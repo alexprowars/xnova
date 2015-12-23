@@ -1,0 +1,5 @@
+<?php
+
+$lang['test'] = 'test';
+
+?>
