@@ -23,4 +23,16 @@ function convertIp ($ip)
 		return long2ip($ip);
 }
 
+function is_email ($email)
+{
+	if (!$email)
+		return false;
+
+	if (preg_match('#^[^\\x00-\\x1f@]+@[^\\x00-\\x1f@]{2,}\.[a-z]{2,}$#iu', $email) == 0)
+	{
+		return false;
+	}
+	return true;
+}
+
 ?>

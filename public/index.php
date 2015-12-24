@@ -54,7 +54,13 @@ try
 
 	if ($application->request->isAjax())
 	{
-		$application->response->setJsonContent(['status' => $application->game->getStatus(), 'message' => $application->game->getMessage(), 'html' => str_replace(Array("\t"), "", $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''), 'data' => ['tutorial' => $application->game->tutorial]]);
+		$application->response->setJsonContent(
+		[
+			'status' 	=> $application->game->getRequestStatus(),
+			'message' 	=> $application->game->getRequestMessage(),
+			'html' 		=> str_replace(Array("\t"), "", $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
+			'data' 		=> $application->game->getRequestData()
+		]);
 		$application->response->setContentType('text/json', 'utf8');
 		$application->response->send();
 	}
