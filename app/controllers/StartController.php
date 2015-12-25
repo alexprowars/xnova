@@ -1,31 +1,34 @@
 <?php
 namespace App\Controllers;
 
+use App\Lang;
+use App\Sql;
+
 class StartController extends ApplicationController
 {
 	public function initialize()
 	{
 		parent::initialize();
+
+		Lang::includeLang('reg');
 	}
 
 	public function indexAction ()
 	{
 		$error = '';
 
-		if (user::get()->data['sex'] == 0 || user::get()->data['avatar'] == 0)
+		if ($this->user->sex == 0 || $this->user->avatar == 0)
 		{
-			if (isset($_POST['save']))
+			if ($this->request->hasPost('save'))
 			{
-				strings::includeLang('reg');
-
 				$arUpdate = array();
 
-				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-\!\~\.@ ]+$/u", $_POST['character']))
+				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-\!\~\.@ ]+$/u", $this->request->getPost('character')))
 				{
 					$error .= _getText('error_charalpha');
 				}
 
-				$ExistUser = db::query("SELECT `id` FROM game_users WHERE `username` = '" . db::escape_string(trim($_POST['character'])) . "' AND id != ".user::get()->getId()." LIMIT 1;", true);
+				$ExistUser = $this->db->query("SELECT `id` FROM game_users WHERE `username` = '" . trim($this->request->getPost('character')) . "' AND id != ".$this->user->getId()." LIMIT 1");
 
 				if (isset($ExistUser['id']))
 				{
@@ -59,53 +62,53 @@ class StartController extends ApplicationController
 
 				if (!$error)
 				{
-					$arUpdate['username'] = db::escape_string(strip_tags(trim($_POST['character'])));
+					$arUpdate['username'] = strip_tags(trim($this->request->getPost('character')));
 
-					sql::build()->update('game_users')->set($arUpdate)->where('id', '=', user::get()->getId())->execute();
+					$this->user->saveData($arUpdate);
 
-					request::redirectTo('?set=overview');
+					$this->response->redirect('overview/');
+					$this->view->disable();
 				}
 			}
 
-			$this->setTemplate('start/start_sex');
-
-			$this->set('name', user::get()->data['username']);
+			$this->view->pick('shared/start/sex');
+			$this->view->setVar('name', $this->user->username);
 		}
-		elseif (user::get()->data['race'] == 0)
+		elseif ($this->user->race == 0)
 		{
-			strings::includeLang('infos');
+			Lang::includeLang('infos');
 
-			$this->setTemplate('start/start_race');
+			$this->view->pick('shared/start/race');
 
-			if (isset($_POST['save']))
+			if ($this->request->hasPost('save'))
 			{
-				$r = request::P('race', 0, VALUE_INT);
+				$r = $this->request->getPost('race', 'int', 0);
 				$r = ($r < 1 || $r > 4) ? 0 : $r;
 
 				if ($r != 0)
 				{
 					global $reslist, $resource;
 
-					sql::build()->update('game_users')->set(Array('race' => $r, 'bonus' => (time() + 86400)));
+					Sql::build()->update('game_users')->set(Array('race' => $r, 'bonus' => (time() + 86400)));
 
 					foreach ($reslist['officier'] AS $oId)
-						sql::build()->setField($resource[$oId], (time() + 86400));
+						Sql::build()->setField($resource[$oId], (time() + 86400));
 
-					sql::build()->where('id', '=', user::get()->getId())->execute();
+					Sql::build()->where('id', '=', $this->user->getId())->execute();
 
-					request::redirectTo("?set=tutorial");
+					$this->response->redirect('tutorial/');
+					$this->view->disable();
 				}
 				else
 					$error = 'Выберите фракцию';
 			}
 		}
 
-		$this->set('error', $error);
+		$this->view->setVar('message', $error);
 
-		$this->setTitle('Выбор персонажа');
+		//$this->setTitle('Выбор персонажа');
 		$this->showTopPanel(false);
-		//$this->showLeftPanel(false);
-		$this->display();
+		//$this->display();
 	}
 }
 

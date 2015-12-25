@@ -1,0 +1,740 @@
+html {
+    height: 100%;
+	overflow-y:scroll;
+    padding: 0;
+	font-size: 11px;
+}
+
+:focus{
+	outline: none;
+}
+
+#menu_links{
+	width:157px;
+	padding:0;
+	margin:0
+}
+
+.w49  {
+    width:49%; vertical-align:top
+}
+.h100 {
+    height:100%
+}
+.w100 {
+	width:100%
+}
+
+a {
+    cursor: pointer;
+	font-weight: normal;
+    color: #fff;
+    text-decoration: none;
+}
+
+.td {
+	padding: 1px;
+}
+
+.image {
+	border:0;
+}
+
+p table{
+  border:0;
+}
+
+p td
+{
+  text-align           : center;
+  font-size            : 11px;
+}
+
+table table td
+{
+  font-size            : 11px;
+  padding-top: 0;
+  margin-right: 0;
+}
+
+body {
+	background: #0a0a0a url(/skins/default/img/starfield_01.gif) repeat 0 0 fixed;
+	height:100%;
+	width:100%;
+	font-size:11px;
+	font-family: verdana, arial, sans-serif;
+	color:#D4D4D4;
+	line-height: normal;
+}
+
+th, td.a, td.b, .c, .f, input, select,
+td.g, td.h, td.i, td.j, .k, td.l, td.m,
+td.n, td.o, td.q, td.r, td.v, .style td,
+textarea, p td, table.s th img
+{
+  	color			: #FFFFFF;
+  	font-size		: 11px;
+	font-family: verdana, arial, sans-serif;
+}
+
+th, td.a, td.b, .c, .f, input, select, td.g,
+td.h, td.i, td.j, .k, td.m, td.o, td.q, td.r,
+td.v, td.s, .style td, p td
+{
+	background: transparent;
+	color: #FFFFFF;
+}
+
+th, .th
+{
+	text-align           : center;
+	padding         : 2px 3px;
+    background: #37476a;
+	color: #d7d7d7;
+	border: 1px solid #425e8c;
+	font-size: 11px;
+}
+
+td.m1 {
+	text-align: center;
+	font-size            : 11px;
+    vertical-align:top;
+    border-spacing:0;
+
+}
+
+.bar {
+	font-size:11px;
+	margin: 0 auto 0 auto;
+	padding-top:2px;
+	height: 23px;
+}
+
+td.m1 a{
+	color: #bbb8b8;
+    font-weight:normal;
+}
+
+td.m1 a:hover {
+    color:#9c0;
+    text-decoration:none;
+    font-weight:normal;
+}
+
+td.a
+{
+	height               : 39px;
+	text-align           : center;
+	background: transparent;
+	color: #FFFFFF;
+}
+
+td.b
+{
+	padding : 3px 3px 3px 3px;
+	border: 1px solid #415683;
+	color: #EBEBEB;
+	background: #353535;
+	font-weight: normal;
+	text-align: left;
+}
+
+th.b
+{
+	padding : 3px 3px 3px 3px;
+	color: #EBEBEB;
+	background: #353535;
+	text-align: left;
+	font-weight: normal;
+	border: 1px solid #202020;
+	font-size: 11px;
+	word-wrap: break-word;
+	max-width: 556px;
+}
+
+th.a
+{
+	padding : 3px 3px 3px 3px;
+	color: #EBEBEB;
+	background: #353535;
+	font-weight: normal;
+	border: 1px solid #202020;
+	font-size: 11px;
+	margin: 0;
+}
+
+.c
+{
+	color : #DADADA;
+	padding: 2px 3px;
+	text-align: center;
+	font-size: 11px;
+	font-weight: normal;
+	border: 1px solid #415683;
+
+	background: #253046;
+	background: -moz-linear-gradient(top,  #212946 0%, #2c2c64 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#212946), color-stop(100%,#2c2c64));
+	background: -webkit-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: -o-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: -ms-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: linear-gradient(to bottom,  #212946 0%,#2c2c64 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#212946', endColorstr='#2c2c64',GradientType=0 );
+
+}
+
+.c.big, .k.big {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	font-size: 14px;
+}
+
+.f, input
+{
+	color : #E6EBFB;
+	border: 1px solid #BFBFBF;
+	font-family: verdana, arial, sans-serif;
+}
+
+input[type="checkbox"] {
+	border: 1px solid #8A8A8A;
+}
+
+td.f, select, textarea{
+	color : #E6EBFB;
+	background: #414141;
+	border: #8A8A8A solid 1px;
+	font-family: verdana, arial, sans-serif;
+}
+
+select {
+	margin: 0;
+	padding: 0;
+}
+
+textarea{
+	width : 99%;
+	color: #FFFFFF;
+	background: #354566;
+	margin: 0 0 0 0;
+}
+
+td.g
+{
+  text-align           : right;
+  color                : #E6EBFB;
+  font-weight: bold;
+}
+
+td.h
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.i
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.j
+{
+  padding:0 0 0 0;
+	border: 1px solid #415683;
+}
+
+.k
+{
+	text-align           : center;
+	color                : #E6EBFB;
+    background: #42444D;
+	border: 1px solid #415683;
+}
+
+td.l
+{
+	color                : #D2D2D2;
+	vertical-align       : top;
+	padding: 0;
+	font-size: 11px;
+	background-color: #054144;
+}
+
+td.m
+{
+  text-align           : right;
+  width                : 86px;
+  color                : #E6EBFB;
+  background: transparent;
+  font-weight: bold;
+}
+
+td.n
+{
+  width                : 89px;
+  text-align           : center;
+  color                : #E6EBFB;
+  background: transparent;
+  font-weight: bold;
+}
+
+td.o
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.q
+{
+  font-size            : 11px;
+  font-family          : verdana,sans-serif;
+  text-align           : center;
+  vertical-align       : middle;
+  color                : #E6EBFB;
+  background: transparent;
+  font-weight: bold;
+}
+
+td.r
+{
+  text-align           : right;
+  color                : #E6EBFB;
+}
+
+td.v
+{
+  text-align           : right;
+  color                : #f7f7f7;
+  font-weight: bold;
+}
+
+td.s
+{
+  color                : #E6EBFB;
+}
+
+table.s th
+{
+  border               : 0;
+}
+
+table.s th img
+{
+  width                : 89px;
+  height               : 89px;
+}
+
+div.z
+{
+  color                : #E6EBFB;
+}
+
+a:hover {
+    color:#9c0;
+    text-decoration:underline;
+}
+
+a.s
+{
+  color                : #C2CFF5;
+}
+
+a.t
+{
+  color                : #C8D3F7;
+}
+
+h1
+{
+  font-size            : 11px;
+  font-family          : verdana,sans-serif;
+  border-bottom        : 0 solid #344566;
+  width                : 98%;
+  text-align           : center;
+}
+
+tr.flight th span.owndeploy {
+color:#33FF33;
+}
+tr.flight th span.owndeploy a {
+color:#D8D8D8;
+}
+tr.flight th span.owntransport {
+color:#33FF33;
+}
+tr.flight th span.owntransport a {
+color:#D8D8D8;
+}
+tr.flight th span.ownattack {
+color:#33FF33;
+}
+tr.flight th span.ownattack a {
+color:#D8D8D8;
+}
+tr.flight th span.ownespionage {
+color:#FF9900;
+}
+tr.flight th span.ownespionage a {
+color:#D8D8D8;
+}
+tr.flight th span.ownharvest {
+color:#F9F900;
+}
+tr.flight th span.ownharvest a {
+color:#D8D8D8;
+}
+tr.flight th span.owncolony {
+color:#007DFB;
+}
+tr.flight th span.owncolony a {
+color:#D8D8D8;
+}
+tr th span.ownfederation {
+color:#3AAF3A;
+}
+tr th span.ownfederation a {
+color:#D8D8D8;
+}
+tr th span.ownattack {
+color:#33FF33;
+}
+tr th span.ownattack a {
+color:#D8D8D8;
+}
+tr th span.ownmissile {
+color:#99FFFF;
+}
+tr th span.ownmissile a {
+color:#D8D8D8;
+}
+tr th span.owndestroy {
+color:#33FF33;
+}
+tr th span.owndestroy a {
+color:#D8D8D8;
+}
+tr th span.ownhold {
+color:#33FF33;
+}
+tr th span.ownhold a {
+color:#D8D8D8;
+}
+tr.flight th span.attack {
+color:red;
+}
+tr.flight th span.attack a {
+color:#D8D8D8;
+}
+tr.flight th span.espionage {
+color:#FF0000;
+}
+tr.flight th span.espionage a {
+color:#D8D8D8;
+}
+tr th span.missile {
+color:#CC3333;
+}
+tr th span.missile a {
+color:#D8D8D8;
+}
+tr th span.destroy {
+color:#FF0000;
+}
+tr th span.destroy a {
+color:#D8D8D8;
+}
+tr th span.federation {
+color:#007DFB;
+}
+tr th span.federation a {
+color:#D8D8D8;
+}
+tr.return th span {
+color:#339900;
+}
+tr.return th span a {
+color:#D8D8D8;
+}
+.error {
+  color: red;
+}
+
+.warning {
+  color: orange;
+}
+
+.notice {
+  color: yellow;
+}
+
+.combatreport {
+  color: red;
+}
+
+.espionagereport {
+  color: orange;
+}
+
+.timeremaining {
+  color: orange;
+}
+.success {
+  color: lime;
+}
+
+.errormessage a {
+	text-decoration: underline;
+}
+.allymember {
+  color: lime;
+}
+
+.noob {
+  color: #a0ffa0;
+}
+
+.strong {
+  color: #ffa0a0;
+}
+
+.vacation {
+  color: skyblue;
+}
+
+.inactive {
+  color: #CCCCCC;
+}
+
+.longinactive {
+  color: #999999;
+}
+
+.banned {
+  text-decoration: line-through;
+}
+
+
+.clearfloat {
+    clear:both;
+    height:0;
+    font-size: 1px;
+    line-height: 0;
+}
+
+.clear {
+    clear:both;
+    height:0;
+    font-size: 0;
+    line-height: 0;
+	overflow: hidden;
+	zoom: 1;
+}
+
+.contentBox {
+    min-height: 100%;
+	height: auto !important;
+    margin: 0 auto -19px;
+	position: relative;
+	z-index: 1;
+}
+
+#box {
+    margin: 0 auto;
+    text-align:left;
+}
+
+.table_menu{
+	border-spacing:0;
+}
+
+.table_menu td {
+	padding:0 0 0 0;
+	margin:0 0 0 0;
+	border-spacing:0;
+}
+
+/* BBCode
+ ------------ */
+.quotetitle {
+	margin: 0 0 0 0;
+	padding: 2px 4px;
+	border: solid 1px #C8CBD9;
+	color: #7D8AA0;
+	background-color: #EAECF2;
+	font-size: 0.85em;
+	font-weight: bold;
+}
+
+.quotecontent {
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 1px solid #C8CBD9;
+	border-top-width: 0;
+	font-weight: normal;
+	background-color: #EFF2F6;
+	color: #444;
+}
+
+.quotecontent a {
+	color: #7D8AA0;
+}
+.quotecontent a:hover {
+    color:#9c0;
+    text-decoration:none;
+}
+
+.quotewrapper {
+	clear: both;
+	margin: 0 0 0 0;
+	background: #EAECF2 url(/skins/default/img/quote_header.gif) top left no-repeat;
+	padding-left: 17px;
+	border: solid 1px #C8CBD9;
+	border-bottom-color: #AEB3C5;
+	border-right-color: #AEB3C5;
+}
+
+iframe {
+	border-width: 0;
+}
+
+#gamediv {
+    position: relative;
+}
+
+input[type=submit], input[type=button], input[type=reset], .button {
+	background: #2B354E;
+	border: 1px solid #415683;
+	color: #FFFFFF;
+	padding: 3px 10px;
+	margin: 1px;
+	min-width: 110px;
+	text-decoration: none;
+	font-weight: normal;
+	font-size: 11px;
+	box-sizing: border-box;
+	display: inline-block;
+}
+
+input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover, .button:hover {
+	border-color: #517db5;
+	color: #fbff6f;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+input[type=text], input[type=password] {
+	background: #2B354E;
+	border: 1px solid #415683;
+	color: #FFFFFF;
+	font-size: 14px;
+	margin: 0;
+	text-align: center;
+	width: auto;
+}
+
+input[type=text]:hover, input[type=password]:hover, textarea:hover {
+	border-color: #517db5;
+}
+
+input[type=radio], input[type=radio] + label, input[type=checkbox] {
+	cursor: pointer;
+}
+
+.errormessage {
+	padding: 5px 3px;
+}
+
+.full {
+	color: #ff3f3e !important;
+}
+
+img.info {
+	margin-right: 5px;
+	border: 1px solid #ccc;
+}
+
+.shoutbox {
+	margin: 5px;
+	vertical-align: text-top;
+	height: 380px;
+	min-height: 200px;
+	overflow-y:auto;
+	overflow-x:hidden;
+	width: 695px;
+}
+
+.iframe .shoutbox {
+	max-width: 650px;
+}
+
+.shoutbox .date1, .activity .date1 {
+	font-size: 11px;
+	text-decoration: none;
+	font-weight: normal;
+	color: #04AE04;
+	padding: 2px 3px;
+}
+
+.shoutbox .date2 {
+	font-size: 11px;
+	text-decoration: none;
+	font-weight: normal;
+	color: #04AE04;
+	padding: 2px 3px;
+	background-color: #00FFAA
+}
+
+.shoutbox .date3 {
+	font-size: 11px;
+	text-decoration: none;
+	font-weight: normal;
+	color: #04AE04;
+	background-color: #ddd;
+	padding: 2px 3px;
+}
+
+.shoutbox div {
+	margin: 5px 0;
+}
+
+.shoutbox .to, .activity .to {
+	cursor: pointer;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+.shoutbox .player {
+	color: #7397E1;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.shoutbox .private {
+	COLOR: Red;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.activity {
+	padding-top: 5px;
+}
+
+.activity .title {
+	color: #7acc72;
+}
+
+.tip {
+	display:none;
+	padding:4px;
+	position:absolute;
+	z-index:1000;
+	max-width: 600px;
+	background: #252525;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+}
+
+.tip table:first-child td:first-child {
+	padding: 1px;
+}

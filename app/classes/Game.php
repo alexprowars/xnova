@@ -71,6 +71,14 @@ class Game extends Component
 		return $this->data;
 	}
 
+	function getSpeed ($type = '')
+	{
+		if ($type == 'fleet')
+			return $this->config->game->get('fleet_speed', 2500) / 2500;
+
+		return 1;
+	}
+
 	public function sendMessage ($owner, $sender, $time, $type, $from, $message)
 	{
 		if (!$time)

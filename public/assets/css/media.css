@@ -1,0 +1,423 @@
+#siteFooter {
+    background: transparent url(/images/bar-bg.gif) repeat-x 0 0;
+    color:#848484;
+    font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+    height: 19px;
+    line-height:19px;
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+#siteFooter a,
+#siteFooter a:link {
+    color:#848484;
+    margin:0 10px;
+    text-decoration:none;
+	font-weight:normal;
+}
+
+#siteFooter a:hover {
+    color:#9c0;
+    text-decoration:none;
+}
+
+@media (max-width: 1200px)
+{
+	.set_buildings .planetList .list .planet > div {
+		display: none;
+	}
+	.set_buildings .planetList .list .planet > div.clear {
+		display: block;
+	}
+	.set_buildings .planetList .list .planet img {
+		width: 52px;
+		height: 52px;
+	}
+	.set_buildings .planetList .list {
+		width: 60px;
+	}
+	.set_buildings .planetList {
+		width: 60px;
+	}
+	.set_buildings .game_content > .content {
+		margin: 0 65px 0 135px;
+		width: 785px;
+	}
+
+	.doubleth {
+		height: 39px;
+	}
+}
+
+@media (min-width: 1200px)
+{
+	#box, #siteFooter .content {
+		width: 1125px;
+	}
+
+	.game_content > .content {
+		margin: 0 175px 0 165px;
+		width: 785px;
+	}
+
+	.game_content > .menu {
+		width: 150px;
+	}
+
+	.game_content > .planetList {
+		width: 160px;
+	}
+
+	.game_content > .menu li > a {
+		padding: 8px;
+		height:auto;
+	}
+
+	.topnav {
+		margin-bottom: 10px;
+	}
+
+	.shoutbox {
+		width: 765px;
+	}
+
+	.doubleth {
+		height: 39px;
+	}
+}
+
+@media (min-width: 1700px)
+{
+	td.c, .game_content > .menu li > a, .buildings, body, html, td, th, table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
+	th, td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
+	{
+		font-size: 12px;
+	}
+
+	.planetList .list .planet {
+		font-size: 11px;
+	}
+
+	.block > .title {
+		font-size: 14px;
+	}
+
+	.shoutbox {
+		font-size: 14px;
+		width: 765px;
+	}
+
+	.buildings .actions {
+		padding: 4px;
+	}
+
+	.buildings .title {
+		padding: 4px;
+	}
+
+	td.c, th, td.k {
+		padding: 4px;
+	}
+
+	.doubleth {
+		height: 45px;
+	}
+}
+
+@media (min-width: 481px) and (max-width: 992px)
+{
+	#box, #siteFooter > div {
+		width: 790px;
+	}
+
+	.planetList .list .planet > div.clear {
+		display: block;
+	}
+	.planetList .list .planet img {
+		width: 52px;
+		height: 52px;
+	}
+	.planetList .list {
+		width: 60px;
+	}
+
+	.game_content > .planetList {
+		width: 60px;
+	}
+
+	.game_content .menu {
+		width: 90px;
+		margin-right: 5px;
+	}
+
+	.set_buildings #tabs-0, .set_buildings #tab_area, .set_buildings #tabs-0 * {
+		display: none !important;
+	}
+
+	.set_buildings .content {
+		overflow-x: hidden;
+	}
+
+	.game_content > .content {
+		margin: 0 65px 0 95px !important;
+		width: 630px !important;
+	}
+
+	.shoutbox {
+		width: 610px;
+	}
+}
+
+@media (min-width: 992px) {
+	.buildings.area {
+		color: #D4D4D4;
+		position: relative;
+	}
+
+	.buildings.area.planet {
+		height: 634px;
+		background: url(/images/buildings/area.jpg) no-repeat 0 0;
+		font-size: 0;
+	}
+
+	.buildings.area.moon, .buildings.area.base {
+		height: 702px;
+		background: url(/images/buildings/moon.jpg) no-repeat 0 0;
+		font-size: 0;
+	}
+
+	.buildings.area .object {
+		position: absolute;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	.buildings.area .object:hover {
+		opacity: 0.8;
+	}
+
+	.buildings.area .object.empty img {
+		opacity: 0.3;
+	}
+
+	.buildings.area .object.i_1 {
+		top: 76px;
+		left: 122px;
+	}
+
+	.buildings.area .object.i_1 img {
+		width: 90px;
+		height: 79px;
+	}
+
+	.buildings.area .object.i_2 {
+		top: 457px;
+		left: 193px;
+	}
+
+	.buildings.area .object.i_2 img {
+		width: 130px;
+		height: 106px;
+	}
+
+	.buildings.area .object.i_3 {
+		top: 298px;
+		left: 640px;
+		width: 100px;
+	}
+
+	.buildings.area .object.i_3 img {
+		width: 90px;
+		height: 88px;
+	}
+
+	.buildings.area .object.i_4 {
+		top: 155px;
+		left: 546px;
+	}
+
+	.buildings.area .object.i_4 img {
+		width: 90px;
+		height: 75px;
+	}
+
+	.buildings.area .object.i_12 {
+		top: 74px;
+		left: 634px;
+	}
+
+	.buildings.area .object.i_12 img {
+		width: 90px;
+		height: 69px;
+	}
+
+	.buildings.area .object.i_14 {
+		top: 307px;
+		left: 253px;
+	}
+
+	.buildings.area .object.i_14 img {
+		width: 100px;
+		height: 61px;
+	}
+
+	.buildings.area.moon .object.i_14, .buildings.area.base .object.i_14 {
+		top: 110px;
+		left: 490px;
+	}
+
+	.buildings.area .object.i_15 {
+		top: 303px;
+		left: 25px;
+	}
+
+	.buildings.area .object.i_15 img {
+		width: 120px;
+		height: 100px;
+	}
+
+	.buildings.area .object.i_21 {
+		top: 310px;
+		left: 380px;
+	}
+
+	.buildings.area .object.i_21 img {
+		width: 160px;
+		height: 130px;
+	}
+
+	.buildings.area .object.i_22 {
+		top: 146px;
+		left: 22px;
+	}
+
+	.buildings.area .object.i_22 img {
+		width: 90px;
+		height: 63px;
+	}
+
+	.buildings.area .object.i_23 {
+		top: 520px;
+		left: 350px;
+		width: 100px;
+	}
+
+	.buildings.area .object.i_23 img {
+		width: 90px;
+		height: 54px;
+	}
+
+	.buildings.area .object.i_24 {
+		top: 398px;
+		left: 581px;
+		width: 100px;
+	}
+
+	.buildings.area .object.i_24 img {
+		width: 90px;
+		height: 76px;
+	}
+
+	.buildings.area .object.i_31 {
+		top: 193px;
+		left: 108px;
+	}
+
+	.buildings.area .object.i_31 img {
+		width: 90px;
+		height: 100px;
+	}
+
+	.buildings.area .object.i_33 {
+		top: 150px;
+		left: 310px;
+	}
+
+	.buildings.area .object.i_33 img {
+		width: 100px;
+		height: 80px;
+	}
+
+	.buildings.area .object.i_34 {
+		top: 508px;
+		left: 520px;
+		width: 140px;
+	}
+
+	.buildings.area .object.i_34 img {
+		width: 120px;
+		height: 106px;
+	}
+
+	.buildings.area.base .object.i_34 {
+		top: 280px;
+		left: 91px;
+	}
+
+	.buildings.area .object.i_41 {
+		top: 223px;
+		left: 115px;
+	}
+
+	.buildings.area .object.i_41 img {
+		width: 110px;
+		height: 170px;
+	}
+
+	.buildings.area .object.i_42 {
+		top: 217px;
+		left: 529px;
+	}
+
+	.buildings.area .object.i_42 img {
+		width: 150px;
+		height: 174px;
+	}
+
+	.buildings.area .object.i_43 {
+		top: 20px;
+		left: 150px;
+	}
+
+	.buildings.area .object.i_43 img {
+		width: 270px;
+		height: 248px;
+	}
+
+	.buildings.area .object.i_44 {
+		top: 46px;
+		left: 388px;
+	}
+
+	.buildings.area .object.i_44 img {
+		width: 130px;
+		height: 76px;
+	}
+
+	.buildings.area.base .object.i_44 {
+		top: 570px;
+		left: 230px;
+	}
+
+	.buildings.area.moon .object.i_21 {
+		top: 510px;
+		left: 250px;
+	}
+
+	.buildings.area .object .name {
+		width: 100%;
+		border: 1px solid #415680;
+		background-color: #253046;
+		padding: 3px;
+		margin: 0 auto;
+		z-index: 10;
+		position: absolute;
+		font-size: 11px;
+		text-align: center;
+	}
+
+	.buildings.area .object .name span {
+		color: #ffd653;
+	}
+}

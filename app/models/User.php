@@ -22,6 +22,7 @@ class User extends Model
 	public $planet_current;
 	public $planet_id;
 	public $race;
+	public $sex;
 	public $ally_id;
 
 	public $ally = [];

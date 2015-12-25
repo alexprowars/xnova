@@ -1,0 +1,307 @@
+@media only screen and (max-width: 480px)
+{
+	.menu-toggle, .planet-toggle{
+		width: 45px;
+		height: 45px;
+		position: fixed;
+		text-align: center;
+		background-color: rgba(0,0,0,.60);
+		left: 5px;
+		top: 5px;
+		transition: all ease-out 0.2s;
+		-o-transition: all ease-out 0.2s;
+		-moz-transition: all ease-out 0.2s;
+		-ms-transition: all ease-out 0.2s;
+		-webkit-transition: all ease-out 0.2s;
+		z-index: 200;
+	}
+
+	.planet-toggle {
+		right: 5px;
+		left: auto;
+	}
+
+	.menu-toggle span span, .planet-toggle span span{
+		position: absolute;
+		width: 24px;
+		height: 2px;
+		left: 0;
+		background-color: #ffffff;
+		transition: all ease-out 0.2s;
+		-o-transition: all ease-out 0.2s;
+		-moz-transition: all ease-out 0.2s;
+		-ms-transition: all ease-out 0.2s;
+		-webkit-transition: all ease-out 0.2s;
+	}
+
+	.planet-toggle > span{left: auto;right: 12px;}
+	.planet-toggle:before{
+		-moz-transition: all ease-out 0.2s;
+		-webkit-transition: all ease-out 0.2s;
+		-o-transition: all ease-out 0.2s;
+		-ms-transition: all ease-out 0.2s;
+		transition: all ease-out 0.2s;
+		content: '';
+		position: absolute;
+		width: 17px;
+		height: 16px;
+		background: transparent url('/images/icon-city.svg') 0 0 no-repeat;
+		left: 14px;
+		top: 14px;
+		opacity: 1;
+	}
+
+	.menu-toggle:active span span,.planet-toggle:active span span{background-color: #fbbe69;}
+	.menu-toggle > span,.planet-toggle > span{top: 50%;margin-top: -11px;position: absolute;left: 12px;width: 24px;height: 22px;}
+
+	.planet-toggle > span,.planet-toggle.act:before{opacity: 0;}
+	.planet-toggle.act > span{opacity: 1;}
+
+	.menu-toggle span.first,.planet-toggle span.first{top: 0;}
+	.menu-toggle span.second,.planet-toggle span.second{top: 10px;}
+	.menu-toggle span.third,.planet-toggle span.third{top: 20px;}
+
+	.menu-toggle.act span.second,.planet-toggle.act span.second{opacity: 0;left: -5px;}
+	.menu-toggle.act span.first,
+	.planet-toggle.act span.first{
+		top: 2px;
+		-moz-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		-webkit-transform: rotate(45deg);
+		-o-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+	.menu-toggle.act span.third,
+	.planet-toggle.act span.third{
+		top: 2px;
+		-moz-transform: rotate(-45deg);
+		-ms-transform: rotate(-45deg);
+		-webkit-transform: rotate(-45deg);
+		-o-transform: rotate(-45deg);
+		transform: rotate(-45deg);
+	}
+	.menu-toggle.act span.first,
+	.menu-toggle.act span.third,
+	.planet-toggle.act span.first,
+	.planet-toggle.act span.third{top: 10px}
+
+	.menu-toggle1.act {
+		transform: translate(190px,0);
+		-o-transform: translate(190px,0);
+		-moz-transform: translate(190px,0);
+		-webkit-transform: translate(190px,0);
+	}
+
+	.planet-toggle1.act {
+		transform: translate(-190px,0);
+		-o-transform: translate(-190px,0);
+		-moz-transform: translate(-190px,0);
+		-webkit-transform: translate(-190px,0);
+	}
+
+	.menu-sidebar, .planet-sidebar{
+		position: fixed;
+		width: 250px !important;
+		height: 100%;
+		background-color: rgba(0,0,0,.90);
+		top: 0;
+		left: 0;
+		z-index: 190;
+		transform: translate(-250px,0);
+		-webkit-transform: translate(-250px,0);
+		transition: all ease-out 0.2s;
+		padding-top: 60px;
+		display: none;
+	}
+
+	.menu-sidebar.opened, .planet-sidebar.opened{
+		transform: translate(0,0);
+		-webkit-transform: translate(0,0);
+		-o-transform: translate(0,0);
+		-moz-transform: translate(0,0);
+	}
+
+	.planet-sidebar {
+		right: 0;
+		left: auto;
+		transform: translate(251px,0);
+		-webkit-transform: translate(251px,0);
+		-o-transform: translate(251px,0);
+		-moz-transform: translate(251px,0);
+	}
+
+	.menu-sidebar .nav {
+		background: inherit;
+		overflow: scroll;
+		overflow-x: hidden;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		top: 0;
+		left: 100%;
+		z-index: 0;
+	}
+
+	.menu-sidebar .nav li {
+		list-style: none;
+		display: block;
+		padding: 0;
+		margin: 0;
+		border-bottom: 1px solid #324a6a;
+	}
+
+	.menu-sidebar .nav a {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		display: block;
+		padding: 8px 10px 8px 20px;
+		margin: 0;
+		position: relative;
+		color: #ffffff;
+		font-size: 15px;
+	}
+
+	.game_content > .content {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		width: 100% !important;
+	}
+
+	#box, #siteFooter .content {
+		width: 100%;
+	}
+
+	.planet-sidebar {
+		padding: 60px 10px 0 10px;
+	}
+
+	.planetList.planet-sidebar .list {
+		overflow: scroll;
+		overflow-x: hidden;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		width: 100%;
+		height: 100%;
+	}
+
+	.planetList.planet-sidebar .list * {
+		font-size: 14px;
+	}
+
+	.planetList .list .planet > div {
+		max-width: 160px;
+	}
+
+	.message_list {
+
+	}
+
+	.game_menu {
+		margin-left: 60px;
+		margin-right: 60px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.icon-panel {
+		margin-top: 15px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.icon-panel a {
+		margin-right: 4%;
+	}
+
+	.shoutbox {
+		width: 100%;
+		margin: 0;
+	}
+
+	.shoutbox img {
+		max-width: 100%;
+	}
+
+	.smiles {
+		width: 100%;
+	}
+
+	td.c, .game_content > .menu li > a, .buildings, body, html, td, th, table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
+	td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
+	{
+		font-size: 12px;
+	}
+
+	.block > .title {
+		font-size: 14px;
+	}
+
+	.shoutbox {
+		font-size: 14px;
+	}
+
+	.buildings .actions {
+		padding: 5px;
+	}
+
+	.buildings .title {
+		padding: 5px;
+	}
+
+	td.c, th, td.k {
+		padding: 5px;
+	}
+
+	.footer-mobile {
+		background: #000;
+		color: #848484;
+		font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+		margin: 0;
+	}
+
+	.footer-mobile > div {
+		padding: 5px;
+	}
+
+	.footer-mobile a {
+		color: #9d9d9d;
+		margin: 0 5px;
+		text-decoration: none;
+		font-weight: normal;
+	}
+
+	.contentBox {
+		margin: 0 auto -42px;
+	}
+
+	 #clock {
+		 float: none !important;
+	 }
+
+	.table.galaxy > tbody > tr > th {
+		padding: 5px;
+	}
+
+	.fleet_ships th {
+		white-space: normal !important;
+	}
+}
+
+@media only screen and (max-width: 359px)
+{
+	.bar .m1 {
+		padding-right: 15px;
+	}
+
+	.icon-panel a {
+		margin-right: 2%;
+	}
+}
+
+.table-responsive {
+	-webkit-overflow-scrolling: touch;
+}

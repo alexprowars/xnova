@@ -31,6 +31,9 @@ class ApplicationController extends Controller
 {
 	public $private = 0;
 
+	private $showTopPanel = true;
+	private $showLeftMenu = true;
+
 	public function initialize()
 	{
 		if (function_exists('sys_getloadavg'))
@@ -57,6 +60,30 @@ class ApplicationController extends Controller
 
 		if ($this->auth->isAuthorized())
 		{
+			$this->view->setMainView('game');
+
+			$assets = $this->assets->collection('headerCss');
+
+			$assets->addCss('/assets/css/bootstrap.css');
+			$assets->addCss('/assets/css/formate.css');
+			$assets->addCss('/assets/css/style.css');
+			$assets->addCss('/assets/css/media.css');
+			$assets->addCss('/assets/css/mobile.css');
+			$assets->addCss('/assets/css/jquery-ui.css');
+
+			$assets = $this->assets->collection('headerJs');
+
+			$assets->addJs('//yastatic.net/jquery/1.11.1/jquery.min.js');
+			$assets->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
+			$assets->addJs('/assets/js//script.js');
+			$assets->addJs('/assets/js/jquery.form.min.js');
+			$assets->addJs('/assets/js/game.js');
+			$assets->addJs('/assets/js/universe.js');
+			$assets->addJs('/assets/js/flotten.js');
+			$assets->addJs('/assets/js/smiles.js');
+			$assets->addJs('/assets/js/ed.js');
+			$assets->addJs('/assets/js/jquery.touchSwipe.min.js');
+
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
 			{
@@ -92,6 +119,12 @@ class ApplicationController extends Controller
 				$this->config->app->offsetSet('showPlanetListSelect', 0);
 			}
 
+			$this->view->setVar('timezone', 0);
+			$this->view->setVar('topPanel', $this->showTopPanel);
+			$this->view->setVar('leftMenu', $this->showLeftMenu);
+			$this->view->setVar('adminlevel', $this->user->authlevel);
+			$this->view->setVar('controller', $this->dispatcher->getControllerName());
+
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode($this->session->get('config'), true);
 			//user::get()->data = array_merge(user::get()->data, $inf);
@@ -116,7 +149,7 @@ class ApplicationController extends Controller
 
 			$controller = $this->dispatcher->getControllerName();
 
-			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content')
+			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start')
 				$this->dispatcher->forward(array('controller' => 'start'));
 		}
 
@@ -188,6 +221,16 @@ class ApplicationController extends Controller
 				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $reffer['u_id'] . ", " . time() . ", " . round($giveCredits / 2) . ", 3)");
 			}
 		}
+	}
+
+	public function showTopPanel ($view = true)
+	{
+		$this->showTopPanel = $view;
+	}
+
+	public function showLeftPanel ($view = true)
+	{
+		$this->showLeftMenu = $view;
 	}
 
 	public function message ($text, $title = '')

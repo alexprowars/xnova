@@ -1,0 +1,1003 @@
+td, th {
+	cursor: default;
+}
+
+th {
+    font-weight: normal;
+}
+
+textarea#text {
+	width: 100%;
+}
+
+.game_content {
+	width: 100%;
+	margin-top: 10px;
+}
+
+.game_content > .menu {
+	width: 120px;
+	float: left;
+	margin: 0 15px 0 0;
+	padding: 0;
+}
+.game_content > .content {
+	margin: 0 150px 0 135px;
+	width: 715px;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+.game_content > .content #gamediv {
+	margin: 0;
+	width: 100%;
+}
+.game_content > .planetList {
+	float: right;
+	width: 135px;
+	vertical-align: top;
+}
+
+.game_content > .menu li:first-child > a {
+	border-radius: 3px 3px 0 0;
+}
+
+.game_content > .menu li:last-child > a {
+	border-radius: 0 0 3px 3px;
+	border-bottom:1px solid #40567f;
+}
+
+.game_content > .menu li {
+	display:inline;
+}
+
+.game_content > .menu li > a {
+    background: #2B354E;
+    display: block;
+    float: none;
+    font-size: 11px;
+    text-align: center;
+    border-top:1px solid #40567f;
+    border-left:1px solid #40567f;
+    border-right:1px solid #40567f;
+    border-bottom: none;
+	margin: 0;
+    color: #FFFFFF;
+    font-family: verdana;
+    font-weight: normal;
+	padding: 5px;
+}
+
+.iframe #menu_links li > a {
+    font-size: 10px;
+    width: 70px;
+}
+
+.iframe #menu_links{
+    width: 80px;
+    margin-left: 5px;
+}
+
+.iframe #box {
+    padding-bottom:15px;
+    width: 760px;
+}
+
+.iframe #siteFooter .content {
+	width: 760px;
+}
+
+.iframe .game_content > .content {
+	margin-right: 0 !important;
+	width: 665px !important;
+}
+
+.iframe div.iframe_wrapper {
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.iframe .game_content {
+	margin-top: 5px;
+}
+
+.iframe table td.menu {
+	width: 85px;
+}
+
+.game_content > .menu li > a.check, .game_content > .menu li > a:hover {
+    background: #6B354E;
+}
+
+#box {
+    padding-bottom:50px;
+    width: 1000px;
+	position: static;
+}
+
+.table {
+    width: 100%;
+}
+
+.table td {
+	border-spacing: 0;
+}
+
+.padding5 {
+    padding: 5px !important;
+}
+
+.padding10 {
+    padding: 10px !important;
+}
+
+.margin5 {
+    margin: 5px
+}
+
+.left {
+    text-align: left !important;
+}
+
+.top {
+	vertical-align: top;
+}
+
+.center {
+	text-align: center !important;
+}
+
+.separator {
+    height: 5px;
+    clear: both;
+    font-size: 1px;
+    line-height: 1px;
+}
+
+.viewport {
+    position: relative;
+}
+
+.overContent {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: #000;
+   	opacity: .9;
+   	filter: Alpha(Opacity=90);
+    width: 120px;
+    text-align: left;
+}
+
+.overContent img {
+	margin-right: 3px;
+}
+
+.resNo {
+    color: red;
+}
+
+.resYes {
+    color: lime;
+}
+
+.nopadding {
+	padding: 0 !important;
+}
+
+.noborder, table.noborder td, table.noborder th {
+	border: 0 !important;
+}
+
+#loadingOverlay {
+	position:absolute;
+	background-color:#ddd;
+	width:140px;
+	color:#333;
+	padding:10px;
+	vertical-align:top;
+	text-align:center;
+	top:100px;
+	display: none;
+	z-index: 1000;
+	left: 50%;
+	margin-left: -70px;
+}
+
+.startBuild {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	background: url(/images/build.png) 100% 0 no-repeat;
+	height: 15px;
+	padding-right: 25px;
+	padding-top: 3px;
+}
+
+.buildmax {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+}
+
+.error {
+	padding: 10px;
+	color: red;
+	text-align: center;
+}
+
+.success {
+	padding: 10px;
+	color: lime;
+	text-align: center;
+}
+
+ul {
+	list-style: none outside;
+	margin-bottom: 1em;
+	margin-top: 1em;
+	padding-left: 40px;
+ }
+
+ul li {
+	text-align: left;
+}
+
+.creditList .number {
+	width: 35px;
+	display: block;
+	float: left;
+	margin: 10px 0;
+}
+
+.creditList {
+	margin-bottom: 15px;
+}
+
+#raportRaw.ui-accordion .ui-accordion-content {
+	overflow-x: auto;
+	max-width: 640px;
+	padding: 5px;
+}
+
+.anotherPlanets th {
+	padding: 8px 0;
+}
+
+.raportUser {
+	float:left
+}
+
+.raceSelect input[type="button"] {
+	font-size: 16px;
+}
+
+.arrow {
+	width: 32px;
+	height: 32px;
+	background: url(/images/arrow_up.png) no-repeat 50% 50%;
+	position: absolute;
+	z-index: 999;
+}
+
+input[type=button] {
+	cursor: pointer;
+}
+
+.tutorial .solution > ul {
+	padding: 0;
+	margin: 0;
+	list-style: disc inside none;
+}
+
+.tutorial .solution {
+	text-align: left;
+	background:#13181D;
+	border:1px solid #030303;
+	color:#848484;
+	font-size:11px;
+	margin:10px;
+	padding:20px;
+	line-height: 15px;
+}
+
+.tutorial ul {
+	list-style: decimal inside none;
+}
+
+#siteFooter .content {
+	width: 1000px;
+}
+
+.game_menu {
+	padding-bottom: 5px;
+	padding-top: 4px;
+	background: #3a4a6e;
+	border-radius: 0 0 5px 5px;
+	border: 1px solid #425e8c;
+}
+
+.planetList .list .planet {
+	background: #354566;
+	color: #BEBEBE;
+	border: 1px solid #415683;
+	margin-bottom:5px;
+	text-align: center;
+	font-size: 10px;
+	padding: 3px;
+	position: relative;
+	border-radius: 3px;
+}
+
+.planetList .list .planet > a {
+	float: left;
+	margin-right: 5px;
+}
+
+.planetList .list .planet > div {
+	max-width: 108px;
+	overflow: hidden;
+}
+
+.planetList .list .planet .reload {
+	background: url(/images/reload-icon.png) 0 0 no-repeat;
+	width: 20px;
+	height: 20px;
+	cursor:pointer;
+	position: absolute;
+	top: 2px;
+	left: 3px;
+}
+
+.planetList .list .planet.type_5 {
+	background: #883332;
+}
+
+.planetList .list .planet.type_3 {
+	background: #707a73;
+}
+
+.planetList .list .planet.current {
+	border: 2px solid #44d137;
+	padding: 2px 2px 0 2px;
+}
+.planetList .list .planet.current .reload {
+	top: 0;
+	left: 1px;
+}
+
+.planetList .list {
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: auto;
+}
+
+.topnav {
+	margin: 0 0 5px 0;
+}
+
+td.c, th {
+	padding: 3px;
+}
+
+.ok, .success, .positive {
+	color: lime !important;
+}
+
+.notice, .zero, .neutral {
+  color: yellow !important;
+}
+
+.error, .negative {
+  color: #FF3F3E !important;
+}
+
+.table.galaxy > tbody > tr > th {
+	padding: 0;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.table.galaxy .img {
+	font-size: 0;
+	width: 30px;
+	height: 32px;
+}
+
+.techtree th {
+	padding: 4px;
+	font-size: 11px;
+}
+
+.inline {
+	display: inline-block;
+	float: none !important;
+}
+
+.odd {
+	background-color: #303F5E;
+}
+
+span.star {
+	font-family: "arial";
+	color: #fff;
+	font-size: 11px;
+}
+
+p {
+	display: block;
+	margin-bottom: 1em;
+	margin-top: 1em;
+	font-size: 10px;
+	font-weight: bold;
+ }
+
+#preloadOverlay {
+	display: none;
+	top: 40px;
+	position: absolute;
+	z-index: 1000;
+	left: 50%;
+	margin-left: -345px;
+}
+
+.pic {
+	width: 200px;
+	height: 200px;
+}
+
+.tutorial h3 {
+	margin: 15px 0;
+}
+
+.tutorial .end {
+	width:150px;
+	height:30px;
+	color:orange;
+	margin-top:10px;
+}
+
+.shadow {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+
+.notAvailable {
+	width: 100%;
+	height: 122px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	z-index: 99;
+	text-align: center;
+}
+
+.iframe .notAvailable {
+	width: 329px;
+}
+
+.notAvailable span {
+	background: url(/images/block.png) 0 1px no-repeat;
+	padding-left: 25px;
+	display: inline-block;
+	margin-top: 50px;
+	font-size: 16px;
+	color: #ff4341;
+	height: 35px;
+}
+
+.iframe .game_menu {
+	margin-bottom: 5px;
+}
+
+.set_admin input[type=submit], .set_admin input[type=button], .set_admin input[type=reset] {
+	min-width: 20px;
+}
+
+.fullscreen {
+	top: 3px;
+	left: 3px;
+	position: absolute;
+}
+
+.set_techtree #tabs a {
+	font-weight: normal;
+}
+
+.tch_node
+{
+position: absolute;
+text-overflow: clip;
+}
+
+.tch_noreq
+{
+color:white;
+font-weight:bold;
+background-color:black;
+box-shadow:lime 0 0 6px 6px;
+border-radius:3px;
+height: 30px;
+padding-top: 18px;
+text-align: center;
+}
+
+.tch_icon_lime
+{
+height:56px;
+width:56px;
+box-shadow:lime 0 0 6px 6px;
+border-radius:3px;
+background-color:black;
+}
+
+.tch_icon_yellow
+{
+height:56px;
+width:56px;
+box-shadow:yellow 0 0 6px 6px;
+border-radius:3px;
+background-color:black;
+}
+
+.tch_icon_red
+{
+height:56px;
+width:56px;
+box-shadow:red 0 0 6px 6px;
+border-radius:3px;
+background-color:black;
+}
+
+.tch_tx_lvl
+{
+font-size: 12px;
+font-weight: bold;
+position: relative;
+text-align: center;
+top: -17px;
+text-shadow: 0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000;
+margin-left:-3px;
+}
+
+.tch_tx_nmcont
+{
+position: absolute;
+text-align: center;
+top: 64px;
+left: -28px;
+width:120px;
+}
+
+.tch_tx_name
+{
+font-size: 10px;
+text-align: center;
+box-shadow: inset 1px 1px 70px #000000, 1px 1px 4px #000000, -1px -1px 4px #000000;
+border-radius:5px;
+padding:0 3px 0 3px;
+margin-left: -5px;
+}
+
+#rf_techinfo {
+    margin-top: 30px
+}
+
+.planet-image {
+    position:relative;
+}
+
+.planet-image > a {
+    display: block;
+    border: 1px solid #415683;
+}
+
+.planet-image > a img {
+	width:100%;
+}
+
+.moon-image {
+    position:absolute;
+    bottom:0;
+    left: 0;
+    background: #354566;
+    color: #BEBEBE;
+    border: 1px solid #415683;
+    padding: 3px;
+    overflow: hidden;
+    font-size: 0;
+}
+
+.bar .top_menu {
+	float: right;
+	display: inline-block;
+}
+
+.bar .m1 {
+	padding-right: 25px;
+	font-size: 14px;
+	vertical-align: top;
+	font-weight: normal;
+}
+
+.bar .m1 > b {
+	font-size: 14px;
+	vertical-align: top;
+	margin-top: 2px;
+	font-weight: normal;
+	display: inline-block;
+}
+
+.bar .message_list {
+	float: left;
+	margin-left: 10px;
+	display: inline-block;
+}
+
+.toolbar .colorpicker {
+	background: #eee;
+	width: 100%;
+	padding: 0;
+	margin-top: 0;
+	display: block;
+	text-align: center;
+}
+
+.toolbar .gensmall {
+	font-size: 1em;
+	margin-top: 0;
+	color: #000000;
+	font-weight: 400;
+}
+
+.toolbar .gensmall select {
+	margin: 4px 0 0 0;
+	padding: 0 0 0 0;
+	font-weight: 400;
+	white-space: nowrap;
+	vertical-align: top;
+	background-color: #f2f4f8;
+	color: #000000;
+	font-size: 11px;
+}
+
+.toolbar {
+	text-align: center;
+	padding: 2px 4px;
+	font-size: 0;
+}
+
+.toolbar.inline {
+	display: inline-block;
+}
+
+.toolbar .buttons {
+	border: 1px solid #ccc;
+	margin: 1px;
+	padding: 2px;
+	display: inline-block;
+	font-size: 0;
+	cursor: pointer;
+	background-color: #fff;
+}
+
+.toolbar .ed {
+	width: 400px;
+	height: 150px;
+}
+
+.smiles {
+	position: absolute;
+	z-index: 1000;
+	background: #C8CBD9;
+	border: 2px solid #000000;
+	padding: 10px;
+	height: 300px;
+	width: 500px;
+	overflow: auto;
+	text-align: left;
+	top: -330px;
+}
+
+.sprite {
+	display:inline-block;
+	overflow:hidden;
+	background: url(/images/sprite.png) no-repeat;
+}
+
+.bb_color_swatch {width:16px; height:16px; background-position: -341px -1px}
+.bb_emoticon_grin {width:16px; height:16px; background-position: -324px -1px}
+.bb_eye {width:16px; height:16px; background-position: -358px -1px}
+.bb_film_add {width:16px; height:16px; background-position: -307px -1px}
+.bb_image_add {width:16px; height:16px; background-position: -273px -1px}
+.bb_palette {width:16px; height:16px; background-position: -256px -1px}
+.bb_picture_add {width:16px; height:16px; background-position: -290px -1px}
+.bb_rainbow {width:16px; height:16px; background-position: -477px -1px}
+.bb_sound_add {width:16px; height:16px; background-position: -494px -1px}
+.bb_television {width:16px; height:16px; background-position: -409px -1px}
+.bb_text_align_center {width:16px; height:16px; background-position: -392px -1px}
+.bb_text_align_justify {width:16px; height:16px; background-position: -426px -1px}
+.bb_text_align_left {width:16px; height:16px; background-position: -460px -1px}
+.bb_text_align_right {width:16px; height:16px; background-position: -443px -1px}
+.bb_text_bold {width:16px; height:16px; background-position: -375px -1px}
+.bb_text_italic {width:16px; height:16px; background-position: -18px -1px}
+.bb_text_list_bullets {width:16px; height:16px; background-position: -69px -1px}
+.bb_text_list_numbers {width:16px; height:16px; background-position: -52px -1px}
+.bb_text_signature {width:16px; height:16px; background-position: -86px -1px}
+.bb_text_strikethrough {width:16px; height:16px; background-position: -35px -1px}
+.bb_text_underline {width:16px; height:16px; background-position: -1px -1px}
+.bb_tick {width:16px; height:16px; background-position: -103px -1px}
+.bb_user_comment {width:16px; height:16px; background-position: -154px -1px}
+.bb_world_link {width:16px; height:16px; background-position: -205px -1px}
+.ico_alliance {width:24px; height:24px; background-position: -333px -24px}
+.ico_chat {width:24px; height:24px; background-position: -308px -24px}
+.ico_exit {width:24px; height:24px; background-position: -358px -24px}
+.ico_forum {width:24px; height:24px; background-position: -533px -24px}
+.ico_fullscreen {width:24px; height:24px; background-position: -408px -24px}
+.ico_mail {width:24px; height:24px; background-position: -458px -24px}
+.ico_search {width:24px; height:24px; background-position: -483px -24px}
+.ico_settings {width:24px; height:24px; background-position: -433px -24px}
+.ico_sim {width:24px; height:24px; background-position: -383px -24px}
+.ico_space {width:24px; height:24px; background-position: -508px -24px}
+.ico_stats {width:24px; height:24px; background-position: -558px -24px}
+.ico_support {width:24px; height:24px; background-position: -608px -24px}
+.ico_tech {width:24px; height:24px; background-position: -633px -24px}
+.ico_tutorial {width:24px; height:24px; background-position: -583px -24px}
+.skin_b {width:16px; height:16px; background-position: -188px -1px}
+.skin_batt0 {width:42px; height:22px; background-position: -597px -1px}
+.skin_batt100 {width:42px; height:22px; background-position: -87px -24px}
+.skin_deuterium {width:42px; height:22px; background-position: -1px -24px}
+.skin_e {width:16px; height:16px; background-position: -222px -1px}
+.skin_energie {width:42px; height:22px; background-position: -554px -1px}
+.skin_kredits {width:42px; height:22px; background-position: -44px -24px}
+.skin_kristall {width:42px; height:22px; background-position: -511px -1px}
+.skin_m {width:16px; height:16px; background-position: -171px -1px}
+.skin_message {width:42px; height:22px; background-position: -130px -24px}
+.skin_metall {width:42px; height:22px; background-position: -242px -24px}
+.skin_r {width:16px; height:16px; background-position: -137px -1px}
+.skin_s {width:16px; height:16px; background-position: -120px -1px}
+.skin_s_deuterium {width:22px; height:22px; background-position: -285px -24px}
+.skin_s_energie {width:22px; height:22px; background-position: -219px -24px}
+.skin_s_kristall {width:22px; height:22px; background-position: -196px -24px}
+.skin_s_metall {width:22px; height:22px; background-position: -173px -24px}
+.skin_z {width:16px; height:16px; background-position: -239px -1px}
+
+.officier {
+	display:inline-block;
+	overflow:hidden;
+	background: url(/images/officiers.png) no-repeat;
+}
+
+.of601 {width:32px; height:32px; background-position: -444px -2px}
+.of601_ikon {width:32px; height:32px; background-position: -410px -2px}
+.of602 {width:32px; height:32px; background-position: -376px -2px}
+.of602_ikon {width:32px; height:32px; background-position: -342px -2px}
+.of603 {width:32px; height:32px; background-position: -308px -2px}
+.of603_ikon {width:32px; height:32px; background-position: -274px -2px}
+.of604 {width:32px; height:32px; background-position: -240px -2px}
+.of604_ikon {width:32px; height:32px; background-position: -206px -2px}
+.of605 {width:32px; height:32px; background-position: -172px -2px}
+.of605_ikon {width:32px; height:32px; background-position: -138px -2px}
+.of606 {width:32px; height:32px; background-position: -104px -2px}
+.of606_ikon {width:32px; height:32px; background-position: -70px -2px}
+.of607 {width:32px; height:32px; background-position: -36px -2px}
+.of607_ikon {width:32px; height:32px; background-position: -2px -2px}
+
+input[type="checkbox"],
+input[type="radio"] {
+	margin: 3px;
+}
+
+.scrollbox::-webkit-scrollbar{width:9px;height:9px;}
+.scrollbox::-webkit-scrollbar-button:start:decrement,#doc ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
+.scrollbox::-webkit-scrollbar-track-piece{background-color:#999;-webkit-border-radius:8px;}
+.scrollbox::-webkit-scrollbar-thumb:vertical{height:50px;background-color:#FAFAFA;-webkit-border-radius:8px;}
+.scrollbox::-webkit-scrollbar-thumb:horizontal{width:50px;background-color:#FAFAFA;-webkit-border-radius:8px;}
+
+.block {
+
+}
+
+.block > .title {
+	border: 1px solid #415683;
+	border-bottom: 0;
+	border-radius: 3px 3px 0 0;
+	color : #DADADA;
+	padding: 5px;
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+
+	background: #253046;
+	background: -moz-linear-gradient(top,  #212946 0%, #2c2c64 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#212946), color-stop(100%,#2c2c64));
+	background: -webkit-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: -o-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: -ms-linear-gradient(top,  #212946 0%,#2c2c64 100%);
+	background: linear-gradient(to bottom,  #212946 0%,#2c2c64 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#212946', endColorstr='#2c2c64',GradientType=0 );
+}
+
+.block > .title input[type=submit] {
+	padding: 0 10px 2px 10px;
+}
+
+.block > .content {
+	border: 1px solid #415683;
+	border-top: 0;
+	border-radius: 0 0 3px 3px;
+	background: #37476a;
+	font-size: 11px;
+	color: #d7d7d7;
+}
+
+.table.table-noborder > tbody > tr > th, .table.table-noborder > tbody > tr > td {
+	border: 0 !important;
+}
+
+.buildings {
+	height: 122px;
+	background: #37476a;
+	font-size: 11px;
+}
+
+.buildings .img {
+	height: 120px;
+	width: 120px;
+	float: left;
+	background-color: #054144;
+}
+
+.buildings .title {
+	background: #253046;
+	padding: 3px;
+	margin-left: 120px;
+}
+
+.buildings .actions {
+	margin-left: 120px;
+	padding: 3px;
+}
+
+.start .avatar {
+	padding: 15px;
+	border: 1px solid #415683;
+	display: inline-block;
+	margin: 10px 5px;
+}
+
+.start.race .content {
+	text-align: center;
+}
+
+.start.race .avatar {
+	width: 40%;
+	text-align: center;
+}
+
+.start.race .avatar span {
+	display: block;
+	text-align: left;
+	margin-top: 15px;
+}
+
+.start.race .avatar h3 {
+	font-size: 16px;
+	margin-top: 10px;
+}
+
+.start #tabs input[type=radio] {
+	display: none;
+}
+
+.start #tabs input[type=radio]:checked + label {
+	border: 1px solid #fff;
+}
+
+div.errormessage {
+	color: #ff4d56;
+	border: 1px solid #ff4d56;
+	margin: 10px;
+	padding: 10px;
+	display: inline-block;
+}
+
+
+.buildings .popup {
+	display: none;
+	width: 400px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #37476a;
+	height: 120px;
+	z-index: 100;
+}
+
+.set_imperium #gamediv {
+	direction: ltr;
+}
+
+#galaxyMessage {
+	margin-top: 10px;
+	display: none;
+	padding: 10px;
+	border-radius: 3px;
+	border: 1px solid green;
+}
+
+.officiers .powers {
+	border-spacing: 0 !important;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.officiers .powers td {
+	padding: 2px 5px;
+	color: #84CFEF;
+}
+
+*{-webkit-font-smoothing: antialiased;}
+
+#windowDialog {
+	display: none;
+}
+
+#building.row, .research.row, .shipyard.row {
+	margin: 0;
+}
+
+#building.row > div, .research.row > div, .shipyard.row > div {
+	padding: 1px;
+}
+
+#building.row > div > div, .research.row > div > div, .shipyard.row > div > div {
+	border: 1px solid #415683;
+}
+
+.topnav {
+	line-height: 1.4em;
+}
+
+.officiers .row {
+	border-bottom: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background: #37476a;
+	color: #d7d7d7;
+	border-bottom: 1px solid #425e8c;
+}
+
+.officiers:last-child {
+	border-bottom: 0;
+}
+
+.officiers .row > div > img {
+	width: 100%;
+}
+
+.set_overview .block .content {
+	padding: 5px;
+}
+
+.techtree .row > div {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.techtree .row .title {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.divtable .row div[class*="col-"] {
+	display: block;
+}
+
+.galaxy-select input[type=button] {
+	min-width: 0;
+}
+
+.planetList .list .planet > span {
+	margin-top: 3px;
+}
