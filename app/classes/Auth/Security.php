@@ -39,6 +39,8 @@ class Security extends Component
 			$privateResources = array
 			(
 				'admin'   	=> array('*'),
+				'overview'  => array('*'),
+				'start'  	=> array('*'),
 			);
 
 			$publicResources = array

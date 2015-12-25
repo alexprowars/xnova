@@ -2,13 +2,13 @@
 
 use App\Auth\Auth;
 use App\Auth\Security;
+use App\Database;
 use App\Game;
 use Phalcon\Crypt;
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url as UrlResolver;
-use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Logger;
 use Phalcon\Mvc\Dispatcher;
@@ -62,7 +62,7 @@ $di->set(
 		/**
 		 * @var Object $config
 		 */
-		$connection = new DbAdapter(array
+		$connection = new Database(array
 		(
             'host' 		=> $config->database->host,
             'username' 	=> $config->database->username,

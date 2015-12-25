@@ -1,0 +1,778 @@
+<?php
+namespace App\Controllers;
+
+use App\Lang;
+
+class OverviewController extends ApplicationController
+{
+	public function initialize()
+	{
+		parent::initialize();
+
+		Lang::includeLang('overview');
+
+		$this->user->loadPlanet();
+	}
+
+	private function BuildFleetEventTable ($FleetRow, $Status, $Owner, $Label, $Record)
+	{
+		$FleetStyle = array
+		(
+			1 => 'attack',
+			2 => 'federation',
+			3 => 'transport',
+			4 => 'deploy',
+			5 => 'transport',
+			6 => 'espionage',
+			7 => 'colony',
+			8 => 'harvest',
+			9 => 'destroy',
+			10 => 'missile',
+			15 => 'transport',
+			20 => 'attack'
+		);
+
+		$FleetStatus = array(0 => 'flight', 1 => 'holding', 2 => 'return');
+		$FleetPrefix = $Owner == true ? 'own' : '';
+
+		$MissionType 	= $FleetRow['fleet_mission'];
+		$FleetContent 	= CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType]);
+		$FleetCapacity 	= CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+
+		$StartPlanet 	= $FleetRow['fleet_owner_name'];
+		$StartType 		= $FleetRow['fleet_start_type'];
+		$TargetPlanet 	= $FleetRow['fleet_target_owner_name'];
+		$TargetType 	= $FleetRow['fleet_end_type'];
+
+		$StartID  = '';
+		$TargetID = '';
+
+		if ($Status != 2)
+		{
+			if ($StartPlanet == '')
+				$StartID = ' с координат ';
+			else
+			{
+				if ($StartType == 1)
+					$StartID = _getText('ov_planet_to');
+				elseif ($StartType == 3)
+					$StartID = _getText('ov_moon_to');
+				elseif ($StartType == 5)
+					$StartID = ' с военной базы ';
+
+				$StartID .= $StartPlanet . " ";
+			}
+
+			$StartID .= GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+
+			if ($TargetPlanet == '')
+				$TargetID = ' координаты ';
+			else
+			{
+				if ($MissionType != 15 && $MissionType != 5)
+				{
+					if ($TargetType == 1)
+						$TargetID = _getText('ov_planet_to_target');
+					elseif ($TargetType == 2)
+						$TargetID = _getText('ov_debris_to_target');
+					elseif ($TargetType == 3)
+						$TargetID = _getText('ov_moon_to_target');
+					elseif ($TargetType == 5)
+						$TargetID = ' военной базе ';
+				}
+				else
+					$TargetID = _getText('ov_explo_to_target');
+
+				$TargetID .= $TargetPlanet . " ";
+			}
+
+			$TargetID .= GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+		}
+		else
+		{
+			if ($StartPlanet == '')
+				$StartID = ' на координаты ';
+			else
+			{
+				if ($StartType == 1)
+					$StartID = _getText('ov_back_planet');
+				elseif ($StartType == 3)
+					$StartID = _getText('ov_back_moon');
+
+				$StartID .= $StartPlanet . " ";
+			}
+
+			$StartID .= GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+
+			if ($TargetPlanet == '')
+				$TargetID = ' с координат ';
+			else
+			{
+				if ($MissionType != 15)
+				{
+					if ($TargetType == 1)
+						$TargetID = _getText('ov_planet_from');
+					elseif ($TargetType == 2)
+						$TargetID = _getText('ov_debris_from');
+					elseif ($TargetType == 3)
+						$TargetID = _getText('ov_moon_from');
+					elseif ($TargetType == 5)
+						$TargetID = ' с военной базы ';
+				}
+				else
+					$TargetID = _getText('ov_explo_from');
+
+				$TargetID .= $TargetPlanet . " ";
+			}
+
+			$TargetID .= GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+		}
+
+		if ($Owner == true)
+		{
+			$EventString = _getText('ov_une');
+			$EventString .= $FleetContent;
+		}
+		else
+		{
+			$EventString = ($FleetRow['fleet_group'] != 0) ? 'Союзный ' : _getText('ov_une_hostile');
+			$EventString .= $FleetContent;
+			$EventString .= _getText('ov_hostile');
+			$EventString .= BuildHostileFleetPlayerLink($FleetRow);
+		}
+
+		if ($Status == 0)
+		{
+			$Time = $FleetRow['fleet_start_time'];
+			$Rest = $Time - time();
+			$EventString .= _getText('ov_vennant');
+			$EventString .= $StartID;
+			$EventString .= _getText('ov_atteint');
+			$EventString .= $TargetID;
+			$EventString .= _getText('ov_mission');
+		}
+		elseif ($Status == 1)
+		{
+			$Time = $FleetRow['fleet_end_stay'];
+			$Rest = $Time - time();
+			$EventString .= _getText('ov_vennant');
+			$EventString .= $StartID;
+
+			if ($MissionType == 5)
+				$EventString .= ' защищает ';
+			else
+				$EventString .= _getText('ov_explo_stay');
+
+			$EventString .= $TargetID;
+			$EventString .= _getText('ov_explo_mission');
+		}
+		else
+		{
+			$Time = $FleetRow['fleet_end_time'];
+			$Rest = $Time - time();
+			$EventString .= _getText('ov_rentrant');
+			$EventString .= $TargetID;
+			$EventString .= $StartID;
+			$EventString .= _getText('ov_mission');
+		}
+
+		$EventString .= $FleetCapacity;
+
+		$bloc['fleet_status'] = $FleetStatus[$Status];
+		$bloc['fleet_prefix'] = $FleetPrefix;
+		$bloc['fleet_style'] = $FleetStyle[$MissionType];
+		$bloc['fleet_order'] = $Label . $Record;
+		$bloc['fleet_time'] = datezone("H:i:s", $Time);
+		$bloc['fleet_count_time'] = strings::pretty_time($Rest, ':');
+		$bloc['fleet_descr'] = $EventString;
+		$bloc['fleet_javas'] = InsertJavaScriptChronoApplet($Label, $Record, $Rest);
+
+		return $bloc;
+	}
+
+	public function renameplanetAction ()
+	{
+		$parse = array();
+		$parse['planet_id'] = $this->planet->id;
+		$parse['galaxy_galaxy'] = $this->planet->galaxy;
+		$parse['galaxy_system'] = $this->planet->system;
+		$parse['galaxy_planet'] = $this->planet->planet;
+		$parse['planet_name'] = $this->planet->name;
+
+		$parse['images'] = array
+		(
+			'trocken' => 20,
+			'wuesten' => 4,
+			'dschjungel' => 19,
+			'normaltemp' => 15,
+			'gas' => 16,
+			'wasser' => 18,
+			'eis' => 20
+		);
+
+		$parse['type'] = '';
+
+		foreach ($parse['images'] AS $type => $max)
+		{
+			if (strpos($this->planet->image, $type) !== false)
+				$parse['type'] = $type;
+		}
+
+		if (isset($_POST['action']) && $_POST['action'] == _getText('namer'))
+		{
+			$UserPlanet = $_POST['newname'];
+
+			if (trim($UserPlanet) != "")
+			{
+				if (preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $UserPlanet))
+				{
+					if (mb_strlen($UserPlanet, 'UTF-8') > 1 && mb_strlen($UserPlanet, 'UTF-8') < 20)
+					{
+						$newname = db::escape_string(strip_tags(trim($UserPlanet)));
+
+						$this->planet->name = $newname;
+						$parse['planet_name'] = $this->planet->name;
+
+						$this->db->query("UPDATE game_planets SET `name` = '" . $newname . "' WHERE `id` = '" . $this->user->current_planet . "' LIMIT 1;");
+
+						if (isset($_SESSION['fleet_shortcut']))
+							unset($_SESSION['fleet_shortcut']);
+					}
+					else
+						$this->message('Введённо слишком длинное или короткое имя планеты', 'Ошибка', '?set=overview&mode=renameplanet', 5);
+				}
+				else
+					$this->message('Введённое имя содержит недопустимые символы', 'Ошибка', '?set=overview&mode=renameplanet', 5);
+			}
+		}
+		elseif (isset($_POST['action']) && $_POST['action'] == _getText('colony_abandon'))
+		{
+			$parse['number_1'] 		= mt_rand(1, 100);
+			$parse['number_2'] 		= mt_rand(1, 100);
+			$parse['number_3'] 		= mt_rand(1, 100);
+			$parse['number_check'] 	= $parse['number_1'] + $parse['number_2'] * $parse['number_3'];
+
+			$this->setTemplate('planet_delete');
+			$this->set('parse', $parse);
+
+			$this->setTitle('Покинуть колонию');
+			$this->showTopPanel(false);
+			$this->display();
+
+		}
+		elseif (isset($_POST['action']) && isset($_POST['image']))
+		{
+			if ($this->user->credits < 1)
+				$this->message('Недостаточно кредитов', 'Ошибка', '?set=overview&mode=renameplanet');
+
+			$image = intval($_POST['image']);
+
+			if ($image > 0 && $image <= $parse['images'][$parse['type']])
+			{
+				sql::build()->update('game_planets')->setField('image', $parse['type'].'planet'.($image < 10 ? '0' : '').$image)->where('id', '=', $this->planet->id)->execute();
+				sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', app::$user->getId())->execute();
+
+				request::redirectTo('?set=overview');
+			}
+			else
+				$this->message('Недостаточно читерских навыков', 'Ошибка', '?set=overview&mode=renameplanet');
+		}
+		elseif (isset($_POST['kolonieloeschen']) && $_POST['deleteid'] == $this->user->current_planet)
+		{
+			if ($this->user->id != $this->planet->id_owner)
+				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '?set=overview&mode=renameplanet');
+			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->id_planet != $this->user->current_planet)
+			{
+				$checkFleets = $this->db->query("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
+
+				if ($checkFleets['num'] > 0)
+					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '?set=overview&mode=renameplanet');
+				else
+				{
+					$destruyed = time() + 60 * 60 * 24;
+
+					$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->user->current_planet . "' LIMIT 1;");
+					$this->db->query("UPDATE game_users SET `current_planet` = `id_planet` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+
+					if ($this->planet->parent_planet != 0)
+						$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->planet->parent_planet . "' LIMIT 1;");
+
+					if (isset($_SESSION['fleet_shortcut']))
+						unset($_SESSION['fleet_shortcut']);
+
+					cache::delete('app::planetlist_'.$this->user->id);
+
+					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
+				}
+
+			}
+			elseif ($this->user->id_planet == app::$user->data["current_planet"])
+				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
+			else
+				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
+		}
+
+		$this->setTemplate('planet_rename');
+		$this->set('parse', $parse);
+
+		$this->setTitle('Переименовать планету');
+		$this->showTopPanel(false);
+		$this->display();
+	}
+
+	public function bonusAction ()
+	{
+		if ($this->user->bonus < time())
+		{
+			$multi = ($this->user->bonus_multi < 50) ? ($this->user->bonus_multi + 1) : 50;
+
+			if ($this->user->bonus < (time() - 86400))
+				$multi = 1;
+
+			$add = $multi * 500 * system::getResourceSpeed();
+
+			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->current_planet . ";");
+
+			$arUpdate = array
+			(
+				'bonus' => (time() + 86400),
+				'bonus_multi' => $multi
+			);
+
+			if ($this->user->bonus_multi > 1)
+				$arUpdate['+credits'] = 1;
+
+			sql::build()->update('game_users')->set($arUpdate)->where('id', '=', $this->user->id)->execute();
+
+			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '?set=overview', 2);
+		}
+		else
+			$this->message('Ошибочка вышла, сорри :(');
+	}
+
+	public function indexAction ()
+	{
+		global $resource, $reslist;
+
+		$parse = array();
+
+		$XpMinierUp = pow($this->user->lvl_minier, 3);
+		$XpRaidUp = pow($this->user->lvl_raid, 2);
+
+		$fleets = array_merge
+		(
+			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `fleet_owner` = " . $this->user->id . "")),
+			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `fleet_target_owner` = " . $this->user->id . ""))
+		);
+
+		$Record = 0;
+		$fpage = array();
+		$aks = array();
+
+		foreach ($fleets AS $FleetRow)
+		{
+			$Record++;
+
+			if ($FleetRow['fleet_owner'] == $this->user->id)
+			{
+				$StartTime = $FleetRow['fleet_start_time'];
+				$StayTime = $FleetRow['fleet_end_stay'];
+				$EndTime = $FleetRow['fleet_end_time'];
+
+				if ($StartTime > time())
+					$fpage[$StartTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
+
+				if ($StayTime > time())
+					$fpage[$StayTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
+
+				if (!($FleetRow['fleet_mission'] == 7 && $FleetRow['fleet_mess'] == 0))
+				{
+					if (($EndTime > time() AND $FleetRow['fleet_mission'] != 4) OR ($FleetRow['fleet_mess'] == 1 AND $FleetRow['fleet_mission'] == 4))
+						$fpage[$EndTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
+				}
+
+				if ($FleetRow['fleet_group'] != 0 && !in_array($FleetRow['fleet_group'], $aks))
+				{
+					$AKSFleets = $this->db->query("SELECT * FROM game_fleets WHERE fleet_group = " . $FleetRow['fleet_group'] . " AND `fleet_owner` != '" . $this->user->id . "' AND fleet_mess = 0;");
+
+					while ($AKFleet = $AKSFleets->fetch())
+					{
+						$Record++;
+						$fpage[$FleetRow['fleet_start_time']][$AKFleet['fleet_id']] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
+					}
+
+					$aks[] = $FleetRow['fleet_group'];
+				}
+
+			}
+			elseif ($FleetRow['fleet_mission'] != 8)
+			{
+				$Record++;
+
+				$StartTime = $FleetRow['fleet_start_time'];
+				$StayTime = $FleetRow['fleet_end_stay'];
+
+				if ($StartTime > time())
+					$fpage[$StartTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
+				if ($FleetRow['fleet_mission'] == 5 && $StayTime > time())
+					$fpage[$StayTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
+			}
+		}
+
+		/*if (user::get()->IsAdmin())
+		{
+			$FleetRow = array
+			(
+				'fleet_owner' => 1,
+				'fleet_owner_name' => 'Призрак',
+				'fleet_mission' => 9,
+				'fleet_array' => '214,9999!0',
+				'fleet_start_time' => mktime(23, 59, 59),
+				'fleet_start_galaxy' => 0,
+				'fleet_start_system' => 0,
+				'fleet_start_planet' => 0,
+				'fleet_start_type' => 1,
+				'fleet_end_time' => mktime(23, 59, 59),
+				'fleet_end_stay' => 0,
+				'fleet_end_galaxy' 		=> $this->planet->galaxy,
+				'fleet_end_system' 		=> $this->planet->system,
+				'fleet_end_planet' 		=> $this->planet->planet,
+				'fleet_end_type' 		=> $this->planet->planet_type,
+				'fleet_resource_metal' 	=> 0,
+				'fleet_resource_crystal' 	=> 0,
+				'fleet_resource_deuterium' 	=> 0,
+				'fleet_target_owner' 	=> $this->user->id,
+				'fleet_target_owner_name' 	=> $this->planet->name,
+				'fleet_group' 			=> 0,
+				'raunds' 				=> 6,
+				'start_time' 			=> time(),
+				'fleet_time' 			=> 0
+
+			);
+
+			$fpage[mktime(23, 0, 0)][2] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", ($Record + 1));
+		}*/
+
+		$parse['moon_img'] 	= '';
+		$parse['moon'] 		= '';
+
+		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id)
+		{
+			$lune = cache::get('app::lune_'.$this->planet->parent_planet);
+
+			if ($lune === false)
+			{
+				$lune = $this->db->query("SELECT `id`, `name`, `image`, `destruyed` FROM game_planets WHERE id = " . $this->planet->parent_planet . " AND planet_type='3';", true);
+
+				cache::set('app::lune_'.$this->planet->parent_planet, $lune, 300);
+			}
+
+			if (isset($lune['id']))
+			{
+				$parse['moon_img'] = "<a href=\"?set=overview&amp;cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"" . DPATH . "planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
+				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
+			}
+		}
+
+		if (core::getConfig('overviewListView', 0) == 0)
+			$QryPlanets = app::$user->getPlanetListSortQuery();
+		else
+			$QryPlanets = '';
+
+		$build_list = array();
+		$AllPlanets = array();
+
+		$planets_query = $this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $this->user->id . "' AND `planet_type` != '3' AND id != " . app::$user->data["current_planet"] . " " . $QryPlanets . ";");
+
+		if (db::num_rows($planets_query) > 0)
+		{
+			while ($UserPlanet = db::fetch_assoc($planets_query))
+			{
+				if (core::getConfig('overviewListView', 0) == 0)
+				{
+					$AllPlanets[] = array('id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']);
+				}
+
+				if ($UserPlanet['queue'] != '[]')
+				{
+					if (!isset($queueManager))
+						$queueManager = new queueManager();
+
+					$queueManager->loadQueue($UserPlanet['queue']);
+
+					if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
+					{
+						if (!isset($build))
+						{
+							$build = new planet();
+							$build->load_user_info(app::$user);
+						}
+
+						$build->load_from_array($UserPlanet);
+						$build->UpdatePlanetBatimentQueueList();
+
+						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
+
+						foreach ($QueueArray AS $CurrBuild)
+						{
+							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"?set=buildings&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
+						}
+					}
+
+					if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
+					{
+						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+
+						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"?set=buildings&amp;mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . app::$user->data[$resource[$QueueArray[0]['i']]] . ' -> ' . (app::$user->data[$resource[$QueueArray[0]['i']]] + 1) . ')');
+					}
+				}
+			}
+		}
+
+		$parse['planet_type'] = $this->planet->planet_type;
+		$parse['planet_name'] = $this->planet->name;
+		$parse['planet_diameter'] = $this->planet->diameter;
+		$parse['planet_field_current'] = $this->planet->field_current;
+		$parse['planet_field_max'] = CalculateMaxPlanetFields(app::$planetrow->data);
+		$parse['planet_temp_min'] = $this->planet->temp_min;
+		$parse['planet_temp_max'] = $this->planet->temp_max;
+		$parse['galaxy_galaxy'] = $this->planet->galaxy;
+		$parse['galaxy_planet'] = $this->planet->planet;
+		$parse['galaxy_system'] = $this->planet->system;
+
+		$records = cache::get('app::records_'.user::get()->getId());
+
+		if ($records === false)
+		{
+			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . user::get()->getId() . "';", true);
+
+			if (!is_array($records))
+				$records = array();
+
+			cache::set('app::records_'.user::get()->getId().'', $records, 1800);
+		}
+
+		if (count($records))
+		{
+			$parse['user_points'] = $records['build_points'];
+			$parse['player_points_tech'] = $records['tech_points'];
+			$parse['total_points'] = $records['total_points'];
+			$parse['user_fleet'] = $records['fleet_points'];
+			$parse['user_defs'] = $records['defs_points'];
+
+			$parse['user_rank'] = $records['total_rank'] + 0;
+
+			if (!$records['total_old_rank'])
+				$records['total_old_rank'] = $records['total_rank'];
+
+			$parse['ile'] = $records['total_old_rank'] - $records['total_rank'];
+		}
+		else
+		{
+			$parse['user_points'] = 0;
+			$parse['player_points_tech'] = 0;
+			$parse['total_points'] = 0;
+			$parse['user_fleet'] = 0;
+			$parse['user_defs'] = 0;
+
+			$parse['user_rank'] = 0;
+			$parse['ile'] = 0;
+		}
+
+		$parse['user_username'] = $this->user->username;
+
+		$flotten = array();
+
+		if (count($fpage) > 0)
+		{
+			ksort($fpage);
+			foreach ($fpage as $content)
+			{
+				foreach ($content AS $text)
+				{
+					$flotten[] = $text;
+				}
+			}
+		}
+
+		$parse['fleet_list'] = $flotten;
+
+		$parse['planet_image'] = $this->planet->image;
+		$parse['anothers_planets'] = $AllPlanets;
+		$parse['max_users'] = core::getConfig('users_amount');
+
+		$parse['metal_debris'] = $this->planet->debris_metal;
+		$parse['crystal_debris'] = $this->planet->debris_crystal;
+
+		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && app::$planetrow->data[$resource[209]] != 0);
+
+		if ($this->planet->queue != '[]')
+		{
+			if (!isset($queueManager))
+				$queueManager = new queueManager();
+
+			$queueManager->loadQueue($this->planet->queue);
+
+			if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
+			{
+				app::$planetrow->UpdatePlanetBatimentQueueList();
+
+				$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
+
+				foreach ($BuildQueue AS $CurrBuild)
+				{
+					$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . ($CurrBuild['l']) . ')');
+				}
+			}
+
+			if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
+			{
+				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+
+				$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . app::$user->data[$resource[$QueueArray[0]['i']]] . ' -> ' . (app::$user->data[$resource[$QueueArray[0]['i']]] + 1) . ')');
+			}
+		}
+
+		if (count($build_list) > 0)
+		{
+			$parse['build_list'] = array();
+			ksort($build_list);
+
+			foreach ($build_list as $planet)
+			{
+				foreach ($planet AS $text)
+				{
+					$parse['build_list'][] = $text;
+				}
+			}
+		}
+
+		$parse['case_pourcentage'] = floor(app::$planetrow->data["field_current"] / CalculateMaxPlanetFields(app::$planetrow->data) * 100);
+
+		$parse['race'] = _getText('race', $this->user->race);
+
+		$parse['xpminier'] = $this->user->xpminier;
+		$parse['xpraid'] = $this->user->xpraid;
+		$parse['lvl_minier'] = $this->user->lvl_minier;
+		$parse['lvl_raid'] = $this->user->lvl_raid;
+		$parse['user_id'] = $this->user->id;
+		$parse['links'] = $this->user->links;
+
+		$parse['raids_win'] = $this->user->raids_win;
+		$parse['raids_lose'] = $this->user->raids_lose;
+		$parse['raids'] = $this->user->raids;
+
+		$parse['lvl_up_minier'] = $XpMinierUp;
+		$parse['lvl_up_raid'] = $XpRaidUp;
+
+		$parse['bonus'] = ($this->user->bonus < time()) ? true : false;
+
+		if ($parse['bonus'])
+		{
+			$parse['bonus_multi'] = $this->user->bonus_multi + 1;
+
+			if ($this->user->bonus < (time() - 86400))
+				$parse['bonus_multi'] = 1;
+		}
+
+		$parse['refers'] = $this->user->refers;
+
+		$parse['officiers'] = array();
+
+		foreach ($reslist['officier'] AS $officier)
+		{
+			$parse['officiers'][$officier] = app::$user->data[$resource[$officier]];
+		}
+
+		if (!user::get()->getUserOption('gameactivity'))
+			core::setConfig('gameActivityList', 0);
+
+		if (core::getConfig('gameActivityList', 0))
+		{
+			$parse['activity'] = array('chat' => array(), 'forum' => array());
+
+			$chat = json_decode(cache::get("game_chat"), true);
+
+			if (is_array($chat) && count($chat))
+			{
+				$chat = array_reverse($chat);
+
+				$i = 0;
+
+				foreach ($chat AS $message)
+				{
+					if ($message[3] != '')
+						continue;
+
+					if ($i >= 5)
+						break;
+
+					$t = explode(' ', $message[4]);
+
+					foreach ($t AS $j => $w)
+					{
+						if (mb_strlen($w, 'UTF-8') > 30)
+						{
+							$w = str_split(iconv('utf-8', 'windows-1251', $w), 30);
+
+							$t[$j] = iconv('windows-1251', 'utf-8', implode(' ', $w));
+						}
+					}
+
+					$message[4] = implode(' ', $t);
+
+					$parse['activity']['chat'][] = array
+					(
+						'TIME' => $message[0],
+						'MESS' => '<span class="title"><span class="to">'.$message[1].'</span> написал'.($message[2] != '' ? ' <span class="to">'.$message[2].'</span>' : '').'</span>: '.$message[4].''
+					);
+
+					$i++;
+				}
+			}
+
+			$forum = cache::get('forum_activity');
+
+			if (!$forum)
+			{
+				$forum = file_get_contents('http://forum.xnova.su/lastposts.php');
+
+				cache::set('forum_activity', $forum, 600);
+			}
+
+			$forum = json_decode($forum, true);
+
+			foreach ($forum AS $message)
+			{
+				$parse['activity']['forum'][] = array
+				(
+					'TIME' => $message['post_time'],
+					'MESS' => '<span class="title"><span class="to">'.$message['username'].'</span> написал "<span class="to">'.$message['topic_title'].'</span>"</span>: '.strings::cutString(strip_tags($message['post_text']), 250).' <a href="http://forum.xnova.su/viewtopic.php?f='.$message['forum_id'].'&t='.$message['topic_id'].'&p='.$message['post_id'].'#p'.$message['post_id'].'" target="_blank">читать полностью</a>'
+				);
+			}
+
+			//usort($parse['activity'], create_function('$a1,$a2', 'if ($a1["TIME"] == $a2["TIME"]) return 0; return ($a1["TIME"] < $a2["TIME"] ? 1 : -1);'));
+		}
+
+		$showMessage = false;
+
+		foreach ($reslist['res'] AS $res)
+		{
+			if (!app::$planetrow->data[$res.'_mine_porcent'])
+				$showMessage = true;
+		}
+
+		if ($showMessage)
+		{
+			$this->setMessage('<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "Сырьё" и восстановите производство.</span>');
+		}
+
+		$this->setTemplate('overview');
+		$this->set('parse', $parse);
+
+		$this->setTitle('Обзор');
+		$this->display();
+	}
+}
+
+?>
