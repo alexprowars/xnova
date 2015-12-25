@@ -32,7 +32,7 @@
 		<? endforeach; ?>
 	</ul>
 </div>
-<div class="contentBox set_<?=$set ?>">
+<div class="contentBox set_<?=$controller ?>">
 	<div id="box">
 		<div class="game_menu">
 			<div class="visible-xs text-center bar">
@@ -40,9 +40,9 @@
 					<a class="m1 tooltip" href="?set=tutorial" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 				<? endif; ?>
 				<a class="m1 tooltip" href="?set=chat" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
-				<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$mess ?></b></a>
-				<? if ($mess_ally != ''): ?>
-					<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$mess_ally ?></b></a>
+				<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
+				<? if ($messages_ally != ''): ?>
+					<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
 				<? endif; ?>
 			</div>
 			<div class="bar hhh hidden-xs">
@@ -51,9 +51,9 @@
 						<a class="m1 tooltip" href="?set=tutorial" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 					<? endif; ?>
 					<a class="m1 tooltip" href="?set=chat" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
-					<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b id="new_messages"><?=$mess ?></b></a>
-					<? if ($mess_ally != ''): ?>
-						<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b id="ally_messages"><?=$mess_ally ?></b></a>
+					<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b id="new_messages"><?=$messages ?></b></a>
+					<? if ($messages_ally != ''): ?>
+						<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b id="ally_messages"><?=$messages_ally ?></b></a>
 					<? endif; ?>
 				</div>
 				<table align="center" class="top_menu">
@@ -79,7 +79,7 @@
 							<td class="m1"><a href="?set=logout&popup" class="tooltip sprite ico_exit" data-tooltip-content="Выход"></a></td>
 						<? endif; ?>
 						<? if ($this->config->app->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
-							<? if (!isset($_COOKIE[COOKIE_NAME.'_full'])): ?>
+							<? if (!$this->cookies->has($this->config->cookie->prefix.'_full')): ?>
 								<td class="m1" style="vertical-align: middle"><a style="color:#38CA38" href="javascript:;" onclick="showInviteBox()">Пригласить друзей</a></td>
 							<? endif; ?>
 						<? endif; ?>

@@ -14,9 +14,6 @@
  * ICQ: 8696096, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-if (!defined('INSIDE'))
-	die();
-
 $resource = array
 (
 	1 => "metal_mine",

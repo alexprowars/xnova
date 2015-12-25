@@ -32,6 +32,14 @@ class Game extends Component
 
 	public $planet;
 
+	public $resource 		= [];
+	public $requeriments 	= [];
+	public $pricelist 		= [];
+	public $gun_armour 		= [];
+	public $CombatCaps 		= [];
+	public $ProdGrid 		= [];
+	public $reslist 		= [];
+
 	function datezone ($format, $time = 0)
 	{
 		if ($time == 0)
@@ -71,12 +79,37 @@ class Game extends Component
 		return $this->data;
 	}
 
-	function getSpeed ($type = '')
+	public function getSpeed ($type = '')
 	{
 		if ($type == 'fleet')
 			return $this->config->game->get('fleet_speed', 2500) / 2500;
+		if ($type == 'mine')
+			return $this->config->game->get('resource_multiplier', 1);
+		if ($type == 'build')
+			return round($this->config->game->get('game_speed', 2500) / 2500, 1);
 
 		return 1;
+	}
+
+	public function loadGameVariables ()
+	{
+		require_once(APP_PATH."app/varsGlobal.php");
+
+		/** @var array $resource */
+		/** @var array $requeriments */
+		/** @var array $pricelist */
+		/** @var array $gun_armour */
+		/** @var array $CombatCaps */
+		/** @var array $CombatCaps */
+		/** @var array $reslist */
+
+		$this->resource 	= $resource;
+		$this->requeriments = $requeriments;
+		$this->pricelist 	= $pricelist;
+		$this->gun_armour 	= $gun_armour;
+		$this->CombatCaps 	= $CombatCaps;
+		$this->ProdGrid 	= $CombatCaps;
+		$this->reslist 		= $reslist;
 	}
 
 	public function sendMessage ($owner, $sender, $time, $type, $from, $message)
@@ -112,6 +145,17 @@ class Game extends Component
 		$this->db->query("UPDATE game_users SET messages = messages + 1 WHERE id = ".$owner."");
 
 		return true;
+	}
+
+	public function updateConfig ($key, $value)
+	{
+		$this->db->query("UPDATE game_config SET `value` = '". $value ."' WHERE `key` = '".$key."';");
+		$this->config->app->offsetSet($key, $value);
+	}
+
+	function CalculateMaxPlanetFields ($planet)
+	{
+		return $planet->field_max + ($planet->{$this->resource[33]} * 5) + ($this->config->game->fieldsByMoonBase * $planet->{$this->resource[41]});
 	}
 }
 

@@ -7,11 +7,13 @@ use Phalcon\Mvc\Model;
 /**
  * Class User
  * @package App\Models
- * @property \Phalcon\Db\Adapter\Pdo\Mysql db
+ * @property \App\Database db
  */
 class User extends Model
 {
+	private $db;
 	private $optionsData = array('security' => 0);
+	private $bonus = [];
 
 	public $id;
 	public $username;
@@ -24,6 +26,8 @@ class User extends Model
 	public $race;
 	public $sex;
 	public $ally_id;
+	public $vacation;
+	public $b_tech_planet;
 
 	public $ally = [];
 
@@ -34,11 +38,19 @@ class User extends Model
 
 	public $credits;
 	public $messages;
+	public $messages_ally;
 	public $avatar;
+
+	public $galaxy;
+	public $system;
+	public $planet;
+
+	public $planet_sort;
+	public $planet_sort_order;
 
 	public function onConstruct()
 	{
-
+		$this->db = $this->getDi()->getShared('db');
 	}
 
 	public function isAdmin()
@@ -127,14 +139,19 @@ class User extends Model
 		{
 			if ($this->race > 0)
 			{
-				$this->planet_id = system::CreateRegPlanet($this->getId());
+				$planet = new Planet;
+
+				$this->planet_id = $planet->createByUserId($this->getId());
 				$this->planet_current = $this->planet_id;
 			}
 		}
 
 		if ($this->planet_current > 0 && $this->planet_id > 0)
 		{
-			// Выбираем информацию о планете
+			/**
+			 * Выбираем информацию о планете
+			 * @var \App\Models\Planet $planet
+			 */
 			$planet = Planet::findFirst($this->planet_current);
 			$planet->assignUser($this);
 			$planet->checkOwnerPlanet();
@@ -169,13 +186,15 @@ class User extends Model
 
 		if ($this->ally_id > 0)
 		{
-			$ally = $this->cache->get('user::ally_' . $this->id . '_' . $this->ally_id);
+			$cache = $this->getDi()->getShared('cache');
+
+			$ally = $cache->get('user::ally_' . $this->id . '_' . $this->ally_id);
 
 			if ($ally === false)
 			{
 				$ally = $this->db->query("SELECT a.id, a.ally_owner, a.ally_name, a.ally_ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
 
-				$this->cache->set('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
+				$cache->save('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
 
 			if (isset($ally['id']))
@@ -220,6 +239,60 @@ class User extends Model
 		}
 
 		return true;
+	}
+
+	public function bonusValue ($key)
+	{
+		return (isset($this->bonus[$key]) ? $this->bonus[$key] : 1);
+	}
+
+	public function getUserPlanets ($userId, $moons = true, $allyId = 0)
+	{
+		if (!$userId)
+			return array();
+
+		$qryPlanets = "SELECT `id`, `name`, `image`, `galaxy`, `system`, `planet`, `planet_type`, `destruyed` FROM game_planets WHERE `id_owner` = '" . $userId . "' ";
+
+		$qryPlanets .= ($allyId > 0 ? " OR id_ally = '".$allyId."'" : "");
+
+		if (!$moons)
+			$qryPlanets .= " AND planet_type != 3 ";
+
+		$qryPlanets .= $this->getPlanetListSortQuery();
+
+		return $this->db->extractResult($this->db->query($qryPlanets));
+	}
+
+	public function getPlanetListSortQuery ($sort = false, $order = false)
+	{
+		if ($this->getId())
+		{
+			if (!$sort)
+				$sort 	= $this->planet_sort;
+			if (!$order)
+				$order 	= $this->planet_sort_order;
+		}
+
+		$qryPlanets = ' ORDER BY ';
+
+		switch ($sort)
+		{
+			case 1:
+				$qryPlanets .= "`galaxy`, `system`, `planet`, `planet_type` ";
+				break;
+			case 2:
+				$qryPlanets .= "`name` ";
+				break;
+			case 3:
+				$qryPlanets .= "`planet_type` ";
+				break;
+			default:
+				$qryPlanets .= "`id` ";
+		}
+
+		$qryPlanets .= ($order == 1) ? "DESC" : "ASC";
+
+		return $qryPlanets;
 	}
 
 	public function saveData ($fields, $userId = 0)

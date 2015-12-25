@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Helpers;
 use App\Lang;
 use App\Sql;
 
@@ -28,14 +29,14 @@ class StartController extends ApplicationController
 					$error .= _getText('error_charalpha');
 				}
 
-				$ExistUser = $this->db->query("SELECT `id` FROM game_users WHERE `username` = '" . trim($this->request->getPost('character')) . "' AND id != ".$this->user->getId()." LIMIT 1");
+				$ExistUser = $this->db->query("SELECT `id` FROM game_users WHERE `username` = '" . trim($this->request->getPost('character')) . "' AND id != ".$this->user->getId()." LIMIT 1")->fetch();
 
 				if (isset($ExistUser['id']))
 				{
 					$error .= _getText('error_userexist');
 				}
 
-				$face = strings::CheckString($_POST['face']);
+				$face = Helpers::CheckString($_POST['face']);
 
 				if ($face != '')
 				{
@@ -96,7 +97,7 @@ class StartController extends ApplicationController
 
 					Sql::build()->where('id', '=', $this->user->getId())->execute();
 
-					$this->response->redirect('tutorial/');
+					$this->game->setRequestData(['redirect' => '/tutorial/']);
 					$this->view->disable();
 				}
 				else
@@ -105,10 +106,8 @@ class StartController extends ApplicationController
 		}
 
 		$this->view->setVar('message', $error);
-
-		//$this->setTitle('Выбор персонажа');
+		$this->tag->setTitle('Выбор персонажа');
 		$this->showTopPanel(false);
-		//$this->display();
 	}
 }
 

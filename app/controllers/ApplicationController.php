@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Helpers;
 use App\Lang;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View;
@@ -21,6 +22,7 @@ use Phalcon\Tag;
  * @property \Phalcon\Cache\Backend\Memcache cache
  * @property \Phalcon\Mvc\Url url
  * @property \App\Models\User user
+ * @property \App\Models\Planet planet
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
@@ -33,6 +35,27 @@ class ApplicationController extends Controller
 
 	private $showTopPanel = true;
 	private $showLeftMenu = true;
+
+	public function afterExecuteRoute ()
+	{
+		$this->view->setVar('topPanel', $this->showTopPanel);
+		$this->view->setVar('leftMenu', $this->showLeftMenu);
+
+		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
+			$this->response->redirect($this->game->getRequestData()['redirect']);
+
+		if ($this->auth->isAuthorized())
+		{
+			$parse = array();
+
+			if ($this->getDi()->has('planet'))
+				$parse = $this->ShowTopNavigationBar();
+
+			$parse['tutorial'] = $this->user->tutorial;
+
+			$this->view->setVar('planet', $parse);
+		}
+	}
 
 	public function initialize()
 	{
@@ -120,10 +143,12 @@ class ApplicationController extends Controller
 			}
 
 			$this->view->setVar('timezone', 0);
-			$this->view->setVar('topPanel', $this->showTopPanel);
-			$this->view->setVar('leftMenu', $this->showLeftMenu);
 			$this->view->setVar('adminlevel', $this->user->authlevel);
+			$this->view->setVar('messages', $this->user->messages);
+			$this->view->setVar('messages_ally', $this->user->messages_ally);
 			$this->view->setVar('controller', $this->dispatcher->getControllerName());
+
+			$this->game->loadGameVariables();
 
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode($this->session->get('config'), true);
@@ -221,6 +246,112 @@ class ApplicationController extends Controller
 				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $reffer['u_id'] . ", " . time() . ", " . round($giveCredits / 2) . ", 3)");
 			}
 		}
+	}
+
+	public function ShowTopNavigationBar ()
+	{
+		$parse = array();
+
+		$parse['image'] = $this->planet->image;
+		$parse['name'] = $this->planet->name;
+		$parse['time'] = time();
+
+		$parse['planetlist'] = '';
+
+		if ($this->config->app->get('showPlanetListSelect', 0))
+		{
+			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId().'');
+
+			if ($planetsList === false)
+			{
+				$planetsList = $this->user->getUserPlanets($this->user->getId());
+
+				$this->cache->save('app::planetlist_'.$this->user->getId().'', $planetsList, 300);
+			}
+
+			foreach ($planetsList AS $CurPlanet)
+			{
+				if ($CurPlanet['destruyed'] > 0)
+					continue;
+
+				$parse['planetlist'] .= "\n<option ";
+
+				if ($CurPlanet['planet_type'] == 3)
+					$parse['planetlist'] .= "style=\"color:red;\" ";
+				elseif ($CurPlanet['planet_type'] == 5)
+					$parse['planetlist'] .= "style=\"color:yellow;\" ";
+
+				if ($CurPlanet['id'] == $this->user->planet_current)
+				{
+					$parse['planetlist'] .= "selected=\"selected\" ";
+				}
+				if (isset($_GET['set']))
+					$parse['planetlist'] .= "value=\"?set=" . $_GET['set'] . "";
+				else
+					$parse['planetlist'] .= "value=\"?set=overview";
+				if (isset($_GET['mode']))
+					$parse['planetlist'] .= "&amp;mode=" . $_GET['mode'];
+
+				$parse['planetlist'] .= "&amp;cp=" . $CurPlanet['id'] . "&amp;re=0\">";
+
+				$parse['planetlist'] .= "" . $CurPlanet['name'];
+				$parse['planetlist'] .= "&nbsp;[" . $CurPlanet['galaxy'] . ":" . $CurPlanet['system'] . ":" . $CurPlanet['planet'];
+				$parse['planetlist'] .= "]&nbsp;&nbsp;</option>";
+			}
+		}
+
+		foreach ($this->game->reslist['res'] AS $res)
+		{
+			$parse[$res] = floor(floatval($this->planet->{$res}));
+
+			$parse[$res.'_m'] = $this->planet->{$res.'_max'};
+
+			if ($this->planet->{$res.'_max'} <= $this->planet->{$res})
+				$parse[$res.'_max'] = '<font class="full">';
+			else
+				$parse[$res.'_max'] = '<font color="#00ff00">';
+
+			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</font>";
+			$parse[$res.'_ph'] 	= $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
+			$parse[$res.'_mp'] 	= $this->planet->{$res.'_mine_porcent'} * 10;
+		}
+
+		$parse['energy_max'] 	= Helpers::pretty_number($this->planet->energy_max);
+		$parse['energy_total'] 	= Helpers::colorNumber(Helpers::pretty_number($this->planet->energy_max + $this->planet->energy_used));
+
+		$parse['credits'] = Helpers::pretty_number($this->user->credits);
+
+		$parse['officiers'] = array();
+
+		foreach ($this->game->reslist['officier'] AS $officier)
+		{
+			$parse['officiers'][$officier] = $this->user->{$this->game->resource[$officier]};
+		}
+
+		$parse['energy_ak'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
+		$parse['energy_ak'] = min(100, max(0, $parse['energy_ak']));
+
+		$parse['ak'] = round($this->planet->energy_ak) . " / " . $this->planet->battery_max;
+
+		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
+		{
+			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
+				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->game->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
+				$parse['ak'] .= '<br>Разряд: ' . Helpers::pretty_time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+		}
+
+		$parse['messages'] = $this->user->messages;
+
+		if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
+		{
+			$this->user->messages_ally = 0;
+			$this->db->updateAsDict('game_users', ['mnl_alliance' => 0], "id = ".$this->user->id);
+		}
+
+		$parse['ally_messages'] = ($this->user->ally_id != 0) ? $this->user->messages_ally : '';
+
+		return $parse;
 	}
 
 	public function showTopPanel ($view = true)

@@ -58,7 +58,7 @@ table table td
 }
 
 body {
-	background: #0a0a0a url(/skins/default/img/starfield_01.gif) repeat 0 0 fixed;
+	background: #0a0a0a url(/assets/images/starfield_01.gif) repeat 0 0 fixed;
 	height:100%;
 	width:100%;
 	font-size:11px;
@@ -587,7 +587,7 @@ color:#D8D8D8;
 .quotewrapper {
 	clear: both;
 	margin: 0 0 0 0;
-	background: #EAECF2 url(/skins/default/img/quote_header.gif) top left no-repeat;
+	background: #EAECF2 url(/assets/images/quote_header.gif) top left no-repeat;
 	padding-left: 17px;
 	border: solid 1px #C8CBD9;
 	border-bottom-color: #AEB3C5;

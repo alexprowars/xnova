@@ -2,6 +2,8 @@
 namespace App\Controllers;
 
 use App\Lang;
+use App\Models\Planet;
+use App\Queue;
 
 class OverviewController extends ApplicationController
 {
@@ -352,8 +354,6 @@ class OverviewController extends ApplicationController
 
 	public function indexAction ()
 	{
-		global $resource, $reslist;
-
 		$parse = array();
 
 		$XpMinierUp = pow($this->user->lvl_minier, 3);
@@ -474,21 +474,21 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		if (core::getConfig('overviewListView', 0) == 0)
-			$QryPlanets = app::$user->getPlanetListSortQuery();
+		if ($this->config->app->get('overviewListView', 0) == 0)
+			$QryPlanets = $this->user->getPlanetListSortQuery();
 		else
 			$QryPlanets = '';
 
 		$build_list = array();
 		$AllPlanets = array();
 
-		$planets_query = $this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $this->user->id . "' AND `planet_type` != '3' AND id != " . app::$user->data["current_planet"] . " " . $QryPlanets . ";");
+		$planets_query = $this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $this->user->id . "' AND `planet_type` != '3' AND id != " . $this->user->planet_current . " " . $QryPlanets . ";");
 
-		if (db::num_rows($planets_query) > 0)
+		if ($planets_query->numRows() > 0)
 		{
-			while ($UserPlanet = db::fetch_assoc($planets_query))
+			while ($UserPlanet = $planets_query->fetch())
 			{
-				if (core::getConfig('overviewListView', 0) == 0)
+				if ($this->config->app->get('overviewListView', 0) == 0)
 				{
 					$AllPlanets[] = array('id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']);
 				}
@@ -496,7 +496,7 @@ class OverviewController extends ApplicationController
 				if ($UserPlanet['queue'] != '[]')
 				{
 					if (!isset($queueManager))
-						$queueManager = new queueManager();
+						$queueManager = new Queue();
 
 					$queueManager->loadQueue($UserPlanet['queue']);
 
@@ -504,11 +504,11 @@ class OverviewController extends ApplicationController
 					{
 						if (!isset($build))
 						{
-							$build = new planet();
-							$build->load_user_info(app::$user);
+							$build = new Planet();
+							$build->assignUser($this->user);
 						}
 
-						$build->load_from_array($UserPlanet);
+						$build->assign($UserPlanet);
 						$build->UpdatePlanetBatimentQueueList();
 
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
@@ -523,7 +523,7 @@ class OverviewController extends ApplicationController
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"?set=buildings&amp;mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . app::$user->data[$resource[$QueueArray[0]['i']]] . ' -> ' . (app::$user->data[$resource[$QueueArray[0]['i']]] + 1) . ')');
+						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"?set=buildings&amp;mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
 					}
 				}
 			}
@@ -533,14 +533,14 @@ class OverviewController extends ApplicationController
 		$parse['planet_name'] = $this->planet->name;
 		$parse['planet_diameter'] = $this->planet->diameter;
 		$parse['planet_field_current'] = $this->planet->field_current;
-		$parse['planet_field_max'] = CalculateMaxPlanetFields(app::$planetrow->data);
+		$parse['planet_field_max'] = $this->game->CalculateMaxPlanetFields($this->planet);
 		$parse['planet_temp_min'] = $this->planet->temp_min;
 		$parse['planet_temp_max'] = $this->planet->temp_max;
 		$parse['galaxy_galaxy'] = $this->planet->galaxy;
 		$parse['galaxy_planet'] = $this->planet->planet;
 		$parse['galaxy_system'] = $this->planet->system;
 
-		$records = cache::get('app::records_'.user::get()->getId());
+		$records = $this->cache->get('app::records_'.$this->user->getId());
 
 		if ($records === false)
 		{
@@ -549,7 +549,7 @@ class OverviewController extends ApplicationController
 			if (!is_array($records))
 				$records = array();
 
-			cache::set('app::records_'.user::get()->getId().'', $records, 1800);
+			$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 		}
 
 		if (count($records))
@@ -599,23 +599,23 @@ class OverviewController extends ApplicationController
 
 		$parse['planet_image'] = $this->planet->image;
 		$parse['anothers_planets'] = $AllPlanets;
-		$parse['max_users'] = core::getConfig('users_amount');
+		$parse['max_users'] = $this->config->app->users_total;
 
 		$parse['metal_debris'] = $this->planet->debris_metal;
 		$parse['crystal_debris'] = $this->planet->debris_crystal;
 
-		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && app::$planetrow->data[$resource[209]] != 0);
+		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->game->resource[209]} != 0);
 
 		if ($this->planet->queue != '[]')
 		{
 			if (!isset($queueManager))
-				$queueManager = new queueManager();
+				$queueManager = new Queue();
 
 			$queueManager->loadQueue($this->planet->queue);
 
 			if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 			{
-				app::$planetrow->UpdatePlanetBatimentQueueList();
+				$this->planet->UpdatePlanetBatimentQueueList();
 
 				$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
@@ -629,7 +629,7 @@ class OverviewController extends ApplicationController
 			{
 				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-				$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . app::$user->data[$resource[$QueueArray[0]['i']]] . ' -> ' . (app::$user->data[$resource[$QueueArray[0]['i']]] + 1) . ')');
+				$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
 			}
 		}
 
@@ -647,7 +647,7 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		$parse['case_pourcentage'] = floor(app::$planetrow->data["field_current"] / CalculateMaxPlanetFields(app::$planetrow->data) * 100);
+		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->game->CalculateMaxPlanetFields($this->planet) * 100);
 
 		$parse['race'] = _getText('race', $this->user->race);
 
@@ -679,19 +679,19 @@ class OverviewController extends ApplicationController
 
 		$parse['officiers'] = array();
 
-		foreach ($reslist['officier'] AS $officier)
+		foreach ($this->game->reslist['officier'] AS $officier)
 		{
-			$parse['officiers'][$officier] = app::$user->data[$resource[$officier]];
+			$parse['officiers'][$officier] = $this->user->{$this->game->resource[$officier]};
 		}
 
-		if (!user::get()->getUserOption('gameactivity'))
-			core::setConfig('gameActivityList', 0);
+		if (!$this->user->getUserOption('gameactivity'))
+			$this->config->app->offsetSet('gameActivityList', 0);
 
-		if (core::getConfig('gameActivityList', 0))
+		if ($this->config->app->get('gameActivityList', 0))
 		{
 			$parse['activity'] = array('chat' => array(), 'forum' => array());
 
-			$chat = json_decode(cache::get("game_chat"), true);
+			$chat = json_decode($this->cache->get("game_chat"), true);
 
 			if (is_array($chat) && count($chat))
 			{
@@ -731,13 +731,13 @@ class OverviewController extends ApplicationController
 				}
 			}
 
-			$forum = cache::get('forum_activity');
+			$forum = $this->cache->get('forum_activity');
 
 			if (!$forum)
 			{
 				$forum = file_get_contents('http://forum.xnova.su/lastposts.php');
 
-				cache::set('forum_activity', $forum, 600);
+				$this->cache->save('forum_activity', $forum, 600);
 			}
 
 			$forum = json_decode($forum, true);
@@ -756,9 +756,9 @@ class OverviewController extends ApplicationController
 
 		$showMessage = false;
 
-		foreach ($reslist['res'] AS $res)
+		foreach ($this->game->reslist['res'] AS $res)
 		{
-			if (!app::$planetrow->data[$res.'_mine_porcent'])
+			if (!$this->planet->{$res.'_mine_porcent'})
 				$showMessage = true;
 		}
 
@@ -767,11 +767,8 @@ class OverviewController extends ApplicationController
 			$this->setMessage('<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "Сырьё" и восстановите производство.</span>');
 		}
 
-		$this->setTemplate('overview');
-		$this->set('parse', $parse);
-
-		$this->setTitle('Обзор');
-		$this->display();
+		$this->view->setVar('parse', $parse);
+		$this->tag->setTitle('Обзор');
 	}
 }
 

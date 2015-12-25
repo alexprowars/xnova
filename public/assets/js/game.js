@@ -112,7 +112,9 @@ var XNova =
 		if (!$('#gamediv').length)
 			return;
 
-		$("body").on('click', 'a[data-link!=1]', function(e)
+		$.ajaxSetup({data: {isAjax: true}});
+
+		$("body").on('click', 'a[data-link!=Y]', function(e)
 		{
 			var el = $(this);
 
@@ -140,7 +142,7 @@ var XNova =
 		$('#gamediv form[class!=noajax]').ajaxForm(
 		{
 			delegation: true,
-			target: '#gamediv',
+			dataType: 'json',
 			beforeSerialize: function(form)
 			{
 				$(form).append('<input type="hidden" name="ajax" value="1">');
@@ -151,10 +153,15 @@ var XNova =
 				start_time = new Date();
 				Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
 			},
-			success: function ()
+			success: function (data)
 			{
 				$('#tooltip').hide();
 				hideLoading();
+
+				if (data.data.redirect !== undefined)
+					window.location.href = data.data.redirect;
+				else
+					$('#gamediv').html(data.html);
 			},
 			error: function()
 			{
@@ -163,6 +170,50 @@ var XNova =
 
 				alert('Что-то пошло не так!? Попробуйте еще раз');
 			}
+		});
+
+		$(document).on('submit', '#windowDialog form', function(e)
+		{
+			e.preventDefault();
+
+			showLoading();
+
+			$.ajax({
+				url: $(this).attr('target'),
+				type: 'post',
+				data: $(this).serializeObject(),
+				dataType: 'json',
+				success: function (data)
+				{
+					hideLoading();
+
+					if (data.message != '')
+					{
+						$.toast({
+							text: data.message,
+							icon: statusMessages[data.status]
+						});
+					}
+					else if (data.html != '')
+					{
+						ClearTimers();
+
+						$('#gamediv').html(data.html);
+						dialog.dialog("close");
+					}
+
+					if (data.status == 0)
+					{
+						dialog.dialog("close");
+					}
+				},
+				error: function()
+				{
+					hideLoading();
+
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				}
+			})
 		});
 
 		$('#tooltip').hide();
@@ -451,6 +502,7 @@ function load (url)
 	{
 		url: url+'&ajax=1&random=' + Math.random()*99999,
 		cache: false,
+		dataType: 'json',
 		success: function(html)
 		{
 			$('#tooltip').hide();
@@ -461,7 +513,47 @@ function load (url)
 			$('body.window .content').css('width', '');
 			$('#box, .game_content > .content').css('display', '');
 
-			$('#gamediv').html(html);
+			$('#gamediv').html(data.html);
+
+			if (data.message != '')
+			{
+				$.toast({
+					text: data.message,
+					icon: statusMessages[data.status]
+				});
+			}
+
+			if (data.data.redirect !== undefined)
+				window.location.href = data.data.redirect;
+
+			dialog.dialog("close");
+
+			if (data.data.tutorial !== undefined && data.data.tutorial.popup != '')
+			{
+				$.confirm({
+				    title: 'Обучение',
+				    content: data.data.tutorial.popup,
+					confirmButton: 'Продолжить',
+					cancelButton: false,
+					backgroundDismiss: false,
+					confirm: function ()
+					{
+						if (data.data.tutorial.url != '')
+						{
+							load(data.data.tutorial.url);
+						}
+					}
+				});
+			}
+
+			if (data.data.tutorial.toast != '')
+			{
+				$.toast({
+					text: data.data.tutorial.toast,
+					icon: 'info',
+					stack : 1
+				});
+			}
 		},
 		timeout: 10000,
 		error: function()
@@ -505,22 +597,27 @@ var tooltipTimer;
 
 var currentState = window.location.hash.slice(1);
 
+var dialog;
+
 $(document).ready(function()
 {
-	$('#windowDialog').dialog({
-		autoOpen: false,
-		minWidth: 500,
-		minHeight: 300,
-		maxHeight: 600,
-		resizable: false,
-		title: 'Сообщение',
-		modal: true,
-		position: { my: "center", at: "center", of: window },
-		close: function( event, ui )
-		{
-			$('#windowDialog').html('');
-		}
-	});
+	if ($.isFunction($(document).dialog))
+	{
+		dialog = $('#windowDialog').dialog({
+			autoOpen: false,
+			minWidth: 500,
+			minHeight: 300,
+			maxHeight: 600,
+			resizable: false,
+			title: 'Сообщение',
+			modal: true,
+			position: { my: "center", at: "center", of: window },
+			close: function()
+			{
+				$('#windowDialog').html('');
+			}
+		});
+	}
 
     if (ajax_nav == 1)
     {

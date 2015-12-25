@@ -207,7 +207,7 @@ textarea#text {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
-	background: url(/images/build.png) 100% 0 no-repeat;
+	background: url(/assets/images/build.png) 100% 0 no-repeat;
 	height: 15px;
 	padding-right: 25px;
 	padding-top: 3px;
@@ -274,7 +274,7 @@ ul li {
 .arrow {
 	width: 32px;
 	height: 32px;
-	background: url(/images/arrow_up.png) no-repeat 50% 50%;
+	background: url(/assets/images/arrow_up.png) no-repeat 50% 50%;
 	position: absolute;
 	z-index: 999;
 }
@@ -339,7 +339,7 @@ input[type=button] {
 }
 
 .planetList .list .planet .reload {
-	background: url(/images/reload-icon.png) 0 0 no-repeat;
+	background: url(/assets/images/reload-icon.png) 0 0 no-repeat;
 	width: 20px;
 	height: 20px;
 	cursor:pointer;
@@ -477,7 +477,7 @@ p {
 }
 
 .notAvailable span {
-	background: url(/images/block.png) 0 1px no-repeat;
+	background: url(/assets/images/block.png) 0 1px no-repeat;
 	padding-left: 25px;
 	display: inline-block;
 	margin-top: 50px;
@@ -702,7 +702,7 @@ margin-left: -5px;
 .sprite {
 	display:inline-block;
 	overflow:hidden;
-	background: url(/images/sprite.png) no-repeat;
+	background: url(/assets/images/sprite.png) no-repeat;
 }
 
 .bb_color_swatch {width:16px; height:16px; background-position: -341px -1px}
@@ -765,7 +765,7 @@ margin-left: -5px;
 .officier {
 	display:inline-block;
 	overflow:hidden;
-	background: url(/images/officiers.png) no-repeat;
+	background: url(/assets/images/officiers.png) no-repeat;
 }
 
 .of601 {width:32px; height:32px; background-position: -444px -2px}

@@ -170,7 +170,7 @@ $di->set(
     }, true
 );
 
-$di->set('modelsMetadata', function()
+/*$di->set('modelsMetadata', function()
 {
 	$metaData = new \Phalcon\Mvc\Model\MetaData\Memcache([
 		'lifetime' 		=> 86400,
@@ -181,7 +181,7 @@ $di->set('modelsMetadata', function()
 	]);
 
 	return $metaData;
-});
+});*/
 
 Model::setup(array(
     'events' 			=> false,
