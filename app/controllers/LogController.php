@@ -2,22 +2,16 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\db;
-use Xcms\request;
-use Xnova\User;
-use Xnova\pageHelper;
-
 class LogController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
 	{
-		if (user::get()->isAuthorized() && !isset($_GET['id']))
+		if ($this->auth->isAuthorized() && !isset($_GET['id']))
 		{
 			$message = "";
 		
@@ -36,12 +30,12 @@ class LogController extends ApplicationController
 						$this->message('Не правильный ключ', 'Ошибка', '', 0, false);
 					else
 					{
-						$log = db::query("SELECT * FROM game_rw WHERE `id` = '" . $id . "';", true);
+						$log = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $id . "';")->fetch();
 						if (isset($log['id']))
 						{
 							$user_list = json_decode($log['id_users']);
 		
-							if ($user_list[0] == user::get()->data['id'] && $log['no_contact'] == 1)
+							if ($user_list[0] == $this->user->id && $log['no_contact'] == 1)
 							{
 								$SaveLog = "Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)";
 							}
@@ -58,7 +52,7 @@ class LogController extends ApplicationController
 								$SaveLog = json_encode($SaveLog);
 							}
 		
-							db::query("INSERT INTO game_savelog (`user`, `title`, `log`) VALUES ('" . user::get()->data['id'] . "', '" . addslashes(htmlspecialchars($_POST['title'])) . "', '" . addslashes($SaveLog) . "')");
+							$this->db->query("INSERT INTO game_savelog (`user`, `title`, `log`) VALUES ('" . $this->user->id . "', '" . addslashes(htmlspecialchars($_POST['title'])) . "', '" . addslashes($SaveLog) . "')");
 							$message = 'Боевой отчёт успешно сохранён.';
 						}
 						else
@@ -84,11 +78,10 @@ class LogController extends ApplicationController
 					$html .= "<br><input type=submit value='Сохранить'>";
 					$html .= "</form></th></tr></table>";
 
-					$this->setTitle('Логовница');
+					$this->tag->setTitle('Логовница');
 					$this->setContent($html);
 					$this->showTopPanel(false);
-					$this->display();
-		
+
 					break;
 		
 				case 'delete':
@@ -97,13 +90,13 @@ class LogController extends ApplicationController
 					{
 						$id = intval($_GET['id_l']);
 		
-						$sql = db::query("SELECT * FROM game_savelog WHERE id = '" . $id . "' ");
-						$raportrow = db::fetch_assoc($sql);
+						$sql = $this->db->query("SELECT * FROM game_savelog WHERE id = '" . $id . "' ");
+						$raportrow = $sql->fetch();
 		
-						if (user::get()->data['id'] == $raportrow['user'])
+						if ($this->user->id == $raportrow['user'])
 						{
-							db::query("DELETE FROM game_savelog WHERE `id` = " . $id . " ");
-							request::redirectTo("?set=log");
+							$this->db->query("DELETE FROM game_savelog WHERE `id` = " . $id . " ");
+							$this->response->redirect("?set=log");
 						}
 						else
 							$this->message("Ошибка удаления.", "Логовница", "?set=log", 1);
@@ -113,7 +106,7 @@ class LogController extends ApplicationController
 		
 				default:
 		
-					$ksql = db::query("SELECT `id`, `user`, `title` FROM game_savelog WHERE `user` = '" . user::get()->data['id'] . "' ");
+					$ksql = $this->db->query("SELECT `id`, `user`, `title` FROM game_savelog WHERE `user` = '" . $this->user->id . "' ");
 		
 					$html  = "<table class=\"table\">";
 					$html .= "<tr><th colspan=4>Логовница</th></tr>";
@@ -122,7 +115,7 @@ class LogController extends ApplicationController
 					$html .= "</tr>";
 					$html .= "<tr><td class=c>№</td><td class=c>Название</td><td class=c>Ссылка</td><td class=c>Управление логом</td></tr>";
 					$i = 0;
-					while ($krow = db::fetch($ksql))
+					while ($krow = $ksql->fetch())
 					{
 						$i++;
 						$html .= "<tr><td class=\"b center\">" . $i . "</td><td class=\"b center\">" . $krow['title'] . "</td><td class=\"b center\"><a href=?set=log&id=" . $krow['id'] . " ".(core::getConfig('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '').">Открыть</a></td><td class=\"b center\"><a href='?set=log&mode=delete&id_l=" . $krow['id'] . "'>Удалить лог</a></td></tr>";
@@ -132,10 +125,9 @@ class LogController extends ApplicationController
 		
 					$html .= "<tr><td class=c colspan=4><a href=?set=log&mode=new>Создать новый лог боя</a></td></tr></table>";
 
-					$this->setTitle('Логовница');
+					$this->tag->setTitle('Логовница');
 					$this->setContent($html);
 					$this->showTopPanel(false);
-					$this->display();
 			}
 		}
 		
@@ -143,7 +135,7 @@ class LogController extends ApplicationController
 		{
 			$html = '';
 
-			$raportrow = db::query("SELECT * FROM game_savelog WHERE id = '" . intval($_GET['id']) . "' ", true);
+			$raportrow = $this->db->query("SELECT * FROM game_savelog WHERE id = '" . intval($_GET['id']) . "' ")->fetch();
 		
 			if (isset($raportrow['id']))
 			{
@@ -151,7 +143,7 @@ class LogController extends ApplicationController
 
 				$result = json_decode($raportrow['log'], true);
 
-				if (!core::getConfig('openRaportInNewWindow', 0) && user::get()->isAuthorized())
+				if (!core::getConfig('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 				{
 					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200)))
 						echo "<center>Данный лог боя пока недоступен для просмотра!</center>";
@@ -161,10 +153,9 @@ class LogController extends ApplicationController
 						$html .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});</script>';
 					}
 
-					$this->setTitle('Боевой доклад');
+					$this->tag->setTitle('Боевой доклад');
 					$this->setContent($html);
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				else
 				{
@@ -173,7 +164,7 @@ class LogController extends ApplicationController
 					$html .= "</head><body>";
 					$html .= "<table width=\"99%\"><tr><td>";
 
-					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200) && !user::get()->isAdmin()))
+					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
 						echo "<center>Данный лог боя пока недоступен для просмотра!</center>";
 					else
 					{
@@ -187,7 +178,7 @@ class LogController extends ApplicationController
 			}
 			else
 			{
-				if (!core::getConfig('openRaportInNewWindow', 0) && user::get()->isAuthorized())
+				if (!core::getConfig('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 					$this->message('Запрашиваемого лога не существует в базе данных');
 				else
 				{

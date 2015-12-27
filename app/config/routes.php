@@ -34,6 +34,13 @@ $router->add('/admin/:action/action/([a-zA-Z0-9_-]+)/:params', array
 	'params' 		=> 3
 ));
 
+$router->add('/:controller/:action/:params', array
+(
+	'controller' 	=> 1,
+	'action' 		=> 2,
+	'params' 		=> 3
+));
+
 $router->add('/', array
 (
 	'controller' 	=> 'index',

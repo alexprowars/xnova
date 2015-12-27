@@ -1,9 +1,11 @@
 <?php
 namespace App\Controllers;
 
+use App\Helpers;
 use App\Lang;
 use App\Models\Planet;
 use App\Queue;
+use App\Sql;
 
 class OverviewController extends ApplicationController
 {
@@ -184,15 +186,27 @@ class OverviewController extends ApplicationController
 		$bloc['fleet_prefix'] = $FleetPrefix;
 		$bloc['fleet_style'] = $FleetStyle[$MissionType];
 		$bloc['fleet_order'] = $Label . $Record;
-		$bloc['fleet_time'] = datezone("H:i:s", $Time);
-		$bloc['fleet_count_time'] = strings::pretty_time($Rest, ':');
+		$bloc['fleet_time'] = $this->game->datezone("H:i:s", $Time);
+		$bloc['fleet_count_time'] = Helpers::pretty_time($Rest, ':');
 		$bloc['fleet_descr'] = $EventString;
 		$bloc['fleet_javas'] = InsertJavaScriptChronoApplet($Label, $Record, $Rest);
 
 		return $bloc;
 	}
 
-	public function renameplanetAction ()
+	public function deleteAction ()
+	{
+		$parse['number_1'] 		= mt_rand(1, 100);
+		$parse['number_2'] 		= mt_rand(1, 100);
+		$parse['number_3'] 		= mt_rand(1, 100);
+		$parse['number_check'] 	= $parse['number_1'] + $parse['number_2'] * $parse['number_3'];
+
+		$this->view->setVar('parse', $parse);
+		$this->tag->setTitle('Покинуть колонию');
+		$this->showTopPanel(false);
+	}
+
+	public function renameAction ()
 	{
 		$parse = array();
 		$parse['planet_id'] = $this->planet->id;
@@ -230,36 +244,26 @@ class OverviewController extends ApplicationController
 				{
 					if (mb_strlen($UserPlanet, 'UTF-8') > 1 && mb_strlen($UserPlanet, 'UTF-8') < 20)
 					{
-						$newname = db::escape_string(strip_tags(trim($UserPlanet)));
+						$newname = strip_tags(trim($UserPlanet));
 
 						$this->planet->name = $newname;
 						$parse['planet_name'] = $this->planet->name;
 
-						$this->db->query("UPDATE game_planets SET `name` = '" . $newname . "' WHERE `id` = '" . $this->user->current_planet . "' LIMIT 1;");
+						$this->db->query("UPDATE game_planets SET `name` = '" . $newname . "' WHERE `id` = '" . $this->user->planet_current . "' LIMIT 1;");
 
 						if (isset($_SESSION['fleet_shortcut']))
 							unset($_SESSION['fleet_shortcut']);
 					}
 					else
-						$this->message('Введённо слишком длинное или короткое имя планеты', 'Ошибка', '?set=overview&mode=renameplanet', 5);
+						$this->message('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
 				}
 				else
-					$this->message('Введённое имя содержит недопустимые символы', 'Ошибка', '?set=overview&mode=renameplanet', 5);
+					$this->message('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
 			}
 		}
 		elseif (isset($_POST['action']) && $_POST['action'] == _getText('colony_abandon'))
 		{
-			$parse['number_1'] 		= mt_rand(1, 100);
-			$parse['number_2'] 		= mt_rand(1, 100);
-			$parse['number_3'] 		= mt_rand(1, 100);
-			$parse['number_check'] 	= $parse['number_1'] + $parse['number_2'] * $parse['number_3'];
 
-			$this->setTemplate('planet_delete');
-			$this->set('parse', $parse);
-
-			$this->setTitle('Покинуть колонию');
-			$this->showTopPanel(false);
-			$this->display();
 
 		}
 		elseif (isset($_POST['action']) && isset($_POST['image']))
@@ -271,19 +275,19 @@ class OverviewController extends ApplicationController
 
 			if ($image > 0 && $image <= $parse['images'][$parse['type']])
 			{
-				sql::build()->update('game_planets')->setField('image', $parse['type'].'planet'.($image < 10 ? '0' : '').$image)->where('id', '=', $this->planet->id)->execute();
-				sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', app::$user->getId())->execute();
+				Sql::build()->update('game_planets')->setField('image', $parse['type'].'planet'.($image < 10 ? '0' : '').$image)->where('id', '=', $this->planet->id)->execute();
+				Sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', $this->user->getId())->execute();
 
-				request::redirectTo('?set=overview');
+				$this->response->redirect('?set=overview');
 			}
 			else
 				$this->message('Недостаточно читерских навыков', 'Ошибка', '?set=overview&mode=renameplanet');
 		}
-		elseif (isset($_POST['kolonieloeschen']) && $_POST['deleteid'] == $this->user->current_planet)
+		elseif (isset($_POST['kolonieloeschen']) && $_POST['deleteid'] == $this->user->planet_current)
 		{
 			if ($this->user->id != $this->planet->id_owner)
 				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '?set=overview&mode=renameplanet');
-			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->id_planet != $this->user->current_planet)
+			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
 			{
 				$checkFleets = $this->db->query("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
 
@@ -293,8 +297,8 @@ class OverviewController extends ApplicationController
 				{
 					$destruyed = time() + 60 * 60 * 24;
 
-					$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->user->current_planet . "' LIMIT 1;");
-					$this->db->query("UPDATE game_users SET `current_planet` = `id_planet` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+					$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->user->planet_current . "' LIMIT 1;");
+					$this->db->query("UPDATE game_users SET `planet_current` = `planet_id` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
 
 					if ($this->planet->parent_planet != 0)
 						$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->planet->parent_planet . "' LIMIT 1;");
@@ -302,24 +306,21 @@ class OverviewController extends ApplicationController
 					if (isset($_SESSION['fleet_shortcut']))
 						unset($_SESSION['fleet_shortcut']);
 
-					cache::delete('app::planetlist_'.$this->user->id);
+					$this->cache->delete('app::planetlist_'.$this->user->id);
 
 					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
 				}
 
 			}
-			elseif ($this->user->id_planet == app::$user->data["current_planet"])
+			elseif ($this->user->planet_id == $this->user->planet_current)
 				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
 			else
 				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '?set=overview&mode=renameplanet');
 		}
 
-		$this->setTemplate('planet_rename');
-		$this->set('parse', $parse);
-
-		$this->setTitle('Переименовать планету');
+		$this->view->setVar('parse', $parse);
+		$this->tag->setTitle('Переименовать планету');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function bonusAction ()
@@ -333,7 +334,7 @@ class OverviewController extends ApplicationController
 
 			$add = $multi * 500 * system::getResourceSpeed();
 
-			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->current_planet . ";");
+			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->planet_current . ";");
 
 			$arUpdate = array
 			(
@@ -344,7 +345,7 @@ class OverviewController extends ApplicationController
 			if ($this->user->bonus_multi > 1)
 				$arUpdate['+credits'] = 1;
 
-			sql::build()->update('game_users')->set($arUpdate)->where('id', '=', $this->user->id)->execute();
+			Sql::build()->update('game_users')->set($arUpdate)->where('id', '=', $this->user->id)->execute();
 
 			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '?set=overview', 2);
 		}
@@ -419,7 +420,7 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		/*if (user::get()->IsAdmin())
+		/*if ($this->user->IsAdmin())
 		{
 			$FleetRow = array
 			(
@@ -458,18 +459,18 @@ class OverviewController extends ApplicationController
 
 		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id)
 		{
-			$lune = cache::get('app::lune_'.$this->planet->parent_planet);
+			$lune = $this->cache->get('app::lune_'.$this->planet->parent_planet);
 
-			if ($lune === false)
+			if ($lune === NULL)
 			{
-				$lune = $this->db->query("SELECT `id`, `name`, `image`, `destruyed` FROM game_planets WHERE id = " . $this->planet->parent_planet . " AND planet_type='3';", true);
+				$lune = $this->db->query("SELECT `id`, `name`, `image`, `destruyed` FROM game_planets WHERE id = " . $this->planet->parent_planet . " AND planet_type = '3'")->fetch();
 
-				cache::set('app::lune_'.$this->planet->parent_planet, $lune, 300);
+				$this->cache->save('app::lune_'.$this->planet->parent_planet, $lune, 300);
 			}
 
 			if (isset($lune['id']))
 			{
-				$parse['moon_img'] = "<a href=\"?set=overview&amp;cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"" . DPATH . "planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
+				$parse['moon_img'] = "<a href=\"?set=overview&amp;cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
 				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
 			}
 		}
@@ -542,9 +543,9 @@ class OverviewController extends ApplicationController
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 
-		if ($records === false)
+		if ($records === NULL)
 		{
-			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . user::get()->getId() . "';", true);
+			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';", true);
 
 			if (!is_array($records))
 				$records = array();
@@ -733,7 +734,7 @@ class OverviewController extends ApplicationController
 
 			$forum = $this->cache->get('forum_activity');
 
-			if (!$forum)
+			if ($forum === NULL)
 			{
 				$forum = file_get_contents('http://forum.xnova.su/lastposts.php');
 
@@ -747,7 +748,7 @@ class OverviewController extends ApplicationController
 				$parse['activity']['forum'][] = array
 				(
 					'TIME' => $message['post_time'],
-					'MESS' => '<span class="title"><span class="to">'.$message['username'].'</span> написал "<span class="to">'.$message['topic_title'].'</span>"</span>: '.strings::cutString(strip_tags($message['post_text']), 250).' <a href="http://forum.xnova.su/viewtopic.php?f='.$message['forum_id'].'&t='.$message['topic_id'].'&p='.$message['post_id'].'#p'.$message['post_id'].'" target="_blank">читать полностью</a>'
+					'MESS' => '<span class="title"><span class="to">'.$message['username'].'</span> написал "<span class="to">'.$message['topic_title'].'</span>"</span>: '.Helpers::cutString(strip_tags($message['post_text']), 250).' <a href="http://forum.xnova.su/viewtopic.php?f='.$message['forum_id'].'&t='.$message['topic_id'].'&p='.$message['post_id'].'#p'.$message['post_id'].'" target="_blank">читать полностью</a>'
 				);
 			}
 

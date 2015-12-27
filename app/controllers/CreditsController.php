@@ -2,32 +2,27 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xnova\User;
-use Xnova\pageHelper;
-
 class CreditsController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
 	{
-		$userinf = db::query("SELECT email FROM game_users_info WHERE id = " . user::get()->getId() . ";", true);
+		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId() . ";")->fetch();
 
 		if (!isset($_SESSION['OKAPI']))
-			$this->setTemplate('credits');
+			$this->view->pick('credits');
 		else
-			$this->setTemplate('credits_ok');
+			$this->view->pick('credits_ok');
 
-		$this->set('userid', user::get()->getId());
-		$this->set('useremail', $userinf['email']);
+		$this->view->setVar('userid', $this->user->getId());
+		$this->view->setVar('useremail', $userinf['email']);
 
-		$this->setTitle('Покупка кредитов');
+		$this->tag->setTitle('Покупка кредитов');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

@@ -2,22 +2,17 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\sql;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
+use App\Lang;
 
 class MerchantController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 		
-		strings::includeLang('marchand');
+		Lang::includeLang('marchand');
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -27,7 +22,7 @@ class MerchantController extends ApplicationController
 		
 		if (isset($_POST['ress']))
 		{
-			if (user::get()->data['credits'] <= 0)
+			if ($this->user->credits <= 0)
 				$this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '?set=marchand', 3);
 		
 			$Error = false;
@@ -45,8 +40,8 @@ class MerchantController extends ApplicationController
 						$Message = "Failed";
 						$Error = true;
 					}
-					elseif (app::$planetrow->data['metal'] > $Necessaire)
-						app::$planetrow->data['metal'] -= $Necessaire;
+					elseif ($this->planet->metal > $Necessaire)
+						$this->planet->metal -= $Necessaire;
 					else
 					{
 						$Message = _getText('mod_ma_noten') . " " . _getText('Metal') . "! ";
@@ -62,8 +57,8 @@ class MerchantController extends ApplicationController
 						$Message = "Failed";
 						$Error = true;
 					}
-					elseif (app::$planetrow->data['crystal'] > $Necessaire)
-						app::$planetrow->data['crystal'] -= $Necessaire;
+					elseif ($this->planet->crystal > $Necessaire)
+						$this->planet->crystal -= $Necessaire;
 					else
 					{
 						$Message = _getText('mod_ma_noten') . " " . _getText('Crystal') . "! ";
@@ -79,8 +74,8 @@ class MerchantController extends ApplicationController
 						$Message = "Failed";
 						$Error = true;
 					}
-					elseif (app::$planetrow->data['deuterium'] > $Necessaire)
-						app::$planetrow->data['deuterium'] -= $Necessaire;
+					elseif ($this->planet->deuterium > $Necessaire)
+						$this->planet->deuterium -= $Necessaire;
 					else
 					{
 						$Message = _getText('mod_ma_noten') . " " . _getText('Deuterium') . "! ";
@@ -99,26 +94,26 @@ class MerchantController extends ApplicationController
 			if ($Error == false)
 			{
 				if ($_POST['ress'] != "metal")
-					app::$planetrow->data['metal'] += $metal;
+					$this->planet->metal += $metal;
 				if ($_POST['ress'] != "cristal")
-					app::$planetrow->data['crystal'] += $cristal;
+					$this->planet->crystal += $cristal;
 				if ($_POST['ress'] != "deuterium")
-					app::$planetrow->data['deuterium'] += $deut;
+					$this->planet->deuterium += $deut;
 
-				app::$planetrow->saveData(Array
+				$this->planet->saveData(Array
 				(
-					'metal' 	=> app::$planetrow->data['metal'],
-					'crystal' 	=> app::$planetrow->data['crystal'],
-					'deuterium' => app::$planetrow->data['deuterium'],
-				), app::$planetrow->data['id']);
+					'metal' 	=> $this->planet->metal,
+					'crystal' 	=> $this->planet->crystal,
+					'deuterium' => $this->planet->deuterium,
+				), $this->planet->id);
 
-				db::query("UPDATE game_users SET `credits` = `credits` - 1 WHERE id = " . user::get()->data['id'] . "");
-				user::get()->data['credits'] -= 1;
+				$this->db->query("UPDATE game_users SET `credits` = `credits` - 1 WHERE id = " . $this->user->id . "");
+				$this->user->credits -= 1;
 
-				$tutorial = db::query("SELECT id FROM game_users_quests WHERE user_id = ".user::get()->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0", true);
+				$tutorial = $this->db->query("SELECT id FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0")->fetch();
 
 				if (isset($tutorial['id']))
-					db::query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
+					$this->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
 		
 				$Message = _getText('mod_ma_done');
 			}
@@ -159,11 +154,10 @@ class MerchantController extends ApplicationController
 		else
 			$parse['type'] = 'main';
 		
-		$this->setTemplate('merchand');
-		$this->set('parse', $parse);
+		$this->view->pick('merchand');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Торговец');
-		$this->display();
+		$this->tag->setTitle('Торговец');
 	}
 }
 

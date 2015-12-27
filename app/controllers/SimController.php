@@ -2,18 +2,13 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-
 class SimController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -47,19 +42,18 @@ class SimController extends ApplicationController
 		
 		foreach ($res AS $id)
 		{
-			if (isset(app::$planetrow->data[$resource[$id]]) && app::$planetrow->data[$resource[$id]] > 0)
-				$parse['slot_0'][$id] = array('c' => app::$planetrow->data[$resource[$id]], 'l' => ((isset(user::get()->data['fleet_' . $id])) ? user::get()->data['fleet_' . $id] : 0));
+			if (isset($this->planet->data[$resource[$id]]) && $this->planet->data[$resource[$id]] > 0)
+				$parse['slot_0'][$id] = array('c' => $this->planet->data[$resource[$id]], 'l' => ((isset($this->user->data['fleet_' . $id])) ? $this->user->data['fleet_' . $id] : 0));
 		
-			if (isset(user::get()->data[$resource[$id]]) && user::get()->data[$resource[$id]] > 0)
-				$parse['slot_0'][$id] = array('c' => user::get()->data[$resource[$id]]);
+			if (isset($this->user->data[$resource[$id]]) && $this->user->data[$resource[$id]] > 0)
+				$parse['slot_0'][$id] = array('c' => $this->user->data[$resource[$id]]);
 		}
 		
-		$this->setTemplate('sim');
-		$this->set('parse', $parse);
+		$this->view->pick('sim');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Симулятор');
+		$this->tag->setTitle('Симулятор');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

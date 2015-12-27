@@ -2,17 +2,15 @@
 
 namespace App\Controllers;
 
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Lang;
 
 class NewsController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('news');
+		Lang::includeLang('news');
 	}
 	
 	public function show ()
@@ -24,13 +22,12 @@ class NewsController extends ApplicationController
 			$news[] = array($a, nl2br($b));
 		}
 
-		$this->setTemplate('news');
-		$this->set('parse', $news);
+		$this->view->pick('news');
+		$this->view->setVar('parse', $news);
 
-		$this->setTitle('Новости');
+		$this->tag->setTitle('Новости');
 		$this->showTopPanel(false);
-		$this->showLeftPanel(isset(user::get()->data['id']));
-		$this->display();
+		$this->showLeftPanel(isset($this->user->id));
 	}
 }
 

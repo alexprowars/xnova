@@ -42,6 +42,13 @@ class Planet extends Model
 	public $last_active;
 	public $production_level;
 	public $b_hangar;
+	public $debris_metal;
+	public $debris_crystal;
+	public $galaxy;
+	public $planet;
+	public $system;
+	public $diameter;
+	public $parent_planet;
 
 	public $small_ship_cargo;
 	public $big_ship_cargo;

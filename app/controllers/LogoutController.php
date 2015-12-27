@@ -2,13 +2,11 @@
 
 namespace App\Controllers;
 
-use Xnova\pageHelper;
-
 class LogoutController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()

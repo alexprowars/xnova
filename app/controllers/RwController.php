@@ -2,16 +2,11 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\db;
-use Xnova\User;
-use Xnova\pageHelper;
-
 class RwController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
@@ -20,16 +15,16 @@ class RwController extends ApplicationController
 
 		include(ROOT_DIR.APP_PATH."functions/formatCR.php");
 		
-		$raportrow = db::query("SELECT * FROM game_rw WHERE `id` = '" . intval($_GET['r']) . "';", true);
+		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . intval($_GET['r']) . "';")->fetch();
 		
 		if (!isset($raportrow['id']))
 			$this->message('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
 		
 		$user_list = json_decode($raportrow['id_users'], true);
 		
-		if (isset($raportrow['id']) && !user::get()->isAdmin() && (!isset($_GET['k']) ||  md5('xnovasuka' . $raportrow['id']) != $_GET['k']))
+		if (isset($raportrow['id']) && !$this->user->isAdmin() && (!isset($_GET['k']) ||  md5('xnovasuka' . $raportrow['id']) != $_GET['k']))
 			$this->message('Не правильный ключ', 'Ошибка', '', 0, false);
-		elseif (!in_array(user::get()->data['id'], $user_list) && !user::get()->isAdmin())
+		elseif (!in_array($this->user->id, $user_list) && !$this->user->isAdmin())
 			$this->message('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
 		else
 		{
@@ -37,7 +32,7 @@ class RwController extends ApplicationController
 			{
 				$Page = "";
 		
-				if ($user_list[0] == user::get()->data['id'] && $raportrow['no_contact'] == 1 && !user::get()->isAdmin())
+				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
 				{
 					$Page .= "Контакт с вашим флотом потерян.<br>(Ваш флот был уничтожен в первой волне атаки.)";
 				}
@@ -58,10 +53,9 @@ class RwController extends ApplicationController
 					$Page .= '<div class="separator"></div><a data-link="1" target="_blank" href="?set=rw&r='.$_GET['r'].'&k='.$_GET['k'].'">Полная версия боя</a>';
 				}
 
-				$this->setTitle('Боевой доклад');
+				$this->tag->setTitle('Боевой доклад');
 				$this->setContent($Page);
 				$this->showTopPanel(false);
-				$this->display();
 			}
 			else
 			{
@@ -83,7 +77,7 @@ class RwController extends ApplicationController
 				$Page .= "</head><body><script>function show(id){if(document.getElementById(id).style.display==\"block\")document.getElementById(id).style.display=\"none\"; else document.getElementById(id).style.display=\"block\";}</script>";
 				$Page .= "<table width=\"99%\"><tr><td><center>";
 		
-				if ($user_list[0] == user::get()->data['id'] && $raportrow['no_contact'] == 1 && !user::get()->isAdmin())
+				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
 				{
 					$Page .= "Контакт с вашим флотом потерян.<br>(Ваш флот был уничтожен в первой волне атаки.)";
 				}

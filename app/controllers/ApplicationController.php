@@ -102,6 +102,17 @@ class ApplicationController extends Controller
 		{
 			$this->view->setMainView('game');
 
+			if (is_array($this->router->getParams()) && count($this->router->getParams()))
+			{
+				$params = $this->router->getParams();
+
+				for ($i = 0; $i < count($params); $i += 2)
+				{
+					if ($params[$i] != '')
+						$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
+				}
+			}
+
 			$assets = $this->assets->collection('headerCss');
 
 			$assets->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
@@ -172,6 +183,7 @@ class ApplicationController extends Controller
 					$this->view->setVar('ajaxNavigation', 1);
 			}
 
+			$this->view->setVar('isPopup', ($this->request->has('isPopup') ? 1 : 0));
 			$this->view->setVar('timezone', 0);
 			$this->view->setVar('adminlevel', $this->user->authlevel);
 			$this->view->setVar('messages', $this->user->messages);
@@ -297,7 +309,7 @@ class ApplicationController extends Controller
 		{
 			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId().'');
 
-			if ($planetsList === false)
+			if ($planetsList === NULL)
 			{
 				$planetsList = $this->user->getUserPlanets($this->user->getId());
 
@@ -381,7 +393,7 @@ class ApplicationController extends Controller
 		if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
 		{
 			$this->user->messages_ally = 0;
-			$this->db->updateAsDict('game_users', ['mnl_alliance' => 0], "id = ".$this->user->id);
+			$this->db->updateAsDict('game_users', ['messages_ally' => 0], "id = ".$this->user->id);
 		}
 
 		$parse['ally_messages'] = ($this->user->ally_id != 0) ? $this->user->messages_ally : '';
@@ -399,7 +411,7 @@ class ApplicationController extends Controller
 		$this->showLeftMenu = $view;
 	}
 
-	public function message ($text, $title = '')
+	public function message ($text, $title = '', $redirect = '', $timeout = 5)
 	{
 		$this->view->pick('shared/message');
 		$this->view->setVar('text', $text);

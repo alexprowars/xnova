@@ -2,14 +2,11 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xnova\pageHelper;
-
 class HallController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
@@ -19,11 +16,11 @@ class HallController extends ApplicationController
 		$parse = array();
 		$parse['hall'] = array();
 
-		$halls = db::query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $sab . " ORDER BY debris DESC LIMIT 50");
+		$halls = $this->db->query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $sab . " ORDER BY debris DESC LIMIT 50");
 
 		$time = 0;
 
-		while ($hall = db::fetch_assoc($halls))
+		while ($hall = $halls->fetch())
 		{
 			$parse['hall'][] = $hall;
 
@@ -33,12 +30,11 @@ class HallController extends ApplicationController
 
 		$parse['time'] = $time;
 
-		$this->setTemplate('hall');
-		$this->set('parse', $parse);
+		$this->view->pick('hall');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Зал славы');
+		$this->tag->setTitle('Зал славы');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

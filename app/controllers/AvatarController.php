@@ -2,16 +2,11 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\db;
-use Xnova\User;
-use Xnova\pageHelper;
-
 class AvatarController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 
 	public function upload()
@@ -22,7 +17,7 @@ class AvatarController extends ApplicationController
 
 		if ($upload->uploaded)
 		{
-			$name = user::get()->getId().'_'.time().'.jpg';
+			$name = $this->user->getId().'_'.time().'.jpg';
 
 			$upload->dir_auto_create = false;
 			$upload->dir_auto_chmod = false;
@@ -35,13 +30,13 @@ class AvatarController extends ApplicationController
 			$upload->image_x = 128;
 			$upload->image_y = 128;
 			$upload->jpeg_quality = 90;
-			$upload->file_new_name_body = user::get()->getId().'_'.time();
+			$upload->file_new_name_body = $this->user->getId().'_'.time();
 
 			$upload->Process('images/avatars/upload/');
 
 			if ($upload->processed && file_exists(ROOT_DIR.'/images/avatars/upload/'.$name))
 			{
-				db::query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . user::get()->getId() . "");
+				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 
 				$this->message("Аватар успешно установлен.", "ОК", "?set=options", 3);
 			}
@@ -62,10 +57,9 @@ class AvatarController extends ApplicationController
 		            <input type="submit" name="Submit" value="Загрузить" /></th></tr></table>
 		        </form></center>';
 
-		$this->setTitle("Выбор аватара");
+		$this->tag->setTitle("Выбор аватара");
 		$this->setContent($html);
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

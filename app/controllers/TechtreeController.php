@@ -2,19 +2,13 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\request;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-
 class TechtreeController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -27,11 +21,11 @@ class TechtreeController extends ApplicationController
 
 		if ($Element > 0 && isset($resource[$Element]))
 		{
-			$this->setTemplate('techtree_element');
-			$this->set('element', $Element);
+			$this->view->pick('techtree_element');
+			$this->view->setVar('element', $Element);
 
 			if (isset($requeriments[$Element]))
-				$this->set('req', $requeriments[$Element]);
+				$this->view->setVar('req', $requeriments[$Element]);
 
 			core::setConfig('overviewListView', 0);
 		}
@@ -61,11 +55,11 @@ class TechtreeController extends ApplicationController
 							{
 								if ($ResClass != 700)
 								{
-									if (isset(user::get()->data[$resource[$ResClass]]) && user::get()->data[$resource[$ResClass]] >= $Level)
+									if (isset($this->user->data[$resource[$ResClass]]) && $this->user->data[$resource[$ResClass]] >= $Level)
 									{
 										$pars['required_list'] .= "<span class=\"positive\">";
 									}
-									elseif (isset(app::$planetrow->data[$resource[$ResClass]]) && app::$planetrow->data[$resource[$ResClass]] >= $Level)
+									elseif (isset($this->planet->data[$resource[$ResClass]]) && $this->planet->data[$resource[$ResClass]] >= $Level)
 									{
 										$pars['required_list'] .= "<span class=\"positive\">";
 									}
@@ -75,14 +69,14 @@ class TechtreeController extends ApplicationController
 									}
 									$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
 		
-									if (isset(user::get()->data[$resource[$ResClass]]) && user::get()->data[$resource[$ResClass]] < $Level)
+									if (isset($this->user->data[$resource[$ResClass]]) && $this->user->data[$resource[$ResClass]] < $Level)
 									{
-										$minus = $Level - user::get()->data[$resource[$ResClass]];
+										$minus = $Level - $this->user->data[$resource[$ResClass]];
 										$pars['required_list'] .= " + <b>" . $minus . "</b>";
 									}
-									elseif (isset(app::$planetrow->data[$resource[$ResClass]]) && app::$planetrow->data[$resource[$ResClass]] < $Level)
+									elseif (isset($this->planet->data[$resource[$ResClass]]) && $this->planet->data[$resource[$ResClass]] < $Level)
 									{
-										$minus = $Level - app::$planetrow->data[$resource[$ResClass]];
+										$minus = $Level - $this->planet->data[$resource[$ResClass]];
 										$pars['required_list'] .= " + <b>" . $minus . "</b>";
 									}
 								}
@@ -90,7 +84,7 @@ class TechtreeController extends ApplicationController
 								{
 									$pars['required_list'] .= _getText('tech', $ResClass) . " (";
 		
-									if (user::get()->data['race'] != $Level)
+									if ($this->user->race != $Level)
 										$pars['required_list'] .= "<span class=\"negative\">" . _getText('race', $Level);
 									else
 										$pars['required_list'] .= "<span class=\"positive\">" . _getText('race', $Level);
@@ -108,14 +102,13 @@ class TechtreeController extends ApplicationController
 				}
 			}
 		
-			$this->setTemplate('techtree');
+			$this->view->pick('techtree');
 		}
 		
-		$this->set('parse', $parse);
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle(_getText('Tech'));
+		$this->tag->setTitle(_getText('Tech'));
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

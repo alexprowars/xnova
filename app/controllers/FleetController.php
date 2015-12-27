@@ -2,17 +2,13 @@
 
 namespace App\Controllers;
 
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-
 class FleetController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 		
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -20,7 +16,7 @@ class FleetController extends ApplicationController
 		global $resource, $reslist, $CombatCaps;
 	
 		// Устанавливаем обновлённые двигателя кораблей
-		SetShipsEngine(user::get()->data);
+		SetShipsEngine($this->user->data);
 
 		$module = (isset($_GET['page'])) ? $_GET['page'] : '';
 

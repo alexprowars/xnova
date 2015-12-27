@@ -2,27 +2,24 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Lang;
 
 class ContactController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('contact');
+		Lang::includeLang('contact');
 	}
 
 	function show()
 	{
 		$contacts = array();
 
-		$GameOps = db::query("SELECT u.`username`, ui.`email`, u.`authlevel` FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.`authlevel` != '0' ORDER BY u.`authlevel` DESC");
+		$GameOps = $this->db->query("SELECT u.`username`, ui.`email`, u.`authlevel` FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.`authlevel` != '0' ORDER BY u.`authlevel` DESC");
 
-		while ($Ops = db::fetch_assoc($GameOps))
+		while ($Ops = $GameOps->fetch())
 		{
 			$contacts[] = array
 			(
@@ -32,12 +29,11 @@ class ContactController extends ApplicationController
 			);
 		}
 
-		$this->setTemplate('contact');
-		$this->set('contacts', $contacts);
+		$this->view->pick('contact');
+		$this->view->setVar('contacts', $contacts);
 
-		$this->setTitle(_getText('ctc_title'));
+		$this->tag->setTitle(_getText('ctc_title'));
 		$this->showTopPanel(false);
-		$this->showLeftPanel(isset(user::get()->data['id']));
-		$this->display();
+		$this->showLeftPanel(isset($this->user->id));
 	}
 }

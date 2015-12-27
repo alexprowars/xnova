@@ -2,46 +2,38 @@
 
 namespace App\Controllers;
 
-use Xcms\cache;
-use Xcms\db;
-use Xcms\request;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\JavaScriptPacker;
-use Xnova\pageHelper;
-use Xnova\system;
+use App\Lang;
 
 class GalaxyController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 		
-		strings::includeLang('galaxy');
+		Lang::includeLang('galaxy');
 	}
 	
 	public function show()
 	{
-		$fleetmax = user::get()->data['computer_tech'] + 1;
+		$fleetmax = $this->user->computer_tech + 1;
 		
-		if (user::get()->data['rpg_admiral'] > time())
+		if ($this->user->rpg_admiral > time())
 			$fleetmax += 2;
 		
-		$maxfleet_count = db::first(db::query("SELECT COUNT(*) AS num FROM game_fleets WHERE `fleet_owner` = '" . user::get()->data['id'] . "';", true));
+		$maxfleet_count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE `fleet_owner` = '" . $this->user->id . "';");
 
-		$records = cache::get('app::records_'.user::get()->getId());
+		$records = $this->cache->get('app::records_'.$this->user->getId());
 
-		if ($records === false)
+		if ($records === NULL)
 		{
-			$records = db::query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . user::get()->getId() . "';", true);
+			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
 			if (!is_array($records))
 				$records = array();
 
-			cache::set('app::records_'.user::get()->getId(), $records, 1800);
+			$this->cache->save('app::records_'.$this->user->getId(), $records, 1800);
 		}
 
 		$mode = request::G('r', 0, VALUE_INT);
@@ -52,9 +44,9 @@ class GalaxyController extends ApplicationController
 		
 		if ($mode == 0)
 		{
-			$galaxy = app::$planetrow->data['galaxy'];
-			$system = app::$planetrow->data['system'];
-			$planet = app::$planetrow->data['planet'];
+			$galaxy = $this->planet->galaxy;
+			$system = $this->planet->system;
+			$planet = $this->planet->planet;
 		}
 		elseif ($mode == 1)
 		{
@@ -65,7 +57,7 @@ class GalaxyController extends ApplicationController
 			elseif (isset($_POST["galaxy"]))
 				$galaxy = intval($_POST["galaxy"]);
 			else
-				$galaxy = app::$planetrow->data['galaxy'];
+				$galaxy = $this->planet->galaxy;
 		
 			if (isset($_POST["systemLeft"]))
 				$system = intval($_POST["system"]) - 1;
@@ -74,7 +66,7 @@ class GalaxyController extends ApplicationController
 			elseif (isset($_POST["system"]))
 				$system = intval($_POST["system"]);
 			else
-				$system = app::$planetrow->data['system'];
+				$system = $this->planet->system;
 		}
 		elseif ($mode == 2)
 		{
@@ -94,7 +86,7 @@ class GalaxyController extends ApplicationController
 		
 		if (!isset($_SESSION['fleet_shortcut']))
 		{
-			$array = user::get()->getUserPlanets(user::get()->getId(), false, user::get()->data['ally_id']);
+			$array = $this->user->getUserPlanets($this->user->getId(), false, $this->user->ally_id);
 			$j = array();
 		
 			foreach ($array AS $a)
@@ -102,7 +94,7 @@ class GalaxyController extends ApplicationController
 				$j[] = array(base64_encode($a['name']), $a['galaxy'], $a['system'], $a['planet']);
 			}
 		
-			$shortcuts = db::first(db::query("SELECT fleet_shortcut FROM game_users_info WHERE id = " . user::get()->data['id'] . ";", true));
+			$shortcuts = $this->db->fetchColumn("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $this->user->id . ";");
 		
 			if (isset($shortcuts))
 			{
@@ -123,24 +115,24 @@ class GalaxyController extends ApplicationController
 		
 		$Phalanx = 0;
 		
-		if (app::$planetrow->data['phalanx'] <> 0)
+		if ($this->planet->phalanx <> 0)
 		{
-			$Range = system::GetPhalanxRange(app::$planetrow->data['phalanx']);
+			$Range = system::GetPhalanxRange($this->planet->phalanx);
 
-			$SystemLimitMin = max(1, app::$planetrow->data['system'] - $Range);
-			$SystemLimitMax = app::$planetrow->data['system'] + $Range;
+			$SystemLimitMin = max(1, $this->planet->system - $Range);
+			$SystemLimitMax = $this->planet->system + $Range;
 		
 			if ($system <= $SystemLimitMax && $system >= $SystemLimitMin)
 				$Phalanx = 1;
 		}
 		
-		if (app::$planetrow->data['interplanetary_misil'] <> 0)
+		if ($this->planet->interplanetary_misil <> 0)
 		{
-			if ($galaxy == app::$planetrow->data['galaxy'])
+			if ($galaxy == $this->planet->galaxy)
 			{
 				$Range = system::GetMissileRange();
-				$SystemLimitMin = max(1, app::$planetrow->data['system'] - $Range);
-				$SystemLimitMax = app::$planetrow->data['system'] + $Range;
+				$SystemLimitMin = max(1, $this->planet->system - $Range);
+				$SystemLimitMax = $this->planet->system + $Range;
 
 				if ($system <= $SystemLimitMax)
 					$MissileBtn = ($system >= $SystemLimitMin) ? 1 : 0;
@@ -155,18 +147,18 @@ class GalaxyController extends ApplicationController
 
 		$Destroy = 0;
 		
-		if (app::$planetrow->data['dearth_star'] > 0)
+		if ($this->planet->dearth_star > 0)
 			$Destroy = 1;
 		
 		$html = '';
 		
 		if ($mode == 2)
 		{
-			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, app::$planetrow->data['id'], app::$planetrow->data['interplanetary_misil']);
+			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->interplanetary_misil);
 		}
 
 		$html .= "<div id='galaxy'></div>";
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '" . DPATH . "'; var user = {id:" . user::get()->data['id'] . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . user::get()->data['ally_id'] . ", current_planet:" . user::get()->data['current_planet'] . ", colonizer:" . app::$planetrow->data['colonizer'] . ", spy_sonde:" . app::$planetrow->data['spy_sonde'] . ", spy:".intval(user::get()->data['spy']).", recycler:" . app::$planetrow->data['recycler'] . ", interplanetary_misil:" . app::$planetrow->data['interplanetary_misil'] . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = new Array(); ";
+		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '" . DPATH . "'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", current_planet:" . $this->user->current_planet . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = new Array(); ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
 		$array = json_decode($_SESSION['fleet_shortcut'], true);
@@ -180,7 +172,7 @@ class GalaxyController extends ApplicationController
 		
 		$galaxyRow = '';
 		
-		$GalaxyRow = db::query("SELECT
+		$GalaxyRow = $this->db->query("SELECT
 								p.planet, p.id AS id_planet, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
 								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
 								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.urlaubs_modus_time, u.banaday, u.sex, u.avatar,
@@ -193,13 +185,13 @@ class GalaxyController extends ApplicationController
 				LEFT JOIN game_users u ON (u.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN game_users_info ui ON (ui.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN game_alliance a ON (a.id = u.ally_id AND u.ally_id != 0)
-				LEFT JOIN game_alliance_diplomacy ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . user::get()->data['ally_id'] . ") AND ad.status = 1 AND u.ally_id != 0)
+				LEFT JOIN game_alliance_diplomacy ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
 				LEFT JOIN game_statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1') 
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "';", '');
 		
 		$rows = array();
 		
-		while ($row = db::fetch_assoc($GalaxyRow))
+		while ($row = $GalaxyRow->fetch())
 		{
 			if ($row['luna_update'] != "" && $row['luna_update'] > $row['last_active'])
 				$row['last_active'] = $row['luna_update'];
@@ -207,10 +199,10 @@ class GalaxyController extends ApplicationController
 			unset($row['luna_update']);
 		
 			if ($row['destruyed'] != 0 && $row["id_planet"] != '')
-				app::$planetrow->checkAbandonPlanetState($row);
+				$this->planet->checkAbandonPlanetState($row);
 		
 			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
-				app::$planetrow->checkAbandonMoonState($row);
+				$this->planet->checkAbandonMoonState($row);
 
 			$online = $row['onlinetime'];
 		
@@ -251,9 +243,8 @@ class GalaxyController extends ApplicationController
 		$html .= "$('#galaxy').append(PrintRow());</script>";
 
 		$this->setContent($html);
-		$this->setTitle('Галактика');
+		$this->tag->setTitle('Галактика');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	private function ShowGalaxyMISelector ($Galaxy, $System, $Planet, $Current, $MICount)

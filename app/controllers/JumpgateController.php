@@ -2,21 +2,17 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
+use App\Lang;
 
 class JumpgateController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 
-		strings::includeLang('infos');
+		Lang::includeLang('infos');
 	}
 
 	public function show ()
@@ -25,16 +21,16 @@ class JumpgateController extends ApplicationController
 
 		die();
 
-		if ($_POST && (app::$planetrow->data['planet_type'] == 3 || app::$planetrow->data['planet_type'] == 5) && app::$planetrow->data['sprungtor'] > 0)
+		if ($_POST && ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) && $this->planet->sprungtor > 0)
 		{
-			$RestString = GetNextJumpWaitTime(app::$planetrow->data);
+			$RestString = GetNextJumpWaitTime($this->planet->data);
 			$NextJumpTime = $RestString['value'];
 			$JumpTime = time();
 
 			if ($NextJumpTime == 0)
 			{
 				$TargetPlanet = intval($_POST['jmpto']);
-				$TargetGate = db::query("SELECT `id`, `planet_type`, `sprungtor`, `last_jump_time` FROM game_planets WHERE `id` = '" . $TargetPlanet . "';", true);
+				$TargetGate = $this->db->query("SELECT `id`, `planet_type`, `sprungtor`, `last_jump_time` FROM game_planets WHERE `id` = '" . $TargetPlanet . "';")->fetch();
 
 				if (($TargetGate['planet_type'] == 3 || $TargetGate['planet_type'] == 5) && $TargetGate['sprungtor'] > 0)
 				{
@@ -58,9 +54,9 @@ class JumpgateController extends ApplicationController
 								die();
 							}
 
-							if (abs(intval($_POST[$ShipLabel])) > app::$planetrow->data[$resource[$Ship]])
+							if (abs(intval($_POST[$ShipLabel])) > $this->planet->data[$resource[$Ship]])
 							{
-								$ShipArray[$Ship] = app::$planetrow->data[$resource[$Ship]];
+								$ShipArray[$Ship] = $this->planet->data[$resource[$Ship]];
 							}
 							else
 							{
@@ -79,24 +75,24 @@ class JumpgateController extends ApplicationController
 							$QryUpdateOri .= $SubQueryOri;
 							$QryUpdateOri .= "`last_jump_time` = '" . $JumpTime . "' ";
 							$QryUpdateOri .= "WHERE ";
-							$QryUpdateOri .= "`id` = '" . app::$planetrow->data['id'] . "';";
-							db::query($QryUpdateOri);
+							$QryUpdateOri .= "`id` = '" . $this->planet->id . "';";
+							$this->db->query($QryUpdateOri);
 
 							$QryUpdateDes = "UPDATE game_planets SET ";
 							$QryUpdateDes .= $SubQueryDes;
 							$QryUpdateDes .= "`last_jump_time` = '" . $JumpTime . "' ";
 							$QryUpdateDes .= "WHERE ";
 							$QryUpdateDes .= "`id` = '" . $TargetGate['id'] . "';";
-							db::query($QryUpdateDes);
+							$this->db->query($QryUpdateDes);
 
 							$QryUpdateUsr = "UPDATE game_users SET ";
 							$QryUpdateUsr .= "`current_planet` = '" . $TargetGate['id'] . "' ";
 							$QryUpdateUsr .= "WHERE ";
-							$QryUpdateUsr .= "`id` = '" . user::get()->data['id'] . "';";
-							db::query($QryUpdateUsr);
+							$QryUpdateUsr .= "`id` = '" . $this->user->id . "';";
+							$this->db->query($QryUpdateUsr);
 
-							app::$planetrow->data['last_jump_time'] = $JumpTime;
-							$RestString = GetNextJumpWaitTime(app::$planetrow->data);
+							$this->planet->last_jump_time = $JumpTime;
+							$RestString = GetNextJumpWaitTime($this->planet->data);
 							$RetMessage = _getText('gate_jump_done') . " - " . $RestString['string'];
 						}
 						else

@@ -498,6 +498,8 @@ function load (url)
 
 	showLoading();
 
+	addHistoryState(url);
+
 	$.ajax(
 	{
 		url: url+'&ajax=1&random=' + Math.random()*99999,
@@ -546,7 +548,7 @@ function load (url)
 				});
 			}
 
-			if (data.data.tutorial.toast != '')
+			if (data.data.tutorial !== undefined && data.data.tutorial.toast != '')
 			{
 				$.toast({
 					text: data.data.tutorial.toast,

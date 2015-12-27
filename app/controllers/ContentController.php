@@ -2,32 +2,27 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\request;
-use Xnova\pageHelper;
-
 class ContentController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 
 	function show()
 	{
-		if (!request::G('article'))
+		if (!$this->request->getQuery('article'))
 			$this->message('Страница не найдена!');
 
-		$content = db::query("SELECT * FROM game_content WHERE alias = '".request::G('article')."' LIMIT 1", true);
+		$content = $this->db->query("SELECT * FROM game_content WHERE alias = '".$this->request->getQuery('article')."' LIMIT 1")->fetch();
 
 		if (!isset($content['id']))
 			$this->message('Страница не найдена!');
 
-		$this->setTemplate('content');
-		$this->set('html', stripslashes($content['html']));
+		$this->view->pick('content');
+		$this->view->setVar('html', stripslashes($content['html']));
 
-		$this->setTitle($content['title']);
+		$this->tag->setTitle($content['title']);
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }

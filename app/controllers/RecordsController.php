@@ -2,15 +2,13 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\strings;
-use Xnova\pageHelper;
+use App\Helpers;
 
 class RecordsController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
@@ -32,35 +30,35 @@ class RecordsController extends ApplicationController
 			{
 				$Builds[_getText('tech', $ElementID)] = array(
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? strings::pretty_number($ElementIDArray['maxlvl']) : '-',
+					'count' => ($ElementIDArray['maxlvl'] != 0) ? Helpers::pretty_number($ElementIDArray['maxlvl']) : '-',
 				);
 			}
 			elseif ($ElementID >= 41 && $ElementID <= 99 && $ElementID != 44)
 			{
 				$MoonsBuilds[_getText('tech', $ElementID)] = array(
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? strings::pretty_number($ElementIDArray['maxlvl']) : '-',
+					'count' => ($ElementIDArray['maxlvl'] != 0) ? Helpers::pretty_number($ElementIDArray['maxlvl']) : '-',
 				);
 			}
 			elseif ($ElementID >= 101 && $ElementID <= 199)
 			{
 				$Techno[_getText('tech', $ElementID)] = array(
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? strings::pretty_number($ElementIDArray['maxlvl']) : '-',
+					'count' => ($ElementIDArray['maxlvl'] != 0) ? Helpers::pretty_number($ElementIDArray['maxlvl']) : '-',
 				);
 			}
 			elseif ($ElementID >= 201 && $ElementID <= 399)
 			{
 				$Fleet[_getText('tech', $ElementID)] = array(
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? strings::pretty_number($ElementIDArray['maxlvl']) : '-',
+					'count' => ($ElementIDArray['maxlvl'] != 0) ? Helpers::pretty_number($ElementIDArray['maxlvl']) : '-',
 				);
 			}
 			elseif ($ElementID >= 401 && $ElementID <= 599)
 			{
 				$Defense[_getText('tech', $ElementID)] = array(
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? strings::pretty_number($ElementIDArray['maxlvl']) : '-',
+					'count' => ($ElementIDArray['maxlvl'] != 0) ? Helpers::pretty_number($ElementIDArray['maxlvl']) : '-',
 				);
 			}
 		}
@@ -78,12 +76,11 @@ class RecordsController extends ApplicationController
 			'update' => core::getConfig('stat_update'),
 		);
 
-		$this->setTemplate('records');
-		$this->set('parse', $parse);
+		$this->view->pick('records');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Таблица рекордов');
+		$this->tag->setTitle('Таблица рекордов');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

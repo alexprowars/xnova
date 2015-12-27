@@ -2,11 +2,7 @@
 
 namespace App\Controllers;
 
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\building;
-use Xnova\pageHelper;
+use App\Lang;
 
 class BuildingsController extends ApplicationController
 {
@@ -15,15 +11,15 @@ class BuildingsController extends ApplicationController
 	 */
 	private $building;
 
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('buildings');
+		Lang::includeLang('buildings');
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 
-		if (user::get()->data['urlaubs_modus_time'] > 0)
+		if ($this->user->banned > 0)
 		{
 			$this->message("Нет доступа!");
 		}
@@ -35,41 +31,39 @@ class BuildingsController extends ApplicationController
 	{
 		global $resource;
 
-		if (app::$planetrow->data[$resource[21]] == 0)
+		if ($this->planet->data[$resource[21]] == 0)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
 		$parse['mode'] = $this->mode;
 
-		$this->setTemplate('buildings/buildings_shipyard');
-		$this->set('parse', $parse);
+		$this->view->pick('buildings/buildings_shipyard');
+		$this->view->setVar('parse', $parse);
 
 		$data = $this->building->ElementBuildListBox();
 
 		if ($data['count'] > 0)
 		{
-			$this->setTemplate('buildings/buildings_script');
-			$this->set('parse', $data);
+			$this->view->pick('buildings/buildings_script');
+			$this->view->setVar('parse', $data);
 		}
 
-		$this->setTitle('Верфь');
-		$this->display();
+		$this->tag->setTitle('Верфь');
 	}
 
 	public function research()
 	{
 		global $resource;
 
-		if (app::$planetrow->data[$resource[31]] == 0)
+		if ($this->planet->data[$resource[31]] == 0)
 			$this->message(_getText('no_laboratory'), _getText('Research'));
 
 		$parse = $this->building->pageResearch(($this->mode == 'research_fleet' ? 'fleet' : ''));
 
-		$this->setTemplate('buildings/buildings_research');
-		$this->set('parse', $parse);
+		$this->view->pick('buildings/buildings_research');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Исследования');
-		$this->display();
+		$this->tag->setTitle('Исследования');
 	}
 
 	public function research_fleet()
@@ -81,46 +75,44 @@ class BuildingsController extends ApplicationController
 	{
 		global $resource;
 
-		if (app::$planetrow->data[$resource[21]] == 0 && app::$planetrow->data['planet_type'] != 5)
+		if ($this->planet->data[$resource[21]] == 0 && $this->planet->planet_type != 5)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
 
-		if (app::$planetrow->data['planet_type'] == 5)
-			user::get()->setUserOption('only_available', 1);
+		if ($this->planet->planet_type == 5)
+			$this->user->setUserOption('only_available', 1);
 
 		$parse = $this->building->pageShipyard('defense');
 		$parse['mode'] = $this->mode;
 
-		$this->setTemplate('buildings/buildings_shipyard');
-		$this->set('parse', $parse);
+		$this->view->pick('buildings/buildings_shipyard');
+		$this->view->setVar('parse', $parse);
 
 		$data = $this->building->ElementBuildListBox();
 
 		if ($data['count'] > 0)
 		{
-			$this->setTemplate('buildings/buildings_script');
-			$this->set('parse', $data);
+			$this->view->pick('buildings/buildings_script');
+			$this->view->setVar('parse', $data);
 		}
 
-		$this->setTitle('Оборона');
-		$this->display();
+		$this->tag->setTitle('Оборона');
 	}
 	
 	public function show ()
 	{
 		$parse = $this->building->pageBuilding();
 
-		if (app::$planetrow->data['planet_type'] == 3)
+		if ($this->planet->planet_type == 3)
 			$parse['planettype'] = 'moon';
-		elseif (app::$planetrow->data['planet_type'] == 5)
+		elseif ($this->planet->planet_type == 5)
 			$parse['planettype'] = 'base';
 		else
 			$parse['planettype'] = 'planet';
 
-		$this->setTemplate('buildings/buildings_area');
-		$this->set('parse', $parse);
+		$this->view->pick('buildings/buildings_area');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Постройки');
-		$this->display();
+		$this->tag->setTitle('Постройки');
 	}
 }
 

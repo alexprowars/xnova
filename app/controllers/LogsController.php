@@ -2,20 +2,16 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xnova\User;
-use Xnova\pageHelper;
-
 class LogsController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
 	{
-		$this->setTemplate('jurnal');
+		$this->view->pick('jurnal');
 		
 		$journal = @intval($_POST['journal']);
 		$days = @intval($_POST['days']);
@@ -62,13 +58,13 @@ class LogsController extends ApplicationController
 		
 		$start = floor($range / 100 % 100) * 100;
 		
-		$MaxLogs = db::query("SELECT COUNT(*) AS `count` FROM game_logs WHERE `s_id` = '".user::get()->data['id']."' AND `mission` = '" . $journal . "' " . $text_query . ";", true);
+		$MaxLogs = $this->db->query("SELECT COUNT(*) AS `count` FROM game_logs WHERE `s_id` = '".$this->user->id."' AND `mission` = '" . $journal . "' " . $text_query . ";")->fetch();
 		
-		$Logs = db::query("SELECT * FROM game_logs WHERE `s_id` = '".user::get()->data['id']."' AND `mission` = '" . $journal . "' " . $text_query . " ORDER BY `time` DESC LIMIT " . $start . ",10;");
+		$Logs = $this->db->query("SELECT * FROM game_logs WHERE `s_id` = '".$this->user->id."' AND `mission` = '" . $journal . "' " . $text_query . " ORDER BY `time` DESC LIMIT " . $start . ",10;");
 		
 		$count = floor($MaxLogs['count'] / 10);
 		
-		if (db::num_rows($Logs) > 0)
+		if ($Logs->numRows() > 0)
 		{
 		
 			$parse['count'] = "<td colspan=\"1\" class=\"c\" width=\"10\"%><center>Игрок:</center></td>
@@ -95,10 +91,10 @@ class LogsController extends ApplicationController
 			$parse['log'] .= "<br><table width=\"679\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\">";
 			$parse['log'] .= "<tr><td class=\"c\">Время</td><td class=\"c\">Отправлен с</td><td class=\"c\">Отправлен на</td><td class=\"c\">&nbsp;</td></tr>";
 		
-			while ($Log = db::fetch($Logs))
+			while ($Log = $Logs->fetch())
 			{
 		
-				$parse['log'] .= "<tr><td class=\"b\"><center><b>" . datezone("H:i:s", $Log['time']) . "</b></center></td>
+				$parse['log'] .= "<tr><td class=\"b\"><center><b>" . $this->game->datezone("H:i:s", $Log['time']) . "</b></center></td>
 						<td class=\"b\"><center><a href=\"?set=galaxy&r=3&galaxy=" . $Log['s_galaxy'] . "&system=" . $Log['s_system'] . "\">[" . $Log['s_galaxy'] . ":" . $Log['s_system'] . ":" . $Log['s_planet'] . "]</a></center></td>
 						<td class=\"b\"><center><font color=lime><a href=\"?set=galaxy&r=3&galaxy=" . $Log['e_galaxy'] . "&system=" . $Log['e_system'] . "\">[" . $Log['e_galaxy'] . ":" . $Log['e_system'] . ":" . $Log['e_planet'] . "]</a>&nbsp;<a href=?set=players&id=" . $Log['e_id'] . "></font></center></td>
 						<td class=\"b\"><center><a href=?set=players&id=" . $Log['e_id'] . "><img src=/skins/default/img/s.gif alt=\"Информация об игроке\" title=\"Информация об игроке\" border=0></a></td></center></tr>";
@@ -113,10 +109,9 @@ class LogsController extends ApplicationController
 		}
 		
 		
-		$this->set('parse', $parse);
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Бортовой журнал');
-		$this->display();
+		$this->tag->setTitle('Бортовой журнал');
 	}
 }
 

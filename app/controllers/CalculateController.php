@@ -2,57 +2,49 @@
 
 namespace App\Controllers;
 
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-
 class CalculateController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 
 	public function cost()
 	{
-		$this->setTemplate('calculate/cost');
-		$this->set('planet', app::$planetrow->data);
-		$this->set('user', user::get()->data);
+		$this->view->pick('calculate/cost');
+		$this->view->setVar('planet', $this->planet->data);
+		$this->view->setVar('user', $this->user->data);
 
-		$this->setTitle('Калькуляторы');
+		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function moon()
 	{
-		$this->setTemplate('calculate/moon');
+		$this->view->pick('calculate/moon');
 
-		$this->setTitle('Калькуляторы');
+		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function fleet()
 	{
-		$this->setTemplate('calculate/fleet');
-		$this->set('planet', app::$planetrow->data);
-		$this->set('user', user::get()->data);
+		$this->view->pick('calculate/fleet');
+		$this->view->setVar('planet', $this->planet->data);
+		$this->view->setVar('user', $this->user->data);
 
-		$this->setTitle('Калькуляторы');
+		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 	
 	public function show ()
 	{
-		$this->setTemplate('calculate/index');
+		$this->view->pick('calculate/index');
 
-		$this->setTitle('Калькуляторы');
+		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

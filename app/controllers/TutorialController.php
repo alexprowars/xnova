@@ -2,21 +2,17 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\request;
-use Xcms\sql;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
+use App\Helpers;
+use App\Lang;
+use App\Sql;
 
 class TutorialController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -27,7 +23,7 @@ class TutorialController extends ApplicationController
 		
 		$requer = 0;
 
-		strings::includeLang('tutorial');
+		Lang::includeLang('tutorial');
 
 		$stage = request::G('q', 0, VALUE_INT);
 
@@ -37,19 +33,19 @@ class TutorialController extends ApplicationController
 			$parse['task'] = array();
 			$parse['rewd'] = array();
 
-			$qInfo = db::query("SELECT * FROM game_users_quests WHERE user_id = ".user::get()->getId()." AND quest_id = ".$stage."", true);
+			$qInfo = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = ".$stage."")->fetch();
 
 			if (!isset($qInfo['id']))
 			{
 				$qInfo = array
 				(
-					'user_id' => user::get()->getId(),
+					'user_id' => $this->user->getId(),
 					'quest_id' => $stage,
 					'finish' => 0,
 					'stage' => 0
 				);
 
-				$qInfo['id'] = sql::build()->insert('game_users_quests')->set($qInfo)->execute();
+				$qInfo['id'] = Sql::build()->insert('game_users_quests')->set($qInfo)->execute();
 			}
 
 			$errors = 0;
@@ -64,7 +60,7 @@ class TutorialController extends ApplicationController
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset(app::$user->data[$resource[$element]]) ? (app::$user->data[$resource[$element]] >= $level) : (app::$planetrow->data[$resource[$element]] >= $level);
+						$check = isset($this->user->data[$resource[$element]]) ? ($this->user->data[$resource[$element]] >= $level) : ($this->planet->data[$resource[$element]] >= $level);
 
 						if ($chk == true)
 							$chk = $check;
@@ -84,14 +80,14 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == '!PLANET_NAME')
 				{
-					$check = app::$planetrow->data['name'] != $taskVal ? true : false;
+					$check = $this->planet->name != $taskVal ? true : false;
 
 					$parse['task'][] = array('Переименовать планету', $check);
 				}
 
 				if ($taskKey == 'BUDDY_COUNT')
 				{
-					$count = db::first(db::query("SELECT COUNT(*) AS num FROM game_buddy WHERE sender = ".app::$user->data['id']." OR owner = ".app::$user->data['id']."", true));
+					$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_buddy WHERE sender = ".$this->user->data['id']." OR owner = ".$this->user->data['id']."");
 
 					$check = $count >= $taskVal ? true : false;
 
@@ -100,7 +96,7 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == 'ALLY')
 				{
-					$check = app::$user->data['ally_id'] > 0 ? true : false;
+					$check = $this->user->data['ally_id'] > 0 ? true : false;
 
 					$parse['task'][] = array('Вступить в альянс с кол-во игроков: '.$taskVal, $check);
 				}
@@ -109,7 +105,7 @@ class TutorialController extends ApplicationController
 				{
 					if ($taskVal === true)
 					{
-						$check = app::$planetrow->data[$resource[22]] > 0 || app::$planetrow->data[$resource[23]] > 0 || app::$planetrow->data[$resource[24]] > 0;
+						$check = $this->planet->data[$resource[22]] > 0 || $this->planet->data[$resource[23]] > 0 || $this->planet->data[$resource[24]] > 0;
 
 						$parse['task'][] = array('Построить любое хранилище ресурсов', $check);
 					}
@@ -131,7 +127,7 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == 'PLANETS')
 				{
-					$count = db::first(db::query("SELECT COUNT(*) AS num FROM game_planets WHERE id_owner = ".user::get()->getId()." AND planet_type = 1", true));
+					$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_planets WHERE id_owner = ".$this->user->getId()." AND planet_type = 1");
 
 					$check = $count >= $taskVal ? true : false;
 
@@ -146,7 +142,7 @@ class TutorialController extends ApplicationController
 
 			if (isset($_GET['continue']) && !$errors && $qInfo['finish'] == 0)
 			{
-				//db::query("UPDATE game_planets SET `" . $resource[401] . "` = `" . $resource[401] . "` + 3 WHERE `id` = '" . app::$planetrow->data['id'] . "';");
+				//$this->db->query("UPDATE game_planets SET `" . $resource[401] . "` = `" . $resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 
 				$planetData = array();
 				$userData = array();
@@ -173,7 +169,7 @@ class TutorialController extends ApplicationController
 								$planetData['+'.$resource[$element]] = $level;
 							elseif (in_array($element, $reslist['officier']))
 							{
-								if (user::get()->data[$resource[$element]] > time())
+								if ($this->user->data[$resource[$element]] > time())
 									$userData['+'.$resource[$element]] = $level;
 								else
 									$userData[$resource[$element]] = time() + $level;
@@ -190,26 +186,26 @@ class TutorialController extends ApplicationController
 					}
 				}
 
-				sql::build()->update('game_users_quests')->setField('finish', '1')->where('id', '=', $qInfo['id'])->execute();
+				Sql::build()->update('game_users_quests')->setField('finish', '1')->where('id', '=', $qInfo['id'])->execute();
 
 				if (count($planetData))
-					app::$planetrow->saveData($planetData);
+					$this->planet->saveData($planetData);
 				if (count($userData))
-					app::$user->saveData($userData);
+					$this->user->saveData($userData);
 
-				request::redirectTo('?set=tutorial');
+				$this->response->redirect('?set=tutorial');
 			}
 
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 			{
 				if ($rewardKey == 'metal')
-					$parse['rewd'][] = strings::pretty_number($rewardVal).' ед. '._getText('Metal').'а';
+					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Metal').'а';
 				elseif ($rewardKey == 'crystal')
-					$parse['rewd'][] = strings::pretty_number($rewardVal).' ед. '._getText('Crystal').'а';
+					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Crystal').'а';
 				elseif ($rewardKey == 'deuterium')
-					$parse['rewd'][] = strings::pretty_number($rewardVal).' ед. '._getText('Deuterium').'';
+					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Deuterium').'';
 				elseif ($rewardKey == 'credits')
-					$parse['rewd'][] = strings::pretty_number($rewardVal).' ед. '._getText('Credits').'';
+					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Credits').'';
 				elseif ($rewardKey == 'BUILD')
 				{
 					foreach ($rewardVal AS $element => $level)
@@ -232,23 +228,22 @@ class TutorialController extends ApplicationController
 				}
 			}
 
-			$this->setTemplate('quests_info');
+			$this->view->pick('quests_info');
 
-			$this->set('stage', $stage);
-			$this->set('errors', $errors);
+			$this->view->setVar('stage', $stage);
+			$this->view->setVar('errors', $errors);
 
-			$this->set('parse', $parse);
+			$this->view->setVar('parse', $parse);
 
-			$this->setTitle('Задание. '.$parse['info']['TITLE']);
+			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
 			$this->showTopPanel(false);
-			$this->display();
 		}
 
 		$userQuests = array();
 
-		$dbRes = db::query("SELECT * FROM game_users_quests WHERE user_id = ".user::get()->getId()."");
+		$dbRes = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()."");
 
-		while ($res = db::fetch($dbRes))
+		while ($res = $dbRes->fetch())
 		{
 			$userQuests[$res['quest_id']] = $res;
 		}
@@ -269,10 +264,10 @@ class TutorialController extends ApplicationController
 					if ($key == 'QUEST' && (!isset($userQuests[$req]) || (isset($userQuests[$req]) && $userQuests[$req]['finish'] == 0)))
 						$available = false;
 
-					if ($key == 'LEVEL_MINIER' && user::get()->data['lvl_minier'] < $req)
+					if ($key == 'LEVEL_MINIER' && $this->user->lvl_minier < $req)
 						$available = false;
 
-					if ($key == 'LEVEL_RAID' && user::get()->data['lvl_raid'] < $req)
+					if ($key == 'LEVEL_RAID' && $this->user->lvl_raid < $req)
 						$available = false;
 				}
 			}
@@ -284,12 +279,11 @@ class TutorialController extends ApplicationController
 			$parse['list'][] = $quest;
 		}
 
-		$this->setTemplate('quests_list');
-		$this->set('parse', $parse);
+		$this->view->pick('quests_list');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Обучение');
+		$this->tag->setTitle('Обучение');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

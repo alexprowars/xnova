@@ -2,23 +2,20 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\request;
-use Xcms\sql;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Helpers;
+use App\Lang;
+use App\Sql;
 
 class OfficierController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 		
-		if (user::get()->data['urlaubs_modus_time'] > 0)
+		if ($this->user->banned > 0)
 			$this->message("Нет доступа!");
 
-		strings::includeLang('officier');
+		Lang::includeLang('officier');
 	}
 	
 	public function show ()
@@ -46,27 +43,27 @@ class OfficierController extends ApplicationController
 				$times = 2592000;
 			}
 		
-			if ($need_c > 0 && $times > 0 && user::get()->data['credits'] >= $need_c)
+			if ($need_c > 0 && $times > 0 && $this->user->credits >= $need_c)
 			{
 				$selected = request::P('buy', 0, VALUE_INT);
 
 				if (in_array($selected, $reslist['officier']))
 				{
-					if (user::get()->data[$resource[$selected]] > time())
-						user::get()->data[$resource[$selected]] = user::get()->data[$resource[$selected]] + $times;
+					if ($this->user->data[$resource[$selected]] > time())
+						$this->user->data[$resource[$selected]] = $this->user->data[$resource[$selected]] + $times;
 					else
-						user::get()->data[$resource[$selected]] = time() + $times;
+						$this->user->data[$resource[$selected]] = time() + $times;
 
-					user::get()->data['credits'] -= $need_c;
+					$this->user->credits -= $need_c;
 
-					sql::build()->update('game_users')->set(array
+					Sql::build()->update('game_users')->set(array
 					(
-						'credits' => user::get()->data['credits'],
-						$resource[$selected] => user::get()->data[$resource[$selected]],
+						'credits' => $this->user->credits,
+						$resource[$selected] => $this->user->data[$resource[$selected]],
 					))
-					->where('id', '=', user::get()->getId())->execute();
+					->where('id', '=', $this->user->getId())->execute();
 		
-					db::query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . user::get()->data['id'] . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
+					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
 		
 					$Message = _getText('OffiRecrute');
 				}
@@ -81,7 +78,7 @@ class OfficierController extends ApplicationController
 		else
 		{
 			$parse['off_points'] = _getText('off_points');
-			$parse['alv_points'] = strings::pretty_number(user::get()->data['credits']);
+			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
 			$parse['list'] = array();
 
 			foreach ($reslist['officier'] AS $officier)
@@ -89,9 +86,9 @@ class OfficierController extends ApplicationController
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if (user::get()->data[$resource[$officier]] > time())
+				if ($this->user->data[$resource[$officier]] > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . datezone("d.m.Y H:i", user::get()->data[$resource[$officier]]) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->data[$resource[$officier]]) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else
@@ -107,13 +104,12 @@ class OfficierController extends ApplicationController
 				$parse['list'][] = $bloc;
 			}
 		
-			$this->setTemplate('officier');
-			$this->set('parse', $parse);
+			$this->view->pick('officier');
+			$this->view->setVar('parse', $parse);
 		}
 		
-		$this->setTitle('Офицеры');
+		$this->tag->setTitle('Офицеры');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

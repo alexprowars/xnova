@@ -2,21 +2,16 @@
 
 namespace App\Controllers;
 
-use Xcms\cache;
-use Xcms\core;
-use Xcms\db;
-use Xcms\request;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Helpers;
+use App\Lang;
 
 class StatController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('stat');
+		Lang::includeLang('stat');
 	}
 	
 	public function show ()
@@ -49,34 +44,34 @@ class StatController extends ApplicationController
 				$field = 'total';
 		}
 
-		$this->setTemplate('stat');
-		$this->set('who', $who);
-		$this->set('type', $type);
+		$this->view->pick('stat');
+		$this->view->setVar('who', $who);
+		$this->view->setVar('type', $type);
 
 		$stat = array();
 
 		if ($who == 3)
 		{
-			$this->setTemplate('stat_race');
+			$this->view->pick('stat_race');
 
 			$parse['range'] = "<option value='0'>1-4</option>";
 
-			$query = db::query("SELECT * FROM game_statpoints WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $field . "_rank` ASC;");
+			$query = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $field . "_rank` ASC;");
 
-			while ($StatRow = db::fetch_assoc($query))
+			while ($StatRow = $query->fetch())
 			{
 				$stats['player_rank'] = $StatRow[$field.'_rank'];
 				$stats['player_race'] = $StatRow['race'];
 				$stats['player_count'] = $StatRow['total_count'];
-				$stats['player_points'] = strings::pretty_number($StatRow[$field.'_points']);
-				$stats['player_pointatuser'] = strings::pretty_number(floor($StatRow[$field.'_points'] / $StatRow['total_count']));
+				$stats['player_points'] = Helpers::pretty_number($StatRow[$field.'_points']);
+				$stats['player_pointatuser'] = Helpers::pretty_number(floor($StatRow[$field.'_points'] / $StatRow['total_count']));
 
 				$stat[] = $stats;
 			}
 		}
 		elseif ($who == 2)
 		{
-			$this->setTemplate('stat_alliance');
+			$this->view->pick('stat_alliance');
 			$stat = array();
 
 			if (core::getConfig('active_alliance') > 100)
@@ -95,11 +90,11 @@ class StatController extends ApplicationController
 			}
 
 			$start *= 100;
-			$query = db::query("SELECT s.*, a.`id`, a.`ally_tag`, a.`ally_name`, a.`ally_members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $field . "_rank` ASC LIMIT " . $start . ",100;");
+			$query = $this->db->query("SELECT s.*, a.`id`, a.`ally_tag`, a.`ally_name`, a.`ally_members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $field . "_rank` ASC LIMIT " . $start . ",100;");
 
 			$start++;
 
-			while ($StatRow = db::fetch_assoc($query))
+			while ($StatRow = $query->fetch())
 			{
 				$stats['ally_id'] = $StatRow['id'];
 				$stats['ally_rank'] = $start;
@@ -115,15 +110,15 @@ class StatController extends ApplicationController
 				if ($ranking > 0)
 					$stats['ally_rankplus'] = "<font color=\"green\">+" . $ranking . "</font>";
 
-				if ($StatRow['ally_name'] == user::get()->data['ally_name'])
+				if ($StatRow['ally_name'] == $this->user->ally_name)
 					$stats['ally_name'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
 				else
 					$stats['ally_name'] = "<a href=\"?set=alliance&mode=ainfo&a=" . $StatRow['id'] . "\">" . $StatRow['ally_name'] . "</a>";
 
 				$stats['ally_mes'] = '';
 				$stats['ally_members'] = $StatRow['ally_members'];
-				$stats['ally_points'] = strings::pretty_number($StatRow[$field.'_points']);
-				$stats['ally_members_points'] = strings::pretty_number(floor($StatRow[$field.'_points'] / $StatRow['ally_members']));
+				$stats['ally_points'] = Helpers::pretty_number($StatRow[$field.'_points']);
+				$stats['ally_members_points'] = Helpers::pretty_number(floor($StatRow[$field.'_points'] / $StatRow['ally_members']));
 
 				$stat[] = $stats;
 
@@ -132,21 +127,21 @@ class StatController extends ApplicationController
 		}
 		else
 		{
-			$this->setTemplate('stat_players');
+			$this->view->pick('stat_players');
 			$stats = array();
 
 			if (!$range)
 			{
-				$records = cache::get('app::records_'.user::get()->getId().'');
+				$records = cache::get('app::records_'.$this->user->getId().'');
 
 				if ($records === false)
 				{
-					$records = db::query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . user::get()->getId() . "';", true);
+					$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
 					if (!is_array($records))
 						$records = array();
 
-					cache::set('app::records_'.user::get()->getId().'', $records, 1800);
+					cache::set('app::records_'.$this->user->getId().'', $records, 1800);
 				}
 
 				if (isset($records[$field.'_rank']))
@@ -170,11 +165,11 @@ class StatController extends ApplicationController
 
 			$start *= 100;
 
-			$query = db::query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `stat_hide` = 0 ORDER BY `" . $field . "_rank` ASC LIMIT " . $start . ",100;");
+			$query = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `stat_hide` = 0 ORDER BY `" . $field . "_rank` ASC LIMIT " . $start . ",100;");
 
 			$start++;
 
-			while ($StatRow = db::fetch_assoc($query))
+			while ($StatRow = $query->fetch())
 			{
 				$stats['player_id'] = $StatRow['id_owner'];
 				$stats['player_rank'] = $start;
@@ -193,15 +188,15 @@ class StatController extends ApplicationController
 				if ($ranking > 0)
 					$stats['player_rankplus'] = "<span class=\"positive\">+" . $ranking . "</span>";
 
-				if ((user::get()->isAuthorized() && $StatRow['id_owner'] == user::get()->data['id']) || $StatRow['id_owner'] == $pid)
+				if (($this->auth->isAuthorized() && $StatRow['id_owner'] == $this->user->id) || $StatRow['id_owner'] == $pid)
 					$stats['player_name'] = "<span class=\"neutral\">" . $StatRow['username'] . "</span>";
 				else
 					$stats['player_name'] = $StatRow['username'];
 
-				if (user::get()->isAuthorized())
+				if ($this->auth->isAuthorized())
 					$stats['player_mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '?set=messages&mode=write&id=" . $StatRow['id_owner'] . "&ajax&popup', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
 
-				if (user::get()->isAuthorized() && $StatRow['ally_name'] == user::get()->data['ally_name'])
+				if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
 					$stats['player_alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
 				elseif ($StatRow['ally_name'] != '')
 					$stats['player_alliance'] = "<a href=\"?set=alliance&mode=ainfo&a=" . $StatRow['id_ally'] . "\">" . $StatRow['ally_name'] . "</a>";
@@ -210,7 +205,7 @@ class StatController extends ApplicationController
 
 				$stats['player_race'] = $StatRow['race'];
 
-				$stats['player_points'] = strings::pretty_number($StatRow[$field.'_points']);
+				$stats['player_points'] = Helpers::pretty_number($StatRow[$field.'_points']);
 
 				$stat[] = $stats;
 
@@ -218,15 +213,14 @@ class StatController extends ApplicationController
 			}
 		}
 
-		$parse['stat_date'] = datezone("d.m.Y - H:i:s", core::getConfig('stat_update'));
+		$parse['stat_date'] = $this->game->datezone("d.m.Y - H:i:s", core::getConfig('stat_update'));
 
-		$this->set('stat', $stat);
+		$this->view->setVar('stat', $stat);
 		$this->setTemplateName('stat');
-		$this->set('parse', $parse);
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Статистика');
+		$this->tag->setTitle('Статистика');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

@@ -2,32 +2,29 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\request;
-use Xcms\sql;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Helpers;
+use App\Lang;
+use App\Sql;
 
 class AllianceController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('alliance');
+		Lang::includeLang('alliance');
 	}
 	
 	public function show ()
 	{
-		if (!user::get()->isAuthorized())
+		if (!$this->auth->isAuthorized())
 			$this->message(_getText('Denied_access'), "Ошипко");
 	
-		if (user::get()->data['ally_id'] == 0)
+		if ($this->user->ally_id == 0)
 		{
 			if (isset($_POST['bcancel']) && isset($_POST['r_id']))
 			{
-				db::query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND `u_id` = " . user::get()->data['id']);
+				$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND `u_id` = " . $this->user->id);
 
 				$this->message("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "?set=alliance", 2);
 			}
@@ -36,27 +33,26 @@ class AllianceController extends ApplicationController
 
 			$parse['list'] = array();
 
-			$requests = db::query("SELECT r.*, a.ally_name, a.ally_tag FROM game_alliance_requests r LEFT JOIN game_alliance a ON a.id = r.a_id WHERE r.u_id = " . user::get()->data['id'] . ";");
+			$requests = $this->db->query("SELECT r.*, a.ally_name, a.ally_tag FROM game_alliance_requests r LEFT JOIN game_alliance a ON a.id = r.a_id WHERE r.u_id = " . $this->user->id . ";");
 
-			while ($request = db::fetch_assoc($requests))
+			while ($request = $requests->fetch())
 				$parse['list'][] = array($request['a_id'], $request['ally_tag'], $request['ally_name'], $request['time']);
 
 			$parse['allys'] = array();
 
-			$allys = db::query("SELECT s.total_points, a.`id`, a.`ally_tag`, a.`ally_name`, a.`ally_members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`total_points` DESC LIMIT 0,15;");
+			$allys = $this->db->query("SELECT s.total_points, a.`id`, a.`ally_tag`, a.`ally_name`, a.`ally_members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`total_points` DESC LIMIT 0,15;");
 
-			while ($ally = db::fetch_assoc($allys))
+			while ($ally = $allys->fetch())
 			{
-				$ally['total_points'] = strings::pretty_number($ally['total_points']);
+				$ally['total_points'] = Helpers::pretty_number($ally['total_points']);
 				$parse['allys'][] = $ally;
 			}
 
-			$this->setTemplate('alliance/alliance_default');
-			$this->set('parse', $parse);
+			$this->view->pick('alliance/alliance_default');
+			$this->view->setVar('parse', $parse);
 
-			$this->setTitle(_getText('alliance'));
+			$this->tag->setTitle(_getText('alliance'));
 			$this->showTopPanel(false);
-			$this->display();
 		}
 		else
 		{
@@ -81,19 +77,19 @@ class AllianceController extends ApplicationController
 			$show = @intval($_GET['show']);
 			$t = @$_GET['t'];
 
-			$ally = db::query("SELECT * FROM game_alliance WHERE id = '" . user::get()->data['ally_id'] . "'", true);
+			$ally = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $this->user->ally_id . "'")->fetch();
 	
-			$ally_member = db::query("SELECT * FROM game_alliance_members WHERE u_id = " . user::get()->data['id'] . ";", true);
+			$ally_member = $this->db->query("SELECT * FROM game_alliance_members WHERE u_id = " . $this->user->id . ";")->fetch();
 	
 			if ($ally_member['a_id'] != $ally['id'])
-				db::query("DELETE FROM game_alliance_members WHERE u_id = " . user::get()->data['id'] . ";");
+				$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
 	
 			if ($ally['ally_ranks'] == NULL)
 				$ally['ally_ranks'] = 'a:0:{}';
 	
 			$ally_ranks = json_decode($ally['ally_ranks'], true);
 	
-			if ($ally['ally_owner'] == user::get()->data['id'])
+			if ($ally['ally_owner'] == $this->user->id)
 			{
 				$user_can_watch_memberlist_status = true;
 				$user_can_watch_memberlist = true;
@@ -132,45 +128,44 @@ class AllianceController extends ApplicationController
 	
 			if (!isset($ally['id']))
 			{
-				db::query("UPDATE game_users SET `ally_id` = 0 WHERE `id` = '" . user::get()->data['id'] . "'");
-				db::query("DELETE FROM game_alliance_members WHERE u_id = " . user::get()->data['id'] . ";");
+				$this->db->query("UPDATE game_users SET `ally_id` = 0 WHERE `id` = '" . $this->user->id . "'");
+				$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
 	
 				$this->message(_getText('ally_notexist'), _getText('your_alliance'), '?set=alliance');
 			}
 	
 			if (!isset($ally_member['a_id']))
 			{
-				db::query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally['id'] . ", " . user::get()->data['id'] . ", " . time() . ")");
+				$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally['id'] . ", " . $this->user->id . ", " . time() . ")");
 	
-				request::redirectTo("?set=alliance");
+				$this->response->redirect("?set=alliance");
 			}
 	
 			if ($mode == 'exit')
 			{
-				if ($ally['ally_owner'] == user::get()->data['id'])
+				if ($ally['ally_owner'] == $this->user->id)
 					$this->message(_getText('Owner_cant_go_out'), _getText('Alliance'));
 	
 				if (isset($_GET['yes']))
 				{
-					db::query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".user::get()->data['id']." AND id_ally = ".$ally['id']."");
+					$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$this->user->id." AND id_ally = ".$ally['id']."");
 	
-					db::query("UPDATE game_users SET `ally_id` = 0, `ally_name` = '' WHERE `id` = '" . user::get()->data['id'] . "'");
-					db::query("DELETE FROM game_alliance_members WHERE u_id = " . user::get()->data['id'] . ";");
+					$this->db->query("UPDATE game_users SET `ally_id` = 0, `ally_name` = '' WHERE `id` = '" . $this->user->id . "'");
+					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
 	
 					$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '?set=alliance', _getText('Ok'));
 				}
 				else
 					$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "?set=alliance&mode=exit&yes=1", "Подтвердить");
 
-				$this->setTitle('Выход их альянса');
+				$this->tag->setTitle('Выход их альянса');
 				$this->setContent($html);
 				$this->showTopPanel(false);
-				$this->display();
 			}
 	
 			if ($mode == 'diplo')
 			{
-				if ($ally['ally_owner'] != user::get()->data['id'] && !$user_diplomacy)
+				if ($ally['ally_owner'] != $this->user->id && !$user_diplomacy)
 					$this->message(_getText('Denied_access'), "Дипломатия");
 	
 				$parse['DText'] = "";
@@ -182,52 +177,52 @@ class AllianceController extends ApplicationController
 				if (isset($_GET['edit']) && $_GET['edit'] == "add")
 				{
 					$st = intval($_POST['status']);
-					$al = db::query("SELECT id, ally_name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'", true);
+					$al = $this->db->query("SELECT id, ally_name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'")->fetch();
 					if (!$al['id'])
 						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
-					$ad = db::query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $ally['id'] . " AND d_id = " . $al['id'] . ";");
-					if (db::num_rows($ad) > 0)
+					$ad = $this->db->query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $ally['id'] . " AND d_id = " . $al['id'] . ";");
+					if ($ad->numRows() > 0)
 						$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
 					if ($st < 0 || $st > 3)
 						$st = 0;
 	
-					db::query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $ally['id'] . ", " . $al['id'] . ", " . $st . ", 0, 1)");
-					db::query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $ally['id'] . ", " . $st . ", 0, 0)");
+					$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $ally['id'] . ", " . $al['id'] . ", " . $st . ", 0, 1)");
+					$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $ally['id'] . ", " . $st . ", 0, 0)");
 	
 					$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
 				}
 				elseif (isset($_GET['edit']) && $_GET['edit'] == "del")
 				{
-					$al = db::query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . ";", true);
+					$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . ";")->fetch();
 	
 					if (!$al['a_id'])
 						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
-					db::query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
-					db::query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
+					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
+					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 	
 					$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
 				}
 				elseif (isset($_GET['edit']) && $_GET['edit'] == "suc")
 				{
-					$al = db::query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . "", true);
+					$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . "")->fetch();
 	
 					if (!$al['a_id'])
 						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
 	
-					db::query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
-					db::query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
+					$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
+					$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 	
 					$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "?set=alliance&mode=diplo", 3);
 				}
 	
-				$dp = db::query("SELECT ad.*, a.ally_name FROM game_alliance_diplomacy ad, game_alliance a WHERE a.id = ad.d_id AND ad.a_id = '" . $ally['id'] . "';");
+				$dp = $this->db->query("SELECT ad.*, a.ally_name FROM game_alliance_diplomacy ad, game_alliance a WHERE a.id = ad.d_id AND ad.a_id = '" . $ally['id'] . "';");
 	
-				while ($diplo = db::fetch_assoc($dp))
+				while ($diplo = $dp->fetch())
 				{
 					if ($diplo['status'] == 0)
 					{
@@ -249,17 +244,16 @@ class AllianceController extends ApplicationController
 	
 				$parse['a_list'] = "<option value=\"0\">список альянсов";
 	
-				$ally_list = db::query("SELECT id, ally_name, ally_tag FROM game_alliance WHERE id != " . user::get()->data['ally_id'] . " AND ally_members > 0");
+				$ally_list = $this->db->query("SELECT id, ally_name, ally_tag FROM game_alliance WHERE id != " . $this->user->ally_id . " AND ally_members > 0");
 	
-				while ($a_list = db::fetch_assoc($ally_list))
+				while ($a_list = $ally_list->fetch())
 					$parse['a_list'] .= "<option value=\"" . $a_list['id'] . "\">" . $a_list['ally_name'] . " [" . $a_list['ally_tag'] . "]";
 	
-				$this->setTemplate('alliance/alliance_diplomacy');
-				$this->set('parse', $parse);
+				$this->view->pick('alliance/alliance_diplomacy');
+				$this->view->setVar('parse', $parse);
 
-				$this->setTitle('Дипломатия');
+				$this->tag->setTitle('Дипломатия');
 				$this->showTopPanel(false);
-				$this->display();
 			}
 	
 			if ($mode == 'memberslist' || ($mode == 'admin' && $edit == 'members'))
@@ -268,22 +262,22 @@ class AllianceController extends ApplicationController
 	
 				if ($mode == 'admin' && $edit == 'members')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_kick)
+					if ($ally['ally_owner'] != $this->user->id && !$user_can_kick)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
 					if (isset($kick))
 					{
-						if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_kick)
+						if ($ally['ally_owner'] != $this->user->id && !$user_can_kick)
 							$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
-						$u = db::query("SELECT * FROM game_users WHERE id = '" . $kick . "' LIMIT 1", true);
+						$u = $this->db->query("SELECT * FROM game_users WHERE id = '" . $kick . "' LIMIT 1")->fetch();
 	
 						if ($u['ally_id'] == $ally['id'] && $u['id'] != $ally['ally_owner'])
 						{
-							db::query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$u['id']." AND id_ally = ".$ally['id']."");
+							$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$u['id']." AND id_ally = ".$ally['id']."");
 	
-							db::query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE `id` = '" . $u['id'] . "'");
-							db::query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
+							$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE `id` = '" . $u['id'] . "'");
+							$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
 						}
 					}
 					elseif (request::P('newrang', '') != '' && request::R('id', 0, VALUE_INT) != 0)
@@ -291,17 +285,17 @@ class AllianceController extends ApplicationController
 						$id = request::R('id', 0, VALUE_INT);
 						$rank = request::P('newrang', 0, VALUE_INT);
 
-						$q = db::query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1", true);
+						$q = $this->db->query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
 	
 						if ((isset($ally_ranks[$rank - 1]) || $rank == 0) && $q['id'] != $ally['ally_owner'] && $q['ally_id'] == $ally['id'])
-							db::query("UPDATE game_alliance_members SET `rank` = '" . $rank . "' WHERE `u_id` = '" . $id . "';");
+							$this->db->query("UPDATE game_alliance_members SET `rank` = '" . $rank . "' WHERE `u_id` = '" . $id . "';");
 					}
 	
 					$parse['admin'] = true;
 				}
 				else
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_watch_memberlist)
+					if ($ally['ally_owner'] != $this->user->id && !$user_can_watch_memberlist)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
 					$parse['admin'] = false;
@@ -329,12 +323,12 @@ class AllianceController extends ApplicationController
 					elseif ($sort2 == 2)
 						$sort .= " ASC;";
 				}
-				$listuser = db::query("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id LEFT JOIN game_statpoints s ON s.id_owner = u.id AND stat_type = 1 WHERE u.ally_id = '" . user::get()->data['ally_id'] . "'" . $sort . "");
+				$listuser = $this->db->query("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id LEFT JOIN game_statpoints s ON s.id_owner = u.id AND stat_type = 1 WHERE u.ally_id = '" . $this->user->ally_id . "'" . $sort . "");
 	
 				$i = 0;
 				$parse['memberslist'] = array();
 	
-				while ($u = db::fetch_assoc($listuser))
+				while ($u = $listuser->fetch())
 				{
 					$i++;
 					$u['i'] = $i;
@@ -356,8 +350,8 @@ class AllianceController extends ApplicationController
 					else
 						$u["ally_range"] = _getText('Novate');
 	
-					$u['points'] = strings::pretty_number($u['total_points']);
-					$u['time'] = ($u['time'] > 0) ? datezone("d.m.Y H:i", $u['time']) : '-';
+					$u['points'] = Helpers::pretty_number($u['total_points']);
+					$u['time'] = ($u['time'] > 0) ? $this->game->datezone("d.m.Y H:i", $u['time']) : '-';
 	
 					$parse['memberslist'][] = $u;
 	
@@ -393,34 +387,33 @@ class AllianceController extends ApplicationController
 					$s = 1;
 	
 				if ($i != $ally['ally_members'])
-					db::query("UPDATE game_alliance SET `ally_members` = '" . $i . "' WHERE `id` = '" . $ally['id'] . "'");
+					$this->db->query("UPDATE game_alliance SET `ally_members` = '" . $i . "' WHERE `id` = '" . $ally['id'] . "'");
 	
 				$parse['i'] = $i;
 				$parse['s'] = $s;
 				$parse['status'] = $user_can_watch_memberlist_status;
 	
-				$this->setTemplate('alliance/alliance_members_admin');
-				$this->set('parse', $parse);
+				$this->view->pick('alliance/alliance_members_admin');
+				$this->view->setVar('parse', $parse);
 
-				$this->setTitle(_getText('Members_list'));
+				$this->tag->setTitle(_getText('Members_list'));
 				$this->showTopPanel(false);
-				$this->display();
 			}
 	
 			if ($mode == 'circular')
 			{
-				if (user::get()->data['mnl_alliance'] != 0)
-					db::query("UPDATE game_users SET `mnl_alliance` = '0' WHERE `id` = '" . user::get()->data['id'] . "'");
+				if ($this->user->messages_ally != 0)
+					$this->db->query("UPDATE game_users SET `messages_ally` = '0' WHERE `id` = '" . $this->user->id . "'");
 	
-				if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_send_mails)
+				if ($ally['ally_owner'] != $this->user->id && !$user_can_send_mails)
 					$this->message(_getText('Denied_access'), _getText('Send_circular_mail'));
 	
-				if (isset($_POST['deletemessages']) && $ally['ally_owner'] == user::get()->data['id'])
+				if (isset($_POST['deletemessages']) && $ally['ally_owner'] == $this->user->id)
 				{
 					$DeleteWhat = $_POST['deletemessages'];
 	
 					if ($DeleteWhat == 'deleteall')
-						db::query("DELETE FROM game_alliance_chat WHERE `ally_id` = '" . user::get()->data['ally_id'] . "';");
+						$this->db->query("DELETE FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "';");
 					elseif ($DeleteWhat == 'deletemarked' || $DeleteWhat == 'deleteunmarked')
 					{
 						$Mess_Array = array();
@@ -437,81 +430,80 @@ class AllianceController extends ApplicationController
 						$Mess_Array = implode(',', $Mess_Array);
 	
 						if ($Mess_Array != '')
-							db::query("DELETE FROM game_alliance_chat WHERE `id` " . (($DeleteWhat == 'deleteunmarked') ? 'NOT' : '') . " IN (" . $Mess_Array . ") AND `ally_id` = '" . user::get()->data['ally_id'] . "';");
+							$this->db->query("DELETE FROM game_alliance_chat WHERE `id` " . (($DeleteWhat == 'deleteunmarked') ? 'NOT' : '') . " IN (" . $Mess_Array . ") AND `ally_id` = '" . $this->user->ally_id . "';");
 					}
 				}
 	
 				if (isset($_GET['sendmail']) && isset($_POST['text']) && $_POST['text'] != '')
 				{
-					$_POST['text'] = strings::FormatText($_POST['text']);
+					$_POST['text'] = Helpers::FormatText($_POST['text']);
 	
-					db::query("INSERT INTO game_alliance_chat SET `ally_id` = '" . user::get()->data['ally_id'] . "', `user` = '" . user::get()->data['username'] . "', user_id = " . user::get()->data['id'] . ", `message` = '" . db::escape_string($_POST['text']) . "', `timestamp` = '" . time() . "'");
-					db::query("UPDATE game_users SET `mnl_alliance` = `mnl_alliance` + '1' WHERE `ally_id` = '" . user::get()->data['ally_id'] . "' AND id != " . user::get()->data['id'] . "");
+					$this->db->query("INSERT INTO game_alliance_chat SET `ally_id` = '" . $this->user->ally_id . "', `user` = '" . $this->user->username . "', user_id = " . $this->user->id . ", `message` = '" . $this->db->escapeString($_POST['text']) . "', `timestamp` = '" . time() . "'");
+					$this->db->query("UPDATE game_users SET `messages_ally` = `messages_ally` + '1' WHERE `ally_id` = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");
 				}
 	
 				$parse = array();
 				$parse['messages'] = array();
 	
-				$news_count = db::query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE `ally_id` = '" . user::get()->data['ally_id'] . "'", true);
+				$news_count = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "'")->fetch();
 	
 				if ($news_count['num'] > 0)
 				{
 					$p = (isset($_GET['p'])) ? intval($_GET['p']) : 1;
 	
-					$thiss = strings::pagination($news_count['num'], 20, '?set=alliance&mode=circular', $p);
+					$thiss = Helpers::pagination($news_count['num'], 20, '?set=alliance&mode=circular', $p);
 	
-					$mess = db::query("SELECT * FROM game_alliance_chat WHERE `ally_id` = '" . user::get()->data['ally_id'] . "' ORDER BY `id` DESC limit " . (($p - 1) * 20) . ", 20");
+					$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "' ORDER BY `id` DESC limit " . (($p - 1) * 20) . ", 20");
 	
-					while ($mes = db::fetch_assoc($mess))
+					while ($mes = $mess->fetch())
 					{
 						$parse['messages'][] = $mes;
 					}
 				}
 	
-				$parse['ally_owner'] = ($ally['ally_owner'] == user::get()->data['id']) ? true : false;
+				$parse['ally_owner'] = ($ally['ally_owner'] == $this->user->id) ? true : false;
 				$parse['pages'] = (isset($thiss)) ? $thiss : '[0]';
-				$parse['parser'] = user::get()->getUserOption('bb_parser') ? true : false;
+				$parse['parser'] = $this->user->getUserOption('bb_parser') ? true : false;
 	
-				$this->setTemplate('alliance/alliance_chat');
-				$this->set('parse', $parse);
+				$this->view->pick('alliance/alliance_chat');
+				$this->view->setVar('parse', $parse);
 
-				$this->setTitle('Альянс-чат');
+				$this->tag->setTitle('Альянс-чат');
 				$this->showTopPanel(false);
-				$this->display();
 			}
 	
 			if ($mode == 'admin')
 			{
-				if (user::get()->isAdmin() && $edit == 'planets')
+				if ($this->user->isAdmin() && $edit == 'planets')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'])
+					if ($ally['ally_owner'] != $this->user->id)
 						$this->message(_getText('Denied_access'), "Управление планетами");
 	
 					$parse = array();
 	
-					$parse['list'] = db::extractResult(db::query("SELECT id, id_ally, name, galaxy, system, planet FROM game_planets WHERE planet_type = 5 AND id_owner = ".user::get()->data['id'].""));
-					$parse['credits'] = user::get()->data['credits'];
+					$parse['list'] = $this->db->extractResult($this->db->query("SELECT id, id_ally, name, galaxy, system, planet FROM game_planets WHERE planet_type = 5 AND id_owner = ".$this->user->id.""));
+					$parse['credits'] = $this->user->credits;
 	
-					$parse['bases'] = db::first(db::query("SELECT COUNT(*) AS num FROM game_planets WHERE planet_type = 5 AND id_ally = ".$ally['id']."", true));
+					$parse['bases'] = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_planets WHERE planet_type = 5 AND id_ally = ".$ally['id']."");
 	
-					$parse['need'] = 100 * ($parse['bases'] > 0 ? (5 + ($parse['bases'] - 1) * 5) : 1);
+					$parse['need'] = 100 * ($parse['bases'] > 0 ? (5 + ((int) $parse['bases'] - 1) * 5) : 1);
 	
 					if (isset($_GET['ally']))
 					{
 						$id = intval($_GET['ally']);
 	
-						$check = db::query("SELECT id, id_ally FROM game_planets WHERE planet_type = 5 AND id_ally = 0 AND id_owner = ".user::get()->data['id']." AND id = ".$id."", true);
+						$check = $this->db->query("SELECT id, id_ally FROM game_planets WHERE planet_type = 5 AND id_ally = 0 AND id_owner = ".$this->user->id." AND id = ".$id."")->fetch();
 	
 						if (isset($check['id']))
 						{
-							if (user::get()->data['credits'] >= $parse['need'])
+							if ($this->user->credits >= $parse['need'])
 							{
-								sql::build()->update('game_planets')->
+								Sql::build()->update('game_planets')->
 										setField('id_ally', $ally['id'])->
 										setField('name', $ally['ally_name'])
 								->where('id', '=', $check['id'])->execute();
 	
-								sql::build()->update('game_users')->setField('-credits', $parse['need'])->where('id', '=', user::get()->data['id'])->execute();
+								Sql::build()->update('game_users')->setField('-credits', $parse['need'])->where('id', '=', $this->user->id)->execute();
 	
 								$this->message("Планета была успешно преобразована", "Управление планетами", "?set=alliance&mode=admin&edit=planets", 3);
 							}
@@ -520,25 +512,24 @@ class AllianceController extends ApplicationController
 						}
 					}
 	
-					$this->setTemplate('alliance/alliance_planets');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_planets');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle('Управление планетами');
+					$this->tag->setTitle('Управление планетами');
 					$this->showTopPanel(false);
-					$this->display();
 				}
 	
 				if ($edit == 'rights')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_edit_rights && user::get()->data['id'] != 1)
+					if ($ally['ally_owner'] != $this->user->id && !$user_can_edit_rights && $this->user->id != 1)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 					elseif (!empty($_POST['newrangname']))
 					{
-						$name = db::escape_string(strip_tags($_POST['newrangname']));
+						$name = $this->db->escapeString(strip_tags($_POST['newrangname']));
 	
 						$ally_ranks[] = array('name' => $name, 'mails' => 0, 'delete' => 0, 'kick' => 0, 'bewerbungen' => 0, 'administrieren' => 0, 'bewerbungenbearbeiten' => 0, 'memberlist' => 0, 'onlinestatus' => 0, 'rechtehand' => 0, 'diplomacy' => 0, 'planet' => 0);
 	
-						db::query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes(json_encode($ally_ranks)) . "' WHERE `id` = " . $ally['id']);
+						$this->db->query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes(json_encode($ally_ranks)) . "' WHERE `id` = " . $ally['id']);
 					}
 					elseif (isset($_POST['id']) && is_array($_POST['id']))
 					{
@@ -550,8 +541,8 @@ class AllianceController extends ApplicationController
 	
 							$ally_ranks_new[$id]['name'] = $name;
 	
-							$ally_ranks_new[$id]['delete'] = ($ally['ally_owner'] == user::get()->data['id'] ? (isset($_POST['u' . $id . 'r0']) ? 1 : 0) : $ally_ranks[$id]['delete']);
-							$ally_ranks_new[$id]['kick'] = ($ally['ally_owner'] == user::get()->data['id'] ? (isset($_POST['u' . $id . 'r1']) ? 1 : 0) : $ally_ranks[$id]['kick']);
+							$ally_ranks_new[$id]['delete'] = ($ally['ally_owner'] == $this->user->id ? (isset($_POST['u' . $id . 'r0']) ? 1 : 0) : $ally_ranks[$id]['delete']);
+							$ally_ranks_new[$id]['kick'] = ($ally['ally_owner'] == $this->user->id ? (isset($_POST['u' . $id . 'r1']) ? 1 : 0) : $ally_ranks[$id]['kick']);
 							$ally_ranks_new[$id]['bewerbungen'] = (isset($_POST['u' . $id . 'r2'])) ? 1 : 0;
 							$ally_ranks_new[$id]['memberlist'] = (isset($_POST['u' . $id . 'r3'])) ? 1 : 0;
 							$ally_ranks_new[$id]['bewerbungenbearbeiten'] = (isset($_POST['u' . $id . 'r4'])) ? 1 : 0;
@@ -565,14 +556,14 @@ class AllianceController extends ApplicationController
 	
 						$ally_ranks = $ally_ranks_new;
 	
-						db::query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes(json_encode($ally_ranks)) . "' WHERE `id` = " . $ally['id']);
+						$this->db->query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes(json_encode($ally_ranks)) . "' WHERE `id` = " . $ally['id']);
 					}
 					elseif (isset($d) && isset($ally_ranks[$d]))
 					{
 						unset($ally_ranks[$d]);
 						$ally['ally_rank'] = json_encode($ally_ranks);
 	
-						db::query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes($ally['ally_rank']) . "' WHERE `id` = " . $ally['id']);
+						$this->db->query("UPDATE game_alliance SET `ally_ranks` = '" . addslashes($ally['ally_rank']) . "' WHERE `id` = " . $ally['id']);
 					}
 	
 					$parse['list'] = array();
@@ -586,12 +577,12 @@ class AllianceController extends ApplicationController
 							$list['r0'] = $b['name'];
 							$list['a'] = $a;
 	
-							if ($ally['ally_owner'] == user::get()->data['id'])
+							if ($ally['ally_owner'] == $this->user->id)
 								$list['r1'] = "<input type=checkbox name=\"u{$a}r0\"" . (($b['delete'] == 1) ? ' checked="checked"' : '') . ">";
 							else
 								$list['r1'] = "<b>" . (($b['delete'] == 1) ? '+' : '-') . "</b>";
 	
-							if ($ally['ally_owner'] == user::get()->data['id'])
+							if ($ally['ally_owner'] == $this->user->id)
 								$list['r2'] = "<input type=checkbox name=\"u{$a}r1\"" . (($b['kick'] == 1) ? ' checked="checked"' : '') . ">";
 							else
 								$list['r2'] = "<b>" . (($b['kick'] == 1) ? '+' : '-') . "</b>";
@@ -610,16 +601,15 @@ class AllianceController extends ApplicationController
 						}
 					}
 	
-					$this->setTemplate('alliance/alliance_laws');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_laws');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle(_getText('Law_settings'));
+					$this->tag->setTitle(_getText('Law_settings'));
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				elseif ($edit == 'ally')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_admin)
+					if ($ally['ally_owner'] != $this->user->id && !$user_admin)
 						$this->message(_getText('Denied_access'), "Меню управления альянсом");
 	
 					if ($t != 1 && $t != 2 && $t != 3)
@@ -627,32 +617,32 @@ class AllianceController extends ApplicationController
 	
 					if (isset($_POST['options']))
 					{
-						$ally['ally_owner_range'] = db::escape_string(htmlspecialchars(strip_tags($_POST['owner_range'])));
-						$ally['ally_web'] = db::escape_string(htmlspecialchars(strip_tags($_POST['web'])));
-						$ally['ally_image'] = db::escape_string(htmlspecialchars(strip_tags($_POST['image'])));
+						$ally['ally_owner_range'] = $this->db->escapeString(htmlspecialchars(strip_tags($_POST['owner_range'])));
+						$ally['ally_web'] = $this->db->escapeString(htmlspecialchars(strip_tags($_POST['web'])));
+						$ally['ally_image'] = $this->db->escapeString(htmlspecialchars(strip_tags($_POST['image'])));
 						$ally['ally_request_notallow'] = intval($_POST['request_notallow']);
 	
 						if ($ally['ally_request_notallow'] != 0 && $ally['ally_request_notallow'] != 1)
 							$this->message("Недопустимое значение атрибута!", "Ошибка");
 	
-						db::query("UPDATE game_alliance SET `ally_owner_range`='" . $ally['ally_owner_range'] . "', `ally_image`='" . $ally['ally_image'] . "', `ally_web`='" . $ally['ally_web'] . "', `ally_request_notallow`='" . $ally['ally_request_notallow'] . "' WHERE `id`='" . $ally['id'] . "'");
+						$this->db->query("UPDATE game_alliance SET `ally_owner_range`='" . $ally['ally_owner_range'] . "', `ally_image`='" . $ally['ally_image'] . "', `ally_web`='" . $ally['ally_web'] . "', `ally_request_notallow`='" . $ally['ally_request_notallow'] . "' WHERE `id`='" . $ally['id'] . "'");
 					}
 					elseif (isset($_POST['t']))
 					{
 						if ($t == 3)
 						{
-							$ally['ally_request'] = strings::FormatText($_POST['text']);
-							db::query("UPDATE game_alliance SET `ally_request`='" . $ally['ally_request'] . "' WHERE `id`='" . $ally['id'] . "'");
+							$ally['ally_request'] = Helpers::FormatText($_POST['text']);
+							$this->db->query("UPDATE game_alliance SET `ally_request`='" . $ally['ally_request'] . "' WHERE `id`='" . $ally['id'] . "'");
 						}
 						elseif ($t == 2)
 						{
-							$ally['ally_text'] = strings::FormatText($_POST['text']);
-							db::query("UPDATE game_alliance SET `ally_text`='" . $ally['ally_text'] . "' WHERE `id`='" . $ally['id'] . "'");
+							$ally['ally_text'] = Helpers::FormatText($_POST['text']);
+							$this->db->query("UPDATE game_alliance SET `ally_text`='" . $ally['ally_text'] . "' WHERE `id`='" . $ally['id'] . "'");
 						}
 						else
 						{
-							$ally['ally_description'] = strings::FormatText($_POST['text']);
-							db::query("UPDATE game_alliance SET `ally_description`='" . $ally['ally_description'] . "' WHERE `id`='" . $ally['id'] . "'");
+							$ally['ally_description'] = Helpers::FormatText($_POST['text']);
+							$this->db->query("UPDATE game_alliance SET `ally_description`='" . $ally['ally_description'] . "' WHERE `id`='" . $ally['id'] . "'");
 						}
 					}
 	
@@ -679,16 +669,15 @@ class AllianceController extends ApplicationController
 					$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "?set=alliance&mode=admin&edit=give", 'Продолжить');
 					$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "?set=alliance&mode=admin&edit=exit", 'Продолжить');
 	
-					$this->setTemplate('alliance/alliance_admin');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_admin');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle(_getText('Alliance_admin'));
+					$this->tag->setTitle(_getText('Alliance_admin'));
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				elseif ($edit == 'requests')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_bewerbungen_bearbeiten)
+					if ($ally['ally_owner'] != $this->user->id && !$user_bewerbungen_bearbeiten)
 						$this->message(_getText('Denied_access'), _getText('Check_the_requests'));
 	
 					if (isset($_POST['action']) && $_POST['action'] == "Принять")
@@ -698,36 +687,36 @@ class AllianceController extends ApplicationController
 						else
 						{
 							if ($_POST['text'] != '')
-								$text_ot = db::escape_string(strip_tags($_POST['text']));
+								$text_ot = $this->db->escapeString(strip_tags($_POST['text']));
 	
-							$check_req = db::query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $ally['id'] . " AND u_id = " . intval($show) . ";", true);
+							$check_req = $this->db->query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $ally['id'] . " AND u_id = " . intval($show) . ";")->fetch();
 	
 							if (isset($check_req['a_id']))
 							{
-								db::query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . ";");
+								$this->db->query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . ";");
 	
-								db::query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally['id'] . ", " . intval($show) . ", " . time() . ")");
-								db::query("UPDATE game_alliance SET ally_members = ally_members + 1 WHERE id='" . $ally['id'] . "'");
-								db::query("UPDATE game_users SET ally_name = '" . $ally['ally_name'] . "', ally_id = '" . $ally['id'] . "', new_message = new_message + 1 WHERE id = '" . intval($show) . "'");
-								db::query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . user::get()->data['id'] . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$ally['ally_tag']}', `message_text`='Привет!<br>Альянс <b>" . $ally['ally_name'] . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : "") . "'");
+								$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally['id'] . ", " . intval($show) . ", " . time() . ")");
+								$this->db->query("UPDATE game_alliance SET ally_members = ally_members + 1 WHERE id='" . $ally['id'] . "'");
+								$this->db->query("UPDATE game_users SET ally_name = '" . $ally['ally_name'] . "', ally_id = '" . $ally['id'] . "', new_message = new_message + 1 WHERE id = '" . intval($show) . "'");
+								$this->db->query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . $this->user->id . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$ally['ally_tag']}', `message_text`='Привет!<br>Альянс <b>" . $ally['ally_name'] . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : "") . "'");
 							}
 						}
 					}
 					elseif (isset($_POST['action']) && $_POST['action'] == "Отклонить")
 					{
 						if ($_POST['text'] != '')
-							$text_ot = db::escape_string(strip_tags($_POST['text']));
+							$text_ot = $this->db->escapeString(strip_tags($_POST['text']));
 	
-						db::query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . " AND a_id = " . $ally['id'] . ";");
-						db::query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . user::get()->data['id'] . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$ally['ally_tag']}', `message_text`='Привет!<br>Альянс <b>" . $ally['ally_name'] . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : "") . "'");
+						$this->db->query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . " AND a_id = " . $ally['id'] . ";");
+						$this->db->query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . $this->user->id . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$ally['ally_tag']}', `message_text`='Привет!<br>Альянс <b>" . $ally['ally_name'] . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : "") . "'");
 					}
 	
 					$parse = array();
 					$parse['list'] = array();
 	
-					$query = db::query("SELECT u.id, u.username, r.* FROM game_alliance_requests r LEFT JOIN game_users u ON u.id = r.u_id WHERE a_id = '" . $ally['id'] . "'");
+					$query = $this->db->query("SELECT u.id, u.username, r.* FROM game_alliance_requests r LEFT JOIN game_users u ON u.id = r.u_id WHERE a_id = '" . $ally['id'] . "'");
 	
-					while ($r = db::fetch_assoc($query))
+					while ($r = $query->fetch())
 					{
 						if (isset($show) && $r['id'] == $show)
 						{
@@ -737,7 +726,7 @@ class AllianceController extends ApplicationController
 							$s['id'] = $r['id'];
 						}
 	
-						$r['time'] = datezone("Y-m-d H:i:s", $r['time']);
+						$r['time'] = $this->game->datezone("Y-m-d H:i:s", $r['time']);
 	
 						$parse['list'][] = $r;
 					}
@@ -749,16 +738,15 @@ class AllianceController extends ApplicationController
 	
 					$parse['ally_tag'] = $ally['ally_tag'];
 	
-					$this->setTemplate('alliance/alliance_requests');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_requests');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle(_getText('Check_the_requests'));
+					$this->tag->setTitle(_getText('Check_the_requests'));
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				elseif ($edit == 'name')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_admin)
+					if ($ally['ally_owner'] != $this->user->id && !$user_admin)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
 					if (isset($_POST['newname']))
@@ -767,24 +755,23 @@ class AllianceController extends ApplicationController
 							$this->message("Название альянса содержит запрещённые символы", _getText('make_alliance'));
 	
 						$ally['ally_name'] = addslashes(htmlspecialchars($_POST['newname']));
-						db::query("UPDATE game_alliance SET `ally_name` = '" . $ally['ally_name'] . "' WHERE `id` = '" . user::get()->data['ally_id'] . "';");
-						db::query("UPDATE game_users SET `ally_name` = '" . $ally['ally_name'] . "' WHERE `ally_id` = '" . $ally['id'] . "';");
+						$this->db->query("UPDATE game_alliance SET `ally_name` = '" . $ally['ally_name'] . "' WHERE `id` = '" . $this->user->ally_id . "';");
+						$this->db->query("UPDATE game_users SET `ally_name` = '" . $ally['ally_name'] . "' WHERE `ally_id` = '" . $ally['id'] . "';");
 					}
 	
 					$parse['question'] = 'Введите новое название альянса';
 					$parse['name'] = 'newname';
 					$parse['form'] = 'name';
 	
-					$this->setTemplate('alliance/alliance_rename');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_rename');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle('Управление альянсом');
+					$this->tag->setTitle('Управление альянсом');
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				elseif ($edit == 'tag')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_admin)
+					if ($ally['ally_owner'] != $this->user->id && !$user_admin)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
 					if (isset($_POST['newtag']))
@@ -793,75 +780,73 @@ class AllianceController extends ApplicationController
 							$this->message("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
 	
 						$ally['ally_tag'] = addslashes(htmlspecialchars($_POST['newtag']));
-						db::query("UPDATE game_alliance SET `ally_tag` = '" . $ally['ally_tag'] . "' WHERE `id` = '" . user::get()->data['ally_id'] . "';");
+						$this->db->query("UPDATE game_alliance SET `ally_tag` = '" . $ally['ally_tag'] . "' WHERE `id` = '" . $this->user->ally_id . "';");
 					}
 	
 					$parse['question'] = 'Введите новую аббревиатуру альянса';
 					$parse['name'] = 'newtag';
 					$parse['form'] = 'tag';
 	
-					$this->setTemplate('alliance/alliance_rename');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_rename');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle('Управление альянсом');
+					$this->tag->setTitle('Управление альянсом');
 					$this->showTopPanel(false);
-					$this->display();
 				}
 				elseif ($edit == 'exit')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'] && !$user_can_exit_alliance)
+					if ($ally['ally_owner'] != $this->user->id && !$user_can_exit_alliance)
 						$this->message(_getText('Denied_access'), _getText('Members_list'));
 	
-					db::query("UPDATE game_planets SET id_ally = 0 WHERE id_ally = ".$ally['id']."");
+					$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_ally = ".$ally['id']."");
 	
-					db::query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE ally_id = '" . $ally['id'] . "'");
-					db::query("DELETE FROM game_alliance WHERE id = '" . $ally['id'] . "'");
-					db::query("DELETE FROM game_alliance_members WHERE a_id = '" . $ally['id'] . "'");
-					db::query("DELETE FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'");
-					db::query("DELETE FROM game_alliance_diplomacy WHERE a_id = '" . $ally['id'] . "' OR d_id = '" . $ally['id'] . "'");
+					$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE ally_id = '" . $ally['id'] . "'");
+					$this->db->query("DELETE FROM game_alliance WHERE id = '" . $ally['id'] . "'");
+					$this->db->query("DELETE FROM game_alliance_members WHERE a_id = '" . $ally['id'] . "'");
+					$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'");
+					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = '" . $ally['id'] . "' OR d_id = '" . $ally['id'] . "'");
 	
-					request::redirectTo('?set=alliance');
+					$this->response->redirect('?set=alliance');
 				}
 				elseif ($edit == 'give')
 				{
-					if ($ally['ally_owner'] != user::get()->data['id'])
+					if ($ally['ally_owner'] != $this->user->id)
 						$this->message("Доступ запрещён.", "Ошибка!", "?set=alliance", 2);
 	
-					if (isset($_POST['newleader']) && $ally['ally_owner'] == user::get()->data['id'])
+					if (isset($_POST['newleader']) && $ally['ally_owner'] == $this->user->id)
 					{
-						$info = db::query("SELECT id, ally_id FROM game_users WHERE id = '" . intval($_POST['newleader']) . "'", true);
+						$info = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . intval($_POST['newleader']) . "'")->fetch();
 	
-						if (!$info['id'] || $info['ally_id'] != user::get()->data['ally_id'])
+						if (!$info['id'] || $info['ally_id'] != $this->user->ally_id)
 							$this->message("Операция невозможна.", "Ошибка!", "?set=alliance", 2);
 	
-						db::query("UPDATE game_alliance SET `ally_owner` = '" . $info['id'] . "' WHERE `id` = " . user::get()->data['ally_id'] . " ");
-						db::query("UPDATE game_alliance_members SET `rank` = '0' WHERE `u_id` = '" . $info['id'] . "';");
+						$this->db->query("UPDATE game_alliance SET `ally_owner` = '" . $info['id'] . "' WHERE `id` = " . $this->user->ally_id . " ");
+						$this->db->query("UPDATE game_alliance_members SET `rank` = '0' WHERE `u_id` = '" . $info['id'] . "';");
 	
-						request::redirectTo('?set=alliance');
+						$this->response->redirect('?set=alliance');
 					}
 	
-					$listuser = db::query("SELECT u.username, u.id, m.rank FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . user::get()->data['ally_id'] . "' AND u.id != " . $ally['ally_owner'] . " AND m.rank != 0;");
+					$listuser = $this->db->query("SELECT u.username, u.id, m.rank FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $ally['ally_owner'] . " AND m.rank != 0;");
 	
 					$parse['righthand'] = '';
 	
-					while ($u = db::fetch_assoc($listuser))
+					while ($u = $listuser->fetch())
 					{
 						if ($ally_ranks[$u['rank'] - 1]['rechtehand'] == 1)
 							$parse['righthand'] .= "<option value=\"" . $u['id'] . "\">" . $u['username'] . "&nbsp;[" . $ally_ranks[$u['rank'] - 1]['name'] . "]&nbsp;&nbsp;</option>";
 					}
 	
-					$parse['id'] = user::get()->data['id'];
+					$parse['id'] = $this->user->id;
 	
-					$this->setTemplate('alliance/alliance_transfer');
-					$this->set('parse', $parse);
+					$this->view->pick('alliance/alliance_transfer');
+					$this->view->setVar('parse', $parse);
 
-					$this->setTitle('Передача альянса');
+					$this->tag->setTitle('Передача альянса');
 					$this->showTopPanel(false);
-					$this->display();
 				}
 			}
 	
-			if ($ally['ally_owner'] == user::get()->data['id'])
+			if ($ally['ally_owner'] == $this->user->id)
 				$range = ($ally['ally_owner_range'] == '') ? 'Основатель' : $ally['ally_owner_range'];
 			elseif ($ally_member['rank'] != 0 && isset($ally_ranks[$ally_member['rank'] - 1]['name']))
 				$range = $ally_ranks[$ally_member['rank'] - 1]['name'];
@@ -870,7 +855,7 @@ class AllianceController extends ApplicationController
 	
 			if ($user_diplomacy)
 			{
-				$qq = db::query("SELECT count(id) AS cc FROM game_alliance_diplomacy WHERE d_id = " . $ally['id'] . " AND status = 0", true);
+				$qq = $this->db->query("SELECT count(id) AS cc FROM game_alliance_diplomacy WHERE d_id = " . $ally['id'] . " AND status = 0")->fetch();
 	
 				if ($qq['cc'] > 0)
 					$parse['ally_dipl'] = " <a href=\"?set=alliance&mode=diplo\">Просмотр</a> (" . $qq['cc'] . " новых запросов)";
@@ -880,18 +865,18 @@ class AllianceController extends ApplicationController
 	
 			$parse['requests'] = '';
 	
-			$request = db::first(db::query("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'", true));
+			$request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'");
 	
 			if ($request != 0)
 			{
-				if ($ally['ally_owner'] == user::get()->data['id'] || $ally_ranks[$ally_member['rank'] - 1]['bewerbungen'] != 0)
+				if ($ally['ally_owner'] == $this->user->id || $ally_ranks[$ally_member['rank'] - 1]['bewerbungen'] != 0)
 					$parse['requests'] = "<tr><th>Заявки</th><th><a href=\"?set=alliance&mode=admin&edit=requests\">" . $request . " заявок</a></th></tr>";
 			}
 	
 			$parse['alliance_admin'] = ($user_admin) ? '(<a href="?set=alliance&mode=admin&edit=ally">управление альянсом</a>)' : '';
-			$parse['send_circular_mail'] = ($user_can_send_mails) ? '<tr><th>Альянс чат (' . user::get()->data['mnl_alliance'] . ' новых)</th><th><a href="?set=alliance&mode=circular">Войти в чат</a></th></tr>' : '';
+			$parse['send_circular_mail'] = ($user_can_send_mails) ? '<tr><th>Альянс чат (' . $this->user->messages_ally . ' новых)</th><th><a href="?set=alliance&mode=circular">Войти в чат</a></th></tr>' : '';
 			$parse['members_list'] = ($user_can_watch_memberlist) ? ' (<a href="?set=alliance&mode=memberslist">список</a>)' : '';
-			$parse['ally_owner'] = ($ally['ally_owner'] != user::get()->data['id']) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "?set=alliance&mode=exit", _getText('Continue')) : '';
+			$parse['ally_owner'] = ($ally['ally_owner'] != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "?set=alliance&mode=exit", _getText('Continue')) : '';
 			$parse['ally_image'] = ($ally['ally_image'] != '') ? "<tr><th colspan=2 class=nopadding><img src=\"" . $ally['ally_image'] . "\" style=\"max-width:100%\"></th></tr>" : '';
 			$parse['range'] = $range;
 			$parse['ally_description'] = $ally['ally_description'];
@@ -901,24 +886,23 @@ class AllianceController extends ApplicationController
 			$parse['ally_members'] = $ally['ally_members'];
 			$parse['ally_name'] = $ally['ally_name'];
 	
-			$this->setTemplate('alliance/alliance_frontpage');
-			$this->set('parse', $parse);
+			$this->view->pick('alliance/alliance_frontpage');
+			$this->view->setVar('parse', $parse);
 
-			$this->setTitle('Ваш альянс');
+			$this->tag->setTitle('Ваш альянс');
 			$this->showTopPanel(false);
-			$this->display();
 		}
 	}
 
 	public function ainfo ()
 	{
 		$a = @intval($_GET['a']);
-		$tag = @db::escape_string($_GET['tag']);
+		$tag = @$this->db->escapeString($_GET['tag']);
 
 		if ($tag != "")
-			$allyrow = db::query("SELECT * FROM game_alliance WHERE ally_tag = '" . $tag . "'", true);
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE ally_tag = '" . $tag . "'")->fetch();
 		elseif ($a != 0)
-			$allyrow = db::query("SELECT * FROM game_alliance WHERE id = '" . $a . "'", true);
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $a . "'")->fetch();
 		else
 			$this->message("Указанного альянса не существует в игре!", "Информация об альянсе");
 
@@ -940,24 +924,23 @@ class AllianceController extends ApplicationController
 		$parse['ally_description'] = $allyrow['ally_description'];
 		$parse['ally_image'] = $allyrow['ally_image'];
 		$parse['ally_web'] = $allyrow['ally_web'];
-		$parse['bewerbung'] = (user::get()->data['ally_id'] == 0) ? "<tr><th>Вступление</th><th><a href=\"?set=alliance&mode=apply&amp;allyid=" . $allyrow['id'] . "\">Нажмите сюда для подачи заявки</a></th></tr>" : '';
+		$parse['bewerbung'] = ($this->user->ally_id == 0) ? "<tr><th>Вступление</th><th><a href=\"?set=alliance&mode=apply&amp;allyid=" . $allyrow['id'] . "\">Нажмите сюда для подачи заявки</a></th></tr>" : '';
 
-		$this->setTemplate('alliance/alliance_info');
-		$this->set('parse', $parse);
+		$this->view->pick('alliance/alliance_info');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Альянс ' . $allyrow['ally_name']);
+		$this->tag->setTitle('Альянс ' . $allyrow['ally_name']);
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function make ()
 	{
-		if (!user::get()->isAuthorized())
+		if (!$this->auth->isAuthorized())
 			$this->message(_getText('Denied_access'), "Ошипко");
 			
-		$ally_request = db::first(db::query("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . user::get()->data['id'] . ";", true));
+		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
-		if (user::get()->data['ally_id'] > 0 || $ally_request > 0)
+		if ($this->user->ally_id > 0 || $ally_request > 0)
 			$this->show();
 
 		if (isset($_GET['yes']) && $_POST)
@@ -971,41 +954,39 @@ class AllianceController extends ApplicationController
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['aname']))
 				$this->message("Название альянса содержит запрещённые символы", _getText('make_alliance'));
 
-			$tagquery = db::query("SELECT * FROM game_alliance WHERE ally_tag = '" . addslashes($_POST['atag']) . "'", true);
+			$tagquery = $this->db->query("SELECT * FROM game_alliance WHERE ally_tag = '" . addslashes($_POST['atag']) . "'")->fetch();
 
 			if ($tagquery)
 				$this->message(str_replace('%s', $_POST['atag'], _getText('always_exist')), _getText('make_alliance'));
 
-			db::query("INSERT INTO game_alliance SET `ally_name` = '" . addslashes($_POST['aname']) . "', `ally_tag`= '" . addslashes($_POST['atag']) . "' , `ally_owner` = '" . user::get()->data['id'] . "', `ally_register_time` = " . time());
+			$this->db->query("INSERT INTO game_alliance SET `ally_name` = '" . addslashes($_POST['aname']) . "', `ally_tag`= '" . addslashes($_POST['atag']) . "' , `ally_owner` = '" . $this->user->id . "', `ally_register_time` = " . time());
 
-			$ally_id = db::insert_id();
+			$ally_id = $this->db->lastInsertId();
 
-			db::query("UPDATE game_users SET `ally_id` = '" . $ally_id . "', `ally_name` = '" . addslashes($_POST['aname']) . "' WHERE `id` = '" . user::get()->data['id'] . "'");
-			db::query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally_id . ", " . user::get()->data['id'] . ", " . time() . ")");
+			$this->db->query("UPDATE game_users SET `ally_id` = '" . $ally_id . "', `ally_name` = '" . addslashes($_POST['aname']) . "' WHERE `id` = '" . $this->user->id . "'");
+			$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally_id . ", " . $this->user->id . ", " . time() . ")");
 
-			$this->setTitle(_getText('make_alliance'));
+			$this->tag->setTitle(_getText('make_alliance'));
 			$this->setContent($this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "?set=alliance", _getText('Ok')));
 			$this->showTopPanel(false);
-			$this->display();
 		}
 		else
 		{
-			$this->setTemplate('alliance/alliance_make');
+			$this->view->pick('alliance/alliance_make');
 
-			$this->setTitle(_getText('make_alliance'));
+			$this->tag->setTitle(_getText('make_alliance'));
 			$this->showTopPanel(false);
-			$this->display();
 		}
 	}
 
 	public function search ()
 	{
-		if (!user::get()->isAuthorized())
+		if (!$this->auth->isAuthorized())
 			$this->message(_getText('Denied_access'), "Ошипко");
 	
-		$ally_request = db::first(db::query("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . user::get()->data['id'] . ";", true));
+		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
-		if (user::get()->data['ally_id'] > 0 || $ally_request > 0)
+		if ($this->user->ally_id > 0 || $ally_request > 0)
 			$this->show();
 
 		$parse = array();
@@ -1015,13 +996,13 @@ class AllianceController extends ApplicationController
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['searchtext']))
 				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '?set=alliance&mode=search', 2);
 
-			$search = db::query("SELECT * FROM game_alliance WHERE ally_name LIKE '%" . $_POST['searchtext'] . "%' or ally_tag LIKE '%" . $_POST['searchtext'] . "%' LIMIT 30");
+			$search = $this->db->query("SELECT * FROM game_alliance WHERE ally_name LIKE '%" . $_POST['searchtext'] . "%' or ally_tag LIKE '%" . $_POST['searchtext'] . "%' LIMIT 30");
 
 			$parse['result'] = array();
 
-			if (db::num_rows($search) != 0)
+			if ($search->numRows() != 0)
 			{
-				while ($s = db::fetch_assoc($search))
+				while ($s = $search->fetch())
 				{
 					$entry = array();
 					$entry['ally_tag'] = "[<a href=\"?set=alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
@@ -1035,20 +1016,19 @@ class AllianceController extends ApplicationController
 
 		$parse['searchtext'] = (isset($_POST['searchtext'])) ? $_POST['searchtext'] : '';
 
-		$this->setTemplate('alliance/alliance_search');
-		$this->set('parse', $parse);
+		$this->view->pick('alliance/alliance_search');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle(_getText('search_alliance'));
+		$this->tag->setTitle(_getText('search_alliance'));
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function apply ()
 	{
-		if (!user::get()->isAuthorized())
+		if (!$this->auth->isAuthorized())
 			$this->message(_getText('Denied_access'), "Ошипко");
 	
-		if (user::get()->data['ally_id'] > 0)
+		if ($this->user->ally_id > 0)
 			$this->show();
 
 		if (!is_numeric($_GET['allyid']) || !$_GET['allyid'])
@@ -1056,7 +1036,7 @@ class AllianceController extends ApplicationController
 
 		$allyid = intval($_GET['allyid']);
 
-		$allyrow = db::query("SELECT ally_tag, ally_request, ally_request_notallow FROM game_alliance WHERE id = '" . $allyid . "'", true);
+		$allyrow = $this->db->query("SELECT ally_tag, ally_request, ally_request_notallow FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 
 		if (!isset($allyrow['ally_tag']))
 			$this->message("Альянса не существует!", "Ошибка");
@@ -1066,11 +1046,11 @@ class AllianceController extends ApplicationController
 
 		if (isset($_POST['further']))
 		{
-			$request = db::query("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = " . $allyid . " AND u_id = " . user::get()->data['id'] . ";", true);
+			$request = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = " . $allyid . " AND u_id = " . $this->user->id . ";")->fetch();
 
 			if ($request['num'] == 0)
 			{
-				db::query("INSERT INTO game_alliance_requests VALUES (" . $allyid . ", " . user::get()->data['id'] . ", " . time() . ", '" . db::escape_string(strip_tags($_POST['text'])) . "')");
+				$this->db->query("INSERT INTO game_alliance_requests VALUES (" . $allyid . ", " . $this->user->id . ", " . time() . ", '" . $this->db->escapeString(strip_tags($_POST['text'])) . "')");
 				$this->message(_getText('apply_registered'), _getText('your_apply'), '?set=alliance', 3);
 			}
 			else
@@ -1083,12 +1063,11 @@ class AllianceController extends ApplicationController
 		$parse['text_apply'] = ($allyrow['ally_request']) ? $allyrow['ally_request'] : '';
 		$parse['ally_tag'] = $allyrow['ally_tag'];
 
-		$this->setTemplate('alliance/alliance_applyform');
-		$this->set('parse', $parse);
+		$this->view->pick('alliance/alliance_applyform');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Запрос на вступление');
+		$this->tag->setTitle('Запрос на вступление');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	public function stat ()
@@ -1100,21 +1079,20 @@ class AllianceController extends ApplicationController
 
 		$allyid = request::R('id', 0);
 
-		$allyrow = db::query("SELECT id, ally_name FROM game_alliance WHERE id = '" . $allyid . "'", true);
+		$allyrow = $this->db->query("SELECT id, ally_name FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 
 		if (!isset($allyrow['id']))
 			$this->message('Информация о данном альянсе не найдена');
 
 		$parse = array();
 		$parse['name'] = $allyrow['ally_name'];
-		$parse['data'] = db::extractResult(db::query("SELECT * FROM game_log_stats WHERE id = ".$allyid." AND type = 2 ORDER BY time ASC"));
+		$parse['data'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_stats WHERE id = ".$allyid." AND type = 2 ORDER BY time ASC"));
 
-		$this->setTemplate('alliance/alliance_stat');
-		$this->set('parse', $parse);
+		$this->view->pick('alliance/alliance_stat');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Статистика альянса');
+		$this->tag->setTitle('Статистика альянса');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 
 	private function MessageForm ($Title, $Message, $Goto = '', $Button = ' ok ', $TwoLines = false)

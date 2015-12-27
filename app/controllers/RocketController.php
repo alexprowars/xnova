@@ -2,19 +2,13 @@
 
 namespace App\Controllers;
 
-use Xcms\core;
-use Xcms\db;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-
 class RocketController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 	
 	public function show ()
@@ -25,21 +19,21 @@ class RocketController extends ApplicationController
 		$anz = intval($_POST['SendMI']);
 		$pziel = $_POST['Target'];
 		
-		$tempvar1 = (($s - app::$planetrow->data['system']) * (-1));
-		$tempvar2 = (user::get()->data['impulse_motor_tech'] * 5) - 1;
-		$tempvar3 = db::query("SELECT * FROM game_planets WHERE galaxy = " . $g . " AND system = " . $s . " AND planet = " . $i . " AND planet_type = 1", true);
+		$tempvar1 = (($s - $this->planet->system) * (-1));
+		$tempvar2 = ($this->user->impulse_motor_tech * 5) - 1;
+		$tempvar3 = $this->db->query("SELECT * FROM game_planets WHERE galaxy = " . $g . " AND system = " . $s . " AND planet = " . $i . " AND planet_type = 1")->fetch();
 		
 		$error = 0;
 		
-		if (app::$planetrow->data['silo'] < 4)
+		if ($this->planet->silo < 4)
 		{
 			$error = 1;
 		}
-		elseif (user::get()->data['impulse_motor_tech'] == 0)
+		elseif ($this->user->impulse_motor_tech == 0)
 		{
 			$error = 2;
 		}
-		elseif ($tempvar1 >= $tempvar2 || $g != app::$planetrow->data['galaxy'])
+		elseif ($tempvar1 >= $tempvar2 || $g != $this->planet->galaxy)
 		{
 			$error = 3;
 		}
@@ -47,7 +41,7 @@ class RocketController extends ApplicationController
 		{
 			$error = 4;
 		}
-		elseif ($anz > app::$planetrow->data['interplanetary_misil'])
+		elseif ($anz > $this->planet->interplanetary_misil)
 		{
 			$error = 5;
 		}
@@ -64,7 +58,7 @@ class RocketController extends ApplicationController
 		else
 			$pziel = intval($pziel);
 		
-		$select = db::query("SELECT id, urlaubs_modus_time FROM game_users WHERE id = " . $tempvar3['id_owner'], true);
+		$select = $this->db->query("SELECT id, urlaubs_modus_time FROM game_users WHERE id = " . $tempvar3['id_owner'], true);
 		
 		if (!isset($select['id']))
 			$this->message('Игрока не существует');
@@ -72,20 +66,20 @@ class RocketController extends ApplicationController
 		if ($select['urlaubs_modus_time'] > 0)
 			$this->message('Игрок в режиме отпуска');
 		
-		if (user::get()->data['urlaubs_modus_time'] > 0)
+		if ($this->user->banned > 0)
 			$this->message('Вы в режиме отпуска');
 		
 		$flugzeit = round(((30 + (60 * $tempvar1)) * 2500) / core::getConfig('game_speed'));
 		
 		$QryInsertFleet = "INSERT INTO game_fleets SET ";
-		$QryInsertFleet .= "`fleet_owner` = '" . user::get()->data['id'] . "', ";
-		$QryInsertFleet .= "`fleet_owner_name` = '" . app::$planetrow->data['name'] . "', ";
+		$QryInsertFleet .= "`fleet_owner` = '" . $this->user->id . "', ";
+		$QryInsertFleet .= "`fleet_owner_name` = '" . $this->planet->name . "', ";
 		$QryInsertFleet .= "`fleet_mission` = '20', ";
 		$QryInsertFleet .= "`fleet_array` = '503," . $anz . "!" . $pziel . "', ";
 		$QryInsertFleet .= "`fleet_start_time` = '" . (time() + $flugzeit) . "', ";
-		$QryInsertFleet .= "`fleet_start_galaxy` = '" . app::$planetrow->data['galaxy'] . "', ";
-		$QryInsertFleet .= "`fleet_start_system` = '" . app::$planetrow->data['system'] . "', ";
-		$QryInsertFleet .= "`fleet_start_planet` = '" . app::$planetrow->data['planet'] . "', ";
+		$QryInsertFleet .= "`fleet_start_galaxy` = '" . $this->planet->galaxy . "', ";
+		$QryInsertFleet .= "`fleet_start_system` = '" . $this->planet->system . "', ";
+		$QryInsertFleet .= "`fleet_start_planet` = '" . $this->planet->planet . "', ";
 		$QryInsertFleet .= "`fleet_start_type` = '1', ";
 		$QryInsertFleet .= "`fleet_end_time` = '" . (time() + $flugzeit + 3600) . "', ";
 		$QryInsertFleet .= "`fleet_end_galaxy` = '" . $g . "', ";
@@ -95,16 +89,15 @@ class RocketController extends ApplicationController
 		$QryInsertFleet .= "`fleet_target_owner` = '" . $tempvar3['id_owner'] . "', ";
 		$QryInsertFleet .= "`fleet_target_owner_name` = '" . $tempvar3['name'] . "', ";
 		$QryInsertFleet .= "`start_time` = '" . time() . "', fleet_time = '" . (time() + $flugzeit) . "';";
-		db::query($QryInsertFleet);
+		$this->db->query($QryInsertFleet);
 		
-		db::query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . user::get()->data['current_planet'] . "'");
+		$this->db->query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . $this->user->current_planet . "'");
 		
-		$this->setTemplate('rak');
-		$this->set('anz', $anz);
+		$this->view->pick('rak');
+		$this->view->setVar('anz', $anz);
 
-		$this->setTitle('Межпланетная атака');
+		$this->tag->setTitle('Межпланетная атака');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }
 

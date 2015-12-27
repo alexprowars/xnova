@@ -2,23 +2,18 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\app;
-use Xnova\pageHelper;
-use Xnova\planet;
-use Xnova\queueManager;
+use App\Helpers;
+use App\Lang;
 
 class ImperiumController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 
-		strings::includeLang('imperium');
+		Lang::includeLang('imperium');
 
-		app::loadPlanet();
+		$this->user->loadPlanet();
 	}
 
 	public function show()
@@ -33,14 +28,14 @@ class ImperiumController extends ApplicationController
 
 		$fleet_fly = array();
 
-		$fleets = db::query("SELECT * FROM game_fleets WHERE fleet_owner = " . user::get()->getId() . "");
+		$fleets = $this->db->query("SELECT * FROM game_fleets WHERE fleet_owner = " . $this->user->getId() . "");
 
-		while ($fleet = db::fetch_assoc($fleets))
+		while ($fleet = $fleets->fetch())
 		{
 			if (!isset($fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']]))
 				$fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']] = array();
 
-			if ($fleet['fleet_target_owner'] == user::get()->data['id'] && !isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
+			if ($fleet['fleet_target_owner'] == $this->user->id && !isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
 				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = array();
 
 			$fleetData = unserializeFleet($fleet['fleet_array']);
@@ -51,17 +46,17 @@ class ImperiumController extends ApplicationController
 				{
 					$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] = 0;
 
-					if ($fleet['fleet_target_owner'] == user::get()->data['id'])
+					if ($fleet['fleet_target_owner'] == $this->user->id)
 						$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] = 0;
 				}
 
 				$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] -= $shipArr['cnt'];
 
-				if ($fleet['fleet_target_owner'] == user::get()->data['id'])
+				if ($fleet['fleet_target_owner'] == $this->user->id)
 					$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] += $shipArr['cnt'];
 
 
-				if ($fleet['fleet_target_owner'] == user::get()->data['id'])
+				if ($fleet['fleet_target_owner'] == $this->user->id)
 				{
 					if (!isset($build_hangar_full[$shipId]))
 						$build_hangar_full[$shipId] = 0;
@@ -77,11 +72,11 @@ class ImperiumController extends ApplicationController
 		$imperium = new planet();
 		$imperium->load_user_info(user::get());
 
-		$planetsrow = db::query("SELECT * FROM game_planets WHERE `id_owner` = '" . user::get()->getId() . "' ".user::get()->getPlanetListSortQuery()."");
+		$planetsrow = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->getId() . "' ".$this->user->getPlanetListSortQuery()."");
 
-		$parse['mount'] = db::num_rows($planetsrow) + 3;
+		$parse['mount'] = $planetsrow->numRows() + 3;
 
-		while ($p = db::fetch($planetsrow))
+		while ($p = $planetsrow->fetch())
 		{
 			$imperium->load_from_array($p);
 			$imperium->PlanetResourceUpdate(time(), true);
@@ -94,10 +89,10 @@ class ImperiumController extends ApplicationController
 			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";
 			@$parse['file_coordinates'] .= "<th>[<a href=\"?set=galaxy&r=3&galaxy=".$p['galaxy']."&system=".$p['system']."\">".$p['galaxy'].":".$p['system'].":".$p['planet']."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $p['field_current'] . '/' . $p['field_max'] . '</th>';
-			@$parse['file_metal'] .= '<th>' . strings::pretty_number($p['metal']) . '</th>';
-			@$parse['file_crystal'] .= '<th>' . strings::pretty_number($p['crystal']) . '</th>';
-			@$parse['file_deuterium'] .= '<th>' . strings::pretty_number($p['deuterium']) . '</th>';
-			@$parse['file_energy'] .= '<th>' . strings::pretty_number($p['energy_max'] - abs($p['energy_used'])) . '</th>';
+			@$parse['file_metal'] .= '<th>' . Helpers::pretty_number($p['metal']) . '</th>';
+			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($p['crystal']) . '</th>';
+			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($p['deuterium']) . '</th>';
+			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($p['energy_max'] - abs($p['energy_used'])) . '</th>';
 			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($p['energy_ak'] / (250 * $p[$resource[4]]) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $p['field_current'];
@@ -107,9 +102,9 @@ class ImperiumController extends ApplicationController
 			@$parse['file_deuterium_t'] += $p['deuterium'];
 			@$parse['file_energy_t'] += $p['energy_max'] - abs($p['energy_used']);
 
-			@$parse['file_metal_ph'] .= '<th>' . strings::pretty_number($p['metal_perhour']) . '</th>';
-			@$parse['file_crystal_ph'] .= '<th>' . strings::pretty_number($p['crystal_perhour']) . '</th>';
-			@$parse['file_deuterium_ph'] .= '<th>' . strings::pretty_number($p['deuterium_perhour']) . '</th>';
+			@$parse['file_metal_ph'] .= '<th>' . Helpers::pretty_number($p['metal_perhour']) . '</th>';
+			@$parse['file_crystal_ph'] .= '<th>' . Helpers::pretty_number($p['crystal_perhour']) . '</th>';
+			@$parse['file_deuterium_ph'] .= '<th>' . Helpers::pretty_number($p['deuterium_perhour']) . '</th>';
 
 			@$parse['file_metal_ph_t'] += $p['metal_perhour'];
 			@$parse['file_crystal_ph_t'] += $p['crystal_perhour'];
@@ -189,16 +184,16 @@ class ImperiumController extends ApplicationController
 			}
 		}
 
-		$parse['file_metal_t'] = strings::pretty_number($parse['file_metal_t']);
-		$parse['file_crystal_t'] = strings::pretty_number($parse['file_crystal_t']);
-		$parse['file_deuterium_t'] = strings::pretty_number($parse['file_deuterium_t']);
-		$parse['file_energy_t'] = strings::pretty_number($parse['file_energy_t']);
+		$parse['file_metal_t'] = Helpers::pretty_number($parse['file_metal_t']);
+		$parse['file_crystal_t'] = Helpers::pretty_number($parse['file_crystal_t']);
+		$parse['file_deuterium_t'] = Helpers::pretty_number($parse['file_deuterium_t']);
+		$parse['file_energy_t'] = Helpers::pretty_number($parse['file_energy_t']);
 
-		$parse['file_metal_ph_t'] = strings::pretty_number($parse['file_metal_ph_t']);
-		$parse['file_crystal_ph_t'] = strings::pretty_number($parse['file_crystal_ph_t']);
-		$parse['file_deuterium_ph_t'] = strings::pretty_number($parse['file_deuterium_ph_t']);
+		$parse['file_metal_ph_t'] = Helpers::pretty_number($parse['file_metal_ph_t']);
+		$parse['file_crystal_ph_t'] = Helpers::pretty_number($parse['file_crystal_ph_t']);
+		$parse['file_deuterium_ph_t'] = Helpers::pretty_number($parse['file_deuterium_ph_t']);
 
-		$parse['file_kredits'] = strings::pretty_number(user::get()->data['credits']);
+		$parse['file_kredits'] = Helpers::pretty_number($this->user->credits);
 
 		$parse['building_row'] = '';
 		$parse['fleet_row'] = '';
@@ -207,7 +202,7 @@ class ImperiumController extends ApplicationController
 
 		foreach ($reslist['build'] as $i)
 		{
-			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . app::$planetrow->data[$resource[$i]] . " (" . $r1[$i] . ")</th></tr>";
+			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->data[$resource[$i]] . " (" . $r1[$i] . ")</th></tr>";
 		}
 
 		foreach ($reslist['fleet'] as $i)
@@ -222,14 +217,13 @@ class ImperiumController extends ApplicationController
 
 		foreach ($reslist['tech'] as $i)
 		{
-			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . user::get()->data[$resource[$i]] . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
+			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->data[$resource[$i]] . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		$this->setTemplate('imperium');
-		$this->set('parse', $parse);
+		$this->view->pick('imperium');
+		$this->view->setVar('parse', $parse);
 
-		$this->setTitle('Империя');
+		$this->tag->setTitle('Империя');
 		$this->showTopPanel(false);
-		$this->display();
 	}
 }

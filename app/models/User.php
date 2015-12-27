@@ -53,6 +53,13 @@ class User extends Model
 	public $messages;
 	public $messages_ally;
 	public $avatar;
+	public $raids_win;
+	public $raids_lose;
+	public $raids;
+	public $links;
+	public $bonus;
+	public $bonus_multi;
+	public $refers;
 
 	public $galaxy;
 	public $system;
@@ -393,7 +400,7 @@ class User extends Model
 
 			$ally = $cache->get('user::ally_' . $this->id . '_' . $this->ally_id);
 
-			if ($ally === false)
+			if ($ally === NULL)
 			{
 				$ally = $this->db->query("SELECT a.id, a.ally_owner, a.ally_name, a.ally_ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
 

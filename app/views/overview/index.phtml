@@ -8,7 +8,7 @@
 				Сейчас вы можете получить по <b><?=($parse['bonus_multi'] * 500 * $this->game->getSpeed('mine')) ?></b> Металла, Кристаллов и Дейтерия.<br>
 				Каждый день размер бонуса будет увеличиваться.<br>
 				<br>
-				<a href="?set=overview&mode=bonus">ПОЛУЧИТЬ БОНУС</a><br><br>
+				<a href="<?=$this->url->get("overview/bonus/") ?>">ПОЛУЧИТЬ БОНУС</a><br><br>
 
 				Помоги проекту, поделись им с друзьями!
 				<script type="text/javascript" src="//yandex.st/share/share.js" charset="utf-8"></script>
@@ -24,8 +24,8 @@
 		<div class="row">
 			<div class="col-xs-12 col-sm-6">
 				<?=_getText('type_planet', $parse['planet_type']) ?> "<?=$parse['planet_name'] ?>"
-				<a href="?set=galaxy&r=0&galaxy=<?=$parse['galaxy_galaxy'] ?>&system=<?=$parse['galaxy_system'] ?>">[<?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?>]</a>
-				<a href="?set=overview&mode=renameplanet" title="Редактирование планеты">(изменить)</a>
+				<a href="<?=$this->url->get("galaxy/galaxy/".$parse['galaxy_galaxy']."/system/".$parse['galaxy_system']."/r/0/") ?>">[<?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?>]</a>
+				<a href="<?=$this->url->get("overview/rename/") ?>" title="Редактирование планеты">(изменить)</a>
 			</div>
 			<div class="separator visible-xs"></div>
 			<div class="col-xs-12 col-sm-6">
@@ -68,7 +68,7 @@
 				<div class="row">
 					<div class="col-sm-10 col-xs-5">
 						<div class="planet-image">
-							<a href="?set=overview&mode=renameplanet">
+							<a href="<?=$this->url->get("overview/rename/") ?>">
 								<img src="/assets/images/planeten/<?=$parse['planet_image'] ?>.jpg" alt="">
 							</a>
 							<? if ($parse['moon_img'] != ''): ?>
@@ -83,8 +83,6 @@
 								<font color="#000000"><b><?=$parse['case_pourcentage'] ?>%</b></font></div>
 						</div>
 
-						<br><center><a href="javascript:" onclick="snow()">Добавить снега</a></center>
-
 						<? if ($this->config->game->get('noob', 0) == 1): ?>
 							<div class="separator"></div>
 							<img src="/assets/images/warning.png" align="absmiddle" alt="">
@@ -96,7 +94,7 @@
 							<? foreach ($parse['officiers'] AS $oId => $oTime): ?>
 
 									<div class="col-xs-3 col-sm-12">
-										<a href="?set=officier" class="tooltip" data-tooltip-content="<?=_getText('tech', $oId) ?><br><? if ($oTime > time()): ?>Нанят до <font color=lime><?=$this->game->datezone("d.m.Y H:i", $oTime) ?></font><? else: ?><font color=lime>Не нанят</font><? endif; ?>"><span class="officier of<?=$oId ?><?=($oTime > time() ? '_ikon' : '') ?>"></span></a>
+										<a href="<?=$this->url->get("officier/") ?>" class="tooltip" data-tooltip-content="<?=_getText('tech', $oId) ?><br><? if ($oTime > time()): ?>Нанят до <font color=lime><?=$this->game->datezone("d.m.Y H:i", $oTime) ?></font><? else: ?><font color=lime>Не нанят</font><? endif; ?>"><span class="officier of<?=$oId ?><?=($oTime > time() ? '_ikon' : '') ?>"></span></a>
 									</div>
 
 							<? endforeach; ?>
@@ -155,10 +153,10 @@
 						</th>
 					</tr>
 					<tr>
-						<th colspan="2">Фракция: <a href="?set=race"><?=$parse['race'] ?></a></th>
+						<th colspan="2">Фракция: <a href="<?=$this->url->get("race/") ?>"><?=$parse['race'] ?></a></th>
 					</tr>
 					<tr>
-						<th colspan="2"><a href="?set=refers"><? if ($this->config->view->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]</th>
+						<th colspan="2"><a href="<?=$this->url->get("refers/") ?>"><? if ($this->config->view->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]</th>
 					</tr>
 				</table>
 			</div>
@@ -167,7 +165,7 @@
 				<table class="table">
 					<tr>
 						<td class="c col-sm-5 col-xs-6">Игрок:</td>
-						<td class="c col-sm-7 col-xs-6" style="word-break: break-all;"><a href="?set=players&id=<?=$parse['user_id'] ?>" class="window popup-user"><?=$parse['user_username'] ?></a></td>
+						<td class="c col-sm-7 col-xs-6" style="word-break: break-all;"><a href="<?=$this->url->get("players/id/".$parse['user_id']."/") ?>" class="window popup-user"><?=$parse['user_username'] ?></a></td>
 					</tr>
 					<tr>
 						<th>Постройки:</th>
@@ -191,7 +189,7 @@
 					</tr>
 					<tr>
 						<th>Место:</th>
-						<th><a href="?set=stat&range=<?=$parse['user_rank'] ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<font color="lime">+'.$parse['ile'].'</font>' : ($parse['ile'] < 0 ? '<font color="red">'.$parse['ile'].'</font>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></th>
+						<th><a href="<?=$this->url->get("stat/range/".$parse['user_rank']."/") ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<font color="lime">+'.$parse['ile'].'</font>' : ($parse['ile'] < 0 ? '<font color="red">'.$parse['ile'].'</font>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></th>
 					</tr>
 					<tr>
 						<td class="c" colspan="2">Промышленный уровень</td>
@@ -242,7 +240,7 @@
 		<tr>
 			<? foreach ($parse['anothers_planets'] AS $i => $UserPlanet): ?>
 				<th width="20%" valign="top">
-					<a href="?set=overview&amp;cp=<?= $UserPlanet['id'] ?>&amp;re=0" title="<?= $UserPlanet['name'] ?>"><img src="/assets/images/planeten/small/s_<?= $UserPlanet['image'] ?>.jpg" height="50" width="50" alt=""></a>
+					<a href="<?=$this->url->get("overview/cp/".$UserPlanet['id']."/re/0/") ?>" title="<?= $UserPlanet['name'] ?>"><img src="/assets/images/planeten/small/s_<?= $UserPlanet['image'] ?>.jpg" height="50" width="50" alt=""></a>
 					<br><?=$UserPlanet['name'] ?>
 				</th>
 				<? if ($i > 0 && $i%5 == 0): ?></tr><tr><? endif; ?>

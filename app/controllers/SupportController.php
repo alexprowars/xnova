@@ -2,17 +2,13 @@
 
 namespace App\Controllers;
 
-use Xcms\db;
-use Xcms\socials;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Helpers;
 
 class SupportController extends ApplicationController
 {
-	function __construct ()
+	public function initialize ()
 	{
-		parent::__construct();
+		parent::initialize();
 	}
 	
 	public function show ()
@@ -26,12 +22,12 @@ class SupportController extends ApplicationController
 				if (empty($_POST['text']) || empty($_POST['subject']))
 					$this->message('Не заполнены все поля', 'Ошибка', '?set=support', 3);
 		
-				db::query("INSERT game_support SET `player_id` = '" . user::get()->data['id'] . "', `subject` = '" . strings::CheckString($_POST['subject']) . "', `text` = '" . strings::CheckString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
+				$this->db->query("INSERT game_support SET `player_id` = '" . $this->user->id . "', `subject` = '" . Helpers::CheckString($_POST['subject']) . "', `text` = '" . Helpers::CheckString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
 		
-				$ID = db::insert_id();
+				$ID = $this->db->lastInsertId();
 		
 				$token = socials::smsGetToken();
-				socials::smsSend(SMS_LOGIN, 'Создан новый тикет №' . $ID . ' ('.user::get()->data['username'].')', $token);
+				socials::smsSend(SMS_LOGIN, 'Создан новый тикет №' . $ID . ' ('.$this->user->username.')', $token);
 		
 				$this->message('Задача добавлена', 'Успех', '?set=support', 3);
 		
@@ -46,22 +42,22 @@ class SupportController extends ApplicationController
 					if (empty($_POST['text']))
 						$this->message('Не заполнены все поля', 'Ошибка', '?set=support', 3);
 		
-					$ticket = db::query("SELECT id, text, status FROM game_support WHERE `id` = '" . $TicketID . "';", true);
+					$ticket = $this->db->query("SELECT id, text, status FROM game_support WHERE `id` = '" . $TicketID . "';")->fetch();
 		
 					if (isset($ticket['id']))
 					{
-						$text = $ticket['text'] . '<hr>' . user::get()->data['username'] . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . strings::CheckString($_POST['text']) . '';
+						$text = $ticket['text'] . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::CheckString($_POST['text']) . '';
 		
-						db::query("UPDATE game_support SET `text` = '" . addslashes($text) . "',`status` = '3' WHERE `id` = '" . $TicketID . "';");
+						$this->db->query("UPDATE game_support SET `text` = '" . addslashes($text) . "',`status` = '3' WHERE `id` = '" . $TicketID . "';");
 		
-						user::get()->sendMessage(1, false, time(), 4, user::get()->data['username'], 'Поступил ответ на тикет №' . $TicketID);
+						$this->game->sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
 		
 						$this->message('Задача обновлена', 'Успех', '?set=support', 3);
 		
 						if ($ticket['status'] == 2)
 						{
 							$token = socials::smsGetToken();
-							socials::smsSend(SMS_LOGIN, 'Поступил ответ на тикет №' . $ticket['id'] . ' ('.user::get()->data['username'].')', $token);
+							socials::smsSend(SMS_LOGIN, 'Поступил ответ на тикет №' . $ticket['id'] . ' ('.$this->user->username.')', $token);
 						}
 					}
 				}
@@ -72,27 +68,26 @@ class SupportController extends ApplicationController
 		
 				$parse = array();
 		
-				$supports = db::query("SELECT ID, time, text, subject, status FROM game_support WHERE (`player_id` = '" . user::get()->data['id'] . "') ORDER BY time DESC;");
+				$supports = $this->db->query("SELECT ID, time, text, subject, status FROM game_support WHERE (`player_id` = '" . $this->user->id . "') ORDER BY time DESC;");
 		
 				$parse['TicketsList'] = array();
 		
-				while ($ticket = db::fetch_assoc($supports))
+				while ($ticket = $supports->fetch())
 				{
 					$parse['TicketsList'][$ticket['ID']] = array
 					(
 						'status' => $ticket['status'],
 						'subject' => $ticket['subject'],
-						'date' => datezone("d.m.Y H:i:s", $ticket['time']),
+						'date' => $this->game->datezone("d.m.Y H:i:s", $ticket['time']),
 						'text' => html_entity_decode($ticket['text'], ENT_NOQUOTES, "CP1251"),
 					);
 				}
 		
-				$this->setTemplate('support');
-				$this->set('parse', $parse);
+				$this->view->pick('support');
+				$this->view->setVar('parse', $parse);
 
-				$this->setTitle('Техподдержка');
+				$this->tag->setTitle('Техподдержка');
 				$this->showTopPanel(false);
-				$this->display();
 		}
 	}
 }

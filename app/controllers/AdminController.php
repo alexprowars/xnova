@@ -2,12 +2,7 @@
 
 namespace App\Controllers;
 
-use Xcms\cms;
-use Xcms\core;
-use Xcms\db;
-use Xcms\strings;
-use Xnova\User;
-use Xnova\pageHelper;
+use App\Lang;
 
 /**
  * Class showAdminPage
@@ -18,24 +13,24 @@ class AdminController extends ApplicationController
 {
 	private $modules = array();
 
-	function __construct ()
+	public function initialize ()
 	{
 		core::setConfig('gameTemplate', 'admin');
 
-		parent::__construct();
+		parent::initialize();
 		
-		strings::includeLang('admin');
+		Lang::includeLang('admin');
 
-		$result = db::query("SELECT m.id, m.alias, m.name, r.right_id FROM game_cms_modules m LEFT JOIN game_cms_rights r ON r.module_id = m.id AND r.group_id = ".user::get()->data['group_id']." AND right_id != '0' WHERE m.is_admin = '1' AND m.active = '1'");
+		$result = $this->db->query("SELECT m.id, m.alias, m.name, r.right_id FROM game_cms_modules m LEFT JOIN game_cms_rights r ON r.module_id = m.id AND r.group_id = ".$this->user->group_id." AND right_id != '0' WHERE m.is_admin = '1' AND m.active = '1'");
 
-		while ($r = db::fetch($result))
+		while ($r = $result->fetch())
 		{
 			$this->modules[$r['alias']] = array
 			(
 				'id' 	=> $r['id'],
 				'alias'	=> $r['alias'],
 				'name' 	=> $r['name'],
-				'right' => user::get()->isAdmin() ? 2 : (!$r['right_id'] ? 0 : $r['right_id'])
+				'right' => $this->user->isAdmin() ? 2 : (!$r['right_id'] ? 0 : $r['right_id'])
 			);
 		}
 
