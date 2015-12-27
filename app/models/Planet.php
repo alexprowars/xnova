@@ -51,6 +51,8 @@ class Planet extends Model
 	public $diameter;
 	public $parent_planet;
 	public $phalanx;
+	public $sprungtor;
+	public $last_jump_time;
 
 	public $small_ship_cargo;
 	public $big_ship_cargo;

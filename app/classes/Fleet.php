@@ -3,6 +3,7 @@ namespace App;
 
 use App\Models\User;
 use Phalcon\Di;
+use Phalcon\DiInterface;
 
 class Fleet extends Building
 {
@@ -129,7 +130,7 @@ class Fleet extends Building
 		return $consumption;
 	}
 
-	static function GetFleetStay ($FleetArray, Di $di)
+	static function GetFleetStay ($FleetArray, DiInterface $di)
 	{
 		$game = $di->getShared('game');
 
