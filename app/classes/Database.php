@@ -2,10 +2,11 @@
 namespace App;
 
 use Phalcon\Db\Adapter\Pdo\Mysql;
+use Phalcon\Db\ResultInterface;
 
 class Database extends Mysql
 {
-	public function extractResult ($result, $field = false)
+	public function extractResult (ResultInterface $result, $field = false)
 	{
 		$data = array();
 

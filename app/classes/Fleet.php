@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Models\User;
+use Phalcon\Di;
 
 class Fleet extends Building
 {
@@ -39,7 +40,7 @@ class Fleet extends Building
 	 */
 	static function GetFleetMaxSpeed ($FleetArray, $Fleet, User $user)
 	{
-		global $CombatCaps;
+		$game = $user->getDI()->getShared('game');
 
 		$speedalls = array();
 
@@ -50,19 +51,19 @@ class Fleet extends Building
 
 		foreach ($FleetArray as $Ship => $Count)
 		{
-			switch ($CombatCaps[$Ship]['type_engine'])
+			switch ($game->CombatCaps[$Ship]['type_engine'])
 			{
 				case 1:
-					$speedalls[$Ship] = $CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
+					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
 					break;
 				case 2:
-					$speedalls[$Ship] = $CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
+					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
 					break;
 				case 3:
-					$speedalls[$Ship] = $CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
+					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
 					break;
 				default:
-					$speedalls[$Ship] = $CombatCaps[$Ship]['speed'];
+					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'];
 			}
 
 			if ($user->bonusValue('fleet_speed') != 1)
@@ -77,18 +78,18 @@ class Fleet extends Building
 
 	static function SetShipsEngine (User $user)
 	{
-		global $CombatCaps, $reslist, $resource;
+		$game = $user->getDI()->getShared('game');
 
-		foreach ($reslist['fleet'] as $Ship)
+		foreach ($game->reslist['fleet'] as $Ship)
 		{
-			if (isset($CombatCaps[$Ship]) && isset($CombatCaps[$Ship]['engine_up']))
+			if (isset($game->CombatCaps[$Ship]) && isset($game->CombatCaps[$Ship]['engine_up']))
 			{
-				if ($user[$resource[$CombatCaps[$Ship]['engine_up']['tech']]] >= $CombatCaps[$Ship]['engine_up']['lvl'])
+				if ($user->{$game->resource[$game->CombatCaps[$Ship]['engine_up']['tech']]} >= $game->CombatCaps[$Ship]['engine_up']['lvl'])
 				{
-					$CombatCaps[$Ship]['type_engine']++;
-					$CombatCaps[$Ship]['speed'] = $CombatCaps[$Ship]['engine_up']['speed'];
+					$game->CombatCaps[$Ship]['type_engine']++;
+					$game->CombatCaps[$Ship]['speed'] = $game->CombatCaps[$Ship]['engine_up']['speed'];
 
-					unset($CombatCaps[$Ship]['engine_up']);
+					unset($game->CombatCaps[$Ship]['engine_up']);
 				}
 			}
 		}
@@ -101,9 +102,9 @@ class Fleet extends Building
 	 */
 	static function GetShipConsumption ($Ship, User $user)
 	{
-		global $CombatCaps;
+		$game = $user->getDI()->getShared('game');
 
-		return ceil($CombatCaps[$Ship]['consumption'] * $user->bonusValue('fleet_fuel'));
+		return ceil($game->CombatCaps[$Ship]['consumption'] * $user->bonusValue('fleet_fuel'));
 	}
 
 	static function GetFleetConsumption ($FleetArray, $gameFleetSpeed, $MissionDuration, $MissionDistance, $Player)
@@ -128,9 +129,9 @@ class Fleet extends Building
 		return $consumption;
 	}
 
-	static function GetFleetStay ($FleetArray)
+	static function GetFleetStay ($FleetArray, Di $di)
 	{
-		global $CombatCaps;
+		$game = $di->getShared('game');
 
 		$stay = 0;
 
@@ -138,7 +139,7 @@ class Fleet extends Building
 		{
 			if ($Ship > 0)
 			{
-				$stay += $CombatCaps[$Ship]['stay'] * $Count;
+				$stay += $game->CombatCaps[$Ship]['stay'] * $Count;
 			}
 		}
 
@@ -172,21 +173,19 @@ class Fleet extends Building
 		return $fleetAmount;
 	}
 
-	static function CreateFleetPopupedFleetLink ($FleetRow, $Texte, $FleetType)
+	static function CreateFleetPopupedFleetLink ($FleetRow, $Texte, $FleetType, User $user)
 	{
-		global $user;
-
 		$FleetRec = explode(";", $FleetRow['fleet_array']);
 
 		$FleetPopup = "<table width=200>";
 		$r = 'javascript:;';
 		$Total = 0;
 
-		if ($FleetRow['fleet_owner'] != $user->data['id'] && $user->data['spy_tech'] < 2)
+		if ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 2)
 		{
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
 		}
-		elseif ($FleetRow['fleet_owner'] != $user->data['id'] && $user->data['spy_tech'] < 4)
+		elseif ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 4)
 		{
 			foreach ($FleetRec as $Group)
 			{
@@ -197,9 +196,9 @@ class Fleet extends Building
 					$Total = $Total + $Count[0];
 				}
 			}
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . strings::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
-		elseif ($FleetRow['fleet_owner'] != $user->data['id'] && $user->data['spy_tech'] < 8)
+		elseif ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 8)
 		{
 			foreach ($FleetRec as $Group)
 			{
@@ -211,11 +210,11 @@ class Fleet extends Building
 					$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . _getText('tech', $Ship[0]) . "<font></td></tr>";
 				}
 			}
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . strings::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
 		else
 		{
-			if ($FleetRow['fleet_target_owner'] == $user->data['id'] && $FleetRow['fleet_mission'] == 1)
+			if ($FleetRow['fleet_target_owner'] == $user->id && $FleetRow['fleet_mission'] == 1)
 				$r = '?set=sim&r=';
 
 			foreach ($FleetRec as $Group)
@@ -224,7 +223,7 @@ class Fleet extends Building
 				{
 					$Ship = explode(",", $Group);
 					$Count = explode("!", $Ship[1]);
-					$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $Ship[0]) . ":<font></td><td width=25% align=right><font color=white>" . strings::pretty_number($Count[0]) . "<font></td></tr>";
+					$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $Ship[0]) . ":<font></td><td width=25% align=right><font color=white>" . Helpers::pretty_number($Count[0]) . "<font></td></tr>";
 
 					if ($r != 'javascript:;')
 						$r .= $Group . ';';
@@ -248,9 +247,9 @@ class Fleet extends Building
 		if ($FleetTotalC != 0)
 		{
 			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . strings::pretty_number($FleetRow['fleet_resource_metal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . strings::pretty_number($FleetRow['fleet_resource_crystal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . strings::pretty_number($FleetRow['fleet_resource_deuterium']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_metal']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_crystal']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_deuterium']) . "<font></td></tr>";
 			$FRessource .= "</table>";
 		}
 		else

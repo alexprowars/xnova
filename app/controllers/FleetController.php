@@ -2,6 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Controllers\Fleet\Back;
+use App\Controllers\Fleet\StageOne;
+use App\Controllers\Fleet\StageZero;
+use App\Fleet;
+
 class FleetController extends ApplicationController
 {
 	public function initialize ()
@@ -9,41 +14,48 @@ class FleetController extends ApplicationController
 		parent::initialize();
 		
 		$this->user->loadPlanet();
+
+		// Устанавливаем обновлённые двигателя кораблей
+		Fleet::SetShipsEngine($this->user);
 	}
 	
 	public function indexAction ()
 	{
-		// Устанавливаем обновлённые двигателя кораблей
-		SetShipsEngine($this->user);
+		new StageZero($this);
+	}
 
-		$module = (isset($_GET['page'])) ? $_GET['page'] : '';
+	public function stageoneAction ()
+	{
+		new StageOne($this);
+	}
 
-		switch ($module)
-		{
-			case 'fleet_1':
-				include(APP_PATH.'controllers/fleet/fleet_1.php');
-				break;
-			case 'fleet_2':
-				include(APP_PATH.'controllers/fleet/fleet_2.php');
-				break;
-			case 'fleet_3':
-				include(APP_PATH.'controllers/fleet/fleet_3.php');
-				break;
-			case 'back':
-				include(APP_PATH.'controllers/fleet/back.php');
-				break;
-			case 'quick':
-				include(APP_PATH.'controllers/fleet/quick.php');
-				break;
-			case 'shortcut':
-				include(APP_PATH.'controllers/fleet/shortcut.php');
-				break;
-			case 'verband':
-				include(APP_PATH.'controllers/fleet/verband.php');
-				break;
-			default:
-				include(APP_PATH.'controllers/fleet/fleet_0.php');
-		}
+	public function stagetwoAction ()
+	{
+		new StageTwo($this);
+	}
+
+	public function stagethreeAction ()
+	{
+		new StageThree($this);
+	}
+	public function backAction ()
+	{
+		new Back($this);
+	}
+
+	public function shortcutAction ()
+	{
+		new Shortcut($this);
+	}
+
+	public function verbandAction ()
+	{
+		new Verband($this);
+	}
+
+	public function quickAction ()
+	{
+		new Quick($this);
 	}
 }
 

@@ -16,6 +16,8 @@ use Phalcon\Mvc\User\Component;
  * @property \Phalcon\Http\Request request
  * @property \Phalcon\Http\Response response
  * @property \Phalcon\Mvc\Router router
+ * @property \Phalcon\Config|\stdClass config
+ * @property \App\Game game
  */
 class Auth extends Component
 {
@@ -55,7 +57,7 @@ class Auth extends Component
 					$this->db->query("DELETE FROM game_banned WHERE `who` = '".$Result->id."'");
 					$this->db->query("UPDATE game_users SET`banned` = '0' WHERE `id` = '".$Result->id."'");
 
-					$Result->banaday = 0;
+					$Result->banned = 0;
 				}
 			}
 

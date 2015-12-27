@@ -3,6 +3,7 @@ namespace App;
 
 use App\Models\Planet;
 use App\Models\User;
+use Phalcon\Di;
 use Phalcon\Mvc\User\Component;
 
 class Building extends Component
@@ -35,32 +36,28 @@ class Building extends Component
 
 	static function IsTechnologieAccessible (User $user, Planet $planet, $Element)
 	{
-		if (isset($requeriments[$Element]))
+		$game = $user->getDI()->getShared('game');
+
+		if (isset($game->requeriments[$Element]))
 		{
 			$enabled = true;
-			foreach ($requeriments[$Element] as $ReqElement => $EleLevel)
+
+			foreach ($game->requeriments[$Element] as $ReqElement => $EleLevel)
 			{
-				if ($ReqElement == 700 && $user[$resource[$ReqElement]] != $EleLevel)
-				{
+				if ($ReqElement == 700 && $user->{$game->resource[$ReqElement]} != $EleLevel)
 					return false;
-				}
-				elseif (isset($user[$resource[$ReqElement]]) && $user[$resource[$ReqElement]] >= $EleLevel)
+				elseif (isset($user->{$game->resource[$ReqElement]}) && $user->{$game->resource[$ReqElement]} >= $EleLevel)
 				{
 					// break;
 				}
-				elseif (isset($planet[$resource[$ReqElement]]) && $planet[$resource[$ReqElement]] >= $EleLevel)
-				{
+				elseif (isset($planet->{$game->resource[$ReqElement]}) && $planet->{$game->resource[$ReqElement]} >= $EleLevel)
 					$enabled = true;
-				}
-				elseif (isset($planet['planet_type']) && $planet['planet_type'] == 5 && ($Element == 43 || $Element == 502 || $Element == 503) && ($ReqElement == 21 || $ReqElement == 41))
-				{
+				elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($Element == 43 || $Element == 502 || $Element == 503) && ($ReqElement == 21 || $ReqElement == 41))
 					$enabled = true;
-				}
 				else
-				{
 					return false;
-				}
 			}
+
 			return $enabled;
 		}
 		else
@@ -69,16 +66,14 @@ class Building extends Component
 
 	static function checkTechnologyRace (User $user, $Element)
 	{
-		global $requeriments, $resource;
+		$game = $user->getDI()->getShared('game');
 
-		if (isset($requeriments[$Element]))
+		if (isset($game->requeriments[$Element]))
 		{
-			foreach ($requeriments[$Element] as $ReqElement => $EleLevel)
+			foreach ($game->requeriments[$Element] as $ReqElement => $EleLevel)
 			{
-				if ($ReqElement == 700 && $user[$resource[$ReqElement]] != $EleLevel)
-				{
+				if ($ReqElement == 700 && $user->{$game->resource[$ReqElement]} != $EleLevel)
 					return false;
-				}
 			}
 
 			return true;
@@ -87,15 +82,17 @@ class Building extends Component
 			return true;
 	}
 
-	static function CheckLabSettingsInQueue ($CurrentPlanet)
+	static function CheckLabSettingsInQueue (Planet $planet)
 	{
-		$queueManager = new Queue($CurrentPlanet['queue']);
+		$queueManager = new Queue($planet->queue);
 
 		if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 		{
+			$config = $planet->getDI()->getShared('config');
+
 			$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
-			if ($BuildQueue[0]['i'] == 31 && core::getConfig('BuildLabWhileRun', 0) != 1)
+			if ($BuildQueue[0]['i'] == 31 && $config->game->get('BuildLabWhileRun', 0) != 1)
 				$return = false;
 			else
 				$return = true;
@@ -106,40 +103,37 @@ class Building extends Component
 		return $return;
 	}
 
-	static function getTechTree ($Element)
+	static function getTechTree ($Element, User $user, Planet $planet)
 	{
+		$game = $user->getDI()->getShared('game');
+
 		$result = '';
 
-		if (isset($requeriments[$Element]))
+		if (isset($game->requeriments[$Element]))
 		{
 			$result = "";
 
-			foreach ($requeriments[$Element] as $ResClass => $Level)
+			foreach ($game->requeriments[$Element] as $ResClass => $Level)
 			{
 				if ($ResClass != 700)
 				{
-					if (isset(app::$user->data[$resource[$ResClass]]) && app::$user->data[$resource[$ResClass]] >= $Level)
-					{
+					if (isset($user->{$game->resource[$ResClass]}) && $user->{$game->resource[$ResClass]} >= $Level)
 						$result .= "<span class=\"positive\">";
-					}
-					elseif (isset(app::$planetrow->data[$resource[$ResClass]]) && app::$planetrow->data[$resource[$ResClass]] >= $Level)
-					{
+					elseif (isset($planet->{$game->resource[$ResClass]}) && $planet->{$game->resource[$ResClass]} >= $Level)
 						$result .= "<span class=\"positive\">";
-					}
 					else
-					{
 						$result .= "<span class=\"negative\">";
-					}
+
 					$result .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
 
-					if (isset(app::$user->data[$resource[$ResClass]]) && app::$user->data[$resource[$ResClass]] < $Level)
+					if (isset($user->{$game->resource[$ResClass]}) && $user->{$game->resource[$ResClass]} < $Level)
 					{
-						$minus = $Level - app::$user->data[$resource[$ResClass]];
+						$minus = $Level - $user->{$game->resource[$ResClass]};
 						$result .= " + <b>" . $minus . "</b>";
 					}
-					elseif (isset(app::$planetrow->data[$resource[$ResClass]]) && app::$planetrow->data[$resource[$ResClass]] < $Level)
+					elseif (isset($planet->{$game->resource[$ResClass]}) && $planet->{$game->resource[$ResClass]} < $Level)
 					{
-						$minus = $Level - app::$planetrow->data[$resource[$ResClass]];
+						$minus = $Level - $planet->{$game->resource[$ResClass]};
 						$result .= " + <b>" . $minus . "</b>";
 					}
 				}
@@ -147,7 +141,7 @@ class Building extends Component
 				{
 					$result .= _getText('tech', $ResClass) . " (";
 
-					if (app::$user->data['race'] != $Level)
+					if ($user->race != $Level)
 						$result .= "<span class=\"negative\">" . _getText('race', $Level);
 					else
 						$result .= "<span class=\"positive\">" . _getText('race', $Level);
@@ -168,46 +162,45 @@ class Building extends Component
 	 */
 	static function GetBuildingTime (User $user, Planet $planet, $Element)
 	{
-		global $resource, $reslist;
+		$game = $user->getDI()->getShared('game');
+		$config = $user->getDI()->getShared('config');
 
 		$time = 0;
 
-		$cost = self::GetBuildingPrice($user, $planet, $Element, !(in_array($Element, $reslist['defense']) || in_array($Element, $reslist['fleet'])), false, false);
+		$cost = self::GetBuildingPrice($user, $planet, $Element, !(in_array($Element, $game->reslist['defense']) || in_array($Element, $game->reslist['fleet'])), false, false);
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		if (in_array($Element, $reslist['build']))
+		if (in_array($Element, $game->reslist['build']))
 		{
-			$time = ($cost / core::getConfig('game_speed')) * (1 / ($planet[$resource['14']] + 1)) * pow(0.5, $planet[$resource['15']]);
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$game->resource['14']} + 1)) * pow(0.5, (int) $planet->{$game->resource['15']});
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
-		elseif (in_array($Element, $reslist['tech']) || in_array($Element, $reslist['tech_f']))
+		elseif (in_array($Element, $game->reslist['tech']) || in_array($Element, $game->reslist['tech_f']))
 		{
 			if (isset($planet['spaceLabs']) && count($planet['spaceLabs']))
 			{
 				$lablevel = 0;
 
-				global $requeriments;
-
 				foreach ($planet['spaceLabs'] as $Levels)
 				{
-					if (!isset($requeriments[$Element][31]) || $Levels >= $requeriments[$Element][31])
+					if (!isset($game->requeriments[$Element][31]) || $Levels >= $game->requeriments[$Element][31])
 						$lablevel += $Levels;
 				}
 			}
 			else
-				$lablevel = $planet[$resource['31']];
+				$lablevel = $planet->{$game->resource['31']};
 
-			$time = ($cost / core::getConfig('game_speed')) / (($lablevel + 1) * 2);
+			$time = ($cost / $config->game->get('game_speed')) / (($lablevel + 1) * 2);
 			$time = floor($time * 3600 * $user->bonusValue('time_research'));
 		}
-		elseif (in_array($Element, $reslist['defense']))
+		elseif (in_array($Element, $game->reslist['defense']))
 		{
-			$time = ($cost / core::getConfig('game_speed')) * (1 / ($planet[$resource['21']] + 1)) * pow(1 / 2, $planet[$resource['15']]);
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$game->resource['21']} + 1)) * pow(1 / 2, (int) $planet->{$game->resource['15']});
 			$time = floor($time * 3600 * $user->bonusValue('time_defence'));
 		}
-		elseif (in_array($Element, $reslist['fleet']))
+		elseif (in_array($Element, $game->reslist['fleet']))
 		{
-			$time = ($cost / core::getConfig('game_speed')) * (1 / ($planet[$resource['21']] + 1)) * pow(1 / 2, $planet[$resource['15']]);
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$game->resource['21']} + 1)) * pow(1 / 2, (int) $planet->{$game->resource['15']});
 			$time = floor($time * 3600 * $user->bonusValue('time_fleet'));
 		}
 
@@ -237,16 +230,13 @@ class Building extends Component
 		{
 			if (isset($cost[$ResType]) && $cost[$ResType] != 0)
 			{
-				$text .= "<div><img src='" . DPATH . "images/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-tooltip-content='" . $ResTitle[0] . "'>";
+				$text .= "<div><img src='/assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-tooltip-content='" . $ResTitle[0] . "'>";
 
-				if ($cost[$ResType] > $planet[$ResType])
-				{
-					$text .= "<span class=\"resNo tooltip\" data-tooltip-content=\"необходимо: ".strings::pretty_number($cost[$ResType] - $planet[$ResType])."\">" . strings::pretty_number($cost[$ResType]) . "</span> ";
-				}
+				if ($cost[$ResType] > $planet->{$ResType})
+					$text .= "<span class=\"resNo tooltip\" data-tooltip-content=\"необходимо: ".Helpers::pretty_number($cost[$ResType] - $planet->{$ResType})."\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
 				else
-				{
-					$text .= "<span class=\"resYes\">" . strings::pretty_number($cost[$ResType]) . "</span> ";
-				}
+					$text .= "<span class=\"resYes\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
+
 				$text .= "</div>";
 			}
 		}
@@ -265,10 +255,10 @@ class Building extends Component
 	 */
 	static function GetBuildingPrice (User $user, Planet $planet, $Element, $Incremental = true, $ForDestroy = false, $withBonus = true)
 	{
-		global $pricelist, $resource, $reslist;
+		$game = $user->getDI()->getShared('game');
 
 		if ($Incremental)
-			$level = (isset($planet[$resource[$Element]])) ? $planet[$resource[$Element]] : $user->data[$resource[$Element]];
+			$level = (isset($planet->{$game->resource[$Element]})) ? $planet->{$game->resource[$Element]} : $user->{$game->resource[$Element]};
 		else
 			$level = 0;
 
@@ -277,25 +267,25 @@ class Building extends Component
 
 		foreach ($array as $ResType)
 		{
-			if (!isset($pricelist[$Element][$ResType]))
+			if (!isset($game->pricelist[$Element][$ResType]))
 				continue;
 
 			if ($Incremental)
-				$cost[$ResType] = floor($pricelist[$Element][$ResType] * pow($pricelist[$Element]['factor'], $level));
+				$cost[$ResType] = floor($game->pricelist[$Element][$ResType] * pow($game->pricelist[$Element]['factor'], $level));
 			else
-				$cost[$ResType] = floor($pricelist[$Element][$ResType]);
+				$cost[$ResType] = floor($game->pricelist[$Element][$ResType]);
 
 			if ($withBonus)
 			{
-				if (in_array($Element, $reslist['build']))
+				if (in_array($Element, $game->reslist['build']))
 					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_building'));
-				elseif (in_array($Element, $reslist['tech']))
+				elseif (in_array($Element, $game->reslist['tech']))
 					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_research'));
-				elseif (in_array($Element, $reslist['tech_f']))
+				elseif (in_array($Element, $game->reslist['tech_f']))
 					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_levelup'));
-				elseif (in_array($Element, $reslist['fleet']))
+				elseif (in_array($Element, $game->reslist['fleet']))
 					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_fleet'));
-				elseif (in_array($Element, $reslist['defense']))
+				elseif (in_array($Element, $game->reslist['defense']))
 					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_defence'));
 			}
 
@@ -309,20 +299,21 @@ class Building extends Component
 	/**
 	 * @param int $Element
 	 * @param int $Level
+	 * @param Planet $planet
 	 * @return string
 	 */
-	static function GetNextProduction ($Element, $Level)
+	static function GetNextProduction ($Element, $Level, Planet $planet)
 	{
 		$Res = array();
 
-		$resFrom = app::$planetrow->getProductionLevel($Element, ($Level + 1));
+		$resFrom = $planet->getProductionLevel($Element, ($Level + 1));
 
 		$Res['m'] = $resFrom['metal'];
 		$Res['c'] = $resFrom['crystal'];
 		$Res['d'] = $resFrom['deuterium'];
 		$Res['e'] = $resFrom['energy'];
 
-		$resTo = app::$planetrow->getProductionLevel($Element, $Level);
+		$resTo = $planet->getProductionLevel($Element, $Level);
 
 		$Res['m'] -= $resTo['metal'];
 		$Res['c'] -= $resTo['crystal'];
@@ -354,17 +345,17 @@ class Building extends Component
 	 */
 	static function GetElementRessources ($Element, $Count, User $user)
 	{
-		global $pricelist, $reslist;
+		$game = $user->getDI()->getShared('game');
 
-		$ResType['metal'] 		= ($pricelist[$Element]['metal'] * $Count);
-		$ResType['crystal'] 	= ($pricelist[$Element]['crystal'] * $Count);
-		$ResType['deuterium'] 	= ($pricelist[$Element]['deuterium'] * $Count);
+		$ResType['metal'] 		= ($game->pricelist[$Element]['metal'] * $Count);
+		$ResType['crystal'] 	= ($game->pricelist[$Element]['crystal'] * $Count);
+		$ResType['deuterium'] 	= ($game->pricelist[$Element]['deuterium'] * $Count);
 
 		foreach ($ResType AS &$cost)
 		{
-			if (in_array($Element, $reslist['fleet']))
+			if (in_array($Element, $game->reslist['fleet']))
 				$cost = round($cost * $user->bonusValue('res_fleet'));
-			elseif (in_array($Element, $reslist['defense']))
+			elseif (in_array($Element, $game->reslist['defense']))
 				$cost = round($cost * $user->bonusValue('res_defence'));
 		}
 
@@ -379,19 +370,19 @@ class Building extends Component
 	 */
 	static function GetMaxConstructibleElements ($Element, $Ressources, User $user)
 	{
-		global $pricelist, $reslist;
+		$game = $user->getDI()->getShared('game');
 
 		$MaxElements = -1;
 
-		foreach ($pricelist[$Element] AS $need_res => $need_count)
+		foreach ($game->pricelist[$Element] AS $need_res => $need_count)
 		{
 			if (in_array($need_res, array('metal', 'crystal', 'deuterium', 'energy_max')) && $need_count != 0)
 			{
 				$count = 0;
 
-				if (in_array($Element, $reslist['fleet']))
+				if (in_array($Element, $game->reslist['fleet']))
 					$count = round($need_count * $user->bonusValue('res_fleet'));
-				elseif (in_array($Element, $reslist['defense']))
+				elseif (in_array($Element, $game->reslist['defense']))
 					$count = round($need_count * $user->bonusValue('res_defence'));
 
 				$count = floor($Ressources[$need_res] / $count);
@@ -403,8 +394,8 @@ class Building extends Component
 			}
 		}
 
-		if (isset($pricelist[$Element]['max']) && $MaxElements > $pricelist[$Element]['max'])
-			$MaxElements = $pricelist[$Element]['max'];
+		if (isset($game->pricelist[$Element]['max']) && $MaxElements > $game->pricelist[$Element]['max'])
+			$MaxElements = $game->pricelist[$Element]['max'];
 
 		return $MaxElements;
 	}

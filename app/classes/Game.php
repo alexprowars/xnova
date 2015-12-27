@@ -152,11 +152,6 @@ class Game extends Component
 		$this->db->query("UPDATE game_config SET `value` = '". $value ."' WHERE `key` = '".$key."';");
 		$this->config->app->offsetSet($key, $value);
 	}
-
-	function CalculateMaxPlanetFields ($planet)
-	{
-		return $planet->field_max + ($planet->{$this->resource[33]} * 5) + ($this->config->game->fieldsByMoonBase * $planet->{$this->resource[41]});
-	}
 }
 
 ?>

@@ -27,6 +27,7 @@ class Planet extends Model
 	public $id_ally;
 	public $planet_type;
 	public $field_current;
+	public $field_max;
 	public $last_update;
 	public $battery_max;
 	public $planet_updated;
@@ -987,6 +988,13 @@ class Planet extends Model
 
 			$this->db->query("UNLOCK TABLES");
 		}
+	}
+
+	function getMaxFields ()
+	{
+		$config = $this->getDI()->get('config');
+
+		return $this->field_max + ($this->{$this->game->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->game->resource[41]});
 	}
 
 	public function saveData ($fields, $userId = 0)

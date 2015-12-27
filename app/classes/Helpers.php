@@ -134,7 +134,7 @@ class Helpers
 
 	static function pretty_phone ($phone)
 	{
-		$phone = socials::phoneFormat($phone);
+		$phone = Socials::phoneFormat($phone);
 
 		if ($phone != '')
 		{

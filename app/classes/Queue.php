@@ -4,7 +4,29 @@ namespace App;
 
 use App\Models\Planet;
 use App\Models\User;
+use Phalcon\Mvc\User\Component;
 
+/**
+ * Class ControllerBase
+ * @property \Phalcon\Mvc\View view
+ * @property \Phalcon\Tag tag
+ * @property \Phalcon\Assets\Manager assets
+ * @property \Phalcon\Db\Adapter\Pdo\Mysql db
+ * @property \Phalcon\Mvc\Model\Manager modelsManager
+ * @property \Phalcon\Session\Adapter\Memcache session
+ * @property \Phalcon\Http\Response\Cookies cookies
+ * @property \Phalcon\Http\Request request
+ * @property \Phalcon\Http\Response response
+ * @property \Phalcon\Mvc\Router router
+ * @property \Phalcon\Cache\Backend\Memcache cache
+ * @property \Phalcon\Mvc\Url url
+ * @property \App\Models\User user
+ * @property \App\Auth\Auth auth
+ * @property \Phalcon\Mvc\Dispatcher dispatcher
+ * @property \Phalcon\Flash\Direct flash
+ * @property \Phalcon\Config|\stdClass config
+ * @property \App\Game game
+ */
 class Queue
 {
 	private $queue = array();
@@ -13,11 +35,11 @@ class Queue
 	const QUEUE_TYPE_RESEARCH = 'research';
 	const QUEUE_TYPE_SHIPYARD = 'shipyard';
 	/**
-	 * @var user
+	 * @var \App\Models\User user
 	 */
 	private $user;
 	/**
-	 * @var \Xnova\planet
+	 * @var \App\Models\Planet
 	 */
 	private $planet;
 
@@ -49,19 +71,19 @@ class Queue
 
 	public function add($elementId, $count = 1, $destroy = false)
 	{
-		if (in_array($elementId, $reslist['build']))
+		if (in_array($elementId, $this->game->reslist['build']))
 			$this->addBuildingToQueue($elementId, $destroy);
-		elseif (in_array($elementId, $reslist['tech']) || in_array($elementId, $reslist['tech_f']))
+		elseif (in_array($elementId, $this->game->reslist['tech']) || in_array($elementId, $this->game->reslist['tech_f']))
 			$this->addTechToQueue($elementId);
-		elseif (in_array($elementId, $reslist['fleet']) || in_array($elementId, $reslist['defense']))
+		elseif (in_array($elementId, $this->game->reslist['fleet']) || in_array($elementId, $this->game->reslist['defense']))
 			$this->addShipyardToQueue($elementId, $count);
 	}
 
 	public function delete($elementId, $listId = 0)
 	{
-		if (in_array($elementId, $reslist['build']))
+		if (in_array($elementId, $this->game->reslist['build']))
 			$this->deleteBuildingInQueue($listId);
-		elseif (in_array($elementId, $reslist['tech']) || in_array($elementId, $reslist['tech_f']))
+		elseif (in_array($elementId, $this->game->reslist['tech']) || in_array($elementId, $this->game->reslist['tech_f']))
 			$this->deleteTechInQueue($elementId);
 	}
 
@@ -101,7 +123,7 @@ class Queue
 
 	private function addBuildingToQueue ($elementId, $destroy = false)
 	{
-		$maxBuidSize = MAX_BUILDING_QUEUE_SIZE;
+		$maxBuidSize = $this->config->game->maxBuildingQueue;
 		if ($this->user->rpg_constructeur > time())
 			$maxBuidSize += 2;
 
@@ -112,9 +134,9 @@ class Queue
 		else
 			$queueID = false;
 
-		$currentMaxFields = CalculateMaxPlanetFields($this->planet->data);
+		$currentMaxFields = Building::CalculateMaxPlanetFields($this->planet);
 
-		if ($this->planet->data["field_current"] < ($currentMaxFields - $actualCount) || $destroy)
+		if ($this->planet->field_current < ($currentMaxFields - $actualCount) || $destroy)
 		{
 			if ($queueID > 1)
 			{
@@ -129,21 +151,21 @@ class Queue
 			else
 				$inArray = 0;
 
-			$ActualLevel = $this->planet->data[$resource[$elementId]];
+			$ActualLevel = $this->planet->{$this->game->resource[$elementId]};
 
 			if (!$destroy)
 			{
 				$BuildLevel = $ActualLevel + 1 + $inArray;
-				$this->planet->{$resource[$elementId]} += $inArray;
-				$BuildTime = GetBuildingTime($this->user, $this->planet->data, $elementId);
-				$this->planet->{$resource[$elementId]} -= $inArray;
+				$this->planet->{$this->game->resource[$elementId]} += $inArray;
+				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId);
+				$this->planet->{$this->game->resource[$elementId]} -= $inArray;
 			}
 			else
 			{
 				$BuildLevel = $ActualLevel - 1 + $inArray;
-				$this->planet->{$resource[$elementId]} -= $inArray;
-				$BuildTime = GetBuildingTime($this->user, $this->planet->data, $elementId) / 2;
-				$this->planet->{$resource[$elementId]} += $inArray;
+				$this->planet->{$this->game->resource[$elementId]} -= $inArray;
+				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId) / 2;
+				$this->planet->{$this->game->resource[$elementId]} += $inArray;
 			}
 
 			if ($queueID == 1)
@@ -200,7 +222,7 @@ class Queue
 					
 				foreach ($queueArray AS $i => &$listArray)
 				{
-					$listArray['t'] = GetBuildingTime($this->user, $this->planet->data, $listArray['i']);
+					$listArray['t'] = Building::GetBuildingTime($this->user, $this->planet, $listArray['i']);
 
 					if ($listArray['d'] == 1)
 						$listArray['t'] = ceil($listArray['t'] / 2);
@@ -220,38 +242,40 @@ class Queue
 			else
 				unset($newQueue[self::QUEUE_TYPE_BUILDING]);
 				
-			$this->planet->data['queue'] = json_encode($newQueue);
+			$this->planet->queue = json_encode($newQueue);
 
-			sql::build()->update('game_planets')->setField('queue', $this->planet->data['queue']);
+			sql::build()->update('game_planets')->setField('queue', $this->planet->queue);
 			
 			if ($canceledArray['s'] > 0)
 			{
-				$cost = GetBuildingPrice($this->user, $this->planet->data, $canceledArray['i'], true, ($canceledArray['d'] == 1));
+				$cost = Building::GetBuildingPrice($this->user, $this->planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
 
-				$this->planet->data['metal'] 		+= $cost['metal'];
-				$this->planet->data['crystal'] 		+= $cost['crystal'];
-				$this->planet->data['deuterium'] 	+= $cost['deuterium'];
+				$this->planet->metal 		+= $cost['metal'];
+				$this->planet->crystal 		+= $cost['crystal'];
+				$this->planet->deuterium 	+= $cost['deuterium'];
 
 				sql::build()->set(array
 				(
-					'metal' 	=> $this->planet->data['metal'],
-					'crystal' 	=> $this->planet->data['crystal'],
-					'deuterium' => $this->planet->data['deuterium']
+					'metal' 	=> $this->planet->metal,
+					'crystal' 	=> $this->planet->crystal,
+					'deuterium' => $this->planet->deuterium
 				));
 			}
 
-			sql::build()->where('id', '=', $this->planet->data['id'])->execute();
+			sql::build()->where('id', '=', $this->planet->id)->execute();
 		}
 	}
 
 	private function addTechToQueue ($elementId)
 	{
+		global $TechHandle;
+
 		if (!is_array($TechHandle))
 			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
 
 		$spaceLabs = array();
 
-		if ($this->user->data[$resource[123]] > 0)
+		if ($this->user->{$this->game->resource[123]} > 0)
 		{
 			$spaceLabs = $this->planet->getNetworkLevel();
 		}
@@ -259,26 +283,26 @@ class Queue
 		if (is_array($TechHandle['WorkOn']))
 			$WorkingPlanet = $TechHandle['WorkOn'];
 		else
-			$WorkingPlanet = $this->planet->data;
+			$WorkingPlanet = $this->planet->toArray();
 
 		$WorkingPlanet['spaceLabs'] = $spaceLabs;
 
-		if (IsTechnologieAccessible($this->user->data, $WorkingPlanet, $elementId) && IsElementBuyable($this->user, $WorkingPlanet, $elementId) && $WorkingPlanet['b_tech_id'] == 0 && !(isset($pricelist[$elementId]['max']) && $this->user->data[$resource[$elementId]] >= $pricelist[$elementId]['max']))
+		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && $WorkingPlanet['b_tech_id'] == 0 && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
 		{
-			$costs = GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
+			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 
 			$WorkingPlanet['metal'] 	-= $costs['metal'];
 			$WorkingPlanet['crystal'] 	-= $costs['crystal'];
 			$WorkingPlanet['deuterium'] -= $costs['deuterium'];
 
-			$time = GetBuildingTime($this->user, $WorkingPlanet, $elementId);
+			$time = Building::GetBuildingTime($this->user, $WorkingPlanet, $elementId);
 
 			$this->queue[self::QUEUE_TYPE_RESEARCH] = array();
 
 			$this->queue[self::QUEUE_TYPE_RESEARCH][] = array
 			(
 				'i' => $elementId,
-				'l' => ($this->user->data[$resource[$elementId]] + 1),
+				'l' => ($this->user->{$this->game->resource[$elementId]} + 1),
 				't' => $time,
 				's' => time(),
 				'e' => time() + $time,
@@ -287,13 +311,15 @@ class Queue
 			
 			$WorkingPlanet['queue'] = json_encode($this->queue);
 
-			$this->user->data["b_tech_planet"] = $WorkingPlanet["id"];
+			$this->user->b_tech_planet = $WorkingPlanet["id"];
 			$this->saveTechToQueue($WorkingPlanet);
 		}
 	}
 
 	private function deleteTechInQueue ($elementId, $listId = 0)
 	{
+		global $TechHandle;
+
 		if (!is_array($TechHandle))
 			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
 
@@ -302,15 +328,15 @@ class Queue
 			if (is_array($TechHandle['WorkOn']))
 				$WorkingPlanet = $TechHandle['WorkOn'];
 			else
-				$WorkingPlanet = $this->planet->data;
+				$WorkingPlanet = $this->planet->toArray();
 
-			$nedeed = GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
+			$nedeed = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 
-			if ($TechHandle['WorkOn']['id'] == $this->planet->data['id'])
+			if ($TechHandle['WorkOn']['id'] == $this->planet->id)
 			{
-				$this->planet->data['metal'] += $nedeed['metal'];
-				$this->planet->data['crystal'] += $nedeed['crystal'];
-				$this->planet->data['deuterium'] += $nedeed['deuterium'];
+				$this->planet->metal 		+= $nedeed['metal'];
+				$this->planet->crystal 		+= $nedeed['crystal'];
+				$this->planet->deuterium 	+= $nedeed['deuterium'];
 			}
 
 			$WorkingPlanet['metal'] 	+= $nedeed['metal'];
@@ -324,7 +350,7 @@ class Queue
 
 			$WorkingPlanet['queue'] = json_encode($this->queue);
 			
-			$this->user->data['b_tech_planet'] = 0;
+			$this->user->b_tech_planet = 0;
 			$this->saveTechToQueue($WorkingPlanet);
 		}
 	}
@@ -340,22 +366,22 @@ class Queue
 		))
 		->where('id', '=', $WorkingPlanet['id'])->execute();
 
-		sql::build()->update('game_users')->setField('b_tech_planet', $this->user->data['b_tech_planet'])->where('id', '=', $this->user->data['id'])->execute();
+		sql::build()->update('game_users')->setField('b_tech_planet', $this->user->b_tech_planet)->where('id', '=', $this->user->id)->execute();
 	}
 
 	private function addShipyardToQueue ($elementId, $count)
 	{
-		if (!IsTechnologieAccessible($this->user->data, $this->planet->data, $elementId))
+		if (!Building::IsTechnologieAccessible($this->user, $this->planet, $elementId))
 			return;
 
 		$BuildArray = $this->get(self::QUEUE_TYPE_SHIPYARD);
 
 		if ($elementId == 502 || $elementId == 503)
 		{
-			$Missiles[502] = $this->planet->data[$resource[502]];
-			$Missiles[503] = $this->planet->data[$resource[503]];
+			$Missiles[502] = $this->planet->{$this->game->resource[502]};
+			$Missiles[503] = $this->planet->{$this->game->resource[503]};
 
-			$MaxMissiles = $this->planet->data[$resource[44]] * 10;
+			$MaxMissiles = $this->planet->{$this->game->resource[44]} * 10;
 
 			foreach ($BuildArray AS $item)
 			{
@@ -366,7 +392,7 @@ class Queue
 
 		if (isset($pricelist[$elementId]['max']))
 		{
-			$total = $this->planet->data[$resource[$elementId]];
+			$total = $this->planet->{$this->game->resource[$elementId]};
 
 			if (isset($BuildArray[$elementId]))
 				$total += $BuildArray[$elementId];
@@ -393,15 +419,15 @@ class Queue
 		if (!$count)
 			return;
 
-		$count = min($count, GetMaxConstructibleElements($elementId, $this->planet->data, $this->user));
+		$count = min($count, Building::GetMaxConstructibleElements($elementId, $this->planet, $this->user));
 
 		if ($count > 0)
 		{
-			$Ressource = GetElementRessources($elementId, $count, $this->user);
+			$Ressource = Building::GetElementRessources($elementId, $count, $this->user);
 
-			$this->planet->data['metal'] 		-= $Ressource['metal'];
-			$this->planet->data['crystal'] 		-= $Ressource['crystal'];
-			$this->planet->data['deuterium'] 	-= $Ressource['deuterium'];
+			$this->planet->metal 		-= $Ressource['metal'];
+			$this->planet->crystal 		-= $Ressource['crystal'];
+			$this->planet->deuterium 	-= $Ressource['deuterium'];
 
 			if (!isset($this->queue[self::QUEUE_TYPE_SHIPYARD]))
 				$this->queue[self::QUEUE_TYPE_SHIPYARD] = array();
@@ -418,25 +444,25 @@ class Queue
 
 			sql::build()->update('game_planets')->set(Array
 			(
-				'metal' 	=> $this->planet->data['metal'],
-				'crystal' 	=> $this->planet->data['crystal'],
-				'deuterium' => $this->planet->data['deuterium'],
+				'metal' 	=> $this->planet->metal,
+				'crystal' 	=> $this->planet->crystal,
+				'deuterium' => $this->planet->deuterium,
 				'queue' 	=> json_encode($this->queue)
 			))
-			->where('id', '=', $this->planet->data['id'])->execute();
+			->where('id', '=', $this->planet->id)->execute();
 		}
 	}
 
 	private function saveQueue ()
 	{
 		$this->checkQueue();
-		$this->planet->data['queue'] = json_encode($this->get());
+		$this->planet->queue = json_encode($this->get());
 		
 		sql::build()->update('game_planets')->set(Array
 		(
-			'queue' => $this->planet->data['queue']
+			'queue' => $this->planet->queue
 		))
-		->where('id', '=', $this->planet->data['id'])->execute();
+		->where('id', '=', $this->planet->id)->execute();
 	}
 
 	private function checkQueue ()

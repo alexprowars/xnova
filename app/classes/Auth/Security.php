@@ -12,10 +12,14 @@ use Phalcon\Mvc\User\Component;
 
 /**
  * Class Security
+ * @property \App\Auth\Auth auth
  * @property \Phalcon\Session\Bag persistent
  */
 class Security extends Component
 {
+	/**
+	 * @return AclList
+	 */
 	public function getAcl()
 	{
 		//if (!isset($this->persistent->acl))
@@ -136,7 +140,7 @@ class Security extends Component
 	 * @param Dispatcher $dispatcher
 	 * @return bool
 	 */
-	public function beforeExecuteRoute (Event $event, Dispatcher $dispatcher)
+	public function beforeExecuteRoute (/** @noinspection PhpUnusedParameterInspection */Event $event, Dispatcher $dispatcher)
 	{
 		$auth = $this->auth->check();
 
