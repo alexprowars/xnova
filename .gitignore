@@ -1,3 +1,4 @@
 .idea/*
 app/cache/*
 app/config/config.ini
+vendor/*
