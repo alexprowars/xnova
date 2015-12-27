@@ -49,7 +49,6 @@ class StageOne
 		if (!$t)
 			$t = 1;
 
-		$FleetHiddenBlock = "";
 		$fleet['fleetlist'] = "";
 		$fleet['amount'] = 0;
 

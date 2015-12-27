@@ -3,8 +3,13 @@
 namespace App\Controllers;
 
 use App\Controllers\Fleet\Back;
+use App\Controllers\Fleet\Quick;
+use App\Controllers\Fleet\Shortcut;
 use App\Controllers\Fleet\StageOne;
+use App\Controllers\Fleet\StageThree;
+use App\Controllers\Fleet\StageTwo;
 use App\Controllers\Fleet\StageZero;
+use App\Controllers\Fleet\Verband;
 use App\Fleet;
 
 class FleetController extends ApplicationController
@@ -21,41 +26,49 @@ class FleetController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		new StageZero($this);
+		$action = new StageZero();
+		$action->show($this);
 	}
 
 	public function stageoneAction ()
 	{
-		new StageOne($this);
+		$action = new StageOne();
+		$action->show($this);
 	}
 
 	public function stagetwoAction ()
 	{
-		new StageTwo($this);
+		$action = new StageTwo();
+		$action->show($this);
 	}
 
 	public function stagethreeAction ()
 	{
-		new StageThree($this);
+		$action = new StageThree();
+		$action->show($this);
 	}
 	public function backAction ()
 	{
-		new Back($this);
+		$action = new Back();
+		$action->show($this);
 	}
 
 	public function shortcutAction ()
 	{
-		new Shortcut($this);
+		$action = new Shortcut();
+		$action->show($this);
 	}
 
 	public function verbandAction ()
 	{
-		new Verband($this);
+		$action = new Verband();
+		$action->show($this);
 	}
 
 	public function quickAction ()
 	{
-		new Quick($this);
+		$action = new Quick();
+		$action->show($this);
 	}
 }
 

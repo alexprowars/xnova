@@ -105,8 +105,6 @@ class StageZero
 
 				$parse['ships'][] = $ship;
 			}
-
-			$have_ships = true;
 		}
 
 		$controller->view->setVar('parse', $parse);

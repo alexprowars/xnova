@@ -41,6 +41,7 @@ class User extends Model
 	public $vacation;
 	public $b_tech_planet;
 	public $tutorial;
+	public $ip;
 
 	public $ally = [];
 
@@ -93,6 +94,8 @@ class User extends Model
 	public $rpg_constructeur;
 	public $rpg_technocrate;
 	public $rpg_meta;
+
+	public $fleet_209;
 
 	public function onConstruct()
 	{
