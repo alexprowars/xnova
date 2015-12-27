@@ -94,8 +94,35 @@ class User extends Model
 	public $rpg_constructeur;
 	public $rpg_technocrate;
 	public $rpg_meta;
+	public $rpg_komandir;
 
+	public $fleet_202;
+	public $fleet_203;
+	public $fleet_204;
+	public $fleet_205;
+	public $fleet_206;
+	public $fleet_207;
 	public $fleet_209;
+	public $fleet_211;
+	public $fleet_213;
+	public $fleet_214;
+	public $fleet_215;
+	public $fleet_220;
+	public $fleet_221;
+	public $fleet_222;
+	public $fleet_223;
+	public $fleet_401;
+	public $fleet_402;
+	public $fleet_403;
+	public $fleet_404;
+	public $fleet_405;
+	public $fleet_406;
+
+	public $tutorial_value;
+	public $message_block;
+	public $color;
+	public $timezone;
+	public $spy;
 
 	public function onConstruct()
 	{

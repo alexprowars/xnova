@@ -80,11 +80,12 @@ class ImperiumController extends ApplicationController
 		while ($p = $planetsrow->fetch())
 		{
 			$imperium->assign($p);
+			$imperium->copyTempParams();
 			$imperium->PlanetResourceUpdate(time(), true);
 
 			$p = $imperium->toArray();
 
-			$p['field_max'] = $imperium->CalculateMaxPlanetFields($p);
+			$p['field_max'] = $imperium->getMaxFields();
 
 			@$parse['file_images'] .= '<th width=75><a href="?set=overview&cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";

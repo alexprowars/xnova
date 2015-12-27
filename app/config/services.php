@@ -165,9 +165,12 @@ $di->set(
 			"port" => $config->memcache->port
 		));
 
-		$profiler = $di->get('profiler');
+		if ($di->has('profiler'))
+		{
+			$profiler = $di->get('profiler');
 
-		$cache = new \Fabfuel\Prophiler\Decorator\Phalcon\Cache\BackendDecorator($cache, $profiler);
+			$cache = new \Fabfuel\Prophiler\Decorator\Phalcon\Cache\BackendDecorator($cache, $profiler);
+		}
 
         return $cache;
     }, true

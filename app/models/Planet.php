@@ -53,6 +53,27 @@ class Planet extends Model
 	public $phalanx;
 	public $sprungtor;
 	public $last_jump_time;
+	public $destruyed;
+	public $id_level;
+
+	public $metal_mine;
+	public $crystal_mine;
+	public $deuterium_mine;
+	public $solar_plant;
+	public $fusion_plant;
+	public $robot_factory;
+	public $nano_factory;
+	public $hangar;
+	public $metal_store;
+	public $crystal_store;
+	public $deuterium_store;
+	public $laboratory;
+	public $terraformer;
+	public $ally_deposit;
+	public $silo;
+	public $deuterium_mine_porcent;
+	public $mondbasis;
+	public $merchand;
 
 	public $small_ship_cargo;
 	public $big_ship_cargo;
@@ -994,7 +1015,7 @@ class Planet extends Model
 
 	function getMaxFields ()
 	{
-		$config = $this->getDI()->get('config');
+		$config = $this->getDI()->getShared('config');
 
 		return $this->field_max + ($this->{$this->game->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->game->resource[41]});
 	}

@@ -134,7 +134,7 @@ class Queue
 		else
 			$queueID = false;
 
-		$currentMaxFields = Building::CalculateMaxPlanetFields($this->planet);
+		$currentMaxFields = $this->planet->getMaxFields();
 
 		if ($this->planet->field_current < ($currentMaxFields - $actualCount) || $destroy)
 		{

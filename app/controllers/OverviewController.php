@@ -534,7 +534,7 @@ class OverviewController extends ApplicationController
 		$parse['planet_name'] = $this->planet->name;
 		$parse['planet_diameter'] = $this->planet->diameter;
 		$parse['planet_field_current'] = $this->planet->field_current;
-		$parse['planet_field_max'] = $this->game->CalculateMaxPlanetFields($this->planet);
+		$parse['planet_field_max'] = $this->planet->getMaxFields();
 		$parse['planet_temp_min'] = $this->planet->temp_min;
 		$parse['planet_temp_max'] = $this->planet->temp_max;
 		$parse['galaxy_galaxy'] = $this->planet->galaxy;
@@ -648,7 +648,7 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->game->CalculateMaxPlanetFields($this->planet) * 100);
+		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->planet->getMaxFields() * 100);
 
 		$parse['race'] = _getText('race', $this->user->race);
 
