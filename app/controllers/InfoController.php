@@ -14,7 +14,7 @@ class InfosController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		if ($this->request->getQuery('gid'))
 			$html = $this->ShowBuildingInfoPage(user::get(), $this->planet->data, $this->request->getQuery('gid'));

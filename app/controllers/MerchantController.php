@@ -15,7 +15,7 @@ class MerchantController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$parse = array();
 		$Message = '';

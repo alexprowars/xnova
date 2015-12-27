@@ -45,7 +45,7 @@ class AdminController extends ApplicationController
 		$this->globals('menu', $menu);
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$error = '';

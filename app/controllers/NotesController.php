@@ -13,7 +13,7 @@ class NotesController extends ApplicationController
 		Lang::includeLang('notes');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$n = @intval($_GET['n']);
 		

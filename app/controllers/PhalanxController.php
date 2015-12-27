@@ -11,7 +11,7 @@ class PhalanxController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		if ($this->user->banned > 0)
 			$this->message("Нет доступа!");

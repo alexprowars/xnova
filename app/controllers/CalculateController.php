@@ -39,7 +39,7 @@ class CalculateController extends ApplicationController
 		$this->showTopPanel(false);
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$this->view->pick('calculate/index');
 

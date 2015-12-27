@@ -9,7 +9,7 @@ class RwController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		global $session;
 

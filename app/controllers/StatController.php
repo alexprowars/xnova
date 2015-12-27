@@ -14,7 +14,7 @@ class StatController extends ApplicationController
 		Lang::includeLang('stat');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$parse = array();
 

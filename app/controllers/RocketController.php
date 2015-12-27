@@ -11,7 +11,7 @@ class RocketController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$g = intval($_GET['galaxy']);
 		$s = intval($_GET['system']);

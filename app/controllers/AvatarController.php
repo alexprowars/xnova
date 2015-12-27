@@ -47,7 +47,7 @@ class AvatarController extends ApplicationController
 		}
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$html = '<center><form name="form2" enctype="multipart/form-data" method="post" action="?set=avatar&mode=upload">
 				<table width=500><tr><td class=c>Загрузка аватара</td></tr>

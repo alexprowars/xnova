@@ -15,7 +15,7 @@ class JumpgateController extends ApplicationController
 		Lang::includeLang('infos');
 	}
 
-	public function show ()
+	public function indexAction ()
 	{
 		global $resource, $reslist;
 

@@ -18,7 +18,7 @@ class OfficierController extends ApplicationController
 		Lang::includeLang('officier');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		global $resource, $reslist;
 

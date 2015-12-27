@@ -15,7 +15,7 @@ class GalaxyController extends ApplicationController
 		Lang::includeLang('galaxy');
 	}
 	
-	public function show()
+	public function indexAction ()
 	{
 		$fleetmax = $this->user->computer_tech + 1;
 		

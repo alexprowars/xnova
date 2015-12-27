@@ -11,7 +11,7 @@ class FleetController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		global $resource, $reslist, $CombatCaps;
 	

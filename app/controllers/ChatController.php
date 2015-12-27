@@ -9,7 +9,7 @@ class ChatController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$regTime = $this->db->fetchColumn("SELECT register_time FROM game_users_info WHERE id = ".$this->user->getId()."");
 

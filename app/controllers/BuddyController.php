@@ -11,7 +11,7 @@ class BuddyController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$a = @$_GET['a'];
 		$e = @$_GET['e'];

@@ -9,7 +9,7 @@ class HallController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$sab = (!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 0 : 1;
 

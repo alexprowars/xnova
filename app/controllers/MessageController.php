@@ -134,7 +134,7 @@ class MessagesController extends ApplicationController
 		$this->response->redirect('?set=messages');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$html = "";
 

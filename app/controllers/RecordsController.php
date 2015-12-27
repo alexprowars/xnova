@@ -11,7 +11,7 @@ class RecordsController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$RecordsArray = array();
 

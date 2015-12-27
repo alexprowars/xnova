@@ -44,7 +44,7 @@ class ResourcesController extends ApplicationController
 			$this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '?set=resources', 2);
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		global $reslist, $resource, $ProdGrid;
 

@@ -11,7 +11,7 @@ class TechtreeController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		global $requeriments, $resource;
 

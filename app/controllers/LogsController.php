@@ -9,7 +9,7 @@ class LogsController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$this->view->pick('jurnal');
 		

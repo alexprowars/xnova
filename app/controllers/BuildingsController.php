@@ -98,7 +98,7 @@ class BuildingsController extends ApplicationController
 		$this->tag->setTitle('Оборона');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$parse = $this->building->pageBuilding();
 

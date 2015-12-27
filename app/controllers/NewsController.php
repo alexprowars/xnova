@@ -13,7 +13,7 @@ class NewsController extends ApplicationController
 		Lang::includeLang('news');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$news = array();
 

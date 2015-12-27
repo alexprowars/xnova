@@ -295,7 +295,7 @@ class OptionsController extends ApplicationController
 		}
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$inf = $this->db->query("SELECT * FROM game_users_info WHERE id = " . $this->user->id . "")->fetch();
 

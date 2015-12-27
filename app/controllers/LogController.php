@@ -9,7 +9,7 @@ class LogController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		if ($this->auth->isAuthorized() && !isset($_GET['id']))
 		{

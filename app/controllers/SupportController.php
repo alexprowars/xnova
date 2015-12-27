@@ -11,7 +11,7 @@ class SupportController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$action = (isset($_GET['action'])) ? $_GET['action'] : '';
 		

@@ -9,7 +9,7 @@ class BannedController extends ApplicationController
 		parent::initialize();
 	}
 
-	public function show ()
+	public function indexAction ()
 	{
 		$query = $this->db->query('SELECT u.username AS user_1, u2.username AS user_2, b.* FROM game_banned b LEFT JOIN game_users u ON u.id = b.who LEFT JOIN game_users u2 ON u2.id = b.author ORDER BY b.`id` DESC');
 

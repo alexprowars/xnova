@@ -9,7 +9,7 @@ class CreditsController extends ApplicationController
 		parent::initialize();
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId() . ";")->fetch();
 

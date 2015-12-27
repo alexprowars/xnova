@@ -15,7 +15,7 @@ class AllianceController extends ApplicationController
 		Lang::includeLang('alliance');
 	}
 	
-	public function show ()
+	public function indexAction ()
 	{
 		if (!$this->auth->isAuthorized())
 			$this->message(_getText('Denied_access'), "Ошипко");
