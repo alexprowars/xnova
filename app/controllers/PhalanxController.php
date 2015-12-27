@@ -13,7 +13,7 @@ class PhalanxController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		if ($this->user->banned > 0)
+		if ($this->user->vacation > 0)
 			$this->message("Нет доступа!");
 
 		$galaktyka = $this->planet->galaxy;
@@ -29,11 +29,11 @@ class PhalanxController extends ApplicationController
 		$consomation = 5000;
 		$deuteriumtotal = $deuterium - $consomation;
 		
-		if ($g < 1 || $g > MAX_GALAXY_IN_WORLD)
+		if ($g < 1 || $g > $this->config->game->maxGalaxyInWorld)
 			$g = $galaktyka;
-		if ($s < 1 || $s > MAX_SYSTEM_IN_GALAXY)
+		if ($s < 1 || $s > $this->config->game->maxSystemInGalaxy)
 			$s = $system;
-		if ($i < 1 || $i > MAX_PLANET_IN_SYSTEM)
+		if ($i < 1 || $i > $this->config->game->maxPlanetInSystem)
 			$i = $planeta;
 		
 		$systemdol = $system - pow($phalangelvl, 2);
@@ -48,7 +48,7 @@ class PhalanxController extends ApplicationController
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
 			$this->message("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
 		else
-			$this->db->query("UPDATE game_planets SET deuterium = " . $deuteriumtotal . " WHERE id = '".$this->user->current_planet."'");
+			$this->db->query("UPDATE game_planets SET deuterium = " . $deuteriumtotal . " WHERE id = '".$this->user->planet_current."'");
 
 		$planet = $this->db->query("SELECT * FROM game_planets WHERE galaxy = " . $g . " AND system = " . $s . " AND planet = " . $i . "");
 		

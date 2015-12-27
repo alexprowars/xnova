@@ -118,7 +118,7 @@ class LogController extends ApplicationController
 					while ($krow = $ksql->fetch())
 					{
 						$i++;
-						$html .= "<tr><td class=\"b center\">" . $i . "</td><td class=\"b center\">" . $krow['title'] . "</td><td class=\"b center\"><a href=?set=log&id=" . $krow['id'] . " ".(core::getConfig('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '').">Открыть</a></td><td class=\"b center\"><a href='?set=log&mode=delete&id_l=" . $krow['id'] . "'>Удалить лог</a></td></tr>";
+						$html .= "<tr><td class=\"b center\">" . $i . "</td><td class=\"b center\">" . $krow['title'] . "</td><td class=\"b center\"><a href=?set=log&id=" . $krow['id'] . " ".($this->config->game->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '').">Открыть</a></td><td class=\"b center\"><a href='?set=log&mode=delete&id_l=" . $krow['id'] . "'>Удалить лог</a></td></tr>";
 					}
 					if ($i == 0)
 						$html .= "<tr align=center><td class=\"b center\" colspan=4>У вас пока нет сохранённых логов.</td></tr>";
@@ -139,11 +139,11 @@ class LogController extends ApplicationController
 		
 			if (isset($raportrow['id']))
 			{
-				include(ROOT_DIR.APP_PATH."functions/formatCombatReport.php");
+				include(APP_PATH."functions/formatCombatReport.php");
 
 				$result = json_decode($raportrow['log'], true);
 
-				if (!core::getConfig('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
+				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 				{
 					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200)))
 						echo "<center>Данный лог боя пока недоступен для просмотра!</center>";
@@ -160,7 +160,7 @@ class LogController extends ApplicationController
 				else
 				{
 					$html = "<html><head><title>" . stripslashes($raportrow["title"]) . "</title>";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".DPATH."report_v2.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report_v2.css\">";
 					$html .= "</head><body>";
 					$html .= "<table width=\"99%\"><tr><td>";
 
@@ -172,13 +172,13 @@ class LogController extends ApplicationController
 					}
 		
 					$html .= "</td></tr></table>";
-					$html .= file_get_contents(ROOT_DIR.'/template/main/block/counter.php');
+					$html .= file_get_contents('/template/main/block/counter.php');
 					$html .= "</body></html>";
 				}
 			}
 			else
 			{
-				if (!core::getConfig('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
+				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 					$this->message('Запрашиваемого лога не существует в базе данных');
 				else
 				{

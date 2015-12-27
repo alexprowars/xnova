@@ -322,7 +322,7 @@ class InfosController extends ApplicationController
 			elseif ($CombatCaps[$BuildID]['type_gun'] == 3)
 				$attTech += $CurrentUser->data['buster_tech'] * 0.05;
 
-			include_once(ROOT_DIR.APP_PATH.'functions/functions.php');
+			include_once(APP_PATH.'functions/functions.php');
 			// Устанавливаем обновлённые двигателя кораблей
 			SetShipsEngine($CurrentUser->data);
 

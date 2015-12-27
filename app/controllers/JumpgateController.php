@@ -86,7 +86,7 @@ class JumpgateController extends ApplicationController
 							$this->db->query($QryUpdateDes);
 
 							$QryUpdateUsr = "UPDATE game_users SET ";
-							$QryUpdateUsr .= "`current_planet` = '" . $TargetGate['id'] . "' ";
+							$QryUpdateUsr .= "`planet_current` = '" . $TargetGate['id'] . "' ";
 							$QryUpdateUsr .= "WHERE ";
 							$QryUpdateUsr .= "`id` = '" . $this->user->id . "';";
 							$this->db->query($QryUpdateUsr);

@@ -13,7 +13,7 @@ class RwController extends ApplicationController
 	{
 		global $session;
 
-		include(ROOT_DIR.APP_PATH."functions/formatCR.php");
+		include(APP_PATH."functions/formatCR.php");
 		
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . intval($_GET['r']) . "';")->fetch();
 		
@@ -48,7 +48,7 @@ class RwController extends ApplicationController
 		
 				$Page .= "<div class='separator'></div>ID боевого доклада: <a href=\"?set=log&mode=new&save=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a>";
 		
-				if (core::getConfig('gameTemplate') == 'main')
+				if ($this->config->game->get('gameTemplate') == 'main')
 				{
 					$Page .= '<div class="separator"></div><a data-link="1" target="_blank" href="?set=rw&r='.$_GET['r'].'&k='.$_GET['k'].'">Полная версия боя</a>';
 				}
@@ -63,15 +63,15 @@ class RwController extends ApplicationController
 
 				if (isset($result[0]['version']) && $result[0]['version'] == 2)
 				{
-					include(ROOT_DIR.APP_PATH.'functions/formatCombatReport.php');
+					include(APP_PATH.'functions/formatCombatReport.php');
 				}
 
 				$Page = "<html><head><title>Боевой доклад</title>";
 
 				if (isset($result[0]['version']) && $result[0]['version'] == 2)
-					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".DPATH."report_v2.css?v=".substr(md5(VERSION), 0, 3)."\">";
+					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report_v2.css?v=".substr(md5(VERSION), 0, 3)."\">";
 				else
-					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".DPATH."report.css?v=".substr(md5(VERSION), 0, 3)."\">";
+					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css?v=".substr(md5(VERSION), 0, 3)."\">";
 
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
 				$Page .= "</head><body><script>function show(id){if(document.getElementById(id).style.display==\"block\")document.getElementById(id).style.display=\"none\"; else document.getElementById(id).style.display=\"block\";}</script>";

@@ -23,28 +23,28 @@ class FleetController extends ApplicationController
 		switch ($module)
 		{
 			case 'fleet_1':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/fleet_1.php');
+				include(APP_PATH.'controllers/fleet/fleet_1.php');
 				break;
 			case 'fleet_2':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/fleet_2.php');
+				include(APP_PATH.'controllers/fleet/fleet_2.php');
 				break;
 			case 'fleet_3':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/fleet_3.php');
+				include(APP_PATH.'controllers/fleet/fleet_3.php');
 				break;
 			case 'back':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/back.php');
+				include(APP_PATH.'controllers/fleet/back.php');
 				break;
 			case 'quick':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/quick.php');
+				include(APP_PATH.'controllers/fleet/quick.php');
 				break;
 			case 'shortcut':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/shortcut.php');
+				include(APP_PATH.'controllers/fleet/shortcut.php');
 				break;
 			case 'verband':
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/verband.php');
+				include(APP_PATH.'controllers/fleet/verband.php');
 				break;
 			default:
-				include(ROOT_DIR.APP_PATH.'controllers/fleet/fleet_0.php');
+				include(APP_PATH.'controllers/fleet/fleet_0.php');
 		}
 	}
 }

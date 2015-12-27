@@ -18,7 +18,7 @@ class ResourcesController extends ApplicationController
 	{
 		global $reslist;
 
-		if ($this->user->banned > 0)
+		if ($this->user->vacation > 0)
 			$this->message("Включен режим отпуска!");
 
 		if ($this->user->credits >= 10)
@@ -59,7 +59,7 @@ class ResourcesController extends ApplicationController
 		
 		if (isset($_GET['production_full']) || isset($_GET['production_empty']))
 		{
-			if ($this->user->banned > 0)
+			if ($this->user->vacation > 0)
 				$this->message("Включен режим отпуска!");
 
 			$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
@@ -99,7 +99,7 @@ class ResourcesController extends ApplicationController
 		
 		if ($_POST)
 		{
-			if ($this->user->banned > 0)
+			if ($this->user->vacation > 0)
 				$this->message("Включен режим отпуска!");
 
 			$arFields = array();
@@ -172,7 +172,7 @@ class ResourcesController extends ApplicationController
 
 		foreach ($reslist['res'] AS $res)
 		{
-			$parse[$res.'_basic_income'] = core::getConfig($res.'_basic_income', 0) * core::getConfig('resource_multiplier', 1);
+			$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
 
 			$parse[$res.'_max'] = '<font color="#' . (($this->planet->data[$res.'_max'] < $this->planet->data[$res]) ? 'ff00' : '00ff') . '00">';
 			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->data[$res.'_max'] / 1000) . " k</font>";
@@ -199,7 +199,7 @@ class ResourcesController extends ApplicationController
 		foreach ($reslist['res'] AS $res)
 			$parse['buy_'.$res] = Helpers::colorNumber(Helpers::pretty_number($parse['buy_'.$res]));
 
-		$parse['energy_basic_income'] = core::getConfig('energy_basic_income');
+		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');
 
 		$parse['energy_total'] = Helpers::colorNumber(Helpers::pretty_number(floor(($this->planet->energy_max + $parse['energy_basic_income']) + $this->planet->energy_used)));
 		$parse['energy_max'] = Helpers::pretty_number(floor($this->planet->energy_max));

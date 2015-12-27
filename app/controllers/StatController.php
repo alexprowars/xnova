@@ -74,8 +74,8 @@ class StatController extends ApplicationController
 			$this->view->pick('stat_alliance');
 			$stat = array();
 
-			if (core::getConfig('active_alliance') > 100)
-				$LastPage = floor(core::getConfig('active_alliance') / 100);
+			if ($this->config->app->get('active_alliance') > 100)
+				$LastPage = floor($this->config->app->get('active_alliance') / 100);
 			else
 				$LastPage = 0;
 
@@ -148,8 +148,8 @@ class StatController extends ApplicationController
 					$range = $records[$field.'_rank'];
 			}
 
-			if (core::getConfig('active_users') > 100)
-				$LastPage = floor(core::getConfig('active_users') / 100);
+			if ($this->config->app->get('active_users') > 100)
+				$LastPage = floor($this->config->app->get('active_users') / 100);
 			else
 				$LastPage = 0;
 
@@ -213,7 +213,7 @@ class StatController extends ApplicationController
 			}
 		}
 
-		$parse['stat_date'] = $this->game->datezone("d.m.Y - H:i:s", core::getConfig('stat_update'));
+		$parse['stat_date'] = $this->game->datezone("d.m.Y - H:i:s", $this->config->app->get('stat_update'));
 
 		$this->view->setVar('stat', $stat);
 		$this->setTemplateName('stat');

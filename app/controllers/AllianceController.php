@@ -227,12 +227,12 @@ class AllianceController extends ApplicationController
 					if ($diplo['status'] == 0)
 					{
 						if ($diplo['primary'] == 1)
-							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"".DPATH."pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 						else
-							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"".DPATH."pic/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"".DPATH."pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"/assets/images/pic/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 					}
 					else
-						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"".DPATH."pic/abort.gif\" alt=\"Удалить\"></a></th></tr>";
+						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить\"></a></th></tr>";
 				}
 	
 				if ($parse['DMyQuery'] == "")
@@ -573,7 +573,7 @@ class AllianceController extends ApplicationController
 						foreach ($ally_ranks as $a => $b)
 						{
 							$list['id'] = $a;
-							$list['delete'] = "<a href=\"?set=alliance&mode=admin&edit=rights&d={$a}\"><img src=\"" . DPATH . "pic/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
+							$list['delete'] = "<a href=\"?set=alliance&mode=admin&edit=rights&d={$a}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
 							$list['r0'] = $b['name'];
 							$list['a'] = $a;
 	

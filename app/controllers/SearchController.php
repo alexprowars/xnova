@@ -25,7 +25,7 @@ class SearchController extends ApplicationController
 			switch ($type)
 			{
 				case "playername":
-					$search = $this->db->query("SELECT u.id, u.username, u.race, p.name AS planet_name, u.ally_name, u.galaxy AS g, u.system AS s, u.planet AS p, s.total_rank FROM game_users u LEFT JOIN game_planets p ON p.id = u.id_planet LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.username LIKE '%" . $searchtext . "%' LIMIT 30;");
+					$search = $this->db->query("SELECT u.id, u.username, u.race, p.name AS planet_name, u.ally_name, u.galaxy AS g, u.system AS s, u.planet AS p, s.total_rank FROM game_users u LEFT JOIN game_planets p ON p.id = u.planet_id LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.username LIKE '%" . $searchtext . "%' LIMIT 30;");
 					break;
 				case "planetname":
 					$search = $this->db->query("SELECT u.id, u.username, u.race, p.name AS planet_name, u.ally_name, p.galaxy AS g, p.system AS s, p.planet AS p, s.total_rank FROM game_planets p LEFT JOIN game_users u ON u.id = p.id_owner LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE p.name LIKE '%" . $searchtext . "%' LIMIT 30");

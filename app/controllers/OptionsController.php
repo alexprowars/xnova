@@ -129,13 +129,13 @@ class OptionsController extends ApplicationController
 				$this->message('Данный email уже используется в игре.', 'Hacтpoйки', '?set=options', 3);
 		}
 
-		if ($this->user->banned > time())
+		if ($this->user->vacation > time())
 		{
-			$urlaubs_modus_time = $this->user->banned;
+			$vacation = $this->user->vacation;
 		}
 		else
 		{
-			$urlaubs_modus_time = 0;
+			$vacation = 0;
 
 			if (isset($_POST["urlaubs_modus"]) && $_POST["urlaubs_modus"] == 'on')
 			{
@@ -159,10 +159,10 @@ class OptionsController extends ApplicationController
 					$this->message('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "?set=overview", 5);
 				else
 				{
-					if ($this->user->banned == 0)
-						$urlaubs_modus_time = time() + core::getConfig('vocationModeTime', 172800);
+					if ($this->user->vacation == 0)
+						$vacation = time() + $this->config->game->get('vocationModeTime', 172800);
 					else
-						$urlaubs_modus_time = $this->user->banned;
+						$vacation = $this->user->vacation;
 
 					$this->db->query("UPDATE game_planets SET `metal_mine_porcent` = '0', `crystal_mine_porcent` = '0', `deuterium_mine_porcent` = '0', `solar_plant_porcent` = '0', `fusion_plant_porcent` = '0', `solar_satelit_porcent` = '0' WHERE `id_owner` = '" . $this->user->id . "'");
 				}
@@ -171,7 +171,7 @@ class OptionsController extends ApplicationController
 
 		$Del_Time = (isset($_POST["db_deaktjava"]) && $_POST["db_deaktjava"] == 'on') ? (time() + 604800) : 0;
 
-		if ($this->user->banned == 0)
+		if ($this->user->vacation == 0)
 		{
 			$sex = ($_POST['sex'] == 'F') ? 2 : 1;
 
@@ -201,7 +201,7 @@ class OptionsController extends ApplicationController
 			$options['planetlistselect']= (isset($_POST["planetlistselect"]) && $_POST["planetlistselect"] == 'on') ? 1 : 0;
 			$options['only_available']	= (isset($_POST["available"]) && $_POST["available"] == 'on') ? 1 : 0;
 
-			$this->db->query("UPDATE game_users SET options_toggle = '".$this->user->packOptions($options)."', sex = '" . $sex . "', `urlaubs_modus_time` = '" . $urlaubs_modus_time . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "'");
+			$this->db->query("UPDATE game_users SET options_toggle = '".$this->user->packOptions($options)."', sex = '" . $sex . "', `vacation` = '" . $vacation . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "'");
 
 			$ui_query = '';
 
@@ -234,7 +234,7 @@ class OptionsController extends ApplicationController
 			unset($_SESSION['config']);
 		}
 		else
-			$this->db->query("UPDATE game_users SET `urlaubs_modus_time` = '" . $urlaubs_modus_time . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+			$this->db->query("UPDATE game_users SET `vacation` = '" . $vacation . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "' LIMIT 1");
 
 		if (isset($_POST["db_password"]) && $_POST["db_password"] != "" && $_POST["newpass1"] != "")
 		{
@@ -301,11 +301,11 @@ class OptionsController extends ApplicationController
 
 		$parse = array();
 
-		if ($this->user->banned > 0)
+		if ($this->user->vacation > 0)
 		{
-			$parse['um_end_date'] = $this->game->datezone("d.m.Y H:i:s", $this->user->banned);
+			$parse['um_end_date'] = $this->game->datezone("d.m.Y H:i:s", $this->user->vacation);
 			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked='checked'/" : '';
-			$parse['opt_modev_data'] = ($this->user->banned > 0) ? " checked='checked'/" : '';
+			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked='checked'/" : '';
 			$parse['opt_usern_data'] = $this->user->username;
 
 			$this->view->pick('options_um');
@@ -350,7 +350,7 @@ class OptionsController extends ApplicationController
 			$parse['opt_planetlistselect_data'] = ($this->user->getUserOption('planetlistselect') == 1) ? " checked='checked'/" : '';
 			$parse['opt_available_data'] = ($this->user->getUserOption('only_available') == 1) ? " checked='checked'/" : '';
 			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked='checked'/" : '';
-			$parse['opt_modev_data'] = ($this->user->banned > 0) ? " checked='checked'/" : '';
+			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked='checked'/" : '';
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = $inf['about'];
 			$parse['timezone'] = $inf['timezone'];

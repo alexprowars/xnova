@@ -12,7 +12,7 @@ class OfficierController extends ApplicationController
 	{
 		parent::initialize();
 		
-		if ($this->user->banned > 0)
+		if ($this->user->vacation > 0)
 			$this->message("Нет доступа!");
 
 		Lang::includeLang('officier');

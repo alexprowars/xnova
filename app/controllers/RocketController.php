@@ -58,18 +58,18 @@ class RocketController extends ApplicationController
 		else
 			$pziel = intval($pziel);
 		
-		$select = $this->db->query("SELECT id, urlaubs_modus_time FROM game_users WHERE id = " . $tempvar3['id_owner'], true);
+		$select = $this->db->query("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3['id_owner'], true);
 		
 		if (!isset($select['id']))
 			$this->message('Игрока не существует');
 		
-		if ($select['urlaubs_modus_time'] > 0)
+		if ($select['vacation'] > 0)
 			$this->message('Игрок в режиме отпуска');
 		
-		if ($this->user->banned > 0)
+		if ($this->user->vacation > 0)
 			$this->message('Вы в режиме отпуска');
 		
-		$flugzeit = round(((30 + (60 * $tempvar1)) * 2500) / core::getConfig('game_speed'));
+		$flugzeit = round(((30 + (60 * $tempvar1)) * 2500) / $this->config->game->get('game_speed'));
 		
 		$QryInsertFleet = "INSERT INTO game_fleets SET ";
 		$QryInsertFleet .= "`fleet_owner` = '" . $this->user->id . "', ";
@@ -91,7 +91,7 @@ class RocketController extends ApplicationController
 		$QryInsertFleet .= "`start_time` = '" . time() . "', fleet_time = '" . (time() + $flugzeit) . "';";
 		$this->db->query($QryInsertFleet);
 		
-		$this->db->query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . $this->user->current_planet . "'");
+		$this->db->query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . $this->user->planet_current . "'");
 		
 		$this->view->pick('rak');
 		$this->view->setVar('anz', $anz);

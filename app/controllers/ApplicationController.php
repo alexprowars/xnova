@@ -411,7 +411,7 @@ class ApplicationController extends Controller
 		$this->showLeftMenu = $view;
 	}
 
-	public function message ($text, $title = '', $redirect = '', $timeout = 5)
+	public function message ($text, $title = '', $redirect = '', $timeout = 5, $left = true)
 	{
 		$this->view->pick('shared/message');
 		$this->view->setVar('text', $text);

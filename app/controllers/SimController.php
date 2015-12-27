@@ -18,7 +18,7 @@ class SimController extends ApplicationController
 		$r = (isset($_GET['r'])) ? $_GET['r'] : '';
 		$r = explode(";", $r);
 
-		define('MAX_SLOTS', core::getConfig('maxSlotsInSim', 5));
+		define('MAX_SLOTS', $this->config->game->get('maxSlotsInSim', 5));
 		
 		$parse = array();
 		$parse['slot_0'] = array();

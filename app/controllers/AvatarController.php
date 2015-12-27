@@ -34,7 +34,7 @@ class AvatarController extends ApplicationController
 
 			$upload->Process('images/avatars/upload/');
 
-			if ($upload->processed && file_exists(ROOT_DIR.'/images/avatars/upload/'.$name))
+			if ($upload->processed && file_exists('/images/avatars/upload/'.$name))
 			{
 				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 

@@ -36,8 +36,8 @@ class GalaxyController extends ApplicationController
 			$this->cache->save('app::records_'.$this->user->getId(), $records, 1800);
 		}
 
-		$mode = request::G('r', 0, VALUE_INT);
-		
+		$mode = $this->request->getQuery('r', 'int', 0);
+
 		$galaxy = 1;
 		$system = 1;
 		$planet = 1;
@@ -80,9 +80,9 @@ class GalaxyController extends ApplicationController
 			$system = intval($_GET['system']);
 		}
 		
-		$galaxy = min(max($galaxy, 1), MAX_GALAXY_IN_WORLD);
-		$system = min(max($system, 1), MAX_SYSTEM_IN_GALAXY);
-		$planet = min(max($planet, 1), MAX_PLANET_IN_SYSTEM);
+		$galaxy = min(max($galaxy, 1), $this->config->game->maxGalaxyInWorld);
+		$system = min(max($system, 1), $this->config->game->maxSystemInGalaxy);
+		$planet = min(max($planet, 1), $this->config->game->maxPlanetInSystem);
 		
 		if (!isset($_SESSION['fleet_shortcut']))
 		{
@@ -158,7 +158,7 @@ class GalaxyController extends ApplicationController
 		}
 
 		$html .= "<div id='galaxy'></div>";
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '" . DPATH . "'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", current_planet:" . $this->user->current_planet . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = new Array(); ";
+		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '/assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = new Array(); ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
 		$array = json_decode($_SESSION['fleet_shortcut'], true);
@@ -173,9 +173,9 @@ class GalaxyController extends ApplicationController
 		$galaxyRow = '';
 		
 		$GalaxyRow = $this->db->query("SELECT
-								p.planet, p.id AS id_planet, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
+								p.planet, p.id AS planet_id, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
 								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
-								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.urlaubs_modus_time, u.banaday, u.sex, u.avatar,
+								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.vacation, u.banned, u.sex, u.avatar,
 								ui.image AS user_image,
 								a.ally_name, a.ally_members, a.ally_web, a.ally_tag,
 								ad.type,
@@ -198,7 +198,7 @@ class GalaxyController extends ApplicationController
 		
 			unset($row['luna_update']);
 		
-			if ($row['destruyed'] != 0 && $row["id_planet"] != '')
+			if ($row['destruyed'] != 0 && $row["planet_id"] != '')
 				$this->planet->checkAbandonPlanetState($row);
 		
 			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
@@ -213,8 +213,8 @@ class GalaxyController extends ApplicationController
 			else
 				$row['onlinetime'] = 0;
 		
-			if ($row['urlaubs_modus_time'] > 0)
-				$row['urlaubs_modus_time'] = 1;
+			if ($row['vacation'] > 0)
+				$row['vacation'] = 1;
 		
 			if ($row['last_active'] > (time() - 59 * 60))
 				$row['last_active'] = floor((time() - $row['last_active']) / 60);

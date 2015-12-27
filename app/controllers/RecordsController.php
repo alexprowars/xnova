@@ -15,8 +15,8 @@ class RecordsController extends ApplicationController
 	{
 		$RecordsArray = array();
 
-		if (file_exists(ROOT_DIR.CACHE_DIR."/CacheRecords.php"))
-			require_once(ROOT_DIR.CACHE_DIR."/CacheRecords.php");
+		if (file_exists(CACHE_DIR."/CacheRecords.php"))
+			require_once(CACHE_DIR."/CacheRecords.php");
 
 		$Builds = array();
 		$MoonsBuilds = array();
@@ -73,7 +73,7 @@ class RecordsController extends ApplicationController
 
 		$parse = array(
 			'Records' => $Records,
-			'update' => core::getConfig('stat_update'),
+			'update' => $this->config->app->get('stat_update'),
 		);
 
 		$this->view->pick('records');

@@ -85,7 +85,7 @@ class ImperiumController extends ApplicationController
 
 			$p['field_max'] = CalculateMaxPlanetFields($p);
 
-			@$parse['file_images'] .= '<th width=75><a href="?set=overview&cp=' . $p['id'] . '&amp;re=0"><img src="' . DPATH . 'planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
+			@$parse['file_images'] .= '<th width=75><a href="?set=overview&cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";
 			@$parse['file_coordinates'] .= "<th>[<a href=\"?set=galaxy&r=3&galaxy=".$p['galaxy']."&system=".$p['system']."\">".$p['galaxy'].":".$p['system'].":".$p['planet']."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $p['field_current'] . '/' . $p['field_max'] . '</th>';

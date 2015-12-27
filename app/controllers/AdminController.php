@@ -60,8 +60,8 @@ class AdminController extends ApplicationController
 
 		if (isset($this->modules[$this->mode]) && $this->modules[$this->mode]['right'] > 0)
 		{
-			if (file_exists(ROOT_DIR.APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php"))
-				require(ROOT_DIR.APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php");
+			if (file_exists(APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php"))
+				require(APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php");
 			else
 				$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 		}
