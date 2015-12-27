@@ -503,7 +503,7 @@ function load (url)
 		url: url+'&ajax=1&random=' + Math.random()*99999,
 		cache: false,
 		dataType: 'json',
-		success: function(html)
+		success: function(data)
 		{
 			$('#tooltip').hide();
 			hideLoading();

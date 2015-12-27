@@ -12,16 +12,19 @@ class IndexController extends ApplicationController
 	{
 		parent::initialize();
 
-		$assets = $this->assets->collection('headerJs');
-		$assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
-		$assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
-		$assets->addJs('/assets/js/jquery.form.min.js');
-		$assets->addJs('/assets/js/jquery.validate.js');
-		$assets->addJs('/assets/js/game.js');
+		if (!$this->dispatcher->wasForwarded())
+		{
+			$assets = $this->assets->collection('headerJs');
+			$assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+			$assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
+			$assets->addJs('/assets/js/jquery.form.min.js');
+			$assets->addJs('/assets/js/jquery.validate.js');
+			$assets->addJs('/assets/js/game.js');
 
-		$assets = $this->assets->collection('headerCss');
-		$assets->addCss('/assets/css/jquery-ui.css');
-		$assets->addCss('/assets/css/login.css');
+			$assets = $this->assets->collection('headerCss');
+			$assets->addCss('/assets/css/jquery-ui.css');
+			$assets->addCss('/assets/css/login.css');
+		}
 	}
 
 	public function indexAction ()

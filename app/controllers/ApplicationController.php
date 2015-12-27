@@ -40,6 +40,7 @@ class ApplicationController extends Controller
 	{
 		$this->view->setVar('topPanel', $this->showTopPanel);
 		$this->view->setVar('leftMenu', $this->showLeftMenu);
+		$this->view->setVar('controller', $this->dispatcher->getControllerName());
 
 		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
 			$this->response->redirect($this->game->getRequestData()['redirect']);
@@ -53,12 +54,28 @@ class ApplicationController extends Controller
 
 			$parse['tutorial'] = $this->user->tutorial;
 
+			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
+
+			if ($planetsList === NULL)
+			{
+				$planetsList = $this->user->getUserPlanets($this->user->getId());
+
+				if (count($planetsList))
+					$this->cache->save('app::planetlist_'.$this->user->getId(), $planetsList, 600);
+			}
+
+			$parse['list'] = $planetsList;
+			$parse['current'] = $this->user->planet_current;
+
 			$this->view->setVar('planet', $parse);
 		}
 	}
 
 	public function initialize()
 	{
+		if ($this->dispatcher->wasForwarded())
+			return true;
+
 		if (function_exists('sys_getloadavg'))
 		{
 			$load = sys_getloadavg();
@@ -87,6 +104,7 @@ class ApplicationController extends Controller
 
 			$assets = $this->assets->collection('headerCss');
 
+			$assets->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 			$assets->addCss('/assets/css/bootstrap.css');
 			$assets->addCss('/assets/css/formate.css');
 			$assets->addCss('/assets/css/style.css');
@@ -114,8 +132,8 @@ class ApplicationController extends Controller
 				$this->session->set('config', json_encode($inf));
 			}
 
-			if (!$this->config->app->get('showPlanetListSelect', 0))
-				$this->config->app->offsetSet('showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
+			if (!$this->config->view->get('showPlanetListSelect', 0))
+				$this->config->view->offsetSet('showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
 
 			if ($this->request->getQuery('fullscreen') == 'Y')
 			{
@@ -125,34 +143,48 @@ class ApplicationController extends Controller
 
 			if ($this->request->getServer('SERVER_NAME') == 'ok1.xnova.su')
 			{
-				$this->config->app->offsetSet('socialIframeView', 2);
+				$this->config->view->offsetSet('socialIframeView', 2);
 				$this->config->app->offsetSet('ajaxNavigation', 2);
 			}
 
 			if ($this->request->getServer('SERVER_NAME') == 'vk.xnova.su')
 			{
-				$this->config->app->offsetSet('socialIframeView', 2);
+				$this->config->view->offsetSet('socialIframeView', 2);
 				$this->config->app->offsetSet('ajaxNavigation', 2);
 			}
 
 			if ($this->cookies->has($this->config->cookie->prefix."_full") && $this->cookies->get($this->config->cookie->prefix."_full") == 'Y')
 			{
-				$this->config->app->offsetSet('socialIframeView', 0);
-				$this->config->app->offsetSet('overviewListView', 1);
-				$this->config->app->offsetSet('showPlanetListSelect', 0);
+				$this->config->view->offsetSet('socialIframeView', 0);
+				$this->config->view->offsetSet('overviewListView', 1);
+				$this->config->view->offsetSet('showPlanetListSelect', 0);
+			}
+
+			switch ($this->config->app->get('ajaxNavigation', 0))
+			{
+				case 0:
+					$this->view->setVar('ajaxNavigation', 0);
+					break;
+				case 1:
+					$this->view->setVar('ajaxNavigation', $this->user->getUserOption('ajax_navigation'));
+					break;
+				default:
+					$this->view->setVar('ajaxNavigation', 1);
 			}
 
 			$this->view->setVar('timezone', 0);
 			$this->view->setVar('adminlevel', $this->user->authlevel);
 			$this->view->setVar('messages', $this->user->messages);
 			$this->view->setVar('messages_ally', $this->user->messages_ally);
-			$this->view->setVar('controller', $this->dispatcher->getControllerName());
 
 			$this->game->loadGameVariables();
 
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode($this->session->get('config'), true);
-			//user::get()->data = array_merge(user::get()->data, $inf);
+
+			foreach ($inf as $key => $value)
+				$this->user->{$key} = $value;
+
 			$this->user->getAllyInfo();
 
 			$this->checkUserLevel();
@@ -176,6 +208,9 @@ class ApplicationController extends Controller
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start')
 				$this->dispatcher->forward(array('controller' => 'start'));
+
+			if ($controller == 'index')
+				$this->dispatcher->forward(array('controller' => 'overview'));
 		}
 
 		return true;
@@ -258,7 +293,7 @@ class ApplicationController extends Controller
 
 		$parse['planetlist'] = '';
 
-		if ($this->config->app->get('showPlanetListSelect', 0))
+		if ($this->config->view->get('showPlanetListSelect', 0))
 		{
 			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId().'');
 

@@ -49,8 +49,6 @@ class Queue
 
 	public function add($elementId, $count = 1, $destroy = false)
 	{
-		global $reslist;
-
 		if (in_array($elementId, $reslist['build']))
 			$this->addBuildingToQueue($elementId, $destroy);
 		elseif (in_array($elementId, $reslist['tech']) || in_array($elementId, $reslist['tech_f']))
@@ -61,8 +59,6 @@ class Queue
 
 	public function delete($elementId, $listId = 0)
 	{
-		global $reslist;
-
 		if (in_array($elementId, $reslist['build']))
 			$this->deleteBuildingInQueue($listId);
 		elseif (in_array($elementId, $reslist['tech']) || in_array($elementId, $reslist['tech_f']))
@@ -105,10 +101,8 @@ class Queue
 
 	private function addBuildingToQueue ($elementId, $destroy = false)
 	{
-		global $resource;
-
 		$maxBuidSize = MAX_BUILDING_QUEUE_SIZE;
-		if ($this->user->data['rpg_constructeur'] > time())
+		if ($this->user->rpg_constructeur > time())
 			$maxBuidSize += 2;
 
 		$actualCount = $this->getCount(self::QUEUE_TYPE_BUILDING);
@@ -140,16 +134,16 @@ class Queue
 			if (!$destroy)
 			{
 				$BuildLevel = $ActualLevel + 1 + $inArray;
-				$this->planet->data[$resource[$elementId]] += $inArray;
+				$this->planet->{$resource[$elementId]} += $inArray;
 				$BuildTime = GetBuildingTime($this->user, $this->planet->data, $elementId);
-				$this->planet->data[$resource[$elementId]] -= $inArray;
+				$this->planet->{$resource[$elementId]} -= $inArray;
 			}
 			else
 			{
 				$BuildLevel = $ActualLevel - 1 + $inArray;
-				$this->planet->data[$resource[$elementId]] -= $inArray;
+				$this->planet->{$resource[$elementId]} -= $inArray;
 				$BuildTime = GetBuildingTime($this->user, $this->planet->data, $elementId) / 2;
-				$this->planet->data[$resource[$elementId]] += $inArray;
+				$this->planet->{$resource[$elementId]} += $inArray;
 			}
 
 			if ($queueID == 1)
@@ -252,8 +246,6 @@ class Queue
 
 	private function addTechToQueue ($elementId)
 	{
-		global $resource, $pricelist, $TechHandle;
-
 		if (!is_array($TechHandle))
 			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
 
@@ -302,8 +294,6 @@ class Queue
 
 	private function deleteTechInQueue ($elementId, $listId = 0)
 	{
-		global $TechHandle;
-
 		if (!is_array($TechHandle))
 			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
 
@@ -355,8 +345,6 @@ class Queue
 
 	private function addShipyardToQueue ($elementId, $count)
 	{
-		global $resource, $pricelist;
-
 		if (!IsTechnologieAccessible($this->user->data, $this->planet->data, $elementId))
 			return;
 

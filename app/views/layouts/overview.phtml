@@ -158,7 +158,7 @@
 						<th colspan="2">Фракция: <a href="?set=race"><?=$parse['race'] ?></a></th>
 					</tr>
 					<tr>
-						<th colspan="2"><a href="?set=refers"><? if ($this->config->app->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]</th>
+						<th colspan="2"><a href="?set=refers"><? if ($this->config->view->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]</th>
 					</tr>
 				</table>
 			</div>

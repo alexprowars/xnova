@@ -474,7 +474,7 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		if ($this->config->app->get('overviewListView', 0) == 0)
+		if ($this->config->view->get('overviewListView', 0) == 0)
 			$QryPlanets = $this->user->getPlanetListSortQuery();
 		else
 			$QryPlanets = '';
@@ -488,7 +488,7 @@ class OverviewController extends ApplicationController
 		{
 			while ($UserPlanet = $planets_query->fetch())
 			{
-				if ($this->config->app->get('overviewListView', 0) == 0)
+				if ($this->config->view->get('overviewListView', 0) == 0)
 				{
 					$AllPlanets[] = array('id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']);
 				}
@@ -685,9 +685,9 @@ class OverviewController extends ApplicationController
 		}
 
 		if (!$this->user->getUserOption('gameactivity'))
-			$this->config->app->offsetSet('gameActivityList', 0);
+			$this->config->view->offsetSet('gameActivityList', 0);
 
-		if ($this->config->app->get('gameActivityList', 0))
+		if ($this->config->view->get('gameActivityList', 0))
 		{
 			$parse['activity'] = array('chat' => array(), 'forum' => array());
 

@@ -1001,3 +1001,11 @@ div.errormessage {
 .planetList .list .planet > span {
 	margin-top: 3px;
 }
+
+#prophiler .toolbar {
+	font-size: 12px;
+}
+
+#prophiler h1 {
+	width: inherit;
+}

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "php" : "~5.4",
+        "fabfuel/prophiler": "~1.5"
+    }
+}

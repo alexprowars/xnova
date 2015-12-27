@@ -8,7 +8,7 @@ use Phalcon\DI\FactoryDefault;
 
 define('APP_PATH', realpath('..') . '/');
 
-define('DEBUG', false);
+define('DEBUG', true);
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);
@@ -22,6 +22,9 @@ try
 		require APP_PATH.'/vendor/autoload.php';
 
 		$profiler = new \Fabfuel\Prophiler\Profiler();
+		$profiler->addAggregator(new \Fabfuel\Prophiler\Aggregator\Database\QueryAggregator());
+		$profiler->addAggregator(new \Fabfuel\Prophiler\Aggregator\Cache\CacheAggregator());
+
 		$benchmark = $profiler->start('\App', [], 'Init');
 	}
 
@@ -46,7 +49,7 @@ try
 
 	$handle = $application->handle();
 
-	if (DEBUG && $application->router->getControllerName() != '' && $application->router->getControllerName() != 'game' && $application->router->getControllerName() != 'chat' && $application->router->getControllerName() != 'admin')
+	if (DEBUG && $application->router->getControllerName() != '' && $application->router->getControllerName() != 'chat' && $application->router->getControllerName() != 'admin')
 	{
 		$toolbar = new \Fabfuel\Prophiler\Toolbar($profiler);
 		$toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
@@ -67,6 +70,9 @@ try
 	else
 	{
    		echo $handle->getContent();
+
+		if (isset($toolbar))
+			echo $toolbar->render();
 	}
 }
 catch(\Exception $e)

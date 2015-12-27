@@ -150,7 +150,7 @@ $di->set('crypt', function()
 });
 
 $di->set(
-    'cache', function () use ($config)
+    'cache', function () use ($config, $di)
 	{
 		$frontCache = new \Phalcon\Cache\Frontend\Data(array(
 			"lifetime" => 3600
@@ -165,6 +165,9 @@ $di->set(
 			"port" => $config->memcache->port
 		));
 
+		$profiler = $di->get('profiler');
+
+		$cache = new \Fabfuel\Prophiler\Decorator\Phalcon\Cache\BackendDecorator($cache, $profiler);
 
         return $cache;
     }, true

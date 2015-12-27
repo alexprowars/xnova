@@ -45,7 +45,7 @@
 		</script>
 	<? endif; ?>
 </head>
-<body class="<? if ($this->config->app->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
+<body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
 	<script type="text/javascript">
 		XNova.path = '/';
 		var timestamp = <?=time() ?>;
@@ -94,7 +94,7 @@
 		<div id="loadingOverlay">загрузка...<br><img src="/assets/images/loading.gif" alt=""></div>
 		<div id="preloadOverlay"><img src="/assets/images/loading.gif" alt=""></div>
 
-		<? if ($this->config->app->get('socialIframeView', 0) == 1): ?>
+		<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
 			</div>
 		<? endif; ?>
 		</div>
@@ -107,17 +107,17 @@
 			<div class="container-fluid">
 				<div class="pull-left text-left">
 					<a href="?set=news" title="Последние изменения">000</a>
-					<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
+					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 					<? endif; ?>
 				</div>
 				<div class="pull-right text-right">
-					<? if ($this->config->app->get('socialIframeView', 0) == 1): ?>
+					<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
 						<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
 					<? endif; ?>
 					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 					<a href="?set=banned">Тёмные</a>|
-					<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
+					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a href="/wide.php" data-link="1">Большой монитор</a>|
 						<a href="http://vk.com/xnova_game" target="_blank">ВК</a>|
 						<a href="?set=contact">Контакты</a>|
@@ -138,7 +138,7 @@
 			</div>
 			<div class="col-xs-8 text-center">
 				<a href="?set=news" title="Последние изменения">000</a>
-				<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 				<? endif; ?>
 			</div>

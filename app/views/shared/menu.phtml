@@ -1,4 +1,4 @@
-<? if ($this->config->app->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
+<? if ($this->config->view->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
 	<script type="text/javascript">
 		var title = new Array();
 		title[0] = "Звездная империя – космическая стратегия в реальном времени.";
@@ -37,48 +37,48 @@
 		<div class="game_menu">
 			<div class="visible-xs text-center bar">
 				<? if (isset($tutorial) && $tutorial < 10): ?>
-					<a class="m1 tooltip" href="?set=tutorial" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
+					<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 				<? endif; ?>
-				<a class="m1 tooltip" href="?set=chat" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
-				<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
+				<a class="m1 tooltip" href="<?=$this->url->get("chat/") ?>" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
+				<a class="m1 tooltip" href="<?=$this->url->get("messages/") ?>" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
 				<? if ($messages_ally != ''): ?>
-					<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
+					<a class="m1 tooltip" href="<?=$this->url->get("alliance/circular/") ?>" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
 				<? endif; ?>
 			</div>
 			<div class="bar hhh hidden-xs">
 				<div class="message_list">
 					<? if (isset($tutorial) && $tutorial < 10): ?>
-						<a class="m1 tooltip" href="?set=tutorial" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
+						<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-tooltip-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 					<? endif; ?>
-					<a class="m1 tooltip" href="?set=chat" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
-					<a class="m1 tooltip" href="?set=messages" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b id="new_messages"><?=$messages ?></b></a>
+					<a class="m1 tooltip" href="<?=$this->url->get("chat/") ?>" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
+					<a class="m1 tooltip" href="<?=$this->url->get("messages/") ?>" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b id="new_messages"><?=$messages ?></b></a>
 					<? if ($messages_ally != ''): ?>
 						<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b id="ally_messages"><?=$messages_ally ?></b></a>
 					<? endif; ?>
 				</div>
 				<table align="center" class="top_menu">
 					<tr>
-						<? if ($this->config->app->get('socialIframeView', 0)): ?>
+						<? if ($this->config->view->get('socialIframeView', 0)): ?>
 							<td class="m1"><a href="?fullscreen=Y" target="_blank" class="tooltip sprite ico_fullscreen" data-tooltip-content="Развернуть"></a></td>
 						<? endif; ?>
-						<? if (!$this->config->app->get('socialIframeView', 0)): ?>
+						<? if (!$this->config->view->get('socialIframeView', 0)): ?>
 							<td class="m1"><a href="http://xnova.su/" target="_blank" class="tooltip sprite ico_space" data-tooltip-content="Вселенные"></a></td>
 						<? endif; ?>
-						<td class="m1"><a href="?set=stat" class="tooltip sprite ico_stats" data-tooltip-content="Статистика"></a></td>
-						<td class="m1"><a href="?set=techtree" class="tooltip sprite ico_tech" data-tooltip-content="Технологии"></a>
-						<td class="m1"><a href="?set=sim" class="tooltip sprite ico_sim" data-tooltip-content="Симулятор"></a>
-						<td class="m1"><a href="?set=search" class="tooltip sprite ico_search" data-tooltip-content="Поиск"></a></td>
-						<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
-							<td class="m1"><a href="?set=support" class="tooltip sprite ico_support" data-tooltip-content="Техподдержка"></a></td>
+						<td class="m1"><a href="<?=$this->url->get("stat/") ?>" class="tooltip sprite ico_stats" data-tooltip-content="Статистика"></a></td>
+						<td class="m1"><a href="<?=$this->url->get("techtree/") ?>" class="tooltip sprite ico_tech" data-tooltip-content="Технологии"></a>
+						<td class="m1"><a href="<?=$this->url->get("sim/") ?>" class="tooltip sprite ico_sim" data-tooltip-content="Симулятор"></a>
+						<td class="m1"><a href="<?=$this->url->get("search/") ?>" class="tooltip sprite ico_search" data-tooltip-content="Поиск"></a></td>
+						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+							<td class="m1"><a href="<?=$this->url->get("support/") ?>" class="tooltip sprite ico_support" data-tooltip-content="Техподдержка"></a></td>
 						<? endif; ?>
-						<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
+						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 							<td class="m1"><a href="<?=$this->config->app->get('forum_url', '') ?>" target="_blank" class="tooltip sprite ico_forum" data-tooltip-content="Форум"></a></td>
 						<? endif; ?>
-						<td class="m1"><a href="?set=options" class="tooltip sprite ico_settings" data-tooltip-content="Настройки"></a></td>
-						<? if ($this->config->app->get('socialIframeView', 0) == 0): ?>
-							<td class="m1"><a href="?set=logout&popup" class="tooltip sprite ico_exit" data-tooltip-content="Выход"></a></td>
+						<td class="m1"><a href="<?=$this->url->get("options/") ?>" class="tooltip sprite ico_settings" data-tooltip-content="Настройки"></a></td>
+						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+							<td class="m1"><a href="<?=$this->url->get("logout/") ?>" class="tooltip sprite ico_exit" data-tooltip-content="Выход"></a></td>
 						<? endif; ?>
-						<? if ($this->config->app->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
+						<? if ($this->config->view->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
 							<? if (!$this->cookies->has($this->config->cookie->prefix.'_full')): ?>
 								<td class="m1" style="vertical-align: middle"><a style="color:#38CA38" href="javascript:;" onclick="showInviteBox()">Пригласить друзей</a></td>
 							<? endif; ?>
@@ -88,14 +88,14 @@
 			</div>
 		</div>
 		<div class="icon-panel visible-xs">
-			<a href="?set=stat" class="sprite ico_stats"></a>
-			<a href="?set=techtree" class="sprite ico_tech"></a>
-			<a href="?set=sim" class="sprite ico_sim"></a>
-			<a href="?set=search" class="sprite ico_search"></a>
-			<a href="?set=support" class="sprite ico_support"></a>
+			<a href="<?=$this->url->get("stat/") ?>" class="sprite ico_stats"></a>
+			<a href="<?=$this->url->get("techtree/") ?>" class="sprite ico_tech"></a>
+			<a href="<?=$this->url->get("sim/") ?>" class="sprite ico_sim"></a>
+			<a href="<?=$this->url->get("search/") ?>" class="sprite ico_search"></a>
+			<a href="<?=$this->url->get("support/") ?>" class="sprite ico_support"></a>
 			<a href="<?=$this->config->app->get('forum_url', '') ?>" target="_blank" class="sprite ico_forum"></a>
-			<a href="?set=options" class="sprite ico_settings"></a>
-			<a href="?set=logout&popup" class="sprite ico_exit"></a>
+			<a href="<?=$this->url->get("options/") ?>" class="sprite ico_settings"></a>
+			<a href="<?=$this->url->get("logout/") ?>" class="sprite ico_exit"></a>
 		</div>
 		<div class="game_content">
 			<ul class="menu hidden-xs">
@@ -103,11 +103,11 @@
 					<li><a id="link_<?=$id ?>" <? if (isset($menu[3])): ?>data-link="1"<? endif; ?> href="<?=$menu[1] ?>" <?=($controller == $id ? 'class="check"' : '') ?>><?=$menu[0] ?></a></li>
 				<? endforeach; ?>
 			</ul>
-			<? if ($this->config->app->get('overviewListView', 0) == 1): ?>
-				<?=$this->ShowBlock('planets', array('ajax' => $isAjax)); ?>
+			<? if ($this->config->view->get('overviewListView', 0) == 1): ?>
+				<? $this->partial('shared/planets'); ?>
 			<? endif; ?>
 			<div class="content">
-				<? if ($this->config->app->get('socialIframeView', 0) == 1): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
 					<div class="iframe_wrapper">
 				<? endif; ?>
 				<div id="gamediv" class="container-fluid">

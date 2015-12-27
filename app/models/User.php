@@ -12,8 +12,20 @@ use Phalcon\Mvc\Model;
 class User extends Model
 {
 	private $db;
-	private $optionsData = array('security' => 0);
-	private $bonus = [];
+	private $optionsData =
+	[
+		'security' 			=> 0,
+		'widescreen' 		=> 0,
+		'bb_parser' 		=> 0,
+		'ajax_navigation' 	=> 0,
+		'planetlist' 		=> 0,
+		'planetlistselect' 	=> 0,
+		'gameactivity' 		=> 0,
+		'records' 			=> 0,
+		'only_available' 	=> 0
+	];
+
+	private $bonusData = [];
 
 	public $id;
 	public $username;
@@ -28,6 +40,7 @@ class User extends Model
 	public $ally_id;
 	public $vacation;
 	public $b_tech_planet;
+	public $tutorial;
 
 	public $ally = [];
 
@@ -47,6 +60,32 @@ class User extends Model
 
 	public $planet_sort;
 	public $planet_sort_order;
+
+	public $spy_tech;
+	public $computer_tech;
+	public $military_tech;
+	public $shield_tech;
+	public $defence_tech;
+	public $energy_tech;
+	public $hyperspace_tech;
+	public $combustion_tech;
+	public $impulse_motor_tech;
+	public $hyperspace_motor_tech;
+	public $laser_tech;
+	public $ionic_tech;
+	public $buster_tech;
+	public $intergalactic_tech;
+	public $expedition_tech;
+	public $colonisation_tech;
+	public $fleet_base_tech;
+	public $graviton_tech;
+
+	public $rpg_geologue;
+	public $rpg_ingenieur;
+	public $rpg_admiral;
+	public $rpg_constructeur;
+	public $rpg_technocrate;
+	public $rpg_meta;
 
 	public function onConstruct()
 	{
@@ -69,6 +108,170 @@ class User extends Model
 	public function getSource()
 	{
 		return "game_users";
+	}
+
+	public function afterFetch()
+	{
+		$bonusArrays = array
+		(
+			'storage', 'metal', 'crystal', 'deuterium', 'energy', 'solar',
+			'res_fleet', 'res_defence', 'res_research', 'res_building', 'res_levelup',
+			'time_fleet', 'time_defence', 'time_research', 'time_building',
+			'fleet_fuel', 'fleet_speed', 'queue'
+		);
+
+		$this->bonusData = [];
+
+		// Значения по умолчанию
+		foreach ($bonusArrays AS $name)
+		{
+			$this->bonusData[$name] = 1;
+		}
+
+		$this->bonusData['queue'] = 0;
+
+		// Расчет бонусов от офицеров
+		if ($this->rpg_geologue > time())
+		{
+			$this->bonusData['metal'] 			+= 0.25;
+			$this->bonusData['crystal'] 		+= 0.25;
+			$this->bonusData['deuterium'] 		+= 0.25;
+			$this->bonusData['storage'] 		+= 0.25;
+		}
+		if ($this->rpg_ingenieur > time())
+		{
+			$this->bonusData['energy'] 			+= 0.15;
+			$this->bonusData['solar'] 			+= 0.15;
+			$this->bonusData['res_defence'] 	-= 0.1;
+		}
+		if ($this->rpg_admiral > time())
+		{
+			$this->bonusData['res_fleet'] 		-= 0.1;
+			$this->bonusData['fleet_speed'] 	+= 0.25;
+		}
+		if ($this->rpg_constructeur > time())
+		{
+			$this->bonusData['time_fleet'] 		-= 0.25;
+			$this->bonusData['time_defence'] 	-= 0.25;
+			$this->bonusData['time_building'] 	-= 0.25;
+			$this->bonusData['queue'] 			+= 2;
+		}
+		if ($this->rpg_technocrate > time())
+		{
+			$this->bonusData['time_research'] 	-= 0.25;
+		}
+		if ($this->rpg_meta > time())
+		{
+			$this->bonusData['fleet_fuel'] 		-= 0.1;
+		}
+
+		// Расчет бонусов от рас
+		if ($this->race == 1)
+		{
+			$this->bonusData['metal'] 			+= 0.15;
+			$this->bonusData['solar'] 			+= 0.15;
+			$this->bonusData['res_levelup'] 	-= 0.1;
+			$this->bonusData['time_fleet'] 		-= 0.1;
+		}
+		elseif ($this->race == 2)
+		{
+			$this->bonusData['deuterium'] 		+= 0.15;
+			$this->bonusData['solar'] 			+= 0.05;
+			$this->bonusData['storage'] 		+= 0.2;
+			$this->bonusData['res_fleet'] 		-= 0.1;
+		}
+		elseif ($this->race == 3)
+		{
+			$this->bonusData['metal'] 			+= 0.05;
+			$this->bonusData['crystal'] 		+= 0.05;
+			$this->bonusData['deuterium'] 		+= 0.05;
+			$this->bonusData['res_defence'] 	-= 0.05;
+			$this->bonusData['res_building'] 	-= 0.05;
+			$this->bonusData['time_building'] 	-= 0.1;
+		}
+		elseif ($this->race == 4)
+		{
+			$this->bonusData['crystal'] 		+= 0.15;
+			$this->bonusData['energy'] 			+= 0.05;
+			$this->bonusData['res_research'] 	-= 0.1;
+			$this->bonusData['fleet_speed'] 	+= 0.1;
+		}
+
+		if (false)
+		{
+			include_once(APP_PATH . 'app/varsArtifacts.php');
+
+			$artifacts = $this->db->query("SELECT * FROM game_artifacts WHERE user_id = " . $this->id . " AND expired > 0 AND expired < " . time() . "");
+
+			while ($artifact = $artifacts->fetch())
+			{
+				/**
+				 * @var $artifactsData array
+				 */
+				$data = $artifactsData[$artifact['element_id']];
+
+				if (isset($data['resources']))
+				{
+					foreach ($data['resources'] AS $res => $lvl)
+					{
+						if (!isset($this->bonusData[$res]))
+							continue;
+
+						$factor = (($lvl[1] - $lvl[0]) / $data['level']) * $artifact['level'];
+
+						$this->bonusData[$res] += round($factor / 100, 5);
+					}
+				}
+
+				if (isset($data['build']))
+				{
+					foreach ($data['build'] AS $res => $lvl)
+					{
+						if (!isset($this->bonusData['time_' . $res]))
+							continue;
+
+						$factor = (($lvl[1] - $lvl[0]) / $data['level']) * $artifact['level'];
+
+						$this->bonusData['time_' . $res] -= round($factor / 100, 5);
+					}
+				}
+
+				if (isset($data['cost']))
+				{
+					foreach ($data['cost'] AS $res => $lvl)
+					{
+						if (!isset($this->bonusData['res_' . $res]))
+							continue;
+
+						$factor = (($lvl[1] - $lvl[0]) / $data['level']) * $artifact['level'];
+
+						$this->bonusData['res_' . $res] -= round($factor / 100, 5);
+					}
+				}
+
+				if (isset($data['queue']))
+				{
+					$factor = (($data['queue'][1] - $data['queue'][0]) / $data['level']) * $artifact['level'];
+
+					$this->bonusData['queue'] += $factor;
+				}
+
+				if (isset($data['fleet']))
+				{
+					foreach ($data['fleet'] AS $res => $lvl)
+					{
+						if (!isset($this->bonusData['fleet_' . $res]))
+							continue;
+
+						$factor = (($lvl[1] - $lvl[0]) / $data['level']) * $artifact['level'];
+
+						$this->bonusData['fleet_' . $res] -= round($factor / 100, 5);
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	public function isOnline ()
@@ -243,7 +446,7 @@ class User extends Model
 
 	public function bonusValue ($key)
 	{
-		return (isset($this->bonus[$key]) ? $this->bonus[$key] : 1);
+		return (isset($this->bonusData[$key]) ? $this->bonusData[$key] : 1);
 	}
 
 	public function getUserPlanets ($userId, $moons = true, $allyId = 0)
