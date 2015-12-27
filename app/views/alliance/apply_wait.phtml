@@ -5,7 +5,7 @@
 	<? foreach ($parse['list'] AS $list): ?>
 	<tr>
 		<th width=70%><?=$list[2] ?> [<?=$list[1] ?>]</th>
-		<th><?=datezone("d.m.Y H:i", $list[3]) ?></th>
+		<th><?=$this->game->datezone("d.m.Y H:i", $list[3]) ?></th>
 	</tr>
 	<tr>
 		<th colspan=2>

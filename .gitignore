@@ -2,3 +2,8 @@
 app/cache/*
 app/config/config.ini
 vendor/*
+Thumbs.db
+.DS_Store
+*.log
+*.txt
+*.map

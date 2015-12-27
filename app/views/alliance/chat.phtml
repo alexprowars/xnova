@@ -12,7 +12,7 @@
 				<table width="100%">
 					<tr>
 						<th class="a" width="130">
-								<?=datezone("H:i:s", $m['timestamp']) ?><br><a href="?set=players&id=<?=$m['user_id'] ?>" target="_blank"><?=stripslashes($m['user']) ?></a>
+								<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="?set=players&id=<?=$m['user_id'] ?>" target="_blank"><?=stripslashes($m['user']) ?></a>
 							<a onclick="AddQuote('<?=stripslashes($m['user']) ?>', 'm<?=$m['id'] ?>')"> -> </a>
 						</th>
 						<th class="b">

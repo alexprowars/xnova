@@ -15,7 +15,7 @@
 					<? if ($list['ListID'] == 1): ?>
 						<div id="blc" class="z"></div>
 						<script type="text/javascript">BuildTimeout(<?=$list['BuildTime'] ?>, <?=$list['ListID'] ?>, <?=$list['PlanetID'] ?>, <?=(isset($_SESSION['LAST_ACTION_TIME']) ? $_SESSION['LAST_ACTION_TIME'] : 0) ?>);</script>
-						<div class="positive"><?=datezone("d.m H:i:s", $list['BuildEndTime']) ?></div>
+						<div class="positive"><?=$this->game->datezone("d.m H:i:s", $list['BuildEndTime']) ?></div>
 					<? else: ?>
 						<a href="?set=buildings&listid=<?=$list['ListID'] ?>&cmd=remove&planet=<?=$list['PlanetID'] ?>">Удалить</a>
 					<? endif; ?>

@@ -89,7 +89,7 @@ class ApplicationController extends Controller
 
 		Lang::setLang($this->config->app->language);
 
-		if ($this->request->isAjax())
+		if ($this->request->isAjax() && !$this->auth->isAuthorized())
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		else
 		{
@@ -100,7 +100,10 @@ class ApplicationController extends Controller
 
 		if ($this->auth->isAuthorized())
 		{
-			$this->view->setMainView('game');
+			if ($this->request->isAjax())
+				$this->view->setMainView('game_ajax');
+			else
+				$this->view->setMainView('game');
 
 			if (is_array($this->router->getParams()) && count($this->router->getParams()))
 			{
@@ -185,6 +188,7 @@ class ApplicationController extends Controller
 
 			$this->view->setVar('isPopup', ($this->request->has('isPopup') ? 1 : 0));
 			$this->view->setVar('timezone', 0);
+			$this->view->setVar('userId', $this->user->getId());
 			$this->view->setVar('adminlevel', $this->user->authlevel);
 			$this->view->setVar('messages', $this->user->messages);
 			$this->view->setVar('messages_ally', $this->user->messages_ally);

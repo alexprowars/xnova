@@ -308,6 +308,8 @@ class User extends Model
 			}
 		}
 
+		$this->optionsData = $this->unpackOptions($this->options);
+
 		return true;
 	}
 

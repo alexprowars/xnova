@@ -33,7 +33,7 @@
 							<input name="showmes<?=$list['message_id'] ?>" type="hidden" value="1">
 							<input name="delmes<?=$list['message_id'] ?>" type="checkbox" style='width:14px;'>
 						</th>
-						<th><?=datezone("d.m.y H:i:s", $list['message_time']) ?></th>
+						<th><?=$this->game->datezone("d.m.y H:i:s", $list['message_time']) ?></th>
 						<th><a href="?set=players&id=<?=$list['message_sender'] ?>" class="window popup-user"><?=$list['message_from'] ?></a></th>
 						<th nowrap>
 							<? if ($list['message_type'] == 1): ?>

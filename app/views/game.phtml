@@ -50,7 +50,7 @@
 		XNova.path = '/';
 		var timestamp = <?=time() ?>;
 		var timezone = <?=$timezone ?>;
-		var ajax_nav = <?=$this->config->app->ajaxNavigation ?>;
+		var ajax_nav = <?=$ajaxNavigation ?>;
 		var addToUrl = '<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') && $this->session->has('OKAPI')): ?><?=http_build_query($this->session->get('OKAPI')) ?><? endif; ?>';
 
 		<? if ($this->auth->isAuthorized()): ?>
@@ -73,7 +73,7 @@
 
 
 	<? if (isset($pageParams['deleteUserTimer']) && $pageParams['deleteUserTimer'] > 0): ?>
-		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=datezone("d.m.Y", $pageParams['deleteUserTimer']) ?> в <?=datezone("H:i:s", $pageParams['deleteUserTimer']) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
+		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $pageParams['deleteUserTimer']) ?> в <?=$this->game->datezone("H:i:s", $pageParams['deleteUserTimer']) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
 	<? endif; ?>
 
 	<? if (isset($pageParams['vocationTimer']) && $pageParams['vocationTimer'] > 0): ?>

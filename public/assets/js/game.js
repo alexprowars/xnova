@@ -480,29 +480,25 @@ function load (url)
 
 	blockTimer = false;
 
-    var loc = url.substring(1).split("&");
-
-    var set = loc[0].split("=");
-	
+    var loc = url.substring(1).split("/");
+	var set = loc[0];
 	var mod;
 	
 	if (loc[1] !== undefined)
-		mod = loc[1].split("=");
+		mod = loc[1];
 
-    if (set[1] != 'buildings')
-        currentState = set[1];
+    if (set != 'buildings')
+        currentState = set;
     else
-        currentState = set[1] + ((loc[1] != undefined && loc[1] != 'ajax=2' && loc[1] != 'ajax=1') ? '&'+loc[1] : '');
+        currentState = set + ((loc[1] != undefined && loc[1] != 'ajax=2' && loc[1] != 'ajax=1') ? '&'+loc[1] : '');
 
 	url = url+(addToUrl != '' ? '&'+addToUrl : '');
 
 	showLoading();
 
-	addHistoryState(url);
-
 	$.ajax(
 	{
-		url: url+'&ajax=1&random=' + Math.random()*99999,
+		url: url,
 		cache: false,
 		dataType: 'json',
 		success: function(data)
@@ -511,7 +507,7 @@ function load (url)
 			hideLoading();
 			ClearTimers();
 
-			$('body > .contentBox').attr('class', 'contentBox set_'+set[1]+(mod !== undefined && set[1] == 'buildings' && mod[0] !== undefined ? mod[1] : ''));
+			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set == 'buildings' && mod !== undefined ? mod : ''));
 			$('body.window .content').css('width', '');
 			$('#box, .game_content > .content').css('display', '');
 
@@ -562,6 +558,8 @@ function load (url)
 		{
 			$('#tooltip').hide();
 			document.location = url;
+
+			console.log('error in '+url);
 		}
 	});
 

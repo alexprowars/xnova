@@ -37,13 +37,13 @@
 					<? endif; ?>
 				</th>
 				<th>
-					<a class="tooltip" data-tooltip-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\Xcms\strings::pretty_number($f['fleet_count']) ?></a>
+					<a class="tooltip" data-tooltip-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\App\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
 				<th><a href="?set=galaxy&r=3&galaxy=<?=$f['fleet_start_galaxy'] ?>&system=<?=$f['fleet_start_system'] ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
-				<th><?=datezone("d.m.y", $f['fleet_start_time']) ?><br><?=datezone("H:i:s", $f['fleet_start_time']) ?></th>
+				<th><?=$this->game->datezone("d.m.y", $f['fleet_start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_start_time']) ?></th>
 				<th><a href="?set=galaxy&r=3&galaxy=<?=$f['fleet_end_galaxy'] ?>&system=<?=$f['fleet_end_system'] ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
-				<th><?=datezone("d.m.y", $f['fleet_end_time']) ?><br><?=datezone("H:i:s", $f['fleet_end_time']) ?></th>
-				<th><font color="lime"><?=($f['fleet_end_time'] > time() ? \Xcms\strings::pretty_time(floor($f['fleet_end_time'] + 1 - time())) : 'обработка...') ?></font></th>
+				<th><?=$this->game->datezone("d.m.y", $f['fleet_end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_end_time']) ?></th>
+				<th><font color="lime"><?=($f['fleet_end_time'] > time() ? \App\Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
 					<? if ($f['fleet_mess'] == 0 && $f['fleet_mission'] != 20 && $f['fleet_target_owner'] != 1): ?>
 						<form action="?set=fleet&page=back" method="post">
@@ -102,7 +102,7 @@
 			<? foreach ($parse['ships'] as $ship): ?>
 				<tr>
 					<th><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></th>
-					<th><?=\Xcms\strings::pretty_number($ship['count']) ?></th>
+					<th><?=\App\Helpers::pretty_number($ship['count']) ?></th>
 					<? if ($ship['id'] == 212): ?>
 						<th></th><th></th>
 					<? else: ?>
@@ -164,5 +164,5 @@
 		<input type="hidden" name="maxepedition" value="<?=$parse['maxExpeditions'] ?>" />
 		<input type="hidden" name="curepedition" value="<?=$parse['currentExpeditions'] ?>" />
 		<input type="hidden" name="target_mission" value="<?=$parse['mission'] ?>" />
-		<input type="hidden" name="crc" value="<?=md5(\Xnova\user::get()->getId() . '-CHeAT_CoNTROL_Stage_01-' . date("dmY", time())) ?>" />
+		<input type="hidden" name="crc" value="<?=md5($this->user->getId() . '-CHeAT_CoNTROL_Stage_01-' . date("dmY", time())) ?>" />
 	</form>

@@ -244,7 +244,7 @@
 						<? foreach ($parse['auth'] AS $auth): ?>
 							<tr>
 								<th><?=$auth['external_id'] ?></th>
-								<th><?=datezone("d.m.Y H:i:s", $auth['register_time']) ?></th>
+								<th><?=$this->game->datezone("d.m.Y H:i:s", $auth['register_time']) ?></th>
 								<th><?=($auth['enter_time'] > 0 ? datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
 							</tr>
 						<? endforeach; ?>

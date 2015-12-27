@@ -27,7 +27,7 @@ class BuildingsController extends ApplicationController
 		$this->building = new building();
 	}
 
-	public function fleet()
+	public function fleetAction ()
 	{
 		if ($this->planet->{$this->game->resource[21]} == 0)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
@@ -49,7 +49,7 @@ class BuildingsController extends ApplicationController
 		$this->tag->setTitle('Верфь');
 	}
 
-	public function research()
+	public function researchAction ()
 	{
 		if ($this->planet->{$this->game->resource[31]} == 0)
 			$this->message(_getText('no_laboratory'), _getText('Research'));
@@ -62,12 +62,12 @@ class BuildingsController extends ApplicationController
 		$this->tag->setTitle('Исследования');
 	}
 
-	public function research_fleet()
+	public function research_fleetAction ()
 	{
-		$this->research();
+		$this->researchAction();
 	}
 
-	public function defense()
+	public function defenseAction ()
 	{
 		if ($this->planet->{$this->game->resource[21]} == 0 && $this->planet->planet_type != 5)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));

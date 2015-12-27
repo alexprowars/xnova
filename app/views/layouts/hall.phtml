@@ -28,7 +28,7 @@
 				elseif ($log['won'] == 1)
 					echo'А';
 				else echo'О'; ?></th>
-				<th nowrap><? if ($parse['time'] == $log['time']): ?><font color="green"><? endif; ?><?=datezone("d.m.y H:i", $log['time']) ?><? if ($parse['time'] == $log['time']): ?></font><? endif; ?></th>
+				<th nowrap><? if ($parse['time'] == $log['time']): ?><font color="green"><? endif; ?><?=$this->game->datezone("d.m.y H:i", $log['time']) ?><? if ($parse['time'] == $log['time']): ?></font><? endif; ?></th>
 			</tr>
 			<? endforeach; ?>
 		<? else: ?>

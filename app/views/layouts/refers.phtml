@@ -12,7 +12,7 @@
 			<tr>
 				<th><? if (datezone("d", $list['register_time']) >= 15)
 					echo '+&nbsp;'; ?><a href="?set=players&id=<?=$list['id'] ?>"><?=$list['username'] ?></a></th>
-				<th><?=datezone("d.m.Y H:i", $list['register_time']) ?></th>
+				<th><?=$this->game->datezone("d.m.Y H:i", $list['register_time']) ?></th>
 				<th>П:<?=$list['lvl_minier'] ?>, В:<?=$list['lvl_raid'] ?></th>
 			</tr>
 		<? endforeach; ?>

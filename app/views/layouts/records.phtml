@@ -1,6 +1,6 @@
 <table class="table">
 	<tr>
-		<th colspan="3" style="text-align:center;">Обновлено в <?=datezone("H:i:s d.m.Y", $parse['update']) ?></th>
+		<th colspan="3" style="text-align:center;">Обновлено в <?=$this->game->datezone("H:i:s d.m.Y", $parse['update']) ?></th>
 	</tr>
 	<? foreach ($parse['Records'] AS $title => $list): ?>
 	<tr>

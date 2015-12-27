@@ -147,6 +147,28 @@ class Game extends Component
 		return true;
 	}
 
+	public function checkSaveState ()
+	{
+		return (!($this->request->get('ep', null, '') == 'dontsavestate'));
+	}
+
+	public function getClearQuery ()
+	{
+		$out = $this->request->getQuery();
+
+		unset($out['ajax']);
+		unset($out['popup']);
+		unset($out['random']);
+		unset($out['_']);
+		unset($out['_url']);
+		unset($out['isAjax']);
+
+		if (count($out))
+			return $this->router->getRewriteUri().'?'.http_build_query($out);
+		else
+			return $this->router->getRewriteUri();
+	}
+
 	public function updateConfig ($key, $value)
 	{
 		$this->db->query("UPDATE game_config SET `value` = '". $value ."' WHERE `key` = '".$key."';");

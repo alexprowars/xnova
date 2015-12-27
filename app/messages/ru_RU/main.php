@@ -12,7 +12,7 @@ $lang['main_menu'] = array
 (
 	'overview' 					=> array('Обзор', '/overview/', 0),
 	'imperium' 					=> array('Империя', '/imperium/', 0),
-	'galaxy' 					=> array('Космос', '/galaxy/?r=0', 0),
+	'galaxy' 					=> array('Космос', '/galaxy/index/r/0/', 0),
 	'fleet' 					=> array('Флот', '/fleet/', 0),
 	'buildings' 				=> array('Постройки', '/buildings/', 0),
 	'buildingsresearch' 		=> array('Наука', '/buildings/research/', 0),
@@ -20,7 +20,7 @@ $lang['main_menu'] = array
 	'buildingsfleet' 			=> array('Верфь', '/buildings/fleet/', 0),
 	'buildingsdefense' 			=> array('Оборона', '/buildings/defense/', 0),
 	'resources' 				=> array('Сырьё', '/resources/', 0),
-	'marchand' 					=> array('Рынок', '/marchand/', 0),
+	'merchant' 					=> array('Рынок', '/merchant/', 0),
 	'officier' 					=> array('Офицеры', '/officier/', 0),
 	'alliance' 					=> array('Альянс', '/alliance/', 0),
 	'buddy' 					=> array('Друзья', '/buddy/', 0),

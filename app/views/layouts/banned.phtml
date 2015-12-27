@@ -15,10 +15,10 @@
 			<tr>
 				<td class="b center"><a href='?set=players&id=<?=$u['who'] ?>'><?=$u['user_1'] ?></a></td>
 				<td class="b center">
-					<small><?=datezone("d/m/Y H:m:s", $u['time']) ?></small>
+					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['time']) ?></small>
 				</td>
 				<td class="b center">
-					<small><?=datezone("d/m/Y H:m:s", $u['longer']) ?></small>
+					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['longer']) ?></small>
 				</td>
 				<td class="b center"><?=$u['theme'] ?></td>
 				<td class="b center"><a href='?set=players&id=<?=$u['author'] ?>'><?=$u['user_2'] ?></a></td>
