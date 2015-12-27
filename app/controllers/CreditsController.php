@@ -11,7 +11,7 @@ class CreditsController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId() . ";")->fetch();
+		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
 
 		if (!isset($_SESSION['OKAPI']))
 			$this->view->pick('credits');

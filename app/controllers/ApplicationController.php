@@ -416,6 +416,13 @@ class ApplicationController extends Controller
 		$this->view->pick('shared/message');
 		$this->view->setVar('text', $text);
 		$this->view->setVar('title', $title);
+		$this->view->setVar('destination', $redirect);
+		$this->view->setVar('time', $timeout);
+
+		$this->tag->setTitle(($title ? strip_tags($title) : 'Сообщение'));
+		$this->showTopPanel(false);
+		$this->showLeftPanel($left);
+
 		$this->view->start();
 
 		return true;

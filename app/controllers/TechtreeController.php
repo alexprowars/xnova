@@ -13,13 +13,11 @@ class TechtreeController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $requeriments, $resource;
-
-		 $parse = array();
+		$parse = array();
 		
-		$Element = request::G('id', 0);
+		$Element = $this->request->getQuery('id', null, 0);
 
-		if ($Element > 0 && isset($resource[$Element]))
+		if ($Element > 0 && isset($this->game->resource[$Element]))
 		{
 			$this->view->pick('techtree_element');
 			$this->view->setVar('element', $Element);
@@ -27,7 +25,7 @@ class TechtreeController extends ApplicationController
 			if (isset($requeriments[$Element]))
 				$this->view->setVar('req', $requeriments[$Element]);
 
-			core::setConfig('overviewListView', 0);
+			$this->config->view->offsetSet('overviewListView', 0);
 		}
 		else
 		{
@@ -41,7 +39,7 @@ class TechtreeController extends ApplicationController
 					$pars = array();
 					$pars['tt_name'] = $ElementName;
 		
-					if (!isset($resource[$Element]))
+					if (!isset($this->game->resource[$Element]))
 					{
 						$parse[] = $pars;
 					}
@@ -55,11 +53,11 @@ class TechtreeController extends ApplicationController
 							{
 								if ($ResClass != 700)
 								{
-									if (isset($this->user->data[$resource[$ResClass]]) && $this->user->data[$resource[$ResClass]] >= $Level)
+									if (isset($this->user->{$this->game->resource[$ResClass]}) && $this->user->{$this->game->resource[$ResClass]} >= $Level)
 									{
 										$pars['required_list'] .= "<span class=\"positive\">";
 									}
-									elseif (isset($this->planet->data[$resource[$ResClass]]) && $this->planet->data[$resource[$ResClass]] >= $Level)
+									elseif (isset($this->planet->{$this->game->resource[$ResClass]}) && $this->planet->{$this->game->resource[$ResClass]} >= $Level)
 									{
 										$pars['required_list'] .= "<span class=\"positive\">";
 									}
@@ -69,14 +67,14 @@ class TechtreeController extends ApplicationController
 									}
 									$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
 		
-									if (isset($this->user->data[$resource[$ResClass]]) && $this->user->data[$resource[$ResClass]] < $Level)
+									if (isset($this->user->{$this->game->resource[$ResClass]}) && $this->user->{$this->game->resource[$ResClass]} < $Level)
 									{
-										$minus = $Level - $this->user->data[$resource[$ResClass]];
+										$minus = $Level - $this->user->{$this->game->resource[$ResClass]};
 										$pars['required_list'] .= " + <b>" . $minus . "</b>";
 									}
-									elseif (isset($this->planet->data[$resource[$ResClass]]) && $this->planet->data[$resource[$ResClass]] < $Level)
+									elseif (isset($this->planet->{$this->game->resource[$ResClass]}) && $this->planet->{$this->game->resource[$ResClass]} < $Level)
 									{
-										$minus = $Level - $this->planet->data[$resource[$ResClass]];
+										$minus = $Level - $this->planet->{$this->game->resource[$ResClass]};
 										$pars['required_list'] .= " + <b>" . $minus . "</b>";
 									}
 								}

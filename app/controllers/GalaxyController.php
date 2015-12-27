@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Fleet;
+use App\JavaScriptPacker;
 use App\Lang;
 
 class GalaxyController extends ApplicationController
@@ -117,7 +119,7 @@ class GalaxyController extends ApplicationController
 		
 		if ($this->planet->phalanx <> 0)
 		{
-			$Range = system::GetPhalanxRange($this->planet->phalanx);
+			$Range = Fleet::GetPhalanxRange($this->planet->phalanx);
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
@@ -130,7 +132,7 @@ class GalaxyController extends ApplicationController
 		{
 			if ($galaxy == $this->planet->galaxy)
 			{
-				$Range = system::GetMissileRange();
+				$Range = Fleet::GetMissileRange();
 				$SystemLimitMin = max(1, $this->planet->system - $Range);
 				$SystemLimitMax = $this->planet->system + $Range;
 
@@ -242,7 +244,7 @@ class GalaxyController extends ApplicationController
 		
 		$html .= "$('#galaxy').append(PrintRow());</script>";
 
-		$this->setContent($html);
+		$this->view->setVar('html', $html);
 		$this->tag->setTitle('Галактика');
 		$this->showTopPanel(false);
 	}

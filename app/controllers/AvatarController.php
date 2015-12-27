@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Upload\Upload;
+
 class AvatarController extends ApplicationController
 {
 	public function initialize ()
@@ -11,9 +13,7 @@ class AvatarController extends ApplicationController
 
 	public function upload()
 	{
-		core::loadLib('upload');
-
-		$upload = new \upload($_FILES['image']);
+		$upload = new Upload($_FILES['image']);
 
 		if ($upload->uploaded)
 		{
@@ -58,7 +58,7 @@ class AvatarController extends ApplicationController
 		        </form></center>';
 
 		$this->tag->setTitle("Выбор аватара");
-		$this->setContent($html);
+		$this->view->setVar('html', $html);
 		$this->showTopPanel(false);
 	}
 }

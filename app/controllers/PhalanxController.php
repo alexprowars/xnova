@@ -72,16 +72,13 @@ class PhalanxController extends ApplicationController
 				$end = 1;
 		
 			$timerek = $row['fleet_start_time'];
-			$timerekend = $row['fleet_end_time'];
-		
+
 			if ($row['fleet_mission'] != 6)
 			{
-				$kolormisjiz = 'green';
 				$kolormisjido = 'lime';
 			}
 			else
 			{
-				$kolormisjiz = 'B45D00';
 				$kolormisjido = 'orange';
 			}
 		
@@ -164,7 +161,7 @@ class PhalanxController extends ApplicationController
 		}
 
 		$this->tag->setTitle('Сенсорная фаланга');
-		$this->setContent($html);
+		$this->view->setVar('html', $html);
 		$this->showTopPanel(false);
 		$this->showLeftPanel(false);
 	}

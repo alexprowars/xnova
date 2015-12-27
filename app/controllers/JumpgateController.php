@@ -17,11 +17,9 @@ class JumpgateController extends ApplicationController
 
 	public function indexAction ()
 	{
-		global $resource, $reslist;
+		return false;
 
-		die();
-
-		if ($_POST && ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) && $this->planet->sprungtor > 0)
+		/*if ($_POST && ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) && $this->planet->sprungtor > 0)
 		{
 			$RestString = GetNextJumpWaitTime($this->planet->data);
 			$NextJumpTime = $RestString['value'];
@@ -42,7 +40,7 @@ class JumpgateController extends ApplicationController
 						$SubQueryOri = "";
 						$SubQueryDes = "";
 
-						foreach ($reslist['fleet'] AS $Ship)
+						foreach ($this->game->reslist['fleet'] AS $Ship)
 						{
 							$ShipLabel = "c" . $Ship;
 
@@ -54,9 +52,9 @@ class JumpgateController extends ApplicationController
 								die();
 							}
 
-							if (abs(intval($_POST[$ShipLabel])) > $this->planet->data[$resource[$Ship]])
+							if (abs(intval($_POST[$ShipLabel])) > $this->planet->{$this->game->resource[$Ship]})
 							{
-								$ShipArray[$Ship] = $this->planet->data[$resource[$Ship]];
+								$ShipArray[$Ship] = $this->planet->{$this->game->resource[$Ship]};
 							}
 							else
 							{
@@ -64,8 +62,8 @@ class JumpgateController extends ApplicationController
 							}
 							if ($ShipArray[$Ship] <> 0)
 							{
-								$SubQueryOri .= "`" . $resource[$Ship] . "` = `" . $resource[$Ship] . "` - '" . $ShipArray[$Ship] . "', ";
-								$SubQueryDes .= "`" . $resource[$Ship] . "` = `" . $resource[$Ship] . "` + '" . $ShipArray[$Ship] . "', ";
+								$SubQueryOri .= "`" . $this->game->resource[$Ship] . "` = `" . $this->game->resource[$Ship] . "` - '" . $ShipArray[$Ship] . "', ";
+								$SubQueryDes .= "`" . $this->game->resource[$Ship] . "` = `" . $this->game->resource[$Ship] . "` + '" . $ShipArray[$Ship] . "', ";
 							}
 						}
 
@@ -120,7 +118,7 @@ class JumpgateController extends ApplicationController
 			$RetMessage = _getText('gate_wait_data');
 		}
 
-		$this->message($RetMessage, _getText('tech', 43), "?set=infos&gid=43", 4);
+		$this->message($RetMessage, _getText('tech', 43), "?set=infos&gid=43", 4);*/
 	}
 }
 

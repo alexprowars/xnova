@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
+use App\Mail\PHPMailer;
+use App\Queue;
 use App\Sql;
 
 class OptionsController extends ApplicationController
@@ -77,8 +79,6 @@ class OptionsController extends ApplicationController
 
 	public function change ()
 	{
-		global $session;
-
 		if (isset($_POST['ld']) && $_POST['ld'] != '')
 		{
 			$this->ld();
@@ -110,16 +110,14 @@ class OptionsController extends ApplicationController
 
 				Sql::build()->update('game_users_info')->setField('email', $e)->setField('password', md5($password))->where('id', '=', $this->user->getId())->execute();
 
-				core::loadLib('mail');
-
-				$mail = new \PHPMailer();
+				$mail = new PHPMailer();
 
 				$mail->IsMail();
 				$mail->IsHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->SetFrom(ADMINEMAIL, SITE_TITLE);
-				$mail->AddAddress($e, SITE_TITLE);
-				$mail->Subject = 'Пароль в Xnova Game: '.UNIVERSE.' вселенная';
+				$mail->SetFrom($this->config->app->email, $this->config->app->name);
+				$mail->AddAddress($e, $this->config->app->name);
+				$mail->Subject = 'Пароль в Xnova Game: '.$this->config->game->universe.' вселенная';
 				$mail->Body = "Ваш пароль от игрового аккаунта '" . $this->user->username . "': " . $password;
 				$mail->Send();
 
@@ -139,7 +137,7 @@ class OptionsController extends ApplicationController
 
 			if (isset($_POST["urlaubs_modus"]) && $_POST["urlaubs_modus"] == 'on')
 			{
-				$queueManager = new queueManager();
+				$queueManager = new Queue();
 				$queueCount = 0;
 
 				$BuildOnPlanets = $this->db->query("SELECT `queue` FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
@@ -245,7 +243,7 @@ class OptionsController extends ApplicationController
 				$newpass = md5($_POST["newpass1"]);
 				$this->db->query("UPDATE game_users_info SET `password` = '" . $newpass . "' WHERE `id` = '" . $this->user->id . "' LIMIT 1");
 
-				$session->ClearSession(false);
+				$this->auth->remove(false);
 
 				$this->message('Уcпeшнo', 'Cмeнa пapoля', '?set=login', 2);
 			}
@@ -328,14 +326,14 @@ class OptionsController extends ApplicationController
 
 			if ($inf['image'] != '')
 			{
-				$parse['avatar'] = "<img src='".RPATH."images/avatars/upload/".$inf['image']."' height='100'><br>";
+				$parse['avatar'] = "<img src='/assets/images/avatars/upload/".$inf['image']."' height='100'><br>";
 			}
 			elseif ($this->user->avatar != 0)
 			{
 				if ($this->user->avatar != 99)
-					$parse['avatar'] = "<img src=".RPATH."images/faces/" . $this->user->sex . "/" . $this->user->avatar . "s.png height='100'><br>";
+					$parse['avatar'] = "<img src=/assets/images/faces/" . $this->user->sex . "/" . $this->user->avatar . "s.png height='100'><br>";
 				else
-					$parse['avatar'] = "<img src=".RPATH."images/avatars/upload/upload_" . $this->user->id . ".jpg height='100'><br>";
+					$parse['avatar'] = "<img src=/assets/images/avatars/upload/upload_" . $this->user->id . ".jpg height='100'><br>";
 			}
 
 			$parse['opt_usern_datatime'] = $inf['username_last'];

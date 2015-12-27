@@ -11,8 +11,6 @@ class RwController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $session;
-
 		include(APP_PATH."functions/formatCR.php");
 		
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . intval($_GET['r']) . "';")->fetch();
@@ -28,7 +26,7 @@ class RwController extends ApplicationController
 			$this->message('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
 		else
 		{
-			if ($this->page->ajax && $session->isAuthorized())
+			if ($this->request->isAjax() && $this->auth->isAuthorized())
 			{
 				$Page = "";
 		
@@ -43,7 +41,7 @@ class RwController extends ApplicationController
 					$formatted_cr = formatCREx($result[0], $result[1], $result[2], $result[3], $result[4], $result[5]);
 					$Page .= $formatted_cr['html'];
 		
-					$Page .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});;</script>';
+					$Page .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});</script>';
 				}
 		
 				$Page .= "<div class='separator'></div>ID боевого доклада: <a href=\"?set=log&mode=new&save=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a>";
@@ -54,7 +52,7 @@ class RwController extends ApplicationController
 				}
 
 				$this->tag->setTitle('Боевой доклад');
-				$this->setContent($Page);
+				$this->view->setVar('html', $Page);
 				$this->showTopPanel(false);
 			}
 			else

@@ -15,7 +15,7 @@ class AdminController extends ApplicationController
 
 	public function initialize ()
 	{
-		core::setConfig('gameTemplate', 'admin');
+		$this->config->game->offsetSet('gameTemplate', 'admin');
 
 		parent::initialize();
 		

@@ -67,7 +67,7 @@ class OverviewController extends ApplicationController
 				$StartID .= $StartPlanet . " ";
 			}
 
-			$StartID .= GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$StartID .= Helpers::GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
 
 			if ($TargetPlanet == '')
 				$TargetID = ' координаты ';
@@ -106,7 +106,7 @@ class OverviewController extends ApplicationController
 				$StartID .= $StartPlanet . " ";
 			}
 
-			$StartID .= GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$StartID .= Helpers::GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
 
 			if ($TargetPlanet == '')
 				$TargetID = ' с координат ';
@@ -129,7 +129,7 @@ class OverviewController extends ApplicationController
 				$TargetID .= $TargetPlanet . " ";
 			}
 
-			$TargetID .= GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$TargetID .= Helpers::GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
 		}
 
 		if ($Owner == true)
@@ -332,7 +332,7 @@ class OverviewController extends ApplicationController
 			if ($this->user->bonus < (time() - 86400))
 				$multi = 1;
 
-			$add = $multi * 500 * system::getResourceSpeed();
+			$add = $multi * 500 * $this->game->getSpeed('mine');
 
 			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->planet_current . ";");
 

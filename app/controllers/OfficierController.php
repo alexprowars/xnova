@@ -20,8 +20,6 @@ class OfficierController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $resource, $reslist;
-
 		if (isset($_POST['buy']))
 		{
 			$need_c = 0;
@@ -45,21 +43,21 @@ class OfficierController extends ApplicationController
 		
 			if ($need_c > 0 && $times > 0 && $this->user->credits >= $need_c)
 			{
-				$selected = request::P('buy', 0, VALUE_INT);
+				$selected = $this->request->getPost('buy', 'int', 0);
 
-				if (in_array($selected, $reslist['officier']))
+				if (in_array($selected, $this->game->reslist['officier']))
 				{
-					if ($this->user->data[$resource[$selected]] > time())
-						$this->user->data[$resource[$selected]] = $this->user->data[$resource[$selected]] + $times;
+					if ($this->user->{$this->game->resource[$selected]} > time())
+						$this->user->{$this->game->resource[$selected]} = $this->user->{$this->game->resource[$selected]} + $times;
 					else
-						$this->user->data[$resource[$selected]] = time() + $times;
+						$this->user->{$this->game->resource[$selected]} = time() + $times;
 
 					$this->user->credits -= $need_c;
 
 					Sql::build()->update('game_users')->set(array
 					(
 						'credits' => $this->user->credits,
-						$resource[$selected] => $this->user->data[$resource[$selected]],
+						$this->game->resource[$selected] => $this->user->{$this->game->resource[$selected]},
 					))
 					->where('id', '=', $this->user->getId())->execute();
 		
@@ -81,14 +79,14 @@ class OfficierController extends ApplicationController
 			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
 			$parse['list'] = array();
 
-			foreach ($reslist['officier'] AS $officier)
+			foreach ($this->game->reslist['officier'] AS $officier)
 			{
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if ($this->user->data[$resource[$officier]] > time())
+				if ($this->user->{$this->game->resource[$officier]} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->data[$resource[$officier]]) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->game->resource[$officier]}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else

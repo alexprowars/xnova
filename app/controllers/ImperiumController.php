@@ -2,8 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Fleet;
 use App\Helpers;
 use App\Lang;
+use App\Models\Planet;
+use App\Queue;
 
 class ImperiumController extends ApplicationController
 {
@@ -18,8 +21,6 @@ class ImperiumController extends ApplicationController
 
 	public function indexAction()
 	{
-		global $resource, $reslist;
-
 		$r = array();
 		$r1 = array();
 		$parse = array();
@@ -38,7 +39,7 @@ class ImperiumController extends ApplicationController
 			if ($fleet['fleet_target_owner'] == $this->user->id && !isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
 				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = array();
 
-			$fleetData = unserializeFleet($fleet['fleet_array']);
+			$fleetData = Fleet::unserializeFleet($fleet['fleet_array']);
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
@@ -66,11 +67,11 @@ class ImperiumController extends ApplicationController
 			}
 		}
 
-		$queueManager = new queueManager();
+		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		$imperium = new planet();
-		$imperium->load_user_info(user::get());
+		$imperium = new Planet();
+		$imperium->assignUser($this->user);
 
 		$planetsrow = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->getId() . "' ".$this->user->getPlanetListSortQuery()."");
 
@@ -78,12 +79,12 @@ class ImperiumController extends ApplicationController
 
 		while ($p = $planetsrow->fetch())
 		{
-			$imperium->load_from_array($p);
+			$imperium->assign($p);
 			$imperium->PlanetResourceUpdate(time(), true);
 
-			$p = $imperium->data;
+			$p = $imperium->toArray();
 
-			$p['field_max'] = CalculateMaxPlanetFields($p);
+			$p['field_max'] = $imperium->CalculateMaxPlanetFields($p);
 
 			@$parse['file_images'] .= '<th width=75><a href="?set=overview&cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";
@@ -93,7 +94,7 @@ class ImperiumController extends ApplicationController
 			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($p['crystal']) . '</th>';
 			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($p['deuterium']) . '</th>';
 			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($p['energy_max'] - abs($p['energy_used'])) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($p['energy_ak'] / (250 * $p[$resource[4]]) * 100) . '</font>%</th>';
+			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($p['energy_ak'] / (250 * $p[$this->game->resource[4]]) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $p['field_current'];
 			@$parse['file_fields_t'] += $p['field_max'];
@@ -142,7 +143,7 @@ class ImperiumController extends ApplicationController
 				}
 			}
 
-			foreach ($resource as $i => $res)
+			foreach ($this->game->resource as $i => $res)
 			{
 
 				if (!isset($r[$i]))
@@ -150,23 +151,23 @@ class ImperiumController extends ApplicationController
 				if (!isset($r1[$i]))
 					$r1[$i] = 0;
 
-				if (in_array($i, $reslist['build']))
+				if (in_array($i, $this->game->reslist['build']))
 				{
-					$r[$i] .= ($p[$resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					if ($r1[$i] < $p[$resource[$i]])
-						$r1[$i] = $p[$resource[$i]];
+					$r[$i] .= ($p[$this->game->resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$this->game->resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					if ($r1[$i] < $p[$this->game->resource[$i]])
+						$r1[$i] = $p[$this->game->resource[$i]];
 				}
-				elseif (in_array($i, $reslist['fleet']))
+				elseif (in_array($i, $this->game->reslist['fleet']))
 				{
 
 					$r[$i] .= '<th>';
 
-					if ($p[$resource[$i]] == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i]))
+					if ($p[$this->game->resource[$i]] == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i]))
 						$r[$i] .= '-';
 					else
 					{
-						if ($p[$resource[$i]] >= 0)
-							$r[$i] .= $p[$resource[$i]];
+						if ($p[$this->game->resource[$i]] >= 0)
+							$r[$i] .= $p[$this->game->resource[$i]];
 						if (isset($build_hangar[$i]))
 							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
 						if (isset($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i]))
@@ -174,12 +175,12 @@ class ImperiumController extends ApplicationController
 						$r[$i] .= '</th>';
 					}
 
-					$r1[$i] += $p[$resource[$i]];
+					$r1[$i] += $p[$this->game->resource[$i]];
 				}
-				elseif (in_array($i, $reslist['defense']))
+				elseif (in_array($i, $this->game->reslist['defense']))
 				{
-					$r[$i] .= ($p[$resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					$r1[$i] += $p[$resource[$i]];
+					$r[$i] .= ($p[$this->game->resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$this->game->resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					$r1[$i] += $p[$this->game->resource[$i]];
 				}
 			}
 		}
@@ -200,24 +201,24 @@ class ImperiumController extends ApplicationController
 		$parse['defense_row'] = '';
 		$parse['technology_row'] = '';
 
-		foreach ($reslist['build'] as $i)
+		foreach ($this->game->reslist['build'] as $i)
 		{
-			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->data[$resource[$i]] . " (" . $r1[$i] . ")</th></tr>";
+			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->{$this->game->resource[$i]} . " (" . $r1[$i] . ")</th></tr>";
 		}
 
-		foreach ($reslist['fleet'] as $i)
+		foreach ($this->game->reslist['fleet'] as $i)
 		{
 			$parse['fleet_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($reslist['defense'] as $i)
+		foreach ($this->game->reslist['defense'] as $i)
 		{
 			$parse['defense_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($reslist['tech'] as $i)
+		foreach ($this->game->reslist['tech'] as $i)
 		{
-			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->data[$resource[$i]] . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
+			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->game->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
 		$this->view->pick('imperium');

@@ -79,7 +79,7 @@ class LogController extends ApplicationController
 					$html .= "</form></th></tr></table>";
 
 					$this->tag->setTitle('Логовница');
-					$this->setContent($html);
+					$this->view->setVar('html', $html);
 					$this->showTopPanel(false);
 
 					break;
@@ -126,7 +126,7 @@ class LogController extends ApplicationController
 					$html .= "<tr><td class=c colspan=4><a href=?set=log&mode=new>Создать новый лог боя</a></td></tr></table>";
 
 					$this->tag->setTitle('Логовница');
-					$this->setContent($html);
+					$this->view->setVar('html', $html);
 					$this->showTopPanel(false);
 			}
 		}
@@ -154,7 +154,7 @@ class LogController extends ApplicationController
 					}
 
 					$this->tag->setTitle('Боевой доклад');
-					$this->setContent($html);
+					$this->view->setVar('html', $html);
 					$this->showTopPanel(false);
 				}
 				else

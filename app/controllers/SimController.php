@@ -13,8 +13,6 @@ class SimController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $reslist, $resource;
-		
 		$r = (isset($_GET['r'])) ? $_GET['r'] : '';
 		$r = explode(";", $r);
 
@@ -38,15 +36,15 @@ class SimController extends ApplicationController
 			}
 		}
 		
-		$res = array_merge($reslist['fleet'], $reslist['defense'], $reslist['tech']);
+		$res = array_merge($this->game->reslist['fleet'], $this->game->reslist['defense'], $this->game->reslist['tech']);
 		
 		foreach ($res AS $id)
 		{
-			if (isset($this->planet->data[$resource[$id]]) && $this->planet->data[$resource[$id]] > 0)
-				$parse['slot_0'][$id] = array('c' => $this->planet->data[$resource[$id]], 'l' => ((isset($this->user->data['fleet_' . $id])) ? $this->user->data['fleet_' . $id] : 0));
+			if (isset($this->planet->{$this->game->resource[$id]}) && $this->planet->{$this->game->resource[$id]} > 0)
+				$parse['slot_0'][$id] = array('c' => $this->planet->{$this->game->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0));
 		
-			if (isset($this->user->data[$resource[$id]]) && $this->user->data[$resource[$id]] > 0)
-				$parse['slot_0'][$id] = array('c' => $this->user->data[$resource[$id]]);
+			if (isset($this->user->{$this->game->resource[$id]}) && $this->user->{$this->game->resource[$id]} > 0)
+				$parse['slot_0'][$id] = array('c' => $this->user->{$this->game->resource[$id]});
 		}
 		
 		$this->view->pick('sim');

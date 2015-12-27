@@ -18,12 +18,12 @@ class StatController extends ApplicationController
 	{
 		$parse = array();
 
-		$who 	= request::R('who', 1, VALUE_INT);
-		$type 	= request::R('type', 1, VALUE_INT);
-		$range 	= request::R('range', 0, VALUE_INT);
-		$pid 	= request::G('pid', 0, VALUE_INT);
+		$who 	= $this->request->get('who', 'int', 1);
+		$type 	= $this->request->get('type', 'int', 1);
+		$range 	= $this->request->get('range', 'int', 0);
+		$pid 	= $this->request->getQuery('pid', 'int', 0);
 
-		if (($who != request::P('old_who', 0, VALUE_INT) && request::P('old_who', 0, VALUE_INT) > 0) || ($type != request::P('old_type', 0, VALUE_INT) && request::P('old_type', 0, VALUE_INT) > 0))
+		if (($who != $this->request->getPost('old_who', 'int', 0) && $this->request->getPost('old_who', 'int', 0) > 0) || ($type != $this->request->getPost('old_type', 'int', 0) && $this->request->getPost('old_type', 'int', 0) > 0))
 			$range = 0;
 
 		switch ($type)
@@ -132,16 +132,16 @@ class StatController extends ApplicationController
 
 			if (!$range)
 			{
-				$records = cache::get('app::records_'.$this->user->getId().'');
+				$records = $this->cache->get('app::records_'.$this->user->getId().'');
 
-				if ($records === false)
+				if ($records === NULL)
 				{
 					$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
 					if (!is_array($records))
 						$records = array();
 
-					cache::set('app::records_'.$this->user->getId().'', $records, 1800);
+					$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 				}
 
 				if (isset($records[$field.'_rank']))
@@ -216,7 +216,7 @@ class StatController extends ApplicationController
 		$parse['stat_date'] = $this->game->datezone("d.m.Y - H:i:s", $this->config->app->get('stat_update'));
 
 		$this->view->setVar('stat', $stat);
-		$this->setTemplateName('stat');
+		$this->view->pick('stat');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Статистика');

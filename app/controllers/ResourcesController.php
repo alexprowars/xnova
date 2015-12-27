@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers;
+use App\Models\Planet;
 use App\Sql;
 
 class ResourcesController extends ApplicationController
@@ -16,8 +17,6 @@ class ResourcesController extends ApplicationController
 
 	private function buy ($parse)
 	{
-		global $reslist;
-
 		if ($this->user->vacation > 0)
 			$this->message("Включен режим отпуска!");
 
@@ -27,7 +26,7 @@ class ResourcesController extends ApplicationController
 			{
 				$arFields = array('merchand' => (time() + 172800));
 
-				foreach ($reslist['res'] AS $res)
+				foreach ($this->game->reslist['res'] AS $res)
 					$arFields['+'.$res] = $parse['buy_'.$res];
 
 				$this->planet->saveData($arFields);
@@ -46,12 +45,10 @@ class ResourcesController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $reslist, $resource, $ProdGrid;
-
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
 		{
-			foreach ($reslist['res'] AS $res)
-				core::setConfig($res.'_basic_income', 0);
+			foreach ($this->game->reslist['res'] AS $res)
+				$this->config->game->offsetSet($res.'_basic_income', 0);
 		}
 
 		$CurrentUser['energy_tech'] = $this->user->energy_tech;
@@ -64,12 +61,13 @@ class ResourcesController extends ApplicationController
 
 			$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
 		
-			$pl_class = new planet();
-			$pl_class->load_user_info(user::get());
+			$pl_class = new Planet();
+			$pl_class->assignUser($this->user);
 
 			while ($planet = $planets->fetch())
 			{
-				$pl_class->load_from_array($planet);
+				$pl_class->assign($planet);
+				$pl_class->copyTempParams();
 				$pl_class->PlanetResourceUpdate();
 			}
 
@@ -77,22 +75,22 @@ class ResourcesController extends ApplicationController
 
 			$arFields = array
 			(
-				$resource[4].'_porcent' 	=> $production,
-				$resource[12].'_porcent' 	=> $production,
-				$resource[212].'_porcent' 	=> $production
+				$this->game->resource[4].'_porcent' 	=> $production,
+				$this->game->resource[12].'_porcent' 	=> $production,
+				$this->game->resource[212].'_porcent' 	=> $production
 			);
 
-			foreach ($reslist['res'] AS $res)
+			foreach ($this->game->reslist['res'] AS $res)
 			{
-				$this->planet->data[$res.'_mine_porcent'] = $production;
+				$this->planet->{$res.'_mine_porcent'} = $production;
 				$arFields[$res.'_mine_porcent'] = $production;
 			}
 
 			Sql::build()->update('game_planets')->set($arFields)->where('id_owner', '=', $this->user->id)->execute();
 
-			$this->planet->data[$resource[4].'_porcent'] 		= $production;
-			$this->planet->data[$resource[12].'_porcent'] 	= $production;
-			$this->planet->data[$resource[212].'_porcent']	= $production;
+			$this->planet->{$this->game->resource[4].'_porcent'} 	= $production;
+			$this->planet->{$this->game->resource[12].'_porcent'} 	= $production;
+			$this->planet->{$this->game->resource[212].'_porcent'}	= $production;
 		
 			$this->planet->PlanetResourceUpdate(time(), true);
 		}
@@ -106,11 +104,11 @@ class ResourcesController extends ApplicationController
 
 			foreach ($_POST as $Field => $Value)
 			{
-				if (isset($this->planet->data[$Field.'_porcent']) && in_array($Value, $ValidList['percent']))
+				if (isset($this->planet->{$Field.'_porcent'}) && in_array($Value, $ValidList['percent']))
 				{
 					$arFields[$Field.'_porcent'] = $Value;
 
-					$this->planet->data[$Field.'_porcent'] = $Value;
+					$this->planet->{$Field.'_porcent'} = $Value;
 				}
 			}
 
@@ -128,16 +126,16 @@ class ResourcesController extends ApplicationController
 
 		$parse['resource_row'] = array();
 
-		foreach ($reslist['prod'] as $ProdID)
+		foreach ($this->game->reslist['prod'] as $ProdID)
 		{
-			if ($this->planet->data[$resource[$ProdID]] > 0 && isset($ProdGrid[$ProdID]))
+			if ($this->planet->{$this->game->resource[$ProdID]} > 0 && isset($ProdGrid[$ProdID]))
 			{
-				$BuildLevelFactor = $this->planet->data[$resource[$ProdID] . "_porcent"];
-				$BuildLevel = $this->planet->data[$resource[$ProdID]];
+				$BuildLevelFactor = $this->planet->{$this->game->resource[$ProdID] . "_porcent"};
+				$BuildLevel = $this->planet->{$this->game->resource[$ProdID]};
 
 				$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-				foreach ($reslist['res'] AS $res)
+				foreach ($this->game->reslist['res'] AS $res)
 				{
 					$$res = $result[$res];
 					$$res = round($$res * 0.01 * $production_level);
@@ -147,8 +145,8 @@ class ResourcesController extends ApplicationController
 
 				$CurrRow = array();
 		        $CurrRow['id'] = $ProdID;
-				$CurrRow['name'] = $resource[$ProdID];
-				$CurrRow['porcent'] = $this->planet->data[$resource[$ProdID] . "_porcent"];
+				$CurrRow['name'] = $this->game->resource[$ProdID];
+				$CurrRow['porcent'] = $this->planet->{$this->game->resource[$ProdID] . "_porcent"};
 
 				$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
 
@@ -157,9 +155,9 @@ class ResourcesController extends ApplicationController
 
 				$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
 
-				$CurrRow['level_type'] = $this->planet->data[$resource[$ProdID]];
+				$CurrRow['level_type'] = $this->planet->{$this->game->resource[$ProdID]};
 
-				foreach ($reslist['res'] AS $res)
+				foreach ($this->game->reslist['res'] AS $res)
 				{
 					$CurrRow[$res.'_type'] = $$res;
 				}
@@ -170,16 +168,16 @@ class ResourcesController extends ApplicationController
 			}
 		}
 
-		foreach ($reslist['res'] AS $res)
+		foreach ($this->game->reslist['res'] AS $res)
 		{
 			$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
 
-			$parse[$res.'_max'] = '<font color="#' . (($this->planet->data[$res.'_max'] < $this->planet->data[$res]) ? 'ff00' : '00ff') . '00">';
-			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->data[$res.'_max'] / 1000) . " k</font>";
+			$parse[$res.'_max'] = '<font color="#' . (($this->planet->{$res.'_max'} < $this->planet->{$res}) ? 'ff00' : '00ff') . '00">';
+			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'} / 1000) . " k</font>";
 
-			$parse[$res.'_total'] = $this->planet->data[$res.'_perhour'] + $parse[$res.'_basic_income'];
-			$parse[$res.'_storage'] = floor($this->planet->data[$res] / $this->planet->data[$res.'_max'] * 100);
-			$parse[$res.'_storage_bar'] = floor(($this->planet->data[$res] / $this->planet->data[$res.'_max']) * 100);
+			$parse[$res.'_total'] = $this->planet->{$res.'_perhour'} + $parse[$res.'_basic_income'];
+			$parse[$res.'_storage'] = floor($this->planet->{$res} / $this->planet->{$res.'_max'} * 100);
+			$parse[$res.'_storage_bar'] = floor(($this->planet->{$res} / $this->planet->{$res.'_max'}) * 100);
 
 			if ($parse[$res.'_storage_bar'] >= 100)
 				$parse[$res.'_storage_barcolor'] = '#C00000';
@@ -196,7 +194,7 @@ class ResourcesController extends ApplicationController
 			$this->buy($parse);
 		}
 
-		foreach ($reslist['res'] AS $res)
+		foreach ($this->game->reslist['res'] AS $res)
 			$parse['buy_'.$res] = Helpers::colorNumber(Helpers::pretty_number($parse['buy_'.$res]));
 
 		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');

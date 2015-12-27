@@ -15,8 +15,8 @@ class RecordsController extends ApplicationController
 	{
 		$RecordsArray = array();
 
-		if (file_exists(CACHE_DIR."/CacheRecords.php"))
-			require_once(CACHE_DIR."/CacheRecords.php");
+		if (file_exists(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php"))
+			require_once(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php");
 
 		$Builds = array();
 		$MoonsBuilds = array();

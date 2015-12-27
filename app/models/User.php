@@ -505,6 +505,17 @@ class User extends Model
 		return $qryPlanets;
 	}
 
+	public function getRankId ($lvl)
+	{
+		if ($lvl == 1)
+			$lvl = 0;
+
+		if ($lvl <= 80)
+			return (ceil($lvl / 4) + 1);
+		else
+			return 22;
+	}
+
 	public function saveData ($fields, $userId = 0)
 	{
 		Sql::build()->update('game_users')->set($fields)->where('id', '=', ($userId > 0 ? $userId : $this->id))->execute();

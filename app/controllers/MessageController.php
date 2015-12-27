@@ -162,7 +162,7 @@ class MessagesController extends ApplicationController
 
 		$MessCategory = (!isset($_POST['messcat'])) ? (isset($_SESSION['m_cat']) ? $_SESSION['m_cat'] : 100) : intval($_POST['messcat']);
 		$lim = (!isset($_POST['show_by']) || !in_array(intval($_POST['show_by']), $parse['limit'])) ? (isset($_SESSION['m_limit']) ? $_SESSION['m_limit'] : 10) : intval($_POST['show_by']);
-		$start = request::R('p', 0, VALUE_INT);
+		$start = $this->request->get('p', 'int', 0);
 
 		if (!isset($_SESSION['m_limit']) || $_SESSION['m_limit'] != $lim)
 			$_SESSION['m_limit'] = $lim;
@@ -178,10 +178,10 @@ class MessagesController extends ApplicationController
 		$parse['lim'] = $lim;
 		$parse['category'] = $MessCategory;
 
-		if ($this->user->new_message > 0)
+		if ($this->user->messages > 0)
 		{
-			$this->db->query("UPDATE game_users SET `new_message` = 0 WHERE `id` = " . $this->user->id . "");
-			$this->user->new_message = 0;
+			$this->db->query("UPDATE game_users SET `messages` = 0 WHERE `id` = " . $this->user->id . "");
+			$this->user->messages = 0;
 		}
 
 		if ($MessCategory < 100)
@@ -211,7 +211,7 @@ class MessagesController extends ApplicationController
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Сообщения');
-		$this->setContent($html);
+		$this->view->setVar('html', $html);
 		$this->showTopPanel(false);
 	}
 }

@@ -11,9 +11,7 @@ class LogoutController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $session;
-
-		$session->ClearSession();
+		$this->auth->remove();
 
 		$this->message('Выход', 'Сессия закрыта', "/", 3);
 	}

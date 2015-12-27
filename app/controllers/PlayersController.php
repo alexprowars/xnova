@@ -13,16 +13,14 @@ class PlayersController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $session;
-		
 		$parse = array();
 		
-		$playerid = htmlspecialchars(request::R('id', ''));
+		$playerid = htmlspecialchars($this->request->get('id', null, ''));
 
 		if (!$playerid)
 			$this->message('Профиль не найден');
 
-		$ownid = ($session->isAuthorized()) ? $this->user->id : 0;
+		$ownid = ($this->auth->isAuthorized()) ? $this->user->id : 0;
 		
 		$PlayerCard = $this->db->query("SELECT u.*, ui.about, ui.image FROM game_users u LEFT JOIN game_users_info ui ON ui.id = u.id WHERE ".(is_numeric($playerid) ? "u.id" : "u.username")." = '" . $playerid . "';");
 		
@@ -30,17 +28,17 @@ class PlayersController extends ApplicationController
 		{
 			if ($daten['image'] != '')
 			{
-				$parse['avatar'] = RPATH."images/avatars/upload/".$daten['image'];
+				$parse['avatar'] = "/assets/images/avatars/upload/".$daten['image'];
 			}
 			elseif ($daten['avatar'] != 0)
 			{
 				if ($daten['avatar'] != 99)
-					$parse['avatar'] = RPATH."images/faces/".$daten['sex']."/" . $daten['avatar'] . "s.png";
+					$parse['avatar'] = "/assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . "s.png";
 				else
-					$parse['avatar'] = RPATH."images/avatars/upload/upload_" . $daten['id'] . ".jpg";
+					$parse['avatar'] = "/assets/images/avatars/upload/upload_" . $daten['id'] . ".jpg";
 			}
 			else
-				$parse['avatar'] = RPATH.'images/no_photo.gif';
+				$parse['avatar'] = '/assets/images/no_photo.gif';
 
 			$gesamtkaempfe = $daten['raids_win'] + $daten['raids_lose'];
 
@@ -112,17 +110,15 @@ class PlayersController extends ApplicationController
 
 		$this->tag->setTitle('Информация о игроке');
 		$this->showTopPanel(false);
-		$this->showLeftPanel($session->isAuthorized());
+		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
 	public function stat ()
 	{
-		global $session;
+		if (!$this->auth->isAuthorized())
+			$this->indexAction();
 
-		if (!$session->isAuthorized())
-			$this->show();
-
-		$playerid = request::R('id', 0);
+		$playerid = $this->request->get('id', null, 0);
 
 		$player = $this->db->query("SELECT id, username FROM game_users WHERE id = ".$playerid."")->fetch();
 
@@ -138,7 +134,7 @@ class PlayersController extends ApplicationController
 
 		$this->tag->setTitle('Статистика игрока');
 		$this->showTopPanel(false);
-		$this->showLeftPanel($session->isAuthorized());
+		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 }
 

@@ -25,7 +25,7 @@ class BannedController extends ApplicationController
 
 		$this->tag->setTitle('Список заблокированных игроков');
 		$this->showTopPanel(false);
-		$this->showLeftPanel(($this->user->getId() && $this->user->banaday == 0));
+		$this->showLeftPanel(($this->user->getId() && $this->user->banned == 0));
 	}
 }
 

@@ -14,8 +14,8 @@ class CalculateController extends ApplicationController
 	public function cost()
 	{
 		$this->view->pick('calculate/cost');
-		$this->view->setVar('planet', $this->planet->data);
-		$this->view->setVar('user', $this->user->data);
+		$this->view->setVar('planet', $this->planet->toArray());
+		$this->view->setVar('user', $this->user->toArray());
 
 		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
@@ -32,8 +32,8 @@ class CalculateController extends ApplicationController
 	public function fleet()
 	{
 		$this->view->pick('calculate/fleet');
-		$this->view->setVar('planet', $this->planet->data);
-		$this->view->setVar('user', $this->user->data);
+		$this->view->setVar('planet', $this->planet->toArray());
+		$this->view->setVar('user', $this->user->toArray());
 
 		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);

@@ -159,7 +159,7 @@ class AllianceController extends ApplicationController
 					$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "?set=alliance&mode=exit&yes=1", "Подтвердить");
 
 				$this->tag->setTitle('Выход их альянса');
-				$this->setContent($html);
+				$this->view->setVar('html', $html);
 				$this->showTopPanel(false);
 			}
 	
@@ -227,12 +227,12 @@ class AllianceController extends ApplicationController
 					if ($diplo['status'] == 0)
 					{
 						if ($diplo['primary'] == 1)
-							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 						else
-							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"/assets/images/pic/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"/assets/images/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 					}
 					else
-						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить\"></a></th></tr>";
+						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить\"></a></th></tr>";
 				}
 	
 				if ($parse['DMyQuery'] == "")
@@ -280,10 +280,10 @@ class AllianceController extends ApplicationController
 							$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
 						}
 					}
-					elseif (request::P('newrang', '') != '' && request::R('id', 0, VALUE_INT) != 0)
+					elseif ($this->request->getPost('newrang', null, '') != '' && $this->request->get('id', 'int', 0) != 0)
 					{
-						$id = request::R('id', 0, VALUE_INT);
-						$rank = request::P('newrang', 0, VALUE_INT);
+						$id = $this->request->get('id', 'int', 0);
+						$rank = $this->request->getPost('newrang', 'int', 0);
 
 						$q = $this->db->query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
 	
@@ -573,7 +573,7 @@ class AllianceController extends ApplicationController
 						foreach ($ally_ranks as $a => $b)
 						{
 							$list['id'] = $a;
-							$list['delete'] = "<a href=\"?set=alliance&mode=admin&edit=rights&d={$a}\"><img src=\"/assets/images/pic/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
+							$list['delete'] = "<a href=\"?set=alliance&mode=admin&edit=rights&d={$a}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
 							$list['r0'] = $b['name'];
 							$list['a'] = $a;
 	
@@ -967,7 +967,7 @@ class AllianceController extends ApplicationController
 			$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally_id . ", " . $this->user->id . ", " . time() . ")");
 
 			$this->tag->setTitle(_getText('make_alliance'));
-			$this->setContent($this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "?set=alliance", _getText('Ok')));
+			$this->view->setVar('html', $this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "?set=alliance", _getText('Ok')));
 			$this->showTopPanel(false);
 		}
 		else
@@ -1072,12 +1072,10 @@ class AllianceController extends ApplicationController
 
 	public function stat ()
 	{
-		global $session;
-
-		if (!$session->isAuthorized())
+		if (!$this->auth->isAuthorized())
 			$this->show();
 
-		$allyid = request::R('id', 0);
+		$allyid = $this->request->get('id', null, 0);
 
 		$allyrow = $this->db->query("SELECT id, ally_name FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 

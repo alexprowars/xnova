@@ -316,17 +316,17 @@ function PrintRow ()
 
 			if (row[planet]['user_image'] != 0)
 			{
-				result += " style=\"background:url("+XNova.path+"images/avatars/upload/"+row[planet]['user_image']+") 50% 50% no-repeat;\"></td>";
+				result += " style=\"background:url("+XNova.path+"assets/images/avatars/upload/"+row[planet]['user_image']+") 50% 50% no-repeat;\"></td>";
 			}
 			else if (row[planet]['avatar'] != 0)
             {
 				if (row[planet]['avatar'] != 99)
                 {
-					result += " style=\"background:url("+XNova.path+"images/faces/"+row[planet]['sex']+"/"+row[planet]['avatar']+"s.png) 50% 50% no-repeat;\"></td>";
+					result += " style=\"background:url("+XNova.path+"assets/images/faces/"+row[planet]['sex']+"/"+row[planet]['avatar']+"s.png) 50% 50% no-repeat;\"></td>";
 				}
                 else
                 {
-					result += " style=\"background:url("+XNova.path+"images/avatars/upload/upload_"+row[planet]['user_id']+".jpg) 50% 50% no-repeat;\"></td>";
+					result += " style=\"background:url("+XNova.path+"assets/images/avatars/upload/upload_"+row[planet]['user_id']+".jpg) 50% 50% no-repeat;\"></td>";
 				}
 			}
 			else if (row[planet]['photo'] != '')
@@ -351,7 +351,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='?set=infos&gid=70"+row[planet]['race']+"'><img src='"+dpath+"images/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='?set=infos&gid=70"+row[planet]['race']+"'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else

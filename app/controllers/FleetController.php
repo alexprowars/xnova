@@ -13,10 +13,8 @@ class FleetController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $resource, $reslist, $CombatCaps;
-	
 		// Устанавливаем обновлённые двигателя кораблей
-		SetShipsEngine($this->user->data);
+		SetShipsEngine($this->user);
 
 		$module = (isset($_GET['page'])) ? $_GET['page'] : '';
 

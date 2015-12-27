@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Queue;
 use App\Sql;
 
 class RaceController extends ApplicationController
@@ -13,8 +14,6 @@ class RaceController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $reslist, $resource;
-		
 		$ui = $this->db->query('SELECT free_race_change FROM game_users_info WHERE id = ' . $this->user->id . ';', true);
 		
 		if (isset($_GET['sel']) && $this->user->race == 0)
@@ -26,8 +25,8 @@ class RaceController extends ApplicationController
 			{
 				Sql::build()->update('game_users')->set(Array('race' => intval($r), 'bonus' => (time() + 86400)));
 		
-				foreach ($reslist['officier'] AS $oId)
-					Sql::build()->setField($resource[$oId], (time() + 86400));
+				foreach ($this->game->reslist['officier'] AS $oId)
+					Sql::build()->setField($this->game->resource[$oId], (time() + 86400));
 					
 				Sql::build()->where('id', '=', $this->user->id)->execute();
 		
@@ -44,7 +43,7 @@ class RaceController extends ApplicationController
 		
 			if ($r > 0)
 			{
-				$queueManager = new queueManager();
+				$queueManager = new Queue();
 				$queueCount = 0;
 
 				$BuildOnPlanets = $this->db->query("SELECT `queue` FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
@@ -83,7 +82,7 @@ class RaceController extends ApplicationController
 		
 		$this->view->pick('race');
 		
-		$this->view->setVar('race', $this->user->race, 'race');
+		$this->view->setVar('race', $this->user->race);
 		$this->view->setVar('free_race_change', $ui['free_race_change']);
 		$this->view->setVar('isChangeAvailable', $isChangeAvailable);
 

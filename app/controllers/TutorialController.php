@@ -17,15 +17,11 @@ class TutorialController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		global $resource, $reslist;
-
 		$parse = array();
-		
-		$requer = 0;
 
 		Lang::includeLang('tutorial');
 
-		$stage = request::G('q', 0, VALUE_INT);
+		$stage = $this->request->getQuery('q', 'int', 0);
 
 		if ($stage > 0)
 		{
@@ -60,16 +56,16 @@ class TutorialController extends ApplicationController
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->data[$resource[$element]]) ? ($this->user->data[$resource[$element]] >= $level) : ($this->planet->data[$resource[$element]] >= $level);
+						$check = isset($this->user->{$this->game->resource[$element]}) ? ($this->user->{$this->game->resource[$element]} >= $level) : ($this->planet->{$this->game->resource[$element]} >= $level);
 
 						if ($chk == true)
 							$chk = $check;
 
-						if (in_array($element, array_merge($reslist['tech'], $reslist['tech_f'])))
+						if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
 							$parse['task'][] = array('Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check);
-						elseif (in_array($element, $reslist['fleet']))
+						elseif (in_array($element, $this->game->reslist['fleet']))
 							$parse['task'][] = array('Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check);
-						elseif (in_array($element, $reslist['defense']))
+						elseif (in_array($element, $this->game->reslist['defense']))
 							$parse['task'][] = array('Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check);
 						else
 							$parse['task'][] = array('Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check);
@@ -87,7 +83,7 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == 'BUDDY_COUNT')
 				{
-					$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_buddy WHERE sender = ".$this->user->data['id']." OR owner = ".$this->user->data['id']."");
+					$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_buddy WHERE sender = ".$this->user->id." OR owner = ".$this->user->id."");
 
 					$check = $count >= $taskVal ? true : false;
 
@@ -96,7 +92,7 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == 'ALLY')
 				{
-					$check = $this->user->data['ally_id'] > 0 ? true : false;
+					$check = $this->user->ally_id > 0 ? true : false;
 
 					$parse['task'][] = array('Вступить в альянс с кол-во игроков: '.$taskVal, $check);
 				}
@@ -105,7 +101,7 @@ class TutorialController extends ApplicationController
 				{
 					if ($taskVal === true)
 					{
-						$check = $this->planet->data[$resource[22]] > 0 || $this->planet->data[$resource[23]] > 0 || $this->planet->data[$resource[24]] > 0;
+						$check = $this->planet->{$this->game->resource[22]} > 0 || $this->planet->{$this->game->resource[23]} > 0 || $this->planet->{$this->game->resource[24]} > 0;
 
 						$parse['task'][] = array('Построить любое хранилище ресурсов', $check);
 					}
@@ -142,7 +138,7 @@ class TutorialController extends ApplicationController
 
 			if (isset($_GET['continue']) && !$errors && $qInfo['finish'] == 0)
 			{
-				//$this->db->query("UPDATE game_planets SET `" . $resource[401] . "` = `" . $resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
+				//$this->db->query("UPDATE game_planets SET `" . $this->game->resource[401] . "` = `" . $this->game->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 
 				$planetData = array();
 				$userData = array();
@@ -161,28 +157,28 @@ class TutorialController extends ApplicationController
 					{
 						foreach ($rewardVal AS $element => $level)
 						{
-							if (in_array($element, array_merge($reslist['tech'], $reslist['tech_f'])))
-								$userData['+'.$resource[$element]] = $level;
-							elseif (in_array($element, $reslist['fleet']))
-								$planetData['+'.$resource[$element]] = $level;
-							elseif (in_array($element, $reslist['defense']))
-								$planetData['+'.$resource[$element]] = $level;
-							elseif (in_array($element, $reslist['officier']))
+							if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
+								$userData['+'.$this->game->resource[$element]] = $level;
+							elseif (in_array($element, $this->game->reslist['fleet']))
+								$planetData['+'.$this->game->resource[$element]] = $level;
+							elseif (in_array($element, $this->game->reslist['defense']))
+								$planetData['+'.$this->game->resource[$element]] = $level;
+							elseif (in_array($element, $this->game->reslist['officier']))
 							{
-								if ($this->user->data[$resource[$element]] > time())
-									$userData['+'.$resource[$element]] = $level;
+								if ($this->user->{$this->game->resource[$element]} > time())
+									$userData['+'.$this->game->resource[$element]] = $level;
 								else
-									$userData[$resource[$element]] = time() + $level;
+									$userData[$this->game->resource[$element]] = time() + $level;
 							}
 							else
-								$planetData['+'.$resource[$element]] = $level;
+								$planetData['+'.$this->game->resource[$element]] = $level;
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')
 					{
 						$r = mt_rand(22, 24);
 
-						$planetData['+'.$resource[$r]] = 1;
+						$planetData['+'.$this->game->resource[$r]] = 1;
 					}
 				}
 
@@ -210,13 +206,13 @@ class TutorialController extends ApplicationController
 				{
 					foreach ($rewardVal AS $element => $level)
 					{
-						if (in_array($element, array_merge($reslist['tech'], $reslist['tech_f'])))
+						if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
-						elseif (in_array($element, $reslist['fleet']))
+						elseif (in_array($element, $this->game->reslist['fleet']))
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $reslist['defense']))
+						elseif (in_array($element, $this->game->reslist['defense']))
 							$parse['rewd'][] = $level.' ед. обороны типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $reslist['officier']))
+						elseif (in_array($element, $this->game->reslist['officier']))
 							$parse['rewd'][] = 'Офицер <b>'._getText('tech', $element).'</b> на '.round($level / 3600 / 24, 1).' суток';
 						else
 							$parse['rewd'][] = 'Постройка <b>'._getText('tech', $element).'</b> '.$level.' уровня';
