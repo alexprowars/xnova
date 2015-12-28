@@ -1,4 +1,4 @@
-<form action="?set=messages" id="mes_form" method="post">
+<form action="<?=$this->url->get('messages/') ?>" id="mes_form" method="post">
 	<input name="category" value="<?=$parse['category'] ?>" type="hidden">
 	<div class="block">
 		<div class="title">
@@ -34,12 +34,12 @@
 							<input name="delmes<?=$list['message_id'] ?>" type="checkbox" style='width:14px;'>
 						</th>
 						<th><?=$this->game->datezone("d.m.y H:i:s", $list['message_time']) ?></th>
-						<th><a href="?set=players&id=<?=$list['message_sender'] ?>" class="window popup-user"><?=$list['message_from'] ?></a></th>
+						<th><a href="<?=$this->url->get('players/'.$list['message_sender'].'/') ?>" class="window popup-user"><?=$list['message_from'] ?></a></th>
 						<th nowrap>
 							<? if ($list['message_type'] == 1): ?>
-								<a href="?set=messages&mode=write&id=<?=$list['message_sender'] ?>" title="Ответить"><span class='sprite skin_m'></span></a>
-								&nbsp;<a href="?set=messages&mode=write&id=<?=$list['message_sender'] ?>&quote=<?=$list['message_id'] ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
-								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="?set=messages&amp;abuse=<?=$list['message_id'] ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
+								<a href="<?=$this->url->get('messages/write/id/'.$list['message_sender'].'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
+								&nbsp;<a href="<?=$this->url->get('messages/write/id/'.$list['message_sender'].'/quote/'.$list['message_id'].'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
+								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$list['message_id'].'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
 							<? else: ?>
 								&nbsp;
 							<? endif; ?>
@@ -47,7 +47,7 @@
 					</tr>
 					<tr>
 						<td style="background-color:<?=_getText('mess_background', $list['message_type']) ?>;" colspan="4" class="b">
-							<? if ($list['message_type'] == 1 && \Xnova\User::get()->getUserOption('bb_parser')): ?>
+							<? if ($list['message_type'] == 1 && $this->user->getUserOption('bb_parser')): ?>
 								<span id="m<?=$list['message_id'] ?>"></span>
 								<script type="text/javascript">Text('<?=str_replace(array("\r\n", "\n", "\r"), '<br>', stripslashes($list['message_text'])) ?>', 'm<?=$list['message_id'] ?>');</script>
 							<? else: ?>

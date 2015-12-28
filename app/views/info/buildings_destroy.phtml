@@ -2,7 +2,7 @@
 <table class="table">
 	<tr>
 		<td class="c big" align="center">
-			<a href="?set=buildings&cmd=destroy&building=<?=$parse['image'] ?>">Снести: <?=$parse['name'] ?> уровень <?=$parse['levelvalue'] ?> ?</a>
+			<a href="<?=$this->url->get('buildings/index/cmd/destroy/building/'.$parse['image'].'/') ?>">Снести: <?=$parse['name'] ?> уровень <?=$parse['levelvalue'] ?> ?</a>
 		</td>
 	</tr>
 	<tr>

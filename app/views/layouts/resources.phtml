@@ -1,6 +1,6 @@
 <? global $reslist; ?>
 
-<form action="?set=resources" method="post">
+<form action="<?=$this->url->get('resources/') ?>" method="post">
 	<table width="100%">
 		<tr>
 			<td class="c" align="center">Уровень производства</td>
@@ -14,7 +14,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td class="c" align="center"><a href="?set=infos&gid=113">Энергетическая технология</a></td>
+			<td class="c" align="center"><a href="<?=$this->url->get('infos&gid=113/') ?>">Энергетическая технология</a></td>
 			<th><?=$parse['et'] ?> ур.</th>
 		</tr>
 	</table>
@@ -24,8 +24,8 @@
 			<td class="c" colspan="5">Управление шахтами и энергетикой</td>
 		</tr>
 		<tr>
-			<th width="50%"><a href="?set=resources&production_full=1" class="button">Включить на всех<br>планетах</a></th>
-			<th><a href="?set=resources&production_empty=1" class="button">Выключить на всех<br>планетах</a></th>
+			<th width="50%"><a href="<?=$this->url->get('resources&production_full=1/') ?>" class="button">Включить на всех<br>планетах</a></th>
+			<th><a href="<?=$this->url->get('resources&production_empty=1/') ?>" class="button">Выключить на всех<br>планетах</a></th>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -38,10 +38,10 @@
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '?set=infos&gid=1&ajax&popup', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '?set=infos&gid=2&ajax&popup', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '?set=infos&gid=3&ajax&popup', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '?set=infos&gid=4&ajax&popup', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('infos/gid/1/') ?>', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/gid/2/') ?>', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/gid/3/') ?>', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/gid/4/') ?>', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
@@ -56,13 +56,13 @@
 			</tr>
 			<? foreach ($parse['resource_row'] as $resource): ?>
 				<tr>
-					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '?set=infos&gid=<?=$resource['id'] ?>&ajax&popup', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
+					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('infos/gid/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
 					<? foreach ($reslist['res'] AS $res): ?>
-						<th><font color="#ffffff"><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($resource[$res.'_type'])) ?></font></th>
+						<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
 					<? endforeach; ?>
-					<th><font color="#ffffff"><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($resource['energy_type'])) ?></font></th>
+					<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
 					<th>
 						<select name="<?=$resource['name'] ?>">
 						<? for ($j = 10; $j >= 0; $j--): ?>
@@ -86,7 +86,7 @@
 			<tr>
 				<th colspan="3">Сумма:</th>
 				<? foreach ($reslist['res'] AS $res): ?>
-					<td class="k"><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($parse[$res.'_total'])) ?></td>
+					<td class="k"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
 				<? endforeach; ?>
 				<td class="k"><?=$parse['energy_total'] ?></td>
 			</tr>
@@ -107,10 +107,10 @@
 		<? foreach ($reslist['res'] AS $res): ?>
 			<tr>
 				<th><?=_getText('res', $res) ?></th>
-				<th><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($parse[$res.'_total'])) ?></th>
-				<th><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($parse[$res.'_total'] * 24)) ?></th>
-				<th><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
-				<th><?=\Xcms\Strings::colorNumber(\Xcms\Strings::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
+				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
+				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24)) ?></th>
+				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
+				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
 			</tr>
 		<? endforeach; ?>
 	</table>
@@ -142,9 +142,9 @@
 	<tr>
 		<th width="30%">
 			<? if ($parse['merchand'] < time()): ?>
-				<a href="?set=resources&buy=1" class="button">Купить за 10 кредитов</a>
+				<a href="<?=$this->url->get('resources&buy=1/') ?>" class="button">Купить за 10 кредитов</a>
 			<? else: ?>
-				Через <?= \Xcms\Strings::pretty_time($parse['merchand'] - time()) ?>
+				Через <?= \App\Helpers::pretty_time($parse['merchand'] - time()) ?>
 			<? endif; ?>
 		</th>
 		<th>Вы можете купить: <?=$parse['buy_metal'] ?> металла, <?=$parse['buy_crystal'] ?> кристалла, <?=$parse['buy_deuterium'] ?> дейтерия</th>

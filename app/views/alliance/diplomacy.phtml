@@ -19,7 +19,7 @@
 				<?=$parse['DText'] ?>
 			</table>
 
-			<form action="?set=alliance&mode=diplo&edit=add" method=post>
+			<form action="<?=$this->url->get('alliance/diplo/edit/add/') ?>" method=post>
 				<table width=600>
 					<tr>
 						<td class=c colspan=2>Добавить альянс в список</td>
@@ -40,7 +40,7 @@
 					</tr>
 
 					<tr>
-						<td class="c"><a href="?set=alliance">назад</a></td>
+						<td class="c"><a href="<?=$this->url->get('alliance/') ?>">назад</a></td>
 						<td class="c">
 							<input type="submit" value="Добавить">
 						</td>

@@ -27,7 +27,7 @@
 	<div class="separator"></div>
 	<? foreach ($parse['TicketsList'] AS $id => $list): ?>
 		<div id="ticket_<?=$id ?>" style="display:none;" class="tickets">
-			<form action="?set=support&amp;action=send&amp;id=<?=$id ?>" method="POST">
+			<form action="<?=$this->url->get('support/send/id/'.$id.'/') ?>" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>
@@ -63,7 +63,7 @@
 		</table>
 	</div>
 	<div id="new" style="display:none;">
-		<form action="?set=support&amp;action=newticket" method="POST">
+		<form action="<?=$this->url->get('support/newticket/') ?>" method="POST">
 			<table class="table">
 				<tr>
 					<th colspan="2" width="50%">Новый запрос</th>

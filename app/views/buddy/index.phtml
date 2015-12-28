@@ -5,10 +5,10 @@
 
 	<? if (!$parse['a']): ?>
 	<tr>
-		<th colspan=6><a href=?set=buddy&a=1>Запросы</a></th>
+		<th colspan=6><a href="<?=$this->url->get('buddy/index/a/1/') ?>">Запросы</a></th>
 	</tr>
 	<tr>
-		<th colspan=6><a href=?set=buddy&a=1&e=1>Мои запросы</a></th>
+		<th colspan=6><a href="<?=$this->url->get('buddy/index/a/1/e/1/') ?>">Мои запросы</a></th>
 	</tr>
 	<tr>
 		<td class=c>&nbsp;</td>
@@ -33,9 +33,9 @@
 	<? foreach ($parse['list'] AS $id => $list): ?>
 		<tr>
 			<th width="20"><?=($id + 1) ?></th>
-			<th><a href=?set=messages&mode=write&id=<?=$list['id'] ?>><?=$list['username'] ?></a></th>
+			<th><a href="<?=$this->url->get('messages/write/id/'.$list['id'].'') ?>"><?=$list['username'] ?></a></th>
 			<th><?=$list['ally'] ?></th>
-			<th><a href="?set=galaxy&r=3&galaxy=<?=$list['g'] ?>&system=<?=$list['s'] ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
+			<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$list['g'].'/system/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 			<th><?=$list['online'] ?></th>
 			<th><?=$list['c'] ?></th>
 		</tr>
@@ -47,7 +47,7 @@
 	<? endif; ?>
 	<? if ($parse['a']): ?>
 	<tr>
-		<td colspan=6 class=c><a href="?set=buddy">назад</a></td>
+		<td colspan=6 class=c><a href="<?=$this->url->get('buddy/') ?>">назад</a></td>
 	</tr>
 	<? endif; ?>
 
@@ -74,13 +74,13 @@
 						  <td style="text-align:center;">
 							  <?=$okArray[$data['ok_uid']]['name'] ?>
 							  <? if ($okArray[$data['ok_uid']]['name'] != $data['username']): ?><br>[<?=$data['username'] ?>]<? endif; ?>
-							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '?set=messages&mode=write&id=<?=$data['id'] ?>&ajax&popup', 680)" data-link="1" title="Сообщение"><span class='sprite skin_m'></span></a>
+							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$data['id'].'/ajax/popup/') ?>', 680)" data-link="1" title="Сообщение"><span class='sprite skin_m'></span></a>
 						  </td>
 						</tr>
 						<tr>
 							<td>
 								<?=$data['planet_name'] ?><br>
-								<a href="?set=galaxy&r=3&galaxy=<?=$data['galaxy'] ?>&system=<?=$data['system'] ?>">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
+								<a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$data['galaxy'].'/system/'.$data['system'].'/') ?>">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
 							</td>
 					  </tr>
 					</table>

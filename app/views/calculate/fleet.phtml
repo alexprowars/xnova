@@ -1,11 +1,11 @@
-<script type="text/javascript" src="<?=RPATH ?>scripts/jquery.cookie.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/jquery.ui.spinbtn.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/jquery.inputmask.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/utils.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/common.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/flight.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.ui.spinbtn.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.inputmask.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/utils.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/common.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/flight.js"></script>
 
-<link type="text/css" href="/scripts/calculate/common.css" rel="stylesheet"/>
+<link type="text/css" href="/assets/js/calculate/common.css" rel="stylesheet"/>
 
 <style>
 
@@ -93,7 +93,7 @@
 							<td><input id="hyp-drive" type="text" name="hyp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$resource[118]]?>" tabindex="3" /></td>
 							<td></td>
 							<td>
-								<input type="hidden" id="universe-speed" name="universe-speed" value="<?=(\Xcms\Core::getConfig('fleet_speed')/ 2500)?>">
+								<input type="hidden" id="universe-speed" name="universe-speed" value="<?=$this->game->getSpeed('fleet')?>">
 
 								<input type="checkbox" name="race" value="1" id="race"><label for="race">Древние</label>
 								<input type="checkbox" name="officier" value="1" id="officier"><label for="officier">Адмирал</label>

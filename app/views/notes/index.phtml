@@ -1,10 +1,10 @@
-<form action="?set=notes" method=post>
+<form action="<?=$this->url->get('notes/') ?>" method=post>
 	<table width="100%">
 		<tr>
 			<td class=c colspan=4><?=_getText('Notes') ?></td>
 		</tr>
 		<tr>
-			<th colspan=4><a href="?set=notes&a=1"><?=_getText('MakeNewNote') ?></a></th>
+			<th colspan=4><a href="<?=$this->url->get('notes/a/1/') ?>"><?=_getText('MakeNewNote') ?></a></th>
 		</tr>
 		<tr>
 			<td class=c></td>
@@ -18,7 +18,7 @@
 				<th width=20><input name="delmes<?=$list['NOTE_ID'] ?>" value="y" type="checkbox"></th>
 				<th width=150><?=$list['NOTE_TIME'] ?></th>
 				<th>
-					<a href="?set=notes&a=2&amp;n=<?=$list['NOTE_ID'] ?>">
+					<a href="<?=$this->url->get('notes/a/2/n/'.$list['NOTE_ID'].'/') ?>">
 						<font color="<?=$list['NOTE_COLOR'] ?>"><?=$list['NOTE_TITLE'] ?></font>
 					</a>
 				</th>

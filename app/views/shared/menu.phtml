@@ -53,7 +53,7 @@
 					<a class="m1 tooltip" href="<?=$this->url->get("chat/") ?>" data-tooltip-content="Чат"><span class="sprite ico_chat"></span></a>
 					<a class="m1 tooltip" href="<?=$this->url->get("messages/") ?>" data-tooltip-content="Сообщения"><span class="sprite ico_mail"></span> <b id="new_messages"><?=$messages ?></b></a>
 					<? if ($messages_ally != ''): ?>
-						<a class="m1 tooltip" href="?set=alliance&mode=circular" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b id="ally_messages"><?=$messages_ally ?></b></a>
+						<a class="m1 tooltip" href="<?=$this->url->get('alliance&mode=circular/') ?>" data-tooltip-content="Альянс"><span class="sprite ico_alliance"></span> <b id="ally_messages"><?=$messages_ally ?></b></a>
 					<? endif; ?>
 				</div>
 				<table align="center" class="top_menu">

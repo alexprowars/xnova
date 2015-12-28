@@ -1,4 +1,4 @@
-<form action="?set=options&mode=change" method="post">
+<form action="<?=$this->url->get('options/change/') ?>" method="post">
 	<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
 		<div class="head">
 			<ul class="ui-tabs-nav ui-widget-header">
@@ -7,7 +7,7 @@
 				<li><a href="#tabs-2">Описание</a></li>
 				<li><a href="#tabs-3">Отпуск / Удаление</a></li>
 				<li><a href="#tabs-4">Личное дело</a></li>
-				<? if (\Xcms\Core::getConfig('socialIframeView', 0) == 0): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<li><a href="#tabs-5">Точки входа</a></li>
 				<? endif; ?>
 			</ul>
@@ -24,7 +24,7 @@
 						<? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?><input name="db_character" size="20" value="<? endif; ?><?=$parse['opt_usern_data'] ?><? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?>" type="text"><? endif; ?>
 					</th>
 				</tr>
-				<? if (\Xcms\Core::getConfig('socialIframeView', 0) == 0): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<? if (is_email($parse['opt_mail_data'])): ?>
 						<tr>
 							<th>Старый пароль</th>
@@ -45,7 +45,7 @@
 							<? if (!is_email($parse['opt_mail_data'])): ?>
 								<input type="text" name="email" value="">
 							<? else: ?>
-								<?=$parse['opt_mail_data'] ?> <a href="?set=options&mode=changeemail" class="button">сменить</a>
+								<?=$parse['opt_mail_data'] ?> <a href="<?=$this->url->get('options&mode=changeemail/') ?>" class="button">сменить</a>
 							<? endif; ?>
 						</th>
 					</tr>
@@ -96,7 +96,7 @@
 					<th>Показывать только доступные постройки</th>
 					<th><input name="available"<?=$parse['opt_available_data'] ?> type="checkbox"></th>
 				</tr>
-				<? if (\Xcms\Core::getConfig('socialIframeView', 0) == 0): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<tr>
 						<th>Включить просмотр игровой активности</th>
 						<th><input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox"></th>
@@ -158,10 +158,10 @@
 						<option value="18"<?=(($parse['timezone'] == 18) ? 'selected' : '')?>>+12</option>
 					</select></th>
 				</tr>
-				<? if (\Xcms\Core::getConfig('socialIframeView', 0) == 0): ?>
+				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<tr>
 						<th>Аватар</th>
-						<th><?=$parse['avatar'] ?> <a href="?set=avatar" class="button">Выбрать аватар</a></th>
+						<th><?=$parse['avatar'] ?> <a href="<?=$this->url->get('avatar/') ?>" class="button">Выбрать аватар</a></th>
 					</tr>
 				<? endif; ?>
 				<tr>
@@ -232,7 +232,7 @@
 				</tr>
 			</table>
 		</div>
-		<? if (\Xcms\Core::getConfig('socialIframeView', 0) == 0): ?>
+		<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 			<div id="tabs-5" class="ui-tabs-panel ui-widget-content"  style="display: none">
 				<? if (count($parse['auth'])): ?>
 					<table class="table">
@@ -244,8 +244,8 @@
 						<? foreach ($parse['auth'] AS $auth): ?>
 							<tr>
 								<th><?=$auth['external_id'] ?></th>
-								<th><?=$this->game->datezone("d.m.Y H:i:s", $auth['register_time']) ?></th>
-								<th><?=($auth['enter_time'] > 0 ? datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
+								<th><?=$this->game->datezone("d.m.Y H:i:s", $auth['create_time']) ?></th>
+								<th><?=($auth['enter_time'] > 0 ? $this->game->datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
 							</tr>
 						<? endforeach; ?>
 					</table>
@@ -258,7 +258,7 @@
 						<th>
 							<br>
 							<script type="text/javascript" src="http://u-login.com/js/ulogin.js"></script>
-							<div id="uLogin" x-ulogin-params="display=panel;fields=first_name,last_name,photo;providers=vkontakte,odnoklassniki,facebook,twitter,yandex,googleplus,mailru;redirect_uri=<?=urlencode("http://".$_SERVER['SERVER_NAME']."/?set=options&mode=external") ?>"></div>
+							<div id="uLogin" x-ulogin-params="display=panel;fields=first_name,last_name,photo;providers=vkontakte,odnoklassniki,facebook,twitter,yandex,googleplus,mailru;redirect_uri=<?=urlencode("http://".$_SERVER['SERVER_NAME']."/options/external/") ?>"></div>
 							<br>
 						</th>
 					</tr>

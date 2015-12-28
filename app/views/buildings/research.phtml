@@ -7,12 +7,12 @@
 				<div class="col-md-6">
 					<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 						<? if (!$build['access']): ?>
-							<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', getTechTree($build['i'])) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '?set=infos&gid=<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>&ajax&popup', 600)"><span>недоступно</span></div>
+							<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/gid/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/ajax/popup/') ?>', 600)"><span>недоступно</span></div>
 						<? endif; ?>
 
 						<div class="img">
-							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '?set=infos&gid=<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>&ajax&popup', 600)">
-								<img src="<?=RPATH ?><?=DPATH ?>gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-tooltip-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
+							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/gid/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)">
+								<img src="/assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-tooltip-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 							</a>
 
 							<div class="overContent">
@@ -20,13 +20,13 @@
 							</div>
 						</div>
 						<div class="title">
-							<a href=?set=infos&gid=<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>><?=_getText('tech', $build['i']) ?></a>
+							<a href="<?=$this->url->get('infos/gid/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>"><?=_getText('tech', $build['i']) ?></a>
 						</div>
 						<div class="actions">
 							Уровень: <?=$build['tech_level'] ?><br>
 
 							<? if ($build['access']): ?>
-								Время: <?=\Xcms\Strings::pretty_time($build['search_time']); ?>
+								Время: <?=\App\Helpers::pretty_time($build['search_time']); ?>
 
 								<? if (isset($build['add'])): ?>
 								<br><br>Бонусы:<br><?= $build['add'] ?>
@@ -39,13 +39,14 @@
 										var brp = $('#brp');
 										function t()
 										{
-											n = new Date();
-											ss = <?=$build['tech_link']['tech_time'] ?>;
-											s = ss - Math.round((n.getTime() - v.getTime()) / 1000);
-											m = 0;
-											h = 0;
+											var n = new Date();
+											var ss = <?=$build['tech_link']['tech_time'] ?>;
+											var s = ss - Math.round((n.getTime() - v.getTime()) / 1000);
+											var m = 0;
+											var h = 0;
+
 											if (s < 0)
-												brp.html('<a href="javascript:;" onclick="load(\'?set=buildings&mode=<?=$parse['mode'] ?>&cp=<?=$build['tech_link']['tech_home'] ?>\')">завершено. продолжить...</a>');
+												brp.html('<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cp/'.$build['tech_link']['tech_home'].'/') ?>\')">завершено. продолжить...</a>');
 											else
 											{
 												if (s > 59)
@@ -59,11 +60,11 @@
 													m = m - h * 60;
 												}
 												if (s < 10)
-													s = "0" + s
+													s = "0" + s;
 												if (m < 10)
-													m = "0" + m
+													m = "0" + m;
 
-												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'?set=buildings&mode=<?=$parse['mode'] ?>&cmd=cancel&tech=<?=$build['tech_link']['tech_id'] ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
+												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cmd=cancel/tech/'.$build['tech_link']['tech_id'].'/') ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
 
 												window.setTimeout("t();", 999);
 											}

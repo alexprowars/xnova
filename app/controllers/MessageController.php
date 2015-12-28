@@ -46,7 +46,7 @@ class MessagesController extends ApplicationController
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
 			{
-				$registerTime = $this->db->fetchColumn("SELECT register_time FROM game_users_info WHERE id = ".$this->user->id."");
+				$registerTime = $this->db->fetchColumn("SELECT create_time FROM game_users_info WHERE id = ".$this->user->id."");
 
 				if ($registerTime > time() - 86400)
 				{

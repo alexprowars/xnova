@@ -5,7 +5,7 @@
 	});
 </script>
 
-<form action="?set=fleet&page=fleet_2" method="post">
+<form action="<?=$this->url->get('fleet/stagetwo/') ?>" method="post">
 	<? foreach ($parse['ships'] as $ship): ?>
 		<input type="hidden" name="ship<?=$ship['id'] ?>" value="<?=$ship['count'] ?>" />
 		<input type="hidden" name="consumption<?=$ship['id'] ?>" value="<?=$ship['consumption'] ?>" />
@@ -78,7 +78,7 @@
 					<th><div id="storage">-</div></th>
 				</tr>
 				<tr>
-					<td colspan="2" class="c"><?=_getText('fl_shortcut') ?> <a href="?set=fleet&page=shortcut"><?=_getText('fl_shortlnk') ?></a></td>
+					<td colspan="2" class="c"><?=_getText('fl_shortcut') ?> <a href="<?=$this->url->get('fleet/shortcut/') ?>"><?=_getText('fl_shortlnk') ?></a></td>
 				</tr>
 				<? if (count($parse['shortcut'])): ?>
 					<tr>

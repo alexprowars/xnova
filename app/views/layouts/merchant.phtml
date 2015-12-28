@@ -17,7 +17,7 @@
 				$("#metal").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="?set=marchand" method="post">
+	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
 		<input type="hidden" name="ress" value="metal">
 		<table width="100%">
 			<tr>
@@ -68,7 +68,7 @@
 				$("#cristal").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="?set=marchand" method="post">
+	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
 		<input type="hidden" name="ress" value="cristal">
 		<table width="100%">
 			<tr>
@@ -119,7 +119,7 @@
 				$("#deut").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="?set=marchand" method="post">
+	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
 		<input type="hidden" name="ress" value="deuterium">
 		<table width="100%">
 			<tr>
@@ -155,7 +155,7 @@
 	<div class="block start">
 		<div class="title">Обмен сырья</div>
 		<div class="content">
-			<form action="?set=marchand" method="post">
+			<form action="<?=$this->url->get('marchand/') ?>" method="post">
 				<input type="hidden" name="action" value="2">
 				<table class="table noborder">
 					<tr>

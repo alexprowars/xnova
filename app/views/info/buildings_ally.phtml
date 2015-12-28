@@ -1,6 +1,6 @@
 <? if ($parse['fleet'] != ''): ?>
 	<div class="separator"></div>
-	<form action="?set=infos&gid=34" method="post">
+	<form action="<?=$this->url->get('infos/gid/34/') ?>" method="post">
 		<table>
 			<tr>
 				<th width="550"><?=$parse['msg'] ?></th>

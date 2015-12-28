@@ -1,4 +1,4 @@
-<form action="?set=search" method="post">
+<form action="<?=$this->url->get('search/') ?>" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Поиск по игре</td>
@@ -36,15 +36,15 @@
 		<? foreach ($parse['result'] AS $result): ?>
 			<tr>
 				<th><?=$result['username'] ?></th>
-				<th><a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '?set=messages&mode=write&id=<?=$result['id'] ?>&ajax&popup', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
-					&nbsp;<a href="?set=buddy&a=2&amp;u=<?=$result['id'] ?>" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
+				<th><a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$result['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
+					&nbsp;<a href="<?=$this->url->get('buddy/index/a/2&/u='.$result['id'].'/') ?>" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
 				</th>
-				<th><? if ($result['race'] != 0): ?><img src="<?=RPATH ?><?=DPATH ?>images/race<?=$result['race'] ?>.gif" width="16" height="16"><? else: ?>&nbsp;<? endif; ?>
+				<th><? if ($result['race'] != 0): ?><img src="/addets/images/skin/race<?=$result['race'] ?>.gif" width="16" height="16"><? else: ?>&nbsp;<? endif; ?>
 				</th>
 				<th><?=$result['ally_name'] ?></th>
 				<th><?=$result['planet_name'] ?></th>
-				<th><a href="?set=galaxy&r=3&galaxy=<?=$result['g'] ?>&system=<?=$result['s'] ?>"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
-				<th><a href="?set=stat&range=<?=$result['total_rank'] ?>"><?=$result['total_rank'] ?></a></th>
+				<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$result['g'].'/system/'.$result['s'].'/') ?>"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
+				<th><a href="<?=$this->url->get('stat/index/range/'.$result['total_rank'].'/') ?>"><?=$result['total_rank'] ?></a></th>
 			</tr>
 			<? endforeach; ?>
 		<? else: ?>
@@ -65,7 +65,7 @@
 		<? if (count($parse['result']) > 0): ?>
 		<? foreach ($parse['result'] AS $result): ?>
 			<tr>
-				<th><a href="?set=alliance&mode=ainfo&a=<?=$result['id'] ?>"><?=$result['ally_tag'] ?></a></th>
+				<th><a href="<?=$this->url->get('alliance/ainfo/a/'.$result['id'].'/') ?>"><?=$result['ally_tag'] ?></a></th>
 				<th><?=$result['ally_name'] ?></th>
 				<th><?=$result['ally_members'] ?></th>
 				<th><?=$result['total_points'] ?></th>

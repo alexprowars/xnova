@@ -258,14 +258,14 @@ class IndexController extends ApplicationController
 		{
 			if ($this->request->getPost('email') != '')
 			{
-				$login = $this->db->query("SELECT u.id, u.options_toggle, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
+				$login = $this->db->query("SELECT u.id, u.options, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
 
 				if (isset($login['id']))
 				{
 					if ($login['password'] == md5($this->request->getPost('password')))
 					{
 						$user = new User;
-						$options = $user->unpackOptions($login['options_toggle']);
+						$options = $user->unpackOptions($login['options']);
 						$expiretime = $this->request->hasPost("rememberme") ? (time() + 2419200) : 0;
 
 						$this->auth->auth($login['id'], $login['password'], $options['security'], $expiretime);

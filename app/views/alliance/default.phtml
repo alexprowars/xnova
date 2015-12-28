@@ -3,8 +3,8 @@
 		<td class=c colspan=2>Альянсы</td>
 	</tr>
 	<tr>
-		<th><a href="?set=alliance&mode=make">Создать альянс</a></th>
-		<th><a href="?set=alliance&mode=search">Поиск альянса</a></th>
+		<th><a href="<?=$this->url->get('alliance/make/') ?>">Создать альянс</a></th>
+		<th><a href="<?=$this->url->get('alliance/search/') ?>">Поиск альянса</a></th>
 	</tr>
 </table>
 <? if (count($parse['list']) > 0): ?>
@@ -20,7 +20,7 @@
 	</tr>
 	<tr>
 		<th colspan=2>
-			<form action="?set=alliance" method=POST><input type="hidden" name="r_id" value="<?=$list[0] ?>"><input type=submit name="bcancel" value="Убрать заявку"></form>
+			<form action="<?=$this->url->get('alliance/') ?>" method=POST><input type="hidden" name="r_id" value="<?=$list[0] ?>"><input type=submit name="bcancel" value="Убрать заявку"></form>
 		</th>
 	</tr>
 	<? endforeach; ?>
@@ -38,7 +38,7 @@
 		<? $i = 0; foreach ($parse['allys'] AS $list): $i++; ?>
 		<tr>
 			<th><?=$i ?></th>
-			<th><a href="?set=alliance&mode=ainfo&a=<?=$list['id'] ?>"><?=$list['ally_name'] ?> [<?=$list['ally_tag'] ?>]</a></th>
+			<th><a href="<?=$this->url->get('alliance/ainfo/a/'.$list['id'].'/') ?>"><?=$list['ally_name'] ?> [<?=$list['ally_tag'] ?>]</a></th>
 			<th><?=$list['ally_members'] ?></th>
 			<th><?=$list['total_points'] ?></th>
 		</tr>

@@ -34,9 +34,9 @@ $lang['Reset'] = 'Сброс';
 
 $lang['ThereIsNoNote'] = 'Нет заметок';
 
-$lang['NoteUpdated'] = 'Заметка обновлена. <a href="?set=notes"><blink>Пожалуйста, подождите...</blink></a>';
-$lang['NoteAdded'] = 'Заметка добавлена. <a href="?set=notes"><blink>Пожалуйста, подождите...</blink></a>';
-$lang['NoteDeleted'] = 'Заметка удалена. <a href="?set=notes"><blink>Пожалуйста, подождите...</blink></a>';
-$lang['NoteDeleteds'] = 'Заметки удалены <a href="?set=notes"><blink>Пожалуйста, подождите...</blink></a>';
+$lang['NoteUpdated'] = 'Заметка обновлена. <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
+$lang['NoteAdded'] = 'Заметка добавлена. <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
+$lang['NoteDeleted'] = 'Заметка удалена. <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
+$lang['NoteDeleteds'] = 'Заметки удалены <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
 
 ?>

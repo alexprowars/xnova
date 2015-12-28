@@ -13,7 +13,7 @@
 
 		<? foreach ($bannedList AS $u): ?>
 			<tr>
-				<td class="b center"><a href='?set=players&id=<?=$u['who'] ?>'><?=$u['user_1'] ?></a></td>
+				<td class="b center"><a href="<?=$this->url->get('players/'.$u['who'].'/') ?>"><?=$u['user_1'] ?></a></td>
 				<td class="b center">
 					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['time']) ?></small>
 				</td>
@@ -21,7 +21,7 @@
 					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['longer']) ?></small>
 				</td>
 				<td class="b center"><?=$u['theme'] ?></td>
-				<td class="b center"><a href='?set=players&id=<?=$u['author'] ?>'><?=$u['user_2'] ?></a></td>
+				<td class="b center"><a href="<?=$this->url->get('players/'.$u['author'].'/') ?>"><?=$u['user_2'] ?></a></td>
 			</tr>
 		<? endforeach; ?>
 

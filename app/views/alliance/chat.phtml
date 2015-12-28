@@ -1,10 +1,10 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
-<form action="?set=alliance&mode=circular" method="post">
+<form action="<?=$this->url->get('alliance/circular/') ?>" method="post">
 	<table class="table">
 		<tr>
-			<td class='c' colspan='4'><a href="?set=alliance&mode=circular">Обновить</a></td>
+			<td class='c' colspan='4'><a href="<?=$this->url->get('alliance/circular/') ?>">Обновить</a></td>
 		</tr>
 		<? if (count($parse['messages']) > 0): foreach ($parse['messages'] AS $m): ?>
 		<tr>
@@ -12,7 +12,7 @@
 				<table width="100%">
 					<tr>
 						<th class="a" width="130">
-								<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="?set=players&id=<?=$m['user_id'] ?>" target="_blank"><?=stripslashes($m['user']) ?></a>
+								<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="<?=$this->url->get('players/'.$m['user_id'].'/') ?>" target="_blank"><?=stripslashes($m['user']) ?></a>
 							<a onclick="AddQuote('<?=stripslashes($m['user']) ?>', 'm<?=$m['id'] ?>')"> -> </a>
 						</th>
 						<th class="b">
@@ -60,7 +60,7 @@
 		$(document).ready(function(){ShowText()});
 	<? endif; ?>
 </script>
-<form action="?set=alliance&mode=circular&sendmail=1" method="post">
+<form action="<?=$this->url->get('alliance/circular/sendmail/1/') ?>" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Отправить сообщение в чат альянса</td>
@@ -89,5 +89,5 @@
 		</table>
 	</div>
 </form>
-<span style="float:left;margin-left:10px;margin-top:7px;"><a href="?set=alliance">[назад к альянсу]</a></span>
+<span style="float:left;margin-left:10px;margin-top:7px;"><a href="<?=$this->url->get('alliance/') ?>">[назад к альянсу]</a></span>
 <script type="text/javascript">edToolbar('text');</script>

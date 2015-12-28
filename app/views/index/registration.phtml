@@ -25,13 +25,13 @@
 		<tr>
 			<th colspan=2 class="text-left">
 				<input name="sogl" id="sogl" type="checkbox" <?=($this->request->getPost('sogl') != '' ? 'checked' : '') ?>>
-				<label for="sogl">Я принимаю</label> <a href="?set=sogl" target="_blank">Пользовательское соглашение</a>
+				<label for="sogl">Я принимаю</label> <a href="<?=$this->url->get('sogl/') ?>" target="_blank">Пользовательское соглашение</a>
 			</th>
 		</tr>
 		<tr>
 			<th colspan=2 class="text-left">
 				<input name="rgt" id="rgt" type="checkbox" <?=($this->request->getPost('rgt') != '' ? 'checked' : '') ?>>
-				<label for="rgt">Я принимаю</label> <a href="?set=agb" target="_blank">Законы игры</a>
+				<label for="rgt">Я принимаю</label> <a href="<?=$this->url->get('agb/') ?>" target="_blank">Законы игры</a>
 			</th>
 		</tr>
 		<tr>

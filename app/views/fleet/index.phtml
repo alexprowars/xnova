@@ -39,25 +39,25 @@
 				<th>
 					<a class="tooltip" data-tooltip-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\App\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
-				<th><a href="?set=galaxy&r=3&galaxy=<?=$f['fleet_start_galaxy'] ?>&system=<?=$f['fleet_start_system'] ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
+				<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$f['fleet_start_galaxy'].'/system/'.$f['fleet_start_system'].'/') ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['fleet_start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_start_time']) ?></th>
-				<th><a href="?set=galaxy&r=3&galaxy=<?=$f['fleet_end_galaxy'] ?>&system=<?=$f['fleet_end_system'] ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
+				<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$f['fleet_end_galaxy'].'/system/'.$f['fleet_end_system'].'/') ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['fleet_end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_end_time']) ?></th>
 				<th><font color="lime"><?=($f['fleet_end_time'] > time() ? \App\Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
 					<? if ($f['fleet_mess'] == 0 && $f['fleet_mission'] != 20 && $f['fleet_target_owner'] != 1): ?>
-						<form action="?set=fleet&page=back" method="post">
+						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
 							<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
 							<input value=" <?=_getText('fl_back_to_ttl') ?> " type="submit" name="send">
 						</form>
 						<? if ($f['fleet_mission'] == 1): ?>
-							<form action="?set=fleet&page=verband" method="post">
+							<form action="<?=$this->url->get('fleet/verband/') ?>" method="post">
 								<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
 								<input value=" <?=_getText('fl_associate') ?> " type="submit">
 							</form>
 						<? endif; ?>
 					<? elseif ($f['fleet_mess'] == 3 && $f['fleet_mission'] != 15): ?>
-						<form action="?set=fleet&page=back" method="post">
+						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
 							<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
 							<input value=" Отозвать " type="submit" name="send">
 						</form>
@@ -86,7 +86,7 @@
 	</table>
 	</div>
 	<br>
-	<form action="?set=fleet&page=fleet_1" method="post" class="table-responsive">
+	<form action="<?=$this->url->get('fleet/stageone/') ?>" method="post" class="table-responsive">
 		<table class="table fleet_ships">
 			<tr>
 				<td colspan="4" class="c">

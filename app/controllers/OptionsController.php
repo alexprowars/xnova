@@ -29,7 +29,7 @@ class OptionsController extends ApplicationController
 				$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = '".$data['identity']."'")->fetch();
 
 				if (!isset($check['user_id']))
-					Sql::build()->insert('game_users_auth')->set(Array('user_id' => $this->user->getId(), 'external_id' => $data['identity'], 'register_time' => time()))->execute();
+					Sql::build()->insert('game_users_auth')->set(Array('user_id' => $this->user->getId(), 'external_id' => $data['identity'], 'create_time' => time()))->execute();
 				else
 					$this->message('Данная точка входа уже используется', 'Ошибка', '?set=options');
 			}

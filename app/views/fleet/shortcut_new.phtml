@@ -1,4 +1,4 @@
-<form method=POST action="?set=fleet&page=shortcut&mode=add">
+<form method=POST action="<?=$this->url->get('fleet/shortcut/mode/add/') ?>">
 	<table class="table">
 		<tr height=20>
 			<td colspan=2 class=c>Имя [Галактика:Система:Планета]</td>
@@ -21,7 +21,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td colspan=2 class=c><a href=?set=fleet&page=shortcut>Назад</a></td>
+			<td colspan=2 class=c><a href="<?=$this->url->get('fleet/shortcut/') ?>">Назад</a></td>
 		</tr>
 	</table>
 </form>

@@ -1,5 +1,5 @@
 <?= $parse['gate_time_script'] ?>
-<form action="?set=jumpgate" method="post">
+<form action="<?=$this->url->get('jumpgate/') ?>" method="post">
 	<table border="1" width="100%">
 		<tr>
 			<th>Исходная точка отправления</th>
@@ -31,7 +31,7 @@
 			<? endif; ?>
 		<? foreach ($parse['gate_fleet_rows'] AS $fleet): ?>
 		<tr>
-			<th><a href="?set=infos&gid=<?=$fleet['fleet_id'] ?>"><?=$fleet['fleet_name'] ?></a> (<?=$fleet['fleet_max'] ?> всего)</th>
+			<th><a href="<?=$this->url->get('infos/gid/'.$fleet['fleet_id'].'/') ?>"><?=$fleet['fleet_name'] ?></a> (<?=$fleet['fleet_max'] ?> всего)</th>
 			<th><input tabindex="<?=$fleet['idx'] ?>" name="c<?=$fleet['fleet_id'] ?>" size="7" maxlength="7" value="0" type="text"></th>
 		</tr>
 			<? endforeach; ?>

@@ -14,8 +14,8 @@
 					<td class="col-xs-4 text-center">
 						<img src="<?=$parse['avatar'] ?>" alt="<?=$parse['username'] ?>" width="100%">
 						<? if ($parse['ingame']): ?>
-							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '?set=messages&amp;mode=write&amp;id=<?=$parse['id'] ?>&ajax&popup', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
-							<a href="?set=buddy&amp;a=2&amp;u=<?=$parse['id'] ?>" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
+							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$parse['id'].'/') ?>', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
+							<a href="<?=$this->url->get('buddy/index/a/2/u/'.$parse['id'].'/') ?>" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
 						<? endif; ?>
 					</td>
 					<td valign="top" class="col-xs-6">
@@ -27,7 +27,7 @@
 							<tr>
 								<td class="col-xs-4 text-left">Планета:</td>
 								<td>
-									<a href="?set=galaxy&r=3&galaxy=<?=$parse['galaxy'] ?>&system=<?=$parse['system'] ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
+									<a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$parse['galaxy'].'/system/'.$parse['system'].'/') ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
 								</td>
 							</tr>
 							<? if ($parse['ally_name']): ?>
@@ -42,12 +42,12 @@
 							</tr>
 						</table>
 						<? if ($parse['race'] != 0): ?>
-							<br><img src="<?=RPATH ?><?=DPATH ?>images/race<?=$parse['race'] ?>.gif" alt="">
+							<br><img src="/assets/images/skin/race<?=$parse['race'] ?>.gif" alt="">
 						<? endif; ?>
 					</td>
 					<td class="col-xs-2">
-						<img src="<?=RPATH ?>images/ranks/m<?=$parse['m'] ?>.png" alt="Промышленная отрасль" title="Промышленная отрасль"><br>
-						<img src="<?=RPATH ?>images/ranks/f<?=$parse['f'] ?>.png" alt="Военная отрасль" title="Военная отрасль">
+						<img src="/assets/images/ranks/m<?=$parse['m'] ?>.png" alt="Промышленная отрасль" title="Промышленная отрасль"><br>
+						<img src="/assets/images/ranks/f<?=$parse['f'] ?>.png" alt="Военная отрасль" title="Военная отрасль">
 					</td>
 				</tr>
 

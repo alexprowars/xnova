@@ -1,10 +1,10 @@
-<script type="text/javascript" src="<?=RPATH ?>scripts/jquery.cookie.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/jquery.ui.spinbtn.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/utils.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/common.js"></script>
-<script type="text/javascript" src="<?=RPATH ?>scripts/calculate/costs.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.ui.spinbtn.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/utils.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/common.js"></script>
+<script type="text/javascript" src="/assets/js/calculate/costs.js"></script>
 
-<link type="text/css" href="<?=RPATH ?>scripts/calculate/common.css" rel="stylesheet"/>
+<link type="text/css" href="/assets/js/calculate/common.css" rel="stylesheet"/>
 
 <style>
 	#costs { margin: auto; width: 100%; }
@@ -14,11 +14,11 @@
 		font-weight: 700 !important; }
 	.fleet-input { width: 50px !important; text-align: center; margin-left: 2px !important; margin-right: 8px !important; border: 1px solid #79B7E7 !important; color: #1D5987 !important;
 			font-weight: 700 !important; }
-	#technocrat, #engineer, #geologist, #admiral, #arhitector { margin-left: 0px; margin-right: 5px;}
+	#technocrat, #engineer, #geologist, #admiral, #arhitector { margin-left: 0; margin-right: 5px;}
 
 
-	#tab-0, #tab-1, #tab-2 { padding: 0em; }
-	#tab-0-2, #tab-0-3, #tab-0-4, #tab-0-5, #tab-0-6, #tab-1-2, #tab-1-3, #tab-1-4 { padding: .3em 0em; }
+	#tab-0, #tab-1, #tab-2 { padding: 0; }
+	#tab-0-2, #tab-0-3, #tab-0-4, #tab-0-5, #tab-0-6, #tab-1-2, #tab-1-3, #tab-1-4 { padding: .3em 0; }
 
 
 	#irn-calc { margin: auto; width: 350px; }
@@ -185,7 +185,7 @@
 				<td></td>
 				<td></td>
 				<td>
-					<input type="hidden" id="universe-speed" name="universe-speed" value="<?=\Xnova\system::getGameSpeed() ?>">
+					<input type="hidden" id="universe-speed" name="universe-speed" value="<?=$this->game->getSpeed('mine') ?>">
 				</td>
 			</tr>
 		</table>

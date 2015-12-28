@@ -5,7 +5,7 @@
 
 				<div class="login-inputs">
 					<div class="error" id="authError"></div>
-					<form action="?set=login&xd" method="post" id="authForm">
+					<form action="<?=$this->url->get('login/xd/') ?>" method="post" id="authForm">
 						<div>
 							<input class="input-text" name="email" placeholder="Email" value="" type="text" />
 							<input class="input-text" name="password" placeholder="Пароль" value="" type="password" />
@@ -45,11 +45,11 @@
 		<div class="desk"><?=$this->config->app->name ?> - онлайн-игра</div>
 		<div class="nav">
 			<a href="http://forum.xnova.su" title="Официальный форум" target="_blank">Форум</a>  |
-			<a href="/xnsim/">Симулятор</a>  |  <a href="?set=stat">Статистика</a>  |
+			<a href="/xnsim/">Симулятор</a>  |  <a href="<?=$this->url->get('stat/') ?>">Статистика</a>  |
 			<a href="http://vkontakte.ru/xnova_game" title="Официальная группа ВКонтакте" target="_blank">ВКонтакте</a>  |
-			<a href="?set=agb">Правила</a>  |
-			<a href="?set=banned">Блокировки</a>  |
-			<a href="?set=contact">Администрация</a>
+			<a href="<?=$this->url->get('agb/') ?>">Правила</a>  |
+			<a href="<?=$this->url->get('banned/') ?>">Блокировки</a>  |
+			<a href="<?=$this->url->get('contact/') ?>">Администрация</a>
 		</div>
 		<div class="copy"><?=$this->config->app->users_online ?> / <?=$this->config->app->users_total ?>&nbsp;&nbsp;&nbsp;&copy; <?=date("Y") ?> XNOVA.SU</div>
 	</div>

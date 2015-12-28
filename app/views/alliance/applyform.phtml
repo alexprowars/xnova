@@ -1,4 +1,4 @@
-<form action="?set=alliance&mode=apply&allyid=<?=$parse['allyid'] ?>" method=POST>
+<form action="<?=$this->url->get('alliance/apply/allyid/'.$parse['allyid'].'/') ?>" method=POST>
 	<table width=651>
 		<? if ($parse['text_apply'] != ''): ?>
 		<tr>

@@ -114,7 +114,7 @@
 		<div id="siteFooter" class="hidden-xs">
 			<div class="container-fluid">
 				<div class="pull-left text-left">
-					<a href="?set=news" title="Последние изменения">000</a>
+					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения">000</a>
 					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 					<? endif; ?>
@@ -124,14 +124,14 @@
 						<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
 					<? endif; ?>
 					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
-					<a href="?set=banned">Тёмные</a>|
+					<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
 					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a href="/wide.php" data-link="1">Большой монитор</a>|
 						<a href="http://vk.com/xnova_game" target="_blank">ВК</a>|
-						<a href="?set=contact">Контакты</a>|
+						<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
 					<? endif;?>
-					<a href="?set=content&article=help">Новичкам</a>|
-					<a href="?set=content&article=agb">Правила</a>|
+					<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
+					<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>|
 					<a onclick="" title="Игроков в сети" style="color:green"><?=$this->config->app->get('online') ?></a>/<a onclick="" title="Всего игроков" style="color:yellow"><?=$this->config->app->get('users_amount') ?></a>
 				</div>
 				<br class="clearfloat"/></div>
@@ -139,13 +139,13 @@
 		<div class="row hidden-sm hidden-md hidden-lg footer-mobile">
 			<div class="col-xs-12 text-center">
 				<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
-				<a href="?set=banned">Тёмные</a>|
-				<a href="?set=contact">Контакты</a>|
-				<a href="?set=content&article=help">Новичкам</a>|
-				<a href="?set=content&article=agb">Правила</a>
+				<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
+				<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
+				<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
+				<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>
 			</div>
 			<div class="col-xs-8 text-center">
-				<a href="?set=news" title="Последние изменения">000</a>
+				<a href="<?=$this->url->get('news/') ?>" title="Последние изменения">000</a>
 				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 				<? endif; ?>
