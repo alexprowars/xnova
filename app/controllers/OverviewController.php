@@ -269,7 +269,7 @@ class OverviewController extends ApplicationController
 		elseif (isset($_POST['action']) && isset($_POST['image']))
 		{
 			if ($this->user->credits < 1)
-				$this->message('Недостаточно кредитов', 'Ошибка', '/overview/?mode=renameplanet');
+				$this->message('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
 
 			$image = intval($_POST['image']);
 
@@ -281,18 +281,18 @@ class OverviewController extends ApplicationController
 				$this->response->redirect('?set=overview');
 			}
 			else
-				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/?mode=renameplanet');
+				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
 		}
 		elseif (isset($_POST['kolonieloeschen']) && $_POST['deleteid'] == $this->user->planet_current)
 		{
 			if ($this->user->id != $this->planet->id_owner)
-				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/?mode=renameplanet');
+				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
 			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
 			{
 				$checkFleets = $this->db->query("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
 
 				if ($checkFleets['num'] > 0)
-					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/?mode=renameplanet');
+					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
 				else
 				{
 					$destruyed = time() + 60 * 60 * 24;
@@ -308,14 +308,14 @@ class OverviewController extends ApplicationController
 
 					$this->cache->delete('app::planetlist_'.$this->user->id);
 
-					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/?mode=renameplanet');
+					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/rename/');
 				}
 
 			}
 			elseif ($this->user->planet_id == $this->user->planet_current)
-				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/?mode=renameplanet');
+				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
 			else
-				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/?mode=renameplanet');
+				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/rename/');
 		}
 
 		$this->view->setVar('parse', $parse);
@@ -470,7 +470,7 @@ class OverviewController extends ApplicationController
 
 			if (isset($lune['id']))
 			{
-				$parse['moon_img'] = "<a href=\"/overview/?amp;cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
+				$parse['moon_img'] = "<a href=\"/overview/?cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
 				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
 			}
 		}
@@ -516,7 +516,7 @@ class OverviewController extends ApplicationController
 
 						foreach ($QueueArray AS $CurrBuild)
 						{
-							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"/buildings/?amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
+							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"/buildings/?cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
 						}
 					}
 
@@ -524,7 +524,7 @@ class OverviewController extends ApplicationController
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"/buildings/?amp;mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
+						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"/buildings/?mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
 					}
 				}
 			}

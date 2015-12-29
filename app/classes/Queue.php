@@ -4,29 +4,7 @@ namespace App;
 
 use App\Models\Planet;
 use App\Models\User;
-use Phalcon\Mvc\User\Component;
 
-/**
- * Class ControllerBase
- * @property \Phalcon\Mvc\View view
- * @property \Phalcon\Tag tag
- * @property \Phalcon\Assets\Manager assets
- * @property \Phalcon\Db\Adapter\Pdo\Mysql db
- * @property \Phalcon\Mvc\Model\Manager modelsManager
- * @property \Phalcon\Session\Adapter\Memcache session
- * @property \Phalcon\Http\Response\Cookies cookies
- * @property \Phalcon\Http\Request request
- * @property \Phalcon\Http\Response response
- * @property \Phalcon\Mvc\Router router
- * @property \Phalcon\Cache\Backend\Memcache cache
- * @property \Phalcon\Mvc\Url url
- * @property \App\Models\User user
- * @property \App\Auth\Auth auth
- * @property \Phalcon\Mvc\Dispatcher dispatcher
- * @property \Phalcon\Flash\Direct flash
- * @property \Phalcon\Config|\stdClass config
- * @property \App\Game game
- */
 class Queue
 {
 	private $queue = array();
@@ -42,6 +20,9 @@ class Queue
 	 * @var \App\Models\Planet
 	 */
 	private $planet;
+
+	private $game;
+	private $config;
 
 	public function __construct($queue = '')
 	{
@@ -67,6 +48,9 @@ class Queue
 	public function setPlanetObject (Planet $planet)
 	{
 		$this->planet = $planet;
+
+		$this->game = $this->planet->getDI()->getShared('game');
+		$this->config = $this->planet->getDI()->getShared('config');
 	}
 
 	public function add($elementId, $count = 1, $destroy = false)
@@ -271,19 +255,20 @@ class Queue
 		global $TechHandle;
 
 		if (!is_array($TechHandle))
-			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
+			$TechHandle = $this->planet->HandleTechnologieBuild();
 
 		$spaceLabs = array();
 
 		if ($this->user->{$this->game->resource[123]} > 0)
-		{
 			$spaceLabs = $this->planet->getNetworkLevel();
-		}
 
 		if (is_array($TechHandle['WorkOn']))
-			$WorkingPlanet = $TechHandle['WorkOn'];
+		{
+			$WorkingPlanet = new Planet;
+			$WorkingPlanet->assign($TechHandle['WorkOn']);
+		}
 		else
-			$WorkingPlanet = $this->planet->toArray();
+			$WorkingPlanet = $this->planet;
 
 		$WorkingPlanet['spaceLabs'] = $spaceLabs;
 
@@ -291,9 +276,9 @@ class Queue
 		{
 			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 
-			$WorkingPlanet['metal'] 	-= $costs['metal'];
-			$WorkingPlanet['crystal'] 	-= $costs['crystal'];
-			$WorkingPlanet['deuterium'] -= $costs['deuterium'];
+			$WorkingPlanet->metal 		-= $costs['metal'];
+			$WorkingPlanet->crystal 	-= $costs['crystal'];
+			$WorkingPlanet->deuterium 	-= $costs['deuterium'];
 
 			$time = Building::GetBuildingTime($this->user, $WorkingPlanet, $elementId);
 
@@ -309,10 +294,10 @@ class Queue
 				'd' => 0
 			);
 			
-			$WorkingPlanet['queue'] = json_encode($this->queue);
+			$WorkingPlanet->queue = json_encode($this->queue);
 
-			$this->user->b_tech_planet = $WorkingPlanet["id"];
-			$this->saveTechToQueue($WorkingPlanet);
+			$this->user->b_tech_planet = $WorkingPlanet->id;
+			$this->saveTechToQueue($WorkingPlanet->toArray());
 		}
 	}
 
@@ -321,12 +306,15 @@ class Queue
 		global $TechHandle;
 
 		if (!is_array($TechHandle))
-			$TechHandle = $this->planet->HandleTechnologieBuild($this->planet, $this->user);
+			$TechHandle = $this->planet->HandleTechnologieBuild();
 
 		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['OnWork'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
 		{
 			if (is_array($TechHandle['WorkOn']))
-				$WorkingPlanet = $TechHandle['WorkOn'];
+			{
+				$WorkingPlanet = new Planet;
+				$WorkingPlanet->assign($TechHandle['WorkOn']);
+			}
 			else
 				$WorkingPlanet = $this->planet->toArray();
 
@@ -339,19 +327,19 @@ class Queue
 				$this->planet->deuterium 	+= $nedeed['deuterium'];
 			}
 
-			$WorkingPlanet['metal'] 	+= $nedeed['metal'];
-			$WorkingPlanet['crystal'] 	+= $nedeed['crystal'];
-			$WorkingPlanet['deuterium'] += $nedeed['deuterium'];
+			$WorkingPlanet->metal 		+= $nedeed['metal'];
+			$WorkingPlanet->crystal 	+= $nedeed['crystal'];
+			$WorkingPlanet->deuterium 	+= $nedeed['deuterium'];
 			
 			unset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]);
 
 			if (!count($this->queue[self::QUEUE_TYPE_BUILDING]))
 				unset($this->queue[self::QUEUE_TYPE_BUILDING]);
 
-			$WorkingPlanet['queue'] = json_encode($this->queue);
+			$WorkingPlanet->queue = json_encode($this->queue);
 			
 			$this->user->b_tech_planet = 0;
-			$this->saveTechToQueue($WorkingPlanet);
+			$this->saveTechToQueue($WorkingPlanet->toArray());
 		}
 	}
 
@@ -442,7 +430,7 @@ class Queue
 				'd' => 0
 			);
 
-			sql::build()->update('game_planets')->set(Array
+			Sql::build()->update('game_planets')->set(Array
 			(
 				'metal' 	=> $this->planet->metal,
 				'crystal' 	=> $this->planet->crystal,
@@ -458,7 +446,7 @@ class Queue
 		$this->checkQueue();
 		$this->planet->queue = json_encode($this->get());
 		
-		sql::build()->update('game_planets')->set(Array
+		Sql::build()->update('game_planets')->set(Array
 		(
 			'queue' => $this->planet->queue
 		))

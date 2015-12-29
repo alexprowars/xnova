@@ -2,12 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Construction;
 use App\Lang;
 
 class BuildingsController extends ApplicationController
 {
 	/**
-	 * @var building $building
+	 * @var \App\Construction $building
 	 */
 	private $building;
 
@@ -20,11 +21,10 @@ class BuildingsController extends ApplicationController
 		$this->user->loadPlanet();
 
 		if ($this->user->vacation > 0)
-		{
 			$this->message("Нет доступа!");
-		}
 
-		$this->building = new building();
+		$this->building = new Construction($this->user, $this->planet);
+		$this->building->mode = $this->dispatcher->getActionName();
 	}
 
 	public function fleetAction ()
@@ -33,16 +33,16 @@ class BuildingsController extends ApplicationController
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
-		$parse['mode'] = $this->mode;
+		$parse['mode'] = $this->dispatcher->getActionName();
 
-		$this->view->pick('buildings/buildings_shipyard');
+		$this->view->pick('buildings/shipyard');
 		$this->view->setVar('parse', $parse);
 
 		$data = $this->building->ElementBuildListBox();
 
 		if ($data['count'] > 0)
 		{
-			$this->view->pick('buildings/buildings_script');
+			$this->view->pick('buildings/script');
 			$this->view->setVar('parse', $data);
 		}
 
@@ -54,9 +54,9 @@ class BuildingsController extends ApplicationController
 		if ($this->planet->{$this->game->resource[31]} == 0)
 			$this->message(_getText('no_laboratory'), _getText('Research'));
 
-		$parse = $this->building->pageResearch(($this->mode == 'research_fleet' ? 'fleet' : ''));
+		$parse = $this->building->pageResearch(($this->dispatcher->getActionName() == 'research_fleet' ? 'fleet' : ''));
 
-		$this->view->pick('buildings/buildings_research');
+		$this->view->pick('buildings/research');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Исследования');
@@ -76,16 +76,16 @@ class BuildingsController extends ApplicationController
 			$this->user->setUserOption('only_available', 1);
 
 		$parse = $this->building->pageShipyard('defense');
-		$parse['mode'] = $this->mode;
+		$parse['mode'] = $this->dispatcher->getActionName();
 
-		$this->view->pick('buildings/buildings_shipyard');
+		$this->view->pick('buildings/shipyard');
 		$this->view->setVar('parse', $parse);
 
 		$data = $this->building->ElementBuildListBox();
 
 		if ($data['count'] > 0)
 		{
-			$this->view->pick('buildings/buildings_script');
+			$this->view->pick('buildings/script');
 			$this->view->setVar('parse', $data);
 		}
 
@@ -103,7 +103,7 @@ class BuildingsController extends ApplicationController
 		else
 			$parse['planettype'] = 'planet';
 
-		$this->view->pick('buildings/buildings_area');
+		$this->view->pick('buildings/index');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Постройки');

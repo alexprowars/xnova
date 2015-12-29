@@ -31,7 +31,7 @@
 <? endif; ?>
 
 <? if (isset($ajaxNavigation) && $ajaxNavigation): ?>
-	<script type="text/javascript">setMenuItem("<?=($this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getControllerAction() : '')) ?>");</script>
+	<script type="text/javascript">setMenuItem("<?=($this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : '')) ?>");</script>
 <? endif; ?>
 
 <? if ($userId > 0 && !$isPopup): ?>

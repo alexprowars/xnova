@@ -114,6 +114,8 @@ class Planet extends Model
 	public $solar_satelit_porcent;
 	public $darkmat_mine_porcent;
 
+	public $spaceLabs;
+
 	public function onConstruct()
 	{
 		$this->db = $this->getDi()->getShared('db');
@@ -1011,6 +1013,74 @@ class Planet extends Model
 
 			$this->db->query("UNLOCK TABLES");
 		}
+	}
+
+	public function HandleTechnologieBuild ()
+	{
+		$Result['WorkOn'] = "";
+		$Result['OnWork'] = false;
+
+		if ($this->user->b_tech_planet != 0)
+		{
+			if ($this->user->b_tech_planet != $this->id)
+				$WorkingPlanet = $this->db->query("SELECT * FROM game_planets WHERE `id` = '" . $this->user->b_tech_planet . "'")->fetch();
+
+			if (isset($WorkingPlanet))
+				$ThePlanet = $WorkingPlanet;
+			else
+				$ThePlanet = $this->toArray();
+
+			$queueManager 	= new Queue($ThePlanet['queue']);
+			$queueArray 	= $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+
+			if (count($queueArray))
+			{
+				if ($queueArray[0]['e'] <= time())
+				{
+					$this->user->b_tech_planet = 0;
+					$this->user->{$this->game->resource[$queueArray[0]['i']]}++;
+
+					$newQueue = $queueManager->get();
+					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
+
+					$this->db->query("UPDATE game_planets SET `queue` = '".json_encode($newQueue)."' WHERE `id` = '" . $ThePlanet['id'] . "'");
+					$this->db->query("UPDATE game_users SET `" . $this->game->resource[$queueArray[0]['i']] . "` = '" . $this->user->{$this->game->resource[$queueArray[0]['i']]} . "', `b_tech_planet` = '0' WHERE `id` = '" . $this->user->id . "'");
+
+					if (!isset($WorkingPlanet))
+						$this->assign($ThePlanet);
+				}
+				else
+				{
+					$Result['WorkOn'] = $ThePlanet;
+					$Result['OnWork'] = true;
+				}
+			}
+			else
+			{
+				$this->db->query("UPDATE game_users SET `b_tech_planet` = '0'  WHERE `id` = '" . $this->user->id . "'");
+
+				$this->user->b_tech_planet = 0;
+			}
+		}
+
+		return $Result;
+	}
+
+	public function getNetworkLevel()
+	{
+		$researchLevelList = array($this->{$this->game->resource[31]});
+
+		if ($this->user->{$this->game->resource[123]} > 0)
+		{
+			$researchResult = $this->db->query("SELECT ".$this->game->resource[31]." FROM game_planets WHERE id_owner='" . $this->user->id . "' AND id != '" . $this->id . "' AND ".$this->game->resource[31]." > 0 AND destruyed = 0 AND planet_type = 1 ORDER BY ".$this->game->resource[31]." DESC LIMIT ".$this->user->{$this->game->resource[123]}."");
+
+			while ($researchRow = $researchResult->fetch())
+			{
+				$researchLevelList[] = $researchRow[$this->game->resource[31]];
+			}
+		}
+
+		return $researchLevelList;
 	}
 
 	function getMaxFields ()

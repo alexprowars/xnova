@@ -483,9 +483,9 @@ class User extends Model
 		return true;
 	}
 
-	public function bonusValue ($key)
+	public function bonusValue ($key, $default = false)
 	{
-		return (isset($this->bonusData[$key]) ? $this->bonusData[$key] : 1);
+		return (isset($this->bonusData[$key]) ? $this->bonusData[$key] : ($default !== false ? $default : 1));
 	}
 
 	public function getUserPlanets ($userId, $moons = true, $allyId = 0)

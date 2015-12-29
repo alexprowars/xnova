@@ -24,7 +24,7 @@ class Building extends Component
 
 		foreach ($cost AS $ResType => $ResCount)
 		{
-			if (!isset($CurrentPlanet[$ResType]) || $ResCount > $CurrentPlanet[$ResType])
+			if (!isset($CurrentPlanet->{$ResType}) || $ResCount > $CurrentPlanet->{$ResType})
 			{
 				$RetValue = false;
 				break;
@@ -368,7 +368,7 @@ class Building extends Component
 	 * @param $user User
 	 * @return float|int
 	 */
-	static function GetMaxConstructibleElements ($Element, $Ressources, User $user)
+	static function GetMaxConstructibleElements ($Element, Planet $planet, User $user)
 	{
 		$game = $user->getDI()->getShared('game');
 
@@ -385,7 +385,7 @@ class Building extends Component
 				elseif (in_array($Element, $game->reslist['defense']))
 					$count = round($need_count * $user->bonusValue('res_defence'));
 
-				$count = floor($Ressources[$need_res] / $count);
+				$count = floor($planet->{$need_res} / $count);
 
 				if ($MaxElements == -1)
 					$MaxElements = $count;
