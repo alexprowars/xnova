@@ -216,7 +216,7 @@ class Fleet extends Building
 		else
 		{
 			if ($FleetRow['fleet_target_owner'] == $user->id && $FleetRow['fleet_mission'] == 1)
-				$r = '?set=sim&r=';
+				$r = '/sim/?r=';
 
 			foreach ($FleetRec as $Group)
 			{

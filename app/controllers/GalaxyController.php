@@ -52,41 +52,41 @@ class GalaxyController extends ApplicationController
 		}
 		elseif ($mode == 1)
 		{
-			if (isset($_POST["galaxyLeft"]))
-				$galaxy = intval($_POST["galaxy"]) - 1;
-			elseif (isset($_POST["galaxyRight"]))
-				$galaxy = intval($_POST["galaxy"]) + 1;
-			elseif (isset($_POST["galaxy"]))
-				$galaxy = intval($_POST["galaxy"]);
+			if ($this->request->hasPost('galaxyLeft'))
+				$galaxy = $this->request->getPost('galaxy', 'int') - 1;
+			elseif ($this->request->hasPost('galaxyRight'))
+				$galaxy = $this->request->getPost('galaxy', 'int') + 1;
+			elseif ($this->request->hasPost('galaxy'))
+				$galaxy = $this->request->getPost('galaxy', 'int');
 			else
 				$galaxy = $this->planet->galaxy;
 		
-			if (isset($_POST["systemLeft"]))
-				$system = intval($_POST["system"]) - 1;
-			elseif (isset($_POST["systemRight"]))
-				$system = intval($_POST["system"]) + 1;
-			elseif (isset($_POST["system"]))
-				$system = intval($_POST["system"]);
+			if ($this->request->hasPost('systemLeft'))
+				$system = $this->request->getPost('system', 'int') - 1;
+			elseif ($this->request->hasPost('systemRight'))
+				$system = $this->request->getPost('system', 'int') + 1;
+			elseif ($this->request->hasPost('system'))
+				$system = $this->request->getPost('system', 'int');
 			else
 				$system = $this->planet->system;
 		}
 		elseif ($mode == 2)
 		{
-			$galaxy = intval($_GET['galaxy']);
-			$system = intval($_GET['system']);
-			$planet = intval($_GET['planet']);
+			$galaxy = $this->request->getQuery('galaxy', 'int', 1);
+			$system = $this->request->getQuery('system', 'int', 1);
+			$planet = $this->request->getQuery('planet', 'int', 1);
 		}
 		elseif ($mode == 3)
 		{
-			$galaxy = intval($_GET['galaxy']);
-			$system = intval($_GET['system']);
+			$galaxy = $this->request->getQuery('galaxy', 'int', 1);
+			$system = $this->request->getQuery('system', 'int', 1);
 		}
-		
+
 		$galaxy = min(max($galaxy, 1), $this->config->game->maxGalaxyInWorld);
 		$system = min(max($system, 1), $this->config->game->maxSystemInGalaxy);
 		$planet = min(max($planet, 1), $this->config->game->maxPlanetInSystem);
 		
-		if (!isset($_SESSION['fleet_shortcut']))
+		if (!$this->session->has('fleet_shortcut'))
 		{
 			$array = $this->user->getUserPlanets($this->user->getId(), false, $this->user->ally_id);
 			$j = array();
@@ -112,12 +112,12 @@ class GalaxyController extends ApplicationController
 				}
 			}
 		
-			$_SESSION['fleet_shortcut'] = json_encode($j);
+			$this->session->get('fleet_shortcut', json_encode($j));
 		}
 		
 		$Phalanx = 0;
 		
-		if ($this->planet->phalanx <> 0)
+		if ($this->planet->phalanx != 0)
 		{
 			$Range = Fleet::GetPhalanxRange($this->planet->phalanx);
 
@@ -155,9 +155,7 @@ class GalaxyController extends ApplicationController
 		$html = '';
 		
 		if ($mode == 2)
-		{
 			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->interplanetary_misil);
-		}
 
 		$html .= "<div id='galaxy'></div>";
 		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '/assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = new Array(); ";
@@ -251,7 +249,7 @@ class GalaxyController extends ApplicationController
 
 	private function ShowGalaxyMISelector ($Galaxy, $System, $Planet, $Current, $MICount)
 	{
-		$Result = "<form action=\"?set=raketenangriff&c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
+		$Result = "<form action=\"/raketenangriff/?c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
 		$Result .= "<table border=\"0\">";
 		$Result .= "<tr>";
 		$Result .= "<td class=\"c\" colspan=\"3\">";

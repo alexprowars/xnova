@@ -69,7 +69,7 @@ class LogController extends ApplicationController
 				case 'new':
 		
 					$html = "<table class=\"table\"><tr><td class=\"c\"><h1>Сохранение боевого доклада</h1></td></tr>";
-					$html .= "<tr><th><form action=?set=log&mysql=new method=POST>";
+					$html .= "<tr><th><form action=/log/?mysql=new method=POST>";
 					$html .= "Название:<br>";
 					$html .= "<input type=text name=title size=50 maxlength=100><br>";
 					$html .= "ID боевого доклада:<br>";
@@ -118,12 +118,12 @@ class LogController extends ApplicationController
 					while ($krow = $ksql->fetch())
 					{
 						$i++;
-						$html .= "<tr><td class=\"b center\">" . $i . "</td><td class=\"b center\">" . $krow['title'] . "</td><td class=\"b center\"><a href=?set=log&id=" . $krow['id'] . " ".($this->config->game->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '').">Открыть</a></td><td class=\"b center\"><a href='?set=log&mode=delete&id_l=" . $krow['id'] . "'>Удалить лог</a></td></tr>";
+						$html .= "<tr><td class=\"b center\">" . $i . "</td><td class=\"b center\">" . $krow['title'] . "</td><td class=\"b center\"><a href=/log/?id=" . $krow['id'] . " ".($this->config->game->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '').">Открыть</a></td><td class=\"b center\"><a href='/log/?mode=delete&id_l=" . $krow['id'] . "'>Удалить лог</a></td></tr>";
 					}
 					if ($i == 0)
 						$html .= "<tr align=center><td class=\"b center\" colspan=4>У вас пока нет сохранённых логов.</td></tr>";
 		
-					$html .= "<tr><td class=c colspan=4><a href=?set=log&mode=new>Создать новый лог боя</a></td></tr></table>";
+					$html .= "<tr><td class=c colspan=4><a href=/log/?mode=new>Создать новый лог боя</a></td></tr></table>";
 
 					$this->tag->setTitle('Логовница');
 					$this->view->setVar('html', $html);

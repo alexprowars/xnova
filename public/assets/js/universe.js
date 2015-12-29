@@ -12,8 +12,8 @@ $(document).ready(function()
 
 		$.ajax({
 			type: "GET",
-			url: "?set=fleet&page=quick",
-			data: "ajax=1&mode=6&g="+galaxy+"&s="+system+"&p="+obj.data('planet')+"&t="+obj.data('type')+"&count="+spyNum+"",
+			url: "/fleet/quick/",
+			data: "mode=6&g="+galaxy+"&s="+system+"&p="+obj.data('planet')+"&t="+obj.data('type')+"&count="+spyNum+"",
 			success: function(msg)
 			{
 				$('#galaxyMessage').html(msg).show();
@@ -36,7 +36,7 @@ $(document).ready(function()
 	});
 });
 
-var race_str = new Array('', 'Конфедерация', 'Бионики', 'Сайлоны', 'Древние');
+var race_str = ['', 'Конфедерация', 'Бионики', 'Сайлоны', 'Древние'];
 
 function PrintRow ()
 {
@@ -79,19 +79,19 @@ function PrintRow ()
 			result += "<th align=left>";
 
 			if (user['phalanx'] == 1)
-				result += "<a href=\"javascript:void()\" onclick=fenster(\"?set=phalanx&amp;galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"\")>Фаланга</a><br />";
+				result += "<a href=\"javascript:void()\" onclick=fenster(\"/phalanx/index/galaxy/"+galaxy+"/system/"+system+"/planet/"+planet+"/\")>Фаланга</a><br />";
 
 			if (row[planet]['user_id'] != user['id'] && !(row[planet]['ally_planet'] > 0 && row[planet]['ally_planet'] == user['ally_id']))
             {
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&amp;planettype="+row[planet]['planet_type']+"&amp;target_mission=1>Атаковать</a><br />";
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&system="+system+"&planet="+planet+"&planettype="+row[planet]['planet_type']+"&target_mission=5>Удерживать</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m1/\">Атаковать</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m5/\">Удерживать</a><br />";
 			}
             else
             {
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&system="+system+"&planet="+planet+"&planettype="+row[planet]['planet_type']+"&target_mission=4>Оставить</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m4/\">Оставить</a><br />";
 			}
 
-			result += "<a href=?set=fleet&galaxy="+galaxy+"&system="+system+"&planet="+planet+"&planettype="+row[planet]['planet_type']+"&target_mission=3>Транспорт</a>";
+			result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m3/\">Транспорт</a>";
 
 
 			result += "</th></tr>";
@@ -171,20 +171,20 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&amp;planettype=3&amp;target_mission=1>Атаковать</a><br />";
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&planettype=3&target_mission=5>Удерживать</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m1/\">Атаковать</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m5/\">Удерживать</a><br />";
 
 				if (user['destroy'] > 0)
                 {
-					result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&planettype=3&target_mission=9>Уничтожить</a><br>";
+					result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m9/\">Уничтожить</a><br>";
 				}
 			}
             else
             {
-				result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&planettype=3&target_mission=4>Оставить</a><br />";
+				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m4/\">Оставить</a><br />";
 			}
 
-			result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&planettype=3&target_mission=3>Транспорт</a><br />";
+			result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m3/\">Транспорт</a><br />";
 
 			result += "</tr>";
 			result += "</table>";
@@ -236,7 +236,7 @@ function PrintRow ()
 			if (user['recycler'] > 0)
 				result += "<tr><th colspan=2 align=left><a href=# onclick=QuickFleet(8,"+galaxy+","+system+","+planet+",2,0)>Собрать</a></th></tr>";
 
-			result += "<tr><th colspan=2 align=left><a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&planettype=2&target_mission=8>Отправить флот</a></th>";
+			result += "<tr><th colspan=2 align=left><a href=/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t2/m8/>Отправить флот</a></th>";
 			result += "</tr></table>";
 			result += "</th>";
 			result += "</tr>";
@@ -266,10 +266,10 @@ function PrintRow ()
             var Systemtatus2 = '', Systemtatus = '';
 
 			if (row[planet]['banaday'] > time && row[planet]['urlaubs_modus_time'] > 0) {
-				Systemtatus2 = "U <a href=\"?set=banned\"><span class=\"banned\">G</span></a>";
+				Systemtatus2 = "U <a href=\"/banned/\"><span class=\"banned\">G</span></a>";
 				Systemtatus  = "<span class=\"vacation\">";
 			} else if (row[planet]['banaday'] > time) {
-				Systemtatus2 = "<a href=\"?set=banned\">G</a>";
+				Systemtatus2 = "<a href=\"/banned/\">G</a>";
 				Systemtatus  = "<span class=\"banned\">";
 			} else if (row[planet]['urlaubs_modus_time'] > 0) {
 				Systemtatus2 = "U";
@@ -336,13 +336,13 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<th><a href=?set=messages&mode=write&id="+row[planet]['user_id']+">Послать сообщение</a></th>";
+				result += "<th><a href=/messages/write/id/"+row[planet]['user_id']+"/>Послать сообщение</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href=?set=buddy&a=2&u="+row[planet]['user_id']+">Добавить в друзья</a></th>";
+				result += "<th><a href=/buddy/index/a/2/u/"+row[planet]['user_id']+"/>Добавить в друзья</a></th>";
 				result += "</tr><tr>";
 			}
 
-			result += "<th valign=top><a href=?set=stat&who=1&range="+Systemtart+"&pid="+row[planet]['user_id']+">Статистика</a></th>";
+			result += "<th valign=top><a href=/stat/index/who/1/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/>Статистика</a></th>";
 			result += "</tr>";
 			result += "</table>'>";
 			result += Systemtatus+row[planet]['username']+Systemtatus2+rank;
@@ -351,7 +351,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='?set=infos&gid=70"+row[planet]['race']+"'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='/infos/gid/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else
@@ -368,9 +368,9 @@ function PrintRow ()
 				result += "<tr>";
 				result += "<td class=c>Альянс "+row[planet]['ally_name']+" с "+row[planet]['ally_members']+" членами</td>";
 				result += "</tr>";
-				result += "<tr><th><a href=?set=alliance&mode=ainfo&a="+row[planet]['ally_id']+">Информация</a></th>";
+				result += "<tr><th><a href=/alliance/ainfo/a/"+row[planet]['ally_id']+"/>Информация</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href=?set=stat&start=0&who=2>Статистика</a></th></tr>";
+				result += "<th><a href=/stat/index/start/0/who/2/>Статистика</a></th></tr>";
 
 				if (row[planet]["ally_web"] != "") {
 					result += "<tr><th><a href="+row[planet]["ally_web"]+" target=_new>Сайт альянса</th>";
@@ -406,22 +406,22 @@ function PrintRow ()
         {
 			if (row[planet]['user_id'] && row[planet]["destruyed"] == 0)
             {
-				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', '?set=messages&mode=write&id="+row[planet]["user_id"]+"&ajax&popup', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
+				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', '/messages/write/id/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
 
-				result += "<a href=\"?set=buddy&a=2&amp;u="+row[planet]["user_id"]+"\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
+				result += "<a href=\"/buddy/index/a/2/u/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
 
 				if (user['missile'] == 1)
-					result += "<a href=\"?set=galaxy&r=2&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&current="+user['current_planet']+"\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
+					result += "<a href=\"/galaxy/"+galaxy+"/"+system+"/"+planet+"/2/"+user['current_planet']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
 
 				if (user['spy_sonde'] > 0 && row[planet]['urlaubs_modus_time'] == 0)
 					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-tooltip-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
 
-				result += "<a href=\"?set=players&id="+row[planet]["user_id"]+"\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
-				result += "<a href=\"?set=fleet&page=shortcut&mode=add&g="+galaxy+"&s="+system+"&i="+planet+"&t="+row[planet]['planet_type']+"\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
+				result += "<a href=\"/players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
+				result += "<a href=\"/fleet/shortcut/mode/add/g/"+galaxy+"/s/"+system+"/i/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
 			}
 		}
         else if (!row[planet] && user['colonizer'] > 0)
-                result += "<a href=\"?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet="+planet+"&amp;target_mission=7\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
+                result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t/0/m7/\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
 		else
             result += "&nbsp;";
 
@@ -431,7 +431,7 @@ function PrintRow ()
 	
 	result += "<tr><th width=\"30\">16</th>";
 	result += "<th colspan=8 class='c big'>";
-	result += "<a href=?set=fleet&galaxy="+galaxy+"&amp;system="+system+"&amp;planet=16&amp;target_mission=15>неизведанные дали</a>";
+	result += "<a href=/fleet/g"+galaxy+"/s"+system+"/p16/t0/m15/>неизведанные дали</a>";
 	result += "</th>";
 	result += "</tr><tr>";
 
@@ -492,9 +492,9 @@ function ChangePlanet(id)
 	if (id > 0)
 	{
 		if (ajax_nav == 0)
-			eval("location='?set=galaxy&r=3&"+document.getElementById('planet_select').options[id].value+"'");
+			eval("location='/galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"'");
 		else
-			load("?set=galaxy&r=3&"+document.getElementById('planet_select').options[id].value+"");
+			load("/galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"");
 	}
 }
 
@@ -502,7 +502,7 @@ function PrintSelector(fleet_shortcut)
 {
 	var result = '';
 
-	result += "<form action=\"?set=galaxy&r=1\" method=\"post\" class='galaxy-select hidden-xs'>";
+	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-xs'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-sm-4'>";
 
@@ -518,7 +518,7 @@ function PrintSelector(fleet_shortcut)
 	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';
 	result += '<option>--- выберите планету ---</option>';
 
-	for (i = 0; i < fleet_shortcut.length; i++)
+	for (var i = 0; i < fleet_shortcut.length; i++)
     {
 		result += '<option';
 
@@ -542,7 +542,7 @@ function PrintSelector(fleet_shortcut)
 
 
 
-	result += "<form action=\"?set=galaxy&r=1\" method=\"post\" class='galaxy-select visible-xs'>";
+	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select visible-xs'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-xs-12'>";
 	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';

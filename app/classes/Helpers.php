@@ -256,21 +256,21 @@ class Helpers
 
 	static function GetStartAdressLink ($FleetRow, $FleetType = '')
 	{
-		$Link = "<a href=\"?set=galaxy&amp;r=3&amp;galaxy=" . $FleetRow['fleet_start_galaxy'] . "&amp;system=" . $FleetRow['fleet_start_system'] . "\" " . $FleetType . " >";
+		$Link = "<a href=\"/galaxy/?amp;r=3&amp;galaxy=" . $FleetRow['fleet_start_galaxy'] . "&amp;system=" . $FleetRow['fleet_start_system'] . "\" " . $FleetType . " >";
 		$Link .= "[" . $FleetRow['fleet_start_galaxy'] . ":" . $FleetRow['fleet_start_system'] . ":" . $FleetRow['fleet_start_planet'] . "]</a>";
 		return $Link;
 	}
 
 	static function GetTargetAdressLink ($FleetRow, $FleetType = '')
 	{
-		$Link = "<a href=\"?set=galaxy&amp;r=3&amp;galaxy=" . $FleetRow['fleet_end_galaxy'] . "&amp;system=" . $FleetRow['fleet_end_system'] . "\" " . $FleetType . " >";
+		$Link = "<a href=\"/galaxy/?amp;r=3&amp;galaxy=" . $FleetRow['fleet_end_galaxy'] . "&amp;system=" . $FleetRow['fleet_end_system'] . "\" " . $FleetType . " >";
 		$Link .= "[" . $FleetRow['fleet_end_galaxy'] . ":" . $FleetRow['fleet_end_system'] . ":" . $FleetRow['fleet_end_planet'] . "]</a>";
 		return $Link;
 	}
 
 	static function BuildPlanetAdressLink ($CurrentPlanet)
 	{
-		$Link = "<a href=\"?set=galaxy&amp;r=3&amp;galaxy=" . $CurrentPlanet['galaxy'] . "&amp;system=" . $CurrentPlanet['system'] . "\">";
+		$Link = "<a href=\"/galaxy/?amp;r=3&amp;galaxy=" . $CurrentPlanet['galaxy'] . "&amp;system=" . $CurrentPlanet['system'] . "\">";
 		$Link .= "[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
 		return $Link;
 	}

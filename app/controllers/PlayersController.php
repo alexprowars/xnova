@@ -69,12 +69,12 @@ class PlayersController extends ApplicationController
 			$parse['total_points'] = Helpers::pretty_number($points['total_points']);
 		
 			if ($ownid != 0)
-				$parse['player_buddy'] = "<a href=\"?set=buddy&a=2&amp;u=" . $playerid . "\" title=\"Добавить в друзья\">Добавить в друзья</a>";
+				$parse['player_buddy'] = "<a href=\"/buddy/?a=2&amp;u=" . $playerid . "\" title=\"Добавить в друзья\">Добавить в друзья</a>";
 			else
 				$parse['player_buddy'] = "";
 		
 			if ($ownid != 0)
-				$parse['player_mes'] = "<a href=\"?set=messages&mode=write&id=" . $playerid . "\">Написать сообщение</a>";
+				$parse['player_mes'] = "<a href=\"/messages/?mode=write&id=" . $playerid . "\">Написать сообщение</a>";
 			else
 				$parse['player_mes'] = "";
 		

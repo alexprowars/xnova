@@ -27,7 +27,7 @@
 							<tr>
 								<td class="col-xs-4 text-left">Планета:</td>
 								<td>
-									<a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$parse['galaxy'].'/system/'.$parse['system'].'/') ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
+									<a href="<?=$this->url->get('galaxy/'.$parse['galaxy'].'/'.$parse['system'].'/') ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
 								</td>
 							</tr>
 							<? if ($parse['ally_name']): ?>

@@ -85,15 +85,7 @@
 	<? endif; ?>
 
 	<div class="row">
-		<? if (isset($html) && isset($html_position) && $html_position == 'top'): ?>
-			<?=$html ?>
-		<? endif; ?>
-
 		<?php echo $this->getContent() ?>
-
-		<? if (isset($html) && (!isset($html_position) || $html_position == 'bottom')): ?>
-			<?=$html ?>
-		<? endif; ?>
 	</div>
 
 	<? if (isset($leftMenu) && $leftMenu == true): ?>

@@ -113,7 +113,7 @@ class StatController extends ApplicationController
 				if ($StatRow['ally_name'] == $this->user->ally_name)
 					$stats['ally_name'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
 				else
-					$stats['ally_name'] = "<a href=\"?set=alliance&mode=ainfo&a=" . $StatRow['id'] . "\">" . $StatRow['ally_name'] . "</a>";
+					$stats['ally_name'] = "<a href=\"/alliance/?mode=ainfo&a=" . $StatRow['id'] . "\">" . $StatRow['ally_name'] . "</a>";
 
 				$stats['ally_mes'] = '';
 				$stats['ally_members'] = $StatRow['ally_members'];
@@ -194,12 +194,12 @@ class StatController extends ApplicationController
 					$stats['player_name'] = $StatRow['username'];
 
 				if ($this->auth->isAuthorized())
-					$stats['player_mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '?set=messages&mode=write&id=" . $StatRow['id_owner'] . "&ajax&popup', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
+					$stats['player_mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '/messages/?mode=write&id=" . $StatRow['id_owner'] . "&ajax&popup', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
 
 				if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
 					$stats['player_alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
 				elseif ($StatRow['ally_name'] != '')
-					$stats['player_alliance'] = "<a href=\"?set=alliance&mode=ainfo&a=" . $StatRow['id_ally'] . "\">" . $StatRow['ally_name'] . "</a>";
+					$stats['player_alliance'] = "<a href=\"/alliance/?mode=ainfo&a=" . $StatRow['id_ally'] . "\">" . $StatRow['ally_name'] . "</a>";
 				else
 					$stats['player_alliance'] = '&nbsp;';
 

@@ -12,7 +12,7 @@ $lang['main_menu'] = array
 (
 	'overview' 					=> array('Обзор', '/overview/', 0),
 	'imperium' 					=> array('Империя', '/imperium/', 0),
-	'galaxy' 					=> array('Космос', '/galaxy/index/r/0/', 0),
+	'galaxy' 					=> array('Космос', '/galaxy/', 0),
 	'fleet' 					=> array('Флот', '/fleet/', 0),
 	'buildings' 				=> array('Постройки', '/buildings/', 0),
 	'buildingsresearch' 		=> array('Наука', '/buildings/research/', 0),

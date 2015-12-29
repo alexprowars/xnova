@@ -109,9 +109,21 @@ class ApplicationController extends Controller
 			{
 				$params = $this->router->getParams();
 
+				foreach ($params as $key => $value)
+				{
+					if (!is_numeric($key))
+					{
+						$_REQUEST[$key] = $_GET[$key] = $value;
+
+						unset($params[$key]);
+					}
+				}
+
+				$params = array_values($params);
+
 				for ($i = 0; $i < count($params); $i += 2)
 				{
-					if ($params[$i] != '')
+					if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
 						$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
 				}
 			}

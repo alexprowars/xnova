@@ -47,7 +47,7 @@ class OptionsController extends ApplicationController
 		if (isset($_POST['db_password']) && isset($_POST['email']))
 		{
 			if (md5($_POST["db_password"]) != $inf["password"])
-				$this->message('Heпpaвильный тeкyщий пapoль', 'Hacтpoйки', '?set=options&mode=changeemail', 3);
+				$this->message('Heпpaвильный тeкyщий пapoль', 'Hacтpoйки', '/options/?mode=changeemail', 3);
 			else
 			{
 				$email = $this->db->query("SELECT user_id FROM game_log_email WHERE user_id = " . $this->user->id . " AND ok = 0;")->fetch();

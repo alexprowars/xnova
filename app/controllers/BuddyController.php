@@ -55,7 +55,7 @@ class BuddyController extends ApplicationController
 					'text'		=> $this->db->escapeString(strip_tags($_POST['text']))
 				))->execute();
 		
-				$this->game->sendMessage($u, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="?set=buddy&a=1"><< просмотреть >></a>');
+				$this->game->sendMessage($u, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/?a=1"><< просмотреть >></a>');
 		
 				$this->message('Запрос отправлен', 'Предложение дружбы', '?set=buddy');
 			}
@@ -103,7 +103,7 @@ class BuddyController extends ApplicationController
 		
 			$u = $this->db->query("SELECT id, username, galaxy, system, planet, onlinetime, ally_id, ally_name FROM game_users WHERE id=" . $uid)->fetch();
 		
-			$UserAlly = ($u["ally_id"] != 0) ? "<a href=?set=alliance&mode=ainfo&a=" . $u["ally_id"] . ">" . $u["ally_name"] . "</a>" : "";
+			$UserAlly = ($u["ally_id"] != 0) ? "<a href=/alliance/?mode=ainfo&a=" . $u["ally_id"] . ">" . $u["ally_name"] . "</a>" : "";
 		
 			if (isset($a))
 				$LastOnline = $b["text"];
@@ -122,14 +122,14 @@ class BuddyController extends ApplicationController
 			}
 		
 			if (isset($a) && isset($e))
-				$UserCommand = "<a href=?set=buddy&s=1&bid=" . $b["id"] . ">Удалить запрос</a>";
+				$UserCommand = "<a href=/buddy/?s=1&bid=" . $b["id"] . ">Удалить запрос</a>";
 			elseif (isset($a))
 			{
-				$UserCommand = "<a href=?set=buddy&s=1&bid=" . $b["id"] . ">Применить</a><br/>";
-				$UserCommand .= "<a href=?set=buddy&a=1&s=1&bid=" . $b["id"] . ">Отклонить</a></a>";
+				$UserCommand = "<a href=/buddy/?s=1&bid=" . $b["id"] . ">Применить</a><br/>";
+				$UserCommand .= "<a href=/buddy/?a=1&s=1&bid=" . $b["id"] . ">Отклонить</a></a>";
 			}
 			else
-				$UserCommand = "<a href=?set=buddy&s=1&bid=" . $b["id"] . ">Удалить</a>";
+				$UserCommand = "<a href=/buddy/?s=1&bid=" . $b["id"] . ">Удалить</a>";
 		
 			$q['id'] = $u["id"];
 			$q['username'] = $u["username"];

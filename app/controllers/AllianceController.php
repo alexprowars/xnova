@@ -156,7 +156,7 @@ class AllianceController extends ApplicationController
 					$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '?set=alliance', _getText('Ok'));
 				}
 				else
-					$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "?set=alliance&mode=exit&yes=1", "Подтвердить");
+					$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "/alliance/?mode=exit&yes=1", "Подтвердить");
 
 				$this->tag->setTitle('Выход их альянса');
 				$this->view->setVar('html', $html);
@@ -179,11 +179,11 @@ class AllianceController extends ApplicationController
 					$st = intval($_POST['status']);
 					$al = $this->db->query("SELECT id, ally_name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'")->fetch();
 					if (!$al['id'])
-						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
+						$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 					$ad = $this->db->query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $ally['id'] . " AND d_id = " . $al['id'] . ";");
 					if ($ad->numRows() > 0)
-						$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "?set=alliance&mode=diplo", 3);
+						$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 					if ($st < 0 || $st > 3)
 						$st = 0;
@@ -191,7 +191,7 @@ class AllianceController extends ApplicationController
 					$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $ally['id'] . ", " . $al['id'] . ", " . $st . ", 0, 1)");
 					$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $ally['id'] . ", " . $st . ", 0, 0)");
 	
-					$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "?set=alliance&mode=diplo", 3);
+					$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 				}
 				elseif (isset($_GET['edit']) && $_GET['edit'] == "del")
@@ -199,12 +199,12 @@ class AllianceController extends ApplicationController
 					$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . ";")->fetch();
 	
 					if (!$al['a_id'])
-						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
+						$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
 					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 	
-					$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "?set=alliance&mode=diplo", 3);
+					$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 				}
 				elseif (isset($_GET['edit']) && $_GET['edit'] == "suc")
@@ -212,12 +212,12 @@ class AllianceController extends ApplicationController
 					$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $ally['id'] . "")->fetch();
 	
 					if (!$al['a_id'])
-						$this->message("Ошибка ввода параметров", "Дипломатия", "?set=alliance&mode=diplo", 3);
+						$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/?mode=diplo", 3);
 	
 					$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
 					$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 	
-					$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "?set=alliance&mode=diplo", 3);
+					$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "/alliance/?mode=diplo", 3);
 				}
 	
 				$dp = $this->db->query("SELECT ad.*, a.ally_name FROM game_alliance_diplomacy ad, game_alliance a WHERE a.id = ad.d_id AND ad.a_id = '" . $ally['id'] . "';");
@@ -227,12 +227,12 @@ class AllianceController extends ApplicationController
 					if ($diplo['status'] == 0)
 					{
 						if ($diplo['primary'] == 1)
-							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DMyQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/?mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 						else
-							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"/assets/images/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"?set=alliance&mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+							$parse['DQuery'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/?mode=diplo&edit=suc&id={$diplo['id']}\"><img src=\"/assets/images/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"/alliance/?mode=diplo&edit=del&id={$diplo['id']}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
 					}
 					else
-						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"?set=alliance&mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить\"></a></th></tr>";
+						$parse['DText'] .= "<tr><th>" . $diplo['ally_name'] . "</th><th>" . $ally['ally_name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/?mode=diplo&edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить\"></a></th></tr>";
 				}
 	
 				if ($parse['DMyQuery'] == "")
@@ -451,7 +451,7 @@ class AllianceController extends ApplicationController
 				{
 					$p = (isset($_GET['p'])) ? intval($_GET['p']) : 1;
 	
-					$thiss = Helpers::pagination($news_count['num'], 20, '?set=alliance&mode=circular', $p);
+					$thiss = Helpers::pagination($news_count['num'], 20, '/alliance/?mode=circular', $p);
 	
 					$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "' ORDER BY `id` DESC limit " . (($p - 1) * 20) . ", 20");
 	
@@ -505,7 +505,7 @@ class AllianceController extends ApplicationController
 	
 								Sql::build()->update('game_users')->setField('-credits', $parse['need'])->where('id', '=', $this->user->id)->execute();
 	
-								$this->message("Планета была успешно преобразована", "Управление планетами", "?set=alliance&mode=admin&edit=planets", 3);
+								$this->message("Планета была успешно преобразована", "Управление планетами", "/alliance/?mode=admin&edit=planets", 3);
 							}
 							else
 								$this->message("Недостаточно кредитов для преобразования планеты", "Управление планетами");
@@ -573,7 +573,7 @@ class AllianceController extends ApplicationController
 						foreach ($ally_ranks as $a => $b)
 						{
 							$list['id'] = $a;
-							$list['delete'] = "<a href=\"?set=alliance&mode=admin&edit=rights&d={$a}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
+							$list['delete'] = "<a href=\"/alliance/?mode=admin&edit=rights&d={$a}\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
 							$list['r0'] = $b['name'];
 							$list['a'] = $a;
 	
@@ -666,8 +666,8 @@ class AllianceController extends ApplicationController
 					$parse['ally_request_notallow_0'] = ($ally['ally_request_notallow'] == 1) ? ' SELECTED' : '';
 					$parse['ally_request_notallow_1'] = ($ally['ally_request_notallow'] == 0) ? ' SELECTED' : '';
 					$parse['ally_owner_range'] = $ally['ally_owner_range'];
-					$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "?set=alliance&mode=admin&edit=give", 'Продолжить');
-					$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "?set=alliance&mode=admin&edit=exit", 'Продолжить');
+					$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/?mode=admin&edit=give", 'Продолжить');
+					$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/?mode=admin&edit=exit", 'Продолжить');
 	
 					$this->view->pick('alliance/alliance_admin');
 					$this->view->setVar('parse', $parse);
@@ -858,9 +858,9 @@ class AllianceController extends ApplicationController
 				$qq = $this->db->query("SELECT count(id) AS cc FROM game_alliance_diplomacy WHERE d_id = " . $ally['id'] . " AND status = 0")->fetch();
 	
 				if ($qq['cc'] > 0)
-					$parse['ally_dipl'] = " <a href=\"?set=alliance&mode=diplo\">Просмотр</a> (" . $qq['cc'] . " новых запросов)";
+					$parse['ally_dipl'] = " <a href=\"/alliance/?mode=diplo\">Просмотр</a> (" . $qq['cc'] . " новых запросов)";
 				else
-					$parse['ally_dipl'] = " <a href=\"?set=alliance&mode=diplo\">Просмотр</a>";
+					$parse['ally_dipl'] = " <a href=\"/alliance/?mode=diplo\">Просмотр</a>";
 			}
 	
 			$parse['requests'] = '';
@@ -870,13 +870,13 @@ class AllianceController extends ApplicationController
 			if ($request != 0)
 			{
 				if ($ally['ally_owner'] == $this->user->id || $ally_ranks[$ally_member['rank'] - 1]['bewerbungen'] != 0)
-					$parse['requests'] = "<tr><th>Заявки</th><th><a href=\"?set=alliance&mode=admin&edit=requests\">" . $request . " заявок</a></th></tr>";
+					$parse['requests'] = "<tr><th>Заявки</th><th><a href=\"/alliance/?mode=admin&edit=requests\">" . $request . " заявок</a></th></tr>";
 			}
 	
-			$parse['alliance_admin'] = ($user_admin) ? '(<a href="?set=alliance&mode=admin&edit=ally">управление альянсом</a>)' : '';
-			$parse['send_circular_mail'] = ($user_can_send_mails) ? '<tr><th>Альянс чат (' . $this->user->messages_ally . ' новых)</th><th><a href="?set=alliance&mode=circular">Войти в чат</a></th></tr>' : '';
-			$parse['members_list'] = ($user_can_watch_memberlist) ? ' (<a href="?set=alliance&mode=memberslist">список</a>)' : '';
-			$parse['ally_owner'] = ($ally['ally_owner'] != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "?set=alliance&mode=exit", _getText('Continue')) : '';
+			$parse['alliance_admin'] = ($user_admin) ? '(<a href="/alliance/?mode=admin&edit=ally">управление альянсом</a>)' : '';
+			$parse['send_circular_mail'] = ($user_can_send_mails) ? '<tr><th>Альянс чат (' . $this->user->messages_ally . ' новых)</th><th><a href="/alliance/?mode=circular">Войти в чат</a></th></tr>' : '';
+			$parse['members_list'] = ($user_can_watch_memberlist) ? ' (<a href="/alliance/?mode=memberslist">список</a>)' : '';
+			$parse['ally_owner'] = ($ally['ally_owner'] != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "/alliance/?mode=exit", _getText('Continue')) : '';
 			$parse['ally_image'] = ($ally['ally_image'] != '') ? "<tr><th colspan=2 class=nopadding><img src=\"" . $ally['ally_image'] . "\" style=\"max-width:100%\"></th></tr>" : '';
 			$parse['range'] = $range;
 			$parse['ally_description'] = $ally['ally_description'];
@@ -924,7 +924,7 @@ class AllianceController extends ApplicationController
 		$parse['ally_description'] = $allyrow['ally_description'];
 		$parse['ally_image'] = $allyrow['ally_image'];
 		$parse['ally_web'] = $allyrow['ally_web'];
-		$parse['bewerbung'] = ($this->user->ally_id == 0) ? "<tr><th>Вступление</th><th><a href=\"?set=alliance&mode=apply&amp;allyid=" . $allyrow['id'] . "\">Нажмите сюда для подачи заявки</a></th></tr>" : '';
+		$parse['bewerbung'] = ($this->user->ally_id == 0) ? "<tr><th>Вступление</th><th><a href=\"/alliance/?mode=apply&amp;allyid=" . $allyrow['id'] . "\">Нажмите сюда для подачи заявки</a></th></tr>" : '';
 
 		$this->view->pick('alliance/alliance_info');
 		$this->view->setVar('parse', $parse);
@@ -994,7 +994,7 @@ class AllianceController extends ApplicationController
 		if (isset($_POST['searchtext']) && $_POST['searchtext'] != '')
 		{
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['searchtext']))
-				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '?set=alliance&mode=search', 2);
+				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '/alliance/?mode=search', 2);
 
 			$search = $this->db->query("SELECT * FROM game_alliance WHERE ally_name LIKE '%" . $_POST['searchtext'] . "%' or ally_tag LIKE '%" . $_POST['searchtext'] . "%' LIMIT 30");
 
@@ -1005,7 +1005,7 @@ class AllianceController extends ApplicationController
 				while ($s = $search->fetch())
 				{
 					$entry = array();
-					$entry['ally_tag'] = "[<a href=\"?set=alliance&mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
+					$entry['ally_tag'] = "[<a href=\"/alliance/?mode=apply&allyid={$s['id']}\">{$s['ally_tag']}</a>]";
 					$entry['ally_name'] = $s['ally_name'];
 					$entry['ally_members'] = $s['ally_members'];
 

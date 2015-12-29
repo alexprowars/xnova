@@ -7,3 +7,5 @@ Thumbs.db
 *.log
 *.txt
 *.map
+*.lock
+*.phar

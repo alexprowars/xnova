@@ -49,7 +49,7 @@ class AvatarController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$html = '<center><form name="form2" enctype="multipart/form-data" method="post" action="?set=avatar&mode=upload">
+		$html = '<center><form name="form2" enctype="multipart/form-data" method="post" action="/avatar/?mode=upload">
 				<table width=500><tr><td class=c>Загрузка аватара</td></tr>
 				<tr><th>
 					Картинки уменьшаются до размера 128 на 128 пикселей<br><br>

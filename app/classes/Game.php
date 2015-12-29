@@ -154,7 +154,7 @@ class Game extends Component
 
 	public function getClearQuery ()
 	{
-		$out = $this->request->getQuery();
+		/*$out = $this->request->getQuery();
 
 		unset($out['ajax']);
 		unset($out['popup']);
@@ -165,7 +165,7 @@ class Game extends Component
 
 		if (count($out))
 			return $this->router->getRewriteUri().'?'.http_build_query($out);
-		else
+		else*/
 			return $this->router->getRewriteUri();
 	}
 

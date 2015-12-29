@@ -87,9 +87,9 @@ class ImperiumController extends ApplicationController
 
 			$p['field_max'] = $imperium->getMaxFields();
 
-			@$parse['file_images'] .= '<th width=75><a href="?set=overview&cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
+			@$parse['file_images'] .= '<th width=75><a href="/overview/?cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";
-			@$parse['file_coordinates'] .= "<th>[<a href=\"?set=galaxy&r=3&galaxy=".$p['galaxy']."&system=".$p['system']."\">".$p['galaxy'].":".$p['system'].":".$p['planet']."</a>]</th>";
+			@$parse['file_coordinates'] .= "<th>[<a href=\"/galaxy/?r=3&galaxy=".$p['galaxy']."&system=".$p['system']."\">".$p['galaxy'].":".$p['system'].":".$p['planet']."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $p['field_current'] . '/' . $p['field_max'] . '</th>';
 			@$parse['file_metal'] .= '<th>' . Helpers::pretty_number($p['metal']) . '</th>';
 			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($p['crystal']) . '</th>';

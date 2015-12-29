@@ -24,7 +24,7 @@
 		<div class="row">
 			<div class="col-xs-12 col-sm-6">
 				<?=_getText('type_planet', $parse['planet_type']) ?> "<?=$parse['planet_name'] ?>"
-				<a href="<?=$this->url->get("galaxy/galaxy/".$parse['galaxy_galaxy']."/system/".$parse['galaxy_system']."/r/0/") ?>">[<?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?>]</a>
+				<a href="<?=$this->url->get("galaxy/".$parse['galaxy_galaxy']."/".$parse['galaxy_system']."/") ?>">[<?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?>]</a>
 				<a href="<?=$this->url->get("overview/rename/") ?>" title="Редактирование планеты">(изменить)</a>
 			</div>
 			<div class="separator visible-xs"></div>

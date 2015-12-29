@@ -35,7 +35,7 @@
 			<th width="20"><?=($id + 1) ?></th>
 			<th><a href="<?=$this->url->get('messages/write/id/'.$list['id'].'') ?>"><?=$list['username'] ?></a></th>
 			<th><?=$list['ally'] ?></th>
-			<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$list['g'].'/system/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
+			<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 			<th><?=$list['online'] ?></th>
 			<th><?=$list['c'] ?></th>
 		</tr>
@@ -80,7 +80,7 @@
 						<tr>
 							<td>
 								<?=$data['planet_name'] ?><br>
-								<a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$data['galaxy'].'/system/'.$data['system'].'/') ?>">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
+								<a href="<?=$this->url->get('galaxy/'.$data['galaxy'].'/'.$data['system'].'/') ?>">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
 							</td>
 					  </tr>
 					</table>

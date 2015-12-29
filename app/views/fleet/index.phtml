@@ -39,9 +39,9 @@
 				<th>
 					<a class="tooltip" data-tooltip-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\App\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
-				<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$f['fleet_start_galaxy'].'/system/'.$f['fleet_start_system'].'/') ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
+				<th><a href="<?=$this->url->get('galaxy/'.$f['fleet_start_galaxy'].'/'.$f['fleet_start_system'].'/') ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['fleet_start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_start_time']) ?></th>
-				<th><a href="<?=$this->url->get('galaxy/index/r/3/galaxy/'.$f['fleet_end_galaxy'].'/system/'.$f['fleet_end_system'].'/') ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
+				<th><a href="<?=$this->url->get('galaxy/'.$f['fleet_end_galaxy'].'/'.$f['fleet_end_system'].'/') ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['fleet_end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_end_time']) ?></th>
 				<th><font color="lime"><?=($f['fleet_end_time'] > time() ? \App\Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
