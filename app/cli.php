@@ -7,6 +7,7 @@ use App\Database;
 use App\Game;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Cli\Console as ConsoleApp;
+use Phalcon\Cache\Backend\Memcache as Cache;
 
 $di = new CliDI();
 
@@ -38,6 +39,26 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 
 			return $connection;
 	    }
+	);
+
+	$di->set(
+	    'cache', function () use ($config, $di)
+		{
+			$frontCache = new \Phalcon\Cache\Frontend\Data(array(
+				"lifetime" => 3600
+			));
+
+			/**
+			 * @var Object $config
+			 */
+			$cache = new Cache($frontCache, array
+			(
+				"host" => $config->memcache->host,
+				"port" => $config->memcache->port
+			));
+
+	        return $cache;
+	    }, true
 	);
 
 	$di->set('game', function ()

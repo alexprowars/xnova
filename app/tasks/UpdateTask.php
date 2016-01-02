@@ -1,5 +1,6 @@
 <?php
 
+use App\Missions\Mission;
 use App\UpdateStatistics;
 
 class UpdateTask extends ApplicationTask
@@ -61,8 +62,6 @@ class UpdateTask extends ApplicationTask
 			20  => 'MissionCaseRak'
 		);
 
-		require_once(APP_PATH.'class/missions/interface.php');
-
 		$totalRuns = 1;
 
 		while ($totalRuns < MAX_RUNS)
@@ -77,9 +76,9 @@ class UpdateTask extends ApplicationTask
 
 			$_fleets = array_merge
 			(
-				db::extractResult(db::query("SELECT * FROM game_fleets WHERE (`fleet_start_time` <= '" . time() . "' AND `fleet_mess` = '0') LIMIT 3")),
-				db::extractResult(db::query("SELECT * FROM game_fleets WHERE (`fleet_end_stay` <= '" . time() . "' AND `fleet_mess` != '1' AND `fleet_end_stay` != '0') LIMIT 3")),
-				db::extractResult(db::query("SELECT * FROM game_fleets WHERE (`fleet_end_time` < '" . time() . "' AND `fleet_mess` != '0') LIMIT 3"))
+				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`fleet_start_time` <= '" . time() . "' AND `fleet_mess` = '0') LIMIT 3")),
+				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`fleet_end_stay` <= '" . time() . "' AND `fleet_mess` != '1' AND `fleet_end_stay` != '0') LIMIT 3")),
+				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`fleet_end_time` < '" . time() . "' AND `fleet_mess` != '0') LIMIT 3"))
 			);
 
 			uasort($_fleets, function($a, $b)
@@ -93,17 +92,14 @@ class UpdateTask extends ApplicationTask
 				{
 					if (!isset($missionObjPattern[$fleetRow['fleet_mission']]))
 					{
-						db::query("DELETE FROM game_fleets WHERE `fleet_id` = ".$fleetRow['fleet_id']);
+						$this->db->query("DELETE FROM game_fleets WHERE `fleet_id` = ".$fleetRow['fleet_id']);
 
 						continue;
 					}
 
 					$missionName = $missionObjPattern[$fleetRow['fleet_mission']];
 
-					if (!class_exists($missionName))
-						require_once(ROOT_DIR.APP_PATH.'class/missions/'.$missionName.'.php');
-
-					$missionName = 'Xnova\missions\\'.$missionName;
+					$missionName = 'App\Missions\\'.$missionName;
 
 					/**
 					 * @var $mission Mission
@@ -132,6 +128,8 @@ class UpdateTask extends ApplicationTask
 			$totalRuns++;
 			sleep(TIME_LIMIT / MAX_RUNS);
 		}
+
+		echo "all fleet updated\n";
 	}
 }
 

@@ -127,6 +127,18 @@ class Planet extends Model
 		return "game_planets";
 	}
 
+	/**
+	 * @param $galaxy
+	 * @param $system
+	 * @param $planet
+	 * @param int $type
+	 * @return Planet
+	 */
+	static function findByCoords ($galaxy, $system, $planet, $type = 1)
+	{
+		return Planet::findFirst("galaxy = ".$galaxy." AND system = ".$system." AND planet = ".$planet." AND planet_type = ".$type."");
+	}
+
 	public function assignUser (User $user)
 	{
 		$this->user = $user;
@@ -275,6 +287,46 @@ class Planet extends Model
 				unset($_SESSION['fleet_shortcut']);
 
 			return $planetId;
+		}
+		else
+			return false;
+	}
+
+	public function createMoon ($Galaxy, $System, $Planet, $Owner, $Chance)
+	{
+		$MoonPlanet = $this->db->query("SELECT * FROM game_planets WHERE `galaxy` = '" . $Galaxy . "' AND `system` = '" . $System . "' AND `planet` = '" . $Planet . "' AND planet_type = 1")->fetch();
+
+		if ($MoonPlanet['parent_planet'] == 0 && $MoonPlanet['id'] != 0)
+		{
+			$maxtemp = $MoonPlanet['temp_max'] - rand(10, 45);
+			$mintemp = $MoonPlanet['temp_min'] - rand(10, 45);
+
+			$size = floor(pow(mt_rand(10, 20) + 3 * $Chance, 0.5) * 1000);
+
+			$this->db->insertAsDict('game_planets',
+			[
+				'name' 			=> _getText('sys_moon'),
+				'id_owner' 		=> $Owner,
+				'galaxy' 		=> $Galaxy,
+				'system' 		=> $System,
+				'planet' 		=> $Planet,
+				'planet_type' 	=> 3,
+				'last_update' 	=> time(),
+				'image' 		=> 'mond',
+				'diameter' 		=> $size,
+				'field_max' 	=> 1,
+				'temp_min' 		=> $maxtemp,
+				'temp_max' 		=> $mintemp,
+				'metal' 		=> 0,
+				'crystal' 		=> 0,
+				'deuterium' 	=> 0
+			]);
+
+			$QryGetMoonId = $this->db->lastInsertId();
+
+			$this->db->updateAsDict('game_planets', ['parent_planet' => $QryGetMoonId], 'id = '.$MoonPlanet['id']);
+
+			return $QryGetMoonId;
 		}
 		else
 			return false;

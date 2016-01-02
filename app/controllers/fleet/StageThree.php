@@ -270,7 +270,7 @@ class StageThree
 			$errorlist .= _getText('fl_limit_planet');
 
 		if ($errorlist != '')
-			$controller->message("<span class=\"error\"><ul>" . $errorlist . "</ul></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\">" . $errorlist . "</span>", 'Ошибка', "?set=fleet", 2);
 
 		if (!isset($fleetarray))
 			$controller->message("<span class=\"error\"><b>" . _getText('fl_no_fleetarray') . "</b></span>", 'Ошибка', "?set=fleet", 2);
@@ -474,7 +474,7 @@ class StageThree
 			//if ($equiv > 15000000)
 			//	$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку с количеством ресурсов большим чем 15кк в эквиваленте металла.</b></span>", 'Ошибка', "?set=fleet", 5);
 
-			sql::build()->insert('game_log_transfers')->set(Array
+			Sql::build()->insert('game_log_transfers')->set(Array
 			(
 				'time' 		=> time(),
 				'user_id' 	=> $controller->user->id,
@@ -565,7 +565,7 @@ class StageThree
 		$fleetPlanetUpdate['crystal'] 	= $controller->planet->crystal;
 		$fleetPlanetUpdate['deuterium'] = $controller->planet->deuterium;
 
-		sql::build()->update('game_planets')->set($fleetPlanetUpdate)->where('id', '=', $controller->planet->id)->execute();
+		Sql::build()->update('game_planets')->set($fleetPlanetUpdate)->where('id', '=', $controller->planet->id)->execute();
 
 		$html = "<center>";
 		$html .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"600\">";
