@@ -2,7 +2,10 @@
 
 namespace App\Missions;
 
-use App\Fleet;
+use App\Battle\Models\Player;
+use App\Battle\Models\PlayerGroup;
+use App\Battle\Models\Fleet;
+use App\Fleet as FleetMethods;
 use App\FleetEngine;
 use App\Helpers;
 use App\Sql;
@@ -245,12 +248,12 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$mission = new MissionCaseAttack(array());
 
-				$attackers = new \PlayerGroup();
-				$defenders = new \PlayerGroup();
+				$attackers = new PlayerGroup();
+				$defenders = new PlayerGroup();
 
 				$mission->getGroupFleet($this->_fleet, $attackers);
 
-				$fleetData = Fleet::unserializeFleet($defenderFleetArray);
+				$fleetData = FleetMethods::unserializeFleet($defenderFleetArray);
 
 				$mission->usersInfo[0] = array();
 				$mission->usersInfo[0][0] = array
@@ -271,7 +274,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$res[$shipId + 100] = $shipArr['lvl'];
 				}
 
-				$playerObj = new \Player(0);
+				$playerObj = new Player(0);
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
@@ -283,14 +286,14 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$mission->usersTech[0] = $res;
 
-				$fleetObj = new \Fleet(0);
+				$fleetObj = new Fleet(0);
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
 					if ($shipId < 100 || $shipId > 300 || !$shipArr['cnt'])
 						continue;
 
-					$fleetObj->add($mission->getShipType($shipId, array($shipArr['cnt'], $shipArr['lvl']), $res));
+					$fleetObj->addShipType($mission->getShipType($shipId, array($shipArr['cnt'], $shipArr['lvl']), $res));
 				}
 
 				if (!$fleetObj->isEmpty())
