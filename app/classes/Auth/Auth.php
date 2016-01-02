@@ -117,20 +117,35 @@ class Auth extends Component
 
 		if ($this->IsUserChecked)
 		{
-			if ($UserRow->ip != sprintf("%u", ip2long($this->request->getClientAddress())))
-			{
-				$update = [];
-				$update['ip'] = sprintf("%u", ip2long($this->request->getClientAddress()));
+			$ip = sprintf("%u", ip2long($this->request->getClientAddress()));
 
-				$this->db->insertAsDict(
-					"game_log_ip",
-					array
-					(
-						'id'	=> $UserRow->id,
-						'time'	=> time(),
-						'ip'	=> sprintf("%u", ip2long($this->request->getClientAddress()))
-					)
-				);
+			if ($UserRow->onlinetime < (time() - 30) || $UserRow->ip != $ip || ($this->dispatcher->getControllerName() == "chat" && ($UserRow->onlinetime < time() - 120 || $UserRow->chat == 0)) || ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0))
+			{
+				$update = ['onlinetime' => time()];
+
+				if ($UserRow->ip != $ip)
+				{
+					$update['ip'] = $ip;
+
+					$this->db->insertAsDict(
+						"game_log_ip",
+						array
+						(
+							'id'	=> $UserRow->id,
+							'time'	=> time(),
+							'ip'	=> $ip
+						)
+					);
+				}
+
+				if ($this->dispatcher->getControllerName() == "chat" && $UserRow->chat == 0)
+				{
+					$update['chat'] = 1;
+
+					$UserRow->chat = 1;
+				}
+				elseif ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0)
+					$update['chat'] = 0;
 
 				$this->db->updateAsDict(
 				   	"game_users",
