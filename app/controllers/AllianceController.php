@@ -941,7 +941,7 @@ class AllianceController extends ApplicationController
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
 		if ($this->user->ally_id > 0 || $ally_request > 0)
-			$this->show();
+			$this->indexAction();
 
 		if (isset($_GET['yes']) && $_POST)
 		{
@@ -987,7 +987,7 @@ class AllianceController extends ApplicationController
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
 		if ($this->user->ally_id > 0 || $ally_request > 0)
-			$this->show();
+			$this->indexAction();
 
 		$parse = array();
 
@@ -1029,7 +1029,7 @@ class AllianceController extends ApplicationController
 			$this->message(_getText('Denied_access'), "Ошипко");
 	
 		if ($this->user->ally_id > 0)
-			$this->show();
+			$this->indexAction();
 
 		if (!is_numeric($_GET['allyid']) || !$_GET['allyid'])
 			$this->message(_getText('it_is_not_posible_to_apply'), _getText('it_is_not_posible_to_apply'));
@@ -1073,7 +1073,7 @@ class AllianceController extends ApplicationController
 	public function stat ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->show();
+			$this->indexAction();
 
 		$allyid = $this->request->get('id', null, 0);
 

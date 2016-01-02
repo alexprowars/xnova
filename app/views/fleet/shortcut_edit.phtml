@@ -1,10 +1,10 @@
 <form method=POST action="<?=$this->url->get('fleet/shortcut/a/'.$a.'/') ?>">
 	<input type=hidden name=a value=<?=$a ?>>
 	<table class="table">
-		<tr height=20>
+		<tr>
 			<td colspan=2 class=c><?=$c[0] ?> [<?=$c[1] ?>:<?=$c[2] ?>:<?=$c[3] ?>]</td>
 		</tr>
-		<tr height="20">
+		<tr>
 			<th>
 				<input type=text name=n value="<?=$c[0] ?>" size=32 maxlength=32 title="Название">
 				<input type=text name=g value="<?=$c[1] ?>" size=3 maxlength=2 title="Галактика">

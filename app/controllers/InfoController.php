@@ -63,47 +63,6 @@ class InfosController extends ApplicationController
 		return $ResultString;
 	}
 
-	private function BuildFleetListRows ($CurrentPlanet)
-	{
-		$CurrIdx = 1;
-		$Result = array();
-		foreach ($this->game->reslist['fleet'] AS $Ship)
-		{
-			if (isset($this->game->resource[$Ship]) && $CurrentPlanet[$this->game->resource[$Ship]] > 0)
-			{
-				$bloc = array();
-				$bloc['idx'] = $CurrIdx;
-				$bloc['fleet_id'] = $Ship;
-				$bloc['fleet_name'] = _getText('tech', $Ship);
-				$bloc['fleet_max'] = Helpers::pretty_number($CurrentPlanet[$this->game->resource[$Ship]]);
-				$Result[] = $bloc;
-				$CurrIdx++;
-			}
-		}
-		return $Result;
-	}
-
-	private function BuildJumpableMoonCombo ($CurrentUser, $CurrentPlanet)
-	{
-		$MoonList = $this->db->query("SELECT `id`, `name`, `system`, `galaxy`, `planet`, `sprungtor`, `last_jump_time` FROM game_planets WHERE (`planet_type` = '3' OR `planet_type` = '5') AND `id_owner` = '" . $CurrentUser['id'] . "';");
-
-		$Combo = "";
-
-		while ($CurMoon = $MoonList->fetch())
-		{
-			if ($CurMoon['id'] != $CurrentPlanet['id'])
-			{
-				$RestString = GetNextJumpWaitTime($CurMoon);
-
-				if ($CurMoon[$this->game->resource[43]] >= 1)
-				{
-					$Combo .= "<option value=\"" . $CurMoon['id'] . "\">[" . $CurMoon['galaxy'] . ":" . $CurMoon['system'] . ":" . $CurMoon['planet'] . "] " . $CurMoon['name'] . $RestString['string'] . "</option>\n";
-				}
-			}
-		}
-		return $Combo;
-	}
-
 	private function BuildFleetCombo ($CurrentUser, $CurrentPlanet)
 	{
 		$MoonList = $this->db->query("SELECT * FROM game_fleets WHERE `fleet_end_galaxy` = " . $CurrentPlanet['galaxy'] . " AND `fleet_end_system` = " . $CurrentPlanet['system'] . " AND `fleet_end_planet` = " . $CurrentPlanet['planet'] . " AND `fleet_end_type` = " . $CurrentPlanet['planet_type'] . " AND `fleet_mess` = 3 AND `fleet_owner` = '" . $CurrentUser['id'] . "';");
@@ -316,7 +275,7 @@ class InfosController extends ApplicationController
 
 			include_once(APP_PATH.'functions/functions.php');
 			// Устанавливаем обновлённые двигателя кораблей
-			SetShipsEngine($CurrentUser->data);
+			Fleet::SetShipsEngine($CurrentUser);
 
 			$parse['rf_info_to']  = $this->ShowRapidFireTo($BuildID);
 			$parse['rf_info_fr']  = $this->ShowRapidFireFrom($BuildID);

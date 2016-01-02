@@ -6,7 +6,7 @@ use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Mvc\Application;
 use Phalcon\DI\FactoryDefault;
 
-define('APP_PATH', realpath('..') . '/');
+define('APP_PATH', dirname(__DIR__.'../') . '/');
 
 define('DEBUG', false);
 
@@ -28,10 +28,10 @@ try
 		$benchmark = $profiler->start('\App', [], 'Init');
 	}
 
-	$config = new \Phalcon\Config\Adapter\Ini(APP_PATH . "/app/config/config.ini");
+	$config = new \Phalcon\Config\Adapter\Ini(APP_PATH . '/app/config/config.ini');
 
-	include (APP_PATH . "/app/config/loader.php");
-	include (APP_PATH . "/app/config/services.php");
+	include (APP_PATH . '/app/config/loader.php');
+	include (APP_PATH . '/app/config/services.php');
 
 	if (DEBUG)
 	{
@@ -42,26 +42,32 @@ try
 
     $application = new Application($di);
 
-	include (APP_PATH . "/app/config/bootstrap.php");
+	include (APP_PATH . '/app/config/bootstrap.php');
 
 	if (isset($benchmark))
 		$profiler->stop($benchmark);
 
 	$handle = $application->handle();
 
-	if (DEBUG && $application->router->getControllerName() != '' && $application->router->getControllerName() != 'chat' && $application->router->getControllerName() != 'admin')
+	if (DEBUG)
 	{
-		$toolbar = new \Fabfuel\Prophiler\Toolbar($profiler);
-		$toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
+		$controller = $application->router->getControllerName();
+
+		if ($controller !== '' && $controller !== 'chat' && $controller !== 'admin')
+		{
+			$toolbar = new \Fabfuel\Prophiler\Toolbar($profiler);
+			$toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
+		}
 	}
 
 	if ($application->request->isAjax())
 	{
+		/** @noinspection PhpUndefinedFieldInspection */
 		$application->response->setJsonContent(
 		[
 			'status' 	=> $application->game->getRequestStatus(),
 			'message' 	=> $application->game->getRequestMessage(),
-			'html' 		=> str_replace(Array("\t"), "", $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
+			'html' 		=> str_replace(Array("\t"), '', $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
 			'data' 		=> $application->game->getRequestData()
 		]);
 		$application->response->setContentType('text/json', 'utf8');
@@ -77,9 +83,9 @@ try
 }
 catch(\Exception $e)
 {
-    echo "PhalconException: ", $e->getMessage();
-	echo "<br>".$e->getFile();
-	echo "<br>".$e->getLine();
+    echo 'PhalconException: ', $e->getMessage();
+	echo '<br>'.$e->getFile();
+	echo '<br>'.$e->getLine();
 }
 
 ?>

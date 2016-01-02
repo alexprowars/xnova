@@ -39,7 +39,7 @@ class Shortcut
 				if (isset($_SESSION['fleet_shortcut']))
 					unset($_SESSION['fleet_shortcut']);
 
-				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "?set=fleet&page=shortcut");
+				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/?page=shortcut");
 			}
 
 			$g = $controller->request->getPost('g', 'int', 0);
@@ -79,7 +79,7 @@ class Shortcut
 					if (isset($_SESSION['fleet_shortcut']))
 						unset($_SESSION['fleet_shortcut']);
 
-					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "?set=fleet&page=shortcut");
+					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/?page=shortcut");
 				}
 				else
 				{
@@ -110,7 +110,7 @@ class Shortcut
 					if (isset($_SESSION['fleet_shortcut']))
 						unset($_SESSION['fleet_shortcut']);
 
-					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "?set=fleet&page=shortcut");
+					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/?page=shortcut");
 				}
 			}
 
@@ -128,15 +128,15 @@ class Shortcut
 					$controller->view->setVar('a', $a);
 				}
 				else
-					$controller->message("Данной ссылки не существует!", "Ссылки", "?set=fleet&page=shortcut");
+					$controller->message("Данной ссылки не существует!", "Ссылки", "/fleet/?page=shortcut");
 			}
 			else
-				$controller->message("Ваш список быстрых ссылок пуст!", "Ссылки", "?set=fleet&page=shortcut");
+				$controller->message("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/?page=shortcut");
 		}
 		else
 		{
 
-			$html = '<table class="table"><tr height="20"><td colspan="2" class="c">Ссылки (<a href="?set=fleet&page=shortcut&mode=add">Добавить</a>)</td></tr>';
+			$html = '<table class="table"><tr height="20"><td colspan="2" class="c">Ссылки (<a href="/fleet/?page=shortcut&mode=add">Добавить</a>)</td></tr>';
 
 			if ($inf['fleet_shortcut'])
 			{
@@ -152,7 +152,7 @@ class Shortcut
 						if ($i == 0)
 							$html .= "<tr height=\"20\">";
 
-						$html .= "<th width=50%><a href=\"?set=fleet&page=shortcut&a=" . $e++ . "\">";
+						$html .= "<th width=50%><a href=\"/fleet/?page=shortcut&a=" . $e++ . "\">";
 						$html .= "{$c[0]} {$c[1]}:{$c[2]}:{$c[3]}";
 
 						if ($c[4] == 2)

@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Fleet;
+use App\Helpers;
+
 class PhalanxController extends ApplicationController
 {
 	public function initialize ()
@@ -74,14 +77,10 @@ class PhalanxController extends ApplicationController
 			$timerek = $row['fleet_start_time'];
 
 			if ($row['fleet_mission'] != 6)
-			{
 				$kolormisjido = 'lime';
-			}
 			else
-			{
 				$kolormisjido = 'orange';
-			}
-		
+
 			$g1 = $row['fleet_start_galaxy'];
 			$s1 = $row['fleet_start_system'];
 			$i1 = $row['fleet_start_planet'];
@@ -92,24 +91,16 @@ class PhalanxController extends ApplicationController
 			$i2 = $row['fleet_end_planet'];
 			$t2 = $row['fleet_end_type'];
 		
-			if ($t1 == '3')
-			{
+			if ($t1 == 3)
 				$type = "лун";
-			}
 			else
-			{
 				$type = "планет";
-			}
-		
-			if ($t2 == '3')
-			{
+
+			if ($t2 == 3)
 				$type2 = "лун";
-			}
 			else
-			{
 				$type2 = "планет";
-			}
-		
+
 			$nome = $row['fleet_owner_name'];
 			$nome2 = $row['fleet_target_owner_name'];
 		
@@ -119,10 +110,10 @@ class PhalanxController extends ApplicationController
 		
 				$Label = "fs";
 				$Time = $row['fleet_start_time'] - time();
-				$parse['manobras'] .= InsertJavaScriptChronoApplet($Label, $ii, $Time);
+				$parse['manobras'] .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
 		
 				$parse['manobras'] .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$parse['manobras'] .= "(" . CreateFleetPopupedFleetLink($row, 'флот', '') . ")";
+				$parse['manobras'] .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
 				$parse['manobras'] .= " с " . $type . "ы " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font> летит на " . $type2 . "у " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font>. Задание:";
 				$parse['manobras'] .= " <font color=\"white\">{$missiontype[$row['fleet_mission']]}</font></th>";
@@ -136,10 +127,10 @@ class PhalanxController extends ApplicationController
 		
 				$Label = "fe";
 				$Time = $row['fleet_end_time'] - time();
-				$parse['manobras'] .= InsertJavaScriptChronoApplet($Label, $ii, $Time);
+				$parse['manobras'] .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
 		
 				$parse['manobras'] .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$parse['manobras'] .= "(" . CreateFleetPopupedFleetLink($row, 'флот', '') . ")";
+				$parse['manobras'] .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
 				$parse['manobras'] .= " с " . $type2 . "ы " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font> возвращается на " . $type . "у " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font>. Задание:";
 				$parse['manobras'] .= " <font color=\"white\">{$missiontype[$row['fleet_mission']]}</font></th></tr>";
@@ -156,9 +147,7 @@ class PhalanxController extends ApplicationController
 			$html = '';
 		}
 		else
-		{
-			$html = "<center><table width=519><tr><td class=c colspan=7>Нет флотов.</td></tr><th>На этой планете нет движения флотов.</th></table></center>";
-		}
+			$html = "<center><table width=519><tr><td class=c colspan=7>Нет флотов.</td></tr><tr><th>На этой планете нет движения флотов.</th></tr></table></center>";
 
 		$this->tag->setTitle('Сенсорная фаланга');
 		$this->view->setVar('html', $html);

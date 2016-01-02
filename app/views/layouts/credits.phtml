@@ -45,12 +45,12 @@
 				<br><br>
 
 				<form class="noajax" action="https://auth.robokassa.ru/Merchant/Index.aspx" method="POST" target="_blank">
-					<input type="hidden" name="MrchLogin" value="<?=SHOP_LOGIN ?>">
+					<input type="hidden" name="MrchLogin" value="<?=$this->config->robokassa->login ?>">
 					<input type="hidden" name="InvDesc" value="Покупка кредитов">
 					<input type="hidden" name="InvId" value="0">
 					<input type="hidden" name="Email" value="<?=$useremail ?>">
 					<input type="hidden" name="Shp_UID" value="<?=((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?>">
-					<input type="hidden" name="SignatureValue" value="<?=md5(SHOP_LOGIN.":".intval($_POST['OutSum']).":0:".SHOP_MERCHANT.":Shp_UID=".((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
+					<input type="hidden" name="SignatureValue" value="<?=md5($this->config->robokassa->login.":".intval($_POST['OutSum']).":0:".$this->config->robokassa->public.":Shp_UID=".((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
 					<input type="hidden" name="Culture" value="RU">
 					<input type="hidden" name="OutSum" value="<?=intval($_POST['OutSum']) ?>">
 					<br>

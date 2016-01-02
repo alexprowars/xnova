@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Fleet;
 use App\Helpers;
 use App\Lang;
 use App\Models\Planet;
@@ -40,8 +41,8 @@ class OverviewController extends ApplicationController
 		$FleetPrefix = $Owner == true ? 'own' : '';
 
 		$MissionType 	= $FleetRow['fleet_mission'];
-		$FleetContent 	= CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType]);
-		$FleetCapacity 	= CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
+		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
 
 		$StartPlanet 	= $FleetRow['fleet_owner_name'];
 		$StartType 		= $FleetRow['fleet_start_type'];
@@ -90,7 +91,7 @@ class OverviewController extends ApplicationController
 				$TargetID .= $TargetPlanet . " ";
 			}
 
-			$TargetID .= GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$TargetID .= Helpers::GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
 		}
 		else
 		{
@@ -142,7 +143,10 @@ class OverviewController extends ApplicationController
 			$EventString = ($FleetRow['fleet_group'] != 0) ? 'Союзный ' : _getText('ov_une_hostile');
 			$EventString .= $FleetContent;
 			$EventString .= _getText('ov_hostile');
-			$EventString .= BuildHostileFleetPlayerLink($FleetRow);
+
+			$FleetRow['username'] = $this->db->fetchColumn("SELECT `username` FROM game_users WHERE `id` = '" . $FleetRow['fleet_owner'] . "';");
+
+			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
 		}
 
 		if ($Status == 0)
@@ -189,7 +193,7 @@ class OverviewController extends ApplicationController
 		$bloc['fleet_time'] = $this->game->datezone("H:i:s", $Time);
 		$bloc['fleet_count_time'] = Helpers::pretty_time($Rest, ':');
 		$bloc['fleet_descr'] = $EventString;
-		$bloc['fleet_javas'] = InsertJavaScriptChronoApplet($Label, $Record, $Rest);
+		$bloc['fleet_javas'] = Helpers::InsertJavaScriptChronoApplet($Label, $Record, $Rest);
 
 		return $bloc;
 	}
@@ -764,9 +768,7 @@ class OverviewController extends ApplicationController
 		}
 
 		if ($showMessage)
-		{
-			$this->setMessage('<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "Сырьё" и восстановите производство.</span>');
-		}
+			$this->view->setVar('globalMessage', '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "Сырьё" и восстановите производство.</span>');
 
 		$this->view->setVar('parse', $parse);
 		$this->tag->setTitle('Обзор');

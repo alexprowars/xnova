@@ -316,6 +316,34 @@ class Fleet extends Building
 
 		return $result;
 	}
+
+	static function GetMissileRange (User $user)
+	{
+		$game = $user->getDI()->getShared('game');
+
+		if ($user->{$game->resource[117]} > 0)
+			$MissileRange = ($user->{$game->resource[117]} * 5) - 1;
+		else
+			$MissileRange = 0;
+
+		return $MissileRange;
+	}
+
+	static function GetPhalanxRange ($PhalanxLevel)
+	{
+		$PhalanxRange = 0;
+
+		if ($PhalanxLevel > 1)
+		{
+			for ($Level = 2; $Level < $PhalanxLevel + 1; $Level++)
+			{
+				$lvl = ($Level * 2) - 1;
+				$PhalanxRange += $lvl;
+			}
+		}
+
+		return $PhalanxRange;
+	}
 }
 
 ?>

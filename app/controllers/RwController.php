@@ -67,9 +67,9 @@ class RwController extends ApplicationController
 				$Page = "<html><head><title>Боевой доклад</title>";
 
 				if (isset($result[0]['version']) && $result[0]['version'] == 2)
-					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report_v2.css?v=".substr(md5(VERSION), 0, 3)."\">";
+					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report_v2.css\">";
 				else
-					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css?v=".substr(md5(VERSION), 0, 3)."\">";
+					$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";
 
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
 				$Page .= "</head><body><script>function show(id){if(document.getElementById(id).style.display==\"block\")document.getElementById(id).style.display=\"none\"; else document.getElementById(id).style.display=\"block\";}</script>";

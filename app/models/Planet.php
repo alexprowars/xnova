@@ -1090,7 +1090,65 @@ class Planet extends Model
 		return $this->field_max + ($this->{$this->game->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->game->resource[41]});
 	}
 
-	public function saveData ($fields, $userId = 0)
+	public function GetNextJumpWaitTime (array $CurMoon = array())
+	{
+		if (count($CurMoon) == 0)
+			$CurMoon = $this->toArray();
+
+		$JumpGateLevel = $CurMoon[$this->game->resource[43]];
+		$LastJumpTime = $CurMoon['last_jump_time'];
+
+		if ($JumpGateLevel > 0)
+		{
+			$WaitBetweenJmp = (60 * 60) * (1 / $JumpGateLevel);
+			$NextJumpTime = $LastJumpTime + $WaitBetweenJmp;
+
+			if ($NextJumpTime >= time())
+			{
+				$RestWait = $NextJumpTime - time();
+				$RestString = " " . Helpers::pretty_time($RestWait);
+			}
+			else
+			{
+				$RestWait = 0;
+				$RestString = "";
+			}
+		}
+		else
+		{
+			$RestWait = 0;
+			$RestString = "";
+		}
+
+		$RetValue['string'] = $RestString;
+		$RetValue['value'] = $RestWait;
+
+		return $RetValue;
+	}
+
+	function checkAbandonMoonState (array &$lunarow)
+	{
+		if ($lunarow['luna_destruyed'] <= time())
+		{
+			$this->db->query("DELETE FROM game_planets WHERE `id` = " . $lunarow['luna_id'] . "");
+			$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
+
+			$lunarow['id_luna'] = 0;
+		}
+	}
+
+	function checkAbandonPlanetState (array &$planet)
+	{
+		if ($planet['destruyed'] <= time())
+		{
+			$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['id_planet'] . ";");
+
+			if ($planet['parent_planet'] != 0)
+				$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['parent_planet'] . ";");
+		}
+	}
+
+	public function saveData (array $fields, $userId = 0)
 	{
 		Sql::build()->update('game_planets')->set($fields)->where('id', '=', ($userId > 0 ? $userId : $this->id))->execute();
 	}

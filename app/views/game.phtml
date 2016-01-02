@@ -72,16 +72,16 @@
 	<? endif; ?>
 
 
-	<? if (isset($pageParams['deleteUserTimer']) && $pageParams['deleteUserTimer'] > 0): ?>
-		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $pageParams['deleteUserTimer']) ?> в <?=$this->game->datezone("H:i:s", $pageParams['deleteUserTimer']) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
+	<? if (isset($deleteUserTimer) && $deleteUserTimer > 0): ?>
+		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $deleteUserTimer) ?> в <?=$this->game->datezone("H:i:s", $eleteUserTimer) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
 	<? endif; ?>
 
-	<? if (isset($pageParams['vocationTimer']) && $pageParams['vocationTimer'] > 0): ?>
+	<? if (isset($vocationTimer) && $vocationTimer > 0): ?>
 	   <table class="table"><tr><td class="c" align="center"><font color="red">Включен режим отпуска! Функциональность игры ограничена.</font></td></tr></table><div class="separator"></div>
 	<? endif; ?>
 
-	<? if (isset($pageParams['message']) && $pageParams['message'] != ''): ?>
-	   <table class="table"><tr><td class="c" align="center"><?=$pageParams['message'] ?></td></tr></table><div class="separator"></div>
+	<? if (isset($globalMessage) && $globalMessage != ''): ?>
+	   <table class="table"><tr><td class="c" align="center"><?=$globalMessage ?></td></tr></table><div class="separator"></div>
 	<? endif; ?>
 
 	<div class="row">
@@ -180,7 +180,7 @@
 				{
 					//FAPI.UI.setWindowSize(800, 700);
 				}
-				, function(error)
+				, function()
 				{
 					alert("API initialization failed");
 				}

@@ -1,4 +1,4 @@
-<? if ((($parse['mount'] - 3) * 75 + 100 + 350) > 720 && !allowMobileVersion()): ?>
+<? if ((($parse['mount'] - 3) * 75 + 100 + 350) > 720 && !\App\Helpers::allowMobileVersion()): ?>
 	<script type="application/javascript">
 		$(document).ready(function()
 		{

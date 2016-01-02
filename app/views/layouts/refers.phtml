@@ -46,7 +46,7 @@
 			data-yashareTheme="counter"
 			data-yashareType="small"
 			data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus"
-			data-yashareLink="http://uni<?=UNIVERSE ?>.xnova.su/?<?=$userId ?>"
+			data-yashareLink="http://uni<?=$this->config->game->universe ?>.xnova.su/?<?=$userId ?>"
 			data-yashareTitle="<?=$this->config->app->get('name') ?>"
 		></div>
 		</th></tr></table>
@@ -64,10 +64,10 @@
 				<br><br>
 				HTML код:
 				<br>
-				<input style="width:100%" type="text" value="<?=htmlspecialchars('<a href="http://uni'.UNIVERSE.'.xnova.su/?'.$userId.'"><img src="http://uni'.UNIVERSE.'.xnova.su/userbar'.$userId.'.jpg"></a>') ?>">
+				<input style="width:100%" type="text" value="<?=htmlspecialchars('<a href="http://uni'.$this->config->game->universe.'.xnova.su/?'.$userId.'"><img src="http://uni'.$this->config->game->universe.'.xnova.su/userbar'.$userId.'.jpg"></a>') ?>">
 				<div class="separator"></div>
 				BB код:
-				<input style="width:100%" type="text" value="<?=htmlspecialchars('[url=http://uni'.UNIVERSE.'.xnova.su/?'.$userId.'][img]http://uni'.UNIVERSE.'.xnova.su/userbar'.$userId.'.jpg[/img][/url]') ?>">
+				<input style="width:100%" type="text" value="<?=htmlspecialchars('[url=http://uni'.$this->config->game->universe.'.xnova.su/?'.$userId.'][img]http://uni'.$this->config->game->universe.'.xnova.su/userbar'.$userId.'.jpg[/img][/url]') ?>">
 			</th>
 		</tr>
 	</table>

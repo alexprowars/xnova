@@ -274,6 +274,37 @@ class Helpers
 		$Link .= "[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
 		return $Link;
 	}
+
+	static function BuildHostileFleetPlayerLink ($FleetRow)
+	{
+		$Link = $FleetRow['username'] . " ";
+		$Link .= "<a href=\"?set=messages&amp;mode=write&amp;id=" . $FleetRow['fleet_owner'] . "\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
+
+		return $Link;
+	}
+
+	static function InsertJavaScriptChronoApplet ($Type, $Ref, $Value)
+	{
+		return "<script>FlotenTime('bxx" . $Type . $Ref . "', " . $Value . ");</script>";
+	}
+
+	static function allowMobileVersion ()
+	{
+		$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+
+		$result = true;
+
+		if (!isMobile())
+			$result = false;
+
+		if (strpos($ua, 'webkit/5') === false)
+			$result = false;
+
+		if (strpos($ua, 'android 2') !== false || strpos($ua, 'android 3') !== false)
+			$result = false;
+
+		return $result;
+	}
 }
 
 ?>

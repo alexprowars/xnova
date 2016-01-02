@@ -123,6 +123,8 @@ class User extends Model
 	public $color;
 	public $timezone;
 	public $spy;
+	public $deltime;
+	public $ally_name;
 
 	public function onConstruct()
 	{

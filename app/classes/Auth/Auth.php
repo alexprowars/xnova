@@ -103,6 +103,9 @@ class Auth extends Component
 				$this->remove();
 			else
 			{
+				/**
+				 * @var \App\Models\User $UserRow
+				 */
 				$UserRow = User::findFirst($this->session->get('uid'));
 
 				if ($UserRow->id <= 0)

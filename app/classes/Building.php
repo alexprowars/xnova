@@ -364,7 +364,7 @@ class Building extends Component
 
 	/**
 	 * @param $Element int
-	 * @param $Ressources array
+	 * @param $planet Planet
 	 * @param $user User
 	 * @return float|int
 	 */

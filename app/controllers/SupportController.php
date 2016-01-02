@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers;
+use App\Socials;
 
 class SupportController extends ApplicationController
 {
@@ -26,8 +27,8 @@ class SupportController extends ApplicationController
 		
 				$ID = $this->db->lastInsertId();
 		
-				$token = socials::smsGetToken();
-				socials::smsSend(SMS_LOGIN, 'Создан новый тикет №' . $ID . ' ('.$this->user->username.')', $token);
+				$token = Socials::smsGetToken();
+				Socials::smsSend($this->config->sms->login, 'Создан новый тикет №' . $ID . ' ('.$this->user->username.')', $token);
 		
 				$this->message('Задача добавлена', 'Успех', '?set=support', 3);
 		
@@ -56,8 +57,8 @@ class SupportController extends ApplicationController
 		
 						if ($ticket['status'] == 2)
 						{
-							$token = socials::smsGetToken();
-							socials::smsSend(SMS_LOGIN, 'Поступил ответ на тикет №' . $ticket['id'] . ' ('.$this->user->username.')', $token);
+							$token = Socials::smsGetToken();
+							Socials::smsSend($this->config->sms->login, 'Поступил ответ на тикет №' . $ticket['id'] . ' ('.$this->user->username.')', $token);
 						}
 					}
 				}

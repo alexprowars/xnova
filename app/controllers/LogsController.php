@@ -67,16 +67,16 @@ class LogsController extends ApplicationController
 		if ($Logs->numRows() > 0)
 		{
 		
-			$parse['count'] = "<td colspan=\"1\" class=\"c\" width=\"10\"%><center>Игрок:</center></td>
-		<td colspan=\"1\" class=\"c\" width=\"10\"%><center>
+			$parse['count'] = "<td colspan=\"1\" class=\"c\" width=\"10%\"><center>Игрок:</center></td>
+		<td colspan=\"1\" class=\"c\" width=\"10%\"><center>
 		<select name=\"lim\" onChange=\"document.forms[1].submit()\">";
 		
 			$parse['count'] .= "<option value=\"0\"" . (($lim == "0") ? " SELECTED" : "") . ">Я</option>";
 			$parse['count'] .= "<option value=\"1\"" . (($lim == "1") ? " SELECTED" : "") . ">Враг</option>";
 		
 			$parse['count'] .= "</td>
-		<td colspan=\"1\" class=\"c\" width=\"10\"%><center>Записи:</center></td>
-		<td colspan=\"1\" class=\"c\" width=\"20\"%><center>
+		<td colspan=\"1\" class=\"c\" width=\"10%\"><center>Записи:</center></td>
+		<td colspan=\"1\" class=\"c\" width=\"20%\"><center>
 		<select name=\"start\" onChange=\"document.forms[1].submit()\">";
 		
 			for ($Page = 0; $Page <= $count; $Page++)
