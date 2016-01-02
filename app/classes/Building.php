@@ -177,11 +177,11 @@ class Building extends Component
 		}
 		elseif (in_array($Element, $game->reslist['tech']) || in_array($Element, $game->reslist['tech_f']))
 		{
-			if (isset($planet['spaceLabs']) && count($planet['spaceLabs']))
+			if (isset($planet->spaceLabs) && count($planet->spaceLabs))
 			{
 				$lablevel = 0;
 
-				foreach ($planet['spaceLabs'] as $Levels)
+				foreach ($planet->spaceLabs as $Levels)
 				{
 					if (!isset($game->requeriments[$Element][31]) || $Levels >= $game->requeriments[$Element][31])
 						$lablevel += $Levels;

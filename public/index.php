@@ -67,7 +67,7 @@ try
 		[
 			'status' 	=> $application->game->getRequestStatus(),
 			'message' 	=> $application->game->getRequestMessage(),
-			'html' 		=> str_replace(Array("\t"), '', $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
+			'html' 		=> str_replace("\t", ' ', $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
 			'data' 		=> $application->game->getRequestData()
 		]);
 		$application->response->setContentType('text/json', 'utf8');

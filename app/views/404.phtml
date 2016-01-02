@@ -1,1 +1,28 @@
-404
+<?= $this->tag->getDoctype() ?>
+<html lang="ru">
+<head>
+	<?php echo $this->tag->getTitle(); ?>
+	<?= $this->tag->tagHtml('meta', ['name' => 'description', 'content' => '']) ?>
+	<?= $this->tag->tagHtml('meta', ['name' => 'keywords', 'content' => '']) ?>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<link rel="image_src" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/logo.jpg" />
+	<link rel="apple-touch-icon" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/apple-touch-icon.png"/>
+
+	<?php $this->assets->outputJs('headerJs') ?>
+	<?php $this->assets->outputCss('headerCss') ?>
+</head>
+<body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
+
+	<? if (isset($leftMenu) && $leftMenu == true): ?>
+		<? $this->partial('shared/menu'); ?>
+	<? endif; ?>
+
+	<div class="row">
+		<div class="e404">404</div>
+	</div>
+
+	</div></div>
+</body>
+</html>

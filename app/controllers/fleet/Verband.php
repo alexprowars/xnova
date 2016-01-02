@@ -183,9 +183,9 @@ class Verband
 				$html .= "<th>" . $controller->game->datezone("d.m H:i:s", $f['fleet_end_time']) . "</th>";
 				$html .= " </form>";
 
-				$html .= "<th><font color=\"lime\"><div id=\"time_0\"><font>" . Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) . "</font></th><th>";
+				$html .= "<th><font color=\"lime\"><div id=\"time_0\">" . Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) . "</div></font></th><th>";
 				$html .= $f['fleet_owner_name'] . "</th>";
-				$html .= "</div></font></tr>";
+				$html .= "</tr>";
 			}
 
 			if ($i == 0)
@@ -196,7 +196,7 @@ class Verband
 
 			if ($fleet['fleet_group'] == 0)
 			{
-				$html .= '<div class="separator"></div><form action="?set=fleet&page=verband" method="POST">
+				$html .= '<div class="separator"></div><form action="/fleet/?page=verband" method="POST">
 					<input type="hidden" name="fleetid" value="' . $fleetid . '" />
 					<input type="hidden" name="action" value="addaks" />
 					<table class="table">
@@ -217,7 +217,7 @@ class Verband
 				</tr>
 				<tr>
 					<th colspan="2">
-						<form action="?set=fleet&page=verband" method="POST">
+						<form action="/fleet/?page=verband" method="POST">
 							<input type="hidden" name="fleetid" value="' . $fleetid . '" />
 							<input type="hidden" name="action" value="changename" />
 							<input type="text" name="groupname" value="' . $aks['name'] . '" size=50 /> <br /> <input type="submit" value="Изменить" />
@@ -249,7 +249,7 @@ class Verband
 				</th>
 
 				<th>
-				<form action="?set=fleet&page=verband" method="POST">
+				<form action="/fleet/?page=verband" method="POST">
 					<input type="hidden" name="fleetid" value="' . $fleetid . '" />
 					<input type="hidden" name="action" value="adduser" />';
 

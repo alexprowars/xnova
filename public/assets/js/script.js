@@ -77,7 +77,7 @@ $(document).ready(function()
 	{
 		e.preventDefault();
 
-		showWindow('', $(this).attr('href')+'&ajax&popup')
+		showWindow('', $(this).attr('href'))
 	});
 
 	if (false && $('.planetList .list').length)

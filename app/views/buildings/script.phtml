@@ -10,7 +10,7 @@
 			<th><select name="auftr" disabled size="5" style="width:100%;"></select></th>
 		</tr>
 		<tr>
-			<td class="c">Оставшееся время <?=$parse['time'] ?></td>
+			<td class="c">Оставшееся время <?=$build['time'] ?></td>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -18,13 +18,13 @@
 <script type="text/javascript">
 	v = new Date();
 	p = 0;
-	g = <?=$parse['b_hangar_id_plus'] ?>;
+	g = <?=$build['b_hangar_id_plus'] ?>;
 	s = 0;
 	var hs = 0;
 	of = 1;
-	c = new Array(<?=$parse['c'] ?>'');
-	b = new Array(<?=$parse['b'] ?>'');
-	a = new Array(<?=$parse['a'] ?>'');
+	c = new Array(<?=$build['c'] ?>'');
+	b = new Array(<?=$build['b'] ?>'');
+	a = new Array(<?=$build['a'] ?>'');
 	aa = 'завершено';
 
 	function t() {

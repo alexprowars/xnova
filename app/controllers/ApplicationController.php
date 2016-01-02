@@ -40,7 +40,7 @@ class ApplicationController extends Controller
 	{
 		$this->view->setVar('topPanel', $this->showTopPanel);
 		$this->view->setVar('leftMenu', $this->showLeftMenu);
-		$this->view->setVar('controller', $this->dispatcher->getControllerName());
+		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
 
 		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
 			$this->response->redirect($this->game->getRequestData()['redirect']);
@@ -73,7 +73,7 @@ class ApplicationController extends Controller
 
 	public function initialize()
 	{
-		if ($this->dispatcher->wasForwarded())
+		if ($this->dispatcher->wasForwarded() && $this->dispatcher->getControllerName() !== 'error')
 			return true;
 
 		if (function_exists('sys_getloadavg'))
@@ -198,7 +198,7 @@ class ApplicationController extends Controller
 					$this->view->setVar('ajaxNavigation', 1);
 			}
 
-			$this->view->setVar('isPopup', ($this->request->has('isPopup') ? 1 : 0));
+			$this->view->setVar('isPopup', ($this->request->has('popup') ? 1 : 0));
 			$this->view->setVar('timezone', 0);
 			$this->view->setVar('userId', $this->user->getId());
 			$this->view->setVar('adminlevel', $this->user->authlevel);

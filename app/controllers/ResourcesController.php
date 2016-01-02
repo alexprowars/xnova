@@ -128,7 +128,7 @@ class ResourcesController extends ApplicationController
 
 		foreach ($this->game->reslist['prod'] as $ProdID)
 		{
-			if ($this->planet->{$this->game->resource[$ProdID]} > 0 && isset($ProdGrid[$ProdID]))
+			if ($this->planet->{$this->game->resource[$ProdID]} > 0 && isset($this->game->ProdGrid[$ProdID]))
 			{
 				$BuildLevelFactor = $this->planet->{$this->game->resource[$ProdID] . "_porcent"};
 				$BuildLevel = $this->planet->{$this->game->resource[$ProdID]};

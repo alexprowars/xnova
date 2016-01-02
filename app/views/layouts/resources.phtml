@@ -1,5 +1,3 @@
-<? global $reslist; ?>
-
 <form action="<?=$this->url->get('resources/') ?>" method="post">
 	<table width="100%">
 		<tr>
@@ -59,14 +57,14 @@
 					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('infos/gid/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
-					<? foreach ($reslist['res'] AS $res): ?>
+					<? foreach ($this->game->reslist['res'] AS $res): ?>
 						<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
 					<? endforeach; ?>
 					<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
 					<th>
 						<select name="<?=$resource['name'] ?>">
 						<? for ($j = 10; $j >= 0; $j--): ?>
-							<option value="<?=$j ?>"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
+							<option value="<?=$j ?>"<?=($j == $this->game->resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
 						<? endfor; ?>
 						</select>
 					</th>
@@ -77,7 +75,7 @@
 			<tr>
 				<th colspan="2">Вместимость:</th>
 				<th><?=$parse['bonus_h'] ?>%</th>
-				<? foreach ($reslist['res'] AS $res): ?>
+				<? foreach ($this->game->reslist['res'] AS $res): ?>
 					<td class="k"><?=$parse[$res.'_max'] ?></td>
 				<? endforeach; ?>
 				<td class="k"><font color="#00ff00"><?=$parse['energy_max'] ?></font></td>
@@ -85,7 +83,7 @@
 			</tr>
 			<tr>
 				<th colspan="3">Сумма:</th>
-				<? foreach ($reslist['res'] AS $res): ?>
+				<? foreach ($this->game->reslist['res'] AS $res): ?>
 					<td class="k"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
 				<? endforeach; ?>
 				<td class="k"><?=$parse['energy_total'] ?></td>
@@ -104,7 +102,7 @@
 			<th width="21%">Неделя</th>
 			<th width="21%">Месяц</th>
 		</tr>
-		<? foreach ($reslist['res'] AS $res): ?>
+		<? foreach ($this->game->reslist['res'] AS $res): ?>
 			<tr>
 				<th><?=_getText('res', $res) ?></th>
 				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
@@ -119,7 +117,7 @@
 		<tr>
 			<td class="c" colspan="3">Статус хранилища</td>
 		</tr>
-		<? foreach ($reslist['res'] AS $res): ?>
+		<? foreach ($this->game->reslist['res'] AS $res): ?>
 			<tr>
 				<th width="150"><?=_getText('res', $res) ?></th>
 				<th width="100"><?=$parse[$res.'_storage'] ?>%</th>

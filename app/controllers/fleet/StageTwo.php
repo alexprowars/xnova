@@ -20,7 +20,7 @@ class StageTwo
 
 		if (isset($_POST['moon']) && intval($_POST['moon']) != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
 		{
-			$RestString = GetNextJumpWaitTime($controller->planet->toArray());
+			$RestString = $controller->planet->GetNextJumpWaitTime();
 			$NextJumpTime = $RestString['value'];
 			$JumpTime = time();
 
@@ -31,7 +31,7 @@ class StageTwo
 
 				if (($TargetGate['planet_type'] == 3 || $TargetGate['planet_type'] == 5) && $TargetGate['sprungtor'] > 0)
 				{
-					$RestString = GetNextJumpWaitTime($TargetGate);
+					$RestString = $controller->planet->GetNextJumpWaitTime($TargetGate);
 
 					if ($RestString['value'] == 0)
 					{
@@ -69,7 +69,7 @@ class StageTwo
 							Sql::build()->update('game_users')->setField('current_planet', $TargetGate['id'])->where('id', '=', $controller->user->id)->execute();
 
 							$controller->planet->last_jump_time = $JumpTime;
-							$RestString = GetNextJumpWaitTime($controller->planet->toArray());
+							$RestString = $controller->planet->GetNextJumpWaitTime();
 
 							$RetMessage = _getText('gate_jump_done') . " - " . $RestString['string'];
 						}

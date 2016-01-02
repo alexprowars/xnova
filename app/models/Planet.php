@@ -360,7 +360,7 @@ class Planet extends Model
 		foreach ($this->game->reslist['res'] AS $res)
 			$return[$res] = 0;
 
-		if (isset($ProdGrid[$Element]))
+		if (isset($this->game->ProdGrid[$Element]))
 		{
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$energyTech 	= $this->user->energy_tech;
@@ -368,9 +368,9 @@ class Planet extends Model
 			$BuildTemp		= $this->temp_max;
 
 			foreach ($this->game->reslist['res'] AS $res)
-				$return[$res] = floor(eval($ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
+				$return[$res] = floor(eval($this->game->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
 
-			$energy = floor(eval($ProdGrid[$Element]['energy']));
+			$energy = floor(eval($this->game->ProdGrid[$Element]['energy']));
 
 			if ($Element < 4)
 				$return['energy'] = $energy;
@@ -599,8 +599,6 @@ class Planet extends Model
 
 	private function HandleElementBuildingQueue ($ProductionTime)
 	{
-		global $resource;
-
 		if ($this->queue != '[]')
 		{
 			$queueManager = new Queue($this->queue);
@@ -670,7 +668,7 @@ class Planet extends Model
 
 				foreach ($BuildArray as $Item)
 				{
-					if (!isset($resource[$Item[0]]))
+					if (!isset($this->game->resource[$Item[0]]))
 						continue;
 
 					$Element = $Item[0];
@@ -684,7 +682,7 @@ class Planet extends Model
 					{
 						$this->b_hangar -= $BuildTime;
 						$Builded[$Element]++;
-						$this->{$resource[$Element]}++;
+						$this->{$this->game->resource[$Element]}++;
 						$Count--;
 
 						if ($Count <= 0)

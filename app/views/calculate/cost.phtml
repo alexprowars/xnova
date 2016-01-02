@@ -53,9 +53,9 @@
 	options.msgCantResearch = 'При данном уровне Исследовательской лаборатории исследование "{0}" невозможно.';
 
 	options.techCosts = {
-		<? global $pricelist, $resource;
+		<?
 
-		 foreach ($pricelist AS $id => $price)
+		 foreach ($this->game->pricelist AS $id => $price)
 		 {
 		 	echo ''.$id.': ['.$price['metal'].', '.$price['crystal'].', '.$price['deuterium'].', '.$price['factor'].'],';
 		 }
@@ -148,15 +148,15 @@
 			<tr>
 				<td width="200"><label for="robot-factory-level">Фабрика роботов</label></td>
 				<td>
-					<input id="robot-factory-level" type="text" name="robot-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$resource[14]] ?>"/>
+					<input id="robot-factory-level" type="text" name="robot-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$this->game->resource[14]] ?>"/>
 				</td>
 				<td><label for="nanite-factory-level">Фабрика нанитов</label></td>
 				<td>
-					<input id="nanite-factory-level" type="text" name="nanite-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$resource[15]] ?>"/>
+					<input id="nanite-factory-level" type="text" name="nanite-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$this->game->resource[15]] ?>"/>
 				</td>
 				<td><label for="shipyard-level">Верфь</label></td>
 				<td>
-					<input id="shipyard-level" type="text" name="shipyard-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$resource[21]] ?>"/>
+					<input id="shipyard-level" type="text" name="shipyard-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$this->game->resource[21]] ?>"/>
 				</td>
 			</tr>
 			<tr>
@@ -165,7 +165,7 @@
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
 							<td>
-								<input id="research-lab-level" type="text" name="research-lab-level" class="ui-state-default ui-corner-all ui-input level-input" value="<?=$planet[$resource[31]] ?>"/>
+								<input id="research-lab-level" type="text" name="research-lab-level" class="ui-state-default ui-corner-all ui-input level-input" value="<?=$planet[$this->game->resource[31]] ?>"/>
 							</td>
 							<td>
 								<div id="open-llc-dialog" class="ui-state-default ui-corner-all" title="Рассчитать">
@@ -220,12 +220,11 @@
 	<th align="center">Очки</th>
 </tr>
 
-<? global $reslist; ?>
-<? $i = 0; foreach ($reslist['allowed'][1] AS $id): ?>
+<? $i = 0; foreach ($this->game->reslist['allowed'][1] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 1 ? ($planet[$resource[$id]] + 1) : 0) ?>"/></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 1 ? ($planet[$this->game->resource[$id]] + 1) : 0) ?>"/></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -289,11 +288,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($reslist['allowed'][3] AS $id): ?>
+		<? $i = 0; foreach ($this->game->reslist['allowed'][3] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;">100<?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 3 ? ($planet[$resource[$id]] + 1) : 0) ?>"/></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 3 ? ($planet[$this->game->resource[$id]] + 1) : 0) ?>"/></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -356,11 +355,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($reslist['tech'] AS $id): ?>
+<? $i = 0; foreach ($this->game->reslist['tech'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$resource[$id]] + 1) ?>"/></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->game->resource[$id]] + 1) ?>"/></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -369,11 +368,11 @@
 		<td align="center">0</td>
 	</tr>
 <? $i++; endforeach; ?>
-<? foreach ($reslist['tech_f'] AS $id): ?>
+<? foreach ($this->game->reslist['tech_f'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$resource[$id]] + 1) ?>"/></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->game->resource[$id]] + 1) ?>"/></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -436,11 +435,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($reslist['fleet'] AS $id): ?>
+		<? $i = 0; foreach ($this->game->reslist['fleet'] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;"><?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$resource[$id]] ?>"/></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$this->game->resource[$id]] ?>"/></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -503,11 +502,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($reslist['defense'] AS $id): ?>
+		<? $i = 0; foreach ($this->game->reslist['defense'] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;"><?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$resource[$id]] ?>"/></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$planet[$this->game->resource[$id]] ?>"/></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -580,11 +579,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($reslist['allowed'][1] AS $id): ?>
+<? $i = 0; foreach ($this->game->reslist['allowed'][1] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 1 ? $planet[$resource[$id]] : 0) ?>"/></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 1 ? $planet[$this->game->resource[$id]] : 0) ?>"/></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0"/></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -649,11 +648,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($reslist['allowed'][3] AS $id): ?>
+		<? $i = 0; foreach ($this->game->reslist['allowed'][3] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;">100<?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 3 ? $planet[$resource[$id]] : 0) ?>"/></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($planet['planet_type'] == 3 ? $planet[$this->game->resource[$id]] : 0) ?>"/></td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0"/></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -718,11 +717,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($reslist['tech'] AS $id): ?>
+<? $i = 0; foreach ($this->game->reslist['tech'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$resource[$id]] ?>"/></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->game->resource[$id]] ?>"/></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0"/></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -732,11 +731,11 @@
 		<td align="center">0</td>
 	</tr>
 <? $i++; endforeach; ?>
-	<? foreach ($reslist['tech_f'] AS $id): ?>
+	<? foreach ($this->game->reslist['tech_f'] AS $id): ?>
 		<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 			<td style="display: none;"><?=$id ?></td>
 			<td class="title"><?=_getText('tech', $id) ?></td>
-			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$resource[$id]] ?>"/></td>
+			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->game->resource[$id]] ?>"/></td>
 			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0"/></td>
 			<td align="center">0</td>
 			<td align="center">0</td>
@@ -796,17 +795,17 @@
 				<td colspan="4">
 					<select id="tech-types-select" name="tech-types-select" class="ui-state-default ui-corner-all ui-input">
 						<optgroup label="Постройки (планета)">
-							<? foreach ($reslist['allowed'][1] AS $id): ?>
+							<? foreach ($this->game->reslist['allowed'][1] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>
 						<optgroup label="Постройки (луна)">
-							<? foreach ($reslist['allowed'][3] AS $id): ?>
+							<? foreach ($this->game->reslist['allowed'][3] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>
 						<optgroup label="Исследования">
-							<? foreach ($reslist['tech'] AS $id): ?>
+							<? foreach ($this->game->reslist['tech'] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>

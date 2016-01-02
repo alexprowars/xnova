@@ -76,7 +76,7 @@ class Security extends Component
 				'race'  	=> array('*'),
 				'records'  	=> array('*'),
 				'refers'  	=> array('*'),
-				'recources' => array('*'),
+				'resources' => array('*'),
 				'rocket'  	=> array('*'),
 				'rw'  		=> array('*'),
 				'search'  	=> array('*'),

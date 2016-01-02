@@ -762,7 +762,7 @@ function showWindow (title, url, width, height)
 				{
 					url: url,
 					cache: false,
-					data: {ajax: 'Y'},
+					data: {ajax: 'Y', 'popup': 'Y'},
 					dataType: 'json',
 					success: function (json)
 					{

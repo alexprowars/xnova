@@ -3,6 +3,7 @@ namespace App\Controllers\Fleet;
 
 use App\Controllers\FleetController;
 use App\Fleet;
+use App\Helpers;
 use App\Lang;
 
 class StageOne
@@ -143,14 +144,14 @@ class StageOne
 
 			if ($moons->numRows())
 			{
-				$timer = GetNextJumpWaitTime($controller->planet->toArray());
+				$timer = $controller->planet->GetNextJumpWaitTime();
 
 				if ($timer['value'] != 0)
-					$parse['moon_timer'] = InsertJavaScriptChronoApplet("Gate", "1", $timer['value'], true);;
+					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer['value']);
 
 				while ($moon = $moons->fetch())
 				{
-					$moon['timer'] = GetNextJumpWaitTime($moon);
+					$moon['timer'] = $controller->planet->GetNextJumpWaitTime($moon);
 
 					$parse['moons'][] = $moon;
 				}

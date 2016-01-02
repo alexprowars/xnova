@@ -228,7 +228,7 @@ class Queue
 				
 			$this->planet->queue = json_encode($newQueue);
 
-			sql::build()->update('game_planets')->setField('queue', $this->planet->queue);
+			Sql::build()->update('game_planets')->setField('queue', $this->planet->queue);
 			
 			if ($canceledArray['s'] > 0)
 			{
@@ -238,7 +238,7 @@ class Queue
 				$this->planet->crystal 		+= $cost['crystal'];
 				$this->planet->deuterium 	+= $cost['deuterium'];
 
-				sql::build()->set(array
+				Sql::build()->set(array
 				(
 					'metal' 	=> $this->planet->metal,
 					'crystal' 	=> $this->planet->crystal,
@@ -246,16 +246,13 @@ class Queue
 				));
 			}
 
-			sql::build()->where('id', '=', $this->planet->id)->execute();
+			Sql::build()->where('id', '=', $this->planet->id)->execute();
 		}
 	}
 
 	private function addTechToQueue ($elementId)
 	{
-		global $TechHandle;
-
-		if (!is_array($TechHandle))
-			$TechHandle = $this->planet->HandleTechnologieBuild();
+		$TechHandle = $this->planet->HandleTechnologieBuild();
 
 		$spaceLabs = array();
 
@@ -270,9 +267,9 @@ class Queue
 		else
 			$WorkingPlanet = $this->planet;
 
-		$WorkingPlanet['spaceLabs'] = $spaceLabs;
+		$WorkingPlanet->spaceLabs = $spaceLabs;
 
-		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && $WorkingPlanet['b_tech_id'] == 0 && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
+		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && $WorkingPlanet->b_tech_id == 0 && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
 		{
 			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 
@@ -303,10 +300,7 @@ class Queue
 
 	private function deleteTechInQueue ($elementId, $listId = 0)
 	{
-		global $TechHandle;
-
-		if (!is_array($TechHandle))
-			$TechHandle = $this->planet->HandleTechnologieBuild();
+		$TechHandle = $this->planet->HandleTechnologieBuild();
 
 		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['OnWork'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
 		{
@@ -345,7 +339,7 @@ class Queue
 
 	private function saveTechToQueue ($WorkingPlanet)
 	{
-		sql::build()->update('game_planets')->set(Array
+		Sql::build()->update('game_planets')->set(Array
 		(
 			'queue'		=> $WorkingPlanet['queue'],
 			'metal'		=> $WorkingPlanet['metal'],
@@ -354,7 +348,7 @@ class Queue
 		))
 		->where('id', '=', $WorkingPlanet['id'])->execute();
 
-		sql::build()->update('game_users')->setField('b_tech_planet', $this->user->b_tech_planet)->where('id', '=', $this->user->id)->execute();
+		Sql::build()->update('game_users')->setField('b_tech_planet', $this->user->b_tech_planet)->where('id', '=', $this->user->id)->execute();
 	}
 
 	private function addShipyardToQueue ($elementId, $count)
@@ -378,14 +372,14 @@ class Queue
 			}
 		}
 
-		if (isset($pricelist[$elementId]['max']))
+		if (isset($this->game->pricelist[$elementId]['max']))
 		{
 			$total = $this->planet->{$this->game->resource[$elementId]};
 
 			if (isset($BuildArray[$elementId]))
 				$total += $BuildArray[$elementId];
 
-			$count = min($count, max(($pricelist[$elementId]['max'] - $total), 0));
+			$count = min($count, max(($this->game->pricelist[$elementId]['max'] - $total), 0));
 		}
 
 		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($MaxMissiles))

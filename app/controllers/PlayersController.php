@@ -104,8 +104,7 @@ class PlayersController extends ApplicationController
 		}
 		else
 			$this->message('Параметр задан неверно', 'Ошибка');
-		
-		$this->view->pick('player');
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Информация о игроке');
@@ -113,7 +112,7 @@ class PlayersController extends ApplicationController
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
-	public function stat ()
+	public function statAction ()
 	{
 		if (!$this->auth->isAuthorized())
 			$this->indexAction();
@@ -129,7 +128,6 @@ class PlayersController extends ApplicationController
 		$parse['name'] = $player['username'];
 		$parse['data'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_stats WHERE id = ".$playerid." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC"));
 
-		$this->view->pick('player_stat');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Статистика игрока');

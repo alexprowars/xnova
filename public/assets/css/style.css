@@ -1009,3 +1009,10 @@ div.errormessage {
 #prophiler h1 {
 	width: inherit;
 }
+
+.e404 {
+	font-size: 45px;
+	text-align: center;
+	margin: 0 auto;
+	padding: 100px 50px;
+}

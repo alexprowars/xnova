@@ -100,7 +100,7 @@ class Game extends Component
 		/** @var array $pricelist */
 		/** @var array $gun_armour */
 		/** @var array $CombatCaps */
-		/** @var array $CombatCaps */
+		/** @var array $ProdGrid */
 		/** @var array $reslist */
 
 		$this->resource 	= $resource;
@@ -108,7 +108,7 @@ class Game extends Component
 		$this->pricelist 	= $pricelist;
 		$this->gun_armour 	= $gun_armour;
 		$this->CombatCaps 	= $CombatCaps;
-		$this->ProdGrid 	= $CombatCaps;
+		$this->ProdGrid 	= $ProdGrid;
 		$this->reslist 		= $reslist;
 	}
 
