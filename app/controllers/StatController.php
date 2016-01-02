@@ -194,7 +194,7 @@ class StatController extends ApplicationController
 					$stats['player_name'] = $StatRow['username'];
 
 				if ($this->auth->isAuthorized())
-					$stats['player_mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '/messages/?mode=write&id=" . $StatRow['id_owner'] . "&ajax&popup', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
+					$stats['player_mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '/messages/write/" . $StatRow['id_owner'] . "/', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
 
 				if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
 					$stats['player_alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";

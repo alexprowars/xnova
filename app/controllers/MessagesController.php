@@ -14,7 +14,7 @@ class MessagesController extends ApplicationController
 		Lang::includeLang('messages');
 	}
 	
-	public function write ()
+	public function writeAction ()
 	{
 		$OwnerID = htmlspecialchars(addslashes($this->request->getQuery('id')));
 	
@@ -92,7 +92,6 @@ class MessagesController extends ApplicationController
 			}
 		}
 
-		$this->view->pick('message_new');
 		$this->view->setVar('msg', $msg);
 		$this->view->setVar('text', '');
 		$this->view->setVar('id', $OwnerRecord['id']);
@@ -207,7 +206,6 @@ class MessagesController extends ApplicationController
 
 		$parse['list'] = $this->db->extractResult($messages);
 
-		$this->view->pick('messages');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Сообщения');

@@ -47,11 +47,11 @@
 					<div class="col-md-6" id="object_<?=$build['i'] ?>">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 							<? if (!$build['access']): ?>
-								<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/gid/'.$build['i'].'/ajax/popup/') ?>', 600, 500)"><span>недоступно</span></div>
+								<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/'.$build['i'].'/') ?>', 600, 500)"><span>недоступно</span></div>
 							<? endif; ?>
 
 							<div class="img">
-								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/gid/'.$build['i'].'/ajax/popup/') ?>', 600)">
+								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/'.$build['i'].'/') ?>', 600)">
 									<img src="/assets/images/gebaeude/<?=$build['i'] ?>.gif" align="top" alt="" class="tooltip img-responsive" data-tooltip-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 								</a>
 
@@ -60,7 +60,7 @@
 								</div>
 							</div>
 							<div class="title">
-								<a href="<?=$this->url->get('infos/gid/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a>
+								<a href="<?=$this->url->get('infos/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a>
 							</div>
 							<div class="actions">
 								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\App\Helpers::pretty_number($build['count']) ?></span><br>

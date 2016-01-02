@@ -1,5 +1,5 @@
 <? if ($msg): ?><?= $msg ?><? endif; ?>
-<form action="<?=$this->url->get('messages/write/id/'.$id.'/') ?>" method="post" <? if ($isPopup): ?>class="popup"<? endif; ?>>
+<form action="<?=$this->url->get('messages/write/'.$id.'/') ?>" method="post" <? if ($isPopup): ?>class="popup"<? endif; ?>>
 	<table class="table form-group">
 		<? if (!$isPopup): ?>
 		<tr>

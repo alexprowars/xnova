@@ -65,7 +65,7 @@ class Security extends Component
 				'logout'  	=> array('*'),
 				'logs'  	=> array('*'),
 				'merchant'  => array('*'),
-				'message'  	=> array('*'),
+				'messages'  => array('*'),
 				'news'  	=> array('*'),
 				'notes'  	=> array('*'),
 				'officier'  => array('*'),

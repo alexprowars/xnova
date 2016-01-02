@@ -19,7 +19,7 @@
 			<tr>
 				<th><?=$m['i'] ?></th>
 				<th><?=$m['username'] ?></th>
-				<th><a href="javascript:;" onclick="showWindow('<?=$m['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$m['id'].'/ajax/popup/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
+				<th><a href="javascript:;" onclick="showWindow('<?=$m['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$m['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
 				<th><img src="/skins/default/images/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
 				<th><?=$m['ally_range'] ?></th>
 				<th><?=$m['points'] ?></th>

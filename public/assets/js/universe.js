@@ -336,7 +336,7 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<th><a href=/messages/write/id/"+row[planet]['user_id']+"/>Послать сообщение</a></th>";
+				result += "<th><a href=/messages/write/"+row[planet]['user_id']+"/>Послать сообщение</a></th>";
 				result += "</tr><tr>";
 				result += "<th><a href=/buddy/index/a/2/u/"+row[planet]['user_id']+"/>Добавить в друзья</a></th>";
 				result += "</tr><tr>";
@@ -351,7 +351,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='/infos/gid/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='/infos/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else
@@ -406,7 +406,7 @@ function PrintRow ()
         {
 			if (row[planet]['user_id'] && row[planet]["destruyed"] == 0)
             {
-				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', '/messages/write/id/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
+				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', '/messages/write/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
 
 				result += "<a href=\"/buddy/index/a/2/u/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
 

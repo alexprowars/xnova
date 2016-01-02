@@ -71,10 +71,26 @@ $router->add('/fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m([0-
 	'params' 		=> 6
 ));
 
+$router->add('/info/([0-9])/:params', array
+(
+	'controller' 	=> 'info',
+	'action' 		=> 'index',
+	'gid' 			=> 1,
+	'params' 		=> 2
+));
+
 $router->add('/players/([0-9])/:params', array
 (
 	'controller' 	=> 'players',
 	'action' 		=> 'index',
+	'id' 			=> 1,
+	'params' 		=> 2
+));
+
+$router->add('/messages/write/([0-9])/:params', array
+(
+	'controller' 	=> 'messages',
+	'action' 		=> 'write',
 	'id' 			=> 1,
 	'params' 		=> 2
 ));

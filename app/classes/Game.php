@@ -124,7 +124,9 @@ class Game extends Component
 			return false;
 
 		if ($sender === false && $this->auth->isAuthorized())
-			$sender = $this->data['id'];
+			$sender = $this->user->id;
+		else
+			$sender = 0;
 
 		if ($this->auth->isAuthorized() && $owner == $this->user->getId())
 			$this->user->messages++;

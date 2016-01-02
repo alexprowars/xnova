@@ -36,7 +36,7 @@
 		<? foreach ($parse['result'] AS $result): ?>
 			<tr>
 				<th><?=$result['username'] ?></th>
-				<th><a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$result['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
+				<th><a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$result['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
 					&nbsp;<a href="<?=$this->url->get('buddy/index/a/2&/u='.$result['id'].'/') ?>" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
 				</th>
 				<th><? if ($result['race'] != 0): ?><img src="/addets/images/skin/race<?=$result['race'] ?>.gif" width="16" height="16"><? else: ?>&nbsp;<? endif; ?>

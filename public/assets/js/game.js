@@ -172,17 +172,22 @@ var XNova =
 			}
 		});
 
-		$(document).on('submit', '#windowDialog form', function(e)
+		$('#windowDialog').on('submit', 'form', function(e)
 		{
 			e.preventDefault();
 
 			showLoading();
 
 			$.ajax({
-				url: $(this).attr('target'),
+				url: $(this).attr('action'),
 				type: 'post',
-				data: $(this).serializeObject(),
+				data: $(this).serialize(),
 				dataType: 'json',
+				beforeSend: function(jqXHR, settings)
+				{
+					settings.data += (settings.data != '' ? '&' : '')+'popup=Y&ep=dontsavestate';
+	    			return true;
+				},
 				success: function (data)
 				{
 					hideLoading();
@@ -196,15 +201,7 @@ var XNova =
 					}
 					else if (data.html != '')
 					{
-						ClearTimers();
-
-						$('#gamediv').html(data.html);
-						dialog.dialog("close");
-					}
-
-					if (data.status == 0)
-					{
-						dialog.dialog("close");
+						$('#windowDialog').html(data.html);
 					}
 				},
 				error: function()
@@ -722,29 +719,6 @@ $(document).ready(function()
 	{
 		closeWindow();
 	});
-
-	$('#windowDialog form').ajaxForm(
-	{
-		delegation: true,
-		target: '#windowDialog',
-		beforeSerialize: function(form)
-		{
-			$(form).append('<input type="hidden" name="ajax" value="1">');
-			$(form).append('<input type="hidden" name="ep" value="dontsavestate">');
-
-			showLoading();
-		},
-		success: function ()
-		{
-			hideLoading();
-		},
-		error: function()
-		{
-			hideLoading();
-
-			alert('Что-то пошло не так!? Попробуйте еще раз');
-		}
-	});
 });
 
 function showWindow (title, url, width, height)
@@ -762,7 +736,7 @@ function showWindow (title, url, width, height)
 				{
 					url: url,
 					cache: false,
-					data: {ajax: 'Y', 'popup': 'Y'},
+					data: {ajax: 'Y', 'popup': 'Y', 'ep': 'dontsavestate'},
 					dataType: 'json',
 					success: function (json)
 					{

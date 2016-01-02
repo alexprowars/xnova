@@ -74,7 +74,7 @@ class PlayersController extends ApplicationController
 				$parse['player_buddy'] = "";
 		
 			if ($ownid != 0)
-				$parse['player_mes'] = "<a href=\"/messages/?mode=write&id=" . $playerid . "\">Написать сообщение</a>";
+				$parse['player_mes'] = "<a href=\"/messages/write/" . $playerid . "/\">Написать сообщение</a>";
 			else
 				$parse['player_mes'] = "";
 		

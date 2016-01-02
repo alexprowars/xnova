@@ -66,7 +66,7 @@ class NotesController extends ApplicationController
 				$this->message($mes, _getText('Please_Wait'), '?set=notes', "3");
 			}
 			else
-				$this->response->redirect("?set=notes");
+				$this->response->redirect("notes/");
 		}
 		else
 		{

@@ -30,13 +30,13 @@
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['metal_max'] ?></span>
 			</div>
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/gid/2/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['crystal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/2/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['crystal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
 				<font color="#FFFF00">Кристалл</font><br>
 				<div title="Количество ресурса на планете"><div id="cry">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['crystal_max'] ?></span>
 			</div>
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/gid/3/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['deuterium_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/3/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['deuterium_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
 				<font color="#FFFF00">Дейтерий</font><br>
 				<div title="Количество ресурса на планете"><div id="deu">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['deuterium_max'] ?></span>
@@ -46,7 +46,7 @@
 	<div class="col-md-<?=($this->config->view->get('showPlanetListSelect', 0) == 1 ? '5' : '6') ?> col-sm-6">
 		<div class="row">
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/gid/4/') ?>', 600)" title="<?=_getText('tech', 4) ?>" class="hidden-xs"><span class="sprite skin_energie"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/4/') ?>', 600)" title="<?=_getText('tech', 4) ?>" class="hidden-xs"><span class="sprite skin_energie"></span><br></span>
 				<font color="#FFFF00">Энергия</font><br>
 				<div title="Энергетический баланс"><?=$planet['energy_total'] ?></div>
 				<span title="Выработка энергии" class="hidden-xs"><font color="#00ff00"><?=$planet['energy_max'] ?></font></span>

@@ -36,10 +36,10 @@
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('infos/gid/1/') ?>', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/gid/2/') ?>', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/gid/3/') ?>', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/gid/4/') ?>', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('infos/1/') ?>', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/2/') ?>', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/3/') ?>', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/4/') ?>', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@
 			</tr>
 			<? foreach ($parse['resource_row'] as $resource): ?>
 				<tr>
-					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('infos/gid/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
+					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('infos/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
 					<? foreach ($this->game->reslist['res'] AS $res): ?>

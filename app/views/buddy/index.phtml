@@ -33,7 +33,7 @@
 	<? foreach ($parse['list'] AS $id => $list): ?>
 		<tr>
 			<th width="20"><?=($id + 1) ?></th>
-			<th><a href="<?=$this->url->get('messages/write/id/'.$list['id'].'') ?>"><?=$list['username'] ?></a></th>
+			<th><a href="<?=$this->url->get('messages/write/'.$list['id'].'') ?>"><?=$list['username'] ?></a></th>
 			<th><?=$list['ally'] ?></th>
 			<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 			<th><?=$list['online'] ?></th>
@@ -74,7 +74,7 @@
 						  <td style="text-align:center;">
 							  <?=$okArray[$data['ok_uid']]['name'] ?>
 							  <? if ($okArray[$data['ok_uid']]['name'] != $data['username']): ?><br>[<?=$data['username'] ?>]<? endif; ?>
-							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/id/'.$data['id'].'/ajax/popup/') ?>', 680)" data-link="1" title="Сообщение"><span class='sprite skin_m'></span></a>
+							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$data['id'].'/') ?>', 680)" data-link="1" title="Сообщение"><span class='sprite skin_m'></span></a>
 						  </td>
 						</tr>
 						<tr>
