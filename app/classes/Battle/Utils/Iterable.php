@@ -41,5 +41,4 @@ class Iterable implements Iterator
 	{
 		return $this->array;
 	}
-
 }

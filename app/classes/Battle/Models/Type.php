@@ -38,14 +38,6 @@ class Type
 		$this->count = $number;
 	}
 
-	public function __toString()
-	{
-		ob_start();
-		$_type = $this;
-		require(OPBEPATH."views/type.html");
-		return ob_get_clean();
-	}
-
 	public function isEmpty()
 	{
 		return $this->count == 0;

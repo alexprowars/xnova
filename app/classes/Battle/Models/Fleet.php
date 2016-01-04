@@ -6,6 +6,11 @@ use App\Battle\CombatObject\FireManager;
 use App\Battle\Utils\Iterable;
 use Exception;
 
+/**
+ * Class Fleet
+ * @package App\Battle\Models
+ * @method Ship[] getIterator
+ */
 class Fleet extends Iterable
 {
 	/**
@@ -128,15 +133,6 @@ class Fleet extends Iterable
 		return $this->count;
 	}
 
-	public function __toString()
-	{
-		ob_start();
-		$_fleet = $this;
-		$_st = "";
-		require(OPBEPATH."views/fleet.html");
-		return ob_get_clean();
-	}
-
 	public function inflictDamage(FireManager $fires)
 	{
 		$physicShots = array();
@@ -144,6 +140,7 @@ class Fleet extends Iterable
 		foreach ($fires->getIterator() as $fire)
 		{
 			$tmp = array();
+
 			foreach ($this->getOrderedIterator() as $idShipTypeDefender => $shipTypeDefender)
 			{
 				$idShipTypeAttacker = $fire->getId();
@@ -152,13 +149,16 @@ class Fleet extends Iterable
 				$ps = $shipTypeDefender->inflictDamage($fire->getPower(), $xs->result);
 				log_var('$xs',$xs);
 				$tmp[$idShipTypeDefender] = $xs->rest;
+
 				if ($ps != null)
 					$physicShots[$idShipTypeDefender][] = $ps;
 			}
+
 			log_var('$tmp',$tmp);
 			// assign the last shot to the more likely shitType
 			$m = 0;
 			$f = 0;
+
 			foreach ($tmp as $k => $v)
 			{
 				if ($v > $m)
@@ -167,38 +167,39 @@ class Fleet extends Iterable
 					$f = $k;
 				}
 			}
+
 			if ($f != 0)
 			{
 				log_comment('adding 1 shot');
 				$ps = $this->getShipType($f)->inflictDamage($fire->getPower(), 1);
 				$physicShots[$f][] = $ps;
 			}
-
 		}
+
 		return $physicShots;
 	}
 
 	public function getOrderedIterator()
 	{
 		if (!ksort($this->array))
-		{
 			throw new Exception('Unable to order types');
-		}
+
 		return $this->array;
 	}
 
 	public function cleanShips()
 	{
 		$shipsCleaners = array();
+
 		foreach ($this->array as $id => $shipType)
 		{
 			log_comment("---- exploding $id ----");
 			$sc = $shipType->cleanShips();
 			$this->count -= $sc->getExplodedShips();
+
 			if ($shipType->isEmpty())
-			{
 				unset($this->array[$id]);
-			}
+
 			$shipsCleaners[$shipType->getId()] = $sc;
 		}
 		return $shipsCleaners;
@@ -207,9 +208,7 @@ class Fleet extends Iterable
 	public function repairShields()
 	{
 		foreach ($this->array as $id => $shipTypeDefender)
-		{
 			$shipTypeDefender->repairShields();
-		}
 	}
 
 	public function isEmpty()
@@ -217,10 +216,9 @@ class Fleet extends Iterable
 		foreach ($this->array as $id => $shipType)
 		{
 			if (!$shipType->isEmpty())
-			{
 				return false;
-			}
 		}
+
 		return true;
 	}
 

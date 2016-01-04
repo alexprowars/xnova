@@ -70,6 +70,7 @@ class Battle
 			ob_get_clean();
 		return true;
 	}
+
 	/**
 	 * Battle::checkWhoWon()
 	 * Assign to groups the status win,lose or draw
@@ -97,15 +98,6 @@ class Battle
 	}
 
 	/**
-	 * Battle::__toString()
-	 *
-	 * @return
-	 */
-	public function __toString()
-	{
-		return $this->report->__toString();
-	}
-	/**
 	 * Battle::getReport()
 	 * Start the battle if not and return the report.
 	 * @return BattleReport
@@ -113,9 +105,8 @@ class Battle
 	public function getReport()
 	{
 		if (!$this->battleStarted)
-		{
 			$this->startBattle();
-		}
+
 		return $this->report;
 	}
 }

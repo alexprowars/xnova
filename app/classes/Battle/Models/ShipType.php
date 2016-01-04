@@ -2,12 +2,12 @@
 
 namespace App\Battle\Models;
 
+use App\Battle\CombatObject\PhysicShot;
 use App\Battle\CombatObject\ShipsCleaner;
 use Exception;
 
 class ShipType extends Type
 {
-
 	private $originalPower;
 	private $originalShield;
 
@@ -43,7 +43,7 @@ class ShipType extends Type
 	 * @param int $weapons_tech
 	 * @param int $shields_tech
 	 * @param int $armour_tech
-	 * @return
+	 * @throws Exception
 	 */
 	public function __construct($id, $count, $rf, $shield, array $cost, $power, $weapons_tech = null, $shields_tech = null, $armour_tech = null)
 	{
@@ -67,12 +67,11 @@ class ShipType extends Type
 		$this->setShieldsTech($shields_tech);
 	}
 
-
 	/**
 	 * ShipType::setWeaponsTech()
 	 * Set new weapon techs level.
 	 * @param int $level
-	 * @return void
+	 * @throws Exception
 	 */
 	public function setWeaponsTech($level)
 	{
@@ -88,12 +87,11 @@ class ShipType extends Type
 		$this->fullPower *= $incr;
 	}
 
-
 	/**
 	 * ShipType::setShieldsTech()
 	 * Set new shield techs level.
 	 * @param int $level
-	 * @return void
+	 * @throws Exception
 	 */
 	public function setShieldsTech($level)
 	{
@@ -110,12 +108,11 @@ class ShipType extends Type
 		$this->currentShield *= $incr;
 	}
 
-
 	/**
 	 * ShipType::setArmourTech()
 	 * Set new armour techs level
 	 * @param int $level
-	 * @return void
+	 * @throws Exception
 	 */
 	public function setArmourTech($level)
 	{
@@ -131,7 +128,6 @@ class ShipType extends Type
 		$this->fullLife *= $incr;
 		$this->currentLife *= $incr;
 	}
-
 
 	/**
 	 * ShipType::increment()
@@ -160,7 +156,6 @@ class ShipType extends Type
 		$this->currentShield += $newShield * $number;
 	}
 
-
 	/**
 	 * ShipType::decrement()
 	 * Decrement the amount of ships of this type.
@@ -188,7 +183,6 @@ class ShipType extends Type
 		$this->currentShield -= $remainShield * $number;
 	}
 
-
 	/**
 	 * ShipType::setCount()
 	 * Set the amount of ships of this type.
@@ -211,7 +205,6 @@ class ShipType extends Type
 		}
 	}
 
-
 	/**
 	 * ShipType::getCost()
 	 * Get the array of cost to build this type of ship.
@@ -221,7 +214,6 @@ class ShipType extends Type
 	{
 		return $this->cost;
 	}
-
 
 	/**
 	 * ShipType::getWeaponsTech()
@@ -233,7 +225,6 @@ class ShipType extends Type
 		return $this->weapons_tech;
 	}
 
-
 	/**
 	 * ShipType::getShieldsTech()
 	 * Get the level of current shield tech.
@@ -244,7 +235,6 @@ class ShipType extends Type
 		return $this->shields_tech;
 	}
 
-
 	/**
 	 * ShipType::getArmourTech()
 	 * Get the level of current armour tech.
@@ -254,7 +244,6 @@ class ShipType extends Type
 	{
 		return $this->armour_tech;
 	}
-
 
 	/**
 	 * ShipType::getRfTo()
@@ -278,7 +267,6 @@ class ShipType extends Type
 		return $this->rf;
 	}
 
-
 	/**
 	 * ShipType::getShield()
 	 * Get the shield value of a single ship of this type.
@@ -288,7 +276,6 @@ class ShipType extends Type
 	{
 		return $this->singleShield;
 	}
-
 
 	/**
 	 * ShipType::getShieldCellValue()
@@ -304,7 +291,6 @@ class ShipType extends Type
 		return $this->singleShield / SHIELD_CELLS;
 	}
 
-
 	/**
 	 * ShipType::getHull()
 	 * Get the hull value of a single ship of this type.
@@ -314,7 +300,6 @@ class ShipType extends Type
 	{
 		return $this->singleLife;
 	}
-
 
 	/**
 	 * ShipType::getPower()
@@ -326,7 +311,6 @@ class ShipType extends Type
 		return $this->singlePower;
 	}
 
-
 	/**
 	 * ShipType::getCurrentShield()
 	 * Get the current shield value of a all ships of this type.
@@ -336,7 +320,6 @@ class ShipType extends Type
 	{
 		return $this->currentShield;
 	}
-
 
 	/**
 	 * ShipType::getCurrentLife()
@@ -348,7 +331,6 @@ class ShipType extends Type
 		return $this->currentLife;
 	}
 
-
 	/**
 	 * ShipType::getCurrentPower()
 	 * Get the current attack power value of a all ships of this type.
@@ -359,18 +341,18 @@ class ShipType extends Type
 		return $this->fullPower;
 	}
 
-
 	/**
 	 * ShipType::inflictDamage()
 	 * Inflict damage to all ships of this type.
 	 * @param int $damage
 	 * @param int $shotsToThisShipType
-	 * @return void
+	 * @return PhysicShot|bool
+	 * @throws Exception
 	 */
 	public function inflictDamage($damage, $shotsToThisShipType)
 	{
 		if ($shotsToThisShipType == 0)
-			return;
+			return false;
 		if ($shotsToThisShipType < 0)
 			throw new Exception("Negative amount of shotsToThisShipType!");
 
@@ -384,17 +366,21 @@ class ShipType extends Type
 		$ps->start();
 		log_var('$ps->getAssorbedDamage()', $ps->getAssorbedDamage());
 		$this->currentShield -= $ps->getAssorbedDamage();
+
 		if ($this->currentShield < 0 && $this->currentShield > -EPSILON)
 		{
 			log_comment('fixing double number currentshield');
 			$this->currentShield = 0;
 		}
+
 		$this->currentLife -= $ps->getHullDamage();
+
 		if ($this->currentLife < 0 && $this->currentLife > -EPSILON)
 		{
 			log_comment('fixing double number currentlife');
 			$this->currentLife = 0;
 		}
+
 		log_var('currentShield after', $this->currentShield);
 		log_var('currentLife after', $this->currentLife);
 		$this->lastShipHit += $ps->getHitShips();
@@ -402,20 +388,14 @@ class ShipType extends Type
 		log_var('lastShots after', $this->lastShots);
 
 		if ($this->currentLife < 0)
-		{
 			throw new Exception('Negative currentLife!');
-		}
 		if ($this->currentShield < 0)
-		{
 			throw new Exception('Negative currentShield!');
-		}
 		if ($this->lastShipHit < 0)
-		{
 			throw new Exception('Negative lastShipHit!');
-		}
+
 		return $ps; //for web
 	}
-
 
 	/**
 	 * ShipType::cleanShips()
@@ -437,7 +417,6 @@ class ShipType extends Type
 		return $sc;
 	}
 
-
 	/**
 	 * ShipType::repairShields()
 	 * Repair all shields.
@@ -447,20 +426,6 @@ class ShipType extends Type
 	{
 		$this->currentShield = $this->fullShield;
 	}
-
-
-	/**
-	 * ShipType::__toString()
-	 *
-	 * @return null
-	 */
-	public function __toString()
-	{
-		$return = parent::__toString();
-		//$return .= "hull:" . $this->hull . "<br>Shield:" . $this->shield . "<br>CurrentLife:" . $this->currentLife . "<br>CurrentShield:" . $this->currentShield;
-		return $return;
-	}
-
 
 	/**
 	 * ShipType::isShieldDisabled()
@@ -472,11 +437,10 @@ class ShipType extends Type
 		return $this->currentShield / $this->getCount() < 0.01;
 	}
 
-
 	/**
 	 * ShipType::cloneMe()
 	 *
-	 * @return ShipType
+	 * @return $this
 	 */
 	public function cloneMe()
 	{

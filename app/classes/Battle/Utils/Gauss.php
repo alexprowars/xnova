@@ -16,7 +16,7 @@ class Gauss
 		$x = (float)mt_rand() / (float)mt_getrandmax();
 		$y = (float)mt_rand() / (float)mt_getrandmax();
 		$u = sqrt(-2 * log($x)) * cos(2 * pi() * $y);
-		$v = sqrt(-2 * log($x)) * sin(2 * pi() * $y);
+
 		return $u;
 	}
 
@@ -36,32 +36,34 @@ class Gauss
 	 * Random::getNextMsBetween()
 	 * Generates a random number from the normal distribution with specific mean and standard deviation.
 	 * The number must be between min and max.
-	 * @param int $m: mean
-	 * @param int $s: standard deviation
-	 * @param int $min: the minimum
-	 * @param int $max: the maximum
+	 * @param int $m : mean
+	 * @param int $s : standard deviation
+	 * @param int $min : the minimum
+	 * @param int $max : the maximum
 	 * @return int
+	 * @throws Exception
 	 */
 	public static function getNextMsBetween($m, $s, $min, $max)
 	{
 		$i = 0;
+
 		if ($min > $m || $max < $m)
-		{
 			throw new Exception("Mean is not bounded by min and max");
-		}
+
 		while (true)
 		{
 			$n = self::getNextMs($m, $s);
+
 			if ($n >= $min && $n <= $max)
-			{
 				return $n;
-			}
+
 			$i++;
+
 			if ($i > 10)
-			{
 				return mt_rand($min, $max);
-			}
 		}
+
+		return 0;
 	}
 }
 

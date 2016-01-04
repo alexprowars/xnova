@@ -2,6 +2,7 @@
 
 namespace App\Battle\Core;
 
+use App\Battle\CombatObject\Fire;
 use App\Battle\CombatObject\FireManager;
 use App\Battle\Models\PlayerGroup;
 
@@ -31,10 +32,9 @@ class Round
 	/**
 	 * Round::__construct()
 	 * Construct a new Round object. No side effects.
-	 * @param PlayerGroup: the attackers
-	 * @param PlayerGroup: the defenders
-	 * @param int: the round number
-	 * @return void
+	 * @param PlayerGroup $attackers
+	 * @param PlayerGroup $defenders
+	 * @param PlayerGroup : the attackers
 	 */
 	public function __construct(PlayerGroup $attackers, PlayerGroup $defenders, $number)
 	{
@@ -49,7 +49,6 @@ class Round
 	/**
 	 * Round::startRound()
 	 * Start the current round and update the players instance inside this object.
-	 * @return
 	 */
 	public function startRound()
 	{
@@ -59,6 +58,7 @@ class Round
 
 		// here we add to fire manager each fire shotted from an attacker's ShipType to all defenders
 		$defendersMerged = $this->defenders->getEquivalentFleetContent();
+
 		foreach ($this->attackers->getIterator() as $idPlayer => $player)
 		{
 			foreach ($player->getIterator() as $idFleet => $fleet)
@@ -182,20 +182,6 @@ class Round
 	}
 
 	/**
-	 * Round::__toString()
-	 * An html rappresentation of this object
-	 * @return string
-	 */
-	public function __toString()
-	{
-		ob_start();
-		$_round = $this;
-		$_i = $this->number;
-		require(OPBEPATH."views/round.html");
-		return ob_get_clean();
-	}
-
-	/**
 	 * Round::getNumber()
 	 * Return this round number
 	 * @return int: number
@@ -209,31 +195,40 @@ class Round
 	{
 		return $this->getAttackersFire()->getAttackerTotalFire();
 	}
+
 	public function getAttackersFireCount()
 	{
 		return $this->getAttackersFire()->getAttackerTotalShots();
 	}
+
 	public function getDefendersFirePower()
 	{
 		return $this->getDefendersFire()->getAttackerTotalFire();
 	}
+
 	public function getDefendersFireCount()
 	{
 		return $this->getDefendersFire()->getAttackerTotalShots();
 	}
+
 	public function getAttachersAssorbedDamage()
 	{
 		$playerGroupPS = $this->getDefendersPhysicShots();
+
 		return $this->getPlayersAssorbedDamage($playerGroupPS);
 	}
+
 	public function getDefendersAssorbedDamage()
 	{
 		$playerGroupPS = $this->getAttachersPhysicShots();
+
 		return $this->getPlayersAssorbedDamage($playerGroupPS);
 	}
+
 	private function getPlayersAssorbedDamage($playerGroupPS)
 	{
 		$ass = 0;
+
 		foreach ($playerGroupPS as $idPlayer => $playerPs)
 		{
 			foreach ($playerPs as $idFleet => $fleetPS)
@@ -241,12 +236,11 @@ class Round
 				foreach ($fleetPS as $idTypeD => $typeDPS)
 				{
 					foreach ($typeDPS as $typeAPS)
-					{
 						$ass += $typeAPS->getAssorbedDamage();
-					}
 				}
 			}
 		}
+
 		return $ass;
 	}
 }

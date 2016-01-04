@@ -28,7 +28,6 @@ class Fire
 	 *
 	 * @param ShipType $attackerShipType
 	 * @param Fleet $defenderFleet
-	 * @internal param bool $attacking
 	 */
 	public function __construct(ShipType $attackerShipType, Fleet $defenderFleet)
 	{
@@ -166,6 +165,7 @@ class Fire
 	{
 		$first = $this->getShotsFiredByAttackerToOne($shipType_A);
 		$second = new Number($shipType_D->getCount());
+
 		return Math::multiple($first, $second, $real);
 	}
 
@@ -173,6 +173,7 @@ class Fire
 	{
 		$num = $this->getShotsFiredByAttackerToAll($shipType_A);
 		$denum = new Number($this->defenderFleet->getTotalCount());
+
 		return Math::divide($num, $denum, $real);
 	}
 
@@ -180,13 +181,16 @@ class Fire
 	{
 		$first = $this->getShotsFiredByAllToOne();
 		$second = new Number($shipType_D->getCount());
+
 		return Math::multiple($first, $second, $real);
 	}
 
 	public function getShotsFiredByAttackerToAll(ShipType $shipType_A, $real = false)
 	{
 		$num = new Number($this->getAttackerTotalShots() * $shipType_A->getCount());
-		$denum = new Number($this->attackerShipType->getTotalCount());
+
+		$denum = new Number($this->attackerShipType->getCount());
+
 		return Math::divide($num, $denum, $real);
 	}
 
@@ -194,22 +198,12 @@ class Fire
 	{
 		$num = new Number($this->getAttackerTotalShots());
 		$denum = new Number($this->defenderFleet->getTotalCount());
-		return Math::divide($num, $denum, $real);
-	}
 
-	/**
-	 * Fire::__toString()
-	 * Rappresentation of this object
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return $this->getAttackerTotalFire() . '';
+		return Math::divide($num, $denum, $real);
 	}
 
 	public function cloneMe()
 	{
 		return new Fire($this->attackerShipType, $this->defenderFleet);
 	}
-
 }

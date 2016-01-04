@@ -6,6 +6,11 @@ use App\Battle\CombatObject\FireManager;
 use App\Battle\Utils\Iterable;
 use Exception;
 
+/**
+ * Class Player
+ * @package App\Battle\Models
+ * @method Fleet[] getIterator
+ */
 class Player extends Iterable
 {
 	private $id;
@@ -129,15 +134,6 @@ class Player extends Iterable
 			}
 		}
 		return true;
-	}
-
-	public function __toString()
-	{
-		ob_start();
-		$_player = $this;
-		$_st = "";
-		require(OPBEPATH."views/player2.html");
-		return ob_get_clean();
 	}
 
 	public function inflictDamage(FireManager $fire)

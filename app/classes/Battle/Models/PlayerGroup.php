@@ -6,6 +6,11 @@ use App\Battle\CombatObject\FireManager;
 use App\Battle\Utils\Iterable;
 use Exception;
 
+/**
+ * Class PlayerGroup
+ * @package App\Battle\Models
+ * @method Player[] getIterator
+ */
 class PlayerGroup extends Iterable
 {
 	/**
@@ -75,15 +80,6 @@ class PlayerGroup extends Iterable
 			}
 		}
 		return true;
-	}
-
-	public function __toString()
-	{
-		ob_start();
-		$_playerGroup = $this;
-		$_st = "";
-		require(OPBEPATH."views/playerGroup.html");
-		return ob_get_clean();
 	}
 
 	public function inflictDamage(FireManager $fire)
