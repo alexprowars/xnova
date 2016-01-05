@@ -42,6 +42,50 @@ class ResourcesController extends ApplicationController
 		else
 			$this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '?set=resources', 2);
 	}
+
+	public function productionAction ()
+	{
+		if ($this->user->vacation > 0)
+			$this->message("Включен режим отпуска!");
+
+		$production = $this->request->getQuery('active', null, 'Y');
+		$production = $production == 'Y' ? 10 : 0;
+
+		$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
+
+		$pl_class = new Planet();
+		$pl_class->assignUser($this->user);
+
+		while ($planet = $planets->fetch())
+		{
+			$pl_class->assign($planet);
+			$pl_class->copyTempParams();
+			$pl_class->PlanetResourceUpdate();
+		}
+
+		$arFields = array
+		(
+			$this->game->resource[4].'_porcent' 	=> $production,
+			$this->game->resource[12].'_porcent' 	=> $production,
+			$this->game->resource[212].'_porcent' 	=> $production
+		);
+
+		foreach ($this->game->reslist['res'] AS $res)
+		{
+			$this->planet->{$res.'_mine_porcent'} = $production;
+			$arFields[$res.'_mine_porcent'] = $production;
+		}
+
+		Sql::build()->update('game_planets')->set($arFields)->where('id_owner', '=', $this->user->id)->execute();
+
+		$this->planet->{$this->game->resource[4].'_porcent'} 	= $production;
+		$this->planet->{$this->game->resource[12].'_porcent'} 	= $production;
+		$this->planet->{$this->game->resource[212].'_porcent'}	= $production;
+
+		$this->planet->PlanetResourceUpdate(time(), true);
+
+		return $this->indexAction();
+	}
 	
 	public function indexAction ()
 	{
@@ -53,47 +97,6 @@ class ResourcesController extends ApplicationController
 
 		$CurrentUser['energy_tech'] = $this->user->energy_tech;
 		$ValidList['percent'] = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		
-		if (isset($_GET['production_full']) || isset($_GET['production_empty']))
-		{
-			if ($this->user->vacation > 0)
-				$this->message("Включен режим отпуска!");
-
-			$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
-		
-			$pl_class = new Planet();
-			$pl_class->assignUser($this->user);
-
-			while ($planet = $planets->fetch())
-			{
-				$pl_class->assign($planet);
-				$pl_class->copyTempParams();
-				$pl_class->PlanetResourceUpdate();
-			}
-
-			$production = (isset($_GET['production_full'])) ? 10 : 0;
-
-			$arFields = array
-			(
-				$this->game->resource[4].'_porcent' 	=> $production,
-				$this->game->resource[12].'_porcent' 	=> $production,
-				$this->game->resource[212].'_porcent' 	=> $production
-			);
-
-			foreach ($this->game->reslist['res'] AS $res)
-			{
-				$this->planet->{$res.'_mine_porcent'} = $production;
-				$arFields[$res.'_mine_porcent'] = $production;
-			}
-
-			Sql::build()->update('game_planets')->set($arFields)->where('id_owner', '=', $this->user->id)->execute();
-
-			$this->planet->{$this->game->resource[4].'_porcent'} 	= $production;
-			$this->planet->{$this->game->resource[12].'_porcent'} 	= $production;
-			$this->planet->{$this->game->resource[212].'_porcent'}	= $production;
-		
-			$this->planet->PlanetResourceUpdate(time(), true);
-		}
 		
 		if ($_POST)
 		{

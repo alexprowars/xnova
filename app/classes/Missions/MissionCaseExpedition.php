@@ -2,9 +2,12 @@
 
 namespace App\Missions;
 
+use App\Battle\Core\Battle;
+use App\Battle\LangImplementation;
 use App\Battle\Models\Player;
 use App\Battle\Models\PlayerGroup;
 use App\Battle\Models\Fleet;
+use App\Battle\Utils\LangManager;
 use App\Fleet as FleetMethods;
 use App\FleetEngine;
 use App\Helpers;
@@ -246,6 +249,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$defenderFleetArray .= $ID . "," . round($count * $MaxAttackerPoints) . "!0;";
 				}
 
+				LangManager::getInstance()->setImplementation(new LangImplementation());
+
 				$mission = new MissionCaseAttack(array());
 
 				$attackers = new PlayerGroup();
@@ -304,7 +309,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$this->config->game->offsetSet('repairDefenceFactor', 0);
 				$this->config->game->offsetSet('battleRounds', 6);
 
-				$engine = new \Battle($attackers, $defenders);
+				$engine = new Battle($attackers, $defenders);
 
 				$report = $engine->getReport();
 

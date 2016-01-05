@@ -229,6 +229,9 @@ class Round
 	{
 		$ass = 0;
 
+		if (!is_array($playerGroupPS))
+			return $ass;
+
 		foreach ($playerGroupPS as $idPlayer => $playerPs)
 		{
 			foreach ($playerPs as $idFleet => $fleetPS)

@@ -1,0 +1,350 @@
+td, th, textarea, body, table
+{
+  font-family	: Verdana,sans-serif;
+  font-size	: 11px;
+}
+
+.center {
+	text-align: center !important;
+}
+
+.table {
+    width: 100%;
+    border-spacing: 0 !important;
+    border-collapse: collapse;
+}
+
+.table td {
+	border-spacing: 0;
+}
+
+.fleet {
+	padding: 7px;
+	background-color: #344566;
+	display: inline-block;
+}
+
+.fleet table td, .fleet table th {
+	border-spacing: 0;
+	padding: 3px 5px;
+}
+
+.ok, .success, .positive {
+	color: lime !important;
+}
+
+.notice, .zero, .neutral {
+  color: yellow !important;
+}
+
+.error, .negative {
+  color: #FF3F3E !important;
+}
+
+.info {
+	min-width: 150px;
+}
+
+.result {
+	min-width: 500px;
+}
+
+img
+{
+  border               : 0;
+}
+
+p table
+{
+  border               : 0;
+}
+
+p td
+{
+  text-align           : center;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+}
+
+table table, .fleet table
+{
+  	border               : 0;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+table table td, .fleet table td
+{
+  font-size            : 11px;
+  font-family          : Verdana,sans-serif;
+}
+
+body {
+	margin: 0 0 0 0;
+	background:#000 url(/assets/images/starfield_01.gif) repeat 0 0 fixed;
+	width:100%;
+	font-size:11px;
+	font-family: verdana, arial, sans-serif;
+	color:#D4D4D4;
+	padding: 5px;
+	box-sizing: border-box;
+}
+
+body form table th table input
+{
+  width: 60px;
+}
+
+th, td.a, td.b, td.c, td.f, input, select,
+td.g, td.h, td.i, td.j, td.k, td.l, td.m,
+td.n, td.o, td.q, td.r, td.v, .style td,
+textarea, p td, table.s th img
+{
+  border               : 1px #415680 solid;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+	font-weight: normal;
+}
+
+th, td.a, td.b, td.c, td.f, input, select, td.g,
+td.h, td.i, td.j, td.k, td.m, td.o, td.q, td.r,
+td.v, td.s, .style td, p td
+{
+  background-color     : #344566;
+}
+
+th
+{
+  text-align      : center;
+  padding         : 3px;
+}
+
+td.a
+{
+  height               : 39px;
+  text-align           : center;
+}
+
+td.b
+{
+  padding              : 3px;
+}
+
+td.c
+{
+	text-align: center;
+  color                : #E6EBFB;
+  padding         : 3px;
+}
+
+td.f, input, select, textarea
+{
+  color                : #E6EBFB;
+  background-color     : #344566;
+}
+
+textarea
+{
+  width                : 100%;
+}
+
+td.k input
+{
+  text-align           : left;
+}
+
+td.g
+{
+  font-weight          : bold;
+  text-align           : right;
+  color                : #E6EBFB;
+}
+
+td.h
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.i
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.j
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.k, td.k input
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.l
+{
+  background-color     : #344566;
+  color                : #E6EBFB;
+  vertical-align       : top;
+  padding              : 3px;
+}
+
+td.m
+{
+  font-weight          : bold;
+  text-align           : right;
+  width                : 86px;
+  color                : #E6EBFB;
+}
+
+td.n
+{
+  font-weight          : bold;
+  width                : 89px;
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.o
+{
+  text-align           : center;
+  color                : #E6EBFB;
+}
+
+td.q
+{
+  font-weight          : bold;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+  text-align           : center;
+  vertical-align       : middle;
+  color                : #E6EBFB;
+}
+
+td.r
+{
+  text-align           : right;
+  color                : #E6EBFB;
+}
+
+td.v
+{
+  font-weight          : bold;
+  text-align           : right;
+  color                : #f7f7f7;
+}
+
+td.s
+{
+  color                : #E6EBFB;
+}
+
+table.s th
+{
+  border               : 0;
+}
+
+table.s th img
+{
+  width                : 89px;
+  height               : 89px;
+}
+
+div.z
+{
+  font-weight          : bold;
+  color                : #E6EBFB;
+}
+
+a
+{
+  color                : #E6EBFB;
+  text-decoration      : none;
+  font-weight          : bold;
+}
+
+a.s
+{
+  color                : #E6EBFB;
+}
+
+a.t
+{
+  color                : #E6EBFB;
+}
+
+a:hover
+{
+  color                : #CDD7F8;
+  text-decoration      : underline;
+}
+
+.style td
+{
+  color                : #E6EBFB;
+  border-top           : 0;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+}
+
+.style div a
+{
+  height               : 100%;
+  width                : 100%;
+  color                : #f2f2f2;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+}
+
+.style div a:link
+{
+  height               : 100%;
+  width                : 100%;
+  color                : #f2f2f2;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+}
+
+.style div a:visited
+{
+  height               : 100%;
+  width                : 100%;
+  color                : #f2f2f2;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+}
+
+.style div a:hover
+{
+  background-color     : #415680;
+  height               : 100%;
+  width                : 100%;
+  text-decoration      : none;
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+  color                : #E6EBFB;
+}
+
+.style
+{
+  margin-top           : 15px;
+}
+
+h1
+{
+  font-size            : 11px;
+  font-family          : Tahoma,sans-serif;
+  border-bottom        : 0;
+  width                : 98%;
+  text-align           : center;
+}
+
+.separator {
+    height: 5px;
+    clear: both;
+    font-size: 1px;
+    line-height: 1px;
+}

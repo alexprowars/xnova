@@ -1,6 +1,7 @@
 <?php
-use App\Battle\Core\BattleReport;
-use App\Battle\Core\Round;
+
+namespace App\Battle\Core;
+
 use App\Battle\Models\PlayerGroup;
 
 class Battle
@@ -37,8 +38,8 @@ class Battle
 			ob_start();
 		$this->battleStarted = true;
 		//only for initial fleets presentation
-		log_var('attackers', $this->attackers);
-		log_var('defenders', $this->defenders);
+		\log_var('attackers', $this->attackers);
+		\log_var('defenders', $this->defenders);
 		$round = new Round($this->attackers, $this->defenders, 0);
 		$this->report->addRound($round);
 		for ($i = 1; $i <= ROUNDS; $i++)

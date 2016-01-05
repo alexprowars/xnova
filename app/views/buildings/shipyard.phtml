@@ -10,11 +10,11 @@
 					<div class="col-md-6">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 							<? if (!$build['access']): ?>
-								<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/'.$build['i'].'/') ?>/', 600)"><span>недоступно</span></div>
+								<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>/', 600)"><span>недоступно</span></div>
 							<? endif; ?>
 
 							<div class="img">
-								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('infos/'.$build['i'].'/') ?>', 600)">
+								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600)">
 									<img src="/assets/images/gebaeude/<?=$build['i'] ?>.gif" alt='<?=_getText('tech', $build['i']) ?>' align=top width=120 height=120 class="tooltip" data-tooltip-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 								</a>
 
@@ -23,7 +23,7 @@
 								</div>
 							</div>
 							<div class="title">
-								<a href="?<?=$this->url->get('infos/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a> (<span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\App\Helpers::pretty_number($build['count']) ?></span>)
+								<a href="?<?=$this->url->get('info/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a> (<span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\App\Helpers::pretty_number($build['count']) ?></span>)
 							</div>
 							<div class="actions">
 								<? if ($build['access']): ?>

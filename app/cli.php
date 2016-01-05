@@ -5,6 +5,7 @@ if (!extension_loaded('phalcon'))
 
 use App\Database;
 use App\Game;
+use App\Lang;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Cli\Console as ConsoleApp;
 use Phalcon\Cache\Backend\Memcache as Cache;
@@ -69,8 +70,13 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 else
 	die('config.ini not found');
 
+Lang::setLang($di->get('config')->app->language);
+
 $console = new ConsoleApp();
 $console->setDI($di);
+
+include (APP_PATH . '/app/config/bootstrap.php');
+include_once(APP_PATH."/app/config/battle.php");
 
 $console->getDI()->getShared('game')->loadGameVariables();
 

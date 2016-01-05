@@ -12,7 +12,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td class="c" align="center"><a href="<?=$this->url->get('infos&gid=113/') ?>">Энергетическая технология</a></td>
+			<td class="c" align="center"><a href="<?=$this->url->get('info/113/') ?>">Энергетическая технология</a></td>
 			<th><?=$parse['et'] ?> ур.</th>
 		</tr>
 	</table>
@@ -22,8 +22,8 @@
 			<td class="c" colspan="5">Управление шахтами и энергетикой</td>
 		</tr>
 		<tr>
-			<th width="50%"><a href="<?=$this->url->get('resources&production_full=1/') ?>" class="button">Включить на всех<br>планетах</a></th>
-			<th><a href="<?=$this->url->get('resources&production_empty=1/') ?>" class="button">Выключить на всех<br>планетах</a></th>
+			<th width="50%"><a href="<?=$this->url->get('resources/production/active/Y/') ?>" class="button">Включить на всех<br>планетах</a></th>
+			<th><a href="<?=$this->url->get('resources/production/active/N/') ?>" class="button">Выключить на всех<br>планетах</a></th>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -36,10 +36,10 @@
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('infos/1/') ?>', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('infos/2/') ?>', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('infos/3/') ?>', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('infos/4/') ?>', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('info/1/') ?>', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('info/2/') ?>', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('info/3/') ?>', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('info/4/') ?>', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@
 			</tr>
 			<? foreach ($parse['resource_row'] as $resource): ?>
 				<tr>
-					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('infos/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
+					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('info/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
 					<? foreach ($this->game->reslist['res'] AS $res): ?>

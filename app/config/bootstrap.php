@@ -2,7 +2,8 @@
 
 include_once(APP_PATH."app/functions.php");
 
-$di->get('auth')->checkExtAuth();
+if ($di->has('auth'))
+	$di->get('auth')->checkExtAuth();
 
 $loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
 

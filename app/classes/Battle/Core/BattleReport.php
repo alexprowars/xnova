@@ -204,7 +204,7 @@ class BattleReport
 					$count = $shipType->getCount() - $repairedAmount;
 
 					if ($count > 0)
-						$return[$idPlayer][$idFleet][get_class($shipType)][$idShipType] = array($cost[0] * $count, $cost[1] * $count);
+						$return[$idPlayer][$idFleet][$shipType->getType()][$idShipType] = array($cost[0] * $count, $cost[1] * $count);
 					elseif ($count < 0)
 						throw new Exception('Count negative');
 				}

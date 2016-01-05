@@ -82,6 +82,19 @@ class PlayerGroup extends Iterable
 		return true;
 	}
 
+	public function __toString()
+	{
+		ob_start();
+
+		$_st = '';
+		/** @noinspection PhpUnusedLocalVariableInspection */
+		$_playerGroup = $this;
+
+		require(APP_PATH."app/classes/Battle/Views/playerGroup.html");
+
+		return ob_get_clean();
+	}
+
 	public function inflictDamage(FireManager $fire)
 	{
 		$physicShots = array();

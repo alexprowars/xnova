@@ -78,15 +78,15 @@ class BuildingsController extends ApplicationController
 		$parse = $this->building->pageShipyard('defense');
 		$parse['mode'] = $this->dispatcher->getActionName();
 
-		$this->view->pick('buildings/shipyard');
+		$this->view->partial('buildings/shipyard');
 		$this->view->setVar('parse', $parse);
 
 		$data = $this->building->ElementBuildListBox();
 
 		if ($data['count'] > 0)
 		{
-			$this->view->pick('buildings/script');
-			$this->view->setVar('parse', $data);
+			$this->view->setVar('build', $data);
+			$this->view->partial('buildings/script');
 		}
 
 		$this->tag->setTitle('Оборона');

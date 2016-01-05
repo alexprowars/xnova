@@ -236,7 +236,7 @@ function PrintRow ()
 			if (user['recycler'] > 0)
 				result += "<tr><th colspan=2 align=left><a href=# onclick=QuickFleet(8,"+galaxy+","+system+","+planet+",2,0)>Собрать</a></th></tr>";
 
-			result += "<tr><th colspan=2 align=left><a href=/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t2/m8/>Отправить флот</a></th>";
+			result += "<tr><th colspan=2 align=left><a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t2/m8/\'>Отправить флот</a></th>";
 			result += "</tr></table>";
 			result += "</th>";
 			result += "</tr>";
@@ -265,10 +265,10 @@ function PrintRow ()
 
             var Systemtatus2 = '', Systemtatus = '';
 
-			if (row[planet]['banaday'] > time && row[planet]['urlaubs_modus_time'] > 0) {
+			if (row[planet]['banned'] > time && row[planet]['vacation'] > 0) {
 				Systemtatus2 = "U <a href=\"/banned/\"><span class=\"banned\">G</span></a>";
 				Systemtatus  = "<span class=\"vacation\">";
-			} else if (row[planet]['banaday'] > time) {
+			} else if (row[planet]['banned'] > time) {
 				Systemtatus2 = "<a href=\"/banned/\">G</a>";
 				Systemtatus  = "<span class=\"banned\">";
 			} else if (row[planet]['urlaubs_modus_time'] > 0) {
@@ -351,7 +351,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='/infos/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='/info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else

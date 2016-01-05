@@ -117,18 +117,18 @@ class Game extends Component
 		if (!$time)
 			$time = time();
 
-		if (!$owner && $this->auth->isAuthorized())
-			$owner = $this->data['id'];
+		if (!$owner && isset($this->auth) && $this->auth->isAuthorized())
+			$owner = $this->user->id;
 
 		if (!$owner)
 			return false;
 
-		if ($sender === false && $this->auth->isAuthorized())
+		if ($sender === false && isset($this->auth) && $this->auth->isAuthorized())
 			$sender = $this->user->id;
 		else
 			$sender = 0;
 
-		if ($this->auth->isAuthorized() && $owner == $this->user->getId())
+		if (isset($this->auth) && $this->auth->isAuthorized() && $owner == $this->user->getId())
 			$this->user->messages++;
 
 		$this->db->insertAsDict(

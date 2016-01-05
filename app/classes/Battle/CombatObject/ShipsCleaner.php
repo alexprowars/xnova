@@ -50,7 +50,7 @@ class ShipsCleaner
 
 		if (USE_BIEXPLOSION_SYSTEM && $this->lastShipHit >= $this->fighters->getCount() / PROB_TO_REAL_MAGIC)
 		{
-			log_comment('lastShipHit bigger than getCount()/magic');
+			\log_comment('lastShipHit bigger than getCount()/magic');
 			if ($prob < MIN_PROB_TO_EXPLODE)
 			{
 				$probToExplode = 0;
@@ -62,7 +62,7 @@ class ShipsCleaner
 		}
 		else
 		{
-			log_comment('lastShipHit smaller than getCount()/magic');
+			\log_comment('lastShipHit smaller than getCount()/magic');
 			$probToExplode = $prob * (1 - MIN_PROB_TO_EXPLODE);
 		}
 
@@ -78,11 +78,11 @@ class ShipsCleaner
 
 		//$this->remainLife = $this->exploded * (1 - $prob) * ($this->fighters->getCurrentLife() / $this->fighters->getCount());
 		$this->remainLife = $this->fighters->getCurrentLife() / $this->fighters->getCount();
-		log_var('prob',$prob);
-		log_var('probToExplode',$probToExplode);
-		log_var('teoricExploded',$teoricExploded);
-		log_var('exploded',$this->exploded);
-		log_var('remainLife',$this->remainLife);
+		\log_var('prob',$prob);
+		\log_var('probToExplode',$probToExplode);
+		\log_var('teoricExploded',$teoricExploded);
+		\log_var('exploded',$this->exploded);
+		\log_var('remainLife',$this->remainLife);
 	}
 
 	/**

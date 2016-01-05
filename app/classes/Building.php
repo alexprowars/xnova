@@ -4,9 +4,8 @@ namespace App;
 use App\Models\Planet;
 use App\Models\User;
 use Phalcon\Di;
-use Phalcon\Mvc\User\Component;
 
-class Building extends Component
+class Building
 {
 	/**
 	 * @param  $CurrentUser

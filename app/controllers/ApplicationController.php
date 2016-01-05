@@ -47,10 +47,17 @@ class ApplicationController extends Controller
 
 		if ($this->auth->isAuthorized())
 		{
+			$this->view->setVar('deleteUserTimer', $this->user->deltime);
+			$this->view->setVar('vocationTimer', $this->user->vacation);
+			$this->view->setVar('messages', $this->user->messages);
+			$this->view->setVar('messages_ally', $this->user->messages_ally);
+
 			$parse = array();
 
 			if ($this->getDi()->has('planet'))
 				$parse = $this->ShowTopNavigationBar();
+			else
+				$this->showTopPanel(false);
 
 			$parse['tutorial'] = $this->user->tutorial;
 
@@ -202,10 +209,6 @@ class ApplicationController extends Controller
 			$this->view->setVar('timezone', 0);
 			$this->view->setVar('userId', $this->user->getId());
 			$this->view->setVar('adminlevel', $this->user->authlevel);
-			$this->view->setVar('deleteUserTimer', $this->user->deltime);
-			$this->view->setVar('vocationTimer', $this->user->vacation);
-			$this->view->setVar('messages', $this->user->messages);
-			$this->view->setVar('messages_ally', $this->user->messages_ally);
 
 			$this->game->loadGameVariables();
 

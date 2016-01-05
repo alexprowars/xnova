@@ -1,5 +1,6 @@
 <?php
 
+use App\Lang;
 use App\Missions\Mission;
 use App\UpdateStatistics;
 
@@ -61,6 +62,8 @@ class UpdateTask extends ApplicationTask
 			15  => 'MissionCaseExpedition',
 			20  => 'MissionCaseRak'
 		);
+
+		Lang::includeLang("fleet_engine");
 
 		$totalRuns = 1;
 

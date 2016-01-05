@@ -359,7 +359,7 @@ function FlotenTime (obj, time)
 
 	time--;
 
-	timeouts['fleet'+obj] = window.setTimeout(function(){FlotenTime(obj,time)}, 999);
+	timeouts['fleet'+obj] = window.setTimeout(function(){FlotenTime(obj,time)}, 1000);
 }
 
 var Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
@@ -376,7 +376,7 @@ function UpdateClock()
    	var D0 = new Date;
     hms('clock', new Date(D0.getTime() + serverTime));
 
-	timeouts['clock'] = setTimeout(UpdateClock, 999);
+	timeouts['clock'] = setTimeout(UpdateClock, 1000);
 }
 
 function setMaximum(type, number)
@@ -427,8 +427,8 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({
 		type: "GET",
-		url: "?set=fleet&page=quick",
-		data: "ajax=1&mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count+"",
+		url: "/fleet/quick/",
+		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count+"",
 		success: function(msg)
 		{
 			if ($('#galaxyMessage').length > 0)

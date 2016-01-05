@@ -118,7 +118,7 @@ class JumpgateController extends ApplicationController
 			$RetMessage = _getText('gate_wait_data');
 		}
 
-		$this->message($RetMessage, _getText('tech', 43), "/infos/?gid=43", 4);*/
+		$this->message($RetMessage, _getText('tech', 43), "/info/?gid=43", 4);*/
 	}
 }
 

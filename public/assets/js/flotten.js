@@ -228,7 +228,7 @@ function durationTimer()
 	var D0 = new Date;
 	hms('end_time', new Date(D0.getTime() + serverTime + durationTime));
 
-	timeouts['durationTimer'] = setTimeout(durationTimer, 999);
+	timeouts['durationTimer'] = setTimeout(durationTimer, 1000);
 }
 
 function setResource(id, val)
@@ -417,7 +417,7 @@ function t()
 		}
 		bxx.attr('title', ss - 1);
 	}
-	window.setTimeout("t();", 999);
+	window.setTimeout("t();", 1000);
 }
 
 function addZeros(value, count)

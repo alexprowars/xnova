@@ -144,17 +144,17 @@ class Fleet extends Iterable
 			foreach ($this->getOrderedIterator() as $idShipTypeDefender => $shipTypeDefender)
 			{
 				$idShipTypeAttacker = $fire->getId();
-				log_comment( "---- firing from $idShipTypeAttacker to $idShipTypeDefender ----");
+				\log_comment( "---- firing from $idShipTypeAttacker to $idShipTypeDefender ----");
 				$xs = $fire->getShotsFiredByAllToDefenderType($shipTypeDefender, true);
 				$ps = $shipTypeDefender->inflictDamage($fire->getPower(), $xs->result);
-				log_var('$xs',$xs);
+				\log_var('$xs',$xs);
 				$tmp[$idShipTypeDefender] = $xs->rest;
 
 				if ($ps != null)
 					$physicShots[$idShipTypeDefender][] = $ps;
 			}
 
-			log_var('$tmp',$tmp);
+			\log_var('$tmp',$tmp);
 			// assign the last shot to the more likely shitType
 			$m = 0;
 			$f = 0;
@@ -170,7 +170,7 @@ class Fleet extends Iterable
 
 			if ($f != 0)
 			{
-				log_comment('adding 1 shot');
+				\log_comment('adding 1 shot');
 				$ps = $this->getShipType($f)->inflictDamage($fire->getPower(), 1);
 				$physicShots[$f][] = $ps;
 			}
@@ -193,7 +193,7 @@ class Fleet extends Iterable
 
 		foreach ($this->array as $id => $shipType)
 		{
-			log_comment("---- exploding $id ----");
+			\log_comment("---- exploding $id ----");
 			$sc = $shipType->cleanShips();
 			$this->count -= $sc->getExplodedShips();
 

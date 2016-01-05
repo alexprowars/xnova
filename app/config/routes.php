@@ -103,6 +103,15 @@ $router->add('/players/stat/([0-9])/:params', array
 	'params' 		=> 2
 ));
 
+$router->add('/rw/([0-9]+)/([a-z0-9]+)/:params', array
+(
+	'controller' 	=> 'rw',
+	'action' 		=> 'index',
+	'id' 			=> 1,
+	'k' 			=> 2,
+	'params' 		=> 3
+));
+
 $router->add('/', array
 (
 	'controller' 	=> 'index',

@@ -15,7 +15,7 @@
 			<? else: ?>
 				<div class="row">
 					<div class="col-sm-5 col-xs-6 title">
-						<a href="<?=$this->url->get('infos/'.$list['tt_info'].'/') ?>"><?=$list['tt_name'] ?></a>
+						<a href="<?=$this->url->get('info/'.$list['tt_info'].'/') ?>"><?=$list['tt_name'] ?></a>
 
 						<? if ($list['required_list'] != ''): ?>
 							<div class="pull-right hidden-xs"><a href="<?=$this->url->get('techtree/id/'.$list['tt_info'].'/') ?>">[i]</a></div>

@@ -26,8 +26,8 @@ class PhysicShot
 	 */
 	public function __construct(ShipType $shipType, $damage, $count)
 	{
-		log_var('damage', $damage);
-		log_var('count', $count);
+		\log_var('damage', $damage);
+		\log_var('count', $count);
 
 		if ($damage < 0)
 			throw new Exception('Negative damage');

@@ -2,7 +2,9 @@
 
 namespace App\Missions;
 
+use App\Battle\Core\Battle;
 use App\Battle\Core\Round;
+use App\Battle\LangImplementation;
 use App\Battle\Models\Defense;
 use App\Battle\Models\HomeFleet;
 use App\Battle\Models\Player;
@@ -10,6 +12,8 @@ use App\Battle\Models\PlayerGroup;
 use App\Battle\Models\Ship;
 use App\Battle\Models\ShipType;
 use App\Battle\Models\Fleet;
+use App\Battle\Core;
+use App\Battle\Utils\LangManager;
 use App\Fleet as FleetMethods;
 use App\FleetEngine;
 use App\Helpers;
@@ -40,7 +44,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$owner = User::findFirst($this->_fleet['fleet_owner']);
 
-		if (!isset($owner['id']))
+		if (!$owner)
 		{
 			$this->ReturnFleet();
 
@@ -61,6 +65,8 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$target->assignUser($targetUser);
 		$target->PlanetResourceUpdate($this->_fleet['fleet_start_time']);
+
+		LangManager::getInstance()->setImplementation(new LangImplementation());
 
 		$attackers = new PlayerGroup();
 		$defenders = new PlayerGroup();
@@ -154,7 +160,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if (!$this->_fleet['raunds'])
 			$this->_fleet['raunds'] = 6;
 
-		$engine = new \Battle($attackers, $defenders, $this->_fleet['raunds']);
+		$engine = new Battle($attackers, $defenders, $this->_fleet['raunds']);
 		$report = $engine->getReport();
 		$result = array('version' => 2, 'time' => time(), 'rw' => array());
 
@@ -407,7 +413,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		{
 			if (!in_array($info['tech']['id'], $FleetsUsers))
 			{
-				$FleetsUsers[] = $info['tech']['id'];
+				$FleetsUsers[] = (int) $info['tech']['id'];
 
 				if ($this->_fleet['fleet_mission'] != 6)
 				{
@@ -429,7 +435,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		{
 			if (!in_array($info['tech']['id'], $FleetsUsers))
 			{
-				$FleetsUsers[] = $info['tech']['id'];
+				$FleetsUsers[] = (int) $info['tech']['id'];
 
 				if ($this->_fleet['fleet_mission'] != 6)
 				{
@@ -516,7 +522,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			]);
 		}
 
-		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"?set=rw&r=" . $ids . "&k=" . md5('xnovasuka' . $ids) . "\">";
+		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"/rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
 
 		if ($result['won'] == 1)
 			$raport .= "<font color=\"green\">";
