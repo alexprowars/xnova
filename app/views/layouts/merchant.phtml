@@ -2,22 +2,22 @@
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Cristal 	= $('#marchand').find('input[name=cristal]').val();
-			var Deuterium 	= $('#marchand').find('input[name=deut]').val();
+			var Cristal 	= $('#merchant').find('input[name=cristal]').val();
+			var Deuterium 	= $('#merchant').find('input[name=deut]').val();
 
 			Cristal = Cristal * <?=$parse['mod_ma_res_a'] ?>;
 			Deuterium = Deuterium * <?=$parse['mod_ma_res_b'] ?>;
 
 			$("#metal").html(Cristal + Deuterium);
 
-			if (isNaN($('#marchand').find('input[name=cristal]').val()))
+			if (isNaN($('#merchant').find('input[name=cristal]').val()))
 				$("#metal").html("<?=_getText('mod_ma_nbre') ?>");
 
-			if (isNaN($('#marchand').find('input[name=deut]').val()))
+			if (isNaN($('#merchant').find('input[name=deut]').val()))
 				$("#metal").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
+	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
 		<input type="hidden" name="ress" value="metal">
 		<table width="100%">
 			<tr>
@@ -53,22 +53,22 @@
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Metal = $('#marchand').find('input[name=metal]').val();
-			var Deuterium = $('#marchand').find('input[name=deut]').val();
+			var Metal = $('#merchant').find('input[name=metal]').val();
+			var Deuterium = $('#merchant').find('input[name=deut]').val();
 
 			Metal = Metal * <?=$parse['mod_ma_res_a'] ?>;
 			Deuterium = Deuterium * <?=$parse['mod_ma_res_b'] ?>;
 
 			$("#cristal").html(Metal + Deuterium);
 
-			if (isNaN($('#marchand').find('input[name=metal]').val()))
+			if (isNaN($('#merchant').find('input[name=metal]').val()))
 				$("#cristal").html("<?=_getText('mod_ma_nbre') ?>");
 
-			if (isNaN($('#marchand').find('input[name=deut]').val()))
+			if (isNaN($('#merchant').find('input[name=deut]').val()))
 				$("#cristal").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
+	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
 		<input type="hidden" name="ress" value="cristal">
 		<table width="100%">
 			<tr>
@@ -104,22 +104,22 @@
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Metal 	= $('#marchand').find('input[name=metal]').val();
-			var Cristal = $('#marchand').find('input[name=cristal]').val();
+			var Metal 	= $('#merchant').find('input[name=metal]').val();
+			var Cristal = $('#merchant').find('input[name=cristal]').val();
 
 			Metal = Metal * <?=$parse['mod_ma_res_a'] ?>;
 			Cristal = Cristal * <?=$parse['mod_ma_res_b'] ?>;
 
 			$("#deut").html(Metal + Cristal);
 
-			if (isNaN($('#marchand').find('input[name=metal]').val()))
+			if (isNaN($('#merchant').find('input[name=metal]').val()))
 				$("#deut").html("<?=_getText('mod_ma_nbre') ?>");
 
-			if (isNaN($('#marchand').find('input[name=cristal]').val()))
+			if (isNaN($('#merchant').find('input[name=cristal]').val()))
 				$("#deut").html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="marchand" action="<?=$this->url->get('marchand/') ?>" method="post">
+	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
 		<input type="hidden" name="ress" value="deuterium">
 		<table width="100%">
 			<tr>
@@ -155,7 +155,7 @@
 	<div class="block start">
 		<div class="title">Обмен сырья</div>
 		<div class="content">
-			<form action="<?=$this->url->get('marchand/') ?>" method="post">
+			<form action="<?=$this->url->get('merchant/') ?>" method="post">
 				<input type="hidden" name="action" value="2">
 				<table class="table noborder">
 					<tr>

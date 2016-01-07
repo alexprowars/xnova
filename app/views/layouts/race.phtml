@@ -30,7 +30,7 @@
 				<br><br>
 
 				<? if ($race == 0): ?>
-					<div style="text-align:center"><a href="<?=$this->url->get('race/sel/1/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/1/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</th>
 			<th style="text-align:left">
@@ -49,7 +49,7 @@
 				<br><br>
 
 				<? if ($race == 0): ?>
-				<div style="text-align:center"><a href="<?=$this->url->get('race/sel/2/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/2/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</th>
 		</tr>
@@ -74,7 +74,7 @@
 				<br><br>
 
 				<? if ($race == 0): ?>
-				<div style="text-align:center"><a href="<?=$this->url->get('race/sel/3/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/3/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</th>
 			<th style="text-align:left">
@@ -93,7 +93,7 @@
 				<br><br>
 
 				<? if ($race == 0): ?>
-				<div style="text-align:center"><a href="<?=$this->url->get('race/sel/4/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/4/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</th>
 		</tr>
@@ -111,7 +111,7 @@
 				<th colspan="2">
 					На планетах не должно идти строительство, исследования, летать флот и весь флот фракции подлежит демонтировке (без возврата ресурсов).<br><br>
 					<? if ($isChangeAvailable): ?>
-						<form action="<?=$this->url->get('race/mode/change/') ?>" method="POST">
+						<form action="<?=$this->url->get('race/change/') ?>" method="POST">
 							<select name="race">
 								<option value="0">выбрать...</option>
 								<option value="1">Конфедерация</option>

@@ -47,7 +47,7 @@ class RwController extends ApplicationController
 					$Page .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});</script>';
 				}
 		
-				$Page .= "<div class='separator'></div>ID боевого доклада: <a href=\"/log/?mode=new&save=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a>";
+				$Page .= "<div class='separator'></div>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a>";
 		
 				if ($this->config->game->get('gameTemplate') == 'main')
 				{
@@ -80,7 +80,7 @@ class RwController extends ApplicationController
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "</center></td></tr><tr align=center><td>ID боевого доклада: <a href=\"/log/?mode=new&save=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
+				$Page .= "</center></td></tr><tr align=center><td>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
 				$Page .= "</table></body></html>";
 		
 				echo $Page;

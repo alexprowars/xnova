@@ -47,13 +47,13 @@ class BuddyController extends ApplicationController
 				if (mb_strlen($_POST['text'], 'UTF-8') > 5000)
 					$this->message("Максимальная длинна сообщения 5000 семволов!", "Ошибка");
 		
-				Sql::build()->insert('game_buddy')->set(Array
-				(
+				$this->db->insertAsDict('game_buddy',
+				[
 					'sender'	=> $this->user->id,
 					'owner'		=> $u,
 					'active'	=> 0,
 					'text'		=> $this->db->escapeString(strip_tags($_POST['text']))
-				))->execute();
+				]);
 		
 				$this->game->sendMessage($u, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/?a=1"><< просмотреть >></a>');
 		

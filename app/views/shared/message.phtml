@@ -1,13 +1,19 @@
-<br><br>
-<center>
-	<table width="519">
-		<? if (isset($title) && $title != ''): ?>
-			<tr>
-				<td class="c"><font color="red"><?=$title ?></font></td>
-			</tr>
-		<? endif; ?>
+<table class="table">
+	<? if (isset($title) && $title != ''): ?>
 		<tr>
-			<th class="errormessage"><?=$text ?></th>
+			<td class="c"><font color="red"><?=$title ?></font></td>
 		</tr>
-	</table>
-</center>
+	<? endif; ?>
+	<tr>
+		<th class="errormessage"><?=$text ?></th>
+	</tr>
+</table>
+<? if ($time && $destination): ?>
+	<script type="text/javascript">
+	<? if ($isAjax): ?>
+		timeouts['message'] = setTimeout(function(){load('<?=$destination ?>')}, <?=($time * 1000) ?>);
+	<? else: ?>
+		setTimeout(function(){location.href = '<?=$destination ?>';}, <?=($time * 1000) ?>);
+	<? endif; ?>
+	</script>
+<? endif; ?>

@@ -279,7 +279,7 @@ class OverviewController extends ApplicationController
 
 			if ($image > 0 && $image <= $parse['images'][$parse['type']])
 			{
-				Sql::build()->update('game_planets')->setField('image', $parse['type'].'planet'.($image < 10 ? '0' : '').$image)->where('id', '=', $this->planet->id)->execute();
+				$this->db->updateAsDict('game_planets', ['image' => $parse['type'].'planet'.($image < 10 ? '0' : '').$image], 'id = '.$this->planet->id);
 				Sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', $this->user->getId())->execute();
 
 				$this->response->redirect('/overview/');

@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Models\Planet;
-use App\Sql;
 
 class ResourcesController extends ApplicationController
 {
@@ -18,7 +17,7 @@ class ResourcesController extends ApplicationController
 	private function buy ($parse)
 	{
 		if ($this->user->vacation > 0)
-			$this->message("Включен режим отпуска!");
+			return $this->message("Включен режим отпуска!");
 
 		if ($this->user->credits >= 10)
 		{
@@ -34,13 +33,13 @@ class ResourcesController extends ApplicationController
 				$this->db->query('UPDATE game_users SET credits = credits - 10 WHERE id = ' . $this->user->id . ';');
 				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . (10 * (-1)) . ", 2)");
 
-				$this->message('Вы успешно купили ' . $parse['buy_metal'] . ' металла, ' . $parse['buy_crystal'] . ' кристалла, ' . $parse['buy_deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
+				return $this->message('Вы успешно купили ' . $parse['buy_metal'] . ' металла, ' . $parse['buy_crystal'] . ' кристалла, ' . $parse['buy_deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
 			}
 			else
-				$this->message('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '/resources/', 2);
+				return $this->message('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '/resources/', 2);
 		}
 		else
-			$this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '/resources/', 2);
+			return $this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '/resources/', 2);
 	}
 
 	public function productionAction ()
@@ -76,7 +75,7 @@ class ResourcesController extends ApplicationController
 			$arFields[$res.'_mine_porcent'] = $production;
 		}
 
-		Sql::build()->update('game_planets')->set($arFields)->where('id_owner', '=', $this->user->id)->execute();
+		$this->db->updateAsDict('game_planets', $arFields, 'id_owner = '.$this->user->id);
 
 		$this->planet->{$this->game->resource[4].'_porcent'} 	= $production;
 		$this->planet->{$this->game->resource[12].'_porcent'} 	= $production;
@@ -213,8 +212,7 @@ class ResourcesController extends ApplicationController
 		$parse['name'] = $this->planet->name;
 		
 		$parse['et'] = $this->user->energy_tech;
-		
-		$this->view->pick('resources');
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Сырьё');

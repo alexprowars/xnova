@@ -120,6 +120,14 @@ $router->add('/tech/([0-9]+)/:params', array
 	'params' 		=> 2
 ));
 
+$router->add('/log/([0-9]+)/:params', array
+(
+	'controller' 	=> 'log',
+	'action' 		=> 'info',
+	'id' 			=> 1,
+	'params' 		=> 2
+));
+
 $router->add('/tutorial/([0-9]+)/:params', array
 (
 	'controller' 	=> 'tutorial',

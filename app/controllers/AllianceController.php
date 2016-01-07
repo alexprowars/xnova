@@ -498,10 +498,7 @@ class AllianceController extends ApplicationController
 						{
 							if ($this->user->credits >= $parse['need'])
 							{
-								Sql::build()->update('game_planets')->
-										setField('id_ally', $ally['id'])->
-										setField('name', $ally['ally_name'])
-								->where('id', '=', $check['id'])->execute();
+								$this->db->updateAsDict('game_planets', ['id_ally' => $ally['id'], 'name' => $ally['ally_name']], 'id = '.$check['id']);
 	
 								Sql::build()->update('game_users')->setField('-credits', $parse['need'])->where('id', '=', $this->user->id)->execute();
 	

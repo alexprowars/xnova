@@ -33,15 +33,15 @@ class TutorialController extends ApplicationController
 
 			if (!isset($qInfo['id']))
 			{
-				$qInfo = array
-				(
+				$this->db->insertAsDict('game_users_quests',
+				[
 					'user_id' => $this->user->getId(),
 					'quest_id' => $stage,
 					'finish' => 0,
 					'stage' => 0
-				);
+				]);
 
-				$qInfo['id'] = Sql::build()->insert('game_users_quests')->set($qInfo)->execute();
+				$qInfo['id'] = $this->db->lastInsertId();
 			}
 
 			$errors = 0;
@@ -182,7 +182,7 @@ class TutorialController extends ApplicationController
 					}
 				}
 
-				Sql::build()->update('game_users_quests')->setField('finish', '1')->where('id', '=', $qInfo['id'])->execute();
+				$this->db->updateAsDict('game_users_quests', ['finish' => '1'], 'id = '.$qInfo['id']);
 
 				if (count($planetData))
 					$this->planet->saveData($planetData);

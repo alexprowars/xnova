@@ -23,7 +23,7 @@ class MerchantController extends ApplicationController
 		if (isset($_POST['ress']))
 		{
 			if ($this->user->credits <= 0)
-				$this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/marchand/', 3);
+				return $this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/merchant/', 3);
 		
 			$Error = false;
 		
@@ -35,6 +35,7 @@ class MerchantController extends ApplicationController
 			{
 				case 'metal':
 					$Necessaire = ($cristal * 2) + ($deut * 4);
+
 					if ($cristal < 0 || $deut < 0 || $metal != 0 || $Necessaire == 0)
 					{
 						$Message = "Failed";
@@ -47,11 +48,13 @@ class MerchantController extends ApplicationController
 						$Message = _getText('mod_ma_noten') . " " . _getText('Metal') . "! ";
 						$Error = true;
 					}
+
 					break;
 		
 				case 'cristal':
 		
 					$Necessaire = ($metal * 0.5) + ($deut * 2);
+
 					if ($metal < 0 || $deut < 0 || $cristal != 0 || $Necessaire == 0)
 					{
 						$Message = "Failed";
@@ -64,11 +67,13 @@ class MerchantController extends ApplicationController
 						$Message = _getText('mod_ma_noten') . " " . _getText('Crystal') . "! ";
 						$Error = true;
 					}
+
 					break;
 		
 				case 'deuterium':
 		
 					$Necessaire = ($metal * 0.25) + ($cristal * 0.5);
+
 					if ($metal < 0 || $cristal < 0 || $deut != 0 || $Necessaire == 0)
 					{
 						$Message = "Failed";
@@ -81,12 +86,14 @@ class MerchantController extends ApplicationController
 						$Message = _getText('mod_ma_noten') . " " . _getText('Deuterium') . "! ";
 						$Error = true;
 					}
+
 					break;
 		
 				default :
 		
 					$Message = "Ошибочная операция";
 					$Error = true;
+
 					break;
 		
 			}
@@ -125,7 +132,7 @@ class MerchantController extends ApplicationController
 		
 			$parse['mes'] = $Message;
 		
-			$this->message($parse['mes'], $parse['title'], '/marchand/', 2);
+			return $this->message($parse['mes'], $parse['title'], '/merchant/', 2);
 		}
 		elseif (isset($_POST['choix']))
 		{
@@ -135,19 +142,27 @@ class MerchantController extends ApplicationController
 			switch ($_POST['choix'])
 			{
 				case 'metal':
+
 					$parse['mod_ma_res_a'] = "2";
 					$parse['mod_ma_res_b'] = "4";
+
 					break;
 				case 'cristal':
+
 					$parse['mod_ma_res_a'] = "0.5";
 					$parse['mod_ma_res_b'] = "2";
+
 					break;
 				case 'deut':
+
 					$parse['mod_ma_res_a'] = "0.25";
 					$parse['mod_ma_res_b'] = "0.5";
+
 					break;
 				default:
-					$this->message('Злобный читер!', 'Ошибка', '/marchand/', 2);
+
+					return $this->message('Злобный читер!', 'Ошибка', '/merchant/', 2);
+
 					break;
 			}
 		}
@@ -158,6 +173,8 @@ class MerchantController extends ApplicationController
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Торговец');
+
+		return true;
 	}
 }
 
