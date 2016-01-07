@@ -83,7 +83,7 @@ class Security extends Component
 				'sim'  		=> array('*'),
 				'stat'  	=> array('*'),
 				'support'  	=> array('*'),
-				'techtree'  => array('*'),
+				'tech'  	=> array('*'),
 				'tutorial'  => array('*'),
 			);
 

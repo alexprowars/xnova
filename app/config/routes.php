@@ -71,7 +71,7 @@ $router->add('/fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m([0-
 	'params' 		=> 6
 ));
 
-$router->add('/info/([0-9])/:params', array
+$router->add('/info/([0-9]+)/:params', array
 (
 	'controller' 	=> 'info',
 	'action' 		=> 'index',
@@ -79,7 +79,7 @@ $router->add('/info/([0-9])/:params', array
 	'params' 		=> 2
 ));
 
-$router->add('/players/([0-9])/:params', array
+$router->add('/players/([0-9]+)/:params', array
 (
 	'controller' 	=> 'players',
 	'action' 		=> 'index',
@@ -87,7 +87,7 @@ $router->add('/players/([0-9])/:params', array
 	'params' 		=> 2
 ));
 
-$router->add('/messages/write/([0-9])/:params', array
+$router->add('/messages/write/([0-9]+)/:params', array
 (
 	'controller' 	=> 'messages',
 	'action' 		=> 'write',
@@ -95,7 +95,7 @@ $router->add('/messages/write/([0-9])/:params', array
 	'params' 		=> 2
 ));
 
-$router->add('/players/stat/([0-9])/:params', array
+$router->add('/players/stat/([0-9]+)/:params', array
 (
 	'controller' 	=> 'players',
 	'action' 		=> 'stat',
@@ -110,6 +110,14 @@ $router->add('/rw/([0-9]+)/([a-z0-9]+)/:params', array
 	'id' 			=> 1,
 	'k' 			=> 2,
 	'params' 		=> 3
+));
+
+$router->add('/tech/([0-9]+)/:params', array
+(
+	'controller' 	=> 'tech',
+	'action' 		=> 'info',
+	'id' 			=> 1,
+	'params' 		=> 2
 ));
 
 $router->add('/', array

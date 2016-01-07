@@ -410,7 +410,7 @@ class User extends Model
 				$action = $dispatcher->getActionName();
 
 				// Обновляем ресурсы на планете когда это необходимо
-				if ((($controller == "overview" || ($controller == "fleet" && $action != 'fleet_3') || $controller == "galaxy" || $controller == "resources" || $controller == "imperium" || $controller == "credits" || $controller == "tutorial" || $controller == "techtree" || $controller == "search" || $controller == "support" || $controller == "sim" || $controller == "tutorial") && $planet->last_update > (time() - 60)))
+				if ((($controller == "overview" || ($controller == "fleet" && $action != 'fleet_3') || $controller == "galaxy" || $controller == "resources" || $controller == "imperium" || $controller == "credits" || $controller == "tutorial" || $controller == "tech" || $controller == "search" || $controller == "support" || $controller == "sim" || $controller == "tutorial") && $planet->last_update > (time() - 60)))
 					$planet->PlanetResourceUpdate(time(), true);
 				else
 					$planet->PlanetResourceUpdate();
