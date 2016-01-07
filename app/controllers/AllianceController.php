@@ -26,7 +26,7 @@ class AllianceController extends ApplicationController
 			{
 				$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND `u_id` = " . $this->user->id);
 
-				$this->message("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "?set=alliance", 2);
+				$this->message("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "/alliance/", 2);
 			}
 
 			$parse = array();
@@ -131,14 +131,14 @@ class AllianceController extends ApplicationController
 				$this->db->query("UPDATE game_users SET `ally_id` = 0 WHERE `id` = '" . $this->user->id . "'");
 				$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
 	
-				$this->message(_getText('ally_notexist'), _getText('your_alliance'), '?set=alliance');
+				$this->message(_getText('ally_notexist'), _getText('your_alliance'), '/alliance/');
 			}
 	
 			if (!isset($ally_member['a_id']))
 			{
 				$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally['id'] . ", " . $this->user->id . ", " . time() . ")");
 	
-				$this->response->redirect("?set=alliance");
+				$this->response->redirect("/alliance/");
 			}
 	
 			if ($mode == 'exit')
@@ -153,7 +153,7 @@ class AllianceController extends ApplicationController
 					$this->db->query("UPDATE game_users SET `ally_id` = 0, `ally_name` = '' WHERE `id` = '" . $this->user->id . "'");
 					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
 	
-					$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '?set=alliance', _getText('Ok'));
+					$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '/alliance/', _getText('Ok'));
 				}
 				else
 					$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "/alliance/?mode=exit&yes=1", "Подтвердить");
@@ -806,24 +806,24 @@ class AllianceController extends ApplicationController
 					$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'");
 					$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = '" . $ally['id'] . "' OR d_id = '" . $ally['id'] . "'");
 	
-					$this->response->redirect('?set=alliance');
+					$this->response->redirect('/alliance/');
 				}
 				elseif ($edit == 'give')
 				{
 					if ($ally['ally_owner'] != $this->user->id)
-						$this->message("Доступ запрещён.", "Ошибка!", "?set=alliance", 2);
+						$this->message("Доступ запрещён.", "Ошибка!", "/alliance/", 2);
 	
 					if (isset($_POST['newleader']) && $ally['ally_owner'] == $this->user->id)
 					{
 						$info = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . intval($_POST['newleader']) . "'")->fetch();
 	
 						if (!$info['id'] || $info['ally_id'] != $this->user->ally_id)
-							$this->message("Операция невозможна.", "Ошибка!", "?set=alliance", 2);
+							$this->message("Операция невозможна.", "Ошибка!", "/alliance/", 2);
 	
 						$this->db->query("UPDATE game_alliance SET `ally_owner` = '" . $info['id'] . "' WHERE `id` = " . $this->user->ally_id . " ");
 						$this->db->query("UPDATE game_alliance_members SET `rank` = '0' WHERE `u_id` = '" . $info['id'] . "';");
 	
-						$this->response->redirect('?set=alliance');
+						$this->response->redirect('/alliance/');
 					}
 	
 					$listuser = $this->db->query("SELECT u.username, u.id, m.rank FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $ally['ally_owner'] . " AND m.rank != 0;");
@@ -967,7 +967,7 @@ class AllianceController extends ApplicationController
 			$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally_id . ", " . $this->user->id . ", " . time() . ")");
 
 			$this->tag->setTitle(_getText('make_alliance'));
-			$this->view->setVar('html', $this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "?set=alliance", _getText('Ok')));
+			$this->view->setVar('html', $this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "/alliance/", _getText('Ok')));
 			$this->showTopPanel(false);
 		}
 		else
@@ -1051,10 +1051,10 @@ class AllianceController extends ApplicationController
 			if ($request['num'] == 0)
 			{
 				$this->db->query("INSERT INTO game_alliance_requests VALUES (" . $allyid . ", " . $this->user->id . ", " . time() . ", '" . $this->db->escapeString(strip_tags($_POST['text'])) . "')");
-				$this->message(_getText('apply_registered'), _getText('your_apply'), '?set=alliance', 3);
+				$this->message(_getText('apply_registered'), _getText('your_apply'), '/alliance/', 3);
 			}
 			else
-				$this->message('Вы уже отсылали заявку на вступление в этот альянс!', 'Ошибка', '?set=alliance', 3);
+				$this->message('Вы уже отсылали заявку на вступление в этот альянс!', 'Ошибка', '/alliance/', 3);
 		}
 
 		$parse = array();

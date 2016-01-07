@@ -27,7 +27,7 @@ class NotesController extends ApplicationController
 			if ($_POST["s"] == 1)
 			{
 				$this->db->query("INSERT INTO game_notes SET owner=".$this->user->id.", time=$time, priority=$priority, title='$title', text='$text'");
-				$this->message(_getText('NoteAdded'), _getText('Please_Wait'), '?set=notes', "3");
+				$this->message(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/', "3");
 			}
 			elseif ($_POST["s"] == 2)
 			{
@@ -38,7 +38,7 @@ class NotesController extends ApplicationController
 					$this->message(_getText('notpossiblethisway'), _getText('Notes'));
 
 				$this->db->query("UPDATE game_notes SET time=$time, priority=$priority, title='$title', text='$text' WHERE id=$id");
-				$this->message(_getText('NoteUpdated'), _getText('Please_Wait'), '?set=notes', "3");
+				$this->message(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/', "3");
 			}
 		
 		}
@@ -63,7 +63,7 @@ class NotesController extends ApplicationController
 			if ($deleted)
 			{
 				$mes = ($deleted == 1) ? _getText('NoteDeleted') : _getText('NoteDeleteds');
-				$this->message($mes, _getText('Please_Wait'), '?set=notes', "3");
+				$this->message($mes, _getText('Please_Wait'), '/notes/', "3");
 			}
 			else
 				$this->response->redirect("notes/");

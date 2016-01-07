@@ -72,7 +72,7 @@
 							<td class="m1"><a href="<?=$this->url->get("support/") ?>" class="tooltip sprite ico_support" data-tooltip-content="Техподдержка"></a></td>
 						<? endif; ?>
 						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-							<td class="m1"><a href="<?=$this->config->app->get('forum_url', '') ?>" target="_blank" class="tooltip sprite ico_forum" data-tooltip-content="Форум"></a></td>
+							<td class="m1"><a href="<?=$this->config->game->get('forum_url', '') ?>" target="_blank" class="tooltip sprite ico_forum" data-tooltip-content="Форум"></a></td>
 						<? endif; ?>
 						<td class="m1"><a href="<?=$this->url->get("options/") ?>" class="tooltip sprite ico_settings" data-tooltip-content="Настройки"></a></td>
 						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
@@ -93,7 +93,7 @@
 			<a href="<?=$this->url->get("sim/") ?>" class="sprite ico_sim"></a>
 			<a href="<?=$this->url->get("search/") ?>" class="sprite ico_search"></a>
 			<a href="<?=$this->url->get("support/") ?>" class="sprite ico_support"></a>
-			<a href="<?=$this->config->app->get('forum_url', '') ?>" target="_blank" class="sprite ico_forum"></a>
+			<a href="<?=$this->config->game->get('forum_url', '') ?>" target="_blank" class="sprite ico_forum"></a>
 			<a href="<?=$this->url->get("options/") ?>" class="sprite ico_settings"></a>
 			<a href="<?=$this->url->get("logout/") ?>" class="sprite ico_exit"></a>
 		</div>

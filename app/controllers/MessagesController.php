@@ -130,7 +130,7 @@ class MessagesController extends ApplicationController
 			$this->db->query("UPDATE game_messages SET message_deleted = '1' WHERE `message_id` IN (" . $Mess_Array . ") AND `message_owner` = " . $this->user->id . ";");
 		}
 
-		$this->response->redirect('?set=messages');
+		$this->response->redirect('messages/');
 	}
 	
 	public function indexAction ()
@@ -193,7 +193,7 @@ class MessagesController extends ApplicationController
 		if (!$start)
 			$start = 1;
 
-		$parse['pages'] = Helpers::pagination($totalCount, $lim, '?set=messages', $start);
+		$parse['pages'] = Helpers::pagination($totalCount, $lim, '/messages/', $start);
 
 		$limits = (($start - 1) * $lim) . "," . $lim . "";
 

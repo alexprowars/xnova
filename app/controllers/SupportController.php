@@ -21,7 +21,7 @@ class SupportController extends ApplicationController
 			case 'newticket':
 		
 				if (empty($_POST['text']) || empty($_POST['subject']))
-					$this->message('Не заполнены все поля', 'Ошибка', '?set=support', 3);
+					$this->message('Не заполнены все поля', 'Ошибка', '/support/', 3);
 		
 				$this->db->query("INSERT game_support SET `player_id` = '" . $this->user->id . "', `subject` = '" . Helpers::CheckString($_POST['subject']) . "', `text` = '" . Helpers::CheckString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
 		
@@ -30,7 +30,7 @@ class SupportController extends ApplicationController
 				$token = Socials::smsGetToken();
 				Socials::smsSend($this->config->sms->login, 'Создан новый тикет №' . $ID . ' ('.$this->user->username.')', $token);
 		
-				$this->message('Задача добавлена', 'Успех', '?set=support', 3);
+				$this->message('Задача добавлена', 'Успех', '/support/', 3);
 		
 				break;
 		
@@ -41,7 +41,7 @@ class SupportController extends ApplicationController
 					$TicketID = intval($_GET['id']);
 		
 					if (empty($_POST['text']))
-						$this->message('Не заполнены все поля', 'Ошибка', '?set=support', 3);
+						$this->message('Не заполнены все поля', 'Ошибка', '/support/', 3);
 		
 					$ticket = $this->db->query("SELECT id, text, status FROM game_support WHERE `id` = '" . $TicketID . "';")->fetch();
 		
@@ -53,7 +53,7 @@ class SupportController extends ApplicationController
 		
 						$this->game->sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
 		
-						$this->message('Задача обновлена', 'Успех', '?set=support', 3);
+						$this->message('Задача обновлена', 'Успех', '/support/', 3);
 		
 						if ($ticket['status'] == 2)
 						{

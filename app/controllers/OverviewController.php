@@ -282,7 +282,7 @@ class OverviewController extends ApplicationController
 				Sql::build()->update('game_planets')->setField('image', $parse['type'].'planet'.($image < 10 ? '0' : '').$image)->where('id', '=', $this->planet->id)->execute();
 				Sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', $this->user->getId())->execute();
 
-				$this->response->redirect('?set=overview');
+				$this->response->redirect('/overview/');
 			}
 			else
 				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
@@ -351,7 +351,7 @@ class OverviewController extends ApplicationController
 
 			Sql::build()->update('game_users')->set($arUpdate)->where('id', '=', $this->user->id)->execute();
 
-			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '?set=overview', 2);
+			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
 		}
 		else
 			$this->message('Ошибочка вышла, сорри :(');

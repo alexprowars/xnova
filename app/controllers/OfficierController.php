@@ -71,7 +71,7 @@ class OfficierController extends ApplicationController
 			else
 				$Message = _getText('NoPoints');
 		
-			$this->message($Message, _getText('Officier'), '?set=officier', 2);
+			$this->message($Message, _getText('Officier'), '/officier/', 2);
 		}
 		else
 		{

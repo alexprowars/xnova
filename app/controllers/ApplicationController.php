@@ -51,6 +51,7 @@ class ApplicationController extends Controller
 			$this->view->setVar('vocationTimer', $this->user->vacation);
 			$this->view->setVar('messages', $this->user->messages);
 			$this->view->setVar('messages_ally', $this->user->messages_ally);
+			$this->view->setVar('tutorial', $this->user->tutorial);
 
 			$parse = array();
 
@@ -268,7 +269,7 @@ class ApplicationController extends Controller
 				'-xpminier' 	=> $indNextXp
 			));
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href=?set=officier>Получен новый промышленный уровень</a>');
+			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/fficier/">Получен новый промышленный уровень</a>');
 
 			$this->user->lvl_minier += 1;
 			$this->user->xpminier 	-= $indNextXp;
@@ -285,7 +286,7 @@ class ApplicationController extends Controller
 				'-xpraid' 	=> $warNextXp
 			));
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href=?set=officier>Получен новый военный уровень</a>');
+			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
 			$this->user->lvl_raid 	+= 1;
 			$this->user->xpraid 	-= $warNextXp;
@@ -350,13 +351,13 @@ class ApplicationController extends Controller
 					$parse['planetlist'] .= "style=\"color:yellow;\" ";
 
 				if ($CurPlanet['id'] == $this->user->planet_current)
-				{
 					$parse['planetlist'] .= "selected=\"selected\" ";
-				}
+
 				if (isset($_GET['set']))
-					$parse['planetlist'] .= "value=\"?set=" . $_GET['set'] . "";
+					$parse['planetlist'] .= "value=\"/" . $_GET['set'] . "/";
 				else
-					$parse['planetlist'] .= "value=\"?set=overview";
+					$parse['planetlist'] .= "value=\"/overview/";
+
 				if (isset($_GET['mode']))
 					$parse['planetlist'] .= "&amp;mode=" . $_GET['mode'];
 

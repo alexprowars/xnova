@@ -45,7 +45,7 @@ class PhalanxController extends ApplicationController
 		if ($this->planet->planet_type != '3')
 			$this->message("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
 		elseif ($this->planet->phalanx == '0')
-			$this->message("Постройте сначало сенсорную фалангу", "Ошибка", "?set=overview", 1, false);
+			$this->message("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
 		elseif ($deuterium < $consomation)
 			$this->message("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)

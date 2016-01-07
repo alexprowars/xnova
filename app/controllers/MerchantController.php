@@ -23,7 +23,7 @@ class MerchantController extends ApplicationController
 		if (isset($_POST['ress']))
 		{
 			if ($this->user->credits <= 0)
-				$this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '?set=marchand', 3);
+				$this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/marchand/', 3);
 		
 			$Error = false;
 		
@@ -125,7 +125,7 @@ class MerchantController extends ApplicationController
 		
 			$parse['mes'] = $Message;
 		
-			$this->message($parse['mes'], $parse['title'], '?set=marchand', 2);
+			$this->message($parse['mes'], $parse['title'], '/marchand/', 2);
 		}
 		elseif (isset($_POST['choix']))
 		{
@@ -147,7 +147,7 @@ class MerchantController extends ApplicationController
 					$parse['mod_ma_res_b'] = "0.5";
 					break;
 				default:
-					$this->message('Злобный читер!', 'Ошибка', '?set=marchand', 2);
+					$this->message('Злобный читер!', 'Ошибка', '/marchand/', 2);
 					break;
 			}
 		}

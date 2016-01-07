@@ -58,7 +58,7 @@ var replaceS = [
 	'<a href="$1" target="_blank">$2</a>',
 	'<a href="$1" target="_blank">$1</a>',
 	'<p>$1</p>',
-	'<a href="?set=galaxy&amp;r=3&amp;galaxy=$1&amp;system=$2">[$1:$2:$3]</a>'
+	'<a href="/galaxy/$1/$2/3/">[$1:$2:$3]</a>'
 ];
 
 function showSmilesEx(obj, event)
@@ -196,11 +196,11 @@ function ChatMsg(Time, Player, Msg, Me, My)
 			},
 			'mail': function(e)
 			{
-				showWindow($(e).text()+': отправить сообщение', '?set=messages&mode=write&id='+$(e).text()+'&ajax&popup', 680)
+				showWindow($(e).text()+': отправить сообщение', '/messages/write/'+$(e).text()+'/', 680)
 			},
 			'info': function (e)
 			{
-				showWindow('', XNova.path+'?set=players&id='+$(e).text()+'&ajax&popup');
+				showWindow('', XNova.path+'/players/'+$(e).text()+'/');
 			}
 		}
 	});

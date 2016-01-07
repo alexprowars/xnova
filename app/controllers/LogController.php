@@ -59,7 +59,7 @@ class LogController extends ApplicationController
 							$message = 'Боевой отчёт не найден в базе';
 					}
 				}
-				$this->message($message, "Логовница", "?set=log", 2);
+				$this->message($message, "Логовница", "/log/", 2);
 			}
 		
 			$mode = (isset($_GET['mode'])) ? $_GET['mode'] : '';
@@ -96,10 +96,10 @@ class LogController extends ApplicationController
 						if ($this->user->id == $raportrow['user'])
 						{
 							$this->db->query("DELETE FROM game_savelog WHERE `id` = " . $id . " ");
-							$this->response->redirect("?set=log");
+							$this->response->redirect("/log/");
 						}
 						else
-							$this->message("Ошибка удаления.", "Логовница", "?set=log", 1);
+							$this->message("Ошибка удаления.", "Логовница", "/log/", 1);
 					}
 		
 					break;

@@ -7,9 +7,9 @@ function BuildTimeout(pp, pk, pl, at)
 
 	if ( s < 0 )
     {
-		blc.html("Завершено<br>" + "<a href='#' onclick='load(\"?set=buildings&planet=" + pl + "\")'>Продолжить</a>");
+		blc.html("Завершено<br>" + "<a href='#' onclick='load(\"/buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
 
-		timeouts['build'+pk+'-'+pl] = window.setTimeout('load("?set=buildings&planet=' + pl + '");', 5000);
+		timeouts['build'+pk+'-'+pl] = window.setTimeout('load("/buildings/index/planet/' + pl + '/");', 5000);
 
 		return;
 	}
@@ -33,7 +33,7 @@ function BuildTimeout(pp, pk, pl, at)
 		if (at > timestamp - 5)
 			blc.html(h + ":" + m + ":" + s);
 		else
-			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\"?set=buildings&listid=" + pk + "&cmd=cancel&planet=" + pl + "\")'>Отменить</a>");
+			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\"/buildings/index/listid/" + pk + "/cmd/cancel/planet/" + pl + "/\")'>Отменить</a>");
 	}
 
 	pp--;
@@ -164,7 +164,7 @@ function changePlanet (pId)
 {
 	var a = parse_str(document.location.search.substr(1));
 
-	var url = '?set='+a['set']+''+(a['mode'] !== undefined ? '&mode='+a['mode'] : '')+'&cp='+pId+'&re=0';
+	var url = '/'+a['set']+''+(a['mode'] !== undefined ? '/'+a['mode'] : '')+'/cp/'+pId+'/re/0/';
 
 	if (ajax_nav == 1)
 		load(url);

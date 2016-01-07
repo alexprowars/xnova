@@ -137,7 +137,7 @@ class FleetEngine extends Injectable
 
 			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
 			$String .= $TitleString . " " . $TargetPlanet['name'];
-			$String .= " <a href=\"?set=galaxy&r=3&galaxy=" . $TargetPlanet["galaxy"] . "&system=" . $TargetPlanet["system"] . "\">";
+			$String .= " <a href=\"/galaxy/" . $TargetPlanet["galaxy"] . "/" . $TargetPlanet["system"] . "/\">";
 			$String .= "[" . $TargetPlanet["galaxy"] . ":" . $TargetPlanet["system"] . ":" . $TargetPlanet["planet"] . "]</a>";
 			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(print_date(" . time() . ", 1));</script></td>";
 			$String .= "</tr><tr>";

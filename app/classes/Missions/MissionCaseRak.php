@@ -58,8 +58,8 @@ class MissionCaseRak extends FleetEngine implements Mission
 			}
 			else
 			{
-				$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->_fleet['fleet_owner_name'] . ' <a href="?set=galaxy&r=3&galaxy=' . $this->_fleet['fleet_start_galaxy'] . '&system=' . $this->_fleet['fleet_start_system'] . '">[' . $this->_fleet['fleet_start_galaxy'] . ':' . $this->_fleet['fleet_start_system'] . ':' . $this->_fleet['fleet_start_planet'] . ']</a>';
-				$message .= ' на планету ' . $this->_fleet['fleet_target_owner_name'] . ' <a href="?set=galaxy&r=3&galaxy=' . $this->_fleet['fleet_end_galaxy'] . '&system=' . $this->_fleet['fleet_end_system'] . '">[' . $this->_fleet['fleet_end_galaxy'] . ':' . $this->_fleet['fleet_end_system'] . ':' . $this->_fleet['fleet_end_planet'] . ']</a>.<br><br>';
+				$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->_fleet['fleet_owner_name'] . ' <a href="/galaxy/' . $this->_fleet['fleet_start_galaxy'] . '/' . $this->_fleet['fleet_start_system'] . '/">[' . $this->_fleet['fleet_start_galaxy'] . ':' . $this->_fleet['fleet_start_system'] . ':' . $this->_fleet['fleet_start_planet'] . ']</a>';
+				$message .= ' на планету ' . $this->_fleet['fleet_target_owner_name'] . ' <a href="/galaxy/' . $this->_fleet['fleet_end_galaxy'] . '/' . $this->_fleet['fleet_end_system'] . '/">[' . $this->_fleet['fleet_end_galaxy'] . ':' . $this->_fleet['fleet_end_system'] . ':' . $this->_fleet['fleet_end_planet'] . ']</a>.<br><br>';
 
 				if ($PlanetRow['interceptor_misil'] > 0)
 				{

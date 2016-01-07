@@ -12,16 +12,16 @@ class TutorialController extends ApplicationController
 	{
 		parent::initialize();
 
-		$this->user->loadPlanet();
-	}
-	
-	public function indexAction ()
-	{
-		$parse = array();
-
 		Lang::includeLang('tutorial');
 
-		$stage = $this->request->getQuery('q', 'int', 0);
+		$this->user->loadPlanet();
+
+		$this->showTopPanel(false);
+	}
+
+	public function infoAction ()
+	{
+		$stage = $this->request->getQuery('id', 'int', 0);
 
 		if ($stage > 0)
 		{
@@ -189,7 +189,7 @@ class TutorialController extends ApplicationController
 				if (count($userData))
 					$this->user->saveData($userData);
 
-				$this->response->redirect('?set=tutorial');
+				$this->response->redirect('/tutorial/');
 			}
 
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
@@ -224,16 +224,18 @@ class TutorialController extends ApplicationController
 				}
 			}
 
-			$this->view->pick('quests_info');
-
 			$this->view->setVar('stage', $stage);
 			$this->view->setVar('errors', $errors);
 
 			$this->view->setVar('parse', $parse);
 
 			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
-			$this->showTopPanel(false);
 		}
+	}
+	
+	public function indexAction ()
+	{
+		$parse = array();
 
 		$userQuests = array();
 
@@ -275,11 +277,9 @@ class TutorialController extends ApplicationController
 			$parse['list'][] = $quest;
 		}
 
-		$this->view->pick('quests_list');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Обучение');
-		$this->showTopPanel(false);
 	}
 }
 

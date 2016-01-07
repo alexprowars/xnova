@@ -69,7 +69,7 @@ var replace = [
 	'<span style="background-color:#$1;">$2</span>',
 	'<span style="background-image:url($1);background-repeat:no-repeat;display:block;width:$2;height:$3;max-width:716px;">$4</span>',
 	'<p>$1</p>',
-	'<a href="?set=galaxy&amp;r=3&amp;galaxy=$1&amp;system=$2">[$1:$2:$3]</a>',
+	'<a href="/galaxy/$1/$2/3/">[$1:$2:$3]</a>',
 	'<table$1>$2</table>',
 	'<tr>$1</tr>',
 	'<td$1>$2</td>',

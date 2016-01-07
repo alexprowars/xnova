@@ -57,7 +57,7 @@ class BuddyController extends ApplicationController
 		
 				$this->game->sendMessage($u, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/?a=1"><< просмотреть >></a>');
 		
-				$this->message('Запрос отправлен', 'Предложение дружбы', '?set=buddy');
+				$this->message('Запрос отправлен', 'Предложение дружбы', '/buddy/');
 			}
 			else
 				$this->message('Запрос дружбы был уже отправлен ранее', 'Предложение дружбы');

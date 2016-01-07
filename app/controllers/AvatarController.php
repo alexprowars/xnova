@@ -38,10 +38,10 @@ class AvatarController extends ApplicationController
 			{
 				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 
-				$this->message("Аватар успешно установлен.", "ОК", "?set=options", 3);
+				$this->message("Аватар успешно установлен.", "ОК", "/options/", 3);
 			}
 			else
-				$this->message($upload->error, "Ошибка", "?set=avatar", 3);
+				$this->message($upload->error, "Ошибка", "/avatar/", 3);
 
 			$upload->Clean();
 		}

@@ -30,7 +30,7 @@ class RaceController extends ApplicationController
 					
 				Sql::build()->where('id', '=', $this->user->id)->execute();
 		
-				$this->response->redirect("?set=tutorial");
+				$this->response->redirect("/tutorial/");
 			}
 		}
 		
@@ -58,9 +58,9 @@ class RaceController extends ApplicationController
 				$UserFlyingFleets = $this->db->query("SELECT `fleet_id` FROM game_fleets WHERE `fleet_owner` = '" . $this->user->id . "'");
 
 				if ($queueCount > 0)
-					$this->message('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "Oшибкa", "?set=race", 5);
+					$this->message('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "Oшибкa", "/race/", 5);
 				elseif ($UserFlyingFleets->numRows() > 0)
-					$this->message('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "?set=race", 5);
+					$this->message('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "/race/", 5);
 				else
 				{
 					$this->db->query("UPDATE game_users SET race = " . $r . " WHERE id = " . $this->user->id . ";");
@@ -75,7 +75,7 @@ class RaceController extends ApplicationController
 						
 					$this->db->query("UPDATE game_planets SET corvete = 0, interceptor = 0, dreadnought = 0, corsair = 0 WHERE id_owner = " . $this->user->id . ";");
 		
-					$this->response->redirect("?set=overview");
+					$this->response->redirect("/overview/");
 				}
 			}
 		}

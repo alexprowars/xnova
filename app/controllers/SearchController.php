@@ -17,8 +17,8 @@ class SearchController extends ApplicationController
 	{
 		$parse = array();
 
-		$searchtext = (isset($_POST['searchtext'])) ? $this->db->escapeString(htmlspecialchars($_POST['searchtext'])) : '';
-		$type = (isset($_POST['type'])) ? $_POST['type'] : '';
+		$searchtext = $this->request->getPost('searchtext', 'string', '');
+		$type = $this->request->getPost('type', 'string', '');
 
 		if ($searchtext != '' && $type != '')
 		{
@@ -65,9 +65,7 @@ class SearchController extends ApplicationController
 		$parse['searchtext'] = $searchtext;
 		$parse['type'] = $type;
 
-		$this->view->pick('search');
 		$this->view->setVar('parse', $parse);
-
 		$this->tag->setTitle('Поиск');
 	}
 }

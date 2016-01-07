@@ -134,9 +134,9 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . _getText('sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"?set=fleet&galaxy=" . $this->_fleet['fleet_end_galaxy'] . "&system=" . $this->_fleet['fleet_end_system'] . "";
-			$AttackLink .= "&planet=" . $this->_fleet['fleet_end_planet'] . "&planettype=" . $this->_fleet['fleet_end_type'] . "";
-			$AttackLink .= "&target_mission=" . $this->_fleet['fleet_end_type'] . "";
+			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet['fleet_end_galaxy'] . "/s" . $this->_fleet['fleet_end_system'] . "/";
+			$AttackLink .= "p" . $this->_fleet['fleet_end_planet'] . "/t" . $this->_fleet['fleet_end_type'] . "/";
+			$AttackLink .= "m" . $this->_fleet['fleet_end_type'] . "/";
 			$AttackLink .= " \">" . _getText('type_mission', 1) . "";
 			$AttackLink .= "</a></center>";
 
@@ -162,7 +162,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $TargetUser->{$this->game->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->game->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->game->resource[$id - 50]} : 0) . ';';
 			}
 
-			$MessageEnd .= "<center><a href=\"?set=sim&r=" . $fleet_link . "\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
+			$MessageEnd .= "<center><a href=\"/sim/r/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet['fleet_start_time'] . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet['fleet_start_time'] . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;

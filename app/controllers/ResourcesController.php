@@ -34,13 +34,13 @@ class ResourcesController extends ApplicationController
 				$this->db->query('UPDATE game_users SET credits = credits - 10 WHERE id = ' . $this->user->id . ';');
 				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . (10 * (-1)) . ", 2)");
 
-				$this->message('Вы успешно купили ' . $parse['buy_metal'] . ' металла, ' . $parse['buy_crystal'] . ' кристалла, ' . $parse['buy_deuterium'] . ' дейтерия', 'Успешная покупка', '?set=resources', 2);
+				$this->message('Вы успешно купили ' . $parse['buy_metal'] . ' металла, ' . $parse['buy_crystal'] . ' кристалла, ' . $parse['buy_deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
 			}
 			else
-				$this->message('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '?set=resources', 2);
+				$this->message('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '/resources/', 2);
 		}
 		else
-			$this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '?set=resources', 2);
+			$this->message('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '/resources/', 2);
 	}
 
 	public function productionAction ()
