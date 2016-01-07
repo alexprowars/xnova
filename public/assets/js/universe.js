@@ -342,7 +342,7 @@ function PrintRow ()
 				result += "</tr><tr>";
 			}
 
-			result += "<th valign=top><a href=/stat/index/who/1/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/>Статистика</a></th>";
+			result += "<th valign=top><a href=/stat/players/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/>Статистика</a></th>";
 			result += "</tr>";
 			result += "</table>'>";
 			result += Systemtatus+row[planet]['username']+Systemtatus2+rank;
@@ -370,7 +370,7 @@ function PrintRow ()
 				result += "</tr>";
 				result += "<tr><th><a href=/alliance/ainfo/a/"+row[planet]['ally_id']+"/>Информация</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href=/stat/index/start/0/who/2/>Статистика</a></th></tr>";
+				result += "<th><a href=/stat/alliance/start/0/>Статистика</a></th></tr>";
 
 				if (row[planet]["ally_web"] != "") {
 					result += "<tr><th><a href="+row[planet]["ally_web"]+" target=_new>Сайт альянса</th>";

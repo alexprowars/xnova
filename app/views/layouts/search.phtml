@@ -44,7 +44,7 @@
 				<th><?=$result['ally_name'] ?></th>
 				<th><?=$result['planet_name'] ?></th>
 				<th><a href="<?=$this->url->get('galaxy/'.$result['g'].'/'.$result['s'].'/') ?>"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
-				<th><a href="<?=$this->url->get('stat/index/range/'.$result['total_rank'].'/') ?>"><?=$result['total_rank'] ?></a></th>
+				<th><a href="<?=$this->url->get('stat/players/range/'.$result['total_rank'].'/') ?>"><?=$result['total_rank'] ?></a></th>
 			</tr>
 			<? endforeach; ?>
 		<? else: ?>

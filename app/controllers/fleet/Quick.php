@@ -129,7 +129,7 @@ class Quick
 		else
 			die('Такой миссии не существует!');
 
-		if (isset($HeDBRec['id']) && $FleetSpeed > 0 && count($FleetArray) > 0)
+		if ($FleetSpeed > 0 && count($FleetArray) > 0)
 		{
 			$SpeedFactor = $controller->game->getSpeed('fleet');
 			$distance = Fleet::GetTargetDistance($controller->planet->galaxy, $Galaxy, $controller->planet->system, $System, $controller->planet->planet, $Planet);
@@ -177,7 +177,7 @@ class Quick
 				$QryInsertFleet .= "`fleet_end_planet` = '" . $Planet . "', ";
 				$QryInsertFleet .= "`fleet_end_type` = '" . $TypePl . "', ";
 
-				if ($Mode == 6)
+				if ($Mode == 6 && isset($HeDBRec['id']))
 				{
 					$QryInsertFleet .= "`fleet_target_owner` = '" . $HeDBRec['id'] . "', ";
 					$QryInsertFleet .= "`fleet_target_owner_name` = '" . $target['name'] . "', ";

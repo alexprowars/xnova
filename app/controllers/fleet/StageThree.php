@@ -177,7 +177,7 @@ class StageThree
 				$controller->message("<span class=\"error\"><b>Заключён мир или перемирие с альянсом атакуемого игрока.</b></span>", "Ошибка дипломатии", "?set=fleet", 2);
 		}
 
-		$VacationMode = $HeDBRec['urlaubs_modus_time'];
+		$VacationMode = $HeDBRec['vacation'];
 
 		if ($controller->user->authlevel < 2)
 		{
@@ -187,7 +187,7 @@ class StageThree
 			if (!$HeGameLevel)
 				$HeGameLevel = 0;
 
-			if ($HeDBRec['onlinetime'] < (time() - 60 * 60 * 24 * 7) || $HeDBRec['banaday'] != 0)
+			if ($HeDBRec['onlinetime'] < (time() - 60 * 60 * 24 * 7) || $HeDBRec['banned'] != 0)
 				$NoobNoActive = 1;
 			else
 				$NoobNoActive = 0;
@@ -450,7 +450,7 @@ class StageThree
 		{
 			$check = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_ip WHERE id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 3)." AND ip IN (SELECT ip FROM game_log_ip WHERE id = ".$controller->user->id." AND time > ".(time() - 86400 * 3).")");
 
-			if ($check > 0 || $HeDBRec['user_lastip'] == $controller->user->ip)
+			if ($check > 0 || $HeDBRec['ip'] == $controller->user->ip)
 				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" и \"Атака\" к игрокам, с которыми были пересечения по IP адресу.</b></span>", 'Ошибка', "?set=fleet", 5);
 		}
 

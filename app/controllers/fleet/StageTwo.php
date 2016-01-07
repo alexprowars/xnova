@@ -93,7 +93,7 @@ class StageTwo
 		$galaxy = $controller->request->getPost('galaxy', 'int', 0);
 		$system = $controller->request->getPost('system', 'int', 0);
 		$planet = $controller->request->getPost('planet', 'int', 0);
-		$type 	= $controller->request->getPost('planet_type', 'int', 0);
+		$type 	= $controller->request->getPost('planettype', 'int', 0);
 		$acs 	= $controller->request->getPost('acs', 'int', 0);
 
 		$fleetmission 	= $controller->request->getPost('target_mission', 'int', 0);
@@ -106,7 +106,7 @@ class StageTwo
 
 		if ($galaxy == $TargetPlanet['galaxy'] && $system == $TargetPlanet['system'] && $planet == $TargetPlanet['planet'] && $type == $TargetPlanet['planet_type'])
 		{
-			if ($TargetPlanet['id_owner'] == $controller->user->id || ($this->$controller->ally_id > 0 && $TargetPlanet['id_ally'] == $controller->user->ally_id))
+			if ($TargetPlanet['id_owner'] == $controller->user->id || ($controller->user->ally_id > 0 && $TargetPlanet['id_ally'] == $controller->user->ally_id))
 			{
 				$YourPlanet = true;
 				$UsedPlanet = true;

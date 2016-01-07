@@ -9,11 +9,11 @@
 	<? if (count($stat) > 0): ?>
 		<? foreach ($stat AS $s): ?>
 			<tr>
-				<th><?=$s['player_rank'] ?></th>
-				<th class="text-center"><img src="/assets/images/skin/race<?=$s['player_race'] ?>.gif" width="30" height="30"></th>
-				<th><?=$s['player_count'] ?></th>
-				<th><?=$s['player_points'] ?></th>
-				<th><?=$s['player_pointatuser'] ?></th>
+				<th><?=$s['rank'] ?></th>
+				<th class="text-center"><img src="/assets/images/skin/race<?=$s['race'] ?>.gif" width="30" height="30"></th>
+				<th><?=$s['count'] ?></th>
+				<th><?=$s['points'] ?></th>
+				<th><?=$s['pointatuser'] ?></th>
 			</tr>
 		<? endforeach; ?>
 	<? endif; ?>

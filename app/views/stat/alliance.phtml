@@ -11,18 +11,18 @@
 	<? foreach ($stat AS $s): ?>
 		<tr>
 			<th class="col-sm-1 col-xs-1">
-				<?=$s['ally_rank'] ?>
-				<div class="visible-xs"><?=$s['ally_rankplus'] ?></div>
+				<?=$s['rank'] ?>
+				<div class="visible-xs"><?=$s['rankplus'] ?></div>
 			</th>
-			<th class="col-sm-1 hidden-xs"><?=$s['ally_rankplus'] ?></th>
-			<th class="col-sm-4 col-xs-5"><?=$s['ally_name'] ?></th>
-			<th class="col-sm-1 col-xs-1"><?=$s['ally_members'] ?></th>
-			<th class="col-sm-2 hidden-xs"><a href="<?=$this->url->get('alliance/stat/id/'.$s['ally_id'].'/') ?>"><?=$s['ally_points'] ?></a></th>
-			<th class="col-sm-2 hidden-xs"><?=$s['ally_members_points'] ?></th>
+			<th class="col-sm-1 hidden-xs"><?=$s['rankplus'] ?></th>
+			<th class="col-sm-4 col-xs-5"><?=$s['name'] ?></th>
+			<th class="col-sm-1 col-xs-1"><?=$s['members'] ?></th>
+			<th class="col-sm-2 hidden-xs"><a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a></th>
+			<th class="col-sm-2 hidden-xs"><?=$s['members_points'] ?></th>
 			<th class="visible-xs col-xs-5">
-				<a href="<?=$this->url->get('alliance/stat/id/'.$s['ally_id'].'/') ?>"><?=$s['ally_points'] ?></a>
+				<a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
 				<br>
-				<?=$s['ally_members_points'] ?>
+				<?=$s['members_points'] ?>
 			</th>
 		</tr>
 	<? endforeach; ?>

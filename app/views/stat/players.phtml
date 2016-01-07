@@ -10,23 +10,23 @@
 	<? foreach ($stat AS $s): ?>
 	<tr>
 		<th class="th col-sm-1 col-xs-1">
-			<?=$s['player_rank'] ?>
-			<div class="visible-xs"><?=$s['player_rankplus'] ?></div>
+			<?=$s['rank'] ?>
+			<div class="visible-xs"><?=$s['rankplus'] ?></div>
 		</th>
-		<th class="th col-sm-1 hidden-xs"><?=$s['player_rankplus'] ?></th>
+		<th class="th col-sm-1 hidden-xs"><?=$s['rankplus'] ?></th>
 		<th class="th col-sm-4 col-xs-6">
-			<a href="<?=$this->url->get('players/'.$s['player_id'].'/') ?>" class="window popup-user"><?=$s['player_name'] ?></a>
+			<a href="<?=$this->url->get('players/'.$s['id'].'/') ?>" class="window popup-user"><?=$s['name'] ?></a>
 			<div class="visible-xs">
-				<?=$s['player_alliance'] ?>
+				<?=$s['alliance'] ?>
 			</div>
 		</th>
 		<th class="th col-sm-1 col-xs-2">
-			<? if ($s['player_race'] != 0): ?><img src="/assets/images/skin/race<?=$s['player_race'] ?>.gif" width="16" height="16" class="pull-left" style="margin-left:7px;"><? endif; ?>
-			<? if (isset($userId) && $userId != 0): ?><?=$s['player_mes'] ?><? endif; ?>
+			<? if ($s['race'] != 0): ?><img src="/assets/images/skin/race<?=$s['race'] ?>.gif" width="16" height="16" class="pull-left" style="margin-left:7px;"><? endif; ?>
+			<? if (isset($userId) && $userId != 0): ?><?=$s['mes'] ?><? endif; ?>
 		</th>
-		<th class="th col-sm-3 hidden-xs"><?=$s['player_alliance'] ?></th>
+		<th class="th col-sm-3 hidden-xs"><?=$s['alliance'] ?></th>
 		<th class="th col-sm-2 col-xs-3">
-			<a href="<?=$this->url->get('players/stat/'.$s['player_id'].'/') ?>"><?=$s['player_points'] ?></a>
+			<a href="<?=$this->url->get('players/stat/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
 		</th>
 	</tr>
 	<? endforeach; ?>
