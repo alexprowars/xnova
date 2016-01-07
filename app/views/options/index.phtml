@@ -45,7 +45,7 @@
 							<? if (!is_email($parse['opt_mail_data'])): ?>
 								<input type="text" name="email" value="">
 							<? else: ?>
-								<?=$parse['opt_mail_data'] ?> <a href="<?=$this->url->get('options&mode=changeemail/') ?>" class="button">сменить</a>
+								<?=$parse['opt_mail_data'] ?> <a href="<?=$this->url->get('options/email/') ?>" class="button">сменить</a>
 							<? endif; ?>
 						</th>
 					</tr>
