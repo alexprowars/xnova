@@ -21,8 +21,8 @@ class NotesController extends ApplicationController
 		{
 			$time = time();
 			$priority = $_POST["u"];
-			$title = ($_POST["title"]) ? $this->db->escapeString(strip_tags($_POST["title"])) : _getText('NoTitle');
-			$text = ($_POST["text"]) ? $this->db->escapeString(strip_tags($_POST["text"])) : _getText('NoText');
+			$title = ($_POST["title"]) ? strip_tags($_POST["title"]) : _getText('NoTitle');
+			$text = ($_POST["text"]) ? strip_tags($_POST["text"]) : _getText('NoText');
 		
 			if ($_POST["s"] == 1)
 			{

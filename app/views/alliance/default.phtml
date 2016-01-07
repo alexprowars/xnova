@@ -1,4 +1,4 @@
-<table width=650>
+<table class="table">
 	<tr>
 		<td class=c colspan=2>Альянсы</td>
 	</tr>
@@ -9,7 +9,7 @@
 </table>
 <? if (count($parse['list']) > 0): ?>
 <br>
-<table width=650>
+<table class="table">
 	<tr>
 		<td class=c colspan=2>Ваши заявки</td>
 	</tr>
@@ -28,7 +28,7 @@
 <? endif; ?>
 <? if (count($parse['allys'])): ?>
 	<br>
-	<table width="650">
+	<table class="table">
 		<tr>
 			<td class="c" width="30">Место</td>
 			<td class="c">Альянс</td>
@@ -38,7 +38,7 @@
 		<? $i = 0; foreach ($parse['allys'] AS $list): $i++; ?>
 		<tr>
 			<th><?=$i ?></th>
-			<th><a href="<?=$this->url->get('alliance/ainfo/a/'.$list['id'].'/') ?>"><?=$list['ally_name'] ?> [<?=$list['ally_tag'] ?>]</a></th>
+			<th><a href="<?=$this->url->get('alliance/info/'.$list['id'].'/') ?>"><?=$list['ally_name'] ?> [<?=$list['ally_tag'] ?>]</a></th>
 			<th><?=$list['ally_members'] ?></th>
 			<th><?=$list['total_points'] ?></th>
 		</tr>

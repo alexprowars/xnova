@@ -33,13 +33,14 @@ class TutorialController extends ApplicationController
 
 			if (!isset($qInfo['id']))
 			{
-				$this->db->insertAsDict('game_users_quests',
-				[
-					'user_id' => $this->user->getId(),
-					'quest_id' => $stage,
-					'finish' => 0,
-					'stage' => 0
-				]);
+				$qInfo = [
+					'user_id' 	=> $this->user->getId(),
+					'quest_id' 	=> $stage,
+					'finish' 	=> 0,
+					'stage' 	=> 0
+				];
+
+				$this->db->insertAsDict('game_users_quests', $qInfo);
 
 				$qInfo['id'] = $this->db->lastInsertId();
 			}

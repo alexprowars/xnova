@@ -64,7 +64,7 @@
 					<th>
 						<select name="<?=$resource['name'] ?>">
 						<? for ($j = 10; $j >= 0; $j--): ?>
-							<option value="<?=$j ?>"<?=($j == $this->game->resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
+							<option value="<?=$j ?>"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
 						<? endfor; ?>
 						</select>
 					</th>

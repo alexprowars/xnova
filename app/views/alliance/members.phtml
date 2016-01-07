@@ -4,14 +4,14 @@
 	</tr>
 	<tr>
 		<th>№</th>
-		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'memberslist').'/sort1/1/sort2/'.$parse['s'].'/') ?>">Ник</a></th>
+		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/1/sort2/'.$parse['s'].'/') ?>">Ник</a></th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
-		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'memberslist').'/sort1/2/sort2/'.$parse['s'].'/') ?>">Ранг</a></th>
-		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit=members' : 'memberslist').'/sort1/3/sort2/'.$parse['s'].'/') ?>">Очки</a></th>
+		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/2/sort2/'.$parse['s'].'/') ?>">Ранг</a></th>
+		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit=members' : 'members').'/sort1/3/sort2/'.$parse['s'].'/') ?>">Очки</a></th>
 		<th>Координаты</th>
-		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'memberslist').'/sort1/4/sort2/'.$parse['s'].'/') ?>">Дата вступления</a></th>
-		<? if ($parse['status']): ?><th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'memberslist').'/sort1/5/sort2/'.$parse['s'].'/') ?>">Активность</a></th><? endif; ?>
+		<th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/4/sort2/'.$parse['s'].'/') ?>">Дата вступления</a></th>
+		<? if ($parse['status']): ?><th><a href="<?=$this->url->get('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/5/sort2/'.$parse['s'].'/') ?>">Активность</a></th><? endif; ?>
 		<? if ($parse['admin']): ?><th>Управление</th><? endif; ?>
 	</tr>
 	<? foreach ($parse['memberslist'] AS $m): ?>
@@ -20,7 +20,7 @@
 				<th><?=$m['i'] ?></th>
 				<th><?=$m['username'] ?></th>
 				<th><a href="javascript:;" onclick="showWindow('<?=$m['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$m['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
-				<th><img src="/skins/default/images/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
+				<th><img src="/assets/images/skin/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
 				<th><?=$m['ally_range'] ?></th>
 				<th><?=$m['points'] ?></th>
 				<th><a href="<?=$this->url->get('galaxy/'.$m['galaxy'].'/'.$m['system'].'/') ?>"><?=$m['galaxy'] ?>:<?=$m['system'] ?>:<?=$m['planet'] ?></a></th>

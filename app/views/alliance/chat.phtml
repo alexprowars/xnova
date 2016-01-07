@@ -1,10 +1,10 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
-<form action="<?=$this->url->get('alliance/circular/') ?>" method="post">
+<form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
 	<table class="table">
 		<tr>
-			<td class='c' colspan='4'><a href="<?=$this->url->get('alliance/circular/') ?>">Обновить</a></td>
+			<td class='c' colspan='4'><a href="<?=$this->url->get('alliance/chat/') ?>">Обновить</a></td>
 		</tr>
 		<? if (count($parse['messages']) > 0): foreach ($parse['messages'] AS $m): ?>
 		<tr>
@@ -60,7 +60,7 @@
 		$(document).ready(function(){ShowText()});
 	<? endif; ?>
 </script>
-<form action="<?=$this->url->get('alliance/circular/sendmail/1/') ?>" method="post">
+<form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Отправить сообщение в чат альянса</td>

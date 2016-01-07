@@ -52,7 +52,7 @@ class BuddyController extends ApplicationController
 					'sender'	=> $this->user->id,
 					'owner'		=> $u,
 					'active'	=> 0,
-					'text'		=> $this->db->escapeString(strip_tags($_POST['text']))
+					'text'		=> strip_tags($_POST['text'])
 				]);
 		
 				$this->game->sendMessage($u, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/?a=1"><< просмотреть >></a>');

@@ -161,11 +161,18 @@ class GalaxyController extends ApplicationController
 		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '/assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
-		$array = json_decode($_SESSION['fleet_shortcut'], true);
-		
-		foreach ($array AS $id => $a)
+
+		if ($this->session->has('fleet_shortcut'))
 		{
-			$html .= " fleet_shortcut[" . $id . "] = new Array('" . base64_decode($a[0]) . "', " . $a[1] . ", " . $a[2] . ", " . $a[3] . ", " . (($a[1] == $galaxy && $a[2] == $system) ? 1 : 0) . "); ";
+			$array = json_decode($_SESSION['fleet_shortcut'], true);
+
+			if (!is_array($array))
+				$array = [];
+
+			foreach ($array AS $id => $a)
+			{
+				$html .= " fleet_shortcut[" . $id . "] = new Array('" . base64_decode($a[0]) . "', " . $a[1] . ", " . $a[2] . ", " . $a[3] . ", " . (($a[1] == $galaxy && $a[2] == $system) ? 1 : 0) . "); ";
+			}
 		}
 		
 		$html .= "$('#galaxy').append(PrintSelector(fleet_shortcut)); ";
