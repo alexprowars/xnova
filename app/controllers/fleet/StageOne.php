@@ -82,7 +82,7 @@ class StageOne
 		}
 
 		if (!$fleet['fleetlist'])
-			$controller->message(_getText('fl_unselectall'), _getText('fl_error'), "?set=fleet", 1);
+			$controller->message(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
 
 		$parse['usedfleet'] = str_rot13(base64_encode(json_encode($fleet['fleetarray'])));
 		$parse['thisgalaxy'] = $controller->planet->galaxy;

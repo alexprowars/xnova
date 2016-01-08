@@ -436,20 +436,20 @@ class User extends Model
 
 			if ($ally === NULL)
 			{
-				$ally = $this->db->query("SELECT a.id, a.ally_owner, a.ally_name, a.ally_ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
+				$ally = $this->db->query("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
 
 				$cache->save('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
 
 			if (isset($ally['id']))
 			{
-				if (!$ally['ally_ranks'])
-					$ally['ally_ranks'] = 'a:0:{}';
+				if (!$ally['ranks'])
+					$ally['ranks'] = 'a:0:{}';
 
-				$ally_ranks = json_decode($ally['ally_ranks'], true);
+				$ranks = json_decode($ally['ranks'], true);
 
 				$this->ally = $ally;
-				$this->ally['rights'] = isset($ally_ranks[$ally['rank'] - 1]) ? $ally_ranks[$ally['rank'] - 1] : array('name' => '', 'planet' => 0);
+				$this->ally['rights'] = isset($ranks[$ally['rank'] - 1]) ? $ranks[$ally['rank'] - 1] : array('name' => '', 'planet' => 0);
 			}
 		}
 	}
@@ -561,9 +561,9 @@ class User extends Model
 		{
 			$ally = $this->db->query("SELECT * FROM game_alliance WHERE `id` = '" . $userInfo['ally_id'] . "';")->fetch();
 
-			if ($ally['ally_owner'] != $userId)
+			if ($ally['owner'] != $userId)
 			{
-				$this->db->query("UPDATE game_alliance SET `ally_members` = '" . ($ally['ally_members'] - 1) . "' WHERE `id` = '" . $ally['id'] . "';");
+				$this->db->query("UPDATE game_alliance SET `members` = '" . ($ally['members'] - 1) . "' WHERE `id` = '" . $ally['id'] . "';");
 				$this->db->query("DELETE FROM game_alliance_members WHERE `u_id` = '" . $userId . "';");
 			}
 			else

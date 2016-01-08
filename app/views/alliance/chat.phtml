@@ -22,7 +22,7 @@
 							<?= str_replace(array("\r\n", "\n", "\r"), '', stripslashes($m['message'])) ?>
 							<? endif; ?>
 						</th>
-						<? if ($parse['ally_owner']): ?>
+						<? if ($parse['owner']): ?>
 						<th class="b" width="20"><input name="showmes<?=$m['id'] ?>" type="hidden" value="1"><input name="delmes<?=$m['id'] ?>" type="checkbox"></th>
 						<? endif; ?>
 					</tr>
@@ -38,7 +38,7 @@
 		<tr>
 			<th colspan="4"><?=$parse['pages'] ?></th>
 		</tr>
-		<? if ($parse['ally_owner'] && count($parse['messages']) > 0): ?>
+		<? if ($parse['owner'] && count($parse['messages']) > 0): ?>
 		<tr>
 			<th colspan="4">
 				<select id="deletemessages" name="deletemessages">

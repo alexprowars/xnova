@@ -17,7 +17,7 @@ class Verband
 
 		if (!is_numeric($fleetid) || empty($fleetid))
 		{
-			$controller->response->redirect("?set=overview");
+			$controller->response->redirect("/overview/");
 		}
 
 		$fleet = $controller->db->query("SELECT * FROM game_fleets WHERE fleet_id = '" . $fleetid . "' AND fleet_owner = " . $controller->user->id . " AND fleet_mission = 1")->fetch();
@@ -76,7 +76,7 @@ class Verband
 				if (isset($_POST['userid']))
 					$user_data = $controller->db->query("SELECT * FROM game_users WHERE id = '" . intval($_POST['userid']) . "'")->fetch();
 				else
-					$user_data = $controller->db->query("SELECT * FROM game_users WHERE username = '" . $controller->db->escapeString($_POST['addtogroup']) . "'")->fetch();
+					$user_data = $controller->db->query("SELECT * FROM game_users WHERE username = '" . $_POST['addtogroup'] . "'")->fetch();
 
 				if (!isset($user_data['id']))
 					$controller->message("Игрок не найден");
@@ -108,7 +108,7 @@ class Verband
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
 					$controller->message("Имя ассоциации содержит запрещённые символы", _getText('error'));
 
-				$name = $controller->db->escapeString(strip_tags($name));
+				$name = strip_tags($name);
 
 				$x = $controller->db->query("SELECT * FROM game_aks WHERE name = '" . $name . "'");
 

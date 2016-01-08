@@ -1,6 +1,6 @@
 <table class="table">
 	<tr>
-		<td class=c colspan=2>Обзор заявок [<?=$parse['ally_tag'] ?>]</td>
+		<td class=c colspan=2>Обзор заявок [<?=$parse['tag'] ?>]</td>
 	</tr>
 	<? if (is_array($parse['request'])): ?>
 		<tr><td colspan="2">
@@ -10,7 +10,7 @@
 				<th colspan=2>Заявка от <?=$parse['request']['username'] ?></th>
 			</tr>
 			<tr>
-				<th colspan=2><?=$parse['request']['ally_request_text'] ?></th>
+				<th colspan=2><?=$parse['request']['request_text'] ?></th>
 			</tr>
 			<tr>
 				<td class="c" colspan=2>Форма ответа:</td>

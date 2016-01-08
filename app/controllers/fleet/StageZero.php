@@ -81,7 +81,7 @@ class StageZero
 
 		if ($target_mission > 0)
 			$parse['mission_text'] = ' для миссии "' . _getText('type_mission', $target_mission) . '"';
-		if (($system > 0 && $galaxy > 0 && $planet > 0) && ($galaxy != $controller->planet->galaxy || $system != $controller->planet->system || $planet != $controller->planet))
+		if (($system > 0 && $galaxy > 0 && $planet > 0) && ($galaxy != $controller->planet->galaxy || $system != $controller->planet->system || $planet != $controller->planet->id))
 			$parse['mission_text'] = ' на координаты [' . $galaxy . ':' . $system . ':' . $planet . ']';
 
 		$parse['ships'] = array();

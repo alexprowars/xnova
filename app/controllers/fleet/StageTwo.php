@@ -85,7 +85,7 @@ class StageTwo
 			else
 				$RetMessage = _getText('gate_wait_star') . " - " . $RestString['string'];
 
-			$controller->message($RetMessage, 'Результат', "?set=fleet", 5);
+			$controller->message($RetMessage, 'Результат', "/fleet/", 5);
 		}
 
 		$parse = array();

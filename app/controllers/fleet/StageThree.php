@@ -29,7 +29,7 @@ class StageThree
 		$fleetarray = json_decode(base64_decode(str_rot13($controller->request->getPost('usedfleet', null, ''))), true);
 
 		if (!$fleetmission)
-			$controller->message("<span class=\"error\"><b>Не выбрана миссия!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Не выбрана миссия!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if (($fleetmission == 1 || $fleetmission == 6 || $fleetmission == 9 || $fleetmission == 2) && $controller->config->app->get('disableAttacks', 0) > 0 && time() < $controller->config->app->get('disableAttacks', 0))
 			$controller->message("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", $controller->config->app->get('disableAttacks', 0)) . "</b></span>", 'Ошибка');
@@ -67,20 +67,20 @@ class StageThree
 
 		if (!is_array($fleetarray))
 		{
-			$controller->message("<span class=\"error\"><b>Ошибка в передаче параметров!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Ошибка в передаче параметров!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
 		foreach ($fleetarray as $Ship => $Count)
 		{
 			if ($Count > $controller->planet->{$controller->game->resource[$Ship]})
-				$controller->message("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
 		if ($planettype != 1 && $planettype != 2 && $planettype != 3 && $planettype != 5)
-			$controller->message("<span class=\"error\"><b>Неизвестный тип планеты!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Неизвестный тип планеты!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($controller->planet->galaxy == $galaxy && $controller->planet->system == $system && $controller->planet->planet == $planet && $controller->planet->planet_type == $planettype)
-			$controller->message("<span class=\"error\"><b>Невозможно отправить флот на эту же планету!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Невозможно отправить флот на эту же планету!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($fleetmission == 8)
 		{
@@ -94,11 +94,11 @@ class StageThree
 		if ($fleetmission != 15)
 		{
 			if ($select->numRows() == 0 && $fleetmission != 7 && $fleetmission != 10)
-				$controller->message("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #1', "?set=fleet", 20);
+				$controller->message("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #1', "/fleet/", 20);
 			elseif ($fleetmission == 9 && $select->numRows() == 0)
-				$controller->message("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #2', "?set=fleet", 20);
+				$controller->message("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #2', "/fleet/", 20);
 			elseif ($select->numRows() == 0 && $fleetmission == 7 && $planettype != 1)
-				$controller->message("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 		else
 		{
@@ -116,12 +116,12 @@ class StageThree
 			}
 
 			if ($controller->user->{$controller->game->resource[124]} == 0)
-				$controller->message("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", 'Ошибка', "/fleet/", 2);
 			elseif ($ExpeditionEnCours >= $MaxExpedition)
-				$controller->message("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->game->resource[124]} / 2) + 1))
-				$controller->message("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
 		$TargetPlanet = $select->fetch();
@@ -148,12 +148,12 @@ class StageThree
 		$missiontype = Fleet::getFleetMissions($fleetarray, Array($galaxy, $system, $planet, $planettype), $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
 
 		if (!isset($missiontype[$fleetmission]))
-			$controller->message("<span class=\"error\"><b>Миссия неизвестна!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Миссия неизвестна!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($fleetmission == 8 && $TargetPlanet['debris_metal'] == 0 && $TargetPlanet['debris_crystal'] == 0)
 		{
 			if ($TargetPlanet['debris_metal'] == 0 && $TargetPlanet['debris_crystal'] == 0)
-				$controller->message("<span class=\"error\"><b>Нет обломков для сбора.</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Нет обломков для сбора.</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
 		if (isset($TargetPlanet['id_owner']))
@@ -161,20 +161,20 @@ class StageThree
 			$HeDBRec = $controller->db->query("SELECT * FROM game_users WHERE `id` = '" . $TargetPlanet['id_owner'] . "';")->fetch();
 
 			if (!isset($HeDBRec['id']))
-				$controller->message("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU".$TargetPlanet['id_owner']."</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU".$TargetPlanet['id_owner']."</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 		else
 			$HeDBRec = $controller->user->toArray();
 
 		if (($HeDBRec['authlevel'] > 0 && $controller->user->authlevel == 0) && ($fleetmission != 4 && $fleetmission != 3))
-			$controller->message("<span class=\"error\"><b>На этого игрока запрещено нападать</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>На этого игрока запрещено нападать</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($controller->user->ally_id != 0 && $HeDBRec['ally_id'] != 0 && $fleetmission == 1)
 		{
 			$ad = $controller->db->query("SELECT * FROM game_alliance_diplomacy WHERE (a_id = " . $HeDBRec['ally_id'] . " AND d_id = " . $controller->user->ally_id . ") AND status = 1", true);
 
 			if (isset($ad['id']) && $ad['type'] < 3)
-				$controller->message("<span class=\"error\"><b>Заключён мир или перемирие с альянсом атакуемого игрока.</b></span>", "Ошибка дипломатии", "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Заключён мир или перемирие с альянсом атакуемого игрока.</b></span>", "Ошибка дипломатии", "/fleet/", 2);
 		}
 
 		$VacationMode = $HeDBRec['vacation'];
@@ -195,14 +195,14 @@ class StageThree
 			if (isset($TargetPlanet['id_owner']) && ($fleetmission == 1 || $fleetmission == 2 || $fleetmission == 5 || $fleetmission == 6 || $fleetmission == 9) && $protection && !$NoobNoActive && $HeGameLevel < ($protectiontime * 1000))
 			{
 				if ($MyGameLevel > ($HeGameLevel * $protectionmulti))
-					$controller->message("<span class=\"success\"><b>Игрок находится под защитой новичков!</b></span>", 'Защита новичков', "?set=fleet", 2);
+					$controller->message("<span class=\"success\"><b>Игрок находится под защитой новичков!</b></span>", 'Защита новичков', "/fleet/", 2);
 				if (($MyGameLevel * $protectionmulti) < $HeGameLevel)
-					$controller->message("<span class=\"success\"><b>Вы слишком слабы для нападения на этого игрока!</b></span>", 'Защита новичков', "?set=fleet", 2);
+					$controller->message("<span class=\"success\"><b>Вы слишком слабы для нападения на этого игрока!</b></span>", 'Защита новичков', "/fleet/", 2);
 			}
 		}
 
 		if ($VacationMode && $fleetmission != 8)
-			$controller->message("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", 'Режим отпуска', "?set=fleet", 2);
+			$controller->message("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", 'Режим отпуска', "/fleet/", 2);
 
 		$flyingFleets = $controller->db->fetchColumn("SELECT COUNT(fleet_id) as Number FROM game_fleets WHERE `fleet_owner`='".$controller->user->id."'");
 
@@ -212,38 +212,38 @@ class StageThree
 			$fleetmax += 2;
 
 		if ($fleetmax <= $flyingFleets)
-			$controller->message("Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.", "Ошибка", "?set=fleet", 2);
+			$controller->message("Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.", "Ошибка", "/fleet/", 2);
 
 		if (($_POST['resource1'] + $_POST['resource2'] + $_POST['resource3']) < 1 AND $fleetmission == 3)
-			$controller->message("<span class=\"success\"><b>Нет сырья для транспорта!</b></span>", _getText('type_mission', 3), "?set=fleet", 2);
+			$controller->message("<span class=\"success\"><b>Нет сырья для транспорта!</b></span>", _getText('type_mission', 3), "/fleet/", 2);
 
 		if ($fleetmission != 15)
 		{
 			if (!isset($TargetPlanet['id_owner']) AND $fleetmission < 7)
-				$controller->message("<span class=\"error\"><b>Планеты не существует!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Планеты не существует!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if (isset($TargetPlanet['id_owner']) AND ($fleetmission == 7 || $fleetmission == 10))
-				$controller->message("<span class=\"error\"><b>Место занято</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Место занято</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if ($TargetPlanet['ally_deposit'] == 0 && $HeDBRec['id'] != $controller->user->id && $fleetmission == 5)
-				$controller->message("<span class=\"error\"><b>На планете нет склада альянса!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>На планете нет склада альянса!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if ($fleetmission == 5)
 			{
 				$friend = $controller->db->query("SELECT id FROM game_buddy WHERE ((sender = " . $controller->user->id . " AND owner = " . $HeDBRec['id'] . ") OR (owner = " . $controller->user->id . " AND sender = " . $HeDBRec['id'] . ")) AND active = 1 LIMIT 1")->fetch();
 
 				if ($HeDBRec['ally_id'] != $controller->user->ally_id && !isset($friend['id']) && (!isset($ad['id']) || (isset($ad['id']) && $ad['type'] != 2)))
-					$controller->message("<span class=\"error\"><b>Нельзя охранять вражеские планеты!</b></span>", 'Ошибка', "?set=fleet", 2);
+					$controller->message("<span class=\"error\"><b>Нельзя охранять вражеские планеты!</b></span>", 'Ошибка', "/fleet/", 2);
 			}
 
 			if ($TargetPlanet['id_owner'] == $controller->user->id && ($fleetmission == 1 || $fleetmission == 2))
-				$controller->message("<span class=\"error\"><b>Невозможно атаковать самого себя!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Невозможно атаковать самого себя!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if ($TargetPlanet['id_owner'] == $controller->user->id && $fleetmission == 6)
-				$controller->message("<span class=\"error\"><b>Невозможно шпионить самого себя!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Невозможно шпионить самого себя!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if (!$YourPlanet && $fleetmission == 4)
-				$controller->message("<span class=\"error\"><b>Выполнение данной миссии невозможно!</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Выполнение данной миссии невозможно!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
 		$speedPossible = array(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
@@ -253,10 +253,10 @@ class StageThree
 		$gameFleetSpeed 	= $controller->game->getSpeed('fleet');
 
 		if (!in_array($fleetSpeedFactor, $speedPossible))
-			$controller->message("<span class=\"error\"><b>Читеришь со скоростью?</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Читеришь со скоростью?</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if (!$planettype)
-			$controller->message("<span class=\"error\"><b>Ошибочный тип планеты!</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>Ошибочный тип планеты!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		$errorlist = "";
 
@@ -270,10 +270,10 @@ class StageThree
 			$errorlist .= _getText('fl_limit_planet');
 
 		if ($errorlist != '')
-			$controller->message("<span class=\"error\">" . $errorlist . "</span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\">" . $errorlist . "</span>", 'Ошибка', "/fleet/", 2);
 
 		if (!isset($fleetarray))
-			$controller->message("<span class=\"error\"><b>" . _getText('fl_no_fleetarray') . "</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>" . _getText('fl_no_fleetarray') . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		$distance 		= Fleet::GetTargetDistance($controller->planet->galaxy, $galaxy, $controller->planet->system, $system, $controller->planet->planet, $planet);
 		$duration 		= Fleet::GetMissionDuration($fleetSpeedFactor, $maxFleetSpeed, $distance, $gameFleetSpeed);
@@ -407,10 +407,10 @@ class StageThree
 		$StockOk = ($StockMetal >= $TransMetal && $StockCrystal >= $TransCrystal && $StockDeuterium >= $TransDeuterium);
 
 		if (!$StockOk && $TargetPlanet['id_owner'] != 1)
-			$controller->message("<span class=\"error\"><b>" . _getText('fl_noressources') . Helpers::pretty_number($consumption) . "</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>" . _getText('fl_noressources') . Helpers::pretty_number($consumption) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($StorageNeeded > $FleetStorage && !$controller->user->isAdmin())
-			$controller->message("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Helpers::pretty_number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "?set=fleet", 2);
+			$controller->message("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Helpers::pretty_number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		// Баш контроль
 		if ($fleetmission == 1)
@@ -420,7 +420,7 @@ class StageThree
 			$log = $controller->db->query("SELECT kolvo FROM game_logs WHERE `s_id` = '".$controller->user->id."' AND `mission` = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "")->fetch();
 
 			if (!$controller->user->isAdmin() && isset($log['kolvo']) && $log['kolvo'] > 2 && ((isset($ad['id']) && $ad['type'] != 3) || !isset($ad['id'])))
-				$controller->message("<span class=\"error\"><b>Баш-контроль. Лимит ваших нападений на планету исчерпан.</b></span>", 'Ошибка', "?set=fleet", 2);
+				$controller->message("<span class=\"error\"><b>Баш-контроль. Лимит ваших нападений на планету исчерпан.</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if (isset($log['kolvo']))
 				$controller->db->query("UPDATE game_logs SET kolvo = kolvo + 1 WHERE `s_id` = '".$controller->user->id."' AND `mission` = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "");
@@ -451,37 +451,36 @@ class StageThree
 			$check = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_ip WHERE id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 3)." AND ip IN (SELECT ip FROM game_log_ip WHERE id = ".$controller->user->id." AND time > ".(time() - 86400 * 3).")");
 
 			if ($check > 0 || $HeDBRec['ip'] == $controller->user->ip)
-				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" и \"Атака\" к игрокам, с которыми были пересечения по IP адресу.</b></span>", 'Ошибка', "?set=fleet", 5);
+				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" и \"Атака\" к игрокам, с которыми были пересечения по IP адресу.</b></span>", 'Ошибка', "/fleet/", 5);
 		}
 
 		if ($fleetmission == 3 && $HeDBRec['id'] != $controller->user->id && !$controller->user->isAdmin())
 		{
 			if (isset($NoobNoActive) && $NoobNoActive == 1)
-				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" к неактивному игроку.</b></span>", 'Ошибка', "?set=fleet", 5);
+				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" к неактивному игроку.</b></span>", 'Ошибка', "/fleet/", 5);
 
 			$cnt = $controller->db->query("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 7)."");
 
 			if ($cnt >= 3)
-				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще 3х раз в неделю.</b></span>", 'Ошибка', "?set=fleet", 5);
+				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще 3х раз в неделю.</b></span>", 'Ошибка', "/fleet/", 5);
 
 			$cnt = $controller->db->query("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 1)."");
 
 			if ($cnt > 0)
-				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще одного раза в день.</b></span>", 'Ошибка', "?set=fleet", 5);
+				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще одного раза в день.</b></span>", 'Ошибка', "/fleet/", 5);
 
 			//$equiv = $TransMetal + $TransCrystal * 2 + $TransDeuterium * 4;
 
 			//if ($equiv > 15000000)
-			//	$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку с количеством ресурсов большим чем 15кк в эквиваленте металла.</b></span>", 'Ошибка', "?set=fleet", 5);
+			//	$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку с количеством ресурсов большим чем 15кк в эквиваленте металла.</b></span>", 'Ошибка', "/fleet/", 5);
 
-			Sql::build()->insert('game_log_transfers')->set(Array
-			(
+			$controller->db->insertAsDict('game_log_transfers',
+			[
 				'time' 		=> time(),
 				'user_id' 	=> $controller->user->id,
 				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planettype.")];f:[".$fleet_array."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
 				'target_id' => $TargetPlanet['id_owner']
-			))
-			->execute();
+			]);
 
 			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
 		}
@@ -607,7 +606,7 @@ class StageThree
 		}
 		$html .= "</tr></table></center>";
 
-		$controller->message($html, '' . _getText('fl_title_3') . '', '?set=fleet', '3');
+		$controller->message($html, '' . _getText('fl_title_3') . '', '/fleet/', '3');
 	}
 }
 

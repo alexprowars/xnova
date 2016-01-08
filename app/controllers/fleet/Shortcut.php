@@ -182,7 +182,7 @@ class Shortcut
 			else
 				$html .= "<th colspan=\"2\">Список ссылок пуст</th>";
 
-			$html .= '<tr><td colspan=2 class=c><a href=?set=fleet>Назад</a></td></tr></tr></table>';
+			$html .= '<tr><td colspan=2 class=c><a href="/fleet/">Назад</a></td></tr></tr></table>';
 		}
 
 		$controller->tag->setTitle("Закладки");

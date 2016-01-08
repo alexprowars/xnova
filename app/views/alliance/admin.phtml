@@ -2,7 +2,7 @@
 	<tr>
 		<td class="c">Управление альянсом</td>
 	</tr>
-	<? if ($this->user->isAdmin() && $parse['ally_owner'] == $userId): ?>
+	<? if ($this->user->isAdmin() && $parse['owner'] == $userId): ?>
 		<tr>
 			<th><a href="<?=$this->url->get('alliance/admin/edit/planets/') ?>">Планеты альянса</a></th>
 		</tr>
@@ -65,22 +65,22 @@
 		</tr>
 		<tr>
 			<th width="150">Домашняя страница</th>
-			<th><input type=text name="web" value="<?=$parse['ally_web'] ?>" style="width:98%;"></th>
+			<th><input type=text name="web" value="<?=$parse['web'] ?>" style="width:98%;"></th>
 		</tr>
 		<tr>
 			<th>Логотип</th>
-			<th><input type=text name="image" value="<?=$parse['ally_image'] ?>" style="width:98%;"></th>
+			<th><input type=text name="image" value="<?=$parse['image'] ?>" style="width:98%;"></th>
 		</tr>
 		<tr>
 			<th>Ранг основателя</th>
-			<th><input type="text" name="owner_range" value="<?=$parse['ally_owner_range'] ?>" style="width:98%;"></th>
+			<th><input type="text" name="owner_range" value="<?=$parse['owner_range'] ?>" style="width:98%;"></th>
 		</tr>
 		<tr>
 			<th>Заявки</th>
 			<th>
 				<select style="width:98%;" name="request_notallow">
-					<option value=1<?=$parse['ally_request_notallow_0'] ?>><?=_getText('No_allow_request') ?></option>
-					<option value=0<?=$parse['ally_request_notallow_1'] ?>><?=_getText('Allow_request') ?></option>
+					<option value=1<?=$parse['request_notallow_0'] ?>><?=_getText('No_allow_request') ?></option>
+					<option value=0<?=$parse['request_notallow_1'] ?>><?=_getText('Allow_request') ?></option>
 				</select>
 			</th>
 		</tr>

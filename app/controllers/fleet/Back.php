@@ -66,7 +66,7 @@ class Back
 				$BoxMessage = _getText('fl_onlyyours');
 		}
 
-		$controller->message("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", $BoxTitle, "?set=fleet", 2);
+		$controller->message("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", $BoxTitle, "/fleet/", 2);
 	}
 }
 
