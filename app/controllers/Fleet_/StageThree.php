@@ -171,7 +171,7 @@ class StageThree
 
 		if ($controller->user->ally_id != 0 && $HeDBRec['ally_id'] != 0 && $fleetmission == 1)
 		{
-			$ad = $controller->db->query("SELECT * FROM game_alliance_diplomacy WHERE (a_id = " . $HeDBRec['ally_id'] . " AND d_id = " . $controller->user->ally_id . ") AND status = 1", true);
+			$ad = $controller->db->query("SELECT * FROM game_alliance_diplomacy WHERE (a_id = " . $HeDBRec['ally_id'] . " AND d_id = " . $controller->user->ally_id . ") AND status = 1")->fetch();
 
 			if (isset($ad['id']) && $ad['type'] < 3)
 				$controller->message("<span class=\"error\"><b>Заключён мир или перемирие с альянсом атакуемого игрока.</b></span>", "Ошибка дипломатии", "/fleet/", 2);
