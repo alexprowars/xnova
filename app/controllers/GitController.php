@@ -53,7 +53,7 @@ class GitController extends ApplicationController
 		            $git_history[$last_hash]['date'] = date('d/m/Y H:i:s A', strtotime($date));
 		        }
 		        else
-		            $git_history[$last_hash]['message'] .= $line ." ";
+		            $git_history[$last_hash]['message'] .= $line ."<br>";
 		    }
 		}
 
