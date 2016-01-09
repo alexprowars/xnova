@@ -152,7 +152,7 @@ $di->setShared('crypt', function()
 $di->setShared(
     'cache', function () use ($config, $di)
 	{
-		$frontCache = new \Phalcon\Cache\Frontend\Data(array(
+		$frontCache = new \Phalcon\Cache\Frontend\None(array(
 			"lifetime" => 3600
 		));
 

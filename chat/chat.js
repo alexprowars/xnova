@@ -17,7 +17,7 @@ http.createServer(function(request, response) {
 
 io.sockets.on('connection', function (socket)
 {
-	var primaryKey = crypto.createHash('md5').update(socket.handshake.query.userId+'|'+socket.handshake.query.userName+'SuperPuperChat').digest('hex');
+	var primaryKey = crypto.createHash('md5').update(socket.handshake.query.userId+'|'+decodeURIComponent(socket.handshake.query.userName)+'SuperPuperChat', 'utf8').digest('hex');
 
 	if (primaryKey != socket.handshake.query.key)
 		return false;
@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket)
 
 	socket.on('message', function (msg, userId, userName, key)
 	{
-		var primaryKey = crypto.createHash('md5').update(userId+'|'+userName+'SuperPuperChat').digest('hex');
+		var primaryKey = crypto.createHash('md5').update(userId+'|'+userName+'SuperPuperChat', 'utf8').digest('hex');
 
 		if (primaryKey != key)
 			return false;

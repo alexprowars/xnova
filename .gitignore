@@ -3,6 +3,7 @@ app/cache/*
 app/config/config.ini
 vendor/*
 node_modules/*
+chat/node_modules/*
 Thumbs.db
 .DS_Store
 *.log

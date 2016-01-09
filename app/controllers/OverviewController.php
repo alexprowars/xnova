@@ -706,13 +706,13 @@ class OverviewController extends ApplicationController
 
 				foreach ($chat AS $message)
 				{
-					if ($message[3] != '')
+					if ($message[4] != false)
 						continue;
 
 					if ($i >= 5)
 						break;
 
-					$t = explode(' ', $message[4]);
+					$t = explode(' ', $message[5]);
 
 					foreach ($t AS $j => $w)
 					{
@@ -724,12 +724,12 @@ class OverviewController extends ApplicationController
 						}
 					}
 
-					$message[4] = implode(' ', $t);
+					$message[5] = implode(' ', $t);
 
 					$parse['activity']['chat'][] = array
 					(
-						'TIME' => $message[0],
-						'MESS' => '<span class="title"><span class="to">'.$message[1].'</span> написал'.($message[2] != '' ? ' <span class="to">'.$message[2].'</span>' : '').'</span>: '.$message[4].''
+						'TIME' => $message[1],
+						'MESS' => '<span class="title"><span class="to">'.$message[2].'</span> написал'.(count($message[3]) ? ' <span class="to">'.implode(', ', $message[3]).'</span>' : '').'</span>: '.$message[5].''
 					);
 
 					$i++;
