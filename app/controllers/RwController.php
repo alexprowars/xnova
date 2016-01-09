@@ -14,12 +14,12 @@ class RwController extends ApplicationController
 	public function indexAction ()
 	{
 		if (!$this->request->hasQuery('id'))
-			return $this->message('Боевой отчет не найден');
+			$this->message('Боевой отчет не найден');
 
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $this->request->getQuery('id', 'int') . "'")->fetch();
 		
 		if (!isset($raportrow['id']))
-			return $this->message('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
+			$this->message('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
 
 		$user_list = json_decode($raportrow['id_users'], true);
 		

@@ -184,7 +184,7 @@ class GalaxyController extends ApplicationController
 								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
 								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.vacation, u.banned, u.sex, u.avatar,
 								ui.image AS user_image,
-								a.ally_name, a.ally_members, a.ally_web, a.ally_tag,
+								a.name AS ally_name, a.members AS ally_members, a.web AS ally_web, a.tag AS ally_tag,
 								ad.type,
 								s.total_rank, s.total_points
 				FROM game_planets p 

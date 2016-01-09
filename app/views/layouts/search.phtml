@@ -65,9 +65,9 @@
 		<? if (count($parse['result']) > 0): ?>
 		<? foreach ($parse['result'] AS $result): ?>
 			<tr>
-				<th><a href="<?=$this->url->get('alliance/ainfo/a/'.$result['id'].'/') ?>"><?=$result['ally_tag'] ?></a></th>
-				<th><?=$result['ally_name'] ?></th>
-				<th><?=$result['ally_members'] ?></th>
+				<th><a href="<?=$this->url->get('alliance/info/'.$result['id'].'/') ?>"><?=$result['tag'] ?></a></th>
+				<th><?=$result['name'] ?></th>
+				<th><?=$result['members'] ?></th>
 				<th><?=$result['total_points'] ?></th>
 			</tr>
 			<? endforeach; ?>

@@ -811,7 +811,7 @@ class Planet extends Model
 		if ($this->user->b_tech_planet != 0)
 		{
 			if ($this->user->b_tech_planet != $this->id)
-				$WorkingPlanet = $this->db->query("SELECT id, queue FROM game_planets WHERE `id` = '" . $this->user->b_tech_planet . "';", true);
+				$WorkingPlanet = $this->db->query("SELECT id, queue FROM game_planets WHERE `id` = '" . $this->user->b_tech_planet . "';")->fetch();
 
 			if (isset($WorkingPlanet))
 				$ThePlanet = $WorkingPlanet;

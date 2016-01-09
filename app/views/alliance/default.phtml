@@ -38,8 +38,8 @@
 		<? $i = 0; foreach ($parse['allys'] AS $list): $i++; ?>
 		<tr>
 			<th><?=$i ?></th>
-			<th><a href="<?=$this->url->get('alliance/info/'.$list['id'].'/') ?>"><?=$list['ally_name'] ?> [<?=$list['ally_tag'] ?>]</a></th>
-			<th><?=$list['ally_members'] ?></th>
+			<th><a href="<?=$this->url->get('alliance/info/'.$list['id'].'/') ?>"><?=$list['name'] ?> [<?=$list['tag'] ?>]</a></th>
+			<th><?=$list['members'] ?></th>
 			<th><?=$list['total_points'] ?></th>
 		</tr>
 		<? endforeach; ?>

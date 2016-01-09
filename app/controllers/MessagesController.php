@@ -99,7 +99,7 @@ class MessagesController extends ApplicationController
 
 		if (isset($_GET['quote']))
 		{
-			$mes = $this->db->query("SELECT message_id, message_text FROM game_messages WHERE message_id = " . intval($_GET['quote']) . " AND (message_owner = " . $this->user->id . " || message_sender = " . $this->user->id . ");", true);
+			$mes = $this->db->query("SELECT message_id, message_text FROM game_messages WHERE message_id = " . intval($_GET['quote']) . " AND (message_owner = " . $this->user->id . " || message_sender = " . $this->user->id . ");")->fetch();
 
 			if (isset($mes['message_id']))
 			{

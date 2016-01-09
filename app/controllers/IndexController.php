@@ -125,7 +125,7 @@ class IndexController extends ApplicationController
 
 				if ($this->session->has('ref'))
 				{
-					$refe = $this->db->query("SELECT id FROM game_users WHERE id = ".$this->session->get('ref'), true);
+					$refe = $this->db->query("SELECT id FROM game_users WHERE id = ".$this->session->get('ref'))->fetch();
 
 					if (isset($refe['id']))
 						$this->db->insertAsDict('game_refs', Array('r_id' => $iduser, 'u_id' => $this->session->get('ref')));

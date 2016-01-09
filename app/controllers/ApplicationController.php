@@ -445,9 +445,34 @@ class ApplicationController extends Controller
 		$this->showTopPanel(false);
 		$this->showLeftPanel($left);
 
+		$this->afterExecuteRoute();
+
 		$this->view->start();
 
-		return true;
+		$this->view->render(
+			$this->dispatcher->getControllerName(),
+			$this->dispatcher->getActionName(),
+			$this->dispatcher->getParams()
+		);
+
+		$this->view->finish();
+
+		if ($this->request->isAjax())
+		{
+			$this->response->setJsonContent(
+			[
+				'status' 	=> $this->game->getRequestStatus(),
+				'message' 	=> $this->game->getRequestMessage(),
+				'html' 		=> str_replace("\t", ' ', $this->view->getContent()),
+				'data' 		=> $this->game->getRequestData()
+			]);
+			$this->response->setContentType('text/json', 'utf8');
+			$this->response->send();
+		}
+		else
+	   		echo $this->view->getContent();
+
+		die();
 	}
 }
 

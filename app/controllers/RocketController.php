@@ -58,7 +58,7 @@ class RocketController extends ApplicationController
 		else
 			$pziel = intval($pziel);
 		
-		$select = $this->db->query("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3['id_owner'], true);
+		$select = $this->db->query("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3['id_owner'])->fetch();
 		
 		if (!isset($select['id']))
 			$this->message('Игрока не существует');

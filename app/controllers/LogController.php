@@ -167,7 +167,7 @@ class LogController extends ApplicationController
 			else
 			{
 				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
-					return $this->message('Запрашиваемого лога не существует в базе данных');
+					$this->message('Запрашиваемого лога не существует в базе данных');
 				else
 				{
 					$html = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";

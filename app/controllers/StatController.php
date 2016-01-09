@@ -187,7 +187,7 @@ class StatController extends ApplicationController
 		}
 
 		$start *= 100;
-		$query = $this->db->query("SELECT s.*, a.`id`, a.`ally_tag`, a.`ally_name`, a.`ally_members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
+		$query = $this->db->query("SELECT s.*, a.`id`, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
 
 		$start++;
 
@@ -207,15 +207,15 @@ class StatController extends ApplicationController
 			if ($ranking > 0)
 				$stats['rankplus'] = "<font color=\"green\">+" . $ranking . "</font>";
 
-			if ($StatRow['name'] == $this->user->name)
-				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
+			if ($StatRow['name'] == $this->user->ally_name)
+				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['ally'] . "</font>";
 			else
-				$stats['name'] = "<a href=\"/alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['ally_name'] . "</a>";
+				$stats['name'] = "<a href=\"/alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
 
 			$stats['mes'] = '';
-			$stats['members'] = $StatRow['ally_members'];
+			$stats['members'] = $StatRow['members'];
 			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
-			$stats['members_points'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['ally_members']));
+			$stats['members_points'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
 
 			$stat[] = $stats;
 
