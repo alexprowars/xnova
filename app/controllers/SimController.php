@@ -46,8 +46,7 @@ class SimController extends ApplicationController
 			if (isset($this->user->{$this->game->resource[$id]}) && $this->user->{$this->game->resource[$id]} > 0)
 				$parse['slot_0'][$id] = array('c' => $this->user->{$this->game->resource[$id]});
 		}
-		
-		$this->view->pick('sim');
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Симулятор');

@@ -19,7 +19,7 @@ use Phalcon\Cache\Backend\Memcache as Cache;
 
 $di = new FactoryDefault();
 
-$di->set('cookies', function()
+$di->setShared('cookies', function()
 {
     $cookies = new Phalcon\Http\Response\Cookies();
     $cookies->useEncryption(false);
@@ -27,12 +27,12 @@ $di->set('cookies', function()
     return $cookies;
 });
 
-$di->set('router', function ()
+$di->setShared('router', function ()
 {
     return require __DIR__ . '/routes.php';
 });
 
-$di->set(
+$di->setShared(
     'url', function () use ($config)
 	{
 		/**
@@ -41,10 +41,10 @@ $di->set(
         $url = new UrlResolver();
         $url->setBaseUri($config->application->baseUri);
         return $url;
-    }, true
+    }
 );
 
-$di->set(
+$di->setShared(
     'db', function () use ($config)
 	{
 		/*$logger = new FileLogger(APP_PATH."app/logs/debug.log");
@@ -118,19 +118,19 @@ $di->set('dispatcher', function () use ($di)
     return $dispatcher;
 });
 
-$di->set('view', function()
+$di->setShared('view', function()
 {
 	$view = new View();
 	$view->setViewsDir(APP_PATH.'app/views/');
 	return $view;
 });
 
-$di->set('auth', function ()
+$di->setShared('auth', function ()
 {
     return new Auth();
 });
 
-$di->set('game', function ()
+$di->setShared('game', function ()
 {
     return new Game();
 });
@@ -140,16 +140,16 @@ $di->remove('flashSession');
 $di->remove('flash');
 $di->remove('annotations');
 
-$di->set('config', $config);
+$di->setShared('config', $config);
 
-$di->set('crypt', function()
+$di->setShared('crypt', function()
 {
     $crypt = new Crypt();
     $crypt->setKey('fsdgdghrdfhgasdfsd');
     return $crypt;
 });
 
-$di->set(
+$di->setShared(
     'cache', function () use ($config, $di)
 	{
 		$frontCache = new \Phalcon\Cache\Frontend\Data(array(
@@ -173,7 +173,7 @@ $di->set(
 		}
 
         return $cache;
-    }, true
+    }
 );
 
 /*$di->set('modelsMetadata', function()

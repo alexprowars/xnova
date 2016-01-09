@@ -22,12 +22,16 @@ class NewsController extends ApplicationController
 			$news[] = array($a, nl2br($b));
 		}
 
-		$this->view->pick('news');
 		$this->view->setVar('parse', $news);
+
+		exec('git rev-parse --verify HEAD 2> /dev/null', $output);
+
+		$lastCommit = $output[0];
+
+		$this->view->setVar('lastCommit', $lastCommit);
 
 		$this->tag->setTitle('Новости');
 		$this->showTopPanel(false);
-		$this->showLeftPanel(isset($this->user->id));
 	}
 }
 

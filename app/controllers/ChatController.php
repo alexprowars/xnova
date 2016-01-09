@@ -16,8 +16,6 @@ class ChatController extends ApplicationController
 		if ($regTime > (time() - 43200))
 			$this->message('Доступ к чату будет открыт спустя 12 часов после регистрации.');
 
-		$this->view->pick('chat');
-
 		$this->tag->setTitle('Межгалактический чат');
 		$this->showTopPanel(false);
 		$this->showLeftPanel(!isset($_GET['frame']));

@@ -92,8 +92,7 @@ class RocketController extends ApplicationController
 		$this->db->query($QryInsertFleet);
 		
 		$this->db->query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . $this->user->planet_current . "'");
-		
-		$this->view->pick('rak');
+
 		$this->view->setVar('anz', $anz);
 
 		$this->tag->setTitle('Межпланетная атака');

@@ -20,12 +20,10 @@ class BannedController extends ApplicationController
 			$bannedList[] = $u;
 		}
 
-		$this->view->pick('banned');
 		$this->view->setVar('bannedList', $bannedList);
 
 		$this->tag->setTitle('Список заблокированных игроков');
 		$this->showTopPanel(false);
-		$this->showLeftPanel(($this->user->getId() && $this->user->banned == 0));
 	}
 }
 

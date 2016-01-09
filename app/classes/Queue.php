@@ -269,7 +269,7 @@ class Queue
 
 		$WorkingPlanet->spaceLabs = $spaceLabs;
 
-		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && $WorkingPlanet->b_tech_id == 0 && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
+		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
 		{
 			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 

@@ -30,7 +30,6 @@ class HallController extends ApplicationController
 
 		$parse['time'] = $time;
 
-		$this->view->pick('hall');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Зал славы');

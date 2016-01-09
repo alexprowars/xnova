@@ -2,6 +2,10 @@
 
 $lang['news'] = array(
 
+'<font color="lime">3.0</font>' => 'Made by AlexPro
+CORE: Переезд на MVC фреймворк Phalcon
+',
+
 '<font color="lime">2.6</font>' => 'Made by AlexPro
 MOD: Мобильная версия
 FIX: Оптимизация потребления интернет-траффика

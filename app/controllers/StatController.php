@@ -80,7 +80,7 @@ class StatController extends ApplicationController
 	{
 		$stats = $stat = array();
 
-		if (!$this->range)
+		if (!$this->range && $this->getDI()->has('user'))
 		{
 			$records = $this->cache->get('app::records_'.$this->user->getId().'');
 

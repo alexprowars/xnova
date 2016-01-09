@@ -1016,3 +1016,7 @@ div.errormessage {
 	margin: 0 auto;
 	padding: 100px 50px;
 }
+
+.alert a {
+	color: #337ab7;
+}

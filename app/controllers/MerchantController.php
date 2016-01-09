@@ -168,13 +168,10 @@ class MerchantController extends ApplicationController
 		}
 		else
 			$parse['type'] = 'main';
-		
-		$this->view->pick('merchand');
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Торговец');
-
-		return true;
 	}
 }
 

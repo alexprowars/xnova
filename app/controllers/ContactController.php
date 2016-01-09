@@ -13,7 +13,7 @@ class ContactController extends ApplicationController
 		Lang::includeLang('contact');
 	}
 
-	function show()
+	function indexAction ()
 	{
 		$contacts = array();
 
@@ -29,11 +29,9 @@ class ContactController extends ApplicationController
 			);
 		}
 
-		$this->view->pick('contact');
 		$this->view->setVar('contacts', $contacts);
 
 		$this->tag->setTitle(_getText('ctc_title'));
 		$this->showTopPanel(false);
-		$this->showLeftPanel(isset($this->user->id));
 	}
 }

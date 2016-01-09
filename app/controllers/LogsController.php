@@ -11,8 +11,6 @@ class LogsController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$this->view->pick('jurnal');
-		
 		$journal = @intval($_POST['journal']);
 		$days = @intval($_POST['days']);
 		$lim = @intval($_POST['lim']);

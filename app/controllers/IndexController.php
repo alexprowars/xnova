@@ -10,8 +10,6 @@ class IndexController extends ApplicationController
 {
 	public function initialize()
 	{
-		parent::initialize();
-
 		if (!$this->dispatcher->wasForwarded())
 		{
 			$assets = $this->assets->collection('headerJs');
@@ -25,6 +23,8 @@ class IndexController extends ApplicationController
 			$assets->addCss('/assets/css/jquery-ui.css');
 			$assets->addCss('/assets/css/login.css');
 		}
+
+		parent::initialize();
 	}
 
 	public function indexAction ()

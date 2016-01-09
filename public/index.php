@@ -58,6 +58,9 @@ try
 			$toolbar = new \Fabfuel\Prophiler\Toolbar($profiler);
 			$toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
 		}
+
+		if (!$application->auth->isAuthorized() || !$application->user->isAdmin())
+			unset($toolbar);
 	}
 
 	if ($application->request->isAjax())

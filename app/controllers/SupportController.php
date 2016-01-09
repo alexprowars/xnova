@@ -83,8 +83,7 @@ class SupportController extends ApplicationController
 						'text' => html_entity_decode($ticket['text'], ENT_NOQUOTES, "CP1251"),
 					);
 				}
-		
-				$this->view->pick('support');
+
 				$this->view->setVar('parse', $parse);
 
 				$this->tag->setTitle('Техподдержка');

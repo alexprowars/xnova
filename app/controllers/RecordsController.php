@@ -76,7 +76,6 @@ class RecordsController extends ApplicationController
 			'update' => $this->config->app->get('stat_update'),
 		);
 
-		$this->view->pick('records');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Таблица рекордов');

@@ -36,7 +36,7 @@ class StartController extends ApplicationController
 					$error .= _getText('error_userexist');
 				}
 
-				$face = Helpers::CheckString($_POST['face']);
+				$face = Helpers::CheckString($this->request->getPost('face', 'string', ''));
 
 				if ($face != '')
 				{

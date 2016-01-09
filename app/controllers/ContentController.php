@@ -19,7 +19,6 @@ class ContentController extends ApplicationController
 		if (!isset($content['id']))
 			$this->message('Страница не найдена!');
 
-		$this->view->pick('content');
 		$this->view->setVar('html', stripslashes($content['html']));
 
 		$this->tag->setTitle($content['title']);

@@ -106,7 +106,7 @@
 		<div id="siteFooter" class="hidden-xs">
 			<div class="container-fluid">
 				<div class="pull-left text-left">
-					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения">000</a>
+					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
 					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 					<? endif; ?>
@@ -137,7 +137,7 @@
 				<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>
 			</div>
 			<div class="col-xs-8 text-center">
-				<a href="<?=$this->url->get('news/') ?>" title="Последние изменения">000</a>
+				<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
 				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 				<? endif; ?>

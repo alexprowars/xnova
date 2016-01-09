@@ -141,7 +141,6 @@ class PhalanxController extends ApplicationController
 		
 		if ($ii > 0)
 		{
-			$this->view->pick('phalanx');
 			$this->view->setVar('parse', $parse);
 		
 			$html = '';

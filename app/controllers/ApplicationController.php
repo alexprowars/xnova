@@ -106,38 +106,33 @@ class ApplicationController extends Controller
 	        $this->tag->setDoctype(Tag::HTML5);
 		}
 
-		if ($this->auth->isAuthorized())
+		if (is_array($this->router->getParams()) && count($this->router->getParams()))
 		{
-			if ($this->request->isAjax())
-				$this->view->setMainView('game_ajax');
-			else
-				$this->view->setMainView('game');
+			$params = $this->router->getParams();
 
-			if (is_array($this->router->getParams()) && count($this->router->getParams()))
+			foreach ($params as $key => $value)
 			{
-				$params = $this->router->getParams();
-
-				foreach ($params as $key => $value)
+				if (!is_numeric($key))
 				{
-					if (!is_numeric($key))
-					{
-						$_REQUEST[$key] = $_GET[$key] = $value;
+					$_REQUEST[$key] = $_GET[$key] = $value;
 
-						unset($params[$key]);
-					}
-				}
-
-				$params = array_values($params);
-
-				for ($i = 0; $i < count($params); $i += 2)
-				{
-					if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
-						$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
+					unset($params[$key]);
 				}
 			}
 
-			$assets = $this->assets->collection('headerCss');
+			$params = array_values($params);
 
+			for ($i = 0; $i < count($params); $i += 2)
+			{
+				if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
+					$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
+			}
+		}
+
+		$assets = $this->assets->collection('headerCss');
+
+		if ($assets->count() == 0)
+		{
 			$assets->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 			$assets->addCss('/assets/css/bootstrap.css');
 			$assets->addCss('/assets/css/formate.css');
@@ -145,9 +140,12 @@ class ApplicationController extends Controller
 			$assets->addCss('/assets/css/media.css');
 			$assets->addCss('/assets/css/mobile.css');
 			$assets->addCss('/assets/css/jquery-ui.css');
+		}
 
-			$assets = $this->assets->collection('headerJs');
+		$assets = $this->assets->collection('headerJs');
 
+		if ($assets->count() == 0)
+		{
 			$assets->addJs('//yastatic.net/jquery/1.11.1/jquery.min.js');
 			$assets->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
 			$assets->addJs('/assets/js//script.js');
@@ -159,6 +157,14 @@ class ApplicationController extends Controller
 			$assets->addJs('/assets/js/ed.js');
 			$assets->addJs('/assets/js/jquery.touchSwipe.min.js');
 
+			if ($this->request->isAjax())
+				$this->view->setMainView('game_ajax');
+			else
+				$this->view->setMainView('game');
+		}
+
+		if ($this->auth->isAuthorized())
+		{
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
 			{
@@ -245,6 +251,11 @@ class ApplicationController extends Controller
 
 			if ($controller == 'index')
 				$this->dispatcher->forward(array('controller' => 'overview'));
+		}
+		else
+		{
+			$this->showTopPanel(false);
+			$this->showLeftPanel(false);
 		}
 
 		return true;

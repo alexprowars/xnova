@@ -222,7 +222,6 @@ class ImperiumController extends ApplicationController
 			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->game->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		$this->view->pick('imperium');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Империя');

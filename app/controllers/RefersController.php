@@ -25,7 +25,6 @@ class RefersController extends ApplicationController
 		if (isset($refers['id']))
 			$parse['you'] = $refers;
 
-		$this->view->pick('refers');
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Рефералы');

@@ -42,17 +42,17 @@ class Security extends Component
 			//Private area resources
 			$privateResources = array
 			(
-				'admin'   	=> array('*'),
-				'overview'  => array('*'),
-				'start'  	=> array('*'),
-				'alliance'  => array('*'),
-				'avatar'  	=> array('*'),
-				'banned'  	=> array('*'),
-				'buddy'  	=> array('*'),
-				'buildings' => array('*'),
-				'calculate' => array('*'),
-				'chat'  	=> array('*'),
-				'contact'  	=> array('*'),
+				'admin'		=> array('*'),
+				'overview'	=> array('*'),
+				'start'		=> array('*'),
+				'alliance'	=> array('*'),
+				'avatar'	=> array('*'),
+				'banned'	=> array('*'),
+				'buddy'		=> array('*'),
+				'buildings'	=> array('*'),
+				'calculate'	=> array('*'),
+				'chat'		=> array('*'),
+				'contact'	=> array('*'),
 				'content'  	=> array('*'),
 				'credits'  	=> array('*'),
 				'fleet'  	=> array('*'),
@@ -82,15 +82,19 @@ class Security extends Component
 				'search'  	=> array('*'),
 				'sim'  		=> array('*'),
 				'stat'  	=> array('*'),
-				'support'  	=> array('*'),
-				'tech'  	=> array('*'),
-				'tutorial'  => array('*'),
+				'support'	=> array('*'),
+				'tech'		=> array('*'),
+				'tutorial'	=> array('*'),
+				'git'		=> array('*'),
 			);
 
 			$publicResources = array
 			(
-				'index'     => array('*'),
-				'error'     => array('*'),
+				'index'		=> array('*'),
+				'error'		=> array('*'),
+				'contact'	=> array('*'),
+				'stat'		=> array('*'),
+				'banned'	=> array('*'),
 			);
 
 			foreach ($privateResources as $resource => $actions)
@@ -149,7 +153,8 @@ class Security extends Component
 		else
 			$role = 'Users';
 
-		$this->getDI()->set('user', $auth);
+		if ($auth !== false)
+			$this->getDI()->set('user', $auth);
 
 		$controller = $dispatcher->getControllerName();
 		$action = $dispatcher->getActionName();
@@ -162,10 +167,6 @@ class Security extends Component
 			$this->response->redirect('');
 			$this->response->send();
 			die();
-
-			//$dispatcher->forward(array('controller' => 'index'));
-
-			//return false;
 		}
 
 		return true;

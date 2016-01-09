@@ -15,5 +15,7 @@ while ($load = $loads->fetch())
 }
 
 $di->get('config')->merge(new \Phalcon\Config(array('app' => $result)));
+
+define('VERSION', '3.0');
  
 ?>
