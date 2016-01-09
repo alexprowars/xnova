@@ -113,40 +113,27 @@ function pp(login)
 	msg.focus();
 }
 
-var ChatTimer;
-
-function StopChatTimer()
-{
-	clearTimeout(ChatTimer);
-}
-
-function RefreshChat()
-{
-	StopChatTimer();
-	showMessage();
-
-	ChatTimer = setTimeout(RefreshChat, 10000);
-}
-
-function MsgSent(msg_id)
-{
-	StopChatTimer();
-
-	$("#message_id").val(msg_id);
-
-	ChatTimer = setTimeout(showMessage, 5000);
-}
-
-function ChatMsg(Time, Player, Msg, Me, My)
+function ChatMsg(time, Player, To, Msg, Private, Me, My)
 {
 	var str = "";
 
-	for (var i = 0; i < sm_repl.length; i++)
+	var j = 0;
+
+	for (var i = 0; i < arSmiles.length; i++)
 	{
-		Msg = Msg.replace(sm_find[i], '<img src="'+XNova.path+'images/smile/' + sm_repl[i] + '.gif" onclick="S(\'' + sm_repl[i] + '\')" style="cursor:pointer">');
+		while (Msg.indexOf(':'+arSmiles[i]+':') >= 0)
+		{
+			Msg = Msg.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="S(\'' + arSmiles[i] + '\')" style="cursor:pointer">');
+
+			if (++j >= 3)
+				break;
+		}
+
+		if(j >= 3)
+			break;
 	}
 
-	if (!Time)
+	if (!time)
 		return;
 
 	if (Me > 0)
@@ -157,17 +144,30 @@ function ChatMsg(Time, Player, Msg, Me, My)
 		str += "<span class='date1' onclick='pp(\"" + Player + "\");' style='cursor:pointer;'>";
 
 	if (!Player)
-		str += print_date(Time, 1) + "</span> ";
+		str += print_date(time, 1) + "</span> ";
 	else
 	{
-		str += print_date(Time, 1) + "</span> [<span class='username ";
+		str += print_date(time, 1) + "</span> ";
 
 		if (My == 1)
-			str += "negative'>";
+			str += "<span class='negative'>";
 		else
-			str += "to' onclick='to(\"" + Player + "\");' style='cursor:pointer;'>";
+			str += "<span class='to' onclick='to(\"" + Player + "\");' style='cursor:pointer;'>";
 
-		str += Player + "</span>] ";
+		str += Player + "</span>: ";
+	}
+
+	if (To.length > 0)
+	{
+		str += '<span class="'+(Private ? 'private' : 'player')+'">'+(Private ? 'приватно' : 'для')+' [';
+
+		for (i in To)
+		{
+			if (To.hasOwnProperty(i))
+				str += (i > 0 ? ', ' : '') +'<a href=\'javascript:'+(Private ? 'pp' : 'to')+'("'+To[i]+'");\'>'+To[i]+'</a>';
+		}
+
+		str += ']</span> ';
 	}
 
 	for (i in findS)
@@ -200,7 +200,7 @@ function ChatMsg(Time, Player, Msg, Me, My)
 			},
 			'info': function (e)
 			{
-				showWindow('', XNova.path+'/players/'+$(e).text()+'/');
+				showWindow('', '/players/'+$(e).text()+'/');
 			}
 		}
 	});
@@ -228,71 +228,35 @@ function addMessage()
 
 	$("#chatMsg").val('');
 
-	StopChatTimer();
-	HideSmiles();
-
-	$.ajax({
-		type: "POST",
-		url: XNova.path+"daemon/chat.php",
-		data: "msg=" + data + "",
-		success: function()
-		{
-			ChatTimer = setTimeout(showMessage, 500);
-		},
-		error: function()
-		{
-			ChatTimer = setTimeout(showMessage, 500);
-		}
-	});
+	return data;
 }
 
-function showMessage()
-{
-	$.ajax({
-		type:"GET",
-		url: XNova.path+"daemon/chat.php",
-		data:"message_id=" + parseInt($("#message_id").val()) + "",
-		dataType: 'script',
-		success:function (msg)
-		{
-			//eval(msg)
-		}
-	});
-}
-
-function S(name)
+function AddSmile (id)
 {
 	var msg = $('#chatMsg');
 
-	msg.val(msg.val()+':' + name + ':');
-	msg.focus();
+	msg.val(msg.val() + ' :'+id+': ').focus();
 }
 
 var sml = 0;
 
 function ShowSmiles()
 {
-	var str = "";
+	var obj = $("#smiles");
 
-	if (sml == 1)
+	if (obj.is(':visible'))
 	{
-		HideSmiles();
-		return;
+		obj.html('').hide();
+		$('#shoutbox').show();
 	}
-
-	sml = 1;
-
-	for (var i = 0; i < sm_repl.length; i++)
+	else
 	{
-		str += '<img src="'+XNova.path+'images/smile/' + sm_repl[i] + '.gif" ALT="' + sm_repl[i] + '" onclick="S(\'' + sm_repl[i] + '\')" style="cursor:pointer"> ';
-	}
+		for (var i = 0; i < arSmiles.length; i++)
+			obj.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\')" style="cursor:pointer"> ');
 
-	$('#smiles').html(str).show();
-	$('#shoutbox').hide();
-}
-function HideSmiles()
-{
-	$('#smiles').html('').attr('style', 'display:none');
+		obj.show();
+		$('#shoutbox').hide();
+	}
 }
 
 function ClearChat()
@@ -300,19 +264,50 @@ function ClearChat()
 	$("#shoutbox").html('');
 }
 
-function doSomething(e)
-{
-	if (!e)
-		e = window.event;
-	if (e.keyCode == 13)
-		addMessage();
-
-	return true;
-}
-
-window.document.onkeydown = doSomething;
+var lastMessageId = 0;
 
 $(document).ready(function()
 {
-	setTimeout(showMessage, 1000);
+	var socket = io.connect('http://'+window.location.host+':6677', {query: 'userId='+userId+'&userName='+userName+'&key='+key});
+
+	socket.on('connecting', function ()
+	{
+		ChatMsg(Math.floor(Date.now() / 1000), '', [], 'Соединение...', 0, 0, 0);
+	});
+
+	socket.on('connect', function ()
+	{
+		ChatMsg(Math.floor(Date.now() / 1000), '', [], 'Соединение установлено', 0, 0, 0);
+
+		socket.on('message', function (message)
+		{
+			if (message['id'] <= lastMessageId)
+					return false;
+
+			lastMessageId = message['id'];
+
+			console.log(message);
+
+			ChatMsg(message['time'], message['user'], message['to'], message['text'], message['private'], message['me'], message['my']);
+		});
+
+		$('#chatMsg').on('keypress', function(e)
+		{
+			if (e.which == '13')
+			{
+				var msg = addMessage();
+
+				socket.send(encodeURIComponent(msg), userId, userName, key);
+			}
+		});
+
+		$('#send').on('click', function(e)
+		{
+			e.preventDefault();
+
+			var msg = addMessage();
+
+			socket.send(encodeURIComponent(msg), userId, userName, key);
+		});
+	});
 });

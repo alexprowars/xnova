@@ -9,15 +9,20 @@
 	<input name="msg" type="text" id="chatMsg" style="width:95%" maxlength="750">
 	<div class="separator"></div>
 	<input type="button" name="clear" value="Очистить" id="clear" onClick="ClearChat()">
-	<input type="button" name="send" value="Отправить" id="send" onClick="addMessage()">
+	<input type="button" name="send" value="Отправить" id="send">
 	<br>
 	<div id="new_msg"></div>
 </div>
 
+<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 <script type="text/javascript" src="/assets/js/chat.js"></script>
 <script type="text/javascript">
 
 var allowResize = <?=($this->config->view->get('socialIframeView', 0) == 1 ? 0 : 1)?>;
+
+var userId = <?=$this->user->getId() ?>;
+var userName = '<?=$this->user->username ?>';
+var key = '<?=md5($this->user->getId().'|'.$this->user->username.'SuperPuperChat') ?>';
 
 $(document).ready(function()
 {

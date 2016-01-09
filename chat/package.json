@@ -1,0 +1,13 @@
+{
+  "name": "xnova-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "chat.js",
+  "dependencies": {
+    "socket.io": "^1.4.3",
+    "mysql": "^2.10.0",
+    "memcached": "latest"
+  },
+  "author": "AlexPro (alexprowars@gmail.com)",
+  "license": "ISC"
+}
