@@ -77,6 +77,8 @@ class ApplicationController extends Controller
 
 			$this->view->setVar('planet', $parse);
 		}
+
+		$this->tag->appendTitle($this->config->app->name);
 	}
 
 	public function initialize()
@@ -101,7 +103,7 @@ class ApplicationController extends Controller
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		else
 		{
-			$this->tag->setTitleSeparator(' | ');
+			$this->tag->setTitleSeparator(' :: ');
 			$this->tag->setTitle($this->config->app->name);
 	        $this->tag->setDoctype(Tag::HTML5);
 		}
@@ -165,6 +167,9 @@ class ApplicationController extends Controller
 
 		if ($this->auth->isAuthorized())
 		{
+			if (!$this->user->isAdmin())
+				die('Нельзя пока вам сюда');
+
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
 			{
@@ -246,7 +251,7 @@ class ApplicationController extends Controller
 
 			$controller = $this->dispatcher->getControllerName();
 
-			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start')
+			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start' && $controller != 'error')
 				$this->dispatcher->forward(array('controller' => 'start'));
 
 			if ($controller == 'index')

@@ -696,7 +696,7 @@ class OverviewController extends ApplicationController
 		{
 			$parse['activity'] = array('chat' => array(), 'forum' => array());
 
-			$chat = json_decode($this->cache->get("game_chat"), true);
+			$chat = json_decode($this->cache->get("chat"), true);
 
 			if (is_array($chat) && count($chat))
 			{

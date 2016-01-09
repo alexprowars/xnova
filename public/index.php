@@ -8,7 +8,7 @@ use Phalcon\DI\FactoryDefault;
 
 define('APP_PATH', dirname(__DIR__.'../') . '/');
 
-define('DEBUG', true);
+define('DEBUG', false);
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);
@@ -70,7 +70,7 @@ try
 		[
 			'status' 	=> $application->game->getRequestStatus(),
 			'message' 	=> $application->game->getRequestMessage(),
-			'html' 		=> str_replace("\t", ' ', $handle->getContent()).(isset($toolbar) ? $toolbar->render() : ''),
+			'html' 		=> str_replace("\t", ' ', $handle->getContent()),
 			'data' 		=> $application->game->getRequestData()
 		]);
 		$application->response->setContentType('text/json', 'utf8');

@@ -23,7 +23,7 @@
 <? endif; ?>
 
 <? if (!$isPopup): ?>
-	<script>document.title = "<?=strip_tags(str_replace("\n", "", $this->tag->getTitle())) ?> :: <?=$this->config->app->name ?>";</script>
+	<script>document.title = "<?=str_replace("\n", "", $this->tag->getTitle(false)) ?>";</script>
 <? endif; ?>
 
 <? if ($this->game->checkSaveState()): ?>

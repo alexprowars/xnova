@@ -914,7 +914,7 @@ class Planet extends Model
 					$this->game->resource[$Element]	=> $this->{$this->game->resource[$Element]},
 					'queue'	=> $this->queue
 				],
-				"id = ".$this->user->id);
+				"id = ".$this->id);
 
 				if ($XP != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
 				{
@@ -1198,9 +1198,9 @@ class Planet extends Model
 		}
 	}
 
-	public function saveData (array $fields, $userId = 0)
+	public function saveData (array $fields, $planetId = 0)
 	{
-		Sql::build()->update('game_planets')->set($fields)->where('id', '=', ($userId > 0 ? $userId : $this->id))->execute();
+		sql::build()->update('game_planets')->set($fields)->where('id', '=', ($planetId > 0 ? $planetId : $this->id))->execute();
 	}
 }
 

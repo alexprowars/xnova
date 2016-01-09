@@ -2,8 +2,11 @@
 
 include_once(APP_PATH."app/functions.php");
 
-if ($di->has('auth'))
+if ($di->has('auth') && !$di->get('auth')->isAuthorized())
+{
+	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Ulogin');
 	$di->get('auth')->checkExtAuth();
+}
 
 $loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
 

@@ -176,10 +176,10 @@ $di->setShared(
     }
 );
 
-/*$di->set('modelsMetadata', function()
+$di->set('modelsMetadata', function()
 {
 	$metaData = new \Phalcon\Mvc\Model\MetaData\Memcache([
-		'lifetime' 		=> 86400,
+		'lifetime' 		=> 3600,
 		'prefix'  		=> 'xnova',
 		'host' 			=> 'localhost',
     	'port' 			=> 11211,
@@ -187,7 +187,7 @@ $di->setShared(
 	]);
 
 	return $metaData;
-});*/
+});
 
 Model::setup(array(
     'events' 			=> false,

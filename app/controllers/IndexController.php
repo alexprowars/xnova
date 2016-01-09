@@ -10,6 +10,9 @@ class IndexController extends ApplicationController
 {
 	public function initialize()
 	{
+		if ($this->auth->isAuthorized())
+			$this->response->redirect('overview/');
+
 		if (!$this->dispatcher->wasForwarded())
 		{
 			$assets = $this->assets->collection('headerJs');

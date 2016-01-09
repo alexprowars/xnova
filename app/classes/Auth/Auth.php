@@ -22,9 +22,22 @@ use Phalcon\Mvc\User\Component;
 class Auth extends Component
 {
 	private $IsUserChecked = false;
+	private $plugins = [];
+
+	public function addAuthPlugin ($className)
+	{
+		$this->plugins[] = $className;
+	}
 
 	public function checkExtAuth ()
 	{
+		foreach ($this->plugins as $plugin)
+		{
+			$ext = new $plugin();
+			/** @noinspection PhpUndefinedMethodInspection */
+			$ext->check();
+		}
+
 		if ($this->request->has('authId') && $this->request->has('authSecret'))
 		{
 			$this->cookies->set($this->config->cookie->prefix.'_id', 		$this->request->get('authId', 'int'));
