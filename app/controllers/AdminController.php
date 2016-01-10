@@ -12,6 +12,7 @@ use App\Lang;
 class AdminController extends ApplicationController
 {
 	private $modules = array();
+	private $mode = '';
 
 	public function initialize ()
 	{
@@ -25,7 +26,7 @@ class AdminController extends ApplicationController
 
 		while ($r = $result->fetch())
 		{
-			$this->modules[$r['alias']] = array
+			$this->modules[mb_strtolower($r['alias'], 'utf-8')] = array
 			(
 				'id' 	=> $r['id'],
 				'alias'	=> $r['alias'],
@@ -34,7 +35,7 @@ class AdminController extends ApplicationController
 			);
 		}
 
-		$menu = cms::getMenu(1, 2);
+		$menu = $this->getMenu(1, 2);
 
 		foreach ($menu AS $i => $item)
 		{
@@ -42,7 +43,12 @@ class AdminController extends ApplicationController
 				unset($menu[$i]);
 		}
 
-		$this->globals('menu', $menu);
+		$this->mode = $this->request->getQuery('set', 'string', 'overview');
+
+		$this->view->setVar('menu', $menu);
+		$this->view->setVar('mode', $this->mode);
+		$this->view->setMainView('admin');
+		$this->showTopPanel(false);
 	}
 	
 	public function indexAction ()
@@ -50,23 +56,56 @@ class AdminController extends ApplicationController
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$error = '';
 
-		if ($this->mode == core::getConfig('defaultAction', 'show'))
+		if ($this->mode == 'index')
 		{
 			$default = $this->modules;
 			$default = array_shift($default);
 
-			$this->mode = $default['alias'];
+			$this->mode = mb_strtolower($default['alias'], 'utf-8');
 		}
 
 		if (isset($this->modules[$this->mode]) && $this->modules[$this->mode]['right'] > 0)
 		{
-			if (file_exists(APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php"))
-				require(APP_PATH."controllers/admin/".$this->modules[$this->mode]['alias'].".php");
+			if (class_exists("App\\Controllers\\Admin\\".$this->modules[$this->mode]['alias'].""))
+			{
+				$class = "App\\Controllers\\Admin\\".$this->modules[$this->mode]['alias'];
+				$class = new $class();
+
+				$class->show($this);
+			}
 			else
 				$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 		}
 		else
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+	}
+
+	public function getMenu ($parent_id, $lvl = 1, $all = false)
+	{
+		$array = array();
+
+		if ($lvl > 0)
+		{
+			$childrens = $this->db->extractResult($this->db->query("SELECT id, name, alias, icon, image, active FROM game_cms_menu WHERE parent_id = ".intval($parent_id)." ".($all ? '' : "AND active = '1'")." ORDER BY priority ASC"));
+
+			if (count($childrens) > 0)
+			{
+				foreach ($childrens AS $children)
+				{
+					$array[] = array(
+						'id' 		=> $children['id'],
+						'alias' 	=> mb_strtolower($children['alias'], 'utf-8'),
+						'name' 		=> $children['name'],
+						'children' 	=> ($lvl > 1) ? $this->getMenu($children['id'], ($lvl - 1), $all) : array(),
+						'active' 	=> $children['active'],
+						'icon' 		=> $children['icon'],
+						'image' 	=> $children['image']
+					);
+				}
+			}
+		}
+
+		return $array;
 	}
 }
 

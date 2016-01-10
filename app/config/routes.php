@@ -136,6 +136,14 @@ $router->add('/tutorial/([0-9]+)/:params', array
 	'params' 		=> 2
 ));
 
+$router->add('/admin/([a-zA-Z0-9]+)/:params', array
+(
+	'controller' 	=> 'admin',
+	'action' 		=> 'index',
+	'set' 			=> 1,
+	'params' 		=> 2
+));
+
 $router->add('/', array
 (
 	'controller' 	=> 'index',
