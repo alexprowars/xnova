@@ -1,31 +1,31 @@
 <table class="table">
 	<tr>
-		<td class=c colspan=6><?=$parse['title'] ?></td>
+		<td class="c" colspan="6"><?=$parse['title'] ?></td>
 	</tr>
 
 	<? if (!$parse['a']): ?>
 	<tr>
-		<th colspan=6><a href="<?=$this->url->get('buddy/index/a/1/') ?>">Запросы</a></th>
+		<th colspan="6"><a href="<?=$this->url->get('buddy/index/a/1/') ?>">Запросы</a></th>
 	</tr>
 	<tr>
-		<th colspan=6><a href="<?=$this->url->get('buddy/index/a/1/e/1/') ?>">Мои запросы</a></th>
+		<th colspan="6"><a href="<?=$this->url->get('buddy/index/a/1/e/1/') ?>">Мои запросы</a></th>
 	</tr>
 	<tr>
-		<td class=c>&nbsp;</td>
-		<td class=c>Имя</td>
-		<td class=c>Альянс</td>
-		<td class=c>Координаты</td>
-		<td class=c>Позиция</td>
-		<td class=c>&nbsp;</td>
+		<td class="c">&nbsp;</td>
+		<td class="c">Имя</td>
+		<td class="c">Альянс</td>
+		<td class="c">Координаты</td>
+		<td class="c">Позиция</td>
+		<td class="c">&nbsp;</td>
 	</tr>
 	<? else: ?>
 	<tr>
-		<td class=c>&nbsp;</td>
-		<td class=c>Пользователь</td>
-		<td class=c>Альянс</td>
-		<td class=c>Координаты</td>
-		<td class=c>Текст</td>
-		<td class=c>&nbsp;</td>
+		<td class="c">&nbsp;</td>
+		<td class="c">Пользователь</td>
+		<td class="c">Альянс</td>
+		<td class="c">Координаты</td>
+		<td class="c">Текст</td>
+		<td class="c">&nbsp;</td>
 	</tr>
 	<? endif; ?>
 
@@ -42,12 +42,12 @@
 		<? endforeach; ?>
 	<? else: ?>
 	<tr>
-		<th colspan=6>Нет друзей</th>
+		<th colspan="6">Нет друзей</th>
 	</tr>
 	<? endif; ?>
 	<? if ($parse['a']): ?>
 	<tr>
-		<td colspan=6 class=c><a href="<?=$this->url->get('buddy/') ?>">назад</a></td>
+		<td colspan="6" class="c"><a href="<?=$this->url->get('buddy/') ?>">назад</a></td>
 	</tr>
 	<? endif; ?>
 

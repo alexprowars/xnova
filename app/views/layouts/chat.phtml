@@ -14,7 +14,7 @@
 	<div id="new_msg"></div>
 </div>
 
-<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+<script type="text/javascript" src="/assets/js/socket.io-1.4.3.js"></script>
 <script type="text/javascript" src="/assets/js/chat.js"></script>
 <script type="text/javascript">
 
@@ -30,6 +30,8 @@ $(document).ready(function()
 
 	if (allowResize)
 		setTimeout(chatResize, 1500);
+
+	setTimeout(initChat, 1000);
 });
 </script>
 

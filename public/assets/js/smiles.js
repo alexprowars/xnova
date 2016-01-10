@@ -67,7 +67,7 @@ var replace = [
 	'<span style="background-color:#$1;">$2</span>',
 	'<span style="background-image:url($1);background-repeat:no-repeat;display:block;width:$2;height:$3;max-width:716px;">$4</span>',
 	'<p>$1</p>',
-	'<a href="/galaxy/$1/$2/3/">[$1:$2:$3]</a>',
+	'<a href="/galaxy/$1/$2/">[$1:$2:$3]</a>',
 	'<table$1>$2</table>',
 	'<tr>$1</tr>',
 	'<td$1>$2</td>',
@@ -81,15 +81,9 @@ var replace = [
 function AddSmile(id, obj)
 {
 	if (obj !== undefined)
-	{
-		$('#'+obj).val($('#'+obj).val() + ' :'+id+': ');
-		$('#'+obj).focus();
-	}
+		$('#'+obj).val($('#'+obj).val() + ' :'+id+': ').focus();
 	else
-	{
-		$('#text').val($('#text').val() + ' :'+id+': ');
-		$('#text').focus();
-	}
+		$('#text').val($('#text').val() + ' :'+id+': ').focus();
 }
 
 function AddQuote (user, id)
@@ -104,19 +98,20 @@ function AddQuote (user, id)
 function Text (txt, id) 
 {
 	if (typeof(txt) != 'string')
-		return false;
+		return;
 
-	for (i = 0; i < sm_repl.length; i++) 
+	for (var i = 0; i < arSmiles.length; i++)
+		txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="S(\'' + arSmiles[i] + '\')" style="cursor:pointer">');
+
+	for (i in find)
 	{
-		txt = txt.replace(sm_find[i], '<img border="0" src="'+XNova.path+'images/smile/' + sm_repl[i] + '.gif" onclick="AddSmile(\''+sm_repl[i]+'\')" style="cursor:pointer">');
-	}
+		if (find.hasOwnProperty(i))
+		{
+			txt = txt.replace(find[i],replace[i]);
 
-	for(var i in find) 
-	{
-    	txt = txt.replace(find[i],replace[i]);
-
-		if(i == 3 || i == 4 || i == 23)
-			while(txt.match(find[i])) txt = txt.replace(find[i],replace[i]);
+			if(i == 3 || i == 4 || i == 23)
+				while(txt.match(find[i])) txt = txt.replace(find[i],replace[i]);
+		}
 	}
 
 	$('#'+id).append(txt);
@@ -124,9 +119,9 @@ function Text (txt, id)
 
 function ShowText()
 {
-	for(var i in messages)
+	for (var i in messages)
 	{
-		if (typeof(messages[i]) == 'string')
+		if (messages.hasOwnProperty(i) && typeof(messages[i]) == 'string')
 			Text(messages[i], i);
 	}
 }
@@ -134,12 +129,10 @@ function ShowText()
 function parseSmiles (txt)
 {
 	if (typeof(txt) != 'string')
-		return false;
+		return;
 
-	for (i = 0; i < sm_repl.length; i++)
-	{
-		txt = txt.replace(sm_find[i], '<img src="'+XNova.path+'images/smile/' + sm_repl[i] + '.gif" class="absmiddle">');
-	}
+	for (var i = 0; i < arSmiles.length; i++)
+		txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" class="absmiddle">');
 
 	document.write(txt);
 }

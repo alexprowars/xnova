@@ -191,7 +191,6 @@ class Auth extends Component
 		$this->cookies->get($this->config->cookie->prefix."_id")->delete();
 		$this->cookies->get($this->config->cookie->prefix."_secret")->delete();
 		$this->cookies->get($this->config->cookie->prefix."_extid")->delete();
-		$this->cookies->send();
 
 		if ($redirect)
 			$this->response->redirect('')->send();

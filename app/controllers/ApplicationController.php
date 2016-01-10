@@ -131,44 +131,41 @@ class ApplicationController extends Controller
 			}
 		}
 
-		$assets = $this->assets->collection('headerCss');
+		$css = $this->assets->collection('css');
+		$css->addCss('/assets/css/jquery-ui.css');
 
-		if ($assets->count() == 0)
-		{
-			$assets->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
-			$assets->addCss('/assets/css/bootstrap.css');
-			$assets->addCss('/assets/css/formate.css');
-			$assets->addCss('/assets/css/style.css');
-			$assets->addCss('/assets/css/media.css');
-			$assets->addCss('/assets/css/mobile.css');
-			$assets->addCss('/assets/css/jquery-ui.css');
-		}
+		$js = $this->assets->collection('js');
 
-		$assets = $this->assets->collection('headerJs');
-
-		if ($assets->count() == 0)
-		{
-			$assets->addJs('//yastatic.net/jquery/1.11.1/jquery.min.js');
-			$assets->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
-			$assets->addJs('/assets/js//script.js');
-			$assets->addJs('/assets/js/jquery.form.min.js');
-			$assets->addJs('/assets/js/game.js');
-			$assets->addJs('/assets/js/universe.js');
-			$assets->addJs('/assets/js/flotten.js');
-			$assets->addJs('/assets/js/smiles.js');
-			$assets->addJs('/assets/js/ed.js');
-			$assets->addJs('/assets/js/jquery.touchSwipe.min.js');
-
-			if ($this->request->isAjax())
-				$this->view->setMainView('game_ajax');
-			else
-				$this->view->setMainView('game');
-		}
+		$js->addJs('//yastatic.net/jquery/1.11.3/jquery.min.js');
+		$js->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
+		$js->addJs('/assets/js/jquery.form.min.js');
+		$js->addJs('/assets/js/game.js');
 
 		if ($this->auth->isAuthorized())
 		{
 			if (!$this->user->isAdmin())
 				die('Нельзя пока вам сюда');
+
+			if (DEBUG)
+				$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+
+			$css->addCss('/assets/css/bootstrap.css');
+			$css->addCss('/assets/css/formate.css');
+			$css->addCss('/assets/css/style.css');
+			$css->addCss('/assets/css/media.css');
+			$css->addCss('/assets/css/mobile.css');
+
+			$js->addJs('/assets/js//script.js');
+			$js->addJs('/assets/js/universe.js');
+			$js->addJs('/assets/js/flotten.js');
+			$js->addJs('/assets/js/smiles.js');
+			$js->addJs('/assets/js/ed.js');
+			$js->addJs('/assets/js/jquery.touchSwipe.min.js');
+
+			if ($this->request->isAjax())
+				$this->view->setMainView('game_ajax');
+			else
+				$this->view->setMainView('game');
 
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)

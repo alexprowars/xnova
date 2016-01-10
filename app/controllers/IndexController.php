@@ -15,16 +15,11 @@ class IndexController extends ApplicationController
 
 		if (!$this->dispatcher->wasForwarded())
 		{
-			$assets = $this->assets->collection('headerJs');
-			$assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
-			$assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
-			$assets->addJs('/assets/js/jquery.form.min.js');
-			$assets->addJs('/assets/js/jquery.validate.js');
-			$assets->addJs('/assets/js/game.js');
+			$js = $this->assets->collection('js');
+			$js->addJs('/assets/js/jquery.validate.js');
 
-			$assets = $this->assets->collection('headerCss');
-			$assets->addCss('/assets/css/jquery-ui.css');
-			$assets->addCss('/assets/css/login.css');
+			$css = $this->assets->collection('css');
+			$css->addCss('/assets/css/login.css');
 		}
 
 		parent::initialize();
@@ -146,7 +141,7 @@ class IndexController extends ApplicationController
 				$mail->Body = "Вы успешно зарегистрировались в игре ".$this->config->app->name.".<br>Ваши данные для входа в игру:<br>Email: " . $this->request->getPost('email') . "<br>Пароль:" . $newpass . "";
 				$mail->Send();
 
-				$this->auth->auth($iduser, $newpass, 0, 0);
+				$this->auth->auth($iduser, $md5newpass, 0, 0);
 
 				if ($this->request->isAjax())
 				{

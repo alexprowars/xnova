@@ -1,7 +1,7 @@
 <form action="<?=$this->url->get('alliance/admin/edit/rights/') ?>" method=POST>
 	<table class="table">
 		<tr>
-			<td class=c colspan=13><?=_getText('Configure_laws') ?></td>
+			<td class="c" colspan="13"><?=_getText('Configure_laws') ?></td>
 		</tr>
 		<tr>
 			<th colspan="2">Имя ранга</th>
@@ -34,7 +34,7 @@
 				</tr>
 			<? endforeach; ?>
 			<tr>
-				<th colspan=13><input type=submit value="Сохранить"></th>
+				<th colspan="13"><input type="submit" value="Сохранить"></th>
 			</tr>
 		<? else: ?>
 			<tr>
@@ -47,21 +47,21 @@
 <form action="<?=$this->url->get('alliance/admin/edit/rights/add/name/') ?>" method=POST>
 	<table class="table">
 		<tr>
-			<td class=c colspan=2><?=_getText('Range_make') ?></td>
+			<td class="c" colspan="2"><?=_getText('Range_make') ?></td>
 		</tr>
 		<tr>
 			<th><?=_getText('Range_name') ?></th>
-			<th><input type=text name="newrangname" size=20 maxlength=30></th>
+			<th><input type="text" name="newrangname" size=20 maxlength=30></th>
 		</tr>
 		<tr>
-			<th colspan=2><input type=submit value="<?=_getText('Make') ?>"></th>
+			<th colspan="2"><input type="submit" value="<?=_getText('Make') ?>"></th>
 		</tr>
 	</table>
 </form>
 <div class="separator"></div>
 <table class="table">
 	<tr>
-		<td class=c colspan=2><?=_getText('Law_leyends') ?></td>
+		<td class="c" colspan="2"><?=_getText('Law_leyends') ?></td>
 	</tr>
 	<tr>
 		<th><img src=/assets/images/alliance/r1.png></th>

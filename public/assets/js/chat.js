@@ -58,23 +58,21 @@ var replaceS = [
 	'<a href="$1" target="_blank">$2</a>',
 	'<a href="$1" target="_blank">$1</a>',
 	'<p>$1</p>',
-	'<a href="/galaxy/$1/$2/3/">[$1:$2:$3]</a>'
+	'<a href="/galaxy/$1/$2/">[$1:$2:$3]</a>'
 ];
 
 function showSmilesEx(obj, event)
 {
-	if ($('#smiles').is(':visible'))
-	{
+	var o = $('#smiles');
+
+	if (o.is(':visible'))
 		$('#smiles').html('').hide();
-	}
 	else
 	{
-		for (var i = 0; i < sm_repl.length; i++)
-		{
-        	$('#smiles').append('<img src="'+XNova.path+'images/smile/'+sm_repl[i]+'.gif" alt="'+sm_repl[i]+'" onclick="AddSmile(\''+sm_repl[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
-		}
+		for (var i = 0; i < arSmiles.length; i++)
+			o.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
-		$('#smiles').show();
+		o.show();
 	}
 
 	descendreTchat();
@@ -231,15 +229,6 @@ function addMessage()
 	return data;
 }
 
-function AddSmile (id)
-{
-	var msg = $('#chatMsg');
-
-	msg.val(msg.val() + ' :'+id+': ').focus();
-}
-
-var sml = 0;
-
 function ShowSmiles()
 {
 	var obj = $("#smiles");
@@ -266,7 +255,7 @@ function ClearChat()
 
 var lastMessageId = 0;
 
-$(document).ready(function()
+function initChat ()
 {
 	var socket = io.connect('http://'+window.location.host+':6677', {query: 'userId='+userId+'&userName='+userName+'&key='+key});
 
@@ -285,8 +274,6 @@ $(document).ready(function()
 					return false;
 
 			lastMessageId = message['id'];
-
-			console.log(message);
 
 			ChatMsg(message['time'], message['user'], message['to'], message['text'], message['private'], message['me'], message['my']);
 		});
@@ -310,4 +297,4 @@ $(document).ready(function()
 			socket.send(encodeURIComponent(msg), userId, userName, key);
 		});
 	});
-});
+}

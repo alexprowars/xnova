@@ -1,28 +1,28 @@
 <table class="table">
 	<tr>
-		<td class=c colspan=2>Обзор заявок [<?=$parse['tag'] ?>]</td>
+		<td class="c" colspan="2">Обзор заявок [<?=$parse['tag'] ?>]</td>
 	</tr>
 	<? if (is_array($parse['request'])): ?>
 		<tr><td colspan="2">
 		<form action="<?=$this->url->get('alliance/admin/edit/requests/show/'.$parse['request']['id'].'/sort/0/') ?>" method="POST">
 			<table width="100%">
 			<tr>
-				<th colspan=2>Заявка от <?=$parse['request']['username'] ?></th>
+				<th colspan="2">Заявка от <?=$parse['request']['username'] ?></th>
 			</tr>
 			<tr>
-				<th colspan=2><?=$parse['request']['request_text'] ?></th>
+				<th colspan="2"><?=$parse['request']['request_text'] ?></th>
 			</tr>
 			<tr>
-				<td class="c" colspan=2>Форма ответа:</td>
+				<td class="c" colspan="2">Форма ответа:</td>
 			</tr>
 			<tr>
-				<th colspan=2><input type="submit" name="action" value="Принять"></th>
+				<th colspan="2"><input type="submit" name="action" value="Принять"></th>
 			</tr>
 			<tr>
-				<th colspan=2><textarea name="text" cols=40 rows=10></textarea></th>
+				<th colspan="2"><textarea name="text" cols=40 rows=10></textarea></th>
 			</tr>
 			<tr>
-				<th colspan=2><input type="submit" name="action" value="Отклонить"></th>
+				<th colspan="2"><input type="submit" name="action" value="Отклонить"></th>
 			</tr>
 			</table>
 		</form>
@@ -30,10 +30,10 @@
 	<? endif; ?>
 	<? if (count($parse['list']) > 0): ?>
 	<tr>
-		<td class=c>
+		<td class="c">
 			<center><a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/1/') ?>">Логин</a></center>
 		</td>
-		<td class=c>
+		<td class="c">
 			<center><a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/0/') ?>">Дата подачи заявки</a></center>
 		</td>
 	</tr>
@@ -49,10 +49,10 @@
 		<? endforeach; ?>
 	<? else: ?>
 	<tr>
-		<th colspan=2>Список заявок пуст</th>
+		<th colspan="2">Список заявок пуст</th>
 	</tr>
 	<? endif; ?>
 	<tr>
-		<td class=c colspan=2><a href="<?=$this->url->get('alliance/') ?>">Назад</a></td>
+		<td class="c" colspan="2"><a href="<?=$this->url->get('alliance/') ?>">Назад</a></td>
 	</tr>
 </table>

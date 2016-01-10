@@ -105,32 +105,22 @@ class AllianceController extends ApplicationController
 				$range = $this->ally->ranks[$this->ally->member->rank - 1]['name'];
 			else
 				$range = _getText('member');
+
+			$parse['diplomacy'] = false;
 	
 			if ($this->ally->canAccess(Alliance::DIPLOMACY_ACCESS))
-			{
-				$qq = $this->db->fetchColumn("SELECT count(id) FROM game_alliance_diplomacy WHERE d_id = " . $this->ally->id . " AND status = 0");
-	
-				if ($qq > 0)
-					$parse['diplomacy'] = " <a href=\"/alliance/diplomacy/\">Просмотр</a> (" . $qq . " новых запросов)";
-				else
-					$parse['diplomacy'] = " <a href=\"/alliance/diplomacy/\">Просмотр</a>";
-			}
-	
-			$parse['requests'] = '';
-	
-			$request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = '" . $this->ally->id . "'");
-	
-			if ($request != 0)
-			{
-				if ($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::REQUEST_ACCESS))
-					$parse['requests'] = "<tr><th>Заявки</th><th><a href=\"/alliance/admin/edit/requests/\">" . $request . " заявок</a></th></tr>";
-			}
-	
-			$parse['alliance_admin'] = ($this->ally->canAccess(Alliance::ADMIN_ACCESS)) ? '(<a href="/alliance/admin/edit/ally/">управление альянсом</a>)' : '';
-			$parse['send_circular_mail'] = ($this->ally->canAccess(Alliance::CHAT_ACCESS)) ? '<tr><th>Альянс чат (' . $this->user->messages_ally . ' новых)</th><th><a href="/alliance/chat/">Войти в чат</a></th></tr>' : '';
-			$parse['members_list'] = ($this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST)) ? ' (<a href="/alliance/members/">список</a>)' : '';
-			$parse['owner'] = ($this->ally->owner != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "/alliance/?mode=exit", _getText('Continue')) : '';
-			$parse['image'] = ($this->ally->image != '') ? "<tr><th colspan=2 class=nopadding><img src=\"" . $this->ally->image . "\" style=\"max-width:100%\"></th></tr>" : '';
+				$parse['diplomacy'] = $this->db->fetchColumn("SELECT count(id) FROM game_alliance_diplomacy WHERE d_id = " . $this->ally->id . " AND status = 0");
+
+			$parse['requests'] = 0;
+
+			if ($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::REQUEST_ACCESS))
+				$parse['requests'] = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE a_id = '" . $this->ally->id . "'");
+
+			$parse['alliance_admin'] = $this->ally->canAccess(Alliance::ADMIN_ACCESS);
+			$parse['chat_access'] = $this->ally->canAccess(Alliance::CHAT_ACCESS);
+			$parse['members_list'] = $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST);
+			$parse['owner'] = ($this->ally->owner != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "/alliance/exit/", _getText('Continue')) : '';
+			$parse['image'] = $this->ally->image;
 			$parse['range'] = $range;
 			$parse['description'] = $this->ally->description;
 			$parse['text'] = $this->ally->text;
@@ -144,6 +134,8 @@ class AllianceController extends ApplicationController
 			$this->tag->setTitle('Ваш альянс');
 			$this->showTopPanel(false);
 		}
+
+		return true;
 	}
 
 	public function adminAction ()
@@ -547,56 +539,55 @@ class AllianceController extends ApplicationController
 		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::DIPLOMACY_ACCESS))
 			$this->message(_getText('Denied_access'), "Дипломатия");
 
-		$parse['DText'] = "";
-		$parse['DMyQuery'] = "";
-		$parse['DQuery'] = "";
+		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
 
-		$status = array(0 => "Нейтральное", 1 => "Перемирие", 2 => "Мир", 3 => "Война");
-
-		if (isset($_GET['edit']) && $_GET['edit'] == "add")
+		if ($this->request->hasQuery('edit'))
 		{
-			$st = intval($_POST['status']);
-			$al = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'")->fetch();
+			if ($this->request->getQuery('edit', null, '') == "add")
+			{
+				$st = intval($_POST['status']);
+				$al = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'")->fetch();
 
-			if (!$al['id'])
-				$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+				if (!$al['id'])
+					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
-			$ad = $this->db->query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $this->ally->id . " AND d_id = " . $al['id'] . ";");
+				$ad = $this->db->query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $this->ally->id . " AND d_id = " . $al['id'] . ";");
 
-			if ($ad->numRows() > 0)
-				$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "/alliance/?mode=diplo", 3);
+				if ($ad->numRows() > 0)
+					$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "/alliance/diplomacy/", 3);
 
-			if ($st < 0 || $st > 3)
-				$st = 0;
+				if ($st < 0 || $st > 3)
+					$st = 0;
 
-			$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $this->ally->id . ", " . $al['id'] . ", " . $st . ", 0, 1)");
-			$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
+				$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $this->ally->id . ", " . $al['id'] . ", " . $st . ", 0, 1)");
+				$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
-			$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "/alliance/diplomacy/", 3);
-		}
-		elseif (isset($_GET['edit']) && $_GET['edit'] == "del")
-		{
-			$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . ";")->fetch();
+				$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "/alliance/diplomacy/", 3);
+			}
+			elseif ($this->request->getQuery('edit', null, '') == "del")
+			{
+				$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . ";")->fetch();
 
-			if (!$al['a_id'])
-				$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+				if (!$al['a_id'])
+					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
-			$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
-			$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
+				$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
+				$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 
-			$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "/alliance/diplomacy/", 3);
-		}
-		elseif (isset($_GET['edit']) && $_GET['edit'] == "suc")
-		{
-			$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . "")->fetch();
+				$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "/alliance/diplomacy/", 3);
+			}
+			elseif ($this->request->getQuery('edit', null, '') == "suc")
+			{
+				$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . "")->fetch();
 
-			if (!$al['a_id'])
-				$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+				if (!$al['a_id'])
+					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
-			$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
-			$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
+				$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
+				$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 
-			$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "/alliance/?mode=diplo", 3);
+				$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "/alliance/diplomacy/", 3);
+			}
 		}
 
 		$dp = $this->db->query("SELECT ad.*, a.name FROM game_alliance_diplomacy ad, game_alliance a WHERE a.id = ad.d_id AND ad.a_id = '" . $this->ally->id . "';");
@@ -606,27 +597,20 @@ class AllianceController extends ApplicationController
 			if ($diplo['status'] == 0)
 			{
 				if ($diplo['primary'] == 1)
-					$parse['DMyQuery'] .= "<tr><th>" . $diplo['name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/diplomacy/?edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+					$parse['DMyQuery'][] = $diplo;
 				else
-					$parse['DQuery'] .= "<tr><th>" . $diplo['name'] . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/diplomacy/?edit=suc&id=".$diplo['id']."\"><img src=\"/assets/images/appwiz.gif\" alt=\"Подтвердить\"></a> <a href=\"/alliance/diplomacy/?edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить заявку\"></a></th></tr>";
+					$parse['DQuery'][] = $diplo;
 			}
 			else
-				$parse['DText'] .= "<tr><th>" . $diplo['name'] . "</th><th>" . $this->ally->name . "</th><th>" . $status[$diplo['type']] . "</th><th><a href=\"/alliance/diplomacy/?edit=del&id=".$diplo['id']."\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить\"></a></th></tr>";
+				$parse['DText'][] = $diplo;
 		}
 
-		if ($parse['DMyQuery'] == "")
-			$parse['DMyQuery'] = "<tr><th colspan=3>нет</th></tr>";
-		if ($parse['DQuery'] == "")
-			$parse['DQuery'] = "<tr><th colspan=3>нет</th></tr>";
-		if ($parse['DText'] == "")
-			$parse['DText'] = "<tr><th colspan=4>нет</th></tr>";
-
-		$parse['a_list'] = "<option value=\"0\">список альянсов";
+		$parse['a_list'] = [];
 
 		$ally_list = $this->db->query("SELECT id, name, tag FROM game_alliance WHERE id != " . $this->user->ally_id . " AND members > 0");
 
 		while ($a_list = $ally_list->fetch())
-			$parse['a_list'] .= "<option value=\"" . $a_list['id'] . "\">" . $a_list['name'] . " [" . $a_list['tag'] . "]";
+			$parse['a_list'][] = $a_list;
 
 		$this->view->setVar('parse', $parse);
 
@@ -649,7 +633,7 @@ class AllianceController extends ApplicationController
 			$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '/alliance/', _getText('Ok'));
 		}
 		else
-			$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "/alliance/?mode=exit&yes=1", "Подтвердить");
+			$html = $this->MessageForm(_getText('Want_go_out'), "<br>", "/alliance/exit/yes/1/", "Подтвердить");
 
 		$this->tag->setTitle('Выход их альянса');
 		$this->view->setVar('html', $html);
@@ -885,37 +869,29 @@ class AllianceController extends ApplicationController
 		$this->showTopPanel(false);
 	}
 
-	public function infoAction ()
+	public function infoAction ($id = '')
 	{
-		$a = $this->request->getQuery('a', 'int', '0');
-		$tag = $this->request->getQuery('tag', null, '');
-
-		if ($tag != "")
-			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE tag = '" . $tag . "'")->fetch();
-		elseif ($a != 0)
-			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $a . "'")->fetch();
+		if ($id != '' && !is_numeric($id))
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE tag = '" . $id . "'")->fetch();
+		elseif ($id > 0 && is_numeric($id))
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $id . "'")->fetch();
 		else
 			$this->message("Указанного альянса не существует в игре!", "Информация об альянсе");
 
 		if (!isset($allyrow['id']))
 			$this->message("Указанного альянса не существует в игре!", "Информация об альянсе");
 
-		if ($allyrow['image'] != "")
-			$allyrow['image'] = "<tr><th colspan=2><img src=\"" . $allyrow['image'] . "\" style=\"max-width:100%\"></th></tr>";
-
 		if ($allyrow['description'] == "")
 			$allyrow['description'] = "[center]У этого альянса ещё нет описания[/center]";
 
-		if ($allyrow['_web'] != "")
-			$allyrow['web'] = "<tr><th>Сайт альянса:</th><th><a href=\"" . $allyrow['web'] . "\" target=\"_blank\">" . $allyrow['web'] . "</a></th></tr>";
-
+		$parse['id'] = $allyrow['id'];
 		$parse['member_scount'] = $allyrow['members'];
 		$parse['name'] = $allyrow['name'];
 		$parse['tag'] = $allyrow['tag'];
 		$parse['description'] = $allyrow['description'];
 		$parse['image'] = $allyrow['image'];
 		$parse['web'] = $allyrow['web'];
-		$parse['bewerbung'] = ($this->user->ally_id == 0) ? "<tr><th>Вступление</th><th><a href=\"/alliance/apply/allyid/" . $allyrow['id'] . "/\">Нажмите сюда для подачи заявки</a></th></tr>" : '';
+		$parse['request'] = ($this->getDI()->has('user') && $this->user->ally_id == 0);
 
 		$this->view->setVar('parse', $parse);
 
