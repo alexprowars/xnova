@@ -136,16 +136,16 @@ class FleetEngine extends Injectable
 			$t = time().''.mt_rand(1, 100);
 
 			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
-			$String .= $TitleString . " " . $TargetPlanet['name'];
-			$String .= " <a href=\"/galaxy/" . $TargetPlanet["galaxy"] . "/" . $TargetPlanet["system"] . "/\">";
-			$String .= "[" . $TargetPlanet["galaxy"] . ":" . $TargetPlanet["system"] . ":" . $TargetPlanet["planet"] . "]</a>";
+			$String .= $TitleString . " " . $TargetPlanet->name;
+			$String .= " <a href=\"/galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
+			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
 			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(print_date(" . time() . ", 1));</script></td>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet['metal']) . "</th>";
-			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet['crystal']) . "</th>";
+			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->metal) . "</th>";
+			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->crystal) . "</th>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>дейтерия:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet['deuterium']) . "</th>";
-			$String .= "<th width=220>энергии:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet['energy_max']) . "</th>";
+			$String .= "<th width=220>дейтерия:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->deuterium) . "</th>";
+			$String .= "<th width=220>энергии:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->energy_max) . "</th>";
 			$String .= "</tr>";
 			$LookAtLoop = false;
 		}
@@ -200,14 +200,14 @@ class FleetEngine extends Injectable
 
 				for ($Item = $ResFrom[$CurrentLook]; $Item <= $ResTo[$CurrentLook]; $Item++)
 				{
-					if (isset($resource[$Item]) && (($TargetPlanet[$resource[$Item]] > 0 && $Item < 600) || ($TargetPlanet[$resource[$Item]] > time() && $Item > 600)))
+					if (isset($this->game->resource[$Item]) && (($TargetPlanet->{$this->game->resource[$Item]} > 0 && $Item < 600) || ($TargetPlanet->{$this->game->resource[$Item]} > time() && $Item > 600)))
 					{
 						if ($row == 0)
 							$String .= "<tr>";
 
-						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $TargetPlanet[$resource[$Item]] : '+') . "</th>";
+						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $TargetPlanet->{$this->game->resource[$Item]} : '+') . "</th>";
 
-						$Count += $TargetPlanet[$resource[$Item]];
+						$Count += $TargetPlanet->{$this->game->resource[$Item]};
 						$row++;
 
 						if ($row == $this->config->game->get('spyReportRow', 1))

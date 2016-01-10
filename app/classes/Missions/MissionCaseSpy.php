@@ -87,10 +87,10 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			if ($CurrentSpyLvl >= $TargetSpyLvl)
 				$ST = ($LS + pow($techDifference, 2));
 
-			$MaterialsInfo = $this->SpyTarget($TargetPlanet->toArray(), 0, _getText('sys_spy_maretials'));
+			$MaterialsInfo = $this->SpyTarget($TargetPlanet, 0, _getText('sys_spy_maretials'));
 			$SpyMessage = $MaterialsInfo['String'];
 
-			$PlanetFleetInfo = $this->SpyTarget($TargetPlanet->toArray(), 1, _getText('sys_spy_fleet'));
+			$PlanetFleetInfo = $this->SpyTarget($TargetPlanet, 1, _getText('sys_spy_fleet'));
 
 			if ($ST >= 2)
 			{
@@ -98,27 +98,27 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			}
 			if ($ST >= 3)
 			{
-				$PlanetDefenInfo = $this->SpyTarget($TargetPlanet->toArray(), 2, _getText('sys_spy_defenses'));
+				$PlanetDefenInfo = $this->SpyTarget($TargetPlanet, 2, _getText('sys_spy_defenses'));
 				$SpyMessage .= $PlanetDefenInfo['String'];
 			}
 			if ($ST >= 5)
 			{
-				$PlanetBuildInfo = $this->SpyTarget($TargetPlanet->toArray(), 3, _getText('tech', 0));
+				$PlanetBuildInfo = $this->SpyTarget($TargetPlanet, 3, _getText('tech', 0));
 				$SpyMessage .= $PlanetBuildInfo['String'];
 			}
 			if ($ST >= 7)
 			{
-				$TargetTechnInfo = $this->SpyTarget($TargetUser->toArray(), 4, _getText('tech', 100));
+				$TargetTechnInfo = $this->SpyTarget($TargetUser, 4, _getText('tech', 100));
 				$SpyMessage .= $TargetTechnInfo['String'];
 			}
 			if ($ST >= 8)
 			{
-				$TargetFleetLvlInfo = $this->SpyTarget($TargetUser->toArray(), 5, _getText('tech', 300));
+				$TargetFleetLvlInfo = $this->SpyTarget($TargetUser, 5, _getText('tech', 300));
 				$SpyMessage .= $TargetFleetLvlInfo['String'];
 			}
 			if ($ST >= 9)
 			{
-				$TargetOfficierLvlInfo = $this->SpyTarget($TargetUser->toArray(), 6, _getText('tech', 600));
+				$TargetOfficierLvlInfo = $this->SpyTarget($TargetUser, 6, _getText('tech', 600));
 				$SpyMessage .= $TargetOfficierLvlInfo['String'];
 			}
 
@@ -162,7 +162,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $TargetUser->{$this->game->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->game->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->game->resource[$id - 50]} : 0) . ';';
 			}
 
-			$MessageEnd .= "<center><a href=\"/sim/r/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
+			$MessageEnd .= "<center><a href=\"/sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet['fleet_start_time'] . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet['fleet_start_time'] . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;

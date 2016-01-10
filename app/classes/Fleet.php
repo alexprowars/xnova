@@ -216,7 +216,7 @@ class Fleet extends Building
 		else
 		{
 			if ($FleetRow['fleet_target_owner'] == $user->id && $FleetRow['fleet_mission'] == 1)
-				$r = '/sim/?r=';
+				$r = '/sim/';
 
 			foreach ($FleetRec as $Group)
 			{
@@ -235,7 +235,7 @@ class Fleet extends Building
 		$FleetPopup .= "</table>";
 		$FleetPopup .= "' class=\"" . $FleetType . "\">" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "' class=\"tooltip\" data-tooltip-content='" . $FleetPopup;
+		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip\" data-tooltip-content='" . $FleetPopup;
 
 		return $FleetPopup;
 

@@ -14,6 +14,11 @@ $di = new CliDI();
 
 define('APP_PATH', dirname(__DIR__.'../') . '/');
 
+ini_set('log_errors', 'On');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('error_log', APP_PATH.'/php_errors.log');
+
 if (is_readable(APP_PATH . '/app/config/config.ini'))
 {
 	$config = new \Phalcon\Config\Adapter\Ini(APP_PATH . '/app/config/config.ini');

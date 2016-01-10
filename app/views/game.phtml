@@ -13,7 +13,7 @@
 	<?php $this->assets->outputJs('js') ?>
 	<?php $this->assets->outputCss('css') ?>
 
-	<? if (!function_exists('allowMobileVersion') || !allowMobileVersion()): ?>
+	<? if (!class_exists('\App\Helpers') || !\App\Helpers::allowMobileVersion()): ?>
 		<meta name="viewport" content="width=810">
 	<? else: ?>
 		<meta name="viewport" content="width=device-width, initial-scale=1">

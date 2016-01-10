@@ -34,10 +34,14 @@ io.sockets.on('connection', function (socket)
 			{
 				if (chat.hasOwnProperty(id))
 				{
+					console.log(chat[id]);
 					socket.json.send(getMessage(chat[id], socket.handshake.query.userName));
 				}
 			}
-		} catch (e) {}
+		} catch (e)
+		{
+			memcached.set('chat', JSON.stringify([]), 86400, function (err) { console.log(err) });
+		}
 	});
 
 	socket.on('message', function (msg, userId, userName, key)
@@ -129,11 +133,15 @@ function insertMessage (msg, userId, userName, lastId, socket)
 
 		chat = chat.reverse();
 
+		var tmp = [];
+
 		for (id in chat)
 		{
-			if (chat.hasOwnProperty(id) && id >= 25 && chat[id][0] < (now - 120))
-				delete chat[id];
+			if (chat.hasOwnProperty(id) && (id < 25 || chat[id][0] > (now - 120)))
+				tmp.push(chat[id]);
 		}
+
+		chat = tmp;
 
 		chat = chat.reverse();
 
@@ -233,4 +241,12 @@ Array.prototype.unique = function()
     }
 
     return a;
+};
+
+Array.prototype.remove = function(from, to)
+{
+  	var rest = this.slice((to || from) + 1 || this.length);
+  	this.length = from < 0 ? this.length + from : from;
+
+  	return this.push.apply(this, rest);
 };

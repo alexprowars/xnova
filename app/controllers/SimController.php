@@ -11,10 +11,9 @@ class SimController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 	
-	public function indexAction ()
+	public function indexAction ($data = '')
 	{
-		$r = (isset($_GET['r'])) ? $_GET['r'] : '';
-		$r = explode(";", $r);
+		$data = explode(";", $data);
 
 		define('MAX_SLOTS', $this->config->game->get('maxSlotsInSim', 5));
 		
@@ -24,7 +23,7 @@ class SimController extends ApplicationController
 
 		$parse['tech'] = array(109, 110, 111, 120, 121, 122);
 		
-		foreach ($r AS $row)
+		foreach ($data AS $row)
 		{
 			if ($row != '')
 			{
