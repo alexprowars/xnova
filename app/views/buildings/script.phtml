@@ -27,66 +27,75 @@
 	a = new Array(<?=$build['a'] ?>'');
 	aa = 'завершено';
 
-	function t() {
-		if (hs == 0) {
+	function t()
+	{
+		if (hs == 0)
+		{
 			xd();
 			hs = 1;
 		}
+
 		var n = new Date();
 		var s = c[p] - g - Math.round((n.getTime() - v.getTime()) / 1000);
 		s = Math.round(s);
 		var m = 0;
 		var h = 0;
-		if (s < 0) {
+
+		if (s < 0)
+		{
 			a[p]--;
 			xd();
-			if (a[p] <= 0) {
+			if (a[p] <= 0)
+			{
 				p++;
 				xd();
 			}
 			s = 0;
 		}
-		if (s > 59) {
+		if (s > 59)
+		{
 			m = Math.floor(s / 60);
 			s = s - m * 60;
 		}
-		if (m > 59) {
+		if (m > 59)
+		{
 			h = Math.floor(m / 60);
 			m = m - h * 60;
 		}
-		if (s < 10) {
+		if (s < 10)
 			s = "0" + s;
-		}
-		if (m < 10) {
+
+		if (m < 10)
 			m = "0" + m;
-		}
-		if (p > b.length - 2) {
+
+		if (p > b.length - 2)
 			$("#bx").html(aa);
-		} else {
+		else
 			$("#bx").html(b[p] + " " + h + ":" + m + ":" + s);
-		}
-		window.setTimeout("t();", 1000);
+
+		setTimeoutWorker(t, 1000);
 	}
 
 	function xd()
 	{
-		while (document.Atr.auftr.length > 0) {
+		while (document.Atr.auftr.length > 0)
 			document.Atr.auftr.options[document.Atr.auftr.length - 1] = null;
-		}
-		if (p > b.length - 2) {
+
+		if (p > b.length - 2)
 			document.Atr.auftr.options[document.Atr.auftr.length] = new Option(aa);
-		}
-		for (var iv = p; iv <= b.length - 2; iv++) {
-			if (a[iv] < 2) {
+
+		for (var iv = p; iv <= b.length - 2; iv++)
+		{
+			if (a[iv] < 2)
 				ae = " ";
-			} else {
+			else
 				ae = " ";
-			}
-			if (iv == p) {
+
+			if (iv == p)
 				act = " (в процессе)";
-			} else {
+			else
 				act = "";
-			}
+
 			document.Atr.auftr.options[document.Atr.auftr.length] = new Option(a[iv] + ae + " \"" + b[iv] + "\"" + act, iv + of);
 		}
 	}

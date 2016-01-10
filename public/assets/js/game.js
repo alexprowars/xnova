@@ -359,7 +359,7 @@ function FlotenTime (obj, time)
 
 	time--;
 
-	timeouts['fleet'+obj] = window.setTimeout(function(){FlotenTime(obj,time)}, 1000);
+	timeouts['fleet'+obj] = setTimeoutWorker(function(){FlotenTime(obj,time)}, 1000);
 }
 
 var Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
@@ -376,7 +376,7 @@ function UpdateClock()
    	var D0 = new Date;
     hms('clock', new Date(D0.getTime() + serverTime));
 
-	timeouts['clock'] = setTimeout(UpdateClock, 1000);
+	timeouts['clock'] = setTimeoutWorker(UpdateClock, 1000);
 }
 
 function setMaximum(type, number)
@@ -459,10 +459,15 @@ function fenster(target_url, win_name, w, h)
 
 function ClearTimers ()
 {
-	for(var i in timeouts)
+	for (var i in timeouts)
 	{
-		clearInterval(timeouts[i]);
-		clearTimeout(timeouts[i]);
+		if (timeouts.hasOwnProperty(i))
+		{
+			clearInterval(timeouts[i]);
+			clearIntervalWorker(timeouts[i]);
+			clearTimeout(timeouts[i]);
+			clearTimeoutWorker(timeouts[i]);
+		}
 	}
 
 	timeouts.length = 0;

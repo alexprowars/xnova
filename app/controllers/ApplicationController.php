@@ -136,6 +136,7 @@ class ApplicationController extends Controller
 
 		$js = $this->assets->collection('js');
 
+		$js->addJs('/assets/js/workers.js');
 		$js->addJs('//yastatic.net/jquery/1.11.3/jquery.min.js');
 		$js->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
 		$js->addJs('/assets/js/jquery.form.min.js');

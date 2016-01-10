@@ -2,7 +2,7 @@
 	var ress = [<?=$planet['metal'] ?>, <?=$planet['crystal'] ?>, <?=$planet['deuterium'] ?>];
 	var max = [<?=$planet['metal_m'] ?>,<?=$planet['crystal_m'] ?>,<?=$planet['deuterium_m'] ?>];
 	var production = [<?=($planet['metal_ph'] / 3600) ?>, <?=($planet['crystal_ph'] / 3600) ?>, <?=($planet['deuterium_ph'] / 3600) ?>];
-	timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
+	timeouts['res_count'] = window.setIntervalWorker(XNova.updateResources, 1000);
 	var serverTime = <?=$planet['time'] ?>000 - Djs + (timezone + <?=(date("Z") / 1800) ?>) * 1800000;
 </script>
 <form action="" name="ress" id="ress" style="display:none">
