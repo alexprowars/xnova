@@ -336,13 +336,13 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<th><a href=/messages/write/"+row[planet]['user_id']+"/>Послать сообщение</a></th>";
+				result += "<th><a href=\"/messages/write/"+row[planet]['user_id']+"/\">Послать сообщение</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href=/buddy/index/a/2/u/"+row[planet]['user_id']+"/>Добавить в друзья</a></th>";
+				result += "<th><a href=\"/buddy/new/"+row[planet]['user_id']+"/\">Добавить в друзья</a></th>";
 				result += "</tr><tr>";
 			}
 
-			result += "<th valign=top><a href=/stat/players/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/>Статистика</a></th>";
+			result += "<th valign=top><a href=\"/stat/players/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/\">Статистика</a></th>";
 			result += "</tr>";
 			result += "</table>'>";
 			result += Systemtatus+row[planet]['username']+Systemtatus2+rank;
@@ -408,7 +408,7 @@ function PrintRow ()
             {
 				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', '/messages/write/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
 
-				result += "<a href=\"/buddy/index/a/2/u/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
+				result += "<a href=\"/buddy/new/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
 
 				if (user['missile'] == 1)
 					result += "<a href=\"/galaxy/"+galaxy+"/"+system+"/"+planet+"/2/"+user['current_planet']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";

@@ -1,14 +1,12 @@
 <table class="table">
 	<tr>
-		<td class="c" colspan="6"><?=$parse['title'] ?></td>
-	</tr>
-
-	<? if (!$parse['a']): ?>
-	<tr>
-		<th colspan="6"><a href="<?=$this->url->get('buddy/index/a/1/') ?>">Запросы</a></th>
+		<td class="c" colspan="6">Список друзей</td>
 	</tr>
 	<tr>
-		<th colspan="6"><a href="<?=$this->url->get('buddy/index/a/1/e/1/') ?>">Мои запросы</a></th>
+		<th colspan="6"><a href="<?=$this->url->get('buddy/requests/') ?>">Запросы</a></th>
+	</tr>
+	<tr>
+		<th colspan="6"><a href="<?=$this->url->get('buddy/requests/my/') ?>">Мои запросы</a></th>
 	</tr>
 	<tr>
 		<td class="c">&nbsp;</td>
@@ -18,39 +16,25 @@
 		<td class="c">Позиция</td>
 		<td class="c">&nbsp;</td>
 	</tr>
-	<? else: ?>
-	<tr>
-		<td class="c">&nbsp;</td>
-		<td class="c">Пользователь</td>
-		<td class="c">Альянс</td>
-		<td class="c">Координаты</td>
-		<td class="c">Текст</td>
-		<td class="c">&nbsp;</td>
-	</tr>
-	<? endif; ?>
 
 	<? if (count($parse['list'])): ?>
-	<? foreach ($parse['list'] AS $id => $list): ?>
-		<tr>
-			<th width="20"><?=($id + 1) ?></th>
-			<th><a href="<?=$this->url->get('messages/write/'.$list['id'].'') ?>"><?=$list['username'] ?></a></th>
-			<th><?=$list['ally'] ?></th>
-			<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
-			<th><?=$list['online'] ?></th>
-			<th><?=$list['c'] ?></th>
-		</tr>
+		<? foreach ($parse['list'] AS $id => $list): ?>
+			<tr>
+				<th width="20"><?=($id + 1) ?></th>
+				<th><a href="<?=$this->url->get('messages/write/'.$list['userid'].'') ?>"><?=$list['username'] ?></a></th>
+				<th><?=$list['ally'] ?></th>
+				<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
+				<th><?=$list['online'] ?></th>
+				<th>
+					<a href="/buddy/delete/<?=$list['id'] ?>/">Удалить</a>
+				</th>
+			</tr>
 		<? endforeach; ?>
 	<? else: ?>
-	<tr>
-		<th colspan="6">Нет друзей</th>
-	</tr>
+		<tr>
+			<th colspan="6">Нет друзей</th>
+		</tr>
 	<? endif; ?>
-	<? if ($parse['a']): ?>
-	<tr>
-		<td colspan="6" class="c"><a href="<?=$this->url->get('buddy/') ?>">назад</a></td>
-	</tr>
-	<? endif; ?>
-
 </table>
 
 <? if (isset($okFriends) && count($okFriends)): ?>
@@ -74,7 +58,7 @@
 						  <td style="text-align:center;">
 							  <?=$okArray[$data['ok_uid']]['name'] ?>
 							  <? if ($okArray[$data['ok_uid']]['name'] != $data['username']): ?><br>[<?=$data['username'] ?>]<? endif; ?>
-							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$data['id'].'/') ?>', 680)" data-link="1" title="Сообщение"><span class='sprite skin_m'></span></a>
+							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$data['id'].'/') ?>', 680)" data-link="Y" title="Сообщение"><span class='sprite skin_m'></span></a>
 						  </td>
 						</tr>
 						<tr>

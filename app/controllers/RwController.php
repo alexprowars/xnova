@@ -51,7 +51,7 @@ class RwController extends ApplicationController
 		
 				if ($this->config->game->get('gameTemplate') == 'main')
 				{
-					$Page .= '<div class="separator"></div><a data-link="1" target="_blank" href="/rw/'.$_GET['r'].'/'.$_GET['k'].'/">Полная версия боя</a>';
+					$Page .= '<div class="separator"></div><a data-link="Y" target="_blank" href="/rw/'.$_GET['r'].'/'.$_GET['k'].'/">Полная версия боя</a>';
 				}
 
 				$this->tag->setTitle('Боевой доклад');

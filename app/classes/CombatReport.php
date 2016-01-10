@@ -484,7 +484,7 @@ class CombatReport extends Component
 			$attackers1 = $data1['attackers'];
 			$defenders1 = $data1['defenders'];
 	
-			$html .= "<h3><a data-link=\"yes\" href=\"#\">Раунд №".($round + 1)."</a></h3><div><table width=100%><tr>";
+			$html .= "<h3><a data-link=\"Y\" href=\"#\">Раунд №".($round + 1)."</a></h3><div><table width=100%><tr>";
 	
 			foreach ($attackers1 as $fleet_id1 => $data2)
 			{

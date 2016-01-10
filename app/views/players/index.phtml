@@ -15,7 +15,7 @@
 						<img src="<?=$parse['avatar'] ?>" alt="<?=$parse['username'] ?>" width="100%">
 						<? if ($parse['ingame']): ?>
 							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$parse['id'].'/') ?>', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
-							<a href="<?=$this->url->get('buddy/index/a/2/u/'.$parse['id'].'/') ?>" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
+							<a href="<?=$this->url->get('buddy/new/'.$parse['id'].'/') ?>" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
 						<? endif; ?>
 					</td>
 					<td valign="top" class="col-xs-6">
