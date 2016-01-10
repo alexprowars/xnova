@@ -39,7 +39,7 @@ class Banned
 			Sql::build()->update('game_users')->setField('banned', $BanTime);
 
 			if ($controller->request->getPost('ro', 'int', 0) == 1)
-				Sql::build()->setField('urlaubs_modus_time', 1);
+				Sql::build()->setField('vacation', 1);
 
 			Sql::build()->where('id', '=', $userz['id'])->execute();
 

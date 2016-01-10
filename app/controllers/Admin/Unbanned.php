@@ -18,7 +18,7 @@ class Unbanned
 					$controller->db->query("DELETE FROM game_banned WHERE who = '" . $info['id'] . "'");
 					$controller->db->query("UPDATE game_users SET banned = 0 WHERE id = '" . $info['id'] . "'");
 
-					if ($info['urlaubs_modus_time'] == 1)
+					if ($info['vacation'] == 1)
 						$controller->db->query("UPDATE game_users SET vacation = 0 WHERE id = '" . $info['id'] . "'");
 
 					$controller->message("Игрок ".$info['username']." разбанен!", 'Информация');

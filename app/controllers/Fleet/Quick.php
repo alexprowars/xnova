@@ -60,7 +60,7 @@ class Quick
 			if ($target['id_owner'] == $controller->user->id)
 				die('Невозможно выполнить задание!');
 
-			$HeDBRec = $controller->db->query("SELECT id, onlinetime, urlaubs_modus_time FROM game_users WHERE `id` = '" . $target['id_owner'] . "';")->fetch();
+			$HeDBRec = $controller->db->query("SELECT id, onlinetime, vacation FROM game_users WHERE `id` = '" . $target['id_owner'] . "';")->fetch();
 
 			$UserPoints  = $controller->db->query("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $controller->user->id . "';")->fetch();
 			$User2Points = $controller->db->query("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $HeDBRec['id'] . "';")->fetch();

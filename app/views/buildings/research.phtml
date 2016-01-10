@@ -64,7 +64,7 @@
 												if (m < 10)
 													m = "0" + m;
 
-												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cmd=cancel/tech/'.$build['tech_link']['tech_id'].'/') ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
+												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cmd/cancel/tech/'.$build['tech_link']['tech_id'].'/') ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
 
 												setTimeoutWorker(t, 1000);
 											}

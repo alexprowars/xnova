@@ -70,58 +70,56 @@ class ImperiumController extends ApplicationController
 		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		$imperium = new Planet();
-		$imperium->assignUser($this->user);
+		$planet = new Planet();
+		$planet->assignUser($this->user);
 
-		$planetsrow = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->getId() . "' ".$this->user->getPlanetListSortQuery()."");
+		$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->getId() . "' ".$this->user->getPlanetListSortQuery()."");
 
-		$parse['mount'] = $planetsrow->numRows() + 3;
+		$parse['mount'] = $planets->numRows() + 3;
 
-		while ($p = $planetsrow->fetch())
+		while ($p = $planets->fetch())
 		{
-			$imperium->assign($p);
-			$imperium->copyTempParams();
-			$imperium->PlanetResourceUpdate(time(), true);
+			$planet->assign($p);
+			$planet->copyTempParams();
+			$planet->PlanetResourceUpdate(time(), true);
 
-			$p = $imperium->toArray();
+			$planet->field_max = $planet->getMaxFields();
 
-			$p['field_max'] = $imperium->getMaxFields();
+			@$parse['file_images'] .= '<th width=75><a href="/overview/index/cp/' . $planet->id . '/re/0/"><img src="/assets/images/planeten/small/s_' . $planet->image . '.jpg" border="0" height="75" width="75"></a></th>';
+			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
+			@$parse['file_coordinates'] .= "<th>[<a href=\"/galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
+			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
+			@$parse['file_metal'] .= '<th>' . Helpers::pretty_number($planet->metal) . '</th>';
+			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($planet->crystal) . '</th>';
+			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($planet->deuterium) . '</th>';
+			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
+			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $p[$this->game->resource[4]]) * 100) . '</font>%</th>';
 
-			@$parse['file_images'] .= '<th width=75><a href="/overview/?cp=' . $p['id'] . '&amp;re=0"><img src="/assets/images/planeten/small/s_' . $p['image'] . '.jpg" border="0" height="75" width="75"></a></th>';
-			@$parse['file_names'] .= "<th>" . $p['name'] . "</th>";
-			@$parse['file_coordinates'] .= "<th>[<a href=\"/galaxy/?r=3&galaxy=".$p['galaxy']."&system=".$p['system']."\">".$p['galaxy'].":".$p['system'].":".$p['planet']."</a>]</th>";
-			@$parse['file_fields'] .= '<th>' . $p['field_current'] . '/' . $p['field_max'] . '</th>';
-			@$parse['file_metal'] .= '<th>' . Helpers::pretty_number($p['metal']) . '</th>';
-			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($p['crystal']) . '</th>';
-			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($p['deuterium']) . '</th>';
-			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($p['energy_max'] - abs($p['energy_used'])) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($p['energy_ak'] / (250 * $p[$this->game->resource[4]]) * 100) . '</font>%</th>';
+			@$parse['file_fields_c'] += $planet->field_current;
+			@$parse['file_fields_t'] += $planet->field_max;
+			@$parse['file_metal_t'] += $planet->metal;
+			@$parse['file_crystal_t'] += $planet->crystal;
+			@$parse['file_deuterium_t'] += $planet->deuterium;
+			@$parse['file_energy_t'] += $planet->energy_max - abs($planet->energy_used);
 
-			@$parse['file_fields_c'] += $p['field_current'];
-			@$parse['file_fields_t'] += $p['field_max'];
-			@$parse['file_metal_t'] += $p['metal'];
-			@$parse['file_crystal_t'] += $p['crystal'];
-			@$parse['file_deuterium_t'] += $p['deuterium'];
-			@$parse['file_energy_t'] += $p['energy_max'] - abs($p['energy_used']);
+			@$parse['file_metal_ph'] .= '<th>' . Helpers::pretty_number($planet->metal_perhour) . '</th>';
+			@$parse['file_crystal_ph'] .= '<th>' . Helpers::pretty_number($planet->crystal_perhour) . '</th>';
+			@$parse['file_deuterium_ph'] .= '<th>' . Helpers::pretty_number($planet->deuterium_perhour) . '</th>';
 
-			@$parse['file_metal_ph'] .= '<th>' . Helpers::pretty_number($p['metal_perhour']) . '</th>';
-			@$parse['file_crystal_ph'] .= '<th>' . Helpers::pretty_number($p['crystal_perhour']) . '</th>';
-			@$parse['file_deuterium_ph'] .= '<th>' . Helpers::pretty_number($p['deuterium_perhour']) . '</th>';
+			@$parse['file_metal_ph_t'] += $planet->metal_perhour;
+			@$parse['file_crystal_ph_t'] += $planet->crystal_perhour;
+			@$parse['file_deuterium_ph_t'] += $planet->deuterium_perhour;
 
-			@$parse['file_metal_ph_t'] += $p['metal_perhour'];
-			@$parse['file_crystal_ph_t'] += $p['crystal_perhour'];
-			@$parse['file_deuterium_ph_t'] += $p['deuterium_perhour'];
-
-			@$parse['file_metal_p'] .= '<th><font color="#00FF00">' . ($p['metal_mine_porcent'] * 10) . '</font>%</th>';
-			@$parse['file_crystal_p'] .= '<th><font color="#00FF00">' . ($p['crystal_mine_porcent'] * 10) . '</font>%</th>';
-			@$parse['file_deuterium_p'] .= '<th><font color="#00FF00">' . ($p['deuterium_mine_porcent'] * 10) . '</font>%</th>';
-			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($p['solar_plant_porcent'] * 10) . '</font>%</th>';
-			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($p['fusion_plant_porcent'] * 10) . '</font>%</th>';
-			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($p['solar_satelit_porcent'] * 10) . '</font>%</th>';
+			@$parse['file_metal_p'] .= '<th><font color="#00FF00">' . ($planet->metal_mine_porcent * 10) . '</font>%</th>';
+			@$parse['file_crystal_p'] .= '<th><font color="#00FF00">' . ($planet->crystal_mine_porcent * 10) . '</font>%</th>';
+			@$parse['file_deuterium_p'] .= '<th><font color="#00FF00">' . ($planet->deuterium_mine_porcent * 10) . '</font>%</th>';
+			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->solar_plant_porcent * 10) . '</font>%</th>';
+			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->fusion_plant_porcent * 10) . '</font>%</th>';
+			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->solar_satelit_porcent * 10) . '</font>%</th>';
 
 			$build_hangar = array();
 
-			$queueManager->loadQueue($p['queue']);
+			$queueManager->loadQueue($planet->queue);
 
 			foreach ($types AS $type)
 			{
@@ -163,7 +161,7 @@ class ImperiumController extends ApplicationController
 
 					$r[$i] .= '<th>';
 
-					if ($p[$this->game->resource[$i]] == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i]))
+					if ($p[$this->game->resource[$i]] == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
 						$r[$i] .= '-';
 					else
 					{
@@ -171,8 +169,8 @@ class ImperiumController extends ApplicationController
 							$r[$i] .= $p[$this->game->resource[$i]];
 						if (isset($build_hangar[$i]))
 							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
-						if (isset($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i]))
-							$r[$i] .= ' <font color=yellow>' . (($fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i] > 0) ? '+' : '') . '' . $fleet_fly[$p['galaxy'] . ':' . $p['system'] . ':' . $p['planet'] . ':' . $p['planet_type']][$i] . '</font>';
+						if (isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
+							$r[$i] .= ' <font color=yellow>' . (($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] > 0) ? '+' : '') . '' . $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] . '</font>';
 						$r[$i] .= '</th>';
 					}
 

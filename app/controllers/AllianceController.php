@@ -528,6 +528,45 @@ class AllianceController extends ApplicationController
 			$this->tag->setTitle('Передача альянса');
 			$this->showTopPanel(false);
 		}
+		elseif ($edit == 'members')
+		{
+			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
+				$this->message(_getText('Denied_access'), _getText('Members_list'));
+
+			if ($this->request->hasQuery('kick'))
+			{
+				$kick = $this->request->getQuery('kick', 'int', 0);
+
+				if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK) && $kick > 0)
+					$this->message(_getText('Denied_access'), _getText('Members_list'));
+
+				$u = $this->db->query("SELECT * FROM game_users WHERE id = '" . $kick . "' LIMIT 1")->fetch();
+
+				if ($u['ally_id'] == $this->ally->id && $u['id'] != $this->ally->owner)
+				{
+					$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$u['id']." AND id_ally = ".$this->ally->id."");
+
+					$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE `id` = '" . $u['id'] . "'");
+					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
+				}
+				else
+					$this->message(_getText('Denied_access'), _getText('Members_list'));
+			}
+			elseif ($this->request->getPost('newrang', null, '') != '' && $this->request->get('id', 'int', 0) != 0)
+			{
+				$id = $this->request->get('id', 'int', 0);
+				$rank = $this->request->getPost('newrang', 'int', 0);
+
+				$q = $this->db->query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
+
+				if ((isset($this->ally->ranks[$rank - 1]) || $rank == 0) && $q['id'] != $this->ally->owner && $q['ally_id'] == $this->ally->id)
+					$this->db->query("UPDATE game_alliance_members SET `rank` = '" . $rank . "' WHERE `u_id` = '" . $id . "';");
+			}
+
+			$this->membersAction();
+		}
+		else
+			$this->response->redirect('alliance/');
 
 		return true;
 	}
@@ -644,41 +683,12 @@ class AllianceController extends ApplicationController
 	{
 		$this->parseInfo($this->user->ally_id);
 
+		$this->view->pick('alliance/members');
+
 		$parse = array();
 
 		if ($this->dispatcher->getActionName() == 'admin')
-		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
-
-			if (isset($kick))
-			{
-				if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
-					$this->message(_getText('Denied_access'), _getText('Members_list'));
-
-				$u = $this->db->query("SELECT * FROM game_users WHERE id = '" . $kick . "' LIMIT 1")->fetch();
-
-				if ($u['ally_id'] == $this->ally->id && $u['id'] != $this->ally->owner)
-				{
-					$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$u['id']." AND id_ally = ".$this->ally->id."");
-
-					$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE `id` = '" . $u['id'] . "'");
-					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
-				}
-			}
-			elseif ($this->request->getPost('newrang', null, '') != '' && $this->request->get('id', 'int', 0) != 0)
-			{
-				$id = $this->request->get('id', 'int', 0);
-				$rank = $this->request->getPost('newrang', 'int', 0);
-
-				$q = $this->db->query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
-
-				if ((isset($this->ally->ranks[$rank - 1]) || $rank == 0) && $q['id'] != $this->ally->owner && $q['ally_id'] == $this->ally->id)
-					$this->db->query("UPDATE game_alliance_members SET `rank` = '" . $rank . "' WHERE `u_id` = '" . $id . "';");
-			}
-
 			$parse['admin'] = true;
-		}
 		else
 		{
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST))

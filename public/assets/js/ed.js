@@ -88,15 +88,16 @@ function show()
 
 function showSmiles(obj)
 {
-	if ($('#smiles').css('display') == 'block') {
-		$('#smiles').html('');
-		$('#smiles').attr('style', 'display:none');
-	} else {
-		for (var i = 0; i < sm_repl.length; i++) {
-        	$('#smiles').append('<img src="images/smile/'+sm_repl[i]+'.gif" alt="'+sm_repl[i]+'" onclick="AddSmile(\''+sm_repl[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
-		}
+	var o = $('#smiles');
 
-		$('#smiles').attr('style', 'display:block');
+	if (o.is(':visible'))
+		o.html('').hide();
+	else
+	{
+		for (var i = 0; i < arSmiles.length; i++)
+        	o.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+
+		o.show();
 	}
 }
 

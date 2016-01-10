@@ -485,7 +485,7 @@ class StageThree
 			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
 		}
 
-		if ($TargetPlanet['id_owner'] == 1)
+		if (isset($TargetPlanet['id']) && $TargetPlanet['id_owner'] == 1)
 		{
 			$fleet['start_time'] = time() + 30;
 			$fleet['end_time'] = time() + 60;
@@ -530,30 +530,30 @@ class StageThree
 
 		$controller->db->insertAsDict('game_fleets',
 		[
-			'fleet_owner' 			=> $controller->user->id,
-			'fleet_owner_name' 		=> $controller->planet->name,
-			'fleet_mission' 		=> $fleetmission,
-			'fleet_array' 			=> $fleet_array,
-			'fleet_start_time' 		=> $fleet['start_time'],
-			'fleet_start_galaxy' 	=> $controller->planet->galaxy,
-			'fleet_start_system' 	=> $controller->planet->system,
-			'fleet_start_planet' 	=> $controller->planet->planet,
-			'fleet_start_type' 		=> $controller->planet->planet_type,
-			'fleet_end_time' 		=> $fleet['end_time'],
-			'fleet_end_stay' 		=> $StayTime,
-			'fleet_end_galaxy' 		=> $galaxy,
-			'fleet_end_system' 		=> $system,
-			'fleet_end_planet' 		=> $planet,
-			'fleet_end_type' 		=> $planettype,
-			'fleet_resource_metal' 	=> $TransMetal,
+			'fleet_owner' 				=> $controller->user->id,
+			'fleet_owner_name' 			=> $controller->planet->name,
+			'fleet_mission' 			=> $fleetmission,
+			'fleet_array' 				=> $fleet_array,
+			'fleet_start_time' 			=> $fleet['start_time'],
+			'fleet_start_galaxy' 		=> $controller->planet->galaxy,
+			'fleet_start_system' 		=> $controller->planet->system,
+			'fleet_start_planet' 		=> $controller->planet->planet,
+			'fleet_start_type' 			=> $controller->planet->planet_type,
+			'fleet_end_time' 			=> $fleet['end_time'],
+			'fleet_end_stay' 			=> $StayTime,
+			'fleet_end_galaxy' 			=> $galaxy,
+			'fleet_end_system' 			=> $system,
+			'fleet_end_planet' 			=> $planet,
+			'fleet_end_type' 			=> $planettype,
+			'fleet_resource_metal' 		=> $TransMetal,
 			'fleet_resource_crystal' 	=> $TransCrystal,
 			'fleet_resource_deuterium' 	=> $TransDeuterium,
-			'fleet_target_owner' 	=> $TargetPlanet['id_owner'],
-			'fleet_target_owner_name' 	=> $TargetPlanet['name'],
-			'fleet_group' 			=> $fleet_group_mr,
-			'raunds' 				=> $raunds,
-			'start_time' 			=> time(),
-			'fleet_time' 			=> $fleet['start_time']
+			'fleet_target_owner' 		=> (isset($TargetPlanet['id']) ? $TargetPlanet['id_owner'] : 0),
+			'fleet_target_owner_name' 	=> (isset($TargetPlanet['id']) ? $TargetPlanet['name'] : ''),
+			'fleet_group' 				=> $fleet_group_mr,
+			'raunds' 					=> $raunds,
+			'start_time' 				=> time(),
+			'fleet_time' 				=> $fleet['start_time']
 		]);
 
 		$controller->planet->metal 		-= $TransMetal;

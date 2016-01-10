@@ -271,7 +271,7 @@ function PrintRow ()
 			} else if (row[planet]['banned'] > time) {
 				Systemtatus2 = "<a href=\"/banned/\">G</a>";
 				Systemtatus  = "<span class=\"banned\">";
-			} else if (row[planet]['urlaubs_modus_time'] > 0) {
+			} else if (row[planet]['vacation'] > 0) {
 				Systemtatus2 = "U";
 				Systemtatus  = "<span class=\"vacation\">";
 			} else if (row[planet]['onlinetime'] == 1) {
@@ -413,7 +413,7 @@ function PrintRow ()
 				if (user['missile'] == 1)
 					result += "<a href=\"/galaxy/"+galaxy+"/"+system+"/"+planet+"/2/"+user['current_planet']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
 
-				if (user['spy_sonde'] > 0 && row[planet]['urlaubs_modus_time'] == 0)
+				if (user['spy_sonde'] > 0 && row[planet]['vacation'] == 0)
 					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-tooltip-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
 
 				result += "<a href=\"/players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
@@ -421,7 +421,7 @@ function PrintRow ()
 			}
 		}
         else if (!row[planet] && user['colonizer'] > 0)
-                result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t/0/m7/\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
+                result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t0/m7/\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
 		else
             result += "&nbsp;";
 
@@ -431,7 +431,7 @@ function PrintRow ()
 	
 	result += "<tr><th width=\"30\">16</th>";
 	result += "<th colspan=8 class='c big'>";
-	result += "<a href=/fleet/g"+galaxy+"/s"+system+"/p16/t0/m15/>неизведанные дали</a>";
+	result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p16/t0/m15/\">неизведанные дали</a>";
 	result += "</th>";
 	result += "</tr><tr>";
 

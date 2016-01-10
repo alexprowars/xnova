@@ -100,8 +100,21 @@ function Text (txt, id)
 	if (typeof(txt) != 'string')
 		return;
 
+	var j = 0;
+
 	for (var i = 0; i < arSmiles.length; i++)
-		txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="S(\'' + arSmiles[i] + '\')" style="cursor:pointer">');
+	{
+		while (txt.indexOf(':'+arSmiles[i]+':') >= 0)
+		{
+			txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif">');
+
+			if (++j >= 3)
+				break;
+		}
+
+		if (j >= 3)
+			break;
+	}
 
 	for (i in find)
 	{

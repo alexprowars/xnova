@@ -162,9 +162,9 @@ $(document).ready(function()
 
 function changePlanet (pId)
 {
-	var a = parse_str(document.location.search.substr(1));
+	var a = window.location.pathname.split('/');
 
-	var url = '/'+a['set']+''+(a['mode'] !== undefined ? '/'+a['mode'] : '')+'/cp/'+pId+'/re/0/';
+	var url = '/'+a[1]+''+(a[2] !== undefined && a[2] != '' ? '/'+a[2] : '/index')+'/cp/'+pId+'/re/0/';
 
 	if (ajax_nav == 1)
 		load(url);
