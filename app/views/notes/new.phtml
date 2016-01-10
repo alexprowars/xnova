@@ -1,23 +1,24 @@
-<form action="<?=$this->url->get('notes/') ?>" method=post>
-	<?=$parse['inputs'] ?>
-	<table width="651">
+<form action="<?=$this->url->get('notes/new/') ?>" method="post">
+	<table class="table">
 		<tr>
-			<td class="c" colspan="2"><?=$parse['TITLE'] ?></td>
+			<td class="c" colspan="2"><?=_getText('Createnote') ?></td>
 		</tr>
 		<tr>
 			<th>Приоритет:
 				<select name="u">
-					<?=$parse['c_Options'] ?>
+					<option value="2" selected><?=_getText('Important') ?></option>
+					<option value="1"><?=_getText('Normal') ?></option>
+					<option value="0"><?=_getText('Unimportant') ?></option
 				</select>
 			</th>
 			<th>Тема:
-				<input type="text" name="title" size="30" maxlength="30" value="<?=$parse['title'] ?>">
+				<input type="text" name="title" size="30" maxlength="30" value="" placeholder="Введите тему">
 			</th>
 		</tr>
 		<tr>
 			<th colspan="2" class="nopadding">
 				<div id="editor"></div>
-				<textarea name="text" id="text" rows="10"><?=$parse['text'] ?></textarea>
+				<textarea name="text" id="text" rows="10" placeholder="Введите текст"></textarea>
 				<script type="text/javascript">edToolbar('text');</script>
 			</th>
 		</tr>

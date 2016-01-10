@@ -144,8 +144,8 @@ class ApplicationController extends Controller
 
 		if ($this->auth->isAuthorized())
 		{
-			if (!$this->user->isAdmin())
-				die('Нельзя пока вам сюда');
+			//if (!$this->user->isAdmin())
+			//	die('Нельзя пока вам сюда');
 
 			if (DEBUG)
 				$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');

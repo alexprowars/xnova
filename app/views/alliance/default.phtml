@@ -15,12 +15,12 @@
 	</tr>
 	<? foreach ($parse['list'] AS $list): ?>
 	<tr>
-		<th width=70%><?=$list[2] ?> [<?=$list[1] ?>]</th>
+		<th width="70%"><?=$list[2] ?> [<?=$list[1] ?>]</th>
 		<th><?=$this->game->datezone("d.m.Y H:i", $list[3]) ?></th>
 	</tr>
 	<tr>
 		<th colspan="2">
-			<form action="<?=$this->url->get('alliance/') ?>" method=POST><input type="hidden" name="r_id" value="<?=$list[0] ?>"><input type="submit" name="bcancel" value="Убрать заявку"></form>
+			<form action="<?=$this->url->get('alliance/') ?>" method="POST"><input type="hidden" name="r_id" value="<?=$list[0] ?>"><input type="submit" name="bcancel" value="Убрать заявку"></form>
 		</th>
 	</tr>
 	<? endforeach; ?>

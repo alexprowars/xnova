@@ -1,11 +1,11 @@
 <table class="table">
 	<tr>
-		<td class="c" width=100>TOP50</td>
+		<td class="c" width="100">TOP50</td>
 		<td class="c"><a href="<?=$this->url->get('hall/') ?>">Зал Славы</a></td>
-		<td class="c" width=137>
+		<td class="c" width="137">
 			<form method="POST" action="<?=$this->url->get('hall/') ?>" id="hall"><select name="visible" onChange="$('#hall').submit()">
-				<option value=1 <?=((!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 'selected' : '') ?>>Бои
-				<option value=2 <?=((isset($_POST['visible']) && $_POST['visible'] == 2) ? 'selected' : '') ?>>САБ
+				<option value="1" <?=((!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 'selected' : '') ?>>Бои
+				<option value="2" <?=((isset($_POST['visible']) && $_POST['visible'] == 2) ? 'selected' : '') ?>>САБ
 			</select></form>
 		</td>
 	</tr>
@@ -13,10 +13,10 @@
 <div class="separator"></div>
 	<table class="table">
 		<tr>
-			<td class="c" width=35>Место</td>
+			<td class="c" width="35">Место</td>
 			<td class="c"><font color=#CDB5CD><?=((!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 'Самые разрушительные бои' : 'Самые разрушительные групповые бои') ?></font></td>
-			<td class="c" width=45>Итог</td>
-			<td class="c" width=125>Дата</td>
+			<td class="c" width="45">Итог</td>
+			<td class="c" width="125">Дата</td>
 		</tr>
 		<? if (count($parse['hall']) > 0): $i = 0;
 		foreach ($parse['hall'] AS $log): $i++; ?>

@@ -33,7 +33,7 @@ class PlayersController extends ApplicationController
 			elseif ($daten['avatar'] != 0)
 			{
 				if ($daten['avatar'] != 99)
-					$parse['avatar'] = "/assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . "s.png";
+					$parse['avatar'] = "/assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . ".png";
 				else
 					$parse['avatar'] = "/assets/images/avatars/upload/upload_" . $daten['id'] . ".jpg";
 			}

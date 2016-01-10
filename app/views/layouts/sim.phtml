@@ -193,7 +193,7 @@
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Исследования и офицеры</td>
 	</tr>
 	<? foreach ($parse['tech'] AS $techId): ?>
-		<tr align=center>
+		<tr align="center">
 			<th><?=_getText('tech', $techId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
 				<th id="gr<?=$i ?>"><input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$techId]['c'])) ? $parse['slot_'.$i][$techId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2"></th>
@@ -204,7 +204,7 @@
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Флот</td>
 	</tr>
 	<? foreach ($this->game->reslist['fleet'] AS $fleetId): ?>
-		<tr align=center>
+		<tr align="center">
 			<th><?=_getText('tech', $fleetId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
 				<th id="gr<?=$i ?>">
@@ -224,7 +224,7 @@
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Оборона</td>
 	</tr>
 	<? foreach ($this->game->reslist['defense'] AS $fleetId): ?>
-		<tr align=center>
+		<tr align="center">
 			<th><?=_getText('tech', $fleetId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
 				<th id="gr<?=$i ?>">

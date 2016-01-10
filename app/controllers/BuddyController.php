@@ -72,7 +72,7 @@ class BuddyController extends ApplicationController
 				$parse['id'] = $u['id'];
 				$parse['username'] = $u['username'];
 		
-				$this->view->pick('buddy_new');
+				$this->view->pick('buddy/new');
 				$this->view->setVar('parse', $parse);
 
 				$this->tag->setTitle('Друзья');
@@ -142,8 +142,7 @@ class BuddyController extends ApplicationController
 		
 			$parse['list'][] = $q;
 		}
-		
-		$this->view->pick('buddy_list');
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Список друзей');

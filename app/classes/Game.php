@@ -123,10 +123,10 @@ class Game extends Component
 		if (!$owner)
 			return false;
 
-		if ($sender === false && isset($this->auth) && $this->auth->isAuthorized())
+		if ($sender === false && $this->getDI()->has('user'))
 			$sender = $this->user->id;
 
-		if (isset($this->auth) && $this->auth->isAuthorized() && $owner == $this->user->getId())
+		if ($this->getDI()->has('user') && $owner == $this->user->getId())
 			$this->user->messages++;
 
 		$this->db->insertAsDict(
