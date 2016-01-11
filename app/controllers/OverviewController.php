@@ -200,10 +200,51 @@ class OverviewController extends ApplicationController
 
 	public function deleteAction ()
 	{
+		if ($this->request->isPost() && $this->request->hasPost('id') && $this->request->getPost('id', 'int', 0) == $this->user->planet_current)
+		{
+			if ($this->user->id != $this->planet->id_owner)
+				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
+			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
+			{
+				$checkFleets = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
+
+				if ($checkFleets > 0)
+					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
+				else
+				{
+					$destruyed = time() + 60 * 60 * 24;
+
+					$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->user->planet_current."'");
+
+					$this->db->query("UPDATE game_users SET `planet_current` = `planet_id` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+
+					if ($this->planet->parent_planet != 0)
+						$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
+
+					if ($this->session->has('fleet_shortcut'))
+						$this->session->remove('fleet_shortcut');
+
+					$this->cache->delete('app::planetlist_'.$this->user->id);
+
+					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
+				}
+
+			}
+			elseif ($this->user->planet_id == $this->user->planet_current)
+				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
+			else
+				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
+		}
+
 		$parse['number_1'] 		= mt_rand(1, 100);
 		$parse['number_2'] 		= mt_rand(1, 100);
 		$parse['number_3'] 		= mt_rand(1, 100);
 		$parse['number_check'] 	= $parse['number_1'] + $parse['number_2'] * $parse['number_3'];
+
+		$parse['id'] = $this->planet->id;
+		$parse['galaxy'] = $this->planet->galaxy;
+		$parse['system'] = $this->planet->system;
+		$parse['planet'] = $this->planet->planet;
 
 		$this->view->setVar('parse', $parse);
 		$this->tag->setTitle('Покинуть колонию');
@@ -286,40 +327,6 @@ class OverviewController extends ApplicationController
 			}
 			else
 				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
-		}
-		elseif (isset($_POST['kolonieloeschen']) && $_POST['deleteid'] == $this->user->planet_current)
-		{
-			if ($this->user->id != $this->planet->id_owner)
-				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
-			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
-			{
-				$checkFleets = $this->db->query("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
-
-				if ($checkFleets['num'] > 0)
-					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
-				else
-				{
-					$destruyed = time() + 60 * 60 * 24;
-
-					$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->user->planet_current . "' LIMIT 1;");
-					$this->db->query("UPDATE game_users SET `planet_current` = `planet_id` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
-
-					if ($this->planet->parent_planet != 0)
-						$this->db->query("UPDATE game_planets SET `destruyed` = '" . $destruyed . "', `id_owner` = '0' WHERE `id` = '" . $this->planet->parent_planet . "' LIMIT 1;");
-
-					if (isset($_SESSION['fleet_shortcut']))
-						unset($_SESSION['fleet_shortcut']);
-
-					$this->cache->delete('app::planetlist_'.$this->user->id);
-
-					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/rename/');
-				}
-
-			}
-			elseif ($this->user->planet_id == $this->user->planet_current)
-				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
-			else
-				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/rename/');
 		}
 
 		$this->view->setVar('parse', $parse);
