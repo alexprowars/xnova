@@ -187,7 +187,7 @@ class StatController extends ApplicationController
 		}
 
 		$start *= 100;
-		$query = $this->db->query("SELECT s.*, a.`id`, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
+		$query = $this->db->query("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
 
 		$start++;
 

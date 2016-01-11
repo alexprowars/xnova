@@ -36,7 +36,7 @@ class ImperiumController extends ApplicationController
 			if (!isset($fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']]))
 				$fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']] = array();
 
-			if ($fleet['fleet_target_owner'] == $this->user->id && !isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
+			if (!isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
 				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = array();
 
 			$fleetData = Fleet::unserializeFleet($fleet['fleet_array']);
@@ -46,9 +46,7 @@ class ImperiumController extends ApplicationController
 				if (!isset($fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId]))
 				{
 					$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] = 0;
-
-					if ($fleet['fleet_target_owner'] == $this->user->id)
-						$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] = 0;
+					$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] = 0;
 				}
 
 				$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] -= $shipArr['cnt'];

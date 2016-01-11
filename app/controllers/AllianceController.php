@@ -345,8 +345,8 @@ class AllianceController extends ApplicationController
 			$parse['request_notallow_0'] = ($this->ally->request_notallow == 1) ? ' SELECTED' : '';
 			$parse['request_notallow_1'] = ($this->ally->request_notallow == 0) ? ' SELECTED' : '';
 			$parse['owner_range'] = $this->ally->owner_range;
-			$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/?mode=admin&edit=give", 'Продолжить');
-			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/?mode=admin&edit=exit", 'Продолжить');
+			$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/edit/give/", 'Продолжить');
+			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/edit/exit/", 'Продолжить');
 
 			$this->view->pick('alliance/admin');
 			$this->view->setVar('parse', $parse);
@@ -372,16 +372,21 @@ class AllianceController extends ApplicationController
 						if ($_POST['text'] != '')
 							$text_ot = strip_tags($_POST['text']);
 
-						$check_req = $this->db->query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . intval($show) . ";")->fetch();
+						$check = $this->db->query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "")->fetch();
 
-						if (isset($check_req['a_id']))
+						if (isset($check['a_id']))
 						{
-							$this->db->query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . ";");
+							$this->db->delete('game_alliance_requests', "u_id = ?", [$show]);
+							$this->db->delete('game_alliance_members', "u_id = ?", [$show]);
 
-							$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $this->ally->id . ", " . intval($show) . ", " . time() . ")");
-							$this->db->query("UPDATE game_alliance SET members = members + 1 WHERE id = '" . $this->ally->id . "'");
-							$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "', new_message = new_message + 1 WHERE id = '" . intval($show) . "'");
-							$this->db->query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . $this->user->id . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$this->ally->tag}', `message_text`='Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : "") . "'");
+							$this->db->insertAsDict('game_alliance_members', ['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
+
+							$this->db->execute("UPDATE game_alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
+							$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
+
+							$this->game->sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
+
+							return $this->response->redirect("alliance/members/");
 						}
 					}
 				}
@@ -390,8 +395,9 @@ class AllianceController extends ApplicationController
 					if ($_POST['text'] != '')
 						$text_ot = strip_tags($_POST['text']);
 
-					$this->db->query("DELETE FROM game_alliance_requests WHERE u_id = " . intval($show) . " AND a_id = " . $this->ally->id . ";");
-					$this->db->query("INSERT INTO game_messages SET `message_owner`='" . intval($show) . "', `message_sender`='" . $this->user->id . "' , `message_time`='" . time() . "', `message_type`='2', `message_from`='{$this->ally->tag}', `message_text`='Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : "") . "'");
+					$this->db->delete('game_alliance_requests', "u_id = ? AND a_id = ?", [$show, $this->ally->id]);
+
+					$this->game->sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
 				}
 			}
 

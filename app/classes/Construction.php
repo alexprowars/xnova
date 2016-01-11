@@ -248,13 +248,13 @@ class Construction
 				{
 					$l = ($Tech < 350 ? ($Tech - 100) : ($Tech + 50));
 
-					if (isset($CombatCaps[$l]['power_up']) && $CombatCaps[$l]['power_up'] > 0)
+					if (isset($game->CombatCaps[$l]['power_up']) && $game->CombatCaps[$l]['power_up'] > 0)
 					{
-						$row['add'] = '+' . ($CombatCaps[$l]['power_up'] * $building_level) . '% атака<br>';
-						$row['add'] .= '+' . ($CombatCaps[$l]['power_armour'] * $building_level) . '% прочность<br>';
+						$row['add'] = '+' . ($game->CombatCaps[$l]['power_up'] * $building_level) . '% атака<br>';
+						$row['add'] .= '+' . ($game->CombatCaps[$l]['power_armour'] * $building_level) . '% прочность<br>';
 					}
-					if (isset($CombatCaps[$l]['power_consumption']) && $CombatCaps[($Tech < 350 ? ($Tech - 100) : ($Tech + 50))]['power_consumption'] > 0)
-						$row['add'] = '+' . ($CombatCaps[$l]['power_consumption'] * $building_level) . '% вместимость<br>';
+					if (isset($game->CombatCaps[$l]['power_consumption']) && $game->CombatCaps[($Tech < 350 ? ($Tech - 100) : ($Tech + 50))]['power_consumption'] > 0)
+						$row['add'] = '+' . ($game->CombatCaps[$l]['power_consumption'] * $building_level) . '% вместимость<br>';
 				}
 				elseif ($Tech >= 120 && $Tech <= 122)
 					$row['add'] = '+' . (5 * $building_level) . '% атака<br>';

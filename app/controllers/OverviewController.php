@@ -281,23 +281,21 @@ class OverviewController extends ApplicationController
 
 		if (isset($_POST['action']) && $_POST['action'] == _getText('namer'))
 		{
-			$UserPlanet = $_POST['newname'];
+			$newName = strip_tags(trim($this->request->getPost('newname', 'string', '')));
 
-			if (trim($UserPlanet) != "")
+			if ($newName != "")
 			{
-				if (preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $UserPlanet))
+				if (preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $newName))
 				{
-					if (mb_strlen($UserPlanet, 'UTF-8') > 1 && mb_strlen($UserPlanet, 'UTF-8') < 20)
+					if (mb_strlen($newName, 'UTF-8') > 1 && mb_strlen($newName, 'UTF-8') < 20)
 					{
-						$newname = strip_tags(trim($UserPlanet));
-
-						$this->planet->name = $newname;
+						$this->planet->name = $newName;
 						$parse['planet_name'] = $this->planet->name;
 
-						$this->db->query("UPDATE game_planets SET `name` = '" . $newname . "' WHERE `id` = '" . $this->user->planet_current . "' LIMIT 1;");
+						$this->db->updateAsDict('game_planets', ['name' => $newName], "id = '".$this->user->planet_current."'");
 
-						if (isset($_SESSION['fleet_shortcut']))
-							unset($_SESSION['fleet_shortcut']);
+						if ($this->session->has('fleet_shortcut'))
+							$this->session->remove('fleet_shortcut');
 					}
 					else
 						$this->message('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
@@ -306,17 +304,12 @@ class OverviewController extends ApplicationController
 					$this->message('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
 			}
 		}
-		elseif (isset($_POST['action']) && $_POST['action'] == _getText('colony_abandon'))
-		{
-
-
-		}
-		elseif (isset($_POST['action']) && isset($_POST['image']))
+		elseif (isset($_POST['action']) && $this->request->hasPost('image'))
 		{
 			if ($this->user->credits < 1)
 				$this->message('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
 
-			$image = intval($_POST['image']);
+			$image = $this->request->getPost('image', 'int', 0);
 
 			if ($image > 0 && $image <= $parse['images'][$parse['type']])
 			{

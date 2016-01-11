@@ -459,12 +459,12 @@ class StageThree
 			if (isset($NoobNoActive) && $NoobNoActive == 1)
 				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" к неактивному игроку.</b></span>", 'Ошибка', "/fleet/", 5);
 
-			$cnt = $controller->db->query("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 7)."");
+			$cnt = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 7)."");
 
 			if ($cnt >= 3)
 				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще 3х раз в неделю.</b></span>", 'Ошибка', "/fleet/", 5);
 
-			$cnt = $controller->db->query("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 1)."");
+			$cnt = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 1)."");
 
 			if ($cnt > 0)
 				$controller->message("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку чаще одного раза в день.</b></span>", 'Ошибка', "/fleet/", 5);
