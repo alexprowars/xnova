@@ -474,7 +474,7 @@ class OverviewController extends ApplicationController
 
 			if (isset($lune['id']))
 			{
-				$parse['moon_img'] = "<a href=\"/overview/?cp=" . $lune['id'] . "&amp;re=0\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
+				$parse['moon_img'] = "<a href=\"/overview/?chpl=" . $lune['id'] . "\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
 				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
 			}
 		}
@@ -520,7 +520,7 @@ class OverviewController extends ApplicationController
 
 						foreach ($QueueArray AS $CurrBuild)
 						{
-							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"/buildings/?cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
+							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"/buildings/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
 						}
 					}
 
@@ -528,7 +528,7 @@ class OverviewController extends ApplicationController
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"/buildings/?mode=research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "&amp;cp=" . $UserPlanet['id'] . "&amp;re=0\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
+						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"/buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
 					}
 				}
 			}

@@ -458,11 +458,11 @@ class User extends Model
 	{
 		$request = $this->getDi()->getShared('request');
 
-		if ($request->hasQuery('cp') && is_numeric($request->getQuery('cp')) && $request->hasQuery('re') && $request->getQuery('re', 'int') == 0)
+		if ($request->hasQuery('chpl') && is_numeric($request->getQuery('chpl')))
 		{
-			$selectPlanet = $request->getQuery('cp', 'int');
+			$selectPlanet = $request->getQuery('chpl', 'int');
 
-			if ($this->planet_current == $selectPlanet)
+			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
 
 			$IsPlanetMine = $this->db->query("SELECT `id`, `id_owner`, `id_ally` FROM game_planets WHERE `id` = '" . $selectPlanet . "' AND (`id_owner` = '" . $this->getId() . "' OR (`id_ally` > 0 AND `id_ally` = '".$this->ally_id."'))")->fetch();

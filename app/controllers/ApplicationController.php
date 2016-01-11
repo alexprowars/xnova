@@ -368,14 +368,14 @@ class ApplicationController extends Controller
 					$parse['planetlist'] .= "selected=\"selected\" ";
 
 				if (isset($_GET['set']))
-					$parse['planetlist'] .= "value=\"/" . $_GET['set'] . "/";
+					$parse['planetlist'] .= "value=\"/" . $this->dispatcher->getControllerName() . "/";
 				else
 					$parse['planetlist'] .= "value=\"/overview/";
 
-				if (isset($_GET['mode']))
-					$parse['planetlist'] .= "&amp;mode=" . $_GET['mode'];
+				if ($this->dispatcher->getActionName() != 'index')
+					$parse['planetlist'] .= "" . $this->dispatcher->getActionName().'/';
 
-				$parse['planetlist'] .= "&amp;cp=" . $CurPlanet['id'] . "&amp;re=0\">";
+				$parse['planetlist'] .= "&chpl=" . $CurPlanet['id'] . "\">";
 
 				$parse['planetlist'] .= "" . $CurPlanet['name'];
 				$parse['planetlist'] .= "&nbsp;[" . $CurPlanet['galaxy'] . ":" . $CurPlanet['system'] . ":" . $CurPlanet['planet'];
