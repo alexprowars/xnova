@@ -522,16 +522,16 @@ class User extends Model
 		switch ($sort)
 		{
 			case 1:
-				$qryPlanets .= "`galaxy`, `system`, `planet`, `planet_type` ";
+				$qryPlanets .= "galaxy, system, planet, planet_type ";
 				break;
 			case 2:
-				$qryPlanets .= "`name` ";
+				$qryPlanets .= "name ";
 				break;
 			case 3:
-				$qryPlanets .= "`planet_type` ";
+				$qryPlanets .= "planet_type ";
 				break;
 			default:
-				$qryPlanets .= "`id` ";
+				$qryPlanets .= "id ";
 		}
 
 		$qryPlanets .= ($order == 1) ? "DESC" : "ASC";

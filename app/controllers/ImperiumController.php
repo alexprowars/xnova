@@ -70,16 +70,16 @@ class ImperiumController extends ApplicationController
 		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		$planet = new Planet();
-		$planet->assignUser($this->user);
+		/**
+		 * @var Planet[] $planets
+		 */
+		$planets = Planet::find(array("id_owner = " . $this->user->getId(), "order" => trim(str_replace('ORDER BY', '', $this->user->getPlanetListSortQuery()))));
 
-		$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->getId() . "' ".$this->user->getPlanetListSortQuery()."");
+		$parse['mount'] = count($planets) + 3;
 
-		$parse['mount'] = $planets->numRows() + 3;
-
-		while ($p = $planets->fetch())
+		foreach ($planets AS $planet)
 		{
-			$planet->assign($p);
+			$planet->assignUser($this->user);
 			$planet->copyTempParams();
 			$planet->PlanetResourceUpdate(time(), true);
 
@@ -93,7 +93,7 @@ class ImperiumController extends ApplicationController
 			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($planet->crystal) . '</th>';
 			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($planet->deuterium) . '</th>';
 			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $p[$this->game->resource[4]]) * 100) . '</font>%</th>';
+			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->{$this->game->resource[4]}) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $planet->field_current;
 			@$parse['file_fields_t'] += $planet->field_max;
@@ -127,14 +127,16 @@ class ImperiumController extends ApplicationController
 				{
 					$queue = $queueManager->get($type);
 
+					p($queue);
+
 					foreach ($queue AS $q)
 					{
-						if (!isset($build_hangar[$q['i']]))
+						if (!isset($build_hangar[$q['i']]) || in_array($q['i'], $this->game->reslist['build']))
 							$build_hangar[$q['i']]  = $q['l'];
 						else
 							$build_hangar[$q['i']] += $q['l'];
 
-						if (!isset($build_hangar_full[$q['i']]))
+						if (!isset($build_hangar_full[$q['i']]) || in_array($q['i'], $this->game->reslist['build']))
 							$build_hangar_full[$q['i']]  = $q['l'];
 						else
 							$build_hangar_full[$q['i']] += $q['l'];
@@ -144,7 +146,6 @@ class ImperiumController extends ApplicationController
 
 			foreach ($this->game->resource as $i => $res)
 			{
-
 				if (!isset($r[$i]))
 					$r[$i] = '';
 				if (!isset($r1[$i]))
@@ -152,21 +153,21 @@ class ImperiumController extends ApplicationController
 
 				if (in_array($i, $this->game->reslist['build']))
 				{
-					$r[$i] .= ($p[$this->game->resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$this->game->resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					if ($r1[$i] < $p[$this->game->resource[$i]])
-						$r1[$i] = $p[$this->game->resource[$i]];
+					$r[$i] .= ($planet->{$this->game->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->game->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					if ($r1[$i] < $planet->{$this->game->resource[$i]})
+						$r1[$i] = $planet->{$this->game->resource[$i]};
 				}
 				elseif (in_array($i, $this->game->reslist['fleet']))
 				{
 
 					$r[$i] .= '<th>';
 
-					if ($p[$this->game->resource[$i]] == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
+					if ($planet->{$this->game->resource[$i]} == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
 						$r[$i] .= '-';
 					else
 					{
-						if ($p[$this->game->resource[$i]] >= 0)
-							$r[$i] .= $p[$this->game->resource[$i]];
+						if ($planet->{$this->game->resource[$i]} >= 0)
+							$r[$i] .= $planet->{$this->game->resource[$i]};
 						if (isset($build_hangar[$i]))
 							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
 						if (isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
@@ -174,12 +175,12 @@ class ImperiumController extends ApplicationController
 						$r[$i] .= '</th>';
 					}
 
-					$r1[$i] += $p[$this->game->resource[$i]];
+					$r1[$i] += $planet->{$this->game->resource[$i]};
 				}
 				elseif (in_array($i, $this->game->reslist['defense']))
 				{
-					$r[$i] .= ($p[$this->game->resource[$i]] == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $p[$this->game->resource[$i]] . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					$r1[$i] += $p[$this->game->resource[$i]];
+					$r[$i] .= ($planet->{$this->game->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->game->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					$r1[$i] += $planet->{$this->game->resource[$i]};
 				}
 			}
 		}
