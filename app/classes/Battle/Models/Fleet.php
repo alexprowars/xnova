@@ -25,19 +25,17 @@ class Fleet extends Iterable
 	private $armour_tech = 0;
 	private $name;
 
-	public function __construct($id, $shipTypes = array(),$weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
+	public function __construct($id, $shipTypes = array(), $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
 	{
 		$this->id = $id;
 		$this->count = 0;
 		$this->name = $name;
-		if($this->id != -1)
-		{
+
+		if ($this->id != -1)
 			$this->setTech($weapons_tech, $shields_tech, $armour_tech);
-		}
+
 		foreach ($shipTypes as $shipType)
-		{
 			$this->addShipType($shipType);
-		}
 	}
 
 	public function getName()
@@ -64,11 +62,11 @@ class Fleet extends Iterable
 			$shipType->setArmourTech($armour);
 		}
 
-		if(is_numeric($weapons))
+		if (is_numeric($weapons))
 			$this->weapons_tech = intval($weapons);
-		if(is_numeric($shields))
+		if (is_numeric($shields))
 			$this->shields_tech = intval($shields);
-		if(is_numeric($armour))
+		if (is_numeric($armour))
 			$this->armour_tech = intval($armour);
 	}
 
@@ -82,11 +80,14 @@ class Fleet extends Iterable
 		{
 			$shipType = $shipType->cloneMe();//avoid collateral effects
 
-			if($this->id != -1)
+			if ($this->id != -1)
 			{
-				$shipType->setWeaponsTech($this->weapons_tech);
-				$shipType->setShieldsTech($this->shields_tech);
-				$shipType->setArmourTech($this->armour_tech);
+				if ($this->weapons_tech > 0)
+					$shipType->setWeaponsTech($this->weapons_tech);
+				if ($this->shields_tech > 0)
+					$shipType->setShieldsTech($this->shields_tech);
+				if ($this->armour_tech > 0)
+					$shipType->setArmourTech($this->armour_tech);
 			}
 
 			$this->array[$shipType->getId()] = $shipType;

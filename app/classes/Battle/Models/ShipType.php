@@ -75,12 +75,14 @@ class ShipType extends Type
 	 */
 	public function setWeaponsTech($level)
 	{
-		if (!is_numeric($level))
+		if (!is_numeric($level) || $level <= 0)
 			return;
-		$level = intval($level);
+
 		$diff = $level - $this->weapons_tech;
+
 		if ($diff < 0)
 			throw new Exception('Trying to decrease tech');
+
 		$this->weapons_tech = $level;
 		$incr = 1 + WEAPONS_TECH_INCREMENT_FACTOR * $diff;
 		$this->singlePower *= $incr;
@@ -95,12 +97,14 @@ class ShipType extends Type
 	 */
 	public function setShieldsTech($level)
 	{
-		if (!is_numeric($level))
+		if (!is_numeric($level) || $level <= 0)
 			return;
-		$level = intval($level);
+
 		$diff = $level - $this->shields_tech;
+
 		if ($diff < 0)
 			throw new Exception('Trying to decrease tech');
+
 		$this->shields_tech = $level;
 		$incr = 1 + SHIELDS_TECH_INCREMENT_FACTOR * $diff;
 		$this->singleShield *= $incr;
@@ -116,12 +120,14 @@ class ShipType extends Type
 	 */
 	public function setArmourTech($level)
 	{
-		if (!is_numeric($level))
+		if (!is_numeric($level) || $level <= 0)
 			return;
-		$level = intval($level);
+		
 		$diff = $level - $this->armour_tech;
+
 		if ($diff < 0)
 			throw new Exception('Trying to decrease tech');
+
 		$this->armour_tech = $level;
 		$incr = 1 + ARMOUR_TECH_INCREMENT_FACTOR * $diff;
 		$this->singleLife *= $incr;
