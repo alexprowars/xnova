@@ -55,7 +55,7 @@ var replace = [
 	'<div style="text-align:justify;word-spacing:-0.3ex;">$1<\/div>',
 	'<span style="font-size: $1px;">$2</span>',
 	'<span style="color: #$1;">$2</span>',
-	'<a href="$1" target="_blank"><img src="$1" style="max-width:300px;" alt="XNova" /></a>',
+	'<a href="$1" class="fancybox" target="_blank"><img src="$1" style="max-width:300px;" alt="XNova" /></a>',
 	'<img src="$1" style="max-width:100%;" class="image" alt="" />',
 	'<a href="$1" target="_blank">$2</a>',
 	'<a href="$1" target="_blank">$1</a>',

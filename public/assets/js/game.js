@@ -723,6 +723,20 @@ $(document).ready(function()
 	.on('click', '.ui-widget-overlay', function()
 	{
 		closeWindow();
+	})
+	.on('click', '.fancybox', function(e)
+	{
+		if ($.isFunction($(document).fancybox))
+		{
+			e.preventDefault();
+
+			$.fancybox({
+				href: $(this).attr('href'),
+				padding: 0,
+				openSpeed: 100,
+				closeSpeed: 100
+			});
+		}
 	});
 });
 
@@ -818,7 +832,7 @@ var blockTimer = true;
 
 function showLoading ()
 {
-	$('#preloadOverlay').show();
+	$.fancybox.showLoading();
 
 	setTimeout(function()
 	{
@@ -840,7 +854,7 @@ function hideLoading ()
 	//blockTimer = true;
 	//clearTimeout(loadingTimer);
 	//$('#loadingOverlay').hide();
-	$('#preloadOverlay').hide();
+	$.fancybox.hideLoading();
 }
 
 function f(target_url, win_name)

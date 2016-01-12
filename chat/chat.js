@@ -166,12 +166,17 @@ function insertMessage (msg, userId, userName, lastId, socket)
 
 		for (var j in connectedUsers)
 		{
-			if (connectedUsers.hasOwnProperty(j))
+			if (connectedUsers.hasOwnProperty(j) && connectedUsers[j] !== null)
 			{
 				var message = getMessage(insert, j);
 
 				if (message.me >= 0 && message.my >= 0)
-					io.sockets.connected[connectedUsers[j]].send(getMessage(insert, j));
+				{
+					if (io.sockets.connected[connectedUsers[j]] !== undefined)
+						io.sockets.connected[connectedUsers[j]].send(getMessage(insert, j));
+					else
+						delete connectedUsers[j];
+				}
 			}
 		}
 	});

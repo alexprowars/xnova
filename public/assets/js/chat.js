@@ -54,7 +54,7 @@ var replaceS = [
 	'<div align="right">$1<\/div>',
 	'<div style="text-align:justify;">$1<\/div>',
 	'<span style="font-size: $1px;">$2</span>',
-	'<a href="$1" target="_blank"><img src="$1" style="max-width:350px;" alt="XNova" /></a>',
+	'<a href="$1" class="fancybox" target="_blank"><img src="$1" style="max-width:350px;" alt="XNova" /></a>',
 	'<a href="$1" target="_blank">$2</a>',
 	'<a href="$1" target="_blank">$1</a>',
 	'<p>$1</p>',
@@ -121,7 +121,7 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 	{
 		while (Msg.indexOf(':'+arSmiles[i]+':') >= 0)
 		{
-			Msg = Msg.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="S(\'' + arSmiles[i] + '\')" style="cursor:pointer">');
+			Msg = Msg.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="AddSmile(\'' + arSmiles[i] + '\', \'chatMsg\')" style="cursor:pointer">');
 
 			if (++j >= 3)
 				break;

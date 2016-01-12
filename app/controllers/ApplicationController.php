@@ -151,6 +151,7 @@ class ApplicationController extends Controller
 				$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
 			$css->addCss('/assets/css/bootstrap.css');
+			$css->addCss('/assets/css/jquery.fancybox.css');
 			$css->addCss('/assets/css/formate.css');
 			$css->addCss('/assets/css/style.css');
 			$css->addCss('/assets/css/media.css');
@@ -162,6 +163,7 @@ class ApplicationController extends Controller
 			$js->addJs('/assets/js/smiles.js');
 			$js->addJs('/assets/js/ed.js');
 			$js->addJs('/assets/js/jquery.touchSwipe.min.js');
+			$js->addJs('/assets/js/jquery.fancybox.min.js');
 
 			if ($this->request->isAjax())
 				$this->view->setMainView('game_ajax');
