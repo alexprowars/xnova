@@ -1191,7 +1191,7 @@ class Planet extends Model
 	{
 		if ($planet['destruyed'] <= time())
 		{
-			$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['id_planet'] . ";");
+			$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['planet_id'] . ";");
 
 			if ($planet['parent_planet'] != 0)
 				$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['parent_planet'] . ";");

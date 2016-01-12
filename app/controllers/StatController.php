@@ -208,7 +208,7 @@ class StatController extends ApplicationController
 				$stats['rankplus'] = "<font color=\"green\">+" . $ranking . "</font>";
 
 			if ($StatRow['name'] == $this->user->ally_name)
-				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['ally'] . "</font>";
+				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
 			else
 				$stats['name'] = "<a href=\"/alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
 

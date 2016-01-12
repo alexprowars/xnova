@@ -1,1 +1,21 @@
-<?=$html ?>
+<table class="table">
+	<tr height="20">
+		<td colspan="2" class="c">Ссылки (<a href="/fleet/shortcut/add/new/">Добавить</a>)</td>
+	</tr>
+	<tr height="20">
+		<? foreach ($links as $i => $link): ?>
+			<th width="50%">
+				<a href="/fleet/shortcut/view/<?=$i ?>/"><?=$link['name'] ?> [<?=$link['galaxy'] ?>:<?=$link['system'] ?>:<?=$link['planet'] ?>] <?=$link['type'] ?></a>
+			</th>
+		<? endforeach; ?>
+		<? if (count($links)%2 == 1): ?>
+			<th>&nbsp;</th>
+		<? endif; ?>
+		<? if (!count($links)): ?>
+			<th colspan="2">Список ссылок пуст</th>
+		<? endif; ?>
+	</tr>
+	<tr>
+		<td colspan="2" class="c"><a href="<?=$this->url->get('fleet/') ?>">Назад</a></td>
+	</tr>
+</table>

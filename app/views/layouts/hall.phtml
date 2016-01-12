@@ -22,7 +22,7 @@
 		foreach ($parse['hall'] AS $log): $i++; ?>
 			<tr>
 				<th><?=$i ?></th>
-				<th><a href="<?=$this->url->get('log/id/'.$log['log'].'/') ?>" <?=($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '') ?>><?=$log['title'] ?></a></th>
+				<th><a href="<?=$this->url->get('log/'.$log['log'].'/') ?>" <?=($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '') ?>><?=$log['title'] ?></a></th>
 				<th><? if ($log['won'] == 0)
 					echo'Н';
 				elseif ($log['won'] == 1)

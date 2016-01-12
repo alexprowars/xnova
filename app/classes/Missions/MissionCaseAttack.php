@@ -458,14 +458,20 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		// Уничтожен в первой волне
 		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 		// Добавление в базу
-		$this->db->query("INSERT INTO game_rw SET `time` = " . time() . ", `id_users` = '" . $users . "', `no_contact` = '" . $no_contact . "', `raport` = '" . addslashes($raport) . "'");
+		$this->db->insertAsDict('game_rw',
+		[
+			'time' 			=> time(),
+			'id_users' 		=> $users,
+			'no_contact' 	=> $no_contact,
+			'raport' 		=> $raport,
+		]);
 		// Ключи авторизации доклада
 		$ids = $this->db->lastInsertId();
 
 		if ($this->_fleet['fleet_group'] != 0)
 		{
-			$this->db->query("DELETE FROM game_aks WHERE id = " . $this->_fleet['fleet_group'] . "");
-			$this->db->query("DELETE FROM game_aks_user WHERE aks_id = " . $this->_fleet['fleet_group'] . "");
+			$this->db->delete('game_aks', 'id = ?', [$this->_fleet['fleet_group']]);
+			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet['fleet_group']]);
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
@@ -506,7 +512,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			[
 				'user' 	=> 0,
 				'title' => $title,
-				'log' 	=> addslashes($raport)
+				'log' 	=> $raport
 			]);
 
 			$id = $this->db->lastInsertId();

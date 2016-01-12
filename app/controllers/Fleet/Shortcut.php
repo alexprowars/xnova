@@ -11,35 +11,37 @@ class Shortcut
 
 		$inf = $controller->db->query("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $controller->user->id . ";")->fetch();
 
-		if (isset($_GET['mode']))
+		if ($controller->request->hasQuery('add'))
 		{
-			if ($_POST)
+			if ($controller->request->isPost())
 			{
-				if ($_POST["n"] == "" || !preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $_POST["n"]))
-					$_POST["n"] = "Планета";
+				$name = $controller->request->getPost('n', 'string', '');
 
-				$g = intval($_POST['g']);
-				$s = intval($_POST['s']);
-				$i = intval($_POST['p']);
-				$t = intval($_POST['t']);
+				if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
+					$name = 'Планета';
+
+				$g = $controller->request->getPost('g', 'int', 0);
+				$s = $controller->request->getPost('s', 'int', 0);
+				$p = $controller->request->getPost('p', 'int', 0);
+				$t = $controller->request->getPost('t', 'int', 0);
 
 				if ($g < 1 || $g > $controller->config->game->maxGalaxyInWorld)
 					$g = 1;
 				if ($s < 1 || $s > $controller->config->game->maxSystemInGalaxy)
 					$s = 1;
-				if ($i < 1 || $i > $controller->config->game->maxPlanetInSystem)
-					$i = 1;
+				if ($p < 1 || $p > $controller->config->game->maxPlanetInSystem)
+					$p = 1;
 				if ($t != 1 && $t != 2 && $t != 3 && $t != 5)
 					$t = 1;
 
-				$inf['fleet_shortcut'] .= strip_tags(str_replace(',', '', $_POST['n'])) . "," . $g . "," . $s . "," . $i . "," . $t . "\r\n";
+				$inf['fleet_shortcut'] .= strip_tags(str_replace(',', '', $name)) . "," . $g . "," . $s . "," . $p . "," . $t . "\r\n";
 
 				$controller->db->updateAsDict('game_users_info', ['fleet_shortcut' => $inf['fleet_shortcut']], 'id = '.$controller->user->getId());
 
-				if (isset($_SESSION['fleet_shortcut']))
-					unset($_SESSION['fleet_shortcut']);
+				if ($controller->session->has('fleet_shortcut'))
+					$controller->session->remove('fleet_shortcut');
 
-				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/?page=shortcut");
+				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/");
 			}
 
 			$g = $controller->request->getPost('g', 'int', 0);
@@ -62,36 +64,38 @@ class Shortcut
 			$controller->view->setVar('i', $p);
 			$controller->view->setVar('t', $t);
 		}
-		elseif (isset($_GET['a']))
+		elseif ($controller->request->hasQuery('view'))
 		{
-			if ($_POST)
+			$id = $controller->request->getQuery('view', 'int', 0);
+
+			if ($controller->request->isPost())
 			{
-				$a = intval($_POST['a']);
 				$scarray = explode("\r\n", $inf['fleet_shortcut']);
 
-				if (isset($_POST["delete"]))
+				if (!isset($scarray[$id]))
+					$controller->response->redirect('fleet/shortcut/');
+
+				if ($controller->request->hasPost('delete'))
 				{
-					unset($scarray[$a]);
+					unset($scarray[$id]);
 					$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
 					$controller->db->updateAsDict('game_users_info', ['fleet_shortcut' => $inf['fleet_shortcut']], 'id = '.$controller->user->getId());
 
-					if (isset($_SESSION['fleet_shortcut']))
-						unset($_SESSION['fleet_shortcut']);
+					if ($controller->session->has('fleet_shortcut'))
+						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/?page=shortcut");
+					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/");
 				}
 				else
 				{
-					$r = explode(",", $scarray[$a]);
+					$r = explode(",", $scarray[$id]);
 
-					$_POST['n'] = str_replace(',', '', $_POST['n']);
-
-					$r[0] = strip_tags($_POST['n']);
-					$r[1] = intval($_POST['g']);
-					$r[2] = intval($_POST['s']);
-					$r[3] = intval($_POST['p']);
-					$r[4] = intval($_POST['t']);
+					$r[0] = strip_tags(str_replace(',', '', $controller->request->getPost('n', 'string', '')));
+					$r[1] = $controller->request->getPost('g', 'int', 0);
+					$r[2] = $controller->request->getPost('s', 'int', 0);
+					$r[3] = $controller->request->getPost('p', 'int', 0);
+					$r[4] = $controller->request->getPost('t', 'int', 0);
 
 					if ($r[1] < 1 || $r[1] > $controller->config->game->maxGalaxyInWorld)
 						$r[1] = 1;
@@ -102,15 +106,15 @@ class Shortcut
 					if ($r[4] != 1 && $r[4] != 2 && $r[4] != 3 && $r[4] != 5)
 						$r[4] = 1;
 
-					$scarray[$a] = implode(",", $r);
+					$scarray[$id] = implode(",", $r);
 					$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
 					$controller->db->updateAsDict('game_users_info', ['fleet_shortcut' => $inf['fleet_shortcut']], 'id = '.$controller->user->getId());
 
-					if (isset($_SESSION['fleet_shortcut']))
-						unset($_SESSION['fleet_shortcut']);
+					if ($controller->session->has('fleet_shortcut'))
+						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/?page=shortcut");
+					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/");
 				}
 			}
 
@@ -135,54 +139,42 @@ class Shortcut
 		}
 		else
 		{
+			$links = [];
 
-			$html = '<table class="table"><tr height="20"><td colspan="2" class="c">Ссылки (<a href="/fleet/?page=shortcut&mode=add">Добавить</a>)</td></tr>';
+			$html = '';
 
 			if ($inf['fleet_shortcut'])
 			{
-
 				$scarray = explode("\r\n", $inf['fleet_shortcut']);
-				$i = $e = 0;
+
 				foreach ($scarray as $a => $b)
 				{
-					if ($b != "")
+					if ($b != '')
 					{
 						$c = explode(',', $b);
 
-						if ($i == 0)
-							$html .= "<tr height=\"20\">";
-
-						$html .= "<th width=50%><a href=\"/fleet/?page=shortcut&a=" . $e++ . "\">";
-						$html .= "{$c[0]} {$c[1]}:{$c[2]}:{$c[3]}";
+						$type = '';
 
 						if ($c[4] == 2)
-							$html .= " (E)";
+							$type = " (E)";
 						elseif ($c[4] == 3)
-							$html .= " (L)";
+							$type = " (L)";
 						elseif ($c[4] == 5)
-							$html .= " (B)";
+							$type = " (B)";
 
-						$html .= "</a></th>";
-
-						if ($i == 1)
-							$html .= "</tr>";
-
-						if ($i == 1)
-							$i = 0;
-						else
-							$i = 1;
+						$links[] =
+						[
+							'name' => $c[0],
+							'galaxy' => $c[1],
+							'system' => $c[2],
+							'planet' => $c[3],
+							'type'=> $type
+						];
 					}
-
-
 				}
-				if ($i == 1)
-					$html .= "<th>&nbsp;</th></tr>";
-
 			}
-			else
-				$html .= "<th colspan=\"2\">Список ссылок пуст</th>";
 
-			$html .= '<tr><td colspan=2 class=c><a href="/fleet/">Назад</a></td></tr></tr></table>';
+			$controller->view->setVar('links', $links);
 		}
 
 		$controller->tag->setTitle("Закладки");

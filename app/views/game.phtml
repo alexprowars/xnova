@@ -73,7 +73,7 @@
 
 
 	<? if (isset($deleteUserTimer) && $deleteUserTimer > 0): ?>
-		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $deleteUserTimer) ?> в <?=$this->game->datezone("H:i:s", $eleteUserTimer) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
+		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $deleteUserTimer) ?> в <?=$this->game->datezone("H:i:s", $deleteUserTimer) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
 	<? endif; ?>
 
 	<? if (isset($vocationTimer) && $vocationTimer > 0): ?>

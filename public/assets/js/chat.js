@@ -217,12 +217,7 @@ function addMessage()
 {
 	var data = $("#chatMsg").val();
 
-	data = data.replace('%', '%25');
-	while (data.indexOf('+') >= 0) data = data.replace('+', '%2B');
-	while (data.indexOf('#') >= 0) data = data.replace('#', '%23');
-	while (data.indexOf('&') >= 0) data = data.replace('&', '%26');
-	while (data.indexOf('?') >= 0) data = data.replace('?', '%3F');
-	while (data.indexOf('\'') >= 0)data = data.replace('\'', '`');
+	while (data.indexOf('\'') >= 0) data = data.replace('\'', '`');
 
 	$("#chatMsg").val('');
 

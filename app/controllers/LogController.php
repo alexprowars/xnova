@@ -126,13 +126,12 @@ class LogController extends ApplicationController
 				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 				{
 					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200)))
-						echo "<center>Данный лог боя пока недоступен для просмотра!</center>";
+						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
 					else
 					{
 						$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
 
 						$html .= $report->report()['html'];
-						$html .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});</script>';
 					}
 
 					$this->tag->setTitle('Боевой доклад');
@@ -147,7 +146,7 @@ class LogController extends ApplicationController
 					$html .= "<table width=\"99%\"><tr><td>";
 
 					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
-						echo "<center>Данный лог боя пока недоступен для просмотра!</center>";
+						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
 					else
 					{
 						$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);

@@ -327,7 +327,7 @@ class Queue
 			
 			unset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]);
 
-			if (!count($this->queue[self::QUEUE_TYPE_BUILDING]))
+			if (isset($this->queue[self::QUEUE_TYPE_BUILDING]) && !count($this->queue[self::QUEUE_TYPE_BUILDING]))
 				unset($this->queue[self::QUEUE_TYPE_BUILDING]);
 
 			$WorkingPlanet->queue = json_encode($this->queue);
