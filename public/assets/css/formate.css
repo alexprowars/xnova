@@ -27,7 +27,6 @@ html {
 
 a {
     cursor: pointer;
-	font-weight: normal;
     color: #fff;
     text-decoration: none;
 }
@@ -673,7 +672,7 @@ img.info {
 	text-decoration: none;
 	font-weight: normal;
 	color: #04AE04;
-	padding: 2px 3px;
+	padding: 2px 0;
 }
 
 .shoutbox .date2 {
@@ -706,14 +705,22 @@ img.info {
 
 .shoutbox .player {
 	color: #7397E1;
-	font-weight: bold;
 	cursor: pointer;
+	font-weight: bold;
+}
+
+.shoutbox .player a {
+	color: #7397E1;
+}
+
+.shoutbox .private a {
+	COLOR: Red;
 }
 
 .shoutbox .private {
 	COLOR: Red;
-	font-weight: bold;
 	cursor: pointer;
+	font-weight: bold;
 }
 
 .activity {

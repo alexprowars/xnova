@@ -150,7 +150,7 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 		if (My == 1)
 			str += "<span class='negative'>";
 		else
-			str += "<span class='to' onclick='to(\"" + Player + "\");' style='cursor:pointer;'>";
+			str += "<span class='to' onclick='to(\"" + Player + "\");'>";
 
 		str += Player + "</span>: ";
 	}

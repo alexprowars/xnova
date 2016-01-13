@@ -13,6 +13,8 @@ class IndexController extends ApplicationController
 		if ($this->auth->isAuthorized())
 			$this->response->redirect('overview/');
 
+		parent::initialize();
+
 		if (!$this->dispatcher->wasForwarded())
 		{
 			$js = $this->assets->collection('js');
@@ -21,8 +23,6 @@ class IndexController extends ApplicationController
 			$css = $this->assets->collection('css');
 			$css->addCss('/assets/css/login.css');
 		}
-
-		parent::initialize();
 	}
 
 	public function indexAction ()

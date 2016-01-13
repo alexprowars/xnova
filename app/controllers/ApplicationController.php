@@ -133,6 +133,7 @@ class ApplicationController extends Controller
 
 		$css = $this->assets->collection('css');
 		$css->addCss('/assets/css/jquery-ui.css');
+		$css->addCss('/assets/css/jquery.fancybox.css');
 
 		$js = $this->assets->collection('js');
 
@@ -140,6 +141,7 @@ class ApplicationController extends Controller
 		$js->addJs('//yastatic.net/jquery/1.11.3/jquery.min.js');
 		$js->addJs('//yastatic.net/jquery-ui/1.11.2/jquery-ui.min.js');
 		$js->addJs('/assets/js/jquery.form.min.js');
+		$js->addJs('/assets/js/jquery.fancybox.min.js');
 		$js->addJs('/assets/js/game.js');
 
 		if ($this->auth->isAuthorized())
@@ -151,7 +153,6 @@ class ApplicationController extends Controller
 				$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
 			$css->addCss('/assets/css/bootstrap.css');
-			$css->addCss('/assets/css/jquery.fancybox.css');
 			$css->addCss('/assets/css/formate.css');
 			$css->addCss('/assets/css/style.css');
 			$css->addCss('/assets/css/media.css');
@@ -163,7 +164,6 @@ class ApplicationController extends Controller
 			$js->addJs('/assets/js/smiles.js');
 			$js->addJs('/assets/js/ed.js');
 			$js->addJs('/assets/js/jquery.touchSwipe.min.js');
-			$js->addJs('/assets/js/jquery.fancybox.min.js');
 
 			if ($this->request->isAjax())
 				$this->view->setMainView('game_ajax');

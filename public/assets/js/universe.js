@@ -171,20 +171,20 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m1/\">Атаковать</a><br />";
-				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m5/\">Удерживать</a><br />";
+				result += "<a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m1/\'>Атаковать</a><br />";
+				result += "<a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m5/\'>Удерживать</a><br />";
 
 				if (user['destroy'] > 0)
                 {
-					result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m9/\">Уничтожить</a><br>";
+					result += "<a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m9/\'>Уничтожить</a><br>";
 				}
 			}
             else
             {
-				result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m4/\">Оставить</a><br />";
+				result += "<a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m4/\'>Оставить</a><br />";
 			}
 
-			result += "<a href=\"/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m3/\">Транспорт</a><br />";
+			result += "<a href=\'/fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m3/\'>Транспорт</a><br />";
 
 			result += "</tr>";
 			result += "</table>";
