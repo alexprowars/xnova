@@ -95,6 +95,7 @@ class Security extends Component
 				'contact'	=> array('*'),
 				'stat'		=> array('*'),
 				'banned'	=> array('*'),
+				'xnsim'		=> array('*'),
 			);
 
 			foreach ($privateResources as $resource => $actions)

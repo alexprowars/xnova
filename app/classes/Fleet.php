@@ -168,7 +168,9 @@ class Fleet extends Building
 			$lvl = explode("!", $temp[1]);
 
 			$fleetAmount[$temp[0]]['cnt'] += $lvl[0];
-			$fleetAmount[$temp[0]]['lvl']  = $lvl[1];
+
+			if (isset($lvl[1]))
+				$fleetAmount[$temp[0]]['lvl'] = $lvl[1];
 		}
 
 		return $fleetAmount;

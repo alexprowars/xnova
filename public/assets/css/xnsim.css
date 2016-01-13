@@ -1,0 +1,227 @@
+body {
+	margin: 5px;
+}
+img {
+	border: 0;
+	padding: 0;
+}
+.main td, .main th {
+	padding-left: 4px;
+	padding-right: 4px;
+}
+.spacer {
+	width: 3px;
+}
+li:first-line {
+	font-weight:	bold;
+}
+input.number {
+	width:			45px;
+	text-align:	right;
+}
+input.lvl {
+	width:			23px;
+	text-align:	right;
+}
+body, th, td, textarea, input, select, option {
+ 	font-family: "Arial", "Helvetica", sans-serif;
+}
+body, th, td {
+ 	font-size:	11px;
+}
+textarea, input, select, option {
+ 	font-size:	10px;
+}
+th, td {
+	height:	18px;
+}
+textarea {
+	height: 16px;
+}
+.button {
+ width: 95%;
+ height: 25px;
+ margin: 3px;
+}
+.radio {
+	height: 12px;
+}
+.checkbox {
+	height: 12px;
+}
+.br_td {
+	height: 18px;
+}
+.br_td_noborder {
+	height: 20px;
+}
+.checkboxtable {
+ padding: 0;
+ width: 1%;
+}
+td.setting {
+ height: 10px;
+ font-weight: bold;
+ padding: 0;
+}
+input.setting {
+ width: 85%;
+}
+.action {
+ padding: 2px;
+}
+.kb {
+ border: 2px dashed gray;
+ padding: 5px;
+}
+.kbtable * {
+ padding: 2px;
+}
+#kb_div {
+	overflow: auto;
+	width: 800px;
+	height: 600px;
+	position: absolute;
+	z-index: 20;
+	left: 100px;
+	top : 100px;
+}
+.newstable * {
+	padding: 7px;
+}
+.version {
+	font-weight: bold;
+}
+div td td {
+	background-color: #F5F5F5;
+}
+.linkbar a {
+	text-decoration: underline;
+}
+.warning {
+	border: 2px solid red;
+}
+#loading {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	background: white;
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+	z-index: 1000
+}
+#loading img {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -50px
+}
+#kb_link
+{
+	font-weight: bold;
+	text-decoration: underline;
+}
+.kb_angreifer {
+ font-weight:           bold;
+}
+.kb_verteidiger {
+ font-weight:           bold;
+}
+input.number {
+ text-align:            right;
+}
+A.tab_normal, A.tab_click {
+ font-weight:           bold;
+ text-decoration:       none;
+}
+A.tab_normal:link, A.tab_normal:active, A.tab_normal:visited {
+ color:									#FFFFFF;
+ text-decoration:       none;
+}
+A.tab_normal:hover, A.tab_normal:focus  {
+ color:									#FF0000;
+ text-decoration:       none;
+}
+A.tab_click:link, A.tab_click:active, A.tab_click:visited {
+ color:									#FF0000;
+ text-decoration:       none;
+}
+A.tab_click:hover, A.tab_click:focus  {
+ color:									#FF0000;
+ text-decoration:       none;
+}
+h3 {
+	display: block;
+	width: 100%;
+	border-bottom: 1px solid black;
+}
+body, #kb_div, #scan_div {
+ background:            rgb(220, 230, 255) /*url(gradient.png) repeat-x*/;
+}
+#kb_div {
+ border: 2px solid black;
+}
+body,th,td {
+ color:                 Black;
+}
+a,th,td {
+ color:                 Black;
+}
+th,td {
+/* background-color:      #606080;*/
+
+  background-color: rgb(204, 219, 234);
+/*  border: 1px dashed #E0E0E0;*/
+}
+.spezial {
+/*	border: 1px dashed #A0A0A0;*/
+}
+.heading {
+	color: Navy;
+	padding-top: 20px;
+}
+.angreifer {
+ color:      #006400;
+}
+.verteidiger {
+ color:      #FF0000;
+}
+.spezial {
+/* background-color:      #1030A0;*/
+
+  background-color: rgb(173, 199, 225);
+}
+a {
+ COLOR:                 black;
+ text-decoration:       none;
+}
+a:hover {
+ COLOR:                 #FF0000;
+}
+.body {
+	background: transparent;
+	border: none;
+}
+.menu {
+/*	background: rgb(100, 150, 200);*/
+/*	background: url(gradient2.png) repeat;*/
+}
+.topmenu {
+	border-bottom: 1px dashed black;
+}
+.leftmenu {
+	border-right: 1px dashed black;
+}
+a.disabled {
+	color: gray;
+	text-decoration: none;
+	cursor: default;
+}
+.attacker_def_td
+{
+	color: red;
+}

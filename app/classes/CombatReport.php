@@ -428,7 +428,7 @@ class CombatReport extends Component
 			$def[] = '';
 		}
 
-		return 'http://uni'.$this->config->game->universe.'.xnova.su/xnsim/sim.php?r='.implode('|', $att).'|'.implode('|', $def).'';
+		return 'http://uni'.$this->config->game->universe.'.xnova.su/xnsim/report/?r='.implode('|', $att).'|'.implode('|', $def).'';
 	}
 	
 	function old ()
