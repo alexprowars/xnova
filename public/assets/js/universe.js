@@ -71,7 +71,7 @@ function PrintRow ()
         {
 			planetcount++;
 
-			result += "<a href=\"javascript:;\" class=\"tooltip_sticky\" data-tooltip-content='";
+			result += "<a href=\"javascript:;\" class=\"tooltip_sticky\" data-content='";
 			result += "<table width=240>";
 			result += "<tr><td class=c colspan=2>Планета "+row[planet]["name"]+" ["+galaxy+":"+system+":"+planet+"]</td></tr>";
 			result += "<tr>";
@@ -145,7 +145,7 @@ function PrintRow ()
 
 		if (row[planet] && row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"])
         {
-			result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-tooltip-content=\"";
+			result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-content=\"";
 			result += "<table width=240>";
 			result += "<tr>";
 			result += "<td class=c colspan=2>";
@@ -213,7 +213,7 @@ function PrintRow ()
 			}
 
 			result += "background-image: none;\" width=30>";
-			result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-tooltip-content=\"";
+			result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-content=\"";
 			result += "<table width=240>";
 			result += "<tr>";
 			result += "<td class=c colspan=2>";
@@ -307,7 +307,7 @@ function PrintRow ()
 			else
 				Systemtart = (Math.floor( row[planet]['total_rank'] / 100 ) * 100) + 1;
 
-            result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-tooltip-content='";
+            result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-content='";
 			result += "<table width=280>";
 			result += "<tr>";
 			result += "<td class=c colspan=2>Игрок "+row[planet]['username']+", место "+row[planet]['total_rank']+"</td>";
@@ -363,7 +363,7 @@ function PrintRow ()
         {
 			if (row[planet]['ally_name'])
             {
-				result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-tooltip-content=\"";
+				result += "<a style=\"cursor: pointer;\" class=\"tooltip_sticky\" data-content=\"";
 				result += "<table width=240>";
 				result += "<tr>";
 				result += "<td class=c>Альянс "+row[planet]['ally_name']+" с "+row[planet]['ally_members']+" членами</td>";
@@ -414,7 +414,7 @@ function PrintRow ()
 					result += "<a href=\"/galaxy/"+galaxy+"/"+system+"/planet/"+planet+"/r/2/user/"+user['planet_current']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
 
 				if (user['spy_sonde'] > 0 && row[planet]['vacation'] == 0)
-					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-tooltip-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
+					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
 
 				result += "<a href=\"/players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
 				result += "<a href=\"/fleet/shortcut/mode/add/g/"+galaxy+"/s/"+system+"/i/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
@@ -449,7 +449,7 @@ function PrintRow ()
 	result += "<td class=c colspan=6>( "+PlanetCountMessage+" )</td>";
 	result += "<td class=c colspan=3>";
 	
-	result += "<a href=\"javascript:;\" class=\"tooltip_sticky\" data-tooltip-content=\"";
+	result += "<a href=\"javascript:;\" class=\"tooltip_sticky\" data-content=\"";
 
 	result += "<table width=240>";
 	result += "<tr>";

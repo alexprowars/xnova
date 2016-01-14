@@ -758,3 +758,13 @@ button.ui-button::-moz-focus-inner {
 .ui-tabs-panel .table tr:last-child td, .ui-tabs-panel .table tr:last-child th {
 	border-bottom: 0;
 }
+
+.ui-tooltip {
+	padding: 6px 8px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 250px;
+}
+body .ui-tooltip {
+	border-width: 2px;
+}

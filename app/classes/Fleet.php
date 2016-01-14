@@ -237,7 +237,7 @@ class Fleet extends Building
 		$FleetPopup .= "</table>";
 		$FleetPopup .= "' class=\"" . $FleetType . "\">" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip\" data-tooltip-content='" . $FleetPopup;
+		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip\" data-content='" . $FleetPopup;
 
 		return $FleetPopup;
 
@@ -262,7 +262,7 @@ class Fleet extends Building
 
 		if ($FRessource <> "")
 		{
-			$MissionPopup = "<a href='javascript:;' data-tooltip-content='" . $FRessource . "' class=\"tooltip " . $FleetType . "\">" . $Texte . "</a>";
+			$MissionPopup = "<a href='javascript:;' data-content='" . $FRessource . "' class=\"tooltip " . $FleetType . "\">" . $Texte . "</a>";
 		}
 		else
 		{

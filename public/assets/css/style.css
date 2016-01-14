@@ -188,21 +188,6 @@ textarea#text {
 	border: 0 !important;
 }
 
-#loadingOverlay {
-	position:absolute;
-	background-color:#ddd;
-	width:140px;
-	color:#333;
-	padding:10px;
-	vertical-align:top;
-	text-align:center;
-	top:100px;
-	display: none;
-	z-index: 1000;
-	left: 50%;
-	margin-left: -70px;
-}
-
 .startBuild {
 	position: absolute;
 	bottom: 5px;
@@ -430,15 +415,6 @@ p {
 	font-size: 10px;
 	font-weight: bold;
  }
-
-#preloadOverlay {
-	display: none;
-	top: 40px;
-	position: absolute;
-	z-index: 1000;
-	left: 50%;
-	margin-left: -345px;
-}
 
 .pic {
 	width: 200px;

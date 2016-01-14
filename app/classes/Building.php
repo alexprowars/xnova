@@ -229,10 +229,10 @@ class Building
 		{
 			if (isset($cost[$ResType]) && $cost[$ResType] != 0)
 			{
-				$text .= "<div><img src='/assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-tooltip-content='" . $ResTitle[0] . "'>";
+				$text .= "<div><img src='/assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-content='" . $ResTitle[0] . "'>";
 
 				if ($cost[$ResType] > $planet->{$ResType})
-					$text .= "<span class=\"resNo tooltip\" data-tooltip-content=\"необходимо: ".Helpers::pretty_number($cost[$ResType] - $planet->{$ResType})."\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
+					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Helpers::pretty_number($cost[$ResType] - $planet->{$ResType})."\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
 				else
 					$text .= "<span class=\"resYes\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
 

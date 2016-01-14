@@ -2,17 +2,10 @@
 	var ress = [<?=$planet['metal'] ?>, <?=$planet['crystal'] ?>, <?=$planet['deuterium'] ?>];
 	var max = [<?=$planet['metal_m'] ?>,<?=$planet['crystal_m'] ?>,<?=$planet['deuterium_m'] ?>];
 	var production = [<?=($planet['metal_ph'] / 3600) ?>, <?=($planet['crystal_ph'] / 3600) ?>, <?=($planet['deuterium_ph'] / 3600) ?>];
-	timeouts['res_count'] = window.setIntervalWorker(XNova.updateResources, 1000);
+	timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
 	var serverTime = <?=$planet['time'] ?>000 - Djs + (timezone + <?=(date("Z") / 1800) ?>) * 1800000;
+	var lastUpdate = <?=$planet['time'] ?>000;
 </script>
-<form action="" name="ress" id="ress" style="display:none">
-	<input type="hidden" id="metall" value="0">
-	<input type="hidden" id="crystall" value="0">
-	<input type="hidden" id="deuterium" value="0">
-	<input type="hidden" id="bmetall" value="0">
-	<input type="hidden" id="bcrystall" value="0">
-	<input type="hidden" id="bdeuterium" value="0">
-</form>
 <div class="row topnav">
 	<? if ($this->config->view->get('showPlanetListSelect', 0) == 1): ?>
 		<div class="col-md-2 hidden-xs col-sm-12">
@@ -24,19 +17,19 @@
 	<div class="col-md-<?=($this->config->view->get('showPlanetListSelect', 0) == 1 ? '5' : '6') ?> col-sm-6">
 		<div class="row">
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('info/1/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['metal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['metal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['metal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_metall"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('info/1/') ?>', 600)" class="tooltip hidden-xs" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['metal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['metal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['metal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_metall"></span><br></span>
 				<font color="#FFFF00">Металл</font><br>
 				<div title="Количество ресурса на планете"><div id="met">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['metal_max'] ?></span>
 			</div>
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('info/2/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['crystal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('info/2/') ?>', 600)" class="tooltip hidden-xs" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['crystal_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['crystal_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
 				<font color="#FFFF00">Кристалл</font><br>
 				<div title="Количество ресурса на планете"><div id="cry">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['crystal_max'] ?></span>
 			</div>
 			<div class="col-xs-4 text-center">
-				<span onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('info/3/') ?>', 600)" class="tooltip hidden-xs" data-tooltip-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['deuterium_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
+				<span onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('info/3/') ?>', 600)" class="tooltip hidden-xs" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right><?=$planet['deuterium_mp'] ?>%</td></tr><tr><td>В час:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph']) ?></td></tr><tr><td>День:</td><td align=right><?=\App\Helpers::pretty_number($planet['deuterium_ph'] * 24) ?></td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
 				<font color="#FFFF00">Дейтерий</font><br>
 				<div title="Количество ресурса на планете"><div id="deu">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs"><?=$planet['deuterium_max'] ?></span>
@@ -52,7 +45,7 @@
 				<span title="Выработка энергии" class="hidden-xs"><font color="#00ff00"><?=$planet['energy_max'] ?></font></span>
 			</div>
 			<div class="col-xs-4 text-center">
-				<span class="tooltip hidden-xs" data-tooltip-content='<center>Вместимость:<br><?=$planet['ak'] ?></center>'>
+				<span class="tooltip hidden-xs" data-content='<center>Вместимость:<br><?=$planet['ak'] ?></center>'>
 					<? if ($planet['energy_ak'] > 0 && $planet['energy_ak'] < 100): ?>
 						<img src="/assets/images/batt.php?p=<?=$planet['energy_ak'] ?>" width="42" alt="">
 					<? else: ?>
@@ -64,7 +57,7 @@
 				<?=$planet['energy_ak'] ?>%<br>
 			</div>
 			<div class="col-xs-4 text-center">
-				<a href="<?=$this->url->get('credits/') ?>" class="tooltip hidden-xs" data-tooltip-content='
+				<a href="<?=$this->url->get('credits/') ?>" class="tooltip hidden-xs" data-content='
 				<table width=550>
 				<tr>
 				<? foreach ($planet['officiers'] AS $oId => $oTime): ?>

@@ -311,21 +311,6 @@ div.error {
 	margin-bottom: 5px;
 }
 
-#loadingOverlay {
-	position:absolute;
-	background-color:#ddd;
-	width:140px;
-	color:#333;
-	padding:10px;
-	vertical-align:top;
-	text-align:center;
-	top:100px;
-	display: none;
-	z-index: 1000;
-	left: 50%;
-	margin-left: -70px;
-}
-
 .list {
 	height: 300px;
 	width: 800px;

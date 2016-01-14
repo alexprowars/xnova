@@ -7,12 +7,12 @@
 				<div class="col-md-6">
 					<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 						<? if (!$build['access']): ?>
-							<div class="notAvailable tooltip" data-tooltip-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)"><span>недоступно</span></div>
+							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)"><span>недоступно</span></div>
 						<? endif; ?>
 
 						<div class="img">
 							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)">
-								<img src="/assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-tooltip-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
+								<img src="/assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 							</a>
 
 							<div class="overContent">
@@ -35,13 +35,13 @@
 									<? if (is_array($build['tech_link'])): ?>
 									<div id="brp" class="z"></div>
 									<script type="text/javascript">
-										v = new Date();
+										var v = new Date();
 										var brp = $('#brp');
+
 										function t()
 										{
 											var n = new Date();
-											var ss = <?=$build['tech_link']['tech_time'] ?>;
-											var s = ss - Math.round((n.getTime() - v.getTime()) / 1000);
+											var s = <?=$build['tech_link']['tech_time'] ?> - Math.round((n.getTime() - v.getTime()) / 1000);
 											var m = 0;
 											var h = 0;
 
@@ -66,7 +66,7 @@
 
 												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cmd/cancel/tech/'.$build['tech_link']['tech_id'].'/') ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
 
-												setTimeoutWorker(t, 1000);
+												setTimeout(t, 1000);
 											}
 										}
 										$(document).ready(t);

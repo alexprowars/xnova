@@ -9,7 +9,7 @@ function BuildTimeout(pp, pk, pl, at)
     {
 		blc.html("Завершено<br>" + "<a href='#' onclick='load(\"/buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
 
-		timeouts['build'+pk+'-'+pl] = setTimeoutWorker('load("/buildings/index/planet/' + pl + '/");', 5000);
+		timeouts['build'+pk+'-'+pl] = setTimeout('load("/buildings/index/planet/' + pl + '/");', 5000);
 
 		return;
 	}
@@ -38,7 +38,7 @@ function BuildTimeout(pp, pk, pl, at)
 
 	pp--;
 
-	timeouts['build'+pk+'-'+pl] = setTimeoutWorker("BuildTimeout("+pp+", "+pk+", "+pl+", "+(at - 1)+");", 1000);
+	timeouts['build'+pk+'-'+pl] = setTimeout("BuildTimeout("+pp+", "+pk+", "+pl+", "+(at - 1)+");", 1000);
 }
 
 function reloadPlanetList ()

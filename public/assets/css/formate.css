@@ -648,6 +648,14 @@ input[type=radio], input[type=radio] + label, input[type=checkbox] {
 	color: #ff3f3e !important;
 }
 
+.topnav .empty {
+	color: #3abc55
+}
+
+.topnav .full {
+	color: #ff3f3e
+}
+
 img.info {
 	margin-right: 5px;
 	border: 1px solid #ccc;

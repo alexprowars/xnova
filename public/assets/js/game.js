@@ -55,57 +55,50 @@ var XNova =
 	},
 	updateResources: function ()
 	{
-		var metall, crystall, deuterium;
-		var bold1_met = '<font color=#3abc55>';
-		var bold2_met = '</font>';
-		var bold1_cry = '<font color=#3abc55>';
-		var bold2_cry = '</font>';
-		var bold1_deu = '<font color=#3abc55>';
-		var bold2_deu = '</font>';
+		var bold1_met = 'empty';
+		var bold1_cry = 'empty';
+		var bold1_deu = 'empty';
 		var faktor_met = 1;
 		var faktor_cry = 1;
 		var faktor_deu = 1;
-		var ges_met = production[0];
-		var ges_cry = production[1];
-		var ges_deu = production[2];
 
-		var rohstoffe = $('#ress')[0];
-
-		if (rohstoffe === undefined)
+		if (ress === undefined)
 			return;
 
-		if(rohstoffe.metall.value >= max[0] - ress[0] || rohstoffe.bmetall.value == 1 || ress[0] >= max[0]) {
-			bold1_met = '<div class="full">';
-			bold2_met = '</div>';
-			rohstoffe.bmetall.value = 1;
+		var factor = ((new Date).getTime() - lastUpdate) / 1000;
+
+		lastUpdate = (new Date).getTime();
+
+		if (ress[0] >= max[0])
+		{
+			bold1_met = 'full';
 			faktor_met = 0;
-
 		}
-		metall = Math.floor(rohstoffe.metall.value) + Math.floor(ress[0]);
-		rohstoffe.metall.value = (Math.floor(rohstoffe.metall.value * 10000)/10000) + (ges_met * faktor_met);
 
-		if(rohstoffe.crystall.value >= max[1] - ress[1] || rohstoffe.bcrystall.value == 1 || ress[1] >= max[1]) {
-			bold1_cry = '<div class="full">';
-			bold2_cry = '</div>';
-			rohstoffe.bcrystall.value = 1;
+		if (faktor_met > 0)
+			ress[0] = ress[0] + (production[0] * faktor_met * factor);
+
+		if (ress[1] >= max[1])
+		{
+			bold1_cry = 'full';
 			faktor_cry = 0;
 		}
 
-		crystall = Math.floor(rohstoffe.crystall.value) + Math.floor(ress[1]);
-		rohstoffe.crystall.value = (Math.floor(rohstoffe.crystall.value * 10000)/10000) + (ges_cry * faktor_cry);
+		if (faktor_cry > 0)
+			ress[1] = ress[1] + (production[1] * faktor_cry * factor);
 
-		if(rohstoffe.deuterium.value >= max[2] - ress[2] || rohstoffe.bdeuterium.value == 1 || ress[2] >= max[2]) {
-			bold1_deu = '<div class="full">';
-			bold2_deu = '</div>';
-			rohstoffe.bdeuterium.value = 1;
+		if (ress[2] >= max[2])
+		{
+			bold1_deu = 'full';
 			faktor_deu = 0;
 		}
-		deuterium = Math.floor(rohstoffe.deuterium.value) + Math.floor(ress[2]);
-		rohstoffe.deuterium.value = (Math.floor(rohstoffe.deuterium.value * 10000)/10000) + (ges_deu * faktor_deu);
 
-	    $('#met').html(bold1_met+number_format(metall, 0, ',', '.')+bold2_met);
-	    $('#cry').html(bold1_cry+number_format(crystall, 0, ',', '.')+bold2_cry);
-	    $('#deu').html(bold1_deu+number_format(deuterium, 0, ',', '.')+bold2_deu);
+		if (faktor_deu > 0)
+			ress[2] = ress[2] + (production[2] * faktor_deu * factor);
+
+	    $('#met').html('<div class="'+bold1_met+'">'+number_format(ress[0], 0, ',', '.')+'</div>');
+	    $('#cry').html('<div class="'+bold1_cry+'">'+number_format(ress[1], 0, ',', '.')+'</div>');
+	    $('#deu').html('<div class="'+bold1_deu+'">'+number_format(ress[2], 0, ',', '.')+'</div>');
 	},
 	setAjaxNavigation: function ()
 	{
@@ -328,38 +321,52 @@ function number_format(number, decimals, dec_point, thousands_sep)
 	return s.join(dec);
 }
 
+var flotenTimers = [];
+var flotenTime = [];
+
 function FlotenTime (obj, time)
 {
-	var v       = new Date();
+	if (flotenTimers['fleet'+obj] === undefined)
+		flotenTimers['fleet'+obj] = (new Date).getTime();
+	if (flotenTime['fleet'+obj] === undefined)
+		flotenTime['fleet'+obj] = time;
+
+	if (time === undefined)
+	{
+		time = flotenTime['fleet'+obj] - Math.floor((((new Date).getTime() - flotenTimers['fleet'+obj]) / 1000));
+	}
+
 	var divs    = $('#'+obj);
 	var ttime   = time;
 	var mfs1    = 0;
-	var hfs1     = 0;
+	var hfs1    = 0;
 
 	if (ttime < 1)
 		divs.html("-");
 	else
     {
-		if (ttime > 59) {
+		if (ttime > 59)
+		{
 			mfs1 = Math.floor(ttime / 60);
 			ttime = ttime - mfs1 * 60;
 		}
-		if (mfs1 > 59) {
+
+		if (mfs1 > 59)
+		{
 			hfs1 = Math.floor(mfs1 / 60);
 			mfs1 = mfs1 - hfs1 * 60;
 		}
-		if (ttime < 10) {
+
+		if (ttime < 10)
 			ttime = "0" + ttime;
-		}
-		if (mfs1 < 10) {
+
+		if (mfs1 < 10)
 			mfs1 = "0" + mfs1;
-		}
+
 		divs.html(hfs1 + ":" + mfs1 + ":" + ttime);
 	}
 
-	time--;
-
-	timeouts['fleet'+obj] = setTimeoutWorker(function(){FlotenTime(obj,time)}, 1000);
+	timeouts['fleet'+obj] = setTimeout(function(){FlotenTime(obj)}, 1000);
 }
 
 var Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
@@ -373,10 +380,9 @@ function hms(layr, X)
 
 function UpdateClock()
 {
-   	var D0 = new Date;
-    hms('clock', new Date(D0.getTime() + serverTime));
+    hms('clock', new Date((new Date).getTime() + serverTime));
 
-	timeouts['clock'] = setTimeoutWorker(UpdateClock, 1000);
+	timeouts['clock'] = setTimeout(UpdateClock, 1000);
 }
 
 function setMaximum(type, number)
@@ -464,9 +470,7 @@ function ClearTimers ()
 		if (timeouts.hasOwnProperty(i))
 		{
 			clearInterval(timeouts[i]);
-			clearIntervalWorker(timeouts[i]);
 			clearTimeout(timeouts[i]);
-			clearTimeoutWorker(timeouts[i]);
 		}
 	}
 
@@ -512,6 +516,7 @@ function load (url)
 			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set == 'buildings' && mod !== undefined ? mod : ''));
 			$('body.window .content').css('width', '');
 			$('#box, .game_content > .content').css('display', '');
+			$('.ui-helper-hidden-accessible').html('');
 
 			$('#gamediv').html(data.html);
 
@@ -649,49 +654,34 @@ $(document).ready(function()
 		}
     }
 
-	$('body').on('mouseenter', '.tooltip', function()
+	if ($.isFunction($(document).tooltip))
 	{
-		var tip = $('#tooltip');
+		$(document).tooltip({
+			items: ".tooltip",
+			track: true,
+			show: false,
+			hide: false,
+			position: {my: "left+25 top+15", at: "left bottom", collision: "flipfit"},
+			content: function ()
+			{
+				if ($(this).hasClass('script'))
+					return eval($(this).data('content'));
+				else
+					return $(this).data('content');
+			},
+			open: function(ev, obj)
+			{
+				if ($(ev.toElement).data('tooltipWidth') !== undefined)
+					obj.tooltip.css({width: $(ev.toElement).data('tooltipWidth')});
+			},
+			close: function()
+			{
+				$('.ui-helper-hidden-accessible').html('');
+			}
+		});
+	}
 
-		if ($(this).data('tooltipWidth'))
-			tip.css({width: $(this).data('tooltipWidth')});
-		else
-			tip.css({width: ''});
-
-		tip.html($(this).data('tooltipContent')).show();
-	})
-	.on('mouseleave', '.tooltip', function()
-	{
-		$('#tooltip').hide();
-	})
-	.on('mousemove', '.tooltip', function(e)
-	{
-		var tip = $('#tooltip');
-
-		if (tip.is(':visible'))
-		{
-			var mousex = e.pageX + 20;
-			var mousey = e.pageY + 20;
-
-			var tipWidth = tip.width();
-			var tipHeight = tip.height();
-
-			var tipVisX = $(window).width() - (mousex + tipWidth);
-			var tipVisY = $(window).height() - (mousey + tipHeight);
-
-			if (tipVisX < 20)
-				mousex = e.pageX - tipWidth - 20;
-
-			if (tipVisY < 20)
-				mousey = e.pageY - tipHeight - 20;
-
-			tip.css({
-				top: mousey,
-				left: mousex
-			});
-		}
-	})
-	.on('mouseenter', ".tooltip_sticky", function (e)
+	$('body').on('mouseenter', ".tooltip_sticky", function (e)
 	{
    		var tip = $('#tooltip');
 		var obj = $(this);
@@ -700,7 +690,7 @@ $(document).ready(function()
 
 		tooltipTimer = setTimeout(function()
 		{
-			tip.html(obj.data('tooltipContent')).addClass('tooltip_sticky_div');
+			tip.html(obj.data('content')).addClass('tooltip_sticky_div');
 
 			tip.css({
 				top : e.pageY - tip.outerHeight() / 2,
@@ -838,22 +828,10 @@ function showLoading ()
 	{
 		blockTimer = true;
 	}, 500);
-
-	/**
-	clearTimeout(loadingTimer);
-	loadingTimer = setTimeout(function()
-	{
-		$('#preloadOverlay').hide();
-		$('#loadingOverlay').show();
-	}, 1000);
-	**/
 }
 
 function hideLoading ()
 {
-	//blockTimer = true;
-	//clearTimeout(loadingTimer);
-	//$('#loadingOverlay').hide();
 	$.fancybox.hideLoading();
 }
 
