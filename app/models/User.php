@@ -522,19 +522,19 @@ class User extends Model
 		switch ($sort)
 		{
 			case 1:
-				$qryPlanets .= "galaxy, system, planet, planet_type ";
+				$qryPlanets .= "galaxy, system, planet, planet_type";
 				break;
 			case 2:
-				$qryPlanets .= "name ";
+				$qryPlanets .= "name";
 				break;
 			case 3:
-				$qryPlanets .= "planet_type ";
+				$qryPlanets .= "planet_type";
 				break;
 			default:
-				$qryPlanets .= "id ";
+				$qryPlanets .= "id";
 		}
 
-		$qryPlanets .= ($order == 1) ? "DESC" : "ASC";
+		$qryPlanets .= ($order == 1) ? " DESC" : " ASC";
 
 		return $qryPlanets;
 	}
@@ -559,47 +559,41 @@ class User extends Model
 
 		if ($userInfo['ally_id'] != 0)
 		{
-			$ally = $this->db->query("SELECT * FROM game_alliance WHERE `id` = '" . $userInfo['ally_id'] . "';")->fetch();
+			/**
+			 * @var \App\Models\Alliance $ally
+			 */
+			$ally = Alliance::findFirst($userInfo['ally_id']);
 
-			if ($ally['owner'] != $userId)
+			if ($ally)
 			{
-				$this->db->query("UPDATE game_alliance SET `members` = '" . ($ally['members'] - 1) . "' WHERE `id` = '" . $ally['id'] . "';");
-				$this->db->query("DELETE FROM game_alliance_members WHERE `u_id` = '" . $userId . "';");
-			}
-			else
-			{
-				$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE ally_id = '" . $ally['id'] . "' AND id != " . $userId . "");
-				$this->db->query("DELETE FROM game_alliance WHERE `id` = '" . $ally['id'] . "';");
-				$this->db->query("DELETE FROM game_alliance_chat WHERE ally_id = '" . $ally['id'] . "'");
-				$this->db->query("DELETE FROM game_alliance_members WHERE a_id = '" . $ally['id'] . "'");
-				$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = '" . $ally['id'] . "'");
-				$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = '" . $ally['id'] . "' OR d_id = '" . $ally['id'] . "';");
-				$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '2' AND `id_owner` = '" . $ally['id'] . "';");
+				if ($ally->owner != $userId)
+					$ally->deleteMember($userId);
+				else
+					$ally->deleteAlly();
 			}
 		}
 
-		$this->db->query("DELETE FROM game_alliance_requests WHERE `u_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1' AND `id_owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_planets WHERE `id_owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_notes WHERE `owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_fleets WHERE `fleet_owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_buddy WHERE `sender` = '" . $userId . "' OR `owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_refs WHERE `r_id` = '" . $userId . "' OR `u_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_attack WHERE `uid` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_credits WHERE `uid` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_email WHERE `user_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_history WHERE `user_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_transfers WHERE `user_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_username WHERE `user_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_stats WHERE `id` = '" . $userId . "' AND type = 1;");
-		$this->db->query("DELETE FROM game_logs WHERE `s_id` = '" . $userId . "' OR `e_id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_users_auth WHERE `user_id` = '" . $userId . "';");
-		
-		$this->db->query("DELETE FROM game_messages WHERE `message_sender` = '" . $userId . "' OR `message_owner` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_users WHERE `id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_users_info WHERE `id` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_banned WHERE `who` = '" . $userId . "';");
-		$this->db->query("DELETE FROM game_log_ip WHERE `id` = '" . $userId . "';");
+		$this->db->delete('game_alliance_requests', 'u_id = ?', [$userId]);
+		$this->db->delete('game_statpoints', 'stat_type = 1 AND id_owner = ?', [$userId]);
+		$this->db->delete('game_planets', 'id_owner = ?', [$userId]);
+		$this->db->delete('game_notes', 'owner = ?', [$userId]);
+		$this->db->delete('game_fleets', 'fleet_owner = ?', [$userId]);
+		$this->db->delete('game_buddy', 'sender = ? OR owner = ?', [$userId, $userId]);
+		$this->db->delete('game_refs', 'r_id = ? OR u_id = ?', [$userId, $userId]);
+		$this->db->delete('game_log_attack', 'uid = ?', [$userId]);
+		$this->db->delete('game_log_credits', 'uid = ?', [$userId]);
+		$this->db->delete('game_log_email', 'user_id = ?', [$userId]);
+		$this->db->delete('game_log_history', 'user_id = ?', [$userId]);
+		$this->db->delete('game_log_transfers', 'user_id = ?', [$userId]);
+		$this->db->delete('game_log_username', 'user_id = ?', [$userId]);
+		$this->db->delete('game_log_stats', 'id = ?  AND type = 1', [$userId]);
+		$this->db->delete('game_logs', 's_id = ? OR e_id = ?', [$userId, $userId]);
+		$this->db->delete('game_users_auth', 'user_id = ?', [$userId]);
+		$this->db->delete('game_messages', 'message_sender = ? OR message_owner = ?', [$userId, $userId]);
+		$this->db->delete('game_users', 'id = ?', [$userId]);
+		$this->db->delete('game_users_info', 'id = ?', [$userId]);
+		$this->db->delete('game_banned', 'who = ?', [$userId]);
+		$this->db->delete('game_log_ip', 'id = ?', [$userId]);
 
 		return true;
 	}

@@ -240,7 +240,7 @@
 		<tr>
 			<? foreach ($parse['anothers_planets'] AS $i => $UserPlanet): ?>
 				<th width="20%" valign="top">
-					<a href="<?=$this->url->get("overview/cp/".$UserPlanet['id']."/re/0/") ?>" title="<?= $UserPlanet['name'] ?>"><img src="/assets/images/planeten/small/s_<?= $UserPlanet['image'] ?>.jpg" height="50" width="50" alt=""></a>
+					<a href="<?=$this->url->get("overview/?chpl=".$UserPlanet['id']."") ?>" title="<?= $UserPlanet['name'] ?>"><img src="/assets/images/planeten/small/s_<?= $UserPlanet['image'] ?>.jpg" height="50" width="50" alt=""></a>
 					<br><?=$UserPlanet['name'] ?>
 				</th>
 				<? if ($i > 0 && $i%5 == 0): ?></tr><tr><? endif; ?>

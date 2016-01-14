@@ -38,7 +38,7 @@ class LogController extends ApplicationController
 
 				if ($this->user->id == $raportrow['user'])
 				{
-					$this->db->query("DELETE FROM game_savelog WHERE `id` = " . $id . " ");
+					$this->db->delete('game_savelog', 'id = ?', [$id]);
 
 					$this->response->redirect("log/");
 				}

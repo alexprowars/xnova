@@ -140,6 +140,31 @@ class Alliance extends Model
 
 		return (isset($this->rights[$method]) ? $this->rights[$method] : false);
 	}
+
+	public function deleteMember ($userId)
+	{
+		$db = $this->getDI()->getShared('db');
+
+		$db->updateAsDict('game_planets', ['id_ally' => 0], 'id_owner = '.$userId);
+		$db->updateAsDict('game_users', ['members' => ($this->members - 1)], 'u_id = '.$this->id);
+
+		$db->delete('game_alliance_members', 'u_id = ?', [$userId]);
+	}
+
+	public function deleteAlly ()
+	{
+		$db = $this->getDI()->getShared('db');
+
+		$db->updateAsDict('game_planets', ['id_ally' => 0], 'id_ally = '.$this->id);
+		$db->updateAsDict('game_users', ['ally_id' => 0, 'ally_name' => ''], 'ally_id = '.$this->id);
+
+		$db->delete('game_alliance', 'id = ?', [$this->id]);
+		$db->delete('game_alliance_chat', 'ally_id = ?', [$this->id]);
+		$db->delete('game_alliance_members', 'a_id = ?', [$this->id]);
+		$db->delete('game_alliance_requests', 'a_id = ?', [$this->id]);
+		$db->delete('game_alliance_diplomacy', 'a_id = ? OR d_id = ?', [$this->id, $this->id]);
+		$db->delete('game_statpoints', 'stat_type = 2 AND id_owner = ?', [$this->id]);
+	}
 }
 
 ?>

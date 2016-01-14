@@ -69,7 +69,7 @@ class Ulogin extends Component implements AuthInterface
 			$find = $this->db->query("SELECT id FROM game_users WHERE id = ".$check['user_id']."")->fetch();
 
 			if (!isset($find['id']))
-				$this->db->query("DELETE FROM game_users_auth WHERE user_id = ".$check['user_id']."");
+				$this->db->delete('game_users_auth', 'user_id = ?', [$check['user_id']]);
 			else
 				return false;
 		}

@@ -30,11 +30,11 @@ class StageZero
 
 		Lang::includeLang('fleet');
 
-		$galaxy = (isset($_GET['galaxy'])) ? intval($_GET['galaxy']) : 0;
-		$system = (isset($_GET['system'])) ? intval($_GET['system']) : 0;
-		$planet = (isset($_GET['planet'])) ? intval($_GET['planet']) : 0;
-		$planettype = (isset($_GET['planettype'])) ? intval($_GET['planettype']) : 0;
-		$target_mission = (isset($_GET['target_mission'])) ? intval($_GET['target_mission']) : 0;
+		$galaxy = $controller->request->getQuery('galaxy', 'int', 0);
+		$system = $controller->request->getQuery('system', 'int', 0);
+		$planet = $controller->request->getQuery('planet', 'int', 0);
+		$planettype = $controller->request->getQuery('type', 'int', 0);
+		$target_mission = $controller->request->getQuery('mission', 'int', 0);
 
 		if (!$galaxy)
 			$galaxy = $controller->planet->galaxy;

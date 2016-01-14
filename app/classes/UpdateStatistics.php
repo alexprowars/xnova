@@ -230,7 +230,7 @@ class UpdateStatistics extends Injectable
 
 	public function clearOldStats ()
 	{
-		$this->db->query("DELETE FROM game_statpoints WHERE `stat_code` >= 2");
+		$this->db->delete('game_statpoints', 'stat_code >= 2');
 		$this->db->query("UPDATE game_statpoints SET `stat_code` = `stat_code` + '1';");
 	}
 

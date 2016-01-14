@@ -20,18 +20,10 @@ class StageOne
 
 		$parse = array();
 
-		$speed = array(
-			10 => 100,
-			9 => 90,
-			8 => 80,
-			7 => 70,
-			6 => 60,
-			5 => 50,
-			4 => 40,
-			3 => 30,
-			2 => 20,
-			1 => 10,
-		);
+		$speed = [];
+
+		for ($i = 10; $i >= 1; $i--)
+			$speed[$i] = $i * 10;
 
 		$g = $controller->request->getPost('galaxy', 'int', 0);
 		$s = $controller->request->getPost('system', 'int', 0);

@@ -66,7 +66,7 @@ class StageTwo
 							Sql::build()->update('game_planets')->set($SubQueryOri)->where('id', '=', $controller->planet->id)->execute();
 							Sql::build()->update('game_planets')->set($SubQueryDes)->where('id', '=', $TargetGate['id'])->execute();
 
-							Sql::build()->update('game_users')->setField('current_planet', $TargetGate['id'])->where('id', '=', $controller->user->id)->execute();
+							Sql::build()->update('game_users')->setField('planet_current', $TargetGate['id'])->where('id', '=', $controller->user->id)->execute();
 
 							$controller->planet->last_jump_time = $JumpTime;
 							$RestString = $controller->planet->GetNextJumpWaitTime();

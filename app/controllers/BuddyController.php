@@ -72,9 +72,9 @@ class BuddyController extends ApplicationController
 		if (isset($buddy['id']))
 		{
 			if ($buddy['owner'] == $this->user->id && $buddy['active'] == 1)
-				$this->db->query("DELETE FROM game_buddy WHERE `id` = '" . $buddy['id'] . "'");
+				$this->db->delete('game_buddy', 'id = ?', [$buddy['id']]);
 			elseif ($buddy['sender'] == $this->user->id)
-				$this->db->query("DELETE FROM game_buddy WHERE `id` = '" . $buddy['id'] . "'");
+				$this->db->delete('game_buddy', 'id = ?', [$buddy['id']]);
 			else
 				$this->message('Заявка не найдена', 'Ошибка');
 

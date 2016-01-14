@@ -67,8 +67,8 @@ class Auth extends Component
 					die('Ваш аккаунт заблокирован. Срок окончания блокировки: '.$this->game->datezone("d.m.Y H:i:s", $Result->banned).'<br>Для получения дополнительной информации зайдите <a href="/banned/">сюда</a>');
 				elseif ($Result->banned > 0 && $Result->banned < time())
 				{
-					$this->db->query("DELETE FROM game_banned WHERE `who` = '".$Result->id."'");
-					$this->db->query("UPDATE game_users SET`banned` = '0' WHERE `id` = '".$Result->id."'");
+					$this->db->delete('game_banned', 'who = ?', [$Result->id]);
+					$this->db->updateAsDict('game_users', ['banned' => 0], 'id = '.$Result->id);
 
 					$Result->banned = 0;
 				}

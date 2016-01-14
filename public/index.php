@@ -15,6 +15,15 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ini_set('error_log', APP_PATH.'/php_errors.log');
 
+if (isset($_GET['game']))
+{
+	setcookie('game', 1, 0);
+	$_COOKIE['game'] = 1;
+}
+
+if (!isset($_COOKIE['game']))
+	die(':)');
+
 try
 {
 	if (DEBUG)

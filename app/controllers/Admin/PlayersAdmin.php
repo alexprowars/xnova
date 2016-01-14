@@ -220,7 +220,7 @@ class PlayerAdmin
 						$parse['adm_plyer_lst'] = '';
 						while ($Usr = $SelUser->fetch())
 						{
-							$UsrMain = $controller->db->query("SELECT `name` FROM game_planets WHERE `id` = '" . $Usr['id_planet'] . "';")->fetch();
+							$UsrMain = $controller->db->query("SELECT `name` FROM game_planets WHERE `id` = '" . $Usr['planet_id'] . "';")->fetch();
 							$parse['adm_plyer_lst'] .= "<tr><th>" . $Usr['username'] . "</th><th>[" . $Usr['galaxy'] . ":" . $Usr['system'] . ":" . $Usr['planet'] . "] " . $UsrMain['name'] . "</th></tr>";
 						}
 						$controller->view->pick('admin/adminpanel_ans2');

@@ -95,7 +95,7 @@ class UpdateTask extends ApplicationTask
 				{
 					if (!isset($missionObjPattern[$fleetRow['fleet_mission']]))
 					{
-						$this->db->query("DELETE FROM game_fleets WHERE `fleet_id` = ".$fleetRow['fleet_id']);
+						$this->db->delete('game_fleets', 'fleet_id = ?', [$fleetRow['fleet_id']]);
 
 						continue;
 					}

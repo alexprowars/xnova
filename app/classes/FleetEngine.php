@@ -23,7 +23,7 @@ class FleetEngine extends Injectable
 		if (!$fleetId)
 			$fleetId = $this->_fleet['fleet_id'];
 
-		$this->db->query("DELETE FROM game_fleets WHERE `fleet_id` = ".$fleetId);
+		$this->db->delete('game_fleets', 'fleet_id = ?', [$fleetId]);
 	}
 
 	public function RestoreFleetToPlanet ($Start = true, $fleet = true)
@@ -261,8 +261,8 @@ class FleetEngine extends Injectable
 
 		if ($this->_fleet['fleet_group'] != 0)
 		{
-			$this->db->query("DELETE FROM game_aks WHERE id = " . $this->_fleet['fleet_group'] . ";");
-			$this->db->query("DELETE FROM game_aks_user WHERE aks_id = " . $this->_fleet['fleet_group'] . ";");
+			$this->db->delete('game_aks', 'id = ?', [$this->_fleet['fleet_group']]);
+			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet['fleet_group']]);
 		}
 	}
 

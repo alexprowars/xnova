@@ -28,8 +28,8 @@ class AllianceController extends ApplicationController
 
 		if (!$ally)
 		{
-			$this->db->query("UPDATE game_users SET ally_id = 0 WHERE id = ".$this->user->id."");
-			$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
+			$this->db->updateAsDict('game_users', ['ally_id' => 0], 'id = '.$this->user->id);
+			$this->db->delete('game_alliance_members', 'u_id = ?', [$this->user->id]);
 
 			$this->message(_getText('ally_notexist'), _getText('your_alliance'), '/alliance/');
 			die();
@@ -41,8 +41,7 @@ class AllianceController extends ApplicationController
 
 		if (!$this->ally->member)
 		{
-			$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . "");
-			$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $this->ally->id . ", " . $this->user->id . ", " . time() . ")");
+			$this->db->query('game_alliance_members', 'u_id = ?', [$this->user->id]);
 
 			$this->ally->member = new AllianceMember();
 			$this->ally->member->a_id = $this->ally->id;
@@ -488,13 +487,7 @@ class AllianceController extends ApplicationController
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
 				$this->message(_getText('Denied_access'), _getText('Members_list'));
 
-			$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_ally = ".$this->ally->id."");
-
-			$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE ally_id = '" . $this->ally->id . "'");
-			$this->db->query("DELETE FROM game_alliance WHERE id = '" . $this->ally->id . "'");
-			$this->db->query("DELETE FROM game_alliance_members WHERE a_id = '" . $this->ally->id . "'");
-			$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = '" . $this->ally->id . "'");
-			$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = '" . $this->ally->id . "' OR d_id = '" . $this->ally->id . "'");
+			$this->ally->deleteAlly();
 
 			$this->response->redirect('alliance/');
 		}
@@ -668,12 +661,9 @@ class AllianceController extends ApplicationController
 		if ($this->ally->owner == $this->user->id)
 			$this->message(_getText('Owner_cant_go_out'), _getText('Alliance'));
 
-		if (isset($_GET['yes']))
+		if ($this->request->hasQuery('yes'))
 		{
-			$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$this->user->id." AND id_ally = ".$this->ally->id."");
-
-			$this->db->query("UPDATE game_users SET `ally_id` = 0, `ally_name` = '' WHERE `id` = '" . $this->user->id . "'");
-			$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $this->user->id . ";");
+			$this->ally->deleteMember($this->user->id);
 
 			$html = $this->MessageForm(_getText('Go_out_welldone'), "<br>", '/alliance/', _getText('Ok'));
 		}
@@ -950,13 +940,11 @@ class AllianceController extends ApplicationController
 
 			$this->tag->setTitle(_getText('make_alliance'));
 			$this->view->setVar('html', $this->MessageForm(str_replace('%s', $_POST['atag'], _getText('ally_maked')), str_replace('%s', $_POST['atag'], _getText('alliance_has_been_maked')) . "<br><br>", "/alliance/", _getText('Ok')));
-			$this->showTopPanel(false);
 		}
 		else
-		{
 			$this->tag->setTitle(_getText('make_alliance'));
-			$this->showTopPanel(false);
-		}
+
+		$this->showTopPanel(false);
 
 		return true;
 	}

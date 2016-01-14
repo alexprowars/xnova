@@ -256,8 +256,8 @@ class GalaxyController extends ApplicationController
 
 	private function ShowGalaxyMISelector ($Galaxy, $System, $Planet, $Current, $MICount)
 	{
-		$Result = "<form action=\"/raketenangriff/?c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
-		$Result .= "<table border=\"0\">";
+		$Result = "<form action=\"/rocket/?c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
+		$Result .= "<table border=\"0\" class=\"table\">";
 		$Result .= "<tr>";
 		$Result .= "<td class=\"c\" colspan=\"3\">";
 		$Result .= _getText('gm_launch') . " [" . $Galaxy . ":" . $System . ":" . $Planet . "]";

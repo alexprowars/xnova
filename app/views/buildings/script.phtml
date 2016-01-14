@@ -16,25 +16,20 @@
 	<div class="separator"></div>
 </form>
 <script type="text/javascript">
-	v = new Date();
-	p = 0;
-	g = <?=$build['b_hangar_id_plus'] ?>;
-	s = 0;
-	var hs = 0;
-	of = 1;
-	c = new Array(<?=$build['c'] ?>'');
-	b = new Array(<?=$build['b'] ?>'');
-	a = new Array(<?=$build['a'] ?>'');
-	aa = 'завершено';
+	var v = new Date();
+	var p = 0;
+	var g = <?=$build['b_hangar_id_plus'] ?>;
+	var s = 0;
+	var of = 1;
+	var c = new Array(<?=$build['c'] ?>'');
+	var b = new Array(<?=$build['b'] ?>'');
+	var a = new Array(<?=$build['a'] ?>'');
+	var aa = 'завершено';
+
+	xd();
 
 	function t()
 	{
-		if (hs == 0)
-		{
-			xd();
-			hs = 1;
-		}
-
 		var n = new Date();
 		var s = c[p] - g - Math.round((n.getTime() - v.getTime()) / 1000);
 		s = Math.round(s);
@@ -50,6 +45,8 @@
 				p++;
 				xd();
 			}
+			g = 0;
+			v = new Date();
 			s = 0;
 		}
 		if (s > 59)
@@ -86,17 +83,14 @@
 
 		for (var iv = p; iv <= b.length - 2; iv++)
 		{
-			if (a[iv] < 2)
-				ae = " ";
-			else
-				ae = " ";
+			var act;
 
 			if (iv == p)
 				act = " (в процессе)";
 			else
 				act = "";
 
-			document.Atr.auftr.options[document.Atr.auftr.length] = new Option(a[iv] + ae + " \"" + b[iv] + "\"" + act, iv + of);
+			document.Atr.auftr.options[document.Atr.auftr.length] = new Option(a[iv] + " \"" + b[iv] + "\"" + act, iv + of);
 		}
 	}
 

@@ -14,9 +14,9 @@ class Back
 		$TxtColor = "red";
 		$BoxMessage = _getText('fl_notback');
 
-		if (is_numeric($_POST['fleetid']))
+		if ($controller->request->hasPost('fleetid'))
 		{
-			$fleetid = intval($_POST['fleetid']);
+			$fleetid = $controller->request->getPost('fleetid', 'int', 0);
 
 			$FleetRow = $controller->db->query("SELECT * FROM game_fleets WHERE `fleet_id` = '" . $fleetid . "';")->fetch();
 
@@ -37,22 +37,21 @@ class Back
 
 					$ReturnFlyingTime = $CurrentFlyingTime + time();
 
-					$QryUpdateFleet = "UPDATE game_fleets SET ";
-					$QryUpdateFleet .= "`fleet_start_time` = '" . (time() - 1) . "', ";
-					$QryUpdateFleet .= "`fleet_end_stay` = '0', ";
-					$QryUpdateFleet .= "`fleet_end_time` = '" . ($ReturnFlyingTime + 1) . "', ";
-					$QryUpdateFleet .= "`fleet_target_owner` = '" . $controller->user->id . "', ";
-					$QryUpdateFleet .= "`fleet_group` = 0, ";
-					$QryUpdateFleet .= "fleet_time = fleet_end_time, `fleet_mess` = '1' ";
-					$QryUpdateFleet .= "WHERE ";
-					$QryUpdateFleet .= "`fleet_id` = '" . $fleetid . "';";
-
-					$controller->db->query($QryUpdateFleet);
+					$controller->db->updateAsDict('game_fleets',
+					[
+						'fleet_start_time'	 	=> time() - 1,
+						'fleet_end_stay' 		=> 0,
+						'fleet_end_time' 		=> $ReturnFlyingTime + 1,
+						'fleet_target_owner' 	=> $controller->user->id,
+						'fleet_group' 			=> 0,
+						'fleet_time' 			=> $ReturnFlyingTime + 1,
+						'fleet_mess' 			=> 1,
+					], 'fleet_id = '.$fleetid);
 
 					if ($FleetRow['fleet_group'] != 0 && $FleetRow['fleet_mission'] == 1)
 					{
-						$controller->db->query("DELETE FROM game_aks WHERE id = " . $FleetRow['fleet_group'] . ";");
-						$controller->db->query("DELETE FROM game_aks_user WHERE aks_id = " . $FleetRow['fleet_group'] . ";");
+						$controller->db->delete('game_aks', 'id = ?', [$FleetRow['fleet_group']]);
+						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow['fleet_group']]);
 					}
 
 					$BoxTitle = _getText('fl_sback');

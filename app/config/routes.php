@@ -40,16 +40,17 @@ $router->add('/galaxy/:params', array
 	'params' 		=> 1,
 ));
 
-$router->add('/galaxy/:int/:int/:params', array
+$router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/:params', array
 (
 	'controller' 	=> 'galaxy',
 	'action' 		=> 'index',
 	'galaxy' 		=> 1,
 	'system' 		=> 2,
-	'r' 			=> 3,
+	'r' 			=> '3',
+	'params' 		=> 3
 ));
 
-$router->add('/galaxy/:int/:int/:int/:params', array
+$router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/([0-9])/:params', array
 (
 	'controller' 	=> 'galaxy',
 	'action' 		=> 'index',

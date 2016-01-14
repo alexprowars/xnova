@@ -164,7 +164,7 @@ function changePlanet (pId)
 {
 	var a = window.location.pathname.split('/');
 
-	var url = '/'+a[1]+(a[2] !== undefined && a[2] != '' ? '/'+a[2] : '')+'/?chpl='+pId+'';
+	var url = '/'+a[1]+(a[2] !== undefined && a[2] != '' && a[1] != 'fleet' ? '/'+a[2] : '')+'/?chpl='+pId+'';
 
 	if (ajax_nav == 1)
 		load(url);

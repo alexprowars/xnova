@@ -72,7 +72,7 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 						$moonDestroyed = true;
 
 						$this->db->query("UPDATE game_planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE `id` = '" . $TargetMoon['id'] . "';");
-						$this->db->query("UPDATE game_users SET current_planet = id_planet WHERE id = " . $TargetMoon['id_owner'] . ";");
+						$this->db->query("UPDATE game_users SET planet_current = planet_id WHERE id = " . $TargetMoon['id_owner'] . ";");
 
 						$this->db->query("UPDATE game_fleets SET fleet_start_type = 1 WHERE fleet_start_galaxy = " . $this->_fleet['fleet_end_galaxy'] . " AND fleet_start_system = " . $this->_fleet['fleet_end_system'] . " AND fleet_start_planet = " . $this->_fleet['fleet_end_planet'] . " AND fleet_start_type = 3;");
 						$this->db->query("UPDATE game_fleets SET fleet_end_type = 1 WHERE fleet_end_galaxy = " . $this->_fleet['fleet_end_galaxy'] . " AND fleet_end_system = " . $this->_fleet['fleet_end_system'] . " AND fleet_end_planet = " . $this->_fleet['fleet_end_planet'] . " AND fleet_end_type = 3;");
