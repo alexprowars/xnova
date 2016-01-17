@@ -123,11 +123,11 @@ class PlayerGroup extends Iterable
 		return $shipsCleaners;
 	}
 
-	public function repairShields()
+	public function repairShields($round = 0)
 	{
 		foreach ($this->array as $idPlayer => $player)
 		{
-			$player->repairShields();
+			$player->repairShields($round);
 		}
 	}
 

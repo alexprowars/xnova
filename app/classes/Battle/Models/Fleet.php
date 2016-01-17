@@ -206,10 +206,10 @@ class Fleet extends Iterable
 		return $shipsCleaners;
 	}
 
-	public function repairShields()
+	public function repairShields($round = 0)
 	{
 		foreach ($this->array as $id => $shipTypeDefender)
-			$shipTypeDefender->repairShields();
+			$shipTypeDefender->repairShields($round);
 	}
 
 	public function isEmpty()

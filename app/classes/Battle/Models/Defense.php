@@ -11,7 +11,7 @@ class Defense extends ShipType
 
 	public function getRepairProb()
 	{
-		return DEFENSE_REPAIR_PROB;
+		return ($this->repairProb > 0 ? $this->repairProb : DEFENSE_REPAIR_PROB);
 	}
 }
 

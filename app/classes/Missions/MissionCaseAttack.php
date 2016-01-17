@@ -128,7 +128,12 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				$homeFleet->addShipType($this->getShipType($i, array($target->{$this->game->resource[$i]}, (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) ? $targetUser->{$this->game->resource[$l]} : 0)), $res));
+				$shipType = $this->getShipType($i, array($target->{$this->game->resource[$i]}, (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) ? $targetUser->{$this->game->resource[$l]} : 0)), $res);
+
+				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship')
+					$shipType->setRepairProb(0.8);
+
+				$homeFleet->addShipType($shipType);
 			}
 		}
 
@@ -151,11 +156,6 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 		else
 			$defenders->getPlayer($targetUser->id)->addDefense($homeFleet);
-
-		if ($targetUser->rpg_ingenieur)
-			$this->config->game->offsetSet('repairDefenceFactor', 0.8);
-		else
-			$this->config->game->offsetSet('repairDefenceFactor', 0.7);
 
 		if (!$this->_fleet['raunds'])
 			$this->_fleet['raunds'] = 6;

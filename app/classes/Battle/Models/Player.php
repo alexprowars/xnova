@@ -164,10 +164,10 @@ class Player extends Iterable
 		return $shipsCleaners;
 	}
 
-	public function repairShields()
+	public function repairShields($round = 0)
 	{
 		foreach ($this->array as $idFleet => $fleet)
-			$fleet->repairShields();
+			$fleet->repairShields($round);
 	}
 
 	public function getEquivalentFleetContent()

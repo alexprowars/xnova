@@ -96,8 +96,8 @@ class Round
 		//--------------------------------------------------------------------------//
 
 		//------------------------- Repairing shields ------------------------------//
-		$this->defenders->repairShields();
-		$this->attackers->repairShields();
+		$this->defenders->repairShields($this->number);
+		$this->attackers->repairShields($this->number);
 		//--------------------------------------------------------------------------//
 	}
 
@@ -239,7 +239,12 @@ class Round
 				foreach ($fleetPS as $idTypeD => $typeDPS)
 				{
 					foreach ($typeDPS as $typeAPS)
+					{
+						/**
+						 * @var \App\Battle\CombatObject\PhysicShot $typeAPS
+						 */
 						$ass += $typeAPS->getAssorbedDamage();
+					}
 				}
 			}
 		}

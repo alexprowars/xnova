@@ -31,6 +31,8 @@ class ShipType extends Type
 	protected $lastShipHit;
 	private $cost;
 
+	public $repairProb = 0;
+
 	/**
 	 * ShipType::__construct()
 	 *
@@ -426,11 +428,14 @@ class ShipType extends Type
 	/**
 	 * ShipType::repairShields()
 	 * Repair all shields.
-	 * @return void
+	 * @param int $round
 	 */
-	public function repairShields()
+	public function repairShields($round = 0)
 	{
-		$this->currentShield = $this->fullShield;
+		if ($round > 4)
+			$round = 4;
+
+		$this->currentShield = ceil($this->fullShield * (1 - 0.25 * $round));
 	}
 
 	/**
@@ -441,6 +446,11 @@ class ShipType extends Type
 	public function isShieldDisabled()
 	{
 		return $this->currentShield / $this->getCount() < 0.01;
+	}
+
+	public function setRepairProb ($factor = 0)
+	{
+		$this->repairProb = floatval($factor);
 	}
 
 	/**

@@ -11,7 +11,7 @@ class Ship extends ShipType
 
 	public function getRepairProb()
 	{
-		return SHIP_REPAIR_PROB;
+		return ($this->repairProb > 0 ? $this->repairProb : SHIP_REPAIR_PROB);
 	}
 }
 

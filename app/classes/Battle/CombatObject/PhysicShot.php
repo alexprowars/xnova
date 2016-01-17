@@ -94,7 +94,7 @@ class PhysicShot
 	 * Start the system
 	 */
 	public function start()
-	{	 
+	{
 		$this->bounce();
 		$this->assorb();
 		$this->inflict();
