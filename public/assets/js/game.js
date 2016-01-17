@@ -395,8 +395,8 @@ function setMaximum(type, number)
 
 function UpdateGameInfo (mes, ally)
 {
-	$('#new_messages').html(''+mes+'');
-	$('#ally_messages').html(''+ally+'');
+	$('.ico_mail + b').html(''+mes+'');
+	$('.ico_alliance + b').html(''+ally+'');
 }
 
 function setCookie (name, value, expires, path, domain, secure)
