@@ -3,7 +3,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Helpers;
-use App\Sql;
 
 class Modules
 {
@@ -28,13 +27,12 @@ class Modules
 					{
 						$active = $controller->request->getPost('active', 'string', '') != '' ? 1 : 0;
 
-						Sql::build()->insert('game_cms_modules')->set(Array
-						(
+						$controller->db->insertAsDict('game_cms_modules',
+						[
 							'active' 	=> $active,
 							'alias' 	=> Helpers::CheckString($controller->request->getPost('alias', 'string', '')),
 							'name' 		=> Helpers::CheckString($controller->request->getPost('name', 'string', ''))
-						))
-						->execute();
+						]);
 
 						$controller->response->redirect('admin/modules/action/edit/id/'.$controller->db->lastInsertId().'/');
 					}
@@ -60,13 +58,12 @@ class Modules
 						{
 							$active = $controller->request->getPost('active', 'string', '') != '' ? 1 : 0;
 
-							Sql::build()->update('game_cms_modules')->set(Array
-							(
+							$controller->db->updateAsDict('game_cms_modules',
+							[
 								'active' 	=> $active,
 								'alias' 	=> Helpers::CheckString($controller->request->getPost('alias', 'string', '')),
 								'name' 		=> Helpers::CheckString($controller->request->getPost('name', 'string', ''))
-							))
-							->where('id', '=', $info['id'])->execute();
+							], "id = ".$info['id']);
 
 							$controller->response->redirect('admin/modules/action/edit/id/'.$info['id'].'/');
 						}

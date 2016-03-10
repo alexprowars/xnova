@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Queue;
-use App\Sql;
 
 class RaceController extends ApplicationController
 {
@@ -48,10 +47,10 @@ class RaceController extends ApplicationController
 					$this->db->query("UPDATE game_users SET race = " . $r . " WHERE id = " . $this->user->id . ";");
 
 					if ($numChanges > 0)
-						Sql::build()->update('game_users_info')->setField('-free_race_change', 1)->where('id', '=', $this->user->id)->execute();
+						$this->user->saveData(['-free_race_change' => 1]);
 					else
 					{
-						Sql::build()->update('game_users')->setField('-credits', 100)->where('id', '=', $this->user->id)->execute();
+						$this->user->saveData(['-credits' => 100]);
 						$this->db->insertAsDict('game_log_credits', ['uid' => $this->user->id, 'time' => time(), 'credits' => 100, 'type' => 7]);
 					}
 
@@ -74,12 +73,12 @@ class RaceController extends ApplicationController
 		
 			if ($r > 0)
 			{
-				Sql::build()->update('game_users')->set(Array('race' => intval($r), 'bonus' => (time() + 86400)));
-		
+				$update = ['race' => intval($r), 'bonus' => time() + 86400];
+
 				foreach ($this->game->reslist['officier'] AS $oId)
-					Sql::build()->setField($this->game->resource[$oId], (time() + 86400));
+					$update[$this->game->resource[$oId]] = time() + 86400;
 					
-				Sql::build()->where('id', '=', $this->user->id)->execute();
+				$this->user->saveData($update);
 		
 				$this->response->redirect("/tutorial/");
 			}

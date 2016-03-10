@@ -3,7 +3,6 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
-use App\Sql;
 
 class StartController extends ApplicationController
 {
@@ -88,12 +87,12 @@ class StartController extends ApplicationController
 
 				if ($r != 0)
 				{
-					Sql::build()->update('game_users')->set(Array('race' => $r, 'bonus' => (time() + 86400)));
+					$update = ['race' => $r, 'bonus' => (time() + 86400)];
 
 					foreach ($this->game->reslist['officier'] AS $oId)
-						Sql::build()->setField($this->game->resource[$oId], (time() + 86400));
+						$update[$this->game->resource[$oId]] = time() + 86400;
 
-					Sql::build()->where('id', '=', $this->user->getId())->execute();
+					$this->user->saveData($update);
 
 					$this->game->setRequestData(['redirect' => '/tutorial/']);
 					$this->view->disable();

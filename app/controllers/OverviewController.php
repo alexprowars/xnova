@@ -6,7 +6,6 @@ use App\Helpers;
 use App\Lang;
 use App\Models\Planet;
 use App\Queue;
-use App\Sql;
 
 class OverviewController extends ApplicationController
 {
@@ -312,7 +311,7 @@ class OverviewController extends ApplicationController
 			if ($image > 0 && $image <= $parse['images'][$parse['type']])
 			{
 				$this->db->updateAsDict('game_planets', ['image' => $parse['type'].'planet'.($image < 10 ? '0' : '').$image], 'id = '.$this->planet->id);
-				Sql::build()->update('game_users')->setField('-credits', 1)->where('id', '=', $this->user->getId())->execute();
+				$this->user->saveData(['-credits' => 1]);
 
 				$this->response->redirect('/overview/');
 			}
@@ -346,7 +345,7 @@ class OverviewController extends ApplicationController
 			if ($this->user->bonus_multi > 1)
 				$arUpdate['+credits'] = 1;
 
-			Sql::build()->update('game_users')->set($arUpdate)->where('id', '=', $this->user->id)->execute();
+			$this->user->saveData($arUpdate);
 
 			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
 		}

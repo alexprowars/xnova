@@ -8,18 +8,12 @@ use Phalcon\DI\FactoryDefault;
 
 define('APP_PATH', dirname(__DIR__.'../') . '/');
 
-define('DEBUG', false);
+define('DEBUG', true);
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ini_set('error_log', APP_PATH.'/php_errors.log');
-
-if (isset($_GET['game']))
-{
-	setcookie('game', 1, 0);
-	$_COOKIE['game'] = 1;
-}
 
 try
 {

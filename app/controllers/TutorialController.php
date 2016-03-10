@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
-use App\Sql;
 
 class TutorialController extends ApplicationController
 {

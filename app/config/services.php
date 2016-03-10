@@ -21,31 +21,31 @@ $di = new FactoryDefault();
 
 $di->setShared('cookies', function()
 {
-    $cookies = new Phalcon\Http\Response\Cookies();
-    $cookies->useEncryption(false);
+	$cookies = new Phalcon\Http\Response\Cookies();
+	$cookies->useEncryption(false);
 
-    return $cookies;
+	return $cookies;
 });
 
 $di->setShared('router', function ()
 {
-    return require __DIR__ . '/routes.php';
+	return require __DIR__ . '/routes.php';
 });
 
 $di->setShared(
-    'url', function () use ($config)
+	'url', function () use ($config)
 	{
 		/**
 		 * @var Object $config
 		 */
-        $url = new UrlResolver();
-        $url->setBaseUri($config->application->baseUri);
-        return $url;
-    }
+		$url = new UrlResolver();
+		$url->setBaseUri($config->application->baseUri);
+		return $url;
+	}
 );
 
 $di->setShared(
-    'db', function () use ($config)
+	'db', function () use ($config)
 	{
 		/*$logger = new FileLogger(APP_PATH."app/logs/debug.log");
 
@@ -64,26 +64,26 @@ $di->setShared(
 		 */
 		$connection = new Database(
 		[
-            'host' 		=> $config->database->host,
-            'username' 	=> $config->database->username,
-            'password' 	=> $config->database->password,
-            'dbname' 	=> $config->database->dbname,
+			'host' 		=> $config->database->host,
+			'username' 	=> $config->database->username,
+			'password' 	=> $config->database->password,
+			'dbname' 	=> $config->database->dbname,
 			'options' 	=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-        ]);
+		]);
 
 		//$connection->setEventsManager($eventsManager);
 
 		return $connection;
-    }
+	}
 );
 
 $di->set(
-    'session', function ()
+	'session', function ()
 	{
-        $session = new SessionAdapter();
-        $session->start();
-        return $session;
-    }
+		$session = new SessionAdapter();
+		$session->start();
+		return $session;
+	}
 );
 
 $di->set('dispatcher', function () use ($di)
@@ -102,7 +102,7 @@ $di->set('dispatcher', function () use ($di)
 			case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
 				$dispatcher->forward([
 					'controller' => 'error',
-					'action'     => 'notFound',
+					'action'	 => 'notFound',
 				]);
 				return false;
 		}
@@ -110,10 +110,10 @@ $di->set('dispatcher', function () use ($di)
 		return true;
 	});
 
-    $dispatcher = new Dispatcher();
+	$dispatcher = new Dispatcher();
 	$dispatcher->setDefaultNamespace('App\Controllers');
 	$dispatcher->setEventsManager($eventsManager);
-    return $dispatcher;
+	return $dispatcher;
 });
 
 $di->setShared('view', function()
@@ -125,12 +125,12 @@ $di->setShared('view', function()
 
 $di->setShared('auth', function ()
 {
-    return new Auth();
+	return new Auth();
 });
 
 $di->setShared('game', function ()
 {
-    return new Game();
+	return new Game();
 });
 
 $di->remove('transactionManager');
@@ -142,13 +142,13 @@ $di->setShared('config', $config);
 
 $di->setShared('crypt', function()
 {
-    $crypt = new Crypt();
-    $crypt->setKey('fsdgdghrdfhgasdfsd');
-    return $crypt;
+	$crypt = new Crypt();
+	$crypt->setKey('fsdgdghrdfhgasdfsd');
+	return $crypt;
 });
 
 $di->setShared(
-    'cache', function () use ($config, $di)
+	'cache', function () use ($config, $di)
 	{
 		$frontCache = new \Phalcon\Cache\Frontend\None(["lifetime" => 3600]);
 
@@ -168,8 +168,8 @@ $di->setShared(
 			$cache = new \Fabfuel\Prophiler\Decorator\Phalcon\Cache\BackendDecorator($cache, $profiler);
 		}
 
-        return $cache;
-    }
+		return $cache;
+	}
 );
 
 $di->set('modelsMetadata', function()
@@ -178,16 +178,16 @@ $di->set('modelsMetadata', function()
 		'lifetime' 		=> 3600,
 		'prefix'  		=> 'xnova',
 		'host' 			=> 'localhost',
-    	'port' 			=> 11211,
-    	'persistent' 	=> false,
+		'port' 			=> 11211,
+		'persistent' 	=> false,
 	]);
 
 	return $metaData;
 });
 
 Model::setup([
-    'events' 			=> true,
-    'columnRenaming' 	=> false,
+	'events' 			=> true,
+	'columnRenaming' 	=> false,
 	'notNullValidations'=> false,
 ]);
  

@@ -3,7 +3,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Helpers;
-use App\Sql;
 
 class Groups
 {
@@ -32,11 +31,7 @@ class Groups
 							$error = 'Не указано имя пользователя';
 						else
 						{
-							Sql::build()->update('game_users_groups')->set(Array
-							(
-								'name' 	=> Helpers::CheckString($controller->request->getPost('name', null, ''))
-							))
-							->where('id', '=', $info['id'])->execute();
+							$controller->db->updateAsDict('game_users_groups', ['name' 	=> Helpers::CheckString($controller->request->getPost('name', null, ''))], "id = ".$info['id']);
 
 							if (is_array($controller->request->getPost('module', null, '')))
 							{
@@ -54,23 +49,21 @@ class Groups
 
 										if (!isset($f['id']))
 										{
-											Sql::build()->insert('game_cms_rights')->set(Array
-											(
+											$controller->db->insertAsDict('game_cms_rights',
+											[
 												'group_id' 	=> $info['id'],
 												'module_id' => $check['id'],
 												'right_id' 	=> $rightId
-											))
-											->execute();
+											]);
 										}
 										else
 										{
-											Sql::build()->insert('game_cms_rights')->set(Array
-											(
+											$controller->db->insertAsDict('game_cms_rights',
+											[
 												'group_id' 	=> $info['id'],
 												'module_id' => $check['id'],
 												'right_id' 	=> $rightId
-											))
-											->where('id', '=', $f['id'])->execute();
+											]);
 										}
 									}
 								}

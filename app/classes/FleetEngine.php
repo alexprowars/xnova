@@ -70,7 +70,7 @@ class FleetEngine extends Injectable
 			}
 		}
 
-		Sql::build()->update('game_planets');
+		$update = [];
 
 		if ($fleet)
 		{
@@ -79,23 +79,23 @@ class FleetEngine extends Injectable
 			foreach ($fleetData as $shipId => $shipArr)
 			{
 				if ($shipArr['cnt'] > 0)
-					Sql::build()->setField('+'.$this->game->resource[$shipId], $shipArr['cnt']);
+					$update['+'.$this->game->resource[$shipId]] = $shipArr['cnt'];
 			}
 		}
 
-		Sql::build()->set(Array
-		(
-			'+metal' 		=> $this->_fleet['fleet_resource_metal'],
-			'+crystal' 		=> $this->_fleet['fleet_resource_crystal'],
-			'+deuterium' 	=> $this->_fleet['fleet_resource_deuterium']
-		));
+		$update['+metal'] 		= $this->_fleet['fleet_resource_metal'];
+		$update['+crystal'] 	= $this->_fleet['fleet_resource_crystal'];
+		$update['+deuterium'] 	= $this->_fleet['fleet_resource_deuterium'];
 
-		Sql::build()->where('galaxy', '=', $this->_fleet['fleet_'.$p.'_galaxy'])->addAND()
-					->where('system', '=', $this->_fleet['fleet_'.$p.'_system'])->addAND()
-					->where('planet', '=', $this->_fleet['fleet_'.$p.'_planet'])->addAND()
-					->where('planet_type', '=', $this->_fleet['fleet_'.$p.'_type']);
-
-		Sql::build()->execute();
+		$this->db->updateAsDict('game_planets', $update, [
+			'conditions' => 'galaxy = ? AND system = ? AND planet = ? AND planet_type = ?',
+			'bind' => [
+				$this->_fleet['fleet_'.$p.'_galaxy'],
+				$this->_fleet['fleet_'.$p.'_system'],
+				$this->_fleet['fleet_'.$p.'_planet'],
+				$this->_fleet['fleet_'.$p.'_type']
+			]
+		]);
 	}
 
 	public function StoreGoodsToPlanet ($Start = true)
@@ -103,24 +103,27 @@ class FleetEngine extends Injectable
 		if (!isset($this->_fleet["fleet_id"]))
 			return;
 
-		Sql::build()->update('game_planets')->set(Array
-		(
+		$update =
+		[
 			'+metal' 		=> $this->_fleet['fleet_resource_metal'],
 			'+crystal' 		=> $this->_fleet['fleet_resource_crystal'],
 			'+deuterium' 	=> $this->_fleet['fleet_resource_deuterium']
-		));
+		];
 
 		if ($Start)
 			$p = 'start';
 		else
 			$p = 'end';
 
-		Sql::build()->where('galaxy', '=', $this->_fleet['fleet_'.$p.'_galaxy'])->addAND()
-					->where('system', '=', $this->_fleet['fleet_'.$p.'_system'])->addAND()
-					->where('planet', '=', $this->_fleet['fleet_'.$p.'_planet'])->addAND()
-					->where('planet_type', '=', $this->_fleet['fleet_'.$p.'_type']);
-
-		Sql::build()->execute();
+		$this->db->updateAsDict('game_planets', $update, [
+			'conditions' => 'galaxy = ? AND system = ? AND planet = ? AND planet_type = ?',
+			'bind' => [
+				$this->_fleet['fleet_'.$p.'_galaxy'],
+				$this->_fleet['fleet_'.$p.'_system'],
+				$this->_fleet['fleet_'.$p.'_planet'],
+				$this->_fleet['fleet_'.$p.'_type']
+			]
+		]);
 	}
 
 	public function SpyTarget ($TargetPlanet, $Mode, $TitleString)
@@ -252,12 +255,10 @@ class FleetEngine extends Injectable
 		$update['fleet_mess'] = 1;
 		$update['fleet_time'] = $this->_fleet['fleet_end_time'];
 
-		Sql::build()->update('game_fleets')->set($update);
-
 		if (!$fleetId)
-			Sql::build()->where('fleet_id', '=', $this->_fleet['fleet_id'])->execute();
-		else
-			Sql::build()->where('fleet_id', '=', $fleetId)->execute();
+			$fleetId = $this->_fleet['fleet_id'];
+
+		$this->db->updateAsDict('game_fleets', $update, 'fleet_id = '.$fleetId);
 
 		if ($this->_fleet['fleet_group'] != 0)
 		{
@@ -271,7 +272,7 @@ class FleetEngine extends Injectable
 		$update['fleet_mess'] = 3;
 		$update['fleet_time'] = $this->_fleet['fleet_end_stay'];
 
-		Sql::build()->update('game_fleets')->set($update)->where('fleet_id', '=', $this->_fleet['fleet_id'])->execute();
+		$this->db->updateAsDict('game_fleets', $update, 'fleet_id = '.$this->_fleet['fleet_id']);
 	}
 
 	public function convertFleetToDebris ($fleet)

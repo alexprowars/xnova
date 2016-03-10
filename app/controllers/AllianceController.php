@@ -6,7 +6,6 @@ use App\Helpers;
 use App\Lang;
 use App\Models\Alliance;
 use App\Models\AllianceMember;
-use App\Sql;
 
 class AllianceController extends ApplicationController
 {
@@ -169,7 +168,7 @@ class AllianceController extends ApplicationController
 					{
 						$this->db->updateAsDict('game_planets', ['id_ally' => $this->ally->id, 'name' => $this->ally->name], 'id = '.$check['id']);
 
-						Sql::build()->update('game_users')->setField('-credits', $parse['need'])->where('id', '=', $this->user->id)->execute();
+						$this->user->saveData(['-credits' => $parse['need']]);
 
 						$this->message("Планета была успешно преобразована", "Управление планетами", "/alliance/admin/edit/planets/", 3);
 					}

@@ -5,7 +5,6 @@ use App\Controllers\FleetController;
 use App\Fleet;
 use App\Helpers;
 use App\Lang;
-use App\Sql;
 
 class StageThree
 {
@@ -564,7 +563,7 @@ class StageThree
 		$fleetPlanetUpdate['crystal'] 	= $controller->planet->crystal;
 		$fleetPlanetUpdate['deuterium'] = $controller->planet->deuterium;
 
-		Sql::build()->update('game_planets')->set($fleetPlanetUpdate)->where('id', '=', $controller->planet->id)->execute();
+		$controller->planet->saveData($fleetPlanetUpdate);
 
 		$html = "<center>";
 		$html .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"600\">";

@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-use App\Sql;
 use Phalcon\Mvc\Model;
 
 /**
@@ -28,6 +27,7 @@ class User extends Model
 	private $bonusData = [];
 
 	public $id;
+	public $group_id;
 	public $username;
 	public $authlevel;
 	public $onlinetime;
@@ -125,6 +125,11 @@ class User extends Model
 	public $spy;
 	public $deltime;
 	public $ally_name;
+
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
 
 	public function onConstruct()
 	{
@@ -474,8 +479,7 @@ class User extends Model
 				}
 
 				$this->planet_current = $selectPlanet;
-
-				$this->saveData(['planet_current' => $this->planet_current]);
+				$this->save();
 			}
 			else
 				return false;
@@ -540,7 +544,7 @@ class User extends Model
 
 	public function getRankId ($lvl)
 	{
-		if ($lvl == 1)
+		if ($lvl <= 1)
 			$lvl = 0;
 
 		if ($lvl <= 80)
@@ -599,7 +603,7 @@ class User extends Model
 
 	public function saveData ($fields, $userId = 0)
 	{
-		Sql::build()->update('game_users')->set($fields)->where('id', '=', ($userId > 0 ? $userId : $this->id))->execute();
+		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
 	}
 }
 

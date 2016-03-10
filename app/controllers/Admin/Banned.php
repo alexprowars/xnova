@@ -2,7 +2,6 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
-use App\Sql;
 
 class Banned
 {
@@ -27,35 +26,33 @@ class Banned
 			$BanTime += $mins * 60;
 			$BanTime += time();
 
-			Sql::build()->insert('game_banned')->set([
+			$controller->db->insertAsDict('game_banned', [
 				'who'		=> $userz['id'],
 				'theme'		=> $reas,
 				'time'		=> time(),
 				'longer'	=> $BanTime,
 				'author'	=> $controller->user->getId()
-			])->execute();
+			]);
 
-			Sql::build()->update('game_users')->setField('banned', $BanTime);
+			$update = ['banned' => $BanTime];
 
 			if ($controller->request->getPost('ro', 'int', 0) == 1)
-				Sql::build()->setField('vacation', 1);
+				$update['vacation'] = 1;
 
-			Sql::build()->where('id', '=', $userz['id'])->execute();
+			$controller->user->saveData($update, $userz['id']);
 
 			if ($controller->request->getPost('ro', 'int', 0) == 1)
 			{
-				global $reslist, $resource;
-
 				$arFields = [
-					$resource[4].'_porcent' 	=> 0,
-					$resource[12].'_porcent' 	=> 0,
-					$resource[212].'_porcent' 	=> 0
+					$controller->game->resource[4].'_porcent' 	=> 0,
+					$controller->game->resource[12].'_porcent' 	=> 0,
+					$controller->game->resource[212].'_porcent' 	=> 0
 				];
 
-				foreach ($reslist['res'] AS $res)
+				foreach ($controller->game->reslist['res'] AS $res)
 					$arFields[$res.'_mine_porcent'] = 0;
 
-				Sql::build()->update('game_planets')->set($arFields)->where('id_owner', '=', $userz['id'])->execute();
+				$controller->db->updateAsDict($arFields, "id_owner = ".$userz['id']);
 			}
 
 			$controller->message(_getText('adm_bn_thpl') . " " . $name . " " . _getText('adm_bn_isbn'), _getText('adm_bn_ttle'));

@@ -4,7 +4,6 @@ namespace App\Controllers\Fleet;
 use App\Controllers\FleetController;
 use App\Fleet;
 use App\Lang;
-use App\Sql;
 
 class StageTwo
 {
@@ -63,10 +62,10 @@ class StageTwo
 							$SubQueryOri['last_jump_time'] = $JumpTime;
 							$SubQueryDes['last_jump_time'] = $JumpTime;
 
-							Sql::build()->update('game_planets')->set($SubQueryOri)->where('id', '=', $controller->planet->id)->execute();
-							Sql::build()->update('game_planets')->set($SubQueryDes)->where('id', '=', $TargetGate['id'])->execute();
+							$controller->planet->saveData($SubQueryOri);
+							$controller->planet->saveData($SubQueryDes, $TargetGate['id']);
 
-							Sql::build()->update('game_users')->setField('planet_current', $TargetGate['id'])->where('id', '=', $controller->user->id)->execute();
+							$controller->user->saveData(['planet_current' => $TargetGate['id']]);
 
 							$controller->planet->last_jump_time = $JumpTime;
 							$RestString = $controller->planet->GetNextJumpWaitTime();

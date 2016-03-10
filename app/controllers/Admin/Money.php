@@ -3,7 +3,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Helpers;
-use App\Sql;
 
 class Money
 {
@@ -31,15 +30,15 @@ class Money
 
 					if ($money > 0)
 					{
-						Sql::build()->update('game_users')->setField('+credits', $money)->where('id', '=', $info['id'])->execute();
+						$controller->user->saveData(['+credits' => $money], $info['id']);
 
-						Sql::build()->insert('game_log_credits')->set([
+						$controller->db->insertAsDict('game_log_credits',
+						[
 							'uid' => $info['id'],
 							'time' => time(),
 							'credits' => $money,
 							'type' => 6
-						])
-						->execute();
+						]);
 
 						$controller->message('Начисление '.$money.' кредитов прошло успешно', 'Всё ок!', '/admin/money/mode/add/', 2);
 					}

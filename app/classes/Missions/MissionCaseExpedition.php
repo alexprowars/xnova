@@ -11,7 +11,6 @@ use App\Battle\Utils\LangManager;
 use App\Fleet as FleetMethods;
 use App\FleetEngine;
 use App\Helpers;
-use App\Sql;
 
 class MissionCaseExpedition extends FleetEngine implements Mission
 {
@@ -95,26 +94,25 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Size = min($Factor * MAX(MIN($FleetPoints, $upperLimit), 200), $FleetCapacity);
 
-				Sql::build()->update('game_fleets')->set(Array
-				(
+				$update = [
 					'fleet_time' => $this->_fleet['fleet_end_time'],
 					'fleet_mess' => 1
-				));
+				];
 
 				switch ($WitchFound)
 				{
 					case 1:
-						Sql::build()->setField('+fleet_resource_metal', $Size);
+						$update['+fleet_resource_metal'] = $Size;
 						break;
 					case 2:
-						Sql::build()->setField('+fleet_resource_crystal', $Size);
+						$update['+fleet_resource_crystal'] = $Size;
 						break;
 					case 3:
-						Sql::build()->setField('+fleet_resource_deuterium', $Size);
+						$update['+fleet_resource_deuterium'] = $Size;
 						break;
 				}
 
-				Sql::build()->where('fleet_id', '=', $this->_fleet['fleet_id'])->execute();
+				$this->db->updateAsDict('game_fleets', $update, "fleet_id = ".$this->_fleet['fleet_id']);
 
 				break;
 
@@ -191,13 +189,12 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Message .= $FoundShipMess;
 
-				Sql::build()->update('game_fleets')->set(Array
-				(
+				$this->db->updateAsDict('game_fleets',
+				[
 					'fleet_array' => $NewFleetArray,
 					'fleet_time' => $this->_fleet['fleet_end_time'],
 					'fleet_mess' => 1
-				))
-				->where('fleet_id', '=', $this->_fleet["fleet_id"])->execute();
+				], "fleet_id = ".$this->_fleet["fleet_id"]);
 
 				break;
 
@@ -354,14 +351,13 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$this->KillFleet($fleetID);
 					else
 					{
-						Sql::build()->update('game_fleets')->set(Array
-						(
+						$this->db->updateAsDict('game_fleets',
+						[
 							'fleet_array' 	=> substr($fleetArray, 0, -1),
 							'@fleet_time' 	=> 'fleet_end_time',
 							'fleet_mess'	=> 1,
 							'won'			=> $result['won']
-						))
-						->where('fleet_id', '=', $fleetID)->execute();
+						], "fleet_id = ".$fleetID);
 					}
 				}
 
@@ -438,13 +434,12 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Message = _getText('sys_expe_time_fast_'.mt_rand(1,3));
 				}
 
-				Sql::build()->update('game_fleets')->set(Array
-				(
+				$this->db->updateAsDict('game_fleets',
+				[
 					'fleet_end_time' 	=> $this->_fleet['fleet_end_time'],
 					'fleet_time' 		=> $this->_fleet['fleet_end_time'],
 					'fleet_mess' 		=> 1
-				))
-				->where('fleet_id', '=', $this->_fleet["fleet_id"])->execute();
+				], "fleet_id = ".$this->_fleet["fleet_id"]);
 
            		break;
 

@@ -19,7 +19,6 @@ use App\FleetEngine;
 use App\Helpers;
 use App\Models\Planet;
 use App\Models\User;
-use App\Sql;
 
 class MissionCaseAttack extends FleetEngine implements Mission
 {
@@ -263,11 +262,12 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if ($totalDebree > 0)
 		{
-			Sql::build()->update('game_planets')->set(Array('+debris_metal' => ($result['debree']['att'][0] + $result['debree']['def'][0]), '+debris_crystal' => ($result['debree']['att'][1] + $result['debree']['def'][1])))
-					->where('galaxy', '=', $target->galaxy)->addAND()
-					->where('system', '=', $target->system)->addAND()
-					->where('planet', '=', $target->planet)->addAND()
-					->where('planet_type', '!=', 3)->execute();
+			$this->db->updateAsDict('game_planets',
+			[
+				'+debris_metal' 	=> ($result['debree']['att'][0] + $result['debree']['def'][0]),
+				'+debris_crystal' 	=> ($result['debree']['att'][1] + $result['debree']['def'][1])
+			],
+			"galaxy = ".$target->galaxy." AND system = ".$target->system." AND planet = ".$target->planet." AND planet_type != 3");
 		}
 		
 		foreach ($attackFleets as $fleetID => $attacker)
@@ -288,29 +288,25 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$this->KillFleet($fleetID);
 			else
 			{
-				Sql::build()->update('game_fleets')->set(Array
-				(
+				$update = [
 					'fleet_array' 	=> substr($fleetArray, 0, -1),
 					'@fleet_time' 	=> 'fleet_end_time',
 					'fleet_mess'	=> 1,
 					'fleet_group'	=> 0,
 					'won'			=> $result['won']
-				));
+				];
 
 				if ($result['won'] == 1 && ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0))
 				{
 					if (isset($res_procent[$fleetID]))
 					{
-						Sql::build()->set(Array
-						(
-							'+fleet_resource_metal' 	=> round($res_procent[$fleetID] * $steal['metal']),
-							'+fleet_resource_crystal' 	=> round($res_procent[$fleetID] * $steal['crystal']),
-							'+fleet_resource_deuterium' => round($res_procent[$fleetID] * $steal['deuterium']),
-						));
+						$update['+fleet_resource_metal'] 		= round($res_procent[$fleetID] * $steal['metal']);
+						$update['+fleet_resource_crystal'] 		= round($res_procent[$fleetID] * $steal['crystal']);
+						$update['+fleet_resource_deuterium'] 	= round($res_procent[$fleetID] * $steal['deuterium']);
 					}
 				}
 
-				Sql::build()->where('fleet_id', '=', $fleetID)->execute();
+				$this->db->updateAsDict("game_fleets", $update, "fleet_id = ".$fleetID);
 			}
 		}
 
@@ -334,12 +330,12 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					$this->KillFleet($fleetID);
 				else
 				{
-					Sql::build()->update('game_fleets')->set(Array
-					(
+					$this->db->updateAsDict(
+					[
 						'fleet_array' => substr($fleetArray, 0, -1),
 						'@fleet_time' => 'fleet_end_time'
-					))
-					->where('fleet_id', '=', $fleetID)->execute();
+					],
+					"fleet_id = ".$fleetID);
 				}
 			}
 			else
@@ -362,7 +358,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				}
 
 				if (count($arFields) > 0)
-					Sql::build()->update('game_planets')->set($arFields)->where('id', '=', $target->id)->execute();
+					$target->saveData($arFields);
 			}
 		}
 		
@@ -415,17 +411,17 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				if ($this->_fleet['fleet_mission'] != 6)
 				{
-					Sql::build()->update('game_users');
+					$update = ['+raids' => 1];
 
 					if ($result['won'] == 1)
-						Sql::build()->setField('+raids_win', 1);
+						$update['+raids_win'] = 1;
 					elseif ($result['won'] == 2)
-						Sql::build()->setField('+raids_lose', 1);
+						$update['+raids_lose'] = 1;
 
 					if ($AddWarPoints > 0)
-						Sql::build()->setField('+xpraid', ceil($AddWarPoints / $realAttackersUsers));
+						$update['+xpraid'] = ceil($AddWarPoints / $realAttackersUsers);
 
-					Sql::build()->setField('+raids', 1)->where('id', '=', $info['tech']['id'])->execute();
+					$this->db->updateAsDict('game_users', $update, "id = ".$info['tech']['id']);
 				}
 			}
 		}
@@ -437,14 +433,14 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				if ($this->_fleet['fleet_mission'] != 6)
 				{
-					Sql::build()->update('game_users');
+					$update = ['+raids' => 1];
 
 					if ($result['won'] == 2)
-						Sql::build()->setField('+raids_win', 1);
+						$update['+raids_win'] = 1;
 					elseif ($result['won'] == 1)
-						Sql::build()->setField('+raids_lose', 1);
+						$update['+raids_lose'] = 1;
 
-					Sql::build()->setField('+raids', 1)->where('id', '=', $info['tech']['id'])->execute();
+					$this->db->updateAsDict('game_users', $update, "id = ".$info['tech']['id']);
 				}
 			}
 		}

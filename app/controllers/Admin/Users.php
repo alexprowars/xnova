@@ -3,7 +3,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Helpers;
-use App\Sql;
 
 class Users
 {
@@ -28,12 +27,11 @@ class Users
 							$error = 'Не указано имя пользователя';
 						else
 						{
-							Sql::build()->update('game_users')->set(Array
-							(
+							$controller->user->saveData(
+							[
 								'group_id' 	=> Helpers::CheckString($controller->request->getPost('group_id', 'int', 0)),
 								'username' 	=> Helpers::CheckString($controller->request->getPost('username', 'string', ''))
-							))
-							->where('id', '=', $info['id'])->execute();
+							], $info['id']);
 
 							$controller->response->redirect('admin/users/action/edit/id/'.$info['id'].'/');
 						}

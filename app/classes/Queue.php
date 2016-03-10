@@ -227,8 +227,8 @@ class Queue
 				
 			$this->planet->queue = json_encode($newQueue);
 
-			Sql::build()->update('game_planets')->setField('queue', $this->planet->queue);
-			
+			$update = ['queue' => $this->planet->queue];
+
 			if ($canceledArray['s'] > 0)
 			{
 				$cost = Building::GetBuildingPrice($this->user, $this->planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
@@ -237,14 +237,12 @@ class Queue
 				$this->planet->crystal 		+= $cost['crystal'];
 				$this->planet->deuterium 	+= $cost['deuterium'];
 
-				Sql::build()->set([
-					'metal' 	=> $this->planet->metal,
-					'crystal' 	=> $this->planet->crystal,
-					'deuterium' => $this->planet->deuterium
-				]);
+				$update['metal'] = $this->planet->metal;
+				$update['crystal'] = $this->planet->crystal;
+				$update['deuterium'] = $this->planet->deuterium;
 			}
 
-			Sql::build()->where('id', '=', $this->planet->id)->execute();
+			$this->planet->saveData($update);
 		}
 	}
 
@@ -336,16 +334,14 @@ class Queue
 
 	private function saveTechToQueue ($WorkingPlanet)
 	{
-		Sql::build()->update('game_planets')->set(Array
-		(
+		$this->planet->saveData([
 			'queue'		=> $WorkingPlanet['queue'],
 			'metal'		=> $WorkingPlanet['metal'],
 			'crystal'	=> $WorkingPlanet['crystal'],
 			'deuterium'	=> $WorkingPlanet['deuterium']
-		))
-		->where('id', '=', $WorkingPlanet['id'])->execute();
+		], $WorkingPlanet['id']);
 
-		Sql::build()->update('game_users')->setField('b_tech_planet', $this->user->b_tech_planet)->where('id', '=', $this->user->id)->execute();
+		$this->user->saveData(['b_tech_planet' => $this->user->b_tech_planet]);
 	}
 
 	private function addShipyardToQueue ($elementId, $count)
@@ -420,14 +416,13 @@ class Queue
 				'd' => 0
 			];
 
-			Sql::build()->update('game_planets')->set(Array
-			(
+			$this->planet->saveData(
+			[
 				'metal' 	=> $this->planet->metal,
 				'crystal' 	=> $this->planet->crystal,
 				'deuterium' => $this->planet->deuterium,
 				'queue' 	=> json_encode($this->queue)
-			))
-			->where('id', '=', $this->planet->id)->execute();
+			]);
 		}
 	}
 
@@ -435,12 +430,7 @@ class Queue
 	{
 		$this->checkQueue();
 		$this->planet->queue = json_encode($this->get());
-		
-		Sql::build()->update('game_planets')->set(Array
-		(
-			'queue' => $this->planet->queue
-		))
-		->where('id', '=', $this->planet->id)->execute();
+		$this->planet->saveData(['queue' => $this->planet->queue]);
 	}
 
 	private function checkQueue ()

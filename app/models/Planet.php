@@ -4,7 +4,6 @@ namespace App\Models;
 use App\Building;
 use App\Helpers;
 use App\Queue;
-use App\Sql;
 use Phalcon\Mvc\Model;
 
 /**
@@ -114,7 +113,16 @@ class Planet extends Model
 	public $solar_satelit_porcent;
 	public $darkmat_mine_porcent;
 
+	public $metal_perhour = 0;
+	public $crystal_perhour = 0;
+	public $deuterium_perhour = 0;
+
 	public $spaceLabs;
+
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
 
 	public function onConstruct()
 	{
@@ -136,7 +144,7 @@ class Planet extends Model
 	 */
 	static function findByCoords ($galaxy, $system, $planet, $type = 1)
 	{
-		return Planet::findFirst("galaxy = ".$galaxy." AND system = ".$system." AND planet = ".$planet." AND planet_type = ".$type."");
+		return self::findFirst("galaxy = ".$galaxy." AND system = ".$system." AND planet = ".$planet." AND planet_type = ".$type."");
 	}
 
 	public function assignUser (User $user)
@@ -162,8 +170,7 @@ class Planet extends Model
 	{
 		if ($this->id_owner != $this->user->id && $this->id_ally > 0 && ($this->id_ally != $this->user->ally_id || !$this->user->ally['rights']['planet']))
 		{
-			$this->db->updateAsDict('game_users', ['planet_current' => $this->user->planet_id], "id = ".$this->user->id);
-
+			$this->user->saveData(['planet_current' => $this->user->planet_id]);
 			$this->user->planet_current = $this->user->planet_id;
 
 			$this->assign($this->findFirst($this->user->planet->id)->toArray());
@@ -184,8 +191,7 @@ class Planet extends Model
 		if ($this->field_current != $cnt)
 		{
 			$this->field_current = $cnt;
-
-			$this->saveData(Array('field_current' => $this->field_current));
+			$this->save();
 		}
 	}
 
@@ -235,18 +241,13 @@ class Planet extends Model
 
 			$PlanetID = $this->db->fetchColumn("SELECT `id` FROM game_planets WHERE `id_owner` = '" . $user_id . "' LIMIT 1");
 
-			$this->db->updateAsDict(
-				'game_users',
-				Array
-				(
-					'planet_id'		 => $PlanetID,
-					'planet_current' => $PlanetID,
-					'galaxy'		 => $Galaxy,
-					'system'		 => $System,
-					'planet'		 => $position
-				),
-				"id = ".$user_id
-			);
+			$this->user->saveData([
+				'planet_id'		 => $PlanetID,
+				'planet_current' => $PlanetID,
+				'galaxy'		 => $Galaxy,
+				'system'		 => $System,
+				'planet'		 => $position
+			], $user_id);
 
 			return $PlanetID;
 		}
@@ -1051,15 +1052,14 @@ class Planet extends Model
 		{
 			$this->queue = $newQueue;
 
-			$this->db->query("LOCK TABLES game_planets WRITE");
+			$this->db->query("LOCK TABLES ".$this->getSource()." WRITE");
 
-			$this->saveData(Array
-			(
+			$this->saveData([
 				'metal'		=> $this->metal,
 				'crystal'	=> $this->crystal,
 				'deuterium'	=> $this->deuterium,
 				'queue'		=> $this->queue
-			));
+			]);
 
 			$this->db->query("UNLOCK TABLES");
 		}
@@ -1180,8 +1180,8 @@ class Planet extends Model
 	{
 		if ($lunarow['luna_destruyed'] <= time())
 		{
-			$this->db->query("DELETE FROM game_planets WHERE `id` = " . $lunarow['luna_id'] . "");
-			$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
+			$this->db->delete($this->getSource(), 'id = ?', [$lunarow['luna_id']]);
+			$this->db->updateAsDict($this->getSource(), ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
 
 			$lunarow['id_luna'] = 0;
 		}
@@ -1191,16 +1191,16 @@ class Planet extends Model
 	{
 		if ($planet['destruyed'] <= time())
 		{
-			$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['planet_id'] . ";");
+			$this->db->delete($this->getSource(), 'id = ?', [$planet['planet_id']]);
 
 			if ($planet['parent_planet'] != 0)
-				$this->db->query("DELETE FROM game_planets WHERE id = " . $planet['parent_planet'] . ";");
+				$this->db->delete($this->getSource(), 'id = ?', [$planet['parent_planet']]);
 		}
 	}
 
 	public function saveData (array $fields, $planetId = 0)
 	{
-		sql::build()->update('game_planets')->set($fields)->where('id', '=', ($planetId > 0 ? $planetId : $this->id))->execute();
+		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($planetId > 0 ? $planetId : $this->id))]);
 	}
 }
 

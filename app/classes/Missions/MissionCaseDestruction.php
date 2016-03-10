@@ -4,7 +4,6 @@ namespace App\Missions;
 
 use App\Fleet;
 use App\FleetEngine;
-use App\Sql;
 
 class MissionCaseDestruction extends FleetEngine implements Mission
 {
@@ -91,11 +90,12 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 							if ($debree['metal'] > 0 && $debree['crystal'] > 0)
 							{
-								Sql::build()->update('game_planets')->set(Array('+debris_metal' => $debree['metal'], '+debris_crystal' => $debree['crystal']))
-										->where('galaxy', '=', $this->_fleet['fleet_end_galaxy'])->addAND()
-										->where('system', '=', $this->_fleet['fleet_end_system'])->addAND()
-										->where('planet', '=', $this->_fleet['fleet_end_planet'])->addAND()
-										->where('planet_type', '!=', 3)->execute();
+								$this->db->updateAsDict('game_planets',
+								[
+									'+debris_metal' 	=> $debree['metal'],
+									'+debris_crystal' 	=> $debree['crystal']
+								],
+								"galaxy = ".$this->_fleet['fleet_end_galaxy']." AND system = ".$this->_fleet['fleet_end_system']." AND planet = ".$this->_fleet['fleet_end_planet']." AND planet_type != 3");
 							}
 						}
 					}
