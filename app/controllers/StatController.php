@@ -73,7 +73,7 @@ class StatController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$this->dispatcher->forward(array("action" => "players"));
+		$this->dispatcher->forward(["action" => "players"]);
 	}
 
 	public function playersAction ()

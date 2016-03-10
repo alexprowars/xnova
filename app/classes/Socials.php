@@ -18,7 +18,7 @@ class Socials
 		self::$facebook_access_token = $access_token;
 	}
 
-	public static function facebookLoad ($object = '', $params = array())
+	public static function facebookLoad ($object = '', $params = [])
 	{
 		if (!self::$facebook_id || !self::$facebook_access_token)
 			return false;
@@ -44,7 +44,7 @@ class Socials
 		self::$vk_api_secret 	= $api_secret;
 	}
 
-	public static function vkLoad ($method, $params = array())
+	public static function vkLoad ($method, $params = [])
 	{
 		$params['api_id'] 		= self::$vk_app_id;
 		$params['method'] 		= $method;
@@ -74,7 +74,7 @@ class Socials
 		self::$ok_api_key = $api_key;
 	}
 
-	public static function okLoad ($method, $params = array(), $secret = '')
+	public static function okLoad ($method, $params = [], $secret = '')
 	{
 		if (!is_array($params))
 			$params = [];
@@ -122,7 +122,7 @@ class Socials
 		if ($phone == '')
 			return '';
 
-		$phone = str_replace(array('+', '-', '(', ')', ' '), '', $phone);
+		$phone = str_replace(['+', '-', '(', ')', ' '], '', $phone);
 
 		if ($phone[0] == '8')
 			$phone[0] = '7';
@@ -148,8 +148,7 @@ class Socials
 			$ch = curl_init("http://sms.ru/sms/send");
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-
+			curl_setopt($ch, CURLOPT_POSTFIELDS, [
 				"login"		=>	SMS_LOGIN,
 				"sig"		=>	md5(SMS_PASSWORD.$token),
 				"token"		=>	$token,
@@ -158,7 +157,7 @@ class Socials
 				"to"		=>	$phone,
 				"text"		=>	$message
 
-			));
+			]);
 			$sms = curl_exec($ch);
 			curl_close($ch);
 

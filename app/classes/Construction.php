@@ -31,7 +31,7 @@ class Construction
 		$config 	= $this->user->getDI()->getShared('config');
 
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
-			$game->reslist['allowed']['5'] = array(14, 21, 34, 44);
+			$game->reslist['allowed'][5] = [14, 21, 34, 44];
 
 		$this->planet->SetNextQueueElementOnTop();
 

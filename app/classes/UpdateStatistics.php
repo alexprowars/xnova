@@ -20,13 +20,12 @@ class UpdateStatistics extends Injectable
 
 	private $user;
 
-	private $StatRace = array
-	(
-		1 => array('count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0),
-		2 => array('count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0),
-		3 => array('count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0),
-		4 => array('count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0),
-	);
+	private $StatRace = [
+		1 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
+		2 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
+		3 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
+		4 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
+	];
 
 	public function __construct()
 	{
@@ -40,10 +39,10 @@ class UpdateStatistics extends Injectable
 			return;
 
 		if (!isset($this->maxinfos[$ID]))
-			$this->maxinfos[$ID] = array('maxlvl' => 0, 'username' => '');
+			$this->maxinfos[$ID] = ['maxlvl' => 0, 'username' => ''];
 
 		if ($this->maxinfos[$ID]['maxlvl'] < $Count)
-			$this->maxinfos[$ID] = array('maxlvl' => $Count, 'username' => $Data['username']);
+			$this->maxinfos[$ID] = ['maxlvl' => $Count, 'username' => $Data['username']];
 	}
 
 	private function GetTechnoPoints ($CurrentUser)
@@ -421,7 +420,7 @@ class UpdateStatistics extends Injectable
 	{
 		$qryFormat = 'UPDATE game_statpoints SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `id_owner` ASC;';
 
-		$rankNames = array('tech', 'fleet', 'defs', 'build', 'total');
+		$rankNames = ['tech', 'fleet', 'defs', 'build', 'total'];
 
 		foreach ($rankNames as $rankName)
 		{
@@ -536,7 +535,7 @@ class UpdateStatistics extends Injectable
 			if ($ElementID != 407 && $ElementID != 408)
 				$array .= $ElementID . " => array('username' => '" . (isset($this->maxinfos[$ElementID]['username']) ? $this->maxinfos[$ElementID]['username'] : '-') . "', 'maxlvl' => '" . (isset($this->maxinfos[$ElementID]['maxlvl']) ? $this->maxinfos[$ElementID]['maxlvl'] : '-') . "'),\n";
 		}
-		$file = "<?php \n//The File is created on " . date("d. M y H:i:s", time()) . "\n$" . "RecordsArray = array(\n" . $array . "\n);\n?>";
+		$file = "<?php \n//The File is created on " . date("d. M y H:i:s", time()) . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";
 
 		if (!file_exists(APP_PATH . $this->config->application->cacheDir))
 			mkdir(APP_PATH . $this->config->application->cacheDir, 0777);

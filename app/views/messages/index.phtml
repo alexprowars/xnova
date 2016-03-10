@@ -49,7 +49,7 @@
 						<td style="background-color:<?=_getText('mess_background', $list['message_type']) ?>;" colspan="4" class="b">
 							<? if ($list['message_type'] == 1 && $this->user->getUserOption('bb_parser')): ?>
 								<span id="m<?=$list['message_id'] ?>"></span>
-								<script type="text/javascript">Text('<?=str_replace(array("\r\n", "\n", "\r"), '<br>', stripslashes($list['message_text'])) ?>', 'm<?=$list['message_id'] ?>');</script>
+								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($list['message_text'])) ?>', 'm<?=$list['message_id'] ?>');</script>
 							<? else: ?>
 								<?=stripslashes(nl2br($list['message_text'])) ?>
 							<? endif; ?>

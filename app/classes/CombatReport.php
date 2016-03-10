@@ -34,7 +34,7 @@ class CombatReport extends Component
 	private $moon_string = '';
 	private $repair = [];
 
-	public function __construct ($result_array, $attackUsers, $defenseUsers, $steal_array, $moon_int = 0, $moon_string = '', $repair = array())
+	public function __construct ($result_array, $attackUsers, $defenseUsers, $steal_array, $moon_int = 0, $moon_string = '', $repair = [])
 	{
 		$this->attackUsers = $attackUsers;
 		$this->defenseUsers = $defenseUsers;

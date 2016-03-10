@@ -22,7 +22,7 @@
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;">
 				<span id="m1"></span>
-				<script type="text/javascript">Text('<?=str_replace(array("\r\n", "\n", "\r"), '', stripslashes($parse['description'])) ?>', 'm1');</script>
+				<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '', stripslashes($parse['description'])) ?>', 'm1');</script>
 			</td>
 		</tr>
 	<? endif; ?>

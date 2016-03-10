@@ -46,12 +46,11 @@ class ActivePlanet
 
 			while ($ActivPlanet = $AllActivPlanet->fetch())
 			{
-				$result['rows'][] = array
-				(
+				$result['rows'][] = [
 					'name' 		=> $ActivPlanet['name'],
 					'position' 	=> Helpers::BuildPlanetAdressLink($ActivPlanet),
 					'activity' 	=> (time() - $ActivPlanet['last_active'])
-				);
+				];
 			}
 
 			$result['total'] = $controller->db->fetchColumn("SELECT COUNT(id) AS num FROM game_planets WHERE `last_active` >= '" . (time() - 15 * 60) . "'");

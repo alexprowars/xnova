@@ -26,13 +26,13 @@ class AdminController extends ApplicationController
 
 		while ($r = $result->fetch())
 		{
-			$this->modules[mb_strtolower($r['alias'], 'utf-8')] = array
-			(
+			$this->modules[mb_strtolower($r['alias'], 'utf-8')] =
+			[
 				'id' 	=> $r['id'],
 				'alias'	=> $r['alias'],
 				'name' 	=> $r['name'],
 				'right' => $this->user->isAdmin() ? 2 : (!$r['right_id'] ? 0 : $r['right_id'])
-			);
+			];
 		}
 
 		$menu = $this->getMenu(1, 2);
@@ -92,15 +92,15 @@ class AdminController extends ApplicationController
 			{
 				foreach ($childrens AS $children)
 				{
-					$array[] = array(
+					$array[] = [
 						'id' 		=> $children['id'],
 						'alias' 	=> mb_strtolower($children['alias'], 'utf-8'),
 						'name' 		=> $children['name'],
-						'children' 	=> ($lvl > 1) ? $this->getMenu($children['id'], ($lvl - 1), $all) : array(),
+						'children' 	=> ($lvl > 1) ? $this->getMenu($children['id'], ($lvl - 1), $all) : [],
 						'active' 	=> $children['active'],
 						'icon' 		=> $children['icon'],
 						'image' 	=> $children['image']
-					);
+					];
 				}
 			}
 		}

@@ -46,8 +46,7 @@ class PlayerAdmin
 							if ($controller->user->authlevel > 1)
 								$parse['planet_list'] = $controller->db->extractResult($controller->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $SelUser['id'] . "' ORDER BY id ASC"));
 
-							$parse['history_actions'] = array
-							(
+							$parse['history_actions'] = [
 								1 => 'Постройка здания',
 								2 => 'Снос здания',
 								3 => 'Отмена постройки',
@@ -55,7 +54,7 @@ class PlayerAdmin
 								5 => 'Исследование',
 								6 => 'Отмена исследования',
 								7 => 'Постройка обороны/флота',
-							);
+							];
 
 							$parse['transfer_list'] = [];
 
@@ -65,8 +64,7 @@ class PlayerAdmin
 							{
 								preg_match("/s\:\[(.*?)\:(.*?)\:(.*?)\((.*?)\)\];e\:\[(.*?)\:(.*?)\:(.*?)\((.*?)\)\];f\:\[(.*?)\];m\:(.*?);c\:(.*?);d\:(.*?);/", $transfer['data'], $t);
 
-								$parse['transfer_list'][] = array
-								(
+								$parse['transfer_list'][] = [
 									'time' 	=> $transfer['time'],
 									'start' => '<a href="/?set=galaxy&r=3&galaxy='.$t[1].'&system='.$t[2].'&planet='.$t[3].'" target="_blank">'.$t[1].':'.$t[2].':'.$t[3].' ('._getText('type_planet', $t[4]).')</a>',
 									'end' 	=> '<a href="/?set=galaxy&r=3&galaxy='.$t[5].'&system='.$t[6].'&planet='.$t[7].'" target="_blank">'.$t[5].':'.$t[6].':'.$t[7].' ('._getText('type_planet', $t[8]).')</a>',
@@ -74,7 +72,7 @@ class PlayerAdmin
 									'crystal'	=> $t[11],
 									'deuterium'	=> $t[12],
 									'target'	=> $transfer['target'],
-								);
+								];
 							}
 
 							$parse['transfer_list_income'] = [];
@@ -85,8 +83,7 @@ class PlayerAdmin
 							{
 								preg_match("/s\:\[(.*?)\:(.*?)\:(.*?)\((.*?)\)\];e\:\[(.*?)\:(.*?)\:(.*?)\((.*?)\)\];f\:\[(.*?)\];m\:(.*?);c\:(.*?);d\:(.*?);/", $transfer['data'], $t);
 
-								$parse['transfer_list_income'][] = array
-								(
+								$parse['transfer_list_income'][] = [
 									'time' 	=> $transfer['time'],
 									'start' => '<a href="/?set=galaxy&r=3&galaxy='.$t[1].'&system='.$t[2].'&planet='.$t[3].'" target="_blank">'.$t[1].':'.$t[2].':'.$t[3].' ('._getText('type_planet', $t[4]).')</a>',
 									'end' 	=> '<a href="/?set=galaxy&r=3&galaxy='.$t[5].'&system='.$t[6].'&planet='.$t[7].'" target="_blank">'.$t[5].':'.$t[6].':'.$t[7].' ('._getText('type_planet', $t[8]).')</a>',
@@ -94,7 +91,7 @@ class PlayerAdmin
 									'crystal'	=> $t[11],
 									'deuterium'	=> $t[12],
 									'target'	=> $transfer['target'],
-								);
+								];
 							}
 
 							$parse['history_list'] = $controller->db->extractResult($controller->db->query("SELECT * FROM game_log_history WHERE user_id = ".$SelUser['id']." AND time > ".(time() - 86400 * 7)." ORDER BY time"));
@@ -123,7 +120,7 @@ class PlayerAdmin
 
 							$parse['adm_sub_form4'] .= "</table>";
 
-							$logs_lang = array('', 'WMR', 'Ресурсы', 'Реферал', 'Уровень', 'Офицер', 'Админка', 'Смена фракции');
+							$logs_lang = ['', 'WMR', 'Ресурсы', 'Реферал', 'Уровень', 'Офицер', 'Админка', 'Смена фракции'];
 
 							if ($controller->user->authlevel > 1)
 							{

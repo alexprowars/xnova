@@ -204,7 +204,7 @@ class BattleReport
 					$count = $shipType->getCount() - $repairedAmount;
 
 					if ($count > 0)
-						$return[$idPlayer][$idFleet][$shipType->getType()][$idShipType] = array($cost[0] * $count, $cost[1] * $count);
+						$return[$idPlayer][$idFleet][$shipType->getType()][$idShipType] = [$cost[0] * $count, $cost[1] * $count];
 					elseif ($count < 0)
 						throw new Exception('Count negative');
 				}
@@ -249,7 +249,7 @@ class BattleReport
 			}
 		}
 
-		return array($metal, $crystal);
+		return [$metal, $crystal];
 	}
 
 	public function getDefenderDebris()
@@ -276,7 +276,7 @@ class BattleReport
 			}
 		}
 
-		return array($metal, $crystal);
+		return [$metal, $crystal];
 	}
 
 	public function getDebris()
@@ -284,7 +284,7 @@ class BattleReport
 		$aDebris = $this->getAttackerDebris();
 		$dDebris = $this->getDefenderDebris();
 
-		return array($aDebris[0] + $dDebris[0], $aDebris[1] + $dDebris[1]);
+		return [$aDebris[0] + $dDebris[0], $aDebris[1] + $dDebris[1]];
 	}
 
 	public function getAttackersTech()
@@ -295,10 +295,11 @@ class BattleReport
 
 		foreach ($players->getIterator() as $id => $player)
 		{
-			$techs[$player->getId()] = array(
+			$techs[$player->getId()] = [
 				$player->getWeaponsTech(),
 				$player->getShieldsTech(),
-				$player->getArmourTech());
+				$player->getArmourTech()
+			];
 		}
 
 		return $techs;
@@ -312,10 +313,11 @@ class BattleReport
 
 		foreach ($players->getIterator() as $id => $player)
 		{
-			$techs[$player->getId()] = array(
+			$techs[$player->getId()] = [
 				$player->getWeaponsTech(),
 				$player->getShieldsTech(),
-				$player->getArmourTech());
+				$player->getArmourTech()
+			];
 		}
 
 		return $techs;

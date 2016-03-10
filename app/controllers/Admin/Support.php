@@ -68,7 +68,7 @@ class Support
 			}
 		}
 
-		$tickets = array('open' => array(), 'closed' => array());
+		$tickets = ['open' => [], 'closed' => []];
 
 		$query = $controller->db->query("SELECT s.*, u.username FROM game_support s, game_users u WHERE u.id = s.player_id AND status != 0 ORDER BY s.time LIMIT 100;");
 
@@ -100,23 +100,23 @@ class Support
 				if (isset($_GET['mode']) && $_GET['mode'] == 'detail')
 					continue;
 
-				$tickets['closed'][] = array(
+				$tickets['closed'][] = [
 					'id' => $ticket['ID'],
 					'username' => $ticket['username'],
 					'subject' => $ticket['subject'],
 					'status' => $status,
 					'date' => date("d.m.Y H:i:s", $ticket['time'])
-				);
+				];
 			}
 			else
 			{
-				$tickets['open'][] = array(
+				$tickets['open'][] = [
 					'id' => $ticket['ID'],
 					'username' => $ticket['username'],
 					'subject' => $ticket['subject'],
 					'status' => $status,
 					'date' => date("d.m.Y H:i:s", $ticket['time'])
-				);
+				];
 			}
 		}
 
@@ -142,7 +142,7 @@ class Support
 					$status = '';
 			}
 
-			$parse = array(
+			$parse = [
 				't_id' => $TINFO['ID'],
 				't_username' => $TINFO['username'],
 				't_statustext' => $status,
@@ -150,7 +150,7 @@ class Support
 				't_text' => strtr($TINFO['text'], Array('\n\r' => '<br>', '\n' => '<br>')),
 				't_subject' => $TINFO['subject'],
 				't_date' => date("j. M Y H:i:s", $TINFO['time']),
-			);
+			];
 
 			$controller->view->setVar('parse', $parse);
 		}

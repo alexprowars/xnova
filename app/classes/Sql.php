@@ -116,7 +116,7 @@ class Sql extends Component
 	{
 		$expression = strtoupper($expression);
 
-		if (!in_array($expression, Array('AND', 'OR')))
+		if (!in_array($expression, ['AND', 'OR']))
 			$expression = 'AND';
 
 		$this->where .= ' '.$expression.' ';
@@ -142,7 +142,7 @@ class Sql extends Component
 	{
 		$position = strtoupper($position);
 
-		if (!in_array($position, Array('LEFT', 'RIGHT')))
+		if (!in_array($position, ['LEFT', 'RIGHT']))
 			$position = 'LEFT';
 
 		$this->where .= ($position == 'LEFT' ? ' ( ' : ' ) ');

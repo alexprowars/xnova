@@ -247,7 +247,7 @@ class FleetEngine extends Injectable
 		return $return;
 	}
 
-	public function ReturnFleet ($update = array(), $fleetId = false)
+	public function ReturnFleet ($update = [], $fleetId = false)
 	{
 		$update['fleet_mess'] = 1;
 		$update['fleet_time'] = $this->_fleet['fleet_end_time'];
@@ -266,7 +266,7 @@ class FleetEngine extends Injectable
 		}
 	}
 
-	public function StayFleet ($update = array())
+	public function StayFleet ($update = [])
 	{
 		$update['fleet_mess'] = 3;
 		$update['fleet_time'] = $this->_fleet['fleet_end_stay'];
@@ -276,7 +276,7 @@ class FleetEngine extends Injectable
 
 	public function convertFleetToDebris ($fleet)
 	{
-		$debris = array('metal' => 0, 'crystal' => 0);
+		$debris = ['metal' => 0, 'crystal' => 0];
 
 		foreach ($fleet AS $fleetId => $fleetData)
 		{

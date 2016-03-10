@@ -63,13 +63,13 @@ class TutorialController extends ApplicationController
 							$chk = $check;
 
 						if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
-							$parse['task'][] = array('Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check);
+							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
 						elseif (in_array($element, $this->game->reslist['fleet']))
-							$parse['task'][] = array('Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check);
+							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
 						elseif (in_array($element, $this->game->reslist['defense']))
-							$parse['task'][] = array('Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check);
+							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
-							$parse['task'][] = array('Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check);
+							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
 					}
 
 					$check = $chk;
@@ -79,7 +79,7 @@ class TutorialController extends ApplicationController
 				{
 					$check = $this->planet->name != $taskVal ? true : false;
 
-					$parse['task'][] = array('Переименовать планету', $check);
+					$parse['task'][] = ['Переименовать планету', $check];
 				}
 
 				if ($taskKey == 'BUDDY_COUNT')
@@ -88,14 +88,14 @@ class TutorialController extends ApplicationController
 
 					$check = $count >= $taskVal ? true : false;
 
-					$parse['task'][] = array('Кол-во друзей в игре: '.$taskVal, $check);
+					$parse['task'][] = ['Кол-во друзей в игре: '.$taskVal, $check];
 				}
 
 				if ($taskKey == 'ALLY')
 				{
 					$check = $this->user->ally_id > 0 ? true : false;
 
-					$parse['task'][] = array('Вступить в альянс с кол-во игроков: '.$taskVal, $check);
+					$parse['task'][] = ['Вступить в альянс с кол-во игроков: '.$taskVal, $check];
 				}
 
 				if ($taskKey == 'STORAGE')
@@ -104,7 +104,7 @@ class TutorialController extends ApplicationController
 					{
 						$check = $this->planet->{$this->game->resource[22]} > 0 || $this->planet->{$this->game->resource[23]} > 0 || $this->planet->{$this->game->resource[24]} > 0;
 
-						$parse['task'][] = array('Построить любое хранилище ресурсов', $check);
+						$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 					}
 				}
 
@@ -112,14 +112,14 @@ class TutorialController extends ApplicationController
 				{
 					$check = $qInfo['stage'] > 0 ? true : false;
 
-					$parse['task'][] = array('Обменять ресурсы у торговца', $check);
+					$parse['task'][] = ['Обменять ресурсы у торговца', $check];
 				}
 
 				if ($taskKey == 'FLEET_MISSION')
 				{
 					$check = $qInfo['stage'] > 0 ? true : false;
 
-					$parse['task'][] = array('Отправить флот в миссию: '._getText('type_mission', $taskVal), $check);
+					$parse['task'][] = ['Отправить флот в миссию: '._getText('type_mission', $taskVal), $check];
 				}
 
 				if ($taskKey == 'PLANETS')
@@ -128,7 +128,7 @@ class TutorialController extends ApplicationController
 
 					$check = $count >= $taskVal ? true : false;
 
-					$parse['task'][] = array('Кол-во колонизированных планет: '.$taskVal, $check);
+					$parse['task'][] = ['Кол-во колонизированных планет: '.$taskVal, $check];
 				}
 
 				$errors += !$check ? 1 : 0;

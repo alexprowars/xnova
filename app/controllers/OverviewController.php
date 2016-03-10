@@ -21,8 +21,7 @@ class OverviewController extends ApplicationController
 
 	private function BuildFleetEventTable ($FleetRow, $Status, $Owner, $Label, $Record)
 	{
-		$FleetStyle = array
-		(
+		$FleetStyle = [
 			1 => 'attack',
 			2 => 'federation',
 			3 => 'transport',
@@ -35,9 +34,9 @@ class OverviewController extends ApplicationController
 			10 => 'missile',
 			15 => 'transport',
 			20 => 'attack'
-		);
+		];
 
-		$FleetStatus = array(0 => 'flight', 1 => 'holding', 2 => 'return');
+		$FleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
 		$FleetPrefix = $Owner == true ? 'own' : '';
 
 		$MissionType 	= $FleetRow['fleet_mission'];
@@ -260,8 +259,7 @@ class OverviewController extends ApplicationController
 		$parse['galaxy_planet'] = $this->planet->planet;
 		$parse['planet_name'] = $this->planet->name;
 
-		$parse['images'] = array
-		(
+		$parse['images'] = [
 			'trocken' => 20,
 			'wuesten' => 4,
 			'dschjungel' => 19,
@@ -269,7 +267,7 @@ class OverviewController extends ApplicationController
 			'gas' => 16,
 			'wasser' => 18,
 			'eis' => 20
-		);
+		];
 
 		$parse['type'] = '';
 
@@ -340,11 +338,10 @@ class OverviewController extends ApplicationController
 
 			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->planet_current . ";");
 
-			$arUpdate = array
-			(
+			$arUpdate = [
 				'bonus' => (time() + 86400),
 				'bonus_multi' => $multi
-			);
+			];
 
 			if ($this->user->bonus_multi > 1)
 				$arUpdate['+credits'] = 1;
@@ -495,7 +492,7 @@ class OverviewController extends ApplicationController
 			{
 				if ($this->config->view->get('overviewListView', 0) == 0)
 				{
-					$AllPlanets[] = array('id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']);
+					$AllPlanets[] = ['id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']];
 				}
 
 				if ($UserPlanet['queue'] != '[]')
@@ -520,7 +517,7 @@ class OverviewController extends ApplicationController
 
 						foreach ($QueueArray AS $CurrBuild)
 						{
-							$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], "<a href=\"/buildings/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')');
+							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"/buildings/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
 						}
 					}
 
@@ -528,7 +525,7 @@ class OverviewController extends ApplicationController
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], "<a href=\"/buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
+						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"/buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')'];
 					}
 				}
 			}
@@ -626,7 +623,7 @@ class OverviewController extends ApplicationController
 
 				foreach ($BuildQueue AS $CurrBuild)
 				{
-					$build_list[$CurrBuild['e']][] = array($CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . ($CurrBuild['l']) . ')');
+					$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . ($CurrBuild['l']) . ')'];
 				}
 			}
 
@@ -634,7 +631,7 @@ class OverviewController extends ApplicationController
 			{
 				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-				$build_list[$QueueArray[0]['e']][] = array($QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')');
+				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->game->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->game->resource[$QueueArray[0]['i']]} + 1) . ')'];
 			}
 		}
 
@@ -694,7 +691,7 @@ class OverviewController extends ApplicationController
 
 		if ($this->config->view->get('gameActivityList', 0))
 		{
-			$parse['activity'] = array('chat' => array(), 'forum' => array());
+			$parse['activity'] = ['chat' => [], 'forum' => []];
 
 			$chat = json_decode($this->cache->get("chat"), true);
 
@@ -726,11 +723,10 @@ class OverviewController extends ApplicationController
 
 					$message[5] = implode(' ', $t);
 
-					$parse['activity']['chat'][] = array
-					(
+					$parse['activity']['chat'][] = [
 						'TIME' => $message[1],
 						'MESS' => '<span class="title"><span class="to">'.$message[2].'</span> написал'.(count($message[3]) ? ' <span class="to">'.implode(', ', $message[3]).'</span>' : '').'</span>: '.$message[5].''
-					);
+					];
 
 					$i++;
 				}
@@ -749,11 +745,10 @@ class OverviewController extends ApplicationController
 
 			foreach ($forum AS $message)
 			{
-				$parse['activity']['forum'][] = array
-				(
+				$parse['activity']['forum'][] = [
 					'TIME' => $message['post_time'],
 					'MESS' => '<span class="title"><span class="to">'.$message['username'].'</span> написал "<span class="to">'.$message['topic_title'].'</span>"</span>: '.Helpers::cutString(strip_tags($message['post_text']), 250).' <a href="http://forum.xnova.su/viewtopic.php?f='.$message['forum_id'].'&t='.$message['topic_id'].'&p='.$message['post_id'].'#p'.$message['post_id'].'" target="_blank">читать полностью</a>'
-				);
+				];
 			}
 
 			//usort($parse['activity'], create_function('$a1,$a2', 'if ($a1["TIME"] == $a2["TIME"]) return 0; return ($a1["TIME"] < $a2["TIME"] ? 1 : -1);'));

@@ -19,7 +19,7 @@
 							<? if ($parse['parser']): ?>
 							<span id="m<?=$m['id'] ?>"></span>
 							<? else: ?>
-							<?= str_replace(array("\r\n", "\n", "\r"), '', stripslashes($m['message'])) ?>
+							<?= str_replace(["\r\n", "\n", "\r"], '', stripslashes($m['message'])) ?>
 							<? endif; ?>
 						</th>
 						<? if ($parse['owner']): ?>
@@ -54,7 +54,7 @@
 <script type="text/javascript">
 	var messages = new Array(20);
 	<? if (count($parse['messages']) > 0): foreach ($parse['messages'] AS $m): ?>
-		messages['m<?=$m['id'] ?>'] = '<?=str_replace(array("\r\n", "\n", "\r"), '', addslashes(stripslashes($m['message']))) ?>';
+		messages['m<?=$m['id'] ?>'] = '<?=str_replace(["\r\n", "\n", "\r"], '', addslashes(stripslashes($m['message']))) ?>';
 	<? endforeach;  endif; ?>
 	<? if ($parse['parser']): ?>
 		$(document).ready(function(){ShowText()});

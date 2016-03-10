@@ -281,9 +281,9 @@ class InfoController extends ApplicationController
 			$parse['cry'] = Helpers::pretty_number($this->game->pricelist[$BuildID]['crystal']) . ' (' . Helpers::pretty_number($this->game->pricelist[$BuildID]['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
 			$parse['deu'] = Helpers::pretty_number($this->game->pricelist[$BuildID]['deuterium']) . ' (' . Helpers::pretty_number($this->game->pricelist[$BuildID]['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
 
-			$engine = array('', 'Ракетный', 'Импульсный', 'Гиперпространственный');
-			$gun = array('', 'Лазерное', 'Ионное', 'Плазменное');
-			$armour = array('', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная');
+			$engine = ['', 'Ракетный', 'Импульсный', 'Гиперпространственный'];
+			$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
+			$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
 			$parse['base_engine'] = $engine[$this->game->CombatCaps[$BuildID]['type_engine']];
 			$parse['gun'] = $gun[$this->game->CombatCaps[$BuildID]['type_gun']];
@@ -313,8 +313,8 @@ class InfoController extends ApplicationController
 
 			if ($BuildID >= 400 && $BuildID < 500)
 			{
-				$gun = array('', 'Лазерное', 'Ионное', 'Плазменное');
-				$armour = array('', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная');
+				$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
+				$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
 				$parse['gun'] = $gun[$this->game->CombatCaps[$BuildID]['type_gun']];
 				$parse['armour'] = $armour[$this->game->CombatCaps[$BuildID]['type_armour']];

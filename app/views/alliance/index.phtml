@@ -73,6 +73,6 @@
 	<? endif; ?>
 </table>
 <script>
-	Text('<?=str_replace(array("\r\n", "\n", "\r"), '', stripslashes($parse['description'])) ?>', 'm1');
-	Text('<?=str_replace(array("\r\n", "\n", "\r"), '', stripslashes($parse['text'])) ?>', 'm2');
+	Text('<?=str_replace(["\r\n", "\n", "\r"], '', stripslashes($parse['description'])) ?>', 'm1');
+	Text('<?=str_replace(["\r\n", "\n", "\r"], '', stripslashes($parse['text'])) ?>', 'm2');
 </script>

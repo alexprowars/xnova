@@ -27,14 +27,13 @@ class Banned
 			$BanTime += $mins * 60;
 			$BanTime += time();
 
-			Sql::build()->insert('game_banned')->set(array
-			(
+			Sql::build()->insert('game_banned')->set([
 				'who'		=> $userz['id'],
 				'theme'		=> $reas,
 				'time'		=> time(),
 				'longer'	=> $BanTime,
 				'author'	=> $controller->user->getId()
-			))->execute();
+			])->execute();
 
 			Sql::build()->update('game_users')->setField('banned', $BanTime);
 
@@ -47,12 +46,11 @@ class Banned
 			{
 				global $reslist, $resource;
 
-				$arFields = array
-				(
+				$arFields = [
 					$resource[4].'_porcent' 	=> 0,
 					$resource[12].'_porcent' 	=> 0,
 					$resource[212].'_porcent' 	=> 0
-				);
+				];
 
 				foreach ($reslist['res'] AS $res)
 					$arFields[$res.'_mine_porcent'] = 0;

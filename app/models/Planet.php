@@ -405,7 +405,7 @@ class Planet extends Model
 
 	public function getProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
 	{
-		$return = array('energy' => 0);
+		$return = ['energy' => 0];
 
 		$config = $this->getDi()->getShared('config');
 
@@ -711,7 +711,7 @@ class Planet extends Model
 						}
 					}
 
-					$BuildArray[$Node] = array($Item['i'], $Item['l'], Building::GetBuildingTime($this->user, $this, $Item['i']));
+					$BuildArray[$Node] = [$Item['i'], $Item['l'], Building::GetBuildingTime($this->user, $this, $Item['i'])];
 				}
 
 				$UnFinished = false;
@@ -747,7 +747,7 @@ class Planet extends Model
 					{
 						$UnFinished = true;
 
-						$queueArray[$queueManager::QUEUE_TYPE_SHIPYARD][] = array('i' => $Element, 'l' => $Count, 't' => 0, 's' => count($queueArray[$queueManager::QUEUE_TYPE_SHIPYARD]) == 0 ? $this->b_hangar : 0, 'e' => 0);
+						$queueArray[$queueManager::QUEUE_TYPE_SHIPYARD][] = ['i' => $Element, 'l' => $Count, 't' => 0, 's' => count($queueArray[$queueManager::QUEUE_TYPE_SHIPYARD]) == 0 ? $this->b_hangar : 0, 'e' => 0];
 					}
 				}
 
@@ -880,7 +880,7 @@ class Planet extends Model
 				$Units = $Needed['metal'] + $Needed['crystal'] + $Needed['deuterium'];
 
 				// Мирный опыт за строения
-				$XPBuildings = array(1, 2, 3, 5, 22, 23, 24, 25);
+				$XPBuildings = [1, 2, 3, 5, 22, 23, 24, 25];
 				$XP = 0;
 
 				if (in_array($Element, $XPBuildings))
@@ -1118,7 +1118,7 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
-		$researchLevelList = array($this->{$this->game->resource[31]});
+		$researchLevelList = [$this->{$this->game->resource[31]}];
 
 		if ($this->user->{$this->game->resource[123]} > 0)
 		{
@@ -1140,7 +1140,7 @@ class Planet extends Model
 		return $this->field_max + ($this->{$this->game->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->game->resource[41]});
 	}
 
-	public function GetNextJumpWaitTime (array $CurMoon = array())
+	public function GetNextJumpWaitTime (array $CurMoon = [])
 	{
 		if (count($CurMoon) == 0)
 			$CurMoon = $this->toArray();

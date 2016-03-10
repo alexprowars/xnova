@@ -11,7 +11,7 @@ while ($load = $loads->fetch())
 	$result[$load['key']] = $load['value'];
 }
 
-$di->get('config')->merge(new \Phalcon\Config(array('app' => $result)));
+$di->get('config')->merge(new \Phalcon\Config(['app' => $result]));
 
 if ($di->has('auth') && !$di->get('auth')->isAuthorized())
 {

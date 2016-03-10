@@ -151,13 +151,12 @@ class User extends Model
 
 	public function afterFetch()
 	{
-		$bonusArrays = array
-		(
+		$bonusArrays = [
 			'storage', 'metal', 'crystal', 'deuterium', 'energy', 'solar',
 			'res_fleet', 'res_defence', 'res_research', 'res_building', 'res_levelup',
 			'time_fleet', 'time_defence', 'time_research', 'time_building',
 			'fleet_fuel', 'fleet_speed', 'queue'
-		);
+		];
 
 		$this->bonusData = [];
 
@@ -449,7 +448,7 @@ class User extends Model
 				$ranks = json_decode($ally['ranks'], true);
 
 				$this->ally = $ally;
-				$this->ally['rights'] = isset($ranks[$ally['rank'] - 1]) ? $ranks[$ally['rank'] - 1] : array('name' => '', 'planet' => 0);
+				$this->ally['rights'] = isset($ranks[$ally['rank'] - 1]) ? $ranks[$ally['rank'] - 1] : ['name' => '', 'planet' => 0];
 			}
 		}
 	}
@@ -476,7 +475,7 @@ class User extends Model
 
 				$this->planet_current = $selectPlanet;
 
-				$this->saveData(array('planet_current' => $this->planet_current));
+				$this->saveData(['planet_current' => $this->planet_current]);
 			}
 			else
 				return false;

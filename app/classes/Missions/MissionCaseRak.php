@@ -23,7 +23,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 		if (isset($PlanetRow['id']) && isset($Defender['defence_tech']))
 		{
 			// Массивы параметров
-			$ids = array(0 => 401, 1 => 402, 2 => 403, 3 => 404, 4 => 405, 5 => 406, 6 => 407, 7 => 408, 8 => 503, 9 => 502);
+			$ids = [0 => 401, 1 => 402, 2 => 403, 3 => 404, 4 => 405, 5 => 406, 6 => 407, 7 => 408, 8 => 503, 9 => 502];
 
 			$message = '';
 

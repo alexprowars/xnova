@@ -24,7 +24,7 @@ class AvatarController extends ApplicationController
 			$upload->file_overwrite = true;
 			$upload->file_max_size = 102400;
 			$upload->mime_check = true;
-			$upload->allowed = array('image/*');
+			$upload->allowed = ['image/*'];
 			$upload->image_convert = 'jpg';
 			$upload->image_resize = true;
 			$upload->image_x = 128;

@@ -23,14 +23,13 @@ class Tree
 
 				foreach ($nodes AS $node)
 				{
-					$result[] = array
-					(
+					$result[] = [
 						'id' 		=> $node['id'],
 						'text' 		=> $node['name'],
 						'type'		=> (count($node['children']) > 0) ? 'folder' : 'file',
 						'children' 	=> (count($node['children']) > 0),
-						'state'		=> array('opened' => false)
-					);
+						'state'		=> ['opened' => false]
+					];
 				}
 
 				echo json_encode($result);

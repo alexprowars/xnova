@@ -14,10 +14,10 @@ class Messages
 
 			$parse = [];
 
-			$Prev = (!empty($_POST['prev'])) ? true : false;
-			$Next = (!empty($_POST['next'])) ? true : false;
-			$DelSel = (!empty($_POST['delsel'])) ? true : false;
-			$DelDat = (!empty($_POST['deldat'])) ? true : false;
+			$Prev = !empty($_POST['prev']);
+			$Next = !empty($_POST['next']);
+			$DelSel = !empty($_POST['delsel']);
+			$DelDat = !empty($_POST['deldat']);
 			$CurrPage = (!empty($_POST['curr'])) ? intval($_POST['curr']) : 1;
 			$Selected = isset($_POST['type']) ? intval($_POST['type']) : 1;
 			$SelPage = @$_POST['page'];
@@ -25,10 +25,10 @@ class Messages
 			if ($Selected == 6)
 				$Selected = 0;
 
-			$parse['types'] = array(1, 2, 3, 4, 5, 0);
+			$parse['types'] = [1, 2, 3, 4, 5, 0];
 
 			if ($controller->user->authlevel == 1)
-				$parse['types'] = array(3, 4, 5);
+				$parse['types'] = [3, 4, 5];
 
 			if (!in_array($Selected, $parse['types']))
 			{

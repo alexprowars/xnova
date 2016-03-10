@@ -128,7 +128,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				$shipType = $this->getShipType($i, array($target->{$this->game->resource[$i]}, (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) ? $targetUser->{$this->game->resource[$l]} : 0)), $res);
+				$shipType = $this->getShipType($i, [$target->{$this->game->resource[$i]}, (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) ? $targetUser->{$this->game->resource[$l]} : 0)], $res);
 
 				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship')
 					$shipType->setRepairProb(0.8);
@@ -139,7 +139,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if (!$defenders->existPlayer($targetUser->id))
 		{
-			$player = new Player($targetUser->id, array($homeFleet));
+			$player = new Player($targetUser->id, [$homeFleet]);
 			$player->setTech(0, 0, 0);
 			$player->setName($targetUser->username);
 			$defenders->addPlayer($player);
@@ -147,12 +147,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			if (!isset($this->usersInfo[$targetUser->id]))
 				$this->usersInfo[$targetUser->id] = [];
 
-			$this->usersInfo[$targetUser->id][0] = array
-			(
+			$this->usersInfo[$targetUser->id][0] = [
 				'galaxy' => $target->galaxy,
 				'system' => $target->system,
 				'planet' => $target->planet
-			);
+			];
 		}
 		else
 			$defenders->getPlayer($targetUser->id)->addDefense($homeFleet);
@@ -162,7 +161,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$engine = new Battle($attackers, $defenders, $this->_fleet['raunds']);
 		$report = $engine->getReport();
-		$result = array('version' => 2, 'time' => time(), 'rw' => array());
+		$result = ['version' => 2, 'time' => time(), 'rw' => []];
 
 		$attackUsers 	= $this->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
 		$defenseUsers 	= $this->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
@@ -181,12 +180,12 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if ($report->isAdraw())
 			$result['won'] = 0;
 
-		$result['lost'] = array('att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits());
+		$result['lost'] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
 
 		$debris = $report->getDebris();
 
 		$result['debree']['att'] = $debris;
-		$result['debree']['def'] = array(0,0);
+		$result['debree']['def'] = [0, 0];
 
 		$attackFleets 	= $this->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 		$defenseFleets 	= $this->getResultFleetArray($report->getPresentationDefendersFleetOnRound('START'), $report->getAfterBattleDefenders());
@@ -220,7 +219,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 
-		$steal = array('metal' => 0, 'crystal' => 0, 'deuterium' => 0);
+		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
 
 		if ($result['won'] == 1)
 		{
@@ -349,12 +348,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				if ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)
 				{
-					$arFields = array
-					(
+					$arFields = [
 						'-metal' 		=> $steal['metal'],
 						'-crystal' 		=> $steal['crystal'],
 						'-deuterium' 	=> $steal['deuterium']
-					);
+					];
 				}
 
 				for ($i = 200; $i < 500; $i++)
@@ -454,7 +452,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		// Упаковка в строку
 		$users = json_encode($FleetsUsers);
 		// Упаковка в строку
-		$raport = json_encode(array($result, $attackUsers, $defenseUsers, $steal, $moonChance, $GottenMoon, $repairFleets));
+		$raport = json_encode([$result, $attackUsers, $defenseUsers, $steal, $moonChance, $GottenMoon, $repairFleets]);
 		// Уничтожен в первой волне
 		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 		// Добавление в базу
@@ -596,7 +594,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if (!count($fleetData))
 		{
 			if ($fleet['fleet_mission'] == 1 || ($fleet['fleet_mission'] == 2 && count($fleetData) == 1 && isset($fleetData[210])))
-				$this->ReturnFleet(array(), $fleet['fleet_id']);
+				$this->ReturnFleet([], $fleet['fleet_id']);
 
 			return;
 		}
@@ -604,12 +602,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if (!isset($this->usersInfo[$fleet['fleet_owner']]))
 			$this->usersInfo[$fleet['fleet_owner']] = [];
 
-		$this->usersInfo[$fleet['fleet_owner']][$fleet['fleet_id']] = array
-		(
+		$this->usersInfo[$fleet['fleet_owner']][$fleet['fleet_id']] = [
 			'galaxy' => $fleet['fleet_start_galaxy'],
 			'system' => $fleet['fleet_start_system'],
 			'planet' => $fleet['fleet_start_planet']
-		);
+		];
 
 		$res = [];
 
@@ -683,7 +680,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			if ($shipId < 100 || $shipId > 300 || !$shipArr['cnt'])
 				continue;
 
-			$fleetObj->addShipType($this->getShipType($shipId, array($shipArr['cnt'], $shipArr['lvl']), $res));
+			$fleetObj->addShipType($this->getShipType($shipId, [$shipArr['cnt'], $shipArr['lvl']], $res));
 		}
 
 		if (!$fleetObj->isEmpty())
@@ -705,7 +702,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		elseif ($this->game->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = array($this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']);
+		$cost = [$this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']];
 
 		if (in_array($id, $this->game->reslist['fleet']))
 			return new Ship($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
@@ -722,12 +719,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			/**
 			 * @var Player $_player
 			 */
-			$result[$_player->getId()] = array
-			(
+			$result[$_player->getId()] = [
 				'username' 	=> $_player->getName(),
 				'fleet' 	=> $this->usersInfo[$_player->getId()],
-				'tech' 		=> array
-				(
+				'tech' 		=>
+				[
 					'id' 			=> $_player->getId(),
 					'military_tech' => isset($this->usersTech[$_player->getId()][109]) ? $this->usersTech[$_player->getId()][109] : 0,
 					'shield_tech' 	=> isset($this->usersTech[$_player->getId()][110]) ? $this->usersTech[$_player->getId()][110] : 0,
@@ -735,9 +731,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					'laser_tech'	=> isset($this->usersTech[$_player->getId()][120]) ? $this->usersTech[$_player->getId()][120] : 0,
 					'ionic_tech'	=> isset($this->usersTech[$_player->getId()][121]) ? $this->usersTech[$_player->getId()][121] : 0,
 					'buster_tech'	=> isset($this->usersTech[$_player->getId()][122]) ? $this->usersTech[$_player->getId()][122] : 0
-				),
+				],
 				'flvl' => $this->usersTech[$_player->getId()],
-			);
+			];
 		}
 
 		return $result;
@@ -745,15 +741,14 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	public function convertRoundToArray(Round $round)
 	{
-		$result = array
-		(
-				'attackers' 	=> array(),
-				'defenders' 	=> array(),
-				'attack'		=> array('total' => $round->getAttackersFirePower()),
-				'defense' 		=> array('total' => $round->getDefendersFirePower()),
-				'attackA' 		=> array('total' => $round->getAttackersFireCount()),
-				'defenseA' 		=> array('total' => $round->getDefendersFireCount())
-		);
+		$result = [
+			'attackers' 	=> [],
+			'defenders' 	=> [],
+			'attack'		=> ['total' => $round->getAttackersFirePower()],
+			'defense' 		=> ['total' => $round->getDefendersFirePower()],
+			'attackA' 		=> ['total' => $round->getAttackersFireCount()],
+			'defenseA' 		=> ['total' => $round->getDefendersFireCount()]
+		];
 
 		$attackers = $round->getAfterBattleAttackers();
 		$defenders = $round->getAfterBattleDefenders();
@@ -856,7 +851,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	private function getSteal ($planet, $capacity = 0)
 	{
-		$steal = array('metal' => 0, 'crystal' => 0, 'deuterium' => 0);
+		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
 
 		if ($capacity > 0)
 		{

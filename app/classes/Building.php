@@ -216,12 +216,12 @@ class Building
 	 */
 	static function GetElementPrice ($cost, Planet $planet)
 	{
-		$array = array(
-			'metal' 	=> array(_getText('Metal'), 'metall'),
-			'crystal' 	=> array(_getText('Crystal'), 'kristall'),
-			'deuterium' => array(_getText('Deuterium'), 'deuterium'),
-			'energy_max'=> array(_getText('Energy'), 'energie')
-		);
+		$array = [
+			'metal' 	=> [_getText('Metal'), 'metall'],
+			'crystal' 	=> [_getText('Crystal'), 'kristall'],
+			'deuterium' => [_getText('Deuterium'), 'deuterium'],
+			'energy_max'=> [_getText('Energy'), 'energie']
+		];
 
 		$text = "";
 
@@ -261,7 +261,7 @@ class Building
 		else
 			$level = 0;
 
-		$array 	= array('metal', 'crystal', 'deuterium', 'energy_max');
+		$array 	= ['metal', 'crystal', 'deuterium', 'energy_max'];
 		$cost 	= [];
 
 		foreach ($array as $ResType)

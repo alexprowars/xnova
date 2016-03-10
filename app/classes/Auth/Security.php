@@ -28,11 +28,10 @@ class Security extends Component
 			$acl->setDefaultAction(Acl::DENY);
 
 			//Register roles
-			$roles = array
-			(
+			$roles = [
 				'users'  => new Role('Users'),
 				'guests' => new Role('Guests')
-			);
+			];
 
 			foreach ($roles as $role)
 			{
@@ -40,8 +39,7 @@ class Security extends Component
 			}
 
 			//Private area resources
-			$privateResources = array
-			(
+			$privateResources = [
 				'admin'		=> array('*'),
 				'overview'	=> array('*'),
 				'start'		=> array('*'),
@@ -86,17 +84,16 @@ class Security extends Component
 				'tech'		=> array('*'),
 				'tutorial'	=> array('*'),
 				'git'		=> array('*'),
-			);
+			];
 
-			$publicResources = array
-			(
+			$publicResources = [
 				'index'		=> array('*'),
 				'error'		=> array('*'),
 				'contact'	=> array('*'),
 				'stat'		=> array('*'),
 				'banned'	=> array('*'),
 				'xnsim'		=> array('*'),
-			);
+			];
 
 			foreach ($privateResources as $resource => $actions)
 			{

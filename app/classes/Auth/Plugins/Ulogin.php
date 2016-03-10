@@ -88,15 +88,14 @@ class Ulogin extends Component implements AuthInterface
 
 		$this->db->insertAsDict(
 		   	"game_users",
-			array
-		   	(
+			[
 				'username' 		=> trim($this->data['first_name']." ".$this->data['last_name']),
 				'sex' 			=> 0,
 				'ip' 			=> sprintf("%u", ip2long($this->request->getClientAddress())),
 				'bonus' 		=> time(),
 				'onlinetime' 	=> time(),
 				'planet_id'		=> 0
-		   	)
+		   	]
 		);
 
 		$iduser = $this->db->lastInsertId();
@@ -105,24 +104,22 @@ class Ulogin extends Component implements AuthInterface
 		{
 			$this->db->insertAsDict(
 			   	"game_users_info",
-				array
-			   	(
+				[
 					'id' 			=> $iduser,
 					'email' 		=> '',
 					'create_time' 	=> time(),
 					'password' 		=> md5($this->token)
-			   	)
+			   	]
 			);
 
 			$this->db->insertAsDict(
 			   	"game_users_auth",
-				array
-			   	(
+				[
 					'user_id' 		=> $iduser,
 					'external_id' 	=> $this->data['identity'],
 					'create_time' 	=> time(),
 					'enter_time' 	=> time()
-			   	)
+			   	]
 			);
 
 			$this->db->query("UNLOCK TABLES");
@@ -135,11 +132,10 @@ class Ulogin extends Component implements AuthInterface
 				{
 					$this->db->insertAsDict(
 					   	"game_refs",
-						array
-					   	(
+						[
 							'r_id' 	=> $iduser,
 							'u_id'	=> $refer
-					   	)
+					   	]
 					);
 				}
 			}

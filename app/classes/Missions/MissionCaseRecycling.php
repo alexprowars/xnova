@@ -78,7 +78,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 		$this->db->query("UPDATE game_planets SET `debris_metal` = `debris_metal` - '" . $RecycledGoods["metal"] . "', `debris_crystal` = `debris_crystal` - '" . $RecycledGoods["crystal"] . "' WHERE `id` = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
 
-		$this->ReturnFleet(array('+fleet_resource_metal' => $RecycledGoods["metal"], '+fleet_resource_crystal' => $RecycledGoods["crystal"]));
+		$this->ReturnFleet(['+fleet_resource_metal' => $RecycledGoods["metal"], '+fleet_resource_crystal' => $RecycledGoods["crystal"]]);
 
 		$Message = sprintf(_getText('sys_recy_gotten'),
 						Helpers::pretty_number($RecycledGoods["metal"]), _getText('Metal'),

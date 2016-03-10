@@ -7,7 +7,7 @@
 			<th style="text-align:left;font-weight:normal;">
 				<span id="um<?=$parse['id'] ?>" style="display:none;"></span>
 				<span id="m<?=$parse['id'] ?>"></span>
-				<script>Text('<?=str_replace(array("\n", "\r", "\n\r"), '<br>', addslashes($parse['text'])) ?>', 'm<?=$parse['id'] ?>');</script>
+				<script>Text('<?=str_replace(["\n", "\r", "\n\r"], '<br>', addslashes($parse['text'])) ?>', 'm<?=$parse['id'] ?>');</script>
 			</th>
 		</tr>
 	</table>

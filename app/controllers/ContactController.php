@@ -21,12 +21,11 @@ class ContactController extends ApplicationController
 
 		while ($Ops = $GameOps->fetch())
 		{
-			$contacts[] = array
-			(
+			$contacts[] = [
 				'ctc_data_name' => $Ops['username'],
 				'ctc_data_auth' => _getText('user_level', $Ops['authlevel']),
 				'ctc_data_mail' => $Ops['email']
-			);
+			];
 		}
 
 		$this->view->setVar('contacts', $contacts);

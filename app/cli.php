@@ -34,14 +34,13 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 			/**
 			 * @var Object $config
 			 */
-			$connection = new Database(array
-			(
+			$connection = new Database([
 	            'host' 		=> $config->database->host,
 	            'username' 	=> $config->database->username,
 	            'password' 	=> $config->database->password,
 	            'dbname' 	=> $config->database->dbname,
 				'options' 	=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-	        ));
+	        ]);
 
 			return $connection;
 	    }
@@ -50,18 +49,15 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	$di->set(
 	    'cache', function () use ($config, $di)
 		{
-			$frontCache = new \Phalcon\Cache\Frontend\Data(array(
-				"lifetime" => 3600
-			));
+			$frontCache = new \Phalcon\Cache\Frontend\Data(["lifetime" => 3600]);
 
 			/**
 			 * @var Object $config
 			 */
-			$cache = new Cache($frontCache, array
-			(
+			$cache = new Cache($frontCache, [
 				"host" => $config->memcache->host,
 				"port" => $config->memcache->port
-			));
+			]);
 
 	        return $cache;
 	    }, true

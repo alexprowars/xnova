@@ -131,15 +131,14 @@ class Game extends Component
 
 		$this->db->insertAsDict(
 			"game_messages",
-			array
-			(
+			[
 				'message_owner'		=> $owner,
 				'message_sender'	=> $sender,
 				'message_time'		=> $time,
 				'message_type'		=> $type,
 				'message_from'		=> addslashes($from),
 				'message_text'		=> addslashes($message)
-			)
+			]
 		);
 
 		$this->db->query("UPDATE game_users SET messages = messages + 1 WHERE id = ".$owner."");

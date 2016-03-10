@@ -21,7 +21,7 @@ class PlayerGroup extends Iterable
 	private static $id_count = 0;
 	private $id;
 
-	public function __construct($players = array())
+	public function __construct($players = [])
 	{
 		$this->id = ++self::$id_count;
 		foreach ($players as $player)

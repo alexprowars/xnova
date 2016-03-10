@@ -115,7 +115,7 @@ class StageTwo
 				$UsedPlanet = true;
 		}
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, Array($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
 
 		if ($TargetPlanet['id_owner'] == 1 || $controller->user->isAdmin())
 			$missiontype[4] = _getText('type_mission', 4);
@@ -176,14 +176,13 @@ class StageTwo
 
 		foreach ($fleetarray as $i => $count)
 		{
-			$ship = array
-			(
+			$ship = [
 				'id' => $i,
 				'count' => $count,
 				'consumption' => Fleet::GetShipConsumption($i, $controller->user),
 				'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user),
 				'stay' => $controller->game->CombatCaps[$i]['stay'],
-			);
+			];
 
 			if (isset($controller->user->{'fleet_' . $i}) && isset($controller->game->CombatCaps[$i]['power_consumption']) && $controller->game->CombatCaps[$i]['power_consumption'] > 0)
 				$ship['capacity'] = round($controller->game->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->game->CombatCaps[$i]['power_consumption'] / 100)));

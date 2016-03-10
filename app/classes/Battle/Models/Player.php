@@ -24,7 +24,7 @@ class Player extends Iterable
 	private $armour_tech = 0;
 	private $name;
 
-	public function __construct($id, $fleets = array(), $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
+	public function __construct($id, $fleets = [], $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
 	{
 		$this->id = $id;
 		$this->name = $name;

@@ -145,7 +145,7 @@ class StageThree
 		if ($fleetmission == 4 && ($TargetPlanet['id_owner'] == 1 || $controller->user->isAdmin()))
 			$YourPlanet = true;
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, Array($galaxy, $system, $planet, $planettype), $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planettype], $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
 
 		if (!isset($missiontype[$fleetmission]))
 			$controller->message("<span class=\"error\"><b>Миссия неизвестна!</b></span>", 'Ошибка', "/fleet/", 2);
@@ -246,7 +246,7 @@ class StageThree
 				$controller->message("<span class=\"error\"><b>Выполнение данной миссии невозможно!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
-		$speedPossible = array(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+		$speedPossible = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
 		$maxFleetSpeed 		= min(Fleet::GetFleetMaxSpeed($fleetarray, 0, $controller->user));
 		$fleetSpeedFactor 	= $controller->request->getPost('speed', 'int', 10);
@@ -369,7 +369,7 @@ class StageThree
 
 		if ($fleetmission == 5)
 		{
-			$StayArrayTime = array(0, 1, 2, 4, 8, 16, 32);
+			$StayArrayTime = [0, 1, 2, 4, 8, 16, 32];
 
 			if (!isset($_POST['holdingtime']) || !in_array($_POST['holdingtime'], $StayArrayTime))
 				$_POST['holdingtime'] = 0;

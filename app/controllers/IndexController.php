@@ -97,28 +97,26 @@ class IndexController extends ApplicationController
 
 				$this->db->insertAsDict(
 				   	"game_users",
-					array
-				   	(
+					[
 						'username' 		=> '',
 						'sex' 			=> 0,
 						'planet_id' 	=> 0,
 						'ip' 			=> convertIp($this->request->getClientAddress()),
 						'bonus' 		=> time(),
 						'onlinetime' 	=> time()
-					)
+					]
 				);
 
 				$iduser = $this->db->lastInsertId();
 
 				$this->db->insertAsDict(
 					"game_users_info",
-					array
-					(
+					[
 						'id' 			=> $iduser,
 						'email' 		=> $email,
 						'create_time' 	=> time(),
 						'password' 		=> $md5newpass
-					)
+					]
 				);
 
 				if ($this->session->has('ref'))
@@ -212,14 +210,13 @@ class IndexController extends ApplicationController
 
 				$this->db->insertAsDict(
 				   	"game_lostpasswords",
-					array
-				   	(
+					[
 						'user_id' 		=> $inf['id'],
 						'keystring' 	=> $key,
 						'time'			=> time(),
 						'ip'			=> $ip,
 						'active'		=> 0
-				   	)
+				   	]
 				);
 
 				$mail = new PHPMailer();

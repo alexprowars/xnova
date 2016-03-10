@@ -68,7 +68,7 @@ class AllianceController extends ApplicationController
 		$requests = $this->db->query("SELECT r.*, a.name, a.tag FROM game_alliance_requests r LEFT JOIN game_alliance a ON a.id = r.a_id WHERE r.u_id = " . $this->user->id . ";");
 
 		while ($request = $requests->fetch())
-			$parse['list'][] = array($request['a_id'], $request['tag'], $request['name'], $request['time']);
+			$parse['list'][] = [$request['a_id'], $request['tag'], $request['name'], $request['time']];
 
 		$parse['allys'] = [];
 

@@ -161,9 +161,7 @@ class Fleet extends Building
 				continue;
 
 			if (!isset($fleetAmount[$temp[0]]))
-			{
-				$fleetAmount[$temp[0]] = array('cnt' => 0, 'lvl' => 0);
-			}
+				$fleetAmount[$temp[0]] = ['cnt' => 0, 'lvl' => 0];
 
 			$lvl = explode("!", $temp[1]);
 
@@ -272,7 +270,7 @@ class Fleet extends Building
 		return $MissionPopup;
 	}
 
-	static function getFleetMissions ($fleetArray, $target = array(1, 1, 1, 1), $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
+	static function getFleetMissions ($fleetArray, $target = [1, 1, 1, 1], $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
 	{
 		$result = [];
 

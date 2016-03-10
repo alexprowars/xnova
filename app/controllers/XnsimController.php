@@ -28,7 +28,7 @@ class XnsimController extends ApplicationController
 
 	public function indexAction ()
 	{
-		$techList = array(109, 110, 111, 120, 121, 122);
+		$techList = [109, 110, 111, 120, 121, 122];
 
 		$css = $this->assets->collection('css');
 		$css->addCss('/assets/css/xnsim.css');
@@ -74,7 +74,7 @@ class XnsimController extends ApplicationController
 			$report = $engine->getReport();
 
 			$result = [];
-			$result[0] = array('time' => time(), 'rw' => array());
+			$result[0] = ['time' => time(), 'rw' => []];
 
 			$result[1] = $this->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
 			$result[2] = $this->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
@@ -91,14 +91,14 @@ class XnsimController extends ApplicationController
 			if ($report->isAdraw())
 				$result[0]['won'] = 0;
 
-			$result[0]['lost'] = array('att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits());
+			$result[0]['lost'] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
 
 			$debris = $report->getDebris();
 
 			$result[0]['debree']['att'] = $debris;
-			$result[0]['debree']['def'] = array(0, 0);
+			$result[0]['debree']['def'] = [0, 0];
 
-			$result[3] = array('metal' => 0, 'crystal' => 0, 'deuterium' => 0);
+			$result[3] = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
 			$result[4] = $report->getMoonProb();
 			$result[5] = '';
 
@@ -126,7 +126,7 @@ class XnsimController extends ApplicationController
 
 				$report = $engine->getReport();
 
-				$statistics[] = array('att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits());
+				$statistics[] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
 
 				unset($report);
 				unset($engine);
@@ -167,21 +167,20 @@ class XnsimController extends ApplicationController
 
 		foreach ($_playerGroup as $_player)
 		{
-			$result[$_player->getId()] = array
-			(
+			$result[$_player->getId()] = [
 				'username' => $_player->getName(),
-				'fleet' => array($_player->getId() => array('galaxy' => 1, 'system' => 1, 'planet' => 1)),
-				'tech' => array
-				(
+				'fleet' => [$_player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
+				'tech' =>
+				[
 					'military_tech' => isset($this->usersInfo[$_player->getId()][109]) ? $this->usersInfo[$_player->getId()][109] : 0,
 					'shield_tech' 	=> isset($this->usersInfo[$_player->getId()][110]) ? $this->usersInfo[$_player->getId()][110] : 0,
 					'defence_tech' 	=> isset($this->usersInfo[$_player->getId()][111]) ? $this->usersInfo[$_player->getId()][111] : 0,
 					'laser_tech'	=> isset($this->usersInfo[$_player->getId()][120]) ? $this->usersInfo[$_player->getId()][120] : 0,
 					'ionic_tech'	=> isset($this->usersInfo[$_player->getId()][121]) ? $this->usersInfo[$_player->getId()][121] : 0,
 					'buster_tech'	=> isset($this->usersInfo[$_player->getId()][122]) ? $this->usersInfo[$_player->getId()][122] : 0
-				),
+				],
 				'flvl' => $this->usersInfo[$_player->getId()],
-			);
+			];
 		}
 
 		return $result;
@@ -189,15 +188,14 @@ class XnsimController extends ApplicationController
 
 	private function convertRoundToArray(Round $round)
 	{
-		$result = array
-		(
-				'attackers' 	=> array(),
-				'defenders' 	=> array(),
-				'attack'		=> array('total' => $round->getAttackersFirePower()),
-				'defense' 		=> array('total' => $round->getDefendersFirePower()),
-				'attackA' 		=> array('total' => $round->getAttackersFireCount()),
-				'defenseA' 		=> array('total' => $round->getDefendersFireCount())
-		);
+		$result = [
+			'attackers' 	=> [],
+			'defenders' 	=> [],
+			'attack'		=> ['total' => $round->getAttackersFirePower()],
+			'defense' 		=> ['total' => $round->getDefendersFirePower()],
+			'attackA' 		=> ['total' => $round->getAttackersFireCount()],
+			'defenseA' 		=> ['total' => $round->getDefendersFireCount()]
+		];
 
 		$attackers = $round->getAfterBattleAttackers();
 		$defenders = $round->getAfterBattleDefenders();
@@ -262,7 +260,7 @@ class XnsimController extends ApplicationController
 				foreach ($fleetData as $shipId => $shipArr)
 				{
 					if ($shipId > 200)
-						$fleets[$shipId] = array($shipArr['cnt'], $shipArr['lvl']);
+						$fleets[$shipId] = [$shipArr['cnt'], $shipArr['lvl']];
 
 					$res[$shipId] = $shipArr['cnt'];
 
@@ -312,7 +310,7 @@ class XnsimController extends ApplicationController
 		elseif ($this->game->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = array($this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']);
+		$cost = [$this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']];
 
 		if (in_array($id, $this->game->reslist['fleet']))
 			return new Ship($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);

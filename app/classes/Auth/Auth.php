@@ -142,12 +142,11 @@ class Auth extends Component
 
 					$this->db->insertAsDict(
 						"game_log_ip",
-						array
-						(
+						[
 							'id'	=> $UserRow->id,
 							'time'	=> time(),
 							'ip'	=> $ip
-						)
+						]
 					);
 				}
 

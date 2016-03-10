@@ -18,9 +18,9 @@ class Helpers
 		$data = [];
 
 		if ($type == 'month')
-			$data = array('', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');
+			$data = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 		elseif ($type == 'week')
-			$data = array('Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота');
+			$data = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
 		return (isset($data[$value]) ? $data[$value] : '');
 	}
@@ -41,35 +41,21 @@ class Helpers
 
 	static function translite($st)
 	{
-	 	$st = strtr($st,'абвгдезийклмнопрстуфх','abvgdezijklmnoprstufx');
-	 	$st = strtr($st,'АБВГДЕЗИЙКЛМНОПРСТУФХ','ABVGDEZIJKLMNOPRSTUFX');
+	 	$st = strtr($st, 'абвгдезийклмнопрстуфх','abvgdezijklmnoprstufx');
+	 	$st = strtr($st, 'АБВГДЕЗИЙКЛМНОПРСТУФХ','ABVGDEZIJKLMNOPRSTUFX');
+	 	$st = strtr($st, ['ё' => 'yo', 'ж' => 'zh', 'ц' => 'cz', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shh', 'ъ' => '``', 'ы' => 'y`', 'ь' => '`', 'э' => 'e`', 'ю' => 'yu', 'я' => 'ya', 'Ё' => 'YO', 'Ж' => 'ZH', 'Ц' => 'CZ', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SHH', 'Ъ' => '``', 'Ы' => 'Y`', 'Ь' => '`', 'Э' => 'E`', 'Ю' => 'YU', 'Я' => 'YA']);
 
-	 	$st = strtr($st,array(
-			 'ё'=>'yo', 'ж'=>'zh', 'ц'=>'cz', 'ч'=>'ch', 'ш'=>'sh',
-			 'щ'=>'shh', 'ъ'=>'``', 'ы'=>'y`', 'ь'=>'`', 'э'=>'e`', 'ю'=>'yu', 'я'=>'ya',
-			 'Ё'=>'YO', 'Ж'=>'ZH', 'Ц'=>'CZ', 'Ч'=>'CH', 'Ш'=>'SH',
-			 'Щ'=>'SHH', 'Ъ'=>'``', 'Ы'=>'Y`', 'Ь'=>'`', 'Э'=>'E`', 'Ю'=>'YU', 'Я'=>'YA'
-			 )
-	 	);
-
-	 return $st;
-	 }
+		return $st;
+	}
 
 	static function untranslite($st)
 	{
-		$st = strtr($st,array(
-			'yo'=>'ё', 'zh'=>'ж', 'cz'=>'ц', 'ch'=>'ч', 'sh'=>'ш',
-			'shh'=>'щ', '``'=>'ъ', 'y`'=>'ы', '`'=>'ь', 'e`'=>'э', 'yu'=>'ю', 'ya'=>'я',
-			'YO'=>'Ё', 'ZH'=>'Ж', 'CZ'=>'Ц', 'CH'=>'Ч', 'SH'=>'Ш',
-			'SHH'=>'Щ', 'Y`'=>'Ы', 'E`'=>'Э', 'YU'=>'Ю', 'YA'=>'Я'
-			 )
-		);
-
-		$st = strtr($st,'abvgdezijklmnoprstufx', 'абвгдезийклмнопрстуфх');
-		$st = strtr($st,'ABVGDEZIJKLMNOPRSTUFX', 'АБВГДЕЗИЙКЛМНОПРСТУФХ');
+		$st = strtr($st, ['yo' => 'ё', 'zh' => 'ж', 'cz' => 'ц', 'ch' => 'ч', 'sh' => 'ш', 'shh' => 'щ', '``' => 'ъ', 'y`' => 'ы', '`' => 'ь', 'e`' => 'э', 'yu' => 'ю', 'ya' => 'я', 'YO' => 'Ё', 'ZH' => 'Ж', 'CZ' => 'Ц', 'CH' => 'Ч', 'SH' => 'Ш', 'SHH' => 'Щ', 'Y`' => 'Ы', 'E`' => 'Э', 'YU' => 'Ю', 'YA' => 'Я']);
+		$st = strtr($st, 'abvgdezijklmnoprstufx', 'абвгдезийклмнопрстуфх');
+		$st = strtr($st, 'ABVGDEZIJKLMNOPRSTUFX', 'АБВГДЕЗИЙКЛМНОПРСТУФХ');
 
 		return $st;
-	 }
+	}
 
 	static function CheckString ($str, $cut = false)
 	{
@@ -106,7 +92,7 @@ class Helpers
 
 	static function formatBytes ($size)
 	{
-	     $units = array(' B', ' KiB', ' MiB', ' GiB', ' TiB');
+	     $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
 
 	     for ($i = 0; $size >= 1024 && $i < 4; $i++)
 			 $size /= 1024;
@@ -181,7 +167,7 @@ class Helpers
 		$text = htmlspecialchars(str_replace("'", '&#39;', $text));
 		$text = addslashes($text);
 		$text = trim ( nl2br ( strip_tags ( $text, '<br>' ) ) );
-		$text = str_replace(array("\r\n", "\n", "\r"), '', $text);
+		$text = str_replace(["\r\n", "\n", "\r"], '', $text);
 
 		return $text;
 	}

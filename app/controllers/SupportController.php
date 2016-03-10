@@ -75,13 +75,12 @@ class SupportController extends ApplicationController
 		
 				while ($ticket = $supports->fetch())
 				{
-					$parse['TicketsList'][$ticket['ID']] = array
-					(
+					$parse['TicketsList'][$ticket['ID']] = [
 						'status' => $ticket['status'],
 						'subject' => $ticket['subject'],
 						'date' => $this->game->datezone("d.m.Y H:i:s", $ticket['time']),
 						'text' => html_entity_decode($ticket['text'], ENT_NOQUOTES, "CP1251"),
-					);
+					];
 				}
 
 				$this->view->setVar('parse', $parse);

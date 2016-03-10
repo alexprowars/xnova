@@ -25,7 +25,7 @@ class Fleet extends Iterable
 	private $armour_tech = 0;
 	private $name;
 
-	public function __construct($id, $shipTypes = array(), $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
+	public function __construct($id, $shipTypes = [], $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
 	{
 		$this->id = $id;
 		$this->count = 0;

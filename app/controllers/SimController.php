@@ -21,7 +21,7 @@ class SimController extends ApplicationController
 		$parse['slot_0'] = [];
 		$parse['slot_'.MAX_SLOTS] = [];
 
-		$parse['tech'] = array(109, 110, 111, 120, 121, 122);
+		$parse['tech'] = [109, 110, 111, 120, 121, 122];
 		
 		foreach ($data AS $row)
 		{
@@ -31,7 +31,7 @@ class SimController extends ApplicationController
 				$Count = explode("!", $Element[1]);
 
 				if (isset($Count[1]))
-					$parse['slot_'.MAX_SLOTS][$Element[0]] = array('c' => $Count[0], 'l' => $Count[1]);
+					$parse['slot_'.MAX_SLOTS][$Element[0]] = ['c' => $Count[0], 'l' => $Count[1]];
 			}
 		}
 		
@@ -40,10 +40,10 @@ class SimController extends ApplicationController
 		foreach ($res AS $id)
 		{
 			if (isset($this->planet->{$this->game->resource[$id]}) && $this->planet->{$this->game->resource[$id]} > 0)
-				$parse['slot_0'][$id] = array('c' => $this->planet->{$this->game->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0));
+				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->game->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
 		
 			if (isset($this->user->{$this->game->resource[$id]}) && $this->user->{$this->game->resource[$id]} > 0)
-				$parse['slot_0'][$id] = array('c' => $this->user->{$this->game->resource[$id]});
+				$parse['slot_0'][$id] = ['c' => $this->user->{$this->game->resource[$id]}];
 		}
 
 		$this->view->setVar('parse', $parse);

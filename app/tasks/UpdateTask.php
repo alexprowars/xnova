@@ -47,8 +47,7 @@ class UpdateTask extends ApplicationTask
 		define('MAX_RUNS', 12);
 		define('TIME_LIMIT', 60);
 
-		$missionObjPattern = array
-		(
+		$missionObjPattern = [
 			1	=> 'MissionCaseAttack',
 			2   => 'MissionCaseACS',
 			3   => 'MissionCaseTransport',
@@ -61,7 +60,7 @@ class UpdateTask extends ApplicationTask
 			10  => 'MissionCaseCreateBase',
 			15  => 'MissionCaseExpedition',
 			20  => 'MissionCaseRak'
-		);
+		];
 
 		Lang::includeLang("fleet_engine");
 

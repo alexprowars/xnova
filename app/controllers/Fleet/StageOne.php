@@ -56,13 +56,12 @@ class StageOne
 				$fleet['fleetlist'] .= $i . "," . intval($_POST["ship" . $i]) . ";";
 				$fleet['amount'] += intval($_POST["ship" . $i]);
 
-				$ship = array
-				(
+				$ship = [
 					'id' => $i,
 					'count' => intval($_POST["ship" . $i]),
 					'consumption' => Fleet::GetShipConsumption($i, $controller->user),
 					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
-				);
+				];
 
 				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->game->CombatCaps[$i]['power_consumption']) && $controller->game->CombatCaps[$i]['power_consumption'] > 0)
 					$ship['capacity'] = round($controller->game->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->game->CombatCaps[$i]['power_consumption'] / 100)));

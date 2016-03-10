@@ -165,15 +165,14 @@ class Queue
 			if (!isset($this->queue[self::QUEUE_TYPE_BUILDING]))
 				$this->queue[self::QUEUE_TYPE_BUILDING] = [];
 
-			$this->queue[self::QUEUE_TYPE_BUILDING][] = array
-			(
+			$this->queue[self::QUEUE_TYPE_BUILDING][] = [
 				'i' => $elementId,
 				'l' => $BuildLevel,
 				't' => 0,
 				's' => 0,
 				'e' => $BuildEndTime,
 				'd' => $destroy ? 1 : 0
-			);
+			];
 
 			$this->saveQueue();
 		}
@@ -238,12 +237,11 @@ class Queue
 				$this->planet->crystal 		+= $cost['crystal'];
 				$this->planet->deuterium 	+= $cost['deuterium'];
 
-				Sql::build()->set(array
-				(
+				Sql::build()->set([
 					'metal' 	=> $this->planet->metal,
 					'crystal' 	=> $this->planet->crystal,
 					'deuterium' => $this->planet->deuterium
-				));
+				]);
 			}
 
 			Sql::build()->where('id', '=', $this->planet->id)->execute();
@@ -281,15 +279,14 @@ class Queue
 
 			$this->queue[self::QUEUE_TYPE_RESEARCH] = [];
 
-			$this->queue[self::QUEUE_TYPE_RESEARCH][] = array
-			(
+			$this->queue[self::QUEUE_TYPE_RESEARCH][] = [
 				'i' => $elementId,
 				'l' => ($this->user->{$this->game->resource[$elementId]} + 1),
 				't' => $time,
 				's' => time(),
 				'e' => time() + $time,
 				'd' => 0
-			);
+			];
 			
 			$WorkingPlanet->queue = json_encode($this->queue);
 
@@ -414,15 +411,14 @@ class Queue
 			if (!isset($this->queue[self::QUEUE_TYPE_SHIPYARD]))
 				$this->queue[self::QUEUE_TYPE_SHIPYARD] = [];
 
-			$this->queue[self::QUEUE_TYPE_SHIPYARD][] = array
-			(
+			$this->queue[self::QUEUE_TYPE_SHIPYARD][] = [
 				'i' => $elementId,
 				'l' => $count,
 				't' => 0,
 				's' => 0,
 				'e' => 0,
 				'd' => 0
-			);
+			];
 
 			Sql::build()->update('game_planets')->set(Array
 			(

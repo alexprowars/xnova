@@ -156,8 +156,8 @@ class MessagesController extends ApplicationController
 
 		$parse = [];
 
-		$parse['types'] = array(0, 1, 2, 3, 4, 5, 15, 99, 100, 101);
-		$parse['limit'] = array(5, 10, 25, 50, 100, 200);
+		$parse['types'] = [0, 1, 2, 3, 4, 5, 15, 99, 100, 101];
+		$parse['limit'] = [5, 10, 25, 50, 100, 200];
 
 		$MessCategory = (!isset($_POST['messcat'])) ? (isset($_SESSION['m_cat']) ? $_SESSION['m_cat'] : 100) : intval($_POST['messcat']);
 		$lim = (!isset($_POST['show_by']) || !in_array(intval($_POST['show_by']), $parse['limit'])) ? (isset($_SESSION['m_limit']) ? $_SESSION['m_limit'] : 10) : intval($_POST['show_by']);

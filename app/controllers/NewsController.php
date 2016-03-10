@@ -19,7 +19,7 @@ class NewsController extends ApplicationController
 
 		foreach (_getText('news') as $a => $b)
 		{
-			$news[] = array($a, nl2br($b));
+			$news[] = [$a, nl2br($b)];
 		}
 
 		$this->view->setVar('parse', $news);

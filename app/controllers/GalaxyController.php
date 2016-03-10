@@ -92,9 +92,7 @@ class GalaxyController extends ApplicationController
 			$j = [];
 		
 			foreach ($array AS $a)
-			{
-				$j[] = array(base64_encode($a['name']), $a['galaxy'], $a['system'], $a['planet']);
-			}
+				$j[] = [base64_encode($a['name']), $a['galaxy'], $a['system'], $a['planet']];
 		
 			$shortcuts = $this->db->fetchColumn("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $this->user->id . ";");
 		
@@ -107,7 +105,7 @@ class GalaxyController extends ApplicationController
 					if ($b != "")
 					{
 						$c = explode(',', $b);
-						$j[] = array(base64_encode($c[0]), intval($c[1]), intval($c[2]), intval($c[3]));
+						$j[] = [base64_encode($c[0]), intval($c[1]), intval($c[2]), intval($c[3])];
 					}
 				}
 			}

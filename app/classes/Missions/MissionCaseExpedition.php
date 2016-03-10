@@ -207,22 +207,22 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				if ($Chance == 1)
 				{
-					$Points = array(-3, -5, -8);
+					$Points = [-3, -5, -8];
 					$Which = 1;
 					$Def = -3;
 					$Name = _getText('sys_expe_attackname_1');
 					$Add = 0;
-					$Rand = array(5, 3, 2);
+					$Rand = [5, 3, 2];
 					$defenderFleetArray = "204,5!0;206,3!0;207,2!0;";
 				}
 				else
 				{
-					$Points = array(-4, -6, -9);
+					$Points = [-4, -6, -9];
 					$Which = 2;
 					$Def = 3;
 					$Name = _getText('sys_expe_attackname_2');
 					$Add = 0.1;
-					$Rand = array(4, 3, 2);
+					$Rand = [4, 3, 2];
 					$defenderFleetArray = "205,5!0;207,5!0;213,2!0;";
 				}
 
@@ -251,7 +251,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				LangManager::getInstance()->setImplementation(new LangImplementation());
 
-				$mission = new MissionCaseAttack(array());
+				$mission = new MissionCaseAttack([]);
 
 				$attackers = new PlayerGroup();
 				$defenders = new PlayerGroup();
@@ -261,12 +261,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$fleetData = FleetMethods::unserializeFleet($defenderFleetArray);
 
 				$mission->usersInfo[0] = [];
-				$mission->usersInfo[0][0] = array
-				(
+				$mission->usersInfo[0][0] = [
 					'galaxy' => $this->_fleet['fleet_end_galaxy'],
 					'system' => $this->_fleet['fleet_end_system'],
 					'planet' => $this->_fleet['fleet_end_planet']
-				);
+				];
 
 				$res = [];
 
@@ -298,7 +297,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					if ($shipId < 100 || $shipId > 300 || !$shipArr['cnt'])
 						continue;
 
-					$fleetObj->addShipType($mission->getShipType($shipId, array($shipArr['cnt'], $shipArr['lvl']), $res));
+					$fleetObj->addShipType($mission->getShipType($shipId, [$shipArr['cnt'], $shipArr['lvl']], $res));
 				}
 
 				if (!$fleetObj->isEmpty())
@@ -313,7 +312,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$report = $engine->getReport();
 
-				$result = array('version' => 2, 'time' => time(), 'rw' => array());
+				$result = ['version' => 2, 'time' => time(), 'rw' => []];
 
 				$attackUsers 	= $mission->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
 				$defenseUsers 	= $mission->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
@@ -330,10 +329,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				if ($report->isAdraw())
 					$result['won'] = 0;
 
-				$result['lost'] = array('att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits());
+				$result['lost'] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
 
-				$result['debree']['att'] = array(0,0);
-				$result['debree']['def'] = array(0,0);
+				$result['debree']['att'] = [0,0];
+				$result['debree']['def'] = [0,0];
 
 				$attackFleets = $mission->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 
@@ -374,7 +373,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				}
 
 				// Упаковка в строку
-				$raport = json_encode(array($result, $attackUsers, $defenseUsers, array('metal' => 0, 'crystal' => 0, 'deuterium' => 0), 0, '', array()));
+				$raport = json_encode([$result, $attackUsers, $defenseUsers, array('metal' => 0, 'crystal' => 0, 'deuterium' => 0), 0, '', []]);
 				// Добавление в базу
 				$this->db->query("INSERT INTO game_rw SET `time` = " . time() . ", `id_users` = '" . json_encode($FleetsUsers) . "', `no_contact` = '0', `raport` = '" . addslashes($raport) . "';");
 				// Ключи авторизации доклада

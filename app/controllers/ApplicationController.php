@@ -259,10 +259,10 @@ class ApplicationController extends Controller
 			$controller = $this->dispatcher->getControllerName();
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start' && $controller != 'error')
-				$this->dispatcher->forward(array('controller' => 'start'));
+				$this->dispatcher->forward(['controller' => 'start']);
 
 			if ($controller == 'index')
-				$this->dispatcher->forward(array('controller' => 'overview'));
+				$this->dispatcher->forward(['controller' => 'overview']);
 		}
 		else
 		{
@@ -290,12 +290,12 @@ class ApplicationController extends Controller
 
 		if ($this->user->xpminier >= $indNextXp && $this->user->lvl_minier < $this->config->level->get('max_ind', 100))
 		{
-			$this->user->saveData(array
-			(
+			$this->user->saveData(
+			[
 				'+lvl_minier' 	=> 1,
 				'+credits' 		=> $this->config->level->get('credits', 10),
 				'-xpminier' 	=> $indNextXp
-			));
+			]);
 
 			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/fficier/">Получен новый промышленный уровень</a>');
 
@@ -307,12 +307,12 @@ class ApplicationController extends Controller
 
 		if ($this->user->xpraid >= $warNextXp && $this->user->lvl_raid < $this->config->level->get('max_war', 100))
 		{
-			$this->user->saveData(array
-			(
+			$this->user->saveData(
+			[
 				'+lvl_raid' => 1,
 				'+credits' 	=> $this->config->level->get('credits', 10),
 				'-xpraid' 	=> $warNextXp
-			));
+			]);
 
 			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
@@ -326,14 +326,12 @@ class ApplicationController extends Controller
 		{
 			$this->db->insertAsDict(
 				"game_log_credits",
-				array
-				(
+				[
 					'uid' 		=> $this->user->getId(),
 					'time' 		=> time(),
 					'credits' 	=> $giveCredits,
 					'type' 		=> 4,
-				)
-			);
+				]);
 
 			$reffer = $this->db->query("SELECT u_id FROM game_refs WHERE r_id = " . $this->user->getId())->fetch();
 

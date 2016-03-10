@@ -23,7 +23,7 @@ class ResourcesController extends ApplicationController
 		{
 			if ($this->planet->merchand < time())
 			{
-				$arFields = array('merchand' => (time() + 172800));
+				$arFields = ['merchand' => (time() + 172800)];
 
 				foreach ($this->game->reslist['res'] AS $res)
 					$arFields['+'.$res] = $parse['buy_'.$res];
@@ -62,12 +62,11 @@ class ResourcesController extends ApplicationController
 			$pl_class->PlanetResourceUpdate();
 		}
 
-		$arFields = array
-		(
+		$arFields = [
 			$this->game->resource[4].'_porcent' 	=> $production,
 			$this->game->resource[12].'_porcent' 	=> $production,
 			$this->game->resource[212].'_porcent' 	=> $production
-		);
+		];
 
 		foreach ($this->game->reslist['res'] AS $res)
 		{
@@ -95,7 +94,7 @@ class ResourcesController extends ApplicationController
 		}
 
 		$CurrentUser['energy_tech'] = $this->user->energy_tech;
-		$ValidList['percent'] = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		$ValidList['percent'] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		
 		if ($_POST)
 		{

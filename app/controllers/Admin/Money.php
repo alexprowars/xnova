@@ -33,13 +33,12 @@ class Money
 					{
 						Sql::build()->update('game_users')->setField('+credits', $money)->where('id', '=', $info['id'])->execute();
 
-						Sql::build()->insert('game_log_credits')->set(array
-						(
+						Sql::build()->insert('game_log_credits')->set([
 							'uid' => $info['id'],
 							'time' => time(),
 							'credits' => $money,
 							'type' => 6
-						))
+						])
 						->execute();
 
 						$controller->message('Начисление '.$money.' кредитов прошло успешно', 'Всё ок!', '/admin/money/mode/add/', 2);

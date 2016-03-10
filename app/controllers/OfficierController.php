@@ -54,11 +54,11 @@ class OfficierController extends ApplicationController
 
 					$this->user->credits -= $need_c;
 
-					Sql::build()->update('game_users')->set(array
-					(
+					Sql::build()->update('game_users')->set(
+					[
 						'credits' => $this->user->credits,
 						$this->game->resource[$selected] => $this->user->{$this->game->resource[$selected]},
-					))
+					])
 					->where('id', '=', $this->user->getId())->execute();
 		
 					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
