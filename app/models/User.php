@@ -146,7 +146,7 @@ class User extends Model
 
 	public function getSource()
 	{
-		return "game_users";
+		return DB_PREFIX."users";
 	}
 
 	public function afterFetch()
@@ -322,7 +322,7 @@ class User extends Model
 
 	public function unpackOptions ($opt, $isToggle = true)
 	{
-		$result = array();
+		$result = [];
 
 		if ($isToggle)
 		{
@@ -345,7 +345,7 @@ class User extends Model
 	{
 		if ($isToggle)
 		{
-			$r = array();
+			$r = [];
 
 			foreach ($this->optionsData as $k => $v)
 			{
@@ -493,7 +493,7 @@ class User extends Model
 	public function getUserPlanets ($userId, $moons = true, $allyId = 0)
 	{
 		if (!$userId)
-			return array();
+			return [];
 
 		$qryPlanets = "SELECT `id`, `name`, `image`, `galaxy`, `system`, `planet`, `planet_type`, `destruyed` FROM game_planets WHERE `id_owner` = '" . $userId . "' ";
 

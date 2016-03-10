@@ -262,7 +262,7 @@ class Building
 			$level = 0;
 
 		$array 	= array('metal', 'crystal', 'deuterium', 'energy_max');
-		$cost 	= array();
+		$cost 	= [];
 
 		foreach ($array as $ResType)
 		{
@@ -303,7 +303,7 @@ class Building
 	 */
 	static function GetNextProduction ($Element, $Level, Planet $planet)
 	{
-		$Res = array();
+		$Res = [];
 
 		$resFrom = $planet->getProductionLevel($Element, ($Level + 1));
 

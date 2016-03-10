@@ -104,12 +104,12 @@ class NotesController extends ApplicationController
 
 		$notes = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." ORDER BY time DESC");
 
-		$parse = array();
-		$parse['list'] = array();
+		$parse = [];
+		$parse['list'] = [];
 
 		while ($note = $notes->fetch())
 		{
-			$list = array();
+			$list = [];
 
 			if ($note["priority"] == 0)
 				$list['color'] = "lime";

@@ -14,7 +14,7 @@ class FireManager extends Iterable
 	/**
 	 * @var Fire[] $array
 	 */
-	protected $array = array();
+	protected $array = [];
 
 	public function add(Fire $fire)
 	{

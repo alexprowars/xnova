@@ -26,8 +26,8 @@ class TutorialController extends ApplicationController
 		if ($stage > 0)
 		{
 			$parse['info'] = _getText('tutorial', $stage);
-			$parse['task'] = array();
-			$parse['rewd'] = array();
+			$parse['task'] = [];
+			$parse['rewd'] = [];
 
 			$qInfo = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = ".$stage."")->fetch();
 
@@ -141,8 +141,8 @@ class TutorialController extends ApplicationController
 			{
 				//$this->db->query("UPDATE game_planets SET `" . $this->game->resource[401] . "` = `" . $this->game->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 
-				$planetData = array();
-				$userData = array();
+				$planetData = [];
+				$userData = [];
 
 				foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 				{
@@ -236,9 +236,9 @@ class TutorialController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 
-		$userQuests = array();
+		$userQuests = [];
 
 		$dbRes = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()."");
 
@@ -247,7 +247,7 @@ class TutorialController extends ApplicationController
 			$userQuests[$res['quest_id']] = $res;
 		}
 
-		$parse['list'] = array();
+		$parse['list'] = [];
 		$parse['quests'] = $userQuests;
 
 		$quests = _getText('tutorial');

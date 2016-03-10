@@ -15,7 +15,7 @@ use Phalcon\Di\Injectable;
  */
 class UpdateStatistics extends Injectable
 {
-	private $maxinfos = array();
+	private $maxinfos = [];
 	public $start = 0;
 
 	private $user;
@@ -155,7 +155,7 @@ class UpdateStatistics extends Injectable
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
-		$FleetArray = array();
+		$FleetArray = [];
 
 		$split = trim(str_replace(';', ' ', $CurrentFleet));
 		$split = explode(' ', $split);
@@ -184,7 +184,7 @@ class UpdateStatistics extends Injectable
 
 	public function deleteUsers ()
 	{
-		$result = array();
+		$result = [];
 
 		$list = $this->db->query("SELECT id, username FROM game_users WHERE `deltime` < ".time()." AND `deltime`> 0");
 
@@ -199,7 +199,7 @@ class UpdateStatistics extends Injectable
 
 	public function inactiveUsers ()
 	{
-		$result = array();
+		$result = [];
 
 		$list = $this->db->query("SELECT u.id, u.username, i.email FROM game_users u, game_users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - $this->config->stat->get('inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
@@ -236,7 +236,7 @@ class UpdateStatistics extends Injectable
 
 	public function getTotalFleetPoints ()
 	{
-		$fleetPoints = array();
+		$fleetPoints = [];
 
 		$UsrFleets = $this->db->query("SELECT * FROM game_fleets");
 
@@ -246,10 +246,10 @@ class UpdateStatistics extends Injectable
 
 			if (!isset($fleetPoints[$CurFleet['fleet_owner']]))
 			{
-				$fleetPoints[$CurFleet['fleet_owner']] = array();
+				$fleetPoints[$CurFleet['fleet_owner']] = [];
 				$fleetPoints[$CurFleet['fleet_owner']]['points'] = 0;
 				$fleetPoints[$CurFleet['fleet_owner']]['count'] = 0;
-				$fleetPoints[$CurFleet['fleet_owner']]['array'] = array();
+				$fleetPoints[$CurFleet['fleet_owner']]['array'] = [];
 			}
 
 			$fleetPoints[$CurFleet['fleet_owner']]['points'] += ($Points['FleetPoint'] / 1000);
@@ -316,7 +316,7 @@ class UpdateStatistics extends Injectable
 
 			$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $user['id'] . "';");
 
-			$RecordArray = array();
+			$RecordArray = [];
 
 			while ($planet = $planets->fetch())
 			{

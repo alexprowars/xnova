@@ -49,7 +49,7 @@ class Quick
 				die('Цели не существует!');
 		}
 
-		$FleetArray = array();
+		$FleetArray = [];
 
 		if ($Mode == 6 && ($TypePl == 1 || $TypePl == 3 || $TypePl == 5))
 		{

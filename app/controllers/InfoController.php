@@ -114,7 +114,7 @@ class InfoController extends ApplicationController
 		if ($BuildStartLvl < 1)
 			$BuildStartLvl = 1;
 
-		$Table = array();
+		$Table = [];
 
 		$ProdFirst = 0;
 
@@ -178,7 +178,7 @@ class InfoController extends ApplicationController
 	{
 		Lang::includeLang('infos');
 
-		$parse = array();
+		$parse = [];
 
 		if (!_getText('tech', $BuildID))
 			$this->message('Мы не сможем дать вам эту информацию', 'Ошибка', '/overview/', 2);
@@ -319,7 +319,7 @@ class InfoController extends ApplicationController
 				$parse['gun'] = $gun[$this->game->CombatCaps[$BuildID]['type_gun']];
 				$parse['armour'] = $armour[$this->game->CombatCaps[$BuildID]['type_armour']];
 
-				$parse['speedBattle'] = array();
+				$parse['speedBattle'] = [];
 
 				foreach ($this->game->reslist['fleet'] AS $Type)
 				{
@@ -360,7 +360,7 @@ class InfoController extends ApplicationController
 					$this->planet->{$this->game->resource[502]} -= $_POST['502'];
 					$this->planet->{$this->game->resource[503]} -= $_POST['503'];
 				}
-				$pars = array();
+				$pars = [];
 				$pars['max_mis'] = $this->planet->{$this->game->resource[44]} * 10;
 				$pars['int_miss'] = _getText('tech', 502) . ': ' . $this->planet->{$this->game->resource[502]};
 				$pars['plant_miss'] = _getText('tech', 503) . ': ' . $this->planet->{$this->game->resource[503]};

@@ -78,7 +78,7 @@ class StatController extends ApplicationController
 
 	public function playersAction ()
 	{
-		$stats = $stat = array();
+		$stats = $stat = [];
 
 		if (!$this->range && $this->getDI()->has('user'))
 		{
@@ -89,7 +89,7 @@ class StatController extends ApplicationController
 				$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
 				if (!is_array($records))
-					$records = array();
+					$records = [];
 
 				$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 			}
@@ -169,7 +169,7 @@ class StatController extends ApplicationController
 
 	public function allianceAction ()
 	{
-		$stat = array();
+		$stat = [];
 
 		if ($this->config->app->get('active_alliance') > 100)
 			$LastPage = floor($this->config->app->get('active_alliance') / 100);
@@ -229,7 +229,7 @@ class StatController extends ApplicationController
 
 	public function raceAction ()
 	{
-		$stat = array();
+		$stat = [];
 
 		$rangeStr = "<option value='0'>1-4</option>";
 

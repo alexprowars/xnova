@@ -9,8 +9,8 @@ class Load
 	{
 		if ($controller->user->authlevel >= 3)
 		{
-			$result = array();
-			$result['rows'] = array();
+			$result = [];
+			$result['rows'] = [];
 
 			$query = $controller->db->query("SELECT * FROM game_log_load WHERE time >= ".(time() - 86400)." ORDER BY time ASC");
 

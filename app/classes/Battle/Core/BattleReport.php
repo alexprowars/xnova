@@ -16,7 +16,7 @@ class BattleReport
 
 	public function __construct()
 	{
-		$this->rounds = array();
+		$this->rounds = [];
 		$this->roundsCount = 0;
 		$this->steal = 0;
 	}
@@ -187,7 +187,7 @@ class BattleReport
 		$lostShips = $this->getPlayersLostShips($playersBefore, $playersAfter);
 		$defRepaired = $this->getPlayerRepaired($playersBefore, $playersAfter);
 
-		$return = array();
+		$return = [];
 
 		foreach ($lostShips->getIterator() as $idPlayer => $player)
 		{
@@ -289,7 +289,7 @@ class BattleReport
 
 	public function getAttackersTech()
 	{
-		$techs = array();
+		$techs = [];
 
 		$players = $this->getRound('START')->getAfterBattleAttackers()->getIterator()[0];
 
@@ -306,7 +306,7 @@ class BattleReport
 
 	public function getDefendersTech()
 	{
-		$techs = array();
+		$techs = [];
 
 		$players = $this->getRound('START')->getAfterBattleDefenders()->getIterator()[0];
 
@@ -432,7 +432,7 @@ class BattleReport
 
 	public function getAttackersId()
 	{
-		$array = array();
+		$array = [];
 
 		foreach ($this->getPresentationAttackersFleetOnRound('START') as $id => $group)
 			$array[] = $id;
@@ -442,7 +442,7 @@ class BattleReport
 
 	public function getDefendersId()
 	{
-		$array = array();
+		$array = [];
 
 		foreach($this->getPresentationDefendersFleetOnRound('START') as $id => $group)
 			$array[] = $id;

@@ -15,7 +15,7 @@ class NewsController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$news = array();
+		$news = [];
 
 		foreach (_getText('news') as $a => $b)
 		{

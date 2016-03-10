@@ -16,7 +16,7 @@ class Fleet extends Iterable
 	/**
 	 * @var ShipType[] $array
 	 */
-	protected $array = array();
+	protected $array = [];
 	private $count;
 	private $id;
 	// added but only used in report templates
@@ -136,11 +136,11 @@ class Fleet extends Iterable
 
 	public function inflictDamage(FireManager $fires)
 	{
-		$physicShots = array();
+		$physicShots = [];
 		//doesn't matter who shot first, but who receive first the damage
 		foreach ($fires->getIterator() as $fire)
 		{
-			$tmp = array();
+			$tmp = [];
 
 			foreach ($this->getOrderedIterator() as $idShipTypeDefender => $shipTypeDefender)
 			{
@@ -190,7 +190,7 @@ class Fleet extends Iterable
 
 	public function cleanShips()
 	{
-		$shipsCleaners = array();
+		$shipsCleaners = [];
 
 		foreach ($this->array as $id => $shipType)
 		{

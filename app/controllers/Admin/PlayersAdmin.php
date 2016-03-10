@@ -29,7 +29,7 @@ class PlayerAdmin
 							if (!isset($SelUser['id']))
 								$controller->message('Такого игрока не существует', 'Ошибка', '/admin/paneladmina/', 2);
 
-							$parse = array();
+							$parse = [];
 							$parse['answer1'] = $SelUser['id'];
 							$parse['answer2'] = $SelUser['username'];
 							$parse['answer3'] = long2ip($SelUser['ip']);
@@ -40,7 +40,7 @@ class PlayerAdmin
 							$parse['answer9'] = date('d.m.Y H:i:s', $SelUser['create_time']);
 							$parse['answer8'] = "[" . $SelUser['galaxy'] . ":" . $SelUser['system'] . ":" . $SelUser['planet'] . "] ";
 
-							$parse['planet_list'] = array();
+							$parse['planet_list'] = [];
 							$parse['planet_fields'] = $controller->game->resource;
 
 							if ($controller->user->authlevel > 1)
@@ -57,7 +57,7 @@ class PlayerAdmin
 								7 => 'Постройка обороны/флота',
 							);
 
-							$parse['transfer_list'] = array();
+							$parse['transfer_list'] = [];
 
 							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.target_id WHERE t.`user_id` = '" . $SelUser['id'] . "' ORDER BY id DESC"));
 
@@ -77,7 +77,7 @@ class PlayerAdmin
 								);
 							}
 
-							$parse['transfer_list_income'] = array();
+							$parse['transfer_list_income'] = [];
 
 							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.user_id WHERE t.`target_id` = '" . $SelUser['id'] . "' ORDER BY id DESC"));
 
@@ -215,7 +215,7 @@ class PlayerAdmin
 					case 'ip_search':
 						$Pattern = addslashes($_POST['ip']);
 						$SelUser = $controller->db->query("SELECT * FROM game_users WHERE `ip` = INET_ATON('" . $Pattern . "');");
-						$parse = array();
+						$parse = [];
 						$parse['adm_this_ip'] = $Pattern;
 						$parse['adm_plyer_lst'] = '';
 						while ($Usr = $SelUser->fetch())

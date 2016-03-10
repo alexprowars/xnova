@@ -62,7 +62,7 @@ class PhalanxController extends ApplicationController
 		
 		$fq = $this->db->query("SELECT * FROM game_fleets WHERE fleet_owner != 1 AND (( fleet_start_galaxy = '" . $g . "' AND fleet_start_system = '" . $s . "' AND fleet_start_planet = '" . $i . "' AND fleet_start_type != 3 ) OR ( fleet_end_galaxy = '" . $g . "' AND fleet_end_system = '" . $s . "' AND fleet_end_planet = '" . $i . "' )) ORDER BY `fleet_start_time`");
 		
-		$parse = array();
+		$parse = [];
 		$ii = 0;
 		
 		$parse['manobras'] = '';

@@ -13,8 +13,8 @@ class HallController extends ApplicationController
 	{
 		$sab = (!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 0 : 1;
 
-		$parse = array();
-		$parse['hall'] = array();
+		$parse = [];
+		$parse['hall'] = [];
 
 		$halls = $this->db->query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $sab . " ORDER BY debris DESC LIMIT 50");
 

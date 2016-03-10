@@ -11,7 +11,7 @@ use App\Lang;
  */
 class AdminController extends ApplicationController
 {
-	private $modules = array();
+	private $modules = [];
 	private $mode = '';
 
 	public function initialize ()
@@ -82,7 +82,7 @@ class AdminController extends ApplicationController
 
 	public function getMenu ($parent_id, $lvl = 1, $all = false)
 	{
-		$array = array();
+		$array = [];
 
 		if ($lvl > 0)
 		{

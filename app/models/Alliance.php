@@ -40,7 +40,7 @@ class Alliance extends Model
 
 	public function getSource()
 	{
-		return "game_alliance";
+		return DB_PREFIX."alliance";
 	}
 
 	public function onConstruct()

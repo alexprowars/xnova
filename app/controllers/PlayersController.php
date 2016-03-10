@@ -13,7 +13,7 @@ class PlayersController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 		
 		$playerid = htmlspecialchars($this->request->get('id', null, ''));
 
@@ -124,7 +124,7 @@ class PlayersController extends ApplicationController
 		if (!isset($player['id']))
 			$this->message('Информация о данном игроке не найдена');
 
-		$parse = array();
+		$parse = [];
 		$parse['name'] = $player['username'];
 		$parse['data'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_stats WHERE id = ".$playerid." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC"));
 

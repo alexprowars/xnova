@@ -292,7 +292,7 @@ class OptionsController extends ApplicationController
 	{
 		$inf = $this->db->query("SELECT * FROM game_users_info WHERE id = " . $this->user->id . "")->fetch();
 
-		$parse = array();
+		$parse = [];
 
 		if ($this->user->vacation > 0)
 		{

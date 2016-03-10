@@ -151,7 +151,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			elseif ($ST >= 7)
 				$res = array_merge($this->game->reslist['fleet'], $this->game->reslist['defense'], $this->game->reslist['tech']);
 			else
-				$res = array();
+				$res = [];
 
 			foreach ($res AS $id)
 			{

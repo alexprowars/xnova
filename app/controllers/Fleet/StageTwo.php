@@ -35,9 +35,9 @@ class StageTwo
 
 					if ($RestString['value'] == 0)
 					{
-						$ShipArray = array();
-						$SubQueryOri = array();
-						$SubQueryDes = array();
+						$ShipArray = [];
+						$SubQueryOri = [];
+						$SubQueryDes = [];
 
 						foreach ($controller->game->reslist['fleet'] AS $Ship)
 						{
@@ -88,7 +88,7 @@ class StageTwo
 			$controller->message($RetMessage, 'Результат', "/fleet/", 5);
 		}
 
-		$parse = array();
+		$parse = [];
 
 		$galaxy = $controller->request->getPost('galaxy', 'int', 0);
 		$system = $controller->request->getPost('system', 'int', 0);
@@ -134,8 +134,8 @@ class StageTwo
 		if ($controller->user->rpg_meta > time())
 			$stayConsumption = ceil($stayConsumption * 0.9);
 
-		$parse['missions_selected'] = array();
-		$parse['missions'] = array();
+		$parse['missions_selected'] = [];
+		$parse['missions'] = [];
 
 		if (count($missiontype) > 0)
 		{
@@ -172,7 +172,7 @@ class StageTwo
 		$parse['curepedition'] = $_POST["curepedition"];
 		$parse['crc'] = md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]);
 
-		$parse['ships'] = array();
+		$parse['ships'] = [];
 
 		foreach ($fleetarray as $i => $count)
 		{

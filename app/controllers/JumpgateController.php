@@ -36,7 +36,7 @@ class JumpgateController extends ApplicationController
 					$NextDestTime = $RestString['value'];
 					if ($NextDestTime == 0)
 					{
-						$ShipArray = array();
+						$ShipArray = [];
 						$SubQueryOri = "";
 						$SubQueryDes = "";
 

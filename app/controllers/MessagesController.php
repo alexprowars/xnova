@@ -113,7 +113,7 @@ class MessagesController extends ApplicationController
 	
 	public function delete ()
 	{
-		$Mess_Array = array();
+		$Mess_Array = [];
 
 		foreach ($_POST as $Message => $Answer)
 		{
@@ -154,7 +154,7 @@ class MessagesController extends ApplicationController
 			}
 		}
 
-		$parse = array();
+		$parse = [];
 
 		$parse['types'] = array(0, 1, 2, 3, 4, 5, 15, 99, 100, 101);
 		$parse['limit'] = array(5, 10, 25, 50, 100, 200);

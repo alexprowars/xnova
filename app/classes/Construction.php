@@ -24,7 +24,7 @@ class Construction
 
 	public function pageBuilding ()
 	{
-		$parse = array();
+		$parse = [];
 
 		$request 	= $this->user->getDI()->getShared('request');
 		$game 		= $this->user->getDI()->getShared('game');
@@ -84,7 +84,7 @@ class Construction
 
 		$oldStyle = $this->user->getUserOption('only_available');
 
-		$parse['BuildingsList'] = array();
+		$parse['BuildingsList'] = [];
 
 		foreach ($game->reslist['build'] as $Element)
 		{
@@ -102,7 +102,7 @@ class Construction
 			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
 			$BuildingLevel 		= (int) $this->planet->{$game->resource[$Element]};
 
-			$row = array();
+			$row = [];
 
 			$row['access']= $isAccess;
 			$row['i'] 	= $Element;
@@ -169,7 +169,7 @@ class Construction
 			$bContinue = false;
 		}
 
-		$spaceLabs = array();
+		$spaceLabs = [];
 
 		if ($this->user->{$game->resource[123]} > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
@@ -217,7 +217,7 @@ class Construction
 
 		$oldStyle = $this->user->getUserOption('only_available');
 
-		$PageParse['technolist'] = array();
+		$PageParse['technolist'] = [];
 
 		foreach ($res_array AS $Tech)
 		{
@@ -229,7 +229,7 @@ class Construction
 			if (!Building::checkTechnologyRace($this->user, $Tech))
 				continue;
 
-			$row = array();
+			$row = [];
 			$row['access'] = $isAccess;
 			$row['i'] = $Tech;
 
@@ -313,7 +313,7 @@ class Construction
 				{
 					if (isset($queueArray['i']) && $queueArray['i'] == $Tech)
 					{
-						$bloc = array();
+						$bloc = [];
 
 						if ($TechHandle['WorkOn']['id'] != $this->planet->id)
 							$bloc['tech_name'] 	= ' на ' . $TechHandle['WorkOn']["name"];
@@ -376,8 +376,8 @@ class Construction
 
 		$oldStyle = $this->user->getUserOption('only_available');
 
-		$parse = array();
-		$parse['buildlist'] = array();
+		$parse = [];
+		$parse['buildlist'] = [];
 
 		foreach ($elementIDs AS $Element)
 		{
@@ -389,7 +389,7 @@ class Construction
 			if (!Building::checkTechnologyRace($this->user, $Element))
 				continue;
 
-			$row = array();
+			$row = [];
 
 			$row['access']	= $isAccess;
 			$row['i'] 		= $Element;
@@ -430,7 +430,7 @@ class Construction
 
 	private function extractHangarQueue ($queue = '')
 	{
-		$result = array();
+		$result = [];
 
 		if (is_array($queue) && count($queue))
 		{
@@ -449,7 +449,7 @@ class Construction
 
 		$ActualCount = $queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING);
 
-		$ListIDRow = array();
+		$ListIDRow = [];
 
 		if ($ActualCount != 0)
 		{
@@ -491,7 +491,7 @@ class Construction
 		$TimePerType = "";
 		$QueueTime = 0;
 
-		$parse = array();
+		$parse = [];
 
 		if (count($ElementQueue))
 		{

@@ -15,7 +15,7 @@ class Tree
 
 				header('Content-type: application/json; charset=utf-8');
 
-				$result = array();
+				$result = [];
 
 				$parent = $controller->request->get('parent', 'int', 0);
 

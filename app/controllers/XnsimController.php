@@ -73,7 +73,7 @@ class XnsimController extends ApplicationController
 
 			$report = $engine->getReport();
 
-			$result = array();
+			$result = [];
 			$result[0] = array('time' => time(), 'rw' => array());
 
 			$result[1] = $this->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
@@ -102,7 +102,7 @@ class XnsimController extends ApplicationController
 			$result[4] = $report->getMoonProb();
 			$result[5] = '';
 
-			$result[6] = array();
+			$result[6] = [];
 
 			foreach ($report->getDefendersRepaired() as $_id => $_player)
 			{
@@ -118,7 +118,7 @@ class XnsimController extends ApplicationController
 				}
 			}
 
-			$statistics = array();
+			$statistics = [];
 
 			for ($i = 0; $i < 50; $i++)
 			{
@@ -163,7 +163,7 @@ class XnsimController extends ApplicationController
 
 	private function convertPlayerGroupToArray (PlayerGroup $_playerGroup)
 	{
-		$result = array();
+		$result = [];
 
 		foreach ($_playerGroup as $_player)
 		{
@@ -254,8 +254,8 @@ class XnsimController extends ApplicationController
 		{
 			if ($i <= MAX_SLOTS && $i < (MAX_SLOTS + $s) && $r[$i] != "")
 			{
-				$res = array();
-				$fleets = array();
+				$res = [];
+				$fleets = [];
 
 				$fleetData = FleetObject::unserializeFleet($r[$i]);
 

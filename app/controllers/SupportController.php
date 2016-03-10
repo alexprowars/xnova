@@ -67,11 +67,11 @@ class SupportController extends ApplicationController
 		
 			default:
 		
-				$parse = array();
+				$parse = [];
 		
 				$supports = $this->db->query("SELECT ID, time, text, subject, status FROM game_support WHERE (`player_id` = '" . $this->user->id . "') ORDER BY time DESC;");
 		
-				$parse['TicketsList'] = array();
+				$parse['TicketsList'] = [];
 		
 				while ($ticket = $supports->fetch())
 				{

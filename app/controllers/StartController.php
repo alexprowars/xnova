@@ -22,7 +22,7 @@ class StartController extends ApplicationController
 		{
 			if ($this->request->hasPost('save'))
 			{
-				$arUpdate = array();
+				$arUpdate = [];
 
 				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-\!\~\.@ ]+$/u", $this->request->getPost('character')))
 				{

@@ -10,8 +10,8 @@ class ActivePlanet
 	{
 		if ($controller->user->authlevel >= 2)
 		{
-			$result = array();
-			$result['rows'] = array();
+			$result = [];
+			$result['rows'] = [];
 
 			$start = isset($_GET['p']) ? intval($_GET['p']) : 0;
 			$limit = 25;

@@ -6,8 +6,8 @@ use Phalcon\Mvc\User\Component;
 class Sql extends Component
 {
 	private $query 	= '';
-	private $fields = array();
-	private $from 	= array();
+	private $fields = [];
+	private $from 	= [];
 	private $mode	= 'select';
 	private $where	= '';
 
@@ -40,8 +40,8 @@ class Sql extends Component
 	public function clear ()
 	{
 		$this->query 	= '';
-		$this->fields 	= array();
-		$this->from 	= array();
+		$this->fields 	= [];
+		$this->from 	= [];
 		$this->mode		= 'select';
 		$this->where	= '';
 	}

@@ -77,7 +77,7 @@ class Socials
 	public static function okLoad ($method, $params = array(), $secret = '')
 	{
 		if (!is_array($params))
-			$params = array();
+			$params = [];
 
 		$params['application_key'] = self::$ok_api_key;
 		$params['format'] = 'JSON';

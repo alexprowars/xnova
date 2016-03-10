@@ -48,7 +48,7 @@ class StageZero
 		if (!$planettype)
 			$planettype = 1;
 
-		$parse = array();
+		$parse = [];
 		$parse['maxFlyingFleets'] = $MaxFlyingFleets;
 		$parse['maxFlottes'] = $MaxFlottes;
 		$parse['currentExpeditions'] = $ExpeditionEnCours;
@@ -61,7 +61,7 @@ class StageZero
 
 		$fq = $controller->db->query("SELECT * FROM game_fleets WHERE fleet_owner=" . $controller->user->id . "");
 
-		$parse['fleets'] = array();
+		$parse['fleets'] = [];
 
 		while ($f = $fq->fetch())
 		{
@@ -84,7 +84,7 @@ class StageZero
 		if (($system > 0 && $galaxy > 0 && $planet > 0) && ($galaxy != $controller->planet->galaxy || $system != $controller->planet->system || $planet != $controller->planet->id))
 			$parse['mission_text'] = ' на координаты [' . $galaxy . ':' . $system . ':' . $planet . ']';
 
-		$parse['ships'] = array();
+		$parse['ships'] = [];
 
 		foreach ($controller->game->reslist['fleet'] as $n => $i)
 		{

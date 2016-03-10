@@ -16,7 +16,7 @@ use Phalcon\Di\Injectable;
  */
 class FleetEngine extends Injectable
 {
-	public $_fleet = array();
+	public $_fleet = [];
 
 	public function KillFleet ($fleetId = false)
 	{
@@ -128,8 +128,8 @@ class FleetEngine extends Injectable
 		$LookAtLoop = true;
 		$String = '';
 		$Loops = 0;
-		$ResFrom = array();
-		$ResTo = array();
+		$ResFrom = [];
+		$ResTo = [];
 
 		if ($Mode == 0)
 		{

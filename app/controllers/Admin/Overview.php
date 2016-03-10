@@ -13,9 +13,9 @@ class Overview
 		else
 			$TypeSort = "ip";
 
-		$parse = array();
+		$parse = [];
 		$parse['adm_ov_data_yourv'] = VERSION;
-		$parse['adm_ov_data_table'] = array();
+		$parse['adm_ov_data_table'] = [];
 
 		$Count = 0;
 		$Color = "lime";

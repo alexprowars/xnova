@@ -7,7 +7,7 @@ use Phalcon\Mvc\User\Component;
 class Ulogin extends Component implements AuthInterface
 {
 	private $token = '';
-	private $data = array();
+	private $data = [];
 	private $isLogin = false;
 
 	public function check ()

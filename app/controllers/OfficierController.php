@@ -77,7 +77,7 @@ class OfficierController extends ApplicationController
 		{
 			$parse['off_points'] = _getText('off_points');
 			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
-			$parse['list'] = array();
+			$parse['list'] = [];
 
 			foreach ($this->game->reslist['officier'] AS $officier)
 			{

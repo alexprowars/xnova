@@ -13,16 +13,16 @@ class RecordsController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$RecordsArray = array();
+		$RecordsArray = [];
 
 		if (file_exists(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php"))
 			require_once(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php");
 
-		$Builds = array();
-		$MoonsBuilds = array();
-		$Techno = array();
-		$Fleet = array();
-		$Defense = array();
+		$Builds = [];
+		$MoonsBuilds = [];
+		$Techno = [];
+		$Fleet = [];
+		$Defense = [];
 
 		foreach ($RecordsArray as $ElementID => $ElementIDArray)
 		{

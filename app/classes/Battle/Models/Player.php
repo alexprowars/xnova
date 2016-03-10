@@ -17,7 +17,7 @@ class Player extends Iterable
 	/**
 	 * @var Fleet[] $array
 	 */
-	protected $array = array();
+	protected $array = [];
 
 	private $weapons_tech = 0;
 	private $shields_tech = 0;
@@ -138,7 +138,7 @@ class Player extends Iterable
 
 	public function inflictDamage(FireManager $fire)
 	{
-		$physicShots = array();
+		$physicShots = [];
 		foreach ($this->array as $idFleet => $fleet)
 		{
 			echo "------- firing to fleet with ID = $idFleet -------- <br>";
@@ -150,7 +150,7 @@ class Player extends Iterable
 
 	public function cleanShips()
 	{
-		$shipsCleaners = array();
+		$shipsCleaners = [];
 		foreach ($this->array as $idFleet => $fleet)
 		{
 			echo "------- cleanShips to fleet with ID = $idFleet -------- <br>";

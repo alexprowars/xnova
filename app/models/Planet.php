@@ -124,7 +124,7 @@ class Planet extends Model
 
 	public function getSource()
 	{
-		return "game_planets";
+		return DB_PREFIX."planets";
 	}
 
 	/**
@@ -336,10 +336,10 @@ class Planet extends Model
 	{
 		$config = $this->getDi()->getShared('config');
 
-		$planetData = array();
+		$planetData = [];
 		require(APP_PATH.'app/varsPlanet.php');
 
-		$return = array();
+		$return = [];
 
 		if ($HomeWorld)
 			$return['field_max'] = $config->game->get('initial_fields', 163);
@@ -392,7 +392,7 @@ class Planet extends Model
 	{
 		$search = $this->db->extractResult($this->db->query("SELECT id, planet FROM game_planets WHERE galaxy = '".$galaxy."' AND system = '".$system."' AND planet >= '".$start."' AND planet <= '".$end."'"), 'planet');
 
-		$result = array();
+		$result = [];
 
 		for ($i = $start; $i <= $end; $i++)
 		{
@@ -439,7 +439,7 @@ class Planet extends Model
 	{
 		$config = $this->getDi()->getShared('config');
 
-		$Caps = array();
+		$Caps = [];
 
 		foreach ($this->game->reslist['res'] AS $res)
 			$Caps[$res.'_perhour'] = 0;
@@ -611,7 +611,7 @@ class Planet extends Model
 			if (!isset($Builded))
 				$Builded = $this->HandleElementBuildingQueue($productionTime);
 
-			$arFields = array();
+			$arFields = [];
 
 			if ($this->planet_type == 1)
 			{
@@ -667,8 +667,8 @@ class Planet extends Model
 				$Shield_1 = $this->small_protection_shield;
 				$Shield_2 = $this->big_protection_shield;
 
-				$BuildArray = array();
-				$Builded = array();
+				$BuildArray = [];
+				$Builded = [];
 
 				foreach ($BuildQueue as $Node => $Item)
 				{
@@ -716,7 +716,7 @@ class Planet extends Model
 
 				$UnFinished = false;
 
-				$queueArray[$queueManager::QUEUE_TYPE_SHIPYARD] = array();
+				$queueArray[$queueManager::QUEUE_TYPE_SHIPYARD] = [];
 
 				foreach ($BuildArray as $Item)
 				{

@@ -21,9 +21,6 @@ if (isset($_GET['game']))
 	$_COOKIE['game'] = 1;
 }
 
-if (!isset($_COOKIE['game']))
-	die(':)');
-
 try
 {
 	if (DEBUG)

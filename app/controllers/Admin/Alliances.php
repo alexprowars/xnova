@@ -11,8 +11,8 @@ class Alliances
 		{
 			$query = $controller->db->query("SELECT a.`id`, a.`name`, a.`tag`,  a.`owner`, a.`create_time`, a.`description`, a.`text`, a.`members`, u.`username` FROM game_alliance a, game_users u WHERE u.id = a.owner");
 
-			$parse = array();
-			$parse['alliance'] = array();
+			$parse = [];
+			$parse['alliance'] = [];
 
 			$parse['desc'] = '';
 			$parse['edit'] = '';

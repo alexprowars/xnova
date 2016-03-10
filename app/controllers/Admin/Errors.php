@@ -18,8 +18,8 @@ class Errors
 				$controller->db->query("TRUNCATE TABLE game_errors");
 			}
 
-			$result = array();
-			$result['rows'] = array();
+			$result = [];
+			$result['rows'] = [];
 
 			$query = $controller->db->query("SELECT * FROM game_errors");
 

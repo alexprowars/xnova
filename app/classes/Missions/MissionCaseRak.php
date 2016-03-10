@@ -43,7 +43,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 				}
 			}
 
-			$TargetDefensive = array();
+			$TargetDefensive = [];
 
 			foreach ($this->game->reslist['defense'] as $Element)
 			{
@@ -118,7 +118,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 		$max_dam = $ipm * $life_fac_a;
 		$i = 0;
 
-		$ship_res = array();
+		$ship_res = [];
 
 		foreach ($TargetDefensive as $Element => $Count)
 		{

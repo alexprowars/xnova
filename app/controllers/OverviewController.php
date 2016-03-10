@@ -253,7 +253,7 @@ class OverviewController extends ApplicationController
 
 	public function renameAction ()
 	{
-		$parse = array();
+		$parse = [];
 		$parse['planet_id'] = $this->planet->id;
 		$parse['galaxy_galaxy'] = $this->planet->galaxy;
 		$parse['galaxy_system'] = $this->planet->system;
@@ -359,7 +359,7 @@ class OverviewController extends ApplicationController
 
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 
 		$XpMinierUp = pow($this->user->lvl_minier, 3);
 		$XpRaidUp = pow($this->user->lvl_raid, 2);
@@ -371,8 +371,8 @@ class OverviewController extends ApplicationController
 		);
 
 		$Record = 0;
-		$fpage = array();
-		$aks = array();
+		$fpage = [];
+		$aks = [];
 
 		foreach ($fleets AS $FleetRow)
 		{
@@ -484,8 +484,8 @@ class OverviewController extends ApplicationController
 		else
 			$QryPlanets = '';
 
-		$build_list = array();
-		$AllPlanets = array();
+		$build_list = [];
+		$AllPlanets = [];
 
 		$planets_query = $this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $this->user->id . "' AND `planet_type` != '3' AND id != " . $this->user->planet_current . " " . $QryPlanets . ";");
 
@@ -552,7 +552,7 @@ class OverviewController extends ApplicationController
 			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';", true);
 
 			if (!is_array($records))
-				$records = array();
+				$records = [];
 
 			$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 		}
@@ -586,7 +586,7 @@ class OverviewController extends ApplicationController
 
 		$parse['user_username'] = $this->user->username;
 
-		$flotten = array();
+		$flotten = [];
 
 		if (count($fpage) > 0)
 		{
@@ -640,7 +640,7 @@ class OverviewController extends ApplicationController
 
 		if (count($build_list) > 0)
 		{
-			$parse['build_list'] = array();
+			$parse['build_list'] = [];
 			ksort($build_list);
 
 			foreach ($build_list as $planet)
@@ -682,7 +682,7 @@ class OverviewController extends ApplicationController
 
 		$parse['refers'] = $this->user->refers;
 
-		$parse['officiers'] = array();
+		$parse['officiers'] = [];
 
 		foreach ($this->game->reslist['officier'] AS $officier)
 		{

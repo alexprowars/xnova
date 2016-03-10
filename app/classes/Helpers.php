@@ -15,7 +15,7 @@ class Helpers
 
 	static function getDateString ($type, $value)
 	{
-		$data = array();
+		$data = [];
 
 		if ($type == 'month')
 			$data = array('', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря');

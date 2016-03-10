@@ -7,7 +7,7 @@ use App\Models\User;
 
 class Queue
 {
-	private $queue = array();
+	private $queue = [];
 
 	const QUEUE_TYPE_BUILDING = 'building';
 	const QUEUE_TYPE_RESEARCH = 'research';
@@ -37,7 +37,7 @@ class Queue
 			$this->queue = $queue;
 
 		if (!is_array($this->queue))
-			$this->queue = array();
+			$this->queue = [];
 	}
 	
 	public function setUserObject (User $user)
@@ -78,7 +78,7 @@ class Queue
 		elseif (isset($this->queue[$queueType]))
 			return $this->queue[$queueType];
 		else
-			return array();
+			return [];
 	}
 
 	public function getCount($queueType = '')
@@ -163,7 +163,7 @@ class Queue
 			}
 
 			if (!isset($this->queue[self::QUEUE_TYPE_BUILDING]))
-				$this->queue[self::QUEUE_TYPE_BUILDING] = array();
+				$this->queue[self::QUEUE_TYPE_BUILDING] = [];
 
 			$this->queue[self::QUEUE_TYPE_BUILDING][] = array
 			(
@@ -254,7 +254,7 @@ class Queue
 	{
 		$TechHandle = $this->planet->HandleTechnologieBuild();
 
-		$spaceLabs = array();
+		$spaceLabs = [];
 
 		if ($this->user->{$this->game->resource[123]} > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
@@ -279,7 +279,7 @@ class Queue
 
 			$time = Building::GetBuildingTime($this->user, $WorkingPlanet, $elementId);
 
-			$this->queue[self::QUEUE_TYPE_RESEARCH] = array();
+			$this->queue[self::QUEUE_TYPE_RESEARCH] = [];
 
 			$this->queue[self::QUEUE_TYPE_RESEARCH][] = array
 			(
@@ -412,7 +412,7 @@ class Queue
 			$this->planet->deuterium 	-= $Ressource['deuterium'];
 
 			if (!isset($this->queue[self::QUEUE_TYPE_SHIPYARD]))
-				$this->queue[self::QUEUE_TYPE_SHIPYARD] = array();
+				$this->queue[self::QUEUE_TYPE_SHIPYARD] = [];
 
 			$this->queue[self::QUEUE_TYPE_SHIPYARD][] = array
 			(

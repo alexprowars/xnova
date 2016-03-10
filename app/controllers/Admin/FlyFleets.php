@@ -14,7 +14,7 @@ class FlyFleets
 
 		Lang::includeLang('admin/fleets');
 
-		$table = array();
+		$table = [];
 
 		$FlyingFleets = $controller->db->query("SELECT * FROM game_fleets ORDER BY `fleet_end_time` ASC;");
 

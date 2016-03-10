@@ -82,7 +82,7 @@ class Auth extends Component
 
 	private function checkUserAuth ()
 	{
-		$UserRow = array();
+		$UserRow = [];
 
 		if (!$this->session->has('uid') && $this->cookies->has($this->config->cookie->prefix.'_id') && $this->cookies->has($this->config->cookie->prefix.'_secret'))
 		{

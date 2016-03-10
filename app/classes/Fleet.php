@@ -43,7 +43,7 @@ class Fleet extends Building
 	{
 		$game = $user->getDI()->getShared('game');
 
-		$speedalls = array();
+		$speedalls = [];
 
 		if ($Fleet != 0)
 		{
@@ -151,7 +151,7 @@ class Fleet extends Building
 	{
 		$fleetTyps = explode(';', $fleetAmount);
 
-		$fleetAmount = array();
+		$fleetAmount = [];
 
 		foreach ($fleetTyps as $fleetTyp)
 		{
@@ -274,7 +274,7 @@ class Fleet extends Building
 
 	static function getFleetMissions ($fleetArray, $target = array(1, 1, 1, 1), $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
 	{
-		$result = array();
+		$result = [];
 
 		if ($target[2] == 16)
 		{

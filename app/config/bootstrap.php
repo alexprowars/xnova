@@ -4,7 +4,7 @@ include_once(APP_PATH."app/functions.php");
 
 $loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
 
-$result = array();
+$result = [];
 
 while ($load = $loads->fetch())
 {
@@ -20,5 +20,6 @@ if ($di->has('auth') && !$di->get('auth')->isAuthorized())
 }
 
 define('VERSION', '3.0');
- 
+define('DB_PREFIX', 'game_');
+
 ?>

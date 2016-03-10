@@ -47,7 +47,7 @@ class JavaScriptPacker
 	}
 
 	// keep a list of parsing functions, they'll be executed all at once
-	private $_parsers = array();
+	private $_parsers = [];
 
 	private function _addParser ($parser)
 	{
@@ -135,18 +135,18 @@ class JavaScriptPacker
 	{
 		// analyse
 		// retreive all words in the script
-		$all = array();
+		$all = [];
 		preg_match_all($regexp, $script, $all);
-		$_sorted = array(); // list of words sorted by frequency
-		$_encoded = array(); // dictionary of word->encoding
-		$_protected = array(); // instances of "protected" words
+		$_sorted = []; // list of words sorted by frequency
+		$_encoded = []; // dictionary of word->encoding
+		$_protected = []; // instances of "protected" words
 		$all = $all[0]; // simulate the javascript comportement of global match
 		if (!empty($all))
 		{
-			$unsorted = array(); // same list, not sorted
-			$protected = array(); // "protected" words (dictionary of word->"word")
-			$value = array(); // dictionary of charCode->encoding (eg. 256->ff)
-			$this->_count = array(); // word->count
+			$unsorted = []; // same list, not sorted
+			$protected = []; // "protected" words (dictionary of word->"word")
+			$value = []; // dictionary of charCode->encoding (eg. 256->ff)
+			$this->_count = []; // word->count
 			$i = count($all);
 			$j = 0; //$word = null;
 			// count the occurrences - used for sorting later
@@ -210,7 +210,7 @@ class JavaScriptPacker
 		return array('sorted' => $_sorted, 'encoded' => $_encoded, 'protected' => $_protected);
 	}
 
-	private $_count = array();
+	private $_count = [];
 
 	private function _sortWords ($match1, $match2)
 	{
@@ -544,7 +544,7 @@ class ParseMaster
 	public function exec ($string)
 	{
 		// execute the global replacement
-		$this->_escaped = array();
+		$this->_escaped = [];
 
 		// simulate the _patterns.toSTring of Dean
 		$regexp = '/';
@@ -565,12 +565,12 @@ class ParseMaster
 	public function reset ()
 	{
 		// clear the patterns collection so that this object may be re-used
-		$this->_patterns = array();
+		$this->_patterns = [];
 	}
 
 	// private
-	private $_escaped = array(); // escaped characters
-	private $_patterns = array(); // patterns stored by index
+	private $_escaped = []; // escaped characters
+	private $_patterns = []; // patterns stored by index
 
 	// create and add a new pattern to the patterns collection
 	private function _add ()

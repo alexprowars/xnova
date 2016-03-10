@@ -15,7 +15,7 @@ class TechController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 
 		foreach (_getText('tech') as $Element => $ElementName)
 		{
@@ -24,7 +24,7 @@ class TechController extends ApplicationController
 
 			if ($Element < 600)
 			{
-				$pars = array();
+				$pars = [];
 				$pars['tt_name'] = $ElementName;
 
 				if (!isset($this->game->resource[$Element]))

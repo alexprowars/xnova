@@ -9,7 +9,7 @@ class Content
 	{
 		if ($controller->user->authlevel >= 3)
 		{
-			$result = array();
+			$result = [];
 
 			if ($controller->request->getQuery('edit') > 0)
 			{
@@ -19,7 +19,7 @@ class Content
 			}
 			else
 			{
-				$result['rows'] = array();
+				$result['rows'] = [];
 
 				$query = $controller->db->query("SELECT * FROM game_content");
 

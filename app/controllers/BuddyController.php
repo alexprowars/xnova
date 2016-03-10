@@ -106,7 +106,7 @@ class BuddyController extends ApplicationController
 		if ($isRequests)
 			$parse['title'] = $isMy ? 'Мои запросы' : 'Другие запросы';
 
-		$parse['list'] = array();
+		$parse['list'] = [];
 		$parse['isMy'] = $isMy;
 
 		$query = $isRequests ? ($isMy ? "active = 0 AND ignor = 0 AND sender = ".$this->user->id : "active = 0 AND ignor = 0 AND owner = " . $this->user->id) : "active = 1 AND ignor = 0 AND (sender = " . $this->user->id . " OR owner = " . $this->user->id . ")";
@@ -115,7 +115,7 @@ class BuddyController extends ApplicationController
 
 		while ($b = $buddyrow->fetch())
 		{
-			$q = array();
+			$q = [];
 
 			$uid = ($b["owner"] == $this->user->id) ? $b["sender"] : $b["owner"];
 		

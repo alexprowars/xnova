@@ -23,8 +23,8 @@ use App\Sql;
 
 class MissionCaseAttack extends FleetEngine implements Mission
 {
-	public $usersTech = array();
-	public $usersInfo = array();
+	public $usersTech = [];
+	public $usersInfo = [];
 
 	function __construct($Fleet)
 	{
@@ -90,7 +90,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			$this->getGroupFleet($fleet, $defenders);
 		}
 
-		$res = array();
+		$res = [];
 
 		for ($i = 200; $i < 500; $i++)
 		{
@@ -145,7 +145,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			$defenders->addPlayer($player);
 
 			if (!isset($this->usersInfo[$targetUser->id]))
-				$this->usersInfo[$targetUser->id] = array();
+				$this->usersInfo[$targetUser->id] = [];
 
 			$this->usersInfo[$targetUser->id][0] = array
 			(
@@ -191,7 +191,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		$attackFleets 	= $this->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 		$defenseFleets 	= $this->getResultFleetArray($report->getPresentationDefendersFleetOnRound('START'), $report->getAfterBattleDefenders());
 
-		$repairFleets = array();
+		$repairFleets = [];
 
 		foreach ($report->getDefendersRepaired() as $_player)
 		{
@@ -207,7 +207,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 
-		$fleetToUser = array();
+		$fleetToUser = [];
 
 		foreach ($report->getPresentationAttackersFleetOnRound('START') as $idPlayer => $player)
 		{
@@ -225,7 +225,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if ($result['won'] == 1)
 		{
 			$max_resources = 0;
-			$max_fleet_res = array();
+			$max_fleet_res = [];
 
 			foreach ($attackFleets AS $fleet => $arr)
 			{
@@ -247,7 +247,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 
 			$res_correction = $max_resources;
-			$res_procent = array();
+			$res_procent = [];
 
 			if ($max_resources > 0)
 			{
@@ -345,7 +345,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 			else
 			{
-				$arFields = array();
+				$arFields = [];
 
 				if ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)
 				{
@@ -394,9 +394,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		$warPoints 		= round($totalDebree / 25000);
 		$AddWarPoints 	= ($result['won'] != 2) ? $warPoints : 0;
 		// Сборка массива ID участников боя
-		$FleetsUsers = array();
+		$FleetsUsers = [];
 
-		$tmp = array();
+		$tmp = [];
 
 		foreach ($attackUsers AS $info)
 		{
@@ -480,7 +480,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		{
 			$sab = 0;
 
-			$UserList = array();
+			$UserList = [];
 
 			foreach ($attackUsers AS $info)
 			{
@@ -493,7 +493,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 			$title_1 = implode(',', $UserList);
 
-			$UserList = array();
+			$UserList = [];
 
 			foreach ($defenseUsers AS $info)
 			{
@@ -543,7 +543,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Helpers::pretty_number($steal['deuterium']) . '</font><br>';
 		$raport2 .= _getText('sys_debris') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
 
-		$UserList = array();
+		$UserList = [];
 
 		foreach ($attackUsers AS $info)
 		{
@@ -554,7 +554,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		foreach ($UserList AS $info)
 			$this->game->sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport2);
 
-		$UserList = array();
+		$UserList = [];
 
 		foreach ($defenseUsers AS $info)
 		{
@@ -602,7 +602,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		if (!isset($this->usersInfo[$fleet['fleet_owner']]))
-			$this->usersInfo[$fleet['fleet_owner']] = array();
+			$this->usersInfo[$fleet['fleet_owner']] = [];
 
 		$this->usersInfo[$fleet['fleet_owner']][$fleet['fleet_id']] = array
 		(
@@ -611,7 +611,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			'planet' => $fleet['fleet_start_planet']
 		);
 
-		$res = array();
+		$res = [];
 
 		foreach ($fleetData as $shipId => $shipArr)
 		{
@@ -715,7 +715,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	public function convertPlayerGroupToArray (PlayerGroup $_playerGroup)
 	{
-		$result = array();
+		$result = [];
 
 		foreach ($_playerGroup as $_player)
 		{
@@ -804,7 +804,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	public function getResultFleetArray (PlayerGroup $playerGroupBeforeBattle, PlayerGroup $playerGroupAfterBattle)
 	{
-		$result = array();
+		$result = [];
 
 		foreach ($playerGroupBeforeBattle->getIterator() as $idPlayer => $player)
 		{
@@ -828,7 +828,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$existFleet = $existPlayer && $Xplayer->existFleet($idFleet);
 				$Xfleet = null;
 
-				$result[$idFleet] = array();
+				$result[$idFleet] = [];
 
 				if ($existFleet)
 					$Xfleet = $Xplayer->getFleet($idFleet);

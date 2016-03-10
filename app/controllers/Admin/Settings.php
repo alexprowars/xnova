@@ -23,8 +23,8 @@ class Settings
 			}
 			else
 			{
-				$parse = array();
-				$parse['settings'] = array();
+				$parse = [];
+				$parse['settings'] = [];
 
 				$settings = $controller->db->query("SELECT * FROM game_config ORDER BY `key`");
 

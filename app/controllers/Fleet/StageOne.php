@@ -18,7 +18,7 @@ class StageOne
 
 		Lang::includeLang('fleet');
 
-		$parse = array();
+		$parse = [];
 
 		$speed = [];
 
@@ -90,7 +90,7 @@ class StageOne
 		$parse['thisresource3'] = floor($controller->planet->deuterium);
 		$parse['speed'] = $speed;
 
-		$parse['shortcut'] = array();
+		$parse['shortcut'] = [];
 
 		$inf = $controller->db->query("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $controller->user->id . ";")->fetch();
 
@@ -109,7 +109,7 @@ class StageOne
 			}
 		}
 
-		$parse['planets'] = array();
+		$parse['planets'] = [];
 
 		$kolonien = $controller->user->getUserPlanets($controller->user->getId(), true, $controller->user->ally_id);
 
@@ -128,7 +128,7 @@ class StageOne
 		}
 
 		$parse['moon_timer'] = '';
-		$parse['moons'] = array();
+		$parse['moons'] = [];
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
@@ -150,7 +150,7 @@ class StageOne
 			}
 		}
 
-		$parse['aks'] = array();
+		$parse['aks'] = [];
 
 		$aks_madnessred = $controller->db->query("SELECT a.* FROM game_aks a, game_aks_user au WHERE au.aks_id = a.id AND au.user_id = " . $controller->user->id . " ;");
 

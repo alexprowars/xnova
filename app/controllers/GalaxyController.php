@@ -33,7 +33,7 @@ class GalaxyController extends ApplicationController
 			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
 			if (!is_array($records))
-				$records = array();
+				$records = [];
 
 			$this->cache->save('app::records_'.$this->user->getId(), $records, 1800);
 		}
@@ -89,7 +89,7 @@ class GalaxyController extends ApplicationController
 		if (!$this->session->has('fleet_shortcut'))
 		{
 			$array = $this->user->getUserPlanets($this->user->getId(), false, $this->user->ally_id);
-			$j = array();
+			$j = [];
 		
 			foreach ($array AS $a)
 			{
@@ -196,7 +196,7 @@ class GalaxyController extends ApplicationController
 				LEFT JOIN game_statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1') 
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "';", '');
 		
-		$rows = array();
+		$rows = [];
 		
 		while ($row = $GalaxyRow->fetch())
 		{

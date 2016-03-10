@@ -55,7 +55,7 @@ class ApplicationController extends Controller
 			$this->view->setVar('messages_ally', $this->user->messages_ally);
 			$this->view->setVar('tutorial', $this->user->tutorial);
 
-			$parse = array();
+			$parse = [];
 
 			if ($this->getDi()->has('planet'))
 				$parse = $this->ShowTopNavigationBar();
@@ -347,7 +347,7 @@ class ApplicationController extends Controller
 
 	public function ShowTopNavigationBar ()
 	{
-		$parse = array();
+		$parse = [];
 
 		$parse['image'] = $this->planet->image;
 		$parse['name'] = $this->planet->name;
@@ -418,7 +418,7 @@ class ApplicationController extends Controller
 
 		$parse['credits'] = Helpers::pretty_number($this->user->credits);
 
-		$parse['officiers'] = array();
+		$parse['officiers'] = [];
 
 		foreach ($this->game->reslist['officier'] AS $officier)
 		{

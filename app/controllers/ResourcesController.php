@@ -102,7 +102,7 @@ class ResourcesController extends ApplicationController
 			if ($this->user->vacation > 0)
 				$this->message("Включен режим отпуска!");
 
-			$arFields = array();
+			$arFields = [];
 
 			foreach ($_POST as $Field => $Value)
 			{
@@ -120,13 +120,13 @@ class ResourcesController extends ApplicationController
 			$this->planet->PlanetResourceUpdate(time(), true);
 		}
 		
-		$parse = array();
+		$parse = [];
 
 		$production_level = $this->planet->production_level;
 
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
 
-		$parse['resource_row'] = array();
+		$parse['resource_row'] = [];
 
 		foreach ($this->game->reslist['prod'] as $ProdID)
 		{
@@ -145,7 +145,7 @@ class ResourcesController extends ApplicationController
 
 				$energy = $result['energy'];
 
-				$CurrRow = array();
+				$CurrRow = [];
 		        $CurrRow['id'] = $ProdID;
 				$CurrRow['name'] = $this->game->resource[$ProdID];
 				$CurrRow['porcent'] = $this->planet->{$this->game->resource[$ProdID] . "_porcent"};

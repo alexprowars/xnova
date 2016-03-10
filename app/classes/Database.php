@@ -8,7 +8,7 @@ class Database extends Mysql
 {
 	public function extractResult (ResultInterface $result, $field = false)
 	{
-		$data = array();
+		$data = [];
 
 		if (!$field)
 		{

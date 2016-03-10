@@ -288,7 +288,7 @@ class StageThree
 			// Вычисляем время самого медленного флота в совместной атаке
 			$flet = $controller->db->query("SELECT fleet_id, fleet_start_time, fleet_end_time FROM game_fleets WHERE fleet_group = '" . $fleet_group_mr . "'");
 			$fleet_group_time = $duration + time();
-			$arrr = array();
+			$arrr = [];
 
 			while ($flt = $flet->fetch())
 			{
@@ -322,7 +322,7 @@ class StageThree
 		$FleetStorage = 0;
 		$fleet_array = "";
 
-		$fleetPlanetUpdate = array();
+		$fleetPlanetUpdate = [];
 
 		foreach ($fleetarray as $Ship => $Count)
 		{

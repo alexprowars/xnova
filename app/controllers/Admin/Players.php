@@ -43,8 +43,8 @@ class Players
 
 			$query = $controller->db->query("SELECT u.`id`, u.`username`, ui.`email`, u.`ip`, ui.`create_time`, u.`onlinetime`, u.`banned` FROM game_users u, game_users_info ui WHERE ui.id = u.id ORDER BY " . $TypeSort . " LIMIT " . (($p - 1) * 25) . ", 25");
 
-			$parse = array();
-			$parse['adm_ul_table'] = array();
+			$parse = [];
+			$parse['adm_ul_table'] = [];
 			$Color = "lime";
 			$PrevIP = '';
 

@@ -47,7 +47,7 @@ class CombatReport extends Component
 
 	public function report ()
 	{
-		$usersInfo = array();
+		$usersInfo = [];
 
 		foreach ($this->attackUsers AS $userId => $u)
 		{
@@ -80,7 +80,7 @@ class CombatReport extends Component
 
 		if (is_array($this->attackUsers))
 		{
-			$checkName = array();
+			$checkName = [];
 
 			foreach ($this->attackUsers AS $info)
 			{
@@ -103,7 +103,7 @@ class CombatReport extends Component
 
 		if (is_array($this->defenseUsers))
 		{
-			$checkName = array();
+			$checkName = [];
 
 			foreach ($this->defenseUsers AS $info)
 			{
@@ -344,7 +344,7 @@ class CombatReport extends Component
 
 	public function convertReportToSimLink ($result)
 	{
-		$usersInfo = array();
+		$usersInfo = [];
 
 		foreach ($result[1] AS $userId => $u)
 		{
@@ -368,7 +368,7 @@ class CombatReport extends Component
 			}
 		}
 
-		$att = array();
+		$att = [];
 
 		$j = 0;
 
@@ -376,7 +376,7 @@ class CombatReport extends Component
 		{
 			$j++;
 
-			$t = array();
+			$t = [];
 
 			foreach ($result[1][$usersInfo[$i]]['flvl'] AS $j => $l)
 			{
@@ -398,7 +398,7 @@ class CombatReport extends Component
 			$att[] = '';
 		}
 
-		$def = array();
+		$def = [];
 
 		$j = 0;
 
@@ -406,7 +406,7 @@ class CombatReport extends Component
 		{
 			$j++;
 
-			$t = array();
+			$t = [];
 
 			foreach ($result[2][$usersInfo[$i]]['flvl'] AS $j => $l)
 			{
@@ -437,7 +437,7 @@ class CombatReport extends Component
 	
 		$html = "<center><div class='separator'></div>В " . $this->game->datezone("d-m-Y H:i:s", $this->result_array['time']) . " произошёл бой между следующими флотами:<div class='separator'></div>";
 	
-		$users = array();
+		$users = [];
 	
 		foreach ($this->attackUsers AS $info)
 		{

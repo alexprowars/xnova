@@ -27,7 +27,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 	public function EndStayEvent()
 	{
-		$Expowert = array();
+		$Expowert = [];
 
 		foreach ($this->game->reslist['fleet'] as $ID)
 			$Expowert[$ID] = ($this->game->pricelist[$ID]['metal'] + $this->game->pricelist[$ID]['crystal']) / 200;
@@ -37,7 +37,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 		$FleetPoints = 0;
 
 		$FleetCapacity = 0;
-		$FleetCount = array();
+		$FleetCount = [];
 
 		foreach ($farray as $Group)
 		{
@@ -160,7 +160,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$FoundShipMess = "";
 				$NewFleetArray = "";
 
-				$Found = array();
+				$Found = [];
 
 				foreach ($this->game->reslist['fleet'] as $ID)
 				{
@@ -260,7 +260,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$fleetData = FleetMethods::unserializeFleet($defenderFleetArray);
 
-				$mission->usersInfo[0] = array();
+				$mission->usersInfo[0] = [];
 				$mission->usersInfo[0][0] = array
 				(
 					'galaxy' => $this->_fleet['fleet_end_galaxy'],
@@ -268,7 +268,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					'planet' => $this->_fleet['fleet_end_planet']
 				);
 
-				$res = array();
+				$res = [];
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
@@ -366,7 +366,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					}
 				}
 
-				$FleetsUsers = array();
+				$FleetsUsers = [];
 
 				foreach ($attackUsers AS $info)
 				{
@@ -414,7 +414,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 			case 6:
 
 				$MoreTime       = mt_rand(0, 100);
-				$Wrapper        = array();
+				$Wrapper        = [];
 				$Wrapper[]      = 2;
 				$Wrapper[]      = 2;
 				$Wrapper[]      = 2;

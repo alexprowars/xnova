@@ -6,7 +6,7 @@ use Phalcon\Text;
 class Lang
 {
 	static private $currentLang = '';
-	static private $langArray 	= array();
+	static private $langArray 	= [];
 
 	static function setLang ($lang_code)
 	{
@@ -14,7 +14,7 @@ class Lang
 
 		if (is_file(APP_PATH.'app/messages/'.$lang_code.'/main.php'))
 		{
-			$lang = array();
+			$lang = [];
 			include(APP_PATH.'app/messages/'.$lang_code.'/main.php');
 
 			self::$langArray = array_merge(self::$langArray, $lang);
@@ -36,7 +36,7 @@ class Lang
 
 		if (is_file(APP_PATH.'app/messages/'.self::$currentLang.'/'.$module.'.php'))
 		{
-			$lang = array();
+			$lang = [];
 			include(APP_PATH.'app/messages/'.self::$currentLang.'/'.$module.'.php');
 
 			self::$langArray = array_merge(self::$langArray, $lang);

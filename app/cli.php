@@ -85,7 +85,7 @@ include_once(APP_PATH."/app/config/battle.php");
 
 $console->getDI()->getShared('game')->loadGameVariables();
 
-$arguments = array();
+$arguments = [];
 
 foreach ($argv as $k => $arg)
 {

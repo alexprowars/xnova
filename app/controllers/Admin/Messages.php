@@ -12,7 +12,7 @@ class Messages
 		{
 			Lang::includeLang('admin/messagelist');
 
-			$parse = array();
+			$parse = [];
 
 			$Prev = (!empty($_POST['prev'])) ? true : false;
 			$Next = (!empty($_POST['next'])) ? true : false;
@@ -101,7 +101,7 @@ class Messages
 
 			$Messages = $controller->db->query("SELECT m.*, u.username FROM game_messages m LEFT JOIN game_users u ON u.id = m.message_owner WHERE m.`message_type` = '" . $Selected . "' " . $userid . " ORDER BY m.`message_time` DESC LIMIT " . (($ViewPage - 1) * 25) . ",25;");
 
-			$parse['mlst_data_rows'] = array();
+			$parse['mlst_data_rows'] = [];
 
 			while ($row = $Messages->fetch())
 			{

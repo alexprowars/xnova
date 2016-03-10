@@ -9,7 +9,7 @@ class Moons
 	{
 		if ($controller->user->authlevel >= 2)
 		{
-			$parse = array();
+			$parse = [];
 
 			$action = $controller->request->getQuery('mode', 'string', '');
 
@@ -50,7 +50,7 @@ class Moons
 			}
 			else
 			{
-				$parse['moons'] = array();
+				$parse['moons'] = [];
 
 				$query = $controller->db->query("SELECT * FROM game_planets WHERE planet_type='3' ORDER BY galaxy,system,planet");
 

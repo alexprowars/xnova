@@ -78,13 +78,13 @@ class Gauss
  * //----------------------------------
 
 
- * $a = array();
+ * $a = [];
  * for ($i = 0; $i < SIMULATIONS; $i++)
  * {
  *	 $a[] = Gauss::getNextMs(MEAN, DEV);
  * }
 
- * $l = array();
+ * $l = [];
  * foreach ($a as $v)
  * {
  *	 if (isset($l[$v]))

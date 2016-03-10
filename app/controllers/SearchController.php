@@ -15,7 +15,7 @@ class SearchController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 
 		$searchtext = $this->request->getPost('searchtext', 'string', '');
 		$type = $this->request->getPost('type', 'string', '');
@@ -37,7 +37,7 @@ class SearchController extends ApplicationController
 					$search = $this->db->query("SELECT a.id, a.name, a.tag, a.members, s.total_points FROM game_alliance a LEFT JOIN game_statpoints s ON s.id_owner = a.id AND s.stat_type = 2 WHERE a.name LIKE '%" . $searchtext . "%' LIMIT 30");
 			}
 
-			$parse['result'] = array();
+			$parse['result'] = [];
 
 			if (isset($search))
 			{

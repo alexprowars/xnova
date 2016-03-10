@@ -17,7 +17,7 @@ class MerchantController extends ApplicationController
 	
 	public function indexAction ()
 	{
-		$parse = array();
+		$parse = [];
 		$Message = '';
 		
 		if (isset($_POST['ress']))

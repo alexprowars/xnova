@@ -53,8 +53,8 @@ class Money
 
 			case 'transactions':
 
-				$parse = array();
-				$parse['list'] = array();
+				$parse = [];
+				$parse['list'] = [];
 
 				$start = $controller->request->getQuery('p', 'int', 0);
 				$limit = 25;

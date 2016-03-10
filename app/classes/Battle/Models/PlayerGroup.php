@@ -16,7 +16,7 @@ class PlayerGroup extends Iterable
 	/**
 	 * @var Player[] $array
 	 */
-	protected $array = array();
+	protected $array = [];
 	public $battleResult;
 	private static $id_count = 0;
 	private $id;
@@ -97,7 +97,7 @@ class PlayerGroup extends Iterable
 
 	public function inflictDamage(FireManager $fire)
 	{
-		$physicShots = array();
+		$physicShots = [];
 		foreach ($this->array as $idPlayer => $player)
 		{
 			echo "---------** firing to player with ID = $idPlayer **---------- <br>";
@@ -109,7 +109,7 @@ class PlayerGroup extends Iterable
 
 	public function cleanShips()
 	{
-		$shipsCleaners = array();
+		$shipsCleaners = [];
 		foreach ($this->array as $idPlayer => $player)
 		{
 			echo "---------** cleanShips to player with ID = $idPlayer **---------- <br>";

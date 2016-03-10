@@ -21,23 +21,23 @@ class ImperiumController extends ApplicationController
 
 	public function indexAction()
 	{
-		$r = array();
-		$r1 = array();
-		$parse = array();
+		$r = [];
+		$r1 = [];
+		$parse = [];
 
-		$build_hangar_full = array();
+		$build_hangar_full = [];
 
-		$fleet_fly = array();
+		$fleet_fly = [];
 
 		$fleets = $this->db->query("SELECT * FROM game_fleets WHERE fleet_owner = " . $this->user->getId() . "");
 
 		while ($fleet = $fleets->fetch())
 		{
 			if (!isset($fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']]))
-				$fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']] = array();
+				$fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']] = [];
 
 			if (!isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
-				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = array();
+				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = [];
 
 			$fleetData = Fleet::unserializeFleet($fleet['fleet_array']);
 
@@ -115,7 +115,7 @@ class ImperiumController extends ApplicationController
 			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->fusion_plant_porcent * 10) . '</font>%</th>';
 			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->solar_satelit_porcent * 10) . '</font>%</th>';
 
-			$build_hangar = array();
+			$build_hangar = [];
 
 			$queueManager->loadQueue($planet->queue);
 
