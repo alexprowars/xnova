@@ -12,7 +12,7 @@ class StageZero
 		if (!$controller->planet)
 			$controller->message(_getText('fl_noplanetrow'), _getText('fl_error'));
 
-		$MaxFlyingFleets = $controller->db->fetchColumn("SELECT COUNT(fleet_owner) AS `actcnt` FROM game_fleets WHERE `fleet_owner` = '" . $controller->user->id . "';");
+		$MaxFlyingFleets = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
 
 		$MaxExpedition = $controller->user->{$controller->game->resource[124]};
 		$ExpeditionEnCours = 0;
@@ -20,7 +20,7 @@ class StageZero
 
 		if ($MaxExpedition >= 1)
 		{
-			$ExpeditionEnCours = $controller->db->fetchColumn("SELECT COUNT(fleet_owner) AS `expedi` FROM game_fleets WHERE `fleet_owner` = '" . $controller->user->id . "' AND `fleet_mission` = '15';");
+			$ExpeditionEnCours = $controller->db->fetchColumn("SELECT COUNT(owner) AS `expedi` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "' AND `mission` = '15';");
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
@@ -59,7 +59,7 @@ class StageZero
 		$parse['planettype'] = $planettype;
 		$parse['mission'] = $target_mission;
 
-		$fq = $controller->db->query("SELECT * FROM game_fleets WHERE fleet_owner=" . $controller->user->id . "");
+		$fq = $controller->db->query("SELECT * FROM game_fleets WHERE owner=" . $controller->user->id . "");
 
 		$parse['fleets'] = [];
 

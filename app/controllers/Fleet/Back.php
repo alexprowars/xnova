@@ -18,40 +18,39 @@ class Back
 		{
 			$fleetid = $controller->request->getPost('fleetid', 'int', 0);
 
-			$FleetRow = $controller->db->query("SELECT * FROM game_fleets WHERE `fleet_id` = '" . $fleetid . "';")->fetch();
+			$FleetRow = $controller->db->query("SELECT * FROM game_fleets WHERE `id` = '" . $fleetid . "';")->fetch();
 
-			if ($FleetRow['fleet_owner'] == $controller->user->id)
+			if ($FleetRow['owner'] == $controller->user->id)
 			{
-				if (($FleetRow['fleet_mess'] == 0 || ($FleetRow['fleet_mess'] == 3 && $FleetRow['fleet_mission'] != 15) && $FleetRow['fleet_mission'] != 20 && $FleetRow['fleet_target_owner'] != 1))
+				if (($FleetRow['mess'] == 0 || ($FleetRow['mess'] == 3 && $FleetRow['mission'] != 15) && $FleetRow['mission'] != 20 && $FleetRow['target_owner'] != 1))
 				{
-					if ($FleetRow['fleet_end_stay'] != 0)
+					if ($FleetRow['end_stay'] != 0)
 					{
-
-						if ($FleetRow['fleet_start_time'] > time())
-							$CurrentFlyingTime = time() - $FleetRow['start_time'];
+						if ($FleetRow['start_time'] > time())
+							$CurrentFlyingTime = time() - $FleetRow['create_time'];
 						else
-							$CurrentFlyingTime = $FleetRow['fleet_start_time'] - $FleetRow['start_time'];
+							$CurrentFlyingTime = $FleetRow['start_time'] - $FleetRow['create_time'];
 					}
 					else
-						$CurrentFlyingTime = time() - $FleetRow['start_time'];
+						$CurrentFlyingTime = time() - $FleetRow['create_time'];
 
 					$ReturnFlyingTime = $CurrentFlyingTime + time();
 
 					$controller->db->updateAsDict('game_fleets',
 					[
-						'fleet_start_time'	 	=> time() - 1,
-						'fleet_end_stay' 		=> 0,
-						'fleet_end_time' 		=> $ReturnFlyingTime + 1,
-						'fleet_target_owner' 	=> $controller->user->id,
-						'fleet_group' 			=> 0,
-						'fleet_time' 			=> $ReturnFlyingTime + 1,
-						'fleet_mess' 			=> 1,
-					], 'fleet_id = '.$fleetid);
+						'start_time'	=> time() - 1,
+						'end_stay' 		=> 0,
+						'end_time' 		=> $ReturnFlyingTime + 1,
+						'target_owner' 	=> $controller->user->id,
+						'group_id' 		=> 0,
+						'update_time' 	=> $ReturnFlyingTime + 1,
+						'mess' 			=> 1,
+					], 'id = '.$fleetid);
 
-					if ($FleetRow['fleet_group'] != 0 && $FleetRow['fleet_mission'] == 1)
+					if ($FleetRow['group_id'] != 0 && $FleetRow['mission'] == 1)
 					{
-						$controller->db->delete('game_aks', 'id = ?', [$FleetRow['fleet_group']]);
-						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow['fleet_group']]);
+						$controller->db->delete('game_aks', 'id = ?', [$FleetRow['group_id']]);
+						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow['group_id']]);
 					}
 
 					$BoxTitle = _getText('fl_sback');

@@ -38,14 +38,14 @@ class OverviewController extends ApplicationController
 		$FleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
 		$FleetPrefix = $Owner == true ? 'own' : '';
 
-		$MissionType 	= $FleetRow['fleet_mission'];
+		$MissionType 	= $FleetRow['mission'];
 		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
 		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
 
-		$StartPlanet 	= $FleetRow['fleet_owner_name'];
-		$StartType 		= $FleetRow['fleet_start_type'];
-		$TargetPlanet 	= $FleetRow['fleet_target_owner_name'];
-		$TargetType 	= $FleetRow['fleet_end_type'];
+		$StartPlanet 	= $FleetRow['owner_name'];
+		$StartType 		= $FleetRow['start_type'];
+		$TargetPlanet 	= $FleetRow['target_owner_name'];
+		$TargetType 	= $FleetRow['end_type'];
 
 		$StartID  = '';
 		$TargetID = '';
@@ -138,18 +138,18 @@ class OverviewController extends ApplicationController
 		}
 		else
 		{
-			$EventString = ($FleetRow['fleet_group'] != 0) ? 'Союзный ' : _getText('ov_une_hostile');
+			$EventString = ($FleetRow['group_id'] != 0) ? 'Союзный ' : _getText('ov_une_hostile');
 			$EventString .= $FleetContent;
 			$EventString .= _getText('ov_hostile');
 
-			$FleetRow['username'] = $this->db->fetchColumn("SELECT `username` FROM game_users WHERE `id` = '" . $FleetRow['fleet_owner'] . "';");
+			$FleetRow['username'] = $this->db->fetchColumn("SELECT `username` FROM game_users WHERE `id` = '" . $FleetRow['owner'] . "';");
 
 			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
 		}
 
 		if ($Status == 0)
 		{
-			$Time = $FleetRow['fleet_start_time'];
+			$Time = $FleetRow['start_time'];
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
@@ -159,7 +159,7 @@ class OverviewController extends ApplicationController
 		}
 		elseif ($Status == 1)
 		{
-			$Time = $FleetRow['fleet_end_stay'];
+			$Time = $FleetRow['end_stay'];
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
@@ -174,7 +174,7 @@ class OverviewController extends ApplicationController
 		}
 		else
 		{
-			$Time = $FleetRow['fleet_end_time'];
+			$Time = $FleetRow['end_time'];
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_rentrant');
 			$EventString .= $TargetID;
@@ -204,7 +204,7 @@ class OverviewController extends ApplicationController
 				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
 			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
 			{
-				$checkFleets = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE (fleet_start_galaxy = " . $this->planet->galaxy . " AND fleet_start_system = " . $this->planet->system . " AND fleet_start_planet = " . $this->planet->planet . " AND fleet_start_type = " . $this->planet->planet_type . ") OR (fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . ")", true);
+				$checkFleets = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE (start_galaxy = " . $this->planet->galaxy . " AND start_system = " . $this->planet->system . " AND start_planet = " . $this->planet->planet . " AND start_type = " . $this->planet->planet_type . ") OR (end_galaxy = " . $this->planet->galaxy . " AND end_system = " . $this->planet->system . " AND end_planet = " . $this->planet->planet . " AND end_type = " . $this->planet->planet_type . ")", true);
 
 				if ($checkFleets > 0)
 					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
@@ -362,8 +362,8 @@ class OverviewController extends ApplicationController
 
 		$fleets = array_merge
 		(
-			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `fleet_owner` = " . $this->user->id . "")),
-			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `fleet_target_owner` = " . $this->user->id . ""))
+			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `owner` = " . $this->user->id . "")),
+			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `target_owner` = " . $this->user->id . ""))
 		);
 
 		$Record = 0;
@@ -374,85 +374,51 @@ class OverviewController extends ApplicationController
 		{
 			$Record++;
 
-			if ($FleetRow['fleet_owner'] == $this->user->id)
+			if ($FleetRow['owner'] == $this->user->id)
 			{
-				$StartTime = $FleetRow['fleet_start_time'];
-				$StayTime = $FleetRow['fleet_end_stay'];
-				$EndTime = $FleetRow['fleet_end_time'];
+				$StartTime = $FleetRow['start_time'];
+				$StayTime = $FleetRow['end_stay'];
+				$EndTime = $FleetRow['end_time'];
 
 				if ($StartTime > time())
-					$fpage[$StartTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
+					$fpage[$StartTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
 
 				if ($StayTime > time())
-					$fpage[$StayTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
+					$fpage[$StayTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
 
-				if (!($FleetRow['fleet_mission'] == 7 && $FleetRow['fleet_mess'] == 0))
+				if (!($FleetRow['mission'] == 7 && $FleetRow['mess'] == 0))
 				{
-					if (($EndTime > time() AND $FleetRow['fleet_mission'] != 4) OR ($FleetRow['fleet_mess'] == 1 AND $FleetRow['fleet_mission'] == 4))
-						$fpage[$EndTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
+					if (($EndTime > time() AND $FleetRow['mission'] != 4) OR ($FleetRow['mess'] == 1 AND $FleetRow['mission'] == 4))
+						$fpage[$EndTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
 				}
 
-				if ($FleetRow['fleet_group'] != 0 && !in_array($FleetRow['fleet_group'], $aks))
+				if ($FleetRow['group_id'] != 0 && !in_array($FleetRow['group_id'], $aks))
 				{
-					$AKSFleets = $this->db->query("SELECT * FROM game_fleets WHERE fleet_group = " . $FleetRow['fleet_group'] . " AND `fleet_owner` != '" . $this->user->id . "' AND fleet_mess = 0;");
+					$AKSFleets = $this->db->query("SELECT * FROM game_fleets WHERE group_id = " . $FleetRow['group_id'] . " AND `owner` != '" . $this->user->id . "' AND mess = 0");
 
 					while ($AKFleet = $AKSFleets->fetch())
 					{
 						$Record++;
-						$fpage[$FleetRow['fleet_start_time']][$AKFleet['fleet_id']] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
+						$fpage[$FleetRow['start_time']][$AKFleet['id']] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
 					}
 
-					$aks[] = $FleetRow['fleet_group'];
+					$aks[] = $FleetRow['group_id'];
 				}
 
 			}
-			elseif ($FleetRow['fleet_mission'] != 8)
+			elseif ($FleetRow['mission'] != 8)
 			{
 				$Record++;
 
-				$StartTime = $FleetRow['fleet_start_time'];
-				$StayTime = $FleetRow['fleet_end_stay'];
+				$StartTime = $FleetRow['start_time'];
+				$StayTime = $FleetRow['end_stay'];
 
 				if ($StartTime > time())
-					$fpage[$StartTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
-				if ($FleetRow['fleet_mission'] == 5 && $StayTime > time())
-					$fpage[$StayTime][$FleetRow['fleet_id']] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
+					$fpage[$StartTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
+				if ($FleetRow['mission'] == 5 && $StayTime > time())
+					$fpage[$StayTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
 			}
 		}
-
-		/*if ($this->user->IsAdmin())
-		{
-			$FleetRow = array
-			(
-				'fleet_owner' => 1,
-				'fleet_owner_name' => 'Призрак',
-				'fleet_mission' => 9,
-				'fleet_array' => '214,9999!0',
-				'fleet_start_time' => mktime(23, 59, 59),
-				'fleet_start_galaxy' => 0,
-				'fleet_start_system' => 0,
-				'fleet_start_planet' => 0,
-				'fleet_start_type' => 1,
-				'fleet_end_time' => mktime(23, 59, 59),
-				'fleet_end_stay' => 0,
-				'fleet_end_galaxy' 		=> $this->planet->galaxy,
-				'fleet_end_system' 		=> $this->planet->system,
-				'fleet_end_planet' 		=> $this->planet->planet,
-				'fleet_end_type' 		=> $this->planet->planet_type,
-				'fleet_resource_metal' 	=> 0,
-				'fleet_resource_crystal' 	=> 0,
-				'fleet_resource_deuterium' 	=> 0,
-				'fleet_target_owner' 	=> $this->user->id,
-				'fleet_target_owner_name' 	=> $this->planet->name,
-				'fleet_group' 			=> 0,
-				'raunds' 				=> 6,
-				'start_time' 			=> time(),
-				'fleet_time' 			=> 0
-
-			);
-
-			$fpage[mktime(23, 0, 0)][2] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", ($Record + 1));
-		}*/
 
 		$parse['moon_img'] 	= '';
 		$parse['moon'] 		= '';

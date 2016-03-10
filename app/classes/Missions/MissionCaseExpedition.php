@@ -66,7 +66,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 		else
 			$upperLimit = 12000;
 
-		$FleetCapacity -= $this->_fleet['fleet_resource_metal'] + $this->_fleet['fleet_resource_crystal'] + $this->_fleet['fleet_resource_deuterium'];
+		$FleetCapacity -= $this->_fleet['resource_metal'] + $this->_fleet['resource_crystal'] + $this->_fleet['resource_deuterium'];
 		$GetEvent = mt_rand(1, 10);
 
 		switch ($GetEvent)
@@ -95,24 +95,24 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$Size = min($Factor * MAX(MIN($FleetPoints, $upperLimit), 200), $FleetCapacity);
 
 				$update = [
-					'fleet_time' => $this->_fleet['fleet_end_time'],
-					'fleet_mess' => 1
+					'update_time' => $this->_fleet['end_time'],
+					'mess' => 1
 				];
 
 				switch ($WitchFound)
 				{
 					case 1:
-						$update['+fleet_resource_metal'] = $Size;
+						$update['+resource_metal'] = $Size;
 						break;
 					case 2:
-						$update['+fleet_resource_crystal'] = $Size;
+						$update['+resource_crystal'] = $Size;
 						break;
 					case 3:
-						$update['+fleet_resource_deuterium'] = $Size;
+						$update['+resource_deuterium'] = $Size;
 						break;
 				}
 
-				$this->db->updateAsDict('game_fleets', $update, "fleet_id = ".$this->_fleet['fleet_id']);
+				$this->db->updateAsDict('game_fleets', $update, "id = ".$this->_fleet['id']);
 
 				break;
 
@@ -129,8 +129,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Message = _getText('sys_expe_found_dm_1_'.mt_rand(1,5));
 
-				$this->db->query("UPDATE game_users SET credits = credits + ".$Size." WHERE id = ".$this->_fleet['fleet_owner']."");
-				$this->db->query("UPDATE game_fleets SET fleet_time = fleet_end_time, `fleet_mess` = '1' WHERE `fleet_id` = " . $this->_fleet["fleet_id"]);
+				$this->db->query("UPDATE game_users SET credits = credits + ".$Size." WHERE id = ".$this->_fleet['owner']."");
+				$this->db->query("UPDATE game_fleets SET update = end_time, `mess` = '1' WHERE `id` = " . $this->_fleet["id"]);
 
 				break;
 
@@ -191,10 +191,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$this->db->updateAsDict('game_fleets',
 				[
-					'fleet_array' => $NewFleetArray,
-					'fleet_time' => $this->_fleet['fleet_end_time'],
-					'fleet_mess' => 1
-				], "fleet_id = ".$this->_fleet["fleet_id"]);
+					'fleet_array' 	=> $NewFleetArray,
+					'update_time' 	=> $this->_fleet['end_time'],
+					'mess' 			=> 1
+				], "id = ".$this->_fleet["id"]);
 
 				break;
 
@@ -259,9 +259,9 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$mission->usersInfo[0] = [];
 				$mission->usersInfo[0][0] = [
-					'galaxy' => $this->_fleet['fleet_end_galaxy'],
-					'system' => $this->_fleet['fleet_end_system'],
-					'planet' => $this->_fleet['fleet_end_planet']
+					'galaxy' => $this->_fleet['end_galaxy'],
+					'system' => $this->_fleet['end_system'],
+					'planet' => $this->_fleet['end_planet']
 				];
 
 				$res = [];
@@ -281,8 +281,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($this->game->reslist['tech'] AS $techId)
 				{
-					if (isset($mission->usersTech[$this->_fleet['fleet_owner']][$this->game->resource[$techId]]) && $mission->usersTech[$this->_fleet['fleet_owner']][$this->game->resource[$techId]] > 0)
-						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet['fleet_owner']][$this->game->resource[$techId]] + $Def), 0);
+					if (isset($mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]]) && $mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]] > 0)
+						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]] + $Def), 0);
 				}
 
 				$mission->usersTech[0] = $res;
@@ -354,10 +354,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$this->db->updateAsDict('game_fleets',
 						[
 							'fleet_array' 	=> substr($fleetArray, 0, -1),
-							'@fleet_time' 	=> 'fleet_end_time',
-							'fleet_mess'	=> 1,
+							'@update' 		=> 'end_time',
+							'mess'			=> 1,
 							'won'			=> $result['won']
-						], "fleet_id = ".$fleetID);
+						], "id = ".$fleetID);
 					}
 				}
 
@@ -392,9 +392,9 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet['fleet_end_galaxy'], $this->_fleet['fleet_end_system'], $this->_fleet['fleet_end_planet']), $ColorAtt, _getText('sys_perte_attaquant'), Helpers::pretty_number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Helpers::pretty_number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
+				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet['end_galaxy'], $this->_fleet['end_system'], $this->_fleet['end_planet']), $ColorAtt, _getText('sys_perte_attaquant'), Helpers::pretty_number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Helpers::pretty_number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
 
-				$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 3, _getText('sys_mess_tower'), $MessageAtt);
+				$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 3, _getText('sys_mess_tower'), $MessageAtt);
 
 				break;
 
@@ -423,23 +423,23 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				if ($MoreTime < 75)
 				{
-					$this->_fleet['fleet_end_time'] += ($this->_fleet['fleet_end_stay'] - $this->_fleet['fleet_start_time']) * (array_rand($Wrapper) - 1);
+					$this->_fleet['end_time'] += ($this->_fleet['end_stay'] - $this->_fleet['start_time']) * (array_rand($Wrapper) - 1);
 
 					$Message = _getText('sys_expe_time_slow_'.mt_rand(1,6));
 				}
 				else
 				{
-					$this->_fleet['fleet_end_time'] -= max(1, (($this->_fleet['fleet_end_stay'] - $this->_fleet['fleet_start_time']) / 3 * array_rand($Wrapper)));
+					$this->_fleet['end_time'] -= max(1, (($this->_fleet['end_stay'] - $this->_fleet['start_time']) / 3 * array_rand($Wrapper)));
 
 					$Message = _getText('sys_expe_time_fast_'.mt_rand(1,3));
 				}
 
 				$this->db->updateAsDict('game_fleets',
 				[
-					'fleet_end_time' 	=> $this->_fleet['fleet_end_time'],
-					'fleet_time' 		=> $this->_fleet['fleet_end_time'],
-					'fleet_mess' 		=> 1
-				], "fleet_id = ".$this->_fleet["fleet_id"]);
+					'end_time' 		=> $this->_fleet['end_time'],
+					'update_time' 	=> $this->_fleet['end_time'],
+					'mess' 			=> 1
+				], "id = ".$this->_fleet["id"]);
 
            		break;
 
@@ -450,14 +450,14 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$Message = _getText('sys_expe_nothing_' . mt_rand(1, 8));
 		}
 
-		$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_end_stay'], 15, _getText('sys_expe_report'), $Message);
+		$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['end_stay'], 15, _getText('sys_expe_report'), $Message);
 	}
 
 	public function ReturnEvent()
 	{
-		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Helpers::pretty_number($this->_fleet['fleet_resource_metal']), _getText('Crystal'), Helpers::pretty_number($this->_fleet['fleet_resource_crystal']),  _getText('Deuterium'), Helpers::pretty_number($this->_fleet['fleet_resource_deuterium']));
+		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Helpers::pretty_number($this->_fleet['resource_metal']), _getText('Crystal'), Helpers::pretty_number($this->_fleet['resource_crystal']),  _getText('Deuterium'), Helpers::pretty_number($this->_fleet['resource_deuterium']));
 
-		$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_end_time'], 15, _getText('sys_expe_report'), $Message);
+		$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['end_time'], 15, _getText('sys_expe_report'), $Message);
 
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

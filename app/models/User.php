@@ -580,7 +580,7 @@ class User extends Model
 		$this->db->delete('game_statpoints', 'stat_type = 1 AND id_owner = ?', [$userId]);
 		$this->db->delete('game_planets', 'id_owner = ?', [$userId]);
 		$this->db->delete('game_notes', 'owner = ?', [$userId]);
-		$this->db->delete('game_fleets', 'fleet_owner = ?', [$userId]);
+		$this->db->delete('game_fleets', 'owner = ?', [$userId]);
 		$this->db->delete('game_buddy', 'sender = ? OR owner = ?', [$userId, $userId]);
 		$this->db->delete('game_refs', 'r_id = ? OR u_id = ?', [$userId, $userId]);
 		$this->db->delete('game_log_attack', 'uid = ?', [$userId]);

@@ -29,33 +29,33 @@ class ImperiumController extends ApplicationController
 
 		$fleet_fly = [];
 
-		$fleets = $this->db->query("SELECT * FROM game_fleets WHERE fleet_owner = " . $this->user->getId() . "");
+		$fleets = $this->db->query("SELECT * FROM game_fleets WHERE owner = " . $this->user->getId() . "");
 
 		while ($fleet = $fleets->fetch())
 		{
-			if (!isset($fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']]))
-				$fleet_fly[$fleet['fleet_start_galaxy'] . ':' . $fleet['fleet_start_system'] . ':' . $fleet['fleet_start_planet'] . ':' . $fleet['fleet_start_type']] = [];
+			if (!isset($fleet_fly[$fleet['start_galaxy'] . ':' . $fleet['start_system'] . ':' . $fleet['start_planet'] . ':' . $fleet['start_type']]))
+				$fleet_fly[$fleet['start_galaxy'] . ':' . $fleet['start_system'] . ':' . $fleet['start_planet'] . ':' . $fleet['start_type']] = [];
 
-			if (!isset($fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']]))
-				$fleet_fly[$fleet['fleet_end_galaxy'] . ':' . $fleet['fleet_end_system'] . ':' . $fleet['fleet_end_planet'] . ':' . $fleet['fleet_end_type']] = [];
+			if (!isset($fleet_fly[$fleet['end_galaxy'] . ':' . $fleet['end_system'] . ':' . $fleet['end_planet'] . ':' . $fleet['end_type']]))
+				$fleet_fly[$fleet['end_galaxy'] . ':' . $fleet['end_system'] . ':' . $fleet['end_planet'] . ':' . $fleet['end_type']] = [];
 
 			$fleetData = Fleet::unserializeFleet($fleet['fleet_array']);
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				if (!isset($fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId]))
+				if (!isset($fleet_fly[$fleet['start_galaxy'].':'.$fleet['start_system'].':'.$fleet['start_planet'].':'.$fleet['start_type']][$shipId]))
 				{
-					$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] = 0;
-					$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] = 0;
+					$fleet_fly[$fleet['start_galaxy'].':'.$fleet['start_system'].':'.$fleet['start_planet'].':'.$fleet['start_type']][$shipId] = 0;
+					$fleet_fly[$fleet['end_galaxy'].':'.$fleet['end_system'].':'.$fleet['end_planet'].':'.$fleet['end_type']][$shipId] = 0;
 				}
 
-				$fleet_fly[$fleet['fleet_start_galaxy'].':'.$fleet['fleet_start_system'].':'.$fleet['fleet_start_planet'].':'.$fleet['fleet_start_type']][$shipId] -= $shipArr['cnt'];
+				$fleet_fly[$fleet['start_galaxy'].':'.$fleet['start_system'].':'.$fleet['start_planet'].':'.$fleet['start_type']][$shipId] -= $shipArr['cnt'];
 
-				if ($fleet['fleet_target_owner'] == $this->user->id)
-					$fleet_fly[$fleet['fleet_end_galaxy'].':'.$fleet['fleet_end_system'].':'.$fleet['fleet_end_planet'].':'.$fleet['fleet_end_type']][$shipId] += $shipArr['cnt'];
+				if ($fleet['target_owner'] == $this->user->id)
+					$fleet_fly[$fleet['end_galaxy'].':'.$fleet['end_system'].':'.$fleet['end_planet'].':'.$fleet['end_type']][$shipId] += $shipArr['cnt'];
 
 
-				if ($fleet['fleet_target_owner'] == $this->user->id)
+				if ($fleet['target_owner'] == $this->user->id)
 				{
 					if (!isset($build_hangar_full[$shipId]))
 						$build_hangar_full[$shipId] = 0;

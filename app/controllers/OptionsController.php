@@ -144,7 +144,7 @@ class OptionsController extends ApplicationController
 					$queueCount += $queueManager->getCount();
 				}
 
-				$UserFlyingFleets = $this->db->query("SELECT `fleet_id` FROM game_fleets WHERE `fleet_owner` = '" . $this->user->id . "'");
+				$UserFlyingFleets = $this->db->query("SELECT `id` FROM game_fleets WHERE `owner` = '" . $this->user->id . "'");
 
 				if ($queueCount > 0)
 					$this->message('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe. Строится: '.$queueCount.' объектов.', "Oшибкa", "/overview/", 5);

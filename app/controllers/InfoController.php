@@ -63,13 +63,13 @@ class InfoController extends ApplicationController
 
 	private function BuildFleetCombo ()
 	{
-		$MoonList = $this->db->query("SELECT * FROM game_fleets WHERE `fleet_end_galaxy` = " . $this->planet->galaxy . " AND `fleet_end_system` = " . $this->planet->system . " AND `fleet_end_planet` = " . $this->planet->planet . " AND `fleet_end_type` = " . $this->planet->planet_type . " AND `fleet_mess` = 3 AND `fleet_owner` = '" . $this->user->id . "';");
+		$MoonList = $this->db->query("SELECT * FROM game_fleets WHERE `end_galaxy` = " . $this->planet->galaxy . " AND `end_system` = " . $this->planet->system . " AND `end_planet` = " . $this->planet->planet . " AND `end_type` = " . $this->planet->planet_type . " AND `mess` = 3 AND `owner` = '" . $this->user->id . "';");
 
 		$Combo = "";
 
 		while ($CurMoon = $MoonList->fetch())
 		{
-			$Combo .= "<option value=\"" . $CurMoon['fleet_id'] . "\">[" . $CurMoon['fleet_start_galaxy'] . ":" . $CurMoon['fleet_start_system'] . ":" . $CurMoon['fleet_start_planet'] . "] " . $CurMoon['fleet_owner_name'] . "</option>\n";
+			$Combo .= "<option value=\"" . $CurMoon['id'] . "\">[" . $CurMoon['start_galaxy'] . ":" . $CurMoon['start_system'] . ":" . $CurMoon['start_planet'] . "] " . $CurMoon['owner_name'] . "</option>\n";
 		}
 
 		return $Combo;
@@ -203,9 +203,9 @@ class InfoController extends ApplicationController
 				{
 					$flid = intval($_POST['jmpto']);
 
-					$query = $this->db->query("SELECT * FROM game_fleets WHERE fleet_id = '" . $flid . "' AND fleet_end_galaxy = " . $this->planet->galaxy . " AND fleet_end_system = " . $this->planet->system . " AND fleet_end_planet = " . $this->planet->planet . " AND fleet_end_type = " . $this->planet->planet_type . " AND `fleet_mess` = 3")->fetch();
+					$query = $this->db->query("SELECT * FROM game_fleets WHERE id = '" . $flid . "' AND end_galaxy = " . $this->planet->galaxy . " AND end_system = " . $this->planet->system . " AND end_planet = " . $this->planet->planet . " AND end_type = " . $this->planet->planet_type . " AND `mess` = 3")->fetch();
 
-					if (!$query['fleet_id'])
+					if (!$query['id'])
 						$parse['msg'] = "<font color=red>Флот отсутствует у планеты</font>";
 					else
 					{
@@ -227,7 +227,7 @@ class InfoController extends ApplicationController
 
 						$times = round(($cur / $tt) * 3600);
 						$this->planet->deuterium -= $cur;
-						$this->db->query("UPDATE game_fleets SET fleet_end_stay = fleet_end_stay + " . $times . ", fleet_end_time = fleet_end_time + " . $times . " WHERE fleet_id = '" . $flid . "'");
+						$this->db->query("UPDATE game_fleets SET end_stay = end_stay + " . $times . ", end_time = end_time + " . $times . " WHERE id = '" . $flid . "'");
 
 						$parse['msg'] = "<font color=red>Ракета с дейтерием отправлена на орбиту вашей планете</font>";
 					}

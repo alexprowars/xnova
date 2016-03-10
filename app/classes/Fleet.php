@@ -182,11 +182,11 @@ class Fleet extends Building
 		$r = 'javascript:;';
 		$Total = 0;
 
-		if ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 2)
+		if ($FleetRow['owner'] != $user->id && $user->spy_tech < 2)
 		{
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
 		}
-		elseif ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 4)
+		elseif ($FleetRow['owner'] != $user->id && $user->spy_tech < 4)
 		{
 			foreach ($FleetRec as $Group)
 			{
@@ -199,7 +199,7 @@ class Fleet extends Building
 			}
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
-		elseif ($FleetRow['fleet_owner'] != $user->id && $user->spy_tech < 8)
+		elseif ($FleetRow['owner'] != $user->id && $user->spy_tech < 8)
 		{
 			foreach ($FleetRec as $Group)
 			{
@@ -215,7 +215,7 @@ class Fleet extends Building
 		}
 		else
 		{
-			if ($FleetRow['fleet_target_owner'] == $user->id && $FleetRow['fleet_mission'] == 1)
+			if ($FleetRow['target_owner'] == $user->id && $FleetRow['mission'] == 1)
 				$r = '/sim/';
 
 			foreach ($FleetRec as $Group)
@@ -243,14 +243,14 @@ class Fleet extends Building
 
 	static function CreateFleetPopupedMissionLink ($FleetRow, $Texte, $FleetType)
 	{
-		$FleetTotalC = $FleetRow['fleet_resource_metal'] + $FleetRow['fleet_resource_crystal'] + $FleetRow['fleet_resource_deuterium'];
+		$FleetTotalC = $FleetRow['resource_metal'] + $FleetRow['resource_crystal'] + $FleetRow['resource_deuterium'];
 
 		if ($FleetTotalC != 0)
 		{
 			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_metal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_crystal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['fleet_resource_deuterium']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_metal']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_crystal']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_deuterium']) . "<font></td></tr>";
 			$FRessource .= "</table>";
 		}
 		else

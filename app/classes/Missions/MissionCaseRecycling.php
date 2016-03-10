@@ -15,7 +15,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 	public function TargetEvent()
 	{
-		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE `galaxy` = '" . $this->_fleet['fleet_end_galaxy'] . "' AND `system` = '" . $this->_fleet['fleet_end_system'] . "' AND `planet` = '" . $this->_fleet['fleet_end_planet'] . "' AND `planet_type` != 3 LIMIT 1;")->fetch();
+		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE `galaxy` = '" . $this->_fleet['end_galaxy'] . "' AND `system` = '" . $this->_fleet['end_system'] . "' AND `planet` = '" . $this->_fleet['end_planet'] . "' AND `planet_type` != 3 LIMIT 1;")->fetch();
 
 		$RecyclerCapacity = 0;
 		$OtherFleetCapacity = 0;
@@ -35,7 +35,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 				$OtherFleetCapacity += $capacity;
 		}
 
-		$IncomingFleetGoods = $this->_fleet["fleet_resource_metal"] + $this->_fleet["fleet_resource_crystal"] + $this->_fleet["fleet_resource_deuterium"];
+		$IncomingFleetGoods = $this->_fleet["resource_metal"] + $this->_fleet["resource_crystal"] + $this->_fleet["resource_deuterium"];
 
 		// Если часть ресурсов хранится в переработчиках
 		if ($IncomingFleetGoods > $OtherFleetCapacity)
@@ -78,14 +78,14 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 		$this->db->query("UPDATE game_planets SET `debris_metal` = `debris_metal` - '" . $RecycledGoods["metal"] . "', `debris_crystal` = `debris_crystal` - '" . $RecycledGoods["crystal"] . "' WHERE `id` = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
 
-		$this->ReturnFleet(['+fleet_resource_metal' => $RecycledGoods["metal"], '+fleet_resource_crystal' => $RecycledGoods["crystal"]]);
+		$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 
 		$Message = sprintf(_getText('sys_recy_gotten'),
 						Helpers::pretty_number($RecycledGoods["metal"]), _getText('Metal'),
 						Helpers::pretty_number($RecycledGoods["crystal"]), _getText('Crystal'),
 						Helpers::GetTargetAdressLink($this->_fleet));
 
-		$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 4, _getText('sys_mess_spy_control'), $Message);
+		$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 4, _getText('sys_mess_spy_control'), $Message);
 	}
 
 	public function EndStayEvent()

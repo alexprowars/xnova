@@ -14,7 +14,7 @@ class Quick
 
 		Lang::includeLang('fleet');
 
-		$maxfleet = $controller->db->fetchColumn("SELECT COUNT(fleet_owner) AS `actcnt` FROM game_fleets WHERE `fleet_owner` = '" . $controller->user->id . "';");
+		$maxfleet = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
 
 		$MaxFlottes = 1 + $controller->user->{$controller->game->resource[108]};
 		if ($controller->user->rpg_admiral > time())
@@ -162,28 +162,28 @@ class Quick
 			if ($FleetSubQRY != '')
 			{
 				$QryInsertFleet = "INSERT INTO game_fleets SET ";
-				$QryInsertFleet .= "`fleet_owner` = '" . $controller->user->id . "', ";
-				$QryInsertFleet .= "`fleet_owner_name` = '" . $controller->planet->name . "', ";
-				$QryInsertFleet .= "`fleet_mission` = '" . $Mode . "', ";
+				$QryInsertFleet .= "`owner` = '" . $controller->user->id . "', ";
+				$QryInsertFleet .= "`owner_name` = '" . $controller->planet->name . "', ";
+				$QryInsertFleet .= "`mission` = '" . $Mode . "', ";
 				$QryInsertFleet .= "`fleet_array` = '" . $ShipArray . "', ";
-				$QryInsertFleet .= "`fleet_start_time` = '" . ($duration + time()) . "', ";
-				$QryInsertFleet .= "`fleet_start_galaxy` = '" . $controller->planet->galaxy . "', ";
-				$QryInsertFleet .= "`fleet_start_system` = '" . $controller->planet->system . "', ";
-				$QryInsertFleet .= "`fleet_start_planet` = '" . $controller->planet->planet . "', ";
-				$QryInsertFleet .= "`fleet_start_type` = '" . $controller->planet->planet_type . "', ";
-				$QryInsertFleet .= "`fleet_end_time` = '" . (($duration * 2) + time()) . "', ";
-				$QryInsertFleet .= "`fleet_end_galaxy` = '" . $Galaxy . "', ";
-				$QryInsertFleet .= "`fleet_end_system` = '" . $System . "', ";
-				$QryInsertFleet .= "`fleet_end_planet` = '" . $Planet . "', ";
-				$QryInsertFleet .= "`fleet_end_type` = '" . $TypePl . "', ";
+				$QryInsertFleet .= "`start_time` = '" . ($duration + time()) . "', ";
+				$QryInsertFleet .= "`start_galaxy` = '" . $controller->planet->galaxy . "', ";
+				$QryInsertFleet .= "`start_system` = '" . $controller->planet->system . "', ";
+				$QryInsertFleet .= "`start_planet` = '" . $controller->planet->planet . "', ";
+				$QryInsertFleet .= "`start_type` = '" . $controller->planet->planet_type . "', ";
+				$QryInsertFleet .= "`end_time` = '" . (($duration * 2) + time()) . "', ";
+				$QryInsertFleet .= "`end_galaxy` = '" . $Galaxy . "', ";
+				$QryInsertFleet .= "`end_system` = '" . $System . "', ";
+				$QryInsertFleet .= "`end_planet` = '" . $Planet . "', ";
+				$QryInsertFleet .= "`end_type` = '" . $TypePl . "', ";
 
 				if ($Mode == 6 && isset($HeDBRec['id']))
 				{
-					$QryInsertFleet .= "`fleet_target_owner` = '" . $HeDBRec['id'] . "', ";
-					$QryInsertFleet .= "`fleet_target_owner_name` = '" . $target['name'] . "', ";
+					$QryInsertFleet .= "`target_owner` = '" . $HeDBRec['id'] . "', ";
+					$QryInsertFleet .= "`target_owner_name` = '" . $target['name'] . "', ";
 				}
 
-				$QryInsertFleet .= "`start_time` = '" . time() . "', `fleet_time` = '" . ($duration + time()) . "';";
+				$QryInsertFleet .= "`create` = '" . time() . "', `update` = '" . ($duration + time()) . "';";
 				$controller->db->query($QryInsertFleet);
 
 				$controller->db->query("UPDATE game_planets SET " . $FleetSubQRY . " deuterium = deuterium - " . $consumption . " WHERE `id` = '" . $controller->planet->id . "'");

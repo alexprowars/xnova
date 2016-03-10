@@ -21,14 +21,14 @@ class Verband
 			return;
 		}
 
-		$fleet = $controller->db->fetchOne("SELECT * FROM game_fleets WHERE fleet_id = '" . $fleetid . "' AND fleet_owner = " . $controller->user->id . " AND fleet_mission = 1");
+		$fleet = $controller->db->fetchOne("SELECT * FROM game_fleets WHERE id = '" . $fleetid . "' AND owner = " . $controller->user->id . " AND mission = 1");
 
-		if (!isset($fleet['fleet_id']))
+		if (!isset($fleet['id']))
 			$controller->message('Этот флот не существует!', 'Ошибка');
 
-		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet['fleet_group'] . "' LIMIT 1");
+		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet['group_id'] . "'");
 
-		if ($fleet['fleet_start_time'] <= time() || $fleet['fleet_end_time'] < time() || $fleet['fleet_mess'] == 1)
+		if ($fleet['start_time'] <= time() || $fleet['end_time'] < time() || $fleet['mess'] == 1)
 			$controller->message('Ваш флот возвращается на планету!', 'Ошибка');
 
 		if ($controller->request->hasPost('action'))
@@ -37,16 +37,16 @@ class Verband
 
 			if ($action == 'addaks')
 			{
-				if (empty($fleet['fleet_group']))
+				if (empty($fleet['group_id']))
 				{
 					$controller->db->insertAsDict('game_aks',
 					[
 						'name' 			=> $controller->request->getPost('groupname', 'string'),
 						'fleet_id' 		=> $fleetid,
-						'galaxy' 		=> $fleet['fleet_end_galaxy'],
-						'system' 		=> $fleet['fleet_end_system'],
-						'planet' 		=> $fleet['fleet_end_planet'],
-						'planet_type' 	=> $fleet['fleet_end_type'],
+						'galaxy' 		=> $fleet['end_galaxy'],
+						'system' 		=> $fleet['end_system'],
+						'planet' 		=> $fleet['end_planet'],
+						'planet_type' 	=> $fleet['end_type'],
 						'user_id' 		=> $controller->user->id,
 					]);
 
@@ -55,7 +55,7 @@ class Verband
 					if (!$aksid)
 						$controller->message('Невозможно получить идентификатор САБ атаки', 'Ошибка');
 
-					$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = '" . $aksid . "' LIMIT 1")->fetch();
+					$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = '" . $aksid . "'")->fetch();
 
 					/*if ($this->user->data['ally_id'] > 0)
 					{
@@ -67,9 +67,9 @@ class Verband
 						}
 					}*/
 
-					$fleet['fleet_group'] = $aksid;
+					$fleet['group_id'] = $aksid;
 
-					$controller->db->updateAsDict('game_fleets', ['fleet_group' => $fleet['fleet_group']], 'fleet_id = '.$fleetid);
+					$controller->db->updateAsDict('game_fleets', ['group_id' => $fleet['group_id']], 'id = '.$fleetid);
 				}
 				else
 					$controller->message('Для этого флота уже задана ассоциация!', 'Ошибка');
@@ -134,12 +134,12 @@ class Verband
 			}
 		}
 
-		if ($fleet['fleet_group'] == 0)
-			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE fleet_id = " . $fleetid . "");
+		if ($fleet['group_id'] == 0)
+			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE id = " . $fleetid . "");
 		else
-			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE fleet_group = " . $fleet['fleet_group'] . "");
+			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE group_id = " . $fleet['group_id'] . "");
 
-		$parse['group'] = $fleet['fleet_group'];
+		$parse['group'] = $fleet['group_id'];
 		$parse['fleetid'] = $fleetid;
 		$parse['aks'] = $aks;
 		$parse['list'] = [];
@@ -166,7 +166,7 @@ class Verband
 		{
 			$parse['users'] = [];
 
-			$query = $controller->db->query("SELECT game_users.username FROM game_users, game_aks_user WHERE game_users.id = game_aks_user.user_id AND game_aks_user.aks_id = " . $fleet['fleet_group'] . "", '');
+			$query = $controller->db->query("SELECT game_users.username FROM game_users, game_aks_user WHERE game_users.id = game_aks_user.user_id AND game_aks_user.aks_id = " . $fleet['group_id'] . "");
 
 			while ($us = $query->fetch())
 				$parse['users'][] = $us['username'];

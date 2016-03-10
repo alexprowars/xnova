@@ -20,7 +20,7 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 		if ($result == true)
 		{
-			$checkFleet = $this->db->query("SELECT fleet_array, won FROM game_fleets WHERE fleet_id = " . $this->_fleet['fleet_id'] . ";")->fetch();
+			$checkFleet = $this->db->query("SELECT fleet_array, won FROM game_fleets WHERE id = " . $this->_fleet['id'] . "")->fetch();
 
 			if (isset($checkFleet['fleet_array']) && $checkFleet['won'] == 1)
 			{
@@ -39,8 +39,8 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 				if ($Rips > 0)
 				{
-					$TargetMoon = $this->db->query("SELECT id, id_owner, diameter FROM game_planets WHERE `galaxy` = '" . $this->_fleet['fleet_end_galaxy'] . "' AND `system` = '" . $this->_fleet['fleet_end_system'] . "' AND `planet` = '" . $this->_fleet['fleet_end_planet'] . "' AND `planet_type` = '3';")->fetch();
-					$CurrentUser = $this->db->query("SELECT `rpg_admiral`, `rpg_ingenieur` FROM game_users WHERE `id` = '" . $this->_fleet['fleet_owner'] . "';")->fetch();
+					$TargetMoon = $this->db->query("SELECT id, id_owner, diameter FROM game_planets WHERE `galaxy` = '" . $this->_fleet['end_galaxy'] . "' AND `system` = '" . $this->_fleet['end_system'] . "' AND `planet` = '" . $this->_fleet['end_planet'] . "' AND `planet_type` = '3';")->fetch();
+					$CurrentUser = $this->db->query("SELECT `rpg_admiral`, `rpg_ingenieur` FROM game_users WHERE `id` = '" . $this->_fleet['owner'] . "';")->fetch();
 
 					$moonDestroyChance = round((100 - sqrt($TargetMoon['diameter'])) * (sqrt($Rips)));
 
@@ -73,8 +73,8 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 						$this->db->query("UPDATE game_planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE `id` = '" . $TargetMoon['id'] . "';");
 						$this->db->query("UPDATE game_users SET planet_current = planet_id WHERE id = " . $TargetMoon['id_owner'] . ";");
 
-						$this->db->query("UPDATE game_fleets SET fleet_start_type = 1 WHERE fleet_start_galaxy = " . $this->_fleet['fleet_end_galaxy'] . " AND fleet_start_system = " . $this->_fleet['fleet_end_system'] . " AND fleet_start_planet = " . $this->_fleet['fleet_end_planet'] . " AND fleet_start_type = 3;");
-						$this->db->query("UPDATE game_fleets SET fleet_end_type = 1 WHERE fleet_end_galaxy = " . $this->_fleet['fleet_end_galaxy'] . " AND fleet_end_system = " . $this->_fleet['fleet_end_system'] . " AND fleet_end_planet = " . $this->_fleet['fleet_end_planet'] . " AND fleet_end_type = 3;");
+						$this->db->query("UPDATE game_fleets SET start_type = 1 WHERE start_galaxy = " . $this->_fleet['end_galaxy'] . " AND start_system = " . $this->_fleet['end_system'] . " AND start_planet = " . $this->_fleet['end_planet'] . " AND start_type = 3;");
+						$this->db->query("UPDATE game_fleets SET end_type = 1 WHERE end_galaxy = " . $this->_fleet['end_galaxy'] . " AND end_system = " . $this->_fleet['end_system'] . " AND end_planet = " . $this->_fleet['end_planet'] . " AND end_type = 3;");
 					}
 					else
 					{
@@ -95,7 +95,7 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 									'+debris_metal' 	=> $debree['metal'],
 									'+debris_crystal' 	=> $debree['crystal']
 								],
-								"galaxy = ".$this->_fleet['fleet_end_galaxy']." AND system = ".$this->_fleet['fleet_end_system']." AND planet = ".$this->_fleet['fleet_end_planet']." AND planet_type != 3");
+								"galaxy = ".$this->_fleet['end_galaxy']." AND system = ".$this->_fleet['end_system']." AND planet = ".$this->_fleet['end_planet']." AND planet_type != 3");
 							}
 						}
 					}
@@ -116,16 +116,16 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 					$message .= "<br><br>" . _getText('sys_destruc_lune') . $moonDestroyChance . "%. <br>" . _getText('sys_destruc_rip') . $fleetDestroyChance . "%";
 
-					$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 3, _getText('sys_mess_destruc_report'), $message);
-					$this->game->sendMessage($TargetMoon['id_owner'], 0, $this->_fleet['fleet_start_time'], 3, _getText('sys_mess_destruc_report'), $message);
+					$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 3, _getText('sys_mess_destruc_report'), $message);
+					$this->game->sendMessage($TargetMoon['id_owner'], 0, $this->_fleet['start_time'], 3, _getText('sys_mess_destruc_report'), $message);
 
 					$this->cache->delete('app::planetlist_'.$TargetMoon['id_owner']);
 				}
 				else
-					$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
+					$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
 			}
 			else
-				$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
+				$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
 		}
 	}
 

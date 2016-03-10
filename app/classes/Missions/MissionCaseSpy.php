@@ -17,9 +17,9 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 	public function TargetEvent()
 	{
-		$CurrentUser = $this->db->query("SELECT `spy_tech`, `rpg_technocrate` FROM game_users WHERE `id` = '" . $this->_fleet['fleet_owner'] . "';")->fetch();
+		$CurrentUser = $this->db->query("SELECT `spy_tech`, `rpg_technocrate` FROM game_users WHERE `id` = '" . $this->_fleet['owner'] . "';")->fetch();
 
-		$TargetPlanet = Planet::findByCoords($this->_fleet['fleet_end_galaxy'], $this->_fleet['fleet_end_system'], $this->_fleet['fleet_end_planet'], $this->_fleet['fleet_end_type']);
+		$TargetPlanet = Planet::findByCoords($this->_fleet['end_galaxy'], $this->_fleet['end_system'], $this->_fleet['end_planet'], $this->_fleet['end_type']);
 
 		if ($TargetPlanet->id_owner == 0)
 		{
@@ -51,7 +51,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		// Обновление производства на планете
 		// =============================================================================
-		$TargetPlanet->PlanetResourceUpdate($this->_fleet['fleet_start_time']);
+		$TargetPlanet->PlanetResourceUpdate($this->_fleet['start_time']);
 		// =============================================================================
 
 		$LS = 0;
@@ -63,7 +63,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		if ($LS > 0)
 		{
-			$def = $this->db->query('SELECT fleet_array FROM game_fleets WHERE `fleet_end_galaxy` = ' . $this->_fleet['fleet_end_galaxy'] . ' AND `fleet_end_system` = ' . $this->_fleet['fleet_end_system'] . ' AND `fleet_end_type` = ' . $this->_fleet['fleet_end_type'] . ' AND `fleet_end_planet` = ' . $this->_fleet['fleet_end_planet'] . ' AND fleet_mess = 3');
+			$def = $this->db->query('SELECT fleet_array FROM game_fleets WHERE `end_galaxy` = ' . $this->_fleet['end_galaxy'] . ' AND `end_system` = ' . $this->_fleet['end_system'] . ' AND `end_type` = ' . $this->_fleet['end_type'] . ' AND `end_planet` = ' . $this->_fleet['end_planet'] . ' AND mess = 3');
 
 			while ($defRow = $def->fetch())
 			{
@@ -134,9 +134,9 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . _getText('sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet['fleet_end_galaxy'] . "/s" . $this->_fleet['fleet_end_system'] . "/";
-			$AttackLink .= "p" . $this->_fleet['fleet_end_planet'] . "/t" . $this->_fleet['fleet_end_type'] . "/";
-			$AttackLink .= "m" . $this->_fleet['fleet_end_type'] . "/";
+			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet['end_galaxy'] . "/s" . $this->_fleet['end_system'] . "/";
+			$AttackLink .= "p" . $this->_fleet['end_planet'] . "/t" . $this->_fleet['end_type'] . "/";
+			$AttackLink .= "m" . $this->_fleet['end_type'] . "/";
 			$AttackLink .= " \">" . _getText('type_mission', 1) . "";
 			$AttackLink .= "</a></center>";
 
@@ -163,19 +163,19 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			}
 
 			$MessageEnd .= "<center><a href=\"/sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
-			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet['fleet_start_time'] . "')\">BB-код</a></center>";
+			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet['start_time'] . "')\">BB-код</a></center>";
 
-			$SpyMessage = "<div id=\"sp" . $this->_fleet['fleet_start_time'] . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
+			$SpyMessage = "<div id=\"sp" . $this->_fleet['start_time'] . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
 
-			$this->game->sendMessage($this->_fleet['fleet_owner'], 0, $this->_fleet['fleet_start_time'], 0, _getText('sys_mess_qg'), $SpyMessage);
+			$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 0, _getText('sys_mess_qg'), $SpyMessage);
 
-			$TargetMessage  = _getText('sys_mess_spy_ennemyfleet') . " " . $this->_fleet['fleet_owner_name'] ." ";
+			$TargetMessage  = _getText('sys_mess_spy_ennemyfleet') . " " . $this->_fleet['owner_name'] ." ";
 			$TargetMessage .= Helpers::GetStartAdressLink($this->_fleet);
 			$TargetMessage .= _getText('sys_mess_spy_seen_at') . " " . $TargetPlanet->name;
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
 			$TargetMessage .= sprintf(_getText('sys_mess_spy_lostproba'), $TargetChances) . ".";
 
-			$this->game->sendMessage($TargetPlanet->id_owner, 0, $this->_fleet['fleet_start_time'], 0, _getText('sys_mess_spy_control'), $TargetMessage);
+			$this->game->sendMessage($TargetPlanet->id_owner, 0, $this->_fleet['start_time'], 0, _getText('sys_mess_spy_control'), $TargetMessage);
 
 			if ($TargetChances > $SpyerChances)
 			{

@@ -242,15 +242,15 @@ class Helpers
 
 	static function GetStartAdressLink ($FleetRow, $FleetType = '')
 	{
-		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['fleet_start_galaxy'] . "&amp;system=" . $FleetRow['fleet_start_system'] . "\" " . $FleetType . " >";
-		$Link .= "[" . $FleetRow['fleet_start_galaxy'] . ":" . $FleetRow['fleet_start_system'] . ":" . $FleetRow['fleet_start_planet'] . "]</a>";
+		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['start_galaxy'] . "&amp;system=" . $FleetRow['start_system'] . "\" " . $FleetType . " >";
+		$Link .= "[" . $FleetRow['start_galaxy'] . ":" . $FleetRow['start_system'] . ":" . $FleetRow['start_planet'] . "]</a>";
 		return $Link;
 	}
 
 	static function GetTargetAdressLink ($FleetRow, $FleetType = '')
 	{
-		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['fleet_end_galaxy'] . "&amp;system=" . $FleetRow['fleet_end_system'] . "\" " . $FleetType . " >";
-		$Link .= "[" . $FleetRow['fleet_end_galaxy'] . ":" . $FleetRow['fleet_end_system'] . ":" . $FleetRow['fleet_end_planet'] . "]</a>";
+		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['end_galaxy'] . "&amp;system=" . $FleetRow['end_system'] . "\" " . $FleetType . " >";
+		$Link .= "[" . $FleetRow['end_galaxy'] . ":" . $FleetRow['end_system'] . ":" . $FleetRow['end_planet'] . "]</a>";
 		return $Link;
 	}
 
@@ -264,7 +264,7 @@ class Helpers
 	static function BuildHostileFleetPlayerLink ($FleetRow)
 	{
 		$Link = $FleetRow['username'] . " ";
-		$Link .= "<a href=\"/messages/write/" . $FleetRow['fleet_owner'] . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
+		$Link .= "<a href=\"/messages/write/" . $FleetRow['owner'] . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
 
 		return $Link;
 	}

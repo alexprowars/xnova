@@ -32,7 +32,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	public function TargetEvent()
 	{
-		$target = Planet::findByCoords($this->_fleet['fleet_end_galaxy'], $this->_fleet['fleet_end_system'], $this->_fleet['fleet_end_planet'], $this->_fleet['fleet_end_type']);
+		$target = Planet::findByCoords($this->_fleet['end_galaxy'], $this->_fleet['end_system'], $this->_fleet['end_planet'], $this->_fleet['end_type']);
 
 		if (!isset($target->id) || !$target->id_owner || $target->destruyed > 0)
 		{
@@ -41,7 +41,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$owner = User::findFirst($this->_fleet['fleet_owner']);
+		$owner = User::findFirst($this->_fleet['owner']);
 
 		if (!$owner)
 		{
@@ -63,7 +63,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		$target->assignUser($targetUser);
-		$target->PlanetResourceUpdate($this->_fleet['fleet_start_time']);
+		$target->PlanetResourceUpdate($this->_fleet['create_time']);
 
 		LangManager::getInstance()->setImplementation(new LangImplementation());
 
@@ -72,9 +72,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$this->getGroupFleet($this->_fleet, $attackers);
 
-		if ($this->_fleet['fleet_group'] != 0)
+		if ($this->_fleet['group_id'] != 0)
 		{
-			$fleets = $this->db->query('SELECT * FROM game_fleets WHERE fleet_id != ' . $this->_fleet['fleet_id'] . ' AND fleet_group = ' . $this->_fleet['fleet_group']);
+			$fleets = $this->db->query('SELECT * FROM game_fleets WHERE id != ' . $this->_fleet['id'] . ' AND group_id = ' . $this->_fleet['group_id']);
 
 			while ($fleet = $fleets->fetch())
 			{
@@ -82,7 +82,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 
-		$def = $this->db->query('SELECT * FROM game_fleets WHERE `fleet_end_galaxy` = ' . $this->_fleet['fleet_end_galaxy'] . ' AND `fleet_end_system` = ' . $this->_fleet['fleet_end_system'] . ' AND `fleet_end_type` = ' . $this->_fleet['fleet_end_type'] . ' AND `fleet_end_planet` = ' . $this->_fleet['fleet_end_planet'] . ' AND fleet_mess = 3');
+		$def = $this->db->query('SELECT * FROM game_fleets WHERE `end_galaxy` = ' . $this->_fleet['end_galaxy'] . ' AND `end_system` = ' . $this->_fleet['end_system'] . ' AND `end_type` = ' . $this->_fleet['end_type'] . ' AND `end_planet` = ' . $this->_fleet['end_planet'] . ' AND mess = 3');
 
 		while ($fleet = $def->fetch())
 		{
@@ -290,9 +290,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$update = [
 					'fleet_array' 	=> substr($fleetArray, 0, -1),
-					'@fleet_time' 	=> 'fleet_end_time',
-					'fleet_mess'	=> 1,
-					'fleet_group'	=> 0,
+					'@update' 		=> 'end_time',
+					'mess'			=> 1,
+					'group_id'		=> 0,
 					'won'			=> $result['won']
 				];
 
@@ -300,13 +300,13 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				{
 					if (isset($res_procent[$fleetID]))
 					{
-						$update['+fleet_resource_metal'] 		= round($res_procent[$fleetID] * $steal['metal']);
-						$update['+fleet_resource_crystal'] 		= round($res_procent[$fleetID] * $steal['crystal']);
-						$update['+fleet_resource_deuterium'] 	= round($res_procent[$fleetID] * $steal['deuterium']);
+						$update['+resource_metal'] 		= round($res_procent[$fleetID] * $steal['metal']);
+						$update['+resource_crystal'] 	= round($res_procent[$fleetID] * $steal['crystal']);
+						$update['+resource_deuterium'] 	= round($res_procent[$fleetID] * $steal['deuterium']);
 					}
 				}
 
-				$this->db->updateAsDict("game_fleets", $update, "fleet_id = ".$fleetID);
+				$this->db->updateAsDict("game_fleets", $update, "id = ".$fleetID);
 			}
 		}
 
@@ -333,9 +333,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					$this->db->updateAsDict(
 					[
 						'fleet_array' => substr($fleetArray, 0, -1),
-						'@fleet_time' => 'fleet_end_time'
+						'@update' => 'end_time'
 					],
-					"fleet_id = ".$fleetID);
+					"id = ".$fleetID);
 				}
 			}
 			else
@@ -369,15 +369,15 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$userChance = mt_rand(1, 100);
 
-		if ($this->_fleet['fleet_end_type'] == 5)
+		if ($this->_fleet['end_type'] == 5)
 			$userChance = 0;
 
 		if ($target->parent_planet == 0 && $userChance && $userChance <= $moonChance)
 		{
-			$TargetPlanetName = $target->createMoon($this->_fleet['fleet_end_galaxy'], $this->_fleet['fleet_end_system'], $this->_fleet['fleet_end_planet'], $target->id_owner, $moonChance);
+			$TargetPlanetName = $target->createMoon($this->_fleet['end_galaxy'], $this->_fleet['end_system'], $this->_fleet['end_planet'], $target->id_owner, $moonChance);
 
 			if ($TargetPlanetName)
-				$GottenMoon = sprintf(_getText('sys_moonbuilt'), $this->_fleet['fleet_end_galaxy'], $this->_fleet['fleet_end_system'], $this->_fleet['fleet_end_planet']);
+				$GottenMoon = sprintf(_getText('sys_moonbuilt'), $this->_fleet['end_galaxy'], $this->_fleet['end_system'], $this->_fleet['end_planet']);
 			else
 				$GottenMoon = 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';
 		}
@@ -409,7 +409,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$FleetsUsers[] = (int) $info['tech']['id'];
 
-				if ($this->_fleet['fleet_mission'] != 6)
+				if ($this->_fleet['mission'] != 6)
 				{
 					$update = ['+raids' => 1];
 
@@ -431,7 +431,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$FleetsUsers[] = (int) $info['tech']['id'];
 
-				if ($this->_fleet['fleet_mission'] != 6)
+				if ($this->_fleet['mission'] != 6)
 				{
 					$update = ['+raids' => 1];
 
@@ -462,10 +462,10 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		// Ключи авторизации доклада
 		$ids = $this->db->lastInsertId();
 
-		if ($this->_fleet['fleet_group'] != 0)
+		if ($this->_fleet['group_id'] != 0)
 		{
-			$this->db->delete('game_aks', 'id = ?', [$this->_fleet['fleet_group']]);
-			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet['fleet_group']]);
+			$this->db->delete('game_aks', 'id = ?', [$this->_fleet['group_id']]);
+			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet['group_id']]);
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
@@ -531,7 +531,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		elseif ($result['won'] == 2)
 			$raport .= "<font color=\"red\">";
 
-		$raport .= _getText('sys_mess_attack_report') . " [" . $this->_fleet['fleet_end_galaxy'] . ":" . $this->_fleet['fleet_end_system'] . ":" . $this->_fleet['fleet_end_planet'] . "]</font></a>";
+		$raport .= _getText('sys_mess_attack_report') . " [" . $this->_fleet['end_galaxy'] . ":" . $this->_fleet['end_system'] . ":" . $this->_fleet['end_planet'] . "]</font></a>";
 
 		$raport2  = $raport . '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Helpers::pretty_number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Helpers::pretty_number($result['lost']['def']) . '</font><br>';
 		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Helpers::pretty_number($steal['deuterium']) . '</font><br>';
@@ -561,7 +561,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$this->db->insertAsDict('game_log_attack',
 		[
-			'uid' 			=> $this->_fleet['fleet_owner'],
+			'uid' 			=> $this->_fleet['owner'],
 			'time'			=> time(),
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
@@ -589,19 +589,19 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if (!count($fleetData))
 		{
-			if ($fleet['fleet_mission'] == 1 || ($fleet['fleet_mission'] == 2 && count($fleetData) == 1 && isset($fleetData[210])))
-				$this->ReturnFleet([], $fleet['fleet_id']);
+			if ($fleet['mission'] == 1 || ($fleet['mission'] == 2 && count($fleetData) == 1 && isset($fleetData[210])))
+				$this->ReturnFleet([], $fleet['id']);
 
 			return;
 		}
 
-		if (!isset($this->usersInfo[$fleet['fleet_owner']]))
-			$this->usersInfo[$fleet['fleet_owner']] = [];
+		if (!isset($this->usersInfo[$fleet['owner']]))
+			$this->usersInfo[$fleet['owner']] = [];
 
-		$this->usersInfo[$fleet['fleet_owner']][$fleet['fleet_id']] = [
-			'galaxy' => $fleet['fleet_start_galaxy'],
-			'system' => $fleet['fleet_start_system'],
-			'planet' => $fleet['fleet_start_planet']
+		$this->usersInfo[$fleet['owner']][$fleet['id']] = [
+			'galaxy' => $fleet['start_galaxy'],
+			'system' => $fleet['start_system'],
+			'planet' => $fleet['start_planet']
 		];
 
 		$res = [];
@@ -615,11 +615,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			$res[$shipId + 100] = $shipArr['lvl'];
 		}
 
-		if (!isset($this->usersTech[$fleet['fleet_owner']]))
+		if (!isset($this->usersTech[$fleet['owner']]))
 		{
-			$info = $this->db->query('SELECT `id`, `username`, `military_tech`, `defence_tech`, `shield_tech`, `laser_tech`, `ionic_tech`, `buster_tech`, `rpg_admiral`, `rpg_komandir` FROM game_users WHERE id = ' . $fleet['fleet_owner'])->fetch();
+			$info = $this->db->query('SELECT `id`, `username`, `military_tech`, `defence_tech`, `shield_tech`, `laser_tech`, `ionic_tech`, `buster_tech`, `rpg_admiral`, `rpg_komandir` FROM game_users WHERE id = ' . $fleet['owner'])->fetch();
 
-			$playerObj = new Player($fleet['fleet_owner']);
+			$playerObj = new Player($fleet['owner']);
 			$playerObj->setName($info['username']);
 			$playerObj->setTech(0, 0, 0);
 
@@ -636,17 +636,17 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					$res[$techId] = $info[$this->game->resource[$techId]];
 			}
 
-			$this->usersTech[$fleet['fleet_owner']] = $res;
+			$this->usersTech[$fleet['owner']] = $res;
 		}
 		else
 		{
-			$playerObj = $playerGroup->getPlayer($fleet['fleet_owner']);
+			$playerObj = $playerGroup->getPlayer($fleet['owner']);
 
 			if ($playerObj === false)
 			{
-				$info = $this->db->query('SELECT `id`, `username` FROM game_users WHERE id = ' . $fleet['fleet_owner'])->fetch();
+				$info = $this->db->query('SELECT `id`, `username` FROM game_users WHERE id = ' . $fleet['owner'])->fetch();
 
-				$playerObj = new Player($fleet['fleet_owner']);
+				$playerObj = new Player($fleet['owner']);
 				$playerObj->setName($info['username']);
 				$playerObj->setTech(0, 0, 0);
 			}
@@ -656,20 +656,20 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				if ($shipId < 300 || $shipId > 400)
 					continue;
 			
-				if (!isset($this->usersTech[$fleet['fleet_owner']][$shipId]))
+				if (!isset($this->usersTech[$fleet['owner']][$shipId]))
 				{
-					$this->usersTech[$fleet['fleet_owner']][$shipId] = $lvl;
+					$this->usersTech[$fleet['owner']][$shipId] = $lvl;
 				}
 			}
 
-			foreach ($this->usersTech[$fleet['fleet_owner']] AS $rId => $rVal)
+			foreach ($this->usersTech[$fleet['owner']] AS $rId => $rVal)
 			{
 				if (!isset($res[$rId]))
 					$res[$rId] = $rVal;
 			}
 		}
 
-		$fleetObj = new Fleet($fleet['fleet_id']);
+		$fleetObj = new Fleet($fleet['id']);
 
 		foreach ($fleetData as $shipId => $shipArr)
 		{
@@ -682,7 +682,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		if (!$fleetObj->isEmpty())
 			$playerObj->addFleet($fleetObj);
 
-		if (!$playerGroup->existPlayer($fleet['fleet_owner']))
+		if (!$playerGroup->existPlayer($fleet['owner']))
 			$playerGroup->addPlayer($playerObj);
 	}
 

@@ -16,27 +16,27 @@ class FlyFleets
 
 		$table = [];
 
-		$FlyingFleets = $controller->db->query("SELECT * FROM game_fleets ORDER BY `fleet_end_time` ASC;");
+		$FlyingFleets = $controller->db->query("SELECT * FROM game_fleets ORDER BY `end_time` ASC;");
 
 		while ($CurrentFleet = $FlyingFleets->fetch())
 		{
-			$Bloc['Id'] = $CurrentFleet['fleet_id'];
-			$Bloc['Mission'] = Fleet::CreateFleetPopupedMissionLink($CurrentFleet, _getText('type_mission', $CurrentFleet['fleet_mission']), '');
-			$Bloc['Mission'] .= "<br>" . (($CurrentFleet['fleet_mess'] == 1) ? "R" : "A");
+			$Bloc['Id'] = $CurrentFleet['id'];
+			$Bloc['Mission'] = Fleet::CreateFleetPopupedMissionLink($CurrentFleet, _getText('type_mission', $CurrentFleet['mission']), '');
+			$Bloc['Mission'] .= "<br>" . (($CurrentFleet['mess'] == 1) ? "R" : "A");
 
 			$Bloc['Fleet'] = Fleet::CreateFleetPopupedFleetLink($CurrentFleet, _getText('tech', 200), '', $controller->user);
-			$Bloc['St_Owner'] = "[" . $CurrentFleet['fleet_owner'] . "]<br>" . $CurrentFleet['fleet_owner_name'];
-			$Bloc['St_Posit'] = "[" . $CurrentFleet['fleet_start_galaxy'] . ":" . $CurrentFleet['fleet_start_system'] . ":" . $CurrentFleet['fleet_start_planet'] . "]<br>" . (($CurrentFleet['fleet_start_type'] == 1) ? "[P]" : (($CurrentFleet['fleet_start_type'] == 2) ? "D" : "L")) . "";
-			$Bloc['St_Time'] = $controller->game->datezone('H:i:s d/n/Y', $CurrentFleet['fleet_start_time']);
+			$Bloc['St_Owner'] = "[" . $CurrentFleet['owner'] . "]<br>" . $CurrentFleet['owner_name'];
+			$Bloc['St_Posit'] = "[" . $CurrentFleet['start_galaxy'] . ":" . $CurrentFleet['start_system'] . ":" . $CurrentFleet['start_planet'] . "]<br>" . (($CurrentFleet['start_type'] == 1) ? "[P]" : (($CurrentFleet['start_type'] == 2) ? "D" : "L")) . "";
+			$Bloc['St_Time'] = $controller->game->datezone('H:i:s d/n/Y', $CurrentFleet['start_time']);
 
-			if (!empty($CurrentFleet['fleet_target_owner']))
-				$Bloc['En_Owner'] = "[" . $CurrentFleet['fleet_target_owner'] . "]<br>" . $CurrentFleet['fleet_target_owner_name'];
+			if (!empty($CurrentFleet['target_owner']))
+				$Bloc['En_Owner'] = "[" . $CurrentFleet['target_owner'] . "]<br>" . $CurrentFleet['target_owner_name'];
 			else
 				$Bloc['En_Owner'] = "";
 
-			$Bloc['En_Posit'] = "[" . $CurrentFleet['fleet_end_galaxy'] . ":" . $CurrentFleet['fleet_end_system'] . ":" . $CurrentFleet['fleet_end_planet'] . "]<br>" . (($CurrentFleet['fleet_end_type'] == 1) ? "[P]" : (($CurrentFleet['fleet_end_type'] == 2) ? "D" : "L")) . "";
+			$Bloc['En_Posit'] = "[" . $CurrentFleet['end_galaxy'] . ":" . $CurrentFleet['end_system'] . ":" . $CurrentFleet['end_planet'] . "]<br>" . (($CurrentFleet['end_type'] == 1) ? "[P]" : (($CurrentFleet['end_type'] == 2) ? "D" : "L")) . "";
 
-			$Bloc['En_Time'] = $controller->game->datezone('H:i:s d/n/Y', $CurrentFleet['fleet_end_time']);
+			$Bloc['En_Time'] = $controller->game->datezone('H:i:s d/n/Y', $CurrentFleet['end_time']);
 
 			$table[] = $Bloc;
 		}

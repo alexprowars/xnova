@@ -29,8 +29,8 @@
 			<tr>
 				<th><?=($i + 1) ?></th>
 				<th>
-					<a><?=_getText('type_mission', $f['fleet_mission']) ?></a>
-					<? if (($f['fleet_start_time'] + 1) == $f['fleet_end_time']): ?>
+					<a><?=_getText('type_mission', $f['mission']) ?></a>
+					<? if (($f['start_time'] + 1) == $f['end_time']): ?>
 						<br><a title="<?=_getText('fl_back_to_ttl') ?>"><?=_getText('fl_back_to') ?></a>
 					<? else: ?>
 						<br><a title="<?=_getText('fl_get_to_ttl') ?>"><?=_getText('fl_get_to') ?></a>
@@ -39,26 +39,26 @@
 				<th>
 					<a class="tooltip" data-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\App\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
-				<th><a href="<?=$this->url->get('galaxy/'.$f['fleet_start_galaxy'].'/'.$f['fleet_start_system'].'/') ?>">[<?=$f['fleet_start_galaxy'] ?>:<?=$f['fleet_start_system'] ?>:<?=$f['fleet_start_planet'] ?>]</a></th>
-				<th><?=$this->game->datezone("d.m.y", $f['fleet_start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_start_time']) ?></th>
-				<th><a href="<?=$this->url->get('galaxy/'.$f['fleet_end_galaxy'].'/'.$f['fleet_end_system'].'/') ?>">[<?=$f['fleet_end_galaxy'] ?>:<?=$f['fleet_end_system'] ?>:<?=$f['fleet_end_planet'] ?>]</a></th>
-				<th><?=$this->game->datezone("d.m.y", $f['fleet_end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['fleet_end_time']) ?></th>
-				<th><font color="lime"><?=($f['fleet_end_time'] > time() ? \App\Helpers::pretty_time(floor($f['fleet_end_time'] + 1 - time())) : 'обработка...') ?></font></th>
+				<th><a href="<?=$this->url->get('galaxy/'.$f['start_galaxy'].'/'.$f['start_system'].'/') ?>">[<?=$f['start_galaxy'] ?>:<?=$f['start_system'] ?>:<?=$f['start_planet'] ?>]</a></th>
+				<th><?=$this->game->datezone("d.m.y", $f['start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['start_time']) ?></th>
+				<th><a href="<?=$this->url->get('galaxy/'.$f['end_galaxy'].'/'.$f['end_system'].'/') ?>">[<?=$f['end_galaxy'] ?>:<?=$f['end_system'] ?>:<?=$f['end_planet'] ?>]</a></th>
+				<th><?=$this->game->datezone("d.m.y", $f['end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['end_time']) ?></th>
+				<th><font color="lime"><?=($f['end_time'] > time() ? \App\Helpers::pretty_time(floor($f['end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
-					<? if ($f['fleet_mess'] == 0 && $f['fleet_mission'] != 20 && $f['fleet_target_owner'] != 1): ?>
+					<? if ($f['mess'] == 0 && $f['mission'] != 20 && $f['target_owner'] != 1): ?>
 						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
-							<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
+							<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 							<input value=" <?=_getText('fl_back_to_ttl') ?> " type="submit" name="send">
 						</form>
-						<? if ($f['fleet_mission'] == 1): ?>
+						<? if ($f['mission'] == 1): ?>
 							<form action="<?=$this->url->get('fleet/verband/') ?>" method="post">
-								<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
+								<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 								<input value=" <?=_getText('fl_associate') ?> " type="submit">
 							</form>
 						<? endif; ?>
-					<? elseif ($f['fleet_mess'] == 3 && $f['fleet_mission'] != 15): ?>
+					<? elseif ($f['mess'] == 3 && $f['mission'] != 15): ?>
 						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
-							<input name="fleetid" value="<?=$f['fleet_id'] ?>" type="hidden">
+							<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 							<input value=" Отозвать " type="submit" name="send">
 						</form>
 					<? else: ?>

@@ -243,17 +243,17 @@ class UpdateStatistics extends Injectable
 		{
 			$Points = $this->GetFleetPointsOnTour($CurFleet['fleet_array']);
 
-			if (!isset($fleetPoints[$CurFleet['fleet_owner']]))
+			if (!isset($fleetPoints[$CurFleet['owner']]))
 			{
-				$fleetPoints[$CurFleet['fleet_owner']] = [];
-				$fleetPoints[$CurFleet['fleet_owner']]['points'] = 0;
-				$fleetPoints[$CurFleet['fleet_owner']]['count'] = 0;
-				$fleetPoints[$CurFleet['fleet_owner']]['array'] = [];
+				$fleetPoints[$CurFleet['owner']] = [];
+				$fleetPoints[$CurFleet['owner']]['points'] = 0;
+				$fleetPoints[$CurFleet['owner']]['count'] = 0;
+				$fleetPoints[$CurFleet['owner']]['array'] = [];
 			}
 
-			$fleetPoints[$CurFleet['fleet_owner']]['points'] += ($Points['FleetPoint'] / 1000);
-			$fleetPoints[$CurFleet['fleet_owner']]['count'] += $Points['FleetCount'];
-			$fleetPoints[$CurFleet['fleet_owner']]['array'][] = $Points['fleet_array'];
+			$fleetPoints[$CurFleet['owner']]['points'] += ($Points['FleetPoint'] / 1000);
+			$fleetPoints[$CurFleet['owner']]['count'] += $Points['FleetCount'];
+			$fleetPoints[$CurFleet['owner']]['array'][] = $Points['fleet_array'];
 		}
 
 		return $fleetPoints;

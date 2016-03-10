@@ -24,7 +24,7 @@ class GalaxyController extends ApplicationController
 		if ($this->user->rpg_admiral > time())
 			$fleetmax += 2;
 		
-		$maxfleet_count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE `fleet_owner` = '" . $this->user->id . "';");
+		$maxfleet_count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE `owner` = '" . $this->user->id . "';");
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 

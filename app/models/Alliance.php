@@ -146,7 +146,7 @@ class Alliance extends Model
 		$db = $this->getDI()->getShared('db');
 
 		$db->updateAsDict('game_planets', ['id_ally' => 0], 'id_owner = '.$userId);
-		$db->updateAsDict('game_users', ['members' => ($this->members - 1)], 'u_id = '.$this->id);
+		$db->updateAsDict('game_alliance', ['members' => ($this->members - 1)], 'id = '.$this->id);
 
 		$db->delete('game_alliance_members', 'u_id = ?', [$userId]);
 	}
