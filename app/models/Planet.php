@@ -241,6 +241,9 @@ class Planet extends Model
 
 			$PlanetID = $this->db->fetchColumn("SELECT `id` FROM game_planets WHERE `id_owner` = '" . $user_id . "' LIMIT 1");
 
+			if (is_null($this->user))
+				$this->user = User::findFirst($user_id);
+
 			$this->user->saveData([
 				'planet_id'		 => $PlanetID,
 				'planet_current' => $PlanetID,
