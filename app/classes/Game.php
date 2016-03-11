@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Models\Message;
 use Phalcon\Mvc\User\Component;
 
 /**
@@ -129,21 +130,23 @@ class Game extends Component
 		if ($this->getDI()->has('user') && $owner == $this->user->getId())
 			$this->user->messages++;
 
-		$this->db->insertAsDict(
-			"game_messages",
-			[
-				'message_owner'		=> $owner,
-				'message_sender'	=> $sender,
-				'message_time'		=> $time,
-				'message_type'		=> $type,
-				'message_from'		=> addslashes($from),
-				'message_text'		=> addslashes($message)
-			]
-		);
+		$obj = new Message;
 
-		$this->db->query("UPDATE game_users SET messages = messages + 1 WHERE id = ".$owner."");
+		$obj->owner = $owner;
+		$obj->sender = $sender;
+		$obj->time = $time;
+		$obj->type = $type;
+		$obj->from = addslashes($from);
+		$obj->text = addslashes($message);
 
-		return true;
+		if ($obj->create())
+		{
+			$this->db->updateAsDict('game_users', ['+messages' => 1], ['conditions' => 'id = ?', 'bind' => [$owner]]);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public function checkSaveState ()
@@ -170,7 +173,7 @@ class Game extends Component
 
 	public function updateConfig ($key, $value)
 	{
-		$this->db->query("UPDATE game_config SET `value` = '". $value ."' WHERE `key` = '".$key."';");
+		$this->db->updateAsDict('game_config', ['value' => $value], ['conditions' => '`key` = ?', 'bind' => [$key]]);
 		$this->config->app->offsetSet($key, $value);
 	}
 }

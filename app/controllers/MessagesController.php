@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
+use App\Models\Message;
 
 class MessagesController extends ApplicationController
 {
@@ -50,7 +51,7 @@ class MessagesController extends ApplicationController
 
 				if ($registerTime > time() - 86400)
 				{
-					$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE message_sender = " . $this->user->id . " AND message_time > ".(time() - (1 * 60))."");
+					$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE sender = " . $this->user->id . " AND time > ".(time() - (1 * 60))."");
 
 					if ($lastSend > 0)
 					{
@@ -62,13 +63,13 @@ class MessagesController extends ApplicationController
 
 			if (!$error)
 			{
-				$similar = $this->db->query("SELECT message_text FROM game_messages WHERE message_sender = " . $this->user->id . " AND message_time > ".(time() - (5 * 60))." ORDER BY message_time DESC LIMIT 1")->fetch();
+				$similar = $this->db->query("SELECT text FROM game_messages WHERE sender = " . $this->user->id . " AND time > ".(time() - (5 * 60))." ORDER BY time DESC LIMIT 1")->fetch();
 
-				if (isset($similar['message_text']))
+				if (isset($similar['text']))
 				{
-					if (mb_strlen($similar['message_text'], 'UTF-8') < 1000)
+					if (mb_strlen($similar['text'], 'UTF-8') < 1000)
 					{
-						similar_text($_POST["text"], $similar['message_text'], $sim);
+						similar_text($_POST["text"], $similar['text'], $sim);
 
 						if ($sim > 80)
 						{
@@ -99,11 +100,11 @@ class MessagesController extends ApplicationController
 
 		if (isset($_GET['quote']))
 		{
-			$mes = $this->db->query("SELECT message_id, message_text FROM game_messages WHERE message_id = " . intval($_GET['quote']) . " AND (message_owner = " . $this->user->id . " || message_sender = " . $this->user->id . ");")->fetch();
+			$mes = $this->db->query("SELECT id, text FROM game_messages WHERE id = " . intval($_GET['quote']) . " AND (owner = " . $this->user->id . " || sender = " . $this->user->id . ");")->fetch();
 
-			if (isset($mes['message_id']))
+			if (isset($mes['id']))
 			{
-				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes['message_text']) . '[/quote]');
+				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes['text']) . '[/quote]');
 			}
 		}
 
@@ -127,7 +128,7 @@ class MessagesController extends ApplicationController
 
 		if ($Mess_Array != '')
 		{
-			$this->db->query("UPDATE game_messages SET message_deleted = '1' WHERE `message_id` IN (" . $Mess_Array . ") AND `message_owner` = " . $this->user->id . ";");
+			$this->db->query("UPDATE game_messages SET deleted = '1' WHERE `id` IN (" . $Mess_Array . ") AND `owner` = " . $this->user->id . ";");
 		}
 
 		$this->response->redirect('messages/');
@@ -139,15 +140,15 @@ class MessagesController extends ApplicationController
 
 		if (isset($_GET['abuse']))
 		{
-			$mes = $this->db->query("SELECT * FROM game_messages WHERE message_id = " . intval($_GET['abuse']) . " AND message_owner = " . $this->user->id . ";")->fetch();
+			$mes = $this->db->query("SELECT * FROM game_messages WHERE id = " . intval($_GET['abuse']) . " AND owner = " . $this->user->id . ";")->fetch();
 
-			if (isset($mes['message_id']))
+			if (isset($mes['id']))
 			{
 				$c = $this->db->query("SELECT `id` FROM game_users WHERE `authlevel` != 0");
 
 				while ($cc = $c->fetch())
 				{
-					$this->game->sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes['message_from'] . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes['message_time']) . '<br>Текст сообщения: ' . $mes['message_text']);
+					$this->game->sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes['from'] . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes['time']) . '<br>Текст сообщения: ' . $mes['text']);
 				}
 
 				$html .= "<script type='text/javascript'>alert('Жалоба отправлена администрации игры');</script>";
@@ -184,11 +185,11 @@ class MessagesController extends ApplicationController
 		}
 
 		if ($MessCategory < 100)
-			$totalCount = $this->db->fetchColumn("SELECT COUNT(message_id) as kol FROM game_messages WHERE `message_owner` = '" . $this->user->id . "' AND message_type = " . $MessCategory . " AND message_deleted = '0'");
+			$totalCount = Message::count(['owner = ?0 AND type = ?1 AND deleted = ?2', 'bind' => [$this->user->id, $MessCategory, 0]]);
 		elseif ($MessCategory == 101)
-			$totalCount = $this->db->fetchColumn("SELECT COUNT(message_id) as kol FROM game_messages WHERE `message_sender` = '" . $this->user->id . "'");
+			$totalCount = Message::count(['sender = ?0', 'bind' => [$this->user->id]]);
 		else
-			$totalCount = $this->db->fetchColumn("SELECT COUNT(message_id) as kol FROM game_messages WHERE `message_owner` = '" . $this->user->id . "' AND message_deleted = '0'");
+			$totalCount = Message::count(['owner = ?0 AND deleted = ?1', 'bind' => [$this->user->id, 0]]);
 
 		if (!$start)
 			$start = 1;
@@ -198,11 +199,11 @@ class MessagesController extends ApplicationController
 		$limits = (($start - 1) * $lim) . "," . $lim . "";
 
 		if ($MessCategory < 100)
-			$messages = $this->db->query("SELECT * FROM game_messages WHERE `message_owner` = '" . $this->user->id . "' AND message_type = " . $MessCategory . " AND message_deleted = '0' ORDER BY `message_time` DESC LIMIT " . $limits . ";");
+			$messages = $this->db->query("SELECT * FROM game_messages WHERE `owner` = '" . $this->user->id . "' AND type = " . $MessCategory . " AND deleted = '0' ORDER BY `time` DESC LIMIT " . $limits . ";");
 		elseif ($MessCategory == 101)
-			$messages = $this->db->query("SELECT m.*, CONCAT(u.username, ' [', u.galaxy,':', u.system,':',u.planet, ']') AS message_from, m.message_owner AS message_sender FROM game_messages m LEFT JOIN game_users u ON u.id = m.message_owner WHERE m.`message_sender` = '" . $this->user->id . "' ORDER BY m.`message_time` DESC LIMIT " . $limits . ";");
+			$messages = $this->db->query("SELECT m.*, CONCAT(u.username, ' [', u.galaxy,':', u.system,':',u.planet, ']') AS from, m.owner AS sender FROM game_messages m LEFT JOIN game_users u ON u.id = m.owner WHERE m.`sender` = '" . $this->user->id . "' ORDER BY m.`time` DESC LIMIT " . $limits . ";");
 		else
-			$messages = $this->db->query("SELECT * FROM game_messages WHERE `message_owner` = '" . $this->user->id . "' AND message_deleted = '0' ORDER BY `message_time` DESC LIMIT " . $limits . ";");
+			$messages = $this->db->query("SELECT * FROM game_messages WHERE `owner` = '" . $this->user->id . "' AND deleted = '0' ORDER BY `time` DESC LIMIT " . $limits . ";");
 
 		$parse['list'] = $this->db->extractResult($messages);
 

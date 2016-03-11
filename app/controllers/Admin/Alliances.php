@@ -162,12 +162,12 @@ class Alliances
 					while ($u = $sq->fetch())
 					{
 						$controller->db->query("INSERT INTO game_messages SET
-												`message_owner`='{$u['id']}',
-												`message_sender`='Администрация' ,
-												`message_time`='" . time() . "',
-												`message_type`='2',
-												`message_from`='Сообщение альянса (Admin)',
-												`message_text`='" . addslashes($_POST['text']) . "'
+												`owner`='{$u['id']}',
+												`sender`='Администрация' ,
+												`time`='" . time() . "',
+												`type`='2',
+												`from`='Сообщение альянса (Admin)',
+												`text`='" . addslashes($_POST['text']) . "'
 												");
 					}
 					$controller->response->redirect('admin/alliancelist/');

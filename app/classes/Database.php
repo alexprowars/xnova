@@ -59,7 +59,7 @@ class Database extends Mysql
 
 						$field = substr($field, 1);
 
-						$placeholders[] = $field." = ".$field." ".$exp." ?";
+						$placeholders[] = "`".$field."` = `".$field."` ".$exp." ?";
 					}
 					elseif ($exp == '@')
 					{
@@ -70,7 +70,7 @@ class Database extends Mysql
 						continue;
 					}
 					else
-						$placeholders[] = $field." = ?";
+						$placeholders[] = "`".$field."` = ?";
 
 					$updateValues[] = $value;
 

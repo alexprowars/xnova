@@ -592,7 +592,7 @@ class User extends Model
 		$this->db->delete('game_log_stats', 'id = ?  AND type = 1', [$userId]);
 		$this->db->delete('game_logs', 's_id = ? OR e_id = ?', [$userId, $userId]);
 		$this->db->delete('game_users_auth', 'user_id = ?', [$userId]);
-		$this->db->delete('game_messages', 'message_sender = ? OR message_owner = ?', [$userId, $userId]);
+		$this->db->delete('game_messages', 'sender = ? OR owner = ?', [$userId, $userId]);
 		$this->db->delete('game_users', 'id = ?', [$userId]);
 		$this->db->delete('game_users_info', 'id = ?', [$userId]);
 		$this->db->delete('game_banned', 'who = ?', [$userId]);

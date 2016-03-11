@@ -303,14 +303,14 @@ class StageThree
 		}
 
 		if ($fleet_group_mr > 0)
-			$fleet['create_time'] = $fleet_group_time;
+			$fleet['start_time'] = $fleet_group_time;
 		else
-			$fleet['create_time'] = $duration + time();
+			$fleet['start_time'] = $duration + time();
 
 		if ($fleetmission == 15)
 		{
 			$StayDuration = intval($_POST['expeditiontime']) * 3600;
-			$StayTime = $fleet['create_time'] + intval($_POST['expeditiontime']) * 3600;
+			$StayTime = $fleet['start_time'] + intval($_POST['expeditiontime']) * 3600;
 		}
 		else
 		{
@@ -493,11 +493,11 @@ class StageThree
 
 		/*if ($controller->user->isAdmin() && $fleetmission != 6)
 		{
-			$fleet['create_time'] 	= time() + 15;
+			$fleet['start_time'] 	= time() + 15;
 			$fleet['end_time'] 		= time() + 30;
 
 			if ($StayTime)
-				$StayTime = $fleet['create_time'] + 5;
+				$StayTime = $fleet['start_time'] + 5;
 
 			$consumption = 0;
 		}*/

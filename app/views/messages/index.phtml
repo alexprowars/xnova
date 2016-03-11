@@ -30,28 +30,28 @@
 				<? foreach ($parse['list'] AS $list): ?>
 					<tr>
 						<th>
-							<input name="showmes<?=$list['message_id'] ?>" type="hidden" value="1">
-							<input name="delmes<?=$list['message_id'] ?>" type="checkbox" style='width:14px;'>
+							<input name="showmes<?=$list['id'] ?>" type="hidden" value="1">
+							<input name="delmes<?=$list['id'] ?>" type="checkbox" style='width:14px;'>
 						</th>
-						<th><?=$this->game->datezone("d.m.y H:i:s", $list['message_time']) ?></th>
-						<th><a href="<?=$this->url->get('players/'.$list['message_sender'].'/') ?>" class="window popup-user"><?=$list['message_from'] ?></a></th>
+						<th><?=$this->game->datezone("d.m.y H:i:s", $list['time']) ?></th>
+						<th><a href="<?=$this->url->get('players/'.$list['sender'].'/') ?>" class="window popup-user"><?=$list['from'] ?></a></th>
 						<th nowrap>
-							<? if ($list['message_type'] == 1): ?>
-								<a href="<?=$this->url->get('messages/write/'.$list['message_sender'].'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
-								&nbsp;<a href="<?=$this->url->get('messages/write/'.$list['message_sender'].'/quote/'.$list['message_id'].'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
-								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$list['message_id'].'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
+							<? if ($list['type'] == 1): ?>
+								<a href="<?=$this->url->get('messages/write/'.$list['sender'].'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
+								&nbsp;<a href="<?=$this->url->get('messages/write/'.$list['sender'].'/quote/'.$list['id'].'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
+								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$list['id'].'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
 							<? else: ?>
 								&nbsp;
 							<? endif; ?>
 						</th>
 					</tr>
 					<tr>
-						<td style="background-color:<?=_getText('mess_background', $list['message_type']) ?>;" colspan="4" class="b">
-							<? if ($list['message_type'] == 1 && $this->user->getUserOption('bb_parser')): ?>
-								<span id="m<?=$list['message_id'] ?>"></span>
-								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($list['message_text'])) ?>', 'm<?=$list['message_id'] ?>');</script>
+						<td style="background-color:<?=_getText('mess_background', $list['type']) ?>;" colspan="4" class="b">
+							<? if ($list['type'] == 1 && $this->user->getUserOption('bb_parser')): ?>
+								<span id="m<?=$list['id'] ?>"></span>
+								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($list['text'])) ?>', 'm<?=$list['id'] ?>');</script>
 							<? else: ?>
-								<?=stripslashes(nl2br($list['message_text'])) ?>
+								<?=stripslashes(nl2br($list['text'])) ?>
 							<? endif; ?>
 						</td>
 					</tr>
