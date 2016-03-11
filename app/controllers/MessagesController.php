@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Lang;
 use App\Models\Message;
+use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 
 class MessagesController extends ApplicationController
 {
@@ -98,63 +99,58 @@ class MessagesController extends ApplicationController
 		$this->view->setVar('id', $OwnerRecord['id']);
 		$this->view->setVar('to', $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]");
 
-		if (isset($_GET['quote']))
+		if ($this->request->hasQuery('quote'))
 		{
-			$mes = $this->db->query("SELECT id, text FROM game_messages WHERE id = " . intval($_GET['quote']) . " AND (owner = " . $this->user->id . " || sender = " . $this->user->id . ");")->fetch();
+			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (owner = ?1 || sender = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
 
-			if (isset($mes['id']))
-			{
-				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes['text']) . '[/quote]');
-			}
+			if ($mes)
+				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes->text) . '[/quote]');
 		}
 
 		$this->tag->setTitle('Сообщения');
 		$this->showTopPanel(false);
 	}
-	
+
 	public function delete ()
 	{
-		$Mess_Array = [];
+		$items = [];
 
-		foreach ($_POST as $Message => $Answer)
+		foreach ($this->request->getPost() as $key => $value)
 		{
-			if (preg_match("/delmes/iu", $Message) && $Answer == 'on')
+			if (preg_match("/delmes/iu", $key) && $value != '')
+				$items[] = trim(str_replace("delmes", "", $key));
+		}
+
+		if (count($items))
+			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN (?) AND owner = ?', 'bind' => [implode(',', $items), $this->user->id]]);
+
+		return $this->response->redirect('messages/');
+	}
+
+	public function abuseAction ($id)
+	{
+		/**
+		 * @var $mes \App\Models\Message
+		 */
+		$mes = Message::findFirst(['id = ?0 AND owner = ?1', 'bind' => [$id, $this->user->id]]);
+
+		if ($mes)
+		{
+			$c = $this->db->query("SELECT `id` FROM game_users WHERE `authlevel` != 0");
+
+			while ($cc = $c->fetch())
 			{
-				$Mess_Array[] = str_replace("delmes", "", $Message);
+				$this->game->sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text);
 			}
+
+			$this->flashSession->message('alert', 'Жалоба отправлена администрации игры');
 		}
 
-		$Mess_Array = implode(',', $Mess_Array);
-
-		if ($Mess_Array != '')
-		{
-			$this->db->query("UPDATE game_messages SET deleted = '1' WHERE `id` IN (" . $Mess_Array . ") AND `owner` = " . $this->user->id . ";");
-		}
-
-		$this->response->redirect('messages/');
+		return $this->response->redirect('messages/');
 	}
 	
 	public function indexAction ()
 	{
-		$html = "";
-
-		if (isset($_GET['abuse']))
-		{
-			$mes = $this->db->query("SELECT * FROM game_messages WHERE id = " . intval($_GET['abuse']) . " AND owner = " . $this->user->id . ";")->fetch();
-
-			if (isset($mes['id']))
-			{
-				$c = $this->db->query("SELECT `id` FROM game_users WHERE `authlevel` != 0");
-
-				while ($cc = $c->fetch())
-				{
-					$this->game->sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes['from'] . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes['time']) . '<br>Текст сообщения: ' . $mes['text']);
-				}
-
-				$html .= "<script type='text/javascript'>alert('Жалоба отправлена администрации игры');</script>";
-			}
-		}
-
 		$parse = [];
 
 		$parse['types'] = [0, 1, 2, 3, 4, 5, 15, 99, 100, 101];
@@ -170,48 +166,48 @@ class MessagesController extends ApplicationController
 		if (!isset($_SESSION['m_cat']) || $_SESSION['m_cat'] != $MessCategory)
 			$_SESSION['m_cat'] = $MessCategory;
 
-		if (isset($_POST['deletemessages']))
-		{
-			$this->delete();
-		}
+		if ($this->request->hasPost('deletemessages'))
+			return $this->delete();
 
 		$parse['lim'] = $lim;
 		$parse['category'] = $MessCategory;
 
 		if ($this->user->messages > 0)
 		{
-			$this->db->query("UPDATE game_users SET `messages` = 0 WHERE `id` = " . $this->user->id . "");
+			$this->user->saveData(['messages' => 0]);
 			$this->user->messages = 0;
 		}
-
-		if ($MessCategory < 100)
-			$totalCount = Message::count(['owner = ?0 AND type = ?1 AND deleted = ?2', 'bind' => [$this->user->id, $MessCategory, 0]]);
-		elseif ($MessCategory == 101)
-			$totalCount = Message::count(['sender = ?0', 'bind' => [$this->user->id]]);
-		else
-			$totalCount = Message::count(['owner = ?0 AND deleted = ?1', 'bind' => [$this->user->id, 0]]);
 
 		if (!$start)
 			$start = 1;
 
-		$parse['pages'] = Helpers::pagination($totalCount, $lim, '/messages/', $start);
-
-		$limits = (($start - 1) * $lim) . "," . $lim . "";
+		$messages = $this->modelsManager->createBuilder()->from('App\Models\Message')->orderBy('time DESC');
 
 		if ($MessCategory < 100)
-			$messages = $this->db->query("SELECT * FROM game_messages WHERE `owner` = '" . $this->user->id . "' AND type = " . $MessCategory . " AND deleted = '0' ORDER BY `time` DESC LIMIT " . $limits . ";");
+			$messages->where('owner = ?0 AND type = ?1 AND deleted = ?2', [$this->user->id, $MessCategory, 0]);
 		elseif ($MessCategory == 101)
-			$messages = $this->db->query("SELECT m.*, CONCAT(u.username, ' [', u.galaxy,':', u.system,':',u.planet, ']') AS from, m.owner AS sender FROM game_messages m LEFT JOIN game_users u ON u.id = m.owner WHERE m.`sender` = '" . $this->user->id . "' ORDER BY m.`time` DESC LIMIT " . $limits . ";");
+			$messages->where('sender = ?0', [$this->user->id]);
 		else
-			$messages = $this->db->query("SELECT * FROM game_messages WHERE `owner` = '" . $this->user->id . "' AND deleted = '0' ORDER BY `time` DESC LIMIT " . $limits . ";");
+			$messages->where('owner = ?0 AND deleted = ?1', [$this->user->id, 0]);
 
-		$parse['list'] = $this->db->extractResult($messages);
+		$paginator = new PaginatorQueryBuilder(
+		[
+			"builder"  	=> $messages,
+			"limit" 	=> $lim,
+			"page"  	=> $start
+		]);
+
+		$page = $paginator->getPaginate();
+
+		$parse['pages'] = Helpers::pagination($page->total_items, $lim, '/messages/', $page->current);
 
 		$this->view->setVar('parse', $parse);
+		$this->view->setVar('page', $page);
 
 		$this->tag->setTitle('Сообщения');
-		$this->view->setVar('html', $html);
 		$this->showTopPanel(false);
+
+		return true;
 	}
 }
 

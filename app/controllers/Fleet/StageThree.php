@@ -589,7 +589,7 @@ class StageThree
 		$html .= "<th>" . $galaxy . ":" . $system . ":" . $planet . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_time_go') . "</th>";
-		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet['create_time']) . "</th>";
+		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet['start_time']) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_time_back') . "</th>";
 		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet['end_time']) . "</th>";

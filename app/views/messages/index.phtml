@@ -1,3 +1,20 @@
+<?
+
+$messages = $this->flashSession->getMessages();
+
+if (count($messages))
+{
+	foreach ($messages as $type => $items)
+	{
+		foreach ($items as $message)
+		{
+			if ($type == 'alert')
+				echo '<script>alert("'.$message.'");</script>';
+		}
+	}
+}
+
+?>
 <form action="<?=$this->url->get('messages/') ?>" id="mes_form" method="post">
 	<input name="category" value="<?=$parse['category'] ?>" type="hidden">
 	<div class="block">
@@ -27,36 +44,36 @@
 					<th>От</th>
 					<th width="65">&nbsp;</th>
 				</tr>
-				<? foreach ($parse['list'] AS $list): ?>
+				<? foreach ($page->items AS $item): ?>
 					<tr>
 						<th>
-							<input name="showmes<?=$list['id'] ?>" type="hidden" value="1">
-							<input name="delmes<?=$list['id'] ?>" type="checkbox" style='width:14px;'>
+							<input name="showmes<?=$item->id ?>" type="hidden" value="1">
+							<input name="delmes<?=$item->id ?>" type="checkbox" style='width:14px;'>
 						</th>
-						<th><?=$this->game->datezone("d.m.y H:i:s", $list['time']) ?></th>
-						<th><a href="<?=$this->url->get('players/'.$list['sender'].'/') ?>" class="window popup-user"><?=$list['from'] ?></a></th>
+						<th><?=$this->game->datezone("d.m.y H:i:s", $item->time) ?></th>
+						<th><a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a></th>
 						<th nowrap>
-							<? if ($list['type'] == 1): ?>
-								<a href="<?=$this->url->get('messages/write/'.$list['sender'].'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
-								&nbsp;<a href="<?=$this->url->get('messages/write/'.$list['sender'].'/quote/'.$list['id'].'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
-								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$list['id'].'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
+							<? if ($item->type == 1): ?>
+								<a href="<?=$this->url->get('messages/write/'.$item->sender.'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
+								&nbsp;<a href="<?=$this->url->get('messages/write/'.$item->sender.'/quote/'.$item->id.'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
+								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$item->id.'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
 							<? else: ?>
 								&nbsp;
 							<? endif; ?>
 						</th>
 					</tr>
 					<tr>
-						<td style="background-color:<?=_getText('mess_background', $list['type']) ?>;" colspan="4" class="b">
-							<? if ($list['type'] == 1 && $this->user->getUserOption('bb_parser')): ?>
-								<span id="m<?=$list['id'] ?>"></span>
-								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($list['text'])) ?>', 'm<?=$list['id'] ?>');</script>
+						<td style="background-color:<?=_getText('mess_background', $item->type) ?>;" colspan="4" class="b">
+							<? if ($item->type == 1 && $this->user->getUserOption('bb_parser')): ?>
+								<span id="m<?=$item->id ?>"></span>
+								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->text)) ?>', 'm<?=$item->id ?>');</script>
 							<? else: ?>
-								<?=stripslashes(nl2br($list['text'])) ?>
+								<?=stripslashes(nl2br($item->text)) ?>
 							<? endif; ?>
 						</td>
 					</tr>
 				<? endforeach; ?>
-				<? if (!count($parse['list'])): ?>
+				<? if (!$page->total_items): ?>
 					<tr>
 						<th colspan="4" align="center">нет сообщений</th>
 					</tr>

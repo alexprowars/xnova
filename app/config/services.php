@@ -134,7 +134,7 @@ $di->setShared('game', function ()
 });
 
 $di->remove('transactionManager');
-$di->remove('flashSession');
+//$di->remove('flashSession');
 $di->remove('flash');
 $di->remove('annotations');
 
