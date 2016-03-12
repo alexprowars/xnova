@@ -12,6 +12,7 @@ use App\Helpers;
 use App\Lang;
 use App\Models\Planet;
 use App\Queue;
+use App\Models\Fleet as FleetModel;
 
 class OverviewController extends ApplicationController
 {
@@ -24,7 +25,7 @@ class OverviewController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 
-	private function BuildFleetEventTable ($FleetRow, $Status, $Owner, $Label, $Record)
+	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner, $Label, $Record)
 	{
 		$FleetStyle = [
 			1 => 'attack',
@@ -44,14 +45,16 @@ class OverviewController extends ApplicationController
 		$FleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
 		$FleetPrefix = $Owner == true ? 'own' : '';
 
-		$MissionType 	= $FleetRow['mission'];
-		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
-		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+		$MissionType 	= $FleetRow->mission;
 
-		$StartPlanet 	= $FleetRow['owner_name'];
-		$StartType 		= $FleetRow['start_type'];
-		$TargetPlanet 	= $FleetRow['target_owner_name'];
-		$TargetType 	= $FleetRow['end_type'];
+		/** TODO Переписать в будущем! */
+		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow->toArray(), _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
+		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow->toArray(), _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+
+		$StartPlanet 	= $FleetRow->owner_name;
+		$StartType 		= $FleetRow->start_type;
+		$TargetPlanet 	= $FleetRow->target_owner_name;
+		$TargetType 	= $FleetRow->end_type;
 
 		$StartID  = '';
 		$TargetID = '';
@@ -72,7 +75,7 @@ class OverviewController extends ApplicationController
 				$StartID .= $StartPlanet . " ";
 			}
 
-			$StartID .= Helpers::GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$StartID .= $FleetRow->getStartAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
 
 			if ($TargetPlanet == '')
 				$TargetID = ' координаты ';
@@ -95,7 +98,7 @@ class OverviewController extends ApplicationController
 				$TargetID .= $TargetPlanet . " ";
 			}
 
-			$TargetID .= Helpers::GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$TargetID .= $FleetRow->getTargetAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
 		}
 		else
 		{
@@ -111,7 +114,7 @@ class OverviewController extends ApplicationController
 				$StartID .= $StartPlanet . " ";
 			}
 
-			$StartID .= Helpers::GetStartAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$StartID .= $FleetRow->getStartAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
 
 			if ($TargetPlanet == '')
 				$TargetID = ' с координат ';
@@ -134,7 +137,7 @@ class OverviewController extends ApplicationController
 				$TargetID .= $TargetPlanet . " ";
 			}
 
-			$TargetID .= Helpers::GetTargetAdressLink($FleetRow, $FleetPrefix . $FleetStyle[$MissionType]);
+			$TargetID .= $FleetRow->getTargetAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
 		}
 
 		if ($Owner == true)
@@ -144,18 +147,18 @@ class OverviewController extends ApplicationController
 		}
 		else
 		{
-			$EventString = ($FleetRow['group_id'] != 0) ? 'Союзный ' : _getText('ov_une_hostile');
+			$EventString = ($FleetRow->group_id != 0) ? 'Союзный ' : _getText('ov_une_hostile');
 			$EventString .= $FleetContent;
 			$EventString .= _getText('ov_hostile');
 
-			$FleetRow['username'] = $this->db->fetchColumn("SELECT `username` FROM game_users WHERE `id` = '" . $FleetRow['owner'] . "';");
+			$FleetRow->username = $this->db->fetchColumn("SELECT `username` FROM game_users WHERE `id` = '" . $FleetRow->owner . "'");
 
 			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
 		}
 
 		if ($Status == 0)
 		{
-			$Time = $FleetRow['start_time'];
+			$Time = $FleetRow->start_time;
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
@@ -165,7 +168,7 @@ class OverviewController extends ApplicationController
 		}
 		elseif ($Status == 1)
 		{
-			$Time = $FleetRow['end_stay'];
+			$Time = $FleetRow->end_stay;
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
@@ -180,7 +183,7 @@ class OverviewController extends ApplicationController
 		}
 		else
 		{
-			$Time = $FleetRow['end_time'];
+			$Time = $FleetRow->end_time;
 			$Rest = $Time - time();
 			$EventString .= _getText('ov_rentrant');
 			$EventString .= $TargetID;
@@ -366,11 +369,7 @@ class OverviewController extends ApplicationController
 		$XpMinierUp = pow($this->user->lvl_minier, 3);
 		$XpRaidUp = pow($this->user->lvl_raid, 2);
 
-		$fleets = array_merge
-		(
-			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `owner` = " . $this->user->id . "")),
-			$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE `target_owner` = " . $this->user->id . ""))
-		);
+		$fleets = FleetModel::find(['conditions' => 'owner = :user: OR target_owner = :user:', 'bind' => ['user' => $this->user->id]]);
 
 		$Record = 0;
 		$fpage = [];
@@ -380,49 +379,42 @@ class OverviewController extends ApplicationController
 		{
 			$Record++;
 
-			if ($FleetRow['owner'] == $this->user->id)
+			if ($FleetRow->owner == $this->user->id)
 			{
-				$StartTime = $FleetRow['start_time'];
-				$StayTime = $FleetRow['end_stay'];
-				$EndTime = $FleetRow['end_time'];
+				if ($FleetRow->start_time > time())
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
 
-				if ($StartTime > time())
-					$fpage[$StartTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
+				if ($FleetRow->end_stay > time())
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
 
-				if ($StayTime > time())
-					$fpage[$StayTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
-
-				if (!($FleetRow['mission'] == 7 && $FleetRow['mess'] == 0))
+				if (!($FleetRow->mission == 7 && $FleetRow->mess == 0))
 				{
-					if (($EndTime > time() AND $FleetRow['mission'] != 4) OR ($FleetRow['mess'] == 1 AND $FleetRow['mission'] == 4))
-						$fpage[$EndTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
+					if (($FleetRow->end_time > time() AND $FleetRow->mission != 4) OR ($FleetRow->mess == 1 AND $FleetRow->mission == 4))
+						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
 				}
 
-				if ($FleetRow['group_id'] != 0 && !in_array($FleetRow['group_id'], $aks))
+				if ($FleetRow->group_id != 0 && !in_array($FleetRow->group_id, $aks))
 				{
-					$AKSFleets = $this->db->query("SELECT * FROM game_fleets WHERE group_id = " . $FleetRow['group_id'] . " AND `owner` != '" . $this->user->id . "' AND mess = 0");
+					$AKSFleets = FleetModel::find(['conditions' => 'group_id = :group: AND owner != :user: AND mess = 0', 'bind' => ['group' => $FleetRow->group_id, 'user' => $this->user->id]]);
 
-					while ($AKFleet = $AKSFleets->fetch())
+					foreach ($AKSFleets as $AKFleet)
 					{
 						$Record++;
-						$fpage[$FleetRow['start_time']][$AKFleet['id']] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
+						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
 					}
 
-					$aks[] = $FleetRow['group_id'];
+					$aks[] = $FleetRow->group_id;
 				}
 
 			}
-			elseif ($FleetRow['mission'] != 8)
+			elseif ($FleetRow->mission != 8)
 			{
 				$Record++;
 
-				$StartTime = $FleetRow['start_time'];
-				$StayTime = $FleetRow['end_stay'];
-
-				if ($StartTime > time())
-					$fpage[$StartTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
-				if ($FleetRow['mission'] == 5 && $StayTime > time())
-					$fpage[$StayTime][$FleetRow['id']] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
+				if ($FleetRow->start_time > time())
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
+				if ($FleetRow->mission == 5 && $FleetRow->end_stay > time())
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
 			}
 		}
 

@@ -44,8 +44,26 @@ class Fleet extends Model
 	public $raunds;
 	public $won;
 
+	public $username = '';
+
 	public function getSource()
 	{
 		return DB_PREFIX."fleets";
+	}
+
+	public function getStartAdressLink ($FleetType = '')
+	{
+		$link  = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $this->start_galaxy . "&amp;system=" . $this->start_system . "\" " . $FleetType . " >";
+		$link .= "[" . $this->start_galaxy . ":" . $this->start_system . ":" . $this->start_planet . "]</a>";
+
+		return $link;
+	}
+
+	public function getTargetAdressLink ($FleetType = '')
+	{
+		$link  = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $this->end_galaxy . "&amp;system=" . $this->end_system . "\" " . $FleetType . " >";
+		$link .= "[" . $this->end_galaxy . ":" . $this->end_system . ":" . $this->end_planet . "]</a>";
+
+		return $link;
 	}
 }

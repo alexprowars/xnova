@@ -134,7 +134,7 @@ class StageTwo
 		$duration = Fleet::GetMissionDuration($GenFleetSpeed, $MaxFleetSpeed, $distance, $SpeedFactor);
 		$consumption = Fleet::GetFleetConsumption($fleetarray, $SpeedFactor, $duration, $distance, $controller->user);
 
-		$stayConsumption = Fleet::GetFleetStay($fleetarray, $controller->getDI());
+		$stayConsumption = Fleet::GetFleetStay($fleetarray);
 
 		if ($controller->user->rpg_meta > time())
 			$stayConsumption = ceil($stayConsumption * 0.9);

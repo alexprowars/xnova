@@ -269,8 +269,8 @@ class Helpers
 
 	static function BuildHostileFleetPlayerLink ($FleetRow)
 	{
-		$Link = $FleetRow['username'] . " ";
-		$Link .= "<a href=\"/messages/write/" . $FleetRow['owner'] . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
+		$Link = $FleetRow->username . " ";
+		$Link .= "<a href=\"/messages/write/" . $FleetRow->owner . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
 
 		return $Link;
 	}

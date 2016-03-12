@@ -47,30 +47,28 @@ class Fleet extends Building
 	 */
 	static function GetFleetMaxSpeed ($FleetArray, $Fleet, User $user)
 	{
-		$game = $user->getDI()->getShared('game');
+		$storage = Di::getDefault()->getShared('storage');
 
 		$speedalls = [];
 
 		if ($Fleet != 0)
-		{
 			$FleetArray[$Fleet] = 1;
-		}
 
 		foreach ($FleetArray as $Ship => $Count)
 		{
-			switch ($game->CombatCaps[$Ship]['type_engine'])
+			switch ($storage->CombatCaps[$Ship]['type_engine'])
 			{
 				case 1:
-					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
 					break;
 				case 2:
-					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
 					break;
 				case 3:
-					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
 					break;
 				default:
-					$speedalls[$Ship] = $game->CombatCaps[$Ship]['speed'];
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'];
 			}
 
 			if ($user->bonusValue('fleet_speed') != 1)
@@ -109,9 +107,9 @@ class Fleet extends Building
 	 */
 	static function GetShipConsumption ($Ship, User $user)
 	{
-		$game = $user->getDI()->getShared('game');
+		$storage = Di::getDefault()->getShared('storage');
 
-		return ceil($game->CombatCaps[$Ship]['consumption'] * $user->bonusValue('fleet_fuel'));
+		return ceil($storage->CombatCaps[$Ship]['consumption'] * $user->bonusValue('fleet_fuel'));
 	}
 
 	static function GetFleetConsumption ($FleetArray, $gameFleetSpeed, $MissionDuration, $MissionDistance, $Player)
@@ -136,18 +134,16 @@ class Fleet extends Building
 		return $consumption;
 	}
 
-	static function GetFleetStay ($FleetArray, DiInterface $di)
+	static function GetFleetStay ($FleetArray)
 	{
-		$game = $di->getShared('game');
+		$storage = Di::getDefault()->getShared('storage');
 
 		$stay = 0;
 
 		foreach ($FleetArray as $Ship => $Count)
 		{
 			if ($Ship > 0)
-			{
-				$stay += $game->CombatCaps[$Ship]['stay'] * $Count;
-			}
+				$stay += $storage->CombatCaps[$Ship]['stay'] * $Count;
 		}
 
 		return $stay;

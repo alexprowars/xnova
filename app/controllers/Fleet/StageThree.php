@@ -379,7 +379,7 @@ class StageThree
 			if (!isset($_POST['holdingtime']) || !in_array($_POST['holdingtime'], $StayArrayTime))
 				$_POST['holdingtime'] = 0;
 
-			$FleetStayConsumption = Fleet::GetFleetStay($fleetarray, $controller->getDI());
+			$FleetStayConsumption = Fleet::GetFleetStay($fleetarray);
 
 			if ($controller->user->rpg_meta > time())
 				$FleetStayConsumption = ceil($FleetStayConsumption * 0.9);
