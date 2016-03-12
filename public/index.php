@@ -8,7 +8,7 @@ use Phalcon\DI\FactoryDefault;
 
 define('APP_PATH', dirname(__DIR__.'../') . '/');
 
-define('DEBUG', false);
+define('DEBUG', true);
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);
@@ -59,6 +59,7 @@ try
 			$toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
 		}
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		if (!$application->auth->isAuthorized() || !$application->user->isAdmin())
 			unset($toolbar);
 	}

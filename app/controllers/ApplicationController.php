@@ -32,6 +32,7 @@ use Phalcon\Tag;
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
+ * @property \Phalcon\Registry|\stdClass storage
  * @property \Phalcon\Config|\stdClass config
  * @property \App\Game game
  */
@@ -401,7 +402,7 @@ class ApplicationController extends Controller
 			}
 		}
 
-		foreach ($this->game->reslist['res'] AS $res)
+		foreach ($this->storage->reslist['res'] AS $res)
 		{
 			$parse[$res] = floor(floatval($this->planet->{$res}));
 
@@ -424,9 +425,9 @@ class ApplicationController extends Controller
 
 		$parse['officiers'] = [];
 
-		foreach ($this->game->reslist['officier'] AS $officier)
+		foreach ($this->storage->reslist['officier'] AS $officier)
 		{
-			$parse['officiers'][$officier] = $this->user->{$this->game->resource[$officier]};
+			$parse['officiers'][$officier] = $this->user->{$this->storage->resource[$officier]};
 		}
 
 		$parse['energy_ak'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
@@ -437,7 +438,7 @@ class ApplicationController extends Controller
 		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->game->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->storage->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
 				$parse['ak'] .= '<br>Разряд: ' . Helpers::pretty_time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}

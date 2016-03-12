@@ -40,15 +40,15 @@ class SimController extends ApplicationController
 			}
 		}
 		
-		$res = array_merge($this->game->reslist['fleet'], $this->game->reslist['defense'], $this->game->reslist['tech']);
+		$res = array_merge($this->storage->reslist['fleet'], $this->storage->reslist['defense'], $this->storage->reslist['tech']);
 		
 		foreach ($res AS $id)
 		{
-			if (isset($this->planet->{$this->game->resource[$id]}) && $this->planet->{$this->game->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->game->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
+			if (isset($this->planet->{$this->storage->resource[$id]}) && $this->planet->{$this->storage->resource[$id]} > 0)
+				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->storage->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
 		
-			if (isset($this->user->{$this->game->resource[$id]}) && $this->user->{$this->game->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->user->{$this->game->resource[$id]}];
+			if (isset($this->user->{$this->storage->resource[$id]}) && $this->user->{$this->storage->resource[$id]} > 0)
+				$parse['slot_0'][$id] = ['c' => $this->user->{$this->storage->resource[$id]}];
 		}
 
 		$this->view->setVar('parse', $parse);

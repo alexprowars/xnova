@@ -120,7 +120,7 @@ class StatController extends ApplicationController
 
 		$start *= 100;
 
-		$query = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `stat_hide` = 0 ORDER BY `" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
+		$query = $this->db->query("SELECT s.*, u.username, u.race FROM game_statpoints s LEFT JOIN game_users u ON u.id = s.id_owner WHERE  s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $start . ", 100");
 
 		$start++;
 

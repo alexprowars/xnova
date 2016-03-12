@@ -763,7 +763,6 @@ button.ui-button::-moz-focus-inner {
 	padding: 6px 8px;
 	position: absolute;
 	z-index: 9999;
-	max-width: 250px;
 }
 body .ui-tooltip {
 	border-width: 2px;

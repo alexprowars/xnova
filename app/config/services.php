@@ -185,6 +185,14 @@ $di->set('modelsMetadata', function()
 	return $metaData;
 });
 
+$di->setShared(
+	'storage', function ()
+	{
+		$registry = new \Phalcon\Registry();
+		return $registry;
+	}
+);
+
 Model::setup([
 	'events' 			=> true,
 	'columnRenaming' 	=> false,

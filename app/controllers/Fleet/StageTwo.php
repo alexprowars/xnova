@@ -44,22 +44,22 @@ class StageTwo
 						$SubQueryOri = [];
 						$SubQueryDes = [];
 
-						foreach ($controller->game->reslist['fleet'] AS $Ship)
+						foreach ($controller->storage->reslist['fleet'] AS $Ship)
 						{
 							$ShipLabel = "ship" . $Ship;
 
 							if (!isset($_POST[$ShipLabel]) || !is_numeric($_POST[$ShipLabel]) || intval($_POST[$ShipLabel]) < 0)
 								continue;
 
-							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->{$controller->game->resource[$Ship]})
-								$ShipArray[$Ship] = $controller->planet->{$controller->game->resource[$Ship]};
+							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->{$controller->storage->resource[$Ship]})
+								$ShipArray[$Ship] = $controller->planet->{$controller->storage->resource[$Ship]};
 							else
 								$ShipArray[$Ship] = abs(intval($_POST[$ShipLabel]));
 
 							if ($ShipArray[$Ship] != 0)
 							{
-								$SubQueryOri['-'.$controller->game->resource[$Ship]] = $ShipArray[$Ship];
-								$SubQueryDes['+'.$controller->game->resource[$Ship]] = $ShipArray[$Ship];
+								$SubQueryOri['-'.$controller->storage->resource[$Ship]] = $ShipArray[$Ship];
+								$SubQueryDes['+'.$controller->storage->resource[$Ship]] = $ShipArray[$Ship];
 							}
 						}
 
@@ -186,19 +186,19 @@ class StageTwo
 				'count' => $count,
 				'consumption' => Fleet::GetShipConsumption($i, $controller->user),
 				'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user),
-				'stay' => $controller->game->CombatCaps[$i]['stay'],
+				'stay' => $controller->storage->CombatCaps[$i]['stay'],
 			];
 
-			if (isset($controller->user->{'fleet_' . $i}) && isset($controller->game->CombatCaps[$i]['power_consumption']) && $controller->game->CombatCaps[$i]['power_consumption'] > 0)
-				$ship['capacity'] = round($controller->game->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->game->CombatCaps[$i]['power_consumption'] / 100)));
+			if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
+				$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
 			else
-				$ship['capacity'] = $controller->game->CombatCaps[$i]['capacity'];
+				$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
 
 			$parse['ships'][] = $ship;
 		}
 
 		if (isset($missiontype[15]))
-			$parse['expedition_hours'] = round($controller->user->{$controller->game->resource[124]} / 2) + 1;
+			$parse['expedition_hours'] = round($controller->user->{$controller->storage->resource[124]} / 2) + 1;
 
 		$controller->view->setVar('parse', $parse);
 		$controller->tag->setTitle(_getText('fl_title_2'));

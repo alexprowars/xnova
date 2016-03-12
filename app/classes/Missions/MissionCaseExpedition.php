@@ -33,8 +33,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 	{
 		$Expowert = [];
 
-		foreach ($this->game->reslist['fleet'] as $ID)
-			$Expowert[$ID] = ($this->game->pricelist[$ID]['metal'] + $this->game->pricelist[$ID]['crystal']) / 200;
+		foreach ($this->storage->reslist['fleet'] as $ID)
+			$Expowert[$ID] = ($this->storage->pricelist[$ID]['metal'] + $this->storage->pricelist[$ID]['crystal']) / 200;
 
 		$farray = explode(";", $this->_fleet['fleet_array']);
 
@@ -53,7 +53,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 			$FleetCount[$Class[0]] = $Fleet[0];
 
-			$FleetCapacity += $Fleet[0] * $this->game->CombatCaps[$Class[0]]['capacity'];
+			$FleetCapacity += $Fleet[0] * $this->storage->CombatCaps[$Class[0]]['capacity'];
 
 			$FleetPoints += $Fleet[0] * $Expowert[$Class[0]];
 		}
@@ -165,12 +165,12 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Found = [];
 
-				foreach ($this->game->reslist['fleet'] as $ID)
+				foreach ($this->storage->reslist['fleet'] as $ID)
 				{
 					if(!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214)
 						continue;
 
-					$MaxFound = floor($FoundShips / ($this->game->pricelist[$ID]['metal'] + $this->game->pricelist[$ID]['crystal']));
+					$MaxFound = floor($FoundShips / ($this->storage->pricelist[$ID]['metal'] + $this->storage->pricelist[$ID]['crystal']));
 
 					if ($MaxFound <= 0)
 						continue;
@@ -182,7 +182,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 					$Found[$ID]	= $Count;
 
-					$FoundShips	 		-= $Count * ($this->game->pricelist[$ID]['metal'] + $this->game->pricelist[$ID]['crystal']);
+					$FoundShips	 		-= $Count * ($this->storage->pricelist[$ID]['metal'] + $this->storage->pricelist[$ID]['crystal']);
 					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Helpers::pretty_number($Count);
 
 					if ($FoundShips <= 0)
@@ -284,10 +284,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
-				foreach ($this->game->reslist['tech'] AS $techId)
+				foreach ($this->storage->reslist['tech'] AS $techId)
 				{
-					if (isset($mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]]) && $mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]] > 0)
-						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet['owner']][$this->game->resource[$techId]] + $Def), 0);
+					if (isset($mission->usersTech[$this->_fleet['owner']][$this->storage->resource[$techId]]) && $mission->usersTech[$this->_fleet['owner']][$this->storage->resource[$techId]] > 0)
+						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet['owner']][$this->storage->resource[$techId]] + $Def), 0);
 				}
 
 				$mission->usersTech[0] = $res;

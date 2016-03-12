@@ -9,6 +9,7 @@ namespace App;
 
 use App\Models\Planet;
 use App\Models\User;
+use Phalcon\Di;
 
 class Queue
 {
@@ -26,7 +27,7 @@ class Queue
 	 */
 	private $planet;
 
-	private $game;
+	private $storage;
 	private $config;
 
 	public function __construct($queue = '')
@@ -54,25 +55,25 @@ class Queue
 	{
 		$this->planet = $planet;
 
-		$this->game = $this->planet->getDI()->getShared('game');
-		$this->config = $this->planet->getDI()->getShared('config');
+		$this->storage 	= Di::getDefault()->getShared('storage');
+		$this->config 	= Di::getDefault()->getShared('config');
 	}
 
 	public function add($elementId, $count = 1, $destroy = false)
 	{
-		if (in_array($elementId, $this->game->reslist['build']))
+		if (in_array($elementId, $this->storage->reslist['build']))
 			$this->addBuildingToQueue($elementId, $destroy);
-		elseif (in_array($elementId, $this->game->reslist['tech']) || in_array($elementId, $this->game->reslist['tech_f']))
+		elseif (in_array($elementId, $this->storage->reslist['tech']) || in_array($elementId, $this->storage->reslist['tech_f']))
 			$this->addTechToQueue($elementId);
-		elseif (in_array($elementId, $this->game->reslist['fleet']) || in_array($elementId, $this->game->reslist['defense']))
+		elseif (in_array($elementId, $this->storage->reslist['fleet']) || in_array($elementId, $this->storage->reslist['defense']))
 			$this->addShipyardToQueue($elementId, $count);
 	}
 
 	public function delete($elementId, $listId = 0)
 	{
-		if (in_array($elementId, $this->game->reslist['build']))
+		if (in_array($elementId, $this->storage->reslist['build']))
 			$this->deleteBuildingInQueue($listId);
-		elseif (in_array($elementId, $this->game->reslist['tech']) || in_array($elementId, $this->game->reslist['tech_f']))
+		elseif (in_array($elementId, $this->storage->reslist['tech']) || in_array($elementId, $this->storage->reslist['tech_f']))
 			$this->deleteTechInQueue($elementId);
 	}
 
@@ -140,21 +141,21 @@ class Queue
 			else
 				$inArray = 0;
 
-			$ActualLevel = $this->planet->{$this->game->resource[$elementId]};
+			$ActualLevel = $this->planet->{$this->storage->resource[$elementId]};
 
 			if (!$destroy)
 			{
 				$BuildLevel = $ActualLevel + 1 + $inArray;
-				$this->planet->{$this->game->resource[$elementId]} += $inArray;
+				$this->planet->{$this->storage->resource[$elementId]} += $inArray;
 				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId);
-				$this->planet->{$this->game->resource[$elementId]} -= $inArray;
+				$this->planet->{$this->storage->resource[$elementId]} -= $inArray;
 			}
 			else
 			{
 				$BuildLevel = $ActualLevel - 1 + $inArray;
-				$this->planet->{$this->game->resource[$elementId]} -= $inArray;
+				$this->planet->{$this->storage->resource[$elementId]} -= $inArray;
 				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId) / 2;
-				$this->planet->{$this->game->resource[$elementId]} += $inArray;
+				$this->planet->{$this->storage->resource[$elementId]} += $inArray;
 			}
 
 			if ($queueID == 1)
@@ -257,7 +258,7 @@ class Queue
 
 		$spaceLabs = [];
 
-		if ($this->user->{$this->game->resource[123]} > 0)
+		if ($this->user->{$this->storage->resource[123]} > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
 
 		if (is_array($TechHandle['WorkOn']))
@@ -270,7 +271,7 @@ class Queue
 
 		$WorkingPlanet->spaceLabs = $spaceLabs;
 
-		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && !(isset($this->game->pricelist[$elementId]['max']) && $this->user->{$this->game->resource[$elementId]} >= $this->game->pricelist[$elementId]['max']))
+		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && !(isset($this->storage->pricelist[$elementId]['max']) && $this->user->{$this->storage->resource[$elementId]} >= $this->storage->pricelist[$elementId]['max']))
 		{
 			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
 
@@ -284,7 +285,7 @@ class Queue
 
 			$this->queue[self::QUEUE_TYPE_RESEARCH][] = [
 				'i' => $elementId,
-				'l' => ($this->user->{$this->game->resource[$elementId]} + 1),
+				'l' => ($this->user->{$this->storage->resource[$elementId]} + 1),
 				't' => $time,
 				's' => time(),
 				'e' => time() + $time,
@@ -358,10 +359,10 @@ class Queue
 
 		if ($elementId == 502 || $elementId == 503)
 		{
-			$Missiles[502] = $this->planet->{$this->game->resource[502]};
-			$Missiles[503] = $this->planet->{$this->game->resource[503]};
+			$Missiles[502] = $this->planet->{$this->storage->resource[502]};
+			$Missiles[503] = $this->planet->{$this->storage->resource[503]};
 
-			$MaxMissiles = $this->planet->{$this->game->resource[44]} * 10;
+			$MaxMissiles = $this->planet->{$this->storage->resource[44]} * 10;
 
 			foreach ($BuildArray AS $item)
 			{
@@ -370,14 +371,14 @@ class Queue
 			}
 		}
 
-		if (isset($this->game->pricelist[$elementId]['max']))
+		if (isset($this->storage->pricelist[$elementId]['max']))
 		{
-			$total = $this->planet->{$this->game->resource[$elementId]};
+			$total = $this->planet->{$this->storage->resource[$elementId]};
 
 			if (isset($BuildArray[$elementId]))
 				$total += $BuildArray[$elementId];
 
-			$count = min($count, max(($this->game->pricelist[$elementId]['max'] - $total), 0));
+			$count = min($count, max(($this->storage->pricelist[$elementId]['max'] - $total), 0));
 		}
 
 		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($MaxMissiles))

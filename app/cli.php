@@ -69,6 +69,14 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	    }, true
 	);
 
+	$di->setShared(
+		'storage', function ()
+		{
+			$registry = new \Phalcon\Registry();
+			return $registry;
+		}
+	);
+
 	$di->set('game', function ()
 	{
 	    return new Game();

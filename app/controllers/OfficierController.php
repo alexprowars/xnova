@@ -49,19 +49,19 @@ class OfficierController extends ApplicationController
 			{
 				$selected = $this->request->getPost('buy', 'int', 0);
 
-				if (in_array($selected, $this->game->reslist['officier']))
+				if (in_array($selected, $this->storage->reslist['officier']))
 				{
-					if ($this->user->{$this->game->resource[$selected]} > time())
-						$this->user->{$this->game->resource[$selected]} = $this->user->{$this->game->resource[$selected]} + $times;
+					if ($this->user->{$this->storage->resource[$selected]} > time())
+						$this->user->{$this->storage->resource[$selected]} = $this->user->{$this->storage->resource[$selected]} + $times;
 					else
-						$this->user->{$this->game->resource[$selected]} = time() + $times;
+						$this->user->{$this->storage->resource[$selected]} = time() + $times;
 
 					$this->user->credits -= $need_c;
 
 					$this->user->saveData(
 					[
 						'credits' => $this->user->credits,
-						$this->game->resource[$selected] => $this->user->{$this->game->resource[$selected]},
+						$this->storage->resource[$selected] => $this->user->{$this->storage->resource[$selected]},
 					]);
 		
 					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
@@ -82,14 +82,14 @@ class OfficierController extends ApplicationController
 			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
 			$parse['list'] = [];
 
-			foreach ($this->game->reslist['officier'] AS $officier)
+			foreach ($this->storage->reslist['officier'] AS $officier)
 			{
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if ($this->user->{$this->game->resource[$officier]} > time())
+				if ($this->user->{$this->storage->resource[$officier]} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->game->resource[$officier]}) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->storage->datezone("d.m.Y H:i", $this->user->{$this->storage->resource[$officier]}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else

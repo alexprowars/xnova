@@ -33,11 +33,11 @@ class Construction
 		$parse = [];
 
 		$request 	= $this->user->getDI()->getShared('request');
-		$game 		= $this->user->getDI()->getShared('game');
+		$storage 	= $this->user->getDI()->getShared('storage');
 		$config 	= $this->user->getDI()->getShared('config');
 
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
-			$game->reslist['allowed'][5] = [14, 21, 34, 44];
+			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
 
 		$this->planet->SetNextQueueElementOnTop();
 
@@ -53,7 +53,7 @@ class Construction
 			$Element 	= $request->getQuery('building', 'int', 0);
 			$ListID 	= $request->getQuery('listid', 'int', 0);
 
-			if (in_array($Element, $game->reslist['allowed'][$this->planet->planet_type]) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
+			if (in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{
 				$queueManager = new Queue($this->planet->queue);
 				$queueManager->setUserObject($this->user);
@@ -92,9 +92,9 @@ class Construction
 
 		$parse['BuildingsList'] = [];
 
-		foreach ($game->reslist['build'] as $Element)
+		foreach ($storage->reslist['build'] as $Element)
 		{
-			if (!in_array($Element, $game->reslist['allowed'][$this->planet->planet_type]))
+			if (!in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]))
 				continue;
 
 			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
@@ -106,7 +106,7 @@ class Construction
 				continue;
 
 			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
-			$BuildingLevel 		= (int) $this->planet->{$game->resource[$Element]};
+			$BuildingLevel 		= (int) $this->planet->{$storage->resource[$Element]};
 
 			$row = [];
 
@@ -134,7 +134,7 @@ class Construction
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"/buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$game->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span></a>";
+								$row['click'] = "<a href=\"/buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span></a>";
 							else
 								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
 						}
@@ -142,7 +142,7 @@ class Construction
 							$row['click'] = "<a href=\"/buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь</span></a>";
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$game->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
+						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
 					else
 						$row['click'] = "<span class=\"resNo\">нет места</span>";
 				}
@@ -162,7 +162,7 @@ class Construction
 	public function pageResearch ($mode = '')
 	{
 		$request 	= $this->user->getDI()->getShared('request');
-		$game 		= $this->user->getDI()->getShared('game');
+		$storage 	= $this->user->getDI()->getShared('storage');
 
 		$TechHandle = $this->planet->HandleTechnologieBuild();
 
@@ -177,15 +177,15 @@ class Construction
 
 		$spaceLabs = [];
 
-		if ($this->user->{$game->resource[123]} > 0)
+		if ($this->user->{$storage->resource[123]} > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
 
 		$this->planet->spaceLabs = $spaceLabs;
 
 		if ($mode == 'fleet')
-			$res_array = $game->reslist['tech_f'];
+			$res_array = $storage->reslist['tech_f'];
 		else
-			$res_array = $game->reslist['tech'];
+			$res_array = $storage->reslist['tech'];
 
 		$PageParse['mode'] = $this->mode;
 
@@ -239,12 +239,12 @@ class Construction
 			$row['access'] = $isAccess;
 			$row['i'] = $Tech;
 
-			$building_level = $this->user->{$game->resource[$Tech]};
+			$building_level = $this->user->{$storage->resource[$Tech]};
 
 			$row['tech_level'] = ($building_level == 0) ? "<font color=#FF0000>" . $building_level . "</font>" : "<font color=#00FF00>" . $building_level . "</font>";
 
-			if (isset($game->pricelist[$Tech]['max']))
-				$row['tech_level'] .= ' из <font color=yellow>' . $game->pricelist[$Tech]['max'] . '</font>';
+			if (isset($storage->pricelist[$Tech]['max']))
+				$row['tech_level'] .= ' из <font color=yellow>' . $storage->pricelist[$Tech]['max'] . '</font>';
 
 			$row['tech_price'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Tech), $this->planet);
 
@@ -254,13 +254,13 @@ class Construction
 				{
 					$l = ($Tech < 350 ? ($Tech - 100) : ($Tech + 50));
 
-					if (isset($game->CombatCaps[$l]['power_up']) && $game->CombatCaps[$l]['power_up'] > 0)
+					if (isset($storage->CombatCaps[$l]['power_up']) && $storage->CombatCaps[$l]['power_up'] > 0)
 					{
-						$row['add'] = '+' . ($game->CombatCaps[$l]['power_up'] * $building_level) . '% атака<br>';
-						$row['add'] .= '+' . ($game->CombatCaps[$l]['power_armour'] * $building_level) . '% прочность<br>';
+						$row['add'] = '+' . ($storage->CombatCaps[$l]['power_up'] * $building_level) . '% атака<br>';
+						$row['add'] .= '+' . ($storage->CombatCaps[$l]['power_armour'] * $building_level) . '% прочность<br>';
 					}
-					if (isset($game->CombatCaps[$l]['power_consumption']) && $game->CombatCaps[($Tech < 350 ? ($Tech - 100) : ($Tech + 50))]['power_consumption'] > 0)
-						$row['add'] = '+' . ($game->CombatCaps[$l]['power_consumption'] * $building_level) . '% вместимость<br>';
+					if (isset($storage->CombatCaps[$l]['power_consumption']) && $storage->CombatCaps[($Tech < 350 ? ($Tech - 100) : ($Tech + 50))]['power_consumption'] > 0)
+						$row['add'] = '+' . ($storage->CombatCaps[$l]['power_consumption'] * $building_level) . '% вместимость<br>';
 				}
 				elseif ($Tech >= 120 && $Tech <= 122)
 					$row['add'] = '+' . (5 * $building_level) . '% атака<br>';
@@ -287,9 +287,9 @@ class Construction
 
 				if (!$TechHandle['OnWork'])
 				{
-					$LevelToDo = 1 + $this->user->{$game->resource[$Tech]};
+					$LevelToDo = 1 + $this->user->{$storage->resource[$Tech]};
 
-					if (isset($game->pricelist[$Tech]['max']) && $this->user->{$game->resource[$Tech]} >= $game->pricelist[$Tech]['max'])
+					if (isset($storage->pricelist[$Tech]['max']) && $this->user->{$storage->resource[$Tech]} >= $storage->pricelist[$Tech]['max'])
 						$TechnoLink = '<font color=#FF0000>максимальный уровень</font>';
 					elseif ($CanBeDone)
 					{
@@ -348,14 +348,14 @@ class Construction
 
 	public function pageShipyard ($mode = 'fleet')
 	{
-		$game = $this->user->getDI()->getShared('game');
+		$storage = $this->user->getDI()->getShared('storage');
 
 		$queueManager = new Queue($this->planet->queue);
 
 		if ($mode == 'defense')
-			$elementIDs = $game->reslist['defense'];
+			$elementIDs = $storage->reslist['defense'];
 		else
-			$elementIDs = $game->reslist['fleet'];
+			$elementIDs = $storage->reslist['fleet'];
 
 		if (isset($_POST['fmenge']))
 		{
@@ -399,7 +399,7 @@ class Construction
 
 			$row['access']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['count'] 	= $this->planet->{$game->resource[$Element]};
+			$row['count'] 	= $this->planet->{$storage->resource[$Element]};
 			$row['price'] 	= Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
 
 			if ($isAccess)
@@ -411,14 +411,14 @@ class Construction
 				{
 					$row['maximum'] = false;
 
-					if (isset($game->pricelist[$Element]['max']))
+					if (isset($storage->pricelist[$Element]['max']))
 					{
-						$total = $this->planet->{$game->resource[$Element]};
+						$total = $this->planet->{$storage->resource[$Element]};
 
 						if (isset($BuildArray[$Element]))
 							$total += $BuildArray[$Element];
 
-						if ($total >= $game->pricelist[$Element]['max'])
+						if ($total >= $storage->pricelist[$Element]['max'])
 							$row['maximum'] = true;
 					}
 

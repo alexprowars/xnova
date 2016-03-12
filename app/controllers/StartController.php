@@ -95,8 +95,8 @@ class StartController extends ApplicationController
 				{
 					$update = ['race' => $r, 'bonus' => (time() + 86400)];
 
-					foreach ($this->game->reslist['officier'] AS $oId)
-						$update[$this->game->resource[$oId]] = time() + 86400;
+					foreach ($this->storage->reslist['officier'] AS $oId)
+						$update[$this->storage->resource[$oId]] = time() + 86400;
 
 					$this->user->saveData($update);
 

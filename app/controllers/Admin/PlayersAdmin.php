@@ -41,7 +41,7 @@ class PlayerAdmin
 							$parse['answer8'] = "[" . $SelUser['galaxy'] . ":" . $SelUser['system'] . ":" . $SelUser['planet'] . "] ";
 
 							$parse['planet_list'] = [];
-							$parse['planet_fields'] = $controller->game->resource;
+							$parse['planet_fields'] = $controller->storage->resource;
 
 							if ($controller->user->authlevel > 1)
 								$parse['planet_list'] = $controller->db->extractResult($controller->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $SelUser['id'] . "' ORDER BY id ASC"));
@@ -100,10 +100,10 @@ class PlayerAdmin
 							{
 								$parse['adm_sub_form3'] = "<table class='table'><tr><th colspan=\"4\">" . _getText('adm_technos') . "</th></tr>";
 
-								foreach ($controller->game->reslist['tech'] AS $Item)
+								foreach ($controller->storage->reslist['tech'] AS $Item)
 								{
-									if (isset($controller->game->resource[$Item]))
-										$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$controller->game->resource[$Item]] . "</td></tr>";
+									if (isset($controller->storage->resource[$Item]))
+										$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$controller->storage->resource[$Item]] . "</td></tr>";
 								}
 
 								$parse['adm_sub_form3'] .= "</table>";

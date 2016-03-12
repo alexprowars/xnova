@@ -77,7 +77,7 @@ class StageThree
 
 		foreach ($fleetarray as $Ship => $Count)
 		{
-			if ($Count > $controller->planet->{$controller->game->resource[$Ship]})
+			if ($Count > $controller->planet->{$controller->storage->resource[$Ship]})
 				$controller->message("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -107,12 +107,12 @@ class StageThree
 		}
 		else
 		{
-			if ($controller->user->{$controller->game->resource[124]} >= 1)
+			if ($controller->user->{$controller->storage->resource[124]} >= 1)
 			{
 				$maxexp = $controller->db->query("SELECT COUNT(*) AS `expeditions` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "' AND `mission` = '15';")->fetch();
 
 				$ExpeditionEnCours = $maxexp['expeditions'];
-				$MaxExpedition = 1 + floor($controller->user->{$controller->game->resource[124]} / 3);
+				$MaxExpedition = 1 + floor($controller->user->{$controller->storage->resource[124]} / 3);
 			}
 			else
 			{
@@ -120,12 +120,12 @@ class StageThree
 				$ExpeditionEnCours = 0;
 			}
 
-			if ($controller->user->{$controller->game->resource[124]} == 0)
+			if ($controller->user->{$controller->storage->resource[124]} == 0)
 				$controller->message("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", 'Ошибка', "/fleet/", 2);
 			elseif ($ExpeditionEnCours >= $MaxExpedition)
 				$controller->message("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "/fleet/", 2);
 
-			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->game->resource[124]} / 2) + 1))
+			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->storage->resource[124]} / 2) + 1))
 				$controller->message("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -211,7 +211,7 @@ class StageThree
 
 		$flyingFleets = $controller->db->fetchColumn("SELECT COUNT(id) as Number FROM game_fleets WHERE `owner`='".$controller->user->id."'");
 
-		$fleetmax = $controller->user->{$controller->game->resource[108]} + 1;
+		$fleetmax = $controller->user->{$controller->storage->resource[108]} + 1;
 
 		if ($controller->user->rpg_admiral > time())
 			$fleetmax += 2;
@@ -333,14 +333,14 @@ class StageThree
 		{
 			$Count = intval($Count);
 
-			if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->game->CombatCaps[$Ship]['power_consumption']) && $controller->game->CombatCaps[$Ship]['power_consumption'] > 0)
-				$FleetStorage += round($controller->game->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->game->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
+			if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->storage->CombatCaps[$Ship]['power_consumption']) && $controller->storage->CombatCaps[$Ship]['power_consumption'] > 0)
+				$FleetStorage += round($controller->storage->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->storage->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
 			else
-				$FleetStorage += $controller->game->CombatCaps[$Ship]['capacity'] * $Count;
+				$FleetStorage += $controller->storage->CombatCaps[$Ship]['capacity'] * $Count;
 
 			$fleet_array .= (isset($controller->user->{'fleet_' . $Ship})) ? $Ship . "," . $Count . "!" . $controller->user->{'fleet_' . $Ship} . ";" : $Ship . "," . $Count . "!0;";
 
-			$fleetPlanetUpdate['-'.$controller->game->resource[$Ship]] = $Count;
+			$fleetPlanetUpdate['-'.$controller->storage->resource[$Ship]] = $Count;
 		}
 
 		$FleetStorage -= $consumption;

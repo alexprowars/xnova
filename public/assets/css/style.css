@@ -588,7 +588,7 @@ margin-left: -5px;
 }
 
 .bar .m1 {
-	padding-right: 25px;
+	padding: 0 12px;
 }
 
 .bar .m1 > b {
@@ -597,10 +597,6 @@ margin-left: -5px;
 	margin-top: 3px;
 	font-weight: normal;
 	display: inline-block;
-}
-
-.bar .message_list {
-	margin-left: 10px;
 }
 
 .toolbar .colorpicker {
@@ -1015,4 +1011,8 @@ footer a:hover {
 
 .top_menu {
 	display: flex;
+}
+
+#windowDialog > .row {
+	margin: 0;
 }

@@ -98,14 +98,14 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		for ($i = 200; $i < 500; $i++)
 		{
-			if (isset($this->game->resource[$i]) && isset($target->{$this->game->resource[$i]}) && $target->{$this->game->resource[$i]} > 0)
+			if (isset($this->storage->resource[$i]) && isset($target->{$this->storage->resource[$i]}) && $target->{$this->storage->resource[$i]} > 0)
 			{
-				$res[$i] = $target->{$this->game->resource[$i]};
+				$res[$i] = $target->{$this->storage->resource[$i]};
 
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				if (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) && $targetUser->{$this->game->resource[$l]} > 0)
-					$res[$l] = $targetUser->{$this->game->resource[$l]};
+				if (isset($this->storage->resource[$l]) && isset($targetUser->{$this->storage->resource[$l]}) && $targetUser->{$this->storage->resource[$l]} > 0)
+					$res[$l] = $targetUser->{$this->storage->resource[$l]};
 			}
 		}
 
@@ -116,10 +116,10 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			$targetUser->shield_tech 	+= 2;
 		}
 
-		foreach ($this->game->reslist['tech'] AS $techId)
+		foreach ($this->storage->reslist['tech'] AS $techId)
 		{
-			if (isset($targetUser->{$this->game->resource[$techId]}) && $targetUser->{$this->game->resource[$techId]} > 0)
-				$res[$techId] = $targetUser->{$this->game->resource[$techId]};
+			if (isset($targetUser->{$this->storage->resource[$techId]}) && $targetUser->{$this->storage->resource[$techId]} > 0)
+				$res[$techId] = $targetUser->{$this->storage->resource[$techId]};
 		}
 
 		$this->usersTech[$targetUser->id] = $res;
@@ -128,11 +128,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		for ($i = 200; $i < 500; $i++)
 		{
-			if (isset($this->game->resource[$i]) && isset($target->{$this->game->resource[$i]}) && $target->{$this->game->resource[$i]} > 0)
+			if (isset($this->storage->resource[$i]) && isset($target->{$this->storage->resource[$i]}) && $target->{$this->storage->resource[$i]} > 0)
 			{
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				$shipType = $this->getShipType($i, [$target->{$this->game->resource[$i]}, (isset($this->game->resource[$l]) && isset($targetUser->{$this->game->resource[$l]}) ? $targetUser->{$this->game->resource[$l]} : 0)], $res);
+				$shipType = $this->getShipType($i, [$target->{$this->storage->resource[$i]}, (isset($this->storage->resource[$l]) && isset($targetUser->{$this->storage->resource[$l]}) ? $targetUser->{$this->storage->resource[$l]} : 0)], $res);
 
 				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship')
 					$shipType->setRepairProb(0.8);
@@ -239,10 +239,10 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					if ($Element == 210)
 						continue;
 
-					if (isset($attackUsers[$fleetToUser[$fleet]]['flvl'][$Element]) && isset($this->game->CombatCaps[$Element]['power_consumption']) && $this->game->CombatCaps[$Element]['power_consumption'] > 0)
-						$capacity = $this->game->CombatCaps[$Element]['capacity'] * $amount * (1 + $attackUsers[$fleetToUser[$fleet]]['flvl'][$Element] * ($this->game->CombatCaps[$Element]['power_consumption'] / 100));
+					if (isset($attackUsers[$fleetToUser[$fleet]]['flvl'][$Element]) && isset($this->storage->CombatCaps[$Element]['power_consumption']) && $this->storage->CombatCaps[$Element]['power_consumption'] > 0)
+						$capacity = $this->storage->CombatCaps[$Element]['capacity'] * $amount * (1 + $attackUsers[$fleetToUser[$fleet]]['flvl'][$Element] * ($this->storage->CombatCaps[$Element]['power_consumption'] / 100));
 					else
-						$capacity = $this->game->CombatCaps[$Element]['capacity'] * $amount;
+						$capacity = $this->storage->CombatCaps[$Element]['capacity'] * $amount;
 
 					$max_resources += $capacity;
 					$max_fleet_res[$fleet] += $capacity;
@@ -358,8 +358,8 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				for ($i = 200; $i < 500; $i++)
 				{
-					if (isset($this->game->resource[$i]) && isset($defender[$i]) && isset($target->{$this->game->resource[$i]}) && $defender[$i] != $target->{'~'.$this->game->resource[$i]})
-						$arFields[$this->game->resource[$i]] = $defender[$i];
+					if (isset($this->storage->resource[$i]) && isset($defender[$i]) && isset($target->{$this->storage->resource[$i]}) && $defender[$i] != $target->{'~'.$this->storage->resource[$i]})
+						$arFields[$this->storage->resource[$i]] = $defender[$i];
 				}
 
 				if (count($arFields) > 0)
@@ -635,10 +635,10 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$info['shield_tech'] 	+= 2;
 			}
 
-			foreach ($this->game->reslist['tech'] AS $techId)
+			foreach ($this->storage->reslist['tech'] AS $techId)
 			{
-				if (isset($info[$this->game->resource[$techId]]) && $info[$this->game->resource[$techId]] > 0)
-					$res[$techId] = $info[$this->game->resource[$techId]];
+				if (isset($info[$this->storage->resource[$techId]]) && $info[$this->storage->resource[$techId]] > 0)
+					$res[$techId] = $info[$this->storage->resource[$techId]];
 			}
 
 			$this->usersTech[$fleet['owner']] = $res;
@@ -693,22 +693,22 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 	public function getShipType($id, $count, $res)
 	{
-		$attDef 	= ($count[1] * ($this->game->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
-		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->game->CombatCaps[$id]['power_up'] / 100));
+		$attDef 	= ($count[1] * ($this->storage->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
+		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->storage->CombatCaps[$id]['power_up'] / 100));
 
-		if ($this->game->CombatCaps[$id]['type_gun'] == 1)
+		if ($this->storage->CombatCaps[$id]['type_gun'] == 1)
 			$attTech += (isset($res[120]) ? $res[120] : 0) * 0.05;
-		elseif ($this->game->CombatCaps[$id]['type_gun'] == 2)
+		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 2)
 			$attTech += (isset($res[121]) ? $res[121] : 0) * 0.05;
-		elseif ($this->game->CombatCaps[$id]['type_gun'] == 3)
+		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']];
+		$cost = [$this->storage->pricelist[$id]['metal'], $this->storage->pricelist[$id]['crystal']];
 
-		if (in_array($id, $this->game->reslist['fleet']))
-			return new Ship($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		if (in_array($id, $this->storage->reslist['fleet']))
+			return new Ship($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
-		return new Defense($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		return new Defense($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 	}
 
 	public function convertPlayerGroupToArray (PlayerGroup $_playerGroup)

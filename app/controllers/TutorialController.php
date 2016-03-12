@@ -61,16 +61,16 @@ class TutorialController extends ApplicationController
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->{$this->game->resource[$element]}) ? ($this->user->{$this->game->resource[$element]} >= $level) : ($this->planet->{$this->game->resource[$element]} >= $level);
+						$check = isset($this->user->{$this->storage->resource[$element]}) ? ($this->user->{$this->storage->resource[$element]} >= $level) : ($this->planet->{$this->storage->resource[$element]} >= $level);
 
 						if ($chk == true)
 							$chk = $check;
 
-						if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
+						if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
-						elseif (in_array($element, $this->game->reslist['fleet']))
+						elseif (in_array($element, $this->storage->reslist['fleet']))
 							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
-						elseif (in_array($element, $this->game->reslist['defense']))
+						elseif (in_array($element, $this->storage->reslist['defense']))
 							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
 							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
@@ -106,7 +106,7 @@ class TutorialController extends ApplicationController
 				{
 					if ($taskVal === true)
 					{
-						$check = $this->planet->{$this->game->resource[22]} > 0 || $this->planet->{$this->game->resource[23]} > 0 || $this->planet->{$this->game->resource[24]} > 0;
+						$check = $this->planet->{$this->storage->resource[22]} > 0 || $this->planet->{$this->storage->resource[23]} > 0 || $this->planet->{$this->storage->resource[24]} > 0;
 
 						$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 					}
@@ -143,7 +143,7 @@ class TutorialController extends ApplicationController
 
 			if (isset($_GET['continue']) && !$errors && $qInfo['finish'] == 0)
 			{
-				//$this->db->query("UPDATE game_planets SET `" . $this->game->resource[401] . "` = `" . $this->game->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
+				//$this->db->query("UPDATE game_planets SET `" . $this->storage->resource[401] . "` = `" . $this->storage->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 
 				$planetData = [];
 				$userData = [];
@@ -162,28 +162,28 @@ class TutorialController extends ApplicationController
 					{
 						foreach ($rewardVal AS $element => $level)
 						{
-							if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
-								$userData['+'.$this->game->resource[$element]] = $level;
-							elseif (in_array($element, $this->game->reslist['fleet']))
-								$planetData['+'.$this->game->resource[$element]] = $level;
-							elseif (in_array($element, $this->game->reslist['defense']))
-								$planetData['+'.$this->game->resource[$element]] = $level;
-							elseif (in_array($element, $this->game->reslist['officier']))
+							if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
+								$userData['+'.$this->storage->resource[$element]] = $level;
+							elseif (in_array($element, $this->storage->reslist['fleet']))
+								$planetData['+'.$this->storage->resource[$element]] = $level;
+							elseif (in_array($element, $this->storage->reslist['defense']))
+								$planetData['+'.$this->storage->resource[$element]] = $level;
+							elseif (in_array($element, $this->storage->reslist['officier']))
 							{
-								if ($this->user->{$this->game->resource[$element]} > time())
-									$userData['+'.$this->game->resource[$element]] = $level;
+								if ($this->user->{$this->storage->resource[$element]} > time())
+									$userData['+'.$this->storage->resource[$element]] = $level;
 								else
-									$userData[$this->game->resource[$element]] = time() + $level;
+									$userData[$this->storage->resource[$element]] = time() + $level;
 							}
 							else
-								$planetData['+'.$this->game->resource[$element]] = $level;
+								$planetData['+'.$this->storage->resource[$element]] = $level;
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')
 					{
 						$r = mt_rand(22, 24);
 
-						$planetData['+'.$this->game->resource[$r]] = 1;
+						$planetData['+'.$this->storage->resource[$r]] = 1;
 					}
 				}
 
@@ -211,13 +211,13 @@ class TutorialController extends ApplicationController
 				{
 					foreach ($rewardVal AS $element => $level)
 					{
-						if (in_array($element, array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f'])))
+						if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
-						elseif (in_array($element, $this->game->reslist['fleet']))
+						elseif (in_array($element, $this->storage->reslist['fleet']))
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->game->reslist['defense']))
+						elseif (in_array($element, $this->storage->reslist['defense']))
 							$parse['rewd'][] = $level.' ед. обороны типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->game->reslist['officier']))
+						elseif (in_array($element, $this->storage->reslist['officier']))
 							$parse['rewd'][] = 'Офицер <b>'._getText('tech', $element).'</b> на '.round($level / 3600 / 24, 1).' суток';
 						else
 							$parse['rewd'][] = 'Постройка <b>'._getText('tech', $element).'</b> '.$level.' уровня';

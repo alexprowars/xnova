@@ -24,6 +24,7 @@ class Planet extends Model
 	private $db;
 	private $user;
 	private $game;
+	private $storage;
 
 	public $id;
 	public $image;
@@ -134,6 +135,7 @@ class Planet extends Model
 	{
 		$this->db = $this->getDi()->getShared('db');
 		$this->game = $this->getDi()->getShared('game');
+		$this->storage = $this->getDi()->getShared('storage');
 	}
 
 	public function getSource()
@@ -191,8 +193,8 @@ class Planet extends Model
 	{
 		$cnt = 0;
 
-		foreach ($this->game->reslist['allowed'][$this->planet_type] AS $type)
-			$cnt += $this->{$this->game->resource[$type]};
+		foreach ($this->storage->reslist['allowed'][$this->planet_type] AS $type)
+			$cnt += $this->{$this->storage->resource[$type]};
 
 		if ($this->field_current != $cnt)
 		{
@@ -419,20 +421,20 @@ class Planet extends Model
 
 		$config = $this->getDi()->getShared('config');
 
-		foreach ($this->game->reslist['res'] AS $res)
+		foreach ($this->storage->reslist['res'] AS $res)
 			$return[$res] = 0;
 
-		if (isset($this->game->ProdGrid[$Element]))
+		if (isset($this->storage->ProdGrid[$Element]))
 		{
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$energyTech 	= $this->user->energy_tech;
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$BuildTemp		= $this->temp_max;
 
-			foreach ($this->game->reslist['res'] AS $res)
-				$return[$res] = floor(eval($this->game->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
+			foreach ($this->storage->reslist['res'] AS $res)
+				$return[$res] = floor(eval($this->storage->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
 
-			$energy = floor(eval($this->game->ProdGrid[$Element]['energy']));
+			$energy = floor(eval($this->storage->ProdGrid[$Element]['energy']));
 
 			if ($Element < 4)
 				$return['energy'] = $energy;
@@ -451,23 +453,23 @@ class Planet extends Model
 
 		$Caps = [];
 
-		foreach ($this->game->reslist['res'] AS $res)
+		foreach ($this->storage->reslist['res'] AS $res)
 			$Caps[$res.'_perhour'] = 0;
 
 		$Caps['energy_used'] 	= 0;
 		$Caps['energy_max'] 	= 0;
 
-		foreach ($this->game->reslist['prod'] AS $ProdID)
+		foreach ($this->storage->reslist['prod'] AS $ProdID)
 		{
-			$BuildLevelFactor = $this->{$this->game->resource[$ProdID] . '_porcent'};
-			$BuildLevel = $this->{$this->game->resource[$ProdID]};
+			$BuildLevelFactor = $this->{$this->storage->resource[$ProdID] . '_porcent'};
+			$BuildLevel = $this->{$this->storage->resource[$ProdID]};
 
 			if ($ProdID == 12 && $this->deuterium < 100)
 				$BuildLevelFactor = 0;
 
 			$result = $this->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-			foreach ($this->game->reslist['res'] AS $res)
+			foreach ($this->storage->reslist['res'] AS $res)
 				$Caps[$res.'_perhour'] += $result[$res];
 
 			if ($ProdID < 4)
@@ -478,7 +480,7 @@ class Planet extends Model
 
 		if ($this->planet_type == 3 || $this->planet_type == 5)
 		{
-			foreach ($this->game->reslist['res'] AS $res)
+			foreach ($this->storage->reslist['res'] AS $res)
 			{
 				$config->game->offsetSet($res.'_basic_income', 0);
 				$this->{$res.'_perhour'} = 0;
@@ -489,7 +491,7 @@ class Planet extends Model
 		}
 		else
 		{
-			foreach ($this->game->reslist['res'] AS $res)
+			foreach ($this->storage->reslist['res'] AS $res)
 				$this->{$res.'_perhour'} = $Caps[$res.'_perhour'];
 
 			$this->energy_used 	= $Caps['energy_used'];
@@ -515,12 +517,12 @@ class Planet extends Model
 
 		$this->planet_updated = true;
 
-		foreach ($this->game->reslist['res'] AS $res)
+		foreach ($this->storage->reslist['res'] AS $res)
 		{
 			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, intval($this->{$res.'_store'}))))) * $this->user->bonusValue('storage'));
 		}
 
-		$this->battery_max = floor(250 * $this->{$this->game->resource[4]});
+		$this->battery_max = floor(250 * $this->{$this->storage->resource[4]});
 
 		$this->getProductions();
 
@@ -532,7 +534,7 @@ class Planet extends Model
 
 		if ($this->energy_max == 0)
 		{
-			foreach ($this->game->reslist['res'] AS $res)
+			foreach ($this->storage->reslist['res'] AS $res)
 				$this->{$res.'_perhour'} = $config->game->get($res.'_basic_income');
 
 			$production_level = 0;
@@ -572,7 +574,7 @@ class Planet extends Model
 
 		$this->production_level = $production_level;
 
-		foreach ($this->game->reslist['res'] AS $res)
+		foreach ($this->storage->reslist['res'] AS $res)
 		{
 			$this->{$res.'_production'} = 0;
 
@@ -625,7 +627,7 @@ class Planet extends Model
 
 			if ($this->planet_type == 1)
 			{
-				foreach ($this->game->reslist['res'] AS $res)
+				foreach ($this->storage->reslist['res'] AS $res)
 				{
 					if ($this->{$res} != $this->{'~'.$res})
 						$arFields[$res] = $this->{$res};
@@ -641,8 +643,8 @@ class Planet extends Model
 			if ($Builded != '')
 			{
 				foreach ($Builded as $Element => $Count)
-					if ($Element <> '' && $this->{$this->game->resource[$Element]} != $this->{'~'.$this->game->resource[$Element]})
-						$arFields[$this->game->resource[$Element]] = $this->{$this->game->resource[$Element]};
+					if ($Element <> '' && $this->{$this->storage->resource[$Element]} != $this->{'~'.$this->storage->resource[$Element]})
+						$arFields[$this->storage->resource[$Element]] = $this->{$this->storage->resource[$Element]};
 			}
 
 			if (count($arFields) > 0 || ($this->last_update - $this->{'~last_update'}) >= 60)
@@ -673,7 +675,7 @@ class Planet extends Model
 				$this->b_hangar = $BuildQueue[0]['s'];
 				$this->b_hangar += $ProductionTime;
 
-				$MissilesSpace = ($this->{$this->game->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
+				$MissilesSpace = ($this->{$this->storage->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
 				$Shield_1 = $this->small_protection_shield;
 				$Shield_2 = $this->big_protection_shield;
 
@@ -730,7 +732,7 @@ class Planet extends Model
 
 				foreach ($BuildArray as $Item)
 				{
-					if (!isset($this->game->resource[$Item[0]]))
+					if (!isset($this->storage->resource[$Item[0]]))
 						continue;
 
 					$Element = $Item[0];
@@ -744,7 +746,7 @@ class Planet extends Model
 					{
 						$this->b_hangar -= $BuildTime;
 						$Builded[$Element]++;
-						$this->{$this->game->resource[$Element]}++;
+						$this->{$this->storage->resource[$Element]}++;
 						$Count--;
 
 						if ($Count <= 0)
@@ -835,7 +837,7 @@ class Planet extends Model
 			{
 				if ($queueArray[0]['e'] <= time())
 				{
-					$this->user->{$this->game->resource[$queueArray[0]['i']]}++;
+					$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
 
 					$newQueue = $queueManager->get();
 					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
@@ -844,7 +846,7 @@ class Planet extends Model
 					$this->db->updateAsDict(
 						'game_users',
 						[
-							$this->game->resource[$queueArray[0]['i']]	=> $this->user->{$this->game->resource[$queueArray[0]['i']]},
+							$this->storage->resource[$queueArray[0]['i']]	=> $this->user->{$this->storage->resource[$queueArray[0]['i']]},
 							'b_tech_planet'	=> 0
 						],
 						"id = ".$this->user->id
@@ -904,12 +906,12 @@ class Planet extends Model
 				if (!$ForDestroy)
 				{
 					$this->field_current++;
-					$this->{$this->game->resource[$Element]}++;
+					$this->{$this->storage->resource[$Element]}++;
 				}
 				else
 				{
 					$this->field_current--;
-					$this->{$this->game->resource[$Element]}--;
+					$this->{$this->storage->resource[$Element]}--;
 				}
 
 				$NewQueue = $queueManager->get();
@@ -921,7 +923,7 @@ class Planet extends Model
 
 				$this->db->updateAsDict('game_planets',
 				[
-					$this->game->resource[$Element]	=> $this->{$this->game->resource[$Element]},
+					$this->storage->resource[$Element]	=> $this->{$this->storage->resource[$Element]},
 					'queue'	=> $this->queue
 				],
 				"id = ".$this->id);
@@ -968,7 +970,7 @@ class Planet extends Model
 
 				$ForDestroy = ($ListIDArray['d'] == 1);
 
-				if ($ForDestroy && $this->{$this->game->resource[$ListIDArray['i']]} == 0)
+				if ($ForDestroy && $this->{$this->storage->resource[$ListIDArray['i']]} == 0)
 				{
 					$HaveRessources = false;
 					$HaveNoMoreLevel = true;
@@ -1003,7 +1005,7 @@ class Planet extends Model
 							'to_crystal' 		=> $this->crystal,
 							'to_deuterium' 		=> $this->deuterium,
 							'build_id' 			=> $ListIDArray['i'],
-							'level' 			=> ($this->{$this->game->resource[$ListIDArray['i']]} + 1)
+							'level' 			=> ($this->{$this->storage->resource[$ListIDArray['i']]} + 1)
 						]);
 					}
 				}
@@ -1097,13 +1099,13 @@ class Planet extends Model
 				if ($queueArray[0]['e'] <= time())
 				{
 					$this->user->b_tech_planet = 0;
-					$this->user->{$this->game->resource[$queueArray[0]['i']]}++;
+					$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
 
 					$newQueue = $queueManager->get();
 					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
 
 					$this->db->query("UPDATE game_planets SET `queue` = '".json_encode($newQueue)."' WHERE `id` = '" . $ThePlanet['id'] . "'");
-					$this->db->query("UPDATE game_users SET `" . $this->game->resource[$queueArray[0]['i']] . "` = '" . $this->user->{$this->game->resource[$queueArray[0]['i']]} . "', `b_tech_planet` = '0' WHERE `id` = '" . $this->user->id . "'");
+					$this->db->query("UPDATE game_users SET `" . $this->storage->resource[$queueArray[0]['i']] . "` = '" . $this->user->{$this->storage->resource[$queueArray[0]['i']]} . "', `b_tech_planet` = '0' WHERE `id` = '" . $this->user->id . "'");
 
 					if (!isset($WorkingPlanet))
 						$this->assign($ThePlanet);
@@ -1127,15 +1129,15 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
-		$researchLevelList = [$this->{$this->game->resource[31]}];
+		$researchLevelList = [$this->{$this->storage->resource[31]}];
 
-		if ($this->user->{$this->game->resource[123]} > 0)
+		if ($this->user->{$this->storage->resource[123]} > 0)
 		{
-			$researchResult = $this->db->query("SELECT ".$this->game->resource[31]." FROM game_planets WHERE id_owner='" . $this->user->id . "' AND id != '" . $this->id . "' AND ".$this->game->resource[31]." > 0 AND destruyed = 0 AND planet_type = 1 ORDER BY ".$this->game->resource[31]." DESC LIMIT ".$this->user->{$this->game->resource[123]}."");
+			$researchResult = $this->db->query("SELECT ".$this->storage->resource[31]." FROM game_planets WHERE id_owner='" . $this->user->id . "' AND id != '" . $this->id . "' AND ".$this->storage->resource[31]." > 0 AND destruyed = 0 AND planet_type = 1 ORDER BY ".$this->storage->resource[31]." DESC LIMIT ".$this->user->{$this->storage->resource[123]}."");
 
 			while ($researchRow = $researchResult->fetch())
 			{
-				$researchLevelList[] = $researchRow[$this->game->resource[31]];
+				$researchLevelList[] = $researchRow[$this->storage->resource[31]];
 			}
 		}
 
@@ -1146,7 +1148,7 @@ class Planet extends Model
 	{
 		$config = $this->getDI()->getShared('config');
 
-		return $this->field_max + ($this->{$this->game->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->game->resource[41]});
+		return $this->field_max + ($this->{$this->storage->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->storage->resource[41]});
 	}
 
 	public function GetNextJumpWaitTime (array $CurMoon = [])
@@ -1154,7 +1156,7 @@ class Planet extends Model
 		if (count($CurMoon) == 0)
 			$CurMoon = $this->toArray();
 
-		$JumpGateLevel = $CurMoon[$this->game->resource[43]];
+		$JumpGateLevel = $CurMoon[$this->storage->resource[43]];
 		$LastJumpTime = $CurMoon['last_jump_time'];
 
 		if ($JumpGateLevel > 0)

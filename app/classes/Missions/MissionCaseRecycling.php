@@ -29,10 +29,10 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 		foreach ($fleetData as $shipId => $shipArr)
 		{
-			if (isset($shipArr['lvl']) && $shipArr['lvl'] > 0 && isset($this->game->CombatCaps[$shipId]["power_consumption"]) && $this->game->CombatCaps[$shipId]["power_consumption"] > 0)
-				$capacity = round($this->game->CombatCaps[$shipId]["capacity"] * (1 + $shipArr['lvl'] * ($this->game->CombatCaps[$shipId]["power_consumption"] / 100))) * $shipArr['cnt'];
+			if (isset($shipArr['lvl']) && $shipArr['lvl'] > 0 && isset($this->storage->CombatCaps[$shipId]["power_consumption"]) && $this->storage->CombatCaps[$shipId]["power_consumption"] > 0)
+				$capacity = round($this->storage->CombatCaps[$shipId]["capacity"] * (1 + $shipArr['lvl'] * ($this->storage->CombatCaps[$shipId]["power_consumption"] / 100))) * $shipArr['cnt'];
 			else
-				$capacity = $this->game->CombatCaps[$shipId]["capacity"] * $shipArr['cnt'];
+				$capacity = $this->storage->CombatCaps[$shipId]["capacity"] * $shipArr['cnt'];
 
 			if ($shipId == 209)
 				$RecyclerCapacity += $capacity;

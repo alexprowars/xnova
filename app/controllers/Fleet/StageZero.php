@@ -20,7 +20,7 @@ class StageZero
 
 		$MaxFlyingFleets = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
 
-		$MaxExpedition = $controller->user->{$controller->game->resource[124]};
+		$MaxExpedition = $controller->user->{$controller->storage->resource[124]};
 		$ExpeditionEnCours = 0;
 		$EnvoiMaxExpedition = 0;
 
@@ -30,7 +30,7 @@ class StageZero
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
-		$MaxFlottes = 1 + $controller->user->{$controller->game->resource[108]};
+		$MaxFlottes = 1 + $controller->user->{$controller->storage->resource[108]};
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
@@ -92,21 +92,21 @@ class StageZero
 
 		$parse['ships'] = [];
 
-		foreach ($controller->game->reslist['fleet'] as $n => $i)
+		foreach ($controller->storage->reslist['fleet'] as $n => $i)
 		{
-			if ($controller->planet->{$controller->game->resource[$i]} > 0)
+			if ($controller->planet->{$controller->storage->resource[$i]} > 0)
 			{
 				$ship = [
 					'id' => $i,
-					'count' => $controller->planet->{$controller->game->resource[$i]},
+					'count' => $controller->planet->{$controller->storage->resource[$i]},
 					'consumption' => Fleet::GetShipConsumption($i, $controller->user),
 					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
 				];
 
-				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->game->CombatCaps[$i]['power_consumption']) && $controller->game->CombatCaps[$i]['power_consumption'] > 0)
-					$ship['capacity'] = round($controller->game->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->game->CombatCaps[$i]['power_consumption'] / 100)));
+				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
+					$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
 				else
-					$ship['capacity'] = $controller->game->CombatCaps[$i]['capacity'];
+					$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
 
 				$parse['ships'][] = $ship;
 			}

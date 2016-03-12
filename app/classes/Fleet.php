@@ -85,18 +85,18 @@ class Fleet extends Building
 
 	static function SetShipsEngine (User $user)
 	{
-		$game = $user->getDI()->getShared('game');
+		$storage = $user->getDI()->getShared('storage');
 
-		foreach ($game->reslist['fleet'] as $Ship)
+		foreach ($storage->reslist['fleet'] as $Ship)
 		{
-			if (isset($game->CombatCaps[$Ship]) && isset($game->CombatCaps[$Ship]['engine_up']))
+			if (isset($storage->CombatCaps[$Ship]) && isset($storage->CombatCaps[$Ship]['engine_up']))
 			{
-				if ($user->{$game->resource[$game->CombatCaps[$Ship]['engine_up']['tech']]} >= $game->CombatCaps[$Ship]['engine_up']['lvl'])
+				if ($user->{$storage->resource[$storage->CombatCaps[$Ship]['engine_up']['tech']]} >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
 				{
-					$game->CombatCaps[$Ship]['type_engine']++;
-					$game->CombatCaps[$Ship]['speed'] = $game->CombatCaps[$Ship]['engine_up']['speed'];
+					$storage->CombatCaps[$Ship]['type_engine']++;
+					$storage->CombatCaps[$Ship]['speed'] = $storage->CombatCaps[$Ship]['engine_up']['speed'];
 
-					unset($game->CombatCaps[$Ship]['engine_up']);
+					unset($storage->CombatCaps[$Ship]['engine_up']);
 				}
 			}
 		}
@@ -325,10 +325,10 @@ class Fleet extends Building
 
 	static function GetMissileRange (User $user)
 	{
-		$game = $user->getDI()->getShared('game');
+		$storage = $user->getDI()->getShared('storage');
 
-		if ($user->{$game->resource[117]} > 0)
-			$MissileRange = ($user->{$game->resource[117]} * 5) - 1;
+		if ($user->{$storage->resource[117]} > 0)
+			$MissileRange = ($user->{$storage->resource[117]} * 5) - 1;
 		else
 			$MissileRange = 0;
 

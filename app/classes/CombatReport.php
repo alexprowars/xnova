@@ -26,6 +26,7 @@ use Phalcon\Mvc\User\Component;
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
+ * @property \Phalcon\Registry|\stdClass storage
  * @property \Phalcon\Config|\stdClass config
  * @property \App\Game game
  */
@@ -182,17 +183,17 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 
-							$attTech = 1 + $this->attackUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0) * ($this->game->CombatCaps[$ship_id]['power_up'] / 100));
+							$attTech = 1 + $this->attackUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0) * ($this->storage->CombatCaps[$ship_id]['power_up'] / 100));
 
-							if ($this->game->CombatCaps[$ship_id]['type_gun'] == 1)
+							if ($this->storage->CombatCaps[$ship_id]['type_gun'] == 1)
 								$attTech += $this->attackUsers[$user]['tech']['laser_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id]['type_gun'] == 2)
+							elseif ($this->storage->CombatCaps[$ship_id]['type_gun'] == 2)
 								$attTech += $this->attackUsers[$user]['tech']['ionic_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id]['type_gun'] == 3)
+							elseif ($this->storage->CombatCaps[$ship_id]['type_gun'] == 3)
 								$attTech += $this->attackUsers[$user]['tech']['buster_tech'] * 0.05;
 
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->game->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->game->pricelist[$ship_id]['metal'] + $this->game->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->game->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Helpers::pretty_number(round($this->storage->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->storage->pricelist[$ship_id]['metal'] + $this->storage->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->storage->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -253,17 +254,17 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 
-							$attTech = 1 + $this->defenseUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0) * ($this->game->CombatCaps[$ship_id]['power_up'] / 100));
+							$attTech = 1 + $this->defenseUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0) * ($this->storage->CombatCaps[$ship_id]['power_up'] / 100));
 
-							if ($this->game->CombatCaps[$ship_id]['type_gun'] == 1)
+							if ($this->storage->CombatCaps[$ship_id]['type_gun'] == 1)
 								$attTech += $this->defenseUsers[$user]['tech']['laser_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id]['type_gun'] == 2)
+							elseif ($this->storage->CombatCaps[$ship_id]['type_gun'] == 2)
 								$attTech += $this->defenseUsers[$user]['tech']['ionic_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id]['type_gun'] == 3)
+							elseif ($this->storage->CombatCaps[$ship_id]['type_gun'] == 3)
 								$attTech += $this->defenseUsers[$user]['tech']['buster_tech'] * 0.05;
 
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->game->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->game->pricelist[$ship_id]['metal'] + $this->game->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->game->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Helpers::pretty_number(round($this->storage->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->storage->pricelist[$ship_id]['metal'] + $this->storage->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->storage->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -531,17 +532,17 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 	
-							$attTech = 1 + $this->attackUsers[$fleet_id1]['tech']['military_tech'] * 0.05 + ($this->attackUsers[$fleet_id1]['flvl'][$ship_id1] * ($this->game->CombatCaps[$ship_id1]['power_up'] / 100));
+							$attTech = 1 + $this->attackUsers[$fleet_id1]['tech']['military_tech'] * 0.05 + ($this->attackUsers[$fleet_id1]['flvl'][$ship_id1] * ($this->storage->CombatCaps[$ship_id1]['power_up'] / 100));
 	
-							if ($this->game->CombatCaps[$ship_id1]['type_gun'] == 1)
+							if ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 1)
 								$attTech += $this->attackUsers[$fleet_id1]['tech']['laser_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id1]['type_gun'] == 2)
+							elseif ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 2)
 								$attTech += $this->attackUsers[$fleet_id1]['tech']['ionic_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id1]['type_gun'] == 3)
+							elseif ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 3)
 								$attTech += $this->attackUsers[$fleet_id1]['tech']['buster_tech'] * 0.05;
 	
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->game->CombatCaps[$ship_id1]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round(($this->game->pricelist[$ship_id1]['metal'] + $this->game->pricelist[$ship_id1]['crystal'] + $this->game->pricelist[$ship_id1]['deuterium']) * (1 + (($this->game->CombatCaps[$ship_id1]['power_up'] * $this->attackUsers[$fleet_id1]['flvl'][$ship_id1]) / 100) + $this->attackUsers[$fleet_id1]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Helpers::pretty_number(round($this->storage->CombatCaps[$ship_id1]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round(($this->storage->pricelist[$ship_id1]['metal'] + $this->storage->pricelist[$ship_id1]['crystal'] + $this->storage->pricelist[$ship_id1]['deuterium']) * (1 + (($this->storage->CombatCaps[$ship_id1]['power_up'] * $this->attackUsers[$fleet_id1]['flvl'][$ship_id1]) / 100) + $this->attackUsers[$fleet_id1]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 	
@@ -601,17 +602,17 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 	
-							$attTech = 1 + $this->defenseUsers[$fleet_id1]['tech']['military_tech'] * 0.05 + ($this->defenseUsers[$fleet_id1]['flvl'][$ship_id1] * ($this->game->CombatCaps[$ship_id1]['power_up'] / 100));
+							$attTech = 1 + $this->defenseUsers[$fleet_id1]['tech']['military_tech'] * 0.05 + ($this->defenseUsers[$fleet_id1]['flvl'][$ship_id1] * ($this->storage->CombatCaps[$ship_id1]['power_up'] / 100));
 	
-							if ($this->game->CombatCaps[$ship_id1]['type_gun'] == 1)
+							if ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 1)
 								$attTech += $this->defenseUsers[$fleet_id1]['tech']['laser_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id1]['type_gun'] == 2)
+							elseif ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 2)
 								$attTech += $this->defenseUsers[$fleet_id1]['tech']['ionic_tech'] * 0.05;
-							elseif ($this->game->CombatCaps[$ship_id1]['type_gun'] == 3)
+							elseif ($this->storage->CombatCaps[$ship_id1]['type_gun'] == 3)
 								$attTech += $this->defenseUsers[$fleet_id1]['tech']['buster_tech'] * 0.05;
 	
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->game->CombatCaps[$ship_id1]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round(($this->game->pricelist[$ship_id1]['metal'] + $this->game->pricelist[$ship_id1]['crystal'] + $this->game->pricelist[$ship_id1]['deuterium']) * (1 + (($this->game->CombatCaps[$ship_id1]['power_up'] * $this->defenseUsers[$fleet_id1]['flvl'][$ship_id1]) / 100) + $this->defenseUsers[$fleet_id1]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Helpers::pretty_number(round($this->storage->CombatCaps[$ship_id1]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round(($this->storage->pricelist[$ship_id1]['metal'] + $this->storage->pricelist[$ship_id1]['crystal'] + $this->storage->pricelist[$ship_id1]['deuterium']) * (1 + (($this->storage->CombatCaps[$ship_id1]['power_up'] * $this->defenseUsers[$fleet_id1]['flvl'][$ship_id1]) / 100) + $this->defenseUsers[$fleet_id1]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 					$raport1 .= "</tr>";

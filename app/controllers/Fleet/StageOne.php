@@ -51,11 +51,11 @@ class StageOne
 		$fleet['fleetlist'] = "";
 		$fleet['amount'] = 0;
 
-		foreach ($controller->game->reslist['fleet'] as $n => $i)
+		foreach ($controller->storage->reslist['fleet'] as $n => $i)
 		{
-			if (isset($_POST["ship" . $i]) && in_array($i, $controller->game->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
+			if (isset($_POST["ship" . $i]) && in_array($i, $controller->storage->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
 			{
-				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->game->resource[$i]})
+				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->storage->resource[$i]})
 					continue;
 
 				$fleet['fleetarray'][$i] = intval($_POST["ship" . $i]);
@@ -69,10 +69,10 @@ class StageOne
 					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
 				];
 
-				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->game->CombatCaps[$i]['power_consumption']) && $controller->game->CombatCaps[$i]['power_consumption'] > 0)
-					$ship['capacity'] = round($controller->game->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->game->CombatCaps[$i]['power_consumption'] / 100)));
+				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
+					$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
 				else
-					$ship['capacity'] = $controller->game->CombatCaps[$i]['capacity'];
+					$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
 
 				$parse['ships'][] = $ship;
 			}
@@ -137,7 +137,7 @@ class StageOne
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
-			$moons = $controller->db->query("SELECT `id`, `name`, `system`, `galaxy`, `planet`, `sprungtor`, `last_jump_time` FROM game_planets WHERE (`planet_type` = '3' OR `planet_type` = '5') AND " . $controller->game->resource[43] . " > 0 AND id != ".$controller->planet->id." AND `id_owner` = '" . $controller->user->id . "';");
+			$moons = $controller->db->query("SELECT `id`, `name`, `system`, `galaxy`, `planet`, `sprungtor`, `last_jump_time` FROM game_planets WHERE (`planet_type` = '3' OR `planet_type` = '5') AND " . $controller->storage->resource[43] . " > 0 AND id != ".$controller->planet->id." AND `id_owner` = '" . $controller->user->id . "';");
 
 			if ($moons->numRows())
 			{

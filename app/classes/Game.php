@@ -28,6 +28,7 @@ use Phalcon\Mvc\User\Component;
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
+ * @property \Phalcon\Registry|\stdClass storage
  * @property \Phalcon\Config|\stdClass config
  * @property \App\Game game
  */
@@ -38,14 +39,6 @@ class Game extends Component
 	private $data = [];
 
 	public $planet;
-
-	public $resource 		= [];
-	public $requeriments 	= [];
-	public $pricelist 		= [];
-	public $gun_armour 		= [];
-	public $CombatCaps 		= [];
-	public $ProdGrid 		= [];
-	public $reslist 		= [];
 
 	function datezone ($format, $time = 0)
 	{
@@ -110,13 +103,13 @@ class Game extends Component
 		/** @var array $ProdGrid */
 		/** @var array $reslist */
 
-		$this->resource 	= $resource;
-		$this->requeriments = $requeriments;
-		$this->pricelist 	= $pricelist;
-		$this->gun_armour 	= $gun_armour;
-		$this->CombatCaps 	= $CombatCaps;
-		$this->ProdGrid 	= $ProdGrid;
-		$this->reslist 		= $reslist;
+		$this->storage->resource = $resource;
+		$this->storage->requeriments = $requeriments;
+		$this->storage->pricelist = $pricelist;
+		$this->storage->gun_armour = $gun_armour;
+		$this->storage->CombatCaps = $CombatCaps;
+		$this->storage->ProdGrid = $ProdGrid;
+		$this->storage->reslist = $reslist;
 	}
 
 	public function sendMessage ($owner, $sender, $time, $type, $from, $message)

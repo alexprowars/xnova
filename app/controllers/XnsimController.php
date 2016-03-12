@@ -305,21 +305,21 @@ class XnsimController extends ApplicationController
 
 	private function getShipType($id, $count, $res)
 	{
-		$attDef 	= ($count[1] * ($this->game->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
-		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->game->CombatCaps[$id]['power_up'] / 100));
+		$attDef 	= ($count[1] * ($this->storage->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
+		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->storage->CombatCaps[$id]['power_up'] / 100));
 
-		if ($this->game->CombatCaps[$id]['type_gun'] == 1)
+		if ($this->storage->CombatCaps[$id]['type_gun'] == 1)
 			$attTech += (isset($res[120]) ? $res[120] : 0) * 0.05;
-		elseif ($this->game->CombatCaps[$id]['type_gun'] == 2)
+		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 2)
 			$attTech += (isset($res[121]) ? $res[121] : 0) * 0.05;
-		elseif ($this->game->CombatCaps[$id]['type_gun'] == 3)
+		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->game->pricelist[$id]['metal'], $this->game->pricelist[$id]['crystal']];
+		$cost = [$this->storage->pricelist[$id]['metal'], $this->storage->pricelist[$id]['crystal']];
 
-		if (in_array($id, $this->game->reslist['fleet']))
-			return new Ship($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		if (in_array($id, $this->storage->reslist['fleet']))
+			return new Ship($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
-		return new Defense($id, $count[0], $this->game->CombatCaps[$id]['sd'], $this->game->CombatCaps[$id]['shield'], $cost, $this->game->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		return new Defense($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 	}
 }

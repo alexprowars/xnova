@@ -17,6 +17,7 @@ use Phalcon\Di\Injectable;
  * @property \App\Database db
  * @property \Phalcon\Config|\stdClass config
  * @property \Phalcon\Cache\Backend\Memcache cache
+ * @property \Phalcon\Registry|\stdClass storage
  * @property \App\Game game
  */
 class FleetEngine extends Injectable
@@ -84,7 +85,7 @@ class FleetEngine extends Injectable
 			foreach ($fleetData as $shipId => $shipArr)
 			{
 				if ($shipArr['cnt'] > 0)
-					$update['+'.$this->game->resource[$shipId]] = $shipArr['cnt'];
+					$update['+'.$this->storage->resource[$shipId]] = $shipArr['cnt'];
 			}
 		}
 
@@ -208,14 +209,14 @@ class FleetEngine extends Injectable
 
 				for ($Item = $ResFrom[$CurrentLook]; $Item <= $ResTo[$CurrentLook]; $Item++)
 				{
-					if (isset($this->game->resource[$Item]) && (($TargetPlanet->{$this->game->resource[$Item]} > 0 && $Item < 600) || ($TargetPlanet->{$this->game->resource[$Item]} > time() && $Item > 600)))
+					if (isset($this->storage->resource[$Item]) && (($TargetPlanet->{$this->storage->resource[$Item]} > 0 && $Item < 600) || ($TargetPlanet->{$this->storage->resource[$Item]} > time() && $Item > 600)))
 					{
 						if ($row == 0)
 							$String .= "<tr>";
 
-						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $TargetPlanet->{$this->game->resource[$Item]} : '+') . "</th>";
+						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $TargetPlanet->{$this->storage->resource[$Item]} : '+') . "</th>";
 
-						$Count += $TargetPlanet->{$this->game->resource[$Item]};
+						$Count += $TargetPlanet->{$this->storage->resource[$Item]};
 						$row++;
 
 						if ($row == $this->config->game->get('spyReportRow', 1))
@@ -286,7 +287,7 @@ class FleetEngine extends Injectable
 
 		foreach ($fleet AS $fleetId => $fleetData)
 		{
-			$res = $this->game->pricelist[$fleetId];
+			$res = $this->storage->pricelist[$fleetId];
 
 			$debris['metal'] 	+= floor($fleetData['cnt'] * $res['metal'] * $this->config->game->get('fleetDebrisRate', 0));
 			$debris['crystal'] 	+= floor($fleetData['cnt'] * $res['crystal'] * $this->config->game->get('fleetDebrisRate', 0));

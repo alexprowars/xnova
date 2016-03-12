@@ -16,6 +16,7 @@ use Phalcon\Di\Injectable;
  * @package App
  * @property \App\Database db
  * @property \Phalcon\Config|\stdClass config
+ * @property \Phalcon\Registry|\stdClass storage
  * @property \App\Game game
  */
 class UpdateStatistics extends Injectable
@@ -55,23 +56,23 @@ class UpdateStatistics extends Injectable
 		$TechCounts = 0;
 		$TechPoints = 0;
 
-		$res_array = array_merge($this->game->reslist['tech'], $this->game->reslist['tech_f']);
+		$res_array = array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f']);
 
 		foreach ($res_array as $Techno)
 		{
-			if ($CurrentUser[$this->game->resource[$Techno]] == 0)
+			if ($CurrentUser[$this->storage->resource[$Techno]] == 0)
 				continue;
 
 			if ($CurrentUser['records'] == 1 && $Techno < 300)
-				$this->SetMaxInfo($Techno, $CurrentUser[$this->game->resource[$Techno]], $CurrentUser);
+				$this->SetMaxInfo($Techno, $CurrentUser[$this->storage->resource[$Techno]], $CurrentUser);
 
-			$Units = $this->game->pricelist[$Techno]['metal'] + $this->game->pricelist[$Techno]['crystal'] + $this->game->pricelist[$Techno]['deuterium'];
+			$Units = $this->storage->pricelist[$Techno]['metal'] + $this->storage->pricelist[$Techno]['crystal'] + $this->storage->pricelist[$Techno]['deuterium'];
 
-			for ($Level = 1; $Level <= $CurrentUser[$this->game->resource[$Techno]]; $Level++)
+			for ($Level = 1; $Level <= $CurrentUser[$this->storage->resource[$Techno]]; $Level++)
 			{
-				$TechPoints += $Units * pow($this->game->pricelist[$Techno]['factor'], $Level);
+				$TechPoints += $Units * pow($this->storage->pricelist[$Techno]['factor'], $Level);
 			}
-			$TechCounts += $CurrentUser[$this->game->resource[$Techno]];
+			$TechCounts += $CurrentUser[$this->storage->resource[$Techno]];
 		}
 		$RetValue['TechCount'] = $TechCounts;
 		$RetValue['TechPoint'] = $TechPoints;
@@ -83,20 +84,20 @@ class UpdateStatistics extends Injectable
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
-		foreach ($this->game->reslist['build'] as $Build)
+		foreach ($this->storage->reslist['build'] as $Build)
 		{
-			if ($CurrentPlanet[$this->game->resource[$Build]] == 0)
+			if ($CurrentPlanet[$this->storage->resource[$Build]] == 0)
 				continue;
 
 			if ($User['records'] == 1)
-				$this->SetMaxInfo($Build, $CurrentPlanet[$this->game->resource[$Build]], $User);
+				$this->SetMaxInfo($Build, $CurrentPlanet[$this->storage->resource[$Build]], $User);
 
-			$Units = $this->game->pricelist[$Build]['metal'] + $this->game->pricelist[$Build]['crystal'] + $this->game->pricelist[$Build]['deuterium'];
-			for ($Level = 1; $Level <= $CurrentPlanet[$this->game->resource[$Build]]; $Level++)
+			$Units = $this->storage->pricelist[$Build]['metal'] + $this->storage->pricelist[$Build]['crystal'] + $this->storage->pricelist[$Build]['deuterium'];
+			for ($Level = 1; $Level <= $CurrentPlanet[$this->storage->resource[$Build]]; $Level++)
 			{
-				$BuildPoints += $Units * pow($this->game->pricelist[$Build]['factor'], $Level);
+				$BuildPoints += $Units * pow($this->storage->pricelist[$Build]['factor'], $Level);
 			}
-			$BuildCounts += $CurrentPlanet[$this->game->resource[$Build]];
+			$BuildCounts += $CurrentPlanet[$this->storage->resource[$Build]];
 		}
 		$RetValue['BuildCount'] = $BuildCounts;
 		$RetValue['BuildPoint'] = $BuildPoints;
@@ -109,18 +110,18 @@ class UpdateStatistics extends Injectable
 		$DefenseCounts = 0;
 		$DefensePoints = 0;
 
-		foreach ($this->game->reslist['defense'] as $Defense)
+		foreach ($this->storage->reslist['defense'] as $Defense)
 		{
-			if ($CurrentPlanet[$this->game->resource[$Defense]] > 0)
+			if ($CurrentPlanet[$this->storage->resource[$Defense]] > 0)
 			{
 				if (isset($RecordArray[$Defense]))
-					$RecordArray[$Defense] += $CurrentPlanet[$this->game->resource[$Defense]];
+					$RecordArray[$Defense] += $CurrentPlanet[$this->storage->resource[$Defense]];
 				else
-					$RecordArray[$Defense] = $CurrentPlanet[$this->game->resource[$Defense]];
+					$RecordArray[$Defense] = $CurrentPlanet[$this->storage->resource[$Defense]];
 
-				$Units = $this->game->pricelist[$Defense]['metal'] + $this->game->pricelist[$Defense]['crystal'] + $this->game->pricelist[$Defense]['deuterium'];
-				$DefensePoints += ($Units * $CurrentPlanet[$this->game->resource[$Defense]]);
-				$DefenseCounts += $CurrentPlanet[$this->game->resource[$Defense]];
+				$Units = $this->storage->pricelist[$Defense]['metal'] + $this->storage->pricelist[$Defense]['crystal'] + $this->storage->pricelist[$Defense]['deuterium'];
+				$DefensePoints += ($Units * $CurrentPlanet[$this->storage->resource[$Defense]]);
+				$DefenseCounts += $CurrentPlanet[$this->storage->resource[$Defense]];
 			}
 		}
 		$RetValue['DefenseCount'] = $DefenseCounts;
@@ -134,19 +135,19 @@ class UpdateStatistics extends Injectable
 		$FleetCounts = 0;
 		$FleetPoints = 0;
 
-		foreach ($this->game->reslist['fleet'] as $Fleet)
+		foreach ($this->storage->reslist['fleet'] as $Fleet)
 		{
-			if ($CurrentPlanet[$this->game->resource[$Fleet]] > 0)
+			if ($CurrentPlanet[$this->storage->resource[$Fleet]] > 0)
 			{
 				if (isset($RecordArray[$Fleet]))
-					$RecordArray[$Fleet] += $CurrentPlanet[$this->game->resource[$Fleet]];
+					$RecordArray[$Fleet] += $CurrentPlanet[$this->storage->resource[$Fleet]];
 				else
-					$RecordArray[$Fleet] = $CurrentPlanet[$this->game->resource[$Fleet]];
+					$RecordArray[$Fleet] = $CurrentPlanet[$this->storage->resource[$Fleet]];
 
-				$Units = $this->game->pricelist[$Fleet]['metal'] + $this->game->pricelist[$Fleet]['crystal'] + $this->game->pricelist[$Fleet]['deuterium'];
-				$FleetPoints += ($Units * $CurrentPlanet[$this->game->resource[$Fleet]]);
+				$Units = $this->storage->pricelist[$Fleet]['metal'] + $this->storage->pricelist[$Fleet]['crystal'] + $this->storage->pricelist[$Fleet]['deuterium'];
+				$FleetPoints += ($Units * $CurrentPlanet[$this->storage->resource[$Fleet]]);
 				if ($Fleet != 212)
-					$FleetCounts += $CurrentPlanet[$this->game->resource[$Fleet]];
+					$FleetCounts += $CurrentPlanet[$this->storage->resource[$Fleet]];
 			}
 		}
 		$RetValue['FleetCount'] = $FleetCounts;
@@ -168,7 +169,7 @@ class UpdateStatistics extends Injectable
 		{
 			list($typ, $temp) = explode(',', $ship);
 			list($amount) = explode('!', $temp);
-			$Units = $this->game->pricelist[$typ]['metal'] + $this->game->pricelist[$typ]['crystal'] + $this->game->pricelist[$typ]['deuterium'];
+			$Units = $this->storage->pricelist[$typ]['metal'] + $this->storage->pricelist[$typ]['crystal'] + $this->storage->pricelist[$typ]['deuterium'];
 			$FleetPoints += ($Units * $amount);
 			if ($typ != 212)
 				$FleetCounts += $amount;
@@ -532,7 +533,7 @@ class UpdateStatistics extends Injectable
 
 	public function buildRecordsCache ()
 	{
-		$Elements = array_merge($this->game->reslist['build'], $this->game->reslist['tech'], $this->game->reslist['fleet'], $this->game->reslist['defense']);
+		$Elements = array_merge($this->storage->reslist['build'], $this->storage->reslist['tech'], $this->storage->reslist['fleet'], $this->storage->reslist['defense']);
 
 		$array = "";
 		foreach ($Elements as $ElementID)

@@ -22,7 +22,7 @@ class Quick
 
 		$maxfleet = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
 
-		$MaxFlottes = 1 + $controller->user->{$controller->game->resource[108]};
+		$MaxFlottes = 1 + $controller->user->{$controller->storage->resource[108]};
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
@@ -117,7 +117,7 @@ class Quick
 
 			if ($controller->planet->recycler > 0 && $DebrisSize > 0)
 			{
-				$RecyclerNeeded = floor($DebrisSize / ($controller->game->CombatCaps[209]['capacity'] * (1 + $controller->user->fleet_209 * ($controller->game->CombatCaps[209]['power_consumption'] / 100)))) + 1;
+				$RecyclerNeeded = floor($DebrisSize / ($controller->storage->CombatCaps[209]['capacity'] * (1 + $controller->user->fleet_209 * ($controller->storage->CombatCaps[209]['power_consumption'] / 100)))) + 1;
 
 				if ($RecyclerNeeded > $controller->planet->recycler)
 					$RecyclerNeeded = $controller->planet->recycler;
@@ -150,14 +150,14 @@ class Quick
 
 			foreach ($FleetArray as $Ship => $Count)
 			{
-				$FleetSubQRY .= "`" . $controller->game->resource[$Ship] . "` = `" . $controller->game->resource[$Ship] . "` - " . $Count . " , ";
+				$FleetSubQRY .= "`" . $controller->storage->resource[$Ship] . "` = `" . $controller->storage->resource[$Ship] . "` - " . $Count . " , ";
 				$ShipArray .=  $Ship . "," . $Count . "!" . (isset($controller->user->{'fleet_' . $Ship}) ? $controller->user->{'fleet_' . $Ship} : 0) . ";";
 				$ShipCount += $Count;
 
-				if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->game->CombatCaps[$Ship]['power_consumption']) && $controller->game->CombatCaps[$Ship]['power_consumption'] > 0)
-					$FleetStorage += round($controller->game->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->game->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
+				if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->storage->CombatCaps[$Ship]['power_consumption']) && $controller->storage->CombatCaps[$Ship]['power_consumption'] > 0)
+					$FleetStorage += round($controller->storage->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->storage->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
 				else
-					$FleetStorage += $controller->game->CombatCaps[$Ship]['capacity'] * $Count;
+					$FleetStorage += $controller->storage->CombatCaps[$Ship]['capacity'] * $Count;
 			}
 
 			if ($FleetStorage < $consumption)

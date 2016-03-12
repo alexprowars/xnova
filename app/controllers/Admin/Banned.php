@@ -44,12 +44,12 @@ class Banned
 			if ($controller->request->getPost('ro', 'int', 0) == 1)
 			{
 				$arFields = [
-					$controller->game->resource[4].'_porcent' 	=> 0,
-					$controller->game->resource[12].'_porcent' 	=> 0,
-					$controller->game->resource[212].'_porcent' 	=> 0
+					$controller->storage->resource[4].'_porcent' 	=> 0,
+					$controller->storage->resource[12].'_porcent' 	=> 0,
+					$controller->storage->resource[212].'_porcent' 	=> 0
 				];
 
-				foreach ($controller->game->reslist['res'] AS $res)
+				foreach ($controller->storage->reslist['res'] AS $res)
 					$arFields[$res.'_mine_porcent'] = 0;
 
 				$controller->db->updateAsDict($arFields, "id_owner = ".$userz['id']);

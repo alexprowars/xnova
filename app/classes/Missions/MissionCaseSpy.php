@@ -79,7 +79,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					if ($Element < 100)
 						continue;
 
-					$TargetPlanet->{$this->game->resource[$Element]} += $Fleet['cnt'];
+					$TargetPlanet->{$this->storage->resource[$Element]} += $Fleet['cnt'];
 				}
 			}
 
@@ -150,21 +150,21 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			$fleet_link = '';
 
 			if ($ST == 2)
-				$res = $this->game->reslist['fleet'];
+				$res = $this->storage->reslist['fleet'];
 			elseif ($ST >= 3 && $ST <= 6)
-				$res = array_merge($this->game->reslist['fleet'], $this->game->reslist['defense']);
+				$res = array_merge($this->storage->reslist['fleet'], $this->storage->reslist['defense']);
 			elseif ($ST >= 7)
-				$res = array_merge($this->game->reslist['fleet'], $this->game->reslist['defense'], $this->game->reslist['tech']);
+				$res = array_merge($this->storage->reslist['fleet'], $this->storage->reslist['defense'], $this->storage->reslist['tech']);
 			else
 				$res = [];
 
 			foreach ($res AS $id)
 			{
-				if (isset($TargetPlanet->{$this->game->resource[$id]}) && $TargetPlanet->{$this->game->resource[$id]} > 0)
-					$fleet_link .= $id . ',' . $TargetPlanet->{$this->game->resource[$id]} . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
+				if (isset($TargetPlanet->{$this->storage->resource[$id]}) && $TargetPlanet->{$this->storage->resource[$id]} > 0)
+					$fleet_link .= $id . ',' . $TargetPlanet->{$this->storage->resource[$id]} . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
 
-				if (isset($TargetUser->{$this->game->resource[$id]}) && $TargetUser->{$this->game->resource[$id]} > 0)
-					$fleet_link .= $id . ',' . $TargetUser->{$this->game->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->game->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->game->resource[$id - 50]} : 0) . ';';
+				if (isset($TargetUser->{$this->storage->resource[$id]}) && $TargetUser->{$this->storage->resource[$id]} > 0)
+					$fleet_link .= $id . ',' . $TargetUser->{$this->storage->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->storage->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->storage->resource[$id - 50]} : 0) . ';';
 			}
 
 			$MessageEnd .= "<center><a href=\"/sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";

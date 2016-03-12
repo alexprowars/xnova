@@ -126,7 +126,7 @@ class Helpers
 
 	static function pretty_phone ($phone)
 	{
-		$phone = Socials::phoneFormat($phone);
+		$phone = self::phoneFormat($phone);
 
 		if ($phone != '')
 		{
@@ -278,6 +278,25 @@ class Helpers
 	static function InsertJavaScriptChronoApplet ($Type, $Ref, $Value)
 	{
 		return "<script>FlotenTime('bxx" . $Type . $Ref . "', " . $Value . ");</script>";
+	}
+
+	public static function phoneFormat ($phone)
+	{
+		if ($phone == '')
+			return '';
+
+		$phone = str_replace(['+', '-', '(', ')', ' '], '', $phone);
+
+		if ($phone[0] == '8')
+			$phone[0] = '7';
+
+		if ($phone[0] != '7')
+			$phone = '7'.$phone;
+
+		if (mb_strlen($phone, 'UTF-8') == 11)
+			return $phone;
+		else
+			return '';
 	}
 
 	static function allowMobileVersion ()

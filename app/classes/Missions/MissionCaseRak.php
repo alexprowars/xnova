@@ -50,9 +50,9 @@ class MissionCaseRak extends FleetEngine implements Mission
 
 			$TargetDefensive = [];
 
-			foreach ($this->game->reslist['defense'] as $Element)
+			foreach ($this->storage->reslist['defense'] as $Element)
 			{
-				$TargetDefensive[$Element] = $PlanetRow[$this->game->resource[$Element]];
+				$TargetDefensive[$Element] = $PlanetRow[$this->storage->resource[$Element]];
 			}
 
 			if ($PlanetRow['interceptor_misil'] >= $Raks)
@@ -89,7 +89,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 					if ($sql != '')
 						$sql .= ', ';
 
-					$sql .= $this->game->resource[$Element] . ' = ' . $this->game->resource[$Element] . ' - ' . $destroy . ' ';
+					$sql .= $this->storage->resource[$Element] . ' = ' . $this->storage->resource[$Element] . ' - ' . $destroy . ' ';
 				}
 
 				if ($sql != '')
@@ -118,7 +118,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 		unset($TargetDefensive[502]);
 
 		$life_fac = $TargetDefTech / 10 + 1;
-		$life_fac_a = $this->game->CombatCaps[503]['attack'] * ($OwnerAttTech / 10 + 1);
+		$life_fac_a = $this->storage->CombatCaps[503]['attack'] * ($OwnerAttTech / 10 + 1);
 
 		$max_dam = $ipm * $life_fac_a;
 		$i = 0;
@@ -134,7 +134,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 			else
 				$target = $Element;
 
-			$Dam = $max_dam - ($this->game->pricelist[$target]['metal'] + $this->game->pricelist[$target]['crystal']) / 10 * $TargetDefensive[$target] * $life_fac;
+			$Dam = $max_dam - ($this->storage->pricelist[$target]['metal'] + $this->storage->pricelist[$target]['crystal']) / 10 * $TargetDefensive[$target] * $life_fac;
 
 			if ($Dam > 0)
 			{
@@ -143,10 +143,10 @@ class MissionCaseRak extends FleetEngine implements Mission
 			}
 			else
 			{
-				$dest = floor($max_dam / (($this->game->pricelist[$target]['metal'] + $this->game->pricelist[$target]['crystal']) / 10 * $life_fac));
+				$dest = floor($max_dam / (($this->storage->pricelist[$target]['metal'] + $this->storage->pricelist[$target]['crystal']) / 10 * $life_fac));
 				$ship_res[$target] = $dest;
 			}
-			$max_dam -= $dest * round(($this->game->pricelist[$target]['metal'] + $this->game->pricelist[$target]['crystal']) / 10 * $life_fac);
+			$max_dam -= $dest * round(($this->storage->pricelist[$target]['metal'] + $this->storage->pricelist[$target]['crystal']) / 10 * $life_fac);
 			$i++;
 		}
 
