@@ -14,15 +14,20 @@
 	<?php $this->assets->outputCss('css') ?>
 </head>
 <body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
-
-	<? if (isset($leftMenu) && $leftMenu == true): ?>
-		<? $this->partial('shared/menu'); ?>
-	<? endif; ?>
-
-	<div class="row">
-		<div class="e404">404</div>
+	<div id="box" class="set_error">
+		<? if (isset($leftMenu) && $leftMenu == true): ?>
+			<? $this->partial('shared/header'); ?>
+		<? endif; ?>
+		<div class="game_content">
+			<? if (isset($leftMenu) && $leftMenu == true): ?>
+				<? $this->partial('shared/menu'); ?>
+			<? endif; ?>
+			<div id="gamediv" class="content container-fluid">
+				<div class="row">
+					<div class="e404">404</div>
+				</div>
+			</div>
+		</div>
 	</div>
-
-	</div></div>
 </body>
 </html>

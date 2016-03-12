@@ -165,16 +165,6 @@
 		font-size: 15px;
 	}
 
-	.game_content > .content {
-		margin-left: 0 !important;
-		margin-right: 0 !important;
-		width: 100% !important;
-	}
-
-	#box, #siteFooter .content {
-		width: 100%;
-	}
-
 	.planet-sidebar {
 		padding: 60px 10px 0 10px;
 	}
@@ -288,6 +278,10 @@
 
 	.fleet_ships th {
 		white-space: normal !important;
+	}
+
+	#box .game_menu, #box .game_content {
+	    width: 100%;
 	}
 }
 

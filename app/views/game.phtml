@@ -59,138 +59,98 @@
 			XNova.resSpeed 		= <?=$this->config->game->get('resource_multiplier', 1) ?>;
 		<? endif; ?>
 	</script>
-	<? if (isset($leftMenu) && $leftMenu == true): ?>
-		<? $this->partial('shared/menu'); ?>
-	<? endif; ?>
 
-	<? if (isset($topPanel) && $topPanel == true): ?>
-		<? $this->partial('shared/panel'); ?>
-	<? endif; ?>
-
-	<? if (!isset($leftMenu) || $leftMenu == false): ?>
-		<div class="contentBox"><div><div id="box"><center>
-	<? endif; ?>
-
-
-	<? if (isset($deleteUserTimer) && $deleteUserTimer > 0): ?>
-		<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $deleteUserTimer) ?> в <?=$this->game->datezone("H:i:s", $deleteUserTimer) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
-	<? endif; ?>
-
-	<? if (isset($vocationTimer) && $vocationTimer > 0): ?>
-	   <table class="table"><tr><td class="c" align="center"><font color="red">Включен режим отпуска! Функциональность игры ограничена.</font></td></tr></table><div class="separator"></div>
-	<? endif; ?>
-
-	<? if (isset($globalMessage) && $globalMessage != ''): ?>
-	   <table class="table"><tr><td class="c" align="center"><?=$globalMessage ?></td></tr></table><div class="separator"></div>
-	<? endif; ?>
-
-	<div class="row">
-		<?php echo $this->getContent() ?>
-	</div>
-
-	<? if (isset($leftMenu) && $leftMenu == true): ?>
-		</div>
-
-		<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
-			</div>
+	<div id="box" class="set_<?=$controller ?>">
+		<? if (isset($leftMenu) && $leftMenu == true): ?>
+			<? $this->partial('shared/header'); ?>
 		<? endif; ?>
-		</div>
-		<div class="clearfix"></div>
-		</div>
-		</div>
-		</div></div>
 
-		<div id="siteFooter" class="hidden-xs">
-			<div class="container-fluid">
-				<div class="pull-left text-left">
-					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
-					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-						<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
-					<? endif; ?>
+		<div class="game_content">
+			<? if (isset($leftMenu) && $leftMenu == true): ?>
+				<? $this->partial('shared/menu'); ?>
+			<? endif; ?>
+
+			<? if (isset($leftMenu) && $leftMenu == true && $this->config->view->get('overviewListView', 0) == 1): ?>
+				<? $this->partial('shared/planets'); ?>
+			<? endif; ?>
+
+			<? if ($this->config->view->get('socialIframeView', 0) == 1): ?><div class="iframe_wrapper"><? endif; ?>
+			<div id="gamediv" class="content container-fluid">
+
+				<? if (isset($topPanel) && $topPanel == true): ?>
+					<? $this->partial('shared/panel'); ?>
+				<? endif; ?>
+
+				<? if (isset($deleteUserTimer) && $deleteUserTimer > 0): ?>
+					<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после <?=$this->game->datezone("d.m.Y", $deleteUserTimer) ?> в <?=$this->game->datezone("H:i:s", $deleteUserTimer) ?>. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
+				<? endif; ?>
+
+				<? if (isset($vocationTimer) && $vocationTimer > 0): ?>
+				   <table class="table"><tr><td class="c" align="center"><font color="red">Включен режим отпуска! Функциональность игры ограничена.</font></td></tr></table><div class="separator"></div>
+				<? endif; ?>
+
+				<? if (isset($globalMessage) && $globalMessage != ''): ?>
+				   <table class="table"><tr><td class="c" align="center"><?=$globalMessage ?></td></tr></table><div class="separator"></div>
+				<? endif; ?>
+
+				<div class="row">
+					<?php echo $this->getContent() ?>
 				</div>
-				<div class="pull-right text-right">
-					<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
-						<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
-					<? endif; ?>
+
+			</div>
+			<? if ($this->config->view->get('socialIframeView', 0) == 1): ?></div><? endif; ?>
+		</div>
+
+		<? if (isset($leftMenu) && $leftMenu == true): ?>
+			<footer class="hidden-xs">
+				<div class="container-fluid">
+					<div class="pull-left text-left">
+						<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
+						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+							<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
+						<? endif; ?>
+					</div>
+					<div class="pull-right text-right">
+						<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
+							<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
+						<? endif; ?>
+						<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
+						<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
+						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+							<a href="/wide.php" data-link="Y">Большой монитор</a>|
+							<a href="http://vk.com/xnova_game" target="_blank">ВК</a>|
+							<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
+						<? endif;?>
+						<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
+						<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>|
+						<a onclick="" title="Игроков в сети" style="color:green"><?=$this->config->app->get('users_online', 0) ?></a>/<a onclick="" title="Всего игроков" style="color:yellow"><?=$this->config->app->get('users_total', 0) ?></a>
+					</div>
+					<br class="clearfloat"/></div>
+			</footer>
+			<div class="row hidden-sm hidden-md hidden-lg footer-mobile">
+				<div class="col-xs-12 text-center">
 					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 					<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
-					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-						<a href="/wide.php" data-link="Y">Большой монитор</a>|
-						<a href="http://vk.com/xnova_game" target="_blank">ВК</a>|
-						<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
-					<? endif;?>
+					<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
 					<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
-					<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>|
+					<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>
+				</div>
+				<div class="col-xs-8 text-center">
+					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
+					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+						<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
+					<? endif; ?>
+				</div>
+				<div class="col-xs-4 text-center">
 					<a onclick="" title="Игроков в сети" style="color:green"><?=$this->config->app->get('users_online', 0) ?></a>/<a onclick="" title="Всего игроков" style="color:yellow"><?=$this->config->app->get('users_total', 0) ?></a>
 				</div>
-				<br class="clearfloat"/></div>
-		</div>
-		<div class="row hidden-sm hidden-md hidden-lg footer-mobile">
-			<div class="col-xs-12 text-center">
-				<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
-				<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
-				<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
-				<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
-				<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>
 			</div>
-			<div class="col-xs-8 text-center">
-				<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
-				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-					<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
-				<? endif; ?>
-			</div>
-			<div class="col-xs-4 text-center">
-				<a onclick="" title="Игроков в сети" style="color:green"><?=$this->config->app->get('users_online', 0) ?></a>/<a onclick="" title="Всего игроков" style="color:yellow"><?=$this->config->app->get('users_total', 0) ?></a>
-			</div>
-		</div>
-	<? endif; ?>
+		<? endif; ?>
+	</div>
 
-	<? if ($_SERVER['SERVER_NAME'] == 'vk.xnova.su'): ?>
-		<script src="//vk.com/js/api/xd_connection.js" type="text/javascript"></script>
-		<script type="application/javascript">
-			$(window).load(function()
-			{
-				  VK.init(function() { console.log('vk init success'); }, function() {}, '5.24');
-			});
-		</script>
-	<? endif; ?>
-
-	<?
-		if ($this->request->has('apiconnection') && (!$this->session->has('OKAPI') || !isset($this->session->get('OKAPI')['apiconnection'])))
-		{
-			$_SESSION['OKAPI'] = Array
-			(
-				'api_server' 			=> $this->request->get('api_server'),
-				'apiconnection' 		=> $this->request->get('apiconnection'),
-				'session_secret_key' 	=> $this->request->get('session_secret_key'),
-				'session_key' 			=> $this->request->get('session_key'),
-				'logged_user_id' 		=> $this->request->get('logged_user_id'),
-				'sig' 					=> $this->request->get('sig')
-			);
-		}
-	?>
-	<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') && $this->session->has('OKAPI') && is_array($this->session->get('OKAPI'))): ?>
-		<script src="<?=$this->session->get('OKAPI')['api_server'] ?>js/fapi5.js" type="text/javascript"></script>
-		<script type="text/javascript">
-			FAPI.init('<?=$this->session->get('OKAPI')['api_server'] ?>', '<?=$this->session->get('OKAPI')['apiconnection'] ?>',
-				function()
-				{
-					//FAPI.UI.setWindowSize(800, 700);
-				}
-				, function()
-				{
-					alert("API initialization failed");
-				}
-			);
-		</script>
-	<? endif; ?>
+	<? $this->partial('shared/socials'); ?>
 
 	<div id="windowDialog"></div>
 	<div id="tooltip" class="tip"></div>
-
-	<? if ((!isset($leftMenu) || $leftMenu == false)): ?>
-		</center></div></div></div>
-	<? endif; ?>
-
-	</body>
+</body>
 </html>

@@ -103,10 +103,9 @@ td.m1 {
 }
 
 .bar {
-	font-size:11px;
-	margin: 0 auto 0 auto;
-	padding-top:2px;
-	height: 23px;
+	display: flex;
+	justify-content: space-between;
+	height: 24px;
 }
 
 td.m1 a{
@@ -538,11 +537,6 @@ color:#D8D8D8;
 	z-index: 1;
 }
 
-#box {
-    margin: 0 auto;
-    text-align:left;
-}
-
 .table_menu{
 	border-spacing:0;
 }
@@ -595,10 +589,6 @@ color:#D8D8D8;
 
 iframe {
 	border-width: 0;
-}
-
-#gamediv {
-    position: relative;
 }
 
 input[type=submit], input[type=button], input[type=reset], .button {

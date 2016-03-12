@@ -11,30 +11,35 @@ textarea#text {
 }
 
 .game_content {
-	width: 100%;
+	width: 1125px;
 	margin-top: 10px;
+	flex-grow: 2;
+	display: flex;
+	flex-direction: row;
 }
 
 .game_content > .menu {
 	width: 120px;
-	float: left;
 	margin: 0 15px 0 0;
 	padding: 0;
+	order: 1;
 }
 .game_content > .content {
-	margin: 0 150px 0 135px;
-	width: 715px;
 	overflow-x: auto;
 	overflow-y: hidden;
+	flex-shrink: 1000000;
+	width: 100%;
+	order: 2;
+	position: relative;
 }
 .game_content > .content #gamediv {
 	margin: 0;
 	width: 100%;
 }
 .game_content > .planetList {
-	float: right;
 	width: 135px;
-	vertical-align: top;
+	margin-left: 15px;
+	order: 3;
 }
 
 .game_content > .menu li:first-child > a {
@@ -88,7 +93,6 @@ textarea#text {
 
 .iframe .game_content > .content {
 	margin-right: 0 !important;
-	width: 665px !important;
 }
 
 .iframe div.iframe_wrapper {
@@ -109,9 +113,12 @@ textarea#text {
 }
 
 #box {
-    padding-bottom:50px;
-    width: 1000px;
-	position: static;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: auto;
+	min-height: 100%;
+	align-items: center;
 }
 
 .table {
@@ -289,16 +296,12 @@ input[type=button] {
 	list-style: decimal inside none;
 }
 
-#siteFooter .content {
-	width: 1000px;
-}
-
 .game_menu {
-	padding-bottom: 5px;
-	padding-top: 4px;
+	padding: 5px 0;
 	background: #3a4a6e;
 	border-radius: 0 0 5px 5px;
 	border: 1px solid #425e8c;
+	width: 1125px;
 }
 
 .planetList .list .planet {
@@ -584,30 +587,20 @@ margin-left: -5px;
     font-size: 0;
 }
 
-.bar .top_menu {
-	float: right;
-	display: inline-block;
-}
-
 .bar .m1 {
 	padding-right: 25px;
-	font-size: 14px;
-	vertical-align: top;
-	font-weight: normal;
 }
 
 .bar .m1 > b {
 	font-size: 14px;
 	vertical-align: top;
-	margin-top: 2px;
+	margin-top: 3px;
 	font-weight: normal;
 	display: inline-block;
 }
 
 .bar .message_list {
-	float: left;
 	margin-left: 10px;
-	display: inline-block;
 }
 
 .toolbar .colorpicker {
@@ -705,12 +698,12 @@ margin-left: -5px;
 .bb_tick {width:16px; height:16px; background-position: -103px -1px}
 .bb_user_comment {width:16px; height:16px; background-position: -154px -1px}
 .bb_world_link {width:16px; height:16px; background-position: -205px -1px}
-.ico_alliance {width:24px; height:24px; background-position: -333px -24px}
-.ico_chat {width:24px; height:24px; background-position: -308px -24px}
+.ico_alliance {width:24px; height:24px; background-position: -333px -23px}
+.ico_chat {width:24px; height:24px; background-position: -308px -23px}
 .ico_exit {width:24px; height:24px; background-position: -358px -24px}
 .ico_forum {width:24px; height:24px; background-position: -533px -24px}
 .ico_fullscreen {width:24px; height:24px; background-position: -408px -24px}
-.ico_mail {width:24px; height:24px; background-position: -458px -24px}
+.ico_mail {width:24px; height:24px; background-position: -458px -23px}
 .ico_search {width:24px; height:24px; background-position: -483px -24px}
 .ico_settings {width:24px; height:24px; background-position: -433px -24px}
 .ico_sim {width:24px; height:24px; background-position: -383px -24px}
@@ -718,7 +711,7 @@ margin-left: -5px;
 .ico_stats {width:24px; height:24px; background-position: -558px -24px}
 .ico_support {width:24px; height:24px; background-position: -608px -24px}
 .ico_tech {width:24px; height:24px; background-position: -633px -24px}
-.ico_tutorial {width:24px; height:24px; background-position: -583px -24px}
+.ico_tutorial {width:24px; height:24px; background-position: -583px -23px}
 .skin_b {width:16px; height:16px; background-position: -188px -1px}
 .skin_batt0 {width:42px; height:22px; background-position: -597px -1px}
 .skin_batt100 {width:42px; height:22px; background-position: -87px -24px}
@@ -995,4 +988,31 @@ div.errormessage {
 
 .alert a {
 	color: #337ab7;
+}
+
+footer {
+    background: transparent url(/assets/images/bar-bg.gif) repeat-x 0 0;
+    color:#848484;
+    font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+    height: 19px;
+    line-height:19px;
+    text-align:center;
+	margin-top: 50px;
+	width: 100%;
+}
+
+footer a, footer a:link {
+    color:#848484;
+    margin:0 10px;
+    text-decoration:none;
+	font-weight:normal;
+}
+
+footer a:hover {
+    color:#9c0;
+    text-decoration:none;
+}
+
+.top_menu {
+	display: flex;
 }
