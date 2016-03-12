@@ -1,6 +1,12 @@
 <?php
 namespace App\Auth\Plugins;
 
+	/**
+	 * @author AlexPro
+	 * @copyright 2008 - 2016 XNova Game Group
+	 * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+	 */
+
 /**
  * @property \Phalcon\Mvc\View view
  * @property \Phalcon\Tag tag
@@ -19,5 +25,3 @@ interface AuthInterface
 	public function check ();
 	public function register ();
 }
-
-?>

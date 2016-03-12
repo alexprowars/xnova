@@ -1,6 +1,12 @@
 <?
 namespace App\Models;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use App\Building;
 use App\Helpers;
 use App\Queue;
@@ -1206,5 +1212,3 @@ class Planet extends Model
 		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($planetId > 0 ? $planetId : $this->id))]);
 	}
 }
-
-?>

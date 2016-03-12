@@ -1,6 +1,12 @@
 <?php
 namespace App\Controllers;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use App\Helpers;
 use App\Lang;
 use Phalcon\Mvc\Controller;
@@ -141,7 +147,7 @@ class ApplicationController extends Controller
 			$css->addCss('/assets/css/jquery-ui.css');
 			$css->addCss('/assets/css/jquery.fancybox.css');
 
-			$js->addJs('https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js');
+			$js->addJs('https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$js->addJs('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
 			$js->addJs('/assets/js/jquery.form.min.js');
 			$js->addJs('/assets/js/jquery.fancybox.min.js');
@@ -164,7 +170,7 @@ class ApplicationController extends Controller
 				$css->addCss('/assets/css/media.css');
 				$css->addCss('/assets/css/mobile.css');
 
-				$js->addJs('/assets/js//script.js');
+				$js->addJs('/assets/js/script.js');
 				$js->addJs('/assets/js/universe.js');
 				$js->addJs('/assets/js/flotten.js');
 				$js->addJs('/assets/js/smiles.js');
@@ -501,5 +507,3 @@ class ApplicationController extends Controller
 		die();
 	}
 }
-
-?>

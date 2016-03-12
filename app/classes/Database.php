@@ -1,6 +1,12 @@
 <?php
 namespace App;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\ResultInterface;
 
@@ -120,5 +126,3 @@ class Database extends Mysql
 		return $this->execute($updateSql, $updateValues, $bindDataTypes);
 	}
 }
-
-?>

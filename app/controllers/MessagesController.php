@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Controllers;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\Helpers;
 use App\Lang;
@@ -101,7 +106,7 @@ class MessagesController extends ApplicationController
 
 		if ($this->request->hasQuery('quote'))
 		{
-			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (owner = ?1 || sender = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
+			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (owner = ?1 OR sender = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
 
 			if ($mes)
 				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes->text) . '[/quote]');
@@ -210,5 +215,3 @@ class MessagesController extends ApplicationController
 		return true;
 	}
 }
-
-?>

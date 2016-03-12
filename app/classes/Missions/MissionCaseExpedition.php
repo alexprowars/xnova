@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Missions;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\Battle\Core\Battle;
 use App\Battle\LangImplementation;
@@ -354,7 +359,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$this->db->updateAsDict('game_fleets',
 						[
 							'fleet_array' 	=> substr($fleetArray, 0, -1),
-							'@update' 		=> 'end_time',
+							'@update_time' 	=> 'end_time',
 							'mess'			=> 1,
 							'won'			=> $result['won']
 						], "id = ".$fleetID);
@@ -463,5 +468,3 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 		$this->KillFleet();
 	}
 }
-
-?>

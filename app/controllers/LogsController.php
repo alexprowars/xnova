@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Controllers;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 class LogsController extends ApplicationController
 {
@@ -112,5 +117,3 @@ class LogsController extends ApplicationController
 		$this->tag->setTitle('Бортовой журнал');
 	}
 }
-
-?>

@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Controllers;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 class TechController extends ApplicationController
 {
@@ -104,5 +109,3 @@ class TechController extends ApplicationController
 		$this->showTopPanel(false);
 	}
 }
-
-?>

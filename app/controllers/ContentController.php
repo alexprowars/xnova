@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Controllers;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 class ContentController extends ApplicationController
 {
@@ -9,7 +14,7 @@ class ContentController extends ApplicationController
 		parent::initialize();
 	}
 
-	function show()
+	function indexAction ()
 	{
 		if (!$this->request->getQuery('article'))
 			$this->message('Страница не найдена!');

@@ -1,6 +1,12 @@
 <?php
 namespace App\Controllers\Fleet;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use App\Controllers\FleetController;
 use App\Fleet;
 use App\Lang;
@@ -210,5 +216,3 @@ class Quick
 		}
 	}
 }
-
-?>

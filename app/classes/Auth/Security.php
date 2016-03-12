@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Auth;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use Phalcon\Acl;
 use Phalcon\Acl\Role;
@@ -170,5 +175,3 @@ class Security extends Component
 		return true;
 	}
 }
- 
-?>

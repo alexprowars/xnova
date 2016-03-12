@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Controllers;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 class CalculateController extends ApplicationController
 {
@@ -47,5 +52,3 @@ class CalculateController extends ApplicationController
 		$this->showTopPanel(false);
 	}
 }
-
-?>

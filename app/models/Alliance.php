@@ -1,6 +1,12 @@
 <?php
 namespace App\Models;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use Phalcon\Mvc\Model;
 
 class Alliance extends Model
@@ -166,5 +172,3 @@ class Alliance extends Model
 		$db->delete('game_statpoints', 'stat_type = 2 AND id_owner = ?', [$this->id]);
 	}
 }
-
-?>

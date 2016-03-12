@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Missions;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\Fleet;
 use App\FleetEngine;
@@ -81,5 +86,3 @@ class MissionCaseStay extends FleetEngine implements Mission
 		}
 	}
 }
-
-?>

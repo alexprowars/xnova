@@ -1,6 +1,11 @@
 <?php
-
 namespace App;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\Mail\PHPMailer;
 use App\Models\User;
@@ -543,5 +548,3 @@ class UpdateStatistics extends Injectable
 		file_put_contents(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php", $file);
 	}
 }
- 
-?>

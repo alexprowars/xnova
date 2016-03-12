@@ -1,6 +1,11 @@
 <?php
-
 namespace App;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 class Socials
 {
@@ -167,5 +172,3 @@ class Socials
 		return false;
 	}
 }
-
-?>

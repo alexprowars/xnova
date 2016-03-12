@@ -1,6 +1,12 @@
 <?php
 namespace App\Models;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use Phalcon\Mvc\Model;
 
 class AllianceMember extends Model
@@ -20,5 +26,3 @@ class AllianceMember extends Model
 	 	$this->hasOne("a_id", "App\Models\Alliance", "id", Array('alias' => 'alliance'));
 	}
 }
-
-?>

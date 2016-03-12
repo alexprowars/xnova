@@ -153,6 +153,14 @@ $router->add('/admin/([a-zA-Z0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
+$router->add('/content/([a-zA-Z0-9]+)/:params',
+[
+	'controller' 	=> 'content',
+	'action' 		=> 'index',
+	'article' 		=> 1,
+	'params' 		=> 2
+]);
+
 $router->add('/',
 [
 	'controller' 	=> 'index',
@@ -162,5 +170,3 @@ $router->add('/',
 $router->handle();
 
 return $router;
- 
-?>

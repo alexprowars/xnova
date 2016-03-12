@@ -1,6 +1,12 @@
 <?php
 namespace App\Controllers;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use App\Lang;
 use App\Models\User;
 use App\Mail\PHPMailer;
@@ -294,5 +300,3 @@ class IndexController extends ApplicationController
 		return false;
 	}
 }
-
-?>

@@ -10,8 +10,13 @@
 	<link rel="image_src" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/logo.jpg" />
 	<link rel="apple-touch-icon" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/apple-touch-icon.png"/>
 
-	<?php $this->assets->outputJs('js') ?>
 	<?php $this->assets->outputCss('css') ?>
+	<?php $this->assets->outputJs('js') ?>
+
+	<!--[if lte IE 9]>
+		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all" />
+		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
+	<![endif]-->
 </head>
 <body>
 	<script type="text/javascript">

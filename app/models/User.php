@@ -1,6 +1,12 @@
 <?php
 namespace App\Models;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use Phalcon\Mvc\Model;
 
 /**
@@ -606,5 +612,3 @@ class User extends Model
 		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
 	}
 }
-
-?>

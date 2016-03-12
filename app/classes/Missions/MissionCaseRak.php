@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Missions;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\FleetEngine;
 
@@ -148,5 +153,3 @@ class MissionCaseRak extends FleetEngine implements Mission
 		return $ship_res;
 	}
 }
-
-?>

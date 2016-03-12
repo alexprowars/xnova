@@ -1,6 +1,11 @@
 <?php
-
 namespace App\Missions;
+
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
 
 use App\Battle\Core\Battle;
 use App\Battle\Core\Round;
@@ -290,7 +295,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			{
 				$update = [
 					'fleet_array' 	=> substr($fleetArray, 0, -1),
-					'@update' 		=> 'end_time',
+					'@update_time' 	=> 'end_time',
 					'mess'			=> 1,
 					'group_id'		=> 0,
 					'won'			=> $result['won']
@@ -332,8 +337,8 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				{
 					$this->db->updateAsDict(
 					[
-						'fleet_array' => substr($fleetArray, 0, -1),
-						'@update' => 'end_time'
+						'fleet_array' 	=> substr($fleetArray, 0, -1),
+						'@update_time' 	=> 'end_time'
 					],
 					"id = ".$fleetID);
 				}
@@ -882,5 +887,3 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		return array_map('round', $steal);
 	}
 }
-
-?>

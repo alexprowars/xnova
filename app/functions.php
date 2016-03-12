@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 function _getText ()
 {
 	return \App\Lang::getText(func_get_args());

@@ -1,6 +1,12 @@
 <?php
 namespace App\Auth;
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2016 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 use App\Models\User;
 use Phalcon\Db;
 use Phalcon\Mvc\User\Component;
@@ -121,7 +127,7 @@ class Auth extends Component
 				 */
 				$UserRow = User::findFirst($this->session->get('uid'));
 
-				if ($UserRow->id <= 0)
+				if (!$UserRow)
 					$this->remove();
 				else
 					$this->IsUserChecked = true;
@@ -195,5 +201,3 @@ class Auth extends Component
 			$this->response->redirect('')->send();
 	}
 }
- 
-?>
