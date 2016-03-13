@@ -161,7 +161,7 @@ class StageThree
 
 		if (isset($TargetPlanet['id_owner']))
 		{
-			$HeDBRec = $controller->db->query("SELECT * FROM game_users WHERE `id` = '" . $TargetPlanet['id_owner'] . "';")->fetch();
+			$HeDBRec = $controller->db->query("SELECT * FROM game_users WHERE id = '" . $TargetPlanet['id_owner'] . "';")->fetch();
 
 			if (!isset($HeDBRec['id']))
 				$controller->message("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU".$TargetPlanet['id_owner']."</b></span>", 'Ошибка', "/fleet/", 2);
@@ -184,8 +184,8 @@ class StageThree
 
 		if ($controller->user->authlevel < 2)
 		{
-			$MyGameLevel = $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $controller->user->id . "'");
-			$HeGameLevel = $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $HeDBRec['id'] . "'");
+			$MyGameLevel = $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = '" . $controller->user->id . "'");
+			$HeGameLevel = $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = '" . $HeDBRec['id'] . "'");
 
 			if (!$HeGameLevel)
 				$HeGameLevel = 0;
@@ -324,8 +324,6 @@ class StageThree
 		$FleetStorage = 0;
 		$fleet_array = "";
 
-		$fleetPlanetUpdate = [];
-
 		foreach ($fleetarray as $Ship => $Count)
 		{
 			$Count = intval($Count);
@@ -337,7 +335,7 @@ class StageThree
 
 			$fleet_array .= (isset($controller->user->{'fleet_' . $Ship})) ? $Ship . "," . $Count . "!" . $controller->user->{'fleet_' . $Ship} . ";" : $Ship . "," . $Count . "!0;";
 
-			$fleetPlanetUpdate['-'.$controller->storage->resource[$Ship]] = $Count;
+			$controller->planet->{$controller->storage->resource[$Ship]} -= $Count;
 		}
 
 		$FleetStorage -= $consumption;
@@ -419,13 +417,13 @@ class StageThree
 		{
 			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
 
-			$log = $controller->db->query("SELECT kolvo FROM game_logs WHERE `s_id` = '".$controller->user->id."' AND `mission` = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "")->fetch();
+			$log = $controller->db->query("SELECT kolvo FROM game_logs WHERE s_id = '".$controller->user->id."' AND mission = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "")->fetch();
 
 			if (!$controller->user->isAdmin() && isset($log['kolvo']) && $log['kolvo'] > 2 && ((isset($ad['id']) && $ad['type'] != 3) || !isset($ad['id'])))
 				$controller->message("<span class=\"error\"><b>Баш-контроль. Лимит ваших нападений на планету исчерпан.</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if (isset($log['kolvo']))
-				$controller->db->query("UPDATE game_logs SET kolvo = kolvo + 1 WHERE `s_id` = '".$controller->user->id."' AND `mission` = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "");
+				$controller->db->query("UPDATE game_logs SET kolvo = kolvo + 1 WHERE s_id = '".$controller->user->id."' AND mission = 1 AND e_galaxy = " . $TargetPlanet['galaxy'] . " AND e_system = " . $TargetPlanet['system'] . " AND e_planet = " . $TargetPlanet['planet'] . " AND time > " . $night_time . "");
 			else
 				$controller->db->query("INSERT INTO game_logs VALUES (1, " . time() . ", 1, " . $controller->user->id . ", " . $controller->planet->galaxy . ", " . $controller->planet->system . ", " . $controller->planet->planet . ", " . $TargetPlanet['id_owner'] . ", " . $TargetPlanet['galaxy'] . ", " . $TargetPlanet['system'] . ", " . $TargetPlanet['planet'] . ")");
 
@@ -561,11 +559,7 @@ class StageThree
 		$controller->planet->crystal 	-= $TransCrystal;
 		$controller->planet->deuterium 	-= $TransDeuterium + $consumption + $TotalFleetCons;
 
-		$fleetPlanetUpdate['metal'] 	= $controller->planet->metal;
-		$fleetPlanetUpdate['crystal'] 	= $controller->planet->crystal;
-		$fleetPlanetUpdate['deuterium'] = $controller->planet->deuterium;
-
-		$controller->planet->saveData($fleetPlanetUpdate);
+		$controller->planet->update();
 
 		$html = "<center>";
 		$html .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"600\">";

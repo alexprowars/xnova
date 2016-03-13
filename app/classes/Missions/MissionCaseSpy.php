@@ -17,7 +17,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$CurrentUser = $this->db->query("SELECT `spy_tech`, `rpg_technocrate` FROM game_users WHERE `id` = '" . $this->_fleet->owner . "';")->fetch();
+		$CurrentUser = $this->db->query("SELECT spy_tech, rpg_technocrate FROM game_users WHERE id = '" . $this->_fleet->owner . "';")->fetch();
 
 		$TargetPlanet = Planet::findByCoords($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type);
 

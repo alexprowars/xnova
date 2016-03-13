@@ -60,7 +60,7 @@ class AllianceController extends ApplicationController
 	{
 		if (isset($_POST['bcancel']) && isset($_POST['r_id']))
 		{
-			$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND `u_id` = " . $this->user->id);
+			$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND u_id = " . $this->user->id);
 
 			$this->message("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "/alliance/", 2);
 		}
@@ -76,7 +76,7 @@ class AllianceController extends ApplicationController
 
 		$parse['allys'] = [];
 
-		$allys = $this->db->query("SELECT s.total_points, a.`id`, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`total_points` DESC LIMIT 0,15;");
+		$allys = $this->db->query("SELECT s.total_points, a.id, a.tag, a.name, a.members FROM game_statpoints s, game_alliance a WHERE s.stat_type = '2' AND s.stat_code = '1' AND a.id = s.id_owner ORDER BY s.total_points DESC LIMIT 0,15;");
 
 		while ($ally = $allys->fetch())
 		{
@@ -210,7 +210,7 @@ class AllianceController extends ApplicationController
 					Alliance::PLANET_ACCESS => 0
 				];
 
-				$this->db->query("UPDATE game_alliance SET `ranks` = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE `id` = " . $this->ally->id);
+				$this->db->query("UPDATE game_alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 			}
 			elseif (isset($_POST['id']) && is_array($_POST['id']))
 			{
@@ -237,13 +237,13 @@ class AllianceController extends ApplicationController
 
 				$this->ally->ranks = $ally_ranks_new;
 
-				$this->db->query("UPDATE game_alliance SET `ranks` = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE `id` = " . $this->ally->id);
+				$this->db->query("UPDATE game_alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 			}
 			elseif ($this->request->hasQuery('d') && isset($this->ally->ranks[$this->request->getQuery('d', 'int')]))
 			{
 				unset($this->ally->ranks[$this->request->getQuery('d', 'int')]);
 
-				$this->db->query("UPDATE game_alliance SET `ranks` = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE `id` = " . $this->ally->id);
+				$this->db->query("UPDATE game_alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 			}
 
 			$parse['list'] = [];
@@ -307,24 +307,24 @@ class AllianceController extends ApplicationController
 				if ($this->ally['request_notallow'] != 0 && $this->ally['request_notallow'] != 1)
 					$this->message("Недопустимое значение атрибута!", "Ошибка");
 
-				$this->db->query("UPDATE game_alliance SET `owner_range`='" . $this->ally->owner_range . "', `image`='" . $this->ally->image . "', `web`='" . $this->ally->web . "', `request_notallow`='" . $this->ally->request_notallow . "' WHERE `id`='" . $this->ally->id . "'");
+				$this->db->query("UPDATE game_alliance SET owner_range='" . $this->ally->owner_range . "', image='" . $this->ally->image . "', web='" . $this->ally->web . "', request_notallow='" . $this->ally->request_notallow . "' WHERE id='" . $this->ally->id . "'");
 			}
 			elseif (isset($_POST['t']))
 			{
 				if ($t == 3)
 				{
 					$this->ally->request = Helpers::FormatText($_POST['text']);
-					$this->db->query("UPDATE game_alliance SET `request`='" . $this->ally->request . "' WHERE `id`='" . $this->ally->id . "'");
+					$this->db->query("UPDATE game_alliance SET request='" . $this->ally->request . "' WHERE id='" . $this->ally->id . "'");
 				}
 				elseif ($t == 2)
 				{
 					$this->ally->text = Helpers::FormatText($_POST['text']);
-					$this->db->query("UPDATE game_alliance SET `text`='" . $this->ally->text . "' WHERE `id`='" . $this->ally->id . "'");
+					$this->db->query("UPDATE game_alliance SET text='" . $this->ally->text . "' WHERE id='" . $this->ally->id . "'");
 				}
 				else
 				{
 					$this->ally->description = Helpers::FormatText($_POST['text']);
-					$this->db->query("UPDATE game_alliance SET `description`='" . $this->ally->description . "' WHERE `id`='" . $this->ally->id . "'");
+					$this->db->query("UPDATE game_alliance SET description='" . $this->ally->description . "' WHERE id='" . $this->ally->id . "'");
 				}
 			}
 
@@ -448,8 +448,8 @@ class AllianceController extends ApplicationController
 					$this->message("Название альянса содержит запрещённые символы", _getText('make_alliance'));
 
 				$this->ally->name = addslashes(htmlspecialchars($_POST['newname']));
-				$this->db->query("UPDATE game_alliance SET `name` = '" . $this->ally->name . "' WHERE `id` = '" . $this->user->ally_id . "';");
-				$this->db->query("UPDATE game_users SET `ally_name` = '" . $this->ally->name . "' WHERE `ally_id` = '" . $this->ally->id . "';");
+				$this->db->query("UPDATE game_alliance SET name = '" . $this->ally->name . "' WHERE id = '" . $this->user->ally_id . "';");
+				$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "' WHERE ally_id = '" . $this->ally->id . "';");
 			}
 
 			$parse['question'] = 'Введите новое название альянса';
@@ -473,7 +473,7 @@ class AllianceController extends ApplicationController
 					$this->message("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
 
 				$this->ally->tag = addslashes(htmlspecialchars($_POST['newtag']));
-				$this->db->query("UPDATE game_alliance SET `tag` = '" . $this->ally->tag . "' WHERE `id` = '" . $this->user->ally_id . "';");
+				$this->db->query("UPDATE game_alliance SET tag = '" . $this->ally->tag . "' WHERE id = '" . $this->user->ally_id . "';");
 			}
 
 			$parse['question'] = 'Введите новую аббревиатуру альянса';
@@ -507,8 +507,8 @@ class AllianceController extends ApplicationController
 				if (!$info['id'] || $info['ally_id'] != $this->user->ally_id)
 					$this->message("Операция невозможна.", "Ошибка!", "/alliance/", 2);
 
-				$this->db->query("UPDATE game_alliance SET `owner` = '" . $info['id'] . "' WHERE `id` = " . $this->user->ally_id . " ");
-				$this->db->query("UPDATE game_alliance_members SET `rank` = '0' WHERE `u_id` = '" . $info['id'] . "';");
+				$this->db->query("UPDATE game_alliance SET owner = '" . $info['id'] . "' WHERE id = " . $this->user->ally_id . " ");
+				$this->db->query("UPDATE game_alliance_members SET rank = '0' WHERE u_id = '" . $info['id'] . "';");
 
 				$this->response->redirect('alliance/');
 			}
@@ -549,7 +549,7 @@ class AllianceController extends ApplicationController
 				{
 					$this->db->query("UPDATE game_planets SET id_ally = 0 WHERE id_owner = ".$u['id']." AND id_ally = ".$this->ally->id."");
 
-					$this->db->query("UPDATE game_users SET `ally_id` = '0', `ally_name` = '' WHERE `id` = '" . $u['id'] . "'");
+					$this->db->query("UPDATE game_users SET ally_id = '0', ally_name = '' WHERE id = '" . $u['id'] . "'");
 					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
 				}
 				else
@@ -560,10 +560,10 @@ class AllianceController extends ApplicationController
 				$id = $this->request->get('id', 'int', 0);
 				$rank = $this->request->getPost('newrang', 'int', 0);
 
-				$q = $this->db->query("SELECT `id`, `ally_id` FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
+				$q = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . $id . "' LIMIT 1")->fetch();
 
 				if ((isset($this->ally->ranks[$rank - 1]) || $rank == 0) && $q['id'] != $this->ally->owner && $q['ally_id'] == $this->ally->id)
-					$this->db->query("UPDATE game_alliance_members SET `rank` = '" . $rank . "' WHERE `u_id` = '" . $id . "';");
+					$this->db->query("UPDATE game_alliance_members SET rank = '" . $rank . "' WHERE u_id = '" . $id . "';");
 			}
 
 			$this->membersAction();
@@ -707,17 +707,17 @@ class AllianceController extends ApplicationController
 		if ($sort2)
 		{
 			if ($sort1 == 1)
-				$sort = " ORDER BY u.`username`";
+				$sort = " ORDER BY u.username";
 			elseif ($sort1 == 2)
-				$sort = " ORDER BY m.`rank`";
+				$sort = " ORDER BY m.rank";
 			elseif ($sort1 == 3)
-				$sort = " ORDER BY s.`total_points`";
+				$sort = " ORDER BY s.total_points";
 			elseif ($sort1 == 4)
-				$sort = " ORDER BY m.`time`";
+				$sort = " ORDER BY m.time";
 			elseif ($sort1 == 5 && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS))
-				$sort = " ORDER BY u.`onlinetime`";
+				$sort = " ORDER BY u.onlinetime";
 			else
-				$sort = " ORDER BY u.`id`";
+				$sort = " ORDER BY u.id";
 
 			if ($sort2 == 1)
 				$sort .= " DESC;";
@@ -788,7 +788,7 @@ class AllianceController extends ApplicationController
 			$s = 1;
 
 		if ($i != $this->ally->members)
-			$this->db->query("UPDATE game_alliance SET `members` = '" . $i . "' WHERE `id` = '" . $this->ally->id . "'");
+			$this->db->query("UPDATE game_alliance SET members = '" . $i . "' WHERE id = '" . $this->ally->id . "'");
 
 		$parse['i'] = $i;
 		$parse['s'] = $s;
@@ -803,7 +803,7 @@ class AllianceController extends ApplicationController
 	public function chatAction ()
 	{
 		if ($this->user->messages_ally != 0)
-			$this->db->query("UPDATE game_users SET `messages_ally` = '0' WHERE `id` = '" . $this->user->id . "'");
+			$this->db->query("UPDATE game_users SET messages_ally = '0' WHERE id = '" . $this->user->id . "'");
 
 		$this->parseInfo($this->user->ally_id);
 
@@ -815,7 +815,7 @@ class AllianceController extends ApplicationController
 			$DeleteWhat = $_POST['deletemessages'];
 
 			if ($DeleteWhat == 'deleteall')
-				$this->db->query("DELETE FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "';");
+				$this->db->query("DELETE FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "';");
 			elseif ($DeleteWhat == 'deletemarked' || $DeleteWhat == 'deleteunmarked')
 			{
 				$Mess_Array = [];
@@ -832,7 +832,7 @@ class AllianceController extends ApplicationController
 				$Mess_Array = implode(',', $Mess_Array);
 
 				if ($Mess_Array != '')
-					$this->db->query("DELETE FROM game_alliance_chat WHERE `id` " . (($DeleteWhat == 'deleteunmarked') ? 'NOT' : '') . " IN (" . $Mess_Array . ") AND `ally_id` = '" . $this->user->ally_id . "';");
+					$this->db->query("DELETE FROM game_alliance_chat WHERE id " . (($DeleteWhat == 'deleteunmarked') ? 'NOT' : '') . " IN (" . $Mess_Array . ") AND ally_id = '" . $this->user->ally_id . "';");
 			}
 		}
 
@@ -847,13 +847,13 @@ class AllianceController extends ApplicationController
 				'timestamp'	=> time()
 			]);
 
-			$this->db->query("UPDATE game_users SET `messages_ally` = `messages_ally` + '1' WHERE `ally_id` = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");
+			$this->db->query("UPDATE game_users SET messages_ally = messages_ally + '1' WHERE ally_id = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");
 		}
 
 		$parse = [];
 		$parse['messages'] = [];
 
-		$news_count = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "'")->fetch();
+		$news_count = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "'")->fetch();
 
 		if ($news_count['num'] > 0)
 		{
@@ -861,7 +861,7 @@ class AllianceController extends ApplicationController
 
 			$thiss = Helpers::pagination($news_count['num'], 20, '/alliance/chat/', $p);
 
-			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE `ally_id` = '" . $this->user->ally_id . "' ORDER BY `id` DESC limit " . (($p - 1) * 20) . ", 20");
+			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($p - 1) * 20) . ", 20");
 
 			while ($mes = $mess->fetch())
 			{
@@ -935,11 +935,11 @@ class AllianceController extends ApplicationController
 			if ($tagquery)
 				$this->message(str_replace('%s', $_POST['atag'], _getText('always_exist')), _getText('make_alliance'));
 
-			$this->db->query("INSERT INTO game_alliance SET `name` = '" . addslashes($_POST['aname']) . "', `tag`= '" . addslashes($_POST['atag']) . "' , `owner` = '" . $this->user->id . "', `create_time` = " . time());
+			$this->db->query("INSERT INTO game_alliance SET name = '" . addslashes($_POST['aname']) . "', tag= '" . addslashes($_POST['atag']) . "' , owner = '" . $this->user->id . "', create_time = " . time());
 
 			$ally_id = $this->db->lastInsertId();
 
-			$this->db->query("UPDATE game_users SET `ally_id` = '" . $ally_id . "', `ally_name` = '" . addslashes($_POST['aname']) . "' WHERE `id` = '" . $this->user->id . "'");
+			$this->db->query("UPDATE game_users SET ally_id = '" . $ally_id . "', ally_name = '" . addslashes($_POST['aname']) . "' WHERE id = '" . $this->user->id . "'");
 			$this->db->query("INSERT INTO game_alliance_members (a_id, u_id, time) VALUES (" . $ally_id . ", " . $this->user->id . ", " . time() . ")");
 
 			$this->tag->setTitle(_getText('make_alliance'));

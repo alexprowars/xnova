@@ -15,12 +15,12 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 	public function TargetEvent()
 	{
 		// Определяем максимальное количество баз
-		$iMaxBase = $this->db->fetchColumn("SELECT `fleet_base_tech` FROM game_users WHERE id = " . $this->_fleet->owner . "");
+		$iMaxBase = $this->db->fetchColumn("SELECT fleet_base_tech FROM game_users WHERE id = " . $this->_fleet->owner . "");
 
 		$planet = new Planet();
 
 		// Получение общего количества построенных баз
-		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE `id_owner` = '" . $this->_fleet->owner . "' AND `planet_type` = '5'");
+		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '5'");
 
 		$TargetAdress = sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 

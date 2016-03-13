@@ -112,10 +112,10 @@ class MerchantController extends ApplicationController
 				if ($_POST['ress'] != "deuterium")
 					$this->planet->deuterium += $deut;
 
-				$this->planet->saveData(['metal' => $this->planet->metal, 'crystal' => $this->planet->crystal, 'deuterium' => $this->planet->deuterium]);
+				$this->planet->update();
 
-				$this->db->query("UPDATE game_users SET `credits` = `credits` - 1 WHERE id = " . $this->user->id . "");
 				$this->user->credits -= 1;
+				$this->user->update();
 
 				$tutorial = $this->db->query("SELECT id FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0")->fetch();
 

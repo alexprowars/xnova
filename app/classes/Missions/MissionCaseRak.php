@@ -17,8 +17,8 @@ class MissionCaseRak extends FleetEngine implements Mission
 
 		$PlanetRow = $this->db->query("SELECT * FROM game_planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = 1")->fetch();
 
-		$Defender = $this->db->query("SELECT `defence_tech`  FROM game_users WHERE id = '" . $this->_fleet->target_owner . "'")->fetch();
-		$Attacker = $this->db->query("SELECT `military_tech` FROM game_users WHERE id = '" . $this->_fleet->owner . "'")->fetch();
+		$Defender = $this->db->query("SELECT defence_tech  FROM game_users WHERE id = '" . $this->_fleet->target_owner . "'")->fetch();
+		$Attacker = $this->db->query("SELECT military_tech FROM game_users WHERE id = '" . $this->_fleet->owner . "'")->fetch();
 
 		if (isset($PlanetRow['id']) && isset($Defender['defence_tech']))
 		{

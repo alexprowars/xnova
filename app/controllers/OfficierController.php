@@ -57,12 +57,7 @@ class OfficierController extends ApplicationController
 						$this->user->{$this->storage->resource[$selected]} = time() + $times;
 
 					$this->user->credits -= $need_c;
-
-					$this->user->saveData(
-					[
-						'credits' => $this->user->credits,
-						$this->storage->resource[$selected] => $this->user->{$this->storage->resource[$selected]},
-					]);
+					$this->user->update();
 		
 					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
 		

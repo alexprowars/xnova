@@ -50,15 +50,17 @@ class RaceController extends ApplicationController
 					$this->message('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "/race/", 5);
 				else
 				{
-					$this->db->query("UPDATE game_users SET race = " . $r . " WHERE id = " . $this->user->id . ";");
+					$this->user->race = $r;
 
 					if ($numChanges > 0)
-						$this->user->saveData(['-free_race_change' => 1]);
+						$this->db->updateAsDict('game_users_info', ['-free_race_change' => 1], 'id = '.$this->user->id);
 					else
 					{
-						$this->user->saveData(['-credits' => 100]);
+						$this->user->credits -= 100;
 						$this->db->insertAsDict('game_log_credits', ['uid' => $this->user->id, 'time' => time(), 'credits' => 100, 'type' => 7]);
 					}
+
+					$this->user->update();
 
 					$this->db->query("UPDATE game_planets SET corvete = 0, interceptor = 0, dreadnought = 0, corsair = 0 WHERE id_owner = " . $this->user->id . ";");
 
@@ -72,9 +74,9 @@ class RaceController extends ApplicationController
 	{
 		$numChanges = $this->db->fetchColumn('SELECT free_race_change FROM game_users_info WHERE id = ' . $this->user->id);
 		
-		if (isset($_GET['sel']) && $this->user->race == 0)
+		if ($this->request->hasQuery('sel') && $this->user->race == 0)
 		{
-			$r = intval($_GET['sel']);
+			$r = $this->request->getQuery('sel', 'int', 0);
 			$r = max(min($r, 4), 1);
 		
 			if ($r > 0)
@@ -84,7 +86,7 @@ class RaceController extends ApplicationController
 				foreach ($this->storage->reslist['officier'] AS $oId)
 					$update[$this->storage->resource[$oId]] = time() + 86400;
 					
-				$this->user->saveData($update);
+				$this->user->update($update);
 		
 				$this->response->redirect("/tutorial/");
 			}

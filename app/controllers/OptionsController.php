@@ -141,7 +141,7 @@ class OptionsController extends ApplicationController
 				$queueManager = new Queue();
 				$queueCount = 0;
 
-				$BuildOnPlanets = $this->db->query("SELECT `queue` FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
+				$BuildOnPlanets = $this->db->query("SELECT queue FROM game_planets WHERE id_owner = '" . $this->user->id . "'");
 
 				while ($BuildOnPlanet = $BuildOnPlanets->fetch())
 				{
@@ -163,7 +163,7 @@ class OptionsController extends ApplicationController
 					else
 						$vacation = $this->user->vacation;
 
-					$this->db->query("UPDATE game_planets SET `metal_mine_porcent` = '0', `crystal_mine_porcent` = '0', `deuterium_mine_porcent` = '0', `solar_plant_porcent` = '0', `fusion_plant_porcent` = '0', `solar_satelit_porcent` = '0' WHERE `id_owner` = '" . $this->user->id . "'");
+					$this->db->query("UPDATE game_planets SET metal_mine_porcent = '0', crystal_mine_porcent = '0', deuterium_mine_porcent = '0', solar_plant_porcent = '0', fusion_plant_porcent = '0', solar_satelit_porcent = '0' WHERE id_owner = '" . $this->user->id . "'");
 				}
 			}
 		}
@@ -200,40 +200,40 @@ class OptionsController extends ApplicationController
 			$options['planetlistselect']= (isset($_POST["planetlistselect"]) && $_POST["planetlistselect"] == 'on') ? 1 : 0;
 			$options['only_available']	= (isset($_POST["available"]) && $_POST["available"] == 'on') ? 1 : 0;
 
-			$this->db->query("UPDATE game_users SET options = '".$this->user->packOptions($options)."', sex = '" . $sex . "', `vacation` = '" . $vacation . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "'");
+			$this->db->query("UPDATE game_users SET options = '".$this->user->packOptions($options)."', sex = '" . $sex . "', vacation = '" . $vacation . "', deltime = '" . $Del_Time . "' WHERE id = '" . $this->user->id . "'");
 
 			$ui_query = '';
 
 			if ($SetSort != $inf['planet_sort'])
-				$ui_query .= ", `planet_sort` = '" . $SetSort . "'";
+				$ui_query .= ", planet_sort = '" . $SetSort . "'";
 
 			if ($SetOrder != $inf['planet_sort_order'])
-				$ui_query .= ", `planet_sort_order` = '" . $SetOrder . "'";
+				$ui_query .= ", planet_sort_order = '" . $SetOrder . "'";
 
 			if ($color != $inf['color'])
-				$ui_query .= ", `color` = '" . $color . "'";
+				$ui_query .= ", color = '" . $color . "'";
 
 			if ($timezone != $inf['timezone'])
-				$ui_query .= ", `timezone` = '" . $timezone . "'";
+				$ui_query .= ", timezone = '" . $timezone . "'";
 
 			if ($about != $inf['about'])
-				$ui_query .= ", `about` = '" . $about . "'";
+				$ui_query .= ", about = '" . $about . "'";
 
 			if ($spy != $inf['spy'])
-				$ui_query .= ", `spy` = '" . $spy . "'";
+				$ui_query .= ", spy = '" . $spy . "'";
 
 			if ($ui_query != '')
 			{
 				if ($ui_query != '')
 					$ui_query[0] = ' ';
 
-				$this->db->query("UPDATE game_users_info SET" . $ui_query . " WHERE `id` = '" . $this->user->id . "'");
+				$this->db->query("UPDATE game_users_info SET" . $ui_query . " WHERE id = '" . $this->user->id . "'");
 			}
 
 			unset($_SESSION['config']);
 		}
 		else
-			$this->db->query("UPDATE game_users SET `vacation` = '" . $vacation . "', `deltime` = '" . $Del_Time . "' WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+			$this->db->query("UPDATE game_users SET vacation = '" . $vacation . "', deltime = '" . $Del_Time . "' WHERE id = '" . $this->user->id . "' LIMIT 1");
 
 		if (isset($_POST["db_password"]) && $_POST["db_password"] != "" && $_POST["newpass1"] != "")
 		{
@@ -242,7 +242,7 @@ class OptionsController extends ApplicationController
 			elseif ($_POST["newpass1"] == $_POST["newpass2"])
 			{
 				$newpass = md5($_POST["newpass1"]);
-				$this->db->query("UPDATE game_users_info SET `password` = '" . $newpass . "' WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+				$this->db->query("UPDATE game_users_info SET password = '" . $newpass . "' WHERE id = '" . $this->user->id . "' LIMIT 1");
 
 				$this->auth->remove(false);
 

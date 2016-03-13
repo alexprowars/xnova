@@ -621,7 +621,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if (!isset($this->usersTech[$fleet->owner]))
 		{
-			$info = $this->db->query('SELECT `id`, `username`, `military_tech`, `defence_tech`, `shield_tech`, `laser_tech`, `ionic_tech`, `buster_tech`, `rpg_admiral`, `rpg_komandir` FROM game_users WHERE id = ' . $fleet->owner)->fetch();
+			$info = $this->db->query('SELECT id, username, military_tech, defence_tech, shield_tech, laser_tech, ionic_tech, buster_tech, rpg_admiral, rpg_komandir FROM game_users WHERE id = ' . $fleet->owner)->fetch();
 
 			$playerObj = new Player($fleet->owner);
 			$playerObj->setName($info['username']);
@@ -648,7 +648,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 			if ($playerObj === false)
 			{
-				$info = $this->db->query('SELECT `id`, `username` FROM game_users WHERE id = ' . $fleet->owner)->fetch();
+				$info = $this->db->query('SELECT id, username FROM game_users WHERE id = ' . $fleet->owner)->fetch();
 
 				$playerObj = new Player($fleet->owner);
 				$playerObj->setName($info['username']);

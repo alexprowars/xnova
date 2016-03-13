@@ -42,13 +42,13 @@ class SupportController extends ApplicationController
 			if (empty($_POST['text']))
 				$this->message('Не заполнены все поля', 'Ошибка', '/support/', 3);
 
-			$ticket = $this->db->query("SELECT id, text, status FROM game_support WHERE `id` = '" . $TicketID . "';")->fetch();
+			$ticket = $this->db->query("SELECT id, text, status FROM game_support WHERE id = '" . $TicketID . "';")->fetch();
 
 			if (isset($ticket['id']))
 			{
 				$text = $ticket['text'] . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::CheckString($_POST['text']) . '';
 
-				$this->db->query("UPDATE game_support SET `text` = '" . addslashes($text) . "',`status` = '3' WHERE `id` = '" . $TicketID . "';");
+				$this->db->query("UPDATE game_support SET text = '" . addslashes($text) . "', status = '3' WHERE id = '" . $TicketID . "';");
 
 				$this->game->sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
 
@@ -67,7 +67,7 @@ class SupportController extends ApplicationController
 	{
 		$list = [];
 
-		$supports = $this->db->query("SELECT ID, time, text, subject, status FROM game_support WHERE (`player_id` = '" . $this->user->id . "') ORDER BY time DESC;");
+		$supports = $this->db->query("SELECT ID, time, text, subject, status FROM game_support WHERE (player_id = '" . $this->user->id . "') ORDER BY time DESC;");
 
 		while ($ticket = $supports->fetch())
 		{

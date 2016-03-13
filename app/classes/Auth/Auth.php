@@ -92,7 +92,7 @@ class Auth extends Component
 
 		if (!$this->session->has('uid') && $this->cookies->has($this->config->cookie->prefix.'_id') && $this->cookies->has($this->config->cookie->prefix.'_secret'))
 		{
-			$UserResult = $this->db->query("SELECT u.*, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.`id` = '".$this->cookies->get($this->config->cookie->prefix.'_id')->getValue('int')."'");
+			$UserResult = $this->db->query("SELECT u.*, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.id = '".$this->cookies->get($this->config->cookie->prefix.'_id')->getValue('int')."'");
 
 			if ($UserResult->numRows() == 0)
 				$this->remove();
@@ -140,11 +140,11 @@ class Auth extends Component
 
 			if ($UserRow->onlinetime < (time() - 30) || $UserRow->ip != $ip || ($this->dispatcher->getControllerName() == "chat" && ($UserRow->onlinetime < time() - 120 || $UserRow->chat == 0)) || ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0))
 			{
-				$update = ['onlinetime' => time()];
+				$UserRow->onlinetime = time();
 
 				if ($UserRow->ip != $ip)
 				{
-					$update['ip'] = $ip;
+					$UserRow->ip = $ip;
 
 					$this->db->insertAsDict(
 						"game_log_ip",
@@ -156,20 +156,12 @@ class Auth extends Component
 					);
 				}
 
-				if ($this->dispatcher->getControllerName() == "chat" && $UserRow->chat == 0)
-				{
-					$update['chat'] = 1;
+				//if ($this->dispatcher->getControllerName() == "chat" && $UserRow->chat == 0)
+				//	$UserRow->chat = 1;
+				//elseif ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0)
+				//	$UserRow->chat = 0;
 
-					$UserRow->chat = 1;
-				}
-				elseif ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0)
-					$update['chat'] = 0;
-
-				$this->db->updateAsDict(
-				   	"game_users",
-					$update,
-				   	"id = ".$UserRow->id
-				);
+				$UserRow->update();
 			}
 		}
 

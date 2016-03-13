@@ -14,7 +14,7 @@ class UpdateTask extends ApplicationTask
 {
 	public function onlineAction ()
 	{
-		$online = $this->db->fetchColumn("SELECT COUNT(*) as `online` FROM game_users WHERE `onlinetime` > '" . (time() - $this->config->game->onlinetime * 60) . "'");
+		$online = $this->db->fetchColumn("SELECT COUNT(*) as online FROM game_users WHERE onlinetime > '" . (time() - $this->config->game->onlinetime * 60) . "'");
 
 		$this->game->updateConfig('users_online', $online);
 

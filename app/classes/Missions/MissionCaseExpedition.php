@@ -44,7 +44,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 			$FleetPoints += $ship['cnt'] * $Expowert[$type];
 		}
 
-		$StatFactor = $this->db->fetchColumn("SELECT MAX(total_points) as total FROM game_statpoints WHERE `stat_type` = 1");
+		$StatFactor = $this->db->fetchColumn("SELECT MAX(total_points) as total FROM game_statpoints WHERE stat_type = 1");
 
 		if ($StatFactor < 10000)
 			$upperLimit = 200;
@@ -362,7 +362,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				// Упаковка в строку
 				$raport = json_encode([$result, $attackUsers, $defenseUsers, array('metal' => 0, 'crystal' => 0, 'deuterium' => 0), 0, '', []]);
 				// Добавление в базу
-				$this->db->query("INSERT INTO game_rw SET `time` = " . time() . ", `id_users` = '" . json_encode($FleetsUsers) . "', `no_contact` = '0', `raport` = '" . addslashes($raport) . "';");
+				$this->db->query("INSERT INTO game_rw SET time = " . time() . ", id_users = '" . json_encode($FleetsUsers) . "', no_contact = '0', raport = '" . addslashes($raport) . "';");
 				// Ключи авторизации доклада
 				$ids = $this->db->lastInsertId();
 

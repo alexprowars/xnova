@@ -178,8 +178,8 @@ class MessagesController extends ApplicationController
 
 		if ($this->user->messages > 0)
 		{
-			$this->user->saveData(['messages' => 0]);
 			$this->user->messages = 0;
+			$this->user->update();
 		}
 
 		if (!$start)

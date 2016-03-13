@@ -318,8 +318,11 @@ class OverviewController extends ApplicationController
 
 			if ($image > 0 && $image <= $parse['images'][$parse['type']])
 			{
-				$this->db->updateAsDict('game_planets', ['image' => $parse['type'].'planet'.($image < 10 ? '0' : '').$image], 'id = '.$this->planet->id);
-				$this->user->saveData(['-credits' => 1]);
+				$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
+				$this->planet->update();
+
+				$this->user->credits--;
+				$this->user->update();
 
 				$this->response->redirect('/overview/');
 			}
@@ -343,19 +346,20 @@ class OverviewController extends ApplicationController
 
 			$add = $multi * 500 * $this->game->getSpeed('mine');
 
-			$this->db->query("UPDATE game_planets SET metal = metal + " . $add . ", crystal = crystal + " . $add . ", deuterium = deuterium + " . $add . " WHERE id = " . $this->user->planet_current . ";");
+			$this->planet->metal += $add;
+			$this->planet->crystal += $add;
+			$this->planet->deuterium += $add;
+			$this->planet->update();
 
-			$arUpdate = [
-				'bonus' => (time() + 86400),
-				'bonus_multi' => $multi
-			];
+			$this->user->bonus = time() + 86400;
+			$this->user->bonus_multi = $multi;
 
 			if ($this->user->bonus_multi > 1)
-				$arUpdate['+credits'] = 1;
+				$this->user->credits++;
 
-			$this->user->saveData($arUpdate);
+			$this->user->update();
 
-			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.(isset($arUpdate['+credits']) ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
+			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
 		}
 		else
 			$this->message('Ошибочка вышла, сорри :(');

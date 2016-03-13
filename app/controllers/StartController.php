@@ -70,7 +70,7 @@ class StartController extends ApplicationController
 				{
 					$arUpdate['username'] = strip_tags(trim($this->request->getPost('character')));
 
-					$this->user->saveData($arUpdate);
+					$this->user->update($arUpdate);
 
 					$this->response->redirect('overview/');
 					$this->view->disable();
@@ -98,7 +98,7 @@ class StartController extends ApplicationController
 					foreach ($this->storage->reslist['officier'] AS $oId)
 						$update[$this->storage->resource[$oId]] = time() + 86400;
 
-					$this->user->saveData($update);
+					$this->user->update($update);
 
 					$this->game->setRequestData(['redirect' => '/tutorial/']);
 					$this->view->disable();

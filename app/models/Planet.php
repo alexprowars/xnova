@@ -152,7 +152,7 @@ class Planet extends Model
 	 */
 	static function findByCoords ($galaxy, $system, $planet, $type = 1)
 	{
-		return self::findFirst("galaxy = ".$galaxy." AND system = ".$system." AND planet = ".$planet." AND planet_type = ".$type."");
+		return self::findFirst(['galaxy = ?0 AND system = ?1 AND planet = ?2 AND planet_type = ?3', 'bind' => [$galaxy, $system, $planet, $type]]);
 	}
 
 	public function assignUser (User $user)
@@ -178,8 +178,8 @@ class Planet extends Model
 	{
 		if ($this->id_owner != $this->user->id && $this->id_ally > 0 && ($this->id_ally != $this->user->ally_id || !$this->user->ally['rights']['planet']))
 		{
-			$this->user->saveData(['planet_current' => $this->user->planet_id]);
 			$this->user->planet_current = $this->user->planet_id;
+			$this->user->update();
 
 			$this->assign($this->findFirst($this->user->planet->id)->toArray());
 
@@ -247,7 +247,7 @@ class Planet extends Model
 			$this->game->updateConfig('LastSettedSystemPos', $System);
 			$this->game->updateConfig('LastSettedPlanetPos', $Planet);
 
-			$PlanetID = $this->db->fetchColumn("SELECT `id` FROM game_planets WHERE `id_owner` = '" . $user_id . "' LIMIT 1");
+			$PlanetID = $this->db->fetchColumn("SELECT id FROM game_planets WHERE id_owner = '" . $user_id . "' LIMIT 1");
 
 			if (is_null($this->user))
 				$this->user = User::findFirst($user_id);
@@ -274,31 +274,29 @@ class Planet extends Model
 
 			$planet = $this->sizeRandomiser($Position, $HomeWorld, $Base);
 
-			$planet['metal'] 		= $config->game->baseMetalProduction;
-			$planet['crystal'] 		= $config->game->baseCristalProduction;
-			$planet['deuterium'] 	= $config->game->baseDeuteriumProduction;
+			$planet->metal 		= $config->game->baseMetalProduction;
+			$planet->crystal 	= $config->game->baseCristalProduction;
+			$planet->deuterium 	= $config->game->baseDeuteriumProduction;
 
-			$planet['galaxy'] = $Galaxy;
-			$planet['system'] = $System;
-			$planet['planet'] = $Position;
+			$planet->galaxy = $Galaxy;
+			$planet->system = $System;
+			$planet->planet = $Position;
 
-			$planet['planet_type'] = 1;
+			$planet->planet_type = 1;
 
 			if ($Base)
-				$planet['planet_type'] = 5;
+				$planet->planet_type = 5;
 
-			$planet['id_owner'] = $PlanetOwnerID;
-			$planet['last_update'] = time();
-			$planet['name'] = ($PlanetName == '') ? _getText('sys_colo_defaultname') : $PlanetName;
+			$planet->id_owner = $PlanetOwnerID;
+			$planet->last_update = time();
+			$planet->name = ($PlanetName == '') ? _getText('sys_colo_defaultname') : $PlanetName;
 
-			$this->db->insertAsDict('game_planets', $planet);
-
-			$planetId = $this->db->lastInsertId();
+			$planet->create();
 
 			if (isset($_SESSION['fleet_shortcut']))
 				unset($_SESSION['fleet_shortcut']);
 
-			return $planetId;
+			return $planet->id;
 		}
 		else
 			return false;
@@ -306,17 +304,17 @@ class Planet extends Model
 
 	public function createMoon ($Galaxy, $System, $Planet, $Owner, $Chance)
 	{
-		$MoonPlanet = $this->db->query("SELECT * FROM game_planets WHERE `galaxy` = '" . $Galaxy . "' AND `system` = '" . $System . "' AND `planet` = '" . $Planet . "' AND planet_type = 1")->fetch();
+		$planet = Planet::findByCoords($Galaxy, $System, $Planet, 1);
 
-		if ($MoonPlanet['parent_planet'] == 0 && $MoonPlanet['id'] != 0)
+		if ($planet && $planet->parent_planet == 0)
 		{
-			$maxtemp = $MoonPlanet['temp_max'] - rand(10, 45);
-			$mintemp = $MoonPlanet['temp_min'] - rand(10, 45);
+			$maxtemp = $planet->temp_max - rand(10, 45);
+			$mintemp = $planet->temp_min - rand(10, 45);
 
 			$size = floor(pow(mt_rand(10, 20) + 3 * $Chance, 0.5) * 1000);
 
-			$this->db->insertAsDict('game_planets',
-			[
+			$moon = new Planet();
+			$moon->create([
 				'name' 			=> _getText('sys_moon'),
 				'id_owner' 		=> $Owner,
 				'galaxy' 		=> $Galaxy,
@@ -333,12 +331,11 @@ class Planet extends Model
 				'crystal' 		=> 0,
 				'deuterium' 	=> 0
 			]);
+			
+			$planet->parent_planet = $moon->id;
+			$planet->update();
 
-			$QryGetMoonId = $this->db->lastInsertId();
-
-			$this->db->updateAsDict('game_planets', ['parent_planet' => $QryGetMoonId], 'id = '.$MoonPlanet['id']);
-
-			return $QryGetMoonId;
+			return $moon->id;
 		}
 		else
 			return false;
@@ -351,36 +348,34 @@ class Planet extends Model
 		$planetData = [];
 		require(APP_PATH.'app/varsPlanet.php');
 
-		$return = [];
+		$planet = new Planet;
 
 		if ($HomeWorld)
-			$return['field_max'] = $config->game->get('initial_fields', 163);
+			$planet->field_max = $config->game->get('initial_fields', 163);
 		elseif ($Base)
-			$return['field_max'] = $config->game->get('initial_base_fields', 10);
+			$planet->field_max = $config->game->get('initial_base_fields', 10);
 		else
-			$return['field_max'] = (int) floor($planetData[$Position]['fields'] * $config->game->get('planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$Position]['fields'] * $config->game->get('planetFactor', 1));
 
-		$return['diameter'] = (int) floor(1000 * sqrt($return['field_max']));
+		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));
 
-		$return['temp_max'] = $planetData[$Position]['temp'];
-		$return['temp_min'] = $return['temp_max'] - 40;
+		$planet->temp_max = $planetData[$Position]['temp'];
+		$planet->temp_min = $planet->temp_max - 40;
 
 		if ($Base)
-		{
-			$return['image'] = 'baseplanet01';
-		}
+			$planet->image = 'baseplanet01';
 		else
 		{
 			$imageNames = array_keys($planetData[$Position]['image']);
 			$imageNameType = $imageNames[array_rand($imageNames)];
 
-			$return['image']  = $imageNameType;
-			$return['image'] .= 'planet';
-			$return['image'] .= $planetData[$Position]['image'][$imageNameType] < 10 ? '0' : '';
-			$return['image'] .= $planetData[$Position]['image'][$imageNameType];
+			$planet->image  = $imageNameType;
+			$planet->image .= 'planet';
+			$planet->image .= $planetData[$Position]['image'][$imageNameType] < 10 ? '0' : '';
+			$planet->image .= $planetData[$Position]['image'][$imageNameType];
 		}
 
-		return $return;
+		return $planet;
 	}
 
 	public function isPositionFree ($galaxy, $system, $position, $type = false)
@@ -388,12 +383,12 @@ class Planet extends Model
 		if (!$galaxy || !$system || !$position)
 			return false;
 
-		$query = "SELECT `id` FROM game_planets WHERE ";
+		$query = "SELECT id FROM game_planets WHERE ";
 
 		if ($type !== false)
-			$query .= "`planet_type` = '" . $type . "' AND ";
+			$query .= "planet_type = '" . $type . "' AND ";
 
-		$query .= "`galaxy` = '" . $galaxy . "' AND `system` = '" . $system . "' AND `planet` = '" . $position . "';";
+		$query .= "galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $position . "';";
 
 		$exist = $this->db->query($query)->fetch();
 
@@ -596,10 +591,10 @@ class Planet extends Model
 				$this->{$res} = 0;
 		}
 
+		$Builded = $this->HandleElementBuildingQueue($productionTime);
+
 		if ($simultion)
 		{
-			$Builded = $this->HandleElementBuildingQueue($productionTime);
-
 			$check = false;
 
 			if (is_array($Builded))
@@ -619,44 +614,7 @@ class Planet extends Model
 		}
 
 		if (!$simultion)
-		{
-			if (!isset($Builded))
-				$Builded = $this->HandleElementBuildingQueue($productionTime);
-
-			$arFields = [];
-
-			if ($this->planet_type == 1)
-			{
-				foreach ($this->storage->reslist['res'] AS $res)
-				{
-					if ($this->{$res} != $this->{'~'.$res})
-						$arFields[$res] = $this->{$res};
-				}
-
-				if ($this->{'~energy_ak'} != $this->energy_ak)
-					$arFields['energy_ak'] = $this->energy_ak;
-			}
-
-			if ($this->queue != $this->{'~queue'})
-				$arFields['queue'] = $this->queue;
-
-			if ($Builded != '')
-			{
-				foreach ($Builded as $Element => $Count)
-					if ($Element <> '' && $this->{$this->storage->resource[$Element]} != $this->{'~'.$this->storage->resource[$Element]})
-						$arFields[$this->storage->resource[$Element]] = $this->{$this->storage->resource[$Element]};
-			}
-
-			if (count($arFields) > 0 || ($this->last_update - $this->{'~last_update'}) >= 60)
-			{
-				$arFields['last_update'] = $this->last_update;
-
-				if ($this->{'~last_active'} != $this->last_active)
-					$arFields['last_active'] = $this->last_active;
-
-				$this->db->updateAsDict('game_planets', $arFields, "id = ".$this->id." AND last_update != ".$this->last_update."");
-			}
-		}
+			$this->update();
 
 		return true;
 	}
@@ -823,7 +781,7 @@ class Planet extends Model
 		if ($this->user->b_tech_planet != 0)
 		{
 			if ($this->user->b_tech_planet != $this->id)
-				$WorkingPlanet = $this->db->query("SELECT id, queue FROM game_planets WHERE `id` = '" . $this->user->b_tech_planet . "';")->fetch();
+				$WorkingPlanet = $this->db->query("SELECT id, queue FROM game_planets WHERE id = '" . $this->user->b_tech_planet . "';")->fetch();
 
 			if (isset($WorkingPlanet))
 				$ThePlanet = $WorkingPlanet;
@@ -1065,12 +1023,7 @@ class Planet extends Model
 
 			$this->db->query("LOCK TABLES ".$this->getSource()." WRITE");
 
-			$this->saveData([
-				'metal'		=> $this->metal,
-				'crystal'	=> $this->crystal,
-				'deuterium'	=> $this->deuterium,
-				'queue'		=> $this->queue
-			]);
+			$this->update();
 
 			$this->db->query("UNLOCK TABLES");
 		}
@@ -1078,20 +1031,17 @@ class Planet extends Model
 
 	public function HandleTechnologieBuild ()
 	{
-		$Result['WorkOn'] = "";
+		$Result['WorkOn'] = '';
 		$Result['OnWork'] = false;
 
 		if ($this->user->b_tech_planet != 0)
 		{
 			if ($this->user->b_tech_planet != $this->id)
-				$WorkingPlanet = $this->db->query("SELECT * FROM game_planets WHERE `id` = '" . $this->user->b_tech_planet . "'")->fetch();
-
-			if (isset($WorkingPlanet))
-				$ThePlanet = $WorkingPlanet;
+				$ThePlanet = Planet::findFirst($this->user->b_tech_planet);
 			else
-				$ThePlanet = $this->toArray();
+				$ThePlanet = &$this;
 
-			$queueManager 	= new Queue($ThePlanet['queue']);
+			$queueManager 	= new Queue($ThePlanet->queue);
 			$queueArray 	= $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
 			if (count($queueArray))
@@ -1104,24 +1054,21 @@ class Planet extends Model
 					$newQueue = $queueManager->get();
 					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
 
-					$this->db->query("UPDATE game_planets SET `queue` = '".json_encode($newQueue)."' WHERE `id` = '" . $ThePlanet['id'] . "'");
-					$this->db->query("UPDATE game_users SET `" . $this->storage->resource[$queueArray[0]['i']] . "` = '" . $this->user->{$this->storage->resource[$queueArray[0]['i']]} . "', `b_tech_planet` = '0' WHERE `id` = '" . $this->user->id . "'");
-
-					if (!isset($WorkingPlanet))
-						$this->assign($ThePlanet);
+					$ThePlanet->queue = json_encode($newQueue);
+					$ThePlanet->save();
 				}
 				else
 				{
-					$Result['WorkOn'] = $ThePlanet;
+					$Result['WorkOn'] = $ThePlanet->toArray();
 					$Result['OnWork'] = true;
 				}
 			}
 			else
-			{
-				$this->db->query("UPDATE game_users SET `b_tech_planet` = '0'  WHERE `id` = '" . $this->user->id . "'");
-
 				$this->user->b_tech_planet = 0;
-			}
+
+			$this->user->update();
+
+			unset($ThePlanet);
 		}
 
 		return $Result;

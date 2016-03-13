@@ -14,7 +14,7 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$MaxColo = $this->db->query("SELECT `colonisation_tech` FROM game_users WHERE id = ".$this->_fleet->owner."")->fetch();
+		$MaxColo = $this->db->query("SELECT colonisation_tech FROM game_users WHERE id = ".$this->_fleet->owner."")->fetch();
 		$iMaxColo = $MaxColo['colonisation_tech'] + 1;
 
 		if ($iMaxColo > $this->config->game->get('maxPlanets', 9))
@@ -22,7 +22,7 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 
 		$planet = new Planet();
 
-		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE `id_owner` = '" . $this->_fleet->owner . "' AND `planet_type` = '1'");
+		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '1'");
 
 		$TargetAdress = sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 

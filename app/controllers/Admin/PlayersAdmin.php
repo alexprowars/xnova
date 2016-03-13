@@ -24,7 +24,7 @@ class PlayerAdmin
 						{
 							$username = $controller->request->get('username');
 
-							$SelUser = $controller->db->query("SELECT u.*, ui.* FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ".(is_numeric($username) ? "u.`id` = '" . $username . "'" : "u.`username` = '" . $username . "'")." LIMIT 1;")->fetch();
+							$SelUser = $controller->db->query("SELECT u.*, ui.* FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ".(is_numeric($username) ? "u.id = '" . $username . "'" : "u.username = '" . $username . "'")." LIMIT 1;")->fetch();
 
 							if (!isset($SelUser['id']))
 								$controller->message('Такого игрока не существует', 'Ошибка', '/admin/paneladmina/', 2);
@@ -44,7 +44,7 @@ class PlayerAdmin
 							$parse['planet_fields'] = $controller->storage->resource;
 
 							if ($controller->user->authlevel > 1)
-								$parse['planet_list'] = $controller->db->extractResult($controller->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $SelUser['id'] . "' ORDER BY id ASC"));
+								$parse['planet_list'] = $controller->db->extractResult($controller->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC"));
 
 							$parse['history_actions'] = [
 								1 => 'Постройка здания',
@@ -58,7 +58,7 @@ class PlayerAdmin
 
 							$parse['transfer_list'] = [];
 
-							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.target_id WHERE t.`user_id` = '" . $SelUser['id'] . "' ORDER BY id DESC"));
+							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.target_id WHERE t.user_id = '" . $SelUser['id'] . "' ORDER BY id DESC"));
 
 							foreach ($transfers AS $transfer)
 							{
@@ -77,7 +77,7 @@ class PlayerAdmin
 
 							$parse['transfer_list_income'] = [];
 
-							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.user_id WHERE t.`target_id` = '" . $SelUser['id'] . "' ORDER BY id DESC"));
+							$transfers = $controller->db->extractResult($controller->db->query("SELECT t.*, u.username AS target FROM game_log_transfers t LEFT JOIN game_users u ON u.id = t.user_id WHERE t.target_id = '" . $SelUser['id'] . "' ORDER BY id DESC"));
 
 							foreach ($transfers AS $transfer)
 							{
@@ -199,7 +199,7 @@ class PlayerAdmin
 							$Player = addslashes($_POST['player']);
 							$NewLvl = intval($_POST['authlvl']);
 
-							$controller->db->query("UPDATE game_users SET `authlevel` = '" . $NewLvl . "' WHERE `username` = '" . $Player . "';");
+							$controller->db->query("UPDATE game_users SET authlevel = '" . $NewLvl . "' WHERE username = '" . $Player . "';");
 
 							$Message = _getText('adm_mess_lvl1') . " " . $Player . " " . _getText('adm_mess_lvl2');
 							$Message .= "<font color=\"red\">" . _getText('adm_usr_level', $NewLvl) . "</font>!";
@@ -211,13 +211,13 @@ class PlayerAdmin
 
 					case 'ip_search':
 						$Pattern = addslashes($_POST['ip']);
-						$SelUser = $controller->db->query("SELECT * FROM game_users WHERE `ip` = INET_ATON('" . $Pattern . "');");
+						$SelUser = $controller->db->query("SELECT * FROM game_users WHERE ip = INET_ATON('" . $Pattern . "');");
 						$parse = [];
 						$parse['adm_this_ip'] = $Pattern;
 						$parse['adm_plyer_lst'] = '';
 						while ($Usr = $SelUser->fetch())
 						{
-							$UsrMain = $controller->db->query("SELECT `name` FROM game_planets WHERE `id` = '" . $Usr['planet_id'] . "';")->fetch();
+							$UsrMain = $controller->db->query("SELECT name FROM game_planets WHERE id = '" . $Usr['planet_id'] . "';")->fetch();
 							$parse['adm_plyer_lst'] .= "<tr><th>" . $Usr['username'] . "</th><th>[" . $Usr['galaxy'] . ":" . $Usr['system'] . ":" . $Usr['planet'] . "] " . $UsrMain['name'] . "</th></tr>";
 						}
 						$controller->view->pick('admin/adminpanel_ans2');

@@ -66,10 +66,10 @@ class Quick
 			if ($target['id_owner'] == $controller->user->id)
 				die('Невозможно выполнить задание!');
 
-			$HeDBRec = $controller->db->query("SELECT id, onlinetime, vacation FROM game_users WHERE `id` = '" . $target['id_owner'] . "';")->fetch();
+			$HeDBRec = $controller->db->query("SELECT id, onlinetime, vacation FROM game_users WHERE id = '" . $target['id_owner'] . "';")->fetch();
 
-			$UserPoints  = $controller->db->query("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $controller->user->id . "';")->fetch();
-			$User2Points = $controller->db->query("SELECT total_points FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $HeDBRec['id'] . "';")->fetch();
+			$UserPoints  = $controller->db->query("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = '" . $controller->user->id . "';")->fetch();
+			$User2Points = $controller->db->query("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = '" . $HeDBRec['id'] . "';")->fetch();
 
 			$MyGameLevel = $UserPoints['total_points'];
 			$HeGameLevel = $User2Points['total_points'];
@@ -150,7 +150,7 @@ class Quick
 
 			foreach ($FleetArray as $Ship => $Count)
 			{
-				$FleetSubQRY .= "`" . $controller->storage->resource[$Ship] . "` = `" . $controller->storage->resource[$Ship] . "` - " . $Count . " , ";
+				$FleetSubQRY .= "" . $controller->storage->resource[$Ship] . " = " . $controller->storage->resource[$Ship] . " - " . $Count . " , ";
 				$ShipArray .=  $Ship . "," . $Count . "!" . (isset($controller->user->{'fleet_' . $Ship}) ? $controller->user->{'fleet_' . $Ship} : 0) . ";";
 				$ShipCount += $Count;
 
@@ -194,7 +194,7 @@ class Quick
 
 				if ($fleet->create())
 				{
-					$controller->db->query("UPDATE game_planets SET " . $FleetSubQRY . " deuterium = deuterium - " . $consumption . " WHERE `id` = '" . $controller->planet->id . "'");
+					$controller->db->query("UPDATE game_planets SET " . $FleetSubQRY . " deuterium = deuterium - " . $consumption . " WHERE id = '" . $controller->planet->id . "'");
 
 					$tutorial = $controller->db->query("SELECT id, quest_id FROM game_users_quests WHERE user_id = ".$controller->user->getId()." AND finish = '0' AND stage = 0")->fetch();
 

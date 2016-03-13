@@ -44,8 +44,8 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 				if ($Rips > 0)
 				{
-					$TargetMoon = $this->db->query("SELECT id, id_owner, diameter FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` = '3';")->fetch();
-					$CurrentUser = $this->db->query("SELECT `rpg_admiral`, `rpg_ingenieur` FROM game_users WHERE `id` = '" . $this->_fleet->owner . "';")->fetch();
+					$TargetMoon = $this->db->query("SELECT id, id_owner, diameter FROM game_planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '3';")->fetch();
+					$CurrentUser = $this->db->query("SELECT rpg_admiral, rpg_ingenieur FROM game_users WHERE id = '" . $this->_fleet->owner . "';")->fetch();
 
 					$moonDestroyChance = round((100 - sqrt($TargetMoon['diameter'])) * (sqrt($Rips)));
 
@@ -75,7 +75,7 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 					{
 						$moonDestroyed = true;
 
-						$this->db->query("UPDATE game_planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE `id` = '" . $TargetMoon['id'] . "';");
+						$this->db->query("UPDATE game_planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE id = '" . $TargetMoon['id'] . "';");
 						$this->db->query("UPDATE game_users SET planet_current = planet_id WHERE id = " . $TargetMoon['id_owner'] . ";");
 
 						$this->db->query("UPDATE ".$this->_fleet->getSource()." SET start_type = 1 WHERE start_galaxy = " . $this->_fleet->end_galaxy . " AND start_system = " . $this->_fleet->end_system . " AND start_planet = " . $this->_fleet->end_planet . " AND start_type = 3;");

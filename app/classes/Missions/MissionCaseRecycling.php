@@ -14,7 +14,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` != 3 LIMIT 1;")->fetch();
+		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type != 3 LIMIT 1;")->fetch();
 
 		$RecyclerCapacity = 0;
 		$OtherFleetCapacity = 0;
@@ -75,7 +75,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 			}
 		}
 
-		$this->db->query("UPDATE game_planets SET `debris_metal` = `debris_metal` - '" . $RecycledGoods["metal"] . "', `debris_crystal` = `debris_crystal` - '" . $RecycledGoods["crystal"] . "' WHERE `id` = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
+		$this->db->query("UPDATE game_planets SET debris_metal = debris_metal - '" . $RecycledGoods["metal"] . "', debris_crystal = debris_crystal - '" . $RecycledGoods["crystal"] . "' WHERE id = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
 
 		$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 

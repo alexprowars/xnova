@@ -333,30 +333,31 @@ class User extends Model
 			 * @var \App\Models\Planet $planet
 			 */
 			$planet = Planet::findFirst($this->planet_current);
-			$planet->assignUser($this);
-			$planet->checkOwnerPlanet();
 
-			// Проверяем корректность заполненных полей
-			$planet->CheckPlanetUsedFields();
-
-			if (isset($planet->id))
+			if ($planet)
 			{
+				$planet->assignUser($this);
+				$planet->checkOwnerPlanet();
+
+				// Проверяем корректность заполненных полей
+				$planet->CheckPlanetUsedFields();
+
 				$dispatcher = $this->getDi()->getShared('dispatcher');
 				$controller = $dispatcher->getControllerName();
 				$action = $dispatcher->getActionName();
 
 				// Обновляем ресурсы на планете когда это необходимо
-				if ((($controller == "overview" || ($controller == "fleet" && $action != 'fleet_3') || $controller == "galaxy" || $controller == "resources" || $controller == "imperium" || $controller == "credits" || $controller == "tutorial" || $controller == "tech" || $controller == "search" || $controller == "support" || $controller == "sim" || $controller == "tutorial") && $planet->last_update > (time() - 60)))
+				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60)))
 					$planet->PlanetResourceUpdate(time(), true);
 				else
 					$planet->PlanetResourceUpdate();
+
+				// Проверка наличия законченных построек и исследований
+				if ($planet->UpdatePlanetBatimentQueueList())
+					$planet->PlanetResourceUpdate(time(), true);
+
+				$this->getDi()->setShared('planet', $planet);
 			}
-
-			// Проверка наличия законченных построек и исследований
-			if ($planet->UpdatePlanetBatimentQueueList())
-				$planet->PlanetResourceUpdate(time(), true);
-
-			$this->getDi()->setShared('planet', $planet);
 		}
 	}
 
@@ -401,7 +402,7 @@ class User extends Model
 			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
 
-			$IsPlanetMine = $this->db->query("SELECT `id`, `id_owner`, `id_ally` FROM game_planets WHERE `id` = '" . $selectPlanet . "' AND (`id_owner` = '" . $this->getId() . "' OR (`id_ally` > 0 AND `id_ally` = '".$this->ally_id."'))")->fetch();
+			$IsPlanetMine = $this->db->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
 
 			if (isset($IsPlanetMine['id']))
 			{
@@ -430,7 +431,7 @@ class User extends Model
 		if (!$userId)
 			return [];
 
-		$qryPlanets = "SELECT `id`, `name`, `image`, `galaxy`, `system`, `planet`, `planet_type`, `destruyed` FROM game_planets WHERE `id_owner` = '" . $userId . "' ";
+		$qryPlanets = "SELECT id, name, image, galaxy, system, planet, planet_type, destruyed FROM game_planets WHERE id_owner = '" . $userId . "' ";
 
 		$qryPlanets .= ($allyId > 0 ? " OR id_ally = '".$allyId."'" : "");
 

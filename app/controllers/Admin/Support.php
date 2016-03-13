@@ -23,13 +23,13 @@ class Support
 					if (!$text)
 						$controller->message('Не заполнены все поля', 'Ошибка', '?set=admin&mode=support', 3);
 
-					$ticket = $controller->db->query("SELECT `player_id`, `text` FROM game_support WHERE `id` = '" . $ID . "';")->fetch();
+					$ticket = $controller->db->query("SELECT player_id, text FROM game_support WHERE id = '" . $ID . "';")->fetch();
 
 					if (isset($ticket['player_id']))
 					{
 						$newtext = $ticket['text'].'<br><br><hr>' . $controller->user->username.'  ответил в '.date("d.m.Y H:i:s", time()).':<br>' . $text;
 
-						$controller->db->query("UPDATE game_support SET `text` = '".addslashes($newtext)."',`status` = '2' WHERE `id` = '".$ID."'");
+						$controller->db->query("UPDATE game_support SET text = '".addslashes($newtext)."',status = '2' WHERE id = '".$ID."'");
 
 						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Поступил ответ на тикет №' . $ID);
 					}
@@ -38,13 +38,13 @@ class Support
 
 				case 'open':
 
-					$ticket = $controller->db->query("SELECT id, text, player_id FROM game_support WHERE `id` = '" . $ID . "';")->fetch();
+					$ticket = $controller->db->query("SELECT id, text, player_id FROM game_support WHERE id = '" . $ID . "';")->fetch();
 
 					if (isset($ticket['id']))
 					{
 						$newtext = $ticket['text'] . '<br><br><hr>' . $controller->user->username . ' открыл тикет в ' . date("j. M Y H:i:s", time());
 
-						$controller->db->query("UPDATE game_support SET `text` = '" . addslashes($newtext) . "', `status` = '2' WHERE `id` = '" . $ID . "'");
+						$controller->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $ID . "'");
 
 						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Был открыт тикет №' . $ID);
 					}
@@ -53,13 +53,13 @@ class Support
 
 				case 'close':
 
-					$ticket = $controller->db->query("SELECT id, text, player_id FROM game_support WHERE `id` = '" . $ID . "';")->fetch();
+					$ticket = $controller->db->query("SELECT id, text, player_id FROM game_support WHERE id = '" . $ID . "';")->fetch();
 
 					if (isset($ticket['id']))
 					{
 						$newtext = $ticket['text'] . '<br><br><hr>' . $controller->user->username . ' закрыл тикет в ' . date("j. M Y H:i:s", time());
 
-						$controller->db->query("UPDATE game_support SET `text` = '" . addslashes($newtext) . "', `status` = '0' WHERE `id` = '" . $ID . "'");
+						$controller->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $ID . "'");
 
 						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Тикет №'.$ID.' закрыт');
 					}

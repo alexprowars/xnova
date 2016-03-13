@@ -28,12 +28,12 @@ class ResourcesController extends ApplicationController
 		{
 			if ($this->planet->merchand < time())
 			{
-				$arFields = ['merchand' => (time() + 172800)];
+				$this->planet->merchand = time() + 172800;
 
 				foreach ($this->storage->reslist['res'] AS $res)
-					$arFields['+'.$res] = $parse['buy_'.$res];
+					$this->planet->{$res} += $parse['buy_'.$res];
 
-				$this->planet->saveData($arFields);
+				$this->planet->update();
 
 				$this->db->query('UPDATE game_users SET credits = credits - 10 WHERE id = ' . $this->user->id . ';');
 				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . (10 * (-1)) . ", 2)");
@@ -101,26 +101,18 @@ class ResourcesController extends ApplicationController
 		$CurrentUser['energy_tech'] = $this->user->energy_tech;
 		$ValidList['percent'] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		
-		if ($_POST)
+		if ($this->request->isPost())
 		{
 			if ($this->user->vacation > 0)
 				$this->message("Включен режим отпуска!");
 
-			$arFields = [];
-
-			foreach ($_POST as $Field => $Value)
+			foreach ($this->request->getPost() as $field => $value)
 			{
-				if (isset($this->planet->{$Field.'_porcent'}) && in_array($Value, $ValidList['percent']))
-				{
-					$arFields[$Field.'_porcent'] = $Value;
-
-					$this->planet->{$Field.'_porcent'} = $Value;
-				}
+				if (isset($this->planet->{$field.'_porcent'}) && in_array($value, $ValidList['percent']))
+					$this->planet->{$field.'_porcent'} = $value;
 			}
 
-			if (count($arFields))
-				$this->planet->saveData($arFields);
-
+			$this->planet->update();
 			$this->planet->PlanetResourceUpdate(time(), true);
 		}
 		

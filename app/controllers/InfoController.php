@@ -234,7 +234,8 @@ class InfoController extends ApplicationController
 
 						$times = round(($cur / $tt) * 3600);
 
-						$this->planet->saveData(['-deuterium' => $cur]);
+						$this->planet->deuterium -= $cur;
+						$this->planet->update();
 
 						$fleet->end_stay += $times;
 						$fleet->end_time += $times;

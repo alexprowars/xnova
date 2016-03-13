@@ -15,7 +15,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$TargetPlanet = $this->db->query("SELECT id_owner FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` = '" . $this->_fleet->end_type . "'")->fetch();
+		$TargetPlanet = $this->db->query("SELECT id_owner FROM game_planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '" . $this->_fleet->end_type . "'")->fetch();
 
 		if ($TargetPlanet['id_owner'] != $this->_fleet->target_owner)
 			$this->ReturnFleet();
@@ -53,7 +53,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 
 	public function ReturnEvent()
 	{
-		$TargetPlanet = $this->db->query("SELECT id_owner FROM game_planets WHERE `galaxy` = '" . $this->_fleet->start_galaxy . "' AND `system` = '" . $this->_fleet->start_system . "' AND `planet` = '" . $this->_fleet->start_planet . "' AND `planet_type` = '" . $this->_fleet->start_type . "';")->fetch();
+		$TargetPlanet = $this->db->query("SELECT id_owner FROM game_planets WHERE galaxy = '" . $this->_fleet->start_galaxy . "' AND system = '" . $this->_fleet->start_system . "' AND planet = '" . $this->_fleet->start_planet . "' AND planet_type = '" . $this->_fleet->start_type . "';")->fetch();
 
 		if ($TargetPlanet['id_owner'] != $this->_fleet->owner)
 			$this->KillFleet();

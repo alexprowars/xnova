@@ -233,8 +233,6 @@ class Queue
 				
 			$this->planet->queue = json_encode($newQueue);
 
-			$update = ['queue' => $this->planet->queue];
-
 			if ($canceledArray['s'] > 0)
 			{
 				$cost = Building::GetBuildingPrice($this->user, $this->planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
@@ -242,13 +240,9 @@ class Queue
 				$this->planet->metal 		+= $cost['metal'];
 				$this->planet->crystal 		+= $cost['crystal'];
 				$this->planet->deuterium 	+= $cost['deuterium'];
-
-				$update['metal'] = $this->planet->metal;
-				$update['crystal'] = $this->planet->crystal;
-				$update['deuterium'] = $this->planet->deuterium;
 			}
 
-			$this->planet->saveData($update);
+			$this->planet->update();
 		}
 	}
 
@@ -347,7 +341,7 @@ class Queue
 			'deuterium'	=> $WorkingPlanet['deuterium']
 		], $WorkingPlanet['id']);
 
-		$this->user->saveData(['b_tech_planet' => $this->user->b_tech_planet]);
+		$this->user->update(['b_tech_planet' => $this->user->b_tech_planet]);
 	}
 
 	private function addShipyardToQueue ($elementId, $count)
@@ -422,7 +416,7 @@ class Queue
 				'd' => 0
 			];
 
-			$this->planet->saveData(
+			$this->planet->update(
 			[
 				'metal' 	=> $this->planet->metal,
 				'crystal' 	=> $this->planet->crystal,
@@ -436,7 +430,7 @@ class Queue
 	{
 		$this->checkQueue();
 		$this->planet->queue = json_encode($this->get());
-		$this->planet->saveData(['queue' => $this->planet->queue]);
+		$this->planet->update();
 	}
 
 	private function checkQueue ()
