@@ -16,6 +16,11 @@ class AllianceMember extends Model
 	public $rank;
 	public $time;
 
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
+
 	public function getSource()
 	{
 		return DB_PREFIX."alliance_members";

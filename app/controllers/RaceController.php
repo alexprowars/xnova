@@ -7,6 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use App\Models\Fleet;
 use App\Queue;
 
 class RaceController extends ApplicationController
@@ -41,11 +42,11 @@ class RaceController extends ApplicationController
 					$queueCount += $queueManager->getCount();
 				}
 
-				$UserFlyingFleets = $this->db->query("SELECT `id` FROM game_fleets WHERE `owner` = '" . $this->user->id . "'");
+				$UserFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 
 				if ($queueCount > 0)
 					$this->message('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "Oшибкa", "/race/", 5);
-				elseif ($UserFlyingFleets->numRows() > 0)
+				elseif ($UserFlyingFleets > 0)
 					$this->message('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "/race/", 5);
 				else
 				{

@@ -47,9 +47,8 @@ class OverviewController extends ApplicationController
 
 		$MissionType 	= $FleetRow->mission;
 
-		/** TODO Переписать в будущем! */
-		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow->toArray(), _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
-		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow->toArray(), _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, _getText('ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
+		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, _getText('type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
 
 		$StartPlanet 	= $FleetRow->owner_name;
 		$StartType 		= $FleetRow->start_type;
@@ -213,7 +212,7 @@ class OverviewController extends ApplicationController
 				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
 			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
 			{
-				$checkFleets = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_fleets WHERE (start_galaxy = " . $this->planet->galaxy . " AND start_system = " . $this->planet->system . " AND start_planet = " . $this->planet->planet . " AND start_type = " . $this->planet->planet_type . ") OR (end_galaxy = " . $this->planet->galaxy . " AND end_system = " . $this->planet->system . " AND end_planet = " . $this->planet->planet . " AND end_type = " . $this->planet->planet_type . ")", true);
+				$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
 
 				if ($checkFleets > 0)
 					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
@@ -507,9 +506,9 @@ class OverviewController extends ApplicationController
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 
-		if ($records === NULL)
+		if ($records === null)
 		{
-			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';", true);
+			$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "'")->fetch();
 
 			if (!is_array($records))
 				$records = [];
@@ -613,6 +612,7 @@ class OverviewController extends ApplicationController
 		}
 
 		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->planet->getMaxFields() * 100);
+		$parse['case_pourcentage'] = min($parse['case_pourcentage'], 100);
 
 		$parse['race'] = _getText('race', $this->user->race);
 

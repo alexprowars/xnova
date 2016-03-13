@@ -7,25 +7,19 @@ namespace App\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
 use App\FleetEngine;
 use App\Helpers;
 
 class MissionCaseRecycling extends FleetEngine implements Mission
 {
-	function __construct($Fleet)
-	{
-			$this->_fleet = $Fleet;
-	}
-
 	public function TargetEvent()
 	{
-		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE `galaxy` = '" . $this->_fleet['end_galaxy'] . "' AND `system` = '" . $this->_fleet['end_system'] . "' AND `planet` = '" . $this->_fleet['end_planet'] . "' AND `planet_type` != 3 LIMIT 1;")->fetch();
+		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` != 3 LIMIT 1;")->fetch();
 
 		$RecyclerCapacity = 0;
 		$OtherFleetCapacity = 0;
 
-		$fleetData = Fleet::unserializeFleet($this->_fleet['fleet_array']);
+		$fleetData = $this->_fleet->getShips();
 
 		foreach ($fleetData as $shipId => $shipArr)
 		{
@@ -40,7 +34,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 				$OtherFleetCapacity += $capacity;
 		}
 
-		$IncomingFleetGoods = $this->_fleet["resource_metal"] + $this->_fleet["resource_crystal"] + $this->_fleet["resource_deuterium"];
+		$IncomingFleetGoods = $this->_fleet->resource_metal + $this->_fleet->resource_crystal + $this->_fleet->resource_deuterium;
 
 		// Если часть ресурсов хранится в переработчиках
 		if ($IncomingFleetGoods > $OtherFleetCapacity)
@@ -88,9 +82,9 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 		$Message = sprintf(_getText('sys_recy_gotten'),
 						Helpers::pretty_number($RecycledGoods["metal"]), _getText('Metal'),
 						Helpers::pretty_number($RecycledGoods["crystal"]), _getText('Crystal'),
-						Helpers::GetTargetAdressLink($this->_fleet));
+						$this->_fleet->getTargetAdressLink());
 
-		$this->game->sendMessage($this->_fleet['owner'], 0, $this->_fleet['start_time'], 4, _getText('sys_mess_spy_control'), $Message);
+		$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 4, _getText('sys_mess_spy_control'), $Message);
 	}
 
 	public function EndStayEvent()

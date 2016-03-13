@@ -11,19 +11,14 @@ use App\FleetEngine;
 
 class MissionCaseRak extends FleetEngine implements Mission
 {
-	function __construct($Fleet)
-	{
-			$this->_fleet = $Fleet;
-	}
-
 	public function TargetEvent()
 	{
 		$this->KillFleet();
 
-		$PlanetRow = $this->db->query("SELECT * FROM game_planets WHERE galaxy = '" . $this->_fleet['end_galaxy'] . "' AND system = '" . $this->_fleet['end_system'] . "' AND planet = '" . $this->_fleet['end_planet'] . "' AND planet_type = 1")->fetch();
+		$PlanetRow = $this->db->query("SELECT * FROM game_planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = 1")->fetch();
 
-		$Defender = $this->db->query("SELECT `defence_tech`  FROM game_users WHERE id = '" . $this->_fleet['target_owner'] . "'")->fetch();
-		$Attacker = $this->db->query("SELECT `military_tech` FROM game_users WHERE id = '" . $this->_fleet['owner'] . "'")->fetch();
+		$Defender = $this->db->query("SELECT `defence_tech`  FROM game_users WHERE id = '" . $this->_fleet->target_owner . "'")->fetch();
+		$Attacker = $this->db->query("SELECT `military_tech` FROM game_users WHERE id = '" . $this->_fleet->owner . "'")->fetch();
 
 		if (isset($PlanetRow['id']) && isset($Defender['defence_tech']))
 		{
@@ -35,7 +30,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 			$Raks = 0;
 			$Primary = 401;
 
-			$temp = explode(';', $this->_fleet['fleet_array']);
+			$temp = explode(';', $this->_fleet->fleet_array);
 			foreach ($temp as $temp2)
 			{
 				$temp2 = explode(',', $temp2);
@@ -63,8 +58,8 @@ class MissionCaseRak extends FleetEngine implements Mission
 			}
 			else
 			{
-				$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->_fleet['owner_name'] . ' <a href="/galaxy/' . $this->_fleet['start_galaxy'] . '/' . $this->_fleet['start_system'] . '/">[' . $this->_fleet['start_galaxy'] . ':' . $this->_fleet['start_system'] . ':' . $this->_fleet['start_planet'] . ']</a>';
-				$message .= ' на планету ' . $this->_fleet['target_owner_name'] . ' <a href="/galaxy/' . $this->_fleet['end_galaxy'] . '/' . $this->_fleet['end_system'] . '/">[' . $this->_fleet['end_galaxy'] . ':' . $this->_fleet['end_system'] . ':' . $this->_fleet['end_planet'] . ']</a>.<br><br>';
+				$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->_fleet->owner_name . ' <a href="/galaxy/' . $this->_fleet->start_galaxy . '/' . $this->_fleet->start_system . '/">[' . $this->_fleet->start_galaxy . ':' . $this->_fleet->start_system . ':' . $this->_fleet->start_planet . ']</a>';
+				$message .= ' на планету ' . $this->_fleet->target_owner_name . ' <a href="/galaxy/' . $this->_fleet->end_galaxy . '/' . $this->_fleet->end_system . '/">[' . $this->_fleet->end_galaxy . ':' . $this->_fleet->end_system . ':' . $this->_fleet->end_planet . ']</a>.<br><br>';
 
 				if ($PlanetRow['interceptor_misil'] > 0)
 				{
@@ -99,7 +94,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 			if (empty($message))
 				$message = "Нет обороны для разрушения!";
 
-			$this->game->sendMessage($this->_fleet['target_owner'], 0, $this->_fleet['start_time'], 3, 'Ракетная атака', $message);
+			$this->game->sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 3, 'Ракетная атака', $message);
 		}
 	}
 

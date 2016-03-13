@@ -47,8 +47,7 @@ if (count($messages))
 				<? foreach ($page->items AS $item): ?>
 					<tr>
 						<th>
-							<input name="showmes<?=$item->id ?>" type="hidden" value="1">
-							<input name="delmes<?=$item->id ?>" type="checkbox" style='width:14px;'>
+							<input name="delete[]" type="checkbox" value="<?=$item->id ?>" style='width:14px;'>
 						</th>
 						<th><?=$this->game->datezone("d.m.y H:i:s", $item->time) ?></th>
 						<th><a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a></th>

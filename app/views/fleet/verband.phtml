@@ -18,24 +18,24 @@
 			<tr height="20">
 				<th><?=($i+1) ?></th>
 				<th>
-					<a><?=_getText('type_mission', $item['mission']) ?></a>
-					<? if (($item['start_time'] + 1) == $item['end_time']): ?>
+					<a><?=_getText('type_mission', $item->mission) ?></a>
+					<? if (($item->start_time + 1) == $item->end_time): ?>
 						<a>(F)</a>
 					<? endif; ?>
 				</th>
 				<th>
-					<a class="tooltip" data-content="<? foreach ($item['fleet'] as $t => $f): ?><?=_getText('tech', $t) ?>: <?=$f['cnt'] ?><br><? endforeach; ?>">
-						<?=\App\Helpers::pretty_number($item['count']) ?>
+					<a class="tooltip" data-content="<? foreach ($item->getShips() as $t => $f): ?><?=_getText('tech', $t) ?>: <?=$f['cnt'] ?><br><? endforeach; ?>">
+						<?=\App\Helpers::pretty_number($item->getTotalShips()) ?>
 					</a>
 				</th>
-				<th><?=\App\Helpers::GetStartAdressLink($item) ?></th>
-				<th><?=$this->game->datezone("d.m H:i:s", $item['start_time']) ?></th>
-				<th><?=\App\Helpers::GetTargetAdressLink($item) ?></th>
-				<th><?=$this->game->datezone("d.m H:i:s", $item['end_time']) ?></th>
+				<th><?=$item->getStartAdressLink() ?></th>
+				<th><?=$this->game->datezone("d.m H:i:s", $item->start_time) ?></th>
+				<th><?=$item->getTargetAdressLink() ?></th>
+				<th><?=$this->game->datezone("d.m H:i:s", $item->end_time) ?></th>
 				<th>
-					<div id="time_0" class="positive"><?=\App\Helpers::pretty_time(floor($item['end_time'] + 1 - time())) ?></div>
+					<div id="time_0" class="positive"><?=\App\Helpers::pretty_time(floor($item->end_time + 1 - time())) ?></div>
 				</th>
-				<th><?=$item['owner_name'] ?></th>
+				<th><?=$item->owner_name ?></th>
 			</tr>
 		<? endforeach; ?>
 		<? if (count($parse['list'])): ?>

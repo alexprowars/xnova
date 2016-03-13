@@ -46,6 +46,11 @@ class Fleet extends Model
 
 	public $username = '';
 
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
+
 	public function getSource()
 	{
 		return DB_PREFIX."fleets";
@@ -53,17 +58,53 @@ class Fleet extends Model
 
 	public function getStartAdressLink ($FleetType = '')
 	{
-		$link  = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $this->start_galaxy . "&amp;system=" . $this->start_system . "\" " . $FleetType . " >";
-		$link .= "[" . $this->start_galaxy . ":" . $this->start_system . ":" . $this->start_planet . "]</a>";
-
-		return $link;
+		return '<a href="/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->start_galaxy.':'.$this->start_system.':'.$this->start_planet.']</a>';
 	}
 
 	public function getTargetAdressLink ($FleetType = '')
 	{
-		$link  = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $this->end_galaxy . "&amp;system=" . $this->end_system . "\" " . $FleetType . " >";
-		$link .= "[" . $this->end_galaxy . ":" . $this->end_system . ":" . $this->end_planet . "]</a>";
+		return '<a href="/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->end_galaxy.':'.$this->end_system.':'.$this->end_planet.']</a>';
+	}
 
-		return $link;
+	public function getTotalShips ()
+	{
+		$result = 0;
+
+		$data = $this->getShips();
+
+		foreach ($data as $type)
+			$result += $type['cnt'];
+
+		return $result;
+	}
+
+	public function getShips ($fleetAmount = '')
+	{
+		if (!$fleetAmount)
+			$fleetAmount = $this->fleet_array;
+
+		$fleetTyps = explode(';', $fleetAmount);
+
+		$fleetAmount = [];
+
+		foreach ($fleetTyps as $fleetTyp)
+		{
+			$temp = explode(',', $fleetTyp);
+
+			if (empty($temp[0]))
+				continue;
+
+			if (!isset($fleetAmount[$temp[0]]))
+				$fleetAmount[$temp[0]] = ['cnt' => 0, 'lvl' => 0];
+
+			$lvl = explode("!", $temp[1]);
+
+			$fleetAmount[$temp[0]]['cnt'] += $lvl[0];
+
+			if (isset($lvl[1]))
+				$fleetAmount[$temp[0]]['lvl'] = $lvl[1];
+		}
+
+		return $fleetAmount;
 	}
 }

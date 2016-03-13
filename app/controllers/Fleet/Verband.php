@@ -8,8 +8,8 @@ namespace App\Controllers\Fleet;
  */
 
 use App\Controllers\FleetController;
-use App\Fleet;
 use App\Lang;
+use App\Models\Fleet;
 
 class Verband
 {
@@ -27,14 +27,17 @@ class Verband
 			return;
 		}
 
-		$fleet = $controller->db->fetchOne("SELECT * FROM game_fleets WHERE id = '" . $fleetid . "' AND owner = " . $controller->user->id . " AND mission = 1");
+		/**
+		 * @var $fleet \App\Models\Fleet
+		 */
+		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetid, $controller->user->id, 1]]);
 
-		if (!isset($fleet['id']))
+		if (!$fleet)
 			$controller->message('Этот флот не существует!', 'Ошибка');
 
-		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet['group_id'] . "'");
+		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet->group_id . "'");
 
-		if ($fleet['start_time'] <= time() || $fleet['end_time'] < time() || $fleet['mess'] == 1)
+		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1)
 			$controller->message('Ваш флот возвращается на планету!', 'Ошибка');
 
 		if ($controller->request->hasPost('action'))
@@ -43,16 +46,16 @@ class Verband
 
 			if ($action == 'addaks')
 			{
-				if (empty($fleet['group_id']))
+				if (!$fleet->group_id)
 				{
 					$controller->db->insertAsDict('game_aks',
 					[
 						'name' 			=> $controller->request->getPost('groupname', 'string'),
-						'fleet_id' 		=> $fleetid,
-						'galaxy' 		=> $fleet['end_galaxy'],
-						'system' 		=> $fleet['end_system'],
-						'planet' 		=> $fleet['end_planet'],
-						'planet_type' 	=> $fleet['end_type'],
+						'fleet_id' 		=> $fleet->id,
+						'galaxy' 		=> $fleet->end_galaxy,
+						'system' 		=> $fleet->end_system,
+						'planet' 		=> $fleet->end_planet,
+						'planet_type' 	=> $fleet->end_type,
 						'user_id' 		=> $controller->user->id,
 					]);
 
@@ -73,16 +76,15 @@ class Verband
 						}
 					}*/
 
-					$fleet['group_id'] = $aksid;
-
-					$controller->db->updateAsDict('game_fleets', ['group_id' => $fleet['group_id']], 'id = '.$fleetid);
+					$fleet->group_id = $aksid;
+					$fleet->save();
 				}
 				else
 					$controller->message('Для этого флота уже задана ассоциация!', 'Ошибка');
 			}
 			elseif ($action == 'adduser')
 			{
-				if ($aks['fleet_id'] != $fleetid)
+				if ($aks['fleet_id'] != $fleet->id)
 					$controller->message("Вы не можете менять имя ассоциации", 'Ошибка');
 
 				if ($controller->request->hasPost('userid'))
@@ -113,7 +115,7 @@ class Verband
 			}
 			elseif ($action == "changename")
 			{
-				if ($aks['fleet_id'] != $fleetid)
+				if ($aks['fleet_id'] != $fleet->id)
 					$controller->message("Вы не можете менять имя ассоциации", 'Ошибка');
 
 				$name = $controller->request->getPost('groupname', 'string');
@@ -140,39 +142,24 @@ class Verband
 			}
 		}
 
-		if ($fleet['group_id'] == 0)
-			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE id = " . $fleetid . "");
+		/**
+		 * @var $fq \App\Models\Fleet[]
+		 */
+		if ($fleet->group_id == 0)
+			$fq = Fleet::find(['conditions' => 'id = ?0', 'bind' => [$fleet->id]]);
 		else
-			$fq = $controller->db->query("SELECT * FROM game_fleets WHERE group_id = " . $fleet['group_id'] . "");
+			$fq = Fleet::find(['conditions' => 'group_id = ?0', 'bind' => [$fleet->group_id]]);
 
-		$parse['group'] = $fleet['group_id'];
-		$parse['fleetid'] = $fleetid;
+		$parse['group'] = $fleet->group_id;
+		$parse['fleetid'] = $fleet->id;
 		$parse['aks'] = $aks;
-		$parse['list'] = [];
+		$parse['list'] = $fq;
 
-		while ($f = $fq->fetch())
-		{
-			$fleets_count = 0;
-
-			$fleetArray = Fleet::unserializeFleet($f['fleet_array']);
-
-			foreach ($fleetArray as $type)
-			{
-				$fleets_count += $type['cnt'];
-			}
-
-			$f['count'] = $fleets_count;
-			$f['fleet'] = $fleetArray;
-
-			$parse['list'][] = $f;
-		}
-
-
-		if ($fleetid == $aks['fleet_id'])
+		if ($fleet->id == $aks['fleet_id'])
 		{
 			$parse['users'] = [];
 
-			$query = $controller->db->query("SELECT game_users.username FROM game_users, game_aks_user WHERE game_users.id = game_aks_user.user_id AND game_aks_user.aks_id = " . $fleet['group_id'] . "");
+			$query = $controller->db->query("SELECT game_users.username FROM game_users, game_aks_user WHERE game_users.id = game_aks_user.user_id AND game_aks_user.aks_id = " . $fleet->group_id . "");
 
 			while ($us = $query->fetch())
 				$parse['users'][] = $us['username'];

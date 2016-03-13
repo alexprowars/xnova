@@ -109,9 +109,7 @@ class StageThree
 		{
 			if ($controller->user->{$controller->storage->resource[124]} >= 1)
 			{
-				$maxexp = $controller->db->query("SELECT COUNT(*) AS `expeditions` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "' AND `mission` = '15';")->fetch();
-
-				$ExpeditionEnCours = $maxexp['expeditions'];
+				$ExpeditionEnCours = \App\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);
 				$MaxExpedition = 1 + floor($controller->user->{$controller->storage->resource[124]} / 3);
 			}
 			else
@@ -209,7 +207,7 @@ class StageThree
 		if ($VacationMode && $fleetmission != 8)
 			$controller->message("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", 'Режим отпуска', "/fleet/", 2);
 
-		$flyingFleets = $controller->db->fetchColumn("SELECT COUNT(id) as Number FROM game_fleets WHERE `owner`='".$controller->user->id."'");
+		$flyingFleets = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$fleetmax = $controller->user->{$controller->storage->resource[108]} + 1;
 
@@ -280,38 +278,37 @@ class StageThree
 		if (!isset($fleetarray))
 			$controller->message("<span class=\"error\"><b>" . _getText('fl_no_fleetarray') . "</b></span>", 'Ошибка', "/fleet/", 2);
 
+		$fleet = new \App\Models\Fleet();
+
 		$distance 		= Fleet::GetTargetDistance($controller->planet->galaxy, $galaxy, $controller->planet->system, $system, $controller->planet->planet, $planet);
 		$duration 		= Fleet::GetMissionDuration($fleetSpeedFactor, $maxFleetSpeed, $distance, $gameFleetSpeed);
 		$consumption 	= Fleet::GetFleetConsumption($fleetarray, $gameFleetSpeed, $duration, $distance, $controller->user);
 
 		$fleet_group_time = 0;
 
-		$i = 0;
-
 		if ($fleet_group_mr > 0)
 		{
 			// Вычисляем время самого медленного флота в совместной атаке
-			$flet = $controller->db->query("SELECT id, start_time, end_time FROM game_fleets WHERE group = '" . $fleet_group_mr . "'");
+			$flet = \App\Models\Fleet::find(['column' => 'id, start_time, end_time', 'conditions' => 'group_id = ?0', 'bind' => [$fleet_group_mr]]);
+
 			$fleet_group_time = $duration + time();
 			$arrr = [];
 
-			while ($flt = $flet->fetch())
+			foreach ($flet as $i => $flt)
 			{
-				$i++;
+				if ($flt->start_time > $fleet_group_time)
+					$fleet_group_time = $flt->start_time;
 
-				if ($flt['start_time'] > $fleet_group_time)
-					$fleet_group_time = $flt['start_time'];
-
-				$arrr[$i]['id'] = $flt['id'];
-				$arrr[$i]['start'] = $flt['start_time'];
-				$arrr[$i]['end'] = $flt['end_time'];
+				$arrr[$i]['id'] = $flt->id;
+				$arrr[$i]['start'] = $flt->start_time;
+				$arrr[$i]['end'] = $flt->end_time;
 			}
 		}
 
 		if ($fleet_group_mr > 0)
-			$fleet['start_time'] = $fleet_group_time;
+			$fleet->start_time = $fleet_group_time;
 		else
-			$fleet['start_time'] = $duration + time();
+			$fleet->start_time = $duration + time();
 
 		if ($fleetmission == 15)
 		{
@@ -401,9 +398,9 @@ class StageThree
 		}
 
 		if ($fleet_group_mr > 0)
-			$fleet['end_time'] = $StayDuration + $duration + $fleet_group_time;
+			$fleet->end_time = $StayDuration + $duration + $fleet_group_time;
 		else
-			$fleet['end_time'] = $StayDuration + (2 * $duration) + time();
+			$fleet->end_time = $StayDuration + (2 * $duration) + time();
 
 		$StockMetal 	= $controller->planet->metal;
 		$StockCrystal 	= $controller->planet->crystal;
@@ -442,12 +439,13 @@ class StageThree
 		//		message ("<span class=\"error\"><b>Ваш флот не может взлететь из-за находящегося поблизости от орбиты планеты атакующего флота.</b></span>", 'Ошибка', "fleet." . $phpEx, 2);
 		//
 
-		if ($fleet_group_mr > 0 && $i > 0 && $fleet_group_time > 0 && isset($arrr))
+		if ($fleet_group_mr > 0 && $fleet_group_time > 0 && isset($arrr))
 		{
 			foreach ($arrr AS $id => $row)
 			{
 				$end = $fleet_group_time + $row['end'] - $row['start'];
-				$controller->db->query("UPDATE game_fleets SET start_time = " . $fleet_group_time . ", end_time = " . $end . ", update = " . $fleet_group_time . " WHERE id = '" . $row['id'] . "'");
+
+				$controller->db->updateAsDict($fleet->getSource(), ['start_time' => $fleet_group_time, 'end_time' => $end, 'update_time' => $fleet_group_time], 'id = '.$row['id']);
 			}
 		}
 
@@ -492,18 +490,19 @@ class StageThree
 
 		if (isset($TargetPlanet['id']) && $TargetPlanet['id_owner'] == 1)
 		{
-			$fleet['start_time'] = time() + 30;
-			$fleet['end_time'] = time() + 60;
+			$fleet->start_time = time() + 30;
+			$fleet->end_time = time() + 60;
+
 			$consumption = 0;
 		}
 
 		/*if ($controller->user->isAdmin() && $fleetmission != 6)
 		{
-			$fleet['start_time'] 	= time() + 15;
-			$fleet['end_time'] 		= time() + 30;
+			$fleet->start_time 	= time() + 15;
+			$fleet->end_time 	= time() + 30;
 
 			if ($StayTime)
-				$StayTime = $fleet['start_time'] + 5;
+				$StayTime = $fleet->start_time + 5;
 
 			$consumption = 0;
 		}*/
@@ -533,18 +532,15 @@ class StageThree
 		else
 			$raunds = 0;
 
-		$controller->db->insertAsDict('game_fleets',
-		[
+		$fleet->create([
 			'owner' 				=> $controller->user->id,
 			'owner_name' 			=> $controller->planet->name,
 			'mission' 				=> $fleetmission,
 			'fleet_array' 			=> $fleet_array,
-			'start_time' 			=> $fleet['start_time'],
 			'start_galaxy' 			=> $controller->planet->galaxy,
 			'start_system' 			=> $controller->planet->system,
 			'start_planet' 			=> $controller->planet->planet,
 			'start_type' 			=> $controller->planet->planet_type,
-			'end_time' 				=> $fleet['end_time'],
 			'end_stay' 				=> $StayTime,
 			'end_galaxy' 			=> $galaxy,
 			'end_system' 			=> $system,
@@ -558,7 +554,7 @@ class StageThree
 			'group_id' 				=> $fleet_group_mr,
 			'raunds' 				=> $raunds,
 			'create_time' 			=> time(),
-			'update_time' 			=> $fleet['start_time']
+			'update_time' 			=> $fleet->start_time
 		]);
 
 		$controller->planet->metal 		-= $TransMetal;
@@ -595,10 +591,10 @@ class StageThree
 		$html .= "<th>" . $galaxy . ":" . $system . ":" . $planet . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_time_go') . "</th>";
-		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet['start_time']) . "</th>";
+		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet->start_time) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_time_back') . "</th>";
-		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet['end_time']) . "</th>";
+		$html .= "<th>" . $controller->game->datezone("d H:i:s", $fleet->end_time) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<td class=\"c\" colspan=\"2\">" . _getText('fl_title') . "</td>";
 

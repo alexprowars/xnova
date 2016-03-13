@@ -1016,3 +1016,16 @@ footer a:hover {
 #windowDialog > .row {
 	margin: 0;
 }
+
+#prophiler .toolbar nav ul li {
+	padding: 0 5px !important;
+}
+
+#prophiler .toolbar h1 {
+	padding: 0 15px !important;
+	font-size: 16px !important;
+}
+
+#prophiler .toolbar {
+	min-height: inherit !important;
+}

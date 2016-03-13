@@ -9,6 +9,7 @@ namespace App\Controllers;
 
 use App\Fleet;
 use App\Helpers;
+use App\Models\Fleet as FleetModel;
 
 class PhalanxController extends ApplicationController
 {
@@ -64,37 +65,38 @@ class PhalanxController extends ApplicationController
 			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 		
 		$missiontype = [1 => 'Атаковать', 3 => 'Транспорт', 4 => 'Оставить', 5 => 'Удерживать', 6 => 'Шпионаж', 7 => 'Колонизировать', 8 => 'Переработать', 9 => 'Уничтожить'];
+
+		$fq = FleetModel::find([
+			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
+			'bind' => ['galaxy' => $g, 'system' => $s, 'planet' => $i],
+			'order' => 'start_time asc'
+		]);
 		
-		$fq = $this->db->query("SELECT * FROM game_fleets WHERE owner != 1 AND ((start_galaxy = '" . $g . "' AND start_system = '" . $s . "' AND start_planet = '" . $i . "' AND start_type != 3) OR (end_galaxy = '" . $g . "' AND end_system = '" . $s . "' AND end_planet = '" . $i . "')) ORDER BY `start_time`");
+		$list = [];
 		
-		$parse = [];
-		$ii = 0;
-		
-		$parse['manobras'] = '';
-		
-		while ($row = $fq->fetch())
+		foreach ($fq as $ii => $row)
 		{
-			if ($row['start_galaxy'] == $g && $row['start_system'] == $s && $row['start_planet'] == $i)
+			if ($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i)
 				$end = 0;
 			else
 				$end = 1;
 		
-			$timerek = $row['start_time'];
+			$timerek = $row->start_time;
 
-			if ($row['mission'] != 6)
+			if ($row->mission != 6)
 				$kolormisjido = 'lime';
 			else
 				$kolormisjido = 'orange';
 
-			$g1 = $row['start_galaxy'];
-			$s1 = $row['start_system'];
-			$i1 = $row['start_planet'];
-			$t1 = $row['start_type'];
+			$g1 = $row->start_galaxy;
+			$s1 = $row->start_system;
+			$i1 = $row->start_planet;
+			$t1 = $row->start_type;
 		
-			$g2 = $row['end_galaxy'];
-			$s2 = $row['end_system'];
-			$i2 = $row['end_planet'];
-			$t2 = $row['end_type'];
+			$g2 = $row->end_galaxy;
+			$s2 = $row->end_system;
+			$i2 = $row->end_planet;
+			$t2 = $row->end_type;
 		
 			if ($t1 == 3)
 				$type = "лун";
@@ -106,55 +108,46 @@ class PhalanxController extends ApplicationController
 			else
 				$type2 = "планет";
 
-			$nome = $row['owner_name'];
-			$nome2 = $row['target_owner_name'];
+			$nome = $row->owner_name;
+			$nome2 = $row->target_owner_name;
+
+			$item = '';
 		
 			if ($timerek > time() && $end == 1 && !($t1 == 3 && ($t2 == 2 || $t2 == 3)))
 			{
-				$parse['manobras'] .= "<tr><th><div id=\"bxxfs$ii\" class=\"z\"></div><font color=\"lime\">" . $this->game->datezone("H:i:s", $row['start_time']) . "</font> </th>";
+				$item .= "<tr><th><div id=\"bxxfs$ii\" class=\"z\"></div><font color=\"lime\">" . $this->game->datezone("H:i:s", $row->start_time) . "</font> </th>";
 		
 				$Label = "fs";
-				$Time = $row['start_time'] - time();
-				$parse['manobras'] .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
+				$Time = $row->start_time - time();
+				$item .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
 		
-				$parse['manobras'] .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$parse['manobras'] .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
+				$item .= "<th><font color=\"$kolormisjido\">Игрок ";
+				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
-				$parse['manobras'] .= " с " . $type . "ы " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font> летит на " . $type2 . "у " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font>. Задание:";
-				$parse['manobras'] .= " <font color=\"white\">{$missiontype[$row['mission']]}</font></th>";
-		
-				$ii++;
+				$item .= " с " . $type . "ы " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font> летит на " . $type2 . "у " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font>. Задание:";
+				$item .= " <font color=\"white\">{$missiontype[$row->mission]}</font></th>";
 			}
 		
-			if ($row['mission'] <> 4 && $end == 0 && $t1 != 3)
+			if ($row->mission <> 4 && $end == 0 && $t1 != 3)
 			{
-				$parse['manobras'] .= "<tr><th><div id=\"bxxfe$ii\" class=\"z\"></div><font color=\"green\">" . $this->game->datezone("H:i:s", $row['end_time']) . "</font></th>";
+				$item .= "<tr><th><div id=\"bxxfe$ii\" class=\"z\"></div><font color=\"green\">" . $this->game->datezone("H:i:s", $row->end_time) . "</font></th>";
 		
 				$Label = "fe";
-				$Time = $row['end_time'] - time();
-				$parse['manobras'] .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
+				$Time = $row->end_time - time();
+				$item .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
 		
-				$parse['manobras'] .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$parse['manobras'] .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
+				$item .= "<th><font color=\"$kolormisjido\">Игрок ";
+				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
-				$parse['manobras'] .= " с " . $type2 . "ы " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font> возвращается на " . $type . "у " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font>. Задание:";
-				$parse['manobras'] .= " <font color=\"white\">{$missiontype[$row['mission']]}</font></th></tr>";
-		
-				$ii++;
+				$item .= " с " . $type2 . "ы " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font> возвращается на " . $type . "у " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font>. Задание:";
+				$item .= " <font color=\"white\">{$missiontype[$row->mission]}</font></th></tr>";
 			}
+
+			$list[] = $item;
 		}
-		
-		if ($ii > 0)
-		{
-			$this->view->setVar('parse', $parse);
-		
-			$html = '';
-		}
-		else
-			$html = "<center><table width=519><tr><td class=c colspan=7>Нет флотов.</td></tr><tr><th>На этой планете нет движения флотов.</th></tr></table></center>";
 
 		$this->tag->setTitle('Сенсорная фаланга');
-		$this->view->setVar('html', $html);
+		$this->view->setVar('list', $list);
 		$this->showTopPanel(false);
 		$this->showLeftPanel(false);
 	}

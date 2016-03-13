@@ -7,9 +7,9 @@ namespace App;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use App\Models\Fleet as FleetModel;
 use App\Models\User;
 use Phalcon\Di;
-use Phalcon\DiInterface;
 
 class Fleet extends Building
 {
@@ -91,10 +91,13 @@ class Fleet extends Building
 			{
 				if ($user->{$storage->resource[$storage->CombatCaps[$Ship]['engine_up']['tech']]} >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
 				{
-					$storage->CombatCaps[$Ship]['type_engine']++;
-					$storage->CombatCaps[$Ship]['speed'] = $storage->CombatCaps[$Ship]['engine_up']['speed'];
+					$tmp = $storage['CombatCaps'];
 
-					unset($storage->CombatCaps[$Ship]['engine_up']);
+					$tmp[$Ship]['type_engine']++;
+					$tmp[$Ship]['speed'] = $tmp[$Ship]['engine_up']['speed'];
+
+					unset($tmp[$Ship]['engine_up']);
+					$storage->CombatCaps = $tmp;
 				}
 			}
 		}
@@ -149,88 +152,46 @@ class Fleet extends Building
 		return $stay;
 	}
 
-	static function unserializeFleet ($fleetAmount)
+	static function CreateFleetPopupedFleetLink (FleetModel $FleetRow, $Texte, $FleetType, User $user)
 	{
-		$fleetTyps = explode(';', $fleetAmount);
-
-		$fleetAmount = [];
-
-		foreach ($fleetTyps as $fleetTyp)
-		{
-			$temp = explode(',', $fleetTyp);
-
-			if (empty($temp[0]))
-				continue;
-
-			if (!isset($fleetAmount[$temp[0]]))
-				$fleetAmount[$temp[0]] = ['cnt' => 0, 'lvl' => 0];
-
-			$lvl = explode("!", $temp[1]);
-
-			$fleetAmount[$temp[0]]['cnt'] += $lvl[0];
-
-			if (isset($lvl[1]))
-				$fleetAmount[$temp[0]]['lvl'] = $lvl[1];
-		}
-
-		return $fleetAmount;
-	}
-
-	static function CreateFleetPopupedFleetLink ($FleetRow, $Texte, $FleetType, User $user)
-	{
-		$FleetRec = explode(";", $FleetRow['fleet_array']);
+		$FleetRec = $FleetRow->getShips();
 
 		$FleetPopup = "<table width=200>";
 		$r = 'javascript:;';
+
 		$Total = 0;
 
-		if ($FleetRow['owner'] != $user->id && $user->spy_tech < 2)
+		foreach ($FleetRec as $fleet)
+			$Total += $fleet['cnt'];
+
+		if ($FleetRow->owner != $user->id && $user->spy_tech < 2)
 		{
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
 		}
-		elseif ($FleetRow['owner'] != $user->id && $user->spy_tech < 4)
+		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 4)
 		{
-			foreach ($FleetRec as $Group)
-			{
-				if ($Group != '')
-				{
-					$Ship = explode(",", $Group);
-					$Count = explode("!", $Ship[1]);
-					$Total = $Total + $Count[0];
-				}
-			}
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
-		elseif ($FleetRow['owner'] != $user->id && $user->spy_tech < 8)
+		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 8)
 		{
-			foreach ($FleetRec as $Group)
+			foreach ($FleetRec as $id => $fleet)
 			{
-				if ($Group != '')
-				{
-					$Ship = explode(",", $Group);
-					$Count = explode("!", $Ship[1]);
-					$Total = $Total + $Count[0];
-					$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . _getText('tech', $Ship[0]) . "<font></td></tr>";
-				}
+				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . _getText('tech', $id) . "<font></td></tr>";
 			}
+
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
 		else
 		{
-			if ($FleetRow['target_owner'] == $user->id && $FleetRow['mission'] == 1)
+			if ($FleetRow->target_owner == $user->id && $FleetRow->mission == 1)
 				$r = '/sim/';
 
-			foreach ($FleetRec as $Group)
+			foreach ($FleetRec as $id => $fleet)
 			{
-				if ($Group != '')
-				{
-					$Ship = explode(",", $Group);
-					$Count = explode("!", $Ship[1]);
-					$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $Ship[0]) . ":<font></td><td width=25% align=right><font color=white>" . Helpers::pretty_number($Count[0]) . "<font></td></tr>";
+				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Helpers::pretty_number($fleet['cnt']) . "<font></td></tr>";
 
-					if ($r != 'javascript:;')
-						$r .= $Group . ';';
-				}
+				if ($r != 'javascript:;')
+					$r .= $id.','.$fleet['cnt'].'!'.$fleet['lvl'].';';
 			}
 		}
 
@@ -245,29 +206,23 @@ class Fleet extends Building
 
 	static function CreateFleetPopupedMissionLink ($FleetRow, $Texte, $FleetType)
 	{
-		$FleetTotalC = $FleetRow['resource_metal'] + $FleetRow['resource_crystal'] + $FleetRow['resource_deuterium'];
+		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
 
 		if ($FleetTotalC != 0)
 		{
 			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_metal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_crystal']) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow['resource_deuterium']) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_metal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_crystal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_deuterium) . "<font></td></tr>";
 			$FRessource .= "</table>";
 		}
 		else
-		{
 			$FRessource = "";
-		}
 
 		if ($FRessource <> "")
-		{
 			$MissionPopup = "<a href='javascript:;' data-content='" . $FRessource . "' class=\"tooltip " . $FleetType . "\">" . $Texte . "</a>";
-		}
 		else
-		{
 			$MissionPopup = $Texte . "";
-		}
 
 		return $MissionPopup;
 	}

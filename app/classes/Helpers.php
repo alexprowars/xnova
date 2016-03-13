@@ -246,20 +246,6 @@ class Helpers
 		return $pages;
 	}
 
-	static function GetStartAdressLink ($FleetRow, $FleetType = '')
-	{
-		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['start_galaxy'] . "&amp;system=" . $FleetRow['start_system'] . "\" " . $FleetType . " >";
-		$Link .= "[" . $FleetRow['start_galaxy'] . ":" . $FleetRow['start_system'] . ":" . $FleetRow['start_planet'] . "]</a>";
-		return $Link;
-	}
-
-	static function GetTargetAdressLink ($FleetRow, $FleetType = '')
-	{
-		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $FleetRow['end_galaxy'] . "&amp;system=" . $FleetRow['end_system'] . "\" " . $FleetType . " >";
-		$Link .= "[" . $FleetRow['end_galaxy'] . ":" . $FleetRow['end_system'] . ":" . $FleetRow['end_planet'] . "]</a>";
-		return $Link;
-	}
-
 	static function BuildPlanetAdressLink ($CurrentPlanet)
 	{
 		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $CurrentPlanet['galaxy'] . "&amp;system=" . $CurrentPlanet['system'] . "\">";

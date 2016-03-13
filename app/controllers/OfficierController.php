@@ -89,7 +89,7 @@ class OfficierController extends ApplicationController
 
 				if ($this->user->{$this->storage->resource[$officier]} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->storage->datezone("d.m.Y H:i", $this->user->{$this->storage->resource[$officier]}) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->storage->resource[$officier]}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else

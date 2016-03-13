@@ -1,12 +1,15 @@
-<table width="519">
+<table class="table">
 	<tr>
 		<td class="c" colspan="7">Обнаружена следующая активность на планете:
 		</td>
 	</tr>
-
-
-	<?=$parse['manobras'] ?>
-
+	<? if (!count($list)): ?>
+		<tr>
+			<th>На этой планете нет движения флотов.</th>
+		</tr>
+	<? else: ?>
+		<? foreach ($list as $item): ?>
+			<?=$item ?>
+		<? endforeach; ?>
+	<? endif; ?>
 </table>
-
-<?=$html ?>

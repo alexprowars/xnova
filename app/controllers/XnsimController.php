@@ -253,6 +253,8 @@ class XnsimController extends ApplicationController
 	{
 		$playerGroupObj = new PlayerGroup();
 
+		$model = new \App\Models\Fleet();
+
 		for ($i = $s; $i < MAX_SLOTS * 2; $i++)
 		{
 			if ($i <= MAX_SLOTS && $i < (MAX_SLOTS + $s) && $r[$i] != "")
@@ -260,7 +262,7 @@ class XnsimController extends ApplicationController
 				$res = [];
 				$fleets = [];
 
-				$fleetData = FleetObject::unserializeFleet($r[$i]);
+				$fleetData = $model->getShips($r[$i]);
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{

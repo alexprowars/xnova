@@ -18,7 +18,7 @@ class StageZero
 		if (!$controller->planet)
 			$controller->message(_getText('fl_noplanetrow'), _getText('fl_error'));
 
-		$MaxFlyingFleets = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
+		$MaxFlyingFleets = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$MaxExpedition = $controller->user->{$controller->storage->resource[124]};
 		$ExpeditionEnCours = 0;
@@ -26,7 +26,7 @@ class StageZero
 
 		if ($MaxExpedition >= 1)
 		{
-			$ExpeditionEnCours = $controller->db->fetchColumn("SELECT COUNT(owner) AS `expedi` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "' AND `mission` = '15';");
+			$ExpeditionEnCours = \App\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);;
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
@@ -65,22 +65,20 @@ class StageZero
 		$parse['planettype'] = $planettype;
 		$parse['mission'] = $target_mission;
 
-		$fq = $controller->db->query("SELECT * FROM game_fleets WHERE owner=" . $controller->user->id . "");
+		/**
+		 * @var $fq \App\Models\Fleet[]
+		 */
+		$fq = \App\Models\Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$parse['fleets'] = [];
 
-		while ($f = $fq->fetch())
+		foreach ($fq as $f)
 		{
-			$f['fleet_count'] = 0;
+			$item = $f->toArray();
+			$item['fleet_count'] = $f->getTotalShips();
+			$item['fleet_array'] = $f->getShips();
 
-			$fleetArray = Fleet::unserializeFleet($f['fleet_array']);
-
-			foreach ($fleetArray as $fleetId => $fleetData)
-				$f['fleet_count'] += $fleetData['cnt'];
-
-			$f['fleet_array'] = $fleetArray;
-
-			$parse['fleets'][]= $f;
+			$parse['fleets'][] = $item;
 		}
 
 		$parse['mission_text'] = '';

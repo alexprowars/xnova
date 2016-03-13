@@ -10,6 +10,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Lang;
 use App\Mail\PHPMailer;
+use App\Models\Fleet;
 use App\Queue;
 
 class OptionsController extends ApplicationController
@@ -149,11 +150,11 @@ class OptionsController extends ApplicationController
 					$queueCount += $queueManager->getCount();
 				}
 
-				$UserFlyingFleets = $this->db->query("SELECT `id` FROM game_fleets WHERE `owner` = '" . $this->user->id . "'");
+				$UserFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 
 				if ($queueCount > 0)
 					$this->message('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe. Строится: '.$queueCount.' объектов.', "Oшибкa", "/overview/", 5);
-				elseif ($UserFlyingFleets->numRows() > 0)
+				elseif ($UserFlyingFleets > 0)
 					$this->message('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "/overview/", 5);
 				else
 				{

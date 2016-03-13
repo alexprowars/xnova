@@ -20,6 +20,11 @@ class Message extends Model
 	public $from;
 	public $text;
 
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
+
 	public function getSource()
 	{
 		return DB_PREFIX."messages";

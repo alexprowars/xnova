@@ -7,6 +7,7 @@ namespace App;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use App\Models\Fleet;
 use App\Models\Planet;
 use App\Models\User;
 use Phalcon\Di\Injectable;
@@ -22,36 +23,41 @@ use Phalcon\Di\Injectable;
  */
 class FleetEngine extends Injectable
 {
-	public $_fleet = [];
+	public $_fleet;
+
+	function __construct(Fleet $Fleet)
+	{
+			$this->_fleet = $Fleet;
+	}
 
 	public function KillFleet ($fleetId = false)
 	{
 		if (!$fleetId)
-			$fleetId = $this->_fleet['id'];
+			$fleetId = $this->_fleet->id;
 
-		$this->db->delete('game_fleets', 'id = ?', [$fleetId]);
+		$this->db->delete($this->_fleet->getSource(), 'id = ?', [$fleetId]);
 	}
 
 	public function RestoreFleetToPlanet ($Start = true, $fleet = true)
 	{
-		if (!isset($this->_fleet["id"]))
+		if (!isset($this->_fleet->id))
 			return;
 
 		if ($fleet)
 		{
-			if ($Start && $this->_fleet['start_type'] == 3)
+			if ($Start && $this->_fleet->start_type == 3)
 			{
-				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet['start_galaxy'] . "' AND `system` = '" . $this->_fleet['start_system'] . "' AND `planet` = '" . $this->_fleet['start_planet'] . "' AND `planet_type` = '" . $this->_fleet['start_type'] . "'")->fetch();
+				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet->start_galaxy . "' AND `system` = '" . $this->_fleet->start_system . "' AND `planet` = '" . $this->_fleet->start_planet . "' AND `planet_type` = '" . $this->_fleet->start_type . "'")->fetch();
 
 				if ($CheckFleet['destruyed'] != 0)
-					$this->_fleet['start_type'] = 1;
+					$this->_fleet->start_type = 1;
 			}
-			elseif ($this->_fleet['end_type'] == 3)
+			elseif ($this->_fleet->end_type == 3)
 			{
-				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet['end_galaxy'] . "' AND `system` = '" . $this->_fleet['end_system'] . "' AND `planet` = '" . $this->_fleet['end_planet'] . "' AND `planet_type` = '" . $this->_fleet['end_type'] . "'")->fetch();
+				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` = '" . $this->_fleet->end_type . "'")->fetch();
 
 				if ($CheckFleet['destruyed'] != 0)
-					$this->_fleet['end_type'] = 1;
+					$this->_fleet->end_type = 1;
 			}
 		}
 
@@ -60,7 +66,7 @@ class FleetEngine extends Injectable
 		else
 			$p = 'end';
 
-		$TargetPlanet = Planet::findByCoords($this->_fleet[$p.'_galaxy'], $this->_fleet[$p.'_system'], $this->_fleet[$p.'_planet'], $this->_fleet[$p.'_type']);
+		$TargetPlanet = Planet::findByCoords($this->_fleet->{$p.'_galaxy'}, $this->_fleet->{$p.'_system'}, $this->_fleet->{$p.'_planet'}, $this->_fleet->{$p.'_type'});
 
 		if (isset($TargetPlanet->id) && $TargetPlanet->id_owner > 0)
 		{
@@ -80,7 +86,7 @@ class FleetEngine extends Injectable
 
 		if ($fleet)
 		{
-			$fleetData = Fleet::unserializeFleet($this->_fleet['fleet_array']);
+			$fleetData = $this->_fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
@@ -89,31 +95,31 @@ class FleetEngine extends Injectable
 			}
 		}
 
-		$update['+metal'] 		= $this->_fleet['resource_metal'];
-		$update['+crystal'] 	= $this->_fleet['resource_crystal'];
-		$update['+deuterium'] 	= $this->_fleet['resource_deuterium'];
+		$update['+metal'] 		= $this->_fleet->resource_metal;
+		$update['+crystal'] 	= $this->_fleet->resource_crystal;
+		$update['+deuterium'] 	= $this->_fleet->resource_deuterium;
 
 		$this->db->updateAsDict('game_planets', $update, [
 			'conditions' => 'galaxy = ? AND system = ? AND planet = ? AND planet_type = ?',
 			'bind' => [
-				$this->_fleet[$p.'_galaxy'],
-				$this->_fleet[$p.'_system'],
-				$this->_fleet[$p.'_planet'],
-				$this->_fleet[$p.'_type']
+				$this->_fleet->{$p.'_galaxy'},
+				$this->_fleet->{$p.'_system'},
+				$this->_fleet->{$p.'_planet'},
+				$this->_fleet->{$p.'_type'}
 			]
 		]);
 	}
 
 	public function StoreGoodsToPlanet ($Start = true)
 	{
-		if (!isset($this->_fleet["id"]))
+		if (!isset($this->_fleet->id))
 			return;
 
 		$update =
 		[
-			'+metal' 		=> $this->_fleet['resource_metal'],
-			'+crystal' 		=> $this->_fleet['resource_crystal'],
-			'+deuterium' 	=> $this->_fleet['resource_deuterium']
+			'+metal' 		=> $this->_fleet->resource_metal,
+			'+crystal' 		=> $this->_fleet->resource_crystal,
+			'+deuterium' 	=> $this->_fleet->resource_deuterium
 		];
 
 		if ($Start)
@@ -124,10 +130,10 @@ class FleetEngine extends Injectable
 		$this->db->updateAsDict('game_planets', $update, [
 			'conditions' => 'galaxy = ? AND system = ? AND planet = ? AND planet_type = ?',
 			'bind' => [
-				$this->_fleet[$p.'_galaxy'],
-				$this->_fleet[$p.'_system'],
-				$this->_fleet[$p.'_planet'],
-				$this->_fleet[$p.'_type']
+				$this->_fleet->{$p.'_galaxy'},
+				$this->_fleet->{$p.'_system'},
+				$this->_fleet->{$p.'_planet'},
+				$this->_fleet->{$p.'_type'}
 			]
 		]);
 	}
@@ -259,26 +265,26 @@ class FleetEngine extends Injectable
 	public function ReturnFleet ($update = [], $fleetId = false)
 	{
 		$update['mess'] = 1;
-		$update['update_time'] = $this->_fleet['end_time'];
+		$update['update_time'] = $this->_fleet->end_time;
 
 		if (!$fleetId)
-			$fleetId = $this->_fleet['id'];
+			$fleetId = $this->_fleet->id;
 
-		$this->db->updateAsDict('game_fleets', $update, 'id = '.$fleetId);
+		$this->db->updateAsDict($this->_fleet->getSource(), $update, 'id = '.$fleetId);
 
-		if ($this->_fleet['group_id'] != 0)
+		if ($this->_fleet->group_id != 0)
 		{
-			$this->db->delete('game_aks', 'id = ?', [$this->_fleet['group_id']]);
-			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet['group_id']]);
+			$this->db->delete('game_aks', 'id = ?', [$this->_fleet->group_id]);
+			$this->db->delete('game_aks_user', 'aks_id = ?', [$this->_fleet->group_id]);
 		}
 	}
 
 	public function StayFleet ($update = [])
 	{
 		$update['mess'] = 3;
-		$update['update_time'] = $this->_fleet['end_stay'];
+		$update['update_time'] = $this->_fleet->end_stay;
 
-		$this->db->updateAsDict('game_fleets', $update, 'id = '.$this->_fleet['id']);
+		$this->_fleet->save($update);
 	}
 
 	public function convertFleetToDebris ($fleet)

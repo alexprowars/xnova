@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Models\Planet;
 
 class Moons
 {
@@ -37,7 +38,9 @@ class Moons
 
 					$Diamet = min(max($Diamet, 20), 0);
 
-					$moon = $controller->planet->createMoon($Galaxy, $System, $Planet, $UserId, $Diamet);
+					$planet = new Planet();
+
+					$moon = $planet->createMoon($Galaxy, $System, $Planet, $UserId, $Diamet);
 
 					if ($moon !== false)
 						$controller->message('ID: ' . $moon);

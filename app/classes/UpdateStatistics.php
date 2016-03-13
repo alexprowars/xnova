@@ -8,6 +8,7 @@ namespace App;
  */
 
 use App\Mail\PHPMailer;
+use App\Models\Fleet;
 use App\Models\User;
 use Phalcon\Di\Injectable;
 
@@ -162,22 +163,18 @@ class UpdateStatistics extends Injectable
 		$FleetPoints = 0;
 		$FleetArray = [];
 
-		$split = trim(str_replace(';', ' ', $CurrentFleet));
-		$split = explode(' ', $split);
-
-		foreach ($split as $ship)
+		foreach ($CurrentFleet as $type => $ship)
 		{
-			list($typ, $temp) = explode(',', $ship);
-			list($amount) = explode('!', $temp);
-			$Units = $this->storage->pricelist[$typ]['metal'] + $this->storage->pricelist[$typ]['crystal'] + $this->storage->pricelist[$typ]['deuterium'];
-			$FleetPoints += ($Units * $amount);
-			if ($typ != 212)
-				$FleetCounts += $amount;
+			$Units = $this->storage->pricelist[$type]['metal'] + $this->storage->pricelist[$type]['crystal'] + $this->storage->pricelist[$type]['deuterium'];
+			$FleetPoints += ($Units * $ship['cnt']);
 
-			if (isset($FleetArray[$typ]))
-				$FleetArray[$typ] += $amount;
+			if ($type != 212)
+				$FleetCounts += $ship['cnt'];
+
+			if (isset($FleetArray[$type]))
+				$FleetArray[$type] += $ship['cnt'];
 			else
-				$FleetArray[$typ] = $amount;
+				$FleetArray[$type] = $ship['cnt'];
 		}
 
 		$RetValue['FleetCount'] = $FleetCounts;
@@ -243,23 +240,26 @@ class UpdateStatistics extends Injectable
 	{
 		$fleetPoints = [];
 
-		$UsrFleets = $this->db->query("SELECT * FROM game_fleets");
+		/**
+		 * @var $UsrFleets Fleet[]
+		 */
+		$UsrFleets = Fleet::find();
 
-		while ($CurFleet = $UsrFleets->fetch())
+		foreach ($UsrFleets as $CurFleet)
 		{
-			$Points = $this->GetFleetPointsOnTour($CurFleet['fleet_array']);
+			$Points = $this->GetFleetPointsOnTour($CurFleet->getShips());
 
-			if (!isset($fleetPoints[$CurFleet['owner']]))
+			if (!isset($fleetPoints[$CurFleet->owner]))
 			{
-				$fleetPoints[$CurFleet['owner']] = [];
-				$fleetPoints[$CurFleet['owner']]['points'] = 0;
-				$fleetPoints[$CurFleet['owner']]['count'] = 0;
-				$fleetPoints[$CurFleet['owner']]['array'] = [];
+				$fleetPoints[$CurFleet->owner] = [];
+				$fleetPoints[$CurFleet->owner]['points'] = 0;
+				$fleetPoints[$CurFleet->owner]['count'] = 0;
+				$fleetPoints[$CurFleet->owner]['array'] = [];
 			}
 
-			$fleetPoints[$CurFleet['owner']]['points'] += ($Points['FleetPoint'] / 1000);
-			$fleetPoints[$CurFleet['owner']]['count'] += $Points['FleetCount'];
-			$fleetPoints[$CurFleet['owner']]['array'][] = $Points['fleet_array'];
+			$fleetPoints[$CurFleet->owner]['points'] += ($Points['FleetPoint'] / 1000);
+			$fleetPoints[$CurFleet->owner]['count'] += $Points['FleetCount'];
+			$fleetPoints[$CurFleet->owner]['array'][] = $Points['fleet_array'];
 		}
 
 		return $fleetPoints;

@@ -82,30 +82,28 @@ class UpdateTask extends ApplicationTask
 					die('Server too busy. Please try again later.');
 			}
 
-			$_fleets = array_merge
-			(
-				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`start_time` <= '" . time() . "' AND `mess` = '0') LIMIT 3")),
-				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`end_stay` <= '" . time() . "' AND `mess` != '1' AND `end_stay` != '0') LIMIT 3")),
-				$this->db->extractResult($this->db->query("SELECT * FROM game_fleets WHERE (`end_time` < '" . time() . "' AND `mess` != '0') LIMIT 3"))
-			);
-
-			uasort($_fleets, function($a, $b)
-			{
-				return ($a['update_time'] <= $b['update_time'] ? -1 : 1);
-			});
+			/**
+			 * @var $_fleets \App\Models\Fleet[]
+			 */
+			$_fleets = \App\Models\Fleet::find([
+				'(start_time <= :time: AND mess = 0) OR (end_stay <= :time: AND mess != 1 AND end_stay != 0) OR (end_time < :time: AND mess != 0)',
+				'bind' 	=> ['time' => time()],
+				'order'	=> 'update_time asc',
+				'limit'	=> 10
+			]);
 
 			if (count($_fleets) > 0)
 			{
 				foreach ($_fleets AS $fleetRow)
 				{
-					if (!isset($missionObjPattern[$fleetRow['mission']]))
+					if (!isset($missionObjPattern[$fleetRow->mission]))
 					{
-						$this->db->delete('game_fleets', 'id = ?', [$fleetRow['id']]);
+						$fleetRow->delete();
 
 						continue;
 					}
 
-					$missionName = $missionObjPattern[$fleetRow['mission']];
+					$missionName = $missionObjPattern[$fleetRow->mission];
 
 					$missionName = 'App\Missions\\'.$missionName;
 
@@ -114,20 +112,14 @@ class UpdateTask extends ApplicationTask
 					 */
 					$mission = new $missionName($fleetRow);
 
-					if ($fleetRow['mess'] == 0 && $fleetRow['start_time'] <= time())
-					{
+					if ($fleetRow->mess == 0 && $fleetRow->start_time <= time())
 						$mission->TargetEvent();
-					}
 
-					if ($fleetRow['mess'] == 3 && $fleetRow['end_stay'] <= time())
-					{
+					if ($fleetRow->mess == 3 && $fleetRow->end_stay <= time())
 						$mission->EndStayEvent();
-					}
 
-					if ($fleetRow['mess'] == 1 && $fleetRow['end_time'] <= time())
-					{
+					if ($fleetRow->mess == 1 && $fleetRow->end_time <= time())
 						$mission->ReturnEvent();
-					}
 
 					unset($mission);
 				}

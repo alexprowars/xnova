@@ -222,14 +222,12 @@ var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.
 
 function SelectAll()
 {
-	for (var i = 0; i < document.forms['mes_form'].elements.length; i++)
+	$('#mes_form input[type=checkbox]').each(function()
 	{
-        var item = document.forms['mes_form'].elements[i];
-		if (item.name.indexOf('delmes') >= 0)
-        {
-		    item.checked = mark;
-		}
-	}
+		if (this.name.indexOf('delete') >= 0)
+			this.checked = mark;
+	});
+
 	if (mark == 0)
 		mark = 1;
 	else
@@ -455,9 +453,9 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 function fenster(target_url, win_name, w, h)
 {
 	if (!w)
-		w=640;
+		w=850;
 	if (!h)
-		h=480;
+		h=500;
 
 	var new_win = window.open(target_url,win_name,'resizable=yes,scrollbars=yes,menubar=no,toolbar=no,width='+w+',height='+h+',top=0,left=0');
 	new_win.focus();

@@ -20,7 +20,7 @@ class Quick
 
 		Lang::includeLang('fleet');
 
-		$maxfleet = $controller->db->fetchColumn("SELECT COUNT(owner) AS `actcnt` FROM game_fleets WHERE `owner` = '" . $controller->user->id . "';");
+		$maxfleet = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$MaxFlottes = 1 + $controller->user->{$controller->storage->resource[108]};
 		if ($controller->user->rpg_admiral > time())
@@ -167,51 +167,56 @@ class Quick
 
 			if ($FleetSubQRY != '')
 			{
-				$QryInsertFleet = "INSERT INTO game_fleets SET ";
-				$QryInsertFleet .= "`owner` = '" . $controller->user->id . "', ";
-				$QryInsertFleet .= "`owner_name` = '" . $controller->planet->name . "', ";
-				$QryInsertFleet .= "`mission` = '" . $Mode . "', ";
-				$QryInsertFleet .= "`fleet_array` = '" . $ShipArray . "', ";
-				$QryInsertFleet .= "`start_time` = '" . ($duration + time()) . "', ";
-				$QryInsertFleet .= "`start_galaxy` = '" . $controller->planet->galaxy . "', ";
-				$QryInsertFleet .= "`start_system` = '" . $controller->planet->system . "', ";
-				$QryInsertFleet .= "`start_planet` = '" . $controller->planet->planet . "', ";
-				$QryInsertFleet .= "`start_type` = '" . $controller->planet->planet_type . "', ";
-				$QryInsertFleet .= "`end_time` = '" . (($duration * 2) + time()) . "', ";
-				$QryInsertFleet .= "`end_galaxy` = '" . $Galaxy . "', ";
-				$QryInsertFleet .= "`end_system` = '" . $System . "', ";
-				$QryInsertFleet .= "`end_planet` = '" . $Planet . "', ";
-				$QryInsertFleet .= "`end_type` = '" . $TypePl . "', ";
+				$fleet = new \App\Models\Fleet();
+
+				$fleet->owner = $controller->user->id;
+				$fleet->owner_name = $controller->planet->name;
+				$fleet->mission = $Mode;
+				$fleet->fleet_array = $ShipArray;
+				$fleet->start_time = $duration + time();
+				$fleet->start_galaxy = $controller->planet->galaxy;
+				$fleet->start_system = $controller->planet->system;
+				$fleet->start_planet = $controller->planet->planet;
+				$fleet->start_type = $controller->planet->planet_type;
+				$fleet->end_time = ($duration * 2) + time();
+				$fleet->end_galaxy = $Galaxy;
+				$fleet->end_system = $System;
+				$fleet->end_planet = $Planet;
+				$fleet->end_type = $TypePl;
+				$fleet->create_time = time();
+				$fleet->update_time = $duration + time();
 
 				if ($Mode == 6 && isset($HeDBRec['id']))
 				{
-					$QryInsertFleet .= "`target_owner` = '" . $HeDBRec['id'] . "', ";
-					$QryInsertFleet .= "`target_owner_name` = '" . $target['name'] . "', ";
+					$fleet->target_owner = $HeDBRec['id'];
+					$fleet->target_owner_name = $target['name'];
 				}
 
-				$QryInsertFleet .= "`create` = '" . time() . "', `update` = '" . ($duration + time()) . "';";
-				$controller->db->query($QryInsertFleet);
-
-				$controller->db->query("UPDATE game_planets SET " . $FleetSubQRY . " deuterium = deuterium - " . $consumption . " WHERE `id` = '" . $controller->planet->id . "'");
-
-				$tutorial = $controller->db->query("SELECT id, quest_id FROM game_users_quests WHERE user_id = ".$controller->user->getId()." AND finish = '0' AND stage = 0")->fetch();
-
-				if (isset($tutorial['id']))
+				if ($fleet->create())
 				{
-					Lang::includeLang('tutorial');
+					$controller->db->query("UPDATE game_planets SET " . $FleetSubQRY . " deuterium = deuterium - " . $consumption . " WHERE `id` = '" . $controller->planet->id . "'");
 
-					$quest = _getText('tutorial', $tutorial['quest_id']);
+					$tutorial = $controller->db->query("SELECT id, quest_id FROM game_users_quests WHERE user_id = ".$controller->user->getId()." AND finish = '0' AND stage = 0")->fetch();
 
-					foreach ($quest['TASK'] AS $taskKey => $taskVal)
+					if (isset($tutorial['id']))
 					{
-						if ($taskKey == 'FLEET_MISSION' && $taskVal == $Mode)
+						Lang::includeLang('tutorial');
+
+						$quest = _getText('tutorial', $tutorial['quest_id']);
+
+						foreach ($quest['TASK'] AS $taskKey => $taskVal)
 						{
-							$controller->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
+							if ($taskKey == 'FLEET_MISSION' && $taskVal == $Mode)
+							{
+								$controller->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
+							}
 						}
 					}
-				}
 
-				die("Флот отправлен на координаты [" . $Galaxy . ":" . $System . ":" . $Planet . "] с миссией " . _getText('type_mission', $Mode) . " и прибудет к цели в " . $controller->game->datezone("H:i:s", ($duration + time())) . "");
+					die("Флот отправлен на координаты [" . $Galaxy . ":" . $System . ":" . $Planet . "] с миссией " . _getText('type_mission', $Mode) . " и прибудет к цели в " . $controller->game->datezone("H:i:s", ($duration + time())) . "");
+				}
+				else
+					die('Произошла ошибка');
 			}
 		}
 	}

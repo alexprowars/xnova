@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\Fleet;
+
 /**
  * @author AlexPro
  * @copyright 2008 - 2016 XNova Game Group
@@ -70,8 +72,8 @@ class RocketController extends ApplicationController
 		
 		$time = 30 + (60 * $tempvar1);
 		
-		$this->db->insertAsDict('game_fleets', 
-		[
+		$fleet = new Fleet();
+		$fleet->create([
 			'owner' 			=> $this->user->id,
 			'owner_name' 		=> $this->planet->name,
 			'mission' 			=> 20,

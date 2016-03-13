@@ -68,13 +68,13 @@ class InfoController extends ApplicationController
 
 	private function BuildFleetCombo ()
 	{
-		$MoonList = $this->db->query("SELECT * FROM game_fleets WHERE `end_galaxy` = " . $this->planet->galaxy . " AND `end_system` = " . $this->planet->system . " AND `end_planet` = " . $this->planet->planet . " AND `end_type` = " . $this->planet->planet_type . " AND `mess` = 3 AND `owner` = '" . $this->user->id . "';");
+		$MoonList = \App\Models\Fleet::find(['end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3 AND owner = ?4', 'bind' => [$this->planet->galaxy, $this->planet->system, $this->planet->planet, $this->planet->planet_type, $this->user->id]]);
 
 		$Combo = "";
 
-		while ($CurMoon = $MoonList->fetch())
+		foreach ($MoonList as $CurMoon)
 		{
-			$Combo .= "<option value=\"" . $CurMoon['id'] . "\">[" . $CurMoon['start_galaxy'] . ":" . $CurMoon['start_system'] . ":" . $CurMoon['start_planet'] . "] " . $CurMoon['owner_name'] . "</option>\n";
+			$Combo .= "<option value=\"" . $CurMoon->id . "\">[" . $CurMoon->start_galaxy . ":" . $CurMoon->start_system . ":" . $CurMoon->start_planet . "] " . $CurMoon->owner_name . "</option>\n";
 		}
 
 		return $Combo;
@@ -208,31 +208,37 @@ class InfoController extends ApplicationController
 				{
 					$flid = intval($_POST['jmpto']);
 
-					$query = $this->db->query("SELECT * FROM game_fleets WHERE id = '" . $flid . "' AND end_galaxy = " . $this->planet->galaxy . " AND end_system = " . $this->planet->system . " AND end_planet = " . $this->planet->planet . " AND end_type = " . $this->planet->planet_type . " AND `mess` = 3")->fetch();
+					/**
+					 * @var $fleet \App\Models\Fleet
+					 */
+					$fleet = \App\Models\Fleet::find(['id = ?0 AND end_galaxy = ?1 AND end_system = ?2 AND end_planet = ?3 AND end_type = ?4 AND mess = 3', 'bind' => [$this->planet->galaxy, $this->planet->system, $this->planet->planet, $this->planet->planet_type]]);
 
-					if (!$query['id'])
+					if (!$fleet)
 						$parse['msg'] = "<font color=red>Флот отсутствует у планеты</font>";
 					else
 					{
 						$tt = 0;
-						$temp = explode(';', $query['fleet_array']);
-						foreach ($temp as $temp2)
+
+						foreach ($fleet->getShips() as $type => $ship)
 						{
-							$temp2 = explode(',', $temp2);
-							if ($temp2[0] > 100)
-							{
-								$tt += $this->storage->pricelist[$temp2[0]]['stay'] * $temp2[1];
-							}
+							if ($type > 100)
+								$tt += $this->storage->pricelist[$type]['stay'] * $ship['cnt'];
 						}
+
 						$max = $this->planet->{$this->storage->resource[$BuildID]} * 10000;
+
 						if ($max > $this->planet->deuterium)
 							$cur = $this->planet->deuterium;
 						else
 							$cur = $max;
 
 						$times = round(($cur / $tt) * 3600);
-						$this->planet->deuterium -= $cur;
-						$this->db->query("UPDATE game_fleets SET end_stay = end_stay + " . $times . ", end_time = end_time + " . $times . " WHERE id = '" . $flid . "'");
+
+						$this->planet->saveData(['-deuterium' => $cur]);
+
+						$fleet->end_stay += $times;
+						$fleet->end_time += $times;
+						$fleet->save();
 
 						$parse['msg'] = "<font color=red>Ракета с дейтерием отправлена на орбиту вашей планете</font>";
 					}

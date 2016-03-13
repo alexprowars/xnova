@@ -118,16 +118,15 @@ class MessagesController extends ApplicationController
 
 	public function delete ()
 	{
-		$items = [];
+		$items = $this->request->getPost('delete');
 
-		foreach ($this->request->getPost() as $key => $value)
-		{
-			if (preg_match("/delmes/iu", $key) && $value != '')
-				$items[] = trim(str_replace("delmes", "", $key));
-		}
+		if (!is_array($items) || !count($items))
+			return false;
+
+		$items = array_map('intval', $items);
 
 		if (count($items))
-			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN (?) AND owner = ?', 'bind' => [implode(',', $items), $this->user->id]]);
+			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN ('.implode(',', $items).') AND owner = ?', 'bind' => [$this->user->id]]);
 
 		return $this->response->redirect('messages/');
 	}
@@ -171,7 +170,7 @@ class MessagesController extends ApplicationController
 		if (!isset($_SESSION['m_cat']) || $_SESSION['m_cat'] != $MessCategory)
 			$_SESSION['m_cat'] = $MessCategory;
 
-		if ($this->request->hasPost('deletemessages'))
+		if ($this->request->hasPost('delete'))
 			return $this->delete();
 
 		$parse['lim'] = $lim;

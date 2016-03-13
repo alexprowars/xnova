@@ -44,6 +44,11 @@ class Alliance extends Model
 	 */
 	public $member;
 
+	public function initialize()
+	{
+		$this->useDynamicUpdate(true);
+	}
+
 	public function getSource()
 	{
 		return DB_PREFIX."alliance";
