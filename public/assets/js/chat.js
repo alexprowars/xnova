@@ -83,11 +83,11 @@ function chatResize()
 	if (isMobile)
 		return;
 
-	$('#shoutbox').css('height', $(window).height() - ($('#gamediv').length ? 220 : 144));
+	$('#shoutbox').css('height', $(window).height() - 240);
 
 	$(window).bind('resize', function()
 	{
-		$('#shoutbox').css('height', $(window).height() - ($('#gamediv').length ? 220 : 144));
+		$('#shoutbox').css('height', $(window).height() - 240);
 
 		descendreTchat();
 	});

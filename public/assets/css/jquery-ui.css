@@ -256,7 +256,7 @@ button.ui-button::-moz-focus-inner {
 	top: 0;
 	left: 0;
 	outline: 0;
-    padding: 0;
+	padding: 0;
 }
 .ui-dialog .ui-dialog-titlebar {
 	padding: .4em 1em;
@@ -384,13 +384,13 @@ button.ui-button::-moz-focus-inner {
 	font-size: 1em;
 }
 .ui-widget-content {
-    background-color: #344566;
-    border: 1px solid #415680;
+	background-color: #344566;
+	border: 1px solid #415680;
 	color: #ffffff;
 }
 .ui-widget-header {
-    border: 1px solid #415680;
-    background-color: #253046;
+	border: 1px solid #415680;
+	background-color: #253046;
 	color: #ffffff;
 	font-weight: bold;
 }

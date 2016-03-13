@@ -3,7 +3,7 @@ td, th {
 }
 
 th {
-    font-weight: normal;
+	font-weight: normal;
 }
 
 textarea#text {
@@ -56,35 +56,35 @@ textarea#text {
 }
 
 .game_content > .menu li > a {
-    background: #2B354E;
-    display: block;
-    float: none;
-    font-size: 11px;
-    text-align: center;
-    border-top:1px solid #40567f;
-    border-left:1px solid #40567f;
-    border-right:1px solid #40567f;
-    border-bottom: none;
+	background: #2B354E;
+	display: block;
+	float: none;
+	font-size: 11px;
+	text-align: center;
+	border-top:1px solid #40567f;
+	border-left:1px solid #40567f;
+	border-right:1px solid #40567f;
+	border-bottom: none;
 	margin: 0;
-    color: #FFFFFF;
-    font-family: verdana;
-    font-weight: normal;
+	color: #FFFFFF;
+	font-family: verdana;
+	font-weight: normal;
 	padding: 5px;
 }
 
 .iframe #menu_links li > a {
-    font-size: 10px;
-    width: 70px;
+	font-size: 10px;
+	width: 70px;
 }
 
 .iframe #menu_links{
-    width: 80px;
-    margin-left: 5px;
+	width: 80px;
+	margin-left: 5px;
 }
 
 .iframe #box {
-    padding-bottom:15px;
-    width: 760px;
+	padding-bottom:15px;
+	width: 760px;
 }
 
 .iframe #siteFooter .content {
@@ -96,8 +96,8 @@ textarea#text {
 }
 
 .iframe div.iframe_wrapper {
-    overflow-y: auto;
-    padding-right: 5px;
+	overflow-y: auto;
+	padding-right: 5px;
 }
 
 .iframe .game_content {
@@ -109,7 +109,7 @@ textarea#text {
 }
 
 .game_content > .menu li > a.check, .game_content > .menu li > a:hover {
-    background: #6B354E;
+	background: #6B354E;
 }
 
 #box {
@@ -122,7 +122,7 @@ textarea#text {
 }
 
 .table {
-    width: 100%;
+	width: 100%;
 }
 
 .table td {
@@ -130,19 +130,19 @@ textarea#text {
 }
 
 .padding5 {
-    padding: 5px !important;
+	padding: 5px !important;
 }
 
 .padding10 {
-    padding: 10px !important;
+	padding: 10px !important;
 }
 
 .margin5 {
-    margin: 5px
+	margin: 5px
 }
 
 .left {
-    text-align: left !important;
+	text-align: left !important;
 }
 
 .top {
@@ -154,25 +154,25 @@ textarea#text {
 }
 
 .separator {
-    height: 5px;
-    clear: both;
-    font-size: 1px;
-    line-height: 1px;
+	height: 5px;
+	clear: both;
+	font-size: 1px;
+	line-height: 1px;
 }
 
 .viewport {
-    position: relative;
+	position: relative;
 }
 
 .overContent {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    background: #000;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background: #000;
    	opacity: .9;
    	filter: Alpha(Opacity=90);
-    width: 120px;
-    text-align: left;
+	width: 120px;
+	text-align: left;
 }
 
 .overContent img {
@@ -180,11 +180,11 @@ textarea#text {
 }
 
 .resNo {
-    color: red;
+	color: red;
 }
 
 .resYes {
-    color: lime;
+	color: lime;
 }
 
 .nopadding {
@@ -559,16 +559,16 @@ margin-left: -5px;
 }
 
 #rf_techinfo {
-    margin-top: 30px
+	margin-top: 30px
 }
 
 .planet-image {
-    position:relative;
+	position:relative;
 }
 
 .planet-image > a {
-    display: block;
-    border: 1px solid #415683;
+	display: block;
+	border: 1px solid #415683;
 }
 
 .planet-image > a img {
@@ -576,15 +576,15 @@ margin-left: -5px;
 }
 
 .moon-image {
-    position:absolute;
-    bottom:0;
-    left: 0;
-    background: #354566;
-    color: #BEBEBE;
-    border: 1px solid #415683;
-    padding: 3px;
-    overflow: hidden;
-    font-size: 0;
+	position:absolute;
+	bottom:0;
+	left: 0;
+	background: #354566;
+	color: #BEBEBE;
+	border: 1px solid #415683;
+	padding: 3px;
+	overflow: hidden;
+	font-size: 0;
 }
 
 .bar .m1 {
@@ -987,26 +987,26 @@ div.errormessage {
 }
 
 footer {
-    background: transparent url(/assets/images/bar-bg.gif) repeat-x 0 0;
-    color:#848484;
-    font: normal 10px Verdana, Arial, Helvetica, sans-serif;
-    height: 19px;
-    line-height:19px;
-    text-align:center;
+	background: transparent url(/assets/images/bar-bg.gif) repeat-x 0 0;
+	color:#848484;
+	font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+	height: 19px;
+	line-height:19px;
+	text-align:center;
 	margin-top: 50px;
 	width: 100%;
 }
 
 footer a, footer a:link {
-    color:#848484;
-    margin:0 10px;
-    text-decoration:none;
+	color:#848484;
+	margin:0 10px;
+	text-decoration:none;
 	font-weight:normal;
 }
 
 footer a:hover {
-    color:#9c0;
-    text-decoration:none;
+	color:#9c0;
+	text-decoration:none;
 }
 
 .top_menu {

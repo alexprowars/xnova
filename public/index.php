@@ -8,7 +8,7 @@ use Phalcon\DI\FactoryDefault;
 
 define('APP_PATH', dirname(__DIR__.'../') . '/');
 
-define('DEBUG', true);
+define('DEBUG', false);
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);

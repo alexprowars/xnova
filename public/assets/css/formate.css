@@ -1,7 +1,7 @@
 html {
-    height: 100%;
+	height: 100%;
 	overflow-y:scroll;
-    padding: 0;
+	padding: 0;
 	font-size: 11px;
 }
 
@@ -16,19 +16,19 @@ html {
 }
 
 .w49  {
-    width:49%; vertical-align:top
+	width:49%; vertical-align:top
 }
 .h100 {
-    height:100%
+	height:100%
 }
 .w100 {
 	width:100%
 }
 
 a {
-    cursor: pointer;
-    color: #fff;
-    text-decoration: none;
+	cursor: pointer;
+	color: #fff;
+	text-decoration: none;
 }
 
 .td {
@@ -45,13 +45,13 @@ p table{
 
 p td
 {
-  text-align           : center;
-  font-size            : 11px;
+  text-align		   : center;
+  font-size			: 11px;
 }
 
 table table td
 {
-  font-size            : 11px;
+  font-size			: 11px;
   padding-top: 0;
   margin-right: 0;
 }
@@ -86,9 +86,9 @@ td.v, td.s, .style td, p td
 
 th, .th
 {
-	text-align           : center;
-	padding         : 2px 3px;
-    background: #37476a;
+	text-align		   : center;
+	padding		 : 2px 3px;
+	background: #37476a;
 	color: #d7d7d7;
 	border: 1px solid #425e8c;
 	font-size: 11px;
@@ -96,9 +96,9 @@ th, .th
 
 td.m1 {
 	text-align: center;
-	font-size            : 11px;
-    vertical-align:top;
-    border-spacing:0;
+	font-size			: 11px;
+	vertical-align:top;
+	border-spacing:0;
 
 }
 
@@ -110,19 +110,19 @@ td.m1 {
 
 td.m1 a{
 	color: #bbb8b8;
-    font-weight:normal;
+	font-weight:normal;
 }
 
 td.m1 a:hover {
-    color:#9c0;
-    text-decoration:none;
-    font-weight:normal;
+	color:#9c0;
+	text-decoration:none;
+	font-weight:normal;
 }
 
 td.a
 {
-	height               : 39px;
-	text-align           : center;
+	height			   : 39px;
+	text-align		   : center;
 	background: transparent;
 	color: #FFFFFF;
 }
@@ -219,21 +219,21 @@ textarea{
 
 td.g
 {
-  text-align           : right;
-  color                : #E6EBFB;
+  text-align		   : right;
+  color				: #E6EBFB;
   font-weight: bold;
 }
 
 td.h
 {
-  text-align           : center;
-  color                : #E6EBFB;
+  text-align		   : center;
+  color				: #E6EBFB;
 }
 
 td.i
 {
-  text-align           : center;
-  color                : #E6EBFB;
+  text-align		   : center;
+  color				: #E6EBFB;
 }
 
 td.j
@@ -244,16 +244,16 @@ td.j
 
 .k
 {
-	text-align           : center;
-	color                : #E6EBFB;
-    background: #42444D;
+	text-align		   : center;
+	color				: #E6EBFB;
+	background: #42444D;
 	border: 1px solid #415683;
 }
 
 td.l
 {
-	color                : #D2D2D2;
-	vertical-align       : top;
+	color				: #D2D2D2;
+	vertical-align	   : top;
 	padding: 0;
 	font-size: 11px;
 	background-color: #054144;
@@ -261,95 +261,95 @@ td.l
 
 td.m
 {
-  text-align           : right;
-  width                : 86px;
-  color                : #E6EBFB;
+  text-align		   : right;
+  width				: 86px;
+  color				: #E6EBFB;
   background: transparent;
   font-weight: bold;
 }
 
 td.n
 {
-  width                : 89px;
-  text-align           : center;
-  color                : #E6EBFB;
+  width				: 89px;
+  text-align		   : center;
+  color				: #E6EBFB;
   background: transparent;
   font-weight: bold;
 }
 
 td.o
 {
-  text-align           : center;
-  color                : #E6EBFB;
+  text-align		   : center;
+  color				: #E6EBFB;
 }
 
 td.q
 {
-  font-size            : 11px;
-  font-family          : verdana,sans-serif;
-  text-align           : center;
-  vertical-align       : middle;
-  color                : #E6EBFB;
+  font-size			: 11px;
+  font-family		  : verdana,sans-serif;
+  text-align		   : center;
+  vertical-align	   : middle;
+  color				: #E6EBFB;
   background: transparent;
   font-weight: bold;
 }
 
 td.r
 {
-  text-align           : right;
-  color                : #E6EBFB;
+  text-align		   : right;
+  color				: #E6EBFB;
 }
 
 td.v
 {
-  text-align           : right;
-  color                : #f7f7f7;
+  text-align		   : right;
+  color				: #f7f7f7;
   font-weight: bold;
 }
 
 td.s
 {
-  color                : #E6EBFB;
+  color				: #E6EBFB;
 }
 
 table.s th
 {
-  border               : 0;
+  border			   : 0;
 }
 
 table.s th img
 {
-  width                : 89px;
-  height               : 89px;
+  width				: 89px;
+  height			   : 89px;
 }
 
 div.z
 {
-  color                : #E6EBFB;
+  color				: #E6EBFB;
 }
 
 a:hover {
-    color:#9c0;
-    text-decoration:underline;
+	color:#9c0;
+	text-decoration:underline;
 }
 
 a.s
 {
-  color                : #C2CFF5;
+  color				: #C2CFF5;
 }
 
 a.t
 {
-  color                : #C8D3F7;
+  color				: #C8D3F7;
 }
 
 h1
 {
-  font-size            : 11px;
-  font-family          : verdana,sans-serif;
-  border-bottom        : 0 solid #344566;
-  width                : 98%;
-  text-align           : center;
+  font-size			: 11px;
+  font-family		  : verdana,sans-serif;
+  border-bottom		: 0 solid #344566;
+  width				: 98%;
+  text-align		   : center;
 }
 
 tr.flight th span.owndeploy {
@@ -514,25 +514,25 @@ color:#D8D8D8;
 
 
 .clearfloat {
-    clear:both;
-    height:0;
-    font-size: 1px;
-    line-height: 0;
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0;
 }
 
 .clear {
-    clear:both;
-    height:0;
-    font-size: 0;
-    line-height: 0;
+	clear:both;
+	height:0;
+	font-size: 0;
+	line-height: 0;
 	overflow: hidden;
 	zoom: 1;
 }
 
 .contentBox {
-    min-height: 100%;
+	min-height: 100%;
 	height: auto !important;
-    margin: 0 auto -19px;
+	margin: 0 auto -19px;
 	position: relative;
 	z-index: 1;
 }
@@ -573,8 +573,8 @@ color:#D8D8D8;
 	color: #7D8AA0;
 }
 .quotecontent a:hover {
-    color:#9c0;
-    text-decoration:none;
+	color:#9c0;
+	text-decoration:none;
 }
 
 .quotewrapper {
