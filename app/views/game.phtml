@@ -99,6 +99,27 @@
 				<? endif; ?>
 
 				<div class="row">
+					<?
+
+					$messages = $this->flashSession->getMessages();
+
+					if (count($messages))
+					{
+						foreach ($messages as $type => $items)
+						{
+							foreach ($items as $message)
+							{
+								if ($type == 'alert')
+									echo '<script>$(document).ready(function(){alert("'.$message.'");});</script>';
+								else
+								{
+									echo $message;
+								}
+							}
+						}
+					}
+
+					?>
 					<?php echo $this->getContent() ?>
 				</div>
 

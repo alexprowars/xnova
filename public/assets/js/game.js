@@ -472,6 +472,9 @@ function ClearTimers ()
 		}
 	}
 
+	flotenTimers = [];
+	flotenTime = [];
+
 	timeouts.length = 0;
 }
 

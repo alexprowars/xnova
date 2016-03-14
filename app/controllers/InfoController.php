@@ -367,10 +367,9 @@ class InfoController extends ApplicationController
 					if ($_POST['503'] > $this->planet->{$this->storage->resource[503]})
 						$_POST['503'] = $this->planet->{$this->storage->resource[503]};
 
-					$this->db->query("UPDATE game_planets SET `" . $this->storage->resource[502] . "` = `" . $this->storage->resource[502] . "` - " . $_POST['502'] . " , `" . $this->storage->resource[503] . "` = `" . $this->storage->resource[503] . "` - " . $_POST['503'] . " WHERE `id` = " . $this->planet->id . ";");
-
 					$this->planet->{$this->storage->resource[502]} -= $_POST['502'];
 					$this->planet->{$this->storage->resource[503]} -= $_POST['503'];
+					$this->planet->update();
 				}
 				$pars = [];
 				$pars['max_mis'] = $this->planet->{$this->storage->resource[44]} * 10;

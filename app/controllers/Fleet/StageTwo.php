@@ -9,7 +9,9 @@ namespace App\Controllers\Fleet;
 
 use App\Controllers\FleetController;
 use App\Fleet;
+use App\Helpers;
 use App\Lang;
+use App\Models\Planet;
 
 class StageTwo
 {
@@ -23,26 +25,24 @@ class StageTwo
 
 		Lang::includeLang('fleet');
 
-		if (isset($_POST['moon']) && intval($_POST['moon']) != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
+		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
 		{
-			$RestString = $controller->planet->GetNextJumpWaitTime();
-			$NextJumpTime = $RestString['value'];
-			$JumpTime = time();
+			$nextJumpTime = $controller->planet->GetNextJumpWaitTime();
 
-			if ($NextJumpTime == 0)
+			if ($nextJumpTime == 0)
 			{
-				$TargetPlanet = intval($_POST['moon']);
-				$TargetGate = $controller->db->query("SELECT `id`, `planet_type`, `sprungtor`, `last_jump_time` FROM game_planets WHERE `id` = '" . $TargetPlanet . "';")->fetch();
+				/**
+				 * @var $TargetGate \App\Models\Planet
+				 */
+				$TargetGate = Planet::findFirst($controller->request->getPost('moon', 'int'));
 
-				if (($TargetGate['planet_type'] == 3 || $TargetGate['planet_type'] == 5) && $TargetGate['sprungtor'] > 0)
+				if (($TargetGate->planet_type == 3 || $TargetGate->planet_type == 5) && $TargetGate->sprungtor > 0)
 				{
-					$RestString = $controller->planet->GetNextJumpWaitTime($TargetGate);
+					$nextJumpTime = $TargetGate->GetNextJumpWaitTime();
 
-					if ($RestString['value'] == 0)
+					if ($nextJumpTime == 0)
 					{
 						$ShipArray = [];
-						$SubQueryOri = [];
-						$SubQueryDes = [];
 
 						foreach ($controller->storage->reslist['fleet'] AS $Ship)
 						{
@@ -58,37 +58,36 @@ class StageTwo
 
 							if ($ShipArray[$Ship] != 0)
 							{
-								$SubQueryOri['-'.$controller->storage->resource[$Ship]] = $ShipArray[$Ship];
-								$SubQueryDes['+'.$controller->storage->resource[$Ship]] = $ShipArray[$Ship];
+								$controller->planet->{$controller->storage->resource[$Ship]} -= $ShipArray[$Ship];
+								$TargetGate->{$controller->storage->resource[$Ship]} += $ShipArray[$Ship];
 							}
+							else
+								unset($ShipArray[$Ship]);
 						}
 
-						if (count($SubQueryOri))
+						if (count($ShipArray))
 						{
-							$SubQueryOri['last_jump_time'] = $JumpTime;
-							$SubQueryDes['last_jump_time'] = $JumpTime;
+							$controller->planet->last_jump_time = time();
+							$controller->planet->update();
 
-							$controller->planet->saveData($SubQueryOri);
-							$controller->planet->saveData($SubQueryDes, $TargetGate['id']);
+							$TargetGate->last_jump_time = time();
+							$TargetGate->update();
 
-							$controller->user->saveData(['planet_current' => $TargetGate['id']]);
+							$controller->user->update(['planet_current' => $TargetGate->id]);
 
-							$controller->planet->last_jump_time = $JumpTime;
-							$RestString = $controller->planet->GetNextJumpWaitTime();
-
-							$RetMessage = _getText('gate_jump_done') . " - " . $RestString['string'];
+							$RetMessage = _getText('gate_jump_done') . " - " . Helpers::pretty_time($controller->planet->GetNextJumpWaitTime());
 						}
 						else
 							$RetMessage = _getText('gate_wait_data');
 					}
 					else
-						$RetMessage = _getText('gate_wait_dest') . " - " . $RestString['string'];
+						$RetMessage = _getText('gate_wait_dest') . " - " . Helpers::pretty_time($nextJumpTime);
 				}
 				else
 					$RetMessage = _getText('gate_no_dest_g');
 			}
 			else
-				$RetMessage = _getText('gate_wait_star') . " - " . $RestString['string'];
+				$RetMessage = _getText('gate_wait_star') . " - " . Helpers::pretty_time($nextJumpTime);
 
 			$controller->message($RetMessage, 'Результат', "/fleet/", 5);
 		}
@@ -107,11 +106,11 @@ class StageTwo
 		$YourPlanet = false;
 		$UsedPlanet = false;
 
-		$TargetPlanet = $controller->db->query("SELECT * FROM game_planets WHERE `galaxy` = '" . $galaxy . "' AND `system` = '" . $system . "' AND `planet` = '" . $planet . "' AND `planet_type` = '" . $type . "'")->fetch();
+		$TargetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
 
-		if ($galaxy == $TargetPlanet['galaxy'] && $system == $TargetPlanet['system'] && $planet == $TargetPlanet['planet'] && $type == $TargetPlanet['planet_type'])
+		if ($TargetPlanet)
 		{
-			if ($TargetPlanet['id_owner'] == $controller->user->id || ($controller->user->ally_id > 0 && $TargetPlanet['id_ally'] == $controller->user->ally_id))
+			if ($TargetPlanet->id_owner == $controller->user->id || ($controller->user->ally_id > 0 && $TargetPlanet->id_ally == $controller->user->ally_id))
 			{
 				$YourPlanet = true;
 				$UsedPlanet = true;
@@ -122,12 +121,12 @@ class StageTwo
 
 		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
 
-		if ($TargetPlanet['id_owner'] == 1 || $controller->user->isAdmin())
+		if ($TargetPlanet && ($TargetPlanet->id_owner == 1 || $controller->user->isAdmin()))
 			$missiontype[4] = _getText('type_mission', 4);
 
 		$SpeedFactor = $controller->game->getSpeed('fleet');
 		$AllFleetSpeed = Fleet::GetFleetMaxSpeed($fleetarray, 0, $controller->user);
-		$GenFleetSpeed = intval($_POST['speed']);
+		$GenFleetSpeed = $controller->request->getPost('speed', 'int', 10);
 		$MaxFleetSpeed = min($AllFleetSpeed);
 
 		$distance = Fleet::GetTargetDistance($controller->planet->galaxy, $_POST['galaxy'], $controller->planet->system, $_POST['system'], $controller->planet->planet, $_POST['planet']);
@@ -167,11 +166,11 @@ class StageTwo
 		$parse['thisgalaxy'] = $controller->planet->galaxy;
 		$parse['thissystem'] = $controller->planet->system;
 		$parse['thisplanet'] = $controller->planet->planet;
-		$parse['galaxy'] = $_POST["galaxy"];
-		$parse['system'] = $_POST["system"];
-		$parse['planet'] = $_POST["planet"];
-		$parse['planettype'] = $_POST["planettype"];
-		$parse['speed'] = $_POST["speed"];
+		$parse['galaxy'] = $galaxy;
+		$parse['system'] = $system;
+		$parse['planet'] = $planet;
+		$parse['planettype'] = $type;
+		$parse['speed'] = $GenFleetSpeed;
 		$parse['usedfleet'] = $_POST["usedfleet"];
 		$parse['maxepedition'] = $_POST["maxepedition"];
 		$parse['curepedition'] = $_POST["curepedition"];
@@ -181,18 +180,8 @@ class StageTwo
 
 		foreach ($fleetarray as $i => $count)
 		{
-			$ship = [
-				'id' => $i,
-				'count' => $count,
-				'consumption' => Fleet::GetShipConsumption($i, $controller->user),
-				'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user),
-				'stay' => $controller->storage->CombatCaps[$i]['stay'],
-			];
-
-			if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
-				$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
-			else
-				$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
+			$ship = $controller->getShipInfo($i);
+			$ship['count'] = $count;
 
 			$parse['ships'][] = $ship;
 		}

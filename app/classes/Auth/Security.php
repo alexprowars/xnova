@@ -27,7 +27,7 @@ class Security extends Component
 	 */
 	public function getAcl()
 	{
-		//if (!isset($this->persistent->acl))
+		if (!isset($this->persistent->acl))
 		{
 			$acl = new AclList();
 			$acl->setDefaultAction(Acl::DENY);
@@ -157,7 +157,12 @@ class Security extends Component
 			$role = 'Users';
 
 		if ($auth !== false)
+		{
 			$this->getDI()->set('user', $auth);
+
+			if ($auth->isAdmin())
+				define('SUPERUSER', 'Y');
+		}
 
 		$controller = $dispatcher->getControllerName();
 		$action = $dispatcher->getActionName();

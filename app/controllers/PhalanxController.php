@@ -10,6 +10,7 @@ namespace App\Controllers;
 use App\Fleet;
 use App\Helpers;
 use App\Models\Fleet as FleetModel;
+use App\Models\Planet;
 
 class PhalanxController extends ApplicationController
 {
@@ -24,44 +25,40 @@ class PhalanxController extends ApplicationController
 	{
 		if ($this->user->vacation > 0)
 			$this->message("Нет доступа!");
-
-		$galaktyka = $this->planet->galaxy;
-		$system = $this->planet->system;
-		$planeta = $this->planet->planet;
 		
-		$g = intval($_GET["galaxy"]);
-		$s = intval($_GET["system"]);
-		$i = intval($_GET["planet"]);
+		$g = $this->request->getQuery('galaxy', 'int');
+		$s = $this->request->getQuery('system', 'int');
+		$i = $this->request->getQuery('planet', 'int');
 		
-		$deuterium = $this->planet->deuterium;
-		$phalangelvl = $this->planet->phalanx;
 		$consomation = 5000;
-		$deuteriumtotal = $deuterium - $consomation;
 		
 		if ($g < 1 || $g > $this->config->game->maxGalaxyInWorld)
-			$g = $galaktyka;
+			$g = $this->planet->galaxy;
 		if ($s < 1 || $s > $this->config->game->maxSystemInGalaxy)
-			$s = $system;
+			$s = $this->planet->system;
 		if ($i < 1 || $i > $this->config->game->maxPlanetInSystem)
-			$i = $planeta;
+			$i = $this->planet->planet;
 		
-		$systemdol = $system - pow($phalangelvl, 2);
-		$systemgora = $system + pow($phalangelvl, 2);
+		$systemdol 	= $this->planet->system - pow($this->planet->phalanx, 2);
+		$systemgora = $this->planet->system + pow($this->planet->phalanx, 2);
 		
 		if ($this->planet->planet_type != '3')
 			$this->message("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
 		elseif ($this->planet->phalanx == '0')
 			$this->message("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
-		elseif ($deuterium < $consomation)
+		elseif ($this->planet->deuterium < $consomation)
 			$this->message("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
 			$this->message("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
 		else
-			$this->db->query("UPDATE game_planets SET deuterium = " . $deuteriumtotal . " WHERE id = '".$this->user->planet_current."'");
+		{
+			$this->planet->deuterium -= $consomation;
+			$this->planet->update();
+		}
 
-		$planet = $this->db->query("SELECT * FROM game_planets WHERE galaxy = " . $g . " AND system = " . $s . " AND planet = " . $i . "");
+		$planet = Planet::count(['galaxy = ?0 AND system = ?1 AND planet = ?2', 'bind' => [$g, $s, $i]]);
 		
-		if ($planet->numRows() == 0)
+		if ($planet == 0)
 			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 		
 		$missiontype = [1 => 'Атаковать', 3 => 'Транспорт', 4 => 'Оставить', 5 => 'Удерживать', 6 => 'Шпионаж', 7 => 'Колонизировать', 8 => 'Переработать', 9 => 'Уничтожить'];

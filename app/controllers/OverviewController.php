@@ -220,9 +220,12 @@ class OverviewController extends ApplicationController
 				{
 					$destruyed = time() + 60 * 60 * 24;
 
-					$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->user->planet_current."'");
+					$this->planet->destruyed = $destruyed;
+					$this->planet->id_owner = 0;
+					$this->planet->update();
 
-					$this->db->query("UPDATE game_users SET `planet_current` = `planet_id` WHERE `id` = '" . $this->user->id . "' LIMIT 1");
+					$this->user->planet_current = $this->user->planet_id;
+					$this->user->update();
 
 					if ($this->planet->parent_planet != 0)
 						$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
@@ -264,7 +267,6 @@ class OverviewController extends ApplicationController
 		$parse['galaxy_galaxy'] = $this->planet->galaxy;
 		$parse['galaxy_system'] = $this->planet->system;
 		$parse['galaxy_planet'] = $this->planet->planet;
-		$parse['planet_name'] = $this->planet->name;
 
 		$parse['images'] = [
 			'trocken' => 20,
@@ -295,9 +297,7 @@ class OverviewController extends ApplicationController
 					if (mb_strlen($newName, 'UTF-8') > 1 && mb_strlen($newName, 'UTF-8') < 20)
 					{
 						$this->planet->name = $newName;
-						$parse['planet_name'] = $this->planet->name;
-
-						$this->db->updateAsDict('game_planets', ['name' => $newName], "id = '".$this->user->planet_current."'");
+						$this->planet->update();
 
 						if ($this->session->has('fleet_shortcut'))
 							$this->session->remove('fleet_shortcut');
@@ -329,6 +329,8 @@ class OverviewController extends ApplicationController
 			else
 				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
 		}
+
+		$parse['planet_name'] = $this->planet->name;
 
 		$this->view->setVar('parse', $parse);
 		$this->tag->setTitle('Переименовать планету');
@@ -430,9 +432,10 @@ class OverviewController extends ApplicationController
 
 			if ($lune === NULL)
 			{
-				$lune = $this->db->query("SELECT `id`, `name`, `image`, `destruyed` FROM game_planets WHERE id = " . $this->planet->parent_planet . " AND planet_type = '3'")->fetch();
+				$lune = Planet::findFirst(['columns' => 'id, name, image, destruyed', 'conditions' => 'id = ?0 AND planet_type = 3', 'bind' => [$this->planet->parent_planet]]);
 
-				$this->cache->save('app::lune_'.$this->planet->parent_planet, $lune, 300);
+				if ($lune)
+					$this->cache->save('app::lune_'.$this->planet->parent_planet, $lune->toArray(), 300);
 			}
 
 			if (isset($lune['id']))

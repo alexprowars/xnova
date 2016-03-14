@@ -250,46 +250,39 @@ class Queue
 	{
 		$TechHandle = $this->planet->HandleTechnologieBuild();
 
-		$spaceLabs = [];
-
-		if ($this->user->{$this->storage->resource[123]} > 0)
-			$spaceLabs = $this->planet->getNetworkLevel();
-
-		if (is_array($TechHandle['WorkOn']))
+		if (!$TechHandle['working'])
 		{
-			$WorkingPlanet = new Planet;
-			$WorkingPlanet->assign($TechHandle['WorkOn']);
-		}
-		else
-			$WorkingPlanet = $this->planet;
+			$spaceLabs = [];
 
-		$WorkingPlanet->spaceLabs = $spaceLabs;
+			if ($this->user->{$this->storage->resource[123]} > 0)
+				$spaceLabs = $this->planet->getNetworkLevel();
 
-		if (Building::IsTechnologieAccessible($this->user, $WorkingPlanet, $elementId) && Building::IsElementBuyable($this->user, $WorkingPlanet, $elementId) && !(isset($this->storage->pricelist[$elementId]['max']) && $this->user->{$this->storage->resource[$elementId]} >= $this->storage->pricelist[$elementId]['max']))
-		{
-			$costs = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
+			$this->planet->spaceLabs = $spaceLabs;
 
-			$WorkingPlanet->metal 		-= $costs['metal'];
-			$WorkingPlanet->crystal 	-= $costs['crystal'];
-			$WorkingPlanet->deuterium 	-= $costs['deuterium'];
+			if (Building::IsTechnologieAccessible($this->user, $this->planet, $elementId) && Building::IsElementBuyable($this->user, $this->planet, $elementId) && !(isset($this->storage->pricelist[$elementId]['max']) && $this->user->{$this->storage->resource[$elementId]} >= $this->storage->pricelist[$elementId]['max']))
+			{
+				$costs = Building::GetBuildingPrice($this->user, $this->planet, $elementId);
 
-			$time = Building::GetBuildingTime($this->user, $WorkingPlanet, $elementId);
+				$this->planet->metal 		-= $costs['metal'];
+				$this->planet->crystal 		-= $costs['crystal'];
+				$this->planet->deuterium 	-= $costs['deuterium'];
 
-			$this->queue[self::QUEUE_TYPE_RESEARCH] = [];
+				$time = Building::GetBuildingTime($this->user, $this->planet, $elementId);
 
-			$this->queue[self::QUEUE_TYPE_RESEARCH][] = [
-				'i' => $elementId,
-				'l' => ($this->user->{$this->storage->resource[$elementId]} + 1),
-				't' => $time,
-				's' => time(),
-				'e' => time() + $time,
-				'd' => 0
-			];
-			
-			$WorkingPlanet->queue = json_encode($this->queue);
+				$this->queue[self::QUEUE_TYPE_RESEARCH] = [[
+					'i' => $elementId,
+					'l' => ($this->user->{$this->storage->resource[$elementId]} + 1),
+					't' => $time,
+					's' => time(),
+					'e' => time() + $time,
+					'd' => 0
+				]];
 
-			$this->user->b_tech_planet = $WorkingPlanet->id;
-			$this->saveTechToQueue($WorkingPlanet->toArray());
+				$this->planet->queue = json_encode($this->queue);
+
+				$this->planet->update();
+				$this->user->update(['b_tech_planet' => $this->planet->id]);
+			}
 		}
 	}
 
@@ -297,51 +290,24 @@ class Queue
 	{
 		$TechHandle = $this->planet->HandleTechnologieBuild();
 
-		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['OnWork'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
+		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['working'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
 		{
-			if (is_array($TechHandle['WorkOn']))
-			{
-				$WorkingPlanet = new Planet;
-				$WorkingPlanet->assign($TechHandle['WorkOn']);
-			}
-			else
-				$WorkingPlanet = $this->planet->toArray();
+			$nedeed = Building::GetBuildingPrice($this->user, $TechHandle['planet'], $elementId);
 
-			$nedeed = Building::GetBuildingPrice($this->user, $WorkingPlanet, $elementId);
+			$TechHandle['planet']->metal 		+= $nedeed['metal'];
+			$TechHandle['planet']->crystal 		+= $nedeed['crystal'];
+			$TechHandle['planet']->deuterium 	+= $nedeed['deuterium'];
 
-			if ($TechHandle['WorkOn']['id'] == $this->planet->id)
-			{
-				$this->planet->metal 		+= $nedeed['metal'];
-				$this->planet->crystal 		+= $nedeed['crystal'];
-				$this->planet->deuterium 	+= $nedeed['deuterium'];
-			}
-
-			$WorkingPlanet->metal 		+= $nedeed['metal'];
-			$WorkingPlanet->crystal 	+= $nedeed['crystal'];
-			$WorkingPlanet->deuterium 	+= $nedeed['deuterium'];
-			
 			unset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]);
 
 			if (isset($this->queue[self::QUEUE_TYPE_BUILDING]) && !count($this->queue[self::QUEUE_TYPE_BUILDING]))
 				unset($this->queue[self::QUEUE_TYPE_BUILDING]);
 
-			$WorkingPlanet->queue = json_encode($this->queue);
-			
-			$this->user->b_tech_planet = 0;
-			$this->saveTechToQueue($WorkingPlanet->toArray());
+			$TechHandle['planet']->queue = json_encode($this->queue);
+			$TechHandle['planet']->update();
+
+			$this->user->update(['b_tech_planet' => $this->planet->id]);
 		}
-	}
-
-	private function saveTechToQueue ($WorkingPlanet)
-	{
-		$this->planet->saveData([
-			'queue'		=> $WorkingPlanet['queue'],
-			'metal'		=> $WorkingPlanet['metal'],
-			'crystal'	=> $WorkingPlanet['crystal'],
-			'deuterium'	=> $WorkingPlanet['deuterium']
-		], $WorkingPlanet['id']);
-
-		$this->user->update(['b_tech_planet' => $this->user->b_tech_planet]);
 	}
 
 	private function addShipyardToQueue ($elementId, $count)

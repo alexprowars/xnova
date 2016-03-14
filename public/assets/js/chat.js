@@ -289,6 +289,9 @@ function initChat ()
 
 			var msg = addMessage();
 
+			if ($("#smiles").is(':visible'))
+				ShowSmiles();
+
 			socket.send(encodeURIComponent(msg), userId, userName, key);
 		});
 	});

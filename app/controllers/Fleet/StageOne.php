@@ -11,6 +11,7 @@ use App\Controllers\FleetController;
 use App\Fleet;
 use App\Helpers;
 use App\Lang;
+use App\Models\Planet;
 
 class StageOne
 {
@@ -137,20 +138,26 @@ class StageOne
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
-			$moons = $controller->db->query("SELECT `id`, `name`, `system`, `galaxy`, `planet`, `sprungtor`, `last_jump_time` FROM game_planets WHERE (`planet_type` = '3' OR `planet_type` = '5') AND " . $controller->storage->resource[43] . " > 0 AND id != ".$controller->planet->id." AND `id_owner` = '" . $controller->user->id . "';");
-
-			if ($moons->numRows())
+			/**
+			 * @var $moons \App\Models\Planet[]
+			 */
+			$moons = Planet::find([
+				'(planet_type = 3 OR planet_type = 5) AND '.$controller->storage->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
+				'bind' => [$controller->planet->id, $controller->user->id]
+			]);
+			if (count($moons))
 			{
 				$timer = $controller->planet->GetNextJumpWaitTime();
 
-				if ($timer['value'] != 0)
-					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer['value']);
+				if ($timer != 0)
+					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer);
 
-				while ($moon = $moons->fetch())
+				foreach ($moons as $moon)
 				{
-					$moon['timer'] = $controller->planet->GetNextJumpWaitTime($moon);
+					$r = $moon->toArray();
+					$r['timer'] = $moon->GetNextJumpWaitTime();
 
-					$parse['moons'][] = $moon;
+					$parse['moons'][] = $r;
 				}
 			}
 		}

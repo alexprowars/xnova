@@ -345,7 +345,7 @@ class User extends Model
 				$planet->checkOwnerPlanet();
 
 				// Проверяем корректность заполненных полей
-				$planet->CheckPlanetUsedFields();
+				$planet->checkUsedFields();
 
 				$dispatcher = $this->getDi()->getShared('dispatcher');
 				$controller = $dispatcher->getControllerName();

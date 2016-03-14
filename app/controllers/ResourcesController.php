@@ -55,21 +55,23 @@ class ResourcesController extends ApplicationController
 		$production = $this->request->getQuery('active', null, 'Y');
 		$production = $production == 'Y' ? 10 : 0;
 
-		$planets = $this->db->query("SELECT * FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
+		/**
+		 * @var $planets \App\Models\Planet[]
+		 */
+		$planets = Planet::find(['id_owner = ?0', 'bind' => [$this->user->id]]);
 
-		$pl_class = new Planet();
-		$pl_class->assignUser($this->user);
-
-		while ($planet = $planets->fetch())
+		foreach ($planets as $planet)
 		{
-			$pl_class->assign($planet);
-			$pl_class->PlanetResourceUpdate();
+			$planet->assignUser($this->user);
+			$planet->PlanetResourceUpdate();
 		}
+
+		unset($planets);
 
 		$arFields = [
 			$this->storage->resource[4].'_porcent' 	=> $production,
-			$this->storage->resource[12].'_porcent' 	=> $production,
-			$this->storage->resource[212].'_porcent' 	=> $production
+			$this->storage->resource[12].'_porcent' => $production,
+			$this->storage->resource[212].'_porcent' => $production
 		];
 
 		foreach ($this->storage->reslist['res'] AS $res)

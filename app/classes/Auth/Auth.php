@@ -102,6 +102,7 @@ class Auth extends Component
 
 				$UserRow = new User;
 				$UserRow->assign($raw);
+				$UserRow->setSnapshotData($raw);
 
 				$options = $UserRow->unpackOptions($UserRow->options);
 

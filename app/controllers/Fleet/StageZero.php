@@ -94,17 +94,8 @@ class StageZero
 		{
 			if ($controller->planet->{$controller->storage->resource[$i]} > 0)
 			{
-				$ship = [
-					'id' => $i,
-					'count' => $controller->planet->{$controller->storage->resource[$i]},
-					'consumption' => Fleet::GetShipConsumption($i, $controller->user),
-					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
-				];
-
-				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
-					$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
-				else
-					$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
+				$ship = $controller->getShipInfo($i);
+				$ship['count'] = $controller->planet->{$controller->storage->resource[$i]};
 
 				$parse['ships'][] = $ship;
 			}

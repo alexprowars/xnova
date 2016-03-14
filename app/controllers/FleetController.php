@@ -75,4 +75,21 @@ class FleetController extends ApplicationController
 		$action = new Quick();
 		$action->show($this);
 	}
+
+	public function getShipInfo ($type)
+	{
+		$ship = [
+			'id' 			=> $type,
+			'consumption' 	=> Fleet::GetShipConsumption($type, $this->user),
+			'speed' 		=> Fleet::GetFleetMaxSpeed("", $type, $this->user),
+			'stay' 			=> $this->storage->CombatCaps[$type]['stay'],
+		];
+
+		if (isset($this->user->{'fleet_' . $type}) && isset($this->storage->CombatCaps[$type]['power_consumption']) && $this->storage->CombatCaps[$type]['power_consumption'] > 0)
+			$ship['capacity'] = round($this->storage->CombatCaps[$type]['capacity'] * (1 + $this->user->{'fleet_' . $type} * ($this->storage->CombatCaps[$type]['power_consumption'] / 100)));
+		else
+			$ship['capacity'] = $this->storage->CombatCaps[$type]['capacity'];
+
+		return $ship;
+	}
 }

@@ -13,6 +13,20 @@ function _getText ()
 
 function p ($array)
 {
+	if (!defined('SUPERUSER'))
+		return;
+
+	if (is_object($array))
+	{
+		$t = clone $array;
+
+		if (method_exists($t, 'setDi'))
+			$t->setDi(new Phalcon\Di);
+
+		echo '<pre>'; print_r($t); echo '</pre>';
+		return;
+	}
+
 	echo '<pre>'; print_r($array); echo '</pre>';
 }
 

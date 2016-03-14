@@ -127,7 +127,7 @@
 							<? if ($i > 0 && $i%2 == 0): ?></tr><tr><? endif; ?>
 							<th>
 								<input type="radio" name="moon" value="<?=$moon['id'] ?>" id="moon<?=$moon['id'] ?>">
-								<label for="moon<?=$moon['id'] ?>"><?=$moon['name'] ?> [<?=$moon['galaxy'] ?>:<?=$moon['system'] ?>:<?=$moon['planet'] ?>] <?=$moon['timer']['string'] ?></label>
+								<label for="moon<?=$moon['id'] ?>"><?=$moon['name'] ?> [<?=$moon['galaxy'] ?>:<?=$moon['system'] ?>:<?=$moon['planet'] ?>] <?=\App\Helpers::pretty_time($moon['timer']) ?></label>
 							</th>
 						<? endforeach; ?>
 						<? if ($i%2 == 0): ?><th>&nbsp;</th><? endif; ?>

@@ -164,7 +164,10 @@ class Planet extends Model
 			$this->user->planet_current = $this->user->planet_id;
 			$this->user->update();
 
-			$this->assign($this->findFirst($this->user->planet->id)->toArray());
+			$data = $this->findFirst($this->user->planet->id)->toArray();
+
+			$this->assign($data);
+			$this->setSnapshotData($data);
 
 			return false;
 		}
@@ -172,7 +175,7 @@ class Planet extends Model
 		return true;
 	}
 
-	public function CheckPlanetUsedFields ()
+	public function checkUsedFields ()
 	{
 		$cnt = 0;
 
@@ -361,21 +364,14 @@ class Planet extends Model
 		return $planet;
 	}
 
-	public function isPositionFree ($galaxy, $system, $position, $type = false)
+	public function isPositionFree ($galaxy, $system, $planet, $type = false)
 	{
-		if (!$galaxy || !$system || !$position)
+		if (!$galaxy || !$system || !$planet)
 			return false;
 
-		$query = "SELECT id FROM game_planets WHERE ";
+		$exist = $this->count('galaxy = '.$galaxy.' AND system = '.$system.' AND planet = '.$planet.''.($type !== false ? ' AND planet_type = '.$type : ''));
 
-		if ($type !== false)
-			$query .= "planet_type = '" . $type . "' AND ";
-
-		$query .= "galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $position . "';";
-
-		$exist = $this->db->query($query)->fetch();
-
-		return (!isset($exist['id']));
+		return (!($exist > 0));
 	}
 
 	public function getFreePositions ($galaxy, $system, $start = 1, $end = 15)
@@ -574,27 +570,10 @@ class Planet extends Model
 				$this->{$res} = 0;
 		}
 
-		$Builded = $this->HandleElementBuildingQueue($productionTime);
+		$isBuilded = $this->HandleElementBuildingQueue($productionTime);
 
-		if ($simultion)
-		{
-			$check = false;
-
-			if (is_array($Builded))
-			{
-				foreach ($Builded AS $count)
-				{
-					if ($count > 0)
-					{
-						$check = true;
-						break;
-					}
-				}
-			}
-
-			if ($check)
-				$simultion = false;
-		}
+		if ($simultion && $isBuilded > 0)
+			$simultion = false;
 
 		if (!$simultion)
 			$this->update();
@@ -617,11 +596,17 @@ class Planet extends Model
 				$this->b_hangar += $ProductionTime;
 
 				$MissilesSpace = ($this->{$this->storage->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
-				$Shield_1 = $this->small_protection_shield;
-				$Shield_2 = $this->big_protection_shield;
+
+				$max = [];
+
+				foreach ($this->storage->pricelist as $id => $data)
+				{
+					if (isset($data['max']) && isset($this->{$this->storage->resource[$id]}))
+						$max[$id] = $this->{$this->storage->resource[$id]};
+				}
 
 				$BuildArray = [];
-				$Builded = [];
+				$Builded = 0;
 
 				foreach ($BuildQueue as $Node => $Item)
 				{
@@ -643,25 +628,18 @@ class Planet extends Model
 						}
 					}
 
-					if ($Item['i'] == 407 || $Item['i'] == 408)
+					if (isset($this->storage->pricelist[$Item['i']]['max']))
 					{
-						if ($Item['l'] > 1)
-							$Item['l'] = 1;
+						if ($Item['l'] > $this->storage->pricelist[$Item['i']]['max'])
+							$Item['l'] = $this->storage->pricelist[$Item['i']]['max'];
 
-						if ($Item['i'] == 407)
-						{
-							if ($Shield_1 == 1)
-								$Item['l'] = 0;
-							else
-								$Shield_1 = 1;
-						}
+						if ($max[$Item['i']] + $Item['l'] > $this->storage->pricelist[$Item['i']]['max'])
+							$Item['l'] = $this->storage->pricelist[$Item['i']]['max'] - $max[$Item['i']];
+
+						if ($Item['l'] > 0)
+							$max[$Item['i']] += $Item['l'];
 						else
-						{
-							if ($Shield_2 == 1)
-								$Item['l'] = 0;
-							else
-								$Shield_2 = 1;
-						}
+							$Item['l'] = 0;
 					}
 
 					$BuildArray[$Node] = [$Item['i'], $Item['l'], Building::GetBuildingTime($this->user, $this, $Item['i'])];
@@ -671,22 +649,15 @@ class Planet extends Model
 
 				$queueArray[$queueManager::QUEUE_TYPE_SHIPYARD] = [];
 
-				foreach ($BuildArray as $Item)
+				foreach ($BuildArray as list($Element, $Count, $BuildTime))
 				{
-					if (!isset($this->storage->resource[$Item[0]]))
+					if (!isset($this->storage->resource[$Element]))
 						continue;
-
-					$Element = $Item[0];
-					$Count = $Item[1];
-					$BuildTime = $Item[2];
-
-					if (!isset($Builded[$Element]))
-						$Builded[$Element] = 0;
 
 					while ($this->b_hangar >= $BuildTime && !$UnFinished)
 					{
 						$this->b_hangar -= $BuildTime;
-						$Builded[$Element]++;
+						$Builded++;
 						$this->{$this->storage->resource[$Element]}++;
 						$Count--;
 
@@ -711,11 +682,9 @@ class Planet extends Model
 
 				return $Builded;
 			}
-			else
-				return '';
 		}
-		else
-			return '';
+
+		return 0;
 	}
 
 	public function UpdatePlanetBatimentQueueList ()
@@ -780,8 +749,6 @@ class Planet extends Model
 
 						$newQueue = $queueManager->get();
 						unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
-
-						\error_log(get_class($ThePlanet)."\n".print_r($ThePlanet, true), 0);
 
 						$ThePlanet->queue = json_encode($newQueue);
 						$ThePlanet->update();
@@ -852,13 +819,7 @@ class Planet extends Model
 				$queueManager->loadQueue($NewQueue);
 
 				$this->queue = json_encode($NewQueue);
-
-				$this->db->updateAsDict('game_planets',
-				[
-					$this->storage->resource[$Element]	=> $this->{$this->storage->resource[$Element]},
-					'queue'	=> $this->queue
-				],
-				"id = ".$this->id);
+				$this->update();
 
 				if ($XP != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
 				{
@@ -867,7 +828,7 @@ class Planet extends Model
 					if ($this->user->xpminier < 0)
 						$this->user->xpminier = 0;
 
-					$this->db->updateAsDict('game_users', ['xpminier' => $this->user->xpminier], "id = ".$this->user->id);
+					$this->user->update();
 				}
 
 				return true;
@@ -1005,8 +966,8 @@ class Planet extends Model
 
 	public function HandleTechnologieBuild ()
 	{
-		$Result['WorkOn'] = '';
-		$Result['OnWork'] = false;
+		$Result['planet'] = false;
+		$Result['working'] = false;
 
 		if ($this->user->b_tech_planet != 0)
 		{
@@ -1033,16 +994,14 @@ class Planet extends Model
 				}
 				else
 				{
-					$Result['WorkOn'] = $ThePlanet->toArray();
-					$Result['OnWork'] = true;
+					$Result['planet'] = $ThePlanet;
+					$Result['working'] = true;
 				}
 			}
 			else
 				$this->user->b_tech_planet = 0;
 
 			$this->user->update();
-
-			unset($ThePlanet);
 		}
 
 		return $Result;
@@ -1050,19 +1009,25 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
-		$researchLevelList = [$this->{$this->storage->resource[31]}];
+		$list = [$this->{$this->storage->resource[31]}];
 
 		if ($this->user->{$this->storage->resource[123]} > 0)
 		{
-			$researchResult = $this->db->query("SELECT ".$this->storage->resource[31]." FROM game_planets WHERE id_owner='" . $this->user->id . "' AND id != '" . $this->id . "' AND ".$this->storage->resource[31]." > 0 AND destruyed = 0 AND planet_type = 1 ORDER BY ".$this->storage->resource[31]." DESC LIMIT ".$this->user->{$this->storage->resource[123]}."");
+			$result = $this->find([
+				'columns' => $this->storage->resource[31],
+				'conditions' => 'id_owner = ?0 AND id != ?1 AND '.$this->storage->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
+				'bind' => [$this->user->id, $this->id],
+				'limit' => $this->user->{$this->storage->resource[123]},
+				'orders' => $this->storage->resource[31].' DESC'
+			]);
 
-			while ($researchRow = $researchResult->fetch())
+			foreach ($result as $row)
 			{
-				$researchLevelList[] = $researchRow[$this->storage->resource[31]];
+				$list[] = $row->{$this->storage->resource[31]};
 			}
 		}
 
-		return $researchLevelList;
+		return $list;
 	}
 
 	function getMaxFields ()
@@ -1072,40 +1037,18 @@ class Planet extends Model
 		return $this->field_max + ($this->{$this->storage->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->storage->resource[41]});
 	}
 
-	public function GetNextJumpWaitTime (array $CurMoon = [])
+	public function GetNextJumpWaitTime ()
 	{
-		if (count($CurMoon) == 0)
-			$CurMoon = $this->toArray();
-
-		$JumpGateLevel = $CurMoon[$this->storage->resource[43]];
-		$LastJumpTime = $CurMoon['last_jump_time'];
-
-		if ($JumpGateLevel > 0)
+		if ($this->{$this->storage->resource[43]} > 0)
 		{
-			$WaitBetweenJmp = (60 * 60) * (1 / $JumpGateLevel);
-			$NextJumpTime = $LastJumpTime + $WaitBetweenJmp;
+			$WaitBetweenJmp = (60 * 60) * (1 / $this->{$this->storage->resource[43]});
+			$NextJumpTime = $this->last_jump_time + $WaitBetweenJmp;
 
 			if ($NextJumpTime >= time())
-			{
-				$RestWait = $NextJumpTime - time();
-				$RestString = " " . Helpers::pretty_time($RestWait);
-			}
-			else
-			{
-				$RestWait = 0;
-				$RestString = "";
-			}
-		}
-		else
-		{
-			$RestWait = 0;
-			$RestString = "";
+				return $NextJumpTime - time();
 		}
 
-		$RetValue['string'] = $RestString;
-		$RetValue['value'] = $RestWait;
-
-		return $RetValue;
+		return 0;
 	}
 
 	function checkAbandonMoonState (array &$lunarow)

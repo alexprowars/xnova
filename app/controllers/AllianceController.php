@@ -11,6 +11,7 @@ use App\Helpers;
 use App\Lang;
 use App\Models\Alliance;
 use App\Models\AllianceMember;
+use App\Models\Planet;
 
 class AllianceController extends ApplicationController
 {
@@ -157,7 +158,7 @@ class AllianceController extends ApplicationController
 			$parse['list'] = $this->db->extractResult($this->db->query("SELECT id, id_ally, name, galaxy, system, planet FROM game_planets WHERE planet_type = 5 AND id_owner = ".$this->user->id.""));
 			$parse['credits'] = $this->user->credits;
 
-			$parse['bases'] = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_planets WHERE planet_type = 5 AND id_ally = ".$this->ally->id."");
+			$parse['bases'] = Planet::count(['planet_type = 5 AND id_ally = ?0', 'bind' => [$this->ally->id]]);
 
 			$parse['need'] = 100 * ($parse['bases'] > 0 ? (5 + ((int) $parse['bases'] - 1) * 5) : 1);
 

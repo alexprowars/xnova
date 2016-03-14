@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\Fleet;
+use App\Models\Planet;
 
 /**
  * @author AlexPro
@@ -34,8 +35,8 @@ class RocketController extends ApplicationController
 		
 		$tempvar1 = (($s - $this->planet->system) * (-1));
 		$tempvar2 = ($this->user->impulse_motor_tech * 5) - 1;
-		$tempvar3 = $this->db->query("SELECT * FROM game_planets WHERE galaxy = " . $g . " AND system = " . $s . " AND planet = " . $i . " AND planet_type = 1")->fetch();
-		
+		$tempvar3 = Planet::findByCoords($g, $s, $i, 1);
+
 		$error = 0;
 		
 		if ($this->planet->silo < 4)
@@ -44,7 +45,7 @@ class RocketController extends ApplicationController
 			$error = 2;
 		elseif ($tempvar1 >= $tempvar2 || $g != $this->planet->galaxy)
 			$error = 3;
-		elseif (!isset($tempvar3['id']))
+		elseif (!$tempvar3)
 			$error = 4;
 		elseif ($anz > $this->planet->interplanetary_misil)
 			$error = 5;
@@ -59,7 +60,7 @@ class RocketController extends ApplicationController
 		else
 			$destroyType = intval($destroyType);
 		
-		$select = $this->db->fetchOne("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3['id_owner']);
+		$select = $this->db->fetchOne("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3->id_owner);
 		
 		if (!isset($select['id']))
 			$this->message('Игрока не существует');
@@ -88,13 +89,17 @@ class RocketController extends ApplicationController
 			'end_system' 		=> $s,
 			'end_planet' 		=> $i,
 			'end_type' 			=> 1,
-			'target_owner' 		=> $tempvar3['id_owner'],
-			'target_owner_name' => $tempvar3['name'],
+			'target_owner' 		=> $tempvar3->id_owner,
+			'target_owner_name' => $tempvar3->name,
 			'create_time' 		=> time(),
 			'update_time' 		=> time() + $time,
 		]);
-		
-		$this->db->query("UPDATE game_planets SET interplanetary_misil = interplanetary_misil - " . $anz . " WHERE id = '" . $this->user->planet_current . "'");
+
+		if ($fleet->id > 0)
+		{
+			$this->planet->interplanetary_misil -= $anz;
+			$this->planet->update();
+		}
 
 		$this->view->setVar('anz', $anz);
 

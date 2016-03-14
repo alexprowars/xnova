@@ -189,7 +189,7 @@ class Construction
 
 		$PageParse['mode'] = $this->mode;
 
-		$queueManager = new Queue((isset($TechHandle['WorkOn']['queue']) ? $TechHandle['WorkOn']['queue'] : $this->planet->queue));
+		$queueManager = new Queue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
 
 		if (isset($_GET['cmd']) AND $bContinue != false)
 		{
@@ -204,11 +204,17 @@ class Construction
 				switch ($Command)
 				{
 					case 'cancel':
-						$queueManager->delete($Techno);
+
+						if ($queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
+							$queueManager->delete($Techno);
+
 						break;
 
 					case 'search':
-						$queueManager->add($Techno);
+
+						if (!$queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
+							$queueManager->add($Techno);
+
 						break;
 				}
 
@@ -285,7 +291,7 @@ class Construction
 				$row['search_time'] = $SearchTime;
 				$CanBeDone = Building::IsElementBuyable($this->user, $this->planet, $Tech);
 
-				if (!$TechHandle['OnWork'])
+				if (!$TechHandle['working'])
 				{
 					$LevelToDo = 1 + $this->user->{$storage->resource[$Tech]};
 
@@ -321,13 +327,13 @@ class Construction
 					{
 						$bloc = [];
 
-						if ($TechHandle['WorkOn']['id'] != $this->planet->id)
-							$bloc['tech_name'] 	= ' на ' . $TechHandle['WorkOn']["name"];
+						if ($TechHandle['planet']->id != $this->planet->id)
+							$bloc['tech_name'] 	= ' на ' . $TechHandle['planet']->name;
 						else
 							$bloc['tech_name'] 	= "";
 
 						$bloc['tech_time'] 	= $queueArray['e'] - time();
-						$bloc['tech_home'] 	= $TechHandle['WorkOn']["id"];
+						$bloc['tech_home'] 	= $TechHandle['planet']->id;
 						$bloc['tech_id'] 	= $queueArray['i'];
 
 						$TechnoLink = $bloc;

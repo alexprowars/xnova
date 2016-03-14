@@ -8,6 +8,7 @@ namespace App\Controllers;
  */
 
 use App\Helpers;
+use App\Models\Planet;
 
 class PlayersController extends ApplicationController
 {
@@ -57,9 +58,9 @@ class PlayersController extends ApplicationController
 				$siegprozent = 100 / $gesamtkaempfe * $daten['raids_win'];
 				$loosprozent = 100 / $gesamtkaempfe * $daten['raids_lose'];
 			}
-		
-			$planets = $this->db->query("SELECT * FROM game_planets WHERE `galaxy` = '" . $daten['galaxy'] . "' and `system` = '" . $daten['system'] . "' and `planet_type` = '1' and `planet` = '" . $daten['planet'] . "';")->fetch();
-			$parse['userplanet'] = $planets['name'];
+			$planets = Planet::findByCoords($daten['galaxy'], $daten['system'], $daten['planet'], 1);
+
+			$parse['userplanet'] = $planets->name;
 		
 			$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $daten['id'] . "';")->fetch();
 			$parse['tech_rank'] = Helpers::pretty_number($points['tech_rank']);

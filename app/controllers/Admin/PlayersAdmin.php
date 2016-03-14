@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\AdminController;
 use App\Lang;
 
-class PlayerAdmin
+class PlayersAdmin
 {
 	public function show (AdminController $controller)
 	{

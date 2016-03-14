@@ -9,6 +9,7 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
+use App\Models\Planet;
 
 class TutorialController extends ApplicationController
 {
@@ -128,7 +129,7 @@ class TutorialController extends ApplicationController
 
 				if ($taskKey == 'PLANETS')
 				{
-					$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_planets WHERE id_owner = ".$this->user->getId()." AND planet_type = 1");
+					$count = Planet::count(['id_owner = ?0 AND planet_type = 1', 'bind' => [$this->user->getId()]]);
 
 					$check = $count >= $taskVal ? true : false;
 
