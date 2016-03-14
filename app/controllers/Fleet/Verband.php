@@ -77,7 +77,7 @@ class Verband
 					}*/
 
 					$fleet->group_id = $aksid;
-					$fleet->save();
+					$fleet->update();
 				}
 				else
 					$controller->message('Для этого флота уже задана ассоциация!', 'Ошибка');

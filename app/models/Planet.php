@@ -41,7 +41,7 @@ class Planet extends Model
 	public $crystal;
 	public $deuterium;
 	public $energy_used;
-	public $energy_max;
+	public $energy_max = 0;
 	public $energy_ak;
 	public $temp_min;
 	public $temp_max;
@@ -158,20 +158,6 @@ class Planet extends Model
 	public function assignUser (User $user)
 	{
 		$this->user = $user;
-		$this->copyTempParams();
-	}
-
-	public function copyTempParams ()
-	{
-		$metadata = $this->toArray();
-
-		if (is_array($metadata))
-		{
-			foreach ($metadata AS $key => $value)
-				$this->{'~'.$key} = $value;
-
-			$this->energy_max = 0;
-		}
 	}
 
 	public function checkOwnerPlanet ()
@@ -199,7 +185,7 @@ class Planet extends Model
 		if ($this->field_current != $cnt)
 		{
 			$this->field_current = $cnt;
-			$this->save();
+			$this->update();
 		}
 	}
 
@@ -1039,7 +1025,7 @@ class Planet extends Model
 			if ($this->user->b_tech_planet != $this->id)
 				$ThePlanet = Planet::findFirst($this->user->b_tech_planet);
 			else
-				$ThePlanet = &$this;
+				$ThePlanet = $this;
 
 			$queueManager 	= new Queue($ThePlanet->queue);
 			$queueArray 	= $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
@@ -1055,7 +1041,7 @@ class Planet extends Model
 					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
 
 					$ThePlanet->queue = json_encode($newQueue);
-					$ThePlanet->save();
+					$ThePlanet->update();
 				}
 				else
 				{

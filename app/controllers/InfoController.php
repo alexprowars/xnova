@@ -239,7 +239,7 @@ class InfoController extends ApplicationController
 
 						$fleet->end_stay += $times;
 						$fleet->end_time += $times;
-						$fleet->save();
+						$fleet->update();
 
 						$parse['msg'] = "<font color=red>Ракета с дейтерием отправлена на орбиту вашей планете</font>";
 					}

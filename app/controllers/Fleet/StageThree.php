@@ -312,8 +312,8 @@ class StageThree
 
 		if ($fleetmission == 15)
 		{
-			$StayDuration = intval($_POST['expeditiontime']) * 3600;
-			$StayTime = $fleet['start_time'] + intval($_POST['expeditiontime']) * 3600;
+			$StayDuration = $controller->request->getPost('expeditiontime', 'int', 0) * 3600;
+			$StayTime = $fleet->start_time + $StayDuration;
 		}
 		else
 		{

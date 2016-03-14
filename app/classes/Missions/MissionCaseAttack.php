@@ -344,25 +344,20 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 			else
 			{
-				$arFields = [];
-
 				if ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)
 				{
-					$arFields = [
-						'-metal' 		=> $steal['metal'],
-						'-crystal' 		=> $steal['crystal'],
-						'-deuterium' 	=> $steal['deuterium']
-					];
+					$target->metal -= $steal['metal'];
+					$target->crystal -= $steal['crystal'];
+					$target->deuterium -= $steal['deuterium'];
 				}
 
 				for ($i = 200; $i < 500; $i++)
 				{
-					if (isset($this->storage->resource[$i]) && isset($defender[$i]) && isset($target->{$this->storage->resource[$i]}) && $defender[$i] != $target->{'~'.$this->storage->resource[$i]})
-						$arFields[$this->storage->resource[$i]] = $defender[$i];
+					if (isset($this->storage->resource[$i]) && isset($defender[$i]) && isset($target->{$this->storage->resource[$i]}))
+						$target->{$this->storage->resource[$i]} = $defender[$i];
 				}
 
-				if (count($arFields) > 0)
-					$target->saveData($arFields);
+				$target->update();
 			}
 		}
 		

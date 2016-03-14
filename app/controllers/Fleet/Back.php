@@ -46,7 +46,13 @@ class Back
 
 					$ReturnFlyingTime = $CurrentFlyingTime + time();
 
-					$FleetRow->save([
+					if ($FleetRow->group_id != 0 && $FleetRow->mission == 1)
+					{
+						$controller->db->delete('game_aks', 'id = ?', [$FleetRow->group_id]);
+						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow->group_id]);
+					}
+
+					$FleetRow->update([
 						'start_time'	=> time() - 1,
 						'end_stay' 		=> 0,
 						'end_time' 		=> $ReturnFlyingTime + 1,
@@ -55,12 +61,6 @@ class Back
 						'update_time' 	=> $ReturnFlyingTime + 1,
 						'mess' 			=> 1,
 					]);
-
-					if ($FleetRow->group_id != 0 && $FleetRow->mission == 1)
-					{
-						$controller->db->delete('game_aks', 'id = ?', [$FleetRow->group_id]);
-						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow->group_id]);
-					}
 
 					$BoxTitle = _getText('fl_sback');
 					$TxtColor = "lime";

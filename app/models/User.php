@@ -334,6 +334,14 @@ class User extends Model
 			 */
 			$planet = Planet::findFirst($this->planet_current);
 
+			if (!$planet && $this->planet_id > 0)
+			{
+				$this->planet_current = $this->planet_id;
+				$this->update();
+
+				$planet = Planet::findFirst($this->planet_current);
+			}
+
 			if ($planet)
 			{
 				$planet->assignUser($this);
@@ -412,7 +420,7 @@ class User extends Model
 				}
 
 				$this->planet_current = $selectPlanet;
-				$this->save();
+				$this->update();
 			}
 			else
 				return false;

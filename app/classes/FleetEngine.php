@@ -284,7 +284,7 @@ class FleetEngine extends Injectable
 		$update['mess'] = 3;
 		$update['update_time'] = $this->_fleet->end_stay;
 
-		$this->_fleet->save($update);
+		$this->_fleet->update($update);
 	}
 
 	public function convertFleetToDebris ($fleet)

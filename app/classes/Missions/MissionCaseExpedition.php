@@ -101,7 +101,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						break;
 				}
 
-				$this->_fleet->save();
+				$this->_fleet->update();
 
 				break;
 
@@ -122,7 +122,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$this->_fleet->update_time = $this->_fleet->end_time;
 				$this->_fleet->mess = 1;
-				$this->_fleet->save();
+				$this->_fleet->update();
 
 				break;
 
@@ -181,7 +181,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Message .= $FoundShipMess;
 
-				$this->_fleet->save([
+				$this->_fleet->update([
 					'fleet_array' 	=> $NewFleetArray,
 					'update_time' 	=> $this->_fleet->end_time,
 					'mess' 			=> 1
@@ -425,7 +425,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Message = _getText('sys_expe_time_fast_'.mt_rand(1,3));
 				}
 
-				$this->_fleet->save([
+				$this->_fleet->update([
 					'update_time' 	=> $this->_fleet->end_time,
 					'mess' 			=> 1
 				]);

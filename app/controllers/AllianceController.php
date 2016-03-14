@@ -52,7 +52,7 @@ class AllianceController extends ApplicationController
 			$this->ally->member->u_id = $this->user->id;
 			$this->ally->member->time = time();
 
-			$this->ally->member->save();
+			$this->ally->member->create();
 		}
 	}
 

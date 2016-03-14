@@ -63,7 +63,6 @@ class ResourcesController extends ApplicationController
 		while ($planet = $planets->fetch())
 		{
 			$pl_class->assign($planet);
-			$pl_class->copyTempParams();
 			$pl_class->PlanetResourceUpdate();
 		}
 
