@@ -2,13 +2,18 @@
 
 include_once(APP_PATH."app/functions.php");
 
-$loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
+$result = $di->get('cache')->get('app_config');
 
-$result = [];
-
-while ($load = $loads->fetch())
+if ($result === null)
 {
-	$result[$load['key']] = $load['value'];
+	$result = [];
+
+	$loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
+
+	while ($load = $loads->fetch())
+		$result[$load['key']] = $load['value'];
+
+	$di->get('cache')->save('app_config', $result, 3600);
 }
 
 $di->get('config')->merge(new \Phalcon\Config(['app' => $result]));

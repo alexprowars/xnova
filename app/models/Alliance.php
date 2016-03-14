@@ -44,11 +44,6 @@ class Alliance extends Model
 	 */
 	public $member;
 
-	public function initialize()
-	{
-		$this->useDynamicUpdate(true);
-	}
-
 	public function getSource()
 	{
 		return DB_PREFIX."alliance";
@@ -57,6 +52,8 @@ class Alliance extends Model
 	public function onConstruct()
 	{
 		$this->hasOne("id", "App\Models\AllianceMember", "a_id", Array('alias' => 'member'));
+
+		$this->useDynamicUpdate(true);
 	}
 
 	public function getRanks ()

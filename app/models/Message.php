@@ -20,7 +20,7 @@ class Message extends Model
 	public $from;
 	public $text;
 
-	public function initialize()
+	public function onConstruct()
 	{
 		$this->useDynamicUpdate(true);
 	}

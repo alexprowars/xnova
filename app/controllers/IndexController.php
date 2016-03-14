@@ -133,8 +133,8 @@ class IndexController extends ApplicationController
 						$this->db->insertAsDict('game_refs', Array('r_id' => $iduser, 'u_id' => $this->session->get('ref')));
 				}
 
-				$this->db->query("UPDATE game_config SET `value` = `value` + 1 WHERE `key` = 'users_total'");
 				$this->config->app->users_total++;
+				$this->game->updateConfig('users_total', $this->config->app->users_total);
 
 				$mail = new PHPMailer();
 				$mail->SetFrom($this->config->app->email, $this->config->app->name);

@@ -55,7 +55,7 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	$di->set(
 	    'cache', function () use ($config, $di)
 		{
-			$frontCache = new \Phalcon\Cache\Frontend\Data(["lifetime" => 3600]);
+			$frontCache = new \Phalcon\Cache\Frontend\None(["lifetime" => 3600]);
 
 			/**
 			 * @var Object $config

@@ -46,7 +46,7 @@ class Fleet extends Model
 
 	public $username = '';
 
-	public function initialize()
+	public function onConstruct()
 	{
 		$this->useDynamicUpdate(true);
 	}

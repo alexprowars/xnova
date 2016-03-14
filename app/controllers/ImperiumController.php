@@ -79,7 +79,7 @@ class ImperiumController extends ApplicationController
 		/**
 		 * @var Planet[] $planets
 		 */
-		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => trim(str_replace('ORDER BY', '', $this->user->getPlanetListSortQuery()))]);
+		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => $this->user->getPlanetListSortQuery()]);
 
 		$parse['mount'] = count($planets) + 3;
 

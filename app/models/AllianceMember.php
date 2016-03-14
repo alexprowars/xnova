@@ -16,11 +16,6 @@ class AllianceMember extends Model
 	public $rank;
 	public $time;
 
-	public function initialize()
-	{
-		$this->useDynamicUpdate(true);
-	}
-
 	public function getSource()
 	{
 		return DB_PREFIX."alliance_members";
@@ -29,5 +24,7 @@ class AllianceMember extends Model
 	public function onConstruct()
 	{
 	 	$this->hasOne("a_id", "App\Models\Alliance", "id", Array('alias' => 'alliance'));
+
+		$this->useDynamicUpdate(true);
 	}
 }

@@ -174,5 +174,8 @@ class Game extends Component
 	{
 		$this->db->updateAsDict('game_config', ['value' => $value], ['conditions' => '`key` = ?', 'bind' => [$key]]);
 		$this->config->app->offsetSet($key, $value);
+
+		if ($this->cache->get('app_config') !== null)
+			$this->cache->delete('app_config');
 	}
 }

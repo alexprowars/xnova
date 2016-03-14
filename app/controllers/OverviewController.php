@@ -450,40 +450,41 @@ class OverviewController extends ApplicationController
 		$build_list = [];
 		$AllPlanets = [];
 
-		$planets_query = $this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $this->user->id . "' AND `planet_type` != '3' AND id != " . $this->user->planet_current . " " . $QryPlanets . ";");
+		/**
+		 * @var $planets_query \App\Models\Planet[]
+		 */
+		$planets_query = Planet::find([
+			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id:',
+			'orders' => $QryPlanets,
+			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current]
+		]);
 
-		if ($planets_query->numRows() > 0)
+		if (count($planets_query) > 0)
 		{
-			while ($UserPlanet = $planets_query->fetch())
+			foreach ($planets_query as $UserPlanet)
 			{
 				if ($this->config->view->get('overviewListView', 0) == 0)
 				{
-					$AllPlanets[] = ['id' => $UserPlanet['id'], 'name' => $UserPlanet['name'], 'image' => $UserPlanet['image']];
+					$AllPlanets[] = ['id' => $UserPlanet->id, 'name' => $UserPlanet->name, 'image' => $UserPlanet->image];
 				}
 
-				if ($UserPlanet['queue'] != '[]')
+				if ($UserPlanet->queue != '[]')
 				{
 					if (!isset($queueManager))
 						$queueManager = new Queue();
 
-					$queueManager->loadQueue($UserPlanet['queue']);
+					$queueManager->loadQueue($UserPlanet->queue);
 
 					if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 					{
-						if (!isset($build))
-						{
-							$build = new Planet();
-							$build->assignUser($this->user);
-						}
-
-						$build->assign($UserPlanet);
-						$build->UpdatePlanetBatimentQueueList();
+						$UserPlanet->assignUser($this->user);
+						$UserPlanet->UpdatePlanetBatimentQueueList();
 
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
 						foreach ($QueueArray AS $CurrBuild)
 						{
-							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"/buildings/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
+							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"/buildings/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
 						}
 					}
 
@@ -491,7 +492,7 @@ class OverviewController extends ApplicationController
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"/buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet['id'] . "\" style=\"color:#33ff33;\">" . $UserPlanet['name'] . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->storage->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->storage->resource[$QueueArray[0]['i']]} + 1) . ')'];
+						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"/buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->storage->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->storage->resource[$QueueArray[0]['i']]} + 1) . ')'];
 					}
 				}
 			}
@@ -701,7 +702,7 @@ class OverviewController extends ApplicationController
 
 			$forum = $this->cache->get('forum_activity');
 
-			if ($forum === NULL)
+			if ($forum === null)
 			{
 				$forum = file_get_contents('http://forum.xnova.su/lastposts.php');
 

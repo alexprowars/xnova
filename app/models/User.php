@@ -132,14 +132,11 @@ class User extends Model
 	public $deltime;
 	public $ally_name;
 
-	public function initialize()
-	{
-		$this->useDynamicUpdate(true);
-	}
-
 	public function onConstruct()
 	{
 		$this->db = $this->getDi()->getShared('db');
+
+		$this->useDynamicUpdate(true);
 	}
 
 	public function isAdmin()
@@ -446,7 +443,7 @@ class User extends Model
 		if (!$moons)
 			$qryPlanets .= " AND planet_type != 3 ";
 
-		$qryPlanets .= $this->getPlanetListSortQuery();
+		$qryPlanets .= ' ORDER BY '.$this->getPlanetListSortQuery();
 
 		return $this->db->extractResult($this->db->query($qryPlanets));
 	}
@@ -461,7 +458,7 @@ class User extends Model
 				$order 	= $this->planet_sort_order;
 		}
 
-		$qryPlanets = ' ORDER BY ';
+		$qryPlanets = ' ';
 
 		switch ($sort)
 		{

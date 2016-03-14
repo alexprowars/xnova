@@ -145,8 +145,8 @@ class Ulogin extends Component implements AuthInterface
 				}
 			}
 
-			$this->db->query("UPDATE game_config SET `value` = `value` + 1 WHERE `key` = 'users_total'");
 			$this->config->app->users_total++;
+			$this->game->updateConfig('users_total', $this->config->app->users_total);
 
 			$this->auth->auth($iduser, md5($this->token));
 

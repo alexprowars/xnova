@@ -15,7 +15,7 @@ use Phalcon\Mvc\Dispatcher;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Model;
 use Phalcon\Cache\Backend\Memcache as Cache;
-//use Phalcon\Logger\Adapter\File as FileLogger;
+use Phalcon\Logger\Adapter\File as FileLogger;
 
 $di = new FactoryDefault();
 
@@ -47,17 +47,28 @@ $di->setShared(
 $di->setShared(
 	'db', function () use ($config)
 	{
-		/*$logger = new FileLogger(APP_PATH."app/logs/debug.log");
+		if (!file_exists(APP_PATH."app/logs/debug_".date("d.m.Y-H").".log"))
+			fclose(fopen(APP_PATH."app/logs/debug_".date("d.m.Y-H").".log", "w"));
+
+		$logger = new FileLogger(APP_PATH."app/logs/debug_".date("d.m.Y-H").".log");
 
 		$eventsManager = new EventsManager();
 
-		$eventsManager->attach('db', function($event, $connection) use ($logger)
+		$eventsManager->attach('db', function(Phalcon\Events\Event $event, App\Database $connection) use ($logger)
 		{
 			if ($event->getType() == 'beforeQuery')
 			{
 				$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSQLVariables(), true), Logger::INFO);
+
+				$d = debug_backtrace();
+
+				foreach ($d as $a)
+				{
+					if (isset($a['file']))
+						$logger->log("".$a['class'].'::'.$a['function'].''.(isset($a['line']) ? ' in file '.$a['file'].' on line '.$a['line'].'' : ''), Logger::DEBUG);
+				}
 			}
-		});*/
+		});
 
 		/**
 		 * @var Object $config
@@ -71,7 +82,7 @@ $di->setShared(
 			'options' 	=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
 		]);
 
-		//$connection->setEventsManager($eventsManager);
+		$connection->setEventsManager($eventsManager);
 
 		return $connection;
 	}

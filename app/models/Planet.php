@@ -126,13 +126,10 @@ class Planet extends Model
 
 	public $spaceLabs;
 
-	public function initialize()
-	{
-		$this->useDynamicUpdate(true);
-	}
-
 	public function onConstruct()
 	{
+		$this->useDynamicUpdate(true);
+
 		$this->db = $this->getDi()->getShared('db');
 		$this->game = $this->getDi()->getShared('game');
 		$this->storage = $this->getDi()->getShared('storage');
@@ -750,9 +747,8 @@ class Planet extends Model
 
 			if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH) > 0 && $this->user->b_tech_planet == 0)
 			{
-				$this->db->updateAsDict('game_users', ['b_tech_planet' => $this->id], "id = ".$this->user->id);
-
 				$this->user->b_tech_planet = $this->id;
+				$this->user->update();
 			}
 		}
 
@@ -767,47 +763,39 @@ class Planet extends Model
 		if ($this->user->b_tech_planet != 0)
 		{
 			if ($this->user->b_tech_planet != $this->id)
-				$WorkingPlanet = $this->db->query("SELECT id, queue FROM game_planets WHERE id = '" . $this->user->b_tech_planet . "';")->fetch();
-
-			if (isset($WorkingPlanet))
-				$ThePlanet = $WorkingPlanet;
+				$ThePlanet = Planet::findFirst(['conditions' => 'id = ?0', 'bind' => [$this->user->b_tech_planet]]);
 			else
-				$ThePlanet = $this->toArray();
+				$ThePlanet = $this;
 
-			$queueManager = new Queue($ThePlanet['queue']);
-			$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-			if (count($queueArray))
+			if ($ThePlanet)
 			{
-				if ($queueArray[0]['e'] <= time())
+				$queueManager = new Queue($ThePlanet->queue);
+				$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+
+				if (count($queueArray))
 				{
-					$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
+					if ($queueArray[0]['e'] <= time())
+					{
+						$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
 
-					$newQueue = $queueManager->get();
-					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
+						$newQueue = $queueManager->get();
+						unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
 
-					$this->db->updateAsDict('game_planets', ['queue' => json_encode($newQueue)], "id = ".$ThePlanet['id']);
-					$this->db->updateAsDict(
-						'game_users',
-						[
-							$this->storage->resource[$queueArray[0]['i']]	=> $this->user->{$this->storage->resource[$queueArray[0]['i']]},
-							'b_tech_planet'	=> 0
-						],
-						"id = ".$this->user->id
-					);
+						\error_log(get_class($ThePlanet)."\n".print_r($ThePlanet, true), 0);
 
+						$ThePlanet->queue = json_encode($newQueue);
+						$ThePlanet->update();
+
+						$this->user->b_tech_planet = 0;
+					}
+				}
+				else
 					$this->user->b_tech_planet = 0;
 
-					if (!isset($WorkingPlanet))
-						$this->queue = json_encode($newQueue);
-				}
+				$this->user->update();
 			}
-			else
-			{
-				$this->db->updateAsDict('game_users', ['b_tech_planet' => 0], "id = ".$this->user->id);
 
-				$this->user->b_tech_planet = 0;
-			}
+			unset($ThePlanet);
 		}
 		else
 			return false;
