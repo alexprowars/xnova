@@ -27,7 +27,7 @@ class FleetEngine extends Injectable
 
 	function __construct(Fleet $Fleet)
 	{
-			$this->_fleet = $Fleet;
+		$this->_fleet = $Fleet;
 	}
 
 	public function KillFleet ($fleetId = false)
@@ -47,16 +47,16 @@ class FleetEngine extends Injectable
 		{
 			if ($Start && $this->_fleet->start_type == 3)
 			{
-				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet->start_galaxy . "' AND `system` = '" . $this->_fleet->start_system . "' AND `planet` = '" . $this->_fleet->start_planet . "' AND `planet_type` = '" . $this->_fleet->start_type . "'")->fetch();
+				$CheckFleet = Planet::findFirst(['columns' => 'destruyed', 'conditions' => 'galaxy = ?0 AND system = ?1 AND planet = ?2 AND planet_type = ?3', 'bind' => [$this->_fleet->start_galaxy, $this->_fleet->start_system, $this->_fleet->start_planet, $this->_fleet->start_type]]);
 
-				if ($CheckFleet['destruyed'] != 0)
+				if ($CheckFleet && $CheckFleet->destruyed != 0)
 					$this->_fleet->start_type = 1;
 			}
 			elseif ($this->_fleet->end_type == 3)
 			{
-				$CheckFleet = $this->db->query("SELECT destruyed FROM game_planets WHERE `galaxy` = '" . $this->_fleet->end_galaxy . "' AND `system` = '" . $this->_fleet->end_system . "' AND `planet` = '" . $this->_fleet->end_planet . "' AND `planet_type` = '" . $this->_fleet->end_type . "'")->fetch();
+				$CheckFleet = Planet::findFirst(['columns' => 'destruyed', 'conditions' => 'galaxy = ?0 AND system = ?1 AND planet = ?2 AND planet_type = ?3', 'bind' => [$this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type]]);
 
-				if ($CheckFleet['destruyed'] != 0)
+				if ($CheckFleet && $CheckFleet->destruyed != 0)
 					$this->_fleet->end_type = 1;
 			}
 		}
@@ -68,46 +68,36 @@ class FleetEngine extends Injectable
 
 		$TargetPlanet = Planet::findByCoords($this->_fleet->{$p.'_galaxy'}, $this->_fleet->{$p.'_system'}, $this->_fleet->{$p.'_planet'}, $this->_fleet->{$p.'_type'});
 
-		if (isset($TargetPlanet->id) && $TargetPlanet->id_owner > 0)
+		if ($TargetPlanet && $TargetPlanet->id_owner > 0)
 		{
 			/**
 			 * @var \App\Models\User $TargetUser
 			 */
 			$TargetUser = User::findFirst($TargetPlanet->id_owner);
 
-			if (isset($TargetUser->id))
+			if ($TargetUser)
 			{
 				$TargetPlanet->assignUser($TargetUser);
 				$TargetPlanet->PlanetResourceUpdate(time());
 			}
-		}
 
-		$update = [];
-
-		if ($fleet)
-		{
-			$fleetData = $this->_fleet->getShips();
-
-			foreach ($fleetData as $shipId => $shipArr)
+			if ($fleet)
 			{
-				if ($shipArr['cnt'] > 0)
-					$update['+'.$this->storage->resource[$shipId]] = $shipArr['cnt'];
+				$fleetData = $this->_fleet->getShips();
+
+				foreach ($fleetData as $shipId => $shipArr)
+				{
+					if ($shipArr['cnt'] > 0)
+						$TargetPlanet->{$this->storage->resource[$shipId]} += $shipArr['cnt'];
+				}
 			}
+
+			$TargetPlanet->metal += $this->_fleet->resource_metal;
+			$TargetPlanet->crystal += $this->_fleet->resource_crystal;
+			$TargetPlanet->deuterium += $this->_fleet->resource_deuterium;
+
+			$TargetPlanet->update();
 		}
-
-		$update['+metal'] 		= $this->_fleet->resource_metal;
-		$update['+crystal'] 	= $this->_fleet->resource_crystal;
-		$update['+deuterium'] 	= $this->_fleet->resource_deuterium;
-
-		$this->db->updateAsDict('game_planets', $update, [
-			'conditions' => 'galaxy = ? AND system = ? AND planet = ? AND planet_type = ?',
-			'bind' => [
-				$this->_fleet->{$p.'_galaxy'},
-				$this->_fleet->{$p.'_system'},
-				$this->_fleet->{$p.'_planet'},
-				$this->_fleet->{$p.'_type'}
-			]
-		]);
 	}
 
 	public function StoreGoodsToPlanet ($Start = true)

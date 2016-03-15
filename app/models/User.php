@@ -358,7 +358,7 @@ class User extends Model
 					$planet->PlanetResourceUpdate();
 
 				// Проверка наличия законченных построек и исследований
-				if ($planet->UpdatePlanetBatimentQueueList())
+				if ($planet->updateQueueList())
 					$planet->PlanetResourceUpdate(time(), true);
 
 				$this->getDi()->setShared('planet', $planet);

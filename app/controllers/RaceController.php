@@ -8,6 +8,7 @@ namespace App\Controllers;
  */
 
 use App\Models\Fleet;
+use App\Models\Planet;
 use App\Queue;
 
 class RaceController extends ApplicationController
@@ -33,11 +34,11 @@ class RaceController extends ApplicationController
 				$queueManager = new Queue();
 				$queueCount = 0;
 
-				$BuildOnPlanets = $this->db->query("SELECT `queue` FROM game_planets WHERE `id_owner` = '" . $this->user->id . "'");
+				$BuildOnPlanets = Planet::find(['columns' => 'queue', 'conditions' => 'id_owner = ?0', 'bind' => [$this->user->id]]);
 
-				while ($BuildOnPlanet = $BuildOnPlanets->fetch())
+				foreach ($BuildOnPlanets as $BuildOnPlanet)
 				{
-					$queueManager->loadQueue($BuildOnPlanet['queue']);
+					$queueManager->loadQueue($BuildOnPlanet->queue);
 
 					$queueCount += $queueManager->getCount();
 				}

@@ -234,21 +234,6 @@
 	</div>
 </div>
 
-<? if (is_array($parse['anothers_planets']) && count($parse['anothers_planets'])): ?>
-	<div class="separator"></div>
-	<table class="table anotherPlanets">
-		<tr>
-			<? foreach ($parse['anothers_planets'] AS $i => $UserPlanet): ?>
-				<th width="20%" valign="top">
-					<a href="<?=$this->url->get("overview/?chpl=".$UserPlanet['id']."") ?>" title="<?= $UserPlanet['name'] ?>"><img src="/assets/images/planeten/small/s_<?= $UserPlanet['image'] ?>.jpg" height="50" width="50" alt=""></a>
-					<br><?=$UserPlanet['name'] ?>
-				</th>
-				<? if ($i > 0 && $i%5 == 0): ?></tr><tr><? endif; ?>
-			<? endforeach; ?>
-		</tr>
-	</table>
-<? endif; ?>
-
 <? if (isset($parse['activity'])): ?>
 	<div class="separator"></div>
 

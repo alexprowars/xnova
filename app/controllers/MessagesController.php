@@ -190,7 +190,11 @@ class MessagesController extends ApplicationController
 		if ($MessCategory < 100)
 			$messages->where('owner = ?0 AND type = ?1 AND deleted = ?2', [$this->user->id, $MessCategory, 0]);
 		elseif ($MessCategory == 101)
-			$messages->where('sender = ?0', [$this->user->id]);
+		{
+			$messages->columns(['m.id', 'm.type', 'm.time', 'm.text', 'sender' => 'm.owner', 'from' => 'CONCAT(u.username, \' [\', u.galaxy,\':\', u.system,\':\',u.planet, \']\')']);
+			$messages->from(['m' => 'App\Models\Message', 'u' => 'App\Models\User']);
+			$messages->where('u.id = m.owner AND m.sender = ?0', [$this->user->id]);
+		}
 		else
 			$messages->where('owner = ?0 AND deleted = ?1', [$this->user->id, 0]);
 

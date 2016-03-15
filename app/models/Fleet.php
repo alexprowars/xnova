@@ -56,14 +56,24 @@ class Fleet extends Model
 		return DB_PREFIX."fleets";
 	}
 
+	public function splitStartPosition ()
+	{
+		return $this->start_galaxy.':'.$this->start_system.':'.$this->start_planet;
+	}
+
+	public function splitTargetPosition ()
+	{
+		return $this->end_galaxy.':'.$this->end_system.':'.$this->end_planet;
+	}
+
 	public function getStartAdressLink ($FleetType = '')
 	{
-		return '<a href="/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->start_galaxy.':'.$this->start_system.':'.$this->start_planet.']</a>';
+		return '<a href="/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
 	}
 
 	public function getTargetAdressLink ($FleetType = '')
 	{
-		return '<a href="/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->end_galaxy.':'.$this->end_system.':'.$this->end_planet.']</a>';
+		return '<a href="/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
 	}
 
 	public function getTotalShips ()

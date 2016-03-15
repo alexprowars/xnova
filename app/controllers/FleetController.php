@@ -73,7 +73,21 @@ class FleetController extends ApplicationController
 	public function quickAction ()
 	{
 		$action = new Quick();
-		$action->show($this);
+
+		$result = $action->show($this);
+
+		$this->view->disable();
+
+		if (!is_array($result))
+		{
+			$this->game->setRequestStatus(0);
+			$this->game->setRequestMessage($result);
+		}
+		else
+		{
+			$this->game->setRequestStatus($result[0]);
+			$this->game->setRequestMessage($result[1]);
+		}
 	}
 
 	public function getShipInfo ($type)

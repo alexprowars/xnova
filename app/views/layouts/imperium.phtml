@@ -2,8 +2,7 @@
 	<script type="application/javascript">
 		$(document).ready(function()
 		{
-			$('body.window .content').css('width', <?=(($parse['mount'] - 3) * 75 + 100 + 350) ?>);
-			$('#box, .game_content > .content').css('display', 'table');
+			$('body.window .game_content').css('width', <?=(($parse['mount'] - 3) * 75 + 100 + 350 + 250) ?>);
 		});
 	</script>
 <? endif; ?>
@@ -15,8 +14,7 @@
 		<tr>
 			<th colspan="2">&nbsp;</th>
 			<?=$parse['file_images'] ?>
-			<th width="100">Сумма
-			</th>
+			<th width="100">Сумма</th>
 		</tr>
 		<tr>
 			<th colspan="2"><?=_getText('name') ?></th>
@@ -40,17 +38,23 @@
 		<tr>
 			<th rowspan="5">на планете</th>
 			<th><?=_getText('metal') ?></th>
-			<?=$parse['file_metal'] ?>
+			<? foreach ($parse['file_metal'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_metal_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('crystal') ?></th>
-			<?=$parse['file_crystal'] ?>
+			<? foreach ($parse['file_crystal'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_crystal_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('deuterium') ?></th>
-			<?=$parse['file_deuterium'] ?>
+			<? foreach ($parse['file_deuterium'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_deuterium_t'] ?></th>
 		</tr>
 		<tr>
@@ -68,31 +72,47 @@
 		<tr>
 			<th rowspan="3">в час</th>
 			<th><?=_getText('metal') ?></th>
-			<?=$parse['file_metal_ph'] ?>
+			<? foreach ($parse['file_metal_ph'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_metal_ph_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('crystal') ?></th>
-			<?=$parse['file_crystal_ph'] ?>
+			<? foreach ($parse['file_crystal_ph'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_crystal_ph_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('deuterium') ?></th>
-			<?=$parse['file_deuterium_ph'] ?>
+			<? foreach ($parse['file_deuterium_ph'] as $item): ?>
+				<th><?=App\Helpers::pretty_number($item) ?></th>
+			<? endforeach; ?>
 			<th><?=$parse['file_deuterium_ph_t'] ?></th>
 		</tr>
 
 
 		<tr>
 			<th rowspan="6">Производство</th>
-			<th>Металл</th><?=$parse['file_metal_p'] ?>
+			<th>Металл</th>
+			<? foreach ($parse['file_metal_p'] as $item): ?>
+				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+			<? endforeach; ?>
 			<th rowspan="6">&nbsp;</th>
 		</tr>
 		<tr>
 			<th>Кристаллы</th>
-			<?=$parse['file_crystal_p'] ?></th></tr>
+			<? foreach ($parse['file_crystal_p'] as $item): ?>
+				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+			<? endforeach; ?>
+		</tr>
 		<tr>
-			<th>Дейтерий</th><?=$parse['file_deuterium_p'] ?></tr>
+			<th>Дейтерий</th>
+			<? foreach ($parse['file_deuterium_p'] as $item): ?>
+				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+			<? endforeach; ?>
+		</tr>
 		<tr>
 			<th>Солн. ст.</th><?=$parse['file_solar_p'] ?></tr>
 		<tr>

@@ -45,19 +45,12 @@ class RwController extends ApplicationController
 					$result = json_decode($raportrow['raport'], true);
 
 					$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5]);
-					$formatted_cr = $report->old();
+					$formatted_cr = $report->report();
 
 					$Page .= $formatted_cr['html'];
-		
-					$Page .= '<script>$(function(){$(\'#raportRaw\').multiAccordion({active: ['.(count($result[0]['rw']) - 1).']})});</script>';
 				}
 		
-				$Page .= "<div class='separator'></div>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a>";
-		
-				if ($this->config->game->get('gameTemplate') == 'main')
-				{
-					$Page .= '<div class="separator"></div><a data-link="Y" target="_blank" href="/rw/'.$_GET['r'].'/'.$_GET['k'].'/">Полная версия боя</a>';
-				}
+				$Page .= "<div class='separator'></div><<div class='text-center'>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
 
 				$this->tag->setTitle('Боевой доклад');
 				$this->view->setVar('html', $Page);
@@ -70,7 +63,7 @@ class RwController extends ApplicationController
 				$Page = "<html><head><title>Боевой доклад</title>";
 				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
-				$Page .= "</head><body><script>function show(id){if(document.getElementById(id).style.display==\"block\")document.getElementById(id).style.display=\"none\"; else document.getElementById(id).style.display=\"block\";}</script>";
+				$Page .= "</head><body>";
 				$Page .= "<table width=\"99%\"><tr><td><center>";
 		
 				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())

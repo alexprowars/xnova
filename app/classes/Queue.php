@@ -517,23 +517,24 @@ class Queue
 		}
 	}
 
-	private function saveQueue ()
+	public function saveQueue ()
 	{
+		if (!is_object($this->planet))
+			return;
+
 		$this->checkQueue();
 		$this->planet->queue = json_encode($this->get());
 		$this->planet->update();
 	}
 
-	private function checkQueue ()
+	public function checkQueue ()
 	{
 		$types = $this->getTypes();
 		
 		foreach ($this->queue AS $key => $value)
 		{
 			if (!in_array((string) $key, $types))
-			{
 				unset($this->queue[$key]);
-			}
 			elseif (!count($value))
 				unset($this->queue[$key]);
 		}

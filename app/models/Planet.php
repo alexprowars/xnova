@@ -189,6 +189,11 @@ class Planet extends Model
 		}
 	}
 
+	public function isEmptyQueue ()
+	{
+		return (count(json_decode($this->queue, true)) == 0);
+	}
+
 	public function createByUserId ($user_id)
 	{
 		$config = $this->getDi()->getShared('config');
@@ -583,7 +588,7 @@ class Planet extends Model
 
 	private function HandleElementBuildingQueue ($ProductionTime)
 	{
-		if ($this->queue != '[]')
+		if (!$this->isEmptyQueue())
 		{
 			$queueManager = new Queue($this->queue);
 			$queueArray = $queueManager->get();
@@ -687,11 +692,11 @@ class Planet extends Model
 		return 0;
 	}
 
-	public function UpdatePlanetBatimentQueueList ()
+	public function updateQueueList ()
 	{
 		$RetValue = false;
 
-		if ($this->queue != '[]')
+		if (!$this->isEmptyQueue())
 		{
 			$queueManager = new Queue($this->queue);
 
@@ -776,8 +781,9 @@ class Planet extends Model
 				$NewQueue[$queueManager::QUEUE_TYPE_BUILDING] = $QueueArray;
 
 				$queueManager->loadQueue($NewQueue);
+				$queueManager->checkQueue();
 
-				$this->queue = json_encode($NewQueue);
+				$this->queue = json_encode($queueManager->get());
 				$this->update();
 
 				if ($XP != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
@@ -890,6 +896,7 @@ class Planet extends Model
 				}
 			}
 
+			$queueManager->checkQueue();
 			$newQueue = $queueManager->get();
 
 			$BuildEndTime = time();
@@ -945,6 +952,7 @@ class Planet extends Model
 					$this->user->b_tech_planet = 0;
 					$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
 
+					$queueManager->checkQueue();
 					$newQueue = $queueManager->get();
 					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
 

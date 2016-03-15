@@ -13,6 +13,7 @@ use App\Lang;
 use App\Models\Planet;
 use App\Queue;
 use App\Models\Fleet as FleetModel;
+use Phalcon\Mvc\Model\Resultset;
 
 class OverviewController extends ApplicationController
 {
@@ -451,27 +452,21 @@ class OverviewController extends ApplicationController
 			$QryPlanets = '';
 
 		$build_list = [];
-		$AllPlanets = [];
 
 		/**
-		 * @var $planets_query \App\Models\Planet[]
+		 * @var $planets \App\Models\Planet[]
 		 */
-		$planets_query = Planet::find([
-			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id:',
+		$planets = Planet::find([
+			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
 			'orders' => $QryPlanets,
-			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current]
+			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current, 'queue' => '[]']
 		]);
 
-		if (count($planets_query) > 0)
+		if (count($planets) > 0)
 		{
-			foreach ($planets_query as $UserPlanet)
+			foreach ($planets as $UserPlanet)
 			{
-				if ($this->config->view->get('overviewListView', 0) == 0)
-				{
-					$AllPlanets[] = ['id' => $UserPlanet->id, 'name' => $UserPlanet->name, 'image' => $UserPlanet->image];
-				}
-
-				if ($UserPlanet->queue != '[]')
+				if (!$UserPlanet->isEmptyQueue())
 				{
 					if (!isset($queueManager))
 						$queueManager = new Queue();
@@ -481,7 +476,7 @@ class OverviewController extends ApplicationController
 					if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 					{
 						$UserPlanet->assignUser($this->user);
-						$UserPlanet->UpdatePlanetBatimentQueueList();
+						$UserPlanet->updateQueueList();
 
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
@@ -500,6 +495,8 @@ class OverviewController extends ApplicationController
 				}
 			}
 		}
+
+		unset($planets);
 
 		$parse['planet_type'] = $this->planet->planet_type;
 		$parse['planet_name'] = $this->planet->name;
@@ -570,7 +567,6 @@ class OverviewController extends ApplicationController
 		$parse['fleet_list'] = $flotten;
 
 		$parse['planet_image'] = $this->planet->image;
-		$parse['anothers_planets'] = $AllPlanets;
 		$parse['max_users'] = $this->config->app->users_total;
 
 		$parse['metal_debris'] = $this->planet->debris_metal;
@@ -578,7 +574,7 @@ class OverviewController extends ApplicationController
 
 		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->storage->resource[209]} != 0);
 
-		if ($this->planet->queue != '[]')
+		if (!$this->planet->isEmptyQueue())
 		{
 			if (!isset($queueManager))
 				$queueManager = new Queue();
@@ -587,7 +583,7 @@ class OverviewController extends ApplicationController
 
 			if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 			{
-				$this->planet->UpdatePlanetBatimentQueueList();
+				$this->planet->updateQueueList();
 
 				$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 

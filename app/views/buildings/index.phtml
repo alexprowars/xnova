@@ -82,15 +82,10 @@
 <script type="text/javascript">
 	$(document).ready(function()
 	{
-		var tab = 0;
-	
-		if (html5_storage())
-		{
-			tab = parseInt(localStorage.getItem("buildingAreaTab"));
-			
-			if (isNaN(tab))
-				tab = 0;
-		}
+		var tab = parseInt(localStorage.getItem("buildingAreaTab"));
+
+		if (isNaN(tab))
+			tab = 0;
 		
 		if (!$('#tab_area').is(':visible'))
 			tab = 1;

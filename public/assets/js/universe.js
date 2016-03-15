@@ -13,15 +13,15 @@ $(document).ready(function()
 		$.ajax({
 			type: "GET",
 			url: "/fleet/quick/",
-			data: "mode=6&g="+galaxy+"&s="+system+"&p="+obj.data('planet')+"&t="+obj.data('type')+"&count="+spyNum+"",
-			success: function(msg)
+			data: "mode=6&g="+galaxy+"&s="+system+"&p="+obj.data('planet')+"&t="+obj.data('type')+"&count="+spyNum,
+			dataType: 'json',
+			success: function(data)
 			{
-				$('#galaxyMessage').html(msg).show();
-
-				setTimeout(function()
-				{
-					$('#galaxyMessage').hide();
-				}, 3000);
+				$.toast({
+				  	text : data.message,
+					position : 'bottom-center',
+					icon: statusMessages[data.status]
+				});
 
 				obj.removeAttr('disabled');
 			}

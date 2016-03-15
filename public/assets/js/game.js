@@ -16,37 +16,37 @@ var XNova =
 		if (zahl >= 1000000)
 		{
 			zahl_tmp1 = Math.floor(zahl / 1000000);
-			html += "" + zahl_tmp1 + ".";
-			zahl_tmp2 = Math.floor((zahl - (zahl_tmp1 * 1000000)) / 1000) + "";
+			html += zahl_tmp1 + ".";
+			zahl_tmp2 = Math.floor((zahl - (zahl_tmp1 * 1000000)) / 1000);
 
 			if (zahl_tmp2.length == 1)
 				html += "00" + zahl_tmp2 + ".";
 			else if (zahl_tmp2.length == 2)
 				html += "0" + zahl_tmp2 + ".";
 			else
-				html += "" + zahl_tmp2 + ".";
+				html += zahl_tmp2 + ".";
 
-			zahl_tmp3 = Math.floor(zahl - (zahl_tmp1 * 1000000) - (zahl_tmp2 * 1000)) + "";
+			zahl_tmp3 = Math.floor(zahl - (zahl_tmp1 * 1000000) - (zahl_tmp2 * 1000));
 
 			if (zahl_tmp3.length == 1)
-				html += "00" + zahl_tmp3 + "";
+				html += "00" + zahl_tmp3;
 			else if (zahl_tmp3.length == 2)
-				html += "0" + zahl_tmp3 + "";
+				html += "0" + zahl_tmp3;
 			else
-				html += "" + zahl_tmp3 + "";
+				html += zahl_tmp3;
 		}
 		else if (zahl >= 1000)
 		{
 			zahl_tmp1 = Math.floor(zahl / 1000);
-			html += "" + zahl_tmp1 + ".";
-			zahl_tmp2 = Math.floor(zahl - (zahl_tmp1 * 1000)) + "";
+			html += zahl_tmp1 + ".";
+			zahl_tmp2 = Math.floor(zahl - (zahl_tmp1 * 1000));
 
 			if(zahl_tmp2.length == 1)
-				html += "00" + zahl_tmp2 + "";
+				html += "00" + zahl_tmp2;
 			else if(zahl_tmp2.length == 2)
-				html += "0" + zahl_tmp2 + "";
+				html += "0" + zahl_tmp2;
 			else
-				html += "" + zahl_tmp2 + "";
+				html += zahl_tmp2;
 		}
 		else
 			html = zahl;
@@ -210,29 +210,9 @@ var XNova =
 	}
 };
 
-
-function doc(id)
-{
-	return document.getElementById(id);
-}
-
-var mark = 1;
+var statusMessages = {0: 'error', 1: 'success', 2: 'info', 3: 'warning'};
 
 var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-
-function SelectAll()
-{
-	$('#mes_form input[type=checkbox]').each(function()
-	{
-		if (this.name.indexOf('delete') >= 0)
-			this.checked = mark;
-	});
-
-	if (mark == 0)
-		mark = 1;
-	else
-		mark = 0;
-}
 
 function ShowHiddenBlock (id)
 {
@@ -397,36 +377,6 @@ function UpdateGameInfo (mes, ally)
 	$('.ico_alliance + b').html(''+ally+'');
 }
 
-function setCookie (name, value, expires, path, domain, secure)
-{
-      document.cookie = name + "=" + escape(value) + ((expires) ? "; expires=" + expires : "") + ((path) ? "; path=" + path : "") + ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
-}
-
-function getCookie(name)
-{
-	var cookie = " " + document.cookie;
-	var search = " " + name + "=";
-	var setStr = null;
-	var offset = 0;
-	var end = 0;
-
-	if (cookie.length > 0)
-    {
-		offset = cookie.indexOf(search);
-		if (offset != -1)
-        {
-			offset += search.length;
-			end = cookie.indexOf(";", offset);
-			if (end == -1)
-            {
-				end = cookie.length;
-			}
-			setStr = unescape(cookie.substring(offset, end));
-		}
-	}
-	return(setStr);
-}
-
 function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({
@@ -515,8 +465,7 @@ function load (url)
 			ClearTimers();
 
 			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set == 'buildings' && mod !== undefined ? mod : ''));
-			$('body.window .content').css('width', '');
-			$('#box, .game_content > .content').css('display', '');
+			$('body.window .game_content').css('width', '');
 			$('.ui-helper-hidden-accessible').html('');
 
 			$('#gamediv').html(data.html);
@@ -583,9 +532,9 @@ function setMenuItem (location)
 
 	if (location != undefined && location != '')
     	$('#link_'+location).addClass('check');
+
+	$('#box').attr('class', 'set_'+location);
 }
-
-
 
 function addHistoryState (url)
 {
@@ -728,6 +677,15 @@ $(document).ready(function()
 				closeSpeed: 100
 			});
 		}
+	})
+	.on('change', 'input.checkAll', function()
+	{
+		var checked = $(this).is(':checked');
+
+		$(this).closest('form').find('input[type=checkbox]').each(function()
+		{
+			$(this).prop('checked', checked);
+		});
 	});
 });
 
@@ -743,33 +701,33 @@ function showWindow (title, url, width, height)
 			height = 'auto';
 
 		$.ajax(
+		{
+			url: url,
+			cache: false,
+			data: {ajax: 'Y', 'popup': 'Y', 'ep': 'dontsavestate'},
+			dataType: 'json',
+			success: function (json)
+			{
+				var obj = $('#windowDialog');
+
+				obj.dialog("option", "title", title);
+
+				if (width != undefined)
 				{
-					url: url,
-					cache: false,
-					data: {ajax: 'Y', 'popup': 'Y', 'ep': 'dontsavestate'},
-					dataType: 'json',
-					success: function (json)
-					{
-						var obj = $('#windowDialog');
+					obj.dialog("option", "minWidth", width);
+					obj.dialog("option", "width", width);
+				}
 
-						obj.dialog("option", "title", title);
+				if (height != undefined)
+					obj.dialog("option", "height", height);
 
-						if (width != undefined)
-						{
-							obj.dialog("option", "minWidth", width);
-							obj.dialog("option", "width", width);
-						}
+				hideLoading();
 
-						if (height != undefined)
-							obj.dialog("option", "height", height);
-
-						hideLoading();
-
-						obj.html(json.html);
-						obj.dialog("option", "position", {my: "center", at: "center", of: window});
-						obj.dialog("open");
-					}
-				});
+				obj.html(json.html);
+				obj.dialog("option", "position", {my: "center", at: "center", of: window});
+				obj.dialog("open");
+			}
+		});
 	}
 	else
 	{
@@ -787,38 +745,6 @@ function setWindowTitle (title)
 	$('#windowDialog').dialog( "option", "title", title );
 }
 
-var breakArrow = 0;
-
-function showArrow (top, left)
-{
-	var id = parseInt(top) + parseInt(left);
-
-	$('#arr'+id).remove();
-
-	if ($('#gamediv').length > 0)
-		$('#gamediv').append('<div class="arrow" id="arr'+id+'"></div>');
-	else
-		$('#box').append('<div class="arrow" id="arr'+id+'"></div>');
-
-	$('#arr'+id).css('top', top).css('left', left);
-
-	breakArrow = 0;
-
-	function run()
-	{
-		if (!breakArrow && $('#arr'+id).length > 0)
-	    	$('#arr'+id).animate({"opacity": 0.1},1000).animate({"opacity": 1},500, run);
-	}
-	run();
-}
-
-function hideArrow()
-{
-	breakArrow = 1;
-	$('#box .arrow').remove();
-}
-
-var loadingTimer;
 var blockTimer = true;
 
 function showLoading ()
@@ -841,537 +767,3 @@ function f(target_url, win_name)
 	var new_win = window.open(target_url,win_name,'resizable=yes,scrollbars=yes,menubar=no,toolbar=no,width=550,height=280,top=0,left=0');
 	new_win.focus();
 }
-
-function html5_storage()
-{
-    try {
-        return 'localStorage' in window && window['localStorage'] !== null;
-    } catch(e) {
-        return false;
-    }
-}
-
-
-/*
- * jQuery UI Multi Open Accordion Plugin
- * Author	: Anas Nakawa (http://anasnakawa.wordpress.com/)
- * Date		: 22-Jul-2011
- * Released Under MIT License
- * You are welcome to enhance this plugin at https://code.google.com/p/jquery-multi-open-accordion/
- */
-(function($){
-
-	$.widget('ui.multiAccordion', {
-		options: {
-			active: 0,
-			showAll: null,
-			hideAll: null,
-			_classes: {
-				accordion: 'ui-accordion ui-widget ui-helper-reset ui-accordion-icons',
-				h3: 'ui-accordion-header ui-helper-reset ui-state-default ui-corner-all',
-				div: 'ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom',
-				divActive: 'ui-accordion-content-active',
-				span: 'ui-icon ui-icon-triangle-1-e',
-				stateDefault: 'ui-state-default',
-				stateHover: 'ui-state-hover'
-			}
-		},
-
-		_create: function() {
-			var self = this,
-
-			options  = self.options,
-
-			$this = self.element,
-
-			$h3 = $this.children('h3'),
-
-			$div = $this.children('div');
-
-			$this.addClass(options._classes.accordion);
-
-			$h3.each(function(index){
-				var $this = $(this);
-				$this.addClass(options._classes.h3).prepend('<span class="{class}"></span>'.replace(/{class}/, options._classes.span));
-				if(self._isActive(index)) {
-					self._showTab($this)
-				}
-			}); // end h3 each
-
-			$this.children('div').each(function(index){
-				var $this = $(this);
-				$this.addClass(options._classes.div);
-			}); // end each
-
-			$h3.bind('click', function(e){
-				// preventing on click to navigate to the top of document
-				e.preventDefault();
-				var $this = $(this);
-				var ui = {
-					tab: $this,
-					content: $this.next('div')
-				};
-				self._trigger('click', null, ui);
-				if ($this.hasClass(options._classes.stateDefault)) {
-					self._showTab($this);
-				} else {
-					self._hideTab($this);
-				}
-			});
-
-
-			$h3.bind('mouseover', function(){
-				$(this).addClass(options._classes.stateHover);
-			});
-
-			$h3.bind('mouseout', function(){
-				$(this).removeClass(options._classes.stateHover);
-			});
-
-			// triggering initialized
-			self._trigger('init', null, $this);
-
-		},
-
-		// destroying the whole multi open widget
-		destroy: function() {
-			var self = this;
-			var $this = self.element;
-			var $h3 = $this.children('h3');
-			var $div = $this.children('div');
-			var options = self.options;
-			$this.children('h3').unbind('click mouseover mouseout');
-			$this.removeClass(options._classes.accordion);
-			$h3.removeClass(options._classes.h3).removeClass('ui-state-default ui-corner-all ui-state-active ui-corner-top').children('span').remove();
-			$div.removeClass(options._classes.div + ' ' + options._classes.divActive).show();
-		},
-
-		// private helper method that used to show tabs
-		_showTab: function($this) {
-			var $span = $this.children('span.ui-icon');
-			var $div = $this.next();
-			var options = this.options;
-			$this.removeClass('ui-state-default ui-corner-all').addClass('ui-state-active ui-corner-top');
-			$span.removeClass('ui-icon-triangle-1-e').addClass('ui-icon-triangle-1-s');
-			$div.slideDown('fast', function(){
-				$div.addClass(options._classes.divActive);
-			});
-			var ui = {
-				tab: $this,
-				content: $this.next('div')
-			}
-			this._trigger('tabShown', null, ui);
-		},
-
-		// private helper method that used to show tabs
-		_hideTab: function($this) {
-			var $span = $this.children('span.ui-icon');
-			var $div = $this.next();
-			var options = this.options;
-			$this.removeClass('ui-state-active ui-corner-top').addClass('ui-state-default ui-corner-all');
-			$span.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-e');
-			$div.slideUp('fast', function(){
-				$div.removeClass(options._classes.divActive);
-			});
-			var ui = {
-				tab: $this,
-				content: $this.next('div')
-			}
-			this._trigger('tabHidden', null, ui);
-		},
-
-		// helper method to determine wether passed parameter is an index of an active tab or not
-		_isActive: function(num) {
-			var options = this.options;
-			// if array
-			if(typeof options.active == "boolean" && !options.active) {
-				return false;
-			} else {
-				if(options.active.length != undefined) {
-					for (var i = 0; i < options.active.length ; i++) {
-						if(options.active[i] == num)
-							return true;
-					}
-				} else {
-					return options.active == num;
-				}
-			}
-			return false;
-		},
-
-		// return object contain currently opened tabs
-		_getActiveTabs: function() {
-			var $this = this.element;
-			var ui = [];
-			$this.children('div').each(function(index){
-				var $content = $(this);
-				if($content.is(':visible')) {
-					//ui = ui ? ui : [];
-					ui.push({
-						index: index,
-						tab: $content.prev('h3'),
-						content: $content
-					});
-				}
-			});
-			return (ui.length == 0 ? undefined : ui);
-		},
-
-		getActiveTabs: function() {
-			var el = this.element;
-			var tabs = [];
-			el.children('div').each(function(index){
-				if($(this).is(':visible')) {
-					tabs.push(index);
-				}
-			});
-			return (tabs.length == 0 ? [-1] : tabs);
-		},
-
-		// setting array of active tabs
-		_setActiveTabs: function(tabs) {
-			var self = this;
-			var $this = this.element;
-			if(typeof tabs != 'undefined') {
-				$this.children('div').each(function(index){
-					var $tab = $(this).prev('h3');
-					if(tabs.hasObject(index)) {
-						self._showTab($tab);
-					} else {
-						self._hideTab($tab);
-					}
-				});
-			}
-		},
-
-		// active option passed by plugin, this method will read it and convert it into array of tab indexes
-		_generateTabsArrayFromOptions: function(tabOption) {
-			var tabs = [];
-			var self = this;
-			var $this = self.element;
-			var size = $this.children('h3').size();
-			if($.type(tabOption) === 'array') {
-				return tabOption;
-			} else if($.type(tabOption) === 'number') {
-				return [tabOption];
-			} else if($.type(tabOption) === 'string') {
-				switch(tabOption.toLowerCase()) {
-					case 'all':
-						var size = $this.children('h3').size();
-						for(var n = 0 ; n < size ; n++) {
-							tabs.push(n);
-						}
-						return tabs;
-						break;
-					case 'none':
-						tabs = [-1];
-						return tabs;
-						break;
-					default:
-						return undefined;
-						break;
-				}
-			}
-		},
-
-		// required method by jquery ui widget framework, used to provide the ability to pass options
-		// currently only active option is used here, may grow in the future
-		_setOption: function(option, value){
-			$.Widget.prototype._setOption.apply( this, arguments );
-			var el = this.element;
-			switch(option) {
-				case 'active':
-					this._setActiveTabs(this._generateTabsArrayFromOptions(value));
-					break;
-				case 'getActiveTabs':
-					var el = this.element;
-					var tabs;
-					el.children('div').each(function(index){
-						if($(this).is(':visible')) {
-							tabs = tabs ? tabs : [];
-							tabs.push(index);
-						}
-					});
-					return (tabs.length == 0 ? [-1] : tabs);
-					break;
-			}
-		}
-
-	});
-
-	// helper array has object function
-	// thanks to @Vinko Vrsalovic
-	// http://stackoverflow.com/questions/143847/best-way-to-find-an-item-in-a-javascript-array
-	Array.prototype.hasObject = (!Array.indexOf ? function (o) {
-	    var l = this.length + 1;
-	    while (l -= 1) {
-	        if (this[l - 1] === o) {
-	            return true;
-	        }
-	    }
-	    return false;
-	  }: function (o) {
-	    return (this.indexOf(o) !== -1);
-	  }
-	);
-
-})(jQuery);
-
-
-/*
- * jQuery UI Multi Open Accordion Plugin
- * Author	: Anas Nakawa (http://anasnakawa.wordpress.com/)
- * Date		: 22-Jul-2011
- * Released Under MIT License
- * You are welcome to enhance this plugin at https://code.google.com/p/jquery-multi-open-accordion/
- */
-(function($){
-
-	$.widget('ui.multiAccordion', {
-		options: {
-			active: 0,
-			showAll: null,
-			hideAll: null,
-			_classes: {
-				accordion: 'ui-accordion ui-widget ui-helper-reset ui-accordion-icons',
-				h3: 'ui-accordion-header ui-helper-reset ui-state-default ui-corner-all',
-				div: 'ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom',
-				divActive: 'ui-accordion-content-active',
-				span: 'ui-icon ui-icon-triangle-1-e',
-				stateDefault: 'ui-state-default',
-				stateHover: 'ui-state-hover'
-			}
-		},
-
-		_create: function() {
-			var self = this,
-
-			options  = self.options,
-
-			$this = self.element,
-
-			$h3 = $this.children('h3'),
-
-			$div = $this.children('div');
-
-			$this.addClass(options._classes.accordion);
-
-			$h3.each(function(index){
-				var $this = $(this);
-				$this.addClass(options._classes.h3).prepend('<span class="{class}"></span>'.replace(/{class}/, options._classes.span));
-				if(self._isActive(index)) {
-					self._showTab($this)
-				}
-			}); // end h3 each
-
-			$this.children('div').each(function(index){
-				var $this = $(this);
-				$this.addClass(options._classes.div);
-			}); // end each
-
-			$h3.bind('click', function(e){
-				// preventing on click to navigate to the top of document
-				e.preventDefault();
-				var $this = $(this);
-				var ui = {
-					tab: $this,
-					content: $this.next('div')
-				};
-				self._trigger('click', null, ui);
-				if ($this.hasClass(options._classes.stateDefault)) {
-					self._showTab($this);
-				} else {
-					self._hideTab($this);
-				}
-			});
-
-
-			$h3.bind('mouseover', function(){
-				$(this).addClass(options._classes.stateHover);
-			});
-
-			$h3.bind('mouseout', function(){
-				$(this).removeClass(options._classes.stateHover);
-			});
-
-			// triggering initialized
-			self._trigger('init', null, $this);
-
-		},
-
-		// destroying the whole multi open widget
-		destroy: function() {
-			var self = this;
-			var $this = self.element;
-			var $h3 = $this.children('h3');
-			var $div = $this.children('div');
-			var options = self.options;
-			$this.children('h3').unbind('click mouseover mouseout');
-			$this.removeClass(options._classes.accordion);
-			$h3.removeClass(options._classes.h3).removeClass('ui-state-default ui-corner-all ui-state-active ui-corner-top').children('span').remove();
-			$div.removeClass(options._classes.div + ' ' + options._classes.divActive).show();
-		},
-
-		// private helper method that used to show tabs
-		_showTab: function($this) {
-			var $span = $this.children('span.ui-icon');
-			var $div = $this.next();
-			var options = this.options;
-			$this.removeClass('ui-state-default ui-corner-all').addClass('ui-state-active ui-corner-top');
-			$span.removeClass('ui-icon-triangle-1-e').addClass('ui-icon-triangle-1-s');
-			$div.slideDown('fast', function(){
-				$div.addClass(options._classes.divActive);
-			});
-			var ui = {
-				tab: $this,
-				content: $this.next('div')
-			}
-			this._trigger('tabShown', null, ui);
-		},
-
-		// private helper method that used to show tabs
-		_hideTab: function($this) {
-			var $span = $this.children('span.ui-icon');
-			var $div = $this.next();
-			var options = this.options;
-			$this.removeClass('ui-state-active ui-corner-top').addClass('ui-state-default ui-corner-all');
-			$span.removeClass('ui-icon-triangle-1-s').addClass('ui-icon-triangle-1-e');
-			$div.slideUp('fast', function(){
-				$div.removeClass(options._classes.divActive);
-			});
-			var ui = {
-				tab: $this,
-				content: $this.next('div')
-			}
-			this._trigger('tabHidden', null, ui);
-		},
-
-		// helper method to determine wether passed parameter is an index of an active tab or not
-		_isActive: function(num) {
-			var options = this.options;
-			// if array
-			if(typeof options.active == "boolean" && !options.active) {
-				return false;
-			} else {
-				if(options.active.length != undefined) {
-					for (var i = 0; i < options.active.length ; i++) {
-						if(options.active[i] == num)
-							return true;
-					}
-				} else {
-					return options.active == num;
-				}
-			}
-			return false;
-		},
-
-		// return object contain currently opened tabs
-		_getActiveTabs: function() {
-			var $this = this.element;
-			var ui = [];
-			$this.children('div').each(function(index){
-				var $content = $(this);
-				if($content.is(':visible')) {
-					//ui = ui ? ui : [];
-					ui.push({
-						index: index,
-						tab: $content.prev('h3'),
-						content: $content
-					});
-				}
-			});
-			return (ui.length == 0 ? undefined : ui);
-		},
-
-		getActiveTabs: function() {
-			var el = this.element;
-			var tabs = [];
-			el.children('div').each(function(index){
-				if($(this).is(':visible')) {
-					tabs.push(index);
-				}
-			});
-			return (tabs.length == 0 ? [-1] : tabs);
-		},
-
-		_setActiveTabs: function(tabs) {
-			var self = this;
-			var $this = this.element;
-			if(typeof tabs != 'undefined') {
-				$this.children('div').each(function(index){
-					var $tab = $(this).prev('h3');
-					if(tabs.hasObject(index)) {
-						self._showTab($tab);
-					} else {
-						self._hideTab($tab);
-					}
-				});
-			}
-		},
-
-		_generateTabsArrayFromOptions: function(tabOption) {
-			var tabs = [];
-			var self = this;
-			var $this = self.element;
-			var size = $this.children('h3').size();
-			if($.type(tabOption) === 'array') {
-				return tabOption;
-			} else if($.type(tabOption) === 'number') {
-				return [tabOption];
-			} else if($.type(tabOption) === 'string') {
-				switch(tabOption.toLowerCase()) {
-					case 'all':
-						var size = $this.children('h3').size();
-						for(var n = 0 ; n < size ; n++) {
-							tabs.push(n);
-						}
-						return tabs;
-						break;
-					case 'none':
-						tabs = [-1];
-						return tabs;
-						break;
-					default:
-						return undefined;
-						break;
-				}
-			}
-		},
-
-		_setOption: function(option, value){
-			$.Widget.prototype._setOption.apply( this, arguments );
-			var el = this.element;
-			switch(option) {
-				case 'active':
-					this._setActiveTabs(this._generateTabsArrayFromOptions(value));
-					break;
-				case 'getActiveTabs':
-					var el = this.element;
-					var tabs;
-					el.children('div').each(function(index){
-						if($(this).is(':visible')) {
-							tabs = tabs ? tabs : [];
-							tabs.push(index);
-						}
-					});
-					return (tabs.length == 0 ? [-1] : tabs);
-					break;
-			}
-		}
-
-	});
-
-	Array.prototype.hasObject = (!Array.indexOf ? function (o) {
-	    var l = this.length + 1;
-	    while (l -= 1) {
-	        if (this[l - 1] === o) {
-	            return true;
-	        }
-	    }
-	    return false;
-	  }: function (o) {
-	    return (this.indexOf(o) !== -1);
-	  }
-	);
-
-})(jQuery);

@@ -41,27 +41,26 @@ class ImperiumController extends ApplicationController
 
 		foreach ($fleets as $fleet)
 		{
-			if (!isset($fleet_fly[$fleet->start_galaxy . ':' . $fleet->start_system . ':' . $fleet->start_planet . ':' . $fleet->start_type]))
-				$fleet_fly[$fleet->start_galaxy . ':' . $fleet->start_system . ':' . $fleet->start_planet . ':' . $fleet->start_type] = [];
+			if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type]))
+				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type] = [];
 
-			if (!isset($fleet_fly[$fleet->end_galaxy . ':' . $fleet->end_system . ':' . $fleet->end_planet . ':' . $fleet->end_type]))
-				$fleet_fly[$fleet->end_galaxy . ':' . $fleet->end_system . ':' . $fleet->end_planet . ':' . $fleet->end_type] = [];
+			if (!isset($fleet_fly[$fleet->splitTargetPosition() . ':' . $fleet->end_type]))
+				$fleet_fly[$fleet->splitTargetPosition() . ':' . $fleet->end_type] = [];
 
 			$fleetData = $fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				if (!isset($fleet_fly[$fleet->start_galaxy.':'.$fleet->start_system.':'.$fleet->start_planet.':'.$fleet->start_type][$shipId]))
-				{
-					$fleet_fly[$fleet->start_galaxy.':'.$fleet->start_system.':'.$fleet->start_planet.':'.$fleet->start_type][$shipId] = 0;
-					$fleet_fly[$fleet->end_galaxy.':'.$fleet->end_system.':'.$fleet->end_planet.':'.$fleet->end_type][$shipId] = 0;
-				}
+				if (!isset($fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId]))
+					$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] = 0;
 
-				$fleet_fly[$fleet->start_galaxy.':'.$fleet->start_system.':'.$fleet->start_planet.':'.$fleet->start_type][$shipId] -= $shipArr['cnt'];
+				if (!isset($fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId]))
+					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] = 0;
+
+				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] -= $shipArr['cnt'];
 
 				if ($fleet->target_owner == $this->user->id)
-					$fleet_fly[$fleet->end_galaxy.':'.$fleet->end_system.':'.$fleet->end_planet.':'.$fleet->end_type][$shipId] += $shipArr['cnt'];
-
+					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] += $shipArr['cnt'];
 
 				if ($fleet->target_owner == $this->user->id)
 				{
@@ -83,6 +82,15 @@ class ImperiumController extends ApplicationController
 
 		$parse['mount'] = count($planets) + 3;
 
+		foreach ($this->storage->reslist['res'] as $res)
+		{
+			$parse['file_'.$res.'_t'] = 0;
+			$parse['file_'.$res.'_ph_t'] = 0;
+			$parse['file_'.$res] = [];
+			$parse['file_'.$res.'_ph'] = [];
+			$parse['file_'.$res.'_p'] = [];
+		}
+
 		foreach ($planets AS $planet)
 		{
 			$planet->assignUser($this->user);
@@ -94,30 +102,24 @@ class ImperiumController extends ApplicationController
 			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
 			@$parse['file_coordinates'] .= "<th>[<a href=\"/galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
-			@$parse['file_metal'] .= '<th>' . Helpers::pretty_number($planet->metal) . '</th>';
-			@$parse['file_crystal'] .= '<th>' . Helpers::pretty_number($planet->crystal) . '</th>';
-			@$parse['file_deuterium'] .= '<th>' . Helpers::pretty_number($planet->deuterium) . '</th>';
 			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
 			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->{$this->storage->resource[4]}) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $planet->field_current;
 			@$parse['file_fields_t'] += $planet->field_max;
-			@$parse['file_metal_t'] += $planet->metal;
-			@$parse['file_crystal_t'] += $planet->crystal;
-			@$parse['file_deuterium_t'] += $planet->deuterium;
+
 			@$parse['file_energy_t'] += $planet->energy_max - abs($planet->energy_used);
 
-			@$parse['file_metal_ph'] .= '<th>' . Helpers::pretty_number($planet->metal_perhour) . '</th>';
-			@$parse['file_crystal_ph'] .= '<th>' . Helpers::pretty_number($planet->crystal_perhour) . '</th>';
-			@$parse['file_deuterium_ph'] .= '<th>' . Helpers::pretty_number($planet->deuterium_perhour) . '</th>';
+			foreach ($this->storage->reslist['res'] as $res)
+			{
+				$parse['file_'.$res.'_t'] += $planet->{$res};
+				$parse['file_'.$res.'_ph_t'] += $planet->{$res.'_perhour'};
 
-			@$parse['file_metal_ph_t'] += $planet->metal_perhour;
-			@$parse['file_crystal_ph_t'] += $planet->crystal_perhour;
-			@$parse['file_deuterium_ph_t'] += $planet->deuterium_perhour;
+				$parse['file_'.$res][] = $planet->metal;
+				$parse['file_'.$res.'_ph'][] = $planet->{$res.'_perhour'};
+				$parse['file_'.$res.'_p'][] = $planet->{$res.'_mine_porcent'} * 10;
+			}
 
-			@$parse['file_metal_p'] .= '<th><font color="#00FF00">' . ($planet->metal_mine_porcent * 10) . '</font>%</th>';
-			@$parse['file_crystal_p'] .= '<th><font color="#00FF00">' . ($planet->crystal_mine_porcent * 10) . '</font>%</th>';
-			@$parse['file_deuterium_p'] .= '<th><font color="#00FF00">' . ($planet->deuterium_mine_porcent * 10) . '</font>%</th>';
 			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->solar_plant_porcent * 10) . '</font>%</th>';
 			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->fusion_plant_porcent * 10) . '</font>%</th>';
 			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->solar_satelit_porcent * 10) . '</font>%</th>';
@@ -131,8 +133,6 @@ class ImperiumController extends ApplicationController
 				if ($queueManager->getCount($type))
 				{
 					$queue = $queueManager->get($type);
-
-					p($queue);
 
 					foreach ($queue AS $q)
 					{
@@ -190,15 +190,13 @@ class ImperiumController extends ApplicationController
 			}
 		}
 
-		$parse['file_metal_t'] = Helpers::pretty_number($parse['file_metal_t']);
-		$parse['file_crystal_t'] = Helpers::pretty_number($parse['file_crystal_t']);
-		$parse['file_deuterium_t'] = Helpers::pretty_number($parse['file_deuterium_t']);
+		foreach ($this->storage->reslist['res'] as $res)
+		{
+			$parse['file_'.$res.'_t'] = Helpers::pretty_number($parse['file_'.$res.'_t']);
+			$parse['file_'.$res.'_ph_t'] = Helpers::pretty_number($parse['file_'.$res.'_ph_t']);
+		}
+
 		$parse['file_energy_t'] = Helpers::pretty_number($parse['file_energy_t']);
-
-		$parse['file_metal_ph_t'] = Helpers::pretty_number($parse['file_metal_ph_t']);
-		$parse['file_crystal_ph_t'] = Helpers::pretty_number($parse['file_crystal_ph_t']);
-		$parse['file_deuterium_ph_t'] = Helpers::pretty_number($parse['file_deuterium_ph_t']);
-
 		$parse['file_kredits'] = Helpers::pretty_number($this->user->credits);
 
 		$parse['building_row'] = '';
