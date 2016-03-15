@@ -246,9 +246,134 @@ class Queue
 		}
 	}
 
+	public function setNextQueue ()
+	{
+		if ($this->getCount(self::QUEUE_TYPE_BUILDING))
+		{
+			$QueueArray = $this->get(self::QUEUE_TYPE_BUILDING);
+
+			if ($QueueArray[0]['s'] > 0)
+				return;
+
+			/**
+			 * @var $db \App\Database
+			 */
+			$db = Di::getDefault()->getShared('db');
+
+			$Loop = true;
+
+			while ($Loop)
+			{
+				$ListIDArray = $QueueArray[0];
+
+				$HaveNoMoreLevel = false;
+
+				$ForDestroy = ($ListIDArray['d'] == 1);
+
+				if ($ForDestroy && $this->{$this->storage->resource[$ListIDArray['i']]} == 0)
+				{
+					$HaveRessources = false;
+					$HaveNoMoreLevel = true;
+				}
+				else
+					$HaveRessources = Building::IsElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+				if ($HaveRessources && Building::IsTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']))
+				{
+					$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+					$this->planet->metal 		-= $Needed['metal'];
+					$this->planet->crystal 		-= $Needed['crystal'];
+					$this->planet->deuterium 	-= $Needed['deuterium'];
+
+					$QueueArray[0]['s'] = time();
+
+					$Loop = false;
+
+					if ($this->config->log->get('buildings', false) == true)
+					{
+						$db->insertAsDict('game_log_history',
+						[
+							'user_id' 			=> $this->user->id,
+							'time' 				=> time(),
+							'operation' 		=> ($ForDestroy ? 2 : 1),
+							'planet' 			=> $this->planet->id,
+							'from_metal' 		=> $this->planet->metal + $Needed['metal'],
+							'from_crystal' 		=> $this->planet->crystal + $Needed['crystal'],
+							'from_deuterium' 	=> $this->planet->deuterium + $Needed['deuterium'],
+							'to_metal' 			=> $this->planet->metal,
+							'to_crystal' 		=> $this->planet->crystal,
+							'to_deuterium' 		=> $this->planet->deuterium,
+							'build_id' 			=> $ListIDArray['i'],
+							'level' 			=> ($this->{$this->storage->resource[$ListIDArray['i']]} + 1)
+						]);
+					}
+				}
+				else
+				{
+					if ($HaveNoMoreLevel)
+						$Message = sprintf(_getText('sys_nomore_level'), _getText('tech', $ListIDArray['i']));
+					elseif (!$HaveRessources)
+					{
+						$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания ' . _getText('tech', $ListIDArray['i']) . '.<br>Вам необходимо ещё: <br>';
+						if ($Needed['metal'] > $this->planet->metal)
+							$Message .= Helpers::pretty_number($Needed['metal'] - $this->planet->metal) . ' металла<br>';
+						if ($Needed['crystal'] > $this->planet->crystal)
+							$Message .= Helpers::pretty_number($Needed['crystal'] - $this->planet->crystal) . ' кристалла<br>';
+						if ($Needed['deuterium'] > $this->planet->deuterium)
+							$Message .= Helpers::pretty_number($Needed['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
+						if (isset($Needed['energy_max']) && isset($this->energy_max) && $Needed['energy_max'] > $this->energy_max)
+							$Message .= Helpers::pretty_number($Needed['energy_max'] - $this->energy_max) . ' энергии<br>';
+					}
+
+					if (isset($Message))
+						Di::getDefault()->getShared('game')->sendMessage($this->user->id, 0, 0, 99, _getText('sys_buildlist'), $Message);
+
+					array_shift($QueueArray);
+
+					if (count($QueueArray) == 0)
+						$Loop = false;
+				}
+			}
+
+			$newQueue = $this->get();
+
+			$BuildEndTime = time();
+
+			foreach ($QueueArray as &$ListIDArray)
+			{
+				$ListIDArray['t'] = Building::GetBuildingTime($this->user, $this->planet, $ListIDArray['i']);
+
+				if ($ListIDArray['d'])
+					$ListIDArray['t'] = ceil($ListIDArray['t'] / 2);
+
+				$BuildEndTime += $ListIDArray['t'];
+				$ListIDArray['e'] = $BuildEndTime;
+			}
+
+			unset($ListIDArray);
+
+			$newQueue[self::QUEUE_TYPE_BUILDING] = $QueueArray;
+			$newQueue = json_encode($newQueue);
+
+			if ($this->queue != $newQueue)
+			{
+				$this->queue = $newQueue;
+
+				$db->query("LOCK TABLES ".$this->planet->getSource()." WRITE");
+
+				$this->planet->update();
+
+				$db->query("UNLOCK TABLES");
+			}
+		}
+	}
+
 	private function addTechToQueue ($elementId)
 	{
-		$TechHandle = $this->planet->HandleTechnologieBuild();
+		$TechHandle = $this->planet->checkResearchQueue();
 
 		if (!$TechHandle['working'])
 		{
@@ -288,7 +413,7 @@ class Queue
 
 	private function deleteTechInQueue ($elementId, $listId = 0)
 	{
-		$TechHandle = $this->planet->HandleTechnologieBuild();
+		$TechHandle = $this->planet->checkResearchQueue();
 
 		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['working'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
 		{

@@ -259,7 +259,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				}
 			}
 
-			$steal = $this->getSteal($target->toArray(), $max_resources);
+			$steal = $this->getSteal($target, $max_resources);
 		}
 
 		$totalDebree = $result['debree']['def'][0] + $result['debree']['def'][1] + $result['debree']['att'][0] + $result['debree']['att'][1];
@@ -844,15 +844,15 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		return $result;
 	}
 
-	private function getSteal ($planet, $capacity = 0)
+	private function getSteal (Planet $planet, $capacity = 0)
 	{
 		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
 
 		if ($capacity > 0)
 		{
-			$metal 		= $planet['metal'] / 2;
-			$crystal 	= $planet['crystal'] / 2;
-			$deuter 	= $planet['deuterium'] / 2;
+			$metal 		= $planet->metal / 2;
+			$crystal 	= $planet->crystal / 2;
+			$deuter 	= $planet->deuterium / 2;
 
 			$steal['metal'] 	= min($capacity / 3, $metal);
 			$capacity -= $steal['metal'];

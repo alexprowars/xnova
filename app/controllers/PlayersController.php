@@ -58,9 +58,13 @@ class PlayersController extends ApplicationController
 				$siegprozent = 100 / $gesamtkaempfe * $daten['raids_win'];
 				$loosprozent = 100 / $gesamtkaempfe * $daten['raids_lose'];
 			}
-			$planets = Planet::findByCoords($daten['galaxy'], $daten['system'], $daten['planet'], 1);
 
-			$parse['userplanet'] = $planets->name;
+			$parse['userplanet'] = '';
+
+			$planet = Planet::findByCoords($daten['galaxy'], $daten['system'], $daten['planet'], 1);
+
+			if ($planet)
+				$parse['userplanet'] = $planet->name;
 		
 			$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $daten['id'] . "';")->fetch();
 			$parse['tech_rank'] = Helpers::pretty_number($points['tech_rank']);

@@ -701,12 +701,12 @@ class Planet extends Model
 			{
 				for ($i = 0; $i < $build_count; $i++)
 				{
-					if ($this->CheckPlanetBuildingQueue($queueManager))
+					if ($this->checkBuildingQueue($queueManager))
 					{
 						if (!$this->planet_updated)
 							$this->PlanetResourceUpdate();
 
-						$this->SetNextQueueElementOnTop();
+						$this->setNextBuildingQueue();
 						$RetValue = true;
 					}
 					else
@@ -721,56 +721,15 @@ class Planet extends Model
 			}
 		}
 
-		if ($this->checkTechnologieBuild())
+		if ($this->user->b_tech_planet)
 			$RetValue = true;
+
+		$this->checkResearchQueue();
 
 		return $RetValue;
 	}
 
-	private function checkTechnologieBuild ()
-	{
-		if ($this->user->b_tech_planet != 0)
-		{
-			if ($this->user->b_tech_planet != $this->id)
-				$ThePlanet = Planet::findFirst(['conditions' => 'id = ?0', 'bind' => [$this->user->b_tech_planet]]);
-			else
-				$ThePlanet = $this;
-
-			if ($ThePlanet)
-			{
-				$queueManager = new Queue($ThePlanet->queue);
-				$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-				if (count($queueArray))
-				{
-					if ($queueArray[0]['e'] <= time())
-					{
-						$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
-
-						$newQueue = $queueManager->get();
-						unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
-
-						$ThePlanet->queue = json_encode($newQueue);
-						$ThePlanet->update();
-
-						$this->user->b_tech_planet = 0;
-					}
-				}
-				else
-					$this->user->b_tech_planet = 0;
-
-				$this->user->update();
-			}
-
-			unset($ThePlanet);
-		}
-		else
-			return false;
-
-		return true;
-	}
-
-	private function CheckPlanetBuildingQueue (Queue $queueManager)
+	private function checkBuildingQueue (Queue $queueManager)
 	{
 		if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
 		{
@@ -840,7 +799,7 @@ class Planet extends Model
 		return false;
 	}
 
-	public function SetNextQueueElementOnTop ()
+	public function setNextBuildingQueue ()
 	{
 		$queueManager = new Queue($this->queue);
 
@@ -950,24 +909,24 @@ class Planet extends Model
 
 			$newQueue[$queueManager::QUEUE_TYPE_BUILDING] = $QueueArray;
 			$newQueue = json_encode($newQueue);
-		}
 
-		if (isset($newQueue) && $this->queue != $newQueue)
-		{
-			$this->queue = $newQueue;
+			if ($this->queue != $newQueue)
+			{
+				$this->queue = $newQueue;
 
-			$this->db->query("LOCK TABLES ".$this->getSource()." WRITE");
+				$this->db->query("LOCK TABLES ".$this->getSource()." WRITE");
 
-			$this->update();
+				$this->update();
 
-			$this->db->query("UNLOCK TABLES");
+				$this->db->query("UNLOCK TABLES");
+			}
 		}
 	}
 
-	public function HandleTechnologieBuild ()
+	public function checkResearchQueue ()
 	{
-		$Result['planet'] = false;
-		$Result['working'] = false;
+		$Result['planet'] 	= false;
+		$Result['working'] 	= false;
 
 		if ($this->user->b_tech_planet != 0)
 		{
@@ -994,8 +953,8 @@ class Planet extends Model
 				}
 				else
 				{
-					$Result['planet'] = $ThePlanet;
-					$Result['working'] = true;
+					$Result['planet'] 	= $ThePlanet;
+					$Result['working'] 	= true;
 				}
 			}
 			else

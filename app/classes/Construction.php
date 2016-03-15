@@ -39,7 +39,7 @@ class Construction
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
 			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
 
-		$this->planet->SetNextQueueElementOnTop();
+		$this->planet->setNextBuildingQueue();
 
 		$Queue = $this->ShowBuildingQueue();
 
@@ -164,7 +164,7 @@ class Construction
 		$request 	= $this->user->getDI()->getShared('request');
 		$storage 	= $this->user->getDI()->getShared('storage');
 
-		$TechHandle = $this->planet->HandleTechnologieBuild();
+		$TechHandle = $this->planet->checkResearchQueue();
 
 		$NoResearchMessage = "";
 		$bContinue = true;

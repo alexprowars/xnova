@@ -149,19 +149,22 @@ class Security extends Component
 	 */
 	public function beforeExecuteRoute (/** @noinspection PhpUnusedParameterInspection */Event $event, Dispatcher $dispatcher)
 	{
-		$auth = $this->auth->check();
+		$role = 'Users';
 
-		if (!$auth)
-			$role = 'Guests';
-		else
-			$role = 'Users';
-
-		if ($auth !== false)
+		if (!$this->auth->isAuthorized())
 		{
-			$this->getDI()->set('user', $auth);
+			$auth = $this->auth->check();
 
-			if ($auth->isAdmin())
-				define('SUPERUSER', 'Y');
+			if (!$auth)
+				$role = 'Guests';
+
+			if ($auth !== false)
+			{
+				$this->getDI()->set('user', $auth);
+
+				if ($auth->isAdmin())
+					define('SUPERUSER', 'Y');
+			}
 		}
 
 		$controller = $dispatcher->getControllerName();
