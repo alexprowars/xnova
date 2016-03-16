@@ -110,6 +110,7 @@ class Battle
 	/**
 	 * Battle::getReport()
 	 * Start the battle if not and return the report.
+	 * @param bool $debug
 	 * @return BattleReport
 	 */
 	public function getReport($debug = false)

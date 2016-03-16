@@ -8,8 +8,8 @@ namespace App\Controllers\Fleet;
  */
 
 use App\Controllers\FleetController;
-use App\Fleet;
 use App\Lang;
+use App\Models\Fleet;
 
 class StageZero
 {
@@ -18,7 +18,7 @@ class StageZero
 		if (!$controller->planet)
 			$controller->message(_getText('fl_noplanetrow'), _getText('fl_error'));
 
-		$MaxFlyingFleets = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$MaxFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$MaxExpedition = $controller->user->{$controller->storage->resource[124]};
 		$ExpeditionEnCours = 0;
@@ -26,7 +26,7 @@ class StageZero
 
 		if ($MaxExpedition >= 1)
 		{
-			$ExpeditionEnCours = \App\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);;
+			$ExpeditionEnCours = Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);;
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
@@ -66,9 +66,9 @@ class StageZero
 		$parse['mission'] = $target_mission;
 
 		/**
-		 * @var $fq \App\Models\Fleet[]
+		 * @var $fq Fleet[]
 		 */
-		$fq = \App\Models\Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$fq = Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$parse['fleets'] = [];
 

@@ -209,10 +209,10 @@ class GalaxyController extends ApplicationController
 			unset($row['luna_update']);
 		
 			if ($row['destruyed'] != 0 && $row["planet_id"] != '')
-				$this->planet->checkAbandonPlanetState($row);
+				$this->checkAbandonPlanetState($row);
 		
 			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
-				$this->planet->checkAbandonMoonState($row);
+				$this->checkAbandonMoonState($row);
 
 			$online = $row['onlinetime'];
 		
@@ -289,5 +289,27 @@ class GalaxyController extends ApplicationController
 		$Result .= "</form>";
 
 		return $Result;
+	}
+
+	private function checkAbandonMoonState (&$lunarow)
+	{
+		if ($lunarow['luna_destruyed'] <= time())
+		{
+			$this->db->delete('game_planets', 'id = ?', [$lunarow['luna_id']]);
+			$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
+
+			$lunarow['id_luna'] = 0;
+		}
+	}
+
+	private function checkAbandonPlanetState (&$planet)
+	{
+		if ($planet['destruyed'] <= time())
+		{
+			$this->db->delete('game_planets', 'id = ?', [$planet['planet_id']]);
+
+			if ($planet['parent_planet'] != 0)
+				$this->db->delete('game_planets', 'id = ?', [$planet['parent_planet']]);
+		}
 	}
 }

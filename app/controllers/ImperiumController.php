@@ -7,9 +7,9 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
 use App\Helpers;
 use App\Lang;
+use App\Models\Fleet;
 use App\Models\Planet;
 use App\Queue;
 
@@ -35,9 +35,9 @@ class ImperiumController extends ApplicationController
 		$fleet_fly = [];
 
 		/**
-		 * @var $fleets \App\Models\Fleet[]
+		 * @var $fleets Fleet[]
 		 */
-		$fleets = \App\Models\Fleet::find(['owner = ?0', 'bind' => [$this->user->getId()]]);
+		$fleets = Fleet::find(['owner = ?0', 'bind' => [$this->user->getId()]]);
 
 		foreach ($fleets as $fleet)
 		{

@@ -68,7 +68,7 @@
 	$(document).ready(function ()
 	{
 		<? for ($i = 0; $i < 4; $i++): ?>
-			var plot<?=$i ?> = $.plot("#chart_<?=$i ?>", [load_<?=$i ?>], config);
+			$.plot("#chart_<?=$i ?>", [load_<?=$i ?>], config);
 		<? endfor; ?>
 
 		function showTooltip(x, y, contents)

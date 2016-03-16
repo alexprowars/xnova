@@ -147,7 +147,7 @@ class StageOne
 			]);
 			if (count($moons))
 			{
-				$timer = $controller->planet->GetNextJumpWaitTime();
+				$timer = $controller->planet->getNextJumpTime();
 
 				if ($timer != 0)
 					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer);
@@ -155,7 +155,7 @@ class StageOne
 				foreach ($moons as $moon)
 				{
 					$r = $moon->toArray();
-					$r['timer'] = $moon->GetNextJumpWaitTime();
+					$r['timer'] = $moon->getNextJumpTime();
 
 					$parse['moons'][] = $r;
 				}

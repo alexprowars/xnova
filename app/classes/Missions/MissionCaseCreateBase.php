@@ -8,7 +8,7 @@ namespace App\Missions;
  */
 
 use App\FleetEngine;
-use App\Models\Planet;
+use App\Galaxy;
 
 class MissionCaseCreateBase extends FleetEngine implements Mission
 {
@@ -17,7 +17,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 		// Определяем максимальное количество баз
 		$iMaxBase = $this->db->fetchColumn("SELECT fleet_base_tech FROM game_users WHERE id = " . $this->_fleet->owner . "");
 
-		$planet = new Planet();
+		$galaxy = new Galaxy();
 
 		// Получение общего количества построенных баз
 		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '5'");
@@ -25,7 +25,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 		$TargetAdress = sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 
 		// Если в галактике пусто (планета не заселена)
-		if ($planet->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
+		if ($galaxy->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
 		{
 			// Если лимит баз исчерпан
 			if ($iPlanetCount >= $iMaxBase)
@@ -39,7 +39,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 			else
 			{
 				// Создание планеты-базы
-				$NewOwnerPlanet = $planet->createPlanet($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->owner, _getText('sys_base_defaultname'), false, true);
+				$NewOwnerPlanet = $galaxy->createPlanet($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->owner, _getText('sys_base_defaultname'), false, true);
 
 				// Если планета-база создана
 				if ($NewOwnerPlanet !== false)

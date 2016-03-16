@@ -308,12 +308,12 @@ class JavaScriptPacker
 
 	private $buffer;
 
-	private function _insertFastDecode ($match)
+	private function _insertFastDecode ()
 	{
 		return '{' . $this->buffer . ';';
 	}
 
-	private function _insertFastEncode ($match)
+	private function _insertFastEncode ()
 	{
 		return '{$encode=' . $this->buffer . ';';
 	}

@@ -24,7 +24,5 @@ class AllianceMember extends Model
 	public function onConstruct()
 	{
 	 	$this->hasOne("a_id", "App\Models\Alliance", "id", Array('alias' => 'alliance'));
-
-		$this->useDynamicUpdate(true);
 	}
 }

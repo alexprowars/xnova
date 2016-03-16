@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Galaxy;
 use App\Helpers;
 
 class Planets
@@ -33,7 +34,9 @@ class Planets
 					if (!isset($check['id']))
 						$controller->message('Пользователя не существует');
 
-					$planet = $controller->planet->createPlanet($Galaxy, $System, $Planet, $UserId, _getText('sys_colo_defaultname'), false);
+					$galaxy = new Galaxy();
+
+					$planet = $galaxy->createPlanet($Galaxy, $System, $Planet, $UserId, _getText('sys_colo_defaultname'), false);
 
 					if ($planet !== false)
 						$controller->message('ID: ' . $planet);

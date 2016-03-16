@@ -7,6 +7,7 @@ namespace App\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use App\Galaxy;
 use Phalcon\Mvc\Model;
 
 /**
@@ -316,9 +317,9 @@ class User extends Model
 		{
 			if ($this->race > 0)
 			{
-				$planet = new Planet;
+				$galaxy = new Galaxy();
 
-				$this->planet_id = $planet->createByUserId($this->getId());
+				$this->planet_id = $galaxy->createPlanetByUserId($this->getId());
 				$this->planet_current = $this->planet_id;
 			}
 		}
@@ -364,6 +365,9 @@ class User extends Model
 				$this->getDi()->setShared('planet', $planet);
 			}
 		}
+
+		if (!$this->getDi()->has('planet'))
+			throw new \Exception('planet not found');
 	}
 
 	public function getAllyInfo ()

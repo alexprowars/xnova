@@ -20,6 +20,7 @@ use App\Battle\Models\Fleet;
 use App\Battle\Core;
 use App\Battle\Utils\LangManager;
 use App\FleetEngine;
+use App\Galaxy;
 use App\Helpers;
 use App\Models\Planet;
 use App\Models\User;
@@ -373,7 +374,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if ($target->parent_planet == 0 && $userChance && $userChance <= $moonChance)
 		{
-			$TargetPlanetName = $target->createMoon($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $target->id_owner, $moonChance);
+			$galaxy = new Galaxy();
+
+			$TargetPlanetName = $galaxy->createMoon($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $target->id_owner, $moonChance);
 
 			if ($TargetPlanetName)
 				$GottenMoon = sprintf(_getText('sys_moonbuilt'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);

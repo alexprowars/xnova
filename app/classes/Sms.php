@@ -33,7 +33,7 @@ class Sms
 
 		if (mb_strlen($phone, 'UTF-8') == 11)
 		{
-			$config = Di::getDefault()->getConfig();
+			$config = Di::getDefault()->getShared('config');
 
 			$ch = curl_init("http://sms.ru/sms/send");
 

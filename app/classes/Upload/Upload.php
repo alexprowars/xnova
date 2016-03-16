@@ -178,7 +178,7 @@ class Upload {
 	 * Number of pixels
 	 *
 	 * @access public
-	 * @var long
+	 * @var integer
 	 */
 	var $image_src_pixels;
 
@@ -1959,7 +1959,6 @@ class Upload {
 			'odb' => 'application/vnd.oasis.opendocument.database',
 			'odi' => 'application/vnd.oasis.opendocument.image',
 			'oxt' => 'application/vnd.openofficeorg.extension',
-			'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 			'docm' => 'application/vnd.ms-word.document.macroEnabled.12',
 			'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
 			'dotm' => 'application/vnd.ms-word.template.macroEnabled.12',
@@ -1990,6 +1989,8 @@ class Upload {
 
 	/**
 	 * Constructor, for PHP5+
+	 * @param $file
+	 * @param string $lang
 	 */
 	function  __construct($file, $lang = 'en_GB')  {
 		$this->upload($file, $lang);
@@ -2776,16 +2777,18 @@ class Upload {
 	 * If the output format is PNG, then we do it pixel per pixel to retain the alpha channel
 	 *
 	 * @access private
-	 * @param  resource $dst_img Destination image
-	 * @param  resource $src_img Overlay image
-	 * @param  int	  $dst_x   x-coordinate of destination point
-	 * @param  int	  $dst_y   y-coordinate of destination point
-	 * @param  int	  $src_x   x-coordinate of source point
-	 * @param  int	  $src_y   y-coordinate of source point
-	 * @param  int	  $src_w   Source width
-	 * @param  int	  $src_h   Source height
-	 * @param  int	  $pct	 Optional percentage of the overlay, between 0 and 100 (default: 100)
+	 * @param $dst_im
+	 * @param $src_im
+	 * @param  int $dst_x x-coordinate of destination point
+	 * @param  int $dst_y y-coordinate of destination point
+	 * @param  int $src_x x-coordinate of source point
+	 * @param  int $src_y y-coordinate of source point
+	 * @param  int $src_w Source width
+	 * @param  int $src_h Source height
+	 * @param  int $pct Optional percentage of the overlay, between 0 and 100 (default: 100)
 	 * @return resource Destination image
+	 * @internal param resource $dst_img Destination image
+	 * @internal param resource $src_img Overlay image
 	 */
 	function imagecopymergealpha(&$dst_im, &$src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct = 0) {
 		$dst_x = (int) $dst_x;
@@ -4598,6 +4601,7 @@ class Upload {
 		// we may return the image content
 		if ($return_mode) return $return_content;
 
+		return false;
 	}
 
 	/**
@@ -4618,13 +4622,14 @@ class Upload {
 		@unlink($this->file_src_pathname);
 	}
 
-
 	/**
 	 * Opens a BMP image
 	 *
 	 * This function has been written by DHKold, and is used with permission of the author
 	 *
 	 * @access public
+	 * @param $filename
+	 * @return bool|resource
 	 */
 	function imagecreatefrombmp($filename) {
 		if (! $f1 = fopen($filename,"rb")) return false;
@@ -4700,6 +4705,9 @@ class Upload {
 	 * This function has been published on the PHP website, and can be used freely
 	 *
 	 * @access public
+	 * @param $im
+	 * @param string $filename
+	 * @return bool
 	 */
 	function imagebmp(&$im, $filename = "") {
 

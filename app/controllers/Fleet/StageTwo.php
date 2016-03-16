@@ -27,7 +27,7 @@ class StageTwo
 
 		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
 		{
-			$nextJumpTime = $controller->planet->GetNextJumpWaitTime();
+			$nextJumpTime = $controller->planet->getNextJumpTime();
 
 			if ($nextJumpTime == 0)
 			{
@@ -38,7 +38,7 @@ class StageTwo
 
 				if (($TargetGate->planet_type == 3 || $TargetGate->planet_type == 5) && $TargetGate->sprungtor > 0)
 				{
-					$nextJumpTime = $TargetGate->GetNextJumpWaitTime();
+					$nextJumpTime = $TargetGate->getNextJumpTime();
 
 					if ($nextJumpTime == 0)
 					{
@@ -75,7 +75,7 @@ class StageTwo
 
 							$controller->user->update(['planet_current' => $TargetGate->id]);
 
-							$RetMessage = _getText('gate_jump_done') . " - " . Helpers::pretty_time($controller->planet->GetNextJumpWaitTime());
+							$RetMessage = _getText('gate_jump_done') . " - " . Helpers::pretty_time($controller->planet->getNextJumpTime());
 						}
 						else
 							$RetMessage = _getText('gate_wait_data');

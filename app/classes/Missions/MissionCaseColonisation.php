@@ -8,7 +8,7 @@ namespace App\Missions;
  */
 
 use App\FleetEngine;
-use App\Models\Planet;
+use App\Galaxy;
 
 class MissionCaseColonisation extends FleetEngine implements Mission
 {
@@ -20,13 +20,13 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 		if ($iMaxColo > $this->config->game->get('maxPlanets', 9))
 			$iMaxColo = $this->config->game->get('maxPlanets', 9);
 
-		$planet = new Planet();
+		$galaxy = new Galaxy();
 
 		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '1'");
 
 		$TargetAdress = sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 
-		if ($planet->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
+		if ($galaxy->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
 		{
 			if ($iPlanetCount >= $iMaxColo)
 			{
@@ -38,7 +38,7 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 			}
 			else
 			{
-				$NewOwnerPlanet = $planet->createPlanet($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->owner, _getText('sys_colo_defaultname'), false);
+				$NewOwnerPlanet = $galaxy->createPlanet($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->owner, _getText('sys_colo_defaultname'), false);
 
 				if ($NewOwnerPlanet !== false)
 				{

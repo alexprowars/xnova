@@ -9,7 +9,6 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Sms;
-use App\Socials;
 
 class SupportController extends ApplicationController
 {

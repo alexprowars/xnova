@@ -16,7 +16,6 @@ use App\Battle\Models\PlayerGroup;
 use App\Battle\Models\Ship;
 use App\Battle\Models\ShipType;
 use App\CombatReport;
-use App\Fleet AS FleetObject;
 use Phalcon\Mvc\View;
 
 class XnsimController extends ApplicationController

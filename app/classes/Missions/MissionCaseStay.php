@@ -7,7 +7,6 @@ namespace App\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
 use App\FleetEngine;
 use App\Helpers;
 

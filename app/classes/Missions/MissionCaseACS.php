@@ -11,11 +11,6 @@ use App\FleetEngine;
 
 class MissionCaseACS extends FleetEngine implements Mission
 {
-	function __construct($Fleet)
-	{
-			$this->_fleet = $Fleet;
-	}
-
 	public function TargetEvent()
 	{
 		$this->ReturnFleet();

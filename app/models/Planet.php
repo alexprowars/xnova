@@ -194,206 +194,6 @@ class Planet extends Model
 		return (count(json_decode($this->queue, true)) == 0);
 	}
 
-	public function createByUserId ($user_id)
-	{
-		$config = $this->getDi()->getShared('config');
-
-		$Galaxy = $config->app->LastSettedGalaxyPos;
-		$System = $config->app->LastSettedSystemPos;
-		$Planet = $config->app->LastSettedPlanetPos;
-
-		do
-		{
-			$free = self::getFreePositions($Galaxy, $System, round($config->game->maxPlanetInSystem * 0.2), round($config->game->maxPlanetInSystem * 0.8));
-
-			if (count($free) > 0)
-				$position = $free[array_rand($free)];
-			else
-				$position = 0;
-
-            if ($position > 0 && $Planet < $config->game->get('maxRegPlanetsInSystem', 3))
-				$Planet += 1;
-            else
-			{
-				$Planet = 1;
-
-				if ($System >= $config->game->maxSystemInGalaxy)
-				{
-					$System = 1;
-
-					if ($Galaxy >= $config->game->maxGalaxyInWorld)
-						$Galaxy = 1;
-					else
-						$Galaxy += 1;
-				}
-				else
-					$System += 1;
-            }
-		}
-		while ($this->isPositionFree($Galaxy, $System, $position) === false);
-
-		if ($this->createPlanet($Galaxy, $System, $position, $user_id, _getText('sys_plnt_defaultname'), true) !== false)
-		{
-			$this->game->updateConfig('LastSettedGalaxyPos', $Galaxy);
-			$this->game->updateConfig('LastSettedSystemPos', $System);
-			$this->game->updateConfig('LastSettedPlanetPos', $Planet);
-
-			$PlanetID = $this->db->fetchColumn("SELECT id FROM game_planets WHERE id_owner = '" . $user_id . "' LIMIT 1");
-
-			if (is_null($this->user))
-				$this->user = User::findFirst($user_id);
-
-			$this->user->saveData([
-				'planet_id'		 => $PlanetID,
-				'planet_current' => $PlanetID,
-				'galaxy'		 => $Galaxy,
-				'system'		 => $System,
-				'planet'		 => $position
-			], $user_id);
-
-			return $PlanetID;
-		}
-		else
-			return false;
-	}
-
-	public function createPlanet ($Galaxy, $System, $Position, $PlanetOwnerID, $PlanetName = '', $HomeWorld = false, $Base = false)
-	{
-		if (self::isPositionFree($Galaxy, $System, $Position))
-		{
-			$config = $this->getDi()->getShared('config');
-
-			$planet = $this->sizeRandomiser($Position, $HomeWorld, $Base);
-
-			$planet->metal 		= $config->game->baseMetalProduction;
-			$planet->crystal 	= $config->game->baseCristalProduction;
-			$planet->deuterium 	= $config->game->baseDeuteriumProduction;
-
-			$planet->galaxy = $Galaxy;
-			$planet->system = $System;
-			$planet->planet = $Position;
-
-			$planet->planet_type = 1;
-
-			if ($Base)
-				$planet->planet_type = 5;
-
-			$planet->id_owner = $PlanetOwnerID;
-			$planet->last_update = time();
-			$planet->name = ($PlanetName == '') ? _getText('sys_colo_defaultname') : $PlanetName;
-
-			$planet->create();
-
-			if (isset($_SESSION['fleet_shortcut']))
-				unset($_SESSION['fleet_shortcut']);
-
-			return $planet->id;
-		}
-		else
-			return false;
-	}
-
-	public function createMoon ($Galaxy, $System, $Planet, $Owner, $Chance)
-	{
-		$planet = Planet::findByCoords($Galaxy, $System, $Planet, 1);
-
-		if ($planet && $planet->parent_planet == 0)
-		{
-			$maxtemp = $planet->temp_max - rand(10, 45);
-			$mintemp = $planet->temp_min - rand(10, 45);
-
-			$size = floor(pow(mt_rand(10, 20) + 3 * $Chance, 0.5) * 1000);
-
-			$moon = new Planet();
-			$moon->create([
-				'name' 			=> _getText('sys_moon'),
-				'id_owner' 		=> $Owner,
-				'galaxy' 		=> $Galaxy,
-				'system' 		=> $System,
-				'planet' 		=> $Planet,
-				'planet_type' 	=> 3,
-				'last_update' 	=> time(),
-				'image' 		=> 'mond',
-				'diameter' 		=> $size,
-				'field_max' 	=> 1,
-				'temp_min' 		=> $maxtemp,
-				'temp_max' 		=> $mintemp,
-				'metal' 		=> 0,
-				'crystal' 		=> 0,
-				'deuterium' 	=> 0
-			]);
-			
-			$planet->parent_planet = $moon->id;
-			$planet->update();
-
-			return $moon->id;
-		}
-		else
-			return false;
-	}
-
-	public function sizeRandomiser ($Position, $HomeWorld = false, $Base = false)
-	{
-		$config = $this->getDi()->getShared('config');
-
-		$planetData = [];
-		require(APP_PATH.'app/varsPlanet.php');
-
-		$planet = new Planet;
-
-		if ($HomeWorld)
-			$planet->field_max = $config->game->get('initial_fields', 163);
-		elseif ($Base)
-			$planet->field_max = $config->game->get('initial_base_fields', 10);
-		else
-			$planet->field_max = (int) floor($planetData[$Position]['fields'] * $config->game->get('planetFactor', 1));
-
-		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));
-
-		$planet->temp_max = $planetData[$Position]['temp'];
-		$planet->temp_min = $planet->temp_max - 40;
-
-		if ($Base)
-			$planet->image = 'baseplanet01';
-		else
-		{
-			$imageNames = array_keys($planetData[$Position]['image']);
-			$imageNameType = $imageNames[array_rand($imageNames)];
-
-			$planet->image  = $imageNameType;
-			$planet->image .= 'planet';
-			$planet->image .= $planetData[$Position]['image'][$imageNameType] < 10 ? '0' : '';
-			$planet->image .= $planetData[$Position]['image'][$imageNameType];
-		}
-
-		return $planet;
-	}
-
-	public function isPositionFree ($galaxy, $system, $planet, $type = false)
-	{
-		if (!$galaxy || !$system || !$planet)
-			return false;
-
-		$exist = $this->count('galaxy = '.$galaxy.' AND system = '.$system.' AND planet = '.$planet.''.($type !== false ? ' AND planet_type = '.$type : ''));
-
-		return (!($exist > 0));
-	}
-
-	public function getFreePositions ($galaxy, $system, $start = 1, $end = 15)
-	{
-		$search = $this->db->extractResult($this->db->query("SELECT id, planet FROM game_planets WHERE galaxy = '".$galaxy."' AND system = '".$system."' AND planet >= '".$start."' AND planet <= '".$end."'"), 'planet');
-
-		$result = [];
-
-		for ($i = $start; $i <= $end; $i++)
-		{
-			if (!isset($search[$i]))
-				$result[] = $i;
-		}
-
-		return $result;
-	}
-
 	public function getProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
 	{
 		$return = ['energy' => 0];
@@ -1004,40 +804,18 @@ class Planet extends Model
 		return $this->field_max + ($this->{$this->storage->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->storage->resource[41]});
 	}
 
-	public function GetNextJumpWaitTime ()
+	public function getNextJumpTime ()
 	{
 		if ($this->{$this->storage->resource[43]} > 0)
 		{
-			$WaitBetweenJmp = (60 * 60) * (1 / $this->{$this->storage->resource[43]});
-			$NextJumpTime = $this->last_jump_time + $WaitBetweenJmp;
+			$waitTime = (60 * 60) * (1 / $this->{$this->storage->resource[43]});
+			$nextJumpTime = $this->last_jump_time + $waitTime;
 
-			if ($NextJumpTime >= time())
-				return $NextJumpTime - time();
+			if ($nextJumpTime >= time())
+				return $nextJumpTime - time();
 		}
 
 		return 0;
-	}
-
-	function checkAbandonMoonState (array &$lunarow)
-	{
-		if ($lunarow['luna_destruyed'] <= time())
-		{
-			$this->db->delete($this->getSource(), 'id = ?', [$lunarow['luna_id']]);
-			$this->db->updateAsDict($this->getSource(), ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
-
-			$lunarow['id_luna'] = 0;
-		}
-	}
-
-	function checkAbandonPlanetState (array &$planet)
-	{
-		if ($planet['destruyed'] <= time())
-		{
-			$this->db->delete($this->getSource(), 'id = ?', [$planet['planet_id']]);
-
-			if ($planet['parent_planet'] != 0)
-				$this->db->delete($this->getSource(), 'id = ?', [$planet['parent_planet']]);
-		}
 	}
 
 	public function saveData (array $fields, $planetId = 0)
