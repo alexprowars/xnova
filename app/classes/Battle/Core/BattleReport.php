@@ -227,8 +227,7 @@ class BattleReport
 
 	public function getAttackerDebris()
 	{
-		$metal = 0;
-		$crystal = 0;
+		$result = [0, 0];
 
 		foreach ($this->getAttackersLostUnits(!REPAIRED_DO_DEBRIS) as $idPlayer => $player)
 		{
@@ -236,6 +235,9 @@ class BattleReport
 			{
 				foreach($fleet as $role => $values)
 				{
+					$metal = 0;
+					$crystal = 0;
+
 					foreach ($values as $idShipType => $lost)
 					{
 						$metal += $lost[0];
@@ -243,19 +245,19 @@ class BattleReport
 					}
 
 					$factor = constant(strtoupper($role).'_DEBRIS_FACTOR');
-					$metal *= $factor;
-					$crystal *= $factor;
+
+					$result[0] += $metal * $factor;
+					$result[1] += $crystal * $factor;
 				}
 			}
 		}
 
-		return [$metal, $crystal];
+		return $result;
 	}
 
 	public function getDefenderDebris()
 	{
-		$metal = 0;
-		$crystal = 0;
+		$result = [0, 0];
 
 		foreach ($this->getDefendersLostUnits(!REPAIRED_DO_DEBRIS) as $idPlayer => $player)
 		{
@@ -263,6 +265,9 @@ class BattleReport
 			{
 				foreach($fleet as $role => $values)
 				{
+					$metal = 0;
+					$crystal = 0;
+
 					foreach ($values as $idShipType => $lost)
 					{
 						$metal += $lost[0];
@@ -270,13 +275,14 @@ class BattleReport
 					}
 
 					$factor = constant(strtoupper($role).'_DEBRIS_FACTOR');
-					$metal *= $factor;
-					$crystal *= $factor;
+
+					$result[0] += $metal * $factor;
+					$result[1] += $crystal * $factor;
 				}
 			}
 		}
 
-		return [$metal, $crystal];
+		return $result;
 	}
 
 	public function getDebris()
