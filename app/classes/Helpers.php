@@ -294,7 +294,7 @@ class Helpers
 		if (!isMobile())
 			$result = false;
 
-		if (strpos($ua, 'webkit/5') === false)
+		if (strpos($ua, 'webkit/5') === false && strpos($ua, 'webkit/6') === false)
 			$result = false;
 
 		if (strpos($ua, 'android 2') !== false || strpos($ua, 'android 3') !== false)

@@ -446,11 +446,6 @@ class OverviewController extends ApplicationController
 			}
 		}
 
-		if ($this->config->view->get('overviewListView', 0) == 0)
-			$QryPlanets = $this->user->getPlanetListSortQuery();
-		else
-			$QryPlanets = '';
-
 		$build_list = [];
 
 		/**
@@ -458,7 +453,6 @@ class OverviewController extends ApplicationController
 		 */
 		$planets = Planet::find([
 			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
-			'orders' => $QryPlanets,
 			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current, 'queue' => '[]']
 		]);
 

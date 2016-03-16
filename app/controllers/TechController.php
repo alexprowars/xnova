@@ -101,8 +101,6 @@ class TechController extends ApplicationController
 			if (isset($this->storage->requeriments[$Element]))
 				$this->view->setVar('req', $this->storage->requeriments[$Element]);
 
-			$this->config->view->offsetSet('overviewListView', 0);
-
 			$this->tag->setTitle(_getText('tech')[$Element]);
 		}
 

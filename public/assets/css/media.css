@@ -137,6 +137,21 @@
 	.shoutbox {
 		width: 610px;
 	}
+
+	.bar .m1 {
+	    padding: 0 6px;
+	}
+
+	.officier {
+		zoom: 0.8
+	}
+}
+
+@media (min-width: 481px) and (max-width: 790px)
+{
+	#box .game_menu, #box .game_content {
+		width: 100%;
+	}
 }
 
 @media (min-width: 992px)

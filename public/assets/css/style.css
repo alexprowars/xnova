@@ -485,77 +485,77 @@ p {
 
 .tch_node
 {
-position: absolute;
-text-overflow: clip;
+	position: absolute;
+	text-overflow: clip;
 }
 
 .tch_noreq
 {
-color:white;
-font-weight:bold;
-background-color:black;
-box-shadow:lime 0 0 6px 6px;
-border-radius:3px;
-height: 30px;
-padding-top: 18px;
-text-align: center;
+	color:white;
+	font-weight:bold;
+	background-color:black;
+	box-shadow:lime 0 0 6px 6px;
+	border-radius:3px;
+	height: 30px;
+	padding-top: 18px;
+	text-align: center;
 }
 
 .tch_icon_lime
 {
-height:56px;
-width:56px;
-box-shadow:lime 0 0 6px 6px;
-border-radius:3px;
-background-color:black;
+	height:50px;
+	width:50px;
+	box-shadow:lime 0 0 6px 6px;
+	border-radius:3px;
+	background-color:black;
 }
 
 .tch_icon_yellow
 {
-height:56px;
-width:56px;
-box-shadow:yellow 0 0 6px 6px;
-border-radius:3px;
-background-color:black;
+	height:56px;
+	width:56px;
+	box-shadow:yellow 0 0 6px 6px;
+	border-radius:3px;
+	background-color:black;
 }
 
 .tch_icon_red
 {
-height:56px;
-width:56px;
-box-shadow:red 0 0 6px 6px;
-border-radius:3px;
-background-color:black;
+	height:56px;
+	width:56px;
+	box-shadow:red 0 0 6px 6px;
+	border-radius:3px;
+	background-color:black;
 }
 
 .tch_tx_lvl
 {
-font-size: 12px;
-font-weight: bold;
-position: relative;
-text-align: center;
-top: -17px;
-text-shadow: 0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000;
-margin-left:-3px;
+	font-size: 12px;
+	font-weight: bold;
+	position: relative;
+	text-align: center;
+	top: -17px;
+	text-shadow: 0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 3px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000,0 0 4px #000000;
+	margin-left:-3px;
 }
 
 .tch_tx_nmcont
 {
-position: absolute;
-text-align: center;
-top: 64px;
-left: -28px;
-width:120px;
+	position: absolute;
+	text-align: center;
+	top: 64px;
+	left: -28px;
+	width:120px;
 }
 
 .tch_tx_name
 {
-font-size: 10px;
-text-align: center;
-box-shadow: inset 1px 1px 70px #000000, 1px 1px 4px #000000, -1px -1px 4px #000000;
-border-radius:5px;
-padding:0 3px 0 3px;
-margin-left: -5px;
+	font-size: 10px;
+	text-align: center;
+	box-shadow: inset 1px 1px 70px #000000, 1px 1px 4px #000000, -1px -1px 4px #000000;
+	border-radius:5px;
+	padding:0 3px 0 3px;
+	margin-left: -5px;
 }
 
 #rf_techinfo {

@@ -262,12 +262,12 @@ ECONode.prototype._drawChildrenLinks = function (tree) {
 ECOTree = function (obj, elm) {
 	this.config = {
 		iMaxDepth : 100,
-		iLevelSeparation : 65,
-		iSiblingSeparation : 60,
+		iLevelSeparation : 60,
+		iSiblingSeparation : 50,
 		iSubtreeSeparation : 45,
 		iRootOrientation : ECOTree.RO_LEFT,
 		iNodeJustification : ECOTree.NJ_TOP,
-		topXAdjustment : 0,
+		topXAdjustment : 30,
 		topYAdjustment : 0,		
 		render : "CANVAS",
 		linkType : "B",
@@ -282,8 +282,8 @@ ECOTree = function (obj, elm) {
 		useTarget : false,
 		searchMode : ECOTree.SM_DSC,
 		selectMode : ECOTree.SL_NONE,
-		defaultNodeWidth : 58,
-		defaultNodeHeight : 58,
+		defaultNodeWidth : 55,
+		defaultNodeHeight : 55,
 		defaultTarget : 'javascript:void(0);',
 		expandedImage : './design/images/pixel.png',
 		collapsedImage : './design/images/pixel.png',
@@ -696,7 +696,7 @@ ECOTree.prototype.toString = function () {
 	
 	this._positionTree();
 	
-	s.push('<canvas id="ECOTreecanvas" width=845 height=1000 ></canvas>');
+	s.push('<canvas id="ECOTreecanvas" width=785 height=1000 ></canvas>');
 
 	return s.join('');
 }

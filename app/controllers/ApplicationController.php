@@ -217,7 +217,6 @@ class ApplicationController extends Controller
 			if ($this->cookies->has($this->config->cookie->prefix."_full") && $this->cookies->get($this->config->cookie->prefix."_full") == 'Y')
 			{
 				$this->config->view->offsetSet('socialIframeView', 0);
-				$this->config->view->offsetSet('overviewListView', 1);
 				$this->config->view->offsetSet('showPlanetListSelect', 0);
 			}
 

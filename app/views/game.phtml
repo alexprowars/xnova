@@ -75,7 +75,7 @@
 				<? $this->partial('shared/menu'); ?>
 			<? endif; ?>
 
-			<? if (isset($leftMenu) && $leftMenu == true && $this->config->view->get('overviewListView', 0) == 1): ?>
+			<? if (isset($leftMenu) && $leftMenu == true): ?>
 				<? $this->partial('shared/planets'); ?>
 			<? endif; ?>
 
