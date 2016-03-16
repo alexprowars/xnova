@@ -115,7 +115,7 @@ class ImperiumController extends ApplicationController
 				$parse['file_'.$res.'_t'] += $planet->{$res};
 				$parse['file_'.$res.'_ph_t'] += $planet->{$res.'_perhour'};
 
-				$parse['file_'.$res][] = $planet->metal;
+				$parse['file_'.$res][] = $planet->{$res};
 				$parse['file_'.$res.'_ph'][] = $planet->{$res.'_perhour'};
 				$parse['file_'.$res.'_p'][] = $planet->{$res.'_mine_porcent'} * 10;
 			}

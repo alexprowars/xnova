@@ -192,7 +192,7 @@ class AllianceController extends ApplicationController
 
 		if ($edit == 'rights')
 		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && $this->user->id != 1)
+			if (!$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin())
 				$this->message(_getText('Denied_access'), _getText('Members_list'));
 			elseif (!empty($_POST['newrangname']))
 			{
@@ -290,7 +290,7 @@ class AllianceController extends ApplicationController
 		}
 		elseif ($edit == 'ally')
 		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
 				$this->message(_getText('Denied_access'), "Меню управления альянсом");
 
 			$t = $this->request->getQuery('t', 'int', 1);
@@ -440,7 +440,7 @@ class AllianceController extends ApplicationController
 		}
 		elseif ($edit == 'name')
 		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
 				$this->message(_getText('Denied_access'), _getText('Members_list'));
 
 			if (isset($_POST['newname']))
@@ -465,7 +465,7 @@ class AllianceController extends ApplicationController
 		}
 		elseif ($edit == 'tag')
 		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
 				$this->message(_getText('Denied_access'), _getText('Members_list'));
 
 			if (isset($_POST['newtag']))
