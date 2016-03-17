@@ -1,0 +1,59 @@
+.ui-widget { font-size: 10pt; font-family: Arial, sans-serif; }
+.ui-widget-header, .ui-widget-content .ui-widget-header { text-align: center; }
+.c-ui-widget-content { padding: 2px; margin: 2px; }
+.c-ui-main-header { padding: 4px; width: auto; margin: 2px; margin-right: 28px; }
+.ui-subheader, .ui-widget-content .ui-subheader { margin: 0; text-align: center; padding: 2px;}
+.ui-input-margin { margin: 0; margin-left: 6px; }
+.hr { border-bottom: 1px solid #c0c0c0; margin: 3px 0; }
+.hint-label { font-size: 0.8em; }
+.ui-checkbox { margin-right: 10px; }
+.no-mp { margin: 0; padding: 0; }
+#reset { padding: 2px; cursor: pointer; float: right; margin: 2px; }
+#tabs { margin: 2px; z-index: 0;}
+#warning { padding: 2px; margin: 4px; text-align: center; display: none; }
+#hint { margin-top: 10px; padding: 4px; margin: 4px; margin-top: 20px; }
+#hint-message { margin-right: .3em; font-weight: lighter; color: #000; }
+
+#vtable { width: 100%; }
+#vtablesb, #vtablec { vertical-align: top; }
+#vtablesb { white-space: nowrap; }
+#vtablec { width: 100%; }
+#vtablel { text-align: right; width: 100%; }
+
+#topbar { width: 100% }
+#topbar td {white-space:nowrap; vertical-align: center; }
+
+#startpage { font-size: 1.2em; padding: 10px; }
+
+.input-2columns { width: 25px !important; text-align: center; }
+.input-3columns { width: 30px !important; text-align: center; }
+.input-4columns { width: 40px !important; text-align: center; }
+.input-10columns { width: 90px !important; text-align: center; }
+.input-in-table { margin: 0px; }
+
+#general-settings table td, #tab-2 > div table.table td {text-align: left;}
+#tab-2 > div {padding: 3px;}
+#gamediv table td {padding: 4px !important;}
+table.lined td.title {width:200px;text-align: left;}
+table.lined th { font-weight: lighter; }
+table.lined td.border-w { border-left: solid 2px; border-color: #6A8DA6; }
+table.lined td.border-e { border-right: solid 2px; border-color: #6A8DA6; }
+table.lined td.border-n { border-top: solid 2px; border-color: #6A8DA6; }
+table.lined td.border-s { border-bottom: solid 2px; border-color: #6A8DA6; }
+
+abbr { border-bottom: .1em dotted; cursor: help; }
+
+.ui-input[type=text], .ui-widget-content .ui-input[type=text] {
+	background: #ccc;
+	color: #1D5987 !important;
+	border: 1px solid #79B7E7 !important;
+	margin: 1px !important;
+}
+
+select.ui-input {
+	background: #414141 !important;
+}
+
+#general-settings label {
+	font-weight: normal;
+}

@@ -16,17 +16,17 @@ class CalculateController extends ApplicationController
 		$this->user->loadPlanet();
 	}
 
-	public function cost()
+	public function costAction ()
 	{
 		$this->view->pick('calculate/cost');
-		$this->view->setVar('planet', $this->planet->toArray());
+		$this->view->setVar('object', $this->planet->toArray());
 		$this->view->setVar('user', $this->user->toArray());
 
 		$this->tag->setTitle('Калькуляторы');
 		$this->showTopPanel(false);
 	}
 
-	public function moon()
+	public function moonAction ()
 	{
 		$this->view->pick('calculate/moon');
 
@@ -34,10 +34,10 @@ class CalculateController extends ApplicationController
 		$this->showTopPanel(false);
 	}
 
-	public function fleet()
+	public function fleetAction ()
 	{
 		$this->view->pick('calculate/fleet');
-		$this->view->setVar('planet', $this->planet->toArray());
+		$this->view->setVar('object', $this->planet->toArray());
 		$this->view->setVar('user', $this->user->toArray());
 
 		$this->tag->setTitle('Калькуляторы');
