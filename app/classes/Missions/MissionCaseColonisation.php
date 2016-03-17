@@ -9,6 +9,7 @@ namespace App\Missions;
 
 use App\FleetEngine;
 use App\Galaxy;
+use App\Models\Planet;
 
 class MissionCaseColonisation extends FleetEngine implements Mission
 {
@@ -22,7 +23,7 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 
 		$galaxy = new Galaxy();
 
-		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM game_planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '1'");
+		$iPlanetCount = Planet::count(['id_owner = ?0 AND planet_type = 1', 'bind' => [$this->_fleet->owner]]);
 
 		$TargetAdress = sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 
