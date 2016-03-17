@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('search/') ?>" method="post">
 	<table class="table">
 		<tr>
@@ -5,14 +10,14 @@
 		</tr>
 		<tr>
 			<th>
-				<select name="type">
+				<select name="type" title="">
 					<option value="playername"<?=(($parse['type'] == "playername") ? " SELECTED" : "") ?>>Логин игрока</option>
 					<option value="planetname"<?=(($parse['type'] == "planetname") ? " SELECTED" : "") ?>>Название планеты</option>
 					<option value="allytag"<?=(($parse['type'] == "allytag") ? " SELECTED" : "") ?>>Аббревиатура альянса</option>
 					<option value="allyname"<?=(($parse['type'] == "allyname") ? " SELECTED" : "") ?>>Название альянса</option>
 				</select>
 				&nbsp;&nbsp;
-				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>">
+				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>" title="">
 				&nbsp;&nbsp;
 
 				<input type="submit" value="Поиск">

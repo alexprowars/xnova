@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <? if ((($parse['mount'] - 3) * 75 + 100 + 350) > 720 && !\App\Helpers::allowMobileVersion()): ?>
 	<script type="application/javascript">
 		$(document).ready(function()
@@ -97,20 +102,20 @@
 			<th rowspan="6">Производство</th>
 			<th>Металл</th>
 			<? foreach ($parse['file_metal_p'] as $item): ?>
-				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 			<th rowspan="6">&nbsp;</th>
 		</tr>
 		<tr>
 			<th>Кристаллы</th>
 			<? foreach ($parse['file_crystal_p'] as $item): ?>
-				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 		</tr>
 		<tr>
 			<th>Дейтерий</th>
 			<? foreach ($parse['file_deuterium_p'] as $item): ?>
-				<th><font color="#00FF00"><?=App\Helpers::pretty_number($item) ?></font>%</th>
+				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 		</tr>
 		<tr>
@@ -121,7 +126,7 @@
 			<th>Спутники</th><?=$parse['file_solar2_p'] ?></tr>
 		<tr>
 			<th colspan="<?=($parse['mount'] - 1) ?>">Кредиты</th>
-			<th><font color=#FFFF00><?=$parse['file_kredits'] ?></font></th>
+			<th><span class="neutral"><?=$parse['file_kredits'] ?></span></th>
 		</tr>
 		<tr>
 			<td class="c" colspan="<?=$parse['mount'] ?>" align="left"><?=_getText('buildings') ?></td>

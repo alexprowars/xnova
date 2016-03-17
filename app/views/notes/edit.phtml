@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('notes/edit/'.$parse['id'].'/') ?>" method="post">
 	<table class="table">
 		<tr>
@@ -18,7 +23,7 @@
 		</tr>
 		<tr>
 			<th>Приоритет:
-				<select name="u">
+				<select name="u" title="">
 					<option value="2" <?=($parse['priority'] == 2 ? 'selected' : '') ?>><?=_getText('Important') ?></option>
 					<option value="1" <?=($parse['priority'] == 1 ? 'selected' : '') ?>><?=_getText('Normal') ?></option>
 					<option value="0" <?=($parse['priority'] == 0 ? 'selected' : '') ?>><?=_getText('Unimportant') ?></option

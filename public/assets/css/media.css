@@ -97,6 +97,10 @@
 	.doubleth {
 		height: 45px;
 	}
+
+	.block > .content {
+		font-size: 12px;
+	}
 }
 
 @media (min-width: 481px) and (max-width: 992px)

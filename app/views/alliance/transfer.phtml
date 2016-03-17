@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('alliance/admin/edit/give/id/'.$parse['id'].'/') ?>" method="POST">
 	<table class="table">
 		<tr>
@@ -5,7 +10,7 @@
 		</tr>
 			<tr>
 				<th colspan="3">Передать альянс игроку:</th>
-				<th><select name="newleader"><?=$parse['righthand'] ?></select></th>
+				<th><select name="newleader" title=""><?=$parse['righthand'] ?></select></th>
 				<th colspan="3"><input type="submit" value="Передача"></th>
 			</tr>
 		<tr>

@@ -1,15 +1,20 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('messages/') ?>" id="mes_form" method="post">
 	<input name="category" value="<?=$parse['category'] ?>" type="hidden">
 	<div class="block">
 		<div class="title">
 			Сообщения
-			<select name="messcat" onChange="$('#mes_form').submit()">
+			<select name="messcat" onChange="$('#mes_form').submit()" title="">
 				<? foreach ($parse['types'] AS $type): ?>
 					<option value="<?=$type ?>" <?=($type == $parse['category'] ? 'selected' : '') ?>><?=_getText('type', $type) ?></option>
 				<? endforeach; ?>
 			</select>
 			по
-			<select name="show_by" onChange="$('#mes_form').submit()">
+			<select name="show_by" onChange="$('#mes_form').submit()" title="">
 				<? foreach ($parse['limit'] AS $limit): ?>
 					<option value="<?=$limit ?>" <?=($limit == $parse['lim'] ? 'selected' : '') ?>><?=$limit ?></option>
 				<? endforeach; ?>
@@ -22,7 +27,7 @@
 		<div class="content noborder">
 			<table class="table">
 				<tr>
-					<th width="50"><input type="checkbox" class="checkAll" style='width:14px;'></th>
+					<th width="50"><input type="checkbox" class="checkAll" style='width:14px;' title=""></th>
 					<th width="150">Дата</th>
 					<th>От</th>
 					<th width="65">&nbsp;</th>
@@ -30,7 +35,7 @@
 				<? foreach ($page->items AS $item): ?>
 					<tr>
 						<th>
-							<input name="delete[]" type="checkbox" value="<?=$item->id ?>" style='width:14px;'>
+							<input name="delete[]" type="checkbox" value="<?=$item->id ?>" style='width:14px;' title="">
 						</th>
 						<th><?=$this->game->datezone("d.m.y H:i:s", $item->time) ?></th>
 						<th><a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a></th>

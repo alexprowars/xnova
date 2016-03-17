@@ -27,25 +27,25 @@
 <br><br>
 <table class="table">
 	<tr>
-		<td colspan="5" class="c">
-			<center>Служба техподдержки</center>
+		<td colspan="5" class="c text-center">
+			Служба техподдержки
 		</td>
 	</tr>
 	<tr>
-		<td class="c" width="10%">
-			<center>ID</center>
+		<td class="c text-center" width="10%">
+			ID
 		</td>
-		<td class="c" width="10%">
-			<center>Игрок</center>
+		<td class="c text-center" width="10%">
+			Игрок
 		</td>
-		<td class="c" width="40%">
-			<center>Тема</center>
+		<td class="c text-center" width="40%">
+			Тема
 		</td>
-		<td class="c" width="15%">
-			<center>Статус</center>
+		<td class="c text-center" width="15%">
+			Статус
 		</td>
-		<td class="c" width="25%">
-			<center>Дата</center>
+		<td class="c text-center" width="25%">
+			Дата
 		</td>
 	</tr>
 	<? foreach ($tickets['closed'] AS $list): ?>
@@ -108,7 +108,7 @@
 			<form action="/admin/support/mode/send/id/<?=$parse['t_id'] ?>/" method="POST">
 				<div class="form-body">
 					<div class="form-group">
-						<textarea class="form-control" rows="10" name="text"></textarea>
+						<textarea class="form-control" rows="10" name="text" title=""></textarea>
 					</div>
 					<div class="form-actions">
 						<button type="submit" class="btn green">Ответить</button>

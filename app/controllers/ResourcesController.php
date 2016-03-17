@@ -186,6 +186,9 @@ class ResourcesController extends ApplicationController
 				$parse[$res.'_storage_barcolor'] = '#00C000';
 
 			$parse['buy_'.$res] = $parse[$res.'_total'] * 8;
+
+			if ($parse['buy_'.$res] < 0)
+				$parse['buy_'.$res] = 0;
 		}
 
 		if (isset($_GET['buy']) && $this->planet->id > 0 && $this->planet->planet_type == 1)

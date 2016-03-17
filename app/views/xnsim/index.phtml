@@ -49,7 +49,7 @@
 	function opt()
 	{
 		var txt = "", tstr = "", tkey, tval;
-		tkey = new Array();
+		tkey = [];
 
 		$('input[type=text]').each(function()
 		{
@@ -62,7 +62,7 @@
 				{
 					if ($("#" + tval[0] + "-" + tval[1] + "-l").length > 0)
 					{
-						tvar = tval[0];
+						var tvar = tval[0];
 
 						tval[0] = parseInt(tval[0].split('gr').join(''));
 
@@ -134,7 +134,7 @@
 	}
 </script>
 
-<form method="get" action="/xnsim/report/" id="result" target="_blank">
+<form method="get" action="<?=$this->url->get('xnsim/report/') ?>" id="result" target="_blank">
 	<input type="hidden" name="r" value="">
 </form>
 
@@ -146,18 +146,18 @@
 	<tr>
 		<th class="spezial"> XNova SIM </th>
 		<th colspan="11" class="spezial">
-			<select name="Att" SIZE="1" onchange='vis_cols("TD","gr",0,this.value);'>
-			<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
-				<option value="<?=$i ?>"><?=$i ?></option>
-			<? endfor; ?>
+			<select name="Att" SIZE="1" onchange='vis_cols("TD","gr",0,this.value);' title="">
+				<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
+					<option value="<?=$i ?>"><?=$i ?></option>
+				<? endfor; ?>
 			</select>
 
 			Исходная ситуация
 
-			<select name="Def" SIZE="1" onchange='vis_cols("TD","gr",<?=$this->config->game->get('maxSlotsInSim', 5) ?>,this.value);'>
-			<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
-				<option value="<?=$i ?>"><?=$i ?></option>
-			<? endfor; ?>
+			<select name="Def" SIZE="1" onchange='vis_cols("TD","gr",<?=$this->config->game->get('maxSlotsInSim', 5) ?>,this.value);' title="">
+				<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
+					<option value="<?=$i ?>"><?=$i ?></option>
+				<? endfor; ?>
 			</select>
 		</th>
 	</tr>
@@ -182,7 +182,7 @@
 	<tr align=center>
 		<td><b><?=_getText('tech', $techId) ?></b></td>
 		<? for ($i = 0; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-			<td id="gr<?=$i ?>"><input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2"></td>
+			<td id="gr<?=$i ?>"><input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2" title=""></td>
 		<? endfor; ?>
 	</tr>
 <? endforeach; ?>
@@ -199,10 +199,10 @@
 				<? if ($fleetId == 212 && $i < $this->config->game->get('maxSlotsInSim', 5)): ?>
 					-
 				<? else: ?>
-					<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7">
+					<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
 				<? endif; ?>
 				<? if (in_array($fleetId + 100, $this->storage->reslist['tech_f'])): ?>
-					<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2">
+					<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 				<? endif; ?>
 			</td>
 		<? endfor; ?>
@@ -220,9 +220,9 @@
 					<? if ($i < $this->config->game->get('maxSlotsInSim', 5)): ?>
 						-
 					<? else: ?>
-						<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7">
+						<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
 						<? if (in_array($fleetId - 50, $this->storage->reslist['tech_f'])): ?>
-							<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2">
+							<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 						<? endif; ?>
 					<? endif; ?>
 				</td>

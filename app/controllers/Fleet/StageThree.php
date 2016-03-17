@@ -19,7 +19,7 @@ class StageThree
 		if ($controller->user->vacation > 0)
 			$controller->message("Нет доступа!");
 
-		if (!isset($_POST['crc']) || $_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]))
+		if (!$controller->request->hasPost('crc') || $_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]))
 			$controller->message('Ошибка контрольной суммы!');
 
 		Lang::includeLang('fleet');
@@ -52,16 +52,13 @@ class StageThree
 					$aks_tr = $aks_count_mr->fetch();
 
 					if ($aks_tr['galaxy'] == $_POST["galaxy"] && $aks_tr['system'] == $_POST["system"] && $aks_tr['planet'] == $_POST["planet"] && $aks_tr['planet_type'] == $_POST["planettype"])
-					{
 						$fleet_group_mr = $_POST['acs'];
-					}
 				}
 			}
 		}
+
 		if (($_POST['acs'] == 0 || $fleet_group_mr == 0) && ($fleetmission == 2))
-		{
 			$fleetmission = 1;
-		}
 
 		$protection = $controller->config->game->get('noobprotection');
 		$protectiontime = $controller->config->game->get('noobprotectiontime');
@@ -341,27 +338,27 @@ class StageThree
 		$FleetStorage -= $consumption;
 		$StorageNeeded = 0;
 
-		if ($_POST['resource1'] < 1)
+		if ($controller->request->getPost('resource1', 'int', 0) < 1)
 			$TransMetal = 0;
 		else
 		{
-			$TransMetal = intval($_POST['resource1']);
+			$TransMetal = $controller->request->getPost('resource1', 'int', 0);
 			$StorageNeeded += $TransMetal;
 		}
 
-		if ($_POST['resource2'] < 1)
+		if ($controller->request->getPost('resource2', 'int', 0) < 1)
 			$TransCrystal = 0;
 		else
 		{
-			$TransCrystal = intval($_POST['resource2']);
+			$TransCrystal = $controller->request->getPost('resource2', 'int', 0);
 			$StorageNeeded += $TransCrystal;
 		}
 
-		if ($_POST['resource3'] < 1)
+		if ($controller->request->getPost('resource3', 'int', 0) < 1)
 			$TransDeuterium = 0;
 		else
 		{
-			$TransDeuterium = intval($_POST['resource3']);
+			$TransDeuterium = $controller->request->getPost('resource3', 'int', 0);
 			$StorageNeeded += $TransDeuterium;
 		}
 
@@ -371,7 +368,7 @@ class StageThree
 		{
 			$StayArrayTime = [0, 1, 2, 4, 8, 16, 32];
 
-			if (!isset($_POST['holdingtime']) || !in_array($_POST['holdingtime'], $StayArrayTime))
+			if (!$controller->request->hasPost('holdingtime') || !in_array($_POST['holdingtime'], $StayArrayTime))
 				$_POST['holdingtime'] = 0;
 
 			$FleetStayConsumption = Fleet::GetFleetStay($fleetarray);
@@ -379,7 +376,7 @@ class StageThree
 			if ($controller->user->rpg_meta > time())
 				$FleetStayConsumption = ceil($FleetStayConsumption * 0.9);
 
-			$FleetStayAll = $FleetStayConsumption * intval($_POST['holdingtime']);
+			$FleetStayAll = $FleetStayConsumption * $controller->request->getPost('holdingtime', 'int', 0);
 
 			if ($FleetStayAll >= ($controller->planet->deuterium - $TransDeuterium))
 				$TotalFleetCons = $controller->planet->deuterium - $TransDeuterium;
@@ -392,7 +389,7 @@ class StageThree
 			$FleetStayTime = round(($TotalFleetCons / $FleetStayConsumption) * 3600);
 
 			$StayDuration = $FleetStayTime;
-			$StayTime = $fleet['start_time'] + $FleetStayTime;
+			$StayTime = $fleet->start_time + $FleetStayTime;
 		}
 
 		if ($fleet_group_mr > 0)
@@ -524,8 +521,8 @@ class StageThree
 
 		if ($fleetmission == 1)
 		{
-			$raunds = (isset($_POST['raunds'])) ? intval($_POST['raunds']) : 6;
-			$raunds = ($raunds < 6 || $raunds > 10) ? 6 : $raunds;
+			$raunds = $controller->request->getPost('raunds', 'int', 6);
+			$raunds = max(min(10, $raunds), 6);
 		}
 		else
 			$raunds = 0;
@@ -561,8 +558,7 @@ class StageThree
 
 		$controller->planet->update();
 
-		$html = "<center>";
-		$html .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"600\">";
+		$html  = "<table  class='table'>";
 		$html .= "<tr>";
 		$html .= "<td class=\"c\" colspan=\"2\"><span class=\"success\">" . ((isset($str_error)) ? $str_error : _getText('fl_fleet_send')) . "</span></td>";
 		$html .= "</tr><tr>";
@@ -599,8 +595,8 @@ class StageThree
 			$html .= "<th>" . _getText('tech', $Ship) . "</th>";
 			$html .= "<th>" . Helpers::pretty_number($Count) . "</th>";
 		}
-		$html .= "</tr></table></center>";
+		$html .= "</tr></table>";
 
-		$controller->message($html, '' . _getText('fl_title_3') . '', '/fleet/', '3');
+		$controller->message($html, '', '/fleet/', '3');
 	}
 }

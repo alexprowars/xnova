@@ -33,10 +33,10 @@
 				<tr>
 					<th class="col-xs-6"><?=_getText('fl_dest') ?></th>
 					<th class="col-xs-6">
-						<input type="text" name="galaxy" size="3" maxlength="2" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['galaxyend'] ?>" />
-						<input type="text" name="system" size="3" maxlength="3" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['systemend'] ?>" />
-						<input type="text" name="planet" size="3" maxlength="2" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['planetend'] ?>" />
-						<select name="planettype" onChange="shortInfo()" onKeyUp="shortInfo()">
+						<input type="text" name="galaxy" size="3" maxlength="2" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['galaxyend'] ?>" title="">
+						<input type="text" name="system" size="3" maxlength="3" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['systemend'] ?>" title="">
+						<input type="text" name="planet" size="3" maxlength="2" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['planetend'] ?>" title="">
+						<select name="planettype" onChange="shortInfo()" onKeyUp="shortInfo()" title="">
 							<? foreach (_getText('type_planet') AS $key => $value): ?>
 								<option value="<?=$key ?>"<?=(($parse['typeend'] == $key) ? " SELECTED" : "") ?>><?=$value ?></option>
 							<? endforeach; ?>
@@ -46,7 +46,7 @@
 				<tr>
 					<th><?=_getText('fl_speed') ?></th>
 					<th>
-						<select name="speed" onChange="shortInfo()" onKeyUp="shortInfo()">
+						<select name="speed" onChange="shortInfo()" onKeyUp="shortInfo()" title="">
 							<? foreach ($parse['speed'] as $a => $b): ?>
 								<option value="<?=$a ?>"><?=$b ?></option>
 							<? endforeach; ?>

@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $list array
+ */
+?>
 <table class="table">
 	<tr>
 		<th colspan="4">Логовница</th>
@@ -27,6 +32,6 @@
 		</tr>
 	<? endif; ?>
 	<tr>
-		<td class="c" colspan="4"><a href="/log/new/">Создать новый лог боя</a></td>
+		<td class="c" colspan="4"><a href="<?=$this->url->get('log/new/') ?>">Создать новый лог боя</a></td>
 	</tr>
 </table>

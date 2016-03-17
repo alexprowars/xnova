@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <script type="text/javascript">
 
 	var groups = new Array(100);
@@ -162,19 +167,19 @@
 		<th> XNova SIM</th>
 		<th colspan="<?=(MAX_SLOTS * 2 + 1) ?>" class="spezial">
 
-			<SELECT NAME="Att" SIZE="1" onchange='vis_cols("TH","gr",0,this.value);'>
+			<select NAME="Att" SIZE="1" onchange='vis_cols("TH","gr",0,this.value);' title="">
 				<? for ($i = 1; $i <= MAX_SLOTS; $i++): ?>
 					<option value="<?=$i ?>"><?=$i ?></option>
 				<? endfor; ?>
-			</SELECT>
+			</select>
 
 			Исходная ситуация
 
-			<SELECT NAME="Def" SIZE="1" onchange='vis_cols("TH","gr",<?=MAX_SLOTS ?>,this.value);'>
+			<select NAME="Def" SIZE="1" onchange='vis_cols("TH","gr",<?=MAX_SLOTS ?>,this.value);' title="">
 				<? for ($i = 1; $i <= MAX_SLOTS; $i++): ?>
 					<option value="<?=$i ?>"><?=$i ?></option>
 				<? endfor; ?>
-			</SELECT>
+			</select>
 
 		</th>
 	</tr>
@@ -196,7 +201,7 @@
 		<tr align="center">
 			<th><?=_getText('tech', $techId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
-				<th id="gr<?=$i ?>"><input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$techId]['c'])) ? $parse['slot_'.$i][$techId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2"></th>
+				<th id="gr<?=$i ?>"><input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$techId]['c'])) ? $parse['slot_'.$i][$techId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2" title=""></th>
 			<? endfor; ?>
 		</tr>
 	<? endforeach; ?>
@@ -211,10 +216,10 @@
 					<? if ($fleetId == 212 && $i < MAX_SLOTS): ?>
 						-
 					<? else: ?>
-						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7">
+						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
 					<? endif; ?>
 					<? if (in_array($fleetId + 100, $this->storage->reslist['tech_f'])): ?>
-						<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2">
+						<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 					<? endif; ?>
 				</th>
 			<? endfor; ?>
@@ -231,9 +236,9 @@
 					<? if ($i < MAX_SLOTS): ?>
 						-
 					<? else: ?>
-						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7">
+						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
 						<? if (in_array($fleetId - 50, $this->storage->reslist['tech_f'])): ?>
-							<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2">
+							<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 						<? endif; ?>
 					<? endif; ?>
 				</th>

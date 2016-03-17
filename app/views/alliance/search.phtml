@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('alliance/search/') ?>" method="POST">
 	<table class="table">
 		<tr>
@@ -6,7 +11,7 @@
 		<tr>
 			<th>Строка поиска</th>
 			<th>
-				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>"><input type="submit" value="Поиск">
+				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>" title=""><input type="submit" value="Поиск">
 			</th>
 		</tr>
 	</table>
@@ -20,14 +25,14 @@
 		</tr>
 		<? foreach ($parse['result'] AS $r): ?>
 			<tr>
-				<th>
-					<center><?=$r['tag'] ?></center>
+				<th class="text-center">
+					<?=$r['tag'] ?>
 				</th>
-				<th>
-					<center><?=$r['name'] ?></center>
+				<th class="text-center">
+					<?=$r['name'] ?>
 				</th>
-				<th>
-					<center><?=$r['members'] ?></center>
+				<th class="text-center">
+					<?=$r['members'] ?>
 				</th>
 			</tr>
 		<? endforeach; ?>

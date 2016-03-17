@@ -1,5 +1,5 @@
 <br><br>
-<center>
+<div class="text-center">
 	<table width="550" class="raceSelect">
 		<? if ($race == 0): ?>
 			<tr>
@@ -112,7 +112,7 @@
 					На планетах не должно идти строительство, исследования, летать флот и весь флот фракции подлежит демонтировке (без возврата ресурсов).<br><br>
 					<? if ($isChangeAvailable): ?>
 						<form action="<?=$this->url->get('race/change/') ?>" method="POST">
-							<select name="race">
+							<select name="race" title="">
 								<option value="0">выбрать...</option>
 								<option value="1">Конфедерация</option>
 								<option value="2">Бионики</option>
@@ -127,7 +127,7 @@
 			</tr>
 		<? endif; ?>
 	</table>
-</center>
+</div>
 
 <? if ($race == 0 && !$isPopup): ?>
 	<script type="text/javascript">

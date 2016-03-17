@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <table class="table">
 	<tr>
 		<td class="c" colspan="2">Обзор заявок [<?=$parse['tag'] ?>]</td>
@@ -19,7 +24,7 @@
 				<th colspan="2"><input type="submit" name="action" value="Принять"></th>
 			</tr>
 			<tr>
-				<th colspan="2"><textarea name="text" cols=40 rows=10></textarea></th>
+				<th colspan="2"><textarea name="text" cols=40 rows=10 title=""></textarea></th>
 			</tr>
 			<tr>
 				<th colspan="2"><input type="submit" name="action" value="Отклонить"></th>
@@ -29,28 +34,28 @@
 		</td></tr>
 	<? endif; ?>
 	<? if (count($parse['list']) > 0): ?>
-	<tr>
-		<td class="c">
-			<center><a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/1/') ?>">Логин</a></center>
-		</td>
-		<td class="c">
-			<center><a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/0/') ?>">Дата подачи заявки</a></center>
-		</td>
-	</tr>
-	<? foreach ($parse['list'] AS $list): ?>
 		<tr>
-			<th>
-				<center><a href="<?=$this->url->get('alliance/admin/edit/requests/show/'.$list['id'].'/sort/0/') ?>"><?=$list['username'] ?></a></center>
-			</th>
-			<th>
-				<center><?=$list['time'] ?></center>
-			</th>
+			<td class="c text-center">
+				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/1/') ?>">Логин</a>
+			</td>
+			<td class="c text-center">
+				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/0/') ?>">Дата подачи заявки</a>
+			</td>
 		</tr>
+		<? foreach ($parse['list'] AS $list): ?>
+			<tr>
+				<th class="text-center">
+					<a href="<?=$this->url->get('alliance/admin/edit/requests/show/'.$list['id'].'/sort/0/') ?>"><?=$list['username'] ?></a>
+				</th>
+				<th class="text-center">
+					<?=$list['time'] ?>
+				</th>
+			</tr>
 		<? endforeach; ?>
 	<? else: ?>
-	<tr>
-		<th colspan="2">Список заявок пуст</th>
-	</tr>
+		<tr>
+			<th colspan="2">Список заявок пуст</th>
+		</tr>
 	<? endif; ?>
 	<tr>
 		<td class="c" colspan="2"><a href="<?=$this->url->get('alliance/') ?>">Назад</a></td>

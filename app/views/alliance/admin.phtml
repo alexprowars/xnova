@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <table class="table">
 	<tr>
 		<td class="c">Управление альянсом</td>
@@ -39,7 +44,7 @@
 			<th colspan="3" class="nopadding">
 				<div id="editor"></div>
 				<script type="text/javascript">edToolbar('text');</script>
-				<textarea name="text" id="text" rows="15"><?=preg_replace('!<br.*>!iU', "\n", $parse['text']) ?></textarea>
+				<textarea name="text" id="text" rows="15" title=""><?=preg_replace('!<br.*>!iU', "\n", $parse['text']) ?></textarea>
 			</th>
 		</tr>
 		<tr>
@@ -65,20 +70,20 @@
 		</tr>
 		<tr>
 			<th width="150">Домашняя страница</th>
-			<th><input type="text" name="web" value="<?=$parse['web'] ?>" style="width:98%;"></th>
+			<th><input type="text" name="web" value="<?=$parse['web'] ?>" style="width:98%;" title=""></th>
 		</tr>
 		<tr>
 			<th>Логотип</th>
-			<th><input type="text" name="image" value="<?=$parse['image'] ?>" style="width:98%;"></th>
+			<th><input type="text" name="image" value="<?=$parse['image'] ?>" style="width:98%;" title=""></th>
 		</tr>
 		<tr>
 			<th>Ранг основателя</th>
-			<th><input type="text" name="owner_range" value="<?=$parse['owner_range'] ?>" style="width:98%;"></th>
+			<th><input type="text" name="owner_range" value="<?=$parse['owner_range'] ?>" style="width:98%;" title=""></th>
 		</tr>
 		<tr>
 			<th>Заявки</th>
 			<th>
-				<select style="width:98%;" name="request_notallow">
+				<select style="width:98%;" name="request_notallow" title="">
 					<option value="1"<?=$parse['request_notallow_0'] ?>><?=_getText('No_allow_request') ?></option>
 					<option value="0"<?=$parse['request_notallow_1'] ?>><?=_getText('Allow_request') ?></option>
 				</select>

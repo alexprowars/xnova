@@ -2,24 +2,24 @@
 	<div class="error"><?=$message ?></div>
 <? endif; ?>
 <script src='//www.google.com/recaptcha/api.js'></script>
-<form action="/index/registration/" method="post" id="regForm" class="form">
+<form action="<?=$this->url->get('index/registration/') ?>" method="post" id="regForm" class="form">
 	<table class="table">
 		<tbody>
 		<tr>
 			<th width="40%">E-Mail<br>(используется для входа)</th>
-			<th><input name="email" size="20" maxlength="40" type="text" value="<?=$this->request->getPost('email') ?>"></th>
+			<th><input name="email" size="20" maxlength="40" type="text" value="<?=$this->request->getPost('email') ?>" title=""></th>
 		</tr>
 		<tr>
 			<th>Пароль</th>
-			<th><input name="password" id="password" size="20" maxlength="20" type="password"></th>
+			<th><input name="password" id="password" size="20" maxlength="20" type="password" title=""></th>
 		</tr>
 		<tr>
 			<th>Подтверждение пароля</th>
-			<th><input name="rpassword" size="20" maxlength="20" type="password"></th>
+			<th><input name="rpassword" size="20" maxlength="20" type="password" title=""></th>
 		</tr>
 		<tr>
-			<th colspan="2" align="center">
-				<center><div class="g-recaptcha" data-sitekey="<?=$this->config->recaptcha->public_key ?>"></div></center>
+			<th colspan="2" align="center" class="text-center">
+				<div class="g-recaptcha" data-sitekey="<?=$this->config->recaptcha->public_key ?>"></div>
 			</th>
 		</tr>
 		<tr>

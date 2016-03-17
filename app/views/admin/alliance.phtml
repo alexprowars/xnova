@@ -1,9 +1,14 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <div class="table-responsive">
 	<table class="table table-striped table-bordered table-advance">
 		<?=$parse['desc'] ?><?=$parse['edit'] ?><?=$parse['name'] ?><?=$parse['member'] ?><?=$parse['member_row'] ?><?=$parse['mail'] ?><?=$parse['leader'] ?>
 		<thead>
 			<tr>
-				<th><a href="/admin/alliancelist/cmd/sort/type/id/">ID</a></th>
+				<th><a href="<?=$this->url->get('admin/alliancelist/cmd/sort/type/id/') ?>">ID</a></th>
 				<th>Название</th>
 				<th>Обозначение</th>
 				<th>Лидер</th>

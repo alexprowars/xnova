@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <table class="table">
 	<tr>
 		<td class="c" colspan="10">Список членов альянса (количество: <?=$parse['i'] ?>)</td>
@@ -35,7 +40,7 @@
 						<table class="table">
 							<tr>
 								<th colspan="7"><?=$m['Rank_for'] ?></th>
-								<th><select name="newrang"><?=$m['options'] ?></select></th>
+								<th><select name="newrang" title=""><?=$m['options'] ?></select></th>
 								<th colspan="2"><input type="submit" value="Сохранить"></th>
 							</tr>
 						</table>

@@ -1,4 +1,9 @@
-<form action="/admin/messages/" method="post" class="form-horizontal">
+<?
+/**
+ * @var $parse array
+ */
+?>
+<form action="<?=$this->url->get('admin/messages/') ?>" method="post" class="form-horizontal">
 	<input type="hidden" name="curr" value="<?=$parse['mlst_data_page'] ?>">
 	<input type="hidden" name="pmax" value="<?=$parse['mlst_data_pagemax'] ?>">
 	<input type="hidden" name="sele" value="<?=$parse['mlst_data_sele'] ?>">
@@ -17,7 +22,7 @@
 							<input type="submit" name="prev"  class="btn green" value="<?=_getText('mlst_hdr_prev') ?>">
 						</div>
 						<div class="col-md-2 text-center">
-							<select name="page" class="form-control" onchange="submit();">
+							<select name="page" class="form-control" onchange="submit();" title="">
 								<? for ($cPage = 1; $cPage <= $parse['mlst_data_pagemax']; $cPage++): ?>
 									<option value="<?=$cPage ?>" <?=(($parse['mlst_data_page'] == $cPage) ? "selected" : "") ?>><?=$cPage ?>/<?=$parse['mlst_data_pagemax'] ?></option>
 								<? endfor; ?>
@@ -34,7 +39,7 @@
 							<input type="submit" name="usersearch" class="btn red" value="По id"/>
 						</div>
 						<div class="col-md-6 text-center">
-							<select name="type" class="form-control" onchange="submit();">
+							<select name="type" class="form-control" onchange="submit();" title="">
 								<? foreach ($parse['types'] AS $type): ?>
 									<option value="<?=$type ?>"<?=(($parse['mlst_data_sele'] == $type) ? " SELECTED" : "") ?>><?=_getText('mlst_mess_typ__'.$type) ?></option>
 								<? endforeach; ?>
@@ -69,7 +74,7 @@
 			</thead>
 			<? foreach ($parse['mlst_data_rows'] AS $list): ?>
 			<tr>
-				<td><input type="checkbox" name="sele_mes[<?=$list['mlst_id'] ?>]"/></td>
+				<td><input type="checkbox" name="sele_mes[<?=$list['mlst_id'] ?>]" title=""></td>
 				<td><?=$list['mlst_time'] ?></td>
 				<td><?=$list['mlst_from'] ?></td>
 				<td><?=$list['mlst_to'] ?></td>

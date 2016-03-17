@@ -39,7 +39,7 @@
 					<tr>
 						<td class="c">
 							<? if ($item['status'] != 0): ?>
-							<textarea style="width: 99%" rows="10" name="text"></textarea><br><input type="submit" value="Ответить">
+							<textarea style="width: 99%" rows="10" name="text" title=""></textarea><br><input type="submit" value="Ответить">
 							<? endif; ?>
 						</td>
 					</tr>
@@ -70,7 +70,7 @@
 				</tr>
 				<tr>
 					<td class="c">Тема:</td>
-					<td class="c"><input type="text" name="subject"></td>
+					<td class="c"><input type="text" name="subject" title=""></td>
 				</tr>
 				<tr>
 					<td class="c" colspan="2">Текст сообщения:</td>
@@ -78,7 +78,7 @@
 				<tr>
 					<td class="c nopadding" colspan="2">
 						<div id="editor"></div>
-						<textarea name="text" id="text" rows="10"></textarea>
+						<textarea name="text" id="text" rows="10" title=""></textarea>
 
 						<div id="showpanel" style="display:none">
 							<table class="table">

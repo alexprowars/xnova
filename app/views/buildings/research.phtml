@@ -1,4 +1,9 @@
-<? if ($parse['noresearch']): ?><font color="#ff0000"><?=$parse['noresearch'] ?></font><? endif; ?>
+<?
+/**
+ * @var $parse array
+ */
+?>
+<? if ($parse['noresearch']): ?><div class="negative"><?=$parse['noresearch'] ?></div><? endif; ?>
 <div class="block">
 	<div class="title">Исследования</div>
 	<div class="content">

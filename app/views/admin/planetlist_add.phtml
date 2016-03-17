@@ -3,30 +3,30 @@
 		<div class="caption">Создать луну</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="/admin/planetlist/mode/add/" method="post" class="form-horizontal form-bordered">
+		<form action="<?=$this->url->get('admin/planetlist/mode/add/') ?>" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Галактика</label>
 					<div class="col-md-9">
-						<input type="text" class="form-control" name="galaxy">
+						<input type="text" class="form-control" name="galaxy" title="">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-md-3 control-label">Система</label>
 					<div class="col-md-9">
-						<input type="text" class="form-control" name="system">
+						<input type="text" class="form-control" name="system" title="">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-md-3 control-label">Планета</label>
 					<div class="col-md-9">
-						<input type="text" class="form-control" name="planet">
+						<input type="text" class="form-control" name="planet" title="">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-md-3 control-label">user ID</label>
 					<div class="col-md-9">
-						<input type="text" class="form-control" name="user">
+						<input type="text" class="form-control" name="user" title="">
 					</div>
 				</div>
 				<div class="form-actions">

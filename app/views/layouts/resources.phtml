@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('resources/') ?>" method="post">
 	<table width="100%">
 		<tr>
@@ -62,7 +67,7 @@
 					<? endforeach; ?>
 					<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
 					<th>
-						<select name="<?=$resource['name'] ?>">
+						<select name="<?=$resource['name'] ?>" title="">
 						<? for ($j = 10; $j >= 0; $j--): ?>
 							<option value="<?=$j ?>"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
 						<? endfor; ?>

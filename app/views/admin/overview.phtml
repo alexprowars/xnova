@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <table class="table">
 	<tr>
 		<td class="b" colspan="2">Версия сервера: <strong><?=$parse['adm_ov_data_yourv'] ?></strong></td>
@@ -8,11 +13,11 @@
 	<table class="table table-striped table-hover table-advance">
 		<thead>
 			<tr>
-				<th width="30"><a href="/admin/overview/cmd/sort/type/id/">&nbsp;</a></th>
-				<th><a href="/admin/overview/cmd/sort/type/username/">Логин игрока</a></th>
-				<th><a href="/admin/overview/cmd/sort/type/ip/">IP</a></th>
-				<th><a href="/admin/overview/cmd/sort/type/ally_name/">Альянс</a></th>
-				<th><a href="/admin/overview/cmd/sort/type/onlinetime/">Активность</a></th>
+				<th width="30"><a href="<?=$this->url->get('admin/overview/cmd/sort/type/id/') ?>">&nbsp;</a></th>
+				<th><a href="<?=$this->url->get('admin/overview/cmd/sort/type/username/') ?>">Логин игрока</a></th>
+				<th><a href="<?=$this->url->get('admin/overview/cmd/sort/type/ip/') ?>">IP</a></th>
+				<th><a href="<?=$this->url->get('admin/overview/cmd/sort/type/ally_name/') ?>">Альянс</a></th>
+				<th><a href="<?=$this->url->get('admin/overview/cmd/sort/type/onlinetime/') ?>">Активность</a></th>
 			</tr>
 		</thead>
 		<? foreach ($parse['adm_ov_data_table'] AS $list): ?>

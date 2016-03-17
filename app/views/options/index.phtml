@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('options/change/') ?>" method="post">
 	<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
 		<div class="head">
@@ -21,29 +26,29 @@
 						<span class="negative">Можно менять не чаще раза в сутки</span>
 					</th>
 					<th>
-						<? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?><input name="db_character" size="20" value="<? endif; ?><?=$parse['opt_usern_data'] ?><? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?>" type="text"><? endif; ?>
+						<? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?><input name="db_character" size="20" value="<? endif; ?><?=$parse['opt_usern_data'] ?><? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?>" type="text" title=""><? endif; ?>
 					</th>
 				</tr>
 				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<? if (is_email($parse['opt_mail_data'])): ?>
 						<tr>
 							<th>Старый пароль</th>
-							<th><input name="db_password" size="20" value="" type="password"></th>
+							<th><input name="db_password" size="20" value="" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (мин. 8 Знаков)</th>
-							<th><input name="newpass1" size="20" maxlength="40" type="password"></th>
+							<th><input name="newpass1" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (повтор)</th>
-							<th><input name="newpass2" size="20" maxlength="40" type="password"></th>
+							<th><input name="newpass2" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 					<? endif; ?>
 					<tr>
 						<th>Адрес e-mail (логин)</th>
 						<th>
 							<? if (!is_email($parse['opt_mail_data'])): ?>
-								<input type="text" name="email" value="">
+								<input type="text" name="email" value="" title="">
 							<? else: ?>
 								<?=$parse['opt_mail_data'] ?> <a href="<?=$this->url->get('options/email/') ?>" class="button">сменить</a>
 							<? endif; ?>
@@ -52,7 +57,7 @@
 				<? endif; ?>
 				<tr>
 					<th>Пол</th>
-					<th><select name="sex">
+					<th><select name="sex" title="">
 						<option value="M">мужской</option>
 						<option value="F" <?=(($parse['sex'] == 2) ? ' selected' : '')?>>женский</option>
 					</select></th>
@@ -67,7 +72,7 @@
 				<tr>
 					<th>Упорядочить планеты по:</th>
 					<th>
-						<select name="settings_sort" style='width:170px'>
+						<select name="settings_sort" style='width:170px' title="">
 							<?=$parse['opt_lst_ord_data'] ?>
 						</select>
 					</th>
@@ -75,51 +80,51 @@
 				<tr>
 					<th>Упорядочить по:</th>
 					<th>
-						<select name="settings_order" style='width:170px'>
+						<select name="settings_order" style='width:170px' title="">
 							<?=$parse['opt_lst_cla_data'] ?>
 						</select>
 					</th>
 				</tr>
 				<tr>
 					<th>Кол-во по умолчанию отправляемых<br> шпионских зондов в меню "Космос"</th>
-					<th><input name="spy" value="<?=$parse['spy'] ?>" type="text"></th>
+					<th><input name="spy" value="<?=$parse['spy'] ?>" type="text" title=""></th>
 				</tr>
 				<tr>
 					<th>Участвовать в рекордах</th>
-					<th><input name="records"<?=$parse['opt_record_data'] ?> type="checkbox"></th>
+					<th><input name="records"<?=$parse['opt_record_data'] ?> type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th>Использовать BB коды в сообщениях</th>
-					<th><input name="bbcode"<?=$parse['opt_bbcode_data'] ?> type="checkbox"></th>
+					<th><input name="bbcode"<?=$parse['opt_bbcode_data'] ?> type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th>Показывать только доступные постройки</th>
-					<th><input name="available"<?=$parse['opt_available_data'] ?> type="checkbox"></th>
+					<th><input name="available"<?=$parse['opt_available_data'] ?> type="checkbox" title=""></th>
 				</tr>
 				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 					<tr>
 						<th>Включить просмотр игровой активности</th>
-						<th><input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox"></th>
+						<th><input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>Выпадающий список планет</th>
-						<th><input name="planetlistselect"<?=$parse['opt_planetlistselect_data'] ?> type="checkbox"></th>
+						<th><input name="planetlistselect"<?=$parse['opt_planetlistselect_data'] ?> type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>Повышенная безопасность входа</th>
-						<th><input name="security"<?=$parse['opt_sec_data'] ?> type="checkbox"></th>
+						<th><input name="security"<?=$parse['opt_sec_data'] ?> type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>
 							Включить ускорение интерфейса игры
 						</th>
-						<th><input name="ajaxnav"<?=$parse['opt_ajax_data'] ?> type="checkbox"></th>
+						<th><input name="ajaxnav"<?=$parse['opt_ajax_data'] ?> type="checkbox" title=""></th>
 					</tr>
 				<? endif; ?>
 				<tr>
 					<th>Цвет чата</th>
 					<th>
-						<select name='color' style='width:170px'>
+						<select name='color' style='width:170px' title="">
 							<? foreach(_getText('colors') AS $id => $color): if (!$color[1]) continue; ?>
 								<option value="<?=$id ?>" <?=($parse['color'] == $id ? 'selected' : '') ?> style="color:<?=$color[0] ?>"><?=$color[1] ?></option>
 							<? endforeach; ?>
@@ -128,7 +133,7 @@
 				</tr>
 				<tr>
 					<th>Часовой пояс</th>
-					<th><select name='timezone' style='width:170px'>
+					<th><select name='timezone' style='width:170px' title="">
 						<option value="-30"<?=(($parse['timezone'] == (-30)) ? 'selected' : '')?>>-12</option>
 						<option value="-28"<?=(($parse['timezone'] == (-28)) ? 'selected' : '')?>>-11</option>
 						<option value="-26"<?=(($parse['timezone'] == (-26)) ? 'selected' : '')?>>-10</option>
@@ -172,7 +177,7 @@
 				<tr>
 					<th colspan="2" class="nopadding">
 						<div id="editor"></div>
-						<textarea name="text" id="text" cols="" rows="10"><?=preg_replace('!<br.*>!iU', "\n", $parse['about']) ?></textarea>
+						<textarea name="text" id="text" cols="" rows="10" title=""><?=preg_replace('!<br.*>!iU', "\n", $parse['about']) ?></textarea>
 
 						<div id="showpanel" style="display:none">
 							<table class="table">
@@ -196,7 +201,7 @@
 			<table class="table">
 				<tr>
 					<th width="50%"><a title="Режим отпуска нужен для защиты планет во время вашего отсутствия">Включить режим отпуска</a></th>
-					<th><input name="urlaubs_modus"<?=$parse['opt_modev_data'] ?> type="checkbox"/></th>
+					<th><input name="urlaubs_modus"<?=$parse['opt_modev_data'] ?> type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -205,7 +210,7 @@
 				</tr>
 				<tr>
 					<th><a title="Профиль будет удалён через 7 дней">Удалить профиль</a></th>
-					<th><input name="db_deaktjava"<?=$parse['opt_delac_data'] ?> type="checkbox"/></th>
+					<th><input name="db_deaktjava"<?=$parse['opt_delac_data'] ?> type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -223,7 +228,7 @@
 					<td class="c">Добавить запись в личное дело</td>
 				</tr>
 				<tr>
-					<th><textarea name="ld" cols="" rows="5"></textarea></th>
+					<th><textarea name="ld" cols="" rows="5" title=""></textarea></th>
 				</tr>
 				<tr>
 					<th><input value="Записать" type="submit"></th>

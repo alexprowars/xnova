@@ -63,7 +63,7 @@
 		</tr>
 		<tr>
 			<th>
-				<select name="ally">
+				<select name="ally" title="">
 					<option value="0">список альянсов</option>
 					<? foreach ($parse['a_list'] as $item): ?>
 						<option value="<?=$item['id'] ?>"><?=$item['name'] ?> [<?=$item['tag'] ?>]</option>
@@ -71,7 +71,7 @@
 				</select>
 			</th>
 			<th>
-				<select name="status">
+				<select name="status" title="">
 					<option value="1">Перемирие</option>
 					<option value="2">Мир</option>
 					<option value="3">Война</option>

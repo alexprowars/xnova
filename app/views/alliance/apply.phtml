@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('alliance/apply/allyid/'.$parse['allyid'].'/') ?>" method="POST">
 	<table class="table">
 		<? if ($parse['text_apply'] != ''): ?>
@@ -12,7 +17,7 @@
 			<td class="c" colspan="2">Написать запрос на вступление в альянс [<?=$parse['tag'] ?>]</td>
 		</tr>
 		<tr>
-			<th><textarea name="text" cols=40 rows=10></textarea></th>
+			<th><textarea name="text" cols=40 rows=10 title=""></textarea></th>
 		</tr>
 		<tr>
 			<th colspan="2"><input type="submit" name="further" value="Отправить"></th>

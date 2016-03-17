@@ -122,7 +122,7 @@ class Galaxy extends Component
 
 			if ($planet->create())
 			{
-				if ($this->session->has('fleet_shortcut'))
+				if (isset($this->session) && $this->session->has('fleet_shortcut'))
 					$this->session->remove('fleet_shortcut');
 
 				return $planet->id;

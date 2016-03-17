@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <div class="table-responsive">
 	<table class='table'>
 		<tr>
@@ -81,7 +86,7 @@
 			</tr>
 		<? endif; ?>
 		<? if ($parse['maxFlyingFleets'] == $parse['maxFlottes']): ?>
-			<tr><th colspan="9"><font color="red"><?=_getText('fl_noslotfree') ?></font></th></tr>
+			<tr><th colspan="9" class="negative"><?=_getText('fl_noslotfree') ?></th></tr>
 		<? endif; ?>
 	</table>
 	</div>

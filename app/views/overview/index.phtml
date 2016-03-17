@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <? if ($parse['bonus']): ?>
 	<table class="table">
 		<tr>
@@ -42,7 +47,7 @@
 					<tr class="<?=$list['fleet_status'] ?>">
 					<th width="80">
 						<div id="bxx<?=$list['fleet_order'] ?>" class="z"><?=$list['fleet_count_time'] ?></div>
-						<font color="lime"><?=$list['fleet_time'] ?></font>
+						<div class="positive"><?=$list['fleet_time'] ?></div>
 					</th>
 					<th class="text-left" colspan="3">
 						<span class="<?=$list['fleet_status'] ?> <?=$list['fleet_prefix'] ?><?=$list['fleet_style'] ?>"><?=$list['fleet_descr'] ?></span>
@@ -189,7 +194,7 @@
 					</tr>
 					<tr>
 						<th>Место:</th>
-						<th><a href="<?=$this->url->get("stat/players/range/".$parse['user_rank']."/") ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<font color="lime">+'.$parse['ile'].'</font>' : ($parse['ile'] < 0 ? '<font color="red">'.$parse['ile'].'</font>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></th>
+						<th><a href="<?=$this->url->get("stat/players/range/".$parse['user_rank']."/") ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<span class="positive">+'.$parse['ile'].'</span>' : ($parse['ile'] < 0 ? '<span class="negative">'.$parse['ile'].'</span>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></th>
 					</tr>
 					<tr>
 						<td class="c" colspan="2">Промышленный уровень</td>
@@ -221,11 +226,11 @@
 						<th class="col-xs-4 col-sm-1" <?=($id > 0 ? 'style="border-top:0;"' : '')?>>
 							<div id="build<?=$id ?>" class="z"><?=($list[0] - time()) ?></div>
 							<script type="text/javascript">FlotenTime('build<?=$id ?>', <?=($list[0] - time()) ?>);</script>
-							<font color="lime" class="visible-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></font>
+							<span class="positive visible-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
 						</th>
 						<th class="col-sm-11 col-xs-8 text-left" style="<?=($id > 0 ? 'border-top:0;' : '')?>">
 							<span class="pull-left"><span class="flight owndeploy"><?=$list[1] ?></span></span>
-							<font color="lime" class="pull-right hidden-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></font>
+							<span class="positive pull-right hidden-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
 						</th>
 					</tr>
 				<? endforeach; ?>

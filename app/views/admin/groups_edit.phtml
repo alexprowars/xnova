@@ -9,7 +9,7 @@
 					<div class="form-group">
 						<label class="col-md-3 control-label">Имя</label>
 						<div class="col-md-9">
-							<input type="text" class="form-control" name="name" value="<?=$info['name'] ?>">
+							<input type="text" class="form-control" name="name" value="<?=$info['name'] ?>" title="">
 						</div>
 					</div>
 					<div class="form-group">
@@ -30,7 +30,7 @@
 										<input id="module_<?=$module['id'] ?>" <?=(isset($rights[$module['id']]) && $rights[$module['id']]['right_id'] == 1 ? 'checked' : '') ?> type="checkbox" name="module[<?=$module['id'] ?>]" value="1">
 									</div>
 									<div class="col-xs-3 text-center">
-										<input <?=(isset($rights[$module['id']]) && $rights[$module['id']]['right_id'] == 2 ? 'checked' : '') ?> type="checkbox" name="module[<?=$module['id'] ?>]" value="2">
+										<input <?=(isset($rights[$module['id']]) && $rights[$module['id']]['right_id'] == 2 ? 'checked' : '') ?> type="checkbox" name="module[<?=$module['id'] ?>]" value="2" title="">
 									</div>
 								</div>
 							<? endforeach; ?>

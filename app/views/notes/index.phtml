@@ -15,11 +15,11 @@
 		<? if (isset($parse['list']) && count($parse['list']) > 0): ?>
 			<? foreach ($parse['list'] AS $list): ?>
 				<tr>
-					<th width="20"><input name="delmes<?=$list['id'] ?>" value="y" type="checkbox"></th>
+					<th width="20"><input name="delmes<?=$list['id'] ?>" value="y" type="checkbox" title=""></th>
 					<th width="150"><?=$list['time'] ?></th>
 					<th>
 						<a href="<?=$this->url->get('notes/edit/'.$list['id'].'/') ?>">
-							<font color="<?=$list['color'] ?>"><?=$list['title'] ?></font>
+							<span style="color:<?=$list['color'] ?>"><?=$list['title'] ?></span>
 						</a>
 					</th>
 					<th align="right" width="40"><?=$list['text'] ?></th>

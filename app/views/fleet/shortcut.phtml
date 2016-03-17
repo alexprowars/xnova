@@ -1,8 +1,13 @@
+<?
+/**
+ * @var $links array
+ */
+?>
 <table class="table">
-	<tr height="20">
-		<td colspan="2" class="c">Ссылки (<a href="/fleet/shortcut/add/new/">Добавить</a>)</td>
+	<tr>
+		<td colspan="2" class="c">Ссылки (<a href="<?=$this->url->get('fleet/shortcut/add/new/') ?>">Добавить</a>)</td>
 	</tr>
-	<tr height="20">
+	<tr>
 		<? foreach ($links as $i => $link): ?>
 			<th width="50%">
 				<a href="/fleet/shortcut/view/<?=$i ?>/"><?=$link['name'] ?> [<?=$link['galaxy'] ?>:<?=$link['system'] ?>:<?=$link['planet'] ?>] <?=$link['type'] ?></a>

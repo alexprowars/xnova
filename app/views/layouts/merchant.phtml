@@ -1,20 +1,29 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <? if ($parse['type'] == 'metal'): ?>
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Cristal 	= $('#merchant').find('input[name=cristal]').val();
-			var Deuterium 	= $('#merchant').find('input[name=deut]').val();
+			var merchant = $('#merchant');
+
+			var Cristal 	= merchant.find('input[name=cristal]').val();
+			var Deuterium 	= merchant.find('input[name=deut]').val();
 
 			Cristal = Cristal * <?=$parse['mod_ma_res_a'] ?>;
 			Deuterium = Deuterium * <?=$parse['mod_ma_res_b'] ?>;
 
-			$("#metal").html(Cristal + Deuterium);
+			var metal = $("#metal");
 
-			if (isNaN($('#merchant').find('input[name=cristal]').val()))
-				$("#metal").html("<?=_getText('mod_ma_nbre') ?>");
+			metal.html(Cristal + Deuterium);
 
-			if (isNaN($('#merchant').find('input[name=deut]').val()))
-				$("#metal").html("<?=_getText('mod_ma_nbre') ?>");
+			if (isNaN(merchant.find('input[name=cristal]').val()))
+				metal.html("<?=_getText('mod_ma_nbre') ?>");
+
+			if (isNaN(merchant.find('input[name=deut]').val()))
+				metal.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
 	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
@@ -44,7 +53,7 @@
 				<th><input name="deut" type="text" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th colspan="2"><font color="red">Внимание! Стоимость обмена 1 кр.</font></th>
+				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
 				<th><input type="submit" value="<?=_getText('mod_ma_excha') ?>"></th>
 			</tr>
 		</table>
@@ -53,19 +62,23 @@
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Metal = $('#merchant').find('input[name=metal]').val();
-			var Deuterium = $('#merchant').find('input[name=deut]').val();
+			var merchant = $('#merchant');
+
+			var Metal = merchant.find('input[name=metal]').val();
+			var Deuterium = merchant.find('input[name=deut]').val();
 
 			Metal = Metal * <?=$parse['mod_ma_res_a'] ?>;
 			Deuterium = Deuterium * <?=$parse['mod_ma_res_b'] ?>;
 
-			$("#cristal").html(Metal + Deuterium);
+			var crystal = $("#cristal");
 
-			if (isNaN($('#merchant').find('input[name=metal]').val()))
-				$("#cristal").html("<?=_getText('mod_ma_nbre') ?>");
+			crystal.html(Metal + Deuterium);
 
-			if (isNaN($('#merchant').find('input[name=deut]').val()))
-				$("#cristal").html("<?=_getText('mod_ma_nbre') ?>");
+			if (isNaN(merchant.find('input[name=metal]').val()))
+				crystal.html("<?=_getText('mod_ma_nbre') ?>");
+
+			if (isNaN(merchant.find('input[name=deut]').val()))
+				crystal.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
 	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
@@ -95,7 +108,7 @@
 				<th><input name="deut" type="text" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th colspan="2"><font color="red">Внимание! Стоимость обмена 1 кр.</font></th>
+				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
 				<th><input type="submit" value="<?=_getText('mod_ma_excha') ?>"></th>
 			</tr>
 		</table>
@@ -104,19 +117,23 @@
 	<script type="text/javascript">
 		function calcul()
 		{
-			var Metal 	= $('#merchant').find('input[name=metal]').val();
-			var Cristal = $('#merchant').find('input[name=cristal]').val();
+			var merchant = $('#merchant');
+
+			var Metal 	= merchant.find('input[name=metal]').val();
+			var Cristal = merchant.find('input[name=cristal]').val();
 
 			Metal = Metal * <?=$parse['mod_ma_res_a'] ?>;
 			Cristal = Cristal * <?=$parse['mod_ma_res_b'] ?>;
 
-			$("#deut").html(Metal + Cristal);
+			var deuterium = $("#deut");
 
-			if (isNaN($('#merchant').find('input[name=metal]').val()))
-				$("#deut").html("<?=_getText('mod_ma_nbre') ?>");
+			deuterium.html(Metal + Cristal);
 
-			if (isNaN($('#merchant').find('input[name=cristal]').val()))
-				$("#deut").html("<?=_getText('mod_ma_nbre') ?>");
+			if (isNaN(merchant.find('input[name=metal]').val()))
+				deuterium.html("<?=_getText('mod_ma_nbre') ?>");
+
+			if (isNaN(merchant.find('input[name=cristal]').val()))
+				deuterium.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
 	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
@@ -146,7 +163,7 @@
 				<th><input name="cristal" type="text" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th colspan="2"><font color="red">Внимание! Стоимость обмена 1 кр.</font></th>
+				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
 				<th><input type="submit" value="<?=_getText('mod_ma_excha') ?>"></th>
 			</tr>
 		</table>
@@ -161,8 +178,8 @@
 					<tr>
 						<th>
 							Вы можете вызвать межгалактического торговца для обмена ресурсов.<br>
-							<font color="red">Каждая операция обмена будет стоить вам 1 кредит.</font><br><br>
-							Обменять сырьё &nbsp;<select name="choix">
+							<div class="negative">Каждая операция обмена будет стоить вам 1 кредит.</div><br><br>
+							Обменять сырьё &nbsp;<select name="choix" title="">
 							<option value="metal">Металл</option>
 							<option value="cristal">Кристалл</option>
 							<option value="deut">Дейтерий</option>

@@ -64,17 +64,17 @@
 					<tr>
 						<th><?=_getText('Metal') ?></th>
 						<th><a href="javascript:maxResource('1');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource1" alt="<?=_getText('Metal') ?>" size="10" onchange="calculateTransportCapacity();" type="text"></th>
+						<th><input name="resource1" alt="<?=_getText('Metal') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
 						<th><?=_getText('Crystal') ?></th>
 						<th><a href="javascript:maxResource('2');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource2" alt="<?=_getText('Crystal') ?>" size="10" onchange="calculateTransportCapacity();" type="text"></th>
+						<th><input name="resource2" alt="<?=_getText('Crystal') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
 						<th><?=_getText('Deuterium') ?></th>
 						<th><a href="javascript:maxResource('3');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource3" alt="<?=_getText('Deuterium') ?>" size="10" onchange="calculateTransportCapacity();" type="text"></th>
+						<th><input name="resource3" alt="<?=_getText('Deuterium') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
 						<th><?=_getText('fl_space_left') ?></th>
@@ -92,7 +92,7 @@
 						</tr>
 						<tr class="mission m_15">
 							<th colspan="3">
-								<select name="expeditiontime">
+								<select name="expeditiontime" title="">
 									<? for ($i = 1; $i <= $parse['expedition_hours']; $i++): ?>
 										<option value="<?=$i ?>"><?=$i ?> ч.</option>
 									<? endfor; ?>
@@ -106,7 +106,7 @@
 						</tr>
 						<tr class="mission m_5">
 							<th colspan="3">
-								<select name="holdingtime" >
+								<select name="holdingtime" title="">
 									<option value="0">0</option>
 									<option value="1" selected>1</option>
 									<option value="2">2</option>
@@ -125,7 +125,7 @@
 						</tr>
 						<tr class="mission m_1">
 							<th colspan="3">
-								<select name="raunds">
+								<select name="raunds" title="">
 									<option value="6" selected>6</option>
 									<option value="7">7</option>
 									<option value="8">8</option>

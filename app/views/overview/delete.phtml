@@ -1,3 +1,8 @@
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get("overview/delete/") ?>" method=POST>
 	<input type="hidden" name="password" value="<?=md5($parse['number_check']) ?>">
 	<table class="table">
@@ -9,7 +14,7 @@
 		</tr>
 		<tr>
 			<th><?=$parse['number_1'] ?> + <?=$parse['number_2'] ?> * <?=$parse['number_3'] ?> = ???</th>
-			<th><input type="text" name="pw"></th>
+			<th><input type="text" name="pw" title=""></th>
 			<th><input type="submit" name="action" value="Удалить колонию"></th>
 		</tr>
 	</table>

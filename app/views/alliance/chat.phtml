@@ -1,6 +1,11 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
+<?
+/**
+ * @var $parse array
+ */
+?>
 <form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
 	<table class="table">
 		<tr>
@@ -23,7 +28,7 @@
 							<? endif; ?>
 						</th>
 						<? if ($parse['owner']): ?>
-						<th class="b" width="20"><input name="showmes<?=$m['id'] ?>" type="hidden" value="1"><input name="delmes<?=$m['id'] ?>" type="checkbox"></th>
+						<th class="b" width="20"><input name="showmes<?=$m['id'] ?>" type="hidden" value="1"><input name="delmes<?=$m['id'] ?>" type="checkbox" title=""></th>
 						<? endif; ?>
 					</tr>
 				</table>
@@ -41,7 +46,7 @@
 		<? if ($parse['owner'] && count($parse['messages']) > 0): ?>
 		<tr>
 			<th colspan="4">
-				<select id="deletemessages" name="deletemessages">
+				<select id="deletemessages" name="deletemessages" title="">
 					<option value="deletemarked">Удалить выделенные</option>
 					<option value="deleteunmarked">Удалить не выделенные</option>
 					<option value="deleteall">Удалить все</option>
@@ -68,7 +73,7 @@
 		<tr>
 			<th class="nopadding">
 				<div id="editor"></div>
-				<textarea name="text" id="text" rows="10" onkeypress="if((event.ctrlKey) && ((event.keyCode==10)||(event.keyCode==13))) submit()"></textarea>
+				<textarea name="text" id="text" rows="10" onkeypress="if((event.ctrlKey) && ((event.keyCode==10)||(event.keyCode==13))) submit()" title=""></textarea>
 			</th>
 		</tr>
 		<tr>

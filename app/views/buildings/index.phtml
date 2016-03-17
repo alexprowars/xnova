@@ -1,7 +1,7 @@
 <div class="block">
 	<div class="title">
 		Занято полей
-		<font color="#00FF00"><?=$parse['planet_field_current'] ?></font> из <font color="#FF0000"><?=$parse['planet_field_max'] ?></font>
+		<span class="positive"><?=$parse['planet_field_current'] ?></span> из <span class="negative"><?=$parse['planet_field_max'] ?></span>
 		<div class="pull-right col-xs-12 col-sm-6 nopadding">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
 		<div class="clearfix"></div>
 	</div>

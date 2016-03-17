@@ -305,7 +305,7 @@ class ApplicationController extends Controller
 				'-xpminier' 	=> $indNextXp
 			]);
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/fficier/">Получен новый промышленный уровень</a>');
+			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый промышленный уровень</a>');
 
 			$this->user->lvl_minier += 1;
 			$this->user->xpminier 	-= $indNextXp;
@@ -322,7 +322,7 @@ class ApplicationController extends Controller
 				'-xpraid' 	=> $warNextXp
 			]);
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый военный уровень</a>');
+			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый военный уровень</a>');
 
 			$this->user->lvl_raid 	+= 1;
 			$this->user->xpraid 	-= $warNextXp;
@@ -410,11 +410,11 @@ class ApplicationController extends Controller
 			$parse[$res.'_m'] = $this->planet->{$res.'_max'};
 
 			if ($this->planet->{$res.'_max'} <= $this->planet->{$res})
-				$parse[$res.'_max'] = '<font class="full">';
+				$parse[$res.'_max'] = '<span class="negative">';
 			else
-				$parse[$res.'_max'] = '<font color="#00ff00">';
+				$parse[$res.'_max'] = '<span class="positive">';
 
-			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</font>";
+			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</span>";
 			$parse[$res.'_ph'] 	= $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
 			$parse[$res.'_mp'] 	= $this->planet->{$res.'_mine_porcent'} * 10;
 		}
