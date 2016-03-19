@@ -4,9 +4,8 @@
 	<div id="shoutbox" class="shoutbox scrollbox"></div>
 </div>
 <div class="col-xs-12 th">
-	<div id="chatEditor"></div>
-	<div class="separator"></div>
-	<input name="msg" type="text" id="chatMsg" style="width:95%" maxlength="750" title="">
+	<div id="chatEditor" style="float: right"></div>
+	<input name="msg" type="text" id="chatMsg" maxlength="750" title="">
 	<div class="separator"></div>
 	<input type="button" name="clear" value="Очистить" id="clear" onClick="ClearChat()">
 	<input type="button" name="send" value="Отправить" id="send">
@@ -42,12 +41,3 @@ $(document).ready(function()
 	}
 </style>
 <? endif; ?>
-
-<div class="contextMenu" id="chatMenu" style="display: none">
-	<ul>
-		<li id="message">Обратиться</li>
-		<li id="private">Написать в приват</li>
-		<li id="mail">Личное сообщение</li>
-		<li id="info">Профиль игрока</li>
-	</ul>
-</div>

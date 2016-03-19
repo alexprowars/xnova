@@ -1,22 +1,22 @@
 @media (max-width: 1200px)
 {
-	.set_buildings .planetList .list .planet > div {
+	.set_buildingsindex .planetList .list .planet > div {
 		display: none;
 	}
-	.set_buildings .planetList .list .planet > div.clear {
+	.set_buildingsindex .planetList .list .planet > div.clear {
 		display: block;
 	}
-	.set_buildings .planetList .list .planet img {
+	.set_buildingsindex .planetList .list .planet img {
 		width: 52px;
 		height: 52px;
 	}
-	.set_buildings .planetList .list {
+	.set_buildingsindex .planetList .list {
 		width: 60px;
 	}
-	.set_buildings .planetList {
+	.set_buildingsindex .planetList {
 		width: 60px;
 	}
-	.set_buildings .game_content > .content {
+	.set_buildingsindex .game_content > .content {
 		width: 785px;
 	}
 
@@ -130,7 +130,7 @@
 		margin-right: 5px;
 	}
 
-	.set_buildings #tabs-0, .set_buildings #tab_area, .set_buildings #tabs-0 * {
+	.set_buildingsindex #tabs-0, .set_buildingsindex #tab_area, .set_buildingsindex #tabs-0 * {
 		display: none !important;
 	}
 

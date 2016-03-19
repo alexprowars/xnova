@@ -2,7 +2,7 @@ function edToolbar(obj, id)
 {
 	var str 	= '';
 	var count 	= 0;
-	var c 		= new Array('00', '33', '66', '99', 'cc', 'ff');
+	var c 		= ['00', '33', '66', '99', 'cc', 'ff'];
 	var buttonColors = new Array(215);
 
 	for (var r = 0; r < 6; r++) {

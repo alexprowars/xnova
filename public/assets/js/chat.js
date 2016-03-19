@@ -3,18 +3,9 @@ function chatToolbar(obj, id)
 	var str 	= '';
 
     str += ("<div class=\"toolbar inline\">");
-	str += ("<span class=\"gensmall\"><select name=\"btnSize\" onchange=\"doAddTags('[size=' + this.options[this.selectedIndex].value + ']','[/size]','" + obj + "',0); this.selectedIndex = 1;\"><option value=\"9\">Маленький</option><option value=\"11\" selected=\"selected\">Нормальный</option><option value=\"20\">Большой</option><option value=\"25\">Огромный</option></select></span>");
-	str += ("<span class='buttons' title='Жирный' onClick=\"doAddTags('[b]','[/b]','" + obj + "',0)\"><span class='sprite bb_text_bold'></span></span>");
-    str += ("<span class='buttons' title='Курсив' onClick=\"doAddTags('[i]','[/i]','" + obj + "',0)\"><span class='sprite bb_text_italic'></span></span>");
-	str += ("<span class='buttons' title='Подчёркнутый' onClick=\"doAddTags('[u]','[/u]','" + obj + "',0)\"><span class='sprite bb_text_underline'></span></span>");
-	str += ("<span class='buttons' title='Зачёркнутый' onClick=\"doAddTags('[s]','[/s]','" + obj + "',0)\"><span class='sprite bb_text_strikethrough'></span></span>");
-	str += ("<span class='buttons' title='По центру' onClick=\"doAddTags('[center]','[/center]','" + obj + "',0)\"><span class='sprite bb_text_align_center'></span></span>");
-	str += ("<span class='buttons' title='По левому краю' onClick=\"doAddTags('[left]','[/left]','" + obj + "',0)\"><span class='sprite bb_text_align_left'></span></span>");
-	str += ("<span class='buttons' title='По правому краю' onClick=\"doAddTags('[right]','[/right]','" + obj + "',0)\"><span class='sprite bb_text_align_right'></span></span>");
 	str += ("<span class='buttons' title='Вставить ссылку' onClick=\"doAddTags('[url]','[/url]','" + obj + "',1)\"><span class='sprite bb_world_link'></span></span>");
 	str += ("<span class='buttons' title='Вставить картинку' onClick=\"doAddTags('[img]','[/img]','" + obj + "',3)\"><span class='sprite bb_picture_add'></span></span>");
 	str += ("<span class='buttons' title='Смайлы' onClick=\"showSmilesEx('" + obj + "', this);\"><span class='sprite bb_emoticon_grin'></span></span>");
-
     str += ("</div>");
 
 	str += ('<div id="smiles" class="smiles" style="display:none"></div>');
@@ -176,32 +167,6 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 	str += Msg;
 
 	$('#shoutbox').append('<div align="left">' + str + '</div>');
-
-	$('span.username').contextMenu('chatMenu',
-	{
-		menuStyle: {
-			'width': '150px'
-		},
-		bindings:
-		{
-			'private': function(e)
-			{
-				pp($(e).text());
-			},
-			'message': function (e)
-			{
-				to($(e).text());
-			},
-			'mail': function(e)
-			{
-				showWindow($(e).text()+': отправить сообщение', '/messages/write/'+$(e).text()+'/', 680)
-			},
-			'info': function (e)
-			{
-				showWindow('', '/players/'+$(e).text()+'/');
-			}
-		}
-	});
 
 	descendreTchat();
 	setTimeout(function(){descendreTchat();}, 500);
