@@ -382,20 +382,15 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 	$.ajax({
 		type: "GET",
 		url: "/fleet/quick/",
-		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count+"",
-		success: function(msg)
+		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count,
+		dataType: 'json',
+		success: function(data)
 		{
-			if ($('#galaxyMessage').length > 0)
-			{
-				$('#galaxyMessage').html(msg).show();
-
-				setTimeout(function ()
-				{
-					$('#galaxyMessage').hide();
-				}, 3000);
-			}
-			else
-				alert(msg);
+			$.toast({
+			  	text : data.message,
+				position : 'bottom-center',
+				icon: statusMessages[data.status]
+			});
 		}
 	});
 }

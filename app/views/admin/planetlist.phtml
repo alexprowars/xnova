@@ -25,12 +25,12 @@
 		</thead>
 		<? foreach ($planetlist AS $planet): ?>
 			<tr>
-				<td class="b center"><?=$planet['id'] ?></td>
-				<td class="b center"><?=$planet['name'] ?></td>
-				<td class="b center"><?=$planet['galaxy'] ?></td>
-				<td class="b center"><?=$planet['system'] ?></td>
-				<td class="b center"><?=$planet['planet'] ?></td>
-				<td class="b center"><?=\App\Helpers::BuildPlanetAdressLink($planet) ?></td>
+				<td class="b text-center"><?=$planet['id'] ?></td>
+				<td class="b text-center"><?=$planet['name'] ?></td>
+				<td class="b text-center"><?=$planet['galaxy'] ?></td>
+				<td class="b text-center"><?=$planet['system'] ?></td>
+				<td class="b text-center"><?=$planet['planet'] ?></td>
+				<td class="b text-center"><?=\App\Helpers::BuildPlanetAdressLink($planet) ?></td>
 			</tr>
 		<? endforeach; ?>
 	</table>

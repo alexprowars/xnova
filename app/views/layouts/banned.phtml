@@ -13,25 +13,25 @@
 
 		<? foreach ($bannedList AS $u): ?>
 			<tr>
-				<td class="b center"><a href="<?=$this->url->get('players/'.$u['who'].'/') ?>"><?=$u['user_1'] ?></a></td>
-				<td class="b center">
+				<td class="b text-xs-center"><a href="<?=$this->url->get('players/'.$u['who'].'/') ?>"><?=$u['user_1'] ?></a></td>
+				<td class="b text-xs-center">
 					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['time']) ?></small>
 				</td>
-				<td class="b center">
+				<td class="b text-xs-center">
 					<small><?=$this->game->datezone("d/m/Y H:m:s", $u['longer']) ?></small>
 				</td>
-				<td class="b center"><?=$u['theme'] ?></td>
-				<td class="b center"><a href="<?=$this->url->get('players/'.$u['author'].'/') ?>"><?=$u['user_2'] ?></a></td>
+				<td class="b text-xs-center"><?=$u['theme'] ?></td>
+				<td class="b text-xs-center"><a href="<?=$this->url->get('players/'.$u['author'].'/') ?>"><?=$u['user_2'] ?></a></td>
 			</tr>
 		<? endforeach; ?>
 
 		<tr>
-			<td class="b center" colspan="5">Всего <?=count($bannedList) ?> аккаунтов заблокировано</td>
+			<td class="b text-xs-center" colspan="5">Всего <?=count($bannedList) ?> аккаунтов заблокировано</td>
 		</tr>
 
 	<? else: ?>
 		<tr>
-			<th class="b center" colspan="5">Нет заблокированных игроков</th>
+			<th class="b text-xs-center" colspan="5">Нет заблокированных игроков</th>
 		</tr>
 	<? endif; ?>
 </table>

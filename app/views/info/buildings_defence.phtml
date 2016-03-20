@@ -14,7 +14,7 @@
 				<table class="margin5">
 					<tr>
 						<td valign="top"><img src="/assets/images/gebaeude/<?=$parse['image'] ?>.gif" class="info" align="top" border="0" height="120" width="120"></td>
-						<td valign="top" class="left"><?=$parse['description'] ?></td>
+						<td valign="top" class="text-xs-left"><?=$parse['description'] ?></td>
 					</tr>
 				</table>
 			</th>
@@ -64,13 +64,13 @@
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
-			<td class="c left">Скорострел</td>
+			<td class="c text-xs-left">Скорострел</td>
 			<td class="c positive">Поражает флот</td>
 			<td class="c negative">Теряет флот</td>
 		</tr>
 		<? foreach ($parse['speedBattle'] AS $fId => $battle): ?>
 			<tr>
-				<th class="left"><a href="<?=$this->url->get('info/'.$fId.'/') ?>"><?=_getText('tech', $fId) ?></a></th>
+				<th class="text-xs-left"><a href="<?=$this->url->get('info/'.$fId.'/') ?>"><?=_getText('tech', $fId) ?></a></th>
 				<th class="positive">
 					<? if (isset($battle['TO'])): ?>
 						<?=$battle['TO'] ?>

@@ -483,7 +483,6 @@ function PrintRow ()
 	result += "<span id=\"recyclers\">"+XNova.format(user['recycler'])+"</span> переработчиков<br>";
 	result += "<span id=\"probes\">"+XNova.format(user['spy_sonde'])+"</span> шпионских зондов</td>";
 	result += "</tr></table></div></div></div>";
-	result += "<div id=\"galaxyMessage\"></div>";
 
 	return result;
 }
