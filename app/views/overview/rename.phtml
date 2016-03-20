@@ -10,13 +10,13 @@
 		</tr>
 		<? if (!$isPopup): ?>
 			<tr>
-				<th class="hidden-xs"><?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?></th>
+				<th class="hidden-xs-down"><?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?></th>
 				<th><?=$parse['planet_name'] ?></th>
 				<th><a href="<?=$this->url->get("overview/delete/") ?>"><input type="button" value="Покинуть колонию" alt="Покинуть колонию"></a></th>
 			</tr>
 		<? endif; ?>
 		<tr>
-			<th class="hidden-xs">Сменить название</th>
+			<th class="hidden-xs-down">Сменить название</th>
 			<th><input type="text" placeholder="<?=$parse['planet_name'] ?>" name="newname" maxlength=20></th>
 			<th><input type="submit" name="action" value="Сменить название"></th>
 		</tr>

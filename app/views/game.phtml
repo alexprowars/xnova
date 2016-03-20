@@ -80,7 +80,7 @@
 			<? endif; ?>
 
 			<? if ($this->config->view->get('socialIframeView', 0) == 1): ?><div class="iframe_wrapper"><? endif; ?>
-			<div id="gamediv" class="content container-fluid">
+			<div id="gamediv" class="content">
 
 				<? if (isset($topPanel) && $topPanel == true): ?>
 					<? $this->partial('shared/panel'); ?>
@@ -98,7 +98,7 @@
 				   <table class="table"><tr><td class="c" align="center"><?=$globalMessage ?></td></tr></table><div class="separator"></div>
 				<? endif; ?>
 
-				<div class="row">
+				<div class="content-row">
 					<?
 
 					$messages = $this->flashSession->getMessages();
@@ -128,15 +128,15 @@
 		</div>
 
 		<? if (isset($leftMenu) && $leftMenu == true): ?>
-			<footer class="hidden-xs">
+			<footer class="hidden-xs-down">
 				<div class="container-fluid">
-					<div class="pull-left text-left">
+					<div class="pull-xs-left text-xs-left">
 						<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
 						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-							<a class="hidden-sm" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
+							<a class="hidden-sm-down" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 						<? endif; ?>
 					</div>
-					<div class="pull-right text-right">
+					<div class="pull-xs-right text-xs-right">
 						<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>
 							<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
 						<? endif; ?>
@@ -152,21 +152,21 @@
 					</div>
 					<br class="clearfloat"/></div>
 			</footer>
-			<div class="row hidden-sm hidden-md hidden-lg footer-mobile">
-				<div class="col-xs-12 text-center">
+			<div class="row hidden-sm-up footer-mobile">
+				<div class="col-xs-12 text-xs-center">
 					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 					<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
 					<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
 					<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
 					<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>
 				</div>
-				<div class="col-xs-8 text-center">
+				<div class="col-xs-8 text-xs-center">
 					<a href="<?=$this->url->get('news/') ?>" title="Последние изменения"><?=VERSION ?></a>
 					<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 						<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - <?=date("Y") ?> Xcms</a>
 					<? endif; ?>
 				</div>
-				<div class="col-xs-4 text-center">
+				<div class="col-xs-4 text-xs-center">
 					<a onclick="" title="Игроков в сети" style="color:green"><?=$this->config->app->get('users_online', 0) ?></a>/<a onclick="" title="Всего игроков" style="color:yellow"><?=$this->config->app->get('users_total', 0) ?></a>
 				</div>
 			</div>

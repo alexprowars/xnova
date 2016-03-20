@@ -32,11 +32,11 @@
 				<a href="<?=$this->url->get("galaxy/".$parse['galaxy_galaxy']."/".$parse['galaxy_system']."/") ?>">[<?=$parse['galaxy_galaxy'] ?>:<?=$parse['galaxy_system'] ?>:<?=$parse['galaxy_planet'] ?>]</a>
 				<a href="<?=$this->url->get("overview/rename/") ?>" title="Редактирование планеты">(изменить)</a>
 			</div>
-			<div class="separator visible-xs"></div>
+			<div class="separator hidden-sm-up"></div>
 			<div class="col-xs-12 col-sm-6">
-				<div id="clock" class="pull-right"><?=$this->game->datezone("d-m-Y H:i:s", time()) ?></div>
+				<div id="clock" class="pull-xs-right"><?=$this->game->datezone("d-m-Y H:i:s", time()) ?></div>
 				<script type="text/javascript">UpdateClock();</script>
-				<div class="clearfix visible-xs"></div>
+				<div class="clearfix hidden-sm-up"></div>
 			</div>
 		</div>
 	</div>
@@ -49,7 +49,7 @@
 						<div id="bxx<?=$list['fleet_order'] ?>" class="z"><?=$list['fleet_count_time'] ?></div>
 						<div class="positive"><?=$list['fleet_time'] ?></div>
 					</th>
-					<th class="text-left" colspan="3">
+					<th class="text-xs-left" colspan="3">
 						<span class="<?=$list['fleet_status'] ?> <?=$list['fleet_prefix'] ?><?=$list['fleet_style'] ?>"><?=$list['fleet_descr'] ?></span>
 					</th>
 					<?= $list['fleet_javas'] ?>
@@ -69,7 +69,7 @@
 			<div class="separator"></div>
 		<? endif; ?>
 		<div class="row overview">
-			<div class="col-sm-4">
+			<div class="col-sm-4 col-xs-12">
 				<div class="row">
 					<div class="col-md-10 col-sm-12 col-xs-5">
 						<div class="planet-image">
@@ -107,8 +107,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-4">
-				<div class="separator hidden-sm hidden-md hidden-lg"></div>
+			<div class="col-sm-4 col-xs-12">
+				<div class="separator hidden-sm-up"></div>
 				<table class="table">
 					<tr>
 						<td class="c" colspan="2">Диаметр</td>
@@ -165,8 +165,8 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-sm-4">
-				<div class="separator hidden-sm hidden-md hidden-lg"></div>
+			<div class="col-sm-4 col-xs-12">
+				<div class="separator hidden-sm-up"></div>
 				<table class="table">
 					<tr>
 						<td class="c col-sm-5 col-xs-6">Игрок:</td>
@@ -226,11 +226,11 @@
 						<th class="col-xs-4 col-sm-1" <?=($id > 0 ? 'style="border-top:0;"' : '')?>>
 							<div id="build<?=$id ?>" class="z"><?=($list[0] - time()) ?></div>
 							<script type="text/javascript">FlotenTime('build<?=$id ?>', <?=($list[0] - time()) ?>);</script>
-							<span class="positive visible-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
+							<span class="positive hidden-sm-up"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
 						</th>
-						<th class="col-sm-11 col-xs-8 text-left" style="<?=($id > 0 ? 'border-top:0;' : '')?>">
-							<span class="pull-left"><span class="flight owndeploy"><?=$list[1] ?></span></span>
-							<span class="positive pull-right hidden-xs"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
+						<th class="col-sm-11 col-xs-8 text-xs-left" style="<?=($id > 0 ? 'border-top:0;' : '')?>">
+							<span class="pull-xs-left"><span class="flight owndeploy"><?=$list[1] ?></span></span>
+							<span class="positive pull-xs-right hidden-xs-down"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
 						</th>
 					</tr>
 				<? endforeach; ?>
@@ -252,7 +252,7 @@
 		<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
 			<table class="table" style="max-width: 100%">
 				<tr>
-					<th class="left">
+					<th class="text-xs-left">
 						<div style="max-height: 150px;overflow-y: auto;overflow-x: hidden;">
 						<? foreach ($parse['activity']['chat'] AS $activity): ?>
 							<div class="activity"><div class="date1" style="display: inline-block;padding-right:5px;"><?=$this->game->datezone("H:i", $activity['TIME']) ?></div><div style="display: inline;white-space:pre-wrap"><?=$activity['MESS'] ?></div></div>

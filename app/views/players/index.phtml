@@ -16,7 +16,7 @@
 <? endif; ?>
 			<table class="table">
 				<tr>
-					<td class="col-xs-4 text-center">
+					<td class="col-xs-4 text-xs-center">
 						<img src="<?=$parse['avatar'] ?>" alt="<?=$parse['username'] ?>" width="100%">
 						<? if ($parse['ingame']): ?>
 							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$parse['id'].'/') ?>', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
@@ -26,23 +26,23 @@
 					<td valign="top" class="col-xs-6">
 						<table class="table">
 							<tr>
-								<td class="col-xs-4 text-left">Логин:</td>
+								<td class="col-xs-4 text-xs-left">Логин:</td>
 								<td><?=$parse['username'] ?></td>
 							</tr>
 							<tr>
-								<td class="col-xs-4 text-left">Планета:</td>
+								<td class="col-xs-4 text-xs-left">Планета:</td>
 								<td>
 									<a href="<?=$this->url->get('galaxy/'.$parse['galaxy'].'/'.$parse['system'].'/') ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
 								</td>
 							</tr>
 							<? if ($parse['ally_name']): ?>
 								<tr>
-									<td class="col-xs-4 text-left">Альянс:</td>
+									<td class="col-xs-4 text-xs-left">Альянс:</td>
 									<td><?=$parse['ally_name'] ?></td>
 								</tr>
 							<? endif; ?>
 							<tr>
-								<td class="col-xs-4 text-left">Пол:</td>
+								<td class="col-xs-4 text-xs-left">Пол:</td>
 								<td><?=$parse['sex'] ?></td>
 							</tr>
 						</table>
@@ -100,7 +100,7 @@
 				<tr>
 					<td class="c col-xs-4">&nbsp;</td>
 					<td class="c col-xs-4">Сумма</td>
-					<td class="c col-xs-4 text-right">Процент</td>
+					<td class="c col-xs-4 text-xs-right">Процент</td>
 				</tr>
 				<tr>
 					<td class="c">Победы</td>

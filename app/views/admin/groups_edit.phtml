@@ -17,8 +17,8 @@
 						<div class="col-md-9">
 							<div class="row">
 								<div class="col-xs-6"></div>
-								<div class="col-xs-3 text-center">Чтение</div>
-								<div class="col-xs-3 text-center">Изменение</div>
+								<div class="col-xs-3 text-xs-center">Чтение</div>
+								<div class="col-xs-3 text-xs-center">Изменение</div>
 							</div>
 							<? foreach ($modules AS $module): ?>
 								<input type="hidden" name="module[<?=$module['id'] ?>]" value="0">
@@ -26,10 +26,10 @@
 									<div class="col-xs-6">
 										<label for="module_<?=$module['id'] ?>"><?=$module['name'] ?></label>
 									</div>
-									<div class="col-xs-3 text-center">
+									<div class="col-xs-3 text-xs-center">
 										<input id="module_<?=$module['id'] ?>" <?=(isset($rights[$module['id']]) && $rights[$module['id']]['right_id'] == 1 ? 'checked' : '') ?> type="checkbox" name="module[<?=$module['id'] ?>]" value="1">
 									</div>
-									<div class="col-xs-3 text-center">
+									<div class="col-xs-3 text-xs-center">
 										<input <?=(isset($rights[$module['id']]) && $rights[$module['id']]['right_id'] == 2 ? 'checked' : '') ?> type="checkbox" name="module[<?=$module['id'] ?>]" value="2" title="">
 									</div>
 								</div>

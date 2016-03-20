@@ -10,7 +10,6 @@
 				<div class="col-xs-12 c">
 					<input type="submit" value="Построить">
 				</div>
-				<div class="clearfix"></div>
 				<? foreach ($parse['buildlist'] AS $build): ?>
 					<div class="col-md-6">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
@@ -55,7 +54,6 @@
 						</div>
 					</div>
 				<? endforeach; ?>
-				<div class="clearfix"></div>
 				<div class="col-xs-12 c">
 					<input type="submit" value="Построить">
 				</div>

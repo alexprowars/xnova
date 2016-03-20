@@ -91,28 +91,28 @@
 	</table>
 	</div>
 	<br>
-	<form action="<?=$this->url->get('fleet/stageone/') ?>" method="post" class="table-responsive">
-		<table class="table fleet_ships">
-			<tr>
-				<td colspan="4" class="c">
+	<form action="<?=$this->url->get('fleet/stageone/') ?>" method="post">
+		<div class="table fleet_ships container">
+			<div class="row">
+				<div class="col-xs-12 c">
 					Выбрать корабли<?=$parse['mission_text'] ?>:
-				</td>
-			</tr>
-			<tr>
-				<th class="col-sm-5 col-xs-4"><?=_getText('fl_fleet_typ') ?></th>
-				<th class="col-sm-2 col-xs-2"><?=_getText('fl_fleet_disp') ?></th>
-				<th class="col-sm-2 col-xs-2">-</th>
-				<th class="col-sm-3 col-xs-4">-</th>
-			</tr>
+				</div>
+			</div>
+			<div class="row">
+				<div class="th col-sm-5 col-xs-4"><?=_getText('fl_fleet_typ') ?></div>
+				<div class="th col-sm-2 col-xs-2"><?=_getText('fl_fleet_disp') ?></div>
+				<div class="th col-sm-2 col-xs-2">-</div>
+				<div class="th col-sm-3 col-xs-4">-</div>
+			</div>
 			<? foreach ($parse['ships'] as $ship): ?>
-				<tr>
-					<th><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></th>
-					<th><?=\App\Helpers::pretty_number($ship['count']) ?></th>
+				<div class="row">
+					<div class="th col-sm-5 col-xs-4"><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></div>
+					<div class="th col-sm-2 col-xs-2"><?=\App\Helpers::pretty_number($ship['count']) ?></div>
 					<? if ($ship['id'] == 212): ?>
-						<th></th><th></th>
+						<div class="th col-sm-7 col-xs-6"></div>
 					<? else: ?>
-						<th><a href="javascript:noShip('ship<?=$ship['id'] ?>'); calc_capacity();">min</a>/<a href="javascript:maxShip('ship<?=$ship['id'] ?>'); calc_capacity();">max</a></th>
-						<th>
+						<div class="th col-sm-2 col-xs-2"><a href="javascript:noShip('ship<?=$ship['id'] ?>'); calc_capacity();">min</a>/<a href="javascript:maxShip('ship<?=$ship['id'] ?>'); calc_capacity();">max</a></div>
+						<div class="th col-sm-3 col-xs-4">
 							<a href="javascript:chShipCount('<?=$ship['id'] ?>', '-1'); calc_capacity();" title="Уменьшить на 1 ед." style="color:#FFD0D0">- </a>
 							<input type="text" name="ship<?=$ship['id'] ?>" style="width:65%" value="0" onfocus="if(this.value == '0') this.value='';" onblur="if(this.value == '') this.value='0';" title="<?=_getText('tech', $ship['id']).': '.$ship['count'] ?>" onChange="calc_capacity()" onKeyUp="calc_capacity()" />
 							<a href="javascript:chShipCount('<?=$ship['id'] ?>', '1'); calc_capacity();" title="Увеличить на 1 ед." style="color:#D0FFD0"> +</a>
@@ -121,46 +121,42 @@
 							<input type="hidden" name="consumption<?=$ship['id'] ?>" value="<?=$ship['consumption'] ?>" />
 							<input type="hidden" name="speed<?=$ship['id'] ?>" value="<?=$ship['speed'] ?>" />
 							<input type="hidden" name="capacity<?=$ship['id'] ?>" value="<?=$ship['capacity'] ?>" />
-						</th>
+						</div>
 					<? endif; ?>
-				</tr>
+				</div>
 			<? endforeach; ?>
 			
 			<? if (!count($parse['ships'])): ?>
-				<tr>
-					<th colspan="4"><?=_getText('fl_noships') ?></th>
-				</tr>
-				<tr>
-					<th colspan="4"><input type="submit" value=" <?=_getText('fl_continue') ?> " /></th>
-				</tr>
+				<div class="row">
+					<div class="col-xs-12"><?=_getText('fl_noships') ?></div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12"><input type="submit" value=" <?=_getText('fl_continue') ?> " /></div>
+				</div>
 			<? else: ?>
-				<tr>
-					<th colspan="2">
+				<div class="row">
+					<div class="col-xs-6 col-sm-7 th">
 						<a href="javascript:noShips(); calc_capacity();" ><?=_getText('fl_unselectall') ?></a>
-					</th>
-					<th colspan="2"><a href="javascript:maxShips(); calc_capacity();" ><?=_getText('fl_selectall') ?></a></th>
-				</tr>
-				<tr>
-					<th colspan="2" class="hidden-xs">-</th>
-					<th colspan="1" class="visible-xs">-</th>
-					<th colspan="1" class="hidden-xs">Вместимость</th>
-					<th colspan="2" class="visible-xs">Вместимость</th>
-					<th colspan="1"><div id="allcapacity">-</div></th>
-				</tr>
-				<tr>
-					<th colspan="2" class="hidden-xs">-</th>
-					<th colspan="1" class="visible-xs">-</th>
-					<th colspan="1" class="hidden-xs">Скорость</th>
-					<th colspan="2" class="visible-xs">Скорость</th>
-					<th colspan="1"><div id="allspeed">-</div></th>
-				</tr>
+					</div>
+					<div class="col-xs-6 col-sm-5 th"><a href="javascript:maxShips(); calc_capacity();" ><?=_getText('fl_selectall') ?></a></div>
+				</div>
+				<div class="row">
+					<div class="th col-xs-4 col-sm-7">-</div>
+					<div class="th col-xs-4 col-sm-2">Вместимость</div>
+					<div class="th col-xs-4 col-sm-3"><div id="allcapacity">-</div></div>
+				</div>
+				<div class="row">
+					<div class="th col-xs-4 col-sm-7">-</div>
+					<div class="th col-xs-4 col-sm-2">Скорость</div>
+					<div class="th col-xs-4 col-sm-3"><div id="allspeed">-</div></div>
+				</div>
 				<? if ($parse['maxFlyingFleets'] < $parse['maxFlottes']): ?>
-				<tr>
-					<th colspan="4"><input type="submit" value=" <?=_getText('fl_continue') ?> " /></th>
-				</tr>
+					<div class="row">
+						<div class="th col-xs-12"><input type="submit" value=" <?=_getText('fl_continue') ?> " /></div>
+					</div>
 				<? endif; ?>
 			<? endif; ?>
-		</table>
+		</div>
 		<input type="hidden" name="galaxy" value="<?=$parse['galaxy'] ?>" />
 		<input type="hidden" name="system" value="<?=$parse['system'] ?>" />
 		<input type="hidden" name="planet" value="<?=$parse['planet'] ?>" />

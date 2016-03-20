@@ -220,7 +220,7 @@
 		width: 100%;
 	}
 
-	td.c, .game_content > .menu li > a, .buildings, body, html, td, th, table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
+	td.c, .game_content > .menu li > a, .buildings, body, html, table td, .table td, table th, .table th, table table td, .table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
 	td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
 	{
 		font-size: 12px;
@@ -242,7 +242,7 @@
 		padding: 5px;
 	}
 
-	td.c, th, td.k {
+	td.c, table th, .table th, td.k {
 		padding: 5px;
 	}
 
@@ -280,10 +280,17 @@
 		white-space: normal !important;
 	}
 
-	#box .game_menu, #box .game_content {
+	#box .game_content {
 		width: 100%;
-		padding-top: 5px;
-		padding-bottom: 5px;
+		padding: 0;
+	}
+
+	#box .game_menu {
+		width: auto;
+	}
+
+	.bar .m1 {
+	    padding: 0 20px;
 	}
 }
 

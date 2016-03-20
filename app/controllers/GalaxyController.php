@@ -160,7 +160,7 @@ class GalaxyController extends ApplicationController
 		if ($mode == 2)
 			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->interplanetary_misil);
 
-		$html .= "<div id='galaxy'></div>";
+		$html .= "<div id='galaxy' class='container'></div>";
 		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '/assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";

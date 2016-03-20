@@ -18,27 +18,27 @@
 			<div class="portlet-body form">
 				<div class="form-body">
 					<div class="form-group">
-						<div class="col-md-5 text-right">
+						<div class="col-md-5 text-xs-right">
 							<input type="submit" name="prev"  class="btn green" value="<?=_getText('mlst_hdr_prev') ?>">
 						</div>
-						<div class="col-md-2 text-center">
+						<div class="col-md-2 text-xs-center">
 							<select name="page" class="form-control" onchange="submit();" title="">
 								<? for ($cPage = 1; $cPage <= $parse['mlst_data_pagemax']; $cPage++): ?>
 									<option value="<?=$cPage ?>" <?=(($parse['mlst_data_page'] == $cPage) ? "selected" : "") ?>><?=$cPage ?>/<?=$parse['mlst_data_pagemax'] ?></option>
 								<? endfor; ?>
 							</select>
 						</div>
-						<div class="col-md-5 text-left">
+						<div class="col-md-5 text-xs-left">
 							<input type="submit" name="next" class="btn green" value="<?=_getText('mlst_hdr_next') ?>"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-md-6 text-center">
+						<div class="col-md-6 text-xs-center">
 							<input type="text" placeholder="owner" class="form-control form-control-inline input-small" name="userid" size="7" value="<?=is($parse, 'userid') ?>"/>
 							<input type="text" placeholder="sender" class="form-control form-control-inline input-small" name="userid_s" size="7" value="<?=is($parse, 'userid_s') ?>"/>
 							<input type="submit" name="usersearch" class="btn red" value="По id"/>
 						</div>
-						<div class="col-md-6 text-center">
+						<div class="col-md-6 text-xs-center">
 							<select name="type" class="form-control" onchange="submit();" title="">
 								<? foreach ($parse['types'] AS $type): ?>
 									<option value="<?=$type ?>"<?=(($parse['mlst_data_sele'] == $type) ? " SELECTED" : "") ?>><?=_getText('mlst_mess_typ__'.$type) ?></option>
@@ -47,10 +47,10 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-md-4 text-center">
+						<div class="col-md-4 text-xs-center">
 							<input type="submit" name="delsel" class="btn red" value="<?=_getText('mlst_bt_delsel') ?>"/>
 						</div>
-						<div class="col-md-8 text-center">
+						<div class="col-md-8 text-xs-center">
 							<input type="submit" name="deldat"  class="btn red" value="<?=_getText('mlst_bt_deldate') ?>"/>
 							<input type="text" placeholder="дд" name="selday" size="3" class="form-control form-control-inline input-small">
 							<input type="text" placeholder="мм" name="selmonth" size="3" class="form-control form-control-inline input-small">

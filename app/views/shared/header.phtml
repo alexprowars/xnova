@@ -18,14 +18,14 @@
 		}
 	</script>
 <? endif; ?>
-<a href="#" class="menu-toggle visible-xs">
+<a href="#" class="menu-toggle hidden-sm-up">
     <span>
         <span class="first"></span>
         <span class="second"></span>
         <span class="third"></span>
     </span>
 </a>
-<div class="menu-sidebar visible-xs">
+<div class="menu-sidebar hidden-sm-up">
 	<ul class="nav">
 		<? foreach(_getText('main_menu') AS $id => $menu): if ($menu[2] > $adminlevel) continue; ?>
 			<li><a data-link="<?=$id ?>" <? if (isset($menu[3])): ?>data-link="Y"<? endif; ?> href="<?=$menu[1] ?>" <?=($controller == $id ? 'class="check"' : '') ?>><?=$menu[0] ?></a></li>
@@ -34,7 +34,7 @@
 </div>
 
 <header class="game_menu">
-	<div class="visible-xs text-center bar">
+	<div class="hidden-sm-up text-xs-center bar">
 		<? if (isset($tutorial) && $tutorial < 10): ?>
 			<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 		<? endif; ?>
@@ -44,7 +44,7 @@
 			<a class="m1 tooltip" href="<?=$this->url->get("alliance/chat/") ?>" data-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
 		<? endif; ?>
 	</div>
-	<div class="bar hidden-xs">
+	<div class="bar hidden-xs-down">
 		<div class="message_list">
 			<? if (isset($tutorial) && $tutorial < 10): ?>
 				<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
@@ -84,7 +84,7 @@
 		</div>
 	</div>
 </header>
-<div class="icon-panel visible-xs">
+<div class="icon-panel hidden-sm-up">
 	<a href="<?=$this->url->get("stat/") ?>" class="sprite ico_stats"></a>
 	<a href="<?=$this->url->get("tech/") ?>" class="sprite ico_tech"></a>
 	<a href="<?=$this->url->get("sim/") ?>" class="sprite ico_sim"></a>

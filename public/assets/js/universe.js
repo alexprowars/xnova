@@ -42,6 +42,7 @@ function PrintRow ()
 {
 	var result = '';
 	
+	result += "<div class=\"row\"><div class='col-xs-12 p-a-0'>";
 	result += "<div class=\"table-responsive\">";
 	result += "<table class=\"table galaxy\"><tr>";
 	result += "<td class=c colspan=9>Солнечная система "+galaxy+":"+system+"</td>";
@@ -481,7 +482,7 @@ function PrintRow ()
 	result += "<td class=c colspan=3>";
 	result += "<span id=\"recyclers\">"+XNova.format(user['recycler'])+"</span> переработчиков<br>";
 	result += "<span id=\"probes\">"+XNova.format(user['spy_sonde'])+"</span> шпионских зондов</td>";
-	result += "</tr></table></div>";
+	result += "</tr></table></div></div></div>";
 	result += "<div id=\"galaxyMessage\"></div>";
 
 	return result;
@@ -502,7 +503,7 @@ function PrintSelector(fleet_shortcut)
 {
 	var result = '';
 
-	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-xs'>";
+	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-xs-down row'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-sm-4'>";
 
@@ -542,7 +543,7 @@ function PrintSelector(fleet_shortcut)
 
 
 
-	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select visible-xs'>";
+	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-xs-12'>";
 	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';

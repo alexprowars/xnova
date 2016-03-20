@@ -18,18 +18,18 @@
 			<th><input name="rpassword" size="20" maxlength="20" type="password" title=""></th>
 		</tr>
 		<tr>
-			<th colspan="2" align="center" class="text-center">
+			<th colspan="2" align="center" class="text-xs-center">
 				<div class="g-recaptcha" data-sitekey="<?=$this->config->recaptcha->public_key ?>"></div>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-left">
+			<th colspan="2" class="text-xs-left">
 				<input name="sogl" id="sogl" type="checkbox" <?=($this->request->getPost('sogl') != '' ? 'checked' : '') ?>>
 				<label for="sogl">Я принимаю</label> <a href="<?=$this->url->get('sogl/') ?>" target="_blank">Пользовательское соглашение</a>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-left">
+			<th colspan="2" class="text-xs-left">
 				<input name="rgt" id="rgt" type="checkbox" <?=($this->request->getPost('rgt') != '' ? 'checked' : '') ?>>
 				<label for="rgt">Я принимаю</label> <a href="<?=$this->url->get('agb/') ?>" target="_blank">Законы игры</a>
 			</th>

@@ -35,19 +35,19 @@
 	<? endif; ?>
 	<? if (count($parse['list']) > 0): ?>
 		<tr>
-			<td class="c text-center">
+			<td class="c text-xs-center">
 				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/1/') ?>">Логин</a>
 			</td>
-			<td class="c text-center">
+			<td class="c text-xs-center">
 				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/0/') ?>">Дата подачи заявки</a>
 			</td>
 		</tr>
 		<? foreach ($parse['list'] AS $list): ?>
 			<tr>
-				<th class="text-center">
+				<th class="text-xs-center">
 					<a href="<?=$this->url->get('alliance/admin/edit/requests/show/'.$list['id'].'/sort/0/') ?>"><?=$list['username'] ?></a>
 				</th>
-				<th class="text-center">
+				<th class="text-xs-center">
 					<?=$list['time'] ?>
 				</th>
 			</tr>

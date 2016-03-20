@@ -63,8 +63,8 @@
 
 @media (min-width: 1700px)
 {
-	td.c, .game_content > .menu li > a, .buildings, body, html, td, th, table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
-	th, td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
+	td.c, .game_content > .menu li > a, .buildings, body, html, table td, table th, .table th, .table td, table table td, .table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
+	th, .th, .c, td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
 	{
 		font-size: 12px;
 	}
@@ -90,7 +90,7 @@
 		padding: 4px;
 	}
 
-	td.c, th, td.k {
+	table td.c, table th, table td.k, .table th {
 		padding: 4px;
 	}
 
@@ -153,8 +153,9 @@
 
 @media (min-width: 481px) and (max-width: 790px)
 {
-	#box .game_menu, #box .game_content {
+	#box .game_menu, #box .game_content, #box {
 		width: 100%;
+		min-width: 600px;
 	}
 }
 

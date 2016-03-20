@@ -7,7 +7,7 @@
 	<div class="title">
 		Занято полей
 		<span class="positive"><?=$parse['planet_field_current'] ?></span> из <span class="negative"><?=$parse['planet_field_max'] ?></span>
-		<div class="pull-right col-xs-12 col-sm-6 nopadding">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
+		<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
 		<div class="clearfix"></div>
 	</div>
 	<? foreach ($parse['BuildList'] AS $list): ?>
@@ -30,7 +30,7 @@
 	<? endforeach; ?>
 	<div class="content">
 		<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
-			<div class="head hidden-xs">
+			<div class="head hidden-xs-down">
 				<ul class="ui-tabs-nav ui-widget-header">
 					<li id="tab_area"><a href="#tabs-0">Планета</a></li>
 					<li id="tab_list"><a href="#tabs-1">Постройки</a></li>
@@ -49,7 +49,7 @@
 			<div id="tabs-1" class="ui-tabs-panel ui-widget-content" style="display: none">
 				<div class="row" id="building">
 					<? $i = 0; foreach ($parse['BuildingsList'] AS $build): $i++; ?>
-					<div class="col-md-6" id="object_<?=$build['i'] ?>">
+					<div class="col-md-6 col-xs-12" id="object_<?=$build['i'] ?>">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 							<? if (!$build['access']): ?>
 								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600, 500)"><span>недоступно</span></div>
