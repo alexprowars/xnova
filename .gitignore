@@ -11,3 +11,6 @@ Thumbs.db
 *.map
 *.lock
 *.phar
+
+public/assets/css/style.css
+.sass-cache/*

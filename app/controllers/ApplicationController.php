@@ -168,8 +168,6 @@ class ApplicationController extends Controller
 				$css->addCss('/assets/lib/bootstrap/bootstrap.min.css');
 				$css->addCss('/assets/css/jquery.toast.min.css');
 				$css->addCss('/assets/css/style.css');
-				$css->addCss('/assets/css/media.css');
-				$css->addCss('/assets/css/mobile.css');
 
 				$js->addJs('/assets/js/script.js');
 				$js->addJs('/assets/js/universe.js');
