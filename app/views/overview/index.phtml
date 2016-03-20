@@ -109,112 +109,118 @@
 			</div>
 			<div class="col-sm-4 col-xs-12">
 				<div class="separator hidden-sm-up"></div>
-				<table class="table">
-					<tr>
-						<td class="c" colspan="2">Диаметр</td>
-					</tr>
-					<tr>
-						<th colspan="2"><?=\App\Helpers::pretty_number($parse['planet_diameter']) ?> км</th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">Занятость</td>
-					</tr>
-					<tr>
-						<th colspan="2"><a title="Занятость полей"><?=$parse['planet_field_current'] ?></a> / <a title="Максимальное количество полей"><?=$parse['planet_field_max'] ?></a> поля</th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">Температура</td>
-					</tr>
-					<tr>
-						<th colspan="2">от. <?=$parse['planet_temp_min'] ?>&deg;C до <?=$parse['planet_temp_max'] ?>&deg;C</th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">
+				<div class="table container-fluid">
+					<div class="row">
+						<div class="col-xs-12 c">Диаметр</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th"><?=\App\Helpers::pretty_number($parse['planet_diameter']) ?> км</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 c">Занятость</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th"><a title="Занятость полей"><?=$parse['planet_field_current'] ?></a> / <a title="Максимальное количество полей"><?=$parse['planet_field_max'] ?></a> поля</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 c">Температура</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th">от. <?=$parse['planet_temp_min'] ?>&deg;C до <?=$parse['planet_temp_max'] ?>&deg;C</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 c">
 							Обломки
 							<? if ($parse['get_link']): ?>
 								(<a href="#" onclick="QuickFleet(8, <?=$parse['galaxy_galaxy'] ?>, <?=$parse['galaxy_system'] ?>, <?=$parse['galaxy_planet'] ?>, 2)">переработать</a>)
 							<? endif; ?>
-						</td>
-					</tr>
-					<tr>
-						<th colspan="2" class="doubleth">
-							<img src="/assets/images/skin/s_metall.png" alt="" align="absmiddle" class="tooltip" data-content="Металл">
-							<?=\App\Helpers::pretty_number($parse['metal_debris']) ?>
-							/
-							<img src="/assets/images/skin/s_kristall.png" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
-							<?=\App\Helpers::pretty_number($parse['crystal_debris']) ?>
-						</th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">Бои</td>
-					</tr>
-					<tr>
-						<th colspan="2">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th doubleth middle">
+							<div>
+								<img src="/assets/images/skin/s_metall.png" alt="" align="absmiddle" class="tooltip" data-content="Металл">
+								<?=\App\Helpers::pretty_number($parse['metal_debris']) ?>
+								/
+								<img src="/assets/images/skin/s_kristall.png" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
+								<?=\App\Helpers::pretty_number($parse['crystal_debris']) ?>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 c">Бои</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th middle">
 							<img src="/assets/images/wins.gif" alt="" align="absmiddle" class="tooltip" data-content="Победы">
 							<?=$parse['raids_win'] ?>
 							&nbsp;&nbsp;
 							<img src="/assets/images/losses.gif" alt="" align="absmiddle" class="tooltip" data-content="Поражения">
 							<?=$parse['raids_lose'] ?>
-						</th>
-					</tr>
-					<tr>
-						<th colspan="2">Фракция: <a href="<?=$this->url->get("race/") ?>"><?=$parse['race'] ?></a></th>
-					</tr>
-					<tr>
-						<th colspan="2"><a href="<?=$this->url->get("refers/") ?>"><? if ($this->config->view->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]</th>
-					</tr>
-				</table>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th">
+							Фракция: <a href="<?=$this->url->get("race/") ?>"><?=$parse['race'] ?></a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 th">
+							<a href="<?=$this->url->get("refers/") ?>"><? if ($this->config->view->get('socialIframeView', 0)): ?>Рефералы<? else: ?>http://<?=$_SERVER['HTTP_HOST'] ?>/?<?=$parse['user_id'] ?><? endif; ?></a> [<?=$parse['links'] ?>]
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="col-sm-4 col-xs-12">
 				<div class="separator hidden-sm-up"></div>
-				<table class="table">
-					<tr>
-						<td class="c col-sm-5 col-xs-6">Игрок:</td>
-						<td class="c col-sm-7 col-xs-6" style="word-break: break-all;"><a href="<?=$this->url->get("players/".$parse['user_id']."/") ?>" class="window popup-user"><?=$parse['user_username'] ?></a></td>
-					</tr>
-					<tr>
-						<th>Постройки:</th>
-						<th><span class="positive"><?=\App\Helpers::pretty_number($parse['user_points']) ?></span></th>
-					</tr>
-					<tr>
-						<th>Флот:</th>
-						<th><span class="positive"><?=\App\Helpers::pretty_number($parse['user_fleet']) ?></span></th>
-					</tr>
-					<tr>
-						<th>Оборона:</th>
-						<th><span class="positive"><?=\App\Helpers::pretty_number($parse['user_defs']) ?></span></th>
-					</tr>
-					<tr>
-						<th>Наука:</th>
-						<th><span class="positive"><?=\App\Helpers::pretty_number($parse['player_points_tech']) ?></span></th>
-					</tr>
-					<tr>
-						<th>Всего:</th>
-						<th><span class="positive"><?=\App\Helpers::pretty_number($parse['total_points']) ?></span></th>
-					</tr>
-					<tr>
-						<th>Место:</th>
-						<th><a href="<?=$this->url->get("stat/players/range/".$parse['user_rank']."/") ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<span class="positive">+'.$parse['ile'].'</span>' : ($parse['ile'] < 0 ? '<span class="negative">'.$parse['ile'].'</span>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">Промышленный уровень</td>
-					</tr>
-					<tr>
-						<th colspan="2"><?=$parse['lvl_minier'] ?> из 100</th>
-					</tr>
-					<tr>
-						<th colspan="2"><?=\App\Helpers::pretty_number($parse['xpminier']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_minier']) ?> exp</th>
-					</tr>
-					<tr>
-						<td class="c" colspan="2">Военный уровень</td>
-					</tr>
-					<tr>
-						<th colspan="2"><?=$parse['lvl_raid'] ?> из 100</th>
-					</tr>
-					<tr>
-						<th colspan="2"><?=\App\Helpers::pretty_number($parse['xpraid']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_raid']) ?> exp</th>
-					</tr>
-				</table>
+				<div class="table container-fluid">
+					<div class="row">
+						<div class="c col-sm-5 col-xs-6">Игрок:</div>
+						<div class="c col-sm-7 col-xs-6" style="word-break: break-all;"><a href="<?=$this->url->get("players/".$parse['user_id']."/") ?>" class="window popup-user"><?=$parse['user_username'] ?></a></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Постройки:</div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_points']) ?></span></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Флот:</div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_fleet']) ?></span></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Оборона:</div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_defs']) ?></span></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Наука:</div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['player_points_tech']) ?></span></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Всего:</div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['total_points']) ?></span></div>
+					</div>
+					<div class="row">
+						<div class="th col-sm-5 col-xs-6">Место:</div>
+						<div class="th col-sm-7 col-xs-6"><a href="<?=$this->url->get("stat/players/range/".$parse['user_rank']."/") ?>"><?=$parse['user_rank'] ?></a> <span title="Изменение места в рейтинге">(<?=($parse['ile'] >= 1 ? '<span class="positive">+'.$parse['ile'].'</span>' : ($parse['ile'] < 0 ? '<span class="negative">'.$parse['ile'].'</span>' : '<font color="lightblue">'.$parse['ile'].'</font>')) ?>)</span></div>
+					</div>
+					<div class="row">
+						<div class="c col-xs-12">Промышленный уровень</div>
+					</div>
+					<div class="row">
+						<div class="th col-xs-12"><?=$parse['lvl_minier'] ?> из 100</div>
+					</div>
+					<div class="row">
+						<div class="th col-xs-12"><?=\App\Helpers::pretty_number($parse['xpminier']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_minier']) ?> exp</div>
+					</div>
+					<div class="row">
+						<div class="c col-xs-12">Военный уровень</div>
+					</div>
+					<div class="row">
+						<div class="th col-xs-12"><?=$parse['lvl_raid'] ?> из 100</div>
+					</div>
+					<div class="row">
+						<div class="th col-xs-12"><?=\App\Helpers::pretty_number($parse['xpraid']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_raid']) ?> exp</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="clearfix"></div>

@@ -138,14 +138,3 @@ function ShowText()
 			Text(messages[i], i);
 	}
 }
-
-function parseSmiles (txt)
-{
-	if (typeof(txt) != 'string')
-		return;
-
-	for (var i = 0; i < arSmiles.length; i++)
-		txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" class="absmiddle">');
-
-	document.write(txt);
-}

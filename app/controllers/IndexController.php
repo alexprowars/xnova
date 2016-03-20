@@ -137,13 +137,13 @@ class IndexController extends ApplicationController
 				$this->game->updateConfig('users_total', $this->config->app->users_total);
 
 				$mail = new PHPMailer();
-				$mail->SetFrom($this->config->app->email, $this->config->app->name);
-				$mail->AddAddress($this->request->getPost('email'));
-				$mail->IsHTML(true);
+				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->addAddress($this->request->getPost('email'));
+				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
 				$mail->Subject = $this->config->app->name.": Регистрация";
 				$mail->Body = "Вы успешно зарегистрировались в игре ".$this->config->app->name.".<br>Ваши данные для входа в игру:<br>Email: " . $this->request->getPost('email') . "<br>Пароль:" . $newpass . "";
-				$mail->Send();
+				$mail->send();
 
 				$this->auth->auth($iduser, $md5newpass, 0, 0);
 
@@ -185,14 +185,14 @@ class IndexController extends ApplicationController
 
 					$mail = new PHPMailer();
 
-					$mail->IsMail();
-					$mail->IsHTML(true);
+					$mail->isMail();
+					$mail->isHTML(true);
 					$mail->CharSet = 'utf-8';
-					$mail->SetFrom($this->config->app->email, $this->config->app->name);
-					$mail->AddAddress($Mail['email'], $this->config->app->name);
+					$mail->setFrom($this->config->app->email, $this->config->app->name);
+					$mail->addAddress($Mail['email'], $this->config->app->name);
 					$mail->Subject = 'Новый пароль в '.$this->config->app->name.'';
 					$mail->Body = "Ваш новый пароль от игрового аккаунта: " . $Mail['username'] . ": " . $NewPass;
-					$mail->Send();
+					$mail->send();
 
 					$this->db->query("UPDATE game_users_info SET `password` ='" . md5($NewPass) . "' WHERE `id` = '" . $id . "'");
 					$this->db->query("DELETE FROM game_lostpasswords WHERE user_id = '" . $id . "'");
@@ -227,11 +227,11 @@ class IndexController extends ApplicationController
 
 				$mail = new PHPMailer();
 
-				$mail->IsMail();
-				$mail->IsHTML(true);
+				$mail->isMail();
+				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->SetFrom($this->config->app->email, $this->config->app->name);
-				$mail->AddAddress($inf['email']);
+				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->addAddress($inf['email']);
 				$mail->Subject = 'Восстановление забытого пароля';
 
 				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".$this->config->app->name.".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
@@ -239,7 +239,7 @@ class IndexController extends ApplicationController
 
 				$mail->Body = $body;
 
-				if ($mail->Send())
+				if ($mail->send())
 					$message = 'Ссылка на восстановления пароля отправлена на ваш E-mail';
 				else
 					$message = 'Произошла ошибка при отправке сообщения. Обратитесь к администратору сайта за помощью.';

@@ -31,14 +31,14 @@
 			</tr>
 			<tr>
 				<th>
-					<div class="separator"></div>
-					<? for ($i = 1; $i <= $parse['images'][$parse['type']]; $i++): ?>
-						<div class="col-xs-6 col-sm-3 col-md-2">
-							<input type="radio" name="image" value="<?=$i ?>" id="image_<?=$i ?>">
-							<label for="image_<?=$i ?>"><img src="/assets/images/planeten/small/s_<?=$parse['type'] ?>planet<?=($i < 10 ? '0' : '').$i ?>.jpg" align="absmiddle" width="80"></label>
-						</div>
-					<? endfor; ?>
-					<div class="separator"></div>
+					<div class="row">
+						<? for ($i = 1; $i <= $parse['images'][$parse['type']]; $i++): ?>
+							<div class="col-xs-6 col-sm-3 col-md-2">
+								<input type="radio" name="image" value="<?=$i ?>" id="image_<?=$i ?>">
+								<label for="image_<?=$i ?>"><img src="/assets/images/planeten/small/s_<?=$parse['type'] ?>planet<?=($i < 10 ? '0' : '').$i ?>.jpg" align="absmiddle" width="80"></label>
+							</div>
+						<? endfor; ?>
+					</div>
 				</th>
 			</tr>
 			<tr>
