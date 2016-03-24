@@ -515,7 +515,7 @@ function PrintSelector(fleet_shortcut)
 
 	result += "</div><div class='col-sm-4'>";
 
-	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';
+	result += '<table style=\'max-width:200px;width:100%;margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';
 	result += '<option>--- выберите планету ---</option>';
 
 	for (var i = 0; i < fleet_shortcut.length; i++)
@@ -528,7 +528,7 @@ function PrintSelector(fleet_shortcut)
 		result += ' value="galaxy='+fleet_shortcut[i][1]+'&system='+fleet_shortcut[i][2]+'">'+fleet_shortcut[i][0]+'&nbsp;['+fleet_shortcut[i][1]+':'+fleet_shortcut[i][2]+':'+fleet_shortcut[i][3]+']&nbsp;&nbsp;</option>';
 	}
 
-	result += "</select></td></tr><tr><th><input value=\"Просмотр\" type=\"submit\" style=\"width:200px\"></th></tr></table></div>";
+	result += "</select></td></tr><tr><th><input value=\"Просмотр\" type=\"submit\" style=\"width:100%\"></th></tr></table></div>";
 	result += "<div class='col-sm-4'>";
 
 	result += "<table style='margin: 0 auto'><tr>";
@@ -539,8 +539,6 @@ function PrintSelector(fleet_shortcut)
 	result += "</tr></table>";
 
 	result += "</div></form>";
-
-
 
 	result += "<form action=\"/galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";

@@ -449,7 +449,7 @@ class User extends Model
 
 		$qryPlanets .= ' ORDER BY '.$this->getPlanetListSortQuery();
 
-		return $this->db->extractResult($this->db->query($qryPlanets));
+		return $this->db->query($qryPlanets)->fetchAll();
 	}
 
 	public function getPlanetListSortQuery ($sort = false, $order = false)

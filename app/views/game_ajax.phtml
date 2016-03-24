@@ -14,7 +14,28 @@
    <table class="table"><tr><td class="c" align="center"><?=$pageParams['message'] ?></td></tr></table><div class="separator"></div>
 <? endif; ?>
 
-<div class="row">
+<div class="content-row">
+	<?
+
+	$messages = $this->flashSession->getMessages();
+
+	if (count($messages))
+	{
+		foreach ($messages as $type => $items)
+		{
+			foreach ($items as $message)
+			{
+				if ($type == 'alert')
+					echo '<script>$(document).ready(function(){alert("'.$message.'");});</script>';
+				else
+				{
+					echo $message;
+				}
+			}
+		}
+	}
+
+	?>
 	<?php echo $this->getContent() ?>
 </div>
 

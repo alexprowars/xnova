@@ -9,7 +9,6 @@
 		left: 5px;
 		top: 5px;
 		transition: all ease-out 0.2s;
-		-o-transition: all ease-out 0.2s;
 		-moz-transition: all ease-out 0.2s;
 		-ms-transition: all ease-out 0.2s;
 		-webkit-transition: all ease-out 0.2s;
@@ -28,7 +27,6 @@
 		left: 0;
 		background-color: #ffffff;
 		transition: all ease-out 0.2s;
-		-o-transition: all ease-out 0.2s;
 		-moz-transition: all ease-out 0.2s;
 		-ms-transition: all ease-out 0.2s;
 		-webkit-transition: all ease-out 0.2s;
@@ -38,7 +36,6 @@
 	.planet-toggle:before{
 		-moz-transition: all ease-out 0.2s;
 		-webkit-transition: all ease-out 0.2s;
-		-o-transition: all ease-out 0.2s;
 		-ms-transition: all ease-out 0.2s;
 		transition: all ease-out 0.2s;
 		content: '';
@@ -77,7 +74,6 @@
 		-moz-transform: rotate(-45deg);
 		-ms-transform: rotate(-45deg);
 		-webkit-transform: rotate(-45deg);
-		-o-transform: rotate(-45deg);
 		transform: rotate(-45deg);
 	}
 	.menu-toggle.act span.first,
@@ -87,14 +83,12 @@
 
 	.menu-toggle1.act {
 		transform: translate(190px,0);
-		-o-transform: translate(190px,0);
 		-moz-transform: translate(190px,0);
 		-webkit-transform: translate(190px,0);
 	}
 
 	.planet-toggle1.act {
 		transform: translate(-190px,0);
-		-o-transform: translate(-190px,0);
 		-moz-transform: translate(-190px,0);
 		-webkit-transform: translate(-190px,0);
 	}
@@ -117,7 +111,6 @@
 	.menu-sidebar.opened, .planet-sidebar.opened{
 		transform: translate(0,0);
 		-webkit-transform: translate(0,0);
-		-o-transform: translate(0,0);
 		-moz-transform: translate(0,0);
 	}
 
@@ -126,7 +119,6 @@
 		left: auto;
 		transform: translate(251px,0);
 		-webkit-transform: translate(251px,0);
-		-o-transform: translate(251px,0);
 		-moz-transform: translate(251px,0);
 	}
 
@@ -221,7 +213,7 @@
 	}
 
 	td.c, .game_content > .menu li > a, .buildings, body, html, table td, .table td, table th, .table th, table table td, .table table td, input[type=submit], input[type=button], input[type=reset], .button, .shoutbox .date1, .shoutbox .date2, .shoutbox .date3, .activity .date1,
-	td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p
+	td.a, td.b, td.c, td.f, input, select, td.g, td.h, td.i, td.j, td.k, td.l, td.m, td.n, td.o, td.q, td.r, td.v, .style td, textarea, p td, table.s th img, p, .c
 	{
 		font-size: 12px;
 	}

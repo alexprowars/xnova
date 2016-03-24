@@ -195,7 +195,7 @@ class ApplicationController extends Controller
 
 			if ($this->request->getQuery('fullscreen') == 'Y')
 			{
-				$this->cookies->set($this->config->cookie->prefix."_full", "Y", (time() + 30 * 86400), "/", $_SERVER["SERVER_NAME"], 0);
+				$this->cookies->set($this->config->cookie->prefix."_full", "Y", (time() + 30 * 86400), "/", null, $_SERVER["SERVER_NAME"], 0);
 				$_COOKIE[$this->config->cookie->prefix."_full"] = 'Y';
 			}
 

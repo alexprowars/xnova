@@ -18,9 +18,10 @@ if ($result === null)
 
 $di->get('config')->merge(new \Phalcon\Config(['app' => $result]));
 
-if ($di->has('auth') && !$di->get('auth')->isAuthorized())
+if ($di->has('auth'))
 {
 	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Ulogin');
+	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Vk');
 	$di->get('auth')->checkExtAuth();
 }
 
