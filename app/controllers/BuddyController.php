@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\User;
+
 /**
  * @author AlexPro
  * @copyright 2008 - 2016 XNova Game Group
@@ -37,7 +39,7 @@ class BuddyController extends ApplicationController
 						'text'		=> strip_tags($this->request->getPost('text', 'string', ''))
 					]);
 
-					$this->game->sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+					User::sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
 					$this->message('Запрос отправлен', 'Предложение дружбы', '/buddy/');
 				}

@@ -61,8 +61,6 @@ class PhalanxController extends ApplicationController
 		if ($planet == 0)
 			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 		
-		$missiontype = [1 => 'Атаковать', 3 => 'Транспорт', 4 => 'Оставить', 5 => 'Удерживать', 6 => 'Шпионаж', 7 => 'Колонизировать', 8 => 'Переработать', 9 => 'Уничтожить'];
-
 		$fq = FleetModel::find([
 			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
 			'bind' => ['galaxy' => $g, 'system' => $s, 'planet' => $i],
@@ -122,7 +120,7 @@ class PhalanxController extends ApplicationController
 				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
 				$item .= " с " . $type . "ы " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font> летит на " . $type2 . "у " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font>. Задание:";
-				$item .= " <font color=\"white\">{$missiontype[$row->mission]}</font></th>";
+				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th>";
 			}
 		
 			if ($row->mission <> 4 && $end == 0 && $t1 != 3)
@@ -137,7 +135,7 @@ class PhalanxController extends ApplicationController
 				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
 		
 				$item .= " с " . $type2 . "ы " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font> возвращается на " . $type . "у " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font>. Задание:";
-				$item .= " <font color=\"white\">{$missiontype[$row->mission]}</font></th></tr>";
+				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th></tr>";
 			}
 
 			$list[] = $item;

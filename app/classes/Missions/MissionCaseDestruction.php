@@ -9,6 +9,7 @@ namespace App\Missions;
 
 use App\FleetEngine;
 use App\Models\Fleet;
+use App\Models\User;
 
 class MissionCaseDestruction extends FleetEngine implements Mission
 {
@@ -121,16 +122,16 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 					$message .= "<br><br>" . _getText('sys_destruc_lune') . $moonDestroyChance . "%. <br>" . _getText('sys_destruc_rip') . $fleetDestroyChance . "%";
 
-					$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), $message);
-					$this->game->sendMessage($TargetMoon['id_owner'], 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), $message);
+					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), $message);
+					User::sendMessage($TargetMoon['id_owner'], 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), $message);
 
 					$this->cache->delete('app::planetlist_'.$TargetMoon['id_owner']);
 				}
 				else
-					$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
+					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
 			}
 			else
-				$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
+				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_destruc_report'), _getText('sys_destruc_stop'));
 		}
 	}
 

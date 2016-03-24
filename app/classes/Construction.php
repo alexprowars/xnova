@@ -477,7 +477,7 @@ class Construction
 					(
 						'ListID' 		=> ($i + 1),
 						'ElementTitle' 	=> _getText('tech', $item['i']),
-						'BuildLevel' 	=> $item['l'],
+						'BuildLevel' 	=> $item['d'] == 0 ? $item['l'] : $item['l'] + 1,
 						'BuildMode' 	=> $item['d'],
 						'BuildTime' 	=> ($item['e'] - time()),
 						'PlanetID' 		=> $PlanetID,

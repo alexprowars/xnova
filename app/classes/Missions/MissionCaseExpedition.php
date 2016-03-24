@@ -15,6 +15,7 @@ use App\Battle\Models\Fleet;
 use App\Battle\Utils\LangManager;
 use App\FleetEngine;
 use App\Helpers;
+use App\Models\User;
 
 class MissionCaseExpedition extends FleetEngine implements Mission
 {
@@ -385,7 +386,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				}
 				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, _getText('sys_perte_attaquant'), Helpers::pretty_number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Helpers::pretty_number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
 
-				$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_tower'), $MessageAtt);
+				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_tower'), $MessageAtt);
 
 				break;
 
@@ -439,14 +440,14 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$Message = _getText('sys_expe_nothing_' . mt_rand(1, 8));
 		}
 
-		$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->end_stay, 15, _getText('sys_expe_report'), $Message);
+		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_stay, 15, _getText('sys_expe_report'), $Message);
 	}
 
 	public function ReturnEvent()
 	{
 		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Helpers::pretty_number($this->_fleet->resource_metal), _getText('Crystal'), Helpers::pretty_number($this->_fleet->resource_crystal),  _getText('Deuterium'), Helpers::pretty_number($this->_fleet->resource_deuterium));
 
-		$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 15, _getText('sys_expe_report'), $Message);
+		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 15, _getText('sys_expe_report'), $Message);
 
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

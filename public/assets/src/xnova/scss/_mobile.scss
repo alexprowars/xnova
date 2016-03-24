@@ -9,9 +9,6 @@
 		left: 5px;
 		top: 5px;
 		transition: all ease-out 0.2s;
-		-moz-transition: all ease-out 0.2s;
-		-ms-transition: all ease-out 0.2s;
-		-webkit-transition: all ease-out 0.2s;
 		z-index: 200;
 	}
 
@@ -27,16 +24,10 @@
 		left: 0;
 		background-color: #ffffff;
 		transition: all ease-out 0.2s;
-		-moz-transition: all ease-out 0.2s;
-		-ms-transition: all ease-out 0.2s;
-		-webkit-transition: all ease-out 0.2s;
 	}
 
 	.planet-toggle > span{left: auto;right: 12px;}
 	.planet-toggle:before{
-		-moz-transition: all ease-out 0.2s;
-		-webkit-transition: all ease-out 0.2s;
-		-ms-transition: all ease-out 0.2s;
 		transition: all ease-out 0.2s;
 		content: '';
 		position: absolute;
@@ -62,18 +53,11 @@
 	.menu-toggle.act span.first,
 	.planet-toggle.act span.first{
 		top: 2px;
-		-moz-transform: rotate(45deg);
-		-ms-transform: rotate(45deg);
-		-webkit-transform: rotate(45deg);
-		-o-transform: rotate(45deg);
 		transform: rotate(45deg);
 	}
 	.menu-toggle.act span.third,
 	.planet-toggle.act span.third{
 		top: 2px;
-		-moz-transform: rotate(-45deg);
-		-ms-transform: rotate(-45deg);
-		-webkit-transform: rotate(-45deg);
 		transform: rotate(-45deg);
 	}
 	.menu-toggle.act span.first,
@@ -83,14 +67,10 @@
 
 	.menu-toggle1.act {
 		transform: translate(190px,0);
-		-moz-transform: translate(190px,0);
-		-webkit-transform: translate(190px,0);
 	}
 
 	.planet-toggle1.act {
 		transform: translate(-190px,0);
-		-moz-transform: translate(-190px,0);
-		-webkit-transform: translate(-190px,0);
 	}
 
 	.menu-sidebar, .planet-sidebar{
@@ -102,7 +82,6 @@
 		left: 0;
 		z-index: 190;
 		transform: translate(-250px,0);
-		-webkit-transform: translate(-250px,0);
 		transition: all ease-out 0.2s;
 		padding-top: 60px;
 		display: none;
@@ -110,16 +89,12 @@
 
 	.menu-sidebar.opened, .planet-sidebar.opened{
 		transform: translate(0,0);
-		-webkit-transform: translate(0,0);
-		-moz-transform: translate(0,0);
 	}
 
 	.planet-sidebar {
 		right: 0;
 		left: auto;
 		transform: translate(251px,0);
-		-webkit-transform: translate(251px,0);
-		-moz-transform: translate(251px,0);
 	}
 
 	.menu-sidebar .nav {
@@ -286,10 +261,10 @@
 	}
 }
 
-@media only screen and (max-width: 359px)
+@media only screen and (max-width: 361px)
 {
 	.bar .m1 {
-		padding: 0 10px;
+		padding: 0 15px;
 		white-space: nowrap;
 	}
 

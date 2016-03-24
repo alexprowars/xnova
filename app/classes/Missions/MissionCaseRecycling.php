@@ -9,6 +9,7 @@ namespace App\Missions;
 
 use App\FleetEngine;
 use App\Helpers;
+use App\Models\User;
 
 class MissionCaseRecycling extends FleetEngine implements Mission
 {
@@ -84,7 +85,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 						Helpers::pretty_number($RecycledGoods["crystal"]), _getText('Crystal'),
 						$this->_fleet->getTargetAdressLink());
 
-		$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 4, _getText('sys_mess_spy_control'), $Message);
+		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 4, _getText('sys_mess_spy_control'), $Message);
 	}
 
 	public function EndStayEvent()

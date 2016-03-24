@@ -10,6 +10,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Lang;
 use App\Models\Message;
+use App\Models\User;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 
 class MessagesController extends ApplicationController
@@ -95,7 +96,7 @@ class MessagesController extends ApplicationController
 				$Message = preg_replace('/[ ]+/',' ', $Message);
 				$Message = strtr($Message, _getText('stopwords'));
 
-				$this->game->sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
+				User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
 			}
 		}
 
@@ -147,7 +148,7 @@ class MessagesController extends ApplicationController
 
 			while ($cc = $c->fetch())
 			{
-				$this->game->sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text);
+				User::sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text);
 			}
 
 			$this->flashSession->message('alert', 'Жалоба отправлена администрации игры');

@@ -10,6 +10,7 @@ namespace App\Controllers\Fleet;
 use App\Controllers\FleetController;
 use App\Lang;
 use App\Models\Fleet;
+use App\Models\User;
 
 class Verband
 {
@@ -111,7 +112,7 @@ class Verband
 
 				$message = "Игрок " . $controller->user->username . " приглашает вас произвести совместное нападение на планету " . $planet_daten['name'] . " [" . $aks['galaxy'] . ":" . $aks['system'] . ":" . $aks['planet'] . "] игрока " . $owner['username'] . ". Имя ассоциации: " . $aks['name'] . ". Если вы отказываетесь, то просто проигнорируйте данной сообщение.";
 
-				$controller->game->sendMessage($user_data['id'], false, 0, 0, 'Флот', $message);
+				User::sendMessage($user_data['id'], false, 0, 0, 'Флот', $message);
 			}
 			elseif ($action == "changename")
 			{

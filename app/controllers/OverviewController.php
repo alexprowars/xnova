@@ -583,7 +583,7 @@ class OverviewController extends ApplicationController
 
 				foreach ($BuildQueue AS $CurrBuild)
 				{
-					$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . ($CurrBuild['l']) . ')'];
+					$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['d'] == 0 ? $CurrBuild['l'] - 1 : $CurrBuild['l'] + 1) . ' -> ' . ($CurrBuild['l']) . ')'];
 				}
 			}
 

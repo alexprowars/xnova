@@ -9,6 +9,7 @@ namespace App\Controllers;
 
 use App\Helpers;
 use App\Lang;
+use App\Models\User;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
@@ -165,7 +166,7 @@ class ApplicationController extends Controller
 				if (DEBUG)
 					$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
-				$css->addCss('/assets/lib/bootstrap/bootstrap.min.css');
+				$css->addCss('/assets/lib/bootstrap/bootstrap.css');
 				$css->addCss('/assets/css/jquery.toast.min.css');
 				$css->addCss('/assets/css/style.css');
 
@@ -176,6 +177,7 @@ class ApplicationController extends Controller
 				$js->addJs('/assets/js/ed.js');
 				$js->addJs('/assets/js/jquery.touchSwipe.min.js');
 				$js->addJs('/assets/js/jquery.toast.min.js');
+				$js->addJs('/assets/js/jquery.mousewheel.min.js');
 			}
 
 			if ($this->request->isAjax())
@@ -302,7 +304,7 @@ class ApplicationController extends Controller
 				'-xpminier' 	=> $indNextXp
 			]);
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый промышленный уровень</a>');
+			User::sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый промышленный уровень</a>');
 
 			$this->user->lvl_minier += 1;
 			$this->user->xpminier 	-= $indNextXp;
@@ -319,7 +321,7 @@ class ApplicationController extends Controller
 				'-xpraid' 	=> $warNextXp
 			]);
 
-			$this->game->sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый военный уровень</a>');
+			User::sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый военный уровень</a>');
 
 			$this->user->lvl_raid 	+= 1;
 			$this->user->xpraid 	-= $warNextXp;

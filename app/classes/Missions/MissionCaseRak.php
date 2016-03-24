@@ -8,6 +8,7 @@ namespace App\Missions;
  */
 
 use App\FleetEngine;
+use App\Models\User;
 
 class MissionCaseRak extends FleetEngine implements Mission
 {
@@ -94,7 +95,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 			if (empty($message))
 				$message = "Нет обороны для разрушения!";
 
-			$this->game->sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 3, 'Ракетная атака', $message);
+			User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 3, 'Ракетная атака', $message);
 		}
 	}
 

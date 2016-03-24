@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Models\User;
 
 class Support
 {
@@ -31,7 +32,7 @@ class Support
 
 						$controller->db->query("UPDATE game_support SET text = '".addslashes($newtext)."',status = '2' WHERE id = '".$ID."'");
 
-						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Поступил ответ на тикет №' . $ID);
+						User::sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Поступил ответ на тикет №' . $ID);
 					}
 
 					break;
@@ -46,7 +47,7 @@ class Support
 
 						$controller->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $ID . "'");
 
-						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Был открыт тикет №' . $ID);
+						User::sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Был открыт тикет №' . $ID);
 					}
 
 					break;
@@ -61,7 +62,7 @@ class Support
 
 						$controller->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $ID . "'");
 
-						$controller->game->sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Тикет №'.$ID.' закрыт');
+						User::sendMessage($ticket['player_id'], false, time(), 4, $controller->user->username, 'Тикет №'.$ID.' закрыт');
 					}
 
 					break;

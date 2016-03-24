@@ -8,6 +8,7 @@ namespace App\Models;
  */
 
 use App\Galaxy;
+use Phalcon\Di;
 use Phalcon\Mvc\Model;
 
 /**
@@ -546,5 +547,45 @@ class User extends Model
 	public function saveData ($fields, $userId = 0)
 	{
 		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
+	}
+
+	public static function sendMessage ($owner, $sender, $time, $type, $from, $message)
+	{
+		if (!$time)
+			$time = time();
+
+		$di = Di::getDefault();
+
+		$user = $di->has('user') ? $di->getShared('user') : false;
+
+		if (!$owner && $user)
+			$owner = $user->id;
+
+		if (!$owner)
+			return false;
+
+		if ($sender === false && $user)
+			$sender = $user->id;
+
+		if ($user && $owner == $user->getId())
+			$user->messages++;
+
+		$obj = new Message;
+
+		$obj->owner = $owner;
+		$obj->sender = $sender;
+		$obj->time = $time;
+		$obj->type = $type;
+		$obj->from = addslashes($from);
+		$obj->text = addslashes($message);
+
+		if ($obj->create())
+		{
+			$di->getShared('db')->updateAsDict('game_users', ['+messages' => 1], ['conditions' => 'id = ?', 'bind' => [$owner]]);
+
+			return true;
+		}
+
+		return false;
 	}
 }

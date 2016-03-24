@@ -213,7 +213,7 @@ class Helpers
 		if ($page == 0 || $page > $pages_count)
 			$page = 1;
 
-		$pages = '<ul class="pagination pagination-sm">';
+		$pages = '<div class="pagination pagination-sm">';
 		$end = 0;
 
 		if ($pages_count > 1)
@@ -225,23 +225,23 @@ class Helpers
 					$end = 0;
 
 					if ($i == $page)
-						$pages .= "<li class=\"active\"><a href=\"" . $link . "&p=" . $i . "\">" . $i . "</a></li>";
+						$pages .= '<div class="page-item active"><a href="' . $link . '&p=' . $i . '" class="page-link">' . $i . '</a></div>';
 					else
-						$pages .= "<li><a href=\"" . $link . "&p=" . $i . "\">" . $i . "</a></li>";
+						$pages .= '<div class="page-item"><a href="' . $link . '&p=' . $i . '" class="page-link">' . $i . '</a></div>';
 				}
 				else
 				{
 					if ($end == 0)
-						$pages .= '<li><a href="javascript:;">... | </a></li>';
+						$pages .= '<div class="page-item"><a href="javascript:;" class="page-link">... | </a></div>';
 
 					$end = 1;
 				}
 			}
 		}
 		else
-			$pages .= '<li><a href="javascript:;">1</a></li>';
+			$pages .= '<div class="page-item"><a href="javascript:;" class="page-link">1</a></div>';
 
-		$pages .= '</ul>';
+		$pages .= '</div>';
 
 		return $pages;
 	}

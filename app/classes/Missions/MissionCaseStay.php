@@ -9,6 +9,7 @@ namespace App\Missions;
 
 use App\FleetEngine;
 use App\Helpers;
+use App\Models\User;
 
 class MissionCaseStay extends FleetEngine implements Mission
 {
@@ -41,7 +42,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 			if ($TargetAddedGoods != '')
 				$TargetMessage .= '<br>'.trim(substr($TargetAddedGoods, 1));
 
-			$this->game->sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_qg'), $TargetMessage);
 		}
 	}
 
@@ -72,7 +73,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 
 			$TargetMessage = _getText('sys_stay_mess_back') . $this->_fleet->getTargetAdressLink() . _getText('sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
 
-			$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 5, _getText('sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 5, _getText('sys_mess_qg'), $TargetMessage);
 		}
 	}
 }

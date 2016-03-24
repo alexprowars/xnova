@@ -8,6 +8,7 @@ namespace App\Missions;
  */
 
 use App\FleetEngine;
+use App\Models\User;
 
 class MissionCaseTransport extends FleetEngine implements Mission
 {
@@ -21,7 +22,7 @@ class MissionCaseTransport extends FleetEngine implements Mission
 					$this->_fleet->resource_crystal, _getText('Crystal'),
 					$this->_fleet->resource_deuterium, _getText('Deuterium'));
 
-		$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_tower'), $Message);
+		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_tower'), $Message);
 
 		if ($this->_fleet->target_owner != $this->_fleet->owner)
 		{
@@ -32,7 +33,7 @@ class MissionCaseTransport extends FleetEngine implements Mission
 						$this->_fleet->resource_crystal, _getText('Crystal'),
 						$this->_fleet->resource_deuterium, _getText('Deuterium'));
 
-			$this->game->sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_tower'), $Message);
+			User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, _getText('sys_mess_tower'), $Message);
 		}
 
 		$this->ReturnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);

@@ -3,15 +3,19 @@
  * @var $parse array
  */
 ?>
-<? if ((($parse['mount'] - 3) * 75 + 100 + 350) > 720 && !\App\Helpers::allowMobileVersion()): ?>
+<? if (!\App\Helpers::allowMobileVersion()): ?>
 	<script type="application/javascript">
 		$(document).ready(function()
 		{
-			$('body.window .game_content').css('width', <?=(($parse['mount'] - 3) * 75 + 100 + 350 + 250) ?>);
+			$("#imperium").mousewheel(function(event, delta)
+			{
+			      this.scrollLeft -= (delta * 30);
+			      event.preventDefault();
+			 });
 		});
 	</script>
 <? endif; ?>
-<div class="table-responsive">
+<div class="table-responsive" id="imperium">
 	<table class="table">
 		<tr valign="left">
 			<td class="c" colspan="<?=$parse['mount'] ?>"><?=_getText('imperium_vision') ?></td>

@@ -112,42 +112,6 @@ class Game extends Component
 		$this->storage->reslist = $reslist;
 	}
 
-	public function sendMessage ($owner, $sender, $time, $type, $from, $message)
-	{
-		if (!$time)
-			$time = time();
-
-		if (!$owner && isset($this->auth) && $this->auth->isAuthorized())
-			$owner = $this->user->id;
-
-		if (!$owner)
-			return false;
-
-		if ($sender === false && $this->getDI()->has('user'))
-			$sender = $this->user->id;
-
-		if ($this->getDI()->has('user') && $owner == $this->user->getId())
-			$this->user->messages++;
-
-		$obj = new Message;
-
-		$obj->owner = $owner;
-		$obj->sender = $sender;
-		$obj->time = $time;
-		$obj->type = $type;
-		$obj->from = addslashes($from);
-		$obj->text = addslashes($message);
-
-		if ($obj->create())
-		{
-			$this->db->updateAsDict('game_users', ['+messages' => 1], ['conditions' => 'id = ?', 'bind' => [$owner]]);
-
-			return true;
-		}
-
-		return false;
-	}
-
 	public function checkSaveState ()
 	{
 		return (!($this->request->get('ep', null, '') == 'dontsavestate'));

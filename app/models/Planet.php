@@ -687,7 +687,7 @@ class Planet extends Model
 					}
 
 					if (isset($Message))
-						$this->game->sendMessage($this->user->id, 0, 0, 99, _getText('sys_buildlist'), $Message);
+						User::sendMessage($this->user->id, 0, 0, 99, _getText('sys_buildlist'), $Message);
 
 					array_shift($QueueArray);
 

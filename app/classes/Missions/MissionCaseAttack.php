@@ -548,7 +548,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		foreach ($UserList AS $info)
-			$this->game->sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport2);
+			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport2);
 
 		$UserList = [];
 
@@ -559,7 +559,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		foreach ($UserList AS $info)
-			$this->game->sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport);
+			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport);
 
 		$this->db->insertAsDict('game_log_attack',
 		[

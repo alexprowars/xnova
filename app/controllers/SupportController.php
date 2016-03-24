@@ -8,6 +8,7 @@ namespace App\Controllers;
  */
 
 use App\Helpers;
+use App\Models\User;
 use App\Sms;
 
 class SupportController extends ApplicationController
@@ -49,7 +50,7 @@ class SupportController extends ApplicationController
 
 				$this->db->query("UPDATE game_support SET text = '" . addslashes($text) . "', status = '3' WHERE id = '" . $TicketID . "';");
 
-				$this->game->sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
+				User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
 
 				$this->message('Задача обновлена', 'Успех', '/support/', 3);
 

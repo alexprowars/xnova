@@ -9,6 +9,7 @@ namespace App\Missions;
 
 use App\FleetEngine;
 use App\Galaxy;
+use App\Models\User;
 
 class MissionCaseCreateBase extends FleetEngine implements Mission
 {
@@ -32,7 +33,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 			{
 				$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_colo_maxcolo') . $iMaxBase . _getText('sys_base_planet');
 
-				$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
+				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 
 				$this->ReturnFleet();
 			}
@@ -46,7 +47,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 				{
 					$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_base_allisok');
 
-					$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 
 					$NewFleet = "";
 
@@ -74,7 +75,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 
 					$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_base_badpos');
 
-					$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 				}
 			}
 		}
@@ -84,7 +85,7 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 
 			$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_base_notfree');
 
-			$this->game->sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 0, _getText('sys_base_mess_from'), $TheMessage);
+			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 		}
 	}
 

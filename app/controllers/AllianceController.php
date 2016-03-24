@@ -12,6 +12,7 @@ use App\Lang;
 use App\Models\Alliance;
 use App\Models\AllianceMember;
 use App\Models\Planet;
+use App\Models\User;
 
 class AllianceController extends ApplicationController
 {
@@ -388,7 +389,7 @@ class AllianceController extends ApplicationController
 							$this->db->execute("UPDATE game_alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
 							$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
 
-							$this->game->sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
+							User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
 							return $this->response->redirect("alliance/members/");
 						}
@@ -401,7 +402,7 @@ class AllianceController extends ApplicationController
 
 					$this->db->delete('game_alliance_requests', "u_id = ? AND a_id = ?", [$show, $this->ally->id]);
 
-					$this->game->sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
+					User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
 				}
 			}
 

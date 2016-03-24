@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Models\User;
 
 class MessageToAll
 {
@@ -38,7 +39,7 @@ class MessageToAll
 
 				while ($u = $sq->fetch())
 				{
-					$controller->game->sendMessage($u['id'], false, $Time, 1, $From, $Message);
+					User::sendMessage($u['id'], false, $Time, 1, $From, $Message);
 				}
 
 				$controller->message("<font color=\"lime\">Сообщение успешно отправлено всем игрокам!</font>", "Выполнено", "?set=admin&mode=messall", 3);
