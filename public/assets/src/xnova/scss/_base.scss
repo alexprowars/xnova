@@ -112,7 +112,7 @@ td.a {
 	color: #ffffff;
 }
 
-td.b {
+td.b, div.b {
 	padding: 3px 3px 3px 3px;
 	border: 1px solid #415683;
 	color: #ebebeb;
@@ -1682,5 +1682,9 @@ div.table > div.th {
 }
 
 .table {
-  margin-bottom: 0;
+	margin-bottom: 0;
+}
+
+.table .table {
+	background: transparent;
 }
