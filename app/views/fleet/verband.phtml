@@ -114,6 +114,15 @@
 									</select>
 									<br><br>
 								<? endif; ?>
+								<? if (count($parse['alliance'])): ?>
+									Члены альянса:<br>
+									<select name="userid" size="5" style="width:50%;" title="">
+										<? foreach ($parse['alliance'] as $user): ?>
+											<option value="<?=$user['id'] ?>"><?=$user['username'] ?></option>
+										<? endforeach; ?>
+									</select>
+									<br><br>
+								<? endif; ?>
 								<input type="text" name="addtogroup" size="40" placeholder="Введите игровой ник" />
 								<br>
 								<input type="submit" value="OK" />

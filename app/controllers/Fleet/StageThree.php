@@ -192,7 +192,7 @@ class StageThree
 			else
 				$NoobNoActive = 0;
 
-			if (isset($TargetPlanet['id_owner']) && ($fleetmission == 1 || $fleetmission == 2 || $fleetmission == 5 || $fleetmission == 6 || $fleetmission == 9) && $protection && !$NoobNoActive && $HeGameLevel < ($protectiontime * 1000))
+			if (isset($TargetPlanet['id_owner']) && in_array($fleetmission, [1, 2, 5, 6, 9]) && $protection && !$NoobNoActive && $HeGameLevel < ($protectiontime * 1000))
 			{
 				if ($MyGameLevel > ($HeGameLevel * $protectionmulti))
 					$controller->message("<span class=\"success\"><b>Игрок находится под защитой новичков!</b></span>", 'Защита новичков', "/fleet/", 2);

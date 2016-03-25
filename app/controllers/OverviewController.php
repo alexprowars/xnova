@@ -724,7 +724,7 @@ class OverviewController extends ApplicationController
 		}
 
 		if ($showMessage)
-			$this->view->setVar('globalMessage', '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "Сырьё" и восстановите производство.</span>');
+			$this->view->setVar('globalMessage', '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="'.$this->url->get('resources/').'">Сырьё</a>" и восстановите производство.</span>');
 
 		$this->view->setVar('parse', $parse);
 		$this->tag->setTitle('Обзор');
