@@ -30,12 +30,12 @@
 		<input type="hidden" name="speed<?=$ship['id'] ?>" value="<?=$ship['speed'] ?>" />
 		<input type="hidden" name="capacity<?=$ship['id'] ?>" value="<?=$ship['capacity'] ?>" />
 	<? endforeach; ?>
-	<table class='table'>
-		<tr align="left">
-			<td class="c" colspan="2"><?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?> - <?=_getText('type_planet', $parse['planettype']) ?></td>
-		</tr>
-		<tr align="left" valign="top">
-			<th class="col-xs-6">
+	<div class="table">
+		<div class="row">
+			<div class="c col-xs-12"><?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?> - <?=_getText('type_planet', $parse['planettype']) ?></div>
+		</div>
+		<div class="row">
+			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
 						<td class="c" colspan="2"><?=_getText('fl_mission') ?></td>
@@ -60,8 +60,8 @@
 						<th>Время прилёта: <span id='end_time'>00:00:00</span></th>
 					</tr>
 				</table>
-			</th>
-			<th class="col-xs-6">
+			</div>
+			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
 						<td colspan="3" class="c"><?=_getText('fl_ressources') ?></td>
@@ -141,14 +141,14 @@
 						</tr>
 					<? endif; ?>
 				</table>
-			</th>
-		</tr>
+			</div>
+		</div>
 		<? if (count($parse['missions'])): ?>
-			<tr>
-				<th colspan="2"><input accesskey="z" value="<?=_getText('fl_continue') ?>" type="submit"></th>
-			</tr>
+			<div class="row">
+				<div class="th col-xs-12"><input accesskey="z" value="<?=_getText('fl_continue') ?>" type="submit"></div>
+			</div>
 		<? endif; ?>
-	</table>
+	</div>
 </form>
 <script type="text/javascript">
 
