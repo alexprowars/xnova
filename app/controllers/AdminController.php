@@ -23,6 +23,9 @@ class AdminController extends ApplicationController
 	{
 		parent::initialize();
 		
+		if ($this->dispatcher->wasForwarded())
+			return;
+		
 		Lang::includeLang('admin');
 
 		$result = $this->db->query("SELECT m.id, m.alias, m.name, r.right_id FROM game_cms_modules m LEFT JOIN game_cms_rights r ON r.module_id = m.id AND r.group_id = ".$this->user->group_id." AND right_id != '0' WHERE m.is_admin = '1' AND m.active = '1'");

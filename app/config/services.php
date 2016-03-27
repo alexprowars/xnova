@@ -67,6 +67,8 @@ $di->setShared(
 					if (isset($a['file']))
 						$logger->log("".(isset($a['class']) ? $a['class'] : '').'::'.$a['function'].''.(isset($a['line']) ? ' in file '.$a['file'].' on line '.$a['line'].'' : ''), Logger::DEBUG);
 				}
+
+				$logger->log("\n", Logger::INFO);
 			}
 		});
 

@@ -53,7 +53,7 @@ class ApplicationController extends Controller
 		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
 
 		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
-			$this->response->redirect($this->game->getRequestData()['redirect']);
+			return $this->response->redirect($this->game->getRequestData()['redirect']);
 
 		if ($this->auth->isAuthorized())
 		{
@@ -74,7 +74,7 @@ class ApplicationController extends Controller
 
 			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
 
-			if ($planetsList === NULL)
+			if ($planetsList === null)
 			{
 				$planetsList = $this->user->getUserPlanets($this->user->getId());
 
@@ -89,6 +89,8 @@ class ApplicationController extends Controller
 		}
 
 		$this->tag->appendTitle($this->config->app->name);
+
+		return true;
 	}
 
 	public function initialize()
@@ -266,10 +268,9 @@ class ApplicationController extends Controller
 			$controller = $this->dispatcher->getControllerName();
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start' && $controller != 'error')
-				$this->dispatcher->forward(['controller' => 'start']);
-
-			if ($controller == 'index')
-				$this->dispatcher->forward(['controller' => 'overview']);
+				$this->dispatcher->forward(['controller' => 'start', 'action' => 'index']);
+			elseif ($controller == 'index')
+				$this->dispatcher->forward(['controller' => 'overview', 'action' => 'index']);
 		}
 		else
 		{

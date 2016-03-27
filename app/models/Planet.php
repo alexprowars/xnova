@@ -140,6 +140,11 @@ class Planet extends Model
 		return DB_PREFIX."planets";
 	}
 
+	public function afterUpdate ()
+	{
+		$this->setSnapshotData($this->toArray());
+	}
+
 	/**
 	 * @param $galaxy
 	 * @param $system

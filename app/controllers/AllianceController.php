@@ -24,6 +24,9 @@ class AllianceController extends ApplicationController
 	public function initialize ()
 	{
 		parent::initialize();
+		
+		if ($this->dispatcher->wasForwarded())
+			return;
 
 		Lang::includeLang('alliance');
 	}
@@ -495,7 +498,7 @@ class AllianceController extends ApplicationController
 
 			$this->ally->deleteAlly();
 
-			$this->response->redirect('alliance/');
+			return $this->response->redirect('alliance/');
 		}
 		elseif ($edit == 'give')
 		{
@@ -512,7 +515,7 @@ class AllianceController extends ApplicationController
 				$this->db->query("UPDATE game_alliance SET owner = '" . $info['id'] . "' WHERE id = " . $this->user->ally_id . " ");
 				$this->db->query("UPDATE game_alliance_members SET rank = '0' WHERE u_id = '" . $info['id'] . "';");
 
-				$this->response->redirect('alliance/');
+				return $this->response->redirect('alliance/');
 			}
 
 			$listuser = $this->db->query("SELECT u.username, u.id, m.rank FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $this->ally->owner . " AND m.rank != 0;");
@@ -571,7 +574,7 @@ class AllianceController extends ApplicationController
 			$this->membersAction();
 		}
 		else
-			$this->response->redirect('alliance/');
+			return $this->response->redirect('alliance/');
 
 		return true;
 	}

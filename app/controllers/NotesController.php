@@ -15,6 +15,9 @@ class NotesController extends ApplicationController
 	{
 		parent::initialize();
 		
+		if ($this->dispatcher->wasForwarded())
+			return;
+		
 		Lang::includeLang('notes');
 	}
 

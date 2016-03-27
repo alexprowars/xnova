@@ -20,6 +20,9 @@ class BuildingsController extends ApplicationController
 	public function initialize ()
 	{
 		parent::initialize();
+		
+		if ($this->dispatcher->wasForwarded())
+			return;
 
 		Lang::includeLang('buildings');
 

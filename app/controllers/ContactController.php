@@ -14,12 +14,12 @@ class ContactController extends ApplicationController
 	public function initialize ()
 	{
 		parent::initialize();
-
-		Lang::includeLang('contact');
 	}
 
 	function indexAction ()
 	{
+		Lang::includeLang('contact');
+
 		$contacts = [];
 
 		$GameOps = $this->db->query("SELECT u.id, u.username, ui.email, u.authlevel, ui.about FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");

@@ -34,7 +34,7 @@ class Modules
 							'name' 		=> Helpers::CheckString($controller->request->getPost('name', 'string', ''))
 						]);
 
-						$controller->response->redirect('admin/modules/action/edit/id/'.$controller->db->lastInsertId().'/');
+						return $controller->response->redirect('admin/modules/action/edit/id/'.$controller->db->lastInsertId().'/');
 					}
 				}
 
@@ -65,7 +65,7 @@ class Modules
 								'name' 		=> Helpers::CheckString($controller->request->getPost('name', 'string', ''))
 							], "id = ".$info['id']);
 
-							$controller->response->redirect('admin/modules/action/edit/id/'.$info['id'].'/');
+							return $controller->response->redirect('admin/modules/action/edit/id/'.$info['id'].'/');
 						}
 					}
 
@@ -85,6 +85,8 @@ class Modules
 
 		$controller->view->setVar('error', $error);
 		$controller->tag->setTitle('Настройка модулей');
+		
+		return true;
 	}
 }
 

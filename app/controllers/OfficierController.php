@@ -16,6 +16,9 @@ class OfficierController extends ApplicationController
 	{
 		parent::initialize();
 		
+		if ($this->dispatcher->wasForwarded())
+			return;
+		
 		if ($this->user->vacation > 0)
 			$this->message("Нет доступа!");
 

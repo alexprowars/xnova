@@ -69,7 +69,7 @@ class Groups
 								}
 							}
 
-							$controller->response->redirect('admin/groups/action/edit/id/'.$info['id'].'/');
+							return $controller->response->redirect('admin/groups/action/edit/id/'.$info['id'].'/');
 						}
 					}
 
@@ -97,6 +97,8 @@ class Groups
 
 		$controller->view->setVar('error', $error);
 		$controller->tag->setTitle('Группы пользователей');
+		
+		return true;
 	}
 }
 

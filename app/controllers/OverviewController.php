@@ -21,6 +21,9 @@ class OverviewController extends ApplicationController
 	{
 		parent::initialize();
 
+		if ($this->dispatcher->wasForwarded())
+			return;
+
 		Lang::includeLang('overview');
 
 		$this->user->loadPlanet();

@@ -17,7 +17,7 @@ class IndexController extends ApplicationController
 	public function initialize()
 	{
 		if ($this->auth->isAuthorized())
-			$this->response->redirect('overview/');
+			return $this->response->redirect('overview/');
 
 		parent::initialize();
 
@@ -29,6 +29,8 @@ class IndexController extends ApplicationController
 			$css = $this->assets->collection('css');
 			$css->addCss('/assets/css/login.css');
 		}
+
+		return true;
 	}
 
 	public function indexAction ()

@@ -19,10 +19,10 @@ class StatController extends ApplicationController
 
 	public function initialize ()
 	{
+		parent::initialize();
+		
 		if ($this->dispatcher->wasForwarded())
 			return;
-
-		parent::initialize();
 
 		Lang::includeLang('stat');
 

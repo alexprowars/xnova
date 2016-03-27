@@ -159,6 +159,11 @@ class User extends Model
 		return DB_PREFIX."users";
 	}
 
+	public function afterUpdate ()
+	{
+		$this->setSnapshotData($this->toArray());
+	}
+
 	public function afterFetch()
 	{
 		$bonusArrays = [

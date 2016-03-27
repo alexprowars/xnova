@@ -15,6 +15,9 @@ class MerchantController extends ApplicationController
 	{
 		parent::initialize();
 		
+		if ($this->dispatcher->wasForwarded())
+			return;
+		
 		Lang::includeLang('marchand');
 
 		$this->user->loadPlanet();

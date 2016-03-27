@@ -23,6 +23,9 @@ class FleetController extends ApplicationController
 	{
 		parent::initialize();
 		
+		if ($this->dispatcher->wasForwarded())
+			return;
+		
 		$this->user->loadPlanet();
 
 		// Устанавливаем обновлённые двигателя кораблей

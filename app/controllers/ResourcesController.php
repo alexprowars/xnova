@@ -15,6 +15,9 @@ class ResourcesController extends ApplicationController
 	public function initialize ()
 	{
 		parent::initialize();
+		
+		if ($this->dispatcher->wasForwarded())
+			return;
 
 		$this->user->loadPlanet();
 	}
