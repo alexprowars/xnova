@@ -46,7 +46,8 @@ class XnsimController extends ApplicationController
 	public function reportAction ()
 	{
 		$css = $this->assets->collection('css');
-		$css->addCss('/assets/css/report.css');
+		$css->addCss('/assets/css/bootstrap.css');
+		$css->addCss('/assets/css/style.css');
 
 		if ($this->request->hasQuery('sid'))
 		{

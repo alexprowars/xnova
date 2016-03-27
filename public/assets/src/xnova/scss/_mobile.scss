@@ -97,39 +97,41 @@
 		transform: translate(251px,0);
 	}
 
-	.menu-sidebar .nav {
-		background: inherit;
-		overflow: scroll;
-		overflow-x: hidden;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-		width: 100%;
-		height: 100%;
-		padding: 0;
-		margin: 0;
-		top: 0;
-		left: 100%;
-		z-index: 0;
-	}
+	.menu-sidebar {
+		.nav {
+			background: inherit;
+			overflow: scroll;
+			overflow-x: hidden;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+			width: 100%;
+			height: 100%;
+			padding: 0;
+			margin: 0;
+			top: 0;
+			left: 100%;
+			z-index: 0;
 
-	.menu-sidebar .nav li {
-		list-style: none;
-		display: block;
-		padding: 0;
-		margin: 0;
-		border-bottom: 1px solid #324a6a;
-	}
+			li {
+				list-style: none;
+				display: block;
+				padding: 0;
+				margin: 0;
+				border-bottom: 1px solid #324a6a;
+			}
 
-	.menu-sidebar .nav a {
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-		display: block;
-		padding: 8px 10px 8px 20px;
-		margin: 0;
-		position: relative;
-		color: #ffffff;
-		font-size: 15px;
+			a {
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				display: block;
+				padding: 8px 10px 8px 20px;
+				margin: 0;
+				position: relative;
+				color: #ffffff;
+				font-size: 15px;
+			}
+		}
 	}
 
 	.planet-sidebar {
@@ -153,10 +155,6 @@
 		max-width: 160px;
 	}
 
-	.message_list {
-
-	}
-
 	.game_menu {
 		margin-left: 60px;
 		margin-right: 60px;
@@ -168,27 +166,26 @@
 		margin-top: 15px;
 		width: 100%;
 		text-align: center;
-	}
 
-	.icon-panel a {
-		margin-right: 4%;
+		a {
+			margin-right: 4%;
+		}
 	}
 
 	.shoutbox {
 		width: 100%;
 		margin: 0;
-	}
 
-	.shoutbox img {
-		max-width: 100%;
+		img {
+			max-width: 100%;
+		}
 	}
 
 	.smiles {
 		width: 100%;
 	}
 
-	body
-	{
+	body {
 		font-size: 12px;
 	}
 
@@ -200,12 +197,14 @@
 		font-size: 14px;
 	}
 
-	.buildings .actions {
-		padding: 5px;
-	}
+	.buildings {
+		.actions {
+			padding: 5px;
+		}
 
-	.buildings .title {
-		padding: 5px;
+		.title {
+			padding: 5px;
+		}
 	}
 
 	td.c, table th, .table th, td.k {
@@ -217,17 +216,17 @@
 		color: #848484;
 		font: normal 10px Verdana, Arial, Helvetica, sans-serif;
 		margin: 0;
-	}
 
-	.footer-mobile > div {
-		padding: 5px;
-	}
+		> div {
+			padding: 5px;
+		}
 
-	.footer-mobile a {
-		color: #9d9d9d;
-		margin: 0 5px;
-		text-decoration: none;
-		font-weight: normal;
+		a {
+			color: #9d9d9d;
+			margin: 0 5px;
+			text-decoration: none;
+			font-weight: normal;
+		}
 	}
 
 	.contentBox {
@@ -246,13 +245,15 @@
 		white-space: normal !important;
 	}
 
-	#box .game_content {
-		width: 100%;
-		padding: 0;
-	}
+	#box {
+		.game_content {
+			width: 100%;
+			padding: 0;
+		}
 
-	#box .game_menu {
-		width: auto;
+		.game_menu {
+			width: auto;
+		}
 	}
 
 	.bar .m1 {

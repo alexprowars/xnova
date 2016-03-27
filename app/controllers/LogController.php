@@ -146,7 +146,8 @@ class LogController extends ApplicationController
 				else
 				{
 					$html = "<html><head><title>" . stripslashes($raportrow["title"]) . "</title>";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
 					$html .= "</head><body>";
 					$html .= "<table width=\"99%\"><tr><td>";
 
@@ -174,7 +175,8 @@ class LogController extends ApplicationController
 					$this->message('Запрашиваемого лога не существует в базе данных');
 				else
 				{
-					$html = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";
+					$html = "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
 					$html .= "</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>";
 
 					echo $html;

@@ -61,10 +61,11 @@ class RwController extends ApplicationController
 				$result = json_decode($raportrow['raport'], true);
 
 				$Page = "<html><head><title>Боевой доклад</title>";
-				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/report.css\">";
+				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
+				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
 				$Page .= "</head><body>";
-				$Page .= "<table width=\"99%\"><tr><td><center>";
+				$Page .= "<table width=\"99%\"><tr><td>";
 		
 				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
 				{
@@ -78,7 +79,7 @@ class RwController extends ApplicationController
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "</center></td></tr><tr align=center><td>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
+				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
 				$Page .= "</table></body></html>";
 		
 				echo $Page;

@@ -79,7 +79,7 @@ class CombatReport extends Component
 			}
 		}
 
-		$html = "<center>";
+		$html = "<div class='report'>";
 		$bbc = "";
 
 		$html .= "В " . $this->game->datezone("d-m-Y H:i:s", $this->result_array['time']) . " произошёл бой между следующими флотами:<div class='separator'></div><table align='center'><tr>";
@@ -93,7 +93,7 @@ class CombatReport extends Component
 				if (in_array($info['username'], $checkName))
 					continue;
 
-				$html .= '<td><table class="info" align="center">
+				$html .= '<td><table class="report_user" align="center">
 							<tr><td class="c" colspan="3"><span class="negative">' . $info['username'] . '</span></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
@@ -116,7 +116,7 @@ class CombatReport extends Component
 				if (in_array($info['username'], $checkName))
 					continue;
 
-				$html .= '<td><table class="info" align="center">
+				$html .= '<td><table class="report_user" align="center">
 							<tr><td class="c" colspan="3"><span class="positive">' . $info['username'] . '</span></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
@@ -146,13 +146,13 @@ class CombatReport extends Component
 			$defenders = $data['defenders'];
 
 			if (!count($attackers))
-				$html .= '<div class="fleet"><div class="separator"></div><center>Атакующий флот уничтожен</center><div class="separator"></div></div>';
+				$html .= '<div class="report_fleet"><div class="separator"></div><center>Атакующий флот уничтожен</center><div class="separator"></div></div>';
 
 			foreach ($attackers as $fleet_id => $data2)
 			{
 				$user = $usersInfo[$fleet_id]['user_id'];
 
-				$html .= "<div class='fleet'>";
+				$html .= "<div class='report_fleet'>";
 				$html .= "<span class='negative'>Атакующий " . $this->attackUsers[$user]['username'] . " [" . $usersInfo[$fleet_id]['galaxy'] . ":" . $usersInfo[$fleet_id]['system'] . ":" . $usersInfo[$fleet_id]['planet'] . "]</span><div class='separator'></div>";
 				$html .= "<table border=1>";
 
@@ -215,14 +215,14 @@ class CombatReport extends Component
 
 			if (!count($defenders))
 			{
-				$html .= '<div class="fleet"><div class="separator"></div><center>Защитный флот уничтожен</center><div class="separator"></div></div>';
+				$html .= '<div class="report_fleet"><div class="separator"></div><center>Защитный флот уничтожен</center><div class="separator"></div></div>';
 			}
 
 			foreach ($defenders as $fleet_id => $data2)
 			{
 				$user = $usersInfo[$fleet_id]['user_id'];
 
-				$html .= "<div class='fleet'>";
+				$html .= "<div class='report_fleet'>";
 				$html .= "<span class='positive'>Защитник " .$this->defenseUsers[$user]['username'] . " [" . $usersInfo[$fleet_id]['galaxy'] . ":" . $usersInfo[$fleet_id]['system'] . ":" . $usersInfo[$fleet_id]['planet'] . "]</span><div class='separator'></div>";
 
 				$html .= "<table border=1 align=\"center\">";
@@ -299,7 +299,7 @@ class CombatReport extends Component
 			$result1 = "Бой закончился ничьёй!<br />";
 		}
 
-		$html .= "<br><br><table class='result'><tr><td class='c'>" . $result1 . "</td></tr>";
+		$html .= "<br><br><table class='report_result'><tr><td class='c'>" . $result1 . "</td></tr>";
 
 		$debirs_meta = ($this->result_array['debree']['att'][0] + $this->result_array['debree']['def'][0]);
 		$debirs_crys = ($this->result_array['debree']['att'][1] + $this->result_array['debree']['def'][1]);
@@ -317,7 +317,7 @@ class CombatReport extends Component
 		{
 			foreach ($this->repair as $data2)
 			{
-				$html .= "<div class='fleet'><span class='neutral'>Восстановленная оборона:</span><div class='separator'></div>";
+				$html .= "<div class='report_fleet'><span class='neutral'>Восстановленная оборона:</span><div class='separator'></div>";
 				$html .= "<table border=1 align=\"center\">";
 
 				$raport1 = "";
@@ -343,7 +343,7 @@ class CombatReport extends Component
 		$html .= '<br><br>';
 		$html .= '<a href="'.$this->convertReportToSimLink(Array($this->result_array, $this->attackUsers, $this->defenseUsers)).'" target="_blank">Симуляция</a>';
 
-		$html .= "</center><br>";
+		$html .= "</div>";
 
 		return array('html' => $html, 'bbc' => $bbc);
 	}

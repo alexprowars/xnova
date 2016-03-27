@@ -25,7 +25,7 @@ gulp.task('xnova-bootstrap', function ()
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
 		.pipe(uglifycss())
-    	.pipe(gulp.dest('../lib/bootstrap'));
+    	.pipe(gulp.dest('../css'));
 });
 
 gulp.task('default', ['xnova-sass', 'xnova-bootstrap']);

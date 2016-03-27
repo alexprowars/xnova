@@ -3,18 +3,6 @@
  * @var $parse array
  */
 ?>
-<? if (!\App\Helpers::allowMobileVersion()): ?>
-	<script type="application/javascript">
-		$(document).ready(function()
-		{
-			$("#imperium").mousewheel(function(event, delta)
-			{
-			      this.scrollLeft -= (delta * 30);
-			      event.preventDefault();
-			 });
-		});
-	</script>
-<? endif; ?>
 <div class="table-responsive" id="imperium">
 	<table class="table">
 		<tr valign="left">

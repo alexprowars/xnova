@@ -13,4 +13,5 @@ Thumbs.db
 *.phar
 
 public/assets/css/style.css
+public/assets/css/bootstrap.css
 .sass-cache/*

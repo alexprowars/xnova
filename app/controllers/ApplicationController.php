@@ -168,7 +168,7 @@ class ApplicationController extends Controller
 				if (DEBUG)
 					$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
-				$css->addCss('/assets/lib/bootstrap/bootstrap.css');
+				$css->addCss('/assets/css/bootstrap.css');
 				$css->addCss('/assets/css/jquery.toast.min.css');
 				$css->addCss('/assets/css/style.css');
 
