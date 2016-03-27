@@ -226,21 +226,21 @@
 		<div class="clearfix"></div>
 		<? if (isset($parse['build_list']) && is_array($parse['build_list']) && count($parse['build_list']) > 0): ?>
 			<div class="separator"></div>
-			<table class="table">
+			<div class="table">
 				<? foreach ($parse['build_list'] as $id => $list): ?>
-					<tr class="flight">
-						<th class="col-xs-4 col-sm-1" <?=($id > 0 ? 'style="border-top:0;"' : '')?>>
+					<div class="row flight">
+						<div class="th col-xs-4 col-sm-1" <?=($id > 0 ? 'style="border-top:0;"' : '')?>>
 							<div id="build<?=$id ?>" class="z"><?=($list[0] - time()) ?></div>
 							<script type="text/javascript">FlotenTime('build<?=$id ?>', <?=($list[0] - time()) ?>);</script>
 							<span class="positive hidden-sm-up"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
-						</th>
-						<th class="col-sm-11 col-xs-8 text-xs-left" style="<?=($id > 0 ? 'border-top:0;' : '')?>">
+						</div>
+						<div class="th col-sm-11 col-xs-8 text-xs-left" style="<?=($id > 0 ? 'border-top:0;' : '')?>">
 							<span class="pull-xs-left"><span class="flight owndeploy"><?=$list[1] ?></span></span>
 							<span class="positive pull-xs-right hidden-xs-down"><?=$this->game->datezone("d.m H:i:s", $list[0]) ?></span>
-						</th>
-					</tr>
+						</div>
+					</div>
 				<? endforeach; ?>
-			</table>
+			</div>
 		<? endif; ?>
 	</div>
 </div>

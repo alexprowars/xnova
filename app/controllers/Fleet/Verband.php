@@ -162,6 +162,19 @@ class Verband
 			while ($us = $query->fetch())
 				$parse['users'][] = $us['username'];
 
+			$parse['alliance'] = [];
+
+			if ($controller->user->ally_id > 0)
+			{
+				$alliances = $controller->db->query("SELECT id, username FROM game_users WHERE ally_id = ".$controller->user->ally_id." AND id != ".$controller->user->id."");
+
+				if ($alliances->numRows() > 0)
+				{
+					while ($user = $alliances->fetch())
+						$parse['alliance'][] = $user;
+				}
+			}
+
 			$parse['friends'] = [];
 
 			$buddies = $controller->db->query("SELECT u.id, u.username FROM game_buddy b, game_users u WHERE u.id = b.sender AND b.owner = ".$controller->user->getId()." AND active = '1'");

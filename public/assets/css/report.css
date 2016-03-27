@@ -88,30 +88,20 @@ body form table th table input {
 	width: 60px;
 }
 
-th, td.a, td.b, td.c, td.f, input, select,
-td.g, td.h, td.i, td.j, td.k, td.l, td.m,
-td.n, td.o, td.q, td.r, td.v, .style td,
-textarea, p td, table.s th img {
+th, td.b, td.c, td.f, input, select, td.k, td.l, .style td, textarea, p td, table.s th img {
 	border: 1px #415680 solid;
 	font-size: 11px;
 	font-family: Tahoma, sans-serif;
 	font-weight: normal;
 }
 
-th, td.a, td.b, td.c, td.f, input, select, td.g,
-td.h, td.i, td.j, td.k, td.m, td.o, td.q, td.r,
-td.v, td.s, .style td, p td {
+th, td.b, td.c, td.f, input, select, td.k, td.s, .style td, p td {
 	background-color: #344566;
 }
 
 th {
 	text-align: center;
 	padding: 3px;
-}
-
-td.a {
-	height: 39px;
-	text-align: center;
 }
 
 td.b {
@@ -137,23 +127,7 @@ td.k input {
 	text-align: left;
 }
 
-td.g {
-	font-weight: bold;
-	text-align: right;
-	color: #e6ebfb;
-}
-
-td.h {
-	text-align: center;
-	color: #e6ebfb;
-}
-
 td.i {
-	text-align: center;
-	color: #e6ebfb;
-}
-
-td.j {
 	text-align: center;
 	color: #e6ebfb;
 }
@@ -168,45 +142,6 @@ td.l {
 	color: #e6ebfb;
 	vertical-align: top;
 	padding: 3px;
-}
-
-td.m {
-	font-weight: bold;
-	text-align: right;
-	width: 86px;
-	color: #e6ebfb;
-}
-
-td.n {
-	font-weight: bold;
-	width: 89px;
-	text-align: center;
-	color: #e6ebfb;
-}
-
-td.o {
-	text-align: center;
-	color: #e6ebfb;
-}
-
-td.q {
-	font-weight: bold;
-	font-size: 11px;
-	font-family: Tahoma, sans-serif;
-	text-align: center;
-	vertical-align: middle;
-	color: #e6ebfb;
-}
-
-td.r {
-	text-align: right;
-	color: #e6ebfb;
-}
-
-td.v {
-	font-weight: bold;
-	text-align: right;
-	color: #f7f7f7;
 }
 
 td.s {

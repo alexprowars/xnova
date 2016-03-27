@@ -1,33 +1,38 @@
-<table class="table">
-	<tr>
-		<td class="c col-sm-1 col-xs-1">Место</td>
-		<td class="c col-sm-1 hidden-xs-down">+/-</td>
-		<td class="c col-sm-4 col-xs-6">Игрок</td>
-		<td class="c col-sm-1 col-xs-2">&nbsp;</td>
-		<td class="c col-sm-3 hidden-xs-down">Альянс</td>
-		<td class="c col-sm-2 col-xs-3">Очки</td>
-	</tr>
+<?
+/**
+ * @var $stat array
+ */
+?>
+<div class="table">
+	<div class="row">
+		<div class="c col-sm-1 col-xs-2 middle">Место</div>
+		<div class="c col-sm-1 hidden-xs-down middle">+/-</div>
+		<div class="c col-sm-4 col-xs-5 middle">Игрок</div>
+		<div class="c col-sm-1 col-xs-2 middle">&nbsp;</div>
+		<div class="c col-sm-3 hidden-xs-down middle">Альянс</div>
+		<div class="c col-sm-2 col-xs-3 middle">Очки</div>
+	</div>
 	<? foreach ($stat AS $s): ?>
-	<tr>
-		<th class="th col-sm-1 col-xs-1">
-			<?=$s['rank'] ?>
-			<div class="hidden-sm-up"><?=$s['rankplus'] ?></div>
-		</th>
-		<th class="th col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></th>
-		<th class="th col-sm-4 col-xs-6">
-			<a href="<?=$this->url->get('players/'.$s['id'].'/') ?>" class="window popup-user"><?=$s['name'] ?></a>
-			<div class="hidden-sm-up">
-				<?=$s['alliance'] ?>
+		<div class="row">
+			<div class="th col-sm-1 col-xs-2">
+				<?=$s['rank'] ?>
+				<div class="hidden-sm-up"><?=$s['rankplus'] ?></div>
 			</div>
-		</th>
-		<th class="th col-sm-1 col-xs-2">
-			<? if ($s['race'] != 0): ?><img src="/assets/images/skin/race<?=$s['race'] ?>.gif" width="16" height="16" class="pull-xs-left" style="margin-left:7px;"><? endif; ?>
-			<? if (isset($userId) && $userId != 0): ?><?=$s['mes'] ?><? endif; ?>
-		</th>
-		<th class="th col-sm-3 hidden-xs-down"><?=$s['alliance'] ?></th>
-		<th class="th col-sm-2 col-xs-3">
-			<a href="<?=$this->url->get('players/stat/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
-		</th>
-	</tr>
+			<div class="th col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></div>
+			<div class="th col-sm-4 col-xs-5">
+				<a href="<?=$this->url->get('players/'.$s['id'].'/') ?>" class="window popup-user"><?=$s['name'] ?></a>
+				<div class="hidden-sm-up">
+					<?=$s['alliance'] ?>
+				</div>
+			</div>
+			<div class="th col-sm-1 col-xs-2">
+				<? if ($s['race'] != 0): ?><img src="/assets/images/skin/race<?=$s['race'] ?>.gif" width="16" height="16" class="pull-xs-left" style="margin-left:7px;"><? endif; ?>
+				<? if (isset($userId) && $userId != 0): ?><?=$s['mes'] ?><? endif; ?>
+			</div>
+			<div class="th col-sm-3 hidden-xs-down"><?=$s['alliance'] ?></div>
+			<div class="th col-sm-2 col-xs-3 middle">
+				<a href="<?=$this->url->get('players/stat/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
+			</div>
+		</div>
 	<? endforeach; ?>
-</table>
+</div>

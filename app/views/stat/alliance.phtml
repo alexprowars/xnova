@@ -1,29 +1,29 @@
-<table class="table">
-	<tr>
-		<td class="c col-sm-1 col-xs-1">Место</td>
-		<td class="c col-sm-1 hidden-xs-down">+/-</td>
-		<td class="c col-sm-5 col-xs-5">Альянс</td>
-		<td class="c col-sm-1 col-xs-1">Игроки</td>
-		<td class="c col-sm-2 hidden-xs-down">Очки</td>
-		<td class="c col-sm-2 hidden-xs-down">Очки на игрока</td>
-		<td class="c hidden-sm-up col-xs-5">Очки / Очки на игрока</td>
-	</tr>
+<div class="table">
+	<div class="row">
+		<div class="c col-sm-1 col-xs-2 middle">Место</div>
+		<div class="c col-sm-1 hidden-xs-down middle">+/-</div>
+		<div class="c col-sm-5 col-xs-4 middle">Альянс</div>
+		<div class="c col-sm-1 col-xs-2 middle">Игроки</div>
+		<div class="c col-sm-2 hidden-xs-down middle">Очки</div>
+		<div class="c col-sm-2 hidden-xs-down middle">Очки на игрока</div>
+		<div class="c hidden-sm-up col-xs-4 middle">Очки / Очки на игрока</div>
+	</div>
 	<? foreach ($stat AS $s): ?>
-		<tr>
-			<th class="col-sm-1 col-xs-1">
+		<div class="row">
+			<div class="th col-sm-1 col-xs-2">
 				<?=$s['rank'] ?>
 				<div class="hidden-sm-up"><?=$s['rankplus'] ?></div>
-			</th>
-			<th class="col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></th>
-			<th class="col-sm-4 col-xs-5"><?=$s['name'] ?></th>
-			<th class="col-sm-1 col-xs-1"><?=$s['members'] ?></th>
-			<th class="col-sm-2 hidden-xs-down"><a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a></th>
-			<th class="col-sm-2 hidden-xs-down"><?=$s['members_points'] ?></th>
-			<th class="hidden-sm-up col-xs-5">
+			</div>
+			<div class="th col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></div>
+			<div class="th col-sm-5 col-xs-4 middle"><?=$s['name'] ?></div>
+			<div class="th col-sm-1 col-xs-2 middle"><?=$s['members'] ?></div>
+			<div class="th col-sm-2 hidden-xs-down"><a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a></div>
+			<div class="th col-sm-2 hidden-xs-down"><?=$s['members_points'] ?></div>
+			<div class="th hidden-sm-up col-xs-4">
 				<a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
 				<br>
 				<?=$s['members_points'] ?>
-			</th>
-		</tr>
+			</div>
+		</div>
 	<? endforeach; ?>
-</table>
+</div>
