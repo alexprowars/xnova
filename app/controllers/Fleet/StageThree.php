@@ -491,7 +491,7 @@ class StageThree
 			$consumption = 0;
 		}
 
-		/*if ($controller->user->isAdmin() && $fleetmission != 6)
+		if ($controller->user->isAdmin() && $fleetmission != 6)
 		{
 			$fleet->start_time 	= time() + 15;
 			$fleet->end_time 	= time() + 30;
@@ -500,7 +500,7 @@ class StageThree
 				$StayTime = $fleet->start_time + 5;
 
 			$consumption = 0;
-		}*/
+		}
 
 		$tutorial = $controller->db->query("SELECT id, quest_id FROM game_users_quests WHERE user_id = ".$controller->user->getId()." AND finish = '0' AND stage = 0")->fetch();
 

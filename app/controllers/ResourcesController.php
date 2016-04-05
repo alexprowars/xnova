@@ -66,7 +66,7 @@ class ResourcesController extends ApplicationController
 		foreach ($planets as $planet)
 		{
 			$planet->assignUser($this->user);
-			$planet->PlanetResourceUpdate();
+			$planet->resourceUpdate();
 		}
 
 		unset($planets);
@@ -89,7 +89,7 @@ class ResourcesController extends ApplicationController
 		$this->planet->{$this->storage->resource[12].'_porcent'} 	= $production;
 		$this->planet->{$this->storage->resource[212].'_porcent'}	= $production;
 
-		$this->planet->PlanetResourceUpdate(time(), true);
+		$this->planet->resourceUpdate(time(), true);
 
 		return $this->indexAction();
 	}
@@ -117,7 +117,7 @@ class ResourcesController extends ApplicationController
 			}
 
 			$this->planet->update();
-			$this->planet->PlanetResourceUpdate(time(), true);
+			$this->planet->resourceUpdate(time(), true);
 		}
 		
 		$parse = [];

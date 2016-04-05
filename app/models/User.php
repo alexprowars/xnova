@@ -360,13 +360,13 @@ class User extends Model
 
 				// Обновляем ресурсы на планете когда это необходимо
 				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60)))
-					$planet->PlanetResourceUpdate(time(), true);
+					$planet->resourceUpdate(time(), true);
 				else
-					$planet->PlanetResourceUpdate();
+					$planet->resourceUpdate();
 
 				// Проверка наличия законченных построек и исследований
 				if ($planet->updateQueueList())
-					$planet->PlanetResourceUpdate(time(), true);
+					$planet->resourceUpdate(time(), true);
 
 				$this->getDi()->setShared('planet', $planet);
 			}

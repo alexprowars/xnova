@@ -539,10 +539,6 @@ function addHistoryState (url)
 	{
 		window.history.pushState({save: 1}, null, url);
 	}
-	else
-	{
-		//window.location.hash = currentState;
-	}
 }
 
 var tooltipTimer;
@@ -599,7 +595,7 @@ $(document).ready(function()
 		}
     }
 
-	if ($.isFunction($(document).tooltip))
+	if ($.isFunction($(document).tooltip) && !XNova.isMobile)
 	{
 		$(document).tooltip({
 			items: ".tooltip",

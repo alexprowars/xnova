@@ -1,20 +1,20 @@
-<br><br>
 <div class="text-xs-center">
-	<table width="550" class="raceSelect">
+	<div class="table raceSelect">
 		<? if ($race == 0): ?>
-			<tr>
-				<td class="c big" colspan="2">Выбор фракции</td>
-			</tr>
+			<div class="row">
+				<div class="col-xs-12 c big">Выбор фракции</div>
+			</div>
 		<? endif; ?>
-		<tr>
-			<td class="k big">
+		<div class="row">
+			<div class="col-xs-6 k big">
 				<a href='javascript:;' onclick="showWindow('Конфедерация', '<?=$this->url->get('info/701/') ?>', 700, 500)">Конфедерация</a>
-			</td>
-			<td class="k big">
-				<a href='javascript:;' onclick="showWindow('Бионики', '<?=$this->url->get('info/702/') ?>', 700, 500)">Бионики</a></td>
-		</tr>
-		<tr>
-			<th width="50%" style="text-align:left">
+			</div>
+			<div class="col-xs-6 k big">
+				<a href='javascript:;' onclick="showWindow('Бионики', '<?=$this->url->get('info/702/') ?>', 700, 500)">Бионики</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="th col-xs-6 text-xs-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="/assets/images/skin/race1.gif">
@@ -32,8 +32,8 @@
 				<? if ($race == 0): ?>
 					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/1/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
-			</th>
-			<th style="text-align:left">
+			</div>
+			<div class="th col-xs-6 text-xs-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="/assets/images/skin/race2.gif">
@@ -51,14 +51,14 @@
 				<? if ($race == 0): ?>
 					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/2/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
-			</th>
-		</tr>
-		<tr>
-			<td class="k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '<?=$this->url->get('info/703/') ?>', 700, 500)">Сайлоны</a></td>
-			<td class="k big"><a href='javascript:;' onclick="showWindow('Древние', '<?=$this->url->get('info/704/') ?>', 700, 500)">Древние</a></td>
-		</tr>
-		<tr>
-			<th style="text-align:left">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '<?=$this->url->get('info/703/') ?>', 700, 500)">Сайлоны</a></div>
+			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Древние', '<?=$this->url->get('info/704/') ?>', 700, 500)">Древние</a></div>
+		</div>
+		<div class="row">
+			<div class="th col-xs-6 text-xs-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="/assets/images/skin/race3.gif">
@@ -76,8 +76,8 @@
 				<? if ($race == 0): ?>
 					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/3/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
-			</th>
-			<th style="text-align:left">
+			</div>
+			<div class="th col-xs-6 text-xs-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="/assets/images/skin/race4.gif">
@@ -95,20 +95,20 @@
 				<? if ($race == 0): ?>
 					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/4/') ?>"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
-			</th>
-		</tr>
+			</div>
+		</div>
 		<? if ($race != 0): ?>
-			<tr>
-				<td class="k big" colspan="2">
+			<div class="row">
+				<div class="col-xs-12 k big">
 					<? if ($free_race_change > 0): ?>
 						Бесплатная смена фракции (<?=$free_race_change ?> попыток осталось):
 					<? else: ?>
 						Сменить фракцию за 100 кредитов:
 					<? endif; ?>
-				</td>
-			</tr>
-			<tr>
-				<th colspan="2">
+				</div>
+			</div>
+			<div class="row">
+				<div class="th col-sx-12">
 					На планетах не должно идти строительство, исследования, летать флот и весь флот фракции подлежит демонтировке (без возврата ресурсов).<br><br>
 					<? if ($isChangeAvailable): ?>
 						<form action="<?=$this->url->get('race/change/') ?>" method="POST">
@@ -123,10 +123,10 @@
 							<input type="submit" value="Сменить фракцию">
 						</form>
 					<? endif; ?>
-				</th>
-			</tr>
+				</div>
+			</div>
 		<? endif; ?>
-	</table>
+	</div>
 </div>
 
 <? if ($race == 0 && !$isPopup): ?>

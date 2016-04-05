@@ -28,7 +28,7 @@
 <div class="menu-sidebar hidden-sm-up">
 	<ul class="nav">
 		<? foreach(_getText('main_menu') AS $id => $menu): if ($menu[2] > $adminlevel) continue; ?>
-			<li><a data-link="<?=$id ?>" <? if (isset($menu[3])): ?>data-link="Y"<? endif; ?> href="<?=$menu[1] ?>" <?=($controller == $id ? 'class="check"' : '') ?>><?=$menu[0] ?></a></li>
+			<li><a <? if (isset($menu[3])): ?>data-link="Y"<? endif; ?> href="<?=$menu[1] ?>" <?=($controller == $id ? 'class="check"' : '') ?>><?=$menu[0] ?></a></li>
 		<? endforeach; ?>
 	</ul>
 </div>

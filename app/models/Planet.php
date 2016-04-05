@@ -283,7 +283,7 @@ class Planet extends Model
 		}
 	}
 
-	public function PlanetResourceUpdate ($updateTime = 0, $simultion = false)
+	public function resourceUpdate ($updateTime = 0, $simultion = false)
 	{
 		if (!$this->user instanceof User)
 			return false;
@@ -514,7 +514,7 @@ class Planet extends Model
 					if ($this->checkBuildingQueue($queueManager))
 					{
 						if (!$this->planet_updated)
-							$this->PlanetResourceUpdate();
+							$this->resourceUpdate();
 
 						$this->setNextBuildingQueue();
 						$RetValue = true;

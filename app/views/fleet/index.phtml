@@ -106,12 +106,12 @@
 			</div>
 			<? foreach ($parse['ships'] as $ship): ?>
 				<div class="row">
-					<div class="th col-sm-5 col-xs-4"><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></div>
-					<div class="th col-sm-2 col-xs-2"><?=\App\Helpers::pretty_number($ship['count']) ?></div>
+					<div class="th col-sm-5 col-xs-4 middle"><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></div>
+					<div class="th col-sm-2 col-xs-2 middle"><?=\App\Helpers::pretty_number($ship['count']) ?></div>
 					<? if ($ship['id'] == 212): ?>
-						<div class="th col-sm-7 col-xs-6"></div>
+						<div class="th col-sm-5 col-xs-6"></div>
 					<? else: ?>
-						<div class="th col-sm-2 col-xs-2"><a href="javascript:noShip('ship<?=$ship['id'] ?>'); calc_capacity();">min</a>/<a href="javascript:maxShip('ship<?=$ship['id'] ?>'); calc_capacity();">max</a></div>
+						<div class="th col-sm-2 col-xs-2 middle"><a href="javascript:noShip('ship<?=$ship['id'] ?>'); calc_capacity();">min</a>/<a href="javascript:maxShip('ship<?=$ship['id'] ?>'); calc_capacity();">max</a></div>
 						<div class="th col-sm-3 col-xs-4">
 							<a href="javascript:chShipCount('<?=$ship['id'] ?>', '-1'); calc_capacity();" title="Уменьшить на 1 ед." style="color:#FFD0D0">- </a>
 							<input type="text" name="ship<?=$ship['id'] ?>" style="width:65%" value="0" onfocus="if(this.value == '0') this.value='';" onblur="if(this.value == '') this.value='0';" title="<?=_getText('tech', $ship['id']).': '.$ship['count'] ?>" onChange="calc_capacity()" onKeyUp="calc_capacity()" />

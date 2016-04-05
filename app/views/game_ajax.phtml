@@ -51,9 +51,9 @@
 	<script>addHistoryState("<?=$this->game->getClearQuery() ?>")</script>
 <? endif; ?>
 
-<? if (isset($ajaxNavigation) && $ajaxNavigation && $this->game->checkSaveState()): ?>
-	<script type="text/javascript">setMenuItem("<?=($this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : '')) ?>");</script>
-<? endif; ?>
+<script type="text/javascript">
+	setMenuItem("<?=($this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : '')) ?>");
+</script>
 
 <? if ($userId > 0): ?>
 	<script type="text/javascript">UpdateGameInfo('<?=$messages ?>', '<?=$messages_ally ?>'); <? if (!$isPopup): ?>timestamp = <?=time() ?>;<? endif; ?></script>

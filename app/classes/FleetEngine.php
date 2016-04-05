@@ -78,7 +78,7 @@ class FleetEngine extends Injectable
 			if ($TargetUser)
 			{
 				$TargetPlanet->assignUser($TargetUser);
-				$TargetPlanet->PlanetResourceUpdate(time());
+				$TargetPlanet->resourceUpdate(time());
 			}
 
 			if ($fleet)

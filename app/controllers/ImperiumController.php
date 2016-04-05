@@ -97,7 +97,7 @@ class ImperiumController extends ApplicationController
 		foreach ($planets AS $planet)
 		{
 			$planet->assignUser($this->user);
-			$planet->PlanetResourceUpdate(time(), true);
+			$planet->resourceUpdate(time(), true);
 
 			$planet->field_max = $planet->getMaxFields();
 

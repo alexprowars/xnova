@@ -50,7 +50,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		// Обновление производства на планете
 		// =============================================================================
-		$TargetPlanet->PlanetResourceUpdate($this->_fleet->start_time);
+		$TargetPlanet->resourceUpdate($this->_fleet->start_time);
 		// =============================================================================
 
 		$LS = 0;
