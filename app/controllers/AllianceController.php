@@ -50,8 +50,6 @@ class AllianceController extends ApplicationController
 
 		if (!$this->ally->member)
 		{
-			$this->db->query('game_alliance_members', 'u_id = ?', [$this->user->id]);
-
 			$this->ally->member = new AllianceMember();
 			$this->ally->member->a_id = $this->ally->id;
 			$this->ally->member->u_id = $this->user->id;
@@ -667,6 +665,8 @@ class AllianceController extends ApplicationController
 
 	public function exitAction ()
 	{
+		$this->parseInfo($this->user->ally_id);
+
 		if ($this->ally->owner == $this->user->id)
 			$this->message(_getText('Owner_cant_go_out'), _getText('Alliance'));
 

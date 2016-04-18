@@ -157,6 +157,8 @@ class Alliance extends Model
 		$db->updateAsDict('game_alliance', ['members' => ($this->members - 1)], 'id = '.$this->id);
 
 		$db->delete('game_alliance_members', 'u_id = ?', [$userId]);
+
+		$db->updateAsDict('game_users', ['ally_id' => 0, 'ally_name' => ''], 'id = '.$userId);
 	}
 
 	public function deleteAlly ()
