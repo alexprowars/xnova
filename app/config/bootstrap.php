@@ -27,5 +27,3 @@ if ($di->has('auth'))
 
 define('VERSION', '3.0');
 define('DB_PREFIX', 'game_');
-
-?>

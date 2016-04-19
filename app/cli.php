@@ -51,7 +51,7 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 			{
 				if ($event->getType() == 'beforeQuery')
 				{
-					$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSQLVariables(), true), Logger::INFO);
+					$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSqlVariables(), true), Logger::INFO);
 
 					$d = debug_backtrace();
 
@@ -147,5 +147,3 @@ catch (\Phalcon\Exception $e)
     echo $e->getMessage()."\n";
     exit(255);
 }
-
-?>

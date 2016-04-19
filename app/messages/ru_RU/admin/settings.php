@@ -39,5 +39,3 @@ $lang['adm_opt_game_ppos']     = "Планета";
 $lang['adm_opt_plan_tf']       = "Поле обломков";
 $lang['adm_opt_game_tffleet']  = "От флота TF(30=60%)";
 $lang['adm_opt_game_tfdef']    = "От обороны TF(30=30%)";
-
-?>

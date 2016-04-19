@@ -69,9 +69,17 @@ class Lang
 			$value = self::$langArray[$args[0]];
 		else
 			$value = false;
+		
+		$return = false;
 
 		if (count($args) > 1)
 		{
+			if (is_bool($args[count($args) - 1]))
+			{
+				unset($args[count($args) - 1]);
+				$return = true;
+			}
+			
 			foreach ($args as $i => $arg)
 			{
 				if ($i > 0 && $value != false)
@@ -84,7 +92,7 @@ class Lang
 			}
 		}
 
-		if ($value !== false)
+		if ($value !== false || $return)
 			return $value;
 		else
 			return '##'. Text::upper(implode('::', $args)).'##';

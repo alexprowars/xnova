@@ -106,5 +106,3 @@ $lang['gf_fleetslt'] 				= "Флотов";
 $lang['gf_rc_title'] 				= "переработчиков";
 $lang['gf_sp_title'] 				= "шпионских зондов";
 $lang['gf_unknowsp'] 			= "Неизведанные дали";
-
-?>

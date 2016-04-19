@@ -721,8 +721,8 @@ $CombatCaps = array
 	407 => array('attack' => 1, 'shield' => 1000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
 	408 => array('attack' => 1, 'shield' => 10000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
 
-	502 => array('attack' => 1, 'power_up' => 0, 'power_armour' => 0),
-	503 => array('attack' => 12000, 'power_up' => 0, 'power_armour' => 0)
+	502 => array('attack' => 1, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
+	503 => array('attack' => 12000, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array())
 );
 
 $ProdGrid = array(
@@ -776,5 +776,3 @@ $reslist['res'] = array('metal', 'crystal', 'deuterium');
 $reslist['allowed'][1] = array(1, 2, 3, 4, 12, 14, 15, 21, 22, 23, 24, 31, 33, 34, 44);
 $reslist['allowed'][3] = array(14, 21, 34, 41, 42, 43);
 $reslist['allowed'][5] = array(14, 34, 43, 44);
-
-?>

@@ -21,5 +21,3 @@ $lang['Back'] 			= 'Назад';
 $lang['Search'] 			= 'Поиск';
 $lang['write_a_messege'] 		= 'Написать сообщение';
 $lang['buddy_request'] 		= 'Предложение подружиться';
-
-?>

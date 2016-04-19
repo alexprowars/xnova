@@ -47,4 +47,3 @@ $lang['mats_ship'] = "Корабли";
 $lang['mats_building'] = "Постройки";
 $lang['mats_research'] = "Исследования";
 $lang['mats_def'] = "Оборона";
-?>

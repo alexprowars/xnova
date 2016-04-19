@@ -7,7 +7,6 @@ namespace App;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Models\Message;
 use Phalcon\Mvc\User\Component;
 
 /**

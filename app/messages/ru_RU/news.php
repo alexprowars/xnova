@@ -499,5 +499,3 @@ ADD 12.07.2009:
 - DIV: Base of XNova 0.8a',
 
 );
-
-?>

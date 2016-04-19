@@ -136,7 +136,7 @@ class User extends Model
 
 	public function onConstruct()
 	{
-		$this->db = $this->getDi()->getShared('db');
+		$this->db = $this->getDI()->getShared('db');
 
 		$this->useDynamicUpdate(true);
 	}
@@ -316,7 +316,7 @@ class User extends Model
 
 	public function loadPlanet ()
 	{
-		if ($this->getDi()->has('planet'))
+		if ($this->getDI()->has('planet'))
 			return;
 
 		if ($this->planet_current == 0 && $this->planet_id == 0)
@@ -354,7 +354,7 @@ class User extends Model
 				// Проверяем корректность заполненных полей
 				$planet->checkUsedFields();
 
-				$dispatcher = $this->getDi()->getShared('dispatcher');
+				$dispatcher = $this->getDI()->getShared('dispatcher');
 				$controller = $dispatcher->getControllerName();
 				$action = $dispatcher->getActionName();
 
@@ -368,11 +368,11 @@ class User extends Model
 				if ($planet->updateQueueList())
 					$planet->resourceUpdate(time(), true);
 
-				$this->getDi()->setShared('planet', $planet);
+				$this->getDI()->setShared('planet', $planet);
 			}
 		}
 
-		if (!$this->getDi()->has('planet'))
+		if (!$this->getDI()->has('planet'))
 			throw new \Exception('planet not found');
 	}
 
@@ -382,7 +382,7 @@ class User extends Model
 
 		if ($this->ally_id > 0)
 		{
-			$cache = $this->getDi()->getShared('cache');
+			$cache = $this->getDI()->getShared('cache');
 
 			$ally = $cache->get('user::ally_' . $this->id . '_' . $this->ally_id);
 
@@ -408,7 +408,7 @@ class User extends Model
 
 	public function setSelectedPlanet ()
 	{
-		$request = $this->getDi()->getShared('request');
+		$request = $this->getDI()->getShared('request');
 
 		if ($request->hasQuery('chpl') && is_numeric($request->getQuery('chpl')))
 		{
@@ -423,7 +423,7 @@ class User extends Model
 			{
 				if ($IsPlanetMine['id_ally'] > 0 && $IsPlanetMine['id_owner'] != $this->getId() && !$this->ally['rights']['planet'])
 				{
-					$this->getDi()->getShared('game')->message("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
+					$this->getDI()->getShared('game')->message("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
 				}
 
 				$this->planet_current = $selectPlanet;

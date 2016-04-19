@@ -123,5 +123,3 @@ $artifactsData = array
 		'time' => 86400
 	),
 );
- 
-?>

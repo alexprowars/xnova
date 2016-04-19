@@ -77,6 +77,7 @@ class AdminController extends ApplicationController
 				$class = "App\\Controllers\\Admin\\".$this->modules[$this->mode]['alias'];
 				$class = new $class();
 
+				/** @noinspection PhpUndefinedMethodInspection */
 				$class->show($this);
 			}
 			else

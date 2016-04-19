@@ -5,7 +5,7 @@ use App\Auth\Security;
 use App\Database;
 use App\Game;
 use Phalcon\Crypt;
-use Phalcon\DI\FactoryDefault;
+use Phalcon\Di\FactoryDefault;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url as UrlResolver;
@@ -58,7 +58,7 @@ $di->setShared(
 		{
 			if ($event->getType() == 'beforeQuery')
 			{
-				$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSQLVariables(), true), Logger::INFO);
+				$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSqlVariables(), true), Logger::INFO);
 
 				$d = debug_backtrace();
 
@@ -103,6 +103,7 @@ $di->set('dispatcher', function () use ($di)
 {
 	$eventsManager = new EventsManager;
 	$eventsManager->attach('dispatch:beforeExecuteRoute', new Security);
+	/** @noinspection PhpUnusedParameterInspection */
 	$eventsManager->attach("dispatch:beforeException", function($event, $dispatcher, $exception)
 	{
 		/**
@@ -178,6 +179,8 @@ $di->setShared(
 		{
 			$profiler = $di->get('profiler');
 
+			/** @noinspection PhpUndefinedNamespaceInspection */
+			/** @noinspection PhpUndefinedClassInspection */
 			$cache = new \Fabfuel\Prophiler\Decorator\Phalcon\Cache\BackendDecorator($cache, $profiler);
 		}
 
@@ -211,5 +214,3 @@ Model::setup([
 	'columnRenaming' 	=> false,
 	'notNullValidations'=> false,
 ]);
- 
-?>

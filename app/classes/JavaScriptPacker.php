@@ -625,8 +625,8 @@ class ParseMaster
 	private function _backReferences ($match, $offset)
 	{
 		$replacement = $this->buffer['replacement'];
-		$quote = $this->buffer['quote'];
 		$i = $this->buffer['length'];
+
 		while ($i)
 		{
 			$replacement = str_replace('$' . $i--, $match[$offset + $i], $replacement);

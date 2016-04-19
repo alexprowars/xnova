@@ -213,15 +213,15 @@ class UpdateStatistics extends Injectable
 			{
 				$mail = new PHPMailer();
 
-				$mail->IsMail();
-				$mail->IsHTML(true);
+				$mail->isMail();
+				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->SetFrom($this->config->app->email, $this->config->app->name);
-				$mail->AddAddress($user['email']);
+				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->addAddress($user['email']);
 				$mail->Subject = $this->config->app->name.': Уведомление об удалении аккаунта: ' . $this->config->game->universe . ' вселенная';
 				$mail->Body = "Уважаемый \"" . $user['username'] . "\"! Уведомляем вас, что ваш аккаунт перешел в режим удаления и через " . floor($this->config->stat->get('deleteTime', (7 * 86400)) / 86400) . " дней будет удалён из игры.<br>
 				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://uni" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
-				$mail->Send();
+				$mail->send();
 			}
 
 			$result[] = $user['username'];

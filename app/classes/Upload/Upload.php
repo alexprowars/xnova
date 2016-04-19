@@ -652,7 +652,7 @@ class Upload {
 	 * Default value is null
 	 *
 	 * @access public
-	 * @var long
+	 * @var int
 	 */
 	var $image_max_pixels;
 
@@ -694,7 +694,7 @@ class Upload {
 	 * Default value is null
 	 *
 	 * @access public
-	 * @var long
+	 * @var int
 	 */
 	var $image_min_pixels;
 
@@ -2678,7 +2678,7 @@ class Upload {
 	 * Decodes offsets
 	 *
 	 * @access private
-	 * @param  misc	$offsets  Offsets, as an integer, a string or an array
+	 * @param  mixed	$offsets  Offsets, as an integer, a string or an array
 	 * @param  integer $x		Reference picture width
 	 * @param  integer $y		Reference picture height
 	 * @param  boolean $round	Round offsets before returning them
@@ -4256,7 +4256,7 @@ class Upload {
 							imagedestroy($filter);
 
 						} else {
-							$text_color = imageColorAllocate($image_dst ,$red, $green, $blue);
+							$text_color = imagecolorallocate($image_dst ,$red, $green, $blue);
 							foreach ($text as $k => $v) {
 								if ($this->image_text_direction == 'v') {
 									imagestringup($image_dst,

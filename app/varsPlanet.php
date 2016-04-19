@@ -23,5 +23,3 @@ $planetData = [
 	14	=> ['temp' => mt_rand(-90, -50),	'fields' => mt_rand(81, 113),	'image' => ['eis' => mt_rand(1, 20)]],
 	15	=> ['temp' => mt_rand(-130, -90),	'fields' => mt_rand(65, 94),	'image' => ['eis' => mt_rand(1, 20)]]
 ];
-
-?>

@@ -37,7 +37,7 @@ class AvatarController extends ApplicationController
 			$upload->jpeg_quality = 90;
 			$upload->file_new_name_body = $this->user->getId().'_'.time();
 
-			$upload->Process('images/avatars/upload/');
+			$upload->process('images/avatars/upload/');
 
 			if ($upload->processed && file_exists('/images/avatars/upload/'.$name))
 			{
@@ -48,7 +48,7 @@ class AvatarController extends ApplicationController
 			else
 				$this->message($upload->error, "Ошибка", "/avatar/", 3);
 
-			$upload->Clean();
+			$upload->clean();
 		}
 	}
 	

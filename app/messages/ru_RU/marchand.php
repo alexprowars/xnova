@@ -11,5 +11,3 @@ $lang['mod_ma_donet'] = "Обмен прошёл успешно";
 $lang['mod_ma_excha'] = "Обменять ресурсы";
 $lang['mod_ma_cours'] = "Курс обмена";
 $lang['mod_ma_nbre']  = "Число !!!";
-
-?>

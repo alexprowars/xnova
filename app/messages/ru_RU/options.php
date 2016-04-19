@@ -57,6 +57,3 @@ $lang['vacations_tip'] = "Режим отпуска нужен для защит
 $lang['deleteaccount'] = "Удалить профиль";
 $lang['deleteaccount_tip'] = "Профиль будет удалён через 7 дней.";
 $lang['save_settings'] = "Сохранить изменения";
-
-
-?>

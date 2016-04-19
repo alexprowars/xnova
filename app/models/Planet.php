@@ -130,9 +130,9 @@ class Planet extends Model
 	{
 		$this->useDynamicUpdate(true);
 
-		$this->db = $this->getDi()->getShared('db');
-		$this->game = $this->getDi()->getShared('game');
-		$this->storage = $this->getDi()->getShared('storage');
+		$this->db = $this->getDI()->getShared('db');
+		$this->game = $this->getDI()->getShared('game');
+		$this->storage = $this->getDI()->getShared('storage');
 	}
 
 	public function getSource()
@@ -203,7 +203,7 @@ class Planet extends Model
 	{
 		$return = ['energy' => 0];
 
-		$config = $this->getDi()->getShared('config');
+		$config = $this->getDI()->getShared('config');
 
 		foreach ($this->storage->reslist['res'] AS $res)
 			$return[$res] = 0;
@@ -233,7 +233,7 @@ class Planet extends Model
 
 	public function getProductions ()
 	{
-		$config = $this->getDi()->getShared('config');
+		$config = $this->getDI()->getShared('config');
 
 		$Caps = [];
 
@@ -288,7 +288,7 @@ class Planet extends Model
 		if (!$this->user instanceof User)
 			return false;
 
-		$config = $this->getDi()->getShared('config');
+		$config = $this->getDI()->getShared('config');
 
 		if ($this->user->vacation != 0)
 			$simultion = true;
@@ -734,7 +734,7 @@ class Planet extends Model
 			}
 		}
 	}
-
+	
 	public function checkResearchQueue ()
 	{
 		$Result['planet'] 	= false;

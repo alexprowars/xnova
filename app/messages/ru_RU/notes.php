@@ -38,5 +38,3 @@ $lang['NoteUpdated'] = 'Заметка обновлена.';
 $lang['NoteAdded'] = 'Заметка добавлена.';
 $lang['NoteDeleted'] = 'Заметка удалена. <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
 $lang['NoteDeleteds'] = 'Заметки удалены <a href="/notes/"><blink>Пожалуйста, подождите...</blink></a>';
-
-?>

@@ -218,5 +218,3 @@ $lang['tutorial'] = array
 						</ul>'
 	)
 );
-
-?>

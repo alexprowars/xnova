@@ -11,5 +11,3 @@ $lang['flt_time_en']  = "Время прибытия";
 $lang['flt_staying']  = "Прибытие";
 $lang['flt_action']   = "Действие";
 $lang['flt_title']    = "флотов в пути";
-
-?>

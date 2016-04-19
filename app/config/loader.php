@@ -9,5 +9,3 @@ $loader->registerNamespaces([
 ]);
 
 $loader->register();
- 
-?>

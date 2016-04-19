@@ -13,5 +13,3 @@ $lang['buildings'] 			= "Постройки";
 $lang['investigation']		= "Исследования";
 $lang['ships'] 			= "Корабли";
 $lang['defense'] 			= "Оборона";
-
-?>

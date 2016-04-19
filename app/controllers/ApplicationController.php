@@ -65,7 +65,7 @@ class ApplicationController extends Controller
 
 			$parse = [];
 
-			if ($this->getDi()->has('planet'))
+			if ($this->getDI()->has('planet'))
 				$parse = $this->ShowTopNavigationBar();
 			else
 				$this->showTopPanel(false);
@@ -117,7 +117,7 @@ class ApplicationController extends Controller
 		{
 			$this->tag->setTitleSeparator(' :: ');
 			$this->tag->setTitle($this->config->app->name);
-	        $this->tag->setDoctype(Tag::HTML5);
+	        $this->tag->setDocType(Tag::HTML5);
 		}
 
 		if (is_array($this->router->getParams()) && count($this->router->getParams()))

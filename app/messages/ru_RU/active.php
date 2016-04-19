@@ -19,5 +19,3 @@ $lang['thanksforregistry'] = 'Спасибо за регистрацию!! На 
 $lang['error_mail']        = 'Некорректный адрес E-mail!<br />';
 $lang['error_mailsend']    = 'Невозможно отправить письмо!!';
 $lang['reg_welldone']      = 'Активация успешна!!!';
-
-?>

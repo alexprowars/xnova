@@ -26,5 +26,3 @@ $lang['level']        = "уровень";
 $lang['treeinfo']     = "[i]";
 $lang['comingsoon']   = "Скоро";
 $lang['te_dt_tx_pre'] = "Информация о";
-
-?>

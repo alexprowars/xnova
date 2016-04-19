@@ -84,7 +84,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Message = _getText('sys_expe_found_ress_3_' . mt_rand(1, 2));
 				}
 
-				$Size = min($Factor * MAX(MIN($FleetPoints, $upperLimit), 200), $FleetCapacity);
+				$Size = min($Factor * max(min($FleetPoints, $upperLimit), 200), $FleetCapacity);
 
 				$this->_fleet->update_time = $this->_fleet->end_time;
 				$this->_fleet->mess = 1;
@@ -146,7 +146,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Message = _getText('sys_expe_found_ships_3_' . mt_rand(1, 2));
 				}
 
-				$FoundShips = max(round($Size * MIN($FleetPoints, ($upperLimit / 2))), 10000);
+				$FoundShips = max(round($Size * min($FleetPoints, ($upperLimit / 2))), 10000);
 
 				$FoundShipMess = "";
 				$NewFleetArray = "";

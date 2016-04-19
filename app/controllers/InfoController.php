@@ -188,8 +188,8 @@ class InfoController extends ApplicationController
 
 		$parse = [];
 
-		if (!_getText('tech', $BuildID))
-			$this->message('Мы не сможем дать вам эту информацию', 'Ошибка', '/overview/', 2);
+		if (!_getText('tech', $BuildID, true))
+			$this->message('Мы не сможем дать вам эту информацию', 'Ошибка');
 
 		$parse['name'] = _getText('tech', $BuildID);
 		$parse['image'] = $BuildID;

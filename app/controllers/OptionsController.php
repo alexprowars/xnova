@@ -117,14 +117,14 @@ class OptionsController extends ApplicationController
 
 				$mail = new PHPMailer();
 
-				$mail->IsMail();
-				$mail->IsHTML(true);
+				$mail->isMail();
+				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->SetFrom($this->config->app->email, $this->config->app->name);
-				$mail->AddAddress($e, $this->config->app->name);
+				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->addAddress($e, $this->config->app->name);
 				$mail->Subject = 'Пароль в Xnova Game: '.$this->config->game->universe.' вселенная';
 				$mail->Body = "Ваш пароль от игрового аккаунта '" . $this->user->username . "': " . $password;
-				$mail->Send();
+				$mail->send();
 
 				$this->message('Ваш пароль от аккаунта: '.$password.'. Обязательно смените его на другой в настройках игры. Копия пароля отправлена на указанный вами электронный почтовый ящик.', 'Предупреждение');
 			}

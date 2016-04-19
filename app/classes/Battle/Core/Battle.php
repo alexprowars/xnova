@@ -10,7 +10,6 @@ class Battle
 	private $defenders;
 	private $report;
 	private $battleStarted;
-	private $rounds = 6;
 
 	/**
 	 * Battle::__construct()
@@ -62,7 +61,6 @@ class Battle
 
 				return false;
 			}
-
 
 			$round = new Round($this->attackers, $this->defenders, $i);
 			$round->startRound();

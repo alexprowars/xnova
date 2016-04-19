@@ -32,5 +32,3 @@ $lang['adm_base']      		= "Военная база";
 $lang['adm_technos']   		= "Исследованные технологии";
 $lang['adm_bt_search'] 		= "Поиск";
 $lang['adm_bt_change'] 		= "Изменить";
-
-?>

@@ -44,5 +44,3 @@ $lang['ov_back_moon']        = " возвращается на луну ";
 $lang['ov_une_hostile']      = "Чужой ";
 $lang['ov_hostile']          = " игрока ";
 $lang['ov_message']          = "Отправить сообщение";
-
-?>

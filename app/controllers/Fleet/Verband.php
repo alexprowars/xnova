@@ -188,5 +188,7 @@ class Verband
 
 		$controller->tag->setTitle("Совместная атака");
 		$controller->view->setVar('parse', $parse);
+
+		return true;
 	}
 }

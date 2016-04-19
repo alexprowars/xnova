@@ -1,4 +1,2 @@
 <?
-$host=GetEnv("HTTP_HOST");
-Header("Location: http://$host");
-?>
+header("Location: http://".getenv("HTTP_HOST"));

@@ -26,5 +26,3 @@ $lang['mlst_mess_typ__5'] = "Транспорт";
 $lang['mlst_mess_typ__6'] = "Прочее";
 $lang['mlst_mess_typ_15'] = "Экспедиции";
 $lang['mlst_mess_typ_99'] = "Очередь постоек";
-
-?>

@@ -72,5 +72,3 @@ function is ($val, $key)
 {
 	return (isset($val[$key]) ? $val[$key] : '');
 }
-
-?>
