@@ -63,8 +63,11 @@ class PhalanxController extends ApplicationController
 		
 		if ($planet == 0)
 			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
-		
-		$fq = FleetModel::find([
+
+		/**
+		 * @var $fleets FleetModel[]
+		 */
+		$fleets = FleetModel::find([
 			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
 			'bind' => ['galaxy' => $g, 'system' => $s, 'planet' => $i],
 			'order' => 'start_time asc'
@@ -72,76 +75,44 @@ class PhalanxController extends ApplicationController
 		
 		$list = [];
 		
-		foreach ($fq as $ii => $row)
+		foreach ($fleets as $ii => $row)
 		{
-			if ($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i)
-				$end = 0;
-			else
-				$end = 1;
-		
-			$timerek = $row->start_time;
+			$end = !($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i);
 
-			if ($row->mission != 6)
-				$kolormisjido = 'lime';
-			else
-				$kolormisjido = 'orange';
+			$color = ($row->mission != 6) ? 'lime' : 'orange';
 
-			$g1 = $row->start_galaxy;
-			$s1 = $row->start_system;
-			$i1 = $row->start_planet;
-			$t1 = $row->start_type;
-		
-			$g2 = $row->end_galaxy;
-			$s2 = $row->end_system;
-			$i2 = $row->end_planet;
-			$t2 = $row->end_type;
-		
-			if ($t1 == 3)
+			if ($row->start_type == 3)
 				$type = "лун";
 			else
 				$type = "планет";
 
-			if ($t2 == 3)
+			if ($row->end_type == 3)
 				$type2 = "лун";
 			else
 				$type2 = "планет";
 
-			$nome = $row->owner_name;
-			$nome2 = $row->target_owner_name;
-
 			$item = '';
 		
-			if ($timerek > time() && $end == 1 && !($t1 == 3 && ($t2 == 2 || $t2 == 3)))
+			if ($row->start_time > time() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3)))
 			{
-				$item .= "<tr><th><div id=\"bxxfs$ii\" class=\"z\"></div><font color=\"lime\">" . $this->game->datezone("H:i:s", $row->start_time) . "</font> </th>";
-		
-				$Label = "fs";
-				$Time = $row->start_time - time();
-				$item .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
-		
-				$item .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
-		
-				$item .= " с " . $type . "ы " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font> летит на " . $type2 . "у " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font>. Задание:";
+				$item .= "<tr><th><div id=\"bxxfs".$ii."\" class=\"z\"></div><font color=\"lime\">" . $this->game->datezone("H:i:s", $row->start_time) . "</font> </th>";
+				$item .= Helpers::InsertJavaScriptChronoApplet("fs", $ii, $row->start_time - time());
+				$item .= "<th><font color=\"".$color."\">Игрок (" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
+				$item .= " с " . $type . "ы " . $row->owner_name . " <font color=\"white\">[".$row->splitStartPosition()."]</font> летит на " . $type2 . "у " . $row->target_owner_name . " <font color=\"white\">[".$row->splitTargetPosition()."]</font>. Задание:";
 				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th>";
 			}
 		
-			if ($row->mission <> 4 && $end == 0 && $t1 != 3)
+			if ($row->mission <> 4 && !$end && $row->start_type != 3)
 			{
-				$item .= "<tr><th><div id=\"bxxfe$ii\" class=\"z\"></div><font color=\"green\">" . $this->game->datezone("H:i:s", $row->end_time) . "</font></th>";
-		
-				$Label = "fe";
-				$Time = $row->end_time - time();
-				$item .= Helpers::InsertJavaScriptChronoApplet($Label, $ii, $Time);
-		
-				$item .= "<th><font color=\"$kolormisjido\">Игрок ";
-				$item .= "(" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
-		
-				$item .= " с " . $type2 . "ы " . $nome2 . " <font color=\"white\">[$g2:$s2:$i2]</font> возвращается на " . $type . "у " . $nome . " <font color=\"white\">[$g1:$s1:$i1]</font>. Задание:";
+				$item .= "<tr><th><div id=\"bxxfe".$ii."\" class=\"z\"></div><font color=\"green\">" . $this->game->datezone("H:i:s", $row->end_time) . "</font></th>";
+				$item .= Helpers::InsertJavaScriptChronoApplet("fe", $ii, $row->end_time - time());
+				$item .= "<th><font color=\"".$color."\">Игрок (" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
+				$item .= " с " . $type2 . "ы " . $row->target_owner_name . " <font color=\"white\">[".$row->splitTargetPosition()."]</font> возвращается на " . $type . "у " . $row->owner_name . " <font color=\"white\">[".$row->splitStartPosition()."]</font>. Задание:";
 				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th></tr>";
 			}
 
-			$list[] = $item;
+			if ($item != '')
+				$list[] = $item;
 		}
 
 		$this->tag->setTitle('Сенсорная фаланга');
