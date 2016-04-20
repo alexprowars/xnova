@@ -135,7 +135,7 @@ class Alliance extends Model
 			$this->rights[self::CAN_EDIT_RIGHTS] 				= ($this->ranks[$this->member->rank - 1][self::CAN_EDIT_RIGHTS] == 1);
 			$this->rights[self::CAN_DELETE_ALLIANCE] 			= ($this->ranks[$this->member->rank - 1][self::CAN_DELETE_ALLIANCE] == 1);
 			$this->rights[self::CAN_ACCEPT] 					= ($this->ranks[$this->member->rank - 1][self::CAN_ACCEPT] == 1);
-			$this->rights[self::CAN_ACCEPT] 					= ($this->ranks[$this->member->rank - 1][self::CAN_ACCEPT] == 1);
+			$this->rights[self::ADMIN_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::ADMIN_ACCESS] == 1);
 			$this->rights[self::DIPLOMACY_ACCESS] 				= ($this->ranks[$this->member->rank - 1][self::DIPLOMACY_ACCESS] == 1);
 			$this->rights[self::PLANET_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::PLANET_ACCESS] == 1);
 		}

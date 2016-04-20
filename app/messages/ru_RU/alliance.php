@@ -97,7 +97,7 @@ $lang['Delete_range'] 				= '<img src="/images/ally/delete.gif"';
 $lang['Make'] = 'Создать';
 $lang['Law_leyends'] = 'Описание Законов';
 $lang['Alliance_dissolve'] = 'Расформировать альянс';
-$lang['Expel_users'] = 'Выгнать игрока';
+$lang['Expel_users'] = 'Редактирование участников';
 $lang['See_the_requests'] = 'Показать заявки';
 $lang['See_the_list_members'] = 'Показать список участников';
 $lang['Check_the_requests'] = 'Проверить запросы';

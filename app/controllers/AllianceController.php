@@ -351,8 +351,14 @@ class AllianceController extends ApplicationController
 			$parse['request_notallow_0'] = ($this->ally->request_notallow == 1) ? ' SELECTED' : '';
 			$parse['request_notallow_1'] = ($this->ally->request_notallow == 0) ? ' SELECTED' : '';
 			$parse['owner_range'] = $this->ally->owner_range;
-			$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/edit/give/", 'Продолжить');
-			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/edit/exit/", 'Продолжить');
+			
+			$parse['can_view_members'] = $this->ally->canAccess(Alliance::CAN_KICK);
+
+			if ($this->ally->owner == $this->user->id)
+				$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/edit/give/", 'Продолжить');
+
+			if ($this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
+				$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/edit/exit/", 'Продолжить');
 
 			$this->view->pick('alliance/admin');
 			$this->view->setVar('parse', $parse);
@@ -503,9 +509,9 @@ class AllianceController extends ApplicationController
 			if ($this->ally->owner != $this->user->id)
 				$this->message("Доступ запрещён.", "Ошибка!", "/alliance/", 2);
 
-			if (isset($_POST['newleader']) && $this->ally->owner == $this->user->id)
+			if ($this->request->hasPost('newleader') && $this->ally->owner == $this->user->id)
 			{
-				$info = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . intval($_POST['newleader']) . "'")->fetch();
+				$info = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . $this->request->getPost('newleader', 'int') . "'")->fetch();
 
 				if (!$info['id'] || $info['ally_id'] != $this->user->ally_id)
 					$this->message("Операция невозможна.", "Ошибка!", "/alliance/", 2);
@@ -522,7 +528,7 @@ class AllianceController extends ApplicationController
 
 			while ($u = $listuser->fetch())
 			{
-				if ($this->ally->ranks[$u['rank'] - 1]['rechtehand'] == 1)
+				if ($this->ally->ranks[$u['rank'] - 1][Alliance::CAN_EDIT_RIGHTS] == 1)
 					$parse['righthand'] .= "<option value=\"" . $u['id'] . "\">" . $u['username'] . "&nbsp;[" . $this->ally->ranks[$u['rank'] - 1]['name'] . "]&nbsp;&nbsp;</option>";
 			}
 
