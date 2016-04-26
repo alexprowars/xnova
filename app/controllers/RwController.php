@@ -37,7 +37,7 @@ class RwController extends ApplicationController
 			if ($this->request->isAjax() && $this->auth->isAuthorized())
 			{
 				$Page = "";
-		
+
 				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
 					$Page .= "Контакт с вашим флотом потерян.<br>(Ваш флот был уничтожен в первой волне атаки.)";
 				else
@@ -66,8 +66,10 @@ class RwController extends ApplicationController
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
 				$Page .= "</head><body>";
 				$Page .= "<table width=\"99%\"><tr><td>";
+
+				$users = array_count_values($user_list);
 		
-				if ($user_list[0] == $this->user->id && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
+				if ($user_list[0] == $this->user->id && $users[$this->user->id] == 1 && $raportrow['no_contact'] == 1 && !$this->user->isAdmin())
 				{
 					$Page .= "Контакт с вашим флотом потерян.<br>(Ваш флот был уничтожен в первой волне атаки.)";
 				}

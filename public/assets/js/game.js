@@ -595,7 +595,7 @@ $(document).ready(function()
 		}
     }
 
-	if ($.isFunction($(document).tooltip) && !XNova.isMobile)
+	if ($.isFunction($(document).tooltip))
 	{
 		$(document).tooltip({
 			items: ".tooltip",
