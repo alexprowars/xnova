@@ -1,4 +1,18 @@
-var io = require('socket.io').listen(6677);
+
+var https = require('https');
+var fs = require('fs');
+
+var options = {
+    key:    fs.readFileSync('/etc/letsencrypt/live/uni5.xnova.su/privkey.pem'),
+    cert:   fs.readFileSync('/etc/letsencrypt/live/uni5.xnova.su/cert.pem'),
+    ca:     fs.readFileSync('/etc/letsencrypt/live/uni5.xnova.su/chain.pem')
+};
+
+var app = https.createServer(options);
+
+var io = require('socket.io').listen(app);
+
+app.listen(6677, "0.0.0.0");
 
 var Memcached = require('memcached');
 var memcached = new Memcached('localhost:11211', {});

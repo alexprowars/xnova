@@ -7,8 +7,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<link rel="image_src" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/logo.jpg" />
-	<link rel="apple-touch-icon" href="http://<?=$_SERVER['HTTP_HOST'] ?>/assets/images/apple-touch-icon.png"/>
+	<link rel="image_src" href="//<?=$_SERVER['HTTP_HOST'] ?>/assets/images/logo.jpg" />
+	<link rel="apple-touch-icon" href="//<?=$_SERVER['HTTP_HOST'] ?>/assets/images/apple-touch-icon.png"/>
 
 	<?php $this->assets->outputCss('css') ?>
 	<?php $this->assets->outputJs('js') ?>
@@ -143,7 +143,7 @@
 						<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 						<a href="<?=$this->url->get('banned/') ?>">Тёмные</a>|
 						<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-							<a href="http://vk.com/xnova_game" target="_blank">ВК</a>|
+							<a href="//vk.com/xnova_game" target="_blank">ВК</a>|
 							<a href="<?=$this->url->get('contact/') ?>">Контакты</a>|
 						<? endif;?>
 						<a href="<?=$this->url->get('content/help/') ?>">Новичкам</a>|
