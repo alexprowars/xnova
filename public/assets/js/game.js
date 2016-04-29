@@ -8,50 +8,7 @@ var XNova =
 	isMobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
 	format: function (zahl)
 	{
-		var zahl_tmp1;
-		var zahl_tmp2;
-		var zahl_tmp3;
-		var html = "";
-
-		if (zahl >= 1000000)
-		{
-			zahl_tmp1 = Math.floor(zahl / 1000000);
-			html += zahl_tmp1 + ".";
-			zahl_tmp2 = Math.floor((zahl - (zahl_tmp1 * 1000000)) / 1000);
-
-			if (zahl_tmp2.length == 1)
-				html += "00" + zahl_tmp2 + ".";
-			else if (zahl_tmp2.length == 2)
-				html += "0" + zahl_tmp2 + ".";
-			else
-				html += zahl_tmp2 + ".";
-
-			zahl_tmp3 = Math.floor(zahl - (zahl_tmp1 * 1000000) - (zahl_tmp2 * 1000));
-
-			if (zahl_tmp3.length == 1)
-				html += "00" + zahl_tmp3;
-			else if (zahl_tmp3.length == 2)
-				html += "0" + zahl_tmp3;
-			else
-				html += zahl_tmp3;
-		}
-		else if (zahl >= 1000)
-		{
-			zahl_tmp1 = Math.floor(zahl / 1000);
-			html += zahl_tmp1 + ".";
-			zahl_tmp2 = Math.floor(zahl - (zahl_tmp1 * 1000));
-
-			if(zahl_tmp2.length == 1)
-				html += "00" + zahl_tmp2;
-			else if(zahl_tmp2.length == 2)
-				html += "0" + zahl_tmp2;
-			else
-				html += zahl_tmp2;
-		}
-		else
-			html = zahl;
-
-		return html;
+		return number_format(zahl, 0, ',', '.');
 	},
 	updateResources: function ()
 	{
@@ -270,32 +227,30 @@ function raport_to_bb(raport)
 
 function number_format(number, decimals, dec_point, thousands_sep)
 {
-	number = (number + '')
-			.replace(/[^0-9+\-Ee.]/g, '');
+	number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+
 	var n = !isFinite(+number) ? 0 : +number,
-			prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-			sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-			dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-			s = '',
-			toFixedFix = function (n, prec)
-			{
-				var k = Math.pow(10, prec);
-				return '' + Math.round(n * k) / k;
-			};
-	// Fix for IE parseFloat(0.55).toFixed(0) = 0;
-	s = (prec ? toFixedFix(n, prec) : '' + Math.round(n))
-			.split('.');
+		prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+		sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+		dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+		s = '',
+		toFixedFix = function (n, prec)
+		{
+			var k = Math.pow(10, prec);
+			return '' + Math.round(n * k) / k;
+		};
+
+	s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+
 	if (s[0].length > 3)
-	{
 		s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-	}
-	if ((s[1] || '')
-			.length < prec)
+
+	if ((s[1] || '').length < prec)
 	{
 		s[1] = s[1] || '';
-		s[1] += new Array(prec - s[1].length + 1)
-				.join('0');
+		s[1] += new Array(prec - s[1].length + 1).join('0');
 	}
+
 	return s.join(dec);
 }
 

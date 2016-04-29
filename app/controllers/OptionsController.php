@@ -234,7 +234,7 @@ class OptionsController extends ApplicationController
 				$this->db->query("UPDATE game_users_info SET" . $ui_query . " WHERE id = '" . $this->user->id . "'");
 			}
 
-			unset($_SESSION['config']);
+			$this->session->remove('config');
 		}
 		else
 			$this->db->query("UPDATE game_users SET vacation = '" . $vacation . "', deltime = '" . $Del_Time . "' WHERE id = '" . $this->user->id . "' LIMIT 1");

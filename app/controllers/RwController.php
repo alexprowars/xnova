@@ -60,7 +60,7 @@ class RwController extends ApplicationController
 			{
 				$result = json_decode($raportrow['raport'], true);
 
-				$Page = "<html><head><title>Боевой доклад</title>";
+				$Page = "<!DOCTYPE html><html><head><title>Боевой доклад</title>";
 				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
 				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";

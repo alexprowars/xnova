@@ -233,18 +233,18 @@ class ApplicationController extends Controller
 					$this->view->setVar('ajaxNavigation', 1);
 			}
 
-			$this->view->setVar('isPopup', ($this->request->has('popup') ? 1 : 0));
-			$this->view->setVar('timezone', 0);
-			$this->view->setVar('userId', $this->user->getId());
-			$this->view->setVar('adminlevel', $this->user->authlevel);
-
-			$this->game->loadGameVariables();
-
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode($this->session->get('config'), true);
 
 			foreach ($inf as $key => $value)
 				$this->user->{$key} = $value;
+
+			$this->view->setVar('isPopup', ($this->request->has('popup') ? 1 : 0));
+			$this->view->setVar('timezone', (isset($inf['timezone']) ? intval($inf['timezone']) : 0));
+			$this->view->setVar('userId', $this->user->getId());
+			$this->view->setVar('adminlevel', $this->user->authlevel);
+
+			$this->game->loadGameVariables();
 
 			$this->user->getAllyInfo();
 
