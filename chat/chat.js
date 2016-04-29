@@ -43,13 +43,16 @@ io.sockets.on('connection', function (socket)
 		try
 		{
 			var chat = JSON.parse(data);
+			var message;
 
 			for (var id in chat)
 			{
 				if (chat.hasOwnProperty(id))
 				{
-					console.log(chat[id]);
-					socket.json.send(getMessage(chat[id], socket.handshake.query.userName));
+					message = getMessage(chat[id], socket.handshake.query.userName);
+
+					if (message !== false)
+						socket.json.send(message);
 				}
 			}
 		} catch (e)
@@ -184,10 +187,10 @@ function insertMessage (msg, userId, userName, lastId, socket)
 			{
 				var message = getMessage(insert, j);
 
-				if (message.me >= 0 && message.my >= 0)
+				if (message !== false && message.me >= 0 && message.my >= 0)
 				{
 					if (io.sockets.connected[connectedUsers[j]] !== undefined)
-						io.sockets.connected[connectedUsers[j]].send(getMessage(insert, j));
+						io.sockets.connected[connectedUsers[j]].send(message);
 					else
 						delete connectedUsers[j];
 				}
@@ -200,13 +203,16 @@ var color_massive = ['white', 'white'];
 
 function getMessage (message, username)
 {
-	message[5] = nl2br(message[5].replace("[\n\r]", ""));
-	
-	if (message[6] > 0)
-		message[5] = "<font color=\""+color_massive[message[6]][0]+"\">"+message[5]+"</font>";
-
 	if (!Array.isArray(message[3]))
 		message[3] = message[3] == false ? [] : [message[3]];
+
+	if (message[4] > 0 && message[3].indexOf(username) == -1 && message[2] != username)
+		return false;
+
+	message[5] = nl2br(message[5].replace("[\n\r]", ""));
+
+	if (message[6] > 0)
+		message[5] = "<font color=\""+color_massive[message[6]][0]+"\">"+message[5]+"</font>";
 
 	var msg = {'id': message[0], 'time': message[1], 'user': message[2], 'to': message[3], 'text': message[5], 'private': (message[4] > 0 ? 1 : 0), 'me': -1, 'my': -1};
 
