@@ -170,6 +170,7 @@ class ApplicationController extends Controller
 
 				$css->addCss('/assets/css/bootstrap.css');
 				$css->addCss('/assets/css/jquery.toast.min.css');
+				$css->addCss('/assets/css/jquery.reject.css');
 				$css->addCss('/assets/css/style.css');
 
 				$js->addJs('/assets/js/script.js');
@@ -180,6 +181,7 @@ class ApplicationController extends Controller
 				$js->addJs('/assets/js/jquery.touchSwipe.min.js');
 				$js->addJs('/assets/js/jquery.toast.min.js');
 				$js->addJs('/assets/js/jquery.mousewheel.min.js');
+				$js->addJs('/assets/js/jquery.reject.js');
 			}
 
 			if ($this->request->isAjax())

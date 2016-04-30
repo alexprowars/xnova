@@ -114,7 +114,7 @@
 						<div class="th col-sm-2 col-xs-2 middle"><a href="javascript:noShip('ship<?=$ship['id'] ?>'); calc_capacity();">min</a>/<a href="javascript:maxShip('ship<?=$ship['id'] ?>'); calc_capacity();">max</a></div>
 						<div class="th col-sm-3 col-xs-4">
 							<a href="javascript:chShipCount('<?=$ship['id'] ?>', '-1'); calc_capacity();" title="Уменьшить на 1 ед." style="color:#FFD0D0">- </a>
-							<input type="text" name="ship<?=$ship['id'] ?>" style="width:65%" value="0" onfocus="if(this.value == '0') this.value='';" onblur="if(this.value == '') this.value='0';" title="<?=_getText('tech', $ship['id']).': '.$ship['count'] ?>" onChange="calc_capacity()" onKeyUp="calc_capacity()" />
+							<input type="number" name="ship<?=$ship['id'] ?>" style="width:60%" value="0" onfocus="if(this.value == '0') this.value='';" onblur="if(this.value == '') this.value='0';" title="<?=_getText('tech', $ship['id']).': '.$ship['count'] ?>" onChange="calc_capacity()" onKeyUp="calc_capacity()" />
 							<a href="javascript:chShipCount('<?=$ship['id'] ?>', '1'); calc_capacity();" title="Увеличить на 1 ед." style="color:#D0FFD0"> +</a>
 
 							<input type="hidden" name="maxship<?=$ship['id'] ?>" value="<?=$ship['count'] ?>" />

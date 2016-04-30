@@ -140,6 +140,8 @@ $(document).ready(function()
 		$('.menu-sidebar').toggleClass('opened');
 		$('.planet-sidebar').removeClass('opened');
 		$('.planet-toggle').removeClass('act');
+
+		$('html').toggleClass('menu_opened');
 	});
 
 	$('.planet-toggle').click(function(e)
@@ -149,6 +151,8 @@ $(document).ready(function()
 		$('.planet-sidebar').toggleClass('opened');
 		$('.menu-sidebar').removeClass('opened');
 		$('.menu-toggle').removeClass('act');
+
+		$('html').toggleClass('menu_opened');
 	});
 
  	$('.menu-sidebar a').click(function(e)

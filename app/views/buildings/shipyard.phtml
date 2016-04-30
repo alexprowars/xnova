@@ -45,7 +45,7 @@
 											<br>
 											<a href=javascript:setMaximum(<?=$build['i'] ?>,<?=$build['max']?>);>Максимум: <font color="lime"><?=$build['max']?></font></a>
 											<div class="buildmax">
-												<input type="text" name=fmenge[<?=$build['i'] ?>] alt='<?=_getText('tech', $build['i']) ?>' size="7" maxlength="5" value="" placeholder="0">
+												<input type="number" name="fmenge[<?=$build['i'] ?>]" alt="<?=_getText('tech', $build['i']) ?>" style="max-width: 80px" maxlength="5" value="" placeholder="0">
 											</div>
 										<? endif; ?>
 									<? endif; ?>
