@@ -510,7 +510,9 @@ $(document).ready(function()
 			chrome: 20,
 			firefox: 27,
 			opera: 11,
-			safari: 6
+			safari: 6,
+			unknown: false,
+			webkit: 537.1
 		},
 		display: ['firefox', 'chrome', 'opera'],
 		imagePath: '/assets/images/',
@@ -518,7 +520,8 @@ $(document).ready(function()
 		paragraph1: 'Вы вкурсе, что ваш браузер безнадёжно устарел и не поддерживает корректное отображение в данной игре?',
 		paragraph2: 'Обновите текущий браузер или установите новый:',
 		closeLink: 'Закрыть окно',
-		closeMessage: 'Администрация не несет ответственности за отображение игры на несовместимом браузере'
+		closeMessage: 'Администрация не несет ответственности за отображение игры на несовместимом браузере',
+		closeCookie: true
 	});
 
 	if ($.isFunction($(document).dialog))
