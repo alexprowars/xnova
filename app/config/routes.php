@@ -161,6 +161,13 @@ $router->add('/content/([a-zA-Z0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
+$router->add('/login/:params',
+[
+	'controller' 	=> 'index',
+	'action' 		=> 'login',
+	'params' 		=> 1
+]);
+
 $router->add('/',
 [
 	'controller' 	=> 'index',
