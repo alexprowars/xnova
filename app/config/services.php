@@ -130,13 +130,6 @@ $di->set('dispatcher', function () use ($di)
 	return $dispatcher;
 });
 
-$di->setShared('view', function()
-{
-	$view = new View();
-	$view->setViewsDir(APP_PATH.'app/views/');
-	return $view;
-});
-
 $di->setShared('auth', function ()
 {
 	return new Auth();

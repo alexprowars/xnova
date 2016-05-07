@@ -4,6 +4,7 @@ use Phalcon\Mvc\Router;
 
 $router = new Router(true);
 $router->removeExtraSlashes(true);
+$router->setDefaultModule('game');
 
 /*
 $router->notFound([ "controller" => "error" , "action" => "notFound" ]);

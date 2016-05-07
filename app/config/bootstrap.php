@@ -2,6 +2,19 @@
 
 include_once(APP_PATH."app/functions.php");
 
+$application->registerModules([
+	'admin' =>
+	[
+		'className'	=> 'Admin\Module',
+		'path'		=> APP_PATH.'app/modules/admin/Module.php',
+	],
+	'game' =>
+	[
+		'className'	=> 'App\Module',
+		'path'		=> APP_PATH.'app/modules/game/Module.php',
+	]
+]);
+
 $result = $di->get('cache')->get('app_config');
 
 if ($result === null)
