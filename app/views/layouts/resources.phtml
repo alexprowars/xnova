@@ -137,19 +137,21 @@
 		<? endforeach; ?>
 	</table>
 </form>
-<div class="separator"></div>
-<table class="table">
-	<tr>
-		<td class="c" colspan="5">Покупка ресурсов (8 ч. выработка ресурсов)</td>
-	</tr>
-	<tr>
-		<th width="30%">
-			<? if ($parse['merchand'] < time()): ?>
-				<a href="<?=$this->url->get('resources&buy=1/') ?>" class="button">Купить за 10 кредитов</a>
-			<? else: ?>
-				Через <?= \App\Helpers::pretty_time($parse['merchand'] - time()) ?>
-			<? endif; ?>
-		</th>
-		<th>Вы можете купить: <?=$parse['buy_metal'] ?> металла, <?=$parse['buy_crystal'] ?> кристалла, <?=$parse['buy_deuterium'] ?> дейтерия</th>
-	</tr>
-</table>
+<? if ($parse['type'] == 1): ?>
+	<div class="separator"></div>
+	<table class="table">
+		<tr>
+			<td class="c" colspan="5">Покупка ресурсов (8 ч. выработка ресурсов)</td>
+		</tr>
+		<tr>
+			<th width="30%">
+				<? if ($parse['merchand'] < time()): ?>
+					<a href="<?=$this->url->get('resources&buy=1/') ?>" class="button">Купить за 10 кредитов</a>
+				<? else: ?>
+					Через <?= \App\Helpers::pretty_time($parse['merchand'] - time()) ?>
+				<? endif; ?>
+			</th>
+			<th>Вы можете купить: <?=$parse['buy_metal'] ?> металла, <?=$parse['buy_crystal'] ?> кристалла, <?=$parse['buy_deuterium'] ?> дейтерия</th>
+		</tr>
+	</table>
+<? endif; ?>

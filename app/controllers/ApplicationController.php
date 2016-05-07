@@ -389,7 +389,7 @@ class ApplicationController extends Controller
 				if ($CurPlanet['id'] == $this->user->planet_current)
 					$parse['planetlist'] .= "selected=\"selected\" ";
 
-				if (isset($_GET['set']))
+				if ($this->request->hasQuery('set'))
 					$parse['planetlist'] .= "value=\"/" . $this->dispatcher->getControllerName() . "/";
 				else
 					$parse['planetlist'] .= "value=\"/overview/";
@@ -419,6 +419,11 @@ class ApplicationController extends Controller
 			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</span>";
 			$parse[$res.'_ph'] 	= $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
 			$parse[$res.'_mp'] 	= $this->planet->{$res.'_mine_porcent'} * 10;
+		}
+
+		if ($parse['metal'] < 0 || $parse['crystal'] < 0 || $parse['deuterium'] < 0)
+		{
+			User::sendMessage(1, 0, time(), 1, '', print_r($parse, true));
 		}
 
 		$parse['energy_max'] 	= Helpers::pretty_number($this->planet->energy_max);

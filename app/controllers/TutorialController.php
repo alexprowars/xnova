@@ -145,7 +145,7 @@ class TutorialController extends ApplicationController
 			if ($qInfo['finish'] > 0)
 				$errors++;
 
-			if (isset($_GET['continue']) && !$errors && $qInfo['finish'] == 0)
+			if ($this->request->hasQuery('continue') && !$errors && $qInfo['finish'] == 0)
 			{
 				//$this->db->query("UPDATE game_planets SET `" . $this->storage->resource[401] . "` = `" . $this->storage->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 

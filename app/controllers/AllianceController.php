@@ -164,9 +164,9 @@ class AllianceController extends ApplicationController
 
 			$parse['need'] = 100 * ($parse['bases'] > 0 ? (5 + ((int) $parse['bases'] - 1) * 5) : 1);
 
-			if (isset($_GET['ally']))
+			if ($this->request->hasQuery('ally'))
 			{
-				$id = intval($_GET['ally']);
+				$id = $this->request->getQuery('ally', 'int', 0);
 
 				$check = $this->db->query("SELECT id, id_ally FROM game_planets WHERE planet_type = 5 AND id_ally = 0 AND id_owner = ".$this->user->id." AND id = ".$id."")->fetch();
 
@@ -868,7 +868,7 @@ class AllianceController extends ApplicationController
 
 		if ($news_count['num'] > 0)
 		{
-			$p = (isset($_GET['p'])) ? intval($_GET['p']) : 1;
+			$p = $this->request->getQuery('p', 'int', 1);
 
 			$thiss = Helpers::pagination($news_count['num'], 20, '/alliance/chat/', $p);
 
@@ -930,7 +930,7 @@ class AllianceController extends ApplicationController
 		if ($this->user->ally_id > 0 || $ally_request > 0)
 			return $this->indexAction();
 
-		if (isset($_GET['yes']) && $_POST)
+		if ($this->request->hasQuery('yes') && $this->request->isPost())
 		{
 			if (!$_POST['atag'])
 				$this->message(_getText('have_not_tag'), _getText('make_alliance'));
@@ -1018,10 +1018,10 @@ class AllianceController extends ApplicationController
 		if ($this->user->ally_id > 0)
 			return $this->indexAction();
 
-		if (!is_numeric($_GET['allyid']) || !$_GET['allyid'])
-			$this->message(_getText('it_is_not_posible_to_apply'), _getText('it_is_not_posible_to_apply'));
+		$allyid = $this->request->getQuery('allyid', 'int', 0);
 
-		$allyid = intval($_GET['allyid']);
+		if ($allyid <= 0)
+			$this->message(_getText('it_is_not_posible_to_apply'), _getText('it_is_not_posible_to_apply'));
 
 		$allyrow = $this->db->query("SELECT tag, request, request_notallow FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 

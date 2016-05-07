@@ -23,6 +23,6 @@ class ChatController extends ApplicationController
 
 		$this->tag->setTitle('Межгалактический чат');
 		$this->showTopPanel(false);
-		$this->showLeftPanel(!isset($_GET['frame']));
+		$this->showLeftPanel(!$this->request->hasQuery('frame'));
 	}
 }

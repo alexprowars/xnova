@@ -30,9 +30,10 @@ class RocketController extends ApplicationController
 			return;
 		}
 
-		$g = intval($_GET['galaxy']);
-		$s = intval($_GET['system']);
-		$i = intval($_GET['planet']);
+		$g = $this->request->getQuery('galaxy', 'int');
+		$s = $this->request->getQuery('system', 'int');
+		$i = $this->request->getQuery('planet', 'int');
+
 		$anz = intval($_POST['SendMI']);
 		$destroyType = $_POST['Target'];
 		

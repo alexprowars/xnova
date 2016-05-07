@@ -194,7 +194,7 @@ class ResourcesController extends ApplicationController
 				$parse['buy_'.$res] = 0;
 		}
 
-		if (isset($_GET['buy']) && $this->planet->id > 0 && $this->planet->planet_type == 1)
+		if ($this->request->hasQuery('buy') && $this->planet->id > 0 && $this->planet->planet_type == 1)
 		{
 			$this->buy($parse);
 		}
@@ -213,7 +213,8 @@ class ResourcesController extends ApplicationController
 		$parse['production_level'] = "{$production_level}%";
 		$parse['production_level_barcolor'] = '#00ff00';
 		$parse['name'] = $this->planet->name;
-		
+		$parse['type'] = $this->planet->planet_type;
+
 		$parse['et'] = $this->user->energy_tech;
 
 		$this->view->setVar('parse', $parse);
