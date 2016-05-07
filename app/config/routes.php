@@ -6,27 +6,6 @@ $router = new Router(true);
 $router->removeExtraSlashes(true);
 $router->setDefaultModule('game');
 
-/*
-$router->notFound([ "controller" => "error" , "action" => "notFound" ]);
-$router->removeExtraSlashes(true);
-
-$router->add('/game', array(
-	'controller' => 'game',
-));
-
-$router->add('/pers/:action/:params', array
-(
-	'controller' => 'pers',
-	'action' => 1,
-	'params' => 2
-));
-
-$router->add('/:controller', array
-(
-	'controller' => 1
-));
-*/
-
 $router->add('/:controller/:action/:params',
 [
 	'controller' 	=> 1,
@@ -146,14 +125,6 @@ $router->add('/sim/([0-9!;,]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/admin/([a-zA-Z0-9]+)/:params',
-[
-	'controller' 	=> 'admin',
-	'action' 		=> 'index',
-	'set' 			=> 1,
-	'params' 		=> 2
-]);
-
 $router->add('/content/([a-zA-Z0-9]+)/:params',
 [
 	'controller' 	=> 'content',
@@ -173,6 +144,30 @@ $router->add('/',
 [
 	'controller' 	=> 'index',
 	'action' 		=> 'index',
+]);
+
+$router->add('/admin/:params',
+[
+	'module' 		=> 'admin',
+	'controller' 	=> 'overview',
+	'action' 		=> 'index',
+	'params' 		=> 1
+])->setName('admin');
+
+$router->add('/admin/:controller/:params',
+[
+	'module' 		=> 'admin',
+	'controller' 	=> 1,
+	'action' 		=> 'index',
+	'params' 		=> 2
+]);
+
+$router->add('/admin/:controller/:action/:params',
+[
+	'module' 		=> 'admin',
+	'controller' 	=> 1,
+	'action' 		=> 2,
+	'params' 		=> 3
 ]);
 
 $router->handle();

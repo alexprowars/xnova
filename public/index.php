@@ -64,7 +64,7 @@ try
 			unset($toolbar);
 	}
 
-	if ($application->request->isAjax())
+	if ($application->request->isAjax() && $application->dispatcher->getModuleName() !== 'admin')
 	{
 		/** @noinspection PhpUndefinedFieldInspection */
 		$application->response->setJsonContent(

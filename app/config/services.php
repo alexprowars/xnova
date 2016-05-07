@@ -99,37 +99,6 @@ $di->set(
 	}
 );
 
-$di->set('dispatcher', function () use ($di)
-{
-	$eventsManager = new EventsManager;
-	$eventsManager->attach('dispatch:beforeExecuteRoute', new Security);
-	/** @noinspection PhpUnusedParameterInspection */
-	$eventsManager->attach("dispatch:beforeException", function($event, $dispatcher, $exception)
-	{
-		/**
-		 * @var Phalcon\Mvc\Dispatcher $dispatcher
-		 * @var Phalcon\Mvc\Dispatcher\Exception $exception
-		 */
-		switch ($exception->getCode())
-		{
-			case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-			case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-				$dispatcher->forward([
-					'controller' => 'error',
-					'action'	 => 'notFound',
-				]);
-				return false;
-		}
-
-		return true;
-	});
-
-	$dispatcher = new Dispatcher();
-	$dispatcher->setDefaultNamespace('App\Controllers');
-	$dispatcher->setEventsManager($eventsManager);
-	return $dispatcher;
-});
-
 $di->setShared('auth', function ()
 {
 	return new Auth();

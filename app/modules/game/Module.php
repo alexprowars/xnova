@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Auth\Security;
 use Phalcon\DiInterface;
 use Phalcon\Loader;
+use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\Mvc\View;
+use Phalcon\Events\Manager as EventsManager;
 
 class Module implements ModuleDefinitionInterface
 {
@@ -18,7 +21,7 @@ class Module implements ModuleDefinitionInterface
 		/** @noinspection PhpUndefinedFieldInspection */
 		$loader->registerNamespaces(array
 		(
-		    'App\Controllers' 	=> APP_PATH.$config->application->baseDir.$config->application->modulesDir.'game/'.$config->application->controllersDir,
+		    'App\Controllers' => APP_PATH.$config->application->baseDir.$config->application->modulesDir.'game/'.$config->application->controllersDir,
 		));
 
 		$loader->register();
@@ -33,6 +36,37 @@ class Module implements ModuleDefinitionInterface
 			$view = new View();
 			$view->setViewsDir(APP_PATH.$config->application->baseDir.$config->application->modulesDir.'game/'.$config->application->viewsDir);
 			return $view;
+		});
+
+		$di->set('dispatcher', function () use ($di)
+		{
+			$eventsManager = new EventsManager;
+			$eventsManager->attach('dispatch:beforeExecuteRoute', new Security);
+			/** @noinspection PhpUnusedParameterInspection */
+			$eventsManager->attach("dispatch:beforeException", function($event, $dispatcher, $exception)
+			{
+				/**
+				 * @var \Phalcon\Mvc\Dispatcher $dispatcher
+				 * @var \Phalcon\Mvc\Dispatcher\Exception $exception
+				 */
+				switch ($exception->getCode())
+				{
+					case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+					case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+						$dispatcher->forward([
+							'controller' => 'error',
+							'action'	 => 'notFound',
+						]);
+						return false;
+				}
+
+				return true;
+			});
+
+			$dispatcher = new Dispatcher();
+			$dispatcher->setDefaultNamespace('App\Controllers');
+			$dispatcher->setEventsManager($eventsManager);
+			return $dispatcher;
 		});
 	}
 }

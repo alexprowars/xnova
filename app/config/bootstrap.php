@@ -5,7 +5,7 @@ include_once(APP_PATH."app/functions.php");
 $application->registerModules([
 	'admin' =>
 	[
-		'className'	=> 'Admin\Module',
+		'className'	=> 'Xnova\Admin\Module',
 		'path'		=> APP_PATH.'app/modules/admin/Module.php',
 	],
 	'game' =>
