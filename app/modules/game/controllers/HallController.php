@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class HallController extends ApplicationController
+class HallController extends Application
 {
 	public function initialize ()
 	{

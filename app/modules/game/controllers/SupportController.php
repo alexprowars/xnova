@@ -11,7 +11,7 @@ use App\Helpers;
 use App\Models\User;
 use App\Sms;
 
-class SupportController extends ApplicationController
+class SupportController extends Application
 {
 	public function initialize ()
 	{

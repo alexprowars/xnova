@@ -12,7 +12,7 @@ use App\Helpers;
 use App\Models\Fleet as FleetModel;
 use App\Models\Planet;
 
-class PhalanxController extends ApplicationController
+class PhalanxController extends Application
 {
 	public function initialize ()
 	{

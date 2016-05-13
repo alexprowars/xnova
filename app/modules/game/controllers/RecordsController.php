@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Helpers;
 
-class RecordsController extends ApplicationController
+class RecordsController extends Application
 {
 	public function initialize ()
 	{

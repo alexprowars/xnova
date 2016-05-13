@@ -17,7 +17,7 @@ use App\Controllers\Fleet\StageZero;
 use App\Controllers\Fleet\Verband;
 use App\Fleet;
 
-class FleetController extends ApplicationController
+class FleetController extends Application
 {
 	public function initialize ()
 	{

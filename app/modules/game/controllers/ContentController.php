@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class ContentController extends ApplicationController
+class ContentController extends Application
 {
 	public function initialize ()
 	{

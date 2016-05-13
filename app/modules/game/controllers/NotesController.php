@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Lang;
 
-class NotesController extends ApplicationController
+class NotesController extends Application
 {
 	public function initialize ()
 	{

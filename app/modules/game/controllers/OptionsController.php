@@ -14,7 +14,7 @@ use App\Models\Fleet;
 use App\Models\Planet;
 use App\Queue;
 
-class OptionsController extends ApplicationController
+class OptionsController extends Application
 {
 	public function initialize ()
 	{

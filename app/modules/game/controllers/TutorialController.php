@@ -11,7 +11,7 @@ use App\Helpers;
 use App\Lang;
 use App\Models\Planet;
 
-class TutorialController extends ApplicationController
+class TutorialController extends Application
 {
 	public function initialize ()
 	{

@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Lang;
 
-class ContactController extends ApplicationController
+class ContactController extends Application
 {
 	public function initialize ()
 	{

@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\CombatReport;
 
-class LogController extends ApplicationController
+class LogController extends Application
 {
 	public function initialize ()
 	{

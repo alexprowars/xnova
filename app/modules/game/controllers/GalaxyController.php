@@ -11,7 +11,7 @@ use App\Fleet;
 use App\JavaScriptPacker;
 use App\Lang;
 
-class GalaxyController extends ApplicationController
+class GalaxyController extends Application
 {
 	public function initialize ()
 	{

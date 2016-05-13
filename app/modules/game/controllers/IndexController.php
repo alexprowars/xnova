@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Mail\PHPMailer;
 use Phalcon\Text;
 
-class IndexController extends ApplicationController
+class IndexController extends Application
 {
 	public function initialize()
 	{

@@ -13,7 +13,7 @@ use App\Models\Message;
 use App\Models\User;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 
-class MessagesController extends ApplicationController
+class MessagesController extends Application
 {
 	public function initialize ()
 	{

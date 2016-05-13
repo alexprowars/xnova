@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Lang;
 
-class GitController extends ApplicationController
+class GitController extends Application
 {
 	public function initialize ()
 	{

@@ -10,7 +10,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Lang;
 
-class StartController extends ApplicationController
+class StartController extends Application
 {
 	public function initialize()
 	{

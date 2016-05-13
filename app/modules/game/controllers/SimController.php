@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class SimController extends ApplicationController
+class SimController extends Application
 {
 	public function initialize ()
 	{

@@ -10,7 +10,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Lang;
 
-class OfficierController extends ApplicationController
+class OfficierController extends Application
 {
 	public function initialize ()
 	{

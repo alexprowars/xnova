@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class TechController extends ApplicationController
+class TechController extends Application
 {
 	public function initialize ()
 	{

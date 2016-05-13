@@ -2,18 +2,21 @@
 
 include_once(APP_PATH."app/functions.php");
 
-$application->registerModules([
-	'admin' =>
-	[
-		'className'	=> 'Xnova\Admin\Module',
-		'path'		=> APP_PATH.'app/modules/admin/Module.php',
-	],
-	'game' =>
-	[
-		'className'	=> 'App\Module',
-		'path'		=> APP_PATH.'app/modules/game/Module.php',
-	]
-]);
+if (isset($application))
+{
+	$application->registerModules([
+		'admin' =>
+		[
+			'className'	=> 'Xnova\Admin\Module',
+			'path'		=> APP_PATH.'app/modules/admin/Module.php',
+		],
+		'game' =>
+		[
+			'className'	=> 'App\Module',
+			'path'		=> APP_PATH.'app/modules/game/Module.php',
+		]
+	]);
+}
 
 $result = $di->get('cache')->get('app_config');
 

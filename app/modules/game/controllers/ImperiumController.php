@@ -13,7 +13,7 @@ use App\Models\Fleet;
 use App\Models\Planet;
 use App\Queue;
 
-class ImperiumController extends ApplicationController
+class ImperiumController extends Application
 {
 	public function initialize ()
 	{

@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class CreditsController extends ApplicationController
+class CreditsController extends Application
 {
 	public function initialize ()
 	{

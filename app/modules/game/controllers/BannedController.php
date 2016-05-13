@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class BannedController extends ApplicationController
+class BannedController extends Application
 {
 	public function initialize ()
 	{

@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class ErrorController extends ApplicationController
+class ErrorController extends Application
 {
 	public function initialize ()
 	{

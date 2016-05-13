@@ -10,7 +10,7 @@ namespace App\Controllers;
 use App\Helpers;
 use App\Models\Planet;
 
-class ResourcesController extends ApplicationController
+class ResourcesController extends Application
 {
 	public function initialize ()
 	{

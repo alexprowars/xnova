@@ -14,7 +14,7 @@ use App\Models\AllianceMember;
 use App\Models\Planet;
 use App\Models\User;
 
-class AllianceController extends ApplicationController
+class AllianceController extends Application
 {
 	/**
 	 * @var \App\Models\Alliance $ally

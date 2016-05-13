@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Lang;
 
-class MerchantController extends ApplicationController
+class MerchantController extends Application
 {
 	public function initialize ()
 	{

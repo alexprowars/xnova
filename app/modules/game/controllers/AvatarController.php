@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Upload\Upload;
 
-class AvatarController extends ApplicationController
+class AvatarController extends Application
 {
 	public function initialize ()
 	{

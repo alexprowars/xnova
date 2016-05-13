@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class RefersController extends ApplicationController
+class RefersController extends Application
 {
 	public function initialize ()
 	{

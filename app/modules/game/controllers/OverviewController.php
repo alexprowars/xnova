@@ -15,7 +15,7 @@ use App\Queue;
 use App\Models\Fleet as FleetModel;
 use Phalcon\Mvc\Model\Resultset;
 
-class OverviewController extends ApplicationController
+class OverviewController extends Application
 {
 	public function initialize()
 	{

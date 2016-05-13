@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\Helpers;
 
-class SearchController extends ApplicationController
+class SearchController extends Application
 {
 	public function initialize ()
 	{

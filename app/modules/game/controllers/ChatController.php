@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class ChatController extends ApplicationController
+class ChatController extends Application
 {
 	public function initialize ()
 	{

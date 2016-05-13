@@ -37,7 +37,7 @@ use Phalcon\Tag;
  * @property \Phalcon\Config|\stdClass config
  * @property \App\Game game
  */
-class ApplicationController extends Controller
+class Application extends Controller
 {
 	public $private = 0;
 

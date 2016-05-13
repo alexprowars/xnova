@@ -18,7 +18,7 @@ use App\Battle\Models\ShipType;
 use App\CombatReport;
 use Phalcon\Mvc\View;
 
-class XnsimController extends ApplicationController
+class XnsimController extends Application
 {
 	private $usersInfo = [];
 

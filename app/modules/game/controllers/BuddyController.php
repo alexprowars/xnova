@@ -9,7 +9,7 @@ use App\Models\User;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class BuddyController extends ApplicationController
+class BuddyController extends Application
 {
 	public function initialize ()
 	{

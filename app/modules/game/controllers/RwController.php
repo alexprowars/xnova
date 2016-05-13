@@ -9,7 +9,7 @@ namespace App\Controllers;
 
 use App\CombatReport;
 
-class RwController extends ApplicationController
+class RwController extends Application
 {
 	public function initialize ()
 	{

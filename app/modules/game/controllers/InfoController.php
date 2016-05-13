@@ -12,7 +12,7 @@ use App\Fleet;
 use App\Helpers;
 use App\Lang;
 
-class InfoController extends ApplicationController
+class InfoController extends Application
 {
 	public function initialize ()
 	{

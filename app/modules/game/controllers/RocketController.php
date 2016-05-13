@@ -10,7 +10,7 @@ use App\Models\Planet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class RocketController extends ApplicationController
+class RocketController extends Application
 {
 	public function initialize ()
 	{

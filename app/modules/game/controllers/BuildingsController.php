@@ -10,7 +10,7 @@ namespace App\Controllers;
 use App\Construction;
 use App\Lang;
 
-class BuildingsController extends ApplicationController
+class BuildingsController extends Application
 {
 	/**
 	 * @var \App\Construction $building

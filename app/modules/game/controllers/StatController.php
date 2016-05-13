@@ -11,7 +11,7 @@ use App\Helpers;
 use App\Lang;
 use Phalcon\Mvc\View;
 
-class StatController extends ApplicationController
+class StatController extends Application
 {
 	private $field = '';
 	private $range = 0;

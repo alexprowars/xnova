@@ -11,7 +11,7 @@ use App\Models\Fleet;
 use App\Models\Planet;
 use App\Queue;
 
-class RaceController extends ApplicationController
+class RaceController extends Application
 {
 	public function initialize ()
 	{

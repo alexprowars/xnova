@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class LogsController extends ApplicationController
+class LogsController extends Application
 {
 	public function initialize ()
 	{

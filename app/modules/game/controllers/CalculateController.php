@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-class CalculateController extends ApplicationController
+class CalculateController extends Application
 {
 	public function initialize ()
 	{
