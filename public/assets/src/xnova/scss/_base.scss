@@ -672,6 +672,19 @@ textarea#text {
 	height: auto;
 	min-height: 100%;
 	align-items: center;
+
+	&.set_imperium {
+		align-items: baseline;
+
+		.game_content {
+			max-width: none !important;
+			width: auto !important;
+
+			> .content {
+				white-space: nowrap;
+			}
+		}
+	}
 }
 
 .margin5 {
@@ -1471,7 +1484,7 @@ div.table {
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
-    margin:0;
+	margin:0;
 }
 
 .menu_opened {

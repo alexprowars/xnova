@@ -75,10 +75,14 @@
 	}
 }
 
-@media (min-width: 1700px)
+@media (min-width: 1600px)
 {
 	body {
 		font-size: 12px;
+	}
+
+	#box .game_menu, #box .game_content {
+		width: 1200px;
 	}
 
 	.planetList .list .planet {
@@ -112,6 +116,11 @@
 
 	.block > .content {
 		font-size: 12px;
+	}
+
+	.set_buildingsindex .content-row > .block {
+		width: 784px;
+		margin: 0 auto;
 	}
 }
 
@@ -183,6 +192,8 @@
 			height: 634px;
 			background: url(/assets/images/buildings/area.jpg) no-repeat 0 0;
 			font-size: 0;
+			width: 780px;
+			margin: 0 auto;
 		}
 
 		&.moon, &.base {

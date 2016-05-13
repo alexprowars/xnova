@@ -259,7 +259,7 @@
 			<table class="table" style="max-width: 100%">
 				<tr>
 					<th class="text-xs-left">
-						<div style="max-height: 150px;overflow-y: auto;overflow-x: hidden;">
+						<div style="overflow-y: auto;overflow-x: hidden;">
 						<? foreach ($parse['activity']['chat'] AS $activity): ?>
 							<div class="activity"><div class="date1" style="display: inline-block;padding-right:5px;"><?=$this->game->datezone("H:i", $activity['TIME']) ?></div><div style="display: inline;white-space:pre-wrap"><?=$activity['MESS'] ?></div></div>
 							<div class="clear"></div>
@@ -273,7 +273,7 @@
 			<table class="table">
 				<tr>
 					<th class="text-xs-left">
-						<div style="max-height: 150px;overflow-y: auto;overflow-x: hidden;">
+						<div style="overflow-y: auto;overflow-x: hidden;">
 						<? foreach ($parse['activity']['forum'] AS $activity): ?>
 							<div class="activity"><div class="date1" style="display: inline-block;padding-right:5px;"><?=$this->game->datezone("H:i", $activity['TIME']) ?></div><div style="display: inline;white-space:pre-wrap"><?=$activity['MESS'] ?></div></div>
 							<div class="clear"></div>
