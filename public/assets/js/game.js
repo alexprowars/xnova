@@ -24,6 +24,9 @@ var XNova =
 
 		var factor = ((new Date).getTime() - lastUpdate) / 1000;
 
+		if (factor < 0)
+				alert('Если вы это видите, то напишите админу :(');
+
 		lastUpdate = (new Date).getTime();
 
 		if (ress[0] >= max[0])

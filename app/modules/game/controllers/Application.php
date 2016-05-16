@@ -360,6 +360,7 @@ class Application extends Controller
 		$parse['image'] = $this->planet->image;
 		$parse['name'] = $this->planet->name;
 		$parse['time'] = time();
+		$parse['update'] = $this->planet->last_update;
 
 		$parse['planetlist'] = '';
 
@@ -421,7 +422,7 @@ class Application extends Controller
 			$parse[$res.'_mp'] 	= $this->planet->{$res.'_mine_porcent'} * 10;
 		}
 
-		if ($parse['metal'] < 0 || $parse['crystal'] < 0 || $parse['deuterium'] < 0)
+		if ($parse['metal'] < 0 || $parse['crystal'] < 0 || $parse['deuterium'] < 0 || $parse['metal_ph'] < 0 || $parse['crystal_ph'] < 0 || $parse['deuterium_ph'] < 0)
 		{
 			User::sendMessage(1, 0, time(), 1, '', print_r($parse, true));
 		}

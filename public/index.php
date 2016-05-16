@@ -34,11 +34,7 @@ try
 	include (APP_PATH . '/app/config/services.php');
 
 	if (DEBUG)
-	{
 		$di->setShared('profiler', $profiler);
-		$pluginManager = new \Fabfuel\Prophiler\Plugin\Manager\Phalcon($profiler);
-		$pluginManager->register();
-	}
 
     $application = new Application($di);
 
@@ -46,6 +42,19 @@ try
 
 	if (isset($benchmark))
 		$profiler->stop($benchmark);
+
+	if (DEBUG)
+	{
+		$eventManager = new \Phalcon\Events\Manager();
+		$application->setEventsManager($eventManager);
+
+		/** @noinspection PhpUnusedParameterInspection */
+		$eventManager->attach('application:afterStartModule', function ($event, $application)
+		{
+			$pluginManager = new \Fabfuel\Prophiler\Plugin\Manager\Phalcon($application->getDI()->getShared('profiler'));
+			$pluginManager->register();
+		});
+	}
 
 	$handle = $application->handle();
 

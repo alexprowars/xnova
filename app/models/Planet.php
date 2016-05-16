@@ -313,6 +313,11 @@ class Planet extends Model
 		$productionTime = $updateTime - $this->last_update;
 		$this->last_update = $updateTime;
 
+		if ($productionTime < 0)
+		{
+			User::sendMessage(1, 0, time(), 1, '', print_r($this->toArray(), true).'||||||||'.$productionTime);
+		}
+
 		if (!defined('CRON'))
 			$this->last_active = $this->last_update;
 
@@ -358,9 +363,9 @@ class Planet extends Model
 
 		$this->production_level = $production_level;
 
-		if ($this->metal < 0 || $this->crystal < 0 || $this->deuterium < 0)
+		if ($this->metal < 0 || $this->crystal < 0 || $this->deuterium < 0 || $production_level < 0)
 		{
-			User::sendMessage(1, 0, time(), 1, '', print_r($this->toArray(), true));
+			User::sendMessage(1, 0, time(), 1, '', print_r($this->toArray(), true).'|||'.$production_level);
 		}
 
 		foreach ($this->storage->reslist['res'] AS $res)
