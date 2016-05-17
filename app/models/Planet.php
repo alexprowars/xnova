@@ -363,11 +363,6 @@ class Planet extends Model
 
 		$this->production_level = $production_level;
 
-		if ($this->metal < 0 || $this->crystal < 0 || $this->deuterium < 0 || $production_level < 0)
-		{
-			User::sendMessage(1, 0, time(), 1, '', print_r($this->toArray(), true).'|||'.$production_level);
-		}
-
 		foreach ($this->storage->reslist['res'] AS $res)
 		{
 			$this->{$res.'_production'} = 0;
@@ -658,11 +653,6 @@ class Planet extends Model
 					$this->metal 		-= $Needed['metal'];
 					$this->crystal 		-= $Needed['crystal'];
 					$this->deuterium 	-= $Needed['deuterium'];
-
-					if ($this->metal < 0 || $this->crystal < 0 || $this->deuterium < 0)
-					{
-						User::sendMessage(1, 0, time(), 1, '', print_r($QueueArray, true).'||||'.print_r($this->toArray(), true));
-					}
 
 					$QueueArray[0]['s'] = time();
 

@@ -10,6 +10,7 @@ var XNova =
 	{
 		return number_format(zahl, 0, ',', '.');
 	},
+	lastUpdate: 0,
 	updateResources: function ()
 	{
 		var bold1_met = 'empty';
@@ -22,12 +23,15 @@ var XNova =
 		if (ress === undefined)
 			return;
 
-		var factor = ((new Date).getTime() - lastUpdate) / 1000;
+		if (XNova.lastUpdate == 0)
+			XNova.lastUpdate = (new Date).getTime();
+
+		var factor = ((new Date).getTime() - XNova.lastUpdate) / 1000;
 
 		if (factor < 0)
-				alert('Если вы это видите, то напишите админу :(');
+			return;
 
-		lastUpdate = (new Date).getTime();
+		XNova.lastUpdate = (new Date).getTime();
 
 		if (ress[0] >= max[0])
 		{
