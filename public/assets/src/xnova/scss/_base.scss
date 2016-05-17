@@ -1379,10 +1379,10 @@ div.errormessage {
 }
 
 .e404 {
-	font-size: 45px;
+	font-size: 30px;
 	text-align: center;
 	margin: 0 auto;
-	padding: 100px 50px;
+	padding: 20px 50px;
 }
 
 .alert a {
@@ -1488,5 +1488,5 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .menu_opened {
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
