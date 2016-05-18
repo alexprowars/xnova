@@ -1,4 +1,9 @@
 
+var ajax_nav = 0;
+var addToUrl = '';
+var timezone = 0;
+var timestamp = 0;
+
 var XNova =
 {
 	path: '/',

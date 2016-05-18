@@ -53,10 +53,10 @@
 <body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
 	<script type="text/javascript">
 		XNova.path = '/';
-		var timestamp = <?=time() ?>;
-		var timezone = <?=$timezone ?>;
-		var ajax_nav = <?=$ajaxNavigation ?>;
-		var addToUrl = '<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') && $this->session->has('OKAPI')): ?><?=http_build_query($this->session->get('OKAPI')) ?><? endif; ?>';
+		timestamp = <?=time() ?>;
+		timezone = <?=$timezone ?>;
+		ajax_nav = <?=$ajaxNavigation ?>;
+		addToUrl = '<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') && $this->session->has('OKAPI')): ?><?=http_build_query($this->session->get('OKAPI')) ?><? endif; ?>';
 
 		<? if ($this->auth->isAuthorized()): ?>
 			XNova.fleetSpeed 	= <?=$this->game->getSpeed('fleet') ?>;
