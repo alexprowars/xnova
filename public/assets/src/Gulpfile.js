@@ -9,11 +9,7 @@ gulp.task('xnova-sass', function ()
 {
 	gulp.src('./xnova/scss/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer({
-			browsers: ['last 2 versions'],
-			cascade: false,
-			flexbox: 'no-2009'
-		}))
+		.pipe(autoprefixer())
 		.pipe(uglifycss())
     	.pipe(gulp.dest('../css'));
 });
@@ -27,11 +23,7 @@ gulp.task('xnova-bootstrap', function ()
 {
 	gulp.src('./bootstrap/scss/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer({
-			browsers: ['last 2 versions'],
-			cascade: false,
-			flexbox: 'no-2009'
-		}))
+		.pipe(autoprefixer())
 		.pipe(uglifycss())
     	.pipe(gulp.dest('../css'));
 });
