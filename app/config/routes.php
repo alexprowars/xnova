@@ -170,6 +170,38 @@ $router->add('/admin/:controller/:action/:params',
 	'params' 		=> 3
 ]);
 
+$router->add('/bot/:params',
+[
+	'module' 		=> 'bot',
+	'controller' 	=> 'index',
+	'action' 		=> 'index',
+	'params' 		=> 1
+])->setName('bot');
+
+$router->add('/bot/set/:params',
+[
+	'module' 		=> 'bot',
+	'controller' 	=> 'index',
+	'action' 		=> 'set',
+	'params' 		=> 1
+]);
+
+$router->add('/bot/unset/:params',
+[
+	'module' 		=> 'bot',
+	'controller' 	=> 'index',
+	'action' 		=> 'unset',
+	'params' 		=> 1
+]);
+
+$router->add('/bot/hook/:params',
+[
+	'module' 		=> 'bot',
+	'controller' 	=> 'index',
+	'action' 		=> 'hook',
+	'params' 		=> 1
+]);
+
 $router->handle();
 
 return $router;

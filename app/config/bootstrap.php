@@ -14,6 +14,11 @@ if (isset($application))
 		[
 			'className'	=> 'App\Module',
 			'path'		=> APP_PATH.'app/modules/game/Module.php',
+		],
+		'bot' =>
+		[
+			'className'	=> 'Xnova\Bot\Module',
+			'path'		=> APP_PATH.'app/modules/bot/Module.php',
 		]
 	]);
 }
