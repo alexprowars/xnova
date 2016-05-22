@@ -29,6 +29,7 @@ class WhoamiCommand extends UserCommand
     protected $usage = '/whoami';
     protected $version = '1.0.1';
     protected $public = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

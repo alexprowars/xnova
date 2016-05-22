@@ -30,6 +30,7 @@ class SurveyCommand extends UserCommand
     protected $usage = '/survey';
     protected $version = '0.2.0';
     protected $need_mysql = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

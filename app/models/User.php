@@ -581,7 +581,7 @@ class User extends Model
 		$obj->sender = $sender;
 		$obj->time = $time;
 		$obj->type = $type;
-		$obj->from = addslashes($from);
+		$obj->from = $from;
 		$obj->text = addslashes($message);
 
 		if ($obj->create())

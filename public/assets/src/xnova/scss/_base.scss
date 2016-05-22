@@ -673,16 +673,21 @@ textarea#text {
 	min-height: 100%;
 	align-items: center;
 
-	&.set_imperium {
+	&.set_imperium, &.set_sim {
 		align-items: baseline;
 
 		.game_content {
 			max-width: none !important;
 			width: auto !important;
+			min-width: 100%;
 
 			> .content {
 				white-space: nowrap;
 			}
+		}
+
+		.game_menu {
+			width: 100%;
 		}
 	}
 }
@@ -1329,8 +1334,6 @@ div.errormessage {
 		border-bottom: 0;
 	}
 }
-
-
 
 *{-webkit-font-smoothing: antialiased;}
 

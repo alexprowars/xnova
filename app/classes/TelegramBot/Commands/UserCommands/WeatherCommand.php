@@ -26,6 +26,7 @@ class WeatherCommand extends UserCommand
     protected $usage = '/weather <location>';
     protected $version = '1.0.1';
     protected $public = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

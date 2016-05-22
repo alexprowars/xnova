@@ -22,7 +22,7 @@ class HelpCommand extends UserCommand
      * {@inheritdoc}
      */
     protected $name = 'help';
-    protected $description = 'Show bot commands help';
+    protected $description = 'Подсказка по командам';
     protected $usage = '/help or /help <command>';
     protected $version = '1.0.1';
     /**#@-*/
@@ -45,28 +45,27 @@ class HelpCommand extends UserCommand
 
         //If no command parameter is passed, show the list
         if ($command === '') {
-            $text = $this->telegram->getBotName() . ' v. ' . $this->telegram->getVersion() . "\n\n";
-            $text .= 'Commands List:' . "\n";
+            $text = 'Список комманд:' . "\n";
             foreach ($commands as $command) {
                 $text .= '/' . $command->getName() . ' - ' . $command->getDescription() . "\n";
             }
 
-            $text .= "\n" . 'For exact command help type: /help <command>';
+            $text .= "\n" . 'Справка по каждой команде: /help <команда>';
         } else {
             $command = str_replace('/', '', $command);
             if (isset($commands[$command])) {
                 $command = $commands[$command];
-                $text = 'Command: ' . $command->getName() . ' v' . $command->getVersion() . "\n";
-                $text .= 'Description: ' . $command->getDescription() . "\n";
-                $text .= 'Usage: ' . $command->getUsage();
+                $text = 'Команда: ' . $command->getName() . ' v' . $command->getVersion() . "\n";
+                $text .= 'Описание: ' . $command->getDescription() . "\n";
+                $text .= 'Использование: ' . $command->getUsage();
             } else {
-                $text = 'No help available: Command /' . $command . ' not found';
+                $text = 'Нет подсказки: Команда /' . $command . ' не найдена';
             }
         }
 
         $data = [
             'chat_id'             => $chat_id,
-            'reply_to_message_id' => $message_id,
+            //'reply_to_message_id' => $message_id,
             'text'                => $text,
         ];
 

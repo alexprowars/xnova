@@ -276,3 +276,14 @@
 		$( "#tabs" ).tabs();
 	});
 </script>
+
+<? if (is_array($parse['bot_auth'])): ?>
+	<br><br>
+	<div class="table">
+		<div class="row">
+			<div class="col-xs-12 th">
+				Ваш код для привязки Telegram-бота:<br><br><b><?=$parse['bot_auth']['code'] ?></b>
+			</div>
+		</div>
+	</div>
+<? endif; ?>

@@ -3,29 +3,28 @@ namespace Xnova\Admin\Controllers;
 
 use App\Models\User;
 
-class MessageToAllController extends Application
+class MessageAllController extends Application
 {
-	public function indexAction ()
+	public function initialize ()
 	{
+		parent::initialize();
+
 		if ($this->user->authlevel < 1)
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+	}
 
-		if (isset($_POST["tresc"]))
+	public function indexAction ()
+	{
+		if ($this->request->hasPost("tresc"))
 		{
 			$kolor = '';
 
 			if ($this->user->authlevel == 3)
-			{
 				$kolor = 'yellow';
-			}
 			elseif ($this->user->authlevel == 1)
-			{
 				$kolor = 'skyblue';
-			}
 			elseif ($this->user->authlevel == 2)
-			{
 				$kolor = 'yellow';
-			}
 
 			if ((isset($_POST["tresc"]) && $_POST["tresc"] != '') && (isset($_POST["temat"]) && $_POST["temat"] != ''))
 			{
@@ -37,19 +36,15 @@ class MessageToAllController extends Application
 				$Message 	= $_POST['tresc'];
 
 				while ($u = $sq->fetch())
-				{
 					User::sendMessage($u['id'], false, $Time, 1, $From, $Message);
-				}
 
-				$this->message("<font color=\"lime\">Сообщение успешно отправлено всем игрокам!</font>", "Выполнено", "?set=admin&mode=messall", 3);
+				$this->message("<font color=\"lime\">Сообщение успешно отправлено всем игрокам!</font>", "Выполнено", "/admin/messageall/", 3);
 			}
 			else
-				$this->message("<font color=\"red\">Не все поля заполнены!</font>", "Ошибка", "?set=admin&mode=messall", 3);
+				$this->message("<font color=\"red\">Не все поля заполнены!</font>", "Ошибка", "/admin/messageall/", 3);
 		}
-		else
-		{
-			$this->tag->setTitle('Рассылка');
-		}
+
+		$this->tag->setTitle('Рассылка');
 	}
 }
 

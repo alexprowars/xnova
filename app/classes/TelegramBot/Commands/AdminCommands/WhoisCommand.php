@@ -30,6 +30,7 @@ class WhoisCommand extends AdminCommand
     protected $usage = '/whois <id> or /whois <search string>';
     protected $version = '1.1.0';
     protected $need_mysql = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

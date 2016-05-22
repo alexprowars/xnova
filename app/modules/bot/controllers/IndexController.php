@@ -54,26 +54,21 @@ class IndexController extends Application
 		{
 			$telegram = new Telegram($this->config->telegram->token, $this->config->telegram->login);
 
-			//// Enable MySQL
+			// Enable MySQL
 			$telegram->enableExternalMysql($this->db->getInternalHandler(), 'bot_');
 		
-			//// Add an additional commands path
-			//$telegram->addCommandsPath($commands_path);
+			// Add an additional commands path
+			$telegram->addCommandsPath(APP_PATH.$this->config->application->baseDir.$this->config->application->modulesDir.'bot/commands/');
 		
-			//// Here you can enable admin interface for the channel you want to manage
+			// Here you can enable admin interface for the channel you want to manage
 			$telegram->enableAdmins(['134099267']);
-			//$telegram->setCommandConfig('sendtochannel', ['your_channel' => '@type_here_your_channel']);
-		
-			//// Here you can set some command specific parameters,
-			//// for example, google geocode/timezone api key for date command:
-			//$telegram->setCommandConfig('date', ['google_api_key' => 'your_google_api_key_here']);
-		
-			//// Logging
+
+			// Logging
 			$telegram->setLogRequests(true);
 			$telegram->setLogPath(APP_PATH."app/logs/telegram.log");
 			$telegram->setLogVerbosity(3);
 		
-			//// Set custom Upload and Download path
+			// Set custom Upload and Download path
 			//$telegram->setDownloadPath('../Download');
 			//$telegram->setUploadPath('../Upload');
 

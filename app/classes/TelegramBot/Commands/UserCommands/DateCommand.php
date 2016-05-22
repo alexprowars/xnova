@@ -27,6 +27,7 @@ class DateCommand extends UserCommand
     protected $usage = '/date <location>';
     protected $version = '1.2.1';
     protected $public = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

@@ -28,6 +28,7 @@ class ChatsCommand extends AdminCommand
     protected $usage = '/chats, /chats * or /chats <search string>';
     protected $version = '1.0.2';
     protected $need_mysql = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

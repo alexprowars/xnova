@@ -26,6 +26,7 @@ class SendtoallCommand extends AdminCommand
     protected $usage = '/sendtoall <message to send>';
     protected $version = '1.2.1';
     protected $need_mysql = true;
+    protected $enabled = false;
     /**#@-*/
 
     /**

@@ -355,6 +355,8 @@ class OptionsController extends Application
 			$parse['color'] = $inf['color'];
 
 			$parse['auth'] = $this->db->extractResult($this->db->query("SELECT * FROM game_users_auth WHERE user_id = ".$this->user->getId().""));
+
+			$parse['bot_auth'] = $this->db->fetchOne('SELECT * FROM bot_requests WHERE user_id = '.$this->user->getId().'');
 		}
 
 		$this->view->setVar('parse', $parse);

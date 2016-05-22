@@ -28,7 +28,7 @@ class CancelCommand extends UserCommand
      * {@inheritdoc}
      */
     protected $name = 'cancel';
-    protected $description = 'Cancel the currently active conversation';
+    protected $description = 'Отменить текущую активную беседу';
     protected $usage = '/cancel';
     protected $version = '0.1.1';
     protected $need_mysql = true;
@@ -39,7 +39,7 @@ class CancelCommand extends UserCommand
      */
     public function execute()
     {
-        $text = 'No active conversation!';
+        $text = 'Нет активных бесед!';
 
         //Cancel current conversation if any
         $conversation = new Conversation(
@@ -49,7 +49,7 @@ class CancelCommand extends UserCommand
 
         if ($conversation_command = $conversation->getCommand()) {
             $conversation->cancel();
-            $text = 'Conversation "' . $conversation_command . '" cancelled!';
+            $text = 'Беседа "' . $conversation_command . '" отменена!';
         }
 
         return $this->hideKeyboard($text);
