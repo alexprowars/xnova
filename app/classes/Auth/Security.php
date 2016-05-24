@@ -89,6 +89,7 @@ class Security extends Component
 				'tech'		=> array('*'),
 				'tutorial'	=> array('*'),
 				'git'		=> array('*'),
+				'payment'	=> array('*'),
 			];
 
 			$publicResources = [
@@ -98,6 +99,7 @@ class Security extends Component
 				'stat'		=> array('*'),
 				'banned'	=> array('*'),
 				'xnsim'		=> array('*'),
+				'payment'	=> array('*'),
 			];
 
 			foreach ($privateResources as $resource => $actions)
