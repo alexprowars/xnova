@@ -389,15 +389,12 @@ class Application extends Controller
 				if ($CurPlanet['id'] == $this->user->planet_current)
 					$parse['planetlist'] .= "selected=\"selected\" ";
 
-				if ($this->request->hasQuery('set'))
-					$parse['planetlist'] .= "value=\"/" . $this->dispatcher->getControllerName() . "/";
-				else
-					$parse['planetlist'] .= "value=\"/overview/";
+				$parse['planetlist'] .= "value=\"/" . $this->dispatcher->getControllerName() . "/";
 
 				if ($this->dispatcher->getActionName() != 'index')
 					$parse['planetlist'] .= "" . $this->dispatcher->getActionName().'/';
 
-				$parse['planetlist'] .= "&chpl=" . $CurPlanet['id'] . "\">";
+				$parse['planetlist'] .= "?chpl=" . $CurPlanet['id'] . "\">";
 
 				$parse['planetlist'] .= "" . $CurPlanet['name'];
 				$parse['planetlist'] .= "&nbsp;[" . $CurPlanet['galaxy'] . ":" . $CurPlanet['system'] . ":" . $CurPlanet['planet'];
