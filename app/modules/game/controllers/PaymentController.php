@@ -19,33 +19,55 @@ class PaymentController extends Application
 	{
 		$this->view->disable();
 
-		if (!$this->request->has('InvId') || $_REQUEST["InvId"] == '' || !is_numeric($_REQUEST["InvId"]))
+		if (!$this->request->has('InvId') || $this->request->get("InvId") == '' || !is_numeric($this->request->get("InvId")))
 			die('InvId nulled');
 
-		$sign_hash = strtoupper(md5("".$_REQUEST['OutSum'].":".$_REQUEST['InvId'].":".$this->config->robokassa->secret.":Shp_UID=".$_REQUEST['Shp_UID'].""));
+		$sign_hash = strtoupper(md5($this->request->get('OutSum').":".$this->request->get('InvId').":".$this->config->robokassa->secret.":Shp_UID=".$this->request->get('Shp_UID')));
 
-		if (strtoupper($_REQUEST["SignatureValue"]) === $sign_hash)
+		if (strtoupper($this->request->get('SignatureValue')) === $sign_hash)
 		{
-			$check = $this->db->fetchOne("SELECT id FROM game_users_payments WHERE transaction_id = '".intval($_REQUEST["InvId"])."' AND user != 0");
+			$check = $this->db->fetchOne("SELECT id FROM game_users_payments WHERE transaction_id = '".intval($this->request->get("InvId"))."' AND user != 0");
 
 			if (!isset($check['id']))
 			{
-				$user = $this->db->fetchOne("SELECT id FROM game_users WHERE id = ".intval($_REQUEST["Shp_UID"])." LIMIT 1");
+				/**
+				 * @var $user \App\Models\User
+				 */
+				$user = User::findFirst(['conditions' => 'id = ?0', 'bind' => [intval($this->request->get("Shp_UID"))]]);
 
-				if (isset($user['id']))
+				if ($user)
 				{
 					$amount = intval($_REQUEST['OutSum']);
 
 					if ($amount > 0)
 					{
-						$this->db->query("UPDATE game_users SET credits = credits + ".$amount." WHERE id = ".$user['id']."");
-						$this->db->query("INSERT INTO game_users_payments (user, call_id, method, transaction_id, transaction_time, uid, amount, product_code) VALUES (".$user['id'].", '', '".addslashes($_REQUEST['IncCurrLabel'])."', '".intval($_REQUEST["InvId"])."', '".date("Y-m-d H:i:s", time())."', '0', ".$amount.", '".addslashes(json_encode($_REQUEST))."')");
+						if (!$this->request->has('IncCurrLabel'))
+							$_REQUEST['IncCurrLabel'] = 'Free-Kassa';
 
-						User::sendMessage($user['id'], 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено '.$amount.' кредитов');
+						$user->credits += $amount;
+						$user->save();
 
-						$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $user['id'] . ", " . time() . ", " . $amount . ", 1)");
+						$this->db->insertAsDict('game_users_payments', [
+							'user' 				=> $user->id,
+							'call_id' 			=> '',
+							'method' 			=> addslashes($_REQUEST['IncCurrLabel']),
+							'transaction_id' 	=> intval($this->request->get("InvId")),
+							'transaction_time' 	=> date("Y-m-d H:i:s", time()),
+							'uid' 				=> 0,
+							'amount' 			=> $amount,
+							'product_code' 		=> addslashes(json_encode($_REQUEST)),
+						]);
 
-						echo 'OK'.$_REQUEST["InvId"];
+						User::sendMessage($user->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено '.$amount.' кредитов');
+
+						$this->db->insertAsDict('game_log_credits', [
+							'uid' 		=> $user->id,
+							'time' 		=> time(),
+							'credits' 	=> $amount,
+							'type' 		=> 1,
+						]);
+
+						echo 'OK'.$this->request->get("InvId");
 					}
 				}
 				else

@@ -84,6 +84,8 @@ class Application extends Controller
 
 		$this->view->setVar('menu', $menu);
 		$this->view->setVar('mode', $this->mode);
+		$this->view->setVar('userId', $this->user->getId());
+		$this->view->setVar('adminlevel', $this->user->authlevel);
 	}
 
 	public function getMenu ($parent_id, $lvl = 1, $all = false)
