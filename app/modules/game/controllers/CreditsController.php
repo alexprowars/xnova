@@ -20,6 +20,16 @@ class CreditsController extends Application
 
 		if (isset($_SESSION['OKAPI']))
 			$this->view->pick('credits_ok');
+		elseif ($this->request->hasPost('OutSum'))
+		{
+			do
+			{
+				$id = mt_rand(1000000000000, 9999999999999);
+			}
+			while (isset($this->db->fetchOne("SELECT id FROM game_users_payments WHERE transaction_id = ".$id)['id']));
+
+			$this->view->setVar('invid', $id);
+		}
 
 		$this->view->setVar('userid', $this->user->getId());
 		$this->view->setVar('useremail', $userinf['email']);

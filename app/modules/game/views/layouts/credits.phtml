@@ -34,8 +34,6 @@
 					<input type="text" name="OutSum" value="10" title="">
 					<br>
 					<input type="submit" value="Купить">
-					<br><br>
-					После завершения оплаты на игроой аккаунт будет перечислен 5% бонус от суммы пожертвования в качестве компенсации за комиссию.
 				</form>
 
 				<br><br>
@@ -47,10 +45,10 @@
 				<form class="noajax" action="http://www.free-kassa.ru/merchant/cash.php" method="POST" target="_blank">
 					<input type="hidden" name="MrchLogin" value="<?=$this->config->robokassa->login ?>">
 					<input type="hidden" name="InvDesc" value="Покупка кредитов">
-					<input type="hidden" name="InvId" value="0">
+					<input type="hidden" name="InvId" value="<?=$invid ?>">
 					<input type="hidden" name="Email" value="<?=$useremail ?>">
 					<input type="hidden" name="Shp_UID" value="<?=((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?>">
-					<input type="hidden" name="SignatureValue" value="<?=md5($this->config->robokassa->login.":".intval($_POST['OutSum']).":0:".$this->config->robokassa->public.":Shp_UID=".((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
+					<input type="hidden" name="SignatureValue" value="<?=md5($this->config->robokassa->login.":".intval($_POST['OutSum']).":".$invid.":".$this->config->robokassa->public.":Shp_UID=".((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
 					<input type="hidden" name="Culture" value="RU">
 					<input type="hidden" name="OutSum" value="<?=intval($_POST['OutSum']) ?>">
 					<br>

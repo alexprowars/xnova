@@ -38,8 +38,6 @@ class PaymentController extends Application
 
 					if ($amount > 0)
 					{
-						$amount += round($amount * 0.05);
-
 						$this->db->query("UPDATE game_users SET credits = credits + ".$amount." WHERE id = ".$user['id']."");
 						$this->db->query("INSERT INTO game_users_payments (user, call_id, method, transaction_id, transaction_time, uid, amount, product_code) VALUES (".$user['id'].", '', '".addslashes($_REQUEST['IncCurrLabel'])."', '".intval($_REQUEST["InvId"])."', '".date("Y-m-d H:i:s", time())."', '0', ".$amount.", '".addslashes(json_encode($_REQUEST))."')");
 
