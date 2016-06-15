@@ -37,7 +37,7 @@
 			<div class="th col-xs-6 fleet-coordinates-input">
 				<input type="number" name="galaxy" min="1" max="<?=$this->config->game->maxGalaxyInWorld ?>" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['galaxyend'] ?>" title="">
 				<input type="number" name="system" min="1" max="<?=$this->config->game->maxSystemInGalaxy ?>" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['systemend'] ?>" title="">
-				<input type="number" name="planet" min="1" max="<?=$this->config->game->maxPlanetInSystem ?>" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['planetend'] ?>" title="">
+				<input type="number" name="planet" min="1" max="<?=($this->config->game->maxPlanetInSystem + 1) ?>" onChange="shortInfo()" onKeyUp="shortInfo()" value="<?=$parse['planetend'] ?>" title="">
 				<select name="planettype" onChange="shortInfo()" onKeyUp="shortInfo()" title="">
 					<? foreach (_getText('type_planet') AS $key => $value): ?>
 						<option value="<?=$key ?>"<?=(($parse['typeend'] == $key) ? " SELECTED" : "") ?>><?=$value ?></option>
