@@ -13,7 +13,7 @@ $lang['category'] = array
 	)),
 	'settings' 		=> Array('Настройки', 'cogs', 3),
 	'userlist' 		=> Array('Список игроков', 'user', 3),
-	'playersadmin' 	=> Array('Редактор', 'edit', 1, Array
+	'manager' 		=> Array('Редактор', 'edit', 1, Array
 	(
 			'ip_search' => Array('Поиск по IP'),
 			'usr_data' => Array('Статистика'),

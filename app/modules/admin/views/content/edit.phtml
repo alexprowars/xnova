@@ -8,7 +8,7 @@
 		<div class="caption">Редактирование контента</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="/admin/content/edit/<?=$info['id'] ?>" method="post" class="form-horizontal form-bordered">
+		<form action="<?=$this->url->get('admin/content/edit/'.$info['id'].'/') ?>" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Алиас</label>

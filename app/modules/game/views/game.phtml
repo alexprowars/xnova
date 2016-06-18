@@ -25,34 +25,37 @@
 		<script type="text/javascript">
 			$(document).ready(function()
 			{
-				$("body").swipe(
+				if (!navigator.userAgent.match(/(\(iPod|\(iPhone|\(iPad)/))
 				{
-					swipeLeft: function()
+					$("body").swipe(
 					{
-						if ($('.menu-sidebar').hasClass('opened'))
-							$('.menu-toggle').click();
-						else
-							$('.planet-toggle').click();
-					},
-					swipeRight: function()
-					{
-						if ($('.planet-sidebar').hasClass('opened'))
-							$('.planet-toggle').click();
-						else
-							$('.menu-toggle').click();
-					},
-					threshold: 100,
-					excludedElements: ".table-responsive",
-					fallbackToMouseEvents: false,
-					allowPageScroll: "auto"
-				});
+						swipeLeft: function()
+						{
+							if ($('.menu-sidebar').hasClass('opened'))
+								$('.menu-toggle').click();
+							else
+								$('.planet-toggle').click();
+						},
+						swipeRight: function()
+						{
+							if ($('.planet-sidebar').hasClass('opened'))
+								$('.planet-toggle').click();
+							else
+								$('.menu-toggle').click();
+						},
+						threshold: 100,
+						excludedElements: ".table-responsive",
+						fallbackToMouseEvents: false,
+						allowPageScroll: "auto"
+					});
+				}
 			});
 		</script>
 	<? endif; ?>
 </head>
 <body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
 	<script type="text/javascript">
-		XNova.path = <?=$this->url->getBaseUri() ?>;
+		XNova.path = '<?=$this->url->getBaseUri() ?>';
 		timestamp = <?=time() ?>;
 		timezone = <?=$timezone ?>;
 		ajax_nav = <?=$ajaxNavigation ?>;

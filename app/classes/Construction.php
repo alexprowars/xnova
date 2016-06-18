@@ -35,6 +35,7 @@ class Construction
 		$request 	= $this->user->getDI()->getShared('request');
 		$storage 	= $this->user->getDI()->getShared('storage');
 		$config 	= $this->user->getDI()->getShared('config');
+		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
 
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
 			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
@@ -134,12 +135,12 @@ class Construction
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"/buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span></a>";
+								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span></a>";
 							else
 								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
 						}
 						else
-							$row['click'] = "<a href=\"/buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь</span></a>";
+							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь</span></a>";
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
 						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
@@ -163,6 +164,7 @@ class Construction
 	{
 		$request 	= $this->user->getDI()->getShared('request');
 		$storage 	= $this->user->getDI()->getShared('storage');
+		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
 
 		$TechHandle = $this->planet->checkResearchQueue();
 
@@ -308,7 +310,7 @@ class Construction
 						}
 						else
 						{
-							$TechnoLink = "<a href=\"/buildings/" . $this->mode. "/cmd/search/tech/" . $Tech . "/\">";
+							$TechnoLink = "<a href=\"".$baseUri."buildings/" . $this->mode. "/cmd/search/tech/" . $Tech . "/\">";
 
 							if ($LevelToDo == 1)
 								$TechnoLink .= "<font color=#00FF00>Исследовать</font>";

@@ -105,7 +105,7 @@
 			<div class="caption">Ответ</div>
 		</div>
 		<div class="portlet-body form">
-			<form action="/admin/support/send/<?=$parse['t_id'] ?>/" method="POST">
+			<form action="<?=$this->url->get('admin/support/send/'.$parse['t_id'].'/') ?>" method="POST">
 				<div class="form-body">
 					<div class="form-group">
 						<textarea class="form-control" rows="10" name="text" title=""></textarea>
@@ -117,10 +117,10 @@
 			</form>
 			<hr>
 			<? if ($parse['t_status'] != 0): ?>
-			<form action="/admin/support/close/<?=$parse['t_id'] ?>/" method="POST">
+			<form action="<?=$this->url->get('admin/support/close/'.$parse['t_id'].'/') ?>" method="POST">
 				<input type="submit" value="Закрыть"></form>
 			<? else: ?>
-			<form action="/admin/support/open/<?=$parse['t_id'] ?>/" method="POST">
+			<form action="<?=$this->url->get('admin/support/open/'.$parse['t_id'].'/') ?>" method="POST">
 				<input type="submit" value="Открыть"></form>
 			<? endif; ?>
 		</div>

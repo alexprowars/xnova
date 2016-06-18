@@ -86,6 +86,8 @@ class Application extends Controller
 		$this->view->setVar('mode', $this->mode);
 		$this->view->setVar('userId', $this->user->getId());
 		$this->view->setVar('adminlevel', $this->user->authlevel);
+
+		$this->game->loadGameVariables();
 	}
 
 	public function getMenu ($parent_id, $lvl = 1, $all = false)

@@ -305,9 +305,9 @@ class AllianceController extends Application
 				$this->ally->owner_range = htmlspecialchars(strip_tags($_POST['owner_range']));
 				$this->ally->web = htmlspecialchars(strip_tags($_POST['web']));
 				$this->ally->image = htmlspecialchars(strip_tags($_POST['image']));
-				$this->ally['request_notallow'] = intval($_POST['request_notallow']);
+				$this->ally->request_notallow = intval($_POST['request_notallow']);
 
-				if ($this->ally['request_notallow'] != 0 && $this->ally['request_notallow'] != 1)
+				if ($this->ally->request_notallow != 0 && $this->ally->request_notallow != 1)
 					$this->message("Недопустимое значение атрибута!", "Ошибка");
 
 				$this->db->query("UPDATE game_alliance SET owner_range='" . $this->ally->owner_range . "', image='" . $this->ally->image . "', web='" . $this->ally->web . "', request_notallow='" . $this->ally->request_notallow . "' WHERE id='" . $this->ally->id . "'");

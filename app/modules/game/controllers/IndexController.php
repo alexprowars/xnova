@@ -19,14 +19,23 @@ class IndexController extends Application
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
 
+		$this->disableCollections();
+		
 		parent::initialize();
 
 		if (!$this->dispatcher->wasForwarded())
 		{
 			$js = $this->assets->collection('js');
+			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
+			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+			$js->addJs('assets/js/jquery.form.min.js');
+			$js->addJs('assets/js/jquery.fancybox.min.js');
+			$js->addJs('assets/js/game.js');
 			$js->addJs('assets/js/jquery.validate.js');
 
 			$css = $this->assets->collection('css');
+			$css->addCss('assets/css/jquery-ui.css');
+			$css->addCss('assets/css/jquery.fancybox.css');
 			$css->addCss('assets/css/login.css');
 		}
 
@@ -35,7 +44,7 @@ class IndexController extends Application
 
 	public function indexAction ()
 	{
-
+		$this->tag->setTitle('Вход в игру');
 	}
 
 	public function registrationAction ()

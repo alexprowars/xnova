@@ -217,7 +217,7 @@ var lastMessageId = 0;
 
 function initChat ()
 {
-	var socket = io.connect('https://'+window.location.host+':6677', {query: 'userId='+userId+'&userName='+userName+'&key='+key, secure: true});
+	var socket = io.connect('https://uni5.xnova.su:6677', {query: 'userId='+userId+'&userName='+userName+'&key='+key, secure: true});
 
 	socket.on('connecting', function ()
 	{

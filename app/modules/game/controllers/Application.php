@@ -148,8 +148,10 @@ class Application extends Controller
 
 		if (!$this->disableCollections)
 		{
+			$css->addCss('assets/css/bootstrap.css');
 			$css->addCss('assets/css/jquery-ui.css');
 			$css->addCss('assets/css/jquery.fancybox.css');
+			$css->addCss('assets/css/style.css');
 
 			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
@@ -168,10 +170,8 @@ class Application extends Controller
 				if (DEBUG)
 					$css->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
-				$css->addCss('assets/css/bootstrap.css');
 				$css->addCss('assets/css/jquery.toast.min.css');
 				$css->addCss('assets/css/jquery.reject.css');
-				$css->addCss('assets/css/style.css');
 
 				$js->addJs('assets/js/script.js');
 				$js->addJs('assets/js/universe.js');
@@ -471,7 +471,7 @@ class Application extends Controller
 		$this->view->pick('shared/message');
 		$this->view->setVar('text', $text);
 		$this->view->setVar('title', $title);
-		$this->view->setVar('destination', $redirect);
+		$this->view->setVar('destination', $this->url->getBaseUri().ltrim($redirect, '/'));
 		$this->view->setVar('time', $timeout);
 
 		$this->tag->setTitle(($title ? strip_tags($title) : 'Сообщение'));

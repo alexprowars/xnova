@@ -16,7 +16,7 @@ class AvatarController extends Application
 		parent::initialize();
 	}
 
-	public function upload()
+	public function uploadAction ()
 	{
 		$upload = new Upload($_FILES['image']);
 
@@ -32,14 +32,14 @@ class AvatarController extends Application
 			$upload->allowed = ['image/*'];
 			$upload->image_convert = 'jpg';
 			$upload->image_resize = true;
-			$upload->image_x = 128;
-			$upload->image_y = 128;
+			$upload->image_x = 200;
+			$upload->image_y = 200;
 			$upload->jpeg_quality = 90;
 			$upload->file_new_name_body = $this->user->getId().'_'.time();
 
-			$upload->process('images/avatars/upload/');
+			$upload->process(APP_PATH.'public/assets/avatars/');
 
-			if ($upload->processed && file_exists('/images/avatars/upload/'.$name))
+			if ($upload->processed && file_exists(APP_PATH.'public/assets/avatars/'.$name))
 			{
 				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 
@@ -54,16 +54,7 @@ class AvatarController extends Application
 	
 	public function indexAction ()
 	{
-		$html = '<center><form name="form2" enctype="multipart/form-data" method="post" action="/avatar/?mode=upload">
-				<table width=500><tr><td class=c>Загрузка аватара</td></tr>
-				<tr><th>
-					Картинки уменьшаются до размера 128 на 128 пикселей<br><br>
-		            <input type="file" name="image" value="" />
-		            <input type="submit" name="Submit" value="Загрузить" /></th></tr></table>
-		        </form></center>';
-
 		$this->tag->setTitle("Выбор аватара");
-		$this->view->setVar('html', $html);
 		$this->showTopPanel(false);
 	}
 }

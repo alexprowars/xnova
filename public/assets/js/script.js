@@ -7,9 +7,9 @@ function BuildTimeout(pp, pk, pl, at)
 
 	if ( s < 0 )
     {
-		blc.html("Завершено<br>" + "<a href='#' onclick='load(\"/buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
+		blc.html("Завершено<br>" + "<a href='#' onclick='load(\""+XNova.path+"buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
 
-		timeouts['build'+pk+'-'+pl] = setTimeout('load("/buildings/index/planet/' + pl + '/");', 5000);
+		timeouts['build'+pk+'-'+pl] = setTimeout('load("'+XNova.path+'buildings/index/planet/' + pl + '/");', 5000);
 
 		return;
 	}
@@ -33,7 +33,7 @@ function BuildTimeout(pp, pk, pl, at)
 		if (at > timestamp - 5)
 			blc.html(h + ":" + m + ":" + s);
 		else
-			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\"/buildings/index/listid/" + pk + "/cmd/cancel/planet/" + pl + "/\")'>Отменить</a>");
+			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\""+XNova.path+"buildings/index/listid/" + pk + "/cmd/cancel/planet/" + pl + "/\")'>Отменить</a>");
 	}
 
 	pp--;
@@ -49,15 +49,15 @@ function reloadPlanetList ()
 $(document).ready(function()
 {
 	if (window.location.host.indexOf("cmle.ru") >= 0)
-		eval("window.location.href = \"http://uni4.xnova.su/\";");
+		eval("window.location.href = \"http://uni5.xnova.su/\";");
 
 	if (typeof VK != 'undefined')
 	{
 		setInterval(function()
 		{
-			var d = $('#gamediv');
+			var d = $('#gamediv > .content-row');
 
-			VK.callMethod("resizeWindow", 900, (d.height() < 600 ? 600 : d.height()) + 100);
+			VK.callMethod("resizeWindow", 900, (d.height() < 600 ? 600 : d.height()) + 200);
 
 		}, 1000);
 	}
@@ -66,9 +66,9 @@ $(document).ready(function()
 	{
 		setInterval(function()
 		{
-			var d = $('#gamediv');
+			var d = $('#gamediv > .content-row');
 
-			FAPI.UI.setWindowSize(800, (d.height() < 600 ? 600 : d.height()) + 100);
+			FAPI.UI.setWindowSize(800, (d.height() < 600 ? 600 : d.height()) + 200);
 			
 		}, 1000);
 	}

@@ -212,7 +212,7 @@ class StatController extends Application
 			if ($ranking > 0)
 				$stats['rankplus'] = "<font color=\"green\">+" . $ranking . "</font>";
 
-			if ($StatRow['name'] == $this->user->ally_name)
+			if (isset($this->user) && $StatRow['name'] == $this->user->ally_name)
 				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
 			else
 				$stats['name'] = "<a href=\"/alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
@@ -246,7 +246,11 @@ class StatController extends Application
 			$stats['race'] = $StatRow['race'];
 			$stats['count'] = $StatRow['total_count'];
 			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
-			$stats['pointatuser'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
+
+			if ($StatRow['total_count'] > 0)
+				$stats['pointatuser'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
+			else
+				$stats['pointatuser'] = 0;
 
 			$stat[] = $stats;
 		}
