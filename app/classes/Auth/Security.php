@@ -32,7 +32,6 @@ class Security extends Component
 			$acl = new AclList();
 			$acl->setDefaultAction(Acl::DENY);
 
-			//Register roles
 			$roles = [
 				'users'  => new Role('Users'),
 				'guests' => new Role('Guests')
@@ -43,7 +42,6 @@ class Security extends Component
 				$acl->addRole($role);
 			}
 
-			//Private area resources
 			$privateResources = [
 				'admin'		=> array('*'),
 				'overview'	=> array('*'),
@@ -112,7 +110,6 @@ class Security extends Component
 				$acl->addResource(new Resource($resource), $actions);
 			}
 
-			//Grant access to public areas to both users and guests
 			foreach ($roles as $role)
 			{
 				foreach ($publicResources as $resource => $actions)
@@ -127,7 +124,6 @@ class Security extends Component
 				}
 			}
 
-			//Grant acess to private area to role Users
 			foreach ($privateResources as $resource => $actions)
 			{
 				foreach ($actions as $action)
@@ -136,19 +132,12 @@ class Security extends Component
 				}
 			}
 
-			//The acl is stored in session, APC would be useful here too
 			$this->persistent->acl = $acl;
 		}
 
 		return $this->persistent->acl;
 	}
-	/**
-	 * This action is executed before execute any action in the application
-	 *
-	 * @param Event $event
-	 * @param Dispatcher $dispatcher
-	 * @return bool
-	 */
+
 	public function beforeExecuteRoute (/** @noinspection PhpUnusedParameterInspection */Event $event, Dispatcher $dispatcher)
 	{
 		$role = 'Users';
@@ -168,9 +157,6 @@ class Security extends Component
 					define('SUPERUSER', 'Y');
 			}
 		}
-
-		if (!defined('SUPERUSER'))
-			die('Ждем вас в субботу!');
 
 		$controller = $dispatcher->getControllerName();
 		$action = $dispatcher->getActionName();

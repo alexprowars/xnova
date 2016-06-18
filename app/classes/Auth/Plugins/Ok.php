@@ -51,7 +51,7 @@ class Ok extends Component implements AuthInterface
 			echo '<script type="text/javascript">alert("Параметры авторизации являются некорректными!")</script>';
 		else
 		{
-			$Row = $this->db->query("SELECT u.id, u.tutorial, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://odnoklassniki.ru/".intval($_POST['logged_user_id'])."';")->fetch();
+			$Row = $this->db->query("SELECT u.id, u.tutorial, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://www.odnoklassniki.ru/profile/".intval($_POST['logged_user_id'])."';")->fetch();
 
 			if (!isset($Row['id']))
 				$this->register();
@@ -100,11 +100,11 @@ class Ok extends Component implements AuthInterface
 				$refer = 0;
 		}
 		
-		$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = 'http://odnoklassniki.ru/".$uid."'")->fetch();
+		$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = 'http://www.odnoklassniki.ru/profile/".$uid."'")->fetch();
 		
 		if (isset($check['user_id']))
 		{
-			$find = $this->db->query("SELECT id FROM game_users WHERE id = ".$check['user_id']."", true);
+			$find = $this->db->query("SELECT id FROM game_users WHERE id = ".$check['user_id']."")->fetch();
 
 			if (!isset($find['id']))
 				$this->db->query("DELETE FROM game_users_auth WHERE user_id = ".$check['user_id']."");
@@ -144,7 +144,7 @@ class Ok extends Component implements AuthInterface
 			   	"game_users_auth",
 				[
 					'user_id' 		=> $iduser,
-					'external_id' 	=> 'http://odnoklassniki.ru/'.$uid,
+					'external_id' 	=> 'http://www.odnoklassniki.ru/profile/'.$uid,
 					'create_time' 	=> time(),
 					'enter_time' 	=> time()
 			   	]

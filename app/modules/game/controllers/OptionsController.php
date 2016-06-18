@@ -35,10 +35,12 @@ class OptionsController extends Application
 
 			if (isset($data['identity']))
 			{
-				$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = '".$data['identity']."'")->fetch();
+				$identity = isset($data['profile']) && $data['profile'] != '' ? $data['profile'] : $data['identity'];
+
+				$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = '".$identity."'")->fetch();
 
 				if (!isset($check['user_id']))
-					$this->db->insertAsDict('game_users_auth', ['user_id' => $this->user->getId(), 'external_id' => $data['identity'], 'create_time' => time()]);
+					$this->db->insertAsDict('game_users_auth', ['user_id' => $this->user->getId(), 'external_id' => $identity, 'create_time' => time()]);
 				else
 					$this->message('Данная точка входа уже используется', 'Ошибка', '/options/');
 			}

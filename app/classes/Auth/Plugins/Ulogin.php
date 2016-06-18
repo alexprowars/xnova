@@ -121,7 +121,7 @@ class Ulogin extends Component implements AuthInterface
 			   	"game_users_auth",
 				[
 					'user_id' 		=> $iduser,
-					'external_id' 	=> $this->data['identity'],
+					'external_id' 	=> isset($this->data['profile']) && $this->data['profile'] != '' ? $this->data['profile'] : $this->data['identity'],
 					'create_time' 	=> time(),
 					'enter_time' 	=> time()
 			   	]

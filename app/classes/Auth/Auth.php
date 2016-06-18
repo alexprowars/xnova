@@ -174,8 +174,8 @@ class Auth extends Component
 	{
 		$secret = $this->getSecret($userId, $password, $security);
 
-		$this->cookies->set($this->config->cookie->prefix."_id", 		$userId, $expire, $this->url->getBaseUri(), 0, $_SERVER["SERVER_NAME"]);
-		$this->cookies->set($this->config->cookie->prefix."_secret", 	$secret, $expire, $this->url->getBaseUri(), 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->set($this->config->cookie->prefix."_id", 		$userId, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->set($this->config->cookie->prefix."_secret", 	$secret, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
 		$this->cookies->send();
 
 		if ($this->session->isStarted())
@@ -187,8 +187,9 @@ class Auth extends Component
 		if ($this->session->isStarted())
 			$this->session->destroy();
 
-		$this->cookies->get($this->config->cookie->prefix."_id")->delete();
-		$this->cookies->get($this->config->cookie->prefix."_secret")->delete();
+		$this->cookies->set($this->config->cookie->prefix."_id", 		null, 0, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->set($this->config->cookie->prefix."_secret", 	null, 0, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->send();
 
 		if ($redirect)
 			$this->response->redirect('')->send();
