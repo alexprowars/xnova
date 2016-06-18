@@ -529,7 +529,7 @@ $(document).ready(function()
 				webkit: 537.1
 			},
 			display: ['firefox', 'chrome', 'opera'],
-			imagePath: '/assets/images/',
+			imagePath: ''+XNova.path+'assets/images/',
 			header: 'Привет из каменного века!',
 			paragraph1: 'Вы вкурсе, что ваш браузер безнадёжно устарел и не поддерживает корректное отображение в данной игре?',
 			paragraph2: 'Обновите текущий браузер или установите новый:',

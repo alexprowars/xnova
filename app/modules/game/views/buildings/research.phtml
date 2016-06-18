@@ -17,7 +17,7 @@
 
 						<div class="img">
 							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)">
-								<img src="/assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
+								<img src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 							</a>
 
 							<div class="overContent">

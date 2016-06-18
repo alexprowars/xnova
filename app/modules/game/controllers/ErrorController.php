@@ -17,8 +17,8 @@ class ErrorController extends Application
 		{
 			$css = $this->assets->collection('css');
 			
-			$css->addCss('/assets/css/bootstrap.css');
-			$css->addCss('/assets/css/style.css');
+			$css->addCss('assets/css/bootstrap.css');
+			$css->addCss('assets/css/style.css');
 		}
 	}
 

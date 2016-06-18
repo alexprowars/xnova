@@ -66,7 +66,7 @@ function Game()
 	this.sounds = null;
 
 	this.sprite = new Image();
-	this.sprite.src = '/assets/404/sprite.png';
+	this.sprite.src = baseUri+'assets/404/sprite.png';
 	this.state = 0;
 	this.stateCache = 0;
 }
@@ -259,9 +259,9 @@ WelcomeState.prototype.enter = function (game)
 	// Create and load the sounds.
 	game.sounds = new Sounds();
 	game.sounds.init();
-	game.sounds.loadSound('shoot', '/assets/404/sounds/shoot.wav');
-	game.sounds.loadSound('bang', '/assets/404/sounds/bang.wav');
-	game.sounds.loadSound('explosion', '/assets/404/sounds/explosion.wav');
+	game.sounds.loadSound('shoot', baseUri+'assets/404/sounds/shoot.wav');
+	game.sounds.loadSound('bang', baseUri+'assets/404/sounds/bang.wav');
+	game.sounds.loadSound('explosion', baseUri+'assets/404/sounds/explosion.wav');
 };
 
 WelcomeState.prototype.update = function (game, dt)

@@ -27,11 +27,6 @@ $di->setShared('cookies', function()
 	return $cookies;
 });
 
-$di->setShared('router', function ()
-{
-	return require __DIR__ . '/routes.php';
-});
-
 $di->setShared(
 	'url', function () use ($config)
 	{
@@ -43,6 +38,11 @@ $di->setShared(
 		return $url;
 	}
 );
+
+$di->setShared('router', function () use ($di)
+{
+	return require __DIR__ . '/routes.php';
+});
 
 $di->setShared(
 	'db', function () use ($config)

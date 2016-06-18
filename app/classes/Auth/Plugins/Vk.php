@@ -13,6 +13,7 @@ use Phalcon\Mvc\User\Component;
 class Vk extends Component implements AuthInterface
 {
 	private $isLogin = false;
+	private $data = [];
 
 	public function check ()
 	{
@@ -62,7 +63,7 @@ class Vk extends Component implements AuthInterface
 			$this->auth->auth($Row['id'], $Row['password'], 0, (time() + 2419200));
 		}
 
-		echo '<center>Загрузка...</center><script>parent.location.href="/overview/?'.http_build_query($_POST).'";</script>';
+		echo '<center>Загрузка...</center><script>parent.location.href="'.$this->url->getBaseUri().'overview/?'.http_build_query($_POST).'";</script>';
 		die();
 	}
 

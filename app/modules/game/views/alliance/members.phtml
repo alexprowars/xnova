@@ -25,13 +25,13 @@
 				<th><?=$m['i'] ?></th>
 				<th><?=$m['username'] ?></th>
 				<th><a href="javascript:;" onclick="showWindow('<?=$m['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$m['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
-				<th><img src="/assets/images/skin/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
+				<th><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
 				<th><?=$m['range'] ?></th>
 				<th><?=$m['points'] ?></th>
 				<th><a href="<?=$this->url->get('galaxy/'.$m['galaxy'].'/'.$m['system'].'/') ?>"><?=$m['galaxy'] ?>:<?=$m['system'] ?>:<?=$m['planet'] ?></a></th>
 				<th><?=$m['time'] ?></th>
 				<? if ($parse['status']): ?><th><font color=<?=$m['onlinetime'] ?>/font></th><? endif; ?>
-				<? if ($parse['admin']): ?><th><a href="<?=$this->url->get('alliance/admin/edit/members/kick/'.$m['id'].'/') ?>" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="/assets/images/abort.gif"></a>&nbsp;<a href="<?=$this->url->get('alliance/admin/edit/members/rank/'.$m['id'].'/') ?>"><img src="/assets/images/key.gif"></a></th><? endif; ?>
+				<? if ($parse['admin']): ?><th><a href="<?=$this->url->get('alliance/admin/edit/members/kick/'.$m['id'].'/') ?>" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif"></a>&nbsp;<a href="<?=$this->url->get('alliance/admin/edit/members/rank/'.$m['id'].'/') ?>"><img src="<?=$this->url->getBaseUri() ?>assets/images/key.gif"></a></th><? endif; ?>
 			</tr>
 		<? else: ?>
 			<tr>

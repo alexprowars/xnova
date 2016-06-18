@@ -198,7 +198,7 @@ class TutorialController extends Application
 				if (count($userData))
 					$this->user->saveData($userData);
 
-				$this->response->redirect('/tutorial/');
+				$this->response->redirect('tutorial/');
 			}
 
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)

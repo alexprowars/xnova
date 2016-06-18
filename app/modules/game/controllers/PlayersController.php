@@ -33,18 +33,18 @@ class PlayersController extends Application
 		if ($daten = $PlayerCard->fetch())
 		{
 			if ($daten['image'] != '')
-			{
-				$parse['avatar'] = "/assets/images/avatars/upload/".$daten['image'];
-			}
+				$parse['avatar'] = "assets/images/avatars/upload/".$daten['image'];
 			elseif ($daten['avatar'] != 0)
 			{
 				if ($daten['avatar'] != 99)
-					$parse['avatar'] = "/assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . ".png";
+					$parse['avatar'] = "assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . ".png";
 				else
-					$parse['avatar'] = "/assets/images/avatars/upload/upload_" . $daten['id'] . ".jpg";
+					$parse['avatar'] = "assets/images/avatars/upload/upload_" . $daten['id'] . ".jpg";
 			}
 			else
-				$parse['avatar'] = '/assets/images/no_photo.gif';
+				$parse['avatar'] = 'assets/images/no_photo.gif';
+
+			$parse['avatar'] = $this->url->getBaseUri().$parse['avatar'];
 
 			$gesamtkaempfe = $daten['raids_win'] + $daten['raids_lose'];
 

@@ -101,7 +101,7 @@ class ImperiumController extends Application
 
 			$planet->field_max = $planet->getMaxFields();
 
-			@$parse['file_images'] .= '<th width=75><a href="/overview/?chpl=' . $planet->id . '"><img src="/assets/images/planeten/small/s_' . $planet->image . '.jpg" border="0" height="75" width="75"></a></th>';
+			@$parse['file_images'] .= '<th width=75><a href="/overview/?chpl=' . $planet->id . '"><img src="'.$this->url->getBaseUri().'assets/images/planeten/small/s_' . $planet->image . '.jpg" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
 			@$parse['file_coordinates'] .= "<th>[<a href=\"/galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';

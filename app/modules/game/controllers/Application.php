@@ -148,14 +148,14 @@ class Application extends Controller
 
 		if (!$this->disableCollections)
 		{
-			$css->addCss('/assets/css/jquery-ui.css');
-			$css->addCss('/assets/css/jquery.fancybox.css');
+			$css->addCss('assets/css/jquery-ui.css');
+			$css->addCss('assets/css/jquery.fancybox.css');
 
-			$js->addJs('https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$js->addJs('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$js->addJs('/assets/js/jquery.form.min.js');
-			$js->addJs('/assets/js/jquery.fancybox.min.js');
-			$js->addJs('/assets/js/game.js');
+			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
+			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+			$js->addJs('assets/js/jquery.form.min.js');
+			$js->addJs('assets/js/jquery.fancybox.min.js');
+			$js->addJs('assets/js/game.js');
 		}
 
 		if ($this->auth->isAuthorized())
@@ -166,22 +166,22 @@ class Application extends Controller
 			if (!$this->disableCollections)
 			{
 				if (DEBUG)
-					$css->addCss('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+					$css->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
-				$css->addCss('/assets/css/bootstrap.css');
-				$css->addCss('/assets/css/jquery.toast.min.css');
-				$css->addCss('/assets/css/jquery.reject.css');
-				$css->addCss('/assets/css/style.css');
+				$css->addCss('assets/css/bootstrap.css');
+				$css->addCss('assets/css/jquery.toast.min.css');
+				$css->addCss('assets/css/jquery.reject.css');
+				$css->addCss('assets/css/style.css');
 
-				$js->addJs('/assets/js/script.js');
-				$js->addJs('/assets/js/universe.js');
-				$js->addJs('/assets/js/flotten.js');
-				$js->addJs('/assets/js/smiles.js');
-				$js->addJs('/assets/js/ed.js');
-				$js->addJs('/assets/js/jquery.touchSwipe.min.js');
-				$js->addJs('/assets/js/jquery.toast.min.js');
-				$js->addJs('/assets/js/jquery.mousewheel.min.js');
-				$js->addJs('/assets/js/jquery.reject.js');
+				$js->addJs('assets/js/script.js');
+				$js->addJs('assets/js/universe.js');
+				$js->addJs('assets/js/flotten.js');
+				$js->addJs('assets/js/smiles.js');
+				$js->addJs('assets/js/ed.js');
+				$js->addJs('assets/js/jquery.touchSwipe.min.js');
+				$js->addJs('assets/js/jquery.toast.min.js');
+				$js->addJs('assets/js/jquery.mousewheel.min.js');
+				$js->addJs('assets/js/jquery.reject.js');
 			}
 
 			if ($this->request->isAjax())

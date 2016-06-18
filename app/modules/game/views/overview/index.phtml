@@ -61,7 +61,7 @@
 		<? $m = $this->config->app->get('newsMessage', ''); ?>
 		<? if ($m != ''): ?>
 			<div class="row">
-				<div class="col-xs-3"><img src="/assets/images/warning.png" align="absmiddle" alt=""></div>
+				<div class="col-xs-3"><img src="<?=$this->url->getBaseUri() ?>assets/images/warning.png" align="absmiddle" alt=""></div>
 				<div class="col-xs-9">
 					<?=$m ?>
 				</div>
@@ -74,7 +74,7 @@
 					<div class="col-md-10 col-sm-12 col-xs-5">
 						<div class="planet-image">
 							<a href="<?=$this->url->get("overview/rename/") ?>">
-								<img src="/assets/images/planeten/<?=$parse['planet_image'] ?>.jpg" alt="">
+								<img src="<?=$this->url->getBaseUri() ?>assets/images/planeten/<?=$parse['planet_image'] ?>.jpg" alt="">
 							</a>
 							<? if ($parse['moon_img'] != ''): ?>
 								<div class="moon-image"><?=$parse['moon_img'] ?></div>
@@ -90,7 +90,7 @@
 
 						<? if ($this->config->game->get('noob', 0) == 1): ?>
 							<div class="separator"></div>
-							<img src="/assets/images/warning.png" align="absmiddle" alt="">
+							<img src="<?=$this->url->getBaseUri() ?>assets/images/warning.png" align="absmiddle" alt="">
 							<span style="font-weight:normal;"><span class="positive">Активен режим ускорения новичков.</span><br>Режим будет деактивирован после достижения 1000 очков.</span>
 						<? endif; ?>
 					</div>
@@ -139,10 +139,10 @@
 					<div class="row">
 						<div class="col-xs-12 th doubleth middle">
 							<div>
-								<img src="/assets/images/skin/s_metall.png" alt="" align="absmiddle" class="tooltip" data-content="Металл">
+								<img src="<?=$this->url->getBaseUri() ?>assets/images/skin/s_metall.png" alt="" align="absmiddle" class="tooltip" data-content="Металл">
 								<?=\App\Helpers::pretty_number($parse['metal_debris']) ?>
 								/
-								<img src="/assets/images/skin/s_kristall.png" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
+								<img src="<?=$this->url->getBaseUri() ?>assets/images/skin/s_kristall.png" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
 								<?=\App\Helpers::pretty_number($parse['crystal_debris']) ?>
 							</div>
 						</div>
@@ -152,10 +152,10 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-12 th middle">
-							<img src="/assets/images/wins.gif" alt="" align="absmiddle" class="tooltip" data-content="Победы">
+							<img src="<?=$this->url->getBaseUri() ?>assets/images/wins.gif" alt="" align="absmiddle" class="tooltip" data-content="Победы">
 							<?=$parse['raids_win'] ?>
 							&nbsp;&nbsp;
-							<img src="/assets/images/losses.gif" alt="" align="absmiddle" class="tooltip" data-content="Поражения">
+							<img src="<?=$this->url->getBaseUri() ?>assets/images/losses.gif" alt="" align="absmiddle" class="tooltip" data-content="Поражения">
 							<?=$parse['raids_lose'] ?>
 						</div>
 					</div>

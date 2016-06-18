@@ -28,7 +28,7 @@
 				<td><?=date("d/m/Y H:i:s", $u['create_time']) ?></td>
 				<td><a href="/admin/alliancelist/desc/<?=$u['id'] ?>/">Смотреть</a>/<a href="/admin/alliancelist/edit/<?=$u['id'] ?>/">Редактировать</a></td>
 				<td><a href="/admin/alliancelist/mitglieder/<?=$u['id'] ?>/"><?=$u['members'] ?></a></td>
-				<td><a href="/admin/alliancelist/mail/<?=$u['id'] ?>/"><img src="/assets/images/alliance/r5.png"></a></td>
+				<td><a href="/admin/alliancelist/mail/<?=$u['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/alliance/r5.png"></a></td>
 				<td><a href="/admin/alliancelist/del/<?=$u['id'] ?>/">X</a></td>
 			</tr>
 		<? endforeach; ?>

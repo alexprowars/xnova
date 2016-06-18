@@ -61,7 +61,7 @@ function showSmilesEx(obj, event)
 	else
 	{
 		for (var i = 0; i < arSmiles.length; i++)
-			o.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+			o.append('<img src="'+XNova.path+'assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
 		o.show();
 	}
@@ -112,7 +112,7 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 	{
 		while (Msg.indexOf(':'+arSmiles[i]+':') >= 0)
 		{
-			Msg = Msg.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif" onclick="AddSmile(\'' + arSmiles[i] + '\', \'chatMsg\')" style="cursor:pointer">');
+			Msg = Msg.replace(':'+arSmiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + arSmiles[i] + '.gif" onclick="AddSmile(\'' + arSmiles[i] + '\', \'chatMsg\')" style="cursor:pointer">');
 
 			if (++j >= 3)
 				break;
@@ -201,7 +201,7 @@ function ShowSmiles()
 	else
 	{
 		for (var i = 0; i < arSmiles.length; i++)
-			obj.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\')" style="cursor:pointer"> ');
+			obj.append('<img src="'+XNova.path+'assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\')" style="cursor:pointer"> ');
 
 		obj.show();
 		$('#shoutbox').hide();

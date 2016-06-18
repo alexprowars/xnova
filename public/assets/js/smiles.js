@@ -106,7 +106,7 @@ function Text (txt, id)
 	{
 		while (txt.indexOf(':'+arSmiles[i]+':') >= 0)
 		{
-			txt = txt.replace(':'+arSmiles[i]+':', '<img src="/assets/images/smile/' + arSmiles[i] + '.gif">');
+			txt = txt.replace(':'+arSmiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + arSmiles[i] + '.gif">');
 
 			if (++j >= 3)
 				break;

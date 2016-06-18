@@ -45,12 +45,12 @@
 							</div>
 						</div>
 						<? if ($parse['race'] != 0): ?>
-							<br><img src="/assets/images/skin/race<?=$parse['race'] ?>.gif" alt="">
+							<br><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$parse['race'] ?>.gif" alt="">
 						<? endif; ?>
 					</div>
 					<div class="col-xs-2">
-						<img src="/assets/images/ranks/m<?=$parse['m'] ?>.png" alt="Промышленная отрасль" title="Промышленная отрасль"><br>
-						<img src="/assets/images/ranks/f<?=$parse['f'] ?>.png" alt="Военная отрасль" title="Военная отрасль">
+						<img src="<?=$this->url->getBaseUri() ?>assets/images/ranks/m<?=$parse['m'] ?>.png" alt="Промышленная отрасль" title="Промышленная отрасль"><br>
+						<img src="<?=$this->url->getBaseUri() ?>assets/images/ranks/f<?=$parse['f'] ?>.png" alt="Военная отрасль" title="Военная отрасль">
 					</div>
 				</div>
 			</div>

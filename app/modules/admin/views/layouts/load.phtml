@@ -5,8 +5,8 @@
 ?>
 
 <!-- BEGIN PAGE LEVEL PLUGINS -->
-<script src="/assets/admin/plugins/flot/jquery.flot.js"></script>
-<script src="/assets/admin/plugins/flot/jquery.flot.time.js"></script>
+<script src="<?=$this->url->getBaseUri() ?>assets/admin/plugins/flot/jquery.flot.js"></script>
+<script src="<?=$this->url->getBaseUri() ?>assets/admin/plugins/flot/jquery.flot.time.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 
 <? for ($i = 0; $i < 4; $i++): $time = time() - 21600 * ($i + 1); ?>

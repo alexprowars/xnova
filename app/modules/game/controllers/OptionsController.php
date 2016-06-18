@@ -46,7 +46,7 @@ class OptionsController extends Application
 				$this->message('Ошибка получения данных', 'Ошибка', '/options/');
 		}
 
-		$this->response->redirect('/options/');
+		$this->response->redirect('options/');
 	}
 
 	public function emailAction ()
@@ -326,13 +326,13 @@ class OptionsController extends Application
 			$parse['avatar'] = '';
 
 			if ($inf['image'] != '')
-				$parse['avatar'] = "<img src='/assets/images/avatars/upload/".$inf['image']."' height='100'><br>";
+				$parse['avatar'] = "<img src='".$this->url->getBaseUri()."assets/images/avatars/upload/".$inf['image']."' height='100'><br>";
 			elseif ($this->user->avatar != 0)
 			{
 				if ($this->user->avatar != 99)
-					$parse['avatar'] = "<img src=/assets/images/faces/" . $this->user->sex . "/" . $this->user->avatar . "s.png height='100'><br>";
+					$parse['avatar'] = "<img src='".$this->url->getBaseUri()."assets/images/faces/" . $this->user->sex . "/" . $this->user->avatar . "s.png' height='100'><br>";
 				else
-					$parse['avatar'] = "<img src=/assets/images/avatars/upload/upload_" . $this->user->id . ".jpg height='100'><br>";
+					$parse['avatar'] = "<img src='".$this->url->getBaseUri()."assets/images/avatars/upload/upload_" . $this->user->id . ".jpg' height='100'><br>";
 			}
 
 			$parse['opt_usern_datatime'] = $inf['username_last'];

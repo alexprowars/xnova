@@ -27,7 +27,7 @@
 								<? for ($i = 1; $i <= 8; $i++): ?>
 									<input type="radio" name="face" value="1_<?=$i ?>" id="f1_<?=$i ?>" <?=($this->request->getPost('face') == '1_'.$i ? 'checked' : '') ?> title="">
 									<label data-id="f1_<?=$i ?>" class="avatar">
-										<img src="/assets/images/faces/1/<?=$i ?>s.png" alt="">
+										<img src="<?=$this->url->getBaseUri() ?>assets/images/faces/1/<?=$i ?>s.png" alt="">
 									</label>
 								<? endfor; ?>
 							</div>
@@ -35,7 +35,7 @@
 								<? for ($i = 1; $i <= 8; $i++): ?>
 									<input type="radio" name="face" value="2_<?=$i ?>" id="f2_<?=$i ?>" <?=($this->request->getPost('face') == '2_'.$i ? 'checked' : '') ?> title="">
 									<label data-id="f2_<?=$i ?>" class="avatar">
-										<img src="/assets/images/faces/2/<?=$i ?>s.png" alt="">
+										<img src="<?=$this->url->getBaseUri() ?>assets/images/faces/2/<?=$i ?>s.png" alt="">
 									</label>
 								<? endfor; ?>
 							</div>

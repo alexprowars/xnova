@@ -328,7 +328,7 @@ class OverviewController extends Application
 				$this->user->credits--;
 				$this->user->update();
 
-				$this->response->redirect('/overview/');
+				$this->response->redirect('overview/');
 			}
 			else
 				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
@@ -444,7 +444,7 @@ class OverviewController extends Application
 
 			if (isset($lune['id']))
 			{
-				$parse['moon_img'] = "<a href=\"/overview/?chpl=" . $lune['id'] . "\" title=\"" . $lune['name'] . "\"><img src=\"/assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
+				$parse['moon_img'] = "<a href=\"/overview/?chpl=" . $lune['id'] . "\" title=\"" . $lune['name'] . "\"><img src=\"".$this->url->getBaseUri()."assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
 				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
 			}
 		}

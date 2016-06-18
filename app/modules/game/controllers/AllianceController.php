@@ -256,7 +256,7 @@ class AllianceController extends Application
 				foreach ($this->ally->ranks as $a => $b)
 				{
 					$list['id'] = $a;
-					$list['delete'] = "<a href=\"/alliance/admin/edit/rights/d/".$a."/\"><img src=\"/assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
+					$list['delete'] = "<a href=\"/alliance/admin/edit/rights/d/".$a."/\"><img src=\"".$this->url->getBaseUri()."assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
 					$list['r0'] = $b['name'];
 					$list['a'] = $a;
 

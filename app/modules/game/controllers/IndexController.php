@@ -24,10 +24,10 @@ class IndexController extends Application
 		if (!$this->dispatcher->wasForwarded())
 		{
 			$js = $this->assets->collection('js');
-			$js->addJs('/assets/js/jquery.validate.js');
+			$js->addJs('assets/js/jquery.validate.js');
 
 			$css = $this->assets->collection('css');
-			$css->addCss('/assets/css/login.css');
+			$css->addCss('assets/css/login.css');
 		}
 
 		return true;

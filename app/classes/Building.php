@@ -229,13 +229,15 @@ class Building
 			'energy_max'=> [_getText('Energy'), 'energie']
 		];
 
+		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+
 		$text = "";
 
 		foreach ($array as $ResType => $ResTitle)
 		{
 			if (isset($cost[$ResType]) && $cost[$ResType] != 0)
 			{
-				$text .= "<div><img src='/assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-content='" . $ResTitle[0] . "'>";
+				$text .= "<div><img src='".$uri."assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-content='" . $ResTitle[0] . "'>";
 
 				if ($cost[$ResType] > $planet->{$ResType})
 					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Helpers::pretty_number($cost[$ResType] - $planet->{$ResType})."\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";

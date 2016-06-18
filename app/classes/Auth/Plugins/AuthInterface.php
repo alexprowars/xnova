@@ -16,7 +16,9 @@ namespace App\Auth\Plugins;
  * @property \Phalcon\Http\Response\Cookies cookies
  * @property \Phalcon\Http\Request request
  * @property \Phalcon\Http\Response response
- * @property \Phalcon\Config config
+ * @property \Phalcon\Config|\stdClass config
+ * @property \App\Auth\Auth auth
+ * @property \App\Game game
  */
 interface AuthInterface
 {

@@ -2,25 +2,33 @@
 
 use Phalcon\Mvc\Router;
 
-$router = new Router(true);
+$router = new Router(false);
 $router->removeExtraSlashes(true);
 $router->setDefaultModule('game');
 
-$router->add('/:controller/:action/:params',
+$uri = $di->getShared('url')->getBaseUri();
+
+$router->add($uri.':controller/:params',
+[
+	'controller' 	=> 1,
+	'params' 		=> 2
+]);
+
+$router->add($uri.':controller/:action/:params',
 [
 	'controller' 	=> 1,
 	'action' 		=> 2,
 	'params' 		=> 3
 ]);
 
-$router->add('/galaxy/:params',
+$router->add($uri.'galaxy/:params',
 [
 	'controller' 	=> 'galaxy',
 	'action' 		=> 'index',
 	'params' 		=> 1,
 ]);
 
-$router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/:params',
+$router->add($uri.'galaxy/([0-9]{1,2})/([0-9]{1,3})/:params',
 [
 	'controller' 	=> 'galaxy',
 	'action' 		=> 'index',
@@ -30,7 +38,7 @@ $router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/:params',
 	'params' 		=> 3
 ]);
 
-$router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/([0-9])/:params',
+$router->add($uri.'galaxy/([0-9]{1,2})/([0-9]{1,3})/([0-9])/:params',
 [
 	'controller' 	=> 'galaxy',
 	'action' 		=> 'index',
@@ -40,7 +48,7 @@ $router->add('/galaxy/([0-9]{1,2})/([0-9]{1,3})/([0-9])/:params',
 	'params' 		=> 4
 ]);
 
-$router->add('/fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m([0-9]{1,2})/:params',
+$router->add($uri.'fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m([0-9]{1,2})/:params',
 [
 	'controller' 	=> 'fleet',
 	'action' 		=> 'index',
@@ -52,7 +60,7 @@ $router->add('/fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m([0-
 	'params' 		=> 6
 ]);
 
-$router->add('/info/([0-9]+)/:params',
+$router->add($uri.'info/([0-9]+)/:params',
 [
 	'controller' 	=> 'info',
 	'action' 		=> 'index',
@@ -60,7 +68,7 @@ $router->add('/info/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/players/([0-9]+)/:params',
+$router->add($uri.'players/([0-9]+)/:params',
 [
 	'controller' 	=> 'players',
 	'action' 		=> 'index',
@@ -68,7 +76,7 @@ $router->add('/players/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/messages/write/([0-9]+)/:params',
+$router->add($uri.'messages/write/([0-9]+)/:params',
 [
 	'controller' 	=> 'messages',
 	'action' 		=> 'write',
@@ -76,7 +84,7 @@ $router->add('/messages/write/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/players/stat/([0-9]+)/:params',
+$router->add($uri.'players/stat/([0-9]+)/:params',
 [
 	'controller' 	=> 'players',
 	'action' 		=> 'stat',
@@ -84,7 +92,7 @@ $router->add('/players/stat/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/rw/([0-9]+)/([a-z0-9]+)/:params',
+$router->add($uri.'rw/([0-9]+)/([a-z0-9]+)/:params',
 [
 	'controller' 	=> 'rw',
 	'action' 		=> 'index',
@@ -93,7 +101,7 @@ $router->add('/rw/([0-9]+)/([a-z0-9]+)/:params',
 	'params' 		=> 3
 ]);
 
-$router->add('/tech/([0-9]+)/:params',
+$router->add($uri.'tech/([0-9]+)/:params',
 [
 	'controller' 	=> 'tech',
 	'action' 		=> 'info',
@@ -101,7 +109,7 @@ $router->add('/tech/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/log/([0-9]+)/:params',
+$router->add($uri.'log/([0-9]+)/:params',
 [
 	'controller' 	=> 'log',
 	'action' 		=> 'info',
@@ -109,7 +117,7 @@ $router->add('/log/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/tutorial/([0-9]+)/:params',
+$router->add($uri.'tutorial/([0-9]+)/:params',
 [
 	'controller' 	=> 'tutorial',
 	'action' 		=> 'info',
@@ -117,7 +125,7 @@ $router->add('/tutorial/([0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/sim/([0-9!;,]+)/:params',
+$router->add($uri.'sim/([0-9!;,]+)/:params',
 [
 	'controller' 	=> 'sim',
 	'action' 		=> 'index',
@@ -140,13 +148,13 @@ $router->add('/login/:params',
 	'params' 		=> 1
 ]);
 
-$router->add('/',
+$router->add($uri,
 [
 	'controller' 	=> 'index',
 	'action' 		=> 'index',
 ]);
 
-$router->add('/admin/:params',
+$router->add($uri.'admin/:params',
 [
 	'module' 		=> 'admin',
 	'controller' 	=> 'overview',
@@ -154,7 +162,7 @@ $router->add('/admin/:params',
 	'params' 		=> 1
 ])->setName('admin');
 
-$router->add('/admin/:controller/:params',
+$router->add($uri.'admin/:controller/:params',
 [
 	'module' 		=> 'admin',
 	'controller' 	=> 1,
@@ -162,7 +170,7 @@ $router->add('/admin/:controller/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/admin/:controller/:action/:params',
+$router->add($uri.'admin/:controller/:action/:params',
 [
 	'module' 		=> 'admin',
 	'controller' 	=> 1,

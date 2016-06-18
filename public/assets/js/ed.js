@@ -95,7 +95,7 @@ function showSmiles(obj)
 	else
 	{
 		for (var i = 0; i < arSmiles.length; i++)
-        	o.append('<img src="/assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+        	o.append('<img src="'+XNova.path+'assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
 		o.show();
 	}

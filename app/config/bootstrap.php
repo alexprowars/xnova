@@ -43,6 +43,7 @@ if ($di->has('auth'))
 {
 	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Ulogin');
 	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Vk');
+	$di->get('auth')->addAuthPlugin('\App\Auth\Plugins\Ok');
 	$di->get('auth')->checkExtAuth();
 }
 

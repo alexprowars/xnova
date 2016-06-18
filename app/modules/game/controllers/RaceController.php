@@ -89,7 +89,7 @@ class RaceController extends Application
 					
 				$this->user->update($update);
 		
-				$this->response->redirect("/tutorial/");
+				$this->response->redirect("tutorial/");
 			}
 		}
 

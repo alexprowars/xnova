@@ -100,7 +100,7 @@ class LogsController extends Application
 				$parse['log'] .= "<tr><td class=\"b\"><center><b>" . $this->game->datezone("H:i:s", $Log['time']) . "</b></center></td>
 						<td class=\"b\"><center><a href=\"/galaxy/?r=3&galaxy=" . $Log['s_galaxy'] . "&system=" . $Log['s_system'] . "\">[" . $Log['s_galaxy'] . ":" . $Log['s_system'] . ":" . $Log['s_planet'] . "]</a></center></td>
 						<td class=\"b\"><center><font color=lime><a href=\"/galaxy/?r=3&galaxy=" . $Log['e_galaxy'] . "&system=" . $Log['e_system'] . "\">[" . $Log['e_galaxy'] . ":" . $Log['e_system'] . ":" . $Log['e_planet'] . "]</a>&nbsp;<a href=/players/?id=" . $Log['e_id'] . "></font></center></td>
-						<td class=\"b\"><center><a href=\"/players/" . $Log['e_id'] . "/\"><img src=/assets/images/s.gif alt=\"Информация об игроке\" title=\"Информация об игроке\" border=0></a></td></center></tr>";
+						<td class=\"b\"><center><a href=\"/players/" . $Log['e_id'] . "/\"><img src=".$this->url->getBaseUri()."assets/images/s.gif alt=\"Информация об игроке\" title=\"Информация об игроке\" border=0></a></td></center></tr>";
 		
 			}
 		

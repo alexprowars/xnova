@@ -169,6 +169,9 @@ class Security extends Component
 			}
 		}
 
+		if (!defined('SUPERUSER'))
+			die('Ждем вас в субботу!');
+
 		$controller = $dispatcher->getControllerName();
 		$action = $dispatcher->getActionName();
 

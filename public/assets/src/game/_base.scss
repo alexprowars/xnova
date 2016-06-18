@@ -44,7 +44,7 @@ table table td, .table table td {
 }
 
 body {
-	background: #0a0a0a url(/assets/images/starfield_01.gif) repeat 0 0 fixed;
+	background: #0a0a0a url(../images/starfield_01.gif) repeat 0 0 fixed;
 	height: 100%;
 	width: 100%;
 	font: 11px verdana, arial, sans-serif;
@@ -415,7 +415,7 @@ tr.return th span a {
 .quotewrapper {
 	clear: both;
 	margin: 0 0 0 0;
-	background: #EAECF2 url(/assets/images/quote_header.gif) top left no-repeat;
+	background: #EAECF2 url(../images/quote_header.gif) top left no-repeat;
 	padding-left: 17px;
 	border: solid 1px #C8CBD9;
 	border-bottom-color: #AEB3C5;
@@ -738,7 +738,7 @@ textarea#text {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
-	background: url(/assets/images/build.png) 100% 0 no-repeat;
+	background: url(../images/build.png) 100% 0 no-repeat;
 	height: 15px;
 	padding-right: 25px;
 	padding-top: 3px;
@@ -835,7 +835,7 @@ ul {
 			}
 
 			.reload {
-				background: url(/assets/images/reload-icon.png) 0 0 no-repeat;
+				background: url(../images/reload-icon.png) 0 0 no-repeat;
 				width: 20px;
 				height: 20px;
 				cursor: pointer;
@@ -960,7 +960,7 @@ p {
 	text-align: center;
 
 	span {
-		background: url(/assets/images/block.png) 0 1px no-repeat;
+		background: url(../images/block.png) 0 1px no-repeat;
 		padding-left: 25px;
 		display: inline-block;
 		margin-top: 50px;
@@ -1394,7 +1394,7 @@ div.errormessage {
 }
 
 footer {
-	background: transparent url(/assets/images/bar-bg.gif) repeat-x 0 0;
+	background: transparent url(../images/bar-bg.gif) repeat-x 0 0;
 	color: #848484;
 	font: normal 10px Verdana, Arial, Helvetica, sans-serif;
 	height: 19px;

@@ -15,7 +15,7 @@
 		<? foreach ($stat AS $s): ?>
 			<div class="row">
 				<div class="th col-xs-2"><?=$s['rank'] ?></div>
-				<div class="th col-xs-1 text-xs-center"><img src="/assets/images/skin/race<?=$s['race'] ?>.gif" width="30" height="30"></div>
+				<div class="th col-xs-1 text-xs-center"><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$s['race'] ?>.gif" width="30" height="30"></div>
 				<div class="th col-xs-3"><?=$s['count'] ?></div>
 				<div class="th col-xs-3"><?=$s['points'] ?></div>
 				<div class="th col-xs-3"><?=$s['pointatuser'] ?></div>

@@ -8,7 +8,7 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
 				<th>
-					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="/assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -27,8 +27,8 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
 				<th>
-					<a href="/alliance/diplomacy/edit/suc/id/<?=$diplo['id'] ?>/"><img src="/assets/images/appwiz.gif" alt="Подтвердить"></a>
-					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="/assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="/alliance/diplomacy/edit/suc/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/appwiz.gif" alt="Подтвердить"></a>
+					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -47,7 +47,7 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
 				<th>
-					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="/assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>

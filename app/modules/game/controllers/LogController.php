@@ -146,8 +146,8 @@ class LogController extends Application
 				else
 				{
 					$html = "<!DOCTYPE html><html><head><title>" . stripslashes($raportrow["title"]) . "</title>";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
 					$html .= "</head><body>";
 					$html .= "<table width=\"99%\"><tr><td>";
 
@@ -175,8 +175,8 @@ class LogController extends Application
 					$this->message('Запрашиваемого лога не существует в базе данных');
 				else
 				{
-					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\">";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/style.css\">";
+					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
 					$html .= "</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>";
 
 					echo $html;

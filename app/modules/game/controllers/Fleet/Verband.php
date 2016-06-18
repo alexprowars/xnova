@@ -23,7 +23,7 @@ class Verband
 		$fleetid = $controller->request->getPost('fleetid', 'int');
 
 		if (!is_numeric($fleetid) || empty($fleetid) || $fleetid == 0)
-			return $controller->response->redirect("/overview/");
+			return $controller->response->redirect("overview/");
 
 		/**
 		 * @var $fleet \App\Models\Fleet
