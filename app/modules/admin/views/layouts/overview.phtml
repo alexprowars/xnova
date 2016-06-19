@@ -22,8 +22,8 @@
 		</thead>
 		<? foreach ($parse['adm_ov_data_table'] AS $list): ?>
 			<tr>
-				<td><a href="/messages/write/<?=$list['adm_ov_data_id'] ?>/"><span class="fa fa-envelope-o"></span></a></td>
-				<td><a href="/admin/playersadmin/result/usr_data/username/<?=$list['adm_ov_data_id'] ?>/"><?=$list['adm_ov_data_name'] ?></a></td>
+				<td><a href="<?=$this->url->get('messages/write/'.$list['adm_ov_data_id'].'/') ?>"><span class="fa fa-envelope-o"></span></a></td>
+				<td><a href="<?=$this->url->get('admin/playersadmin/result/usr_data/username/'.$list['adm_ov_data_id'].'/') ?>"><?=$list['adm_ov_data_name'] ?></a></td>
 				<td><a style="color:<?=$list['adm_ov_data_clip'] ?>;" href="http://network-tools.com/default.asp?prog=trace&host=<?=$list['adm_ov_data_adip'] ?>"><?=$list['adm_ov_data_adip'] ?></a></td>
 				<td><?=$list['adm_ov_data_ally'] ?></td>
 				<td><?=$list['adm_ov_data_activ'] ?></td>

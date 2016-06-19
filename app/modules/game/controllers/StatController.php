@@ -149,12 +149,12 @@ class StatController extends Application
 				$stats['name'] = $StatRow['username'];
 
 			if ($this->auth->isAuthorized())
-				$stats['mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '/messages/write/" . $StatRow['id_owner'] . "/', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
+				$stats['mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '".$this->url->getBaseUri()."messages/write/" . $StatRow['id_owner'] . "/', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
 
 			if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
 				$stats['alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
 			elseif ($StatRow['ally_name'] != '')
-				$stats['alliance'] = "<a href=\"/alliance/info/" . $StatRow['id_ally'] . "/\">" . $StatRow['ally_name'] . "</a>";
+				$stats['alliance'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['id_ally'] . "/\">" . $StatRow['ally_name'] . "</a>";
 			else
 				$stats['alliance'] = '&nbsp;';
 
@@ -215,7 +215,7 @@ class StatController extends Application
 			if (isset($this->user) && $StatRow['name'] == $this->user->ally_name)
 				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
 			else
-				$stats['name'] = "<a href=\"/alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
+				$stats['name'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
 
 			$stats['mes'] = '';
 			$stats['members'] = $StatRow['members'];

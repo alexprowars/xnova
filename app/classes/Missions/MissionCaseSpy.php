@@ -136,7 +136,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . _getText('sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
+			$AttackLink .= "<a href=\"#BASEPATH#fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
 			$AttackLink .= "p" . $this->_fleet->end_planet . "/t" . $this->_fleet->end_type . "/";
 			$AttackLink .= "m" . $this->_fleet->end_type . "/";
 			$AttackLink .= " \">" . _getText('type_mission', 1) . "";

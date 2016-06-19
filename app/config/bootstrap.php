@@ -23,10 +23,10 @@ if (isset($application))
 	]);
 }
 
-$result = $di->get('cache')->get('app_config');
+//$result = $di->get('cache')->get('app_config');
 
-if ($result === null)
-{
+//if (!is_array($result))
+//{
 	$result = [];
 
 	$loads = $di->get('db')->query("SELECT `key`, `value` FROM game_config");
@@ -34,8 +34,8 @@ if ($result === null)
 	while ($load = $loads->fetch())
 		$result[$load['key']] = $load['value'];
 
-	$di->get('cache')->save('app_config', $result, 3600);
-}
+//	$di->get('cache')->save('app_config', $result, 300);
+//}
 
 $di->get('config')->merge(new \Phalcon\Config(['app' => $result]));
 
@@ -47,5 +47,5 @@ if ($di->has('auth'))
 	$di->get('auth')->checkExtAuth();
 }
 
-define('VERSION', '3.0');
+define('VERSION', '3.0.2');
 define('DB_PREFIX', 'game_');

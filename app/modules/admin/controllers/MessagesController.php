@@ -110,10 +110,12 @@ class MessagesController extends Application
 
 		while ($row = $Messages->fetch())
 		{
+			$row['text'] = str_replace('#BASEPATH#', $this->url->getBaseUri(), $row['text']);
+
 			$bloc['mlst_id'] = $row['id'];
 			$bloc['mlst_from'] = $row['from'];
 			$bloc['mlst_to'] = $row['username'] . " ID:" . $row['owner'];
-			$bloc['mlst_text'] = $row['text'];
+			$bloc['mlst_text'] = stripslashes(nl2br($row['text']));
 			$bloc['mlst_time'] = date("d.m.Y H:i:s", $row['time']);
 
 			$parse['mlst_data_rows'][] = $bloc;

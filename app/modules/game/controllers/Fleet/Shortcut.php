@@ -138,10 +138,10 @@ class Shortcut
 					$controller->view->setVar('a', $a);
 				}
 				else
-					$controller->message("Данной ссылки не существует!", "Ссылки", "/fleet/?page=shortcut");
+					$controller->message("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
 			}
 			else
-				$controller->message("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/?page=shortcut");
+				$controller->message("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/shortcut/");
 		}
 		else
 		{

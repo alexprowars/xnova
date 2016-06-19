@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use Phalcon\Di;
+
 /**
  * @author AlexPro
  * @copyright 2008 - 2016 XNova Game Group
@@ -248,17 +250,16 @@ class Helpers
 
 	static function BuildPlanetAdressLink ($CurrentPlanet)
 	{
-		$Link = "<a href=\"/galaxy/?r=3&amp;galaxy=" . $CurrentPlanet['galaxy'] . "&amp;system=" . $CurrentPlanet['system'] . "\">";
-		$Link .= "[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
-		return $Link;
+		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+
+		return "<a href=\"".$uri."galaxy/".$CurrentPlanet['galaxy']."/".$CurrentPlanet['system']."/\">[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
 	}
 
 	static function BuildHostileFleetPlayerLink ($FleetRow)
 	{
-		$Link = $FleetRow->username . " ";
-		$Link .= "<a href=\"/messages/write/" . $FleetRow->owner . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
+		$uri = Di::getDefault()->getShared('url')->getBaseUri();
 
-		return $Link;
+		return $FleetRow->username . " <a href=\"".$uri."messages/write/" . $FleetRow->owner . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
 	}
 
 	static function InsertJavaScriptChronoApplet ($Type, $Ref, $Value)

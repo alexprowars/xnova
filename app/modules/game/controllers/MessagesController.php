@@ -214,7 +214,7 @@ class MessagesController extends Application
 
 		$page = $paginator->getPaginate();
 
-		$parse['pages'] = Helpers::pagination($page->total_items, $lim, '/messages/', $page->current);
+		$parse['pages'] = Helpers::pagination($page->total_items, $lim, $this->url->getBaseUri().'messages/', $page->current);
 
 		$this->view->setVar('parse', $parse);
 		$this->view->setVar('page', $page);

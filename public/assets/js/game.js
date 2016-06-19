@@ -348,7 +348,7 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({
 		type: "GET",
-		url: "/fleet/quick/",
+		url: XNova.path+"fleet/quick/",
 		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count,
 		dataType: 'json',
 		success: function(data)

@@ -564,8 +564,6 @@ class OverviewController extends Application
 		$parse['fleet_list'] = $flotten;
 
 		$parse['planet_image'] = $this->planet->image;
-		$parse['max_users'] = $this->config->app->users_total;
-
 		$parse['metal_debris'] = $this->planet->debris_metal;
 		$parse['crystal_debris'] = $this->planet->debris_crystal;
 

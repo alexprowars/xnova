@@ -145,5 +145,7 @@ try
 catch (\Phalcon\Exception $e)
 {
     echo $e->getMessage()."\n";
+	echo $e->getFile()."\n";
+	echo $e->getLine()."\n";
     exit(255);
 }

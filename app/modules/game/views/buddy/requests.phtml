@@ -25,11 +25,11 @@
 				<th><?=$list['online'] ?></th>
 				<th>
 					<? if ($parse['isMy']): ?>
-						<a href="/buddy/delete/<?=$list['id'] ?>/">Удалить запрос</a>
+						<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Удалить запрос</a>
 					<? else: ?>
-						<a href="/buddy/approve/<?=$list['id'] ?>/">Применить</a>
+						<a href="<?=$this->url->get('buddy/approve/'.$list['id'].'/') ?>">Применить</a>
 						<br/>
-						<a href="/buddy/delete/<?=$list['id'] ?>/">Отклонить</a>
+						<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Отклонить</a>
 					<? endif; ?>
 				</th>
 			</tr>

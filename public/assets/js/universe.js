@@ -80,7 +80,7 @@ function PrintRow ()
 			result += "<th align=left>";
 
 			if (user['phalanx'] == 1)
-				result += "<a href=\"javascript:void()\" onclick=fenster(\"/phalanx/index/galaxy/"+galaxy+"/system/"+system+"/planet/"+planet+"/\")>Фаланга</a><br />";
+				result += "<a href=\"javascript:void()\" onclick=fenster(\""+XNova.path+"phalanx/index/galaxy/"+galaxy+"/system/"+system+"/planet/"+planet+"/\")>Фаланга</a><br />";
 
 			if (row[planet]['user_id'] != user['id'] && !(row[planet]['ally_planet'] > 0 && row[planet]['ally_planet'] == user['ally_id']))
             {

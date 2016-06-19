@@ -144,7 +144,9 @@ class IndexController extends Application
 						$this->db->insertAsDict('game_refs', Array('r_id' => $iduser, 'u_id' => $this->session->get('ref')));
 				}
 
-				$this->config->app->users_total++;
+				$total = $this->db->query("SELECT `value` FROM game_config WHERE `key` = 'users_total'")->fetch();
+
+				$this->config->app->users_total = $total['value'] + 1;
 				$this->game->updateConfig('users_total', $this->config->app->users_total);
 
 				$mail = new PHPMailer();

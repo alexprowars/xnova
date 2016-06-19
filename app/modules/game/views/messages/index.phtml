@@ -53,9 +53,9 @@
 						<td style="background-color:<?=_getText('mess_background', $item->type) ?>;" colspan="4" class="b">
 							<? if ($item->type == 1 && $this->user->getUserOption('bb_parser')): ?>
 								<span id="m<?=$item->id ?>"></span>
-								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->text)) ?>', 'm<?=$item->id ?>');</script>
+								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes(str_replace('#BASEPATH#', $this->url->getBaseUri(), $item->text))) ?>', 'm<?=$item->id ?>');</script>
 							<? else: ?>
-								<?=stripslashes(nl2br($item->text)) ?>
+								<?=stripslashes(nl2br(str_replace('#BASEPATH#', $this->url->getBaseUri(), $item->text))) ?>
 							<? endif; ?>
 						</td>
 					</tr>

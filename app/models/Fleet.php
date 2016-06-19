@@ -68,12 +68,22 @@ class Fleet extends Model
 
 	public function getStartAdressLink ($FleetType = '')
 	{
-		return '<a href="/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
+		if ($this->getDI()->has('url'))
+			$uri = $this->getDI()->getShared('url')->getBaseUri();
+		else
+			$uri = '#BASEPATH#';
+
+		return '<a href="'.$uri.'galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
 	}
 
 	public function getTargetAdressLink ($FleetType = '')
 	{
-		return '<a href="/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
+		if ($this->getDI()->has('url'))
+			$uri = $this->getDI()->getShared('url')->getBaseUri();
+		else
+			$uri = '#BASEPATH#';
+
+		return '<a href="'.$uri.'galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
 	}
 
 	public function getTotalShips ()

@@ -10,7 +10,7 @@
 	<tr>
 		<? foreach ($links as $i => $link): ?>
 			<th width="50%">
-				<a href="/fleet/shortcut/view/<?=$i ?>/"><?=$link['name'] ?> [<?=$link['galaxy'] ?>:<?=$link['system'] ?>:<?=$link['planet'] ?>] <?=$link['type'] ?></a>
+				<a href="<?=$this->url->get('fleet/shortcut/view/'.$i.'/') ?>"><?=$link['name'] ?> [<?=$link['galaxy'] ?>:<?=$link['system'] ?>:<?=$link['planet'] ?>] <?=$link['type'] ?></a>
 			</th>
 		<? endforeach; ?>
 		<? if (count($links)%2 == 1): ?>

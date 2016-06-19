@@ -31,7 +31,7 @@
 				<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 				<th><?=$list['online'] ?></th>
 				<th>
-					<a href="/buddy/delete/<?=$list['id'] ?>/">Удалить</a>
+					<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Удалить</a>
 				</th>
 			</tr>
 		<? endforeach; ?>

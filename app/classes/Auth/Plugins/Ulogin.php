@@ -44,7 +44,9 @@ class Ulogin extends Component implements AuthInterface
 		if (!$this->isAuthorized())
 			return false;
 
-		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = '".$this->data['identity']."';")->fetch();
+		$identity = isset($this->data['profile']) && $this->data['profile'] != '' ? $this->data['profile'] : $this->data['identity'];
+
+		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = '".$identity."';")->fetch();
 
 		if (!isset($Row['id']))
 			$this->register();
@@ -67,7 +69,9 @@ class Ulogin extends Component implements AuthInterface
 
 	public function register ()
 	{
-		$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = '".$this->data['identity']."'")->fetch();
+		$identity = isset($this->data['profile']) && $this->data['profile'] != '' ? $this->data['profile'] : $this->data['identity'];
+
+		$check = $this->db->query("SELECT user_id FROM game_users_auth WHERE external_id = '".$identity."'")->fetch();
 
 		if (isset($check['user_id']))
 		{
@@ -145,7 +149,9 @@ class Ulogin extends Component implements AuthInterface
 				}
 			}
 
-			$this->config->app->users_total++;
+			$total = $this->db->query("SELECT `value` FROM game_config WHERE `key` = 'users_total'")->fetch();
+
+			$this->config->app->users_total = $total['value'] + 1;
 			$this->game->updateConfig('users_total', $this->config->app->users_total);
 
 			$this->auth->auth($iduser, md5($this->token));

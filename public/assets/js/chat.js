@@ -49,7 +49,7 @@ var replaceS = [
 	'<a href="$1" target="_blank">$2</a>',
 	'<a href="$1" target="_blank">$1</a>',
 	'<p>$1</p>',
-	'<a href="/galaxy/$1/$2/">[$1:$2:$3]</a>'
+	'<a href="'+XNova.path+'galaxy/$1/$2/">[$1:$2:$3]</a>'
 ];
 
 function showSmilesEx(obj, event)
@@ -74,11 +74,11 @@ function chatResize()
 	if (isMobile)
 		return;
 
-	$('#shoutbox').css('height', $(window).height() - 240);
+	$('#shoutbox').css('height', $(window).height() - 280);
 
 	$(window).bind('resize', function()
 	{
-		$('#shoutbox').css('height', $(window).height() - 240);
+		$('#shoutbox').css('height', $(window).height() - 280);
 
 		descendreTchat();
 	});

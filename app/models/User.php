@@ -539,12 +539,56 @@ class User extends Model
 		$this->db->delete('game_log_username', 'user_id = ?', [$userId]);
 		$this->db->delete('game_log_stats', 'id = ?  AND type = 1', [$userId]);
 		$this->db->delete('game_logs', 's_id = ? OR e_id = ?', [$userId, $userId]);
-		$this->db->delete('game_users_auth', 'user_id = ?', [$userId]);
 		$this->db->delete('game_messages', 'sender = ? OR owner = ?', [$userId, $userId]);
-		$this->db->delete('game_users', 'id = ?', [$userId]);
-		$this->db->delete('game_users_info', 'id = ?', [$userId]);
 		$this->db->delete('game_banned', 'who = ?', [$userId]);
 		$this->db->delete('game_log_ip', 'id = ?', [$userId]);
+
+		$update = [
+			'authlevel' => 0,
+			'group_id' => 0,
+			'banned' => 0,
+			'planet_id' => 0,
+			'planet_current' => 0,
+			'bonus' => 0,
+			'ally_id' => 0,
+			'ally_name' => '',
+			'lvl_minier' => 1,
+			'lvl_raid' => 1,
+			'xpminier' => 0,
+			'xpraid' => 0,
+			'messages' => 0,
+			'messages_ally' => 0,
+			'galaxy' => 0,
+			'system' => 0,
+			'planet' => 0,
+			'vacation' => 0,
+			'deltime' => 0,
+			'b_tech_planet' => 0,
+			'raids_win' => 0,
+			'raids_lose' => 0,
+			'raids' => 0,
+			'tutorial' => 0,
+			'tutorial_value' => 0,
+			'bonus_multi' => 0,
+			'message_block' => 0
+		];
+
+		$storage = $this->getDI()->getShared('storage');
+
+		foreach ($storage->reslist['officier'] AS $oId)
+			$update[$storage->resource[$oId]] = 0;
+
+		foreach ($storage->reslist['tech'] AS $oId)
+			$update[$storage->resource[$oId]] = 0;
+
+		foreach ($storage->reslist['tech_f'] AS $oId)
+			$update[$storage->resource[$oId]] = 0;
+
+		$this->saveData($update, $userId);
+
+		//$this->db->delete('game_users', 'id = ?', [$userId]);
+		//$this->db->delete('game_users_info', 'id = ?', [$userId]);
+		//$this->db->delete('game_users_auth', 'user_id = ?', [$userId]);
 
 		return true;
 	}
