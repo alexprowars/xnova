@@ -103,7 +103,7 @@ class StartController extends Application
 
 					$this->user->update($update);
 
-					$this->game->setRequestData(['redirect' => '/tutorial/']);
+					$this->game->setRequestData(['redirect' => $this->url->getBaseUri().'tutorial/']);
 					$this->view->disable();
 				}
 				else

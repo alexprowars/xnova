@@ -8,7 +8,6 @@ namespace App\Controllers;
  */
 
 use App\Fleet;
-use App\JavaScriptPacker;
 use App\Lang;
 
 class GalaxyController extends Application
@@ -248,10 +247,7 @@ class GalaxyController extends Application
 		foreach ($rows AS $row)
 			$galaxyRow .= 'row[' . $row['planet'] . '] = '.json_encode($row, true).';';
 		
-		$packer = new JavaScriptPacker($galaxyRow, (mt_rand(1, 2) == 1 ? 10 : 62), false, false);
-		$packed = $packer->pack();
-		
-		$html .= $packed;
+		$html .= $galaxyRow;
 		
 		$html .= "$('#galaxy').append(PrintRow());</script>";
 

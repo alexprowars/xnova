@@ -68,6 +68,14 @@
 			</table>
 		</div>
 		<div id="tabs-1" class="ui-tabs-panel ui-widget-content"  style="display: none">
+			<? if ($this->config->view->get('socialIframeView', 0) != 0): ?>
+				<div style="display: none">
+					<input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox" title="">
+					<input name="planetlistselect"<?=$parse['opt_planetlistselect_data'] ?> type="checkbox" title="">
+					<input name="security"<?=$parse['opt_sec_data'] ?> type="checkbox" title="">
+					<input name="ajaxnav"<?=$parse['opt_ajax_data'] ?> type="checkbox" title="">
+				</div>
+			<? endif; ?>
 			<table class="table">
 				<tr>
 					<th>Упорядочить планеты по:</th>
@@ -161,12 +169,10 @@
 						<option value="18"<?=(($parse['timezone'] == 18) ? 'selected' : '')?>>+12</option>
 					</select></th>
 				</tr>
-				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-					<tr>
-						<th>Аватар</th>
-						<th><?=$parse['avatar'] ?> <a href="<?=$this->url->get('avatar/') ?>" class="button">Выбрать аватар</a></th>
-					</tr>
-				<? endif; ?>
+				<tr>
+					<th>Аватар</th>
+					<th><?=$parse['avatar'] ?> <a href="<?=$this->url->get('avatar/') ?>" class="button">Выбрать аватар</a></th>
+				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
 				</tr>

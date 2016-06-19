@@ -32,7 +32,7 @@ class NewsController extends Application
 
 		$this->view->setVar('parse', $news);
 
-		exec('git rev-parse --verify HEAD 2> /dev/null', $output);
+		exec('cd '.APP_PATH.' && git rev-parse --verify HEAD 2> /dev/null', $output);
 
 		$lastCommit = $output[0];
 

@@ -12,6 +12,7 @@ use App\Lang;
 use App\Mail\PHPMailer;
 use App\Models\Fleet;
 use App\Models\Planet;
+use App\Models\User;
 use App\Queue;
 
 class OptionsController extends Application
@@ -72,6 +73,9 @@ class OptionsController extends Application
 					if (!isset($email['id']))
 					{
 						$this->db->query("INSERT INTO game_log_email VALUES (" . $this->user->id . ", " . time() . ", '" . addslashes(htmlspecialchars($_POST['email'])) . "', 0);");
+
+						User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступила заявка на смену Email от '.$this->user->username.' на '.addslashes(htmlspecialchars($_POST['email'])).'. <a href="/admin/email/">Сменить</a>');
+
 						$this->message('Заявка отправлена на рассмотрение', 'Hacтpoйки', '/options/', 3);
 					}
 					else

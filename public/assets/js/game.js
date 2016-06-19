@@ -589,7 +589,7 @@ $(document).ready(function()
 	{
 		$(document).tooltip({
 			items: ".tooltip",
-			track: true,
+			track: !isMobile,
 			show: false,
 			hide: false,
 			position: {my: "left+25 top+15", at: "left bottom", collision: "flipfit"},

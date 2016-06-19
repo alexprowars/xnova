@@ -814,8 +814,11 @@ class AllianceController extends Application
 	public function chatAction ()
 	{
 		if ($this->user->messages_ally != 0)
-			$this->db->query("UPDATE game_users SET messages_ally = '0' WHERE id = '" . $this->user->id . "'");
-
+		{
+			$this->user->messages_ally = 0;
+			$this->user->update();
+		}
+		
 		$this->parseInfo($this->user->ally_id);
 
 		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CHAT_ACCESS))

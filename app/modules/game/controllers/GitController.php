@@ -25,7 +25,7 @@ class GitController extends Application
 	{
 		$git_history = [];
 
-		exec("git log -20", $git_logs);
+		exec("cd ".APP_PATH." && git log -20", $git_logs);
 
 		$last_hash = null;
 
