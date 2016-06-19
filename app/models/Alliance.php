@@ -126,7 +126,7 @@ class Alliance extends Model
 			$this->rights[self::DIPLOMACY_ACCESS] 				= false;
 			$this->rights[self::PLANET_ACCESS] 					= false;
 		}
-		else
+		elseif (isset($this->ranks[$this->member->rank - 1]))
 		{
 			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST_STATUS] == 1);
 			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST] == 1);

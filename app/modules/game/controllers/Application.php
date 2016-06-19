@@ -148,16 +148,16 @@ class Application extends Controller
 
 		if (!$this->disableCollections)
 		{
-			$css->addCss('assets/css/bootstrap.css');
+			$css->addCss('assets/css/bootstrap.css?v='.VERSION);
 			$css->addCss('assets/css/jquery-ui.css');
 			$css->addCss('assets/css/jquery.fancybox.css');
-			$css->addCss('assets/css/style.css');
+			$css->addCss('assets/css/style.css?v='.VERSION);
 
 			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
 			$js->addJs('assets/js/jquery.form.min.js');
 			$js->addJs('assets/js/jquery.fancybox.min.js');
-			$js->addJs('assets/js/game.js');
+			$js->addJs('assets/js/game.js?v='.VERSION);
 		}
 
 		if ($this->auth->isAuthorized())
@@ -173,11 +173,11 @@ class Application extends Controller
 				$css->addCss('assets/css/jquery.toast.min.css');
 				$css->addCss('assets/css/jquery.reject.css');
 
-				$js->addJs('assets/js/script.js');
-				$js->addJs('assets/js/universe.js');
-				$js->addJs('assets/js/flotten.js');
-				$js->addJs('assets/js/smiles.js');
-				$js->addJs('assets/js/ed.js');
+				$js->addJs('assets/js/script.js?v='.VERSION);
+				$js->addJs('assets/js/universe.js?v='.VERSION);
+				$js->addJs('assets/js/flotten.js?v='.VERSION);
+				$js->addJs('assets/js/smiles.js?v='.VERSION);
+				$js->addJs('assets/js/ed.js?v='.VERSION);
 				$js->addJs('assets/js/jquery.touchSwipe.min.js');
 				$js->addJs('assets/js/jquery.toast.min.js');
 				$js->addJs('assets/js/jquery.mousewheel.min.js');
@@ -471,7 +471,12 @@ class Application extends Controller
 		$this->view->pick('shared/message');
 		$this->view->setVar('text', $text);
 		$this->view->setVar('title', $title);
-		$this->view->setVar('destination', $this->url->getBaseUri().ltrim($redirect, '/'));
+
+		if ($redirect != '')
+			$this->view->setVar('destination', $this->url->getBaseUri().ltrim($redirect, '/'));
+		else
+			$this->view->setVar('destination', '');
+
 		$this->view->setVar('time', $timeout);
 
 		$this->tag->setTitle(($title ? strip_tags($title) : 'Сообщение'));

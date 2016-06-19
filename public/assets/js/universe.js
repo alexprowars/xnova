@@ -369,12 +369,12 @@ function PrintRow ()
 				result += "<tr>";
 				result += "<td class=c>Альянс "+row[planet]['ally_name']+" с "+row[planet]['ally_members']+" членами</td>";
 				result += "</tr>";
-				result += "<tr><th><a href="+XNova.path+"alliance/ainfo/a/"+row[planet]['ally_id']+"/>Информация</a></th>";
+				result += "<tr><th><a href='"+XNova.path+"alliance/info/"+row[planet]['ally_id']+"/'>Информация</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href="+XNova.path+"stat/alliance/start/0/>Статистика</a></th></tr>";
+				result += "<th><a href='"+XNova.path+"stat/alliance/start/0/'>Статистика</a></th></tr>";
 
 				if (row[planet]["ally_web"] != "") {
-					result += "<tr><th><a href="+row[planet]["ally_web"]+" target=_new>Сайт альянса</th>";
+					result += "<tr><th><a href='"+row[planet]["ally_web"]+"' target='_new'>Сайт альянса</th>";
 				}
 
 				result += "</table>\">";

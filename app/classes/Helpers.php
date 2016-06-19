@@ -287,6 +287,9 @@ class Helpers
 
 	static function allowMobileVersion ()
 	{
+		if (!isset($_SERVER['HTTP_USER_AGENT']))
+			return false;
+		
 		$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
 
 		$result = true;

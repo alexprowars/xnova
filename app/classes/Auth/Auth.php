@@ -176,6 +176,7 @@ class Auth extends Component
 
 		$this->cookies->set($this->config->cookie->prefix."_id", 		$userId, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
 		$this->cookies->set($this->config->cookie->prefix."_secret", 	$secret, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->set($this->config->cookie->prefix."_full", 		'N', 	 $expire, '/', 0, $_SERVER["SERVER_NAME"]);
 		$this->cookies->send();
 
 		if ($this->session->isStarted())
@@ -189,6 +190,7 @@ class Auth extends Component
 
 		$this->cookies->set($this->config->cookie->prefix."_id", 		null, 0, '/', 0, $_SERVER["SERVER_NAME"]);
 		$this->cookies->set($this->config->cookie->prefix."_secret", 	null, 0, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->set($this->config->cookie->prefix."_full", 		null, 0, '/', 0, $_SERVER["SERVER_NAME"]);
 		$this->cookies->send();
 
 		if ($redirect)

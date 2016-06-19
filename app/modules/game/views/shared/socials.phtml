@@ -22,7 +22,7 @@
 		);
 	}
 ?>
-<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') && $this->session->has('OKAPI') && is_array($this->session->get('OKAPI'))): ?>
+<? if ((!$this->cookies->has($this->config->cookie->prefix.'_full') || $this->cookies->get($this->config->cookie->prefix.'_full') == 'N') && $this->session->has('OKAPI') && is_array($this->session->get('OKAPI'))): ?>
 	<script src="<?=$this->session->get('OKAPI')['api_server'] ?>js/fapi5.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		FAPI.init('<?=$this->session->get('OKAPI')['api_server'] ?>', '<?=$this->session->get('OKAPI')['apiconnection'] ?>',

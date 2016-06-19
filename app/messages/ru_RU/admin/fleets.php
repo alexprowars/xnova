@@ -10,4 +10,4 @@ $lang['flt_e_owner']  = "Отправление";
 $lang['flt_time_en']  = "Время прибытия";
 $lang['flt_staying']  = "Прибытие";
 $lang['flt_action']   = "Действие";
-$lang['flt_title']    = "флотов в пути";
+$lang['flt_title']    = "Флоты в пути";

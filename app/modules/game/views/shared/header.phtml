@@ -77,7 +77,7 @@
 				<a href="<?=$this->url->get("logout/") ?>" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>
 			<? endif; ?>
 			<? if ($this->config->view->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
-				<? if (!$this->cookies->has($this->config->cookie->prefix.'_full')): ?>
+				<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') || $this->cookies->get($this->config->cookie->prefix.'_full') == 'N'): ?>
 					<a class="m1" style="color:#38CA38" href="javascript:;" onclick="showInviteBox()">Пригласить друзей</a>
 				<? endif; ?>
 			<? endif; ?>

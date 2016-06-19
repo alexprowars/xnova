@@ -7,13 +7,18 @@ use App\Models\Fleet as FleetModel;
 
 class FlyFleetsController extends Application
 {
-	public function indexAction ()
+	public function initialize ()
 	{
+		parent::initialize();
+
 		if ($this->user->authlevel < 3)
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 
 		Lang::includeLang('admin/fleets');
+	}
 
+	public function indexAction ()
+	{
 		$table = [];
 
 		$FlyingFleets = FleetModel::find(['order' => 'end_time asc']);
@@ -27,9 +32,9 @@ class FlyFleetsController extends Application
 			$Bloc['Fleet'] = Fleet::CreateFleetPopupedFleetLink($CurrentFleet, _getText('tech', 200), '', $this->user);
 			$Bloc['St_Owner'] = "[" . $CurrentFleet->owner . "]<br>" . $CurrentFleet->owner_name;
 			$Bloc['St_Posit'] = "[" . $CurrentFleet->start_galaxy . ":" . $CurrentFleet->start_system . ":" . $CurrentFleet->start_planet . "]<br>" . (($CurrentFleet->start_type == 1) ? "[P]" : (($CurrentFleet->start_type == 2) ? "D" : "L")) . "";
-			$Bloc['St_Time'] = $this->game->datezone('H:i:s d/n/Y', $CurrentFleet['start_time']);
+			$Bloc['St_Time'] = $this->game->datezone('H:i:s d/n/Y', $CurrentFleet->start_time);
 
-			if (!empty($CurrentFleet['target_owner']))
+			if (!empty($CurrentFleet->target_owner))
 				$Bloc['En_Owner'] = "[" . $CurrentFleet->target_owner . "]<br>" . $CurrentFleet->target_owner_name;
 			else
 				$Bloc['En_Owner'] = "";
@@ -40,8 +45,7 @@ class FlyFleetsController extends Application
 
 			$table[] = $Bloc;
 		}
-
-		$this->view->pick('admin/fleets');
+		
 		$this->view->setVar('flt_table', $table);
 		$this->tag->setTitle(_getText('flt_title'));
 	}
