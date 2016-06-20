@@ -133,7 +133,7 @@ $router->add($uri.'sim/([0-9!;,]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/content/([a-zA-Z0-9]+)/:params',
+$router->add($uri.'content/([a-zA-Z0-9]+)/:params',
 [
 	'controller' 	=> 'content',
 	'action' 		=> 'index',
@@ -141,7 +141,7 @@ $router->add('/content/([a-zA-Z0-9]+)/:params',
 	'params' 		=> 2
 ]);
 
-$router->add('/login/:params',
+$router->add($uri.'login/:params',
 [
 	'controller' 	=> 'index',
 	'action' 		=> 'login',

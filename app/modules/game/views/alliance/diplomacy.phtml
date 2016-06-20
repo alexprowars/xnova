@@ -6,7 +6,7 @@
 		<? foreach ($parse['DMyQuery'] as $diplo): ?>
 			<tr>
 				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
+				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
 					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
@@ -21,11 +21,11 @@
 	<tr>
 		<td class="c" colspan="3">Запросы вашему альянсу</td>
 	</tr>
-	<? if (isset($parse['DQuery']) && count($parse['DMyQuery'])): ?>
+	<? if (isset($parse['DQuery']) && count($parse['DQuery'])): ?>
 		<? foreach ($parse['DQuery'] as $diplo): ?>
 			<tr>
 				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
+				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
 					<a href="/alliance/diplomacy/edit/suc/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/appwiz.gif" alt="Подтвердить"></a>
 					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
@@ -41,11 +41,11 @@
 	<tr>
 		<td class="c" colspan="4">Отношения между альянсами</td>
 	</tr>
-	<? if (isset($parse['DText']) && count($parse['DMyQuery'])): ?>
+	<? if (isset($parse['DText']) && count($parse['DText'])): ?>
 		<? foreach ($parse['DText'] as $diplo): ?>
 			<tr>
 				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', [$diplo['type']]) ?></th>
+				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
 					<a href="/alliance/diplomacy/edit/del/id/<?=$diplo['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>

@@ -18,6 +18,9 @@ class AvatarController extends Application
 
 	public function uploadAction ()
 	{
+		if (!isset($_FILES['image']))
+			return;
+
 		$upload = new Upload($_FILES['image']);
 
 		if ($upload->uploaded)

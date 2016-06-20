@@ -540,7 +540,7 @@ function PrintSelector(fleet_shortcut)
 
 	result += "</div></form>";
 
-	result += "<form action=\""+XNova.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up'>";
+	result += "<form action=\""+XNova.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up row'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-xs-12'>";
 	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';

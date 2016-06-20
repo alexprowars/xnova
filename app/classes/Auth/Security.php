@@ -98,6 +98,7 @@ class Security extends Component
 				'banned'	=> array('*'),
 				'xnsim'		=> array('*'),
 				'payment'	=> array('*'),
+				'content'  	=> array('*'),
 			];
 
 			foreach ($privateResources as $resource => $actions)

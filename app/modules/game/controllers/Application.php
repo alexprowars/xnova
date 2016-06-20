@@ -87,6 +87,10 @@ class Application extends Controller
 
 			$this->view->setVar('planet', $parse);
 		}
+		else
+		{
+			$this->showTopPanel(false);
+		}
 
 		$this->tag->appendTitle($this->config->app->name);
 
@@ -159,6 +163,8 @@ class Application extends Controller
 			$js->addJs('assets/js/jquery.fancybox.min.js');
 			$js->addJs('assets/js/game.js?v='.VERSION);
 		}
+
+		$this->game->loadGameVariables();
 
 		if ($this->auth->isAuthorized())
 		{
@@ -245,8 +251,6 @@ class Application extends Controller
 			$this->view->setVar('timezone', (isset($inf['timezone']) ? intval($inf['timezone']) : 0));
 			$this->view->setVar('userId', $this->user->getId());
 			$this->view->setVar('adminlevel', $this->user->authlevel);
-
-			$this->game->loadGameVariables();
 
 			$this->user->getAllyInfo();
 
