@@ -256,7 +256,7 @@ class AllianceController extends Application
 				foreach ($this->ally->ranks as $a => $b)
 				{
 					$list['id'] = $a;
-					$list['delete'] = "<a href=\"/alliance/admin/edit/rights/d/".$a."/\"><img src=\"".$this->url->getBaseUri()."assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
+					$list['delete'] = "<a href=\"".$this->url->get('alliance/admin/edit/rights/d/'.$a.'/')."\"><img src=\"".$this->url->getBaseUri()."assets/images/abort.gif\" alt=\"Удалить ранг\" border=0></a>";
 					$list['r0'] = $b['name'];
 					$list['a'] = $a;
 
@@ -982,7 +982,7 @@ class AllianceController extends Application
 		if (isset($_POST['searchtext']) && $_POST['searchtext'] != '')
 		{
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['searchtext']))
-				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '/alliance/?mode=search', 2);
+				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '/alliance/search/', 2);
 
 			$search = $this->db->query("SELECT * FROM game_alliance WHERE name LIKE '%" . $_POST['searchtext'] . "%' or tag LIKE '%" . $_POST['searchtext'] . "%' LIMIT 30");
 
@@ -994,7 +994,7 @@ class AllianceController extends Application
 				{
 					$entry = [];
 
-					$entry['tag'] = "[<a href=\"/alliance/apply/allyid/".$s['id']."/\">".$s['tag']."</a>]";
+					$entry['tag'] = "[<a href=\"".$this->url->get('alliance/apply/allyid/'.$s['id'].'/')."\">".$s['tag']."</a>]";
 					$entry['name'] = $s['name'];
 					$entry['members'] = $s['members'];
 
@@ -1088,7 +1088,7 @@ class AllianceController extends Application
 
 	private function MessageForm ($Title, $Message, $Goto = '', $Button = ' ok ', $TwoLines = false)
 	{
-		$Form = "<form action=\"" . $Goto . "\" method=\"post\">";
+		$Form = "<form action=\"" . $this->url->get(ltrim($Goto, '/')) . "\" method=\"post\">";
 		$Form .= "<table width=\"100%\"><tr>";
 		$Form .= "<td class=\"c\">" . $Title . "</td>";
 		$Form .= "</tr><tr>";

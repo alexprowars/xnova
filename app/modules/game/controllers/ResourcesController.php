@@ -124,6 +124,7 @@ class ResourcesController extends Application
 
 		$production_level = $this->planet->production_level;
 
+		$parse['buy_form'] = ($this->planet->planet_type == 1 && $this->user->vacation <= 0);
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
 
 		$parse['resource_row'] = [];
@@ -172,7 +173,10 @@ class ResourcesController extends Application
 
 		foreach ($this->storage->reslist['res'] AS $res)
 		{
-			$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
+			if (!$this->user->isVacation())
+				$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
+			else
+				$parse[$res.'_basic_income'] = 0;
 
 			$parse[$res.'_max'] = '<font color="#' . (($this->planet->{$res.'_max'} < $this->planet->{$res}) ? 'ff00' : '00ff') . '00">';
 			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'} / 1000) . " k</font>";
@@ -213,7 +217,6 @@ class ResourcesController extends Application
 		$parse['production_level'] = "{$production_level}%";
 		$parse['production_level_barcolor'] = '#00ff00';
 		$parse['name'] = $this->planet->name;
-		$parse['type'] = $this->planet->planet_type;
 
 		$parse['et'] = $this->user->energy_tech;
 

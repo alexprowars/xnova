@@ -164,7 +164,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $TargetUser->{$this->storage->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->storage->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->storage->resource[$id - 50]} : 0) . ';';
 			}
 
-			$MessageEnd .= "<center><a href=\"/sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
+			$MessageEnd .= "<center><a href=\"#BASEPATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;

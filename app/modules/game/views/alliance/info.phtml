@@ -36,6 +36,6 @@
 	<? endif; ?>
 
 	<? if (isset($userId) && $userId != 0 && $parse['request']): ?>
-		<tr><th>Вступление</th><th><a href="/alliance/apply/allyid/<?=$parse['id'] ?>/">Нажмите сюда для подачи заявки</a></th></tr>
+		<tr><th>Вступление</th><th><a href="<?=$this->url->get('alliance/apply/allyid/'.$parse['id'].'/') ?>">Нажмите сюда для подачи заявки</a></th></tr>
 	<? endif; ?>
 </table>

@@ -524,7 +524,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			]);
 		}
 
-		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"/rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
+		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#BASEPATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
 
 		if ($result['won'] == 1)
 			$raport .= "<font color=\"green\">";

@@ -2,6 +2,10 @@
 /**
  * @var $planet array
  */
+
+if (!isset($planet['time']))
+	file_put_contents(APP_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n", FILE_APPEND);
+
 ?>
 <script type="text/javascript">
 	var ress = [<?=$planet['metal'] ?>, <?=$planet['crystal'] ?>, <?=$planet['deuterium'] ?>];

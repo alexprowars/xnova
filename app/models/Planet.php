@@ -243,6 +243,9 @@ class Planet extends Model
 		$Caps['energy_used'] 	= 0;
 		$Caps['energy_max'] 	= 0;
 
+		if ($this->user->isVacation())
+			return;
+
 		foreach ($this->storage->reslist['prod'] AS $ProdID)
 		{
 			$BuildLevelFactor = $this->{$this->storage->resource[$ProdID] . '_porcent'};
@@ -283,15 +286,12 @@ class Planet extends Model
 		}
 	}
 
-	public function resourceUpdate ($updateTime = 0, $simultion = false)
+	public function resourceUpdate ($updateTime = 0, $simulation = false)
 	{
 		if (!$this->user instanceof User)
 			return false;
 
 		$config = $this->getDI()->getShared('config');
-
-		if ($this->user->vacation != 0)
-			$simultion = true;
 
 		if (!$updateTime)
 			$updateTime = time();
@@ -370,7 +370,11 @@ class Planet extends Model
 			if ($this->{$res} <= $this->{$res.'_max'})
 			{
 				$this->{$res.'_production'} = (($productionTime * ($this->{$res.'_perhour'} / 3600))) * (0.01 * $production_level);
-				$this->{$res.'_base'} 		= (($productionTime * ($config->game->get($res.'_basic_income', 0) / 3600)) * $config->game->get('resource_multiplier', 1));
+
+				if (!$this->user->isVacation())
+					$this->{$res.'_base'} = (($productionTime * ($config->game->get($res.'_basic_income', 0) / 3600)) * $config->game->get('resource_multiplier', 1));
+				else
+					$this->{$res.'_base'} = 0;
 
 				$this->{$res.'_production'} = $this->{$res.'_production'} + $this->{$res.'_base'};
 
@@ -387,10 +391,10 @@ class Planet extends Model
 
 		$isBuilded = $this->HandleElementBuildingQueue($productionTime);
 
-		if ($simultion && $isBuilded > 0)
-			$simultion = false;
+		if ($simulation && $isBuilded > 0)
+			$simulation = false;
 
-		if (!$simultion)
+		if (!$simulation)
 			$this->update();
 
 		return true;

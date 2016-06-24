@@ -402,7 +402,7 @@ class StageThree
 
 		$StockOk = ($StockMetal >= $TransMetal && $StockCrystal >= $TransCrystal && $StockDeuterium >= $TransDeuterium);
 
-		if (!$StockOk && $TargetPlanet->id_owner != 1)
+		if (!$StockOk && (!$TargetPlanet || $TargetPlanet->id_owner != 1))
 			$controller->message("<span class=\"error\"><b>" . _getText('fl_noressources') . Helpers::pretty_number($consumption) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($StorageNeeded > $FleetStorage && !$controller->user->isAdmin())

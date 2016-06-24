@@ -418,8 +418,13 @@ class Application extends Controller
 				$parse[$res.'_max'] = '<span class="positive">';
 
 			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</span>";
-			$parse[$res.'_ph'] 	= $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
-			$parse[$res.'_mp'] 	= $this->planet->{$res.'_mine_porcent'} * 10;
+
+			if ($this->user->vacation <= 0)
+				$parse[$res.'_ph'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
+			else
+				$parse[$res.'_ph'] = 0;
+
+			$parse[$res.'_mp'] = $this->planet->{$res.'_mine_porcent'} * 10;
 		}
 
 		$parse['energy_max'] 	= Helpers::pretty_number($this->planet->energy_max);

@@ -180,22 +180,22 @@ class OptionsController extends Application
 
 		$Del_Time = (isset($_POST["db_deaktjava"]) && $_POST["db_deaktjava"] == 'on') ? (time() + 604800) : 0;
 
-		if ($this->user->vacation == 0)
+		if (!$this->user->isVacation())
 		{
-			$sex = ($_POST['sex'] == 'F') ? 2 : 1;
+			$sex = ($this->request->getPost('sex', 'string', 'M') == 'F') ? 2 : 1;
 
-			$color = intval($_POST['color']);
+			$color = $this->request->getPost('color', 'int', 1);
 			if ($color < 1 || $color > 13)
 				$color = 1;
 
-			$timezone = intval($_POST['timezone']);
+			$timezone = $this->request->getPost('timezone', 'int', 0);
 			if ($timezone < -32 || $timezone > 16)
 				$timezone = 0;
 
-			$SetSort = intval($_POST['settings_sort']);
-			$SetOrder = intval($_POST['settings_order']);
-			$about = Helpers::FormatText($_POST['text']);
-			$spy = intval($_POST['spy']);
+			$SetSort = $this->request->getPost('settings_sort', 'int', 0);
+			$SetOrder = $this->request->getPost('settings_order', 'int', 0);
+			$about = Helpers::FormatText($this->request->getPost('text', 'string', ''));
+			$spy = $this->request->getPost('spy', 'int', 1);
 
 			if ($spy < 1 || $spy > 1000)
 				$spy = 1;
@@ -212,33 +212,28 @@ class OptionsController extends Application
 
 			$this->db->query("UPDATE game_users SET options = '".$this->user->packOptions($options)."', sex = '" . $sex . "', vacation = '" . $vacation . "', deltime = '" . $Del_Time . "' WHERE id = '" . $this->user->id . "'");
 
-			$ui_query = '';
+			$update = [];
 
 			if ($SetSort != $inf['planet_sort'])
-				$ui_query .= ", planet_sort = '" . $SetSort . "'";
+				$update['planet_sort'] = $SetSort;
 
 			if ($SetOrder != $inf['planet_sort_order'])
-				$ui_query .= ", planet_sort_order = '" . $SetOrder . "'";
+				$update['planet_sort_order'] = $SetOrder;
 
 			if ($color != $inf['color'])
-				$ui_query .= ", color = '" . $color . "'";
+				$update['color'] = $color;
 
 			if ($timezone != $inf['timezone'])
-				$ui_query .= ", timezone = '" . $timezone . "'";
+				$update['timezone'] = $timezone;
 
 			if ($about != $inf['about'])
-				$ui_query .= ", about = '" . $about . "'";
+				$update['about'] = $about;
 
 			if ($spy != $inf['spy'])
-				$ui_query .= ", spy = '" . $spy . "'";
+				$update['spy'] = $spy;
 
-			if ($ui_query != '')
-			{
-				if ($ui_query != '')
-					$ui_query[0] = ' ';
-
-				$this->db->query("UPDATE game_users_info SET" . $ui_query . " WHERE id = '" . $this->user->id . "'");
-			}
+			if (count($update))
+				$this->db->updateAsDict('game_users_info', $update, 'id = '.$this->user->id);
 
 			$this->session->remove('config');
 		}

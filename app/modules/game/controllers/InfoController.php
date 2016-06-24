@@ -188,7 +188,7 @@ class InfoController extends Application
 
 		$parse = [];
 
-		if (!_getText('tech', $BuildID, true))
+		if (!_getText('info', $BuildID, true))
 			$this->message('Мы не сможем дать вам эту информацию', 'Ошибка');
 
 		$parse['name'] = _getText('tech', $BuildID);

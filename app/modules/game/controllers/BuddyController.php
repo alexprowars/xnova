@@ -128,7 +128,7 @@ class BuddyController extends Application
 		
 			$u = $this->db->query("SELECT id, username, galaxy, system, planet, onlinetime, ally_id, ally_name FROM game_users WHERE id = " . $uid)->fetch();
 		
-			$UserAlly = ($u["ally_id"] != 0) ? "<a href=\"/alliance/info/" . $u["ally_id"] . "/\">" . $u["ally_name"] . "</a>" : "";
+			$UserAlly = ($u["ally_id"] != 0) ? "<a href=\"".$this->url->get('alliance/info/'.$u["ally_id"].'/') ."\">" . $u["ally_name"] . "</a>" : "";
 		
 			if ($isRequests)
 				$LastOnline = $b["text"];

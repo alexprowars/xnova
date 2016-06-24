@@ -148,6 +148,11 @@ class User extends Model
 		else
 			return false;
 	}
+	
+	public function isVacation()
+	{
+		return $this->vacation > 0;
+	}
 
 	public function getId()
 	{
