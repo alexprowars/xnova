@@ -48,8 +48,6 @@ class Application extends Controller
 
 	public function afterExecuteRoute ()
 	{
-		$this->view->setVar('topPanel', $this->showTopPanel);
-		$this->view->setVar('leftMenu', $this->showLeftMenu);
 		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
 
 		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
@@ -88,9 +86,10 @@ class Application extends Controller
 			$this->view->setVar('planet', $parse);
 		}
 		else
-		{
 			$this->showTopPanel(false);
-		}
+
+		$this->view->setVar('topPanel', $this->showTopPanel);
+		$this->view->setVar('leftMenu', $this->showLeftMenu);
 
 		$this->tag->appendTitle($this->config->app->name);
 

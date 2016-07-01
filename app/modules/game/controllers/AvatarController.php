@@ -14,6 +14,8 @@ class AvatarController extends Application
 	public function initialize ()
 	{
 		parent::initialize();
+
+		$this->showTopPanel(false);
 	}
 
 	public function uploadAction ()
@@ -58,6 +60,5 @@ class AvatarController extends Application
 	public function indexAction ()
 	{
 		$this->tag->setTitle("Выбор аватара");
-		$this->showTopPanel(false);
 	}
 }

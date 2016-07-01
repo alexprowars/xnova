@@ -56,7 +56,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		 */
 		$targetUser = User::findFirst($target->id_owner);
 
-		if (!isset($targetUser->id))
+		if (!$targetUser)
 		{
 			$this->ReturnFleet();
 

@@ -31,7 +31,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		 */
 		$TargetUser = User::findFirst($TargetPlanet->id_owner);
 
-		if (!isset($TargetUser->id))
+		if (!$TargetUser)
 		{
 			$this->ReturnFleet();
 
