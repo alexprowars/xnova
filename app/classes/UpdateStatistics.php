@@ -519,7 +519,7 @@ class UpdateStatistics extends Injectable
 	{
 		$this->db->query("DELETE FROM game_messages WHERE `time` <= '" . (time() - 432000) . "';");
 		$this->db->query("DELETE FROM game_rw WHERE `time` <= '" . (time() - 172800) . "';");
-		$this->db->query("DELETE FROM game_alliance_chat WHERE `timestamp` <= '" . (time() - 604800) . "';");
+		$this->db->query("DELETE FROM game_alliance_chat WHERE `timestamp` <= '" . (time() - 1209600) . "';");
 		$this->db->query("DELETE FROM game_lostpasswords WHERE `time` <= '" . (time() - 86400) . "';");
 		$this->db->query("DELETE FROM game_logs WHERE `time` <= '" . (time() - 259200) . "';");
 		$this->db->query("DELETE FROM game_log_attack WHERE `time` <= '" . (time() - 604800) . "';");

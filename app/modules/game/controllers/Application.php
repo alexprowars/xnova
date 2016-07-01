@@ -494,14 +494,10 @@ class Application extends Controller
 
 		$this->afterExecuteRoute();
 
+		$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
+
 		$this->view->start();
-
-		$this->view->render(
-			$this->dispatcher->getControllerName(),
-			$this->dispatcher->getActionName(),
-			$this->dispatcher->getParams()
-		);
-
+		$this->view->render('error', 'index');
 		$this->view->finish();
 
 		if ($this->request->isAjax())

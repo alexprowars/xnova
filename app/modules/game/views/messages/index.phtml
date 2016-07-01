@@ -38,7 +38,13 @@
 							<input name="delete[]" type="checkbox" value="<?=$item->id ?>" style='width:14px;' title="">
 						</th>
 						<th><?=$this->game->datezone("d.m.y H:i:s", $item->time) ?></th>
-						<th><a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a></th>
+						<th>
+							<? if ($item->sender > 0): ?>
+								<a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a>
+							<? else: ?>
+								<?=$item->from ?>
+							<? endif; ?>
+						</th>
 						<th nowrap>
 							<? if ($item->type == 1): ?>
 								<a href="<?=$this->url->get('messages/write/'.$item->sender.'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>

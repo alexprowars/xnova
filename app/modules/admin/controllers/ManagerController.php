@@ -174,7 +174,7 @@ class ManagerController extends Application
 				$parse['adm_sub_form4'] .= "<td>S:" . $log['planet_start'] . "</td>";
 				$parse['adm_sub_form4'] .= "<td width=30%>E:" . $log['planet_end'] . "</td></tr>";
 
-				$parse['adm_sub_form4'] .= "<tr><td colspan=3><a href=\"/?set=rw&r=" . $log['battle_log'] . "&amp;k=" . md5('xnovasuka' . $log['battle_log']) . "\" target=\"_blank\">" . $log['fleet'] . "</a></td></tr>";
+				$parse['adm_sub_form4'] .= "<tr><td colspan=3><a href=\"".$this->url->get("rw/".$log['battle_log']."/".md5('xnovasuka' . $log['battle_log'])."/")."\" target=\"_blank\">" . $log['fleet'] . "</a></td></tr>";
 			}
 
 			$parse['adm_sub_form4'] .= "</table>";
@@ -191,7 +191,7 @@ class ManagerController extends Application
 				{
 					$parse['adm_sub_form5'] .= "<tr><td width=40%>" . $this->game->datezone("d.m.Y H:i", $ip['time']) . "</td>";
 					$parse['adm_sub_form5'] .= "<td>" . long2ip($log['ip']) . "</td>";
-					$parse['adm_sub_form5'] .= "<td width=30%><a href='/?set=players&id=" . $ip['id'] . "' target='_blank'>" . $ip['username'] . "</a></td></tr>";
+					$parse['adm_sub_form5'] .= "<td width=30%><a href='".$this->url->get("admin/manager/data/username/".$ip['id']."/send/")."' target='_blank'>" . $ip['username'] . "</a></td></tr>";
 				}
 			}
 

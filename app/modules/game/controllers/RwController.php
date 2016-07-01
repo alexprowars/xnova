@@ -14,6 +14,9 @@ class RwController extends Application
 	public function initialize ()
 	{
 		parent::initialize();
+
+		if ($this->dispatcher->wasForwarded())
+			return;
 	}
 	
 	public function indexAction ()
@@ -22,7 +25,7 @@ class RwController extends Application
 			$this->message('Боевой отчет не найден');
 
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $this->request->getQuery('id', 'int') . "'")->fetch();
-		
+
 		if (!isset($raportrow['id']))
 			$this->message('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
 

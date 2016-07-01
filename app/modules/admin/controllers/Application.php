@@ -56,6 +56,29 @@ class Application extends Controller
 		if (!$this->getDI()->has('user'))
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 
+		if (is_array($this->router->getParams()) && count($this->router->getParams()))
+		{
+			$params = $this->router->getParams();
+
+			foreach ($params as $key => $value)
+			{
+				if (!is_numeric($key))
+				{
+					$_REQUEST[$key] = $_GET[$key] = $value;
+
+					unset($params[$key]);
+				}
+			}
+
+			$params = array_values($params);
+
+			for ($i = 0; $i < count($params); $i += 2)
+			{
+				if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
+					$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
+			}
+		}
+
 		$result = $this->db->query("SELECT m.id, m.alias, m.name, r.right_id FROM game_cms_modules m LEFT JOIN game_cms_rights r ON r.module_id = m.id AND r.group_id = ".$this->user->group_id." AND right_id != '0' WHERE m.is_admin = '1' AND m.active = '1'");
 
 		while ($r = $result->fetch())

@@ -169,7 +169,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
 
-			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_mess_qg'), $SpyMessage);
+			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_mess_spy_report'), $SpyMessage);
 
 			$TargetMessage  = _getText('sys_mess_spy_ennemyfleet') . " " . $this->_fleet->owner_name ." ";
 			$TargetMessage .= $this->_fleet->getStartAdressLink();
@@ -177,7 +177,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
 			$TargetMessage .= sprintf(_getText('sys_mess_spy_lostproba'), $TargetChances) . ".";
 
-			User::sendMessage($TargetPlanet->id_owner, 0, $this->_fleet->start_time, 0, _getText('sys_mess_spy_control'), $TargetMessage);
+			User::sendMessage($TargetPlanet->id_owner, 0, $this->_fleet->start_time, 0, _getText('sys_mess_spy_activity'), $TargetMessage);
 
 			if ($TargetChances > $SpyerChances)
 			{
