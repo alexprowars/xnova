@@ -482,7 +482,7 @@ class StageThree
 			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
 		}
 
-		/*if ($TargetPlanet && $TargetPlanet->id_owner == 1)
+		if ($TargetPlanet && $TargetPlanet->id_owner == 1)
 		{
 			$fleet->start_time = time() + 30;
 			$fleet->end_time = time() + 60;
@@ -499,7 +499,7 @@ class StageThree
 				$StayTime = $fleet->start_time + 5;
 
 			$consumption = 0;
-		}*/
+		}
 
 		$tutorial = $controller->db->query("SELECT id, quest_id FROM game_users_quests WHERE user_id = ".$controller->user->getId()." AND finish = '0' AND stage = 0")->fetch();
 

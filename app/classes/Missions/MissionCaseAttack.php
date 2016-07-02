@@ -525,17 +525,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#BASEPATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
+		$raport .= "<font color=\"#COLOR#\">"._getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
-		if ($result['won'] == 1)
-			$raport .= "<font color=\"green\">";
-		elseif ($result['won'] == 0)
-			$raport .= "<font color=\"orange\">";
-		elseif ($result['won'] == 2)
-			$raport .= "<font color=\"red\">";
-
-		$raport .= _getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
-
-		$raport2  = $raport . '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Helpers::pretty_number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Helpers::pretty_number($result['lost']['def']) . '</font><br>';
+		$raport2  = '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Helpers::pretty_number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Helpers::pretty_number($result['lost']['def']) . '</font><br>';
 		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Helpers::pretty_number($steal['deuterium']) . '</font><br>';
 		$raport2 .= _getText('sys_debris') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
 
@@ -547,8 +539,19 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$UserList[] = $info['tech']['id'];
 		}
 
+		$attackersReport = $raport.$raport2;
+
+		$color = 'orange';
+
+		if ($result['won'] == 1)
+			$color = 'green';
+		elseif ($result['won'] == 2)
+			$color = 'red';
+
+		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
+
 		foreach ($UserList AS $info)
-			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport2);
+			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $attackersReport);
 
 		$UserList = [];
 
@@ -558,8 +561,19 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$UserList[] = $info['tech']['id'];
 		}
 
+		$defendersReport = $raport;
+
+		$color = 'orange';
+
+		if ($result['won'] == 1)
+			$color = 'red';
+		elseif ($result['won'] == 2)
+			$color = 'green';
+
+		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
+
 		foreach ($UserList AS $info)
-			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $raport);
+			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $defendersReport);
 
 		$this->db->insertAsDict('game_log_attack',
 		[

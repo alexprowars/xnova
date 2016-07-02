@@ -236,6 +236,7 @@ class OptionsController extends Application
 				$this->db->updateAsDict('game_users_info', $update, 'id = '.$this->user->id);
 
 			$this->session->remove('config');
+			$this->cache->delete('app::planetlist_'.$this->user->getId());
 		}
 		else
 			$this->db->query("UPDATE game_users SET vacation = '" . $vacation . "', deltime = '" . $Del_Time . "' WHERE id = '" . $this->user->id . "' LIMIT 1");

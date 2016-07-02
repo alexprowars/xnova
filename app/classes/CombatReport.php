@@ -169,7 +169,7 @@ class CombatReport extends Component
 						{
 							$l = $ship_id > 400 ? ($ship_id - 50) : ($ship_id + 100);
 
-							$raport1 .= "<th>" . _getText('tech', $ship_id) . "".($this->user->isAdmin() ? ' ('.(isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0).')' : '')."</th>";
+							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
 								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "</th>";
@@ -240,7 +240,7 @@ class CombatReport extends Component
 						{
 							$l = $ship_id > 400 ? ($ship_id - 50) : ($ship_id + 100);
 
-							$raport1 .= "<th>" . _getText('tech', $ship_id) . "".($this->user->isAdmin() ? ' ('.(isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0).')' : '')."</th>";
+							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
 								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "</th>";

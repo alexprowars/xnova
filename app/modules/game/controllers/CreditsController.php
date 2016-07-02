@@ -19,7 +19,7 @@ class CreditsController extends Application
 		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
 
 		if ($this->session->has('OKAPI'))
-			$this->view->pick('layouts/credits_ok');
+			$this->view->setLayout('credits_ok');
 		elseif ($this->request->hasPost('OutSum'))
 		{
 			do

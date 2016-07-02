@@ -11,10 +11,7 @@ var options = {
 	{
 		var data;
 
-		if (html5_storage())
-			data = localStorage.getItem('options_costs');
-		else
-			data = $.cookie('options_costs');
+		data = localStorage.getItem('options_costs');
 
 		if (data) {
 			data = data.split(',');
@@ -59,10 +56,7 @@ var options = {
 				data += getInputNumber($('#lablevel_'+i)[0]) + ',' + $('#labchoice_'+i)[0].checked;
 			}
 
-		if (html5_storage())
-			localStorage.setItem('options_costs', data);
-		else
-			$.cookie('options_costs', data, { expires: 7, path: '/' });
+		localStorage.setItem('options_costs', data);
 	},
 
 	techData: {},
@@ -80,10 +74,7 @@ function loadLLCData()
 {
 	var data;
 
-	if (html5_storage())
-		data = localStorage.getItem('options_costs');
-	else
-		data = $.cookie('options_costs');
+	data = localStorage.getItem('options_costs');
 
 	if (data) {
 		data = data.split(',');
@@ -171,8 +162,8 @@ function resetParams() {
 	//$('#plasma-tech-level')[0].value = 0;
 	$('#max-planet-temp')[0].value = 0;
 	//$('#booster')[0].selectedIndex = 0;
-	$('#geologist').checkbox("option", "checked", false);
-	$('#engineer').checkbox("option", "checked", false);
+	$('#geologist').prop("checked", false);
+	$('#engineer').prop("checked", false);
 	updateOneMultTab();
 }
 

@@ -242,8 +242,6 @@ class GalaxyController extends Application
 			$rows[] = $row;
 		}
 		
-		shuffle($rows);
-		
 		foreach ($rows AS $row)
 			$galaxyRow .= 'row[' . $row['planet'] . '] = '.json_encode($row, true).';';
 		

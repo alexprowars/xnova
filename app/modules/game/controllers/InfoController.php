@@ -355,7 +355,6 @@ class InfoController extends Application
 				}
 			}
 
-			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/buildings_defence');
 
 			if ($BuildID >= 500 && $BuildID < 600)
@@ -374,14 +373,15 @@ class InfoController extends Application
 					$this->planet->{$this->storage->resource[503]} -= $_POST['503'];
 					$this->planet->update();
 				}
-				$pars = [];
-				$pars['max_mis'] = $this->planet->{$this->storage->resource[44]} * 10;
-				$pars['int_miss'] = _getText('tech', 502) . ': ' . $this->planet->{$this->storage->resource[502]};
-				$pars['plant_miss'] = _getText('tech', 503) . ': ' . $this->planet->{$this->storage->resource[503]};
 
-				$this->view->setVar('parse', $pars);
+				$parse['max_mis'] = $this->planet->{$this->storage->resource[44]} * 10;
+				$parse['int_miss'] = _getText('tech', 502) . ': ' . $this->planet->{$this->storage->resource[502]};
+				$parse['plant_miss'] = _getText('tech', 503) . ': ' . $this->planet->{$this->storage->resource[503]};
+
 				$this->view->partial('info/missile');
 			}
+
+			$this->view->setVar('parse', $parse);
 		}
 		elseif (in_array($BuildID, $this->storage->reslist['officier']))
 		{
