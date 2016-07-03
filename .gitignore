@@ -12,6 +12,7 @@ Thumbs.db
 *.lock
 *.phar
 public/mur/*
+public/assets/avatars/*
 
 public/assets/css/style.css
 public/assets/css/bootstrap.css
