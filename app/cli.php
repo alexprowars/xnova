@@ -16,6 +16,8 @@ use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Cli\Console as ConsoleApp;
 use Phalcon\Cache\Backend\Memcache as Cache;
 use Phalcon\Logger;
+use Phalcon\Logger\Adapter\File as FileLogger;
+use Phalcon\Events\Manager as EventsManager;
 
 $di = new CliDI();
 
@@ -38,6 +40,29 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	$di->set(
 	    'db', function () use ($config)
 		{
+			if (!file_exists(APP_PATH."/app/logs/debug_".date("d.m.Y-H").".log"))
+				fclose(fopen(APP_PATH."/app/logs/debug_".date("d.m.Y-H").".log", "w"));
+
+			$logger = new FileLogger(APP_PATH."/app/logs/debug_".date("d.m.Y-H").".log");
+
+			$eventsManager = new EventsManager();
+
+			$eventsManager->attach('db', function(Phalcon\Events\Event $event, App\Database $connection) use ($logger)
+			{
+				if ($event->getType() == 'beforeQuery')
+				{
+					$logger->log($connection->getSQLStatement()."\n".print_r($connection->getSqlVariables(), true), Logger::INFO);
+
+					$d = debug_backtrace();
+
+					foreach ($d as $a)
+					{
+						if (isset($a['file']))
+							$logger->log("".(isset($a['class']) ? $a['class'] : '').'::'.$a['function'].''.(isset($a['line']) ? ' in file '.$a['file'].' on line '.$a['line'].'' : ''), Logger::DEBUG);
+					}
+				}
+			});
+
 			/**
 			 * @var Object $config
 			 */
@@ -48,6 +73,8 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	            'dbname' 	=> $config->database->dbname,
 				'options' 	=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
 	        ]);
+
+			$connection->setEventsManager($eventsManager);
 
 			return $connection;
 	    }

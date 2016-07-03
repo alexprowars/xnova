@@ -873,7 +873,7 @@ class AllianceController extends Application
 		{
 			$p = $this->request->getQuery('p', 'int', 1);
 
-			$thiss = Helpers::pagination($news_count['num'], 20, '/alliance/chat/', $p);
+			$thiss = Helpers::pagination($news_count['num'], 20, $this->url->get('alliance/chat/'), $p);
 
 			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($p - 1) * 20) . ", 20");
 

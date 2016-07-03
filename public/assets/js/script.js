@@ -41,11 +41,6 @@ function BuildTimeout(pp, pk, pl, at)
 	timeouts['build'+pk+'-'+pl] = setTimeout("BuildTimeout("+pp+", "+pk+", "+pl+", "+(at - 1)+");", 1000);
 }
 
-function reloadPlanetList ()
-{
-	$('.planetList .list').load('ajax.php?action=getPlanetList');
-}
-
 $(document).ready(function()
 {
 	if (window.location.host.indexOf("cmle.ru") >= 0)
@@ -80,59 +75,6 @@ $(document).ready(function()
 		showWindow('', $(this).attr('href'))
 	});
 
-	if (false && $('.planetList .list').length)
-	{
-		if( !isMobile )
-		{
-			$('.planetList .list').css('height', $(window).height() - 100);
-
-			$(window).bind('resize', function()
-			{
-				$('.planetList .list').css('height', $(window).height() - 100);
-			});
-
-			/*if (ajax_nav == 1)
-			{
-				setInterval(function()
-				{
-					reloadPlanetList();
-				}, 1200000);
-			}*/
-		}
-		else
-			$('.planetList .list').css('height', 'auto').css('min-height', 'auto');
-	}
-
-	/*
-	$(document).on('keydown', function(event)
-	{
-		if (location.search.indexOf('galaxy') > 0)
-		{
-			if (event.keyCode == $.ui.keyCode.DOWN)
-			{
-				event.preventDefault();
-				galaxy_submit('galaxyRight');
-			}
-			else if (event.keyCode == $.ui.keyCode.UP)
-			{
-				event.preventDefault();
-				galaxy_submit('galaxyLeft');
-			}
-			else if (event.keyCode == $.ui.keyCode.RIGHT)
-			{
-				event.preventDefault();
-				galaxy_submit('systemRight');
-			}
-			else if (event.keyCode == $.ui.keyCode.LEFT)
-			{
-				event.preventDefault();
-				galaxy_submit('systemLeft');
-
-			}
-		}
-	});
-	*/
-
 	$('.menu-toggle').click(function(e)
 	{
 		e.preventDefault();
@@ -166,9 +108,9 @@ $(document).ready(function()
 
 function changePlanet (pId)
 {
-	var a = window.location.pathname.split('/');
+	var path = window.location.pathname.replace(XNova.path, '').split('/');
 
-	var url = '/'+a[1]+(a[2] !== undefined && a[2] != '' && a[1] != 'fleet' ? '/'+a[2] : '')+'/?chpl='+pId+'';
+	var url = XNova.path+path[0]+(path[1] !== undefined && path[1] != '' && path[0] != 'fleet' ? '/'+path[1] : '')+'/?chpl='+pId+'';
 
 	if (ajax_nav == 1)
 		load(url);

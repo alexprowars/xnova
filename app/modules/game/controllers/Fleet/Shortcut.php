@@ -13,8 +13,6 @@ class Shortcut
 {
 	public function show (FleetController $controller)
 	{
-		$html = '';
-
 		$inf = $controller->db->query("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $controller->user->id . ";")->fetch();
 
 		if ($controller->request->hasQuery('add'))
@@ -47,13 +45,13 @@ class Shortcut
 				if ($controller->session->has('fleet_shortcut'))
 					$controller->session->remove('fleet_shortcut');
 
-				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/");
+				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/", 1);
 			}
 
-			$g = $controller->request->getPost('g', 'int', 0);
-			$s = $controller->request->getPost('s', 'int', 0);
-			$p = $controller->request->getPost('p', 'int', 0);
-			$t = $controller->request->getPost('t', 'int', 0);
+			$g = $controller->request->get('g', 'int', 0);
+			$s = $controller->request->get('s', 'int', 0);
+			$p = $controller->request->get('p', 'int', 0);
+			$t = $controller->request->get('t', 'int', 0);
 
 			if ($g < 1 || $g > $controller->config->game->maxGalaxyInWorld)
 				$g = 1;
@@ -91,7 +89,7 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/");
+					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/", 1);
 				}
 				else
 				{
@@ -120,22 +118,21 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/");
+					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/", 1);
 				}
 			}
 
 			if ($inf['fleet_shortcut'])
 			{
-				$a = $controller->request->getPost('a', 'int', 0);
 				$scarray = explode("\r\n", $inf['fleet_shortcut']);
 
-				if (isset($scarray[$a]))
+				if (isset($scarray[$id]))
 				{
-					$c = explode(',', $scarray[$a]);
+					$c = explode(',', $scarray[$id]);
 
 					$controller->view->pick('fleet/shortcut_edit');
 					$controller->view->setVar('c', $c);
-					$controller->view->setVar('a', $a);
+					$controller->view->setVar('a', $id);
 				}
 				else
 					$controller->message("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
@@ -146,8 +143,6 @@ class Shortcut
 		else
 		{
 			$links = [];
-
-			$html = '';
 
 			if ($inf['fleet_shortcut'])
 			{
@@ -184,6 +179,5 @@ class Shortcut
 		}
 
 		$controller->tag->setTitle("Закладки");
-		$controller->view->setVar('html', $html);
 	}
 }

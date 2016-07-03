@@ -47,5 +47,5 @@ if ($di->has('auth'))
 	$di->get('auth')->checkExtAuth();
 }
 
-define('VERSION', '3.0.2');
+define('VERSION', '3.0.3');
 define('DB_PREFIX', 'game_');

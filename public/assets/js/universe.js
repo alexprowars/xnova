@@ -352,7 +352,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='/info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='"+XNova.path+"info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else
@@ -418,7 +418,7 @@ function PrintRow ()
 					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
 
 				result += "<a href=\""+XNova.path+"players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
-				result += "<a href=\""+XNova.path+"fleet/shortcut/mode/add/g/"+galaxy+"/s/"+system+"/i/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
+				result += "<a href=\""+XNova.path+"fleet/shortcut/add/new/g/"+galaxy+"/s/"+system+"/p/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
 			}
 		}
         else if (!row[planet] && user['colonizer'] > 0)

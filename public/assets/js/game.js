@@ -232,7 +232,7 @@ function raport_to_bb(raport)
 	txt = txt.replace(/<th width="220">/gi, "[th]");
 	txt = txt.replace(/<br>/gi, " ");
 	txt = txt.replace(/<\/a>/gi, "[\/url]");
-	txt = txt.replace(/<a href="(.*?)">/gi, "[url=http://uni3.xnova.su$1]");
+	txt = txt.replace(/<a href="(.*?)">/gi, "[url=http://uni5.xnova.su$1]");
 
 	raport.html(txt);
 }
