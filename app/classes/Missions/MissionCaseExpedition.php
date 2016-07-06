@@ -86,23 +86,22 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Size = min($Factor * max(min($FleetPoints, $upperLimit), 200), $FleetCapacity);
 
-				$this->_fleet->update_time = $this->_fleet->end_time;
-				$this->_fleet->mess = 1;
+				$update = [];
 
 				switch ($WitchFound)
 				{
 					case 1:
-						$this->_fleet->resource_metal += $Size;
+						$update['+resource_metal'] = $Size;
 						break;
 					case 2:
-						$this->_fleet->resource_crystal += $Size;
+						$update['+resource_crystal'] = $Size;
 						break;
 					case 3:
-						$this->_fleet->resource_deuterium += $Size;
+						$update['+resource_deuterium'] = $Size;
 						break;
 				}
 
-				$this->_fleet->update();
+				$this->ReturnFleet($update);
 
 				break;
 
@@ -121,9 +120,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$this->db->updateAsDict('game_users', ['+credits' => $Size], "id = ".$this->_fleet->owner);
 
-				$this->_fleet->update_time = $this->_fleet->end_time;
-				$this->_fleet->mess = 1;
-				$this->_fleet->update();
+				$this->ReturnFleet();
 
 				break;
 
@@ -182,11 +179,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Message .= $FoundShipMess;
 
-				$this->_fleet->update([
-					'fleet_array' 	=> $NewFleetArray,
-					'update_time' 	=> $this->_fleet->end_time,
-					'mess' 			=> 1
-				]);
+				$this->ReturnFleet(['fleet_array' => $NewFleetArray]);
 
 				break;
 
@@ -426,10 +419,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Message = _getText('sys_expe_time_fast_'.mt_rand(1,3));
 				}
 
-				$this->_fleet->update([
-					'update_time' 	=> $this->_fleet->end_time,
-					'mess' 			=> 1
-				]);
+				$this->ReturnFleet();
 
            		break;
 

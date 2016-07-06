@@ -18,6 +18,7 @@ use Phalcon\Cache\Backend\Memcache as Cache;
 use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File as FileLogger;
 use Phalcon\Events\Manager as EventsManager;
+use Phalcon\Mvc\Model;
 
 $di = new CliDI();
 
@@ -109,6 +110,12 @@ if (is_readable(APP_PATH . '/app/config/config.ini'))
 	{
 	    return new Game();
 	});
+
+	Model::setup([
+		'events' 			=> true,
+		'columnRenaming' 	=> false,
+		'notNullValidations'=> false,
+	]);
 }
 else
 	die('config.ini not found');

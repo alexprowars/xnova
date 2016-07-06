@@ -51,6 +51,11 @@ class Fleet extends Model
 		$this->useDynamicUpdate(true);
 	}
 
+	public function afterUpdate ()
+	{
+		$this->setSnapshotData($this->toArray());
+	}
+
 	public function getSource()
 	{
 		return DB_PREFIX."fleets";
