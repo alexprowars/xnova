@@ -294,18 +294,35 @@ function getBuildTime(techID, techLevelFrom, techLevelTo) {
 		//((metal + crystal) / 5'000) * (2 / ((level shipyard) + 1)) * (0.5 ^ (level nanite factory))
 		var shipyardLevel = getInputNumber($('#shipyard-level')[0]);
 		var nanitesLevel = getInputNumber($('#nanite-factory-level')[0]);
+
 		// Формула ОГейма даёт время в часах - переведём в секунды, округлим и умножим на кол-во единиц, которые нужно построить
 		timeSpan = Math.floor(3600 * (cost[0] + cost[1]) / 5000.0 * 2.0 / (shipyardLevel + 1.0) * Math.pow(0.5, nanitesLevel));
 		// При слишком высоких уровнях нанитки скорость постройки СС может стать 0 - надо это учесть
 		if (timeSpan == 0) {
 			timeSpan = 1;
 		}
+		console.log(timeSpan);
 		timeSpan *= techLevelTo;
 	}
 	// Если расчёт заказан для ускоренной вселенной, разделим вычисленное время на поправочный коэффициент
-	if ($('#universe-speed')[0].value > 1) {
-		timeSpan /= $('#universe-speed')[0].value;
+	if ($('#build-speed')[0].value > 1) {
+		timeSpan /= $('#build-speed')[0].value;
 	}
+
+	var race = parseInt($('#race').val());
+
+	if (race == 1)
+	{
+		if (techID >= 200 && techID < 300)
+			timeSpan = timeSpan * 0.9;
+	}
+
+	if (race == 3)
+	{
+		if (techID < 100)
+			timeSpan = timeSpan * 0.9;
+	}
+
 	if (timeSpan < 1) {
 		timeSpan = 1;
 	}
@@ -435,6 +452,7 @@ function updateParams() {
 		case 'engineer': var techTypes = [6]; break;
 		case 'admiral': var techTypes = [5]; break;
 		case 'universe-speed': var techTypes = [2, 3, 4, 5, 6]; break;
+		case 'race': var techTypes = [2, 3, 4, 5, 6]; break;
 	}
 	var needUpd = {0: false, 1: false};
 	jQuery.each(options.techData, function(key, value) {

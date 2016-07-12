@@ -182,10 +182,20 @@
 					<br>					<input id="admiral" type="checkbox" name="admiral" class="ui-state-default ui-corner-all ui-input ui-input-margin"/><label for="admiral">Адмирал</label>
 
 				</td>
-				<td></td>
+				<td>
+					Фракция:
+
+					<select name="race" id="race">
+						<option value="1" <?=($this->user->race == 1 ? 'selected' : '') ?>>Конфедерация</option>
+						<option value="2" <?=($this->user->race == 2 ? 'selected' : '') ?>>Бионики</option>
+						<option value="3" <?=($this->user->race == 3 ? 'selected' : '') ?>>Сайлоны</option>
+						<option value="4" <?=($this->user->race == 4 ? 'selected' : '') ?>>Древние</option>
+					</select>
+				</td>
 				<td></td>
 				<td>
 					<input type="hidden" id="universe-speed" name="universe-speed" value="<?=$this->game->getSpeed('mine') ?>">
+					<input type="hidden" id="build-speed" name="build-speed" value="<?=$this->game->getSpeed('build') ?>">
 				</td>
 			</tr>
 		</table>

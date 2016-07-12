@@ -248,7 +248,7 @@ class IndexController extends Application
 				$mail->Subject = 'Восстановление забытого пароля';
 
 				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".$this->config->app->name.".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
-				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/index/reminder/?id=" . $inf['id'] . "&key=" . $key . "</a>";
+				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "</a>";
 
 				$mail->Body = $body;
 

@@ -2,6 +2,7 @@
 namespace Xnova\Admin\Controllers;
 
 use App\Helpers;
+use App\Models\User;
 
 class MoneyController extends Application
 {
@@ -61,6 +62,8 @@ class MoneyController extends Application
 					'credits' => $money,
 					'type' => 6
 				]);
+
+				User::sendMessage($info['id'], 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $money . ' кредитов');
 
 				$this->message('Начисление '.$money.' кредитов прошло успешно', 'Всё ок!', '/admin/money/mode/add/', 2);
 			}
