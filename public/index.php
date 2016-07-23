@@ -1,5 +1,8 @@
 <?php
 
+require_once("../app/bootstrap.php");
+
+die();
 use Phalcon\Loader;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Url as UrlProvider;

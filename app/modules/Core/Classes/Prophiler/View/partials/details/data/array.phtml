@@ -1,0 +1,5 @@
+<?php if (extension_loaded('xdebug')): ?>
+    <?php p($data); ?>
+<?php else: ?>
+    <pre><?php p($data); ?></pre>
+<?php endif; ?>

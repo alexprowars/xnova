@@ -6,11 +6,6 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-function _getText ()
-{
-	return \App\Lang::getText(func_get_args());
-}
-
 function p ($array)
 {
 	if (!defined('SUPERUSER'))
@@ -71,4 +66,29 @@ function log_comment($comment)
 function is ($val, $key)
 {
 	return (isset($val[$key]) ? $val[$key] : '');
+}
+
+function _getText()
+{
+	return \Friday\Core\Lang::getText(func_get_args());
+}
+
+function getClassName ($className)
+{
+	$return = ['name' => '', 'namespace' => ''];
+
+	$parts = explode('\\', $className);
+
+	if (count($parts) > 1)
+	{
+		$return['name'] = $parts[count($parts) - 1];
+
+		array_pop($parts);
+
+		$return['namespace'] = implode('\\', $parts);
+	}
+	else
+		$return['name'] = $className;
+
+	return $return;
 }
