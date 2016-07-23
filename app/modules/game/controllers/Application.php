@@ -201,7 +201,7 @@ class Application extends Controller
 				$this->session->set('config', json_encode($inf));
 			}
 
-			if (!$this->config->view->get('showPlanetListSelect', 0))
+			if (!(int) $this->config->view->get('showPlanetListSelect', 0))
 				$this->config->view->offsetSet('showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
 
 			if ($this->request->getQuery('fullscreen') == 'Y')
@@ -228,7 +228,7 @@ class Application extends Controller
 				$this->config->view->offsetSet('showPlanetListSelect', 0);
 			}
 
-			switch ($this->config->app->get('ajaxNavigation', 0))
+			switch ((int) $this->config->app->get('ajaxNavigation', 0))
 			{
 				case 0:
 					$this->view->setVar('ajaxNavigation', 0);
