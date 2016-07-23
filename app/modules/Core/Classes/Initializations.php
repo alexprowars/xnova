@@ -411,7 +411,7 @@ trait Initializations
 							'module'		=> 'admin',
 							'controller'	=> 'index',
 							'action'		=> 'notFound',
-							'namespace'		=> 'Friday\Admin\Controllers'
+							'namespace'		=> 'Admin\Controllers'
 						]
 					);
 					return false;

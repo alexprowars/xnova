@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Admin;
+namespace Admin;
 
 use Phalcon\DiInterface;
 use Phalcon\Loader;
@@ -68,5 +68,3 @@ class Module implements ModuleDefinitionInterface
 		});
 	}
 }
-
-?>
