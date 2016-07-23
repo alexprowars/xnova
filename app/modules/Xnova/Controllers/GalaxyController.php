@@ -8,10 +8,17 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
-use App\Lang;
+use Xnova\Fleet;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/galaxy")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class GalaxyController extends Controller
 {
 	public function initialize ()
@@ -23,7 +30,7 @@ class GalaxyController extends Controller
 
 		$this->user->loadPlanet();
 		
-		Lang::includeLang('galaxy');
+		Lang::includeLang('galaxy', 'xnova');
 	}
 	
 	public function indexAction ()
@@ -33,7 +40,7 @@ class GalaxyController extends Controller
 		if ($this->user->rpg_admiral > time())
 			$fleetmax += 2;
 		
-		$maxfleet_count = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
+		$maxfleet_count = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 

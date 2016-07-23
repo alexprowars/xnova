@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/logout")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class LogoutController extends Controller
 {
 	public function initialize ()

@@ -4,6 +4,13 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 
+/**
+ * @RoutePrefix("/admin/server")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ServerController extends Controller
 {
 	public function initialize ()

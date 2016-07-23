@@ -68,7 +68,7 @@ class Router extends Annotations
 
 			if ($value)
 			{
-				$uri = $routePrefix . $value;
+				$uri = str_replace('//', '/', $routePrefix.$value);
 
 				$route = $this->add($uri, $paths);
 

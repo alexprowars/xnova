@@ -3,9 +3,16 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Models\User;
+use Xnova\Models\User;
 
-class MessageAllController extends Controller
+/**
+ * @RoutePrefix("/admin/messageall")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
+class MessageallController extends Controller
 {
 	public function initialize ()
 	{

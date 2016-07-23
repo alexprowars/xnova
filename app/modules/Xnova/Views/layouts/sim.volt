@@ -208,7 +208,7 @@
 	<tr>
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Флот</td>
 	</tr>
-	<? foreach ($this->storage->reslist['fleet'] AS $fleetId): ?>
+	<? foreach ($this->registry->reslist['fleet'] AS $fleetId): ?>
 		<tr align="center">
 			<th><?=_getText('tech', $fleetId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
@@ -218,7 +218,7 @@
 					<? else: ?>
 						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
 					<? endif; ?>
-					<? if (in_array($fleetId + 100, $this->storage->reslist['tech_f'])): ?>
+					<? if (in_array($fleetId + 100, $this->registry->reslist['tech_f'])): ?>
 						<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 					<? endif; ?>
 				</th>
@@ -228,7 +228,7 @@
 	<tr>
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Оборона</td>
 	</tr>
-	<? foreach ($this->storage->reslist['defense'] AS $fleetId): ?>
+	<? foreach ($this->registry->reslist['defense'] AS $fleetId): ?>
 		<tr align="center">
 			<th><?=_getText('tech', $fleetId) ?></th>
 			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
@@ -237,7 +237,7 @@
 						-
 					<? else: ?>
 						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
-						<? if (in_array($fleetId - 50, $this->storage->reslist['tech_f'])): ?>
+						<? if (in_array($fleetId - 50, $this->registry->reslist['tech_f'])): ?>
 							<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
 						<? endif; ?>
 					<? endif; ?>

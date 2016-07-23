@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/error")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ErrorController extends Controller
 {
 	public function initialize ()
@@ -32,7 +39,7 @@ class ErrorController extends Controller
 
     public function notFoundAction()
     {
-		file_put_contents(APP_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n", FILE_APPEND);
+		file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n", FILE_APPEND);
 
 		$this->view->setMainView('404');
         $this->response->setStatusCode(404, 'Not Found');

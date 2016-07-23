@@ -30,7 +30,7 @@
 				<td class="b text-center"><?=$planet['galaxy'] ?></td>
 				<td class="b text-center"><?=$planet['system'] ?></td>
 				<td class="b text-center"><?=$planet['planet'] ?></td>
-				<td class="b text-center"><?=\App\Helpers::BuildPlanetAdressLink($planet) ?></td>
+				<td class="b text-center"><?=\Xnova\Helpers::BuildPlanetAdressLink($planet) ?></td>
 			</tr>
 		<? endforeach; ?>
 	</table>
@@ -38,7 +38,7 @@
 <div class="row">
 	<div class="col-md-5 col-sm-12">
 		<div class="dataTables_info">
-			В игре <b><?=$all ?></b> планет<?=\App\Helpers::morph($all, 'feminine', 5) ?>
+			В игре <b><?=$all ?></b> планет<?=\Xnova\Helpers::morph($all, 'feminine', 5) ?>
 		</div>
 	</div>
 	<div class="col-md-7 col-sm-12">

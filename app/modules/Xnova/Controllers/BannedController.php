@@ -10,6 +10,12 @@ use Xnova\Controller;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+/**
+ * @RoutePrefix("/banned")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ */
 class BannedController extends Controller
 {
 	public function initialize ()

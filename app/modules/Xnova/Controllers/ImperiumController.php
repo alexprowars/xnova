@@ -8,13 +8,20 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Models\Fleet;
-use App\Models\Planet;
-use App\Queue;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Fleet;
+use Xnova\Models\Planet;
+use Xnova\Queue;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/imperium")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ImperiumController extends Controller
 {
 	public function initialize ()
@@ -24,7 +31,7 @@ class ImperiumController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('imperium');
+		Lang::includeLang('imperium', 'xnova');
 
 		$this->user->loadPlanet();
 	}
@@ -87,7 +94,7 @@ class ImperiumController extends Controller
 
 		$parse['mount'] = count($planets) + 3;
 
-		foreach ($this->storage->reslist['res'] as $res)
+		foreach ($this->registry->reslist['res'] as $res)
 		{
 			$parse['file_'.$res.'_t'] = 0;
 			$parse['file_'.$res.'_ph_t'] = 0;
@@ -108,14 +115,14 @@ class ImperiumController extends Controller
 			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->getBaseUri()."galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
 			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->{$this->storage->resource[4]}) * 100) . '</font>%</th>';
+			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->{$this->registry->resource[4]}) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $planet->field_current;
 			@$parse['file_fields_t'] += $planet->field_max;
 
 			@$parse['file_energy_t'] += $planet->energy_max - abs($planet->energy_used);
 
-			foreach ($this->storage->reslist['res'] as $res)
+			foreach ($this->registry->reslist['res'] as $res)
 			{
 				$parse['file_'.$res.'_t'] += $planet->{$res};
 				$parse['file_'.$res.'_ph_t'] += $planet->{$res.'_perhour'};
@@ -141,12 +148,12 @@ class ImperiumController extends Controller
 
 					foreach ($queue AS $q)
 					{
-						if (!isset($build_hangar[$q['i']]) || in_array($q['i'], $this->storage->reslist['build']))
+						if (!isset($build_hangar[$q['i']]) || in_array($q['i'], $this->registry->reslist['build']))
 							$build_hangar[$q['i']]  = $q['l'];
 						else
 							$build_hangar[$q['i']] += $q['l'];
 
-						if (!isset($build_hangar_full[$q['i']]) || in_array($q['i'], $this->storage->reslist['build']))
+						if (!isset($build_hangar_full[$q['i']]) || in_array($q['i'], $this->registry->reslist['build']))
 							$build_hangar_full[$q['i']]  = $q['l'];
 						else
 							$build_hangar_full[$q['i']] += $q['l'];
@@ -154,30 +161,30 @@ class ImperiumController extends Controller
 				}
 			}
 
-			foreach ($this->storage->resource as $i => $res)
+			foreach ($this->registry->resource as $i => $res)
 			{
 				if (!isset($r[$i]))
 					$r[$i] = '';
 				if (!isset($r1[$i]))
 					$r1[$i] = 0;
 
-				if (in_array($i, $this->storage->reslist['build']))
+				if (in_array($i, $this->registry->reslist['build']))
 				{
-					$r[$i] .= ($planet->{$this->storage->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->storage->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					if ($r1[$i] < $planet->{$this->storage->resource[$i]})
-						$r1[$i] = $planet->{$this->storage->resource[$i]};
+					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->registry->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					if ($r1[$i] < $planet->{$this->registry->resource[$i]})
+						$r1[$i] = $planet->{$this->registry->resource[$i]};
 				}
-				elseif (in_array($i, $this->storage->reslist['fleet']))
+				elseif (in_array($i, $this->registry->reslist['fleet']))
 				{
 
 					$r[$i] .= '<th>';
 
-					if ($planet->{$this->storage->resource[$i]} == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
+					if ($planet->{$this->registry->resource[$i]} == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
 						$r[$i] .= '-';
 					else
 					{
-						if ($planet->{$this->storage->resource[$i]} >= 0)
-							$r[$i] .= $planet->{$this->storage->resource[$i]};
+						if ($planet->{$this->registry->resource[$i]} >= 0)
+							$r[$i] .= $planet->{$this->registry->resource[$i]};
 						if (isset($build_hangar[$i]))
 							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
 						if (isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
@@ -185,17 +192,17 @@ class ImperiumController extends Controller
 						$r[$i] .= '</th>';
 					}
 
-					$r1[$i] += $planet->{$this->storage->resource[$i]};
+					$r1[$i] += $planet->{$this->registry->resource[$i]};
 				}
-				elseif (in_array($i, $this->storage->reslist['defense']))
+				elseif (in_array($i, $this->registry->reslist['defense']))
 				{
-					$r[$i] .= ($planet->{$this->storage->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->storage->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					$r1[$i] += $planet->{$this->storage->resource[$i]};
+					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->registry->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					$r1[$i] += $planet->{$this->registry->resource[$i]};
 				}
 			}
 		}
 
-		foreach ($this->storage->reslist['res'] as $res)
+		foreach ($this->registry->reslist['res'] as $res)
 		{
 			$parse['file_'.$res.'_t'] = Helpers::pretty_number($parse['file_'.$res.'_t']);
 			$parse['file_'.$res.'_ph_t'] = Helpers::pretty_number($parse['file_'.$res.'_ph_t']);
@@ -209,24 +216,24 @@ class ImperiumController extends Controller
 		$parse['defense_row'] = '';
 		$parse['technology_row'] = '';
 
-		foreach ($this->storage->reslist['build'] as $i)
+		foreach ($this->registry->reslist['build'] as $i)
 		{
-			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->{$this->storage->resource[$i]} . " (" . $r1[$i] . ")</th></tr>";
+			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->{$this->registry->resource[$i]} . " (" . $r1[$i] . ")</th></tr>";
 		}
 
-		foreach ($this->storage->reslist['fleet'] as $i)
+		foreach ($this->registry->reslist['fleet'] as $i)
 		{
 			$parse['fleet_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($this->storage->reslist['defense'] as $i)
+		foreach ($this->registry->reslist['defense'] as $i)
 		{
 			$parse['defense_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($this->storage->reslist['tech'] as $i)
+		foreach ($this->registry->reslist['tech'] as $i)
 		{
-			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->storage->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
+			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->registry->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
 		$this->view->setVar('parse', $parse);

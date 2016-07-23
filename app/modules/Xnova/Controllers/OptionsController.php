@@ -8,15 +8,22 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Mail\PHPMailer;
-use App\Models\Fleet;
-use App\Models\Planet;
-use App\Models\User;
-use App\Queue;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Friday\Core\Mail\PHPMailer;
+use Xnova\Models\Fleet;
+use Xnova\Models\Planet;
+use Xnova\Models\User;
+use Xnova\Queue;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/options")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class OptionsController extends Controller
 {
 	public function initialize ()
@@ -26,7 +33,7 @@ class OptionsController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('options');
+		Lang::includeLang('options', 'xnova');
 	}
 
 	public function externalAction ()

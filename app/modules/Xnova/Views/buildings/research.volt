@@ -12,7 +12,7 @@
 				<div class="col-md-6 col-xs-12">
 					<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 						<? if (!$build['access']): ?>
-							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)"><span>недоступно</span></div>
+							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)"><span>недоступно</span></div>
 						<? endif; ?>
 
 						<div class="img">
@@ -31,7 +31,7 @@
 							Уровень: <?=$build['tech_level'] ?><br>
 
 							<? if ($build['access']): ?>
-								Время: <?=\App\Helpers::pretty_time($build['search_time']); ?>
+								Время: <?=\Xnova\Helpers::pretty_time($build['search_time']); ?>
 
 								<? if (isset($build['add'])): ?>
 								<br><br>Бонусы:<br><?= $build['add'] ?>

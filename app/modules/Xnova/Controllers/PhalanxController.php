@@ -8,12 +8,19 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
-use App\Helpers;
-use App\Models\Fleet as FleetModel;
-use App\Models\Planet;
+use Xnova\Fleet;
+use Xnova\Helpers;
+use Xnova\Models\Fleet as FleetModel;
+use Xnova\Models\Planet;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/phalanx")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class PhalanxController extends Controller
 {
 	public function initialize ()

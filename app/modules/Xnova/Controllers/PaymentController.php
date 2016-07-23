@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Models\User;
+use Xnova\Models\User;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/payment")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class PaymentController extends Controller
 {
 	public function indexAction ()
@@ -34,7 +41,7 @@ class PaymentController extends Controller
 			if (!isset($check['id']))
 			{
 				/**
-				 * @var $user \App\Models\User
+				 * @var $user \Xnova\Models\User
 				 */
 				$user = User::findFirst(['conditions' => 'id = ?0', 'bind' => [intval($this->request->get("Shp_UID"))]]);
 

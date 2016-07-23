@@ -8,11 +8,18 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Models\Fleet;
-use App\Models\Planet;
-use App\Queue;
+use Xnova\Models\Fleet;
+use Xnova\Models\Planet;
+use Xnova\Queue;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/race")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class RaceController extends Controller
 {
 	public function initialize ()
@@ -86,8 +93,8 @@ class RaceController extends Controller
 			{
 				$update = ['race' => intval($r), 'bonus' => time() + 86400];
 
-				foreach ($this->storage->reslist['officier'] AS $oId)
-					$update[$this->storage->resource[$oId]] = time() + 86400;
+				foreach ($this->registry->reslist['officier'] AS $oId)
+					$update[$this->registry->resource[$oId]] = time() + 86400;
 					
 				$this->user->update($update);
 		

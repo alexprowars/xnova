@@ -4,6 +4,13 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 
+/**
+ * @RoutePrefix("/admin/email")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class EmailController extends Controller
 {
 	public function initialize ()

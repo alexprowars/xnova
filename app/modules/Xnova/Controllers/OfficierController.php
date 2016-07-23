@@ -8,10 +8,17 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
+use Xnova\Helpers;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/officier")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class OfficierController extends Controller
 {
 	public function initialize ()
@@ -24,7 +31,7 @@ class OfficierController extends Controller
 		if ($this->user->vacation > 0)
 			$this->message("Нет доступа!");
 
-		Lang::includeLang('officier');
+		Lang::includeLang('officier', 'xnova');
 	}
 	
 	public function indexAction ()
@@ -54,12 +61,12 @@ class OfficierController extends Controller
 			{
 				$selected = $this->request->getPost('buy', 'int', 0);
 
-				if (in_array($selected, $this->storage->reslist['officier']))
+				if (in_array($selected, $this->registry->reslist['officier']))
 				{
-					if ($this->user->{$this->storage->resource[$selected]} > time())
-						$this->user->{$this->storage->resource[$selected]} = $this->user->{$this->storage->resource[$selected]} + $times;
+					if ($this->user->{$this->registry->resource[$selected]} > time())
+						$this->user->{$this->registry->resource[$selected]} = $this->user->{$this->registry->resource[$selected]} + $times;
 					else
-						$this->user->{$this->storage->resource[$selected]} = time() + $times;
+						$this->user->{$this->registry->resource[$selected]} = time() + $times;
 
 					$this->user->credits -= $need_c;
 					$this->user->update();
@@ -82,14 +89,14 @@ class OfficierController extends Controller
 			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
 			$parse['list'] = [];
 
-			foreach ($this->storage->reslist['officier'] AS $officier)
+			foreach ($this->registry->reslist['officier'] AS $officier)
 			{
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if ($this->user->{$this->storage->resource[$officier]} > time())
+				if ($this->user->{$this->registry->resource[$officier]} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->storage->resource[$officier]}) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->registry->resource[$officier]}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else

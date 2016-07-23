@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Galaxy;
+use Xnova\Galaxy;
 
+/**
+ * @RoutePrefix("/admin/moons")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class MoonsController extends Controller
 {
 	public function initialize ()

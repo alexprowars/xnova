@@ -68,7 +68,7 @@ class UpdateTask extends ApplicationTask
 			20  => 'MissionCaseRak'
 		];
 
-		Lang::includeLang("fleet_engine");
+		Lang::includeLang("fleet_engine", 'xnova');
 
 		$totalRuns = 1;
 
@@ -83,9 +83,9 @@ class UpdateTask extends ApplicationTask
 			}
 
 			/**
-			 * @var $_fleets \App\Models\Fleet[]
+			 * @var $_fleets \Xnova\Models\Fleet[]
 			 */
-			$_fleets = \App\Models\Fleet::find([
+			$_fleets = \Xnova\Models\Fleet::find([
 				'(start_time <= :time: AND mess = 0) OR (end_stay <= :time: AND mess != 1 AND end_stay != 0) OR (end_time < :time: AND mess != 0)',
 				'bind' 	=> ['time' => time()],
 				'order'	=> 'update_time asc',

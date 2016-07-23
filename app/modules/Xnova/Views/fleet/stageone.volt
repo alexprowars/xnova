@@ -129,7 +129,7 @@
 					<? if ($i > 0 && $i%2 == 0): ?></div><div class="row"><? endif; ?>
 					<div class="th col-xs-6">
 						<input type="radio" name="moon" value="<?=$moon['id'] ?>" id="moon<?=$moon['id'] ?>">
-						<label for="moon<?=$moon['id'] ?>"><?=$moon['name'] ?> [<?=$moon['galaxy'] ?>:<?=$moon['system'] ?>:<?=$moon['planet'] ?>] <?=\App\Helpers::pretty_time($moon['timer']) ?></label>
+						<label for="moon<?=$moon['id'] ?>"><?=$moon['name'] ?> [<?=$moon['galaxy'] ?>:<?=$moon['system'] ?>:<?=$moon['planet'] ?>] <?=\Xnova\Helpers::pretty_time($moon['timer']) ?></label>
 					</div>
 				<? endforeach; ?>
 				<? if ($i%2 == 0): ?><div class="th col-xs-6">&nbsp;</div><? endif; ?>

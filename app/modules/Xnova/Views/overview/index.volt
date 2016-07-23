@@ -114,7 +114,7 @@
 						<div class="col-xs-12 c">Диаметр</div>
 					</div>
 					<div class="row">
-						<div class="col-xs-12 th"><?=\App\Helpers::pretty_number($parse['planet_diameter']) ?> км</div>
+						<div class="col-xs-12 th"><?=\Xnova\Helpers::pretty_number($parse['planet_diameter']) ?> км</div>
 					</div>
 					<div class="row">
 						<div class="col-xs-12 c">Занятость</div>
@@ -140,10 +140,10 @@
 						<div class="col-xs-12 th doubleth middle">
 							<div>
 								<img src="<?=$this->url->getBaseUri() ?>assets/images/skin/s_metall.png" alt="" align="absmiddle" class="tooltip" data-content="Металл">
-								<?=\App\Helpers::pretty_number($parse['metal_debris']) ?>
+								<?=\Xnova\Helpers::pretty_number($parse['metal_debris']) ?>
 								/
 								<img src="<?=$this->url->getBaseUri() ?>assets/images/skin/s_kristall.png" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
-								<?=\App\Helpers::pretty_number($parse['crystal_debris']) ?>
+								<?=\Xnova\Helpers::pretty_number($parse['crystal_debris']) ?>
 							</div>
 						</div>
 					</div>
@@ -180,23 +180,23 @@
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Постройки:</div>
-						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_points']) ?></span></div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\Xnova\Helpers::pretty_number($parse['user_points']) ?></span></div>
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Флот:</div>
-						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_fleet']) ?></span></div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\Xnova\Helpers::pretty_number($parse['user_fleet']) ?></span></div>
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Оборона:</div>
-						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['user_defs']) ?></span></div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\Xnova\Helpers::pretty_number($parse['user_defs']) ?></span></div>
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Наука:</div>
-						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['player_points_tech']) ?></span></div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\Xnova\Helpers::pretty_number($parse['player_points_tech']) ?></span></div>
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Всего:</div>
-						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\App\Helpers::pretty_number($parse['total_points']) ?></span></div>
+						<div class="th col-sm-7 col-xs-6"><span class="positive"><?=\Xnova\Helpers::pretty_number($parse['total_points']) ?></span></div>
 					</div>
 					<div class="row">
 						<div class="th col-sm-5 col-xs-6">Место:</div>
@@ -209,7 +209,7 @@
 						<div class="th col-xs-12"><?=$parse['lvl_minier'] ?> из 100</div>
 					</div>
 					<div class="row">
-						<div class="th col-xs-12"><?=\App\Helpers::pretty_number($parse['xpminier']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_minier']) ?> exp</div>
+						<div class="th col-xs-12"><?=\Xnova\Helpers::pretty_number($parse['xpminier']) ?> / <?=\Xnova\Helpers::pretty_number($parse['lvl_up_minier']) ?> exp</div>
 					</div>
 					<div class="row">
 						<div class="c col-xs-12">Военный уровень</div>
@@ -218,7 +218,7 @@
 						<div class="th col-xs-12"><?=$parse['lvl_raid'] ?> из 100</div>
 					</div>
 					<div class="row">
-						<div class="th col-xs-12"><?=\App\Helpers::pretty_number($parse['xpraid']) ?> / <?=\App\Helpers::pretty_number($parse['lvl_up_raid']) ?> exp</div>
+						<div class="th col-xs-12"><?=\Xnova\Helpers::pretty_number($parse['xpraid']) ?> / <?=\Xnova\Helpers::pretty_number($parse['lvl_up_raid']) ?> exp</div>
 					</div>
 				</div>
 			</div>

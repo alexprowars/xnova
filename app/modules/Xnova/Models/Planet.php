@@ -8,16 +8,14 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Building;
-use App\Helpers;
-use App\Queue;
+use Xnova\Building;
+use Xnova\Helpers;
+use Xnova\Queue;
 use Phalcon\Mvc\Model;
 
 /**
- * Class Planet
- * @package App\Models
- * @property \App\Database db
- * @property \App\Game game
+ * @property \Xnova\Database db
+ * @property \Xnova\Game game
  * @property \Xnova\Models\User user
  */
 class Planet extends Model
@@ -25,7 +23,7 @@ class Planet extends Model
 	private $db;
 	private $user;
 	private $game;
-	private $storage;
+	private $registry;
 
 	public $id;
 	public $image;
@@ -133,7 +131,7 @@ class Planet extends Model
 
 		$this->db = $this->getDI()->getShared('db');
 		$this->game = $this->getDI()->getShared('game');
-		$this->storage = $this->getDI()->getShared('storage');
+		$this->registry = $this->getDI()->getShared('registry');
 	}
 
 	public function getSource()
@@ -185,8 +183,8 @@ class Planet extends Model
 	{
 		$cnt = 0;
 
-		foreach ($this->storage->reslist['allowed'][$this->planet_type] AS $type)
-			$cnt += $this->{$this->storage->resource[$type]};
+		foreach ($this->registry->reslist['allowed'][$this->planet_type] AS $type)
+			$cnt += $this->{$this->registry->resource[$type]};
 
 		if ($this->field_current != $cnt)
 		{
@@ -206,20 +204,20 @@ class Planet extends Model
 
 		$config = $this->getDI()->getShared('config');
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 			$return[$res] = 0;
 
-		if (isset($this->storage->ProdGrid[$Element]))
+		if (isset($this->registry->ProdGrid[$Element]))
 		{
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$energyTech 	= $this->user->energy_tech;
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$BuildTemp		= $this->temp_max;
 
-			foreach ($this->storage->reslist['res'] AS $res)
-				$return[$res] = floor(eval($this->storage->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
+			foreach ($this->registry->reslist['res'] AS $res)
+				$return[$res] = floor(eval($this->registry->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
 
-			$energy = floor(eval($this->storage->ProdGrid[$Element]['energy']));
+			$energy = floor(eval($this->registry->ProdGrid[$Element]['energy']));
 
 			if ($Element < 4)
 				$return['energy'] = $energy;
@@ -238,7 +236,7 @@ class Planet extends Model
 
 		$Caps = [];
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 			$Caps[$res.'_perhour'] = 0;
 
 		$Caps['energy_used'] 	= 0;
@@ -247,17 +245,17 @@ class Planet extends Model
 		if ($this->user->isVacation())
 			return;
 
-		foreach ($this->storage->reslist['prod'] AS $ProdID)
+		foreach ($this->registry->reslist['prod'] AS $ProdID)
 		{
-			$BuildLevelFactor = $this->{$this->storage->resource[$ProdID] . '_porcent'};
-			$BuildLevel = $this->{$this->storage->resource[$ProdID]};
+			$BuildLevelFactor = $this->{$this->registry->resource[$ProdID] . '_porcent'};
+			$BuildLevel = $this->{$this->registry->resource[$ProdID]};
 
 			if ($ProdID == 12 && $this->deuterium < 100)
 				$BuildLevelFactor = 0;
 
 			$result = $this->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-			foreach ($this->storage->reslist['res'] AS $res)
+			foreach ($this->registry->reslist['res'] AS $res)
 				$Caps[$res.'_perhour'] += $result[$res];
 
 			if ($ProdID < 4)
@@ -268,7 +266,7 @@ class Planet extends Model
 
 		if ($this->planet_type == 3 || $this->planet_type == 5)
 		{
-			foreach ($this->storage->reslist['res'] AS $res)
+			foreach ($this->registry->reslist['res'] AS $res)
 			{
 				$config->game->offsetSet($res.'_basic_income', 0);
 				$this->{$res.'_perhour'} = 0;
@@ -279,7 +277,7 @@ class Planet extends Model
 		}
 		else
 		{
-			foreach ($this->storage->reslist['res'] AS $res)
+			foreach ($this->registry->reslist['res'] AS $res)
 				$this->{$res.'_perhour'} = $Caps[$res.'_perhour'];
 
 			$this->energy_used 	= $Caps['energy_used'];
@@ -302,12 +300,12 @@ class Planet extends Model
 
 		$this->planet_updated = true;
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, intval($this->{$res.'_store'}))))) * $this->user->bonusValue('storage'));
 		}
 
-		$this->battery_max = floor(250 * $this->{$this->storage->resource[4]});
+		$this->battery_max = floor(250 * $this->{$this->registry->resource[4]});
 
 		$this->getProductions();
 
@@ -324,7 +322,7 @@ class Planet extends Model
 
 		if ($this->energy_max == 0)
 		{
-			foreach ($this->storage->reslist['res'] AS $res)
+			foreach ($this->registry->reslist['res'] AS $res)
 				$this->{$res.'_perhour'} = $config->game->get($res.'_basic_income');
 
 			$production_level = 0;
@@ -364,7 +362,7 @@ class Planet extends Model
 
 		$this->production_level = $production_level;
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			$this->{$res.'_production'} = 0;
 
@@ -415,14 +413,14 @@ class Planet extends Model
 				$this->b_hangar = $BuildQueue[0]['s'];
 				$this->b_hangar += $ProductionTime;
 
-				$MissilesSpace = ($this->{$this->storage->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
+				$MissilesSpace = ($this->{$this->registry->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
 
 				$max = [];
 
-				foreach ($this->storage->pricelist as $id => $data)
+				foreach ($this->registry->pricelist as $id => $data)
 				{
-					if (isset($data['max']) && isset($this->{$this->storage->resource[$id]}))
-						$max[$id] = $this->{$this->storage->resource[$id]};
+					if (isset($data['max']) && isset($this->{$this->registry->resource[$id]}))
+						$max[$id] = $this->{$this->registry->resource[$id]};
 				}
 
 				$BuildArray = [];
@@ -448,13 +446,13 @@ class Planet extends Model
 						}
 					}
 
-					if (isset($this->storage->pricelist[$Item['i']]['max']))
+					if (isset($this->registry->pricelist[$Item['i']]['max']))
 					{
-						if ($Item['l'] > $this->storage->pricelist[$Item['i']]['max'])
-							$Item['l'] = $this->storage->pricelist[$Item['i']]['max'];
+						if ($Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
+							$Item['l'] = $this->registry->pricelist[$Item['i']]['max'];
 
-						if ($max[$Item['i']] + $Item['l'] > $this->storage->pricelist[$Item['i']]['max'])
-							$Item['l'] = $this->storage->pricelist[$Item['i']]['max'] - $max[$Item['i']];
+						if ($max[$Item['i']] + $Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
+							$Item['l'] = $this->registry->pricelist[$Item['i']]['max'] - $max[$Item['i']];
 
 						if ($Item['l'] > 0)
 							$max[$Item['i']] += $Item['l'];
@@ -471,14 +469,14 @@ class Planet extends Model
 
 				foreach ($BuildArray as list($Element, $Count, $BuildTime))
 				{
-					if (!isset($this->storage->resource[$Element]))
+					if (!isset($this->registry->resource[$Element]))
 						continue;
 
 					while ($this->b_hangar >= $BuildTime && !$UnFinished)
 					{
 						$this->b_hangar -= $BuildTime;
 						$Builded++;
-						$this->{$this->storage->resource[$Element]}++;
+						$this->{$this->registry->resource[$Element]}++;
 						$Count--;
 
 						if ($Count <= 0)
@@ -584,12 +582,12 @@ class Planet extends Model
 				if (!$ForDestroy)
 				{
 					$this->field_current++;
-					$this->{$this->storage->resource[$Element]}++;
+					$this->{$this->registry->resource[$Element]}++;
 				}
 				else
 				{
 					$this->field_current--;
-					$this->{$this->storage->resource[$Element]}--;
+					$this->{$this->registry->resource[$Element]}--;
 				}
 
 				$NewQueue = $queueManager->get();
@@ -643,7 +641,7 @@ class Planet extends Model
 
 				$ForDestroy = ($ListIDArray['d'] == 1);
 
-				if ($ForDestroy && $this->{$this->storage->resource[$ListIDArray['i']]} == 0)
+				if ($ForDestroy && $this->{$this->registry->resource[$ListIDArray['i']]} == 0)
 				{
 					$HaveRessources = false;
 					$HaveNoMoreLevel = true;
@@ -678,7 +676,7 @@ class Planet extends Model
 							'to_crystal' 		=> $this->crystal,
 							'to_deuterium' 		=> $this->deuterium,
 							'build_id' 			=> $ListIDArray['i'],
-							'level' 			=> ($this->{$this->storage->resource[$ListIDArray['i']]} + 1)
+							'level' 			=> ($this->{$this->registry->resource[$ListIDArray['i']]} + 1)
 						]);
 					}
 				}
@@ -765,7 +763,7 @@ class Planet extends Model
 				if ($queueArray[0]['e'] <= time())
 				{
 					$this->user->b_tech_planet = 0;
-					$this->user->{$this->storage->resource[$queueArray[0]['i']]}++;
+					$this->user->{$this->registry->resource[$queueArray[0]['i']]}++;
 
 					$queueManager->checkQueue();
 					$newQueue = $queueManager->get();
@@ -791,21 +789,21 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
-		$list = [$this->{$this->storage->resource[31]}];
+		$list = [$this->{$this->registry->resource[31]}];
 
-		if ($this->user->{$this->storage->resource[123]} > 0)
+		if ($this->user->{$this->registry->resource[123]} > 0)
 		{
 			$result = $this->find([
-				'columns' => $this->storage->resource[31],
-				'conditions' => 'id_owner = ?0 AND id != ?1 AND '.$this->storage->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
+				'columns' => $this->registry->resource[31],
+				'conditions' => 'id_owner = ?0 AND id != ?1 AND '.$this->registry->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
 				'bind' => [$this->user->id, $this->id],
-				'limit' => $this->user->{$this->storage->resource[123]},
-				'orders' => $this->storage->resource[31].' DESC'
+				'limit' => $this->user->{$this->registry->resource[123]},
+				'orders' => $this->registry->resource[31].' DESC'
 			]);
 
 			foreach ($result as $row)
 			{
-				$list[] = $row->{$this->storage->resource[31]};
+				$list[] = $row->{$this->registry->resource[31]};
 			}
 		}
 
@@ -816,14 +814,14 @@ class Planet extends Model
 	{
 		$config = $this->getDI()->getShared('config');
 
-		return $this->field_max + ($this->{$this->storage->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->storage->resource[41]});
+		return $this->field_max + ($this->{$this->registry->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->registry->resource[41]});
 	}
 
 	public function getNextJumpTime ()
 	{
-		if ($this->{$this->storage->resource[43]} > 0)
+		if ($this->{$this->registry->resource[43]} > 0)
 		{
-			$waitTime = (60 * 60) * (1 / $this->{$this->storage->resource[43]});
+			$waitTime = (60 * 60) * (1 / $this->{$this->registry->resource[43]});
 			$nextJumpTime = $this->last_jump_time + $waitTime;
 
 			if ($nextJumpTime >= time())

@@ -8,18 +8,25 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Battle\Core\Battle;
-use App\Battle\Core\Round;
-use App\Battle\Models\Defense;
-use App\Battle\Models\Fleet;
-use App\Battle\Models\Player;
-use App\Battle\Models\PlayerGroup;
-use App\Battle\Models\Ship;
-use App\Battle\Models\ShipType;
-use App\CombatReport;
+use Xnova\Battle\Core\Battle;
+use Xnova\Battle\Core\Round;
+use Xnova\Battle\Models\Defense;
+use Xnova\Battle\Models\Fleet;
+use Xnova\Battle\Models\Player;
+use Xnova\Battle\Models\PlayerGroup;
+use Xnova\Battle\Models\Ship;
+use Xnova\Battle\Models\ShipType;
+use Xnova\CombatReport;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/xnsim")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class XnsimController extends Controller
 {
 	private $usersInfo = [];
@@ -71,7 +78,7 @@ class XnsimController extends Controller
 
 			define('MAX_SLOTS', $this->config->game->get('maxSlotsInSim', 5));
 
-			include_once(APP_PATH."/app/config/battle.php");
+			include_once(ROOT_PATH."/app/config/battle.php");
 
 			$attackers = $this->getAttackers(0, $r);
 			$defenders = $this->getAttackers(MAX_SLOTS, $r);
@@ -255,7 +262,7 @@ class XnsimController extends Controller
 	{
 		$playerGroupObj = new PlayerGroup();
 
-		$model = new \App\Models\Fleet();
+		$model = new \Xnova\Models\Fleet();
 
 		for ($i = $s; $i < MAX_SLOTS * 2; $i++)
 		{
@@ -309,21 +316,21 @@ class XnsimController extends Controller
 
 	private function getShipType($id, $count, $res)
 	{
-		$attDef 	= ($count[1] * ($this->storage->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
-		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->storage->CombatCaps[$id]['power_up'] / 100));
+		$attDef 	= ($count[1] * ($this->registry->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
+		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->registry->CombatCaps[$id]['power_up'] / 100));
 
-		if ($this->storage->CombatCaps[$id]['type_gun'] == 1)
+		if ($this->registry->CombatCaps[$id]['type_gun'] == 1)
 			$attTech += (isset($res[120]) ? $res[120] : 0) * 0.05;
-		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 2)
+		elseif ($this->registry->CombatCaps[$id]['type_gun'] == 2)
 			$attTech += (isset($res[121]) ? $res[121] : 0) * 0.05;
-		elseif ($this->storage->CombatCaps[$id]['type_gun'] == 3)
+		elseif ($this->registry->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->storage->pricelist[$id]['metal'], $this->storage->pricelist[$id]['crystal']];
+		$cost = [$this->registry->pricelist[$id]['metal'], $this->registry->pricelist[$id]['crystal']];
 
-		if (in_array($id, $this->storage->reslist['fleet']))
-			return new Ship($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		if (in_array($id, $this->registry->reslist['fleet']))
+			return new Ship($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
-		return new Defense($id, $count[0], $this->storage->CombatCaps[$id]['sd'], $this->storage->CombatCaps[$id]['shield'], $cost, $this->storage->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
+		return new Defense($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 	}
 }

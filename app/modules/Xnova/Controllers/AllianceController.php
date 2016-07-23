@@ -8,18 +8,25 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Models\Alliance;
-use App\Models\AllianceMember;
-use App\Models\Planet;
-use App\Models\User;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Alliance;
+use Xnova\Models\AllianceMember;
+use Xnova\Models\Planet;
+use Xnova\Models\User;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/alliance")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class AllianceController extends Controller
 {
 	/**
-	 * @var \App\Models\Alliance $ally
+	 * @var \Xnova\Models\Alliance $ally
 	 */
 	private $ally;
 
@@ -30,7 +37,7 @@ class AllianceController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('alliance');
+		Lang::includeLang('alliance', 'xnova');
 	}
 
 	private function parseInfo ($allyId)

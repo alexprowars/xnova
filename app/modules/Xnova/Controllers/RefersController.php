@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/refers")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class RefersController extends Controller
 {
 	public function initialize ()

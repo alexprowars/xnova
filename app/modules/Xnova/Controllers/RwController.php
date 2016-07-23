@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\CombatReport;
+use Xnova\CombatReport;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/rw")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class RwController extends Controller
 {
 	public function initialize ()

@@ -27,8 +27,8 @@
 					<? foreach ($statistics AS $i => $s): ?>
 						<tr>
 							<th><?=$i ?></th>
-							<th><?=\App\Helpers::pretty_number($s['att']) ?></th>
-							<th><?=\App\Helpers::pretty_number($s['def']) ?></th>
+							<th><?=\Xnova\Helpers::pretty_number($s['att']) ?></th>
+							<th><?=\Xnova\Helpers::pretty_number($s['def']) ?></th>
 						</tr>
 					<? endforeach; ?>
 				</table>

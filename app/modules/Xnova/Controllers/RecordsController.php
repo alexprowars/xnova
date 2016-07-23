@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
+use Xnova\Helpers;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/records")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class RecordsController extends Controller
 {
 	public function initialize ()
@@ -22,8 +29,8 @@ class RecordsController extends Controller
 	{
 		$RecordsArray = [];
 
-		if (file_exists(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php"))
-			require_once(APP_PATH.$this->config->application->cacheDir."/CacheRecords.php");
+		if (file_exists(ROOT_PATH.$this->config->application->cacheDir."/CacheRecords.php"))
+			require_once(ROOT_PATH.$this->config->application->cacheDir."/CacheRecords.php");
 
 		$Builds = [];
 		$MoonsBuilds = [];

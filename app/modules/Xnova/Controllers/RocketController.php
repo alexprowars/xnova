@@ -9,9 +9,16 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
-use App\Models\Fleet;
-use App\Models\Planet;
+use Xnova\Models\Fleet;
+use Xnova\Models\Planet;
 
+/**
+ * @RoutePrefix("/rocket")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class RocketController extends Controller
 {
 	public function initialize ()

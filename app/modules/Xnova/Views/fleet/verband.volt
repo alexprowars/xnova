@@ -18,7 +18,7 @@
 		<th>Прибудет через</th>
 		<th>Планета старта</th>
 	</tr>
-	<? foreach ($parse['list'] as $i => $item): /** * @var $item \App\Models\Fleet  */ ?>
+	<? foreach ($parse['list'] as $i => $item): /** * @var $item \Xnova\Models\Fleet  */ ?>
 		<tr>
 			<th><?=($i+1) ?></th>
 			<th>
@@ -29,7 +29,7 @@
 			</th>
 			<th>
 				<a class="tooltip" data-content="<? foreach ($item->getShips() as $t => $f): ?><?=_getText('tech', $t) ?>: <?=$f['cnt'] ?><br><? endforeach; ?>">
-					<?=\App\Helpers::pretty_number($item->getTotalShips()) ?>
+					<?=\Xnova\Helpers::pretty_number($item->getTotalShips()) ?>
 				</a>
 			</th>
 			<th><?=$item->getStartAdressLink() ?></th>
@@ -37,7 +37,7 @@
 			<th><?=$item->getTargetAdressLink() ?></th>
 			<th><?=$this->game->datezone("d.m H:i:s", $item->end_time) ?></th>
 			<th>
-				<div id="time_0" class="positive"><?=\App\Helpers::pretty_time(floor($item->end_time + 1 - time())) ?></div>
+				<div id="time_0" class="positive"><?=\Xnova\Helpers::pretty_time(floor($item->end_time + 1 - time())) ?></div>
 			</th>
 			<th><?=$item->owner_name ?></th>
 		</tr>

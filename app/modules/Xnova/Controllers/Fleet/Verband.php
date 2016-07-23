@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,10 +8,10 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Lang;
-use App\Models\Fleet;
-use App\Models\User;
+use Xnova\Controllers\FleetController;
+use Friday\Core\Lang;
+use Xnova\Models\Fleet;
+use Xnova\Models\User;
 
 class Verband
 {
@@ -18,7 +19,7 @@ class Verband
 	{
 		$parse = [];
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		$fleetid = $controller->request->getPost('fleetid', 'int');
 
@@ -26,7 +27,7 @@ class Verband
 			return $controller->response->redirect("overview/");
 
 		/**
-		 * @var $fleet \App\Models\Fleet
+		 * @var $fleet \Xnova\Models\Fleet
 		 */
 		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetid, $controller->user->id, 1]]);
 
@@ -141,7 +142,7 @@ class Verband
 		}
 
 		/**
-		 * @var $fq \App\Models\Fleet[]
+		 * @var $fq \Xnova\Models\Fleet[]
 		 */
 		if ($fleet->group_id == 0)
 			$fq = Fleet::find(['conditions' => 'id = ?0', 'bind' => [$fleet->id]]);

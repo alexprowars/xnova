@@ -3,9 +3,16 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
-use App\Lang;
+use Xnova\Helpers;
+use Friday\Core\Lang;
 
+/**
+ * @RoutePrefix("/admin/players")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class PlayersController extends Controller
 {
 	public function initialize ()
@@ -18,7 +25,7 @@ class PlayersController extends Controller
 
 	public function indexAction ()
 	{
-		Lang::includeLang('admin');
+		Lang::includeLang('admin', 'xnova');
 
 		if (isset($_GET['cmd']) && $_GET['cmd'] == 'sort')
 		{

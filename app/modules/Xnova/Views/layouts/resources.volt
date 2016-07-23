@@ -62,10 +62,10 @@
 					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('info/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
-					<? foreach ($this->storage->reslist['res'] AS $res): ?>
-						<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
+					<? foreach ($this->registry->reslist['res'] AS $res): ?>
+						<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
 					<? endforeach; ?>
-					<th><font color="#ffffff"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
+					<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
 					<th>
 						<select name="<?=$resource['name'] ?>" title="">
 						<? for ($j = 10; $j >= 0; $j--): ?>
@@ -80,7 +80,7 @@
 			<tr>
 				<th colspan="2">Вместимость:</th>
 				<th><?=$parse['bonus_h'] ?>%</th>
-				<? foreach ($this->storage->reslist['res'] AS $res): ?>
+				<? foreach ($this->registry->reslist['res'] AS $res): ?>
 					<td class="k"><?=$parse[$res.'_max'] ?></td>
 				<? endforeach; ?>
 				<td class="k"><font color="#00ff00"><?=$parse['energy_max'] ?></font></td>
@@ -88,8 +88,8 @@
 			</tr>
 			<tr>
 				<th colspan="3">Сумма:</th>
-				<? foreach ($this->storage->reslist['res'] AS $res): ?>
-					<td class="k"><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
+				<? foreach ($this->registry->reslist['res'] AS $res): ?>
+					<td class="k"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
 				<? endforeach; ?>
 				<td class="k"><?=$parse['energy_total'] ?></td>
 			</tr>
@@ -107,13 +107,13 @@
 			<th width="21%">Неделя</th>
 			<th width="21%">Месяц</th>
 		</tr>
-		<? foreach ($this->storage->reslist['res'] AS $res): ?>
+		<? foreach ($this->registry->reslist['res'] AS $res): ?>
 			<tr>
 				<th><?=_getText('res', $res) ?></th>
-				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
-				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24)) ?></th>
-				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
-				<th><?=\App\Helpers::colorNumber(\App\Helpers::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
+				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
+				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24)) ?></th>
+				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
+				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
 			</tr>
 		<? endforeach; ?>
 	</table>
@@ -122,7 +122,7 @@
 		<tr>
 			<td class="c" colspan="3">Статус хранилища</td>
 		</tr>
-		<? foreach ($this->storage->reslist['res'] AS $res): ?>
+		<? foreach ($this->registry->reslist['res'] AS $res): ?>
 			<tr>
 				<th width="150"><?=_getText('res', $res) ?></th>
 				<th width="100"><?=$parse[$res.'_storage'] ?>%</th>
@@ -148,7 +148,7 @@
 				<? if ($parse['merchand'] < time()): ?>
 					<a href="<?=$this->url->get('resources&buy=1/') ?>" class="button">Купить за 10 кредитов</a>
 				<? else: ?>
-					Через <?= \App\Helpers::pretty_time($parse['merchand'] - time()) ?>
+					Через <?= \Xnova\Helpers::pretty_time($parse['merchand'] - time()) ?>
 				<? endif; ?>
 			</th>
 			<th>Вы можете купить: <?=$parse['buy_metal'] ?> металла, <?=$parse['buy_crystal'] ?> кристалла, <?=$parse['buy_deuterium'] ?> дейтерия</th>

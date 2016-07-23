@@ -293,7 +293,7 @@ class Request
      *
      * @param string $file
      *
-     * @return CURLFile
+     * @return \CURLFile
      */
     protected static function encodeFile($file)
     {

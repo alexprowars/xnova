@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/git")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class GitController extends Controller
 {
 	public function initialize ()
@@ -20,14 +27,14 @@ class GitController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('news');
+		Lang::includeLang('news', 'xnova');
 	}
 
 	public function indexAction ()
 	{
 		$git_history = [];
 
-		exec("cd ".APP_PATH." && git log -20", $git_logs);
+		exec("cd ".ROOT_PATH." && git log -20", $git_logs);
 
 		$last_hash = null;
 

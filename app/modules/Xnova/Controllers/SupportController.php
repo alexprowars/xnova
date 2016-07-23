@@ -8,11 +8,18 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Models\User;
-use App\Sms;
+use Xnova\Helpers;
+use Xnova\Models\User;
+use Xnova\Sms;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/support")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class SupportController extends Controller
 {
 	public function initialize ()

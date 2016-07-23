@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,10 +8,10 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Fleet;
-use App\Helpers;
-use App\Lang;
+use Xnova\Controllers\FleetController;
+use Xnova\Fleet;
+use Xnova\Helpers;
+use Friday\Core\Lang;
 use Phalcon\Db;
 
 class StageThree
@@ -23,7 +24,7 @@ class StageThree
 		if (!$controller->request->hasPost('crc') || $_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]))
 			$controller->message('Ошибка контрольной суммы!');
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		$galaxy = $controller->request->getPost('galaxy', 'int', 0);
 		$system = $controller->request->getPost('system', 'int', 0);
@@ -75,7 +76,7 @@ class StageThree
 
 		foreach ($fleetarray as $Ship => $Count)
 		{
-			if ($Count > $controller->planet->{$controller->storage->resource[$Ship]})
+			if ($Count > $controller->planet->{$controller->registry->resource[$Ship]})
 				$controller->message("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -101,10 +102,10 @@ class StageThree
 		}
 		else
 		{
-			if ($controller->user->{$controller->storage->resource[124]} >= 1)
+			if ($controller->user->{$controller->registry->resource[124]} >= 1)
 			{
-				$ExpeditionEnCours = \App\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);
-				$MaxExpedition = 1 + floor($controller->user->{$controller->storage->resource[124]} / 3);
+				$ExpeditionEnCours = \Xnova\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);
+				$MaxExpedition = 1 + floor($controller->user->{$controller->registry->resource[124]} / 3);
 			}
 			else
 			{
@@ -112,12 +113,12 @@ class StageThree
 				$ExpeditionEnCours = 0;
 			}
 
-			if ($controller->user->{$controller->storage->resource[124]} == 0)
+			if ($controller->user->{$controller->registry->resource[124]} == 0)
 				$controller->message("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", 'Ошибка', "/fleet/", 2);
 			elseif ($ExpeditionEnCours >= $MaxExpedition)
 				$controller->message("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "/fleet/", 2);
 
-			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->storage->resource[124]} / 2) + 1))
+			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->registry->resource[124]} / 2) + 1))
 				$controller->message("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -203,9 +204,9 @@ class StageThree
 		if ($VacationMode && $fleetmission != 8)
 			$controller->message("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", 'Режим отпуска', "/fleet/", 2);
 
-		$flyingFleets = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$flyingFleets = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$fleetmax = $controller->user->{$controller->storage->resource[108]} + 1;
+		$fleetmax = $controller->user->{$controller->registry->resource[108]} + 1;
 
 		if ($controller->user->rpg_admiral > time())
 			$fleetmax += 2;
@@ -274,7 +275,7 @@ class StageThree
 		if (!isset($fleetarray))
 			$controller->message("<span class=\"error\"><b>" . _getText('fl_no_fleetarray') . "</b></span>", 'Ошибка', "/fleet/", 2);
 
-		$fleet = new \App\Models\Fleet();
+		$fleet = new \Xnova\Models\Fleet();
 
 		$distance 		= Fleet::GetTargetDistance($controller->planet->galaxy, $galaxy, $controller->planet->system, $system, $controller->planet->planet, $planet);
 		$duration 		= Fleet::GetMissionDuration($fleetSpeedFactor, $maxFleetSpeed, $distance, $gameFleetSpeed);
@@ -285,7 +286,7 @@ class StageThree
 		if ($fleet_group_mr > 0)
 		{
 			// Вычисляем время самого медленного флота в совместной атаке
-			$flet = \App\Models\Fleet::find(['column' => 'id, start_time, end_time', 'conditions' => 'group_id = ?0', 'bind' => [$fleet_group_mr]]);
+			$flet = \Xnova\Models\Fleet::find(['column' => 'id, start_time, end_time', 'conditions' => 'group_id = ?0', 'bind' => [$fleet_group_mr]]);
 
 			$fleet_group_time = $duration + time();
 			$arrr = [];
@@ -324,14 +325,14 @@ class StageThree
 		{
 			$Count = intval($Count);
 
-			if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->storage->CombatCaps[$Ship]['power_consumption']) && $controller->storage->CombatCaps[$Ship]['power_consumption'] > 0)
-				$FleetStorage += round($controller->storage->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->storage->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
+			if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->registry->CombatCaps[$Ship]['power_consumption']) && $controller->registry->CombatCaps[$Ship]['power_consumption'] > 0)
+				$FleetStorage += round($controller->registry->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->registry->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
 			else
-				$FleetStorage += $controller->storage->CombatCaps[$Ship]['capacity'] * $Count;
+				$FleetStorage += $controller->registry->CombatCaps[$Ship]['capacity'] * $Count;
 
 			$fleet_array .= (isset($controller->user->{'fleet_' . $Ship})) ? $Ship . "," . $Count . "!" . $controller->user->{'fleet_' . $Ship} . ";" : $Ship . "," . $Count . "!0;";
 
-			$controller->planet->{$controller->storage->resource[$Ship]} -= $Count;
+			$controller->planet->{$controller->registry->resource[$Ship]} -= $Count;
 		}
 
 		$FleetStorage -= $consumption;
@@ -505,7 +506,7 @@ class StageThree
 
 		if (isset($tutorial['id']))
 		{
-			Lang::includeLang('tutorial');
+			Lang::includeLang('tutorial', 'xnova');
 
 			$quest = _getText('tutorial', $tutorial['quest_id']);
 

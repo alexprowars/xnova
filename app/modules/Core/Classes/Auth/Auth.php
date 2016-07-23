@@ -3,11 +3,10 @@
 namespace Friday\Core\Auth;
 
 use Friday\Core\Models\Session;
-use Friday\Core\Models\User;
+use Xnova\Models\User;
 use Phalcon\Mvc\User\Component;
 
 /**
- * Class Auth
  * @property \Phalcon\Mvc\View view
  * @property \Phalcon\Tag tag
  * @property \Phalcon\Assets\Manager assets
@@ -22,10 +21,16 @@ use Phalcon\Mvc\User\Component;
 class Auth extends Component
 {
 	private $_authorized = false;
+	private $_plugins = [];
 
 	public function isAuthorized()
 	{
 		return $this->_authorized;
+	}
+
+	public function addPlugin ($className)
+	{
+		$this->_plugins[] = $className;
 	}
 
 	public function getSecret ($uid, $password)
@@ -50,6 +55,15 @@ class Auth extends Component
 
 	private function checkUserAuth ()
 	{
+		$this->eventsManager->fire('core:beforeAuthCheck', $this);
+
+		foreach ($this->_plugins as $plugin)
+		{
+			$ext = new $plugin();
+			/** @noinspection PhpUndefinedMethodInspection */
+			$ext->check();
+		}
+
 		if (!$this->cookies->has($this->getSessionKey()))
 			return false;
 
@@ -80,6 +94,8 @@ class Auth extends Component
 				$UserRow->update();
 			}
 		}
+
+		$this->eventsManager->fire('core:afterAuthCheck', $this, $UserRow);
 
 		return $UserRow;
 	}

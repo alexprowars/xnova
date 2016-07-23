@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/credits")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class CreditsController extends Controller
 {
 	public function initialize ()

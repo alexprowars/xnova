@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,15 +8,15 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Lang;
-use App\Models\Fleet;
+use Xnova\Controllers\FleetController;
+use Friday\Core\Lang;
+use Xnova\Models\Fleet;
 
 class Back
 {
 	public function show (FleetController $controller)
 	{
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		$BoxTitle = _getText('fl_error');
 		$TxtColor = "red";
@@ -26,7 +27,7 @@ class Back
 			$fleetid = $controller->request->getPost('fleetid', 'int', 0);
 
 			/**
-			 * @var $FleetRow \App\Models\Fleet
+			 * @var $FleetRow \Xnova\Models\Fleet
 			 */
 			$FleetRow = Fleet::findFirst($fleetid);
 

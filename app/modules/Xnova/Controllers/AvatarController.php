@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Upload\Upload;
+use Friday\Core\Upload\Upload;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/avatar")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class AvatarController extends Controller
 {
 	public function initialize ()
@@ -44,9 +51,9 @@ class AvatarController extends Controller
 			$upload->jpeg_quality = 90;
 			$upload->file_new_name_body = $this->user->getId().'_'.time();
 
-			$upload->process(APP_PATH.'public/assets/avatars/');
+			$upload->process(ROOT_PATH.'/public/assets/avatars/');
 
-			if ($upload->processed && file_exists(APP_PATH.'public/assets/avatars/'.$name))
+			if ($upload->processed && file_exists(ROOT_PATH.'/public/assets/avatars/'.$name))
 			{
 				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 

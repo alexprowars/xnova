@@ -2,7 +2,7 @@
 
 namespace Xnova\Controllers;
 
-use App\Models\User;
+use Xnova\Models\User;
 use Xnova\Controller;
 
 /**
@@ -11,6 +11,13 @@ use Xnova\Controller;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+/**
+ * @RoutePrefix("/buddy")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class BuddyController extends Controller
 {
 	public function initialize ()

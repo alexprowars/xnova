@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
+use Xnova\Helpers;
 
+/**
+ * @RoutePrefix("/admin/groups")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class GroupsController extends Controller
 {
 	public function indexAction ()

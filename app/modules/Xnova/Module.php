@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Xnova;
 
 use Friday\Core\Module\Base;
 use Phalcon\DiInterface;
@@ -40,5 +40,10 @@ class Module extends Base implements ModuleDefinitionInterface
 		$viewDirs[] = ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Xnova/Views';
 
 		$view->setViewsDir($viewDirs);
+
+		$di->setShared('game', function ()
+		{
+			return new Game();
+		});
 	}
 }

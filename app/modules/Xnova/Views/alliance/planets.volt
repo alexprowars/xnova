@@ -9,7 +9,7 @@
 	</tr>
 	<? foreach ($parse['list'] AS $p): ?>
 		<tr>
-			<th><?=$p['name'] ?> <?=\App\Helpers::BuildPlanetAdressLink($p) ?> </th>
+			<th><?=$p['name'] ?> <?=\Xnova\Helpers::BuildPlanetAdressLink($p) ?> </th>
 			<th width="200">
 				<? if ($p['id_ally'] == 0): ?>
 					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='<?=$this->url->get('alliance/admin/edit/planets/ally/'.$p['id'].'') ?>' : false">

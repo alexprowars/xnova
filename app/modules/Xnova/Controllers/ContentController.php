@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/content")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ContentController extends Controller
 {
 	public function initialize ()

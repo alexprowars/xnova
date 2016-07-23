@@ -8,14 +8,21 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Construction;
-use App\Lang;
+use Xnova\Construction;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/buildings")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class BuildingsController extends Controller
 {
 	/**
-	 * @var \App\Construction $building
+	 * @var \Xnova\Construction $building
 	 */
 	private $building;
 
@@ -26,7 +33,7 @@ class BuildingsController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('buildings');
+		Lang::includeLang('buildings', 'xnova');
 
 		$this->user->loadPlanet();
 
@@ -39,7 +46,7 @@ class BuildingsController extends Controller
 
 	public function fleetAction ()
 	{
-		if ($this->planet->{$this->storage->resource[21]} == 0)
+		if ($this->planet->{$this->registry->resource[21]} == 0)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
@@ -61,7 +68,7 @@ class BuildingsController extends Controller
 
 	public function researchAction ()
 	{
-		if ($this->planet->{$this->storage->resource[31]} == 0)
+		if ($this->planet->{$this->registry->resource[31]} == 0)
 			$this->message(_getText('no_laboratory'), _getText('Research'));
 
 		$parse = $this->building->pageResearch(($this->dispatcher->getActionName() == 'research_fleet' ? 'fleet' : ''));
@@ -79,7 +86,7 @@ class BuildingsController extends Controller
 
 	public function defenseAction ()
 	{
-		if ($this->planet->{$this->storage->resource[21]} == 0 && $this->planet->planet_type != 5)
+		if ($this->planet->{$this->registry->resource[21]} == 0 && $this->planet->planet_type != 5)
 			$this->message(_getText('need_hangar'), _getText('tech', 21));
 
 		if ($this->planet->planet_type == 5)

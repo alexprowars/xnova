@@ -4,6 +4,12 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 
+/**
+ * @RoutePrefix("/admin/error")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ */
 class ErrorController extends Controller
 {
 	public function initialize ()

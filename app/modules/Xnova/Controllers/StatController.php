@@ -8,11 +8,18 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
+use Xnova\Helpers;
+use Friday\Core\Lang;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/stat")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class StatController extends Controller
 {
 	private $field = '';
@@ -26,7 +33,7 @@ class StatController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('stat');
+		Lang::includeLang('stat', 'xnova');
 
 		$this->range = $this->request->get('range', 'int', 0);
 		$this->pid = $this->request->getQuery('pid', 'int', 0);

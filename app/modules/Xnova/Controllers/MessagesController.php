@@ -8,13 +8,20 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Models\Message;
-use App\Models\User;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Message;
+use Xnova\Models\User;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/messages")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class MessagesController extends Controller
 {
 	public function initialize ()
@@ -24,7 +31,7 @@ class MessagesController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('messages');
+		Lang::includeLang('messages', 'xnova');
 	}
 	
 	public function writeAction ()
@@ -113,7 +120,7 @@ class MessagesController extends Controller
 		if ($this->request->hasQuery('quote'))
 		{
 			/**
-			 * @var $mes \App\Models\Message
+			 * @var $mes \Xnova\Models\Message
 			 */
 			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (owner = ?1 OR sender = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
 
@@ -143,7 +150,7 @@ class MessagesController extends Controller
 	public function abuseAction ($id)
 	{
 		/**
-		 * @var $mes \App\Models\Message
+		 * @var $mes \Xnova\Models\Message
 		 */
 		$mes = Message::findFirst(['id = ?0 AND owner = ?1', 'bind' => [$id, $this->user->id]]);
 
@@ -194,14 +201,14 @@ class MessagesController extends Controller
 		if (!$start)
 			$start = 1;
 
-		$messages = $this->modelsManager->createBuilder()->from('App\Models\Message')->orderBy('time DESC');
+		$messages = $this->modelsManager->createBuilder()->from('Xnova\Models\Message')->orderBy('time DESC');
 
 		if ($MessCategory < 100)
 			$messages->where('owner = ?0 AND type = ?1 AND deleted = ?2', [$this->user->id, $MessCategory, 0]);
 		elseif ($MessCategory == 101)
 		{
 			$messages->columns(['m.id', 'm.type', 'm.time', 'm.text', 'sender' => 'm.owner', 'from' => 'CONCAT(u.username, \' [\', u.galaxy,\':\', u.system,\':\',u.planet, \']\')']);
-			$messages->from(['m' => 'App\Models\Message', 'u' => 'App\Models\User']);
+			$messages->from(['m' => 'Xnova\Models\Message', 'u' => 'Xnova\Models\User']);
 			$messages->where('u.id = m.owner AND m.sender = ?0', [$this->user->id]);
 		}
 		else

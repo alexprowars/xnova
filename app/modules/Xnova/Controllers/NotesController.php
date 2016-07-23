@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/notes")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class NotesController extends Controller
 {
 	public function initialize ()
@@ -20,7 +27,7 @@ class NotesController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 		
-		Lang::includeLang('notes');
+		Lang::includeLang('notes', 'xnova');
 	}
 
 	public function newAction ()

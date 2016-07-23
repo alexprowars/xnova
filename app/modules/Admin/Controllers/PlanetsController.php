@@ -3,9 +3,16 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Galaxy;
-use App\Helpers;
+use Xnova\Galaxy;
+use Xnova\Helpers;
 
+/**
+ * @RoutePrefix("/admin/planets")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class PlanetsController extends Controller
 {
 	public function initialize ()

@@ -4,14 +4,14 @@
 <script type="text/javascript">
 
 	var objx = ({
-		<? foreach ($this->storage->resource AS $id => $code): ?>
+		<? foreach ($this->registry->resource AS $id => $code): ?>
 			<?=$id ?>:{
 				'name':'<?=_getText('tech', $id) ?>',
 				'img':'<?=$id ?>.gif',
 				'req':[
-				<? if (isset($this->storage->requeriments[$id]) && count($this->storage->requeriments[$id]) > 0): ?>
-					<? foreach ($this->storage->requeriments[$id] AS $ids => $level): ?>
-						[<?=$ids ?>,'<?=_getText('tech', $ids) ?>',<?=(isset($this->user->{$this->storage->resource[$ids]}) ? $this->user->{$this->storage->resource[$ids]} : $this->planet->{$this->storage->resource[$ids]}) ?>,-1,<?=$level ?>],
+				<? if (isset($this->registry->requeriments[$id]) && count($this->registry->requeriments[$id]) > 0): ?>
+					<? foreach ($this->registry->requeriments[$id] AS $ids => $level): ?>
+						[<?=$ids ?>,'<?=_getText('tech', $ids) ?>',<?=(isset($this->user->{$this->registry->resource[$ids]}) ? $this->user->{$this->registry->resource[$ids]} : $this->planet->{$this->registry->resource[$ids]}) ?>,-1,<?=$level ?>],
 					<? endforeach; ?>
 				<? else: ?>
 					['no']
@@ -81,6 +81,6 @@
 
 	}
 
-	CreateTree(1, -1, <?=$element ?>, '<?=(isset($this->user->{$this->storage->resource[$element]}) ? $this->user->{$this->storage->resource[$element]} : $this->planet->{$this->storage->resource[$element]}) ?>', <?=(\App\Building::IsTechnologieAccessible($this->user, $this->planet, $element) ? 1 : 0) ?>);
+	CreateTree(1, -1, <?=$element ?>, '<?=(isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->{$this->registry->resource[$element]}) ?>', <?=(\Xnova\Building::IsTechnologieAccessible($this->user, $this->planet, $element) ? 1 : 0) ?>);
 
 </script>

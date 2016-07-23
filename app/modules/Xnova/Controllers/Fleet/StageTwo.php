@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,11 +8,11 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Fleet;
-use App\Helpers;
-use App\Lang;
-use App\Models\Planet;
+use Xnova\Controllers\FleetController;
+use Xnova\Fleet;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Planet;
 
 class StageTwo
 {
@@ -23,7 +24,7 @@ class StageTwo
 		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_02-' . date("dmY", time()) . '-' . $_POST["usedfleet"])))
 			$controller->message('Ошибка контрольной суммы!');
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
 		{
@@ -32,7 +33,7 @@ class StageTwo
 			if ($nextJumpTime == 0)
 			{
 				/**
-				 * @var $TargetGate \App\Models\Planet
+				 * @var $TargetGate \Xnova\Models\Planet
 				 */
 				$TargetGate = Planet::findFirst($controller->request->getPost('moon', 'int'));
 
@@ -44,22 +45,22 @@ class StageTwo
 					{
 						$ShipArray = [];
 
-						foreach ($controller->storage->reslist['fleet'] AS $Ship)
+						foreach ($controller->registry->reslist['fleet'] AS $Ship)
 						{
 							$ShipLabel = "ship" . $Ship;
 
 							if (!isset($_POST[$ShipLabel]) || !is_numeric($_POST[$ShipLabel]) || intval($_POST[$ShipLabel]) < 0)
 								continue;
 
-							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->{$controller->storage->resource[$Ship]})
-								$ShipArray[$Ship] = $controller->planet->{$controller->storage->resource[$Ship]};
+							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->{$controller->registry->resource[$Ship]})
+								$ShipArray[$Ship] = $controller->planet->{$controller->registry->resource[$Ship]};
 							else
 								$ShipArray[$Ship] = abs(intval($_POST[$ShipLabel]));
 
 							if ($ShipArray[$Ship] != 0)
 							{
-								$controller->planet->{$controller->storage->resource[$Ship]} -= $ShipArray[$Ship];
-								$TargetGate->{$controller->storage->resource[$Ship]} += $ShipArray[$Ship];
+								$controller->planet->{$controller->registry->resource[$Ship]} -= $ShipArray[$Ship];
+								$TargetGate->{$controller->registry->resource[$Ship]} += $ShipArray[$Ship];
 							}
 							else
 								unset($ShipArray[$Ship]);
@@ -187,7 +188,7 @@ class StageTwo
 		}
 
 		if (isset($missiontype[15]))
-			$parse['expedition_hours'] = round($controller->user->{$controller->storage->resource[124]} / 2) + 1;
+			$parse['expedition_hours'] = round($controller->user->{$controller->registry->resource[124]} / 2) + 1;
 
 		$controller->view->setVar('parse', $parse);
 		$controller->tag->setTitle(_getText('fl_title_2'));

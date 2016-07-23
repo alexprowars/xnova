@@ -7,7 +7,7 @@
 	<div class="title">
 		Занято полей
 		<span class="positive"><?=$parse['planet_field_current'] ?></span> из <span class="negative"><?=$parse['planet_field_max'] ?></span>
-		<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\App\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
+		<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
 		<div class="clearfix"></div>
 	</div>
 	<? foreach ($parse['BuildList'] AS $list): ?>
@@ -41,7 +41,7 @@
 					<? foreach ($parse['BuildingsList'] AS $build): if (!$build['access']) continue; ?>
 						<div data-id="<?=$build['i'] ?>" class="object i_<?=$build['i'] ?> <?=($build['count'] <= 0 ? 'empty' : '') ?> tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 							<img src="<?=$this->url->getBaseUri() ?>assets/images/buildings/<?=$build['i'] ?>.png" alt="<?=_getText('tech', $build['i']) ?>">
-							<div class="name"><?=_getText('tech', $build['i']) ?> <span><?=\App\Helpers::pretty_number($build['count']) ?></span></div>
+							<div class="name"><?=_getText('tech', $build['i']) ?> <span><?=\Xnova\Helpers::pretty_number($build['count']) ?></span></div>
 						</div>
 					<? endforeach; ?>
 				</div>
@@ -52,7 +52,7 @@
 					<div class="col-md-6 col-xs-12" id="object_<?=$build['i'] ?>">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 							<? if (!$build['access']): ?>
-								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \App\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600, 500)"><span>недоступно</span></div>
+								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600, 500)"><span>недоступно</span></div>
 							<? endif; ?>
 
 							<div class="img">
@@ -68,9 +68,9 @@
 								<a href="<?=$this->url->get('info/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a>
 							</div>
 							<div class="actions">
-								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\App\Helpers::pretty_number($build['count']) ?></span><br>
+								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\Xnova\Helpers::pretty_number($build['count']) ?></span><br>
 								<? if ($build['access']): ?>
-									Время: <?=\App\Helpers::pretty_time($build['time']); ?><br>
+									Время: <?=\Xnova\Helpers::pretty_time($build['time']); ?><br>
 									<?=$build['add'] ?>
 									<div class="startBuild"><?=$build['click'] ?></div>
 								<? endif; ?>

@@ -17,11 +17,11 @@
 						<a href="javascript:" onclick="changePlanet(<?=$item['id'] ?>)" title="<?=$item['name'] ?>">
 							<img src="<?=$this->url->getBaseUri() ?>assets/images/planeten/small/s_<?=$item['image'] ?>.jpg" height="40" width="40" alt="<?=$item['name'] ?>">
 						</a>
-						<span class="hidden-md-up"><?=\App\Helpers::BuildPlanetAdressLink($item) ?></span>
+						<span class="hidden-md-up"><?=\Xnova\Helpers::BuildPlanetAdressLink($item) ?></span>
 						<div class="hidden-sm-down">
 							<?=$item['name'] ?>
 							<br>
-							<?=\App\Helpers::BuildPlanetAdressLink($item) ?>
+							<?=\Xnova\Helpers::BuildPlanetAdressLink($item) ?>
 						</div>
 						<div class="clear"></div>
 					</div>

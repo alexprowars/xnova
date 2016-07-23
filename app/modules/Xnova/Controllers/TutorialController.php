@@ -8,11 +8,18 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Models\Planet;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Planet;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/tutorial")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class TutorialController extends Controller
 {
 	public function initialize ()
@@ -22,7 +29,7 @@ class TutorialController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('tutorial');
+		Lang::includeLang('tutorial', 'xnova');
 
 		$this->user->loadPlanet();
 
@@ -67,16 +74,16 @@ class TutorialController extends Controller
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->{$this->storage->resource[$element]}) ? ($this->user->{$this->storage->resource[$element]} >= $level) : ($this->planet->{$this->storage->resource[$element]} >= $level);
+						$check = isset($this->user->{$this->registry->resource[$element]}) ? ($this->user->{$this->registry->resource[$element]} >= $level) : ($this->planet->{$this->registry->resource[$element]} >= $level);
 
 						if ($chk == true)
 							$chk = $check;
 
-						if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
+						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
-						elseif (in_array($element, $this->storage->reslist['fleet']))
+						elseif (in_array($element, $this->registry->reslist['fleet']))
 							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
-						elseif (in_array($element, $this->storage->reslist['defense']))
+						elseif (in_array($element, $this->registry->reslist['defense']))
 							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
 							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
@@ -112,7 +119,7 @@ class TutorialController extends Controller
 				{
 					if ($taskVal === true)
 					{
-						$check = $this->planet->{$this->storage->resource[22]} > 0 || $this->planet->{$this->storage->resource[23]} > 0 || $this->planet->{$this->storage->resource[24]} > 0;
+						$check = $this->planet->{$this->registry->resource[22]} > 0 || $this->planet->{$this->registry->resource[23]} > 0 || $this->planet->{$this->registry->resource[24]} > 0;
 
 						$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 					}
@@ -149,7 +156,7 @@ class TutorialController extends Controller
 
 			if ($this->request->hasQuery('continue') && !$errors && $qInfo['finish'] == 0)
 			{
-				//$this->db->query("UPDATE game_planets SET `" . $this->storage->resource[401] . "` = `" . $this->storage->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
+				//$this->db->query("UPDATE game_planets SET `" . $this->registry->resource[401] . "` = `" . $this->registry->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
 
 				$planetData = [];
 				$userData = [];
@@ -168,28 +175,28 @@ class TutorialController extends Controller
 					{
 						foreach ($rewardVal AS $element => $level)
 						{
-							if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
-								$userData['+'.$this->storage->resource[$element]] = $level;
-							elseif (in_array($element, $this->storage->reslist['fleet']))
-								$planetData['+'.$this->storage->resource[$element]] = $level;
-							elseif (in_array($element, $this->storage->reslist['defense']))
-								$planetData['+'.$this->storage->resource[$element]] = $level;
-							elseif (in_array($element, $this->storage->reslist['officier']))
+							if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+								$userData['+'.$this->registry->resource[$element]] = $level;
+							elseif (in_array($element, $this->registry->reslist['fleet']))
+								$planetData['+'.$this->registry->resource[$element]] = $level;
+							elseif (in_array($element, $this->registry->reslist['defense']))
+								$planetData['+'.$this->registry->resource[$element]] = $level;
+							elseif (in_array($element, $this->registry->reslist['officier']))
 							{
-								if ($this->user->{$this->storage->resource[$element]} > time())
-									$userData['+'.$this->storage->resource[$element]] = $level;
+								if ($this->user->{$this->registry->resource[$element]} > time())
+									$userData['+'.$this->registry->resource[$element]] = $level;
 								else
-									$userData[$this->storage->resource[$element]] = time() + $level;
+									$userData[$this->registry->resource[$element]] = time() + $level;
 							}
 							else
-								$planetData['+'.$this->storage->resource[$element]] = $level;
+								$planetData['+'.$this->registry->resource[$element]] = $level;
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')
 					{
 						$r = mt_rand(22, 24);
 
-						$planetData['+'.$this->storage->resource[$r]] = 1;
+						$planetData['+'.$this->registry->resource[$r]] = 1;
 					}
 				}
 
@@ -217,13 +224,13 @@ class TutorialController extends Controller
 				{
 					foreach ($rewardVal AS $element => $level)
 					{
-						if (in_array($element, array_merge($this->storage->reslist['tech'], $this->storage->reslist['tech_f'])))
+						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
-						elseif (in_array($element, $this->storage->reslist['fleet']))
+						elseif (in_array($element, $this->registry->reslist['fleet']))
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->storage->reslist['defense']))
+						elseif (in_array($element, $this->registry->reslist['defense']))
 							$parse['rewd'][] = $level.' ед. обороны типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->storage->reslist['officier']))
+						elseif (in_array($element, $this->registry->reslist['officier']))
 							$parse['rewd'][] = 'Офицер <b>'._getText('tech', $element).'</b> на '.round($level / 3600 / 24, 1).' суток';
 						else
 							$parse['rewd'][] = 'Постройка <b>'._getText('tech', $element).'</b> '.$level.' уровня';

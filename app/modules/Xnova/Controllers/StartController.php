@@ -8,10 +8,17 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
+use Xnova\Helpers;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/start")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class StartController extends Controller
 {
 	public function initialize()
@@ -21,7 +28,7 @@ class StartController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('reg');
+		Lang::includeLang('reg', 'xnova');
 	}
 
 	public function indexAction ()
@@ -87,7 +94,7 @@ class StartController extends Controller
 		}
 		elseif ($this->user->race == 0)
 		{
-			Lang::includeLang('infos');
+			Lang::includeLang('infos', 'xnova');
 
 			$this->view->pick('shared/start/race');
 
@@ -100,8 +107,8 @@ class StartController extends Controller
 				{
 					$update = ['race' => $r, 'bonus' => (time() + 86400)];
 
-					foreach ($this->storage->reslist['officier'] AS $oId)
-						$update[$this->storage->resource[$oId]] = time() + 86400;
+					foreach ($this->registry->reslist['officier'] AS $oId)
+						$update[$this->registry->resource[$oId]] = time() + 86400;
 
 					$this->user->update($update);
 

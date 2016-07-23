@@ -8,10 +8,17 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Models\Planet;
+use Xnova\Helpers;
+use Xnova\Models\Planet;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/players")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class PlayersController extends Controller
 {
 	public function initialize ()

@@ -2,8 +2,6 @@
 
 namespace Friday\Core\Helpers;
 
-use Friday\Core\Admin\Controller;
-use Friday\Core\Options;
 use Phalcon\Di;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -57,22 +55,6 @@ class Cache
 			$cache = $di->getShared('cache');
 
 			$cache->flush();
-
-			/*$cache->delete(Options::CACHE_KEY);
-			$cache->delete(Controller::CACHE_KEY_MENU);
-
-			if ($di->has('registry'))
-			{
-				$registry = $di->get('registry');
-
-				if (!empty($registry->modules))
-				{
-					foreach ($registry->modules as $module)
-					{
-						$cache->delete('ROUTER_RESOURCES_'.$module['code']);
-					}
-				}
-			}*/
 		}
 	}
 }

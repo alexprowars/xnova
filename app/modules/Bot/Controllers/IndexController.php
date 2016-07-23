@@ -6,6 +6,13 @@ use Bot\Controller;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
 
+/**
+ * @RoutePrefix("/bot")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class IndexController extends Controller
 {
 	public function indexAction()
@@ -59,14 +66,14 @@ class IndexController extends Controller
 			$telegram->enableExternalMysql($this->db->getInternalHandler(), 'bot_');
 		
 			// Add an additional commands path
-			$telegram->addCommandsPath(APP_PATH.$this->config->application->baseDir.$this->config->application->modulesDir.'bot/commands/');
+			$telegram->addCommandsPath(ROOT_PATH.$this->config->application->baseDir.$this->config->application->modulesDir.'bot/commands/');
 		
 			// Here you can enable admin interface for the channel you want to manage
 			$telegram->enableAdmins(['134099267']);
 
 			// Logging
 			$telegram->setLogRequests(true);
-			$telegram->setLogPath(APP_PATH."app/logs/telegram.log");
+			$telegram->setLogPath(ROOT_PATH."/app/logs/telegram.log");
 			$telegram->setLogVerbosity(3);
 		
 			// Set custom Upload and Download path

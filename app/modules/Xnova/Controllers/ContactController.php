@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/contact")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ContactController extends Controller
 {
 	public function initialize ()
@@ -20,7 +27,7 @@ class ContactController extends Controller
 
 	function indexAction ()
 	{
-		Lang::includeLang('contact');
+		Lang::includeLang('contact', 'xnova');
 
 		$contacts = [];
 

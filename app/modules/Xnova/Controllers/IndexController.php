@@ -8,12 +8,18 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
-use App\Models\User;
-use App\Mail\PHPMailer;
+use Friday\Core\Lang;
+use Xnova\Models\User;
+use Friday\Core\Mail\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;
 
+/**
+ * @Route("/")
+ * @Route("/registration/")
+ * @Route("/remind/")
+ * @Route("/login/")
+ */
 class IndexController extends Controller
 {
 	public function initialize()
@@ -27,18 +33,16 @@ class IndexController extends Controller
 
 		if (!$this->dispatcher->wasForwarded())
 		{
-			$js = $this->assets->collection('js');
-			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$js->addJs('assets/js/jquery.form.min.js');
-			$js->addJs('assets/js/jquery.fancybox.min.js');
-			$js->addJs('assets/js/game.js');
-			$js->addJs('assets/js/jquery.validate.js');
+			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
+			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+			$this->assets->addJs('assets/js/jquery.form.min.js');
+			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
+			$this->assets->addJs('assets/js/game.js');
+			$this->assets->addJs('assets/js/jquery.validate.js');
 
-			$css = $this->assets->collection('css');
-			$css->addCss('assets/css/jquery-ui.css');
-			$css->addCss('assets/css/jquery.fancybox.css');
-			$css->addCss('assets/css/login.css');
+			$this->assets->addCss('assets/css/jquery-ui.css');
+			$this->assets->addCss('assets/css/jquery.fancybox.css');
+			$this->assets->addCss('assets/css/login.css');
 		}
 
 		return true;
@@ -51,7 +55,7 @@ class IndexController extends Controller
 
 	public function registrationAction ()
 	{
-		Lang::includeLang('reg');
+		Lang::includeLang('reg', 'xnova');
 
 		if ($this->request->isPost())
 		{

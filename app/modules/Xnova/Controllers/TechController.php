@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/tech")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class TechController extends Controller
 {
 	public function initialize ()
@@ -38,35 +45,35 @@ class TechController extends Controller
 				$pars = [];
 				$pars['tt_name'] = $ElementName;
 
-				if (!isset($this->storage->resource[$Element]))
+				if (!isset($this->registry->resource[$Element]))
 					$parse[] = $pars;
 				else
 				{
-					if (isset($this->storage->requeriments[$Element]))
+					if (isset($this->registry->requeriments[$Element]))
 					{
 						$pars['required_list'] = "";
 
-						foreach ($this->storage->requeriments[$Element] as $ResClass => $Level)
+						foreach ($this->registry->requeriments[$Element] as $ResClass => $Level)
 						{
 							if ($ResClass != 700)
 							{
-								if (isset($this->user->{$this->storage->resource[$ResClass]}) && $this->user->{$this->storage->resource[$ResClass]} >= $Level)
+								if (isset($this->user->{$this->registry->resource[$ResClass]}) && $this->user->{$this->registry->resource[$ResClass]} >= $Level)
 									$pars['required_list'] .= "<span class=\"positive\">";
-								elseif (isset($this->planet->{$this->storage->resource[$ResClass]}) && $this->planet->{$this->storage->resource[$ResClass]} >= $Level)
+								elseif (isset($this->planet->{$this->registry->resource[$ResClass]}) && $this->planet->{$this->registry->resource[$ResClass]} >= $Level)
 									$pars['required_list'] .= "<span class=\"positive\">";
 								else
 									$pars['required_list'] .= "<span class=\"negative\">";
 
 								$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
 
-								if (isset($this->user->{$this->storage->resource[$ResClass]}) && $this->user->{$this->storage->resource[$ResClass]} < $Level)
+								if (isset($this->user->{$this->registry->resource[$ResClass]}) && $this->user->{$this->registry->resource[$ResClass]} < $Level)
 								{
-									$minus = $Level - $this->user->{$this->storage->resource[$ResClass]};
+									$minus = $Level - $this->user->{$this->registry->resource[$ResClass]};
 									$pars['required_list'] .= " + <b>" . $minus . "</b>";
 								}
-								elseif (isset($this->planet->{$this->storage->resource[$ResClass]}) && $this->planet->{$this->storage->resource[$ResClass]} < $Level)
+								elseif (isset($this->planet->{$this->registry->resource[$ResClass]}) && $this->planet->{$this->registry->resource[$ResClass]} < $Level)
 								{
-									$minus = $Level - $this->planet->{$this->storage->resource[$ResClass]};
+									$minus = $Level - $this->planet->{$this->registry->resource[$ResClass]};
 									$pars['required_list'] .= " + <b>" . $minus . "</b>";
 								}
 							}
@@ -100,12 +107,12 @@ class TechController extends Controller
 	{
 		$Element = $this->request->getQuery('id', 'int', 0);
 
-		if ($Element > 0 && isset($this->storage->resource[$Element]))
+		if ($Element > 0 && isset($this->registry->resource[$Element]))
 		{
 			$this->view->setVar('element', $Element);
 
-			if (isset($this->storage->requeriments[$Element]))
-				$this->view->setVar('req', $this->storage->requeriments[$Element]);
+			if (isset($this->registry->requeriments[$Element]))
+				$this->view->setVar('req', $this->registry->requeriments[$Element]);
 
 			$this->tag->setTitle(_getText('tech')[$Element]);
 		}

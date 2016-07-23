@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,11 +8,11 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Fleet;
-use App\Helpers;
-use App\Lang;
-use App\Models\Planet;
+use Xnova\Controllers\FleetController;
+use Xnova\Fleet;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Planet;
 
 class StageOne
 {
@@ -23,7 +24,7 @@ class StageOne
 		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_01-' . date("dmY", time()))))
 			$controller->message('Ошибка контрольной суммы!');
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		$parse = [];
 
@@ -52,11 +53,11 @@ class StageOne
 		$fleet['fleetlist'] = "";
 		$fleet['amount'] = 0;
 
-		foreach ($controller->storage->reslist['fleet'] as $n => $i)
+		foreach ($controller->registry->reslist['fleet'] as $n => $i)
 		{
-			if (isset($_POST["ship" . $i]) && in_array($i, $controller->storage->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
+			if (isset($_POST["ship" . $i]) && in_array($i, $controller->registry->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
 			{
-				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->storage->resource[$i]})
+				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->registry->resource[$i]})
 					continue;
 
 				$fleet['fleetarray'][$i] = intval($_POST["ship" . $i]);
@@ -70,10 +71,10 @@ class StageOne
 					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
 				];
 
-				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->storage->CombatCaps[$i]['power_consumption']) && $controller->storage->CombatCaps[$i]['power_consumption'] > 0)
-					$ship['capacity'] = round($controller->storage->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->storage->CombatCaps[$i]['power_consumption'] / 100)));
+				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->registry->CombatCaps[$i]['power_consumption']) && $controller->registry->CombatCaps[$i]['power_consumption'] > 0)
+					$ship['capacity'] = round($controller->registry->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->registry->CombatCaps[$i]['power_consumption'] / 100)));
 				else
-					$ship['capacity'] = $controller->storage->CombatCaps[$i]['capacity'];
+					$ship['capacity'] = $controller->registry->CombatCaps[$i]['capacity'];
 
 				$parse['ships'][] = $ship;
 			}
@@ -139,10 +140,10 @@ class StageOne
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
 			/**
-			 * @var $moons \App\Models\Planet[]
+			 * @var $moons \Xnova\Models\Planet[]
 			 */
 			$moons = Planet::find([
-				'(planet_type = 3 OR planet_type = 5) AND '.$controller->storage->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
+				'(planet_type = 3 OR planet_type = 5) AND '.$controller->registry->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
 				'bind' => [$controller->planet->id, $controller->user->id]
 			]);
 			if (count($moons))

@@ -2,7 +2,7 @@
 
 namespace Bot;
 
-use App\Lang;
+use Friday\Core\Lang;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
@@ -36,7 +36,7 @@ class Controller extends PhalconController
 
 		self::$isInitialized = true;
 
-		Lang::setLang($this->config->app->language);
+		Lang::setLang($this->config->app->language, 'xnova');
 	}
 
 	public function notFoundAction ()

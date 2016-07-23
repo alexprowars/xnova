@@ -29,7 +29,6 @@ class Application extends PhalconApplication
 		'cache',
 		'environment',
 		'routers',
-		'database',
 		'flash',
 		'session',
 		'view',
@@ -72,6 +71,9 @@ class Application extends PhalconApplication
 		$loader->register();
 
 		$di->set('loader', $loader);
+
+		if (file_exists(ROOT_PATH.$this->_config->application->baseDir.'globals.php'))
+			include_once(ROOT_PATH.$this->_config->application->baseDir.'globals.php');
 
 		$this->initProfiler($di, $eventsManager);
 

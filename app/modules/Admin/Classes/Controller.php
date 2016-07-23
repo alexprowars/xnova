@@ -1,4 +1,5 @@
 <?php
+
 namespace Admin;
 
 /**
@@ -7,7 +8,7 @@ namespace Admin;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Phalcon\Mvc\Controller as PhalconController;
 
 /**
@@ -15,7 +16,7 @@ use Phalcon\Mvc\Controller as PhalconController;
  * @property \Phalcon\Mvc\View view
  * @property \Phalcon\Tag tag
  * @property \Phalcon\Assets\Manager assets
- * @property \App\Database db
+ * @property \Xnova\Database db
  * @property \Phalcon\Mvc\Model\Manager modelsManager
  * @property \Phalcon\Session\Adapter\Memcache session
  * @property \Phalcon\Http\Response\Cookies cookies
@@ -24,12 +25,12 @@ use Phalcon\Mvc\Controller as PhalconController;
  * @property \Phalcon\Mvc\Router router
  * @property \Phalcon\Cache\Backend\Memcache cache
  * @property \Phalcon\Mvc\Url url
- * @property \App\Models\User user
- * @property \App\Models\Planet planet
+ * @property \Xnova\Models\User user
+ * @property \Xnova\Models\Planet planet
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
- * @property \Phalcon\Registry|\stdClass storage
+ * @property \Phalcon\Registry|\stdClass registry
  * @property \Phalcon\Config|\stdClass config
  */
 class Controller extends PhalconController
@@ -42,8 +43,8 @@ class Controller extends PhalconController
 		if ($this->dispatcher->wasForwarded() && $this->dispatcher->getControllerName() !== 'error')
 			return;
 
-		Lang::setLang($this->config->app->language);
-		Lang::includeLang('admin');
+		Lang::setLang($this->config->app->language, 'xnova');
+		Lang::includeLang('admin', 'xnova');
 
 		if (!$this->auth->isAuthorized())
 		{

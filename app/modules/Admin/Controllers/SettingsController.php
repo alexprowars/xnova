@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Lang;
+use Friday\Core\Lang;
 
+/**
+ * @RoutePrefix("/admin/settings")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class SettingsController extends Controller
 {
 	public function initialize ()
@@ -17,7 +24,7 @@ class SettingsController extends Controller
 
 	public function indexAction ()
 	{
-		Lang::includeLang('admin/settings');
+		Lang::includeLang('admin/settings', 'xnova');
 
 		if (isset($_POST['save']))
 		{

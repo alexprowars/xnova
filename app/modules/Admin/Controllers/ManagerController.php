@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Lang;
+use Friday\Core\Lang;
 
+/**
+ * @RoutePrefix("/admin/manager")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ManagerController extends Controller
 {
 	public function initialize ()
@@ -14,7 +21,7 @@ class ManagerController extends Controller
 		if ($this->user->authlevel <= 2)
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 
-		Lang::includeLang('admin/adminpanel');
+		Lang::includeLang('admin/adminpanel', 'xnova');
 	}
 
 	public function indexAction ()
@@ -69,7 +76,7 @@ class ManagerController extends Controller
 			$parse['answer8'] = "[" . $SelUser['galaxy'] . ":" . $SelUser['system'] . ":" . $SelUser['planet'] . "] ";
 
 			$parse['planet_list'] = [];
-			$parse['planet_fields'] = $this->storage->resource;
+			$parse['planet_fields'] = $this->registry->resource;
 
 			if ($this->user->authlevel > 1)
 				$parse['planet_list'] = $this->db->extractResult($this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC"));
@@ -128,10 +135,10 @@ class ManagerController extends Controller
 			{
 				$parse['adm_sub_form3'] = "<table class='table'><tr><th colspan=\"4\">" . _getText('adm_technos') . "</th></tr>";
 
-				foreach ($this->storage->reslist['tech'] AS $Item)
+				foreach ($this->registry->reslist['tech'] AS $Item)
 				{
-					if (isset($this->storage->resource[$Item]))
-						$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$this->storage->resource[$Item]] . "</td></tr>";
+					if (isset($this->registry->resource[$Item]))
+						$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$this->registry->resource[$Item]] . "</td></tr>";
 				}
 
 				$parse['adm_sub_form3'] .= "</table>";

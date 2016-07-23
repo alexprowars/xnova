@@ -8,14 +8,12 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Galaxy;
+use Xnova\Galaxy;
 use Phalcon\Di;
 use Phalcon\Mvc\Model;
 
 /**
- * Class User
- * @package App\Models
- * @property \App\Database db
+ * @property \Xnova\Database db
  */
 class User extends Model
 {
@@ -340,7 +338,7 @@ class User extends Model
 		{
 			/**
 			 * Выбираем информацию о планете
-			 * @var \App\Models\Planet $planet
+			 * @var \Xnova\Models\Planet $planet
 			 */
 			$planet = Planet::findFirst($this->planet_current);
 
@@ -517,7 +515,7 @@ class User extends Model
 		if ($userInfo['ally_id'] != 0)
 		{
 			/**
-			 * @var \App\Models\Alliance $ally
+			 * @var \Xnova\Models\Alliance $ally
 			 */
 			$ally = Alliance::findFirst($userInfo['ally_id']);
 
@@ -579,7 +577,7 @@ class User extends Model
 			'message_block' => 0
 		];
 
-		$storage = $this->getDI()->getShared('storage');
+		$storage = $this->getDI()->getShared('registry');
 
 		foreach ($storage->reslist['officier'] AS $oId)
 			$update[$storage->resource[$oId]] = 0;

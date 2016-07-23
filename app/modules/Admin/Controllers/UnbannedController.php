@@ -4,6 +4,13 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 
+/**
+ * @RoutePrefix("/admin/unbanned")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class UnbannedController extends Controller
 {
 	public function initialize ()

@@ -55,7 +55,7 @@
 	options.techCosts = {
 		<?
 
-		 foreach ($this->storage->pricelist AS $id => $price)
+		 foreach ($this->registry->pricelist AS $id => $price)
 		 {
 		 	echo ''.$id.': ['.$price['metal'].', '.$price['crystal'].', '.$price['deuterium'].', '.$price['factor'].'],';
 		 }
@@ -148,15 +148,15 @@
 			<tr>
 				<td width="200"><label for="robot-factory-level">Фабрика роботов</label></td>
 				<td>
-					<input id="robot-factory-level" type="text" name="robot-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->storage->resource[14]] ?>"/>
+					<input id="robot-factory-level" type="text" name="robot-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->registry->resource[14]] ?>"/>
 				</td>
 				<td><label for="nanite-factory-level">Фабрика нанитов</label></td>
 				<td>
-					<input id="nanite-factory-level" type="text" name="nanite-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->storage->resource[15]] ?>"/>
+					<input id="nanite-factory-level" type="text" name="nanite-factory-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->registry->resource[15]] ?>"/>
 				</td>
 				<td><label for="shipyard-level">Верфь</label></td>
 				<td>
-					<input id="shipyard-level" type="text" name="shipyard-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->storage->resource[21]] ?>"/>
+					<input id="shipyard-level" type="text" name="shipyard-level" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->registry->resource[21]] ?>"/>
 				</td>
 			</tr>
 			<tr>
@@ -165,7 +165,7 @@
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
 							<td>
-								<input id="research-lab-level" type="text" name="research-lab-level" class="ui-state-default ui-corner-all ui-input level-input" value="<?=$object[$this->storage->resource[31]] ?>"/>
+								<input id="research-lab-level" type="text" name="research-lab-level" class="ui-state-default ui-corner-all ui-input level-input" value="<?=$object[$this->registry->resource[31]] ?>"/>
 							</td>
 							<td>
 								<div id="open-llc-dialog" class="ui-state-default ui-corner-all" title="Рассчитать">
@@ -230,11 +230,11 @@
 	<th align="center">Очки</th>
 </tr>
 
-<? $i = 0; foreach ($this->storage->reslist['allowed'][1] AS $id): ?>
+<? $i = 0; foreach ($this->registry->reslist['allowed'][1] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? ($object[$this->storage->resource[$id]] + 1) : 0) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? ($object[$this->registry->resource[$id]] + 1) : 0) ?>" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -298,11 +298,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($this->storage->reslist['allowed'][3] AS $id): ?>
+		<? $i = 0; foreach ($this->registry->reslist['allowed'][3] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;">100<?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? ($object[$this->storage->resource[$id]] + 1) : 0) ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? ($object[$this->registry->resource[$id]] + 1) : 0) ?>" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -365,11 +365,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($this->storage->reslist['tech'] AS $id): ?>
+<? $i = 0; foreach ($this->registry->reslist['tech'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->storage->resource[$id]] + 1) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->registry->resource[$id]] + 1) ?>" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -378,11 +378,11 @@
 		<td align="center">0</td>
 	</tr>
 <? $i++; endforeach; ?>
-<? foreach ($this->storage->reslist['tech_f'] AS $id): ?>
+<? foreach ($this->registry->reslist['tech_f'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->storage->resource[$id]] + 1) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[$this->registry->resource[$id]] + 1) ?>" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -445,11 +445,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($this->storage->reslist['fleet'] AS $id): ?>
+		<? $i = 0; foreach ($this->registry->reslist['fleet'] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;"><?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->storage->resource[$id]] ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->registry->resource[$id]] ?>" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -512,11 +512,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($this->storage->reslist['defense'] AS $id): ?>
+		<? $i = 0; foreach ($this->registry->reslist['defense'] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;"><?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->storage->resource[$id]] ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$object[$this->registry->resource[$id]] ?>" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -589,11 +589,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($this->storage->reslist['allowed'][1] AS $id): ?>
+<? $i = 0; foreach ($this->registry->reslist['allowed'][1] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? $object[$this->storage->resource[$id]] : 0) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? $object[$this->registry->resource[$id]] : 0) ?>" title=""></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -658,11 +658,11 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach ($this->storage->reslist['allowed'][3] AS $id): ?>
+		<? $i = 0; foreach ($this->registry->reslist['allowed'][3] AS $id): ?>
 			<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 				<td style="display: none;">100<?=$id ?></td>
 				<td class="title"><?=_getText('tech', $id) ?></td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? $object[$this->storage->resource[$id]] : 0) ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? $object[$this->registry->resource[$id]] : 0) ?>" title=""></td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -727,11 +727,11 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach ($this->storage->reslist['tech'] AS $id): ?>
+<? $i = 0; foreach ($this->registry->reslist['tech'] AS $id): ?>
 	<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 		<td style="display: none;"><?=$id ?></td>
 		<td class="title"><?=_getText('tech', $id) ?></td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->storage->resource[$id]] ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->registry->resource[$id]] ?>" title=""></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -741,11 +741,11 @@
 		<td align="center">0</td>
 	</tr>
 <? $i++; endforeach; ?>
-	<? foreach ($this->storage->reslist['tech_f'] AS $id): ?>
+	<? foreach ($this->registry->reslist['tech_f'] AS $id): ?>
 		<tr class="<?=($i%2 == 0 ? 'odd' : 'even') ?>">
 			<td style="display: none;"><?=$id ?></td>
 			<td class="title"><?=_getText('tech', $id) ?></td>
-			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->storage->resource[$id]] ?>" title=""></td>
+			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->registry->resource[$id]] ?>" title=""></td>
 			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 			<td align="center">0</td>
 			<td align="center">0</td>
@@ -805,17 +805,17 @@
 				<td colspan="4">
 					<select id="tech-types-select" name="tech-types-select" class="ui-state-default ui-corner-all ui-input" title="">
 						<optgroup label="Постройки (планета)">
-							<? foreach ($this->storage->reslist['allowed'][1] AS $id): ?>
+							<? foreach ($this->registry->reslist['allowed'][1] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>
 						<optgroup label="Постройки (луна)">
-							<? foreach ($this->storage->reslist['allowed'][3] AS $id): ?>
+							<? foreach ($this->registry->reslist['allowed'][3] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>
 						<optgroup label="Исследования">
-							<? foreach ($this->storage->reslist['tech'] AS $id): ?>
+							<? foreach ($this->registry->reslist['tech'] AS $id): ?>
 								<option value="<?=$id ?>"><?=_getText('tech', $id) ?></option>
 							<? endforeach; ?>
 						</optgroup>

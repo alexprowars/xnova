@@ -7,9 +7,9 @@
  */
 
 /**
- * @property \App\Database db
+ * @property \Xnova\Database db
  * @property \Phalcon\Config|\stdClass config
- * @property \App\Game game
+ * @property \Xnova\Game game
  */
 class ApplicationTask extends \Phalcon\Cli\Task
 {

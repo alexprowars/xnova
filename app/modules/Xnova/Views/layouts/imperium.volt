@@ -36,21 +36,21 @@
 			<th rowspan="5">на планете</th>
 			<th><?=_getText('metal') ?></th>
 			<? foreach ($parse['file_metal'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_metal_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('crystal') ?></th>
 			<? foreach ($parse['file_crystal'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_crystal_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('deuterium') ?></th>
 			<? foreach ($parse['file_deuterium'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_deuterium_t'] ?></th>
 		</tr>
@@ -70,21 +70,21 @@
 			<th rowspan="3">в час</th>
 			<th><?=_getText('metal') ?></th>
 			<? foreach ($parse['file_metal_ph'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_metal_ph_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('crystal') ?></th>
 			<? foreach ($parse['file_crystal_ph'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_crystal_ph_t'] ?></th>
 		</tr>
 		<tr>
 			<th><?=_getText('deuterium') ?></th>
 			<? foreach ($parse['file_deuterium_ph'] as $item): ?>
-				<th><?=App\Helpers::pretty_number($item) ?></th>
+				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
 			<? endforeach; ?>
 			<th><?=$parse['file_deuterium_ph_t'] ?></th>
 		</tr>
@@ -94,20 +94,20 @@
 			<th rowspan="6">Производство</th>
 			<th>Металл</th>
 			<? foreach ($parse['file_metal_p'] as $item): ?>
-				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
+				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 			<th rowspan="6">&nbsp;</th>
 		</tr>
 		<tr>
 			<th>Кристаллы</th>
 			<? foreach ($parse['file_crystal_p'] as $item): ?>
-				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
+				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 		</tr>
 		<tr>
 			<th>Дейтерий</th>
 			<? foreach ($parse['file_deuterium_p'] as $item): ?>
-				<th><span class="positive"><?=App\Helpers::pretty_number($item) ?></span>%</th>
+				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
 			<? endforeach; ?>
 		</tr>
 		<tr>

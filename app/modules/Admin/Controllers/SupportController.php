@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Models\User;
+use Xnova\Models\User;
 
+/**
+ * @RoutePrefix("/admin/support")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class SupportController extends Controller
 {
 	public function initialize ()

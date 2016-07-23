@@ -4,6 +4,13 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 
+/**
+ * @RoutePrefix("/admin/banned")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class BannedController extends Controller
 {
 	public function indexAction ()
@@ -45,12 +52,12 @@ class BannedController extends Controller
 			if ($this->request->getPost('ro', 'int', 0) == 1)
 			{
 				$arFields = [
-					$this->storage->resource[4].'_porcent' 	=> 0,
-					$this->storage->resource[12].'_porcent' 	=> 0,
-					$this->storage->resource[212].'_porcent' 	=> 0
+					$this->registry->resource[4].'_porcent' 	=> 0,
+					$this->registry->resource[12].'_porcent' 	=> 0,
+					$this->registry->resource[212].'_porcent' 	=> 0
 				];
 
-				foreach ($this->storage->reslist['res'] AS $res)
+				foreach ($this->registry->reslist['res'] AS $res)
 					$arFields[$res.'_mine_porcent'] = 0;
 
 				$this->db->updateAsDict($arFields, "id_owner = ".$userz['id']);

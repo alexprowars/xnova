@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
+use Xnova\Helpers;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/search")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class SearchController extends Controller
 {
 	public function initialize ()

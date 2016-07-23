@@ -3,9 +3,16 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
-use App\Models\User;
+use Xnova\Helpers;
+use Xnova\Models\User;
 
+/**
+ * @RoutePrefix("/admin/money")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class MoneyController extends Controller
 {
 	public function initialize ()

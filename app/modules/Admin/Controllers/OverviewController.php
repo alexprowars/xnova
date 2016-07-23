@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
+use Xnova\Helpers;
 
+/**
+ * @RoutePrefix("/admin/overview")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class OverviewController extends Controller
 {
 	public function initialize ()

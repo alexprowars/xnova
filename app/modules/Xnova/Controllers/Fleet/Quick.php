@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,10 +8,10 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Fleet;
-use App\Lang;
-use App\Models\Planet;
+use Xnova\Controllers\FleetController;
+use Xnova\Fleet;
+use Friday\Core\Lang;
+use Xnova\Models\Planet;
 
 class Quick
 {
@@ -19,11 +20,11 @@ class Quick
 		if ($controller->user->vacation > 0)
 			return 'Нет доступа!';
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
-		$maxfleet = \App\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$maxfleet = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$MaxFlottes = 1 + $controller->user->{$controller->storage->resource[108]};
+		$MaxFlottes = 1 + $controller->user->{$controller->registry->resource[108]};
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
@@ -115,7 +116,7 @@ class Quick
 
 			if ($controller->planet->recycler > 0 && $DebrisSize > 0)
 			{
-				$RecyclerNeeded = floor($DebrisSize / ($controller->storage->CombatCaps[209]['capacity'] * (1 + $controller->user->fleet_209 * ($controller->storage->CombatCaps[209]['power_consumption'] / 100)))) + 1;
+				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + $controller->user->fleet_209 * ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
 
 				if ($RecyclerNeeded > $controller->planet->recycler)
 					$RecyclerNeeded = $controller->planet->recycler;
@@ -148,14 +149,14 @@ class Quick
 
 			foreach ($FleetArray as $Ship => $Count)
 			{
-				$FleetSubQRY .= "" . $controller->storage->resource[$Ship] . " = " . $controller->storage->resource[$Ship] . " - " . $Count . " , ";
+				$FleetSubQRY .= "" . $controller->registry->resource[$Ship] . " = " . $controller->registry->resource[$Ship] . " - " . $Count . " , ";
 				$ShipArray .=  $Ship . "," . $Count . "!" . (isset($controller->user->{'fleet_' . $Ship}) ? $controller->user->{'fleet_' . $Ship} : 0) . ";";
 				$ShipCount += $Count;
 
-				if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->storage->CombatCaps[$Ship]['power_consumption']) && $controller->storage->CombatCaps[$Ship]['power_consumption'] > 0)
-					$FleetStorage += round($controller->storage->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->storage->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
+				if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->registry->CombatCaps[$Ship]['power_consumption']) && $controller->registry->CombatCaps[$Ship]['power_consumption'] > 0)
+					$FleetStorage += round($controller->registry->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->registry->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
 				else
-					$FleetStorage += $controller->storage->CombatCaps[$Ship]['capacity'] * $Count;
+					$FleetStorage += $controller->registry->CombatCaps[$Ship]['capacity'] * $Count;
 			}
 
 			if ($FleetStorage < $consumption)
@@ -165,7 +166,7 @@ class Quick
 
 			if ($FleetSubQRY != '')
 			{
-				$fleet = new \App\Models\Fleet();
+				$fleet = new \Xnova\Models\Fleet();
 
 				$fleet->owner = $controller->user->id;
 				$fleet->owner_name = $controller->planet->name;
@@ -198,7 +199,7 @@ class Quick
 
 					if (isset($tutorial['id']))
 					{
-						Lang::includeLang('tutorial');
+						Lang::includeLang('tutorial', 'xnova');
 
 						$quest = _getText('tutorial', $tutorial['quest_id']);
 

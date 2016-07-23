@@ -16,14 +16,14 @@
 			<tr>
 				<td><?=$planet['name'] ?></td>
 				<td><?=$planet['position'] ?></td>
-				<td><?=\App\Helpers::pretty_time($planet['activity']) ?></td>
+				<td><?=\Xnova\Helpers::pretty_time($planet['activity']) ?></td>
 			</tr>
 		<? endforeach; ?>
 	</table>
 	<div class="row">
 		<div class="col-md-5 col-sm-12">
 			<div class="dataTables_info">
-				Активно <?=$parse['total'] ?> планет<?=\App\Helpers::morph($parse['total'], 'feminine', 5) ?>
+				Активно <?=$parse['total'] ?> планет<?=\Xnova\Helpers::morph($parse['total'], 'feminine', 5) ?>
 			</div>
 		</div>
 		<div class="col-md-7 col-sm-12">

@@ -8,8 +8,8 @@
 
 function p ($array)
 {
-	if (!defined('SUPERUSER'))
-		return;
+	//if (!defined('SUPERUSER'))
+	//	return;
 
 	if (is_object($array))
 	{
@@ -70,7 +70,9 @@ function is ($val, $key)
 
 function _getText()
 {
-	return \Friday\Core\Lang::getText(func_get_args());
+	$args = array_merge(['xnova'], func_get_args());
+
+	return \Friday\Core\Lang::getText($args);
 }
 
 function getClassName ($className)

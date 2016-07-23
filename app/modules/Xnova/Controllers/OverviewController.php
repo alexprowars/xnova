@@ -8,15 +8,22 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Fleet;
-use App\Helpers;
-use App\Lang;
-use App\Models\Planet;
-use App\Queue;
-use App\Models\Fleet as FleetModel;
+use Xnova\Fleet;
+use Xnova\Helpers;
+use Friday\Core\Lang;
+use Xnova\Models\Planet;
+use Xnova\Queue;
+use Xnova\Models\Fleet as FleetModel;
 use Phalcon\Mvc\Model\Resultset;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/overview")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class OverviewController extends Controller
 {
 	public function initialize()
@@ -26,7 +33,7 @@ class OverviewController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('overview');
+		Lang::includeLang('overview', 'xnova');
 
 		$this->user->loadPlanet();
 	}
@@ -454,7 +461,7 @@ class OverviewController extends Controller
 		$build_list = [];
 
 		/**
-		 * @var $planets \App\Models\Planet[]
+		 * @var $planets \Xnova\Models\Planet[]
 		 */
 		$planets = Planet::find([
 			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
@@ -489,7 +496,7 @@ class OverviewController extends Controller
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->storage->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->storage->resource[$QueueArray[0]['i']]} + 1) . ')'];
+						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
 					}
 				}
 			}
@@ -569,7 +576,7 @@ class OverviewController extends Controller
 		$parse['metal_debris'] = $this->planet->debris_metal;
 		$parse['crystal_debris'] = $this->planet->debris_crystal;
 
-		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->storage->resource[209]} != 0);
+		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->registry->resource[209]} != 0);
 
 		if (!$this->planet->isEmptyQueue())
 		{
@@ -594,7 +601,7 @@ class OverviewController extends Controller
 			{
 				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->storage->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->storage->resource[$QueueArray[0]['i']]} + 1) . ')'];
+				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
 			}
 		}
 
@@ -645,9 +652,9 @@ class OverviewController extends Controller
 
 		$parse['officiers'] = [];
 
-		foreach ($this->storage->reslist['officier'] AS $officier)
+		foreach ($this->registry->reslist['officier'] AS $officier)
 		{
-			$parse['officiers'][$officier] = $this->user->{$this->storage->resource[$officier]};
+			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
 		}
 
 		if (!$this->user->getUserOption('gameactivity'))
@@ -720,7 +727,7 @@ class OverviewController extends Controller
 
 		$showMessage = false;
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			if (!$this->planet->{$res.'_mine_porcent'})
 				$showMessage = true;

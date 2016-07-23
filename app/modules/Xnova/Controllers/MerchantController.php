@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/merchant")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class MerchantController extends Controller
 {
 	public function initialize ()
@@ -20,7 +27,7 @@ class MerchantController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 		
-		Lang::includeLang('marchand');
+		Lang::includeLang('marchand', 'xnova');
 
 		$this->user->loadPlanet();
 	}

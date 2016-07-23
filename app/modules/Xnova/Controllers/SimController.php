@@ -10,6 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/sim")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class SimController extends Controller
 {
 	public function initialize ()
@@ -46,15 +53,15 @@ class SimController extends Controller
 			}
 		}
 		
-		$res = array_merge($this->storage->reslist['fleet'], $this->storage->reslist['defense'], $this->storage->reslist['tech']);
+		$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense'], $this->registry->reslist['tech']);
 		
 		foreach ($res AS $id)
 		{
-			if (isset($this->planet->{$this->storage->resource[$id]}) && $this->planet->{$this->storage->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->storage->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
+			if (isset($this->planet->{$this->registry->resource[$id]}) && $this->planet->{$this->registry->resource[$id]} > 0)
+				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->registry->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
 		
-			if (isset($this->user->{$this->storage->resource[$id]}) && $this->user->{$this->storage->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->user->{$this->storage->resource[$id]}];
+			if (isset($this->user->{$this->registry->resource[$id]}) && $this->user->{$this->registry->resource[$id]} > 0)
+				$parse['slot_0'][$id] = ['c' => $this->user->{$this->registry->resource[$id]}];
 		}
 
 		$this->view->setVar('parse', $parse);

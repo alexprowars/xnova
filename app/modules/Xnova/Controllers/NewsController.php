@@ -8,9 +8,16 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
+use Friday\Core\Lang;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/news")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class NewsController extends Controller
 {
 	public function initialize ()
@@ -20,7 +27,7 @@ class NewsController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('news');
+		Lang::includeLang('news', 'xnova');
 	}
 	
 	public function indexAction ()
@@ -34,7 +41,7 @@ class NewsController extends Controller
 
 		$this->view->setVar('parse', $news);
 
-		exec('cd '.APP_PATH.' && git rev-parse --verify HEAD 2> /dev/null', $output);
+		exec('cd '.ROOT_PATH.' && git rev-parse --verify HEAD 2> /dev/null', $output);
 
 		$lastCommit = $output[0];
 

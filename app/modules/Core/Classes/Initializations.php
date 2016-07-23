@@ -108,7 +108,10 @@ trait Initializations
 		if (!defined('DB_PREFIX'))
 			define('DB_PREFIX', $this->_config->database->prefix);
 
-		$adapter = '\Phalcon\Db\Adapter\Pdo\\'.ucfirst($this->_config->database->adapter);
+		if (strpos($this->_config->database->adapter, '/') !== false)
+			$adapter = '\Phalcon\Db\Adapter\Pdo\\'.ucfirst($this->_config->database->adapter);
+		else
+			$adapter = trim($this->_config->database->adapter);
 
 		$connection = new $adapter([
 			'host'			=> $this->_config->database->host,
@@ -406,14 +409,25 @@ trait Initializations
 					if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
 						return true;
 
-					$dispatcher->forward(
+					p($dispatcher->getDI()->getShared('router')->getMatchedRoute());
+
+					p($dispatcher->getControllerName());
+					p($dispatcher->getActionName());
+					p($dispatcher->getNamespaceName());
+					p($dispatcher->getModuleName());
+
+					echo $exception->getMessage();
+
+					/*$dispatcher->forward(
 						[
 							'module'		=> 'admin',
-							'controller'	=> 'index',
+							'controller'	=> 'error',
 							'action'		=> 'notFound',
 							'namespace'		=> 'Admin\Controllers'
 						]
-					);
+					);*/
+
+					die('E404');
 
 					return false;
 			}

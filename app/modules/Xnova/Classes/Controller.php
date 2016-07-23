@@ -8,9 +8,8 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Lang;
-use App\Models\User;
+use Friday\Core\Lang;
+use Xnova\Models\User;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
@@ -20,7 +19,7 @@ use Phalcon\Tag;
  * @property \Phalcon\Mvc\View view
  * @property \Phalcon\Tag tag
  * @property \Phalcon\Assets\Manager assets
- * @property \App\Database db
+ * @property \Xnova\Database db
  * @property \Phalcon\Mvc\Model\Manager modelsManager
  * @property \Phalcon\Session\Adapter\Memcache session
  * @property \Phalcon\Http\Response\Cookies cookies
@@ -29,14 +28,14 @@ use Phalcon\Tag;
  * @property \Phalcon\Mvc\Router router
  * @property \Phalcon\Cache\Backend\Memcache cache
  * @property \Phalcon\Mvc\Url url
- * @property \App\Models\User user
- * @property \App\Models\Planet planet
+ * @property \Xnova\Models\User user
+ * @property \Xnova\Models\Planet planet
  * @property \App\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
- * @property \Phalcon\Registry|\stdClass storage
+ * @property \Phalcon\Registry|\stdClass registry
  * @property \Phalcon\Config|\stdClass config
- * @property \App\Game game
+ * @property \Xnova\Game game
  */
 class Controller extends PhalconController
 {
@@ -113,7 +112,7 @@ class Controller extends PhalconController
 			}
 		}
 
-		Lang::setLang($this->config->app->language);
+		Lang::setLang($this->config->app->language, 'xnova');
 
 		if ($this->request->isAjax() && !$this->auth->isAuthorized())
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
@@ -147,21 +146,18 @@ class Controller extends PhalconController
 			}
 		}
 
-		$css = $this->assets->collection('css');
-		$js = $this->assets->collection('js');
-
 		if (!$this->disableCollections)
 		{
-			$css->addCss('assets/css/bootstrap.css?v='.VERSION);
-			$css->addCss('assets/css/jquery-ui.css');
-			$css->addCss('assets/css/jquery.fancybox.css');
-			$css->addCss('assets/css/style.css?v='.VERSION);
+			$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
+			$this->assets->addCss('assets/css/jquery-ui.css');
+			$this->assets->addCss('assets/css/jquery.fancybox.css');
+			$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
-			$js->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$js->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$js->addJs('assets/js/jquery.form.min.js');
-			$js->addJs('assets/js/jquery.fancybox.min.js');
-			$js->addJs('assets/js/game.js?v='.VERSION);
+			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
+			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+			$this->assets->addJs('assets/js/jquery.form.min.js');
+			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
+			$this->assets->addJs('assets/js/game.js?v='.VERSION);
 		}
 
 		$this->game->loadGameVariables();
@@ -173,21 +169,21 @@ class Controller extends PhalconController
 
 			if (!$this->disableCollections)
 			{
-				if (DEBUG)
-					$css->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+				if ((int) $this->config->application->prophiler)
+					$this->assets->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
 
-				$css->addCss('assets/css/jquery.toast.min.css');
-				$css->addCss('assets/css/jquery.reject.css');
+				$this->assets->addCss('assets/css/jquery.toast.min.css');
+				$this->assets->addCss('assets/css/jquery.reject.css');
 
-				$js->addJs('assets/js/script.js?v='.VERSION);
-				$js->addJs('assets/js/universe.js?v='.VERSION);
-				$js->addJs('assets/js/flotten.js?v='.VERSION);
-				$js->addJs('assets/js/smiles.js?v='.VERSION);
-				$js->addJs('assets/js/ed.js?v='.VERSION);
-				$js->addJs('assets/js/jquery.touchSwipe.min.js');
-				$js->addJs('assets/js/jquery.toast.min.js');
-				$js->addJs('assets/js/jquery.mousewheel.min.js');
-				$js->addJs('assets/js/jquery.reject.js');
+				$this->assets->addJs('assets/js/script.js?v='.VERSION);
+				$this->assets->addJs('assets/js/universe.js?v='.VERSION);
+				$this->assets->addJs('assets/js/flotten.js?v='.VERSION);
+				$this->assets->addJs('assets/js/smiles.js?v='.VERSION);
+				$this->assets->addJs('assets/js/ed.js?v='.VERSION);
+				$this->assets->addJs('assets/js/jquery.touchSwipe.min.js');
+				$this->assets->addJs('assets/js/jquery.toast.min.js');
+				$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
+				$this->assets->addJs('assets/js/jquery.reject.js');
 			}
 
 			if ($this->request->isAjax())
@@ -406,7 +402,7 @@ class Controller extends PhalconController
 			}
 		}
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			$parse[$res] = floor(floatval($this->planet->{$res}));
 
@@ -434,9 +430,9 @@ class Controller extends PhalconController
 
 		$parse['officiers'] = [];
 
-		foreach ($this->storage->reslist['officier'] AS $officier)
+		foreach ($this->registry->reslist['officier'] AS $officier)
 		{
-			$parse['officiers'][$officier] = $this->user->{$this->storage->resource[$officier]};
+			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
 		}
 
 		$parse['energy_ak'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
@@ -447,7 +443,7 @@ class Controller extends PhalconController
 		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->storage->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->registry->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
 				$parse['ak'] .= '<br>Разряд: ' . Helpers::pretty_time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}

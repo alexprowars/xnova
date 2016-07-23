@@ -8,10 +8,17 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Helpers;
-use App\Models\Planet;
+use Xnova\Helpers;
+use Xnova\Models\Planet;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/resources")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ResourcesController extends Controller
 {
 	public function initialize ()
@@ -35,7 +42,7 @@ class ResourcesController extends Controller
 			{
 				$this->planet->merchand = time() + 172800;
 
-				foreach ($this->storage->reslist['res'] AS $res)
+				foreach ($this->registry->reslist['res'] AS $res)
 					$this->planet->{$res} += $parse['buy_'.$res];
 
 				$this->planet->update();
@@ -61,7 +68,7 @@ class ResourcesController extends Controller
 		$production = $production == 'Y' ? 10 : 0;
 
 		/**
-		 * @var $planets \App\Models\Planet[]
+		 * @var $planets \Xnova\Models\Planet[]
 		 */
 		$planets = Planet::find(['id_owner = ?0', 'bind' => [$this->user->id]]);
 
@@ -74,12 +81,12 @@ class ResourcesController extends Controller
 		unset($planets);
 
 		$arFields = [
-			$this->storage->resource[4].'_porcent' 	=> $production,
-			$this->storage->resource[12].'_porcent' => $production,
-			$this->storage->resource[212].'_porcent' => $production
+			$this->registry->resource[4].'_porcent' 	=> $production,
+			$this->registry->resource[12].'_porcent' => $production,
+			$this->registry->resource[212].'_porcent' => $production
 		];
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			$this->planet->{$res.'_mine_porcent'} = $production;
 			$arFields[$res.'_mine_porcent'] = $production;
@@ -87,9 +94,9 @@ class ResourcesController extends Controller
 
 		$this->db->updateAsDict('game_planets', $arFields, 'id_owner = '.$this->user->id);
 
-		$this->planet->{$this->storage->resource[4].'_porcent'} 	= $production;
-		$this->planet->{$this->storage->resource[12].'_porcent'} 	= $production;
-		$this->planet->{$this->storage->resource[212].'_porcent'}	= $production;
+		$this->planet->{$this->registry->resource[4].'_porcent'} 	= $production;
+		$this->planet->{$this->registry->resource[12].'_porcent'} 	= $production;
+		$this->planet->{$this->registry->resource[212].'_porcent'}	= $production;
 
 		$this->planet->resourceUpdate(time(), true);
 
@@ -100,7 +107,7 @@ class ResourcesController extends Controller
 	{
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
 		{
-			foreach ($this->storage->reslist['res'] AS $res)
+			foreach ($this->registry->reslist['res'] AS $res)
 				$this->config->game->offsetSet($res.'_basic_income', 0);
 		}
 
@@ -131,16 +138,16 @@ class ResourcesController extends Controller
 
 		$parse['resource_row'] = [];
 
-		foreach ($this->storage->reslist['prod'] as $ProdID)
+		foreach ($this->registry->reslist['prod'] as $ProdID)
 		{
-			if ($this->planet->{$this->storage->resource[$ProdID]} > 0 && isset($this->storage->ProdGrid[$ProdID]))
+			if ($this->planet->{$this->registry->resource[$ProdID]} > 0 && isset($this->registry->ProdGrid[$ProdID]))
 			{
-				$BuildLevelFactor = $this->planet->{$this->storage->resource[$ProdID] . "_porcent"};
-				$BuildLevel = $this->planet->{$this->storage->resource[$ProdID]};
+				$BuildLevelFactor = $this->planet->{$this->registry->resource[$ProdID] . "_porcent"};
+				$BuildLevel = $this->planet->{$this->registry->resource[$ProdID]};
 
 				$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-				foreach ($this->storage->reslist['res'] AS $res)
+				foreach ($this->registry->reslist['res'] AS $res)
 				{
 					$$res = $result[$res];
 					$$res = round($$res * 0.01 * $production_level);
@@ -150,8 +157,8 @@ class ResourcesController extends Controller
 
 				$CurrRow = [];
 		        $CurrRow['id'] = $ProdID;
-				$CurrRow['name'] = $this->storage->resource[$ProdID];
-				$CurrRow['porcent'] = $this->planet->{$this->storage->resource[$ProdID] . "_porcent"};
+				$CurrRow['name'] = $this->registry->resource[$ProdID];
+				$CurrRow['porcent'] = $this->planet->{$this->registry->resource[$ProdID] . "_porcent"};
 
 				$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
 
@@ -160,9 +167,9 @@ class ResourcesController extends Controller
 
 				$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
 
-				$CurrRow['level_type'] = $this->planet->{$this->storage->resource[$ProdID]};
+				$CurrRow['level_type'] = $this->planet->{$this->registry->resource[$ProdID]};
 
-				foreach ($this->storage->reslist['res'] AS $res)
+				foreach ($this->registry->reslist['res'] AS $res)
 				{
 					$CurrRow[$res.'_type'] = $$res;
 				}
@@ -173,7 +180,7 @@ class ResourcesController extends Controller
 			}
 		}
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 		{
 			if (!$this->user->isVacation())
 				$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
@@ -205,7 +212,7 @@ class ResourcesController extends Controller
 			$this->buy($parse);
 		}
 
-		foreach ($this->storage->reslist['res'] AS $res)
+		foreach ($this->registry->reslist['res'] AS $res)
 			$parse['buy_'.$res] = Helpers::colorNumber(Helpers::pretty_number($parse['buy_'.$res]));
 
 		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');

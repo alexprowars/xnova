@@ -3,10 +3,17 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Fleet;
-use App\Lang;
-use App\Models\Fleet as FleetModel;
+use Xnova\Fleet;
+use Friday\Core\Lang;
+use Xnova\Models\Fleet as FleetModel;
 
+/**
+ * @RoutePrefix("/admin/flyfleets")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class FlyFleetsController extends Controller
 {
 	public function initialize ()
@@ -16,7 +23,7 @@ class FlyFleetsController extends Controller
 		if ($this->user->authlevel < 3)
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 
-		Lang::includeLang('admin/fleets');
+		Lang::includeLang('admin/fleets', 'xnova');
 	}
 
 	public function indexAction ()

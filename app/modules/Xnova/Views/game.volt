@@ -18,7 +18,7 @@
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->
 
-	<? if (!class_exists('\App\Helpers') || !\App\Helpers::allowMobileVersion()): ?>
+	<? if (!class_exists('\Xnova\Helpers') || !\Xnova\Helpers::allowMobileVersion()): ?>
 		<meta name="viewport" content="width=810">
 	<? else: ?>
 		<meta name="viewport" content="width=device-width, initial-scale=1">

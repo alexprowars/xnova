@@ -2,9 +2,9 @@
 
 namespace Longman\TelegramBot\Commands\UserCommands;
 
-use App\Helpers;
-use App\Models\Fleet;
-use App\Models\User;
+use Xnova\Helpers;
+use Xnova\Models\Fleet;
+use Xnova\Models\User;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Request;
 use Phalcon\Di;
@@ -40,7 +40,7 @@ class ActivityCommand extends UserCommand
 		$data['text'] = '';
 
 		/**
-		 * @var $db \App\Database
+		 * @var $db \Xnova\Database
 		 */
 		$db = Di::getDefault()->getShared('db');
 
@@ -54,7 +54,7 @@ class ActivityCommand extends UserCommand
 		}
 
 		/**
-		 * @var $user \App\Models\User
+		 * @var $user \Xnova\Models\User
 		 */
 		$user = User::findFirst($auth['user_id']);
 
@@ -70,7 +70,7 @@ class ActivityCommand extends UserCommand
 			$data['text'] .= "Летящие флоты: ";
 
 			/**
-			 * @var $fleets \App\Models\Fleet[]
+			 * @var $fleets \Xnova\Models\Fleet[]
 			 */
 			$fleets = Fleet::find(['conditions' => 'owner = :user: OR target_owner = :user:', 'bind' => ['user' => $user->id]]);
 

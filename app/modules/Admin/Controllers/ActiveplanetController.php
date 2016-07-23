@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
+use Xnova\Helpers;
 
+/**
+ * @RoutePrefix("/admin/activeplanet")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ActiveplanetController extends Controller
 {
 	public function indexAction ()

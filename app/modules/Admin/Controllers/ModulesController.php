@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Helpers;
+use Xnova\Helpers;
 
+/**
+ * @RoutePrefix("/admin/modules")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class ModulesController extends Controller
 {
 	public function indexAction ()

@@ -42,13 +42,13 @@
 					<? endif; ?>
 				</th>
 				<th>
-					<a class="tooltip" data-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\App\Helpers::pretty_number($f['fleet_count']) ?></a>
+					<a class="tooltip" data-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\Xnova\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
 				<th><a href="<?=$this->url->get('galaxy/'.$f['start_galaxy'].'/'.$f['start_system'].'/') ?>">[<?=$f['start_galaxy'] ?>:<?=$f['start_system'] ?>:<?=$f['start_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['start_time']) ?></th>
 				<th><a href="<?=$this->url->get('galaxy/'.$f['end_galaxy'].'/'.$f['end_system'].'/') ?>">[<?=$f['end_galaxy'] ?>:<?=$f['end_system'] ?>:<?=$f['end_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['end_time']) ?></th>
-				<th><font color="lime"><?=($f['end_time'] > time() ? \App\Helpers::pretty_time(floor($f['end_time'] + 1 - time())) : 'обработка...') ?></font></th>
+				<th><font color="lime"><?=($f['end_time'] > time() ? \Xnova\Helpers::pretty_time(floor($f['end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
 					<? if ($f['mess'] == 0 && $f['mission'] != 20 && $f['target_owner'] != 1): ?>
 						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
@@ -107,7 +107,7 @@
 			<? foreach ($parse['ships'] as $ship): ?>
 				<div class="row">
 					<div class="th col-sm-5 col-xs-4 middle"><a title="<?=_getText('tech', $ship['id']) ?>"><?=_getText('tech', $ship['id']) ?></a></div>
-					<div class="th col-sm-2 col-xs-2 middle"><?=\App\Helpers::pretty_number($ship['count']) ?></div>
+					<div class="th col-sm-2 col-xs-2 middle"><?=\Xnova\Helpers::pretty_number($ship['count']) ?></div>
 					<? if ($ship['id'] == 212): ?>
 						<div class="th col-sm-5 col-xs-6"></div>
 					<? else: ?>

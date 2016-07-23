@@ -1,5 +1,6 @@
 <?php
-namespace App\Controllers\Fleet;
+
+namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
@@ -7,9 +8,9 @@ namespace App\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\FleetController;
-use App\Lang;
-use App\Models\Fleet;
+use Xnova\Controllers\FleetController;
+use Friday\Core\Lang;
+use Xnova\Models\Fleet;
 
 class StageZero
 {
@@ -20,7 +21,7 @@ class StageZero
 
 		$MaxFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$MaxExpedition = $controller->user->{$controller->storage->resource[124]};
+		$MaxExpedition = $controller->user->{$controller->registry->resource[124]};
 		$ExpeditionEnCours = 0;
 		$EnvoiMaxExpedition = 0;
 
@@ -30,11 +31,11 @@ class StageZero
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
-		$MaxFlottes = 1 + $controller->user->{$controller->storage->resource[108]};
+		$MaxFlottes = 1 + $controller->user->{$controller->registry->resource[108]};
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
-		Lang::includeLang('fleet');
+		Lang::includeLang('fleet', 'xnova');
 
 		$galaxy = $controller->request->getQuery('galaxy', 'int', 0);
 		$system = $controller->request->getQuery('system', 'int', 0);
@@ -90,12 +91,12 @@ class StageZero
 
 		$parse['ships'] = [];
 
-		foreach ($controller->storage->reslist['fleet'] as $n => $i)
+		foreach ($controller->registry->reslist['fleet'] as $n => $i)
 		{
-			if ($controller->planet->{$controller->storage->resource[$i]} > 0)
+			if ($controller->planet->{$controller->registry->resource[$i]} > 0)
 			{
 				$ship = $controller->getShipInfo($i);
-				$ship['count'] = $controller->planet->{$controller->storage->resource[$i]};
+				$ship['count'] = $controller->planet->{$controller->registry->resource[$i]};
 
 				$parse['ships'][] = $ship;
 			}

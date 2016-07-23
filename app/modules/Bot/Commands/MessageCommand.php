@@ -2,7 +2,7 @@
 
 namespace Longman\TelegramBot\Commands\UserCommands;
 
-use App\Models\User;
+use Xnova\Models\User;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Conversation;
 use Longman\TelegramBot\Entities\ReplyKeyboardHide;
@@ -46,7 +46,7 @@ class MessageCommand extends UserCommand
 		$data['chat_id'] = $chat_id;
 
 		/**
-		 * @var $db \App\Database
+		 * @var $db \Xnova\Database
 		 */
 		$db = Di::getDefault()->getShared('db');
 
@@ -82,7 +82,7 @@ class MessageCommand extends UserCommand
 				}
 
 				/**
-				 * @var $user \App\Models\User
+				 * @var $user \Xnova\Models\User
 				 */
 				$user = User::findFirst(['columns' => 'id, username', 'conditions' => 'username = ?0', 'bind' => [$text]]);
 
@@ -111,7 +111,7 @@ class MessageCommand extends UserCommand
 				$this->conversation->notes['text'] = $text;
 
 				/**
-				 * @var $user \App\Models\User
+				 * @var $user \Xnova\Models\User
 				 */
 				$user = User::findFirst(['columns' => 'id', 'conditions' => 'username = ?0', 'bind' => [$this->conversation->notes['login']]]);
 

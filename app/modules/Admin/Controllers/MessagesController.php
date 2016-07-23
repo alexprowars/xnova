@@ -3,8 +3,15 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use App\Lang;
+use Friday\Core\Lang;
 
+/**
+ * @RoutePrefix("/admin/messages")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class MessagesController extends Controller
 {
 	public function initialize ()
@@ -17,7 +24,7 @@ class MessagesController extends Controller
 
 	public function indexAction ()
 	{
-		Lang::includeLang('admin/messagelist');
+		Lang::includeLang('admin/messagelist', 'xnova');
 
 		$parse = [];
 

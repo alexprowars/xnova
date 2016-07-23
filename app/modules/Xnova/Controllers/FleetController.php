@@ -8,17 +8,24 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Controllers\Fleet\Back;
-use App\Controllers\Fleet\Quick;
-use App\Controllers\Fleet\Shortcut;
-use App\Controllers\Fleet\StageOne;
-use App\Controllers\Fleet\StageThree;
-use App\Controllers\Fleet\StageTwo;
-use App\Controllers\Fleet\StageZero;
-use App\Controllers\Fleet\Verband;
-use App\Fleet;
+use Xnova\Controllers\Fleet\Back;
+use Xnova\Controllers\Fleet\Quick;
+use Xnova\Controllers\Fleet\Shortcut;
+use Xnova\Controllers\Fleet\StageOne;
+use Xnova\Controllers\Fleet\StageThree;
+use Xnova\Controllers\Fleet\StageTwo;
+use Xnova\Controllers\Fleet\StageZero;
+use Xnova\Controllers\Fleet\Verband;
+use Xnova\Fleet;
 use Xnova\Controller;
 
+/**
+ * @RoutePrefix("/fleet")
+ * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
+ * @Private
+ */
 class FleetController extends Controller
 {
 	public function initialize ()
@@ -101,13 +108,13 @@ class FleetController extends Controller
 			'id' 			=> $type,
 			'consumption' 	=> Fleet::GetShipConsumption($type, $this->user),
 			'speed' 		=> Fleet::GetFleetMaxSpeed("", $type, $this->user),
-			'stay' 			=> $this->storage->CombatCaps[$type]['stay'],
+			'stay' 			=> $this->registry->CombatCaps[$type]['stay'],
 		];
 
-		if (isset($this->user->{'fleet_' . $type}) && isset($this->storage->CombatCaps[$type]['power_consumption']) && $this->storage->CombatCaps[$type]['power_consumption'] > 0)
-			$ship['capacity'] = round($this->storage->CombatCaps[$type]['capacity'] * (1 + $this->user->{'fleet_' . $type} * ($this->storage->CombatCaps[$type]['power_consumption'] / 100)));
+		if (isset($this->user->{'fleet_' . $type}) && isset($this->registry->CombatCaps[$type]['power_consumption']) && $this->registry->CombatCaps[$type]['power_consumption'] > 0)
+			$ship['capacity'] = round($this->registry->CombatCaps[$type]['capacity'] * (1 + $this->user->{'fleet_' . $type} * ($this->registry->CombatCaps[$type]['power_consumption'] / 100)));
 		else
-			$ship['capacity'] = $this->storage->CombatCaps[$type]['capacity'];
+			$ship['capacity'] = $this->registry->CombatCaps[$type]['capacity'];
 
 		return $ship;
 	}
