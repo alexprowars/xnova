@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 
-class ModulesController extends Application
+class ModulesController extends Controller
 {
 	public function indexAction ()
 	{
@@ -80,5 +82,3 @@ class ModulesController extends Application
 		return true;
 	}
 }
-
-?>

@@ -1,10 +1,12 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 use App\Models\User;
 
-class MoneyController extends Application
+class MoneyController extends Controller
 {
 	public function initialize ()
 	{
@@ -72,5 +74,3 @@ class MoneyController extends Application
 		$this->tag->setTitle('Начисление кредитов');
 	}
 }
-
-?>

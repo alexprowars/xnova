@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Lang;
 
-class ManagerController extends Application
+class ManagerController extends Controller
 {
 	public function initialize ()
 	{
@@ -235,5 +237,3 @@ class ManagerController extends Application
 		}
 	}
 }
-
-?>

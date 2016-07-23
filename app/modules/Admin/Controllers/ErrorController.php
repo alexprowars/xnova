@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class ErrorController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class ErrorController extends Controller
 {
 	public function initialize ()
 	{
@@ -18,5 +21,3 @@ class ErrorController extends Application
 		$this->message('Запрашиваемая вами страница не найдена', _getText('sys_noaccess'));
 	}
 }
-
-?>

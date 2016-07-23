@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 
-class GroupsController extends Application
+class GroupsController extends Controller
 {
 	public function indexAction ()
 	{

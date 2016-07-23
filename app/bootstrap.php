@@ -44,5 +44,6 @@ catch(\Exception $e)
 	echo '<pre style="margin:10px 0">';
 	print_r($e->getTraceAsString());
 	echo '</pre>';
+	//print_r(get_included_files());
 	echo '</pre>';
 }

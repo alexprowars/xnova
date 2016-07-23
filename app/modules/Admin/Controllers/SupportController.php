@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Models\User;
 
-class SupportController extends Application
+class SupportController extends Controller
 {
 	public function initialize ()
 	{
@@ -168,5 +170,3 @@ class SupportController extends Application
 		$this->indexAction();
 	}
 }
-
-?>

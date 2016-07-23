@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Galaxy;
 
-class MoonsController extends Application
+class MoonsController extends Controller
 {
 	public function initialize ()
 	{
@@ -68,5 +70,3 @@ class MoonsController extends Application
 		$this->tag->setTitle('Создание луны');
 	}
 }
-
-?>

@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class EmailController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class EmailController extends Controller
 {
 	public function initialize ()
 	{
@@ -42,5 +45,3 @@ class EmailController extends Application
 		$this->tag->setTitle('Список email');
 	}
 }
-
-?>

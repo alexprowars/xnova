@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class UnbannedController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class UnbannedController extends Controller
 {
 	public function initialize ()
 	{
@@ -34,5 +37,3 @@ class UnbannedController extends Application
 		$this->tag->setTitle('Разблокировка');
 	}
 }
-
-?>

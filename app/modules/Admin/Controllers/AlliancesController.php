@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class AlliancesController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class AlliancesController extends Controller
 {
 	public function initialize ()
 	{
@@ -219,5 +222,3 @@ class AlliancesController extends Application
 		$this->tag->setTitle('Список альянсов');
 	}
 }
-
-?>

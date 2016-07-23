@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class ServerController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class ServerController extends Controller
 {
 	public function initialize ()
 	{
@@ -16,5 +19,3 @@ class ServerController extends Application
 		$this->tag->setTitle('Серверное окружение');
 	}
 }
-
-?>

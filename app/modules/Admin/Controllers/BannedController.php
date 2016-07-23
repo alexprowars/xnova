@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class BannedController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class BannedController extends Controller
 {
 	public function indexAction ()
 	{
@@ -59,5 +62,3 @@ class BannedController extends Application
 		$this->tag->setTitle(_getText('adm_bn_ttle'));
 	}
 }
-
-?>

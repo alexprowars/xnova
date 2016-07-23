@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Lang;
 
-class MessagesController extends Application
+class MessagesController extends Controller
 {
 	public function initialize ()
 	{
@@ -131,5 +133,3 @@ class MessagesController extends Application
 		$this->tag->setTitle(_getText('mlst_title'));
 	}
 }
-
-?>

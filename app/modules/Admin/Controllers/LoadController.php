@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class LoadController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class LoadController extends Controller
 {
 	public function initialize ()
 	{
@@ -31,5 +34,3 @@ class LoadController extends Application
 		$this->tag->setTitle("Загрузка сервера");
 	}
 }
-
-?>

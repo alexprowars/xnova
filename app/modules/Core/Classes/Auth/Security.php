@@ -35,7 +35,7 @@ class Security extends Component
 
 		$annotations = $this->annotations->get($controllerName);
 
-		if (($annotations->getClassAnnotations()->has('Private') && $role == 'User') || !$annotations->getClassAnnotations()->has('Private'))
+		if (!is_object($annotations->getClassAnnotations()) || ($annotations->getClassAnnotations()->has('Private') && $role == 'User') || !$annotations->getClassAnnotations()->has('Private'))
 			return true;
 		else
 		{

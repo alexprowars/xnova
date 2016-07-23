@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class IndexController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class IndexController extends Controller
 {
 	public function initialize ()
 	{
@@ -13,5 +16,3 @@ class IndexController extends Application
 
 	}
 }
-
-?>

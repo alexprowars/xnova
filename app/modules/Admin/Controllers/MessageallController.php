@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Models\User;
 
-class MessageAllController extends Application
+class MessageAllController extends Controller
 {
 	public function initialize ()
 	{
@@ -47,5 +49,3 @@ class MessageAllController extends Application
 		$this->tag->setTitle('Рассылка');
 	}
 }
-
-?>

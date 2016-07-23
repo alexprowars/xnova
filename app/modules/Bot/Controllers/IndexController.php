@@ -1,11 +1,12 @@
 <?php
 
-namespace Xnova\Bot\Controllers;
+namespace Bot\Controllers;
 
+use Bot\Controller;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Telegram;
 
-class IndexController extends Application
+class IndexController extends Controller
 {
 	public function indexAction()
 	{

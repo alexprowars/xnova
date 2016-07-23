@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 
-class OverviewController extends Application
+class OverviewController extends Controller
 {
 	public function initialize ()
 	{
@@ -61,5 +63,3 @@ class OverviewController extends Application
 		$this->tag->setTitle('Активность на сервере');
 	}
 }
-
-?>

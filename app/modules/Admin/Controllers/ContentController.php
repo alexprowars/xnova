@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class ContentController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class ContentController extends Controller
 {
 	public function initialize ()
 	{
@@ -37,5 +40,3 @@ class ContentController extends Application
 		$this->view->setVar('info', $info);
 	}
 }
-
-?>

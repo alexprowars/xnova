@@ -1,10 +1,12 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Galaxy;
 use App\Helpers;
 
-class PlanetsController extends Application
+class PlanetsController extends Controller
 {
 	public function initialize ()
 	{
@@ -67,5 +69,3 @@ class PlanetsController extends Application
 		$this->tag->setTitle('Создание планеты');
 	}
 }
-
-?>

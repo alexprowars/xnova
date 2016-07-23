@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Lang;
 
-class SettingsController extends Application
+class SettingsController extends Controller
 {
 	public function initialize ()
 	{
@@ -43,5 +45,3 @@ class SettingsController extends Application
 		}
 	}
 }
-
-?>

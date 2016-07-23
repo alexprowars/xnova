@@ -1,4 +1,4 @@
-@import "../../../../../../../public/assets/sass/bootstrap/mixins/vendor-prefixes";
+@import "../../../../../../../public/assets/src/admin/bootstrap/mixins/vendor-prefixes";
 
 @mixin border-radius($radius, $important: '') {
   border-radius: $radius#{$important};

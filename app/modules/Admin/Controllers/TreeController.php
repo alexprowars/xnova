@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class TreeController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class TreeController extends Controller
 {
 	public function indexAction ()
 	{
@@ -30,5 +33,3 @@ class TreeController extends Application
 		return $this->response->setJsonContent($result);
 	}
 }
-
-?>

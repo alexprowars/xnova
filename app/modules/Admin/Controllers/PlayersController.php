@@ -1,10 +1,12 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 use App\Lang;
 
-class PlayersController extends Application
+class PlayersController extends Controller
 {
 	public function initialize ()
 	{
@@ -88,5 +90,3 @@ class PlayersController extends Application
 		$this->tag->setTitle(_getText('adm_ul_title'));
 	}
 }
-
-?>

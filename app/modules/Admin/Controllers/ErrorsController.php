@@ -1,7 +1,10 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
-class ErrorsController extends Application
+namespace Admin\Controllers;
+
+use Admin\Controller;
+
+class ErrorsController extends Controller
 {
 	public function initialize ()
 	{
@@ -48,5 +51,3 @@ class ErrorsController extends Application
 		$this->indexAction();
 	}
 }
-
-?>

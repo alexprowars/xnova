@@ -1,11 +1,13 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Fleet;
 use App\Lang;
 use App\Models\Fleet as FleetModel;
 
-class FlyFleetsController extends Application
+class FlyFleetsController extends Controller
 {
 	public function initialize ()
 	{
@@ -50,5 +52,3 @@ class FlyFleetsController extends Application
 		$this->tag->setTitle(_getText('flt_title'));
 	}
 }
-
-?>

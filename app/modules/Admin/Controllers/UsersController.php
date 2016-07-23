@@ -1,9 +1,11 @@
 <?php
-namespace Xnova\Admin\Controllers;
 
+namespace Admin\Controllers;
+
+use Admin\Controller;
 use App\Helpers;
 
-class UsersController extends Application
+class UsersController extends Controller
 {
 	public function initialize ()
 	{
@@ -82,5 +84,3 @@ class UsersController extends Application
 		$this->view->setVar('error', $error);
 	}
 }
-
-?>
