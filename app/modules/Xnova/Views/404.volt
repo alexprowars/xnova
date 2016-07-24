@@ -7,21 +7,21 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<link rel="image_src" href="//<?=$_SERVER['HTTP_HOST'] ?><?=$this->url->getBaseUri() ?>assets/images/logo.jpg" />
-	<link rel="apple-touch-icon" href="//<?=$_SERVER['HTTP_HOST'] ?><?=$this->url->getBaseUri() ?>assets/images/apple-touch-icon.png"/>
+	<link rel="image_src" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}" />
+	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}"/>
 
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
 </head>
-<body class="<? if ($this->config->view->get('socialIframeView', 0) == 1): ?>iframe<? else: ?>window<? endif; ?>">
+<body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<div id="box" class="set_error">
-		<? if (isset($leftMenu) && $leftMenu == true): ?>
-			<? $this->partial('shared/header'); ?>
-		<? endif; ?>
+		{% if leftMenu is defined and leftMenu == true %}
+			{{ partial('shared/header') }}
+		{% endif %}
 		<div class="game_content">
-			<? if (isset($leftMenu) && $leftMenu == true): ?>
-				<? $this->partial('shared/menu'); ?>
-			<? endif; ?>
+			{% if leftMenu is defined and leftMenu == true %}
+				{{ partial('shared/menu') }}
+			{% endif %}
 			<div id="gamediv" class="content container-fluid">
 				<div class="row">
 
@@ -31,14 +31,14 @@
 						<canvas id="gameCanvas"></canvas>
 					</div>
 
-					<script src="<?=$this->url->get('assets/404/js/spaceinvaders.js') ?>"></script>
+					<script src="{{ static_url('assets/404/js/spaceinvaders.js') }}"></script>
 					<script>
 						//  Setup the canvas.
 						var canvas = document.getElementById("gameCanvas");
 						canvas.width = 600;
 						canvas.height = 500;
 
-						var baseUri = '<?=$this->url->getBaseUri() ?>';
+						var baseUri = '{{ url.getBaseUri() }}';
 
 						//  Create the game.
 						var game = new Game();

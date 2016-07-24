@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('buddy/new/'.$parse["id"].'/') ?>" method="post">
+<form action="{{ url('buddy/new/'.$parse["id"].'/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Предложение подружиться</td>

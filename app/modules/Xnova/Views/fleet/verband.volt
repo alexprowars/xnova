@@ -44,7 +44,7 @@
 
 <? if ($parse['group'] == 0): ?>
 	<div class="separator"></div>
-	<form action="<?=$this->url->get('fleet/verband/') ?>" method="POST">
+	<form action="{{ url('fleet/verband/') }}" method="POST">
 		<input type="hidden" name="fleetid" value="<?=$parse['fleetid'] ?>" />
 		<input type="hidden" name="action" value="addaks" />
 		<table class="table">
@@ -68,7 +68,7 @@
 		</tr>
 		<tr>
 			<th colspan="2">
-				<form action="<?=$this->url->get('fleet/verband/') ?>" method="POST">
+				<form action="{{ url('fleet/verband/') }}" method="POST">
 					<input type="hidden" name="fleetid" value="<?=$parse['fleetid'] ?>"/>
 					<input type="hidden" name="action" value="changename"/>
 					<input type="text" name="groupname" value="<?=$parse['aks']['name'] ?>" size=50 title="">
@@ -97,7 +97,7 @@
 							</select>
 						</th>
 						<th>
-							<form action="<?=$this->url->get('fleet/verband/') ?>" method="POST">
+							<form action="{{ url('fleet/verband/') }}" method="POST">
 								<input type="hidden" name="fleetid" value="<?=$parse['fleetid'] ?>" />
 								<input type="hidden" name="action" value="adduser" />
 								<? if (count($parse['friends'])): ?>

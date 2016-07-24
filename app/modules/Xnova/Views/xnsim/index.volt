@@ -134,7 +134,7 @@
 	}
 </script>
 
-<form method="get" action="<?=$this->url->get('xnsim/report/') ?>" id="result" target="_blank">
+<form method="get" action="{{ url('xnsim/report/') }}" id="result" target="_blank">
 	<input type="hidden" name="r" value="">
 </form>
 

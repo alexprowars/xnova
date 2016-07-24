@@ -21,7 +21,7 @@
 				metal.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
+	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="metal">
 		<table width="100%">
 			<tr>
@@ -76,7 +76,7 @@
 				crystal.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
+	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="cristal">
 		<table width="100%">
 			<tr>
@@ -131,7 +131,7 @@
 				deuterium.html("<?=_getText('mod_ma_nbre') ?>");
 		}
 	</script>
-	<form id="merchant" action="<?=$this->url->get('merchant/') ?>" method="post">
+	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="deuterium">
 		<table width="100%">
 			<tr>
@@ -167,7 +167,7 @@
 	<div class="block start">
 		<div class="title">Обмен сырья</div>
 		<div class="content">
-			<form action="<?=$this->url->get('merchant/') ?>" method="post">
+			<form action="{{ url('merchant/') }}" method="post">
 				<input type="hidden" name="action" value="2">
 				<table class="table noborder">
 					<tr>

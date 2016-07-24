@@ -11,7 +11,7 @@
 		<? foreach ($parse['ref'] AS $list): ?>
 			<tr>
 				<th><? if ($this->game->datezone("d", $list['create_time']) >= 15)
-					echo '+&nbsp;'; ?><a href="<?=$this->url->get('players/'.$list['id'].'/') ?>"><?=$list['username'] ?></a></th>
+					echo '+&nbsp;'; ?><a href="{{ url('players/'.$list['id'].'/') }}"><?=$list['username'] ?></a></th>
 				<th><?=$this->game->datezone("d.m.Y H:i", $list['create_time']) ?></th>
 				<th>П:<?=$list['lvl_minier'] ?>, В:<?=$list['lvl_raid'] ?></th>
 			</tr>
@@ -28,7 +28,7 @@
 	<table class="table">
 		<tr>
 			<th>Вы были привлечены игроком:</th>
-			<th><a href="<?=$this->url->get('players/'.$parse['you']['id'].'/') ?>"><?=$parse['you']['username'] ?></a></th>
+			<th><a href="{{ url('players/'.$parse['you']['id'].'/') }}"><?=$parse['you']['username'] ?></a></th>
 		</tr>
 	</table>
 <? endif; ?>

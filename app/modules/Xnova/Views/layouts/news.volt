@@ -1,4 +1,4 @@
-<div class="alert alert-success">Последний коммит: <a href="<?=$this->url->get('git/') ?>"><?=$lastCommit ?></a></div>
+<div class="alert alert-success">Последний коммит: <a href="{{ url('git/') }}"><?=$lastCommit ?></a></div>
 
 <table class="table">
 	<tr>

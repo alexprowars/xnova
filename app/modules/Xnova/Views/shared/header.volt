@@ -36,23 +36,23 @@
 <header class="game_menu">
 	<div class="hidden-sm-up text-xs-center bar">
 		<? if (isset($tutorial) && $tutorial < 10): ?>
-			<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
+			<a class="m1 tooltip" href="{{ url("tutorial/") }}" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 		<? endif; ?>
-		<a class="m1 tooltip" href="<?=$this->url->get("chat/") ?>" data-content="Чат"><span class="sprite ico_chat"></span></a>
-		<a class="m1 tooltip" href="<?=$this->url->get("messages/") ?>" data-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
+		<a class="m1 tooltip" href="{{ url("chat/") }}" data-content="Чат"><span class="sprite ico_chat"></span></a>
+		<a class="m1 tooltip" href="{{ url("messages/") }}" data-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
 		<? if ($messages_ally != ''): ?>
-			<a class="m1 tooltip" href="<?=$this->url->get("alliance/chat/") ?>" data-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
+			<a class="m1 tooltip" href="{{ url("alliance/chat/") }}" data-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
 		<? endif; ?>
 	</div>
 	<div class="bar hidden-xs-down">
 		<div class="message_list">
 			<? if (isset($tutorial) && $tutorial < 10): ?>
-				<a class="m1 tooltip" href="<?=$this->url->get("tutorial/") ?>" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
+				<a class="m1 tooltip" href="{{ url("tutorial/") }}" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 			<? endif; ?>
-			<a class="m1 tooltip" href="<?=$this->url->get("chat/") ?>" data-content="Чат"><span class="sprite ico_chat"></span></a>
-			<a class="m1 tooltip" href="<?=$this->url->get("messages/") ?>" data-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
+			<a class="m1 tooltip" href="{{ url("chat/") }}" data-content="Чат"><span class="sprite ico_chat"></span></a>
+			<a class="m1 tooltip" href="{{ url("messages/") }}" data-content="Сообщения"><span class="sprite ico_mail"></span> <b><?=$messages ?></b></a>
 			<? if ($messages_ally != ''): ?>
-				<a class="m1 tooltip" href="<?=$this->url->get('alliance/chat/') ?>" data-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
+				<a class="m1 tooltip" href="{{ url('alliance/chat/') }}" data-content="Альянс"><span class="sprite ico_alliance"></span> <b><?=$messages_ally ?></b></a>
 			<? endif; ?>
 		</div>
 		<div class="top_menu">
@@ -62,19 +62,19 @@
 			<? if (!$this->config->view->get('socialIframeView', 0)): ?>
 				<a href="http://xnova.su/" target="_blank" class="tooltip m1" data-content="Вселенные"><span class="sprite ico_space"></span></a>
 			<? endif; ?>
-			<a href="<?=$this->url->get("stat/") ?>" class="tooltip m1" data-content="Статистика"><span class="sprite ico_stats"></span></a>
-			<a href="<?=$this->url->get("tech/") ?>" class="tooltip m1" data-content="Технологии"><span class="sprite ico_tech"></span></a>
-			<a href="<?=$this->url->get("sim/") ?>" class="tooltip m1" data-content="Симулятор"><span class="sprite ico_sim"></span></a>
-			<a href="<?=$this->url->get("search/") ?>" class="tooltip m1" data-content="Поиск"><span class="sprite ico_search"></span></a>
+			<a href="{{ url("stat/") }}" class="tooltip m1" data-content="Статистика"><span class="sprite ico_stats"></span></a>
+			<a href="{{ url("tech/") }}" class="tooltip m1" data-content="Технологии"><span class="sprite ico_tech"></span></a>
+			<a href="{{ url("sim/") }}" class="tooltip m1" data-content="Симулятор"><span class="sprite ico_sim"></span></a>
+			<a href="{{ url("search/") }}" class="tooltip m1" data-content="Поиск"><span class="sprite ico_search"></span></a>
 			<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-				<a href="<?=$this->url->get("support/") ?>" class="tooltip m1" data-content="Техподдержка"><span class="sprite ico_support"></span></a>
+				<a href="{{ url("support/") }}" class="tooltip m1" data-content="Техподдержка"><span class="sprite ico_support"></span></a>
 			<? endif; ?>
 			<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
 				<a href="<?=$this->config->game->get('forum_url', '') ?>" target="_blank" class="tooltip m1" data-content="Форум"><span class="sprite ico_forum"></span></a>
 			<? endif; ?>
-			<a href="<?=$this->url->get("options/") ?>" class="tooltip m1" data-content="Настройки"><span class="sprite ico_settings"></span></a>
+			<a href="{{ url("options/") }}" class="tooltip m1" data-content="Настройки"><span class="sprite ico_settings"></span></a>
 			<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-				<a href="<?=$this->url->get("logout/") ?>" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>
+				<a href="{{ url("logout/") }}" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>
 			<? endif; ?>
 			<? if ($this->config->view->get('socialIframeView', 0) && $_SERVER['SERVER_NAME'] == 'ok1.xnova.su'): ?>
 				<? if (!$this->cookies->has($this->config->cookie->prefix.'_full') || $this->cookies->get($this->config->cookie->prefix.'_full') == 'N'): ?>
@@ -85,12 +85,12 @@
 	</div>
 </header>
 <div class="icon-panel hidden-sm-up">
-	<a href="<?=$this->url->get("stat/") ?>" class="sprite ico_stats"></a>
-	<a href="<?=$this->url->get("tech/") ?>" class="sprite ico_tech"></a>
-	<a href="<?=$this->url->get("sim/") ?>" class="sprite ico_sim"></a>
-	<a href="<?=$this->url->get("search/") ?>" class="sprite ico_search"></a>
-	<a href="<?=$this->url->get("support/") ?>" class="sprite ico_support"></a>
+	<a href="{{ url("stat/") }}" class="sprite ico_stats"></a>
+	<a href="{{ url("tech/") }}" class="sprite ico_tech"></a>
+	<a href="{{ url("sim/") }}" class="sprite ico_sim"></a>
+	<a href="{{ url("search/") }}" class="sprite ico_search"></a>
+	<a href="{{ url("support/") }}" class="sprite ico_support"></a>
 	<a href="<?=$this->config->game->get('forum_url', '') ?>" target="_blank" class="sprite ico_forum"></a>
-	<a href="<?=$this->url->get("options/") ?>" class="sprite ico_settings"></a>
-	<a href="<?=$this->url->get("logout/") ?>" class="sprite ico_exit"  data-link="Y"></a>
+	<a href="{{ url("options/") }}" class="sprite ico_settings"></a>
+	<a href="{{ url("logout/") }}" class="sprite ico_exit"  data-link="Y"></a>
 </div>

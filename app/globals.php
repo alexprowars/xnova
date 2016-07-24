@@ -4,6 +4,8 @@ use Phalcon\DiInterface;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Loader;
 use Friday\Core\Auth\Auth;
+use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 use Xnova\Models\User;
 
 /**
@@ -47,6 +49,23 @@ $eventsManager->attach('core:afterAuthCheck', function ($event, Auth $auth, User
 			$user->banned = 0;
 		}
 	}
+});
+
+/** @noinspection PhpUnusedParameterInspection */
+$eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
+{
+	$compiler = $volt->getCompiler();
+
+	$compiler->addFunction('allowMobile', function($arguments)
+	{
+		return 'class_exists("\Xnova\Helpers") && \Xnova\Helpers::allowMobileVersion(' . $arguments . ')';
+	});
+
+	$compiler->addFunction('replace', 'str_replace');
+	$compiler->addFunction('pretty_number', function($arguments)
+	{
+		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
+	});
 });
 
 define('VERSION', '3.0.3');

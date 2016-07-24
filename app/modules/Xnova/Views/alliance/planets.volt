@@ -7,7 +7,7 @@
 			<th><?=$p['name'] ?> <?=\Xnova\Helpers::BuildPlanetAdressLink($p) ?> </th>
 			<th width="200">
 				<? if ($p['id_ally'] == 0): ?>
-					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='<?=$this->url->get('alliance/admin/edit/planets/ally/'.$p['id'].'') ?>' : false">
+					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='{{ url('alliance/admin/edit/planets/ally/'.$p['id'].'') }}' : false">
 				<? else: ?>
 					преобразована
 				<? endif; ?>
@@ -29,7 +29,7 @@
 		</th>
 	</tr>
 	<tr>
-		<td class="c" colspan="2"><a href="<?=$this->url->get('alliance/admin/edit/ally/') ?>">вернутся к обзору</a></td>
+		<td class="c" colspan="2"><a href="{{ url('alliance/admin/edit/ally/') }}">вернутся к обзору</a></td>
 	</tr>
 </table>
 

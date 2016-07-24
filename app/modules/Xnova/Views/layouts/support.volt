@@ -27,7 +27,7 @@
 	<div class="separator"></div>
 	<? foreach ($list AS $id => $item): ?>
 		<div id="ticket_<?=$id ?>" style="display:none;" class="tickets">
-			<form action="<?=$this->url->get('support/answer/'.$id.'/') ?>" method="POST">
+			<form action="{{ url('support/answer/'.$id.'/') }}" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>
@@ -63,7 +63,7 @@
 		</table>
 	</div>
 	<div id="new" style="display:none;">
-		<form action="<?=$this->url->get('support/new/') ?>" method="POST">
+		<form action="{{ url('support/new/') }}" method="POST">
 			<table class="table">
 				<tr>
 					<th colspan="2" width="50%">Новый запрос</th>

@@ -7,11 +7,11 @@
 				<div class="col-md-6 col-xs-12">
 					<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 						<? if (!$build['access']): ?>
-							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)"><span>недоступно</span></div>
+							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)"><span>недоступно</span></div>
 						<? endif; ?>
 
 						<div class="img">
-							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>', 600)">
+							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)">
 								<img src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 							</a>
 
@@ -20,7 +20,7 @@
 							</div>
 						</div>
 						<div class="title">
-							<a href="<?=$this->url->get('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') ?>"><?=_getText('tech', $build['i']) ?></a>
+							<a href="{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}"><?=_getText('tech', $build['i']) ?></a>
 						</div>
 						<div class="actions">
 							Уровень: <?=$build['tech_level'] ?><br>
@@ -46,7 +46,7 @@
 											var h = 0;
 
 											if (s < 0)
-												brp.html('<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/?chpl='.$build['tech_link']['tech_home'].'') ?>\')">завершено. продолжить...</a>');
+												brp.html('<a href="javascript:;" onclick="load(\'{{ url('buildings/'.$parse['mode'].'/?chpl='.$build['tech_link']['tech_home'].'') }}\')">завершено. продолжить...</a>');
 											else
 											{
 												if (s > 59)
@@ -64,7 +64,7 @@
 												if (m < 10)
 													m = "0" + m;
 
-												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'<?=$this->url->get('buildings/'.$parse['mode'].'/cmd/cancel/tech/'.$build['tech_link']['tech_id'].'/') ?>\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
+												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'{{ url('buildings/'.$parse['mode'].'/cmd/cancel/tech/'.$build['tech_link']['tech_id'].'/') }}\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
 
 												setTimeout(t, 1000);
 											}

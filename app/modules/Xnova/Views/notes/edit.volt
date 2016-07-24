@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('notes/edit/'.$parse['id'].'/') ?>" method="post">
+<form action="{{ url('notes/edit/'.$parse['id'].'/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Просмотр заметки</td>
@@ -53,4 +53,4 @@
 		</table>
 	</div>
 </form>
-<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="<?=$this->url->get('notes/') ?>">Назад</a></span>
+<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="{{ url('notes/') }}">Назад</a></span>

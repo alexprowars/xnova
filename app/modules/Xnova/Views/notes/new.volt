@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('notes/new/') ?>" method="post">
+<form action="{{ url('notes/new/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2"><?=_getText('Createnote') ?></td>
@@ -40,4 +40,4 @@
 		</table>
 	</div>
 </form>
-<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="<?=$this->url->get('notes/') ?>">Назад</a></span>
+<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="{{ url('notes/') }}">Назад</a></span>

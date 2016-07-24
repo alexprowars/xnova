@@ -3,10 +3,10 @@
 		<td class="c" colspan="6">Список друзей</td>
 	</tr>
 	<tr>
-		<th colspan="6"><a href="<?=$this->url->get('buddy/requests/') ?>">Запросы</a></th>
+		<th colspan="6"><a href="{{ url('buddy/requests/') }}">Запросы</a></th>
 	</tr>
 	<tr>
-		<th colspan="6"><a href="<?=$this->url->get('buddy/requests/my/') ?>">Мои запросы</a></th>
+		<th colspan="6"><a href="{{ url('buddy/requests/my/') }}">Мои запросы</a></th>
 	</tr>
 	<tr>
 		<td class="c">&nbsp;</td>
@@ -21,12 +21,12 @@
 		<? foreach ($parse['list'] AS $id => $list): ?>
 			<tr>
 				<th width="20"><?=($id + 1) ?></th>
-				<th><a href="<?=$this->url->get('messages/write/'.$list['userid'].'') ?>"><?=$list['username'] ?></a></th>
+				<th><a href="{{ url('messages/write/'.$list['userid'].'') }}"><?=$list['username'] ?></a></th>
 				<th><?=$list['ally'] ?></th>
-				<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
+				<th><a href="{{ url('galaxy/'.$list['g'].'/'.$list['s'].'/') }}"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 				<th><?=$list['online'] ?></th>
 				<th>
-					<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Удалить</a>
+					<a href="{{ url('buddy/delete/'.$list['id'].'/') }}">Удалить</a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -58,13 +58,13 @@
 						  <td style="text-align:center;">
 							  <?=$okArray[$data['ok_uid']]['name'] ?>
 							  <? if ($okArray[$data['ok_uid']]['name'] != $data['username']): ?><br>[<?=$data['username'] ?>]<? endif; ?>
-							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$data['id'].'/') ?>', 680)" data-link="Y" title="Сообщение"><span class='sprite skin_m'></span></a>
+							  <a href="javascript:;" onclick="showWindow('<?=$data['username'] ?>: отправить сообщение', '{{ url('messages/write/'.$data['id'].'/') }}', 680)" data-link="Y" title="Сообщение"><span class='sprite skin_m'></span></a>
 						  </td>
 						</tr>
 						<tr>
 							<td>
 								<?=$data['planet_name'] ?><br>
-								<a href="<?=$this->url->get('galaxy/'.$data['galaxy'].'/'.$data['system'].'/') ?>">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
+								<a href="{{ url('galaxy/'.$data['galaxy'].'/'.$data['system'].'/') }}">[<?=$data['galaxy'] ?>:<?=$data['system'] ?>:<?=$data['planet'] ?>]</a>
 							</td>
 					  </tr>
 					</table>

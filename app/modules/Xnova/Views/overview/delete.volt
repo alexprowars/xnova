@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get("overview/delete/") ?>" method=POST>
+<form action="{{ url("overview/delete/") }}" method=POST>
 	<input type="hidden" name="password" value="<?=md5($parse['number_check']) ?>">
 	<table class="table">
 		<tr>

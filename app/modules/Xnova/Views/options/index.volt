@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('options/change/') ?>" method="post">
+<form action="{{ url('options/change/') }}" method="post">
 	<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
 		<div class="head">
 			<ul class="ui-tabs-nav ui-widget-header">
@@ -45,7 +45,7 @@
 							<? if (!is_email($parse['opt_mail_data'])): ?>
 								<input type="text" name="email" value="" title="">
 							<? else: ?>
-								<?=$parse['opt_mail_data'] ?> <a href="<?=$this->url->get('options/email/') ?>" class="button">сменить</a>
+								<?=$parse['opt_mail_data'] ?> <a href="{{ url('options/email/') }}" class="button">сменить</a>
 							<? endif; ?>
 						</th>
 					</tr>
@@ -166,7 +166,7 @@
 				</tr>
 				<tr>
 					<th>Аватар</th>
-					<th><?=$parse['avatar'] ?> <a href="<?=$this->url->get('avatar/') ?>" class="button">Выбрать аватар</a></th>
+					<th><?=$parse['avatar'] ?> <a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
 				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>

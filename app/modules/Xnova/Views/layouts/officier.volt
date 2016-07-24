@@ -8,7 +8,7 @@
 				<img src="<?=$this->url->getBaseUri() ?>assets/images/officiers/bigcredits.jpg" alt="">
 			</div>
 			<div class="col-xs-12 col-sm-7 text-xs-left">
-				Кредиты (<a href="<?=$this->url->get('credits/') ?>"><span class="positive">Получить</span></a>)<br><br>Инженеры берут за свою работу только межгалактичесие кредиты. В зависимости от суммы контракта работают на вас в течении всего времени найма.
+				Кредиты (<a href="{{ url('credits/') }}"><span class="positive">Получить</span></a>)<br><br>Инженеры берут за свою работу только межгалактичесие кредиты. В зависимости от суммы контракта работают на вас в течении всего времени найма.
 				<table class="powers">
 					<tr>
 						<td><img src="<?=$this->url->getBaseUri() ?>assets/images/officiers/smalcredts.gif"></td>
@@ -17,7 +17,7 @@
 				</table>
 			</div>
 			<div class="col-sm-3 hidden-xs-down text-xs-center">
-				<a href="<?=$this->url->get('credits/') ?>" class="positive">Получить кредиты</a>
+				<a href="{{ url('credits/') }}" class="positive">Получить кредиты</a>
 			</div>
 		</div>
 		<? foreach ($parse['list'] AS $list): ?>
@@ -43,7 +43,7 @@
 					<img src="<?=$this->url->getBaseUri() ?>assets/images/officiers/<?=$list['off_id'] ?>.jpg" align="top" alt=""/>
 				</div>
 				<div class="col-xs-6 col-sm-3 text-xs-center">
-					<form method="POST" action="<?=$this->url->get('officier/') ?>"><?=$list['off_link'] ?></form>
+					<form method="POST" action="{{ url('officier/') }}"><?=$list['off_link'] ?></form>
 				</div>
 			</div>
 		<? endforeach; ?>

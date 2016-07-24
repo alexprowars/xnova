@@ -39,25 +39,25 @@
 				<th>
 					<a class="tooltip" data-content='<? foreach ($f['fleet_array'] as $fleetId => $fleetData): ?><?=_getText('tech', $fleetId) ?>: <?=$fleetData['cnt'] ?><br><? endforeach; ?>'><?=\Xnova\Helpers::pretty_number($f['fleet_count']) ?></a>
 				</th>
-				<th><a href="<?=$this->url->get('galaxy/'.$f['start_galaxy'].'/'.$f['start_system'].'/') ?>">[<?=$f['start_galaxy'] ?>:<?=$f['start_system'] ?>:<?=$f['start_planet'] ?>]</a></th>
+				<th><a href="{{ url('galaxy/'.$f['start_galaxy'].'/'.$f['start_system'].'/') }}">[<?=$f['start_galaxy'] ?>:<?=$f['start_system'] ?>:<?=$f['start_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['start_time']) ?><br><?=$this->game->datezone("H:i:s", $f['start_time']) ?></th>
-				<th><a href="<?=$this->url->get('galaxy/'.$f['end_galaxy'].'/'.$f['end_system'].'/') ?>">[<?=$f['end_galaxy'] ?>:<?=$f['end_system'] ?>:<?=$f['end_planet'] ?>]</a></th>
+				<th><a href="{{ url('galaxy/'.$f['end_galaxy'].'/'.$f['end_system'].'/') }}">[<?=$f['end_galaxy'] ?>:<?=$f['end_system'] ?>:<?=$f['end_planet'] ?>]</a></th>
 				<th><?=$this->game->datezone("d.m.y", $f['end_time']) ?><br><?=$this->game->datezone("H:i:s", $f['end_time']) ?></th>
 				<th><font color="lime"><?=($f['end_time'] > time() ? \Xnova\Helpers::pretty_time(floor($f['end_time'] + 1 - time())) : 'обработка...') ?></font></th>
 				<th>
 					<? if ($f['mess'] == 0 && $f['mission'] != 20 && $f['target_owner'] != 1): ?>
-						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
+						<form action="{{ url('fleet/back/') }}" method="post">
 							<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 							<input value=" <?=_getText('fl_back_to_ttl') ?> " type="submit" name="send">
 						</form>
 						<? if ($f['mission'] == 1): ?>
-							<form action="<?=$this->url->get('fleet/verband/') ?>" method="post">
+							<form action="{{ url('fleet/verband/') }}" method="post">
 								<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 								<input value=" <?=_getText('fl_associate') ?> " type="submit">
 							</form>
 						<? endif; ?>
 					<? elseif ($f['mess'] == 3 && $f['mission'] != 15): ?>
-						<form action="<?=$this->url->get('fleet/back/') ?>" method="post">
+						<form action="{{ url('fleet/back/') }}" method="post">
 							<input name="fleetid" value="<?=$f['id'] ?>" type="hidden">
 							<input value=" Отозвать " type="submit" name="send">
 						</form>
@@ -86,7 +86,7 @@
 	</table>
 	</div>
 	<br>
-	<form action="<?=$this->url->get('fleet/stageone/') ?>" method="post">
+	<form action="{{ url('fleet/stageone/') }}" method="post">
 		<div class="table fleet_ships container">
 			<div class="row">
 				<div class="col-xs-12 c">

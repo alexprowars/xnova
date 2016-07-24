@@ -8,7 +8,7 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
-					<a href="<?=$this->url->get('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') ?>"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -27,8 +27,8 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
-					<a href="<?=$this->url->get('alliance/diplomacy/edit/suc/id/'.$diplo['id'].'/') ?>"><img src="<?=$this->url->getBaseUri() ?>assets/images/appwiz.gif" alt="Подтвердить"></a>
-					<a href="<?=$this->url->get('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') ?>"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/suc/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/appwiz.gif" alt="Подтвердить"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -47,7 +47,7 @@
 				<th><?=$diplo['name'] ?></th>
 				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
 				<th>
-					<a href="<?=$this->url->get('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') ?>"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
 		<? endforeach; ?>
@@ -56,7 +56,7 @@
 	<? endif; ?>
 </table>
 <div class="separator"></div>
-<form action="<?=$this->url->get('alliance/diplomacy/edit/add/') ?>" method="post">
+<form action="{{ url('alliance/diplomacy/edit/add/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Добавить альянс в список</td>
@@ -80,7 +80,7 @@
 		</tr>
 
 		<tr>
-			<td class="c"><a href="<?=$this->url->get('alliance/') ?>">назад</a></td>
+			<td class="c"><a href="{{ url('alliance/') }}">назад</a></td>
 			<td class="c">
 				<input type="submit" value="Добавить">
 			</td>

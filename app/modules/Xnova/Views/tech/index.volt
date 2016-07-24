@@ -15,10 +15,10 @@
 			<? else: ?>
 				<div class="row">
 					<div class="col-sm-5 col-xs-6 title">
-						<a href="<?=$this->url->get('info/'.$list['tt_info'].'/') ?>"><?=$list['tt_name'] ?></a>
+						<a href="{{ url('info/'.$list['tt_info'].'/') }}"><?=$list['tt_name'] ?></a>
 
 						<? if ($list['required_list'] != ''): ?>
-							<div class="pull-xs-right hidden-xs-down"><a href="<?=$this->url->get('tech/'.$list['tt_info'].'/') ?>">[i]</a></div>
+							<div class="pull-xs-right hidden-xs-down"><a href="{{ url('tech/'.$list['tt_info'].'/') }}">[i]</a></div>
 						<? endif; ?>
 					</div><div class="col-sm-7 col-xs-6">
 						<?=$list['required_list'] ?>

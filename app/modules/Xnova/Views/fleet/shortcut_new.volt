@@ -1,4 +1,4 @@
-<form method="POST" action="<?=$this->url->get('fleet/shortcut/add/new/') ?>">
+<form method="POST" action="{{ url('fleet/shortcut/add/new/') }}">
 	<table class="table">
 		<tr>
 			<td colspan="2" class="c">Имя [Галактика:Система:Планета]</td>
@@ -21,7 +21,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td colspan="2" class="c"><a href="<?=$this->url->get('fleet/shortcut/') ?>">Назад</a></td>
+			<td colspan="2" class="c"><a href="{{ url('fleet/shortcut/') }}">Назад</a></td>
 		</tr>
 	</table>
 </form>

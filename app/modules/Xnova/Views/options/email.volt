@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('options/email/') ?>" method="post">
+<form action="{{ url('options/email/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Смена адреса электронной почты</td>

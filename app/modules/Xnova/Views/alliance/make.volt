@@ -1,7 +1,7 @@
 <? if (isset($html)): ?>
 	<?=$html ?>
 <? else: ?>
-	<form action="<?=$this->url->get('alliance/make/yes/1/') ?>" method="POST">
+	<form action="{{ url('alliance/make/yes/1/') }}" method="POST">
 		<table class="table">
 			<tr>
 				<td class="c" colspan="2">Создать альянс</td>

@@ -1,10 +1,10 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
-<form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
+<form action="{{ url('alliance/chat/') }}" method="post">
 	<div class="table">
 		<div class="row">
-			<div class='col-xs-12 c'><a href="<?=$this->url->get('alliance/chat/') ?>">Обновить</a></div>
+			<div class='col-xs-12 c'><a href="{{ url('alliance/chat/') }}">Обновить</a></div>
 		</div>
 
 		<? if (count($parse['messages']) > 0): ?>
@@ -14,7 +14,7 @@
 						<table width="100%">
 							<tr>
 								<th class="b text-xs-center" width="130">
-									<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="<?=$this->url->get('players/'.$m['user_id'].'/') ?>" target="_blank"><?=stripslashes($m['user']) ?></a>
+									<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="{{ url('players/'.$m['user_id'].'/') }}" target="_blank"><?=stripslashes($m['user']) ?></a>
 									<a onclick="AddQuote('<?=stripslashes($m['user']) ?>', 'm<?=$m['id'] ?>')"> -> </a>
 								</th>
 								<th class="b">
@@ -66,7 +66,7 @@
 		$(document).ready(function(){ShowText()});
 	<? endif; ?>
 </script>
-<form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
+<form action="{{ url('alliance/chat/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Отправить сообщение в чат альянса</td>
@@ -95,5 +95,5 @@
 		</table>
 	</div>
 </form>
-<span style="float:left;margin-left:10px;margin-top:7px;"><a href="<?=$this->url->get('alliance/') ?>">[назад к альянсу]</a></span>
+<span style="float:left;margin-left:10px;margin-top:7px;"><a href="{{ url('alliance/') }}">[назад к альянсу]</a></span>
 <script type="text/javascript">edToolbar('text');</script>

@@ -1,4 +1,4 @@
-<form method="post" action="<?=$this->url->get('stat/') ?>" id="stats">
+<form method="post" action="{{ url('stat/') }}" id="stats">
 	<input type="hidden" name="old_who" value="<?=$who ?>">
 	<input type="hidden" name="old_type" value="<?=$type ?>">
 	<div class="table">
@@ -8,7 +8,7 @@
 		<div class="row">
 			<div class="th col-xs-2 middle">Какой</div>
 			<div class="th col-xs-4 col-sm-2">
-				<select name="who" onChange="$(this).parents('form').attr('action', <?=$this->url->get('stat/') ?>+$(this).val()+'/');$(this).parents('form').submit()" title="">
+				<select name="who" onChange="$(this).parents('form').attr('action', {{ url('stat/') }}+$(this).val()+'/');$(this).parents('form').submit()" title="">
 					<? foreach (_getText('who') AS $key => $value): ?>
 						<option value="<?=$key ?>" <?=($key == $who ? 'selected' : '') ?>><?=$value ?></option>
 					<? endforeach; ?>

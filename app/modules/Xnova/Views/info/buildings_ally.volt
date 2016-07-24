@@ -1,6 +1,6 @@
 <? if ($parse['fleet'] != ''): ?>
 	<div class="separator"></div>
-	<form action="<?=$this->url->get('info/34/') ?>" method="post">
+	<form action="{{ url('info/34/') }}" method="post">
 		<table>
 			<tr>
 				<th width="550"><?=$parse['msg'] ?></th>

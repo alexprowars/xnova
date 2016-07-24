@@ -1,9 +1,9 @@
 <table class="table">
 	<tr>
 		<td class="c" width="100">TOP50</td>
-		<td class="c"><a href="<?=$this->url->get('hall/') ?>">Зал Славы</a></td>
+		<td class="c"><a href="{{ url('hall/') }}">Зал Славы</a></td>
 		<td class="c" width="137">
-			<form method="POST" action="<?=$this->url->get('hall/') ?>" id="hall"><select name="visible" onChange="$('#hall').submit()" title="">
+			<form method="POST" action="{{ url('hall/') }}" id="hall"><select name="visible" onChange="$('#hall').submit()" title="">
 				<option value="1" <?=((!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 'selected' : '') ?>>Бои
 				<option value="2" <?=((isset($_POST['visible']) && $_POST['visible'] == 2) ? 'selected' : '') ?>>САБ
 			</select></form>
@@ -22,7 +22,7 @@
 		foreach ($parse['hall'] AS $log): $i++; ?>
 			<tr>
 				<th><?=$i ?></th>
-				<th><a href="<?=$this->url->get('log/'.$log['log'].'/') ?>" <?=($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '') ?>><?=$log['title'] ?></a></th>
+				<th><a href="{{ url('log/'.$log['log'].'/') }}" <?=($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '') ?>><?=$log['title'] ?></a></th>
 				<th><? if ($log['won'] == 0)
 					echo'Н';
 				elseif ($log['won'] == 1)

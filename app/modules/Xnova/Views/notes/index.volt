@@ -1,10 +1,10 @@
-<form action="<?=$this->url->get('notes/') ?>" method="post">
+<form action="{{ url('notes/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="4"><?=_getText('Notes') ?></td>
 		</tr>
 		<tr>
-			<th colspan="4"><a href="<?=$this->url->get('notes/new/') ?>"><?=_getText('MakeNewNote') ?></a></th>
+			<th colspan="4"><a href="{{ url('notes/new/') }}"><?=_getText('MakeNewNote') ?></a></th>
 		</tr>
 		<tr>
 			<td class="c"></td>
@@ -18,7 +18,7 @@
 					<th width="20"><input name="delmes<?=$list['id'] ?>" value="y" type="checkbox" title=""></th>
 					<th width="150"><?=$list['time'] ?></th>
 					<th>
-						<a href="<?=$this->url->get('notes/edit/'.$list['id'].'/') ?>">
+						<a href="{{ url('notes/edit/'.$list['id'].'/') }}">
 							<span style="color:<?=$list['color'] ?>"><?=$list['title'] ?></span>
 						</a>
 					</th>

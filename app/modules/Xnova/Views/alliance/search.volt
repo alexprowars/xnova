@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('alliance/search/') ?>" method="POST">
+<form action="{{ url('alliance/search/') }}" method="POST">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Поиск альянса</td>

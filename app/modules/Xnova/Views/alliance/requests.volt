@@ -4,7 +4,7 @@
 	</tr>
 	<? if (is_array($parse['request'])): ?>
 		<tr><td colspan="2">
-		<form action="<?=$this->url->get('alliance/admin/edit/requests/show/'.$parse['request']['id'].'/sort/0/') ?>" method="POST">
+		<form action="{{ url('alliance/admin/edit/requests/show/'.$parse['request']['id'].'/sort/0/') }}" method="POST">
 			<table width="100%">
 			<tr>
 				<th colspan="2">Заявка от <?=$parse['request']['username'] ?></th>
@@ -31,16 +31,16 @@
 	<? if (count($parse['list']) > 0): ?>
 		<tr>
 			<td class="c text-xs-center">
-				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/1/') ?>">Логин</a>
+				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/1/') }}">Логин</a>
 			</td>
 			<td class="c text-xs-center">
-				<a href="<?=$this->url->get('alliance/admin/edit/requests/show/0/sort/0/') ?>">Дата подачи заявки</a>
+				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/0/') }}">Дата подачи заявки</a>
 			</td>
 		</tr>
 		<? foreach ($parse['list'] AS $list): ?>
 			<tr>
 				<th class="text-xs-center">
-					<a href="<?=$this->url->get('alliance/admin/edit/requests/show/'.$list['id'].'/sort/0/') ?>"><?=$list['username'] ?></a>
+					<a href="{{ url('alliance/admin/edit/requests/show/'.$list['id'].'/sort/0/') }}"><?=$list['username'] ?></a>
 				</th>
 				<th class="text-xs-center">
 					<?=$list['time'] ?>
@@ -53,6 +53,6 @@
 		</tr>
 	<? endif; ?>
 	<tr>
-		<td class="c" colspan="2"><a href="<?=$this->url->get('alliance/') ?>">Назад</a></td>
+		<td class="c" colspan="2"><a href="{{ url('alliance/') }}">Назад</a></td>
 	</tr>
 </table>

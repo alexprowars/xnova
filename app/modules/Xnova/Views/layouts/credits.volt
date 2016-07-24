@@ -23,7 +23,7 @@
 				<br><br>
 
 
-				<form action="<?=$this->url->get('credits/') ?>" method="POST">
+				<form action="{{ url('credits/') }}" method="POST">
 					Введите ID игрока, на счет которого будут зачислены кредиты:
 					<br>(если поле не заполнено, то кредиты поступят на ваш счет)
 					<br><br>

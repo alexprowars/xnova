@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('resources/') ?>" method="post">
+<form action="{{ url('resources/') }}" method="post">
 	<table width="100%">
 		<tr>
 			<td class="c" align="center">Уровень производства</td>
@@ -12,7 +12,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td class="c" align="center"><a href="<?=$this->url->get('info/113/') ?>">Энергетическая технология</a></td>
+			<td class="c" align="center"><a href="{{ url('info/113/') }}">Энергетическая технология</a></td>
 			<th><?=$parse['et'] ?> ур.</th>
 		</tr>
 	</table>
@@ -22,8 +22,8 @@
 			<td class="c" colspan="5">Управление шахтами и энергетикой</td>
 		</tr>
 		<tr>
-			<th width="50%"><a href="<?=$this->url->get('resources/production/active/Y/') ?>" class="button">Включить на всех<br>планетах</a></th>
-			<th><a href="<?=$this->url->get('resources/production/active/N/') ?>" class="button">Выключить на всех<br>планетах</a></th>
+			<th width="50%"><a href="{{ url('resources/production/active/Y/') }}" class="button">Включить на всех<br>планетах</a></th>
+			<th><a href="{{ url('resources/production/active/N/') }}" class="button">Выключить на всех<br>планетах</a></th>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -36,10 +36,10 @@
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '<?=$this->url->get('info/1/') ?>', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '<?=$this->url->get('info/2/') ?>', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '<?=$this->url->get('info/3/') ?>', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '<?=$this->url->get('info/4/') ?>', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '{{ url('info/1/') }}', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '{{ url('info/2/') }}', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '{{ url('info/3/') }}', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '{{ url('info/4/') }}', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@
 			</tr>
 			<? foreach ($parse['resource_row'] as $resource): ?>
 				<tr>
-					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '<?=$this->url->get('info/'.$resource['id'].'/') ?>', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
+					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '{{ url('info/'.$resource['id'].'/') }}', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
 					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
 					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
 					<? foreach ($this->registry->reslist['res'] AS $res): ?>
@@ -141,7 +141,7 @@
 		<tr>
 			<th width="30%">
 				<? if ($parse['merchand'] < time()): ?>
-					<a href="<?=$this->url->get('resources&buy=1/') ?>" class="button">Купить за 10 кредитов</a>
+					<a href="{{ url('resources&buy=1/') }}" class="button">Купить за 10 кредитов</a>
 				<? else: ?>
 					Через <?= \Xnova\Helpers::pretty_time($parse['merchand'] - time()) ?>
 				<? endif; ?>

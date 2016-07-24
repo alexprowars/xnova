@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('search/') ?>" method="post">
+<form action="{{ url('search/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c">Поиск по игре</td>
@@ -38,15 +38,15 @@
 					<tr>
 						<th><?=$result['username'] ?></th>
 						<th nowrap>
-							<a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$result['id'].'/') ?>', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
-							<a href="<?=$this->url->get('buddy/new/'.$result['id'].'/') ?>" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
+							<a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '{{ url('messages/write/'.$result['id'].'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
+							<a href="{{ url('buddy/new/'.$result['id'].'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
 						</th>
 						<th><? if ($result['race'] != 0): ?><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$result['race'] ?>.gif" width="16" height="16"><? else: ?>&nbsp;<? endif; ?>
 						</th>
 						<th><?=$result['ally_name'] ?></th>
 						<th><?=$result['planet_name'] ?></th>
-						<th><a href="<?=$this->url->get('galaxy/'.$result['g'].'/'.$result['s'].'/') ?>"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
-						<th><a href="<?=$this->url->get('stat/players/range/'.$result['total_rank'].'/') ?>"><?=$result['total_rank'] ?></a></th>
+						<th><a href="{{ url('galaxy/'.$result['g'].'/'.$result['s'].'/') }}"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
+						<th><a href="{{ url('stat/players/range/'.$result['total_rank'].'/') }}"><?=$result['total_rank'] ?></a></th>
 					</tr>
 				<? endforeach; ?>
 			<? else: ?>
@@ -67,7 +67,7 @@
 			<? if (count($parse['result']) > 0): ?>
 				<? foreach ($parse['result'] AS $result): ?>
 					<tr>
-						<th><a href="<?=$this->url->get('alliance/info/'.$result['id'].'/') ?>"><?=$result['tag'] ?></a></th>
+						<th><a href="{{ url('alliance/info/'.$result['id'].'/') }}"><?=$result['tag'] ?></a></th>
 						<th><?=$result['name'] ?></th>
 						<th><?=$result['members'] ?></th>
 						<th><?=$result['total_points'] ?></th>

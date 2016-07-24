@@ -11,8 +11,8 @@
 					<div class="col-xs-4 text-xs-center">
 						<img src="<?=$parse['avatar'] ?>" alt="<?=$parse['username'] ?>" width="100%">
 						<? if ($parse['ingame']): ?>
-							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '<?=$this->url->get('messages/write/'.$parse['id'].'/') ?>', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
-							<a href="<?=$this->url->get('buddy/new/'.$parse['id'].'/') ?>" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
+							<a href="javascript:;" onclick="showWindow('<?=$parse['username'] ?>: отправить сообщение', '{{ url('messages/write/'.$parse['id'].'/') }}', 680)" title="Отправить сообщение"><span class='sprite skin_m'></span></a>&nbsp;
+							<a href="{{ url('buddy/new/'.$parse['id'].'/') }}" title="Добавить в друзья"><span class='sprite skin_b'></span></a>
 						<? endif; ?>
 					</div>
 					<div class="col-xs-6">
@@ -24,7 +24,7 @@
 							<div class="row">
 								<div class="col-xs-4 text-xs-left p-a-0">Планета:</div>
 								<div class="col-xs-8 p-a-0">
-									<a href="<?=$this->url->get('galaxy/'.$parse['galaxy'].'/'.$parse['system'].'/') ?>" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
+									<a href="{{ url('galaxy/'.$parse['galaxy'].'/'.$parse['system'].'/') }}" style="font-weight:normal"><?=$parse['userplanet'] ?> [<?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?>]</a>
 								</div>
 							</div>
 							<? if ($parse['ally_name']): ?>

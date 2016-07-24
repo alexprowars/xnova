@@ -27,6 +27,6 @@
 		</tr>
 	<? endif; ?>
 	<tr>
-		<td class="c" colspan="4"><a href="<?=$this->url->get('log/new/') ?>">Создать новый лог боя</a></td>
+		<td class="c" colspan="4"><a href="{{ url('log/new/') }}">Создать новый лог боя</a></td>
 	</tr>
 </table>

@@ -140,6 +140,21 @@ class Application extends PhalconApplication
 			}
 		}
 
+		if ($this->request->isAjax() && $this->dispatcher->getModuleName() !== 'admin')
+		{
+			/** @noinspection PhpUndefinedFieldInspection */
+			$this->response->setJsonContent(
+			[
+				'status' 	=> $this->game->getRequestStatus(),
+				'message' 	=> $this->game->getRequestMessage(),
+				'html' 		=> str_replace("\t", ' ', $handle->getContent()),
+				'data' 		=> $this->game->getRequestData()
+			]);
+			$this->response->setContentType('text/json', 'utf8');
+			$this->response->send();
+			die();
+		}
+
 		return $handle->getContent().(isset($toolbar) ? $toolbar->render() : '');
 	}
 

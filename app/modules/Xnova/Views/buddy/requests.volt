@@ -14,17 +14,17 @@
 		<? foreach ($parse['list'] AS $id => $list): ?>
 			<tr>
 				<th width="20"><?=($id + 1) ?></th>
-				<th><a href="<?=$this->url->get('messages/write/'.$list['userid'].'') ?>"><?=$list['username'] ?></a></th>
+				<th><a href="{{ url('messages/write/'.$list['userid'].'') }}"><?=$list['username'] ?></a></th>
 				<th><?=$list['ally'] ?></th>
-				<th><a href="<?=$this->url->get('galaxy/'.$list['g'].'/'.$list['s'].'/') ?>"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
+				<th><a href="{{ url('galaxy/'.$list['g'].'/'.$list['s'].'/') }}"><?=$list['g'] ?>:<?=$list['s'] ?>:<?=$list['p'] ?></a></th>
 				<th><?=$list['online'] ?></th>
 				<th>
 					<? if ($parse['isMy']): ?>
-						<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Удалить запрос</a>
+						<a href="{{ url('buddy/delete/'.$list['id'].'/') }}">Удалить запрос</a>
 					<? else: ?>
-						<a href="<?=$this->url->get('buddy/approve/'.$list['id'].'/') ?>">Применить</a>
+						<a href="{{ url('buddy/approve/'.$list['id'].'/') }}">Применить</a>
 						<br/>
-						<a href="<?=$this->url->get('buddy/delete/'.$list['id'].'/') ?>">Отклонить</a>
+						<a href="{{ url('buddy/delete/'.$list['id'].'/') }}">Отклонить</a>
 					<? endif; ?>
 				</th>
 			</tr>
@@ -35,6 +35,6 @@
 		</tr>
 	<? endif; ?>
 	<tr>
-		<td colspan="6" class="c"><a href="<?=$this->url->get('buddy/') ?>">назад</a></td>
+		<td colspan="6" class="c"><a href="{{ url('buddy/') }}">назад</a></td>
 	</tr>
 </table>

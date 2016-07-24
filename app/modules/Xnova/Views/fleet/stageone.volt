@@ -5,7 +5,7 @@
 	});
 </script>
 
-<form action="<?=$this->url->get('fleet/stagetwo/') ?>" method="post">
+<form action="{{ url('fleet/stagetwo/') }}" method="post">
 	<? foreach ($parse['ships'] as $ship): ?>
 		<input type="hidden" name="ship<?=$ship['id'] ?>" value="<?=$ship['count'] ?>" />
 		<input type="hidden" name="consumption<?=$ship['id'] ?>" value="<?=$ship['consumption'] ?>" />
@@ -75,7 +75,7 @@
 			<div class="th col-xs-6"><div id="storage">-</div></div>
 		</div>
 		<div class="row">
-			<div class="c col-xs-12"><?=_getText('fl_shortcut') ?> <a href="<?=$this->url->get('fleet/shortcut/') ?>"><?=_getText('fl_shortlnk') ?></a></div>
+			<div class="c col-xs-12"><?=_getText('fl_shortcut') ?> <a href="{{ url('fleet/shortcut/') }}"><?=_getText('fl_shortlnk') ?></a></div>
 		</div>
 		<? if (count($parse['shortcut'])): ?>
 			<div class="row">

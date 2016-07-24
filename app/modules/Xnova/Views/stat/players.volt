@@ -15,7 +15,7 @@
 			</div>
 			<div class="th col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></div>
 			<div class="th col-sm-4 col-xs-5">
-				<a href="<?=$this->url->get('players/'.$s['id'].'/') ?>" class="window popup-user"><?=$s['name'] ?></a>
+				<a href="{{ url('players/'.$s['id'].'/') }}" class="window popup-user"><?=$s['name'] ?></a>
 				<div class="hidden-sm-up">
 					<?=$s['alliance'] ?>
 				</div>
@@ -26,7 +26,7 @@
 			</div>
 			<div class="th col-sm-3 hidden-xs-down"><?=$s['alliance'] ?></div>
 			<div class="th col-sm-2 col-xs-3 middle">
-				<a href="<?=$this->url->get('players/stat/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
+				<a href="{{ url('players/stat/'.$s['id'].'/') }}"><?=$s['points'] ?></a>
 			</div>
 		</div>
 	<? endforeach; ?>

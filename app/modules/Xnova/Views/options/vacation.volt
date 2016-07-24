@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('options/change/') ?>" method="post">
+<form action="{{ url('options/change/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Режим отпуска</td>

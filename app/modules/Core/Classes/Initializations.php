@@ -354,7 +354,7 @@ trait Initializations
 
 		$config = $this->_config;
 
-		$view->registerEngines([".volt" => function ($view, $di) use ($config)
+		$view->registerEngines([".volt" => function ($view, $di) use ($config, $eventManager)
 		{
 			$volt = new Volt($view, $di);
 
@@ -381,10 +381,14 @@ trait Initializations
 			$compiler->addFunction('number_format', 'number_format');
 			$compiler->addFunction('in_array', 'in_array');
 
+			$eventManager->fire('view:afterEngineRegister', $volt);
+
 			return $volt;
 		}]);
 
 		$di->setShared('view', $view);
+
+		return $view;
 	}
 
 	/**
@@ -409,25 +413,14 @@ trait Initializations
 					if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
 						return true;
 
-					p($dispatcher->getDI()->getShared('router')->getMatchedRoute());
-
-					p($dispatcher->getControllerName());
-					p($dispatcher->getActionName());
-					p($dispatcher->getNamespaceName());
-					p($dispatcher->getModuleName());
-
-					echo $exception->getMessage();
-
-					/*$dispatcher->forward(
+					$dispatcher->forward(
 						[
-							'module'		=> 'admin',
+							'module'		=> 'xnova',
 							'controller'	=> 'error',
 							'action'		=> 'notFound',
-							'namespace'		=> 'Admin\Controllers'
+							'namespace'		=> 'Xnova\Controllers'
 						]
-					);*/
-
-					die('E404');
+					);
 
 					return false;
 			}

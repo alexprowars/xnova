@@ -8,7 +8,7 @@
 			<th width="30"><img src="<?=$this->url->getBaseUri() ?>assets/images/<?=($quest['FINISH'] ? 'check' : 'none') ?>.gif" height="11" width="12"></th>
 			<th class="text-xs-left">
 				<? if ($quest['AVAILABLE']): ?>
-					<a href="<?=$this->url->get('tutorial/'.$quest['ID'].'/') ?>"><span class="positive"><?=$quest['TITLE'] ?></span></a>
+					<a href="{{ url('tutorial/'.$quest['ID'].'/') }}"><span class="positive"><?=$quest['TITLE'] ?></span></a>
 				<? else: ?>
 					<span class="positive"><?=$quest['TITLE'] ?></span>
 				<? endif; ?>

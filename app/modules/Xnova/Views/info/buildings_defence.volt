@@ -65,7 +65,7 @@
 		</tr>
 		<? foreach ($parse['speedBattle'] AS $fId => $battle): ?>
 			<tr>
-				<th class="text-xs-left"><a href="<?=$this->url->get('info/'.$fId.'/') ?>"><?=_getText('tech', $fId) ?></a></th>
+				<th class="text-xs-left"><a href="{{ url('info/'.$fId.'/') }}"><?=_getText('tech', $fId) ?></a></th>
 				<th class="positive">
 					<? if (isset($battle['TO'])): ?>
 						<?=$battle['TO'] ?>

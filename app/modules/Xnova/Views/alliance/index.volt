@@ -18,7 +18,7 @@
 		<th>
 			<?=$parse['members'] ?>
 			<? if ($parse['members_list']): ?>
-				(<a href="<?=$this->url->get('alliance/members/') ?>">список</a>)
+				(<a href="{{ url('alliance/members/') }}">список</a>)
 			<? endif; ?>
 		</th>
 	</tr>
@@ -27,7 +27,7 @@
 		<th>
 			<?=$parse['range'] ?>
 			<? if ($parse['alliance_admin']): ?>
-				(<a href="<?=$this->url->get('alliance/admin/edit/ally/') ?>">управление альянсом</a>)
+				(<a href="{{ url('alliance/admin/edit/ally/') }}">управление альянсом</a>)
 			<? endif; ?>
 		</th>
 	</tr>
@@ -35,15 +35,15 @@
 		<tr>
 			<th>Дипломатия</th>
 			<th>
-				<a href="<?=$this->url->get('alliance/diplomacy/') ?>">Просмотр</a><? if ($parse['diplomacy'] > 0): ?> (<?=$parse['diplomacy'] ?> новых запросов)<? endif; ?>
+				<a href="{{ url('alliance/diplomacy/') }}">Просмотр</a><? if ($parse['diplomacy'] > 0): ?> (<?=$parse['diplomacy'] ?> новых запросов)<? endif; ?>
 			</th>
 		</tr>
 	<? endif; ?>
 	<? if ($parse['requests']): ?>
-		<tr><th>Заявки</th><th><a href="<?=$this->url->get('alliance/admin/edit/requests/') ?>"><?=$parse['requests'] ?> заявок</a></th></tr>
+		<tr><th>Заявки</th><th><a href="{{ url('alliance/admin/edit/requests/') }}"><?=$parse['requests'] ?> заявок</a></th></tr>
 	<? endif; ?>
 	<? if ($parse['chat_access']): ?>
-		<tr><th>Альянс чат (<?=$this->user->messages_ally ?> новых)</th><th><a href="<?=$this->url->get('alliance/chat/') ?>">Войти в чат</a></th></tr>
+		<tr><th>Альянс чат (<?=$this->user->messages_ally ?> новых)</th><th><a href="{{ url('alliance/chat/') }}">Войти в чат</a></th></tr>
 	<? endif; ?>
 	<tr>
 		<td class="b" colspan="2" height="100" style="padding:3px;">

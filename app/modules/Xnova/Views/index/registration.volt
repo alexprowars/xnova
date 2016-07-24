@@ -2,7 +2,7 @@
 	<div class="error"><?=$message ?></div>
 <? endif; ?>
 <script src='//www.google.com/recaptcha/api.js'></script>
-<form action="<?=$this->url->get('index/registration/') ?>" method="post" id="regForm" class="form">
+<form action="{{ url('index/registration/') }}" method="post" id="regForm" class="form">
 	<table class="table">
 		<tbody>
 		<tr>
@@ -25,13 +25,13 @@
 		<tr>
 			<th colspan="2" class="text-xs-left">
 				<input name="sogl" id="sogl" type="checkbox" <?=($this->request->getPost('sogl') != '' ? 'checked' : '') ?>>
-				<label for="sogl">Я принимаю</label> <a href="<?=$this->url->get('content/agreement/') ?>" target="_blank">Пользовательское соглашение</a>
+				<label for="sogl">Я принимаю</label> <a href="{{ url('content/agreement/') }}" target="_blank">Пользовательское соглашение</a>
 			</th>
 		</tr>
 		<tr>
 			<th colspan="2" class="text-xs-left">
 				<input name="rgt" id="rgt" type="checkbox" <?=($this->request->getPost('rgt') != '' ? 'checked' : '') ?>>
-				<label for="rgt">Я принимаю</label> <a href="<?=$this->url->get('content/agb/') ?>" target="_blank">Законы игры</a>
+				<label for="rgt">Я принимаю</label> <a href="{{ url('content/agb/') }}" target="_blank">Законы игры</a>
 			</th>
 		</tr>
 		<tr>

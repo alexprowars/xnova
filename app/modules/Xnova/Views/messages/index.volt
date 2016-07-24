@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('messages/') ?>" id="mes_form" method="post">
+<form action="{{ url('messages/') }}" id="mes_form" method="post">
 	<input name="category" value="<?=$parse['category'] ?>" type="hidden">
 	<div class="block">
 		<div class="title">
@@ -35,16 +35,16 @@
 						<th><?=$this->game->datezone("d.m.y H:i:s", $item->time) ?></th>
 						<th>
 							<? if ($item->sender > 0): ?>
-								<a href="<?=$this->url->get('players/'.$item->sender.'/') ?>" class="window popup-user"><?=$item->from ?></a>
+								<a href="{{ url('players/'.$item->sender.'/') }}" class="window popup-user"><?=$item->from ?></a>
 							<? else: ?>
 								<?=$item->from ?>
 							<? endif; ?>
 						</th>
 						<th nowrap>
 							<? if ($item->type == 1): ?>
-								<a href="<?=$this->url->get('messages/write/'.$item->sender.'/') ?>" title="Ответить"><span class='sprite skin_m'></span></a>
-								&nbsp;<a href="<?=$this->url->get('messages/write/'.$item->sender.'/quote/'.$item->id.'/') ?>" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
-								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="<?=$this->url->get('messages/abuse/'.$item->id.'/') ?>" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
+								<a href="{{ url('messages/write/'.$item->sender.'/') }}" title="Ответить"><span class='sprite skin_m'></span></a>
+								&nbsp;<a href="{{ url('messages/write/'.$item->sender.'/quote/'.$item->id.'/') }}" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
+								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="{{ url('messages/abuse/'.$item->id.'/') }}" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
 							<? else: ?>
 								&nbsp;
 							<? endif; ?>

@@ -7,10 +7,10 @@
 		<? endif; ?>
 		<div class="row">
 			<div class="col-xs-6 k big">
-				<a href='javascript:;' onclick="showWindow('Конфедерация', '<?=$this->url->get('info/701/') ?>', 700, 500)">Конфедерация</a>
+				<a href='javascript:;' onclick="showWindow('Конфедерация', '{{ url('info/701/') }}', 700, 500)">Конфедерация</a>
 			</div>
 			<div class="col-xs-6 k big">
-				<a href='javascript:;' onclick="showWindow('Бионики', '<?=$this->url->get('info/702/') ?>', 700, 500)">Бионики</a>
+				<a href='javascript:;' onclick="showWindow('Бионики', '{{ url('info/702/') }}', 700, 500)">Бионики</a>
 			</div>
 		</div>
 		<div class="row">
@@ -26,11 +26,11 @@
 					<br>&nbsp;&nbsp;&nbsp;+15% к энергии спутников
 					<br>&nbsp;&nbsp;&nbsp;-10% к стоимости улучшения кораблей
 					<br>&nbsp;&nbsp;&nbsp;Уникальный корабль:
-					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Конфедерация', '<?=$this->url->get('info/220/') ?>', 700, 500)">Корвет</a></font> (манёвренный и скоростной корабль)</font>
+					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Конфедерация', '{{ url('info/220/') }}', 700, 500)">Корвет</a></font> (манёвренный и скоростной корабль)</font>
 				<br><br>
 
 				<? if ($race == 0): ?>
-					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/1/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="{{ url('race/index/sel/1/') }}"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</div>
 			<div class="th col-xs-6 text-xs-left">
@@ -45,17 +45,17 @@
 					<br>&nbsp;&nbsp;&nbsp;+20% к вместимости хранилищ
 					<br>&nbsp;&nbsp;&nbsp;+5% к энергии от солнечных батарей
 					<br>&nbsp;&nbsp;&nbsp;Уникальный корабль:
-					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Перехватчик', '<?=$this->url->get('info/221/') ?>', 700, 500)">Перехватчик</a></font> (скоростной легкий корабль)</font>
+					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Перехватчик', '{{ url('info/221/') }}', 700, 500)">Перехватчик</a></font> (скоростной легкий корабль)</font>
 				<br><br>
 
 				<? if ($race == 0): ?>
-					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/2/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="{{ url('race/index/sel/2/') }}"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '<?=$this->url->get('info/703/') ?>', 700, 500)">Сайлоны</a></div>
-			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Древние', '<?=$this->url->get('info/704/') ?>', 700, 500)">Древние</a></div>
+			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '{{ url('info/703/') }}', 700, 500)">Сайлоны</a></div>
+			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Древние', '{{ url('info/704/') }}', 700, 500)">Древние</a></div>
 		</div>
 		<div class="row">
 			<div class="th col-xs-6 text-xs-left">
@@ -70,11 +70,11 @@
 					<br>&nbsp;&nbsp;&nbsp;+10% к скорости постройки зданий
 					<br>&nbsp;&nbsp;&nbsp;-5% к стоимости постройки зданий
 					<br>&nbsp;&nbsp;&nbsp;Уникальный корабль:
-					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Дредноут', '<?=$this->url->get('info/222/') ?>', 700, 500)">Дредноут</a></font> (тяжелый боевой корабль)</font>
+					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Дредноут', '{{ url('info/222/') }}', 700, 500)">Дредноут</a></font> (тяжелый боевой корабль)</font>
 				<br><br>
 
 				<? if ($race == 0): ?>
-					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/3/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="{{ url('race/index/sel/3/') }}"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</div>
 			<div class="th col-xs-6 text-xs-left">
@@ -89,11 +89,11 @@
 					<br>&nbsp;&nbsp;&nbsp;+5% энергии от электростанций
 					<br>&nbsp;&nbsp;&nbsp;-10% к стоимости исследований
 					<br>&nbsp;&nbsp;&nbsp;Уникальный корабль:
-					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Корсар', '<?=$this->url->get('info/223/') ?>', 700, 500)">Корсар</a></font> (быстрый пиратский корабль)</font>
+					<font color="#adff2f"><a href='javascript:;' onclick="showWindow('Корсар', '{{ url('info/223/') }}', 700, 500)">Корсар</a></font> (быстрый пиратский корабль)</font>
 				<br><br>
 
 				<? if ($race == 0): ?>
-					<div style="text-align:center"><a href="<?=$this->url->get('race/index/sel/4/') ?>"><input type="button" value="Выбрать"></a></div>
+					<div style="text-align:center"><a href="{{ url('race/index/sel/4/') }}"><input type="button" value="Выбрать"></a></div>
 				<? endif; ?><br>
 			</div>
 		</div>
@@ -111,7 +111,7 @@
 				<div class="th col-sx-12">
 					На планетах не должно идти строительство, исследования, летать флот и весь флот фракции подлежит демонтировке (без возврата ресурсов).<br><br>
 					<? if ($isChangeAvailable): ?>
-						<form action="<?=$this->url->get('race/change/') ?>" method="POST">
+						<form action="{{ url('race/change/') }}" method="POST">
 							<select name="race" title="">
 								<option value="0">выбрать...</option>
 								<option value="1">Конфедерация</option>
@@ -133,7 +133,7 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
-			showWindow('Информация', '<?=$this->url->get('content/welcome/') ?>');
+			showWindow('Информация', '{{ url('content/welcome/') }}');
 		});
 	</script>
 <? endif; ?>

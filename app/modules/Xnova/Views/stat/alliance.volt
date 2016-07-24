@@ -17,10 +17,10 @@
 			<div class="th col-sm-1 hidden-xs-down"><?=$s['rankplus'] ?></div>
 			<div class="th col-sm-5 col-xs-4 middle"><?=$s['name'] ?></div>
 			<div class="th col-sm-1 col-xs-2 middle"><?=$s['members'] ?></div>
-			<div class="th col-sm-2 hidden-xs-down"><a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a></div>
+			<div class="th col-sm-2 hidden-xs-down"><a href="{{ url('alliance/stat/id/'.$s['id'].'/') }}"><?=$s['points'] ?></a></div>
 			<div class="th col-sm-2 hidden-xs-down"><?=$s['members_points'] ?></div>
 			<div class="th hidden-sm-up col-xs-4">
-				<a href="<?=$this->url->get('alliance/stat/id/'.$s['id'].'/') ?>"><?=$s['points'] ?></a>
+				<a href="{{ url('alliance/stat/id/'.$s['id'].'/') }}"><?=$s['points'] ?></a>
 				<br>
 				<?=$s['members_points'] ?>
 			</div>

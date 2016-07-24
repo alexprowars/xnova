@@ -5,35 +5,35 @@
 		</tr>
 		<? if ($this->user->isAdmin() && $parse['owner'] == $userId): ?>
 			<tr>
-				<th><a href="<?=$this->url->get('alliance/admin/edit/planets/') ?>">Планеты альянса</a></th>
+				<th><a href="{{ url('alliance/admin/edit/planets/') }}">Планеты альянса</a></th>
 			</tr>
 		<? endif; ?>
 		<tr>
-			<th><a href="<?=$this->url->get('alliance/admin/edit/rights/') ?>">Установить ранги</a></th>
+			<th><a href="{{ url('alliance/admin/edit/rights/') }}">Установить ранги</a></th>
 		</tr>
 		<? if ($parse['can_view_members']): ?>
 			<tr>
-				<th><a href="<?=$this->url->get('alliance/admin/edit/members/') ?>">Члены альянса</a></th>
+				<th><a href="{{ url('alliance/admin/edit/members/') }}">Члены альянса</a></th>
 			</tr>
 		<? endif; ?>
 		<tr>
-			<th><a href="<?=$this->url->get('alliance/admin/edit/tag/') ?>">Изменить аббревиатуру альянса</a></th>
+			<th><a href="{{ url('alliance/admin/edit/tag/') }}">Изменить аббревиатуру альянса</a></th>
 		</tr>
 		<tr>
-			<th><a href="<?=$this->url->get('alliance/admin/edit/name/') ?>">Изменить название альянса</a></th>
+			<th><a href="{{ url('alliance/admin/edit/name/') }}">Изменить название альянса</a></th>
 		</tr>
 	</table>
 
-	<form action="<?=$this->url->get('alliance/admin/edit/ally/t/'.$parse['t'].'/') ?>" method="POST">
+	<form action="{{ url('alliance/admin/edit/ally/t/'.$parse['t'].'/') }}" method="POST">
 		<input type="hidden" name="t" value="<?=$parse['t'] ?>">
 		<table class="table">
 			<tr>
 				<td class="c" colspan="3"><?=_getText('Texts') ?></td>
 			</tr>
 			<tr>
-				<th><a href="<?=$this->url->get('alliance/admin/edit/ally/t/1/') ?>">Внешний текст</a></th>
-				<th><a href="<?=$this->url->get('alliance/admin/edit/ally/t/2/') ?>">Внутренний текст</a></th>
-				<th><a href="<?=$this->url->get('alliance/admin/edit/ally/t/3/') ?>">Текст заявки</a></th>
+				<th><a href="{{ url('alliance/admin/edit/ally/t/1/') }}">Внешний текст</a></th>
+				<th><a href="{{ url('alliance/admin/edit/ally/t/2/') }}">Внутренний текст</a></th>
+				<th><a href="{{ url('alliance/admin/edit/ally/t/3/') }}">Текст заявки</a></th>
 			</tr>
 			<tr>
 				<td class="c" colspan="3"><?=_getText('Show_of_request_text') ?></td>
@@ -61,7 +61,7 @@
 		</div>
 	</form>
 	<div class="separator"></div>
-	<form action="<?=$this->url->get('alliance/admin/edit/ally/') ?>" method="POST">
+	<form action="{{ url('alliance/admin/edit/ally/') }}" method="POST">
 		<table class="table">
 			<tr>
 				<td class="c" colspan="2">Дополнительные настройки</td>

@@ -5,7 +5,7 @@
 
 				<div class="login-inputs">
 					<div class="error" id="authError"></div>
-					<form action="<?=$this->url->get('login/') ?>" method="post" id="authForm">
+					<form action="{{ url('login/') }}" method="post" id="authForm">
 						<div>
 							<input class="input-text" name="email" placeholder="Email" value="" type="text" />
 							<input class="input-text" name="password" placeholder="Пароль" value="" type="password" />
@@ -48,11 +48,11 @@
 		<div class="desk"><?=$this->config->app->name ?> - онлайн-игра</div>
 		<div class="nav">
 			<a href="http://forum.xnova.su" title="Официальный форум" target="_blank">Форум</a>  |
-			<a href="<?=$this->url->get('xnsim/') ?>">Симулятор</a>  |  <a href="<?=$this->url->get('stat/') ?>">Статистика</a>  |
+			<a href="{{ url('xnsim/') }}">Симулятор</a>  |  <a href="{{ url('stat/') }}">Статистика</a>  |
 			<a href="//vkontakte.ru/xnova_game" title="Официальная группа ВКонтакте" target="_blank">ВКонтакте</a>  |
-			<a href="<?=$this->url->get('content/agb/') ?>">Правила</a>  |
-			<a href="<?=$this->url->get('banned/') ?>">Блокировки</a>  |
-			<a href="<?=$this->url->get('contact/') ?>">Администрация</a>
+			<a href="{{ url('content/agb/') }}">Правила</a>  |
+			<a href="{{ url('banned/') }}">Блокировки</a>  |
+			<a href="{{ url('contact/') }}">Администрация</a>
 		</div>
 		<div class="copy"><?=$this->config->app->users_online ?> / <?=$this->config->app->users_total ?>&nbsp;&nbsp;&nbsp;&copy; <?=date("Y") ?> XNOVA.SU</div>
 	</div>

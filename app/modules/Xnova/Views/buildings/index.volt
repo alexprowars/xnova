@@ -17,7 +17,7 @@
 						<script type="text/javascript">BuildTimeout(<?=$list['BuildTime'] ?>, <?=$list['ListID'] ?>, <?=$list['PlanetID'] ?>, <?=(isset($_SESSION['LAST_ACTION_TIME']) ? $_SESSION['LAST_ACTION_TIME'] : 0) ?>);</script>
 						<div class="positive"><?=$this->game->datezone("d.m H:i:s", $list['BuildEndTime']) ?></div>
 					<? else: ?>
-						<a href="<?=$this->url->get('buildings/index/listid/'.$list['ListID'].'/cmd/remove/planet/'.$list['PlanetID'].'/') ?>">Удалить</a>
+						<a href="{{ url('buildings/index/listid/'.$list['ListID'].'/cmd/remove/planet/'.$list['PlanetID'].'/') }}">Удалить</a>
 					<? endif; ?>
 				</td>
 			</tr>
@@ -47,11 +47,11 @@
 					<div class="col-md-6 col-xs-12" id="object_<?=$build['i'] ?>">
 						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
 							<? if (!$build['access']): ?>
-								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600, 500)"><span>недоступно</span></div>
+								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.$build['i'].'/') }}', 600, 500)"><span>недоступно</span></div>
 							<? endif; ?>
 
 							<div class="img">
-								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '<?=$this->url->get('info/'.$build['i'].'/') ?>', 600)">
+								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.$build['i'].'/') }}', 600)">
 									<img src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/<?=$build['i'] ?>.gif" align="top" alt="" class="tooltip img-responsive" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
 								</a>
 
@@ -60,7 +60,7 @@
 								</div>
 							</div>
 							<div class="title">
-								<a href="<?=$this->url->get('info/'.$build['i'].'/') ?>"><?=_getText('tech', $build['i']) ?></a>
+								<a href="{{ url('info/'.$build['i'].'/') }}"><?=_getText('tech', $build['i']) ?></a>
 							</div>
 							<div class="actions">
 								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\Xnova\Helpers::pretty_number($build['count']) ?></span><br>

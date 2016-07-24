@@ -1,4 +1,4 @@
-<form action="<?=$this->url->get('alliance/admin/edit/rights/') ?>" method="POST">
+<form action="{{ url('alliance/admin/edit/rights/') }}" method="POST">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="13"><?=_getText('Configure_laws') ?></td>
@@ -44,7 +44,7 @@
 	</table>
 </form>
 <div class="separator"></div>
-<form action="<?=$this->url->get('alliance/admin/edit/rights/add/name/') ?>" method="POST">
+<form action="{{ url('alliance/admin/edit/rights/add/name/') }}" method="POST">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2"><?=_getText('Range_make') ?></td>
@@ -104,6 +104,6 @@
 		<th>Дипломатия</th>
 	</tr>
 	<tr>
-		<td class="c" colspan="2"><a href="<?=$this->url->get('alliance/admin/edit/ally/') ?>"><?=_getText('Return_to_overview') ?></a></td>
+		<td class="c" colspan="2"><a href="{{ url('alliance/admin/edit/ally/') }}"><?=_getText('Return_to_overview') ?></a></td>
 	</tr>
 </table>
