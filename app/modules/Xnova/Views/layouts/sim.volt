@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <script type="text/javascript">
 
 	var groups = new Array(100);

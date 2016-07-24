@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table tutorial">
 	<tr>
 		<td class="k">

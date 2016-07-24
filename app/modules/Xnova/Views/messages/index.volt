@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('messages/') ?>" id="mes_form" method="post">
 	<input name="category" value="<?=$parse['category'] ?>" type="hidden">
 	<div class="block">

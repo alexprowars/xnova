@@ -119,9 +119,6 @@ class MessagesController extends Controller
 
 		if ($this->request->hasQuery('quote'))
 		{
-			/**
-			 * @var $mes \Xnova\Models\Message
-			 */
 			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (owner = ?1 OR sender = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
 
 			if ($mes)
@@ -149,9 +146,6 @@ class MessagesController extends Controller
 
 	public function abuseAction ($id)
 	{
-		/**
-		 * @var $mes \Xnova\Models\Message
-		 */
 		$mes = Message::findFirst(['id = ?0 AND owner = ?1', 'bind' => [$id, $this->user->id]]);
 
 		if ($mes)

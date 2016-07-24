@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <br>
 <table width="600">
 	<tbody>

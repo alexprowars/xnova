@@ -16,10 +16,10 @@ use Phalcon\Di\Injectable;
 /**
  * Class UpdateStatistics
  * @package App
- * @property \App\Database db
+ * @property \Xnova\Database db
  * @property \Phalcon\Config|\stdClass config
- * @property \Phalcon\Registry|\stdClass storage
- * @property \App\Game game
+ * @property \Phalcon\Registry|\stdClass registry
+ * @property \Xnova\Game game
  */
 class UpdateStatistics extends Injectable
 {
@@ -241,9 +241,6 @@ class UpdateStatistics extends Injectable
 	{
 		$fleetPoints = [];
 
-		/**
-		 * @var $UsrFleets Fleet[]
-		 */
 		$UsrFleets = Fleet::find();
 
 		foreach ($UsrFleets as $CurFleet)

@@ -92,7 +92,7 @@ class Router extends Annotations
 		$cache = $this->getDI()->getShared('cache');
 		$config = $this->getDI()->getShared('config');
 
-		$resources = $cache->get($config->application->name.'FRIDAY_ROUTER_RESOURCES');
+		$resources = $cache->get('FRIDAY_ROUTER_RESOURCES');
 
 		if (!is_array($resources))
 		{
@@ -127,7 +127,7 @@ class Router extends Annotations
 				$this->addModuleResource($controller['module'], $controller['class']);
 			}
 
-			$cache->save($config->application->name.'FRIDAY_ROUTER_RESOURCES', $this->getResources(), 7200);
+			$cache->save('FRIDAY_ROUTER_RESOURCES', $this->getResources(), 7200);
 		}
 		else
 		{

@@ -220,10 +220,7 @@ class InfoController extends Controller
 				{
 					$flid = intval($_POST['jmpto']);
 
-					/**
-					 * @var $fleet \Xnova\Models\Fleet
-					 */
-					$fleet = \Xnova\Models\Fleet::find(['id = ?0 AND end_galaxy = ?1 AND end_system = ?2 AND end_planet = ?3 AND end_type = ?4 AND mess = 3', 'bind' => [$this->planet->galaxy, $this->planet->system, $this->planet->planet, $this->planet->planet_type]]);
+					$fleet = \Xnova\Models\Fleet::findFirst(['id = ?0 AND end_galaxy = ?1 AND end_system = ?2 AND end_planet = ?3 AND end_type = ?4 AND mess = 3', 'bind' => [$this->planet->galaxy, $this->planet->system, $this->planet->planet, $this->planet->planet_type]]);
 
 					if (!$fleet)
 						$parse['msg'] = "<font color=red>Флот отсутствует у планеты</font>";

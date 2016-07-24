@@ -1,10 +1,3 @@
-<?
-/**
- * @var $who string
- * @var $type string
- * @var $update string
- */
-?>
 <form method="post" action="<?=$this->url->get('stat/') ?>" id="stats">
 	<input type="hidden" name="old_who" value="<?=$who ?>">
 	<input type="hidden" name="old_type" value="<?=$type ?>">

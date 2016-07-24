@@ -1,12 +1,3 @@
-<?
-/**
- * @var $planet array
- */
-
-if (!isset($planet['time']))
-	file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n", FILE_APPEND);
-
-?>
 <script type="text/javascript">
 	var ress = [<?=$planet['metal'] ?>, <?=$planet['crystal'] ?>, <?=$planet['deuterium'] ?>];
 	var max = [<?=$planet['metal_m'] ?>,<?=$planet['crystal_m'] ?>,<?=$planet['deuterium_m'] ?>];

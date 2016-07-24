@@ -10,6 +10,12 @@ namespace Xnova\Models;
 
 use Phalcon\Mvc\Model;
 
+/** @noinspection PhpHierarchyChecksInspection */
+
+/**
+ * @method static Alliance[]|Model\ResultsetInterface find(mixed $parameters = null)
+ * @method static Alliance findFirst(mixed $parameters = null)
+ */
 class Alliance extends Model
 {
 	public $id;

@@ -12,7 +12,11 @@ use Xnova\Galaxy;
 use Phalcon\Di;
 use Phalcon\Mvc\Model;
 
+/** @noinspection PhpHierarchyChecksInspection */
+
 /**
+ * @method static User[]|Model\ResultsetInterface find(mixed $parameters = null)
+ * @method static User findFirst(mixed $parameters = null)
  * @property \Xnova\Database db
  */
 class User extends Model
@@ -338,7 +342,6 @@ class User extends Model
 		{
 			/**
 			 * Выбираем информацию о планете
-			 * @var \Xnova\Models\Planet $planet
 			 */
 			$planet = Planet::findFirst($this->planet_current);
 
@@ -514,9 +517,6 @@ class User extends Model
 
 		if ($userInfo['ally_id'] != 0)
 		{
-			/**
-			 * @var \Xnova\Models\Alliance $ally
-			 */
 			$ally = Alliance::findFirst($userInfo['ally_id']);
 
 			if ($ally)

@@ -1,8 +1,3 @@
-<?
-/**
- * @var $list array
- */
-?>
 <table class="table">
 	<tr>
 		<td class="c" colspan="7">Обнаружена следующая активность на планете:

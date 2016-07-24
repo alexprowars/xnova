@@ -26,9 +26,6 @@ class Back
 		{
 			$fleetid = $controller->request->getPost('fleetid', 'int', 0);
 
-			/**
-			 * @var $FleetRow \Xnova\Models\Fleet
-			 */
 			$FleetRow = Fleet::findFirst($fleetid);
 
 			if ($FleetRow && $FleetRow->owner == $controller->user->id)

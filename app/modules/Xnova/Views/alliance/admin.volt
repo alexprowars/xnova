@@ -1,9 +1,3 @@
-<?
-/**
- * @var $parse array
- * @var $userId int
- */
-?>
 <div class="container-fluid">
 	<table class="table">
 		<tr>

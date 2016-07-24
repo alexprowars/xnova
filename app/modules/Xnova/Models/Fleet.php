@@ -10,6 +10,12 @@ namespace Xnova\Models;
 
 use Phalcon\Mvc\Model;
 
+/** @noinspection PhpHierarchyChecksInspection */
+
+/**
+ * @method static Fleet[]|Model\ResultsetInterface find(mixed $parameters = null)
+ * @method static Fleet findFirst(mixed $parameters = null)
+ */
 class Fleet extends Model
 {
 	public $id;

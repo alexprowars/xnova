@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table width="100%">
 	<tr>
 		<td class="c"><?=$parse['name'] ?></td>

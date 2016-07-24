@@ -67,9 +67,6 @@ class ResourcesController extends Controller
 		$production = $this->request->getQuery('active', null, 'Y');
 		$production = $production == 'Y' ? 10 : 0;
 
-		/**
-		 * @var $planets \Xnova\Models\Planet[]
-		 */
 		$planets = Planet::find(['id_owner = ?0', 'bind' => [$this->user->id]]);
 
 		foreach ($planets as $planet)

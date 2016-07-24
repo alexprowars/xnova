@@ -460,9 +460,6 @@ class OverviewController extends Controller
 
 		$build_list = [];
 
-		/**
-		 * @var $planets \Xnova\Models\Planet[]
-		 */
 		$planets = Planet::find([
 			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
 			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current, 'queue' => '[]']
@@ -702,27 +699,6 @@ class OverviewController extends Controller
 					$i++;
 				}
 			}
-
-			$forum = $this->cache->get('forum_activity');
-
-			if ($forum === null)
-			{
-				$forum = file_get_contents('http://forum.xnova.su/lastposts.php');
-
-				$this->cache->save('forum_activity', $forum, 600);
-			}
-
-			$forum = json_decode($forum, true);
-
-			foreach ($forum AS $message)
-			{
-				$parse['activity']['forum'][] = [
-					'TIME' => $message['post_time'],
-					'MESS' => '<span class="title"><span class="to">'.$message['username'].'</span> написал "<span class="to">'.$message['topic_title'].'</span>"</span>: '.Helpers::cutString(strip_tags($message['post_text']), 250).' <a href="http://forum.xnova.su/viewtopic.php?f='.$message['forum_id'].'&t='.$message['topic_id'].'&p='.$message['post_id'].'#p'.$message['post_id'].'" target="_blank">читать полностью</a>'
-				];
-			}
-
-			//usort($parse['activity'], create_function('$a1,$a2', 'if ($a1["TIME"] == $a2["TIME"]) return 0; return ($a1["TIME"] < $a2["TIME"] ? 1 : -1);'));
 		}
 
 		$showMessage = false;

@@ -16,7 +16,6 @@ use Xnova\Controller;
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
- * @Private
  */
 class PaymentController extends Controller
 {
@@ -40,9 +39,6 @@ class PaymentController extends Controller
 
 			if (!isset($check['id']))
 			{
-				/**
-				 * @var $user \Xnova\Models\User
-				 */
 				$user = User::findFirst(['conditions' => 'id = ?0', 'bind' => [intval($this->request->get("Shp_UID"))]]);
 
 				if ($user)

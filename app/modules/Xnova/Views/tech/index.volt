@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div id="tabs" class="ui-tabs ui-widget ui-widget-content techtree">
 	<div class="head">
 		<ul class="ui-tabs-nav ui-widget-header">

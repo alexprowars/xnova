@@ -1,9 +1,3 @@
-<?
-/**
- * @var $parse array
- * @var $isPopup bool
- */
-?>
 <form action="<?=$this->url->get("overview/rename/pl/".$parse['planet_id']."") ?>" method="POST">
 	<table class="table">
 		<tr>

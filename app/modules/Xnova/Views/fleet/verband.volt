@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table">
 	<tr>
 		<td colspan="9" class="c">Флоты в совместной атаке</td>

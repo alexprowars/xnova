@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <?= $parse['gate_time_script'] ?>
 <form action="<?=$this->url->get('jumpgate/') ?>" method="post">
 	<table border="1" width="100%">

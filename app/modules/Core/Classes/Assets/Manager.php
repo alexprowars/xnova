@@ -258,4 +258,14 @@ class Manager
 
 		return $quote.$path.'/'.$url.$quote;
 	}
+
+	public function clearJs ()
+	{
+		$this->js = [];
+	}
+
+	public function clearCss ()
+	{
+		$this->css = [];
+	}
 }

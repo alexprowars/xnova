@@ -73,9 +73,6 @@ class PhalanxController extends Controller
 		if ($planet == 0)
 			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 
-		/**
-		 * @var $fleets FleetModel[]
-		 */
 		$fleets = FleetModel::find([
 			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
 			'bind' => ['galaxy' => $g, 'system' => $s, 'planet' => $i],

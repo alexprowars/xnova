@@ -1,8 +1,3 @@
-<?
-/**
- * @var $build array
- */
-?>
 <form name="Atr" action="">
 	<div class="separator"></div>
 	<table width="100%">

@@ -16,15 +16,11 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		// Проводим бой
 		$mission = new MissionCaseAttack($this->_fleet);
 		$result = $mission->TargetEvent();
 
 		if ($result == true)
 		{
-			/**
-			 * @var $checkFleet Fleet
-			 */
 			$checkFleet = Fleet::findFirst(['columns' => 'fleet_array, won', 'conditions' => 'id = ?0', 'bind' => [$this->_fleet->id]]);
 
 			if ($checkFleet && $checkFleet->won == 1)

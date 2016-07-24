@@ -15,7 +15,6 @@ use Xnova\Controller;
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
- * @Private
  */
 class ErrorController extends Controller
 {

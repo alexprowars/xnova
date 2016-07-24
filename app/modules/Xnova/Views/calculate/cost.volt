@@ -1,9 +1,3 @@
-<?
-/**
- * @var $object array
- * @var $user array
- */
-?>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jquery.ui.spinbtn.js"></script>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/calculate/utils.js"></script>

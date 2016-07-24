@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <script type="text/javascript">
 	$(document).ready(function()
 	{

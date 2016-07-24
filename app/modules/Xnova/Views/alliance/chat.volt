@@ -1,11 +1,6 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('alliance/chat/') ?>" method="post">
 	<div class="table">
 		<div class="row">

@@ -53,9 +53,6 @@ class ActivityCommand extends UserCommand
 			return Request::sendMessage($data);
 		}
 
-		/**
-		 * @var $user \Xnova\Models\User
-		 */
 		$user = User::findFirst($auth['user_id']);
 
 		if (!$user)
@@ -69,9 +66,6 @@ class ActivityCommand extends UserCommand
 
 			$data['text'] .= "Летящие флоты: ";
 
-			/**
-			 * @var $fleets \Xnova\Models\Fleet[]
-			 */
 			$fleets = Fleet::find(['conditions' => 'owner = :user: OR target_owner = :user:', 'bind' => ['user' => $user->id]]);
 
 			if (!count($fleets))

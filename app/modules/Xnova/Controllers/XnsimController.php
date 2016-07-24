@@ -25,7 +25,6 @@ use Xnova\Controller;
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
- * @Private
  */
 class XnsimController extends Controller
 {
@@ -33,10 +32,12 @@ class XnsimController extends Controller
 
 	public function initialize ()
 	{
-		$this->disableCollections();
 		$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 
 		parent::initialize();
+
+		$this->assets->clearJs();
+		$this->assets->clearCss();
 	}
 
 	public function indexAction ()

@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('fleet/stagethree/') ?>" method="post">
 	<input type="hidden" name="thisresource1"  value="<?=$parse['thisresource1'] ?>" />
 	<input type="hidden" name="thisresource2"  value="<?=$parse['thisresource2'] ?>" />

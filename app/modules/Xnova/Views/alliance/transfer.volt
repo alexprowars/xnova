@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('alliance/admin/edit/give/id/'.$parse['id'].'/') ?>" method="POST">
 	<table class="table">
 		<tr>

@@ -1,9 +1,3 @@
-<?
-/**
- * @var $parse array
- * @var $isPopup bool
- */
-?>
 <table width="100%">
 	<? if (!$isPopup): ?>
 		<tr>

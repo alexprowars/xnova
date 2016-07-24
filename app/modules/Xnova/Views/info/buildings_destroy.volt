@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="separator"></div>
 <table class="table">
 	<tr>

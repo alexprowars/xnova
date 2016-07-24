@@ -1,9 +1,4 @@
-<?
-/**
- * @var $parse array
- */
-?>
-	<table class="table">
+<table class="table">
 	<tr>
 		<td class="c" colspan="3">Привлечённые игроки</td>
 	<tr>

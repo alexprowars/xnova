@@ -51,9 +51,6 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		/**
-		 * @var \Xnova\Models\User $targetUser
-		 */
 		$targetUser = User::findFirst($target->id_owner);
 
 		if (!$targetUser)

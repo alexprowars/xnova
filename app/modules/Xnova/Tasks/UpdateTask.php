@@ -6,9 +6,9 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use App\Lang;
-use App\Missions\Mission;
-use App\UpdateStatistics;
+use Friday\Core\Lang;
+use Xnova\Missions\Mission;
+use Xnova\UpdateStatistics;
 
 class UpdateTask extends ApplicationTask
 {
@@ -82,9 +82,6 @@ class UpdateTask extends ApplicationTask
 					die('Server too busy. Please try again later.');
 			}
 
-			/**
-			 * @var $_fleets \Xnova\Models\Fleet[]
-			 */
 			$_fleets = \Xnova\Models\Fleet::find([
 				'(start_time <= :time: AND mess = 0) OR (end_stay <= :time: AND mess != 1 AND end_stay != 0) OR (end_time < :time: AND mess != 0)',
 				'bind' 	=> ['time' => time()],

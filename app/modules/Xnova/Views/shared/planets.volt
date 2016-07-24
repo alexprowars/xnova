@@ -1,8 +1,3 @@
-<?
-/**
- * @var $planet array
- */
-?>
 <? if (count($planet['list'])): ?>
 	<a href="#" class="planet-toggle hidden-sm-up"><span>
 			<span class="first"></span>

@@ -1,8 +1,3 @@
-<?
-/**
- * @var $list array
- */
-?>
 <table class="table">
 	<tr>
 		<th colspan="4">Логовница</th>

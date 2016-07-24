@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <? if ($parse['noresearch']): ?><div class="negative"><?=$parse['noresearch'] ?></div><? endif; ?>
 <div class="block">
 	<div class="title">Исследования</div>

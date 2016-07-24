@@ -66,9 +66,6 @@ class StageZero
 		$parse['planettype'] = $planettype;
 		$parse['mission'] = $target_mission;
 
-		/**
-		 * @var $fq Fleet[]
-		 */
 		$fq = Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$parse['fleets'] = [];

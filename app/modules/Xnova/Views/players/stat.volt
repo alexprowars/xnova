@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/jquery.jqplot.min.js"></script>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
 <script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/plugins/jqplot.highlighter.min.js"></script>

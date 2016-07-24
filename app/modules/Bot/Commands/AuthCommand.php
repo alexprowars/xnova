@@ -66,9 +66,6 @@ class AuthCommand extends UserCommand
 					break;
 				}
 
-				/**
-				 * @var $user \Xnova\Models\User
-				 */
 				$user = User::findFirst(['conditions' => 'username = ?0', 'bind' => [$text]]);
 
 				if (!$user)
@@ -116,10 +113,7 @@ class AuthCommand extends UserCommand
 
 					break;
 				}
-				
-				/**
-				 * @var $user \Xnova\Models\User
-				 */
+
 				$user = User::findFirst(['conditions' => 'username = ?0', 'bind' => [$this->conversation->notes['login']]]);
 				
 				if (!$user)

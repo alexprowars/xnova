@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('buddy/new/'.$parse["id"].'/') ?>" method="post">
 	<table class="table">
 		<tr>

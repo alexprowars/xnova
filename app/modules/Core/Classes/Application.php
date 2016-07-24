@@ -117,7 +117,11 @@ class Application extends PhalconApplication
 	public function getOutput()
 	{
 		if ($this->_config->application->prophiler && $this->getDI()->has('profiler'))
+		{
 			$benchmark = $this->getDI()->getShared('profiler')->start(__CLASS__.'::getOutput', [], 'Application');
+
+			$this->assets->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+		}
 
 		$handle = $this->handle();
 

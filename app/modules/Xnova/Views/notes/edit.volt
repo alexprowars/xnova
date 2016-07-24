@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('notes/edit/'.$parse['id'].'/') ?>" method="post">
 	<table class="table">
 		<tr>

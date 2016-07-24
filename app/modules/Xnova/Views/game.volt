@@ -1,17 +1,17 @@
-<?= $this->tag->getDoctype() ?>
+{{ getDoctype() }}
 <html lang="ru">
 <head>
-	<?php echo $this->tag->getTitle(); ?>
-	<?= $this->tag->tagHtml('meta', ['name' => 'description', 'content' => '']) ?>
-	<?= $this->tag->tagHtml('meta', ['name' => 'keywords', 'content' => '']) ?>
+	{{ getTitle() }}
+	{{ tag.tagHtml('meta', ['name': 'description', 'content': '']) }}
+	{{ tag.tagHtml('meta', ['name': 'keywords', 'content': '']) }}
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<link rel="image_src" href="//<?=$_SERVER['HTTP_HOST'] ?><?=$this->url->getBaseUri() ?>assets/images/logo.jpg" />
 	<link rel="apple-touch-icon" href="//<?=$_SERVER['HTTP_HOST'] ?><?=$this->url->getBaseUri() ?>assets/images/apple-touch-icon.png"/>
 
-	<?php $this->assets->outputCss('css') ?>
-	<?php $this->assets->outputJs('js') ?>
+	{{ assets.outputCss() }}
+	{{ assets.outputJs() }}
 
 	<!--[if lte IE 9]>
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all" />
@@ -123,7 +123,7 @@
 					}
 
 					?>
-					<?php echo $this->getContent() ?>
+					{{ content() }}
 				</div>
 
 			</div>

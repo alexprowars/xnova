@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('alliance/search/') ?>" method="POST">
 	<table class="table">
 		<tr>

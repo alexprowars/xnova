@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('alliance/apply/allyid/'.$parse['allyid'].'/') ?>" method="POST">
 	<table class="table">
 		<? if ($parse['text_apply'] != ''): ?>

@@ -1,8 +1,3 @@
-<?
-/**
- * @var $links array
- */
-?>
 <table class="table">
 	<tr>
 		<td colspan="2" class="c">Ссылки (<a href="<?=$this->url->get('fleet/shortcut/add/new/') ?>">Добавить</a>)</td>

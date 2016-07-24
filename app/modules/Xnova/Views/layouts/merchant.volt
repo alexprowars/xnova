@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <? if ($parse['type'] == 'metal'): ?>
 	<script type="text/javascript">
 		function calcul()

@@ -27,9 +27,6 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			return false;
 		}
 
-		/**
-		 * @var \Xnova\Models\User $TargetUser
-		 */
 		$TargetUser = User::findFirst($TargetPlanet->id_owner);
 
 		if (!$TargetUser)
@@ -63,9 +60,6 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		if ($LS > 0)
 		{
-			/**
-			 * @var $def Fleet[]
-			 */
 			$def = Fleet::find(['colums' => 'fleet_array', 'conditions' => 'end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3', 'bind' => [$this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type]]);
 
 			foreach ($def as $row)

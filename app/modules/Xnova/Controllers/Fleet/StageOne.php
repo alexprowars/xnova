@@ -139,13 +139,11 @@ class StageOne
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
-			/**
-			 * @var $moons \Xnova\Models\Planet[]
-			 */
 			$moons = Planet::find([
 				'(planet_type = 3 OR planet_type = 5) AND '.$controller->registry->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
 				'bind' => [$controller->planet->id, $controller->user->id]
 			]);
+
 			if (count($moons))
 			{
 				$timer = $controller->planet->getNextJumpTime();

@@ -14,11 +14,11 @@ use Xnova\Models\User;
 class Construction
 {
 	/**
-	 * @var \Xnova\Models\User user
+	 * @var Models\User
 	 */
 	private $user;
 	/**
-	 * @var \Xnova\Models\Planet planet
+	 * @var Models\Planet
 	 */
 	private $planet;
 	public $mode = '';

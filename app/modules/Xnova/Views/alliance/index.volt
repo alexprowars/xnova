@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table" style="table-layout: fixed;">
 	<tr>
 		<td class="c" colspan="2">Информация об альянсе</td>

@@ -13,7 +13,11 @@ use Xnova\Helpers;
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
 
+/** @noinspection PhpHierarchyChecksInspection */
+
 /**
+ * @method static Planet[]|Model\ResultsetInterface find(mixed $parameters = null)
+ * @method static Planet findFirst(mixed $parameters = null)
  * @property \Xnova\Database db
  * @property \Xnova\Game game
  * @property \Xnova\Models\User user

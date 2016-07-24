@@ -71,9 +71,6 @@ class FleetEngine extends Injectable
 
 		if ($TargetPlanet && $TargetPlanet->id_owner > 0)
 		{
-			/**
-			 * @var \Xnova\Models\User $TargetUser
-			 */
 			$TargetUser = User::findFirst($TargetPlanet->id_owner);
 
 			if ($TargetUser)

@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="separator"></div>
 <form action="" method="post">
 	<input type="hidden" name="form" value="missiles"/>

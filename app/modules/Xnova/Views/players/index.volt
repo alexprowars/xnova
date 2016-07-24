@@ -1,9 +1,3 @@
-<?
-/**
- * @var $parse array
- * @var $isPopup bool
- */
-?>
 <style>.image {
 	max-width: 556px !important
 }</style>

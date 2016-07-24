@@ -10,6 +10,12 @@ namespace Xnova\Models;
 
 use Phalcon\Mvc\Model;
 
+/** @noinspection PhpHierarchyChecksInspection */
+
+/**
+ * @method static Message[]|Model\ResultsetInterface find(mixed $parameters = null)
+ * @method static Message findFirst(mixed $parameters = null)
+ */
 class Message extends Model
 {
 	public $id;

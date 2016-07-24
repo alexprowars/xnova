@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('resources/') ?>" method="post">
 	<table width="100%">
 		<tr>

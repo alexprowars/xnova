@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('options/change/') ?>" method="post">
 	<table class="table">
 		<tr>

@@ -1,9 +1,9 @@
-<?= $this->tag->getDoctype() ?>
+{{ getDoctype() }}
 <html lang="ru">
 <head>
-	<?php echo $this->tag->getTitle(); ?>
-	<?= $this->tag->tagHtml('meta', ['name' => 'description', 'content' => '']) ?>
-	<?= $this->tag->tagHtml('meta', ['name' => 'keywords', 'content' => '']) ?>
+	{{ getTitle() }}
+	{{ tag.tagHtml('meta', ['name': 'description', 'content': '']) }}
+	{{ tag.tagHtml('meta', ['name': 'keywords', 'content': '']) }}
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width">
 
@@ -14,8 +14,8 @@
 	<meta property="og:site_name" content="Звездная Империя 5"/>
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик."/>
 
-	<?php $this->assets->outputCss('css') ?>
-	<?php $this->assets->outputJs('js') ?>
+	{{ assets.outputCss() }}
+	{{ assets.outputJs() }}
 
 	<!--[if lte IE 9]>
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all" />
@@ -31,12 +31,12 @@
 		<div id="box">
 			<div class="game_content">
 				<div class="content">
-					<?php echo $this->getContent() ?>
+					{{ content() }}
 				</div>
 			</div>
 		</div>
 	<? else: ?>
-		<?php echo $this->getContent() ?>
+		{{ content() }}
 	<? endif; ?>
 </body>
 </html>

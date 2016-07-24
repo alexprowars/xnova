@@ -46,9 +46,6 @@ class ImperiumController extends Controller
 
 		$fleet_fly = [];
 
-		/**
-		 * @var $fleets Fleet[]
-		 */
 		$fleets = Fleet::find(['owner = ?0', 'bind' => [$this->user->getId()]]);
 
 		foreach ($fleets as $fleet)
@@ -87,9 +84,6 @@ class ImperiumController extends Controller
 		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		/**
-		 * @var Planet[] $planets
-		 */
 		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => $this->user->getPlanetListSortQuery()]);
 
 		$parse['mount'] = count($planets) + 3;

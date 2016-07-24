@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table width="519">
 	<tr>
 		<td class="c" colspan="2">Ваши заявки</td>

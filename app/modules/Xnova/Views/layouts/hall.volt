@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table">
 	<tr>
 		<td class="c" width="100">TOP50</td>

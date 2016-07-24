@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('options/change/') ?>" method="post">
 	<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
 		<div class="head">

@@ -24,10 +24,10 @@ use Phalcon\Mvc\User\Component;
  * @property \Phalcon\Cache\Backend\Memcache cache
  * @property \Phalcon\Mvc\Url url
  * @property \Xnova\Models\User user
- * @property \App\Auth\Auth auth
+ * @property \Friday\Core\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
- * @property \Phalcon\Registry|\stdClass storage
+ * @property \Phalcon\Registry|\stdClass registry
  * @property \Phalcon\Config|\stdClass config
  * @property \Xnova\Game game
  */

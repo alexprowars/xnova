@@ -1,11 +1,5 @@
-<?
-/**
- * @var $parse array
- * @var $isPopup bool
- */
-?>
-	<table class="table">
-		<? if (!$isPopup): ?>
+<table class="table">
+	<? if (!$isPopup): ?>
 		<tr>
 			<td class="c" colspan="2"><?=$parse['name'] ?></td>
 		</tr>

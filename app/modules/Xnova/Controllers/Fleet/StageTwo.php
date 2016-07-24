@@ -32,9 +32,6 @@ class StageTwo
 
 			if ($nextJumpTime == 0)
 			{
-				/**
-				 * @var $TargetGate \Xnova\Models\Planet
-				 */
 				$TargetGate = Planet::findFirst($controller->request->getPost('moon', 'int'));
 
 				if (($TargetGate->planet_type == 3 || $TargetGate->planet_type == 5) && $TargetGate->sprungtor > 0)

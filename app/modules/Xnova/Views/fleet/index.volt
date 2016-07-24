@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="table-responsive">
 	<table class='table'>
 		<tr>

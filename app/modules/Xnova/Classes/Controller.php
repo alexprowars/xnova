@@ -9,6 +9,7 @@ namespace Xnova;
  */
 
 use Friday\Core\Lang;
+use Friday\Core\Options;
 use Xnova\Models\User;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
@@ -18,7 +19,7 @@ use Phalcon\Tag;
  * Class ControllerBase
  * @property \Phalcon\Mvc\View view
  * @property \Phalcon\Tag tag
- * @property \Phalcon\Assets\Manager assets
+ * @property \Friday\Core\Assets\Manager assets
  * @property \Xnova\Database db
  * @property \Phalcon\Mvc\Model\Manager modelsManager
  * @property \Phalcon\Session\Adapter\Memcache session
@@ -30,7 +31,7 @@ use Phalcon\Tag;
  * @property \Phalcon\Mvc\Url url
  * @property \Xnova\Models\User user
  * @property \Xnova\Models\Planet planet
- * @property \App\Auth\Auth auth
+ * @property \Friday\Core\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
  * @property \Phalcon\Registry|\stdClass registry
@@ -39,67 +40,19 @@ use Phalcon\Tag;
  */
 class Controller extends PhalconController
 {
+	static private $isInitialized = false;
+
 	public $private = 0;
 
 	private $showTopPanel = true;
 	private $showLeftMenu = true;
 
-	private $disableCollections = false;
-
-	public function afterExecuteRoute ()
-	{
-		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
-
-		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
-			return $this->response->redirect($this->game->getRequestData()['redirect']);
-
-		if ($this->auth->isAuthorized())
-		{
-			$this->view->setVar('deleteUserTimer', $this->user->deltime);
-			$this->view->setVar('vocationTimer', $this->user->vacation);
-			$this->view->setVar('messages', $this->user->messages);
-			$this->view->setVar('messages_ally', $this->user->messages_ally);
-			$this->view->setVar('tutorial', $this->user->tutorial);
-
-			$parse = [];
-
-			if ($this->getDI()->has('planet'))
-				$parse = $this->ShowTopNavigationBar();
-			else
-				$this->showTopPanel(false);
-
-			$parse['tutorial'] = $this->user->tutorial;
-
-			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
-
-			if ($planetsList === null)
-			{
-				$planetsList = $this->user->getUserPlanets($this->user->getId());
-
-				if (count($planetsList))
-					$this->cache->save('app::planetlist_'.$this->user->getId(), $planetsList, 600);
-			}
-
-			$parse['list'] = $planetsList;
-			$parse['current'] = $this->user->planet_current;
-
-			$this->view->setVar('planet', $parse);
-		}
-		else
-			$this->showTopPanel(false);
-
-		$this->view->setVar('topPanel', $this->showTopPanel);
-		$this->view->setVar('leftMenu', $this->showLeftMenu);
-
-		$this->tag->appendTitle($this->config->app->name);
-
-		return true;
-	}
-
 	public function initialize()
 	{
-		if ($this->dispatcher->wasForwarded() && $this->dispatcher->getControllerName() !== 'error')
+		if (self::$isInitialized)
 			return true;
+
+		self::$isInitialized = true;
 
 		if (function_exists('sys_getloadavg'))
 		{
@@ -119,7 +72,7 @@ class Controller extends PhalconController
 		else
 		{
 			$this->tag->setTitleSeparator(' :: ');
-			$this->tag->setTitle($this->config->app->name);
+			$this->tag->setTitle(Options::get('site_title', $this->config->app->name));
 	        $this->tag->setDocType(Tag::HTML5);
 		}
 
@@ -146,19 +99,16 @@ class Controller extends PhalconController
 			}
 		}
 
-		if (!$this->disableCollections)
-		{
-			$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
-			$this->assets->addCss('assets/css/jquery-ui.css');
-			$this->assets->addCss('assets/css/jquery.fancybox.css');
-			$this->assets->addCss('assets/css/style.css?v='.VERSION);
+		$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
+		$this->assets->addCss('assets/css/jquery-ui.css');
+		$this->assets->addCss('assets/css/jquery.fancybox.css');
+		$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$this->assets->addJs('assets/js/jquery.form.min.js');
-			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
-			$this->assets->addJs('assets/js/game.js?v='.VERSION);
-		}
+		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
+		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+		$this->assets->addJs('assets/js/jquery.form.min.js');
+		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
+		$this->assets->addJs('assets/js/game.js?v='.VERSION);
 
 		$this->game->loadGameVariables();
 
@@ -167,24 +117,18 @@ class Controller extends PhalconController
 			//if (!$this->user->isAdmin())
 			//	die('Нельзя пока вам сюда');
 
-			if (!$this->disableCollections)
-			{
-				if ((int) $this->config->application->prophiler)
-					$this->assets->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+			$this->assets->addCss('assets/css/jquery.toast.min.css');
+			$this->assets->addCss('assets/css/jquery.reject.css');
 
-				$this->assets->addCss('assets/css/jquery.toast.min.css');
-				$this->assets->addCss('assets/css/jquery.reject.css');
-
-				$this->assets->addJs('assets/js/script.js?v='.VERSION);
-				$this->assets->addJs('assets/js/universe.js?v='.VERSION);
-				$this->assets->addJs('assets/js/flotten.js?v='.VERSION);
-				$this->assets->addJs('assets/js/smiles.js?v='.VERSION);
-				$this->assets->addJs('assets/js/ed.js?v='.VERSION);
-				$this->assets->addJs('assets/js/jquery.touchSwipe.min.js');
-				$this->assets->addJs('assets/js/jquery.toast.min.js');
-				$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
-				$this->assets->addJs('assets/js/jquery.reject.js');
-			}
+			$this->assets->addJs('assets/js/script.js?v='.VERSION);
+			$this->assets->addJs('assets/js/universe.js?v='.VERSION);
+			$this->assets->addJs('assets/js/flotten.js?v='.VERSION);
+			$this->assets->addJs('assets/js/smiles.js?v='.VERSION);
+			$this->assets->addJs('assets/js/ed.js?v='.VERSION);
+			$this->assets->addJs('assets/js/jquery.touchSwipe.min.js');
+			$this->assets->addJs('assets/js/jquery.toast.min.js');
+			$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
+			$this->assets->addJs('assets/js/jquery.reject.js');
 
 			if ($this->request->isAjax())
 				$this->view->setMainView('game_ajax');
@@ -283,9 +227,57 @@ class Controller extends PhalconController
 		return true;
 	}
 
-	public function disableCollections ()
+	public function afterExecuteRoute ()
 	{
-		$this->disableCollections = true;
+		if ($this->view->isDisabled())
+			return true;
+
+		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
+
+		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
+			return $this->response->redirect($this->game->getRequestData()['redirect']);
+
+		if ($this->auth->isAuthorized())
+		{
+			$this->view->setVar('deleteUserTimer', $this->user->deltime);
+			$this->view->setVar('vocationTimer', $this->user->vacation);
+			$this->view->setVar('messages', $this->user->messages);
+			$this->view->setVar('messages_ally', $this->user->messages_ally);
+			$this->view->setVar('tutorial', $this->user->tutorial);
+
+			$parse = [];
+
+			if ($this->getDI()->has('planet'))
+				$parse = $this->ShowTopNavigationBar();
+			else
+				$this->showTopPanel(false);
+
+			$parse['tutorial'] = $this->user->tutorial;
+
+			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
+
+			if ($planetsList === null)
+			{
+				$planetsList = $this->user->getUserPlanets($this->user->getId());
+
+				if (count($planetsList))
+					$this->cache->save('app::planetlist_'.$this->user->getId(), $planetsList, 600);
+			}
+
+			$parse['list'] = $planetsList;
+			$parse['current'] = $this->user->planet_current;
+
+			$this->view->setVar('planet', $parse);
+		}
+		else
+			$this->showTopPanel(false);
+
+		$this->view->setVar('topPanel', $this->showTopPanel);
+		$this->view->setVar('leftMenu', $this->showLeftMenu);
+
+		$this->tag->appendTitle($this->config->app->name);
+
+		return true;
 	}
 
 	public function checkUserLevel ()

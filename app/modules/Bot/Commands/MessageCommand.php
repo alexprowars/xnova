@@ -81,9 +81,6 @@ class MessageCommand extends UserCommand
 					break;
 				}
 
-				/**
-				 * @var $user \Xnova\Models\User
-				 */
 				$user = User::findFirst(['columns' => 'id, username', 'conditions' => 'username = ?0', 'bind' => [$text]]);
 
 				if (!$user)
@@ -110,9 +107,6 @@ class MessageCommand extends UserCommand
 
 				$this->conversation->notes['text'] = $text;
 
-				/**
-				 * @var $user \Xnova\Models\User
-				 */
 				$user = User::findFirst(['columns' => 'id', 'conditions' => 'username = ?0', 'bind' => [$this->conversation->notes['login']]]);
 
 				if (!$user)

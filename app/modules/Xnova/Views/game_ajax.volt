@@ -1,10 +1,3 @@
-<?
-/**
- * @var $isPopup bool
- * @var $userId int
- * @var $messages_ally int
- */
-?>
 <? if (isset($topPanel) && $topPanel == true): ?>
 	<? $this->partial('shared/panel'); ?>
 <? endif; ?>
@@ -43,7 +36,7 @@
 	}
 
 	?>
-	<?php echo $this->getContent() ?>
+	{{ content() }}
 </div>
 
 <? if ($userId > 0 && !$isPopup): ?>

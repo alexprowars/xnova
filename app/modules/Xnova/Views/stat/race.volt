@@ -1,8 +1,3 @@
-<?
-/**
- * @var $stat array
- */
-?>
 <div class="table middle">
 	<div class="row">
 		<div class="c col-xs-2">Место</div>

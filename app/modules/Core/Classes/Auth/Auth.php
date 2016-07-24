@@ -35,7 +35,7 @@ class Auth extends Component
 
 	public function getSecret ($uid, $password)
 	{
-		return md5 ($password.':'.$this->config->application->encryptKey.':'.$uid);
+		return md5 ($password.'---IPSECURITYFLAG_N---'.$uid);
 	}
 
 	function check ()
@@ -86,13 +86,27 @@ class Auth extends Component
 		{
 			$this->_authorized = true;
 
+			if ($UserRow->onlinetime < (time() - 30) || ($this->dispatcher->getControllerName() == "chat" && ($UserRow->onlinetime < time() - 120 || $UserRow->chat == 0)) || ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0))
+				$UserRow->onlinetime = time();
+
 			$ip = sprintf("%u", ip2long($this->request->getClientAddress()));
 
 			if ($UserRow->ip != $ip)
 			{
 				$UserRow->ip = $ip;
-				$UserRow->update();
+
+				$this->db->insertAsDict(
+					"game_log_ip",
+					[
+						'id'	=> $UserRow->id,
+						'time'	=> time(),
+						'ip'	=> $ip
+					]
+				);
 			}
+
+			if ($UserRow->hasChanged())
+				$UserRow->update();
 		}
 
 		$this->eventsManager->fire('core:afterAuthCheck', $this, $UserRow);
@@ -107,7 +121,7 @@ class Auth extends Component
 		if (!$session)
 			throw new \Exception("Can`t start auth session");
 
-		$this->cookies->set($this->getSessionKey(), $session->token, $expire);
+		$this->cookies->set($this->getSessionKey(), $session->token, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
 
 		if ($this->session->isStarted())
 			$this->session->destroy(true);

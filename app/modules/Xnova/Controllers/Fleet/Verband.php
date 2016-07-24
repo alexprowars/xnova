@@ -26,9 +26,6 @@ class Verband
 		if (!is_numeric($fleetid) || empty($fleetid) || $fleetid == 0)
 			return $controller->response->redirect("overview/");
 
-		/**
-		 * @var $fleet \Xnova\Models\Fleet
-		 */
 		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetid, $controller->user->id, 1]]);
 
 		if (!$fleet)
@@ -141,9 +138,6 @@ class Verband
 			}
 		}
 
-		/**
-		 * @var $fq \Xnova\Models\Fleet[]
-		 */
 		if ($fleet->group_id == 0)
 			$fq = Fleet::find(['conditions' => 'id = ?0', 'bind' => [$fleet->id]]);
 		else

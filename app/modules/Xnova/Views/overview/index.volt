@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <? if ($parse['bonus']): ?>
 	<table class="table">
 		<tr>

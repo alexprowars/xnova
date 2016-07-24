@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="block">
 	<div class="title">
 		<?=$parse['off_points'] ?> <?=$parse['alv_points'] ?>

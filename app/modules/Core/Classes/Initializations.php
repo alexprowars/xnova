@@ -297,7 +297,7 @@ trait Initializations
 
 		$cache = $di->getShared('cache');
 
-		$resources = $cache->get($config->application->name.'FRIDAY_CONTROLLERS');
+		$resources = $cache->get('FRIDAY_CONTROLLERS');
 
 		if (!is_array($resources))
 		{
@@ -327,7 +327,7 @@ trait Initializations
 				}
 			}
 
-			$cache->save($config->application->name.'FRIDAY_CONTROLLERS', $resources, 3600);
+			$cache->save('FRIDAY_CONTROLLERS', $resources, 3600);
 		}
 
 		$registry->controllers = $resources;

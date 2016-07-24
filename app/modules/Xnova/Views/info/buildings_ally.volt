@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <? if ($parse['fleet'] != ''): ?>
 	<div class="separator"></div>
 	<form action="<?=$this->url->get('info/34/') ?>" method="post">

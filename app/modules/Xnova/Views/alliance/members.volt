@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table">
 	<tr>
 		<td class="c" colspan="10">Список членов альянса (количество: <?=$parse['i'] ?>)</td>

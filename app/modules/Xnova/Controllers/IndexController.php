@@ -26,13 +26,14 @@ class IndexController extends Controller
 	{
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
-
-		$this->disableCollections();
 		
 		parent::initialize();
 
 		if (!$this->dispatcher->wasForwarded())
 		{
+			$this->assets->clearJs();
+			$this->assets->clearCss();
+
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
 			$this->assets->addJs('assets/js/jquery.form.min.js');

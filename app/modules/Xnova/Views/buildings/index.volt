@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="block">
 	<div class="title">
 		Занято полей

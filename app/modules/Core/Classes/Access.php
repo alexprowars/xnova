@@ -3,8 +3,7 @@
 namespace Friday\Core;
 
 use Friday\Core\Models\Group;
-use Friday\Core\Models\User;
-use Friday\Core\Models\UserGroup;
+use Xnova\Models\User;
 use Phalcon\Di\Injectable;
 
 class Access extends Injectable

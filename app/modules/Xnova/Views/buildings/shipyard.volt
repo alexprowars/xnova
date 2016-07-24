@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="block">
 	<div class="content">
 		<form action="<?=$this->url->get('buildings/'.$parse['mode'].'/') ?>" method="post">
