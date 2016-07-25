@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Helpers;
 use Xnova\Controller;
 
@@ -86,8 +87,8 @@ class RecordsController extends Controller
 		];
 
 		$parse = [
-			'Records' => $Records,
-			'update' => $this->config->app->get('stat_update'),
+			'Records'	=> $Records,
+			'update'	=> Options::get('stat_update'),
 		];
 
 		$this->view->setVar('parse', $parse);

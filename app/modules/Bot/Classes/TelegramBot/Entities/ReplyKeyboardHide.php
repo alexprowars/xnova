@@ -12,8 +12,6 @@
 
 namespace Longman\TelegramBot\Entities;
 
-use Longman\TelegramBot\Exception\TelegramException;
-
 class ReplyKeyboardHide extends Entity
 {
     protected $hide_keyboard;

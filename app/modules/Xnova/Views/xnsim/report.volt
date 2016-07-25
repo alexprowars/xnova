@@ -1,22 +1,22 @@
-<?= $this->tag->getDoctype() ?>
+{{ getDoctype() }}
 <html lang="ru">
 	<head>
 		<title>Симуляция боя</title>
-		<?php $this->assets->outputJs('js') ?>
-		<?php $this->assets->outputCss('css') ?>
+		{{ assets.outputCss() }}
+		{{ assets.outputJs() }}
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	</head>
 	<body>
 		<center>
 			<table width="99%">
 				<tr>
-					<td><?=stripslashes( $report['html'] ) ?></td>
+					<td>{{ report['html']|stripslashes }}</td>
 				</tr>
 			</table>
 			Ссылка на результат симуляции<br><br>
-			<input type="text" value="//<?=$_SERVER['SERVER_NAME'] ?>/xnsim/report/?sid=<?=$sid ?>" style="width:500px;padding:5px;text-align: center;" title="">
+			<input type="text" value="//{{ _SERVER['SERVER_NAME'] }}/xnsim/report/?sid={{ sid }}" style="width:500px;padding:5px;text-align: center;" title="">
 			<br><br>
-			<? if (isset($statistics)): ?>
+			{% if statistics is defined %}
 				Результаты потерь после 50 симуляций:
 				<table>
 					<tr>
@@ -24,17 +24,17 @@
 						<th>Потери атакующего</th>
 						<th>Потери защитника</th>
 					</tr>
-					<? foreach ($statistics AS $i => $s): ?>
+					{% for i, s in statistics %}
 						<tr>
-							<th><?=$i ?></th>
-							<th><?=\Xnova\Helpers::pretty_number($s['att']) ?></th>
-							<th><?=\Xnova\Helpers::pretty_number($s['def']) ?></th>
+							<th>{{ i }}</th>
+							<th>{{ pretty_number(s['att']) ?></th>
+							<th>{{ pretty_number(s['def']) ?></th>
 						</tr>
-					<? endforeach; ?>
+					{% endfor %}
 				</table>
-			<? endif; ?>
+			{% endif %}
 			<br><br>
-			Made by AlexPro for <a href="http://xnova.su/" target="_blank">XNova - <?=$this->config->game->universe ?> UNIVERSE</a>
+			Made by AlexPro for <a href="http://xnova.su/" target="_blank">XNova - {{ config.game.universe }} UNIVERSE</a>
 		</center>
 	</body>
 </html>

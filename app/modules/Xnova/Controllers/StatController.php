@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Phalcon\Mvc\View;
@@ -77,7 +78,7 @@ class StatController extends Controller
 
 		$this->view->partial('stat/top',
 		[
-			'update' 	=> $this->game->datezone("d.m.Y - H:i:s", $this->config->app->get('stat_update', 0)),
+			'update' 	=> $this->game->datezone("d.m.Y - H:i:s", Options::get('stat_update', 0)),
 			'who' 		=> $who,
 			'type' 		=> $type,
 			'range'		=> $range
@@ -111,8 +112,8 @@ class StatController extends Controller
 				$this->range = $records[$this->field.'_rank'];
 		}
 
-		if ($this->config->app->get('active_users') > 100)
-			$LastPage = floor($this->config->app->get('active_users') / 100);
+		if (Options::get('active_users') > 100)
+			$LastPage = floor(Options::get('active_users') / 100);
 		else
 			$LastPage = 0;
 
@@ -184,8 +185,8 @@ class StatController extends Controller
 	{
 		$stat = [];
 
-		if ($this->config->app->get('active_alliance') > 100)
-			$LastPage = floor($this->config->app->get('active_alliance') / 100);
+		if (Options::get('active_alliance') > 100)
+			$LastPage = floor(Options::get('active_alliance') / 100);
 		else
 			$LastPage = 0;
 

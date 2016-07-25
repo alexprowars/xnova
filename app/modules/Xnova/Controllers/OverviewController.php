@@ -14,7 +14,6 @@ use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Models\Fleet as FleetModel;
-use Phalcon\Mvc\Model\Resultset;
 use Xnova\Controller;
 
 /**

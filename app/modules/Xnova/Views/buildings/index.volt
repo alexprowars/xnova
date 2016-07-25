@@ -1,28 +1,28 @@
 <div class="block">
 	<div class="title">
 		Занято полей
-		<span class="positive"><?=$parse['planet_field_current'] ?></span> из <span class="negative"><?=$parse['planet_field_max'] ?></span>
-		<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">Осталось <span class="positive"><?=$parse['field_libre'] ?></span> свободн<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
+		<span class="positive">{{ parse['planet_field_current'] }}</span> из <span class="negative">{{ parse['planet_field_max'] }}</span>
+		<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">Осталось <span class="positive">{{ parse['field_libre'] }}</span> свободн<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 2) ?> пол<?=\Xnova\Helpers::morph($parse['field_libre'], 'neuter', 1) ?></div>
 		<div class="clearfix"></div>
 	</div>
-	<? foreach ($parse['BuildList'] AS $list): ?>
+	{% for list in parse['BuildList'] %}
 		<table class="table" id="building">
 			<tr>
 				<td class="c" width="50%">
-					<?=$list['ListID'] ?>: <?=$list['ElementTitle'] ?> <?=$list['BuildLevel'] ?><? if ($list['BuildMode'] != 'build'): ?>. <?=_getText('destroy') ?><? endif; ?>
+					{{ list['ListID'] }}: {{ list['ElementTitle'] }} {{ list['BuildLevel'] }}{% if list['BuildMode'] != 'build' %}. {{ _text('destroy') }}{% endif %}
 				</td>
 				<td class="k">
-					<? if ($list['ListID'] == 1): ?>
+					{% if list['ListID'] == 1 %}
 						<div id="blc" class="z"></div>
-						<script type="text/javascript">BuildTimeout(<?=$list['BuildTime'] ?>, <?=$list['ListID'] ?>, <?=$list['PlanetID'] ?>, <?=(isset($_SESSION['LAST_ACTION_TIME']) ? $_SESSION['LAST_ACTION_TIME'] : 0) ?>);</script>
-						<div class="positive"><?=$this->game->datezone("d.m H:i:s", $list['BuildEndTime']) ?></div>
-					<? else: ?>
-						<a href="{{ url('buildings/index/listid/'.$list['ListID'].'/cmd/remove/planet/'.$list['PlanetID'].'/') }}">Удалить</a>
-					<? endif; ?>
+						<script type="text/javascript">BuildTimeout({{ list['BuildTime'] }}, {{ list['ListID'] }}, {{ list['PlanetID'] }}, <?=(isset($_SESSION['LAST_ACTION_TIME']) ? $_SESSION['LAST_ACTION_TIME'] : 0) ?>);</script>
+						<div class="positive">{{ game.datezone("d.m H:i:s", $list['BuildEndTime']) }}</div>
+					{% else %}
+						<a href="{{ url('buildings/index/listid/'~list['ListID']~'/cmd/remove/planet/'~list['PlanetID']~'/') }}">Удалить</a>
+					{% endif %}
 				</td>
 			</tr>
 		</table>
-	<? endforeach; ?>
+	{% endfor %}
 	<div class="content">
 		<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
 			<div class="head hidden-xs-down">
@@ -32,47 +32,47 @@
 				</ul>
 			</div>
 			<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
-				<div class="buildings area <?=$parse['planettype'] ?>">
-					<? foreach ($parse['BuildingsList'] AS $build): if (!$build['access']) continue; ?>
-						<div data-id="<?=$build['i'] ?>" class="object i_<?=$build['i'] ?> <?=($build['count'] <= 0 ? 'empty' : '') ?> tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
-							<img src="<?=$this->url->getBaseUri() ?>assets/images/buildings/<?=$build['i'] ?>.png" alt="<?=_getText('tech', $build['i']) ?>">
-							<div class="name"><?=_getText('tech', $build['i']) ?> <span><?=\Xnova\Helpers::pretty_number($build['count']) ?></span></div>
+				<div class="buildings area {{ parse['planettype'] }}">
+					{% for parse['BuildingsList'] AS $build): if (!$build['access']) continue; ?>
+						<div data-id="{{ build['i'] }}" class="object i_{{ build['i'] }} <?=($build['count'] <= 0 ? 'empty' : '') ?> tooltip" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
+							<img src="{{ url.getBaseUri() }}assets/images/buildings/{{ build['i'] }}.png" alt="{{ _text('tech', build['i']) }}">
+							<div class="name">{{ _text('tech', build['i']) }} <span>{{ pretty_number(build['count']) ?></span></div>
 						</div>
-					<? endforeach; ?>
+					{% endfor %}
 				</div>
 			</div>
 			<div id="tabs-1" class="ui-tabs-panel ui-widget-content" style="display: none">
 				<div class="row" id="building">
 					<? $i = 0; foreach ($parse['BuildingsList'] AS $build): $i++; ?>
-					<div class="col-md-6 col-xs-12" id="object_<?=$build['i'] ?>">
-						<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
-							<? if (!$build['access']): ?>
-								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.$build['i'].'/') }}', 600, 500)"><span>недоступно</span></div>
-							<? endif; ?>
+					<div class="col-md-6 col-xs-12" id="object_{{ build['i'] }}">
+						<div class="viewport buildings {% if (!$build['access'] %}shadow{% endif %}">
+							{% if (!$build['access'] %}
+								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], user, planet)) ?>" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600, 500)"><span>недоступно</span></div>
+							{% endif %}
 
 							<div class="img">
-								<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.$build['i'].'/') }}', 600)">
-									<img src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/<?=$build['i'] ?>.gif" align="top" alt="" class="tooltip img-responsive" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
+								<a href="javascript:;" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600)">
+									<img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ build['i'] }}.gif" align="top" alt="" class="tooltip img-responsive" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
 								</a>
 
 								<div class="overContent">
-									<?=$build['price'] ?>
+									{{ build['price'] }}
 								</div>
 							</div>
 							<div class="title">
-								<a href="{{ url('info/'.$build['i'].'/') }}"><?=_getText('tech', $build['i']) ?></a>
+								<a href="{{ url('info/'~build['i']~'/') }}">{{ _text('tech', build['i']) }}</a>
 							</div>
 							<div class="actions">
-								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>"><?=\Xnova\Helpers::pretty_number($build['count']) ?></span><br>
-								<? if ($build['access']): ?>
+								Уровень: <span class="<?=($build['count'] > 0 ? 'positive' : 'negative') ?>">{{ pretty_number(build['count']) ?></span><br>
+								{% if build['access'] %}
 									Время: <?=\Xnova\Helpers::pretty_time($build['time']); ?><br>
-									<?=$build['add'] ?>
-									<div class="startBuild"><?=$build['click'] ?></div>
-								<? endif; ?>
+									{{ build['add'] }}
+									<div class="startBuild">{{ build['click'] }}</div>
+								{% endif %}
 							</div>
 						</div>
 					</div>
-					<? endforeach; ?>
+					{% endfor %}
 				</div>
 			</div>
 		</div>

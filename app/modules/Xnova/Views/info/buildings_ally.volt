@@ -1,9 +1,9 @@
-<? if ($parse['fleet'] != ''): ?>
+{% if parse['fleet'] != '' %}
 	<div class="separator"></div>
 	<form action="{{ url('info/34/') }}" method="post">
 		<table>
 			<tr>
-				<th width="550"><?=$parse['msg'] ?></th>
+				<th width="550">{{ parse['msg'] }}</th>
 			</tr>
 			<tr>
 				<th width="550">Флоты возле планеты</th>
@@ -11,7 +11,7 @@
 			<tr>
 				<th>
 					<select name="jmpto" title="">
-						<?=$parse['fleet'] ?>
+						{{ parse['fleet'] }}
 					</select>
 				</th>
 			</tr>
@@ -19,8 +19,8 @@
 		<br>
 		<table width="550">
 			<tr>
-				<th colspan="2"><input value="Отправить <?=$parse['need'] ?> дейтерия" name="send" type="submit"></th>
+				<th colspan="2"><input value="Отправить {{ parse['need'] }} дейтерия" name="send" type="submit"></th>
 			</tr>
 		</table>
 	</form>
-<? endif; ?>
+{% endif %}

@@ -2,25 +2,25 @@
 	<tr>
 		<td class="c" colspan="2">Ваши военные базы</td>
 	</tr>
-	<? foreach ($parse['list'] AS $p): ?>
+	{% for parse['list'] AS $p %}
 		<tr>
-			<th><?=$p['name'] ?> <?=\Xnova\Helpers::BuildPlanetAdressLink($p) ?> </th>
+			<th>{{ p['name'] }} <?=\Xnova\Helpers::BuildPlanetAdressLink($p) ?> </th>
 			<th width="200">
-				<? if ($p['id_ally'] == 0): ?>
-					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='{{ url('alliance/admin/edit/planets/ally/'.$p['id'].'') }}' : false">
-				<? else: ?>
+				{% if p['id_ally'] == 0 %}
+					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='{{ url('alliance/admin/edit/planets/ally/'~p['id']~'') }}' : false">
+				{% else %}
 					преобразована
-				<? endif; ?>
+				{% endif %}
 			</th>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 	<tr>
 		<td class="c" colspan="2">Информация</td>
 	</tr>
 	<tr>
 		<th colspan="2">
-			Доступно кредитов: <span class="<?=($parse['need'] > $parse['credits'] ? 'negative' : 'positive') ?>"><?=$parse['credits'] ?></span>
-			<br>Необходимо кредитов: <?=$parse['need'] ?>
+			Доступно кредитов: <span class="<?=($parse['need'] > $parse['credits'] ? 'negative' : 'positive') ?>">{{ parse['credits'] }}</span>
+			<br>Необходимо кредитов: {{ parse['need'] }}
 			<br><br>
 			<ul>
 				<li>Военную базу нельзя вернуть назад</li>

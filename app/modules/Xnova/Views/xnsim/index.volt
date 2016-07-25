@@ -1,11 +1,11 @@
-<?= $this->tag->getDoctype() ?>
+<?= tag->getDoctype() ?>
 <html lang="ru">
 	<head>
 		<meta http-equiv="content-type" content="text/html; utf-8">
 		<meta http-equiv="content-language" content="ru">
 		<title>XNova SIM v1.0</title>
-		<?php $this->assets->outputJs('js') ?>
-		<?php $this->assets->outputCss('css') ?>
+		<?php assets->outputJs('js') ?>
+		<?php assets->outputCss('css') ?>
 	</head>
 <body>
 <script type="text/javascript">
@@ -14,7 +14,7 @@
 
 	function vis_row(TAG, gID)
 	{
-		if (!groups[gID] == null || groups[gID] == 0)
+		if (!groups[gID] == null or groups[gID] == 0)
 			groups[gID] = 1;
 		else
 			groups[gID] = 0;
@@ -31,7 +31,7 @@
 		var s = parseInt(sID);
 		var g = parseInt(gID);
 
-		for (var i = s; i < s + <?=$this->config->game->get('maxSlotsInSim', 5) ?>; i++)
+		for (var i = s; i < s + {{ config.game.get('maxSlotsInSim', 5) }}; i++)
 		{
 			if (i < s + g)
 			{
@@ -147,16 +147,16 @@
 		<th class="spezial"> XNova SIM </th>
 		<th colspan="11" class="spezial">
 			<select name="Att" SIZE="1" onchange='vis_cols("TD","gr",0,this.value);' title="">
-				<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
-					<option value="<?=$i ?>"><?=$i ?></option>
+				<? for ($i = 1; $i <= $config.game.get('maxSlotsInSim', 5); $i++ %}
+					<option value="{{ i }}">{{ i }}</option>
 				<? endfor; ?>
 			</select>
 
 			Исходная ситуация
 
-			<select name="Def" SIZE="1" onchange='vis_cols("TD","gr",<?=$this->config->game->get('maxSlotsInSim', 5) ?>,this.value);' title="">
-				<? for ($i = 1; $i <= $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
-					<option value="<?=$i ?>"><?=$i ?></option>
+			<select name="Def" SIZE="1" onchange='vis_cols("TD","gr",{{ config.game.get('maxSlotsInSim', 5) }},this.value);' title="">
+				<? for ($i = 1; $i <= $config.game.get('maxSlotsInSim', 5); $i++ %}
+					<option value="{{ i }}">{{ i }}</option>
 				<? endfor; ?>
 			</select>
 		</th>
@@ -165,76 +165,76 @@
 		<th align="center" class="typ leftcol_type typ_td"> Тип </th>
 
 		<th class="angreifer leftcol_data"> Ведущий </th>
-		<? for ($i = 1; $i < $this->config->game->get('maxSlotsInSim', 5); $i++): ?>
-			<td class="angreifer leftcol_data" id='gr<?=$i ?>'>Атакующий&nbsp;<?=$i ?></td>
+		<? for ($i = 1; $i < $config.game.get('maxSlotsInSim', 5); $i++ %}
+			<td class="angreifer leftcol_data" id='gr{{ i }}'>Атакующий&nbsp;{{ i }}</td>
 		<? endfor; ?>
 
 		<th class="verteidiger leftcol_data "> Планета </th>
-		<? for ($i = $this->config->game->get('maxSlotsInSim', 5) + 1; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-			<td class="angreifer leftcol_data" id='gr<?=$i ?>'>Защитник&nbsp;<?=($i - $this->config->game->get('maxSlotsInSim', 5)) ?></td>
+		<? for ($i = $config.game.get('maxSlotsInSim', 5) + 1; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
+			<td class="angreifer leftcol_data" id='gr{{ i }}'>Защитник&nbsp;<?=($i - $config.game.get('maxSlotsInSim', 5)) ?></td>
 		<? endfor; ?>
 	</tr>
 </thead>
 <tr>
 	<td colspan="12" class="spezial" id="tech_td"><b>Исследования и офицеры</b></td>
 </tr>
-<? foreach ($techList AS $techId): ?>
+{% for techList AS $techId %}
 	<tr align=center>
-		<td><b><?=_getText('tech', $techId) ?></b></td>
-		<? for ($i = 0; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-			<td id="gr<?=$i ?>"><input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2" title=""></td>
+		<td><b>{{ _text('tech', techId) }}</b></td>
+		<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
+			<td id="gr{{ i }}"><input class="number" value="0" type="text" name="gr{{ i }}-{{ techId }}" maxlength="2" title=""></td>
 		<? endfor; ?>
 	</tr>
-<? endforeach; ?>
+{% endfor %}
 
 <tr>
 	<td colspan="12" class="spezial" id="fleet_td"><b>Флот</b></td>
 </tr>
 
-<? foreach ($this->registry->reslist['fleet'] AS $fleetId): ?>
+{% for registry->reslist['fleet'] AS $fleetId %}
 	<tr align=center>
-		<td><b><?=_getText('tech', $fleetId) ?></b></td>
-		<? for ($i = 0; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-			<td id="gr<?=$i ?>">
-				<? if ($fleetId == 212 && $i < $this->config->game->get('maxSlotsInSim', 5)): ?>
+		<td><b>{{ _text('tech', fleetId) }}</b></td>
+		<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
+			<td id="gr{{ i }}">
+				{% if fleetId == 212 and $i < $config.game.get('maxSlotsInSim', 5) %}
 					-
-				<? else: ?>
-					<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
-				<? endif; ?>
-				<? if (in_array($fleetId + 100, $this->registry->reslist['tech_f'])): ?>
-					<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
-				<? endif; ?>
+				{% else %}
+					<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
+				{% endif %}
+				{% if (in_array($fleetId + 100, registry->reslist['tech_f']) %}
+					<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
+				{% endif %}
 			</td>
 		<? endfor; ?>
 	</tr>
-<? endforeach; ?>
+{% endfor %}
 
 <tr>
 	<td colspan="12" class="spezial" id="def_td"><b>Защита</b></td>
 </tr>
-	<? foreach ($this->registry->reslist['defense'] AS $fleetId): ?>
+	{% for registry->reslist['defense'] AS $fleetId %}
 		<tr align=center>
-			<td><b><?=_getText('tech', $fleetId) ?></b></td>
-			<? for ($i = 0; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-				<td id="gr<?=$i ?>">
-					<? if ($i < $this->config->game->get('maxSlotsInSim', 5)): ?>
+			<td><b>{{ _text('tech', fleetId) }}</b></td>
+			<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
+				<td id="gr{{ i }}">
+					{% if i < $config.game.get('maxSlotsInSim', 5) %}
 						-
-					<? else: ?>
-						<input class="number" value="0" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
-						<? if (in_array($fleetId - 50, $this->registry->reslist['tech_f'])): ?>
-							<input class="lvl" value="0" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
-						<? endif; ?>
-					<? endif; ?>
+					{% else %}
+						<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
+						{% if (in_array($fleetId - 50, registry->reslist['tech_f']) %}
+							<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
+						{% endif %}
+					{% endif %}
 				</td>
 			<? endfor; ?>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 
 
 	<tr align="center">
 		<td>&nbsp;</td>
-		<? for ($i = 0; $i < $this->config->game->get('maxSlotsInSim', 5) * 2; $i++): ?>
-			<td id='gr<?=$i ?>'><a href='javascript:;' onClick='gclear("<?=$i ?>");'>Очистить</a></td>
+		<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
+			<td id='gr{{ i }}'><a href='javascript:;' onClick='gclear("{{ i }}");'>Очистить</a></td>
 		<? endfor; ?>
   	</tr>
     <tr>
@@ -245,7 +245,7 @@
 
 <script type="text/javascript">
 	vis_cols("TD","gr",0,1);
-	vis_cols("TD","gr",<?=$this->config->game->get('maxSlotsInSim', 5) ?>,1);
+	vis_cols("TD","gr",{{ config.game.get('maxSlotsInSim', 5) }},1);
 	vis_row("TR","ts");
 	vis_row("TR","sp");
 	vis_row("TR","gb");
@@ -257,7 +257,7 @@
 	<!-- Yandex.Metrika counter -->
 	<script type="text/javascript">
 	(function (d, w, c) {
-		(w[c] = w[c] || []).push(function() {
+		(w[c] = w[c] or []).push(function() {
 			try {
 				w.yaCounter25961143 = new Ya.Metrika({id:25961143});
 			} catch(e) { }

@@ -1,3 +1,3 @@
 <div id="report" class="table-responsive">
-	<?=$html ?>
+	{{ html }}
 </div>

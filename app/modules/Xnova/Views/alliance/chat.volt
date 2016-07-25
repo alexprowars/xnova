@@ -7,42 +7,42 @@
 			<div class='col-xs-12 c'><a href="{{ url('alliance/chat/') }}">Обновить</a></div>
 		</div>
 
-		<? if (count($parse['messages']) > 0): ?>
-			<? foreach ($parse['messages'] AS $m): ?>
+		{% if parse['messages']|length > 0 %}
+			{% for m in parse['messages'] %}
 				<div class="row">
 					<div class="col-xs-12 j p-a-0">
 						<table width="100%">
 							<tr>
 								<th class="b text-xs-center" width="130">
-									<?=$this->game->datezone("H:i:s", $m['timestamp']) ?><br><a href="{{ url('players/'.$m['user_id'].'/') }}" target="_blank"><?=stripslashes($m['user']) ?></a>
-									<a onclick="AddQuote('<?=stripslashes($m['user']) ?>', 'm<?=$m['id'] ?>')"> -> </a>
+									{{ game.datezone("H:i:s", m['timestamp']) }}<br><a href="{{ url('players/'~m['user_id']~'/') }}" target="_blank">{{ m['user']|stripslashes }}</a>
+									<a onclick="AddQuote('{{ m['user']|stripslashes }}', 'm{{ m['id'] }}')"> -> </a>
 								</th>
 								<th class="b">
-									<? if ($parse['parser']): ?>
-										<span id="m<?=$m['id'] ?>"></span>
-									<? else: ?>
-										<?= str_replace(["\r\n", "\n", "\r"], '', stripslashes($m['message'])) ?>
-									<? endif; ?>
+									{% if parse['parser'] %}
+										<span id="m{{ m['id'] }}"></span>
+									{% else %}
+										{{ replace(["\r\n", "\n", "\r"], '', m['message']|stripslashes) }}
+									{% endif %}
 								</th>
-								<? if ($parse['owner']): ?>
-									<th class="b" width="20"><input name="showmes<?=$m['id'] ?>" type="hidden" value="1"><input name="delmes<?=$m['id'] ?>" type="checkbox" title=""></th>
-								<? endif; ?>
+								{% if parse['owner'] %}
+									<th class="b" width="20"><input name="showmes{{ m['id'] }}" type="hidden" value="1"><input name="delmes{{ m['id'] }}" type="checkbox" title=""></th>
+								{% endif %}
 							</tr>
 						</table>
 					</div>
 				</div>
-			<? endforeach; ?>
-		<? else: ?>
+			{% endfor %}
+		{% else %}
 			<div class="row">
 				<div class="col-xs-12 b" align="center">В альянсе нет сообщений.</div>
 			</div>
-		<? endif; ?>
+		{% endif %}
 
 		<div class="row">
-			<div class="col-xs-12 th"><?=$parse['pages'] ?></div>
+			<div class="col-xs-12 th">{{ parse['pages'] }}</div>
 		</div>
 
-		<? if ($parse['owner'] && count($parse['messages']) > 0): ?>
+		{% if parse['owner'] and parse['messages']|length > 0 %}
 			<div class="row">
 				<div class="col-xs-12 th">
 					<select id="deletemessages" name="deletemessages" title="">
@@ -53,18 +53,18 @@
 					<input value="Удалить" type="submit">
 				</div>
 			</div>
-		<? endif; ?>
+		{% endif %}
 	</div>
 </form>
 <div class="separator"></div>
 <script type="text/javascript">
 	var messages = new Array(20);
-	<? if (count($parse['messages']) > 0): foreach ($parse['messages'] AS $m): ?>
-		messages['m<?=$m['id'] ?>'] = '<?=str_replace(["\r\n", "\n", "\r"], '', addslashes(stripslashes($m['message']))) ?>';
+	{% if parse['messages']|length > 0): foreach ($parse['messages'] AS $m %}
+		messages['m{{ m['id'] }}'] = '<?=str_replace(["\r\n", "\n", "\r"], '', addslashes(stripslashes($m['message']))) ?>';
 	<? endforeach;  endif; ?>
-	<? if ($parse['parser']): ?>
+	{% if parse['parser'] %}
 		$(document).ready(function(){ShowText()});
-	<? endif; ?>
+	{% endif %}
 </script>
 <form action="{{ url('alliance/chat/') }}" method="post">
 	<table class="table">
@@ -74,7 +74,7 @@
 		<tr>
 			<th class="p-a-0">
 				<div id="editor"></div>
-				<textarea name="text" id="text" rows="10" onkeypress="if((event.ctrlKey) && ((event.keyCode==10)||(event.keyCode==13))) submit()" title=""></textarea>
+				<textarea name="text" id="text" rows="10" onkeypress="if ((event.ctrlKey) && ((event.keyCode == 10) || (event.keyCode == 13))) submit()" title=""></textarea>
 			</th>
 		</tr>
 		<tr>

@@ -1,24 +1,24 @@
 <!--suppress ALL -->
 <div id="rf_techinfo"></div>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/techtree.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/techtree.js"></script>
 <script type="text/javascript">
 
 	var objx = ({
-		<? foreach ($this->registry->resource AS $id => $code): ?>
-			<?=$id ?>:{
-				'name':'<?=_getText('tech', $id) ?>',
-				'img':'<?=$id ?>.gif',
+		{% for registry->resource AS $id => $code %}
+			{{ id }}:{
+				'name':'{{ _text('tech', id) }}',
+				'img':'{{ id }}.gif',
 				'req':[
-				<? if (isset($this->registry->requeriments[$id]) && count($this->registry->requeriments[$id]) > 0): ?>
-					<? foreach ($this->registry->requeriments[$id] AS $ids => $level): ?>
-						[<?=$ids ?>,'<?=_getText('tech', $ids) ?>',<?=(isset($this->user->{$this->registry->resource[$ids]}) ? $this->user->{$this->registry->resource[$ids]} : $this->planet->{$this->registry->resource[$ids]}) ?>,-1,<?=$level ?>],
-					<? endforeach; ?>
-				<? else: ?>
+				{% if (isset(registry->requeriments[$id]) and count(registry->requeriments[$id]) > 0 %}
+					{% for registry->requeriments[$id] AS $ids => $level %}
+						[{{ ids }},'{{ _text('tech', ids) }}',<?=(isset(user.{registry->resource[$ids]}) ? user.{registry->resource[$ids]} : planet->{registry->resource[$ids]}) ?>,-1,{{ level }}],
+					{% endfor %}
+				{% else %}
 					['no']
-				<? endif; ?>
+				{% endif %}
 				]
 			},
-		<? endforeach; ?>
+		{% endfor %}
 		0:{}
 	})
 
@@ -37,7 +37,7 @@
 		}
 
 		if (idx != -1)
-			rftr.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+objx[idx].name+'</span></div><img id="tch_img_'+tid+'" name="'+idx+'" src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/' + objx[idx].img + '" class="tch_icon_' + active + '" /><div class="tch_tx_lvl">'+lvltx+'</div>', null, null, active, active, active);
+			rftr.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+objx[idx].name+'</span></div><img id="tch_img_'+tid+'" name="'+idx+'" src="{{ url.getBaseUri() }}assets/images/gebaeude/' + objx[idx].img + '" class="tch_icon_' + active + '" /><div class="tch_tx_lvl">'+lvltx+'</div>', null, null, active, active, active);
 		else
 			rftr.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+fwrd+'</span></div><img id="tch_img_'+tid+'" src="skins/sn_space_blue/images/pixel.png" class="tch_icon_' + active + '" /><div class="tch_tx_lvl">'+lvltx+'</div>', null, null, active, active, active);
 
@@ -81,6 +81,6 @@
 
 	}
 
-	CreateTree(1, -1, <?=$element ?>, '<?=(isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->{$this->registry->resource[$element]}) ?>', <?=(\Xnova\Building::IsTechnologieAccessible($this->user, $this->planet, $element) ? 1 : 0) ?>);
+	CreateTree(1, -1, {{ element }}, '<?=(isset(user.{registry->resource[$element]}) ? user.{registry->resource[$element]} : planet->{registry->resource[$element]}) ?>', <?=(\Xnova\Building::IsTechnologieAccessible(user, planet, $element) ? 1 : 0) ?>);
 
 </script>

@@ -1,56 +1,56 @@
 <form action="{{ url('fleet/stagethree/') }}" method="post">
-	<input type="hidden" name="thisresource1"  value="<?=$parse['thisresource1'] ?>" />
-	<input type="hidden" name="thisresource2"  value="<?=$parse['thisresource2'] ?>" />
-	<input type="hidden" name="thisresource3"  value="<?=$parse['thisresource3'] ?>" />
-	<input type="hidden" name="consumption"    value="<?=$parse['consumption'] ?>" />
-	<input type="hidden" name="stayConsumption" value="<?=$parse['stayConsumption'] ?>" />
-	<input type="hidden" name="dist"           value="<?=$parse['dist'] ?>" />
-	<input type="hidden" name="acs"            value="<?=$parse['acs'] ?>" />
-	<input type="hidden" name="thisgalaxy"     value="<?=$parse['thisgalaxy'] ?>" />
-	<input type="hidden" name="thissystem"     value="<?=$parse['thissystem'] ?>" />
-	<input type="hidden" name="thisplanet"     value="<?=$parse['thisplanet'] ?>" />
-	<input type="hidden" name="galaxy"         value="<?=$parse['galaxy'] ?>" />
-	<input type="hidden" name="system"         value="<?=$parse['system'] ?>" />
-	<input type="hidden" name="planet"         value="<?=$parse['planet'] ?>" />
-	<input type="hidden" name="planettype"     value="<?=$parse['planettype'] ?>" />
-	<input type="hidden" name="speed"    	   value="<?=$parse['speed'] ?>" />
-	<input type="hidden" name="usedfleet"      value="<?=$parse['usedfleet'] ?>" />
-	<input type="hidden" name="crc"            value="<?=$parse['crc'] ?>" />
-	<input type="hidden" name="maxepedition"   value="<?=$parse['maxepedition'] ?>" />
-	<input type="hidden" name="curepedition"   value="<?=$parse['curepedition'] ?>" />
-	<? foreach ($parse['ships'] as $ship): ?>
-		<input type="hidden" name="ship<?=$ship['id'] ?>" value="<?=$ship['count'] ?>" />
-		<input type="hidden" name="stay<?=$ship['id'] ?>" value="<?=$ship['stay'] ?>" />
-		<input type="hidden" name="consumption<?=$ship['id'] ?>" value="<?=$ship['consumption'] ?>" />
-		<input type="hidden" name="speed<?=$ship['id'] ?>" value="<?=$ship['speed'] ?>" />
-		<input type="hidden" name="capacity<?=$ship['id'] ?>" value="<?=$ship['capacity'] ?>" />
-	<? endforeach; ?>
+	<input type="hidden" name="thisresource1"  value="{{ parse['thisresource1'] }}" />
+	<input type="hidden" name="thisresource2"  value="{{ parse['thisresource2'] }}" />
+	<input type="hidden" name="thisresource3"  value="{{ parse['thisresource3'] }}" />
+	<input type="hidden" name="consumption"    value="{{ parse['consumption'] }}" />
+	<input type="hidden" name="stayConsumption" value="{{ parse['stayConsumption'] }}" />
+	<input type="hidden" name="dist"           value="{{ parse['dist'] }}" />
+	<input type="hidden" name="acs"            value="{{ parse['acs'] }}" />
+	<input type="hidden" name="thisgalaxy"     value="{{ parse['thisgalaxy'] }}" />
+	<input type="hidden" name="thissystem"     value="{{ parse['thissystem'] }}" />
+	<input type="hidden" name="thisplanet"     value="{{ parse['thisplanet'] }}" />
+	<input type="hidden" name="galaxy"         value="{{ parse['galaxy'] }}" />
+	<input type="hidden" name="system"         value="{{ parse['system'] }}" />
+	<input type="hidden" name="planet"         value="{{ parse['planet'] }}" />
+	<input type="hidden" name="planettype"     value="{{ parse['planettype'] }}" />
+	<input type="hidden" name="speed"    	   value="{{ parse['speed'] }}" />
+	<input type="hidden" name="usedfleet"      value="{{ parse['usedfleet'] }}" />
+	<input type="hidden" name="crc"            value="{{ parse['crc'] }}" />
+	<input type="hidden" name="maxepedition"   value="{{ parse['maxepedition'] }}" />
+	<input type="hidden" name="curepedition"   value="{{ parse['curepedition'] }}" />
+	{% for parse['ships'] as $ship %}
+		<input type="hidden" name="ship{{ ship['id'] }}" value="{{ ship['count'] }}" />
+		<input type="hidden" name="stay{{ ship['id'] }}" value="{{ ship['stay'] }}" />
+		<input type="hidden" name="consumption{{ ship['id'] }}" value="{{ ship['consumption'] }}" />
+		<input type="hidden" name="speed{{ ship['id'] }}" value="{{ ship['speed'] }}" />
+		<input type="hidden" name="capacity{{ ship['id'] }}" value="{{ ship['capacity'] }}" />
+	{% endfor %}
 	<div class="table">
 		<div class="row">
-			<div class="c col-xs-12"><?=$parse['galaxy'] ?>:<?=$parse['system'] ?>:<?=$parse['planet'] ?> - <?=_getText('type_planet', $parse['planettype']) ?></div>
+			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('type_planet', parse['planettype']) ?></div>
 		</div>
 		<div class="row">
 			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
-						<td class="c" colspan="2"><?=_getText('fl_mission') ?></td>
+						<td class="c" colspan="2">{{ _text('fl_mission') }}</td>
 					</tr>
-					<? foreach ($parse['missions'] AS $a => $b): ?>
+					{% for parse['missions'] AS $a => $b %}
 						<tr>
 							<th style="text-align: left !important">
-								<input id="m_<?=$a ?>" type="radio" name="mission" value="<?=$a ?>"<?=($parse['missions_selected'] == $a ? 'checked' : '') ?>>
-								<label for="m_<?=$a ?>"><?=$b ?></label>
-								<? if ($a == 15): ?>
-									<center><font color="red"><?=_getText('fl_expe_warning') ?></font></center>
-								<? endif; ?>
+								<input id="m_{{ a }}" type="radio" name="mission" value="{{ a }}"<?=($parse['missions_selected'] == $a ? 'checked' : '') ?>>
+								<label for="m_{{ a }}">{{ b }}</label>
+								{% if a == 15 %}
+									<center><font color="red">{{ _text('fl_expe_warning') }}</font></center>
+								{% endif %}
 							</th>
 						</tr>
-					<? endforeach; ?>
-					<? if (!count($parse['missions'])): ?>
+					{% endfor %}
+					{% if (!count($parse['missions']) %}
 						<tr>
-							<th><font color="red"><?=_getText('fl_bad_mission') ?></font></th>
+							<th><font color="red">{{ _text('fl_bad_mission') }}</font></th>
 						</tr>
-					<? endif; ?>
+					{% endif %}
 					<tr>
 						<th>Время прилёта: <span id='end_time'>00:00:00</span></th>
 					</tr>
@@ -59,48 +59,48 @@
 			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
-						<td colspan="3" class="c"><?=_getText('fl_ressources') ?></td>
+						<td colspan="3" class="c">{{ _text('fl_ressources') }}</td>
 					</tr>
 					<tr>
-						<th><?=_getText('Metal') ?></th>
-						<th><a href="javascript:maxResource('1');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource1" alt="<?=_getText('Metal') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('Metal') }}</th>
+						<th><a href="javascript:maxResource('1');">{{ _text('fl_selmax') }}</a></th>
+						<th><input name="resource1" alt="{{ _text('Metal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th><?=_getText('Crystal') ?></th>
-						<th><a href="javascript:maxResource('2');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource2" alt="<?=_getText('Crystal') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('Crystal') }}</th>
+						<th><a href="javascript:maxResource('2');">{{ _text('fl_selmax') }}</a></th>
+						<th><input name="resource2" alt="{{ _text('Crystal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th><?=_getText('Deuterium') ?></th>
-						<th><a href="javascript:maxResource('3');"><?=_getText('fl_selmax') ?></a></th>
-						<th><input name="resource3" alt="<?=_getText('Deuterium') ?>" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('Deuterium') }}</th>
+						<th><a href="javascript:maxResource('3');">{{ _text('fl_selmax') }}</a></th>
+						<th><input name="resource3" alt="{{ _text('Deuterium') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th><?=_getText('fl_space_left') ?></th>
+						<th>{{ _text('fl_space_left') }}</th>
 						<th colspan="2"><div id="remainingresources">-</div></th>
 					</tr>
 					<tr>
-						<th colspan="3"><a href="javascript:maxResources()"><?=_getText('fl_allressources') ?></a></th>
+						<th colspan="3"><a href="javascript:maxResources()">{{ _text('fl_allressources') }}</a></th>
 					</tr>
 					<tr>
 						<th colspan="3">&nbsp;</th>
 					</tr>
-					<? if (isset($parse['expedition_hours'])): ?>
+					{% if (isset($parse['expedition_hours']) %}
 						<tr class="mission m_15">
 							<td class="c" colspan="3">Время экспедиции</td>
 						</tr>
 						<tr class="mission m_15">
 							<th colspan="3">
 								<select name="expeditiontime" title="">
-									<? for ($i = 1; $i <= $parse['expedition_hours']; $i++): ?>
-										<option value="<?=$i ?>"><?=$i ?> ч.</option>
+									<? for ($i = 1; $i <= $parse['expedition_hours']; $i++ %}
+										<option value="{{ i }}">{{ i }} ч.</option>
 									<? endfor; ?>
 								</select>
 							</th>
 						</tr>
-					<? endif; ?>
-					<? if (isset($parse['missions'][5])): ?>
+					{% endif %}
+					{% if (isset($parse['missions'][5]) %}
 						<tr class="mission m_5">
 							<td class="c" colspan="3">Оставаться часов на орбите</td>
 						</tr>
@@ -118,8 +118,8 @@
 								<div id="stayRes"></div>
 							</th>
 						</tr>
-					<? endif; ?>
-					<? if (isset($parse['missions'][1])): ?>
+					{% endif %}
+					{% if (isset($parse['missions'][1]) %}
 						<tr class="mission m_1">
 							<td class="c" colspan="3">Кол-во раундов боя</td>
 						</tr>
@@ -134,15 +134,15 @@
 								</select>
 							</th>
 						</tr>
-					<? endif; ?>
+					{% endif %}
 				</table>
 			</div>
 		</div>
-		<? if (count($parse['missions'])): ?>
+		{% if (count($parse['missions']) %}
 			<div class="row">
-				<div class="th col-xs-12"><input accesskey="z" value="<?=_getText('fl_continue') ?>" type="submit"></div>
+				<div class="th col-xs-12"><input accesskey="z" value="{{ _text('fl_continue') }}" type="submit"></div>
 			</div>
-		<? endif; ?>
+		{% endif %}
 	</div>
 </form>
 <script type="text/javascript">

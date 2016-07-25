@@ -1,50 +1,50 @@
 <table class="table">
 	<tr>
-		<td class="c" colspan="10">Список членов альянса (количество: <?=$parse['i'] ?>)</td>
+		<td class="c" colspan="10">Список членов альянса (количество: {{ parse['i'] }})</td>
 	</tr>
 	<tr>
 		<th>№</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/1/sort2/'.$parse['s'].'/') }}">Ник</a></th>
+		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/1/sort2/'~parse['s']~'/') }}">Ник</a></th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/2/sort2/'.$parse['s'].'/') }}">Ранг</a></th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit=members' : 'members').'/sort1/3/sort2/'.$parse['s'].'/') }}">Очки</a></th>
+		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/2/sort2/'~parse['s']~'/') }}">Ранг</a></th>
+		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit=members' : 'members').'/sort1/3/sort2/'~parse['s']~'/') }}">Очки</a></th>
 		<th>Координаты</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/4/sort2/'.$parse['s'].'/') }}">Дата вступления</a></th>
-		<? if ($parse['status']): ?><th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/5/sort2/'.$parse['s'].'/') }}">Активность</a></th><? endif; ?>
-		<? if ($parse['admin']): ?><th>Управление</th><? endif; ?>
+		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/4/sort2/'~parse['s']~'/') }}">Дата вступления</a></th>
+		{% if parse['status'] %}<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/5/sort2/'~parse['s']~'/') }}">Активность</a></th>{% endif %}
+		{% if parse['admin'] %}<th>Управление</th>{% endif %}
 	</tr>
-	<? foreach ($parse['memberslist'] AS $m): ?>
-		<? if (!isset($m['Rank_for']) || !$parse['admin']): ?>
+	{% for parse['memberslist'] AS $m %}
+		{% if (!isset($m['Rank_for']) or !$parse['admin'] %}
 			<tr>
-				<th><?=$m['i'] ?></th>
-				<th><?=$m['username'] ?></th>
-				<th><a href="javascript:;" onclick="showWindow('<?=$m['username'] ?>: отправить сообщение', '{{ url('messages/write/'.$m['id'].'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
-				<th><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$m['race'] ?>.gif" width="16" height="16"></th>
-				<th><?=$m['range'] ?></th>
-				<th><?=$m['points'] ?></th>
-				<th><a href="{{ url('galaxy/'.$m['galaxy'].'/'.$m['system'].'/') }}"><?=$m['galaxy'] ?>:<?=$m['system'] ?>:<?=$m['planet'] ?></a></th>
-				<th><?=$m['time'] ?></th>
-				<? if ($parse['status']): ?><th><font color=<?=$m['onlinetime'] ?>/font></th><? endif; ?>
-				<? if ($parse['admin']): ?><th><a href="{{ url('alliance/admin/edit/members/kick/'.$m['id'].'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif"></a>&nbsp;<a href="{{ url('alliance/admin/edit/members/rank/'.$m['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/key.gif"></a></th><? endif; ?>
+				<th>{{ m['i'] }}</th>
+				<th>{{ m['username'] }}</th>
+				<th><a href="javascript:;" onclick="showWindow('{{ m['username'] }}: отправить сообщение', '{{ url('messages/write/'~m['id']~'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
+				<th><img src="{{ url.getBaseUri() }}assets/images/skin/race{{ m['race'] }}.gif" width="16" height="16"></th>
+				<th>{{ m['range'] }}</th>
+				<th>{{ m['points'] }}</th>
+				<th><a href="{{ url('galaxy/'~m['galaxy']~'/'~m['system']~'/') }}">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</a></th>
+				<th>{{ m['time'] }}</th>
+				{% if parse['status'] %}<th><font color={{ m['onlinetime'] }}/font></th>{% endif %}
+				{% if parse['admin'] %}<th><a href="{{ url('alliance/admin/edit/members/kick/'~m['id']~'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="{{ url.getBaseUri() }}assets/images/abort.gif"></a>&nbsp;<a href="{{ url('alliance/admin/edit/members/rank/'~m['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/key.gif"></a></th>{% endif %}
 			</tr>
-		<? else: ?>
+		{% else %}
 			<tr>
 				<td colspan="10">
-					<form action="{{ url('alliance/admin/edit/members/id/'.$m['id'].'/') }}" method="POST">
+					<form action="{{ url('alliance/admin/edit/members/id/'~m['id']~'/') }}" method="POST">
 						<table class="table">
 							<tr>
-								<th colspan="7"><?=$m['Rank_for'] ?></th>
-								<th><select name="newrang" title=""><?=$m['options'] ?></select></th>
+								<th colspan="7">{{ m['Rank_for'] }}</th>
+								<th><select name="newrang" title="">{{ m['options'] }}</select></th>
 								<th colspan="2"><input type="submit" value="Сохранить"></th>
 							</tr>
 						</table>
 					</form>
 				</td>
 			</tr>
-		<? endif; ?>
-	<? endforeach; ?>
+		{% endif %}
+	{% endfor %}
 	<tr>
-		<td class="c" colspan="10"><a href="{{ url('alliance'.(($parse['admin']) ? '/admin/edit/ally' : '').'/') }}"><?=_getText('Return_to_overview') ?></a></td>
+		<td class="c" colspan="10"><a href="{{ url('alliance'.(($parse['admin']) ? '/admin/edit/ally' : '').'/') }}">{{ _text('Return_to_overview') }}</a></td>
 	</tr>
 </table>

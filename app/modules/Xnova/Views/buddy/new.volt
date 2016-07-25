@@ -1,11 +1,11 @@
-<form action="{{ url('buddy/new/'.$parse["id"].'/') }}" method="post">
+<form action="{{ url('buddy/new/'~parse["id"]~'/') }}" method="post">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Предложение подружиться</td>
 		</tr>
 		<tr>
 			<th>Игрок</th>
-			<th><?=$parse["username"] ?></th>
+			<th>{{ parse["username"] }}</th>
 		</tr>
 		<tr>
 			<th colspan="2"><textarea name="text" cols="60" rows="10" title=""></textarea></th>

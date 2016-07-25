@@ -17,9 +17,9 @@
 	</tr>
 	<tr>
 		<th>
-			<? if (!isset($_POST['OutSum'])): ?>
+			{% if (!isset($_POST['OutSum']) %}
 				<br><br>
-				Ваш ID: <span class="neutral"><?=$userId ?></span>
+				Ваш ID: <span class="neutral">{{ userId }}</span>
 				<br><br>
 
 
@@ -37,18 +37,18 @@
 				</form>
 
 				<br><br>
-			<? else: ?>
+			{% else %}
 				<br>
 				Счет сформирован. Нажмите кнопку "перейти к оплате" для продолжения процедуры покупки кредитов
 				<br><br>
 
 				<form class="noajax" action="http://www.free-kassa.ru/merchant/cash.php" method="POST" target="_blank">
-					<input type="hidden" name="MrchLogin" value="<?=$this->config->robokassa->login ?>">
+					<input type="hidden" name="MrchLogin" value="{{ config.robokassa->login }}">
 					<input type="hidden" name="InvDesc" value="Покупка кредитов">
-					<input type="hidden" name="InvId" value="<?=$invid ?>">
-					<input type="hidden" name="Email" value="<?=$useremail ?>">
-					<input type="hidden" name="Shp_UID" value="<?=((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?>">
-					<input type="hidden" name="SignatureValue" value="<?=md5($this->config->robokassa->login.":".intval($_POST['OutSum']).":".$invid.":".$this->config->robokassa->public.":Shp_UID=".((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
+					<input type="hidden" name="InvId" value="{{ invid }}">
+					<input type="hidden" name="Email" value="{{ useremail }}">
+					<input type="hidden" name="Shp_UID" value="<?=((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?>">
+					<input type="hidden" name="SignatureValue" value="<?=md5($config.robokassa->login.":".intval($_POST['OutSum']).":".$invid.":".$config.robokassa->public.":Shp_UID=".((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
 					<input type="hidden" name="Culture" value="RU">
 					<input type="hidden" name="OutSum" value="<?=intval($_POST['OutSum']) ?>">
 					<br>
@@ -57,10 +57,10 @@
 
 				<br><br>
 				Счет выставлен для ID
-				<span class="neutral"><?=((isset($_POST['userId']) && is_numeric($_POST['userId']) && $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?></span>
+				<span class="neutral"><?=((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?></span>
 
 				<br><br>
-			<? endif; ?>
+			{% endif %}
 		</th>
 	</tr>
 </table>

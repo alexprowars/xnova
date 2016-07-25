@@ -8,6 +8,7 @@ namespace Xnova\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Controllers\FleetController;
 use Xnova\Fleet;
 use Xnova\Helpers;
@@ -38,8 +39,8 @@ class StageThree
 		if (!$fleetmission)
 			$controller->message("<span class=\"error\"><b>Не выбрана миссия!</b></span>", 'Ошибка', "/fleet/", 2);
 
-		if (($fleetmission == 1 || $fleetmission == 6 || $fleetmission == 9 || $fleetmission == 2) && $controller->config->app->get('disableAttacks', 0) > 0 && time() < $controller->config->app->get('disableAttacks', 0))
-			$controller->message("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", $controller->config->app->get('disableAttacks', 0)) . "</b></span>", 'Ошибка');
+		if (($fleetmission == 1 || $fleetmission == 6 || $fleetmission == 9 || $fleetmission == 2) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
+			$controller->message("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>", 'Ошибка');
 
 		$fleet_group_mr = 0;
 

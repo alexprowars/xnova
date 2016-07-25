@@ -4,7 +4,7 @@
 
 	function vis_row(TAG, gID)
 	{
-		if (!groups[gID] == null || groups[gID] == 0)
+		if (!groups[gID] == null or groups[gID] == 0)
 			groups[gID] = 1;
 		else
 			groups[gID] = 0;
@@ -152,7 +152,7 @@
 	}
 </style>
 
-<form method="post" action="{{ url('xnsim/report/'.($this->config->view->get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" <?=($this->user->getUserOption('ajax_navigation') ? 'class="noajax"' : '') ?> target="_blank">
+<form method="post" action="{{ url('xnsim/report/'.($config.view.get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" <?=(user.getUserOption('ajax_navigation') ? 'class="noajax"' : '') ?> target="_blank">
 	<input type="hidden" name="r" value="">
 </form>
 
@@ -163,16 +163,16 @@
 		<th colspan="<?=(MAX_SLOTS * 2 + 1) ?>" class="spezial">
 
 			<select NAME="Att" SIZE="1" onchange='vis_cols("TH","gr",0,this.value);' title="">
-				<? for ($i = 1; $i <= MAX_SLOTS; $i++): ?>
-					<option value="<?=$i ?>"><?=$i ?></option>
+				<? for ($i = 1; $i <= MAX_SLOTS; $i++ %}
+					<option value="{{ i }}">{{ i }}</option>
 				<? endfor; ?>
 			</select>
 
 			Исходная ситуация
 
 			<select NAME="Def" SIZE="1" onchange='vis_cols("TH","gr",<?=MAX_SLOTS ?>,this.value);' title="">
-				<? for ($i = 1; $i <= MAX_SLOTS; $i++): ?>
-					<option value="<?=$i ?>"><?=$i ?></option>
+				<? for ($i = 1; $i <= MAX_SLOTS; $i++ %}
+					<option value="{{ i }}">{{ i }}</option>
 				<? endfor; ?>
 			</select>
 
@@ -181,69 +181,69 @@
 	<tr>
 		<th>&nbsp;</th>
 		<th>Ведущий</th>
-		<? for ($i = 1; $i < MAX_SLOTS; $i++): ?>
-			<th class="angreifer leftcol_data" id='gr<?=$i ?>'>Атакующий&nbsp;<?=$i ?></th>
+		<? for ($i = 1; $i < MAX_SLOTS; $i++ %}
+			<th class="angreifer leftcol_data" id='gr{{ i }}'>Атакующий&nbsp;{{ i }}</th>
 		<? endfor; ?>
 		<th>Планета</th>
-		<? for ($i = MAX_SLOTS + 1; $i < MAX_SLOTS * 2; $i++): ?>
-			<th class="angreifer leftcol_data" id='gr<?=$i ?>'>Защитник&nbsp;<?=($i - MAX_SLOTS) ?></th>
+		<? for ($i = MAX_SLOTS + 1; $i < MAX_SLOTS * 2; $i++ %}
+			<th class="angreifer leftcol_data" id='gr{{ i }}'>Защитник&nbsp;<?=($i - MAX_SLOTS) ?></th>
 		<? endfor; ?>
 	</tr>
 	<tr>
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Исследования и офицеры</td>
 	</tr>
-	<? foreach ($parse['tech'] AS $techId): ?>
+	{% for parse['tech'] AS $techId %}
 		<tr align="center">
-			<th><?=_getText('tech', $techId) ?></th>
-			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
-				<th id="gr<?=$i ?>"><input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$techId]['c'])) ? $parse['slot_'.$i][$techId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$techId ?>" maxlength="2" title=""></th>
+			<th>{{ _text('tech', techId) }}</th>
+			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++ %}
+				<th id="gr{{ i }}"><input class="number" value="<?=((isset($parse['slot_'~i]) and isset($parse['slot_'~i][$techId]['c'])) ? $parse['slot_'~i][$techId]['c'] : 0) ?>" type="text" name="gr{{ i }}-{{ techId }}" maxlength="2" title=""></th>
 			<? endfor; ?>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 	<tr>
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Флот</td>
 	</tr>
-	<? foreach ($this->registry->reslist['fleet'] AS $fleetId): ?>
+	{% for registry->reslist['fleet'] AS $fleetId %}
 		<tr align="center">
-			<th><?=_getText('tech', $fleetId) ?></th>
-			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
-				<th id="gr<?=$i ?>">
-					<? if ($fleetId == 212 && $i < MAX_SLOTS): ?>
+			<th>{{ _text('tech', fleetId) }}</th>
+			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++ %}
+				<th id="gr{{ i }}">
+					{% if fleetId == 212 and $i < MAX_SLOTS %}
 						-
-					<? else: ?>
-						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
-					<? endif; ?>
-					<? if (in_array($fleetId + 100, $this->registry->reslist['tech_f'])): ?>
-						<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
-					<? endif; ?>
+					{% else %}
+						<input class="number" value="<?=((isset($parse['slot_'~i]) and isset($parse['slot_'~i][$fleetId]['c'])) ? $parse['slot_'~i][$fleetId]['c'] : 0) ?>" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
+					{% endif %}
+					{% if (in_array($fleetId + 100, registry->reslist['tech_f']) %}
+						<input class="lvl" value="<?=((isset($parse['slot_'~i]) and isset($parse['slot_'~i][$fleetId]['l'])) ? $parse['slot_'~i][$fleetId]['l'] : 0) ?>" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
+					{% endif %}
 				</th>
 			<? endfor; ?>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 	<tr>
 		<td class="c" colspan="<?=(MAX_SLOTS * 2 + 2) ?>">Оборона</td>
 	</tr>
-	<? foreach ($this->registry->reslist['defense'] AS $fleetId): ?>
+	{% for registry->reslist['defense'] AS $fleetId %}
 		<tr align="center">
-			<th><?=_getText('tech', $fleetId) ?></th>
-			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
-				<th id="gr<?=$i ?>">
-					<? if ($i < MAX_SLOTS): ?>
+			<th>{{ _text('tech', fleetId) }}</th>
+			<? for ($i = 0; $i < MAX_SLOTS * 2; $i++ %}
+				<th id="gr{{ i }}">
+					{% if i < MAX_SLOTS %}
 						-
-					<? else: ?>
-						<input class="number" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['c'])) ? $parse['slot_'.$i][$fleetId]['c'] : 0) ?>" type="text" name="gr<?=$i ?>-<?=$fleetId ?>" maxlength="7" title="">
-						<? if (in_array($fleetId - 50, $this->registry->reslist['tech_f'])): ?>
-							<input class="lvl" value="<?=((isset($parse['slot_'.$i]) && isset($parse['slot_'.$i][$fleetId]['l'])) ? $parse['slot_'.$i][$fleetId]['l'] : 0) ?>" type="text" id="gr<?=$i ?>-<?=$fleetId ?>-l" maxlength="2" title="">
-						<? endif; ?>
-					<? endif; ?>
+					{% else %}
+						<input class="number" value="<?=((isset($parse['slot_'~i]) and isset($parse['slot_'~i][$fleetId]['c'])) ? $parse['slot_'~i][$fleetId]['c'] : 0) ?>" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
+						{% if (in_array($fleetId - 50, registry->reslist['tech_f']) %}
+							<input class="lvl" value="<?=((isset($parse['slot_'~i]) and isset($parse['slot_'~i][$fleetId]['l'])) ? $parse['slot_'~i][$fleetId]['l'] : 0) ?>" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
+						{% endif %}
+					{% endif %}
 				</th>
 			<? endfor; ?>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 	<tr align="center">
 		<th>&nbsp;</th>
-		<? for ($i = 0; $i < MAX_SLOTS * 2; $i++): ?>
-			<th id='gr<?=$i ?>'><a href="javascript:" onClick='gclear("<?=$i ?>");'>Очистить</a></th>
+		<? for ($i = 0; $i < MAX_SLOTS * 2; $i++ %}
+			<th id='gr{{ i }}'><a href="javascript:" onClick='gclear("{{ i }}");'>Очистить</a></th>
 		<? endfor; ?>
 	</tr>
 	<tr>

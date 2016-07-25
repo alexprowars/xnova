@@ -2,58 +2,58 @@
 	<tr>
 		<td class="c" colspan="3">Ваши запросы</td>
 	</tr>
-	<? if (isset($parse['DMyQuery']) && count($parse['DMyQuery'])): ?>
-		<? foreach ($parse['DMyQuery'] as $diplo): ?>
+	{% if parse['DMyQuery'] is defined and parse['DMyQuery']|length %}
+		{% for diplo in parse['DMyQuery'] %}
 			<tr>
-				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
+				<th>{{ diplo['name'] }}</th>
+				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
-		<? endforeach; ?>
-	<? else: ?>
+		{% endfor %}
+	{% else %}
 		<tr><th colspan="3">нет</th></tr>
-	<? endif; ?>
+	{% endif %}
 </table>
 <div class="separator"></div>
 <table class="table">
 	<tr>
 		<td class="c" colspan="3">Запросы вашему альянсу</td>
 	</tr>
-	<? if (isset($parse['DQuery']) && count($parse['DQuery'])): ?>
-		<? foreach ($parse['DQuery'] as $diplo): ?>
+	{% if parse['DQuery'] is defined and parse['DQuery']|length %}
+		{% for diplo in parse['DQuery'] %}
 			<tr>
-				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
+				<th>{{ diplo['name'] }}</th>
+				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/suc/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/appwiz.gif" alt="Подтвердить"></a>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/appwiz.gif" alt="Подтвердить"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
-		<? endforeach; ?>
-	<? else: ?>
+		{% endfor %}
+	{% else %}
 		<tr><th colspan="3">нет</th></tr>
-	<? endif; ?>
+	{% endif %}
 </table>
 <div class="separator"></div>
 <table class="table">
 	<tr>
 		<td class="c" colspan="4">Отношения между альянсами</td>
 	</tr>
-	<? if (isset($parse['DText']) && count($parse['DText'])): ?>
-		<? foreach ($parse['DText'] as $diplo): ?>
+	{% if (isset($parse['DText']) and count($parse['DText']) %}
+		{% for diplo in parse['DText'] %}
 			<tr>
-				<th><?=$diplo['name'] ?></th>
-				<th><?=_getText('diplomacyStatus', $diplo['type']) ?></th>
+				<th>{{ diplo['name'] }}</th>
+				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'.$diplo['id'].'/') }}"><img src="<?=$this->url->getBaseUri() ?>assets/images/abort.gif" alt="Удалить заявку"></a>
+					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
 			</tr>
-		<? endforeach; ?>
-	<? else: ?>
+		{% endfor %}
+	{% else %}
 		<tr><th colspan="4">нет</th></tr>
-	<? endif; ?>
+	{% endif %}
 </table>
 <div class="separator"></div>
 <form action="{{ url('alliance/diplomacy/edit/add/') }}" method="post">
@@ -65,9 +65,9 @@
 			<th>
 				<select name="ally" title="">
 					<option value="0">список альянсов</option>
-					<? foreach ($parse['a_list'] as $item): ?>
-						<option value="<?=$item['id'] ?>"><?=$item['name'] ?> [<?=$item['tag'] ?>]</option>
-					<? endforeach; ?>
+					{% for item in parse['a_list'] %}
+						<option value="{{ item['id'] }}">{{ item['name'] }} [{{ item['tag'] }}]</option>
+					{% endfor %}
 				</select>
 			</th>
 			<th>

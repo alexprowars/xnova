@@ -1,38 +1,38 @@
-<? if ($parse['noresearch']): ?><div class="negative"><?=$parse['noresearch'] ?></div><? endif; ?>
+{% if parse['noresearch'] %}<div class="negative">{{ parse['noresearch'] }}</div>{% endif %}
 <div class="block">
 	<div class="title">Исследования</div>
 	<div class="content">
 		<div class="row research">
-			<? foreach ($parse['technolist'] AS $build): ?>
+			{% for build in parse['technolist'] %}
 				<div class="col-md-6 col-xs-12">
-					<div class="viewport buildings <? if (!$build['access']): ?>shadow<? endif; ?>">
-						<? if (!$build['access']): ?>
-							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], $this->user, $this->planet)) ?>" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)"><span>недоступно</span></div>
-						<? endif; ?>
+					<div class="viewport buildings {% if (!$build['access'] %}shadow{% endif %}">
+						{% if (!$build['access'] %}
+							<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], user, planet)) ?>" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)"><span>недоступно</span></div>
+						{% endif %}
 
 						<div class="img">
-							<a href="javascript:;" onclick="showWindow('<?=_getText('tech', $build['i']) ?>', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)">
-								<img src="<?=$this->url->getBaseUri() ?>assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center><?=_getText('descriptions', $build['i']) ?></center>' data-tooltip-width="150">
+							<a href="javascript:;" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}', 600)">
+								<img src="{{ url.getBaseUri() }}assets/images/gebaeude/<?=(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']) ?>.gif" align="top" width="120" height="120" class="tooltip" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
 							</a>
 
 							<div class="overContent">
-								<?=$build['tech_price'] ?>
+								{{ build['tech_price'] }}
 							</div>
 						</div>
 						<div class="title">
-							<a href="{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}"><?=_getText('tech', $build['i']) ?></a>
+							<a href="{{ url('info/'.(($build['i'] > 300) ? ($build['i'] < 350 ? ($build['i'] - 100) : ($build['i'] + 50)) : $build['i']).'/') }}">{{ _text('tech', build['i']) }}</a>
 						</div>
 						<div class="actions">
-							Уровень: <?=$build['tech_level'] ?><br>
+							Уровень: {{ build['tech_level'] }}<br>
 
-							<? if ($build['access']): ?>
+							{% if build['access'] %}
 								Время: <?=\Xnova\Helpers::pretty_time($build['search_time']); ?>
 
-								<? if (isset($build['add'])): ?>
+								{% if (isset($build['add']) %}
 								<br><br>Бонусы:<br><?= $build['add'] ?>
-								<? endif; ?>
+								{% endif %}
 								<div class="startBuild">
-									<? if (is_array($build['tech_link'])): ?>
+									{% if (is_array($build['tech_link']) %}
 									<div id="brp" class="z"></div>
 									<script type="text/javascript">
 										var v = new Date();
@@ -41,12 +41,12 @@
 										function t()
 										{
 											var n = new Date();
-											var s = <?=$build['tech_link']['tech_time'] ?> - Math.round((n.getTime() - v.getTime()) / 1000);
+											var s = {{ build['tech_link']['tech_time'] }} - Math.round((n.getTime() - v.getTime()) / 1000);
 											var m = 0;
 											var h = 0;
 
 											if (s < 0)
-												brp.html('<a href="javascript:;" onclick="load(\'{{ url('buildings/'.$parse['mode'].'/?chpl='.$build['tech_link']['tech_home'].'') }}\')">завершено. продолжить...</a>');
+												brp.html('<a href="javascript:;" onclick="load(\'{{ url('buildings/'~parse['mode']~'/?chpl='~build['tech_link']['tech_home']~'') }}\')">завершено. продолжить...</a>');
 											else
 											{
 												if (s > 59)
@@ -64,22 +64,22 @@
 												if (m < 10)
 													m = "0" + m;
 
-												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'{{ url('buildings/'.$parse['mode'].'/cmd/cancel/tech/'.$build['tech_link']['tech_id'].'/') }}\')">Отменить<?=$build['tech_link']['tech_name'] ?></a>');
+												brp.html(h + ':' + m + ':' + s + '&nbsp;<a href="javascript:;" onclick="load(\'{{ url('buildings/'~parse['mode']~'/cmd/cancel/tech/'~build['tech_link']['tech_id']~'/') }}\')">Отменить{{ build['tech_link']['tech_name'] }}</a>');
 
 												setTimeout(t, 1000);
 											}
 										}
 										$(document).ready(t);
 									</script>
-									<? else: ?>
+									{% else %}
 									<?= $build['tech_link'] ?>
-									<? endif; ?>
+									{% endif %}
 								</div>
-							<? endif; ?>
+							{% endif %}
 						</div>
 					</div>
 				</div>
-			<? endforeach; ?>
+			{% endfor %}
 		</div>
 	</div>
 </div>

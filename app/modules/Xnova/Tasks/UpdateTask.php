@@ -7,6 +7,7 @@
  */
 
 use Friday\Core\Lang;
+use Friday\Core\Options;
 use Xnova\Missions\Mission;
 use Xnova\UpdateStatistics;
 
@@ -16,7 +17,7 @@ class UpdateTask extends ApplicationTask
 	{
 		$online = $this->db->fetchColumn("SELECT COUNT(*) as online FROM game_users WHERE onlinetime > '" . (time() - $this->config->game->onlinetime * 60) . "'");
 
-		$this->game->updateConfig('users_online', $online);
+		Options::set('users_online', $online);
 
 		echo $online." users online\n";
 	}

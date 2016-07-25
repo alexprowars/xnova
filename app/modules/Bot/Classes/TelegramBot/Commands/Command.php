@@ -13,9 +13,7 @@ namespace Longman\TelegramBot\Commands;
 use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
-use Longman\TelegramBot\Entities\Chat;
 use Longman\TelegramBot\Entities\Update;
-use Longman\TelegramBot\Entities\User;
 
 /**
  * Abstract Command Class

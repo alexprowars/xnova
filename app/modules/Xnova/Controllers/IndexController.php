@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Friday\Core\Lang;
+use Friday\Core\Options;
 use Xnova\Models\User;
 use Friday\Core\Mail\PHPMailer;
 use Phalcon\Text;
@@ -151,26 +152,25 @@ class IndexController extends Controller
 						$this->db->insertAsDict('game_refs', Array('r_id' => $iduser, 'u_id' => $this->session->get('ref')));
 				}
 
-				$total = $this->db->query("SELECT `value` FROM game_config WHERE `key` = 'users_total'")->fetch();
+				$total = $this->db->query("SELECT `value` FROM game_options WHERE `name` = 'users_total'")->fetch();
 
-				$this->config->app->users_total = $total['value'] + 1;
-				$this->game->updateConfig('users_total', $this->config->app->users_total);
+				Options::set('users_total', $total['value'] + 1);
 
 				$mail = new PHPMailer();
-				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
 				$mail->addAddress($this->request->getPost('email'));
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->Subject = $this->config->app->name.": Регистрация";
-				$mail->Body = "Вы успешно зарегистрировались в игре ".$this->config->app->name.".<br>Ваши данные для входа в игру:<br>Email: " . $this->request->getPost('email') . "<br>Пароль:" . $newpass . "";
+				$mail->Subject = Options::get('site_title').": Регистрация";
+				$mail->Body = "Вы успешно зарегистрировались в игре ".Options::get('site_title').".<br>Ваши данные для входа в игру:<br>Email: " . $this->request->getPost('email') . "<br>Пароль:" . $newpass . "";
 				$mail->send();
 
-				$this->auth->auth($iduser, $md5newpass, 0, 0);
+				$this->auth->authorize($iduser, 0);
 
 				if ($this->request->isAjax())
 				{
 					$this->game->setRequestStatus(1);
-					$this->game->setRequestData(['redirect' => $this->url->getBaseUri().'overview/']);
+					$this->game->setRequestData(['redirect' => $this->url->get('overview/')]);
 				}
 				else
 					$this->response->redirect('overview/');
@@ -208,9 +208,9 @@ class IndexController extends Controller
 					$mail->isMail();
 					$mail->isHTML(true);
 					$mail->CharSet = 'utf-8';
-					$mail->setFrom($this->config->app->email, $this->config->app->name);
-					$mail->addAddress($Mail['email'], $this->config->app->name);
-					$mail->Subject = 'Новый пароль в '.$this->config->app->name.'';
+					$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
+					$mail->addAddress($Mail['email'], Options::get('site_title'));
+					$mail->Subject = 'Новый пароль в '.Options::get('site_title').'';
 					$mail->Body = "Ваш новый пароль от игрового аккаунта: " . $Mail['username'] . ": " . $NewPass;
 					$mail->send();
 
@@ -250,11 +250,11 @@ class IndexController extends Controller
 				$mail->isMail();
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
 				$mail->addAddress($inf['email']);
 				$mail->Subject = 'Восстановление забытого пароля';
 
-				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".$this->config->app->name.".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
+				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".Options::get('site_title').".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
 				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "</a>";
 
 				$mail->Body = $body;

@@ -2,10 +2,10 @@
 	<table width="100%">
 		<tr>
 			<td class="c" align="center">Уровень производства</td>
-			<th><?=$parse['production_level'] ?></th>
+			<th>{{ parse['production_level'] }}</th>
 			<th width="40%">
 				<div style="border: 1px solid #9999FF;">
-					<div id="prodBar" style="background-color: <?=$parse['production_level_barcolor'] ?>; width: <?=$parse['production_level_bar'] ?>%;">
+					<div id="prodBar" style="background-color: {{ parse['production_level_barcolor'] }}; width: {{ parse['production_level_bar'] }}%;">
 						&nbsp;
 					</div>
 				</div>
@@ -13,7 +13,7 @@
 		</tr>
 		<tr>
 			<td class="c" align="center"><a href="{{ url('info/113/') }}">Энергетическая технология</a></td>
-			<th><?=$parse['et'] ?> ур.</th>
+			<th>{{ parse['et'] }} ур.</th>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -30,63 +30,63 @@
 	<div class="table-responsive">
 		<table width="100%">
 			<tr>
-				<td class="c" colspan="8">Производство на планете <?=$parse['name'] ?></td>
+				<td class="c" colspan="8">Производство на планете {{ parse['name'] }}</td>
 			</tr>
 			<tr>
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 1) ?>', '{{ url('info/1/') }}', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 2) ?>', '{{ url('info/2/') }}', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 3) ?>', '{{ url('info/3/') }}', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('<?=_getText('tech', 4) ?>', '{{ url('info/4/') }}', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 1) }}', '{{ url('info/1/') }}', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 2) }}', '{{ url('info/2/') }}', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 3) }}', '{{ url('info/3/') }}', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 4) }}', '{{ url('info/4/') }}', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
 				<th class="text-xs-left" nowrap>Базовое производство</th>
 				<td class="k">-</td>
 				<td class="k">-</td>
-				<td class="k"><?=$parse['metal_basic_income'] ?></td>
-				<td class="k"><?=$parse['crystal_basic_income'] ?></td>
-				<td class="k"><?=$parse['deuterium_basic_income'] ?></td>
-				<td class="k"><?=$parse['energy_basic_income'] ?></td>
+				<td class="k">{{ parse['metal_basic_income'] }}</td>
+				<td class="k">{{ parse['crystal_basic_income'] }}</td>
+				<td class="k">{{ parse['deuterium_basic_income'] }}</td>
+				<td class="k">{{ parse['energy_basic_income'] }}</td>
 				<td class="k">100%</td>
 			</tr>
-			<? foreach ($parse['resource_row'] as $resource): ?>
+			{% for parse['resource_row'] as $resource %}
 				<tr>
-					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('<?=_getText('tech', $resource['id']) ?>', '{{ url('info/'.$resource['id'].'/') }}', 600)"><?=_getText('tech', $resource['id']) ?></a></th>
-					<th><font color="#ffffff"><?=$resource['level_type'] ?></font></th>
-					<th><font color="#ffffff"><?=$resource['bonus'] ?>%</font></th>
-					<? foreach ($this->registry->reslist['res'] AS $res): ?>
+					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('tech', resource['id']) ?></a></th>
+					<th><font color="#ffffff">{{ resource['level_type'] }}</font></th>
+					<th><font color="#ffffff">{{ resource['bonus'] }}%</font></th>
+					{% for registry->reslist['res'] AS $res %}
 						<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
-					<? endforeach; ?>
+					{% endfor %}
 					<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
 					<th>
-						<select name="<?=$resource['name'] ?>" title="">
-						<? for ($j = 10; $j >= 0; $j--): ?>
-							<option value="<?=$j ?>"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
+						<select name="{{ resource['name'] }}" title="">
+						<? for ($j = 10; $j >= 0; $j-- %}
+							<option value="{{ j }}"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
 						<? endfor; ?>
 						</select>
 					</th>
 				</tr>
-			<? endforeach; ?>
+			{% endfor %}
 			<tr>
 			</tr>
 			<tr>
 				<th colspan="2">Вместимость:</th>
-				<th><?=$parse['bonus_h'] ?>%</th>
-				<? foreach ($this->registry->reslist['res'] AS $res): ?>
-					<td class="k"><?=$parse[$res.'_max'] ?></td>
-				<? endforeach; ?>
-				<td class="k"><font color="#00ff00"><?=$parse['energy_max'] ?></font></td>
+				<th>{{ parse['bonus_h'] }}%</th>
+				{% for registry->reslist['res'] AS $res %}
+					<td class="k">{{ parse[$res.'_max'] }}</td>
+				{% endfor %}
+				<td class="k"><font color="#00ff00">{{ parse['energy_max'] }}</font></td>
 				<td class="k"><input name="action" value="Пересчитать" type="submit"></td>
 			</tr>
 			<tr>
 				<th colspan="3">Сумма:</th>
-				<? foreach ($this->registry->reslist['res'] AS $res): ?>
+				{% for registry->reslist['res'] AS $res %}
 					<td class="k"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
-				<? endforeach; ?>
-				<td class="k"><?=$parse['energy_total'] ?></td>
+				{% endfor %}
+				<td class="k">{{ parse['energy_total'] }}</td>
 			</tr>
 		</table>
 	</div>
@@ -102,37 +102,37 @@
 			<th width="21%">Неделя</th>
 			<th width="21%">Месяц</th>
 		</tr>
-		<? foreach ($this->registry->reslist['res'] AS $res): ?>
+		{% for registry->reslist['res'] AS $res %}
 			<tr>
-				<th><?=_getText('res', $res) ?></th>
+				<th>{{ _text('res', res) }}</th>
 				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
 				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24)) ?></th>
 				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
 				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Статус хранилища</td>
 		</tr>
-		<? foreach ($this->registry->reslist['res'] AS $res): ?>
+		{% for registry->reslist['res'] AS $res %}
 			<tr>
-				<th width="150"><?=_getText('res', $res) ?></th>
-				<th width="100"><?=$parse[$res.'_storage'] ?>%</th>
+				<th width="150">{{ _text('res', res) }</th>
+				<th width="100">{{ parse[$res.'_storage'] }}%</th>
 				<th>
 					<div style="border: 1px solid #9999FF;">
-						<div id="AlmMBar" style="background-color: <?=$parse[$res.'_storage_barcolor'] ?>; width: <?=min(100, max(0, $parse[$res.'_storage_bar'])) ?>%;">
+						<div id="AlmMBar" style="background-color: {{ parse[$res.'_storage_barcolor'] }}; width: <?=min(100, max(0, $parse[$res.'_storage_bar'])) ?>%;">
 							&nbsp;
 						</div>
 					</div>
 				</th>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </form>
-<? if ($parse['buy_form']): ?>
+{% if parse['buy_form'] %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
@@ -140,13 +140,13 @@
 		</tr>
 		<tr>
 			<th width="30%">
-				<? if ($parse['merchand'] < time()): ?>
+				{% if parse['merchand'] < time() %}
 					<a href="{{ url('resources&buy=1/') }}" class="button">Купить за 10 кредитов</a>
-				<? else: ?>
+				{% else %}
 					Через <?= \Xnova\Helpers::pretty_time($parse['merchand'] - time()) ?>
-				<? endif; ?>
+				{% endif %}
 			</th>
-			<th>Вы можете купить: <?=$parse['buy_metal'] ?> металла, <?=$parse['buy_crystal'] ?> кристалла, <?=$parse['buy_deuterium'] ?> дейтерия</th>
+			<th>Вы можете купить: {{ parse['buy_metal'] }} металла, {{ parse['buy_crystal'] }} кристалла, {{ parse['buy_deuterium'] }} дейтерия</th>
 		</tr>
 	</table>
-<? endif; ?>
+{% endif %}

@@ -1,11 +1,11 @@
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jquery.cookie.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jquery.ui.spinbtn.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jquery.inputmask.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/calculate/utils.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/calculate/common.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/calculate/flight.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jquery.ui.spinbtn.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jquery.inputmask.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/calculate/utils.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/calculate/common.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/calculate/flight.js"></script>
 
-<link type="text/css" href="<?=$this->url->getBaseUri() ?>assets/js/calculate/common.css" rel="stylesheet"/>
+<link type="text/css" href="{{ url.getBaseUri() }}assets/js/calculate/common.css" rel="stylesheet"/>
 
 <style>
 	#flight { margin: auto; width: 100%; }
@@ -72,14 +72,14 @@
 					<table cellpadding="2" cellspacing="0" border="0" align="center">
 						<tr>
 							<td><label for="cmb-drive">Рак. двигатель</label></td>
-							<td><input id="cmb-drive" type="text" name="cmb-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->registry->resource[115]]?>" tabindex="1" /></td>
+							<td><input id="cmb-drive" type="text" name="cmb-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry->resource[115]]?>" tabindex="1" /></td>
 							<td><label for="imp-drive">Имп. двигатель</label></td>
-							<td><input id="imp-drive" type="text" name="imp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->registry->resource[117]]?>" tabindex="2" /></td>
+							<td><input id="imp-drive" type="text" name="imp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry->resource[117]]?>" tabindex="2" /></td>
 							<td><label for="hyp-drive">Гипер. двигатель</label></td>
-							<td><input id="hyp-drive" type="text" name="hyp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=$user[$this->registry->resource[118]]?>" tabindex="3" /></td>
+							<td><input id="hyp-drive" type="text" name="hyp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry->resource[118]]?>" tabindex="3" /></td>
 							<td></td>
 							<td>
-								<input type="hidden" id="universe-speed" name="universe-speed" value="<?=$this->game->getSpeed('fleet')?>">
+								<input type="hidden" id="universe-speed" name="universe-speed" value="{{ game.getSpeed('fleet')?>">
 
 								<input type="checkbox" name="race" value="1" id="race"><label for="race">Древние</label>
 								<input type="checkbox" name="officier" value="1" id="officier"><label for="officier">Адмирал</label>
@@ -90,7 +90,7 @@
 						<tr>
 							<td><label for="departure-g">Пункт отправления&nbsp;</label></td>
 							<td>
-								<input id="departure-g" type="text" name="departure-g" class="ui-state-default ui-corner-all ui-input coord-input-small ui-input-margin" value="<?=$object['galaxy'] ?>" alt="Пункт отправления-Галактика" tabindex="5" />:<input id="departure-s" type="text" name="departure-s" class="ui-state-default ui-corner-all ui-input coord-input ui-input-margin" value="<?=$object['system'] ?>" alt="Пункт отправления-Система" tabindex="6" title="">:<input id="departure-p" type="text" name="departure-p" class="ui-state-default ui-corner-all ui-input coord-input-small ui-input-margin" value="<?=$object['planet'] ?>" alt="Пункт отправления-Планета" tabindex="7" title="">
+								<input id="departure-g" type="text" name="departure-g" class="ui-state-default ui-corner-all ui-input coord-input-small ui-input-margin" value="{{ object['galaxy'] }}" alt="Пункт отправления-Галактика" tabindex="5" />:<input id="departure-s" type="text" name="departure-s" class="ui-state-default ui-corner-all ui-input coord-input ui-input-margin" value="{{ object['system'] }}" alt="Пункт отправления-Система" tabindex="6" title="">:<input id="departure-p" type="text" name="departure-p" class="ui-state-default ui-corner-all ui-input coord-input-small ui-input-margin" value="{{ object['planet'] }}" alt="Пункт отправления-Планета" tabindex="7" title="">
 							</td>
 							<td style="width: 30px;">&nbsp;</td>
 							<td><label for="esp-probe">Шпионский зонд</label></td>

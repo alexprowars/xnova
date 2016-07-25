@@ -8,6 +8,7 @@ namespace Xnova\Auth\Plugins;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Phalcon\Mvc\User\Component;
 
 class Ulogin extends Component implements AuthInterface
@@ -59,7 +60,7 @@ class Ulogin extends Component implements AuthInterface
 			   	"id = ".$Row['auth_id']
 			);
 
-			$this->auth->authorize($Row['id'], $Row['password'], 0, (time() + 2419200));
+			$this->auth->authorize($Row['id'], (time() + 2419200));
 		}
 
 		$this->response->redirect('overview/');
@@ -150,12 +151,11 @@ class Ulogin extends Component implements AuthInterface
 				}
 			}
 
-			$total = $this->db->query("SELECT `value` FROM game_config WHERE `key` = 'users_total'")->fetch();
+			$total = $this->db->query("SELECT `value` FROM game_options WHERE `name` = 'users_total'")->fetch();
 
-			$this->config->app->users_total = $total['value'] + 1;
-			$this->game->updateConfig('users_total', $this->config->app->users_total);
+			Options::set('users_total', $total['value'] + 1);
 
-			$this->auth->auth($iduser, md5($this->token));
+			$this->auth->authorize($iduser);
 
 			return true;
 		}

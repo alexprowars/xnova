@@ -7,14 +7,14 @@
 		</tr>
 		<tr>
 			<th colspan="1" width="50%">Максимальное количество:</th>
-			<th colspan="1"><?=$parse['max_mis'] ?></th>
+			<th colspan="1">{{ parse['max_mis'] }}</th>
 		</tr>
 		<tr>
-			<th colspan="1"><?=$parse['int_miss'] ?></th>
+			<th colspan="1">{{ parse['int_miss'] }}</th>
 			<th colspan="1"><input type="text" name="502" title=""></th>
 		</tr>
 		<tr>
-			<th colspan="1"><?=$parse['plant_miss'] ?></th>
+			<th colspan="1">{{ parse['plant_miss'] }}</th>
 			<th colspan="1"><input type="text" name="503" title=""></th>
 		</tr>
 		<tr>

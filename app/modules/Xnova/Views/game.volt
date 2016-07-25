@@ -143,7 +143,7 @@
 						{% endif %}
 						<a href="{{ url('content/help/') }}">Новичкам</a>|
 						<a href="{{ url('content/agb/') }}">Правила</a>|
-						<a onclick="" title="Игроков в сети" style="color:green">{{ config.app.get('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ config.app.get('users_total', 0) }}</a>
+						<a onclick="" title="Игроков в сети" style="color:green">{{ option('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ option('users_total', 0) }}</a>
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -163,7 +163,7 @@
 					{% endif %}
 				</div>
 				<div class="col-xs-4 text-xs-center">
-					<a onclick="" title="Игроков в сети" style="color:green">{{ config.app.get('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ config.app.get('users_total', 0) }}</a>
+					<a onclick="" title="Игроков в сети" style="color:green">{{ option('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ option('users_total', 0) }}</a>
 				</div>
 			</div>
 		{% endif %}

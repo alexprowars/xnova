@@ -5,7 +5,6 @@
  */
 namespace Friday\Core\Prophiler\Plugin\Manager;
 
-use Friday\Core\Prophiler\Plugin\Phalcon\Mvc\RouterPlugin;
 use Friday\Core\Prophiler\ProfilerInterface;
 use Friday\Core\Prophiler\Plugin\Phalcon\Db\AdapterPlugin;
 use Friday\Core\Prophiler\Plugin\Phalcon\Mvc\DispatcherPlugin;

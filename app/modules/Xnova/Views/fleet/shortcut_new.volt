@@ -6,13 +6,13 @@
 		<tr>
 			<th>
 				<input type="text" name="n" value="" size=32 maxlength=32 title="Название">
-				<input type="text" name="g" value="<?=$g ?>" size=3 maxlength=2 title="Галактика">
-				<input type="text" name="s" value="<?=$s ?>" size=3 maxlength=3 title="Система">
-				<input type="text" name="p" value="<?=$i ?>" size=3 maxlength=2 title="Планета">
+				<input type="text" name="g" value="{{ g }}" size=3 maxlength=2 title="Галактика">
+				<input type="text" name="s" value="{{ s }}" size=3 maxlength=3 title="Система">
+				<input type="text" name="p" value="{{ i }}" size=3 maxlength=2 title="Планета">
 				<select name="t" title="">
-					<? foreach (_getText('fleet_objects') AS $key => $value): ?>
-						<option value="<?=$key ?>" <?=($t == $key ? 'selected' : '') ?>><?=$value ?></option>
-					<? endforeach; ?>
+					<? foreach (_getText('fleet_objects') AS $key => $value %}
+						<option value="{{ key }}" <?=($t == $key ? 'selected' : '') ?>>{{ value }}</option>
+					{% endfor %}
 				</select></th>
 		</tr>
 		<tr>

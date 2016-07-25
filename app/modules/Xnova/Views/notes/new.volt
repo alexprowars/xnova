@@ -1,14 +1,14 @@
 <form action="{{ url('notes/new/') }}" method="post">
 	<table class="table">
 		<tr>
-			<td class="c" colspan="2"><?=_getText('Createnote') ?></td>
+			<td class="c" colspan="2">{{ _text('Createnote') }}</td>
 		</tr>
 		<tr>
 			<th>Приоритет:
 				<select name="u" title="">
-					<option value="2" selected><?=_getText('Important') ?></option>
-					<option value="1"><?=_getText('Normal') ?></option>
-					<option value="0"><?=_getText('Unimportant') ?></option
+					<option value="2" selected>{{ _text('Important') }}</option>
+					<option value="1">{{ _text('Normal') }}</option>
+					<option value="0">{{ _text('Unimportant') }}</option
 				</select>
 			</th>
 			<th>Тема:
@@ -24,8 +24,8 @@
 		</tr>
 		<tr>
 			<td class="c" colspan="2">
-				<input type="reset" value="<?=_getText('Reset') ?>">
-				<input type="submit" value="<?=_getText('Save') ?>">
+				<input type="reset" value="{{ _text('Reset') }}">
+				<input type="submit" value="{{ _text('Save') }}">
 			</td>
 		</tr>
 	</table>

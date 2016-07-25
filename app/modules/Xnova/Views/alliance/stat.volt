@@ -1,10 +1,10 @@
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/jquery.jqplot.min.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/jqplot/plugins/jqplot.highlighter.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<?=$this->url->getBaseUri() ?>assets/js/jqplot/jquery.jqplot.min.css">
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jqplot/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/jqplot/plugins/jqplot.highlighter.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ url.getBaseUri() }}assets/js/jqplot/jquery.jqplot.min.css">
 <table class="table">
 	<tr>
-		<td class="c"><b>Статистика по месту игрока "<?=$parse['name'] ?>"</b></td>
+		<td class="c"><b>Статистика по месту игрока "{{ parse['name'] }}"</b></td>
 	</tr>
 	<tr>
 		<th style="padding: 10px;">
@@ -15,33 +15,33 @@
 <script type="text/javascript">
 	<? $max = 0; ?>
 	var temp1 = [
-		<? foreach($parse['data'] AS $data): if ($max < $data['total_rank']) $max = $data['total_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['total_rank'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data): if ($max < $data['total_rank']) $max = $data['total_rank']; ?>
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['total_rank'] }}],
+		{% endfor %}
 	];
 
 	var temp2 = [
-		<? foreach($parse['data'] AS $data): if ($max < $data['tech_rank']) $max = $data['tech_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['tech_rank'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data): if ($max < $data['tech_rank']) $max = $data['tech_rank']; ?>
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['tech_rank'] }}],
+		{% endfor %}
 	];
 
 	var temp3 = [
-		<? foreach($parse['data'] AS $data): if ($max < $data['build_rank']) $max = $data['build_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['build_rank'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data): if ($max < $data['build_rank']) $max = $data['build_rank']; ?>
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['build_rank'] }}],
+		{% endfor %}
 	];
 
 	var temp4 = [
-		<? foreach($parse['data'] AS $data): if ($max < $data['fleet_rank']) $max = $data['fleet_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['fleet_rank'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data): if ($max < $data['fleet_rank']) $max = $data['fleet_rank']; ?>
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['fleet_rank'] }}],
+		{% endfor %}
 	];
 
 	var temp5 = [
-		<? foreach($parse['data'] AS $data): if ($max < $data['defs_rank']) $max = $data['defs_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['defs_rank'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data): if ($max < $data['defs_rank']) $max = $data['defs_rank']; ?>
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['defs_rank'] }}],
+		{% endfor %}
 	];
 
 	$(document).ready(function()
@@ -137,29 +137,29 @@
 	var points = [];
 
 	points[0] = [
-		<? foreach($parse['data'] AS $data): ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['total_points'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data %}
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['total_points'] }}],
+		{% endfor %}
 	];
 	points[1] = [
-		<? foreach($parse['data'] AS $data): ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['build_points'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data %}
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['build_points'] }}],
+		{% endfor %}
 	];
 	points[2] = [
-		<? foreach($parse['data'] AS $data): ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['tech_points'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data %}
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['tech_points'] }}],
+		{% endfor %}
 	];
 	points[3] = [
-		<? foreach($parse['data'] AS $data): ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['fleet_points'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data %}
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['fleet_points'] }}],
+		{% endfor %}
 	];
 	points[4] = [
-		<? foreach($parse['data'] AS $data): ?>
-			['<?=date("d.m H:i", $data['time']) ?>', <?=$data['defs_points'] ?>],
-		<? endforeach; ?>
+		{% for ($parse['data'] AS $data %}
+			['<?=date("d.m H:i", $data['time']) ?>', {{ data['defs_points'] }}],
+		{% endfor %}
 	];
 
 	var plot;

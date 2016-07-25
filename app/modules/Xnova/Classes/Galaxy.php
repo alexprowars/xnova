@@ -8,6 +8,7 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Models\Planet;
 use Xnova\Models\User;
 use Phalcon\Mvc\User\Component;
@@ -39,9 +40,9 @@ class Galaxy extends Component
 {
 	public function createPlanetByUserId ($user_id)
 	{
-		$Galaxy = $this->config->app->LastSettedGalaxyPos;
-		$System = $this->config->app->LastSettedSystemPos;
-		$Planet = $this->config->app->LastSettedPlanetPos;
+		$Galaxy = Options::get('LastSettedGalaxyPos');
+		$System = Options::get('LastSettedSystemPos');
+		$Planet = Options::get('LastSettedPlanetPos');
 
 		do
 		{
@@ -77,9 +78,9 @@ class Galaxy extends Component
 
 		if ($PlanetID !== false)
 		{
-			$this->game->updateConfig('LastSettedGalaxyPos', $Galaxy);
-			$this->game->updateConfig('LastSettedSystemPos', $System);
-			$this->game->updateConfig('LastSettedPlanetPos', $Planet);
+			Options::set('LastSettedGalaxyPos', $Galaxy);
+			Options::set('LastSettedSystemPos', $System);
+			Options::set('LastSettedPlanetPos', $Planet);
 
 			if (is_null($this->user))
 				$this->user = User::findFirst($user_id);

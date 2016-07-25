@@ -1,15 +1,15 @@
-<form action="{{ url('alliance/apply/allyid/'.$parse['allyid'].'/') }}" method="POST">
+<form action="{{ url('alliance/apply/allyid/'~parse['allyid']~'/') }}" method="POST">
 	<table class="table">
-		<? if ($parse['text_apply'] != ''): ?>
+		{% if parse['text_apply'] != '' %}
 		<tr>
 			<td class="c" colspan="2">Приветствие альянса</td>
 		</tr>
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;"><span id="m1"></span></td>
 		</tr>
-		<? endif; ?>
+		{% endif %}
 		<tr>
-			<td class="c" colspan="2">Написать запрос на вступление в альянс [<?=$parse['tag'] ?>]</td>
+			<td class="c" colspan="2">Написать запрос на вступление в альянс [{{ parse['tag'] }}]</td>
 		</tr>
 		<tr>
 			<th><textarea name="text" cols=40 rows=10 title=""></textarea></th>
@@ -19,4 +19,4 @@
 		</tr>
 	</table>
 </form>
-<script>Text('<?=str_replace(["\r\n", "\n", "\r"], '', stripslashes($parse['text_apply'])) ?>', 'm1');</script>
+<script>Text('{{ replace(["\r\n", "\n", "\r"], '', parse['text_apply']|stripslashes) }}', 'm1');</script>

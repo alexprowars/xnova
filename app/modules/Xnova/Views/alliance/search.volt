@@ -6,31 +6,31 @@
 		<tr>
 			<th>Строка поиска</th>
 			<th>
-				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>" title=""><input type="submit" value="Поиск">
+				<input type="text" name="searchtext" value="{{ parse['searchtext'] }}" title=""><input type="submit" value="Поиск">
 			</th>
 		</tr>
 	</table>
 </form>
 
-<? if (isset($parse['result']) && count($parse['result']) > 0): ?>
+{% if (isset($parse['result']) and count($parse['result']) > 0 %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Найденые альянсы:</td>
 		</tr>
-		<? foreach ($parse['result'] AS $r): ?>
+		{% for parse['result'] AS $r %}
 			<tr>
 				<th class="text-xs-center">
-					<?=$r['tag'] ?>
+					{{ r['tag'] }}
 				</th>
 				<th class="text-xs-center">
-					<?=$r['name'] ?>
+					{{ r['name'] }}
 				</th>
 				<th class="text-xs-center">
-					<?=$r['members'] ?>
+					{{ r['members'] }}
 				</th>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 		<tr>
 	</table>
-<? endif; ?>
+{% endif %}

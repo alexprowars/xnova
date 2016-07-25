@@ -7,9 +7,9 @@
 				<li><a href="#tabs-2">Описание</a></li>
 				<li><a href="#tabs-3">Отпуск / Удаление</a></li>
 				<li><a href="#tabs-4">Личное дело</a></li>
-				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+				{% if config.view.get('socialIframeView', 0) == 0 %}
 					<li><a href="#tabs-5">Точки входа</a></li>
-				<? endif; ?>
+				{% endif %}
 			</ul>
 		</div>
 		<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
@@ -21,11 +21,11 @@
 						<span class="negative">Можно менять не чаще раза в сутки</span>
 					</th>
 					<th>
-						<? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?><input name="db_character" size="20" value="<? endif; ?><?=$parse['opt_usern_data'] ?><? if ($parse['opt_usern_datatime'] < (time() - 86400)): ?>" type="text" title=""><? endif; ?>
+						{% if parse['opt_usern_datatime'] < (time() - 86400) %}<input name="db_character" size="20" value="{% endif %}{{ parse['opt_usern_data'] }}{% if parse['opt_usern_datatime'] < (time() - 86400) %}" type="text" title="">{% endif %}
 					</th>
 				</tr>
-				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
-					<? if (is_email($parse['opt_mail_data'])): ?>
+				{% if config.view.get('socialIframeView', 0) == 0 %}
+					{% if (is_email($parse['opt_mail_data']) %}
 						<tr>
 							<th>Старый пароль</th>
 							<th><input name="db_password" size="20" value="" type="password" title=""></th>
@@ -38,18 +38,18 @@
 							<th>Новый пароль (повтор)</th>
 							<th><input name="newpass2" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
-					<? endif; ?>
+					{% endif %}
 					<tr>
 						<th>Адрес e-mail (логин)</th>
 						<th>
-							<? if (!is_email($parse['opt_mail_data'])): ?>
+							{% if (!is_email($parse['opt_mail_data']) %}
 								<input type="text" name="email" value="" title="">
-							<? else: ?>
-								<?=$parse['opt_mail_data'] ?> <a href="{{ url('options/email/') }}" class="button">сменить</a>
-							<? endif; ?>
+							{% else %}
+								{{ parse['opt_mail_data'] }} <a href="{{ url('options/email/') }}" class="button">сменить</a>
+							{% endif %}
 						</th>
 					</tr>
-				<? endif; ?>
+				{% endif %}
 				<tr>
 					<th>Пол</th>
 					<th><select name="sex" title="">
@@ -63,20 +63,20 @@
 			</table>
 		</div>
 		<div id="tabs-1" class="ui-tabs-panel ui-widget-content"  style="display: none">
-			<? if ($this->config->view->get('socialIframeView', 0) != 0): ?>
+			{% if config.view.get('socialIframeView', 0) != 0 %}
 				<div style="display: none">
-					<input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox" title="">
-					<input name="planetlistselect"<?=$parse['opt_planetlistselect_data'] ?> type="checkbox" title="">
-					<input name="security"<?=$parse['opt_sec_data'] ?> type="checkbox" title="">
-					<input name="ajaxnav"<?=$parse['opt_ajax_data'] ?> type="checkbox" title="">
+					<input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title="">
+					<input name="planetlistselect"{{ parse['opt_planetlistselect_data'] }} type="checkbox" title="">
+					<input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title="">
+					<input name="ajaxnav"{{ parse['opt_ajax_data'] }} type="checkbox" title="">
 				</div>
-			<? endif; ?>
+			{% endif %}
 			<table class="table">
 				<tr>
 					<th>Упорядочить планеты по:</th>
 					<th>
 						<select name="settings_sort" style='width:170px' title="">
-							<?=$parse['opt_lst_ord_data'] ?>
+							{{ parse['opt_lst_ord_data'] }}
 						</select>
 					</th>
 				</tr>
@@ -84,53 +84,53 @@
 					<th>Упорядочить по:</th>
 					<th>
 						<select name="settings_order" style='width:170px' title="">
-							<?=$parse['opt_lst_cla_data'] ?>
+							{{ parse['opt_lst_cla_data'] }}
 						</select>
 					</th>
 				</tr>
 				<tr>
 					<th>Кол-во по умолчанию отправляемых<br> шпионских зондов в меню "Космос"</th>
-					<th><input name="spy" value="<?=$parse['spy'] ?>" type="text" title=""></th>
+					<th><input name="spy" value="{{ parse['spy'] }}" type="text" title=""></th>
 				</tr>
 				<tr>
 					<th>Участвовать в рекордах</th>
-					<th><input name="records"<?=$parse['opt_record_data'] ?> type="checkbox" title=""></th>
+					<th><input name="records"{{ parse['opt_record_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th>Использовать BB коды в сообщениях</th>
-					<th><input name="bbcode"<?=$parse['opt_bbcode_data'] ?> type="checkbox" title=""></th>
+					<th><input name="bbcode"{{ parse['opt_bbcode_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th>Показывать только доступные постройки</th>
-					<th><input name="available"<?=$parse['opt_available_data'] ?> type="checkbox" title=""></th>
+					<th><input name="available"{{ parse['opt_available_data'] }} type="checkbox" title=""></th>
 				</tr>
-				<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+				{% if config.view.get('socialIframeView', 0) == 0 %}
 					<tr>
 						<th>Включить просмотр игровой активности</th>
-						<th><input name="gameactivity"<?=$parse['opt_gameactivity_data'] ?> type="checkbox" title=""></th>
+						<th><input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>Выпадающий список планет</th>
-						<th><input name="planetlistselect"<?=$parse['opt_planetlistselect_data'] ?> type="checkbox" title=""></th>
+						<th><input name="planetlistselect"{{ parse['opt_planetlistselect_data'] }} type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>Повышенная безопасность входа</th>
-						<th><input name="security"<?=$parse['opt_sec_data'] ?> type="checkbox" title=""></th>
+						<th><input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title=""></th>
 					</tr>
 					<tr>
 						<th>
 							Включить ускорение интерфейса игры
 						</th>
-						<th><input name="ajaxnav"<?=$parse['opt_ajax_data'] ?> type="checkbox" title=""></th>
+						<th><input name="ajaxnav"{{ parse['opt_ajax_data'] }} type="checkbox" title=""></th>
 					</tr>
-				<? endif; ?>
+				{% endif %}
 				<tr>
 					<th>Цвет чата</th>
 					<th>
 						<select name='color' style='width:170px' title="">
-							<? foreach(_getText('colors') AS $id => $color): if (!$color[1]) continue; ?>
-								<option value="<?=$id ?>" <?=($parse['color'] == $id ? 'selected' : '') ?> style="color:<?=$color[0] ?>"><?=$color[1] ?></option>
-							<? endforeach; ?>
+							{% for (_getText('colors') AS $id => $color): if (!$color[1]) continue; ?>
+								<option value="{{ id ?>" <?=($parse['color'] == $id ? 'selected' : '') ?> style="color:{{ color[0] }}">{{ color[1] }}</option>
+							{% endfor %}
 						</select>
 					</th>
 				</tr>
@@ -166,7 +166,7 @@
 				</tr>
 				<tr>
 					<th>Аватар</th>
-					<th><?=$parse['avatar'] ?> <a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
+					<th>{{ parse['avatar'] }} <a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
 				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
@@ -202,7 +202,7 @@
 			<table class="table">
 				<tr>
 					<th width="50%"><a title="Режим отпуска нужен для защиты планет во время вашего отсутствия">Включить режим отпуска</a></th>
-					<th><input name="urlaubs_modus"<?=$parse['opt_modev_data'] ?> type="checkbox" title=""></th>
+					<th><input name="urlaubs_modus"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -211,7 +211,7 @@
 				</tr>
 				<tr>
 					<th><a title="Профиль будет удалён через 7 дней">Удалить профиль</a></th>
-					<th><input name="db_deaktjava"<?=$parse['opt_delac_data'] ?> type="checkbox" title=""></th>
+					<th><input name="db_deaktjava"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -236,24 +236,24 @@
 				</tr>
 			</table>
 		</div>
-		<? if ($this->config->view->get('socialIframeView', 0) == 0): ?>
+		{% if config.view.get('socialIframeView', 0) == 0 %}
 			<div id="tabs-5" class="ui-tabs-panel ui-widget-content"  style="display: none">
-				<? if (count($parse['auth'])): ?>
+				{% if (count($parse['auth']) %}
 					<table class="table">
 						<tr>
 							<td class="c">Аккаунт</td>
 							<td class="c">Дата регистрации</td>
 							<td class="c">Последняя авторизация</td>
 						</tr>
-						<? foreach ($parse['auth'] AS $auth): ?>
+						{% for parse['auth'] AS $auth %}
 							<tr>
-								<th><?=$auth['external_id'] ?></th>
-								<th><?=$this->game->datezone("d.m.Y H:i:s", $auth['create_time']) ?></th>
-								<th><?=($auth['enter_time'] > 0 ? $this->game->datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
+								<th>{{ auth['external_id'] }}</th>
+								<th>{{ game.datezone("d.m.Y H:i:s", $auth['create_time']) }}</th>
+								<th><?=($auth['enter_time'] > 0 ? game.datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
 							</tr>
-						<? endforeach; ?>
+						{% endfor %}
 					</table>
-				<? endif; ?>
+				{% endif %}
 				<table class="table">
 					<tr>
 						<td class="c">Привязать аккаунт к социальным сетям</td>
@@ -268,7 +268,7 @@
 					</tr>
 				</table>
 			</div>
-		<? endif; ?>
+		{% endif %}
 	</div>
 </form>
 <script type="text/javascript">
@@ -278,13 +278,13 @@
 	});
 </script>
 
-<? if (is_array($parse['bot_auth'])): ?>
+{% if (is_array($parse['bot_auth']) %}
 	<br><br>
 	<div class="table">
 		<div class="row">
 			<div class="col-xs-12 th">
-				Ваш код для привязки Telegram-бота:<br><br><b><?=$parse['bot_auth']['code'] ?></b>
+				Ваш код для привязки Telegram-бота:<br><br><b>{{ parse['bot_auth']['code'] }}</b>
 			</div>
 		</div>
 	</div>
-<? endif; ?>
+{% endif %}

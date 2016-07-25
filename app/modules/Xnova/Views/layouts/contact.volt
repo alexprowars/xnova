@@ -12,17 +12,17 @@
 		<th width="33%">Должность</th>
 		<th width="33%">eMail</th>
 	</tr>
-	<? foreach ($contacts AS $list): ?>
+	{% for contacts AS $list %}
 		<tr>
-			<th><?=$list['name'] ?></th>
-			<th><?=$list['auth'] ?></th>
-			<th><a href=mailto:<?=$list['mail'] ?>><?=$list['mail'] ?></a></th>
+			<th>{{ list['name'] }}</th>
+			<th>{{ list['auth'] }}</th>
+			<th><a href=mailto:{{ list['mail'] }}>{{ list['mail'] }}</a></th>
 		</tr>
 		<tr>
 			<td class="c" colspan="3">
-				<span id="m<?=$list['id'] ?>"></span>
-				<script type="text/javascript">Text('<?=preg_replace("/(\r\n)/u", "<br>", stripslashes($list['info'])) ?>', 'm<?=$list['id'] ?>');</script>
+				<span id="m{{ list['id'] }}"></span>
+				<script type="text/javascript">Text('<?=preg_replace("/(\r\n)/u", "<br>", stripslashes($list['info'])) ?>', 'm{{ list['id'] }}');</script>
 			</td>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 </table>

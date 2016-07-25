@@ -1,5 +1,6 @@
 <?php
 
+use Friday\Core\Options;
 use Xnova\Database;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 
@@ -107,7 +108,7 @@ if ($id > 0)
 
 			// Очки
 			imagettftext($image, 6, 0, 13, 55, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Helpers::pretty_number(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::pretty_number(intval($stats['total_rank']))." из ".\Xnova\Helpers::pretty_number($config->app->get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::pretty_number(intval($stats['total_rank']))." из ".\Xnova\Helpers::pretty_number(Options::get('users_total', 0))."");
 
 			// Дата генерации
 			imagettftext($image, 6, 0, 365, 13, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", date("d.m.Y"));

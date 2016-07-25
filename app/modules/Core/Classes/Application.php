@@ -160,8 +160,6 @@ class Application extends PhalconApplication
 
 	/**
 	 * @param $di DiInterface
-	 * @param $config \Phalcon\Config|\stdClass
-	 * @param $eventsManager
 	 * @return Loader
 	 */
 	protected function initModules ($di)

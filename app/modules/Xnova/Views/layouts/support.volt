@@ -3,56 +3,56 @@
 	<tr>
 		<td class="c" colspan="4">Служба техподдержки</td>
 	</tr>
-	<? if (count($list) > 0): ?>
+	{% if (count($list) > 0 %}
 		<tr>
 			<th style="width:10%">ID</th>
 			<th style="width:50%">Тема</th>
 			<th style="width:15%">Статус</th>
 			<th style="width:25%">Дата</th>
 		</tr>
-		<? foreach ($list AS $id => $item): ?>
+		{% for list AS $id => $item %}
 			<tr>
-				<td class="c"><?=$id ?></td>
-				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_<?=$id ?>');"><?=$item['subject'] ?></a></td>
-				<td class="c"><? if ($item['status'] == 0): ?><span style="color:red">закрыто</span>
-					<? elseif ($item['status'] == 1): ?><span style="color:green">открыто</span>
+				<td class="c">{{ id }}</td>
+				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ id ?>');">{{ item['subject'] }}</a></td>
+				<td class="c">{% if item['status'] == 0 %}<span style="color:red">закрыто</span>
+					<? elseif ($item['status'] == 1 %}<span style="color:green">открыто</span>
 					<?
-				elseif ($item['status'] == 2): ?><span style="color:orange">ответ админа</span>
+				elseif ($item['status'] == 2 %}<span style="color:orange">ответ админа</span>
 				<?
-				elseif ($item['status'] == 3): ?><span style="color:green">ответ игрока</span><? endif; ?></td>
-				<td class="c"><?=$item['date'] ?></td>
+				elseif ($item['status'] == 3 %}<span style="color:green">ответ игрока</span>{% endif %}</td>
+				<td class="c">{{ item['date'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 	<div class="separator"></div>
-	<? foreach ($list AS $id => $item): ?>
-		<div id="ticket_<?=$id ?>" style="display:none;" class="tickets">
-			<form action="{{ url('support/answer/'.$id.'/') }}" method="POST">
+	{% for list AS $id => $item %}
+		<div id="ticket_{{ id }}" style="display:none;" class="tickets">
+			<form action="{{ url('support/answer/'~id.'/') }}" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>
 					</tr>
 					<tr>
-						<td class="c text-xs-left"><?=$item['text'] ?></td>
+						<td class="c text-xs-left">{{ item['text'] }}</td>
 					</tr>
-					<? if ($item['status'] == 0): ?><tr><th>Закрыт</th></tr><? endif; ?>
+					{% if item['status'] == 0 %}<tr><th>Закрыт</th></tr>{% endif %}
 					<tr>
 						<td class="c">
-							<? if ($item['status'] != 0): ?>
+							{% if item['status'] != 0 %}
 							<textarea style="width: 99%" rows="10" name="text" title=""></textarea><br><input type="submit" value="Ответить">
-							<? endif; ?>
+							{% endif %}
 						</td>
 					</tr>
 				</table>
 			</form>
 		</div>
-		<? endforeach; ?>
-	<? else: ?>
+		{% endfor %}
+	{% else %}
 		<tr>
 			<th colspan="4">Нет запросов в техподдержку</th>
 		</tr>
 	</table>
-	<? endif; ?>
+	{% endif %}
 	<br><br>
 
 	<div id="newbutton" style="display:block;">

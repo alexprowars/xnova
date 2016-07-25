@@ -12,7 +12,7 @@
 					<option value="allyname"<?=(($parse['type'] == "allyname") ? " SELECTED" : "") ?>>Название альянса</option>
 				</select>
 				&nbsp;&nbsp;
-				<input type="text" name="searchtext" value="<?=$parse['searchtext'] ?>" title="">
+				<input type="text" name="searchtext" value="{{ parse['searchtext'] }}" title="">
 				&nbsp;&nbsp;
 
 				<input type="submit" value="Поиск">
@@ -21,8 +21,8 @@
 	</table>
 </form>
 <div class="separator"></div>
-<? if ($parse['searchtext'] != ''): ?>
-	<? if (isset($parse['type']) && ($parse['type'] == 'playername' || $parse['type'] == 'planetname')): ?>
+{% if parse['searchtext'] != '' %}
+	{% if (isset($parse['type']) and ($parse['type'] == 'playername' or $parse['type'] == 'planetname') %}
 		<table class="table">
 			<tr>
 				<td class="c" width="120">Имя</td>
@@ -33,29 +33,29 @@
 				<td class="c" width="80">Координаты</td>
 				<td class="c" width="40">Место</td>
 			</tr>
-			<? if (count($parse['result']) > 0): ?>
-				<? foreach ($parse['result'] AS $result): ?>
+			{% if (count($parse['result']) > 0 %}
+				{% for parse['result'] AS $result %}
 					<tr>
-						<th><?=$result['username'] ?></th>
+						<th>{{ result['username'] }}</th>
 						<th nowrap>
-							<a href="javascript:;" onclick="showWindow('<?=$result['username'] ?>: отправить сообщение', '{{ url('messages/write/'.$result['id'].'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
-							<a href="{{ url('buddy/new/'.$result['id'].'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
+							<a href="javascript:;" onclick="showWindow('{{ result['username'] }}: отправить сообщение', '{{ url('messages/write/'~result['id']~'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
+							<a href="{{ url('buddy/new/'~result['id']~'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
 						</th>
-						<th><? if ($result['race'] != 0): ?><img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$result['race'] ?>.gif" width="16" height="16"><? else: ?>&nbsp;<? endif; ?>
+						<th>{% if result['race'] != 0 %}<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ result['race'] }}.gif" width="16" height="16">{% else %}&nbsp;{% endif %}
 						</th>
-						<th><?=$result['ally_name'] ?></th>
-						<th><?=$result['planet_name'] ?></th>
-						<th><a href="{{ url('galaxy/'.$result['g'].'/'.$result['s'].'/') }}"><?=$result['g'] ?>:<?=$result['s'] ?>:<?=$result['p'] ?></a></th>
-						<th><a href="{{ url('stat/players/range/'.$result['total_rank'].'/') }}"><?=$result['total_rank'] ?></a></th>
+						<th>{{ result['ally_name'] }}</th>
+						<th>{{ result['planet_name'] }}</th>
+						<th><a href="{{ url('galaxy/'~result['g']~'/'~result['s']~'/') }}">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</a></th>
+						<th><a href="{{ url('stat/players/range/'~result['total_rank']~'/') }}">{{ result['total_rank'] }}</a></th>
 					</tr>
-				<? endforeach; ?>
-			<? else: ?>
+				{% endfor %}
+			{% else %}
 				<tr>
 					<th colspan="7">Поиск не дал результатов</th>
 				</tr>
-			<? endif; ?>
+			{% endif %}
 		</table>
-	<? else: ?>
+	{% else %}
 
 		<table class="table">
 			<tr>
@@ -64,22 +64,22 @@
 				<td class="c">Члены</td>
 				<td class="c">Очки</td>
 			</tr>
-			<? if (count($parse['result']) > 0): ?>
-				<? foreach ($parse['result'] AS $result): ?>
+			{% if (count($parse['result']) > 0 %}
+				{% for parse['result'] AS $result %}
 					<tr>
-						<th><a href="{{ url('alliance/info/'.$result['id'].'/') }}"><?=$result['tag'] ?></a></th>
-						<th><?=$result['name'] ?></th>
-						<th><?=$result['members'] ?></th>
-						<th><?=$result['total_points'] ?></th>
+						<th><a href="{{ url('alliance/info/'~result['id']~'/') }}">{{ result['tag'] }}</a></th>
+						<th>{{ result['name'] }}</th>
+						<th>{{ result['members'] }}</th>
+						<th>{{ result['total_points'] }}</th>
 					</tr>
-				<? endforeach; ?>
-			<? else: ?>
+				{% endfor %}
+			{% else %}
 				<tr>
 					<th colspan="6">Поиск не дал результатов</th>
 				</tr>
-			<? endif; ?>
+			{% endif %}
 		</table>
 
-	<? endif; ?>
+	{% endif %}
 
-<? endif; ?>
+{% endif %}

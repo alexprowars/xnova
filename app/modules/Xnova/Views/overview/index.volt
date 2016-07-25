@@ -53,7 +53,7 @@
 			</table>
 			<div class="separator"></div>
 		{% endif %}
-		{% set m = config.app.get('newsMessage', '') %}
+		{% set m = option('newsMessage', '') %}
 		{% if m != '' %}
 			<div class="row">
 				<div class="col-xs-3"><img src="{{ url.getBaseUri() }}assets/images/warning.png" align="absmiddle" alt=""></div>

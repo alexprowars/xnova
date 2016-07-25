@@ -1,9 +1,9 @@
 <div class="block start">
 	<div class="title">Основная информация</div>
 	<div class="content">
-		<? if ($message != ''): ?>
-			<div class="errormessage"><?=$message ?></div>
-		<? endif; ?>
+		{% if message != '' %}
+			<div class="errormessage">{{ message }}</div>
+		{% endif %}
 		<form action="" method="POST">
 			<table class="table table-noborder">
 				<tbody>
@@ -24,18 +24,18 @@
 								</ul>
 							</div>
 							<div id="tabs-0">
-								<? for ($i = 1; $i <= 8; $i++): ?>
-									<input type="radio" name="face" value="1_<?=$i ?>" id="f1_<?=$i ?>" <?=($this->request->getPost('face') == '1_'.$i ? 'checked' : '') ?> title="">
-									<label data-id="f1_<?=$i ?>" class="avatar">
-										<img src="<?=$this->url->getBaseUri() ?>assets/images/faces/1/<?=$i ?>s.png" alt="">
+								<? for ($i = 1; $i <= 8; $i++ %}
+									<input type="radio" name="face" value="1_{{ i }}" id="f1_{{ i }}" <?=(request->getPost('face') == '1_'~i ? 'checked' : '') ?> title="">
+									<label data-id="f1_{{ i }}" class="avatar">
+										<img src="{{ url.getBaseUri() }}assets/images/faces/1/{{ i }}s.png" alt="">
 									</label>
 								<? endfor; ?>
 							</div>
 							<div id="tabs-1">
-								<? for ($i = 1; $i <= 8; $i++): ?>
-									<input type="radio" name="face" value="2_<?=$i ?>" id="f2_<?=$i ?>" <?=($this->request->getPost('face') == '2_'.$i ? 'checked' : '') ?> title="">
-									<label data-id="f2_<?=$i ?>" class="avatar">
-										<img src="<?=$this->url->getBaseUri() ?>assets/images/faces/2/<?=$i ?>s.png" alt="">
+								<? for ($i = 1; $i <= 8; $i++ %}
+									<input type="radio" name="face" value="2_{{ i }}" id="f2_{{ i }}" <?=(request->getPost('face') == '2_'~i ? 'checked' : '') ?> title="">
+									<label data-id="f2_{{ i }}" class="avatar">
+										<img src="{{ url.getBaseUri() }}assets/images/faces/2/{{ i }}s.png" alt="">
 									</label>
 								<? endfor; ?>
 							</div>

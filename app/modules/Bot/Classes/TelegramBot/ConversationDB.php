@@ -10,7 +10,6 @@
 
 namespace Longman\TelegramBot;
 
-use Longman\TelegramBot\DB;
 use Longman\TelegramBot\Exception\TelegramException;
 
 /**

@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Friday\Core\Mail\PHPMailer;
@@ -135,8 +136,8 @@ class OptionsController extends Controller
 				$mail->isMail();
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->setFrom($this->config->app->email, $this->config->app->name);
-				$mail->addAddress($e, $this->config->app->name);
+				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
+				$mail->addAddress($e, Options::get('site_title'));
 				$mail->Subject = 'Пароль в Xnova Game: '.$this->config->game->universe.' вселенная';
 				$mail->Body = "Ваш пароль от игрового аккаунта '" . $this->user->username . "': " . $password;
 				$mail->send();

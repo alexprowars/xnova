@@ -72,7 +72,7 @@ class Controller extends PhalconController
 		else
 		{
 			$this->tag->setTitleSeparator(' :: ');
-			$this->tag->setTitle(Options::get('site_title', $this->config->app->name));
+			$this->tag->setTitle(Options::get('site_title'));
 	        $this->tag->setDocType(Tag::HTML5);
 		}
 
@@ -196,18 +196,6 @@ class Controller extends PhalconController
 
 			$this->checkUserLevel();
 
-			if ($this->config->app->code == 'OK1U')
-			{
-				$points = $this->db->fetchColumn("SELECT `total_points` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "'");
-
-				if (!$points || $points < 1000)
-				{
-					$this->config->game->offsetSet('game_speed', $this->config->game->get('game_speed', 1) * 5);
-					$this->config->game->offsetSet('resource_multiplier', $this->config->game->get('resource_multiplier', 1) * 3);
-					$this->config->game->offsetSet('noob', 1);
-				}
-			}
-
 			// Выставляем планету выбранную игроком из списка планет
 			$this->user->setSelectedPlanet();
 
@@ -275,7 +263,7 @@ class Controller extends PhalconController
 		$this->view->setVar('topPanel', $this->showTopPanel);
 		$this->view->setVar('leftMenu', $this->showLeftMenu);
 
-		$this->tag->appendTitle($this->config->app->name);
+		$this->tag->appendTitle(Options::get('site_title'));
 
 		return true;
 	}

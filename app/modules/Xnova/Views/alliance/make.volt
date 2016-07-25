@@ -1,6 +1,6 @@
-<? if (isset($html)): ?>
-	<?=$html ?>
-<? else: ?>
+{% if (isset($html) %}
+	{{ html }}
+{% else %}
 	<form action="{{ url('alliance/make/yes/1/') }}" method="POST">
 		<table class="table">
 			<tr>
@@ -19,4 +19,4 @@
 			</tr>
 		</table>
 	</form>
-<? endif; ?>
+{% endif %}

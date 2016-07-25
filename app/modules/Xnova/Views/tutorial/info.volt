@@ -1,30 +1,30 @@
 <table class="table tutorial">
 	<tr>
 		<td class="k">
-			<h3>Задание <?=$parse['info']['TITLE'] ?></h3>
+			<h3>Задание {{ parse['info']['TITLE'] }}</h3>
 		</td>
 	</tr>
 	<tr>
 		<td class="k text-xs-left">
 			<div class="row">
 				<div class="col-xs-4 text-xs-center">
-					<img src="<?=$this->url->getBaseUri() ?>assets/images/tutorial/<?=$stage ?>.jpg" class="pic">
+					<img src="{{ url.getBaseUri() }}assets/images/tutorial/{{ stage }}.jpg" class="pic">
 				</div>
 				<div class="col-xs-8">
 					<div class="description">
-						<?=$parse['info']['DESCRIPTION'] ?>
+						{{ parse['info']['DESCRIPTION'] }}
 					</div>
 					<h3>Задачи:</h3>
 					<ul>
-						<? foreach ($parse['task'] AS $task): ?>
+						{% for task in parse['task'] %}
 							<li>
-								<span><?=$task[0] ?></span>
-								<span><img src="<?=$this->url->getBaseUri() ?>assets/images/<?=($task[1] ? 'check' : 'none') ?>.gif" height="11" width="12"></span>
+								<span>{{ task[0] }}</span>
+								<span><img src="{{ url.getBaseUri() }}assets/images/{{ task[1] ? 'check' : 'none' }}.gif" height="11" width="12"></span>
 							</li>
-						<? endforeach; ?>
+						{% endfor %}
 					</ul>
 					<div style="color:orange;">
-						Награда: <?=implode(', ', $parse['rewd']) ?>
+						Награда: <?=implode(', ', parse['rewd']) ?>
 					</div>
 				</div>
 			</div>
@@ -32,11 +32,11 @@
 	</tr>
 	<tr>
 		<td class="k">
-			<? if (!$errors): ?>
-				<input type="button" class="end" onclick="load('<?=$this->url->getBaseUri() ?>tutorial/<?=$stage ?>/continue/1/')" value="Закончить">
-			<? endif; ?>
+			{% if errors is false %}
+				<input type="button" class="end" onclick="load('{{ url.getBaseUri() }}tutorial/{{ stage }}/continue/1/')" value="Закончить">
+			{% endif %}
 			<div class="solution">
-				<?=$parse['info']['SOLUTION'] ?>
+				{{ parse['info']['SOLUTION'] }}
 			</div>
 		</td>
 	</tr>

@@ -10,7 +10,7 @@
 			<th><select name="auftr" disabled size="5" style="width:100%;" title=""></select></th>
 		</tr>
 		<tr>
-			<td class="c">Оставшееся время <?=$build['time'] ?></td>
+			<td class="c">Оставшееся время {{ build['time'] }}</td>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -18,12 +18,12 @@
 <script type="text/javascript">
 	var v = new Date();
 	var p = 0;
-	var g = <?=$build['b_hangar_id_plus'] ?>;
+	var g = {{ build['b_hangar_id_plus'] }};
 	var s = 0;
 	var of = 1;
-	var c = new Array(<?=$build['c'] ?>'');
-	var b = new Array(<?=$build['b'] ?>'');
-	var a = new Array(<?=$build['a'] ?>'');
+	var c = new Array({{ build['c'] }}'');
+	var b = new Array({{ build['b'] }}'');
+	var a = new Array({{ build['a'] }}'');
 	var aa = 'завершено';
 
 	xd();

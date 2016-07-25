@@ -1,6 +1,6 @@
-<? if (isset($message)): ?>
-	<div class="error"><?=$message ?></div>
-<? endif; ?>
+{% if (isset($message) %}
+	<div class="error">{{ message }}</div>
+{% endif %}
 <form action="{{ url('index/remind/') }}" method="post" id="lostForm" class="form">
 	<table class="table">
 		<tr>
@@ -26,7 +26,7 @@
 					dataType: 'json',
 					success: function (data)
 					{
-						if (data.status == 1 && data.data.redirect !== undefined)
+						if (data.status == 1 and data.data.redirect !== undefined)
 							window.location.href = data.data.redirect;
 						else
 							$('#windowDialog').html(data.html);

@@ -10,8 +10,6 @@
 
 namespace Longman\TelegramBot\Entities;
 
-use Longman\TelegramBot\Exception\TelegramException;
-
 class ReplyToMessage extends Message
 {
 

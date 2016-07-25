@@ -9,6 +9,7 @@ namespace Xnova;
  */
 
 use Friday\Core\Mail\PHPMailer;
+use Friday\Core\Options;
 use Xnova\Models\Fleet;
 use Xnova\Models\User;
 use Phalcon\Di\Injectable;
@@ -217,9 +218,9 @@ class UpdateStatistics extends Injectable
 				$mail->isMail();
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
-				$mail->setFrom($this->config->app->email, $this->config->app->name);
+				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
 				$mail->addAddress($user['email']);
-				$mail->Subject = $this->config->app->name.': Уведомление об удалении аккаунта: ' . $this->config->game->universe . ' вселенная';
+				$mail->Subject = Options::get('site_title').': Уведомление об удалении аккаунта: ' . $this->config->game->universe . ' вселенная';
 				$mail->Body = "Уважаемый \"" . $user['username'] . "\"! Уведомляем вас, что ваш аккаунт перешел в режим удаления и через " . floor($this->config->stat->get('deleteTime', (7 * 86400)) / 86400) . " дней будет удалён из игры.<br>
 				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://uni" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
 				$mail->send();
@@ -415,9 +416,9 @@ class UpdateStatistics extends Injectable
 
 		$active_alliance = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_statpoints WHERE `stat_type` = '2' AND `stat_hide` = 0");
 
-		$this->game->updateConfig('stat_update', time());
-		$this->game->updateConfig('active_users', $active_users);
-		$this->game->updateConfig('active_alliance', $active_alliance);
+		Options::set('stat_update', time());
+		Options::set('active_users', $active_users);
+		Options::set('active_alliance', $active_alliance);
 	}
 
 	private function calcPositions ()

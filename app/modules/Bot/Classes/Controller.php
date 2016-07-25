@@ -4,8 +4,6 @@ namespace Bot;
 
 use Friday\Core\Lang;
 use Phalcon\Mvc\Controller as PhalconController;
-use Phalcon\Mvc\View;
-use Phalcon\Tag;
 
 /**
  * Class ControllerBase

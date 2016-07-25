@@ -4,7 +4,6 @@ use Phalcon\DiInterface;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Loader;
 use Friday\Core\Auth\Auth;
-use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
 use Xnova\Models\User;
 
@@ -65,6 +64,10 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
 		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
+	});
+	$compiler->addFunction('option', function($arguments)
+	{
+		return '\Friday\Core\Options::get(' . $arguments . ')';
 	});
 });
 

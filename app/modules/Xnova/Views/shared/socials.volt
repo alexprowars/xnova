@@ -1,4 +1,4 @@
-<? if ($_SERVER['SERVER_NAME'] == 'vk.xnova.su'): ?>
+{% if request.getServer('SERVER_NAME') == 'vk.xnova.su' %}
 	<script src="//vk.com/js/api/xd_connection.js" type="text/javascript"></script>
 	<script type="application/javascript">
 		$(window).load(function()
@@ -6,26 +6,12 @@
 			  VK.init(function() { console.log('vk init success'); }, function() {}, '5.24');
 		});
 	</script>
-<? endif; ?>
+{% endif %}
 
-<?
-	if ($this->request->has('apiconnection') && (!$this->session->has('OKAPI') || !isset($this->session->get('OKAPI')['apiconnection'])))
-	{
-		$_SESSION['OKAPI'] = Array
-		(
-			'api_server' 			=> $this->request->get('api_server'),
-			'apiconnection' 		=> $this->request->get('apiconnection'),
-			'session_secret_key' 	=> $this->request->get('session_secret_key'),
-			'session_key' 			=> $this->request->get('session_key'),
-			'logged_user_id' 		=> $this->request->get('logged_user_id'),
-			'sig' 					=> $this->request->get('sig')
-		);
-	}
-?>
-<? if ((!$this->cookies->has($this->config->cookie->prefix.'_full') || $this->cookies->get($this->config->cookie->prefix.'_full') == 'N') && $this->session->has('OKAPI') && is_array($this->session->get('OKAPI'))): ?>
-	<script src="<?=$this->session->get('OKAPI')['api_server'] ?>js/fapi5.js" type="text/javascript"></script>
+{% if (cookies.has(config.cookie.prefix~'_full') is false or cookies.get(config.cookie.prefix~'_full') == 'N') and session.has('OKAPI') and session.get('OKAPI') is type('array') %}
+	<script src="{{ session.get('OKAPI')['api_server'] }}js/fapi5.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		FAPI.init('<?=$this->session->get('OKAPI')['api_server'] ?>', '<?=$this->session->get('OKAPI')['apiconnection'] ?>',
+		FAPI.init('{{ session.get('OKAPI')['api_server'] }}', '{{ session.get('OKAPI')['apiconnection'] }}',
 			function()
 			{
 				//FAPI.UI.setWindowSize(800, 700);
@@ -36,12 +22,12 @@
 			}
 		);
 	</script>
-<? endif; ?>
+{% endif %}
 
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {
-        (w[c] = w[c] || []).push(function() {
+        (w[c] = w[c] or []).push(function() {
             try {
                 w.yaCounter25961143 = new Ya.Metrika({
                     id:25961143,

@@ -13,15 +13,15 @@
 	<div id="new_msg"></div>
 </div>
 
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/socket.io-1.4.5.js"></script>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/js/chat.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/socket.io-1.4.5.js"></script>
+<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/chat.js"></script>
 <script type="text/javascript">
 
-var allowResize = <?=($this->config->view->get('socialIframeView', 0) == 1 ? 0 : 1)?>;
+var allowResize = {{ config.view.get('socialIframeView', 0) == 1 ? 0 : 1 }};
 
-var userId = <?=$this->user->getId() ?>;
-var userName = '<?=$this->user->username ?>';
-var key = '<?=md5($this->user->getId().'|'.$this->user->username.'SuperPuperChat') ?>';
+var userId = {{ user.getId() }};
+var userName = '{{ user.username }}';
+var key = '<?=md5(user.getId().'|'.user.username.'SuperPuperChat') ?>';
 
 $(document).ready(function()
 {
@@ -34,10 +34,6 @@ $(document).ready(function()
 });
 </script>
 
-<? if (isset($_GET['frame'])): ?>
-<style>
-	#box {
-		width: 100%;
-	}
-</style>
-<? endif; ?>
+{% if request.hasQuery('frame') %}
+	<style>#box {  width: 100%;  }</style>
+{% endif %}

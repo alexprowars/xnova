@@ -12,8 +12,6 @@
 
 namespace Longman\TelegramBot\Entities;
 
-use Longman\TelegramBot\Exception\TelegramException;
-
 class ForceReply extends Entity
 {
     protected $force_reply;

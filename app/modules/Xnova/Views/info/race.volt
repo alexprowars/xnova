@@ -1,16 +1,16 @@
 <table width="100%">
-	<? if (!$isPopup): ?>
+	{% if (!$isPopup %}
 		<tr>
-			<td class="c"><?=$parse['name'] ?></td>
+			<td class="c">{{ parse['name'] }}</td>
 		</tr>
-	<? endif; ?>
+	{% endif %}
 	<tr>
 		<th>
 			<table>
 				<tr>
 					<td style="text-align:left;padding:5px">
-						<img src="<?=$this->url->getBaseUri() ?>assets/images/skin/race<?=$parse['image'] ?>.gif" style="float:left;margin:0 20px 10px 0" height="35" width="35">
-						<?=$parse['description'] ?>
+						<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ parse['image'] }}.gif" style="float:left;margin:0 20px 10px 0" height="35" width="35">
+						{{ parse['description'] }}
 					</td>
 				</tr>
 			</table>
