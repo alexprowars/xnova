@@ -49,7 +49,7 @@
 	options.techCosts = {
 		<?
 
-		 foreach (registry.pricelist AS $id => $price)
+		 for (registry.pricelist AS $id => $price)
 		 {
 		 	echo ''~id.': ['~price['metal']~', '~price['crystal']~', '~price['deuterium']~', '~price['factor']~'],';
 		 }
@@ -224,7 +224,7 @@
 	<th align="center">Очки</th>
 </tr>
 
-<? $i = 0; foreach (registry.reslist['allowed'][1] AS $id %}
+<? $i = 0; for (registry.reslist['allowed'][1] AS $id %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
@@ -236,7 +236,7 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endforeach; ?>
+<? $i++; endfor; ?>
 
 <tr class="odd">
 	<td style="display: none;"></td>
@@ -292,7 +292,7 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach (registry.reslist['allowed'][3] AS $id %}
+		<? $i = 0; for (registry.reslist['allowed'][3] AS $id %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -304,7 +304,7 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endforeach; ?>
+		<? $i++; endfor; ?>
 		<tr class="even">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -359,7 +359,7 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach (registry.reslist['tech'] AS $id %}
+<? $i = 0; for (registry.reslist['tech'] AS $id %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
@@ -371,7 +371,7 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endforeach; ?>
+<? $i++; endfor; ?>
 {% for id in registry.reslist['tech_f'] %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
@@ -384,7 +384,7 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endforeach; ?>
+<? $i++; endfor; ?>
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="1" class="border-n">Итого</td>
@@ -439,7 +439,7 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach (registry.reslist['fleet'] AS $id %}
+		<? $i = 0; for (registry.reslist['fleet'] AS $id %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -451,7 +451,7 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endforeach; ?>
+		<? $i++; endfor; ?>
 		<tr class="odd">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -506,7 +506,7 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach (registry.reslist['defense'] AS $id %}
+		<? $i = 0; for (registry.reslist['defense'] AS $id %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -518,7 +518,7 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endforeach; ?>
+		<? $i++; endfor; ?>
 		<tr class="odd">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -583,7 +583,7 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach (registry.reslist['allowed'][1] AS $id %}
+<? $i = 0; for (registry.reslist['allowed'][1] AS $id %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
@@ -596,7 +596,7 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endforeach; ?>
+<? $i++; endfor; ?>
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="2" class="border-n">Итого</td>
@@ -652,7 +652,7 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; foreach (registry.reslist['allowed'][3] AS $id %}
+		<? $i = 0; for (registry.reslist['allowed'][3] AS $id %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -665,7 +665,7 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endforeach; ?>
+		<? $i++; endfor; ?>
 		<tr class="even">
 			<td style="display: none;"></td>
 			<td colspan="2" class="border-n">Итого</td>
@@ -721,7 +721,7 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; foreach (registry.reslist['tech'] AS $id %}
+<? $i = 0; for (registry.reslist['tech'] AS $id %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
@@ -734,7 +734,7 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endforeach; ?>
+<? $i++; endfor; ?>
 	{% for registry.reslist['tech_f'] AS $id %}
 		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 			<td style="display: none;">{{ id }}</td>
@@ -748,7 +748,7 @@
 			<td align="center">0с</td>
 			<td align="center">0</td>
 		</tr>
-	<? $i++; endforeach; ?>
+	<? $i++; endfor; ?>
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="2" class="border-n">Итого</td>

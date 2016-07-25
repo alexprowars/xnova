@@ -17,7 +17,7 @@
 	</tr>
 	<tr>
 		<th>
-			{% if (!isset($_POST['OutSum']) %}
+			{% if request.hasPost('OutSum') is false %}
 				<br><br>
 				Ваш ID: <span class="neutral">{{ userId }}</span>
 				<br><br>
@@ -43,21 +43,21 @@
 				<br><br>
 
 				<form class="noajax" action="http://www.free-kassa.ru/merchant/cash.php" method="POST" target="_blank">
-					<input type="hidden" name="MrchLogin" value="{{ config.robokassa->login }}">
+					<input type="hidden" name="MrchLogin" value="{{ config.robokassa.login }}">
 					<input type="hidden" name="InvDesc" value="Покупка кредитов">
 					<input type="hidden" name="InvId" value="{{ invid }}">
 					<input type="hidden" name="Email" value="{{ useremail }}">
-					<input type="hidden" name="Shp_UID" value="<?=((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?>">
-					<input type="hidden" name="SignatureValue" value="<?=md5($config.robokassa->login.":".intval($_POST['OutSum']).":".$invid.":".$config.robokassa->public.":Shp_UID=".((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid)) ?>">
+					<input type="hidden" name="Shp_UID" value="{{ request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}">
+					<input type="hidden" name="SignatureValue" value="{{ md5(config.robokassa.login~":"~request.getPost('OutSum', 'int')~":"~invid~":"~config.robokassa.public~":Shp_UID="~(request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid) }}">
 					<input type="hidden" name="Culture" value="RU">
-					<input type="hidden" name="OutSum" value="<?=intval($_POST['OutSum']) ?>">
+					<input type="hidden" name="OutSum" value="{{ request.getPost('OutSum', 'int') }}">
 					<br>
 					<input type="submit" value="Перейти к оплате">
 				</form>
 
 				<br><br>
 				Счет выставлен для ID
-				<span class="neutral"><?=((isset($_POST['userId']) and is_numeric($_POST['userId']) and $_POST['userId'] > 0) ? intval($_POST['userId']) : $userid) ?></span>
+				<span class="neutral">{{ request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}</span>
 
 				<br><br>
 			{% endif %}

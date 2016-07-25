@@ -35,7 +35,7 @@
 			<td class="c">Игроки</td>
 			<td class="c">Очки</td>
 		</tr>
-		<? $i = 0; foreach ($parse['allys'] AS $list): $i++; ?>
+		<? $i = 0; for ($parse['allys'] AS $list): $i++; ?>
 		<tr>
 			<th>{{ i }}</th>
 			<th><a href="{{ url('alliance/info/'~list['id']~'/') }}">{{ list['name'] }} [{{ list['tag'] }}]</a></th>

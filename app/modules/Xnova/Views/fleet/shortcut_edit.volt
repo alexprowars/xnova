@@ -10,7 +10,7 @@
 				<input type="text" name="s" value="{{ c[2] }}" size=3 maxlength=3 title="Система">
 				<input type="text" name="p" value="{{ c[3] }}" size=3 maxlength=2 title="Планета">
 				<select name="t" title="">
-					<? foreach (_getText('fleet_objects') AS $key => $value %}
+					<? for (_text('fleet_objects') AS $key => $value %}
 						<option value="{{ key }}" <?=($c[4] == $key ? 'selected' : '') ?>>{{ value }}</option>
 					{% endfor %}
 				</select></th>

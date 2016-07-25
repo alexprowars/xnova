@@ -12,7 +12,7 @@
 		<th width="33%">Должность</th>
 		<th width="33%">eMail</th>
 	</tr>
-	{% for contacts AS $list %}
+	{% for list in contacts %}
 		<tr>
 			<th>{{ list['name'] }}</th>
 			<th>{{ list['auth'] }}</th>
@@ -21,7 +21,7 @@
 		<tr>
 			<td class="c" colspan="3">
 				<span id="m{{ list['id'] }}"></span>
-				<script type="text/javascript">Text('<?=preg_replace("/(\r\n)/u", "<br>", stripslashes($list['info'])) ?>', 'm{{ list['id'] }}');</script>
+				<script type="text/javascript">Text('{{ preg_replace("/(\r\n)/u", "<br>", list['info']|stripslashes) }}', 'm{{ list['id'] }}');</script>
 			</td>
 		</tr>
 	{% endfor %}

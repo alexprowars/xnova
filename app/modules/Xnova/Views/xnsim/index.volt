@@ -191,7 +191,7 @@
 	<td colspan="12" class="spezial" id="fleet_td"><b>Флот</b></td>
 </tr>
 
-{% for registry->reslist['fleet'] AS $fleetId %}
+{% for registry.reslist['fleet'] AS $fleetId %}
 	<tr align=center>
 		<td><b>{{ _text('tech', fleetId) }}</b></td>
 		<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
@@ -201,7 +201,7 @@
 				{% else %}
 					<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
 				{% endif %}
-				{% if (in_array($fleetId + 100, registry->reslist['tech_f']) %}
+				{% if (in_array($fleetId + 100, registry.reslist['tech_f']) %}
 					<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
 				{% endif %}
 			</td>
@@ -212,7 +212,7 @@
 <tr>
 	<td colspan="12" class="spezial" id="def_td"><b>Защита</b></td>
 </tr>
-	{% for registry->reslist['defense'] AS $fleetId %}
+	{% for registry.reslist['defense'] AS $fleetId %}
 		<tr align=center>
 			<td><b>{{ _text('tech', fleetId) }}</b></td>
 			<? for ($i = 0; $i < $config.game.get('maxSlotsInSim', 5) * 2; $i++ %}
@@ -221,7 +221,7 @@
 						-
 					{% else %}
 						<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
-						{% if (in_array($fleetId - 50, registry->reslist['tech_f']) %}
+						{% if (in_array($fleetId - 50, registry.reslist['tech_f']) %}
 							<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
 						{% endif %}
 					{% endif %}

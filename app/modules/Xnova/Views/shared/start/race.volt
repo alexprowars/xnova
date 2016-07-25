@@ -5,7 +5,7 @@
 			<div class="errormessage">{{ message }}</div>
 		{% endif %}
 		<form action="" method="POST" id="tabs">
-			<? foreach (_getText('race') AS $i => $name): if (!$name) continue; ?>
+			<? for (_text('race') AS $i => $name): if (!$name) continue; ?>
 				<input type="radio" name="race" value="{{ i }}" id="f_{{ i }}" <?=(request->getPost('race') == $i ? 'checked' : '') ?>>
 				<label for="f_{{ i }}" class="avatar">
 					<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ i }}.gif" alt=""><br>

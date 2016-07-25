@@ -30,22 +30,22 @@
 		<tr>
 			<th rowspan="5">на планете</th>
 			<th>{{ _text('metal') }}</th>
-			{% for parse['file_metal'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_metal'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_metal_t'] }}</th>
 		</tr>
 		<tr>
 			<th>{{ _text('crystal') }}</th>
-			{% for parse['file_crystal'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_crystal'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_crystal_t'] }}</th>
 		</tr>
 		<tr>
 			<th>{{ _text('deuterium') }}</th>
-			{% for parse['file_deuterium'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_deuterium'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_deuterium_t'] }}</th>
 		</tr>
@@ -64,22 +64,22 @@
 		<tr>
 			<th rowspan="3">в час</th>
 			<th>{{ _text('metal') }}</th>
-			{% for parse['file_metal_ph'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_metal_ph'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_metal_ph_t'] }}</th>
 		</tr>
 		<tr>
 			<th>{{ _text('crystal') }}</th>
-			{% for parse['file_crystal_ph'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_crystal_ph'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_crystal_ph_t'] }}</th>
 		</tr>
 		<tr>
 			<th>{{ _text('deuterium') }}</th>
-			{% for parse['file_deuterium_ph'] as $item %}
-				<th><?=Xnova\Helpers::pretty_number($item) ?></th>
+			{% for item in parse['file_deuterium_ph'] %}
+				<th>{{ pretty_number(item) }}</th>
 			{% endfor %}
 			<th>{{ parse['file_deuterium_ph_t'] }}</th>
 		</tr>
@@ -88,21 +88,21 @@
 		<tr>
 			<th rowspan="6">Производство</th>
 			<th>Металл</th>
-			{% for parse['file_metal_p'] as $item %}
-				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
+			{% for item in parse['file_metal_p'] %}
+				<th><span class="positive">{{ pretty_number(item) }}</span>%</th>
 			{% endfor %}
 			<th rowspan="6">&nbsp;</th>
 		</tr>
 		<tr>
 			<th>Кристаллы</th>
-			{% for parse['file_crystal_p'] as $item %}
-				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
+			{% for item in parse['file_crystal_p'] %}
+				<th><span class="positive">{{ pretty_number(item) }}</span>%</th>
 			{% endfor %}
 		</tr>
 		<tr>
 			<th>Дейтерий</th>
-			{% for parse['file_deuterium_p'] as $item %}
-				<th><span class="positive"><?=Xnova\Helpers::pretty_number($item) ?></span>%</th>
+			{% for item in parse['file_deuterium_p'] %}
+				<th><span class="positive">{{ pretty_number(item) }}</span>%</th>
 			{% endfor %}
 		</tr>
 		<tr>

@@ -10,7 +10,7 @@
 </table>
 {% if time and destination %}
 	<script type="text/javascript">
-	{% if request->isAjax() %}
+	{% if request.isAjax() %}
 		timeouts['message'] = setTimeout(function(){load('{{ destination }}')}, {{ time * 1000 }});
 	{% else %}
 		setTimeout(function(){location.href = '{{ destination }}';}, {{ time * 1000 }});

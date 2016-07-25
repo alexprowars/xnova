@@ -28,7 +28,7 @@
 			<th>{{ data['build_range'] }}</th>
 		</tr>
 			{% endfor %}
-		<? elseif ($parse['image'] == 22 or $parse['image'] == 23 or $parse['image'] == 24 %}
+		{% elseif ($parse['image'] == 22 or $parse['image'] == 23 or $parse['image'] == 24 %}
 	<tr>
 		<td class="c">Уровень</td>
 		<td class="c">Вместимость</td>

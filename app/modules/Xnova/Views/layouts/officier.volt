@@ -20,7 +20,7 @@
 				<a href="{{ url('credits/') }}" class="positive">Получить кредиты</a>
 			</div>
 		</div>
-		{% for parse['list'] AS $list %}
+		{% for list in parse['list'] %}
 			<div class="row">
 				<div class="hidden-xs-down col-sm-2 text-xs-center">
 					<img src="{{ url.getBaseUri() }}assets/images/officiers/{{ list['off_id'] }}.jpg" align="top" alt=""/>
@@ -33,7 +33,7 @@
 						<tr>
 							<td rowspan="<?=(count($list['off_powr']) + 1) ?>"><img src="{{ url.getBaseUri() }}assets/images/officiers/{{ list['off_id'] }}.gif"></td>
 						</tr>
-						{% for list['off_powr'] as $power %}
+						{% for power in list['off_powr'] %}
 							<tr><td class="up">{{ power }}</td></tr>
 						{% endfor %}
 					</table>

@@ -129,7 +129,7 @@
 	</div>
 </div>
 
-{% if race == 0 and !$isPopup %}
+{% if race == 0 and isPopup is false %}
 	<script type="text/javascript">
 		$(document).ready(function()
 		{

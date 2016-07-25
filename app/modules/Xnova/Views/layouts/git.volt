@@ -3,7 +3,7 @@
 		<td class="c" width="100">Дата</td>
 		<td class="c">Новости</td>
 	</tr>
-	{% for history AS $hash => $news %}
+	{% for hash, news in history %}
 	<tr>
 		<th width="70">{{ news['date'] }}</th>
 		<td style="text-align:left" class="b">

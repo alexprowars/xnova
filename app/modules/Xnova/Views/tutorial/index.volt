@@ -18,9 +18,9 @@
 						<br>
 						{% if key == 'QUEST' %}
 							<span class="<?=((!isset($parse['quests'][$req]) or (isset($parse['quests'][$req]) and $parse['quests'][$req]['finish'] == 0)) ? 'negative' : 'positive') ?>">Выполнение задания №{{ req }}</span>
-						<? elseif ($key == 'LEVEL_MINIER' %}
+						{% elseif ($key == 'LEVEL_MINIER' %}
 							<span class="<?=(user.lvl_minier < $req ? 'negative' : 'positive') ?>">Промышленный уровень {{ req }}</span>
-						<? elseif ($key == 'LEVEL_RAID' %}
+						{% elseif ($key == 'LEVEL_RAID' %}
 							<span class="<?=(user.lvl_raid < $req ? 'negative' : 'positive') ?>">Военный уровень {{ req }}</span>
 						{% endif %}
 					{% endfor %}

@@ -13,31 +13,31 @@
 		<th>Прибудет через</th>
 		<th>Планета старта</th>
 	</tr>
-	{% for parse['list'] as $i => $item): /** * @var $item \Xnova\Models\Fleet  */ ?>
+	{% for i, item in parse['list'] %}
 		<tr>
-			<th><?=($i+1) ?></th>
+			<th>{{ i + 1 }}</th>
 			<th>
 				<a>{{ _text('type_mission', item.mission) }}</a>
-				{% if (($item->start_time + 1) == $item->end_time %}
+				{% if (item.start_time + 1) == item.end_time %}
 					<a>(F)</a>
 				{% endif %}
 			</th>
 			<th>
-				<a class="tooltip" data-content="{% for item->getShips() as $t => $f %}{{ _text('tech', t) }}: {{ f['cnt'] }}<br>{% endfor %}">
-					{{ pretty_number(item->getTotalShips()) ?>
+				<a class="tooltip" data-content="{% for t, f in item.getShips() %}{{ _text('tech', t) }}: {{ f['cnt'] }}<br>{% endfor %}">
+					{{ pretty_number(item.getTotalShips()) }}
 				</a>
 			</th>
 			<th>{{ item->getStartAdressLink() }}</th>
-			<th>{{ game.datezone("d.m H:i:s", $item->start_time) }}</th>
+			<th>{{ game.datezone("d.m H:i:s", item.start_time) }}</th>
 			<th>{{ item->getTargetAdressLink() }}</th>
-			<th>{{ game.datezone("d.m H:i:s", $item->end_time) }}</th>
+			<th>{{ game.datezone("d.m H:i:s", item.end_time) }}</th>
 			<th>
-				<div id="time_0" class="positive"><?=\Xnova\Helpers::pretty_time(floor($item->end_time + 1 - time())) ?></div>
+				<div id="time_0" class="positive">{{ pretty_time(floor(item.end_time + 1 - time())) }}</div>
 			</th>
-			<th>{{ item->owner_name }}</th>
+			<th>{{ item.owner_name }}</th>
 		</tr>
 	{% endfor %}
-	{% if (count($parse['list']) %}
+	{% if parse['list']|length %}
 		<tr><th colspan="9">-</th></tr>
 	{% endif %}
 </table>
@@ -60,7 +60,7 @@
 		</tr>
 		</table>
 	</form>
-<? elseif (isset($parse['aks']) and $parse['fleetid'] == $parse['aks']['fleet_id'] %}
+{% elseif parse['aks'] is defined and parse['fleetid'] == parse['aks']['fleet_id'] %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
@@ -87,8 +87,8 @@
 					<tr>
 						<th width="50%" valign="top">
 							<select size="10" style="width:100%;" title="">
-								{% if (isset($parse['users']) and count($parse['users']) %}
-									{% for parse['users'] as $user %}
+								{% if parse['users'] is defined and parse['users']|length %}
+									{% for user in parse['users'] %}
 										<option>{{ user }}</option>
 									{% endfor %}
 								{% else %}
@@ -100,19 +100,19 @@
 							<form action="{{ url('fleet/verband/') }}" method="POST">
 								<input type="hidden" name="fleetid" value="{{ parse['fleetid'] }}" />
 								<input type="hidden" name="action" value="adduser" />
-								{% if (count($parse['friends']) %}
+								{% if parse['friends']|length %}
 									Список друзей:<br>
 									<select name="userid" size="5" style="width:50%;" title="">
-										{% for parse['friends'] as $user %}
+										{% for user in parse['friends'] %}
 											<option value="{{ user['id'] }}">{{ user['username'] }}</option>
 										{% endfor %}
 									</select>
 									<br><br>
 								{% endif %}
-								{% if (count($parse['alliance']) %}
+								{% if parse['alliance']|length %}
 									Члены альянса:<br>
 									<select name="userid" size="5" style="width:50%;" title="">
-										{% for parse['alliance'] as $user %}
+										{% for user in parse['alliance'] %}
 											<option value="{{ user['id'] }}">{{ user['username'] }}</option>
 										{% endfor %}
 									</select>

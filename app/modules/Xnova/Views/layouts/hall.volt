@@ -19,7 +19,7 @@
 			<td class="c" width="125">Дата</td>
 		</tr>
 		{% if (count($parse['hall']) > 0): $i = 0;
-		foreach ($parse['hall'] AS $log): $i++; ?>
+		for ($parse['hall'] AS $log): $i++; ?>
 			<tr>
 				<th>{{ i }}</th>
 				<th><a href="{{ url('log/'~log['log']~'/') }}" <?=($config.view.get('openRaportInNewWindow', 0) ? 'target="_blank"' : '') ?>>{{ log['title'] }}</a></th>

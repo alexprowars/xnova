@@ -6,15 +6,14 @@
 		<tr>
 			<th>
 				<select name="type" title="">
-					<option value="playername"<?=(($parse['type'] == "playername") ? " SELECTED" : "") ?>>Логин игрока</option>
-					<option value="planetname"<?=(($parse['type'] == "planetname") ? " SELECTED" : "") ?>>Название планеты</option>
-					<option value="allytag"<?=(($parse['type'] == "allytag") ? " SELECTED" : "") ?>>Аббревиатура альянса</option>
-					<option value="allyname"<?=(($parse['type'] == "allyname") ? " SELECTED" : "") ?>>Название альянса</option>
+					<option value="playername" {{ parse['type'] == "playername" ? "selected" : "" }}>Логин игрока</option>
+					<option value="planetname" {{ parse['type'] == "planetname" ? "selected" : "" }}>Название планеты</option>
+					<option value="allytag" {{ parse['type'] == "allytag" ? "selected" : "" }}>Аббревиатура альянса</option>
+					<option value="allyname" {{ parse['type'] == "allyname" ? "selected" : "" }}>Название альянса</option>
 				</select>
 				&nbsp;&nbsp;
 				<input type="text" name="searchtext" value="{{ parse['searchtext'] }}" title="">
 				&nbsp;&nbsp;
-
 				<input type="submit" value="Поиск">
 			</th>
 		</tr>
@@ -22,7 +21,7 @@
 </form>
 <div class="separator"></div>
 {% if parse['searchtext'] != '' %}
-	{% if (isset($parse['type']) and ($parse['type'] == 'playername' or $parse['type'] == 'planetname') %}
+	{% if parse['type'] is defined and (parse['type'] == 'playername' or parse['type'] == 'planetname') %}
 		<table class="table">
 			<tr>
 				<td class="c" width="120">Имя</td>
@@ -33,8 +32,8 @@
 				<td class="c" width="80">Координаты</td>
 				<td class="c" width="40">Место</td>
 			</tr>
-			{% if (count($parse['result']) > 0 %}
-				{% for parse['result'] AS $result %}
+			{% if parse['result']|length > 0 %}
+				{% for result in parse['result'] %}
 					<tr>
 						<th>{{ result['username'] }}</th>
 						<th nowrap>
@@ -64,8 +63,8 @@
 				<td class="c">Члены</td>
 				<td class="c">Очки</td>
 			</tr>
-			{% if (count($parse['result']) > 0 %}
-				{% for parse['result'] AS $result %}
+			{% if parse['result']|length > 0 %}
+				{% for result in parse['result'] %}
 					<tr>
 						<th><a href="{{ url('alliance/info/'~result['id']~'/') }}">{{ result['tag'] }}</a></th>
 						<th>{{ result['name'] }}</th>

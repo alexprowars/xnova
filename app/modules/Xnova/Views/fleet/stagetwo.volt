@@ -18,7 +18,7 @@
 	<input type="hidden" name="crc"            value="{{ parse['crc'] }}" />
 	<input type="hidden" name="maxepedition"   value="{{ parse['maxepedition'] }}" />
 	<input type="hidden" name="curepedition"   value="{{ parse['curepedition'] }}" />
-	{% for parse['ships'] as $ship %}
+	{% for ship in parse['ships'] %}
 		<input type="hidden" name="ship{{ ship['id'] }}" value="{{ ship['count'] }}" />
 		<input type="hidden" name="stay{{ ship['id'] }}" value="{{ ship['stay'] }}" />
 		<input type="hidden" name="consumption{{ ship['id'] }}" value="{{ ship['consumption'] }}" />
@@ -27,7 +27,7 @@
 	{% endfor %}
 	<div class="table">
 		<div class="row">
-			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('type_planet', parse['planettype']) ?></div>
+			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('type_planet', parse['planettype']) }}</div>
 		</div>
 		<div class="row">
 			<div class="th col-xs-6">
@@ -35,10 +35,10 @@
 					<tr>
 						<td class="c" colspan="2">{{ _text('fl_mission') }}</td>
 					</tr>
-					{% for parse['missions'] AS $a => $b %}
+					{% for a, b in parse['missions'] %}
 						<tr>
 							<th style="text-align: left !important">
-								<input id="m_{{ a }}" type="radio" name="mission" value="{{ a }}"<?=($parse['missions_selected'] == $a ? 'checked' : '') ?>>
+								<input id="m_{{ a }}" type="radio" name="mission" value="{{ a }}"{{ parse['missions_selected'] == a ? 'checked' : '' }}>
 								<label for="m_{{ a }}">{{ b }}</label>
 								{% if a == 15 %}
 									<center><font color="red">{{ _text('fl_expe_warning') }}</font></center>
@@ -46,7 +46,7 @@
 							</th>
 						</tr>
 					{% endfor %}
-					{% if (!count($parse['missions']) %}
+					{% if parse['missions']|length == 0 %}
 						<tr>
 							<th><font color="red">{{ _text('fl_bad_mission') }}</font></th>
 						</tr>
@@ -86,21 +86,21 @@
 					<tr>
 						<th colspan="3">&nbsp;</th>
 					</tr>
-					{% if (isset($parse['expedition_hours']) %}
+					{% if parse['expedition_hours'] is defined %}
 						<tr class="mission m_15">
 							<td class="c" colspan="3">Время экспедиции</td>
 						</tr>
 						<tr class="mission m_15">
 							<th colspan="3">
 								<select name="expeditiontime" title="">
-									<? for ($i = 1; $i <= $parse['expedition_hours']; $i++ %}
+									{% for i in 1..parse['expedition_hours'] %}
 										<option value="{{ i }}">{{ i }} ч.</option>
-									<? endfor; ?>
+									{% endfor %}
 								</select>
 							</th>
 						</tr>
 					{% endif %}
-					{% if (isset($parse['missions'][5]) %}
+					{% if parse['missions'][5] is defined %}
 						<tr class="mission m_5">
 							<td class="c" colspan="3">Оставаться часов на орбите</td>
 						</tr>
@@ -119,7 +119,7 @@
 							</th>
 						</tr>
 					{% endif %}
-					{% if (isset($parse['missions'][1]) %}
+					{% if parse['missions'][1] is defined %}
 						<tr class="mission m_1">
 							<td class="c" colspan="3">Кол-во раундов боя</td>
 						</tr>
@@ -138,7 +138,7 @@
 				</table>
 			</div>
 		</div>
-		{% if (count($parse['missions']) %}
+		{% if parse['missions']|length %}
 			<div class="row">
 				<div class="th col-xs-12"><input accesskey="z" value="{{ _text('fl_continue') }}" type="submit"></div>
 			</div>
@@ -153,8 +153,6 @@
 	{
 		mission = $('input[name=mission]:checked').val();
 		durationTime = duration() * 1000;
-
-		console.log(durationTime);
 
 		durationTimer();
 

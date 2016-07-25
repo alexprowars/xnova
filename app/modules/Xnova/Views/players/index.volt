@@ -1,7 +1,7 @@
 <style>.image {
 	max-width: 556px !important
 }</style>
-{% if (!$isPopup %}
+{% if isPopup is false %}
 <div class="block">
 	<div class="title">Информация об игроке</div>
 	<div class="content container-fluid">
@@ -109,12 +109,12 @@
 					<div class="th col-xs-4">{{ parse['totalprozent'] }} %</div>
 				</div>
 			</div>
-{% if (!$isPopup %}
+{% if isPopup is false %}
 		{% if parse['about'] != '' %}
 			<div class="row">
 				<div class="b col-xs-12">
 					<span id="m100500"></span>
-					<script type="text/javascript">Text('<?=preg_replace("/(\r\n)/u", "<br>", stripslashes($parse['about'])) ?>', 'm100500');</script>
+					<script type="text/javascript">Text('{{ preg_replace("/(\r\n)/u", "<br>", parse['about']|stripslashes) }}', 'm100500');</script>
 				</div>
 			</div>
 		{% endif %}

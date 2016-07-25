@@ -3,31 +3,36 @@
 	<tr>
 		<td class="c" colspan="4">Служба техподдержки</td>
 	</tr>
-	{% if (count($list) > 0 %}
+	{% if list|length > 0 %}
 		<tr>
 			<th style="width:10%">ID</th>
 			<th style="width:50%">Тема</th>
 			<th style="width:15%">Статус</th>
 			<th style="width:25%">Дата</th>
 		</tr>
-		{% for list AS $id => $item %}
+		{% for id, item in list %}
 			<tr>
 				<td class="c">{{ id }}</td>
-				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ id ?>');">{{ item['subject'] }}</a></td>
-				<td class="c">{% if item['status'] == 0 %}<span style="color:red">закрыто</span>
-					<? elseif ($item['status'] == 1 %}<span style="color:green">открыто</span>
-					<?
-				elseif ($item['status'] == 2 %}<span style="color:orange">ответ админа</span>
-				<?
-				elseif ($item['status'] == 3 %}<span style="color:green">ответ игрока</span>{% endif %}</td>
+				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ id }}');">{{ item['subject'] }}</a></td>
+				<td class="c">
+					{% if item['status'] == 0 %}
+						<span style="color:red">закрыто</span>
+					{% elseif item['status'] == 1 %}
+						<span style="color:green">открыто</span>
+					{% elseif item['status'] == 2 %}
+						<span style="color:orange">ответ админа</span>
+					{% elseif item['status'] == 3 %}
+						<span style="color:green">ответ игрока</span>
+					{% endif %}
+				</td>
 				<td class="c">{{ item['date'] }}</td>
 			</tr>
 		{% endfor %}
 	</table>
 	<div class="separator"></div>
-	{% for list AS $id => $item %}
+	{% for id, item in list %}
 		<div id="ticket_{{ id }}" style="display:none;" class="tickets">
-			<form action="{{ url('support/answer/'~id.'/') }}" method="POST">
+			<form action="{{ url('support/answer/'~id~'/') }}" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>
@@ -39,7 +44,7 @@
 					<tr>
 						<td class="c">
 							{% if item['status'] != 0 %}
-							<textarea style="width: 99%" rows="10" name="text" title=""></textarea><br><input type="submit" value="Ответить">
+								<textarea style="width: 99%" rows="10" name="text" title=""></textarea><br><input type="submit" value="Ответить">
 							{% endif %}
 						</td>
 					</tr>

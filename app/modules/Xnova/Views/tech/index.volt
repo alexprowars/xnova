@@ -1,16 +1,16 @@
 <div id="tabs" class="ui-tabs ui-widget ui-widget-content techtree">
 	<div class="head">
 		<ul class="ui-tabs-nav ui-widget-header">
-			{% for parse AS $i => $list %}
-				{% if (!isset($list['required_list']) %}
-					<li><a href="#tabs-{{ i ?>">{{ list['tt_name'] }}</a></li>
+			{% for i, list in parse %}
+				{% if list['required_list'] is not defined %}
+					<li><a href="#tabs-{{ i }}">{{ list['tt_name'] }}</a></li>
 				{% endif %}
 			{% endfor %}
 		</ul>
 	</div>
 	<div id="tabs-0" class="ui-tabs-panel ui-widget-content container-fluid">
-		{% for parse AS $i => $list): if ($i == 0) continue; ?>
-			{% if (!isset($list['required_list']) %}
+		{% for i, list in parse if i > 0 %}
+			{% if list['required_list'] is not defined %}
 				</div><div id="tabs-{{ i }}" class="ui-tabs-panel ui-widget-content container-fluid" style="display: none">
 			{% else %}
 				<div class="row">
@@ -30,9 +30,9 @@
 </div>
 
 <script type="text/javascript">
-$(function()
-{
-  	$("#tabs").tabs();
-	$("#tabs .row:even").addClass("odd");
-});
+	$(document).ready(function()
+	{
+		$("#tabs").tabs();
+		$("#tabs .row:even").addClass("odd");
+	});
 </script>

@@ -4,14 +4,14 @@
 <script type="text/javascript">
 
 	var objx = ({
-		{% for registry->resource AS $id => $code %}
+		{% for id, code in registry.resource %}
 			{{ id }}:{
 				'name':'{{ _text('tech', id) }}',
 				'img':'{{ id }}.gif',
 				'req':[
-				{% if (isset(registry->requeriments[$id]) and count(registry->requeriments[$id]) > 0 %}
-					{% for registry->requeriments[$id] AS $ids => $level %}
-						[{{ ids }},'{{ _text('tech', ids) }}',<?=(isset(user.{registry->resource[$ids]}) ? user.{registry->resource[$ids]} : planet->{registry->resource[$ids]}) ?>,-1,{{ level }}],
+				{% if registry.requeriments[id] is defined and registry.requeriments[id]|length > 0 %}
+					{% for ids, level in registry.requeriments[id] %}
+						[{{ ids }},'{{ _text('tech', ids) }}',{{ (user.{registry.resource[ids]} is defined ? user.{registry.resource[ids]} : planet.{registry.resource[ids]}) }},-1,{{ level }}],
 					{% endfor %}
 				{% else %}
 					['no']
@@ -81,6 +81,6 @@
 
 	}
 
-	CreateTree(1, -1, {{ element }}, '<?=(isset(user.{registry->resource[$element]}) ? user.{registry->resource[$element]} : planet->{registry->resource[$element]}) ?>', <?=(\Xnova\Building::IsTechnologieAccessible(user, planet, $element) ? 1 : 0) ?>);
+	CreateTree(1, -1, {{ element }}, '{{ user.{registry.resource[element]} is defined ? user.{registry.resource[element]} : planet.{registry.resource[element]}) }}', <?=(\Xnova\Building::IsTechnologieAccessible(user, planet, $element) ? 1 : 0) ?>);
 
 </script>

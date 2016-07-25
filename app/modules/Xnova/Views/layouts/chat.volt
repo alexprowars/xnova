@@ -21,7 +21,7 @@ var allowResize = {{ config.view.get('socialIframeView', 0) == 1 ? 0 : 1 }};
 
 var userId = {{ user.getId() }};
 var userName = '{{ user.username }}';
-var key = '<?=md5(user.getId().'|'.user.username.'SuperPuperChat') ?>';
+var key = '{{ md5(user.getId().'|'.user.username.'SuperPuperChat') }}';
 
 $(document).ready(function()
 {

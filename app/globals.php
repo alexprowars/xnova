@@ -61,6 +61,8 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	});
 
 	$compiler->addFunction('replace', 'str_replace');
+	$compiler->addFunction('preg_replace', 'preg_replace');
+	$compiler->addFunction('md5', 'md5');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
 		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';

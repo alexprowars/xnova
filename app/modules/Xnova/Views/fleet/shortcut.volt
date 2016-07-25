@@ -3,15 +3,15 @@
 		<td colspan="2" class="c">Ссылки (<a href="{{ url('fleet/shortcut/add/new/') }}">Добавить</a>)</td>
 	</tr>
 	<tr>
-		{% for links as $i => $link %}
+		{% for i, link in links %}
 			<th width="50%">
 				<a href="{{ url('fleet/shortcut/view/'~i.'/') }}">{{ link['name'] }} [{{ link['galaxy'] }}:{{ link['system'] }}:{{ link['planet'] }}] {{ link['type'] }}</a>
 			</th>
 		{% endfor %}
-		{% if (count($links)%2 == 1 %}
+		{% if links|length%2 == 1 %}
 			<th>&nbsp;</th>
 		{% endif %}
-		{% if (!count($links) %}
+		{% if links|length == 0 %}
 			<th colspan="2">Список ссылок пуст</th>
 		{% endif %}
 	</tr>

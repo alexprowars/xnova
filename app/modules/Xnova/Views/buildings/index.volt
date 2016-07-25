@@ -43,7 +43,7 @@
 			</div>
 			<div id="tabs-1" class="ui-tabs-panel ui-widget-content" style="display: none">
 				<div class="row" id="building">
-					<? $i = 0; foreach ($parse['BuildingsList'] AS $build): $i++; ?>
+					<? $i = 0; for ($parse['BuildingsList'] AS $build): $i++; ?>
 					<div class="col-md-6 col-xs-12" id="object_{{ build['i'] }}">
 						<div class="viewport buildings {% if (!$build['access'] %}shadow{% endif %}">
 							{% if (!$build['access'] %}

@@ -3,12 +3,12 @@
 		<td class="c" colspan="7">Обнаружена следующая активность на планете:
 		</td>
 	</tr>
-	{% if (!count($list) %}
+	{% if list|length == 0 %}
 		<tr>
 			<th>На этой планете нет движения флотов.</th>
 		</tr>
 	{% else %}
-		{% for list as $item %}
+		{% for item in list %}
 			{{ item }}
 		{% endfor %}
 	{% endif %}

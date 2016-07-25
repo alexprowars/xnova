@@ -57,7 +57,7 @@
 					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('tech', resource['id']) ?></a></th>
 					<th><font color="#ffffff">{{ resource['level_type'] }}</font></th>
 					<th><font color="#ffffff">{{ resource['bonus'] }}%</font></th>
-					{% for registry->reslist['res'] AS $res %}
+					{% for registry.reslist['res'] AS $res %}
 						<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
 					{% endfor %}
 					<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
@@ -75,7 +75,7 @@
 			<tr>
 				<th colspan="2">Вместимость:</th>
 				<th>{{ parse['bonus_h'] }}%</th>
-				{% for registry->reslist['res'] AS $res %}
+				{% for registry.reslist['res'] AS $res %}
 					<td class="k">{{ parse[$res.'_max'] }}</td>
 				{% endfor %}
 				<td class="k"><font color="#00ff00">{{ parse['energy_max'] }}</font></td>
@@ -83,7 +83,7 @@
 			</tr>
 			<tr>
 				<th colspan="3">Сумма:</th>
-				{% for registry->reslist['res'] AS $res %}
+				{% for registry.reslist['res'] AS $res %}
 					<td class="k"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
 				{% endfor %}
 				<td class="k">{{ parse['energy_total'] }}</td>
@@ -102,7 +102,7 @@
 			<th width="21%">Неделя</th>
 			<th width="21%">Месяц</th>
 		</tr>
-		{% for registry->reslist['res'] AS $res %}
+		{% for registry.reslist['res'] AS $res %}
 			<tr>
 				<th>{{ _text('res', res) }}</th>
 				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
@@ -117,7 +117,7 @@
 		<tr>
 			<td class="c" colspan="3">Статус хранилища</td>
 		</tr>
-		{% for registry->reslist['res'] AS $res %}
+		{% for registry.reslist['res'] AS $res %}
 			<tr>
 				<th width="150">{{ _text('res', res) }</th>
 				<th width="100">{{ parse[$res.'_storage'] }}%</th>

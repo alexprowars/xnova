@@ -128,7 +128,7 @@
 					<th>Цвет чата</th>
 					<th>
 						<select name='color' style='width:170px' title="">
-							{% for (_getText('colors') AS $id => $color): if (!$color[1]) continue; ?>
+							{% for (_text('colors') AS $id => $color): if (!$color[1]) continue; ?>
 								<option value="{{ id ?>" <?=($parse['color'] == $id ? 'selected' : '') ?> style="color:{{ color[0] }}">{{ color[1] }}</option>
 							{% endfor %}
 						</select>
