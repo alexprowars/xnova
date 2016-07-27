@@ -20,27 +20,29 @@
 		<th width="50%">Структура</th>
 		<th>{{ parse['hull_pt'] }}</th>
 	</tr>
-	<tr>
+
 	{% if parse['shield_pt'] > 0 %}
-		<th>Мощность щита</th>
-		<th>{{ parse['shield_pt'] }}</th>
-</tr><tr>
-{% endif %}
+		<tr>
+			<th>Мощность щита</th>
+			<th>{{ parse['shield_pt'] }}</th>
+		</tr>
+	{% endif %}
+	<tr>
 		<th>Оценка атаки</th>
 		<th>{{ parse['attack_pt'] }}</th>
 	</tr>
 	{% if parse['gun'] %}
-	<tr>
-		<th>Тип оружия</th>
-		<th>{{ parse['gun'] }}</th>
-	</tr>
-		{% endif %}
+		<tr>
+			<th>Тип оружия</th>
+			<th>{{ parse['gun'] }}</th>
+		</tr>
+	{% endif %}
 	{% if parse['armour'] %}
-	<tr>
-		<th>Тип брони</th>
-		<th>{{ parse['armour'] }}</th>
-	</tr>
-		{% endif %}
+		<tr>
+			<th>Тип брони</th>
+			<th>{{ parse['armour'] }}</th>
+		</tr>
+	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>
 	</tr>
@@ -58,39 +60,39 @@
 	</tr>
 	</tbody>
 </table>
-{% if (count($parse['soprot']) > 0 %}
-<br>
-<table width="600">
-	<tr>
-		<td width="50%">
-			<table width="100%">
-				<tr>
-					<td class="c">Тип корабля</td>
-					<td class="c">Сопротивление брони</td>
-				</tr>
-				{% for parse['soprot'] as $list %}
-				<tr>
-					<th>{{ list[0] }}</th>
-					<th width="35%" class="positive">{{ list[1] }}%</th>
-				</tr>
-				{% endfor %}
-			</table>
-		</td>
-		<td width="50%">
-			<table width="100%">
-				<tr>
-					<td class="c">Тип корабля</td>
-					<td class="c">Сопротивление атаке</td>
-				</tr>
-				{% for parse['soprot_2'] as $list %}
-				<tr>
-					<th>{{ list[0] }}</th>
-					<th width="35%" class="positive">{{ list[1] }}%</th>
-				</tr>
-				{% endfor %}
-			</table>
-		</td>
-	</tr>
-</table>
-<br><a href="http://forum.xnova.su/viewtopic.php?f=1&t=3137" target="_blank">Что за цифры?</a><br>
+{% if parse['soprot']|length > 0 %}
+	<br>
+	<table width="600">
+		<tr>
+			<td width="50%">
+				<table width="100%">
+					<tr>
+						<td class="c">Тип корабля</td>
+						<td class="c">Сопротивление брони</td>
+					</tr>
+					{% for list in parse['soprot'] %}
+						<tr>
+							<th>{{ list[0] }}</th>
+							<th width="35%" class="positive">{{ list[1] }}%</th>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+			<td width="50%">
+				<table width="100%">
+					<tr>
+						<td class="c">Тип корабля</td>
+						<td class="c">Сопротивление атаке</td>
+					</tr>
+					{% for list in parse['soprot_2'] %}
+						<tr>
+							<th>{{ list[0] }}</th>
+							<th width="35%" class="positive">{{ list[1] }}%</th>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+		</tr>
+	</table>
+	<br><a href="http://forum.xnova.su/viewtopic.php?f=1&t=3137" target="_blank">Что за цифры?</a><br>
 {% endif %}

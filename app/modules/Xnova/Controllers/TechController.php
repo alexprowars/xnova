@@ -103,18 +103,22 @@ class TechController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function infoAction ()
+	/**
+	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
+	 */
+	public function infoAction ($element)
 	{
-		$Element = $this->request->getQuery('id', 'int', 0);
+		$element = (int) $element;
 
-		if ($Element > 0 && isset($this->registry->resource[$Element]))
+		if ($element > 0 && isset($this->registry->resource[$element]))
 		{
-			$this->view->setVar('element', $Element);
+			$this->view->setVar('element', $element);
+			$this->view->setVar('level', isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->{$this->registry->resource[$element]});
 
-			if (isset($this->registry->requeriments[$Element]))
-				$this->view->setVar('req', $this->registry->requeriments[$Element]);
+			if (isset($this->registry->requeriments[$element]))
+				$this->view->setVar('req', $this->registry->requeriments[$element]);
 
-			$this->tag->setTitle(_getText('tech')[$Element]);
+			$this->tag->setTitle(_getText('tech')[$element]);
 		}
 
 		$this->showTopPanel(false);

@@ -8,19 +8,6 @@ $router->setDefaultModule('game');
 
 $uri = $di->getShared('url')->getBaseUri();
 
-$router->add($uri.':controller/:params',
-[
-	'controller' 	=> 1,
-	'params' 		=> 2
-]);
-
-$router->add($uri.':controller/:action/:params',
-[
-	'controller' 	=> 1,
-	'action' 		=> 2,
-	'params' 		=> 3
-]);
-
 $router->add($uri.'galaxy/:params',
 [
 	'controller' 	=> 'galaxy',
@@ -60,34 +47,10 @@ $router->add($uri.'fleet/g([0-9]{1,2})/s([0-9]{1,3})/p([0-9]{1,2})/t([0-9]{1})/m
 	'params' 		=> 6
 ]);
 
-$router->add($uri.'info/([0-9]+)/:params',
-[
-	'controller' 	=> 'info',
-	'action' 		=> 'index',
-	'gid' 			=> 1,
-	'params' 		=> 2
-]);
-
-$router->add($uri.'players/([0-9]+)/:params',
-[
-	'controller' 	=> 'players',
-	'action' 		=> 'index',
-	'id' 			=> 1,
-	'params' 		=> 2
-]);
-
 $router->add($uri.'messages/write/([0-9]+)/:params',
 [
 	'controller' 	=> 'messages',
 	'action' 		=> 'write',
-	'id' 			=> 1,
-	'params' 		=> 2
-]);
-
-$router->add($uri.'players/stat/([0-9]+)/:params',
-[
-	'controller' 	=> 'players',
-	'action' 		=> 'stat',
 	'id' 			=> 1,
 	'params' 		=> 2
 ]);
@@ -99,14 +62,6 @@ $router->add($uri.'rw/([0-9]+)/([a-z0-9]+)/:params',
 	'id' 			=> 1,
 	'k' 			=> 2,
 	'params' 		=> 3
-]);
-
-$router->add($uri.'tech/([0-9]+)/:params',
-[
-	'controller' 	=> 'tech',
-	'action' 		=> 'info',
-	'id' 			=> 1,
-	'params' 		=> 2
 ]);
 
 $router->add($uri.'log/([0-9]+)/:params',
@@ -139,19 +94,6 @@ $router->add($uri.'content/([a-zA-Z0-9]+)/:params',
 	'action' 		=> 'index',
 	'article' 		=> 1,
 	'params' 		=> 2
-]);
-
-$router->add($uri.'login/:params',
-[
-	'controller' 	=> 'index',
-	'action' 		=> 'login',
-	'params' 		=> 1
-]);
-
-$router->add($uri,
-[
-	'controller' 	=> 'index',
-	'action' 		=> 'index',
 ]);
 
 $router->add($uri.'admin/:params',

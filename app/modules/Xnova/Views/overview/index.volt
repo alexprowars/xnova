@@ -12,7 +12,7 @@
 
 				Помоги проекту, поделись им с друзьями!
 				<script type="text/javascript" src="//yandex.st/share/share.js" charset="utf-8"></script>
-				<div class="yashare-auto-init" data-yashareL10n="ru" data-yashareTitle="{{ config.app.name }}" data-yashareLink="//uni{{ config.game.universe }}.xnova.su/" data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus" data-yashareTheme="counter" data-yashareType="small"></div>
+				<div class="yashare-auto-init" data-yashareL10n="ru" data-yashareTitle="{{ option('site_title') }}" data-yashareLink="//uni{{ config.game.universe }}.xnova.su/" data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus" data-yashareTheme="counter" data-yashareType="small"></div>
 			</th>
 		</tr>
 	</table>

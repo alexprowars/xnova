@@ -1,5 +1,5 @@
 <table class="table">
-	{% if (!$isPopup %}
+	{% if isPopup is false %}
 	<tr>
 		<td class="c" colspan="2">{{ parse['name'] }}</td>
 	</tr>
@@ -19,49 +19,49 @@
 		<th>{{ parse['hull_pt'] }}</th>
 	</tr>
 	{% if parse['image'] != 212 %}
-	<tr>
-		<th>Оценка атаки</th>
-		<th>{{ parse['attack_pt'] }}</th>
-	</tr>
-	<tr>
-		<th>Щиты</th>
-		<th>{{ parse['shield_pt'] }}</th>
-	</tr>
-	<tr>
-		<th>Грузоподъёмность</th>
-		<th>{{ parse['capacity_pt'] }}</th>
-	</tr>
-	<tr>
-		<th>Скорость</th>
-		<th>{{ parse['base_speed'] }}</th>
-	</tr>
-	<tr>
-		<th>Потребление топлива (дейтерий)</th>
-		<th>{{ parse['base_conso'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип двигателя</th>
-		<th>{{ parse['base_engine'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип оружия</th>
-		<th>{{ parse['gun'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип брони</th>
-		<th>{{ parse['armour'] }}</th>
-	</tr>
-	<tr>
-		<th>Блокировка атаки</th>
-		<th>{{ parse['block'] }}%</th>
-	</tr>
-		{% if parse['upgrade'] %}
 		<tr>
-			<th>Усиление на уровень</th>
-			<th>{{ parse['upgrade'] }}%</th>
+			<th>Оценка атаки</th>
+			<th>{{ parse['attack_pt'] }}</th>
 		</tr>
-			{% endif %}
+		<tr>
+			<th>Щиты</th>
+			<th>{{ parse['shield_pt'] }}</th>
+		</tr>
+		<tr>
+			<th>Грузоподъёмность</th>
+			<th>{{ parse['capacity_pt'] }}</th>
+		</tr>
+		<tr>
+			<th>Скорость</th>
+			<th>{{ parse['base_speed'] }}</th>
+		</tr>
+		<tr>
+			<th>Потребление топлива (дейтерий)</th>
+			<th>{{ parse['base_conso'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип двигателя</th>
+			<th>{{ parse['base_engine'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип оружия</th>
+			<th>{{ parse['gun'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип брони</th>
+			<th>{{ parse['armour'] }}</th>
+		</tr>
+		<tr>
+			<th>Блокировка атаки</th>
+			<th>{{ parse['block'] }}%</th>
+		</tr>
+		{% if parse['upgrade'] %}
+			<tr>
+				<th>Усиление на уровень</th>
+				<th>{{ parse['upgrade'] }}%</th>
+			</tr>
 		{% endif %}
+	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>
 	</tr>

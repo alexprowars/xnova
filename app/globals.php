@@ -67,9 +67,21 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	{
 		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
 	});
+	$compiler->addFunction('pretty_time', function($arguments)
+	{
+		return '\Xnova\Helpers::pretty_time(' . $arguments . ')';
+	});
 	$compiler->addFunction('option', function($arguments)
 	{
 		return '\Friday\Core\Options::get(' . $arguments . ')';
+	});
+	$compiler->addFunction('getTechTree', function($arguments)
+	{
+		return '\Xnova\Building::getTechTree(' . $arguments . ')';
+	});
+	$compiler->addFunction('isTechnologieAccessible', function($arguments)
+	{
+		return '\Xnova\Building::IsTechnologieAccessible(' . $arguments . ')';
 	});
 });
 

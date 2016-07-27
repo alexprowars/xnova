@@ -1,5 +1,5 @@
 <table class="table">
-	{% if (!$isPopup %}
+	{% if isPopup is false %}
 	<tr>
 		<td class="c" colspan="2">{{ parse['name'] }}</td>
 	</tr>

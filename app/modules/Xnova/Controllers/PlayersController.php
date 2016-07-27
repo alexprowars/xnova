@@ -25,7 +25,10 @@ class PlayersController extends Controller
 	{
 		parent::initialize();
 	}
-	
+
+	/**
+	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
+	 */
 	public function indexAction ()
 	{
 		$parse = [];
@@ -131,6 +134,9 @@ class PlayersController extends Controller
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
+	/**
+	 * @Route("/stat/{id:[0-9]+}{params:(/.*)*}")
+	 */
 	public function statAction ()
 	{
 		if (!$this->auth->isAuthorized())

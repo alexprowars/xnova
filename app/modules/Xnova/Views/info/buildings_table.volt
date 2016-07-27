@@ -1,8 +1,8 @@
 <table class="table">
-	{% if (!$isPopup %}
-	<tr>
-		<td class="c" colspan="2">{{ parse['name'] }}</td>
-	</tr>
+	{% if isPopup is false %}
+		<tr>
+			<td class="c" colspan="2">{{ parse['name'] }}</td>
+		</tr>
 	{% endif %}
 	<tr>
 		<th>
@@ -18,58 +18,56 @@
 <div class="separator"></div>
 <table class="table">
 	{% if parse['image'] == 42 %}
-	<tr>
-		<td class="c">Уровень</td>
-		<td class="c">Дальность</td>
-	</tr>
-		{% for parse['table_data'] AS $data %}
 		<tr>
-			<th>{{ data['build_lvl'] }}</th>
-			<th>{{ data['build_range'] }}</th>
+			<td class="c">Уровень</td>
+			<td class="c">Дальность</td>
 		</tr>
-			{% endfor %}
-		{% elseif ($parse['image'] == 22 or $parse['image'] == 23 or $parse['image'] == 24 %}
-	<tr>
-		<td class="c">Уровень</td>
-		<td class="c">Вместимость</td>
-	</tr>
-		{% for parse['table_data'] AS $data %}
+		{% for data in parse['table_data'] %}
+			<tr>
+				<th>{{ data['build_lvl'] }}</th>
+				<th>{{ data['build_range'] }}</th>
+			</tr>
+		{% endfor %}
+	{% elseif parse['image'] == 22 or parse['image'] == 23 or parse['image'] == 24 %}
 		<tr>
-			<th>{{ data['build_lvl'] }}</th>
-			<th>{{ data['build_range'] }}k</th>
+			<td class="c">Уровень</td>
+			<td class="c">Вместимость</td>
 		</tr>
-			{% endfor %}
-		<?
-	elseif ($parse['image'] != 4 %}
+		{% for data in parse['table_data'] %}
+			<tr>
+				<th>{{ data['build_lvl'] }}</th>
+				<th>{{ data['build_range'] }}k</th>
+			</tr>
+		{% endfor %}
+	[% elseif parse['image'] != 4 %}
+		<tr>
+			<td class="c">Уровень</td>
+			<td class="c">Выработка</td>
+			<td class="c">Разница</td>
+			<td class="c">Потребление энергии</td>
+			<td class="c">Разница</td>
+		</tr>
+		{% for data in parse['table_data'] %}
+			<tr>
+				<th>{{ data['build_lvl'] }}</th>
+				<th>{{ data['build_prod'] }}</th>
+				<th>{{ data['build_prod_diff'] }}</th>
+				<th>{{ data['build_need'] }}</th>
+				<th>{{ data['build_need_diff'] }}</th>
+			</tr>
+		{% endfor %}
+	{% else %}
 	<tr>
 		<td class="c">Уровень</td>
 		<td class="c">Выработка</td>
 		<td class="c">Разница</td>
-		<td class="c">Потребление энергии</td>
-		<td class="c">Разница</td>
 	</tr>
-		{% for parse['table_data'] AS $data %}
-		<tr>
-			<th>{{ data['build_lvl'] }}</th>
-			<th>{{ data['build_prod'] }}</th>
-			<th>{{ data['build_prod_diff'] }}</th>
-			<th>{{ data['build_need'] }}</th>
-			<th>{{ data['build_need_diff'] }}</th>
-		</tr>
-			{% endfor %}
-		<?
-	else: ?>
-	<tr>
-		<td class="c">Уровень</td>
-		<td class="c">Выработка</td>
-		<td class="c">Разница</td>
-	</tr>
-		{% for parse['table_data'] AS $data %}
-		<tr>
-			<th>{{ data['build_lvl'] }}</th>
-			<th>{{ data['build_prod'] }}</th>
-			<th>{{ data['build_prod_diff'] }}</th>
-		</tr>
-			{% endfor %}
-		{% endif %}
+		{% for data in parse['table_data'] %}
+			<tr>
+				<th>{{ data['build_lvl'] }}</th>
+				<th>{{ data['build_prod'] }}</th>
+				<th>{{ data['build_prod_diff'] }}</th>
+			</tr>
+		{% endfor %}
+	{% endif %}
 </table>

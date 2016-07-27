@@ -21,45 +21,45 @@
 		<th>{{ parse['hull_pt'] }}</th>
 	</tr>
 	{% if parse['image'] != 212 %}
-	<tr>
-		<th>Оценка атаки</th>
-		<th>{{ parse['attack_pt'] }}</th>
-	</tr>
-	<tr>
-		<th>Грузоподъёмность</th>
-		<th>{{ parse['capacity_pt'] }}</th>
-	</tr>
-	<tr>
-		<th>Начальная скорость</th>
-		<th>{{ parse['base_speed'] }} {{ parse['upd_speed'] }}</th>
-	</tr>
-	<tr>
-		<th>Потребление топлива (дейтерий)</th>
-		<th>{{ parse['base_conso'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип двигателя</th>
-		<th>{{ parse['base_engine'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип оружия</th>
-		<th>{{ parse['gun'] }}</th>
-	</tr>
-	<tr>
-		<th>Тип брони</th>
-		<th>{{ parse['armour'] }}</th>
-	</tr>
-	<tr>
-		<th>Блокировка атаки</th>
-		<th>{{ parse['block'] }}%</th>
-	</tr>
-		{% if parse['upgrade'] %}
 		<tr>
-			<th>Усиление на уровень</th>
-			<th>{{ parse['upgrade'] }}%</th>
+			<th>Оценка атаки</th>
+			<th>{{ parse['attack_pt'] }}</th>
 		</tr>
+		<tr>
+			<th>Грузоподъёмность</th>
+			<th>{{ parse['capacity_pt'] }}</th>
+		</tr>
+		<tr>
+			<th>Начальная скорость</th>
+			<th>{{ parse['base_speed'] }} {{ parse['upd_speed'] }}</th>
+		</tr>
+		<tr>
+			<th>Потребление топлива (дейтерий)</th>
+			<th>{{ parse['base_conso'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип двигателя</th>
+			<th>{{ parse['base_engine'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип оружия</th>
+			<th>{{ parse['gun'] }}</th>
+		</tr>
+		<tr>
+			<th>Тип брони</th>
+			<th>{{ parse['armour'] }}</th>
+		</tr>
+		<tr>
+			<th>Блокировка атаки</th>
+			<th>{{ parse['block'] }}%</th>
+		</tr>
+		{% if parse['upgrade'] %}
+			<tr>
+				<th>Усиление на уровень</th>
+				<th>{{ parse['upgrade'] }}%</th>
+			</tr>
 			{% endif %}
-		{% endif %}
+	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>
 	</tr>
@@ -78,38 +78,38 @@
 	</tbody>
 </table>
 {% if parse['image'] != 212 %}
-<br>
-<table width="600">
-	<tr>
-		<td width="50%">
-			<table width="100%">
-				<tr>
-					<td class="c">Тип корабля</td>
-					<td class="c">Сопротивление брони</td>
-				</tr>
-				{% for parse['soprot'] as $list %}
-				<tr>
-					<th>{{ list[0] }}</th>
-					<th width="35%" class="positive">{{ list[1] }}%</th>
-				</tr>
-				{% endfor %}
-			</table>
-		</td>
-		<td width="50%">
-			<table width="100%">
-				<tr>
-					<td class="c">Тип корабля</td>
-					<td class="c">Сопротивление атаке</td>
-				</tr>
-				{% for parse['soprot_2'] as $list %}
-				<tr>
-					<th>{{ list[0] }}</th>
-					<th width="35%" class="positive">{{ list[1] }}%</th>
-				</tr>
-				{% endfor %}
-			</table>
-		</td>
-	</tr>
-</table>
-<br><a href="http://forum.xnova.su/viewtopic.php?f=1&t=3137" target="_blank">Что за цифры?</a><br>
+	<br>
+	<table width="600">
+		<tr>
+			<td width="50%">
+				<table width="100%">
+					<tr>
+						<td class="c">Тип корабля</td>
+						<td class="c">Сопротивление брони</td>
+					</tr>
+					{% for list in parse['soprot'] %}
+						<tr>
+							<th>{{ list[0] }}</th>
+							<th width="35%" class="positive">{{ list[1] }}%</th>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+			<td width="50%">
+				<table width="100%">
+					<tr>
+						<td class="c">Тип корабля</td>
+						<td class="c">Сопротивление атаке</td>
+					</tr>
+					{% for list in parse['soprot_2'] %}
+						<tr>
+							<th>{{ list[0] }}</th>
+							<th width="35%" class="positive">{{ list[1] }}%</th>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+		</tr>
+	</table>
+	<br><a href="http://forum.xnova.su/viewtopic.php?f=1&t=3137" target="_blank">Что за цифры?</a><br>
 {% endif %}

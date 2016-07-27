@@ -64,7 +64,10 @@ class Lang
 		{
 			foreach ($args as $i => $arg)
 			{
-				if ($i > 0 && $value != false)
+				if (is_bool($arg))
+					return $value;
+
+				if ($i > 0 && is_array($value))
 				{
 					if (isset($value[$arg]))
 						$value = $value[$arg];

@@ -32,11 +32,14 @@ class InfoController extends Controller
 
 		$this->user->loadPlanet();
 	}
-	
-	public function indexAction ()
+
+	/**
+	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
+	 */
+	public function indexAction ($element = null)
 	{
-		if ($this->request->getQuery('gid'))
-			$html = $this->ShowBuildingInfoPage($this->request->getQuery('gid'));
+		if (is_numeric($element))
+			$html = $this->ShowBuildingInfoPage($element);
 		else
 			$html = '';
 

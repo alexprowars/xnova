@@ -1,5 +1,5 @@
 <table class="table">
-	{% if (!$isPopup %}
+	{% if isPopup is false %}
 		<tr>
 			<td class="c" colspan="2">{{ parse['name'] }}</td>
 		</tr>
@@ -18,27 +18,28 @@
 		<th width="50%">Броня</th>
 		<th>{{ parse['hull_pt'] }}</th>
 	</tr>
-	<tr>
 	{% if parse['shield_pt'] > 0 %}
-		<th>Мощность щита</th>
-		<th>{{ parse['shield_pt'] }}</th>
-</tr><tr>
-{% endif %}
+		<tr>
+			<th>Мощность щита</th>
+			<th>{{ parse['shield_pt'] }}</th>
+		</tr>
+	{% endif %}
+	<tr>
 		<th>Оценка атаки</th>
 		<th>{{ parse['attack_pt'] }}</th>
 	</tr>
-	{% if (isset($parse['gun']) and $parse['gun'] %}
-	<tr>
-		<th>Тип оружия</th>
-		<th>{{ parse['gun'] }}</th>
-	</tr>
-		{% endif %}
-	{% if (isset($parse['armour']) and $parse['armour'] %}
-	<tr>
-		<th>Тип брони</th>
-		<th>{{ parse['armour'] }}</th>
-	</tr>
-		{% endif %}
+	{% if parse['gun'] is defined and parse['gun'] %}
+		<tr>
+			<th>Тип оружия</th>
+			<th>{{ parse['gun'] }}</th>
+		</tr>
+	{% endif %}
+	{% if parse['armour'] is defined and parse['armour'] %}
+		<tr>
+			<th>Тип брони</th>
+			<th>{{ parse['armour'] }}</th>
+		</tr>
+	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>
 	</tr>
@@ -55,7 +56,7 @@
 		<th>{{ parse['deu'] }}</th>
 	</tr>
 </table>
-{% if (isset($parse['speedBattle']) and count($parse['speedBattle']) > 0 %}
+{% if parse['speedBattle'] is defined and parse['speedBattle']|length > 0 %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
@@ -63,18 +64,18 @@
 			<td class="c positive">Поражает флот</td>
 			<td class="c negative">Теряет флот</td>
 		</tr>
-		{% for parse['speedBattle'] AS $fId => $battle %}
+		{% for fId, battle in parse['speedBattle'] %}
 			<tr>
 				<th class="text-xs-left"><a href="{{ url('info/'~fId.'/') }}">{{ _text('tech', fId) }}</a></th>
 				<th class="positive">
-					{% if (isset($battle['TO']) %}
+					{% if battle['TO'] is defined %}
 						{{ battle['TO'] }}
 					{% else %}
 						< 1
 					{% endif %}
 				</th>
 				<th class="negative">
-					{% if (isset($battle['FROM']) %}
+					{% if battle['FROM'] is defined %}
 						{{ battle['FROM'] }}
 					{% else %}
 						< 1
