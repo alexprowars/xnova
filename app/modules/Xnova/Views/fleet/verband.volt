@@ -53,7 +53,7 @@
 		</tr>
 		<tr>
 			<th colspan="2">
-				<input type="text" name="groupname" value="AKS<?=mt_rand(100000, 999999999) ?>" size=50 title="">
+				<input type="text" name="groupname" value="AKS{{ rand(100000, 999999999) }}" size=50 title="">
 				<br />
 				<input type="submit" value="Создать" />
 			</th>

@@ -1,5 +1,5 @@
 <form action="{{ url("overview/delete/") }}" method=POST>
-	<input type="hidden" name="password" value="<?=md5($parse['number_check']) ?>">
+	<input type="hidden" name="password" value="{{ md5(parse['number_check']) }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Система безопасности</td>

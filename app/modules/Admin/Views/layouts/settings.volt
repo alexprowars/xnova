@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="portlet box green">
 	<div class="portlet-title">
 		<div class="caption">Глобальные настройки сервера</div>

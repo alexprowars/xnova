@@ -31,7 +31,7 @@
 					{{ list['off_desc'] }}
 					<table class="powers">
 						<tr>
-							<td rowspan="<?=(count($list['off_powr']) + 1) ?>"><img src="{{ url.getBaseUri() }}assets/images/officiers/{{ list['off_id'] }}.gif"></td>
+							<td rowspan="{{ list['off_powr']|length + 1 }}"><img src="{{ url.getBaseUri() }}assets/images/officiers/{{ list['off_id'] }}.gif"></td>
 						</tr>
 						{% for power in list['off_powr'] %}
 							<tr><td class="up">{{ power }}</td></tr>

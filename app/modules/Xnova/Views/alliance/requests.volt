@@ -2,7 +2,7 @@
 	<tr>
 		<td class="c" colspan="2">Обзор заявок [{{ parse['tag'] }}]</td>
 	</tr>
-	{% if (is_array($parse['request']) %}
+	{% if parse['request'] is type('array') %}
 		<tr><td colspan="2">
 		<form action="{{ url('alliance/admin/edit/requests/show/'~parse['request']['id']~'/sort/0/') }}" method="POST">
 			<table width="100%">
@@ -28,7 +28,7 @@
 		</form>
 		</td></tr>
 	{% endif %}
-	{% if (count($parse['list']) > 0 %}
+	{% if parse['list']|length > 0 %}
 		<tr>
 			<td class="c text-xs-center">
 				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/1/') }}">Логин</a>
@@ -37,7 +37,7 @@
 				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/0/') }}">Дата подачи заявки</a>
 			</td>
 		</tr>
-		{% for parse['list'] AS $list %}
+		{% for list in parse['list'] %}
 			<tr>
 				<th class="text-xs-center">
 					<a href="{{ url('alliance/admin/edit/requests/show/'~list['id']~'/sort/0/') }}">{{ list['username'] }}</a>

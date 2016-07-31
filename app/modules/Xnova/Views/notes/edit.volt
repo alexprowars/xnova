@@ -7,7 +7,7 @@
 			<th style="text-align:left;font-weight:normal;">
 				<span id="um{{ parse['id'] }}" style="display:none;"></span>
 				<span id="m{{ parse['id'] }}"></span>
-				<script>Text('<?=str_replace(["\n", "\r", "\n\r"], '<br>', addslashes($parse['text'])) ?>', 'm{{ parse['id'] }}');</script>
+				<script>Text('{{ replace(["\n", "\r", "\n\r"], '<br>', parse['text']|slashes) }}', 'm{{ parse['id'] }}');</script>
 			</th>
 		</tr>
 	</table>
@@ -19,9 +19,9 @@
 		<tr>
 			<th>Приоритет:
 				<select name="u" title="">
-					<option value="2" <?=($parse['priority'] == 2 ? 'selected' : '') ?>>{{ _text('Important') }}</option>
-					<option value="1" <?=($parse['priority'] == 1 ? 'selected' : '') ?>>{{ _text('Normal') }}</option>
-					<option value="0" <?=($parse['priority'] == 0 ? 'selected' : '') ?>>{{ _text('Unimportant') }}</option
+					<option value="2" {{ parse['priority'] == 2 ? 'selected' : '' }}>{{ _text('Important') }}</option>
+					<option value="1" {{ parse['priority'] == 1 ? 'selected' : '' }}>{{ _text('Normal') }}</option>
+					<option value="0" {{ parse['priority'] == 0 ? 'selected' : '' }}>{{ _text('Unimportant') }}</option
 				</select>
 			</th>
 			<th>Тема:

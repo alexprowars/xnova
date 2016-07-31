@@ -41,7 +41,7 @@
 	<tr>
 		<td class="c" colspan="4">Отношения между альянсами</td>
 	</tr>
-	{% if (isset($parse['DText']) and count($parse['DText']) %}
+	{% if parse['DText'] is defined and parse['DText']|length %}
 		{% for diplo in parse['DText'] %}
 			<tr>
 				<th>{{ diplo['name'] }}</th>

@@ -72,14 +72,14 @@
 					<table cellpadding="2" cellspacing="0" border="0" align="center">
 						<tr>
 							<td><label for="cmb-drive">Рак. двигатель</label></td>
-							<td><input id="cmb-drive" type="text" name="cmb-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[115]]?>" tabindex="1" /></td>
+							<td><input id="cmb-drive" type="text" name="cmb-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[115]] }}" tabindex="1" /></td>
 							<td><label for="imp-drive">Имп. двигатель</label></td>
-							<td><input id="imp-drive" type="text" name="imp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[117]]?>" tabindex="2" /></td>
+							<td><input id="imp-drive" type="text" name="imp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[117]] }}" tabindex="2" /></td>
 							<td><label for="hyp-drive">Гипер. двигатель</label></td>
-							<td><input id="hyp-drive" type="text" name="hyp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[118]]?>" tabindex="3" /></td>
+							<td><input id="hyp-drive" type="text" name="hyp-drive" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[118]] }}" tabindex="3" /></td>
 							<td></td>
 							<td>
-								<input type="hidden" id="universe-speed" name="universe-speed" value="{{ game.getSpeed('fleet')?>">
+								<input type="hidden" id="universe-speed" name="universe-speed" value="{{ game.getSpeed('fleet') }}">
 
 								<input type="checkbox" name="race" value="1" id="race"><label for="race">Древние</label>
 								<input type="checkbox" name="officier" value="1" id="officier"><label for="officier">Адмирал</label>

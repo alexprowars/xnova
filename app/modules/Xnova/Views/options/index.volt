@@ -25,7 +25,7 @@
 					</th>
 				</tr>
 				{% if config.view.get('socialIframeView', 0) == 0 %}
-					{% if (is_email($parse['opt_mail_data']) %}
+					{% if is_email(parse['opt_mail_data']) %}
 						<tr>
 							<th>Старый пароль</th>
 							<th><input name="db_password" size="20" value="" type="password" title=""></th>
@@ -42,7 +42,7 @@
 					<tr>
 						<th>Адрес e-mail (логин)</th>
 						<th>
-							{% if (!is_email($parse['opt_mail_data']) %}
+							{% if is_email(parse['opt_mail_data']) is false %}
 								<input type="text" name="email" value="" title="">
 							{% else %}
 								{{ parse['opt_mail_data'] }} <a href="{{ url('options/email/') }}" class="button">сменить</a>
@@ -54,7 +54,7 @@
 					<th>Пол</th>
 					<th><select name="sex" title="">
 						<option value="M">мужской</option>
-						<option value="F" <?=(($parse['sex'] == 2) ? ' selected' : '')?>>женский</option>
+						<option value="F" {{ parse['sex'] == 2 ? ' selected' : '' }}>женский</option>
 					</select></th>
 				</tr>
 				<tr>
@@ -128,8 +128,8 @@
 					<th>Цвет чата</th>
 					<th>
 						<select name='color' style='width:170px' title="">
-							{% for (_text('colors') AS $id => $color): if (!$color[1]) continue; ?>
-								<option value="{{ id ?>" <?=($parse['color'] == $id ? 'selected' : '') ?> style="color:{{ color[0] }}">{{ color[1] }}</option>
+							{% for id, color in _text('colors') if color[1] != '' %}
+								<option value="{{ id }}" {{ parse['color'] == id ? 'selected' : '' }} style="color:{{ color[0] }}">{{ color[1] }}</option>
 							{% endfor %}
 						</select>
 					</th>
@@ -137,31 +137,31 @@
 				<tr>
 					<th>Часовой пояс</th>
 					<th><select name='timezone' style='width:170px' title="">
-						<option value="-30"<?=(($parse['timezone'] == (-30)) ? 'selected' : '')?>>-12</option>
-						<option value="-28"<?=(($parse['timezone'] == (-28)) ? 'selected' : '')?>>-11</option>
-						<option value="-26"<?=(($parse['timezone'] == (-26)) ? 'selected' : '')?>>-10</option>
-						<option value="-24"<?=(($parse['timezone'] == (-24)) ? 'selected' : '')?>>-9</option>
-						<option value="-22"<?=(($parse['timezone'] == (-22)) ? 'selected' : '')?>>-8</option>
-						<option value="-20"<?=(($parse['timezone'] == (-20)) ? 'selected' : '')?>>-7</option>
-						<option value="-18"<?=(($parse['timezone'] == (-18)) ? 'selected' : '')?>>-6</option>
-						<option value="-16"<?=(($parse['timezone'] == (-16)) ? 'selected' : '')?>>-5</option>
-						<option value="-14"<?=(($parse['timezone'] == (-14)) ? 'selected' : '')?>>-4</option>
-						<option value="-12"<?=(($parse['timezone'] == (-12)) ? 'selected' : '')?>>-3</option>
-						<option value="-10"<?=(($parse['timezone'] == (-10)) ? 'selected' : '')?>>-2</option>
-						<option value="-8"<?=(($parse['timezone'] == (-8)) ? 'selected' : '')?>>-1</option>
-						<option value="-6"<?=(($parse['timezone'] == (-6)) ? 'selected' : '')?>>0</option>
-						<option value="-4"<?=(($parse['timezone'] == (-4)) ? 'selected' : '')?>>+1</option>
-						<option value="-2"<?=(($parse['timezone'] == (-2)) ? 'selected' : '')?>>+2</option>
-						<option value="0"<?=(($parse['timezone'] == 0) ? 'selected' : '')?>>+3 (Московское время)</option>
-						<option value="2"<?=(($parse['timezone'] == 2) ? 'selected' : '')?>>+4</option>
-						<option value="4"<?=(($parse['timezone'] == 4) ? 'selected' : '')?>>+5</option>
-						<option value="6"<?=(($parse['timezone'] == 6) ? 'selected' : '')?>>+6</option>
-						<option value="8"<?=(($parse['timezone'] == 8) ? 'selected' : '')?>>+7</option>
-						<option value="10"<?=(($parse['timezone'] == 10) ? 'selected' : '')?>>+8</option>
-						<option value="12"<?=(($parse['timezone'] == 12) ? 'selected' : '')?>>+9</option>
-						<option value="14"<?=(($parse['timezone'] == 14) ? 'selected' : '')?>>+10</option>
-						<option value="16"<?=(($parse['timezone'] == 16) ? 'selected' : '')?>>+11</option>
-						<option value="18"<?=(($parse['timezone'] == 18) ? 'selected' : '')?>>+12</option>
+						<option value="-30" {{ parse['timezone'] == (-30) ? 'selected' : '' }}>-12</option>
+						<option value="-28" {{ parse['timezone'] == (-28) ? 'selected' : '' }}>-11</option>
+						<option value="-26" {{ parse['timezone'] == (-26) ? 'selected' : '' }}>-10</option>
+						<option value="-24" {{ parse['timezone'] == (-24) ? 'selected' : '' }}>-9</option>
+						<option value="-22" {{ parse['timezone'] == (-22) ? 'selected' : '' }}>-8</option>
+						<option value="-20" {{ parse['timezone'] == (-20) ? 'selected' : '' }}>-7</option>
+						<option value="-18" {{ parse['timezone'] == (-18) ? 'selected' : '' }}>-6</option>
+						<option value="-16" {{ parse['timezone'] == (-16) ? 'selected' : '' }}>-5</option>
+						<option value="-14" {{ parse['timezone'] == (-14) ? 'selected' : '' }}>-4</option>
+						<option value="-12" {{ parse['timezone'] == (-12) ? 'selected' : '' }}>-3</option>
+						<option value="-10" {{ parse['timezone'] == (-10) ? 'selected' : ''}}>-2</option>
+						<option value="-8" {{ parse['timezone'] == (-8) ? 'selected' : ''}}>-1</option>
+						<option value="-6" {{ parse['timezone'] == (-6) ? 'selected' : ''}}>0</option>
+						<option value="-4" {{ parse['timezone'] == (-4) ? 'selected' : ''}}>+1</option>
+						<option value="-2" {{ parse['timezone'] == (-2) ? 'selected' : ''}}>+2</option>
+						<option value="0" {{ parse['timezone'] == 0 ? 'selected' : ''}}>+3 (Московское время)</option>
+						<option value="2" {{ parse['timezone'] == 2 ? 'selected' : ''}}>+4</option>
+						<option value="4" {{ parse['timezone'] == 4 ? 'selected' : ''}}>+5</option>
+						<option value="6" {{ parse['timezone'] == 6 ? 'selected' : ''}}>+6</option>
+						<option value="8" {{ parse['timezone'] == 8 ? 'selected' : ''}}>+7</option>
+						<option value="10" {{ parse['timezone'] == 10 ? 'selected' : ''}}>+8</option>
+						<option value="12" {{ parse['timezone'] == 12 ? 'selected' : ''}}>+9</option>
+						<option value="14" {{ parse['timezone'] == 14 ? 'selected' : ''}}>+10</option>
+						<option value="16" {{ parse['timezone'] == 16 ? 'selected' : ''}}>+11</option>
+						<option value="18" {{ parse['timezone'] == 18 ? 'selected' : ''}}>+12</option>
 					</select></th>
 				</tr>
 				<tr>
@@ -178,7 +178,7 @@
 				<tr>
 					<th colspan="2" class="p-a-0">
 						<div id="editor"></div>
-						<textarea name="text" id="text" cols="" rows="10" title=""><?=preg_replace('!<br.*>!iU', "\n", $parse['about']) ?></textarea>
+						<textarea name="text" id="text" cols="" rows="10" title="">{{ replace('!<br.*>!iU', "\n", parse['about']) }}</textarea>
 
 						<div id="showpanel" style="display:none">
 							<table class="table">
@@ -238,18 +238,18 @@
 		</div>
 		{% if config.view.get('socialIframeView', 0) == 0 %}
 			<div id="tabs-5" class="ui-tabs-panel ui-widget-content"  style="display: none">
-				{% if (count($parse['auth']) %}
+				{% if parse['auth']|length %}
 					<table class="table">
 						<tr>
 							<td class="c">Аккаунт</td>
 							<td class="c">Дата регистрации</td>
 							<td class="c">Последняя авторизация</td>
 						</tr>
-						{% for parse['auth'] AS $auth %}
+						{% for auth in parse['auth'] %}
 							<tr>
 								<th>{{ auth['external_id'] }}</th>
-								<th>{{ game.datezone("d.m.Y H:i:s", $auth['create_time']) }}</th>
-								<th><?=($auth['enter_time'] > 0 ? game.datezone("d.m.Y H:i:s", $auth['enter_time']) : '-') ?></th>
+								<th>{{ game.datezone("d.m.Y H:i:s", auth['create_time']) }}</th>
+								<th>{{ auth['enter_time'] > 0 ? game.datezone("d.m.Y H:i:s", auth['enter_time']) : '-' }}</th>
 							</tr>
 						{% endfor %}
 					</table>
@@ -262,7 +262,7 @@
 						<th>
 							<br>
 							<script type="text/javascript" src="//ulogin.ru/js/ulogin.js"></script>
-							<div id="uLogin" x-ulogin-params="display=panel;fields=first_name,last_name,photo;providers=vkontakte,odnoklassniki,facebook,twitter,yandex,googleplus,mailru;redirect_uri=<?=urlencode("//".$_SERVER['SERVER_NAME']."/options/external/") ?>"></div>
+							<div id="uLogin" x-ulogin-params="display=panel;fields=first_name,last_name,photo;providers=vkontakte,odnoklassniki,facebook,twitter,yandex,googleplus,mailru;redirect_uri={{ ("//"~request.getServer('SERVER_NAME')~"/options/external/")|url_encode }}"></div>
 							<br>
 						</th>
 					</tr>
@@ -278,7 +278,7 @@
 	});
 </script>
 
-{% if (is_array($parse['bot_auth']) %}
+{% if parse['bot_auth'] is type('array') %}
 	<br><br>
 	<div class="table">
 		<div class="row">

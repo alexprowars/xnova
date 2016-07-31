@@ -9,7 +9,7 @@
 				<tbody>
 				<tr>
 					<th>Введите ваш игровой ник</th>
-					<th><input name="character" size="20" maxlength="20" type="text" value="<?=(isset($_POST['character']) ? $_POST['character'] : $name) ?>" title=""></th>
+					<th><input name="character" size="20" maxlength="20" type="text" value="{{ request.hasPost('character') ? request.getPost('character') : name }}" title=""></th>
 				</tr>
 				<tr>
 					<td class="c" colspan="2">Выберите ваш игровой образ</td>
@@ -24,20 +24,20 @@
 								</ul>
 							</div>
 							<div id="tabs-0">
-								<? for ($i = 1; $i <= 8; $i++ %}
-									<input type="radio" name="face" value="1_{{ i }}" id="f1_{{ i }}" <?=(request->getPost('face') == '1_'~i ? 'checked' : '') ?> title="">
+								{% for i in 1..8 %}
+									<input type="radio" name="face" value="1_{{ i }}" id="f1_{{ i }}" {{ request.getPost('face') == '1_'~i ? 'checked' : '' }} title="">
 									<label data-id="f1_{{ i }}" class="avatar">
 										<img src="{{ url.getBaseUri() }}assets/images/faces/1/{{ i }}s.png" alt="">
 									</label>
-								<? endfor; ?>
+								{% endfor %}
 							</div>
 							<div id="tabs-1">
-								<? for ($i = 1; $i <= 8; $i++ %}
-									<input type="radio" name="face" value="2_{{ i }}" id="f2_{{ i }}" <?=(request->getPost('face') == '2_'~i ? 'checked' : '') ?> title="">
+								{% for i in 1..8 %}
+									<input type="radio" name="face" value="2_{{ i }}" id="f2_{{ i }}" {{ request.getPost('face') == '2_'~i ? 'checked' : '' }} title="">
 									<label data-id="f2_{{ i }}" class="avatar">
 										<img src="{{ url.getBaseUri() }}assets/images/faces/2/{{ i }}s.png" alt="">
 									</label>
-								<? endfor; ?>
+								{% endfor %}
 							</div>
 						</div>
 					</th>

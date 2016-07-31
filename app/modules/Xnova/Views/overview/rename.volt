@@ -1,9 +1,9 @@
-<form action="{{ url("overview/rename/pl/".$parse['planet_id']."") }}" method="POST">
+<form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}" method="POST">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Переименовать или покинуть планету</td>
 		</tr>
-		{% if (!$isPopup %}
+		{% if isPopup is not defined %}
 			<tr>
 				<th class="hidden-xs-down">{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}</th>
 				<th>{{ parse['planet_name'] }}</th>
@@ -19,7 +19,7 @@
 </form>
 {% if parse['type'] != '' %}
 	<div class="separator"></div>
-	<form action="{{ url("overview/rename/pl/".$parse['planet_id']."") }}" method="POST">
+	<form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}" method="POST">
 		<table class="table">
 			<tr>
 				<td class="c">Сменить фон планеты</td>
@@ -27,12 +27,12 @@
 			<tr>
 				<th>
 					<div class="row">
-						<? for ($i = 1; $i <= $parse['images'][$parse['type']]; $i++ %}
+						{% for i in 1..parse['images'][parse['type']] %}
 							<div class="col-xs-6 col-sm-3 col-md-2">
 								<input type="radio" name="image" value="{{ i }}" id="image_{{ i }}">
-								<label for="image_{{ i ?>"><img src="{{ url.getBaseUri() }}assets/images/planeten/small/s_{{ parse['type'] }}planet<?=($i < 10 ? '0' : '').$i }}.jpg" align="absmiddle" width="80"></label>
+								<label for="image_{{ i }}"><img src="{{ url.getBaseUri() }}assets/images/planeten/small/s_{{ parse['type'] }}planet{{ (i < 10 ? '0' : '')~i }}.jpg" align="absmiddle" width="80"></label>
 							</div>
-						<? endfor; ?>
+						{% endfor %}
 					</div>
 				</th>
 			</tr>

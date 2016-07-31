@@ -42,7 +42,7 @@
 				<th colspan="3" class="p-a-0">
 					<div id="editor"></div>
 					<script type="text/javascript">edToolbar('text');</script>
-					<textarea name="text" id="text" rows="15" title=""><?=preg_replace('!<br.*>!iU', "\n", $parse['text']) ?></textarea>
+					<textarea name="text" id="text" rows="15" title="">{{ preg_replace('!<br.*>!iU', "\n", parse['text']) }}</textarea>
 				</th>
 			</tr>
 			<tr>

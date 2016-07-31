@@ -17,10 +17,10 @@
 		<td class="c">&nbsp;</td>
 	</tr>
 
-	{% if (count($parse['list']) %}
-		{% for parse['list'] AS $id => $list %}
+	{% if parse['list']|length %}
+		{% for id, list in parse['list'] %}
 			<tr>
-				<th width="20"><?=($id + 1) ?></th>
+				<th width="20">{{ id + 1 }}</th>
 				<th><a href="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</a></th>
 				<th>{{ list['ally'] }}</th>
 				<th><a href="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</a></th>
@@ -37,27 +37,27 @@
 	{% endif %}
 </table>
 
-{% if (isset($okFriends) and count($okFriends) %}
+{% if okFriends is defined and okFriends|length %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
 			<td class="c" colspan="4">Ваши друзья в Одноклассниках</td>
 		</tr>
 		<tr>
-			{% for okFriends AS $ii => $data %}
-				{% if ii > 0 and $ii%5 == 0 %}</tr><tr>{% endif %}
+			{% for ii, data in okFriends %}
+				{% if ii > 0 and ii%5 == 0 %}</tr><tr>{% endif %}
 				<th width="20%">
 					<div class="separator"></div>
 					<table width="100%">
 						<tr>
 						  <td style="text-align:center;">
-							<img src="{{ okArray[$data['ok_uid']]['pic128x128'] }}" style="max-width:96px">
+							<img src="{{ okArray[data['ok_uid']]['pic128x128'] }}" style="max-width:96px">
 						  </td>
 						</tr>
 						<tr>
 						  <td style="text-align:center;">
-							  {{ okArray[$data['ok_uid']]['name'] }}
-							  {% if okArray[$data['ok_uid']]['name'] != $data['username'] %}<br>[{{ data['username'] }}]{% endif %}
+							  {{ okArray[data['ok_uid']]['name'] }}
+							  {% if okArray[data['ok_uid']]['name'] != data['username'] %}<br>[{{ data['username'] }}]{% endif %}
 							  <a href="javascript:;" onclick="showWindow('{{ data['username'] }}: отправить сообщение', '{{ url('messages/write/'~data['id']~'/') }}', 680)" data-link="Y" title="Сообщение"><span class='sprite skin_m'></span></a>
 						  </td>
 						</tr>

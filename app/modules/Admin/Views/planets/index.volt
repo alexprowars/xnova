@@ -1,10 +1,3 @@
-<?
-/**
- * @var $planetlist array
- * @var $all integer
- * @var $pagination string
- */
-?>
 <div class="util-btn-margin-bottom-5">
 	<a href="<?=$this->url->get('admin/planetlist/add/') ?>">
 		<button type="button" class="btn blue btn-sm">Создать</button>

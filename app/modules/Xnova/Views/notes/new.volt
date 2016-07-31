@@ -8,7 +8,7 @@
 				<select name="u" title="">
 					<option value="2" selected>{{ _text('Important') }}</option>
 					<option value="1">{{ _text('Normal') }}</option>
-					<option value="0">{{ _text('Unimportant') }}</option
+					<option value="0">{{ _text('Unimportant') }}</option>
 				</select>
 			</th>
 			<th>Тема:

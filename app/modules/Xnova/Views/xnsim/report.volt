@@ -27,8 +27,8 @@
 					{% for i, s in statistics %}
 						<tr>
 							<th>{{ i }}</th>
-							<th>{{ pretty_number(s['att']) ?></th>
-							<th>{{ pretty_number(s['def']) ?></th>
+							<th>{{ pretty_number(s['att']) }}</th>
+							<th>{{ pretty_number(s['def']) }}</th>
 						</tr>
 					{% endfor %}
 				</table>

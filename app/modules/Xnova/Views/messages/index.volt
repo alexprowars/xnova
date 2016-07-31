@@ -54,9 +54,9 @@
 						<td style="background-color:{{ _text('mess_background', item.type) }};" colspan="4" class="b">
 							{% if item.type == 1 and user.getUserOption('bb_parser') %}
 								<span id="m{{ item.id }}"></span>
-								<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes(str_replace('#BASEPATH#', url.getBaseUri(), $item->text))) ?>', 'm{{ item->id }}');</script>
+								<script type="text/javascript">Text('{{ replace(["\r\n", "\n", "\r"], '<br>', replace('#BASEPATH#', url.getBaseUri(), item.text)|stripslashes) }}', 'm{{ item->id }}');</script>
 							{% else %}
-								<?=stripslashes(nl2br(str_replace('#BASEPATH#', url.getBaseUri(), $item->text))) ?>
+								{{ (replace('#BASEPATH#', url.getBaseUri(), item.text)|nl2br)|stripslashes }}
 							{% endif %}
 						</td>
 					</tr>

@@ -1,9 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
-
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 <script src="<?=$this->url->getBaseUri() ?>assets/admin/plugins/flot/jquery.flot.js"></script>
 <script src="<?=$this->url->getBaseUri() ?>assets/admin/plugins/flot/jquery.flot.time.js"></script>

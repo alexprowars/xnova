@@ -70,7 +70,7 @@
 			},
 			success: function(data)
 			{
-				if (data.status == 1 and data.data.redirect !== undefined)
+				if (data.status == 1 && data.data.redirect !== undefined)
 					window.location.href = data.data.redirect;
 				else
 					$('#authError').html(data.message);

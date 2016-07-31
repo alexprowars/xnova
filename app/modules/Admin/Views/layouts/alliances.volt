@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="table-responsive">
 	<table class="table table-striped table-bordered table-advance">
 		<?=$parse['desc'] ?><?=$parse['edit'] ?><?=$parse['name'] ?><?=$parse['member'] ?><?=$parse['member_row'] ?><?=$parse['mail'] ?><?=$parse['leader'] ?>

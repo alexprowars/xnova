@@ -4,18 +4,18 @@
 	</tr>
 	<tr>
 		<th>№</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/1/sort2/'~parse['s']~'/') }}">Ник</a></th>
+		<th><a href="{{ url('alliance/'~(parse['admin'] ? 'admin/edit/members' : 'members')~'/sort1/1/sort2/'~parse['s']~'/') }}">Ник</a></th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/2/sort2/'~parse['s']~'/') }}">Ранг</a></th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit=members' : 'members').'/sort1/3/sort2/'~parse['s']~'/') }}">Очки</a></th>
+		<th><a href="{{ url('alliance/'~(parse['admin'] ? 'admin/edit/members' : 'members')~'/sort1/2/sort2/'~parse['s']~'/') }}">Ранг</a></th>
+		<th><a href="{{ url('alliance/'~(parse['admin'] ? 'admin/edit=members' : 'members')~'/sort1/3/sort2/'~parse['s']~'/') }}">Очки</a></th>
 		<th>Координаты</th>
-		<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/4/sort2/'~parse['s']~'/') }}">Дата вступления</a></th>
-		{% if parse['status'] %}<th><a href="{{ url('alliance/'.(($parse['admin']) ? 'admin/edit/members' : 'members').'/sort1/5/sort2/'~parse['s']~'/') }}">Активность</a></th>{% endif %}
+		<th><a href="{{ url('alliance/'~(parse['admin'] ? 'admin/edit/members' : 'members')~'/sort1/4/sort2/'~parse['s']~'/') }}">Дата вступления</a></th>
+		{% if parse['status'] %}<th><a href="{{ url('alliance/'~(parse['admin'] ? 'admin/edit/members' : 'members')~'/sort1/5/sort2/'~parse['s']~'/') }}">Активность</a></th>{% endif %}
 		{% if parse['admin'] %}<th>Управление</th>{% endif %}
 	</tr>
-	{% for parse['memberslist'] AS $m %}
-		{% if (!isset($m['Rank_for']) or !$parse['admin'] %}
+	{% for m in parse['memberslist'] %}
+		{% if m['Rank_for'] is not defined or parse['admin'] is false %}
 			<tr>
 				<th>{{ m['i'] }}</th>
 				<th>{{ m['username'] }}</th>
@@ -25,7 +25,7 @@
 				<th>{{ m['points'] }}</th>
 				<th><a href="{{ url('galaxy/'~m['galaxy']~'/'~m['system']~'/') }}">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</a></th>
 				<th>{{ m['time'] }}</th>
-				{% if parse['status'] %}<th><font color={{ m['onlinetime'] }}/font></th>{% endif %}
+				{% if parse['status'] %}<th><font color="">{{ m['onlinetime'] }}</font></th>{% endif %}
 				{% if parse['admin'] %}<th><a href="{{ url('alliance/admin/edit/members/kick/'~m['id']~'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="{{ url.getBaseUri() }}assets/images/abort.gif"></a>&nbsp;<a href="{{ url('alliance/admin/edit/members/rank/'~m['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/key.gif"></a></th>{% endif %}
 			</tr>
 		{% else %}
@@ -45,6 +45,6 @@
 		{% endif %}
 	{% endfor %}
 	<tr>
-		<td class="c" colspan="10"><a href="{{ url('alliance'.(($parse['admin']) ? '/admin/edit/ally' : '').'/') }}">{{ _text('Return_to_overview') }}</a></td>
+		<td class="c" colspan="10"><a href="{{ url('alliance'~(parse['admin'] ? '/admin/edit/ally' : '')~'/') }}">{{ _text('Return_to_overview') }}</a></td>
 	</tr>
 </table>

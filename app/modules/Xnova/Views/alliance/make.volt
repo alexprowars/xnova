@@ -1,4 +1,4 @@
-{% if (isset($html) %}
+{% if html is defined %}
 	{{ html }}
 {% else %}
 	<form action="{{ url('alliance/make/yes/1/') }}" method="POST">

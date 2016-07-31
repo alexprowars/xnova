@@ -13,34 +13,49 @@
 	</tr>
 </table>
 <script type="text/javascript">
-	<? $max = 0; ?>
+	{% set max = 0 %}
 	var temp1 = [
-		{% for ($parse['data'] AS $data): if ($max < $data['total_rank']) $max = $data['total_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['total_rank'] }}],
+		{% for data in parse['data']   %}
+				{% if max < data['total_rank'] %}
+					{% set max = data['total_rank'] %}
+				{% endif %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['total_rank'] }}],
 		{% endfor %}
 	];
 
 	var temp2 = [
-		{% for ($parse['data'] AS $data): if ($max < $data['tech_rank']) $max = $data['tech_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['tech_rank'] }}],
+		{% for data in parse['data'] %}
+			{% if max < data['tech_rank'] %}
+				{% set max = data['tech_rank'] %}
+			{% endif %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['tech_rank'] }}],
 		{% endfor %}
 	];
 
 	var temp3 = [
-		{% for ($parse['data'] AS $data): if ($max < $data['build_rank']) $max = $data['build_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['build_rank'] }}],
+		{% for data in parse['data'] %}
+			{% if max < data['build_rank'] %}
+				{% set max = data['build_rank'] %}
+			{% endif %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['build_rank'] }}],
 		{% endfor %}
 	];
 
 	var temp4 = [
-		{% for ($parse['data'] AS $data): if ($max < $data['fleet_rank']) $max = $data['fleet_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['fleet_rank'] }}],
+		{% for data in parse['data'] %}
+			{% if max < data['fleet_rank'] %}
+				{% set max = data['fleet_rank'] %}
+			{% endif %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['fleet_rank'] }}],
 		{% endfor %}
 	];
 
 	var temp5 = [
-		{% for ($parse['data'] AS $data): if ($max < $data['defs_rank']) $max = $data['defs_rank']; ?>
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['defs_rank'] }}],
+		{% for data in parse['data'] %}
+			{% if max < data['defs_rank'] %}
+				{% set max = data['defs_rank'] %}
+			{% endif %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['defs_rank'] }}],
 		{% endfor %}
 	];
 
@@ -77,7 +92,7 @@
 					label: '',
 					tickOptions: {textColor:'#ffffff', formatString:'%i'},
 					max: -1,
-					min: <?=round($max * 1.1) + 1 ?>
+					min: {{ (max * 1.1)|round + 1 }}
 				}
 			},
 			highlighter: {
@@ -137,28 +152,28 @@
 	var points = [];
 
 	points[0] = [
-		{% for ($parse['data'] AS $data %}
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['total_points'] }}],
+		{% for data in parse['data'] %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['total_points'] }}],
 		{% endfor %}
 	];
 	points[1] = [
-		{% for ($parse['data'] AS $data %}
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['build_points'] }}],
+		{% for data in parse['data'] %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['build_points'] }}],
 		{% endfor %}
 	];
 	points[2] = [
-		{% for ($parse['data'] AS $data %}
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['tech_points'] }}],
+		{% for data in parse['data'] %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['tech_points'] }}],
 		{% endfor %}
 	];
 	points[3] = [
-		{% for ($parse['data'] AS $data %}
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['fleet_points'] }}],
+		{% for data in parse['data'] %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['fleet_points'] }}],
 		{% endfor %}
 	];
 	points[4] = [
-		{% for ($parse['data'] AS $data %}
-			['<?=date("d.m H:i", $data['time']) ?>', {{ data['defs_points'] }}],
+		{% for data in parse['data'] %}
+			['{{ date("d.m H:i", data['time']) }}', {{ data['defs_points'] }}],
 		{% endfor %}
 	];
 

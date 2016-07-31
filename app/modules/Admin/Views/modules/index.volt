@@ -1,8 +1,3 @@
-<?
-/**
- * @var $list array
- */
-?>
 <div class="util-btn-margin-bottom-5">
 	<a href="<?=$this->url->get('admin/modules/add/') ?>">
 		<button type="button" class="btn green btn-sm">Добавить</button>

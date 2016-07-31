@@ -52,20 +52,20 @@
 				<td class="k">{{ parse['energy_basic_income'] }}</td>
 				<td class="k">100%</td>
 			</tr>
-			{% for parse['resource_row'] as $resource %}
+			{% for resource in parse['resource_row'] %}
 				<tr>
-					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('tech', resource['id']) ?></a></th>
+					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('tech', resource['id']) }}</a></th>
 					<th><font color="#ffffff">{{ resource['level_type'] }}</font></th>
 					<th><font color="#ffffff">{{ resource['bonus'] }}%</font></th>
-					{% for registry.reslist['res'] AS $res %}
-						<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource[$res.'_type'])) ?></font></th>
+					{% for res in registry.reslist['res'] %}
+						<th><font color="#ffffff">{{ colorNumber(pretty_number(resource[res~'_type'])) }}</font></th>
 					{% endfor %}
-					<th><font color="#ffffff"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($resource['energy_type'])) ?></font></th>
+					<th><font color="#ffffff">{{ colorNumber(pretty_number(resource['energy_type'])) }}</font></th>
 					<th>
 						<select name="{{ resource['name'] }}" title="">
-						<? for ($j = 10; $j >= 0; $j-- %}
-							<option value="{{ j }}"<?=($j == $resource['porcent'] ? ' selected=selected' : '') ?>><?=($j * 10) ?>%</option>
-						<? endfor; ?>
+						{% for j in 10..0 %}
+							<option value="{{ j }}"{{ j == resource['porcent'] ? ' selected=selected' : '' }}>{{ j * 10 }}%</option>
+						{% endfor %}
 						</select>
 					</th>
 				</tr>
@@ -75,16 +75,16 @@
 			<tr>
 				<th colspan="2">Вместимость:</th>
 				<th>{{ parse['bonus_h'] }}%</th>
-				{% for registry.reslist['res'] AS $res %}
-					<td class="k">{{ parse[$res.'_max'] }}</td>
+				{% for res in registry.reslist['res'] %}
+					<td class="k">{{ parse[res~'_max'] }}</td>
 				{% endfor %}
 				<td class="k"><font color="#00ff00">{{ parse['energy_max'] }}</font></td>
 				<td class="k"><input name="action" value="Пересчитать" type="submit"></td>
 			</tr>
 			<tr>
 				<th colspan="3">Сумма:</th>
-				{% for registry.reslist['res'] AS $res %}
-					<td class="k"><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></td>
+				{% for res in registry.reslist['res'] %}
+					<td class="k">{{ colorNumber(pretty_number(parse[res~'_total'])) }}</td>
 				{% endfor %}
 				<td class="k">{{ parse['energy_total'] }}</td>
 			</tr>
@@ -102,13 +102,13 @@
 			<th width="21%">Неделя</th>
 			<th width="21%">Месяц</th>
 		</tr>
-		{% for registry.reslist['res'] AS $res %}
+		{% for res in registry.reslist['res'] %}
 			<tr>
 				<th>{{ _text('res', res) }}</th>
-				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'])) ?></th>
-				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24)) ?></th>
-				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 7)) ?></th>
-				<th><?=\Xnova\Helpers::colorNumber(\Xnova\Helpers::pretty_number($parse[$res.'_total'] * 24 * 30)) ?></th>
+				<th>{{ colorNumber(pretty_number(parse[res~'_total'])) }}</th>
+				<th>{{ colorNumber(pretty_number(parse[res~'_total'] * 24)) }}</th>
+				<th>{{ colorNumber(pretty_number(parse[res~'_total'] * 24 * 7)) }}</th>
+				<th>{{ colorNumber(pretty_number(parse[res~'_total'] * 24 * 30)) }}</th>
 			</tr>
 		{% endfor %}
 	</table>
@@ -117,13 +117,13 @@
 		<tr>
 			<td class="c" colspan="3">Статус хранилища</td>
 		</tr>
-		{% for registry.reslist['res'] AS $res %}
+		{% for res in registry.reslist['res'] %}
 			<tr>
-				<th width="150">{{ _text('res', res) }</th>
-				<th width="100">{{ parse[$res.'_storage'] }}%</th>
+				<th width="150">{{ _text('res', res) }}</th>
+				<th width="100">{{ parse[res~'_storage'] }}%</th>
 				<th>
 					<div style="border: 1px solid #9999FF;">
-						<div id="AlmMBar" style="background-color: {{ parse[$res.'_storage_barcolor'] }}; width: <?=min(100, max(0, $parse[$res.'_storage_bar'])) ?>%;">
+						<div id="AlmMBar" style="background-color: {{ parse[res~'_storage_barcolor'] }}; width: {{ min(100, max(0, parse[res~'_storage_bar'])) }}%;">
 							&nbsp;
 						</div>
 					</div>
@@ -143,7 +143,7 @@
 				{% if parse['merchand'] < time() %}
 					<a href="{{ url('resources&buy=1/') }}" class="button">Купить за 10 кредитов</a>
 				{% else %}
-					Через <?= \Xnova\Helpers::pretty_time($parse['merchand'] - time()) ?>
+					Через {{ pretty_time(parse['merchand'] - time()) }}
 				{% endif %}
 			</th>
 			<th>Вы можете купить: {{ parse['buy_metal'] }} металла, {{ parse['buy_crystal'] }} кристалла, {{ parse['buy_deuterium'] }} дейтерия</th>

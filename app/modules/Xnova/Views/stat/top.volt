@@ -9,16 +9,16 @@
 			<div class="th col-xs-2 middle">Какой</div>
 			<div class="th col-xs-4 col-sm-2">
 				<select name="who" onChange="$(this).parents('form').attr('action', {{ url('stat/') }}+$(this).val()+'/');$(this).parents('form').submit()" title="">
-					<? for (_text('who') AS $key => $value %}
-						<option value="{{ key }}" <?=($key == $who ? 'selected' : '') ?>>{{ value }}</option>
+					{% for key, value in _text('who') %}
+						<option value="{{ key }}" {{ key == who ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select>
 			</div>
 			<div class="th col-xs-2 col-sm-1 middle">по</div>
 			<div class="th col-xs-4 col-sm-3">
 				<select name="type" onChange="$(this).parents('form').submit()" title="">
-					<? for (_text('type') AS $key => $value %}
-						<option value="{{ key }}" <?=($key == $type ? 'selected' : '') ?>>{{ value }}</option>
+					{% for key, value in _text('type') %}
+						<option value="{{ key }}" {{ key == type ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select>
 			</div>

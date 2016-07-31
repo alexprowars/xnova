@@ -47,18 +47,14 @@
 	options.msgCantResearch = 'При данном уровне Исследовательской лаборатории исследование "{0}" невозможно.';
 
 	options.techCosts = {
-		<?
-
-		 for (registry.pricelist AS $id => $price)
-		 {
-		 	echo ''~id.': ['~price['metal']~', '~price['crystal']~', '~price['deuterium']~', '~price['factor']~'],';
-		 }
-
-		 ?>
+		{% for id, price in registry.pricelist %}
+			{{ id }}id: [{{ price['metal'] }}, {{ price['crystal'] }}, {{ price['deuterium'] }}, {{ price['factor'] }}],
+		{% endfor %}
 		999: []
 	};
 	options.techReqs = {
-		106: 3, 108: 1, 109: 4, 110: 6, 111: 2, 113: 1, 114: 7, 115: 1, 117: 2, 118: 7, 120: 1, 121: 4, 122: 4, 123: 10, 124: 3, 199: 12                                        };
+		106: 3, 108: 1, 109: 4, 110: 6, 111: 2, 113: 1, 114: 7, 115: 1, 117: 2, 118: 7, 120: 1, 121: 4, 122: 4, 123: 10, 124: 3, 199: 12
+	};
 
 </script>
 
@@ -180,10 +176,10 @@
 					Фракция:
 
 					<select name="race" id="race">
-						<option value="1" <?=(user.race == 1 ? 'selected' : '') ?>>Конфедерация</option>
-						<option value="2" <?=(user.race == 2 ? 'selected' : '') ?>>Бионики</option>
-						<option value="3" <?=(user.race == 3 ? 'selected' : '') ?>>Сайлоны</option>
-						<option value="4" <?=(user.race == 4 ? 'selected' : '') ?>>Древние</option>
+						<option value="1" {{ this.user.race == 1 ? 'selected' : '' }}>Конфедерация</option>
+						<option value="2" {{ this.user.race == 2 ? 'selected' : '' }}>Бионики</option>
+						<option value="3" {{ this.user.race == 3 ? 'selected' : '' }}>Сайлоны</option>
+						<option value="4" {{ this.user.race == 4 ? 'selected' : '' }}>Древние</option>
 					</select>
 				</td>
 				<td></td>
@@ -224,11 +220,12 @@
 	<th align="center">Очки</th>
 </tr>
 
-<? $i = 0; for (registry.reslist['allowed'][1] AS $id %}
+{% set i = 0 %}
+{% for id in registry.reslist['allowed'][3] %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? ($object[registry.resource[id]] + 1) : 0) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 1 ? (object[registry.resource[id]] + 1) : 0 }}" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -236,7 +233,8 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endfor; ?>
+	{% set i = i + 1 %}
+{% endfor %}
 
 <tr class="odd">
 	<td style="display: none;"></td>
@@ -292,11 +290,12 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; for (registry.reslist['allowed'][3] AS $id %}
+		{% set i = 0 %}
+		{% for id in registry.reslist['allowed'][3] %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? ($object[registry.resource[id]] + 1) : 0) ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 3 ? (object[registry.resource[id]] + 1) : 0 }}" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -304,7 +303,8 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endfor; ?>
+			{% set i = i + 1 %}
+		{% endfor %}
 		<tr class="even">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -359,32 +359,36 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; for (registry.reslist['tech'] AS $id %}
-	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
-		<td style="display: none;">{{ id }}</td>
-		<td class="title">{{ _text('tech', id) }}</td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[registry.resource[id]] + 1) ?>" title=""></td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0с</td>
-		<td align="center">0</td>
-	</tr>
-<? $i++; endfor; ?>
-{% for id in registry.reslist['tech_f'] %}
-	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
-		<td style="display: none;">{{ id }}</td>
-		<td class="title">{{ _text('tech', id) }}</td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($user[registry.resource[id]] + 1) ?>" title=""></td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0</td>
-		<td align="center">0с</td>
-		<td align="center">0</td>
-	</tr>
-<? $i++; endfor; ?>
+	{% set i = 0 %}
+	{% for id in registry.reslist['tech'] %}
+		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<td style="display: none;">{{ id }}</td>
+			<td class="title">{{ _text('tech', id) }}</td>
+			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] + 1 }}" title=""></td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0с</td>
+			<td align="center">0</td>
+		</tr>
+		{% set i = i + 1 %}
+	{% endfor %}
+	{% set i = 0 %}
+	{% for id in registry.reslist['tech_f'] %}
+		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<td style="display: none;">{{ id }}</td>
+			<td class="title">{{ _text('tech', id) }}</td>
+			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] + 1 }}" title=""></td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0</td>
+			<td align="center">0с</td>
+			<td align="center">0</td>
+		</tr>
+		{% set i = i + 1 %}
+	{% endfor %}
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="1" class="border-n">Итого</td>
@@ -439,7 +443,8 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; for (registry.reslist['fleet'] AS $id %}
+		{% set i = 0 %}
+		{% for id in registry.reslist['fleet'] %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -451,7 +456,8 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endfor; ?>
+			{% set i = i + 1 %}
+		{% endfor %}
 		<tr class="odd">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -506,7 +512,8 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; for (registry.reslist['defense'] AS $id %}
+		{% set i = 0 %}
+		{% for id in registry.reslist['defense'] %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
@@ -518,7 +525,8 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endfor; ?>
+			{% set i = i + 1 %}
+		{% endfor %}
 		<tr class="odd">
 			<td style="display: none;"></td>
 			<td colspan="1" class="border-n">Итого</td>
@@ -583,11 +591,12 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; for (registry.reslist['allowed'][1] AS $id %}
+{% set i = 0 %}
+{% for id in registry.reslist['allowed'][1] %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 1 ? $object[registry.resource[id]] : 0) ?>" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 1 ? object[registry.resource[id]] : 0) }}" title=""></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -596,7 +605,8 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endfor; ?>
+	{% set i = i + 1 %}
+{% endfor %}
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="2" class="border-n">Итого</td>
@@ -652,11 +662,12 @@
 			<th align="center">Время</th>
 			<th align="center">Очки</th>
 		</tr>
-		<? $i = 0; for (registry.reslist['allowed'][3] AS $id %}
+		{% set i = 0 %}
+		{% for id in registry.reslist['allowed'][3] %}
 			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
-				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="<?=($object['planet_type'] == 3 ? $object[registry.resource[id]] : 0) ?>" title=""></td>
+				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 3 ? object[registry.resource[id]] : 0 }}" title=""></td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 				<td align="center">0</td>
 				<td align="center">0</td>
@@ -665,7 +676,8 @@
 				<td align="center">0с</td>
 				<td align="center">0</td>
 			</tr>
-		<? $i++; endfor; ?>
+		{% set i = i + 1 %}
+		{% endfor %}
 		<tr class="even">
 			<td style="display: none;"></td>
 			<td colspan="2" class="border-n">Итого</td>
@@ -721,7 +733,8 @@
 	<th align="center">Время</th>
 	<th align="center">Очки</th>
 </tr>
-<? $i = 0; for (registry.reslist['tech'] AS $id %}
+{% set i = 0 %}
+{% for id in registry.reslist['tech'] %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
@@ -734,8 +747,9 @@
 		<td align="center">0с</td>
 		<td align="center">0</td>
 	</tr>
-<? $i++; endfor; ?>
-	{% for registry.reslist['tech_f'] AS $id %}
+	{% set i = i + 1 %}
+{% endfor %}
+	{% for id in registry.reslist['tech_f'] %}
 		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
 			<td style="display: none;">{{ id }}</td>
 			<td class="title">{{ _text('tech', id) }}</td>
@@ -748,7 +762,8 @@
 			<td align="center">0с</td>
 			<td align="center">0</td>
 		</tr>
-	<? $i++; endfor; ?>
+	{% set i = i + 1 %}
+{% endfor %}
 <tr class="odd">
 	<td style="display: none;"></td>
 	<td colspan="2" class="border-n">Итого</td>
@@ -799,17 +814,17 @@
 				<td colspan="4">
 					<select id="tech-types-select" name="tech-types-select" class="ui-state-default ui-corner-all ui-input" title="">
 						<optgroup label="Постройки (планета)">
-							{% for registry.reslist['allowed'][1] AS $id %}
+							{% for id in registry.reslist['allowed'][1] %}
 								<option value="{{ id }}">{{ _text('tech', id) }}</option>
 							{% endfor %}
 						</optgroup>
 						<optgroup label="Постройки (луна)">
-							{% for registry.reslist['allowed'][3] AS $id %}
+							{% for id in registry.reslist['allowed'][3] %}
 								<option value="{{ id }}">{{ _text('tech', id) }}</option>
 							{% endfor %}
 						</optgroup>
 						<optgroup label="Исследования">
-							{% for registry.reslist['tech'] AS $id %}
+							{% for id in registry.reslist['tech'] %}
 								<option value="{{ id }}">{{ _text('tech', id) }}</option>
 							{% endfor %}
 						</optgroup>

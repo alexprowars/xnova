@@ -1,7 +1,7 @@
-{% if msg %}<?= $msg ?>{% endif %}
+{% if msg %}{{ msg }}{% endif %}
 <form action="{{ url('messages/write/'~id.'/') }}" method="post" {% if isPopup %}class="popup"{% endif %}>
 	<table class="table form-group">
-		{% if (!$isPopup %}
+		{% if isPopup is false %}
 		<tr>
 			<td class="c" colspan="2">Отправка сообщения</td>
 		</tr>
@@ -13,7 +13,7 @@
 			<th class="p-a-0">
 				<div id="editor"></div>
 				<script type="text/javascript">edToolbar('text');</script>
-				<textarea name="text" id="text" rows="15" onkeypress="if((event.ctrlKey) and ((event.keyCode==10)||(event.keyCode==13))) submit()" title="">{{ text }}</textarea></th>
+				<textarea name="text" id="text" rows="15" onkeypress="if((event.ctrlKey) && ((event.keyCode==10)||(event.keyCode==13))) submit()" title="">{{ text }}</textarea></th>
 		</tr>
 		<tr>
 			<th colspan="2"><input type="submit" value="Отправить"></th>

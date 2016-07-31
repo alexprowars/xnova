@@ -63,6 +63,12 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('replace', 'str_replace');
 	$compiler->addFunction('preg_replace', 'preg_replace');
 	$compiler->addFunction('md5', 'md5');
+	$compiler->addFunction('min', 'min');
+	$compiler->addFunction('max', 'max');
+	$compiler->addFunction('is_email', 'is_email');
+	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
+	$compiler->addFunction('rand', 'mt_rand');
+	$compiler->addFunction('implode', 'implode');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
 		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
@@ -82,6 +88,18 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('isTechnologieAccessible', function($arguments)
 	{
 		return '\Xnova\Building::IsTechnologieAccessible(' . $arguments . ')';
+	});
+	$compiler->addFunction('morph', function($arguments)
+	{
+		return '\Xnova\Helpers::morph(' . $arguments . ')';
+	});
+	$compiler->addFunction('colorNumber', function($arguments)
+	{
+		return '\Xnova\Helpers::colorNumber(' . $arguments . ')';
+	});
+	$compiler->addFunction('planetLink', function($arguments)
+	{
+		return 'BuildPlanetAdressLink(' . $arguments . ')';
 	});
 });
 

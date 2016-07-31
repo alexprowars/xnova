@@ -53,7 +53,7 @@
 			</tr>
 		</table>
 	</form>
-{% elseif ($parse['type'] == 'cristal' %}
+{% elseif parse['type'] == 'cristal' %}
 	<script type="text/javascript">
 		function calcul()
 		{
@@ -108,7 +108,7 @@
 			</tr>
 		</table>
 	</form>
-{% elseif ($parse['type'] == 'deut' %}
+{% elseif parse['type'] == 'deut' %}
 	<script type="text/javascript">
 		function calcul()
 		{

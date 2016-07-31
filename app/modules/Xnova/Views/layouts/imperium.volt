@@ -112,7 +112,7 @@
 		<tr>
 			<th>Спутники</th>{{ parse['file_solar2_p'] }}</tr>
 		<tr>
-			<th colspan="<?=($parse['mount'] - 1) ?>">Кредиты</th>
+			<th colspan="{{ parse['mount'] - 1 }}">Кредиты</th>
 			<th><span class="neutral">{{ parse['file_kredits'] }}</span></th>
 		</tr>
 		<tr>

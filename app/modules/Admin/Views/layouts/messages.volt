@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <form action="<?=$this->url->get('admin/messages/') ?>" method="post" class="form-horizontal">
 	<input type="hidden" name="curr" value="<?=$parse['mlst_data_page'] ?>">
 	<input type="hidden" name="pmax" value="<?=$parse['mlst_data_pagemax'] ?>">

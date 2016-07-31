@@ -7,16 +7,16 @@
 		<th><a href="{{ url('alliance/search/') }}">Поиск альянса</a></th>
 	</tr>
 </table>
-{% if (count($parse['list']) > 0 %}
+{% if parse['list']|length > 0 %}
 <br>
 <table class="table">
 	<tr>
 		<td class="c" colspan="2">Ваши заявки</td>
 	</tr>
-	{% for parse['list'] AS $list %}
+	{% for list in parse['list'] %}
 	<tr>
 		<th width="70%">{{ list[2] }} [{{ list[1] }}]</th>
-		<th>{{ game.datezone("d.m.Y H:i", $list[3]) }}</th>
+		<th>{{ game.datezone("d.m.Y H:i", list[3]) }}</th>
 	</tr>
 	<tr>
 		<th colspan="2">
@@ -26,7 +26,7 @@
 	{% endfor %}
 </table>
 {% endif %}
-{% if (count($parse['allys']) %}
+{% if parse['allys']|length > 0 %}
 	<br>
 	<table class="table">
 		<tr>
@@ -35,13 +35,15 @@
 			<td class="c">Игроки</td>
 			<td class="c">Очки</td>
 		</tr>
-		<? $i = 0; for ($parse['allys'] AS $list): $i++; ?>
-		<tr>
-			<th>{{ i }}</th>
-			<th><a href="{{ url('alliance/info/'~list['id']~'/') }}">{{ list['name'] }} [{{ list['tag'] }}]</a></th>
-			<th>{{ list['members'] }}</th>
-			<th>{{ list['total_points'] }}</th>
-		</tr>
+		{% set i = 0 %}
+		{% for list in parse['allys'] %}
+			{% set i = i + 1 %}
+			<tr>
+				<th>{{ i }}</th>
+				<th><a href="{{ url('alliance/info/'~list['id']~'/') }}">{{ list['name'] }} [{{ list['tag'] }}]</a></th>
+				<th>{{ list['members'] }}</th>
+				<th>{{ list['total_points'] }}</th>
+			</tr>
 		{% endfor %}
 	</table>
 {% endif %}

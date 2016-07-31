@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <table class="table">
 	<tr>
 		<td class="b" colspan="2">Версия сервера: <strong><?=$parse['adm_ov_data_yourv'] ?></strong></td>

@@ -27,7 +27,7 @@
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {
-        (w[c] = w[c] or []).push(function() {
+        (w[c] = w[c] || []).push(function() {
             try {
                 w.yaCounter25961143 = new Ya.Metrika({
                     id:25961143,

@@ -24,7 +24,7 @@
 						{% endfor %}
 					</ul>
 					<div style="color:orange;">
-						Награда: <?=implode(', ', parse['rewd']) ?>
+						Награда: {{ implode(', ', parse['rewd']) }}
 					</div>
 				</div>
 			</div>

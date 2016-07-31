@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="util-btn-margin-bottom-5">
 	<a href="<?=$this->url->get('admin/errors/clear/') ?>">
 		<button type="button" class="btn blue btn-sm"><?=_getText('adm_er_clear') ?></button>

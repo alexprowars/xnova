@@ -2,9 +2,9 @@
 	<tr>
 		<td class="c" colspan="2">Ваши военные базы</td>
 	</tr>
-	{% for parse['list'] AS $p %}
+	{% for p in parse['list'] %}
 		<tr>
-			<th>{{ p['name'] }} <?=\Xnova\Helpers::BuildPlanetAdressLink($p) ?> </th>
+			<th>{{ p['name'] }} {{ planetLink(p) }} </th>
 			<th width="200">
 				{% if p['id_ally'] == 0 %}
 					<input type="button" value="Сделать альянсовой" onclick="window.confirm('Вы действительно хотите сделать эту планету альянсовой? Данное действие необратимо!') ? window.location.href='{{ url('alliance/admin/edit/planets/ally/'~p['id']~'') }}' : false">
@@ -19,7 +19,7 @@
 	</tr>
 	<tr>
 		<th colspan="2">
-			Доступно кредитов: <span class="<?=($parse['need'] > $parse['credits'] ? 'negative' : 'positive') ?>">{{ parse['credits'] }}</span>
+			Доступно кредитов: <span class="{{ parse['need'] > parse['credits'] ? 'negative' : 'positive' }}">{{ parse['credits'] }}</span>
 			<br>Необходимо кредитов: {{ parse['need'] }}
 			<br><br>
 			<ul>

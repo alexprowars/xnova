@@ -63,25 +63,6 @@
 	</tr>
 </table>
 
-<?
-
-	$params['application_key'] = $config.ok->public;
-	$params['format'] = 'JSON';
-	$params['uid'] = $_SESSION['OKAPI']['logged_user_id'];
-	$params['message'] = 'Я прошел обучение в Звёздной Империи. Теперь настало время воевать!';
-
-	ksort($params);
-
-	$sig = '';
-
-	for($params as $k => $v)
-		$sig .= $k.'='~v;
-
-	$sig .= $config.ok->private;
-
-	$params['sig'] = md5($sig);
-?>
-
 <!--<input type="button" onclick="FAPI.UI.showConfirmation('stream.publish', 'Я прошел обучение в Звёздной Империи. Теперь настало время воевать!', '{{ params['sig'] }}');" value="Show Confirmation">-->
 
 <script type="text/javascript">

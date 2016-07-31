@@ -8,7 +8,7 @@
 		<div class="c col-sm-2 hidden-xs-down middle">Очки на игрока</div>
 		<div class="c hidden-sm-up col-xs-4 middle">Очки / Очки на игрока</div>
 	</div>
-	{% for stat AS $s %}
+	{% for s in stat %}
 		<div class="row">
 			<div class="th col-sm-1 col-xs-2">
 				{{ s['rank'] }}

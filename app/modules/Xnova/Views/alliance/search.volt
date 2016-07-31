@@ -12,13 +12,13 @@
 	</table>
 </form>
 
-{% if (isset($parse['result']) and count($parse['result']) > 0 %}
+{% if parse['result'] is defined and parse['result']|length > 0 %}
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Найденые альянсы:</td>
 		</tr>
-		{% for parse['result'] AS $r %}
+		{% for r in parse['result'] %}
 			<tr>
 				<th class="text-xs-center">
 					{{ r['tag'] }}

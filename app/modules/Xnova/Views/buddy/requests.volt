@@ -10,10 +10,10 @@
 		<td class="c">Текст</td>
 		<td class="c">&nbsp;</td>
 	</tr>
-	{% if (count($parse['list']) %}
-		{% for parse['list'] AS $id => $list %}
+	{% if parse['list']|length %}
+		{% for id, list in parse['list'] %}
 			<tr>
-				<th width="20"><?=($id + 1) ?></th>
+				<th width="20">{{ id + 1 }}</th>
 				<th><a href="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</a></th>
 				<th>{{ list['ally'] }}</th>
 				<th><a href="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</a></th>

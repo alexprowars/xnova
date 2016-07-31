@@ -1,9 +1,3 @@
-<?
-/**
- * @var $list array
- * @var $pagination string
- */
-?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-advance">
 		<thead>

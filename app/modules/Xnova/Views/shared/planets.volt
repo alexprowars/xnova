@@ -8,15 +8,15 @@
 		<div class="planet-sidebar planetList">
 			<div class="list ">
 				{% for i, item in planet['list'] %}
-					<div class="planet type_{{ item['planet_type'] }} <?=($planet['current'] == $item['id'] ? 'current' : '') ?>">
+					<div class="planet type_{{ item['planet_type'] }} {{ planet['current'] == item['id'] ? 'current' : '' }}">
 						<a href="javascript:" onclick="changePlanet({{ item['id'] }})" title="{{ item['name'] }}">
 							<img src="{{ url.getBaseUri() }}assets/images/planeten/small/s_{{ item['image'] }}.jpg" height="40" width="40" alt="{{ item['name'] }}">
 						</a>
-						<span class="hidden-md-up"><?=\Xnova\Helpers::BuildPlanetAdressLink($item) ?></span>
+						<span class="hidden-md-up">{{ planetLink(item) }}</span>
 						<div class="hidden-sm-down">
 							{{ item['name'] }}
 							<br>
-							<?=\Xnova\Helpers::BuildPlanetAdressLink($item) ?>
+							{{ planetLink(item) }}
 						</div>
 						<div class="clear"></div>
 					</div>

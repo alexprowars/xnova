@@ -7,14 +7,14 @@
 				</div>
 				{% for build in parse['buildlist'] %}
 					<div class="col-md-6 col-xs-12">
-						<div class="viewport buildings {% if (!$build['access'] %}shadow{% endif %}">
-							{% if (!$build['access'] %}
-								<div class="notAvailable tooltip" data-content="Требования:<br><?=str_replace('"', '\'', \Xnova\Building::getTechTree($build['i'], user, planet)) ?>" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}/', 600)"><span>недоступно</span></div>
+						<div class="viewport buildings {% if build['access'] is false %}shadow{% endif %}">
+							{% if build['access'] is false %}
+								<div class="notAvailable tooltip" data-content="Требования:<br>{{ replace('"', "'", getTechTree(build['i'], this.user, this.planet)) }}" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}/', 600)"><span>недоступно</span></div>
 							{% endif %}
 
 							<div class="img">
 								<a href="javascript:;" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600)">
-									<img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ build['i'] }}.gif" alt='{{ _text('tech', build['i']) }}' align="top" width="120" height=120 class="tooltip" data-content='<center>{{ _text('descriptions', build['i']) ?></center>' data-tooltip-width="150">
+									<img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ build['i'] }}.gif" alt='{{ _text('tech', build['i']) }}' align="top" width="120" height=120 class="tooltip" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
 								</a>
 
 								<div class="overContent">
@@ -22,11 +22,11 @@
 								</div>
 							</div>
 							<div class="title">
-								<a href="?{{ url('info/'~build['i']~'/') }}">{{ _text('tech', build['i']) }}</a> (<span class="<?=($build['count'] > 0 ? 'positive' : 'negative') }}">{{ pretty_number(build['count']) ?></span>)
+								<a href="?{{ url('info/'~build['i']~'/') }}">{{ _text('tech', build['i']) }}</a> (<span class="{{ build['count'] > 0 ? 'positive' : 'negative' }}">{{ pretty_number(build['count']) }}</span>)
 							</div>
 							<div class="actions">
 								{% if build['access'] %}
-									Время: <?=\Xnova\Helpers::pretty_time($build['time']); ?>
+									Время: {{ pretty_time(build['time']) }}
 									{% if build['add'] != '' %}
 										{{ build['add'] }}
 									{% else %}
@@ -38,7 +38,7 @@
 											<center><font color="red">Вы можете построить только {{ build['max'] }} постройку данного типа</font></center>
 										{% else %}
 											<br>
-											<a href=javascript:setMaximum({{ build['i'] }},{{ build['max']?>);>Максимум: <font color="lime">{{ build['max']?></font></a>
+											<a href=javascript:setMaximum({{ build['i'] }},{{ build['max'] }});>Максимум: <font color="lime">{{ build['max'] }}</font></a>
 											<div class="buildmax">
 												<input type="number" name="fmenge[{{ build['i'] }}]" alt="{{ _text('tech', build['i']) }}" style="max-width: 80px" maxlength="5" value="" placeholder="0">
 											</div>

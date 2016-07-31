@@ -22,7 +22,7 @@
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;">
 				<span id="m1"></span>
-				<script type="text/javascript">Text('<?=str_replace(["\r\n", "\n", "\r"], '', stripslashes($parse['description'])) ?>', 'm1');</script>
+				<script type="text/javascript">Text('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');</script>
 			</td>
 		</tr>
 	{% endif %}
@@ -30,7 +30,7 @@
 		<tr><th>Сайт альянса:</th><th><a href="{{ parse['web'] }}" target="_blank">{{ parse['web'] }}</a></th></tr>
 	{% endif %}
 
-	{% if (isset($userId) and $userId != 0 and $parse['request'] %}
+	{% if userId is defined and userId != 0 and parse['request'] %}
 		<tr><th>Вступление</th><th><a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}">Нажмите сюда для подачи заявки</a></th></tr>
 	{% endif %}
 </table>

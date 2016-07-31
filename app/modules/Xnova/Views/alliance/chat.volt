@@ -59,9 +59,11 @@
 <div class="separator"></div>
 <script type="text/javascript">
 	var messages = new Array(20);
-	{% if parse['messages']|length > 0): for ($parse['messages'] AS $m %}
-		messages['m{{ m['id'] }}'] = '<?=str_replace(["\r\n", "\n", "\r"], '', addslashes(stripslashes($m['message']))) ?>';
-	<? endfor;  endif; ?>
+	{% if parse['messages']|length > 0 %}
+		{% for m in parse['messages'] %}
+			messages['m{{ m['id'] }}'] = '{{ replace(["\r\n", "\n", "\r"], '', (m['message']|stripslashes)|slashes) }}';
+		{% endfor %}
+	{% endif %}
 	{% if parse['parser'] %}
 		$(document).ready(function(){ShowText()});
 	{% endif %}

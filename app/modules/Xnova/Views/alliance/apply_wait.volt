@@ -2,10 +2,10 @@
 	<tr>
 		<td class="c" colspan="2">Ваши заявки</td>
 	</tr>
-	{% for parse['list'] AS $list %}
+	{% for list in parse['list'] %}
 	<tr>
 		<th width="70%">{{ list[2] }} [{{ list[1] }}]</th>
-		<th>{{ game.datezone("d.m.Y H:i", $list[3]) }}</th>
+		<th>{{ game.datezone("d.m.Y H:i", list[3]) }}</th>
 	</tr>
 	<tr>
 		<th colspan="2">

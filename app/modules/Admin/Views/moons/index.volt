@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="util-btn-margin-bottom-5">
 	<a href="<?=$this->url->get('admin/moons/add/') ?>">
 		<button type="button" class="btn blue btn-sm">Создать</button>

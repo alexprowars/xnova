@@ -16,8 +16,8 @@
 			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r9.png width="16"></th>
 			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r10.gif width="16"></th>
 		</tr>
-		{% if (count($parse['list']) > 0 %}
-			{% for parse['list'] AS $r %}
+		{% if parse['list']|length > 0 %}
+			{% for r in parse['list'] %}
 				<tr>
 					<th>{{ r['delete'] }}<input type="hidden" name="id[]" value="{{ r['a'] }}"></th>
 					<th>&nbsp;{{ r['r0'] }}&nbsp;</th>

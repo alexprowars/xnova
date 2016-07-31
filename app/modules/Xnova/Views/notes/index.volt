@@ -12,8 +12,8 @@
 			<td class="c">{{ _text('Subject') }}</td>
 			<td class="c">{{ _text('Size') }}</td>
 		</tr>
-		{% if (isset($parse['list']) and count($parse['list']) > 0 %}
-			{% for parse['list'] AS $list %}
+		{% if parse['list'] is defined and parse['list']|length > 0 %}
+			{% for list in parse['list'] %}
 				<tr>
 					<th width="20"><input name="delmes{{ list['id'] }}" value="y" type="checkbox" title=""></th>
 					<th width="150">{{ list['time'] }}</th>

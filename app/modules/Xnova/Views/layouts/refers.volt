@@ -2,17 +2,21 @@
 	<tr>
 		<td class="c" colspan="3">Привлечённые игроки</td>
 	<tr>
-	{% if (count($parse['ref']) > 0 %}
+	{% if parse['ref']|length > 0 %}
 		<tr>
 			<td class="c">Ник</td>
 			<td class="c">Дата регистрации</td>
 			<td class="c">Уровень развития</td>
 		</tr>
-		{% for parse['ref'] AS $list %}
+		{% for list in parse['ref'] %}
 			<tr>
-				<th>{% if game.datezone("d", $list['create_time']) >= 15)
-					echo '+&nbsp;'; ?><a href="{{ url('players/'~list['id']~'/') }}">{{ list['username'] }}</a></th>
-				<th>{{ game.datezone("d.m.Y H:i", $list['create_time']) }}</th>
+				<th>
+					{% if game.datezone("d", list['create_time']) >= 15) %}
+						+
+					{% endif %}
+					<a href="{{ url('players/'~list['id']~'/') }}">{{ list['username'] }}</a>
+				</th>
+				<th>{{ game.datezone("d.m.Y H:i", list['create_time']) }}</th>
 				<th>П:{{ list['lvl_minier'] }}, В:{{ list['lvl_raid'] }}</th>
 			</tr>
 		{% endfor %}
@@ -23,7 +27,7 @@
 	{% endif %}
 </table>
 
-{% if (isset($parse['you']) %}
+{% if parse['you'] is defined %}
 	<br><br>
 	<table class="table">
 		<tr>
@@ -64,16 +68,16 @@
 				<br><br>
 				HTML код:
 				<br>
-				<input style="width:100%" type="text" value="<?=htmlspecialchars('<a href="//uni'~config.game.universe.'.xnova.su/?'~userId.'"><img src="http://uni'~config.game.universe.'.xnova.su/userbar'~userId.'.jpg"></a>') ?>" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('<a href="//uni'~config.game.universe~'.xnova.su/?'~userId~'"><img src="http://uni'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg"></a>') }}" title="">
 				<div class="separator"></div>
 				BB код:
-				<input style="width:100%" type="text" value="<?=htmlspecialchars('[url=http://uni'~config.game.universe.'.xnova.su/?'~userId.'][img]http://uni'~config.game.universe.'.xnova.su/userbar'~userId.'.jpg[/img][/url]') ?>" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('[url=http://uni'~config.game.universe~'.xnova.su/?'~userId~'][img]http://uni'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg[/img][/url]') }}" title="">
 			</th>
 		</tr>
 	</table>
 {% endif %}
 
-{% if config.view.get('socialIframeView', 0) == 1 and $_SERVER['SERVER_NAME'] == 'ok1.xnova.su' %}
+{% if config.view.get('socialIframeView', 0) == 1 and request.getServer('SERVER_NAME') == 'ok1.xnova.su' %}
 	<br><br>
 	<table width="100%">
 		<tr>

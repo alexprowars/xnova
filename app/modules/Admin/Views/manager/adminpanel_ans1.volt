@@ -1,8 +1,3 @@
-<?
-/**
- * @var $parse array
- */
-?>
 <div class="row">
 	<div class="col-md-6">
 		<table class="table table-striped table-hover table-advance">

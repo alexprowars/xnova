@@ -1,4 +1,4 @@
-{% if (isset($message) %}
+{% if message is defined %}
 	<div class="error">{{ message }}</div>
 {% endif %}
 <form action="{{ url('index/remind/') }}" method="post" id="lostForm" class="form">
@@ -26,7 +26,7 @@
 					dataType: 'json',
 					success: function (data)
 					{
-						if (data.status == 1 and data.data.redirect !== undefined)
+						if (data.status == 1 && data.data.redirect !== undefined)
 							window.location.href = data.data.redirect;
 						else
 							$('#windowDialog').html(data.html);
