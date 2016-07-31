@@ -222,7 +222,7 @@
 
 {% set i = 0 %}
 {% for id in registry.reslist['allowed'][3] %}
-	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+	<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 1 ? (object[registry.resource[id]] + 1) : 0 }}" title=""></td>
@@ -292,7 +292,7 @@
 		</tr>
 		{% set i = 0 %}
 		{% for id in registry.reslist['allowed'][3] %}
-			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 3 ? (object[registry.resource[id]] + 1) : 0 }}" title=""></td>
@@ -361,7 +361,7 @@
 </tr>
 	{% set i = 0 %}
 	{% for id in registry.reslist['tech'] %}
-		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+		<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 			<td style="display: none;">{{ id }}</td>
 			<td class="title">{{ _text('tech', id) }}</td>
 			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] + 1 }}" title=""></td>
@@ -376,7 +376,7 @@
 	{% endfor %}
 	{% set i = 0 %}
 	{% for id in registry.reslist['tech_f'] %}
-		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+		<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 			<td style="display: none;">{{ id }}</td>
 			<td class="title">{{ _text('tech', id) }}</td>
 			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] + 1 }}" title=""></td>
@@ -445,7 +445,7 @@
 		</tr>
 		{% set i = 0 %}
 		{% for id in registry.reslist['fleet'] %}
-			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object[registry.resource[id]] }}" title=""></td>
@@ -514,7 +514,7 @@
 		</tr>
 		{% set i = 0 %}
 		{% for id in registry.reslist['defense'] %}
-			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 				<td style="display: none;">{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object[registry.resource[id]] }}" title=""></td>
@@ -593,10 +593,10 @@
 </tr>
 {% set i = 0 %}
 {% for id in registry.reslist['allowed'][1] %}
-	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+	<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
-		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 1 ? object[registry.resource[id]] : 0) }}" title=""></td>
+		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 1 ? object[registry.resource[id]] : 0 }}" title=""></td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="0" title=""></td>
 		<td align="center">0</td>
 		<td align="center">0</td>
@@ -664,7 +664,7 @@
 		</tr>
 		{% set i = 0 %}
 		{% for id in registry.reslist['allowed'][3] %}
-			<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+			<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 				<td style="display: none;">100{{ id }}</td>
 				<td class="title">{{ _text('tech', id) }}</td>
 				<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ object['planet_type'] == 3 ? object[registry.resource[id]] : 0 }}" title=""></td>
@@ -735,7 +735,7 @@
 </tr>
 {% set i = 0 %}
 {% for id in registry.reslist['tech'] %}
-	<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+	<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('tech', id) }}</td>
 		<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] }}" title=""></td>
@@ -750,7 +750,7 @@
 	{% set i = i + 1 %}
 {% endfor %}
 	{% for id in registry.reslist['tech_f'] %}
-		<tr class="{{ i%2 == 0 ? 'odd' : 'even') }}">
+		<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 			<td style="display: none;">{{ id }}</td>
 			<td class="title">{{ _text('tech', id) }}</td>
 			<td class="input" align="center"><input type="text" class="ui-state-default ui-corner-all ui-input level-input ui-input-margin" value="{{ user[registry.resource[id]] }}" title=""></td>

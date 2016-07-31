@@ -27,9 +27,9 @@
 					{{ pretty_number(item.getTotalShips()) }}
 				</a>
 			</th>
-			<th>{{ item->getStartAdressLink() }}</th>
+			<th>{{ item.getStartAdressLink() }}</th>
 			<th>{{ game.datezone("d.m H:i:s", item.start_time) }}</th>
-			<th>{{ item->getTargetAdressLink() }}</th>
+			<th>{{ item.getTargetAdressLink() }}</th>
 			<th>{{ game.datezone("d.m H:i:s", item.end_time) }}</th>
 			<th>
 				<div id="time_0" class="positive">{{ pretty_time(floor(item.end_time + 1 - time())) }}</div>

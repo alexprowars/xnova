@@ -4,6 +4,7 @@ use Phalcon\DiInterface;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Loader;
 use Friday\Core\Auth\Auth;
+use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\View\Engine\Volt;
 use Xnova\Models\User;
 
@@ -55,6 +56,21 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 {
 	$compiler = $volt->getCompiler();
 
+	$compiler->addFunction('_text', function($arguments)
+	{
+		return '_getText(' . $arguments . ')';
+	});
+
+	$compiler->addFunction('plural', function($arguments)
+	{
+		return '\Friday\Core\Helpers::getPlural(' . $arguments . ')';
+	});
+
+	$compiler->addFilter('round', 'round');
+	$compiler->addFilter('ceil', 'ceil');
+	$compiler->addFunction('number_format', 'number_format');
+	$compiler->addFunction('in_array', 'in_array');
+
 	$compiler->addFunction('allowMobile', function($arguments)
 	{
 		return 'class_exists("\Xnova\Helpers") && \Xnova\Helpers::allowMobileVersion(' . $arguments . ')';
@@ -99,8 +115,38 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	});
 	$compiler->addFunction('planetLink', function($arguments)
 	{
-		return 'BuildPlanetAdressLink(' . $arguments . ')';
+		return '\Xnova\Helpers::BuildPlanetAdressLink(' . $arguments . ')';
 	});
+});
+
+/** @noinspection PhpUnusedParameterInspection */
+$eventsManager->attach("dispatch:beforeException", function($event, $dispatcher, $exception)
+{
+	/**
+	 * @var \Phalcon\Mvc\Dispatcher $dispatcher
+	 * @var \Phalcon\Mvc\Dispatcher\Exception $exception
+	 */
+	switch ($exception->getCode())
+	{
+		case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+		case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+
+			if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
+				return true;
+
+			$dispatcher->forward(
+				[
+					'module'		=> 'xnova',
+					'controller'	=> 'error',
+					'action'		=> 'notFound',
+					'namespace'		=> 'Xnova\Controllers'
+				]
+			);
+
+			return false;
+	}
+
+	return true;
 });
 
 define('VERSION', '3.0.3');

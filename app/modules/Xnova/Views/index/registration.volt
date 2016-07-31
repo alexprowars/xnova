@@ -2,7 +2,7 @@
 	<div class="error">{{ message }}</div>
 {% endif %}
 <script src='//www.google.com/recaptcha/api.js'></script>
-<form action="{{ url('index/registration/') }}" method="post" id="regForm" class="form">
+<form action="{{ url('registration/') }}" method="post" id="regForm" class="form">
 	<table class="table">
 		<tbody>
 		<tr>

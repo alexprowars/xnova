@@ -7,6 +7,7 @@
  */
 
 use Friday\Core\Lang;
+use Friday\Core\Modules;
 use Friday\Core\Options;
 use Xnova\Missions\Mission;
 use Xnova\UpdateStatistics;
@@ -15,6 +16,8 @@ class UpdateTask extends ApplicationTask
 {
 	public function onlineAction ()
 	{
+		Modules::init('xnova');
+
 		$online = $this->db->fetchColumn("SELECT COUNT(*) as online FROM game_users WHERE onlinetime > '" . (time() - $this->config->game->onlinetime * 60) . "'");
 
 		Options::set('users_online', $online);
@@ -24,12 +27,16 @@ class UpdateTask extends ApplicationTask
 
 	public function statAction ()
 	{
+		Modules::init('xnova');
+
+		$this->game->loadGameVariables();
+
 		$start = microtime(true);
 
 		$statUpdate = new UpdateStatistics();
 
-		$statUpdate->inactiveUsers();
-		$statUpdate->deleteUsers();
+		//$statUpdate->inactiveUsers();
+		//$statUpdate->deleteUsers();
 		$statUpdate->clearOldStats();
 		$statUpdate->update();
 		$statUpdate->addToLog();
@@ -50,6 +57,12 @@ class UpdateTask extends ApplicationTask
 			if ($load[0] > 3)
 				die('Server too busy. Please try again later.');
 		}
+
+		Modules::init('xnova');
+
+		$this->game->loadGameVariables();
+
+		include_once(ROOT_PATH."/app/config/battle.php");
 
 		define('MAX_RUNS', 12);
 		define('TIME_LIMIT', 60);
@@ -103,7 +116,7 @@ class UpdateTask extends ApplicationTask
 
 					$missionName = $missionObjPattern[$fleetRow->mission];
 
-					$missionName = 'App\Missions\\'.$missionName;
+					$missionName = 'Xnova\Missions\\'.$missionName;
 
 					/**
 					 * @var $mission Mission

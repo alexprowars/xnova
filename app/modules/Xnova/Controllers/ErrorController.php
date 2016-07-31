@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Modules;
 use Xnova\Controller;
 
 /**
@@ -20,14 +21,14 @@ class ErrorController extends Controller
 {
 	public function initialize ()
 	{
+		Modules::init('xnova');
+
 		parent::initialize();
 
 		if (!$this->auth->isAuthorized())
 		{
-			$css = $this->assets->collection('css');
-			
-			$css->addCss('assets/css/bootstrap.css');
-			$css->addCss('assets/css/style.css');
+			$this->assets->addCss('assets/css/bootstrap.css');
+			$this->assets->addCss('assets/css/style.css');
 		}
 	}
 

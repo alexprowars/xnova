@@ -17,9 +17,6 @@ use Xnova\Controller;
 
 /**
  * @Route("/")
- * @Route("/registration/")
- * @Route("/remind/")
- * @Route("/login/")
  */
 class IndexController extends Controller
 {
@@ -55,6 +52,9 @@ class IndexController extends Controller
 		$this->tag->setTitle('Вход в игру');
 	}
 
+	/**
+	 * @Route("/registration/")
+	 */
 	public function registrationAction ()
 	{
 		Lang::includeLang('reg', 'xnova');
@@ -180,6 +180,9 @@ class IndexController extends Controller
 		}
 	}
 
+	/**
+	 * @Route("/remind/")
+	 */
 	public function remindAction ()
 	{
 		$message = '';
@@ -255,7 +258,7 @@ class IndexController extends Controller
 				$mail->Subject = 'Восстановление забытого пароля';
 
 				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".Options::get('site_title').".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
-				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/index/remind/?id=" . $inf['id'] . "&key=" . $key . "</a>";
+				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/remind/?id=" . $inf['id'] . "&key=" . $key . "</a>";
 
 				$mail->Body = $body;
 
@@ -271,6 +274,9 @@ class IndexController extends Controller
 		$this->view->setVar('message', $message);
 	}
 
+	/**
+	 * @Route("/login/")
+	 */
 	public function loginAction ()
 	{
 		$error = '';

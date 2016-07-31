@@ -6,6 +6,8 @@ if (!extension_loaded('phalcon'))
 if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 
+ini_set('apc.enable_cli', 1);
+
 try
 {
 	require_once(ROOT_PATH."/app/modules/Core/Classes/Initializations.php");

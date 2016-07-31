@@ -90,7 +90,7 @@ class PlayerGroup extends Iterable
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$_playerGroup = $this;
 
-		require(ROOT_PATH."app/classes/Battle/Views/playerGroup.html");
+		require(dirname(__DIR__)."/Views/playerGroup.html");
 
 		return ob_get_clean();
 	}

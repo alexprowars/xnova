@@ -11,7 +11,7 @@
 		{% for list in parse['ref'] %}
 			<tr>
 				<th>
-					{% if game.datezone("d", list['create_time']) >= 15) %}
+					{% if game.datezone("d", list['create_time']) >= 15 %}
 						+
 					{% endif %}
 					<a href="{{ url('players/'~list['id']~'/') }}">{{ list['username'] }}</a>

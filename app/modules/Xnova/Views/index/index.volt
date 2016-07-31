@@ -16,7 +16,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="lost-pass"><a id="lost-pass-link" href="javascript:;" onclick="showWindow('Восстановление пароля', '/index/remind/', (window.orientation !== undefined ? 300 : 400), 200);" title="Восстановление пароля">Забыли?</a></div>
+			<div class="lost-pass"><a id="lost-pass-link" href="javascript:;" onclick="showWindow('Восстановление пароля', '{{ url('remind/') }}', (window.orientation !== undefined ? 300 : 400), 200);" title="Восстановление пароля">Забыли?</a></div>
 			<div class="sm">
 				Войти с помощью:<br><br>
 				<script type="text/javascript" src="//ulogin.ru/js/ulogin.js"></script>
@@ -36,7 +36,7 @@
 			<p>Завоёвывайте планеты, покоряйте галактики, создайте нерушимый альянс сильнейших игроков!
 			Сойдитесь в неравной космической битве со своими противниками, окунувшись в зрелищный и захватывающий мир XNova!</p>
 
-			<div id="reg_button"><a href="javascript:;" onclick="showWindow('Регистрация', '/index/registration/', (window.orientation !== undefined ? 300 : 500), 400);">Регистрация</a></div>
+			<div id="reg_button"><a href="javascript:;" onclick="showWindow('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 500), 400);">Регистрация</a></div>
 			<div class="clear"></div>
 		</div>
 	</div>

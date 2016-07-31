@@ -1,7 +1,7 @@
 {% if message is defined %}
 	<div class="error">{{ message }}</div>
 {% endif %}
-<form action="{{ url('index/remind/') }}" method="post" id="lostForm" class="form">
+<form action="{{ url('remind/') }}" method="post" id="lostForm" class="form">
 	<table class="table">
 		<tr>
 			<th>Введите ваш Email, который вы указали при регистрации. При нажатии на кнопку "Получить пароль" на ваш e-mail будет выслана ссылка на новый пароль.</th>

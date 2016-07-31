@@ -52,6 +52,9 @@ class Controller extends PhalconController
 		if (self::$isInitialized)
 			return true;
 
+		if ($this->getDI()->has('game'))
+			new \Exception('game module not initialized');
+
 		self::$isInitialized = true;
 
 		if (function_exists('sys_getloadavg'))

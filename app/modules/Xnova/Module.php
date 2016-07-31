@@ -25,21 +25,24 @@ class Module extends Base implements ModuleDefinitionInterface
 
 	public function registerServices(DiInterface $di)
 	{
-		$view = $di->getShared('view');
+		if ($di->has('view'))
+		{
+			$view = $di->getShared('view');
 
-		$viewDirs = $view->getViewsDir();
+			$viewDirs = $view->getViewsDir();
 
-		if (is_null($viewDirs))
-			$viewDirs = [];
+			if (is_null($viewDirs))
+				$viewDirs = [];
 
-		if (!is_array($viewDirs))
-			$viewDirs = [$viewDirs];
+			if (!is_array($viewDirs))
+				$viewDirs = [$viewDirs];
 
-		$config = $di->getShared('config');
+			$config = $di->getShared('config');
 
-		$viewDirs[] = ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Xnova/Views';
+			$viewDirs[] = ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Xnova/Views';
 
-		$view->setViewsDir($viewDirs);
+			$view->setViewsDir($viewDirs);
+		}
 
 		$di->setShared('game', function ()
 		{

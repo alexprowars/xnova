@@ -90,6 +90,8 @@ trait Initializations
 		}
 
 		$di->set('router', $router);
+
+		return $router;
 	}
 
 	/**
@@ -165,7 +167,7 @@ trait Initializations
 		$di->remove('flash');
 
 		if (!$di->has('flashSession'))
-			return;
+			return null;
 
 		$flash = $di->getShared('flashSession');
 
@@ -175,6 +177,8 @@ trait Initializations
 			'warning' 	=> 'alert alert-warning',
 			'notice' 	=> 'alert alert-info',
 		]);
+
+		return $flash;
 	}
 
 	/**
@@ -183,9 +187,9 @@ trait Initializations
 	protected function initSession ($di)
 	{
 		if (!$this->_config->offsetExists('session') || !$this->_config->session->offsetExists('adapter'))
-			throw new Exception('No configuration for a session');
-
-		$sessionAdapter = 'Phalcon\Session\Adapter\\'.ucfirst($this->_config->session->adapter);
+			$sessionAdapter = 'Phalcon\Session\Adapter\Files';
+		else
+			$sessionAdapter = 'Phalcon\Session\Adapter\\'.ucfirst($this->_config->session->adapter);
 
 		/**
 		 * @var $session \Phalcon\Session\Adapter
@@ -194,6 +198,8 @@ trait Initializations
 		$session->start();
 
 		$di->set('session', $session, true);
+
+		return $session;
 	}
 
 	/**
@@ -202,6 +208,8 @@ trait Initializations
 	 */
 	protected function initProfiler ($di, $eventManager)
 	{
+		$profiler = null;
+
 		if ($this->_config->application->prophiler)
 		{
 			$profiler = new Prophiler\Profiler();
@@ -217,13 +225,15 @@ trait Initializations
 				$pluginManager->register();
 			});
 		}
+
+		return $profiler;
 	}
 
 	/**
 	 * @param $di DiInterface
 	 * @param $eventManager EventsManager
 	 */
-	protected function initEnvironment ($di, $eventManager)
+	protected function initEnvironment ($di, /** @noinspection PhpUnusedParameterInspection */$eventManager)
 	{
 		/*set_error_handler(function ($errorCode, $errorMessage, $errorFile, $errorLine)
 		{
@@ -364,23 +374,6 @@ trait Initializations
 				'compiledExtension'	=> '.cache'
 			]);
 
-			$compiler = $volt->getCompiler();
-
-			$compiler->addFunction('_text', function($arguments)
-			{
-				return '_getText(' . $arguments . ')';
-			});
-
-			$compiler->addFunction('plural', function($arguments)
-			{
-				return '\Friday\Core\Helpers::getPlural(' . $arguments . ')';
-			});
-
-			$compiler->addFilter('round', 'round');
-			$compiler->addFilter('ceil', 'ceil');
-			$compiler->addFunction('number_format', 'number_format');
-			$compiler->addFunction('in_array', 'in_array');
-
 			$eventManager->fire('view:afterEngineRegister', $volt);
 
 			return $volt;
@@ -398,35 +391,6 @@ trait Initializations
 	protected function initDispatcher ($di, $eventManager)
 	{
 		$eventManager->attach('dispatch:beforeExecuteRoute', new Security);
-		/** @noinspection PhpUnusedParameterInspection */
-		$eventManager->attach("dispatch:beforeException", function($event, $dispatcher, $exception)
-		{
-			/**
-			 * @var \Phalcon\Mvc\Dispatcher $dispatcher
-			 * @var \Phalcon\Mvc\Dispatcher\Exception $exception
-			 */
-			switch ($exception->getCode())
-			{
-				case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-				case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-
-					if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
-						return true;
-
-					$dispatcher->forward(
-						[
-							'module'		=> 'xnova',
-							'controller'	=> 'error',
-							'action'		=> 'notFound',
-							'namespace'		=> 'Xnova\Controllers'
-						]
-					);
-
-					return false;
-			}
-
-			return true;
-		});
 
 		$dispatcher = new Dispatcher();
 		$dispatcher->setEventsManager($eventManager);

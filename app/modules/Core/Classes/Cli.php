@@ -2,12 +2,20 @@
 
 namespace Friday\Core;
 
+use Friday\Core\Models\Module;
 use Phalcon\Cli\Console;
+use Phalcon\DiInterface;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Loader;
 use Phalcon\Registry;
 use Phalcon\Config\Adapter\Ini as Config;
+use Phalcon\Text;
+
+include_once(ROOT_PATH."/app/functions.php");
+
+define('VALUE_TRUE', 'Y');
+define('VALUE_FALSE', 'N');
 
 class Cli extends Console
 {
@@ -15,8 +23,7 @@ class Cli extends Console
 
 	protected $_loaders =
 	[
-		'cache',
-		'database'
+		'cache'
 	];
 	private $_paths = [];
 
@@ -69,7 +76,18 @@ class Cli extends Console
 
 		$di->set('loader', $loader);
 
-		$loader = $this->initLoaders($di);
+		if (file_exists(ROOT_PATH.$this->_config->application->baseDir.'globals.php'))
+			include_once(ROOT_PATH.$this->_config->application->baseDir.'globals.php');
+
+		$this->initDatabase($di, $eventsManager);
+
+		$registry = $di->get('registry');
+
+		/** @noinspection PhpUndefinedFieldInspection */
+		$registry->modules = Module::find()->toArray();
+
+		$this->initModules($di);
+		$this->initLoaders($di);
 
 		foreach ($this->_loaders as $service)
 		{
@@ -100,8 +118,40 @@ class Cli extends Console
 		define('CURRENT_ACTION', (isset($this->arguments['action']) ? $this->arguments['action'] : null));
 	}
 
+	/**
+	 * @param $di DiInterface
+	 * @return Loader
+	 */
+	protected function initModules ($di)
+	{
+		$registry = $di->get('registry');
+
+		$modules = [];
+
+		if (!empty($registry->modules))
+		{
+			foreach ($registry->modules as $module)
+			{
+				if ($module['active'] != VALUE_TRUE)
+					continue;
+
+				$modules[mb_strtolower($module['code'])] = [
+					'className'	=> ($module['system'] == VALUE_TRUE ? 'Friday\\' : '').ucfirst($module['code']).'\Module',
+					'path' 		=> $registry->directories->modules.ucfirst($module['code']).'/Module.php'
+				];
+			}
+		}
+
+		parent::registerModules($modules);
+	}
+
 	public function getOutput()
 	{
 		$this->handle($this->arguments);
+	}
+
+	public function hasModule ($name)
+	{
+		return (isset($this->_modules[Text::lower($name)]));
 	}
 }
