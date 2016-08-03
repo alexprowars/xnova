@@ -3,7 +3,7 @@
 		<div class="caption">Создать луну</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="<?=$this->url->get('admin/planetlist/add/') ?>" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('admin/planetlist/add/') }}" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Галактика</label>

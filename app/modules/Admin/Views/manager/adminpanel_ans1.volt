@@ -3,55 +3,55 @@
 		<table class="table table-striped table-hover table-advance">
 			<tbody>
 			<tr>
-				<th colspan="2"><?=_getText('adm_panel_mnu') ?></th>
+				<th colspan="2">{{ _text('adm_panel_mnu') }}</th>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_id') ?></td>
-				<td align="center"><?=$parse['answer1'] ?></td>
+				<td align="center">{{ _text('adm_frm1_id') }}</td>
+				<td align="center">{{ parse['answer1'] }}</td>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_name') ?></td>
-				<td align="center"><?=$parse['answer2'] ?></td>
+				<td align="center">{{ _text('adm_frm1_name') }}</td>
+				<td align="center">{{ parse['answer2'] }}</td>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_ip') ?></td>
-				<td align="center"><?=$parse['answer3'] ?></td>
+				<td align="center">{{ _text('adm_frm1_ip') }}</td>
+				<td align="center">{{ parse['answer3'] }}</td>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_mail') ?></td>
-				<td align="center"><?=$parse['answer4'] ?></td>
+				<td align="center">{{ _text('adm_frm1_mail') }}</td>
+				<td align="center">{{ parse['answer4'] }}</td>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_acc') ?></td>
-				<td align="center" class="negative"><?=$parse['answer5'] ?></td>
+				<td align="center">{{ _text('adm_frm1_acc') }}</td>
+				<td align="center" class="negative">{{ parse['answer5'] }}</td>
 			</tr>
 			<tr>
-				<td align="center"><?=_getText('adm_frm1_gen') ?></td>
-				<td align="center"><?=$parse['answer6'] ?></td>
+				<td align="center">{{ _text('adm_frm1_gen') }}</td>
+				<td align="center">{{ parse['answer6'] }}</td>
 			</tr>
 			<tr>
 				<td align="center">Дата регистрации</td>
-				<td align="center"><?=$parse['answer9'] ?></td>
+				<td align="center">{{ parse['answer9'] }}</td>
 			</tr>
 			<tr>
 				<td align="center">РО</td>
-				<td align="center"><?=$parse['answer7'] ?></td>
+				<td align="center">{{ parse['answer7'] }}</td>
 			</tr>
 			</tbody>
 		</table>
-		<?=$parse['adm_sub_form3'] ?>
+		{{ parse['adm_sub_form3'] }}
 	</div>
 	<div class="col-md-6">
-		<?=$parse['adm_sub_form4'] ?>
+		{{ parse['adm_sub_form4'] }}
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<?=$parse['adm_sub_form5'] ?>
+		{{ parse['adm_sub_form5'] }}
 	</div>
 </div>
 
-<? if (count($parse['planet_list'])): ?>
+{% if parse['planet_list']|length > 0 %}
 	<div class="portlet box yellow">
 		<div class="portlet-title">
 			<div class="caption">
@@ -60,42 +60,42 @@
 		</div>
 		<div class="portlet-body">
 			<div class="panel-group accordion">
-				<? foreach ($parse['planet_list'] AS $planet): ?>
+				{% for planet in parse['planet_list'] %}
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="panel-title">
-							<a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" href="#planet_<?=$planet['id'] ?>">
-								<? if ($planet['planet_type'] == 1): ?>
-									<?=_getText('adm_planet') ?>
-								<? elseif ($planet['planet_type'] == 3): ?>
-									<?=_getText('adm_moon') ?>
-								<? elseif ($planet['planet_type'] == 5): ?>
-									<?=_getText('adm_base') ?>
-								<? endif; ?>
+							<a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" href="#planet_{{ planet['id'] }}">
+								{% if planet['planet_type'] == 1 %}
+									{{ _text('adm_planet') }}
+								{% elseif planet['planet_type'] == 3 %}
+									{{ _text('adm_moon') }}
+								{% elseif planet['planet_type'] == 5 %}
+									{{ _text('adm_base') }}
+								{% endif %}
 
-								[<?=$planet['galaxy'] ?>:<?=$planet['system'] ?>:<?=$planet['planet'] ?>] <?=$planet['name'] ?>, #<?=$planet['id'] ?>
+								[{{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}] {{ planet['name'] }}, #{{ planet['id'] }}
 							</a>
 							</h4>
 						</div>
-						<div id="planet_<?=$planet['id'] ?>" class="panel-collapse collapse">
+						<div id="planet_{{ planet['id'] }}" class="panel-collapse collapse">
 							<div class="panel-body">
 								<table class='table'>
-									<? foreach ($planet AS $field => $value): ?>
+									{% for field, value in planet %}
 										<tr>
-											<td><?=(array_search($field, $parse['planet_fields']) ? _getText('tech', array_search($field, $parse['planet_fields'])) : $field) ?></td>
-											<td><b><?=$value ?></b></td>
+											<td>{{ (array_search(field, parse['planet_fields']) ? _text('tech', array_search(field, parse['planet_fields'])) : field) }}</td>
+											<td><b>{{ value }}</b></td>
 										</tr>
-									<? endforeach; ?>
+									{% endfor %}
 								</table>
 							</div>
 						</div>
 					</div>
-				<? endforeach; ?>
+				{% endfor %}
 			</div>
 		</div>
 	</div>
-<? endif; ?>
-<? if (count($parse['transfer_list'])): ?>
+{% endif %}
+{% if parse['transfer_list']|length > 0 %}
 	<div class="portlet box yellow">
 		<div class="portlet-title">
 			<div class="caption">
@@ -113,22 +113,22 @@
 					<th>Кристал</th>
 					<th>Дейтерий</th>
 				</tr>
-				<? foreach ($parse['transfer_list'] AS $history): ?>
+				{% for history in parse['transfer_list'] %}
 					<tr>
-						<td><?=date("d.m.Y H:i:s", $history['time']) ?></td>
-						<td><?=$history['target'] ?></td>
-						<td><?=$history['start'] ?></td>
-						<td><?=$history['end'] ?></td>
-						<td><?=number_format($history['metal'], 0, '.', ' ') ?></td>
-						<td><?=number_format($history['crystal'], 0, '.', ' ') ?></td>
-						<td><?=number_format($history['deuterium'], 0, '.', ' ') ?></td>
+						<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
+						<td>{{ history['target'] }}</td>
+						<td>{{ history['start'] }}</td>
+						<td>{{ history['end'] }}</td>
+						<td>{{ number_format(history['metal'], 0, '.', ' ') }}</td>
+						<td>{{ number_format(history['crystal'], 0, '.', ' ') }}</td>
+						<td>{{ number_format(history['deuterium'], 0, '.', ' ') }}</td>
 					</tr>
-				<? endforeach; ?>
+				{% endfor %}
 			</table>
 		</div>
 	</div>
-<? endif; ?>
-<? if (count($parse['transfer_list_income'])): ?>
+{% endif %}
+{% if parse['transfer_list_income']|length > 0 %}
 	<div class="portlet box yellow">
 		<div class="portlet-title">
 			<div class="caption">
@@ -146,22 +146,22 @@
 					<th>Кристал</th>
 					<th>Дейтерий</th>
 				</tr>
-				<? foreach ($parse['transfer_list_income'] AS $history): ?>
+				{% for history in parse['transfer_list_income'] %}
 					<tr>
-						<td><?=date("d.m.Y H:i:s", $history['time']) ?></td>
-						<td><?=$history['target'] ?></td>
-						<td><?=$history['start'] ?></td>
-						<td><?=$history['end'] ?></td>
-						<td><?=number_format($history['metal'], 0, '.', ' ') ?></td>
-						<td><?=number_format($history['crystal'], 0, '.', ' ') ?></td>
-						<td><?=number_format($history['deuterium'], 0, '.', ' ') ?></td>
+						<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
+						<td>{{ history['target'] }}</td>
+						<td>{{ history['start'] }}</td>
+						<td>{{ history['end'] }}</td>
+						<td>{{ number_format(history['metal'], 0, '.', ' ') }}</td>
+						<td>{{ number_format(history['crystal'], 0, '.', ' ') }}</td>
+						<td>{{ number_format(history['deuterium'], 0, '.', ' ') }}</td>
 					</tr>
-				<? endforeach; ?>
+				{% endfor %}
 			</table>
 		</div>
 	</div>
-<? endif; ?>
-<? if (count($parse['history_list'])): ?>
+{% endif %}
+{% if parse['history_list']|length > 0 %}
 	<div class="portlet box yellow">
 		<div class="portlet-title">
 			<div class="caption">
@@ -180,19 +180,19 @@
 					<th>Кристал</th>
 					<th>Дейтерий</th>
 				</tr>
-				<? foreach ($parse['history_list'] AS $history): ?>
+				{% for history in parse['history_list'] %}
 					<tr>
-						<td><?=date("d.m.Y H:i:s", $history['time']) ?></td>
-						<td><?=$history['planet'] ?></td>
-						<td><?=$parse['history_actions'][$history['operation']] ?></td>
-						<td><?=($history['build_id'] > 0 ? _getText('tech', $history['build_id']) : '') ?></td>
-						<td><?=($history['count'] ? $history['count'] : $history['level']) ?></td>
-						<td><?=$history['from_metal'] ?> -> <?=$history['to_metal'] ?> (<?=($history['to_metal'] - $history['from_metal']) ?>)</td>
-						<td><?=$history['from_crystal'] ?> -> <?=$history['to_crystal'] ?> (<?=($history['to_crystal'] - $history['from_crystal']) ?>)</td>
-						<td><?=$history['from_deuterium'] ?> -> <?=$history['to_deuterium'] ?> (<?=($history['to_deuterium'] - $history['from_deuterium']) ?>)</td>
+						<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
+						<td>{{ history['planet'] }}</td>
+						<td>{{ parse['history_actions'][history['operation']] }}</td>
+						<td>{{ (history['build_id'] > 0 ? _text('tech', history['build_id']) : '') }}</td>
+						<td>{{ (history['count'] ? history['count'] : history['level']) }}</td>
+						<td>{{ history['from_metal'] }} -> {{ history['to_metal'] }} ({{ (history['to_metal'] - history['from_metal']) }})</td>
+						<td>{{ history['from_crystal'] }} -> {{ history['to_crystal'] }} ({{ (history['to_crystal'] - history['from_crystal']) }})</td>
+						<td>{{ history['from_deuterium'] }} -> {{ history['to_deuterium'] }} ({{ (history['to_deuterium'] - history['from_deuterium']) }})</td>
 					</tr>
-				<? endforeach; ?>
+				{% endfor %}
 			</table>
 		</div>
 	</div>
-<? endif; ?>
+{% endif %}

@@ -8,14 +8,14 @@
 		<meta content="" name="description"/>
 		<meta content="Olympia Digital" name="author"/>
 
-		{{ assets.outputCss('css') }}
-		{{ assets.outputJs('js') }}
+		{{ assets.outputCss() }}
+		{{ assets.outputJs() }}
 
 		<link rel="shortcut icon" href="/favicon.ico"/>
 	</head>
 	<body class=" page-404-3">
 		<div class="page-inner">
-			<img src="/assets/images/earth.jpg" class="img-responsive" alt="">
+			<img src="/assets/admin/images/earth.jpg" class="img-responsive" alt="">
 		</div>
 		<div class="container error-404">
 			<h1>404</h1>

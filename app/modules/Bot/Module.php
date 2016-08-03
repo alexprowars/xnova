@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Bot;
+namespace Bot;
 
 use Friday\Core\Module\Base;
 use Phalcon\DiInterface;
@@ -17,7 +17,7 @@ class Module extends Base implements ModuleDefinitionInterface
 
 	public function registerAutoloaders(DiInterface $di = null)
 	{
-		$namespaces[__NAMESPACE__.'\Longman'] = __DIR__.'/Classes';
+		$namespaces['Longman'] = __DIR__.'/Classes';
 
 		$loader = $di->get('loader');
 

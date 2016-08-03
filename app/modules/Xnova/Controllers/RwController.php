@@ -14,8 +14,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/rw")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class RwController extends Controller
@@ -27,7 +25,11 @@ class RwController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 	}
-	
+
+	/**
+	 * @Route("/{id:[0-9]+}/{k:[a-z0-9]+}{params:(/.*)*}")
+	 * @return bool
+	 */
 	public function indexAction ()
 	{
 		if (!$this->request->hasQuery('id'))

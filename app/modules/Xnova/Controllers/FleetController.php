@@ -40,7 +40,10 @@ class FleetController extends Controller
 		// Устанавливаем обновлённые двигателя кораблей
 		Fleet::SetShipsEngine($this->user);
 	}
-	
+
+	/**
+	 * @Route("/g{galaxy:[0-9]{1,2}}/s{system:[0-9]{1,3}}/p{planet:[0-9]{1,2}}/t{type:[0-9]{1}}/m{mission:[0-9]{1,2}}{params:(/.*)*}")
+	 */
 	public function indexAction ()
 	{
 		$action = new StageZero();

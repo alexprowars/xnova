@@ -15,8 +15,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/galaxy")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class GalaxyController extends Controller
@@ -32,7 +30,11 @@ class GalaxyController extends Controller
 		
 		Lang::includeLang('galaxy', 'xnova');
 	}
-	
+
+	/**
+	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}{params:(/.*)*}", paths={r="3"})
+	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}/{r:[0-9]}{params:(/.*)*}")
+	 */
 	public function indexAction ()
 	{
 		$fleetmax = $this->user->computer_tech + 1;

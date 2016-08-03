@@ -13,8 +13,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/content")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  */
 class ContentController extends Controller
 {
@@ -23,6 +21,9 @@ class ContentController extends Controller
 		parent::initialize();
 	}
 
+	/**
+	 * @Route("/{article:[a-zA-Z0-9]+}{params:(/.*)*}")
+	 */
 	function indexAction ()
 	{
 		if (!$this->request->getQuery('article'))

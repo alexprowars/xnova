@@ -21,6 +21,16 @@ class ContentController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'content',
+			'title' => 'Контент',
+			'icon'	=> '',
+			'sort'	=> 180
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$result = [];

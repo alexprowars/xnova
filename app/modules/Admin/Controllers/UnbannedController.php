@@ -21,6 +21,16 @@ class UnbannedController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'unbanned',
+			'title' => 'Разблокировать',
+			'icon'	=> 'legal',
+			'sort'	=> 140
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if ($this->request->getPost('username', 'string', '') != '')

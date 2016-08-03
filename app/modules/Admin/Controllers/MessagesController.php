@@ -22,6 +22,16 @@ class MessagesController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'messages',
+			'title' => 'Сообщения',
+			'icon'	=> 'inbox',
+			'sort'	=> 170
+		]];
+	}
+
 	public function indexAction ()
 	{
 		Lang::includeLang('admin/messagelist', 'xnova');

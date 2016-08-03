@@ -22,6 +22,16 @@ class ModulesController extends Controller
 		$this->tag->setTitle('Настройка модулей');
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'modules',
+			'title' => 'Модули',
+			'icon'	=> '',
+			'sort'	=> 180
+		]];
+	}
+
 	public function addAction ()
 	{
 		$error = '';

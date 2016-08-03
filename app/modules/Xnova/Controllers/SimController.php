@@ -13,8 +13,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/sim")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class SimController extends Controller
@@ -28,7 +26,11 @@ class SimController extends Controller
 
 		$this->user->loadPlanet();
 	}
-	
+
+	/**
+	 * @Route("/{data:[0-9!;,]+}{params:(/.*)*}")
+	 * @param string $data
+	 */
 	public function indexAction ($data = '')
 	{
 		$data = explode(";", $data);

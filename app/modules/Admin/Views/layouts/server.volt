@@ -1,8 +1,8 @@
 <table class="table">
-	<? foreach ($_SERVER AS $key => $value): ?>
+	{% for key, value in _SERVER %}
 		<tr>
-			<th class="text-left"><?=$key ?></th>
-			<td class="c text-left"><?=$value ?></td>
+			<th class="text-left">{{ key }}</th>
+			<td class="c text-left">{{ value }}</td>
 		</tr>
-	<? endforeach; ?>
+	{% endfor %}
 </table>

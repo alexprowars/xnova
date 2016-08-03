@@ -24,6 +24,30 @@ class ManagerController extends Controller
 		Lang::includeLang('admin/adminpanel', 'xnova');
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'manager',
+			'title' => 'Редактор',
+			'icon'	=> 'edit',
+			'sort'	=> 70,
+			'childrens' => [
+				[
+					'code'	=> 'ip',
+					'title' => 'Поиск по IP',
+				],
+				[
+					'code'	=> 'data',
+					'title' => 'Статистика',
+				],
+				[
+					'code'	=> 'level',
+					'title' => 'Смена прав',
+				]
+			]
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$this->tag->setTitle(_getText('panel_mainttl'));

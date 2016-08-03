@@ -22,6 +22,16 @@ class GroupsController extends Controller
 		$this->tag->setTitle('Группы пользователей');
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'groups',
+			'title' => 'Группы',
+			'icon'	=> '',
+			'sort'	=> 180
+		]];
+	}
+
 	public function addAction ()
 	{
 

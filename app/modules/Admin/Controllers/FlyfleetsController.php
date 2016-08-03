@@ -26,6 +26,16 @@ class FlyFleetsController extends Controller
 		Lang::includeLang('admin/fleets', 'xnova');
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'flyfleets',
+			'title' => 'Флоты в полёте',
+			'icon'	=> 'plane',
+			'sort'	=> 110
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$table = [];

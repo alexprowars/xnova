@@ -14,17 +14,10 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/log")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class LogController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-	
 	public function indexAction ()
 	{
 		if (!$this->auth->isAuthorized())
@@ -37,6 +30,9 @@ class LogController extends Controller
 		$this->showTopPanel(false);
 	}
 
+	/**
+	 * @Route("/delete/")
+	 */
 	public function deleteAction ()
 	{
 		if (!$this->auth->isAuthorized())
@@ -64,6 +60,9 @@ class LogController extends Controller
 		}
 	}
 
+	/**
+	 * @Route("/new/")
+	 */
 	public function newAction ()
 	{
 		if (!$this->auth->isAuthorized())
@@ -125,6 +124,10 @@ class LogController extends Controller
 		$this->showTopPanel(false);
 	}
 
+	/**
+	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
+	 * @return bool
+	 */
 	public function infoAction ()
 	{
 		if ($this->request->hasQuery('id'))

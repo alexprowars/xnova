@@ -1,15 +1,15 @@
-<? if (isset($info)): ?>
+{% if info is defined %}
 	<div class="portlet box green">
 		<div class="portlet-title">
-			<div class="caption">Редактирование пользователя "<?=$info['username'] ?>"</div>
+			<div class="caption">Редактирование пользователя "{{ info['username'] }}"</div>
 		</div>
 		<div class="portlet-body form">
-			<form action="<?=$this->url->get('admin/users/mode/edit/id/'.$info['id'].'/') ?>" method="post" class="form-horizontal form-row-seperated">
+			<form action="{{ url('admin/users/mode/edit/id/'~info['id']~'/') }}" method="post" class="form-horizontal form-row-seperated">
 				<div class="form-body">
 					<div class="form-group">
 						<label class="col-md-3 control-label">Имя</label>
 						<div class="col-md-9">
-							<input type="text" class="form-control" name="username" value="<?=$info['username'] ?>" title="">
+							<input type="text" class="form-control" name="username" value="{{ info['username'] }}" title="">
 						</div>
 					</div>
 					<div class="form-group">
@@ -17,9 +17,9 @@
 						<div class="col-md-9">
 							<select class="form-control" name="group_id" title="">
 								<option value="0">Без группы</option>
-								<? foreach ($groups AS $group): ?>
-									<option value="<?=$group['id'] ?>" <?=($group['id'] == $info['group_id'] ? 'selected' : '') ?>><?=$group['name'] ?></option>
-								<? endforeach; ?>
+								{% for group in groups %}
+									<option value="{{ group['id'] }}" {{ group['id'] == info['group_id'] ? 'selected' : '' }}>{{ group['name'] }}</option>
+								{% endfor %}
 							</select>
 						</div>
 					</div>
@@ -30,4 +30,4 @@
 			</form>
 		</div>
 	</div>
-<? endif; ?>
+{% endif %}

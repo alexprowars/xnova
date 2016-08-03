@@ -14,8 +14,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/contact")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  */
 class ContactController extends Controller
 {

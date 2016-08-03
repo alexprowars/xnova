@@ -19,6 +19,16 @@ class OverviewController extends Controller
 		parent::initialize();
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'overview',
+			'title' => 'Активность',
+			'icon'	=> 'home',
+			'sort'	=> 10
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if (isset($_GET['cmd']) && $_GET['cmd'] == 'sort')

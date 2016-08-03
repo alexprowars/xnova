@@ -23,6 +23,26 @@ class MoneyController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'money',
+			'title' => 'Финансы',
+			'icon'	=> 'rub',
+			'sort'	=> 40,
+			'childrens' => [
+				[
+					'code'	=> 'add',
+					'title' => 'Начислить кредиты',
+				],
+				[
+					'code'	=> 'index',
+					'title' => 'Транзакции',
+				]
+			]
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$parse = [];

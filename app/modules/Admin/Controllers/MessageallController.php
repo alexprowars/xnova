@@ -22,6 +22,16 @@ class MessageallController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'messageall',
+			'title' => 'Рассылка',
+			'icon'	=> 'bullhorn',
+			'sort'	=> 180
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if ($this->request->hasPost("tresc"))

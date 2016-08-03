@@ -14,19 +14,19 @@
 				<th>Время прибытия</th>
 			</tr>
 		</thead>
-		<? foreach ($flt_table AS $parse): ?>
+		{% for parse in flt_table %}
 			<tr>
-				<td><?=$parse['Id'] ?></td>
-				<td><?=$parse['Fleet'] ?></td>
-				<td><?=$parse['Mission'] ?></td>
-				<td><?=$parse['St_Owner'] ?></td>
-				<td><?=$parse['St_Posit'] ?></td>
-				<td><?=$parse['St_Time'] ?></td>
-				<td><?=$parse['En_Owner'] ?></td>
-				<td><?=$parse['En_Posit'] ?></td>
-				<td><?=$parse['St_Time'] ?></td>
-				<td><?=$parse['En_Time'] ?></td>
+				<td>{{ parse['Id'] }}</td>
+				<td>{{ parse['Fleet'] }}</td>
+				<td>{{ parse['Mission'] }}</td>
+				<td>{{ parse['St_Owner'] }}</td>
+				<td>{{ parse['St_Posit'] }}</td>
+				<td>{{ parse['St_Time'] }}</td>
+				<td>{{ parse['En_Owner'] }}</td>
+				<td>{{ parse['En_Posit'] }}</td>
+				<td>{{ parse['St_Time'] }}</td>
+				<td>{{ parse['En_Time'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </div>

@@ -1,12 +1,12 @@
 <div class="note note-danger">
-	<h4 class="block"><?=$title ?></h4>
+	<h4 class="block">{{ title }}</h4>
 	<p>
-		<?=$text ?>
+		{{ text }}
 	</p>
 </div>
 
-<? if ($time && $destination): ?>
+{% if time and destination %}
 	<script type="text/javascript">
-		setTimeout(function(){location.href = '<?=$destination ?>';}, <?=($time * 1000) ?>);
+		setTimeout(function(){location.href = '{{ destination }}';}, {{ time * 1000 }});
 	</script>
-<? endif; ?>
+{% endif %}

@@ -1,5 +1,5 @@
-<link rel="stylesheet" type="text/css" href="<?=$this->url->getBaseUri() ?>assets/admin/plugins/jstree/dist/themes/default/style.min.css"/>
-<script type="text/javascript" src="<?=$this->url->getBaseUri() ?>assets/admin/plugins/jstree/dist/jstree.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ urlBaseUri() }}assets/admin/plugins/jstree/dist/themes/default/style.min.css"/>
+<script type="text/javascript" src="{{ urlBaseUri() }}assets/admin/plugins/jstree/dist/jstree.min.js"></script>
 
 <div class="portlet yellow box">
 	<div class="portlet-title">

@@ -19,6 +19,16 @@ class UsersController extends Controller
 		parent::initialize();
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'users',
+			'title' => 'Пользователи',
+			'icon'	=> '',
+			'sort'	=> 180
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if (isset($_GET['cmd']) && $_GET['cmd'] == 'sort')

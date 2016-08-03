@@ -22,6 +22,16 @@ class SupportController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'support',
+			'title' => 'Техподдержка',
+			'icon'	=> 'bolt',
+			'sort'	=> 20
+		]];
+	}
+
 	public function indexAction ($id = 0)
 	{
 		$tickets = ['open' => [], 'closed' => []];

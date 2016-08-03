@@ -23,6 +23,16 @@ class PlayersController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'players',
+			'title' => 'Список игроков',
+			'icon'	=> 'user',
+			'sort'	=> 60
+		]];
+	}
+
 	public function indexAction ()
 	{
 		Lang::includeLang('admin', 'xnova');

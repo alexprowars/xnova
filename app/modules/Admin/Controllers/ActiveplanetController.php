@@ -14,6 +14,16 @@ use Xnova\Helpers;
  */
 class ActiveplanetController extends Controller
 {
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'activeplanet',
+			'title' => 'Активные планеты',
+			'icon'	=> 'clock-o',
+			'sort'	=> 90
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if ($this->user->authlevel >= 2)

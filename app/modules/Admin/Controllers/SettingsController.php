@@ -22,6 +22,16 @@ class SettingsController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'settings',
+			'title' => 'Настройки',
+			'icon'	=> 'cogs',
+			'sort'	=> 50
+		]];
+	}
+
 	public function indexAction ()
 	{
 		Lang::includeLang('admin/settings', 'xnova');

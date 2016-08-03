@@ -13,6 +13,16 @@ use Admin\Controller;
  */
 class BannedController extends Controller
 {
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'banned',
+			'title' => 'Заблокировать',
+			'icon'	=> 'ban',
+			'sort'	=> 130
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if ($this->request->getPost('name', 'string', '') != '')

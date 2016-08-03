@@ -13,6 +13,16 @@ use Admin\Controller;
  */
 class PasswordController extends Controller
 {
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'password',
+			'title' => 'Сменить пароль',
+			'icon'	=> 'key',
+			'sort'	=> 150
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if ($this->user->authlevel == 3)

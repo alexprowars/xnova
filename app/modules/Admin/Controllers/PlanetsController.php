@@ -23,6 +23,16 @@ class PlanetsController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'planets',
+			'title' => 'Список планет',
+			'icon'	=> 'globe',
+			'sort'	=> 80
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$p = $this->request->getQuery('p', 'int', 1);

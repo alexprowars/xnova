@@ -7,16 +7,16 @@
 				<th>Название</th>
 			</tr>
 		</thead>
-		<? foreach ($parse['rows'] AS $data): ?>
+		{% for data in parse['rows'] %}
 			<tr>
-				<td><a href="/admin/content/edit/<?=$data['id'] ?>/"><?=$data['id'] ?></a></td>
-				<td><?=$data['alias'] ?></td>
-				<td><?=$data['title'] ?></td>
+				<td><a href="/admin/content/edit/{{ data['id'] }}/">{{ data['id'] }}</a></td>
+				<td>{{ data['alias'] }}</td>
+				<td>{{ data['title'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 
 		<tr>
-			<th class="b text-center" colspan="4"><?=$parse['total'] ?> страниц</th>
+			<th class="b text-center" colspan="4">{{ parse['total'] }} страниц</th>
 		</tr>
 	</table>
 </div>

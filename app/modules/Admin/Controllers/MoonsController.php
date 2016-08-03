@@ -22,6 +22,16 @@ class MoonsController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'moons',
+			'title' => 'Список лун',
+			'icon'	=> 'star',
+			'sort'	=> 100
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$parse = [];

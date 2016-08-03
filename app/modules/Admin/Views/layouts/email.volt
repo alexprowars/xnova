@@ -7,5 +7,5 @@
 		<th>&nbsp;</th>
 		</tr>
 	</thead>
-	<?=$planetes ?>
+	{{ planetes }}
 </table>

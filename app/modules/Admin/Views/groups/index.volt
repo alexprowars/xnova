@@ -6,11 +6,11 @@
 				<th>Имя группы</th>
 			</tr>
 		</thead>
-		<? foreach ($list AS $l): ?>
+		{% for l in list %}
 			<tr>
-				<td><a href="/admin/groups/edit/<?=$l['id'] ?>/"><?=$l['id'] ?></a></td>
-				<td><?=$l['name'] ?></td>
+				<td><a href="/admin/groups/edit/{{ l['id'] }}/">{{ l['id'] }}</a></td>
+				<td>{{ l['name'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </div>

@@ -33,15 +33,13 @@ class MessagesController extends Controller
 
 		Lang::includeLang('messages', 'xnova');
 	}
-	
-	public function writeAction ()
+
+	public function writeAction ($userId)
 	{
-		$OwnerID = htmlspecialchars(addslashes($this->request->getQuery('id')));
-	
-		if (!$OwnerID)
+		if (!$userId)
 			$this->message(_getText('mess_no_ownerid'), _getText('mess_error'));
 
-		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE ".(is_numeric($OwnerID) ? '`id`' : '`username`')." = '" . $OwnerID . "';")->fetch();
+		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE ".(is_numeric($userId) ? '`id`' : '`username`')." = '" . $userId . "';")->fetch();
 
 		if (!isset($OwnerRecord['id']))
 			$this->message(_getText('mess_no_owner'), _getText('mess_error'));

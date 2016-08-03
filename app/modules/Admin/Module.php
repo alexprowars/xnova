@@ -3,6 +3,7 @@
 namespace Admin;
 
 use Friday\Core\Module\Base;
+use Friday\Core\Modules;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -18,20 +19,14 @@ class Module extends Base implements ModuleDefinitionInterface
 
 	public function registerServices(DiInterface $di)
 	{
-		$view = $di->getShared('view');
+		Modules::init('xnova');
 
-		$viewDirs = $view->getViewsDir();
+		if ($di->has('view'))
+		{
+			$view = $di->getShared('view');
+			$config = $di->getShared('config');
 
-		if (is_null($viewDirs))
-			$viewDirs = [];
-
-		if (!is_array($viewDirs))
-			$viewDirs = [$viewDirs];
-
-		$config = $di->getShared('config');
-
-		$viewDirs[] = ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Admin/Views';
-
-		$view->setViewsDir($viewDirs);
+			$view->setViewsDir(ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Admin/Views');
+		}
 	}
 }

@@ -23,6 +23,8 @@ $loader->registerClasses([
 /** @noinspection PhpUnusedParameterInspection */
 $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 {
+	\Friday\Core\Modules::init('xnova');
+
 	if (!$auth->isAuthorized())
 	{
 		$auth->addPlugin('\Xnova\Auth\Plugins\Ulogin');
@@ -70,6 +72,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFilter('ceil', 'ceil');
 	$compiler->addFunction('number_format', 'number_format');
 	$compiler->addFunction('in_array', 'in_array');
+	$compiler->addFunction('long2ip', 'long2ip');
 
 	$compiler->addFunction('allowMobile', function($arguments)
 	{
@@ -81,6 +84,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('md5', 'md5');
 	$compiler->addFunction('min', 'min');
 	$compiler->addFunction('max', 'max');
+	$compiler->addFunction('array_search', 'array_search');
 	$compiler->addFunction('is_email', 'is_email');
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
 	$compiler->addFunction('rand', 'mt_rand');

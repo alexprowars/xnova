@@ -21,6 +21,16 @@ class EmailController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'email',
+			'title' => 'Сменить email',
+			'icon'	=> 'envelope',
+			'sort'	=> 160
+		]];
+	}
+
 	public function indexAction ()
 	{
 		if (isset($_GET['u']) && isset($_GET['email']))

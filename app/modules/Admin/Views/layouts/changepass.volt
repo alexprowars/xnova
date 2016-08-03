@@ -3,7 +3,7 @@
 		<div class="caption">Смена пароля</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="<?=$this->url->get('admin/md5changepass/') ?>" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('admin/md5changepass/') }}" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Логин игрока</label>

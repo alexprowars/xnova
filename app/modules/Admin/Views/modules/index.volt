@@ -1,5 +1,5 @@
 <div class="util-btn-margin-bottom-5">
-	<a href="<?=$this->url->get('admin/modules/add/') ?>">
+	<a href="{{ url('admin/modules/add/') }}">
 		<button type="button" class="btn green btn-sm">Добавить</button>
 	</a>
 </div>
@@ -14,14 +14,14 @@
 				<th>Активность</th>
 			</tr>
 		</thead>
-		<? foreach ($list AS $module): ?>
+		{% for module in list %}
 			<tr>
-				<td><a href="/admin/modules/edit/<?=$module['id'] ?>/"><?=$module['id'] ?></a></td>
-				<td><?=$module['alias'] ?></td>
-				<td><?=$module['name'] ?></td>
-				<td><?=$module['is_admin'] ?></td>
-				<td><?=$module['active'] ?></td>
+				<td><a href="/admin/modules/edit/{{ module['id'] }}/">{{ module['id'] }}</a></td>
+				<td>{{ module['alias'] }}</td>
+				<td>{{ module['name'] }}</td>
+				<td>{{ module['is_admin'] }}</td>
+				<td>{{ module['active'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </div>

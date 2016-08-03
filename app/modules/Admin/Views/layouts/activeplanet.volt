@@ -7,23 +7,23 @@
 				<th width="150">Активность</th>
 			</tr>
 		</thead>
-		<? foreach ($parse['rows'] AS $planet): ?>
+		{% for planet in parse['rows'] %}
 			<tr>
-				<td><?=$planet['name'] ?></td>
-				<td><?=$planet['position'] ?></td>
-				<td><?=\Xnova\Helpers::pretty_time($planet['activity']) ?></td>
+				<td>{{ planet['name'] }}</td>
+				<td>{{ planet['position'] }}</td>
+				<td>{{ pretty_time(planet['activity']) }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 	<div class="row">
 		<div class="col-md-5 col-sm-12">
 			<div class="dataTables_info">
-				Активно <?=$parse['total'] ?> планет<?=\Xnova\Helpers::morph($parse['total'], 'feminine', 5) ?>
+				Активно {{ parse['total'] }} планет{{ morph(parse['total'], 'feminine', 5) }}
 			</div>
 		</div>
 		<div class="col-md-7 col-sm-12">
 			<div class="dataTables_paginate paging_bootstrap">
-				<?=$pagination ?>
+				{{ pagination }}
 			</div>
 		</div>
 	</div>

@@ -36,9 +36,12 @@ class TutorialController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function infoAction ()
+	/**
+	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
+	 */
+	public function infoAction ($stage)
 	{
-		$stage = $this->request->getQuery('id', 'int', 0);
+		$stage = (int) $stage;
 
 		if ($stage > 0)
 		{

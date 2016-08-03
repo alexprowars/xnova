@@ -1,9 +1,9 @@
 <div class="table-responsive">
 	<table class="table table-striped table-bordered table-advance">
-		<?=$parse['desc'] ?><?=$parse['edit'] ?><?=$parse['name'] ?><?=$parse['member'] ?><?=$parse['member_row'] ?><?=$parse['mail'] ?><?=$parse['leader'] ?>
+		{{ parse['desc'] }}{{ parse['edit'] }}{{ parse['name'] }}{{ parse['member'] }}{{ parse['member_row'] }}{{ parse['mail'] }}{{ parse['leader'] }}
 		<thead>
 			<tr>
-				<th><a href="<?=$this->url->get('admin/alliancelist/?cmd=sort&type=id') ?>">ID</a></th>
+				<th><a href="{{ url('admin/alliancelist/?cmd=sort&type=id') }}">ID</a></th>
 				<th>Название</th>
 				<th>Обозначение</th>
 				<th>Лидер</th>
@@ -14,19 +14,19 @@
 				<th></th>
 			</tr>
 		</thead>
-		<? foreach ($parse['alliance'] AS $u): ?>
+		{% for u in parse['alliance'] %}
 			<tr>
-				<td><?=$u['id'] ?></td>
-				<td><a href="/admin/alliancelist/allyname/<?=$u['id'] ?>/"><?=$u['name'] ?></a></td>
-				<td><a href="/admin/alliancelist/allyname/<?=$u['id'] ?>/"><?=$u['tag'] ?></a></td>
-				<td><a href="/admin/alliancelist/leader/<?=$u['id'] ?>/"><?=$u['username'] ?></a></td>
-				<td><?=date("d/m/Y H:i:s", $u['create_time']) ?></td>
-				<td><a href="/admin/alliancelist/desc/<?=$u['id'] ?>/">Смотреть</a>/<a href="/admin/alliancelist/edit/<?=$u['id'] ?>/">Редактировать</a></td>
-				<td><a href="/admin/alliancelist/mitglieder/<?=$u['id'] ?>/"><?=$u['members'] ?></a></td>
-				<td><a href="/admin/alliancelist/mail/<?=$u['id'] ?>/"><img src="<?=$this->url->getBaseUri() ?>assets/images/alliance/r5.png"></a></td>
-				<td><a href="/admin/alliancelist/del/<?=$u['id'] ?>/">X</a></td>
+				<td>{{ u['id'] }}</td>
+				<td><a href="/admin/alliancelist/allyname/{{ u['id'] }}/">{{ u['name'] }}</a></td>
+				<td><a href="/admin/alliancelist/allyname/{{ u['id'] }}/">{{ u['tag'] }}</a></td>
+				<td><a href="/admin/alliancelist/leader/{{ u['id'] }}/">{{ u['username'] }}</a></td>
+				<td>{{ date("d/m/Y H:i:s", u['create_time']) }}</td>
+				<td><a href="/admin/alliancelist/desc/{{ u['id'] }}/">Смотреть</a>/<a href="/admin/alliancelist/edit/{{ u['id'] }}/">Редактировать</a></td>
+				<td><a href="/admin/alliancelist/mitglieder/{{ u['id'] }}/">{{ u['members'] }}</a></td>
+				<td><a href="/admin/alliancelist/mail/{{ u['id'] }}/"><img src="{{ static_url('assets/images/alliance/r5.png') }}"></a></td>
+				<td><a href="/admin/alliancelist/del/{{ u['id'] }}/">X</a></td>
 			</tr>
-		<? endforeach; ?>
-		<tr><th colspan="9">Всего <?=count($parse['alliance']) ?> альянсов</th></tr>
+		{% endfor %}
+		<tr><th colspan="9">Всего {{ parse['alliance']|length }} альянсов</th></tr>
 	</table>
 </div>

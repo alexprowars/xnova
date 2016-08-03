@@ -1,5 +1,5 @@
 <div class="util-btn-margin-bottom-5">
-	<a href="<?=$this->url->get('admin/moons/add/') ?>">
+	<a href="{{ url('admin/moons/add/') }}">
 		<button type="button" class="btn blue btn-sm">Создать</button>
 	</a>
 </div>
@@ -16,24 +16,24 @@
 				<th>Планета</th>
 			</tr>
 		</thead>
-		<? foreach ($parse['moons'] AS $u): ?>
+		{% for u in parse['moons'] %}
 			<tr>
-				<td><?=$u['id'] ?></td>
-				<td><?=$u['name'] ?></td>
-				<td><?=$u['parent_planet'] ?></td>
-				<td><?=$u['galaxy'] ?></td>
-				<td><?=$u['system'] ?></td>
-				<td><?=$u['planet'] ?></td>
+				<td>{{ u['id'] }}</td>
+				<td>{{ u['name'] }}</td>
+				<td>{{ u['parent_planet'] }}</td>
+				<td>{{ u['galaxy'] }}</td>
+				<td>{{ u['system'] }}</td>
+				<td>{{ u['planet'] }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </div>
 <div class="row">
 	<div class="col-md-5 col-sm-12">
-		<? if (count($parse['moons']) == 1): ?>
+		{% if parse['moons']|length == 1 %}
 			В игре одна луна
-		<? else: ?>
-			В игре <?=count($parse['moons']) ?> лун
-		<? endif; ?>
+		{% else %}
+			В игре {{ parse['moons']|length }} лун
+		{% endif %}
 	</div>
 </div>

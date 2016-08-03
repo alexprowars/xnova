@@ -21,6 +21,16 @@ class ServerController extends Controller
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
 	}
 
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'server',
+			'title' => 'Информация',
+			'icon'	=> 'dashboard',
+			'sort'	=> 30
+		]];
+	}
+
 	public function indexAction ()
 	{
 		$this->tag->setTitle('Серверное окружение');

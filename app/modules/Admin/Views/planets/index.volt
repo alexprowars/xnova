@@ -1,5 +1,5 @@
 <div class="util-btn-margin-bottom-5">
-	<a href="<?=$this->url->get('admin/planetlist/add/') ?>">
+	<a href="{{ url('admin/planetlist/add/') }}">
 		<button type="button" class="btn blue btn-sm">Создать</button>
 	</a>
 </div>
@@ -16,27 +16,27 @@
 				<th>Переход</th>
 			</tr>
 		</thead>
-		<? foreach ($planetlist AS $planet): ?>
+		{% for planet in planetlist %}
 			<tr>
-				<td class="b text-center"><?=$planet['id'] ?></td>
-				<td class="b text-center"><?=$planet['name'] ?></td>
-				<td class="b text-center"><?=$planet['galaxy'] ?></td>
-				<td class="b text-center"><?=$planet['system'] ?></td>
-				<td class="b text-center"><?=$planet['planet'] ?></td>
-				<td class="b text-center"><?=\Xnova\Helpers::BuildPlanetAdressLink($planet) ?></td>
+				<td class="b text-center">{{ planet['id'] }}</td>
+				<td class="b text-center">{{ planet['name'] }}</td>
+				<td class="b text-center">{{ planet['galaxy'] }}</td>
+				<td class="b text-center">{{ planet['system'] }}</td>
+				<td class="b text-center">{{ planet['planet'] }}</td>
+				<td class="b text-center">{{ planetLink(planet) }}</td>
 			</tr>
-		<? endforeach; ?>
+		{% endfor %}
 	</table>
 </div>
 <div class="row">
 	<div class="col-md-5 col-sm-12">
 		<div class="dataTables_info">
-			В игре <b><?=$all ?></b> планет<?=\Xnova\Helpers::morph($all, 'feminine', 5) ?>
+			В игре <b>{{ all }}</b> планет{{ morph(all, 'feminine', 5) }}
 		</div>
 	</div>
 	<div class="col-md-7 col-sm-12">
 		<div class="dataTables_paginate paging_bootstrap">
-			<?=$pagination ?>
+			{{ pagination }}
 		</div>
 	</div>
 </div>

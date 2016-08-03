@@ -9,57 +9,57 @@
 				<th width="150">Дата</th>
 			</tr>
 		</thead>
-		<? foreach ($tickets['open'] AS $list): ?>
+		{% for list in tickets['open'] %}
 		<tr>
-			<td><?=$list['id'] ?></td>
-			<td><?=$list['username'] ?></td>
-			<td><a href="/admin/support/detail/<?=$list['id'] ?>/"><?=$list['subject'] ?></a></td>
-			<td><?=$list['status'] ?></td>
-			<td><?=$list['date'] ?></td>
+			<td>{{ list['id'] }}</td>
+			<td>{{ list['username'] }}</td>
+			<td><a href="/admin/support/detail/{{ list['id'] }}/">{{ list['subject'] }}</a></td>
+			<td>{{ list['status'] }}</td>
+			<td>{{ list['date'] }}</td>
 		</tr>
-		<? endforeach; ?>
-		<? if (count($tickets['open']) == 0): ?>
+		{% endfor %}
+		{% if tickets['open']|length == 0 %}
 			<th colspan="5" class="c">Нет новых запросов</th>
-		<? endif; ?>
+		{% endif %}
 	</table>
 </div>
-<? if (!empty($tickets['closed'])): ?>
-<br><br>
-<table class="table">
-	<tr>
-		<td colspan="5" class="c text-xs-center">
-			Служба техподдержки
-		</td>
-	</tr>
-	<tr>
-		<td class="c text-xs-center" width="10%">
-			ID
-		</td>
-		<td class="c text-xs-center" width="10%">
-			Игрок
-		</td>
-		<td class="c text-xs-center" width="40%">
-			Тема
-		</td>
-		<td class="c text-xs-center" width="15%">
-			Статус
-		</td>
-		<td class="c text-xs-center" width="25%">
-			Дата
-		</td>
-	</tr>
-	<? foreach ($tickets['closed'] AS $list): ?>
-	<tr>
-		<th><?=$list['id'] ?></th>
-		<th><?=$list['username'] ?></th>
-		<th><a href="/admin/support/detail/<?=$list['id'] ?>/"><?=$list['subject'] ?></a></th>
-		<th><?=$list['status'] ?></th>
-		<th><?=$list['date'] ?></th>
-	</tr>
-	<? endforeach; ?>
-</table>
-<? endif; ?>
-<? if (isset($parse['t_id'])): ?>
+{% if tickets['closed']|length > 0 %}
+	<br><br>
+	<table class="table">
+		<tr>
+			<td colspan="5" class="c text-xs-center">
+				Служба техподдержки
+			</td>
+		</tr>
+		<tr>
+			<td class="c text-xs-center" width="10%">
+				ID
+			</td>
+			<td class="c text-xs-center" width="10%">
+				Игрок
+			</td>
+			<td class="c text-xs-center" width="40%">
+				Тема
+			</td>
+			<td class="c text-xs-center" width="15%">
+				Статус
+			</td>
+			<td class="c text-xs-center" width="25%">
+				Дата
+			</td>
+		</tr>
+		{% for list in tickets['closed'] %}
+		<tr>
+			<th>{{ list['id'] }}</th>
+			<th>{{ list['username'] }}</th>
+			<th><a href="/admin/support/detail/{{ list['id'] }}/">{{ list['subject'] }}</a></th>
+			<th>{{ list['status'] }}</th>
+			<th>{{ list['date'] }}</th>
+		</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+{% if parse['t_id'] is defined %}
 	<br><br>
 	<table class="table table-advance">
 		<thead>
@@ -82,11 +82,11 @@
 			</tr>
 		</thead>
 		<tr>
-			<td><?=$parse['t_id'] ?></td>
-			<td><?=$parse['t_username'] ?></td>
-			<td><?=$parse['t_subject'] ?></a></td>
-			<td><?=$parse['t_statustext'] ?></td>
-			<td><?=$parse['t_date'] ?></td>
+			<td>{{ parse['t_id'] }}</td>
+			<td>{{ parse['t_username'] }}</td>
+			<td>{{ parse['t_subject'] }}</a></td>
+			<td>{{ parse['t_statustext'] }}</td>
+			<td>{{ parse['t_date'] }}</td>
 		</tr>
 	</table>
 	<div class="separator"></div>
@@ -97,7 +97,7 @@
 			</tr>
 		</thead>
 		<tr>
-			<td><?=$parse['t_text'] ?></td>
+			<td>{{ parse['t_text'] }}</td>
 		</tr>
 	</table>
 	<div class="portlet box green">
@@ -105,7 +105,7 @@
 			<div class="caption">Ответ</div>
 		</div>
 		<div class="portlet-body form">
-			<form action="<?=$this->url->get('admin/support/send/'.$parse['t_id'].'/') ?>" method="POST">
+			<form action="{{ url('admin/support/send/'~parse['t_id']~'/') }}" method="POST">
 				<div class="form-body">
 					<div class="form-group">
 						<textarea class="form-control" rows="10" name="text" title=""></textarea>
@@ -116,13 +116,13 @@
 				</div>
 			</form>
 			<hr>
-			<? if ($parse['t_status'] != 0): ?>
-			<form action="<?=$this->url->get('admin/support/close/'.$parse['t_id'].'/') ?>" method="POST">
+			{% if parse['t_status'] != 0 %}
+			<form action="{{ url('admin/support/close/'~parse['t_id']~'/') }}" method="POST">
 				<input type="submit" value="Закрыть"></form>
-			<? else: ?>
-			<form action="<?=$this->url->get('admin/support/open/'.$parse['t_id'].'/') ?>" method="POST">
+			{% else %}
+			<form action="{{ url('admin/support/open/'~parse['t_id']~'/') }}" method="POST">
 				<input type="submit" value="Открыть"></form>
-			<? endif; ?>
+			{% endif %}
 		</div>
 	</div>
-<? endif; ?>
+{% endif %}

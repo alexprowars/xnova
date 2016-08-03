@@ -8,8 +8,8 @@
 		<meta content="" name="description"/>
 		<meta content="Olympia Digital" name="author"/>
 
-		{{ assets.outputCss('css') }}
-		{{ assets.outputJs('js') }}
+		{{ assets.outputCss() }}
+		{{ assets.outputJs() }}
 
 		<link rel="shortcut icon" href="/favicon.ico"/>
 	</head>

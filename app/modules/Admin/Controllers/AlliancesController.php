@@ -5,7 +5,7 @@ namespace Admin\Controllers;
 use Admin\Controller;
 
 /**
- * @RoutePrefix("/admin/aliances")
+ * @RoutePrefix("/admin/alliances")
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
@@ -19,6 +19,16 @@ class AlliancesController extends Controller
 
 		if ($this->user->authlevel < 3)
 			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+	}
+
+	public static function getMenu ()
+	{
+		return [[
+			'code'	=> 'alliances',
+			'title' => 'Список альянсов',
+			'icon'	=> 'group',
+			'sort'	=> 120
+		]];
 	}
 
 	public function indexAction ()
