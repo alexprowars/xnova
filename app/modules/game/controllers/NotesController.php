@@ -48,7 +48,7 @@ class NotesController extends Application
 		$this->showTopPanel(false);
 	}
 
-	public function editAction ($noteId)
+	public function editAction ($noteId = 0)
 	{
 		$parse = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." AND id = ".intval($noteId)."")->fetch();
 
