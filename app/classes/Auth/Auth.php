@@ -170,6 +170,43 @@ class Auth extends Component
 		return $UserRow;
 	}
 
+	public function checkReferLink ()
+	{
+		if (!$this->session->has('uid') && is_numeric($this->request->getServer('QUERY_STRING')) && strlen($this->request->getServer('QUERY_STRING')) > 0)
+		{
+			$id = intval($this->request->getServer('QUERY_STRING'));
+
+			$user = User::findFirst($id);
+
+			if ($user)
+			{
+				$ip = sprintf("%u", ip2long($this->request->getClientAddress()));
+
+				$res = $this->db->fetchOne("SELECT `id` FROM game_moneys where `ip` = '" . $ip . "' AND `time` > '" . (time() - 86400) . "'");
+
+				if (!isset($res['id']))
+				{
+					$this->db->insertAsDict(
+						"game_moneys",
+						[
+							'user_id'		=> $user->id,
+							'time'			=> time(),
+							'ip'			=> $ip,
+							'referer'		=> $this->request->hasServer('HTTP_REFERER') ? $this->request->getServer('HTTP_REFERER') : '',
+							'user_agent'	=> $this->request->getServer('HTTP_USER_AGENT'),
+						]
+					);
+
+					$user->links++;
+					$user->refers++;
+					$user->update();
+				}
+
+				$this->session->set('ref', $user->id);
+			}
+		}
+	}
+
 	public function auth ($userId, $password, $security = 0, $expire = 0)
 	{
 		$secret = $this->getSecret($userId, $password, $security);

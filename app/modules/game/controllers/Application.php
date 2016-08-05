@@ -281,6 +281,9 @@ class Application extends Controller
 		{
 			$this->showTopPanel(false);
 			$this->showLeftPanel(false);
+
+			if ($this->getDI()->has('auth'))
+				$this->auth->checkReferLink();
 		}
 
 		return true;
