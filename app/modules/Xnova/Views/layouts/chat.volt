@@ -13,15 +13,17 @@
 	<div id="new_msg"></div>
 </div>
 
-<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/socket.io-1.4.5.js"></script>
-<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/chat.js"></script>
+<script type="text/javascript" src="{{ static_url('assets/js/socket.io-1.4.5.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('assets/js/chat.js') }}"></script>
 <script type="text/javascript">
 
 var allowResize = {{ config.view.get('socialIframeView', 0) == 1 ? 0 : 1 }};
 
 var userId = {{ user.getId() }};
 var userName = '{{ user.username }}';
-var key = '{{ md5(user.getId().'|'.user.username.'SuperPuperChat') }}';
+var key = '{{ md5(user.getId()~'|'~user.username~'SuperPuperChat') }}';
+var server = 'https://uni5.xnova.su:6677';
+var color = {{ user.color }};
 
 $(document).ready(function()
 {

@@ -33,11 +33,6 @@ class Auth extends Component
 		$this->_plugins[] = $className;
 	}
 
-	public function getSecret ($uid, $password)
-	{
-		return md5 ($password.'---IPSECURITYFLAG_N---'.$uid);
-	}
-
 	function check ()
 	{
 		$result = $this->checkUserAuth();
@@ -130,7 +125,19 @@ class Auth extends Component
 	public function remove ($redirect = false)
 	{
 		$this->session->destroy(true);
-		$this->cookies->get($this->getSessionKey())->delete();
+
+		$sessionCookie = $this->cookies->get($this->getSessionKey());
+		$sessionCookie->setPath('/');
+		$sessionCookie->setDomain($_SERVER["SERVER_NAME"]);
+
+		$sessionId = $sessionCookie->getValue();
+
+		$session = Session::findFirst(["conditions" => "token = ?0", "bind" => [$sessionId]]);
+
+		if ($session)
+			$session->delete();
+
+		$sessionCookie->delete();
 
 		$this->_authorized = false;
 

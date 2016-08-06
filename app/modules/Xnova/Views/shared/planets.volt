@@ -1,4 +1,4 @@
-{% if planet['list']|length %}
+{% if planet is defined and planet['list']|length %}
 	<a href="#" class="planet-toggle hidden-sm-up"><span>
 			<span class="first"></span>
 			<span class="second"></span>

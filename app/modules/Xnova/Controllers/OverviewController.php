@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Cache\Backend\Memcache;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -15,6 +16,7 @@ use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Controller;
+use Phalcon\Cache\Frontend\None as FrontendCache;
 
 /**
  * @RoutePrefix("/overview")
@@ -660,7 +662,54 @@ class OverviewController extends Controller
 		{
 			$parse['activity'] = ['chat' => [], 'forum' => []];
 
-			$chat = json_decode($this->cache->get("chat"), true);
+			$memcache = new Memcache(new FrontendCache([]), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
+
+			$chat = json_decode($memcache->get("xnova_5_chat"), true);
+
+			if (!is_array($chat))
+			{
+				$messages = $this->db->query("SELECT c.*, u.username FROM game_log_chat c LEFT JOIN game_users u ON u.id = c.user WHERE 1 = 1 ORDER BY c.time DESC LIMIT 20");
+
+				$chat = [];
+
+				while ($message = $messages->fetch())
+				{
+					if (preg_match_all("/приватно \[(.*?)\]/u", $message['text'], $private))
+					{
+						$message['text'] = preg_replace("/приватно \[(.*?)\]/u", '', $message['text']);
+					}
+
+					if (preg_match_all("/для \[(.*?)\]/u", $message['text'], $to))
+					{
+						$message['text'] = preg_replace("/для \[(.*?)\]/u", '', $message['text']);
+
+						if (isset($private[1]) && count($private[1]) > 0)
+						{
+							$private[1] = array_merge($private[1], $to[1]);
+							unset($to[1]);
+						}
+					}
+
+					if (!isset($to[1]))
+						$to[1] = [];
+
+					$isPrivate = false;
+
+					if (isset($private['1']) && count($private[1]) > 0)
+					{
+						$to[1] = $private[1];
+						$isPrivate = true;
+					}
+
+					$message['text'] = trim($message['text']);
+
+					$chat[] = [$message['id'], $message['time'], $message['username'], $to[1], $isPrivate, $message['text'], 0];
+				}
+
+				$chat = array_reverse($chat);
+
+				$memcache->save('xnova_5_chat', $chat, 86400);
+			}
 
 			if (is_array($chat) && count($chat))
 			{

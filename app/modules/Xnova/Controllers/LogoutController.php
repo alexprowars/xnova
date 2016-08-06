@@ -28,6 +28,6 @@ class LogoutController extends Controller
 	{
 		$this->auth->remove();
 
-		$this->message('Выход', 'Сессия закрыта', "/", 3);
+		$this->message('Вы вышли из игры', 'Сессия закрыта', "/", 3, false);
 	}
 }

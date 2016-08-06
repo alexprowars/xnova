@@ -18,6 +18,6 @@ class IndexController extends Controller
 
 	public function indexAction ()
 	{
-		return $this->response->redirect('admin/overview/');
+		return $this->response->redirect('overview/');
 	}
 }
