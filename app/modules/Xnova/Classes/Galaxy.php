@@ -213,11 +213,11 @@ class Galaxy extends Component
 		$planet = new Planet;
 
 		if ($HomeWorld)
-			$planet->field_max = $this->config->game->get('initial_fields', 163);
+			$planet->field_max = (int) $this->config->game->get('initial_fields', 163);
 		elseif ($Base)
-			$planet->field_max = $this->config->game->get('initial_base_fields', 10);
+			$planet->field_max = (int) $this->config->game->get('initial_base_fields', 10);
 		else
-			$planet->field_max = (int) floor($planetData[$Position]['fields'] * $this->config->game->get('planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) $this->config->game->get('planetFactor', 1));
 
 		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));
 

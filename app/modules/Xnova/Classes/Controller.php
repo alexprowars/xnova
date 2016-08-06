@@ -213,6 +213,9 @@ class Controller extends PhalconController
 		{
 			$this->showTopPanel(false);
 			$this->showLeftPanel(false);
+
+			if ($this->getDI()->has('game'))
+				$this->game->checkReferLink();
 		}
 
 		return true;
