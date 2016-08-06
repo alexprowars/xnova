@@ -5,7 +5,7 @@
 	<tr>
 		{% for i, link in links %}
 			<th width="50%">
-				<a href="{{ url('fleet/shortcut/view/'~i.'/') }}">{{ link['name'] }} [{{ link['galaxy'] }}:{{ link['system'] }}:{{ link['planet'] }}] {{ link['type'] }}</a>
+				<a href="{{ url('fleet/shortcut/view/'~i~'/') }}">{{ link['name'] }} [{{ link['galaxy'] }}:{{ link['system'] }}:{{ link['planet'] }}] {{ link['type'] }}</a>
 			</th>
 		{% endfor %}
 		{% if links|length%2 == 1 %}

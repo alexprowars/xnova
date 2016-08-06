@@ -1,4 +1,4 @@
-<form method="POST" action="{{ url('fleet/shortcut/view/'~a.'/') }}">
+<form method="POST" action="{{ url('fleet/shortcut/view/'~a~'/') }}">
 	<table class="table">
 		<tr>
 			<td colspan="2" class="c">{{ c[0] }} [{{ c[1] }}:{{ c[2] }}:{{ c[3] }}]</td>

@@ -35,16 +35,16 @@
 						<th>{{ game.datezone("d.m.y H:i:s", item.time) }}</th>
 						<th>
 							{% if item.sender > 0 %}
-								<a href="{{ url('players/'~item.sender.'/') }}" class="window popup-user">{{ item.from }}</a>
+								<a href="{{ url('players/'~item.sender~'/') }}" class="window popup-user">{{ item.from }}</a>
 							{% else %}
 								{{ item.from }}
 							{% endif %}
 						</th>
 						<th nowrap>
 							{% if item.type == 1 %}
-								<a href="{{ url('messages/write/'~item.sender.'/') }}" title="Ответить"><span class='sprite skin_m'></span></a>
-								&nbsp;<a href="{{ url('messages/write/'~item.sender.'/quote/'~item.id.'/') }}" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
-								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="{{ url('messages/abuse/'~item.id.'/') }}" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
+								<a href="{{ url('messages/write/'~item.sender~'/') }}" title="Ответить"><span class='sprite skin_m'></span></a>
+								&nbsp;<a href="{{ url('messages/write/'~item.sender~'/quote/'~item.id~'/') }}" title='Цитировать сообщение'><span class='sprite skin_z'></span></a>
+								&nbsp;<a href="javascript:;" onclick='window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?") ? window.location.href="{{ url('messages/abuse/'~item.id~'/') }}" : false;' title='Отправить жалобу'><span class='sprite skin_s'></span></a>
 							{% else %}
 								&nbsp;
 							{% endif %}

@@ -370,7 +370,7 @@ trait Initializations
 
 			$volt->setOptions([
 				'compiledPath'		=> ROOT_PATH.$config->application->baseDir.$config->application->cacheDir.'views/',
-				'compiledSeparator'	=> '|',
+				'compiledSeparator'	=> '-',
 				'compiledExtension'	=> '.cache'
 			]);
 

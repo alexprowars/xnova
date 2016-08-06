@@ -51,7 +51,7 @@ class ViewsTest extends PHPUnit_Framework_TestCase
 
 		$volt->setOptions([
 			'compiledPath'		=> ROOT_PATH.'/app/cache/views/',
-			'compiledSeparator'	=> '|',
+			'compiledSeparator'	=> '-',
 			'compiledExtension'	=> '.cache',
 			'compileAlways'		=> true
 		]);
