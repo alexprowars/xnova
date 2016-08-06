@@ -1,4 +1,4 @@
-<form method="post" action="{{ url('stat/') }}" id="stats">
+<form method="post" action="{{ url('stat/'~(who != '' ? who~'/' : '')) }}" id="stats">
 	<input type="hidden" name="old_who" value="{{ who }}">
 	<input type="hidden" name="old_type" value="{{ type }}">
 	<div class="table">
@@ -17,7 +17,7 @@
 			<div class="th col-xs-2 col-sm-1 middle">по</div>
 			<div class="th col-xs-4 col-sm-3">
 				<select name="type" onChange="$(this).parents('form').submit()" title="">
-					{% for key, value in _text('type') %}
+					{% for key, value in _text('type_'~who) %}
 						<option value="{{ key }}" {{ key == type ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select>

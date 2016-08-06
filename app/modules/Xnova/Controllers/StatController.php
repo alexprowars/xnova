@@ -61,6 +61,12 @@ class StatController extends Controller
 			case 5:
 				$this->field = 'build';
 				break;
+			case 6:
+				$this->field = 'minier';
+				break;
+			case 7:
+				$this->field = 'raid';
+				break;
 			default:
 				$this->field = 'total';
 		}
@@ -75,6 +81,9 @@ class StatController extends Controller
 	{
 		$type 	= $this->request->get('type', 'int', 1);
 		$who 	= $this->dispatcher->getActionName();
+
+		if ($who == '')
+			$who = 'players';
 
 		$this->view->partial('stat/top',
 		[
@@ -129,7 +138,12 @@ class StatController extends Controller
 
 		$start *= 100;
 
-		$query = $this->db->query("SELECT s.*, u.username, u.race FROM game_statpoints s LEFT JOIN game_users u ON u.id = s.id_owner WHERE  s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $start . ", 100");
+		$type = $this->request->get('type', 'int', 1);
+
+		if ($type == 6 || $type == 7)
+			$query = $this->db->query("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_".$this->field." as ".$this->field."_points, 0 as ".$this->field."_old_rank FROM game_users u LEFT JOIN game_alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_".$this->field." DESC, u.xp".$this->field." DESC LIMIT " . $start . ", 100");
+		else
+			$query = $this->db->query("SELECT s.*, u.username, u.race FROM game_statpoints s LEFT JOIN game_users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $start . ", 100");
 
 		$start++;
 
