@@ -11,6 +11,7 @@ namespace Xnova\Models;
 use Xnova\Galaxy;
 use Phalcon\Di;
 use Phalcon\Mvc\Model;
+use Friday\Core\Models\User as BaseUser;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -19,7 +20,7 @@ use Phalcon\Mvc\Model;
  * @method static User findFirst(mixed $parameters = null)
  * @property \Xnova\Database db
  */
-class User extends Model
+class User extends BaseUser
 {
 	private $db;
 	private $optionsData =
@@ -37,7 +38,6 @@ class User extends Model
 
 	private $bonusData = [];
 
-	public $id;
 	public $group_id;
 	public $username;
 	public $authlevel;
@@ -137,6 +137,10 @@ class User extends Model
 	public $deltime;
 	public $ally_name;
 
+	private $_infoColumns = [
+		'name', 'second_name', 'last_name', 'gender', 'photo', 'password'
+	];
+
 	public function onConstruct()
 	{
 		$this->db = $this->getDI()->getShared('db');
@@ -155,16 +159,6 @@ class User extends Model
 	public function isVacation()
 	{
 		return $this->vacation > 0;
-	}
-
-	public function getId()
-	{
-		return $this->id;
-	}
-
-	public function getSource()
-	{
-		return DB_PREFIX."users";
 	}
 
 	public function afterUpdate ()

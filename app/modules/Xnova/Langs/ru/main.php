@@ -1,5 +1,7 @@
 <?php
 
+$lang['module_name'] = 'Игра';
+
 $lang['user_level'] = array
 (
 	'0' => 'Игрок',

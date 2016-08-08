@@ -1,46 +1,62 @@
-{% if info is defined %}
-	<div class="portlet box green">
-		<div class="portlet-title">
-			<div class="caption">Редактирование группы "{{ info['name'] }}"</div>
-		</div>
-		<div class="portlet-body form">
-			<form action="{{ url('admin/groups/edit/'~info['id']~'/') }}" method="post" class="form-horizontal form-row-seperated">
-				<div class="form-body">
-					<div class="form-group">
-						<label class="col-md-3 control-label">Имя</label>
-						<div class="col-md-9">
-							<input type="text" class="form-control" name="name" value="{{ info['name'] }}" title="">
-						</div>
+<div class="portlet light bordered">
+	<div class="portlet-body">
+		<form action="{{ url('groups/edit/'~form.getValue('id')~'/') }}" method="post" id="{{ form.getFormId() }}" class="form-horizontal form" enctype="multipart/form-data">
+			<div class="tabbable-line boxless tabbable-reversed">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#tab_info" data-toggle="tab">Информация</a>
+					</li>
+					<li>
+						<a href="#tab_access" data-toggle="tab">Доступы</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="tab_info">
+						{{ form.get('title').render() }}
 					</div>
-					<div class="form-group">
-						<label class="col-md-3 control-label">Права</label>
-						<div class="col-md-9">
-							<div class="row">
-								<div class="col-xs-6"></div>
-								<div class="col-xs-3 text-xs-center">Чтение</div>
-								<div class="col-xs-3 text-xs-center">Изменение</div>
-							</div>
-							{% for module in modules %}
-								<input type="hidden" name="module[{{ module['id'] }}]" value="0">
-								<div class="row">
-									<div class="col-xs-6">
-										<label for="module_{{ module['id'] }}">{{ module['name'] }}</label>
-									</div>
-									<div class="col-xs-3 text-xs-center">
-										<input id="module_{{ module['id'] }}" {{ rights[module['id']] is defined and rights[module['id']]['right_id'] == 1 ? 'checked' : '' }} type="checkbox" name="module[{{ module['id'] }}]" value="1">
-									</div>
-									<div class="col-xs-3 text-xs-center">
-										<input {{ rights[module['id']] is defined and rights[module['id']]['right_id'] == 2 ? 'checked' : '' }} type="checkbox" name="module[{{ module['id'] }}]" value="2" title="">
-									</div>
-								</div>
-							{% endfor %}
-						</div>
-					</div>
-					<div class="form-actions">
-						<button type="submit" name="save" class="btn green" value="Y">Сохранить</button>
+					<div class="tab-pane" id="tab_access">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Модуль</th>
+									<th class="text-center">Управление</th>
+									<th>Права доступа</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for module, items in access %}
+									<tr>
+										<td>{{ module }}</td>
+										<td>{{ _text(module, 'module_name') }}</td>
+										<td class="text-center">
+											<div class="mt-checkbox-inline">
+												<label class="mt-checkbox mt-checkbox-outline">
+													<input type="checkbox" name="roles[{{ module }}][access]" value="{{ items['access'] }}" {{ (in_array(items['access'], access_group) ? 'checked' : '') }}>
+													<span></span>
+												</label>
+											</div>
+										</td>
+										<td>
+											{% for role, id in items if role != 'access'  %}
+												<div class="mt-checkbox-inline">
+													<label class="mt-checkbox mt-checkbox-outline">
+														<input type="checkbox" name="roles[{{ module }}][{{ role }}]" value="{{ id }}" {{ (in_array(id, access_group) ? 'checked' : '') }}>
+														{{ _text(module, 'module_access', role) }}
+														<span></span>
+													</label>
+												</div>
+											{% endfor %}
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
 					</div>
 				</div>
-			</form>
-		</div>
+			</div>
+			{{ form.renderActions() }}
+			{{ form.renderValidation() }}
+		</form>
 	</div>
-{% endif %}
+</div>

@@ -15,7 +15,14 @@ class Module extends Base implements ModuleDefinitionInterface
 	}
 
 	public function registerAutoloaders(DiInterface $di = null)
-	{}
+	{
+		$namespaces[__NAMESPACE__.'\Forms'] = __DIR__.'/Forms';
+
+		$loader = $di->get('loader');
+
+		$loader->registerNamespaces($namespaces, true);
+		$loader->register();
+	}
 
 	public function registerServices(DiInterface $di)
 	{

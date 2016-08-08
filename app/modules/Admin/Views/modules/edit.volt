@@ -1,35 +1,25 @@
-{% if info is defined %}
-	<div class="portlet box green">
-		<div class="portlet-title">
-			<div class="caption">Настройка модуля "{{ info['name'] }}"</div>
-		</div>
-		<div class="portlet-body form">
-			<form action="{{ url('/admin/modules/edit/'~info['id']~'/') }}" method="post" class="form-horizontal form-row-seperated">
-				<div class="form-body">
-					<div class="form-group">
-						<label class="col-md-3 control-label"></label>
-						<div class="col-md-9">
-							<input id="active" type="checkbox" class="form-control" name="active" {{ info['active'] == 1 ? 'checked' : '' }}>
-							<label for="active">Активность</label>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-md-3 control-label">Алиас</label>
-						<div class="col-md-9">
-							<input type="text" class="form-control" name="alias" value="{{ info['alias'] }}" title="">
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-md-3 control-label">Название</label>
-						<div class="col-md-9">
-							<input type="text" class="form-control" name="name" value="{{ info['name'] }}" title="">
-						</div>
-					</div>
-					<div class="form-actions">
-						<button type="submit" name="save" class="btn green" value="Y">Сохранить</button>
+<div class="portlet light bordered">
+	<div class="portlet-body form">
+		<form action="{{ url('modules/edit/'~form.getValue('id')~'/') }}" method="post" class="form-horizontal">
+			<div class="form-group">
+				<label class="col-md-3 control-label">Код</label>
+				<div class="col-md-4">
+					<p class="form-control-static">{{ form.getValue('code') }}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-3 control-label">Сортировка</label>
+				<div class="col-md-4">
+					<input name="sort" type="text" class="form-control" placeholder="Введите сортировку" value="{{ form.getValue('sort') }}">
+				</div>
+			</div>
+			<div class="form-actions">
+				<div class="row">
+					<div class="col-md-offset-3 col-md-4">
+						<button type="submit" class="btn green">Сохранить</button>
 					</div>
 				</div>
-			</form>
-		</div>
+			</div>
+		</form>
 	</div>
-{% endif %}
+</div>

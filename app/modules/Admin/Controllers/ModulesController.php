@@ -3,7 +3,10 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use Xnova\Helpers;
+use Admin\Forms\ModuleForm;
+use Friday\Core\Lang;
+use Friday\Core\Models\Module;
+use Friday\Core\Helpers\Cache as CacheHelper;
 
 /**
  * @RoutePrefix("/admin/modules")
@@ -14,88 +17,114 @@ use Xnova\Helpers;
  */
 class ModulesController extends Controller
 {
-	public function indexAction ()
-	{
-		$list = $this->db->extractResult($this->db->query("SELECT * FROM game_cms_modules WHERE 1"));
+	const CODE = 'modules';
 
-		$this->view->setVar('list', $list);
-		$this->tag->setTitle('Настройка модулей');
+	public function initialize()
+	{
+		parent::initialize();
+
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
+		$this->addToBreadcrumbs(Lang::getText('page_title_index'), self::CODE);
 	}
 
 	public static function getMenu ()
 	{
 		return [[
-			'code'	=> 'modules',
+			'code'	=> self::CODE,
 			'title' => 'Модули',
-			'icon'	=> '',
-			'sort'	=> 180
+			'icon'	=> 'grid',
+			'sort'	=> 1020
 		]];
 	}
 
-	public function addAction ()
+	public function indexAction ()
 	{
-		$error = '';
+		$modules = Module::find(['order' => 'sort ASC']);
 
-		if ($this->request->getPost('save', 'string', '') != '')
+		foreach ($modules as $module)
+			Lang::includeLang('main', $module->code);
+
+		$this->view->setVar('modules', $modules);
+		$this->tag->setTitle(Lang::getText('page_title_index'));
+	}
+
+	public function editAction ($moduleId)
+	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
+		$module = Module::findFirst($moduleId);
+
+		if (!$module)
 		{
-			if (!$this->request->getPost('alias', 'string', ''))
-				$error = 'Не указан алиас модуля';
-			elseif (!$this->request->getPost('name', 'string', ''))
-				$error = 'Не указано название модуля';
+			$this->flashSession->error('Модуль не найден');
+
+			return $this->response->redirect(self::CODE.'/');
+		}
+
+		$form = new ModuleForm($module);
+		$form->setAction($this->url->get(self::CODE.'/eidt/'.$module->id.'/'));
+
+		if ($this->request->isPost())
+		{
+			if ($form->isValid($this->request->getPost()))
+			{
+				if ($module->update())
+				{
+					$this->flashSession->success('Изменения сохранены');
+
+					return $this->response->redirect(self::CODE.'/edit/'.$module->id.'/');
+				}
+				else
+					$this->flashSession->error('Произошла ошибка при сохранении');
+			}
 			else
 			{
-				$active = $this->request->getPost('active', 'string', '') != '' ? 1 : 0;
-
-				$this->db->insertAsDict('game_cms_modules',
-				[
-					'active' 	=> $active,
-					'alias' 	=> Helpers::CheckString($this->request->getPost('alias', 'string', '')),
-					'name' 		=> Helpers::CheckString($this->request->getPost('name', 'string', ''))
-				]);
-
-				return $this->response->redirect('admin/modules/edit/'.$this->db->lastInsertId().'/');
+				foreach ($form->getMessages() as $message)
+				{
+					$this->flashSession->error($message);
+				}
 			}
 		}
 
-		$this->view->setVar('error', $error);
+		$this->view->setVar('form', $form);
+
+		$this->addToBreadcrumbs('Редактирование модуля');
 
 		return true;
 	}
 
-	public function editAction ($id)
+	public function activateAction ($moduleId, $status = VALUE_TRUE)
 	{
-		$error = '';
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 
-		$info = $this->db->query("SELECT * FROM game_cms_modules WHERE id = ".intval($id)."")->fetch();
+		$module = Module::findFirst($moduleId);
 
-		if (isset($info['id']))
+		if (!$module)
 		{
-			if ($this->request->getPost('save', 'string', '') != '')
-			{
-				if (!$this->request->getPost('alias', 'string', ''))
-					$error = 'Не указан алиас модуля';
-				elseif (!$this->request->getPost('name', 'string', ''))
-					$error = 'Не указано название модуля';
-				else
-				{
-					$active = $this->request->getPost('active', 'string', '') != '' ? 1 : 0;
+			$this->flashSession->error('Модуль не найден');
 
-					$this->db->updateAsDict('game_cms_modules',
-					[
-						'active' 	=> $active,
-						'alias' 	=> Helpers::CheckString($this->request->getPost('alias', 'string', '')),
-						'name' 		=> Helpers::CheckString($this->request->getPost('name', 'string', ''))
-					], "id = ".$info['id']);
-
-					return $this->response->redirect('admin/modules/edit/'.$info['id'].'/');
-				}
-			}
-
-			$this->view->setVar('info', $info);
+			return $this->response->redirect(self::CODE.'/');
 		}
 
-		$this->view->setVar('error', $error);
+		if ($status == VALUE_TRUE)
+			$module->active = VALUE_TRUE;
+		if ($status == VALUE_FALSE)
+			$module->active = VALUE_FALSE;
 
-		return true;
+		if ($module->update())
+			CacheHelper::clearApplicationCache();
+		else
+		{
+			foreach ($module->getMessages() as $message)
+			{
+				$this->flashSession->error($message);
+			}
+		}
+
+		return $this->response->redirect(self::CODE.'/');
 	}
 }

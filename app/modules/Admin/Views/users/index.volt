@@ -1,30 +1,64 @@
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
-		<thead>
-			<tr>
-				<th><a href="{{ url('admin/users/?cmd=sort&type=id') }}">ID</a></th>
-				<th><a href="{{ url('admin/users/?cmd=sort&type=username') }}">Логин игрока</a></th>
-				<th><a href="{{ url('admin/users/?cmd=sort&type=email') }}">E-Mail</a></th>
-				<th><a href="{{ url('admin/users/?cmd=sort&type=ip') }}">IP</a></th>
-				<th><a href="{{ url('admin/users/?cmd=sort&type=create_time') }}">Регистрация</a></th>
-			</tr>
-		</thead>
-		{% for l in list %}
-			<tr>
-				<td><a href="/admin/users/edit/{{ l['id'] }}/">{{ l['id'] }}</a></td>
-				<td><a href="/admin/users/edit/{{ l['id'] }}/">{{ l['username'] }}</a></td>
-				<td>{{ l['email'] }}</td>
-				<td>{{ long2ip(l['ip']) }}</td>
-				<td>{{ date("d.m.Y H:i:s", l['create_time']) }}<br>{{ date("d.m.Y H:i:s", l['onlinetime']) }}</td>
-			</tr>
-		{% endfor %}
-	</table>
-</div>
-
-<div class="row">
-	<div class="col-md-12 col-sm-12">
-		<div class="dataTables_paginate paging_bootstrap">
-			{{ pagination }}
+<div class="portlet light bordered">
+	<div class="portlet-body">
+		<div class="table-toolbar">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="btn-group">
+						{% if access.canWriteController('users', 'admin') %}
+							<a href="{{ url('users/add/') }}" class="btn sbold green">Добавить <i class="fa fa-plus"></i></a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="table-container">
+			<table class="table table-striped table-bordered table-hover table-checkable" id="userlist">
+				<thead>
+					<tr role="row" class="heading">
+						<th width="5%">ID</th>
+						<th width="15%">Email</th>
+						<th width="35%">ФИО</th>
+						<th width="30%">Регистрация</th>
+						<th width="25%">Действия</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	$(document).ready(function()
+	{
+		var grid = new Datatable();
+
+		grid.init({
+			src: $("#userlist"),
+			onSuccess: function (grid, response) {},
+			onError: function (grid) {},
+			onDataLoad: function(grid) {},
+			loadingMessage: 'Загрузка...',
+			dataTable: {
+				"bStateSave": false,
+				"lengthMenu": [
+					[10, 20, 50, -1],
+					[10, 20, 50, "Все"]
+				],
+				"pageLength": 10,
+				"ajax": {
+					"url": "{{ url('users/list/') }}"
+				},
+				"order": [
+					[0, "asc"]
+				],
+				"columns": [
+					{"data": "id"},
+					{"data": "email"},
+					{"data": "name"},
+					{"data": "date"},
+					{"data": "actions", "orderable": false}
+				]
+			}
+		});
+	});
+</script>

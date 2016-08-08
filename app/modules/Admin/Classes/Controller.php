@@ -36,6 +36,7 @@ use Phalcon\Tag;
  * @property \Phalcon\Flash\Direct flash
  * @property \Phalcon\Registry|\stdClass registry
  * @property \Phalcon\Config|\stdClass config
+ * @property \Friday\Core\Access access
  */
 class Controller extends PhalconController
 {

@@ -60,7 +60,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 
 	$compiler->addFunction('_text', function($arguments)
 	{
-		return '_getText(' . $arguments . ')';
+		return '\Friday\Core\Lang::getText(' . $arguments . ')';
 	});
 
 	$compiler->addFunction('plural', function($arguments)

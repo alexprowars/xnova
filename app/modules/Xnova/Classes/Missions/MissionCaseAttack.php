@@ -61,7 +61,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		}
 
 		$target->assignUser($targetUser);
-		$target->resourceUpdate($this->_fleet->create_time);
+		$target->resourceUpdate($this->_fleet->start_time);
 
 		LangManager::getInstance()->setImplementation(new LangImplementation());
 

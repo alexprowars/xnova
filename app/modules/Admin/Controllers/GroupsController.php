@@ -3,7 +3,12 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use Xnova\Helpers;
+use Admin\Forms\GroupForm;
+use Friday\Core\Lang;
+use Friday\Core\Models\Access;
+use Friday\Core\Models\Group;
+use Friday\Core\Models\GroupAccess;
+use Friday\Core\Helpers\Cache as CacheHelper;
 
 /**
  * @RoutePrefix("/admin/groups")
@@ -14,100 +19,207 @@ use Xnova\Helpers;
  */
 class GroupsController extends Controller
 {
-	public function indexAction ()
-	{
-		$list = $this->db->extractResult($this->db->query("SELECT * FROM game_users_groups WHERE 1 ORDER BY id ASC"));
+	const CODE = 'groups';
 
-		$this->view->setVar('list', $list);
-		$this->tag->setTitle('Группы пользователей');
+	public function initialize()
+	{
+		parent::initialize();
+
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
+		$this->addToBreadcrumbs(Lang::getText('page_title_index'), self::CODE);
 	}
 
 	public static function getMenu ()
 	{
 		return [[
-			'code'	=> 'groups',
+			'code'	=> self::CODE,
 			'title' => 'Группы',
-			'icon'	=> '',
-			'sort'	=> 180
+			'icon'	=> 'info',
+			'sort'	=> 1010
 		]];
+	}
+
+	public function indexAction ()
+	{
+		$groups = Group::find();
+
+		$this->view->setVar('groups', $groups);
+
+		$this->assets->addJs('assets/admin/global/js/datatable.js');
+		$this->assets->addJs('assets/admin/global/plugins/datatables/datatables.min.js');
+		$this->assets->addJs('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js');
+
+		$this->assets->addCss('assets/admin/global/plugins/datatables/datatables.min.css', 100);
+		$this->assets->addCss('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css', 101);
 	}
 
 	public function addAction ()
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 
-	}
+		$group = new Group();
+		$form = new GroupForm($group);
+		$form->setAction($this->url->get(self::CODE.'/add/'));
 
-	public function editAction ($id)
-	{
-		$error = '';
-
-		$info = $this->db->query("SELECT * FROM game_users_groups WHERE id = ".intval($id)."")->fetch();
-
-		if (isset($info['id']))
+		if ($this->request->isPost())
 		{
-			if ($this->request->getPost('save', null, '') != '')
+			if ($form->isValid($this->request->getPost()))
 			{
-				if (!$this->request->getPost('name', null, ''))
-					$error = 'Не указано имя пользователя';
+				if ($group->create())
+					return $this->response->redirect(self::CODE.'/');
 				else
+					$this->flashSession->error('Произошла ошибка при сохранении группы');
+			}
+			else
+			{
+				foreach ($form->getMessages() as $message)
 				{
-					$this->db->updateAsDict('game_users_groups', ['name' 	=> Helpers::CheckString($this->request->getPost('name', null, ''))], "id = ".$info['id']);
-
-					if (is_array($this->request->getPost('module', null, '')))
-					{
-						$m = $this->request->getPost('module', null, '');
-
-						foreach ($m as $moduleId => $rightId)
-						{
-							$check = $this->db->query("SELECT id FROM game_cms_modules WHERE active = '1' AND id = ".intval($moduleId)."")->fetch();
-
-							if (isset($check['id']))
-							{
-								$rightId = min(2, max(0, $rightId));
-
-								$f = $this->db->query("SELECT id FROM game_cms_rights WHERE group_id = '".$info['id']."' AND module_id = ".$check['id']."")->fetch();
-
-								if (!isset($f['id']))
-								{
-									$this->db->insertAsDict('game_cms_rights',
-									[
-										'group_id' 	=> $info['id'],
-										'module_id' => $check['id'],
-										'right_id' 	=> $rightId
-									]);
-								}
-								else
-								{
-									$this->db->insertAsDict('game_cms_rights',
-									[
-										'group_id' 	=> $info['id'],
-										'module_id' => $check['id'],
-										'right_id' 	=> $rightId
-									]);
-								}
-							}
-						}
-					}
-
-					return $this->response->redirect('admin/groups/edit/'.$info['id'].'/');
+					$this->flashSession->error($message);
 				}
 			}
-
-			$modules = $this->db->extractResult($this->db->query("SELECT * FROM game_cms_modules WHERE active = '1' ORDER BY id ASC"));
-
-			$rights = $this->db->extractResult($this->db->query("SELECT * FROM game_cms_rights WHERE group_id = '".$info['id']."'"), 'module_id');
-
-			$this->view->setVar('rights', $rights);
-			$this->view->setVar('modules', $modules);
-			$this->view->setVar('info', $info);
 		}
-		else
-			$error = 'Группа не найдена';
 
-		$this->view->setVar('error', $error);
+		$this->view->setVar('form', $form);
 
 		return true;
 	}
-}
 
-?>
+	public function editAction ($groupId)
+	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
+		$group = Group::findFirst($groupId);
+
+		if (!$group)
+		{
+			$this->flashSession->error('Группа не найден');
+
+			return $this->response->redirect(self::CODE.'/');
+		}
+
+		$accessGroup = [];
+
+		$data = GroupAccess::find(["columns" => "access_id", "conditions" => "group_id = :group:", "bind" => ["group" => $group->id]]);
+
+		foreach ($data as $item)
+			$accessGroup[] = $item->access_id;
+
+		$form = new GroupForm($group);
+		$form->setAction($this->url->get(self::CODE.'/edit/'.$group->id.'/'));
+
+		if ($this->request->isPost())
+		{
+			if ($form->isValid($this->request->getPost()))
+			{
+				if ($group->update())
+				{
+					$access = $form->getValue('roles');
+
+					$accessIds = [];
+
+					foreach ($access as $module => $roles)
+					{
+						foreach ($roles as $code => $id)
+							$accessIds[] = $id;
+					}
+
+					if (is_array($accessIds))
+					{
+						foreach ($accessIds as $id)
+						{
+							if (!in_array($id, $accessGroup))
+							{
+								$access = Access::findFirst($id);
+
+								if ($access)
+								{
+									$item = new GroupAccess();
+									$item->create(['group_id' => $group->id, 'access_id' => $access->id]);
+								}
+							}
+						}
+
+						$diff = array_diff($accessGroup, $accessIds);
+
+						if (count($diff))
+							GroupAccess::find(["conditions" => "group_id = :group: AND access_id IN (".implode(',', $diff).")", "bind" => ["group" => $group->id]])->delete();
+					}
+					else
+						GroupAccess::find(["conditions" => "group_id = :group:", "bind" => ["group" => $group->id]])->delete();
+
+					CacheHelper::clearApplicationCache();
+
+					$this->flashSession->success('Изменения сохранены');
+
+					return $this->response->redirect(self::CODE.'/edit/'.$group->id.'/');
+				}
+				else
+					$this->flashSession->error('Произошла ошибка при сохранении группы');
+			}
+			else
+			{
+				foreach ($form->getMessages() as $message)
+				{
+					$this->flashSession->error($message);
+				}
+			}
+		}
+
+		$this->view->setVar('form', $form);
+
+		$data = Access::find();
+
+		$access = [];
+
+		foreach ($data as $item)
+		{
+			if (!isset($access[$item->module]))
+				$access[$item->module] = [];
+
+			$access[$item->module][$item->code] = $item->id;
+		}
+
+		foreach ($access as $module => $data)
+		{
+			Lang::includeLang('main', $module);
+		}
+
+		$this->view->setVar('access', $access);
+		$this->view->setVar('access_group', $accessGroup);
+
+		return true;
+	}
+
+	public function deleteAction ($groupId)
+	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
+		$group = Group::findFirst($groupId);
+
+		if (!$group)
+		{
+			$this->flashSession->error('Группа не найдена');
+
+			return $this->response->redirect(self::CODE.'/');
+		}
+
+		if ($group->isSystem())
+		{
+			$this->flashSession->error('Группа не может быть удалена');
+
+			return $this->response->redirect(self::CODE.'/');
+		}
+
+		if ($group->delete())
+			$this->flashSession->success('Группа удалёна');
+		else
+			$this->flashSession->error('Произошла ошибка');
+
+		return $this->response->redirect(self::CODE.'/');
+	}
+}

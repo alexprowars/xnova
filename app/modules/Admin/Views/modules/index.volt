@@ -1,27 +1,38 @@
-<div class="util-btn-margin-bottom-5">
-	<a href="{{ url('admin/modules/add/') }}">
-		<button type="button" class="btn green btn-sm">Добавить</button>
-	</a>
-</div>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
-		<thead>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Название модуля</th>
+			<th>Код модуля</th>
+			<th>Системный</th>
+			<th>Сортировка</th>
+			<th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for module in modules %}
 			<tr>
-				<th width="30">ID</th>
-				<th>Алиас</th>
-				<th>Название</th>
-				<th>Административный</th>
-				<th>Активность</th>
-			</tr>
-		</thead>
-		{% for module in list %}
-			<tr>
-				<td><a href="/admin/modules/edit/{{ module['id'] }}/">{{ module['id'] }}</a></td>
-				<td>{{ module['alias'] }}</td>
-				<td>{{ module['name'] }}</td>
-				<td>{{ module['is_admin'] }}</td>
-				<td>{{ module['active'] }}</td>
+				<td>
+					{% if access.canWriteController('modules', 'admin') %}
+						<a href="{{ url('modules/edit/'~module.id~'/') }}">{{ module.id }}</a>
+					{% else %}
+						{{ module.id }}
+					{% endif %}
+				</td>
+				<td>{{ _text(module.code, 'module_name') }}</td>
+				<td>{{ module.code }}</td>
+				<td>{{ module.system }}</td>
+				<td>{{ module.sort }}</td>
+				<td>
+					{% if access.canWriteController('modules', 'admin') %}
+						{% if module.active == 'Y' %}
+							<a href="javascript:;" {% if module.code != 'core' %}onclick="if (window.confirm('Деактивировать модуль?')) location.href='{{ url('modules/activate/'~module.id~'/N/') }}';"{% endif %} class="btn red" {% if module.code == 'core' %}disabled{% endif %}><i class="fa fa-trash-o"></i> Деактивировать </a>
+						{% else %}
+							<a href="javascript:;" onclick="if (window.confirm('Активировать модуль?')) location.href='{{ url('modules/activate/'~module.id~'/Y/') }}';" class="btn green"><i class="fa fa-cogs"></i> Активировать </a>
+						{% endif %}
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
-	</table>
-</div>
+	</tbody>
+</table>

@@ -134,7 +134,7 @@
 					{% for item in main_menu %}
 						<li class="nav-item start {% if route_controller == item['code'] %}active{{ item['childrens']|length == item['code'] ? ' open' : '' }}{% endif %}">
 							<a href="{{ url(item['code']~'/') }}" class="nav-link nav-toggle">
-								<i class="fa fa-{{ item['icon'] }}"></i>
+								<i class="icon-{{ item['icon'] }}"></i>
 								<span class="title">{{ item['title'] }}</span>
 								{% if route_controller == ['code'] %}
 									<span class="selected"></span>
