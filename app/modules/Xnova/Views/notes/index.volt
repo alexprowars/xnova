@@ -1,16 +1,16 @@
 <form action="{{ url('notes/') }}" method="post">
 	<table class="table">
 		<tr>
-			<td class="c" colspan="4">{{ _text('Notes') }}</td>
+			<td class="c" colspan="4">{{ _text('xnova', 'Notes') }}</td>
 		</tr>
 		<tr>
-			<th colspan="4"><a href="{{ url('notes/new/') }}">{{ _text('MakeNewNote') }}</a></th>
+			<th colspan="4"><a href="{{ url('notes/new/') }}">{{ _text('xnova', 'MakeNewNote') }}</a></th>
 		</tr>
 		<tr>
 			<td class="c"></td>
-			<td class="c">{{ _text('Date') }}</td>
-			<td class="c">{{ _text('Subject') }}</td>
-			<td class="c">{{ _text('Size') }}</td>
+			<td class="c">{{ _text('xnova', 'Date') }}</td>
+			<td class="c">{{ _text('xnova', 'Subject') }}</td>
+			<td class="c">{{ _text('xnova', 'Size') }}</td>
 		</tr>
 		{% if parse['list'] is defined and parse['list']|length > 0 %}
 			{% for list in parse['list'] %}
@@ -31,7 +31,7 @@
 			</tr>
 		{% endif %}
 		<tr>
-			<td colspan="4" align="right"><input value="{{ _text('Delete') }}" type="submit"></td>
+			<td colspan="4" align="right"><input value="{{ _text('xnova', 'Delete') }}" type="submit"></td>
 		</tr>
 	</table>
 </form>

@@ -6,7 +6,7 @@
 		{% for diplo in parse['DMyQuery'] %}
 			<tr>
 				<th>{{ diplo['name'] }}</th>
-				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
+				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
 					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>
@@ -25,7 +25,7 @@
 		{% for diplo in parse['DQuery'] %}
 			<tr>
 				<th>{{ diplo['name'] }}</th>
-				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
+				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
 					<a href="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/appwiz.gif" alt="Подтвердить"></a>
 					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
@@ -45,7 +45,7 @@
 		{% for diplo in parse['DText'] %}
 			<tr>
 				<th>{{ diplo['name'] }}</th>
-				<th>{{ _text('diplomacyStatus', diplo['type']) }}</th>
+				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
 					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
 				</th>

@@ -7,15 +7,15 @@
 	{% endif %}
 	{{ parse['image'] }}
 	<tr>
-		<th>{{ _text('Tag') }}</th>
+		<th>{{ _text('xnova', 'Tag') }}</th>
 		<th>{{ parse['tag'] }}</th>
 	</tr>
 	<tr>
-		<th>{{ _text('Name') }}</th>
+		<th>{{ _text('xnova', 'Name') }}</th>
 		<th>{{ parse['name'] }}</th>
 	</tr>
 	<tr>
-		<th>{{ _text('Members') }}</th>
+		<th>{{ _text('xnova', 'Members') }}</th>
 		<th>{{ parse['member_scount'] }}</th>
 	</tr>
 	{% if parse['description'] != '' %}

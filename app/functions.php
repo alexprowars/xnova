@@ -8,8 +8,8 @@
 
 function p ($array)
 {
-	//if (!defined('SUPERUSER'))
-	//	return;
+	if (!defined('SUPERUSER'))
+		return;
 
 	if (is_object($array))
 	{
@@ -44,9 +44,8 @@ function is_email ($email)
 		return false;
 
 	if (preg_match('#^[^\\x00-\\x1f@]+@[^\\x00-\\x1f@]{2,}\.[a-z]{2,}$#iu', $email) == 0)
-	{
 		return false;
-	}
+
 	return true;
 }
 

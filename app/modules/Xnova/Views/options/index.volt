@@ -128,7 +128,7 @@
 					<th>Цвет чата</th>
 					<th>
 						<select name='color' style='width:170px' title="">
-							{% for id, color in _text('colors') if color[1] != '' %}
+							{% for id, color in _text('xnova', 'colors') if color[1] != '' %}
 								<option value="{{ id }}" {{ parse['color'] == id ? 'selected' : '' }} style="color:{{ color[0] }}">{{ color[1] }}</option>
 							{% endfor %}
 						</select>

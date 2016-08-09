@@ -17,13 +17,13 @@
 		<tr>
 			<th>{{ i + 1 }}</th>
 			<th>
-				<a>{{ _text('type_mission', item.mission) }}</a>
+				<a>{{ _text('xnova', 'type_mission', item.mission) }}</a>
 				{% if (item.start_time + 1) == item.end_time %}
 					<a>(F)</a>
 				{% endif %}
 			</th>
 			<th>
-				<a class="tooltip" data-content="{% for t, f in item.getShips() %}{{ _text('tech', t) }}: {{ f['cnt'] }}<br>{% endfor %}">
+				<a class="tooltip" data-content="{% for t, f in item.getShips() %}{{ _text('xnova', 'tech', t) }}: {{ f['cnt'] }}<br>{% endfor %}">
 					{{ pretty_number(item.getTotalShips()) }}
 				</a>
 			</th>

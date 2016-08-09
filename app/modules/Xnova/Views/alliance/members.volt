@@ -45,6 +45,6 @@
 		{% endif %}
 	{% endfor %}
 	<tr>
-		<td class="c" colspan="10"><a href="{{ url('alliance'~(parse['admin'] ? '/admin/edit/ally' : '')~'/') }}">{{ _text('Return_to_overview') }}</a></td>
+		<td class="c" colspan="10"><a href="{{ url('alliance'~(parse['admin'] ? '/admin/edit/ally' : '')~'/') }}">{{ _text('xnova', 'Return_to_overview') }}</a></td>
 	</tr>
 </table>

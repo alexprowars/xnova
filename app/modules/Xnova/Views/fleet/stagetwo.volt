@@ -27,13 +27,13 @@
 	{% endfor %}
 	<div class="table">
 		<div class="row">
-			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('type_planet', parse['planettype']) }}</div>
+			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('xnova', 'type_planet', parse['planettype']) }}</div>
 		</div>
 		<div class="row">
 			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
-						<td class="c" colspan="2">{{ _text('fl_mission') }}</td>
+						<td class="c" colspan="2">{{ _text('xnova', 'fl_mission') }}</td>
 					</tr>
 					{% for a, b in parse['missions'] %}
 						<tr>
@@ -41,14 +41,14 @@
 								<input id="m_{{ a }}" type="radio" name="mission" value="{{ a }}"{{ parse['missions_selected'] == a ? 'checked' : '' }}>
 								<label for="m_{{ a }}">{{ b }}</label>
 								{% if a == 15 %}
-									<center><font color="red">{{ _text('fl_expe_warning') }}</font></center>
+									<center><font color="red">{{ _text('xnova', 'fl_expe_warning') }}</font></center>
 								{% endif %}
 							</th>
 						</tr>
 					{% endfor %}
 					{% if parse['missions']|length == 0 %}
 						<tr>
-							<th><font color="red">{{ _text('fl_bad_mission') }}</font></th>
+							<th><font color="red">{{ _text('xnova', 'fl_bad_mission') }}</font></th>
 						</tr>
 					{% endif %}
 					<tr>
@@ -59,29 +59,29 @@
 			<div class="th col-xs-6">
 				<table class="table">
 					<tr>
-						<td colspan="3" class="c">{{ _text('fl_ressources') }}</td>
+						<td colspan="3" class="c">{{ _text('xnova', 'fl_ressources') }}</td>
 					</tr>
 					<tr>
-						<th>{{ _text('Metal') }}</th>
-						<th><a href="javascript:maxResource('1');">{{ _text('fl_selmax') }}</a></th>
-						<th><input name="resource1" alt="{{ _text('Metal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('xnova', 'Metal') }}</th>
+						<th><a href="javascript:maxResource('1');">{{ _text('xnova', 'fl_selmax') }}</a></th>
+						<th><input name="resource1" alt="{{ _text('xnova', 'Metal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th>{{ _text('Crystal') }}</th>
-						<th><a href="javascript:maxResource('2');">{{ _text('fl_selmax') }}</a></th>
-						<th><input name="resource2" alt="{{ _text('Crystal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('xnova', 'Crystal') }}</th>
+						<th><a href="javascript:maxResource('2');">{{ _text('xnova', 'fl_selmax') }}</a></th>
+						<th><input name="resource2" alt="{{ _text('xnova', 'Crystal') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th>{{ _text('Deuterium') }}</th>
-						<th><a href="javascript:maxResource('3');">{{ _text('fl_selmax') }}</a></th>
-						<th><input name="resource3" alt="{{ _text('Deuterium') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
+						<th>{{ _text('xnova', 'Deuterium') }}</th>
+						<th><a href="javascript:maxResource('3');">{{ _text('xnova', 'fl_selmax') }}</a></th>
+						<th><input name="resource3" alt="{{ _text('xnova', 'Deuterium') }}" size="10" onchange="calculateTransportCapacity();" type="text" title=""></th>
 					</tr>
 					<tr>
-						<th>{{ _text('fl_space_left') }}</th>
+						<th>{{ _text('xnova', 'fl_space_left') }}</th>
 						<th colspan="2"><div id="remainingresources">-</div></th>
 					</tr>
 					<tr>
-						<th colspan="3"><a href="javascript:maxResources()">{{ _text('fl_allressources') }}</a></th>
+						<th colspan="3"><a href="javascript:maxResources()">{{ _text('xnova', 'fl_allressources') }}</a></th>
 					</tr>
 					<tr>
 						<th colspan="3">&nbsp;</th>
@@ -140,7 +140,7 @@
 		</div>
 		{% if parse['missions']|length %}
 			<div class="row">
-				<div class="th col-xs-12"><input accesskey="z" value="{{ _text('fl_continue') }}" type="submit"></div>
+				<div class="th col-xs-12"><input accesskey="z" value="{{ _text('xnova', 'fl_continue') }}" type="submit"></div>
 			</div>
 		{% endif %}
 	</div>

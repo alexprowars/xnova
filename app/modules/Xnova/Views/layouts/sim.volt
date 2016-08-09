@@ -194,7 +194,7 @@
 	</tr>
 	{% for techId in parse['tech'] %}
 		<tr align="center">
-			<th>{{ _text('tech', techId) }}</th>
+			<th>{{ _text('xnova', 'tech', techId) }}</th>
 			{% for i in 0..(constant('MAX_SLOTS') * 2 - 1) %}
 				<th id="gr{{ i }}"><input class="number" value="{{ parse['slot_'~i] is defined and parse['slot_'~i][techId]['c'] is defined ? parse['slot_'~i][techId]['c'] : 0 }}" type="text" name="gr{{ i }}-{{ techId }}" maxlength="2" title=""></th>
 			{% endfor %}
@@ -205,7 +205,7 @@
 	</tr>
 	{% for fleetId in registry.reslist['fleet'] %}
 		<tr align="center">
-			<th>{{ _text('tech', fleetId) }}</th>
+			<th>{{ _text('xnova', 'tech', fleetId) }}</th>
 			{% for i in 0..(constant('MAX_SLOTS') * 2 - 1) %}
 				<th id="gr{{ i }}">
 					{% if fleetId == 212 and i < constant('MAX_SLOTS') %}
@@ -225,7 +225,7 @@
 	</tr>
 	{% for fleetId in registry.reslist['defense'] %}
 		<tr align="center">
-			<th>{{ _text('tech', fleetId) }}</th>
+			<th>{{ _text('xnova', 'tech', fleetId) }}</th>
 			{% for i in 0..(constant('MAX_SLOTS') * 2 - 1) %}
 				<th id="gr{{ i }}">
 					{% if i < constant('MAX_SLOTS') %}

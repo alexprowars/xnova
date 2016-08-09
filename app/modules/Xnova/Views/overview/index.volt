@@ -23,7 +23,7 @@
 	<div class="title">
 		<div class="row">
 			<div class="col-xs-12 col-sm-6">
-				{{ _text('type_planet', parse['planet_type']) }} "{{ parse['planet_name'] }}"
+				{{ _text('xnova', 'type_planet', parse['planet_type']) }} "{{ parse['planet_name'] }}"
 				<a href="{{ url("galaxy/"~parse['galaxy_galaxy']~"/"~parse['galaxy_system']~"/") }}">[{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}]</a>
 				<a href="{{ url("overview/rename/") }}" title="Редактирование планеты">(изменить)</a>
 			</div>
@@ -93,7 +93,7 @@
 						<div class="row">
 							{% for oId, oTime in parse['officiers'] %}
 								<div class="col-xs-3 col-sm-2 col-md-12">
-									<a href="{{ url("officier/") }}" class="tooltip" data-content="{{ _text('tech', oId) }}<br>{% if oTime > time() %}Нанят до <font color=lime>{{ game.datezone("d.m.Y H:i", oTime) }}</font>{% else %}<font color=lime>Не нанят</font>{% endif %}"><span class="officier of{{ oId }}{{ oTime > time() ? '_ikon' : '' }}"></span></a>
+									<a href="{{ url("officier/") }}" class="tooltip" data-content="{{ _text('xnova', 'tech', oId) }}<br>{% if oTime > time() %}Нанят до <font color=lime>{{ game.datezone("d.m.Y H:i", oTime) }}</font>{% else %}<font color=lime>Не нанят</font>{% endif %}"><span class="officier of{{ oId }}{{ oTime > time() ? '_ikon' : '' }}"></span></a>
 								</div>
 							{% endfor %}
 						</div>

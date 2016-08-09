@@ -15,41 +15,41 @@
 			metal.html(Cristal + Deuterium);
 
 			if (isNaN(merchant.find('input[name=cristal]').val()))
-				metal.html("{{ _text('mod_ma_nbre') }}");
+				metal.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 
 			if (isNaN(merchant.find('input[name=deut]').val()))
-				metal.html("{{ _text('mod_ma_nbre') }}");
+				metal.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 		}
 	</script>
 	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="metal">
 		<table width="100%">
 			<tr>
-				<td class="c" colspan="3">{{ _text('mod_ma_buton') }} на металл</td>
+				<td class="c" colspan="3">{{ _text('xnova', 'mod_ma_buton') }} на металл</td>
 			</tr>
 			<tr>
 				<th width="25%"></th>
-				<th width="25%">{{ _text('mod_ma_cours') }}</th>
+				<th width="25%">{{ _text('xnova', 'mod_ma_cours') }}</th>
 				<th></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Metal') }}</th>
+				<th>{{ _text('xnova', 'Metal') }}</th>
 				<th>{{ parse['mod_ma_res'] }}</th>
 				<th><span id='metal'></span></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Crystal') }}</th>
+				<th>{{ _text('xnova', 'Crystal') }}</th>
 				<th>{{ parse['mod_ma_res_a'] }}</th>
 				<th><input name="cristal" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Deuterium') }}</th>
+				<th>{{ _text('xnova', 'Deuterium') }}</th>
 				<th>{{ parse['mod_ma_res_b'] }}</th>
 				<th><input name="deut" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
 				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
-				<th><input type="submit" value="{{ _text('mod_ma_excha') }}"></th>
+				<th><input type="submit" value="{{ _text('xnova', 'mod_ma_excha') }}"></th>
 			</tr>
 		</table>
 	</form>
@@ -70,41 +70,41 @@
 			crystal.html(Metal + Deuterium);
 
 			if (isNaN(merchant.find('input[name=metal]').val()))
-				crystal.html("{{ _text('mod_ma_nbre') }}");
+				crystal.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 
 			if (isNaN(merchant.find('input[name=deut]').val()))
-				crystal.html("{{ _text('mod_ma_nbre') }}");
+				crystal.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 		}
 	</script>
 	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="cristal">
 		<table width="100%">
 			<tr>
-				<td class="c" colspan="3">{{ _text('mod_ma_buton') }} на кристалл</td>
+				<td class="c" colspan="3">{{ _text('xnova', 'mod_ma_buton') }} на кристалл</td>
 			</tr>
 			<tr>
 				<th width="25%"></th>
-				<th width="25%">{{ _text('mod_ma_cours') }}</th>
+				<th width="25%">{{ _text('xnova', 'mod_ma_cours') }}</th>
 				<th></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Crystal') }}</th>
+				<th>{{ _text('xnova', 'Crystal') }}</th>
 				<th>{{ parse['mod_ma_res'] }}</th>
 				<th><span id='cristal'></span></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Metal') }}</th>
+				<th>{{ _text('xnova', 'Metal') }}</th>
 				<th>{{ parse['mod_ma_res_a'] }}</th>
 				<th><input name="metal" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Deuterium') }}</th>
+				<th>{{ _text('xnova', 'Deuterium') }}</th>
 				<th>{{ parse['mod_ma_res_b'] }}</th>
 				<th><input name="deut" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
 				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
-				<th><input type="submit" value="{{ _text('mod_ma_excha') }}"></th>
+				<th><input type="submit" value="{{ _text('xnova', 'mod_ma_excha') }}"></th>
 			</tr>
 		</table>
 	</form>
@@ -125,41 +125,41 @@
 			deuterium.html(Metal + Cristal);
 
 			if (isNaN(merchant.find('input[name=metal]').val()))
-				deuterium.html("{{ _text('mod_ma_nbre') }}");
+				deuterium.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 
 			if (isNaN(merchant.find('input[name=cristal]').val()))
-				deuterium.html("{{ _text('mod_ma_nbre') }}");
+				deuterium.html("{{ _text('xnova', 'mod_ma_nbre') }}");
 		}
 	</script>
 	<form id="merchant" action="{{ url('merchant/') }}" method="post">
 		<input type="hidden" name="ress" value="deuterium">
 		<table width="100%">
 			<tr>
-				<td class="c" colspan="3">{{ _text('mod_ma_buton') }} на дейтерий</td>
+				<td class="c" colspan="3">{{ _text('xnova', 'mod_ma_buton') }} на дейтерий</td>
 			</tr>
 			<tr>
 				<th width="25%"></th>
-				<th width="25%">{{ _text('mod_ma_cours') }}</th>
+				<th width="25%">{{ _text('xnova', 'mod_ma_cours') }}</th>
 				<th></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Deuterium') }}</th>
+				<th>{{ _text('xnova', 'Deuterium') }}</th>
 				<th>{{ parse['mod_ma_res'] }}</th>
 				<th><span id='deut'></span></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Metal') }}</th>
+				<th>{{ _text('xnova', 'Metal') }}</th>
 				<th>{{ parse['mod_ma_res_a'] }}</th>
 				<th><input name="metal" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
-				<th>{{ _text('Crystal') }}</th>
+				<th>{{ _text('xnova', 'Crystal') }}</th>
 				<th>{{ parse['mod_ma_res_b'] }}</th>
 				<th><input name="cristal" type="number" value="" placeholder="введите кол-во" onkeyup="calcul()"/></th>
 			</tr>
 			<tr>
 				<th colspan="2" class="negative">Внимание! Стоимость обмена 1 кр.</th>
-				<th><input type="submit" value="{{ _text('mod_ma_excha') }}"></th>
+				<th><input type="submit" value="{{ _text('xnova', 'mod_ma_excha') }}"></th>
 			</tr>
 		</table>
 	</form>

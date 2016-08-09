@@ -9,15 +9,15 @@
 			<th colspan="2">Режим отпуска включён до: <br/>{{ parse['um_end_date'] }}</th>
 		</tr>
 		<tr>
-			<th>{{ _text('username') }}</th>
+			<th>{{ _text('xnova', 'username') }}</th>
 			<th><input name="db_character" size="20" value="{{ parse['opt_usern_data'] }}" type="hidden">{{ parse['opt_usern_data'] }}</th>
 		</tr>
 		<tr>
-			<th><a title="{{ _text('vacations_tip') }}">{{ _text('mode_vacations') }}</a></th>
+			<th><a title="{{ _text('xnova', 'vacations_tip') }}">{{ _text('xnova', 'mode_vacations') }}</a></th>
 			<th><input name="urlaubs_modus"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
 		</tr>
 		<tr>
-			<th><a title="{{ _text('deleteaccount_tip') }}">{{ _text('deleteaccount') }}</a></th>
+			<th><a title="{{ _text('xnova', 'deleteaccount_tip') }}">{{ _text('xnova', 'deleteaccount') }}</a></th>
 			<th><input name="db_deaktjava"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
 		</tr>
 		<tr>

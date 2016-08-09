@@ -16,19 +16,19 @@
 	<div class="col-md-{{ config.view.get('showPlanetListSelect', 0) == 1 ? '5' : '6' }} col-sm-6 col-xs-12">
 		<div class="row">
 			<div class="col-xs-4 text-xs-center">
-				<span onclick="showWindow('{{ _text('tech', 1) }}', '{{ url('info/1/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['metal_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['metal_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['metal_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_metall"></span><br></span>
+				<span onclick="showWindow('{{ _text('xnova', 'tech', 1) }}', '{{ url('info/1/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['metal_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['metal_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['metal_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_metall"></span><br></span>
 				<div class="neutral">Металл</div>
 				<div title="Количество ресурса на планете"><div id="met">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">{{ planet['metal_max'] }}</span>
 			</div>
 			<div class="col-xs-4 text-xs-center">
-				<span onclick="showWindow('{{ _text('tech', 2) }}', '{{ url('info/2/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['crystal_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['crystal_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['crystal_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
+				<span onclick="showWindow('{{ _text('xnova', 'tech', 2) }}', '{{ url('info/2/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['crystal_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['crystal_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['crystal_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_kristall"></span><br></span>
 				<div class="neutral">Кристалл</div>
 				<div title="Количество ресурса на планете"><div id="cry">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">{{ planet['crystal_max'] }}</span>
 			</div>
 			<div class="col-xs-4 text-xs-center">
-				<span onclick="showWindow('{{ _text('tech', 3) }}', '{{ url('info/3/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['deuterium_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['deuterium_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['deuterium_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
+				<span onclick="showWindow('{{ _text('xnova', 'tech', 3) }}', '{{ url('info/3/') }}', 600)" class="tooltip hidden-xs-down" data-content='<table width=150><tr><td width=30%>КПД:</td><td align=right>{{ planet['deuterium_mp'] }}%</td></tr><tr><td>В час:</td><td align=right>{{ pretty_number(planet['deuterium_ph']) }}</td></tr><tr><td>День:</td><td align=right>{{ pretty_number(planet['deuterium_ph'] * 24) }}</td></tr></table>'><span class="sprite skin_deuterium"></span><br></span>
 				<div class="neutral">Дейтерий</div>
 				<div title="Количество ресурса на планете"><div id="deu">-</div></div>
 				<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">{{ planet['deuterium_max'] }}</span>
@@ -38,7 +38,7 @@
 	<div class="col-md-{{ config.view.get('showPlanetListSelect', 0) == 1 ? '5' : '6' }} col-sm-6 col-xs-12">
 		<div class="row">
 			<div class="col-xs-4 text-xs-center">
-				<span onclick="showWindow('{{ _text('tech', 4) }}', '{{ url('info/4/') }}', 600)" title="{{ _text('tech', 4) }}" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>
+				<span onclick="showWindow('{{ _text('xnova', 'tech', 4) }}', '{{ url('info/4/') }}', 600)" title="{{ _text('xnova', 'tech', 4) }}" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>
 				<div class="neutral">Энергия</div>
 				<div title="Энергетический баланс">{{ planet['energy_total'] }}</div>
 				<span title="Выработка энергии" class="hidden-xs-down positive">{{ planet['energy_max'] }}</span>
@@ -61,7 +61,7 @@
 				<tr>
 				{% for oId, oTime in planet['officiers'] %}
 					<td align="center" width="14%">
-						{{ _text('tech', oId) }}
+						{{ _text('xnova', 'tech', oId) }}
 						<div class="separator"></div>
 						<span class="officier of{{ oId }}{{ oTime > time() ? '_ikon' : '' }}"></span>
 					</td>

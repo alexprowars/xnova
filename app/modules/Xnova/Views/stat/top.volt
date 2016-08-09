@@ -9,7 +9,7 @@
 			<div class="th col-xs-2 middle">Какой</div>
 			<div class="th col-xs-4 col-sm-2">
 				<select name="who" onChange="$(this).parents('form').attr('action', {{ url('stat/') }}+$(this).val()+'/');$(this).parents('form').submit()" title="">
-					{% for key, value in _text('who') %}
+					{% for key, value in _text('xnova', 'who') %}
 						<option value="{{ key }}" {{ key == who ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select>
@@ -17,7 +17,7 @@
 			<div class="th col-xs-2 col-sm-1 middle">по</div>
 			<div class="th col-xs-4 col-sm-3">
 				<select name="type" onChange="$(this).parents('form').submit()" title="">
-					{% for key, value in _text('type_'~who) %}
+					{% for key, value in _text('xnova', 'type_'~who) %}
 						<option value="{{ key }}" {{ key == type ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select>

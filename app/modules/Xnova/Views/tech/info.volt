@@ -6,12 +6,12 @@
 	var objx = ({
 		{% for id, code in registry.resource %}
 			{{ id }}:{
-				'name':'{{ _text('tech', id) }}',
+				'name':'{{ _text('xnova', 'tech', id) }}',
 				'img':'{{ id }}.gif',
 				'req':[
 				{% if registry.requeriments[id] is defined and registry.requeriments[id]|length > 0 %}
 					{% for ids, level in registry.requeriments[id] %}
-						[{{ ids }},'{{ _text('tech', ids) }}',{{ level }},-1,{{ level }}],
+						[{{ ids }},'{{ _text('xnova', 'tech', ids) }}',{{ level }},-1,{{ level }}],
 					{% endfor %}
 				{% else %}
 					['no']

@@ -36,10 +36,10 @@
 				<th width="200"></th>
 				<th>Ур.</th>
 				<th>Бонус</th>
-				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 1) }}', '{{ url('info/1/') }}', 600)">Металл</a></th>
-				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 2) }}', '{{ url('info/2/') }}', 600)">Кристалл</a></th>
-				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 3) }}', '{{ url('info/3/') }}', 600)">Дейтерий</a></th>
-				<th><a href="javascript:" onclick="showWindow('{{ _text('tech', 4) }}', '{{ url('info/4/') }}', 600)">Энергия</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', 1) }}', '{{ url('info/1/') }}', 600)">Металл</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', 2) }}', '{{ url('info/2/') }}', 600)">Кристалл</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', 3) }}', '{{ url('info/3/') }}', 600)">Дейтерий</a></th>
+				<th><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', 4) }}', '{{ url('info/4/') }}', 600)">Энергия</a></th>
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@
 			</tr>
 			{% for resource in parse['resource_row'] %}
 				<tr>
-					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('tech', resource['id']) }}</a></th>
+					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('xnova', 'tech', resource['id']) }}</a></th>
 					<th><font color="#ffffff">{{ resource['level_type'] }}</font></th>
 					<th><font color="#ffffff">{{ resource['bonus'] }}%</font></th>
 					{% for res in registry.reslist['res'] %}
@@ -104,7 +104,7 @@
 		</tr>
 		{% for res in registry.reslist['res'] %}
 			<tr>
-				<th>{{ _text('res', res) }}</th>
+				<th>{{ _text('xnova', 'res', res) }}</th>
 				<th>{{ colorNumber(pretty_number(parse[res~'_total'])) }}</th>
 				<th>{{ colorNumber(pretty_number(parse[res~'_total'] * 24)) }}</th>
 				<th>{{ colorNumber(pretty_number(parse[res~'_total'] * 24 * 7)) }}</th>
@@ -119,7 +119,7 @@
 		</tr>
 		{% for res in registry.reslist['res'] %}
 			<tr>
-				<th width="150">{{ _text('res', res) }}</th>
+				<th width="150">{{ _text('xnova', 'res', res) }}</th>
 				<th width="100">{{ parse[res~'_storage'] }}%</th>
 				<th>
 					<div style="border: 1px solid #9999FF;">

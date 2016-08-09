@@ -14,14 +14,14 @@
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
-			<td class="c" colspan="2">{{ _text('Editnote') }}</td>
+			<td class="c" colspan="2">{{ _text('xnova', 'Editnote') }}</td>
 		</tr>
 		<tr>
 			<th>Приоритет:
 				<select name="u" title="">
-					<option value="2" {{ parse['priority'] == 2 ? 'selected' : '' }}>{{ _text('Important') }}</option>
-					<option value="1" {{ parse['priority'] == 1 ? 'selected' : '' }}>{{ _text('Normal') }}</option>
-					<option value="0" {{ parse['priority'] == 0 ? 'selected' : '' }}>{{ _text('Unimportant') }}</option
+					<option value="2" {{ parse['priority'] == 2 ? 'selected' : '' }}>{{ _text('xnova', 'Important') }}</option>
+					<option value="1" {{ parse['priority'] == 1 ? 'selected' : '' }}>{{ _text('xnova', 'Normal') }}</option>
+					<option value="0" {{ parse['priority'] == 0 ? 'selected' : '' }}>{{ _text('xnova', 'Unimportant') }}</option
 				</select>
 			</th>
 			<th>Тема:
@@ -37,8 +37,8 @@
 		</tr>
 		<tr>
 			<td class="c" colspan="2">
-				<input type="reset" value="{{ _text('Reset') }}">
-				<input type="submit" value="{{ _text('Save') }}">
+				<input type="reset" value="{{ _text('xnova', 'Reset') }}">
+				<input type="submit" value="{{ _text('xnova', 'Save') }}">
 			</td>
 		</tr>
 	</table>

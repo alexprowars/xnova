@@ -10,7 +10,7 @@
 				<input type="text" name="s" value="{{ s }}" size=3 maxlength=3 title="Система">
 				<input type="text" name="p" value="{{ i }}" size=3 maxlength=2 title="Планета">
 				<select name="t" title="">
-					{% for key, value in _text('fleet_objects') %}
+					{% for key, value in _text('xnova', 'fleet_objects') %}
 						<option value="{{ key }}" {{ t == key ? 'selected' : '' }}>{{ value }}</option>
 					{% endfor %}
 				</select></th>

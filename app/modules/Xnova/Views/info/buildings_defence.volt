@@ -66,7 +66,7 @@
 		</tr>
 		{% for fId, battle in parse['speedBattle'] %}
 			<tr>
-				<th class="text-xs-left"><a href="{{ url('info/'~fId~'/') }}">{{ _text('tech', fId) }}</a></th>
+				<th class="text-xs-left"><a href="{{ url('info/'~fId~'/') }}">{{ _text('xnova', 'tech', fId) }}</a></th>
 				<th class="positive">
 					{% if battle['TO'] is defined %}
 						{{ battle['TO'] }}

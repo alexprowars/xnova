@@ -180,7 +180,7 @@
 </tr>
 {% for techId in techList %}
 	<tr align=center>
-		<td><b>{{ _text('tech', techId) }}</b></td>
+		<td><b>{{ _text('xnova', 'tech', techId) }}</b></td>
 		{% for i in 0..(config.game.get('maxSlotsInSim', 5) * 2 - 1) %}
 			<td id="gr{{ i }}"><input class="number" value="0" type="text" name="gr{{ i }}-{{ techId }}" maxlength="2" title=""></td>
 		{% endfor %}
@@ -193,7 +193,7 @@
 
 {% for fleetId in registry.reslist['fleet'] %}
 	<tr align=center>
-		<td><b>{{ _text('tech', fleetId) }}</b></td>
+		<td><b>{{ _text('xnova', 'tech', fleetId) }}</b></td>
 		{% for i in 0..(config.game.get('maxSlotsInSim', 5) * 2 - 1) %}
 			<td id="gr{{ i }}">
 				{% if fleetId == 212 and i < config.game.get('maxSlotsInSim', 5) %}
@@ -214,7 +214,7 @@
 </tr>
 	{% for fleetId in registry.reslist['defense'] %}
 		<tr align=center>
-			<td><b>{{ _text('tech', fleetId) }}</b></td>
+			<td><b>{{ _text('xnova', 'tech', fleetId) }}</b></td>
 			{% for i in 0..(config.game.get('maxSlotsInSim', 5) * 2 - 1) %}
 				<td id="gr{{ i }}">
 					{% if i < config.game.get('maxSlotsInSim', 5) %}

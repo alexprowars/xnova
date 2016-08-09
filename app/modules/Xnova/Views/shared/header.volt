@@ -27,7 +27,7 @@
 </a>
 <div class="menu-sidebar hidden-sm-up">
 	<ul class="nav">
-		{% for id, menu in _text('main_menu') if menu[2] <= adminlevel %}
+		{% for id, menu in _text('xnova', 'main_menu') if menu[2] <= adminlevel %}
 			<li><a {% if menu[3] is defined %}data-link="Y"{% endif %} href="{{ menu[1] }}" {{ controller == id ? 'class="check"' : '' }}>{{ menu[0] }}</a></li>
 		{% endfor %}
 	</ul>

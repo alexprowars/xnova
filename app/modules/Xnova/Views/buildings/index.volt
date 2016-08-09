@@ -9,7 +9,7 @@
 		<table class="table" id="building">
 			<tr>
 				<td class="c" width="50%">
-					{{ list['ListID'] }}: {{ list['ElementTitle'] }} {{ list['BuildLevel'] }}{% if list['BuildMode'] != 'build' %}. {{ _text('destroy') }}{% endif %}
+					{{ list['ListID'] }}: {{ list['ElementTitle'] }} {{ list['BuildLevel'] }}{% if list['BuildMode'] != 'build' %}. {{ _text('xnova', 'destroy') }}{% endif %}
 				</td>
 				<td class="k">
 					{% if list['ListID'] == 1 %}
@@ -34,9 +34,9 @@
 			<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
 				<div class="buildings area {{ parse['planettype'] }}">
 					{% for build in parse['BuildingsList'] if build['access'] is true %}
-						<div data-id="{{ build['i'] }}" class="object i_{{ build['i'] }} {{ build['count'] <= 0 ? 'empty' : '' }} tooltip" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
-							<img src="{{ url.getBaseUri() }}assets/images/buildings/{{ build['i'] }}.png" alt="{{ _text('tech', build['i']) }}">
-							<div class="name">{{ _text('tech', build['i']) }} <span>{{ pretty_number(build['count']) }}</span></div>
+						<div data-id="{{ build['i'] }}" class="object i_{{ build['i'] }} {{ build['count'] <= 0 ? 'empty' : '' }} tooltip" data-content='<center>{{ _text('xnova', 'descriptions', build['i']) }}</center>' data-tooltip-width="150">
+							<img src="{{ url.getBaseUri() }}assets/images/buildings/{{ build['i'] }}.png" alt="{{ _text('xnova', 'tech', build['i']) }}">
+							<div class="name">{{ _text('xnova', 'tech', build['i']) }} <span>{{ pretty_number(build['count']) }}</span></div>
 						</div>
 					{% endfor %}
 				</div>
@@ -49,12 +49,12 @@
 					<div class="col-md-6 col-xs-12" id="object_{{ build['i'] }}">
 						<div class="viewport buildings {% if build['access'] is false %}shadow{% endif %}">
 							{% if build['access'] is false %}
-								<div class="notAvailable tooltip" data-content="Требования:<br>{{ replace('"', "'", getTechTree(build['i'], this.user, this.planet)) }}" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600, 500)"><span>недоступно</span></div>
+								<div class="notAvailable tooltip" data-content="Требования:<br>{{ replace('"', "'", getTechTree(build['i'], this.user, this.planet)) }}" onclick="showWindow('{{ _text('xnova', 'tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600, 500)"><span>недоступно</span></div>
 							{% endif %}
 
 							<div class="img">
-								<a href="javascript:;" onclick="showWindow('{{ _text('tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600)">
-									<img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ build['i'] }}.gif" align="top" alt="" class="tooltip img-responsive" data-content='<center>{{ _text('descriptions', build['i']) }}</center>' data-tooltip-width="150">
+								<a href="javascript:;" onclick="showWindow('{{ _text('xnova', 'tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}', 600)">
+									<img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ build['i'] }}.gif" align="top" alt="" class="tooltip img-responsive" data-content='<center>{{ _text('xnova', 'descriptions', build['i']) }}</center>' data-tooltip-width="150">
 								</a>
 
 								<div class="overContent">
@@ -62,7 +62,7 @@
 								</div>
 							</div>
 							<div class="title">
-								<a href="{{ url('info/'~build['i']~'/') }}">{{ _text('tech', build['i']) }}</a>
+								<a href="{{ url('info/'~build['i']~'/') }}">{{ _text('xnova', 'tech', build['i']) }}</a>
 							</div>
 							<div class="actions">
 								Уровень: <span class="{{ build['count'] > 0 ? 'positive' : 'negative' }}">{{ pretty_number(build['count']) }}</span><br>

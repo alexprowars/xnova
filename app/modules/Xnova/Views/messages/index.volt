@@ -5,7 +5,7 @@
 			Сообщения
 			<select name="messcat" onChange="$('#mes_form').submit()" title="">
 				{% for type in parse['types'] %}
-					<option value="{{ type }}" {{ type == parse['category'] ? 'selected' : '' }}>{{ _text('type', type) }}</option>
+					<option value="{{ type }}" {{ type == parse['category'] ? 'selected' : '' }}>{{ _text('xnova', 'type', type) }}</option>
 				{% endfor %}
 			</select>
 			по
@@ -51,7 +51,7 @@
 						</th>
 					</tr>
 					<tr>
-						<td style="background-color:{{ _text('mess_background', item.type) }};" colspan="4" class="b">
+						<td style="background-color:{{ _text('xnova', 'mess_background', item.type) }};" colspan="4" class="b">
 							{% if item.type == 1 and user.getUserOption('bb_parser') %}
 								<span id="m{{ item.id }}"></span>
 								<script type="text/javascript">Text('{{ replace(["\r\n", "\n", "\r"], '<br>', replace('#BASEPATH#', url.getBaseUri(), item.text)|stripslashes) }}', 'm{{ item.id }}');</script>
