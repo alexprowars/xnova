@@ -3,7 +3,7 @@
 		<div class="caption">Банилка</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="{{ url('admin/banned/') }}" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('users/ban/') }}" method="post" class="form-horizontal form-bordered">
 			<input type="hidden" name="modes" value="banit">
 			<div class="form-body">
 				<div class="form-group">

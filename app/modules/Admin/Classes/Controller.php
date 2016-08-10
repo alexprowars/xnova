@@ -41,7 +41,6 @@ use Phalcon\Tag;
 class Controller extends PhalconController
 {
 	private $modules = [];
-	private $mode = '';
 	private $breadcrumbs = [];
 
 	const CACHE_KEY_MENU = 'MENU';
@@ -62,7 +61,10 @@ class Controller extends PhalconController
 		$this->url->setBaseUri('/admin/');
 
 		Lang::setLang($this->config->app->language, 'xnova');
-		Lang::includeLang('admin', 'xnova');
+		Lang::includeLang($this->dispatcher->getControllerName(), 'admin');
+
+		if (!$this->access->hasAccess('admin'))
+			throw new \Exception('Access denied');
 
 		if ($this->request->isAjax())
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
@@ -236,6 +238,7 @@ class Controller extends PhalconController
 								'title' 	=> $item['title'],
 								'icon' 		=> $item['icon'],
 								'sort' 		=> $item['sort'],
+								'url' 		=> $item['url'],
 								'childrens'	=> $item['childrens']
 							];
 						}

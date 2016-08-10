@@ -13,12 +13,14 @@ use Admin\Controller;
  */
 class ContentController extends Controller
 {
+	const CODE = 'content';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 3)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -26,7 +28,7 @@ class ContentController extends Controller
 		return [[
 			'code'	=> 'content',
 			'title' => 'Контент',
-			'icon'	=> '',
+			'icon'	=> 'doc',
 			'sort'	=> 180
 		]];
 	}
@@ -52,6 +54,9 @@ class ContentController extends Controller
 
 	public function editAction ($id)
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
 		$info = $this->db->query("SELECT * FROM game_content WHERE id = '".intval($id)."'")->fetch();
 
 		$this->view->setVar('info', $info);

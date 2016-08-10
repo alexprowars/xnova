@@ -13,12 +13,14 @@ use Admin\Controller;
  */
 class AlliancesController extends Controller
 {
+	const CODE = 'alliances';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 3)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -26,7 +28,7 @@ class AlliancesController extends Controller
 		return [[
 			'code'	=> 'alliances',
 			'title' => 'Список альянсов',
-			'icon'	=> 'group',
+			'icon'	=> 'organization',
 			'sort'	=> 120
 		]];
 	}
@@ -82,6 +84,9 @@ class AlliancesController extends Controller
 
 			if (isset($_POST['desc']))
 			{
+				if (!$this->access->canWriteController(self::CODE, 'admin'))
+					throw new \Exception('Access denied');
+
 				$this->db->query("UPDATE game_alliance SET `description` = '" . addslashes($_POST['desc']) . "' WHERE `id` = '" . intval($_GET['edit']) . "'");
 
 				$this->response->redirect('admin/alliancelist/');
@@ -116,6 +121,9 @@ class AlliancesController extends Controller
 
 			if (isset($_POST['name']))
 			{
+				if (!$this->access->canWriteController(self::CODE, 'admin'))
+					throw new \Exception('Access denied');
+
 				$this->db->query("UPDATE game_alliance SET `name` = '" . addslashes($_POST['name']) . "', `tag` = '" . addslashes($_POST['tag']) . "', `image` = '" . addslashes($_POST['image']) . "', `web` = '" . addslashes($_POST['web']) . "' WHERE `id` = '" . intval($_GET['allyname']) . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
@@ -157,6 +165,9 @@ class AlliancesController extends Controller
 
 			if (isset($_POST['ent']))
 			{
+				if (!$this->access->canWriteController(self::CODE, 'admin'))
+					throw new \Exception('Access denied');
+
 				$user_id = $_GET['ent'];
 				$this->db->query("UPDATE game_users SET `ally_id`=0, `ally_name` = '' WHERE `id`='" . $user_id . "'");
 				$this->response->redirect('admin/alliancelist/');
@@ -181,6 +192,9 @@ class AlliancesController extends Controller
 
 			if (isset($_POST['text']))
 			{
+				if (!$this->access->canWriteController(self::CODE, 'admin'))
+					throw new \Exception('Access denied');
+
 				$ally_id = intval($_GET['mail']);
 				$sq = $this->db->query("SELECT id FROM game_users WHERE ally_id='" . $ally_id . "'");
 				while ($u = $sq->fetch())
@@ -223,6 +237,9 @@ class AlliancesController extends Controller
 
 			if (isset($_POST['leader']))
 			{
+				if (!$this->access->canWriteController(self::CODE, 'admin'))
+					throw new \Exception('Access denied');
+
 				$sq = $this->db->query("SELECT ally_id FROM game_users WHERE id='" . intval($_POST['leader']) . "'");
 				$a = $sq->fetch();
 

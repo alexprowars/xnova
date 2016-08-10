@@ -28,7 +28,7 @@ class GroupsController extends Controller
 		if (!$this->access->canReadController(self::CODE, 'admin'))
 			throw new \Exception('Access denied');
 
-		$this->addToBreadcrumbs(Lang::getText('page_title_index'), self::CODE);
+		$this->addToBreadcrumbs(Lang::getText('admin', 'page_title_index'), self::CODE);
 	}
 
 	public static function getMenu ()
@@ -53,6 +53,8 @@ class GroupsController extends Controller
 
 		$this->assets->addCss('assets/admin/global/plugins/datatables/datatables.min.css', 100);
 		$this->assets->addCss('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css', 101);
+
+		$this->tag->setTitle(Lang::getText('admin', 'page_title_index'));
 	}
 
 	public function addAction ()

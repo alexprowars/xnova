@@ -3,30 +3,30 @@
 		<table class="table table-striped table-hover table-advance">
 			<tbody>
 			<tr>
-				<th colspan="2">{{ _text('adm_panel_mnu') }}</th>
+				<th colspan="2">{{ _text('admin', 'adm_panel_mnu') }}</th>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_id') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_id') }}</td>
 				<td align="center">{{ parse['answer1'] }}</td>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_name') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_name') }}</td>
 				<td align="center">{{ parse['answer2'] }}</td>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_ip') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_ip') }}</td>
 				<td align="center">{{ parse['answer3'] }}</td>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_mail') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_mail') }}</td>
 				<td align="center">{{ parse['answer4'] }}</td>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_acc') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_acc') }}</td>
 				<td align="center" class="negative">{{ parse['answer5'] }}</td>
 			</tr>
 			<tr>
-				<td align="center">{{ _text('adm_frm1_gen') }}</td>
+				<td align="center">{{ _text('admin', 'adm_frm1_gen') }}</td>
 				<td align="center">{{ parse['answer6'] }}</td>
 			</tr>
 			<tr>
@@ -66,11 +66,11 @@
 							<h4 class="panel-title">
 							<a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" href="#planet_{{ planet['id'] }}">
 								{% if planet['planet_type'] == 1 %}
-									{{ _text('adm_planet') }}
+									{{ _text('admin', 'adm_planet') }}
 								{% elseif planet['planet_type'] == 3 %}
-									{{ _text('adm_moon') }}
+									{{ _text('admin', 'adm_moon') }}
 								{% elseif planet['planet_type'] == 5 %}
-									{{ _text('adm_base') }}
+									{{ _text('admin', 'adm_base') }}
 								{% endif %}
 
 								[{{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}] {{ planet['name'] }}, #{{ planet['id'] }}
@@ -185,7 +185,7 @@
 						<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
 						<td>{{ history['planet'] }}</td>
 						<td>{{ parse['history_actions'][history['operation']] }}</td>
-						<td>{{ (history['build_id'] > 0 ? _text('tech', history['build_id']) : '') }}</td>
+						<td>{{ (history['build_id'] > 0 ? _text('xnova', 'tech', history['build_id']) : '') }}</td>
 						<td>{{ (history['count'] ? history['count'] : history['level']) }}</td>
 						<td>{{ history['from_metal'] }} -> {{ history['to_metal'] }} ({{ (history['to_metal'] - history['from_metal']) }})</td>
 						<td>{{ history['from_crystal'] }} -> {{ history['to_crystal'] }} ({{ (history['to_crystal'] - history['from_crystal']) }})</td>

@@ -15,12 +15,14 @@ use Xnova\Helpers;
  */
 class PlanetsController extends Controller
 {
+	const CODE = 'planets';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 2)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()

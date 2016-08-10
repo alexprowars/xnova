@@ -3,7 +3,7 @@
 		{{ parse['desc'] }}{{ parse['edit'] }}{{ parse['name'] }}{{ parse['member'] }}{{ parse['member_row'] }}{{ parse['mail'] }}{{ parse['leader'] }}
 		<thead>
 			<tr>
-				<th><a href="{{ url('admin/alliancelist/?cmd=sort&type=id') }}">ID</a></th>
+				<th><a href="{{ url('alliancelist/?cmd=sort&type=id') }}">ID</a></th>
 				<th>Название</th>
 				<th>Обозначение</th>
 				<th>Лидер</th>

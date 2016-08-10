@@ -14,10 +14,7 @@ use Xnova\Helpers;
  */
 class OverviewController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
+	const CODE = 'overview';
 
 	public static function getMenu ()
 	{
@@ -44,7 +41,7 @@ class OverviewController extends Controller
 		$Color = "lime";
 		$PrevIP = '';
 
-		if ($this->user->authlevel >= 2)
+		if ($this->access->canReadController(self::CODE, 'admin'))
 		{
 			$Last15Mins = $this->db->query("SELECT `id`, `username`, `ip`, `ally_name`, `onlinetime` FROM game_users WHERE `onlinetime` >= '" . (time() - 15 * 60) . "' ORDER BY `" . $TypeSort . "` ASC;");
 

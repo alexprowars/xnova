@@ -3,7 +3,7 @@
 		<div class="caption">Форма разбана</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="{{ url('admin/unbanned/') }}" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('users/unban/') }}" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Логин игрока</label>

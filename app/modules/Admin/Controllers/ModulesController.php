@@ -26,7 +26,7 @@ class ModulesController extends Controller
 		if (!$this->access->canReadController(self::CODE, 'admin'))
 			throw new \Exception('Access denied');
 
-		$this->addToBreadcrumbs(Lang::getText('page_title_index'), self::CODE);
+		$this->addToBreadcrumbs(Lang::getText('admin', 'page_title_index'), self::CODE);
 	}
 
 	public static function getMenu ()
@@ -47,7 +47,7 @@ class ModulesController extends Controller
 			Lang::includeLang('main', $module->code);
 
 		$this->view->setVar('modules', $modules);
-		$this->tag->setTitle(Lang::getText('page_title_index'));
+		$this->tag->setTitle(Lang::getText('admin', 'page_title_index'));
 	}
 
 	public function editAction ($moduleId)

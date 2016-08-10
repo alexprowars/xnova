@@ -15,12 +15,14 @@ use Xnova\Models\User;
  */
 class MoneyController extends Controller
 {
+	const CODE = 'money';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 3)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -28,7 +30,7 @@ class MoneyController extends Controller
 		return [[
 			'code'	=> 'money',
 			'title' => 'Финансы',
-			'icon'	=> 'rub',
+			'icon'	=> 'credit-card',
 			'sort'	=> 40,
 			'childrens' => [
 				[
@@ -69,6 +71,9 @@ class MoneyController extends Controller
 
 	public function addAction ()
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+		
 		if ($this->request->getPost('username', 'string', '') != '')
 		{
 			$username = $this->request->getPost('username');

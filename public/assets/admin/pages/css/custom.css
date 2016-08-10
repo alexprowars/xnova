@@ -1,6 +1,6 @@
 @media (min-width: 992px) {
 	.page-content-wrapper .page-content {
-		min-height: calc(100vh - 33px);
+		min-height: calc(100vh - 85px);
 	}
 }
 

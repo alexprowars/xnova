@@ -14,12 +14,14 @@ use Xnova\Models\User;
  */
 class MessageallController extends Controller
 {
+	const CODE = 'messageall';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 1)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -27,7 +29,7 @@ class MessageallController extends Controller
 		return [[
 			'code'	=> 'messageall',
 			'title' => 'Рассылка',
-			'icon'	=> 'bullhorn',
+			'icon'	=> 'envelope-letter',
 			'sort'	=> 180
 		]];
 	}

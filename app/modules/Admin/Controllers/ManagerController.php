@@ -14,14 +14,14 @@ use Friday\Core\Lang;
  */
 class ManagerController extends Controller
 {
+	const CODE = 'manager';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel <= 2)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
-
-		Lang::includeLang('admin/adminpanel', 'xnova');
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -29,7 +29,7 @@ class ManagerController extends Controller
 		return [[
 			'code'	=> 'manager',
 			'title' => 'Редактор',
-			'icon'	=> 'edit',
+			'icon'	=> 'magic-wand',
 			'sort'	=> 70,
 			'childrens' => [
 				[
@@ -76,9 +76,6 @@ class ManagerController extends Controller
 
 	public function dataAction ()
 	{
-		if ($this->user->authlevel < 1)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
-
 		if ($this->request->has('send'))
 		{
 			$username = $this->request->get('username');
@@ -93,7 +90,6 @@ class ManagerController extends Controller
 			$parse['answer2'] = $SelUser['username'];
 			$parse['answer3'] = long2ip($SelUser['ip']);
 			$parse['answer4'] = $SelUser['email'];
-			$parse['answer5'] = _getText('user_level', $SelUser['authlevel']);
 			$parse['answer6'] = _getText('adm_usr_genre', $SelUser['sex']);
 			$parse['answer7'] = date('d.m.Y H:i:s', $SelUser['vacation']);
 			$parse['answer9'] = date('d.m.Y H:i:s', $SelUser['create_time']);
@@ -102,8 +98,7 @@ class ManagerController extends Controller
 			$parse['planet_list'] = [];
 			$parse['planet_fields'] = $this->registry->resource;
 
-			if ($this->user->authlevel > 1)
-				$parse['planet_list'] = $this->db->extractResult($this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC"));
+			$parse['planet_list'] = $this->db->extractResult($this->db->query("SELECT * FROM game_planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC"));
 
 			$parse['history_actions'] = [
 				1 => 'Постройка здания',
@@ -155,18 +150,15 @@ class ManagerController extends Controller
 
 			$parse['history_list'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_history WHERE user_id = ".$SelUser['id']." AND time > ".(time() - 86400 * 7)." ORDER BY time"));
 
-			if ($this->user->authlevel > 1)
+			$parse['adm_sub_form3'] = "<table class='table'><tr><th colspan=\"4\">" . _getText('adm_technos') . "</th></tr>";
+
+			foreach ($this->registry->reslist['tech'] AS $Item)
 			{
-				$parse['adm_sub_form3'] = "<table class='table'><tr><th colspan=\"4\">" . _getText('adm_technos') . "</th></tr>";
-
-				foreach ($this->registry->reslist['tech'] AS $Item)
-				{
-					if (isset($this->registry->resource[$Item]))
-						$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$this->registry->resource[$Item]] . "</td></tr>";
-				}
-
-				$parse['adm_sub_form3'] .= "</table>";
+				if (isset($this->registry->resource[$Item]))
+					$parse['adm_sub_form3'] .= "<tr><td>" . _getText('tech', $Item) . "</td><td>" . $SelUser[$this->registry->resource[$Item]] . "</td></tr>";
 			}
+
+			$parse['adm_sub_form3'] .= "</table>";
 
 			$logs = $this->db->query("SELECT ip, time FROM game_log_ip WHERE id = " . $SelUser['id'] . " ORDER BY time DESC");
 
@@ -181,21 +173,18 @@ class ManagerController extends Controller
 
 			$logs_lang = ['', 'WMR', 'Ресурсы', 'Реферал', 'Уровень', 'Офицер', 'Админка', 'Смена фракции'];
 
-			if ($this->user->authlevel > 1)
+			$logs = $this->db->query("SELECT time, credits, type FROM game_log_credits WHERE uid = " . $SelUser['id'] . " ORDER BY time DESC");
+
+			$parse['adm_sub_form4'] .= "<table class='table'><tr><th colspan=\"4\">Кредитная история</th></tr>";
+
+			while ($log = $logs->fetch())
 			{
-				$logs = $this->db->query("SELECT time, credits, type FROM game_log_credits WHERE uid = " . $SelUser['id'] . " ORDER BY time DESC");
-
-				$parse['adm_sub_form4'] .= "<table class='table'><tr><th colspan=\"4\">Кредитная история</th></tr>";
-
-				while ($log = $logs->fetch())
-				{
-					$parse['adm_sub_form4'] .= "<tr><td width=40%>" . $this->game->datezone("d.m.Y H:i", $log['time']) . "</td>";
-					$parse['adm_sub_form4'] .= "<td>" . $log['credits'] . "</td>";
-					$parse['adm_sub_form4'] .= "<td width=40%>" . $logs_lang[$log['type']] . "</td></tr>";
-				}
-
-				$parse['adm_sub_form4'] .= "</table>";
+				$parse['adm_sub_form4'] .= "<tr><td width=40%>" . $this->game->datezone("d.m.Y H:i", $log['time']) . "</td>";
+				$parse['adm_sub_form4'] .= "<td>" . $log['credits'] . "</td>";
+				$parse['adm_sub_form4'] .= "<td width=40%>" . $logs_lang[$log['type']] . "</td></tr>";
 			}
+
+			$parse['adm_sub_form4'] .= "</table>";
 
 			$logs = $this->db->query("SELECT time, planet_start, planet_end, fleet, battle_log FROM game_log_attack WHERE uid = " . $SelUser['id'] . " ORDER BY time DESC");
 
@@ -246,25 +235,6 @@ class ManagerController extends Controller
 			$this->view->pick('manager/adminpanel_ans1');
 			$this->view->setVar('parse', $parse);
 
-		}
-	}
-
-	public function levelAction ()
-	{
-		if ($this->user->authlevel < 3)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
-
-		if ($this->request->has('send'))
-		{
-			$Player = addslashes($_POST['player']);
-			$NewLvl = intval($_POST['authlvl']);
-
-			$this->db->query("UPDATE game_users SET authlevel = '" . $NewLvl . "' WHERE username = '" . $Player . "';");
-
-			$Message = _getText('adm_mess_lvl1') . " " . $Player . " " . _getText('adm_mess_lvl2');
-			$Message .= "<font color=\"red\">" . _getText('adm_usr_level', $NewLvl) . "</font>!";
-
-			$this->message($Message, _getText('adm_mod_level'));
 		}
 	}
 }

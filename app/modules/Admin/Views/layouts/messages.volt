@@ -14,7 +14,7 @@
 				<div class="form-body">
 					<div class="form-group">
 						<div class="col-md-5 text-xs-right">
-							<input type="submit" name="prev"  class="btn green" value="{{ _text('mlst_hdr_prev') }}">
+							<input type="submit" name="prev"  class="btn green" value="{{ _text('admin', 'mlst_hdr_prev') }}">
 						</div>
 						<div class="col-md-2 text-xs-center">
 							<select name="page" class="form-control" onchange="submit();" title="">
@@ -24,7 +24,7 @@
 							</select>
 						</div>
 						<div class="col-md-5 text-xs-left">
-							<input type="submit" name="next" class="btn green" value="{{ _text('mlst_hdr_next') }}"/>
+							<input type="submit" name="next" class="btn green" value="{{ _text('admin', 'mlst_hdr_next') }}"/>
 						</div>
 					</div>
 					<div class="form-group">
@@ -36,17 +36,17 @@
 						<div class="col-md-6 text-xs-center">
 							<select name="type" class="form-control" onchange="submit();" title="">
 								{% for type in parse['types'] %}
-									<option value="{{ type }}"{{ parse['mlst_data_sele'] == type ? " SELECTED" : "" }}>{{ _text('mlst_mess_typ__'~type) }}</option>
+									<option value="{{ type }}"{{ parse['mlst_data_sele'] == type ? " SELECTED" : "" }}>{{ _text('admin', 'mlst_mess_typ__'~type) }}</option>
 								{% endfor %}
 							</select>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-md-4 text-xs-center">
-							<input type="submit" name="delsel" class="btn red" value="{{ _text('mlst_bt_delsel') }}"/>
+							<input type="submit" name="delsel" class="btn red" value="{{ _text('admin', 'mlst_bt_delsel') }}"/>
 						</div>
 						<div class="col-md-8 text-xs-center">
-							<input type="submit" name="deldat"  class="btn red" value="{{ _text('mlst_bt_deldate') }}"/>
+							<input type="submit" name="deldat"  class="btn red" value="{{ _text('admin', 'mlst_bt_deldate') }}"/>
 							<input type="text" placeholder="дд" name="selday" size="3" class="form-control form-control-inline input-small">
 							<input type="text" placeholder="мм" name="selmonth" size="3" class="form-control form-control-inline input-small">
 							<input type="text" placeholder="гггг" name="selyear" size="6" class="form-control form-control-inline input-small">
@@ -61,10 +61,10 @@
 			<thead>
 				<tr>
 					<th width="40">&nbsp;</th>
-					<th>{{ _text('mlst_hdr_time') }}</th>
-					<th>{{ _text('mlst_hdr_from') }}</th>
-					<th>{{ _text('mlst_hdr_to') }}</th>
-					<th width="300">{{ _text('mlst_hdr_text') }}</th>
+					<th>{{ _text('admin', 'mlst_hdr_time') }}</th>
+					<th>{{ _text('admin', 'mlst_hdr_from') }}</th>
+					<th>{{ _text('admin', 'mlst_hdr_to') }}</th>
+					<th width="300">{{ _text('admin', 'mlst_hdr_text') }}</th>
 				</tr>
 			</thead>
 			{% for list in parse['mlst_data_rows'] %}

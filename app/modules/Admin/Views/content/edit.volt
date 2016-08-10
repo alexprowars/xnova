@@ -3,7 +3,7 @@
 		<div class="caption">Редактирование контента</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="{{ url('admin/content/edit/'~info['id']~'/') }}" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('content/edit/'~info['id']~'/') }}" method="post" class="form-horizontal form-bordered">
 			<div class="form-body">
 				<div class="form-group">
 					<label class="col-md-3 control-label">Алиас</label>

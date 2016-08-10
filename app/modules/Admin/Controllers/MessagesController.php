@@ -14,12 +14,14 @@ use Friday\Core\Lang;
  */
 class MessagesController extends Controller
 {
+	const CODE = 'support';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 1)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -27,7 +29,7 @@ class MessagesController extends Controller
 		return [[
 			'code'	=> 'messages',
 			'title' => 'Сообщения',
-			'icon'	=> 'inbox',
+			'icon'	=> 'envelope-open',
 			'sort'	=> 170
 		]];
 	}

@@ -127,16 +127,16 @@
 	<div class="page-container">
 		<div class="page-sidebar-wrapper">
 			<div class="page-sidebar navbar-collapse collapse">
-				<ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+				<ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-light" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
 					<li class="sidebar-toggler-wrapper hide">
 						<div class="sidebar-toggler"> </div>
 					</li>
 					{% for item in main_menu %}
 						<li class="nav-item start {% if route_controller == item['code'] %}active{{ item['childrens']|length == item['code'] ? ' open' : '' }}{% endif %}">
-							<a href="{{ url(item['code']~'/') }}" class="nav-link nav-toggle">
+							<a href="{{ item['url'] is defined and item['url'] !== false ? (item['url'] == '' ? 'javascript:;' : url(item['url']~'/')) : url(item['code']~'/') }}" class="nav-link nav-toggle">
 								<i class="icon-{{ item['icon'] }}"></i>
 								<span class="title">{{ item['title'] }}</span>
-								{% if route_controller == ['code'] %}
+								{% if route_controller == item['code'] %}
 									<span class="selected"></span>
 								{% endif %}
 								{% if item['childrens']|length %}
@@ -147,7 +147,10 @@
 								<ul class="sub-menu">
 									{% for child in item['childrens'] %}
 										<li class="nav-item {% if route_action == child['code'] %}active{% endif %}">
-											<a href="{{ url(item['code']~'/'~child['code']~'/') }}" class="nav-link ">
+											<a href="{{ child['url'] is defined and child['url'] != '' ? url(child['url']~'/') : url(item['code']~'/'~child['code']~'/') }}" class="nav-link ">
+												{% if child['icon'] is defined %}
+													<i class="icon-{{ item['icon'] }}"></i>
+												{% endif %}
 												<span class="title">{{ child['title'] }}</span>
 											</a>
 										</li>
@@ -182,7 +185,7 @@
 					</ul>
 				</div>
 				{% if title_hide is not defined %}
-					<h1 class="page-title">{{ _text('page_title', route_controller~'_'~route_action) }}</h1>
+					<h1 class="page-title">{{ _text('admin', 'page_title', route_controller~'_'~route_action) }}</h1>
 				{% else %}
 					<br>
 				{% endif %}

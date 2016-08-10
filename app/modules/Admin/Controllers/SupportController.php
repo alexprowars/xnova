@@ -14,12 +14,14 @@ use Xnova\Models\User;
  */
 class SupportController extends Controller
 {
+	const CODE = 'support';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 1)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()
@@ -27,7 +29,7 @@ class SupportController extends Controller
 		return [[
 			'code'	=> 'support',
 			'title' => 'Техподдержка',
-			'icon'	=> 'bolt',
+			'icon'	=> 'support',
 			'sort'	=> 20
 		]];
 	}
@@ -130,6 +132,9 @@ class SupportController extends Controller
 
 	public function sendAction ($id)
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
 		$text = nl2br($this->request->getPost('text'));
 
 		if (!$text || !$id)
@@ -151,6 +156,9 @@ class SupportController extends Controller
 
 	public function openAction ($id)
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
 		if (!$id)
 			$this->message('Не заполнены все поля', 'Ошибка', '/admin/support/', 3);
 
@@ -170,6 +178,9 @@ class SupportController extends Controller
 
 	public function closeAction ($id)
 	{
+		if (!$this->access->canWriteController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
+
 		if (!$id)
 			$this->message('Не заполнены все поля', 'Ошибка', '/admin/support/', 3);
 

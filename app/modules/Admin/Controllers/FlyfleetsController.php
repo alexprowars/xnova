@@ -16,14 +16,14 @@ use Xnova\Models\Fleet as FleetModel;
  */
 class FlyFleetsController extends Controller
 {
+	const CODE = 'flyfleets';
+
 	public function initialize ()
 	{
 		parent::initialize();
 
-		if ($this->user->authlevel < 3)
-			$this->message(_getText('sys_noalloaw'), _getText('sys_noaccess'));
-
-		Lang::includeLang('admin/fleets', 'xnova');
+		if (!$this->access->canReadController(self::CODE, 'admin'))
+			throw new \Exception('Access denied');
 	}
 
 	public static function getMenu ()

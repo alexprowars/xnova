@@ -7,6 +7,48 @@ var App = function()
 	var globalPluginsPath = 'global/plugins/';
 	var globalCssPath = 'global/css/';
 
+	// Set proper height for sidebar and content. The content and sidebar height must be synced always.
+	var handleSidebarAndContentHeight = function () {
+		var content = $('.page-content');
+		var sidebar = $('.page-sidebar');
+		var body = $('body');
+		var height;
+
+		var resBreakpointMd = App.getResponsiveBreakpoint('md');
+
+		if (body.hasClass("page-footer-fixed") === true && body.hasClass("page-sidebar-fixed") === false) {
+			var available_height = App.getViewPort().height - $('.page-footer').outerHeight() - $('.page-header').outerHeight();
+			var sidebar_height = sidebar.outerHeight();
+			if (sidebar_height > available_height) {
+				available_height = sidebar_height + $('.page-footer').outerHeight();
+			}
+			if (content.height() < available_height) {
+				content.attr('style', 'min-height:' + available_height + 'px');
+			}
+		} else {
+			if (body.hasClass('page-sidebar-fixed')) {
+				height = _calculateFixedSidebarViewportHeight();
+				if (body.hasClass('page-footer-fixed') === false) {
+					height = height - $('.page-footer').outerHeight();
+				}
+			} else {
+				var headerHeight = $('.page-header').outerHeight();
+				var footerHeight = $('.page-footer').outerHeight();
+
+				if (App.getViewPort().width < resBreakpointMd) {
+					height = App.getViewPort().height - headerHeight - footerHeight;
+				} else {
+					height = sidebar.height() + 20;
+				}
+
+				if ((height + headerHeight + footerHeight) <= App.getViewPort().height) {
+					height = App.getViewPort().height - headerHeight - footerHeight;
+				}
+			}
+			content.attr('style', 'min-height:' + height + 'px');
+		}
+	};
+
 	// Handles Bootstrap switches
 	var handleBootstrapSwitch = function () {
 		if (!$().bootstrapSwitch) {
@@ -77,6 +119,104 @@ var App = function()
 		});
 	};
 
+	var handleSidebarMenu = function () {
+
+		var resBreakpointMd = App.getResponsiveBreakpoint('md');
+
+		// offcanvas mobile menu
+		$('.page-sidebar-mobile-offcanvas .responsive-toggler').click(function () {
+			$('body').toggleClass('page-sidebar-mobile-offcanvas-open');
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		if ($('body').hasClass('page-sidebar-mobile-offcanvas')) {
+			$(document).on('click', function (e) {
+				if ($('body').hasClass('page-sidebar-mobile-offcanvas-open')) {
+					if ($(e.target).closest('.page-sidebar-mobile-offcanvas .responsive-toggler').length === 0 &&
+						$(e.target).closest('.page-sidebar-wrapper').length === 0) {
+						$('body').removeClass('page-sidebar-mobile-offcanvas-open');
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				}
+			});
+		}
+
+		// handle sidebar link click
+		$('.page-sidebar-menu').on('click', 'li > a.nav-toggle, li > a > span.nav-toggle', function (e) {
+			var that = $(this).closest('.nav-item').children('.nav-link');
+
+			if (App.getViewPort().width >= resBreakpointMd && !$('.page-sidebar-menu').attr("data-initialized") && $('body').hasClass('page-sidebar-closed') && that.parent('li').parent('.page-sidebar-menu').size() === 1) {
+				return;
+			}
+
+			var hasSubMenu = that.next().hasClass('sub-menu');
+
+			if (App.getViewPort().width >= resBreakpointMd && that.parents('.page-sidebar-menu-hover-submenu').size() === 1) { // exit of hover sidebar menu
+				return;
+			}
+
+			if (hasSubMenu === false) {
+				if (App.getViewPort().width < resBreakpointMd && $('.page-sidebar').hasClass("in")) { // close the menu on mobile view while laoding a page
+					$('.page-header .responsive-toggler').click();
+				}
+				return;
+			}
+
+			var parent = that.parent().parent();
+			var the = that;
+			var menu = $('.page-sidebar-menu');
+			var sub = that.next();
+
+			var autoScroll = menu.data("auto-scroll");
+			var slideSpeed = parseInt(menu.data("slide-speed"));
+			var keepExpand = menu.data("keep-expanded");
+
+			if (!keepExpand) {
+				parent.children('li.open').children('a').children('.arrow').removeClass('open');
+				parent.children('li.open').children('.sub-menu:not(.always-open)').slideUp(slideSpeed);
+				parent.children('li.open').removeClass('open');
+			}
+
+			var slideOffeset = -200;
+
+			if (sub.is(":visible")) {
+				$('.arrow', the).removeClass("open");
+				the.parent().removeClass("open");
+				sub.slideUp(slideSpeed, function () {
+					if (autoScroll === true && $('body').hasClass('page-sidebar-closed') === false) {
+						if ($('body').hasClass('page-sidebar-fixed')) {
+							menu.slimScroll({
+								'scrollTo': (the.position()).top
+							});
+						} else {
+							App.scrollTo(the, slideOffeset);
+						}
+					}
+					handleSidebarAndContentHeight();
+				});
+			} else if (hasSubMenu) {
+				$('.arrow', the).addClass("open");
+				the.parent().addClass("open");
+				sub.slideDown(slideSpeed, function () {
+					if (autoScroll === true && $('body').hasClass('page-sidebar-closed') === false) {
+						if ($('body').hasClass('page-sidebar-fixed')) {
+							menu.slimScroll({
+								'scrollTo': (the.position()).top
+							});
+						} else {
+							App.scrollTo(the, slideOffeset);
+						}
+					}
+					handleSidebarAndContentHeight();
+				});
+			}
+
+			e.preventDefault();
+		});
+	};
+
 	return {
      	init: function ()
 	 	{
@@ -85,6 +225,7 @@ var App = function()
 			handleSidebarToggler();
 			handleBootstrapSelect();
 			handleScrollers();
+			handleSidebarMenu();
      	},
 
 		// wrApper function to  block element(indicate loading)
@@ -265,6 +406,20 @@ var App = function()
 			}
 		},
 
+		getViewPort: function () {
+			var e = window,
+				a = 'inner';
+			if (!('innerWidth' in window)) {
+				a = 'client';
+				e = document.documentElement || document.body;
+			}
+
+			return {
+				width: e[a + 'Width'],
+				height: e[a + 'Height']
+			};
+		},
+
 		generatePassword: function (plength)
 		{
 			var passwd = '';
@@ -355,6 +510,18 @@ var App = function()
 
 				}
 			});
+		},
+
+		getResponsiveBreakpoint: function (size) {
+			// bootstrap responsive breakpoints
+			var sizes = {
+				'xs': 480,     // extra small
+				'sm': 768,     // small
+				'md': 992,     // medium
+				'lg': 1200     // large
+			};
+
+			return sizes[size] ? sizes[size] : 0;
 		}
  	};
 }();
