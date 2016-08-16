@@ -795,11 +795,11 @@ class Planet extends Model
 		if ($this->user->{$this->storage->resource[123]} > 0)
 		{
 			$result = $this->find([
-				'columns' => $this->storage->resource[31],
-				'conditions' => 'id_owner = ?0 AND id != ?1 AND '.$this->storage->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
-				'bind' => [$this->user->id, $this->id],
-				'limit' => $this->user->{$this->storage->resource[123]},
-				'orders' => $this->storage->resource[31].' DESC'
+				'columns'		=> $this->storage->resource[31],
+				'conditions'	=> 'id_owner = ?0 AND id != ?1 AND '.$this->storage->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
+				'bind'			=> [$this->user->id, $this->id],
+				'limit'			=> $this->user->{$this->storage->resource[123]},
+				'order'			=> $this->storage->resource[31].' DESC'
 			]);
 
 			foreach ($result as $row)

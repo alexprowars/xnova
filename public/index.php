@@ -100,7 +100,7 @@ catch(\Exception $e)
 	echo '<br>'.$e->getFile();
 	echo '<br>'.$e->getLine();
 	echo '<pre>';
-	print_r($e->getTraceAsString());
+	//print_r($e->getTraceAsString());
 	echo '</pre>';
 }
 
