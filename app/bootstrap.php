@@ -42,8 +42,9 @@ catch(\Exception $e)
 	echo '<br>'.$e->getFile();
 	echo '<br>'.$e->getLine();
 	echo '<pre style="margin:10px 0">';
-	print_r($e->getTraceAsString());
-	echo '</pre>';
-	//print_r(get_included_files());
+
+	if (defined('SUPERUSER'))
+		print_r($e->getTraceAsString());
+
 	echo '</pre>';
 }

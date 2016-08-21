@@ -205,7 +205,7 @@ class UpdateStatistics extends Injectable
 	{
 		$result = [];
 
-		$list = $this->db->query("SELECT u.id, u.username, i.email FROM game_users u, game_users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - $this->config->stat->get('inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = $this->db->query("SELECT u.id, u.username, i.email FROM game_users u, game_users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - $this->config->stat->get('inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		while ($user = $list->fetch())
 		{

@@ -291,11 +291,9 @@ class IndexController extends Controller
 				{
 					if ($login['password'] == md5($this->request->getPost('password')))
 					{
-						$user = new User;
-						$options = $user->unpackOptions($login['options']);
 						$expiretime = $this->request->hasPost("rememberme") ? (time() + 2419200) : 0;
 
-						$this->auth->auth($login['id'], $login['password'], $options['security'], $expiretime);
+						$this->auth->authorize($login['id'], $expiretime);
 
 						if ($this->request->isAjax())
 						{

@@ -52,11 +52,14 @@ class Auth extends Component
 	{
 		$this->eventsManager->fire('core:beforeAuthCheck', $this);
 
-		foreach ($this->_plugins as $plugin)
+		if (!$this->cookies->has($this->getSessionKey()))
 		{
-			$ext = new $plugin();
-			/** @noinspection PhpUndefinedMethodInspection */
-			$ext->check();
+			foreach ($this->_plugins as $plugin)
+			{
+				$ext = new $plugin();
+				/** @noinspection PhpUndefinedMethodInspection */
+				$ext->check();
+			}
 		}
 
 		if (!$this->cookies->has($this->getSessionKey()))

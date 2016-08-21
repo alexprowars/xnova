@@ -23,6 +23,11 @@ class Options
 		if (isset(self::$options[$name]))
 			return self::$options[$name];
 
+		$option = Option::findFirst(["columns" => "value, type", "conditions" => "name = :name:", "bind" => ["name" => $name]]);
+
+		if ($option)
+			return $option->type == 'integer' ? (int) $option->value : $option->value;
+
 		return $default;
 	}
 
@@ -37,12 +42,10 @@ class Options
 
 		if (!is_array($data))
 		{
-			$options = Option::find();
+			$options = Option::find(["conditions" => "cached = ?0", "bind" => ['Y']]);
 
 			foreach ($options as $option)
-			{
 				self::$options[$option->name] = is_null($option->value) ? $option->default : $option->value;
-			}
 
 			$cache->save(self::CACHE_KEY, self::$options, self::CACHE_TIME);
 		}

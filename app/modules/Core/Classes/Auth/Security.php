@@ -27,14 +27,15 @@ class Security extends Component
 
 			if ($auth !== false)
 			{
-				$role = 'User';
-
 				$this->getDI()->set('user', $auth, true);
 
 				if ($auth->isAdmin())
 					define('SUPERUSER', 'Y');
 			}
 		}
+
+		if ($this->auth->isAuthorized())
+			$role = 'User';
 
 		$this->getDI()->set('access', new Access(), true);
 
