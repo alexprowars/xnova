@@ -17,3 +17,8 @@ public/assets/avatars/*
 public/assets/css/style.css
 public/assets/css/bootstrap.css
 .sass-cache/*
+
+public/assets/admin/pages/css
+public/assets/admin/global/css
+app/modules/Core/Classes/Prophiler/View/css
+public/assets/admin/global/plugins/bootstrap/css

@@ -80,7 +80,7 @@ function show()
 		var txt = $('#text').val();
 		if (txt != "")
 		{
-			Text (txt, 'showbox');
+			TextParser.parse(txt, 'showbox');
 			$('#showpanel').show();
 		}
 	}
@@ -94,8 +94,8 @@ function showSmiles(obj)
 		o.html('').hide();
 	else
 	{
-		for (var i = 0; i < arSmiles.length; i++)
-        	o.append('<img src="'+XNova.path+'assets/images/smile/'+arSmiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+arSmiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+		for (var i = 0; i < TextParser.smiles.length; i++)
+        	o.append('<img src="'+XNova.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
 		o.show();
 	}

@@ -73,6 +73,6 @@
 	{% endif %}
 </table>
 <script>
-	Text('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');
-	Text('{{ replace(["\r\n", "\n", "\r"], '', parse['text']|stripslashes) }}', 'm2');
+	TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');
+	TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['text']|stripslashes) }}', 'm2');
 </script>

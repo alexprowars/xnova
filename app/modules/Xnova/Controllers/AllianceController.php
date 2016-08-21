@@ -871,6 +871,8 @@ class AllianceController extends Controller
 			]);
 
 			$this->db->query("UPDATE game_users SET messages_ally = messages_ally + '1' WHERE ally_id = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");
+
+			$this->response->redirect('alliance/chat/');
 		}
 
 		$parse = [];

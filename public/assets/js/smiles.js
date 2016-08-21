@@ -1,11 +1,66 @@
-var arSmiles = ['adolf','am','angel','angl','aplause','baby','boxing','bye','crazy','dollar','duel','evil','face1','face2','face5','fingal','fuu','girl','gun1','ha','happy','heart','hello','help','hummer','hummer2','ill','inlove','jack','jedy','killed','king','kiss2','knut','lick','lips','lol','med','roze','mol','ninja','nunchak','ogo','pare','police','prise','punk','ravvin','rip','rupor','scare','shut','sleep','song','strong','training','user','wall','rofl','hunter','bratan','diskot','vglaz','duet','ff','smoke','bita','perec','popope','morpeh','naem','pirat','baraban','klizma','gamer2','pulemet','good2','negative','quiet','ball','pooh','vv','fig1'];
+var TextParser =
+{
+	find: [],
+	replace: [],
+	smiles: [
+		'adolf','am','angel','angl','aplause','baby','boxing','bye','crazy','dollar','duel','evil','face1','face2','face5','fingal','fuu','girl','gun1','ha','happy','heart','hello','help','hummer','hummer2','ill','inlove','jack','jedy','killed','king','kiss2','knut','lick','lips','lol','med','roze','mol','ninja','nunchak','ogo','pare','police','prise','punk','ravvin','rip','rupor','scare','shut','sleep','song','strong','training','user','wall','rofl','hunter','bratan','diskot','vglaz','duet','ff','smoke','bita','perec','popope','morpeh','naem','pirat','baraban','klizma','gamer2','pulemet','good2','negative','quiet','ball','pooh','vv','fig1'
+	],
+	texts: [],
+	addText: function (text, id)
+	{
+		if (typeof(text) != 'string')
+			return;
 
-var find = [];
-var replace = [];
+		this.texts[this.texts.length] = {'text': text, 'id': id};
+	},
+	parseAll: function ()
+	{
+		for (var key in this.texts)
+		{
+			if (this.texts.hasOwnProperty(key))
+				this.parse(this.texts[key].text, this.texts[key].id)
+		}
+
+		this.texts = [];
+	},
+	parse: function (txt, id)
+	{
+		var i, j;
+
+		j = 0;
+
+		for (i = 0; i < this.smiles.length; i++)
+		{
+			while (txt.indexOf(':'+this.smiles[i]+':') >= 0)
+			{
+				txt = txt.replace(':'+this.smiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + this.smiles[i] + '.gif">');
+
+				if (++j >= 3)
+					break;
+			}
+
+			if (j >= 3)
+				break;
+		}
+
+		for (i in this.find)
+		{
+			if (this.find.hasOwnProperty(i))
+			{
+				txt = txt.replace(this.find[i], this.replace[i]);
+
+				if (i == 3 || i == 4 || i == 23)
+					while(txt.match(this.find[i])) txt = txt.replace(this.find[i], this.replace[i]);
+			}
+		}
+
+		$('#'+id).append(txt);
+	}
+};
 
 $(document).ready(function()
 {
-	find = [
+	TextParser.find = [
 		/\n/g,
 		/script/g,
 		/\[mp3\](https?:\/\/.*?\.(?:mp3|m3u))\[\/mp3\]/gi,
@@ -44,7 +99,7 @@ $(document).ready(function()
 		/\[bashtube\]http:\/\/bashtube.ru\/video\/(.*?).html\[\/bashtube\]/gi
 	];
 
-	replace = [
+	TextParser.replace = [
 		'<br>',
 		'',
 		'<object type="application/x-shockwave-flash" data="'+XNova.path+'scripts/player.swf" id="audioplayer" height="24" width="288"><param name="movie" value="/scripts/player.swf"><param name="FlashVars" value="playerID=1&autostart=no&initialvolume=100&animation=no&soundFile=$1"><param name="quality" value="high"><param name="menu" value="false"><param name="wmode" value="transparent"></object>',
@@ -82,6 +137,8 @@ $(document).ready(function()
 		' class="$1"',
 		'<iframe frameborder="0" width="640" height="370" marginheight="0" marginwidth="0" name="bashtube" src="http://bashtube.ru/video/frame/$1.html"></iframe>'
 	];
+
+	TextParser.parseAll();
 });
 
 function AddSmile(id, obj)
@@ -101,46 +158,11 @@ function AddQuote (user, id)
 	$('#text').val($('#text').val() + '[quote author='+user+']'+text+'[/quote]');
 }
 
-function Text (txt, id) 
-{
-	if (typeof(txt) != 'string')
-		return;
-
-	var j = 0;
-
-	for (var i = 0; i < arSmiles.length; i++)
-	{
-		while (txt.indexOf(':'+arSmiles[i]+':') >= 0)
-		{
-			txt = txt.replace(':'+arSmiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + arSmiles[i] + '.gif">');
-
-			if (++j >= 3)
-				break;
-		}
-
-		if (j >= 3)
-			break;
-	}
-
-	for (i in find)
-	{
-		if (find.hasOwnProperty(i))
-		{
-			txt = txt.replace(find[i],replace[i]);
-
-			if(i == 3 || i == 4 || i == 23)
-				while(txt.match(find[i])) txt = txt.replace(find[i],replace[i]);
-		}
-	}
-
-	$('#'+id).append(txt);
-}
-
 function ShowText()
 {
 	for (var i in messages)
 	{
 		if (messages.hasOwnProperty(i) && typeof(messages[i]) == 'string')
-			Text(messages[i], i);
+			TextParser.parse(messages[i], i);
 	}
 }

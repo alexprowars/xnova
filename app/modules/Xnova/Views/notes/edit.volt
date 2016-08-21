@@ -7,7 +7,7 @@
 			<th style="text-align:left;font-weight:normal;">
 				<span id="um{{ parse['id'] }}" style="display:none;"></span>
 				<span id="m{{ parse['id'] }}"></span>
-				<script>Text('{{ replace(["\n", "\r", "\n\r"], '<br>', parse['text']|slashes) }}', 'm{{ parse['id'] }}');</script>
+				<script>TextParser.addText('{{ replace(["\n", "\r", "\n\r"], '<br>', parse['text']|slashes) }}', 'm{{ parse['id'] }}');</script>
 			</th>
 		</tr>
 	</table>

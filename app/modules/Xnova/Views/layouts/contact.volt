@@ -21,7 +21,7 @@
 		<tr>
 			<td class="c" colspan="3">
 				<span id="m{{ list['id'] }}"></span>
-				<script type="text/javascript">Text('{{ preg_replace("/(\r\n)/u", "<br>", list['info']|stripslashes) }}', 'm{{ list['id'] }}');</script>
+				<script type="text/javascript">TextParser.addText('{{ preg_replace("/(\r\n)/u", "<br>", list['info']|stripslashes) }}', 'm{{ list['id'] }}');</script>
 			</td>
 		</tr>
 	{% endfor %}

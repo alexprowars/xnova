@@ -19,4 +19,4 @@
 		</tr>
 	</table>
 </form>
-<script>Text('{{ replace(["\r\n", "\n", "\r"], '', parse['text_apply']|stripslashes) }}', 'm1');</script>
+<script>TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['text_apply']|stripslashes) }}', 'm1');</script>

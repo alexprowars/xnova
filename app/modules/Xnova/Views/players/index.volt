@@ -114,7 +114,9 @@
 			<div class="row">
 				<div class="b col-xs-12">
 					<span id="m100500"></span>
-					<script type="text/javascript">Text('{{ preg_replace("/(\r\n)/u", "<br>", parse['about']|stripslashes) }}', 'm100500');</script>
+					<script type="text/javascript">
+						TextParser.addText('{{ preg_replace("/(\r\n)/u", "<br>", parse['about']|stripslashes) }}', 'm100500');
+					</script>
 				</div>
 			</div>
 		{% endif %}
