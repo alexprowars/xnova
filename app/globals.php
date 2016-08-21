@@ -153,4 +153,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '3.0.3');
+define('VERSION', '3.1.0');

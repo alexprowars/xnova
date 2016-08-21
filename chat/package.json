@@ -6,7 +6,8 @@
   "dependencies": {
     "socket.io": "^1.4.3",
     "mysql": "^2.10.0",
-    "memcached": "latest"
+    "memcached": "latest",
+    "ini": "latest"
   },
   "author": "AlexPro (alexprowars@gmail.com)",
   "license": "ISC"

@@ -1,6 +1,7 @@
 
 var https = require('https');
 var fs = require('fs');
+var ini = require('ini');
 
 var options = {
     key:    fs.readFileSync('/etc/letsencrypt/live/uni5.xnova.su/privkey.pem'),
@@ -28,6 +29,8 @@ http.createServer(function(request, response) {
   response.write("Hello World");
   response.end();
 }).listen(8888);
+
+var config = ini.parse(fs.readFileSync('../app/config/core.ini', 'utf-8'));
 
 io.sockets.on('connection', function (socket)
 {
@@ -76,10 +79,10 @@ io.sockets.on('connection', function (socket)
 		var mysql = require('mysql');
 
 		var connection = mysql.createConnection({
-			host     : 'localhost',
-			user     : 'uni5',
-			password : 'N9a0R7d4',
-			database : 'uni5'
+			host     : config.database.host,
+			user     : config.database.username,
+			password : config.database.password,
+			database : config.database.dbname
 		});
 
 		connection.connect();
