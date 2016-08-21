@@ -6,11 +6,6 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-function _getText ()
-{
-	return \App\Lang::getText(func_get_args());
-}
-
 function p ($array)
 {
 	if (!defined('SUPERUSER'))
@@ -49,9 +44,8 @@ function is_email ($email)
 		return false;
 
 	if (preg_match('#^[^\\x00-\\x1f@]+@[^\\x00-\\x1f@]{2,}\.[a-z]{2,}$#iu', $email) == 0)
-	{
 		return false;
-	}
+
 	return true;
 }
 
@@ -71,4 +65,31 @@ function log_comment($comment)
 function is ($val, $key)
 {
 	return (isset($val[$key]) ? $val[$key] : '');
+}
+
+function _getText()
+{
+	$args = array_merge(['xnova'], func_get_args());
+
+	return \Friday\Core\Lang::getText($args);
+}
+
+function getClassName ($className)
+{
+	$return = ['name' => '', 'namespace' => ''];
+
+	$parts = explode('\\', $className);
+
+	if (count($parts) > 1)
+	{
+		$return['name'] = $parts[count($parts) - 1];
+
+		array_pop($parts);
+
+		$return['namespace'] = implode('\\', $parts);
+	}
+	else
+		$return['name'] = $className;
+
+	return $return;
 }

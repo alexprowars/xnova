@@ -1,0 +1,57 @@
+@media (min-width: 992px) {
+	.page-content-wrapper .page-content {
+		min-height: calc(100vh - 85px);
+	}
+}
+
+.table.dataTable td {
+	vertical-align: middle;
+}
+
+input[type=search] {
+    -webkit-appearance: searchfield !important;
+}
+
+#prophiler .toolbar {
+	min-height: inherit !important;
+	font-size: 12px !important;
+}
+
+#prophiler .toolbar nav ul li {
+	padding: 2px 5px !important;
+}
+
+#prophiler .toolbar h1 {
+	padding: 0 15px !important;
+	font-size: 16px !important;
+	width: inherit !important;
+}
+
+#prophiler .badge {
+	height: 13px !important;
+	font-size: 9px !important;
+}
+
+#prophiler .label {
+	padding: 2px 5px !important;
+}
+
+.page-header.navbar .page-logo .logo-default {
+	margin-top: 10px !important;
+	margin-left: 20px !important;
+}
+
+.form-control-static {
+	padding-top: 9px;
+}
+
+.table> thead> tr> th, .table> thead> tr> td, .table> tbody> tr> th, .table> tbody> tr> td, .table> tfoot> tr> th, .table> tfoot> tr> td
+{
+	vertical-align: middle;
+}
+
+.mt-checkbox-inline .mt-checkbox, .mt-checkbox-inline .mt-radio, .mt-radio-inline .mt-checkbox, .mt-radio-inline .mt-radio
+{
+	min-height: 19px;
+	margin-bottom: 0;
+}

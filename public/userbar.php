@@ -1,6 +1,7 @@
 <?php
 
-use App\Database;
+use Friday\Core\Options;
+use Xnova\Database;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 
 define('APP_PATH', dirname(__DIR__.'../').'/');
@@ -37,7 +38,7 @@ else
 	die('config.ini not found');
 
 /**
- * @var \App\Database $db
+ * @var \Xnova\Database $db
  */
 $db = $di->getShared('db');
 
@@ -74,9 +75,9 @@ if ($id > 0)
 		$lang[4]  = "Древние";
 
 		/**
-		 * @var $user \App\Models\User
+		 * @var $user \Xnova\Models\User
 		 */
-		$user = App\Models\User::findFirst($id);
+		$user = Xnova\Models\User::findFirst($id);
 
 		if ($user)
 		{
@@ -106,8 +107,8 @@ if ($id > 0)
 			imagettftext($image, 6, 0, 13, 37, $txt_color2, APP_PATH."/public/assets/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
 
 			// Очки
-			imagettftext($image, 6, 0, 13, 55, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\App\Helpers::pretty_number(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\App\Helpers::pretty_number(intval($stats['total_rank']))." из ".\App\Helpers::pretty_number($config->app->get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 55, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Helpers::pretty_number(intval($stats['total_points']))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::pretty_number(intval($stats['total_rank']))." из ".\Xnova\Helpers::pretty_number(Options::get('users_total', 0))."");
 
 			// Дата генерации
 			imagettftext($image, 6, 0, 365, 13, $txt_color, APP_PATH."/public/assets/images/KLMNFP2005.ttf", date("d.m.Y"));

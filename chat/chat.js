@@ -38,7 +38,7 @@ io.sockets.on('connection', function (socket)
 
 	connectedUsers[socket.handshake.query.userName] = socket.id;
 
-	memcached.get('chat', function (err, data)
+	memcached.get('xnova-5-chat', function (err, data)
 	{
 		try
 		{
@@ -57,11 +57,11 @@ io.sockets.on('connection', function (socket)
 			}
 		} catch (e)
 		{
-			memcached.set('chat', JSON.stringify([]), 86400, function (err) { console.log(err) });
+			memcached.set('xnova-5-chat', JSON.stringify([]), 86400, function (err) { console.log(err) });
 		}
 	});
 
-	socket.on('message', function (msg, userId, userName, key)
+	socket.on('message', function (msg, userId, userName, color, key)
 	{
 		var primaryKey = crypto.createHash('md5').update(userId+'|'+userName+'SuperPuperChat', 'utf8').digest('hex');
 
@@ -89,14 +89,14 @@ io.sockets.on('connection', function (socket)
 		  	if (err)
 			  	throw err;
 
-			insertMessage (msg, userId, userName, result.insertId, socket);
+			insertMessage (msg, userId, userName, color, result.insertId, socket);
 		});
 
 		connection.end();
 	});
 });
 
-function insertMessage (msg, userId, userName, lastId, socket)
+function insertMessage (msg, userId, userName, color, lastId, socket)
 {
 	var now = Math.floor(Date.now() / 1000);
 	var regexp = /приватно \[(.*?)\]/gi;
@@ -126,7 +126,7 @@ function insertMessage (msg, userId, userName, lastId, socket)
 
 	msg = msg.trim();
 
-	memcached.get('chat', function (err, data)
+	memcached.get('xnova-5-chat', function (err, data)
 	{
 		var chat;
 
@@ -173,11 +173,11 @@ function insertMessage (msg, userId, userName, lastId, socket)
 		if (user === null)
 			user = [];
 
-		var insert = [lastId, now, userName, user, isPrivate, msg, 0];
+		var insert = [lastId, now, userName, user, isPrivate, msg, color];
 
 		chat.push(insert);
 
-		memcached.set('chat', JSON.stringify(chat), 86400, function (err) { console.log(err) });
+		memcached.set('xnova-5-chat', JSON.stringify(chat), 86400, function (err) { console.log(err) });
 
 		socket.json.send(getMessage(insert, userName));
 
@@ -199,7 +199,7 @@ function insertMessage (msg, userId, userName, lastId, socket)
 	});
 }
 
-var color_massive = ['white', 'white'];
+var color_massive = ['white', 'white', 'navy', 'blue', '#7397E1', '#009898', 'red', 'fuchsia', 'gray', 'lime', 'maroon', 'orange', 'сhocolate', 'darkkhaki'];
 
 function getMessage (message, username)
 {
@@ -212,7 +212,7 @@ function getMessage (message, username)
 	message[5] = nl2br(message[5].replace("[\n\r]", ""));
 
 	if (message[6] > 0)
-		message[5] = "<font color=\""+color_massive[message[6]][0]+"\">"+message[5]+"</font>";
+		message[5] = "<font color=\""+color_massive[message[6]]+"\">"+message[5]+"</font>";
 
 	var msg = {'id': message[0], 'time': message[1], 'user': message[2], 'to': message[3], 'text': message[5], 'private': (message[4] > 0 ? 1 : 0), 'me': -1, 'my': -1};
 

@@ -223,7 +223,7 @@ var lastMessageId = 0;
 
 function initChat ()
 {
-	var socket = io.connect('https://uni5.xnova.su:6677', {query: 'userId='+userId+'&userName='+userName+'&key='+key, secure: true});
+	var socket = io.connect(server, {query: 'userId='+userId+'&userName='+userName+'&key='+key, secure: true});
 
 	socket.on('connecting', function ()
 	{
@@ -250,7 +250,7 @@ function initChat ()
 			{
 				var msg = addMessage();
 
-				socket.send(encodeURIComponent(msg), userId, userName, key);
+				socket.send(encodeURIComponent(msg), userId, userName, color, key);
 			}
 		});
 
@@ -263,7 +263,7 @@ function initChat ()
 			if ($("#smiles").is(':visible'))
 				ShowSmiles();
 
-			socket.send(encodeURIComponent(msg), userId, userName, key);
+			socket.send(encodeURIComponent(msg), userId, userName, color, key);
 		});
 	});
 }

@@ -1,28 +1,5 @@
 <?php
 
-include_once(APP_PATH."app/functions.php");
-
-if (isset($application))
-{
-	$application->registerModules([
-		'admin' =>
-		[
-			'className'	=> 'Xnova\Admin\Module',
-			'path'		=> APP_PATH.'app/modules/admin/Module.php',
-		],
-		'game' =>
-		[
-			'className'	=> 'App\Module',
-			'path'		=> APP_PATH.'app/modules/game/Module.php',
-		],
-		'bot' =>
-		[
-			'className'	=> 'Xnova\Bot\Module',
-			'path'		=> APP_PATH.'app/modules/bot/Module.php',
-		]
-	]);
-}
-
 //$result = $di->get('cache')->get('app_config');
 
 //if (!is_array($result))
