@@ -95,7 +95,7 @@ function showSmiles(obj)
 	else
 	{
 		for (var i = 0; i < TextParser.smiles.length; i++)
-        	o.append('<img src="'+XNova.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+arSmiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+        	o.append('<img src="'+XNova.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+TextParser.smiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
 		o.show();
 	}
