@@ -49,6 +49,7 @@ class CreditsController extends Controller
 
 			$this->view->setLayout('credits_ok');
 			$this->view->setVar('params', $params);
+			$this->view->setVar('query', http_build_query($params));
 		}
 		elseif ($this->request->hasPost('OutSum'))
 		{

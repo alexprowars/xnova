@@ -8,6 +8,12 @@ if (!defined('ROOT_PATH'))
 
 ini_set('apc.enable_cli', 1);
 
+ini_set('log_errors', 'On');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+ini_set('error_log', ROOT_PATH.'/php_errors.log');
+
 try
 {
 	require_once(ROOT_PATH."/app/modules/Core/Classes/Initializations.php");

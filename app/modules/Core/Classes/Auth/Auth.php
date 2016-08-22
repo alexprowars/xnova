@@ -120,7 +120,10 @@ class Auth extends Component
 		$this->cookies->send();
 
 		if ($this->session->isStarted())
+		{
 			$this->session->destroy(true);
+			$this->session->start();
+		}
 	}
 
 	public function remove ($redirect = false)

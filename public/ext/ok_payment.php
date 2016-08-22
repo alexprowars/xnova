@@ -1,28 +1,24 @@
 <?php
 
-use App\Models\User;
-use Phalcon\Loader;
-use Phalcon\Mvc\View;
+use Xnova\Models\User;
 use Phalcon\Mvc\Url as UrlProvider;
-use Phalcon\Mvc\Application;
-use Phalcon\DI\FactoryDefault;
 
-define('APP_PATH', '/var/www/xnova/data/www/uni5.xnova.su/');
+define('ROOT_PATH', '/var/www/xnova/data/www/uni5.xnova.su/');
 
 ini_set('log_errors', 'On');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-ini_set('error_log', APP_PATH.'php_errors.log');
+ini_set('error_log', ROOT_PATH.'php_errors.log');
 
 try
 {
-	$config = new \Phalcon\Config\Adapter\Ini(APP_PATH."app/config/config.ini");
+	require_once(ROOT_PATH."/app/modules/Core/Classes/Initializations.php");
+	require_once(ROOT_PATH."/app/modules/Core/Classes/Application.php");
 
-	include (APP_PATH."app/config/loader.php");
-	include (APP_PATH."app/config/services.php");
-	include (APP_PATH."app/config/bootstrap.php");
+	$application = new Friday\Core\Application();
+	$application->run();
 
-	$application = new Application($di);
+	\Friday\Core\Modules::init('xnova');
 
 	$params = $application->request->getQuery();
 	ksort($params);

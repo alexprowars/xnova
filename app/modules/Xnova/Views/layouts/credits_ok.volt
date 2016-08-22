@@ -85,7 +85,7 @@
 		{
 			$.ajax({
 				'url' : '{{ session.get('OKAPI')['api_server'] }}api/stream/publish',
-				'data': '{{ http_build_query(params) }}&resig='+data,
+				'data': '{{ query }}&resig='+data,
 				'success': function(data)
 				{
 					alert(data);
