@@ -39,7 +39,7 @@
 				<th>{{ data['build_range'] }}k</th>
 			</tr>
 		{% endfor %}
-	[% elseif parse['image'] != 4 %}
+	{% elseif parse['image'] != 4 %}
 		<tr>
 			<td class="c">Уровень</td>
 			<td class="c">Выработка</td>
@@ -57,11 +57,11 @@
 			</tr>
 		{% endfor %}
 	{% else %}
-	<tr>
-		<td class="c">Уровень</td>
-		<td class="c">Выработка</td>
-		<td class="c">Разница</td>
-	</tr>
+		<tr>
+			<td class="c">Уровень</td>
+			<td class="c">Выработка</td>
+			<td class="c">Разница</td>
+		</tr>
 		{% for data in parse['table_data'] %}
 			<tr>
 				<th>{{ data['build_lvl'] }}</th>

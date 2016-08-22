@@ -34,7 +34,7 @@ class MessagesController extends Controller
 		Lang::includeLang('messages', 'xnova');
 	}
 
-	public function writeAction ($userId)
+	public function writeAction ($userId = 0)
 	{
 		if (!$userId)
 			$this->message(_getText('mess_no_ownerid'), _getText('mess_error'));

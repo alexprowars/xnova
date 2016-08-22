@@ -18,7 +18,7 @@
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->
 
-	{% if allowMobile() is true %}
+	{% if allowMobile() is not true %}
 		<meta name="viewport" content="width=810">
 	{% else %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">

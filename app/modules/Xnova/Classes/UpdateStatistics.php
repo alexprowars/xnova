@@ -542,9 +542,9 @@ class UpdateStatistics extends Injectable
 		}
 		$file = "<?php \n//The File is created on " . date("d. M y H:i:s", time()) . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";
 
-		if (!file_exists(ROOT_PATH.$this->config->application->cacheDir))
-			mkdir(ROOT_PATH.$this->config->application->cacheDir, 0777);
+		if (!file_exists(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir))
+			mkdir(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir, 0777);
 
-		file_put_contents(ROOT_PATH.$this->config->application->cacheDir."/CacheRecords.php", $file);
+		file_put_contents(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."/CacheRecords.php", $file);
 	}
 }

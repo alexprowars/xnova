@@ -141,7 +141,7 @@
 		<tr>
 			<th width="30%">
 				{% if parse['merchand'] < time() %}
-					<a href="{{ url('resources&buy=1/') }}" class="button">Купить за 10 кредитов</a>
+					<a href="{{ url('resources/?buy=Y') }}" class="button">Купить за 10 кредитов</a>
 				{% else %}
 					Через {{ pretty_time(parse['merchand'] - time()) }}
 				{% endif %}
