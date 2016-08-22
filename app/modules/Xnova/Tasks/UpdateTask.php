@@ -28,6 +28,7 @@ class UpdateTask extends ApplicationTask
 	public function statAction ()
 	{
 		Modules::init('xnova');
+		Lang::setLang($this->config->app->language, 'xnova');
 
 		$this->game->loadGameVariables();
 
@@ -59,6 +60,8 @@ class UpdateTask extends ApplicationTask
 		}
 
 		Modules::init('xnova');
+		Lang::setLang($this->config->app->language, 'xnova');
+		Lang::includeLang('fleet_engine', 'xnova');
 
 		$this->game->loadGameVariables();
 

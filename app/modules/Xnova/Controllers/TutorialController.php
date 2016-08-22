@@ -16,8 +16,6 @@ use Xnova\Controller;
 /**
  * @RoutePrefix("/tutorial")
  * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class TutorialController extends Controller
@@ -253,6 +251,8 @@ class TutorialController extends Controller
 
 			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
 		}
+		else
+			$this->response->redirect('tutorial/');
 	}
 	
 	public function indexAction ()

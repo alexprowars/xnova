@@ -47,6 +47,9 @@ class StatController extends Controller
 		if (($who != $this->request->getPost('old_who', 'string', '') && $this->request->getPost('old_who', 'string', '') > 0) || ($type != $this->request->getPost('old_type', 'string', '') && $this->request->getPost('old_type', 'string', '') > 0))
 			$this->range = 0;
 
+		if ($who != 'players' && $type > 5)
+			$type = 1;
+
 		switch ($type)
 		{
 			case 2:

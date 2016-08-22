@@ -33,7 +33,7 @@
 	<tr>
 		<td class="k">
 			{% if errors is false %}
-				<input type="button" class="end" onclick="load('{{ url.getBaseUri() }}tutorial/{{ stage }}/continue/1/')" value="Закончить">
+				<input type="button" class="end" onclick="load('{{ url.getBaseUri() }}tutorial/{{ stage }}/?continue=Y')" value="Закончить">
 			{% endif %}
 			<div class="solution">
 				{{ parse['info']['SOLUTION'] }}
