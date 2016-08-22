@@ -38,6 +38,7 @@ class TutorialController extends Controller
 
 	/**
 	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
+	 * @param $stage
 	 */
 	public function infoAction ($stage)
 	{

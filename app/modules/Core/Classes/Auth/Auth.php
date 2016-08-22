@@ -52,14 +52,11 @@ class Auth extends Component
 	{
 		$this->eventsManager->fire('core:beforeAuthCheck', $this);
 
-		if (!$this->cookies->has($this->getSessionKey()))
+		foreach ($this->_plugins as $plugin)
 		{
-			foreach ($this->_plugins as $plugin)
-			{
-				$ext = new $plugin();
-				/** @noinspection PhpUndefinedMethodInspection */
-				$ext->check();
-			}
+			$ext = new $plugin();
+			/** @noinspection PhpUndefinedMethodInspection */
+			$ext->check();
 		}
 
 		if (!$this->cookies->has($this->getSessionKey()))
@@ -120,6 +117,7 @@ class Auth extends Component
 			throw new \Exception("Can`t start auth session");
 
 		$this->cookies->set($this->getSessionKey(), $session->token, $expire, '/', 0, $_SERVER["SERVER_NAME"]);
+		$this->cookies->send();
 
 		if ($this->session->isStarted())
 			$this->session->destroy(true);

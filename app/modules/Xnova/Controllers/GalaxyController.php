@@ -34,6 +34,7 @@ class GalaxyController extends Controller
 	/**
 	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}{params:(/.*)*}", paths={r="3"})
 	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}/{r:[0-9]}{params:(/.*)*}")
+	 * @Route("/r/{r:[0-9]}{params:(/.*)*}")
 	 */
 	public function indexAction ()
 	{
@@ -56,7 +57,7 @@ class GalaxyController extends Controller
 			$this->cache->save('app::records_'.$this->user->getId(), $records, 1800);
 		}
 
-		$mode = $this->request->getQuery('r', 'int', 0);
+		$mode = $this->request->get('r', 'int', 0);
 
 		$galaxy = 1;
 		$system = 1;

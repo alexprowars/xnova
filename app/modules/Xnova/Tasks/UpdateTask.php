@@ -54,7 +54,7 @@ class UpdateTask extends ApplicationTask
 		{
 			$load = sys_getloadavg();
 
-			if ($load[0] > 3)
+			if ($load[0] > 1.5)
 				die('Server too busy. Please try again later.');
 		}
 

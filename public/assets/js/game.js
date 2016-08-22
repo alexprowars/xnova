@@ -124,6 +124,8 @@ var XNova =
 					window.location.href = data.data.redirect;
 				else
 					$('#gamediv').html(data.html);
+
+				TextParser.parseAll();
 			},
 			error: function()
 			{
@@ -164,6 +166,8 @@ var XNova =
 					else if (data.html != '')
 					{
 						$('#windowDialog').html(data.html);
+
+						TextParser.parseAll();
 					}
 				},
 				error: function()
@@ -471,6 +475,8 @@ function load (url)
 					stack : 1
 				});
 			}
+
+			TextParser.parseAll();
 		},
 		timeout: 10000,
 		error: function()

@@ -664,7 +664,12 @@ class OverviewController extends Controller
 
 			$memcache = new Memcache(new FrontendCache([]), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
 
-			$chat = json_decode($memcache->get("xnova_5_chat"), true);
+			$chatCached = $memcache->get("xnova-5-chat");
+
+			if (is_string($chatCached))
+				$chat = json_decode($chatCached, true);
+			else
+				$chat = null;
 
 			if (!is_array($chat))
 			{
@@ -708,7 +713,7 @@ class OverviewController extends Controller
 
 				$chat = array_reverse($chat);
 
-				$memcache->save('xnova_5_chat', $chat, 86400);
+				$memcache->save('xnova-5-chat', json_encode($chat), 86400);
 			}
 
 			if (is_array($chat) && count($chat))

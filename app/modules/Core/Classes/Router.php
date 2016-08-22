@@ -90,7 +90,6 @@ class Router extends Annotations
 	public function parseControllers ()
 	{
 		$cache = $this->getDI()->getShared('cache');
-		$config = $this->getDI()->getShared('config');
 
 		$resources = $cache->get('FRIDAY_ROUTER_RESOURCES');
 
@@ -146,6 +145,16 @@ class Router extends Annotations
 			$realUri = $this->getRewriteUri();
 		else
 			$realUri = $uri;
+
+		$url = $this->getDI()->getShared('url');
+
+		if ($url->getBaseUri() != '/')
+		{
+			$realUri = '/'.trim(str_replace($url->getBaseUri(), '', $realUri), '/');
+
+			if ($realUri != '/')
+				$realUri = $realUri.'/';
+		}
 
 		/**
 		 * @var $annotationsService \Phalcon\Annotations\Adapter\Memory

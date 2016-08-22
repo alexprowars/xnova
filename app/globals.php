@@ -68,6 +68,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 		return '\Friday\Core\Helpers::getPlural(' . $arguments . ')';
 	});
 
+	$compiler->addFilter('floor', 'floor');
 	$compiler->addFilter('round', 'round');
 	$compiler->addFilter('ceil', 'ceil');
 	$compiler->addFunction('number_format', 'number_format');
@@ -84,6 +85,8 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('md5', 'md5');
 	$compiler->addFunction('min', 'min');
 	$compiler->addFunction('max', 'max');
+	$compiler->addFunction('floor', 'floor');
+	$compiler->addFunction('ceil', 'ceil');
 	$compiler->addFunction('array_search', 'array_search');
 	$compiler->addFunction('is_email', 'is_email');
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
@@ -153,4 +156,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '3.1.0');
+define('VERSION', '3.1.1');

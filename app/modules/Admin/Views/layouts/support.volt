@@ -13,7 +13,7 @@
 		<tr>
 			<td>{{ list['id'] }}</td>
 			<td>{{ list['username'] }}</td>
-			<td><a href="/admin/support/detail/{{ list['id'] }}/">{{ list['subject'] }}</a></td>
+			<td><a href="{{ url('support/detail/'~list['id']~'/') }}">{{ list['subject'] }}</a></td>
 			<td>{{ list['status'] }}</td>
 			<td>{{ list['date'] }}</td>
 		</tr>
@@ -52,7 +52,7 @@
 		<tr>
 			<th>{{ list['id'] }}</th>
 			<th>{{ list['username'] }}</th>
-			<th><a href="/admin/support/detail/{{ list['id'] }}/">{{ list['subject'] }}</a></th>
+			<th><a href="{{ url('support/detail/'~list['id']~'/') }}">{{ list['subject'] }}</a></th>
 			<th>{{ list['status'] }}</th>
 			<th>{{ list['date'] }}</th>
 		</tr>
@@ -105,7 +105,7 @@
 			<div class="caption">Ответ</div>
 		</div>
 		<div class="portlet-body form">
-			<form action="{{ url('admin/support/send/'~parse['t_id']~'/') }}" method="POST">
+			<form action="{{ url('support/send/'~parse['t_id']~'/') }}" method="POST">
 				<div class="form-body">
 					<div class="form-group">
 						<textarea class="form-control" rows="10" name="text" title=""></textarea>
@@ -117,10 +117,10 @@
 			</form>
 			<hr>
 			{% if parse['t_status'] != 0 %}
-			<form action="{{ url('admin/support/close/'~parse['t_id']~'/') }}" method="POST">
+			<form action="{{ url('support/close/'~parse['t_id']~'/') }}" method="POST">
 				<input type="submit" value="Закрыть"></form>
 			{% else %}
-			<form action="{{ url('admin/support/open/'~parse['t_id']~'/') }}" method="POST">
+			<form action="{{ url('support/open/'~parse['t_id']~'/') }}" method="POST">
 				<input type="submit" value="Открыть"></form>
 			{% endif %}
 		</div>

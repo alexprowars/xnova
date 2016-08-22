@@ -350,7 +350,7 @@ trait Initializations
 	protected function initView ($di, $eventManager)
 	{
 		$url = new UrlResolver();
-		$url->setStaticBaseUri('/');
+		$url->setStaticBaseUri($this->_config->application->staticUri);
 		$url->setBaseUri($this->_config->application->baseUri);
 
 		$di->set('url', $url, true);

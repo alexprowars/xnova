@@ -27,7 +27,7 @@ catch(\Exception $e)
 
 			$assets->addCss('https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all');
 			$assets->addCss('assets/admin/global/plugins/bootstrap/css/bootstrap.css');
-			$assets->addCss('assets/adminn/global/css/components.css');
+			$assets->addCss('assets/admin/global/css/components.css');
 			$assets->addCss('assets/admin/pages/css/error.css');
 
 			$views->setViewsDir(ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Admin/Views');

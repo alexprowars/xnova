@@ -45,7 +45,7 @@ class Security extends Component
 
 		if (!is_object($annotations->getClassAnnotations()) || ($annotations->getClassAnnotations()->has('Private') && $role == 'User') || !$annotations->getClassAnnotations()->has('Private'))
 			return true;
-		else
+		elseif (is_object($annotations->getClassAnnotations()) && !$annotations->getClassAnnotations()->has('Private'))
 		{
 			$actions = $annotations->getMethodsAnnotations();
 

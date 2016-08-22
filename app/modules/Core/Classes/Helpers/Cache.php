@@ -10,7 +10,7 @@ class Cache
 {
 	private static $cacheDirs = [
 		'/public/assets/cache/',
-		'/app/cache/'
+		'/app/cache/views/'
 	];
 
 	static function clearAll ()

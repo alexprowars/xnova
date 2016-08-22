@@ -110,7 +110,7 @@ function changePlanet (pId)
 {
 	var path = window.location.pathname.replace(XNova.path, '').split('/');
 
-	var url = XNova.path+path[0]+(path[1] !== undefined && path[1] != '' && path[0] != 'fleet' ? '/'+path[1] : '')+'/?chpl='+pId+'';
+	var url = XNova.path+path[0]+(path[1] !== undefined && path[1] != '' && path[0] != 'galaxy' && path[0] != 'fleet' ? '/'+path[1] : '')+'/?chpl='+pId+'';
 
 	if (ajax_nav == 1)
 		load(url);

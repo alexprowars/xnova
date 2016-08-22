@@ -105,6 +105,7 @@ class TechController extends Controller
 
 	/**
 	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
+	 * @param $element
 	 */
 	public function infoAction ($element)
 	{

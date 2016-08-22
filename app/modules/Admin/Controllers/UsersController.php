@@ -45,14 +45,17 @@ class UsersController extends Controller
 			'url'	=> '',
 			'childrens' => [
 				[
+					'code'	=> 'index',
 					'url'	=> self::CODE,
 					'title'	=> 'Список'
 				],
 				[
+					'code'	=> 'ban',
 					'url'	=> self::CODE.'/ban',
 					'title'	=> 'Заблокировать'
 				],
 				[
+					'code'	=> 'unban',
 					'url'	=> self::CODE.'/unban',
 					'title'	=> 'Разблокировать'
 				]

@@ -238,7 +238,7 @@ class Controller extends PhalconController
 								'title' 	=> $item['title'],
 								'icon' 		=> $item['icon'],
 								'sort' 		=> $item['sort'],
-								'url' 		=> $item['url'],
+								'url' 		=> isset($item['url']) ? $item['url'] : false,
 								'childrens'	=> $item['childrens']
 							];
 						}

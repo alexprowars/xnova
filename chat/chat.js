@@ -30,7 +30,7 @@ http.createServer(function(request, response) {
   response.end();
 }).listen(8888);
 
-var config = ini.parse(fs.readFileSync('../app/config/core.ini', 'utf-8'));
+var config = ini.parse(fs.readFileSync('/var/www/xnova/data/www/uni5.xnova.su/app/config/core.ini', 'utf-8'));
 
 io.sockets.on('connection', function (socket)
 {
