@@ -105,6 +105,7 @@ class Alliance extends Model
 			self::ADMIN_ACCESS 					=> false,
 			self::DIPLOMACY_ACCESS 				=> false,
 			self::PLANET_ACCESS 				=> false,
+			self::REQUEST_ACCESS 				=> false,
 		];
 
 		if ($this->owner == $userId)
@@ -119,6 +120,7 @@ class Alliance extends Model
 			$this->rights[self::ADMIN_ACCESS] 					= true;
 			$this->rights[self::DIPLOMACY_ACCESS] 				= true;
 			$this->rights[self::PLANET_ACCESS] 					= true;
+			$this->rights[self::REQUEST_ACCESS] 				= true;
 		}
 		elseif ($this->member && $this->member->rank == 0)
 		{
@@ -132,6 +134,7 @@ class Alliance extends Model
 			$this->rights[self::ADMIN_ACCESS] 					= false;
 			$this->rights[self::DIPLOMACY_ACCESS] 				= false;
 			$this->rights[self::PLANET_ACCESS] 					= false;
+			$this->rights[self::REQUEST_ACCESS] 				= false;
 		}
 		elseif (isset($this->ranks[$this->member->rank - 1]))
 		{
@@ -145,6 +148,7 @@ class Alliance extends Model
 			$this->rights[self::ADMIN_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::ADMIN_ACCESS] == 1);
 			$this->rights[self::DIPLOMACY_ACCESS] 				= ($this->ranks[$this->member->rank - 1][self::DIPLOMACY_ACCESS] == 1);
 			$this->rights[self::PLANET_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::PLANET_ACCESS] == 1);
+			$this->rights[self::REQUEST_ACCESS] 				= ($this->ranks[$this->member->rank - 1][self::REQUEST_ACCESS] == 1);
 		}
 	}
 

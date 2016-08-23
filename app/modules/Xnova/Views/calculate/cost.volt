@@ -48,7 +48,7 @@
 
 	options.techCosts = {
 		{% for id, price in registry.pricelist %}
-			{{ id }}id: [{{ price['metal'] }}, {{ price['crystal'] }}, {{ price['deuterium'] }}, {{ price['factor'] }}],
+			{{ id }}: [{{ price['metal'] }}, {{ price['crystal'] }}, {{ price['deuterium'] }}, {{ price['factor'] }}],
 		{% endfor %}
 		999: []
 	};

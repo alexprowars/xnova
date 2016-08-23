@@ -755,13 +755,13 @@ class AllianceController extends Controller
 			$u['i'] = $i;
 
 			if ($u["onlinetime"] + 60 * 10 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS))
-				$u["onlinetime"] = "lime>" . _getText('On') . "<";
+				$u["onlinetime"] = "<span class='positive'>" . _getText('On') . "</span>";
 			elseif ($u["onlinetime"] + 60 * 20 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS))
-				$u["onlinetime"] = "yellow>" . _getText('15_min') . "<";
+				$u["onlinetime"] = "<span class='neutral'>" . _getText('15_min') . "</span>";
 			elseif ($this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS))
 			{
 				$hours = floor((time() - $u["onlinetime"]) / 3600);
-				$u["onlinetime"] = "red>" . _getText('Off') . " " . floor($hours / 24) . " д. " . ($hours % 24) . " ч.<";
+				$u["onlinetime"] = "<span class='negative'>" . _getText('Off') . " " . floor($hours / 24) . " д. " . ($hours % 24) . " ч.</span>";
 			}
 
 			if ($this->ally->owner == $u['id'])

@@ -3,7 +3,7 @@
 		<tr>
 			<td class="c" colspan="3">Переименовать или покинуть планету</td>
 		</tr>
-		{% if isPopup is not defined %}
+		{% if isPopup is false %}
 			<tr>
 				<th class="hidden-xs-down">{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}</th>
 				<th>{{ parse['planet_name'] }}</th>

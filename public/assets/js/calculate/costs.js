@@ -301,7 +301,6 @@ function getBuildTime(techID, techLevelFrom, techLevelTo) {
 		if (timeSpan == 0) {
 			timeSpan = 1;
 		}
-		console.log(timeSpan);
 		timeSpan *= techLevelTo;
 	}
 	// Если расчёт заказан для ускоренной вселенной, разделим вычисленное время на поправочный коэффициент

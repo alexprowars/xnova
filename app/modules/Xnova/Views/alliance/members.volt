@@ -25,7 +25,7 @@
 				<th>{{ m['points'] }}</th>
 				<th><a href="{{ url('galaxy/'~m['galaxy']~'/'~m['system']~'/') }}">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</a></th>
 				<th>{{ m['time'] }}</th>
-				{% if parse['status'] %}<th><font color="">{{ m['onlinetime'] }}</font></th>{% endif %}
+				{% if parse['status'] %}<th>{{ m['onlinetime'] }}</th>{% endif %}
 				{% if parse['admin'] %}<th><a href="{{ url('alliance/admin/edit/members/kick/'~m['id']~'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="{{ url.getBaseUri() }}assets/images/abort.gif"></a>&nbsp;<a href="{{ url('alliance/admin/edit/members/rank/'~m['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/key.gif"></a></th>{% endif %}
 			</tr>
 		{% else %}
