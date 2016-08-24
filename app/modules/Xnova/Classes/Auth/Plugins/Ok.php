@@ -69,6 +69,9 @@ class Ok extends Component implements AuthInterface
 
 			$this->session->set('OKAPI', $_POST);
 
+			if ($this->cookies->has($this->config->cookie->prefix."_full"))
+				$this->cookies->get($this->config->cookie->prefix."_full")->setDomain($this->request->getServer('SERVER_NAME'))->delete();
+
 			echo '<center>Загрузка...-</center>'.print_r($Row, true).'<script>parent.location.href="'.$this->url->getBaseUri().'overview/?'.http_build_query($_POST).'";</script>';
 		}
 		
