@@ -64,7 +64,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "<div class='separator'></div><<div class='text-xs-center'>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
+				$Page .= "<div class='separator'></div><<div class='text-xs-center'>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
 
 				$this->tag->setTitle('Боевой доклад');
 				$this->view->setVar('html', $Page);
@@ -75,8 +75,8 @@ class RwController extends Controller
 				$result = json_decode($raportrow['raport'], true);
 
 				$Page = "<!DOCTYPE html><html><head><title>Боевой доклад</title>";
-				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
-				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
+				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/bootstrap.css')."\">";
+				$Page .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/style.css')."\">";
 				$Page .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />";
 				$Page .= "</head><body>";
 				$Page .= "<table width=\"99%\"><tr><td>";
@@ -95,7 +95,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"/log/new/save/" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
+				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
 				$Page .= "</table></body></html>";
 		
 				echo $Page;
