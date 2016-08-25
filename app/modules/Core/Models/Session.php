@@ -19,6 +19,7 @@ class Session extends Model
 	public $object_id;
 	public $timestamp;
 	public $lifetime;
+	public $useragent;
 
 	const OBJECT_TYPE_USER = 'user';
 
@@ -46,6 +47,9 @@ class Session extends Model
 
 	public static function start ($type, $id, $lifetime = 3600)
 	{
+		if (strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
+			return false;
+
 		$session = new self;
 
 		$token = new Random();
@@ -61,7 +65,8 @@ class Session extends Model
 			'object_type' 	=> $type,
 			'object_id' 	=> $id,
 			'timestamp'		=> time(),
-			'lifetime'		=> $lifetime
+			'lifetime'		=> $lifetime,
+			'useragent'		=> $_SERVER['HTTP_USER_AGENT']
 		]);
 		
 		return $success ? $session : false;

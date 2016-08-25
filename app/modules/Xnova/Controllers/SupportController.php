@@ -42,7 +42,7 @@ class SupportController extends Controller
 		$this->message('Задача добавлена', 'Успех', '/support/', 3);
 	}
 
-	public function answerAction ($id)
+	public function answerAction ($id = 0)
 	{
 		if ($id > 0)
 		{
@@ -70,6 +70,8 @@ class SupportController extends Controller
 				}
 			}
 		}
+		else
+			$this->message('Не задан ID тикета', 'Ошибка', '/support/');
 	}
 	
 	public function indexAction ()

@@ -642,6 +642,9 @@ class OverviewController extends Controller
 		{
 			$parse['bonus_multi'] = $this->user->bonus_multi + 1;
 
+			if ($parse['bonus_multi'] > 50)
+				$parse['bonus_multi'] = 50;
+
 			if ($this->user->bonus < (time() - 86400))
 				$parse['bonus_multi'] = 1;
 		}

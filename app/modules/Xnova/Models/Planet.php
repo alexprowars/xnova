@@ -692,7 +692,8 @@ class Planet extends Model
 					{
 						$Needed = Building::GetBuildingPrice($this->user, $this, $ListIDArray['i'], true, $ForDestroy);
 
-						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания ' . _getText('tech', $ListIDArray['i']) . '.<br>Вам необходимо ещё: <br>';
+						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . _getText('tech', $ListIDArray['i']) . '" на планете '.$this->name.' '.Helpers::BuildPlanetAdressLink($this->toArray()).'.<br>Вам необходимо ещё: <br>';
+
 						if ($Needed['metal'] > $this->metal)
 							$Message .= Helpers::pretty_number($Needed['metal'] - $this->metal) . ' металла<br>';
 						if ($Needed['crystal'] > $this->crystal)

@@ -56,7 +56,7 @@
 			{% endif %}
 		</div>
 		<div class="top_menu">
-			{% if config.view.get('socialIframeView', 0) %}
+			{% if config.view.get('socialIframeView', 0) != 0 %}
 				<a href="?fullscreen=Y" target="_blank" class="tooltip m1" data-content="Развернуть"><span class="sprite ico_fullscreen"></span></a>
 			{% endif %}
 			{% if config.view.get('socialIframeView', 0) != 0 %}
