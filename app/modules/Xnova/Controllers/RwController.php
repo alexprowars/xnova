@@ -95,7 +95,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
+				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
 				$Page .= "</table></body></html>";
 		
 				echo $Page;

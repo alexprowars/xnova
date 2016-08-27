@@ -3,7 +3,7 @@
 		<div class="caption">{{ _text('admin', 'adm_mod_level') }}</div>
 	</div>
 	<div class="portlet-body form">
-		<form action="{{ url('admin/manager/level/') }}" method="post" class="form-horizontal form-bordered">
+		<form action="{{ url('manager/level/') }}" method="post" class="form-horizontal form-bordered">
 			<input type="hidden" name="send" value="y">
 			<div class="form-body">
 				<div class="form-group">

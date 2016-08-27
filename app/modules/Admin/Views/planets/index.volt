@@ -1,5 +1,5 @@
 <div class="util-btn-margin-bottom-5">
-	<a href="{{ url('admin/planetlist/add/') }}">
+	<a href="{{ url('planetlist/add/') }}">
 		<button type="button" class="btn blue btn-sm">Создать</button>
 	</a>
 </div>

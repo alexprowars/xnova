@@ -81,7 +81,7 @@ class LogController extends Controller
 				$code = $this->request->getPost('code', 'string', '');
 
 				$key = substr($code, 0, 32);
-				$id = substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
+				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 				if (md5('xnovasuka' . $id) != $key)
 					$this->message('Не правильный ключ', 'Ошибка', '', 0, false);

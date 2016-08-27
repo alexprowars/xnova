@@ -4,6 +4,7 @@
 	</tr>
 	<tr>
 		{% for i, link in links %}
+			{% if i%2 == 0 %}</tr><tr>{% endif %}
 			<th width="50%">
 				<a href="{{ url('fleet/shortcut/view/'~i~'/') }}">{{ link['name'] }} [{{ link['galaxy'] }}:{{ link['system'] }}:{{ link['planet'] }}] {{ link['type'] }}</a>
 			</th>

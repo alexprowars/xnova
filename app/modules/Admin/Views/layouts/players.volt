@@ -2,12 +2,12 @@
 	<table class="table table-striped table-hover table-advance">
 		<thead>
 			<tr>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/id/') }}">ID</a></th>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/username/') }}">Логин игрока</a></th>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/email/') }}">E-Mail</a></th>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/ip/') }}">IP</a></th>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/create_time/') }}">Регистрация</a></th>
-				<th><a href="{{ url('admin/userlist/cmd/sort/type/banned/') }}">Блок</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/id/') }}">ID</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/username/') }}">Логин игрока</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/email/') }}">E-Mail</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/ip/') }}">IP</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/create_time/') }}">Регистрация</a></th>
+				<th><a href="{{ url('userlist/cmd/sort/type/banned/') }}">Блок</a></th>
 			</tr>
 		</thead>
 		{% for list in parse['adm_ul_table'] %}

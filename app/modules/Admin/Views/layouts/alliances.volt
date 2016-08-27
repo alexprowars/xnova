@@ -17,14 +17,14 @@
 		{% for u in parse['alliance'] %}
 			<tr>
 				<td>{{ u['id'] }}</td>
-				<td><a href="/admin/alliancelist/allyname/{{ u['id'] }}/">{{ u['name'] }}</a></td>
-				<td><a href="/admin/alliancelist/allyname/{{ u['id'] }}/">{{ u['tag'] }}</a></td>
-				<td><a href="/admin/alliancelist/leader/{{ u['id'] }}/">{{ u['username'] }}</a></td>
+				<td><a href="{{ url('alliancelist/allyname/'~u['id']~'/') }}">{{ u['name'] }}</a></td>
+				<td><a href="{{ url('alliancelist/allyname/'~u['id']~'/') }}">{{ u['tag'] }}</a></td>
+				<td><a href="{{ url('alliancelist/leader/'~u['id']~'/') }}">{{ u['username'] }}</a></td>
 				<td>{{ date("d/m/Y H:i:s", u['create_time']) }}</td>
-				<td><a href="/admin/alliancelist/desc/{{ u['id'] }}/">Смотреть</a>/<a href="/admin/alliancelist/edit/{{ u['id'] }}/">Редактировать</a></td>
-				<td><a href="/admin/alliancelist/mitglieder/{{ u['id'] }}/">{{ u['members'] }}</a></td>
-				<td><a href="/admin/alliancelist/mail/{{ u['id'] }}/"><img src="{{ static_url('assets/images/alliance/r5.png') }}"></a></td>
-				<td><a href="/admin/alliancelist/del/{{ u['id'] }}/">X</a></td>
+				<td><a href="{{ url('alliancelist/desc/'~u['id']~'/') }}">Смотреть</a>/<a href="{{ url('alliancelist/edit/'~u['id']~'/') }}">Редактировать</a></td>
+				<td><a href="{{ url('alliancelist/mitglieder/'~u['id']~'/') }}">{{ u['members'] }}</a></td>
+				<td><a href="{{ url('alliancelist/mail/'~u['id']~'/') }}"><img src="{{ static_url('assets/images/alliance/r5.png') }}"></a></td>
+				<td><a href="{{ url('alliancelist/del/'~u['id']~'/') }}">X</a></td>
 			</tr>
 		{% endfor %}
 		<tr><th colspan="9">Всего {{ parse['alliance']|length }} альянсов</th></tr>
