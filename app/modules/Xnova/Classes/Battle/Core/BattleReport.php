@@ -220,9 +220,9 @@ class BattleReport
 		return Math::tryEvent($prob, 'Events::event_moon', $prob);
 	}
 
-	public function getMoonProb()
+	public function getMoonProb($add = 0)
 	{
-		return min(floor(array_sum($this->getDebris()) / MOON_UNIT_PROB), MAX_MOON_PROB);
+		return min(floor(array_sum($this->getDebris()) / MOON_UNIT_PROB), (MAX_MOON_PROB + $add));
 	}
 
 	public function getAttackerDebris()

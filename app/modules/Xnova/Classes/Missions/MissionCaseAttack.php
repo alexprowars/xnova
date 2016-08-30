@@ -359,7 +359,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 		
-		$moonChance = $report->getMoonProb();
+		$moonChance = $report->getMoonProb(($targetUser->rpg_admiral > time() ? 10 : 0));
 
 		if ($target->planet_type != 1)
 			$moonChance = 0;

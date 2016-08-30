@@ -83,7 +83,7 @@ class ManagerController extends Controller
 			$SelUser = $this->db->query("SELECT u.*, ui.* FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ".(is_numeric($username) ? "u.id = '" . $username . "'" : "u.username = '" . $username . "'")." LIMIT 1;")->fetch();
 
 			if (!isset($SelUser['id']))
-				$this->message('Такого игрока не существует', 'Ошибка', '/admin/playersadmin/', 2);
+				$this->message('Такого игрока не существует', 'Ошибка', '/admin/manager/', 2);
 
 			$parse = [];
 			$parse['answer1'] = $SelUser['id'];
@@ -234,7 +234,6 @@ class ManagerController extends Controller
 
 			$this->view->pick('manager/adminpanel_ans1');
 			$this->view->setVar('parse', $parse);
-
 		}
 	}
 }

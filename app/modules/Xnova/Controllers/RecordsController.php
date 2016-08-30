@@ -30,8 +30,8 @@ class RecordsController extends Controller
 	{
 		$RecordsArray = [];
 
-		if (file_exists(ROOT_PATH.$this->config->application->cacheDir."/CacheRecords.php"))
-			require_once(ROOT_PATH.$this->config->application->cacheDir."/CacheRecords.php");
+		if (file_exists(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."/CacheRecords.php"))
+			require_once(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."/CacheRecords.php");
 
 		$Builds = [];
 		$MoonsBuilds = [];

@@ -11,16 +11,14 @@
 			</tr>
 		</thead>
 		{% for list in parse['adm_ul_table'] %}
-
-		<tr>
-			<td><a href="/admin/playersadmin/result/usr_data/username/{{ list['adm_ul_data_id'] }}/">{{ list['adm_ul_data_id'] }}</a></td>
-			<td><a href="/admin/playersadmin/result/usr_data/username/{{ list['adm_ul_data_id'] }}/">{{ list['adm_ul_data_name'] }}</a></td>
-			<td>{{ list['adm_ul_data_mail'] }}</td>
-			<td>{{ list['adm_ul_data_adip'] }}</td>
-			<td>{{ list['adm_ul_data_regd'] }}<br>{{ list['adm_ul_data_lconn'] }}</td>
-			<td>{{ list['adm_ul_data_banna'] }}</td>
-		</tr>
-
+			<tr>
+				<td><a href="/admin/manager/data/username/{{ list['adm_ul_data_id'] }}/">{{ list['adm_ul_data_id'] }}</a></td>
+				<td><a href="/admin/manager/data/username/{{ list['adm_ul_data_id'] }}/">{{ list['adm_ul_data_name'] }}</a></td>
+				<td>{{ list['adm_ul_data_mail'] }}</td>
+				<td>{{ list['adm_ul_data_adip'] }}</td>
+				<td>{{ list['adm_ul_data_regd'] }}<br>{{ list['adm_ul_data_lconn'] }}</td>
+				<td>{{ list['adm_ul_data_banna'] }}</td>
+			</tr>
 		{% endfor %}
 	</table>
 </div>

@@ -20,6 +20,7 @@ class Session extends Model
 	public $timestamp;
 	public $lifetime;
 	public $useragent;
+	public $request;
 
 	const OBJECT_TYPE_USER = 'user';
 
@@ -66,7 +67,8 @@ class Session extends Model
 			'object_id' 	=> $id,
 			'timestamp'		=> time(),
 			'lifetime'		=> $lifetime,
-			'useragent'		=> $_SERVER['HTTP_USER_AGENT']
+			'useragent'		=> $_SERVER['HTTP_USER_AGENT'],
+			'request'		=> print_r($_REQUEST, true)
 		]);
 		
 		return $success ? $session : false;

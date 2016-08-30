@@ -13,7 +13,7 @@
 					</div>
 				</div>
 				<div class="form-actions">
-					<button type="submit" class="btn green">{{ _text'admin', 'adm_bt_search') }}</button>
+					<button type="submit" class="btn green">{{ _text('admin', 'adm_bt_search') }}</button>
 				</div>
 			</div>
 		</form>

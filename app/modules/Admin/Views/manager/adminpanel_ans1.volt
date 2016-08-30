@@ -2,41 +2,37 @@
 	<div class="col-md-6">
 		<table class="table table-striped table-hover table-advance">
 			<tbody>
-			<tr>
-				<th colspan="2">{{ _text('admin', 'adm_panel_mnu') }}</th>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_id') }}</td>
-				<td align="center">{{ parse['answer1'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_name') }}</td>
-				<td align="center">{{ parse['answer2'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_ip') }}</td>
-				<td align="center">{{ parse['answer3'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_mail') }}</td>
-				<td align="center">{{ parse['answer4'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_acc') }}</td>
-				<td align="center" class="negative">{{ parse['answer5'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">{{ _text('admin', 'adm_frm1_gen') }}</td>
-				<td align="center">{{ parse['answer6'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">Дата регистрации</td>
-				<td align="center">{{ parse['answer9'] }}</td>
-			</tr>
-			<tr>
-				<td align="center">РО</td>
-				<td align="center">{{ parse['answer7'] }}</td>
-			</tr>
+				<tr>
+					<th colspan="2">{{ _text('admin', 'adm_panel_mnu') }}</th>
+				</tr>
+				<tr>
+					<td align="center">{{ _text('admin', 'adm_frm1_id') }}</td>
+					<td align="center">{{ parse['answer1'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">{{ _text('admin', 'adm_frm1_name') }}</td>
+					<td align="center">{{ parse['answer2'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">{{ _text('admin', 'adm_frm1_ip') }}</td>
+					<td align="center">{{ parse['answer3'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">{{ _text('admin', 'adm_frm1_mail') }}</td>
+					<td align="center">{{ parse['answer4'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">{{ _text('admin', 'adm_frm1_gen') }}</td>
+					<td align="center">{{ parse['answer6'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">Дата регистрации</td>
+					<td align="center">{{ parse['answer9'] }}</td>
+				</tr>
+				<tr>
+					<td align="center">РО</td>
+					<td align="center">{{ parse['answer7'] }}</td>
+				</tr>
 			</tbody>
 		</table>
 		{{ parse['adm_sub_form3'] }}

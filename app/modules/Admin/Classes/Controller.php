@@ -75,6 +75,31 @@ class Controller extends PhalconController
 			$this->tag->setDocType(Tag::HTML5);
 		}
 
+		if (is_array($this->router->getParams()) && count($this->router->getParams()))
+		{
+			$params = $this->router->getParams();
+
+			foreach ($params as $key => $value)
+			{
+				if (!is_numeric($key))
+				{
+					$_REQUEST[$key] = $_GET[$key] = $value;
+
+					unset($params[$key]);
+				}
+			}
+
+			$params = array_values($params);
+
+			for ($i = 0; $i < count($params); $i += 2)
+			{
+				if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
+					$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
+			}
+		}
+
+		$this->game->loadGameVariables();
+
 		$this->assets->addCss('https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all');
 		$this->assets->addCss('assets/admin/global/plugins/font-awesome/css/font-awesome.css');
 		$this->assets->addCss('assets/admin/global/plugins/simple-line-icons/simple-line-icons.css');

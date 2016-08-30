@@ -221,7 +221,7 @@
 </tr>
 
 {% set i = 0 %}
-{% for id in registry.reslist['allowed'][3] %}
+{% for id in registry.reslist['allowed'][1] %}
 	<tr class="{{ i%2 == 0 ? 'odd' : 'even' }}">
 		<td style="display: none;">{{ id }}</td>
 		<td class="title">{{ _text('xnova', 'tech', id) }}</td>

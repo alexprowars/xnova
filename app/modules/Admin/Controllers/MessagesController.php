@@ -131,7 +131,7 @@ class MessagesController extends Controller
 
 		while ($row = $Messages->fetch())
 		{
-			$row['text'] = str_replace('#BASEPATH#', $this->url->getBaseUri(), $row['text']);
+			$row['text'] = str_replace('/admin', '', str_replace('#BASEPATH#', $this->url->getBaseUri(), $row['text']));
 
 			$bloc['mlst_id'] = $row['id'];
 			$bloc['mlst_from'] = $row['from'];
@@ -145,7 +145,7 @@ class MessagesController extends Controller
 		if (isset($_POST['delit']) && $this->user->authlevel > 1)
 		{
 			$this->db->query("DELETE FROM game_messages WHERE id = '" . $_POST['delit'] . "';");
-			$this->message(_getText('mlst_mess_del') . " ( " . $_POST['delit'] . " )", _getText('mlst_title'), "?set=admin&mode=messagelist", 3);
+			$this->message(_getText('mlst_mess_del') . " ( " . $_POST['delit'] . " )", _getText('mlst_title'), "/messages/", 3);
 		}
 		
 		$this->view->setVar('parse', $parse);

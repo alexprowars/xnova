@@ -31,7 +31,7 @@ class LogController extends Controller
 	}
 
 	/**
-	 * @Route("/delete/")
+	 * @Route("/delete{params:(/.*)*}")
 	 */
 	public function deleteAction ()
 	{
@@ -53,11 +53,13 @@ class LogController extends Controller
 					$this->response->redirect("log/");
 				}
 				else
-					$this->message("Ошибка удаления.", "Логовница", "/log/", 1);
+					$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
 			}
 			else
-				$this->message("Ошибка удаления.", "Логовница", "/log/", 1);
+				$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
 		}
+		else
+			$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
 	}
 
 	/**

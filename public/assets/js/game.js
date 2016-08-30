@@ -415,7 +415,7 @@ function load (url)
     else
         currentState = set + ((loc[1] != undefined && loc[1] != 'ajax=2' && loc[1] != 'ajax=1') ? '&'+loc[1] : '');
 
-	url = url+(addToUrl != '' ? (addToUrl.substr(0, 1) == '?' ? '&' : '?')+addToUrl : '');
+	url = url+(addToUrl != '' ? (url.indexOf('?') >= 0 ? '&' : '?')+addToUrl : '');
 
 	showLoading();
 
