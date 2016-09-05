@@ -320,6 +320,8 @@ class Controller extends PhalconController
 
 		if ($giveCredits != 0)
 		{
+			$this->user->credits += $giveCredits;
+
 			$this->db->insertAsDict(
 				"game_log_credits",
 				[

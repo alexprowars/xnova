@@ -63,7 +63,7 @@ class MoneyController extends Controller
 		$total = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_users_payments");
 
 		$parse['total'] = $total;
-		$parse['pagination'] = Helpers::pagination($total, 25, '/admin/money/mode/transactions/', $start);
+		$parse['pagination'] = Helpers::pagination($total, 25, '/admin/money/', $start);
 
 		$this->view->setVar('parse', $parse);
 		$this->tag->setTitle("Транзакции");
@@ -81,7 +81,7 @@ class MoneyController extends Controller
 			$info = $this->db->query("SELECT id FROM game_users u WHERE ".(is_numeric($username) ? "`id` = '" . $username . "'" : "`username` = '" . $username . "'")." LIMIT 1;")->fetch();
 
 			if (!isset($info['id']))
-				$this->message('Такого игрока не существует', 'Ошибка', '/admin/money/mode/add/', 2);
+				$this->message('Такого игрока не существует', 'Ошибка', '/admin/money/add/', 2);
 
 			$money = $this->request->getPost('money', 'int', 0);
 
@@ -99,7 +99,7 @@ class MoneyController extends Controller
 
 				User::sendMessage($info['id'], 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $money . ' кредитов');
 
-				$this->message('Начисление '.$money.' кредитов прошло успешно', 'Всё ок!', '/admin/money/mode/add/', 2);
+				$this->message('Начисление '.$money.' кредитов прошло успешно', 'Всё ок!', '/admin/money/add/', 2);
 			}
 		}
 

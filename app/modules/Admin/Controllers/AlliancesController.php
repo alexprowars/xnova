@@ -6,9 +6,6 @@ use Admin\Controller;
 
 /**
  * @RoutePrefix("/admin/alliances")
- * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class AlliancesController extends Controller
@@ -33,6 +30,11 @@ class AlliancesController extends Controller
 		]];
 	}
 
+	/**
+	 * @Route("/")
+	 * @Route("{params:(/.*)*}")
+	 * @throws \Exception
+	 */
 	public function indexAction ()
 	{
 		$query = $this->db->query("SELECT a.`id`, a.`name`, a.`tag`,  a.`owner`, a.`create_time`, a.`description`, a.`text`, a.`members`, u.`username` FROM game_alliance a, game_users u WHERE u.id = a.owner");
