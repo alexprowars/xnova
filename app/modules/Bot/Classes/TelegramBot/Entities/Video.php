@@ -22,6 +22,11 @@ class Video extends Entity
     protected $mime_type;
     protected $file_size;
 
+    /**
+     * Video constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
 
@@ -40,7 +45,7 @@ class Video extends Entity
             throw new TelegramException('height is empty!');
         }
         $this->duration = isset($data['duration']) ? $data['duration'] : null;
-        if (empty($this->duration)) {
+        if ($this->duration === '' || $this->duration === null) {
             throw new TelegramException('duration is empty!');
         }
         $this->thumb = isset($data['thumb']) ? $data['thumb'] : null;

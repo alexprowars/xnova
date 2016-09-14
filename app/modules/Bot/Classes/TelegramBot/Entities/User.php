@@ -20,6 +20,11 @@ class User extends Entity
     protected $last_name;
     protected $username;
 
+    /**
+     * User constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
 
@@ -29,9 +34,6 @@ class User extends Entity
         }
 
         $this->first_name = isset($data['first_name']) ? $data['first_name'] : null;
-        if (empty($this->first_name)) {
-            throw new TelegramException('first_name is empty!');
-        }
 
         $this->last_name = isset($data['last_name']) ? $data['last_name'] : null;
         $this->username = isset($data['username']) ? $data['username'] : null;

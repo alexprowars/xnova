@@ -60,7 +60,7 @@ class CancelCommand extends UserCommand
      */
     public function executeNoDb()
     {
-        return $this->hideKeyboard();
+        return $this->hideKeyboard('Nothing to cancel.');
     }
 
     /**
@@ -68,9 +68,9 @@ class CancelCommand extends UserCommand
      *
      * @param string $text
      *
-     * @return Entities\ServerResponse
+     * @return \Longman\TelegramBot\Entities\ServerResponse
      */
-    private function hideKeyboard($text = '')
+    private function hideKeyboard($text)
     {
         return Request::sendMessage([
             'reply_markup' => new ReplyKeyboardHide(['selective' => true]),

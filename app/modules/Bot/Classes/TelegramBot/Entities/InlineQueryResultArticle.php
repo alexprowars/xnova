@@ -23,6 +23,11 @@ class InlineQueryResultArticle extends InlineQueryResult
     protected $thumb_width;
     protected $thumb_height;
 
+    /**
+     * InlineQueryResultArticle constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         parent::__construct($data);
@@ -45,7 +50,6 @@ class InlineQueryResultArticle extends InlineQueryResult
         $this->thumb_url = isset($data['thumb_url']) ? $data['thumb_url'] : null;
         $this->thumb_width = isset($data['thumb_width']) ? $data['thumb_width'] : null;
         $this->thumb_height = isset($data['thumb_height']) ? $data['thumb_height'] : null;
-
     }
 
     public function getTitle()

@@ -18,6 +18,12 @@ class Module extends Base implements ModuleDefinitionInterface
 	public function registerAutoloaders(DiInterface $di = null)
 	{
 		$namespaces['Longman'] = __DIR__.'/Classes';
+		$namespaces['GuzzleHttp'] = __DIR__.'/Classes/GuzzleHttp';
+		$namespaces['Psr'] = __DIR__.'/Classes/Psr';
+
+		require __DIR__.'/Classes/GuzzleHttp/functions.php';
+		require __DIR__.'/Classes/GuzzleHttp/Psr7/functions.php';
+		require __DIR__.'/Classes/GuzzleHttp/Promise/functions.php';
 
 		$loader = $di->get('loader');
 

@@ -16,8 +16,10 @@ class InlineKeyboardMarkup extends Entity
 {
     protected $inline_keyboard;
 
-    /*
-     * @todo check for InlineKeyboardButton elements
+    /**
+     * InlineKeyboardMarkup constructor.
+     *
+     * @param array $data
      */
     public function __construct($data = array())
     {

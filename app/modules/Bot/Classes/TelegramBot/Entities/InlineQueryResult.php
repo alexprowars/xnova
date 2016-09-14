@@ -19,6 +19,11 @@ class InlineQueryResult extends Entity
     protected $input_message_content;
     protected $reply_markup;
 
+    /**
+     * InlineQueryResult constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         $this->type = null;
@@ -35,8 +40,19 @@ class InlineQueryResult extends Entity
     {
         return $this->type;
     }
+
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getInputMessageContent()
+    {
+        return $this->input_message_content;
+    }
+
+    public function getReplyMarkup()
+    {
+        return $this->reply_markup;
     }
 }

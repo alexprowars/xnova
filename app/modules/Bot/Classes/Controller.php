@@ -35,6 +35,8 @@ class Controller extends PhalconController
 		self::$isInitialized = true;
 
 		Lang::setLang($this->config->app->language, 'xnova');
+
+		file_put_contents(ROOT_PATH."/app/logs/telegram.log", print_r($_REQUEST, true), FILE_APPEND);
 	}
 
 	public function notFoundAction ()

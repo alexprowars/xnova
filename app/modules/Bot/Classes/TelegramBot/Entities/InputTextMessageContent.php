@@ -18,10 +18,13 @@ class InputTextMessageContent extends InputMessageContent
     protected $parse_mode;
     protected $disable_web_page_preview;
 
+    /**
+     * InputTextMessageContent constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
-        //parent::__construct($data);
-
         $this->message_text = isset($data['message_text']) ? $data['message_text'] : null;
         if (empty($this->message_text)) {
             throw new TelegramException('message_text is empty!');

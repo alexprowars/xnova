@@ -34,7 +34,7 @@ class SendtochannelCommand extends AdminCommand
     /**
      * Conversation Object
      *
-     * @var Longman\TelegramBot\Conversation
+     * @var \Longman\TelegramBot\Conversation
      */
     protected $conversation;
 
@@ -68,7 +68,7 @@ class SendtochannelCommand extends AdminCommand
         switch ($state) {
             case -1:
                 // getConfig has not been configured asking for channel to administer
-                if ($type != 'Message' || empty($text)) {
+                if ($type != 'Message' || $text === '') {
                     $this->conversation->notes['state'] = -1;
                     $this->conversation->update();
 
@@ -117,7 +117,7 @@ class SendtochannelCommand extends AdminCommand
                 // no break
             case 1:
                 insert:
-                if ($this->conversation->notes['last_message_id'] == $message->getMessageId() || ($type == 'Message' && empty($text))) {
+                if ($this->conversation->notes['last_message_id'] == $message->getMessageId() || ($type == 'Message' && $text === '')) {
                     $this->conversation->notes['state'] = 1;
                     $this->conversation->update();
 
@@ -129,7 +129,6 @@ class SendtochannelCommand extends AdminCommand
                 $this->conversation->notes['last_message_id'] = $message->getMessageId();
                 $this->conversation->notes['message'] = $message->reflect();
                 $this->conversation->notes['message_type'] = $type;
-
                 // no break
             case 2:
                 if ($this->conversation->notes['last_message_id'] == $message->getMessageId() || !($text == 'Yes' || $text == 'No')) {
@@ -246,7 +245,7 @@ class SendtochannelCommand extends AdminCommand
         $data = [];
         $data['chat_id'] = $chat_id;
 
-        if (empty($text)) {
+        if ($text === '') {
             $data['text'] = 'Usage: /sendtochannel <text>';
         } else {
             $channels = (array) $this->getConfig('your_channel');
@@ -259,7 +258,7 @@ class SendtochannelCommand extends AdminCommand
     /**
      * Publish a message to a channel and return success or failure message
      *
-     * @param Entities\Message $message
+     * @param \Longman\TelegramBot\Entities\Message $message
      * @param int              $channel
      * @param string|null      $caption
      *
@@ -293,10 +292,10 @@ class SendtochannelCommand extends AdminCommand
      * @todo This method will be moved at an higher level maybe in AdminCommand or Command
      * @todo Looking for a more significative name
      *
-     * @param Entities\Message $message
+     * @param \Longman\TelegramBot\Entities\Message $message
      * @param array            $data
      *
-     * @return Entities\ServerResponse
+     * @return \Longman\TelegramBot\Entities\ServerResponse
      */
     protected function sendBack(Message $message, array $data)
     {

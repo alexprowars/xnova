@@ -32,8 +32,6 @@ class SendtoallCommand extends AdminCommand
     /**
      * Execute command
      *
-     * @todo Don't use empty, as a string of '0' is regarded to be empty
-     *
      * @return boolean
      */
     public function execute()
@@ -43,7 +41,7 @@ class SendtoallCommand extends AdminCommand
         $chat_id = $message->getChat()->getId();
         $text = $message->getText(true);
 
-        if (empty($text)) {
+        if ($text === '') {
             $text = 'Write the message to send: /sendtoall <message>';
         } else {
             $results = Request::sendToActiveChats(

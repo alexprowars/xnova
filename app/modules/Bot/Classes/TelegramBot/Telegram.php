@@ -30,7 +30,7 @@ class Telegram
      *
      * @var string
      */
-    protected $version = '0.32.0';
+    protected $version = '0.35.0';
 
     /**
      * Telegram API key
@@ -68,20 +68,6 @@ class Telegram
     protected $update;
 
     /**
-     * Log verbose curl output
-     *
-     * @var bool
-     */
-    protected $log_requests;
-
-    /**
-     * Log path
-     *
-     * @var string
-     */
-    protected $log_path;
-
-    /**
      * Upload path
      *
      * @var string
@@ -94,13 +80,6 @@ class Telegram
      * @var string
      */
     protected $download_path;
-
-    /**
-     * Log verbosity
-     *
-     * @var int
-     */
-    protected $log_verbosity = 1;
 
     /**
      * MySQL integration
@@ -136,6 +115,13 @@ class Telegram
      * @var Entities\ServerResponse
      */
     protected $last_command_response;
+
+    /**
+     * Botan.io integration
+     *
+     * @var boolean
+     */
+    protected $botan_enabled = false;
 
     /**
      * Constructor
@@ -174,9 +160,9 @@ class Telegram
      *
      * @return Telegram
      */
-    public function enableMySql(array $credential, $table_prefix = null)
+    public function enableMySql(array $credential, $table_prefix = null, $encoding = 'utf8mb4')
     {
-        $this->pdo = DB::initialize($credential, $this, $table_prefix);
+        $this->pdo = DB::initialize($credential, $this, $table_prefix, $encoding);
         ConversationDB::initializeConversation();
         $this->mysql_enabled = true;
         return $this;
@@ -185,7 +171,7 @@ class Telegram
     /**
      * Initialize Database external connection
      *
-     * @param \PDO    $external_pdo_connection PDO database object
+     * @param /PDO    $external_pdo_connection PDO database object
      * @param string $table_prefix
      */
     public function enableExternalMysql($external_pdo_connection, $table_prefix = null)
@@ -225,6 +211,7 @@ class Telegram
 
                     require_once $file->getPathname();
 
+
                     $command_obj = $this->getCommandObject($command);
                     if ($command_obj instanceof Commands\Command) {
                         $commands[$command_name] = $command_obj;
@@ -243,7 +230,7 @@ class Telegram
      *
      * @param string $command
      *
-     * @return Entities\Command|null
+     * @return \Longman\TelegramBot\Commands\Command|null
      */
     public function getCommandObject($command)
     {
@@ -259,81 +246,6 @@ class Telegram
         }
 
         return null;
-    }
-
-    /**
-     * Set log requests
-     *
-     * 0 don't store
-     * 1 store the Curl verbose output with Telegram updates
-     *
-     * @param bool $log_requests
-     *
-     * @return Telegram
-     */
-    public function setLogRequests($log_requests)
-    {
-        $this->log_requests = $log_requests;
-        return $this;
-    }
-
-    /**
-     * Get log requests
-     *
-     * @return bool
-     */
-    public function getLogRequests()
-    {
-        return $this->log_requests;
-    }
-
-    /**
-     * Set log path
-     *
-     * @param string $log_path
-     *
-     * @return \Longman\TelegramBot\Telegram
-     */
-    public function setLogPath($log_path)
-    {
-        $this->log_path = $log_path;
-        return $this;
-    }
-
-    /**
-     * Get log path
-     *
-     * @return string
-     */
-    public function getLogPath()
-    {
-        return $this->log_path;
-    }
-
-    /**
-     * Set log Verbosity
-     *
-     * @param int $log_verbosity
-     *
-     * 1 only incoming updates from webhook and getUpdates
-     * 3 incoming updates from webhook and getUpdates and curl request info and response
-     *
-     * @return \Longman\TelegramBot\Telegram
-     */
-    public function setLogVerbosity($log_verbosity)
-    {
-        $this->log_verbosity = $log_verbosity;
-        return $this;
-    }
-
-    /**
-     * Get log verbosity
-     *
-     * @return int
-     */
-    public function getLogVerbosity()
-    {
-        return $this->log_verbosity;
     }
 
     /**
@@ -379,6 +291,13 @@ class Telegram
      */
     public function handleGetUpdates($limit = null, $timeout = null)
     {
+        if (!DB::isDbConnected()) {
+            return new Entities\ServerResponse([
+                'ok'          => false,
+                'description' => 'getUpdates needs MySQL connection!',
+            ], $this->bot_name);
+        }
+
         //DB Query
         $last_update = DB::selectTelegramUpdate(1);
 
@@ -448,7 +367,7 @@ class Telegram
         $command = 'genericmessage';
 
         $update_type = $this->update->getUpdateType();
-        if (in_array($update_type, ['inline_query', 'chosen_inline_result', 'callback_query'])) {
+        if (in_array($update_type, ['inline_query', 'chosen_inline_result', 'callback_query', 'edited_message'])) {
             $command = $this->getCommandFromType($update_type);
         } elseif ($update_type === 'message') {
             $message = $this->update->getMessage();
@@ -508,16 +427,31 @@ class Telegram
             //Handle a generic command or non existing one
             $this->last_command_response = $this->executeCommand('Generic');
         } else {
+            //Botan.io integration, make sure only the command user executed is reported
+            if ($this->botan_enabled) {
+                Botan::lock($command);
+            }
+
             //execute() method is executed after preExecute()
             //This is to prevent executing a DB query without a valid connection
             $this->last_command_response = $command_obj->preExecute();
+
+            //Botan.io integration, send report after executing the command
+            if ($this->botan_enabled) {
+                Botan::track($this->update, $command);
+            }
         }
 
         return $this->last_command_response;
     }
 
+
     /**
-     * @todo Complete DocBlock
+     * Sanitize Command
+     *
+     * @param string $command
+     *
+     * @return string
      */
     protected function sanitizeCommand($command)
     {
@@ -525,20 +459,34 @@ class Telegram
     }
 
     /**
-     * Enable Admin Account
+     * Enable a single Admin account
      *
-     * @param array $admins_list List of admins
+     * @param integer $admin_id Single admin id
      *
-     * @return string
+     * @return Telegram
      */
-    public function enableAdmins(array $admins_list)
+    public function enableAdmin($admin_id)
     {
-        foreach ($admins_list as $admin) {
-            if ($admin > 0) {
-                $this->admins_list[] = $admin;
-            } else {
-                throw new TelegramException('Invalid value "' . $admin . '" for admin!');
-            }
+        if (is_int($admin_id) && $admin_id > 0 && !in_array($admin_id, $this->admins_list)) {
+            $this->admins_list[] = $admin_id;
+        } else {
+            TelegramLog::error('Invalid value "' . $admin_id . '" for admin.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Enable a list of Admin Accounts
+     *
+     * @param array $admin_ids List of admin ids
+     *
+     * @return Telegram
+     */
+    public function enableAdmins(array $admin_ids)
+    {
+        foreach ($admin_ids as $admin_id) {
+            $this->enableAdmin($admin_id);
         }
 
         return $this;
@@ -568,6 +516,14 @@ class Telegram
         if ($user_id === null && $this->update !== null) {
             if (($message = $this->update->getMessage()) && ($from = $message->getFrom())) {
                 $user_id = $from->getId();
+            } elseif (($inline_query = $this->update->getInlineQuery()) && ($from = $inline_query->getFrom())) {
+                $user_id = $from->getId();
+            } elseif (($chosen_inline_result = $this->update->getChosenInlineResult()) && ($from = $chosen_inline_result->getFrom())) {
+                $user_id = $from->getId();
+            } elseif (($callback_query = $this->update->getCallbackQuery()) && ($from = $callback_query->getFrom())) {
+                $user_id = $from->getId();
+            } elseif (($edited_message = $this->update->getEditedMessage()) && ($from = $edited_message->getFrom())) {
+                $user_id = $from->getId();
             }
         }
 
@@ -589,25 +545,42 @@ class Telegram
     }
 
     /**
-     * Add custom commands path
+     * Add a single custom commands path
      *
-     * @param string $path   Custom commands path
+     * @param string $path   Custom commands path to add
      * @param bool   $before If the path should be prepended or appended to the list
      *
-     * @return \Longman\TelegramBot\Telegram
+     * @return Telegram
      */
     public function addCommandsPath($path, $before = true)
     {
         if (!is_dir($path)) {
-            throw new TelegramException('Commands path "' . $path . '" does not exist!');
-        }
-        if (!in_array($path, $this->commands_paths)) {
+            TelegramLog::error('Commands path "' . $path . '" does not exist.');
+        } elseif (!in_array($path, $this->commands_paths)) {
             if ($before) {
                 array_unshift($this->commands_paths, $path);
             } else {
                 array_push($this->commands_paths, $path);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Add multiple custom commands paths
+     *
+     * @param array $paths  Custom commands paths to add
+     * @param bool  $before If the paths should be prepended or appended to the list
+     *
+     * @return Telegram
+     */
+    public function addCommandsPaths(array $paths, $before = true)
+    {
+        foreach ($paths as $path) {
+            $this->addCommandsPath($path);
+        }
+
         return $this;
     }
 
@@ -784,5 +757,18 @@ class Telegram
     protected function ucfirstUnicode($str, $encoding = 'UTF-8')
     {
         return mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding) . mb_strtolower(mb_substr($str, 1, mb_strlen($str), $encoding), $encoding);
+    }
+
+    /**
+     * Enable Botan.io integration
+     *
+     * @param  $token
+     * @return Telegram
+     */
+    public function enableBotan($token)
+    {
+        Botan::initializeBotan($token);
+        $this->botan_enabled = true;
+        return $this;
     }
 }

@@ -13,6 +13,7 @@
 namespace Longman\TelegramBot\Commands\UserCommands;
 
 use Longman\TelegramBot\Commands\UserCommand;
+use Longman\TelegramBot\Entities\File;
 use Longman\TelegramBot\Request;
 
 /**

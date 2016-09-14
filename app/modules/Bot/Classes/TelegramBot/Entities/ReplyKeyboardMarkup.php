@@ -21,8 +21,10 @@ class ReplyKeyboardMarkup extends Entity
     protected $one_time_keyboard;
     protected $selective;
 
-    /*
-     * @todo check for KeyboardButton elements
+    /**
+     * ReplyKeyboardMarkup constructor.
+     *
+     * @param array $data
      */
     public function __construct($data = array())
     {

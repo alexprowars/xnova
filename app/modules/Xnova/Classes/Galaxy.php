@@ -145,6 +145,9 @@ class Galaxy extends Component
 			$maxtemp = $planet->temp_max - rand(10, 45);
 			$mintemp = $planet->temp_min - rand(10, 45);
 
+			if ($Chance > 20)
+				$Chance = 20;
+
 			$size = floor(pow(mt_rand(10, 20) + 3 * $Chance, 0.5) * 1000);
 
 			$moon = new Planet();

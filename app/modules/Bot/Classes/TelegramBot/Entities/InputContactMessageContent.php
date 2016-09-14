@@ -18,10 +18,13 @@ class InputContactMessageContent extends InputMessageContent
     protected $first_name;
     protected $last_name;
 
+    /**
+     * InputContactMessageContent constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
-        //parent::__construct($data);
-
         $this->phone_number = isset($data['phone_number']) ? $data['phone_number'] : null;
         if (empty($this->phone_number)) {
             throw new TelegramException('phone_number is empty!');

@@ -17,6 +17,11 @@ class ReplyKeyboardHide extends Entity
     protected $hide_keyboard;
     protected $selective;
 
+    /**
+     * ReplyKeyboardHide constructor.
+     *
+     * @param array|null $data
+     */
     public function __construct(array $data = null)
     {
         $this->hide_keyboard = true;

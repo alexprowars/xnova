@@ -12,11 +12,18 @@
 
 namespace Longman\TelegramBot\Entities;
 
+use Longman\TelegramBot\Exception\TelegramException;
+
 class ForceReply extends Entity
 {
     protected $force_reply;
     protected $selective;
 
+    /**
+     * ForceReply constructor.
+     *
+     * @param array|null $data
+     */
     public function __construct(array $data = null)
     {
         $this->force_reply = true;

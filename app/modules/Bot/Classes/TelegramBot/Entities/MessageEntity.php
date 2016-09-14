@@ -10,31 +10,42 @@
 
 namespace Longman\TelegramBot\Entities;
 
+use Longman\TelegramBot\Exception\TelegramException;
+
 class MessageEntity extends Entity
 {
     protected $type;
     protected $offset;
     protected $length;
     protected $url;
+    protected $user;
 
+    /**
+     * MessageEntity constructor.
+     *
+     * @todo check for type value from this list: https://core.telegram.org/bots/api#messageentity
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         $this->type = isset($data['type']) ? $data['type'] : null;
-        if (empty($this->type)) {                               // @todo check for value from this list: https://core.telegram.org/bots/api#messageentity
+        if (empty($this->type)) {
             throw new TelegramException('type is empty!');
         }
 
         $this->offset = isset($data['offset']) ? $data['offset'] : null;
-        if (empty($this->offset) && $this->offset != 0) {       // @todo this is not an ideal solution?
+        if ($this->offset === '') {
             throw new TelegramException('offset is empty!');
         }
 
         $this->length = isset($data['length']) ? $data['length'] : null;
-        if (empty($this->length) && $this->offset != 0) {       // @todo this is not an ideal solution?
+        if ($this->length === '') {
             throw new TelegramException('length is empty!');
         }
 
         $this->url = isset($data['url']) ? $data['url'] : null;
+        $this->user = isset($data['user']) ? new User($data['user']) : null;
     }
 
     public function getType()
@@ -55,5 +66,10 @@ class MessageEntity extends Entity
     public function getUrl()
     {
         return $this->url;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 }

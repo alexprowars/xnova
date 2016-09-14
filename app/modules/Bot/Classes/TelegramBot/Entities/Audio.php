@@ -21,17 +21,20 @@ class Audio extends Entity
     protected $mime_type;
     protected $file_size;
 
-
+    /**
+     * Audio constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data)
     {
-
         $this->file_id = isset($data['file_id']) ? $data['file_id'] : null;
         if (empty($this->file_id)) {
             throw new TelegramException('file_id is empty!');
         }
 
         $this->duration = isset($data['duration']) ? $data['duration'] : null;
-        if (empty($this->duration)) {
+        if ($this->duration === '' || $this->duration === null) {
             throw new TelegramException('duration is empty!');
         }
 
@@ -40,7 +43,6 @@ class Audio extends Entity
         $this->title = isset($data['title']) ? $data['title'] : null;
         $this->mime_type = isset($data['mime_type']) ? $data['mime_type'] : null;
         $this->file_size = isset($data['file_size']) ? $data['file_size'] : null;
-
     }
 
     public function getFileId()
@@ -57,10 +59,12 @@ class Audio extends Entity
     {
         return $this->performer;
     }
+
     public function getTitle()
     {
         return $this->title;
     }
+
     public function getMimeType()
     {
          return $this->mime_type;
