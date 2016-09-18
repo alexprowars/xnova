@@ -258,6 +258,8 @@ class FleetEngine extends Injectable
 		if (!$fleetId)
 			$fleetId = $this->_fleet->id;
 
+		print_r($update);
+
 		$this->db->updateAsDict($this->_fleet->getSource(), $update, 'id = '.$fleetId);
 
 		if ($this->_fleet->group_id != 0)
