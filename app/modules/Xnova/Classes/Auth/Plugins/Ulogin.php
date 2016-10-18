@@ -47,8 +47,9 @@ class Ulogin extends Component implements AuthInterface
 			return false;
 
 		$identity = isset($this->data['profile']) && $this->data['profile'] != '' ? $this->data['profile'] : $this->data['identity'];
+		$identity = str_replace(['http://', 'https://'], '', $identity);
 
-		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = '".$identity."';")->fetch();
+		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id LIKE '%".$identity."';")->fetch();
 
 		if (!isset($Row['id']))
 			$this->register();

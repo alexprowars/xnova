@@ -156,6 +156,9 @@ class Router extends Annotations
 				$realUri = $realUri.'/';
 		}
 
+		if (substr($realUri, -1) != '/')
+			$realUri = $realUri.'/';
+
 		/**
 		 * @var $annotationsService \Phalcon\Annotations\Adapter\Memory
 		 */

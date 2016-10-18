@@ -8,7 +8,7 @@ use Phalcon\Di;
 class Options
 {
 	const CACHE_KEY = 'FRIDAY_OPTIONS';
-	const CACHE_TIME = 3600;
+	const CACHE_TIME = 600;
 
 	protected static $options = [];
 
@@ -71,6 +71,7 @@ class Options
 			$cache = Di::getDefault()->getShared('cache');
 
 			$cache->delete(self::CACHE_KEY);
+			self::$options = [];
 		}
 		else
 			throw new \Exception("OptionNotFound");
