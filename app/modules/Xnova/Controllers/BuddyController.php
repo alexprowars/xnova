@@ -2,6 +2,8 @@
 
 namespace Xnova\Controllers;
 
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Models\User;
 use Xnova\Controller;
 
@@ -38,7 +40,7 @@ class BuddyController extends Controller
 				if (!isset($buddy['id']))
 				{
 					if (mb_strlen($this->request->getPost('text', 'string', ''), 'UTF-8') > 5000)
-						$this->message("Максимальная длинна сообщения 5000 символов!", "Ошибка");
+						throw new ErrorException("Максимальная длинна сообщения 5000 символов!", "Ошибка");
 
 					$this->db->insertAsDict('game_buddy',
 					[
@@ -50,10 +52,10 @@ class BuddyController extends Controller
 
 					User::sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="#BASEPATH#buddy/requests/"><< просмотреть >></a>');
 
-					$this->message('Запрос отправлен', 'Предложение дружбы', '/buddy/');
+					throw new RedirectException('Запрос отправлен', 'Предложение дружбы', '/buddy/');
 				}
 				else
-					$this->message('Запрос дружбы был уже отправлен ранее', 'Предложение дружбы');
+					throw new ErrorException('Запрос дружбы был уже отправлен ранее', 'Предложение дружбы');
 			}
 
 			if ($u['id'] != $this->user->id)
@@ -66,10 +68,10 @@ class BuddyController extends Controller
 				$this->showTopPanel(false);
 			}
 			else
-				$this->message('Нельзя дружить сам с собой', 'Предложение дружбы');
+				throw new ErrorException('Нельзя дружить сам с собой', 'Предложение дружбы');
 		}
 		else
-			$this->message('Друг не найден', 'Предложение дружбы');
+			throw new ErrorException('Друг не найден', 'Предложение дружбы');
 	}
 
 	public function requestsAction ($isMy = false)
@@ -92,12 +94,12 @@ class BuddyController extends Controller
 			elseif ($buddy['sender'] == $this->user->id)
 				$this->db->delete('game_buddy', 'id = ?', [$buddy['id']]);
 			else
-				$this->message('Заявка не найдена', 'Ошибка');
+				throw new ErrorException('Заявка не найдена');
 
 			$this->response->redirect('buddy/');
 		}
 		else
-			$this->message('Заявка не найдена', 'Ошибка');
+			throw new ErrorException('Заявка не найдена');
 	}
 
 	public function approveAction ($id)
@@ -109,12 +111,12 @@ class BuddyController extends Controller
 			if ($buddy['owner'] == $this->user->id && $buddy['active'] == 0)
 				$this->db->query("UPDATE game_buddy SET `active` = '1' WHERE `id` = '" . $buddy['id'] . "'");
 			else
-				$this->message('Заявка не найдена', 'Ошибка');
+				throw new ErrorException('Заявка не найдена');
 
 			$this->response->redirect('buddy/');
 		}
 		else
-			$this->message('Заявка не найдена', 'Ошибка');
+			throw new ErrorException('Заявка не найдена');
 	}
 	
 	public function indexAction ($isRequests = false, $isMy = false)

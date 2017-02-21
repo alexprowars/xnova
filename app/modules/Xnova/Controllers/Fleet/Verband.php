@@ -10,6 +10,7 @@ namespace Xnova\Controllers\Fleet;
 
 use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
+use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Fleet;
 use Xnova\Models\User;
 
@@ -29,12 +30,12 @@ class Verband
 		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetid, $controller->user->id, 1]]);
 
 		if (!$fleet)
-			$controller->message('Этот флот не существует!', 'Ошибка');
+			throw new ErrorException('Этот флот не существует!');
 
 		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet->group_id . "'");
 
 		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1)
-			$controller->message('Ваш флот возвращается на планету!', 'Ошибка');
+			throw new ErrorException('Ваш флот возвращается на планету!');
 
 		if ($controller->request->hasPost('action'))
 		{
@@ -58,7 +59,7 @@ class Verband
 					$aksid = $controller->db->lastInsertId();
 
 					if (!$aksid)
-						$controller->message('Невозможно получить идентификатор САБ атаки', 'Ошибка');
+						throw new ErrorException('Невозможно получить идентификатор САБ атаки');
 
 					$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = '" . $aksid . "'")->fetch();
 
@@ -76,12 +77,12 @@ class Verband
 					$fleet->update();
 				}
 				else
-					$controller->message('Для этого флота уже задана ассоциация!', 'Ошибка');
+					throw new ErrorException('Для этого флота уже задана ассоциация!');
 			}
 			elseif ($action == 'adduser')
 			{
 				if ($aks['fleet_id'] != $fleet->id)
-					$controller->message("Вы не можете менять имя ассоциации", 'Ошибка');
+					throw new ErrorException("Вы не можете менять имя ассоциации");
 
 				if ($controller->request->hasPost('userid'))
 					$user_data = $controller->db->fetchOne("SELECT * FROM game_users WHERE id = '" . $controller->request->getPost('userid', 'int') . "'");
@@ -89,12 +90,12 @@ class Verband
 					$user_data = $controller->db->fetchOne("SELECT * FROM game_users WHERE username = '" . $_POST['addtogroup'] . "'");
 
 				if (!isset($user_data['id']))
-					$controller->message("Игрок не найден");
+					throw new ErrorException("Игрок не найден");
 
 				$aks_user = $controller->db->query("SELECT * FROM game_aks_user WHERE aks_id = " . $aks['id'] . " AND user_id = " . $user_data['id'] . "");
 
 				if ($aks_user->numRows() > 0)
-					$controller->message("Игрок уже приглашён для нападения", 'Ошибка');
+					throw new ErrorException("Игрок уже приглашён для нападения");
 
 				$controller->db->insertAsDict('game_aks_user',
 				[
@@ -112,25 +113,25 @@ class Verband
 			elseif ($action == "changename")
 			{
 				if ($aks['fleet_id'] != $fleet->id)
-					$controller->message("Вы не можете менять имя ассоциации", 'Ошибка');
+					throw new ErrorException("Вы не можете менять имя ассоциации");
 
 				$name = $controller->request->getPost('groupname', 'string');
 
 				if (mb_strlen($name, 'UTF-8') < 5)
-					$controller->message("Слишком короткое имя ассоциации", 'Ошибка');
+					throw new ErrorException("Слишком короткое имя ассоциации");
 
 				if (mb_strlen($name, 'UTF-8') > 20)
-					$controller->message("Слишком длинное имя ассоциации", 'Ошибка');
+					throw new ErrorException("Слишком длинное имя ассоциации");
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
-					$controller->message("Имя ассоциации содержит запрещённые символы", _getText('error'));
+					throw new ErrorException("Имя ассоциации содержит запрещённые символы", _getText('error'));
 
 				$name = strip_tags($name);
 
 				$x = $controller->db->query("SELECT * FROM game_aks WHERE name = '" . $name . "'");
 
 				if ($x->numRows() >= 1)
-					$controller->message("Имя уже зарезервировано другим игроком", 'Ошибка');
+					throw new ErrorException("Имя уже зарезервировано другим игроком");
 
 				$aks['name'] = $name;
 

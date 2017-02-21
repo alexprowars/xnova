@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Xnova\Models\User;
 use Xnova\Sms;
@@ -30,7 +31,7 @@ class SupportController extends Controller
 	public function newAction ()
 	{
 		if (empty($_POST['text']) || empty($_POST['subject']))
-			$this->message('Не заполнены все поля', 'Ошибка', '/support/', 3);
+			throw new RedirectException('Не заполнены все поля', 'Ошибка', '/support/', 3);
 
 		$this->db->query("INSERT game_support SET `player_id` = '" . $this->user->id . "', `subject` = '" . Helpers::CheckString($_POST['subject']) . "', `text` = '" . Helpers::CheckString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
 
@@ -39,7 +40,7 @@ class SupportController extends Controller
 		$sms = new Sms();
 		$sms->send($this->config->sms->login, 'Создан новый тикет №' . $ID . ' ('.$this->user->username.')');
 
-		$this->message('Задача добавлена', 'Успех', '/support/', 3);
+		throw new RedirectException('Задача добавлена', 'Успех', '/support/', 3);
 	}
 
 	public function answerAction ($id = 0)
@@ -49,7 +50,7 @@ class SupportController extends Controller
 			$TicketID = intval($id);
 
 			if (empty($_POST['text']))
-				$this->message('Не заполнены все поля', 'Ошибка', '/support/', 3);
+				throw new RedirectException('Не заполнены все поля', 'Ошибка', '/support/', 3);
 
 			$ticket = $this->db->query("SELECT id, text, status FROM game_support WHERE id = '" . $TicketID . "';")->fetch();
 
@@ -61,17 +62,17 @@ class SupportController extends Controller
 
 				User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $TicketID);
 
-				$this->message('Задача обновлена', 'Успех', '/support/', 3);
-
 				if ($ticket['status'] == 2)
 				{
 					$sms = new Sms();
 					$sms->send($this->config->sms->login, 'Поступил ответ на тикет №' . $ticket['id'] . ' ('.$this->user->username.')');
 				}
+
+				throw new RedirectException('Задача обновлена', 'Успех', '/support/', 3);
 			}
 		}
 		else
-			$this->message('Не задан ID тикета', 'Ошибка', '/support/');
+			throw new RedirectException('Не задан ID тикета', 'Ошибка', '/support/');
 	}
 	
 	public function indexAction ()

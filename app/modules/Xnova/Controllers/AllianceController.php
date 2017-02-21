@@ -8,6 +8,8 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Alliance;
@@ -49,8 +51,7 @@ class AllianceController extends Controller
 			$this->db->updateAsDict('game_users', ['ally_id' => 0], 'id = '.$this->user->id);
 			$this->db->delete('game_alliance_members', 'u_id = ?', [$this->user->id]);
 
-			$this->message(_getText('ally_notexist'), _getText('your_alliance'), '/alliance/');
-			die();
+			throw new RedirectException(_getText('ally_notexist'), _getText('your_alliance'), '/alliance/');
 		}
 
 		$this->ally = $ally;
@@ -74,7 +75,7 @@ class AllianceController extends Controller
 		{
 			$this->db->query("DELETE FROM game_alliance_requests WHERE a_id = " . intval($_POST['r_id']) . " AND u_id = " . $this->user->id);
 
-			$this->message("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "/alliance/", 2);
+			throw new RedirectException("Вы отозвали свою заявку на вступление в альянс", "Отзыв заявки", "/alliance/", 2);
 		}
 
 		$parse = [];
@@ -106,7 +107,7 @@ class AllianceController extends Controller
 	public function indexAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->message(_getText('Denied_access'), "Ошипко");
+			throw new ErrorException(_getText('Denied_access'), "Ошипко");
 	
 		if ($this->user->ally_id == 0)
 			$this->noAlly();
@@ -149,8 +150,6 @@ class AllianceController extends Controller
 			$this->tag->setTitle('Ваш альянс');
 			$this->showTopPanel(false);
 		}
-
-		return true;
 	}
 
 	public function adminAction ()
@@ -162,7 +161,7 @@ class AllianceController extends Controller
 		if ($this->user->isAdmin() && $edit == 'planets')
 		{
 			if ($this->ally->owner != $this->user->id)
-				$this->message(_getText('Denied_access'), "Управление планетами");
+				throw new ErrorException(_getText('Denied_access'), "Управление планетами");
 
 			$parse = [];
 
@@ -187,10 +186,10 @@ class AllianceController extends Controller
 
 						$this->user->saveData(['-credits' => $parse['need']]);
 
-						$this->message("Планета была успешно преобразована", "Управление планетами", "/alliance/admin/edit/planets/", 3);
+						throw new RedirectException("Планета была успешно преобразована", "Управление планетами", "/alliance/admin/edit/planets/", 3);
 					}
 					else
-						$this->message("Недостаточно кредитов для преобразования планеты", "Управление планетами");
+						throw new ErrorException("Недостаточно кредитов для преобразования планеты", "Управление планетами");
 				}
 			}
 
@@ -204,7 +203,7 @@ class AllianceController extends Controller
 		if ($edit == 'rights')
 		{
 			if (!$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin())
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 			elseif (!empty($_POST['newrangname']))
 			{
 				$this->ally->ranks[] = [
@@ -302,7 +301,7 @@ class AllianceController extends Controller
 		elseif ($edit == 'ally')
 		{
 			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				$this->message(_getText('Denied_access'), "Меню управления альянсом");
+				throw new ErrorException(_getText('Denied_access'), "Меню управления альянсом");
 
 			$t = $this->request->getQuery('t', 'int', 1);
 
@@ -317,7 +316,7 @@ class AllianceController extends Controller
 				$this->ally->request_notallow = intval($_POST['request_notallow']);
 
 				if ($this->ally->request_notallow != 0 && $this->ally->request_notallow != 1)
-					$this->message("Недопустимое значение атрибута!", "Ошибка");
+					throw new ErrorException("Недопустимое значение атрибута!", "Ошибка");
 
 				$this->db->query("UPDATE game_alliance SET owner_range='" . $this->ally->owner_range . "', image='" . $this->ally->image . "', web='" . $this->ally->web . "', request_notallow='" . $this->ally->request_notallow . "' WHERE id='" . $this->ally->id . "'");
 			}
@@ -378,7 +377,7 @@ class AllianceController extends Controller
 		elseif ($edit == 'requests')
 		{
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_ACCEPT) && !$this->ally->canAccess(Alliance::REQUEST_ACCESS))
-				$this->message(_getText('Denied_access'), _getText('Check_the_requests'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Check_the_requests'));
 
 			if ($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT))
 			{
@@ -387,7 +386,7 @@ class AllianceController extends Controller
 				if (isset($_POST['action']) && $_POST['action'] == "Принять")
 				{
 					if ($this->ally->members >= 150)
-						$this->message('Альянс не может иметь больше 150 участников', _getText('Check_the_requests'));
+						throw new ErrorException('Альянс не может иметь больше 150 участников', _getText('Check_the_requests'));
 					else
 					{
 						if ($_POST['text'] != '')
@@ -458,12 +457,12 @@ class AllianceController extends Controller
 		elseif ($edit == 'name')
 		{
 			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 			if (isset($_POST['newname']))
 			{
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $_POST['newname']))
-					$this->message("Название альянса содержит запрещённые символы", _getText('make_alliance'));
+					throw new ErrorException("Название альянса содержит запрещённые символы", _getText('make_alliance'));
 
 				$this->ally->name = addslashes(htmlspecialchars($_POST['newname']));
 				$this->db->query("UPDATE game_alliance SET name = '" . $this->ally->name . "' WHERE id = '" . $this->user->ally_id . "';");
@@ -483,12 +482,12 @@ class AllianceController extends Controller
 		elseif ($edit == 'tag')
 		{
 			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 			if (isset($_POST['newtag']))
 			{
 				if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['newtag']))
-					$this->message("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
+					throw new ErrorException("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
 
 				$this->ally->tag = addslashes(htmlspecialchars($_POST['newtag']));
 				$this->db->query("UPDATE game_alliance SET tag = '" . $this->ally->tag . "' WHERE id = '" . $this->user->ally_id . "';");
@@ -507,7 +506,7 @@ class AllianceController extends Controller
 		elseif ($edit == 'exit')
 		{
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 			$this->ally->deleteAlly();
 
@@ -516,14 +515,14 @@ class AllianceController extends Controller
 		elseif ($edit == 'give')
 		{
 			if ($this->ally->owner != $this->user->id)
-				$this->message("Доступ запрещён.", "Ошибка!", "/alliance/", 2);
+				throw new RedirectException("Доступ запрещён.", "Ошибка!", "/alliance/", 2);
 
 			if ($this->request->hasPost('newleader') && $this->ally->owner == $this->user->id)
 			{
 				$info = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = '" . $this->request->getPost('newleader', 'int') . "'")->fetch();
 
 				if (!$info['id'] || $info['ally_id'] != $this->user->ally_id)
-					$this->message("Операция невозможна.", "Ошибка!", "/alliance/", 2);
+					throw new RedirectException("Операция невозможна.", "Ошибка!", "/alliance/", 2);
 
 				$this->db->query("UPDATE game_alliance SET owner = '" . $info['id'] . "' WHERE id = " . $this->user->ally_id . " ");
 				$this->db->query("UPDATE game_alliance_members SET rank = '0' WHERE u_id = '" . $info['id'] . "';");
@@ -552,14 +551,14 @@ class AllianceController extends Controller
 		elseif ($edit == 'members')
 		{
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 			if ($this->request->hasQuery('kick'))
 			{
 				$kick = $this->request->getQuery('kick', 'int', 0);
 
 				if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK) && $kick > 0)
-					$this->message(_getText('Denied_access'), _getText('Members_list'));
+					throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 				$u = $this->db->query("SELECT * FROM game_users WHERE id = '" . $kick . "' LIMIT 1")->fetch();
 
@@ -571,7 +570,7 @@ class AllianceController extends Controller
 					$this->db->query("DELETE FROM game_alliance_members WHERE u_id = " . $u['id'] . ";");
 				}
 				else
-					$this->message(_getText('Denied_access'), _getText('Members_list'));
+					throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 			}
 			elseif ($this->request->getPost('newrang', null, '') != '' && $this->request->get('id', 'int', 0) != 0)
 			{
@@ -597,7 +596,7 @@ class AllianceController extends Controller
 		$this->parseInfo($this->user->ally_id);
 
 		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::DIPLOMACY_ACCESS))
-			$this->message(_getText('Denied_access'), "Дипломатия");
+			throw new ErrorException(_getText('Denied_access'), "Дипломатия");
 
 		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
 
@@ -609,12 +608,12 @@ class AllianceController extends Controller
 				$al = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . intval($_POST['ally']) . "'")->fetch();
 
 				if (!$al['id'])
-					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+					throw new RedirectException("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
 				$ad = $this->db->query("SELECT id FROM game_alliance_diplomacy WHERE a_id = " . $this->ally->id . " AND d_id = " . $al['id'] . ";");
 
 				if ($ad->numRows() > 0)
-					$this->message("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "/alliance/diplomacy/", 3);
+					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "Дипломатия", "/alliance/diplomacy/", 3);
 
 				if ($st < 0 || $st > 3)
 					$st = 0;
@@ -622,31 +621,31 @@ class AllianceController extends Controller
 				$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $this->ally->id . ", " . $al['id'] . ", " . $st . ", 0, 1)");
 				$this->db->query("INSERT INTO game_alliance_diplomacy VALUES (NULL, " . $al['id'] . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
-				$this->message("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "/alliance/diplomacy/", 3);
+				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "Дипломатия", "/alliance/diplomacy/", 3);
 			}
 			elseif ($this->request->getQuery('edit', null, '') == "del")
 			{
 				$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . ";")->fetch();
 
 				if (!$al['a_id'])
-					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+					throw new RedirectException("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
 				$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
 				$this->db->query("DELETE FROM game_alliance_diplomacy WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 
-				$this->message("Отношение между вашими альянсами расторжено", "Дипломатия", "/alliance/diplomacy/", 3);
+				throw new RedirectException("Отношение между вашими альянсами расторжено", "Дипломатия", "/alliance/diplomacy/", 3);
 			}
 			elseif ($this->request->getQuery('edit', null, '') == "suc")
 			{
 				$al = $this->db->query("SELECT a_id, d_id FROM game_alliance_diplomacy WHERE id = '" . intval($_GET['id']) . "' AND a_id = " . $this->ally->id . "")->fetch();
 
 				if (!$al['a_id'])
-					$this->message("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
+					throw new RedirectException("Ошибка ввода параметров", "Дипломатия", "/alliance/diplomacy/", 3);
 
 				$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['a_id'] . " AND d_id = " . $al['d_id'] . ";");
 				$this->db->query("UPDATE game_alliance_diplomacy SET status = 1 WHERE a_id = " . $al['d_id'] . " AND d_id = " . $al['a_id'] . ";");
 
-				$this->message("Отношение между вашими альянсами подтверждено", "Дипломатия", "/alliance/diplomacy/", 3);
+				throw new RedirectException("Отношение между вашими альянсами подтверждено", "Дипломатия", "/alliance/diplomacy/", 3);
 			}
 		}
 
@@ -683,7 +682,7 @@ class AllianceController extends Controller
 		$this->parseInfo($this->user->ally_id);
 
 		if ($this->ally->owner == $this->user->id)
-			$this->message(_getText('Owner_cant_go_out'), _getText('Alliance'));
+			throw new ErrorException(_getText('Owner_cant_go_out'), _getText('Alliance'));
 
 		if ($this->request->hasQuery('yes'))
 		{
@@ -712,7 +711,7 @@ class AllianceController extends Controller
 		else
 		{
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST))
-				$this->message(_getText('Denied_access'), _getText('Members_list'));
+				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
 			$parse['admin'] = false;
 		}
@@ -831,7 +830,7 @@ class AllianceController extends Controller
 		$this->parseInfo($this->user->ally_id);
 
 		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CHAT_ACCESS))
-			$this->message(_getText('Denied_access'), _getText('Send_circular_mail'));
+			throw new ErrorException(_getText('Denied_access'), _getText('Send_circular_mail'));
 
 		if (isset($_POST['deletemessages']) && $this->ally->owner == $this->user->id)
 		{
@@ -911,10 +910,10 @@ class AllianceController extends Controller
 		elseif ($id > 0 && is_numeric($id))
 			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $id . "'")->fetch();
 		else
-			$this->message("Указанного альянса не существует в игре!", "Информация об альянсе");
+			throw new ErrorException("Указанного альянса не существует в игре!", "Информация об альянсе");
 
 		if (!isset($allyrow['id']))
-			$this->message("Указанного альянса не существует в игре!", "Информация об альянсе");
+			throw new ErrorException("Указанного альянса не существует в игре!", "Информация об альянсе");
 
 		if ($allyrow['description'] == "")
 			$allyrow['description'] = "[center]У этого альянса ещё нет описания[/center]";
@@ -937,7 +936,7 @@ class AllianceController extends Controller
 	public function makeAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->message(_getText('Denied_access'), "Ошипко");
+			throw new ErrorException(_getText('Denied_access'), "Ошипко");
 			
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
@@ -947,18 +946,18 @@ class AllianceController extends Controller
 		if ($this->request->hasQuery('yes') && $this->request->isPost())
 		{
 			if (!$_POST['atag'])
-				$this->message(_getText('have_not_tag'), _getText('make_alliance'));
+				throw new ErrorException(_getText('have_not_tag'), _getText('make_alliance'));
 			if (!$_POST['aname'])
-				$this->message(_getText('have_not_name'), _getText('make_alliance'));
+				throw new ErrorException(_getText('have_not_name'), _getText('make_alliance'));
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['atag']))
-				$this->message("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
+				throw new ErrorException("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['aname']))
-				$this->message("Название альянса содержит запрещённые символы", _getText('make_alliance'));
+				throw new ErrorException("Название альянса содержит запрещённые символы", _getText('make_alliance'));
 
 			$tagquery = $this->db->query("SELECT * FROM game_alliance WHERE tag = '" . addslashes($_POST['atag']) . "'")->fetch();
 
 			if ($tagquery)
-				$this->message(str_replace('%s', $_POST['atag'], _getText('always_exist')), _getText('make_alliance'));
+				throw new ErrorException(str_replace('%s', $_POST['atag'], _getText('always_exist')), _getText('make_alliance'));
 
 			$this->db->query("INSERT INTO game_alliance SET name = '" . addslashes($_POST['aname']) . "', tag= '" . addslashes($_POST['atag']) . "' , owner = '" . $this->user->id . "', create_time = " . time());
 
@@ -981,7 +980,7 @@ class AllianceController extends Controller
 	public function searchAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->message(_getText('Denied_access'), "Ошипко");
+			throw new ErrorException(_getText('Denied_access'), "Ошипко");
 	
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
@@ -993,7 +992,7 @@ class AllianceController extends Controller
 		if (isset($_POST['searchtext']) && $_POST['searchtext'] != '')
 		{
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $_POST['searchtext']))
-				$this->message("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '/alliance/search/', 2);
+				throw new RedirectException("Строка поиска содержит запрещённые символы", _getText('make_alliance'), '/alliance/search/', 2);
 
 			$search = $this->db->query("SELECT * FROM game_alliance WHERE name LIKE '%" . $_POST['searchtext'] . "%' or tag LIKE '%" . $_POST['searchtext'] . "%' LIMIT 30");
 
@@ -1027,7 +1026,7 @@ class AllianceController extends Controller
 	public function applyAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->message(_getText('Denied_access'), "Ошипко");
+			throw new ErrorException(_getText('Denied_access'), "Ошипко");
 	
 		if ($this->user->ally_id > 0)
 			return $this->indexAction();
@@ -1035,15 +1034,15 @@ class AllianceController extends Controller
 		$allyid = $this->request->getQuery('allyid', 'int', 0);
 
 		if ($allyid <= 0)
-			$this->message(_getText('it_is_not_posible_to_apply'), _getText('it_is_not_posible_to_apply'));
+			throw new ErrorException(_getText('it_is_not_posible_to_apply'), _getText('it_is_not_posible_to_apply'));
 
 		$allyrow = $this->db->query("SELECT tag, request, request_notallow FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 
 		if (!isset($allyrow['tag']))
-			$this->message("Альянса не существует!", "Ошибка");
+			throw new ErrorException("Альянса не существует!", "Ошибка");
 
 		if ($allyrow['request_notallow'] != 0)
-			$this->message("Данный альянс является закрытым для вступлений новых членов", "Ошибка");
+			throw new ErrorException("Данный альянс является закрытым для вступлений новых членов", "Ошибка");
 
 		if (isset($_POST['further']))
 		{
@@ -1053,10 +1052,10 @@ class AllianceController extends Controller
 			{
 				$this->db->query("INSERT INTO game_alliance_requests VALUES (" . $allyid . ", " . $this->user->id . ", " . time() . ", '" . strip_tags($_POST['text']) . "')");
 
-				$this->message(_getText('apply_registered'), _getText('your_apply'), '/alliance/', 3);
+				throw new RedirectException(_getText('apply_registered'), _getText('your_apply'), '/alliance/', 3);
 			}
 			else
-				$this->message('Вы уже отсылали заявку на вступление в этот альянс!', 'Ошибка', '/alliance/', 3);
+				throw new RedirectException('Вы уже отсылали заявку на вступление в этот альянс!', 'Ошибка', '/alliance/', 3);
 		}
 
 		$parse = [];
@@ -1083,7 +1082,7 @@ class AllianceController extends Controller
 		$allyrow = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
 
 		if (!isset($allyrow['id']))
-			$this->message('Информация о данном альянсе не найдена');
+			throw new ErrorException('Информация о данном альянсе не найдена');
 
 		$parse = [];
 		$parse['name'] = $allyrow['name'];

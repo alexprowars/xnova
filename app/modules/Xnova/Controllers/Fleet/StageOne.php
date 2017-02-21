@@ -9,6 +9,8 @@ namespace Xnova\Controllers\Fleet;
  */
 
 use Xnova\Controllers\FleetController;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -19,10 +21,10 @@ class StageOne
 	public function show (FleetController $controller)
 	{
 		if ($controller->user->vacation > 0)
-			$controller->message("Нет доступа!");
+			throw new ErrorException("Нет доступа!");
 
 		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_01-' . date("dmY", time()))))
-			$controller->message('Ошибка контрольной суммы!');
+			throw new ErrorException('Ошибка контрольной суммы!');
 
 		Lang::includeLang('fleet', 'xnova');
 
@@ -81,7 +83,7 @@ class StageOne
 		}
 
 		if (!$fleet['fleetlist'])
-			$controller->message(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
+			throw new RedirectException(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
 
 		$parse['usedfleet'] = str_rot13(base64_encode(json_encode($fleet['fleetarray'])));
 		$parse['thisgalaxy'] = $controller->planet->galaxy;

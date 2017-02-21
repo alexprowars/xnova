@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/logout")
@@ -28,6 +29,6 @@ class LogoutController extends Controller
 	{
 		$this->auth->remove();
 
-		$this->message('Вы вышли из игры', 'Сессия закрыта', "/", 3, false);
+		throw new RedirectException('Вы вышли из игры', 'Сессия закрыта', "/", 3, false);
 	}
 }

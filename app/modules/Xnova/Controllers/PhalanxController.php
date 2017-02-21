@@ -8,6 +8,8 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\MessageException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Xnova\Models\Fleet as FleetModel;
@@ -36,7 +38,7 @@ class PhalanxController extends Controller
 	public function indexAction ()
 	{
 		if ($this->user->vacation > 0)
-			$this->message("Нет доступа!");
+			throw new ErrorException("Нет доступа!");
 		
 		$g = $this->request->getQuery('galaxy', 'int');
 		$s = $this->request->getQuery('system', 'int');
@@ -55,13 +57,13 @@ class PhalanxController extends Controller
 		$systemgora = $this->planet->system + pow($this->planet->phalanx, 2);
 		
 		if ($this->planet->planet_type != 3)
-			$this->message("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
+			throw new MessageException("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
 		elseif ($this->planet->phalanx == 0)
-			$this->message("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
+			throw new MessageException("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
 		elseif ($this->planet->deuterium < $consomation)
-			$this->message("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);
+			throw new MessageException("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
-			$this->message("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
+			throw new MessageException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
 		else
 		{
 			$this->planet->deuterium -= $consomation;
@@ -71,7 +73,7 @@ class PhalanxController extends Controller
 		$planet = Planet::count(['galaxy = ?0 AND system = ?1 AND planet = ?2', 'bind' => [$g, $s, $i]]);
 		
 		if ($planet == 0)
-			$this->message("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
+			throw new MessageException("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 
 		$fleets = FleetModel::find([
 			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',

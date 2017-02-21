@@ -9,6 +9,8 @@ namespace Xnova\Controllers;
  */
 
 use Phalcon\Cache\Backend\Memcache;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -223,13 +225,13 @@ class OverviewController extends Controller
 		if ($this->request->isPost() && $this->request->hasPost('id') && $this->request->getPost('id', 'int', 0) == $this->user->planet_current)
 		{
 			if ($this->user->id != $this->planet->id_owner)
-				$this->message("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
+				throw new RedirectException("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
 			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
 			{
 				$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
 
 				if ($checkFleets > 0)
-					$this->message('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
+					throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
 				else
 				{
 					$destruyed = time() + 60 * 60 * 24;
@@ -249,14 +251,14 @@ class OverviewController extends Controller
 
 					$this->cache->delete('app::planetlist_'.$this->user->id);
 
-					$this->message(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
+					throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
 				}
 
 			}
 			elseif ($this->user->planet_id == $this->user->planet_current)
-				$this->message(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
+				throw new RedirectException(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
 			else
-				$this->message(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
+				throw new RedirectException(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
 		}
 
 		$parse['number_1'] 		= mt_rand(1, 100);
@@ -317,16 +319,16 @@ class OverviewController extends Controller
 							$this->session->remove('fleet_shortcut');
 					}
 					else
-						$this->message('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
+						throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
 				}
 				else
-					$this->message('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
+					throw new RedirectException('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
 			}
 		}
 		elseif (isset($_POST['action']) && $this->request->hasPost('image'))
 		{
 			if ($this->user->credits < 1)
-				$this->message('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
+				throw new RedirectException('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
 
 			$image = $this->request->getPost('image', 'int', 0);
 
@@ -341,7 +343,7 @@ class OverviewController extends Controller
 				$this->response->redirect('overview/');
 			}
 			else
-				$this->message('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
+				throw new RedirectException('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
 		}
 
 		$parse['planet_name'] = $this->planet->name;
@@ -375,10 +377,10 @@ class OverviewController extends Controller
 
 			$this->user->update();
 
-			$this->message('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
+			throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
 		}
 		else
-			$this->message('Ошибочка вышла, сорри :(');
+			throw new ErrorException('Ошибочка вышла, сорри :(');
 	}
 
 	public function indexAction ()

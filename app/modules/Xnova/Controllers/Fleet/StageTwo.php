@@ -9,6 +9,8 @@ namespace Xnova\Controllers\Fleet;
  */
 
 use Xnova\Controllers\FleetController;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -19,10 +21,10 @@ class StageTwo
 	public function show (FleetController $controller)
 	{
 		if ($controller->user->vacation > 0)
-			$controller->message("Нет доступа!");
+			throw new ErrorException("Нет доступа!");
 
 		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_02-' . date("dmY", time()) . '-' . $_POST["usedfleet"])))
-			$controller->message('Ошибка контрольной суммы!');
+			throw new ErrorException('Ошибка контрольной суммы!');
 
 		Lang::includeLang('fleet', 'xnova');
 
@@ -87,7 +89,7 @@ class StageTwo
 			else
 				$RetMessage = _getText('gate_wait_star') . " - " . Helpers::pretty_time($nextJumpTime);
 
-			$controller->message($RetMessage, 'Результат', "/fleet/", 5);
+			throw new RedirectException($RetMessage, 'Результат', "/fleet/", 5);
 		}
 
 		$parse = [];

@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Message;
@@ -37,12 +38,12 @@ class MessagesController extends Controller
 	public function writeAction ($userId = 0)
 	{
 		if (!$userId)
-			$this->message(_getText('mess_no_ownerid'), _getText('mess_error'));
+			throw new ErrorException(_getText('mess_no_ownerid'), _getText('mess_error'));
 
 		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE ".(is_numeric($userId) ? '`id`' : '`username`')." = '" . $userId . "';")->fetch();
 
 		if (!isset($OwnerRecord['id']))
-			$this->message(_getText('mess_no_owner'), _getText('mess_error'));
+			throw new ErrorException(_getText('mess_no_owner'), _getText('mess_error'));
 
 		$msg = '';
 
@@ -139,7 +140,7 @@ class MessagesController extends Controller
 		if (count($items))
 			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN ('.implode(',', $items).') AND owner = ?', 'bind' => [$this->user->id]]);
 
-		return $this->response->redirect('messages/');
+		return true;
 	}
 
 	public function abuseAction ($id)
@@ -179,7 +180,7 @@ class MessagesController extends Controller
 			$_SESSION['m_cat'] = $MessCategory;
 
 		if ($this->request->hasPost('delete'))
-			return $this->delete();
+			$this->delete();
 
 		$parse['lim'] = $lim;
 		$parse['category'] = $MessCategory;
@@ -222,7 +223,5 @@ class MessagesController extends Controller
 
 		$this->tag->setTitle('Сообщения');
 		$this->showTopPanel(false);
-
-		return true;
 	}
 }

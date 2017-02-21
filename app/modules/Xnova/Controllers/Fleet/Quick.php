@@ -8,6 +8,7 @@ namespace Xnova\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Options;
 use Xnova\Controllers\FleetController;
 use Xnova\Fleet;
 use Friday\Core\Lang;
@@ -53,6 +54,9 @@ class Quick
 
 		if (!$target)
 			return 'Цели не существует!';
+
+		if (($Mode == 1 || $Mode == 6 || $Mode == 9 || $Mode == 2) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
+			return "<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>";
 
 		$FleetArray = [];
 

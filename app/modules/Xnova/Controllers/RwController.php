@@ -10,6 +10,8 @@ namespace Xnova\Controllers;
 
 use Xnova\CombatReport;
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\MessageException;
 
 /**
  * @RoutePrefix("/rw")
@@ -28,24 +30,23 @@ class RwController extends Controller
 
 	/**
 	 * @Route("/{id:[0-9]+}/{k:[a-z0-9]+}{params:(/.*)*}")
-	 * @return bool
 	 */
 	public function indexAction ()
 	{
 		if (!$this->request->hasQuery('id'))
-			$this->message('Боевой отчет не найден');
+			throw new ErrorException('Боевой отчет не найден');
 
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $this->request->getQuery('id', 'int') . "'")->fetch();
 
 		if (!isset($raportrow['id']))
-			$this->message('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
+			throw new MessageException('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
 
 		$user_list = json_decode($raportrow['id_users'], true);
 		
 		if (isset($raportrow['id']) && !$this->user->isAdmin() && (!isset($_GET['k']) ||  md5('xnovasuka' . $raportrow['id']) != $_GET['k']))
-			$this->message('Не правильный ключ', 'Ошибка', '', 0, false);
+			throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
 		elseif (!in_array($this->user->id, $user_list) && !$this->user->isAdmin())
-			$this->message('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
+			throw new MessageException('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
 		else
 		{
 			if ($this->request->isAjax() && $this->auth->isAuthorized())
@@ -104,7 +105,5 @@ class RwController extends Controller
 				die();
 			}
 		}
-
-		return true;
 	}
 }

@@ -10,6 +10,9 @@ namespace Xnova\Controllers;
 
 use Xnova\CombatReport;
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\MessageException;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/log")
@@ -53,13 +56,13 @@ class LogController extends Controller
 					$this->response->redirect("log/");
 				}
 				else
-					$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
+					throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
 			}
 			else
-				$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
+				throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
 		}
 		else
-			$this->message("Ошибка удаления.", "Логовница", "/log/", 2);
+			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
 	}
 
 	/**
@@ -72,8 +75,6 @@ class LogController extends Controller
 
 		if ($this->request->isPost())
 		{
-			$message = "";
-
 			if ($this->request->getPost('title', 'string', '') == '')
 				$message = '<h1><font color=red>Введите название для боевого отчёта.</h1>';
 			elseif ($this->request->getPost('code', 'string', '') == '')
@@ -86,7 +87,7 @@ class LogController extends Controller
 				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 				if (md5('xnovasuka' . $id) != $key)
-					$this->message('Не правильный ключ', 'Ошибка', '', 0, false);
+					throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
 				else
 				{
 					$log = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $id . "'")->fetch();
@@ -119,7 +120,7 @@ class LogController extends Controller
 				}
 			}
 
-			$this->message($message, "Логовница", "/log/", 2);
+			throw new RedirectException($message, "Логовница", "/log/", 2);
 		}
 
 		$this->tag->setTitle('Логовница');
@@ -128,7 +129,6 @@ class LogController extends Controller
 
 	/**
 	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
-	 * @return bool
 	 */
 	public function infoAction ()
 	{
@@ -186,7 +186,7 @@ class LogController extends Controller
 			else
 			{
 				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
-					$this->message('Запрашиваемого лога не существует в базе данных');
+					throw new ErrorException('Запрашиваемого лога не существует в базе данных');
 				else
 				{
 					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
@@ -199,7 +199,5 @@ class LogController extends Controller
 				}
 			}
 		}
-
-		return true;
 	}
 }

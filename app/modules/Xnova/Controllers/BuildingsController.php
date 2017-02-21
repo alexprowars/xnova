@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\Construction;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
 
 /**
  * @RoutePrefix("/buildings")
@@ -38,7 +39,7 @@ class BuildingsController extends Controller
 		$this->user->loadPlanet();
 
 		if ($this->user->vacation > 0)
-			$this->message("Нет доступа!");
+			throw new ErrorException("Нет доступа!");
 
 		$this->building = new Construction($this->user, $this->planet);
 		$this->building->mode = $this->dispatcher->getActionName();
@@ -47,7 +48,7 @@ class BuildingsController extends Controller
 	public function fleetAction ()
 	{
 		if ($this->planet->{$this->registry->resource[21]} == 0)
-			$this->message(_getText('need_hangar'), _getText('tech', 21));
+			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
 		$parse['mode'] = $this->dispatcher->getActionName();
@@ -69,7 +70,7 @@ class BuildingsController extends Controller
 	public function researchAction ()
 	{
 		if ($this->planet->{$this->registry->resource[31]} == 0)
-			$this->message(_getText('no_laboratory'), _getText('Research'));
+			throw new ErrorException(_getText('no_laboratory'), _getText('Research'));
 
 		$parse = $this->building->pageResearch(($this->dispatcher->getActionName() == 'research_fleet' ? 'fleet' : ''));
 
@@ -87,7 +88,7 @@ class BuildingsController extends Controller
 	public function defenseAction ()
 	{
 		if ($this->planet->{$this->registry->resource[21]} == 0 && $this->planet->planet_type != 5)
-			$this->message(_getText('need_hangar'), _getText('tech', 21));
+			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
 
 		if ($this->planet->planet_type == 5)
 			$this->user->setUserOption('only_available', 1);

@@ -458,47 +458,4 @@ class Controller extends PhalconController
 	{
 		$this->showLeftMenu = $view;
 	}
-
-	public function message ($text, $title = '', $redirect = '', $timeout = 5, $left = true)
-	{
-		$this->view->pick('shared/message');
-		$this->view->setVar('text', $text);
-		$this->view->setVar('title', $title);
-
-		if ($redirect != '')
-			$this->view->setVar('destination', $this->url->getBaseUri().ltrim($redirect, '/'));
-		else
-			$this->view->setVar('destination', '');
-
-		$this->view->setVar('time', $timeout);
-
-		$this->tag->setTitle(($title ? strip_tags($title) : 'Сообщение'));
-		$this->showTopPanel(false);
-		$this->showLeftPanel($left);
-
-		$this->afterExecuteRoute();
-
-		$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
-
-		$this->view->start();
-		$this->view->render('error', 'index');
-		$this->view->finish();
-
-		if ($this->request->isAjax())
-		{
-			$this->response->setJsonContent(
-			[
-				'status' 	=> $this->game->getRequestStatus(),
-				'message' 	=> $this->game->getRequestMessage(),
-				'html' 		=> str_replace("\t", ' ', $this->view->getContent()),
-				'data' 		=> $this->game->getRequestData()
-			]);
-			$this->response->setContentType('text/json', 'utf8');
-			$this->response->send();
-		}
-		else
-	   		echo $this->view->getContent();
-
-		die();
-	}
 }

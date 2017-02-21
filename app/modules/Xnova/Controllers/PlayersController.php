@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
 use Xnova\Helpers;
 use Xnova\Models\Planet;
 use Xnova\Controller;
@@ -36,7 +37,7 @@ class PlayersController extends Controller
 		$playerid = htmlspecialchars($this->request->get('id', null, ''));
 
 		if (!$playerid)
-			$this->message('Профиль не найден');
+			throw new ErrorException('Профиль не найден');
 
 		$ownid = ($this->auth->isAuthorized()) ? $this->user->id : 0;
 		
@@ -125,7 +126,7 @@ class PlayersController extends Controller
 			$parse['f'] = $this->user->getRankId($daten['lvl_raid']);
 		}
 		else
-			$this->message('Параметр задан неверно', 'Ошибка');
+			throw new ErrorException('Параметр задан неверно');
 
 		$this->view->setVar('parse', $parse);
 
@@ -147,7 +148,7 @@ class PlayersController extends Controller
 		$player = $this->db->query("SELECT id, username FROM game_users WHERE id = ".$playerid."")->fetch();
 
 		if (!isset($player['id']))
-			$this->message('Информация о данном игроке не найдена');
+			throw new ErrorException('Информация о данном игроке не найдена');
 
 		$parse = [];
 		$parse['name'] = $player['username'];

@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Building;
+use Xnova\Exceptions\ErrorException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -35,6 +36,7 @@ class InfoController extends Controller
 
 	/**
 	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
+	 * @param null $element
 	 */
 	public function indexAction ($element = null)
 	{
@@ -193,6 +195,7 @@ class InfoController extends Controller
 	/**
 	 * @param $BuildID int
 	 * @return array|string
+	 * @throws ErrorException
 	 */
 	private function ShowBuildingInfoPage ($BuildID)
 	{
@@ -201,7 +204,7 @@ class InfoController extends Controller
 		$parse = [];
 
 		if (!_getText('info', $BuildID, true))
-			$this->message('Мы не сможем дать вам эту информацию', 'Ошибка');
+			throw new ErrorException('Мы не сможем дать вам эту информацию');
 
 		$parse['name'] = _getText('tech', $BuildID);
 		$parse['image'] = $BuildID;

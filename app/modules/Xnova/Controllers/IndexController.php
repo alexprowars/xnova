@@ -10,7 +10,6 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Friday\Core\Options;
-use Xnova\Models\User;
 use Friday\Core\Mail\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;

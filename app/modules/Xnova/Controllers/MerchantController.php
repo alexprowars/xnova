@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/merchant")
@@ -40,7 +41,7 @@ class MerchantController extends Controller
 		if (isset($_POST['ress']))
 		{
 			if ($this->user->credits <= 0)
-				$this->message('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/merchant/', 3);
+				throw new RedirectException('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/merchant/', 3);
 		
 			$Error = false;
 		
@@ -144,7 +145,7 @@ class MerchantController extends Controller
 		
 			$parse['mes'] = $Message;
 		
-			$this->message($parse['mes'], $parse['title'], '/merchant/', 2);
+			throw new RedirectException($parse['mes'], $parse['title'], '/merchant/', 2);
 		}
 		elseif (isset($_POST['choix']))
 		{
@@ -173,7 +174,7 @@ class MerchantController extends Controller
 					break;
 				default:
 
-					$this->message('Злобный читер!', 'Ошибка', '/merchant/', 2);
+					throw new RedirectException('Злобный читер!', 'Ошибка', '/merchant/', 2);
 
 					break;
 			}

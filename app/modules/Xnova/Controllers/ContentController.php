@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
 
 /**
  * @RoutePrefix("/content")
@@ -27,12 +28,12 @@ class ContentController extends Controller
 	function indexAction ()
 	{
 		if (!$this->request->getQuery('article'))
-			$this->message('Страница не найдена!');
+			throw new ErrorException('Страница не найдена!');
 
 		$content = $this->db->query("SELECT * FROM game_content WHERE alias = '".$this->request->getQuery('article')."' LIMIT 1")->fetch();
 
 		if (!isset($content['id']))
-			$this->message('Страница не найдена!');
+			throw new ErrorException('Страница не найдена!');
 
 		$this->view->setVar('html', stripslashes($content['html']));
 

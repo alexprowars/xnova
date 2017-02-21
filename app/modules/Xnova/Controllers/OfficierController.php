@@ -8,6 +8,8 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
@@ -29,7 +31,7 @@ class OfficierController extends Controller
 			return;
 		
 		if ($this->user->vacation > 0)
-			$this->message("Нет доступа!");
+			throw new ErrorException("Нет доступа!");
 
 		Lang::includeLang('officier', 'xnova');
 	}
@@ -81,7 +83,7 @@ class OfficierController extends Controller
 			else
 				$Message = _getText('NoPoints');
 		
-			$this->message($Message, _getText('Officier'), '/officier/', 2);
+			throw new RedirectException($Message, _getText('Officier'), '/officier/', 2);
 		}
 		else
 		{

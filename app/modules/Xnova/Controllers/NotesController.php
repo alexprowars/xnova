@@ -10,6 +10,8 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/notes")
@@ -50,7 +52,7 @@ class NotesController extends Controller
 
 			$id = $this->db->lastInsertId();
 
-			$this->message(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$id.'/', 1);
+			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$id.'/', 1);
 		}
 
 		$this->tag->setTitle('Создание заметки');
@@ -62,7 +64,7 @@ class NotesController extends Controller
 		$parse = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." AND id = ".intval($noteId)."")->fetch();
 
 		if (!$parse['id'])
-			$this->message(_getText('notpossiblethisway'), _getText('Error'));
+			throw new ErrorException(_getText('notpossiblethisway'), _getText('Error'));
 
 		if ($this->request->isPost())
 		{
@@ -79,7 +81,7 @@ class NotesController extends Controller
 				'text' 		=> $text
 			], "id = ".$parse['id']);
 
-			$this->message(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$parse['id'].'/', 1);
+			throw new RedirectException(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$parse['id'].'/', 1);
 		}
 
 		$this->view->setVar('parse', $parse);
@@ -113,7 +115,7 @@ class NotesController extends Controller
 			if ($deleted)
 			{
 				$mes = ($deleted == 1) ? _getText('NoteDeleted') : _getText('NoteDeleteds');
-				$this->message($mes, _getText('Please_Wait'), '/notes/', 3);
+				throw new RedirectException($mes, _getText('Please_Wait'), '/notes/', 3);
 			}
 			else
 				$this->response->redirect("notes/");

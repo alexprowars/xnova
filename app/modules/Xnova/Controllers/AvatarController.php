@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Upload\Upload;
 use Xnova\Controller;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/avatar")
@@ -57,12 +58,14 @@ class AvatarController extends Controller
 			{
 				$this->db->query("UPDATE game_users_info SET image = '".$name."' WHERE id = " . $this->user->getId() . "");
 
-				$this->message("Аватар успешно установлен.", "ОК", "/options/", 3);
+				$upload->clean();
+
+				throw new RedirectException("Аватар успешно установлен.", "ОК", "/options/", 3);
 			}
-			else
-				$this->message($upload->error, "Ошибка", "/avatar/", 3);
 
 			$upload->clean();
+
+			throw new RedirectException($upload->error, "Ошибка", "/avatar/", 3);
 		}
 	}
 	

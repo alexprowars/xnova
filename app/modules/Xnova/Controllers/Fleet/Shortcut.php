@@ -9,6 +9,7 @@ namespace Xnova\Controllers\Fleet;
  */
 
 use Xnova\Controllers\FleetController;
+use Xnova\Exceptions\RedirectException;
 
 class Shortcut
 {
@@ -46,7 +47,7 @@ class Shortcut
 				if ($controller->session->has('fleet_shortcut'))
 					$controller->session->remove('fleet_shortcut');
 
-				$controller->message("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/", 1);
+				throw new RedirectException("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/", 1);
 			}
 
 			$g = $controller->request->get('g', 'int', 0);
@@ -90,7 +91,7 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/", 1);
+					throw new RedirectException("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/", 1);
 				}
 				else
 				{
@@ -119,7 +120,7 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					$controller->message("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/", 1);
+					throw new RedirectException("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/", 1);
 				}
 			}
 
@@ -136,10 +137,10 @@ class Shortcut
 					$controller->view->setVar('a', $id);
 				}
 				else
-					$controller->message("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
+					throw new RedirectException("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
 			}
 			else
-				$controller->message("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/shortcut/");
+				throw new RedirectException("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/shortcut/");
 		}
 		else
 		{

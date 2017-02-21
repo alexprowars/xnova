@@ -1,5 +1,7 @@
 <?php
 
+use Xnova\Exceptions\MessageException;
+
 if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 
@@ -13,7 +15,11 @@ try
 
 	echo $application->getOutput();
 }
-catch(\Exception $e)
+catch (MessageException $e)
+{
+	echo $e;
+}
+catch (Exception $e)
 {
 	if (isset($application))
 	{

@@ -8,6 +8,7 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\RedirectException;
 use Xnova\Galaxy;
 use Phalcon\Di;
 use Phalcon\Mvc\Model;
@@ -423,9 +424,7 @@ class User extends BaseUser
 			if (isset($IsPlanetMine['id']))
 			{
 				if ($IsPlanetMine['id_ally'] > 0 && $IsPlanetMine['id_owner'] != $this->getId() && !$this->ally['rights']['planet'])
-				{
-					$this->getDI()->getShared('game')->message("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
-				}
+					throw new RedirectException("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
 
 				$this->planet_current = $selectPlanet;
 				$this->update();

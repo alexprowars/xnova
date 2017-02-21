@@ -10,6 +10,7 @@ namespace Xnova\Controllers\Fleet;
 
 use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
 
 class Back
@@ -71,6 +72,6 @@ class Back
 				$BoxMessage = _getText('fl_onlyyours');
 		}
 
-		$controller->message("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", $BoxTitle, "/fleet/", 2);
+		throw new RedirectException("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", $BoxTitle, "/fleet/", 2);
 	}
 }

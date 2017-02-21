@@ -51,6 +51,13 @@ class Ulogin extends Component implements AuthInterface
 
 		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id LIKE '%".$identity."';")->fetch();
 
+		if (!isset($Row['id']) && strpos($identity, 'ok.ru') !== false)
+		{
+			$identity = str_replace('ok.ru', 'www.odnoklassniki.ru', $identity);
+
+			$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id LIKE '%".$identity."';")->fetch();
+		}
+
 		if (!isset($Row['id']))
 			$this->register();
 		else

@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 
@@ -66,7 +67,7 @@ class RocketController extends Controller
 			$error = 6;
 		
 		if ($error != 0)
-			$this->message('Возможно у вас нет столько межпланетных ракет, или вы не имеете достоточно развитую технологию импульсного двигателя, или вводите неккоректные данные при отправке.', 'Ошибка ' . $error . '');
+			throw new ErrorException('Возможно у вас нет столько межпланетных ракет, или вы не имеете достоточно развитую технологию импульсного двигателя, или вводите неккоректные данные при отправке.', 'Ошибка ' . $error . '');
 		
 		if ($destroyType == "all")
 			$destroyType = 0;
@@ -76,13 +77,13 @@ class RocketController extends Controller
 		$select = $this->db->fetchOne("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3->id_owner);
 		
 		if (!isset($select['id']))
-			$this->message('Игрока не существует');
+			throw new ErrorException('Игрока не существует');
 		
 		if ($select['vacation'] > 0)
-			$this->message('Игрок в режиме отпуска');
+			throw new ErrorException('Игрок в режиме отпуска');
 		
 		if ($this->user->vacation > 0)
-			$this->message('Вы в режиме отпуска');
+			throw new ErrorException('Вы в режиме отпуска');
 		
 		$time = 30 + (60 * $tempvar1);
 		
