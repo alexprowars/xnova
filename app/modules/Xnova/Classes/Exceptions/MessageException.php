@@ -44,11 +44,14 @@ class MessageException extends \Exception
 		$app->tag->setTitle(($this->title ? strip_tags($this->title) : 'Сообщение'));
 
 		/** @var \Xnova\Controller $controller */
-		$controller = $app->dispatcher->getLastController();
+		$controller = $app->dispatcher->getActiveController();
 
-		$controller->showTopPanel(false);
-		$controller->showLeftPanel($this->showLeft);
-		$controller->afterExecuteRoute();
+		if ($controller)
+		{
+			$controller->showTopPanel(false);
+			$controller->showLeftPanel($this->showLeft);
+			$controller->afterExecuteRoute();
+		}
 
 		$app->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
 
