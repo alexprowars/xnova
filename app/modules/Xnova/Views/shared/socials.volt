@@ -8,22 +8,6 @@
 	</script>
 {% endif %}
 
-{% if (cookies.has(config.cookie.prefix~'_full') is false or cookies.get(config.cookie.prefix~'_full') == 'N') and session.has('OKAPI') and session.get('OKAPI') is type('array') %}
-	<script src="{{ session.get('OKAPI')['api_server'] }}js/fapi5.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		FAPI.init('{{ session.get('OKAPI')['api_server'] }}', '{{ session.get('OKAPI')['apiconnection'] }}',
-			function()
-			{
-				//FAPI.UI.setWindowSize(800, 700);
-			}
-			, function()
-			{
-				alert("API initialization failed");
-			}
-		);
-	</script>
-{% endif %}
-
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {

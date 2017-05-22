@@ -47,7 +47,7 @@
 					<input type="hidden" name="InvDesc" value="Покупка кредитов">
 					<input type="hidden" name="InvId" value="{{ invid }}">
 					<input type="hidden" name="Email" value="{{ useremail }}">
-					<input type="hidden" name="Shp_UID" value="{{ request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}">
+					<input type="hidden" name="Shp_UID" value="{{ request.hasPost('userId') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}">
 					<input type="hidden" name="SignatureValue" value="{{ md5(config.robokassa.login~":"~request.getPost('OutSum', 'int')~":"~invid~":"~config.robokassa.public~":Shp_UID="~(request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid)) }}">
 					<input type="hidden" name="Culture" value="RU">
 					<input type="hidden" name="OutSum" value="{{ request.getPost('OutSum', 'int') }}">
@@ -57,7 +57,7 @@
 
 				<br><br>
 				Счет выставлен для ID
-				<span class="neutral">{{ request.hasPost('userId') and request.getPost('userId') is type('integer') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}</span>
+				<span class="neutral">{{ request.hasPost('userId') and request.getPost('userId') > 0 ? request.getPost('userId') : userid }}</span>
 
 				<br><br>
 			{% endif %}

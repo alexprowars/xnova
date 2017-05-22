@@ -202,7 +202,7 @@ class StageThree
 			}
 		}
 
-		if ($VacationMode && $fleetmission != 8)
+		if ($VacationMode && $fleetmission != 8 && !$controller->user->isAdmin())
 			throw new RedirectException("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", 'Режим отпуска', "/fleet/", 2);
 
 		$flyingFleets = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);

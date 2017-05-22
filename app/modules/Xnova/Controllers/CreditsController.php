@@ -28,30 +28,7 @@ class CreditsController extends Controller
 	{
 		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
 
-		if ($this->session->has('OKAPI'))
-		{
-			$params = [];
-			$params['application_key'] = $this->config->ok->public;
-			$params['format'] = 'JSON';
-			$params['uid'] = $this->session->get('OKAPI')['logged_user_id'];
-			$params['message'] = 'Я прошел обучение в Звёздной Империи. Теперь настало время воевать!';
-
-			ksort($params);
-
-			$sig = '';
-
-			foreach ($params as $k => $v)
-				$sig .= $k.'='.$v;
-
-			$sig .= $this->config->ok->private;
-
-			$params['sig'] = md5($sig);
-
-			$this->view->setLayout('credits_ok');
-			$this->view->setVar('params', $params);
-			$this->view->setVar('query', http_build_query($params));
-		}
-		elseif ($this->request->hasPost('OutSum'))
+		if ($this->request->hasPost('OutSum'))
 		{
 			do
 			{

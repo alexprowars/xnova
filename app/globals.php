@@ -29,7 +29,6 @@ $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 	{
 		$auth->addPlugin('\Xnova\Auth\Plugins\Ulogin');
 		$auth->addPlugin('\Xnova\Auth\Plugins\Vk');
-		$auth->addPlugin('\Xnova\Auth\Plugins\Ok');
 	}
 });
 

@@ -59,7 +59,7 @@
 		timestamp = {{ time() }};
 		timezone = {{ timezone }};
 		ajax_nav = {{ ajaxNavigation }};
-		addToUrl = '{% if cookies.has(config.cookie.prefix~"_full") is false and session.has("OKAPI") %}{{ http_build_query(session.get("OKAPI")) }}{% endif %}';
+		addToUrl = '';
 
 		{% if auth.isAuthorized() %}
 			XNova.fleetSpeed 	= {{ game.getSpeed('fleet') }};
@@ -132,9 +132,6 @@
 						{% endif %}
 					</div>
 					<div class="pull-xs-right text-xs-right">
-						{% if config.view.get('socialIframeView', 0) == 1 %}
-							<a href="http://www.odnoklassniki.ru/group/56711983595558" class="ok" target="_blank">Группа игры</a>|
-						{% endif %}
 						<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 						<a href="{{ url('banned/') }}">Тёмные</a>|
 						{% if config.view.get('socialIframeView', 0) == 0 %}
