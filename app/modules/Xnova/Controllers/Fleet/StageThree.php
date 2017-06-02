@@ -445,13 +445,13 @@ class StageThree
 			}
 		}
 
-		if (($fleetmission == 1 || $fleetmission == 2 || $fleetmission == 3) && $HeDBRec['id'] != $controller->user->id && !$controller->user->isAdmin())
+		/*if (($fleetmission == 1 || $fleetmission == 2 || $fleetmission == 3) && $HeDBRec['id'] != $controller->user->id && !$controller->user->isAdmin())
 		{
 			$check = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_ip WHERE id = ".$HeDBRec['id']." AND time > ".(time() - 86400 * 3)." AND ip IN (SELECT ip FROM game_log_ip WHERE id = ".$controller->user->id." AND time > ".(time() - 86400 * 3).")");
 
 			if ($check > 0 || $HeDBRec['ip'] == $controller->user->ip)
 				throw new RedirectException("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" и \"Атака\" к игрокам, с которыми были пересечения по IP адресу.</b></span>", 'Ошибка', "/fleet/", 5);
-		}
+		}*/
 
 		if ($fleetmission == 3 && $HeDBRec['id'] != $controller->user->id && !$controller->user->isAdmin())
 		{
