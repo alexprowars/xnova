@@ -59,7 +59,6 @@
 		timestamp = {{ time() }};
 		timezone = {{ timezone }};
 		ajax_nav = {{ ajaxNavigation }};
-		addToUrl = '';
 
 		{% if auth.isAuthorized() %}
 			XNova.fleetSpeed 	= {{ game.getSpeed('fleet') }};

@@ -241,28 +241,16 @@
 {% if parse['activity'] is defined %}
 	<div class="separator"></div>
 
-	<div id="tabs" class="ui-tabs ui-widget ui-widget-content" style="max-width: 100%">
-		<div class="head">
-			<ul class="ui-tabs-nav ui-widget-header">
-				<li><a href="#tabs-0">Чат</a></li>
-			</ul>
-		</div>
-		<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
-			<table class="table" style="max-width: 100%">
-				<tr>
-					<th class="text-xs-left">
-						<div style="overflow-y: auto;overflow-x: hidden;">
-							{% for activity in parse['activity']['chat'] %}
-								<div class="activity"><div class="date1" style="display: inline-block;padding-right:5px;">{{ game.datezone("H:i", activity['TIME']) }}</div><div style="display: inline;white-space:pre-wrap">{{ activity['MESS'] }}</div></div>
-								<div class="clear"></div>
-							{% endfor %}
-						</div>
-					</th>
-				</tr>
-			</table>
-		</div>
-	</div>
-	<script type="text/javascript">
-		$("#tabs").tabs();
-	</script>
+	<table class="table" style="max-width: 100%">
+		<tr>
+			<th class="text-xs-left">
+				<div style="overflow-y: auto;overflow-x: hidden;">
+					{% for activity in parse['activity']['chat'] %}
+						<div class="activity"><div class="date1" style="display: inline-block;padding-right:5px;">{{ game.datezone("H:i", activity['TIME']) }}</div><div style="display: inline;white-space:pre-wrap">{{ activity['MESS'] }}</div></div>
+						<div class="clear"></div>
+					{% endfor %}
+				</div>
+			</th>
+		</tr>
+	</table>
 {% endif %}

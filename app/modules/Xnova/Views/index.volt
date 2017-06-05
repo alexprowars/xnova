@@ -25,7 +25,6 @@
 <body>
 	<script type="text/javascript">
 		var ajax_nav = 0;
-		var addToUrl = '';
 	</script>
 	{% if dispatcher.getControllerName() !== 'index' %}
 		<div id="box">

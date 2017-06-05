@@ -1,6 +1,5 @@
 
 var ajax_nav = 0;
-var addToUrl = '';
 var timezone = 0;
 var timestamp = 0;
 
@@ -185,8 +184,6 @@ var XNova =
 
 var statusMessages = {0: 'error', 1: 'success', 2: 'info', 3: 'warning'};
 
-var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-
 function ShowHiddenBlock (id)
 {
     $('#'+id).toggle();
@@ -336,10 +333,12 @@ function UpdateClock()
 
 function setMaximum(type, number)
 {
-    if(document.getElementsByName('fmenge['+type+']')[0].value == 0)
-   		document.getElementsByName('fmenge['+type+']')[0].value = number;
+	var obj = document.getElementsByName('fmenge['+type+']')[0];
+
+    if (parseInt(obj.value) === 0)
+		obj.value = number;
 	else
-		document.getElementsByName('fmenge['+type+']')[0].value = 0;
+		obj.value = 0;
 }
 
 function UpdateGameInfo (mes, ally)
@@ -410,12 +409,10 @@ function load (url)
 	if (loc[1] !== undefined)
 		mod = loc[1];
 
-    if (set != 'buildings')
+    if (set !== 'buildings')
         currentState = set;
     else
         currentState = set + ((loc[1] != undefined && loc[1] != 'ajax=2' && loc[1] != 'ajax=1') ? '&'+loc[1] : '');
-
-	url = url+(addToUrl != '' ? (url.indexOf('?') >= 0 ? '&' : '?')+addToUrl : '');
 
 	showLoading();
 
@@ -595,7 +592,7 @@ $(document).ready(function()
 	{
 		$(document).tooltip({
 			items: ".tooltip",
-			track: !isMobile,
+			track: !XNova.isMobile,
 			show: false,
 			hide: false,
 			position: {my: "left+25 top+15", at: "left bottom", collision: "flipfit"},
@@ -678,7 +675,7 @@ $(document).ready(function()
 
 function showWindow (title, url, width, height)
 {
-	if (XNova.isMobile == false)
+	if (!XNova.isMobile)
 	{
 		$('#windowDialog').html('');
 

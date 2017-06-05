@@ -77,14 +77,16 @@ function showSmilesEx(obj, event)
 
 function chatResize()
 {
-	if (isMobile)
+	if (XNova.isMobile)
 		return;
 
-	$('#shoutbox').css('height', $(window).height() - 280);
+	var height = $(window).height() - 135;
+
+	$('#shoutbox').css('height', height);
 
 	$(window).bind('resize', function()
 	{
-		$('#shoutbox').css('height', $(window).height() - 280);
+		$('#shoutbox').css('height', height);
 
 		descendreTchat();
 	});
