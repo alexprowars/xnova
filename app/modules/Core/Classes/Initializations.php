@@ -99,7 +99,7 @@ trait Initializations
 	 * @param $eventsManager
 	 * @throws Exception
 	 */
-	protected function initDatabase($di, $eventsManager)
+	public function initDatabase($di, $eventsManager)
 	{
 		if ($di->has('db'))
 			return;

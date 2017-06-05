@@ -571,11 +571,9 @@ class Planet extends Model
 				$Needed = Building::GetBuildingPrice($this->user, $this, $Element, true, $ForDestroy);
 				$Units = $Needed['metal'] + $Needed['crystal'] + $Needed['deuterium'];
 
-				// Мирный опыт за строения
-				$XPBuildings = [1, 2, 3, 5, 22, 23, 24, 25];
 				$XP = 0;
 
-				if (in_array($Element, $XPBuildings))
+				if (in_array($Element, $this->registry->reslist['build_exp']))
 				{
 					if (!$ForDestroy)
 						$XP += floor($Units / $config->game->get('buildings_exp_mult', 1000));

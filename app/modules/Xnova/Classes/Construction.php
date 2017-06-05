@@ -109,16 +109,20 @@ class Construction
 
 			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
 			$BuildingLevel 		= (int) $this->planet->{$storage->resource[$Element]};
+			$BuildingPrice 		= Building::GetBuildingPrice($this->user, $this->planet, $Element);
 
 			$row = [];
 
-			$row['access']= $isAccess;
-			$row['i'] 	= $Element;
-			$row['count'] = $BuildingLevel;
-			$row['price'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Element), $this->planet);
+			$row['access']	= $isAccess;
+			$row['i'] 		= $Element;
+			$row['count'] 	= $BuildingLevel;
+			$row['price'] 	= Building::GetElementPrice($BuildingPrice, $this->planet);
 
 			if ($isAccess)
 			{
+				if (in_array($Element, $storage->reslist['build_exp']))
+					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / $config->game->get('buildings_exp_mult', 1000));
+
 				$row['time'] 	= Building::GetBuildingTime($this->user, $this->planet, $Element);
 				$row['add'] 	= Building::GetNextProduction($Element, $BuildingLevel, $this->planet);
 				$row['click'] 	= '';
@@ -136,12 +140,12 @@ class Construction
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span></a>";
+								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
 							else
 								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
 						}
 						else
-							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь</span></a>";
+							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь ".(isset($row['exp']) && $row['exp'] > 0 ? ' (+ '.$row['exp'].' exp)' : '')."</span></a>";
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
 						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
