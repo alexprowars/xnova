@@ -10,6 +10,10 @@
 	<link rel="image_src" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}" />
 	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}"/>
 
+	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}"/>
+	<meta property="og:image:width" content="300"/>
+	<meta property="og:image:height" content="300"/>
+
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
 

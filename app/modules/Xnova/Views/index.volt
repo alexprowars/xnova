@@ -11,6 +11,9 @@
 	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}"/>
 
 	<meta property="og:title" content="Вход в игру"/>
+	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}"/>
+	<meta property="og:image:width" content="300"/>
+	<meta property="og:image:height" content="300"/>
 	<meta property="og:site_name" content="Звездная Империя 5"/>
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик."/>
 
