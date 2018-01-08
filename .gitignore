@@ -22,3 +22,4 @@ public/assets/admin/pages/css
 public/assets/admin/global/css
 app/modules/Core/Classes/Prophiler/View/css
 public/assets/admin/global/plugins/bootstrap/css
+/composer.lock

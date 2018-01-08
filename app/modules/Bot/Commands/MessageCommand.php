@@ -5,7 +5,7 @@ namespace Longman\TelegramBot\Commands\UserCommands;
 use Xnova\Models\User;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Conversation;
-use Longman\TelegramBot\Entities\ReplyKeyboardHide;
+use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Request;
 use Phalcon\Di;
 
@@ -76,7 +76,7 @@ class MessageCommand extends UserCommand
 					$this->conversation->update();
 
 					$data['text'] = 'Введите логин игрока';
-					$data['reply_markup'] = new ReplyKeyBoardHide(['selective' => true]);
+					$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 					break;
 				}

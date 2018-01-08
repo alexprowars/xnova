@@ -5,6 +5,8 @@ use Xnova\Exceptions\MessageException;
 if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 
+require_once(ROOT_PATH.'/vendor/autoload.php');
+
 try
 {
 	require_once(ROOT_PATH."/app/modules/Core/Classes/Initializations.php");
