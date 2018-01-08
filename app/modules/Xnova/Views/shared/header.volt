@@ -1,23 +1,3 @@
-{% if config.view.get('socialIframeView', 0) and request.getServer('SERVER_NAME') == 'ok1.xnova.su' %}
-	<script type="text/javascript">
-		var title = [];
-		title[0] = "Звездная империя – космическая стратегия в реальном времени.";
-		title[1] = "Звездная империя - отличная космическая войнушка.";
-		title[2] = "Звездная империя - интересная игра, приглашаю стать моим союзником.";
-		title[3] = "Отстраивай планету и повышай свой рейтинг";
-		title[4] = "Ищу союзников, для серьезных дел.";
-		title[5] = "Игра затягивает! Советую!";
-		title[6] = "Друзья, помогите мне с победой. Спасибо!";
-		title[7] = "Пришло время воевать!";
-
-		function showInviteBox ()
-		{
-			var text = title[Math.round(Math.random()*7)];
-
-			FAPI.UI.showInvite(text, 'userId={{ user.getId() }}');
-		}
-	</script>
-{% endif %}
 <a href="#" class="menu-toggle hidden-sm-up">
     <span>
         <span class="first"></span>
@@ -75,11 +55,6 @@
 			<a href="{{ url("options/") }}" class="tooltip m1" data-content="Настройки"><span class="sprite ico_settings"></span></a>
 			{% if config.view.get('socialIframeView', 0) == 0 %}
 				<a href="{{ url("logout/") }}" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>
-			{% endif %}
-			{% if config.view.get('socialIframeView', 0) and request.getServer('SERVER_NAME') == 'ok1.xnova.su' %}
-				{% if cookies.has(config.cookie.prefix~'_full') is not false or cookies.get(config.cookie.prefix~'_full') == 'N' %}
-					<a class="m1" style="color:#38CA38" href="javascript:;" onclick="showInviteBox()">Пригласить друзей</a>
-				{% endif %}
 			{% endif %}
 		</div>
 	</div>

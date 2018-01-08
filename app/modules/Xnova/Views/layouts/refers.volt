@@ -76,18 +76,3 @@
 		</tr>
 	</table>
 {% endif %}
-
-{% if config.view.get('socialIframeView', 0) == 1 and request.getServer('SERVER_NAME') == 'ok1.xnova.su' %}
-	<br><br>
-	<table width="100%">
-		<tr>
-				<td class="c">Информация</td>
-		<tr>
-		<tr>
-			<th>Приглашайте друзей в игру, и с каждым их полученным боевым и мирным уровнем вам будет начислено некоторое количество кредитов.
-			<br><br>
-			<input type="button" value="Пригласить друзей" onclick="FAPI.UI.showInvite('Пришло время воевать!', 'userId={{ userId }}');">
-			</th>
-		</tr>
-	</table>
-{% endif %}

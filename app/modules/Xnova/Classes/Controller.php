@@ -154,12 +154,6 @@ class Controller extends PhalconController
 				$_COOKIE[$this->config->cookie->prefix."_full"] = 'Y';
 			}
 
-			if ($this->request->getServer('SERVER_NAME') == 'ok1.xnova.su')
-			{
-				$this->config->view->offsetSet('socialIframeView', 2);
-				$this->config->app->offsetSet('ajaxNavigation', 2);
-			}
-
 			if ($this->request->getServer('SERVER_NAME') == 'vk.xnova.su')
 			{
 				$this->config->view->offsetSet('socialIframeView', 2);
