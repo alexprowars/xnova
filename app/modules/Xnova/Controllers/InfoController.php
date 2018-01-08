@@ -103,13 +103,13 @@ class InfoController extends Controller
 	 */
 	private function ShowProductionTable ($BuildID)
 	{
-		$CurrentBuildtLvl = $this->planet->{$this->registry->resource[$BuildID]};
+		$CurrentBuildtLvl = $this->planet->getBuild($BuildID)['level'];
 
 		$ActualNeed = $ActualProd = 0;
 
 		if ($BuildID != 42 && !($BuildID >= 22 && $BuildID <= 24))
 		{
-			$BuildLevelFactor = $this->planet->{$this->registry->resource[$BuildID] . "_porcent"};
+			$BuildLevelFactor = $this->planet->getBuild($BuildID)['power'];
 			$BuildLevel = ($CurrentBuildtLvl > 0) ? $CurrentBuildtLvl : 1;
 
 			$res = $this->planet->getProductionLevel($BuildID, $BuildLevel, $BuildLevelFactor);
@@ -410,14 +410,16 @@ class InfoController extends Controller
 
 		if ($BuildID <= 44 && $BuildID != 33 && $BuildID != 41 && !($BuildID >= 601 && $BuildID <= 615) && !($BuildID >= 502 && $BuildID <= 503))
 		{
-			if ($this->planet->{$this->registry->resource[$BuildID]} > 0)
+			$build = $this->planet->getBuild($BuildID);
+
+			if ($build && $build['level'] > 0)
 			{
 				$DestroyTime = Building::GetBuildingTime($this->user, $this->planet, $BuildID) / 2;
 
 				if ($DestroyTime < 1)
 					$DestroyTime = 1;
 
-				$parse['levelvalue'] = $this->planet->{$this->registry->resource[$BuildID]};
+				$parse['levelvalue'] = $build['level'];
 				$parse['destroy'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $BuildID, true, true), $this->planet);
 				$parse['destroytime'] = Helpers::pretty_time($DestroyTime);
 

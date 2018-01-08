@@ -108,7 +108,7 @@ class Construction
 				continue;
 
 			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
-			$BuildingLevel 		= (int) $this->planet->{$storage->resource[$Element]};
+			$BuildingLevel 		= $this->planet->getBuild($Element)['level'];
 			$BuildingPrice 		= Building::GetBuildingPrice($this->user, $this->planet, $Element);
 
 			$row = [];
@@ -140,7 +140,7 @@ class Construction
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
+								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->getBuild($Element)['level']) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
 							else
 								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
 						}
@@ -148,7 +148,7 @@ class Construction
 							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь ".(isset($row['exp']) && $row['exp'] > 0 ? ' (+ '.$row['exp'].' exp)' : '')."</span></a>";
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
+						$row['click'] = "<span class=\"resNo\">".((!$this->planet->getBuild($Element)['level']) ? 'Построить' : 'Улучшить')."</span>";
 					else
 						$row['click'] = "<span class=\"resNo\">нет места</span>";
 				}

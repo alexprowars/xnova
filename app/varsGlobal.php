@@ -36,10 +36,10 @@ $resource = array
 	31 => "laboratory",
 	33 => "terraformer",
 	34 => "ally_deposit",
-	41 => "mondbasis",
+	41 => "moonbase",
 	42 => "phalanx",
-	43 => "sprungtor",
-	44 => "silo",
+	43 => "jumpgate",
+	44 => "missile_facility",
 
 	106 => "spy_tech",
 	108 => "computer_tech",

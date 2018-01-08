@@ -69,34 +69,30 @@ class ResourcesController extends Controller
 		$production = $this->request->getQuery('active', null, 'Y');
 		$production = $production == 'Y' ? 10 : 0;
 
+		$planetsId = [];
+
 		$planets = Planet::find(['id_owner = ?0', 'bind' => [$this->user->id]]);
 
 		foreach ($planets as $planet)
 		{
 			$planet->assignUser($this->user);
 			$planet->resourceUpdate();
+
+			$planetsId[] = $planet->id;
 		}
 
-		unset($planets);
+		unset($planets, $planet);
 
-		$arFields = [
-			$this->registry->resource[4].'_porcent' 	=> $production,
-			$this->registry->resource[12].'_porcent' => $production,
-			$this->registry->resource[212].'_porcent' => $production
-		];
+		$buildsId = [4, 12];
 
 		foreach ($this->registry->reslist['res'] AS $res)
-		{
-			$this->planet->{$res.'_mine_porcent'} = $production;
-			$arFields[$res.'_mine_porcent'] = $production;
-		}
+			$buildsId[] = $this->registry->resource_flip[$res.'_mine'];
 
-		$this->db->updateAsDict('game_planets', $arFields, 'id_owner = '.$this->user->id);
+		$this->db->updateAsDict('game_planets_buildings', [
+			'power' => $production
+		], 'planet_id IN ('.implode(',', $planetsId).') AND build_id IN ('.implode(',', $buildsId).')');
 
-		$this->planet->{$this->registry->resource[4].'_porcent'} 	= $production;
-		$this->planet->{$this->registry->resource[12].'_porcent'} 	= $production;
-		$this->planet->{$this->registry->resource[212].'_porcent'}	= $production;
-
+		$this->planet->buildings = false;
 		$this->planet->resourceUpdate(time(), true);
 
 		return $this->indexAction();
@@ -120,8 +116,8 @@ class ResourcesController extends Controller
 
 			foreach ($this->request->getPost() as $field => $value)
 			{
-				if (isset($this->planet->{$field.'_porcent'}) && in_array($value, $ValidList['percent']))
-					$this->planet->{$field.'_porcent'} = $value;
+				if ($this->planet->getBuild($field) && in_array($value, $ValidList['percent']))
+					$this->planet->setBuild($field, false, $value);
 			}
 
 			$this->planet->update();
@@ -139,44 +135,47 @@ class ResourcesController extends Controller
 
 		foreach ($this->registry->reslist['prod'] as $ProdID)
 		{
-			if ($this->planet->{$this->registry->resource[$ProdID]} > 0 && isset($this->registry->ProdGrid[$ProdID]))
+			if (!isset($this->planet->buildings[$ProdID]) || !isset($this->registry->ProdGrid[$ProdID]))
+				continue;
+
+			$build = $this->planet->getBuild($ProdID);
+
+			if ($build['level'] <= 0)
+				continue;
+
+			$BuildLevelFactor = $build['power'];
+			$BuildLevel = $build['level'];
+
+			$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
+
+			foreach ($this->registry->reslist['res'] AS $res)
 			{
-				$BuildLevelFactor = $this->planet->{$this->registry->resource[$ProdID] . "_porcent"};
-				$BuildLevel = $this->planet->{$this->registry->resource[$ProdID]};
-
-				$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
-
-				foreach ($this->registry->reslist['res'] AS $res)
-				{
-					$$res = $result[$res];
-					$$res = round($$res * 0.01 * $production_level);
-				}
-
-				$energy = $result['energy'];
-
-				$CurrRow = [];
-		        $CurrRow['id'] = $ProdID;
-				$CurrRow['name'] = $this->registry->resource[$ProdID];
-				$CurrRow['porcent'] = $this->planet->{$this->registry->resource[$ProdID] . "_porcent"};
-
-				$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
-
-				if ($ProdID == 4)
-					$CurrRow['bonus'] += $this->user->energy_tech / 100;
-
-				$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
-
-				$CurrRow['level_type'] = $this->planet->{$this->registry->resource[$ProdID]};
-
-				foreach ($this->registry->reslist['res'] AS $res)
-				{
-					$CurrRow[$res.'_type'] = $$res;
-				}
-
-				$CurrRow['energy_type'] = $energy;
-
-				$parse['resource_row'][] = $CurrRow;
+				$$res = $result[$res];
+				$$res = round($$res * 0.01 * $production_level);
 			}
+
+			$energy = $result['energy'];
+
+			$CurrRow = [];
+			$CurrRow['id'] = $ProdID;
+			$CurrRow['name'] = $this->registry->resource[$ProdID];
+			$CurrRow['porcent'] = $BuildLevelFactor;
+
+			$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
+
+			if ($ProdID == 4)
+				$CurrRow['bonus'] += $this->user->energy_tech / 100;
+
+			$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
+
+			$CurrRow['level_type'] = $BuildLevel;
+
+			foreach ($this->registry->reslist['res'] AS $res)
+				$CurrRow[$res.'_type'] = $$res;
+
+			$CurrRow['energy_type'] = $energy;
+
+			$parse['resource_row'][] = $CurrRow;
 		}
 
 		foreach ($this->registry->reslist['res'] AS $res)

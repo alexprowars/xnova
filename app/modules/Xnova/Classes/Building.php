@@ -178,7 +178,7 @@ class Building
 
 		if (in_array($Element, $storage->reslist['build']))
 		{
-			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$storage->resource['14']} + 1)) * pow(0.5, (int) $planet->{$storage->resource['15']});
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuild('nano_factory')['level'] + 1)) * pow(0.5, $planet->getBuild('robot_factory')['level']);
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
 		elseif (in_array($Element, $storage->reslist['tech']) || in_array($Element, $storage->reslist['tech_f']))
@@ -265,10 +265,15 @@ class Building
 	{
 		$storage = Di::getDefault()->getShared('registry');
 
+		$level = 0;
+
 		if ($Incremental)
-			$level = (isset($planet->{$storage->resource[$Element]})) ? $planet->{$storage->resource[$Element]} : $user->{$storage->resource[$Element]};
-		else
-			$level = 0;
+		{
+			if (in_array($Element, $storage->reslist['build']))
+				$level = isset($planet->buildings[$Element]) ? $planet->getBuild($Element)['level'] : 0;
+			else
+				$level = $user->{$storage->resource[$Element]};
+		}
 
 		$array 	= ['metal', 'crystal', 'deuterium', 'energy_max'];
 		$cost 	= [];

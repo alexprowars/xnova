@@ -402,7 +402,7 @@ class Controller extends PhalconController
 			else
 				$parse[$res.'_ph'] = 0;
 
-			$parse[$res.'_mp'] = $this->planet->{$res.'_mine_porcent'} * 10;
+			$parse[$res.'_mp'] = $this->planet->getBuild($res.'_mine')['power'] * 10;
 		}
 
 		$parse['energy_max'] 	= Helpers::pretty_number($this->planet->energy_max);
@@ -425,7 +425,7 @@ class Controller extends PhalconController
 		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->{$this->registry->resource[4]}) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
 				$parse['ak'] .= '<br>Разряд: ' . Helpers::pretty_time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}

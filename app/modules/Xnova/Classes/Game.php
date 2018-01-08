@@ -108,6 +108,7 @@ class Game extends Component
 		/** @var array $reslist */
 
 		$this->registry->resource = $resource;
+		$this->registry->resource_flip = array_flip($resource);
 		$this->registry->requeriments = $requeriments;
 		$this->registry->pricelist = $pricelist;
 		$this->registry->gun_armour = $gun_armour;

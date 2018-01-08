@@ -142,21 +142,28 @@ class Queue
 			else
 				$inArray = 0;
 
-			$ActualLevel = $this->planet->{$this->registry->resource[$elementId]};
+			$build = $this->planet->getBuild($elementId);
+
+			if (!$build)
+				return false;
+
+			$ActualLevel = $build['level'];
 
 			if (!$destroy)
 			{
 				$BuildLevel = $ActualLevel + 1 + $inArray;
-				$this->planet->{$this->registry->resource[$elementId]} += $inArray;
+
+				$this->planet->setBuild($elementId, $build['level'] + $inArray);
 				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId);
-				$this->planet->{$this->registry->resource[$elementId]} -= $inArray;
+				$this->planet->setBuild($elementId, $build['level'] - $inArray);
 			}
 			else
 			{
 				$BuildLevel = $ActualLevel - 1 + $inArray;
-				$this->planet->{$this->registry->resource[$elementId]} -= $inArray;
+
+				$this->planet->setBuild($elementId, $build['level'] - $inArray);
 				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId) / 2;
-				$this->planet->{$this->registry->resource[$elementId]} += $inArray;
+				$this->planet->setBuild($elementId, $build['level'] + $inArray);
 			}
 
 			if ($queueID == 1)

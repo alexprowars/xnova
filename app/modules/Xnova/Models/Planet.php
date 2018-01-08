@@ -65,69 +65,18 @@ class Planet extends Model
 	public $destruyed;
 	public $id_level;
 
-	public $metal_mine;
-	public $crystal_mine;
-	public $deuterium_mine;
-	public $solar_plant;
-	public $fusion_plant;
-	public $robot_factory;
-	public $nano_factory;
-	public $hangar;
-	public $metal_store;
-	public $crystal_store;
-	public $deuterium_store;
-	public $laboratory;
-	public $terraformer;
-	public $ally_deposit;
-	public $silo;
-	public $deuterium_mine_porcent;
-	public $mondbasis;
 	public $merchand;
-
-	public $small_ship_cargo;
-	public $big_ship_cargo;
-	public $light_hunter;
-	public $heavy_hunter;
-	public $crusher;
-	public $battle_ship;
-	public $colonizer;
-	public $recycler;
-	public $spy_sonde;
-	public $bomber_ship;
-	public $solar_satelit;
-	public $destructor;
-	public $dearth_star;
-	public $battle_cruiser;
-	public $fly_base;
-
-	public $corvete;
-	public $interceptor;
-	public $dreadnought;
-	public $corsair;
-
-	public $misil_launcher;
-	public $small_laser;
-	public $big_laser;
-	public $gauss_canyon;
-	public $ionic_canyon;
-	public $buster_canyon;
-	public $small_protection_shield;
-	public $big_protection_shield;
-	public $interceptor_misil;
-	public $interplanetary_misil;
-
-	public $metal_mine_porcent;
-	public $crystal_mine_porcent;
-	public $solar_plant_porcent;
-	public $fusion_plant_porcent;
-	public $solar_satelit_porcent;
-	public $darkmat_mine_porcent;
 
 	public $metal_perhour = 0;
 	public $crystal_perhour = 0;
 	public $deuterium_perhour = 0;
 
 	public $spaceLabs;
+	/**
+	 * @var bool|array
+	 */
+	public $buildings = false;
+	public $units = false;
 
 	public function onConstruct()
 	{
@@ -146,6 +95,37 @@ class Planet extends Model
 	public function afterUpdate ()
 	{
 		$this->setSnapshotData($this->toArray());
+
+		if ($this->buildings !== false)
+		{
+			foreach ($this->buildings as $building)
+			{
+				if ($building['id'] == 0 && $building['level'] > 0)
+				{
+					$this->db->insertAsDict('game_planets_buildings', [
+						'planet_id' => $this->id,
+						'build_id' => $building['type'],
+						'level' => $building['level'],
+						'power' => $building['power'] !== false ? $building['power'] : 10
+					]);
+				}
+				elseif ($building['level'] != $building['~level'] || $building['power'] != $building['~power'])
+				{
+					if ($building['level'] > 0)
+					{
+						$this->db->updateAsDict('game_planets_buildings', [
+							'level' => $building['level'],
+							'power' => $building['power']
+						], ['conditions' => 'id = ?', 'bind' => [$building['id']]]);
+					}
+					else
+						$this->db->delete('game_planets_buildings', 'id = ?', [$building['id']]);
+				}
+
+				$building['~level'] = $building['level'];
+				$building['~power'] = $building['power'];
+			}
+		}
 	}
 
 	/**
@@ -163,6 +143,75 @@ class Planet extends Model
 	public function assignUser (User $user)
 	{
 		$this->user = $user;
+	}
+
+	private function getBuildingsData ()
+	{
+		if ($this->buildings !== false)
+			return;
+
+		$this->buildings = [];
+
+		$items = $this->db->query('SELECT * FROM game_planets_buildings WHERE planet_id = ?', [$this->id]);
+
+		while ($item = $items->fetch())
+		{
+			$this->buildings[$item['build_id']] = [
+				'id'		=> (int) $item['id'],
+				'type'		=> (int) $item['build_id'],
+				'level'		=> (int) $item['level'],
+				'~level'	=> (int) $item['level'],
+				'power'		=> (int) $item['power'],
+				'~power'	=> (int) $item['power']
+			];
+		}
+	}
+
+	public function getBuild ($buildId)
+	{
+		if (!is_numeric($buildId))
+			$buildId = $this->registry->resource_flip[$buildId];
+
+		$buildId = (int) $buildId;
+
+		if (!$buildId)
+			return false;
+
+		if (!in_array($buildId, $this->registry->reslist['build']))
+			return false;
+
+		if ($this->buildings === false)
+			$this->getBuildingsData();
+
+		if (isset($this->buildings[$buildId]))
+			return $this->buildings[$buildId];
+
+		$this->buildings[$buildId] = [
+			'id'		=> 0,
+			'type'		=> $buildId,
+			'level'		=> 0,
+			'~level'	=> 0,
+			'power'		=> false,
+			'~power'	=> false
+		];
+
+		return $this->buildings[$buildId];
+	}
+
+	public function setBuild ($buildId, $level = false, $power = false)
+	{
+		$build = $this->getBuild($buildId);
+
+		if ($level !== false)
+			$this->buildings[$build['type']]['level'] = (int) $level;
+
+		if ($power !== false)
+		{
+			$power = (int) $power;
+			$power = min(10, max(0, $power));
+
+			$this->buildings[$build['type']]['power'] = $power;
+		}
 	}
 
 	public function checkOwnerPlanet ()
@@ -185,10 +234,15 @@ class Planet extends Model
 
 	public function checkUsedFields ()
 	{
+		$this->getBuildingsData();
+
 		$cnt = 0;
 
 		foreach ($this->registry->reslist['allowed'][$this->planet_type] AS $type)
-			$cnt += $this->{$this->registry->resource[$type]};
+		{
+			if (isset($this->buildings[$type]))
+				$cnt += $this->buildings[$type]['level'];
+		}
 
 		if ($this->field_current != $cnt)
 		{
@@ -251,8 +305,11 @@ class Planet extends Model
 
 		foreach ($this->registry->reslist['prod'] AS $ProdID)
 		{
-			$BuildLevelFactor = $this->{$this->registry->resource[$ProdID] . '_porcent'};
-			$BuildLevel = $this->{$this->registry->resource[$ProdID]};
+			if (!isset($this->buildings[$ProdID]))
+				continue;
+
+			$BuildLevelFactor = $this->buildings[$ProdID]['power'];
+			$BuildLevel = $this->buildings[$ProdID]['level'];
 
 			if ($ProdID == 12 && $this->deuterium < 100)
 				$BuildLevelFactor = 0;
@@ -263,12 +320,12 @@ class Planet extends Model
 				$Caps[$res.'_perhour'] += $result[$res];
 
 			if ($ProdID < 4)
-				$Caps['energy_used'] 	+= $result['energy'];
+				$Caps['energy_used'] += $result['energy'];
 			else
-				$Caps['energy_max'] 	+= $result['energy'];
+				$Caps['energy_max'] += $result['energy'];
 		}
 
-		if ($this->planet_type == 3 || $this->planet_type == 5)
+		if (in_array($this->planet_type, [3, 5]))
 		{
 			foreach ($this->registry->reslist['res'] AS $res)
 			{
@@ -302,14 +359,19 @@ class Planet extends Model
 		if ($updateTime < $this->last_update)
 			return false;
 
+		$this->getBuildingsData();
+
 		$this->planet_updated = true;
 
 		foreach ($this->registry->reslist['res'] AS $res)
 		{
-			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, intval($this->{$res.'_store'}))))) * $this->user->bonusValue('storage'));
+			$storage = $this->getBuild($res.'_store');
+			$storageLevel = $storage ? $storage['level'] : 0;
+
+			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, $storageLevel)))) * $this->user->bonusValue('storage'));
 		}
 
-		$this->battery_max = floor(250 * $this->{$this->registry->resource[4]});
+		$this->battery_max = floor(250 * $this->getBuild('solar_plant')['level']);
 
 		$this->getProductions();
 
@@ -417,7 +479,7 @@ class Planet extends Model
 				$this->b_hangar = $BuildQueue[0]['s'];
 				$this->b_hangar += $ProductionTime;
 
-				$MissilesSpace = ($this->{$this->registry->resource[44]} * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
+				$MissilesSpace = ($this->getBuild('missile_facility')['level'] * 10) - ($this->interceptor_misil + (2 * $this->interplanetary_misil));
 
 				$max = [];
 
@@ -581,15 +643,17 @@ class Planet extends Model
 						$XP -= floor($Units / $config->game->get('buildings_exp_mult', 1000));
 				}
 
+				$build = $this->getBuild($Element);
+
 				if (!$ForDestroy)
 				{
 					$this->field_current++;
-					$this->{$this->registry->resource[$Element]}++;
+					$this->setBuild($Element, $build['level'] + 1);
 				}
 				else
 				{
 					$this->field_current--;
-					$this->{$this->registry->resource[$Element]}--;
+					$this->setBuild($Element, $build['level'] - 1);
 				}
 
 				$NewQueue = $queueManager->get();
@@ -641,9 +705,21 @@ class Planet extends Model
 
 				$HaveNoMoreLevel = false;
 
+				$build = $this->getBuild($ListIDArray['i']);
+
+				if (!$build)
+				{
+					array_shift($QueueArray);
+
+					if (count($QueueArray) == 0)
+						$Loop = false;
+
+					continue;
+				}
+
 				$ForDestroy = ($ListIDArray['d'] == 1);
 
-				if ($ForDestroy && $this->{$this->registry->resource[$ListIDArray['i']]} == 0)
+				if ($ForDestroy && $build['level'] == 0)
 				{
 					$HaveRessources = false;
 					$HaveNoMoreLevel = true;
@@ -678,7 +754,7 @@ class Planet extends Model
 							'to_crystal' 		=> $this->crystal,
 							'to_deuterium' 		=> $this->deuterium,
 							'build_id' 			=> $ListIDArray['i'],
-							'level' 			=> ($this->{$this->registry->resource[$ListIDArray['i']]} + 1)
+							'level' 			=> ($build['level'] + 1)
 						]);
 					}
 				}
@@ -792,22 +868,21 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
-		$list = [$this->{$this->registry->resource[31]}];
+		$list = [$this->getBuild('laboratory')['level']];
 
 		if ($this->user->{$this->registry->resource[123]} > 0)
 		{
-			$result = $this->find([
-				'columns'		=> $this->registry->resource[31],
-				'conditions'	=> 'id_owner = ?0 AND id != ?1 AND '.$this->registry->resource[31].' > 0 AND destruyed = 0 AND planet_type = 1',
-				'bind'			=> [$this->user->id, $this->id],
-				'limit'			=> $this->user->{$this->registry->resource[123]},
-				'order'			=> $this->registry->resource[31].' DESC'
-			]);
+			$items = $this->db->query('SELECT id, level FROM game_planets_buildings 
+					WHERE 
+				build_id = ?0 AND id_owner = ?1 AND id != ?2 AND level > 0 AND destruyed = 0 AND planet_type = 1 
+					ORDER BY 
+				level DESC 
+					LIMIT ?3',
+				[31, $this->user->id, $this->id, $this->user->{$this->registry->resource[123]}]
+			);
 
-			foreach ($result as $row)
-			{
-				$list[] = $row->{$this->registry->resource[31]};
-			}
+			while ($item = $items->fetch())
+				$list[] = $item['level'];
 		}
 
 		return $list;
@@ -817,14 +892,21 @@ class Planet extends Model
 	{
 		$config = $this->getDI()->getShared('config');
 
-		return $this->field_max + ($this->{$this->registry->resource[33]} * 5) + ($config->game->fieldsByMoonBase * $this->{$this->registry->resource[41]});
+		$fields = $this->field_max;
+
+		$fields += $this->getBuild('terraformer')['level'] * 5;
+		$fields += $config->game->fieldsByMoonBase * $this->getBuild('moonbase')['level'];
+
+		return $fields;
 	}
 
 	public function getNextJumpTime ()
 	{
-		if ($this->{$this->registry->resource[43]} > 0)
+		$jumpGate = $this->getBuild('jumpgate');
+
+		if ($jumpGate && $jumpGate['level'] > 0)
 		{
-			$waitTime = (60 * 60) * (1 / $this->{$this->registry->resource[43]});
+			$waitTime = (60 * 60) * (1 / $jumpGate['level']);
 			$nextJumpTime = $this->last_jump_time + $waitTime;
 
 			if ($nextJumpTime >= time())

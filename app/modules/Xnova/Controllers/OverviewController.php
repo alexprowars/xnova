@@ -763,7 +763,7 @@ class OverviewController extends Controller
 
 		foreach ($this->registry->reslist['res'] AS $res)
 		{
-			if (!$this->planet->{$res.'_mine_porcent'})
+			if ($this->planet->getBuild($res.'_mine')['level'] && !$this->planet->getBuild($res.'_mine')['power'])
 				$showMessage = true;
 		}
 

@@ -25,7 +25,7 @@ try
 
 	$application->getOutput();
 }
-catch (\Phalcon\Exception $e)
+catch (Exception $e)
 {
     echo $e->getMessage()."\n";
     exit(255);
