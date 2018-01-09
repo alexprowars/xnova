@@ -56,7 +56,7 @@ class Building
 				{
 					// break;
 				}
-				elseif (isset($planet->{$storage->resource[$ReqElement]}) && $planet->{$storage->resource[$ReqElement]} >= $EleLevel)
+				elseif ($planet->getBuildLevel($ReqElement) >= $EleLevel)
 					$enabled = true;
 				elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($Element == 43 || $Element == 502 || $Element == 503) && ($ReqElement == 21 || $ReqElement == 41))
 					$enabled = true;
@@ -137,9 +137,9 @@ class Building
 						$minus = $Level - $user->{$storage->resource[$ResClass]};
 						$result .= " + <b>" . $minus . "</b>";
 					}
-					elseif (isset($planet->{$storage->resource[$ResClass]}) && $planet->{$storage->resource[$ResClass]} < $Level)
+					elseif ($planet->getBuildLevel($ResClass) < $Level)
 					{
-						$minus = $Level - $planet->{$storage->resource[$ResClass]};
+						$minus = $Level - $planet->getBuildLevel($ResClass);
 						$result .= " + <b>" . $minus . "</b>";
 					}
 				}
@@ -178,7 +178,7 @@ class Building
 
 		if (in_array($Element, $storage->reslist['build']))
 		{
-			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuild('nano_factory')['level'] + 1)) * pow(0.5, $planet->getBuild('robot_factory')['level']);
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('nano_factory') + 1)) * pow(0.5, $planet->getBuildLevel('robot_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
 		elseif (in_array($Element, $storage->reslist['tech']) || in_array($Element, $storage->reslist['tech_f']))
@@ -194,19 +194,19 @@ class Building
 				}
 			}
 			else
-				$lablevel = $planet->{$storage->resource['31']};
+				$lablevel = $planet->getBuildLevel('laboratory');
 
 			$time = ($cost / $config->game->get('game_speed')) / (($lablevel + 1) * 2);
 			$time = floor($time * 3600 * $user->bonusValue('time_research'));
 		}
 		elseif (in_array($Element, $storage->reslist['defense']))
 		{
-			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$storage->resource['21']} + 1)) * pow(1 / 2, (int) $planet->{$storage->resource['15']});
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('hangar') + 1)) * pow(1 / 2, $planet->getBuildLevel('nano_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_defence'));
 		}
 		elseif (in_array($Element, $storage->reslist['fleet']))
 		{
-			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->{$storage->resource['21']} + 1)) * pow(1 / 2, (int) $planet->{$storage->resource['15']});
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('hangar') + 1)) * pow(1 / 2, $planet->getBuildLevel('nano_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_fleet'));
 		}
 
@@ -270,7 +270,7 @@ class Building
 		if ($Incremental)
 		{
 			if (in_array($Element, $storage->reslist['build']))
-				$level = isset($planet->buildings[$Element]) ? $planet->getBuild($Element)['level'] : 0;
+				$level = $planet->getBuildLevel($Element);
 			else
 				$level = $user->{$storage->resource[$Element]};
 		}

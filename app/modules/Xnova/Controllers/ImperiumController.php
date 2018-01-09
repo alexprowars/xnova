@@ -109,7 +109,7 @@ class ImperiumController extends Controller
 			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->getBaseUri()."galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
 			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->{$this->registry->resource[4]}) * 100) . '</font>%</th>';
+			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $planet->field_current;
 			@$parse['file_fields_t'] += $planet->field_max;
@@ -126,9 +126,9 @@ class ImperiumController extends Controller
 				$parse['file_'.$res.'_p'][] = $planet->{$res.'_mine_porcent'} * 10;
 			}
 
-			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->solar_plant_porcent * 10) . '</font>%</th>';
-			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->fusion_plant_porcent * 10) . '</font>%</th>';
-			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->solar_satelit_porcent * 10) . '</font>%</th>';
+			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('solar_plant')['power'] * 10) . '</font>%</th>';
+			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('fusion_plant')['power'] * 10) . '</font>%</th>';
+			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('solar_satelit')['power'] * 10) . '</font>%</th>';
 
 			$build_hangar = [];
 
@@ -164,9 +164,9 @@ class ImperiumController extends Controller
 
 				if (in_array($i, $this->registry->reslist['build']))
 				{
-					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->registry->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					if ($r1[$i] < $planet->{$this->registry->resource[$i]})
-						$r1[$i] = $planet->{$this->registry->resource[$i]};
+					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getBuildLevel($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					if ($r1[$i] < $planet->getBuildLevel($i))
+						$r1[$i] = $planet->getBuildLevel($i);
 				}
 				elseif (in_array($i, $this->registry->reslist['fleet']))
 				{

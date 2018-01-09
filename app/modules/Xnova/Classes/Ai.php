@@ -10,7 +10,6 @@ namespace Xnova;
 
 use Xnova\Models\Planet;
 use Xnova\Models\User;
-use Phalcon\Di;
 
 class Ai
 {

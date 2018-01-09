@@ -366,10 +366,6 @@ class User extends BaseUser
 				else
 					$planet->resourceUpdate();
 
-				// Проверка наличия законченных построек и исследований
-				if ($planet->updateQueueList())
-					$planet->resourceUpdate(time(), true);
-
 				$this->getDI()->setShared('planet', $planet);
 			}
 		}

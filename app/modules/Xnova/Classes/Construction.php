@@ -41,8 +41,6 @@ class Construction
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
 			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
 
-		$this->planet->setNextBuildingQueue();
-
 		$Queue = $this->ShowBuildingQueue();
 
 		$MaxBuidSize = $config->game->maxBuildingQueue + $this->user->bonusValue('queue', 0);
@@ -107,8 +105,13 @@ class Construction
 			if (!Building::checkTechnologyRace($this->user, $Element))
 				continue;
 
+			$build = $this->planet->getBuild($Element);
+
+			if (!$build)
+				continue;
+
 			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
-			$BuildingLevel 		= $this->planet->getBuild($Element)['level'];
+			$BuildingLevel 		= $build['level'];
 			$BuildingPrice 		= Building::GetBuildingPrice($this->user, $this->planet, $Element);
 
 			$row = [];
@@ -140,7 +143,7 @@ class Construction
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->getBuild($Element)['level']) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
+								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$build['level']) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
 							else
 								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
 						}
@@ -148,7 +151,7 @@ class Construction
 							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь ".(isset($row['exp']) && $row['exp'] > 0 ? ' (+ '.$row['exp'].' exp)' : '')."</span></a>";
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['click'] = "<span class=\"resNo\">".((!$this->planet->getBuild($Element)['level']) ? 'Построить' : 'Улучшить')."</span>";
+						$row['click'] = "<span class=\"resNo\">".((!$build['level']) ? 'Построить' : 'Улучшить')."</span>";
 					else
 						$row['click'] = "<span class=\"resNo\">нет места</span>";
 				}
@@ -170,8 +173,6 @@ class Construction
 		$request 	= $this->user->getDI()->getShared('request');
 		$storage 	= $this->user->getDI()->getShared('registry');
 		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
-
-		$TechHandle = $this->planet->checkResearchQueue();
 
 		$NoResearchMessage = "";
 		$bContinue = true;
@@ -196,15 +197,18 @@ class Construction
 
 		$PageParse['mode'] = $this->mode;
 
-		$queueManager = new Queue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
+		$queueManager = new Queue();
+		$queueManager->setUserObject($this->user);
+		$queueManager->setPlanetObject($this->planet);
+
+		$TechHandle = $queueManager->checkTechQueue();
+
+		$queueManager->loadQueue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
 
 		if (isset($_GET['cmd']) AND $bContinue != false)
 		{
 			$Command 	= $request->getQuery('cmd', null, '');
 			$Techno 	= $request->getQuery('tech', 'int', 0);
-
-			$queueManager->setUserObject($this->user);
-			$queueManager->setPlanetObject($this->planet);
 
 			if ($Techno > 0 && in_array($Techno, $res_array))
 			{

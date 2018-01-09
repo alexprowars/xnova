@@ -53,7 +53,7 @@ class RocketController extends Controller
 
 		$error = 0;
 		
-		if ($this->planet->silo < 4)
+		if ($this->planet->getBuildLevel('missile_facility') < 4)
 			$error = 1;
 		elseif ($this->user->impulse_motor_tech == 0)
 			$error = 2;

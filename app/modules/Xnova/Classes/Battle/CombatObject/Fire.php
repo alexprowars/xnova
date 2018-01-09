@@ -107,6 +107,7 @@ class Fire
 	 * This function return the number of shots caused by RF from one ShipType to all defenders
 	 * @param ShipType $shipType_A
 	 * @return int
+	 * @throws \Exception
 	 */
 	private function getShotsFromOneAttackerShipOfType(ShipType $shipType_A)
 	{

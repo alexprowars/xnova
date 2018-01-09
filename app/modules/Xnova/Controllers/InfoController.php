@@ -37,6 +37,7 @@ class InfoController extends Controller
 	/**
 	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
 	 * @param null $element
+	 * @throws ErrorException
 	 */
 	public function indexAction ($element = null)
 	{
@@ -103,7 +104,7 @@ class InfoController extends Controller
 	 */
 	private function ShowProductionTable ($BuildID)
 	{
-		$CurrentBuildtLvl = $this->planet->getBuild($BuildID)['level'];
+		$CurrentBuildtLvl = $this->planet->getBuildLevel($BuildID);
 
 		$ActualNeed = $ActualProd = 0;
 

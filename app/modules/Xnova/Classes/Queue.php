@@ -8,9 +8,13 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Planet;
 use Xnova\Models\User;
 use Phalcon\Di;
+use Xnova\Queue\Build;
+use Xnova\Queue\Tech;
+use Xnova\Queue\Unit;
 
 class Queue
 {
@@ -60,32 +64,63 @@ class Queue
 		$this->config 	= Di::getDefault()->getShared('config');
 	}
 
+	public function getPlanet ()
+	{
+		return $this->planet;
+	}
+
+	public function getUser ()
+	{
+		return $this->user;
+	}
+
 	public function add($elementId, $count = 1, $destroy = false)
 	{
 		if (in_array($elementId, $this->registry->reslist['build']))
-			$this->addBuildingToQueue($elementId, $destroy);
+			(new Build($this))->add($elementId, $destroy);
 		elseif (in_array($elementId, $this->registry->reslist['tech']) || in_array($elementId, $this->registry->reslist['tech_f']))
-			$this->addTechToQueue($elementId);
+			(new Tech($this))->add($elementId);
 		elseif (in_array($elementId, $this->registry->reslist['fleet']) || in_array($elementId, $this->registry->reslist['defense']))
-			$this->addShipyardToQueue($elementId, $count);
+			(new Unit($this))->add($elementId, $count);
 	}
 
 	public function delete($elementId, $listId = 0)
 	{
 		if (in_array($elementId, $this->registry->reslist['build']))
-			$this->deleteBuildingInQueue($listId);
+			(new Build($this))->delete($listId);
 		elseif (in_array($elementId, $this->registry->reslist['tech']) || in_array($elementId, $this->registry->reslist['tech_f']))
-			$this->deleteTechInQueue($elementId);
+			(new Tech($this))->delete($elementId);
 	}
 
-	public function get($queueType = '')
+	public function get($type = '')
 	{
-		if (!$queueType)
+		if (!$type)
 			return $this->queue;
-		elseif (isset($this->queue[$queueType]))
-			return $this->queue[$queueType];
+		elseif (isset($this->queue[$type]))
+			return $this->queue[$type];
 		else
 			return [];
+	}
+
+	public function is($type)
+	{
+		return isset($this->queue[$type]);
+	}
+
+	public function set($type, $queue)
+	{
+		if ($type === false)
+			$this->queue = $queue;
+		else
+		{
+			if (!isset($this->queue[$type]))
+				$this->queue[$type] = [];
+
+			if (!isset($queue['i']))
+				$this->queue[$type] = $queue;
+			else
+				$this->queue[$type][] = $queue;
+		}
 	}
 
 	public function getCount($queueType = '')
@@ -112,294 +147,6 @@ class Queue
 		return Array(self::QUEUE_TYPE_BUILDING, self::QUEUE_TYPE_RESEARCH, self::QUEUE_TYPE_SHIPYARD);
 	}
 
-	private function addBuildingToQueue ($elementId, $destroy = false)
-	{
-		$maxBuidSize = $this->config->game->maxBuildingQueue;
-		if ($this->user->rpg_constructeur > time())
-			$maxBuidSize += 2;
-
-		$actualCount = $this->getCount(self::QUEUE_TYPE_BUILDING);
-
-		if ($actualCount < $maxBuidSize)
-			$queueID = $actualCount + 1;
-		else
-			$queueID = false;
-
-		$currentMaxFields = $this->planet->getMaxFields();
-
-		if ($this->planet->field_current < ($currentMaxFields - $actualCount) || $destroy)
-		{
-			if ($queueID > 1)
-			{
-				$inArray = 0;
-
-				foreach ($this->queue[self::QUEUE_TYPE_BUILDING] AS $item)
-				{
-					if ($item['i'] == $elementId)
-						$inArray++;
-				}
-			}
-			else
-				$inArray = 0;
-
-			$build = $this->planet->getBuild($elementId);
-
-			if (!$build)
-				return false;
-
-			$ActualLevel = $build['level'];
-
-			if (!$destroy)
-			{
-				$BuildLevel = $ActualLevel + 1 + $inArray;
-
-				$this->planet->setBuild($elementId, $build['level'] + $inArray);
-				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId);
-				$this->planet->setBuild($elementId, $build['level'] - $inArray);
-			}
-			else
-			{
-				$BuildLevel = $ActualLevel - 1 + $inArray;
-
-				$this->planet->setBuild($elementId, $build['level'] - $inArray);
-				$BuildTime = Building::GetBuildingTime($this->user, $this->planet, $elementId) / 2;
-				$this->planet->setBuild($elementId, $build['level'] + $inArray);
-			}
-
-			if ($queueID == 1)
-				$BuildEndTime = time() + $BuildTime;
-			else
-			{
-				$queueArray = $this->get(self::QUEUE_TYPE_BUILDING);
-
-				$PrevBuild = $queueArray[$actualCount - 1];
-				$BuildEndTime = $PrevBuild['e'] + $BuildTime;
-			}
-
-			if (!isset($this->queue[self::QUEUE_TYPE_BUILDING]))
-				$this->queue[self::QUEUE_TYPE_BUILDING] = [];
-
-			$this->queue[self::QUEUE_TYPE_BUILDING][] = [
-				'i' => $elementId,
-				'l' => $BuildLevel,
-				't' => 0,
-				's' => 0,
-				'e' => $BuildEndTime,
-				'd' => $destroy ? 1 : 0
-			];
-
-			$this->saveQueue();
-		}
-	}
-
-	private function deleteBuildingInQueue ($elementId)
-	{
-		if ($this->getCount(self::QUEUE_TYPE_BUILDING))
-		{
-			$queueArray 	= $this->get(self::QUEUE_TYPE_BUILDING);
-			$ActualCount 	= count($queueArray);
-
-			if (!isset($queueArray[$elementId]))
-				return;
-
-			$canceledArray = $queueArray[$elementId];
-
-			$newQueue = $this->get();
-
-			if ($ActualCount > 1)
-			{
-				unset($queueArray[$elementId]);
-
-				$queueArray = array_values($queueArray);
-				
-				if ($elementId == 0)
-					$BuildEndTime = time();
-				else
-					$BuildEndTime = $queueArray[0]['s'];
-					
-				foreach ($queueArray AS $i => &$listArray)
-				{
-					$listArray['t'] = Building::GetBuildingTime($this->user, $this->planet, $listArray['i']);
-
-					if ($listArray['d'] == 1)
-						$listArray['t'] = ceil($listArray['t'] / 2);
-
-					$BuildEndTime += $listArray['t'];
-
-					$listArray['e'] = $BuildEndTime;
-
-					if ($canceledArray['i'] == $listArray['i'] && $elementId <= $i)
-						$listArray['l']--;
-				}
-
-				unset($listArray);
-
-				$newQueue[self::QUEUE_TYPE_BUILDING] = $queueArray;
-			}
-			else
-				unset($newQueue[self::QUEUE_TYPE_BUILDING]);
-				
-			$this->planet->queue = json_encode($newQueue);
-
-			if ($canceledArray['s'] > 0)
-			{
-				$cost = Building::GetBuildingPrice($this->user, $this->planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
-
-				$this->planet->metal 		+= $cost['metal'];
-				$this->planet->crystal 		+= $cost['crystal'];
-				$this->planet->deuterium 	+= $cost['deuterium'];
-			}
-
-			$this->planet->update();
-		}
-	}
-
-	private function addTechToQueue ($elementId)
-	{
-		$TechHandle = $this->planet->checkResearchQueue();
-
-		if (!$TechHandle['working'])
-		{
-			$spaceLabs = [];
-
-			if ($this->user->{$this->registry->resource[123]} > 0)
-				$spaceLabs = $this->planet->getNetworkLevel();
-
-			$this->planet->spaceLabs = $spaceLabs;
-
-			if (Building::IsTechnologieAccessible($this->user, $this->planet, $elementId) && Building::IsElementBuyable($this->user, $this->planet, $elementId) && !(isset($this->registry->pricelist[$elementId]['max']) && $this->user->{$this->registry->resource[$elementId]} >= $this->registry->pricelist[$elementId]['max']))
-			{
-				$costs = Building::GetBuildingPrice($this->user, $this->planet, $elementId);
-
-				$this->planet->metal 		-= $costs['metal'];
-				$this->planet->crystal 		-= $costs['crystal'];
-				$this->planet->deuterium 	-= $costs['deuterium'];
-
-				$time = Building::GetBuildingTime($this->user, $this->planet, $elementId);
-
-				$this->queue[self::QUEUE_TYPE_RESEARCH] = [[
-					'i' => $elementId,
-					'l' => ($this->user->{$this->registry->resource[$elementId]} + 1),
-					't' => $time,
-					's' => time(),
-					'e' => time() + $time,
-					'd' => 0
-				]];
-
-				$this->planet->queue = json_encode($this->queue);
-
-				$this->planet->update();
-				$this->user->update(['b_tech_planet' => $this->planet->id]);
-			}
-		}
-	}
-
-	private function deleteTechInQueue ($elementId, $listId = 0)
-	{
-		$TechHandle = $this->planet->checkResearchQueue();
-
-		if (isset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['working'] && $this->queue[self::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
-		{
-			$nedeed = Building::GetBuildingPrice($this->user, $TechHandle['planet'], $elementId);
-
-			$TechHandle['planet']->metal 		+= $nedeed['metal'];
-			$TechHandle['planet']->crystal 		+= $nedeed['crystal'];
-			$TechHandle['planet']->deuterium 	+= $nedeed['deuterium'];
-
-			unset($this->queue[self::QUEUE_TYPE_RESEARCH][$listId]);
-
-			if (isset($this->queue[self::QUEUE_TYPE_BUILDING]) && !count($this->queue[self::QUEUE_TYPE_BUILDING]))
-				unset($this->queue[self::QUEUE_TYPE_BUILDING]);
-
-			$TechHandle['planet']->queue = json_encode($this->queue);
-			$TechHandle['planet']->update();
-
-			$this->user->update(['b_tech_planet' => $this->planet->id]);
-		}
-	}
-
-	private function addShipyardToQueue ($elementId, $count)
-	{
-		if (!Building::IsTechnologieAccessible($this->user, $this->planet, $elementId))
-			return;
-
-		$BuildArray = $this->get(self::QUEUE_TYPE_SHIPYARD);
-
-		if ($elementId == 502 || $elementId == 503)
-		{
-			$Missiles[502] = $this->planet->{$this->registry->resource[502]};
-			$Missiles[503] = $this->planet->{$this->registry->resource[503]};
-
-			$MaxMissiles = $this->planet->{$this->registry->resource[44]} * 10;
-
-			foreach ($BuildArray AS $item)
-			{
-				if (($item['i'] == 502 || $item['i'] == 503) && $item['l'] != 0)
-					$Missiles[$item['i']] += $item['l'];
-			}
-		}
-
-		if (isset($this->registry->pricelist[$elementId]['max']))
-		{
-			$total = $this->planet->{$this->registry->resource[$elementId]};
-
-			if (isset($BuildArray[$elementId]))
-				$total += $BuildArray[$elementId];
-
-			$count = min($count, max(($this->registry->pricelist[$elementId]['max'] - $total), 0));
-		}
-
-		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($MaxMissiles))
-		{
-			$ActuMissiles 	= $Missiles[502] + (2 * $Missiles[503]);
-			$MissilesSpace 	= $MaxMissiles - $ActuMissiles;
-
-			if ($MissilesSpace > 0)
-			{
-				if ($elementId == 502)
-					$count = min($count, $MissilesSpace);
-				else
-					$count = min($count, floor($MissilesSpace / 2));
-			}
-			else
-				$count = 0;
-		}
-
-		if (!$count)
-			return;
-
-		$count = min($count, Building::GetMaxConstructibleElements($elementId, $this->planet, $this->user));
-
-		if ($count > 0)
-		{
-			$Ressource = Building::GetElementRessources($elementId, $count, $this->user);
-
-			$this->planet->metal 		-= $Ressource['metal'];
-			$this->planet->crystal 		-= $Ressource['crystal'];
-			$this->planet->deuterium 	-= $Ressource['deuterium'];
-
-			if (!isset($this->queue[self::QUEUE_TYPE_SHIPYARD]))
-				$this->queue[self::QUEUE_TYPE_SHIPYARD] = [];
-
-			$this->queue[self::QUEUE_TYPE_SHIPYARD][] = [
-				'i' => $elementId,
-				'l' => $count,
-				't' => 0,
-				's' => 0,
-				'e' => 0,
-				'd' => 0
-			];
-
-			$this->planet->update(
-			[
-				'metal' 	=> $this->planet->metal,
-				'crystal' 	=> $this->planet->crystal,
-				'deuterium' => $this->planet->deuterium,
-				'queue' 	=> json_encode($this->queue)
-			]);
-		}
-	}
-
 	public function saveQueue ()
 	{
 		if (!is_object($this->planet))
@@ -421,5 +168,398 @@ class Queue
 			elseif (!count($value))
 				unset($this->queue[$key]);
 		}
+	}
+
+	public function update ($time = 0)
+	{
+		if (!($this->planet instanceof Planet))
+			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
+
+		if (!($this->user instanceof User))
+			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::User');
+
+		$result = false;
+
+		$buildingsCount = $this->getCount(self::QUEUE_TYPE_BUILDING);
+
+		if ($buildingsCount)
+		{
+			for ($i = 0; $i < $buildingsCount; $i++)
+			{
+				if ($this->checkBuildQueue())
+				{
+					if (!$this->planet->planet_updated)
+						$this->planet->resourceUpdate();
+
+					$this->nextBuildingQueue();
+					$result = true;
+				}
+				else
+					break;
+			}
+		}
+
+		if ($this->getCount(self::QUEUE_TYPE_RESEARCH) > 0 && $this->user->b_tech_planet == 0)
+		{
+			$this->user->b_tech_planet = $this->planet->id;
+			$this->user->update();
+		}
+
+		if ($this->user->b_tech_planet)
+			$result = true;
+
+		$this->checkTechQueue();
+		$this->checkUnitQueue($time);
+
+		return $result;
+	}
+
+	private function checkBuildQueue ()
+	{
+		if ($this->getCount(self::QUEUE_TYPE_BUILDING))
+		{
+			$QueueArray = $this->get(self::QUEUE_TYPE_BUILDING);
+
+			$BuildArray = $QueueArray[0];
+			$Element = $BuildArray['i'];
+
+			array_shift($QueueArray);
+
+			$ForDestroy = ($BuildArray['d'] == 1);
+
+			if ($BuildArray['e'] <= time())
+			{
+				$Needed = Building::GetBuildingPrice($this->user, $this->planet, $Element, true, $ForDestroy);
+				$Units = $Needed['metal'] + $Needed['crystal'] + $Needed['deuterium'];
+
+				$XP = 0;
+
+				if (in_array($Element, $this->registry->reslist['build_exp']))
+				{
+					if (!$ForDestroy)
+						$XP += floor($Units / $this->config->game->get('buildings_exp_mult', 1000));
+					else
+						$XP -= floor($Units / $this->config->game->get('buildings_exp_mult', 1000));
+				}
+
+				$build = $this->planet->getBuild($Element);
+
+				if (!$ForDestroy)
+				{
+					$this->planet->field_current++;
+					$this->planet->setBuild($Element, $build['level'] + 1);
+				}
+				else
+				{
+					$this->planet->field_current--;
+					$this->planet->setBuild($Element, $build['level'] - 1);
+				}
+
+				$NewQueue = $this->get();
+				$NewQueue[self::QUEUE_TYPE_BUILDING] = $QueueArray;
+
+				$this->loadQueue($NewQueue);
+				$this->saveQueue();
+
+				if ($XP != 0 && $this->user->lvl_minier < $this->config->game->get('level.max_ind', 100))
+				{
+					$this->user->xpminier += $XP;
+
+					if ($this->user->xpminier < 0)
+						$this->user->xpminier = 0;
+
+					$this->user->update();
+				}
+
+				return true;
+			}
+			else
+				return false;
+		}
+
+		return false;
+	}
+
+	private function nextBuildingQueue ()
+	{
+		if ($this->getCount(self::QUEUE_TYPE_BUILDING))
+		{
+			$QueueArray = $this->get(self::QUEUE_TYPE_BUILDING);
+
+			if ($QueueArray[0]['s'] > 0)
+				return;
+
+			$Loop = true;
+
+			while ($Loop)
+			{
+				$ListIDArray = $QueueArray[0];
+
+				$HaveNoMoreLevel = false;
+
+				$build = $this->planet->getBuild($ListIDArray['i']);
+
+				if (!$build)
+				{
+					array_shift($QueueArray);
+
+					if (count($QueueArray) == 0)
+						$Loop = false;
+
+					continue;
+				}
+
+				$ForDestroy = ($ListIDArray['d'] == 1);
+
+				if ($ForDestroy && $build['level'] == 0)
+				{
+					$HaveRessources = false;
+					$HaveNoMoreLevel = true;
+				}
+				else
+					$HaveRessources = Building::IsElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+				if ($HaveRessources && Building::IsTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']))
+				{
+					$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+					$this->planet->metal 		-= $Needed['metal'];
+					$this->planet->crystal 		-= $Needed['crystal'];
+					$this->planet->deuterium 	-= $Needed['deuterium'];
+
+					$QueueArray[0]['s'] = time();
+
+					$Loop = false;
+
+					if ($this->config->log->get('buildings', false) == true)
+					{
+						Di::getDefault()->getShared('db')->insertAsDict('game_log_history',
+						[
+							'user_id' 			=> $this->user->id,
+							'time' 				=> time(),
+							'operation' 		=> ($ForDestroy ? 2 : 1),
+							'planet' 			=> $this->planet->id,
+							'from_metal' 		=> $this->planet->metal + $Needed['metal'],
+							'from_crystal' 		=> $this->planet->crystal + $Needed['crystal'],
+							'from_deuterium' 	=> $this->planet->deuterium + $Needed['deuterium'],
+							'to_metal' 			=> $this->planet->metal,
+							'to_crystal' 		=> $this->planet->crystal,
+							'to_deuterium' 		=> $this->planet->deuterium,
+							'build_id' 			=> $ListIDArray['i'],
+							'level' 			=> ($build['level'] + 1)
+						]);
+					}
+				}
+				else
+				{
+					if ($HaveNoMoreLevel)
+						$Message = sprintf(_getText('sys_nomore_level'), _getText('tech', $ListIDArray['i']));
+					elseif (!$HaveRessources)
+					{
+						$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+
+						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . _getText('tech', $ListIDArray['i']) . '" на планете '.$this->planet->name.' '.Helpers::BuildPlanetAdressLink($this->planet->toArray()).'.<br>Вам необходимо ещё: <br>';
+
+						if ($Needed['metal'] > $this->planet->metal)
+							$Message .= Helpers::pretty_number($Needed['metal'] - $this->planet->metal) . ' металла<br>';
+						if ($Needed['crystal'] > $this->planet->crystal)
+							$Message .= Helpers::pretty_number($Needed['crystal'] - $this->planet->crystal) . ' кристалла<br>';
+						if ($Needed['deuterium'] > $this->planet->deuterium)
+							$Message .= Helpers::pretty_number($Needed['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
+						if (isset($Needed['energy_max']) && isset($this->planet->energy_max) && $Needed['energy_max'] > $this->planet->energy_max)
+							$Message .= Helpers::pretty_number($Needed['energy_max'] - $this->planet->energy_max) . ' энергии<br>';
+					}
+
+					if (isset($Message))
+						User::sendMessage($this->user->id, 0, 0, 99, _getText('sys_buildlist'), $Message);
+
+					array_shift($QueueArray);
+
+					if (count($QueueArray) == 0)
+						$Loop = false;
+				}
+			}
+
+			$this->checkQueue();
+			$newQueue = $this->get();
+
+			$BuildEndTime = time();
+
+			foreach ($QueueArray as &$ListIDArray)
+			{
+				$ListIDArray['t'] = Building::GetBuildingTime($this->user, $this->planet, $ListIDArray['i']);
+
+				if ($ListIDArray['d'])
+					$ListIDArray['t'] = ceil($ListIDArray['t'] / 2);
+
+				$BuildEndTime += $ListIDArray['t'];
+				$ListIDArray['e'] = $BuildEndTime;
+			}
+
+			unset($ListIDArray);
+
+			$newQueue[self::QUEUE_TYPE_BUILDING] = $QueueArray;
+			$newQueue = json_encode($newQueue);
+
+			if ($this->queue != $newQueue)
+			{
+				$this->loadQueue($newQueue);
+				$this->saveQueue();
+			}
+		}
+	}
+
+	public function checkTechQueue ()
+	{
+		if (!($this->planet instanceof Planet))
+			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
+
+		if (!($this->user instanceof User))
+			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::User');
+
+		$Result['planet'] 	= false;
+		$Result['working'] 	= false;
+
+		if ($this->user->b_tech_planet != 0)
+		{
+			if ($this->user->b_tech_planet != $this->planet->id)
+				$ThePlanet = Planet::findFirst($this->user->b_tech_planet);
+			else
+				$ThePlanet = $this->planet;
+
+			$queueManager 	= new Queue($ThePlanet->queue);
+			$queueArray 	= $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+
+			if (count($queueArray))
+			{
+				if ($queueArray[0]['e'] <= time())
+				{
+					$this->user->b_tech_planet = 0;
+					$this->user->{$this->registry->resource[$queueArray[0]['i']]}++;
+
+					$queueManager->checkQueue();
+					$newQueue = $queueManager->get();
+					unset($newQueue[$queueManager::QUEUE_TYPE_RESEARCH]);
+
+					$ThePlanet->queue = json_encode($newQueue);
+					$ThePlanet->update();
+
+					if ($this->user->b_tech_planet == $this->planet->id)
+						$this->loadQueue($newQueue);
+				}
+				else
+				{
+					$Result['planet'] 	= $ThePlanet;
+					$Result['working'] 	= true;
+				}
+			}
+			else
+				$this->user->b_tech_planet = 0;
+
+			$this->user->update();
+		}
+
+		return $Result;
+	}
+
+	private function checkUnitQueue ($ProductionTime)
+	{
+		if ($this->getCount(self::QUEUE_TYPE_SHIPYARD))
+		{
+			$queueArray = $this->get();
+			$BuildQueue = $this->get(self::QUEUE_TYPE_SHIPYARD);
+
+			$this->planet->b_hangar = $BuildQueue[0]['s'];
+			$this->planet->b_hangar += $ProductionTime;
+
+			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->interceptor_misil + (2 * $this->planet->interplanetary_misil));
+
+			$max = [];
+
+			foreach ($this->registry->pricelist as $id => $data)
+			{
+				if (isset($data['max']) && isset($this->{$this->registry->resource[$id]}))
+					$max[$id] = $this->{$this->registry->resource[$id]};
+			}
+
+			$BuildArray = [];
+			$Builded = 0;
+
+			foreach ($BuildQueue as $Node => $Item)
+			{
+				if ($Item['i'] == 502 || $Item['i'] == 503)
+				{
+					if ($Item['i'] == 502)
+					{
+						if ($Item['l'] > $MissilesSpace)
+							$Item['l'] = $MissilesSpace;
+						else
+							$MissilesSpace -= $Item['l'];
+					}
+					else
+					{
+						if ($Item['l'] > floor($MissilesSpace / 2))
+							$Item['l'] = floor($MissilesSpace / 2);
+						else
+							$MissilesSpace -= $Item['l'];
+					}
+				}
+
+				if (isset($this->registry->pricelist[$Item['i']]['max']))
+				{
+					if ($Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
+						$Item['l'] = $this->registry->pricelist[$Item['i']]['max'];
+
+					if ($max[$Item['i']] + $Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
+						$Item['l'] = $this->registry->pricelist[$Item['i']]['max'] - $max[$Item['i']];
+
+					if ($Item['l'] > 0)
+						$max[$Item['i']] += $Item['l'];
+					else
+						$Item['l'] = 0;
+				}
+
+				$BuildArray[$Node] = [$Item['i'], $Item['l'], Building::GetBuildingTime($this->user, $this->planet, $Item['i'])];
+			}
+
+			$UnFinished = false;
+
+			$queueArray[self::QUEUE_TYPE_SHIPYARD] = [];
+
+			foreach ($BuildArray as list($Element, $Count, $BuildTime))
+			{
+				if (!isset($this->registry->resource[$Element]))
+					continue;
+
+				while ($this->planet->b_hangar >= $BuildTime && !$UnFinished)
+				{
+					$this->planet->b_hangar -= $BuildTime;
+					$Builded++;
+					$this->{$this->registry->resource[$Element]}++;
+					$Count--;
+
+					if ($Count <= 0)
+						break;
+					elseif ($this->planet->b_hangar < $BuildTime)
+						$UnFinished = true;
+				}
+
+				if ($Count > 0)
+				{
+					$UnFinished = true;
+
+					$queueArray[self::QUEUE_TYPE_SHIPYARD][] = ['i' => $Element, 'l' => $Count, 't' => 0, 's' => count($queueArray[self::QUEUE_TYPE_SHIPYARD]) == 0 ? $this->planet->b_hangar : 0, 'e' => 0];
+				}
+			}
+
+			if (!count($queueArray[self::QUEUE_TYPE_SHIPYARD]))
+				unset($queueArray[self::QUEUE_TYPE_SHIPYARD]);
+
+			$this->queue = json_encode($queueArray);
+
+			return $Builded;
+		}
+
+		return 0;
 	}
 }

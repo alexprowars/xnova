@@ -667,7 +667,7 @@ class OverviewController extends Controller
 		{
 			$parse['activity'] = ['chat' => [], 'forum' => []];
 
-			$memcache = new Memcache(new FrontendCache([]), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
+			$memcache = new Memcache(new FrontendCache(), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
 
 			$chatCached = $memcache->get("xnova-5-chat");
 
@@ -763,7 +763,7 @@ class OverviewController extends Controller
 
 		foreach ($this->registry->reslist['res'] AS $res)
 		{
-			if ($this->planet->getBuild($res.'_mine')['level'] && !$this->planet->getBuild($res.'_mine')['power'])
+			if ($this->planet->getBuildLevel($res.'_mine') && !$this->planet->getBuild($res.'_mine')['power'])
 				$showMessage = true;
 		}
 
