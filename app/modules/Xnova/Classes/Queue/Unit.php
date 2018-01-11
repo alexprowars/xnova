@@ -36,8 +36,8 @@ class Unit
 		if ($elementId == 502 || $elementId == 503)
 		{
 			$Missiles = [];
-			$Missiles[502] = $planet->{$registry->resource[502]};
-			$Missiles[503] = $planet->{$registry->resource[503]};
+			$Missiles[502] = $planet->getUnitCount('interceptor_misil');
+			$Missiles[503] = $planet->getUnitCount('interplanetary_misil');
 
 			$MaxMissiles = $planet->getBuildLevel('missile_facility') * 10;
 
@@ -50,7 +50,7 @@ class Unit
 
 		if (isset($registry->pricelist[$elementId]['max']))
 		{
-			$total = $planet->{$registry->resource[$elementId]};
+			$total = $planet->getUnitCount($elementId);
 
 			if (isset($BuildArray[$elementId]))
 				$total += $BuildArray[$elementId];

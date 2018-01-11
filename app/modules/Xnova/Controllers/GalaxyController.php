@@ -137,9 +137,9 @@ class GalaxyController extends Controller
 		
 		$Phalanx = 0;
 		
-		if ($this->planet->phalanx != 0)
+		if ($this->planet->getBuildLevel('phalanx') > 0)
 		{
-			$Range = Fleet::GetPhalanxRange($this->planet->phalanx);
+			$Range = Fleet::GetPhalanxRange($this->planet->getBuildLevel('phalanx'));
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
@@ -148,7 +148,7 @@ class GalaxyController extends Controller
 				$Phalanx = 1;
 		}
 		
-		if ($this->planet->interplanetary_misil <> 0)
+		if ($this->planet->getUnitCount('interplanetary_misil') > 0)
 		{
 			if ($galaxy == $this->planet->galaxy)
 			{
@@ -169,16 +169,34 @@ class GalaxyController extends Controller
 
 		$Destroy = 0;
 		
-		if ($this->planet->dearth_star > 0)
+		if ($this->planet->getUnitCount('dearth_star') > 0)
 			$Destroy = 1;
 		
 		$html = '';
 		
 		if ($mode == 2)
-			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->interplanetary_misil);
+			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->getUnitCount('interplanetary_misil'));
 
 		$html .= "<div id='galaxy' class='container-fluid'></div>";
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '".$this->url->getBaseUri()."assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
+
+		$jsUser = [
+			'id' => $this->user->id,
+			'phalanx' => $Phalanx,
+			'destroy' => $Destroy,
+			'missile' => $MissileBtn,
+			'total_points' => isset($records['total_points']) ? $records['total_points'] : 0,
+			'ally_id' => $this->user->ally_id,
+			'planet_current' => $this->user->planet_current,
+			'colonizer' => $this->planet->getUnitCount('colonizer'),
+			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
+			'spy' => (int) $this->user->spy,
+			'recycler' => $this->planet->getUnitCount('recycler'),
+			'interplanetary_misil' => $this->planet->getUnitCount('interplanetary_misil'),
+			'fleets' => $maxfleet_count,
+			'max_fleets' => $fleetmax
+		];
+
+		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '".$this->url->getBaseUri()."assets/images/'; var user = ".json_encode($jsUser)."; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
 

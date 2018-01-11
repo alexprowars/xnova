@@ -57,7 +57,6 @@ class Planet extends Model
 	public $system;
 	public $diameter;
 	public $parent_planet;
-	public $phalanx;
 	public $sprungtor;
 	public $last_jump_time;
 	public $destruyed;
@@ -74,6 +73,9 @@ class Planet extends Model
 	 * @var bool|array
 	 */
 	public $buildings = false;
+	/**
+	 * @var bool|array
+	 */
 	public $units = false;
 
 	public function onConstruct()
@@ -122,6 +124,34 @@ class Planet extends Model
 
 				$building['~level'] = $building['level'];
 				$building['~power'] = $building['power'];
+			}
+		}
+
+		if ($this->units !== false)
+		{
+			foreach ($this->units as $unit)
+			{
+				if ($unit['id'] == 0 && $unit['amount'] > 0)
+				{
+					$this->db->insertAsDict(DB_PREFIX.'planets_units', [
+						'planet_id' => $this->id,
+						'unit_id' => $unit['type'],
+						'amount' => $unit['amount'],
+					]);
+				}
+				elseif ($unit['amount'] != $unit['~amount'])
+				{
+					if ($unit['amount'] > 0)
+					{
+						$this->db->updateAsDict(DB_PREFIX.'planets_units', [
+							'amount' => $unit['amount']
+						], ['conditions' => 'id = ?', 'bind' => [$unit['id']]]);
+					}
+					else
+						$this->db->delete(DB_PREFIX.'planets_units', 'id = ?', [$unit['id']]);
+				}
+
+				$building['~amount'] = $unit['amount'];
 			}
 		}
 	}
@@ -175,14 +205,14 @@ class Planet extends Model
 		if (!$buildId)
 			return false;
 
-		if (!in_array($buildId, $this->registry->reslist['build']))
-			return false;
-
 		if ($this->buildings === false)
 			$this->getBuildingsData();
 
 		if (isset($this->buildings[$buildId]))
 			return $this->buildings[$buildId];
+
+		if (!in_array($buildId, $this->registry->reslist['build']))
+			return false;
 
 		$this->buildings[$buildId] = [
 			'id'		=> 0,
@@ -213,10 +243,76 @@ class Planet extends Model
 	}
 
 	public function getBuildLevel ($buildId)
-	{
-		$build = $this->getBuild($buildId);
+		{
+			$build = $this->getBuild($buildId);
 
-		return $build ? $build['level'] : 0;
+			return $build ? $build['level'] : 0;
+		}
+
+	private function getUnitsData ()
+	{
+		if ($this->units !== false)
+			return;
+
+		$this->units = [];
+
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_units WHERE planet_id = ?', [$this->id]);
+
+		while ($item = $items->fetch())
+		{
+			$this->units[$item['unit_id']] = [
+				'id'		=> (int) $item['id'],
+				'type'		=> (int) $item['unit_id'],
+				'amount'	=> (int) $item['amount'],
+				'~amount'	=> (int) $item['amount'],
+			];
+		}
+	}
+
+	public function getUnit ($unitId)
+	{
+		if (!is_numeric($unitId))
+			$unitId = $this->registry->resource_flip[$unitId];
+
+		$unitId = (int) $unitId;
+
+		if (!$unitId)
+			return false;
+
+		if ($this->units === false)
+			$this->getUnitsData();
+
+		if (isset($this->units[$unitId]))
+			return $this->units[$unitId];
+
+		if (!in_array($unitId, $this->registry->reslist['fleet']) && !in_array($unitId, $this->registry->reslist['defense']))
+			return false;
+
+		$this->units[$unitId] = [
+			'id'		=> 0,
+			'type'		=> $unitId,
+			'amount'	=> 0,
+			'~amount'	=> 0,
+		];
+
+		return $this->units[$unitId];
+	}
+
+	public function setUnit ($unitId, $count, $isDifferent = false)
+	{
+		$unit = $this->getUnit($unitId);
+
+		if ($isDifferent)
+			$this->units[$unit['type']]['amount'] = $unit['amount'] + (int) $count;
+		else
+			$this->units[$unit['type']]['amount'] = (int) $count;
+	}
+
+	public function getUnitCount ($unitId)
+	{
+		$unit = $this->getUnit($unitId);
+
+		return $unit ? $unit['amount'] : 0;
 	}
 
 	public function checkOwnerPlanet ()

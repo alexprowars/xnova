@@ -241,7 +241,7 @@ class InfoController extends Controller
 								$tt += $this->registry->pricelist[$type]['stay'] * $ship['cnt'];
 						}
 
-						$max = $this->planet->{$this->registry->resource[$BuildID]} * 10000;
+						$max = $this->planet->getBuildLevel($BuildID) * 10000;
 
 						if ($max > $this->planet->deuterium)
 							$cur = $this->planet->deuterium;
@@ -261,13 +261,13 @@ class InfoController extends Controller
 					}
 				}
 
-				if ($this->planet->{$this->registry->resource[$BuildID]} > 0)
+				if ($this->planet->getBuildLevel($BuildID) > 0)
 				{
 					if (!$parse['msg'])
 						$parse['msg'] = "Выберите флот для отправки дейтерия";
 
 					$parse['fleet'] = $this->BuildFleetCombo();
-					$parse['need'] = ($this->planet->{$this->registry->resource[$BuildID]} * 10000);
+					$parse['need'] = ($this->planet->getBuildLevel($BuildID) * 10000);
 
 					$this->view->setVar('parse', $parse);
 					$this->view->partial('info/buildings_ally');
@@ -377,19 +377,19 @@ class InfoController extends Controller
 					$_POST['502'] = abs(intval($_POST['502']));
 					$_POST['503'] = abs(intval($_POST['503']));
 
-					if ($_POST['502'] > $this->planet->{$this->registry->resource[502]})
-						$_POST['502'] = $this->planet->{$this->registry->resource[502]};
-					if ($_POST['503'] > $this->planet->{$this->registry->resource[503]})
-						$_POST['503'] = $this->planet->{$this->registry->resource[503]};
+					if ($_POST['502'] > $this->planet->getUnitCount('interceptor_misil'))
+						$_POST['502'] = $this->planet->getUnitCount('interceptor_misil');
+					if ($_POST['503'] > $this->planet->getUnitCount('interplanetary_misil'))
+						$_POST['503'] = $this->planet->getUnitCount('interplanetary_misil');
 
-					$this->planet->{$this->registry->resource[502]} -= $_POST['502'];
-					$this->planet->{$this->registry->resource[503]} -= $_POST['503'];
+					$this->planet->setUnit('interceptor_misil', -$_POST['502'], true);
+					$this->planet->setUnit('interplanetary_misil', -$_POST['502'], true);
 					$this->planet->update();
 				}
 
-				$parse['max_mis'] = $this->planet->{$this->registry->resource[44]} * 10;
-				$parse['int_miss'] = _getText('tech', 502) . ': ' . $this->planet->{$this->registry->resource[502]};
-				$parse['plant_miss'] = _getText('tech', 503) . ': ' . $this->planet->{$this->registry->resource[503]};
+				$parse['max_mis'] = $this->planet->getBuildLevel('missile_facility') * 10;
+				$parse['int_miss'] = _getText('tech', 502) . ': ' . $this->planet->getUnitCount('interceptor_misil');
+				$parse['plant_miss'] = _getText('tech', 503) . ': ' . $this->planet->getUnitCount('interplanetary_misil');
 
 				$this->view->partial('info/missile');
 			}

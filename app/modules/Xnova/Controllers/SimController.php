@@ -59,8 +59,8 @@ class SimController extends Controller
 		
 		foreach ($res AS $id)
 		{
-			if (isset($this->planet->{$this->registry->resource[$id]}) && $this->planet->{$this->registry->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->registry->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
+			if ($this->planet->getUnitCount($id) > 0)
+				$parse['slot_0'][$id] = ['c' => $this->planet->getUnitCount($id), 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
 		
 			if (isset($this->user->{$this->registry->resource[$id]}) && $this->user->{$this->registry->resource[$id]} > 0)
 				$parse['slot_0'][$id] = ['c' => $this->user->{$this->registry->resource[$id]}];

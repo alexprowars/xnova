@@ -71,7 +71,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					if ($Element < 100)
 						continue;
 
-					$TargetPlanet->{$this->registry->resource[$Element]} += $Fleet['cnt'];
+					$TargetPlanet->setUnit($Element, $Fleet['cnt'], true);
 				}
 			}
 
@@ -152,8 +152,8 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 			foreach ($res AS $id)
 			{
-				if (isset($TargetPlanet->{$this->registry->resource[$id]}) && $TargetPlanet->{$this->registry->resource[$id]} > 0)
-					$fleet_link .= $id . ',' . $TargetPlanet->{$this->registry->resource[$id]} . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
+				if ($TargetPlanet->getUnitCount($id) > 0)
+					$fleet_link .= $id . ',' . $TargetPlanet->getUnitCount($id) . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
 
 				if (isset($TargetUser->{$this->registry->resource[$id]}) && $TargetUser->{$this->registry->resource[$id]} > 0)
 					$fleet_link .= $id . ',' . $TargetUser->{$this->registry->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->registry->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->registry->resource[$id - 50]} : 0) . ';';

@@ -76,7 +76,7 @@ class TutorialController extends Controller
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->{$this->registry->resource[$element]}) ? ($this->user->{$this->registry->resource[$element]} >= $level) : ($this->planet->{$this->registry->resource[$element]} >= $level);
+						$check = isset($this->user->{$this->registry->resource[$element]}) ? ($this->user->{$this->registry->resource[$element]} >= $level) : ($this->planet->getBuildLevel($element) >= $level);
 
 						if ($chk == true)
 							$chk = $check;
@@ -121,7 +121,7 @@ class TutorialController extends Controller
 				{
 					if ($taskVal === true)
 					{
-						$check = $this->planet->{$this->registry->resource[22]} > 0 || $this->planet->{$this->registry->resource[23]} > 0 || $this->planet->{$this->registry->resource[24]} > 0;
+						$check = $this->planet->getBuildLevel('metal_store') > 0 || $this->planet->getBuildLevel('crystal_store') > 0 || $this->planet->getBuildLevel('deuterium_store') > 0;
 
 						$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 					}

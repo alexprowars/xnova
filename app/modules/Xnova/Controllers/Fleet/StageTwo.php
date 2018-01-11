@@ -51,15 +51,15 @@ class StageTwo
 							if (!isset($_POST[$ShipLabel]) || !is_numeric($_POST[$ShipLabel]) || intval($_POST[$ShipLabel]) < 0)
 								continue;
 
-							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->{$controller->registry->resource[$Ship]})
-								$ShipArray[$Ship] = $controller->planet->{$controller->registry->resource[$Ship]};
+							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->getUnitCount($Ship))
+								$ShipArray[$Ship] = $controller->planet->getUnitCount($Ship);
 							else
 								$ShipArray[$Ship] = abs(intval($_POST[$ShipLabel]));
 
 							if ($ShipArray[$Ship] != 0)
 							{
-								$controller->planet->{$controller->registry->resource[$Ship]} -= $ShipArray[$Ship];
-								$TargetGate->{$controller->registry->resource[$Ship]} += $ShipArray[$Ship];
+								$controller->planet->setUnit($Ship, -$ShipArray[$Ship], true);
+								$TargetGate->setUnit($Ship, $ShipArray[$Ship], true);
 							}
 							else
 								unset($ShipArray[$Ship]);

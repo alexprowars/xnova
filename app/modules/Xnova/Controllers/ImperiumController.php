@@ -123,7 +123,7 @@ class ImperiumController extends Controller
 
 				$parse['file_'.$res][] = $planet->{$res};
 				$parse['file_'.$res.'_ph'][] = $planet->{$res.'_perhour'};
-				$parse['file_'.$res.'_p'][] = $planet->{$res.'_mine_porcent'} * 10;
+				$parse['file_'.$res.'_p'][] = $planet->getBuild($res.'_mine')['power'] * 10;
 			}
 
 			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('solar_plant')['power'] * 10) . '</font>%</th>';
@@ -164,7 +164,7 @@ class ImperiumController extends Controller
 
 				if (in_array($i, $this->registry->reslist['build']))
 				{
-					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getBuildLevel($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					$r[$i] .= ($planet->getBuildLevel($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getBuildLevel($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
 					if ($r1[$i] < $planet->getBuildLevel($i))
 						$r1[$i] = $planet->getBuildLevel($i);
 				}
@@ -173,12 +173,12 @@ class ImperiumController extends Controller
 
 					$r[$i] .= '<th>';
 
-					if ($planet->{$this->registry->resource[$i]} == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
+					if ($planet->getUnitCount($i) == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
 						$r[$i] .= '-';
 					else
 					{
-						if ($planet->{$this->registry->resource[$i]} >= 0)
-							$r[$i] .= $planet->{$this->registry->resource[$i]};
+						if ($planet->getUnitCount($i) >= 0)
+							$r[$i] .= $planet->getUnitCount($i);
 						if (isset($build_hangar[$i]))
 							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
 						if (isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
@@ -186,12 +186,12 @@ class ImperiumController extends Controller
 						$r[$i] .= '</th>';
 					}
 
-					$r1[$i] += $planet->{$this->registry->resource[$i]};
+					$r1[$i] += $planet->getUnitCount($i);
 				}
 				elseif (in_array($i, $this->registry->reslist['defense']))
 				{
-					$r[$i] .= ($planet->{$this->registry->resource[$i]} == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->{$this->registry->resource[$i]} . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					$r1[$i] += $planet->{$this->registry->resource[$i]};
+					$r[$i] .= ($planet->getUnitCount($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getUnitCount($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
+					$r1[$i] += $planet->getUnitCount($i);
 				}
 			}
 		}
@@ -212,7 +212,7 @@ class ImperiumController extends Controller
 
 		foreach ($this->registry->reslist['build'] as $i)
 		{
-			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->{$this->registry->resource[$i]} . " (" . $r1[$i] . ")</th></tr>";
+			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->getBuildLevel($i) . " (" . $r1[$i] . ")</th></tr>";
 		}
 
 		foreach ($this->registry->reslist['fleet'] as $i)

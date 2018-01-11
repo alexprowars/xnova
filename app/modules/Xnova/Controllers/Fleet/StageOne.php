@@ -57,9 +57,9 @@ class StageOne
 
 		foreach ($controller->registry->reslist['fleet'] as $n => $i)
 		{
-			if (isset($_POST["ship" . $i]) && in_array($i, $controller->registry->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
+			if (isset($_POST["ship" . $i]) && intval($_POST["ship" . $i]) > 0)
 			{
-				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->registry->resource[$i]})
+				if (intval($_POST["ship" . $i]) > $controller->planet->getUnitCount($i))
 					continue;
 
 				$fleet['fleetarray'][$i] = intval($_POST["ship" . $i]);

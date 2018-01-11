@@ -91,10 +91,10 @@ class StageZero
 
 		foreach ($controller->registry->reslist['fleet'] as $n => $i)
 		{
-			if ($controller->planet->{$controller->registry->resource[$i]} > 0)
+			if ($controller->planet->getUnitCount($i) > 0)
 			{
 				$ship = $controller->getShipInfo($i);
-				$ship['count'] = $controller->planet->{$controller->registry->resource[$i]};
+				$ship['count'] = $controller->planet->getUnitCount($i);
 
 				$parse['ships'][] = $ship;
 			}

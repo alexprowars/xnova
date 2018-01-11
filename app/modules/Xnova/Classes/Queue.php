@@ -472,14 +472,14 @@ class Queue
 			$this->planet->b_hangar = $BuildQueue[0]['s'];
 			$this->planet->b_hangar += $ProductionTime;
 
-			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->interceptor_misil + (2 * $this->planet->interplanetary_misil));
+			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->getUnitCount('interceptor_misil') + (2 * $this->planet->getUnitCount('interplanetary_misil')));
 
 			$max = [];
 
 			foreach ($this->registry->pricelist as $id => $data)
 			{
-				if (isset($data['max']) && isset($this->{$this->registry->resource[$id]}))
-					$max[$id] = $this->{$this->registry->resource[$id]};
+				if (isset($data['max']) && $this->planet->getUnitCount($id) > 0)
+					$max[$id] = $this->planet->getUnitCount($id);
 			}
 
 			$BuildArray = [];
@@ -535,7 +535,7 @@ class Queue
 				{
 					$this->planet->b_hangar -= $BuildTime;
 					$Builded++;
-					$this->{$this->registry->resource[$Element]}++;
+					$this->planet->setUnit($Element, 1, true);
 					$Count--;
 
 					if ($Count <= 0)
@@ -548,14 +548,24 @@ class Queue
 				{
 					$UnFinished = true;
 
-					$queueArray[self::QUEUE_TYPE_SHIPYARD][] = ['i' => $Element, 'l' => $Count, 't' => 0, 's' => count($queueArray[self::QUEUE_TYPE_SHIPYARD]) == 0 ? $this->planet->b_hangar : 0, 'e' => 0];
+					$queueArray[self::QUEUE_TYPE_SHIPYARD][] = [
+						'i' => $Element,
+						'l' => $Count,
+						't' => 0,
+						's' => count($queueArray[self::QUEUE_TYPE_SHIPYARD]) == 0 ? $this->planet->b_hangar : 0,
+						'e' => 0
+					];
 				}
 			}
 
 			if (!count($queueArray[self::QUEUE_TYPE_SHIPYARD]))
 				unset($queueArray[self::QUEUE_TYPE_SHIPYARD]);
 
-			$this->queue = json_encode($queueArray);
+			if ($Builded > 0)
+			{
+				$this->loadQueue($queueArray);
+				$this->saveQueue();
+			}
 
 			return $Builded;
 		}

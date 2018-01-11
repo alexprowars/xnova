@@ -93,11 +93,13 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$res = [];
 
-		for ($i = 200; $i < 500; $i++)
+		$units = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+
+		foreach ($units as $i)
 		{
-			if (isset($this->registry->resource[$i]) && isset($target->{$this->registry->resource[$i]}) && $target->{$this->registry->resource[$i]} > 0)
+			if (isset($this->registry->resource[$i]) && $target->getUnitCount($i) > 0)
 			{
-				$res[$i] = $target->{$this->registry->resource[$i]};
+				$res[$i] = $target->getUnitCount($i);
 
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
@@ -123,13 +125,13 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$homeFleet = new HomeFleet(0);
 
-		for ($i = 200; $i < 500; $i++)
+		foreach ($units as $i)
 		{
-			if (isset($this->registry->resource[$i]) && isset($target->{$this->registry->resource[$i]}) && $target->{$this->registry->resource[$i]} > 0)
+			if (isset($this->registry->resource[$i]) && $target->getUnitCount($i) > 0)
 			{
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				$shipType = $this->getShipType($i, [$target->{$this->registry->resource[$i]}, (isset($this->registry->resource[$l]) && isset($targetUser->{$this->registry->resource[$l]}) ? $targetUser->{$this->registry->resource[$l]} : 0)], $res);
+				$shipType = $this->getShipType($i, [$target->getUnitCount($i), (isset($this->registry->resource[$l]) && isset($targetUser->{$this->registry->resource[$l]}) ? $targetUser->{$this->registry->resource[$l]} : 0)], $res);
 
 				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship')
 					$shipType->setRepairProb(0.8);
@@ -349,10 +351,10 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					$target->deuterium -= $steal['deuterium'];
 				}
 
-				for ($i = 200; $i < 500; $i++)
+				foreach ($units as $i)
 				{
-					if (isset($this->registry->resource[$i]) && isset($defender[$i]) && isset($target->{$this->registry->resource[$i]}))
-						$target->{$this->registry->resource[$i]} = $defender[$i];
+					if (isset($this->registry->resource[$i]) && isset($defender[$i]) && $target->getUnitCount($i) > 0)
+						$target->setUnit($i, $defender[$i]);
 				}
 
 				$target->update();

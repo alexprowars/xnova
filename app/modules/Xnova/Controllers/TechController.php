@@ -59,7 +59,7 @@ class TechController extends Controller
 							{
 								if (isset($this->user->{$this->registry->resource[$ResClass]}) && $this->user->{$this->registry->resource[$ResClass]} >= $Level)
 									$pars['required_list'] .= "<span class=\"positive\">";
-								elseif (isset($this->planet->{$this->registry->resource[$ResClass]}) && $this->planet->{$this->registry->resource[$ResClass]} >= $Level)
+								elseif ($this->planet->getBuildLevel($ResClass) >= $Level)
 									$pars['required_list'] .= "<span class=\"positive\">";
 								else
 									$pars['required_list'] .= "<span class=\"negative\">";
@@ -71,9 +71,9 @@ class TechController extends Controller
 									$minus = $Level - $this->user->{$this->registry->resource[$ResClass]};
 									$pars['required_list'] .= " + <b>" . $minus . "</b>";
 								}
-								elseif (isset($this->planet->{$this->registry->resource[$ResClass]}) && $this->planet->{$this->registry->resource[$ResClass]} < $Level)
+								elseif ($this->planet->getBuildLevel($ResClass) < $Level)
 								{
-									$minus = $Level - $this->planet->{$this->registry->resource[$ResClass]};
+									$minus = $Level - $this->planet->getBuildLevel($ResClass);
 									$pars['required_list'] .= " + <b>" . $minus . "</b>";
 								}
 							}
@@ -114,7 +114,7 @@ class TechController extends Controller
 		if ($element > 0 && isset($this->registry->resource[$element]))
 		{
 			$this->view->setVar('element', $element);
-			$this->view->setVar('level', isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->{$this->registry->resource[$element]});
+			$this->view->setVar('level', isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->getBuildLevel($element));
 
 			if (isset($this->registry->requeriments[$element]))
 				$this->view->setVar('req', $this->registry->requeriments[$element]);

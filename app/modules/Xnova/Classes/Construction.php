@@ -416,7 +416,7 @@ class Construction
 
 			$row['access']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['count'] 	= $this->planet->{$storage->resource[$Element]};
+			$row['count'] 	= $this->planet->getUnitCount($Element);
 			$row['price'] 	= Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
 
 			if ($isAccess)
@@ -430,7 +430,7 @@ class Construction
 
 					if (isset($storage->pricelist[$Element]['max']))
 					{
-						$total = $this->planet->{$storage->resource[$Element]};
+						$total = $this->planet->getUnitCount($Element);
 
 						if (isset($BuildArray[$Element]))
 							$total += $BuildArray[$Element];

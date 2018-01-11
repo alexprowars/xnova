@@ -86,7 +86,7 @@ class FleetEngine extends Injectable
 				foreach ($fleetData as $shipId => $shipArr)
 				{
 					if ($shipArr['cnt'] > 0)
-						$TargetPlanet->{$this->registry->resource[$shipId]} += $shipArr['cnt'];
+						$TargetPlanet->setUnit($shipId, $shipArr['cnt'], true);
 				}
 			}
 
@@ -126,7 +126,7 @@ class FleetEngine extends Injectable
 		]);
 	}
 
-	public function SpyTarget ($TargetPlanet, $Mode, $TitleString)
+	public function SpyTarget (Planet $TargetPlanet, $Mode, $TitleString)
 	{
 		$LookAtLoop = true;
 		$String = '';
@@ -203,14 +203,26 @@ class FleetEngine extends Injectable
 
 				for ($Item = $ResFrom[$CurrentLook]; $Item <= $ResTo[$CurrentLook]; $Item++)
 				{
-					if (isset($this->registry->resource[$Item]) && (($TargetPlanet->{$this->registry->resource[$Item]} > 0 && $Item < 600) || ($TargetPlanet->{$this->registry->resource[$Item]} > time() && $Item > 600)))
+					if (!isset($this->registry->resource[$Item]))
+						continue;
+
+					$level = 0;
+
+					if (in_array($Item, $this->registry->reslist['build']))
+						$level = $TargetPlanet->getBuildLevel($Item);
+					elseif (in_array($Item, $this->registry->reslist['fleet']) || in_array($Item, $this->registry->reslist['defense']))
+						$level = $TargetPlanet->getUnitCount($Item);
+					elseif (in_array($Item, $this->registry->reslist['officier']))
+						$level = $TargetPlanet->{$this->registry->resource[$Item]};
+
+					if (($level && $Item < 600) || ($level > time() && $Item > 600))
 					{
 						if ($row == 0)
 							$String .= "<tr>";
 
-						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $TargetPlanet->{$this->registry->resource[$Item]} : '+') . "</th>";
+						$String .= "<th width=40%>" . _getText('tech', $Item) . "</th><th width=10%>" . (($Item < 600) ? $level : '+') . "</th>";
 
-						$Count += $TargetPlanet->{$this->registry->resource[$Item]};
+						$Count += $Item < 600 ? $level : 1;
 						$row++;
 
 						if ($row == $this->config->game->get('spyReportRow', 1))
@@ -257,8 +269,6 @@ class FleetEngine extends Injectable
 
 		if (!$fleetId)
 			$fleetId = $this->_fleet->id;
-
-		print_r($update);
 
 		$this->db->updateAsDict($this->_fleet->getSource(), $update, 'id = '.$fleetId);
 

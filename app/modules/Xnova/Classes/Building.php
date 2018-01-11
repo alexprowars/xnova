@@ -125,7 +125,7 @@ class Building
 				{
 					if (isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} >= $Level)
 						$result .= "<span class=\"positive\">";
-					elseif (isset($planet->{$storage->resource[$ResClass]}) && $planet->{$storage->resource[$ResClass]} >= $Level)
+					elseif ($planet->getBuildLevel($ResClass) >= $Level)
 						$result .= "<span class=\"positive\">";
 					else
 						$result .= "<span class=\"negative\">";

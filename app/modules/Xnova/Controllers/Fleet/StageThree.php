@@ -77,7 +77,7 @@ class StageThree
 
 		foreach ($fleetarray as $Ship => $Count)
 		{
-			if ($Count > $controller->planet->{$controller->registry->resource[$Ship]})
+			if ($Count > $controller->planet->getUnitCount($Ship))
 				throw new RedirectException("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -333,7 +333,7 @@ class StageThree
 
 			$fleet_array .= (isset($controller->user->{'fleet_' . $Ship})) ? $Ship . "," . $Count . "!" . $controller->user->{'fleet_' . $Ship} . ";" : $Ship . "," . $Count . "!0;";
 
-			$controller->planet->{$controller->registry->resource[$Ship]} -= $Count;
+			$controller->planet->setUnit($Ship, -$Count, true);
 		}
 
 		$FleetStorage -= $consumption;

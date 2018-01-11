@@ -47,7 +47,7 @@ class BuildingsController extends Controller
 
 	public function fleetAction ()
 	{
-		if ($this->planet->{$this->registry->resource[21]} == 0)
+		if ($this->planet->getBuildLevel('hangar') == 0)
 			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
@@ -87,7 +87,7 @@ class BuildingsController extends Controller
 
 	public function defenseAction ()
 	{
-		if ($this->planet->{$this->registry->resource[21]} == 0 && $this->planet->planet_type != 5)
+		if ($this->planet->getBuildLevel('hangar') == 0 && $this->planet->planet_type != 5)
 			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
 
 		if ($this->planet->planet_type == 5)

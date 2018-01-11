@@ -576,7 +576,7 @@ class OverviewController extends Controller
 		$parse['metal_debris'] = $this->planet->debris_metal;
 		$parse['crystal_debris'] = $this->planet->debris_crystal;
 
-		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->registry->resource[209]} != 0);
+		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getBuildLevel('recycler') > 0);
 
 		if (!$this->planet->isEmptyQueue())
 		{
