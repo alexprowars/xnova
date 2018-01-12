@@ -17,6 +17,7 @@ use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
 use Xnova\Helpers;
 use Xnova\Models\User;
+use Xnova\Vars;
 
 class MissionCaseExpedition extends FleetEngine implements Mission
 {
@@ -29,8 +30,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 	{
 		$Expowert = [];
 
-		foreach ($this->registry->reslist['fleet'] as $ID)
-			$Expowert[$ID] = ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']) / 200;
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
+			$Expowert[$ID] = Vars::getItemTotalPrice($ID) / 200;
 
 		$FleetPoints = 0;
 
@@ -151,12 +152,12 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				$Found = [];
 
-				foreach ($this->registry->reslist['fleet'] as $ID)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
 				{
 					if(!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214)
 						continue;
 
-					$MaxFound = floor($FoundShips / ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']));
+					$MaxFound = floor($FoundShips / Vars::getItemTotalPrice($ID));
 
 					if ($MaxFound <= 0)
 						continue;
@@ -168,7 +169,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 					$Found[$ID]	= $Count;
 
-					$FoundShips	 		-= $Count * ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']);
+					$FoundShips	 		-= $Count * Vars::getItemTotalPrice($ID);
 					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Helpers::pretty_number($Count);
 
 					if ($FoundShips <= 0)
@@ -265,7 +266,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
-				foreach ($this->registry->reslist['tech'] AS $techId)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 				{
 					if (isset($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
 						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] + $Def), 0);

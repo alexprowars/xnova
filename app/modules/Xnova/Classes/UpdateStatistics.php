@@ -54,28 +54,29 @@ class UpdateStatistics extends Injectable
 			$this->maxinfos[$ID] = ['maxlvl' => $Count, 'username' => $Data['username']];
 	}
 
-	private function GetTechnoPoints ($CurrentUser)
+	private function GetTechnoPoints ($user)
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
 
-		$res_array = array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f']);
+		$res_array = Vars::getItemsByType([Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]);
 
-		foreach ($res_array as $Techno)
+		foreach ($res_array as $itemId)
 		{
-			if ($CurrentUser[$this->registry->resource[$Techno]] == 0)
+			if ($user[$this->registry->resource[$itemId]] == 0)
 				continue;
 
-			if ($CurrentUser['records'] == 1 && $Techno < 300)
-				$this->SetMaxInfo($Techno, $CurrentUser[$this->registry->resource[$Techno]], $CurrentUser);
+			if ($user['records'] == 1 && $itemId < 300)
+				$this->SetMaxInfo($itemId, $user[$this->registry->resource[$itemId]], $user);
 
-			$Units = $this->registry->pricelist[$Techno]['metal'] + $this->registry->pricelist[$Techno]['crystal'] + $this->registry->pricelist[$Techno]['deuterium'];
+			$price = Vars::getItemPrice($itemId);
 
-			for ($Level = 1; $Level <= $CurrentUser[$this->registry->resource[$Techno]]; $Level++)
-			{
-				$TechPoints += $Units * pow($this->registry->pricelist[$Techno]['factor'], $Level);
-			}
-			$TechCounts += $CurrentUser[$this->registry->resource[$Techno]];
+			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+
+			for ($Level = 1; $Level <= $user[$this->registry->resource[$itemId]]; $Level++)
+				$TechPoints += $Units * pow($price['factor'], $Level);
+
+			$TechCounts += $user[$this->registry->resource[$itemId]];
 		}
 		$RetValue['TechCount'] = $TechCounts;
 		$RetValue['TechPoint'] = $TechPoints;
@@ -83,24 +84,27 @@ class UpdateStatistics extends Injectable
 		return $RetValue;
 	}
 
-	private function GetBuildPoints ($CurrentPlanet, $User)
+	private function GetBuildPoints ($planet, $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
-		foreach ($this->registry->reslist['build'] as $Build)
+
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $itemId)
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Build]] == 0)
+			if ($planet[$this->registry->resource[$itemId]] == 0)
 				continue;
 
-			if ($User['records'] == 1)
-				$this->SetMaxInfo($Build, $CurrentPlanet[$this->registry->resource[$Build]], $User);
+			if ($user['records'] == 1)
+				$this->SetMaxInfo($itemId, $planet[$this->registry->resource[$itemId]], $user);
 
-			$Units = $this->registry->pricelist[$Build]['metal'] + $this->registry->pricelist[$Build]['crystal'] + $this->registry->pricelist[$Build]['deuterium'];
-			for ($Level = 1; $Level <= $CurrentPlanet[$this->registry->resource[$Build]]; $Level++)
-			{
-				$BuildPoints += $Units * pow($this->registry->pricelist[$Build]['factor'], $Level);
-			}
-			$BuildCounts += $CurrentPlanet[$this->registry->resource[$Build]];
+			$price = Vars::getItemPrice($itemId);
+
+			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+
+			for ($Level = 1; $Level <= $planet[$this->registry->resource[$itemId]]; $Level++)
+				$BuildPoints += $Units * pow($price['factor'], $Level);
+
+			$BuildCounts += $planet[$this->registry->resource[$itemId]];
 		}
 		$RetValue['BuildCount'] = $BuildCounts;
 		$RetValue['BuildPoint'] = $BuildPoints;
@@ -108,51 +112,56 @@ class UpdateStatistics extends Injectable
 		return $RetValue;
 	}
 
-	private function GetDefensePoints ($CurrentPlanet, &$RecordArray)
+	private function GetDefensePoints ($planet, &$RecordArray)
 	{
 		$DefenseCounts = 0;
 		$DefensePoints = 0;
 
-		foreach ($this->registry->reslist['defense'] as $Defense)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $itemId)
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Defense]] > 0)
-			{
-				if (isset($RecordArray[$Defense]))
-					$RecordArray[$Defense] += $CurrentPlanet[$this->registry->resource[$Defense]];
-				else
-					$RecordArray[$Defense] = $CurrentPlanet[$this->registry->resource[$Defense]];
+			if ($planet[$this->registry->resource[$itemId]] <= 0)
+				continue;
 
-				$Units = $this->registry->pricelist[$Defense]['metal'] + $this->registry->pricelist[$Defense]['crystal'] + $this->registry->pricelist[$Defense]['deuterium'];
-				$DefensePoints += ($Units * $CurrentPlanet[$this->registry->resource[$Defense]]);
-				$DefenseCounts += $CurrentPlanet[$this->registry->resource[$Defense]];
-			}
+			if (isset($RecordArray[$itemId]))
+				$RecordArray[$itemId] += $planet[$this->registry->resource[$itemId]];
+			else
+				$RecordArray[$itemId] = $planet[$this->registry->resource[$itemId]];
+
+			$Units = Vars::getItemTotalPrice($itemId, true);
+
+			$DefensePoints += ($Units * $planet[$this->registry->resource[$itemId]]);
+			$DefenseCounts += $planet[$this->registry->resource[$itemId]];
 		}
+
 		$RetValue['DefenseCount'] = $DefenseCounts;
 		$RetValue['DefensePoint'] = $DefensePoints;
 
 		return $RetValue;
 	}
 
-	private function GetFleetPoints ($CurrentPlanet, &$RecordArray)
+	private function GetFleetPoints ($planet, &$RecordArray)
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
 
-		foreach ($this->registry->reslist['fleet'] as $Fleet)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $itemId)
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Fleet]] > 0)
-			{
-				if (isset($RecordArray[$Fleet]))
-					$RecordArray[$Fleet] += $CurrentPlanet[$this->registry->resource[$Fleet]];
-				else
-					$RecordArray[$Fleet] = $CurrentPlanet[$this->registry->resource[$Fleet]];
+			if ($planet[$this->registry->resource[$itemId]] <= 0)
+				continue;
 
-				$Units = $this->registry->pricelist[$Fleet]['metal'] + $this->registry->pricelist[$Fleet]['crystal'] + $this->registry->pricelist[$Fleet]['deuterium'];
-				$FleetPoints += ($Units * $CurrentPlanet[$this->registry->resource[$Fleet]]);
-				if ($Fleet != 212)
-					$FleetCounts += $CurrentPlanet[$this->registry->resource[$Fleet]];
-			}
+			if (isset($RecordArray[$itemId]))
+				$RecordArray[$itemId] += $planet[$this->registry->resource[$itemId]];
+			else
+				$RecordArray[$itemId] = $planet[$this->registry->resource[$itemId]];
+
+			$Units = Vars::getItemTotalPrice($itemId, true);
+
+			$FleetPoints += ($Units * $planet[$this->registry->resource[$itemId]]);
+
+			if ($itemId != 212)
+				$FleetCounts += $planet[$this->registry->resource[$itemId]];
 		}
+
 		$RetValue['FleetCount'] = $FleetCounts;
 		$RetValue['FleetPoint'] = $FleetPoints;
 
@@ -167,7 +176,7 @@ class UpdateStatistics extends Injectable
 
 		foreach ($CurrentFleet as $type => $ship)
 		{
-			$Units = $this->registry->pricelist[$type]['metal'] + $this->registry->pricelist[$type]['crystal'] + $this->registry->pricelist[$type]['deuterium'];
+			$Units = Vars::getItemTotalPrice($type, true);
 			$FleetPoints += ($Units * $ship['cnt']);
 
 			if ($type != 212)
@@ -532,7 +541,7 @@ class UpdateStatistics extends Injectable
 
 	public function buildRecordsCache ()
 	{
-		$Elements = array_merge($this->registry->reslist['build'], $this->registry->reslist['tech'], $this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+		$Elements = Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		$array = "";
 		foreach ($Elements as $ElementID)

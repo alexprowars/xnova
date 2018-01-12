@@ -86,7 +86,7 @@ class Fleet extends Building
 	{
 		$storage = $user->getDI()->getShared('registry');
 
-		foreach ($storage->reslist['fleet'] as $Ship)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship)
 		{
 			if (isset($storage->CombatCaps[$Ship]) && isset($storage->CombatCaps[$Ship]['engine_up']))
 			{

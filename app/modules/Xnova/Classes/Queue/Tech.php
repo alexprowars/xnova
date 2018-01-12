@@ -11,6 +11,7 @@ namespace Xnova\Queue;
 use Xnova\Building;
 use Phalcon\Di;
 use Xnova\Queue;
+use Xnova\Vars;
 
 class Tech
 {
@@ -39,7 +40,9 @@ class Tech
 
 			$planet->spaceLabs = $spaceLabs;
 
-			if (Building::IsTechnologieAccessible($user, $planet, $elementId) && Building::IsElementBuyable($user, $planet, $elementId) && !(isset($registry->pricelist[$elementId]['max']) && $user->{$registry->resource[$elementId]} >= $registry->pricelist[$elementId]['max']))
+			$price = Vars::getItemPrice($elementId);
+
+			if (Building::IsTechnologieAccessible($user, $planet, $elementId) && Building::IsElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->{$registry->resource[$elementId]} >= $price['max']))
 			{
 				$costs = Building::GetBuildingPrice($user, $planet, $elementId);
 

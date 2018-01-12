@@ -12,6 +12,7 @@ use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Fleet;
+use Xnova\Vars;
 
 class StageZero
 {
@@ -89,7 +90,7 @@ class StageZero
 
 		$parse['ships'] = [];
 
-		foreach ($controller->registry->reslist['fleet'] as $n => $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $n => $i)
 		{
 			if ($controller->planet->getUnitCount($i) > 0)
 			{

@@ -10,6 +10,7 @@ namespace Xnova\Models;
 
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
+use Xnova\Vars;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -211,7 +212,7 @@ class Planet extends Model
 		if (isset($this->buildings[$buildId]))
 			return $this->buildings[$buildId];
 
-		if (!in_array($buildId, $this->registry->reslist['build']))
+		if (Vars::getItemType($buildId) != Vars::ITEM_TYPE_BUILING)
 			return false;
 
 		$this->buildings[$buildId] = [
@@ -285,7 +286,7 @@ class Planet extends Model
 		if (isset($this->units[$unitId]))
 			return $this->units[$unitId];
 
-		if (!in_array($unitId, $this->registry->reslist['fleet']) && !in_array($unitId, $this->registry->reslist['defense']))
+		if (!in_array(Vars::getItemType($unitId), [Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]))
 			return false;
 
 		$this->units[$unitId] = [

@@ -412,7 +412,7 @@ class Controller extends PhalconController
 
 		$parse['officiers'] = [];
 
-		foreach ($this->registry->reslist['officier'] AS $officier)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 		{
 			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
 		}

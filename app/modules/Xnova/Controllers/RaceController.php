@@ -13,6 +13,7 @@ use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/race")
@@ -94,8 +95,8 @@ class RaceController extends Controller
 			{
 				$update = ['race' => intval($r), 'bonus' => time() + 86400];
 
-				foreach ($this->registry->reslist['officier'] AS $oId)
-					$update[$this->registry->resource[$oId]] = time() + 86400;
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
+					$update[Vars::getName($oId)] = time() + 86400;
 					
 				$this->user->update($update);
 		

@@ -12,6 +12,7 @@ use Xnova\FleetEngine;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Models\User;
+use Xnova\Vars;
 
 class MissionCaseSpy extends FleetEngine implements Mission
 {
@@ -142,11 +143,11 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			$fleet_link = '';
 
 			if ($ST == 2)
-				$res = $this->registry->reslist['fleet'];
+				$res = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 			elseif ($ST >= 3 && $ST <= 6)
-				$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+				$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 			elseif ($ST >= 7)
-				$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense'], $this->registry->reslist['tech']);
+				$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
 			else
 				$res = [];
 

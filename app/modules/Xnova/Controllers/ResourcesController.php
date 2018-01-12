@@ -13,6 +13,7 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/resources")
@@ -158,7 +159,7 @@ class ResourcesController extends Controller
 
 			$CurrRow = [];
 			$CurrRow['id'] = $ProdID;
-			$CurrRow['name'] = $this->registry->resource[$ProdID];
+			$CurrRow['name'] = Vars::getName($ProdID);
 			$CurrRow['porcent'] = $BuildLevelFactor;
 
 			$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));

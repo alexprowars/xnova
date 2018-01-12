@@ -97,24 +97,7 @@ class Game extends Component
 
 	public function loadGameVariables ()
 	{
-		require_once(ROOT_PATH."/app/varsGlobal.php");
-
-		/** @var array $resource */
-		/** @var array $requeriments */
-		/** @var array $pricelist */
-		/** @var array $gun_armour */
-		/** @var array $CombatCaps */
-		/** @var array $ProdGrid */
-		/** @var array $reslist */
-
-		$this->registry->resource = $resource;
-		$this->registry->resource_flip = array_flip($resource);
-		$this->registry->requeriments = $requeriments;
-		$this->registry->pricelist = $pricelist;
-		$this->registry->gun_armour = $gun_armour;
-		$this->registry->CombatCaps = $CombatCaps;
-		$this->registry->ProdGrid = $ProdGrid;
-		$this->registry->reslist = $reslist;
+		Vars::init();
 	}
 
 	public function checkSaveState ()

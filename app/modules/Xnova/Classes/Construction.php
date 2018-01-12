@@ -92,7 +92,7 @@ class Construction
 
 		$parse['BuildingsList'] = [];
 
-		foreach ($storage->reslist['build'] as $Element)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
 		{
 			if (!in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]))
 				continue;
@@ -191,9 +191,9 @@ class Construction
 		$this->planet->spaceLabs = $spaceLabs;
 
 		if ($mode == 'fleet')
-			$res_array = $storage->reslist['tech_f'];
+			$res_array = Vars::getItemsByType(Vars::ITEM_TYPE_TECH_FLEET);
 		else
-			$res_array = $storage->reslist['tech'];
+			$res_array = Vars::getItemsByType(Vars::ITEM_TYPE_TECH);
 
 		$PageParse['mode'] = $this->mode;
 
@@ -256,12 +256,14 @@ class Construction
 			$row['access'] = $isAccess;
 			$row['i'] = $Tech;
 
+			$price = Vars::getItemPrice($Tech);
+
 			$building_level = $this->user->{$storage->resource[$Tech]};
 
 			$row['tech_level'] = ($building_level == 0) ? "<font color=#FF0000>" . $building_level . "</font>" : "<font color=#00FF00>" . $building_level . "</font>";
 
-			if (isset($storage->pricelist[$Tech]['max']))
-				$row['tech_level'] .= ' из <font color=yellow>' . $storage->pricelist[$Tech]['max'] . '</font>';
+			if (isset($price['max']))
+				$row['tech_level'] .= ' из <font color=yellow>' . $price['max'] . '</font>';
 
 			$row['tech_price'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Tech), $this->planet);
 
@@ -306,7 +308,7 @@ class Construction
 				{
 					$LevelToDo = 1 + $this->user->{$storage->resource[$Tech]};
 
-					if (isset($storage->pricelist[$Tech]['max']) && $this->user->{$storage->resource[$Tech]} >= $storage->pricelist[$Tech]['max'])
+					if (isset($price['max']) && $this->user->{$storage->resource[$Tech]} >= $price['max'])
 						$TechnoLink = '<font color=#FF0000>максимальный уровень</font>';
 					elseif ($CanBeDone)
 					{
@@ -370,9 +372,9 @@ class Construction
 		$queueManager = new Queue($this->planet->queue);
 
 		if ($mode == 'defense')
-			$elementIDs = $storage->reslist['defense'];
+			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
 		else
-			$elementIDs = $storage->reslist['fleet'];
+			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 
 		if (isset($_POST['fmenge']))
 		{
@@ -428,14 +430,16 @@ class Construction
 				{
 					$row['maximum'] = false;
 
-					if (isset($storage->pricelist[$Element]['max']))
+					$price = Vars::getItemPrice($Element);
+
+					if (isset($price['max']))
 					{
 						$total = $this->planet->getUnitCount($Element);
 
 						if (isset($BuildArray[$Element]))
 							$total += $BuildArray[$Element];
 
-						if ($total >= $storage->pricelist[$Element]['max'])
+						if ($total >= $price['max'])
 							$row['maximum'] = true;
 					}
 

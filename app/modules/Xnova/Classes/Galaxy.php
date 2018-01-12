@@ -211,7 +211,7 @@ class Galaxy extends Component
 	public function sizeRandomiser ($Position, $HomeWorld = false, $Base = false)
 	{
 		$planetData = [];
-		require(ROOT_PATH.'/app/varsPlanet.php');
+		require(dirname(__DIR__).'/Vars/planet.php');
 
 		$planet = new Planet;
 

@@ -14,6 +14,7 @@ use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/imperium")
@@ -142,12 +143,12 @@ class ImperiumController extends Controller
 
 					foreach ($queue AS $q)
 					{
-						if (!isset($build_hangar[$q['i']]) || in_array($q['i'], $this->registry->reslist['build']))
+						if (!isset($build_hangar[$q['i']]) || Vars::getItemType($q['i']) == Vars::ITEM_TYPE_BUILING)
 							$build_hangar[$q['i']]  = $q['l'];
 						else
 							$build_hangar[$q['i']] += $q['l'];
 
-						if (!isset($build_hangar_full[$q['i']]) || in_array($q['i'], $this->registry->reslist['build']))
+						if (!isset($build_hangar_full[$q['i']]) || Vars::getItemType($q['i']) == Vars::ITEM_TYPE_BUILING)
 							$build_hangar_full[$q['i']]  = $q['l'];
 						else
 							$build_hangar_full[$q['i']] += $q['l'];
@@ -162,13 +163,13 @@ class ImperiumController extends Controller
 				if (!isset($r1[$i]))
 					$r1[$i] = 0;
 
-				if (in_array($i, $this->registry->reslist['build']))
+				if (Vars::getItemType($i) == Vars::ITEM_TYPE_BUILING)
 				{
 					$r[$i] .= ($planet->getBuildLevel($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getBuildLevel($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
 					if ($r1[$i] < $planet->getBuildLevel($i))
 						$r1[$i] = $planet->getBuildLevel($i);
 				}
-				elseif (in_array($i, $this->registry->reslist['fleet']))
+				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET)
 				{
 
 					$r[$i] .= '<th>';
@@ -188,7 +189,7 @@ class ImperiumController extends Controller
 
 					$r1[$i] += $planet->getUnitCount($i);
 				}
-				elseif (in_array($i, $this->registry->reslist['defense']))
+				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_DEFENSE)
 				{
 					$r[$i] .= ($planet->getUnitCount($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getUnitCount($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
 					$r1[$i] += $planet->getUnitCount($i);
@@ -210,22 +211,22 @@ class ImperiumController extends Controller
 		$parse['defense_row'] = '';
 		$parse['technology_row'] = '';
 
-		foreach ($this->registry->reslist['build'] as $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i)
 		{
 			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->getBuildLevel($i) . " (" . $r1[$i] . ")</th></tr>";
 		}
 
-		foreach ($this->registry->reslist['fleet'] as $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
 		{
 			$parse['fleet_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($this->registry->reslist['defense'] as $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i)
 		{
 			$parse['defense_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
-		foreach ($this->registry->reslist['tech'] as $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i)
 		{
 			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->registry->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}

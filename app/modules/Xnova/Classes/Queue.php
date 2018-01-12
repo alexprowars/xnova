@@ -76,19 +76,23 @@ class Queue
 
 	public function add($elementId, $count = 1, $destroy = false)
 	{
-		if (in_array($elementId, $this->registry->reslist['build']))
+		$type = Vars::getItemType($elementId);
+
+		if ($type == Vars::ITEM_TYPE_BUILING)
 			(new Build($this))->add($elementId, $destroy);
-		elseif (in_array($elementId, $this->registry->reslist['tech']) || in_array($elementId, $this->registry->reslist['tech_f']))
+		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 			(new Tech($this))->add($elementId);
-		elseif (in_array($elementId, $this->registry->reslist['fleet']) || in_array($elementId, $this->registry->reslist['defense']))
+		elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 			(new Unit($this))->add($elementId, $count);
 	}
 
 	public function delete($elementId, $listId = 0)
 	{
-		if (in_array($elementId, $this->registry->reslist['build']))
+		$type = Vars::getItemType($elementId);
+
+		if ($type == Vars::ITEM_TYPE_BUILING)
 			(new Build($this))->delete($listId);
-		elseif (in_array($elementId, $this->registry->reslist['tech']) || in_array($elementId, $this->registry->reslist['tech_f']))
+		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 			(new Tech($this))->delete($elementId);
 	}
 
@@ -476,7 +480,7 @@ class Queue
 
 			$max = [];
 
-			foreach ($this->registry->pricelist as $id => $data)
+			foreach (Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]) as $id => $data)
 			{
 				if (isset($data['max']) && $this->planet->getUnitCount($id) > 0)
 					$max[$id] = $this->planet->getUnitCount($id);
@@ -505,13 +509,15 @@ class Queue
 					}
 				}
 
-				if (isset($this->registry->pricelist[$Item['i']]['max']))
-				{
-					if ($Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
-						$Item['l'] = $this->registry->pricelist[$Item['i']]['max'];
+				$price = Vars::getItemPrice($Item['i']);
 
-					if ($max[$Item['i']] + $Item['l'] > $this->registry->pricelist[$Item['i']]['max'])
-						$Item['l'] = $this->registry->pricelist[$Item['i']]['max'] - $max[$Item['i']];
+				if (isset($price['max']))
+				{
+					if ($Item['l'] > $price['max'])
+						$Item['l'] = $price['max'];
+
+					if ($max[$Item['i']] + $Item['l'] > $price['max'])
+						$Item['l'] = $price['max'] - $max[$Item['i']];
 
 					if ($Item['l'] > 0)
 						$max[$Item['i']] += $Item['l'];

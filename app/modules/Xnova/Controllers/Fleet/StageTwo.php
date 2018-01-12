@@ -15,6 +15,7 @@ use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\Vars;
 
 class StageTwo
 {
@@ -44,7 +45,7 @@ class StageTwo
 					{
 						$ShipArray = [];
 
-						foreach ($controller->registry->reslist['fleet'] AS $Ship)
+						foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) AS $Ship)
 						{
 							$ShipLabel = "ship" . $Ship;
 

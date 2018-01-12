@@ -15,77 +15,70 @@ use Phalcon\Di;
 class Building
 {
 	/**
-	 * @param  $CurrentUser
-	 * @param  $CurrentPlanet
+	 * @param  $user
+	 * @param  $planet
 	 * @param  $Element
-	 * @param bool $Incremental
-	 * @param bool $ForDestroy
+	 * @param bool $incremental
+	 * @param bool $destroy
 	 * @return bool
 	 */
-	static function IsElementBuyable (User $CurrentUser, Planet $CurrentPlanet, $Element, $Incremental = true, $ForDestroy = false)
+	static function IsElementBuyable (User $user, Planet $planet, $Element, $incremental = true, $destroy = false)
 	{
-		$RetValue = true;
-
-		$cost = self::GetBuildingPrice($CurrentUser, $CurrentPlanet, $Element, $Incremental, $ForDestroy);
+		$cost = self::GetBuildingPrice($user, $planet, $Element, $incremental, $destroy);
 
 		foreach ($cost AS $ResType => $ResCount)
 		{
-			if (!isset($CurrentPlanet->{$ResType}) || $ResCount > $CurrentPlanet->{$ResType})
-			{
-				$RetValue = false;
-				break;
-			}
+			if (!isset($planet->{$ResType}) || $ResCount > $planet->{$ResType})
+				return false;
 		}
 
-		return $RetValue;
+		return true;
 	}
 
-	static function IsTechnologieAccessible (User $user, Planet $planet, $Element)
+	static function IsTechnologieAccessible (User $user, Planet $planet, $element)
 	{
 		$storage = $user->getDI()->getShared('registry');
 
-		if (isset($storage->requeriments[$Element]))
-		{
-			$enabled = true;
+		$requeriments = Vars::getItemRequeriments($element);
 
-			foreach ($storage->requeriments[$Element] as $ReqElement => $EleLevel)
-			{
-				if ($ReqElement == 700 && $user->{$storage->resource[$ReqElement]} != $EleLevel)
-					return false;
-				elseif (isset($user->{$storage->resource[$ReqElement]}) && $user->{$storage->resource[$ReqElement]} >= $EleLevel)
-				{
-					// break;
-				}
-				elseif ($planet->getBuildLevel($ReqElement) >= $EleLevel)
-					$enabled = true;
-				elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($Element == 43 || $Element == 502 || $Element == 503) && ($ReqElement == 21 || $ReqElement == 41))
-					$enabled = true;
-				else
-					return false;
-			}
-
-			return $enabled;
-		}
-		else
+		if (!count($requeriments))
 			return true;
+
+		$enabled = true;
+
+		foreach ($requeriments as $reqElement => $level)
+		{
+			if ($reqElement == 700 && $user->{$storage->resource[$reqElement]} != $level)
+				return false;
+			elseif (isset($user->{$storage->resource[$reqElement]}) && $user->{$storage->resource[$reqElement]} >= $level)
+			{
+				// break;
+			}
+			elseif ($planet->getBuildLevel($reqElement) >= $level)
+				$enabled = true;
+			elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($element == 43 || $element == 502 || $element == 503) && ($reqElement == 21 || $reqElement == 41))
+				$enabled = true;
+			else
+				return false;
+		}
+
+		return $enabled;
 	}
 
-	static function checkTechnologyRace (User $user, $Element)
+	static function checkTechnologyRace (User $user, $element)
 	{
-		$storage = Di::getDefault()->getShared('registry');
+		$requeriments = Vars::getItemRequeriments($element);
 
-		if (isset($storage->requeriments[$Element]))
+		if (!count($requeriments))
+			return true;
+
+		foreach ($requeriments as $reqElement => $level)
 		{
-			foreach ($storage->requeriments[$Element] as $ReqElement => $EleLevel)
-			{
-				if ($ReqElement == 700 && $user->{$storage->resource[$ReqElement]} != $EleLevel)
-					return false;
-			}
-
-			return true;
+			if ($reqElement == 700 && $user->race != $level)
+				return false;
 		}
-		else
-			return true;
+
+		return true;
 	}
 
 	static function CheckLabSettingsInQueue (Planet $planet)
@@ -99,62 +92,58 @@ class Building
 			$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
 			if ($BuildQueue[0]['i'] == 31 && $config->game->get('BuildLabWhileRun', 0) != 1)
-				$return = false;
+				return false;
 			else
-				$return = true;
+				return true;
 		}
-		else
-			$return = true;
 
-		return $return;
+		return true;
 	}
 
-	static function getTechTree ($Element, User $user, Planet $planet)
+	static function getTechTree ($element, User $user, Planet $planet)
 	{
 		$storage = Di::getDefault()->getShared('registry');
 
 		$result = '';
 
-		if (isset($storage->requeriments[$Element]))
+		$requeriments = Vars::getItemRequeriments($element);
+		$elementType = Vars::getItemType($element);
+
+		if (!count($requeriments))
+			return $result;
+
+		foreach ($requeriments as $ResClass => $Level)
 		{
-			$result = "";
+			$isAvailable = false;
+			$line = '';
 
-			foreach ($storage->requeriments[$Element] as $ResClass => $Level)
+			if ($ResClass != 700)
 			{
-				if ($ResClass != 700)
+				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} >= $Level)
+					$isAvailable = true;
+				elseif ($planet->getBuildLevel($ResClass) >= $Level)
+					$isAvailable = true;
+
+				$line .= _getText('level').' '.$Level;
+
+				if (isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} < $Level)
 				{
-					if (isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} >= $Level)
-						$result .= "<span class=\"positive\">";
-					elseif ($planet->getBuildLevel($ResClass) >= $Level)
-						$result .= "<span class=\"positive\">";
-					else
-						$result .= "<span class=\"negative\">";
-
-					$result .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
-
-					if (isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} < $Level)
-					{
-						$minus = $Level - $user->{$storage->resource[$ResClass]};
-						$result .= " + <b>" . $minus . "</b>";
-					}
-					elseif ($planet->getBuildLevel($ResClass) < $Level)
-					{
-						$minus = $Level - $planet->getBuildLevel($ResClass);
-						$result .= " + <b>" . $minus . "</b>";
-					}
+					$minus = $Level - $user->{$storage->resource[$ResClass]};
+					$line .= " + <b>" . $minus . "</b>";
 				}
-				else
+				elseif ($planet->getBuildLevel($ResClass) < $Level)
 				{
-					$result .= _getText('tech', $ResClass) . " (";
-
-					if ($user->race != $Level)
-						$result .= "<span class=\"negative\">" . _getText('race', $Level);
-					else
-						$result .= "<span class=\"positive\">" . _getText('race', $Level);
+					$minus = $Level - $planet->getBuildLevel($ResClass);
+					$line .= " + <b>" . $minus . "</b>";
 				}
-
-				$result .= ")</span><br>";
 			}
+			else
+			{
+				$line .= _getText('race', $Level);
+				$isAvailable = ($user->race == $Level);
+			}
+
+			$result .= '<span class="'.($isAvailable ? 'positive' : 'negative').'">'._getText('tech', $ResClass).' ('.$line.')</span><br>';
 		}
 
 		return $result;
@@ -163,25 +152,25 @@ class Building
 	/**
 	 * @param  $user User
 	 * @param  $planet Planet
-	 * @param  $Element integer
+	 * @param  $element integer
 	 * @return int
 	 */
-	static function GetBuildingTime (User $user, Planet $planet, $Element)
+	static function GetBuildingTime (User $user, Planet $planet, $element)
 	{
-		$storage = Di::getDefault()->getShared('registry');
 		$config = $user->getDI()->getShared('config');
 
+		$elementType = Vars::getItemType($element);
 		$time = 0;
 
-		$cost = self::GetBuildingPrice($user, $planet, $Element, !(in_array($Element, $storage->reslist['defense']) || in_array($Element, $storage->reslist['fleet'])), false, false);
+		$cost = self::GetBuildingPrice($user, $planet, $element, !in_array($elementType,  [Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_FLEET]), false, false);
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		if (in_array($Element, $storage->reslist['build']))
+		if ($elementType == Vars::ITEM_TYPE_BUILING)
 		{
 			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('nano_factory') + 1)) * pow(0.5, $planet->getBuildLevel('robot_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
-		elseif (in_array($Element, $storage->reslist['tech']) || in_array($Element, $storage->reslist['tech_f']))
+		elseif (in_array($elementType,  [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]))
 		{
 			if (isset($planet->spaceLabs) && count($planet->spaceLabs))
 			{
@@ -189,7 +178,9 @@ class Building
 
 				foreach ($planet->spaceLabs as $Levels)
 				{
-					if (!isset($storage->requeriments[$Element][31]) || $Levels >= $storage->requeriments[$Element][31])
+					$req = Vars::getItemRequeriments($element);
+
+					if (!isset($req[31]) || $Levels >= $req[31])
 						$lablevel += $Levels;
 				}
 			}
@@ -199,19 +190,18 @@ class Building
 			$time = ($cost / $config->game->get('game_speed')) / (($lablevel + 1) * 2);
 			$time = floor($time * 3600 * $user->bonusValue('time_research'));
 		}
-		elseif (in_array($Element, $storage->reslist['defense']))
+		elseif ($elementType == Vars::ITEM_TYPE_DEFENSE)
 		{
 			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('hangar') + 1)) * pow(1 / 2, $planet->getBuildLevel('nano_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_defence'));
 		}
-		elseif (in_array($Element, $storage->reslist['fleet']))
+		elseif ($elementType == Vars::ITEM_TYPE_FLEET)
 		{
 			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('hangar') + 1)) * pow(1 / 2, $planet->getBuildLevel('nano_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_fleet'));
 		}
 
-		if ($time < 1)
-			$time = 1;
+		$time = max(1, $time);
 
 		return $time;
 	}
@@ -255,54 +245,65 @@ class Building
 	/**
 	 * @param $user User
 	 * @param $planet Planet
-	 * @param $Element
-	 * @param bool $Incremental
-	 * @param bool $ForDestroy
+	 * @param $element
+	 * @param bool $incremental
+	 * @param bool $destroy
 	 * @param bool $withBonus
 	 * @return array
 	 */
-	static function GetBuildingPrice (User $user, Planet $planet, $Element, $Incremental = true, $ForDestroy = false, $withBonus = true)
+	static function GetBuildingPrice (User $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
 	{
 		$storage = Di::getDefault()->getShared('registry');
 
+		$price = Vars::getItemPrice($element);
+		$elementType = Vars::getItemType($element);
 		$level = 0;
 
-		if ($Incremental)
+		if ($incremental)
 		{
-			if (in_array($Element, $storage->reslist['build']))
-				$level = $planet->getBuildLevel($Element);
+			if ($elementType == Vars::ITEM_TYPE_BUILING)
+				$level = $planet->getBuildLevel($element);
 			else
-				$level = $user->{$storage->resource[$Element]};
+				$level = $user->{$storage->resource[$element]};
 		}
 
-		$array 	= ['metal', 'crystal', 'deuterium', 'energy_max'];
-		$cost 	= [];
+		$cost = [];
 
-		foreach ($array as $ResType)
+		foreach (['metal', 'crystal', 'deuterium', 'energy_max'] as $ResType)
 		{
-			if (!isset($storage->pricelist[$Element][$ResType]))
+			if (!isset($price[$ResType]))
 				continue;
 
-			if ($Incremental)
-				$cost[$ResType] = floor($storage->pricelist[$Element][$ResType] * pow($storage->pricelist[$Element]['factor'], $level));
+			if ($incremental && isset($price['factor']))
+				$cost[$ResType] = floor($price[$ResType] * pow($price['factor'], $level));
 			else
-				$cost[$ResType] = floor($storage->pricelist[$Element][$ResType]);
+				$cost[$ResType] = floor($price[$ResType]);
 
 			if ($withBonus)
 			{
-				if (in_array($Element, $storage->reslist['build']))
-					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_building'));
-				elseif (in_array($Element, $storage->reslist['tech']))
-					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_research'));
-				elseif (in_array($Element, $storage->reslist['tech_f']))
-					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_levelup'));
-				elseif (in_array($Element, $storage->reslist['fleet']))
-					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_fleet'));
-				elseif (in_array($Element, $storage->reslist['defense']))
-					$cost[$ResType] = round($cost[$ResType] * $user->bonusValue('res_defence'));
+				switch ($elementType)
+				{
+					case Vars::ITEM_TYPE_BUILING:
+						$cost[$ResType] *= $user->bonusValue('res_building');
+						break;
+					case Vars::ITEM_TYPE_TECH:
+						$cost[$ResType] *= $user->bonusValue('res_research');
+						break;
+					case Vars::ITEM_TYPE_TECH_FLEET:
+						$cost[$ResType] *= $user->bonusValue('res_levelup');
+						break;
+					case Vars::ITEM_TYPE_FLEET:
+						$cost[$ResType] *= $user->bonusValue('res_fleet');
+						break;
+					case Vars::ITEM_TYPE_DEFENSE:
+						$cost[$ResType] *= $user->bonusValue('res_defence');
+						break;
+				}
+
+				$cost[$ResType] = round($cost[$ResType]);
 			}
 
-			if ($ForDestroy)
+			if ($destroy)
 				$cost[$ResType] = floor($cost[$ResType] / 2);
 		}
 
@@ -351,65 +352,75 @@ class Building
 	}
 
 	/**
-	 * @param $Element int
-	 * @param $Count int
+	 * @param $element int
+	 * @param $count int
 	 * @param $user User
 	 * @return mixed
 	 */
-	static function GetElementRessources ($Element, $Count, User $user)
+	static function GetElementRessources ($element, $count, User $user)
 	{
-		$storage = Di::getDefault()->getShared('registry');
+		$price = Vars::getItemPrice($element);
 
-		$ResType['metal'] 		= ($storage->pricelist[$Element]['metal'] * $Count);
-		$ResType['crystal'] 	= ($storage->pricelist[$Element]['crystal'] * $Count);
-		$ResType['deuterium'] 	= ($storage->pricelist[$Element]['deuterium'] * $Count);
+		$ResType['metal'] 		= $price['metal'] * $count;
+		$ResType['crystal'] 	= $price['crystal'] * $count;
+		$ResType['deuterium'] 	= $price['deuterium'] * $count;
 
 		foreach ($ResType AS &$cost)
 		{
-			if (in_array($Element, $storage->reslist['fleet']))
-				$cost = round($cost * $user->bonusValue('res_fleet'));
-			elseif (in_array($Element, $storage->reslist['defense']))
-				$cost = round($cost * $user->bonusValue('res_defence'));
+			switch (Vars::getItemType($element))
+			{
+				case Vars::ITEM_TYPE_FLEET:
+					$cost = round($cost * $user->bonusValue('res_fleet'));
+					break;
+				case Vars::ITEM_TYPE_DEFENSE:
+					$cost = round($cost * $user->bonusValue('res_defence'));
+					break;
+			}
 		}
 
 		return $ResType;
 	}
 
 	/**
-	 * @param $Element int
+	 * @param $element int
 	 * @param $planet Planet
 	 * @param $user User
 	 * @return float|int
 	 */
-	static function GetMaxConstructibleElements ($Element, Planet $planet, User $user)
+	static function GetMaxConstructibleElements ($element, Planet $planet, User $user)
 	{
-		$storage = Di::getDefault()->getShared('registry');
+		$maxElements = -1;
 
-		$MaxElements = -1;
+		$price = Vars::getItemPrice($element);
 
-		foreach ($storage->pricelist[$Element] AS $need_res => $need_count)
+		foreach ($price as $resType => $resCount)
 		{
-			if (in_array($need_res, array('metal', 'crystal', 'deuterium', 'energy_max')) && $need_count != 0)
+			if (in_array($resType, ['metal', 'crystal', 'deuterium', 'energy_max']) && $resCount != 0)
 			{
 				$count = 0;
 
-				if (in_array($Element, $storage->reslist['fleet']))
-					$count = round($need_count * $user->bonusValue('res_fleet'));
-				elseif (in_array($Element, $storage->reslist['defense']))
-					$count = round($need_count * $user->bonusValue('res_defence'));
+				switch (Vars::getItemType($element))
+				{
+					case Vars::ITEM_TYPE_FLEET:
+						$count = round($resCount * $user->bonusValue('res_fleet'));
+						break;
+					case Vars::ITEM_TYPE_DEFENSE:
+						$count = round($resCount * $user->bonusValue('res_defence'));
+						break;
+				}
 
-				$count = floor($planet->{$need_res} / $count);
+				$count = floor($planet->{$resType} / $count);
 
-				if ($MaxElements == -1)
-					$MaxElements = $count;
-				elseif ($MaxElements > $count)
-					$MaxElements = $count;
+				if ($maxElements < 0)
+					$maxElements = $count;
+				elseif ($maxElements > $count)
+					$maxElements = $count;
 			}
 		}
 
-		if (isset($storage->pricelist[$Element]['max']) && $MaxElements > $storage->pricelist[$Element]['max'])
-			$MaxElements = $storage->pricelist[$Element]['max'];
+		if (isset($price['max']) && $maxElements > $price['max'])
+			$maxElements = $price['max'];
 
-		return $MaxElements;
+		return $maxElements;
 	}
 }

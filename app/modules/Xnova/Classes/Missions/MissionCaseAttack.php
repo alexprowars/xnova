@@ -25,6 +25,7 @@ use Xnova\Helpers;
 use Xnova\Models\Planet;
 use Xnova\Models\User;
 use Xnova\Models\Fleet as FleetModel;
+use Xnova\Vars;
 
 class MissionCaseAttack extends FleetEngine implements Mission
 {
@@ -93,7 +94,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$res = [];
 
-		$units = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+		$units = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		foreach ($units as $i)
 		{
@@ -115,7 +116,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			$targetUser->shield_tech 	+= 2;
 		}
 
-		foreach ($this->registry->reslist['tech'] AS $techId)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 		{
 			if (isset($targetUser->{$this->registry->resource[$techId]}) && $targetUser->{$this->registry->resource[$techId]} > 0)
 				$res[$techId] = $targetUser->{$this->registry->resource[$techId]};
@@ -645,7 +646,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 				$info['shield_tech'] 	+= 2;
 			}
 
-			foreach ($this->registry->reslist['tech'] AS $techId)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 			{
 				if (isset($info[$this->registry->resource[$techId]]) && $info[$this->registry->resource[$techId]] > 0)
 					$res[$techId] = $info[$this->registry->resource[$techId]];
@@ -713,9 +714,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		elseif ($this->registry->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->registry->pricelist[$id]['metal'], $this->registry->pricelist[$id]['crystal']];
+		$price = Vars::getItemPrice($id);
 
-		if (in_array($id, $this->registry->reslist['fleet']))
+		$cost = [$price['metal'], $price['crystal']];
+
+		if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET)
 			return new Ship($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
 		return new Defense($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);

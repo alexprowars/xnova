@@ -14,6 +14,7 @@ use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/info")
@@ -54,7 +55,7 @@ class InfoController extends Controller
 	{
 		$ResultString = "";
 
-		$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		foreach ($res AS $Type)
 		{
@@ -71,7 +72,7 @@ class InfoController extends Controller
 	{
 		$ResultString = "";
 
-		$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		foreach ($res AS $Type)
 		{
@@ -194,32 +195,34 @@ class InfoController extends Controller
 	}
 
 	/**
-	 * @param $BuildID int
+	 * @param $itemId int
 	 * @return array|string
 	 * @throws ErrorException
 	 */
-	private function ShowBuildingInfoPage ($BuildID)
+	private function ShowBuildingInfoPage ($itemId)
 	{
 		Lang::includeLang('infos', 'xnova');
 
 		$parse = [];
 
-		if (!_getText('info', $BuildID, true))
+		if (!_getText('info', $itemId, true))
 			throw new ErrorException('Мы не сможем дать вам эту информацию');
 
-		$parse['name'] = _getText('tech', $BuildID);
-		$parse['image'] = $BuildID;
-		$parse['description'] = _getText('info', $BuildID);
+		$price = Vars::getItemPrice($itemId);
 
-		if (($BuildID >= 1 && $BuildID <= 4) || $BuildID == 12 || $BuildID == 42 || ($BuildID >= 22 && $BuildID <= 24))
+		$parse['name'] = _getText('tech', $itemId);
+		$parse['image'] = $itemId;
+		$parse['description'] = _getText('info', $itemId);
+
+		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24))
 		{
-			$parse['table_data'] = $this->ShowProductionTable($BuildID);
+			$parse['table_data'] = $this->ShowProductionTable($itemId);
 			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/buildings_table');
 		}
-		elseif (($BuildID >= 14 && $BuildID <= 34) || $BuildID == 6 || $BuildID == 43 || $BuildID == 44 || $BuildID == 41 || ($BuildID >= 106 && $BuildID <= 199))
+		elseif (($itemId >= 14 && $itemId <= 34) || $itemId == 6 || $itemId == 43 || $itemId == 44 || $itemId == 41 || ($itemId >= 106 && $itemId <= 199))
 		{
-			if ($BuildID == 34)
+			if ($itemId == 34)
 			{
 				$parse['msg'] = '';
 
@@ -238,10 +241,10 @@ class InfoController extends Controller
 						foreach ($fleet->getShips() as $type => $ship)
 						{
 							if ($type > 100)
-								$tt += $this->registry->pricelist[$type]['stay'] * $ship['cnt'];
+								$tt += $this->registry->CombatCaps[$type]['stay'] * $ship['cnt'];
 						}
 
-						$max = $this->planet->getBuildLevel($BuildID) * 10000;
+						$max = $this->planet->getBuildLevel($itemId) * 10000;
 
 						if ($max > $this->planet->deuterium)
 							$cur = $this->planet->deuterium;
@@ -261,13 +264,13 @@ class InfoController extends Controller
 					}
 				}
 
-				if ($this->planet->getBuildLevel($BuildID) > 0)
+				if ($this->planet->getBuildLevel($itemId) > 0)
 				{
 					if (!$parse['msg'])
 						$parse['msg'] = "Выберите флот для отправки дейтерия";
 
 					$parse['fleet'] = $this->BuildFleetCombo();
-					$parse['need'] = ($this->planet->getBuildLevel($BuildID) * 10000);
+					$parse['need'] = ($this->planet->getBuildLevel($itemId) * 10000);
 
 					$this->view->setVar('parse', $parse);
 					$this->view->partial('info/buildings_ally');
@@ -277,91 +280,93 @@ class InfoController extends Controller
 			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/buildings');
 		}
-		elseif (in_array($BuildID, $this->registry->reslist['fleet']))
+		elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_FLEET)
 		{
-			$parse['hull_pt']  = floor(($this->registry->pricelist[$BuildID]['metal'] + $this->registry->pricelist[$BuildID]['crystal']) / 10);
+			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (($this->registry->CombatCaps[$BuildID]['power_up'] * ((isset($this->user->{'fleet_' . $BuildID})) ? $this->user->{'fleet_' . $BuildID} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $BuildID})) ? $this->user->{'fleet_' . $BuildID} : 0) * ($this->registry->CombatCaps[$BuildID]['power_up'] / 100)) + $this->user->military_tech * 0.05;
+			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ($this->registry->CombatCaps[$itemId]['power_up'] / 100)) + $this->user->military_tech * 0.05;
 
-			if ($this->registry->CombatCaps[$BuildID]['type_gun'] == 1)
+			if ($this->registry->CombatCaps[$itemId]['type_gun'] == 1)
 				$attTech += $this->user->laser_tech * 0.05;
-			elseif ($this->registry->CombatCaps[$BuildID]['type_gun'] == 2)
+			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 2)
 				$attTech += $this->user->ionic_tech * 0.05;
-			elseif ($this->registry->CombatCaps[$BuildID]['type_gun'] == 3)
+			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 3)
 				$attTech += $this->user->buster_tech * 0.05;
 
 			// Устанавливаем обновлённые двигателя кораблей
 			Fleet::SetShipsEngine($this->user);
 
-			$parse['rf_info_to']  = $this->ShowRapidFireTo($BuildID);
-			$parse['rf_info_fr']  = $this->ShowRapidFireFrom($BuildID);
+			$parse['rf_info_to']  = $this->ShowRapidFireTo($itemId);
+			$parse['rf_info_fr']  = $this->ShowRapidFireFrom($itemId);
 
-			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$BuildID]['attack'] * $attTech)) . ')';
-			$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['shield']);
-			$parse['capacity_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['capacity']);
-			$parse['base_speed'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['speed']) . ' (' . Helpers::pretty_number(Fleet::GetFleetMaxSpeed('', $BuildID, $this->user)) . ')';
-			$parse['base_conso'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['consumption']);
-			$parse['block'] = $this->registry->CombatCaps[$BuildID]['power_armour'];
-			$parse['upgrade'] = $this->registry->CombatCaps[$BuildID]['power_up'];
-			$parse['met'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['metal']) . ' (' . Helpers::pretty_number($this->registry->pricelist[$BuildID]['metal'] * $this->user->bonusValue('res_fleet')) . ')';
-			$parse['cry'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['crystal']) . ' (' . Helpers::pretty_number($this->registry->pricelist[$BuildID]['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
-			$parse['deu'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['deuterium']) . ' (' . Helpers::pretty_number($this->registry->pricelist[$BuildID]['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
+			$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['shield']);
+			$parse['capacity_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['capacity']);
+			$parse['base_speed'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['speed']) . ' (' . Helpers::pretty_number(Fleet::GetFleetMaxSpeed('', $itemId, $this->user)) . ')';
+			$parse['base_conso'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['consumption']);
+			$parse['block'] = $this->registry->CombatCaps[$itemId]['power_armour'];
+			$parse['upgrade'] = $this->registry->CombatCaps[$itemId]['power_up'];
+			$parse['met'] = Helpers::pretty_number($price['metal']) . ' (' . Helpers::pretty_number($price['metal'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['cry'] = Helpers::pretty_number($price['crystal']) . ' (' . Helpers::pretty_number($price['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['deu'] = Helpers::pretty_number($price['deuterium']) . ' (' . Helpers::pretty_number($price['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
 
 			$engine = ['', 'Ракетный', 'Импульсный', 'Гиперпространственный'];
 			$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
 			$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
-			$parse['base_engine'] = $engine[$this->registry->CombatCaps[$BuildID]['type_engine']];
-			$parse['gun'] = $gun[$this->registry->CombatCaps[$BuildID]['type_gun']];
-			$parse['armour'] = $armour[$this->registry->CombatCaps[$BuildID]['type_armour']];
+			$parse['base_engine'] = $engine[$this->registry->CombatCaps[$itemId]['type_engine']];
+			$parse['gun'] = $gun[$this->registry->CombatCaps[$itemId]['type_gun']];
+			$parse['armour'] = $armour[$this->registry->CombatCaps[$itemId]['type_armour']];
 
 			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/buildings_fleet');
 		}
-		elseif (in_array($BuildID, $this->registry->reslist['defense']))
+		elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_DEFENSE)
 		{
 			$parse['element_typ'] = _getText('tech', 400);
-			$parse['hull_pt']  = floor(($this->registry->pricelist[$BuildID]['metal'] + $this->registry->pricelist[$BuildID]['crystal']) / 10);
+			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (((isset($this->registry->CombatCaps[$BuildID]['power_up']) ? $this->registry->CombatCaps[$BuildID]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $BuildID})) ? $this->user->{'fleet_' . $BuildID} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
-			if (isset($this->registry->CombatCaps[$BuildID]['shield']))
-				$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['shield']);
+			if (isset($this->registry->CombatCaps[$itemId]['shield']))
+				$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['shield']);
 			else
 				$parse['shield_pt'] = '';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $BuildID})) ? $this->user->{'fleet_' . $BuildID} : 0) * ((isset($this->registry->CombatCaps[$BuildID]['power_up']) ? $this->registry->CombatCaps[$BuildID]['power_up'] : 0) / 100)) + $this->user->military_tech * 0.05;
+			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) / 100)) + $this->user->military_tech * 0.05;
 
-			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$BuildID]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$BuildID]['attack'] * $attTech)) . ')';
-			$parse['met'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['metal']);
-			$parse['cry'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['crystal']);
-			$parse['deu'] = Helpers::pretty_number($this->registry->pricelist[$BuildID]['deuterium']);
+			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
+			$parse['met'] = Helpers::pretty_number($price['metal']);
+			$parse['cry'] = Helpers::pretty_number($price['crystal']);
+			$parse['deu'] = Helpers::pretty_number($price['deuterium']);
 
-			if ($BuildID >= 400 && $BuildID < 500)
+			if ($itemId >= 400 && $itemId < 500)
 			{
 				$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
 				$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
-				$parse['gun'] = $gun[$this->registry->CombatCaps[$BuildID]['type_gun']];
-				$parse['armour'] = $armour[$this->registry->CombatCaps[$BuildID]['type_armour']];
+				$parse['gun'] = $gun[$this->registry->CombatCaps[$itemId]['type_gun']];
+				$parse['armour'] = $armour[$this->registry->CombatCaps[$itemId]['type_armour']];
 
 				$parse['speedBattle'] = [];
 
-				foreach ($this->registry->reslist['fleet'] AS $Type)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) AS $Type)
 				{
 					if (!isset($this->registry->CombatCaps[$Type]))
 						continue;
 
-					$enemy_durability = ($this->registry->pricelist[$Type]['metal'] + $this->registry->pricelist[$Type]['crystal']) / 10;
+					$enemyPrice = Vars::getItemPrice($Type);
 
-					$rapid = $this->registry->CombatCaps[$BuildID]['attack'] * (isset($this->registry->CombatCaps[$BuildID]['amplify'][$Type]) ? $this->registry->CombatCaps[$BuildID]['amplify'][$Type] : 1) / $enemy_durability;
+					$enemy_durability = ($enemyPrice['metal'] + $enemyPrice['crystal']) / 10;
+
+					$rapid = $this->registry->CombatCaps[$itemId]['attack'] * (isset($this->registry->CombatCaps[$itemId]['amplify'][$Type]) ? $this->registry->CombatCaps[$itemId]['amplify'][$Type] : 1) / $enemy_durability;
 
 					if ($rapid >= 1)
 						$parse['speedBattle'][$Type]['TO'] = floor($rapid);
 
-					$rapid = $this->registry->CombatCaps[$Type]['attack'] * (isset($this->registry->CombatCaps[$Type]['amplify'][$BuildID]) ? $this->registry->CombatCaps[$Type]['amplify'][$BuildID] : 1) / $parse['hull_pt'];
+					$rapid = $this->registry->CombatCaps[$Type]['attack'] * (isset($this->registry->CombatCaps[$Type]['amplify'][$itemId]) ? $this->registry->CombatCaps[$Type]['amplify'][$itemId] : 1) / $parse['hull_pt'];
 
 					if ($rapid >= 1)
 						$parse['speedBattle'][$Type]['FROM'] = floor($rapid);
@@ -370,7 +375,7 @@ class InfoController extends Controller
 
 			$this->view->partial('info/buildings_defence');
 
-			if ($BuildID >= 500 && $BuildID < 600)
+			if ($itemId >= 500 && $itemId < 600)
 			{
 				if (isset($_POST['form']))
 				{
@@ -396,32 +401,32 @@ class InfoController extends Controller
 
 			$this->view->setVar('parse', $parse);
 		}
-		elseif (in_array($BuildID, $this->registry->reslist['officier']))
+		elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_OFFICIER)
 		{
 			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/officier');
 		}
-		elseif ($BuildID >= 701 && $BuildID <= 704)
+		elseif ($itemId >= 701 && $itemId <= 704)
 		{
-			$parse['image'] = $BuildID - 700;
+			$parse['image'] = $itemId - 700;
 
 			$this->view->setVar('parse', $parse);
 			$this->view->partial('info/race');
 		}
 
-		if ($BuildID <= 44 && $BuildID != 33 && $BuildID != 41 && !($BuildID >= 601 && $BuildID <= 615) && !($BuildID >= 502 && $BuildID <= 503))
+		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503))
 		{
-			$build = $this->planet->getBuild($BuildID);
+			$build = $this->planet->getBuild($itemId);
 
 			if ($build && $build['level'] > 0)
 			{
-				$DestroyTime = Building::GetBuildingTime($this->user, $this->planet, $BuildID) / 2;
+				$DestroyTime = Building::GetBuildingTime($this->user, $this->planet, $itemId) / 2;
 
 				if ($DestroyTime < 1)
 					$DestroyTime = 1;
 
 				$parse['levelvalue'] = $build['level'];
-				$parse['destroy'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $BuildID, true, true), $this->planet);
+				$parse['destroy'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $itemId, true, true), $this->planet);
 				$parse['destroytime'] = Helpers::pretty_time($DestroyTime);
 
 				$this->view->setVar('parse', $parse);

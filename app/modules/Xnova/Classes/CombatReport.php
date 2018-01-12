@@ -194,7 +194,7 @@ class CombatReport extends Component
 								$attTech += $this->attackUsers[$user]['tech']['buster_tech'] * 0.05;
 
 							$raport3 .= "<th>" . Helpers::pretty_number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->registry->pricelist[$ship_id]['metal'] + $this->registry->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -265,7 +265,7 @@ class CombatReport extends Component
 								$attTech += $this->defenseUsers[$user]['tech']['buster_tech'] * 0.05;
 
 							$raport3 .= "<th>" . Helpers::pretty_number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((($this->registry->pricelist[$ship_id]['metal'] + $this->registry->pricelist[$ship_id]['crystal']) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport4 .= "<th>" . Helpers::pretty_number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 

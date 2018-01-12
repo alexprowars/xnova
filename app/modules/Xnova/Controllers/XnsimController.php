@@ -19,6 +19,7 @@ use Xnova\Battle\Models\ShipType;
 use Xnova\CombatReport;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/xnsim")
@@ -323,9 +324,11 @@ class XnsimController extends Controller
 		elseif ($this->registry->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->registry->pricelist[$id]['metal'], $this->registry->pricelist[$id]['crystal']];
+		$price = Vars::getItemPrice($id);
 
-		if (in_array($id, $this->registry->reslist['fleet']))
+		$cost = [$price['metal'], $price['crystal']];
+
+		if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET)
 			return new Ship($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
 		return new Defense($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);

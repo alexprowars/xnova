@@ -207,12 +207,13 @@ class FleetEngine extends Injectable
 						continue;
 
 					$level = 0;
+					$type = Vars::getItemType($Item);
 
-					if (in_array($Item, $this->registry->reslist['build']))
+					if ($type == Vars::ITEM_TYPE_BUILING)
 						$level = $TargetPlanet->getBuildLevel($Item);
-					elseif (in_array($Item, $this->registry->reslist['fleet']) || in_array($Item, $this->registry->reslist['defense']))
+					elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 						$level = $TargetPlanet->getUnitCount($Item);
-					elseif (in_array($Item, $this->registry->reslist['officier']))
+					elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 						$level = $TargetPlanet->{$this->registry->resource[$Item]};
 
 					if (($level && $Item < 600) || ($level > time() && $Item > 600))
@@ -293,10 +294,13 @@ class FleetEngine extends Injectable
 
 		foreach ($fleet AS $fleetId => $fleetData)
 		{
-			$res = $this->registry->pricelist[$fleetId];
+			$res = Vars::getItemPrice($fleetId);
 
-			$debris['metal'] 	+= floor($fleetData['cnt'] * $res['metal'] * $this->config->game->get('fleetDebrisRate', 0));
-			$debris['crystal'] 	+= floor($fleetData['cnt'] * $res['crystal'] * $this->config->game->get('fleetDebrisRate', 0));
+			if (isset($res['metal']) && $res['metal'] > 0)
+				$debris['metal'] += floor($fleetData['cnt'] * $res['metal'] * $this->config->game->get('fleetDebrisRate', 0));
+
+			if (isset($res['crystal']) && $res['crystal'] > 0)
+				$debris['crystal'] += floor($fleetData['cnt'] * $res['crystal'] * $this->config->game->get('fleetDebrisRate', 0));
 		}
 
 		return $debris;

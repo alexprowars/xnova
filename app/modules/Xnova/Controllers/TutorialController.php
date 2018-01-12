@@ -12,6 +12,7 @@ use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/tutorial")
@@ -81,11 +82,13 @@ class TutorialController extends Controller
 						if ($chk == true)
 							$chk = $check;
 
-						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+						$type = Vars::getItemType($element);
+
+						if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
-						elseif (in_array($element, $this->registry->reslist['fleet']))
+						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
-						elseif (in_array($element, $this->registry->reslist['defense']))
+						elseif ($type == Vars::ITEM_TYPE_DEFENSE)
 							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
 							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
@@ -177,13 +180,15 @@ class TutorialController extends Controller
 					{
 						foreach ($rewardVal AS $element => $level)
 						{
-							if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+							$type = Vars::getItemType($element);
+
+							if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 								$userData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['fleet']))
+							elseif ($type == Vars::ITEM_TYPE_FLEET)
 								$planetData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['defense']))
+							elseif ($type == Vars::ITEM_TYPE_DEFENSE)
 								$planetData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['officier']))
+							elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							{
 								if ($this->user->{$this->registry->resource[$element]} > time())
 									$userData['+'.$this->registry->resource[$element]] = $level;
@@ -226,13 +231,15 @@ class TutorialController extends Controller
 				{
 					foreach ($rewardVal AS $element => $level)
 					{
-						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+						$type = Vars::getItemType($element);
+
+						if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
-						elseif (in_array($element, $this->registry->reslist['fleet']))
+						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->registry->reslist['defense']))
+						elseif ($type == Vars::ITEM_TYPE_DEFENSE)
 							$parse['rewd'][] = $level.' ед. обороны типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->registry->reslist['officier']))
+						elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							$parse['rewd'][] = 'Офицер <b>'._getText('tech', $element).'</b> на '.round($level / 3600 / 24, 1).' суток';
 						else
 							$parse['rewd'][] = 'Постройка <b>'._getText('tech', $element).'</b> '.$level.' уровня';

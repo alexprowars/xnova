@@ -19,6 +19,7 @@ use Xnova\Queue;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Controller;
 use Phalcon\Cache\Frontend\None as FrontendCache;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/overview")
@@ -655,7 +656,7 @@ class OverviewController extends Controller
 
 		$parse['officiers'] = [];
 
-		foreach ($this->registry->reslist['officier'] AS $officier)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 		{
 			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
 		}

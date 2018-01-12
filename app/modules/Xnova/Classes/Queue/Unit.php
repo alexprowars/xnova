@@ -11,6 +11,7 @@ namespace Xnova\Queue;
 use Xnova\Building;
 use Phalcon\Di;
 use Xnova\Queue;
+use Xnova\Vars;
 
 class Unit
 {
@@ -23,8 +24,6 @@ class Unit
 
 	public function add ($elementId, $count)
 	{
-		$registry = Di::getDefault()->getShared('registry');
-		
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 		
@@ -48,14 +47,16 @@ class Unit
 			}
 		}
 
-		if (isset($registry->pricelist[$elementId]['max']))
+		$price = Vars::getItemPrice($elementId);
+
+		if (isset($price['max']))
 		{
 			$total = $planet->getUnitCount($elementId);
 
 			if (isset($BuildArray[$elementId]))
 				$total += $BuildArray[$elementId];
 
-			$count = min($count, max(($registry->pricelist[$elementId]['max'] - $total), 0));
+			$count = min($count, max(($price['max'] - $total), 0));
 		}
 
 		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($MaxMissiles))

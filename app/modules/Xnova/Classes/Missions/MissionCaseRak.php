@@ -10,6 +10,7 @@ namespace Xnova\Missions;
 
 use Xnova\FleetEngine;
 use Xnova\Models\User;
+use Xnova\Vars;
 
 class MissionCaseRak extends FleetEngine implements Mission
 {
@@ -47,7 +48,7 @@ class MissionCaseRak extends FleetEngine implements Mission
 
 			$TargetDefensive = [];
 
-			foreach ($this->registry->reslist['defense'] as $Element)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $Element)
 			{
 				$TargetDefensive[$Element] = $PlanetRow[$this->registry->resource[$Element]];
 			}
@@ -131,7 +132,9 @@ class MissionCaseRak extends FleetEngine implements Mission
 			else
 				$target = $Element;
 
-			$Dam = $max_dam - ($this->registry->pricelist[$target]['metal'] + $this->registry->pricelist[$target]['crystal']) / 10 * $TargetDefensive[$target] * $life_fac;
+			$price = Vars::getItemTotalPrice($target);
+
+			$Dam = $max_dam - $price / 10 * $TargetDefensive[$target] * $life_fac;
 
 			if ($Dam > 0)
 			{
@@ -140,10 +143,10 @@ class MissionCaseRak extends FleetEngine implements Mission
 			}
 			else
 			{
-				$dest = floor($max_dam / (($this->registry->pricelist[$target]['metal'] + $this->registry->pricelist[$target]['crystal']) / 10 * $life_fac));
+				$dest = floor($max_dam / ($price / 10 * $life_fac));
 				$ship_res[$target] = $dest;
 			}
-			$max_dam -= $dest * round(($this->registry->pricelist[$target]['metal'] + $this->registry->pricelist[$target]['crystal']) / 10 * $life_fac);
+			$max_dam -= $dest * round($price / 10 * $life_fac);
 			$i++;
 		}
 

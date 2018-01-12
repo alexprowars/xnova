@@ -13,6 +13,7 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/officier")
@@ -63,7 +64,7 @@ class OfficierController extends Controller
 			{
 				$selected = $this->request->getPost('buy', 'int', 0);
 
-				if (in_array($selected, $this->registry->reslist['officier']))
+				if (Vars::getItemType($selected) == Vars::ITEM_TYPE_OFFICIER)
 				{
 					if ($this->user->{$this->registry->resource[$selected]} > time())
 						$this->user->{$this->registry->resource[$selected]} = $this->user->{$this->registry->resource[$selected]} + $times;
@@ -91,7 +92,7 @@ class OfficierController extends Controller
 			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
 			$parse['list'] = [];
 
-			foreach ($this->registry->reslist['officier'] AS $officier)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 			{
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);

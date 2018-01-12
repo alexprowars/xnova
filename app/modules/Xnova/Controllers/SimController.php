@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/sim")
@@ -55,7 +56,7 @@ class SimController extends Controller
 			}
 		}
 		
-		$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense'], $this->registry->reslist['tech']);
+		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
 		
 		foreach ($res AS $id)
 		{

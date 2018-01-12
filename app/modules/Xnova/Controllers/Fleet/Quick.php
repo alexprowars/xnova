@@ -13,6 +13,7 @@ use Xnova\Controllers\FleetController;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\Vars;
 
 class Quick
 {
@@ -25,7 +26,7 @@ class Quick
 
 		$maxfleet = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$MaxFlottes = 1 + $controller->user->{$controller->registry->resource[108]};
+		$MaxFlottes = 1 + $controller->user->{Vars::getName(108)};
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
@@ -153,7 +154,7 @@ class Quick
 
 			foreach ($FleetArray as $Ship => $Count)
 			{
-				$FleetSubQRY .= "" . $controller->registry->resource[$Ship] . " = " . $controller->registry->resource[$Ship] . " - " . $Count . " , ";
+				$FleetSubQRY .= "" . Vars::getName($Ship) . " = " . Vars::getName($Ship) . " - " . $Count . " , ";
 				$ShipArray .=  $Ship . "," . $Count . "!" . (isset($controller->user->{'fleet_' . $Ship}) ? $controller->user->{'fleet_' . $Ship} : 0) . ";";
 				$ShipCount += $Count;
 

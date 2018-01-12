@@ -15,6 +15,7 @@ use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\Vars;
 
 class StageOne
 {
@@ -55,7 +56,7 @@ class StageOne
 		$fleet['fleetlist'] = "";
 		$fleet['amount'] = 0;
 
-		foreach ($controller->registry->reslist['fleet'] as $n => $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $n => $i)
 		{
 			if (isset($_POST["ship" . $i]) && intval($_POST["ship" . $i]) > 0)
 			{
@@ -141,8 +142,9 @@ class StageOne
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
+			// TODO fix it
 			$moons = Planet::find([
-				'(planet_type = 3 OR planet_type = 5) AND '.$controller->registry->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
+				'(planet_type = 3 OR planet_type = 5) AND '.Vars::getName(43).' > 0 AND id != ?0 AND id_owner = ?1',
 				'bind' => [$controller->planet->id, $controller->user->id]
 			]);
 

@@ -13,6 +13,7 @@ use Xnova\Galaxy;
 use Phalcon\Di;
 use Phalcon\Mvc\Model;
 use Friday\Core\Models\User as BaseUser;
+use Xnova\Vars;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -566,16 +567,14 @@ class User extends BaseUser
 			'message_block' => 0
 		];
 
-		$storage = $this->getDI()->getShared('registry');
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
+			$update[Vars::getName($oId)] = 0;
 
-		foreach ($storage->reslist['officier'] AS $oId)
-			$update[$storage->resource[$oId]] = 0;
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $oId)
+			$update[Vars::getName($oId)] = 0;
 
-		foreach ($storage->reslist['tech'] AS $oId)
-			$update[$storage->resource[$oId]] = 0;
-
-		foreach ($storage->reslist['tech_f'] AS $oId)
-			$update[$storage->resource[$oId]] = 0;
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH_FLEET) AS $oId)
+			$update[Vars::getName($oId)] = 0;
 
 		$this->saveData($update, $userId);
 
