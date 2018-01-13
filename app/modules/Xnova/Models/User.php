@@ -554,7 +554,7 @@ class User extends BaseUser
 	
 	public function deleteById ($userId)
 	{
-		$userInfo = $this->db->query("SELECT id, ally_id FROM game_users WHERE id = ".intval($userId)."")->fetch();
+		$userInfo = $this->db->query("SELECT id, ally_id FROM ".$this->getSource()." WHERE id = ".intval($userId)."")->fetch();
 
 		if (!isset($userInfo['id']))
 			return false;
@@ -572,24 +572,25 @@ class User extends BaseUser
 			}
 		}
 
-		$this->db->delete('game_alliance_requests', 'u_id = ?', [$userId]);
-		$this->db->delete('game_statpoints', 'stat_type = 1 AND id_owner = ?', [$userId]);
-		$this->db->delete('game_planets', 'id_owner = ?', [$userId]);
-		$this->db->delete('game_notes', 'owner = ?', [$userId]);
-		$this->db->delete('game_fleets', 'owner = ?', [$userId]);
-		$this->db->delete('game_buddy', 'sender = ? OR owner = ?', [$userId, $userId]);
-		$this->db->delete('game_refs', 'r_id = ? OR u_id = ?', [$userId, $userId]);
-		$this->db->delete('game_log_attack', 'uid = ?', [$userId]);
-		$this->db->delete('game_log_credits', 'uid = ?', [$userId]);
-		$this->db->delete('game_log_email', 'user_id = ?', [$userId]);
-		$this->db->delete('game_log_history', 'user_id = ?', [$userId]);
-		$this->db->delete('game_log_transfers', 'user_id = ?', [$userId]);
-		$this->db->delete('game_log_username', 'user_id = ?', [$userId]);
-		$this->db->delete('game_log_stats', 'id = ?  AND type = 1', [$userId]);
-		$this->db->delete('game_logs', 's_id = ? OR e_id = ?', [$userId, $userId]);
-		$this->db->delete('game_messages', 'sender = ? OR owner = ?', [$userId, $userId]);
-		$this->db->delete('game_banned', 'who = ?', [$userId]);
-		$this->db->delete('game_log_ip', 'id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'alliance_requests', 'u_id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'statpoints', 'stat_type = 1 AND id_owner = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'planets', 'id_owner = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'notes', 'owner = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'fleets', 'owner = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'buddy', 'sender = ? OR owner = ?', [$userId, $userId]);
+		$this->db->delete(DB_PREFIX.'refs', 'r_id = ? OR u_id = ?', [$userId, $userId]);
+		$this->db->delete(DB_PREFIX.'log_attack', 'uid = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_credits', 'uid = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_email', 'user_id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_history', 'user_id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_transfers', 'user_id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_username', 'user_id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_stats', 'id = ?  AND type = 1', [$userId]);
+		$this->db->delete(DB_PREFIX.'logs', 's_id = ? OR e_id = ?', [$userId, $userId]);
+		$this->db->delete(DB_PREFIX.'messages', 'sender = ? OR owner = ?', [$userId, $userId]);
+		$this->db->delete(DB_PREFIX.'banned', 'who = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'log_ip', 'id = ?', [$userId]);
+		$this->db->delete(DB_PREFIX.'users_tech', 'user_id = ?', [$userId]);
 
 		$update = [
 			'authlevel' => 0,
@@ -624,17 +625,7 @@ class User extends BaseUser
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
 			$update[Vars::getName($oId)] = 0;
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $oId)
-			$update[Vars::getName($oId)] = 0;
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH_FLEET) AS $oId)
-			$update[Vars::getName($oId)] = 0;
-
 		$this->saveData($update, $userId);
-
-		//$this->db->delete('game_users', 'id = ?', [$userId]);
-		//$this->db->delete('game_users_info', 'id = ?', [$userId]);
-		//$this->db->delete('game_users_auth', 'user_id = ?', [$userId]);
 
 		return true;
 	}
@@ -676,7 +667,7 @@ class User extends BaseUser
 
 		if ($obj->create())
 		{
-			$di->getShared('db')->updateAsDict('game_users', ['+messages' => 1], ['conditions' => 'id = ?', 'bind' => [$owner]]);
+			$di->getShared('db')->updateAsDict(DB_PREFIX.'users', ['+messages' => 1], ['conditions' => 'id = ?', 'bind' => [$owner]]);
 
 			return true;
 		}

@@ -120,7 +120,7 @@ trait Initializations
 			'username'		=> $this->_config->database->username,
 			'password' 		=> $this->_config->database->password,
 			'dbname'		=> $this->_config->database->dbname,
-			'options'		=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+			'options'		=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 		]);
 
 		$di->set('db', $connection);

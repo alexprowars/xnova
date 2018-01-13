@@ -13,7 +13,7 @@ use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Models\User;

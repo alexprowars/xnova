@@ -6,7 +6,7 @@ use Admin\Controller;
 use Friday\Core\Form\Builder;
 use Admin\Forms\UserForm;
 use Friday\Core\Lang;
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Friday\Core\Modules;
 use Friday\Core\Models\Group;
 use Friday\Core\Models\User;

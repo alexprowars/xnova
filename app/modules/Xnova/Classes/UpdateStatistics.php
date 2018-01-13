@@ -8,7 +8,7 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Friday\Core\Options;
 use Xnova\Models\Fleet;
 use Xnova\Models\User;
