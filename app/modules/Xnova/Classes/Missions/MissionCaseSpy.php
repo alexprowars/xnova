@@ -43,7 +43,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		if ($CurrentUser['rpg_technocrate'] > time())
 			$CurrentSpyLvl += 2;
 
-		$TargetSpyLvl = $TargetUser->spy_tech;
+		$TargetSpyLvl = $TargetUser->getTechLevel('spy');
 		if ($TargetUser->rpg_technocrate > time())
 			$TargetSpyLvl += 2;
 
@@ -156,8 +156,8 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				if ($TargetPlanet->getUnitCount($id) > 0)
 					$fleet_link .= $id . ',' . $TargetPlanet->getUnitCount($id) . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
 
-				if (isset($TargetUser->{$this->registry->resource[$id]}) && $TargetUser->{$this->registry->resource[$id]} > 0)
-					$fleet_link .= $id . ',' . $TargetUser->{$this->registry->resource[$id]} . '!' . (($id > 400 && isset($TargetUser->{$this->registry->resource[$id - 50]}) && $ST >= 8) ? $TargetUser->{$this->registry->resource[$id - 50]} : 0) . ';';
+				if ($TargetUser->getTechLevel($id) > 0)
+					$fleet_link .= $id . ',' . $TargetUser->getTechLevel($id) . '!' . (($id > 400 && $TargetUser->getTechLevel($id - 50) && $ST >= 8) ? $TargetUser->getTechLevel($id - 50) : 0) . ';';
 			}
 
 			$MessageEnd .= "<center><a href=\"#BASEPATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";

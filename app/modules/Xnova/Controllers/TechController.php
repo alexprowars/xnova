@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/tech")
@@ -35,65 +36,62 @@ class TechController extends Controller
 	{
 		$parse = [];
 
-		foreach (_getText('tech') as $Element => $ElementName)
+		foreach (_getText('tech') as $element => $name)
 		{
-			if ($Element >= 300 && $Element < 400)
+			if ($element >= 300 && $element < 400)
 				continue;
 
-			if ($Element < 600)
+			if ($element < 600)
 			{
 				$pars = [];
-				$pars['tt_name'] = $ElementName;
+				$pars['tt_name'] = $name;
 
-				if (!isset($this->registry->resource[$Element]))
+				if (Vars::getName($element) === false)
 					$parse[] = $pars;
 				else
 				{
-					if (isset($this->registry->requeriments[$Element]))
+					$pars['required_list'] = "";
+
+					$requeriments = Vars::getItemRequeriments($element);
+
+					foreach ($requeriments as $ResClass => $Level)
 					{
-						$pars['required_list'] = "";
-
-						foreach ($this->registry->requeriments[$Element] as $ResClass => $Level)
+						if ($ResClass != 700)
 						{
-							if ($ResClass != 700)
-							{
-								if (isset($this->user->{$this->registry->resource[$ResClass]}) && $this->user->{$this->registry->resource[$ResClass]} >= $Level)
-									$pars['required_list'] .= "<span class=\"positive\">";
-								elseif ($this->planet->getBuildLevel($ResClass) >= $Level)
-									$pars['required_list'] .= "<span class=\"positive\">";
-								else
-									$pars['required_list'] .= "<span class=\"negative\">";
-
-								$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
-
-								if (isset($this->user->{$this->registry->resource[$ResClass]}) && $this->user->{$this->registry->resource[$ResClass]} < $Level)
-								{
-									$minus = $Level - $this->user->{$this->registry->resource[$ResClass]};
-									$pars['required_list'] .= " + <b>" . $minus . "</b>";
-								}
-								elseif ($this->planet->getBuildLevel($ResClass) < $Level)
-								{
-									$minus = $Level - $this->planet->getBuildLevel($ResClass);
-									$pars['required_list'] .= " + <b>" . $minus . "</b>";
-								}
-							}
+							if ($this->user->getTechLevel($ResClass) >= $Level)
+								$pars['required_list'] .= "<span class=\"positive\">";
+							elseif ($this->planet->getBuildLevel($ResClass) >= $Level)
+								$pars['required_list'] .= "<span class=\"positive\">";
 							else
+								$pars['required_list'] .= "<span class=\"negative\">";
+
+							$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
+
+							if ($this->user->getTechLevel($ResClass) < $Level)
 							{
-								$pars['required_list'] .= _getText('tech', $ResClass) . " (";
-
-								if ($this->user->race != $Level)
-									$pars['required_list'] .= "<span class=\"negative\">" . _getText('race', $Level);
-								else
-									$pars['required_list'] .= "<span class=\"positive\">" . _getText('race', $Level);
+								$minus = $Level - $this->user->getTechLevel($ResClass);
+								$pars['required_list'] .= " + <b>" . $minus . "</b>";
 							}
-
-							$pars['required_list'] .= ")</span><br>";
+							elseif ($this->planet->getBuildLevel($ResClass) < $Level)
+							{
+								$minus = $Level - $this->planet->getBuildLevel($ResClass);
+								$pars['required_list'] .= " + <b>" . $minus . "</b>";
+							}
 						}
-					}
-					else
-						$pars['required_list'] = "";
+						else
+						{
+							$pars['required_list'] .= _getText('tech', $ResClass) . " (";
 
-					$pars['tt_info'] = $Element;
+							if ($this->user->race != $Level)
+								$pars['required_list'] .= "<span class=\"negative\">" . _getText('race', $Level);
+							else
+								$pars['required_list'] .= "<span class=\"positive\">" . _getText('race', $Level);
+						}
+
+						$pars['required_list'] .= ")</span><br>";
+					}
+
+					$pars['tt_info'] = $element;
 					$parse[] = $pars;
 				}
 			}
@@ -111,10 +109,10 @@ class TechController extends Controller
 	{
 		$element = (int) $element;
 
-		if ($element > 0 && isset($this->registry->resource[$element]))
+		if ($element > 0 && Vars::getName($element))
 		{
 			$this->view->setVar('element', $element);
-			$this->view->setVar('level', isset($this->user->{$this->registry->resource[$element]}) ? $this->user->{$this->registry->resource[$element]} : $this->planet->getBuildLevel($element));
+			$this->view->setVar('level', $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getBuildLevel($element));
 
 			if (isset($this->registry->requeriments[$element]))
 				$this->view->setVar('req', $this->registry->requeriments[$element]);

@@ -188,7 +188,7 @@ class StageTwo
 		}
 
 		if (isset($missiontype[15]))
-			$parse['expedition_hours'] = round($controller->user->{$controller->registry->resource[124]} / 2) + 1;
+			$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
 
 		$controller->view->setVar('parse', $parse);
 		$controller->tag->setTitle(_getText('fl_title_2'));

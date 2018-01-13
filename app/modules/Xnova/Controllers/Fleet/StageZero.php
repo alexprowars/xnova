@@ -23,7 +23,7 @@ class StageZero
 
 		$MaxFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$MaxExpedition = $controller->user->{$controller->registry->resource[124]};
+		$MaxExpedition = $controller->user->getTechLevel('expedition');
 		$ExpeditionEnCours = 0;
 		$EnvoiMaxExpedition = 0;
 
@@ -33,7 +33,7 @@ class StageZero
 			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
 		}
 
-		$MaxFlottes = 1 + $controller->user->{$controller->registry->resource[108]};
+		$MaxFlottes = 1 + $controller->user->getTechLevel('computer');
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 

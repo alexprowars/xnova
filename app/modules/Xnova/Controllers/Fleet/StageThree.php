@@ -103,10 +103,10 @@ class StageThree
 		}
 		else
 		{
-			if ($controller->user->{$controller->registry->resource[124]} >= 1)
+			if ($controller->user->getTechLevel('expedition') >= 1)
 			{
 				$ExpeditionEnCours = \Xnova\Models\Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);
-				$MaxExpedition = 1 + floor($controller->user->{$controller->registry->resource[124]} / 3);
+				$MaxExpedition = 1 + floor($controller->user->getTechLevel('expedition') / 3);
 			}
 			else
 			{
@@ -114,12 +114,12 @@ class StageThree
 				$ExpeditionEnCours = 0;
 			}
 
-			if ($controller->user->{$controller->registry->resource[124]} == 0)
+			if ($controller->user->getTechLevel('expedition') == 0)
 				throw new RedirectException("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", 'Ошибка', "/fleet/", 2);
 			elseif ($ExpeditionEnCours >= $MaxExpedition)
 				throw new RedirectException("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "/fleet/", 2);
 
-			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->{$controller->registry->resource[124]} / 2) + 1))
+			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->getTechLevel('expedition') / 2) + 1))
 				throw new RedirectException("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -207,7 +207,7 @@ class StageThree
 
 		$flyingFleets = \Xnova\Models\Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$fleetmax = $controller->user->{$controller->registry->resource[108]} + 1;
+		$fleetmax = $controller->user->getTechLevel('computer') + 1;
 
 		if ($controller->user->rpg_admiral > time())
 			$fleetmax += 2;

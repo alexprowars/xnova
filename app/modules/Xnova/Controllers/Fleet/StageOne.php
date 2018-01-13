@@ -142,9 +142,8 @@ class StageOne
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
-			// TODO fix it
 			$moons = Planet::find([
-				'(planet_type = 3 OR planet_type = 5) AND '.Vars::getName(43).' > 0 AND id != ?0 AND id_owner = ?1',
+				'(planet_type = 3 OR planet_type = 5) AND id != ?0 AND id_owner = ?1',
 				'bind' => [$controller->planet->id, $controller->user->id]
 			]);
 
@@ -157,6 +156,9 @@ class StageOne
 
 				foreach ($moons as $moon)
 				{
+					if ($moon->getBuildLevel('jumpgate') <= 0)
+						continue;
+
 					$r = $moon->toArray();
 					$r['timer'] = $moon->getNextJumpTime();
 

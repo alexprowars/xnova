@@ -8,6 +8,8 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Di;
+use Phalcon\Exception;
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
 use Xnova\Vars;
@@ -25,8 +27,6 @@ class Planet extends Model
 {
 	private $db;
 	private $user;
-	private $game;
-	private $registry;
 
 	public $id;
 	public $image;
@@ -73,19 +73,17 @@ class Planet extends Model
 	/**
 	 * @var bool|array
 	 */
-	public $buildings = false;
+	private $buildings = false;
 	/**
 	 * @var bool|array
 	 */
-	public $units = false;
+	private $units = false;
 
 	public function onConstruct()
 	{
 		$this->useDynamicUpdate(true);
 
 		$this->db = $this->getDI()->getShared('db');
-		$this->game = $this->getDI()->getShared('game');
-		$this->registry = $this->getDI()->getShared('registry');
 	}
 
 	public function getSource()
@@ -199,9 +197,12 @@ class Planet extends Model
 	public function getBuild ($buildId)
 	{
 		if (!is_numeric($buildId))
-			$buildId = $this->registry->resource_flip[$buildId];
+			$buildId = Vars::getIdByName($buildId);
 
 		$buildId = (int) $buildId;
+
+		if (!$buildId)
+			throw new Exception('getBuild not found');
 
 		if (!$buildId)
 			return false;
@@ -244,11 +245,11 @@ class Planet extends Model
 	}
 
 	public function getBuildLevel ($buildId)
-		{
-			$build = $this->getBuild($buildId);
+	{
+		$build = $this->getBuild($buildId);
 
-			return $build ? $build['level'] : 0;
-		}
+		return $build ? $build['level'] : 0;
+	}
 
 	private function getUnitsData ()
 	{
@@ -273,9 +274,12 @@ class Planet extends Model
 	public function getUnit ($unitId)
 	{
 		if (!is_numeric($unitId))
-			$unitId = $this->registry->resource_flip[$unitId];
+			$unitId = Vars::getIdByName($unitId);
 
 		$unitId = (int) $unitId;
+
+		if (!$unitId)
+			throw new Exception('getUnit not found');
 
 		if (!$unitId)
 			return false;
@@ -340,7 +344,7 @@ class Planet extends Model
 
 		$cnt = 0;
 
-		foreach ($this->registry->reslist['allowed'][$this->planet_type] AS $type)
+		foreach (Vars::getAllowedBuilds($this->planet_type) AS $type)
 		{
 			if (isset($this->buildings[$type]))
 				$cnt += $this->buildings[$type]['level'];
@@ -364,20 +368,30 @@ class Planet extends Model
 
 		$config = $this->getDI()->getShared('config');
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 			$return[$res] = 0;
 
-		if (isset($this->registry->ProdGrid[$Element]))
+		$return['energy'] = 0;
+
+		$production = Vars::getBuildProduction($Element);
+
+		if (!$production)
+			return $return;
+
+		/** @noinspection PhpUnusedLocalVariableInspection */
+		$energyTech 	= $this->user->getTechLevel('energy');
+		/** @noinspection PhpUnusedLocalVariableInspection */
+		$BuildTemp		= $this->temp_max;
+
+		foreach (Vars::getResources() AS $res)
 		{
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			$energyTech 	= $this->user->energy_tech;
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			$BuildTemp		= $this->temp_max;
+			if (isset($production[$res]))
+				$return[$res] = floor(eval($production[$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
+		}
 
-			foreach ($this->registry->reslist['res'] AS $res)
-				$return[$res] = floor(eval($this->registry->ProdGrid[$Element][$res]) * $config->game->get('resource_multiplier') * $this->user->bonusValue($res));
-
-			$energy = floor(eval($this->registry->ProdGrid[$Element]['energy']));
+		if (isset($production['energy']))
+		{
+			$energy = floor(eval($production['energy']));
 
 			if ($Element < 4)
 				$return['energy'] = $energy;
@@ -396,7 +410,7 @@ class Planet extends Model
 
 		$Caps = [];
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 			$Caps[$res.'_perhour'] = 0;
 
 		$Caps['energy_used'] 	= 0;
@@ -405,7 +419,9 @@ class Planet extends Model
 		if ($this->user->isVacation())
 			return;
 
-		foreach ($this->registry->reslist['prod'] AS $ProdID)
+		$registry = Di::getDefault()->getShared('registry');
+
+		foreach ($registry->reslist['prod'] AS $ProdID)
 		{
 			if (!isset($this->buildings[$ProdID]))
 				continue;
@@ -418,7 +434,7 @@ class Planet extends Model
 
 			$result = $this->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 				$Caps[$res.'_perhour'] += $result[$res];
 
 			if ($ProdID < 4)
@@ -429,7 +445,7 @@ class Planet extends Model
 
 		if (in_array($this->planet_type, [3, 5]))
 		{
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 			{
 				$config->game->offsetSet($res.'_basic_income', 0);
 				$this->{$res.'_perhour'} = 0;
@@ -440,7 +456,7 @@ class Planet extends Model
 		}
 		else
 		{
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 				$this->{$res.'_perhour'} = $Caps[$res.'_perhour'];
 
 			$this->energy_used 	= $Caps['energy_used'];
@@ -465,7 +481,7 @@ class Planet extends Model
 
 		$this->planet_updated = true;
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
 			$storage = $this->getBuild($res.'_store');
 			$storageLevel = $storage ? $storage['level'] : 0;
@@ -488,7 +504,7 @@ class Planet extends Model
 
 		if ($this->energy_max == 0)
 		{
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 				$this->{$res.'_perhour'} = $config->game->get($res.'_basic_income');
 
 			$production_level = 0;
@@ -528,7 +544,7 @@ class Planet extends Model
 
 		$this->production_level = $production_level;
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
 			$this->{$res.'_production'} = 0;
 
@@ -578,7 +594,7 @@ class Planet extends Model
 	{
 		$list = [$this->getBuildLevel('laboratory')];
 
-		if ($this->user->{$this->registry->resource[123]} > 0)
+		if ($this->user->getTechLevel('intergalactic') > 0)
 		{
 			$items = $this->db->query('SELECT id, level FROM game_planets_buildings 
 					WHERE 
@@ -586,7 +602,7 @@ class Planet extends Model
 					ORDER BY 
 				level DESC 
 					LIMIT ?3',
-				[31, $this->user->id, $this->id, $this->user->{$this->registry->resource[123]}]
+				[31, $this->user->id, $this->id, $this->user->getTechLevel('intergalactic')]
 			);
 
 			while ($item = $items->fetch())
@@ -622,10 +638,5 @@ class Planet extends Model
 		}
 
 		return 0;
-	}
-
-	public function saveData (array $fields, $planetId = 0)
-	{
-		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($planetId > 0 ? $planetId : $this->id))]);
 	}
 }

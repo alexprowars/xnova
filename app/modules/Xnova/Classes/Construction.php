@@ -53,7 +53,7 @@ class Construction
 			$Element 	= $request->getQuery('building', 'int', 0);
 			$ListID 	= $request->getQuery('listid', 'int', 0);
 
-			if (in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
+			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{
 				$queueManager = new Queue($this->planet->queue);
 				$queueManager->setUserObject($this->user);
@@ -94,7 +94,7 @@ class Construction
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
 		{
-			if (!in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]))
+			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)))
 				continue;
 
 			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
@@ -185,7 +185,7 @@ class Construction
 
 		$spaceLabs = [];
 
-		if ($this->user->{$storage->resource[123]} > 0)
+		if ($this->user->getTechLevel('intergalactic') > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
 
 		$this->planet->spaceLabs = $spaceLabs;
@@ -258,7 +258,7 @@ class Construction
 
 			$price = Vars::getItemPrice($Tech);
 
-			$building_level = $this->user->{$storage->resource[$Tech]};
+			$building_level = $this->user->getTechLevel($Tech);
 
 			$row['tech_level'] = ($building_level == 0) ? "<font color=#FF0000>" . $building_level . "</font>" : "<font color=#00FF00>" . $building_level . "</font>";
 
@@ -306,9 +306,9 @@ class Construction
 
 				if (!$TechHandle['working'])
 				{
-					$LevelToDo = 1 + $this->user->{$storage->resource[$Tech]};
+					$LevelToDo = 1 + $this->user->getTechLevel($Tech);
 
-					if (isset($price['max']) && $this->user->{$storage->resource[$Tech]} >= $price['max'])
+					if (isset($price['max']) && $this->user->getTechLevel($Tech) >= $price['max'])
 						$TechnoLink = '<font color=#FF0000>максимальный уровень</font>';
 					elseif ($CanBeDone)
 					{
@@ -367,8 +367,6 @@ class Construction
 
 	public function pageShipyard ($mode = 'fleet')
 	{
-		$storage = $this->user->getDI()->getShared('registry');
-
 		$queueManager = new Queue($this->planet->queue);
 
 		if ($mode == 'defense')

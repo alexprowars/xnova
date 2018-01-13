@@ -98,28 +98,28 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		foreach ($units as $i)
 		{
-			if (isset($this->registry->resource[$i]) && $target->getUnitCount($i) > 0)
+			if ($target->getUnitCount($i) > 0)
 			{
 				$res[$i] = $target->getUnitCount($i);
 
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				if (isset($this->registry->resource[$l]) && isset($targetUser->{$this->registry->resource[$l]}) && $targetUser->{$this->registry->resource[$l]} > 0)
-					$res[$l] = $targetUser->{$this->registry->resource[$l]};
+				if ($targetUser->getTechLevel($l) > 0)
+					$res[$l] = $targetUser->getTechLevel($l);
 			}
 		}
 
 		if ($targetUser->rpg_komandir > time())
 		{
-			$targetUser->military_tech 	+= 2;
-			$targetUser->defence_tech 	+= 2;
-			$targetUser->shield_tech 	+= 2;
+			$targetUser->setTech('military', $targetUser->getTechLevel('military') + 2);
+			$targetUser->setTech('defence', $targetUser->getTechLevel('defence') + 2);
+			$targetUser->setTech('shield', $targetUser->getTechLevel('shield') + 2);
 		}
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 		{
-			if (isset($targetUser->{$this->registry->resource[$techId]}) && $targetUser->{$this->registry->resource[$techId]} > 0)
-				$res[$techId] = $targetUser->{$this->registry->resource[$techId]};
+			if ($targetUser->getTechLevel($techId) > 0)
+				$res[$techId] = $targetUser->getTechLevel($techId);
 		}
 
 		$this->usersTech[$targetUser->id] = $res;
@@ -128,11 +128,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		foreach ($units as $i)
 		{
-			if (isset($this->registry->resource[$i]) && $target->getUnitCount($i) > 0)
+			if ($target->getUnitCount($i) > 0)
 			{
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
-				$shipType = $this->getShipType($i, [$target->getUnitCount($i), (isset($this->registry->resource[$l]) && isset($targetUser->{$this->registry->resource[$l]}) ? $targetUser->{$this->registry->resource[$l]} : 0)], $res);
+				$shipType = $this->getShipType($i, [$target->getUnitCount($i), $targetUser->getTechLevel($l)], $res);
 
 				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship')
 					$shipType->setRepairProb(0.8);
@@ -354,7 +354,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				foreach ($units as $i)
 				{
-					if (isset($this->registry->resource[$i]) && isset($defender[$i]) && $target->getUnitCount($i) > 0)
+					if (isset($defender[$i]) && $target->getUnitCount($i) > 0)
 						$target->setUnit($i, $defender[$i]);
 				}
 
@@ -648,8 +648,8 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 			{
-				if (isset($info[$this->registry->resource[$techId]]) && $info[$this->registry->resource[$techId]] > 0)
-					$res[$techId] = $info[$this->registry->resource[$techId]];
+				if (isset($info[Vars::getName($techId)]) && $info[Vars::getName($techId)] > 0)
+					$res[$techId] = $info[Vars::getName($techId)];
 			}
 
 			$this->usersTech[$fleet->owner] = $res;

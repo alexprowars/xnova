@@ -497,7 +497,7 @@ class OverviewController extends Controller
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
+						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
 					}
 				}
 			}
@@ -602,7 +602,7 @@ class OverviewController extends Controller
 			{
 				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
+				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
 			}
 		}
 
@@ -658,7 +658,7 @@ class OverviewController extends Controller
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 		{
-			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
+			$parse['officiers'][$officier] = $this->user->{Vars::getName($officier)};
 		}
 
 		if (!$this->user->getUserOption('gameactivity'))
@@ -762,7 +762,7 @@ class OverviewController extends Controller
 
 		$showMessage = false;
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
 			if ($this->planet->getBuildLevel($res.'_mine') && !$this->planet->getBuild($res.'_mine')['power'])
 				$showMessage = true;

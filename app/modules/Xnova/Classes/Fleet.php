@@ -60,13 +60,13 @@ class Fleet extends Building
 			switch ($storage->CombatCaps[$Ship]['type_engine'])
 			{
 				case 1:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('combustion') * 0.1));
 					break;
 				case 2:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('impulse_motor') * 0.2));
 					break;
 				case 3:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('hyperspace_motor') * 0.3));
 					break;
 				default:
 					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'];
@@ -90,7 +90,7 @@ class Fleet extends Building
 		{
 			if (isset($storage->CombatCaps[$Ship]) && isset($storage->CombatCaps[$Ship]['engine_up']))
 			{
-				if ($user->{$storage->resource[$storage->CombatCaps[$Ship]['engine_up']['tech']]} >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
+				if ($user->getTechLevel($storage->CombatCaps[$Ship]['engine_up']['tech']) >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
 				{
 					$tmp = $storage['CombatCaps'];
 
@@ -165,15 +165,15 @@ class Fleet extends Building
 		foreach ($FleetRec as $fleet)
 			$Total += $fleet['cnt'];
 
-		if ($FleetRow->owner != $user->id && $user->spy_tech < 2)
+		if ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 2)
 		{
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
 		}
-		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 4)
+		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 4)
 		{
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
 		}
-		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 8)
+		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 8)
 		{
 			foreach ($FleetRec as $id => $fleet)
 			{
@@ -277,14 +277,10 @@ class Fleet extends Building
 
 	static function GetMissileRange (User $user)
 	{
-		$storage = $user->getDI()->getShared('registry');
+		if ($user->getTechLevel('impulse_motor') > 0)
+			return ($user->getTechLevel('impulse_motor') * 5) - 1;
 
-		if ($user->{$storage->resource[117]} > 0)
-			$MissileRange = ($user->{$storage->resource[117]} * 5) - 1;
-		else
-			$MissileRange = 0;
-
-		return $MissileRange;
+		return 0;
 	}
 
 	static function GetPhalanxRange ($PhalanxLevel)

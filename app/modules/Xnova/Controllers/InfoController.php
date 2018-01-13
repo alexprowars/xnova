@@ -284,16 +284,16 @@ class InfoController extends Controller
 		{
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ($this->registry->CombatCaps[$itemId]['power_up'] / 100)) + $this->user->military_tech * 0.05;
+			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ($this->registry->CombatCaps[$itemId]['power_up'] / 100)) + $this->user->getTechLevel('military') * 0.05;
 
 			if ($this->registry->CombatCaps[$itemId]['type_gun'] == 1)
-				$attTech += $this->user->laser_tech * 0.05;
+				$attTech += $this->user->getTechLevel('laser') * 0.05;
 			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 2)
-				$attTech += $this->user->ionic_tech * 0.05;
+				$attTech += $this->user->getTechLevel('ionic') * 0.05;
 			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 3)
-				$attTech += $this->user->buster_tech * 0.05;
+				$attTech += $this->user->getTechLevel('buster') * 0.05;
 
 			// Устанавливаем обновлённые двигателя кораблей
 			Fleet::SetShipsEngine($this->user);
@@ -328,14 +328,14 @@ class InfoController extends Controller
 			$parse['element_typ'] = _getText('tech', 400);
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->defence_tech * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
 			if (isset($this->registry->CombatCaps[$itemId]['shield']))
 				$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['shield']);
 			else
 				$parse['shield_pt'] = '';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) / 100)) + $this->user->military_tech * 0.05;
+			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) / 100)) + $this->user->getTechLevel('military') * 0.05;
 
 			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
 			$parse['met'] = Helpers::pretty_number($price['metal']);

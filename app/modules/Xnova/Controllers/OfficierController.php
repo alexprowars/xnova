@@ -66,10 +66,10 @@ class OfficierController extends Controller
 
 				if (Vars::getItemType($selected) == Vars::ITEM_TYPE_OFFICIER)
 				{
-					if ($this->user->{$this->registry->resource[$selected]} > time())
-						$this->user->{$this->registry->resource[$selected]} = $this->user->{$this->registry->resource[$selected]} + $times;
+					if ($this->user->{Vars::getName($selected)} > time())
+						$this->user->{Vars::getName($selected)} = $this->user->{Vars::getName($selected)} + $times;
 					else
-						$this->user->{$this->registry->resource[$selected]} = time() + $times;
+						$this->user->{Vars::getName($selected)} = time() + $times;
 
 					$this->user->credits -= $need_c;
 					$this->user->update();
@@ -97,9 +97,9 @@ class OfficierController extends Controller
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if ($this->user->{$this->registry->resource[$officier]} > time())
+				if ($this->user->{Vars::getName($officier)} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->registry->resource[$officier]}) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{Vars::getName($officier)}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else

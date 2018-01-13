@@ -77,7 +77,7 @@ class TutorialController extends Controller
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->{$this->registry->resource[$element]}) ? ($this->user->{$this->registry->resource[$element]} >= $level) : ($this->planet->getBuildLevel($element) >= $level);
+						$check = $this->user->getTechLevel($element) ? ($this->user->getTechLevel($element) >= $level) : ($this->planet->getBuildLevel($element) >= $level);
 
 						if ($chk == true)
 							$chk = $check;
@@ -161,21 +161,16 @@ class TutorialController extends Controller
 
 			if ($this->request->hasQuery('continue') && !$errors && $qInfo['finish'] == 0)
 			{
-				//$this->db->query("UPDATE game_planets SET `" . $this->registry->resource[401] . "` = `" . $this->registry->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
-
-				$planetData = [];
-				$userData = [];
-
 				foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 				{
 					if ($rewardKey == 'metal')
-						$planetData['+metal'] = $rewardVal;
+						$this->planet->metal += $rewardVal;
 					elseif ($rewardKey == 'crystal')
-						$planetData['+crystal'] = $rewardVal;
+						$this->planet->crystal += $rewardVal;
 					elseif ($rewardKey == 'deuterium')
-						$planetData['+deuterium'] = $rewardVal;
+						$this->planet->deuterium += $rewardVal;
 					elseif ($rewardKey == 'credits')
-						$userData['+credits'] = $rewardVal;
+						$this->user->credits += $rewardVal;
 					elseif ($rewardKey == 'BUILD')
 					{
 						foreach ($rewardVal AS $element => $level)
@@ -183,36 +178,34 @@ class TutorialController extends Controller
 							$type = Vars::getItemType($element);
 
 							if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
-								$userData['+'.$this->registry->resource[$element]] = $level;
+								$this->user->setTech($element, $this->user->getTechLevel($element) + $level);
 							elseif ($type == Vars::ITEM_TYPE_FLEET)
-								$planetData['+'.$this->registry->resource[$element]] = $level;
+								$this->planet->setUnit($element, $level, true);
 							elseif ($type == Vars::ITEM_TYPE_DEFENSE)
-								$planetData['+'.$this->registry->resource[$element]] = $level;
+								$this->planet->setUnit($element, $level, true);
 							elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							{
-								if ($this->user->{$this->registry->resource[$element]} > time())
-									$userData['+'.$this->registry->resource[$element]] = $level;
+								if ($this->user->{Vars::getName($element)} > time())
+									$this->user->{Vars::getName($element)} += $level;
 								else
-									$userData[$this->registry->resource[$element]] = time() + $level;
+									$this->user->{Vars::getName($element)} = time() + $level;
 							}
-							else
-								$planetData['+'.$this->registry->resource[$element]] = $level;
+							elseif ($type == Vars::ITEM_TYPE_BUILING)
+								$this->planet->setBuild($element, $this->planet->getBuildLevel($element) + $level);
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')
 					{
 						$r = mt_rand(22, 24);
 
-						$planetData['+'.$this->registry->resource[$r]] = 1;
+						$this->planet->setBuild($r, $this->planet->getBuildLevel($r) + 1);
 					}
 				}
 
 				$this->db->updateAsDict('game_users_quests', ['finish' => '1'], 'id = '.$qInfo['id']);
 
-				if (count($planetData))
-					$this->planet->saveData($planetData);
-				if (count($userData))
-					$this->user->saveData($userData);
+				$this->user->save();
+				$this->planet->save();
 
 				$this->response->redirect('tutorial/');
 			}

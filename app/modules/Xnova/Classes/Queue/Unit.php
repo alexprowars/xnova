@@ -9,7 +9,6 @@ namespace Xnova\Queue;
  */
 
 use Xnova\Building;
-use Phalcon\Di;
 use Xnova\Queue;
 use Xnova\Vars;
 

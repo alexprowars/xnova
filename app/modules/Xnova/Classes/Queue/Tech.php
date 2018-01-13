@@ -24,8 +24,6 @@ class Tech
 
 	public function add ($elementId)
 	{
-		$registry = Di::getDefault()->getShared('registry');
-		
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 		
@@ -35,14 +33,14 @@ class Tech
 		{
 			$spaceLabs = [];
 
-			if ($user->{$registry->resource[123]} > 0)
+			if ($user->getTechLevel('energy') > 0)
 				$spaceLabs = $planet->getNetworkLevel();
 
 			$planet->spaceLabs = $spaceLabs;
 
 			$price = Vars::getItemPrice($elementId);
 
-			if (Building::IsTechnologieAccessible($user, $planet, $elementId) && Building::IsElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->{$registry->resource[$elementId]} >= $price['max']))
+			if (Building::IsTechnologieAccessible($user, $planet, $elementId) && Building::IsElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
 			{
 				$costs = Building::GetBuildingPrice($user, $planet, $elementId);
 
@@ -54,7 +52,7 @@ class Tech
 
 				$this->_queue->set(Queue::QUEUE_TYPE_RESEARCH, [
 					'i' => $elementId,
-					'l' => ($user->{$registry->resource[$elementId]} + 1),
+					'l' => $user->getTechLevel($elementId) + 1,
 					't' => $time,
 					's' => time(),
 					'e' => time() + $time,

@@ -439,7 +439,7 @@ class Queue
 				if ($queueArray[0]['e'] <= time())
 				{
 					$this->user->b_tech_planet = 0;
-					$this->user->{$this->registry->resource[$queueArray[0]['i']]}++;
+					$this->user->setTech($queueArray[0]['i'], $this->user->getTechLevel($queueArray[0]['i']) + 1);
 
 					$queueManager->checkQueue();
 					$newQueue = $queueManager->get();
@@ -479,8 +479,9 @@ class Queue
 			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->getUnitCount('interceptor_misil') + (2 * $this->planet->getUnitCount('interplanetary_misil')));
 
 			$max = [];
+			$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
-			foreach (Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]) as $id => $data)
+			foreach ($buildTypes as $id => $data)
 			{
 				if (isset($data['max']) && $this->planet->getUnitCount($id) > 0)
 					$max[$id] = $this->planet->getUnitCount($id);
@@ -534,7 +535,7 @@ class Queue
 
 			foreach ($BuildArray as list($Element, $Count, $BuildTime))
 			{
-				if (!isset($this->registry->resource[$Element]))
+				if (!in_array($Element, $buildTypes))
 					continue;
 
 				while ($this->planet->b_hangar >= $BuildTime && !$UnFinished)

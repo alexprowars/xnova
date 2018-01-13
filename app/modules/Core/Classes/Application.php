@@ -160,7 +160,7 @@ class Application extends PhalconApplication
 
 	/**
 	 * @param $di DiInterface
-	 * @return Loader
+	 * @return void
 	 */
 	protected function initModules ($di)
 	{

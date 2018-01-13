@@ -52,7 +52,15 @@ class Vars
 	static function getName ($id)
 	{
 		if (isset(self::$registry->resource[$id]))
-			self::$registry->resource[$id];
+			return self::$registry->resource[$id];
+
+		return false;
+	}
+
+	static function getIdByName ($name)
+	{
+		if (isset(self::$registry->resource_flip[$name]))
+			return self::$registry->resource_flip[$name];
 
 		return false;
 	}
@@ -133,5 +141,26 @@ class Vars
 		}
 
 		return $result;
+	}
+
+	static function getResources ()
+	{
+		return self::$registry->reslist['res'];
+	}
+
+	static function getBuildProduction ($buildId)
+	{
+		if (!isset(self::$registry->ProdGrid[$buildId]))
+			return false;
+
+		return self::$registry->ProdGrid[$buildId];
+	}
+
+	static function getAllowedBuilds ($planetType)
+	{
+		if (!isset(self::$registry->reslist['allowed'][(int) $planetType]))
+			return [];
+
+		return self::$registry->reslist['allowed'][(int) $planetType];
 	}
 }

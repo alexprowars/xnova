@@ -126,7 +126,7 @@ class FleetEngine extends Injectable
 		]);
 	}
 
-	public function SpyTarget (Planet $TargetPlanet, $Mode, $TitleString)
+	public function SpyTarget ($TargetPlanet, $Mode, $TitleString)
 	{
 		$LookAtLoop = true;
 		$String = '';
@@ -203,7 +203,7 @@ class FleetEngine extends Injectable
 
 				for ($Item = $ResFrom[$CurrentLook]; $Item <= $ResTo[$CurrentLook]; $Item++)
 				{
-					if (!isset($this->registry->resource[$Item]))
+					if (Vars::getName($Item) === false)
 						continue;
 
 					$level = 0;
@@ -214,7 +214,9 @@ class FleetEngine extends Injectable
 					elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 						$level = $TargetPlanet->getUnitCount($Item);
 					elseif ($type == Vars::ITEM_TYPE_OFFICIER)
-						$level = $TargetPlanet->{$this->registry->resource[$Item]};
+						$level = $TargetPlanet->{Vars::getName($Item)};
+					elseif ($type == Vars::ITEM_TYPE_TECH)
+						$level = $TargetPlanet->getTechLevel($Item);
 
 					if (($level && $Item < 600) || ($level > time() && $Item > 600))
 					{

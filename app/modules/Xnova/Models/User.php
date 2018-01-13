@@ -8,6 +8,7 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Exception;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Galaxy;
 use Phalcon\Di;
@@ -82,25 +83,6 @@ class User extends BaseUser
 	public $planet_sort;
 	public $planet_sort_order;
 
-	public $spy_tech;
-	public $computer_tech;
-	public $military_tech;
-	public $shield_tech;
-	public $defence_tech;
-	public $energy_tech;
-	public $hyperspace_tech;
-	public $combustion_tech;
-	public $impulse_motor_tech;
-	public $hyperspace_motor_tech;
-	public $laser_tech;
-	public $ionic_tech;
-	public $buster_tech;
-	public $intergalactic_tech;
-	public $expedition_tech;
-	public $colonisation_tech;
-	public $fleet_base_tech;
-	public $graviton_tech;
-
 	public $rpg_geologue;
 	public $rpg_ingenieur;
 	public $rpg_admiral;
@@ -109,28 +91,6 @@ class User extends BaseUser
 	public $rpg_meta;
 	public $rpg_komandir;
 
-	public $fleet_202;
-	public $fleet_203;
-	public $fleet_204;
-	public $fleet_205;
-	public $fleet_206;
-	public $fleet_207;
-	public $fleet_209;
-	public $fleet_211;
-	public $fleet_213;
-	public $fleet_214;
-	public $fleet_215;
-	public $fleet_220;
-	public $fleet_221;
-	public $fleet_222;
-	public $fleet_223;
-	public $fleet_401;
-	public $fleet_402;
-	public $fleet_403;
-	public $fleet_404;
-	public $fleet_405;
-	public $fleet_406;
-
 	public $tutorial_value;
 	public $message_block;
 	public $color;
@@ -138,10 +98,10 @@ class User extends BaseUser
 	public $spy;
 	public $deltime;
 	public $ally_name;
-
-	private $_infoColumns = [
-		'name', 'second_name', 'last_name', 'gender', 'photo', 'password'
-	];
+	/**
+	 * @var bool|array
+	 */
+	private $technology = false;
 
 	public function onConstruct()
 	{
@@ -166,6 +126,34 @@ class User extends BaseUser
 	public function afterUpdate ()
 	{
 		$this->setSnapshotData($this->toArray());
+
+		if ($this->technology !== false)
+		{
+			foreach ($this->technology as $tech)
+			{
+				if ($tech['id'] == 0 && $tech['level'] > 0)
+				{
+					$this->db->insertAsDict(DB_PREFIX.'users_tech', [
+						'user_id' => $this->id,
+						'tech_id' => $tech['type'],
+						'level' => $tech['level'],
+					]);
+				}
+				elseif ($tech['level'] != $tech['~level'])
+				{
+					if ($tech['level'] > 0)
+					{
+						$this->db->updateAsDict(DB_PREFIX.'users_tech', [
+							'level' => $tech['level']
+						], ['conditions' => 'id = ?', 'bind' => [$tech['id']]]);
+					}
+					else
+						$this->db->delete(DB_PREFIX.'users_tech', 'id = ?', [$tech['id']]);
+				}
+
+				$building['~level'] = $tech['level'];
+			}
+		}
 	}
 
 	public function afterFetch()
@@ -316,6 +304,72 @@ class User extends BaseUser
 	public function setUserOption ($key, $value)
 	{
 		$this->optionsData[$key] = $value;
+	}
+
+	private function getTechnologyData ()
+	{
+		if ($this->technology !== false)
+			return;
+
+		$this->technology = [];
+
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'users_tech WHERE user_id = ?', [$this->id]);
+
+		while ($item = $items->fetch())
+		{
+			$this->technology[$item['tech_id']] = [
+				'id'		=> (int) $item['id'],
+				'type'		=> (int) $item['tech_id'],
+				'level'		=> (int) $item['level'],
+				'~level'	=> (int) $item['level']
+			];
+		}
+	}
+
+	public function getTech ($techId)
+	{
+		if (!is_numeric($techId))
+			$techId = Vars::getIdByName($techId.'_tech');
+
+		if (!$techId)
+			throw new Exception('getTech not found');
+
+		$techId = (int) $techId;
+
+		if (!$techId)
+			return false;
+
+		if ($this->technology === false)
+			$this->getTechnologyData();
+
+		if (isset($this->technology[$techId]))
+			return $this->technology[$techId];
+
+		if (!in_array(Vars::getItemType($techId), [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]))
+			return false;
+
+		$this->technology[$techId] = [
+			'id'		=> 0,
+			'type'		=> $techId,
+			'level'		=> 0,
+			'~level'	=> 0
+		];
+
+		return $this->technology[$techId];
+	}
+
+	public function setTech ($techId, $level)
+	{
+		$tech = $this->getTech($techId);
+
+		$this->technology[$tech['type']]['level'] = (int) $level;
+	}
+
+	public function getTechLevel ($techId)
+	{
+		$tech = $this->getTech($techId);
+
+		return $tech ? $tech['level'] : 0;
 	}
 
 	public function loadPlanet ()

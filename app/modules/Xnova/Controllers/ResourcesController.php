@@ -45,7 +45,7 @@ class ResourcesController extends Controller
 			{
 				$this->planet->merchand = time() + 172800;
 
-				foreach ($this->registry->reslist['res'] AS $res)
+				foreach (Vars::getResources() AS $res)
 					$this->planet->{$res} += $parse['buy_'.$res];
 
 				$this->planet->update();
@@ -86,7 +86,7 @@ class ResourcesController extends Controller
 
 		$buildsId = [4, 12];
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 			$buildsId[] = $this->registry->resource_flip[$res.'_mine'];
 
 		$this->db->updateAsDict('game_planets_buildings', [
@@ -103,11 +103,11 @@ class ResourcesController extends Controller
 	{
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
 		{
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 				$this->config->game->offsetSet($res.'_basic_income', 0);
 		}
 
-		$CurrentUser['energy_tech'] = $this->user->energy_tech;
+		$CurrentUser['energy_tech'] = $this->user->getTechLevel('energy');
 		$ValidList['percent'] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		
 		if ($this->request->isPost())
@@ -149,7 +149,7 @@ class ResourcesController extends Controller
 
 			$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 			{
 				$$res = $result[$res];
 				$$res = round($$res * 0.01 * $production_level);
@@ -165,13 +165,13 @@ class ResourcesController extends Controller
 			$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
 
 			if ($ProdID == 4)
-				$CurrRow['bonus'] += $this->user->energy_tech / 100;
+				$CurrRow['bonus'] += $this->user->getTechLevel('energy') / 100;
 
 			$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
 
 			$CurrRow['level_type'] = $BuildLevel;
 
-			foreach ($this->registry->reslist['res'] AS $res)
+			foreach (Vars::getResources() AS $res)
 				$CurrRow[$res.'_type'] = $$res;
 
 			$CurrRow['energy_type'] = $energy;
@@ -179,7 +179,7 @@ class ResourcesController extends Controller
 			$parse['resource_row'][] = $CurrRow;
 		}
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
 			if (!$this->user->isVacation())
 				$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
@@ -211,7 +211,7 @@ class ResourcesController extends Controller
 			$this->buy($parse);
 		}
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 			$parse['buy_'.$res] = Helpers::colorNumber(Helpers::pretty_number($parse['buy_'.$res]));
 
 		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');
@@ -226,7 +226,7 @@ class ResourcesController extends Controller
 		$parse['production_level_barcolor'] = '#00ff00';
 		$parse['name'] = $this->planet->name;
 
-		$parse['et'] = $this->user->energy_tech;
+		$parse['et'] = $this->user->getTechLevel('energy');
 
 		$this->view->setVar('parse', $parse);
 

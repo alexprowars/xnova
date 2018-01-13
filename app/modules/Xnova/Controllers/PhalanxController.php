@@ -52,13 +52,15 @@ class PhalanxController extends Controller
 			$s = $this->planet->system;
 		if ($i < 1 || $i > $this->config->game->maxPlanetInSystem)
 			$i = $this->planet->planet;
+
+		$phalanx = $this->planet->getBuildLevel('phalanx');
 		
-		$systemdol 	= $this->planet->system - pow($this->planet->phalanx, 2);
-		$systemgora = $this->planet->system + pow($this->planet->phalanx, 2);
+		$systemdol 	= $this->planet->system - pow($phalanx, 2);
+		$systemgora = $this->planet->system + pow($phalanx, 2);
 		
 		if ($this->planet->planet_type != 3)
 			throw new MessageException("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
-		elseif ($this->planet->phalanx == 0)
+		elseif ($phalanx == 0)
 			throw new MessageException("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
 		elseif ($this->planet->deuterium < $consomation)
 			throw new MessageException("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);

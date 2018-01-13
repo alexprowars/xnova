@@ -48,20 +48,20 @@ class RocketController extends Controller
 		$destroyType = $_POST['Target'];
 		
 		$tempvar1 = (($s - $this->planet->system) * (-1));
-		$tempvar2 = ($this->user->impulse_motor_tech * 5) - 1;
+		$tempvar2 = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 		$tempvar3 = Planet::findByCoords($g, $s, $i, 1);
 
 		$error = 0;
 		
 		if ($this->planet->getBuildLevel('missile_facility') < 4)
 			$error = 1;
-		elseif ($this->user->impulse_motor_tech == 0)
+		elseif ($this->user->getTechLevel('impulse_motor') == 0)
 			$error = 2;
 		elseif ($tempvar1 >= $tempvar2 || $g != $this->planet->galaxy)
 			$error = 3;
 		elseif (!$tempvar3)
 			$error = 4;
-		elseif ($anz > $this->planet->interplanetary_misil)
+		elseif ($anz > $this->planet->getUnitCount('interplanetary_misil'))
 			$error = 5;
 		elseif ((!is_numeric($destroyType) && $destroyType != "all") OR ($destroyType < 0 && $destroyType > 7 && $destroyType != "all"))
 			$error = 6;
@@ -111,7 +111,7 @@ class RocketController extends Controller
 
 		if ($fleet->id > 0)
 		{
-			$this->planet->interplanetary_misil -= $anz;
+			$this->planet->setUnit('interplanetary_misil', -$anz, true);
 			$this->planet->update();
 		}
 

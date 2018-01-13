@@ -65,7 +65,7 @@ class Quick
 		{
 			if ($num <= 0)
 				return 'Вы были забанены за читерство!';
-			if ($controller->planet->spy_sonde == 0)
+			if ($controller->planet->getUnitCount('spy_sonde') == 0)
 				return 'Нет шпионских зондов ля отправки!';
 			if ($target->id_owner == $controller->user->id)
 				return 'Невозможно выполнить задание!';
@@ -100,8 +100,8 @@ class Quick
 			if ($HeDBRec['vacation'] > 0)
 				return 'Игрок в режиме отпуска!';
 
-			if ($controller->planet->spy_sonde < $num)
-				$num = $controller->planet->spy_sonde;
+			if ($controller->planet->getUnitCount('spy_sonde') < $num)
+				$num = $controller->planet->getUnitCount('spy_sonde');
 
 			$FleetArray[210] = $num;
 
@@ -114,17 +114,17 @@ class Quick
 
 			if ($DebrisSize == 0)
 				return 'Нет обломков для сбора!';
-			if ($controller->planet->recycler == 0)
+			if ($controller->planet->getUnitCount('recycler') == 0)
 				return 'Нет переработчиков для сбора обломков!';
 
 			$RecyclerNeeded = 0;
 
-			if ($controller->planet->recycler > 0 && $DebrisSize > 0)
+			if ($controller->planet->getUnitCount('recycler') > 0 && $DebrisSize > 0)
 			{
-				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + $controller->user->fleet_209 * ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
+				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + $controller->user->getTechLevel('fleet_209') * ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
 
-				if ($RecyclerNeeded > $controller->planet->recycler)
-					$RecyclerNeeded = $controller->planet->recycler;
+				if ($RecyclerNeeded > $controller->planet->getUnitCount('recycler'))
+					$RecyclerNeeded = $controller->planet->getUnitCount('recycler');
 			}
 
 			if ($RecyclerNeeded > 0)

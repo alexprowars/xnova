@@ -81,29 +81,29 @@ $resource = array
 	222 => "dreadnought",
 	223 => "corsair",
 
-	302 => "fleet_202",
-	303 => "fleet_203",
-	304 => "fleet_204",
-	305 => "fleet_205",
-	306 => "fleet_206",
-	307 => "fleet_207",
-	309 => "fleet_209",
-	311 => "fleet_211",
-	313 => "fleet_213",
-	314 => "fleet_214",
-	315 => "fleet_215",
+	302 => "fleet_202_tech",
+	303 => "fleet_203_tech",
+	304 => "fleet_204_tech",
+	305 => "fleet_205_tech",
+	306 => "fleet_206_tech",
+	307 => "fleet_207_tech",
+	309 => "fleet_209_tech",
+	311 => "fleet_211_tech",
+	313 => "fleet_213_tech",
+	314 => "fleet_214_tech",
+	315 => "fleet_215_tech",
 
-	320 => "fleet_220",
-	321 => "fleet_221",
-	322 => "fleet_222",
-	323 => "fleet_223",
+	320 => "fleet_220_tech",
+	321 => "fleet_221_tech",
+	322 => "fleet_222_tech",
+	323 => "fleet_223_tech",
 
-	351 => "fleet_401",
-	352 => "fleet_402",
-	353 => "fleet_403",
-	354 => "fleet_404",
-	355 => "fleet_405",
-	356 => "fleet_406",
+	351 => "fleet_401_tech",
+	352 => "fleet_402_tech",
+	353 => "fleet_403_tech",
+	354 => "fleet_404_tech",
+	355 => "fleet_405_tech",
+	356 => "fleet_406_tech",
 
 	401 => "misil_launcher",
 	402 => "small_laser",
@@ -728,38 +728,24 @@ $CombatCaps = array
 $ProdGrid = array(
 	1 => array(
 		'metal' => 'return (30 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'crystal' => 'return 0;',
-		'deuterium' => 'return 0;',
 		'energy' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
 	),
 	2 => array(
-		'metal' => 'return 0;',
 		'crystal' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'deuterium' => 'return 0;',
 		'energy' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
 	),
 	3 => array(
-		'metal' => 'return 0;',
-		'crystal' => 'return 0;',
 		'deuterium' => 'return ((10 * $BuildLevel * pow((1.1), $BuildLevel)) * (-0.002 * $BuildTemp + 1.28)) * (0.1 * $BuildLevelFactor);',
 		'energy' => 'return -(30 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
 	),
 	4 => array(
-		'metal' => 'return 0;',
-		'crystal' => 'return 0;',
-		'deuterium' => 'return 0;',
 		'energy' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $energyTech * 0.01);'
 	),
 	12 => array(
-		'metal' => 'return 0;',
-		'crystal' => 'return 0;',
 		'deuterium' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
 		'energy' => 'return (40 * $BuildLevel * pow(1.05 + $energyTech * 0.01, $BuildLevel)) * (0.1 * $BuildLevelFactor) ;'
 	),
 	212 => array(
-		'metal' => 'return 0;',
-		'crystal' => 'return 0;',
-		'deuterium' => 'return 0;',
 		'energy' => 'return floor(($BuildTemp + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor);'
 	)
 );

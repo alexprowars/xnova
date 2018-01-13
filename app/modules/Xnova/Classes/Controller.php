@@ -384,7 +384,7 @@ class Controller extends PhalconController
 			}
 		}
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
 			$parse[$res] = floor(floatval($this->planet->{$res}));
 
@@ -413,9 +413,7 @@ class Controller extends PhalconController
 		$parse['officiers'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
-		{
-			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
-		}
+			$parse['officiers'][$officier] = $this->user->{Vars::getName($officier)};
 
 		$parse['energy_ak'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
 		$parse['energy_ak'] = min(100, max(0, $parse['energy_ak']));

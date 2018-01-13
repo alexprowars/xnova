@@ -37,8 +37,6 @@ class Building
 
 	static function IsTechnologieAccessible (User $user, Planet $planet, $element)
 	{
-		$storage = $user->getDI()->getShared('registry');
-
 		$requeriments = Vars::getItemRequeriments($element);
 
 		if (!count($requeriments))
@@ -48,13 +46,13 @@ class Building
 
 		foreach ($requeriments as $reqElement => $level)
 		{
-			if ($reqElement == 700 && $user->{$storage->resource[$reqElement]} != $level)
+			if ($reqElement == 700 && $user->race != $level)
 				return false;
-			elseif (isset($user->{$storage->resource[$reqElement]}) && $user->{$storage->resource[$reqElement]} >= $level)
+			elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqElement) >= $level)
 			{
 				// break;
 			}
-			elseif ($planet->getBuildLevel($reqElement) >= $level)
+			elseif (Vars::getItemType($reqElement) != Vars::ITEM_TYPE_TECH && $planet->getBuildLevel($reqElement) >= $level)
 				$enabled = true;
 			elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($element == 43 || $element == 502 || $element == 503) && ($reqElement == 21 || $reqElement == 41))
 				$enabled = true;
@@ -102,8 +100,6 @@ class Building
 
 	static function getTechTree ($element, User $user, Planet $planet)
 	{
-		$storage = Di::getDefault()->getShared('registry');
-
 		$result = '';
 
 		$requeriments = Vars::getItemRequeriments($element);
@@ -119,19 +115,19 @@ class Building
 
 			if ($ResClass != 700)
 			{
-				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} >= $Level)
+				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && $user->getTechLevel($ResClass) >= $Level)
 					$isAvailable = true;
-				elseif ($planet->getBuildLevel($ResClass) >= $Level)
+				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) >= $Level)
 					$isAvailable = true;
 
 				$line .= _getText('level').' '.$Level;
 
-				if (isset($user->{$storage->resource[$ResClass]}) && $user->{$storage->resource[$ResClass]} < $Level)
+				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && $user->getTechLevel($ResClass) < $Level)
 				{
-					$minus = $Level - $user->{$storage->resource[$ResClass]};
+					$minus = $Level - $user->getTechLevel($ResClass);
 					$line .= " + <b>" . $minus . "</b>";
 				}
-				elseif ($planet->getBuildLevel($ResClass) < $Level)
+				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) < $Level)
 				{
 					$minus = $Level - $planet->getBuildLevel($ResClass);
 					$line .= " + <b>" . $minus . "</b>";
@@ -253,8 +249,6 @@ class Building
 	 */
 	static function GetBuildingPrice (User $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
 	{
-		$storage = Di::getDefault()->getShared('registry');
-
 		$price = Vars::getItemPrice($element);
 		$elementType = Vars::getItemType($element);
 		$level = 0;
@@ -264,7 +258,7 @@ class Building
 			if ($elementType == Vars::ITEM_TYPE_BUILING)
 				$level = $planet->getBuildLevel($element);
 			else
-				$level = $user->{$storage->resource[$element]};
+				$level = $user->getTechLevel($element);
 		}
 
 		$cost = [];

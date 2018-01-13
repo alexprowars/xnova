@@ -89,7 +89,7 @@ class ImperiumController extends Controller
 
 		$parse['mount'] = count($planets) + 3;
 
-		foreach ($this->registry->reslist['res'] as $res)
+		foreach (Vars::getResources() as $res)
 		{
 			$parse['file_'.$res.'_t'] = 0;
 			$parse['file_'.$res.'_ph_t'] = 0;
@@ -117,7 +117,7 @@ class ImperiumController extends Controller
 
 			@$parse['file_energy_t'] += $planet->energy_max - abs($planet->energy_used);
 
-			foreach ($this->registry->reslist['res'] as $res)
+			foreach (Vars::getResources() as $res)
 			{
 				$parse['file_'.$res.'_t'] += $planet->{$res};
 				$parse['file_'.$res.'_ph_t'] += $planet->{$res.'_perhour'};
@@ -197,7 +197,7 @@ class ImperiumController extends Controller
 			}
 		}
 
-		foreach ($this->registry->reslist['res'] as $res)
+		foreach (Vars::getResources() as $res)
 		{
 			$parse['file_'.$res.'_t'] = Helpers::pretty_number($parse['file_'.$res.'_t']);
 			$parse['file_'.$res.'_ph_t'] = Helpers::pretty_number($parse['file_'.$res.'_ph_t']);
@@ -228,7 +228,7 @@ class ImperiumController extends Controller
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i)
 		{
-			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->{$this->registry->resource[$i]} . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
+			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->getTechLevel($i) . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
 		}
 
 		$this->view->setVar('parse', $parse);

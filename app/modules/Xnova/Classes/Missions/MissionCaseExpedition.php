@@ -268,8 +268,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 				{
-					if (isset($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
-						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] + $Def), 0);
+					if (isset($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
+						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] + $Def), 0);
 				}
 
 				$mission->usersTech[0] = $res;

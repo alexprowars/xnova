@@ -38,7 +38,7 @@ class GalaxyController extends Controller
 	 */
 	public function indexAction ()
 	{
-		$fleetmax = $this->user->computer_tech + 1;
+		$fleetmax = $this->user->getTechLevel('computer') + 1;
 		
 		if ($this->user->rpg_admiral > time())
 			$fleetmax += 2;
