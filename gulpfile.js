@@ -38,7 +38,6 @@ gulp.task('admin', function ()
 	gulp.src('./public/assets/src/admin/pages/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
 	gulp.src('./public/assets/src/admin/layout/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
 	gulp.src('./public/assets/src/admin/layout/themes/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
-	gulp.src('./app/modules/Core/Classes/Prophiler/View/sass/*.scss').pipe(sass()).pipe(minifyCss()).pipe(gulp.dest('./app/modules/Core/Classes/Prophiler/View/css'));
 
 	gulp.src(['./public/assets/admin/global/css/*.css', '!./public/assets/admin/global/css/*.min.css']).pipe(minifyCss()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/global/css'));
 	gulp.src(['./public/assets/admin/pages/css/*.css', '!./public/assets/admin/pages/css/*.min.css']).pipe(minifyCss()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/pages/css'));

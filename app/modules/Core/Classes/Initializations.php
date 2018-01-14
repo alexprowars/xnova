@@ -5,7 +5,6 @@ namespace Friday\Core;
 use DirectoryIterator;
 use Friday\Core\Auth\Auth;
 use Friday\Core\Auth\Security;
-use Friday\Core\Prophiler\Plugin\Phalcon\Mvc\RouterPlugin;
 use PDO;
 use Phalcon\Crypt;
 use Phalcon\DiInterface;
@@ -15,7 +14,7 @@ use Phalcon\Http\Response\Cookies;
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Cache\Frontend\Data as FrontendCache;
-use Friday\Core\Prophiler;
+use Fabfuel\Prophiler;
 use Phalcon\Mvc\Url as UrlResolver;
 use Friday\Core\Assets\Manager as AssetManager;
 use Phalcon\Mvc\Dispatcher;
@@ -61,6 +60,7 @@ trait Initializations
 	/**
 	 * @param $di DiInterface
 	 * @param $eventsManager EventsManager
+	 * @return Router
 	 */
 	protected function initRouters ($di, $eventsManager)
 	{
@@ -76,7 +76,7 @@ trait Initializations
 		$router->setEventsManager($eventsManager);
 
 		if ($di->has('profiler'))
-			$eventsManager->attach('router', RouterPlugin::getInstance($di->getShared('profiler')));
+			$eventsManager->attach('router', Debug\Profiler\Plugins\Router::getInstance($di->getShared('profiler')));
 
 		foreach ($registry->modules as $module)
 		{
@@ -161,6 +161,7 @@ trait Initializations
 
 	/**
 	 * @param $di DiInterface
+	 * @return mixed|null
 	 */
 	protected function initFlash ($di)
 	{
@@ -183,6 +184,7 @@ trait Initializations
 
 	/**
 	 * @param $di DiInterface
+	 * @return \Phalcon\Session\Adapter
 	 */
 	protected function initSession ($di)
 	{
@@ -205,12 +207,13 @@ trait Initializations
 	/**
 	 * @param $di DiInterface
 	 * @param $eventManager EventsManager
+	 * @return Prophiler\Profiler|null
 	 */
 	protected function initProfiler ($di, $eventManager)
 	{
 		$profiler = null;
 
-		if ($this->_config->application->prophiler)
+		if ($this->_config->application->profiler)
 		{
 			$profiler = new Prophiler\Profiler();
 			$profiler->addAggregator(new Prophiler\Aggregator\Database\QueryAggregator());
@@ -346,6 +349,7 @@ trait Initializations
 	/**
 	 * @param $di DiInterface
 	 * @param $eventManager EventsManager
+	 * @return View
 	 */
 	protected function initView ($di, $eventManager)
 	{

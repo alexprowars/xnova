@@ -10,8 +10,7 @@ use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Loader;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Registry;
-use Friday\Core\Prophiler;
-use Phalcon\Mvc\Url as UrlResolver;
+use Fabfuel\Prophiler;
 use Friday\Core\Helpers\Cache as CacheHelper;
 use Phalcon\Text;
 
@@ -77,7 +76,7 @@ class Application extends PhalconApplication
 
 		$this->initProfiler($di, $eventsManager);
 
-		if ($this->_config->application->prophiler)
+		if ($di->has('profiler'))
 			$appBenchmark = $di->getShared('profiler')->start(__CLASS__.'::run', [], 'Application');
 
 		$this->initDatabase($di, $eventsManager);
@@ -97,46 +96,49 @@ class Application extends PhalconApplication
 		{
 			$serviceName = ucfirst($service);
 
-			if ($this->_config->application->prophiler)
+			if ($di->has('profiler'))
 				$benchmark = $di->getShared('profiler')->start(__CLASS__.'::init'.$serviceName, [], 'Application');
 
 			$eventsManager->fire('init:before'.$serviceName, null);
 			$result = $this->{'init'.$serviceName}($di, $eventsManager);
 			$eventsManager->fire('init:after'.$serviceName, $result);
 
-			if ($this->_config->application->prophiler && isset($benchmark))
+			if ($di->has('profiler') && isset($benchmark))
 				$di->getShared('profiler')->stop($benchmark);
 		}
 
 		$di->set('eventsManager', $eventsManager, true);
 
-		if ($this->_config->application->prophiler && isset($appBenchmark))
+		if ($di->has('profiler') && isset($appBenchmark))
 			$di->getShared('profiler')->stop($appBenchmark);
 	}
 
 	public function getOutput()
 	{
-		if ($this->_config->application->prophiler && $this->getDI()->has('profiler'))
+		if ($this->getDI()->has('profiler'))
 		{
 			$benchmark = $this->getDI()->getShared('profiler')->start(__CLASS__.'::getOutput', [], 'Application');
 
-			$this->assets->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+			$this->assets->addCss('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 		}
 
 		$handle = $this->handle();
 
 		if (isset($benchmark))
+		{
 			$this->getDI()->getShared('profiler')->stop($benchmark);
 
-		if ($this->_config->application->prophiler && !$this->request->isAjax() && !$this->view->isDisabled())
-		{
-			$controller = $this->router->getControllerName();
-
-			if ($controller !== '')
+			if (!$this->request->isAjax() && !$this->view->isDisabled())
 			{
-				$toolbar = new Prophiler\Toolbar($this->getDI()->getShared('profiler'));
-				$toolbar->addDataCollector(new Prophiler\DataCollector\Request());
-				$toolbar->addDataCollector(new Prophiler\DataCollector\Files());
+				$controller = $this->router->getControllerName();
+
+				if ($controller !== '')
+				{
+					$toolbar = new Prophiler\Toolbar($this->getDI()->getShared('profiler'));
+					$toolbar->addDataCollector(new Prophiler\DataCollector\Request());
+					$toolbar->addDataCollector(new Debug\Profiler\Data\Files());
+					$toolbar->addDataCollector(new Debug\Profiler\Data\ApcCache());
+				}
 			}
 		}
 

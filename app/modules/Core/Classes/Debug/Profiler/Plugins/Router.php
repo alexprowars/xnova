@@ -1,12 +1,12 @@
 <?php
 
-namespace Friday\Core\Prophiler\Plugin\Phalcon\Mvc;
+namespace Friday\Core\Debug\Profiler\Plugins;
 
-use Friday\Core\Prophiler\Benchmark\BenchmarkInterface;
-use Friday\Core\Prophiler\Plugin\PluginAbstract;
+use Fabfuel\Prophiler\Benchmark\BenchmarkInterface;
+use Fabfuel\Prophiler\Plugin\PluginAbstract;
 use Phalcon\Events\Event;
 
-class RouterPlugin extends PluginAbstract
+class Router extends PluginAbstract
 {
     /**
      * @var BenchmarkInterface
