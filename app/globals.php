@@ -79,6 +79,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 		return 'class_exists("\Xnova\Helpers") && \Xnova\Helpers::allowMobileVersion(' . $arguments . ')';
 	});
 
+	$compiler->addFunction('toJson', 'json_encode');
 	$compiler->addFunction('replace', 'str_replace');
 	$compiler->addFunction('preg_replace', 'preg_replace');
 	$compiler->addFunction('md5', 'md5');
@@ -156,4 +157,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '3.1.1');
+define('VERSION', '3.2');

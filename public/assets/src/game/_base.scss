@@ -637,7 +637,7 @@ textarea#text {
 				font-weight: normal;
 				padding: 5px;
 
-				&.check, &:hover {
+				&.active, &:hover {
 					background: #6B354E;
 				}
 			}
@@ -665,7 +665,7 @@ textarea#text {
 	}
 }
 
-#box {
+#application {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -1499,4 +1499,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 .menu_opened {
 	/*overflow: hidden;*/
+}
+
+.tooltip .tooltip-content {
+	display: none;
 }

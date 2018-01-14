@@ -106,6 +106,7 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/css/jquery.fancybox.css');
 		$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
+		$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue');
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
 		$this->assets->addJs('assets/js/jquery.form.min.js');
@@ -188,6 +189,33 @@ class Controller extends PhalconController
 			$this->view->setVar('userId', $this->user->getId());
 			$this->view->setVar('adminlevel', $this->user->authlevel);
 
+			if ($this->request->has('popup'))
+				$this->game->addRequestData('popup', true);
+
+			$options = [
+				'route' => [
+					'controller' => $this->dispatcher->getControllerName(),
+					'action' => $this->dispatcher->getActionName(),
+				],
+				'menu' => [],
+				'planet' => false
+			];
+
+			foreach (_getText('main_menu') as $code => $data)
+			{
+				if ($data[2] > $this->user->authlevel)
+					continue;
+
+				$options['menu'][] = [
+					'id' => $code,
+					'url' => $this->url->get($data[1]),
+					'text' => trim($data[0]),
+					'new' => isset($data[3])
+				];
+			}
+
+			$this->view->setVar('options', $options);
+
 			$this->user->getAllyInfo();
 
 			User::checkLevel($this->user);
@@ -262,7 +290,12 @@ class Controller extends PhalconController
 		$this->view->setVar('topPanel', $this->showTopPanel);
 		$this->view->setVar('leftMenu', $this->showLeftMenu);
 
+		$this->game->addRequestData('title', str_replace("\n", "", $this->tag->getTitle(false)));
+
 		$this->tag->appendTitle(Options::get('site_title'));
+
+		$this->game->addRequestData('title_full', str_replace("\n", "", $this->tag->getTitle(false)));
+		$this->game->addRequestData('url', $this->router->getRewriteUri());
 
 		return true;
 	}
@@ -318,46 +351,47 @@ class Controller extends PhalconController
 
 		foreach (Vars::getResources() AS $res)
 		{
-			$parse[$res] = floor(floatval($this->planet->{$res}));
-
-			$parse[$res.'_m'] = $this->planet->{$res.'_max'};
-
-			if ($this->planet->{$res.'_max'} <= $this->planet->{$res})
-				$parse[$res.'_max'] = '<span class="negative">';
-			else
-				$parse[$res.'_max'] = '<span class="positive">';
-
-			$parse[$res.'_max'] .= Format::number($this->planet->{$res.'_max'}) . "</span>";
+			$parse[$res] = [
+				'title' => _getText('res', $res),
+				'url' => $this->url->get('info/'._getText('res_builds', $res).'/'),
+				'current' => floor(floatval($this->planet->{$res})),
+				'max' => $this->planet->{$res.'_max'},
+				'production' => 0,
+				'power' => $this->planet->getBuild($res.'_mine')['power'] * 10
+			];
 
 			if ($this->user->vacation <= 0)
-				$parse[$res.'_ph'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
-			else
-				$parse[$res.'_ph'] = 0;
-
-			$parse[$res.'_mp'] = $this->planet->getBuild($res.'_mine')['power'] * 10;
+				$parse[$res]['production'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
 		}
 
-		$parse['energy_max'] 	= Format::number($this->planet->energy_max);
-		$parse['energy_total'] 	= Helpers::colorNumber(Format::number($this->planet->energy_max + $this->planet->energy_used));
+		$parse['energy'] = [
+			'current' => $this->planet->energy_max + $this->planet->energy_used,
+			'max' => $this->planet->energy_max
+		];
 
-		$parse['credits'] = Format::number($this->user->credits);
+		$parse['battery'] = [
+			'current' => round($this->planet->energy_ak),
+			'max' => $this->planet->battery_max,
+			'power' => 0,
+			'tooltip' => ''
+		];
+
+		$parse['credits'] = $this->user->credits;
 
 		$parse['officiers'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 			$parse['officiers'][$officier] = $this->user->{Vars::getName($officier)};
 
-		$parse['energy_ak'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
-		$parse['energy_ak'] = min(100, max(0, $parse['energy_ak']));
+		$parse['battery']['power'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
+		$parse['battery']['power'] = min(100, max(0, $parse['battery']['power']));
 
-		$parse['ak'] = round($this->planet->energy_ak) . " / " . $this->planet->battery_max;
-
-		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
+		if ($parse['battery']['power'] > 0 && $parse['battery']['power'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['ak'] .= '<br>Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['battery']['tooltip'] .= '<br>Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
-				$parse['ak'] .= '<br>Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['battery']['tooltip'] .= '<br>Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}
 
 		$parse['messages'] = $this->user->messages;

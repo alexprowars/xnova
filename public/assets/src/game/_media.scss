@@ -33,14 +33,14 @@
 		height: 44px;
 	}
 
-	#box .game_menu, #box .game_content {
+	#application .game_menu, #application .game_content {
 		width: 1000px;
 	}
 }
 
 @media (min-width: 1200px)
 {
-	#box .game_menu, #box .game_content {
+	#application .game_menu, #application .game_content {
 		width: 1125px;
 	}
 
@@ -69,7 +69,7 @@
 		height: 44px;
 	}
 
-	#box.set_log .game_content, #box.set_imperium .game_content {
+	#application.set_log .game_content, #application.set_imperium .game_content {
 		max-width: 95%;
 	}
 }
@@ -80,7 +80,7 @@
 		font-size: 12px;
 	}
 
-	#box .game_menu, #box .game_content {
+	#application .game_menu, #application .game_content {
 		width: 1200px;
 	}
 
@@ -125,7 +125,7 @@
 
 @media (min-width: 481px) and (max-width: 992px)
 {
-	#box .game_menu, #box .game_content {
+	#application .game_menu, #application .game_content {
 		width: 790px;
 	}
 
@@ -175,7 +175,7 @@
 
 @media (min-width: 481px) and (max-width: 790px)
 {
-	#box .game_menu, #box .game_content, #box {
+	#application .game_menu, #application .game_content, #application {
 		width: 100%;
 		min-width: 600px;
 	}

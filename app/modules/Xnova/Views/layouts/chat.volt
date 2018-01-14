@@ -37,5 +37,5 @@ $(document).ready(function()
 </script>
 
 {% if request.hasQuery('frame') %}
-	<style>#box {  width: 100%;  }</style>
+	<style>#application {  width: 100%;  }</style>
 {% endif %}

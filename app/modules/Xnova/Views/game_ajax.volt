@@ -1,5 +1,12 @@
 {% if topPanel is defined and topPanel == true %}
-	{{ partial('shared/panel') }}
+	<script type="text/javascript">
+		options.planet = {{ toJson(planet) }};
+		timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
+	</script>
+{% elseif isPopup is not true %}
+	<script type="text/javascript">
+		options.planet = false;
+	</script>
 {% endif %}
 
 {% if deleteUserTimer is defined and deleteUserTimer > 0 %}
@@ -37,19 +44,8 @@
 
 {% if isPopup is false %}
 	<script type="text/javascript">
-		document.title = "{{ replace("\n", "", tag.getTitle(false)) }}";
-	</script>
-{% endif %}
-
-{% if game.checkSaveState() %}
-	<script type="text/javascript">
-		addHistoryState("{{ game.getClearQuery() }}")
-	</script>
-{% endif %}
-
-{% if isPopup is false %}
-	<script type="text/javascript">
-		setMenuItem("{{ dispatcher.getControllerName()~(dispatcher.getControllerName() == 'buildings' ? dispatcher.getActionName() : '') }}");
+		options.route.controller = '{{ dispatcher.getControllerName() }}';
+		options.route.action = '{{ dispatcher.getActionName() }}';
 	</script>
 {% endif %}
 

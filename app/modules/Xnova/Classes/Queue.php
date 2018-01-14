@@ -403,11 +403,8 @@ class Queue
 			$newQueue[self::QUEUE_TYPE_BUILDING] = $QueueArray;
 			$newQueue = json_encode($newQueue);
 
-			if ($this->queue != $newQueue)
-			{
-				$this->loadQueue($newQueue);
-				$this->saveQueue();
-			}
+			$this->loadQueue($newQueue);
+			$this->saveQueue();
 		}
 	}
 

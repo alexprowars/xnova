@@ -1,3 +1,152 @@
+Vue.component('main-menu', {
+	props: ['items', 'active'],
+	template: '<ul class="menu hidden-xs-down">' +
+		'<li is="main-menu-item" v-for="item in items" v-bind:item="item"></li>' +
+	'</ul>'
+})
+
+Vue.component('sidebar-menu', {
+	props: ['items', 'active'],
+	template: '<ul class="nav">' +
+		'<li is="main-menu-item" v-for="item in items" v-bind:item="item"></li>' +
+	'</ul>'
+})
+
+Vue.component('main-menu-item', {
+	props: ['item'],
+	render: function (createElement)
+	{
+		return createElement('li', {}, [
+			createElement('a', {
+				class: {
+					active: this.$parent.active === this.item.id
+				},
+				attrs: {
+					href: this.item.url,
+					target: this.item.new === true ? '_blank' : ''
+				}
+			}, this.item.text)
+		])
+	}
+})
+
+Vue.component('planet-panel', {
+	props: ['planet'],
+	template: '<div class="row topnav">' +
+		'<div class="col-md-6">' +
+			'<div class="row">' +
+				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'metal\'" v-bind:resource="planet.metal"></planet-panel-resource></div>' +
+				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'crystal\'" v-bind:resource="planet.crystal"></planet-panel-resource></div>' +
+				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'deuterium\'" v-bind:resource="planet.deuterium"></planet-panel-resource></div>' +
+			'</div>' +
+		'</div>' +
+		'<div class="col-md-6 col-sm-6 col-xs-12">' +
+			'<div class="row">' +
+				'<div class="col-xs-4 text-xs-center">' +
+					'<span onclick="showWindow(\'\', \'/info/4/\', 600)" title="Солнечная батарея" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>' +
+					'<div class="neutral">Энергия</div>' +
+					'<div title="Энергетический баланс">' +
+						'<span v-if="planet.energy.current >= 0" class="positive">{{ Format.number(planet.energy.current) }}</span>' +
+						'<span v-else class="negative">{{ Format.number(planet.energy.current) }}</span>' +
+					'</div>' +
+					'<span title="Выработка энергии" class="hidden-xs-down positive">{{ Format.number(planet.energy.max) }}</span>' +
+				'</div>' +
+				'<div class="col-xs-4 text-xs-center">' +
+					'<span class="tooltip hidden-xs-down">' +
+						'<div class="tooltip-content"><center>Вместимость:<br>{{ Format.number(planet.battery.current) }} / {{ Format.number(planet.battery.max) }} {{ planet.battery.tooltip }}</center></div>' +
+						'<img v-if="planet.battery.power > 0 && planet.battery.power < 100" v-bind:src="\'/assets/images/batt.php?p=\'+planet.battery.power" width="42" alt="">' +
+						'<span v-else v-bind:class="\'sprite skin_batt\'+planet.battery.power"></span>' +
+						'<br>' +
+					'</span>' +
+					'<div class="neutral">Аккумулятор</div>' +
+					'{{ planet.battery.power }}%<br>' +
+				'</div>' +
+				'<div class="col-xs-4 text-xs-center">' +
+					'<a href="/credits/" class="tooltip hidden-xs-down">' +
+						'<div class="tooltip-content">' +
+							'<table width=550>' +
+								'<tr>' +
+									'<td v-for="(time, index) in planet.officiers" align="center" width="14%">'+
+										'<div class="separator"></div>' +
+										'<span v-bind:class="[\'officier\', \'of\'+index+(time > ((new Date).getTime() / 1000) ? \'_ikon\' : \'\')]"></span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td v-for="(time, index) in planet.officiers" align="center">'+
+										'<span v-if="time > ((new Date).getTime() / 1000)">Нанят до <font color=lime>{{ date(\'d.m.Y H:i\', time) }}</font></span>' +
+										'<span v-else><font color=lime>Не нанят</font></span>' +
+									'</td>' +
+								'</tr>' +
+						'</div>' +
+						'<span class="sprite skin_kredits"></span><br>' +
+					'</a>' +
+					'<div class="neutral">Кредиты</div>' +
+					'{{ Format.number(planet.credits) }}<br>' +
+				'</div>' +
+			'</div>' +
+		'</div>' +
+	'</div>'
+})
+
+Vue.component('planet-panel-resource-tooltip', {
+	props: ['resource'],
+	template: '<table width=150>' +
+		'<tr><td width=30%>КПД:</td><td align=right>{{ resource.power }}%</td></tr>' +
+		'<tr><td>В час:</td><td align=right>{{ Format.number(resource.production) }}</td></tr>' +
+		'<tr><td>День:</td><td align=right>{{ Format.number(resource.production * 24) }}</td></tr>' +
+	'</table>'
+})
+
+Vue.component('planet-panel-resource', {
+	props: ['resource', 'type'],
+	template: '<div class="planet-resource-panel-item">' +
+		'<span v-on:click="showPopup" class="tooltip hidden-xs-down">' +
+			'<div class="tooltip-content">' +
+				'<planet-panel-resource-tooltip v-bind:resource="resource"></planet-panel-resource-tooltip>' +
+			'</div>' +
+			'<span v-bind:class="[\'sprite\', \'skin_\'+type]"></span>' +
+			'<br>' +
+		'</span>' +
+		'<div class="neutral">{{ resource.title }}</div>' +
+		'<div title="Количество ресурса на планете">' +
+			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.current) }}</span>' +
+			'<span v-else class="negative">{{ Format.number(resource.current) }}</span>' +
+		'</div>' +
+		'<span title="Максимальная вместимость хранилищ">' +
+			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.max) }}</span>' +
+			'<span v-else class="negative">{{ Format.number(resource.max) }}</span>' +
+		'</span>' +
+	'</div>',
+	methods:
+	{
+		showPopup: function ()
+		{
+			showWindow('', this.resource.url, 600)
+		}
+	}
+})
+
+var application;
+
+$(document).ready(function()
+{
+	application = new Vue({
+		el: '#application',
+		delimiters: ['<%', '%>'],
+		data: options,
+		computed: {
+			getMenuActiveLink: function ()
+			{
+				return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
+			}
+		},
+		methods:
+		{
+
+		}
+	})
+});
+
 
 var ajax_nav = 0;
 var timezone = 0;
@@ -17,17 +166,10 @@ var XNova =
 	lastUpdate: 0,
 	updateResources: function ()
 	{
-		var bold1_met = 'empty';
-		var bold1_cry = 'empty';
-		var bold1_deu = 'empty';
-		var faktor_met = 1;
-		var faktor_cry = 1;
-		var faktor_deu = 1;
-
-		if (ress === undefined)
+		if (typeof options.planet === 'undefined' || options.planet === false)
 			return;
 
-		if (XNova.lastUpdate == 0)
+		if (XNova.lastUpdate === 0)
 			XNova.lastUpdate = (new Date).getTime();
 
 		var factor = ((new Date).getTime() - XNova.lastUpdate) / 1000;
@@ -37,36 +179,15 @@ var XNova =
 
 		XNova.lastUpdate = (new Date).getTime();
 
-		if (ress[0] >= max[0])
+		['metal', 'crystal', 'deuterium'].forEach(function(res)
 		{
-			bold1_met = 'full';
-			faktor_met = 0;
-		}
+			if (typeof options.planet[res] === 'undefined')
+				return;
 
-		if (faktor_met > 0)
-			ress[0] = ress[0] + (production[0] * faktor_met * factor);
+			var power = (options.planet[res]['current'] >= options.planet[res]['max']) ? 0 : 1;
 
-		if (ress[1] >= max[1])
-		{
-			bold1_cry = 'full';
-			faktor_cry = 0;
-		}
-
-		if (faktor_cry > 0)
-			ress[1] = ress[1] + (production[1] * faktor_cry * factor);
-
-		if (ress[2] >= max[2])
-		{
-			bold1_deu = 'full';
-			faktor_deu = 0;
-		}
-
-		if (faktor_deu > 0)
-			ress[2] = ress[2] + (production[2] * faktor_deu * factor);
-
-	    $('#met').html('<div class="'+bold1_met+'">'+number_format(ress[0], 0, ',', '.')+'</div>');
-	    $('#cry').html('<div class="'+bold1_cry+'">'+number_format(ress[1], 0, ',', '.')+'</div>');
-	    $('#deu').html('<div class="'+bold1_deu+'">'+number_format(ress[2], 0, ',', '.')+'</div>');
+			options.planet[res]['current'] += ((options.planet[res]['production'] / 3600) * power * factor);
+		});
 	},
 	setAjaxNavigation: function ()
 	{
@@ -85,10 +206,10 @@ var XNova =
 			if (!el.attr('href'))
 				return false;
 
-			if (el.attr('href').indexOf('#') == 0)
+			if (el.attr('href').indexOf('#') === 0)
 				return false;
 
-			if (el.attr('href').indexOf('javascript') == 0 || el.attr('href').indexOf('mailto') == 0 || el.attr('href').indexOf('#') >= 0 || el.attr('target') == '_blank')
+			if (el.attr('href').indexOf('javascript') === 0 || el.attr('href').indexOf('mailto') === 0 || el.attr('href').indexOf('#') >= 0 || el.attr('target') === '_blank')
 				return true;
 			else
 			{
@@ -148,21 +269,21 @@ var XNova =
 				dataType: 'json',
 				beforeSend: function(jqXHR, settings)
 				{
-					settings.data += (settings.data != '' ? '&' : '')+'popup=Y&ep=dontsavestate';
+					settings.data += (settings.data !== '' ? '&' : '')+'popup=Y&ep=dontsavestate';
 	    			return true;
 				},
 				success: function (data)
 				{
 					hideLoading();
 
-					if (data.message != '')
+					if (data.message !== '')
 					{
 						$.toast({
 							text: data.message,
 							icon: statusMessages[data.status]
 						});
 					}
-					else if (data.html != '')
+					else if (data.html !== '')
 					{
 						$('#windowDialog').html(data.html);
 
@@ -267,6 +388,16 @@ function number_format(number, decimals, dec_point, thousands_sep)
 	return s.join(dec);
 }
 
+var Format = {
+	number: function(value)
+	{
+		if (value > 1000000000)
+			return number_format(Math.floor(value / 1000000), 0, ',', '.')+'kk';
+
+		return number_format(value, 0, ',', '.');
+	}
+};
+
 var flotenTimers = [];
 var flotenTime = [];
 
@@ -326,9 +457,9 @@ function hms(layr, X)
 
 function UpdateClock()
 {
-    hms('clock', new Date((new Date).getTime() + serverTime));
+    //hms('clock', new Date((new Date).getTime() + serverTime));
 
-	timeouts['clock'] = setTimeout(UpdateClock, 1000);
+	//timeouts['clock'] = setTimeout(UpdateClock, 1000);
 }
 
 function setMaximum(type, number)
@@ -393,7 +524,7 @@ function ClearTimers ()
 	timeouts.length = 0;
 }
 
-function load (url)
+function load (url, disableUrlState)
 {
 	if (!blockTimer)
 		return false;
@@ -405,6 +536,9 @@ function load (url)
     var loc = url.substring(1).split("/");
 	var set = loc[0];
 	var mod;
+
+	if (typeof disableUrlState === 'undefined')
+		disableUrlState = false;
 	
 	if (loc[1] !== undefined)
 		mod = loc[1];
@@ -412,7 +546,7 @@ function load (url)
     if (set !== 'buildings')
         currentState = set;
     else
-        currentState = set + ((loc[1] != undefined && loc[1] != 'ajax=2' && loc[1] != 'ajax=1') ? '&'+loc[1] : '');
+        currentState = set + ((loc[1] !== undefined && loc[1] !== 'ajax=2' && loc[1] !== 'ajax=1') ? '&'+loc[1] : '');
 
 	showLoading();
 
@@ -427,13 +561,13 @@ function load (url)
 			hideLoading();
 			ClearTimers();
 
-			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set == 'buildings' && mod !== undefined ? mod : ''));
+			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set === 'buildings' && mod !== undefined ? mod : ''));
 			$('body.window .game_content').css('width', '');
 			$('.ui-helper-hidden-accessible').html('');
 
 			$('#gamediv').html(data.html);
 
-			if (data.message != '')
+			if (data.message !== '')
 			{
 				$.toast({
 					text: data.message,
@@ -441,12 +575,18 @@ function load (url)
 				});
 			}
 
+			if (typeof data.data.title_full !== 'undefined')
+				document.title = data.data.title_full;
+
 			if (data.data.redirect !== undefined)
 				window.location.href = data.data.redirect;
 
+			if (disableUrlState === false && typeof data.data.url !== 'undefined')
+				addHistoryState(data.data.url);
+
 			dialog.dialog("close");
 
-			if (data.data.tutorial !== undefined && data.data.tutorial.popup != '')
+			if (data.data.tutorial !== undefined && data.data.tutorial.popup !== '')
 			{
 				$.confirm({
 				    title: 'Обучение',
@@ -456,7 +596,7 @@ function load (url)
 					backgroundDismiss: false,
 					confirm: function ()
 					{
-						if (data.data.tutorial.url != '')
+						if (data.data.tutorial.url !== '')
 						{
 							load(data.data.tutorial.url);
 						}
@@ -464,7 +604,7 @@ function load (url)
 				});
 			}
 
-			if (data.data.tutorial !== undefined && data.data.tutorial.toast != '')
+			if (data.data.tutorial !== undefined && data.data.tutorial.toast !== '')
 			{
 				$.toast({
 					text: data.data.tutorial.toast,
@@ -489,16 +629,6 @@ function load (url)
     Djs             = start_time.getTime() - start_time.getTimezoneOffset()*60000;
 
 	return true;
-}
-
-function setMenuItem (location)
-{
-	$('.game_content > ul li > a').removeClass('check');
-
-	if (location != undefined && location != '')
-    	$('#link_'+location).addClass('check');
-
-	$('#box').attr('class', 'set_'+location);
 }
 
 function addHistoryState (url)
@@ -560,7 +690,7 @@ $(document).ready(function()
 		});
 	}
 
-    if (ajax_nav == 1)
+    if (ajax_nav === 1)
     {
 		XNova.setAjaxNavigation();
 
@@ -579,7 +709,7 @@ $(document).ready(function()
 					if (data !== null)
 					{
 						currentState = location.search;
-						load(currentState+'&ep=dontsavestate');
+						load(currentState, true);
 
 						e.preventDefault();
 					}
@@ -600,6 +730,8 @@ $(document).ready(function()
 			{
 				if ($(this).hasClass('script'))
 					return eval($(this).data('content'));
+				else if (typeof $(this).data('content') === "undefined")
+					return $(this).find('.tooltip-content').clone();
 				else
 					return $(this).data('content');
 			},
@@ -688,21 +820,24 @@ function showWindow (title, url, width, height)
 		{
 			url: url,
 			cache: false,
-			data: {ajax: 'Y', 'popup': 'Y', 'ep': 'dontsavestate'},
+			data: {ajax: 'Y', 'popup': 'Y'},
 			dataType: 'json',
 			success: function (json)
 			{
 				var obj = $('#windowDialog');
 
-				obj.dialog("option", "title", title);
+				if (title.length > 0)
+					obj.dialog("option", "title", title);
+				else
+					obj.dialog("option", "title", json.data.title);
 
-				if (width != undefined)
+				if (width !== undefined)
 				{
 					obj.dialog("option", "minWidth", width);
 					obj.dialog("option", "width", width);
 				}
 
-				if (height != undefined)
+				if (height !== undefined)
 					obj.dialog("option", "height", height);
 
 				hideLoading();
@@ -750,4 +885,168 @@ function f(target_url, win_name)
 {
 	var new_win = window.open(target_url,win_name,'resizable=yes,scrollbars=yes,menubar=no,toolbar=no,width=550,height=280,top=0,left=0');
 	new_win.focus();
+}
+
+function date ( format, timestamp )
+{
+	var a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
+	var pad = function(n, c){
+		if( (n = n + "").length < c ) {
+			return new Array(++c - n.length).join("0") + n;
+		} else {
+			return n;
+		}
+	};
+	var txt_weekdays = ["Sunday","Monday","Tuesday","Wednesday",
+		"Thursday","Friday","Saturday"];
+	var txt_ordin = {1:"st",2:"nd",3:"rd",21:"st",22:"nd",23:"rd",31:"st"};
+	var txt_months =  ["", "January", "February", "March", "April",
+		"May", "June", "July", "August", "September", "October", "November",
+		"December"];
+
+	var f = {
+			d: function(){
+				return pad(f.j(), 2);
+			},
+			D: function(){
+				t = f.l(); return t.substr(0,3);
+			},
+			j: function(){
+				return jsdate.getDate();
+			},
+			l: function(){
+				return txt_weekdays[f.w()];
+			},
+			N: function(){
+				return f.w() + 1;
+			},
+			S: function(){
+				return txt_ordin[f.j()] ? txt_ordin[f.j()] : 'th';
+			},
+			w: function(){
+				return jsdate.getDay();
+			},
+			z: function(){
+				return (jsdate - new Date(jsdate.getFullYear() + "/1/1")) / 864e5 >> 0;
+			},
+			W: function(){
+				var a = f.z(), b = 364 + f.L() - a;
+				var nd2, nd = (new Date(jsdate.getFullYear() + "/1/1").getDay() || 7) - 1;
+
+				if(b <= 2 && ((jsdate.getDay() || 7) - 1) <= 2 - b){
+					return 1;
+				} else{
+
+					if(a <= 2 && nd >= 4 && a >= (6 - nd)){
+						nd2 = new Date(jsdate.getFullYear() - 1 + "/12/31");
+						return date("W", Math.round(nd2.getTime()/1000));
+					} else{
+						return (1 + (nd <= 3 ? ((a + nd) / 7) : (a - (7 - nd)) / 7) >> 0);
+					}
+				}
+			},
+			F: function(){
+				return txt_months[f.n()];
+			},
+			m: function(){
+				return pad(f.n(), 2);
+			},
+			M: function(){
+				t = f.F(); return t.substr(0,3);
+			},
+			n: function(){
+				return jsdate.getMonth() + 1;
+			},
+			t: function(){
+				var n;
+				if( (n = jsdate.getMonth() + 1) == 2 ){
+					return 28 + f.L();
+				} else{
+					if( n & 1 && n < 8 || !(n & 1) && n > 7 ){
+						return 31;
+					} else{
+						return 30;
+					}
+				}
+			},
+			L: function(){
+				var y = f.Y();
+				return (!(y & 3) && (y % 1e2 || !(y % 4e2))) ? 1 : 0;
+			},
+			//o not supported yet
+			Y: function(){
+				return jsdate.getFullYear();
+			},
+			y: function(){
+				return (jsdate.getFullYear() + "").slice(2);
+			},
+			a: function(){
+				return jsdate.getHours() > 11 ? "pm" : "am";
+			},
+			A: function(){
+				return f.a().toUpperCase();
+			},
+			B: function(){
+				// peter paul koch:
+				var off = (jsdate.getTimezoneOffset() + 60)*60;
+				var theSeconds = (jsdate.getHours() * 3600) +
+								 (jsdate.getMinutes() * 60) +
+								  jsdate.getSeconds() + off;
+				var beat = Math.floor(theSeconds/86.4);
+				if (beat > 1000) beat -= 1000;
+				if (beat < 0) beat += 1000;
+				if ((String(beat)).length == 1) beat = "00"+beat;
+				if ((String(beat)).length == 2) beat = "0"+beat;
+				return beat;
+			},
+			g: function(){
+				return jsdate.getHours() % 12 || 12;
+			},
+			G: function(){
+				return jsdate.getHours();
+			},
+			h: function(){
+				return pad(f.g(), 2);
+			},
+			H: function(){
+				return pad(jsdate.getHours(), 2);
+			},
+			i: function(){
+				return pad(jsdate.getMinutes(), 2);
+			},
+			s: function(){
+				return pad(jsdate.getSeconds(), 2);
+			},
+
+			O: function(){
+			   var t = pad(Math.abs(jsdate.getTimezoneOffset()/60*100), 4);
+			   if (jsdate.getTimezoneOffset() > 0) t = "-" + t; else t = "+" + t;
+			   return t;
+			},
+			P: function(){
+				var O = f.O();
+				return (O.substr(0, 3) + ":" + O.substr(3, 2));
+			},
+			c: function(){
+				return f.Y() + "-" + f.m() + "-" + f.d() + "T" + f.h() + ":" + f.i() + ":" + f.s() + f.P();
+			},
+			U: function(){
+				return Math.round(jsdate.getTime()/1000);
+			}
+	};
+
+	return format.replace(/[\\]?([a-zA-Z])/g, function(t, s){
+		if( t!=s ){
+			// escaped
+			ret = s;
+		} else if( f[s] ){
+			// a date function exists
+			ret = f[s]();
+		} else{
+			// nothing special
+			ret = s;
+		}
+
+		return ret;
+	});
 }

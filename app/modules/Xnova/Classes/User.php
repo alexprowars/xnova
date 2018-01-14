@@ -197,6 +197,7 @@ class User
 	public static function checkLevel (Models\User $user)
 	{
 		$config = Di::getDefault()->getShared('config');
+		$url = Di::getDefault()->getShared('url');
 
 		$indNextXp = pow($user->lvl_minier, 3);
 		$warNextXp = pow($user->lvl_raid, 2);
@@ -212,7 +213,7 @@ class User
 				'-xpminier' 	=> $indNextXp
 			]);
 
-			User::sendMessage($user->getId(), 0, 0, 1, '', '<a href="'.$config->url->get('officier/').'">Получен новый промышленный уровень</a>');
+			User::sendMessage($user->getId(), 0, 0, 1, '', '<a href="'.$url->get('officier/').'">Получен новый промышленный уровень</a>');
 
 			$user->lvl_minier += 1;
 			$user->xpminier 	-= $indNextXp;
@@ -229,7 +230,7 @@ class User
 				'-xpraid' 	=> $warNextXp
 			]);
 
-			User::sendMessage($user->getId(), 0, 0, 1, '', '<a href="'.$config->url->get('officier/').'">Получен новый военный уровень</a>');
+			User::sendMessage($user->getId(), 0, 0, 1, '', '<a href="'.$url->get('officier/').'">Получен новый военный уровень</a>');
 
 			$user->lvl_raid 	+= 1;
 			$user->xpraid 	-= $warNextXp;
@@ -239,9 +240,11 @@ class User
 
 		if ($giveCredits != 0)
 		{
+			$db = Di::getDefault()->getShared('db');
+
 			$user->credits += $giveCredits;
 
-			$config->db->insertAsDict(
+			$db->insertAsDict(
 				"game_log_credits",
 				[
 					'uid' 		=> $user->getId(),
@@ -250,12 +253,12 @@ class User
 					'type' 		=> 4,
 				]);
 
-			$reffer = $config->db->query("SELECT u_id FROM game_refs WHERE r_id = " . $user->getId())->fetch();
+			$reffer = $db->query("SELECT u_id FROM game_refs WHERE r_id = " . $user->getId())->fetch();
 
 			if (isset($reffer['u_id']))
 			{
-				$config->db->query("UPDATE game_users SET credits = credits + " . round($giveCredits / 2) . " WHERE id = " . $reffer['u_id'] . "");
-				$config->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $reffer['u_id'] . ", " . time() . ", " . round($giveCredits / 2) . ", 3)");
+				$db->query("UPDATE game_users SET credits = credits + " . round($giveCredits / 2) . " WHERE id = " . $reffer['u_id'] . "");
+				$db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $reffer['u_id'] . ", " . time() . ", " . round($giveCredits / 2) . ", 3)");
 			}
 		}
 	}

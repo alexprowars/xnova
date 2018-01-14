@@ -69,16 +69,18 @@
 			XNova.gameSpeed 	= {{ (config.game.get('game_speed', 1) / 2500)|round(1) }};
 			XNova.resSpeed 		= {{ config.game.get('resource_multiplier', 1) }};
 		{% endif %}
+
+		var options = {{ toJson(options) }};
 	</script>
 
-	<div id="box" class="set_{{ controller }}">
+	<div id="application" v-bind:class="['set_'+route.controller]">
 		{% if leftMenu is defined and leftMenu == true %}
 			{{ partial('shared/header') }}
 		{% endif %}
 
 		<div class="game_content">
 			{% if leftMenu is defined and leftMenu == true %}
-				{{ partial('shared/menu') }}
+				<main-menu v-bind:items="menu" v-bind:active="getMenuActiveLink"></main-menu>
 			{% endif %}
 
 			{% if leftMenu is defined and leftMenu == true %}
@@ -86,41 +88,49 @@
 			{% endif %}
 
 			{% if config.view.get('socialIframeView', 0) == 1 %}<div class="iframe_wrapper">{% endif %}
-			<div id="gamediv" class="content">
+			<div class="content">
 
 				{% if topPanel is defined and topPanel == true %}
-					{{ partial('shared/panel') }}
+					<script type="text/javascript">
+						options.planet = {{ toJson(planet) }};
+						timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
+					</script>
 				{% endif %}
 
-				{% if deleteUserTimer is defined and deleteUserTimer > 0 %}
-					<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после {{ game.datezone("d.m.Y", deleteUserTimer) }} в {{ game.datezone("H:i:s", deleteUserTimer) }}. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
-				{% endif %}
+				<planet-panel v-if="options.planet !== false" v-bind:planet="planet"></planet-panel>
 
-				{% if vocationTimer is defined and vocationTimer > 0 %}
-				   <table class="table"><tr><td class="c negative" align="center">Включен режим отпуска! Функциональность игры ограничена.</td></tr></table><div class="separator"></div>
-				{% endif %}
+				<div id="gamediv">
 
-				{% if globalMessage is defined and globalMessage != '' %}
-				   <table class="table"><tr><td class="c" align="center">{{ globalMessage }}</td></tr></table><div class="separator"></div>
-				{% endif %}
-
-				<div class="content-row">
-					{% set messages = flashSession.getMessages() %}
-
-					{% if messages|length > 0 %}
-						{% for type, items in messages %}
-							{% for message in items %}
-								{% if type == 'alert' %}
-									<script type="text/javascript">$(document).ready(function(){alert("{{ message }}");});</script>
-								{% else %}
-									{{ message }}
-								{% endif %}
-							{% endfor %}
-						{% endfor %}
+					{% if deleteUserTimer is defined and deleteUserTimer > 0 %}
+						<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после {{ game.datezone("d.m.Y", deleteUserTimer) }} в {{ game.datezone("H:i:s", deleteUserTimer) }}. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
 					{% endif %}
-					{{ content() }}
-				</div>
 
+					{% if vocationTimer is defined and vocationTimer > 0 %}
+					   <table class="table"><tr><td class="c negative" align="center">Включен режим отпуска! Функциональность игры ограничена.</td></tr></table><div class="separator"></div>
+					{% endif %}
+
+					{% if globalMessage is defined and globalMessage != '' %}
+					   <table class="table"><tr><td class="c" align="center">{{ globalMessage }}</td></tr></table><div class="separator"></div>
+					{% endif %}
+
+					<div class="content-row">
+						{% set messages = flashSession.getMessages() %}
+
+						{% if messages|length > 0 %}
+							{% for type, items in messages %}
+								{% for message in items %}
+									{% if type == 'alert' %}
+										<script type="text/javascript">$(document).ready(function(){alert("{{ message }}");});</script>
+									{% else %}
+										{{ message }}
+									{% endif %}
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+						{{ content() }}
+					</div>
+
+				</div>
 			</div>
 			{% if config.view.get('socialIframeView', 0) == 1 %}</div>{% endif %}
 		</div>

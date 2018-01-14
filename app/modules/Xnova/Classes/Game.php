@@ -78,6 +78,11 @@ class Game extends Component
 			$this->data = $data;
 	}
 
+	public function addRequestData ($key, $value)
+	{
+		$this->data[$key] = $value;
+	}
+
 	public function getRequestData ()
 	{
 		return $this->data;

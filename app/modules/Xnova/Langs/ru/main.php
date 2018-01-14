@@ -101,6 +101,13 @@ $lang['res'] = array
 	'deuterium'    => "Дейтерий"
 );
 
+$lang['res_builds'] = array
+(
+	'metal'        => 1,
+	'crystal'      => 2,
+	'deuterium'    => 3
+);
+
 $lang['stopwords'] = array(
 	'xgame' 	=> '*****',
 	'ref=' 	=> '*****',
