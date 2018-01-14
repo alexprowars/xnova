@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Fleet;
+use Xnova\Format;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
@@ -157,17 +158,17 @@ class InfoController extends Controller
 
 				if ($BuildID != 12)
 				{
-					$bloc['build_prod'] = Helpers::pretty_number(floor($Prod[$BuildID]));
-					$bloc['build_prod_diff'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[$BuildID] - $ActualProd)));
-					$bloc['build_need'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[4])));
-					$bloc['build_need_diff'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[4] - $ActualNeed)));
+					$bloc['build_prod'] = Format::number(floor($Prod[$BuildID]));
+					$bloc['build_prod_diff'] = Helpers::colorNumber(Format::number(floor($Prod[$BuildID] - $ActualProd)));
+					$bloc['build_need'] = Helpers::colorNumber(Format::number(floor($Prod[4])));
+					$bloc['build_need_diff'] = Helpers::colorNumber(Format::number(floor($Prod[4] - $ActualNeed)));
 				}
 				else
 				{
-					$bloc['build_prod'] = Helpers::pretty_number(floor($Prod[4]));
-					$bloc['build_prod_diff'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[4] - $ActualProd)));
-					$bloc['build_need'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[3])));
-					$bloc['build_need_diff'] = Helpers::colorNumber(Helpers::pretty_number(floor($Prod[3] - $ActualNeed)));
+					$bloc['build_prod'] = Format::number(floor($Prod[4]));
+					$bloc['build_prod_diff'] = Helpers::colorNumber(Format::number(floor($Prod[4] - $ActualProd)));
+					$bloc['build_need'] = Helpers::colorNumber(Format::number(floor($Prod[3])));
+					$bloc['build_need_diff'] = Helpers::colorNumber(Format::number(floor($Prod[3] - $ActualNeed)));
 				}
 				if ($ProdFirst == 0)
 				{
@@ -284,7 +285,7 @@ class InfoController extends Controller
 		{
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
 			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ($this->registry->CombatCaps[$itemId]['power_up'] / 100)) + $this->user->getTechLevel('military') * 0.05;
 
@@ -301,16 +302,16 @@ class InfoController extends Controller
 			$parse['rf_info_to']  = $this->ShowRapidFireTo($itemId);
 			$parse['rf_info_fr']  = $this->ShowRapidFireFrom($itemId);
 
-			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
-			$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['shield']);
-			$parse['capacity_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['capacity']);
-			$parse['base_speed'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['speed']) . ' (' . Helpers::pretty_number(Fleet::GetFleetMaxSpeed('', $itemId, $this->user)) . ')';
-			$parse['base_conso'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['consumption']);
+			$parse['attack_pt'] = Format::number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Format::number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
+			$parse['shield_pt'] = Format::number($this->registry->CombatCaps[$itemId]['shield']);
+			$parse['capacity_pt'] = Format::number($this->registry->CombatCaps[$itemId]['capacity']);
+			$parse['base_speed'] = Format::number($this->registry->CombatCaps[$itemId]['speed']) . ' (' . Format::number(Fleet::GetFleetMaxSpeed('', $itemId, $this->user)) . ')';
+			$parse['base_conso'] = Format::number($this->registry->CombatCaps[$itemId]['consumption']);
 			$parse['block'] = $this->registry->CombatCaps[$itemId]['power_armour'];
 			$parse['upgrade'] = $this->registry->CombatCaps[$itemId]['power_up'];
-			$parse['met'] = Helpers::pretty_number($price['metal']) . ' (' . Helpers::pretty_number($price['metal'] * $this->user->bonusValue('res_fleet')) . ')';
-			$parse['cry'] = Helpers::pretty_number($price['crystal']) . ' (' . Helpers::pretty_number($price['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
-			$parse['deu'] = Helpers::pretty_number($price['deuterium']) . ' (' . Helpers::pretty_number($price['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['met'] = Format::number($price['metal']) . ' (' . Format::number($price['metal'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['cry'] = Format::number($price['crystal']) . ' (' . Format::number($price['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
+			$parse['deu'] = Format::number($price['deuterium']) . ' (' . Format::number($price['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
 
 			$engine = ['', 'Ракетный', 'Импульсный', 'Гиперпространственный'];
 			$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
@@ -328,19 +329,19 @@ class InfoController extends Controller
 			$parse['element_typ'] = _getText('tech', 400);
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Helpers::pretty_number($parse['hull_pt']) . ' (' . Helpers::pretty_number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
 
 			if (isset($this->registry->CombatCaps[$itemId]['shield']))
-				$parse['shield_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['shield']);
+				$parse['shield_pt'] = Format::number($this->registry->CombatCaps[$itemId]['shield']);
 			else
 				$parse['shield_pt'] = '';
 
 			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) / 100)) + $this->user->getTechLevel('military') * 0.05;
 
-			$parse['attack_pt'] = Helpers::pretty_number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Helpers::pretty_number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
-			$parse['met'] = Helpers::pretty_number($price['metal']);
-			$parse['cry'] = Helpers::pretty_number($price['crystal']);
-			$parse['deu'] = Helpers::pretty_number($price['deuterium']);
+			$parse['attack_pt'] = Format::number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Format::number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
+			$parse['met'] = Format::number($price['metal']);
+			$parse['cry'] = Format::number($price['crystal']);
+			$parse['deu'] = Format::number($price['deuterium']);
 
 			if ($itemId >= 400 && $itemId < 500)
 			{
@@ -420,14 +421,14 @@ class InfoController extends Controller
 
 			if ($build && $build['level'] > 0)
 			{
-				$DestroyTime = Building::GetBuildingTime($this->user, $this->planet, $itemId) / 2;
+				$DestroyTime = Building::getBuildingTime($this->user, $this->planet, $itemId) / 2;
 
 				if ($DestroyTime < 1)
 					$DestroyTime = 1;
 
 				$parse['levelvalue'] = $build['level'];
-				$parse['destroy'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $itemId, true, true), $this->planet);
-				$parse['destroytime'] = Helpers::pretty_time($DestroyTime);
+				$parse['destroy'] = Building::getElementPrice(Building::getBuildingPrice($this->user, $this->planet, $itemId, true, true), $this->planet);
+				$parse['destroytime'] = Format::time($DestroyTime);
 
 				$this->view->setVar('parse', $parse);
 				$this->view->partial('info/buildings_destroy');

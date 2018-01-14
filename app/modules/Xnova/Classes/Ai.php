@@ -9,13 +9,13 @@ namespace Xnova;
  */
 
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 
 class Ai
 {
 	private $_playerId = 0;
 	/**
-	 * @var bool|User
+	 * @var bool|UserModel
 	 */
 	private $_playerData = false;
 	private $_log = [];
@@ -46,9 +46,9 @@ class Ai
 
 	public function update ()
 	{
-		$this->_playerData = User::findFirst($this->getPlayerId());
+		$this->_playerData = UserModel::findFirst($this->getPlayerId());
 
-		$planets = $this->_playerData->getUserPlanets($this->_playerData->getId());
+		$planets = User::getPlanets($this->_playerData->getId());
 
 		foreach ($planets as $row)
 		{

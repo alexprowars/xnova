@@ -20,10 +20,11 @@ use Xnova\Battle\Models\ShipType;
 use Xnova\Battle\Models\Fleet;
 use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
+use Xnova\Format;
 use Xnova\Galaxy;
-use Xnova\Helpers;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
+use Xnova\Models\User as UserModel;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Vars;
 
@@ -43,7 +44,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$owner = User::findFirst($this->_fleet->owner);
+		$owner = UserModel::findFirst($this->_fleet->owner);
 
 		if (!$owner)
 		{
@@ -52,7 +53,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$targetUser = User::findFirst($target->id_owner);
+		$targetUser = UserModel::findFirst($target->id_owner);
 
 		if (!$targetUser)
 		{
@@ -502,7 +503,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 			$title_2 = implode(',', $UserList);
 
-			$title = '' . $title_1 . ' vs ' . $title_2 . ' (П: ' . Helpers::pretty_number($lost) . ')';
+			$title = '' . $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
 			$this->db->insertAsDict('game_savelog',
 			[
@@ -527,9 +528,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#BASEPATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
 		$raport .= "<font color=\"#COLOR#\">"._getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
-		$raport2  = '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Helpers::pretty_number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Helpers::pretty_number($result['lost']['def']) . '</font><br>';
-		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Helpers::pretty_number($steal['deuterium']) . '</font><br>';
-		$raport2 .= _getText('sys_debris') . ' м: <font color=\'#adaead\'>' . Helpers::pretty_number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Helpers::pretty_number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
+		$raport2  = '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
+		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';
+		$raport2 .= _getText('sys_debris') . ' м: <font color=\'#adaead\'>' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
 
 		$UserList = [];
 

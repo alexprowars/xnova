@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Models\User;
+use Xnova\User;
 use Xnova\Controller;
 
 /**

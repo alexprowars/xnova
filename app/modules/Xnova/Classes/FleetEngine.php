@@ -144,11 +144,11 @@ class FleetEngine extends Injectable
 			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
 			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(print_date(" . time() . ", 1));</script></td>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->metal) . "</th>";
-			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->crystal) . "</th>";
+			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Format::number($TargetPlanet->metal) . "</th>";
+			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Format::number($TargetPlanet->crystal) . "</th>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>дейтерия:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->deuterium) . "</th>";
-			$String .= "<th width=220>энергии:</th><th width=220 align=right>" . Helpers::pretty_number($TargetPlanet->energy_max) . "</th>";
+			$String .= "<th width=220>дейтерия:</th><th width=220 align=right>" . Format::number($TargetPlanet->deuterium) . "</th>";
+			$String .= "<th width=220>энергии:</th><th width=220 align=right>" . Format::number($TargetPlanet->energy_max) . "</th>";
 			$String .= "</tr>";
 			$LookAtLoop = false;
 		}

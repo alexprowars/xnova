@@ -8,6 +8,7 @@
 
 use Friday\Core\Lang;
 use Friday\Core\Modules;
+use Xnova\Vars;
 
 class BotTask extends ApplicationTask
 {
@@ -16,7 +17,7 @@ class BotTask extends ApplicationTask
 		Modules::init('xnova');
 		Lang::setLang($this->config->app->language, 'xnova');
 
-		$this->game->loadGameVariables();
+		Vars::init();
 
 		$bots = $this->db->query("SELECT * FROM game_bots_users WHERE 1 ORDER BY last_update ASC");
 

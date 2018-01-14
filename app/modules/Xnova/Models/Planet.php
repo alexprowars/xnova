@@ -13,6 +13,8 @@ use Phalcon\Exception;
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
 use Xnova\Vars;
+use Xnova\User;
+use Xnova\Models\User as UserModel;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -167,7 +169,7 @@ class Planet extends Model
 		return self::findFirst(['galaxy = ?0 AND system = ?1 AND planet = ?2 AND planet_type = ?3', 'bind' => [$galaxy, $system, $planet, $type]]);
 	}
 
-	public function assignUser (User $user)
+	public function assignUser (UserModel $user)
 	{
 		$this->user = $user;
 	}
@@ -466,7 +468,7 @@ class Planet extends Model
 
 	public function resourceUpdate ($updateTime = 0, $simulation = false)
 	{
-		if (!$this->user instanceof User)
+		if (!$this->user instanceof UserModel)
 			return false;
 
 		$config = $this->getDI()->getShared('config');
@@ -483,10 +485,9 @@ class Planet extends Model
 
 		foreach (Vars::getResources() AS $res)
 		{
-			$storage = $this->getBuild($res.'_store');
-			$storageLevel = $storage ? $storage['level'] : 0;
+			$storage = $this->getBuildLevel($res.'_store');
 
-			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, $storageLevel)))) * $this->user->bonusValue('storage'));
+			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, $storage)))) * $this->user->bonusValue('storage'));
 		}
 
 		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));

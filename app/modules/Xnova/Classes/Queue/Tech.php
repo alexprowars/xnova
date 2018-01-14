@@ -9,7 +9,6 @@ namespace Xnova\Queue;
  */
 
 use Xnova\Building;
-use Phalcon\Di;
 use Xnova\Queue;
 use Xnova\Vars;
 
@@ -40,15 +39,15 @@ class Tech
 
 			$price = Vars::getItemPrice($elementId);
 
-			if (Building::IsTechnologieAccessible($user, $planet, $elementId) && Building::IsElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
+			if (Building::isTechnologieAccessible($user, $planet, $elementId) && Building::isElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
 			{
-				$costs = Building::GetBuildingPrice($user, $planet, $elementId);
+				$costs = Building::getBuildingPrice($user, $planet, $elementId);
 
 				$planet->metal 		-= $costs['metal'];
 				$planet->crystal 	-= $costs['crystal'];
 				$planet->deuterium 	-= $costs['deuterium'];
 
-				$time = Building::GetBuildingTime($user, $planet, $elementId);
+				$time = Building::getBuildingTime($user, $planet, $elementId);
 
 				$this->_queue->set(Queue::QUEUE_TYPE_RESEARCH, [
 					'i' => $elementId,
@@ -77,7 +76,7 @@ class Tech
 
 		if (isset($queue[Queue::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['working'] && $queue[Queue::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
 		{
-			$nedeed = Building::GetBuildingPrice($user, $TechHandle['planet'], $elementId);
+			$nedeed = Building::getBuildingPrice($user, $TechHandle['planet'], $elementId);
 
 			$TechHandle['planet']->metal 		+= $nedeed['metal'];
 			$TechHandle['planet']->crystal 		+= $nedeed['crystal'];

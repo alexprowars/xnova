@@ -9,7 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Friday\Core\Options;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
@@ -186,7 +186,7 @@ class StatController extends Controller
 
 			$stats['race'] = $StatRow['race'];
 
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
 
 			$stat[] = $stats;
 
@@ -245,8 +245,8 @@ class StatController extends Controller
 
 			$stats['mes'] = '';
 			$stats['members'] = $StatRow['members'];
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
-			$stats['members_points'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
+			$stats['members_points'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
 
 			$stat[] = $stats;
 
@@ -271,10 +271,10 @@ class StatController extends Controller
 			$stats['rank'] = $StatRow[$this->field.'_rank'];
 			$stats['race'] = $StatRow['race'];
 			$stats['count'] = $StatRow['total_count'];
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
 
 			if ($StatRow['total_count'] > 0)
-				$stats['pointatuser'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
+				$stats['pointatuser'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
 			else
 				$stats['pointatuser'] = 0;
 

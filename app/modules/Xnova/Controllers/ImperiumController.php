@@ -8,12 +8,13 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\User;
 use Xnova\Vars;
 
 /**
@@ -85,7 +86,7 @@ class ImperiumController extends Controller
 		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => $this->user->getPlanetListSortQuery()]);
+		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => User::getPlanetListSortQuery($this->user->planet_sort, $this->user->planet_sort_order)]);
 
 		$parse['mount'] = count($planets) + 3;
 
@@ -109,7 +110,7 @@ class ImperiumController extends Controller
 			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
 			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->getBaseUri()."galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
-			@$parse['file_energy'] .= '<th>' . Helpers::pretty_number($planet->energy_max - abs($planet->energy_used)) . '</th>';
+			@$parse['file_energy'] .= '<th>' . Format::number($planet->energy_max - abs($planet->energy_used)) . '</th>';
 			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) . '</font>%</th>';
 
 			@$parse['file_fields_c'] += $planet->field_current;
@@ -199,12 +200,12 @@ class ImperiumController extends Controller
 
 		foreach (Vars::getResources() as $res)
 		{
-			$parse['file_'.$res.'_t'] = Helpers::pretty_number($parse['file_'.$res.'_t']);
-			$parse['file_'.$res.'_ph_t'] = Helpers::pretty_number($parse['file_'.$res.'_ph_t']);
+			$parse['file_'.$res.'_t'] = Format::number($parse['file_'.$res.'_t']);
+			$parse['file_'.$res.'_ph_t'] = Format::number($parse['file_'.$res.'_ph_t']);
 		}
 
-		$parse['file_energy_t'] = Helpers::pretty_number($parse['file_energy_t']);
-		$parse['file_kredits'] = Helpers::pretty_number($this->user->credits);
+		$parse['file_energy_t'] = Format::number($parse['file_energy_t']);
+		$parse['file_kredits'] = Format::number($this->user->credits);
 
 		$parse['building_row'] = '';
 		$parse['fleet_row'] = '';

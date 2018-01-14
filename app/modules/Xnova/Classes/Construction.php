@@ -97,7 +97,7 @@ class Construction
 			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)))
 				continue;
 
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
 
 			if (!$isAccess && $oldStyle)
 				continue;
@@ -110,24 +110,24 @@ class Construction
 			if (!$build)
 				continue;
 
-			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
+			$HaveRessources 	= Building::isElementBuyable($this->user, $this->planet, $Element, true, false);
 			$BuildingLevel 		= $build['level'];
-			$BuildingPrice 		= Building::GetBuildingPrice($this->user, $this->planet, $Element);
+			$BuildingPrice 		= Building::getBuildingPrice($this->user, $this->planet, $Element);
 
 			$row = [];
 
 			$row['access']	= $isAccess;
 			$row['i'] 		= $Element;
 			$row['count'] 	= $BuildingLevel;
-			$row['price'] 	= Building::GetElementPrice($BuildingPrice, $this->planet);
+			$row['price'] 	= Building::getElementPrice($BuildingPrice, $this->planet);
 
 			if ($isAccess)
 			{
 				if (in_array($Element, $storage->reslist['build_exp']))
 					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / $config->game->get('buildings_exp_mult', 1000));
 
-				$row['time'] 	= Building::GetBuildingTime($this->user, $this->planet, $Element);
-				$row['add'] 	= Building::GetNextProduction($Element, $BuildingLevel, $this->planet);
+				$row['time'] 	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['add'] 	= Building::getNextProduction($Element, $BuildingLevel, $this->planet);
 				$row['click'] 	= '';
 
 				if ($Element == 31)
@@ -177,7 +177,7 @@ class Construction
 		$NoResearchMessage = "";
 		$bContinue = true;
 
-		if (!Building::CheckLabSettingsInQueue($this->planet))
+		if (!Building::checkLabSettingsInQueue($this->planet))
 		{
 			$NoResearchMessage = _getText('labo_on_update');
 			$bContinue = false;
@@ -244,7 +244,7 @@ class Construction
 
 		foreach ($res_array AS $Tech)
 		{
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Tech);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Tech);
 
 			if (!$isAccess && $oldStyle)
 				continue;
@@ -265,7 +265,7 @@ class Construction
 			if (isset($price['max']))
 				$row['tech_level'] .= ' из <font color=yellow>' . $price['max'] . '</font>';
 
-			$row['tech_price'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Tech), $this->planet);
+			$row['tech_price'] = Building::getElementPrice(Building::getBuildingPrice($this->user, $this->planet, $Tech), $this->planet);
 
 			if ($isAccess)
 			{
@@ -300,9 +300,9 @@ class Construction
 				elseif ($Tech == 123)
 					$row['add'] = '+' . ($building_level) . '% лабораторий<br>';
 
-				$SearchTime = Building::GetBuildingTime($this->user, $this->planet, $Tech);
+				$SearchTime = Building::getBuildingTime($this->user, $this->planet, $Tech);
 				$row['search_time'] = $SearchTime;
-				$CanBeDone = Building::IsElementBuyable($this->user, $this->planet, $Tech);
+				$CanBeDone = Building::isElementBuyable($this->user, $this->planet, $Tech);
 
 				if (!$TechHandle['working'])
 				{
@@ -312,7 +312,7 @@ class Construction
 						$TechnoLink = '<font color=#FF0000>максимальный уровень</font>';
 					elseif ($CanBeDone)
 					{
-						if (!Building::CheckLabSettingsInQueue($this->planet))
+						if (!Building::checkLabSettingsInQueue($this->planet))
 						{
 							if ($LevelToDo == 1)
 								$TechnoLink = "<font color=#FF0000>Исследовать</font>";
@@ -404,7 +404,7 @@ class Construction
 
 		foreach ($elementIDs AS $Element)
 		{
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
 
 			if (!$isAccess && $oldStyle)
 				continue;
@@ -417,12 +417,12 @@ class Construction
 			$row['access']	= $isAccess;
 			$row['i'] 		= $Element;
 			$row['count'] 	= $this->planet->getUnitCount($Element);
-			$row['price'] 	= Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
+			$row['price'] 	= Building::getElementPrice(Building::getBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
 
 			if ($isAccess)
 			{
-				$row['time'] 	 	= Building::GetBuildingTime($this->user, $this->planet, $Element);
-				$row['can_build'] 	= Building::IsElementBuyable($this->user, $this->planet, $Element, false);
+				$row['time'] 	 	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['can_build'] 	= Building::isElementBuyable($this->user, $this->planet, $Element, false);
 
 				if ($row['can_build'])
 				{
@@ -441,10 +441,10 @@ class Construction
 							$row['maximum'] = true;
 					}
 
-					$row['max'] = Building::GetMaxConstructibleElements($Element, $this->planet, $this->user);
+					$row['max'] = Building::getMaxConstructibleElements($Element, $this->planet, $this->user);
 				}
 
-				$row['add'] = Building::GetNextProduction($Element, 0, $this->planet);
+				$row['add'] = Building::getNextProduction($Element, 0, $this->planet);
 			}
 
 			$parse['buildlist'][] = $row;
@@ -522,7 +522,7 @@ class Construction
 		{
 			foreach ($ElementQueue as $queueArray)
 			{
-				$ElementTime = Building::GetBuildingTime($this->user, $this->planet, $queueArray['i']);
+				$ElementTime = Building::getBuildingTime($this->user, $this->planet, $queueArray['i']);
 
 				$QueueTime += $ElementTime * $queueArray['l'];
 
@@ -537,7 +537,7 @@ class Construction
 			$parse['c'] = $TimePerType;
 			$parse['b_hangar_id_plus'] = $ElementQueue[0]['s'];
 
-			$parse['time'] = Helpers::pretty_time($QueueTime - $ElementQueue[0]['s']);
+			$parse['time'] = Format::time($QueueTime - $ElementQueue[0]['s']);
 		}
 
 		$parse['count'] = count($ElementQueue);

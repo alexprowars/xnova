@@ -94,11 +94,11 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('http_build_query', 'http_build_query');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
-		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
+		return '\Xnova\Format::number(' . $arguments . ')';
 	});
 	$compiler->addFunction('pretty_time', function($arguments)
 	{
-		return '\Xnova\Helpers::pretty_time(' . $arguments . ')';
+		return '\Xnova\Format::time(' . $arguments . ')';
 	});
 	$compiler->addFunction('option', function($arguments)
 	{
@@ -110,7 +110,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	});
 	$compiler->addFunction('isTechnologieAccessible', function($arguments)
 	{
-		return '\Xnova\Building::IsTechnologieAccessible(' . $arguments . ')';
+		return '\Xnova\Building::isTechnologieAccessible(' . $arguments . ')';
 	});
 	$compiler->addFunction('morph', function($arguments)
 	{

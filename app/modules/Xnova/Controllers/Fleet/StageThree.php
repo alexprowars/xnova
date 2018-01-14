@@ -13,7 +13,7 @@ use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Phalcon\Db;
 
@@ -405,10 +405,10 @@ class StageThree
 		$StockOk = ($StockMetal >= $TransMetal && $StockCrystal >= $TransCrystal && $StockDeuterium >= $TransDeuterium);
 
 		if (!$StockOk && (!$TargetPlanet || $TargetPlanet->id_owner != 1))
-			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_noressources') . Helpers::pretty_number($consumption) . "</b></span>", 'Ошибка', "/fleet/", 2);
+			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_noressources') . Format::number($consumption) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($StorageNeeded > $FleetStorage && !$controller->user->isAdmin())
-			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Helpers::pretty_number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "/fleet/", 2);
+			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Format::number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		// Баш контроль
 		if ($fleetmission == 1)
@@ -567,13 +567,13 @@ class StageThree
 		$html .= "<th>" . _getText('type_mission', $fleetmission) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_dist') . "</th>";
-		$html .= "<th>" . Helpers::pretty_number($distance) . "</th>";
+		$html .= "<th>" . Format::number($distance) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_speed') . "</th>";
-		$html .= "<th>" . Helpers::pretty_number($maxFleetSpeed) . "</th>";
+		$html .= "<th>" . Format::number($maxFleetSpeed) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_deute_need') . "</th>";
-		$html .= "<th>" . Helpers::pretty_number($consumption) . "</th>";
+		$html .= "<th>" . Format::number($consumption) . "</th>";
 		$html .= "</tr><tr>";
 		$html .= "<th>" . _getText('fl_from') . "</th>";
 		$html .= "<th>" . $controller->planet->galaxy . ":" . $controller->planet->system . ":" . $controller->planet->planet . "</th>";
@@ -593,7 +593,7 @@ class StageThree
 		{
 			$html .= "</tr><tr>";
 			$html .= "<th>" . _getText('tech', $Ship) . "</th>";
-			$html .= "<th>" . Helpers::pretty_number($Count) . "</th>";
+			$html .= "<th>" . Format::number($Count) . "</th>";
 		}
 
 		$html .= "</tr></table>";

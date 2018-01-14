@@ -12,7 +12,7 @@ use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Vars;
@@ -76,19 +76,19 @@ class StageTwo
 
 							$controller->user->update(['planet_current' => $TargetGate->id]);
 
-							$RetMessage = _getText('gate_jump_done') . " - " . Helpers::pretty_time($controller->planet->getNextJumpTime());
+							$RetMessage = _getText('gate_jump_done') . " - " . Format::time($controller->planet->getNextJumpTime());
 						}
 						else
 							$RetMessage = _getText('gate_wait_data');
 					}
 					else
-						$RetMessage = _getText('gate_wait_dest') . " - " . Helpers::pretty_time($nextJumpTime);
+						$RetMessage = _getText('gate_wait_dest') . " - " . Format::time($nextJumpTime);
 				}
 				else
 					$RetMessage = _getText('gate_no_dest_g');
 			}
 			else
-				$RetMessage = _getText('gate_wait_star') . " - " . Helpers::pretty_time($nextJumpTime);
+				$RetMessage = _getText('gate_wait_star') . " - " . Format::time($nextJumpTime);
 
 			throw new RedirectException($RetMessage, 'Результат', "/fleet/", 5);
 		}

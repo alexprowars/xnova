@@ -139,8 +139,8 @@ class CombatReport extends Component
 		{
 			if ($data['attackA']['total'] > 0 && $data['defenseA']['total'] > 0)
 			{
-				$html .= "<div class='separator'></div><center>Атакующий флот делает " . Helpers::pretty_number($data['attackA']['total']) . " выстрела(ов) с общей мощностью " . Helpers::pretty_number($data['attack']['total']) . " по защитнику. Щиты защитника поглощают " . Helpers::pretty_number($data['defShield']) . " мощности.<br />";
-				$html .= "Защитный флот делает " . Helpers::pretty_number($data['defenseA']['total']) . " выстрела(ов) с общей мощностью " . Helpers::pretty_number($data['defense']['total']) . " по атакующему. Щиты атакующего поглащают " . Helpers::pretty_number($data['attackShield']) . " мощности.</center><div class='separator'></div>";
+				$html .= "<div class='separator'></div><center>Атакующий флот делает " . Format::number($data['attackA']['total']) . " выстрела(ов) с общей мощностью " . Format::number($data['attack']['total']) . " по защитнику. Щиты защитника поглощают " . Format::number($data['defShield']) . " мощности.<br />";
+				$html .= "Защитный флот делает " . Format::number($data['defenseA']['total']) . " выстрела(ов) с общей мощностью " . Format::number($data['defense']['total']) . " по атакующему. Щиты атакующего поглащают " . Format::number($data['attackShield']) . " мощности.</center><div class='separator'></div>";
 			}
 
 			$attackers = $data['attackers'];
@@ -173,10 +173,10 @@ class CombatReport extends Component
 							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
-								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "</th>";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "</th>";
 							else
 							{
-								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "";
 
 								if (ceil($this->result_array['rw'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count) > 0)
 									$raport2 .= " <small><font color='red'>-" . (ceil($this->result_array['rw'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count)) . "</font></small>";
@@ -193,8 +193,8 @@ class CombatReport extends Component
 							elseif ($this->registry->CombatCaps[$ship_id]['type_gun'] == 3)
 								$attTech += $this->attackUsers[$user]['tech']['buster_tech'] * 0.05;
 
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Format::number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -244,10 +244,10 @@ class CombatReport extends Component
 							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
-								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "</th>";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "</th>";
 							else
 							{
-								$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "";
 
 								if (ceil($this->result_array['rw'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count) > 0)
 									$raport2 .= " <small><font color='red'>-" . (ceil($this->result_array['rw'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count)) . "</font></small>";
@@ -264,8 +264,8 @@ class CombatReport extends Component
 							elseif ($this->registry->CombatCaps[$ship_id]['type_gun'] == 3)
 								$attTech += $this->defenseUsers[$user]['tech']['buster_tech'] * 0.05;
 
-							$raport3 .= "<th>" . Helpers::pretty_number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Helpers::pretty_number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport3 .= "<th>" . Format::number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
+							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -293,7 +293,7 @@ class CombatReport extends Component
 		elseif ($this->result_array['won'] == 1)
 		{
 			$result1 = "Атакующий выиграл битву!<br />";
-			$result1 .= "Он получает " . Helpers::pretty_number($this->steal_array['metal']) . " металла, " . Helpers::pretty_number($this->steal_array['crystal']) . " кристалла и " . Helpers::pretty_number($this->steal_array['deuterium']) . " дейтерия<br />";
+			$result1 .= "Он получает " . Format::number($this->steal_array['metal']) . " металла, " . Format::number($this->steal_array['crystal']) . " кристалла и " . Format::number($this->steal_array['deuterium']) . " дейтерия<br />";
 		}
 		else
 		{
@@ -305,9 +305,9 @@ class CombatReport extends Component
 		$debirs_meta = ($this->result_array['debree']['att'][0] + $this->result_array['debree']['def'][0]);
 		$debirs_crys = ($this->result_array['debree']['att'][1] + $this->result_array['debree']['def'][1]);
 
-		$html .= "<tr><th>Атакующий потерял " . Helpers::pretty_number($this->result_array['lost']['att']) . " единиц.</th></tr>";
-		$html .= "<tr><th>Обороняющийся потерял " . Helpers::pretty_number($this->result_array['lost']['def']) . " единиц.</th></tr>";
-		$html .= "<tr><td class='c'>Поле обломков: " . Helpers::pretty_number($debirs_meta) . " металла и " . Helpers::pretty_number($debirs_crys) . " кристалла.</td></tr>";
+		$html .= "<tr><th>Атакующий потерял " . Format::number($this->result_array['lost']['att']) . " единиц.</th></tr>";
+		$html .= "<tr><th>Обороняющийся потерял " . Format::number($this->result_array['lost']['def']) . " единиц.</th></tr>";
+		$html .= "<tr><td class='c'>Поле обломков: " . Format::number($debirs_meta) . " металла и " . Format::number($debirs_crys) . " кристалла.</td></tr>";
 
 		$html .= "<tr><th>Шанс появления луны составляет " . $this->moon_int . "%<br>";
 		$html .= $this->moon_string . "</th></tr>";
@@ -329,7 +329,7 @@ class CombatReport extends Component
 					if ($ship_count > 0)
 					{
 						$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
-						$raport2 .= "<th>" . Helpers::pretty_number(ceil($ship_count)) . "</th>";
+						$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "</th>";
 					}
 				}
 				$raport1 .= "</tr>";

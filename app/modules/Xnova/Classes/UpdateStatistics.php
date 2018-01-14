@@ -11,7 +11,6 @@ namespace Xnova;
 use PHPMailer\PHPMailer\PHPMailer;
 use Friday\Core\Options;
 use Xnova\Models\Fleet;
-use Xnova\Models\User;
 use Phalcon\Di\Injectable;
 
 /**
@@ -39,7 +38,7 @@ class UpdateStatistics extends Injectable
 	public function __construct()
 	{
 		$this->start = time();
-		$this->user = new User;
+		$this->user = new Models\User;
 	}
 
 	private function SetMaxInfo ($ID, $Count, $Data)
@@ -211,7 +210,7 @@ class UpdateStatistics extends Injectable
 
 		while ($user = $list->fetch())
 		{
-			if ($this->user->deleteById($user['id']))
+			if (User::deleteById($user['id']))
 				$result[] = $user['username'];
 		}
 

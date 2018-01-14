@@ -95,33 +95,6 @@ class Game extends Component
 		return 1;
 	}
 
-	public function loadGameVariables ()
-	{
-		Vars::init();
-	}
-
-	public function checkSaveState ()
-	{
-		return (!($this->request->get('ep', null, '') == 'dontsavestate'));
-	}
-
-	public function getClearQuery ()
-	{
-		/*$out = $this->request->getQuery();
-
-		unset($out['ajax']);
-		unset($out['popup']);
-		unset($out['random']);
-		unset($out['_']);
-		unset($out['_url']);
-		unset($out['isAjax']);
-
-		if (count($out))
-			return $this->router->getRewriteUri().'?'.http_build_query($out);
-		else*/
-			return $this->router->getRewriteUri();
-	}
-
 	public function checkReferLink ()
 	{
 		if (!$this->session->has('uid') && is_numeric($this->request->getServer('QUERY_STRING')) && strlen($this->request->getServer('QUERY_STRING')) > 0)

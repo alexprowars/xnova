@@ -15,8 +15,8 @@ use Xnova\Battle\Models\PlayerGroup;
 use Xnova\Battle\Models\Fleet;
 use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
-use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\Format;
+use Xnova\User;
 use Xnova\Vars;
 
 class MissionCaseExpedition extends FleetEngine implements Mission
@@ -170,7 +170,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Found[$ID]	= $Count;
 
 					$FoundShips	 		-= $Count * Vars::getItemTotalPrice($ID);
-					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Helpers::pretty_number($Count);
+					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Format::number($Count);
 
 					if ($FoundShips <= 0)
 						break;
@@ -379,7 +379,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="#BASEPATH#rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, _getText('sys_perte_attaquant'), Helpers::pretty_number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Helpers::pretty_number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
+				$MessageAtt = sprintf('<a href="#BASEPATH#rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, _getText('sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Format::number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
 
 				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_tower'), $MessageAtt);
 
@@ -437,7 +437,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 	public function ReturnEvent()
 	{
-		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Helpers::pretty_number($this->_fleet->resource_metal), _getText('Crystal'), Helpers::pretty_number($this->_fleet->resource_crystal),  _getText('Deuterium'), Helpers::pretty_number($this->_fleet->resource_deuterium));
+		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Format::number($this->_fleet->resource_metal), _getText('Crystal'), Format::number($this->_fleet->resource_crystal),  _getText('Deuterium'), Format::number($this->_fleet->resource_deuterium));
 
 		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 15, _getText('sys_expe_report'), $Message);
 

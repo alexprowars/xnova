@@ -171,7 +171,7 @@ class Fleet extends Building
 		}
 		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 4)
 		{
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		}
 		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 8)
 		{
@@ -180,7 +180,7 @@ class Fleet extends Building
 				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . _getText('tech', $id) . "<font></td></tr>";
 			}
 
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		}
 		else
 		{
@@ -189,7 +189,7 @@ class Fleet extends Building
 
 			foreach ($FleetRec as $id => $fleet)
 			{
-				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Helpers::pretty_number($fleet['cnt']) . "<font></td></tr>";
+				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['cnt']) . "<font></td></tr>";
 
 				if ($r != 'javascript:;')
 					$r .= $id.','.$fleet['cnt'].'!'.$fleet['lvl'].';';
@@ -212,9 +212,9 @@ class Fleet extends Building
 		if ($FleetTotalC != 0)
 		{
 			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_metal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_crystal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_deuterium) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_metal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_crystal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_deuterium) . "<font></td></tr>";
 			$FRessource .= "</table>";
 		}
 		else

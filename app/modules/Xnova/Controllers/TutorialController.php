@@ -8,7 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Controller;
@@ -213,13 +213,13 @@ class TutorialController extends Controller
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 			{
 				if ($rewardKey == 'metal')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Metal').'а';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Metal').'а';
 				elseif ($rewardKey == 'crystal')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Crystal').'а';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Crystal').'а';
 				elseif ($rewardKey == 'deuterium')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Deuterium').'';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Deuterium').'';
 				elseif ($rewardKey == 'credits')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Credits').'';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Credits').'';
 				elseif ($rewardKey == 'BUILD')
 				{
 					foreach ($rewardVal AS $element => $level)

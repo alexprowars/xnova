@@ -11,6 +11,7 @@ use Friday\Core\Modules;
 use Friday\Core\Options;
 use Xnova\Missions\Mission;
 use Xnova\UpdateStatistics;
+use Xnova\Vars;
 
 class UpdateTask extends ApplicationTask
 {
@@ -30,7 +31,7 @@ class UpdateTask extends ApplicationTask
 		Modules::init('xnova');
 		Lang::setLang($this->config->app->language, 'xnova');
 
-		$this->game->loadGameVariables();
+		Vars::init();
 
 		$start = microtime(true);
 
@@ -63,7 +64,7 @@ class UpdateTask extends ApplicationTask
 		Lang::setLang($this->config->app->language, 'xnova');
 		Lang::includeLang('fleet_engine', 'xnova');
 
-		$this->game->loadGameVariables();
+		Vars::init();
 
 		include_once(ROOT_PATH."/app/config/battle.php");
 

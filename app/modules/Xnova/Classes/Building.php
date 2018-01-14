@@ -17,14 +17,14 @@ class Building
 	/**
 	 * @param  $user
 	 * @param  $planet
-	 * @param  $Element
+	 * @param  $element
 	 * @param bool $incremental
 	 * @param bool $destroy
 	 * @return bool
 	 */
-	static function IsElementBuyable (User $user, Planet $planet, $Element, $incremental = true, $destroy = false)
+	static function isElementBuyable (User $user, Planet $planet, $element, $incremental = true, $destroy = false)
 	{
-		$cost = self::GetBuildingPrice($user, $planet, $Element, $incremental, $destroy);
+		$cost = self::getBuildingPrice($user, $planet, $element, $incremental, $destroy);
 
 		foreach ($cost AS $ResType => $ResCount)
 		{
@@ -35,7 +35,7 @@ class Building
 		return true;
 	}
 
-	static function IsTechnologieAccessible (User $user, Planet $planet, $element)
+	static function isTechnologieAccessible (User $user, Planet $planet, $element)
 	{
 		$requeriments = Vars::getItemRequeriments($element);
 
@@ -79,7 +79,7 @@ class Building
 		return true;
 	}
 
-	static function CheckLabSettingsInQueue (Planet $planet)
+	static function checkLabSettingsInQueue (Planet $planet)
 	{
 		$queueManager = new Queue($planet->queue);
 
@@ -151,14 +151,14 @@ class Building
 	 * @param  $element integer
 	 * @return int
 	 */
-	static function GetBuildingTime (User $user, Planet $planet, $element)
+	static function getBuildingTime (User $user, Planet $planet, $element)
 	{
 		$config = $user->getDI()->getShared('config');
 
 		$elementType = Vars::getItemType($element);
 		$time = 0;
 
-		$cost = self::GetBuildingPrice($user, $planet, $element, !in_array($elementType,  [Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_FLEET]), false, false);
+		$cost = self::getBuildingPrice($user, $planet, $element, !in_array($elementType,  [Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_FLEET]), false, false);
 		$cost = $cost['metal'] + $cost['crystal'];
 
 		if ($elementType == Vars::ITEM_TYPE_BUILING)
@@ -207,7 +207,7 @@ class Building
 	 * @param  $planet Planet
 	 * @return string
 	 */
-	static function GetElementPrice ($cost, Planet $planet)
+	static function getElementPrice ($cost, Planet $planet)
 	{
 		$array = [
 			'metal' 	=> [_getText('Metal'), 'metall'],
@@ -227,9 +227,9 @@ class Building
 				$text .= "<div><img src='".$uri."assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-content='" . $ResTitle[0] . "'>";
 
 				if ($cost[$ResType] > $planet->{$ResType})
-					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Helpers::pretty_number($cost[$ResType] - $planet->{$ResType})."\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
+					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$ResType] - $planet->{$ResType})."\">" . Format::number($cost[$ResType]) . "</span> ";
 				else
-					$text .= "<span class=\"resYes\">" . Helpers::pretty_number($cost[$ResType]) . "</span> ";
+					$text .= "<span class=\"resYes\">" . Format::number($cost[$ResType]) . "</span> ";
 
 				$text .= "</div>";
 			}
@@ -247,7 +247,7 @@ class Building
 	 * @param bool $withBonus
 	 * @return array
 	 */
-	static function GetBuildingPrice (User $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
+	static function getBuildingPrice (User $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
 	{
 		$price = Vars::getItemPrice($element);
 		$elementType = Vars::getItemType($element);
@@ -310,7 +310,7 @@ class Building
 	 * @param Planet $planet
 	 * @return string
 	 */
-	static function GetNextProduction ($Element, $Level, Planet $planet)
+	static function getNextProduction ($Element, $Level, Planet $planet)
 	{
 		$Res = [];
 
@@ -351,7 +351,7 @@ class Building
 	 * @param $user User
 	 * @return mixed
 	 */
-	static function GetElementRessources ($element, $count, User $user)
+	static function getElementRessources ($element, $count, User $user)
 	{
 		$price = Vars::getItemPrice($element);
 
@@ -381,7 +381,7 @@ class Building
 	 * @param $user User
 	 * @return float|int
 	 */
-	static function GetMaxConstructibleElements ($element, Planet $planet, User $user)
+	static function getMaxConstructibleElements ($element, Planet $planet, User $user)
 	{
 		$maxElements = -1;
 

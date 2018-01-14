@@ -26,7 +26,7 @@ class Unit
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 		
-		if (!Building::IsTechnologieAccessible($user, $planet, $elementId))
+		if (!Building::isTechnologieAccessible($user, $planet, $elementId))
 			return;
 
 		$BuildArray = $this->_queue->get(Queue::QUEUE_TYPE_SHIPYARD);
@@ -77,11 +77,11 @@ class Unit
 		if (!$count)
 			return;
 
-		$count = min($count, Building::GetMaxConstructibleElements($elementId, $planet, $user));
+		$count = min($count, Building::getMaxConstructibleElements($elementId, $planet, $user));
 
 		if ($count > 0)
 		{
-			$Ressource = Building::GetElementRessources($elementId, $count, $user);
+			$Ressource = Building::getElementRessources($elementId, $count, $user);
 
 			$planet->metal 		-= $Ressource['metal'];
 			$planet->crystal 	-= $Ressource['crystal'];

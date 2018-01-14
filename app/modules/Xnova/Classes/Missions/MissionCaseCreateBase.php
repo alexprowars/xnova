@@ -10,7 +10,7 @@ namespace Xnova\Missions;
 
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
-use Xnova\Models\User;
+use Xnova\User;
 
 class MissionCaseCreateBase extends FleetEngine implements Mission
 {

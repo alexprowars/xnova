@@ -12,7 +12,7 @@ use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Fleet;
-use Xnova\Models\User;
+use Xnova\User;
 
 class Verband
 {

@@ -11,7 +11,7 @@ namespace Xnova\Missions;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
 
 class MissionCaseColonisation extends FleetEngine implements Mission
 {

@@ -12,6 +12,7 @@ use Phalcon\Cache\Backend\Memcache;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
+use Xnova\Format;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
@@ -214,7 +215,7 @@ class OverviewController extends Controller
 		$bloc['fleet_style'] = $FleetStyle[$MissionType];
 		$bloc['fleet_order'] = $Label . $Record;
 		$bloc['fleet_time'] = $this->game->datezone("H:i:s", $Time);
-		$bloc['fleet_count_time'] = Helpers::pretty_time($Rest, ':');
+		$bloc['fleet_count_time'] = Format::time($Rest, ':');
 		$bloc['fleet_descr'] = $EventString;
 		$bloc['fleet_javas'] = Helpers::InsertJavaScriptChronoApplet($Label, $Record, $Rest);
 

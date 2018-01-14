@@ -10,7 +10,7 @@ namespace Xnova\Missions;
 
 use Xnova\FleetEngine;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
 use Xnova\Vars;
 
 class MissionCaseRak extends FleetEngine implements Mission
@@ -35,9 +35,6 @@ class MissionCaseRak extends FleetEngine implements Mission
 
 		if (!$attTech)
 			$attTech['level'] = 0;
-
-		// Массивы параметров
-		$ids = [401, 402, 403, 404, 405, 406, 407, 408, 503, 502];
 
 		$message = '';
 

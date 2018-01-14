@@ -3,6 +3,7 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
+use Xnova\Format;
 use Xnova\Helpers;
 
 /**
@@ -64,7 +65,7 @@ class OverviewController extends Controller
 				$Bloc['adm_ov_data_clip'] = $Color;
 				$Bloc['adm_ov_data_adip'] = long2ip($TheUser['ip']);
 				$Bloc['adm_ov_data_ally'] = $TheUser['ally_name'];
-				$Bloc['adm_ov_data_activ'] = Helpers::pretty_time(time() - $TheUser['onlinetime']);
+				$Bloc['adm_ov_data_activ'] = Format::time(time() - $TheUser['onlinetime']);
 
 				$parse['adm_ov_data_table'][] = $Bloc;
 				$Count++;

@@ -9,10 +9,11 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Format;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Message;
-use Xnova\Models\User;
+use Xnova\User;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 use Xnova\Controller;
 
@@ -103,7 +104,7 @@ class MessagesController extends Controller
 				$msg = "<div class=success>" . _getText('mess_sended') . "</div>";
 
 				$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
-				$Message = Helpers::FormatText($_POST['text']);
+				$Message = Format::text($_POST['text']);
 				$Message = preg_replace('/[ ]+/',' ', $Message);
 				$Message = strtr($Message, _getText('stopwords'));
 

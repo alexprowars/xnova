@@ -9,8 +9,6 @@ namespace Xnova;
  */
 
 use Xnova\Exceptions\ErrorException;
-use Xnova\Models\Planet;
-use Xnova\Models\User;
 use Phalcon\Di;
 use Xnova\Queue\Build;
 use Xnova\Queue\Tech;
@@ -24,11 +22,11 @@ class Queue
 	const QUEUE_TYPE_RESEARCH = 'research';
 	const QUEUE_TYPE_SHIPYARD = 'shipyard';
 	/**
-	 * @var \Xnova\Models\User user
+	 * @var Models\User user
 	 */
 	private $user;
 	/**
-	 * @var \Xnova\Models\Planet
+	 * @var Models\Planet
 	 */
 	private $planet;
 
@@ -51,12 +49,12 @@ class Queue
 			$this->queue = [];
 	}
 	
-	public function setUserObject (User $user)
+	public function setUserObject (Models\User $user)
 	{
 		$this->user = $user;
 	}
 	
-	public function setPlanetObject (Planet $planet)
+	public function setPlanetObject (Models\Planet $planet)
 	{
 		$this->planet = $planet;
 
@@ -176,10 +174,10 @@ class Queue
 
 	public function update ($time = 0)
 	{
-		if (!($this->planet instanceof Planet))
+		if (!($this->planet instanceof Models\Planet))
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
 
-		if (!($this->user instanceof User))
+		if (!($this->user instanceof Models\User))
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::User');
 
 		$result = false;
@@ -233,7 +231,7 @@ class Queue
 
 			if ($BuildArray['e'] <= time())
 			{
-				$Needed = Building::GetBuildingPrice($this->user, $this->planet, $Element, true, $ForDestroy);
+				$Needed = Building::getBuildingPrice($this->user, $this->planet, $Element, true, $ForDestroy);
 				$Units = $Needed['metal'] + $Needed['crystal'] + $Needed['deuterium'];
 
 				$XP = 0;
@@ -321,11 +319,11 @@ class Queue
 					$HaveNoMoreLevel = true;
 				}
 				else
-					$HaveRessources = Building::IsElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+					$HaveRessources = Building::isElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
 
-				if ($HaveRessources && Building::IsTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']))
+				if ($HaveRessources && Building::isTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']))
 				{
-					$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+					$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
 
 					$this->planet->metal 		-= $Needed['metal'];
 					$this->planet->crystal 		-= $Needed['crystal'];
@@ -360,18 +358,18 @@ class Queue
 						$Message = sprintf(_getText('sys_nomore_level'), _getText('tech', $ListIDArray['i']));
 					elseif (!$HaveRessources)
 					{
-						$Needed = Building::GetBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+						$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
 
 						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . _getText('tech', $ListIDArray['i']) . '" на планете '.$this->planet->name.' '.Helpers::BuildPlanetAdressLink($this->planet->toArray()).'.<br>Вам необходимо ещё: <br>';
 
 						if ($Needed['metal'] > $this->planet->metal)
-							$Message .= Helpers::pretty_number($Needed['metal'] - $this->planet->metal) . ' металла<br>';
+							$Message .= Format::number($Needed['metal'] - $this->planet->metal) . ' металла<br>';
 						if ($Needed['crystal'] > $this->planet->crystal)
-							$Message .= Helpers::pretty_number($Needed['crystal'] - $this->planet->crystal) . ' кристалла<br>';
+							$Message .= Format::number($Needed['crystal'] - $this->planet->crystal) . ' кристалла<br>';
 						if ($Needed['deuterium'] > $this->planet->deuterium)
-							$Message .= Helpers::pretty_number($Needed['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
+							$Message .= Format::number($Needed['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
 						if (isset($Needed['energy_max']) && isset($this->planet->energy_max) && $Needed['energy_max'] > $this->planet->energy_max)
-							$Message .= Helpers::pretty_number($Needed['energy_max'] - $this->planet->energy_max) . ' энергии<br>';
+							$Message .= Format::number($Needed['energy_max'] - $this->planet->energy_max) . ' энергии<br>';
 					}
 
 					if (isset($Message))
@@ -391,7 +389,7 @@ class Queue
 
 			foreach ($QueueArray as &$ListIDArray)
 			{
-				$ListIDArray['t'] = Building::GetBuildingTime($this->user, $this->planet, $ListIDArray['i']);
+				$ListIDArray['t'] = Building::getBuildingTime($this->user, $this->planet, $ListIDArray['i']);
 
 				if ($ListIDArray['d'])
 					$ListIDArray['t'] = ceil($ListIDArray['t'] / 2);
@@ -415,10 +413,10 @@ class Queue
 
 	public function checkTechQueue ()
 	{
-		if (!($this->planet instanceof Planet))
+		if (!($this->planet instanceof Models\Planet))
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
 
-		if (!($this->user instanceof User))
+		if (!($this->user instanceof Models\User))
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::User');
 
 		$Result['planet'] 	= false;
@@ -427,7 +425,7 @@ class Queue
 		if ($this->user->b_tech_planet != 0)
 		{
 			if ($this->user->b_tech_planet != $this->planet->id)
-				$ThePlanet = Planet::findFirst($this->user->b_tech_planet);
+				$ThePlanet = Models\Planet::findFirst($this->user->b_tech_planet);
 			else
 				$ThePlanet = $this->planet;
 
@@ -526,7 +524,7 @@ class Queue
 						$Item['l'] = 0;
 				}
 
-				$BuildArray[$Node] = [$Item['i'], $Item['l'], Building::GetBuildingTime($this->user, $this->planet, $Item['i'])];
+				$BuildArray[$Node] = [$Item['i'], $Item['l'], Building::getBuildingTime($this->user, $this->planet, $Item['i'])];
 			}
 
 			$UnFinished = false;

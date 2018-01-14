@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/galaxy")
@@ -110,7 +111,7 @@ class GalaxyController extends Controller
 		
 		if (!$this->session->has('fleet_shortcut'))
 		{
-			$array = $this->user->getUserPlanets($this->user->getId(), false, $this->user->ally_id);
+			$array = User::getPlanets($this->user->getId(), false, $this->user->ally_id);
 			$j = [];
 		
 			foreach ($array AS $a)

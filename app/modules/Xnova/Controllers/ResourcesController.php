@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Format;
 use Xnova\Helpers;
 use Xnova\Models\Planet;
 use Xnova\Controller;
@@ -136,7 +137,7 @@ class ResourcesController extends Controller
 
 		foreach ($this->registry->reslist['prod'] as $ProdID)
 		{
-			if (!isset($this->planet->buildings[$ProdID]) || !isset($this->registry->ProdGrid[$ProdID]))
+			if (!$this->planet->getBuildLevel($ProdID) || !isset($this->registry->ProdGrid[$ProdID]))
 				continue;
 
 			$build = $this->planet->getBuild($ProdID);
@@ -187,7 +188,7 @@ class ResourcesController extends Controller
 				$parse[$res.'_basic_income'] = 0;
 
 			$parse[$res.'_max'] = '<font color="#' . (($this->planet->{$res.'_max'} < $this->planet->{$res}) ? 'ff00' : '00ff') . '00">';
-			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'} / 1000) . " k</font>";
+			$parse[$res.'_max'] .= Format::number($this->planet->{$res.'_max'} / 1000) . " k</font>";
 
 			$parse[$res.'_total'] = $this->planet->{$res.'_perhour'} + $parse[$res.'_basic_income'];
 			$parse[$res.'_storage'] = floor($this->planet->{$res} / $this->planet->{$res.'_max'} * 100);
@@ -212,12 +213,12 @@ class ResourcesController extends Controller
 		}
 
 		foreach (Vars::getResources() AS $res)
-			$parse['buy_'.$res] = Helpers::colorNumber(Helpers::pretty_number($parse['buy_'.$res]));
+			$parse['buy_'.$res] = Helpers::colorNumber(Format::number($parse['buy_'.$res]));
 
 		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');
 
-		$parse['energy_total'] = Helpers::colorNumber(Helpers::pretty_number(floor(($this->planet->energy_max + $parse['energy_basic_income']) + $this->planet->energy_used)));
-		$parse['energy_max'] = Helpers::pretty_number(floor($this->planet->energy_max));
+		$parse['energy_total'] = Helpers::colorNumber(Format::number(floor(($this->planet->energy_max + $parse['energy_basic_income']) + $this->planet->energy_used)));
+		$parse['energy_max'] = Format::number(floor($this->planet->energy_max));
 
 		$parse['merchand'] = $this->planet->merchand;
 

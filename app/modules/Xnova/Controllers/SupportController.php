@@ -10,7 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\User;
 use Xnova\Sms;
 use Xnova\Controller;
 
@@ -33,7 +33,7 @@ class SupportController extends Controller
 		if (empty($_POST['text']) || empty($_POST['subject']))
 			throw new RedirectException('Не заполнены все поля', 'Ошибка', '/support/', 3);
 
-		$this->db->query("INSERT game_support SET `player_id` = '" . $this->user->id . "', `subject` = '" . Helpers::CheckString($_POST['subject']) . "', `text` = '" . Helpers::CheckString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
+		$this->db->query("INSERT game_support SET `player_id` = '" . $this->user->id . "', `subject` = '" . Helpers::checkString($_POST['subject']) . "', `text` = '" . Helpers::checkString($_POST['text']) . "', `time` = " . time() . ", `status` = '1';");
 
 		$ID = $this->db->lastInsertId();
 
@@ -56,7 +56,7 @@ class SupportController extends Controller
 
 			if (isset($ticket['id']))
 			{
-				$text = $ticket['text'] . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::CheckString($_POST['text']) . '';
+				$text = $ticket['text'] . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($_POST['text']) . '';
 
 				$this->db->query("UPDATE game_support SET text = '" . addslashes($text) . "', status = '3' WHERE id = '" . $TicketID . "';");
 

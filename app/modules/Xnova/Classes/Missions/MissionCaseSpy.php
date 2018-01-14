@@ -11,7 +11,8 @@ namespace Xnova\Missions;
 use Xnova\FleetEngine;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
+use Xnova\Models\User as UserModel;
 use Xnova\Vars;
 
 class MissionCaseSpy extends FleetEngine implements Mission
@@ -28,7 +29,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			return false;
 		}
 
-		$TargetUser = User::findFirst($TargetPlanet->id_owner);
+		$TargetUser = UserModel::findFirst($TargetPlanet->id_owner);
 
 		if (!$TargetUser)
 		{

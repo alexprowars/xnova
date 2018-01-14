@@ -10,7 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Vars;
@@ -89,7 +89,7 @@ class OfficierController extends Controller
 		else
 		{
 			$parse['off_points'] = _getText('off_points');
-			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
+			$parse['alv_points'] = Format::number($this->user->credits);
 			$parse['list'] = [];
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)

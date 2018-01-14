@@ -2,9 +2,8 @@
 
 use Friday\Core\Options;
 use Phalcon\Loader;
-use Xnova\Database;
-use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Events\Manager as EventsManager;
+use Xnova\User;
 
 define('ROOT_PATH', dirname(__DIR__.'../').'/');
 
@@ -104,15 +103,15 @@ if ($id > 0)
 			imagettftext($image, 6, 0, 13, 37, $txt_color2, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
 
 			// Очки
-			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Helpers::pretty_number(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::pretty_number(intval($stats['total_rank']))." из ".\Xnova\Helpers::pretty_number(Options::get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Helpers::formatNumber(intval($stats['total_points']))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::formatNumber(intval($stats['total_rank']))." из ".\Xnova\Helpers::formatNumber(Options::get('users_total', 0))."");
 
 			// Дата генерации
 			imagettftext($image, 6, 0, 365, 13, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", date("d.m.Y"));
 			imagettftext($image, 6, 0, 377, 25, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", date("H:i:s"));
 
-			$m = $user->getRankId($user->lvl_minier);
-			$f = $user->getRankId($user->lvl_raid);
+			$m = User::getRankId($user->lvl_minier);
+			$f = User::getRankId($user->lvl_raid);
 
 			$img = imagecreatetruecolor(32, 32);
 			$source = imagecreatefrompng(ROOT_PATH.'/public/assets/images/ranks/m'.$m.'.png');

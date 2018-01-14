@@ -9,8 +9,8 @@ namespace Xnova\Missions;
  */
 
 use Xnova\FleetEngine;
-use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\Format;
+use Xnova\User;
 
 class MissionCaseRecycling extends FleetEngine implements Mission
 {
@@ -83,7 +83,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 			$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 
-			$Message = sprintf(_getText('sys_recy_gotten'), Helpers::pretty_number($RecycledGoods["metal"]), _getText('Metal'), Helpers::pretty_number($RecycledGoods["crystal"]), _getText('Crystal'), $this->_fleet->getTargetAdressLink());
+			$Message = sprintf(_getText('sys_recy_gotten'), Format::number($RecycledGoods["metal"]), _getText('Metal'), Format::number($RecycledGoods["crystal"]), _getText('Crystal'), $this->_fleet->getTargetAdressLink());
 		}
 		else
 		{

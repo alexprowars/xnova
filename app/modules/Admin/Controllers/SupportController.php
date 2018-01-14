@@ -3,7 +3,7 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use Xnova\Models\User;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/admin/support")

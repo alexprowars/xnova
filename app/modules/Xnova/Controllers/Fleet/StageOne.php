@@ -15,6 +15,7 @@ use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\User;
 use Xnova\Vars;
 
 class StageOne
@@ -121,7 +122,7 @@ class StageOne
 
 		$parse['planets'] = [];
 
-		$kolonien = $controller->user->getUserPlanets($controller->user->getId(), true, $controller->user->ally_id);
+		$kolonien = User::getPlanets($controller->user->getId(), true, $controller->user->ally_id);
 
 		if (count($kolonien) > 1)
 		{

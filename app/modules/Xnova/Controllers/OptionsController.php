@@ -11,12 +11,13 @@ namespace Xnova\Controllers;
 use Friday\Core\Options;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Format;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use PHPMailer\PHPMailer\PHPMailer;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
 use Xnova\Queue;
 use Xnova\Controller;
 
@@ -206,7 +207,7 @@ class OptionsController extends Controller
 
 			$SetSort = $this->request->getPost('settings_sort', 'int', 0);
 			$SetOrder = $this->request->getPost('settings_order', 'int', 0);
-			$about = Helpers::FormatText($this->request->getPost('text', 'string', ''));
+			$about = Format::text($this->request->getPost('text', 'string', ''));
 			$spy = $this->request->getPost('spy', 'int', 1);
 
 			if ($spy < 1 || $spy > 1000)

@@ -10,12 +10,13 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Format;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Alliance;
 use Xnova\Models\AllianceMember;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\User;
 use Xnova\Controller;
 
 /**
@@ -93,7 +94,7 @@ class AllianceController extends Controller
 
 		while ($ally = $allys->fetch())
 		{
-			$ally['total_points'] = Helpers::pretty_number($ally['total_points']);
+			$ally['total_points'] = Format::number($ally['total_points']);
 			$parse['allys'][] = $ally;
 		}
 
@@ -324,17 +325,17 @@ class AllianceController extends Controller
 			{
 				if ($t == 3)
 				{
-					$this->ally->request = Helpers::FormatText($_POST['text']);
+					$this->ally->request = Format::text($_POST['text']);
 					$this->db->query("UPDATE game_alliance SET request='" . $this->ally->request . "' WHERE id='" . $this->ally->id . "'");
 				}
 				elseif ($t == 2)
 				{
-					$this->ally->text = Helpers::FormatText($_POST['text']);
+					$this->ally->text = Format::text($_POST['text']);
 					$this->db->query("UPDATE game_alliance SET text='" . $this->ally->text . "' WHERE id='" . $this->ally->id . "'");
 				}
 				else
 				{
-					$this->ally->description = Helpers::FormatText($_POST['text']);
+					$this->ally->description = Format::text($_POST['text']);
 					$this->db->query("UPDATE game_alliance SET description='" . $this->ally->description . "' WHERE id='" . $this->ally->id . "'");
 				}
 			}
@@ -770,7 +771,7 @@ class AllianceController extends Controller
 			else
 				$u["range"] = _getText('Novate');
 
-			$u['points'] = Helpers::pretty_number($u['total_points']);
+			$u['points'] = Format::number($u['total_points']);
 			$u['time'] = ($u['time'] > 0) ? $this->game->datezone("d.m.Y H:i", $u['time']) : '-';
 
 			$parse['memberslist'][] = $u;
@@ -865,7 +866,7 @@ class AllianceController extends Controller
 				'ally_id' 	=> $this->user->ally_id,
 				'user' 		=> $this->user->username,
 				'user_id' 	=> $this->user->id,
-				'message' 	=> Helpers::FormatText($this->request->getPost('text')),
+				'message' 	=> Format::text($this->request->getPost('text')),
 				'timestamp'	=> time()
 			]);
 

@@ -10,7 +10,7 @@ namespace Xnova\Missions;
 
 use Xnova\FleetEngine;
 use Xnova\Models\Fleet;
-use Xnova\Models\User;
+use Xnova\User;
 
 class MissionCaseDestruction extends FleetEngine implements Mission
 {

@@ -9,7 +9,7 @@ namespace Xnova\Missions;
  */
 
 use Xnova\FleetEngine;
-use Xnova\Models\User;
+use Xnova\User;
 
 class MissionCaseStayAlly extends FleetEngine implements Mission
 {

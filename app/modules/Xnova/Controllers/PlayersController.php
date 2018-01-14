@@ -9,9 +9,10 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
-use Xnova\Helpers;
+use Xnova\Format;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/players")
@@ -80,16 +81,16 @@ class PlayersController extends Controller
 				$parse['userplanet'] = $planet->name;
 		
 			$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $daten['id'] . "';")->fetch();
-			$parse['tech_rank'] = Helpers::pretty_number($points['tech_rank']);
-			$parse['tech_points'] = Helpers::pretty_number($points['tech_points']);
-			$parse['build_rank'] = Helpers::pretty_number($points['build_rank']);
-			$parse['build_points'] = Helpers::pretty_number($points['build_points']);
-			$parse['fleet_rank'] = Helpers::pretty_number($points['fleet_rank']);
-			$parse['fleet_points'] = Helpers::pretty_number($points['fleet_points']);
-			$parse['defs_rank'] = Helpers::pretty_number($points['defs_rank']);
-			$parse['defs_points'] = Helpers::pretty_number($points['defs_points']);
-			$parse['total_rank'] = Helpers::pretty_number($points['total_rank']);
-			$parse['total_points'] = Helpers::pretty_number($points['total_points']);
+			$parse['tech_rank'] = Format::number($points['tech_rank']);
+			$parse['tech_points'] = Format::number($points['tech_points']);
+			$parse['build_rank'] = Format::number($points['build_rank']);
+			$parse['build_points'] = Format::number($points['build_points']);
+			$parse['fleet_rank'] = Format::number($points['fleet_rank']);
+			$parse['fleet_points'] = Format::number($points['fleet_points']);
+			$parse['defs_rank'] = Format::number($points['defs_rank']);
+			$parse['defs_points'] = Format::number($points['defs_points']);
+			$parse['total_rank'] = Format::number($points['total_rank']);
+			$parse['total_points'] = Format::number($points['total_points']);
 		
 			if ($ownid != 0)
 				$parse['player_buddy'] = "<a href=\"".$this->url->getBaseUri()."buddy/new/" . $playerid . "/\" title=\"Добавить в друзья\">Добавить в друзья</a>";
@@ -116,14 +117,14 @@ class PlayersController extends Controller
 			$parse['ally_id'] = $daten['ally_id'];
 			$parse['ally_name'] = $daten['ally_name'];
 			$parse['about'] = $daten['about'];
-			$parse['wons'] = Helpers::pretty_number($daten['raids_win']);
-			$parse['loos'] = Helpers::pretty_number($daten['raids_lose']);
+			$parse['wons'] = Format::number($daten['raids_win']);
+			$parse['loos'] = Format::number($daten['raids_lose']);
 			$parse['siegprozent'] = round($siegprozent, 2);
 			$parse['loosprozent'] = round($loosprozent, 2);
 			$parse['total'] = $daten['raids'];
 			$parse['totalprozent'] = 100;
-			$parse['m'] = $this->user->getRankId($daten['lvl_minier']);
-			$parse['f'] = $this->user->getRankId($daten['lvl_raid']);
+			$parse['m'] = User::getRankId($daten['lvl_minier']);
+			$parse['f'] = User::getRankId($daten['lvl_raid']);
 		}
 		else
 			throw new ErrorException('Параметр задан неверно');

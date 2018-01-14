@@ -10,7 +10,6 @@ namespace Xnova;
 
 use Friday\Core\Lang;
 use Friday\Core\Options;
-use Xnova\Models\User;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
@@ -113,7 +112,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
 
-		$this->game->loadGameVariables();
+		Vars::init();
 
 		if ($this->auth->isAuthorized())
 		{
@@ -191,7 +190,7 @@ class Controller extends PhalconController
 
 			$this->user->getAllyInfo();
 
-			$this->checkUserLevel();
+			User::checkLevel($this->user);
 
 			// Выставляем планету выбранную игроком из списка планет
 			$this->user->setSelectedPlanet();
@@ -246,7 +245,7 @@ class Controller extends PhalconController
 
 			if ($planetsList === null)
 			{
-				$planetsList = $this->user->getUserPlanets($this->user->getId());
+				$planetsList = User::getPlanets($this->user->getId());
 
 				if (count($planetsList))
 					$this->cache->save('app::planetlist_'.$this->user->getId(), $planetsList, 600);
@@ -268,73 +267,6 @@ class Controller extends PhalconController
 		return true;
 	}
 
-	public function checkUserLevel ()
-	{
-		if (!is_object($this->user))
-			return;
-
-		$indNextXp = pow($this->user->lvl_minier, 3);
-		$warNextXp = pow($this->user->lvl_raid, 2);
-
-		$giveCredits = 0;
-
-		if ($this->user->xpminier >= $indNextXp && $this->user->lvl_minier < $this->config->level->get('max_ind', 100))
-		{
-			$this->user->saveData(
-			[
-				'+lvl_minier' 	=> 1,
-				'+credits' 		=> $this->config->level->get('credits', 10),
-				'-xpminier' 	=> $indNextXp
-			]);
-
-			User::sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый промышленный уровень</a>');
-
-			$this->user->lvl_minier += 1;
-			$this->user->xpminier 	-= $indNextXp;
-
-			$giveCredits += $this->config->level->get('credits', 10);
-		}
-
-		if ($this->user->xpraid >= $warNextXp && $this->user->lvl_raid < $this->config->level->get('max_war', 100))
-		{
-			$this->user->saveData(
-			[
-				'+lvl_raid' => 1,
-				'+credits' 	=> $this->config->level->get('credits', 10),
-				'-xpraid' 	=> $warNextXp
-			]);
-
-			User::sendMessage($this->user->getId(), 0, 0, 1, '', '<a href="'.$this->url->get('officier/').'">Получен новый военный уровень</a>');
-
-			$this->user->lvl_raid 	+= 1;
-			$this->user->xpraid 	-= $warNextXp;
-
-			$giveCredits += $this->config->level->get('credits', 10);
-		}
-
-		if ($giveCredits != 0)
-		{
-			$this->user->credits += $giveCredits;
-
-			$this->db->insertAsDict(
-				"game_log_credits",
-				[
-					'uid' 		=> $this->user->getId(),
-					'time' 		=> time(),
-					'credits' 	=> $giveCredits,
-					'type' 		=> 4,
-				]);
-
-			$reffer = $this->db->query("SELECT u_id FROM game_refs WHERE r_id = " . $this->user->getId())->fetch();
-
-			if (isset($reffer['u_id']))
-			{
-				$this->db->query("UPDATE game_users SET credits = credits + " . round($giveCredits / 2) . " WHERE id = " . $reffer['u_id'] . "");
-				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $reffer['u_id'] . ", " . time() . ", " . round($giveCredits / 2) . ", 3)");
-			}
-		}
-	}
-
 	public function ShowTopNavigationBar ()
 	{
 		$parse = [];
@@ -351,7 +283,7 @@ class Controller extends PhalconController
 
 			if ($planetsList === NULL)
 			{
-				$planetsList = $this->user->getUserPlanets($this->user->getId());
+				$planetsList = User::getPlanets($this->user->getId());
 
 				$this->cache->save('app::planetlist_'.$this->user->getId().'', $planetsList, 300);
 			}
@@ -395,7 +327,7 @@ class Controller extends PhalconController
 			else
 				$parse[$res.'_max'] = '<span class="positive">';
 
-			$parse[$res.'_max'] .= Helpers::pretty_number($this->planet->{$res.'_max'}) . "</span>";
+			$parse[$res.'_max'] .= Format::number($this->planet->{$res.'_max'}) . "</span>";
 
 			if ($this->user->vacation <= 0)
 				$parse[$res.'_ph'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
@@ -405,10 +337,10 @@ class Controller extends PhalconController
 			$parse[$res.'_mp'] = $this->planet->getBuild($res.'_mine')['power'] * 10;
 		}
 
-		$parse['energy_max'] 	= Helpers::pretty_number($this->planet->energy_max);
-		$parse['energy_total'] 	= Helpers::colorNumber(Helpers::pretty_number($this->planet->energy_max + $this->planet->energy_used));
+		$parse['energy_max'] 	= Format::number($this->planet->energy_max);
+		$parse['energy_total'] 	= Helpers::colorNumber(Format::number($this->planet->energy_max + $this->planet->energy_used));
 
-		$parse['credits'] = Helpers::pretty_number($this->user->credits);
+		$parse['credits'] = Format::number($this->user->credits);
 
 		$parse['officiers'] = [];
 
@@ -423,9 +355,9 @@ class Controller extends PhalconController
 		if ($parse['energy_ak'] > 0 && $parse['energy_ak'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['ak'] .= '<br>Заряд: ' . Helpers::pretty_time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['ak'] .= '<br>Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
-				$parse['ak'] .= '<br>Разряд: ' . Helpers::pretty_time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['ak'] .= '<br>Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}
 
 		$parse['messages'] = $this->user->messages;

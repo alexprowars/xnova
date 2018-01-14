@@ -68,7 +68,7 @@ class Build
 				$BuildLevel = $ActualLevel + 1 + $inArray;
 
 				$planet->setBuild($elementId, $build['level'] + $inArray);
-				$BuildTime = Building::GetBuildingTime($user, $planet, $elementId);
+				$BuildTime = Building::getBuildingTime($user, $planet, $elementId);
 				$planet->setBuild($elementId, $build['level'] - $inArray);
 			}
 			else
@@ -76,7 +76,7 @@ class Build
 				$BuildLevel = $ActualLevel - 1 + $inArray;
 
 				$planet->setBuild($elementId, $build['level'] - $inArray);
-				$BuildTime = Building::GetBuildingTime($user, $planet, $elementId) / 2;
+				$BuildTime = Building::getBuildingTime($user, $planet, $elementId) / 2;
 				$planet->setBuild($elementId, $build['level'] + $inArray);
 			}
 
@@ -135,7 +135,7 @@ class Build
 
 				foreach ($queueArray AS $i => &$listArray)
 				{
-					$listArray['t'] = Building::GetBuildingTime($user, $planet, $listArray['i']);
+					$listArray['t'] = Building::getBuildingTime($user, $planet, $listArray['i']);
 
 					if ($listArray['d'] == 1)
 						$listArray['t'] = ceil($listArray['t'] / 2);
@@ -159,7 +159,7 @@ class Build
 
 			if ($canceledArray['s'] > 0)
 			{
-				$cost = Building::GetBuildingPrice($user, $planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
+				$cost = Building::getBuildingPrice($user, $planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
 
 				$planet->metal 		+= $cost['metal'];
 				$planet->crystal 	+= $cost['crystal'];

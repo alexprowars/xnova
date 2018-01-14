@@ -2,6 +2,7 @@
 
 namespace Longman\TelegramBot\Commands\UserCommands;
 
+use Xnova\Format;
 use Xnova\Helpers;
 use Xnova\Models\Fleet;
 use Xnova\Models\User;
@@ -113,9 +114,9 @@ class ActivityCommand extends UserCommand
 							$data['text'] .= "С ";
 
 						if ($status != 2)
-							$data['text'] .= $fleet->owner_name." [".$fleet->splitStartPosition()."] на ".$fleet->target_owner_name." [".$fleet->splitTargetPosition()."]. Осталось времени ".Helpers::pretty_time($time - time())."\n";
+							$data['text'] .= $fleet->owner_name." [".$fleet->splitStartPosition()."] на ".$fleet->target_owner_name." [".$fleet->splitTargetPosition()."]. Осталось времени ".Format::time($time - time())."\n";
 						else
-							$data['text'] .= $fleet->target_owner_name." [".$fleet->splitTargetPosition()."] на ".$fleet->owner_name." [".$fleet->splitStartPosition()."]. Осталось времени ".Helpers::pretty_time($time - time())."\n";
+							$data['text'] .= $fleet->target_owner_name." [".$fleet->splitTargetPosition()."] на ".$fleet->owner_name." [".$fleet->splitStartPosition()."]. Осталось времени ".Format::time($time - time())."\n";
 					}
 				}
 			}
