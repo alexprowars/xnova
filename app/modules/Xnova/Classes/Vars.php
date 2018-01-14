@@ -7,7 +7,7 @@ use Phalcon\Registry;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
