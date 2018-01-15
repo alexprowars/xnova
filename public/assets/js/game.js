@@ -33,7 +33,7 @@ Vue.component('main-menu-item', {
 Vue.component('planet-panel', {
 	props: ['planet'],
 	template: '<div class="row topnav">' +
-		'<div class="col-md-6">' +
+		'<div class="col-md-6 col-sm-6 col-xs-12">' +
 			'<div class="row">' +
 				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'metal\'" v-bind:resource="planet.metal"></planet-panel-resource></div>' +
 				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'crystal\'" v-bind:resource="planet.crystal"></planet-panel-resource></div>' +
@@ -112,7 +112,7 @@ Vue.component('planet-panel-resource', {
 			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.current) }}</span>' +
 			'<span v-else class="negative">{{ Format.number(resource.current) }}</span>' +
 		'</div>' +
-		'<span title="Максимальная вместимость хранилищ">' +
+		'<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">' +
 			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.max) }}</span>' +
 			'<span v-else class="negative">{{ Format.number(resource.max) }}</span>' +
 		'</span>' +
@@ -549,6 +549,8 @@ function load (url, disableUrlState)
         currentState = set + ((loc[1] !== undefined && loc[1] !== 'ajax=2' && loc[1] !== 'ajax=1') ? '&'+loc[1] : '');
 
 	showLoading();
+
+	$('[role="tooltip"]').remove()
 
 	$.ajax(
 	{
