@@ -98,8 +98,6 @@ class Build
 				'e' => $BuildEndTime,
 				'd' => $destroy ? 1 : 0
 			]);
-
-			$this->_queue->saveQueue();
 		}
 
 		return true;

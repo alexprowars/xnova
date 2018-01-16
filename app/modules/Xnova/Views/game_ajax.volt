@@ -1,14 +1,3 @@
-{% if topPanel is defined and topPanel == true %}
-	<script type="text/javascript">
-		options.planet = {{ toJson(planet) }};
-		timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
-	</script>
-{% elseif isPopup is not true %}
-	<script type="text/javascript">
-		options.planet = false;
-	</script>
-{% endif %}
-
 {% if deleteUserTimer is defined and deleteUserTimer > 0 %}
 	<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после {{ game.datezone("d.m.Y", deleteUserTimer) }} в {{ game.datezone("H:i:s", deleteUserTimer) }}. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
 {% endif %}

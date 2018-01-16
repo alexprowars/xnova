@@ -196,6 +196,11 @@ class Planet extends Model
 		}
 	}
 
+	public function clearBuildingsData ()
+	{
+		$this->buildings = false;
+	}
+
 	public function getBuild ($buildId)
 	{
 		if (!is_numeric($buildId))
@@ -271,6 +276,11 @@ class Planet extends Model
 				'~amount'	=> (int) $item['amount'],
 			];
 		}
+	}
+
+	public function clearUnitsData ()
+	{
+		$this->units = false;
 	}
 
 	public function getUnit ($unitId)
@@ -364,7 +374,7 @@ class Planet extends Model
 		return (count(json_decode($this->queue, true)) == 0);
 	}
 
-	public function getProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
+	public function getResourceProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
 	{
 		$return = ['energy' => 0];
 
@@ -406,20 +416,26 @@ class Planet extends Model
 		return $return;
 	}
 
-	private function getProductions ()
+	public function resourceProductions ()
 	{
 		$config = $this->getDI()->getShared('config');
 
-		$Caps = [];
+		$this->energy_used 	= 0;
+		$this->energy_max 	= 0;
 
 		foreach (Vars::getResources() AS $res)
-			$Caps[$res.'_perhour'] = 0;
-
-		$Caps['energy_used'] 	= 0;
-		$Caps['energy_max'] 	= 0;
+			$this->{$res.'_perhour'} = 0;
 
 		if ($this->user->isVacation())
 			return;
+
+		if (in_array($this->planet_type, [3, 5]))
+		{
+			foreach (Vars::getResources() AS $res)
+				$config->game->offsetSet($res.'_basic_income', 0);
+
+			return;
+		}
 
 		$registry = Di::getDefault()->getShared('registry');
 
@@ -434,35 +450,15 @@ class Planet extends Model
 			if ($ProdID == 12 && $this->deuterium < 100)
 				$BuildLevelFactor = 0;
 
-			$result = $this->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
+			$result = $this->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
 			foreach (Vars::getResources() AS $res)
-				$Caps[$res.'_perhour'] += $result[$res];
+				$this->{$res.'_perhour'} += $result[$res];
 
 			if ($ProdID < 4)
-				$Caps['energy_used'] += $result['energy'];
+				$this->energy_used += $result['energy'];
 			else
-				$Caps['energy_max'] += $result['energy'];
-		}
-
-		if (in_array($this->planet_type, [3, 5]))
-		{
-			foreach (Vars::getResources() AS $res)
-			{
-				$config->game->offsetSet($res.'_basic_income', 0);
-				$this->{$res.'_perhour'} = 0;
-			}
-
-			$this->energy_used 	= 0;
-			$this->energy_max 	= 0;
-		}
-		else
-		{
-			foreach (Vars::getResources() AS $res)
-				$this->{$res.'_perhour'} = $Caps[$res.'_perhour'];
-
-			$this->energy_used 	= $Caps['energy_used'];
-			$this->energy_max 	= $Caps['energy_max'];
+				$this->energy_max += $result['energy'];
 		}
 	}
 
@@ -492,7 +488,7 @@ class Planet extends Model
 
 		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));
 
-		$this->getProductions();
+		$this->resourceProductions();
 
 		$productionTime = $updateTime - $this->last_update;
 		$this->last_update = $updateTime;

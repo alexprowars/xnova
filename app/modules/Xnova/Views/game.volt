@@ -64,12 +64,6 @@
 		timezone = {{ timezone }};
 		ajax_nav = {{ ajaxNavigation }};
 
-		{% if auth.isAuthorized() %}
-			XNova.fleetSpeed 	= {{ game.getSpeed('fleet') }};
-			XNova.gameSpeed 	= {{ (config.game.get('game_speed', 1) / 2500)|round(1) }};
-			XNova.resSpeed 		= {{ config.game.get('resource_multiplier', 1) }};
-		{% endif %}
-
 		var options = {{ toJson(options) }};
 	</script>
 
@@ -79,24 +73,13 @@
 		{% endif %}
 
 		<div class="game_content">
-			{% if leftMenu is defined and leftMenu == true %}
-				<main-menu v-bind:items="menu" v-bind:active="getMenuActiveLink"></main-menu>
-			{% endif %}
+			<main-menu v-if="options.view.menu" v-bind:items="menu" v-bind:active="getMenuActiveLink"></main-menu>
 
 			{% if leftMenu is defined and leftMenu == true %}
 				{{ partial('shared/planets') }}
 			{% endif %}
 
-			{% if config.view.get('socialIframeView', 0) == 1 %}<div class="iframe_wrapper">{% endif %}
 			<div class="content">
-
-				{% if topPanel is defined and topPanel == true %}
-					<script type="text/javascript">
-						options.planet = {{ toJson(planet) }};
-						timeouts['res_count'] = window.setInterval(XNova.updateResources, 1000);
-					</script>
-				{% endif %}
-
 				<planet-panel v-if="options.planet !== false" v-bind:planet="planet"></planet-panel>
 
 				<div id="gamediv">
@@ -132,51 +115,9 @@
 
 				</div>
 			</div>
-			{% if config.view.get('socialIframeView', 0) == 1 %}</div>{% endif %}
 		</div>
 
-		{% if leftMenu is defined and leftMenu == true %}
-			<footer class="hidden-xs-down">
-				<div class="container-fluid">
-					<div class="pull-xs-left text-xs-left">
-						<a href="{{ url('news/') }}" title="Последние изменения">{{ constant('VERSION') }}</a>
-						{% if config.view.get('socialIframeView', 0) == 0 %}
-							<a class="hidden-sm-down" target="_blank" href="http://xnova.su/">© 2008 - {{ date("Y") }} Xcms</a>
-						{% endif %}
-					</div>
-					<div class="pull-xs-right text-xs-right">
-						<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
-						<a href="{{ url('banned/') }}">Тёмные</a>|
-						{% if config.view.get('socialIframeView', 0) == 0 %}
-							<a href="//vk.com/xnova_game" target="_blank">ВК</a>|
-							<a href="{{ url('contact/') }}">Контакты</a>|
-						{% endif %}
-						<a href="{{ url('content/help/') }}">Новичкам</a>|
-						<a href="{{ url('content/agb/') }}">Правила</a>|
-						<a onclick="" title="Игроков в сети" style="color:green">{{ option('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ option('users_total', 0) }}</a>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-			</footer>
-			<div class="row hidden-sm-up footer-mobile">
-				<div class="col-xs-12 text-xs-center">
-					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
-					<a href="{{ url('banned/') }}">Тёмные</a>|
-					<a href="{{ url('contact/') }}">Контакты</a>|
-					<a href="{{ url('content/help/') }}">Новичкам</a>|
-					<a href="{{ url('content/agb/') }}">Правила</a>
-				</div>
-				<div class="col-xs-8 text-xs-center">
-					<a href="{{ url('news/') }}" title="Последние изменения">{{ constant('VERSION') }}</a>
-					{% if config.view.get('socialIframeView', 0) == 0 %}
-						<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - {{ date("Y") }} Xcms</a>
-					{% endif %}
-				</div>
-				<div class="col-xs-4 text-xs-center">
-					<a onclick="" title="Игроков в сети" style="color:green">{{ option('users_online', 0) }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ option('users_total', 0) }}</a>
-				</div>
-			</div>
-		{% endif %}
+		<application-footer v-if="options.view.header"></application-footer>
 	</div>
 
 	{{ partial('shared/socials') }}

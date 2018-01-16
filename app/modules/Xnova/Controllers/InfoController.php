@@ -115,7 +115,7 @@ class InfoController extends Controller
 			$BuildLevelFactor = $this->planet->getBuild($BuildID)['power'];
 			$BuildLevel = ($CurrentBuildtLvl > 0) ? $CurrentBuildtLvl : 1;
 
-			$res = $this->planet->getProductionLevel($BuildID, $BuildLevel, $BuildLevelFactor);
+			$res = $this->planet->getResourceProductionLevel($BuildID, $BuildLevel, $BuildLevelFactor);
 
 			$Prod[1] = $res['metal'];
 			$Prod[2] = $res['crystal'];
@@ -147,7 +147,7 @@ class InfoController extends Controller
 		{
 			if ($BuildID != 42 && !($BuildID >= 22 && $BuildID <= 24))
 			{
-				$res = $this->planet->getProductionLevel($BuildID, $BuildLevel);
+				$res = $this->planet->getResourceProductionLevel($BuildID, $BuildLevel);
 
 				$Prod[1] = $res['metal'];
 				$Prod[2] = $res['crystal'];

@@ -101,7 +101,7 @@ function duration()
 {
 	var speed = parseInt($("*[name=speed]").val());
 
-	return Math.round((35000 / speed * Math.sqrt(distance() * 10 / maxspeed()) + 10) / XNova.fleetSpeed);
+	return Math.round((35000 / speed * Math.sqrt(distance() * 10 / maxspeed()) + 10) / options['speed']['fleet']);
 }
 
 function consumption()
@@ -122,7 +122,7 @@ function consumption()
 		if (document.getElementsByName("ship" + i)[0])
 		{
 			shipspeed = document.getElementsByName("speed" + i)[0].value;
-			spd = 35000 / (durationV * XNova.fleetSpeed - 10) * Math.sqrt(distanceV * 10 / shipspeed);
+			spd = 35000 / (durationV * options['speed']['fleet'] - 10) * Math.sqrt(distanceV * 10 / shipspeed);
 
 			basicConsumption = document.getElementsByName("consumption" + i)[0].value * document.getElementsByName("ship" + i)[0].value;
 			consumption += basicConsumption * distanceV / 35000 * ((spd / 10) + 1) * ((spd / 10) + 1);
@@ -143,7 +143,7 @@ function probeConsumption()
 	if (document.getElementsByName("ship210")[0])
 	{
 		var shipspeed = document.getElementsByName("speed210")[0].value;
-		var spd = 35000 / (durationV * XNova.fleetSpeed - 10) * Math.sqrt(distanceV * 10 / shipspeed);
+		var spd = 35000 / (durationV * options['speed']['fleet'] - 10) * Math.sqrt(distanceV * 10 / shipspeed);
 
 		basicConsumption = document.getElementsByName("consumption210")[0].value * document.getElementsByName("ship210")[0].value;
 		consumption += basicConsumption * distanceV / 35000 * ((spd / 10) + 1) * ((spd / 10) + 1);

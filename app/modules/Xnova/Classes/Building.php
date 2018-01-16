@@ -314,14 +314,14 @@ class Building
 	{
 		$Res = [];
 
-		$resFrom = $planet->getProductionLevel($Element, ($Level + 1));
+		$resFrom = $planet->getResourceProductionLevel($Element, ($Level + 1));
 
 		$Res['m'] = $resFrom['metal'];
 		$Res['c'] = $resFrom['crystal'];
 		$Res['d'] = $resFrom['deuterium'];
 		$Res['e'] = $resFrom['energy'];
 
-		$resTo = $planet->getProductionLevel($Element, $Level);
+		$resTo = $planet->getResourceProductionLevel($Element, $Level);
 
 		$Res['m'] -= $resTo['metal'];
 		$Res['c'] -= $resTo['crystal'];

@@ -35,12 +35,6 @@ use Xnova\Models\User;
  */
 class Game extends Component
 {
-	private $message = '';
-	private $status = 1;
-	private $data = [];
-
-	public $planet;
-
 	function datezone ($format, $time = 0)
 	{
 		if ($time == 0)
@@ -52,50 +46,14 @@ class Game extends Component
 		return date($format, $time);
 	}
 
-	public function setRequestMessage ($message = '')
-	{
-		$this->message = $message;
-	}
-
-	public function getRequestMessage ()
-	{
-		return $this->message;
-	}
-
-	public function setRequestStatus ($status = '')
-	{
-		$this->status = $status;
-	}
-
-	public function getRequestStatus ()
-	{
-		return $this->status;
-	}
-
-	public function setRequestData ($data = [])
-	{
-		if (is_array($data))
-			$this->data = $data;
-	}
-
-	public function addRequestData ($key, $value)
-	{
-		$this->data[$key] = $value;
-	}
-
-	public function getRequestData ()
-	{
-		return $this->data;
-	}
-
 	public function getSpeed ($type = '')
 	{
 		if ($type == 'fleet')
-			return $this->config->game->get('fleet_speed', 2500) / 2500;
+			return (int) $this->config->game->get('fleet_speed', 2500) / 2500;
 		if ($type == 'mine')
-			return $this->config->game->get('resource_multiplier', 1);
+			return (int) $this->config->game->get('resource_multiplier', 1);
 		if ($type == 'build')
-			return round($this->config->game->get('game_speed', 2500) / 2500, 1);
+			return round((int) $this->config->game->get('game_speed', 2500) / 2500, 1);
 
 		return 1;
 	}

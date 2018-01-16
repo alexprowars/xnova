@@ -125,6 +125,14 @@ trait Initializations
 
 		$di->set('db', $connection);
 
+		/*$connection->setEventsManager($eventsManager);
+
+		$eventsManager->attach('db', function($event, $connection){
+		    if ($event->getType() == 'afterQuery') {
+		    	file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../db.log', $connection->getRealSQLStatement()."\n".print_r($connection->getSQLVariables(), true)."\n", FILE_APPEND);
+		    }
+		});*/
+
 		$modelsManager = new ModelsManager();
 		$modelsManager->setEventsManager($eventsManager);
 

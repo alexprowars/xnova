@@ -33,6 +33,28 @@ $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 });
 
 /** @noinspection PhpUnusedParameterInspection */
+$eventsManager->attach('core:beforeOutput', function ($event, \Friday\Core\Application $app, Phalcon\Http\Response $handle)
+{
+	if ($app->dispatcher->getModuleName() == 'admin')
+		return;
+
+	if ($app->request->isAjax())
+	{
+		/** @noinspection PhpUndefinedFieldInspection */
+		$app->response->setJsonContent(
+		[
+			'status' 	=> \Xnova\Request::getStatus(),
+			'message' 	=> '',
+			'html' 		=> str_replace("\t", ' ', $handle->getContent()),
+			'data' 		=> \Xnova\Request::getData()
+		]);
+		$app->response->setContentType('text/json', 'utf8');
+		$app->response->send();
+		die();
+	}
+});
+
+/** @noinspection PhpUnusedParameterInspection */
 $eventsManager->attach('core:afterAuthCheck', function ($event, Auth $auth, User $user) use ($di)
 {
 	if ($di->getShared('router')->getControllerName() != 'banned')

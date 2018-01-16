@@ -77,7 +77,10 @@ class Queue
 		$type = Vars::getItemType($elementId);
 
 		if ($type == Vars::ITEM_TYPE_BUILING)
+		{
 			(new Build($this))->add($elementId, $destroy);
+			$this->nextBuildingQueue();
+		}
 		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 			(new Tech($this))->add($elementId);
 		elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
@@ -89,7 +92,10 @@ class Queue
 		$type = Vars::getItemType($elementId);
 
 		if ($type == Vars::ITEM_TYPE_BUILING)
+		{
 			(new Build($this))->delete($listId);
+			$this->nextBuildingQueue();
+		}
 		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
 			(new Tech($this))->delete($elementId);
 	}
@@ -192,6 +198,8 @@ class Queue
 				{
 					if (!$this->planet->planet_updated)
 						$this->planet->resourceUpdate();
+
+					$this->planet->resourceProductions();
 
 					$this->nextBuildingQueue();
 					$result = true;

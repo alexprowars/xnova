@@ -94,7 +94,7 @@ class ResourcesController extends Controller
 			'power' => $production
 		], 'planet_id IN ('.implode(',', $planetsId).') AND build_id IN ('.implode(',', $buildsId).')');
 
-		$this->planet->buildings = false;
+		$this->planet->clearBuildingsData();
 		$this->planet->resourceUpdate(time(), true);
 
 		return $this->indexAction();
@@ -118,7 +118,7 @@ class ResourcesController extends Controller
 
 			foreach ($this->request->getPost() as $field => $value)
 			{
-				if ($this->planet->getBuild($field) && in_array($value, $ValidList['percent']))
+				if (Vars::getIdByName($field) && $this->planet->getBuild($field) && in_array($value, $ValidList['percent']))
 					$this->planet->setBuild($field, false, $value);
 			}
 
@@ -148,7 +148,7 @@ class ResourcesController extends Controller
 			$BuildLevelFactor = $build['power'];
 			$BuildLevel = $build['level'];
 
-			$result = $this->planet->getProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
+			$result = $this->planet->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 
 			foreach (Vars::getResources() AS $res)
 			{

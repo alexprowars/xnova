@@ -112,8 +112,22 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/js/jquery.form.min.js');
 		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
+		$this->assets->addJs('assets/js/application.js?v='.VERSION);
 
 		Vars::init();
+
+		Request::addData('route', [
+			'controller' => $this->dispatcher->getControllerName(),
+			'action' => $this->dispatcher->getActionName(),
+		]);
+
+		Request::addData('path', $this->url->getBaseUri());
+		Request::addData('version', VERSION);
+
+		Request::addData('stats', [
+			'online' => \Friday\Core\Options::get('users_online', 0),
+			'users' => \Friday\Core\Options::get('users_total', 0),
+		]);
 
 		if ($this->auth->isAuthorized())
 		{
@@ -190,23 +204,16 @@ class Controller extends PhalconController
 			$this->view->setVar('adminlevel', $this->user->authlevel);
 
 			if ($this->request->has('popup'))
-				$this->game->addRequestData('popup', true);
+				Request::addData('popup', true);
 
-			$options = [
-				'route' => [
-					'controller' => $this->dispatcher->getControllerName(),
-					'action' => $this->dispatcher->getActionName(),
-				],
-				'menu' => [],
-				'planet' => false
-			];
+			$menu = [];
 
 			foreach (_getText('main_menu') as $code => $data)
 			{
 				if ($data[2] > $this->user->authlevel)
 					continue;
 
-				$options['menu'][] = [
+				$menu[] = [
 					'id' => $code,
 					'url' => $this->url->get($data[1]),
 					'text' => trim($data[0]),
@@ -214,7 +221,14 @@ class Controller extends PhalconController
 				];
 			}
 
-			$this->view->setVar('options', $options);
+			Request::addData('planet', false);
+			Request::addData('menu', $menu);
+
+			Request::addData('speed', [
+				'game' => $this->game->getSpeed('build'),
+				'fleet' => $this->game->getSpeed('fleet'),
+				'resources' => $this->game->getSpeed('mine')
+			]);
 
 			$this->user->getAllyInfo();
 
@@ -249,8 +263,8 @@ class Controller extends PhalconController
 
 		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
 
-		if (!$this->request->isAjax() && isset($this->game->getRequestData()['redirect']))
-			return $this->response->redirect($this->game->getRequestData()['redirect']);
+		if (!$this->request->isAjax() && Request::getDataItem('redirect'))
+			return $this->response->redirect(Request::getDataItem('redirect'));
 
 		if ($this->auth->isAuthorized())
 		{
@@ -260,10 +274,12 @@ class Controller extends PhalconController
 			$this->view->setVar('messages_ally', $this->user->messages_ally);
 			$this->view->setVar('tutorial', $this->user->tutorial);
 
+			Request::addData('planet', false);
+
 			$parse = [];
 
 			if ($this->getDI()->has('planet'))
-				$parse = $this->ShowTopNavigationBar();
+				$this->topPlanetPanel();
 			else
 				$this->showTopPanel(false);
 
@@ -290,17 +306,25 @@ class Controller extends PhalconController
 		$this->view->setVar('topPanel', $this->showTopPanel);
 		$this->view->setVar('leftMenu', $this->showLeftMenu);
 
-		$this->game->addRequestData('title', str_replace("\n", "", $this->tag->getTitle(false)));
+		Request::addData('view', [
+			'header' => $this->showLeftMenu === true,
+			'menu' => $this->showLeftMenu,
+			'footer' => $this->showLeftMenu === true,
+		]);
+
+		Request::addData('title', $this->tag->getTitle(false));
 
 		$this->tag->appendTitle(Options::get('site_title'));
 
-		$this->game->addRequestData('title_full', str_replace("\n", "", $this->tag->getTitle(false)));
-		$this->game->addRequestData('url', $this->router->getRewriteUri());
+		Request::addData('title_full', $this->tag->getTitle(false));
+		Request::addData('url', $this->router->getRewriteUri());
+
+		$this->view->setVar('options', Request::getData());
 
 		return true;
 	}
 
-	public function ShowTopNavigationBar ()
+	public function topPlanetPanel ()
 	{
 		$parse = [];
 
@@ -353,7 +377,7 @@ class Controller extends PhalconController
 		{
 			$parse[$res] = [
 				'title' => _getText('res', $res),
-				'url' => $this->url->get('info/'._getText('res_builds', $res).'/'),
+				'url' => 'info/'._getText('res_builds', $res).'/',
 				'current' => floor(floatval($this->planet->{$res})),
 				'max' => $this->planet->{$res.'_max'},
 				'production' => 0,
@@ -376,12 +400,12 @@ class Controller extends PhalconController
 			'tooltip' => ''
 		];
 
-		$parse['credits'] = $this->user->credits;
+		$parse['credits'] = (int) $this->user->credits;
 
 		$parse['officiers'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
-			$parse['officiers'][$officier] = $this->user->{Vars::getName($officier)};
+			$parse['officiers'][$officier] = (int) $this->user->{Vars::getName($officier)};
 
 		$parse['battery']['power'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
 		$parse['battery']['power'] = min(100, max(0, $parse['battery']['power']));
@@ -389,12 +413,12 @@ class Controller extends PhalconController
 		if ($parse['battery']['power'] > 0 && $parse['battery']['power'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['battery']['tooltip'] .= '<br>Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['battery']['tooltip'] .= 'Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
-				$parse['battery']['tooltip'] .= '<br>Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$parse['battery']['tooltip'] .= 'Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
 		}
 
-		$parse['messages'] = $this->user->messages;
+		$parse['messages'] = (int) $this->user->messages;
 
 		if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
 		{
@@ -404,7 +428,7 @@ class Controller extends PhalconController
 
 		$parse['ally_messages'] = ($this->user->ally_id != 0) ? $this->user->messages_ally : '';
 
-		return $parse;
+		Request::addData('planet', $parse);
 	}
 
 	public function showTopPanel ($view = true)
