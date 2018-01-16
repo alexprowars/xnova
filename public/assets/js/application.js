@@ -211,6 +211,90 @@ Vue.component('application-footer', {
 	'</footer>'
 })
 
+Vue.component('application-header-mobile-icons', {
+	template: '<div class="icon-panel hidden-sm-up">' +
+		'<a v-bind:href="$root.getUrl(\'stat/\')" class="sprite ico_stats"></a>' +
+		'<a v-bind:href="$root.getUrl(\'tech/\')" class="sprite ico_tech"></a>' +
+		'<a v-bind:href="$root.getUrl(\'sim/\')" class="sprite ico_sim"></a>' +
+		'<a v-bind:href="$root.getUrl(\'search/\')" class="sprite ico_search"></a>' +
+		'<a v-bind:href="$root.getUrl(\'support/\')" class="sprite ico_support"></a>' +
+		'<a href="http://forum.xnova.su/" target="_blank" class="sprite ico_forum"></a>' +
+		'<a v-bind:href="$root.getUrl(\'options/\')" class="sprite ico_settings"></a>' +
+		'<a v-bind:href="$root.getUrl(\'logout/\')" class="sprite ico_exit"  data-link="Y"></a>' +
+	'</div>'
+})
+
+Vue.component('application-header', {
+	template: '<header class="game_menu">' +
+		'<div class="hidden-sm-up text-xs-center bar">' +
+			'<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl(\'tutorial/\')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>' +
+			'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'chat/\')" data-content="Чат"><span class="sprite ico_chat"></span></a>' +
+			'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'messages/\')" data-content="Сообщения"><span class="sprite ico_mail"></span> <b>{{ $root.user.messages }}</b></a>' +
+			'<a v-if="$root.user.alliance.id > 0" class="m1 tooltip" v-bind:href="$root.getUrl(\'alliance/chat/\')" data-content="Альянс"><span class="sprite ico_alliance"></span> <b>{{ $root.user.alliance.messages }}</b></a>' +
+		'</div>' +
+		'<div class="bar hidden-xs-down">' +
+			'<div class="message_list">' +
+				'<div class="message_list">' +
+					'<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl(\'tutorial/\')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>' +
+					'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'chat/\')" data-content="Чат"><span class="sprite ico_chat"></span></a>' +
+					'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'messages/\')" data-content="Сообщения"><span class="sprite ico_mail"></span> <b>{{ $root.user.messages }}</b></a>' +
+					'<a v-if="$root.user.alliance.id > 0" class="m1 tooltip" v-bind:href="$root.getUrl(\'alliance/chat/\')" data-content="Альянс"><span class="sprite ico_alliance"></span> <b>{{ $root.user.alliance.messages }}</b></a>' +
+				'</div>' +
+			'</div>' +
+			'<div class="top_menu">' +
+				'<a v-bind:href="$root.getUrl(\'stat/\')" class="tooltip m1" data-content="Статистика"><span class="sprite ico_stats"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'tech/\')" class="tooltip m1" data-content="Технологии"><span class="sprite ico_tech"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'sim/\')" class="tooltip m1" data-content="Симулятор"><span class="sprite ico_sim"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'search/\')" class="tooltip m1" data-content="Поиск"><span class="sprite ico_search"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'support/\')" class="tooltip m1" data-content="Техподдержка"><span class="sprite ico_support"></span></a>' +
+				'<a href="http://forum.xnova.su/" target="_blank" class="tooltip m1" data-content="Форум"><span class="sprite ico_forum"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'options/\')" class="tooltip m1" data-content="Настройки"><span class="sprite ico_settings"></span></a>' +
+				'<a v-bind:href="$root.getUrl(\'logout/\')" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>' +
+			'</div>' +
+		'</div>' +
+	'</header>'
+})
+
+Vue.component('application-planets-list', {
+	props: ['items'],
+	template: '<div class="planet-sidebar planetList">' +
+		'<div class="list">' +
+			'<application-planets-list-row v-for="item in items" v-bind:item="item"></application-planets-list-row>' +
+			'<div class="clearfix"></div>' +
+		'</div>' +
+	'</div>'
+})
+
+Vue.component('application-planets-list-row', {
+	props: ['item'],
+	template: '<div v-bind:class="[\'planet\', \'type_\'+item.t, ($root.user.planet == item.id ? \'current\' : \'\')]">' +
+		'<a v-on:click="changeItem" v-bind:title="item.name">' +
+			'<img v-bind:src="$root.getUrl(\'assets/images/planeten/small/s_\'+item.image+\'.jpg\')" height="40" width="40" v-bind:alt="item.name">' +
+		'</a>' +
+		'<span class="hidden-md-up" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>' +
+		'<div class="hidden-sm-down">' +
+			'{{ item.name }}<br>' +
+			'<span v-html="$root.getPlanetUrl(item.g, item.s, item.p)"></span>' +
+		'</div>' +
+		'<div class="clear"></div>' +
+	'</div>',
+	methods:
+	{
+		changeItem: function ()
+		{
+			var path = window.location.pathname.replace(this.$root.path, '').split('/');
+			var url = this.$root.getUrl(path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id);
+
+			load(url);
+		}
+	}
+})
+
+Vue.component('application-messages-row', {
+	props: ['item'],
+	template: '<table class="table"><tr><td v-bind:class="[\'c\', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>'
+});
+
 var application;
 
 $(document).ready(function()
@@ -230,6 +314,10 @@ $(document).ready(function()
 			getUrl: function (url)
 			{
 				return options.path+url;
+			},
+			getPlanetUrl: function (galaxy, system, planet)
+			{
+				return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
 			}
 		}
 	})

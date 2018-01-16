@@ -33,7 +33,7 @@ var TextParser =
 		{
 			while (txt.indexOf(':'+this.smiles[i]+':') >= 0)
 			{
-				txt = txt.replace(':'+this.smiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + this.smiles[i] + '.gif">');
+				txt = txt.replace(':'+this.smiles[i]+':', '<img src="'+options.path+'assets/images/smile/' + this.smiles[i] + '.gif">');
 
 				if (++j >= 3)
 					break;
@@ -102,7 +102,7 @@ $(document).ready(function()
 	TextParser.replace = [
 		'<br>',
 		'',
-		'<object type="application/x-shockwave-flash" data="'+XNova.path+'scripts/player.swf" id="audioplayer" height="24" width="288"><param name="movie" value="/scripts/player.swf"><param name="FlashVars" value="playerID=1&autostart=no&initialvolume=100&animation=no&soundFile=$1"><param name="quality" value="high"><param name="menu" value="false"><param name="wmode" value="transparent"></object>',
+		'<object type="application/x-shockwave-flash" data="'+options.path+'scripts/player.swf" id="audioplayer" height="24" width="288"><param name="movie" value="/scripts/player.swf"><param name="FlashVars" value="playerID=1&autostart=no&initialvolume=100&animation=no&soundFile=$1"><param name="quality" value="high"><param name="menu" value="false"><param name="wmode" value="transparent"></object>',
 		'<div class="quotewrapper"><div class="quotecontent">$1</div></div>',
 		'<div class="quotewrapper"><div class="quotetitle">$1 написал(а):</div><div class="quotecontent">$2</div></div>',
 		'<strong>$1</strong>',
@@ -127,7 +127,7 @@ $(document).ready(function()
 		'<span style="background-color:#$1;">$2</span>',
 		'<span style="background-image:url($1);background-repeat:no-repeat;display:block;width:$2;height:$3;max-width:716px;">$4</span>',
 		'<p>$1</p>',
-		'<a href="'+XNova.path+'galaxy/$1/$2/">[$1:$2:$3]</a>',
+		'<a href="'+options.path+'galaxy/$1/$2/">[$1:$2:$3]</a>',
 		'<table$1>$2</table>',
 		'<tr>$1</tr>',
 		'<td$1>$2</td>',

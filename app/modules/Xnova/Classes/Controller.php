@@ -43,8 +43,13 @@ class Controller extends PhalconController
 
 	public $private = 0;
 
-	private $showTopPanel = true;
-	private $showLeftMenu = true;
+	private $views = [
+		'header' => true,
+		'footer' => true,
+		'planets' => true,
+		'menu' => true,
+		'resources' => true
+	];
 
 	public function initialize()
 	{
@@ -125,8 +130,9 @@ class Controller extends PhalconController
 		Request::addData('version', VERSION);
 
 		Request::addData('stats', [
-			'online' => \Friday\Core\Options::get('users_online', 0),
-			'users' => \Friday\Core\Options::get('users_total', 0),
+			'time' => time(),
+			'online' => (int) Options::get('users_online', 0),
+			'users' => (int) Options::get('users_total', 0),
 		]);
 
 		if ($this->auth->isAuthorized())
@@ -147,10 +153,7 @@ class Controller extends PhalconController
 			$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
 			$this->assets->addJs('assets/js/jquery.reject.js');
 
-			if ($this->request->isAjax())
-				$this->view->setMainView('game_ajax');
-			else
-				$this->view->setMainView('game');
+			$this->view->setMainView('game');
 
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
@@ -199,9 +202,7 @@ class Controller extends PhalconController
 				$this->user->{$key} = $value;
 
 			$this->view->setVar('isPopup', ($this->request->has('popup') ? 1 : 0));
-			$this->view->setVar('timezone', (isset($inf['timezone']) ? intval($inf['timezone']) : 0));
 			$this->view->setVar('userId', $this->user->getId());
-			$this->view->setVar('adminlevel', $this->user->authlevel);
 
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
@@ -268,22 +269,42 @@ class Controller extends PhalconController
 
 		if ($this->auth->isAuthorized())
 		{
-			$this->view->setVar('deleteUserTimer', $this->user->deltime);
-			$this->view->setVar('vocationTimer', $this->user->vacation);
-			$this->view->setVar('messages', $this->user->messages);
-			$this->view->setVar('messages_ally', $this->user->messages_ally);
-			$this->view->setVar('tutorial', $this->user->tutorial);
+			$messages = [];
 
-			Request::addData('planet', false);
+			if ($this->user->deltime > 0)
+			{
+				$messages[] = [
+					'type' => 'info',
+					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после '.$this->game->datezone("d.m.Y", $this->user->deltime).' в '.$this->game->datezone("H:i:s", $this->user->deltime).'. Выключить режим удаления можно в настройках игры.'
+				];
+			}
 
-			$parse = [];
+			if ($this->user->vacation > 0)
+			{
+				$messages[] = [
+					'type' => 'warning',
+					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
+				];
+			}
 
-			if ($this->getDI()->has('planet'))
-				$this->topPlanetPanel();
-			else
-				$this->showTopPanel(false);
+			foreach ($this->flashSession->getMessages() as $type => $items)
+			{
+				foreach ($items as $item)
+				{
+					$messages[] = [
+						'type' => $type,
+						'text' => $item
+					];
+				}
+			}
 
-			$parse['tutorial'] = $this->user->tutorial;
+			Request::addData('messages', $messages);
+
+			if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
+			{
+				$this->user->messages_ally = 0;
+				$this->db->updateAsDict('game_users', ['messages_ally' => 0], "id = ".$this->user->id);
+			}
 
 			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
 
@@ -295,23 +316,45 @@ class Controller extends PhalconController
 					$this->cache->save('app::planetlist_'.$this->user->getId(), $planetsList, 600);
 			}
 
-			$parse['list'] = $planetsList;
-			$parse['current'] = $this->user->planet_current;
+			$planets = [];
 
-			$this->view->setVar('planet', $parse);
+			foreach ($planetsList as $item)
+			{
+				$planets[] = [
+					'id' => (int) $item['id'],
+					'name' => $item['name'],
+					'image' => $item['image'],
+					'g' => (int) $item['galaxy'],
+					's' => (int) $item['system'],
+					'p' => (int) $item['planet'],
+					't' => (int) $item['planet_type'],
+					'destroy' => $item['destruyed'] > 0,
+				];
+			}
+
+			Request::addData('planet', false);
+			Request::addData('user', [
+				'planet' => (int) $this->user->planet_current,
+				'messages' => (int) $this->user->messages,
+				'alliance' => [
+					'id' => (int) $this->user->ally_id,
+					'name' => $this->user->ally_name,
+					'messages' => (int) $this->user->messages_ally
+				],
+				'tutorial' => (int) $this->user->tutorial,
+				'planets' => $planets,
+				'timezone' => (int) $this->user->timezone
+			]);
+
+			if ($this->getDI()->has('planet'))
+				$this->topPlanetPanel();
+			else
+				$this->showTopPanel(false);
 		}
 		else
 			$this->showTopPanel(false);
 
-		$this->view->setVar('topPanel', $this->showTopPanel);
-		$this->view->setVar('leftMenu', $this->showLeftMenu);
-
-		Request::addData('view', [
-			'header' => $this->showLeftMenu === true,
-			'menu' => $this->showLeftMenu,
-			'footer' => $this->showLeftMenu === true,
-		]);
-
+		Request::addData('view', $this->views);
 		Request::addData('title', $this->tag->getTitle(false));
 
 		$this->tag->appendTitle(Options::get('site_title'));
@@ -319,63 +362,30 @@ class Controller extends PhalconController
 		Request::addData('title_full', $this->tag->getTitle(false));
 		Request::addData('url', $this->router->getRewriteUri());
 
-		$this->view->setVar('options', Request::getData());
+		$this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+		$this->view->render($this->dispatcher->getControllerName(), $this->dispatcher->getActionName());
+		$this->view->finish();
+
+		Request::addData('html', trim(str_replace(["\t", "\n"], '', $this->view->getContent())));
+
+		if (!$this->request->isAjax())
+		{
+			$this->view->setVar('options', Request::getData());
+
+			$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
+			$this->view->disableLevel(View::LEVEL_ACTION_VIEW);
+		}
 
 		return true;
 	}
 
 	public function topPlanetPanel ()
 	{
-		$parse = [];
-
-		$parse['image'] = $this->planet->image;
-		$parse['name'] = $this->planet->name;
-		$parse['time'] = time();
-
-		$parse['planetlist'] = '';
-
-		if ($this->config->view->get('showPlanetListSelect', 0))
-		{
-			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId().'');
-
-			if ($planetsList === NULL)
-			{
-				$planetsList = User::getPlanets($this->user->getId());
-
-				$this->cache->save('app::planetlist_'.$this->user->getId().'', $planetsList, 300);
-			}
-
-			foreach ($planetsList AS $CurPlanet)
-			{
-				if ($CurPlanet['destruyed'] > 0)
-					continue;
-
-				$parse['planetlist'] .= "\n<option ";
-
-				if ($CurPlanet['planet_type'] == 3)
-					$parse['planetlist'] .= "style=\"color:red;\" ";
-				elseif ($CurPlanet['planet_type'] == 5)
-					$parse['planetlist'] .= "style=\"color:yellow;\" ";
-
-				if ($CurPlanet['id'] == $this->user->planet_current)
-					$parse['planetlist'] .= "selected=\"selected\" ";
-
-				$parse['planetlist'] .= "value=\"/" . $this->dispatcher->getControllerName() . "/";
-
-				if ($this->dispatcher->getActionName() != 'index')
-					$parse['planetlist'] .= "" . $this->dispatcher->getActionName().'/';
-
-				$parse['planetlist'] .= "?chpl=" . $CurPlanet['id'] . "\">";
-
-				$parse['planetlist'] .= "" . $CurPlanet['name'];
-				$parse['planetlist'] .= "&nbsp;[" . $CurPlanet['galaxy'] . ":" . $CurPlanet['system'] . ":" . $CurPlanet['planet'];
-				$parse['planetlist'] .= "]&nbsp;&nbsp;</option>";
-			}
-		}
+		$data = [];
 
 		foreach (Vars::getResources() AS $res)
 		{
-			$parse[$res] = [
+			$data[$res] = [
 				'title' => _getText('res', $res),
 				'url' => 'info/'._getText('res_builds', $res).'/',
 				'current' => floor(floatval($this->planet->{$res})),
@@ -385,59 +395,52 @@ class Controller extends PhalconController
 			];
 
 			if ($this->user->vacation <= 0)
-				$parse[$res]['production'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
+				$data[$res]['production'] = $this->planet->{$res.'_perhour'} + floor($this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1));
 		}
 
-		$parse['energy'] = [
+		$data['energy'] = [
 			'current' => $this->planet->energy_max + $this->planet->energy_used,
 			'max' => $this->planet->energy_max
 		];
 
-		$parse['battery'] = [
+		$data['battery'] = [
 			'current' => round($this->planet->energy_ak),
 			'max' => $this->planet->battery_max,
 			'power' => 0,
 			'tooltip' => ''
 		];
 
-		$parse['credits'] = (int) $this->user->credits;
+		$data['credits'] = (int) $this->user->credits;
 
-		$parse['officiers'] = [];
+		$data['officiers'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
-			$parse['officiers'][$officier] = (int) $this->user->{Vars::getName($officier)};
+			$data['officiers'][$officier] = (int) $this->user->{Vars::getName($officier)};
 
-		$parse['battery']['power'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
-		$parse['battery']['power'] = min(100, max(0, $parse['battery']['power']));
+		$data['battery']['power'] = ($this->planet->battery_max > 0 ? round($this->planet->energy_ak / $this->planet->battery_max, 2) * 100 : 0);
+		$data['battery']['power'] = min(100, max(0, $data['battery']['power']));
 
-		if ($parse['battery']['power'] > 0 && $parse['battery']['power'] < 100)
+		if ($data['battery']['power'] > 0 && $data['battery']['power'] < 100)
 		{
 			if (($this->planet->energy_max + $this->planet->energy_used) > 0)
-				$parse['battery']['tooltip'] .= 'Заряд: ' . Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$data['battery']['tooltip'] .= 'Заряд: '.Format::time(round(((round(250 * $this->planet->getBuild('solar_plant')['level']) - $this->planet->energy_ak) / ($this->planet->energy_max + $this->planet->energy_used)) * 3600));
 			elseif (($this->planet->energy_max + $this->planet->energy_used) < 0)
-				$parse['battery']['tooltip'] .= 'Разряд: ' . Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600)) . '';
+				$data['battery']['tooltip'] .= 'Разряд: '.Format::time(round(($this->planet->energy_ak / abs($this->planet->energy_max + $this->planet->energy_used)) * 3600));
 		}
 
-		$parse['messages'] = (int) $this->user->messages;
-
-		if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
-		{
-			$this->user->messages_ally = 0;
-			$this->db->updateAsDict('game_users', ['messages_ally' => 0], "id = ".$this->user->id);
-		}
-
-		$parse['ally_messages'] = ($this->user->ally_id != 0) ? $this->user->messages_ally : '';
-
-		Request::addData('planet', $parse);
+		Request::addData('resources', $data);
 	}
 
 	public function showTopPanel ($view = true)
 	{
-		$this->showTopPanel = $view;
+		$this->views['resources'] = $view;
 	}
 
 	public function showLeftPanel ($view = true)
 	{
-		$this->showLeftMenu = $view;
+		$this->views['header'] = $view;
+		$this->views['footer'] = $view;
+		$this->views['menu'] = $view;
+		$this->views['planets'] = $view;
 	}
 }

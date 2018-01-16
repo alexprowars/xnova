@@ -54,7 +54,7 @@ $(document).ready(function()
 		'<a href="$1" target="_blank">$2</a>',
 		'<a href="$1" target="_blank">$1</a>',
 		'<p>$1</p>',
-		'<a href="'+XNova.path+'galaxy/$1/$2/">[$1:$2:$3]</a>'
+		'<a href="'+options.path+'galaxy/$1/$2/">[$1:$2:$3]</a>'
 	];
 });
 
@@ -67,7 +67,7 @@ function showSmilesEx(obj, event)
 	else
 	{
 		for (var i = 0; i < TextParser.smiles.length; i++)
-			o.append('<img src="'+XNova.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+TextParser.smiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
+			o.append('<img src="'+options.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+TextParser.smiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\', \''+obj+'\')" style="cursor:pointer"> ');
 
 		o.show();
 	}
@@ -120,7 +120,7 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 	{
 		while (Msg.indexOf(':'+TextParser.smiles[i]+':') >= 0)
 		{
-			Msg = Msg.replace(':'+TextParser.smiles[i]+':', '<img src="'+XNova.path+'assets/images/smile/' + TextParser.smiles[i] + '.gif" onclick="AddSmile(\'' + TextParser.smiles[i] + '\', \'chatMsg\')" style="cursor:pointer">');
+			Msg = Msg.replace(':'+TextParser.smiles[i]+':', '<img src="'+options.path+'assets/images/smile/' + TextParser.smiles[i] + '.gif" onclick="AddSmile(\'' + TextParser.smiles[i] + '\', \'chatMsg\')" style="cursor:pointer">');
 
 			if (++j >= 3)
 				break;
@@ -209,7 +209,7 @@ function ShowSmiles()
 	else
 	{
 		for (var i = 0; i < TextParser.smiles.length; i++)
-			obj.append('<img src="'+XNova.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+TextParser.smiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\')" style="cursor:pointer"> ');
+			obj.append('<img src="'+options.path+'assets/images/smile/'+TextParser.smiles[i]+'.gif" alt="'+TextParser.smiles[i]+'" onclick="AddSmile(\''+TextParser.smiles[i]+'\')" style="cursor:pointer"> ');
 
 		obj.show();
 		$('#shoutbox').hide();

@@ -44,8 +44,6 @@ $eventsManager->attach('core:beforeOutput', function ($event, \Friday\Core\Appli
 		$app->response->setJsonContent(
 		[
 			'status' 	=> \Xnova\Request::getStatus(),
-			'message' 	=> '',
-			'html' 		=> str_replace("\t", ' ', $handle->getContent()),
 			'data' 		=> \Xnova\Request::getData()
 		]);
 		$app->response->setContentType('text/json', 'utf8');

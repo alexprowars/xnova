@@ -9,9 +9,6 @@ var XNova =
 	lastUpdate: 0,
 	setAjaxNavigation: function ()
 	{
-		if (!$('#gamediv').length)
-			return;
-
 		$.ajaxSetup({data: {isAjax: true}});
 
 		$("body").on('click', 'a[data-link!=Y]', function(e)
@@ -60,8 +57,6 @@ var XNova =
 
 				if (data.data.redirect !== undefined)
 					window.location.href = data.data.redirect;
-				else
-					$('#gamediv').html(data.html);
 
 				TextParser.parseAll();
 			},
@@ -300,7 +295,7 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({
 		type: "GET",
-		url: XNova.path+"fleet/quick/",
+		url: options.path+"fleet/quick/",
 		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count,
 		dataType: 'json',
 		success: function(data)
@@ -384,8 +379,6 @@ function load (url, disableUrlState)
 			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set === 'buildings' && mod !== undefined ? mod : ''));
 			$('body.window .game_content').css('width', '');
 			$('.ui-helper-hidden-accessible').html('');
-
-			$('#gamediv').html(data.html);
 
 			if (data.message !== '')
 			{
@@ -483,7 +476,7 @@ $(document).ready(function()
 				webkit: 537.1
 			},
 			display: ['firefox', 'chrome', 'opera'],
-			imagePath: ''+XNova.path+'assets/images/',
+			imagePath: ''+options.path+'assets/images/',
 			header: 'Привет из каменного века!',
 			paragraph1: 'Вы вкурсе, что ваш браузер безнадёжно устарел и не поддерживает корректное отображение в данной игре?',
 			paragraph2: 'Обновите текущий браузер или установите новый:',

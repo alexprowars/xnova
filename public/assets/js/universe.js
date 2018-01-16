@@ -12,7 +12,7 @@ $(document).ready(function()
 
 		$.ajax({
 			type: "GET",
-			url: XNova.path+"fleet/quick/",
+			url: options.path+"fleet/quick/",
 			data: "mode=6&g="+galaxy+"&s="+system+"&p="+obj.data('planet')+"&t="+obj.data('type')+"&count="+spyNum,
 			dataType: 'json',
 			success: function(data)
@@ -80,19 +80,19 @@ function PrintRow ()
 			result += "<th align=left>";
 
 			if (user['phalanx'] == 1)
-				result += "<a href=\"javascript:void()\" onclick=fenster(\""+XNova.path+"phalanx/index/galaxy/"+galaxy+"/system/"+system+"/planet/"+planet+"/\")>Фаланга</a><br />";
+				result += "<a href=\"javascript:void()\" onclick=fenster(\""+options.path+"phalanx/index/galaxy/"+galaxy+"/system/"+system+"/planet/"+planet+"/\")>Фаланга</a><br />";
 
 			if (row[planet]['user_id'] != user['id'] && !(row[planet]['ally_planet'] > 0 && row[planet]['ally_planet'] == user['ally_id']))
             {
-				result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m1/\">Атаковать</a><br />";
-				result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m5/\">Удерживать</a><br />";
+				result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m1/\">Атаковать</a><br />";
+				result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m5/\">Удерживать</a><br />";
 			}
             else
             {
-				result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m4/\">Оставить</a><br />";
+				result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m4/\">Оставить</a><br />";
 			}
 
-			result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m3/\">Транспорт</a>";
+			result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t"+row[planet]['planet_type']+"/m3/\">Транспорт</a>";
 
 
 			result += "</th></tr>";
@@ -172,20 +172,20 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m1/\'>Атаковать</a><br />";
-				result += "<a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m5/\'>Удерживать</a><br />";
+				result += "<a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m1/\'>Атаковать</a><br />";
+				result += "<a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m5/\'>Удерживать</a><br />";
 
 				if (user['destroy'] > 0)
                 {
-					result += "<a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m9/\'>Уничтожить</a><br>";
+					result += "<a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m9/\'>Уничтожить</a><br>";
 				}
 			}
             else
             {
-				result += "<a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m4/\'>Оставить</a><br />";
+				result += "<a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m4/\'>Оставить</a><br />";
 			}
 
-			result += "<a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m3/\'>Транспорт</a><br />";
+			result += "<a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t3/m3/\'>Транспорт</a><br />";
 
 			result += "</tr>";
 			result += "</table>";
@@ -237,7 +237,7 @@ function PrintRow ()
 			if (user['recycler'] > 0)
 				result += "<tr><th colspan=2 align=left><a href=# onclick=QuickFleet(8,"+galaxy+","+system+","+planet+",2,0)>Собрать</a></th></tr>";
 
-			result += "<tr><th colspan=2 align=left><a href=\'"+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t2/m8/\'>Отправить флот</a></th>";
+			result += "<tr><th colspan=2 align=left><a href=\'"+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t2/m8/\'>Отправить флот</a></th>";
 			result += "</tr></table>";
 			result += "</th>";
 			result += "</tr>";
@@ -267,10 +267,10 @@ function PrintRow ()
             var Systemtatus2 = '', Systemtatus = '';
 
 			if (row[planet]['banned'] > time && row[planet]['vacation'] > 0) {
-				Systemtatus2 = "U <a href=\""+XNova.path+"banned/\"><span class=\"banned\">G</span></a>";
+				Systemtatus2 = "U <a href=\""+options.path+"banned/\"><span class=\"banned\">G</span></a>";
 				Systemtatus  = "<span class=\"vacation\">";
 			} else if (row[planet]['banned'] > time) {
-				Systemtatus2 = "<a href=\""+XNova.path+"banned/\">G</a>";
+				Systemtatus2 = "<a href=\""+options.path+"banned/\">G</a>";
 				Systemtatus  = "<span class=\"banned\">";
 			} else if (row[planet]['vacation'] > 0) {
 				Systemtatus2 = "U";
@@ -317,17 +317,17 @@ function PrintRow ()
 
 			if (row[planet]['user_image'] != 0)
 			{
-				result += " style=\"background:url("+XNova.path+"assets/avatars/"+row[planet]['user_image']+") 50% 50% no-repeat;\"></td>";
+				result += " style=\"background:url("+options.path+"assets/avatars/"+row[planet]['user_image']+") 50% 50% no-repeat;\"></td>";
 			}
 			else if (row[planet]['avatar'] != 0)
             {
 				if (row[planet]['avatar'] != 99)
                 {
-					result += " style=\"background:url("+XNova.path+"assets/images/faces/"+row[planet]['sex']+"/"+row[planet]['avatar']+"s.png) 50% 50% no-repeat;\"></td>";
+					result += " style=\"background:url("+options.path+"assets/images/faces/"+row[planet]['sex']+"/"+row[planet]['avatar']+"s.png) 50% 50% no-repeat;\"></td>";
 				}
                 else
                 {
-					result += " style=\"background:url("+XNova.path+"assets/avatars/upload_"+row[planet]['user_id']+".jpg) 50% 50% no-repeat;\"></td>";
+					result += " style=\"background:url("+options.path+"assets/avatars/upload_"+row[planet]['user_id']+".jpg) 50% 50% no-repeat;\"></td>";
 				}
 			}
 			else if (row[planet]['photo'] != '')
@@ -337,13 +337,13 @@ function PrintRow ()
 
 			if (row[planet]['user_id'] != user['id'])
             {
-				result += "<th><a href=\""+XNova.path+"messages/write/"+row[planet]['user_id']+"/\">Послать сообщение</a></th>";
+				result += "<th><a href=\""+options.path+"messages/write/"+row[planet]['user_id']+"/\">Послать сообщение</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href=\""+XNova.path+"buddy/new/"+row[planet]['user_id']+"/\">Добавить в друзья</a></th>";
+				result += "<th><a href=\""+options.path+"buddy/new/"+row[planet]['user_id']+"/\">Добавить в друзья</a></th>";
 				result += "</tr><tr>";
 			}
 
-			result += "<th valign=top><a href=\""+XNova.path+"stat/players/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/\">Статистика</a></th>";
+			result += "<th valign=top><a href=\""+options.path+"stat/players/range/"+Systemtart+"/pid/"+row[planet]['user_id']+"/\">Статистика</a></th>";
 			result += "</tr>";
 			result += "</table>'>";
 			result += Systemtatus+row[planet]['username']+Systemtatus2+rank;
@@ -352,7 +352,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='"+XNova.path+"info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='"+options.path+"info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else
@@ -369,9 +369,9 @@ function PrintRow ()
 				result += "<tr>";
 				result += "<td class=c>Альянс "+row[planet]['ally_name']+" с "+row[planet]['ally_members']+" членами</td>";
 				result += "</tr>";
-				result += "<tr><th><a href='"+XNova.path+"alliance/info/"+row[planet]['ally_id']+"/'>Информация</a></th>";
+				result += "<tr><th><a href='"+options.path+"alliance/info/"+row[planet]['ally_id']+"/'>Информация</a></th>";
 				result += "</tr><tr>";
-				result += "<th><a href='"+XNova.path+"stat/alliance/start/0/'>Статистика</a></th></tr>";
+				result += "<th><a href='"+options.path+"stat/alliance/start/0/'>Статистика</a></th></tr>";
 
 				if (row[planet]["ally_web"] != "") {
 					result += "<tr><th><a href='"+row[planet]["ally_web"]+"' target='_new'>Сайт альянса</th>";
@@ -407,22 +407,22 @@ function PrintRow ()
         {
 			if (row[planet]['user_id'] && row[planet]["destruyed"] == 0)
             {
-				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', XNova.path+'messages/write/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
+				result += "<a href=\"javascript:;\" title=\"Отправить сообщение\" onclick=\"showWindow('"+row[planet]['username']+": отправить сообщение', options.path+'messages/write/"+row[planet]["user_id"]+"/', 680)\"><span class='sprite skin_m'></span></a>&nbsp;";
 
-				result += "<a href=\""+XNova.path+"buddy/new/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
+				result += "<a href=\""+options.path+"buddy/new/"+row[planet]["user_id"]+"/\" title=\"Добавить в друзья\"><span class='sprite skin_b'></span></a>&nbsp;";
 
 				if (user['missile'] == 1)
-					result += "<a href=\""+XNova.path+"galaxy/"+galaxy+"/"+system+"/planet/"+planet+"/r/2/user/"+user['planet_current']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
+					result += "<a href=\""+options.path+"galaxy/"+galaxy+"/"+system+"/planet/"+planet+"/r/2/user/"+user['planet_current']+"/\" title=\"Ракетная атака\"><span class='sprite skin_r'></span></a>&nbsp;";
 
 				if (user['spy_sonde'] > 0 && row[planet]['vacation'] == 0)
 					result += "<a href=\"javascript:;\" title=\"Шпионаж\" class=\"tooltip_sticky\" data-content='<center><input type=text name=\"spy"+planet+"\" id=\"spy"+planet+"\" value=\""+user['spy']+"\"><br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\""+row[planet]['planet_type']+"\" value=\"Отправить на планету\">"+((row[planet]["luna_destruyed"] == 0 && row[planet]["luna_id"]) ? "<br><input type=button class=spyButton data-planet=\""+planet+"\" data-type=\"3\" value=\"Отправить на луну\">" : "")+"</center>'><span class='sprite skin_e'></span></a>&nbsp;";
 
-				result += "<a href=\""+XNova.path+"players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
-				result += "<a href=\""+XNova.path+"fleet/shortcut/add/new/g/"+galaxy+"/s/"+system+"/p/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
+				result += "<a href=\""+options.path+"players/"+row[planet]["user_id"]+"/\" title=\"Информация об игроке\"><span class='sprite skin_s'></span></a>&nbsp;";
+				result += "<a href=\""+options.path+"fleet/shortcut/add/new/g/"+galaxy+"/s/"+system+"/p/"+planet+"/t/"+row[planet]['planet_type']+"/\" title=\"Добавить в закладки\"><span class='sprite skin_z'></span></a>";
 			}
 		}
         else if (!row[planet] && user['colonizer'] > 0)
-                result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t0/m7/\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
+                result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p"+planet+"/t0/m7/\" title=\"Колонизация\"><span class='sprite skin_e'></span></a>&nbsp;";
 		else
             result += "&nbsp;";
 
@@ -432,7 +432,7 @@ function PrintRow ()
 	
 	result += "<tr><th width=\"30\">16</th>";
 	result += "<th colspan=8 class='c big'>";
-	result += "<a href=\""+XNova.path+"fleet/g"+galaxy+"/s"+system+"/p16/t0/m15/\">неизведанные дали</a>";
+	result += "<a href=\""+options.path+"fleet/g"+galaxy+"/s"+system+"/p16/t0/m15/\">неизведанные дали</a>";
 	result += "</th>";
 	result += "</tr><tr>";
 
@@ -492,9 +492,9 @@ function ChangePlanet(id)
 	if (id > 0)
 	{
 		if (ajax_nav == 0)
-			eval("location='"+XNova.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"'");
+			eval("location='"+options.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"'");
 		else
-			load(XNova.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"");
+			load(options.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"");
 	}
 }
 
@@ -502,7 +502,7 @@ function PrintSelector(fleet_shortcut)
 {
 	var result = '';
 
-	result += "<form action=\""+XNova.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-xs-down row'>";
+	result += "<form action=\""+options.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-xs-down row'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-sm-4'>";
 
@@ -540,7 +540,7 @@ function PrintSelector(fleet_shortcut)
 
 	result += "</div></form>";
 
-	result += "<form action=\""+XNova.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up row'>";
+	result += "<form action=\""+options.path+"galaxy/r/1/\" method=\"post\" class='galaxy-select hidden-sm-up row'>";
 	result += "<input type=\"hidden\" class=\"auto\" value=\"dr\" >";
 	result += "<div class='col-xs-12'>";
 	result += '<table style=\'margin: 0 auto\'><tr><td class=\'c\'><select id=\'planet_select\' onChange=\'ChangePlanet(this.selectedIndex);\' style=\"width:100%\">';

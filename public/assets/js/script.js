@@ -7,9 +7,9 @@ function BuildTimeout(pp, pk, pl, at)
 
 	if ( s < 0 )
     {
-		blc.html("Завершено<br>" + "<a href='#' onclick='load(\""+XNova.path+"buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
+		blc.html("Завершено<br>" + "<a href='#' onclick='load(\""+options.path+"buildings/index/planet/" + pl + "/\")'>Продолжить</a>");
 
-		timeouts['build'+pk+'-'+pl] = setTimeout('load("'+XNova.path+'buildings/index/planet/' + pl + '/");', 5000);
+		timeouts['build'+pk+'-'+pl] = setTimeout('load("'+options.path+'buildings/index/planet/' + pl + '/");', 5000);
 
 		return;
 	}
@@ -30,10 +30,10 @@ function BuildTimeout(pp, pk, pl, at)
 			m = "0" + m;
 		}
 
-		if (at > timestamp - 5)
+		if (at > options.stats.time - 5)
 			blc.html(h + ":" + m + ":" + s);
 		else
-			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\""+XNova.path+"buildings/index/listid/" + pk + "/cmd/cancel/planet/" + pl + "/\")'>Отменить</a>");
+			blc.html(h + ":" + m + ":" + s + "<br><a href='#' onclick='load(\""+options.path+"buildings/index/listid/" + pk + "/cmd/cancel/planet/" + pl + "/\")'>Отменить</a>");
 	}
 
 	pp--;
@@ -54,17 +54,6 @@ $(document).ready(function()
 
 			VK.callMethod("resizeWindow", 900, (d.height() < 600 ? 600 : d.height()) + 200);
 
-		}, 1000);
-	}
-
-	if (typeof FAPI != 'undefined')
-	{
-		setInterval(function()
-		{
-			var d = $('#gamediv > .content-row');
-
-			FAPI.UI.setWindowSize(800, (d.height() < 600 ? 600 : d.height()) + 200);
-			
 		}, 1000);
 	}
 
@@ -105,18 +94,6 @@ $(document).ready(function()
 
 	$('.menu-sidebar, .planet-sidebar').show();
 });
-
-function changePlanet (pId)
-{
-	var path = window.location.pathname.replace(XNova.path, '').split('/');
-
-	var url = XNova.path+path[0]+(path[1] !== undefined && path[1] != '' && path[0] != 'galaxy' && path[0] != 'fleet' ? '/'+path[1] : '')+'/?chpl='+pId+'';
-
-	if (ajax_nav == 1)
-		load(url);
-	else
-		window.location.href = url;
-}
 
 function parse_str (url)
 {

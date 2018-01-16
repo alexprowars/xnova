@@ -59,65 +59,64 @@
 </head>
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<script type="text/javascript">
-		XNova.path = '{{ url.getBaseUri() }}';
-		timestamp = {{ time() }};
-		timezone = {{ timezone }};
-		ajax_nav = {{ ajaxNavigation }};
+		ajax_nav = 1;
 
 		var options = {{ toJson(options) }};
 	</script>
 
 	<div id="application" v-bind:class="['set_'+route.controller]">
-		{% if leftMenu is defined and leftMenu == true %}
-			{{ partial('shared/header') }}
-		{% endif %}
+
+		<!-- header -->
+		<a v-if="options.view.header" href="#" class="menu-toggle hidden-sm-up">
+			<span>
+				<span class="first"></span>
+				<span class="second"></span>
+				<span class="third"></span>
+			</span>
+		</a>
+
+		<div v-if="options.view.header" class="menu-sidebar hidden-sm-up">
+			<sidebar-menu v-bind:items="$root.menu" v-bind:active="$root.getMenuActiveLink"></sidebar-menu>
+		</div>
+
+		<application-header v-if="options.view.header"></application-header>
+		<application-header-mobile-icons v-if="options.view.header"></application-header-mobile-icons>
+		<!-- end header -->
 
 		<div class="game_content">
+			<!-- menu -->
 			<main-menu v-if="options.view.menu" v-bind:items="menu" v-bind:active="getMenuActiveLink"></main-menu>
+			<!-- end menu -->
 
-			{% if leftMenu is defined and leftMenu == true %}
-				{{ partial('shared/planets') }}
-			{% endif %}
+			<!-- planets -->
+			<a v-if="options.view.planets" href="#" class="planet-toggle hidden-sm-up"><span>
+					<span class="first"></span>
+					<span class="second"></span>
+					<span class="third"></span>
+				</span>
+			</a>
+
+			<application-planets-list v-if="options.view.planets" v-bind:items="user.planets"></application-planets-list>
+			<!-- end planets -->
 
 			<div class="content">
-				<planet-panel v-if="options.planet !== false" v-bind:planet="planet"></planet-panel>
+				<!-- planet panel -->
+				<planet-panel v-if="options.view.resources" v-bind:planet="resources"></planet-panel>
+				<!-- end planet panel -->
 
-				<div id="gamediv">
-
-					{% if deleteUserTimer is defined and deleteUserTimer > 0 %}
-						<table class="table"><tr><td class="c" align="center">Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после {{ game.datezone("d.m.Y", deleteUserTimer) }} в {{ game.datezone("H:i:s", deleteUserTimer) }}. Выключить режим удаления можно в настройках игры.</td></tr></table><div class="separator"></div>
-					{% endif %}
-
-					{% if vocationTimer is defined and vocationTimer > 0 %}
-					   <table class="table"><tr><td class="c negative" align="center">Включен режим отпуска! Функциональность игры ограничена.</td></tr></table><div class="separator"></div>
-					{% endif %}
-
-					{% if globalMessage is defined and globalMessage != '' %}
-					   <table class="table"><tr><td class="c" align="center">{{ globalMessage }}</td></tr></table><div class="separator"></div>
-					{% endif %}
-
-					<div class="content-row">
-						{% set messages = flashSession.getMessages() %}
-
-						{% if messages|length > 0 %}
-							{% for type, items in messages %}
-								{% for message in items %}
-									{% if type == 'alert' %}
-										<script type="text/javascript">$(document).ready(function(){alert("{{ message }}");});</script>
-									{% else %}
-										{{ message }}
-									{% endif %}
-								{% endfor %}
-							{% endfor %}
-						{% endif %}
-						{{ content() }}
-					</div>
-
+				<!-- messages -->
+				<div v-if="options.messages" v-for="item in options.messages">
+					<application-messages-row v-bind:item="item"></application-messages-row>
 				</div>
+				<!-- end messages -->
+
+				<div id="gamediv" class="content-row" v-html="html"></div>
 			</div>
 		</div>
 
+		<!-- footer -->
 		<application-footer v-if="options.view.header"></application-footer>
+		<!-- end footer -->
 	</div>
 
 	{{ partial('shared/socials') }}
