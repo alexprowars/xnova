@@ -61,22 +61,31 @@
 <script type="text/javascript">
 	$(document).ready(function()
 	{
-		$('#authForm').ajaxForm({
-			url: '{{ url('login/') }}?',
-			data: {'ajax': 'Y'},
-			beforeSubmit: function()
-			{
-				showLoading();
-			},
-			success: function(data)
-			{
-				if (data.status == 1 && data.data.redirect !== undefined)
-					window.location.href = data.data.redirect;
-				else
-					$('#authError').html(data.message);
+		$('#authForm').on('submit', function(e)
+		{
+			e.preventDefault();
 
-				hideLoading();
-			}
+			showLoading();
+
+			$.ajax({
+				url: '{{ url('login/') }}',
+				type: 'post',
+				data: $(this).serialize(),
+				success: function(result)
+				{
+					if (result.status && data.result.redirect !== undefined)
+						window.location.href = result.data.redirect;
+					else
+					{
+						result.data.messages.forEach(function(item)
+						{
+							$('#authError').html(item.text);
+						});
+					}
+
+					hideLoading();
+				}
+			});
 		});
 	});
 </script>

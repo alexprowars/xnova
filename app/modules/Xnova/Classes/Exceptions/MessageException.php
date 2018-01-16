@@ -4,6 +4,8 @@ namespace Xnova\Exceptions;
 
 use Phalcon\Di;
 use Phalcon\Mvc\View;
+use Xnova\Request;
+use Xnova\Vars;
 
 class MessageException extends \Exception
 {
@@ -61,12 +63,12 @@ class MessageException extends \Exception
 
 		if ($app->request->isAjax())
 		{
+			Request::addData('html', str_replace(["\t", "\n"], '', $app->view->getContent()));
+
 			$app->response->setJsonContent(
 			[
-				'status' 	=> $app->game->getRequestStatus(),
-				'message' 	=> $app->game->getRequestMessage(),
-				'html' 		=> str_replace("\t", ' ', $app->view->getContent()),
-				'data' 		=> $app->game->getRequestData()
+				'status' 	=> Request::getStatus(),
+				'data' 		=> Request::getData()
 			]);
 
 			$app->response->setContentType('text/json', 'utf8');

@@ -1,17 +1,12 @@
 var ajax_nav = 0;
-var timezone = 0;
-var timestamp = 0;
 
 var XNova =
 {
-	path: '/',
 	isMobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
 	lastUpdate: 0,
 	setAjaxNavigation: function ()
 	{
-		$.ajaxSetup({data: {isAjax: true}});
-
-		$("body").on('click', 'a[data-link!=Y]', function(e)
+		$("body").on('click', 'a', function(e)
 		{
 			var el = $(this);
 
@@ -34,40 +29,57 @@ var XNova =
 			}
 
 			return false;
-		});
-
-		$('#gamediv form[class!=noajax]').ajaxForm(
+		})
+		.on('submit', '#gamediv form[class!=noajax]', function(e)
 		{
-			delegation: true,
-			dataType: 'json',
-			beforeSerialize: function(form)
-			{
-				$(form).append('<input type="hidden" name="ajax" value="1">');
+			e.preventDefault();
 
-				showLoading();
+			var form = $(this);
 
-				ClearTimers();
-				start_time = new Date();
-				Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
-			},
-			success: function (data)
-			{
-				$('#tooltip').hide();
-				hideLoading();
+			showLoading();
 
-				if (data.data.redirect !== undefined)
-					window.location.href = data.data.redirect;
+			ClearTimers();
+			start_time = new Date();
+			Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
 
-				TextParser.parseAll();
-			},
-			error: function()
-			{
-				$('#tooltip').hide();
-				hideLoading();
+			var formData = new FormData(form[0]);
 
-				alert('Что-то пошло не так!? Попробуйте еще раз');
-			}
-		});
+			$.ajax({
+			    url: form.attr('action'),
+			    data: formData,
+			    type: 'post',
+				dataType: 'json',
+			    contentType: false,
+			    processData: false,
+				success: function (result)
+				{
+					$('#tooltip').hide();
+					hideLoading();
+
+					if (result.data.redirect !== undefined)
+						window.location.href = result.data.redirect;
+
+					for (var key in result.data)
+					{
+						if (result.data.hasOwnProperty(key))
+							Vue.set(options, key, result.data[key])
+					}
+
+					setTimeout(function(){
+						application.evalJs(result.data.html);
+					}, 25);
+
+					TextParser.parseAll();
+				},
+				error: function()
+				{
+					$('#tooltip').hide();
+					hideLoading();
+
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				}
+			});
+		})
 
 		$('#windowDialog').on('submit', 'form', function(e)
 		{
@@ -82,7 +94,7 @@ var XNova =
 				dataType: 'json',
 				beforeSend: function(jqXHR, settings)
 				{
-					settings.data += (settings.data !== '' ? '&' : '')+'popup=Y&ep=dontsavestate';
+					settings.data += (settings.data !== '' ? '&' : '')+'popup=Y';
 	    			return true;
 				},
 				success: function (data)
@@ -370,7 +382,7 @@ function load (url, disableUrlState)
 		url: url,
 		cache: false,
 		dataType: 'json',
-		success: function(data)
+		success: function(result)
 		{
 			$('#tooltip').hide();
 			hideLoading();
@@ -380,53 +392,60 @@ function load (url, disableUrlState)
 			$('body.window .game_content').css('width', '');
 			$('.ui-helper-hidden-accessible').html('');
 
-			if (data.message !== '')
+			if (result.data.messages.length > 0)
 			{
-				$.toast({
-					text: data.message,
-					icon: statusMessages[data.status]
-				});
+				result.data.messages.forEach(function(item)
+				{
+					$.toast({
+						text: item.text,
+						icon: statusMessages[item.type]
+					});
+				})
 			}
 
-			if (typeof data.data.title_full !== 'undefined')
-				document.title = data.data.title_full;
+			if (typeof result.data.title_full !== 'undefined')
+				document.title = result.data.title_full;
 
-			if (data.data.redirect !== undefined)
-				window.location.href = data.data.redirect;
+			if (result.data.redirect !== undefined)
+				window.location.href = result.data.redirect;
 
-			if (disableUrlState === false && typeof data.data.url !== 'undefined')
-				addHistoryState(data.data.url);
+			if (disableUrlState === false && typeof result.data.url !== 'undefined')
+				addHistoryState(result.data.url);
 
 			dialog.dialog("close");
 
-			for (var key in data.data)
+			for (var key in result.data)
 			{
-				if (data.data.hasOwnProperty(key))
-					Vue.set(options, key, data.data[key])
+				if (result.data.hasOwnProperty(key))
+					Vue.set(options, key, result.data[key])
 			}
 
-			if (data.data.tutorial !== undefined && data.data.tutorial.popup !== '')
+			setTimeout(function(){
+				application.evalJs(result.data.html);
+			}, 25);
+
+			if (result.data.tutorial !== undefined && result.data.tutorial.popup !== '')
 			{
 				$.confirm({
 				    title: 'Обучение',
-				    content: data.data.tutorial.popup,
+				    content: result.data.tutorial.popup,
 					confirmButton: 'Продолжить',
 					cancelButton: false,
 					backgroundDismiss: false,
 					confirm: function ()
 					{
-						if (data.data.tutorial.url !== '')
+						if (result.data.tutorial.url !== '')
 						{
-							load(data.data.tutorial.url);
+							load(result.data.tutorial.url);
 						}
 					}
 				});
 			}
 
-			if (data.data.tutorial !== undefined && data.data.tutorial.toast !== '')
+			if (result.data.tutorial !== undefined && result.data.tutorial.toast !== '')
 			{
 				$.toast({
-					text: data.data.tutorial.toast,
+					text: result.data.tutorial.toast,
 					icon: 'info',
 					stack : 1
 				});
@@ -435,8 +454,11 @@ function load (url, disableUrlState)
 			TextParser.parseAll();
 		},
 		timeout: 10000,
-		error: function()
+		error: function(jqXHR, exception)
 		{
+			console.log(jqXHR.responseText);
+			console.log(exception);
+
 			$('#tooltip').hide();
 			document.location = url;
 

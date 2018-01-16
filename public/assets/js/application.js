@@ -295,30 +295,46 @@ Vue.component('application-messages-row', {
 	template: '<table class="table"><tr><td v-bind:class="[\'c\', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>'
 });
 
-var application;
-
-$(document).ready(function()
-{
-	application = new Vue({
-		el: '#application',
-		delimiters: ['<%', '%>'],
-		data: options,
-		computed: {
-			getMenuActiveLink: function ()
-			{
-				return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
-			}
-		},
-		methods:
+var application = new Vue({
+	el: '#application',
+	delimiters: ['<%', '%>'],
+	data: options,
+	computed: {
+		getMenuActiveLink: function ()
 		{
-			getUrl: function (url)
+			return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
+		}
+	},
+	methods:
+	{
+		getUrl: function (url)
+		{
+			return options.path+url;
+		},
+		getPlanetUrl: function (galaxy, system, planet)
+		{
+			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
+		},
+		evalJs: function (html)
+		{
+			if (html.length > 0)
 			{
-				return options.path+url;
-			},
-			getPlanetUrl: function (galaxy, system, planet)
-			{
-				return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
+				var j = $('<div/>').append(html)
+
+				j.find("script").each(function()
+				{
+					console.log($(this).text());
+
+					if ($(this).attr('src') !== undefined)
+						$.getScript($(this).attr('src'))
+					else
+						jQuery.globalEval($(this).text());
+				});
 			}
 		}
-	})
-});
+	},
+	mounted: function ()
+	{
+		this.evalJs(options.html);
+	}
+})

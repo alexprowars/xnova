@@ -74,7 +74,7 @@ class Controller extends PhalconController
 
 		Lang::setLang($this->config->app->language, 'xnova');
 
-		if ($this->request->isAjax() && !$this->auth->isAuthorized())
+		if ($this->request->isAjax())
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		else
 		{
@@ -114,10 +114,9 @@ class Controller extends PhalconController
 		$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue');
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-		$this->assets->addJs('assets/js/jquery.form.min.js');
 		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
-		$this->assets->addJs('assets/js/application.js?v='.VERSION);
+		$this->assets->addJs('assets/js/application.js?v='.VERSION, 'footer');
 
 		Vars::init();
 
@@ -287,14 +286,17 @@ class Controller extends PhalconController
 				];
 			}
 
-			foreach ($this->flashSession->getMessages() as $type => $items)
+			if ($this->flashSession->has())
 			{
-				foreach ($items as $item)
+				foreach ($this->flashSession->getMessages() as $type => $items)
 				{
-					$messages[] = [
-						'type' => $type,
-						'text' => $item
-					];
+					foreach ($items as $item)
+					{
+						$messages[] = [
+							'type' => $type,
+							'text' => $item
+						];
+					}
 				}
 			}
 
@@ -362,18 +364,26 @@ class Controller extends PhalconController
 		Request::addData('title_full', $this->tag->getTitle(false));
 		Request::addData('url', $this->router->getRewriteUri());
 
-		$this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-		$this->view->render($this->dispatcher->getControllerName(), $this->dispatcher->getActionName());
-		$this->view->finish();
+		Request::addData('html', '');
 
-		Request::addData('html', trim(str_replace(["\t", "\n"], '', $this->view->getContent())));
+		$this->view->setVar('options', Request::getData());
 
-		if (!$this->request->isAjax())
+		if (false && $this->auth->isAuthorized())
 		{
-			$this->view->setVar('options', Request::getData());
+			$this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+			$this->view->start();
+			$this->view->render($this->dispatcher->getControllerName(), $this->dispatcher->getActionName());
+			$this->view->finish();
 
-			$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
-			$this->view->disableLevel(View::LEVEL_ACTION_VIEW);
+			Request::addData('html', trim(str_replace(["\t", "\n"], '', $this->view->getContent())));
+
+			if (!$this->request->isAjax())
+			{
+				$this->view->setVar('options', Request::getData());
+
+				$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
+				$this->view->disableLevel(View::LEVEL_ACTION_VIEW);
+			}
 		}
 
 		return true;

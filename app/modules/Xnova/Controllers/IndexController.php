@@ -13,6 +13,7 @@ use Friday\Core\Options;
 use PHPMailer\PHPMailer\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @Route("/")
@@ -33,7 +34,6 @@ class IndexController extends Controller
 
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$this->assets->addJs('assets/js/jquery.form.min.js');
 			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 			$this->assets->addJs('assets/js/game.js');
 			$this->assets->addJs('assets/js/jquery.validate.js');
@@ -296,8 +296,8 @@ class IndexController extends Controller
 
 						if ($this->request->isAjax())
 						{
-							$this->game->setRequestStatus(1);
-							$this->game->setRequestData(['redirect' => $this->url->getBaseUri().'overview/']);
+							Request::setStatus(true);
+							Request::addData('redirect', $this->url->getBaseUri().'overview/');
 						}
 						else
 							$this->response->redirect('overview/');
@@ -316,8 +316,11 @@ class IndexController extends Controller
 
 		if ($error != '')
 		{
-			$this->game->setRequestMessage($error);
-			$this->game->setRequestStatus(0);
+			Request::setStatus(false);
+			Request::addData('messages', [[
+				'type' => 'error',
+				'text' => $error
+			]]);
 		}
 
 		return false;

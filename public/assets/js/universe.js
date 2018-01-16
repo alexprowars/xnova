@@ -76,7 +76,7 @@ function PrintRow ()
 			result += "<table width=240>";
 			result += "<tr><td class=c colspan=2>Планета "+row[planet]["name"]+" ["+galaxy+":"+system+":"+planet+"]</td></tr>";
 			result += "<tr>";
-			result += "<th width=80><img src="+dpath+"planeten/small/s_"+row[planet]["image"]+".jpg height=75 width=75></th>";
+			result += "<th width=80><img src="+options.path+"assets/images/planeten/small/s_"+row[planet]["image"]+".jpg height=75 width=75></th>";
 			result += "<th align=left>";
 
 			if (user['phalanx'] == 1)
@@ -96,7 +96,7 @@ function PrintRow ()
 
 
 			result += "</th></tr>";
-			result += "</table>'><img src="+dpath+"planeten/small/s_"+row[planet]["image"]+".jpg height=30 width=30></a>";
+			result += "</table>'><img src="+options.path+"assets/images/planeten/small/s_"+row[planet]["image"]+".jpg height=30 width=30></a>";
 		}
         else
             result += "&nbsp;";
@@ -154,7 +154,7 @@ function PrintRow ()
 			result += "</td>";
 			result += "</tr><tr>";
 			result += "<th width=80>";
-			result += "<img src="+dpath+"planeten/mond.jpg height=75 width=75 />";
+			result += "<img src="+options.path+"assets/images/planeten/mond.jpg height=75 width=75 />";
 			result += "</th>";
 			result += "<th>";
 			result += "<table class='table'>";
@@ -162,7 +162,7 @@ function PrintRow ()
 			result += "<td class=c colspan=2>Характеристики</td>";
 			result += "</tr><tr>";
 			result += "<th>Диаметр</th>";
-			result += "<th>"+XNova.format(row[planet]['luna_diameter'])+"</th>";
+			result += "<th>"+Format.number(row[planet]['luna_diameter'])+"</th>";
 			result += "</tr><tr>";
 			result += "<th>Температура</th><th>"+row[planet]['luna_temp']+"</th>";
 			result += "</tr><tr>";
@@ -192,7 +192,7 @@ function PrintRow ()
 			result += "</th>";
 			result += "</tr>";
 			result += "</table>\">";
-			result += "<img src=\""+dpath+"planeten/small/s_mond.jpg\" height=\"30\" width=\"30\"></a>";
+			result += "<img src=\""+options.path+"assets/images/planeten/small/s_mond.jpg\" height=\"30\" width=\"30\"></a>";
 		}
         else if (row[planet] && row[planet]["luna_destruyed"] > 0 && row[planet]["luna_id"])
 			result += "~";
@@ -222,7 +222,7 @@ function PrintRow ()
 			result += "</td>";
 			result += "</tr><tr>";
 			result += "<th width=80>";
-			result += "<img src="+dpath+"planeten/debris.jpg height=75 width=75 />";
+			result += "<img src="+options.path+"assets/images/planeten/debris.jpg height=75 width=75 />";
 			result += "</th>";
 			result += "<th>";
 			result += "<table class='table'>";
@@ -242,7 +242,7 @@ function PrintRow ()
 			result += "</th>";
 			result += "</tr>";
 			result += "</table>\">";
-			result += "<img src="+dpath+"planeten/debris.jpg height=22 width=22></a>";
+			result += "<img src="+options.path+"assets/images/planeten/debris.jpg height=22 width=22></a>";
 		}
         else
 			result += "<th style=\"white-space: nowrap;\" width=30>&nbsp;";
@@ -352,7 +352,7 @@ function PrintRow ()
 			if (row[planet]['race'] == 0) {
 				result += "&nbsp;";
 			} else {
-				result += "<a href='"+options.path+"info/70"+row[planet]['race']+"/'><img src='"+dpath+"skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
+				result += "<a href='"+options.path+"info/70"+row[planet]['race']+"/'><img src='"+options.path+"assets/images/skin/race"+row[planet]['race']+".gif' width='16' height='16' alt='"+race_str[row[planet]['race']]+"' title='"+race_str[row[planet]['race']]+"'></a>";
 			}
 		}
         else
@@ -480,8 +480,8 @@ function PrintRow ()
 	result += "<td class=c colspan=3><span id=\"missiles\">"+user['interplanetary_misil']+"</span> межпланетных ракет</td>";
 	result += "<td class=c colspan=3><span id=\"slots\">"+user['fleets']+"</span>/"+user['max_fleets']+" флотов</td>";
 	result += "<td class=c colspan=3>";
-	result += "<span id=\"recyclers\">"+XNova.format(user['recycler'])+"</span> переработчиков<br>";
-	result += "<span id=\"probes\">"+XNova.format(user['spy_sonde'])+"</span> шпионских зондов</td>";
+	result += "<span id=\"recyclers\">"+Format.number(user['recycler'])+"</span> переработчиков<br>";
+	result += "<span id=\"probes\">"+Format.number(user['spy_sonde'])+"</span> шпионских зондов</td>";
 	result += "</tr></table></div></div></div>";
 
 	return result;

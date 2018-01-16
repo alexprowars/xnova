@@ -62,6 +62,7 @@
 		ajax_nav = 1;
 
 		var options = {{ toJson(options) }};
+		options['html'] = {{ replace(["\t", "\n"], "", toJson(content())) }};
 	</script>
 
 	<div id="application" v-bind:class="['set_'+route.controller]">
@@ -119,9 +120,11 @@
 		<!-- end footer -->
 	</div>
 
-	{{ partial('shared/socials') }}
+	{{ partial('shared/counters') }}
 
 	<div id="windowDialog"></div>
 	<div id="tooltip" class="tip"></div>
+
+	{{ assets.outputJs('footer') }}
 </body>
 </html>

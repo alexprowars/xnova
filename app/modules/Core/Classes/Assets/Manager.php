@@ -92,6 +92,9 @@ class Manager
 
 		foreach ($resources as $resource)
 		{
+			if (($target != self::DEFAULT_COLLECTION_CSS && !isset($resource['options']['collection'])) || (isset($resource['options']['collection']) && $resource['options']['collection'] != $target))
+				continue;
+
 			$collection->addCss($resource['path'], $resource['local'], $resource['local']);
 
 			$hashString .= $resource['path'];
@@ -157,6 +160,9 @@ class Manager
 
 		foreach ($resources as $resource)
 		{
+			if (($target != self::DEFAULT_COLLECTION_JS && !isset($resource['options']['collection'])) || (isset($resource['options']['collection']) && $resource['options']['collection'] != $target))
+				continue;
+
 			$collection->addJs($resource['path'], $resource['local'], $resource['local']);
 
 			$hashString .= $resource['path'];

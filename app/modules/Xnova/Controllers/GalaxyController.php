@@ -197,7 +197,7 @@ class GalaxyController extends Controller
 			'max_fleets' => $fleetmax
 		];
 
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '".$this->url->getBaseUri()."assets/images/'; var user = ".json_encode($jsUser)."; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
+		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var user = ".json_encode($jsUser)."; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
 

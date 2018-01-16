@@ -185,7 +185,7 @@ function storage()
 
 function shortInfo()
 {
-	$('#distance').html(XNova.format(distance()));
+	$('#distance').html(Format.number(distance()));
 
 	var seconds = duration();
 
@@ -203,17 +203,17 @@ function shortInfo()
 	var stor = storage();
 	var cons = consumption();
 
-	$("#maxspeed").html(XNova.format(maxspeed()));
+	$("#maxspeed").html(Format.number(maxspeed()));
 
 	if (stor >= 0)
 	{
-		$("#consumption").html('<font color="lime">' + XNova.format(cons) + '</font>');
-		$("#storage").html('<font color="lime">' + XNova.format(stor) + '</font>');
+		$("#consumption").html('<font color="lime">' + Format.number(cons) + '</font>');
+		$("#storage").html('<font color="lime">' + Format.number(stor) + '</font>');
 	}
 	else
 	{
-		$("#consumption").html('<font color="red">' + XNova.format(cons) + '</font>');
-		$("#storage").html('<font color="red">' + XNova.format(stor) + '</font>');
+		$("#consumption").html('<font color="red">' + Format.number(cons) + '</font>');
+		$("#storage").html('<font color="red">' + Format.number(stor) + '</font>');
 	}
 
 	durationTime = duration() * 1000;
