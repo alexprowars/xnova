@@ -7,6 +7,12 @@ var minifyCss = require("gulp-minify-css");
 var rename = require("gulp-rename");
 var uglify = require("gulp-uglify");
 
+var fs = require("fs")
+var browserify = require('browserify')
+var vueify = require('vueify')
+
+process.env.NODE_ENV = 'production';
+
 gulp.task('sass', function ()
 {
 	gulp.src('./public/assets/src/game/**/*.scss')
@@ -16,10 +22,26 @@ gulp.task('sass', function ()
     	.pipe(gulp.dest('./public/assets/css'));
 });
 
+gulp.task('vue', function ()
+{
+	browserify('./public/assets/src/vue/app.js', {debug: false, bundleExternal: false})
+		.transform(vueify)
+		.bundle()
+		.pipe(fs.createWriteStream("./public/assets/js/application.js"))
+});
+
 gulp.task('watch', function ()
 {
 	gulp.watch('./public/assets/src/game/**/*.scss', ['sass']);
 	gulp.watch('./public/assets/src/bootstrap/**/*.scss', ['bootstrap']);
+});
+
+gulp.task('watch-vue', function ()
+{
+	gulp.watch('./public/assets/src/vue/*.js', ['vue']);
+	gulp.watch('./public/assets/src/vue/*.vue', ['vue']);
+	gulp.watch('./public/assets/src/vue/**/*.vue', ['vue']);
+	gulp.watch('./public/assets/src/vue/**/**/*.vue', ['vue']);
 });
 
 gulp.task('bootstrap', function ()
@@ -49,4 +71,4 @@ gulp.task('admin', function ()
 	gulp.src(['./public/assets/admin/layout/js/*.js', '!./public/assets/admin/layout/js/*.min.js']).pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/layout/js'));
 });
 
-gulp.task('default', ['sass', 'bootstrap', 'admin']);
+gulp.task('default', ['sass', 'vue', 'bootstrap', 'admin']);

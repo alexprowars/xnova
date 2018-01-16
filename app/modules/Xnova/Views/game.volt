@@ -65,60 +65,7 @@
 		options['html'] = {{ replace(["\t", "\n"], "", toJson(content())) }};
 	</script>
 
-	<div id="application" v-bind:class="['set_'+route.controller]">
-
-		<!-- header -->
-		<a v-if="options.view.header" href="#" class="menu-toggle hidden-sm-up">
-			<span>
-				<span class="first"></span>
-				<span class="second"></span>
-				<span class="third"></span>
-			</span>
-		</a>
-
-		<div v-if="options.view.header" class="menu-sidebar hidden-sm-up">
-			<sidebar-menu v-bind:items="$root.menu" v-bind:active="$root.getMenuActiveLink"></sidebar-menu>
-		</div>
-
-		<application-header v-if="options.view.header"></application-header>
-		<application-header-mobile-icons v-if="options.view.header"></application-header-mobile-icons>
-		<!-- end header -->
-
-		<div class="game_content">
-			<!-- menu -->
-			<main-menu v-if="options.view.menu" v-bind:items="menu" v-bind:active="getMenuActiveLink"></main-menu>
-			<!-- end menu -->
-
-			<!-- planets -->
-			<a v-if="options.view.planets" href="#" class="planet-toggle hidden-sm-up"><span>
-					<span class="first"></span>
-					<span class="second"></span>
-					<span class="third"></span>
-				</span>
-			</a>
-
-			<application-planets-list v-if="options.view.planets" v-bind:items="user.planets"></application-planets-list>
-			<!-- end planets -->
-
-			<div class="content">
-				<!-- planet panel -->
-				<planet-panel v-if="options.view.resources" v-bind:planet="resources"></planet-panel>
-				<!-- end planet panel -->
-
-				<!-- messages -->
-				<div v-if="options.messages" v-for="item in options.messages">
-					<application-messages-row v-bind:item="item"></application-messages-row>
-				</div>
-				<!-- end messages -->
-
-				<div id="gamediv" class="content-row" v-html="html"></div>
-			</div>
-		</div>
-
-		<!-- footer -->
-		<application-footer v-if="options.view.header"></application-footer>
-		<!-- end footer -->
-	</div>
+	<div id="application"></div>
 
 	{{ partial('shared/counters') }}
 

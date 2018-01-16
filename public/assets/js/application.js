@@ -1,299 +1,8 @@
-Vue.component('main-menu', {
-	props: ['items', 'active'],
-	template: '<ul class="menu hidden-xs-down">' +
-		'<li is="main-menu-item" v-for="item in items" v-bind:item="item"></li>' +
-	'</ul>'
-})
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var App = require('./app.vue')
 
-Vue.component('sidebar-menu', {
-	props: ['items', 'active'],
-	template: '<ul class="nav">' +
-		'<li is="main-menu-item" v-for="item in items" v-bind:item="item"></li>' +
-	'</ul>'
-})
-
-Vue.component('main-menu-item', {
-	props: ['item'],
-	render: function (createElement)
-	{
-		return createElement('li', {}, [
-			createElement('a', {
-				class: {
-					active: this.$parent.active === this.item.id
-				},
-				attrs: {
-					href: this.item.url,
-					target: this.item.new === true ? '_blank' : ''
-				}
-			}, this.item.text)
-		])
-	}
-})
-
-Vue.component('planet-panel', {
-	props: ['planet'],
-	template: '<div class="row topnav">' +
-		'<div class="col-md-6 col-sm-6 col-xs-12">' +
-			'<div class="row">' +
-				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'metal\'" v-bind:resource="planet.metal"></planet-panel-resource></div>' +
-				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'crystal\'" v-bind:resource="planet.crystal"></planet-panel-resource></div>' +
-				'<div class="col-xs-4 text-xs-center"><planet-panel-resource v-bind:type="\'deuterium\'" v-bind:resource="planet.deuterium"></planet-panel-resource></div>' +
-			'</div>' +
-		'</div>' +
-		'<div class="col-md-6 col-sm-6 col-xs-12">' +
-			'<div class="row">' +
-				'<div class="col-xs-4 text-xs-center">' +
-					'<span onclick="showWindow(\'\', \'/info/4/\', 600)" title="Солнечная батарея" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>' +
-					'<div class="neutral">Энергия</div>' +
-					'<div title="Энергетический баланс">' +
-						'<span v-if="planet.energy.current >= 0" class="positive">{{ Format.number(planet.energy.current) }}</span>' +
-						'<span v-else class="negative">{{ Format.number(planet.energy.current) }}</span>' +
-					'</div>' +
-					'<span title="Выработка энергии" class="hidden-xs-down positive">{{ Format.number(planet.energy.max) }}</span>' +
-				'</div>' +
-				'<div class="col-xs-4 text-xs-center">' +
-					'<span class="tooltip hidden-xs-down">' +
-						'<div class="tooltip-content"><center>Вместимость:<br>{{ Format.number(planet.battery.current) }} / {{ Format.number(planet.battery.max) }} <br> {{ planet.battery.tooltip }}</center></div>' +
-						'<img v-if="planet.battery.power > 0 && planet.battery.power < 100" v-bind:src="\'/assets/images/batt.php?p=\'+planet.battery.power" width="42" alt="">' +
-						'<span v-else v-bind:class="\'sprite skin_batt\'+planet.battery.power"></span>' +
-						'<br>' +
-					'</span>' +
-					'<div class="neutral">Аккумулятор</div>' +
-					'{{ planet.battery.power }}%<br>' +
-				'</div>' +
-				'<div class="col-xs-4 text-xs-center">' +
-					'<a v-bind:href="$root.getUrl(\'credits/\')" class="tooltip hidden-xs-down">' +
-						'<div class="tooltip-content">' +
-							'<table width=550>' +
-								'<tr>' +
-									'<td v-for="(time, index) in planet.officiers" align="center" width="14%">'+
-										'<div class="separator"></div>' +
-										'<span v-bind:class="[\'officier\', \'of\'+index+(time > ((new Date).getTime() / 1000) ? \'_ikon\' : \'\')]"></span>' +
-									'</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td v-for="(time, index) in planet.officiers" align="center">'+
-										'<span v-if="time > ((new Date).getTime() / 1000)">Нанят до <font color=lime>{{ date(\'d.m.Y H:i\', time) }}</font></span>' +
-										'<span v-else><font color=lime>Не нанят</font></span>' +
-									'</td>' +
-								'</tr>' +
-						'</div>' +
-						'<span class="sprite skin_kredits"></span><br>' +
-					'</a>' +
-					'<div class="neutral">Кредиты</div>' +
-					'{{ Format.number(planet.credits) }}<br>' +
-				'</div>' +
-			'</div>' +
-		'</div>' +
-	'</div>',
-	methods:
-	{
-		update: function ()
-		{
-			if (typeof options.planet === 'undefined' || options.planet === false)
-				return;
-
-			if (XNova.lastUpdate === 0)
-				XNova.lastUpdate = (new Date).getTime();
-
-			var factor = ((new Date).getTime() - XNova.lastUpdate) / 1000;
-
-			if (factor < 0)
-				return;
-
-			XNova.lastUpdate = (new Date).getTime();
-
-			['metal', 'crystal', 'deuterium'].forEach(function(res)
-			{
-				if (typeof options.planet[res] === 'undefined')
-					return;
-
-				var power = (options.planet[res]['current'] >= options.planet[res]['max']) ? 0 : 1;
-
-				options.planet[res]['current'] += ((options.planet[res]['production'] / 3600) * power * factor);
-			});
-		}
-	},
-	created: function ()
-	{
-		this.update();
-
-		clearInterval(timeouts['res_count']);
-		timeouts['res_count'] = setInterval(this.update, 1000);
-	},
-	updated: function ()
-	{
-		this.update();
-
-		clearInterval(timeouts['res_count']);
-		timeouts['res_count'] = setInterval(this.update, 1000);
-	},
-	destroyed: function ()
-	{
-		clearInterval(timeouts['res_count']);
-	}
-})
-
-Vue.component('planet-panel-resource-tooltip', {
-	props: ['resource'],
-	template: '<table width=150>' +
-		'<tr><td width=30%>КПД:</td><td align=right>{{ resource.power }}%</td></tr>' +
-		'<tr><td>В час:</td><td align=right>{{ Format.number(resource.production) }}</td></tr>' +
-		'<tr><td>День:</td><td align=right>{{ Format.number(resource.production * 24) }}</td></tr>' +
-	'</table>'
-})
-
-Vue.component('planet-panel-resource', {
-	props: ['resource', 'type'],
-	template: '<div class="planet-resource-panel-item">' +
-		'<span v-on:click="showPopup" class="tooltip hidden-xs-down">' +
-			'<div class="tooltip-content">' +
-				'<planet-panel-resource-tooltip v-bind:resource="resource"></planet-panel-resource-tooltip>' +
-			'</div>' +
-			'<span v-bind:class="[\'sprite\', \'skin_\'+type]"></span>' +
-			'<br>' +
-		'</span>' +
-		'<div class="neutral">{{ resource.title }}</div>' +
-		'<div title="Количество ресурса на планете">' +
-			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.current) }}</span>' +
-			'<span v-else class="negative">{{ Format.number(resource.current) }}</span>' +
-		'</div>' +
-		'<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">' +
-			'<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.max) }}</span>' +
-			'<span v-else class="negative">{{ Format.number(resource.max) }}</span>' +
-		'</span>' +
-	'</div>',
-	methods:
-	{
-		showPopup: function ()
-		{
-			showWindow('', this.$root.getUrl(this.resource.url), 600)
-		}
-	}
-})
-
-Vue.component('application-footer', {
-	template: '<footer>' +
-		'<div class="hidden-xs-down">' +
-			'<div class="container-fluid">' +
-				'<div class="pull-xs-left text-xs-left">' +
-					'<a v-bind:href="$root.getUrl(\'news/\')" title="Последние изменения">{{ options.version }}</a>' +
-					'<a class="hidden-sm-down" target="_blank" href="http://xnova.su/">© 2008 - {{ (new Date).getFullYear() }} Xcms</a>' +
-				'</div>' +
-				'<div class="pull-xs-right text-xs-right">' +
-					'<a href="http://forum.xnova.su/" target="_blank">Форум</a>|' +
-					'<a v-bind:href="$root.getUrl(\'banned/\')">Тёмные</a>|' +
-					'<a href="//vk.com/xnova_game" target="_blank">ВК</a>|' +
-					'<a v-bind:href="$root.getUrl(\'contact/\')">Контакты</a>|' +
-					'<a v-bind:href="$root.getUrl(\'content/help/\')">Новичкам</a>|' +
-					'<a v-bind:href="$root.getUrl(\'content/agb/\')">Правила</a>|' +
-					'<a onclick="" title="Игроков в сети" style="color:green">{{ options.stats.online }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ options.stats.users }}</a>' +
-				'</div>' +
-				'<div class="clearfix"></div>' +
-			'</div>' +
-		'</div>' +
-		'<div class="row hidden-sm-up footer-mobile">' +
-			'<div class="col-xs-12 text-xs-center">' +
-				'<a href="http://forum.xnova.su/" target="_blank">Форум</a>|' +
-				'<a v-bind:href="$root.getUrl(\'banned/\')">Тёмные</a>|' +
-				'<a v-bind:href="$root.getUrl(\'contact/\')">Контакты</a>|' +
-				'<a v-bind:href="$root.getUrl(\'content/help/\')">Новичкам</a>|' +
-				'<a v-bind:href="$root.getUrl(\'content/agb/\')">Правила</a>' +
-			'</div>' +
-			'<div class="col-xs-8 text-xs-center">' +
-				'<a v-bind:href="$root.getUrl(\'news/\')" title="Последние изменения">{{ options.version }}</a>' +
-				'<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - {{ (new Date).getFullYear() }} Xcms</a>' +
-			'</div>' +
-			'<div class="col-xs-4 text-xs-center">' +
-				'<a onclick="" title="Игроков в сети" style="color:green">{{ options.stats.online }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ options.stats.users }}</a>' +
-			'</div>' +
-		'</div>' +
-	'</footer>'
-})
-
-Vue.component('application-header-mobile-icons', {
-	template: '<div class="icon-panel hidden-sm-up">' +
-		'<a v-bind:href="$root.getUrl(\'stat/\')" class="sprite ico_stats"></a>' +
-		'<a v-bind:href="$root.getUrl(\'tech/\')" class="sprite ico_tech"></a>' +
-		'<a v-bind:href="$root.getUrl(\'sim/\')" class="sprite ico_sim"></a>' +
-		'<a v-bind:href="$root.getUrl(\'search/\')" class="sprite ico_search"></a>' +
-		'<a v-bind:href="$root.getUrl(\'support/\')" class="sprite ico_support"></a>' +
-		'<a href="http://forum.xnova.su/" target="_blank" class="sprite ico_forum"></a>' +
-		'<a v-bind:href="$root.getUrl(\'options/\')" class="sprite ico_settings"></a>' +
-		'<a v-bind:href="$root.getUrl(\'logout/\')" class="sprite ico_exit"  data-link="Y"></a>' +
-	'</div>'
-})
-
-Vue.component('application-header', {
-	template: '<header class="game_menu">' +
-		'<div class="hidden-sm-up text-xs-center bar">' +
-			'<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl(\'tutorial/\')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>' +
-			'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'chat/\')" data-content="Чат"><span class="sprite ico_chat"></span></a>' +
-			'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'messages/\')" data-content="Сообщения"><span class="sprite ico_mail"></span> <b>{{ $root.user.messages }}</b></a>' +
-			'<a v-if="$root.user.alliance.id > 0" class="m1 tooltip" v-bind:href="$root.getUrl(\'alliance/chat/\')" data-content="Альянс"><span class="sprite ico_alliance"></span> <b>{{ $root.user.alliance.messages }}</b></a>' +
-		'</div>' +
-		'<div class="bar hidden-xs-down">' +
-			'<div class="message_list">' +
-				'<div class="message_list">' +
-					'<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl(\'tutorial/\')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>' +
-					'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'chat/\')" data-content="Чат"><span class="sprite ico_chat"></span></a>' +
-					'<a class="m1 tooltip" v-bind:href="$root.getUrl(\'messages/\')" data-content="Сообщения"><span class="sprite ico_mail"></span> <b>{{ $root.user.messages }}</b></a>' +
-					'<a v-if="$root.user.alliance.id > 0" class="m1 tooltip" v-bind:href="$root.getUrl(\'alliance/chat/\')" data-content="Альянс"><span class="sprite ico_alliance"></span> <b>{{ $root.user.alliance.messages }}</b></a>' +
-				'</div>' +
-			'</div>' +
-			'<div class="top_menu">' +
-				'<a v-bind:href="$root.getUrl(\'stat/\')" class="tooltip m1" data-content="Статистика"><span class="sprite ico_stats"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'tech/\')" class="tooltip m1" data-content="Технологии"><span class="sprite ico_tech"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'sim/\')" class="tooltip m1" data-content="Симулятор"><span class="sprite ico_sim"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'search/\')" class="tooltip m1" data-content="Поиск"><span class="sprite ico_search"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'support/\')" class="tooltip m1" data-content="Техподдержка"><span class="sprite ico_support"></span></a>' +
-				'<a href="http://forum.xnova.su/" target="_blank" class="tooltip m1" data-content="Форум"><span class="sprite ico_forum"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'options/\')" class="tooltip m1" data-content="Настройки"><span class="sprite ico_settings"></span></a>' +
-				'<a v-bind:href="$root.getUrl(\'logout/\')" class="tooltip m1" data-link="Y" data-content="Выход"><span class="sprite ico_exit"></span></a>' +
-			'</div>' +
-		'</div>' +
-	'</header>'
-})
-
-Vue.component('application-planets-list', {
-	props: ['items'],
-	template: '<div class="planet-sidebar planetList">' +
-		'<div class="list">' +
-			'<application-planets-list-row v-for="item in items" v-bind:item="item"></application-planets-list-row>' +
-			'<div class="clearfix"></div>' +
-		'</div>' +
-	'</div>'
-})
-
-Vue.component('application-planets-list-row', {
-	props: ['item'],
-	template: '<div v-bind:class="[\'planet\', \'type_\'+item.t, ($root.user.planet == item.id ? \'current\' : \'\')]">' +
-		'<a v-on:click="changeItem" v-bind:title="item.name">' +
-			'<img v-bind:src="$root.getUrl(\'assets/images/planeten/small/s_\'+item.image+\'.jpg\')" height="40" width="40" v-bind:alt="item.name">' +
-		'</a>' +
-		'<span class="hidden-md-up" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>' +
-		'<div class="hidden-sm-down">' +
-			'{{ item.name }}<br>' +
-			'<span v-html="$root.getPlanetUrl(item.g, item.s, item.p)"></span>' +
-		'</div>' +
-		'<div class="clear"></div>' +
-	'</div>',
-	methods:
-	{
-		changeItem: function ()
-		{
-			var path = window.location.pathname.replace(this.$root.path, '').split('/');
-			var url = this.$root.getUrl(path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id);
-
-			load(url);
-		}
-	}
-})
-
-Vue.component('application-messages-row', {
-	props: ['item'],
-	template: '<table class="table"><tr><td v-bind:class="[\'c\', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>'
-});
+Vue.prototype.Format = Format
+Vue.prototype.date = date
 
 var application = new Vue({
 	el: '#application',
@@ -309,7 +18,7 @@ var application = new Vue({
 	{
 		getUrl: function (url)
 		{
-			return options.path+url;
+			return this.path+url;
 		},
 		getPlanetUrl: function (galaxy, system, planet)
 		{
@@ -323,8 +32,6 @@ var application = new Vue({
 
 				j.find("script").each(function()
 				{
-					console.log($(this).text());
-
 					if ($(this).attr('src') !== undefined)
 						$.getScript($(this).attr('src'))
 					else
@@ -335,6 +42,310 @@ var application = new Vue({
 	},
 	mounted: function ()
 	{
-		this.evalJs(options.html);
-	}
+		this.evalJs(this.html);
+	},
+	render: h => h(App)
 })
+},{"./app.vue":2}],2:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "app",
+	components: {
+		'sidebar-menu': require('./views/app/sidebar-menu.vue'),
+		'main-menu': require('./views/app/main-menu.vue'),
+		'application-header': require('./views/app/header.vue'),
+		'application-header-mobile-icons': require('./views/app/header-mobile-icons.vue'),
+		'application-footer': require('./views/app/footer.vue'),
+		'application-planets-list': require('./views/app/planets-list.vue'),
+		'planet-panel': require('./views/app/planet-panel.vue'),
+		'application-messages-row': require('./views/app/messages-row.vue')
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:['set_'+_vm.$root.route.controller],attrs:{"id":"application"}},[(_vm.$root.view.header)?_c('a',{staticClass:"menu-toggle hidden-sm-up",attrs:{"href":"#"}},[_vm._m(0)]):_vm._e(),_vm._v(" "),(_vm.$root.view.header)?_c('div',{staticClass:"menu-sidebar hidden-sm-up"},[_c('sidebar-menu',{attrs:{"items":_vm.$root.menu,"active":_vm.$root.getMenuActiveLink}})],1):_vm._e(),_vm._v(" "),(_vm.$root.view.header)?_c('application-header'):_vm._e(),_vm._v(" "),(_vm.$root.view.header)?_c('application-header-mobile-icons'):_vm._e(),_vm._v(" "),_c('div',{staticClass:"game_content"},[(_vm.$root.view.menu)?_c('main-menu',{attrs:{"items":_vm.$root.menu,"active":_vm.$root.getMenuActiveLink}}):_vm._e(),_vm._v(" "),(_vm.$root.view.planets)?_c('a',{staticClass:"planet-toggle hidden-sm-up",attrs:{"href":"#"}},[_vm._m(1)]):_vm._e(),_vm._v(" "),(_vm.$root.view.planets)?_c('application-planets-list',{attrs:{"items":_vm.$root.user.planets}}):_vm._e(),_vm._v(" "),_c('div',{staticClass:"content"},[(_vm.$root.view.resources)?_c('planet-panel',{attrs:{"planet":_vm.$root.resources}}):_vm._e(),_vm._v(" "),_vm._l((_vm.$root.messages),function(item){return (_vm.$root.messages)?_c('div',[_c('application-messages-row',{attrs:{"item":item}})],1):_vm._e()}),_vm._v(" "),_c('div',{staticClass:"content-row",attrs:{"id":"gamediv"},domProps:{"innerHTML":_vm._s(_vm.$root.html)}})],2)],1),_vm._v(" "),(_vm.$root.view.header)?_c('application-footer'):_vm._e()],1)}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('span',{staticClass:"first"}),_vm._v(" "),_c('span',{staticClass:"second"}),_vm._v(" "),_c('span',{staticClass:"third"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('span',{staticClass:"first"}),_vm._v(" "),_c('span',{staticClass:"second"}),_vm._v(" "),_c('span',{staticClass:"third"})])}]
+__vue__options__._scopeId = "data-v-86a0bb28"
+
+},{"./views/app/footer.vue":3,"./views/app/header-mobile-icons.vue":4,"./views/app/header.vue":5,"./views/app/main-menu.vue":7,"./views/app/messages-row.vue":8,"./views/app/planet-panel.vue":11,"./views/app/planets-list.vue":13,"./views/app/sidebar-menu.vue":14}],3:[function(require,module,exports){
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-footer"
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('footer',[_c('div',{staticClass:"hidden-xs-down"},[_c('div',{staticClass:"container-fluid"},[_c('div',{staticClass:"pull-xs-left text-xs-left"},[_c('a',{attrs:{"href":_vm.$root.getUrl('news/'),"title":"Последние изменения"}},[_vm._v(_vm._s(_vm.$root.version))]),_vm._v(" "),_c('a',{staticClass:"hidden-sm-down",attrs:{"target":"_blank","href":"http://xnova.su/"}},[_vm._v("© 2008 - "+_vm._s((new Date).getFullYear())+" Xcms")])]),_vm._v(" "),_c('div',{staticClass:"pull-xs-right text-xs-right"},[_c('a',{attrs:{"href":"http://forum.xnova.su/","target":"_blank"}},[_vm._v("Форум")]),_vm._v("|\n\t\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('banned/')}},[_vm._v("Тёмные")]),_vm._v("|\n\t\t\t\t"),_c('a',{attrs:{"href":"//vk.com/xnova_game","target":"_blank"}},[_vm._v("ВК")]),_vm._v("|\n\t\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('contact/')}},[_vm._v("Контакты")]),_vm._v("|\n\t\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('content/help/')}},[_vm._v("Новичкам")]),_vm._v("|\n\t\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('content/agb/')}},[_vm._v("Правила")]),_vm._v("|\n\t\t\t\t"),_c('a',{staticStyle:{"color":"green"},attrs:{"onclick":"","title":"Игроков в сети"}},[_vm._v(_vm._s(_vm.$root.stats.online))]),_vm._v("/"),_c('a',{staticStyle:{"color":"yellow"},attrs:{"onclick":"","title":"Всего игроков"}},[_vm._v(_vm._s(_vm.$root.stats.users))])]),_vm._v(" "),_c('div',{staticClass:"clearfix"})])]),_vm._v(" "),_c('div',{staticClass:"row hidden-sm-up footer-mobile"},[_c('div',{staticClass:"col-xs-12 text-xs-center"},[_c('a',{attrs:{"href":"http://forum.xnova.su/","target":"_blank"}},[_vm._v("Форум")]),_vm._v("|\n\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('banned/')}},[_vm._v("Тёмные")]),_vm._v("|\n\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('contact/')}},[_vm._v("Контакты")]),_vm._v("|\n\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('content/help/')}},[_vm._v("Новичкам")]),_vm._v("|\n\t\t\t"),_c('a',{attrs:{"href":_vm.$root.getUrl('content/agb/')}},[_vm._v("Правила")])]),_vm._v(" "),_c('div',{staticClass:"col-xs-8 text-xs-center"},[_c('a',{attrs:{"href":_vm.$root.getUrl('news/'),"title":"Последние изменения"}},[_vm._v(_vm._s(_vm.$root.version))]),_vm._v(" "),_c('a',{staticClass:"media_1",attrs:{"target":"_blank","href":"http://xnova.su/"}},[_vm._v("© 2008 - "+_vm._s((new Date).getFullYear())+" Xcms")])]),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('a',{staticStyle:{"color":"green"},attrs:{"onclick":"","title":"Игроков в сети"}},[_vm._v(_vm._s(_vm.$root.stats.online))]),_vm._v("/"),_c('a',{staticStyle:{"color":"yellow"},attrs:{"onclick":"","title":"Всего игроков"}},[_vm._v(_vm._s(_vm.$root.stats.users))])])])])}
+__vue__options__.staticRenderFns = []
+
+},{}],4:[function(require,module,exports){
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-header-mobile-icons"
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"icon-panel hidden-sm-up"},[_c('a',{staticClass:"sprite ico_stats",attrs:{"href":_vm.$root.getUrl('stat/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_tech",attrs:{"href":_vm.$root.getUrl('tech/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_sim",attrs:{"href":_vm.$root.getUrl('sim/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_search",attrs:{"href":_vm.$root.getUrl('search/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_support",attrs:{"href":_vm.$root.getUrl('support/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_forum",attrs:{"href":"http://forum.xnova.su/","target":"_blank"}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_settings",attrs:{"href":_vm.$root.getUrl('options/')}}),_vm._v(" "),_c('a',{staticClass:"sprite ico_exit",attrs:{"href":_vm.$root.getUrl('logout/'),"data-link":"Y"}})])}
+__vue__options__.staticRenderFns = []
+
+},{}],5:[function(require,module,exports){
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-header"
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('header',{staticClass:"game_menu"},[_c('div',{staticClass:"hidden-sm-up text-xs-center bar"},[(_vm.$root.user.tutorial < 10)?_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('tutorial/'),"data-content":"Квесты"}},[_c('span',{staticClass:"sprite ico_tutorial"})]):_vm._e(),_vm._v(" "),_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('chat/'),"data-content":"Чат"}},[_c('span',{staticClass:"sprite ico_chat"})]),_vm._v(" "),_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('messages/'),"data-content":"Сообщения"}},[_c('span',{staticClass:"sprite ico_mail"}),_vm._v(" "),_c('b',[_vm._v(_vm._s(_vm.$root.user.messages))])]),_vm._v(" "),(_vm.$root.user.alliance.id > 0)?_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('alliance/chat/'),"data-content":"Альянс"}},[_c('span',{staticClass:"sprite ico_alliance"}),_vm._v(" "),_c('b',[_vm._v(_vm._s(_vm.$root.user.alliance.messages))])]):_vm._e()]),_vm._v(" "),_c('div',{staticClass:"bar hidden-xs-down"},[_c('div',{staticClass:"message_list"},[_c('div',{staticClass:"message_list"},[(_vm.$root.user.tutorial < 10)?_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('tutorial/'),"data-content":"Квесты"}},[_c('span',{staticClass:"sprite ico_tutorial"})]):_vm._e(),_vm._v(" "),_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('chat/'),"data-content":"Чат"}},[_c('span',{staticClass:"sprite ico_chat"})]),_vm._v(" "),_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('messages/'),"data-content":"Сообщения"}},[_c('span',{staticClass:"sprite ico_mail"}),_vm._v(" "),_c('b',[_vm._v(_vm._s(_vm.$root.user.messages))])]),_vm._v(" "),(_vm.$root.user.alliance.id > 0)?_c('a',{staticClass:"m1 tooltip",attrs:{"href":_vm.$root.getUrl('alliance/chat/'),"data-content":"Альянс"}},[_c('span',{staticClass:"sprite ico_alliance"}),_vm._v(" "),_c('b',[_vm._v(_vm._s(_vm.$root.user.alliance.messages))])]):_vm._e()])]),_vm._v(" "),_c('div',{staticClass:"top_menu"},[_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('stat/'),"data-content":"Статистика"}},[_c('span',{staticClass:"sprite ico_stats"})]),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('tech/'),"data-content":"Технологии"}},[_c('span',{staticClass:"sprite ico_tech"})]),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('sim/'),"data-content":"Симулятор"}},[_c('span',{staticClass:"sprite ico_sim"})]),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('search/'),"data-content":"Поиск"}},[_c('span',{staticClass:"sprite ico_search"})]),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('support/'),"data-content":"Техподдержка"}},[_c('span',{staticClass:"sprite ico_support"})]),_vm._v(" "),_vm._m(0),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('options/'),"data-content":"Настройки"}},[_c('span',{staticClass:"sprite ico_settings"})]),_vm._v(" "),_c('a',{staticClass:"tooltip m1",attrs:{"href":_vm.$root.getUrl('logout/'),"data-link":"Y","data-content":"Выход"}},[_c('span',{staticClass:"sprite ico_exit"})])])])])}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('a',{staticClass:"tooltip m1",attrs:{"href":"http://forum.xnova.su/","target":"_blank","data-content":"Форум"}},[_c('span',{staticClass:"sprite ico_forum"})])}]
+
+},{}],6:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "main-menu-item",
+	props: ['item'],
+	render: function render(createElement) {
+		return createElement('li', {}, [createElement('a', {
+			class: {
+				active: this.$parent.active === this.item.id
+			},
+			attrs: {
+				href: this.item.url,
+				target: this.item.new === true ? '_blank' : ''
+			}
+		}, this.item.text)]);
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+
+},{}],7:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "main-menu",
+	props: ['items', 'active'],
+	components: {
+		'main-menu-item': require('./main-menu-item.vue')
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('ul',{staticClass:"menu hidden-xs-down"},_vm._l((_vm.items),function(item){return _c("main-menu-item",{tag:"li",attrs:{"item":item}})}))}
+__vue__options__.staticRenderFns = []
+
+},{"./main-menu-item.vue":6}],8:[function(require,module,exports){
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-messages-row",
+	props: ['item']
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('table',{staticClass:"table"},[_c('tr',[_c('td',{class:['c', _vm.item.type],attrs:{"align":"center"},domProps:{"innerHTML":_vm._s(_vm.item.text)}})])])}
+__vue__options__.staticRenderFns = []
+
+},{}],9:[function(require,module,exports){
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "planet-panel-resource-tooltip",
+	props: ['resource']
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('table',{attrs:{"width":"150"}},[_c('tr',[_c('td',{attrs:{"width":"30%"}},[_vm._v("КПД:")]),_c('td',{attrs:{"align":"right"}},[_vm._v(_vm._s(_vm.resource.power)+"%")])]),_vm._v(" "),_c('tr',[_c('td',[_vm._v("В час:")]),_c('td',{attrs:{"align":"right"}},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.production)))])]),_vm._v(" "),_c('tr',[_c('td',[_vm._v("День:")]),_c('td',{attrs:{"align":"right"}},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.production * 24)))])])])}
+__vue__options__.staticRenderFns = []
+
+},{}],10:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "planet-panel-resource",
+	props: ['resource', 'type'],
+	components: {
+		'planet-panel-resource-tooltip': require('./planet-panel-resource-tooltip.vue')
+	},
+	methods: {
+		showPopup: function showPopup() {
+			showWindow('', this.$root.getUrl(this.resource.url), 600);
+		}
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"planet-resource-panel-item"},[_c('span',{staticClass:"tooltip hidden-xs-down",on:{"click":_vm.showPopup}},[_c('div',{staticClass:"tooltip-content"},[_c('planet-panel-resource-tooltip',{attrs:{"resource":_vm.resource}})],1),_vm._v(" "),_c('span',{class:['sprite', 'skin_'+_vm.type]}),_vm._v(" "),_c('br')]),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v(_vm._s(_vm.resource.title))]),_vm._v(" "),_c('div',{attrs:{"title":"Количество ресурса на планете"}},[(_vm.resource.max > _vm.resource.current)?_c('span',{staticClass:"positive"},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.current)))]):_c('span',{staticClass:"negative"},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.current)))])]),_vm._v(" "),_c('span',{staticClass:"hidden-xs-down",attrs:{"title":"Максимальная вместимость хранилищ"}},[(_vm.resource.max > _vm.resource.current)?_c('span',{staticClass:"positive"},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.max)))]):_c('span',{staticClass:"negative"},[_vm._v(_vm._s(_vm.Format.number(_vm.resource.max)))])])])}
+__vue__options__.staticRenderFns = []
+
+},{"./planet-panel-resource-tooltip.vue":9}],11:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "planet-panel",
+	props: ['planet'],
+	components: {
+		'planet-panel-resource': require('./planet-panel-resource.vue')
+	},
+	methods: {
+		update: function update() {
+			if (typeof options.planet === 'undefined' || options.planet === false) return;
+
+			if (XNova.lastUpdate === 0) XNova.lastUpdate = new Date().getTime();
+
+			var factor = (new Date().getTime() - XNova.lastUpdate) / 1000;
+
+			if (factor < 0) return;
+
+			XNova.lastUpdate = new Date().getTime();
+
+			['metal', 'crystal', 'deuterium'].forEach(function (res) {
+				if (typeof options.planet[res] === 'undefined') return;
+
+				var power = options.planet[res]['current'] >= options.planet[res]['max'] ? 0 : 1;
+
+				options.planet[res]['current'] += options.planet[res]['production'] / 3600 * power * factor;
+			});
+		}
+	},
+	created: function created() {
+		this.update();
+
+		clearInterval(timeouts['res_count']);
+		timeouts['res_count'] = setInterval(this.update, 1000);
+	},
+	updated: function updated() {
+		this.update();
+
+		clearInterval(timeouts['res_count']);
+		timeouts['res_count'] = setInterval(this.update, 1000);
+	},
+	destroyed: function destroyed() {
+		clearInterval(timeouts['res_count']);
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row topnav"},[_c('div',{staticClass:"col-md-6 col-sm-6 col-xs-12"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'metal',"resource":_vm.planet.metal}})],1),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'crystal',"resource":_vm.planet.crystal}})],1),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'deuterium',"resource":_vm.planet.deuterium}})],1)])]),_vm._v(" "),_c('div',{staticClass:"col-md-6 col-sm-6 col-xs-12"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-4 text-xs-center"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Энергия")]),_vm._v(" "),_c('div',{attrs:{"title":"Энергетический баланс"}},[(_vm.planet.energy.current >= 0)?_c('span',{staticClass:"positive"},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.current)))]):_c('span',{staticClass:"negative"},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.current)))])]),_vm._v(" "),_c('span',{staticClass:"hidden-xs-down positive",attrs:{"title":"Выработка энергии"}},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.max)))])]),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('span',{staticClass:"tooltip hidden-xs-down"},[_c('div',{staticClass:"tooltip-content"},[_c('center',[_vm._v("Вместимость:"),_c('br'),_vm._v(_vm._s(_vm.Format.number(_vm.planet.battery.current))+" / "+_vm._s(_vm.Format.number(_vm.planet.battery.max))+" "),_c('br'),_vm._v(" "+_vm._s(_vm.planet.battery.tooltip))])],1),_vm._v(" "),(_vm.planet.battery.power > 0 && _vm.planet.battery.power < 100)?_c('img',{attrs:{"src":'/assets/images/batt.php?p='+_vm.planet.battery.power,"width":"42","alt":""}}):_c('span',{class:'sprite skin_batt'+_vm.planet.battery.power}),_vm._v(" "),_c('br')]),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Аккумулятор")]),_vm._v("\n\t\t\t\t"+_vm._s(_vm.planet.battery.power)+"%"),_c('br')]),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('a',{staticClass:"tooltip hidden-xs-down",attrs:{"href":_vm.$root.getUrl('credits/')}},[_c('div',{staticClass:"tooltip-content"},[_c('table',{attrs:{"width":"550"}},[_c('tr',_vm._l((_vm.planet.officiers),function(time,index){return _c('td',{attrs:{"align":"center","width":"14%"}},[_vm._v("'+\n\t\t\t\t\t\t\t\t\t"),_c('div',{staticClass:"separator"}),_vm._v(" "),_c('span',{class:['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]})])})),_vm._v(" "),_c('tr',_vm._l((_vm.planet.officiers),function(time,index){return _c('td',{attrs:{"align":"center"}},[_vm._v("'+\n\t\t\t\t\t\t\t\t\t"),(time > ((new Date).getTime() / 1000))?_c('span',[_vm._v("Нанят до "),_c('font',{attrs:{"color":"lime"}},[_vm._v(_vm._s(_vm.date('d.m.Y H:i', time)))])],1):_c('span',[_c('font',{attrs:{"color":"lime"}},[_vm._v("Не нанят")])],1)])}))])]),_vm._v(" "),_c('span',{staticClass:"sprite skin_kredits"}),_c('br')]),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Кредиты")]),_vm._v("\n\t\t\t\t"+_vm._s(_vm.Format.number(_vm.planet.credits))),_c('br')])])])])}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',{staticClass:"hidden-xs-down",attrs:{"onclick":"showWindow('', '/info/4/', 600)","title":"Солнечная батарея"}},[_c('span',{staticClass:"sprite skin_energie"}),_c('br')])}]
+
+},{"./planet-panel-resource.vue":10}],12:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-planets-list-row",
+	props: ['item'],
+	methods: {
+		changeItem: function changeItem() {
+			var path = window.location.pathname.replace(this.$root.path, '').split('/');
+			var url = this.$root.getUrl(path[0] + (path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/' + path[1] : '') + '/?chpl=' + this.item.id);
+
+			load(url);
+		}
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:['planet', 'type_'+_vm.item.t, (_vm.$root.user.planet === _vm.item.id ? 'current' : '')]},[_c('a',{attrs:{"title":_vm.item.name},on:{"click":_vm.changeItem}},[_c('img',{attrs:{"src":_vm.$root.getUrl('assets/images/planeten/small/s_'+_vm.item.image+'.jpg'),"height":"40","width":"40","alt":_vm.item.name}})]),_vm._v(" "),_c('span',{staticClass:"hidden-md-up",domProps:{"innerHTML":_vm._s(_vm.$root.getPlanetUrl(_vm.item.g, _vm.item.s, _vm.item.p))}},[_vm._v(_vm._s(_vm.$root.getPlanetUrl(_vm.item.g, _vm.item.s, _vm.item.p)))]),_vm._v(" "),_c('div',{staticClass:"hidden-sm-down"},[_vm._v("\n\t\t"+_vm._s(_vm.item.name)),_c('br'),_vm._v(" "),_c('span',{domProps:{"innerHTML":_vm._s(_vm.$root.getPlanetUrl(_vm.item.g, _vm.item.s, _vm.item.p))}})]),_vm._v(" "),_c('div',{staticClass:"clear"})])}
+__vue__options__.staticRenderFns = []
+
+},{}],13:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "application-planets-list",
+	props: ['items'],
+	components: {
+		'application-planets-list-row': require('./planets-list-row.vue')
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"planet-sidebar planetList"},[_c('div',{staticClass:"list"},[_vm._l((_vm.items),function(item){return _c('application-planets-list-row',{attrs:{"item":item}})}),_vm._v(" "),_c('div',{staticClass:"clearfix"})],2)])}
+__vue__options__.staticRenderFns = []
+__vue__options__._scopeId = "data-v-88a1abf8"
+
+},{"./planets-list-row.vue":12}],14:[function(require,module,exports){
+;(function(){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
+	name: "sidebar-menu",
+	props: ['items', 'active'],
+	components: {
+		'main-menu-item': require('./main-menu-item.vue')
+	}
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('ul',{staticClass:"nav"},_vm._l((_vm.items),function(item){return _c("main-menu-item",{tag:"li",attrs:{"item":item}})}))}
+__vue__options__.staticRenderFns = []
+
+},{"./main-menu-item.vue":6}]},{},[1]);
