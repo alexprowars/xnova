@@ -77,11 +77,10 @@ class Controller extends PhalconController
 		if ($this->request->isAjax())
 			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		else
-		{
-			$this->tag->setTitleSeparator(' :: ');
-			$this->tag->setTitle(Options::get('site_title'));
 	        $this->tag->setDocType(Tag::HTML5);
-		}
+
+		$this->tag->setTitleSeparator(' :: ');
+		$this->tag->setTitle(Options::get('site_title'));
 
 		if (is_array($this->router->getParams()) && count($this->router->getParams()))
 		{
@@ -113,7 +112,6 @@ class Controller extends PhalconController
 
 		$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue');
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
 		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
 		$this->assets->addJs('assets/js/application.js?v='.VERSION, 'footer');
@@ -140,7 +138,7 @@ class Controller extends PhalconController
 			//	die('Нельзя пока вам сюда');
 
 			$this->assets->addCss('assets/css/jquery.toast.min.css');
-			$this->assets->addCss('assets/css/jquery.reject.css');
+			$this->assets->addCss('assets/css/plugins/confirm.css');
 
 			$this->assets->addJs('assets/js/script.js?v='.VERSION);
 			$this->assets->addJs('assets/js/universe.js?v='.VERSION);
@@ -150,7 +148,8 @@ class Controller extends PhalconController
 			$this->assets->addJs('assets/js/jquery.touchSwipe.min.js');
 			$this->assets->addJs('assets/js/jquery.toast.min.js');
 			$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
-			$this->assets->addJs('assets/js/jquery.reject.js');
+			$this->assets->addJs('assets/js/plugins/ui.js');
+			$this->assets->addJs('assets/js/plugins/confirm.js');
 
 			$this->view->setMainView('game');
 
@@ -221,7 +220,6 @@ class Controller extends PhalconController
 				];
 			}
 
-			Request::addData('planet', false);
 			Request::addData('menu', $menu);
 
 			Request::addData('speed', [
@@ -367,24 +365,6 @@ class Controller extends PhalconController
 		Request::addData('html', '');
 
 		$this->view->setVar('options', Request::getData());
-
-		if (false && $this->auth->isAuthorized())
-		{
-			$this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-			$this->view->start();
-			$this->view->render($this->dispatcher->getControllerName(), $this->dispatcher->getActionName());
-			$this->view->finish();
-
-			Request::addData('html', trim(str_replace(["\t", "\n"], '', $this->view->getContent())));
-
-			if (!$this->request->isAjax())
-			{
-				$this->view->setVar('options', Request::getData());
-
-				$this->view->setRenderLevel(View::LEVEL_MAIN_LAYOUT);
-				$this->view->disableLevel(View::LEVEL_ACTION_VIEW);
-			}
-		}
 
 		return true;
 	}

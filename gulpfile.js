@@ -20,6 +20,11 @@ gulp.task('sass', function ()
 		.pipe(autoprefixer())
 		.pipe(minifyCss())
     	.pipe(gulp.dest('./public/assets/css'));
+
+	gulp.src('./public/assets/src/plugins/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(autoprefixer({ browsers: ['last 3 versions'], cascade: false}))
+    	.pipe(gulp.dest('./public/assets/css/plugins'));
 });
 
 gulp.task('vue', function ()

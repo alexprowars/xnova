@@ -412,7 +412,7 @@ function load (url, disableUrlState)
 			if (disableUrlState === false && typeof result.data.url !== 'undefined')
 				addHistoryState(result.data.url);
 
-			dialog.dialog("close");
+			closeWindow();
 
 			for (var key in result.data)
 			{
@@ -480,52 +480,11 @@ function addHistoryState (url)
 		window.history.pushState({save: 1}, null, url);
 }
 
-var tooltipTimer, dialog;
+var tooltipTimer;
 var currentState = window.location.hash.slice(1);
 
 $(document).ready(function()
 {
-	if ($.isFunction($.reject))
-	{
-		$.reject({
-			reject: {
-				msie: 9,
-				chrome: 20,
-				firefox: 27,
-				opera: 11,
-				safari: 6,
-				unknown: false,
-				webkit: 537.1
-			},
-			display: ['firefox', 'chrome', 'opera'],
-			imagePath: ''+options.path+'assets/images/',
-			header: 'Привет из каменного века!',
-			paragraph1: 'Вы вкурсе, что ваш браузер безнадёжно устарел и не поддерживает корректное отображение в данной игре?',
-			paragraph2: 'Обновите текущий браузер или установите новый:',
-			closeLink: 'Закрыть окно',
-			closeMessage: 'Администрация не несет ответственности за отображение игры на несовместимом браузере',
-			closeCookie: true
-		});
-	}
-
-	if ($.isFunction($(document).dialog))
-	{
-		dialog = $('#windowDialog').dialog({
-			autoOpen: false,
-			minWidth: 500,
-			minHeight: 300,
-			maxHeight: 600,
-			resizable: false,
-			title: 'Сообщение',
-			modal: true,
-			position: { my: "center", at: "center", of: window },
-			close: function()
-			{
-				$('#windowDialog').html('');
-			}
-		});
-	}
-
     if (ajax_nav === 1)
     {
 		XNova.setAjaxNavigation();
@@ -645,6 +604,34 @@ function showWindow (title, url, width, height)
 {
 	if (!XNova.isMobile)
 	{
+		if (width === undefined)
+			width = 600;
+
+		$.dialog({
+			title: '',
+			theme: 'dialog',
+			useBootstrap: false,
+			boxWidth: width,
+			backgroundDismiss: true,
+			content: function ()
+			{
+				var self = this;
+
+				$.ajax({
+					url: url,
+					type: 'get',
+					data: {'popup': 'Y'},
+					success: function (result)
+					{
+						self.setTitle(result.data.title);
+						self.setContent(result.data.html);
+					}
+				});
+			}
+		});
+
+		return;
+
 		$('#windowDialog').html('');
 
 		showLoading();
@@ -692,12 +679,10 @@ function showWindow (title, url, width, height)
 
 function closeWindow()
 {
-	$('#windowDialog').dialog('close');
-}
-
-function setWindowTitle (title)
-{
-	$('#windowDialog').dialog( "option", "title", title );
+	jconfirm.instances.forEach(function(item)
+	{
+		item.close();
+	});
 }
 
 var blockTimer = true;

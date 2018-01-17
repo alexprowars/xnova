@@ -62,7 +62,7 @@
 		ajax_nav = 1;
 
 		var options = {{ toJson(options) }};
-		options['html'] = {{ replace(["\t", "\n"], "", toJson(content())) }};
+		options['html'] = {{ replace("\t", "", toJson(content())) }};
 	</script>
 
 	<div id="application"></div>

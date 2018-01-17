@@ -123,9 +123,3 @@
 	</div>
 </div>
 {% endif %}
-
-{% if isPopup %}
-	<script type="text/javascript">
-		setWindowTitle('{{ parse['username'] }}');
-	</script>
-{% endif %}

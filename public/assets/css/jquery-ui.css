@@ -763,7 +763,51 @@ button.ui-button::-moz-focus-inner {
 	padding: 6px 8px;
 	position: absolute;
 	z-index: 9999;
+	opacity: 1;
+	background: #344566;
 }
 body .ui-tooltip {
 	border-width: 2px;
+}
+
+
+.jconfirm.jconfirm-dialog .jconfirm-box {
+	padding: 3px;
+	background-color: #344566;
+	border: 1px solid #415680;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box div.jconfirm-content-pane {
+	margin-bottom: 0;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box div.jconfirm-closeIcon {
+	top: 12px;
+	color: white;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box .jconfirm-title-c {
+	border: 1px solid #415680;
+	background-color: #253046;
+	padding: 5px 13px;
+	font-size: 13px;
+	margin-bottom: 3px;
+	text-align: center;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box .jconfirm-title-c .jconfirm-title {
+	color: #ffffff;
+
+	font-family: Verdana,Arial,sans-serif !important;
+	font-size: 13px !important;
+	text-transform: uppercase;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box .jconfirm-content {
+	font-size: 13px;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-bg {
+	background: #333;
+	opacity: 0.7;
 }
