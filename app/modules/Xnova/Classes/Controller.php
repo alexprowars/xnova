@@ -110,11 +110,10 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/css/jquery.fancybox.css');
 		$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
-		$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue');
+
 		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
-		$this->assets->addJs('assets/js/application.js?v='.VERSION, 'footer');
 
 		Vars::init();
 
@@ -132,24 +131,30 @@ class Controller extends PhalconController
 			'users' => (int) Options::get('users_total', 0),
 		]);
 
+		Request::addData('mobile', Helpers::allowMobileVersion());
+
 		if ($this->auth->isAuthorized())
 		{
 			//if (!$this->user->isAdmin())
 			//	die('Нельзя пока вам сюда');
 
-			$this->assets->addCss('assets/css/jquery.toast.min.css');
+			$this->assets->addCss('assets/css/plugins/toast.css');
 			$this->assets->addCss('assets/css/plugins/confirm.css');
 
-			$this->assets->addJs('assets/js/script.js?v='.VERSION);
-			$this->assets->addJs('assets/js/universe.js?v='.VERSION);
-			$this->assets->addJs('assets/js/flotten.js?v='.VERSION);
-			$this->assets->addJs('assets/js/smiles.js?v='.VERSION);
-			$this->assets->addJs('assets/js/ed.js?v='.VERSION);
-			$this->assets->addJs('assets/js/jquery.touchSwipe.min.js');
-			$this->assets->addJs('assets/js/jquery.toast.min.js');
-			$this->assets->addJs('assets/js/jquery.mousewheel.min.js');
-			$this->assets->addJs('assets/js/plugins/ui.js');
-			$this->assets->addJs('assets/js/plugins/confirm.js');
+			$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue', 'footer');
+			$this->assets->addJs('assets/js/script.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/universe.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/flotten.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/ui.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
+
+			if (Helpers::allowMobileVersion())
+				$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');
+
+			$this->assets->addJs('assets/js/application.js?v='.VERSION, 'footer');
 
 			$this->view->setMainView('game');
 

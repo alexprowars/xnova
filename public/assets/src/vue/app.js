@@ -13,6 +13,11 @@ var application = new Vue({
 			return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
 		}
 	},
+	watch: {
+		html: function (val) {
+			this.evalJs(val);
+		}
+	},
 	methods:
 	{
 		getUrl: function (url)

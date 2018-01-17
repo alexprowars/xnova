@@ -26,35 +26,6 @@
 		<meta name="viewport" content="width=810">
 	{% else %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<script type="text/javascript">
-			$(document).ready(function()
-			{
-				if (!navigator.userAgent.match(/(\(iPod|\(iPhone|\(iPad)/))
-				{
-					$("body").swipe(
-					{
-						swipeLeft: function()
-						{
-							if ($('.menu-sidebar').hasClass('opened'))
-								$('.menu-toggle').click();
-							else
-								$('.planet-toggle').click();
-						},
-						swipeRight: function()
-						{
-							if ($('.planet-sidebar').hasClass('opened'))
-								$('.planet-toggle').click();
-							else
-								$('.menu-toggle').click();
-						},
-						threshold: 100,
-						excludedElements: ".table-responsive",
-						fallbackToMouseEvents: false,
-						allowPageScroll: "auto"
-					});
-				}
-			});
-		</script>
 	{% endif %}
 </head>
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
@@ -70,6 +41,7 @@
 	{{ partial('shared/counters') }}
 
 	<div id="windowDialog"></div>
+	<div id="ajaxLoader"></div>
 	<div id="tooltip" class="tip"></div>
 
 	{{ assets.outputJs('footer') }}

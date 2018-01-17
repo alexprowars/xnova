@@ -811,3 +811,22 @@ body .ui-tooltip {
 	background: #333;
 	opacity: 0.7;
 }
+
+.jconfirm.jconfirm-dialog .jconfirm-box.loading:before {
+	background: #344566;
+}
+
+.jconfirm.jconfirm-dialog .jconfirm-box.loading:after {
+	border-bottom-color: white;
+	opacity: 0.8;
+}
+
+#ajaxLoader {
+	background: url('../images/loader-cat.svg') no-repeat;
+	width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	display: none;
+}

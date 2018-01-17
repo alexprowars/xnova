@@ -8,7 +8,7 @@ var TextParser =
 	texts: [],
 	addText: function (text, id)
 	{
-		if (typeof(text) != 'string')
+		if (typeof text !== 'string')
 			return;
 
 		this.texts[this.texts.length] = {'text': text, 'id': id};
@@ -162,7 +162,7 @@ function ShowText()
 {
 	for (var i in messages)
 	{
-		if (messages.hasOwnProperty(i) && typeof(messages[i]) == 'string')
+		if (messages.hasOwnProperty(i) && typeof messages[i] === 'string')
 			TextParser.parse(messages[i], i);
 	}
 }

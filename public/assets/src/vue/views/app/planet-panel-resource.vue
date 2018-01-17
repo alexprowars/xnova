@@ -30,7 +30,7 @@
 		{
 			showPopup: function ()
 			{
-				showWindow('', this.$root.getUrl(this.resource.url), 600)
+				showWindow('', this.$root.getUrl(this.resource.url))
 			}
 		}
 	}

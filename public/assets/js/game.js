@@ -388,7 +388,6 @@ function load (url, disableUrlState)
 			hideLoading();
 			ClearTimers();
 
-			$('body > .contentBox').attr('class', 'contentBox set_'+set+(mod !== undefined && set === 'buildings' && mod !== undefined ? mod : ''));
 			$('body.window .game_content').css('width', '');
 			$('.ui-helper-hidden-accessible').html('');
 
@@ -398,7 +397,7 @@ function load (url, disableUrlState)
 				{
 					$.toast({
 						text: item.text,
-						icon: statusMessages[item.type]
+						icon: item.type
 					});
 				})
 			}
@@ -419,10 +418,6 @@ function load (url, disableUrlState)
 				if (result.data.hasOwnProperty(key))
 					Vue.set(options, key, result.data[key])
 			}
-
-			setTimeout(function(){
-				application.evalJs(result.data.html);
-			}, 25);
 
 			if (result.data.tutorial !== undefined && result.data.tutorial.popup !== '')
 			{
@@ -571,10 +566,6 @@ $(document).ready(function()
 
    		tip.removeClass('tooltip_sticky_div').hide();
    	})
-	.on('click', '.ui-widget-overlay', function()
-	{
-		closeWindow();
-	})
 	.on('click', '.fancybox', function(e)
 	{
 		if ($.isFunction($(document).fancybox))
@@ -598,9 +589,34 @@ $(document).ready(function()
 			$(this).prop('checked', checked);
 		});
 	});
+
+	if (typeof swipe !== 'undefined' && !navigator.userAgent.match(/(\(iPod|\(iPhone|\(iPad)/))
+	{
+		$("body").swipe(
+		{
+			swipeLeft: function()
+			{
+				if ($('.menu-sidebar').hasClass('opened'))
+					$('.menu-toggle').click();
+				else
+					$('.planet-toggle').click();
+			},
+			swipeRight: function()
+			{
+				if ($('.planet-sidebar').hasClass('opened'))
+					$('.planet-toggle').click();
+				else
+					$('.menu-toggle').click();
+			},
+			threshold: 100,
+			excludedElements: ".table-responsive",
+			fallbackToMouseEvents: false,
+			allowPageScroll: "auto"
+		});
+	}
 });
 
-function showWindow (title, url, width, height)
+function showWindow (title, url, width)
 {
 	if (!XNova.isMobile)
 	{
@@ -613,11 +629,15 @@ function showWindow (title, url, width, height)
 			useBootstrap: false,
 			boxWidth: width,
 			backgroundDismiss: true,
+			animation: 'opacity',
+			closeAnimation: 'opacity',
+			animateFromElement: false,
+			draggable: false,
 			content: function ()
 			{
 				var self = this;
 
-				$.ajax({
+				return $.ajax({
 					url: url,
 					type: 'get',
 					data: {'popup': 'Y'},
@@ -629,52 +649,9 @@ function showWindow (title, url, width, height)
 				});
 			}
 		});
-
-		return;
-
-		$('#windowDialog').html('');
-
-		showLoading();
-
-		if (height === undefined)
-			height = 'auto';
-
-		$.ajax(
-		{
-			url: url,
-			cache: false,
-			data: {ajax: 'Y', 'popup': 'Y'},
-			dataType: 'json',
-			success: function (json)
-			{
-				var obj = $('#windowDialog');
-
-				if (title.length > 0)
-					obj.dialog("option", "title", title);
-				else
-					obj.dialog("option", "title", json.data.title);
-
-				if (width !== undefined)
-				{
-					obj.dialog("option", "minWidth", width);
-					obj.dialog("option", "width", width);
-				}
-
-				if (height !== undefined)
-					obj.dialog("option", "height", height);
-
-				hideLoading();
-
-				obj.html(json.html);
-				obj.dialog("option", "position", {my: "center", at: "center", of: window});
-				obj.dialog("open");
-			}
-		});
 	}
 	else
-	{
 		window.location.href = url.split('ajax').join('').split('popup').join('');
-	}
 }
 
 function closeWindow()
@@ -689,7 +666,7 @@ var blockTimer = true;
 
 function showLoading ()
 {
-	$.fancybox.showLoading();
+	$('#ajaxLoader').show();
 
 	setTimeout(function()
 	{
@@ -699,13 +676,10 @@ function showLoading ()
 
 function hideLoading ()
 {
-	$.fancybox.hideLoading();
-}
-
-function f(target_url, win_name)
-{
-	var new_win = window.open(target_url,win_name,'resizable=yes,scrollbars=yes,menubar=no,toolbar=no,width=550,height=280,top=0,left=0');
-	new_win.focus();
+	setTimeout(function()
+	{
+		$('#ajaxLoader').hide();
+	}, 1000);
 }
 
 function date ( format, timestamp )

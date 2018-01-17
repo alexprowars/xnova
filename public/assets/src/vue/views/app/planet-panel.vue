@@ -10,7 +10,7 @@
 		<div class="col-md-6 col-sm-6 col-xs-12">
 			<div class="row">
 				<div class="col-xs-4 text-xs-center">
-					<span onclick="showWindow('', '/info/4/', 600)" title="Солнечная батарея" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>
+					<span onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="hidden-xs-down"><span class="sprite skin_energie"></span><br></span>
 					<div class="neutral">Энергия</div>
 					<div title="Энергетический баланс">
 						<span v-if="planet.energy.current >= 0" class="positive">{{ Format.number(planet.energy.current) }}</span>

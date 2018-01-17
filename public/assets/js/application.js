@@ -14,6 +14,11 @@ var application = new Vue({
 			return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
 		}
 	},
+	watch: {
+		html: function (val) {
+			this.evalJs(val);
+		}
+	},
 	methods:
 	{
 		getUrl: function (url)
@@ -216,7 +221,7 @@ exports.default = {
 	},
 	methods: {
 		showPopup: function showPopup() {
-			showWindow('', this.$root.getUrl(this.resource.url), 600);
+			showWindow('', this.$root.getUrl(this.resource.url));
 		}
 	}
 };
@@ -280,7 +285,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row topnav"},[_c('div',{staticClass:"col-md-6 col-sm-6 col-xs-12"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'metal',"resource":_vm.planet.metal}})],1),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'crystal',"resource":_vm.planet.crystal}})],1),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('planet-panel-resource',{attrs:{"type":'deuterium',"resource":_vm.planet.deuterium}})],1)])]),_vm._v(" "),_c('div',{staticClass:"col-md-6 col-sm-6 col-xs-12"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col-xs-4 text-xs-center"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Энергия")]),_vm._v(" "),_c('div',{attrs:{"title":"Энергетический баланс"}},[(_vm.planet.energy.current >= 0)?_c('span',{staticClass:"positive"},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.current)))]):_c('span',{staticClass:"negative"},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.current)))])]),_vm._v(" "),_c('span',{staticClass:"hidden-xs-down positive",attrs:{"title":"Выработка энергии"}},[_vm._v(_vm._s(_vm.Format.number(_vm.planet.energy.max)))])]),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('span',{staticClass:"tooltip hidden-xs-down"},[_c('div',{staticClass:"tooltip-content"},[_c('center',[_vm._v("Вместимость:"),_c('br'),_vm._v(_vm._s(_vm.Format.number(_vm.planet.battery.current))+" / "+_vm._s(_vm.Format.number(_vm.planet.battery.max))+" "),_c('br'),_vm._v(" "+_vm._s(_vm.planet.battery.tooltip))])],1),_vm._v(" "),(_vm.planet.battery.power > 0 && _vm.planet.battery.power < 100)?_c('img',{attrs:{"src":'/assets/images/batt.php?p='+_vm.planet.battery.power,"width":"42","alt":""}}):_c('span',{class:'sprite skin_batt'+_vm.planet.battery.power}),_vm._v(" "),_c('br')]),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Аккумулятор")]),_vm._v("\n\t\t\t\t"+_vm._s(_vm.planet.battery.power)+"%"),_c('br')]),_vm._v(" "),_c('div',{staticClass:"col-xs-4 text-xs-center"},[_c('a',{staticClass:"tooltip hidden-xs-down",attrs:{"href":_vm.$root.getUrl('credits/')}},[_c('div',{staticClass:"tooltip-content"},[_c('table',{attrs:{"width":"550"}},[_c('tr',_vm._l((_vm.planet.officiers),function(time,index){return _c('td',{attrs:{"align":"center","width":"14%"}},[_vm._v("'+\n\t\t\t\t\t\t\t\t\t"),_c('div',{staticClass:"separator"}),_vm._v(" "),_c('span',{class:['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]})])})),_vm._v(" "),_c('tr',_vm._l((_vm.planet.officiers),function(time,index){return _c('td',{attrs:{"align":"center"}},[_vm._v("'+\n\t\t\t\t\t\t\t\t\t"),(time > ((new Date).getTime() / 1000))?_c('span',[_vm._v("Нанят до "),_c('font',{attrs:{"color":"lime"}},[_vm._v(_vm._s(_vm.date('d.m.Y H:i', time)))])],1):_c('span',[_c('font',{attrs:{"color":"lime"}},[_vm._v("Не нанят")])],1)])}))])]),_vm._v(" "),_c('span',{staticClass:"sprite skin_kredits"}),_c('br')]),_vm._v(" "),_c('div',{staticClass:"neutral"},[_vm._v("Кредиты")]),_vm._v("\n\t\t\t\t"+_vm._s(_vm.Format.number(_vm.planet.credits))),_c('br')])])])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',{staticClass:"hidden-xs-down",attrs:{"onclick":"showWindow('', '/info/4/', 600)","title":"Солнечная батарея"}},[_c('span',{staticClass:"sprite skin_energie"}),_c('br')])}]
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',{staticClass:"hidden-xs-down",attrs:{"onclick":"showWindow('', '/info/4/')","title":"Солнечная батарея"}},[_c('span',{staticClass:"sprite skin_energie"}),_c('br')])}]
 
 },{"./planet-panel-resource.vue":10}],12:[function(require,module,exports){
 ;(function(){
