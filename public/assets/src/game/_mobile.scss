@@ -42,36 +42,28 @@
 	.menu-toggle:active span span,.planet-toggle:active span span{background-color: #fbbe69;}
 	.menu-toggle > span,.planet-toggle > span{top: 50%;margin-top: -11px;position: absolute;left: 12px;width: 24px;height: 22px;}
 
-	.planet-toggle > span,.planet-toggle.act:before{opacity: 0;}
-	.planet-toggle.act > span{opacity: 1;}
+	.planet-toggle > span,.planet-toggle.active:before{opacity: 0;}
+	.planet-toggle.active > span{opacity: 1;}
 
 	.menu-toggle span.first,.planet-toggle span.first{top: 0;}
 	.menu-toggle span.second,.planet-toggle span.second{top: 10px;}
 	.menu-toggle span.third,.planet-toggle span.third{top: 20px;}
 
-	.menu-toggle.act span.second,.planet-toggle.act span.second{opacity: 0;left: -5px;}
-	.menu-toggle.act span.first,
-	.planet-toggle.act span.first{
+	.menu-toggle.active span.second,.planet-toggle.active span.second{opacity: 0;left: -5px;}
+	.menu-toggle.active span.first,
+	.planet-toggle.active span.first{
 		top: 2px;
 		transform: rotate(45deg);
 	}
-	.menu-toggle.act span.third,
-	.planet-toggle.act span.third{
+	.menu-toggle.active span.third,
+	.planet-toggle.active span.third{
 		top: 2px;
 		transform: rotate(-45deg);
 	}
-	.menu-toggle.act span.first,
-	.menu-toggle.act span.third,
-	.planet-toggle.act span.first,
-	.planet-toggle.act span.third{top: 10px}
-
-	.menu-toggle1.act {
-		transform: translate(190px,0);
-	}
-
-	.planet-toggle1.act {
-		transform: translate(-190px,0);
-	}
+	.menu-toggle.active span.first,
+	.menu-toggle.active span.third,
+	.planet-toggle.active span.first,
+	.planet-toggle.active span.third{top: 10px}
 
 	.menu-sidebar, .planet-sidebar{
 		position: fixed;
@@ -84,10 +76,9 @@
 		transform: translate(-250px,0);
 		transition: all ease-out 0.2s;
 		padding-top: 60px;
-		display: none;
 	}
 
-	.menu-sidebar.opened, .planet-sidebar.opened{
+	.menu-sidebar.active, .planet-sidebar.active{
 		transform: translate(0,0);
 	}
 

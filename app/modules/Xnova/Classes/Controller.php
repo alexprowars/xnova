@@ -106,13 +106,10 @@ class Controller extends PhalconController
 		}
 
 		$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
-		$this->assets->addCss('assets/css/jquery-ui.css', 'footer');
-		$this->assets->addCss('assets/css/jquery.fancybox.css', 'footer');
+		$this->assets->addCss('assets/css/plugins/ui.css', 'footer');
 		$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
-
-		$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-		$this->assets->addJs('assets/js/jquery.fancybox.min.js');
+		$this->assets->addJs('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js');
 		$this->assets->addJs('assets/js/game.js?v='.VERSION);
 
 		Vars::init();
@@ -131,8 +128,6 @@ class Controller extends PhalconController
 			'users' => (int) Options::get('users_total', 0),
 		]);
 
-		Request::addData('mobile', Helpers::allowMobileVersion());
-
 		if ($this->auth->isAuthorized())
 		{
 			//if (!$this->user->isAdmin())
@@ -141,14 +136,14 @@ class Controller extends PhalconController
 			$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
 			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 
-			$this->assets->addJs('https://unpkg.com/vue/dist/vue.js', 'footer');
-			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.js', 'footer');
+			$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue', 'footer');
+			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.min.js', 'footer');
 
-			$this->assets->addJs('assets/js/script.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/universe.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/flotten.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/utils.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/ui.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
@@ -234,6 +229,8 @@ class Controller extends PhalconController
 				'fleet' => $this->game->getSpeed('fleet'),
 				'resources' => $this->game->getSpeed('mine')
 			]);
+
+			Request::addData('page', false);
 
 			$this->user->getAllyInfo();
 

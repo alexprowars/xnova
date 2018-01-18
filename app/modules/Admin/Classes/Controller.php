@@ -14,6 +14,7 @@ use Friday\Core\Options;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
+use Xnova\Vars;
 
 /**
  * Class ControllerBase
@@ -98,7 +99,7 @@ class Controller extends PhalconController
 			}
 		}
 
-		$this->game->loadGameVariables();
+		Vars::init();
 
 		$this->assets->addCss('https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all');
 		$this->assets->addCss('assets/admin/global/plugins/font-awesome/css/font-awesome.css');

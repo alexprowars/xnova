@@ -50,7 +50,7 @@ $(document).ready(function()
 		'<div align="right">$1<\/div>',
 		'<div style="text-align:justify;">$1<\/div>',
 		'<span style="font-size: $1px;">$2</span>',
-		'<a href="$1" class="fancybox" target="_blank"><img src="$1" style="max-width:350px;" alt="XNova" /></a>',
+		'<a href="$1" target="_blank"><img src="$1" style="max-width:350px;" alt="" /></a>',
 		'<a href="$1" target="_blank">$2</a>',
 		'<a href="$1" target="_blank">$1</a>',
 		'<p>$1</p>',

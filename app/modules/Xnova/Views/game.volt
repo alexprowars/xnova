@@ -30,8 +30,6 @@
 </head>
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<script type="text/javascript">
-		ajax_nav = 1;
-
 		var options = {{ toJson(options) }};
 		options['html'] = {{ replace("\t", "", toJson(content())) }};
 	</script>

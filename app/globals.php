@@ -92,9 +92,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFilter('floor', 'floor');
 	$compiler->addFilter('round', 'round');
 	$compiler->addFilter('ceil', 'ceil');
-	$compiler->addFunction('number_format', 'number_format');
 	$compiler->addFunction('in_array', 'in_array');
-	$compiler->addFunction('long2ip', 'long2ip');
 
 	$compiler->addFunction('allowMobile', function($arguments)
 	{
@@ -114,7 +112,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
 	$compiler->addFunction('rand', 'mt_rand');
 	$compiler->addFunction('implode', 'implode');
-	$compiler->addFunction('http_build_query', 'http_build_query');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
 		return '\Xnova\Format::number(' . $arguments . ')';
@@ -134,10 +131,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('isTechnologieAccessible', function($arguments)
 	{
 		return '\Xnova\Building::isTechnologieAccessible(' . $arguments . ')';
-	});
-	$compiler->addFunction('morph', function($arguments)
-	{
-		return '\Xnova\Helpers::morph(' . $arguments . ')';
 	});
 	$compiler->addFunction('colorNumber', function($arguments)
 	{

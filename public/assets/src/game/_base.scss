@@ -628,6 +628,8 @@ textarea#text {
 				color: #FFFFFF;
 				font-weight: normal;
 				padding: 5px;
+				transition-property: background;
+				transition-duration: .25s;
 
 				&.active, &:hover {
 					background: #6B354E;
@@ -1487,10 +1489,6 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin:0;
-}
-
-.menu_opened {
-	/*overflow: hidden;*/
 }
 
 .tooltip .tooltip-content {

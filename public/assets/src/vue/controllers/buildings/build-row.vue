@@ -22,7 +22,7 @@
 			<div class="actions">
 				Уровень: <span v-bind:class="[(item.level > 0 ? 'positive' : 'negative')]">{{ Format.number(item.level) }}</span><br>
 				<div v-if="item.allow">
-					Время: {{ Format.number(item.time) }}<br>
+					Время: {{ Format.time(item.time) }}<br>
 					<div v-html="item.add"></div>
 					<div class="startBuild">
 						<a v-if="item.action === 'allow'" v-bind:href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
@@ -58,7 +58,7 @@
 		methods: {
 			openWindow: function ()
 			{
-				showWindow('', this.$root.getUrl('info/'+item.i+'/'), 600)
+				showWindow('', this.$root.getUrl('info/'+this.item.i+'/'), 600)
 			}
 		}
 	}

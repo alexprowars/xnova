@@ -31,17 +31,17 @@
 				<div class="col-xs-4 text-xs-center">
 					<a v-bind:href="$root.getUrl('credits/')" class="tooltip hidden-xs-down">
 						<div class="tooltip-content">
-							<table width=550>
+							<table width="550">
 								<tr>
-									<td v-for="(time, index) in planet.officiers" align="center" width="14%">'+
+									<td v-for="(time, index) in planet.officiers" align="center" width="14%">
 										<div class="separator"></div>
 										<span v-bind:class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
 									</td>
 								</tr>
 								<tr>
-									<td v-for="(time, index) in planet.officiers" align="center">'+
-										<span v-if="time > ((new Date).getTime() / 1000)">Нанят до <font color=lime>{{ date('d.m.Y H:i', time) }}</font></span>
-										<span v-else><font color=lime>Не нанят</font></span>
+									<td v-for="(time, index) in planet.officiers" align="center">
+										<span v-if="time > ((new Date).getTime() / 1000)">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
+										<span v-else><font color="lime">Не нанят</font></span>
 									</td>
 								</tr>
 							</table>

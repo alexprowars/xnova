@@ -1,20 +1,19 @@
+<template>
+	<li>
+		<a v-bind:class="{active: active}" v-bind:href="item.url" v-bind:target="(item.new === true ? '_blank' : '')" v-on:click="$parent.$parent.sidebarMenu = false">{{ item.text }}</a>
+	</li>
+</template>
+
 <script>
 	export default {
 		name: "main-menu-item",
 		props: ['item'],
-		render: function (createElement)
-		{
-			return createElement('li', {}, [
-				createElement('a', {
-					class: {
-						active: this.$parent.active === this.item.id
-					},
-					attrs: {
-						href: this.item.url,
-						target: this.item.new === true ? '_blank' : ''
-					}
-				}, this.item.text)
-			])
+		data: function () { return {} },
+		computed: {
+			active: function ()
+			{
+				return this.$parent.active === this.item.id
+			}
 		}
 	}
 </script>

@@ -490,12 +490,7 @@ function PrintRow ()
 function ChangePlanet(id)
 {
 	if (id > 0)
-	{
-		if (ajax_nav == 0)
-			eval("location='"+options.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"'");
-		else
-			load(options.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"");
-	}
+		load(options.path+"galaxy/r/3/?"+document.getElementById('planet_select').options[id].value+"");
 }
 
 function PrintSelector(fleet_shortcut)

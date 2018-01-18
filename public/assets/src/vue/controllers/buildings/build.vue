@@ -20,7 +20,7 @@
 					</td>
 					<td class="k" v-if="index === 0">
 						<div v-if="item.time > 0" class="z">
-							{{ Format.time(item.time) }}
+							{{ Format.time(item.time, ':') }}
 							<br>
 							<a v-if="cheat <= 0" v-on:click="load($root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/cancel/planet/'+pl+'/'))">Отменить</a>
 						</div>

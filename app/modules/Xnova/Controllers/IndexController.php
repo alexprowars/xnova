@@ -34,12 +34,10 @@ class IndexController extends Controller
 
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
 			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
 			$this->assets->addJs('assets/js/game.js');
 			$this->assets->addJs('assets/js/jquery.validate.js');
 
 			$this->assets->addCss('assets/css/jquery-ui.css');
-			$this->assets->addCss('assets/css/jquery.fancybox.css');
 			$this->assets->addCss('assets/css/login.css');
 		}
 
