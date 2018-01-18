@@ -44,6 +44,7 @@
 	<div id="ajaxLoader"></div>
 	<div id="tooltip" class="tip"></div>
 
+	{{ assets.outputCss('footer') }}
 	{{ assets.outputJs('footer') }}
 </body>
 </html>

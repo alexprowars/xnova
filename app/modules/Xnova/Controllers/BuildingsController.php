@@ -12,6 +12,7 @@ use Xnova\Construction;
 use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/buildings")
@@ -114,15 +115,7 @@ class BuildingsController extends Controller
 	{
 		$parse = $this->building->pageBuilding();
 
-		if ($this->planet->planet_type == 3)
-			$parse['planettype'] = 'moon';
-		elseif ($this->planet->planet_type == 5)
-			$parse['planettype'] = 'base';
-		else
-			$parse['planettype'] = 'planet';
-
-		$this->view->pick('buildings/index');
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Постройки');
 	}

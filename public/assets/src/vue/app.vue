@@ -45,7 +45,8 @@
 				</div>
 				<!-- end messages -->
 
-				<div id="gamediv" class="content-row" v-html="$root.html"></div>
+				<div v-if="$root.html.length > 0" id="gamediv" class="content-row" v-html="$root.html"></div>
+				<router-view v-bind:page="$root.page"></router-view>
 			</div>
 		</div>
 

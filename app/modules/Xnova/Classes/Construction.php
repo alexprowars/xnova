@@ -8,6 +8,7 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Di;
 use Xnova\Models\Planet;
 use Xnova\Models\User;
 
@@ -33,10 +34,10 @@ class Construction
 	{
 		$parse = [];
 
-		$request 	= $this->user->getDI()->getShared('request');
-		$storage 	= $this->user->getDI()->getShared('registry');
-		$config 	= $this->user->getDI()->getShared('config');
-		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
+		$request 	= Di::getDefault()->getShared('request');
+		$storage 	= Di::getDefault()->getShared('registry');
+		$config 	= Di::getDefault()->getShared('config');
+		$baseUri 	= Di::getDefault()->getShared('url')->getBaseUri();
 
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
 			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
@@ -90,7 +91,7 @@ class Construction
 
 		$oldStyle = $this->user->getUserOption('only_available');
 
-		$parse['BuildingsList'] = [];
+		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
 		{
@@ -116,10 +117,12 @@ class Construction
 
 			$row = [];
 
-			$row['access']	= $isAccess;
+			$row['allow']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['count'] 	= $BuildingLevel;
-			$row['price'] 	= Building::getElementPrice($BuildingPrice, $this->planet);
+			$row['name'] 	= _getText('tech', $Element);
+			$row['level'] 	= $BuildingLevel;
+			$row['price'] 	= $BuildingPrice;
+			$row['action'] 	= '';
 
 			if ($isAccess)
 			{
@@ -128,42 +131,42 @@ class Construction
 
 				$row['time'] 	= Building::getBuildingTime($this->user, $this->planet, $Element);
 				$row['add'] 	= Building::getNextProduction($Element, $BuildingLevel, $this->planet);
-				$row['click'] 	= '';
 
 				if ($Element == 31)
 				{
 					if ($this->user->b_tech_planet != 0)
-						$row['click'] = "<span class=\"resNo\">" . _getText('in_working') . "</span>";
+						$row['action'] = 'working';
 				}
 
-				if (!$row['click'])
+				if (!$row['action'])
 				{
 					if ($RoomIsOk && $CanBuildElement)
 					{
 						if ($Queue['lenght'] == 0)
 						{
 							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$build['level']) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
+								$row['action'] = 'allow';
 							else
-								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
+								$row['action'] = 'resources';
 						}
 						else
-							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь ".(isset($row['exp']) && $row['exp'] > 0 ? ' (+ '.$row['exp'].' exp)' : '')."</span></a>";
+							$row['action'] = 'queue';
 					}
 					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['click'] = "<span class=\"resNo\">".((!$build['level']) ? 'Построить' : 'Улучшить')."</span>";
+						$row['action'] = 'wait';
 					else
-						$row['click'] = "<span class=\"resNo\">нет места</span>";
+						$row['action'] = 'fields';
 				}
 			}
+			else
+				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
 
-			$parse['BuildingsList'][] = $row;
+			$parse['items'][] = $row;
 		}
 
-		$parse['BuildList'] 			= $Queue['buildlist'];
-		$parse['planet_field_current'] 	= $this->planet->field_current;
-		$parse['planet_field_max'] 		= $CurrentMaxFields;
-		$parse['field_libre'] 			= $parse['planet_field_max'] - $this->planet->field_current;
+		$parse['queue'] 			= $Queue['buildlist'];
+		$parse['fields_current'] 	= (int) $this->planet->field_current;
+		$parse['fields_max'] 		= $CurrentMaxFields;
 
 		return $parse;
 	}
@@ -478,23 +481,19 @@ class Construction
 
 		if ($ActualCount != 0)
 		{
-			$PlanetID = $this->planet->id;
-
 			$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
 
-			foreach ($QueueArray AS $i => $item)
+			foreach ($QueueArray AS $item)
 			{
 				if ($item['e'] >= time())
 				{
 					$ListIDRow[] = Array
 					(
-						'ListID' 		=> ($i + 1),
-						'ElementTitle' 	=> _getText('tech', $item['i']),
-						'BuildLevel' 	=> $item['d'] == 0 ? $item['l'] : $item['l'] + 1,
-						'BuildMode' 	=> $item['d'],
-						'BuildTime' 	=> ($item['e'] - time()),
-						'PlanetID' 		=> $PlanetID,
-						'BuildEndTime' 	=> $item['e']
+						'name' 	=> _getText('tech', $item['i']),
+						'level' => $item['d'] == 0 ? $item['l'] : $item['l'] + 1,
+						'mode' 	=> $item['d'],
+						'time' 	=> ($item['e'] - time()),
+						'end' 	=> $item['e']
 					);
 				}
 			}

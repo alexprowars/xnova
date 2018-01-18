@@ -106,8 +106,8 @@ class Controller extends PhalconController
 		}
 
 		$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
-		$this->assets->addCss('assets/css/jquery-ui.css');
-		$this->assets->addCss('assets/css/jquery.fancybox.css');
+		$this->assets->addCss('assets/css/jquery-ui.css', 'footer');
+		$this->assets->addCss('assets/css/jquery.fancybox.css', 'footer');
 		$this->assets->addCss('assets/css/style.css?v='.VERSION);
 
 
@@ -138,10 +138,12 @@ class Controller extends PhalconController
 			//if (!$this->user->isAdmin())
 			//	die('Нельзя пока вам сюда');
 
-			$this->assets->addCss('assets/css/plugins/toast.css');
-			$this->assets->addCss('assets/css/plugins/confirm.css');
+			$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
+			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 
-			$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue', 'footer');
+			$this->assets->addJs('https://unpkg.com/vue/dist/vue.js', 'footer');
+			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.js', 'footer');
+
 			$this->assets->addJs('assets/js/script.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/universe.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/flotten.js?v='.VERSION, 'footer');
@@ -337,7 +339,6 @@ class Controller extends PhalconController
 				];
 			}
 
-			Request::addData('planet', false);
 			Request::addData('user', [
 				'planet' => (int) $this->user->planet_current,
 				'messages' => (int) $this->user->messages,
@@ -350,6 +351,8 @@ class Controller extends PhalconController
 				'planets' => $planets,
 				'timezone' => (int) $this->user->timezone
 			]);
+
+			Request::addData('resources', false);
 
 			if ($this->getDI()->has('planet'))
 				$this->topPlanetPanel();

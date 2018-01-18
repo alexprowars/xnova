@@ -67,7 +67,7 @@
 		{
 			update: function ()
 			{
-				if (typeof options.planet === 'undefined' || options.planet === false)
+				if (typeof this.planet === 'undefined' || this.planet === false)
 					return;
 
 				if (XNova.lastUpdate === 0)
@@ -82,13 +82,13 @@
 
 				['metal', 'crystal', 'deuterium'].forEach(function(res)
 				{
-					if (typeof options.planet[res] === 'undefined')
+					if (typeof this.planet[res] === 'undefined')
 						return;
 
-					var power = (options.planet[res]['current'] >= options.planet[res]['max']) ? 0 : 1;
+					var power = (this.planet[res]['current'] >= this.planet[res]['max']) ? 0 : 1;
 
-					options.planet[res]['current'] += ((options.planet[res]['production'] / 3600) * power * factor);
-				});
+					this.planet[res]['current'] += ((this.planet[res]['production'] / 3600) * power * factor);
+				}.bind(this));
 			}
 		},
 		created: function ()

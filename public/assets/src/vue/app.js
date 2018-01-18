@@ -2,8 +2,31 @@ var App = require('./app.vue')
 
 Vue.prototype.Format = Format
 Vue.prototype.date = date
+Vue.prototype.morph = morph
+Vue.prototype.load = load
 
-var application = new Vue({
+var BuildingBuildController = require('./controllers/buildings/build.vue')
+var EmptyController = require('./controllers/empty.vue')
+
+const routes = [{
+	path: '/buildings',
+	component: BuildingBuildController
+}, {
+	path: '/buildings/index/*',
+	component: BuildingBuildController
+},
+{
+	path: '*',
+	component: EmptyController
+}]
+
+var router = new VueRouter({
+	mode: 'history',
+  routes // сокращение от `routes: routes`
+})
+
+window.application = new Vue({
+	router,
 	el: '#application',
 	delimiters: ['<%', '%>'],
 	data: options,
@@ -14,8 +37,12 @@ var application = new Vue({
 		}
 	},
 	watch: {
-		html: function (val) {
-			this.evalJs(val);
+		html: function (val)
+		{
+			setTimeout(function()
+			{
+				this.evalJs(val);
+			}.bind(this), 25)
 		}
 	},
 	methods:

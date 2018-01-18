@@ -220,6 +220,30 @@ var Format = {
 			return number_format(Math.floor(value / 1000000), 0, ',', '.')+'kk';
 
 		return number_format(value, 0, ',', '.');
+	},
+	time: function (value)
+	{
+		var s = value;
+		var m = 0;
+		var h = 0;
+
+		if (s > 59) {
+			m = Math.floor(s / 60);
+			s = s - m * 60;
+		}
+
+		if ( m > 59) {
+			h = Math.floor(m / 60);
+			m = m - h * 60;
+		}
+
+		if ( s < 10 )
+			s = "0"+s;
+
+		if ( m < 10 )
+			m = "0"+m;
+
+		return h + ":" + m + ":" + s;
 	}
 };
 
@@ -418,6 +442,8 @@ function load (url, disableUrlState)
 				if (result.data.hasOwnProperty(key))
 					Vue.set(options, key, result.data[key])
 			}
+
+			application.$router.push(result.data.url);
 
 			if (result.data.tutorial !== undefined && result.data.tutorial.popup !== '')
 			{
@@ -844,4 +870,9 @@ function date ( format, timestamp )
 
 		return ret;
 	});
+}
+
+function morph (n, titles)
+{
+	return titles[(n % 10 === 1 && n % 100 !== 11) ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2]
 }
