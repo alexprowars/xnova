@@ -337,6 +337,7 @@ class Controller extends PhalconController
 			}
 
 			Request::addData('user', [
+				'id' => (int) $this->user->id,
 				'planet' => (int) $this->user->planet_current,
 				'messages' => (int) $this->user->messages,
 				'alliance' => [

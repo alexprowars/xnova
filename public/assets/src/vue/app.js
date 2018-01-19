@@ -4,8 +4,10 @@ Vue.prototype.Format = Format
 Vue.prototype.date = date
 Vue.prototype.morph = morph
 Vue.prototype.load = load
+Vue.prototype.showWindow = showWindow
 
 var BuildingBuildController = require('./controllers/buildings/build.vue')
+var GalaxyController = require('./controllers/galaxy/galaxy.vue')
 var EmptyController = require('./controllers/empty.vue')
 
 const routes = [{
@@ -14,8 +16,10 @@ const routes = [{
 }, {
 	path: '/buildings/index/*',
 	component: BuildingBuildController
-},
-{
+}, {
+	path: '/galaxy*',
+	component: GalaxyController
+}, {
 	path: '*',
 	component: EmptyController
 }]

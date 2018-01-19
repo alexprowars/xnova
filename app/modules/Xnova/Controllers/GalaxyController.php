@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\User;
 
 /**
@@ -39,6 +40,8 @@ class GalaxyController extends Controller
 	 */
 	public function indexAction ()
 	{
+		$parse = [];
+
 		$fleetmax = $this->user->getTechLevel('computer') + 1;
 		
 		if ($this->user->rpg_admiral > time())
@@ -181,13 +184,10 @@ class GalaxyController extends Controller
 		$html .= "<div id='galaxy' class='container-fluid'></div>";
 
 		$jsUser = [
-			'id' => $this->user->id,
 			'phalanx' => $Phalanx,
 			'destroy' => $Destroy,
 			'missile' => $MissileBtn,
 			'total_points' => isset($records['total_points']) ? $records['total_points'] : 0,
-			'ally_id' => $this->user->ally_id,
-			'planet_current' => $this->user->planet_current,
 			'colonizer' => $this->planet->getUnitCount('colonizer'),
 			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
 			'spy' => (int) $this->user->spy,
@@ -197,7 +197,17 @@ class GalaxyController extends Controller
 			'max_fleets' => $fleetmax
 		];
 
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var user = ".json_encode($jsUser)."; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
+		$parse['galaxy'] = (int) $galaxy;
+		$parse['system'] = (int) $system;
+		$parse['user'] = $jsUser;
+		$parse['items'] = [];
+
+		for ($i = 1; $i <= 15; $i++)
+		{
+			$parse['items'][$i - 1] = false;
+		}
+
+		$html .= "<script>var Deuterium = '0';";
 		
 		$html .= " var fleet_shortcut = new Array(); ";
 
@@ -216,8 +226,6 @@ class GalaxyController extends Controller
 		
 		$html .= "$('#galaxy').append(PrintSelector(fleet_shortcut)); ";
 		
-		$galaxyRow = '';
-		
 		$GalaxyRow = $this->db->query("SELECT
 								p.planet, p.id AS planet_id, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
 								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
@@ -235,8 +243,6 @@ class GalaxyController extends Controller
 				LEFT JOIN game_statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1') 
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "';", '');
 		
-		$rows = [];
-		
 		while ($row = $GalaxyRow->fetch())
 		{
 			if ($row['luna_update'] != "" && $row['luna_update'] > $row['last_active'])
@@ -250,14 +256,12 @@ class GalaxyController extends Controller
 			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
 				$this->checkAbandonMoonState($row);
 
-			$online = $row['onlinetime'];
-		
-			if ($online < (time() - 60 * 60 * 24 * 7) && $online > (time() - 60 * 60 * 24 * 28))
-				$row['onlinetime'] = 1;
-			elseif ($online < (time() - 60 * 60 * 24 * 28))
-				$row['onlinetime'] = 2;
+			if ($row['onlinetime'] < (time() - 60 * 60 * 24 * 7) && $row['onlinetime'] > (time() - 60 * 60 * 24 * 28))
+				$row['online'] = 1;
+			elseif ($row['onlinetime'] < (time() - 60 * 60 * 24 * 28))
+				$row['online'] = 2;
 			else
-				$row['onlinetime'] = 0;
+				$row['online'] = 0;
 		
 			if ($row['vacation'] > 0)
 				$row['vacation'] = 1;
@@ -273,17 +277,11 @@ class GalaxyController extends Controller
 
 			unset($v);
 		
-			$rows[] = $row;
+			$parse['items'][$row['planet'] - 1] = $row;
 		}
 		
-		foreach ($rows AS $row)
-			$galaxyRow .= 'row[' . $row['planet'] . '] = '.json_encode($row, true).';';
-		
-		$html .= $galaxyRow;
-		
-		$html .= "$('#galaxy').append(PrintRow());</script>";
+		Request::addData('page', $parse);
 
-		$this->view->setVar('html', $html);
 		$this->tag->setTitle('Галактика');
 		$this->showTopPanel(false);
 	}

@@ -476,7 +476,12 @@ $(document).ready(function()
 
 		tooltipTimer = setTimeout(function()
 		{
-			tip.html(obj.data('content')).addClass('tooltip_sticky_div');
+			if (typeof obj.data('content') !== 'undefined')
+				tip.html(obj.data('content'));
+			else
+				tip.html('').append(obj.find('.tooltip-content').clone());
+
+			tip.addClass('tooltip_sticky_div');
 
 			tip.css({
 				top : e.pageY - tip.outerHeight() / 2,
