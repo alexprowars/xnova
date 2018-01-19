@@ -5,6 +5,7 @@ Vue.prototype.date = date
 Vue.prototype.morph = morph
 Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
+Vue.prototype.QuickFleet = QuickFleet
 
 var BuildingBuildController = require('./controllers/buildings/build.vue')
 var GalaxyController = require('./controllers/galaxy/galaxy.vue')
@@ -72,6 +73,14 @@ window.application = new Vue({
 					else
 						jQuery.globalEval($(this).text());
 				});
+			}
+		},
+		applyData: function (data)
+		{
+			for (var key in data)
+			{
+				if (data.hasOwnProperty(key))
+					Vue.set(options, key, data[key])
 			}
 		}
 	},

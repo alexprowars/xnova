@@ -559,7 +559,7 @@ img.info {
 	}
 }
 
-.tip {
+.tip, .tooltip-content.tooltip_sticky_div {
 	display: none;
 	padding: 4px;
 	position: absolute;
@@ -639,8 +639,8 @@ textarea#text {
 	}
 
 	> .content {
-		overflow-x: auto;
-		overflow-y: hidden;
+		overflow-x: visible;
+		overflow-y: visible;
 		flex-shrink: 1000000;
 		width: 100%;
 		order: 2;
@@ -905,7 +905,6 @@ table td.c, table th, .table th {
 	}
 
 	.img {
-		font-size: 0;
 		width: 30px;
 		height: 32px;
 	}
@@ -1487,17 +1486,17 @@ input[type=number]::-webkit-outer-spin-button {
 	display: none;
 }
 
-.debirs_0 {
+.galaxy .debris_0 {
 	background-color: rgb(0, 100, 0);
 	background-image: none;
 }
 
-.debris_50 {
+.galaxy .debris_50 {
 	background-color: rgb(100, 100, 0);
 	background-image: none;
 }
 
-.debris_100 {
+.galaxy .debris_100 {
 	background-color: rgb(100, 0, 0);
 	background-image: none;
 }

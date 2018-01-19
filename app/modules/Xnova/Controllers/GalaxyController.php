@@ -181,13 +181,11 @@ class GalaxyController extends Controller
 		if ($mode == 2)
 			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->getUnitCount('interplanetary_misil'));
 
-		$html .= "<div id='galaxy' class='container-fluid'></div>";
-
 		$jsUser = [
 			'phalanx' => $Phalanx,
 			'destroy' => $Destroy,
 			'missile' => $MissileBtn,
-			'total_points' => isset($records['total_points']) ? $records['total_points'] : 0,
+			'stat_points' => isset($records['total_points']) ? $records['total_points'] : 0,
 			'colonizer' => $this->planet->getUnitCount('colonizer'),
 			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
 			'spy' => (int) $this->user->spy,
@@ -201,15 +199,12 @@ class GalaxyController extends Controller
 		$parse['system'] = (int) $system;
 		$parse['user'] = $jsUser;
 		$parse['items'] = [];
+		$parse['shortcuts'] = [];
 
 		for ($i = 1; $i <= 15; $i++)
 		{
 			$parse['items'][$i - 1] = false;
 		}
-
-		$html .= "<script>var Deuterium = '0';";
-		
-		$html .= " var fleet_shortcut = new Array(); ";
 
 		if ($this->session->has('fleet_shortcut'))
 		{
@@ -220,20 +215,24 @@ class GalaxyController extends Controller
 
 			foreach ($array AS $id => $a)
 			{
-				$html .= " fleet_shortcut[" . $id . "] = new Array('" . base64_decode($a[0]) . "', " . $a[1] . ", " . $a[2] . ", " . $a[3] . ", " . (($a[1] == $galaxy && $a[2] == $system) ? 1 : 0) . "); ";
+				$parse['shortcuts'][] = [
+					'n' => base64_decode($a[0]),
+					'g' => (int) $a[1],
+					's' => (int) $a[2],
+					'p' => (int) $a[3],
+					'c'	=> $a[1] == $galaxy && $a[2] == $system
+				];
 			}
 		}
-		
-		$html .= "$('#galaxy').append(PrintSelector(fleet_shortcut)); ";
-		
+
 		$GalaxyRow = $this->db->query("SELECT
-								p.planet, p.id AS planet_id, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
-								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
-								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.vacation, u.banned, u.sex, u.avatar,
-								ui.image AS user_image,
-								a.name AS ally_name, a.members AS ally_members, a.web AS ally_web, a.tag AS ally_tag,
-								ad.type,
-								s.total_rank, s.total_points
+								p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
+								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
+								u.id AS u_id, u.username as u_name, u.race as u_race, u.ally_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned as u_ban, u.sex as u_sex, u.avatar as u_avatar,
+								ui.image AS u_image,
+								a.name AS a_name, a.members AS a_members, a.web AS a_web, a.tag AS a_tag,
+								ad.type as d_type,
+								s.total_rank as s_rank, s.total_points as s_points
 				FROM game_planets p 
 				LEFT JOIN game_planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0) 
 				LEFT JOIN game_users u ON (u.id = p.id_owner AND p.id_owner != 0)
@@ -245,31 +244,41 @@ class GalaxyController extends Controller
 		
 		while ($row = $GalaxyRow->fetch())
 		{
-			if ($row['luna_update'] != "" && $row['luna_update'] > $row['last_active'])
-				$row['last_active'] = $row['luna_update'];
+			if ($row['l_update'] != "" && $row['l_update'] > $row['p_active'])
+				$row['p_active'] = $row['l_update'];
 		
-			unset($row['luna_update']);
-		
-			if ($row['destruyed'] != 0 && $row["planet_id"] != '')
-				$this->checkAbandonPlanetState($row);
-		
-			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
-				$this->checkAbandonMoonState($row);
+			if ($row['p_delete'] > 0 && $row['p_delete'] <= time())
+			{
+				$this->db->delete('game_planets', 'id = ?', [$row['p_id']]);
 
-			if ($row['onlinetime'] < (time() - 60 * 60 * 24 * 7) && $row['onlinetime'] > (time() - 60 * 60 * 24 * 28))
-				$row['online'] = 1;
-			elseif ($row['onlinetime'] < (time() - 60 * 60 * 24 * 28))
-				$row['online'] = 2;
+				if ($row['p_parent'] != 0)
+					$this->db->delete('game_planets', 'id = ?', [$row['p_parent']]);
+			}
+
+			if ($row["l_id"] != "" && $row["l_delete"] != 0 && $row['l_delete'] <= time())
+			{
+				$this->db->delete('game_planets', 'id = ?', [$row['l_id']]);
+				$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$row['l_id']);
+
+				$row['l_id'] = 0;
+			}
+
+			if ($row['u_online'] < (time() - 60 * 60 * 24 * 7) && $row['u_online'] > (time() - 60 * 60 * 24 * 28))
+				$row['u_online'] = 1;
+			elseif ($row['u_online'] < (time() - 60 * 60 * 24 * 28))
+				$row['u_online'] = 2;
 			else
-				$row['online'] = 0;
+				$row['u_online'] = 0;
 		
-			if ($row['vacation'] > 0)
-				$row['vacation'] = 1;
+			if ($row['u_vacation'] > 0)
+				$row['u_vacation'] = 1;
 		
-			if ($row['last_active'] > (time() - 59 * 60))
-				$row['last_active'] = floor((time() - $row['last_active']) / 60);
+			if ($row['p_active'] > (time() - 59 * 60))
+				$row['p_active'] = floor((time() - $row['p_active']) / 60);
 			else
-				$row['last_active'] = 60;
+				$row['p_active'] = 60;
+
+			unset($row['p_parent'], $row['l_update'], $row['p_id']);
 		
 			foreach ($row AS &$v)
 				if (is_numeric($v))

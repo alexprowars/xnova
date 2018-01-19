@@ -139,7 +139,6 @@ class Controller extends PhalconController
 			$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue', 'footer');
 			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.min.js', 'footer');
 
-			$this->assets->addJs('assets/js/universe.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/flotten.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
@@ -207,22 +206,25 @@ class Controller extends PhalconController
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
 
-			$menu = [];
-
-			foreach (_getText('main_menu') as $code => $data)
+			if (!$this->request->isAjax())
 			{
-				if ($data[2] > $this->user->authlevel)
-					continue;
+				$menu = [];
 
-				$menu[] = [
-					'id' => $code,
-					'url' => $this->url->get($data[1]),
-					'text' => trim($data[0]),
-					'new' => isset($data[3])
-				];
+				foreach (_getText('main_menu') as $code => $data)
+				{
+					if ($data[2] > $this->user->authlevel)
+						continue;
+
+					$menu[] = [
+						'id' => $code,
+						'url' => $this->url->get($data[1]),
+						'text' => trim($data[0]),
+						'new' => isset($data[3])
+					];
+				}
+
+				Request::addData('menu', $menu);
 			}
-
-			Request::addData('menu', $menu);
 
 			Request::addData('speed', [
 				'game' => $this->game->getSpeed('build'),

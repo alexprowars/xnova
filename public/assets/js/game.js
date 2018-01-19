@@ -244,12 +244,7 @@ function load (url, disableUrlState)
 
 			closeWindow();
 
-			for (var key in result.data)
-			{
-				if (result.data.hasOwnProperty(key))
-					Vue.set(options, key, result.data[key])
-			}
-
+			application.applyData(result.data);
 			application.$router.push(result.data.url);
 
 			if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
@@ -375,7 +370,7 @@ $(document).ready(function()
 
 		return false;
 	})
-	.on('submit', '#gamediv form[class!=noajax]', function(e)
+	.on('submit', '.content form[class!=noajax]', function(e)
 	{
 		e.preventDefault();
 
@@ -469,8 +464,15 @@ $(document).ready(function()
 	})
 	.on('mouseenter', ".tooltip_sticky", function (e)
 	{
-   		var tip = $('#tooltip');
+   		var tip;
 		var obj = $(this);
+
+		var hasHtml = obj.find('.tooltip-content').length > 0;
+
+		if (hasHtml)
+			tip = obj.find('.tooltip-content');
+		else
+			tip = $('#tooltip');
 
 		tip.css({width: ''});
 
@@ -479,14 +481,26 @@ $(document).ready(function()
 			if (typeof obj.data('content') !== 'undefined')
 				tip.html(obj.data('content'));
 			else
-				tip.html('').append(obj.find('.tooltip-content').clone());
+				tip.show();
 
 			tip.addClass('tooltip_sticky_div');
 
-			tip.css({
-				top : e.pageY - tip.outerHeight() / 2,
-				left : e.pageX - tip.outerWidth() / 2
-			});
+			if (hasHtml)
+			{
+				var parentOffset = $('.game_content > .content').offset();
+
+				tip.css({
+					top : obj.offset().top - parentOffset.top - tip.outerHeight() / 2,
+					left : obj.offset().left - parentOffset.left - (tip.outerWidth() / 2)
+				});
+			}
+			else
+			{
+				tip.css({
+					top : e.pageY - tip.outerHeight() / 2,
+					left : e.pageX - tip.outerWidth() / 2
+				});
+			}
 
 			tip.show();
 		}, 400);
@@ -495,9 +509,9 @@ $(document).ready(function()
 	{
 		clearTimeout(tooltipTimer);
 	})
-	.on('mouseleave', ".tooltip_sticky_div", function ()
+	.on('mouseleave', ".tooltip_sticky_div", function (e)
 	{
-   		var tip = $('#tooltip');
+   		var tip = $('.tooltip_sticky_div');
 
    		tip.removeClass('tooltip_sticky_div').hide();
    	})

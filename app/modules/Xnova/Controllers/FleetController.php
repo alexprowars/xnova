@@ -18,6 +18,7 @@ use Xnova\Controllers\Fleet\StageZero;
 use Xnova\Controllers\Fleet\Verband;
 use Xnova\Fleet;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/fleet")
@@ -89,19 +90,17 @@ class FleetController extends Controller
 	{
 		$action = new Quick();
 
-		$result = $action->show($this);
-
-		$this->view->disable();
-
-		if (!is_array($result))
+		try
 		{
-			$this->game->setRequestStatus(0);
-			$this->game->setRequestMessage($result);
+			$result = $action->show($this);
+
+			$this->flashSession->notice($result);
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->game->setRequestStatus($result[0]);
-			$this->game->setRequestMessage($result[1]);
+			$this->flashSession->error($e->getMessage());
+
+			Request::setStatus(false);
 		}
 	}
 
