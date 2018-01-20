@@ -226,7 +226,8 @@ var durationTime = 0;
 function durationTimer()
 {
 	var D0 = new Date;
-	hms('end_time', new Date(D0.getTime() + serverTime + durationTime));
+
+	$("#end_time").html(date('d.m.Y H:i:s', D0.getTime() + serverTime + durationTime))
 
 	timeouts['durationTimer'] = setTimeout(durationTimer, 1000);
 }

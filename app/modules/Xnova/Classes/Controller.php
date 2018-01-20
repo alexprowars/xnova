@@ -121,6 +121,7 @@ class Controller extends PhalconController
 
 		Request::addData('path', $this->url->getBaseUri());
 		Request::addData('version', VERSION);
+		Request::addData('host', $_SERVER['HTTP_HOST']);
 
 		Request::addData('stats', [
 			'time' => time(),
@@ -340,6 +341,8 @@ class Controller extends PhalconController
 
 			Request::addData('user', [
 				'id' => (int) $this->user->id,
+				'name' => trim($this->user->username),
+				'race' => (int) $this->user->race,
 				'planet' => (int) $this->user->planet_current,
 				'messages' => (int) $this->user->messages,
 				'alliance' => [

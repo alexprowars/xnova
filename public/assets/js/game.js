@@ -12,21 +12,6 @@ function ShowHiddenBlock (id)
 }
 
 var timeouts	= [];
-var start_time 	= new Date();
-
-function print_date(timestamp, view)
-{
-	timestamp = (timestamp + timezone * 1800) * 1000;
-
-    var X = new Date(timestamp);
-
-	if (view == 1) {
-		return ((X.getHours()<10?'0':'')+X.getHours()+':'+((m=X.getMinutes())<10?'0':'')+m);
-	} else {
-		document.write(((d=X.getDate())<10?'0':'')+d+'-'+((mn=X.getMonth()+1)<10?'0':'')+mn+' '+(X.getHours()<10?'0':'')+X.getHours()+':'+((m=X.getMinutes())<10?'0':'')+m+':'+((s=X.getSeconds())<10?'0':'')+s);
-		return '';
-	}
-}
 
 function raport_to_bb(raport)
 {
@@ -55,7 +40,7 @@ function raport_to_bb(raport)
 	txt = txt.replace(/<th width="220">/gi, "[th]");
 	txt = txt.replace(/<br>/gi, " ");
 	txt = txt.replace(/<\/a>/gi, "[\/url]");
-	txt = txt.replace(/<a href="(.*?)">/gi, "[url=http://uni5.xnova.su$1]");
+	txt = txt.replace(/<a href="(.*?)">/gi, "[url=https://x.xnova.su$1]");
 
 	raport.html(txt);
 }
@@ -117,22 +102,6 @@ function FlotenTime (obj, time)
 	timeouts['fleet'+obj] = setTimeout(function(){FlotenTime(obj)}, 1000);
 }
 
-var Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
-
-function hms(layr, X)
-{
-      var d,mn,m,s;
-
-      $("#" + layr).html(((d=X.getDate())<10?'0':'')+d+'.'+((mn=X.getMonth()+1)<10?'0':'')+mn+'.'+X.getFullYear()+' '+X.getHours()+':'+((m=X.getMinutes())<10?'0':'')+m+':'+((s=X.getSeconds())<10?'0':'')+s);
-}
-
-function UpdateClock()
-{
-    //hms('clock', new Date((new Date).getTime() + serverTime));
-
-	//timeouts['clock'] = setTimeout(UpdateClock, 1000);
-}
-
 function setMaximum(type, number)
 {
 	var obj = document.getElementsByName('fmenge['+type+']')[0];
@@ -159,17 +128,6 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 			});
 		}
 	});
-}
-
-function fenster(target_url, win_name, w, h)
-{
-	if (!w)
-		w=850;
-	if (!h)
-		h=500;
-
-	var new_win = window.open(target_url,win_name,'resizable=yes,scrollbars=yes,menubar=no,toolbar=no,width='+w+',height='+h+',top=0,left=0');
-	new_win.focus();
 }
 
 function ClearTimers ()
@@ -285,9 +243,6 @@ function load (url, disableUrlState)
 		}
 	});
 
-	start_time      = new Date();
-    Djs             = start_time.getTime() - start_time.getTimezoneOffset()*60000;
-
 	return true;
 }
 
@@ -377,10 +332,7 @@ $(document).ready(function()
 		var form = $(this);
 
 		showLoading();
-
 		ClearTimers();
-		start_time = new Date();
-		Djs = start_time.getTime() - start_time.getTimezoneOffset()*60000;
 
 		var formData = new FormData(form[0]);
 
@@ -509,11 +461,9 @@ $(document).ready(function()
 	{
 		clearTimeout(tooltipTimer);
 	})
-	.on('mouseleave', ".tooltip_sticky_div", function (e)
+	.on('mouseleave', ".tooltip_sticky_div", function ()
 	{
-   		var tip = $('.tooltip_sticky_div');
-
-   		tip.removeClass('tooltip_sticky_div').hide();
+   		$('.tooltip_sticky_div').removeClass('tooltip_sticky_div').hide();
    	})
 	.on('change', 'input.checkAll', function()
 	{
@@ -622,8 +572,6 @@ function hideLoading ()
 		$('#ajaxLoader').hide();
 	}, 1000);
 }
-
-
 
 function morph (n, titles)
 {

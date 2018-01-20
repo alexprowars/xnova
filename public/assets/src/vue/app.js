@@ -9,6 +9,7 @@ Vue.prototype.QuickFleet = QuickFleet
 
 var BuildingBuildController = require('./controllers/buildings/build.vue')
 var GalaxyController = require('./controllers/galaxy/galaxy.vue')
+var OverviewController = require('./controllers/overview/overview.vue')
 var EmptyController = require('./controllers/empty.vue')
 
 const routes = [{
@@ -20,6 +21,9 @@ const routes = [{
 }, {
 	path: '/galaxy*',
 	component: GalaxyController
+}, {
+	path: '/overview',
+	component: OverviewController
 }, {
 	path: '*',
 	component: EmptyController

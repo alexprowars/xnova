@@ -141,10 +141,10 @@ function ChatMsg(time, Player, To, Msg, Private, Me, My)
 		str += "<span class='date1' onclick='pp(\"" + Player + "\");' style='cursor:pointer;'>";
 
 	if (!Player)
-		str += print_date(time, 1) + "</span> ";
+		str += date('H:m', time) + "</span> ";
 	else
 	{
-		str += print_date(time, 1) + "</span> ";
+		str += date('H:m', time) + "</span> ";
 
 		if (My == 1)
 			str += "<span class='negative'>";

@@ -142,7 +142,7 @@ class FleetEngine extends Injectable
 			$String .= $TitleString . " " . $TargetPlanet->name;
 			$String .= " <a href=\"#BASEPATH#galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
 			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
-			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(print_date(" . time() . ", 1));</script></td>";
+			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(date('H:m', " . time() . "));</script></td>";
 			$String .= "</tr><tr>";
 			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Format::number($TargetPlanet->metal) . "</th>";
 			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Format::number($TargetPlanet->crystal) . "</th>";

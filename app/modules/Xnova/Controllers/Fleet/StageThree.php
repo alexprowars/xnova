@@ -16,6 +16,7 @@ use Xnova\Fleet;
 use Xnova\Format;
 use Friday\Core\Lang;
 use Phalcon\Db;
+use Xnova\Models\Planet;
 
 class StageThree
 {
@@ -88,9 +89,9 @@ class StageThree
 			throw new RedirectException("<span class=\"error\"><b>Невозможно отправить флот на эту же планету!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($fleetmission == 8)
-			$select = $controller->db->query("SELECT * FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND (planet_type = 1 OR planet_type = 5)");
+			$select = $controller->db->query("SELECT id FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND (planet_type = 1 OR planet_type = 5)");
 		else
-			$select = $controller->db->query("SELECT * FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND planet_type = '" . $planettype . "'");
+			$select = $controller->db->query("SELECT id FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND planet_type = '" . $planettype . "'");
 
 		if ($fleetmission != 15)
 		{
@@ -123,8 +124,9 @@ class StageThree
 				throw new RedirectException("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
-		$select->setFetchMode(Db::FETCH_OBJ);
-		$TargetPlanet = $select->fetch();
+		$planetRow = $select->fetch();
+
+		$TargetPlanet = Planet::findFirst($planetRow['id']);
 
 		if (!$TargetPlanet)
 		{
@@ -226,7 +228,7 @@ class StageThree
 			if ($TargetPlanet && ($fleetmission == 7 || $fleetmission == 10))
 				throw new RedirectException("<span class=\"error\"><b>Место занято</b></span>", 'Ошибка', "/fleet/", 2);
 
-			if ($TargetPlanet && $TargetPlanet->ally_deposit == 0 && $HeDBRec['id'] != $controller->user->id && $fleetmission == 5)
+			if ($TargetPlanet && $TargetPlanet->getBuildLevel('ally_deposit') == 0 && $HeDBRec['id'] != $controller->user->id && $fleetmission == 5)
 				throw new RedirectException("<span class=\"error\"><b>На планете нет склада альянса!</b></span>", 'Ошибка', "/fleet/", 2);
 
 			if ($fleetmission == 5)
