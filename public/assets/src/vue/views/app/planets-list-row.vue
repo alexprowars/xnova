@@ -3,8 +3,8 @@
 		<a v-on:click="changeItem" v-bind:title="item.name">
 			<img v-bind:src="$root.getUrl('assets/images/planeten/small/s_'+item.image+'.jpg')" height="40" width="40" v-bind:alt="item.name">
 		</a>
-		<span class="hidden-md-up" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>
-		<div class="hidden-sm-down">
+		<span class="d-none d-md-block d-lg-none" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>
+		<div class="d-sm-none d-md-block">
 			{{ item.name }}<br>
 			<span v-html="$root.getPlanetUrl(item.g, item.s, item.p)"></span>
 		</div>

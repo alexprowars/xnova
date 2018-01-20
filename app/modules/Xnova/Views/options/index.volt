@@ -282,7 +282,7 @@
 	<br><br>
 	<div class="table">
 		<div class="row">
-			<div class="col-xs-12 th">
+			<div class="col-12 th">
 				Ваш код для привязки Telegram-бота:<br><br><b>{{ parse['bot_auth']['code'] }}</b>
 			</div>
 		</div>

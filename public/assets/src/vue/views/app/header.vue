@@ -1,12 +1,12 @@
 <template>
 	<header class="game_menu">
-		<div class="hidden-sm-up text-xs-center bar">
+		<div class="d-sm-none text-center bar">
 			<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl('tutorial/')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>
 			<a class="m1 tooltip" v-bind:href="$root.getUrl('chat/')" data-content="Чат"><span class="sprite ico_chat"></span></a>
 			<a class="m1 tooltip" v-bind:href="$root.getUrl('messages/')" data-content="Сообщения"><span class="sprite ico_mail"></span> <b>{{ $root.user.messages }}</b></a>
 			<a v-if="$root.user.alliance.id > 0" class="m1 tooltip" v-bind:href="$root.getUrl('alliance/chat/')" data-content="Альянс"><span class="sprite ico_alliance"></span> <b>{{ $root.user.alliance.messages }}</b></a>
 		</div>
-		<div class="bar hidden-xs-down">
+		<div class="bar d-none d-sm-flex">
 			<div class="message_list">
 				<div class="message_list">
 					<a v-if="$root.user.tutorial < 10" class="m1 tooltip" v-bind:href="$root.getUrl('tutorial/')" data-content="Квесты"><span class="sprite ico_tutorial"></span></a>

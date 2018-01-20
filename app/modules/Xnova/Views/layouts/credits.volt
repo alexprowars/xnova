@@ -3,7 +3,7 @@
 		<th align="center">
 			<br>
 			Для развития проекта Вы можете поддержать нас, получая кредиты по следующему курсу:<br><br>
-			<div class="text-xs-center">
+			<div class="text-center">
 				1 кредит - 1 руб.
 			</div>
 			<br><br>

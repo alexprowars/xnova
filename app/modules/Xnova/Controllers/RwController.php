@@ -65,7 +65,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "<div class='separator'></div><<div class='text-xs-center'>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
+				$Page .= "<div class='separator'></div><<div class='text-center'>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
 
 				$this->tag->setTitle('Боевой доклад');
 				$this->view->setVar('html', $Page);

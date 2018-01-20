@@ -1,9 +1,9 @@
 <input type="hidden" name="message_id" id="message_id" value="1">
 
-<div class="col-xs-12 th">
+<div class="col-12 th">
 	<div id="shoutbox" class="shoutbox scrollbox"></div>
 </div>
-<div class="col-xs-12 th">
+<div class="col-12 th">
 	<div id="chatEditor" style="float: right"></div>
 	<input name="msg" type="text" id="chatMsg" maxlength="750" title="">
 	<div class="separator"></div>

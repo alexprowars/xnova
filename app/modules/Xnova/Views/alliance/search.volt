@@ -20,13 +20,13 @@
 		</tr>
 		{% for r in parse['result'] %}
 			<tr>
-				<th class="text-xs-center">
+				<th class="text-center">
 					{{ r['tag'] }}
 				</th>
-				<th class="text-xs-center">
+				<th class="text-center">
 					{{ r['name'] }}
 				</th>
-				<th class="text-xs-center">
+				<th class="text-center">
 					{{ r['members'] }}
 				</th>
 			</tr>

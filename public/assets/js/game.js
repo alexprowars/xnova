@@ -437,22 +437,10 @@ $(document).ready(function()
 
 			tip.addClass('tooltip_sticky_div');
 
-			if (hasHtml)
-			{
-				var parentOffset = $('.game_content > .content').offset();
-
-				tip.css({
-					top : obj.offset().top - parentOffset.top - tip.outerHeight() / 2,
-					left : obj.offset().left - parentOffset.left - (tip.outerWidth() / 2)
-				});
-			}
-			else
-			{
-				tip.css({
-					top : e.pageY - tip.outerHeight() / 2,
-					left : e.pageX - tip.outerWidth() / 2
-				});
-			}
+			tip.css({
+				top : e.pageY - tip.outerHeight() / 2,
+				left : e.pageX - tip.outerWidth() / 2
+			});
 
 			tip.show();
 		}, 400);

@@ -3,11 +3,11 @@
 		<input type="hidden" class="auto" value="dr">
 
 		<div class="row">
-			<div class="col-xs-12 hidden-sm-up">
+			<div class="col-12 d-sm-none">
 				<game-page-galaxy-selector-shortcut v-bind:items="shortcuts"></game-page-galaxy-selector-shortcut>
 			</div>
-			<div class="separator hidden-sm-up"></div>
-			<div class="col-sm-4 col-xs-6">
+			<div class="separator d-sm-none"></div>
+			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
 					<tr>
 						<td class="c" colspan="3">
@@ -27,10 +27,10 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-sm-4 hidden-xs-down">
+			<div class="col-sm-4 d-none d-sm-block">
 				<game-page-galaxy-selector-shortcut v-bind:items="shortcuts"></game-page-galaxy-selector-shortcut>
 			</div>
-			<div class="col-sm-4 col-xs-6">
+			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
 					<tr>
 						<td class="c" colspan="3">

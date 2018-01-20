@@ -1,10 +1,10 @@
 <template>
-	<tr class="{{ item.status }}">
+	<tr v-if="time >= 0" class="{{ item.status }}">
 		<th width="80">
 			<div class="z">{{ Format.time(time, ':') }}</div>
 			<div class="positive">{{ item.date }}</div>
 		</th>
-		<th class="text-xs-left" colspan="3">
+		<th class="text-left" colspan="3">
 			<span v-bind:class="[item.status, item.prefix, item.mission]" v-html="item.text"></span>
 		</th>
 	</tr>
@@ -24,7 +24,7 @@
 		{
 			update()
 			{
-				if (this.item.time < 0)
+				if (this.time < 0)
 					return;
 
 				this.time = this.item.time - Math.floor(((new Date).getTime() / 1000));
@@ -38,9 +38,11 @@
 				timeouts['fleet_row_'+this.item.id] = setTimeout(this.update, 1000);
 			}
 		},
-		updated: function()
-		{
-			this.start();
+		watch: {
+			time: function()
+			{
+				this.start();
+			}
 		},
 		mounted: function()
 		{

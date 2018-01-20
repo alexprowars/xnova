@@ -1,6 +1,6 @@
 <template>
 	<div class="planet-resource-panel-item">
-		<span v-on:click="showPopup" class="tooltip hidden-xs-down">
+		<span v-on:click="showPopup" class="tooltip d-none d-sm-block">
 			<div class="tooltip-content">
 				<planet-panel-resource-tooltip v-bind:resource="resource"></planet-panel-resource-tooltip>
 			</div>
@@ -12,7 +12,7 @@
 			<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.current) }}</span>
 			<span v-else class="negative">{{ Format.number(resource.current) }}</span>
 		</div>
-		<span title="Максимальная вместимость хранилищ" class="hidden-xs-down">
+		<span title="Максимальная вместимость хранилищ" class="d-none d-sm-block">
 			<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.max) }}</span>
 			<span v-else class="negative">{{ Format.number(resource.max) }}</span>
 		</span>

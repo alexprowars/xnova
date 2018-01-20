@@ -9,7 +9,7 @@
 			<table class="margin5">
 				<tr>
 					<td valign="top"><img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ parse['image'] }}.gif" class="info" align="top" border="0" height="120" width="120"></td>
-					<td valign="top" class="text-xs-left">{{ parse['description'] }}<br><br>{{ parse['rf_info_to'] }}{{ parse['rf_info_fr'] }}</td>
+					<td valign="top" class="text-left">{{ parse['description'] }}<br><br>{{ parse['rf_info_to'] }}{{ parse['rf_info_fr'] }}</td>
 				</tr>
 			</table>
 		</th>

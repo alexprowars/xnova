@@ -2,7 +2,7 @@
 	<div id="application" v-bind:class="['set_'+$root.route.controller]">
 
 		<!-- header -->
-		<a v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-toggle hidden-sm-up" v-on:click.prevent="sidebarMenuToggle">
+		<a v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarMenuToggle">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
@@ -10,7 +10,7 @@
 			</span>
 		</a>
 
-		<div v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-sidebar hidden-sm-up">
+		<div v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-sidebar d-sm-none">
 			<sidebar-menu v-bind:items="$root.menu" v-bind:active="$root.getMenuActiveLink"></sidebar-menu>
 		</div>
 
@@ -24,7 +24,7 @@
 			<!-- end menu -->
 
 			<!-- planets -->
-			<a v-if="$root.view.planets && mobile" v-bind:class="{active: planetMenu}" class="planet-toggle hidden-sm-up" v-on:click.prevent="planetMenuToggle"><span>
+			<a v-if="$root.view.planets && mobile" v-bind:class="{active: planetMenu}" class="planet-toggle d-sm-none" v-on:click.prevent="planetMenuToggle"><span>
 					<span class="first"></span>
 					<span class="second"></span>
 					<span class="third"></span>

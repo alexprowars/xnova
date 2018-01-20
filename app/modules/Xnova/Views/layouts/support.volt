@@ -38,7 +38,7 @@
 						<th>Текст запроса</th>
 					</tr>
 					<tr>
-						<td class="c text-xs-left">{{ item['text'] }}</td>
+						<td class="c text-left">{{ item['text'] }}</td>
 					</tr>
 					{% if item['status'] == 0 %}<tr><th>Закрыт</th></tr>{% endif %}
 					<tr>

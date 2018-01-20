@@ -3,7 +3,7 @@
 		<div class="title">
 			Занято полей
 			<span class="positive">{{ page.fields_current }}</span> из <span class="negative">{{ page.fields_max }}</span>
-			<div class="pull-xs-right col-xs-12 col-sm-6 p-a-0">
+			<div class="float-right col-12 col-sm-6 p-a-0">
 				Осталось
 				<span class="positive">{{ fields_empty }}</span>
 				свободн{{ morph(page.fields_empty, ['ое', 'ых', 'ых']) }}

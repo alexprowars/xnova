@@ -494,7 +494,7 @@ class StageThree
 			$consumption = 0;
 		}
 
-		if ($controller->user->isAdmin() && $fleetmission != 6)
+		if (false && $controller->user->isAdmin() && $fleetmission != 6)
 		{
 			$fleet->start_time 	= time() + 15;
 			$fleet->end_time 	= time() + 30;

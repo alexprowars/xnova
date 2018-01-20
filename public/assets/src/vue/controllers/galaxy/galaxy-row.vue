@@ -34,15 +34,13 @@
 			</a>
 		</th>
 		<th width="130">
-			<div style="overflow:hidden;width:130px">
-				<div v-if="item && !item.p_delete">
-					<span v-if="item.p_active <= 10" class="star">(*)</span>
-					<span v-else-if="item.p_active < 60" class="star">({{ Math.floor(item.p_active) }})</span>
-					<span v-bind:class="{negative: item.u_id === $root.user.id}">{{ item.p_name }}</span>
-				</div>
-				<div v-else-if="item && item.p_delete">
-					Планета уничтожена
-				</div>
+			<div v-if="item && !item.p_delete">
+				<span v-if="item.p_active <= 10" class="star">(*)</span>
+				<span v-else-if="item.p_active < 60" class="star">({{ Math.floor(item.p_active) }})</span>
+				<span v-bind:class="{negative: item.u_id === $root.user.id}">{{ item.p_name }}</span>
+			</div>
+			<div v-else-if="item && item.p_delete">
+				Планета уничтожена
 			</div>
 		</th>
 		<th style="white-space: nowrap;" width="30">
@@ -153,7 +151,7 @@
 								<td class="c" colspan="2">Игрок {{ item.u_name }}, место {{ item.s_rank }}</td>
 							</tr>
 							<tr>
-								<td v-if="user_avatar !== ''" width="122" height="126" rowspan="3" valign="middle" class="c" v-bind:style="'background:url('+user_avatar+') 50% 50% no-repeat;'"></td>
+								<td v-if="user_avatar !== ''" width="122" height="126" rowspan="3" valign="middle" class="c" v-bind:style="'background:url('+user_avatar+') 50% 50% no-repeat;background-size:cover;'"></td>
 								<td v-else width="122" height="126" rowspan="3" valign="middle" class="c">нет<br>аватара</td>
 
 								<th v-if="item.u_id !== $root.user.id">
@@ -345,8 +343,8 @@
 			},
 			user_avatar: function()
 			{
-				if (this.item.u_image > 0)
-					return this.$root.getUrl('assets/avatars/'+this.item.user_image);
+				if (this.item.u_image.length > 0)
+					return this.$root.getUrl('assets/avatars/'+this.item.u_image);
 				else if (this.item.u_avatar > 0)
 				{
 					if (this.item.u_avatar !== 99)

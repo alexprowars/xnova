@@ -18,18 +18,18 @@
 			<th><input name="rpassword" size="20" maxlength="20" type="password" title=""></th>
 		</tr>
 		<tr>
-			<th colspan="2" align="center" class="text-xs-center">
+			<th colspan="2" align="center" class="text-center">
 				<div class="g-recaptcha" data-sitekey="{{ config.recaptcha.public_key }}"></div>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-xs-left">
+			<th colspan="2" class="text-left">
 				<input name="sogl" id="sogl" type="checkbox" {{ request.getPost('sogl') != '' ? 'checked' : '' }}>
 				<label for="sogl">Я принимаю</label> <a href="{{ url('content/agreement/') }}" target="_blank">Пользовательское соглашение</a>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-xs-left">
+			<th colspan="2" class="text-left">
 				<input name="rgt" id="rgt" type="checkbox" {{ request.getPost('rgt') != '' ? 'checked' : '' }}>
 				<label for="rgt">Я принимаю</label> <a href="{{ url('content/agb/') }}" target="_blank">Законы игры</a>
 			</th>

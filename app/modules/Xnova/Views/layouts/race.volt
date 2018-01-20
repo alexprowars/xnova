@@ -1,20 +1,20 @@
-<div class="text-xs-center">
+<div class="text-center">
 	<div class="table raceSelect">
 		{% if race == 0 %}
 			<div class="row">
-				<div class="col-xs-12 c big">Выбор фракции</div>
+				<div class="col-12 c big">Выбор фракции</div>
 			</div>
 		{% endif %}
 		<div class="row">
-			<div class="col-xs-6 k big">
+			<div class="col-6 k big">
 				<a href='javascript:;' onclick="showWindow('Конфедерация', '{{ url('info/701/') }}', 700, 500)">Конфедерация</a>
 			</div>
-			<div class="col-xs-6 k big">
+			<div class="col-6 k big">
 				<a href='javascript:;' onclick="showWindow('Бионики', '{{ url('info/702/') }}', 700, 500)">Бионики</a>
 			</div>
 		</div>
 		<div class="row">
-			<div class="th col-xs-6 text-xs-left">
+			<div class="th col-6 text-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="{{ url.getBaseUri() }}assets/images/skin/race1.gif">
@@ -33,7 +33,7 @@
 					<div style="text-align:center"><a href="{{ url('race/index/sel/1/') }}"><input type="button" value="Выбрать"></a></div>
 				{% endif %}<br>
 			</div>
-			<div class="th col-xs-6 text-xs-left">
+			<div class="th col-6 text-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="{{ url.getBaseUri() }}assets/images/skin/race2.gif">
@@ -54,11 +54,11 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '{{ url('info/703/') }}', 700, 500)">Сайлоны</a></div>
-			<div class="col-xs-6 k big"><a href='javascript:;' onclick="showWindow('Древние', '{{ url('info/704/') }}', 700, 500)">Древние</a></div>
+			<div class="col-6 k big"><a href='javascript:;' onclick="showWindow('Сайлоны', '{{ url('info/703/') }}', 700, 500)">Сайлоны</a></div>
+			<div class="col-6 k big"><a href='javascript:;' onclick="showWindow('Древние', '{{ url('info/704/') }}', 700, 500)">Древние</a></div>
 		</div>
 		<div class="row">
-			<div class="th col-xs-6 text-xs-left">
+			<div class="th col-6 text-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="{{ url.getBaseUri() }}assets/images/skin/race3.gif">
@@ -77,7 +77,7 @@
 					<div style="text-align:center"><a href="{{ url('race/index/sel/3/') }}"><input type="button" value="Выбрать"></a></div>
 				{% endif %}<br>
 			</div>
-			<div class="th col-xs-6 text-xs-left">
+			<div class="th col-6 text-left">
 				<div style="text-align:center">
 					<div class="separator"></div>
 					<img src="{{ url.getBaseUri() }}assets/images/skin/race4.gif">
@@ -99,7 +99,7 @@
 		</div>
 		{% if race != 0 %}
 			<div class="row">
-				<div class="col-xs-12 k big">
+				<div class="col-12 k big">
 					{% if free_race_change > 0 %}
 						Бесплатная смена фракции ({{ free_race_change }} попыток осталось):
 					{% else %}

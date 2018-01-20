@@ -4,7 +4,7 @@
 	<div class="content">
 		<div class="row research">
 			{% for build in parse['technolist'] %}
-				<div class="col-md-6 col-xs-12">
+				<div class="col-md-6 col-12">
 					<div class="viewport buildings {% if build['access'] is false %}shadow{% endif %}">
 						{% if build['access'] is false %}
 							<div class="notAvailable tooltip" data-content="Требования:<br>{{ replace('"', "'", getTechTree(build['i'], this.user, this.planet)) }}" onclick="showWindow('{{ _text('xnova', 'tech', build['i']) }}', '{{ url('info/'~(build['i'] > 300 ? (build['i'] < 350 ? (build['i'] - 100) : (build['i'] + 50)) : build['i'])~'/') }}', 600)"><span>недоступно</span></div>

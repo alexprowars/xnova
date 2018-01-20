@@ -42,7 +42,7 @@ class AvatarController extends Controller
 			$upload->dir_auto_create = false;
 			$upload->dir_auto_chmod = false;
 			$upload->file_overwrite = true;
-			$upload->file_max_size = 102400;
+			$upload->file_max_size = 250000;
 			$upload->mime_check = true;
 			$upload->allowed = ['image/*'];
 			$upload->image_convert = 'jpg';

@@ -1,5 +1,5 @@
 <template>
-	<ul class="menu hidden-xs-down">
+	<ul class="menu d-none d-sm-block">
 		<li is="main-menu-item" v-for="item in items" v-bind:item="item"></li>
 	</ul>
 </template>

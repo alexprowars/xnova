@@ -96,12 +96,12 @@
 	<div class="separator"></div>
 	<div class="row">
 		{% if parse['Disolve_alliance'] is defined %}
-			<div class="col-xs-6">
+			<div class="col-6">
 				{{ parse['Disolve_alliance'] }}
 			</div>
 		{% endif %}
 		{% if parse['Transfer_alliance'] is defined %}
-			<div class="col-xs-6">
+			<div class="col-6">
 				{{ parse['Transfer_alliance'] }}
 			</div>
 		{% endif %}

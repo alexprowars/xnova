@@ -27,10 +27,10 @@
 	{% endfor %}
 	<div class="table">
 		<div class="row">
-			<div class="c col-xs-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('xnova', 'type_planet', parse['planettype']) }}</div>
+			<div class="c col-12">{{ parse['galaxy'] }}:{{ parse['system'] }}:{{ parse['planet'] }} - {{ _text('xnova', 'type_planet', parse['planettype']) }}</div>
 		</div>
 		<div class="row">
-			<div class="th col-xs-6">
+			<div class="th col-6">
 				<table class="table">
 					<tr>
 						<td class="c" colspan="2">{{ _text('xnova', 'fl_mission') }}</td>
@@ -56,7 +56,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="th col-xs-6">
+			<div class="th col-6">
 				<table class="table">
 					<tr>
 						<td colspan="3" class="c">{{ _text('xnova', 'fl_ressources') }}</td>
@@ -140,7 +140,7 @@
 		</div>
 		{% if parse['missions']|length %}
 			<div class="row">
-				<div class="th col-xs-12"><input accesskey="z" value="{{ _text('xnova', 'fl_continue') }}" type="submit"></div>
+				<div class="th col-12"><input accesskey="z" value="{{ _text('xnova', 'fl_continue') }}" type="submit"></div>
 			</div>
 		{% endif %}
 	</div>

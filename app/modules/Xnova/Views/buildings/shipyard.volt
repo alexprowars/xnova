@@ -2,11 +2,11 @@
 	<div class="content">
 		<form action="{{ url('buildings/'~parse['mode']~'/') }}" method="post">
 			<div class="row shipyard">
-				<div class="col-xs-12 c">
+				<div class="col-12 c">
 					<input type="submit" value="Построить">
 				</div>
 				{% for build in parse['buildlist'] %}
-					<div class="col-md-6 col-xs-12">
+					<div class="col-md-6 col-12">
 						<div class="viewport buildings {% if build['access'] is false %}shadow{% endif %}">
 							{% if build['access'] is false %}
 								<div class="notAvailable tooltip" data-content="Требования:<br>{{ replace('"', "'", getTechTree(build['i'], this.user, this.planet)) }}" onclick="showWindow('{{ _text('xnova', 'tech', build['i']) }}', '{{ url('info/'~build['i']~'/') }}/', 600)"><span>недоступно</span></div>
@@ -49,7 +49,7 @@
 						</div>
 					</div>
 				{% endfor %}
-				<div class="col-xs-12 c">
+				<div class="col-12 c">
 					<input type="submit" value="Построить">
 				</div>
 			</div>

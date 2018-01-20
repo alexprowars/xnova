@@ -644,12 +644,6 @@ textarea#text {
 		flex-shrink: 1000000;
 		width: 100%;
 		order: 2;
-		position: relative;
-
-		#gamediv {
-			margin: 0;
-			width: 100%;
-		}
 	}
 
 	> .planetList {
@@ -898,8 +892,8 @@ table td.c, table th, .table th {
 }
 
 .table.galaxy {
-	> tbody > tr > th {
-		padding: 0;
+	> tr > th {
+		padding: 1px;
 		vertical-align: middle;
 		text-align: center;
 	}
@@ -907,6 +901,7 @@ table td.c, table th, .table th {
 	.img {
 		width: 30px;
 		height: 32px;
+		padding-right: 0;
 	}
 }
 

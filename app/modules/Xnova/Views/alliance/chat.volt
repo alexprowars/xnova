@@ -4,16 +4,16 @@
 <form action="{{ url('alliance/chat/') }}" method="post">
 	<div class="table">
 		<div class="row">
-			<div class='col-xs-12 c'><a href="{{ url('alliance/chat/') }}">Обновить</a></div>
+			<div class='col-12 c'><a href="{{ url('alliance/chat/') }}">Обновить</a></div>
 		</div>
 
 		{% if parse['messages']|length > 0 %}
 			{% for m in parse['messages'] %}
 				<div class="row">
-					<div class="col-xs-12 j p-a-0">
+					<div class="col-12 j p-a-0">
 						<table width="100%">
 							<tr>
-								<th class="b text-xs-center" width="130">
+								<th class="b text-center" width="130">
 									{{ game.datezone("H:i:s", m['timestamp']) }}<br><a href="{{ url('players/'~m['user_id']~'/') }}" target="_blank">{{ m['user']|stripslashes }}</a>
 									<a onclick="AddQuote('{{ m['user']|stripslashes }}', 'm{{ m['id'] }}')"> -> </a>
 								</th>
@@ -34,17 +34,17 @@
 			{% endfor %}
 		{% else %}
 			<div class="row">
-				<div class="col-xs-12 b" align="center">В альянсе нет сообщений.</div>
+				<div class="col-12 b" align="center">В альянсе нет сообщений.</div>
 			</div>
 		{% endif %}
 
 		<div class="row">
-			<div class="col-xs-12 th">{{ parse['pages'] }}</div>
+			<div class="col-12 th">{{ parse['pages'] }}</div>
 		</div>
 
 		{% if parse['owner'] and parse['messages']|length > 0 %}
 			<div class="row">
-				<div class="col-xs-12 th">
+				<div class="col-12 th">
 					<select id="deletemessages" name="deletemessages" title="">
 						<option value="deletemarked">Удалить выделенные</option>
 						<option value="deleteunmarked">Удалить не выделенные</option>

@@ -99,7 +99,7 @@ class Planet extends Model
 
 		if ($this->buildings !== false)
 		{
-			foreach ($this->buildings as $building)
+			foreach ($this->buildings as &$building)
 			{
 				if ($building['id'] == 0 && $building['level'] > 0)
 				{
@@ -109,6 +109,8 @@ class Planet extends Model
 						'level' => $building['level'],
 						'power' => $building['power'] !== false ? $building['power'] : 10
 					]);
+
+					$building['id'] = $this->db->lastInsertId();
 				}
 				elseif ($building['level'] != $building['~level'] || $building['power'] != $building['~power'])
 				{
@@ -126,11 +128,15 @@ class Planet extends Model
 				$building['~level'] = $building['level'];
 				$building['~power'] = $building['power'];
 			}
+
+			unset($building);
 		}
 
 		if ($this->units !== false)
 		{
-			foreach ($this->units as $unit)
+			file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../php_errors.log', print_r($this->units, true), FILE_APPEND);
+
+			foreach ($this->units as &$unit)
 			{
 				if ($unit['id'] == 0 && $unit['amount'] > 0)
 				{
@@ -139,6 +145,8 @@ class Planet extends Model
 						'unit_id' => $unit['type'],
 						'amount' => $unit['amount'],
 					]);
+
+					$unit['id'] = $this->db->lastInsertId();
 				}
 				elseif ($unit['amount'] != $unit['~amount'])
 				{
@@ -152,8 +160,10 @@ class Planet extends Model
 						$this->db->delete(DB_PREFIX.'planets_units', 'id = ?', [$unit['id']]);
 				}
 
-				$building['~amount'] = $unit['amount'];
+				$unit['~amount'] = $unit['amount'];
 			}
+
+			unset($unit);
 		}
 	}
 

@@ -14,13 +14,13 @@
 				</div><div id="tabs-{{ i }}" class="ui-tabs-panel ui-widget-content container-fluid" style="display: none">
 			{% else %}
 				<div class="row">
-					<div class="col-sm-5 col-xs-6 title">
+					<div class="col-sm-5 col-6 title">
 						<a href="{{ url('info/'~list['tt_info']~'/') }}">{{ list['tt_name'] }}</a>
 
 						{% if list['required_list'] != '' %}
-							<div class="pull-xs-right hidden-xs-down"><a href="{{ url('tech/'~list['tt_info']~'/') }}">[i]</a></div>
+							<div class="float-right d-none d-sm-block"><a href="{{ url('tech/'~list['tt_info']~'/') }}">[i]</a></div>
 						{% endif %}
-					</div><div class="col-sm-7 col-xs-6">
+					</div><div class="col-sm-7 col-6">
 						{{ list['required_list'] }}
 					</div>
 				</div>

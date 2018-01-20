@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-6 col-xs-12" v-bind:id="'object_'+item.i">
+	<div class="col-md-6 col-12" v-bind:id="'object_'+item.i">
 		<div v-bind:class="['viewport', 'buildings', (!item.allow ? 'shadow' : '')]">
 			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
 				<div class="tooltip-content" v-if="item.need">

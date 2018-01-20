@@ -1,5 +1,5 @@
 <template>
-	<div class="icon-panel hidden-sm-up">
+	<div class="icon-panel d-sm-none">
 		<a v-bind:href="$root.getUrl('stat/')" class="sprite ico_stats"></a>
 		<a v-bind:href="$root.getUrl('tech/')" class="sprite ico_tech"></a>
 		<a v-bind:href="$root.getUrl('sim/')" class="sprite ico_sim"></a>

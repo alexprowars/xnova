@@ -30,19 +30,19 @@
 	{% endif %}
 	{% if parse['list']|length > 0 %}
 		<tr>
-			<td class="c text-xs-center">
+			<td class="c text-center">
 				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/1/') }}">Логин</a>
 			</td>
-			<td class="c text-xs-center">
+			<td class="c text-center">
 				<a href="{{ url('alliance/admin/edit/requests/show/0/sort/0/') }}">Дата подачи заявки</a>
 			</td>
 		</tr>
 		{% for list in parse['list'] %}
 			<tr>
-				<th class="text-xs-center">
+				<th class="text-center">
 					<a href="{{ url('alliance/admin/edit/requests/show/'~list['id']~'/sort/0/') }}">{{ list['username'] }}</a>
 				</th>
-				<th class="text-xs-center">
+				<th class="text-center">
 					{{ list['time'] }}
 				</th>
 			</tr>
