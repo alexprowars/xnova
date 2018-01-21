@@ -25,7 +25,7 @@ class IndexController extends Controller
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
 
-		die();
+		//die();
 		
 		parent::initialize();
 

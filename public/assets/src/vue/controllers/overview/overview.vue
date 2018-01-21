@@ -1,11 +1,28 @@
 <template>
 	<div>
+		<div v-if="page.bonus">
+			<table class="table">
+				<tr>
+					<td class="c">Ежедневный бонус</td>
+				</tr>
+				<tr>
+					<th>
+						Сейчас вы можете получить по <b class="positive">{{ Format.number(page.bonus_count) }}</b> Металла, Кристаллов и Дейтерия.<br>
+						Каждый день размер бонуса будет увеличиваться.<br>
+						<br>
+						<a v-bind:href="$root.getUrl('overview/bonus/')" class="button">Получить ресурсы</a><br>
+					</th>
+				</tr>
+			</table>
+			<div class="separator"></div>
+		</div>
+
 		<div class="block">
 			<div class="title">
 				<div class="row">
 					<div class="col-12 col-sm-6">
-						{{ page.planet_type }} "{{ page.planet_name }}"
-						<a v-bind:href="$root.getUrl('galaxy/'+page.planet_galaxy+'/'+page.planet_system+'/')">[{{ page.planet_galaxy }}:{{ page.planet_system }}:{{ page.planet_planet }}]</a>
+						{{ page.planet.type }} "{{ page.planet.name }}"
+						<a v-bind:href="$root.getUrl('galaxy/'+page.planet.galaxy+'/'+page.planet.system+'/')">[{{ page.planet.galaxy }}:{{ page.planet.system }}:{{ page.planet.planet }}]</a>
 						<a v-bind:href="$root.getUrl('overview/rename/')" title="Редактирование планеты">(изменить)</a>
 					</div>
 					<div class="separator d-sm-none"></div>
@@ -26,7 +43,7 @@
 							<div class="col-md-10 col-sm-12 col-5">
 								<div class="planet-image">
 									<a v-bind:href="$root.getUrl('overview/rename/')">
-										<img v-bind:src="$root.getUrl('assets/images/planeten/'+page.planet_image+'.jpg')" alt="">
+										<img v-bind:src="$root.getUrl('assets/images/planeten/'+page.planet.image+'.jpg')" alt="">
 									</a>
 									<div v-if="page.moon" class="moon-image">
 										<a v-bind:href="$root.getUrl('overview/?chpl='+page.moon.id)" v-bind:title="page.moon.name">
@@ -75,7 +92,7 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									{{ Format.number(page.planet_diameter) }} км
+									{{ Format.number(page.planet.diameter) }} км
 								</div>
 							</div>
 							<div class="row">
@@ -83,7 +100,7 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									<a title="Занятость полей">{{ page.planet_field_current }}</a> / <a title="Максимальное количество полей">{{ page.planet_field_max }}</a> поля
+									<a title="Занятость полей">{{ page.planet.field_used }}</a> / <a title="Максимальное количество полей">{{ page.planet.field_max }}</a> поля
 								</div>
 							</div>
 							<div class="row">
@@ -91,13 +108,13 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									от. {{ page.planet_temp_min }}&deg;C до {{ page.planet_temp_max }}&deg;C
+									от. {{ page.planet.temp_min }}&deg;C до {{ page.planet.temp_max }}&deg;C
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 c">
 									Обломки
-									<a v-if="page.get_link" href="#" v-bind:onclick="QuickFleet(8, page.planet_galaxy, page.planet_system, page.planet_planet, 2)">
+									<a v-if="page.get_link" href="#" v-bind:onclick="QuickFleet(8, page.planet.galaxy, page.planet.system, page.planet.planet, 2)">
 										(переработать)
 									</a>
 								</div>
@@ -119,10 +136,10 @@
 							<div class="row">
 								<div class="col-12 th middle">
 									<img v-bind:src="$root.getUrl('assets/images/wins.gif')" alt="" align="absmiddle" class="tooltip" data-content="Победы">
-									{{ page.raids_win }}
+									{{ page.raids.win }}
 									&nbsp;&nbsp;
 									<img v-bind:src="$root.getUrl('assets/images/losses.gif')" alt="" align="absmiddle" class="tooltip" data-content="Поражения">
-									{{ page.raids_lose }}
+									{{ page.raids.lost }}
 								</div>
 							</div>
 							<div class="row">
@@ -149,41 +166,40 @@
 							<div class="row">
 								<div class="th col-sm-5 col-6">Постройки:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page.user_points) }}</span>
+									<span class="positive">{{ Format.number(page.points.build) }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Флот:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page.user_fleet) }}</span>
+									<span class="positive">{{ Format.number(page.points.fleet) }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Оборона:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page.user_defs) }}</span>
+									<span class="positive">{{ Format.number(page.points.defs) }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Наука:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page.player_points_tech) }}</span>
+									<span class="positive">{{ Format.number(page.points.tech) }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Всего:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page.total_points) }}</span>
+									<span class="positive">{{ Format.number(page.points.total) }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Место:</div>
 								<div class="th col-sm-7 col-6">
-									<a v-bind:href="$root.getUrl('stat/players/range/'+page.user_rank+'/')">{{ page.user_rank }}</a>
+									<a v-bind:href="$root.getUrl('stat/players/range/'+page.points.place+'/')">{{ page.points.place }}</a>
 									<span title="Изменение места в рейтинге">
-										<span v-if="page.ile >= 1" class="positive">+{{ page.ile }}</span>
-										<span v-else-if="page.ile < 0" class="negative">{{ page.ile }}</span>
-										<font v-else color="lightblue">~</font>
+										<span v-if="page.points.diff >= 1" class="positive">+{{ page.points.diff }}</span>
+										<span v-else-if="page.points.diff < 0" class="negative">{{ page.points.diff }}</span>
 									</span>
 								</div>
 							</div>

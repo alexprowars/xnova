@@ -504,16 +504,19 @@ class OverviewController extends Controller
 
 		unset($planets);
 
-		$parse['planet_type'] = _getText('type_planet', $this->planet->planet_type);
-		$parse['planet_name'] = $this->planet->name;
-		$parse['planet_diameter'] = $this->planet->diameter;
-		$parse['planet_field_current'] = $this->planet->field_current;
-		$parse['planet_field_max'] = $this->planet->getMaxFields();
-		$parse['planet_temp_min'] = $this->planet->temp_min;
-		$parse['planet_temp_max'] = $this->planet->temp_max;
-		$parse['planet_galaxy'] = $this->planet->galaxy;
-		$parse['planet_planet'] = $this->planet->planet;
-		$parse['planet_system'] = $this->planet->system;
+		$parse['planet'] = [
+			'type' => _getText('type_planet', $this->planet->planet_type),
+			'name' => $this->planet->name,
+			'image' => $this->planet->image,
+			'diameter' => (int) $this->planet->diameter,
+			'field_used' => (int) $this->planet->field_current,
+			'field_max' => (int) $this->planet->getMaxFields(),
+			'temp_min' => (int) $this->planet->temp_min,
+			'temp_max' => (int) $this->planet->temp_max,
+			'galaxy' => (int) $this->planet->galaxy,
+			'system' => (int) $this->planet->system,
+			'planet' => (int) $this->planet->planet
+		];
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 
@@ -527,31 +530,28 @@ class OverviewController extends Controller
 			$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 		}
 
+		$parse['points'] = [
+			'build' => 0,
+			'tech' => 0,
+			'fleet' => 0,
+			'defs' => 0,
+			'total' => 0,
+			'place' => 0,
+			'diff' => 0
+		];
+
 		if (count($records))
 		{
-			$parse['user_points'] = $records['build_points'];
-			$parse['player_points_tech'] = $records['tech_points'];
-			$parse['total_points'] = $records['total_points'];
-			$parse['user_fleet'] = $records['fleet_points'];
-			$parse['user_defs'] = $records['defs_points'];
-
-			$parse['user_rank'] = $records['total_rank'] + 0;
-
 			if (!$records['total_old_rank'])
 				$records['total_old_rank'] = $records['total_rank'];
 
-			$parse['ile'] = $records['total_old_rank'] - $records['total_rank'];
-		}
-		else
-		{
-			$parse['user_points'] = 0;
-			$parse['player_points_tech'] = 0;
-			$parse['total_points'] = 0;
-			$parse['user_fleet'] = 0;
-			$parse['user_defs'] = 0;
-
-			$parse['user_rank'] = 0;
-			$parse['ile'] = 0;
+			$parse['points']['build'] = (int) $records['build_points'];
+			$parse['points']['tech'] = (int) $records['tech_points'];
+			$parse['points']['fleet'] = (int) $records['fleet_points'];
+			$parse['points']['defs'] = (int) $records['defs_points'];
+			$parse['points']['total'] = (int) $records['total_points'];
+			$parse['points']['place'] = (int) $records['total_rank'];
+			$parse['points']['diff'] = (int) $records['total_old_rank'] - (int) $records['total_rank'];
 		}
 
 		$flotten = [];
@@ -569,8 +569,6 @@ class OverviewController extends Controller
 		}
 
 		$parse['fleets'] = $flotten;
-
-		$parse['planet_image'] = $this->planet->image;
 
 		$parse['debris'] = [
 			'metal' => (int) $this->planet->debris_metal,
@@ -636,27 +634,30 @@ class OverviewController extends Controller
 			]
 		];
 
-		$parse['links'] = $this->user->links;
+		$parse['links'] = (int) $this->user->links;
+		$parse['refers'] = (int) $this->user->refers;
 		$parse['noob'] = $this->config->game->get('noob', 0);
 
-		$parse['raids_win'] = $this->user->raids_win;
-		$parse['raids_lose'] = $this->user->raids_lose;
-		$parse['raids'] = $this->user->raids;
+		$parse['raids'] = [
+			'win' => (int) $this->user->raids_win,
+			'lost' => (int) $this->user->raids_lose,
+			'total' => (int) $this->user->raids
+		];
 
-		$parse['bonus'] = ($this->user->bonus < time()) ? true : false;
+		$parse['bonus'] = $this->user->bonus < time();
 
 		if ($parse['bonus'])
 		{
-			$parse['bonus_multi'] = $this->user->bonus_multi + 1;
+			$bonus = $this->user->bonus_multi + 1;
 
-			if ($parse['bonus_multi'] > 50)
-				$parse['bonus_multi'] = 50;
+			if ($bonus > 50)
+				$bonus = 50;
 
 			if ($this->user->bonus < (time() - 86400))
-				$parse['bonus_multi'] = 1;
-		}
+				$bonus = 1;
 
-		$parse['refers'] = $this->user->refers;
+			$parse['bonus_count'] = $bonus * 500 * $this->game->getSpeed('mine');
+		}
 
 		$parse['officiers'] = [];
 
