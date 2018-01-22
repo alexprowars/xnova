@@ -47,19 +47,28 @@ router.beforeEach(function(to, from, next)
 	if (from.name === null && typeof from.name === "object")
 		return next();
 
+	if (router.app.router_block)
+	{
+		router.app.router_block = false;
+		return next();
+	}
+
 	router.app.loadPage(to.path, function(url)
 	{
 		next();
 
 		if (to.path !== url)
-			router.replace(url);
+		{
+			router.app.router_block = true;
+			router.replace(url, () => router.app.router_block = false, () => router.app.router_block = false);
+		}
 	});
 })
 
 let store = new Vuex.Store({
 	state: options,
 	mutations: {
-		load (state, data)
+		PAGE_LOAD (state, data)
 		{
 			for (let key in data)
 			{
@@ -76,31 +85,36 @@ window.application = new Vue({
 	el: '#application',
 	computed: {
 		getMenuActiveLink: function () {
-			return this.$store.state.route.controller+(this.$store.state.route.controller === 'buildings' ? this.$store.state.route.action : '');
+			return this.$store.state['route']['controller']+(this.$store.state['route']['controller'] === 'buildings' ? this.$store.state['route']['action'] : '');
 		},
 		html () {
-			return this.$store.state.html;
+			return this.$store.state['html'];
 		},
 		title () {
-			return this.$store.state.title_full;
+			return this.$store.state['title_full'];
 		},
 		url () {
-			return this.$store.state.url;
+			return this.$store.state['url'];
 		},
 		redirect () {
-			return this.$store.state.redirect;
+			return this.$store.state['redirect'];
 		},
 		messages () {
-			return this.$store.state.messages;
+			return this.$store.state['messages'];
 		}
+	},
+	data: {
+		loader: false,
+		request_block: false,
+		router_block: false
 	},
 	watch: {
 		html: function (val)
 		{
-			setTimeout(function() {
+			setTimeout(() => {
 				this.evalJs(val);
 				TextParser.parseAll();
-			}.bind(this), 25)
+			}, 25)
 		},
 		title (val) {
 			document.title = val;
@@ -119,17 +133,24 @@ window.application = new Vue({
 			})
 		},
 		url (val) {
-			this.$router.push(val);
+			this.router_block = true;
+			this.$router.push(val, () => this.router_block = false, () => this.router_block = false);
+		},
+		loader (val, old)
+		{
+			if (val === old)
+				return;
+
+			if (val)
+				setTimeout(() => this.request_block = false, 500);
 		}
 	},
 	methods:
 	{
-		getUrl: function (url)
-		{
+		getUrl: function (url) {
 			return this.$store.state.path+url;
 		},
-		getPlanetUrl: function (galaxy, system, planet)
-		{
+		getPlanetUrl: function (galaxy, system, planet) {
 			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
 		},
 		evalJs: function (html)
@@ -148,18 +169,17 @@ window.application = new Vue({
 			}
 		},
 		applyData: function (data) {
-			this.$store.commit('load', data);
+			this.$store.commit('PAGE_LOAD', data);
 		},
 		loadPage (url, callback)
 		{
-			if (!blockTimer)
+			if (this.request_block)
 				return;
 
 			clearTimers();
 
-			blockTimer = false;
-
-			showLoading();
+			this.request_block = true;
+			this.loader = true;
 
 			$('[role="tooltip"]').remove()
 
@@ -168,10 +188,9 @@ window.application = new Vue({
 				url: url,
 				cache: false,
 				dataType: 'json',
-				success: function(result)
+				timeout: 10000,
+				success: (result) =>
 				{
-					$('#tooltip').hide();
-					hideLoading();
 					clearTimers();
 
 					$('.ui-helper-hidden-accessible').html('');
@@ -206,21 +225,18 @@ window.application = new Vue({
 					}
 
 					callback && callback(result.data.url);
-				}.bind(this),
-				timeout: 10000,
-				error: function(jqXHR, exception)
-				{
-					console.log(jqXHR.responseText);
-					console.log(exception);
-
-					$('#tooltip').hide();
+				},
+				error: () => {
 					document.location = to.path;
+				},
+				complete: () => {
+					this.loader = false;
+					$('#tooltip').hide();
 				}
 			});
 		}
 	},
-	mounted: function ()
-	{
+	mounted: function () {
 		this.evalJs(this.$store.state.html);
 	},
 	render: h => h(App)

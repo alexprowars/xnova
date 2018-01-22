@@ -104,8 +104,7 @@ $(document).ready(function()
 				if ($(ev.toElement).data('tooltipWidth') !== undefined)
 					obj.tooltip.css({width: $(ev.toElement).data('tooltipWidth')});
 			},
-			close: function()
-			{
+			close: function() {
 				$('.ui-helper-hidden-accessible').html('');
 			}
 		});
@@ -116,23 +115,18 @@ $(document).ready(function()
 	body.on('click', 'a', function(e)
 	{
 		var el = $(this);
+		var url = el.attr('href');
 
-		if (el.hasClass('window'))
+		if (!url || el.hasClass('window') || url.indexOf('#') === 0)
 			return false;
 
-		if (!el.attr('href'))
-			return false;
-
-		if (el.attr('href').indexOf('#') === 0)
-			return false;
-
-		if (el.attr('href').indexOf('javascript') === 0 || el.attr('href').indexOf('mailto') === 0 || el.attr('href').indexOf('#') >= 0 || el.attr('target') === '_blank')
+		if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
 			return true;
 		else
 		{
 			e.preventDefault();
 
-			load(el.attr('href'));
+			load(url);
 		}
 
 		return false;
@@ -143,10 +137,10 @@ $(document).ready(function()
 
 		var form = $(this);
 
-		showLoading();
+		application.loader = true;
 		clearTimers();
 
-		var formData = new FormData(form[0]);
+		var formData = new FormData(this);
 
 		$.ajax({
 		    url: form.attr('action'),
@@ -155,19 +149,16 @@ $(document).ready(function()
 			dataType: 'json',
 		    contentType: false,
 		    processData: false,
-			success: function (result)
-			{
-				$('#tooltip').hide();
-				hideLoading();
-
+			success: function (result) {
 				application.applyData(result.data);
 			},
-			error: function()
+			error: function() {
+				alert('Что-то пошло не так!? Попробуйте еще раз');
+			},
+			complete: function()
 			{
 				$('#tooltip').hide();
-				hideLoading();
-
-				alert('Что-то пошло не так!? Попробуйте еще раз');
+				application.loader = false;
 			}
 		});
 	})
@@ -175,41 +166,42 @@ $(document).ready(function()
 	{
 		e.preventDefault();
 
-		showLoading();
+		application.loader = true;
+
+		var formData = new FormData(this);
+		formData.append('popup', 'Y');
 
 		$.ajax({
 			url: $(this).attr('action'),
 			type: 'post',
-			data: $(this).serialize(),
+			data: formData,
 			dataType: 'json',
-			beforeSend: function(jqXHR, settings)
+			processData: false,
+			contentType: false,
+			success: function (result)
 			{
-				settings.data += (settings.data !== '' ? '&' : '')+'popup=Y';
-    			return true;
-			},
-			success: function (data)
-			{
-				hideLoading();
-
-				if (data.message !== '')
+				if (result.data.message.length > 0 && result.data.message !== '')
 				{
-					$.toast({
-						text: data.message,
-						icon: statusMessages[data.status]
-					});
+					result.data.message.forEach(function(item)
+					{
+						$.toast({
+							text: item.message,
+							icon: item.type
+						});
+					})
 				}
-				else if (data.html !== '')
+				else if (result.data.html !== '')
 				{
-					$('.jconfirm-content').html(data.html);
+					$('.jconfirm-content').html(result.data.html);
 
 					TextParser.parseAll();
 				}
 			},
-			error: function()
-			{
-				hideLoading();
-
+			error: function() {
 				alert('Что-то пошло не так!? Попробуйте еще раз');
+			},
+			complete: function() {
+				application.loader = false;
 			}
 		})
 	})
@@ -296,71 +288,41 @@ $(document).ready(function()
 
 function showWindow (title, url, width)
 {
-	if (!isMobile)
-	{
-		if (width === undefined)
-			width = 600;
+	if (isMobile)
+		return window.location.href = url.split('ajax').join('').split('popup').join('');
 
-		$.dialog({
-			title: '',
-			theme: 'dialog',
-			useBootstrap: false,
-			boxWidth: width,
-			backgroundDismiss: true,
-			animation: 'opacity',
-			closeAnimation: 'opacity',
-			animateFromElement: false,
-			draggable: false,
-			content: function ()
-			{
-				var self = this;
+	if (width === undefined)
+		width = 600;
 
-				return $.ajax({
-					url: url,
-					type: 'get',
-					data: {'popup': 'Y'},
-					success: function (result)
-					{
-						self.setTitle(result.data.title);
-						self.setContent(result.data.html);
-					}
-				});
-			}
-		});
-	}
-	else
-		window.location.href = url.split('ajax').join('').split('popup').join('');
+	$.dialog({
+		title: '',
+		theme: 'dialog',
+		useBootstrap: false,
+		boxWidth: width,
+		backgroundDismiss: true,
+		animation: 'opacity',
+		closeAnimation: 'opacity',
+		animateFromElement: false,
+		draggable: false,
+		content: function ()
+		{
+			return $.ajax({
+				url: url,
+				type: 'get',
+				data: {'popup': 'Y'},
+				success: function (result)
+				{
+					this.setTitle(result.data.title);
+					this.setContent(result.data.html);
+				}.bind(this)
+			});
+		}
+	});
 }
 
 function closeWindow()
 {
-	jconfirm.instances.forEach(function(item)
-	{
+	jconfirm.instances.forEach(function(item) {
 		item.close();
 	});
-}
-
-var blockTimer = true;
-
-function showLoading ()
-{
-	$('#ajaxLoader').show();
-
-	setTimeout(function()
-	{
-		blockTimer = true;
-	}, 500);
-}
-
-function hideLoading ()
-{
-	setTimeout(function()
-	{
-		$('#ajaxLoader').hide();
-	}, 1000);
-}
-
-function morph (n, titles)
-{
-	return titles[(n % 10 === 1 && n % 100 !== 11) ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2]
 }

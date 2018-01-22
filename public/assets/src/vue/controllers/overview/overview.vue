@@ -260,6 +260,9 @@
 <script>
 	export default {
 		name: "overview",
+		components: {
+			'game-page-overview-fleets': require('./overview-fleets.vue'),
+		},
 		computed: {
 			page () {
 				return this.$store.state.page;
@@ -268,40 +271,33 @@
 		data: function()
 		{
 			return {
-				clock: 0
+				clock: 0,
+				clock_timeout: null
 			}
 		},
 		methods: {
-			updateClock: function()
-			{
+			clockUpdate: function() {
 				this.clock = Math.floor((new Date).getTime() / 1000);
 			},
-			stopClock: function()
-			{
-				clearTimeout(timeouts['overview_clock']);
+			clockStop: function() {
+				clearTimeout(this.clock_timeout);
 			},
-			startClock: function ()
-			{
-				timeouts['overview_clock'] = setTimeout(this.updateClock, 1000);
+			clockStart: function () {
+				this.clock_timeout = setTimeout(this.clockUpdate, 1000);
 			}
 		},
 		watch: {
-			clock: function()
-			{
-				this.startClock();
+			clock: function(val) {
+				this.clockStart();
 			}
 		},
 		mounted: function()
 		{
-			this.stopClock();
-			this.updateClock();
+			this.clockStop();
+			this.clockUpdate();
 		},
-		destroyed: function ()
-		{
-			this.stopClock();
-		},
-		components: {
-			'game-page-overview-fleets': require('./overview-fleets.vue'),
-		},
+		destroyed: function () {
+			this.clockStop();
+		}
 	}
 </script>

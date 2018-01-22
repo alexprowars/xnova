@@ -49,38 +49,38 @@
 <script>
 	export default {
 		name: "build",
-		data: function () {
+		data () {
 			return {
-				cheat: 3
+				cheat: 3,
+				timeout: null
 			}
 		},
 		computed: {
 			page () {
 				return this.$store.state.page;
 			},
-			fields_empty: function() {
+			fields_empty () {
 				return this.page.fields_max - this.page.fields_current;
 			}
 		},
 		components: {
 			'game-page-buildings-build-item': require('./build-row.vue')
 		},
-		mounted: function ()
-		{
+		mounted () {
 			this.init();
 		},
 		methods:
 		{
-			init: function ()
+			init ()
 			{
-				clearTimeout(timeouts['build_queue']);
+				clearTimeout(this.timeout);
 
 				this.cheat = 3;
 
 				if (this.page.queue.length > 0)
 					setTimeout(this.timer, 1000);
 			},
-			timer: function()
+			timer ()
 			{
 				if (this.cheat > 0)
 					this.cheat -= 1;
@@ -89,19 +89,21 @@
 
 				if (this.page.queue[0].time <= 0)
 				{
-					timeouts['build_queue'] = setTimeout(function()
-					{
+					this.timeout = setTimeout(() => {
 						load(this.$root.getUrl('buildings/index/planet/'+this.$store.state.user.planet+'/'));
-					}.bind(this), 5000);
+					}, 5000);
 				}
 				else
-					timeouts['build_queue'] = setTimeout(this.timer, 1000);
+					this.timeout = setTimeout(this.timer, 1000);
 			}
 		},
 		watch: {
-			page: function () {
+			page () {
 				this.init();
 			}
 		},
+		destroyed () {
+			clearTimeout(this.timeout);
+		}
 	}
 </script>

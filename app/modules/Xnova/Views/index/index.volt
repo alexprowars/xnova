@@ -65,8 +65,6 @@
 		{
 			e.preventDefault();
 
-			showLoading();
-
 			$.ajax({
 				url: '{{ url('login/') }}',
 				type: 'post',
@@ -82,8 +80,6 @@
 							$('#authError').html(item.text);
 						});
 					}
-
-					hideLoading();
 				}
 			});
 		});

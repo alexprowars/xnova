@@ -26,9 +26,6 @@
 	<![endif]-->
 </head>
 <body>
-	<script type="text/javascript">
-		var ajax_nav = 0;
-	</script>
 	{% if dispatcher.getControllerName() !== 'index' %}
 		<div id="box">
 			<div class="game_content">

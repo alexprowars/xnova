@@ -17,7 +17,8 @@
 		data: function() {
 			return {
 				time: 0,
-				timer: Math.floor((new Date).getTime() / 1000)
+				timer: Math.floor((new Date).getTime() / 1000),
+				timeout: null
 			}
 		},
 		methods:
@@ -29,18 +30,15 @@
 
 				this.time = this.item.time - Math.floor(((new Date).getTime() / 1000));
 			},
-			stop: function()
-			{
-				clearTimeout(timeouts['fleet_row_'+this.item.id]);
+			stop: function() {
+				clearTimeout(this.timeout);
 			},
-			start: function ()
-			{
-				timeouts['fleet_row_'+this.item.id] = setTimeout(this.update, 1000);
+			start: function () {
+				this.timeout = setTimeout(this.update, 1000);
 			}
 		},
 		watch: {
-			time: function()
-			{
+			time: function() {
 				this.start();
 			}
 		},
@@ -49,8 +47,7 @@
 			this.stop();
 			this.update();
 		},
-		destroyed: function ()
-		{
+		destroyed: function () {
 			this.stop();
 		}
 	}

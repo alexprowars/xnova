@@ -54,6 +54,8 @@
 		<!-- footer -->
 		<application-footer v-if="$store.state.view.header"></application-footer>
 		<!-- end footer -->
+
+		<div id="ajaxLoader" :class="{active: $root.loader}"></div>
 	</div>
 </template>
 
