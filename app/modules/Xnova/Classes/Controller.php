@@ -137,8 +137,9 @@ class Controller extends PhalconController
 			$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
 			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 
-			$this->assets->addJs('https://cdn.jsdelivr.net/npm/vue', 'footer');
-			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.min.js', 'footer');
+			$this->assets->addJs('https://unpkg.com/vue/dist/vue.js', 'footer');
+			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.js', 'footer');
+			$this->assets->addJs('https://unpkg.com/vuex/dist/vuex.js', 'footer');
 
 			$this->assets->addJs('assets/js/flotten.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');

@@ -10,6 +10,7 @@ var uglify = require("gulp-uglify");
 var fs = require("fs")
 var browserify = require('browserify')
 var vueify = require('vueify')
+var babelify = require('babelify')
 
 process.env.NODE_ENV = 'production';
 
@@ -30,6 +31,7 @@ gulp.task('sass', function ()
 gulp.task('vue', function ()
 {
 	browserify('./public/assets/src/vue/app.js', {debug: false, bundleExternal: false})
+		.transform(babelify, { presets: ['es2015'] })
 		.transform(vueify)
 		.bundle()
 		.pipe(fs.createWriteStream("./public/assets/js/application.js"))

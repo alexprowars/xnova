@@ -27,12 +27,12 @@
 						<div v-else class="z">
 							Завершено
 							<br>
-							<a v-on:click="load($root.getUrl('buildings/index/planet/'+$root.user.planet+'/'))">Продолжить</a>
+							<a v-on:click="load($root.getUrl('buildings/index/planet/'+$store.state.user.planet+'/'))">Продолжить</a>
 						</div>
 						<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 					</td>
 					<td class="k" v-else>
-						<a v-bind:href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$root.user.planet+'/')">Удалить</a>
+						<a v-bind:href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
 					</td>
 				</tr>
 			</table>
@@ -49,13 +49,15 @@
 <script>
 	export default {
 		name: "build",
-		props: ['page'],
 		data: function () {
 			return {
 				cheat: 3
 			}
 		},
 		computed: {
+			page () {
+				return this.$store.state.page;
+			},
 			fields_empty: function() {
 				return this.page.fields_max - this.page.fields_current;
 			}
@@ -89,7 +91,7 @@
 				{
 					timeouts['build_queue'] = setTimeout(function()
 					{
-						load(this.$root.getUrl('buildings/index/planet/'+this.$root.user.planet+'/'));
+						load(this.$root.getUrl('buildings/index/planet/'+this.$store.state.user.planet+'/'));
 					}.bind(this), 5000);
 				}
 				else

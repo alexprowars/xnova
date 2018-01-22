@@ -8,7 +8,7 @@
 
 <script>
 	export default {
-		name: "planet-panel-resource-tooltip",
+		name: "application-planet-panel-resource-tooltip",
 		props: ['resource']
 	}
 </script>

@@ -96,12 +96,14 @@
 <script>
 	export default {
 		name: "galaxy",
-		props: ['page'],
 		components: {
 			'game-page-galaxy-item': require('./galaxy-row.vue'),
 			'game-page-galaxy-selector': require('./galaxy-selector.vue'),
 		},
 		computed: {
+			page () {
+				return this.$store.state.page;
+			},
 			planets: function ()
 			{
 				var count = 0;

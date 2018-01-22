@@ -1,8 +1,8 @@
 <template>
-	<div id="application" v-bind:class="['set_'+$root.route.controller]">
+	<div id="application" v-bind:class="['set_'+$store.state.route.controller]">
 
 		<!-- header -->
-		<a v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarMenuToggle">
+		<a v-if="$store.state.view.header && mobile" v-bind:class="{active: sidebar === 'menu'}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarToggle('menu')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
@@ -10,48 +10,49 @@
 			</span>
 		</a>
 
-		<div v-if="$root.view.header && mobile" v-bind:class="{active: sidebarMenu}" class="menu-sidebar d-sm-none">
-			<sidebar-menu v-bind:items="$root.menu" v-bind:active="$root.getMenuActiveLink"></sidebar-menu>
+		<div v-if="$store.state.view.header && mobile" v-bind:class="{active: sidebar === 'menu'}" class="menu-sidebar d-sm-none">
+			<sidebar-menu></sidebar-menu>
 		</div>
 
-		<application-header v-if="$root.view.header"></application-header>
-		<application-header-mobile-icons v-if="$root.view.header"></application-header-mobile-icons>
+		<application-header v-if="$store.state.view.header"></application-header>
+		<application-header-mobile-icons v-if="$store.state.view.header"></application-header-mobile-icons>
 		<!-- end header -->
 
 		<div class="game_content">
 			<!-- menu -->
-			<main-menu v-if="$root.view.menu && !mobile" v-bind:items="$root.menu" v-bind:active="$root.getMenuActiveLink"></main-menu>
+			<main-menu v-if="$store.state.view.menu && !mobile"></main-menu>
 			<!-- end menu -->
 
 			<!-- planets -->
-			<a v-if="$root.view.planets && mobile" v-bind:class="{active: planetMenu}" class="planet-toggle d-sm-none" v-on:click.prevent="planetMenuToggle"><span>
+			<a v-if="$store.state.view.planets && mobile" v-bind:class="{active: sidebar === 'planet'}" class="planet-toggle d-sm-none" v-on:click.prevent="sidebarToggle('planet')"><span>
 					<span class="first"></span>
 					<span class="second"></span>
 					<span class="third"></span>
 				</span>
 			</a>
 
-			<application-planets-list v-bind:class="{active: planetMenu}" v-if="$root.view.planets" v-bind:items="$root.user.planets"></application-planets-list>
+			<application-planets-list v-bind:class="{active: sidebar === 'planet'}" v-if="$store.state.view.planets"></application-planets-list>
 			<!-- end planets -->
 
-			<div class="content">
+			<div class="main-content">
 				<!-- planet panel -->
-				<planet-panel v-if="$root.view.resources" v-bind:planet="$root.resources"></planet-panel>
+				<planet-panel v-if="$store.state.view.resources" v-bind:planet="$store.state.resources"></planet-panel>
 				<!-- end planet panel -->
 
 				<!-- messages -->
-				<div v-if="$root.messages" v-for="item in $root.messages">
+				<div v-if="$store.state.messages" v-for="item in $store.state.messages">
 					<application-messages-row v-bind:item="item"></application-messages-row>
 				</div>
 				<!-- end messages -->
 
-				<div v-if="$root.html.length > 0" id="gamediv" class="content-row" v-html="$root.html"></div>
-				<router-view v-bind:page="$root.page"></router-view>
+				<div class="main-content-row">
+					<router-view></router-view>
+				</div>
 			</div>
 		</div>
 
 		<!-- footer -->
-		<application-footer v-if="$root.view.header"></application-footer>
+		<application-footer v-if="$store.state.view.header"></application-footer>
 		<!-- end footer -->
 	</div>
 </template>
@@ -59,7 +60,7 @@
 <script>
 
 	export default {
-		name: "app",
+		name: "application",
 		components: {
 			'sidebar-menu': require('./views/app/sidebar-menu.vue'),
 			'main-menu': require('./views/app/main-menu.vue'),
@@ -73,44 +74,34 @@
 		data: function ()
 		{
 			return {
-				sidebarMenu: false,
-				planetMenu: false,
-				mobile: false
+				mobile: false,
+				sidebar: ''
 			}
 		},
 		methods: {
-			planetMenuToggle: function ()
+			sidebarToggle: function (type)
 			{
-				this.planetMenu = !this.planetMenu;
-
-				if (this.planetMenu)
-					this.sidebarMenu = false;
-
+				if (this.sidebar === type)
+					this.sidebar = '';
+				else
+					this.sidebar = type;
 			},
-			sidebarMenuToggle: function ()
-			{
-				this.sidebarMenu = !this.sidebarMenu;
-
-				if (this.sidebarMenu)
-					this.planetMenu = false;
-			},
-			handleWindowResize: function (event)
-			{
+			handleWindowResize: function (event) {
 				this.mobile = (event.currentTarget.innerWidth < 480);
 			}
 		},
-		beforeCreate: function ()
+		created: function ()
 		{
 			if (window.innerWidth < 480)
 				this.mobile = true;
 		},
-		mounted: function()
-		{
+		mounted: function() {
 			window.addEventListener('resize', this.handleWindowResize);
+		},
+		watch: {
+		    '$route' () {
+				this.sidebar = '';
+		    }
 		}
 	}
 </script>
-
-<style scoped>
-
-</style>

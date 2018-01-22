@@ -6,8 +6,12 @@
 
 <script>
 	export default {
-		name: "main-menu",
-		props: ['items', 'active'],
+		name: "application-main-menu",
+		computed: {
+			items () {
+				return this.$store.state.menu;
+			}
+		},
 		components: {
 			'main-menu-item': require('./main-menu-item.vue')
 		}

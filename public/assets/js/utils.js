@@ -190,3 +190,74 @@ function number_format(number, decimals, dec_point, thousands_sep)
 
 	return s.join(dec);
 }
+
+var Format = {
+	number: function(value)
+	{
+		if (value > 1000000000)
+			return number_format(Math.floor(value / 1000000), 0, ',', '.')+'kk';
+
+		return number_format(value, 0, ',', '.');
+	},
+	time: function (value, separator)
+	{
+		if (typeof separator === 'undefined')
+			separator = '';
+
+		var dd = Math.floor(value / (24 * 3600));
+		var hh = Math.floor(value / 3600 % 24);
+		var mm = Math.floor(value / 60 % 60);
+		var ss = Math.floor(value / 1 % 60);
+
+		var time = '';
+
+		if (dd !== 0)
+			time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' д. ');
+
+		if (hh > 0)
+			time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ч. ');
+
+		if (mm > 0)
+			time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' мин. ');
+
+		if (ss !== 0)
+			time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
+
+		if (!time.length)
+			time = '-';
+
+		return time;
+	}
+}
+
+function raport_to_bb(raport)
+{
+	raport = $('#'+raport);
+
+	var txt = raport.html();
+
+	txt = txt.replace(/<tbody>/gi, "");
+	txt = txt.replace(/<\/tbody>/gi, "");
+	txt = txt.replace(/<tr>/gi, "[tr]");
+	txt = txt.replace(/<\/tr>/gi, "[\/tr]");
+	txt = txt.replace(/<td>/gi, "[td]");
+	txt = txt.replace(/<\/td>/gi, "[\/td]");
+	txt = txt.replace(/<\/table>/gi, "[\/table]");
+	txt = txt.replace(/<th>/gi, "[th]");
+	txt = txt.replace(/<th width="40%">/gi, "[th(w=40)]");
+	txt = txt.replace(/<th width="10%">/gi, "[th(w=10)]");
+	txt = txt.replace(/<\/th>/gi, "[\/th]");
+	txt = txt.replace(/<td class="c" colspan="4">/gi, "[td(cl=c)(cs=4)]");
+	txt = txt.replace(/<td colspan="4" class="c">/gi, "[td(cl=c)(cs=4)]");
+	txt = txt.replace(/<table width="100%">/gi, "[table(w=100)]");
+	txt = txt.replace(/<table width="100%" cellspacing="1">/gi, "[table(w=100)]");
+	txt = txt.replace(/<table cellspacing="1" width="100%">/gi, "[table(w=100)]");
+	txt = txt.replace(/<th width="220" align="right">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th align="right" width="220">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th width="220">/gi, "[th]");
+	txt = txt.replace(/<br>/gi, " ");
+	txt = txt.replace(/<\/a>/gi, "[\/url]");
+	txt = txt.replace(/<a href="(.*?)">/gi, "[url=https://x.xnova.su$1]");
+
+	raport.html(txt);
+}

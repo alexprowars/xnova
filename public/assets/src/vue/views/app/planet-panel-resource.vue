@@ -21,7 +21,7 @@
 
 <script>
 	export default {
-		name: "planet-panel-resource",
+		name: "application-planet-panel-resource",
 		props: ['resource', 'type'],
 		components: {
 			'planet-panel-resource-tooltip': require('./planet-panel-resource-tooltip.vue')

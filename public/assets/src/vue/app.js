@@ -1,4 +1,4 @@
-var App = require('./app.vue')
+let App = require('./app.vue')
 
 Vue.prototype.Format = Format
 Vue.prototype.date = date
@@ -7,58 +7,126 @@ Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
 Vue.prototype.QuickFleet = QuickFleet
 
-var BuildingBuildController = require('./controllers/buildings/build.vue')
-var GalaxyController = require('./controllers/galaxy/galaxy.vue')
-var OverviewController = require('./controllers/overview/overview.vue')
-var EmptyController = require('./controllers/empty.vue')
+let BuildingBuildController = require('./controllers/buildings/build.vue')
+let GalaxyController = require('./controllers/galaxy/galaxy.vue')
+let OverviewController = require('./controllers/overview/overview.vue')
+let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
 	path: '/buildings',
+	name: 'buildings',
 	component: BuildingBuildController
 }, {
 	path: '/buildings/index/*',
+	name: 'buildings-index',
 	component: BuildingBuildController
 }, {
 	path: '/galaxy*',
+	name: 'galaxy',
 	component: GalaxyController
 }, {
 	path: '/overview',
+	name: 'overview',
 	component: OverviewController
 }, {
 	path: '*',
-	component: EmptyController
+	name: 'html',
+	component: HtmlController
 }]
 
-var router = new VueRouter({
+Vue.use(Vuex);
+Vue.use(VueRouter);
+
+let router = new VueRouter({
 	mode: 'history',
-  routes // сокращение от `routes: routes`
+	routes
 })
+
+router.beforeEach(function(to, from, next)
+{
+	if (from.name === null && typeof from.name === "object")
+		return next();
+
+	router.app.loadPage(to.path, function(url)
+	{
+		next();
+
+		if (to.path !== url)
+			router.replace(url);
+	});
+})
+
+let store = new Vuex.Store({
+	state: options,
+	mutations: {
+		load (state, data)
+		{
+			for (let key in data)
+			{
+				if (data.hasOwnProperty(key))
+					state[key] = data[key];
+			}
+		}
+	}
+});
 
 window.application = new Vue({
 	router,
+	store,
 	el: '#application',
-	delimiters: ['<%', '%>'],
-	data: options,
 	computed: {
-		getMenuActiveLink: function ()
-		{
-			return this.route.controller+(this.route.controller === 'buildings' ? this.route.action : '');
+		getMenuActiveLink: function () {
+			return this.$store.state.route.controller+(this.$store.state.route.controller === 'buildings' ? this.$store.state.route.action : '');
+		},
+		html () {
+			return this.$store.state.html;
+		},
+		title () {
+			return this.$store.state.title_full;
+		},
+		url () {
+			return this.$store.state.url;
+		},
+		redirect () {
+			return this.$store.state.redirect;
+		},
+		messages () {
+			return this.$store.state.messages;
 		}
 	},
 	watch: {
 		html: function (val)
 		{
-			setTimeout(function()
-			{
+			setTimeout(function() {
 				this.evalJs(val);
+				TextParser.parseAll();
 			}.bind(this), 25)
+		},
+		title (val) {
+			document.title = val;
+		},
+		redirect (val) {
+			window.location.href = val;
+		},
+		messages (val)
+		{
+			val.forEach(function(item)
+			{
+				$.toast({
+					text: item.text,
+					icon: item.type
+				});
+			})
+		},
+		url (val) {
+			this.$router.push(val);
 		}
 	},
 	methods:
 	{
 		getUrl: function (url)
 		{
-			return this.path+url;
+			return this.$store.state.path+url;
 		},
 		getPlanetUrl: function (galaxy, system, planet)
 		{
@@ -68,7 +136,7 @@ window.application = new Vue({
 		{
 			if (html.length > 0)
 			{
-				var j = $('<div/>').append(html)
+				let j = $('<div/>').append(html)
 
 				j.find("script").each(function()
 				{
@@ -79,18 +147,81 @@ window.application = new Vue({
 				});
 			}
 		},
-		applyData: function (data)
+		applyData: function (data) {
+			this.$store.commit('load', data);
+		},
+		loadPage (url, callback)
 		{
-			for (var key in data)
+			if (!blockTimer)
+				return;
+
+			clearTimers();
+
+			blockTimer = false;
+
+			showLoading();
+
+			$('[role="tooltip"]').remove()
+
+			$.ajax(
 			{
-				if (data.hasOwnProperty(key))
-					Vue.set(options, key, data[key])
-			}
+				url: url,
+				cache: false,
+				dataType: 'json',
+				success: function(result)
+				{
+					$('#tooltip').hide();
+					hideLoading();
+					clearTimers();
+
+					$('.ui-helper-hidden-accessible').html('');
+
+					closeWindow();
+
+					this.applyData(result.data);
+
+					if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
+					{
+						$.confirm({
+							title: 'Обучение',
+							content: result.data['tutorial']['popup'],
+							confirmButton: 'Продолжить',
+							cancelButton: false,
+							backgroundDismiss: false,
+							confirm: function ()
+							{
+								if (result.data['tutorial']['url'] !== '')
+									load(result.data['tutorial']['url']);
+							}
+						});
+					}
+
+					if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['toast'] !== '')
+					{
+						$.toast({
+							text: result.data['tutorial']['toast'],
+							icon: 'info',
+							stack : 1
+						});
+					}
+
+					callback && callback(result.data.url);
+				}.bind(this),
+				timeout: 10000,
+				error: function(jqXHR, exception)
+				{
+					console.log(jqXHR.responseText);
+					console.log(exception);
+
+					$('#tooltip').hide();
+					document.location = to.path;
+				}
+			});
 		}
 	},
 	mounted: function ()
 	{
-		this.evalJs(this.html);
+		this.evalJs(this.$store.state.html);
 	},
 	render: h => h(App)
 })

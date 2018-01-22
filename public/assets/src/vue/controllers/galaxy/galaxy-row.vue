@@ -17,13 +17,13 @@
 									<a v-bind:onclick="$root.getUrlPath('phalanx/index/galaxy/'+$parent.page.galaxy+'/system/'+$parent.page.system+'/planet/'+item.planet+'/')" target="_blank">Фаланга</a>
 								</div>
 
-								<div v-if="item.u_id !== $root.user.id">
+								<div v-if="item.u_id !== $store.state.user.id">
 									<a v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t'+item.p_type+'/m1/')">Атаковать</a>
 									<br>
 									<a v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t'+item.p_type+'/m5/')">Удерживать</a>
 								</div>
 								<div v-else>
-									<a v-if="item.u_id === $root.user.id" v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t'+item.p_type+'/m4/')">Оставить</a>
+									<a v-if="item.u_id === $store.state.user.id" v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t'+item.p_type+'/m4/')">Оставить</a>
 								</div>
 								<a v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t'+item.p_type+'/m3/')">Транспорт</a>
 							</th>
@@ -37,7 +37,7 @@
 			<div v-if="item && !item.p_delete">
 				<span v-if="item.p_active <= 10" class="star">(*)</span>
 				<span v-else-if="item.p_active < 60" class="star">({{ Math.floor(item.p_active) }})</span>
-				<span v-bind:class="{negative: item.u_id === $root.user.id}">{{ item.p_name }}</span>
+				<span v-bind:class="{negative: item.u_id === $store.state.user.id}">{{ item.p_name }}</span>
 			</div>
 			<div v-else-if="item && item.p_delete">
 				Планета уничтожена
@@ -74,7 +74,7 @@
 									</tr>
 									<tr>
 										<th colspan="2" align="center">
-											<div v-if="item.u_id !== $root.user.id">
+											<div v-if="item.u_id !== $store.state.user.id">
 												<a v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t3/m1/')">Атаковать</a>
 												<br>
 												<a v-bind:href="$root.getUrl('fleet/g'+$parent.page.galaxy+'/s'+$parent.page.system+'/p'+item.planet+'/t3/m5/')">Удерживать</a>
@@ -154,11 +154,11 @@
 								<td v-if="user_avatar !== ''" width="122" height="126" rowspan="3" valign="middle" class="c" v-bind:style="'background:url('+user_avatar+') 50% 50% no-repeat;background-size:cover;'"></td>
 								<td v-else width="122" height="126" rowspan="3" valign="middle" class="c">нет<br>аватара</td>
 
-								<th v-if="item.u_id !== $root.user.id">
+								<th v-if="item.u_id !== $store.state.user.id">
 									<a v-bind:href="$root.getUrl('messages/write/'+item.u_id+'/')">Послать сообщение</a>
 								</th>
 							</tr>
-							<tr v-if="item.u_id !== $root.user.id">
+							<tr v-if="item.u_id !== $store.state.user.id">
 								<th>
 									<a v-bind:href="$root.getUrl('buddy/new/'+item.u_id+'/')">Добавить в друзья</a>
 								</th>
@@ -215,10 +215,10 @@
 					</table>
 				</div>
 
-				<span v-bind:class="{allymember: $root.user.alliance.id === item.a_id}">{{ item.a_tag }}</span>
+				<span v-bind:class="{allymember: $store.state.user.alliance.id === item.a_id}">{{ item.a_tag }}</span>
 			</a>
 
-			<div v-if="$root.user.alliance.id !== item.a_id">
+			<div v-if="$store.state.user.alliance.id !== item.a_id">
 				<small v-if="item.d_type === 0">[нейтральное]</small>
 				<small v-if="item.d_type === 1"><font color="orange">[перемирие]</font></small>
 				<small v-if="item.d_type === 2"><font color="green">[мир]</font></small>
@@ -227,7 +227,7 @@
 		</th>
 
 		<th style="white-space: nowrap;" width="125">
-			<div v-if="item && item.u_id !== $root.user.id && !item.p_delete">
+			<div v-if="item && item.u_id !== $store.state.user.id && !item.p_delete">
 				<a title="Отправить сообщение" v-bind:onclick="sendMessage">
 					<span class="sprite skin_m"></span>
 				</a>
@@ -235,7 +235,7 @@
 					<span class="sprite skin_b"></span>
 				</a>
 
-				<a v-if="$parent.page.user.missile" v-bind:href="$root.getUrl('galaxy/'+$parent.page.galaxy+'/'+$parent.page.system+'/planet/'+item.planet+'/r/2/user/'+$root.user.planet+'/')" title="Ракетная атака">
+				<a v-if="$parent.page.user.missile" v-bind:href="$root.getUrl('galaxy/'+$parent.page.galaxy+'/'+$parent.page.system+'/planet/'+item.planet+'/r/2/user/'+$store.state.user.planet+'/')" title="Ракетная атака">
 					<span class="sprite skin_r"></span>
 				</a>
 

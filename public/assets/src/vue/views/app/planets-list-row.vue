@@ -1,5 +1,5 @@
 <template>
-	<div v-bind:class="['planet', 'type_'+item.t, ($root.user.planet === item.id ? 'current' : '')]">
+	<div v-bind:class="['planet', 'type_'+item.t, ($store.state.user.planet === item.id ? 'current' : '')]">
 		<a v-on:click="changeItem" v-bind:title="item.name">
 			<img v-bind:src="$root.getUrl('assets/images/planeten/small/s_'+item.image+'.jpg')" height="40" width="40" v-bind:alt="item.name">
 		</a>
@@ -20,7 +20,7 @@
 		{
 			changeItem: function ()
 			{
-				var path = window.location.pathname.replace(this.$root.path, '').split('/');
+				var path = window.location.pathname.replace(this.$store.state.path, '').split('/');
 				var url = this.$root.getUrl(path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id);
 	
 				load(url);

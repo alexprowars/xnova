@@ -131,7 +131,7 @@ textarea {
 	margin: 0 0 0 0;
 }
 
-.k {
+.k, td.k {
 	text-align: center;
 	color: #e6ebfb;
 	background: #42444d;
@@ -638,7 +638,7 @@ textarea#text {
 		}
 	}
 
-	> .content {
+	> .main-content {
 		overflow-x: visible;
 		overflow-y: visible;
 		flex-shrink: 1000000;
@@ -669,7 +669,7 @@ textarea#text {
 			width: auto !important;
 			min-width: 100%;
 
-			> .content {
+			> .main-content {
 				white-space: nowrap;
 			}
 		}

@@ -58,8 +58,15 @@
 
 <script>
 	export default {
-		name: "planet-panel",
+		name: "application-planet-panel",
 		props: ['planet'],
+		data: function()
+		{
+			return {
+				updated: 0,
+				timer: null
+			}
+		},
 		components: {
 			'planet-panel-resource': require('./planet-panel-resource.vue')
 		},
@@ -70,15 +77,15 @@
 				if (typeof this.planet === 'undefined' || this.planet === false)
 					return;
 
-				if (XNova.lastUpdate === 0)
-					XNova.lastUpdate = (new Date).getTime();
+				if (this.updated === 0)
+					this.updated = (new Date).getTime();
 
-				var factor = ((new Date).getTime() - XNova.lastUpdate) / 1000;
+				var factor = ((new Date).getTime() - this.updated) / 1000;
 
 				if (factor < 0)
 					return;
 
-				XNova.lastUpdate = (new Date).getTime();
+				this.updated = (new Date).getTime();
 
 				['metal', 'crystal', 'deuterium'].forEach(function(res)
 				{
@@ -89,25 +96,23 @@
 
 					this.planet[res]['current'] += ((this.planet[res]['production'] / 3600) * power * factor);
 				}.bind(this));
+
+				this.timer = setTimeout(this.update, 1000);
 			}
 		},
 		created: function ()
 		{
+			clearTimeout(this.timer);
 			this.update();
-
-			clearInterval(timeouts['res_count']);
-			timeouts['res_count'] = setInterval(this.update, 1000);
 		},
 		updated: function ()
 		{
+			clearTimeout(this.timer);
 			this.update();
-
-			clearInterval(timeouts['res_count']);
-			timeouts['res_count'] = setInterval(this.update, 1000);
 		},
 		destroyed: function ()
 		{
-			clearInterval(timeouts['res_count']);
+			clearTimeout(this.timer);
 		}
 	}
 </script>

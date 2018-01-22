@@ -77,7 +77,7 @@ function showSmilesEx(obj, event)
 
 function chatResize()
 {
-	if (XNova.isMobile)
+	if (isMobile)
 		return;
 
 	var height = $(window).height() - 135;

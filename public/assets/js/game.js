@@ -1,88 +1,11 @@
-var XNova =
-{
-	isMobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
-	lastUpdate: 0
-};
-
+var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 var statusMessages = {0: 'error', 1: 'success', 2: 'info', 3: 'warning'};
+var timeouts	= [];
 
 function ShowHiddenBlock (id)
 {
     $('#'+id).toggle();
 }
-
-var timeouts	= [];
-
-function raport_to_bb(raport)
-{
-	raport = $('#'+raport);
-
-	var txt = raport.html();
-
-	txt = txt.replace(/<tbody>/gi, "");
-	txt = txt.replace(/<\/tbody>/gi, "");
-	txt = txt.replace(/<tr>/gi, "[tr]");
-	txt = txt.replace(/<\/tr>/gi, "[\/tr]");
-	txt = txt.replace(/<td>/gi, "[td]");
-	txt = txt.replace(/<\/td>/gi, "[\/td]");
-	txt = txt.replace(/<\/table>/gi, "[\/table]");
-	txt = txt.replace(/<th>/gi, "[th]");
-	txt = txt.replace(/<th width="40%">/gi, "[th(w=40)]");
-	txt = txt.replace(/<th width="10%">/gi, "[th(w=10)]");
-	txt = txt.replace(/<\/th>/gi, "[\/th]");
-	txt = txt.replace(/<td class="c" colspan="4">/gi, "[td(cl=c)(cs=4)]");
-	txt = txt.replace(/<td colspan="4" class="c">/gi, "[td(cl=c)(cs=4)]");
-	txt = txt.replace(/<table width="100%">/gi, "[table(w=100)]");
-	txt = txt.replace(/<table width="100%" cellspacing="1">/gi, "[table(w=100)]");
-	txt = txt.replace(/<table cellspacing="1" width="100%">/gi, "[table(w=100)]");
-	txt = txt.replace(/<th width="220" align="right">/gi, "[th(w=33)]");
-	txt = txt.replace(/<th align="right" width="220">/gi, "[th(w=33)]");
-	txt = txt.replace(/<th width="220">/gi, "[th]");
-	txt = txt.replace(/<br>/gi, " ");
-	txt = txt.replace(/<\/a>/gi, "[\/url]");
-	txt = txt.replace(/<a href="(.*?)">/gi, "[url=https://x.xnova.su$1]");
-
-	raport.html(txt);
-}
-
-var Format = {
-	number: function(value)
-	{
-		if (value > 1000000000)
-			return number_format(Math.floor(value / 1000000), 0, ',', '.')+'kk';
-
-		return number_format(value, 0, ',', '.');
-	},
-	time: function (value, separator)
-	{
-		if (typeof separator === 'undefined')
-			separator = '';
-
-		var dd = Math.floor(value / (24 * 3600));
-		var hh = Math.floor(value / 3600 % 24);
-		var mm = Math.floor(value / 60 % 60);
-		var ss = Math.floor(value / 1 % 60);
-
-		var time = '';
-
-		if (dd !== 0)
-			time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' д. ');
-
-		if (hh > 0)
-			time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ч. ');
-
-		if (mm > 0)
-			time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' мин. ');
-
-		if (ss !== 0)
-			time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
-
-		if (!time.length)
-			time = '-';
-
-		return time;
-	}
-};
 
 var flotenTimers = [];
 var flotenTime = [];
@@ -130,7 +53,7 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 	});
 }
 
-function ClearTimers ()
+function clearTimers ()
 {
 	for (var i in timeouts)
 	{
@@ -147,134 +70,23 @@ function ClearTimers ()
 	timeouts.length = 0;
 }
 
-function load (url, disableUrlState)
+function load (url)
 {
-	if (!blockTimer)
-		return false;
-
-    ClearTimers();
-
-	blockTimer = false;
-
-	if (typeof disableUrlState === 'undefined')
-		disableUrlState = false;
-
-	showLoading();
-
-	$('[role="tooltip"]').remove()
-
-	$.ajax(
-	{
-		url: url,
-		cache: false,
-		dataType: 'json',
-		success: function(result)
-		{
-			$('#tooltip').hide();
-			hideLoading();
-			ClearTimers();
-
-			$('body.window .game_content').css('width', '');
-			$('.ui-helper-hidden-accessible').html('');
-
-			if (result.data.messages.length > 0)
-			{
-				result.data.messages.forEach(function(item)
-				{
-					$.toast({
-						text: item.text,
-						icon: item.type
-					});
-				})
-			}
-
-			if (typeof result.data['title_full'] !== 'undefined')
-				document.title = result.data['title_full'];
-
-			if (result.data.redirect !== undefined)
-				window.location.href = result.data.redirect;
-
-			if (disableUrlState === false && typeof result.data.url !== 'undefined')
-			{
-				if (!!(window.history && history.pushState))
-					window.history.pushState({save: 1}, null, result.data.url);
-			}
-
-			closeWindow();
-
-			application.applyData(result.data);
-			application.$router.push(result.data.url);
-
-			if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
-			{
-				$.confirm({
-				    title: 'Обучение',
-				    content: result.data.tutorial.popup,
-					confirmButton: 'Продолжить',
-					cancelButton: false,
-					backgroundDismiss: false,
-					confirm: function ()
-					{
-						if (result.data['tutorial']['url'] !== '')
-							load(result.data['tutorial']['url']);
-					}
-				});
-			}
-
-			if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['toast'] !== '')
-			{
-				$.toast({
-					text: result.data['tutorial']['toast'],
-					icon: 'info',
-					stack : 1
-				});
-			}
-
-			TextParser.parseAll();
-		},
-		timeout: 10000,
-		error: function(jqXHR, exception)
-		{
-			console.log(jqXHR.responseText);
-			console.log(exception);
-
-			$('#tooltip').hide();
-			document.location = url;
-		}
+	application.$router.push(url, function() {},
+	function() {
+		application.loadPage(url);
 	});
-
-	return true;
 }
 
 var tooltipTimer;
 
 $(document).ready(function()
 {
-	if (!!(window.history && history.pushState))
-	{
-		window.history.pushState({save: 1}, null, location.search);
-
-		window.setTimeout( function()
-		{
-			$(window).on("popstate", function(e)
-			{
-				var data = e.originalEvent.state;
-
-				if (data !== null)
-				{
-					load(location.search, true);
-
-					e.preventDefault();
-				}
-			});
-		}, 1000);
-	}
-
 	if ($.isFunction($(document).tooltip))
 	{
 		$(document).tooltip({
 			items: ".tooltip",
-			track: !XNova.isMobile,
+			track: !isMobile,
 			show: false,
 			hide: false,
 			position: {my: "left+25 top+15", at: "left bottom", collision: "flipfit"},
@@ -301,7 +113,7 @@ $(document).ready(function()
 
 	var body = $("body");
 
-	body.on('click', 'a:not(.skip)', function(e)
+	body.on('click', 'a', function(e)
 	{
 		var el = $(this);
 
@@ -325,14 +137,14 @@ $(document).ready(function()
 
 		return false;
 	})
-	.on('submit', '.content form[class!=noajax]', function(e)
+	.on('submit', '.main-content form[class!=noajax]', function(e)
 	{
 		e.preventDefault();
 
 		var form = $(this);
 
 		showLoading();
-		ClearTimers();
+		clearTimers();
 
 		var formData = new FormData(form[0]);
 
@@ -348,20 +160,7 @@ $(document).ready(function()
 				$('#tooltip').hide();
 				hideLoading();
 
-				if (result.data.redirect !== undefined)
-					window.location.href = result.data.redirect;
-
-				for (var key in result.data)
-				{
-					if (result.data.hasOwnProperty(key))
-						Vue.set(options, key, result.data[key])
-				}
-
-				setTimeout(function(){
-					application.evalJs(result.data.html);
-				}, 25);
-
-				TextParser.parseAll();
+				application.applyData(result.data);
 			},
 			error: function()
 			{
@@ -497,7 +296,7 @@ $(document).ready(function()
 
 function showWindow (title, url, width)
 {
-	if (!XNova.isMobile)
+	if (!isMobile)
 	{
 		if (width === undefined)
 			width = 600;

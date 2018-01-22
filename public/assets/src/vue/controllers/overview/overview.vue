@@ -27,13 +27,13 @@
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
-						<div class="float-right">{{ date("d-m-Y H:i:s", clock) }}</div>
+						<div class="float-sm-right">{{ date("d-m-Y H:i:s", clock) }}</div>
 						<div class="clearfix d-sm-none"></div>
 					</div>
 				</div>
 			</div>
 			<div class="content">
-				<div v-if="page.fleets">
+				<div v-if="page.fleets.length">
 					<game-page-overview-fleets v-bind:items="page.fleets"></game-page-overview-fleets>
 					<div class="separator"></div>
 				</div>
@@ -144,12 +144,12 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									Фракция: <a v-bind:href="$root.getUrl('race/')">{{ $root.user.race }}</a>
+									Фракция: <a v-bind:href="$root.getUrl('race/')">{{ $store.state.user.race }}</a>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									<a v-bind:href="$root.getUrl('refers/')">https://{{ $root.host }}/?{{ $root.user.id }}</a> [{{ page.links }}]
+									<a v-bind:href="$root.getUrl('refers/')">https://{{ $store.state.host }}/?{{ $store.state.user.id }}</a> [{{ page.links }}]
 								</div>
 							</div>
 						</div>
@@ -160,7 +160,7 @@
 							<div class="row">
 								<div class="c col-sm-5 col-6">Игрок:</div>
 								<div class="c col-sm-7 col-6" style="word-break: break-all;">
-									<a v-bind:href="$root.getUrl('players/'+$root.user.id+'/')" class="window popup-user">{{ $root.user.name }}</a>
+									<a v-bind:href="$root.getUrl('players/'+$store.state.user.id+'/')" class="window popup-user">{{ $store.state.user.name }}</a>
 								</div>
 							</div>
 							<div class="row">
@@ -260,7 +260,11 @@
 <script>
 	export default {
 		name: "overview",
-		props: ['page'],
+		computed: {
+			page () {
+				return this.$store.state.page;
+			}
+		},
 		data: function()
 		{
 			return {
@@ -301,7 +305,3 @@
 		},
 	}
 </script>
-
-<style scoped>
-
-</style>

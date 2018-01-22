@@ -10,13 +10,13 @@
 <script>
 	export default {
 		name: "application-planets-list",
-		props: ['items'],
+		computed: {
+			items () {
+				return this.$store.state.user.planets;
+			}
+		},
 		components: {
 			'application-planets-list-row': require('./planets-list-row.vue')
 		}
 	}
 </script>
-
-<style scoped>
-
-</style>

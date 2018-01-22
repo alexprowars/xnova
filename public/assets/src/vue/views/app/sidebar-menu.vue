@@ -7,7 +7,11 @@
 <script>
 	export default {
 		name: "sidebar-menu",
-		props: ['items', 'active'],
+		computed: {
+			items () {
+				return this.$store.state.menu;
+			}
+		},
 		components: {
 			'main-menu-item': require('./main-menu-item.vue')
 		}
