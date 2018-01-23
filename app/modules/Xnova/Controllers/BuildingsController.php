@@ -52,18 +52,11 @@ class BuildingsController extends Controller
 			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
 
 		$parse = $this->building->pageShipyard('fleet');
+
 		$parse['mode'] = $this->dispatcher->getActionName();
+		$parse['queue'] = $this->building->ElementBuildListBox();
 
-		$this->view->partial('buildings/shipyard');
-		$this->view->setVar('parse', $parse);
-
-		$data = $this->building->ElementBuildListBox();
-
-		if ($data['count'] > 0)
-		{
-			$this->view->setVar('build', $data);
-			$this->view->partial('buildings/script');
-		}
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Верфь');
 	}
@@ -89,18 +82,11 @@ class BuildingsController extends Controller
 			$this->user->setUserOption('only_available', 1);
 
 		$parse = $this->building->pageShipyard('defense');
+
 		$parse['mode'] = $this->dispatcher->getActionName();
+		$parse['queue'] = $this->building->ElementBuildListBox();
 
-		$this->view->partial('buildings/shipyard');
-		$this->view->setVar('parse', $parse);
-
-		$data = $this->building->ElementBuildListBox();
-
-		if ($data['count'] > 0)
-		{
-			$this->view->setVar('build', $data);
-			$this->view->partial('buildings/script');
-		}
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Оборона');
 	}

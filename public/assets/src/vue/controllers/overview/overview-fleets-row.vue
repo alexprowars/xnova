@@ -27,7 +27,7 @@
 				if (this.time < 0)
 					return;
 
-				this.time = this.item.time - Math.floor(((new Date).getTime() / 1000));
+				this.time = this.item.time - this.$root.serverTime();
 			},
 			stop: function() {
 				clearTimeout(this.timeout);

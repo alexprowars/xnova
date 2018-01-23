@@ -9,6 +9,7 @@ Vue.prototype.QuickFleet = QuickFleet
 
 let BuildingBuildController = require('./controllers/buildings/build.vue')
 let BuildingTechController = require('./controllers/buildings/tech.vue')
+let BuildingUnitController = require('./controllers/buildings/unit.vue')
 let GalaxyController = require('./controllers/galaxy/galaxy.vue')
 let OverviewController = require('./controllers/overview/overview.vue')
 let HtmlController = require('./controllers/html.vue')
@@ -21,6 +22,14 @@ const routes = [{
 	path: '/buildings/research',
 	alias: '/buildings/research/*',
 	component: BuildingTechController
+}, {
+	path: '/buildings/fleet',
+	alias: '/buildings/fleet/*',
+	component: BuildingUnitController
+}, {
+	path: '/buildings/defense',
+	alias: '/buildings/defense/*',
+	component: BuildingUnitController
 }, {
 	path: '/galaxy*',
 	component: GalaxyController
@@ -165,6 +174,9 @@ window.application = new Vue({
 						jQuery.globalEval($(this).text());
 				});
 			}
+		},
+		serverTime () {
+			return Math.floor(((new Date).getTime() / 1000));
 		},
 		applyData: function (data) {
 			this.$store.commit('PAGE_LOAD', data);

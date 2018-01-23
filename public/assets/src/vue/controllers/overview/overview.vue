@@ -277,7 +277,7 @@
 		},
 		methods: {
 			clockUpdate: function() {
-				this.clock = Math.floor((new Date).getTime() / 1000);
+				this.clock = this.$root.serverTime();
 			},
 			clockStop: function() {
 				clearTimeout(this.clock_timeout);

@@ -58,8 +58,7 @@
 			'game-page-buildings-build-row-price': require('./build-row-price.vue')
 		},
 		methods: {
-			openWindow: function ()
-			{
+			openWindow: function () {
 				showWindow('', this.$root.getUrl('info/'+this.item.i+'/'), 600)
 			}
 		}

@@ -571,11 +571,8 @@ class Queue
 			if (!count($queueArray[self::QUEUE_TYPE_SHIPYARD]))
 				unset($queueArray[self::QUEUE_TYPE_SHIPYARD]);
 
-			if ($Builded > 0)
-			{
-				$this->loadQueue($queueArray);
-				$this->saveQueue();
-			}
+			$this->loadQueue($queueArray);
+			$this->saveQueue();
 
 			return $Builded;
 		}

@@ -12,7 +12,7 @@
 
 			<div class="img">
 				<a v-on:click="openWindow">
-					<img v-bind:src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" width="120" height="120" class="tooltip" v-bind:data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
+					<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" width="120" height="120" class="tooltip" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
 				</a>
 				<div class="overContent">
 					<game-page-buildings-build-row-price v-bind:price="item.price"></game-page-buildings-build-row-price>
@@ -70,8 +70,7 @@
 			}
 		},
 		methods: {
-			openWindow ()
-			{
+			openWindow () {
 				showWindow('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
 			},
 			update ()
@@ -79,7 +78,7 @@
 				if (this.time < 0 || typeof this.item['build'] === 'undefined')
 					return;
 
-				this.time = this.item.build.time - Math.floor(((new Date).getTime() / 1000));
+				this.time = this.item.build.time - this.$root.serverTime();
 			},
 			stop () {
 				clearTimeout(this.timeout);

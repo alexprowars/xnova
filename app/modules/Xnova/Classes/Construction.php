@@ -172,7 +172,7 @@ class Construction
 
 	public function pageResearch ()
 	{
-		$request 	= $this->user->getDI()->getShared('request');
+		$request = $this->user->getDI()->getShared('request');
 
 		$NoResearchMessage = "";
 		$bContinue = true;
@@ -250,6 +250,7 @@ class Construction
 			$price = Vars::getItemPrice($Tech);
 
 			$row = [];
+
 			$row['allow'] 	= $isAccess;
 			$row['i'] 		= $Tech;
 			$row['name'] 	= _getText('tech', $Tech);
@@ -282,13 +283,11 @@ class Construction
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 
-				$CanBeDone = Building::isElementBuyable($this->user, $this->planet, $Tech);
-
 				if (!$TechHandle['working'])
 				{
 					if (isset($price['max']) && $row['level'] >= $price['max'])
 						$row['action'] = 'max';
-					elseif ($CanBeDone)
+					elseif (Building::isElementBuyable($this->user, $this->planet, $Tech))
 					{
 						if (!Building::checkLabSettingsInQueue($this->planet))
 							$row['action'] = 'working';
@@ -361,7 +360,7 @@ class Construction
 		$oldStyle = $this->user->getUserOption('only_available');
 
 		$parse = [];
-		$parse['buildlist'] = [];
+		$parse['items'] = [];
 
 		foreach ($elementIDs AS $Element)
 		{
@@ -375,19 +374,21 @@ class Construction
 
 			$row = [];
 
-			$row['access']	= $isAccess;
+			$row['allow']	= $isAccess;
 			$row['i'] 		= $Element;
+			$row['name'] 	= _getText('tech', $Element);
 			$row['count'] 	= $this->planet->getUnitCount($Element);
-			$row['price'] 	= Building::getElementPrice(Building::getBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
+			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Element, false);
+			$row['effects']	= '';
 
 			if ($isAccess)
 			{
-				$row['time'] 	 	= Building::getBuildingTime($this->user, $this->planet, $Element);
-				$row['can_build'] 	= Building::isElementBuyable($this->user, $this->planet, $Element, false);
+				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['can']		= Building::isElementBuyable($this->user, $this->planet, $Element, false);
 
-				if ($row['can_build'])
+				if ($row['can'])
 				{
-					$row['maximum'] = false;
+					$row['is_max'] = false;
 
 					$price = Vars::getItemPrice($Element);
 
@@ -399,16 +400,18 @@ class Construction
 							$total += $BuildArray[$Element];
 
 						if ($total >= $price['max'])
-							$row['maximum'] = true;
+							$row['is_max'] = true;
 					}
 
 					$row['max'] = Building::getMaxConstructibleElements($Element, $this->planet, $this->user);
 				}
 
-				$row['add'] = Building::getNextProduction($Element, 0, $this->planet);
+				$row['effects'] = Building::getNextProduction($Element, 0, $this->planet);
 			}
+			else
+				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
 
-			$parse['buildlist'][] = $row;
+			$parse['items'][] = $row;
 		}
 
 		return $parse;
@@ -468,37 +471,31 @@ class Construction
 		$queueManager = new Queue($this->planet->queue);
 
 		$ElementQueue = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
-		$NbrePerType = "";
-		$NamePerType = "";
-		$TimePerType = "";
-		$QueueTime = 0;
 
-		$parse = [];
+		$data = [];
 
 		if (count($ElementQueue))
 		{
+			$end = time();
+
 			foreach ($ElementQueue as $queueArray)
 			{
 				$ElementTime = Building::getBuildingTime($this->user, $this->planet, $queueArray['i']);
 
-				$QueueTime += $ElementTime * $queueArray['l'];
+				$end += ($ElementTime * $queueArray['l']) - $queueArray['s'];
 
-				$TimePerType .= "" . $ElementTime . ",";
-				$NamePerType .= "'" . html_entity_decode(_getText('tech', $queueArray['i'])) . "',";
-				$NbrePerType .= "" . $queueArray['l'] . ",";
+				$row = [
+					'i'		=> $queueArray['i'],
+					'name'	=> _getText('tech', $queueArray['i']),
+					'count'	=> $queueArray['l'],
+					'time'	=> $ElementTime,
+					'end'	=> $end
+				];
+
+				$data[] = $row;
 			}
-
-
-			$parse['a'] = $NbrePerType;
-			$parse['b'] = $NamePerType;
-			$parse['c'] = $TimePerType;
-			$parse['b_hangar_id_plus'] = $ElementQueue[0]['s'];
-
-			$parse['time'] = Format::time($QueueTime - $ElementQueue[0]['s']);
 		}
 
-		$parse['count'] = count($ElementQueue);
-
-		return $parse;
+		return $data;
 	}
 }
