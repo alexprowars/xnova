@@ -81,7 +81,7 @@ class Queue
 			(new Build($this))->add($elementId, $destroy);
 			$this->nextBuildingQueue();
 		}
-		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
+		elseif ($type == Vars::ITEM_TYPE_TECH)
 			(new Tech($this))->add($elementId);
 		elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 			(new Unit($this))->add($elementId, $count);
@@ -96,7 +96,7 @@ class Queue
 			(new Build($this))->delete($listId);
 			$this->nextBuildingQueue();
 		}
-		elseif ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
+		elseif ($type == Vars::ITEM_TYPE_TECH)
 			(new Tech($this))->delete($elementId);
 	}
 

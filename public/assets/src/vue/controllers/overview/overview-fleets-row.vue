@@ -1,7 +1,7 @@
 <template>
 	<tr v-if="time >= 0" class="{{ item.status }}">
 		<th width="80">
-			<div class="z">{{ Format.time(time, ':') }}</div>
+			<div class="z">{{ Format.time(time, ':', true) }}</div>
 			<div class="positive">{{ item.date }}</div>
 		</th>
 		<th class="text-left" colspan="3">
@@ -17,7 +17,6 @@
 		data: function() {
 			return {
 				time: 0,
-				timer: Math.floor((new Date).getTime() / 1000),
 				timeout: null
 			}
 		},

@@ -8,29 +8,27 @@ Vue.prototype.showWindow = showWindow
 Vue.prototype.QuickFleet = QuickFleet
 
 let BuildingBuildController = require('./controllers/buildings/build.vue')
+let BuildingTechController = require('./controllers/buildings/tech.vue')
 let GalaxyController = require('./controllers/galaxy/galaxy.vue')
 let OverviewController = require('./controllers/overview/overview.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
 	path: '/buildings',
-	name: 'buildings',
+	alias: '/buildings/index/*',
 	component: BuildingBuildController
 }, {
-	path: '/buildings/index/*',
-	name: 'buildings-index',
-	component: BuildingBuildController
+	path: '/buildings/research',
+	alias: '/buildings/research/*',
+	component: BuildingTechController
 }, {
 	path: '/galaxy*',
-	name: 'galaxy',
 	component: GalaxyController
 }, {
 	path: '/overview',
-	name: 'overview',
 	component: OverviewController
 }, {
 	path: '*',
-	name: 'html',
 	component: HtmlController
 }]
 

@@ -73,17 +73,11 @@ class BuildingsController extends Controller
 		if ($this->planet->getBuildlevel('laboratory') == 0)
 			throw new ErrorException(_getText('no_laboratory'), _getText('Research'));
 
-		$parse = $this->building->pageResearch(($this->dispatcher->getActionName() == 'research_fleet' ? 'fleet' : ''));
+		$parse = $this->building->pageResearch();
 
-		$this->view->pick('buildings/research');
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Исследования');
-	}
-
-	public function research_fleetAction ()
-	{
-		$this->researchAction();
 	}
 
 	public function defenseAction ()

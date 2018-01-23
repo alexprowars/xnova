@@ -84,7 +84,7 @@ class TutorialController extends Controller
 
 						$type = Vars::getItemType($element);
 
-						if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
+						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
 						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
@@ -177,7 +177,7 @@ class TutorialController extends Controller
 						{
 							$type = Vars::getItemType($element);
 
-							if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
+							if ($type == Vars::ITEM_TYPE_TECH)
 								$this->user->setTech($element, $this->user->getTechLevel($element) + $level);
 							elseif ($type == Vars::ITEM_TYPE_FLEET)
 								$this->planet->setUnit($element, $level, true);
@@ -226,7 +226,7 @@ class TutorialController extends Controller
 					{
 						$type = Vars::getItemType($element);
 
-						if ($type == Vars::ITEM_TYPE_TECH || $type == Vars::ITEM_TYPE_TECH_FLEET)
+						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
 						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';

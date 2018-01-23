@@ -81,30 +81,6 @@ $resource = array
 	222 => "dreadnought",
 	223 => "corsair",
 
-	302 => "fleet_202_tech",
-	303 => "fleet_203_tech",
-	304 => "fleet_204_tech",
-	305 => "fleet_205_tech",
-	306 => "fleet_206_tech",
-	307 => "fleet_207_tech",
-	309 => "fleet_209_tech",
-	311 => "fleet_211_tech",
-	313 => "fleet_213_tech",
-	314 => "fleet_214_tech",
-	315 => "fleet_215_tech",
-
-	320 => "fleet_220_tech",
-	321 => "fleet_221_tech",
-	322 => "fleet_222_tech",
-	323 => "fleet_223_tech",
-
-	351 => "fleet_401_tech",
-	352 => "fleet_402_tech",
-	353 => "fleet_403_tech",
-	354 => "fleet_404_tech",
-	355 => "fleet_405_tech",
-	356 => "fleet_406_tech",
-
 	401 => "misil_launcher",
 	402 => "small_laser",
 	403 => "big_laser",
@@ -180,28 +156,6 @@ $requeriments = array
 	222 => array(21 => 8, 114 => 4, 118 => 5, 700 => 3),
 	223 => array(21 => 5, 111 => 5, 117 => 3, 700 => 4),
 
-	302 => array(21 => 2, 115 => 2),
-	303 => array(21 => 4, 115 => 6),
-	304 => array(21 => 1, 115 => 1),
-	305 => array(21 => 3, 111 => 2, 117 => 2),
-	306 => array(21 => 5, 117 => 4, 121 => 2),
-	307 => array(21 => 7, 118 => 4),
-	309 => array(21 => 4, 115 => 6, 110 => 2),
-	311 => array(117 => 6, 21 => 8, 122 => 5),
-	313 => array(21 => 9, 118 => 6, 114 => 5),
-	314 => array(21 => 12, 118 => 7, 114 => 6, 199 => 1),
-	315 => array(21 => 8, 114 => 5, 120 => 12, 118 => 5),
-
-	320 => array(21 => 5, 117 => 4, 109 => 4, 113 => 4, 700 => 1),
-	321 => array(21 => 4, 117 => 3, 111 => 5, 700 => 2),
-	322 => array(21 => 8, 114 => 4, 118 => 5, 700 => 3),
-	323 => array(21 => 5, 111 => 5, 117 => 3, 700 => 4),
-
-	351 => array(21 => 1),
-	352 => array(113 => 1, 21 => 2, 120 => 3),
-	353 => array(113 => 3, 21 => 4, 120 => 6),
-	354 => array(21 => 6, 113 => 6, 109 => 3, 110 => 1),
-
 	401 => array(21 => 1),
 	402 => array(113 => 1, 21 => 2, 120 => 3),
 	403 => array(113 => 3, 21 => 4, 120 => 6),
@@ -276,28 +230,6 @@ $pricelist = array
 	221 => array('metal' => 13000, 'crystal' => 3500, 'deuterium' => 1000, 'factor' => 1),
 	222 => array('metal' => 50000, 'crystal' => 30000, 'deuterium' => 5000, 'factor' => 1),
 	223 => array('metal' => 8000, 'crystal' => 4000, 'deuterium' => 500, 'factor' => 1),
-
-	302 => array('metal' => 1000, 'crystal' => 0, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-	303 => array('metal' => 3000, 'crystal' => 1000, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-	304 => array('metal' => 2000, 'crystal' => 400, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-	305 => array('metal' => 3000, 'crystal' => 2000, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-	306 => array('metal' => 10000, 'crystal' => 3500, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-	307 => array('metal' => 20000, 'crystal' => 10000, 'deuterium' => 1000, 'factor' => 2, 'max' => 10),
-	309 => array('metal' => 6000, 'crystal' => 4000, 'deuterium' => 1000, 'factor' => 2, 'max' => 10),
-	311 => array('metal' => 25000, 'crystal' => 12500, 'deuterium' => 7500, 'factor' => 2, 'max' => 10),
-	313 => array('metal' => 60000, 'crystal' => 50000, 'deuterium' => 15000, 'factor' => 2, 'max' => 10),
-	314 => array('metal' => 500000, 'crystal' => 300000, 'deuterium' => 100000, 'factor' => 2, 'max' => 10),
-	315 => array('metal' => 20000, 'crystal' => 10000, 'deuterium' => 5000, 'factor' => 2, 'max' => 10),
-
-	320 => array('metal' => 10000, 'crystal' => 2000, 'deuterium' => 2000, 'factor' => 2, 'max' => 10),
-	321 => array('metal' => 7500, 'crystal' => 2000, 'deuterium' => 500, 'factor' => 2, 'max' => 10),
-	322 => array('metal' => 25000, 'crystal' => 15000, 'deuterium' => 2500, 'factor' => 2, 'max' => 10),
-	323 => array('metal' => 4000, 'crystal' => 2500, 'deuterium' => 0, 'factor' => 2, 'max' => 10),
-
-	351 => array('metal' => 4000, 'crystal' => 2000, 'deuterium' => 500, 'factor' => 2, 'max' => 10),
-	352 => array('metal' => 3000, 'crystal' => 3000, 'deuterium' => 500, 'factor' => 2, 'max' => 10),
-	353 => array('metal' => 15000, 'crystal' => 10000, 'deuterium' => 3000, 'factor' => 2, 'max' => 10),
-	354 => array('metal' => 30000, 'crystal' => 20000, 'deuterium' => 6000, 'factor' => 2, 'max' => 10),
 
 	401 => array('metal' => 2000, 'crystal' => 0, 'deuterium' => 0, 'factor' => 1),
 	402 => array('metal' => 1500, 'crystal' => 500, 'deuterium' => 0, 'factor' => 1),
@@ -752,7 +684,6 @@ $ProdGrid = array(
 
 $reslist['build'] = array(1, 2, 3, 4, 12, 14, 15, 21, 22, 23, 24, 31, 33, 34, 44, 41, 42, 43);
 $reslist['tech'] = array(106, 108, 109, 110, 111, 113, 114, 115, 117, 118, 120, 121, 122, 123, 124, 150, 161, 199);
-$reslist['tech_f'] = array(302, 303, 304, 305, 306, 307, 309, 311, 313, 314, 315, 320, 321, 322, 323, 351, 352, 353, 354);
 $reslist['fleet'] = array(202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 220, 221, 222, 223);
 $reslist['defense'] = array(401, 402, 403, 404, 405, 406, 407, 408, 502, 503);
 $reslist['officier'] = array(601, 602, 603, 604, 605, 606, 607);

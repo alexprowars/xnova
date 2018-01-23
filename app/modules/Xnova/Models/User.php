@@ -344,7 +344,7 @@ class User extends BaseUser
 		if (isset($this->technology[$techId]))
 			return $this->technology[$techId];
 
-		if (!in_array(Vars::getItemType($techId), [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]))
+		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH)
 			return false;
 
 		$this->technology[$techId] = [

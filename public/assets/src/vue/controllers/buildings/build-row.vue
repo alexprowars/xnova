@@ -1,6 +1,6 @@
 <template>
-	<div class="col-md-6 col-12" v-bind:id="'object_'+item.i">
-		<div v-bind:class="['viewport', 'buildings', (!item.allow ? 'shadow' : '')]">
+	<div class="col-md-6 col-12" :id="'object_'+item.i">
+		<div class="viewport buildings" :class="{shadow: !item.allow}">
 			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
 				<div class="tooltip-content" v-if="item.need">
 					Требования:
@@ -11,28 +11,30 @@
 			</div>
 
 			<div class="img">
-				<a href="javascript:;" v-on:click="openWindow">
-					<img v-bind:src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" alt="" class="tooltip img-responsive" v-bind:data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
+				<a v-on:click="openWindow">
+					<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" alt="" class="tooltip img-responsive" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
 				</a>
-				<game-page-buildings-build-row-price v-bind:price="item.price"></game-page-buildings-build-row-price>
+				<game-page-buildings-build-row-price :price="item.price"></game-page-buildings-build-row-price>
 			</div>
 			<div class="title">
-				<a v-bind:href="$root.getUrl('info/'+item.i+'/')">{{ item.name }}</a>
+				<a :href="$root.getUrl('info/'+item.i+'/')">
+					{{ item.name }}
+				</a>
 			</div>
 			<div class="actions">
-				Уровень: <span v-bind:class="[(item.level > 0 ? 'positive' : 'negative')]">{{ Format.number(item.level) }}</span><br>
+				Уровень: <span :class="{positive: item.level > 0, negative: item.level === 0}">{{ Format.number(item.level) }}</span><br>
 				<div v-if="item.allow">
 					Время: {{ Format.time(item.time) }}<br>
-					<div v-html="item.add"></div>
+					<div v-html="item.effects"></div>
 					<div class="startBuild">
-						<a v-if="item.action === 'allow'" v-bind:href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
+						<a v-if="item.action === 'allow'" :href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
 							<span class="resYes">
 								{{ item.level ? 'Улучшить' : 'Построить' }}
 								<span v-if="item.exp" class="exp">(+{{ item.exp }} exp)</span>
 							</span>
 						</a>
 						<span v-else-if="item.action === 'resources'" class="resNo">нет ресурсов</span>
-						<a v-else-if="item.action === 'queue'" v-bind:href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
+						<a v-else-if="item.action === 'queue'" :href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
 							<span class="resYes">
 								В очередь
 								<span v-if="item.exp" class="exp">(+{{ item.exp }} exp)</span>

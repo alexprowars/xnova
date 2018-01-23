@@ -199,10 +199,13 @@ var Format = {
 
 		return number_format(value, 0, ',', '.');
 	},
-	time: function (value, separator)
+	time: function (value, separator, full)
 	{
 		if (typeof separator === 'undefined')
 			separator = '';
+
+		if (typeof full === 'undefined')
+			full = false;
 
 		var dd = Math.floor(value / (24 * 3600));
 		var hh = Math.floor(value / 3600 % 24);
@@ -214,14 +217,13 @@ var Format = {
 		if (dd !== 0)
 			time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' д. ');
 
-		if (hh > 0)
+		if (hh > 0 || full)
 			time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ч. ');
 
-		if (mm > 0)
+		if (mm > 0 || full)
 			time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' мин. ');
 
-		if (ss !== 0)
-			time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
+		time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
 
 		if (!time.length)
 			time = '-';

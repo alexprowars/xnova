@@ -20,7 +20,6 @@ class Vars
 
 	const ITEM_TYPE_BUILING = 'build';
 	const ITEM_TYPE_TECH = 'tech';
-	const ITEM_TYPE_TECH_FLEET = 'tech_f';
 	const ITEM_TYPE_FLEET = 'fleet';
 	const ITEM_TYPE_DEFENSE = 'defense';
 	const ITEM_TYPE_OFFICIER = 'officier';
@@ -101,8 +100,6 @@ class Vars
 			return self::ITEM_TYPE_BUILING;
 		if (in_array($itemId, self::$registry->reslist['tech']))
 			return self::ITEM_TYPE_TECH;
-		if (in_array($itemId, self::$registry->reslist['tech_f']))
-			return self::ITEM_TYPE_TECH_FLEET;
 		if (in_array($itemId, self::$registry->reslist['fleet']))
 			return self::ITEM_TYPE_FLEET;
 		if (in_array($itemId, self::$registry->reslist['defense']))

@@ -115,14 +115,14 @@ class Building
 
 			if ($ResClass != 700)
 			{
-				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && $user->getTechLevel($ResClass) >= $Level)
+				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) >= $Level)
 					$isAvailable = true;
 				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) >= $Level)
 					$isAvailable = true;
 
 				$line .= _getText('level').' '.$Level;
 
-				if (in_array($elementType, [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]) && $user->getTechLevel($ResClass) < $Level)
+				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) < $Level)
 				{
 					$minus = $Level - $user->getTechLevel($ResClass);
 					$line .= " + <b>" . $minus . "</b>";
@@ -166,7 +166,7 @@ class Building
 			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('nano_factory') + 1)) * pow(0.5, $planet->getBuildLevel('robot_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
-		elseif (in_array($elementType,  [Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_TECH_FLEET]))
+		elseif ($elementType == Vars::ITEM_TYPE_TECH)
 		{
 			if (isset($planet->spaceLabs) && count($planet->spaceLabs))
 			{
@@ -282,9 +282,6 @@ class Building
 						break;
 					case Vars::ITEM_TYPE_TECH:
 						$cost[$ResType] *= $user->bonusValue('res_research');
-						break;
-					case Vars::ITEM_TYPE_TECH_FLEET:
-						$cost[$ResType] *= $user->bonusValue('res_levelup');
 						break;
 					case Vars::ITEM_TYPE_FLEET:
 						$cost[$ResType] *= $user->bonusValue('res_fleet');
