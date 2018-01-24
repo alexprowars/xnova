@@ -2,40 +2,79 @@
 	<div class="row topnav">
 		<div class="col-md-6 col-sm-6 col-12">
 			<div class="row">
-				<div class="col-4 text-center"><planet-panel-resource v-bind:type="'metal'" v-bind:resource="planet.metal"></planet-panel-resource></div>
-				<div class="col-4 text-center"><planet-panel-resource v-bind:type="'crystal'" v-bind:resource="planet.crystal"></planet-panel-resource></div>
-				<div class="col-4 text-center"><planet-panel-resource v-bind:type="'deuterium'" v-bind:resource="planet.deuterium"></planet-panel-resource></div>
+				<div class="col-4 text-center"><planet-panel-resource :type="'metal'" :resource="planet.metal"></planet-panel-resource></div>
+				<div class="col-4 text-center"><planet-panel-resource :type="'crystal'" :resource="planet.crystal"></planet-panel-resource></div>
+				<div class="col-4 text-center"><planet-panel-resource :type="'deuterium'" :resource="planet.deuterium"></planet-panel-resource></div>
 			</div>
 		</div>
 		<div class="col-md-6 col-sm-6 col-12">
 			<div class="row">
 				<div class="col-4 text-center">
-					<span onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="d-none d-sm-block"><span class="sprite skin_energie"></span><br></span>
-					<div class="neutral">Энергия</div>
-					<div title="Энергетический баланс">
-						<span v-if="planet.energy.current >= 0" class="positive">{{ Format.number(planet.energy.current) }}</span>
-						<span v-else class="negative">{{ Format.number(planet.energy.current) }}</span>
+					<div class="resource-panel-item">
+						<div onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="tooltip">
+							<div class="tooltip-content">
+								<div class="resource-panel-item-tooltip">
+									<h1>Энергия</h1>
+									<div class="line"></div>
+									<table>
+										<tr>
+											<td>Доступно:</td>
+											<td align="right">{{ Format.number(planet.energy.current) }}</td>
+										</tr>
+										<tr>
+											<td>Производится:</td>
+											<td align="right">{{ Format.number(planet.energy.max) }}</td>
+										</tr>
+										<tr>
+											<td>Потребление:</td>
+											<td align="right">{{ Format.number(planet.energy.max - planet.energy.current) }}</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<span class="sprite skin_energy"></span>
+							<span class="sprite skin_s_energy"></span>
+						</div>
+						<div title="Доступно энергии">
+							<span :class="[planet.energy.current >= 0 ? 'positive' : 'negative']">{{ Format.number(planet.energy.current) }}</span>
+						</div>
 					</div>
-					<span title="Выработка энергии" class="d-none d-sm-block positive">{{ Format.number(planet.energy.max) }}</span>
 				</div>
 				<div class="col-4 text-center">
-					<span class="tooltip d-none d-sm-block">
-						<div class="tooltip-content"><center>Вместимость:<br>{{ Format.number(planet.battery.current) }} / {{ Format.number(planet.battery.max) }} <br> {{ planet.battery.tooltip }}</center></div>
-						<img v-if="planet.battery.power > 0 && planet.battery.power < 100" v-bind:src="'/assets/images/batt.php?p='+planet.battery.power" width="42" alt="">
-						<span v-else v-bind:class="'sprite skin_batt'+planet.battery.power"></span>
+					<div class="tooltip d-none d-sm-block">
+						<div class="tooltip-content">
+							<div class="resource-panel-item-tooltip">
+								<h1>Аккумулятор</h1>
+								<div class="line"></div>
+								<table>
+									<tr>
+										<td>Заряд:</td>
+										<td align="right">{{ Format.number(planet.battery.current) }}</td>
+									</tr>
+									<tr>
+										<td>Емкость:</td>
+										<td align="right">{{ Format.number(planet.battery.max) }}</td>
+									</tr>
+									<tr v-if="planet['battery']['tooltip'].length">
+										<td colspan="2">{{ planet['battery']['tooltip'] }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<img v-if="planet.battery.power > 0 && planet.battery.power < 100" :src="'/assets/images/batt.php?p='+planet.battery.power" width="42" alt="">
+						<span v-else :class="'sprite skin_batt'+planet.battery.power"></span>
 						<br>
-					</span>
-					<div class="neutral">Аккумулятор</div>
-					{{ planet.battery.power }}%<br>
+					</div>
+					{{ planet.battery.power }}%
 				</div>
 				<div class="col-4 text-center">
-					<a v-bind:href="$root.getUrl('credits/')" class="tooltip d-none d-sm-block">
+					<a :href="$root.getUrl('credits/')" class="tooltip d-none d-sm-block">
 						<div class="tooltip-content">
 							<table width="550">
 								<tr>
 									<td v-for="(time, index) in planet.officiers" align="center" width="14%">
 										<div class="separator"></div>
-										<span v-bind:class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
+										<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
 									</td>
 								</tr>
 								<tr>
@@ -46,10 +85,9 @@
 								</tr>
 							</table>
 						</div>
-						<span class="sprite skin_kredits"></span><br>
+						<span class="sprite skin_kredits"></span>
 					</a>
-					<div class="neutral">Кредиты</div>
-					{{ Format.number(planet.credits) }}<br>
+					{{ Format.number(planet.credits) }}
 				</div>
 			</div>
 		</div>
@@ -80,7 +118,7 @@
 				if (this.updated === 0)
 					this.updated = (new Date).getTime();
 
-				var factor = ((new Date).getTime() - this.updated) / 1000;
+				let factor = ((new Date).getTime() - this.updated) / 1000;
 
 				if (factor < 0)
 					return;
@@ -92,7 +130,7 @@
 					if (typeof this.planet[res] === 'undefined')
 						return;
 
-					var power = (this.planet[res]['current'] >= this.planet[res]['max']) ? 0 : 1;
+					let power = (this.planet[res]['current'] >= this.planet[res]['max']) ? 0 : 1;
 
 					this.planet[res]['current'] += ((this.planet[res]['production'] / 3600) * power * factor);
 				}.bind(this));

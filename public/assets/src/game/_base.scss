@@ -44,7 +44,7 @@ table table td, .table table td {
 }
 
 body {
-	background: #0a0a0a url(../images/starfield_01.gif) repeat 0 0 fixed;
+	background: #0a0a0a url(../images/background_1.jpg) no-repeat bottom fixed;
 	height: 100%;
 	width: 100%;
 	font: 11px verdana, arial, sans-serif;
@@ -1494,4 +1494,39 @@ input[type=number]::-webkit-outer-spin-button {
 .galaxy .debris_100 {
 	background-color: rgb(100, 0, 0);
 	background-image: none;
+}
+
+.line {
+	background: #415866;
+	height: 1px;
+	margin: 4px 0 2px 0;
+}
+
+.resource-panel {
+	&-item {
+		&-tooltip {
+			width: 150px;
+			font-size: 11px;
+			color: #c5c5c5;
+
+			h1 {
+				color: #6f9fc8;
+				font-size: 11px;
+				white-space: nowrap;
+				text-align: left;
+				font-weight: normal;
+			}
+
+			table {
+				width: 100%;
+			}
+		}
+
+		.skin_s_metal,
+		.skin_s_crystal,
+		.skin_s_deuterium,
+		.skin_s_energy {
+			display: none;
+		}
+	}
 }

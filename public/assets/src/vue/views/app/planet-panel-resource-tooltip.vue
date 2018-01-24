@@ -1,9 +1,23 @@
 <template>
-	<table width=150>
-		<tr><td width=30%>КПД:</td><td align=right>{{ resource.power }}%</td></tr>
-		<tr><td>В час:</td><td align=right>{{ Format.number(resource.production) }}</td></tr>
-		<tr><td>День:</td><td align=right>{{ Format.number(resource.production * 24) }}</td></tr>
-	</table>'
+	<div class="resource-panel-item-tooltip">
+		<h1>{{ resource['title'] }}</h1>
+		<div class="line"></div>
+
+		<table>
+			<tr>
+				<td width="30%">Мощность:</td>
+				<td align="right">{{ resource['power'] }}%</td>
+			</tr>
+			<tr>
+				<td>Производство:</td>
+				<td align="right">{{ Format.number(resource['production']) }}</td>
+			</tr>
+			<tr>
+				<td>Вместимость:</td>
+				<td align="right">{{ Format.number(resource['max']) }}</td>
+			</tr>
+		</table>
+	</div>
 </template>
 
 <script>

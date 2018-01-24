@@ -210,10 +210,10 @@ class Building
 	static function getElementPrice ($cost, Planet $planet)
 	{
 		$array = [
-			'metal' 	=> [_getText('Metal'), 'metall'],
-			'crystal' 	=> [_getText('Crystal'), 'kristall'],
+			'metal' 	=> [_getText('Metal'), 'metal'],
+			'crystal' 	=> [_getText('Crystal'), 'crystal'],
 			'deuterium' => [_getText('Deuterium'), 'deuterium'],
-			'energy_max'=> [_getText('Energy'), 'energie']
+			'energy_max'=> [_getText('Energy'), 'energy']
 		];
 
 		$uri = Di::getDefault()->getShared('url')->getBaseUri();
@@ -328,16 +328,16 @@ class Building
 		$text = '';
 
 		if ($Res['m'] != 0)
-			$text .= "Металл: <span class=" . (($Res['m'] > 0) ? 'positive' : 'negative') . ">" . (($Res['m'] > 0) ? '+' : '') . $Res['m'] . "</span>";
+			$text .= "<div>Металл: <span class=" . (($Res['m'] > 0) ? 'positive' : 'negative') . ">" . (($Res['m'] > 0) ? '+' : '') . $Res['m'] . "</span></div>";
 
 		if ($Res['c'] != 0)
-			$text .= "Кристалл:  <span class=" . (($Res['c'] > 0) ? 'positive' : 'negative') . ">" . (($Res['c'] > 0) ? '+' : '') . $Res['c'] . "</span>";
+			$text .= "<div>Кристалл:  <span class=" . (($Res['c'] > 0) ? 'positive' : 'negative') . ">" . (($Res['c'] > 0) ? '+' : '') . $Res['c'] . "</span></div>";
 
 		if ($Res['d'] != 0)
-			$text .= "Дейтерий:  <span class=" . (($Res['d'] > 0) ? 'positive' : 'negative') . ">" . (($Res['d'] > 0) ? '+' : '') . $Res['d'] . "</span>";
+			$text .= "<div>Дейтерий:  <span class=" . (($Res['d'] > 0) ? 'positive' : 'negative') . ">" . (($Res['d'] > 0) ? '+' : '') . $Res['d'] . "</span></div>";
 
 		if ($Res['e'] != 0)
-			$text .= "Энергия:  <span class=" . (($Res['e'] > 0) ? 'positive' : 'negative') . ">" . (($Res['e'] > 0) ? '+' : '') . $Res['e'] . "</span>";
+			$text .= "<div>Энергия:  <span class=" . (($Res['e'] > 0) ? 'positive' : 'negative') . ">" . (($Res['e'] > 0) ? '+' : '') . $Res['e'] . "</span></div>";
 
 		return $text;
 	}

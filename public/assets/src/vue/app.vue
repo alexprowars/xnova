@@ -14,7 +14,7 @@
 			<sidebar-menu></sidebar-menu>
 		</div>
 
-		<application-header v-if="$store.state.view.header && !mobile"></application-header>
+		<application-header v-if="$store.state.view.header"></application-header>
 		<application-header-mobile-icons v-if="$store.state.view.header && mobile"></application-header-mobile-icons>
 		<!-- end header -->
 

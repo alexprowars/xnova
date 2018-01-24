@@ -25,16 +25,6 @@ function FlotenTime (obj, time)
 	timeouts['fleet'+obj] = setTimeout(function(){FlotenTime(obj)}, 1000);
 }
 
-function setMaximum(type, number)
-{
-	var obj = document.getElementsByName('fmenge['+type+']')[0];
-
-    if (parseInt(obj.value) === 0)
-		obj.value = number;
-	else
-		obj.value = 0;
-}
-
 function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({

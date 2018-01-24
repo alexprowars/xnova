@@ -122,10 +122,10 @@
 							<div class="row">
 								<div class="col-12 th doubleth middle">
 									<div>
-										<img v-bind:src="$root.getUrl('assets/images/skin/s_metall.png')" alt="" align="absmiddle" class="tooltip" data-content="Металл">
+										<img v-bind:src="$root.getUrl('assets/images/skin/s_metal.png')" alt="" align="absmiddle" class="tooltip" data-content="Металл">
 										{{ Format.number(page.debris.metal) }}
 										/
-										<img v-bind:src="$root.getUrl('assets/images/skin/s_kristall.png')" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
+										<img v-bind:src="$root.getUrl('assets/images/skin/s_crystal.png')" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
 										{{ Format.number(page.debris.crystal) }}
 									</div>
 								</div>

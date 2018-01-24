@@ -250,6 +250,23 @@
 	input[type=text], input[type=number], input[type=password] {
 		font-size: 15px;
 	}
+
+	.resource-panel-item {
+
+		.skin_metal,
+		.skin_crystal,
+		.skin_deuterium,
+		.skin_energy {
+			display: none;
+		}
+
+		.skin_s_metal,
+		.skin_s_crystal,
+		.skin_s_deuterium,
+		.skin_s_energy {
+			display: inline-block;
+		}
+	}
 }
 
 @media only screen and (max-width: 361px)

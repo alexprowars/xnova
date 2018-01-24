@@ -1,22 +1,18 @@
 <template>
-	<div class="planet-resource-panel-item">
-		<span v-on:click="showPopup" class="tooltip d-none d-sm-block">
+	<div class="resource-panel-item">
+		<div v-on:click="showPopup" class="tooltip">
 			<div class="tooltip-content">
 				<planet-panel-resource-tooltip v-bind:resource="resource"></planet-panel-resource-tooltip>
 			</div>
-			<span v-bind:class="['sprite', 'skin_'+type]"></span>
-			<br>
-		</span>
-		<div class="neutral">{{ resource.title }}</div>
-		<div title="Количество ресурса на планете">
-			<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.current) }}</span>
-			<span v-else class="negative">{{ Format.number(resource.current) }}</span>
+			<span class="sprite" :class="['skin_'+type]"></span>
+			<span class="sprite" :class="['skin_s_'+type]"></span>
 		</div>
-		<span title="Максимальная вместимость хранилищ" class="d-none d-sm-block">
-			<span v-if="resource.max > resource.current" class="positive">{{ Format.number(resource.max) }}</span>
-			<span v-else class="negative">{{ Format.number(resource.max) }}</span>
-		</span>
-	</div>',
+		<div title="Количество ресурса на планете">
+			<span :class="[resource.max > resource.current ? 'positive' : 'negative']">
+				{{ Format.number(resource.current) }}
+			</span>
+		</div>
+	</div>
 </template>
 
 <script>
