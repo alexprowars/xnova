@@ -19,7 +19,6 @@ gulp.task('sass', function ()
 	gulp.src('./public/assets/src/game/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
-		.pipe(minifyCss())
     	.pipe(gulp.dest('./public/assets/css'));
 
 	gulp.src('./public/assets/src/plugins/*.scss')

@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-6 col-12" :id="'object_'+item.i">
+	<div class="col-md-6 col-12">
 		<div class="viewport buildings" :class="{shadow: !item.allow}">
 			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
 				<div class="tooltip-content" v-if="item.need">

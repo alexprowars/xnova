@@ -2,6 +2,7 @@ html {
 	height: 100%;
 	overflow-y: scroll;
 	padding: 0;
+	font-size: 12px;
 }
 
 :focus {
@@ -10,12 +11,12 @@ html {
 
 a {
 	cursor: pointer;
-	color: #fff;
+	color: $text-color;
 	text-decoration: none;
 
 	&:focus, &:hover {
-		color: inherit;
-		text-decoration: inherit;
+		color: #9c0;
+		text-decoration: none;
 		outline: none;
 	}
 }
@@ -34,7 +35,7 @@ p table {
 
 p td {
 	text-align: center;
-	font-size: 11px;
+	font-size: 0.9rem;
 }
 
 table table td, .table table td {
@@ -47,18 +48,19 @@ body {
 	background: #0a0a0a url(../images/background_1.jpg) no-repeat bottom fixed;
 	height: 100%;
 	width: 100%;
-	font: 11px verdana, arial, sans-serif;
-	color: #d4d4d4;
+	font: 1rem verdana, arial, sans-serif;
+	color: $text-color;
 	line-height: normal;
 }
 
 table th, .table th, .th {
 	text-align: center;
 	padding: 2px 3px;
-	background: #37476a;
+	background: $main-bg-color;
 	color: #d7d7d7;
-	border: 1px solid #425e8c;
+	border: 1px solid $border-color;
 	vertical-align: middle;
+	font-size: 1.1rem;
 }
 
 .bar {
@@ -69,7 +71,7 @@ table th, .table th, .th {
 
 td.b, div.b {
 	padding: 3px 3px 3px 3px;
-	border: 1px solid #415683;
+	border: 1px solid $border-color;
 	color: #ebebeb;
 	background: #353535;
 	font-weight: normal;
@@ -88,19 +90,19 @@ th.b {
 }
 
 .c, table .c {
-	color: #dadada;
+	color: $text-color;
 	padding: 2px 3px;
 	text-align: center;
 	font-weight: normal;
-	border: 1px solid #415683;
-	background: #253046;
-	background: linear-gradient(to bottom, #212946 0%, #2c2c64 100%);
+	border: 1px solid $border-color;
+	background: $head-bg-color;
+	font-size: 1.1rem;
 }
 
 .c.big, .k.big {
 	padding-top: 5px !important;
 	padding-bottom: 5px !important;
-	font-size: 14px;
+	font-size: 1.2rem;
 }
 
 input {
@@ -121,7 +123,7 @@ select, textarea {
 select {
 	margin: 0;
 	padding: 0;
-	font-size: 12px;
+	font-size: 1rem;
 }
 
 textarea {
@@ -135,7 +137,7 @@ textarea {
 	text-align: center;
 	color: #e6ebfb;
 	background: #42444d;
-	border: 1px solid #415683;
+	border: 1px solid $border-color;
 }
 
 td.l {
@@ -150,7 +152,7 @@ td.s {
 }
 
 div.j {
-	border: 1px solid #415683;
+	border: 1px solid $border-color;
 }
 
 table.s th {
@@ -166,13 +168,8 @@ div.z {
 	color: #e6ebfb;
 }
 
-a:hover {
-	color: #9c0;
-	text-decoration: underline;
-}
-
 h1 {
-	font-size: 11px;
+	font-size: 0.9rem;
 	border-bottom: 0 solid #344566;
 	width: 98%;
 	text-align: center;
@@ -419,9 +416,9 @@ iframe {
 }
 
 input[type=submit], input[type=button], input[type=reset], .button {
-	background: #2B354E;
-	border: 1px solid #415683;
-	color: #FFFFFF;
+	background: $head-bg-color;
+	border: 1px solid $border-color;
+	color: $text-color;
 	padding: 3px 10px;
 	margin: 1px;
 	min-width: 110px;
@@ -432,17 +429,17 @@ input[type=submit], input[type=button], input[type=reset], .button {
 }
 
 input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover, .button:hover {
-	border-color: #517db5;
+	border-color: $border-hover-color;
 	color: #fbff6f;
 	cursor: pointer;
 	text-decoration: none;
 }
 
 input[type=text], input[type=number], input[type=password] {
-	background: #2B354E;
-	border: 1px solid #415683;
-	color: #FFFFFF;
-	font-size: 14px;
+	background: $head-bg-color;
+	border: 1px solid $border-color;
+	color: $text-color;
+	font-size: 1.3rem;
 	margin: 0;
 	text-align: center;
 	width: auto;
@@ -480,7 +477,8 @@ img.info {
 	min-height: 200px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	width: 695px;
+	width: calc(100% - 10px);
+	font-size: 1.2rem;
 
 	.date {
 		&1 {
@@ -539,7 +537,12 @@ img.info {
 }
 
 .activity {
-	padding-top: 5px;
+
+	font-size: 1rem;
+
+	+ .activity {
+		padding-top: 5px;
+	}
 
 	.date1 {
 		text-decoration: none;
@@ -598,7 +601,7 @@ textarea#text {
 	flex-direction: row;
 
 	> .menu {
-		width: 120px;
+		width: 150px;
 		margin: 0 15px 0 0;
 		padding: 0;
 		order: 1;
@@ -612,27 +615,29 @@ textarea#text {
 
 			&:last-child > a {
 				border-radius: 0 0 3px 3px;
-				border-bottom: 1px solid #40567f;
+				border-bottom: 1px solid $menu-border-color;
 			}
 
 			> a {
-				background: #2B354E;
+				background: $menu-bg-color;
 				display: block;
 				float: none;
 				text-align: center;
-				border-top: 1px solid #40567f;
-				border-left: 1px solid #40567f;
-				border-right: 1px solid #40567f;
+				border-top: 1px solid $menu-border-color;
+				border-left: 1px solid $menu-border-color;
+				border-right: 1px solid $menu-border-color;
 				border-bottom: none;
 				margin: 0;
-				color: #FFFFFF;
+				color: $text-color;
 				font-weight: normal;
-				padding: 5px;
+				padding: 8px;
 				transition-property: background;
 				transition-duration: .25s;
+				font-size: 1.1rem;
 
 				&.active, &:hover {
-					background: #6B354E;
+					background: $menu-bg-a-color;
+					text-decoration: none;
 				}
 			}
 		}
@@ -647,7 +652,7 @@ textarea#text {
 	}
 
 	> .planetList {
-		width: 135px;
+		width: 160px;
 		margin-left: 15px;
 		order: 3;
 	}
@@ -732,7 +737,7 @@ textarea#text {
 	padding-top: 3px;
 
 	.exp {
-		font-size: 10px;
+		font-size: 0.8rem;
 	}
 }
 
@@ -766,7 +771,7 @@ ul {
 }
 
 .raceSelect input[type="button"] {
-	font-size: 16px;
+	font-size: 1.3rem;
 }
 
 .tutorial {
@@ -793,9 +798,9 @@ ul {
 
 .game_menu {
 	padding: 5px 0;
-	background: #3a4a6e;
+	background: $main-bg-color;
 	border-radius: 0 0 5px 5px;
-	border: 1px solid #425e8c;
+	border: 1px solid $border-color;
 	width: 1125px;
 }
 
@@ -806,12 +811,12 @@ ul {
 		height: auto;
 
 		.planet {
-			background: #354566;
-			color: #BEBEBE;
-			border: 1px solid #415683;
+			background: $main-bg-color;
+			color: $text-color;
+			border: 1px solid $border-color;
 			margin-bottom: 5px;
 			text-align: center;
-			font-size: 10px;
+			font-size: 0.9rem;
 			padding: 3px;
 			position: relative;
 			border-radius: 3px;
@@ -862,7 +867,7 @@ ul {
 }
 
 .topnav {
-	margin: 0 0 5px 0;
+	margin: 10px 0;
 	line-height: 1.4em;
 
 	.empty {
@@ -875,7 +880,7 @@ ul {
 }
 
 table td.c, table th, .table th {
-	padding: 3px;
+	padding: 4px;
 	vertical-align: middle;
 }
 
@@ -917,7 +922,7 @@ p {
 	display: block;
 	margin-bottom: 1em;
 	margin-top: 1em;
-	font-size: 10px;
+	font-size: 0.8rem;
 	font-weight: bold;
 }
 
@@ -956,14 +961,10 @@ p {
 		padding-left: 25px;
 		display: inline-block;
 		margin-top: 50px;
-		font-size: 16px;
+		font-size: 1.3rem;
 		color: #ff4341;
 		height: 35px;
 	}
-}
-
-.set_admin input[type=submit], .set_admin input[type=button], .set_admin input[type=reset] {
-	min-width: 20px;
 }
 
 .set_techtree #tabs a {
@@ -1021,7 +1022,7 @@ p {
 	&_tx {
 		&_lvl
 		{
-			font-size: 12px;
+			font-size: 1rem;
 			font-weight: bold;
 			position: relative;
 			text-align: center;
@@ -1041,7 +1042,7 @@ p {
 
 		&_name
 		{
-			font-size: 10px;
+			font-size: 0.8rem;
 			text-align: center;
 			box-shadow: inset 1px 1px 70px #000000, 1px 1px 4px #000000, -1px -1px 4px #000000;
 			border-radius: 5px;
@@ -1060,7 +1061,7 @@ p {
 
 	> a {
 		display: block;
-		border: 1px solid #415683;
+		border: 1px solid $border-color;
 
 		img {
 			width: 100%;
@@ -1074,7 +1075,7 @@ p {
 	left: 0;
 	background: #354566;
 	color: #BEBEBE;
-	border: 1px solid #415683;
+	border: 1px solid $border-color;
 	padding: 3px;
 	overflow: hidden;
 	font-size: 0;
@@ -1085,7 +1086,7 @@ p {
 	white-space: nowrap;
 
 	> b {
-		font-size: 14px;
+		font-size: 1.2rem;
 		vertical-align: top;
 		margin-top: 3px;
 		font-weight: normal;
@@ -1190,16 +1191,15 @@ input[type="checkbox"], input[type="radio"] {
 
 .block {
 	> .title {
-		border: 1px solid #415683;
+		border: 1px solid $border-color;
 		border-bottom: 0;
 		border-radius: 3px 3px 0 0;
-		color : #DADADA;
+		color : $text-color;
 		padding: 5px;
-		font-size: 12px;
+		font-size: 1.2rem;
 		font-weight: normal;
 		text-align: left;
-		background: #253046;
-		background: linear-gradient(to bottom,  #212946 0%,#2c2c64 100%);
+		background: $head-bg-color;
 
 		input[type=submit] {
 			padding: 0 10px 2px 10px;
@@ -1207,11 +1207,12 @@ input[type="checkbox"], input[type="radio"] {
 	}
 
 	> .content {
-		border: 1px solid #415683;
+		border: 1px solid $border-color;
 		border-top: 0;
 		border-radius: 0 0 3px 3px;
-		background: #37476a;
-		color: #d7d7d7;
+		background: $main-bg-color;
+		color: $text-color;
+		font-size: 1rem;
 	}
 }
 
@@ -1221,7 +1222,7 @@ input[type="checkbox"], input[type="radio"] {
 
 .buildings {
 	height: 122px;
-	background: #37476a;
+	background: $main-bg-color;
 
 	.img {
 		height: 120px;
@@ -1231,14 +1232,15 @@ input[type="checkbox"], input[type="radio"] {
 	}
 
 	.title {
-		background: #253046;
-		padding: 3px;
+		background: $head-bg-color;
+		padding: 4px;
 		margin-left: 120px;
+		font-size: 1.1rem;
 	}
 
 	.actions {
 		margin-left: 120px;
-		padding: 3px;
+		padding: 4px;
 	}
 
 	.popup {
@@ -1247,7 +1249,7 @@ input[type="checkbox"], input[type="radio"] {
 		position: absolute;
 		top: 0;
 		left: 0;
-		background: #37476a;
+		background: $main-bg-color;
 		height: 120px;
 		z-index: 100;
 	}
@@ -1256,7 +1258,7 @@ input[type="checkbox"], input[type="radio"] {
 .start {
 	.avatar {
 		padding: 15px;
-		border: 1px solid #415683;
+		border: 1px solid $border-color;
 		display: inline-block;
 		margin: 10px 5px;
 	}
@@ -1276,7 +1278,7 @@ input[type="checkbox"], input[type="radio"] {
 		}
 
 		h3 {
-			font-size: 16px;
+			font-size: 1.3rem;
 			margin-top: 10px;
 		}
 	}
@@ -1314,9 +1316,9 @@ div.errormessage {
 		border-bottom: 0;
 		padding-top: 10px;
 		padding-bottom: 10px;
-		background: #37476a;
+		background: $main-bg-color;
 		color: #d7d7d7;
-		border-bottom: 1px solid #425e8c;
+		border-bottom: 1px solid $border-color;
 
 		> div > img {
 			width: 100%;
@@ -1330,19 +1332,19 @@ div.errormessage {
 
 *{-webkit-font-smoothing: antialiased;}
 
-#building.row, .research.row, .shipyard.row {
+.page-building .row {
 	margin: 0;
 }
 
-#building.row > div, .research.row > div, .shipyard.row > div {
+.page-building .row > div {
 	padding: 1px;
 }
 
-#building.row > div > div, .research.row > div > div, .shipyard.row > div > div {
-	border: 1px solid #415683;
+.page-building .row > div > div {
+	border: 1px solid $border-color;
 }
 
-.set_overview .block .content {
+.page-overview .block .content {
 	padding: 5px;
 }
 
@@ -1378,11 +1380,10 @@ div.errormessage {
 }
 
 footer {
-	background: transparent url(../images/bar-bg.gif) repeat-x 0 0;
+	background: #000 url(../images/bar-bg.gif) repeat-x top;
 	color: #848484;
-	font: normal 10px Verdana, Arial, Helvetica, sans-serif;
-	height: 19px;
-	line-height: 19px;
+	height: 25px;
+	line-height: 25px;
 	text-align: center;
 	margin-top: 50px;
 	width: 100%;
@@ -1409,7 +1410,7 @@ footer {
 #prophiler {
 	.toolbar {
 		min-height: inherit !important;
-		font-size: 12px;
+		font-size: 1rem;
 
 		nav ul li {
 			padding: 0 5px !important;
@@ -1426,7 +1427,7 @@ footer {
 #chatMsg {
 	width: calc(100% - 100px);
 	margin-top: 2px;
-	font-size: 16px;
+	font-size: 1.3rem;
 	padding: 2px;
 }
 
@@ -1441,7 +1442,7 @@ div.table {
 	margin-bottom: 0;
 
 	> :last-child {
-		border-bottom: 1px solid #425e8c;
+		border-bottom: 1px solid $border-color;
 	}
 
 	.row > div {
@@ -1482,18 +1483,23 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .galaxy .debris_0 {
-	background-color: rgb(0, 100, 0);
-	background-image: none;
+	background: rgb(0, 100, 0) none;
 }
 
 .galaxy .debris_50 {
-	background-color: rgb(100, 100, 0);
-	background-image: none;
+	background: rgb(100, 100, 0) none;
 }
 
 .galaxy .debris_100 {
-	background-color: rgb(100, 0, 0);
-	background-image: none;
+	background: rgb(100, 0, 0) none;
+}
+
+#application.set_log .game_content, #application.set_imperium .game_content {
+	max-width: 95%;
+}
+
+.doubleth {
+	height: 50px;
 }
 
 .line {
@@ -1506,12 +1512,12 @@ input[type=number]::-webkit-outer-spin-button {
 	&-item {
 		&-tooltip {
 			width: 150px;
-			font-size: 11px;
+			font-size: 0.9rem;
 			color: #c5c5c5;
 
 			h1 {
 				color: #6f9fc8;
-				font-size: 11px;
+				font-size: 0.9rem;
 				white-space: nowrap;
 				text-align: left;
 				font-weight: normal;
@@ -1529,4 +1535,34 @@ input[type=number]::-webkit-outer-spin-button {
 			display: none;
 		}
 	}
+}
+
+.row > div.col-sm-4 + div.col-sm-4 {
+	padding-left: 0;
+}
+
+.page-overview-officiers {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 5px;
+}
+
+.page-overview-officiers-item {
+	display: block;
+	margin: 5px 2px 0 2px;
+}
+
+.page-overview-officiers-item + .page-overview-officiers-item {
+	margin-left: 0;
+}
+
+.page-building .block > .title {
+	border: 1px solid $border-color;
+	margin: 1px;
+}
+
+.page-building .block > .content {
+	border: 0;
+	background: transparent;
 }

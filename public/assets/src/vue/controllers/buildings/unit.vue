@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="page-building page-building-unit">
 		<div class="block">
 			<div class="content">
 				<form :action="$root.getUrl('buildings/'+page.mode+'/')" method="post">

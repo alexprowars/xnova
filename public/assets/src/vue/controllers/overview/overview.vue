@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<div v-if="page.bonus">
+	<div class="page-overview">
+		<div v-if="page.bonus" class="page-overview-bonus">
 			<table class="table">
 				<tr>
 					<td class="c">Ежедневный бонус</td>
@@ -27,7 +27,7 @@
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
-						<div class="float-sm-right">{{ date("d-m-Y H:i:s", clock) }}</div>
+						<div class="float-sm-right">{{ date("d.m.Y H:i:s", clock) }}</div>
 						<div class="clearfix d-sm-none"></div>
 					</div>
 				</div>
@@ -40,7 +40,7 @@
 				<div class="row overview">
 					<div class="col-sm-4 col-12">
 						<div class="row">
-							<div class="col-md-10 col-sm-12 col-5">
+							<div class="col-12">
 								<div class="planet-image">
 									<a v-bind:href="$root.getUrl('overview/rename/')">
 										<img v-bind:src="$root.getUrl('assets/images/planeten/'+page.planet.image+'.jpg')" alt="">
@@ -65,21 +65,19 @@
 									<span style="font-weight:normal;"><span class="positive">Активен режим ускорения новичков.</span><br>Режим будет деактивирован после достижения 1000 очков.</span>
 								</div>
 							</div>
-							<div class="col-md-2 col-sm-12 col-7">
-								<div class="row">
-									<div v-for="item in page.officiers" class="col-3 col-sm-2 col-md-12">
-										<a v-bind:href="$root.getUrl('officier/')" class="tooltip">
-											<div class="tooltip-content">
-												{{ item.name }}
-												<br>
-												<span v-if="item.time > ((new Date()).getTime() / 1000)">
-													Нанят до <font color="lime">{{ date("d.m.Y H:i", item.time) }}</font>
-												</span>
-												<font v-else color="lime">Не нанят</font>
-											</div>
-											<span v-bind:class="['officier', 'of'+item.id+(item.time > ((new Date()).getTime() / 1000) ? '_ikon' : '')]"></span>
-										</a>
-									</div>
+							<div class="col-12 page-overview-officiers">
+								<div v-for="item in page.officiers" class="page-overview-officiers-item">
+									<a v-bind:href="$root.getUrl('officier/')" class="tooltip">
+										<div class="tooltip-content">
+											{{ item.name }}
+											<br>
+											<span v-if="item.time > ((new Date()).getTime() / 1000)">
+												Нанят до <font color="lime">{{ date("d.m.Y H:i", item.time) }}</font>
+											</span>
+											<font v-else color="lime">Не нанят</font>
+										</div>
+										<span v-bind:class="['officier', 'of'+item.id+(item.time > ((new Date()).getTime() / 1000) ? '_ikon' : '')]"></span>
+									</a>
 								</div>
 							</div>
 						</div>
@@ -235,19 +233,16 @@
 			</div>
 		</div>
 
-		<div v-if="page.chat">
+		<div v-if="page.chat" class="page-overview-chat">
 			<div class="separator"></div>
 
 			<table class="table" style="max-width: 100%">
 				<tr>
 					<th class="text-left">
 						<div style="overflow-y: auto;overflow-x: hidden;">
-							<div v-for="item in page.chat">
-								<div class="activity">
-									<div class="date1" style="display: inline-block;padding-right:5px;">{{ date("H:i", item.time) }}</div>
-									<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
-								</div>
-								<div class="clear"></div>
+							<div v-for="item in page.chat" class="activity">
+								<div class="date1" style="display: inline-block;padding-right:5px;">{{ date("H:i", item.time) }}</div>
+								<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
 							</div>
 						</div>
 					</th>

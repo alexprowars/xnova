@@ -1,5 +1,5 @@
 <template>
-	<div class="container-fluid">
+	<div class="page-galaxy">
 		<game-page-galaxy-selector v-bind:shortcuts="page.shortcuts"></game-page-galaxy-selector>
 		<div class="separator"></div>
 

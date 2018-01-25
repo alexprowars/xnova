@@ -1,4 +1,4 @@
-@media (max-width: 1200px)
+@media (min-width: 480px) and (max-width: 1200px)
 {
 	.set_buildingsindex {
 		.planetList {
@@ -36,87 +36,16 @@
 	#application .game_menu, #application .game_content {
 		width: 1000px;
 	}
-}
 
-@media (min-width: 1200px)
-{
-	#application .game_menu, #application .game_content {
-		width: 1125px;
-	}
-
-	.game_content > .menu {
-		width: 150px;
-	}
-
-	.game_content > .planetList {
-		width: 160px;
-	}
-
-	.game_content > .menu li > a {
-		padding: 8px;
-		height:auto;
-	}
-
-	.topnav {
-		margin-bottom: 10px;
-		margin-top: 10px;
-	}
-
-	.shoutbox {
-		width: 765px;
-	}
-
-	.doubleth {
-		height: 44px;
-	}
-
-	#application.set_log .game_content, #application.set_imperium .game_content {
-		max-width: 95%;
+	html {
+		font-size: 10px;
 	}
 }
 
-@media (min-width: 1600px)
+@media (min-width: 1200px) and (max-width: 1600px)
 {
-	body {
-		font-size: 12px;
-	}
-
-	.planetList .list .planet {
+	html {
 		font-size: 11px;
-	}
-
-	.block > .title {
-		font-size: 14px;
-	}
-
-	.shoutbox {
-		font-size: 14px;
-		width: calc(100% - 10px);
-	}
-
-	.buildings .actions {
-		padding: 4px;
-	}
-
-	.buildings .title {
-		padding: 4px;
-	}
-
-	table td.c, table th, table td.k, .table th {
-		padding: 4px;
-	}
-
-	.doubleth {
-		height: 48px;
-	}
-
-	.block > .content {
-		font-size: 12px;
-	}
-
-	.set_buildingsindex .content-row > .block {
-		width: 784px;
-		margin: 0 auto;
 	}
 }
 

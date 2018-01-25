@@ -120,7 +120,7 @@
 				margin: 0;
 				position: relative;
 				color: #ffffff;
-				font-size: 15px;
+				font-size: 1.25rem;
 			}
 		}
 	}
@@ -139,7 +139,7 @@
 	}
 
 	.planetList.planet-sidebar .list * {
-		font-size: 14px;
+		font-size: 1.2rem;
 	}
 
 	.planetList .list .planet > div {
@@ -177,15 +177,15 @@
 	}
 
 	body {
-		font-size: 12px;
+		font-size: 1rem;
 	}
 
 	.block > .title {
-		font-size: 14px;
+		font-size: 1.2rem;
 	}
 
 	.shoutbox {
-		font-size: 14px;
+		font-size: 1.2rem;
 	}
 
 	.buildings {
@@ -247,8 +247,17 @@
 	    padding: 0 15px;
 	}
 
+	.page-overview .planet-image a {
+		max-width: 50%;
+		margin: 0 auto;
+	}
+
+	.main-content-row {
+		margin: 0 10px;
+	}
+
 	input[type=text], input[type=number], input[type=password] {
-		font-size: 15px;
+		font-size: 1.25rem;
 	}
 
 	.resource-panel-item {
