@@ -131,10 +131,10 @@ class Fleet extends Model
 
 			$lvl = explode("!", $temp[1]);
 
-			$fleetAmount[$temp[0]]['cnt'] += $lvl[0];
+			$fleetAmount[$temp[0]]['cnt'] += (int) $lvl[0];
 
 			if (isset($lvl[1]))
-				$fleetAmount[$temp[0]]['lvl'] = $lvl[1];
+				$fleetAmount[$temp[0]]['lvl'] = (int) $lvl[1];
 		}
 
 		return $fleetAmount;

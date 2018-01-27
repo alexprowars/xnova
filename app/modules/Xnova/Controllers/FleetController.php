@@ -51,19 +51,19 @@ class FleetController extends Controller
 		$action->show($this);
 	}
 
-	public function stageoneAction ()
+	public function oneAction ()
 	{
 		$action = new StageOne();
 		$action->show($this);
 	}
 
-	public function stagetwoAction ()
+	public function twoAction ()
 	{
 		$action = new StageTwo();
 		$action->show($this);
 	}
 
-	public function stagethreeAction ()
+	public function threeAction ()
 	{
 		$action = new StageThree();
 		$action->show($this);

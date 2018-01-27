@@ -12,6 +12,7 @@ use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Fleet;
+use Xnova\Request;
 use Xnova\Vars;
 
 class StageZero
@@ -21,29 +22,30 @@ class StageZero
 		if (!$controller->planet)
 			throw new ErrorException(_getText('fl_noplanetrow'), _getText('fl_error'));
 
-		$MaxFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$flyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 
-		$MaxExpedition = $controller->user->getTechLevel('expedition');
-		$ExpeditionEnCours = 0;
-		$EnvoiMaxExpedition = 0;
+		$expeditionTech = $controller->user->getTechLevel('expedition');
+		$curExpeditions = 0;
+		$maxExpeditions = 0;
 
-		if ($MaxExpedition >= 1)
+		if ($expeditionTech >= 1)
 		{
-			$ExpeditionEnCours = Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);;
-			$EnvoiMaxExpedition = 1 + floor($MaxExpedition / 3);
+			$curExpeditions = Fleet::count(['owner = ?0 AND mission = ?1', 'bind' => [$controller->user->id, 15]]);
+			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
-		$MaxFlottes = 1 + $controller->user->getTechLevel('computer');
+		$maxFleets = 1 + $controller->user->getTechLevel('computer');
+
 		if ($controller->user->rpg_admiral > time())
-			$MaxFlottes += 2;
+			$maxFleets += 2;
 
 		Lang::includeLang('fleet', 'xnova');
 
 		$galaxy = $controller->request->getQuery('galaxy', 'int', 0);
 		$system = $controller->request->getQuery('system', 'int', 0);
 		$planet = $controller->request->getQuery('planet', 'int', 0);
-		$planettype = $controller->request->getQuery('type', 'int', 0);
-		$target_mission = $controller->request->getQuery('mission', 'int', 0);
+		$planet_type = $controller->request->getQuery('type', 'int', 0);
+		$mission = $controller->request->getQuery('mission', 'int', 0);
 
 		if (!$galaxy)
 			$galaxy = $controller->planet->galaxy;
@@ -54,37 +56,52 @@ class StageZero
 		if (!$planet)
 			$planet = $controller->planet->planet;
 
-		if (!$planettype)
-			$planettype = 1;
+		if (!$planet_type)
+			$planet_type = 1;
 
 		$parse = [];
-		$parse['maxFlyingFleets'] = $MaxFlyingFleets;
-		$parse['maxFlottes'] = $MaxFlottes;
-		$parse['currentExpeditions'] = $ExpeditionEnCours;
-		$parse['maxExpeditions'] = $EnvoiMaxExpedition;
-		$parse['galaxy'] = $galaxy;
-		$parse['system'] = $system;
-		$parse['planet'] = $planet;
-		$parse['planettype'] = $planettype;
-		$parse['mission'] = $target_mission;
+		$parse['curFleets'] = $flyingFleets;
+		$parse['maxFleets'] = $maxFleets;
+		$parse['curExpeditions'] = $curExpeditions;
+		$parse['maxExpeditions'] = $maxExpeditions;
+		$parse['galaxy'] = (int) $galaxy;
+		$parse['system'] = (int) $system;
+		$parse['planet'] = (int) $planet;
+		$parse['planet_type'] = (int) $planet_type;
+		$parse['mission'] = (int) $mission;
 
-		$fq = Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
+		$fleets = Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
 
 		$parse['fleets'] = [];
 
-		foreach ($fq as $f)
+		foreach ($fleets as $fleet)
 		{
-			$item = $f->toArray();
-			$item['fleet_count'] = $f->getTotalShips();
-			$item['fleet_array'] = $f->getShips();
-
-			$parse['fleets'][] = $item;
+			$parse['fleets'][] = [
+				'id' => (int) $fleet->id,
+				'mission' => (int) $fleet->mission,
+				'amount' => $fleet->getTotalShips(),
+				'units' => $fleet->getShips(),
+				'start' => [
+					'galaxy' => (int) $fleet->start_galaxy,
+					'system' => (int) $fleet->start_system,
+					'planet' => (int) $fleet->start_planet,
+					'time' => (int) $fleet->start_time
+				],
+				'target' => [
+					'galaxy' => (int) $fleet->end_galaxy,
+					'system' => (int) $fleet->end_system,
+					'planet' => (int) $fleet->end_planet,
+					'time' => (int) $fleet->end_time,
+					'id' => (int) $fleet->target_owner
+				],
+				'stage' => (int) $fleet->mess
+			];
 		}
 
 		$parse['mission_text'] = '';
 
-		if ($target_mission > 0)
-			$parse['mission_text'] = ' для миссии "' . _getText('type_mission', $target_mission) . '"';
+		if ($mission > 0)
+			$parse['mission_text'] = ' для миссии "' . _getText('type_mission', $mission) . '"';
 		if (($system > 0 && $galaxy > 0 && $planet > 0) && ($galaxy != $controller->planet->galaxy || $system != $controller->planet->system || $planet != $controller->planet->planet))
 			$parse['mission_text'] = ' на координаты [' . $galaxy . ':' . $system . ':' . $planet . ']';
 
@@ -101,7 +118,8 @@ class StageZero
 			}
 		}
 
-		$controller->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$controller->tag->setTitle(_getText('fl_title_0'));
 	}
 }

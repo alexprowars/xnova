@@ -6,12 +6,15 @@ Vue.prototype.morph = morph
 Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
 Vue.prototype.QuickFleet = QuickFleet
+Vue.prototype.Lang = Lang
 
 let BuildingBuildController = require('./controllers/buildings/build.vue')
 let BuildingTechController = require('./controllers/buildings/tech.vue')
 let BuildingUnitController = require('./controllers/buildings/unit.vue')
 let GalaxyController = require('./controllers/galaxy/galaxy.vue')
 let OverviewController = require('./controllers/overview/overview.vue')
+let FleetIndexController = require('./controllers/fleet/fleet-index.vue')
+let FleetOneController = require('./controllers/fleet/fleet-one.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -33,6 +36,12 @@ const routes = [{
 }, {
 	path: '/galaxy*',
 	component: GalaxyController
+}, {
+	path: '/fleet',
+	component: FleetIndexController
+}, {
+	path: '/fleet/one',
+	component: FleetOneController
 }, {
 	path: '/overview',
 	component: OverviewController
@@ -156,6 +165,33 @@ window.application = new Vue({
 	{
 		getUrl: function (url) {
 			return this.$store.state.path+url;
+		},
+		getLang ()
+		{
+			let lang = 'ru';
+			let value = false;
+
+			if (typeof Lang[lang][arguments[0]] !== 'undefined')
+				value = Lang[lang][arguments[0]];
+
+			if (arguments.length > 1)
+			{
+				for (let i = 0; i < arguments.length; i++)
+				{
+					if (i > 0 && value instanceof Object)
+					{
+						if (typeof value[arguments[i]] !== 'undefined')
+							value = value[arguments[i]];
+						else
+							value = false;
+					}
+				}
+			}
+
+			if (value !== false)
+				return value;
+			else
+				return '##'+arguments.join('::').toUpperCase()+'##';
 		},
 		getPlanetUrl: function (galaxy, system, planet) {
 			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';

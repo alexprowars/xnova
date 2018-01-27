@@ -1,40 +1,3 @@
-function calc_capacity()
-{
-	var msp = 1000000000;
-	var cap = 0;
-	var sp = msp;
-	var tmp;
-	var id;
-
-	for (var i = 200; i < 230; i++)
-	{
-		id = "ship" + i;
-		if (document.getElementsByName(id)[0])
-		{
-			cnt = parseInt($("*[name=" + id + "]").val());
-			cap += cnt * parseInt($("*[name=capacity" + i + "]").val());
-			if (cnt > 0)
-			{
-				tmp = parseInt($("*[name=speed" + i + "]").val());
-				if (tmp < sp)
-					sp = tmp;
-			}
-		}
-	}
-	if (cap <= 0)
-		cap = "-";
-	else
-		cap = validate_number(cap);
-
-	if ((sp <= 0) || (sp >= msp))
-		sp = "-";
-	else
-		sp = validate_number(sp);
-
-	$("#allcapacity").html(cap);
-	$("#allspeed").html(sp);
-}
-
 function target()
 {
 	var galaxy = $("*[name=galaxy]").val();
@@ -42,14 +5,6 @@ function target()
 	var planet = $("*[name=planet]").val();
 
 	return("[" + galaxy + ":" + system + ":" + planet + "]");
-}
-
-function setTarget(galaxy, solarsystem, planet, planettype)
-{
-	$("*[name=galaxy]").val(galaxy);
-	$("*[name=system]").val(solarsystem);
-	$("*[name=planet]").val(planet);
-	$('*[name=planettype]').val(planettype);
 }
 
 function setMission(mission)
@@ -132,34 +87,6 @@ function consumption()
 	return Math.round(consumption) + 1;
 }
 
-function probeConsumption()
-{
-	var consumption = 0;
-	var basicConsumption = 0;
-
-	var distanceV = distance();
-	var durationV = duration();
-
-	if (document.getElementsByName("ship210")[0])
-	{
-		var shipspeed = document.getElementsByName("speed210")[0].value;
-		var spd = 35000 / (durationV * options['speed']['fleet'] - 10) * Math.sqrt(distanceV * 10 / shipspeed);
-
-		basicConsumption = document.getElementsByName("consumption210")[0].value * document.getElementsByName("ship210")[0].value;
-		consumption += basicConsumption * distanceV / 35000 * ((spd / 10) + 1) * ((spd / 10) + 1);
-	}
-
-	return Math.round(consumption) + 1;
-}
-
-function unusedProbeStorage()
-{
-	var storage = document.getElementsByName('capacity210')[0].value * document.getElementsByName('ship210')[0].value;
-	var stor = storage - probeConsumption();
-
-	return (stor > 0) ? stor : 0;
-}
-
 function storage()
 {
 	var storage = 0;
@@ -177,48 +104,7 @@ function storage()
 
 	storage -= consumption();
 
-	if (document.getElementsByName("ship210")[0])
-		storage -= unusedProbeStorage();
-
 	return(storage);
-}
-
-function shortInfo()
-{
-	$('#distance').html(Format.number(distance()));
-
-	var seconds = duration();
-
-	var hours = Math.floor(seconds / 3600);
-	seconds -= hours * 3600;
-
-	var minutes = Math.floor(seconds / 60);
-	seconds -= minutes * 60;
-
-	if (minutes < 10) minutes = "0" + minutes;
-	if (seconds < 10) seconds = "0" + seconds;
-
-	$("#duration").html(hours + ":" + minutes + ":" + seconds + " h");
-
-	var stor = storage();
-	var cons = consumption();
-
-	$("#maxspeed").html(Format.number(maxspeed()));
-
-	if (stor >= 0)
-	{
-		$("#consumption").html('<font color="lime">' + Format.number(cons) + '</font>');
-		$("#storage").html('<font color="lime">' + Format.number(stor) + '</font>');
-	}
-	else
-	{
-		$("#consumption").html('<font color="red">' + Format.number(cons) + '</font>');
-		$("#storage").html('<font color="red">' + Format.number(stor) + '</font>');
-	}
-
-	durationTime = duration() * 1000;
-
-	durationTimer();
 }
 
 var durationTime = 0;
@@ -302,40 +188,6 @@ function maxResources()
 	calculateTransportCapacity();
 }
 
-function maxShip(id)
-{
-	if (document.getElementsByName(id)[0])
-		document.getElementsByName(id)[0].value = document.getElementsByName("max" + id)[0].value;
-}
-
-function maxShips()
-{
-	var id;
-
-	for (var i = 200; i < 230; i++)
-	{
-		id = "ship" + i;
-		maxShip(id);
-	}
-}
-
-function noShip(id)
-{
-	if (document.getElementsByName(id)[0])
-		document.getElementsByName(id)[0].value = 0;
-}
-
-function noShips()
-{
-	var id;
-
-	for (var i = 200; i < 230; i++)
-	{
-		id = "ship" + i;
-		noShip(id);
-	}
-}
-
 function calculateTransportCapacity()
 {
 	var hold = 0;
@@ -362,135 +214,4 @@ function calculateTransportCapacity()
 		$("#remainingresources").html("<font color=lime>" + number_format(transportCapacity, 0, ',', '.') + "</font>");
 
 	return transportCapacity;
-}
-
-function abs(a)
-{
-	if (a < 0) return -a;
-	return a;
-}
-
-function ACS(id)
-{
-	document.getElementsByName('acs')[0].value = id;
-}
-
-function t()
-{
-	var v = new Date();
-	var n = new Date();
-	var o = new Date();
-
-	var bxx, ss, s, m, h;
-
-	for (var cn = 1; cn <= anz; cn++)
-	{
-		bxx = $('#bxx' + cn);
-		ss = bxx.attr('title');
-		s = ss - Math.round((n.getTime() - v.getTime()) / 1000.);
-		m = 0;
-		h = 0;
-		if (s < 0)
-		{
-			bxx.html("-");
-		}
-		else
-		{
-			if (s > 59)
-			{
-				m = Math.floor(s / 60);
-				s = s - m * 60;
-			}
-			if (m > 59)
-			{
-				h = Math.floor(m / 60);
-				m = m - h * 60;
-			}
-			if (s < 10)
-			{
-				s = "0" + s;
-			}
-			if (m < 10)
-			{
-				m = "0" + m;
-			}
-			bxx.html(h + ":" + m + ":" + s);
-		}
-		bxx.attr('title', ss - 1);
-	}
-	window.setTimeout("t();", 1000);
-}
-
-function addZeros(value, count)
-{
-	var ret = "";
-	var ost;
-	for (i = 0; i < count; i++)
-	{
-		ost = value % 10;
-		value = Math.floor(value / 10);
-		ret = ost + ret;
-	}
-	return(ret);
-}
-
-function validate_number(value)
-{
-	if (value == 0)
-	{
-		ret = 0;
-	}
-	else
-	{
-		var inv;
-		if (value < 0)
-		{
-			value = -value;
-			inv = 1;
-		}
-		else
-		{
-			inv = 0;
-		}
-
-		var ret = "";
-		var ost;
-
-		while (value > 0)
-		{
-			ost = value % 1000;
-			value = Math.floor(value / 1000);
-
-			if (value <= 0)
-				s_ost = ost;
-			else
-				s_ost = addZeros(ost, 3);
-
-			if (ret == "")
-				ret = s_ost;
-			else
-				ret = s_ost + "." + ret;
-		}
-		if (inv == 1)
-		{
-			ret = "-" + ret;
-		}
-	}
-	return(ret);
-}
-
-function chShipCount(id, diff)
-{
-	diff = parseInt(diff);
-
-	var ncur = parseInt(document.getElementsByName("ship" + id)[0].value);
-	var count = ncur + diff;
-
-	if (count < 0)
-		count = 0;
-
-	if (count > document.getElementsByName("maxship" + id)[0].value)
-		count = document.getElementsByName("maxship" + id)[0].value;
-
-	document.getElementsByName("ship" + id)[0].value = count;
 }

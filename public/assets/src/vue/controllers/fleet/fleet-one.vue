@@ -1,0 +1,217 @@
+<template>
+	<form :action="$root.getUrl('fleet/two/')" method="post">
+		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
+		<div class="table">
+			<div class="row">
+				<div class="c col-12">Отправление флота</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Цель</div>
+				<div class="th col-6 fleet-coordinates-input">
+					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-on:change="info" v-on:keyup="info" v-model="page['galaxy']" title="">
+					<input type="number" name="system" min="1" :max="page['system_max']" v-on:change="info" v-on:keyup="info" v-model="page['system']" title="">
+					<input type="number" name="planet" min="1" :max="page['planet_max']" v-on:change="info" v-on:keyup="info" v-model="page['planet']" title="">
+					<select name="planet_type" v-model="page['planet_type']" v-on:change="info" title="">
+						<option v-for="(item, index) in $root.getLang('PLANET_TYPE')" :value="index">{{ item }}</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Скорость</div>
+				<div class="th col-6">
+					<select name="speed" v-model="speed" v-on:change="info" title="">
+						<option v-for="i in 10" :value="11 - i">{{ (11 - i) * 10 }}</option>
+					</select> %
+				</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Расстояние</div>
+				<div class="th col-6">{{ Format.number(distance) }}</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Продолжительность полёта (к цели)</div>
+				<div class="th col-6">{{ Format.time(duration, ':', true) }}</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Время прибытия (к цели)</div>
+				<div class="th col-6">{{ date('d.m.Y H:i:s', target_time) }}</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Максимальная скорость</div>
+				<div class="th col-6">{{ Format.number(maxspeed) }}</div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Потребление топлива</div>
+				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ Format.number(consumption) }}</span></div>
+			</div>
+			<div class="row">
+				<div class="th col-6">Грузоподъёмность</div>
+				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ Format.number(storage) }}</span></div>
+			</div>
+			<div class="row">
+				<div class="c col-12">Ссылки <a :href="$root.getUrl('fleet/shortcut/')">(Просмотр / Редактирование)</a></div>
+			</div>
+
+			<div v-if="page['shortcuts'].length > 0" class="row">
+				<div v-for="link in page['shortcuts']" class="th col-6">
+					<a v-on:click.prevent="setTarget(link[1], link[2], link[3], link[4])">
+						{{ link[0] }} {{ link[1] }}:{{ link[2] }}:{{ link[3] }}
+						<span v-if="link[4] === 1">(P)</span>
+						<span v-if="link[4] === 2">(D)</span>
+						<span v-if="link[4] === 3">(L)</span>
+					</a>
+				</div>
+			</div>
+
+			<div v-if="page['planets'].length > 0" class="row">
+				<div class="c col-12">Планеты</div>
+			</div>
+			<div v-if="page['planets'].length > 0" class="row">
+				<div v-for="planet in page['planets']" class="th col-6">
+					<a v-on:click.prevent="setTarget(planet['galaxy'], planet['system'], planet['planet'], planet['planet_type'])">
+						{{ planet['name'] }} {{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}
+					</a>
+				</div>
+			</div>
+
+			<div v-if="page['moons'].length > 0" class="row">
+				<div class="c col-12">
+					Межгалактические врата{% if parse['moon_timer'] != '' %} - <span id="bxxGate1"></span>{{ parse['moon_timer'] }}{% endif %}
+				</div>
+			</div>
+			<div v-if="page['moons'].length > 0" class="row">
+				<div v-for="moon in page['moons']" class="th col-6">
+					<input type="radio" name="moon" value="{{ moon['id'] }}" :id="'moon'+moon['id']">
+					<label :for="'moon'+moon['id']">{{ moon['name'] }} [{{ moon['galaxy'] }}:{{ moon['system'] }}:{{ moon['planet'] }}] {{ Format.time(moon['timer'], ':', true) }}</label>
+				</div>
+			</div>
+
+			<div v-if="page['alliances'].length > 0" class="row">
+				<div class="c col-12">Боевые союзы</div>
+			</div>
+			<div v-for="(row, index) in page['alliances']" class="row">
+				<div class="th col-12">
+					<a v-on:click.prevent="allianceSet(index)">({{ row['name'] }})</a>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="th col-12"><input type="submit" value="Далее"></div>
+			</div>
+		</div>
+		<input type="hidden" name="alliance" v-model="alliance">
+		<input type="hidden" name="fleet" :value="page['fleet']">
+		<input type="hidden" name="mission" :value="page['mission']">
+	</form>
+</template>
+
+<script>
+	export default {
+		name: "fleet-one",
+		computed: {
+			page () {
+				return this.$store.state.page;
+			},
+		},
+		data () {
+			return {
+				speed: 10,
+				distance: 0,
+				duration: 0,
+				storage: 0,
+				maxspeed: 0,
+				consumption: 0,
+
+				target_time: 0,
+				target_timeout: null,
+
+				alliance: 0
+			}
+		},
+		watch: {
+			target_time () {
+				this.startTimer();
+			}
+		},
+		methods: {
+			info ()
+			{
+				this.distance = 5;
+
+				if ((this.page['galaxy'] - this.page['galaxy_current']) !== 0)
+					this.distance = Math.abs(this.page['galaxy'] - this.page['galaxy_current']) * 20000;
+				else if ((this.page['system'] - this.page['system_current']) !== 0)
+					this.distance = Math.abs(this.page['system'] - this.page['system_current']) * 5 * 19 + 2700;
+				else if ((this.page['planet'] - this.page['planet_current']) !== 0)
+					this.distance = Math.abs(this.page['planet'] - this.page['planet_current']) * 5 + 1000;
+
+				let msp = 1000000000;
+
+				this.page['ships'].forEach((item) =>
+				{
+					if (!isNaN(parseInt(item['speed'])) && parseInt(item['speed']) > 0)
+						msp = Math.min(msp, parseInt(item['speed']));
+				});
+
+				this.maxspeed = msp;
+				this.duration = Math.round((35000 / this.speed * Math.sqrt(this.distance * 10 / this.maxspeed) + 10) / this.$store.state['speed']['fleet']);
+
+				if (this.duration <= 1)
+					this.duration = 2;
+
+				let consumption = 0;
+
+				this.page['ships'].forEach((item) =>
+				{
+					let speed = 35000 / (this.duration * this.$store.state['speed']['fleet'] - 10) * Math.sqrt(this.distance * 10 / item['speed']);
+					consumption += (item['consumption'] * item['count']) * this.distance / 35000 * ((speed / 10) + 1) * ((speed / 10) + 1);
+				});
+
+				this.consumption = Math.round(consumption) + 1;
+
+				let storage = 0;
+
+				this.page['ships'].forEach((item) =>
+				{
+					storage += item['count'] * item['capacity'];
+				});
+
+				this.storage = storage - this.consumption;
+
+				this.clearTimer();
+				this.target_time = this.$root.serverTime() + this.duration;
+			},
+
+			startTimer () {
+				this.target_timeout = setTimeout(() => this.target_time = this.$root.serverTime() + this.duration, 1000);
+			},
+			clearTimer () {
+				clearTimeout(this.target_timeout);
+			},
+			setTarget (galaxy, system, planet, type)
+			{
+				this.page['galaxy'] = galaxy;
+				this.page['system'] = system;
+				this.page['planet'] = planet;
+
+				if (typeof type === 'undefined')
+					type = 1;
+
+				this.page['planet_type'] = type;
+			},
+			allianceSet (index)
+			{
+				let al = this.page['alliance'][index];
+
+				this.alliance = al['id'];
+				this.setTarget(al['galaxy'], al['system'], al['planet']);
+			}
+		},
+		mounted () {
+			this.info();
+		},
+		destroyed: function () {
+			this.clearTimer();
+		}
+	}
+</script>

@@ -24,9 +24,6 @@ class StageTwo
 		if ($controller->user->vacation > 0)
 			throw new ErrorException("Нет доступа!");
 
-		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_02-' . date("dmY", time()) . '-' . $_POST["usedfleet"])))
-			throw new ErrorException('Ошибка контрольной суммы!');
-
 		Lang::includeLang('fleet', 'xnova');
 
 		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
@@ -99,10 +96,10 @@ class StageTwo
 		$system = $controller->request->getPost('system', 'int', 0);
 		$planet = $controller->request->getPost('planet', 'int', 0);
 		$type 	= $controller->request->getPost('planettype', 'int', 0);
-		$acs 	= $controller->request->getPost('acs', 'int', 0);
+		$acs 	= $controller->request->getPost('alliance', 'int', 0);
 
 		$fleetmission 	= $controller->request->getPost('target_mission', 'int', 0);
-		$fleetarray 	= json_decode(base64_decode(str_rot13($controller->request->getPost('usedfleet', null, ''))), true);
+		$fleetarray 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		$YourPlanet = false;
 		$UsedPlanet = false;
@@ -175,7 +172,6 @@ class StageTwo
 		$parse['usedfleet'] = $_POST["usedfleet"];
 		$parse['maxepedition'] = $_POST["maxepedition"];
 		$parse['curepedition'] = $_POST["curepedition"];
-		$parse['crc'] = md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]);
 
 		$parse['ships'] = [];
 
