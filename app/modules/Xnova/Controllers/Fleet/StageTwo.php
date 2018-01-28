@@ -15,6 +15,7 @@ use Xnova\Fleet;
 use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\Request;
 use Xnova\Vars;
 
 class StageTwo
@@ -92,13 +93,13 @@ class StageTwo
 
 		$parse = [];
 
-		$galaxy = $controller->request->getPost('galaxy', 'int', 0);
-		$system = $controller->request->getPost('system', 'int', 0);
-		$planet = $controller->request->getPost('planet', 'int', 0);
-		$type 	= $controller->request->getPost('planettype', 'int', 0);
-		$acs 	= $controller->request->getPost('alliance', 'int', 0);
+		$galaxy = (int) $controller->request->getPost('galaxy', 'int', 0);
+		$system = (int) $controller->request->getPost('system', 'int', 0);
+		$planet = (int) $controller->request->getPost('planet', 'int', 0);
+		$type 	= (int) $controller->request->getPost('planet_type', 'int', 0);
+		$acs 	= (int) $controller->request->getPost('alliance', 'int', 0);
 
-		$fleetmission 	= $controller->request->getPost('target_mission', 'int', 0);
+		$fleetmission 	= (int) $controller->request->getPost('mission', 'int', 0);
 		$fleetarray 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		$YourPlanet = false;
@@ -122,21 +123,13 @@ class StageTwo
 		if ($TargetPlanet && ($TargetPlanet->id_owner == 1 || $controller->user->isAdmin()))
 			$missiontype[4] = _getText('type_mission', 4);
 
-		$SpeedFactor = $controller->game->getSpeed('fleet');
-		$AllFleetSpeed = Fleet::GetFleetMaxSpeed($fleetarray, 0, $controller->user);
-		$GenFleetSpeed = $controller->request->getPost('speed', 'int', 10);
-		$MaxFleetSpeed = min($AllFleetSpeed);
-
-		$distance = Fleet::GetTargetDistance($controller->planet->galaxy, $_POST['galaxy'], $controller->planet->system, $_POST['system'], $controller->planet->planet, $_POST['planet']);
-		$duration = Fleet::GetMissionDuration($GenFleetSpeed, $MaxFleetSpeed, $distance, $SpeedFactor);
-		$consumption = Fleet::GetFleetConsumption($fleetarray, $SpeedFactor, $duration, $distance, $controller->user);
-
+		$GenFleetSpeed = (int) $controller->request->getPost('speed', 'int', 10);
 		$stayConsumption = Fleet::GetFleetStay($fleetarray);
 
 		if ($controller->user->rpg_meta > time())
 			$stayConsumption = ceil($stayConsumption * 0.9);
 
-		$parse['missions_selected'] = [];
+		$parse['mission'] = 0;
 		$parse['missions'] = [];
 
 		if (count($missiontype) > 0)
@@ -146,32 +139,33 @@ class StageTwo
 			foreach ($missiontype as $a => $b)
 			{
 				if (($fleetmission > 0 && $fleetmission == $a) || (!isset($missiontype[$fleetmission]) && $i == 0) || count($missiontype) == 1)
-					$parse['missions_selected'] = $a;
+					$parse['mission'] = $a;
 
-				$parse['missions'][$a] = $b;
+				$parse['missions'][] = $a;
 
 				$i++;
 			}
 		}
 
-		$parse['thisresource1'] = floor($controller->planet->metal);
-		$parse['thisresource2'] = floor($controller->planet->crystal);
-		$parse['thisresource3'] = floor($controller->planet->deuterium);
-		$parse['consumption'] = $consumption;
-		$parse['stayConsumption'] = $stayConsumption;
-		$parse['dist'] = $distance;
-		$parse['acs'] = $acs;
-		$parse['thisgalaxy'] = $controller->planet->galaxy;
-		$parse['thissystem'] = $controller->planet->system;
-		$parse['thisplanet'] = $controller->planet->planet;
 		$parse['galaxy'] = $galaxy;
 		$parse['system'] = $system;
 		$parse['planet'] = $planet;
-		$parse['planettype'] = $type;
+		$parse['planet_type'] = $type;
+
+		$parse['galaxy_current'] = (int) $controller->planet->galaxy;
+		$parse['system_current'] = (int) $controller->planet->system;
+		$parse['planet_current'] = (int) $controller->planet->planet;
+
+		$parse['resources'] = [
+			'metal' => floor($controller->planet->metal),
+			'crystal' => floor($controller->planet->crystal),
+			'deuterium' => floor($controller->planet->deuterium)
+		];
+
+		$parse['hold'] = $stayConsumption;
+		$parse['alliance'] = $acs;
 		$parse['speed'] = $GenFleetSpeed;
-		$parse['usedfleet'] = $_POST["usedfleet"];
-		$parse['maxepedition'] = $_POST["maxepedition"];
-		$parse['curepedition'] = $_POST["curepedition"];
+		$parse['fleet'] = $controller->request->getPost('fleet', null, '');
 
 		$parse['ships'] = [];
 
@@ -186,7 +180,8 @@ class StageTwo
 		if (isset($missiontype[15]))
 			$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
 
-		$controller->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$controller->tag->setTitle(_getText('fl_title_2'));
 	}
 }

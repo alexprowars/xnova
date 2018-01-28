@@ -15,6 +15,7 @@ let GalaxyController = require('./controllers/galaxy/galaxy.vue')
 let OverviewController = require('./controllers/overview/overview.vue')
 let FleetIndexController = require('./controllers/fleet/fleet-index.vue')
 let FleetOneController = require('./controllers/fleet/fleet-one.vue')
+let FleetTwoController = require('./controllers/fleet/fleet-two.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -42,6 +43,9 @@ const routes = [{
 }, {
 	path: '/fleet/one',
 	component: FleetOneController
+}, {
+	path: '/fleet/two',
+	component: FleetTwoController
 }, {
 	path: '/overview',
 	component: OverviewController
@@ -191,7 +195,7 @@ window.application = new Vue({
 			if (value !== false)
 				return value;
 			else
-				return '##'+arguments.join('::').toUpperCase()+'##';
+				return '##'+$.makeArray(arguments).join('::').toUpperCase()+'##';
 		},
 		getPlanetUrl: function (galaxy, system, planet) {
 			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';

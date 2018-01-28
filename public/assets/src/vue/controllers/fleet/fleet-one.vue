@@ -136,52 +136,39 @@
 		methods: {
 			info ()
 			{
-				this.distance = 5;
+				let fleet = require('./../../js/fleet.js');
 
-				if ((this.page['galaxy'] - this.page['galaxy_current']) !== 0)
-					this.distance = Math.abs(this.page['galaxy'] - this.page['galaxy_current']) * 20000;
-				else if ((this.page['system'] - this.page['system_current']) !== 0)
-					this.distance = Math.abs(this.page['system'] - this.page['system_current']) * 5 * 19 + 2700;
-				else if ((this.page['planet'] - this.page['planet_current']) !== 0)
-					this.distance = Math.abs(this.page['planet'] - this.page['planet_current']) * 5 + 1000;
-
-				let msp = 1000000000;
-
-				this.page['ships'].forEach((item) =>
-				{
-					if (!isNaN(parseInt(item['speed'])) && parseInt(item['speed']) > 0)
-						msp = Math.min(msp, parseInt(item['speed']));
+				this.distance = fleet.distance({
+					galaxy: this.page['galaxy_current'],
+					system: this.page['system_current'],
+					planet: this.page['planet_current']
+				}, {
+					galaxy: this.page['galaxy'],
+					system: this.page['system'],
+					planet: this.page['planet']
 				});
 
-				this.maxspeed = msp;
-				this.duration = Math.round((35000 / this.speed * Math.sqrt(this.distance * 10 / this.maxspeed) + 10) / this.$store.state['speed']['fleet']);
+				this.maxspeed = fleet.speed(this.page['ships']);
 
-				if (this.duration <= 1)
-					this.duration = 2;
-
-				let consumption = 0;
-
-				this.page['ships'].forEach((item) =>
-				{
-					let speed = 35000 / (this.duration * this.$store.state['speed']['fleet'] - 10) * Math.sqrt(this.distance * 10 / item['speed']);
-					consumption += (item['consumption'] * item['count']) * this.distance / 35000 * ((speed / 10) + 1) * ((speed / 10) + 1);
+				this.duration = fleet.duration({
+					factor: this.speed,
+					distance: this.distance,
+					max_speed: this.maxspeed,
+					universe_speed: this.$store.state['speed']['fleet']
 				});
 
-				this.consumption = Math.round(consumption) + 1;
-
-				let storage = 0;
-
-				this.page['ships'].forEach((item) =>
-				{
-					storage += item['count'] * item['capacity'];
+				this.consumption = fleet.consumption({
+					ships: this.page['ships'],
+					duration: this.duration,
+					distance: this.distance,
+					universe_speed: this.$store.state['speed']['fleet']
 				});
 
-				this.storage = storage - this.consumption;
+				this.storage = fleet.storage(this.page['ships']) - this.consumption;
 
 				this.clearTimer();
 				this.target_time = this.$root.serverTime() + this.duration;
 			},
-
 			startTimer () {
 				this.target_timeout = setTimeout(() => this.target_time = this.$root.serverTime() + this.duration, 1000);
 			},
