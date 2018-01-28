@@ -141,6 +141,8 @@ class Controller extends PhalconController
 			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.js', 'footer');
 			$this->assets->addJs('https://unpkg.com/vuex/dist/vuex.js', 'footer');
 
+			$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
+
 			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/utils.js?v='.VERSION, 'footer');
@@ -340,17 +342,12 @@ class Controller extends PhalconController
 				];
 			}
 
-			Request::addData('user', [
+			$user = [
 				'id' => (int) $this->user->id,
 				'name' => trim($this->user->username),
 				'race' => (int) $this->user->race,
 				'planet' => (int) $this->user->planet_current,
-				'position' => [
-					'galaxy' => (int) $this->planet->galaxy,
-					'system' => (int) $this->planet->system,
-					'planet' => (int) $this->planet->planet,
-					'planet_type' => (int) $this->planet->planet_type,
-				],
+				'position' => false,
 				'messages' => (int) $this->user->messages,
 				'alliance' => [
 					'id' => (int) $this->user->ally_id,
@@ -360,7 +357,19 @@ class Controller extends PhalconController
 				'tutorial' => (int) $this->user->tutorial,
 				'planets' => $planets,
 				'timezone' => (int) $this->user->timezone
-			]);
+			];
+
+			if ($this->getDI()->has('planet'))
+			{
+				$user['position'] = [
+					'galaxy' => (int) $this->planet->galaxy,
+					'system' => (int) $this->planet->system,
+					'planet' => (int) $this->planet->planet,
+					'planet_type' => (int) $this->planet->planet_type,
+				];
+			}
+
+			Request::addData('user', $user);
 
 			Request::addData('resources', false);
 

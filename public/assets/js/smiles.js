@@ -49,7 +49,7 @@ var TextParser =
 			{
 				txt = txt.replace(this.find[i], this.replace[i]);
 
-				if (i == 3 || i == 4 || i == 23)
+				if (i === 3 || i === 4 || i === 23)
 					while(txt.match(this.find[i])) txt = txt.replace(this.find[i], this.replace[i]);
 			}
 		}

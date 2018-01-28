@@ -1,3 +1,5 @@
+@import "variables";
+
 html {
 	height: 100%;
 	overflow-y: scroll;
@@ -45,7 +47,8 @@ table table td, .table table td {
 }
 
 body {
-	background: #0a0a0a url(../images/background_1.jpg) no-repeat bottom fixed;
+	//noinspection CssUnknownTarget
+	background: #000 url(../images/background_1.jpg) no-repeat bottom fixed;
 	height: 100%;
 	width: 100%;
 	font: 1rem verdana, arial, sans-serif;
@@ -404,6 +407,7 @@ tr.return th span a {
 .quotewrapper {
 	clear: both;
 	margin: 0 0 0 0;
+	//noinspection CssUnknownTarget
 	background: #EAECF2 url(../images/quote_header.gif) top left no-repeat;
 	padding-left: 17px;
 	border: solid 1px #C8CBD9;
@@ -473,8 +477,8 @@ img.info {
 .shoutbox {
 	margin: 5px;
 	vertical-align: text-top;
-	height: 380px;
 	min-height: 200px;
+	height: 70vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 	width: calc(100% - 10px);
@@ -485,7 +489,7 @@ img.info {
 			text-decoration: none;
 			font-weight: normal;
 			color: #04AE04;
-			padding: 2px 0;
+			padding: 2px 3px;
 		}
 
 		&2 {
@@ -723,7 +727,7 @@ textarea#text {
 	color: lime;
 }
 
-.noborder, table.noborder td, table.noborder th {
+.noborder, table.noborder td, table.noborder th, table.noborder tr {
 	border: 0 !important;
 }
 
@@ -731,6 +735,7 @@ textarea#text {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
+	//noinspection CssUnknownTarget
 	background: url(../images/build.png) 100% 0 no-repeat;
 	height: 15px;
 	padding-right: 25px;
@@ -832,6 +837,7 @@ ul {
 			}
 
 			.reload {
+				//noinspection CssUnknownTarget
 				background: url(../images/reload-icon.png) 0 0 no-repeat;
 				width: 20px;
 				height: 20px;
@@ -957,6 +963,7 @@ p {
 	text-align: center;
 
 	span {
+		//noinspection CssUnknownTarget
 		background: url(../images/block.png) 0 1px no-repeat;
 		padding-left: 25px;
 		display: inline-block;
@@ -1380,6 +1387,7 @@ div.errormessage {
 }
 
 footer {
+	//noinspection CssUnknownTarget
 	background: #000 url(../images/bar-bg.gif) repeat-x top;
 	color: #848484;
 	height: 25px;
@@ -1424,7 +1432,7 @@ footer {
 	}
 }
 
-#chatMsg {
+.page-chat .page-chat-message {
 	width: calc(100% - 100px);
 	margin-top: 2px;
 	font-size: 1.3rem;

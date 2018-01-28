@@ -7,24 +7,6 @@ function ShowHiddenBlock (id)
     $('#'+id).toggle();
 }
 
-var flotenTimers = [];
-var flotenTime = [];
-
-function FlotenTime (obj, time)
-{
-	if (flotenTimers['fleet'+obj] === undefined)
-		flotenTimers['fleet'+obj] = (new Date).getTime();
-	if (flotenTime['fleet'+obj] === undefined)
-		flotenTime['fleet'+obj] = time;
-
-	if (time === undefined)
-		time = flotenTime['fleet'+obj] - Math.floor((((new Date).getTime() - flotenTimers['fleet'+obj]) / 1000));
-
-	$('#'+obj).html(Format.time(time, ':'));
-
-	timeouts['fleet'+obj] = setTimeout(function(){FlotenTime(obj)}, 1000);
-}
-
 function QuickFleet (mission, galaxy, system, planet, type, count)
 {
 	$.ajax({
@@ -41,23 +23,6 @@ function QuickFleet (mission, galaxy, system, planet, type, count)
 			});
 		}
 	});
-}
-
-function clearTimers ()
-{
-	for (var i in timeouts)
-	{
-		if (timeouts.hasOwnProperty(i))
-		{
-			clearInterval(timeouts[i]);
-			clearTimeout(timeouts[i]);
-		}
-	}
-
-	flotenTimers = [];
-	flotenTime = [];
-
-	timeouts.length = 0;
 }
 
 function load (url)
@@ -128,7 +93,6 @@ $(document).ready(function()
 		var form = $(this);
 
 		application.loader = true;
-		clearTimers();
 
 		var formData = new FormData(this);
 

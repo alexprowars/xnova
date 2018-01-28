@@ -1,9 +1,9 @@
 <template>
-	<div v-html="$store.state.html"></div>
+	<div></div>
 </template>
 
 <script>
 	export default {
-		name: "application-html"
+		name: "application-html",
 	}
 </script>

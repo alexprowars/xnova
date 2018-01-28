@@ -46,7 +46,8 @@
 				<!-- end messages -->
 
 				<div class="main-content-row">
-					<router-view></router-view>
+					<div v-if="html.length" ref="html"></div>
+					<router-view v-if="$store.state.page"></router-view>
 				</div>
 			</div>
 		</div>
@@ -73,37 +74,72 @@
 			'planet-panel': require('./views/app/planet-panel.vue'),
 			'application-messages-row': require('./views/app/messages-row.vue'),
 		},
+		computed: {
+			html () {
+				return this.$store.state.html;
+			}
+		},
 		data: function ()
 		{
 			return {
 				mobile: false,
-				sidebar: ''
+				sidebar: '',
+				html_component: null
+			}
+		},
+		watch: {
+		    '$route' () {
+				this.sidebar = '';
+		    },
+			html (val) {
+		    	this.renderHtml(val);
 			}
 		},
 		methods: {
-			sidebarToggle: function (type)
+			sidebarToggle (type)
 			{
 				if (this.sidebar === type)
 					this.sidebar = '';
 				else
 					this.sidebar = type;
 			},
-			handleWindowResize: function (event) {
+			handleWindowResize (event) {
 				this.mobile = (event.currentTarget.innerWidth < 480);
+			},
+			renderHtml (html)
+			{
+				if (this.html_component !== null)
+					this.html_component.$destroy();
+
+				if (html.length > 0)
+				{
+					setTimeout(() =>
+					{
+						this.$root.evalJs(html);
+						TextParser.parseAll();
+					}, 25);
+
+					this.html_component = new (Vue.extend({
+						name: 'html-render',
+						template: '<div>'+html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+					}))().$mount();
+
+					Vue.nextTick(() => {
+						$(this.$refs['html']).html(this.html_component.$el);
+					});
+				}
 			}
 		},
-		created: function ()
+		created ()
 		{
 			if (window.innerWidth < 480)
 				this.mobile = true;
 		},
-		mounted: function() {
+		mounted () {
 			window.addEventListener('resize', this.handleWindowResize);
-		},
-		watch: {
-		    '$route' () {
-				this.sidebar = '';
-		    }
+
+			if (this.html.length)
+				this.renderHtml(this.html);
 		}
 	}
 </script>

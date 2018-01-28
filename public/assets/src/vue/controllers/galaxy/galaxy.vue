@@ -116,8 +116,6 @@
 
 				return count;
 			}
-		},
-		methods: {
 		}
 	}
 </script>

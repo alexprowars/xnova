@@ -7,6 +7,7 @@ Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
 Vue.prototype.QuickFleet = QuickFleet
 Vue.prototype.Lang = Lang
+Vue.prototype.TextParser = TextParser
 
 let BuildingBuildController = require('./controllers/buildings/build.vue')
 let BuildingTechController = require('./controllers/buildings/tech.vue')
@@ -16,24 +17,21 @@ let OverviewController = require('./controllers/overview/overview.vue')
 let FleetIndexController = require('./controllers/fleet/fleet-index.vue')
 let FleetOneController = require('./controllers/fleet/fleet-one.vue')
 let FleetTwoController = require('./controllers/fleet/fleet-two.vue')
+let ChatController = require('./controllers/chat/chat.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
-	path: '/buildings',
-	alias: '/buildings/index/*',
-	component: BuildingBuildController
-}, {
-	path: '/buildings/research',
-	alias: '/buildings/research/*',
+	path: '/buildings/research*',
 	component: BuildingTechController
 }, {
-	path: '/buildings/fleet',
-	alias: '/buildings/fleet/*',
+	path: '/buildings/fleet*',
 	component: BuildingUnitController
 }, {
-	path: '/buildings/defense',
-	alias: '/buildings/defense/*',
+	path: '/buildings/defense*',
 	component: BuildingUnitController
+}, {
+	path: '/buildings',
+	component: BuildingBuildController
 }, {
 	path: '/galaxy*',
 	component: GalaxyController
@@ -47,12 +45,17 @@ const routes = [{
 	path: '/fleet*',
 	component: FleetIndexController
 }, {
-	path: '/overview',
+	path: '/overview*',
 	component: OverviewController
+}, {
+	path: '/chat',
+	component: ChatController
 }, {
 	path: '*',
 	component: HtmlController
-}]
+}];
+
+Vue.component('error-message', require('./views/message.vue'))
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -107,9 +110,6 @@ window.application = new Vue({
 		getMenuActiveLink: function () {
 			return this.$store.state['route']['controller']+(this.$store.state['route']['controller'] === 'buildings' ? this.$store.state['route']['action'] : '');
 		},
-		html () {
-			return this.$store.state['html'];
-		},
 		title () {
 			return this.$store.state['title'];
 		},
@@ -129,13 +129,6 @@ window.application = new Vue({
 		router_block: false
 	},
 	watch: {
-		html: function (val)
-		{
-			setTimeout(() => {
-				this.evalJs(val);
-				TextParser.parseAll();
-			}, 25)
-		},
 		title (val) {
 			document.title = val;
 		},
@@ -226,8 +219,6 @@ window.application = new Vue({
 			if (this.request_block)
 				return;
 
-			clearTimers();
-
 			this.request_block = true;
 			this.loader = true;
 
@@ -241,8 +232,6 @@ window.application = new Vue({
 				timeout: 10000,
 				success: (result) =>
 				{
-					clearTimers();
-
 					$('.ui-helper-hidden-accessible').html('');
 
 					closeWindow();
@@ -285,9 +274,6 @@ window.application = new Vue({
 				}
 			});
 		}
-	},
-	mounted: function () {
-		this.evalJs(this.$store.state.html);
 	},
 	render: h => h(App)
 })
