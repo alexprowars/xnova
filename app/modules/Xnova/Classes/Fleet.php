@@ -235,40 +235,40 @@ class Fleet extends Building
 		if ($target[2] == 16)
 		{
 			if (!(count($fleetArray) == 1 && isset($fleetArray[210])))
-				$result[15] = _getText('type_mission', 15);
+				$result[] = 15;
 		}
 		else
 		{
 			if ($target[3] == 2 && isset($fleetArray[209]))
-				$result[8] = _getText('type_mission', 8); // Переработка
+				$result[] = 8; // Переработка
 			elseif ($target[3] == 1 || $target[3] == 3 || $target[3] == 5)
 			{
 				if (isset($fleetArray[216]) && !$isActivePlanet && $target[3] == 1)
-					$result[10] = _getText('type_mission', 10); // Создать базу
+					$result[] = 10; // Создать базу
 
 				if (isset($fleetArray[210]) && !$isYouPlanet)
-					$result[6] = _getText('type_mission', 6); // Шпионаж
+					$result[] = 6; // Шпионаж
 
 				if (isset($fleetArray[208]) && !$isActivePlanet)
-					$result[7] = _getText('type_mission', 7); // Колонизировать
+					$result[] = 7; // Колонизировать
 
 				if (!$isYouPlanet && $isActivePlanet && !isset($fleetArray[208]) && !isset($fleetArray[209]) && !isset($fleetArray[216]))
-					$result[1] = _getText('type_mission', 1); // Атаковать
+					$result[] = 1; // Атаковать
 
 				if ($isActivePlanet && !$isYouPlanet && !(count($fleetArray) == 1 && isset($fleetArray[210])))
-					$result[5] = _getText('type_mission', 5); // Удерживать
+					$result[] = 5; // Удерживать
 
 				if (isset($fleetArray[202]) || isset($fleetArray[203]))
-					$result[3] = _getText('type_mission', 3); // Транспорт
+					$result[] = 3; // Транспорт
 
 				if ($isYouPlanet)
-					$result[4] = _getText('type_mission', 4); // Оставить
+					$result[] = 4; // Оставить
 
 				if ($isAcs > 0 && $isActivePlanet)
-					$result[2] = _getText('type_mission', 2); // Объединить
+					$result[] = 2; // Объединить
 
 				if ($target[3] == 3 && isset($fleetArray[214]) && !$isYouPlanet && $isActivePlanet)
-					$result[9] = _getText('type_mission', 9);
+					$result[] = 9;
 			}
 		}
 

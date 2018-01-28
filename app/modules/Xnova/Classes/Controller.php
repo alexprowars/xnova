@@ -345,6 +345,12 @@ class Controller extends PhalconController
 				'name' => trim($this->user->username),
 				'race' => (int) $this->user->race,
 				'planet' => (int) $this->user->planet_current,
+				'position' => [
+					'galaxy' => (int) $this->planet->galaxy,
+					'system' => (int) $this->planet->system,
+					'planet' => (int) $this->planet->planet,
+					'planet_type' => (int) $this->planet->planet_type,
+				],
 				'messages' => (int) $this->user->messages,
 				'alliance' => [
 					'id' => (int) $this->user->ally_id,
@@ -367,11 +373,11 @@ class Controller extends PhalconController
 			$this->showTopPanel(false);
 
 		Request::addData('view', $this->views);
+
+		if (!$this->request->has('popup'))
+			$this->tag->appendTitle(Options::get('site_title'));
+
 		Request::addData('title', $this->tag->getTitle(false));
-
-		$this->tag->appendTitle(Options::get('site_title'));
-
-		Request::addData('title_full', $this->tag->getTitle(false));
 		Request::addData('url', $this->router->getRewriteUri());
 
 		Request::addData('html', '');

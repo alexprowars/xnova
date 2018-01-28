@@ -1,7 +1,7 @@
 <template>
-	<div v-bind:class="['planet', 'type_'+item.t, ($store.state.user.planet === item.id ? 'current' : '')]">
-		<a v-on:click="changeItem" v-bind:title="item.name">
-			<img v-bind:src="$root.getUrl('assets/images/planeten/small/s_'+item.image+'.jpg')" height="40" width="40" v-bind:alt="item.name">
+	<div class="planet" :class="['type_'+item.t, ($store.state.user.planet === item.id ? 'current' : '')]">
+		<a v-on:click="changeItem" :title="item.name">
+			<img :src="$root.getUrl('assets/images/planeten/small/s_'+item.image+'.jpg')" height="40" width="40" :alt="item.name">
 		</a>
 		<span class="d-none d-md-block d-lg-none" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>
 		<div class="d-sm-none d-md-block">
@@ -20,8 +20,8 @@
 		{
 			changeItem: function ()
 			{
-				var path = window.location.pathname.replace(this.$store.state.path, '').split('/');
-				var url = this.$root.getUrl(path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id);
+				let path = window.location.pathname.replace(this.$store.state.path, '').split('/');
+				let url = this.$root.getUrl(path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id);
 	
 				load(url);
 			}

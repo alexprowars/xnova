@@ -8,10 +8,10 @@
 			<div class="row">
 				<div class="th col-6">Цель</div>
 				<div class="th col-6 fleet-coordinates-input">
-					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-on:change="info" v-on:keyup="info" v-model="page['galaxy']" title="">
-					<input type="number" name="system" min="1" :max="page['system_max']" v-on:change="info" v-on:keyup="info" v-model="page['system']" title="">
-					<input type="number" name="planet" min="1" :max="page['planet_max']" v-on:change="info" v-on:keyup="info" v-model="page['planet']" title="">
-					<select name="planet_type" v-model="page['planet_type']" v-on:change="info" title="">
+					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['galaxy']" title="">
+					<input type="number" name="system" min="1" :max="page['system_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['system']" title="">
+					<input type="number" name="planet" min="1" :max="page['planet_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['planet']" title="">
+					<select name="planet_type" v-model="page['target']['planet_type']" v-on:change="info" title="">
 						<option v-for="(item, index) in $root.getLang('PLANET_TYPE')" :value="index">{{ item }}</option>
 					</select>
 				</div>
@@ -112,6 +112,9 @@
 			page () {
 				return this.$store.state.page;
 			},
+			position () {
+				return this.$store.state.user.position;
+			},
 		},
 		data () {
 			return {
@@ -138,16 +141,7 @@
 			{
 				let fleet = require('./../../js/fleet.js');
 
-				this.distance = fleet.distance({
-					galaxy: this.page['galaxy_current'],
-					system: this.page['system_current'],
-					planet: this.page['planet_current']
-				}, {
-					galaxy: this.page['galaxy'],
-					system: this.page['system'],
-					planet: this.page['planet']
-				});
-
+				this.distance = fleet.distance(this.position, this['page']['target']);
 				this.maxspeed = fleet.speed(this.page['ships']);
 
 				this.duration = fleet.duration({

@@ -1,10 +1,10 @@
 <template>
-	<form v-bind:action="$root.getUrl('galaxy/r/1/')" method="post" class="galaxy-select">
+	<form :action="$root.getUrl('galaxy/r/1/')" method="post" class="galaxy-select">
 		<input type="hidden" class="auto" value="dr">
 
 		<div class="row">
 			<div class="col-12 d-sm-none">
-				<game-page-galaxy-selector-shortcut v-bind:items="shortcuts"></game-page-galaxy-selector-shortcut>
+				<game-page-galaxy-selector-shortcut :items="shortcuts"></game-page-galaxy-selector-shortcut>
 			</div>
 			<div class="separator d-sm-none"></div>
 			<div class="col-sm-4 col-6">
@@ -19,7 +19,7 @@
 							<input name="galaxyLeft" value="&lt;-" type="button" v-on:click.prevent="goTo">
 						</th>
 						<th>
-							<input name="galaxy" v-bind:value="$parent.page.galaxy" size="5" maxlength="3" tabindex="1" type="text">
+							<input name="galaxy" :value="$parent.page.galaxy" size="5" maxlength="3" tabindex="1" type="text">
 						</th>
 						<th>
 							<input name="galaxyRight" value="-&gt;" type="button" v-on:click.prevent="goTo">
@@ -28,7 +28,7 @@
 				</table>
 			</div>
 			<div class="col-sm-4 d-none d-sm-block">
-				<game-page-galaxy-selector-shortcut v-bind:items="shortcuts"></game-page-galaxy-selector-shortcut>
+				<game-page-galaxy-selector-shortcut :items="shortcuts"></game-page-galaxy-selector-shortcut>
 			</div>
 			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
@@ -42,7 +42,7 @@
 							<input name="systemLeft" value="&lt;-" type="button" v-on:click.prevent="goTo">
 						</th>
 						<th>
-							<input name="system" v-bind:value="$parent.page.system" size="5" maxlength="3" tabindex="2" type="text">
+							<input name="system" :value="$parent.page.system" size="5" maxlength="3" tabindex="2" type="text">
 						</th>
 						<th>
 							<input name="systemRight" value="-&gt;" type="button" v-on:click.prevent="goTo">

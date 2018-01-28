@@ -5,7 +5,7 @@
 			<div class="title">Исследования</div>
 			<div class="content">
 				<div class="row research">
-					<game-page-buildings-tech-item v-for="item in page.items" v-bind:item="item"></game-page-buildings-tech-item>
+					<game-page-buildings-tech-item v-for="item in page.items" :item="item"></game-page-buildings-tech-item>
 				</div>
 			</div>
 		</div>

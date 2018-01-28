@@ -8,7 +8,7 @@
 							<input type="submit" value="Построить">
 						</div>
 
-						<game-page-buildings-unit-item v-for="item in page.items" v-bind:item="item"></game-page-buildings-unit-item>
+						<game-page-buildings-unit-item v-for="item in page.items" :item="item"></game-page-buildings-unit-item>
 
 						<div class="col-12 c">
 							<input type="submit" value="Построить">
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<game-page-buildings-unit-queue v-if="page.queue.length > 0" v-bind:queue="page.queue"></game-page-buildings-unit-queue>
+		<game-page-buildings-unit-queue v-if="page.queue.length > 0" :queue="page.queue"></game-page-buildings-unit-queue>
 	</div>
 </template>
 

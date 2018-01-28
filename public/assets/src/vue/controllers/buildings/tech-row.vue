@@ -2,10 +2,10 @@
 	<div class="col-md-6 col-12">
 		<div class="viewport buildings" :class="{shadow: !item.allow}">
 			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
-				<div class="tooltip-content" v-if="item.need">
+				<div class="tooltip-content" v-if="item['need']">
 					Требования:
 					<br>
-					<div v-html="item.need"></div>
+					<div v-html="item['need']"></div>
 				</div>
 				<span>недоступно</span>
 			</div>
@@ -15,11 +15,11 @@
 					<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" width="120" height="120" class="tooltip" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
 				</a>
 				<div class="overContent">
-					<game-page-buildings-build-row-price v-bind:price="item.price"></game-page-buildings-build-row-price>
+					<game-page-buildings-build-row-price :price="item.price"></game-page-buildings-build-row-price>
 				</div>
 			</div>
 			<div class="title">
-				<a v-bind:href="$root.getUrl('info/'+item.i+'/')">
+				<a :href="$root.getUrl('info/'+item.i+'/')">
 					{{ item.name }}
 				</a>
 			</div>

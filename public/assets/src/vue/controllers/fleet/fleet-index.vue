@@ -7,10 +7,10 @@
 						<table border="0" width="100%">
 							<tr>
 								<td align="left">
-									Флоты {{ page.curFleets }} из {{ page.maxFleets }}
+									Флоты {{ page['curFleets'] }} из {{ page['maxFleets'] }}
 								</td>
 								<td align="right">
-									{{ page.curExpeditions }}/{{ page.maxExpeditions }} Экспедиции
+									{{ page['curExpeditions'] }}/{{ page['maxExpeditions'] }} Экспедиции
 								</td>
 							</tr>
 						</table>
@@ -43,7 +43,7 @@
 						<a class="tooltip">
 							<div class="tooltip-content">
 								<div v-for="(fleetData, fleetId) in item.units">
-									{{ $root.getLang('TECH', fleetId) }}: {{ fleetData.cnt }}
+									{{ $root.getLang('TECH', fleetId) }}: {{ fleetData['cnt'] }}
 								</div>
 							</div>
 							{{ Format.number(item.amount) }}
@@ -73,17 +73,17 @@
 						</font>
 					</th>
 					<th>
-						<form v-if="item.stage === 0 && item.mission !== 20 && item.target.id !== 1" :action="$root.getUrl('fleet/back/')" method="post">
+						<form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" :action="$root.getUrl('fleet/back/')" method="post">
 							<input name="fleetid" :value="item.id" type="hidden">
 							<input value=" Возврат домой " type="submit" name="send">
 						</form>
 
-						<form v-if="item.stage === 0 && item.mission === 1 && item.target.id !== 1" :action="$root.getUrl('fleet/verband/')" method="post">
+						<form v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :action="$root.getUrl('fleet/verband/')" method="post">
 							<input name="fleetid" :value="item.id" type="hidden">
 							<input value=" Объединить " type="submit">
 						</form>
 
-						<form v-if="item.stage === 3 && item.mission !== 15" :action="$root.getUrl('fleet/back/')" method="post">
+						<form v-if="item['stage'] === 3 && item['mission'] !== 15" :action="$root.getUrl('fleet/back/')" method="post">
 							<input name="fleetid" :value="item.id" type="hidden">
 							<input value=" Отозвать " type="submit" name="send">
 						</form>
@@ -102,7 +102,7 @@
 					<th>-</th>
 				</tr>
 
-				<tr v-if="page.curFleets >= page.maxFleets">
+				<tr v-if="page['curFleets'] >= page['maxFleets']">
 					<th colspan="9" class="negative">Все слоты заняты!</th>
 				</tr>
 			</table>
@@ -113,7 +113,7 @@
 			<div class="table fleet_ships container">
 				<div class="row">
 					<div class="col-12 c">
-						Выбрать корабли{{ page['mission_text'] }}:
+						Выбрать корабли<span v-if="page['selected']['mission'] > 0"> для миссии "{{ $root.getLang('FLEET_MISSION', page['selected']['mission']) }}"</span><span v-if="page['selected']['galaxy'] > 0"> на координаты [{{ page['selected']['galaxy'] }}:{{ page['selected']['system'] }}:{{ page['selected']['planet'] }}]</span>:
 					</div>
 				</div>
 				<div class="row">
@@ -130,7 +130,7 @@
 						<a v-on:click.prevent="maxShips(index)">{{ Format.number(ship['count']) }}</a>
 					</div>
 					<div v-if="ship.id === 212" class="th col-sm-3 col-4"></div>
-					<div v-else class="th col-sm-3 col-4">
+					<div v-else="" class="th col-sm-3 col-4">
 						<a v-on:click.prevent="diffShips(index, -1)" title="Уменьшить на 1" style="color:#FFD0D0">- </a>
 						<input type="number" :name="'ship['+ship['id']+']'" v-model="fleets[index].count" style="width:60%" :title="$root.getLang('TECH', ship.id)+': '+ship['count']" placeholder="0" v-on:change.prevent="calculateShips" v-on:keyup="calculateShips">
 						<a v-on:click.prevent="diffShips(index, 1)" title="Увеличить на 1" style="color:#D0FFD0"> +</a>
@@ -163,11 +163,11 @@
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="galaxy" :value="page['galaxy']">
-			<input type="hidden" name="system" :value="page['system']">
-			<input type="hidden" name="planet" :value="page['planet']">
-			<input type="hidden" name="planet_type" :value="page['planet_type']">
-			<input type="hidden" name="mission" :value="page['mission']">
+			<input type="hidden" name="galaxy" :value="page['selected']['galaxy']">
+			<input type="hidden" name="system" :value="page['selected']['system']">
+			<input type="hidden" name="planet" :value="page['selected']['planet']">
+			<input type="hidden" name="planet_type" :value="page['selected']['planet_type']">
+			<input type="hidden" name="mission" :value="page['selected']['mission']">
 		</form>
 	</div>
 </template>

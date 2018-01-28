@@ -2,10 +2,10 @@
 	<div class="col-md-6 col-12">
 		<div class="viewport buildings" :class="{shadow: !item.allow}">
 			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
-				<div class="tooltip-content" v-if="item.need">
+				<div class="tooltip-content" v-if="item['need']">
 					Требования:
 					<br>
-					<div v-html="item.need"></div>
+					<div v-html="item['need']"></div>
 				</div>
 				<span>недоступно</span>
 			</div>

@@ -1,12 +1,12 @@
 <template>
 	<div class="page-galaxy">
-		<game-page-galaxy-selector v-bind:shortcuts="page.shortcuts"></game-page-galaxy-selector>
+		<game-page-galaxy-selector :shortcuts="page['shortcuts']"></game-page-galaxy-selector>
 		<div class="separator"></div>
 
 		<div class="table-responsive">
 			<table class="table galaxy">
 				<tr>
-					<td class="c" colspan="9">Солнечная система {{ page.galaxy }}:{{ page.system }}</td>
+					<td class="c" colspan="9">Солнечная система {{ page['galaxy'] }}:{{ page['system'] }}</td>
 				</tr>
 				<tr>
 					<td class="c">№</td>
@@ -20,12 +20,12 @@
 					<td class="c">Действия</td>
 				</tr>
 
-				<tr is="game-page-galaxy-item" v-for="(item, index) in page.items" v-bind:item="item" v-bind:i="index"></tr>
+				<tr is="game-page-galaxy-item" v-for="(item, index) in page['items']" :item="item" :i="index"></tr>
 
 				<tr>
 					<th width="30">16</th>
 					<th colspan="8" class="c big">
-						<a v-bind:href="$root.getUrl('fleet/g'+page.galaxy+'/s'+page.system+'/p16/t0/m15/')">неизведанные дали</a>
+						<a :href="$root.getUrl('fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/')">неизведанные дали</a>
 					</th>
 				</tr>
 				<tr>
@@ -81,11 +81,11 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="c" colspan="3"><span id="missiles">{{ page.user.interplanetary_misil }}</span> межпланетных ракет</td>
-					<td class="c" colspan="3"><span id="slots">{{ page.user.fleets }}</span>/{{ page.user.max_fleets }} флотов</td>
+					<td class="c" colspan="3"><span id="missiles">{{ page['user']['interplanetary_misil'] }}</span> межпланетных ракет</td>
+					<td class="c" colspan="3"><span id="slots">{{ page['user']['fleets'] }}</span>/{{ page['user']['max_fleets'] }} флотов</td>
 					<td class="c" colspan="3">
-						<span id="recyclers">{{ Format.number(page.user.recycler) }}</span> переработчиков<br>
-						<span id="probes">{{ Format.number(page.user.spy_sonde) }}</span> шпионских зондов
+						<span id="recyclers">{{ Format.number(page['user']['recycler']) }}</span> переработчиков<br>
+						<span id="probes">{{ Format.number(page['user']['spy_sonde']) }}</span> шпионских зондов
 					</td>
 				</tr>
 			</table>
@@ -106,7 +106,7 @@
 			},
 			planets: function ()
 			{
-				var count = 0;
+				let count = 0;
 
 				this.page.items.forEach(function(item)
 				{

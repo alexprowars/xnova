@@ -2,7 +2,7 @@
 	<div class="resource-panel-item">
 		<div v-on:click="showPopup" class="tooltip">
 			<div class="tooltip-content">
-				<planet-panel-resource-tooltip v-bind:resource="resource"></planet-panel-resource-tooltip>
+				<planet-panel-resource-tooltip :resource="resource"></planet-panel-resource-tooltip>
 			</div>
 			<span class="sprite" :class="['skin_'+type]"></span>
 			<span class="sprite" :class="['skin_s_'+type]"></span>

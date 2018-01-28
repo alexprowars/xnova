@@ -1,8 +1,8 @@
 <template>
-	<div id="application" v-bind:class="['set_'+$store.state.route.controller]">
+	<div id="application" :class="['set_'+$store.state.route.controller]">
 
 		<!-- header -->
-		<a v-if="$store.state.view.header && mobile" v-bind:class="{active: sidebar === 'menu'}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarToggle('menu')">
+		<a v-if="$store.state.view.header && mobile" :class="{active: sidebar === 'menu'}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarToggle('menu')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
@@ -10,7 +10,7 @@
 			</span>
 		</a>
 
-		<div v-if="$store.state.view.header && mobile" v-bind:class="{active: sidebar === 'menu'}" class="menu-sidebar d-sm-none">
+		<div v-if="$store.state.view.header && mobile" :class="{active: sidebar === 'menu'}" class="menu-sidebar d-sm-none">
 			<sidebar-menu></sidebar-menu>
 		</div>
 
@@ -24,24 +24,24 @@
 			<!-- end menu -->
 
 			<!-- planets -->
-			<a v-if="$store.state.view.planets && mobile" v-bind:class="{active: sidebar === 'planet'}" class="planet-toggle d-sm-none" v-on:click.prevent="sidebarToggle('planet')"><span>
+			<a v-if="$store.state.view.planets && mobile" :class="{active: sidebar === 'planet'}" class="planet-toggle d-sm-none" v-on:click.prevent="sidebarToggle('planet')"><span>
 					<span class="first"></span>
 					<span class="second"></span>
 					<span class="third"></span>
 				</span>
 			</a>
 
-			<application-planets-list v-bind:class="{active: sidebar === 'planet'}" v-if="$store.state.view.planets"></application-planets-list>
+			<application-planets-list :class="{active: sidebar === 'planet'}" v-if="$store.state.view.planets"></application-planets-list>
 			<!-- end planets -->
 
 			<div class="main-content">
 				<!-- planet panel -->
-				<planet-panel v-if="$store.state.view.resources" v-bind:planet="$store.state.resources"></planet-panel>
+				<planet-panel v-if="$store.state.view.resources" :planet="$store.state.resources"></planet-panel>
 				<!-- end planet panel -->
 
 				<!-- messages -->
 				<div v-if="$store.state.messages" v-for="item in $store.state.messages">
-					<application-messages-row v-bind:item="item"></application-messages-row>
+					<application-messages-row :item="item"></application-messages-row>
 				</div>
 				<!-- end messages -->
 

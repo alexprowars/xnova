@@ -1,7 +1,7 @@
 <template>
 	<div class="planet-sidebar planetList">
 		<div class="list">
-			<application-planets-list-row v-for="item in items" v-bind:item="item"></application-planets-list-row>
+			<application-planets-list-row v-for="item in items" :item="item"></application-planets-list-row>
 			<div class="clearfix"></div>
 		</div>
 	</div>

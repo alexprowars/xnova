@@ -38,14 +38,14 @@ const routes = [{
 	path: '/galaxy*',
 	component: GalaxyController
 }, {
-	path: '/fleet',
-	component: FleetIndexController
-}, {
 	path: '/fleet/one',
 	component: FleetOneController
 }, {
 	path: '/fleet/two',
 	component: FleetTwoController
+}, {
+	path: '/fleet*',
+	component: FleetIndexController
 }, {
 	path: '/overview',
 	component: OverviewController
@@ -111,7 +111,7 @@ window.application = new Vue({
 			return this.$store.state['html'];
 		},
 		title () {
-			return this.$store.state['title_full'];
+			return this.$store.state['title'];
 		},
 		url () {
 			return this.$store.state['url'];

@@ -19,15 +19,15 @@
 									<table>
 										<tr>
 											<td>Доступно:</td>
-											<td align="right">{{ Format.number(planet.energy.current) }}</td>
+											<td align="right">{{ Format.number(planet['energy']['current']) }}</td>
 										</tr>
 										<tr>
 											<td>Производится:</td>
-											<td align="right">{{ Format.number(planet.energy.max) }}</td>
+											<td align="right">{{ Format.number(planet['energy']['max']) }}</td>
 										</tr>
 										<tr>
 											<td>Потребление:</td>
-											<td align="right">{{ Format.number(planet.energy.max - planet.energy.current) }}</td>
+											<td align="right">{{ Format.number(planet['energy']['max'] - planet['energy']['current']) }}</td>
 										</tr>
 									</table>
 								</div>
@@ -36,7 +36,7 @@
 							<span class="sprite skin_s_energy"></span>
 						</div>
 						<div title="Доступно энергии">
-							<span :class="[planet.energy.current >= 0 ? 'positive' : 'negative']">{{ Format.number(planet.energy.current) }}</span>
+							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ Format.number(planet['energy']['current']) }}</span>
 						</div>
 					</div>
 				</div>
@@ -49,11 +49,11 @@
 								<table>
 									<tr>
 										<td>Заряд:</td>
-										<td align="right">{{ Format.number(planet.battery.current) }}</td>
+										<td align="right">{{ Format.number(planet['battery']['current']) }}</td>
 									</tr>
 									<tr>
 										<td>Емкость:</td>
-										<td align="right">{{ Format.number(planet.battery.max) }}</td>
+										<td align="right">{{ Format.number(planet['battery']['max']) }}</td>
 									</tr>
 									<tr v-if="planet['battery']['tooltip'].length">
 										<td colspan="2">{{ planet['battery']['tooltip'] }}</td>
@@ -61,25 +61,25 @@
 								</table>
 							</div>
 						</div>
-						<img v-if="planet.battery.power > 0 && planet.battery.power < 100" :src="'/assets/images/batt.php?p='+planet.battery.power" width="42" alt="">
-						<span v-else :class="'sprite skin_batt'+planet.battery.power"></span>
+						<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
+						<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
 						<br>
 					</div>
-					{{ planet.battery.power }}%
+					{{ planet['battery']['power'] }}%
 				</div>
 				<div class="col-4 text-center">
 					<a :href="$root.getUrl('credits/')" class="tooltip d-none d-sm-block">
 						<div class="tooltip-content">
 							<table width="550">
 								<tr>
-									<td v-for="(time, index) in planet.officiers" align="center" width="14%">
+									<td v-for="(time, index) in planet['officiers']" align="center" width="14%">
 										<div class="separator"></div>
 										<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
 									</td>
 								</tr>
 								<tr>
-									<td v-for="(time, index) in planet.officiers" align="center">
-										<span v-if="time > ((new Date).getTime() / 1000)">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
+									<td v-for="time in planet['officiers']" align="center">
+										<span v-if="time > $root.serverTime()">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
 										<span v-else><font color="lime">Не нанят</font></span>
 									</td>
 								</tr>
@@ -87,7 +87,7 @@
 						</div>
 						<span class="sprite skin_kredits"></span>
 					</a>
-					{{ Format.number(planet.credits) }}
+					{{ Format.number(planet['credits']) }}
 				</div>
 			</div>
 		</div>

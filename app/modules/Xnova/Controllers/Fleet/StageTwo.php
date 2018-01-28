@@ -27,6 +27,92 @@ class StageTwo
 
 		Lang::includeLang('fleet', 'xnova');
 
+		$this->checkJumpGate($controller);
+
+		$parse = [];
+
+		$galaxy = (int) $controller->request->getPost('galaxy', 'int', 0);
+		$system = (int) $controller->request->getPost('system', 'int', 0);
+		$planet = (int) $controller->request->getPost('planet', 'int', 0);
+		$type 	= (int) $controller->request->getPost('planet_type', 'int', 0);
+		$acs 	= (int) $controller->request->getPost('alliance', 'int', 0);
+
+		$mission 	= (int) $controller->request->getPost('mission', 'int', 0);
+		$fleets 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
+
+		if (!count($fleets))
+			throw new RedirectException(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
+
+		$YourPlanet = false;
+		$UsedPlanet = false;
+
+		$targetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
+
+		if ($targetPlanet)
+		{
+			$UsedPlanet = true;
+
+			if ($targetPlanet->id_owner == $controller->user->id)
+				$YourPlanet = true;
+		}
+
+		$missions = Fleet::getFleetMissions($fleets, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
+
+		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $controller->user->isAdmin()))
+			$missions[] = 4;
+
+		$fleetSpeed = (int) $controller->request->getPost('speed', 'int', 10);
+		$stayConsumption = Fleet::GetFleetStay($fleets);
+
+		if ($controller->user->rpg_meta > time())
+			$stayConsumption = ceil($stayConsumption * 0.9);
+
+		$parse['mission'] = 0;
+		$parse['missions'] = [];
+
+		if (count($missions) > 0)
+		{
+			foreach ($missions as $i => $id)
+			{
+				if (($mission > 0 && $mission == $id) || (!isset($missions[$mission]) && $i == 0) || count($missions) == 1)
+					$parse['mission'] = $id;
+
+				$parse['missions'][] = $id;
+			}
+		}
+
+		$parse['target'] = [
+			'galaxy' => $galaxy,
+			'system' => $system,
+			'planet' => $planet,
+			'planet_type' => $type,
+		];
+
+		$parse['hold'] = $stayConsumption;
+		$parse['alliance'] = $acs;
+		$parse['speed'] = $fleetSpeed;
+		$parse['fleet'] = $controller->request->getPost('fleet', null, '');
+
+		$parse['ships'] = [];
+
+		foreach ($fleets as $i => $count)
+		{
+			$ship = $controller->getShipInfo($i);
+			$ship['count'] = $count;
+
+			$parse['ships'][] = $ship;
+		}
+
+		if (isset($missions[15]))
+			$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
+
+		Request::addData('page', $parse);
+
+		$controller->tag->setTitle(_getText('fl_title_2'));
+	}
+
+	private function checkJumpGate (FleetController $controller)
+	{
 		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
 		{
 			$nextJumpTime = $controller->planet->getNextJumpTime();
@@ -90,98 +176,5 @@ class StageTwo
 
 			throw new RedirectException($RetMessage, 'Результат', "/fleet/", 5);
 		}
-
-		$parse = [];
-
-		$galaxy = (int) $controller->request->getPost('galaxy', 'int', 0);
-		$system = (int) $controller->request->getPost('system', 'int', 0);
-		$planet = (int) $controller->request->getPost('planet', 'int', 0);
-		$type 	= (int) $controller->request->getPost('planet_type', 'int', 0);
-		$acs 	= (int) $controller->request->getPost('alliance', 'int', 0);
-
-		$fleetmission 	= (int) $controller->request->getPost('mission', 'int', 0);
-		$fleetarray 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
-
-		$YourPlanet = false;
-		$UsedPlanet = false;
-
-		$TargetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
-
-		if ($TargetPlanet)
-		{
-			if ($TargetPlanet->id_owner == $controller->user->id || ($controller->user->ally_id > 0 && $TargetPlanet->id_ally == $controller->user->ally_id))
-			{
-				$YourPlanet = true;
-				$UsedPlanet = true;
-			}
-			else
-				$UsedPlanet = true;
-		}
-
-		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
-
-		if ($TargetPlanet && ($TargetPlanet->id_owner == 1 || $controller->user->isAdmin()))
-			$missiontype[4] = _getText('type_mission', 4);
-
-		$GenFleetSpeed = (int) $controller->request->getPost('speed', 'int', 10);
-		$stayConsumption = Fleet::GetFleetStay($fleetarray);
-
-		if ($controller->user->rpg_meta > time())
-			$stayConsumption = ceil($stayConsumption * 0.9);
-
-		$parse['mission'] = 0;
-		$parse['missions'] = [];
-
-		if (count($missiontype) > 0)
-		{
-			$i = 0;
-
-			foreach ($missiontype as $a => $b)
-			{
-				if (($fleetmission > 0 && $fleetmission == $a) || (!isset($missiontype[$fleetmission]) && $i == 0) || count($missiontype) == 1)
-					$parse['mission'] = $a;
-
-				$parse['missions'][] = $a;
-
-				$i++;
-			}
-		}
-
-		$parse['galaxy'] = $galaxy;
-		$parse['system'] = $system;
-		$parse['planet'] = $planet;
-		$parse['planet_type'] = $type;
-
-		$parse['galaxy_current'] = (int) $controller->planet->galaxy;
-		$parse['system_current'] = (int) $controller->planet->system;
-		$parse['planet_current'] = (int) $controller->planet->planet;
-
-		$parse['resources'] = [
-			'metal' => floor($controller->planet->metal),
-			'crystal' => floor($controller->planet->crystal),
-			'deuterium' => floor($controller->planet->deuterium)
-		];
-
-		$parse['hold'] = $stayConsumption;
-		$parse['alliance'] = $acs;
-		$parse['speed'] = $GenFleetSpeed;
-		$parse['fleet'] = $controller->request->getPost('fleet', null, '');
-
-		$parse['ships'] = [];
-
-		foreach ($fleetarray as $i => $count)
-		{
-			$ship = $controller->getShipInfo($i);
-			$ship['count'] = $count;
-
-			$parse['ships'][] = $ship;
-		}
-
-		if (isset($missiontype[15]))
-			$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
-
-		Request::addData('page', $parse);
-
-		$controller->tag->setTitle(_getText('fl_title_2'));
 	}
 }

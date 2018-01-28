@@ -41,20 +41,20 @@ class StageZero
 
 		Lang::includeLang('fleet', 'xnova');
 
-		$galaxy = $controller->request->getQuery('galaxy', 'int', 0);
-		$system = $controller->request->getQuery('system', 'int', 0);
-		$planet = $controller->request->getQuery('planet', 'int', 0);
-		$planet_type = $controller->request->getQuery('type', 'int', 0);
-		$mission = $controller->request->getQuery('mission', 'int', 0);
+		$galaxy = (int) $controller->request->getQuery('galaxy', 'int', 0);
+		$system = (int) $controller->request->getQuery('system', 'int', 0);
+		$planet = (int) $controller->request->getQuery('planet', 'int', 0);
+		$planet_type = (int) $controller->request->getQuery('type', 'int', 0);
+		$mission = (int) $controller->request->getQuery('mission', 'int', 0);
 
 		if (!$galaxy)
-			$galaxy = $controller->planet->galaxy;
+			$galaxy = (int) $controller->planet->galaxy;
 
 		if (!$system)
-			$system = $controller->planet->system;
+			$system = (int) $controller->planet->system;
 
 		if (!$planet)
-			$planet = $controller->planet->planet;
+			$planet = (int) $controller->planet->planet;
 
 		if (!$planet_type)
 			$planet_type = 1;
@@ -64,10 +64,6 @@ class StageZero
 		$parse['maxFleets'] = $maxFleets;
 		$parse['curExpeditions'] = $curExpeditions;
 		$parse['maxExpeditions'] = $maxExpeditions;
-		$parse['galaxy'] = (int) $galaxy;
-		$parse['system'] = (int) $system;
-		$parse['planet'] = (int) $planet;
-		$parse['planet_type'] = (int) $planet_type;
 		$parse['mission'] = (int) $mission;
 
 		$fleets = Fleet::find(['owner = ?0', 'bind' => [$controller->user->id]]);
@@ -98,12 +94,15 @@ class StageZero
 			];
 		}
 
-		$parse['mission_text'] = '';
+		$isCurrent = $galaxy == $controller->planet->galaxy && $system == $controller->planet->system && $planet == $controller->planet->planet;
 
-		if ($mission > 0)
-			$parse['mission_text'] = ' для миссии "' . _getText('type_mission', $mission) . '"';
-		if (($system > 0 && $galaxy > 0 && $planet > 0) && ($galaxy != $controller->planet->galaxy || $system != $controller->planet->system || $planet != $controller->planet->planet))
-			$parse['mission_text'] = ' на координаты [' . $galaxy . ':' . $system . ':' . $planet . ']';
+		$parse['selected'] = [
+			'mission' => $mission,
+			'galaxy' => !$isCurrent ? $galaxy : 0,
+			'system' => !$isCurrent ? $system : 0,
+			'planet' => !$isCurrent ? $planet : 0,
+			'planet_type' => !$isCurrent ? $planet_type : 0,
+		];
 
 		$parse['ships'] = [];
 

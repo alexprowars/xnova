@@ -3,7 +3,7 @@
 		<div class="block">
 			<div class="title">
 				Занято полей
-				<span class="positive">{{ page.fields_current }}</span> из <span class="negative">{{ page.fields_max }}</span>
+				<span class="positive">{{ page['fields_current'] }}</span> из <span class="negative">{{ page['fields_max'] }}</span>
 				<div class="float-right col-12 col-sm-6 p-a-0">
 					Осталось
 					<span class="positive">{{ fields_empty }}</span>
@@ -33,7 +33,7 @@
 							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 						</td>
 						<td class="k" v-else>
-							<a v-bind:href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
+							<a :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
 						</td>
 					</tr>
 				</table>
@@ -41,7 +41,7 @@
 
 			<div class="content">
 				<div class="row">
-					<game-page-buildings-build-item v-for="item in page.items" v-bind:item="item"></game-page-buildings-build-item>
+					<game-page-buildings-build-item v-for="item in page.items" :item="item"></game-page-buildings-build-item>
 				</div>
 			</div>
 		</div>
@@ -62,7 +62,7 @@
 				return this.$store.state.page;
 			},
 			fields_empty () {
-				return this.page.fields_max - this.page.fields_current;
+				return this.page['fields_max'] - this.page['fields_current'];
 			}
 		},
 		components: {

@@ -1,5 +1,5 @@
 <template>
-	<table class="table"><tr><td v-bind:class="['c', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>
+	<table class="table"><tr><td :class="['c', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>
 </template>
 
 <script>

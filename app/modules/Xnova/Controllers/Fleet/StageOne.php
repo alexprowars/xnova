@@ -30,19 +30,19 @@ class StageOne
 
 		$parse = [];
 
-		$g = $controller->request->getPost('galaxy', 'int', 0);
-		$s = $controller->request->getPost('system', 'int', 0);
-		$p = $controller->request->getPost('planet', 'int', 0);
-		$t = $controller->request->getPost('planet_type', 'int', 0);
+		$g = (int) $controller->request->getPost('galaxy', 'int', 0);
+		$s = (int) $controller->request->getPost('system', 'int', 0);
+		$p = (int) $controller->request->getPost('planet', 'int', 0);
+		$t = (int) $controller->request->getPost('planet_type', 'int', 0);
 
 		if (!$g)
-			$g = $controller->planet->galaxy;
+			$g = (int) $controller->planet->galaxy;
 
 		if (!$s)
-			$s = $controller->planet->system;
+			$s = (int) $controller->planet->system;
 
 		if (!$p)
-			$p = $controller->planet->planet;
+			$p = (int) $controller->planet->planet;
 
 		if (!$t)
 			$t = 1;
@@ -73,18 +73,16 @@ class StageOne
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 
-		$parse['galaxy'] = (int) $g;
-		$parse['system'] = (int) $s;
-		$parse['planet'] = (int) $p;
-		$parse['planet_type'] = (int) $t;
+		$parse['target'] = [
+			'galaxy' => (int) $g,
+			'system' => (int) $s,
+			'planet' => (int) $p,
+			'planet_type' => (int) $t,
+		];
 
 		$parse['galaxy_max'] = (int) $controller->config->game->maxGalaxyInWorld;
 		$parse['system_max'] = (int) $controller->config->game->maxSystemInGalaxy;
 		$parse['planet_max'] = (int) $controller->config->game->maxPlanetInSystem + 1;
-
-		$parse['galaxy_current'] = (int) $controller->planet->galaxy;
-		$parse['system_current'] = (int) $controller->planet->system;
-		$parse['planet_current'] = (int) $controller->planet->planet;
 
 		$parse['shortcuts'] = [];
 
@@ -174,7 +172,7 @@ class StageOne
 				$parse['alliances'][] = $row;
 		}
 
-		$parse['mission'] = (int) $_POST['mission'];
+		$parse['mission'] = (int) $controller->request->getPost('mission', 'int', 0);
 
 		Request::addData('page', $parse);
 

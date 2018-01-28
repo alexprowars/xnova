@@ -7,7 +7,7 @@
 
 		<div class="table">
 			<div class="row">
-				<div class="c col-12">{{ page['galaxy'] }}:{{ page['system'] }}:{{ page['planet'] }} - {{ $root.getLang('PLANET_TYPE', page['planet_type']) }}</div>
+				<div class="c col-12">{{ page['target']['galaxy'] }}:{{ page['target']['system'] }}:{{ page['target']['planet'] }} - {{ $root.getLang('PLANET_TYPE', page['target']['planet_type']) }}</div>
 			</div>
 			<div class="row">
 				<div class="th col-6">
@@ -115,6 +115,12 @@
 			page () {
 				return this.$store.state.page;
 			},
+			resources () {
+				return this.$store.state.resource;
+			},
+			position () {
+				return this.$store.state.user.position;
+			},
 			hold ()
 			{
 				let hold = 0;
@@ -156,19 +162,19 @@
 			},
 			maxResAll ()
 			{
-				let free = this.storage - this.page['resources']['metal'] - this.page['resources']['crystal'] - this.page['resources']['deuterium'];
+				let free = this.storage - this.resources['metal']['current'] - this.resources['crystal']['current'] - this.resources['deuterium']['current'];
 
 				if (free < 0)
 				{
-					this.resource.metal = Math.max(Math.min(this.page['resources']['metal'], this.storage), 0);
-					this.resource.crystal = Math.max(Math.min(this.page['resources']['crystal'], this.storage - this.resource.metal), 0);
-					this.resource.deuterium = Math.max(Math.min(this.page['resources']['deuterium'], this.storage - this.resource.metal - this.resource.crystal), 0);
+					this.resource.metal = Math.max(Math.min(this.resources['metal']['current'], this.storage), 0);
+					this.resource.crystal = Math.max(Math.min(this.resources['crystal']['current'], this.storage - this.resource.metal), 0);
+					this.resource.deuterium = Math.max(Math.min(this.resources['deuterium']['current'], this.storage - this.resource.metal - this.resource.crystal), 0);
 				}
 				else
 				{
-					this.resource.metal = Math.max(this.page['resources']['metal'], 0);
-					this.resource.crystal = Math.max(this.page['resources']['crystal'], 0);
-					this.resource.deuterium = Math.max(this.page['resources']['deuterium'], 0);
+					this.resource.metal = Math.max(this.resources['metal']['current'], 0);
+					this.resource.crystal = Math.max(this.resources['crystal']['current'], 0);
+					this.resource.deuterium = Math.max(this.resources['deuterium']['current'], 0);
 				}
 			},
 			startTimer () {
@@ -182,16 +188,7 @@
 		{
 			let fleet = require('./../../js/fleet.js');
 
-			let distance = fleet.distance({
-				galaxy: this.page['galaxy_current'],
-				system: this.page['system_current'],
-				planet: this.page['planet_current']
-			}, {
-				galaxy: this.page['galaxy'],
-				system: this.page['system'],
-				planet: this.page['planet']
-			});
-
+			let distance = fleet.distance(this.position, this.page['target']);
 			let maxspeed = fleet.speed(this.page['ships']);
 
 			let duration = fleet.duration({

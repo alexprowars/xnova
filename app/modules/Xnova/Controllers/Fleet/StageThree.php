@@ -149,7 +149,7 @@ class StageThree
 
 		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planettype], $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
 
-		if (!isset($missiontype[$fleetmission]))
+		if (!in_array($fleetmission, $missiontype))
 			throw new RedirectException("<span class=\"error\"><b>Миссия неизвестна!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($fleetmission == 8 && $TargetPlanet->debris_metal == 0 && $TargetPlanet->debris_crystal == 0)
