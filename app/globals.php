@@ -151,6 +151,19 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 			);
 
 			return false;
+
+			break;
+
+		case 10:
+
+			$params = unserialize($exception->getMessage());
+
+			$dispatcher->forward([
+				'module'		=> 'xnova',
+				'controller'	=> $params['controller'],
+				'action'		=> $params['action'],
+				'namespace'		=> 'Xnova\Controllers'
+			]);
 	}
 
 	return true;

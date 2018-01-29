@@ -205,7 +205,7 @@ class Controller extends PhalconController
 			$controller = $this->dispatcher->getControllerName();
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && $controller != 'infos' && $controller != 'content' && $controller != 'start' && $controller != 'error')
-				$this->dispatcher->forward(['controller' => 'start', 'action' => 'index']);
+				throw new \Exception(serialize(['controller' => 'start', 'action' => 'index']), 10);
 			elseif ($controller == 'index')
 				$this->dispatcher->forward(['controller' => 'overview', 'action' => 'index']);
 		}
