@@ -15,7 +15,6 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Format;
 use Friday\Core\Lang;
-use Phalcon\Db;
 use Xnova\Models\Planet;
 
 class StageThree

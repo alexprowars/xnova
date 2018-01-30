@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -113,7 +114,8 @@ class StartController extends Controller
 
 					$this->user->update($update);
 
-					$this->game->setRequestData(['redirect' => $this->url->getBaseUri().'tutorial/']);
+					Request::addData('redirect', $this->url->getBaseUri().'tutorial/');
+
 					$this->view->disable();
 				}
 				else

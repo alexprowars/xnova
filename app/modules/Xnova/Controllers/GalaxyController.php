@@ -78,18 +78,20 @@ class GalaxyController extends Controller
 		}
 		elseif ($mode == 1)
 		{
-			if ($this->request->hasPost('galaxyLeft'))
+			$direction = trim($this->request->getPost('direction', 'string', ''));
+
+			if ($direction == 'galaxyLeft')
 				$galaxy = $this->request->getPost('galaxy', 'int') - 1;
-			elseif ($this->request->hasPost('galaxyRight'))
+			elseif ($direction == 'galaxyRight')
 				$galaxy = $this->request->getPost('galaxy', 'int') + 1;
 			elseif ($this->request->hasPost('galaxy'))
 				$galaxy = $this->request->getPost('galaxy', 'int');
 			else
 				$galaxy = $this->planet->galaxy;
 		
-			if ($this->request->hasPost('systemLeft'))
+			if ($direction == 'systemLeft')
 				$system = $this->request->getPost('system', 'int') - 1;
-			elseif ($this->request->hasPost('systemRight'))
+			elseif ($direction == 'systemRight')
 				$system = $this->request->getPost('system', 'int') + 1;
 			elseif ($this->request->hasPost('system'))
 				$system = $this->request->getPost('system', 'int');
@@ -202,9 +204,7 @@ class GalaxyController extends Controller
 		$parse['shortcuts'] = [];
 
 		for ($i = 1; $i <= 15; $i++)
-		{
 			$parse['items'][$i - 1] = false;
-		}
 
 		if ($this->session->has('fleet_shortcut'))
 		{
@@ -281,8 +281,10 @@ class GalaxyController extends Controller
 			unset($row['p_parent'], $row['l_update'], $row['p_id']);
 		
 			foreach ($row AS &$v)
+			{
 				if (is_numeric($v))
-					$v = intval($v);
+					$v = (int) $v;
+			}
 
 			unset($v);
 		
@@ -327,27 +329,5 @@ class GalaxyController extends Controller
 		$Result .= "</form>";
 
 		return $Result;
-	}
-
-	private function checkAbandonMoonState (&$lunarow)
-	{
-		if ($lunarow['luna_destruyed'] <= time())
-		{
-			$this->db->delete('game_planets', 'id = ?', [$lunarow['luna_id']]);
-			$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
-
-			$lunarow['id_luna'] = 0;
-		}
-	}
-
-	private function checkAbandonPlanetState (&$planet)
-	{
-		if ($planet['destruyed'] <= time())
-		{
-			$this->db->delete('game_planets', 'id = ?', [$planet['planet_id']]);
-
-			if ($planet['parent_planet'] != 0)
-				$this->db->delete('game_planets', 'id = ?', [$planet['parent_planet']]);
-		}
 	}
 }

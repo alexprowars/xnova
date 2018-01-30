@@ -13,7 +13,6 @@ use Xnova\Controllers\FleetController;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
-use Xnova\Vars;
 
 class Quick
 {

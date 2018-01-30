@@ -36,5 +36,5 @@ $lang['ThereIsNoNote'] = 'Нет заметок';
 
 $lang['NoteUpdated'] = 'Заметка обновлена.';
 $lang['NoteAdded'] = 'Заметка добавлена.';
-$lang['NoteDeleted'] = 'Заметка удалена. <blink>Пожалуйста, подождите...</blink>';
-$lang['NoteDeleteds'] = 'Заметки удалены <blink>Пожалуйста, подождите...</blink>';
+$lang['NoteDeleted'] = 'Заметка удалена. Пожалуйста, подождите...';
+$lang['NoteDeleteds'] = 'Заметки удалены. Пожалуйста, подождите...';

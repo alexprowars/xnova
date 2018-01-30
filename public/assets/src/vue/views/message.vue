@@ -1,10 +1,10 @@
 <template>
 	<table class="table">
 		<tr v-if="title.length">
-			<td class="c error">{{ title }}</td>
+			<td class="c error" v-html="title"></td>
 		</tr>
 		<tr>
-			<th class="errormessage">{{ text }}</th>
+			<th class="errormessage" v-html="text"></th>
 		</tr>
 	</table>
 </template>

@@ -1,7 +1,7 @@
 <template>
 	<div class="page-chat">
 		<div class="col-12 th">
-			<div ref="chatbox" class="shoutbox scrollbox">
+			<div ref="chatbox" class="shoutbox">
 				<div v-for="item in messages" class="page-chat-row text-left">
 					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPlayer(item['user'])" style="cursor:pointer;">{{ date('H:m', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
@@ -40,6 +40,7 @@
 			}
 		},
 		data () {
+			// noinspection RegExpRedundantEscape
 			return {
 				smiles: false,
 				message: '',
@@ -49,7 +50,7 @@
 				patterns: {
 					find: [
 						/script/g,
-						/\[b\](.*?)\[\/b\]/gi,
+						/\[b](.*?)\[\/b\]/gi,
 						/\[i\](.*?)\[\/i\]/gi,
 						/\[u\](.*?)\[\/u\]/gi,
 						/\[s\](.*?)\[\/s\]/gi,
@@ -62,7 +63,7 @@
 						/\[url=((?:ftp|https?):\/\/.*?)\](.*?)\[\/url\]/g,
 						/\[url\]((?:ftp|https?):\/\/.*?)\[\/url\]/g,
 						/\[p\](.*?)\[\/p\]/gi,
-						/\[([1-9]{1}):([0-9]{1,3}):([0-9]{1,2})\]/gi
+						/\[([1-9]):([0-9]{1,3}):([0-9]{1,2})\]/gi
 					],
 					replace: [
 						'',

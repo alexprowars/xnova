@@ -59,3 +59,31 @@ export function storage (ships)
 
 	return storage;
 }
+
+export function sendMission (mission, galaxy, system, planet, type, count)
+{
+	$.ajax({
+		type: "get",
+		url: application.getUrl('fleet/quick/'),
+		data: {
+			mission: mission,
+			galaxy: galaxy,
+			system: system,
+			planet: planet,
+			type: type,
+			count: count,
+		},
+		dataType: 'json',
+		success: function (result)
+		{
+			result.data.messages.forEach((item) =>
+			{
+				$.toast({
+					text : item.text,
+					position : 'bottom-center',
+					icon: item.type
+				});
+			});
+		}
+	});
+}

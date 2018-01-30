@@ -11,7 +11,6 @@ namespace Xnova\Controllers\Fleet;
 use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;

@@ -38,9 +38,6 @@ class TechController extends Controller
 
 		foreach (_getText('tech') as $element => $name)
 		{
-			if ($element >= 300 && $element < 400)
-				continue;
-
 			if ($element < 600)
 			{
 				$pars = [];

@@ -103,6 +103,7 @@ class InfoController extends Controller
 	/**
 	 * @param  $BuildID
 	 * @return array
+	 * @throws \Phalcon\Exception
 	 */
 	private function ShowProductionTable ($BuildID)
 	{
@@ -199,6 +200,7 @@ class InfoController extends Controller
 	 * @param $itemId int
 	 * @return array|string
 	 * @throws ErrorException
+	 * @throws \Phalcon\Exception
 	 */
 	private function ShowBuildingInfoPage ($itemId)
 	{

@@ -210,26 +210,26 @@ class Building
 	static function getElementPrice ($cost, Planet $planet)
 	{
 		$array = [
-			'metal' 	=> [_getText('Metal'), 'metal'],
-			'crystal' 	=> [_getText('Crystal'), 'crystal'],
-			'deuterium' => [_getText('Deuterium'), 'deuterium'],
-			'energy_max'=> [_getText('Energy'), 'energy']
+			'metal' 	=> _getText('Metal'),
+			'crystal' 	=> _getText('Crystal'),
+			'deuterium' => _getText('Deuterium'),
+			'energy'	=> _getText('Energy')
 		];
 
-		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+		$uri = Di::getDefault()->getShared('url');
 
 		$text = "";
 
-		foreach ($array as $ResType => $ResTitle)
+		foreach ($array as $type => $title)
 		{
-			if (isset($cost[$ResType]) && $cost[$ResType] != 0)
+			if (isset($cost[$type]) && $cost[$type] != 0)
 			{
-				$text .= "<div><img src='".$uri."assets/images/skin/s_" . $ResTitle[1] . ".png' align=\"absmiddle\" class=\"tooltip\" data-content='" . $ResTitle[0] . "'>";
+				$text .= "<div><img src='".$uri->get('assets/images/skin/s_'.$type.'.png')."' align=\"absmiddle\" class=\"tooltip\" data-content='".$title."'>";
 
-				if ($cost[$ResType] > $planet->{$ResType})
-					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$ResType] - $planet->{$ResType})."\">" . Format::number($cost[$ResType]) . "</span> ";
+				if ($cost[$type] > $planet->{$type})
+					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$type] - $planet->{$type})."\">" . Format::number($cost[$type]) . "</span> ";
 				else
-					$text .= "<span class=\"resYes\">" . Format::number($cost[$ResType]) . "</span> ";
+					$text .= "<span class=\"resYes\">" . Format::number($cost[$type]) . "</span> ";
 
 				$text .= "</div>";
 			}
@@ -263,7 +263,7 @@ class Building
 
 		$cost = [];
 
-		foreach (['metal', 'crystal', 'deuterium', 'energy_max'] as $ResType)
+		foreach (['metal', 'crystal', 'deuterium', 'energy'] as $ResType)
 		{
 			if (!isset($price[$ResType]))
 				continue;
@@ -369,6 +369,8 @@ class Building
 			}
 		}
 
+		unset($cost);
+
 		return $ResType;
 	}
 
@@ -380,38 +382,26 @@ class Building
 	 */
 	static function getMaxConstructibleElements ($element, Planet $planet, User $user)
 	{
-		$maxElements = -1;
+		$max = -1;
 
-		$price = Vars::getItemPrice($element);
+		$price = self::getElementRessources($element, 1, $user);
 
 		foreach ($price as $resType => $resCount)
 		{
-			if (in_array($resType, ['metal', 'crystal', 'deuterium', 'energy_max']) && $resCount != 0)
+			if (in_array($resType, ['metal', 'crystal', 'deuterium', 'energy']) && $resCount != 0)
 			{
-				$count = 0;
+				$count = floor($planet->{$resType} / $resCount);
 
-				switch (Vars::getItemType($element))
-				{
-					case Vars::ITEM_TYPE_FLEET:
-						$count = round($resCount * $user->bonusValue('res_fleet'));
-						break;
-					case Vars::ITEM_TYPE_DEFENSE:
-						$count = round($resCount * $user->bonusValue('res_defence'));
-						break;
-				}
-
-				$count = floor($planet->{$resType} / $count);
-
-				if ($maxElements < 0)
-					$maxElements = $count;
-				elseif ($maxElements > $count)
-					$maxElements = $count;
+				if ($max < 0)
+					$max = $count;
+				elseif ($max > $count)
+					$max = $count;
 			}
 		}
 
-		if (isset($price['max']) && $maxElements > $price['max'])
-			$maxElements = $price['max'];
+		if (isset($price['max']) && $max > $price['max'])
+			$max = $price['max'];
 
-		return $maxElements;
+		return $max;
 	}
 }

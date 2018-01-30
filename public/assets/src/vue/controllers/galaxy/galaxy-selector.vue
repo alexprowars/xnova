@@ -1,6 +1,6 @@
 <template>
-	<form :action="$root.getUrl('galaxy/r/1/')" method="post" class="galaxy-select">
-		<input type="hidden" class="auto" value="dr">
+	<form :action="$root.getUrl('galaxy/r/1/')" method="post" class="page-galaxy-select">
+		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">
 			<div class="col-12 d-sm-none">
@@ -16,13 +16,13 @@
 					</tr>
 					<tr>
 						<th>
-							<input name="galaxyLeft" value="&lt;-" type="button" v-on:click.prevent="goTo">
+							<input value="&lt;-" type="button" v-on:click.prevent="direction = 'galaxyLeft'">
 						</th>
 						<th>
-							<input name="galaxy" :value="$parent.page.galaxy" size="5" maxlength="3" tabindex="1" type="text">
+							<input name="galaxy" :value="$parent.page.galaxy" maxlength="3" tabindex="1" min="1" type="number">
 						</th>
 						<th>
-							<input name="galaxyRight" value="-&gt;" type="button" v-on:click.prevent="goTo">
+							<input value="-&gt;" type="button" v-on:click.prevent="direction = 'galaxyRight'">
 						</th>
 					</tr>
 				</table>
@@ -39,13 +39,13 @@
 					</tr>
 					<tr>
 						<th>
-							<input name="systemLeft" value="&lt;-" type="button" v-on:click.prevent="goTo">
+							<input value="&lt;-" type="button" v-on:click.prevent="direction = 'systemLeft'">
 						</th>
 						<th>
-							<input name="system" :value="$parent.page.system" size="5" maxlength="3" tabindex="2" type="text">
+							<input name="system" :value="$parent.page.system" maxlength="3" tabindex="2" min="1" type="number">
 						</th>
 						<th>
-							<input name="systemRight" value="-&gt;" type="button" v-on:click.prevent="goTo">
+							<input value="-&gt;" type="button" v-on:click.prevent="direction = 'systemRight'">
 						</th>
 					</tr>
 				</table>
@@ -61,17 +61,24 @@
 			"shortcuts"
 		],
 		data: function() {
-			return {}
+			return {
+				direction: ''
+			}
+		},
+		watch: {
+			direction (val)
+			{
+				if (val !== '')
+				{
+					Vue.nextTick(() => {
+						$('.page-galaxy-select').submit();
+						setTimeout(() => this.direction = '', 100);
+					});
+				}
+			}
 		},
 		components: {
 			'game-page-galaxy-selector-shortcut': require('./galaxy-selector-shortcut.vue'),
-		},
-		methods: {
-			goTo: function ($event)
-			{
-				$('form.galaxy-select').find('.auto').attr('name', $($event.target).attr('name'));
-				$('form.galaxy-select').submit();
-			}
 		}
 	}
 </script>

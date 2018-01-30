@@ -17,7 +17,7 @@ a {
 	text-decoration: none;
 
 	&:focus, &:hover {
-		color: #9c0;
+		color: #9c0 !important;
 		text-decoration: none;
 		outline: none;
 	}
@@ -1371,8 +1371,12 @@ div.errormessage {
 	}
 }
 
-.galaxy-select input[type=button] {
+.page-galaxy-select input[type=button] {
 	min-width: 0;
+}
+
+.page-galaxy-select input[type=number] {
+	width: 60px;
 }
 
 .e404 {

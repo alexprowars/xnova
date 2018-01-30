@@ -1,5 +1,6 @@
 <template>
 	<div class="page-building page-building-unit">
+		<game-page-buildings-unit-queue v-if="page.queue.length > 0" :queue="page.queue"></game-page-buildings-unit-queue>
 		<div class="block">
 			<div class="content">
 				<form :action="$root.getUrl('buildings/'+page.mode+'/')" method="post">
@@ -17,8 +18,6 @@
 				</form>
 			</div>
 		</div>
-
-		<game-page-buildings-unit-queue v-if="page.queue.length > 0" :queue="page.queue"></game-page-buildings-unit-queue>
 	</div>
 </template>
 

@@ -35,11 +35,11 @@
 							<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
 						</div>
 						<div v-else>
-							<a v-on:click.prevent="max">
-								Максимум: <font color="lime">{{ item.max }}</font>
+							<a v-on:click.prevent="setMax">
+								Максимум: <font color="lime">{{ max }}</font>
 							</a>
 							<div class="buildmax">
-								<input type="number" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="max-width: 80px" maxlength="5" value="" placeholder="0">
+								<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">
 							</div>
 						</div>
 					</div>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+
 	export default {
 		name: "unit-row",
 		props: ['item', 'index'],
@@ -57,6 +58,27 @@
 		{
 			return {
 				count: ''
+			}
+		},
+		computed: {
+			max ()
+			{
+				let max = -1;
+
+				['metal', 'crystal', 'deuterium', 'energy'].forEach((item) =>
+				{
+					let count = Math.floor(this.$store.state.resources[item]['current'] / this.item['price'][item]);
+
+					if (max < 0)
+						max = count;
+					else if (max > count)
+						max = count;
+				});
+
+				if (this.item['max'] > 0 && this.item['max'] < max)
+					max = this.item['max'];
+
+				return max;
 			}
 		},
 		components: {
@@ -67,7 +89,7 @@
 			{
 				showWindow('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
 			},
-			max ()
+			setMax ()
 			{
 				if (this.count === '' || parseInt(this.count) === 0)
 					this.count = this.item.max;

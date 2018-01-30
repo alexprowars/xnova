@@ -5,6 +5,7 @@
 			<div class="errormessage">{{ message }}</div>
 		{% endif %}
 		<form action="" method="POST">
+			<input type="hidden" name="save" value="Y">
 			<table class="table table-noborder">
 				<tbody>
 				<tr>

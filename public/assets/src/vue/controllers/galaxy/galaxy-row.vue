@@ -126,7 +126,7 @@
 									</tr>
 									<tr v-if="$parent['page']['user']['recycler'] > 0">
 										<th colspan="2" align="left">
-											<a :onclick="QuickFleet(8,$parent['page']['galaxy'],$parent['page']['system'],i,2,0)">Собрать</a>
+											<a v-on:click.prevent="$parent.fleet.sendMission(8, $parent['page']['galaxy'], $parent['page']['system'], i, 2, 0)">Собрать</a>
 										</th>
 									</tr>
 									<tr>

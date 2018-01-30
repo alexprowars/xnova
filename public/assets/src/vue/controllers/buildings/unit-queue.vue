@@ -1,30 +1,26 @@
 <template>
-	<form name="Atr" action="">
-		<div class="separator"></div>
-		<table width="100%">
-			<tr>
-				<th>
-					Текущее производство: <div class="z"></div>
-				</th>
-			</tr>
-			<tr>
-				<th class="k">
-					<div v-for="item in queue" class="row">
-						<div class="col-6 text-left">
-							<span class="positive">{{ item.count }}</span> {{ item.name }}
-						</div>
-						<div class="col-6 text-right">
-							{{ Format.time(item.end - $root.serverTime()) }}
-						</div>
+	<table width="100%">
+		<tr>
+			<th>
+				Текущее производство: <div class="z"></div>
+			</th>
+		</tr>
+		<tr>
+			<th class="k">
+				<div v-for="item in queue" class="row">
+					<div class="col-6 text-left">
+						<span class="positive">{{ item.count }}</span> {{ item.name }}
 					</div>
-				</th>
-			</tr>
-			<tr>
-				<td class="c">Оставшееся время {{ Format.time(left_time) }}</td>
-			</tr>
-		</table>
-		<div class="separator"></div>
-	</form>
+					<div class="col-6 text-right">
+						{{ Format.time(item.end - $root.serverTime()) }}
+					</div>
+				</div>
+			</th>
+		</tr>
+		<tr>
+			<td class="c">Оставшееся время {{ Format.time(left_time) }}</td>
+		</tr>
+	</table>
 </template>
 
 <script>

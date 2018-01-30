@@ -5,7 +5,6 @@ namespace Xnova\Exceptions;
 use Phalcon\Di;
 use Phalcon\Mvc\View;
 use Xnova\Request;
-use Xnova\Vars;
 
 class MessageException extends \Exception
 {

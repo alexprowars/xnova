@@ -79,7 +79,11 @@ class Queue
 		if ($type == Vars::ITEM_TYPE_BUILING)
 		{
 			(new Build($this))->add($elementId, $destroy);
-			$this->nextBuildingQueue();
+
+			$result = $this->nextBuildingQueue();
+
+			if (!$result)
+				$this->saveQueue();
 		}
 		elseif ($type == Vars::ITEM_TYPE_TECH)
 			(new Tech($this))->add($elementId);
@@ -94,7 +98,11 @@ class Queue
 		if ($type == Vars::ITEM_TYPE_BUILING)
 		{
 			(new Build($this))->delete($listId);
-			$this->nextBuildingQueue();
+
+			$result = $this->nextBuildingQueue();
+
+			if (!$result)
+				$this->saveQueue();
 		}
 		elseif ($type == Vars::ITEM_TYPE_TECH)
 			(new Tech($this))->delete($elementId);
@@ -297,7 +305,7 @@ class Queue
 			$QueueArray = $this->get(self::QUEUE_TYPE_BUILDING);
 
 			if ($QueueArray[0]['s'] > 0)
-				return;
+				return false;
 
 			$Loop = true;
 
@@ -376,8 +384,8 @@ class Queue
 							$Message .= Format::number($Needed['crystal'] - $this->planet->crystal) . ' кристалла<br>';
 						if ($Needed['deuterium'] > $this->planet->deuterium)
 							$Message .= Format::number($Needed['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
-						if (isset($Needed['energy_max']) && isset($this->planet->energy_max) && $Needed['energy_max'] > $this->planet->energy_max)
-							$Message .= Format::number($Needed['energy_max'] - $this->planet->energy_max) . ' энергии<br>';
+						if (isset($Needed['energy']) && isset($this->planet->energy_max) && $Needed['energy'] > $this->planet->energy_max)
+							$Message .= Format::number($Needed['energy'] - $this->planet->energy_max) . ' энергии<br>';
 					}
 
 					if (isset($Message))
@@ -414,6 +422,8 @@ class Queue
 			$this->loadQueue($newQueue);
 			$this->saveQueue();
 		}
+
+		return true;
 	}
 
 	public function checkTechQueue ()

@@ -45,15 +45,17 @@
 		$('#regForm').validate({
 			submitHandler: function(form)
 			{
-				$(form).ajaxSubmit({
-					data: {ajax: 'Y'},
+				$.ajax({
+					url: $(form).attr('action'),
+					type: 'post',
+					data: $(form).serialize(),
 					dataType: 'json',
 					success: function (data)
 					{
-						if (data.status == 1 && data.data.redirect !== undefined)
+						if (data.status && data.data.redirect !== undefined)
 							window.location.href = data.data.redirect;
 						else
-							$('#windowDialog').html(data.html);
+							$('.jconfirm-content').html(data.html);
 					}
 				});
 			},

@@ -184,7 +184,7 @@ $pricelist = array
 	24 => array('metal' => 2000, 'crystal' => 2000, 'deuterium' => 0, 'factor' => 2),
 	25 => array('metal' => 1000, 'crystal' => 2000, 'deuterium' => 4000, 'factor' => 2),
 	31 => array('metal' => 200, 'crystal' => 400, 'deuterium' => 200, 'factor' => 2),
-	33 => array('metal' => 0, 'crystal' => 50000, 'deuterium' => 100000, 'energy_max' => 1000, 'factor' => 2),
+	33 => array('metal' => 0, 'crystal' => 50000, 'deuterium' => 100000, 'energy' => 1000, 'factor' => 2),
 	34 => array('metal' => 20000, 'crystal' => 40000, 'deuterium' => 0, 'factor' => 2),
 	41 => array('metal' => 20000, 'crystal' => 40000, 'deuterium' => 20000, 'factor' => 2),
 	42 => array('metal' => 20000, 'crystal' => 40000, 'deuterium' => 20000, 'factor' => 2),
@@ -208,7 +208,7 @@ $pricelist = array
 	124 => array('metal' => 4000, 'crystal' => 8000, 'deuterium' => 4000, 'factor' => 2),
 	150 => array('metal' => 2000, 'crystal' => 8000, 'deuterium' => 2000, 'factor' => 2, 'max' => 8),
 	161 => array('metal' => 32000, 'crystal' => 64000, 'deuterium' => 64000, 'factor' => 2),
-	199 => array('metal' => 0, 'crystal' => 0, 'deuterium' => 0, 'energy_max' => 300000, 'factor' => 3, 'max' => 1),
+	199 => array('metal' => 0, 'crystal' => 0, 'deuterium' => 0, 'energy' => 300000, 'factor' => 3, 'max' => 1),
 
 	202 => array('metal' => 2000, 'crystal' => 2000, 'deuterium' => 0, 'factor' => 1),
 	203 => array('metal' => 6000, 'crystal' => 6000, 'deuterium' => 0, 'factor' => 1),

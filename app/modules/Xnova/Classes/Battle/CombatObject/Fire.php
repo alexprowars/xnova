@@ -90,6 +90,7 @@ class Fire
 	 * Fire::calculateRf()
 	 * This function implement the RF component of above function
 	 * @return void
+	 * @throws \Exception
 	 */
 	private function calculateRf()
 	{

@@ -5,7 +5,6 @@ Vue.prototype.date = date
 Vue.prototype.morph = morph
 Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
-Vue.prototype.QuickFleet = QuickFleet
 Vue.prototype.Lang = Lang
 Vue.prototype.TextParser = TextParser
 

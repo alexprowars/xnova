@@ -157,16 +157,25 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 			if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
 				return true;
 
-			$dispatcher->forward(
-				[
-					'module'		=> 'xnova',
-					'controller'	=> 'error',
-					'action'		=> 'notFound',
-					'namespace'		=> 'Xnova\Controllers'
-				]
-			);
+			$dispatcher->forward([
+				'module'		=> 'xnova',
+				'controller'	=> 'error',
+				'action'		=> 'notFound',
+				'namespace'		=> 'Xnova\Controllers'
+			]);
 
 			return false;
+
+		case 10:
+
+			$params = unserialize($exception->getMessage());
+
+			$dispatcher->forward([
+				'module'		=> 'xnova',
+				'controller'	=> $params['controller'],
+				'action'		=> $params['action'],
+				'namespace'		=> 'Xnova\Controllers'
+			]);
 	}
 
 	return true;

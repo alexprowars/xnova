@@ -403,7 +403,7 @@ class Construction
 							$row['is_max'] = true;
 					}
 
-					$row['max'] = Building::getMaxConstructibleElements($Element, $this->planet, $this->user);
+					$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
 				}
 
 				$row['effects'] = Building::getNextProduction($Element, 0, $this->planet);

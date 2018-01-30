@@ -31,16 +31,13 @@ class IndexController extends Controller
 
 		if (!$this->dispatcher->wasForwarded())
 		{
-			$this->assets->clearJs();
 			$this->assets->clearCss();
 
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$this->assets->addJs('assets/js/game.js');
-			$this->assets->addJs('assets/js/jquery.validate.js');
+			$this->assets->addJs('assets/js/plugins/validate.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
 
-			$this->assets->addCss('assets/css/jquery-ui.css');
 			$this->assets->addCss('assets/css/login.css');
+			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 		}
 
 		return true;
@@ -167,10 +164,7 @@ class IndexController extends Controller
 				$this->auth->authorize($iduser, 0);
 
 				if ($this->request->isAjax())
-				{
-					$this->game->setRequestStatus(1);
-					$this->game->setRequestData(['redirect' => $this->url->get('overview/')]);
-				}
+					Request::addData('redirect', $this->url->get('overview/'));
 				else
 					$this->response->redirect('overview/');
 

@@ -132,7 +132,7 @@
 					<div v-if="ship.id === 212" class="th col-sm-3 col-4"></div>
 					<div v-else="" class="th col-sm-3 col-4">
 						<a v-on:click.prevent="diffShips(index, -1)" title="Уменьшить на 1" style="color:#FFD0D0">- </a>
-						<input type="number" :name="'ship['+ship['id']+']'" v-model="fleets[index].count" style="width:60%" :title="$root.getLang('TECH', ship.id)+': '+ship['count']" placeholder="0" v-on:change.prevent="calculateShips" v-on:keyup="calculateShips">
+						<input type="number" min="0" :max="ship['count']" :name="'ship['+ship['id']+']'" v-model="fleets[index].count" style="width:60%" :title="$root.getLang('TECH', ship.id)+': '+ship['count']" placeholder="0" v-on:change.prevent="calculateShips" v-on:keyup="calculateShips">
 						<a v-on:click.prevent="diffShips(index, 1)" title="Увеличить на 1" style="color:#D0FFD0"> +</a>
 					</div>
 				</div>
@@ -141,24 +141,24 @@
 					<div class="th col-12">Нет кораблей!</div>
 				</div>
 				<div v-else>
-					<div class="separator"></div>
 					<div class="row">
-						<div class="col-6 col-sm-7 th">
-							<a v-on:click.prevent="clearShips">Очистить</a>
+						<div class="col-12 col-sm-7 th"></div>
+						<div class="col-12 col-sm-5 th">
+							<a class="button" v-on:click.prevent="allShips">Все корабли</a>
+							<a v-if="count" class="button" v-on:click.prevent="clearShips">Очистить</a>
 						</div>
-						<div class="col-6 col-sm-5 th"><a v-on:click.prevent="allShips">Все корабли</a></div>
 					</div>
-					<div class="row">
+					<div v-if="count" class="row">
 						<div class="th col-4 col-sm-7">&nbsp;</div>
 						<div class="th col-4 col-sm-2">Вместимость</div>
 						<div class="th col-4 col-sm-3">{{ allCapacity ? Format.number(allCapacity) : '-' }}</div>
 					</div>
-					<div class="row">
+					<div v-if="count" class="row">
 						<div class="th col-4 col-sm-7">&nbsp;</div>
 						<div class="th col-4 col-sm-2">Скорость</div>
 						<div class="th col-4 col-sm-3">{{ allSpeed ? Format.number(allSpeed) : '-'}}</div>
 					</div>
-					<div v-if="page['curFleets'] < page['maxFleets']" class="row">
+					<div v-if="count && page['curFleets'] < page['maxFleets']" class="row">
 						<div class="th col-12"><input type="submit" value=" Далее "></div>
 					</div>
 				</div>
@@ -179,6 +179,11 @@
 			page () {
 				return this.$store.state.page;
 			},
+			count () {
+				return this.fleets.reduce((total, item) => {
+					return total + (item.count === '' ? 0 : parseInt(item.count));
+				}, 0);
+			}
 		},
 		data () {
 			return {
@@ -218,6 +223,9 @@
 
 				if (this.fleets[index].count <= 0)
 					this.fleets[index].count = '';
+
+				if (this.fleets[index].count > this.page['ships'][index].count)
+					this.fleets[index].count = this.page['ships'][index].count;
 
 				this.calculateShips();
 			},

@@ -100,6 +100,11 @@
 			'game-page-galaxy-item': require('./galaxy-row.vue'),
 			'game-page-galaxy-selector': require('./galaxy-selector.vue'),
 		},
+		data () {
+			return {
+				fleet: require('./../../js/fleet.js')
+			}
+		},
 		computed: {
 			page () {
 				return this.$store.state.page;

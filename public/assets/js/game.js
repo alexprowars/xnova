@@ -1,28 +1,8 @@
 var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-var statusMessages = {0: 'error', 1: 'success', 2: 'info', 3: 'warning'};
-var timeouts	= [];
 
 function ShowHiddenBlock (id)
 {
     $('#'+id).toggle();
-}
-
-function QuickFleet (mission, galaxy, system, planet, type, count)
-{
-	$.ajax({
-		type: "GET",
-		url: options.path+"fleet/quick/",
-		data: "mode="+mission+"&g="+galaxy+"&s="+system+"&p="+planet+"&t="+type+"&count="+count,
-		dataType: 'json',
-		success: function(data)
-		{
-			$.toast({
-			  	text : data.message,
-				position : 'bottom-center',
-				icon: statusMessages[data.status]
-			});
-		}
-	});
 }
 
 function load (url)
@@ -85,6 +65,16 @@ $(document).ready(function()
 		}
 
 		return false;
+	})
+	.on('click', '.main-content form[class!=noajax] input[type=submit], .main-content form[class!=noajax] button[type=submit]', function(e)
+	{
+		e.preventDefault();
+
+		var button = $(this);
+		var form = button.closest('form');
+
+		form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
+		form.submit();
 	})
 	.on('submit', '.main-content form[class!=noajax]', function(e)
 	{

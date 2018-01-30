@@ -37,5 +37,8 @@
 	{% else %}
 		{{ content() }}
 	{% endif %}
+
+	{{ assets.outputCss('footer') }}
+	{{ assets.outputJs('footer') }}
 </body>
 </html>

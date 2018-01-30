@@ -5,13 +5,13 @@
 		</tr>
 		{% if isPopup is false %}
 			<tr>
-				<th class="d-none d-sm-block">{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}</th>
+				<th class="d-none d-sm-table-cell">{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}</th>
 				<th>{{ parse['planet_name'] }}</th>
 				<th><a href="{{ url("overview/delete/") }}"><input type="button" value="Покинуть колонию" alt="Покинуть колонию"></a></th>
 			</tr>
 		{% endif %}
 		<tr>
-			<th class="d-none d-sm-block">Сменить название</th>
+			<th class="d-none d-sm-table-cell">Сменить название</th>
 			<th><input type="text" placeholder="{{ parse['planet_name'] }}" name="newname" maxlength=20></th>
 			<th><input type="submit" name="action" value="Сменить название"></th>
 		</tr>
