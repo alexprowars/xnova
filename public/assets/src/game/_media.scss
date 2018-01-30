@@ -33,7 +33,7 @@
 		height: 44px;
 	}
 
-	#application .game_menu, #application .game_content {
+	#application .game_content {
 		width: 1000px;
 	}
 
@@ -51,7 +51,7 @@
 
 @media (min-width: 481px) and (max-width: 992px)
 {
-	#application .game_menu, #application .game_content {
+	#application .game_content {
 		width: 790px;
 	}
 

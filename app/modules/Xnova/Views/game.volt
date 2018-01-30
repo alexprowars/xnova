@@ -7,18 +7,18 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<link rel="image_src" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}" />
-	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}"/>
+	<link rel="image_src" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}">
+	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}">
 
-	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}"/>
-	<meta property="og:image:width" content="300"/>
-	<meta property="og:image:height" content="300"/>
+	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}">
+	<meta property="og:image:width" content="300">
+	<meta property="og:image:height" content="300">
 
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
 
 	<!--[if lte IE 9]>
-		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all" />
+		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all">
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->
 
@@ -43,5 +43,7 @@
 
 	{{ assets.outputCss('footer') }}
 	{{ assets.outputJs('footer') }}
+
+	{{ partial('shared/svg') }}
 </body>
 </html>

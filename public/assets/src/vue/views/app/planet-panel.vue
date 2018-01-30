@@ -1,5 +1,5 @@
 <template>
-	<div class="row topnav">
+	<div class="row resource-panel">
 		<div class="col-md-6 col-sm-6 col-12">
 			<div class="row">
 				<div class="col-4 text-center"><planet-panel-resource :type="'metal'" :resource="planet.metal"></planet-panel-resource></div>
@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<div onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="tooltip">
+						<div onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
 							<div class="tooltip-content">
 								<div class="resource-panel-item-tooltip">
 									<h1>Энергия</h1>
@@ -35,59 +35,66 @@
 							<span class="sprite skin_energy"></span>
 							<span class="sprite skin_s_energy"></span>
 						</div>
+						<div class="neutral">{{ $root.getLang('RESOURCES', 'energy') }}</div>
 						<div title="Доступно энергии">
 							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ Format.number(planet['energy']['current']) }}</span>
 						</div>
 					</div>
 				</div>
 				<div class="col-4 text-center">
-					<div class="tooltip d-none d-sm-block">
-						<div class="tooltip-content">
-							<div class="resource-panel-item-tooltip">
-								<h1>Аккумулятор</h1>
-								<div class="line"></div>
-								<table>
+					<div class="resource-panel-item">
+						<div class="tooltip d-none d-sm-inline-block resource-panel-item-icon">
+							<div class="tooltip-content">
+								<div class="resource-panel-item-tooltip">
+									<h1>Аккумулятор</h1>
+									<div class="line"></div>
+									<table>
+										<tr>
+											<td>Заряд:</td>
+											<td align="right">{{ Format.number(planet['battery']['current']) }}</td>
+										</tr>
+										<tr>
+											<td>Емкость:</td>
+											<td align="right">{{ Format.number(planet['battery']['max']) }}</td>
+										</tr>
+										<tr v-if="planet['battery']['tooltip'].length">
+											<td colspan="2">{{ planet['battery']['tooltip'] }}</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
+							<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
+							<br>
+						</div>
+						<div class="neutral">Аккумулятор</div>
+						{{ planet['battery']['power'] }}%
+					</div>
+				</div>
+				<div class="col-4 text-center">
+					<div class="resource-panel-item">
+						<a :href="$root.getUrl('credits/')" class="tooltip d-none d-sm-inline-block resource-panel-item-icon">
+							<div class="tooltip-content">
+								<table width="550">
 									<tr>
-										<td>Заряд:</td>
-										<td align="right">{{ Format.number(planet['battery']['current']) }}</td>
+										<td v-for="(time, index) in planet['officiers']" align="center" width="14%">
+											<div class="separator"></div>
+											<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
+										</td>
 									</tr>
 									<tr>
-										<td>Емкость:</td>
-										<td align="right">{{ Format.number(planet['battery']['max']) }}</td>
-									</tr>
-									<tr v-if="planet['battery']['tooltip'].length">
-										<td colspan="2">{{ planet['battery']['tooltip'] }}</td>
+										<td v-for="time in planet['officiers']" align="center">
+											<span v-if="time > $root.serverTime()">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
+											<span v-else><font color="lime">Не нанят</font></span>
+										</td>
 									</tr>
 								</table>
 							</div>
-						</div>
-						<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
-						<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
-						<br>
+							<span class="sprite skin_kredits"></span>
+						</a>
+						<div class="neutral">Кредиты</div>
+						{{ Format.number(planet['credits']) }}
 					</div>
-					{{ planet['battery']['power'] }}%
-				</div>
-				<div class="col-4 text-center">
-					<a :href="$root.getUrl('credits/')" class="tooltip d-none d-sm-block">
-						<div class="tooltip-content">
-							<table width="550">
-								<tr>
-									<td v-for="(time, index) in planet['officiers']" align="center" width="14%">
-										<div class="separator"></div>
-										<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
-									</td>
-								</tr>
-								<tr>
-									<td v-for="time in planet['officiers']" align="center">
-										<span v-if="time > $root.serverTime()">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
-										<span v-else><font color="lime">Не нанят</font></span>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<span class="sprite skin_kredits"></span>
-					</a>
-					{{ Format.number(planet['credits']) }}
 				</div>
 			</div>
 		</div>

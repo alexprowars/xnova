@@ -1,6 +1,6 @@
 <template>
 	<div class="resource-panel-item-tooltip">
-		<h1>{{ resource['title'] }}</h1>
+		<h1>{{ $root.getLang('RESOURCES', type) }}</h1>
 		<div class="line"></div>
 
 		<table>
@@ -23,6 +23,6 @@
 <script>
 	export default {
 		name: "application-planet-panel-resource-tooltip",
-		props: ['resource']
+		props: ['resource', 'type']
 	}
 </script>

@@ -599,7 +599,7 @@ textarea#text {
 
 .game_content {
 	width: 1125px;
-	margin-top: 10px;
+	margin-top: 15px;
 	flex-grow: 2;
 	display: flex;
 	flex-direction: row;
@@ -802,11 +802,10 @@ ul {
 }
 
 .game_menu {
-	padding: 5px 0;
+	padding: 10px 0;
 	background: $main-bg-color;
 	border-radius: 0 0 5px 5px;
 	border: 1px solid $border-color;
-	width: 1125px;
 }
 
 .planetList {
@@ -872,8 +871,8 @@ ul {
 	}
 }
 
-.topnav {
-	margin: 10px 0;
+.resource-panel {
+	margin: 0 0 10px 0;
 	line-height: 1.4em;
 
 	.empty {
@@ -1095,7 +1094,7 @@ p {
 	> b {
 		font-size: 1.2rem;
 		vertical-align: top;
-		margin-top: 3px;
+		margin-top: 5px;
 		font-weight: normal;
 		display: inline-block;
 	}
@@ -1540,6 +1539,10 @@ input[type=number]::-webkit-outer-spin-button {
 			}
 		}
 
+		&-icon {
+			display: inline-block;
+		}
+
 		.skin_s_metal,
 		.skin_s_crystal,
 		.skin_s_deuterium,
@@ -1577,4 +1580,14 @@ input[type=number]::-webkit-outer-spin-button {
 .page-building .block > .content {
 	border: 0;
 	background: transparent;
+}
+
+header svg.icon {
+	width: 25px;
+	height: 25px;
+	fill: #d7d7d7;
+}
+
+header a:hover svg.icon {
+	fill: #9c0;
 }

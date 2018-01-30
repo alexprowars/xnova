@@ -403,8 +403,6 @@ class Controller extends PhalconController
 		foreach (Vars::getResources() AS $res)
 		{
 			$data[$res] = [
-				'title' => _getText('res', $res),
-				'url' => 'info/'._getText('res_builds', $res).'/',
 				'current' => floor(floatval($this->planet->{$res})),
 				'max' => $this->planet->{$res.'_max'},
 				'production' => 0,
