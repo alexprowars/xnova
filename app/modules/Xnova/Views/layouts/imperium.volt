@@ -1,4 +1,4 @@
-<div class="table-responsive" id="imperium">
+<div class="page-imperium table-responsive">
 	<table class="table">
 		<tr valign="left">
 			<td class="c" colspan="{{ parse['mount'] }}">{{ _text('xnova', 'imperium_vision') }}</td>

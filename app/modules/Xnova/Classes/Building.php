@@ -110,36 +110,30 @@ class Building
 
 		foreach ($requeriments as $ResClass => $Level)
 		{
-			$isAvailable = false;
-			$line = '';
+			$minus = 0;
 
 			if ($ResClass != 700)
 			{
 				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) >= $Level)
-					$isAvailable = true;
+					continue;
 				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) >= $Level)
-					$isAvailable = true;
-
-				$line .= _getText('level').' '.$Level;
+					continue;
 
 				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) < $Level)
-				{
 					$minus = $Level - $user->getTechLevel($ResClass);
-					$line .= " + <b>" . $minus . "</b>";
-				}
 				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) < $Level)
-				{
 					$minus = $Level - $planet->getBuildLevel($ResClass);
-					$line .= " + <b>" . $minus . "</b>";
-				}
 			}
 			else
 			{
-				$line .= _getText('race', $Level);
-				$isAvailable = ($user->race == $Level);
+				if ($user->race == $Level)
+					continue;
+
+				$Level = _getText('race', $user->race);
+				$minus = _getText('race', $Level);
 			}
 
-			$result .= '<span class="'.($isAvailable ? 'positive' : 'negative').'">'._getText('tech', $ResClass).' ('.$line.')</span><br>';
+			$result .= '<div><span class="negative">'._getText('tech', $ResClass).' '.$Level.($minus != 0 ? ' ('.$minus.')' : '').'</span></div>';
 		}
 
 		return $result;
@@ -309,6 +303,9 @@ class Building
 	 */
 	static function getNextProduction ($Element, $Level, Planet $planet)
 	{
+		if (!in_array($Element, Vars::getItemsByType('prod')))
+			return '';
+
 		$Res = [];
 
 		$resFrom = $planet->getResourceProductionLevel($Element, ($Level + 1));
@@ -328,16 +325,16 @@ class Building
 		$text = '';
 
 		if ($Res['m'] != 0)
-			$text .= "<div>Металл: <span class=" . (($Res['m'] > 0) ? 'positive' : 'negative') . ">" . (($Res['m'] > 0) ? '+' : '') . $Res['m'] . "</span></div>";
+			$text .= '<div class="building-effects-row"><span class="sprite skin_s_metal" title="Металл"></span> <span class=' . (($Res['m'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['m']) . '</span></div>';
 
 		if ($Res['c'] != 0)
-			$text .= "<div>Кристалл:  <span class=" . (($Res['c'] > 0) ? 'positive' : 'negative') . ">" . (($Res['c'] > 0) ? '+' : '') . $Res['c'] . "</span></div>";
+			$text .= '<div class="building-effects-row"><span class="sprite skin_s_crystal" title="Кристалл"></span> <span class=' . (($Res['c'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['c']) . '</span></div>';
 
 		if ($Res['d'] != 0)
-			$text .= "<div>Дейтерий:  <span class=" . (($Res['d'] > 0) ? 'positive' : 'negative') . ">" . (($Res['d'] > 0) ? '+' : '') . $Res['d'] . "</span></div>";
+			$text .= '<div class="building-effects-row"><span class="sprite skin_s_deuterium" title="Дейтерий"></span> <span class=' . (($Res['d'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['d']) . '</span></div>';
 
 		if ($Res['e'] != 0)
-			$text .= "<div>Энергия:  <span class=" . (($Res['e'] > 0) ? 'positive' : 'negative') . ">" . (($Res['e'] > 0) ? '+' : '') . $Res['e'] . "</span></div>";
+			$text .= '<div class="building-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span> <span class=' . (($Res['e'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['e']) . '</span></div>';
 
 		return $text;
 	}

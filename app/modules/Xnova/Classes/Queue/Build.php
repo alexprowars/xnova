@@ -110,8 +110,7 @@ class Build
 
 		if ($this->_queue->getCount(Queue::QUEUE_TYPE_BUILDING))
 		{
-			$queueArray 	= $this->_queue->get(Queue::QUEUE_TYPE_BUILDING);
-			$ActualCount 	= count($queueArray);
+			$queueArray = $this->_queue->get(Queue::QUEUE_TYPE_BUILDING);
 
 			if (!isset($queueArray[$elementId]))
 				return;
@@ -120,7 +119,7 @@ class Build
 
 			$queue = $this->_queue->get();
 
-			if ($ActualCount > 1)
+			if (count($queueArray) > 1)
 			{
 				unset($queueArray[$elementId]);
 

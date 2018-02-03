@@ -221,7 +221,7 @@ var Format = {
 			time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ч. ');
 
 		if (mm > 0 || full)
-			time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' мин. ');
+			time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' м. ');
 
 		time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
 

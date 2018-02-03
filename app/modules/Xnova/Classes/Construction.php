@@ -166,6 +166,12 @@ class Construction
 		$parse['queue'] 			= $Queue['buildlist'];
 		$parse['fields_current'] 	= (int) $this->planet->field_current;
 		$parse['fields_max'] 		= $CurrentMaxFields;
+		$parse['planet'] 			= 'normaltemp';
+
+		preg_match('/(.*?)planet/', $this->planet->image, $match);
+
+		if (isset($match[1]))
+			$parse['planet'] = trim($match[1]);
 
 		return $parse;
 	}
@@ -263,23 +269,23 @@ class Construction
 			if ($isAccess)
 			{
 				if ($Tech >= 120 && $Tech <= 122)
-					$row['effects'] = '+'.(5 * $row['level']).'% атака<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 115)
-					$row['effects'] = '+'.(10 * $row['level']).'% скорости РД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(10 * $row['level']).'%</span></div>';
 				elseif ($Tech == 117)
-					$row['effects'] = '+'.(20 * $row['level']).'% скорости ИД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(20 * $row['level']).'%</span></div>';
 				elseif ($Tech == 118)
-					$row['effects'] = '+'.(30 * $row['level']).'% скорости ГД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(30 * $row['level']).'%</span></div>';
 				elseif ($Tech == 108)
-					$row['effects'] = '+'.($row['level'] + 1).' слотов флота<br>';
+					$row['effects'] = '<div class="tech-effects-row">+'.($row['level'] + 1).' слотов флота</div>';
 				elseif ($Tech == 109)
-					$row['effects'] = '+'.(5 * $row['level']).'% атаки<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 110)
-					$row['effects'] = '+'.(3 * $row['level']).'% защиты<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">'.(3 * $row['level']).'%</span></div>';
 				elseif ($Tech == 111)
-					$row['effects'] = '+'.(5 * $row['level']).'% прочности<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 123)
-					$row['effects'] = '+'.$row['level'].'% лабораторий<br>';
+					$row['effects'] = '<div class="tech-effects-row">+'.$row['level'].'% лабораторий</div>';
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 

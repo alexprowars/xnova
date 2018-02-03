@@ -52,7 +52,7 @@
 @media (min-width: 481px) and (max-width: 992px)
 {
 	#application .game_content {
-		width: 790px;
+		width: 800px;
 	}
 
 	.planetList .list {
@@ -74,7 +74,7 @@
 	}
 
 	.game_content .menu {
-		width: 90px;
+		width: 100px;
 		margin-right: 5px;
 	}
 
@@ -88,13 +88,5 @@
 
 	.officier {
 		zoom: 0.8
-	}
-}
-
-@media (min-width: 481px) and (max-width: 790px)
-{
-	#application .game_menu, #application .game_content, #application {
-		width: 100%;
-		min-width: 600px;
 	}
 }

@@ -1,10 +1,12 @@
 <template>
 	<div class="page-building page-building-build">
 		<div class="block">
-			<div class="title">
-				Занято полей
-				<span class="positive">{{ page['fields_current'] }}</span> из <span class="negative">{{ page['fields_max'] }}</span>
-				<div class="float-right col-12 col-sm-6 p-a-0">
+			<div class="title row">
+				<div class="col-12 col-sm-6">
+					Занято полей
+					<span class="positive">{{ page['fields_current'] }}</span> из <span class="negative">{{ page['fields_max'] }}</span>
+				</div>
+				<div class="text-sm-right col-12 col-sm-6">
 					Осталось
 					<span class="positive">{{ fields_empty }}</span>
 					свободн{{ morph(page.fields_empty, ['ое', 'ых', 'ых']) }}
@@ -13,11 +15,11 @@
 				<div class="clearfix"></div>
 			</div>
 
-			<div v-if="page.queue.length">
-				<table v-for="(item, index) in page.queue" class="table" id="building">
+			<div class="page-building-build-queue" v-if="page.queue.length">
+				<table v-for="(item, index) in page.queue" class="table">
 					<tr>
 						<td class="c" width="50%">
-							{{ index + 1 }}: {{ item.name }} {{ item.level }}{{ item.mode === 1 ? '. Снос здания' : '' }}
+							{{ item.name }} {{ item.level }}{{ item.mode === 1 ? '. Снос здания' : '' }}
 						</td>
 						<td class="k" v-if="index === 0">
 							<div v-if="item.time > 0" class="z">
@@ -39,7 +41,7 @@
 				</table>
 			</div>
 
-			<div class="content">
+			<div class="content page-building-items">
 				<div class="row">
 					<game-page-buildings-build-item v-for="item in page.items" :item="item"></game-page-buildings-build-item>
 				</div>

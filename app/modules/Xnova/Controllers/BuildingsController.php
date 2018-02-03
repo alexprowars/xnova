@@ -48,9 +48,6 @@ class BuildingsController extends Controller
 
 	public function fleetAction ()
 	{
-		if ($this->planet->getBuildLevel('hangar') == 0)
-			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
-
 		$parse = $this->building->pageShipyard('fleet');
 
 		$parse['mode'] = $this->dispatcher->getActionName();
@@ -63,9 +60,6 @@ class BuildingsController extends Controller
 
 	public function researchAction ()
 	{
-		if ($this->planet->getBuildlevel('laboratory') == 0)
-			throw new ErrorException(_getText('no_laboratory'), _getText('Research'));
-
 		$parse = $this->building->pageResearch();
 
 		Request::addData('page', $parse);
@@ -75,9 +69,6 @@ class BuildingsController extends Controller
 
 	public function defenseAction ()
 	{
-		if ($this->planet->getBuildLevel('hangar') == 0 && $this->planet->planet_type != 5)
-			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
-
 		if ($this->planet->planet_type == 5)
 			$this->user->setUserOption('only_available', 1);
 

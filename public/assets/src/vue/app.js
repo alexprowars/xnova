@@ -29,7 +29,7 @@ const routes = [{
 	path: '/buildings/defense*',
 	component: BuildingUnitController
 }, {
-	path: '/buildings',
+	path: '/buildings*',
 	component: BuildingBuildController
 }, {
 	path: '/galaxy*',

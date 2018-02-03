@@ -503,9 +503,6 @@ class Planet extends Model
 		$productionTime = $updateTime - $this->last_update;
 		$this->last_update = $updateTime;
 
-		if ($productionTime < 0)
-			User::sendMessage(1, 0, time(), 1, '', print_r($this->toArray(), true).'||||||||'.$productionTime);
-
 		if (!defined('CRON'))
 			$this->last_active = $this->last_update;
 

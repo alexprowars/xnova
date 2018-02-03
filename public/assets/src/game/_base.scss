@@ -671,20 +671,12 @@ textarea#text {
 	align-items: center;
 
 	&.set_imperium, &.set_sim {
-		align-items: baseline;
 
 		.game_content {
-			max-width: none !important;
-			width: auto !important;
-			min-width: 100%;
 
 			> .main-content {
 				white-space: nowrap;
 			}
-		}
-
-		.game_menu {
-			width: 100%;
 		}
 	}
 }
@@ -750,6 +742,12 @@ textarea#text {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
+	display: flex;
+	align-items: center;
+
+	a {
+		margin-right: 5px;
+	}
 }
 
 .error {
@@ -855,8 +853,7 @@ ul {
 			}
 
 			&.current {
-				border: 2px solid #44d137;
-				padding: 2px;
+				border: 1px solid #44d137;
 
 				.reload {
 					top: 0;
@@ -947,10 +944,6 @@ p {
 	margin-top: 10px;
 }
 
-.shadow {
-	opacity: 0.5;
-}
-
 .notAvailable {
 	width: 100%;
 	height: 122px;
@@ -960,6 +953,8 @@ p {
 	cursor: pointer;
 	z-index: 99;
 	text-align: center;
+	opacity: 0.6;
+	background: #37476a;
 
 	span {
 		//noinspection CssUnknownTarget
@@ -1090,13 +1085,24 @@ p {
 .bar .m1 {
 	padding: 0 12px;
 	white-space: nowrap;
+	position: relative;
+	display: inline-block;
 
 	> b {
 		font-size: 1.2rem;
 		vertical-align: top;
-		margin-top: 5px;
 		font-weight: normal;
 		display: inline-block;
+		position: absolute;
+		top: -5px;
+		right: 0;
+		background: #7b0000;
+		border-radius: 50%;
+		padding: 2px 6px;
+	}
+
+	svg.red {
+		fill: #e40d0d;
 	}
 }
 
@@ -1226,39 +1232,192 @@ input[type="checkbox"], input[type="radio"] {
 	border: 0 !important;
 }
 
-.buildings {
-	height: 122px;
-	background: $main-bg-color;
-
-	.img {
-		height: 120px;
-		width: 120px;
-		float: left;
-		background-color: #054144;
+.page-building-tech .page-building-items-item.building, .page-building-unit .page-building-items-item.building {
+	&.blocked .building-info-img:after {
+		background: url(../images/buildings/blocked_frame-full.png) no-repeat;
+		background-size: cover;
 	}
 
-	.title {
+	.building-price {
+		position: static;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #253046;
+		padding: 5px 0;
+		height: auto;
+	}
+
+	.tech-effects-row {
+		display: flex;
+		align-items: center;
+		margin-top: 2px;
+	}
+
+	.tech-effects-row .icon {
+		margin-right: 5px;
+	}
+}
+
+.page-building-items-item.building {
+	background: $main-bg-color;
+
+	.building-info {
+		display: flex;
+		justify-content: flex-start;
+		align-items: stretch;
+		position: relative;
+	}
+
+	.building-info-img {
+		height: 98px;
+		width: 98px;
+		background: #054144 no-repeat;
+		position: relative;
+		border-right: 1px solid #415683;
+		box-sizing: content-box;
+	}
+
+	&.blocked .building-info-img:after {
+		background: url(../images/buildings/blocked_frame.png) no-repeat;
+		width: 98px;
+		height: 98px;
+		content: " ";
+		position: absolute;
+		display: block;
+		top: 0;
+		left: 0;
+	}
+
+	.building-title {
 		background: $head-bg-color;
 		padding: 4px;
-		margin-left: 120px;
 		font-size: 1.1rem;
 	}
 
-	.actions {
-		margin-left: 120px;
-		padding: 4px;
+	.building-info-actions {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
 	}
 
-	.popup {
-		display: none;
-		width: 400px;
-		position: absolute;
-		top: 0;
-		left: 0;
-		background: $main-bg-color;
-		height: 120px;
-		z-index: 100;
+	.building-info-info {
+
 	}
+
+	.building-info-upgrade {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+	}
+
+	.building-info-upgrade svg.icon {
+		fill: lime;
+		width: 30px;
+		height: 30px;
+	}
+
+	.building-info-upgrade a {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.building-info-upgrade a:hover svg.icon {
+		fill: #3abc55;
+	}
+
+	.building-effects {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		height: 20px;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		background: #253046;
+	}
+
+	.building-effects-row {
+		height: 17px;
+		display: flex;
+		align-items: center;
+	}
+
+	.building-effects-row span {
+		display: block;
+		font-size: 0.9rem;
+	}
+
+	.building-effects-row .sprite {
+		transform: scale(0.82);
+	}
+
+	.building-info-time {
+		display: flex;
+		align-items: center;
+		padding: 4px 0 0 4px;
+	}
+
+	.building-info-time .icon {
+		width: 16px;
+		height: 12px;
+		fill: #e0e0e0;
+		margin-right: 5px;
+	}
+
+	.building-required {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		flex-grow: 1;
+	}
+
+	.building-price {
+		display: flex;
+		align-items: center;
+	}
+
+	.building-price-item {
+		margin-right: 5px;
+	}
+}
+
+.icon.speed {
+	background: url('../images/icons/speed.png') no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	background-position-y: 1px;
+}
+
+.icon.armor {
+	background: url('../images/icons/armor.png') no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	background-position-y: 2px;
+}
+
+.icon.damage {
+	background: url('../images/icons/damage.png') no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+}
+
+.icon.shield {
+	background: url('../images/icons/shield.png') no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	background-position-y: 1px;
 }
 
 .start {
@@ -1338,16 +1497,20 @@ div.errormessage {
 
 *{-webkit-font-smoothing: antialiased;}
 
-.page-building .row {
+.page-building .page-building-items .row {
 	margin: 0;
 }
 
-.page-building .row > div {
-	padding: 1px;
+.page-building .page-building-items .row > div {
+	padding: 2px;
 }
 
-.page-building .row > div > div {
+.page-building .page-building-items .page-building-items-item {
 	border: 1px solid $border-color;
+}
+
+.page-building-build-queue {
+	margin: 2px 2px 2px 0;
 }
 
 .page-overview .block .content {
@@ -1505,10 +1668,6 @@ input[type=number]::-webkit-outer-spin-button {
 	background: rgb(100, 0, 0) none;
 }
 
-#application.set_log .game_content, #application.set_imperium .game_content {
-	max-width: 95%;
-}
-
 .doubleth {
 	height: 50px;
 }
@@ -1574,10 +1733,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .page-building .block > .title {
 	border: 1px solid $border-color;
-	margin: 1px;
+	margin: 2px 2px 0;
 }
 
-.page-building .block > .content {
+.page-building .page-building-items {
 	border: 0;
 	background: transparent;
 }
@@ -1590,4 +1749,9 @@ header svg.icon {
 
 header a:hover svg.icon {
 	fill: #9c0;
+}
+
+.page-imperium .table {
+	min-width: 65%;
+	width: auto;
 }

@@ -15,13 +15,13 @@
 				<svg class="icon">
 					<use xlink:href="#icon-message"></use>
 				</svg>
-				<b>{{ user.messages }}</b>
+				<b v-if="user.messages > 0">{{ user.messages }}</b>
 			</a>
 			<a v-if="user.alliance.id > 0" class="m1 tooltip" :href="$root.getUrl('alliance/chat/')" data-content="Альянс">
 				<svg class="icon">
 					<use xlink:href="#icon-alliance"></use>
 				</svg>
-				<b>{{ user.alliance.messages }}</b>
+				<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
 			</a>
 		</div>
 		<div class="bar d-none d-sm-flex">
@@ -40,12 +40,14 @@
 					<svg class="icon">
 						<use xlink:href="#icon-message"></use>
 					</svg>
-					<b>{{ user.messages }}</b></a>
+					<b v-if="user.messages > 0">{{ user.messages }}</b>
+				</a>
 				<a v-if="user.alliance.id > 0" class="m1 tooltip" :href="$root.getUrl('alliance/chat/')" data-content="Альянс">
 					<svg class="icon">
 						<use xlink:href="#icon-alliance"></use>
 					</svg>
-					<b>{{ user.alliance.messages }}</b></a>
+					<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
+				</a>
 			</div>
 			<div class="top_menu">
 				<a :href="$root.getUrl('stat/')" class="tooltip m1" data-content="Статистика">
@@ -84,7 +86,7 @@
 					</svg>
 				</a>
 				<a :href="$root.getUrl('logout/')" class="tooltip m1" data-link="Y" data-content="Выход">
-					<svg class="icon">
+					<svg class="icon red">
 						<use xlink:href="#icon-exit"></use>
 					</svg>
 				</a>
@@ -97,8 +99,7 @@
 	export default {
 		name: "application-header",
 		computed: {
-			user ()
-			{
+			user () {
 				return this.$store.state.user;
 			}
 		}

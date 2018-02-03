@@ -1,50 +1,50 @@
 <template>
 	<div class="col-md-6 col-12">
-		<div class="viewport buildings" :class="{shadow: !item.allow}">
-			<div v-if="item.allow === false" class="notAvailable tooltip" v-on:click="openWindow">
-				<div class="tooltip-content" v-if="item['need']">
-					Требования:
-					<br>
-					<div v-html="item['need']"></div>
+		<div class="page-building-items-item building" :class="{blocked: !item.allow}">
+			<div class="building-info">
+				<div class="building-info-img">
+					<a v-on:click="openWindow">
+						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="item.name" align="top" class="tooltip img-fluid" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
+					</a>
 				</div>
-				<span>недоступно</span>
-			</div>
-			<div class="img">
-				<a v-on:click="openWindow">
-					<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="item.name" align="top" width="120" height=120 class="tooltip" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
-				</a>
 
-				<div class="overContent">
-					<game-page-buildings-build-row-price :price="item.price"></game-page-buildings-build-row-price>
-				</div>
-			</div>
-			<div class="title">
-				<a :href="$root.getUrl('info/'+item.i+'/')">
-					{{ item.name }}
-				</a>
-				(<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ Format.number(item.count) }}</span>)
-			</div>
-			<div class="actions">
-				<div v-if="item.allow">
-					<div>Время: {{ Format.time(item.time) }}</div>
-					<div v-html="item.effects"></div>
+				<div class="building-info-actions">
+					<div class="building-title">
+						<a :href="$root.getUrl('info/'+item.i+'/')">
+							{{ item.name }}
+						</a>
+						<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ Format.number(item.count) }}</span>
+					</div>
 
-					<div v-if="item['can']">
-						<br>
-						<div v-if="item['is_max']">
-							<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
+					<div class="building-info-info" v-if="item.allow">
+						<div class="building-info-time">
+							<svg class="icon">
+								<use xlink:href="#icon-time"></use>
+							</svg>
+							{{ Format.time(item.time) }}
 						</div>
-						<div v-else>
-							<a v-on:click.prevent="setMax">
-								Максимум: <font color="lime">{{ max }}</font>
-							</a>
-							<div class="buildmax">
+
+						<div v-html="item.effects"></div>
+
+						<div v-if="item['can']">
+							<br>
+							<div v-if="item['is_max']">
+								<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
+							</div>
+							<div v-else="" class="buildmax">
+								<a v-on:click.prevent="setMax">
+									max: <font color="lime">{{ Format.number(max) }}</font>
+								</a>
 								<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">
 							</div>
 						</div>
 					</div>
+					<div v-else="" class="building-required">
+						<div v-html="item['need']"></div>
+					</div>
 				</div>
 			</div>
+			<game-page-buildings-build-row-price :price="item.price"></game-page-buildings-build-row-price>
 		</div>
 	</div>
 </template>
@@ -92,7 +92,7 @@
 			setMax ()
 			{
 				if (this.count === '' || parseInt(this.count) === 0)
-					this.count = this.item.max;
+					this.count = this.max;
 				else
 					this.count = '';
 			}

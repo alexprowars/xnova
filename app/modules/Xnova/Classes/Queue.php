@@ -327,19 +327,19 @@ class Queue
 					continue;
 				}
 
-				$ForDestroy = ($ListIDArray['d'] == 1);
+				$isDestroy = ($ListIDArray['d'] == 1);
 
-				if ($ForDestroy && $build['level'] == 0)
+				if ($isDestroy && $build['level'] == 0)
 				{
 					$HaveRessources = false;
 					$HaveNoMoreLevel = true;
 				}
 				else
-					$HaveRessources = Building::isElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+					$HaveRessources = Building::isElementBuyable($this->user, $this->planet, $ListIDArray['i'], true, $isDestroy);
 
-				if ($HaveRessources && Building::isTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']))
+				if ($HaveRessources && (Building::isTechnologieAccessible($this->user, $this->planet, $ListIDArray['i']) || $isDestroy))
 				{
-					$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+					$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $isDestroy);
 
 					$this->planet->metal 		-= $Needed['metal'];
 					$this->planet->crystal 		-= $Needed['crystal'];
@@ -355,7 +355,7 @@ class Queue
 						[
 							'user_id' 			=> $this->user->id,
 							'time' 				=> time(),
-							'operation' 		=> ($ForDestroy ? 2 : 1),
+							'operation' 		=> ($isDestroy ? 2 : 1),
 							'planet' 			=> $this->planet->id,
 							'from_metal' 		=> $this->planet->metal + $Needed['metal'],
 							'from_crystal' 		=> $this->planet->crystal + $Needed['crystal'],
@@ -374,7 +374,7 @@ class Queue
 						$Message = sprintf(_getText('sys_nomore_level'), _getText('tech', $ListIDArray['i']));
 					elseif (!$HaveRessources)
 					{
-						$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $ForDestroy);
+						$Needed = Building::getBuildingPrice($this->user, $this->planet, $ListIDArray['i'], true, $isDestroy);
 
 						$Message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . _getText('tech', $ListIDArray['i']) . '" на планете '.$this->planet->name.' '.Helpers::BuildPlanetAdressLink($this->planet->toArray()).'.<br>Вам необходимо ещё: <br>';
 
