@@ -4,14 +4,14 @@
 			<div class="building-info">
 				<div class="building-info-img">
 					<a v-on:click="openWindow">
-						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="item.name" align="top" class="tooltip img-fluid" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
+						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="$root.getLang('TECH', item.i)" align="top" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
 					</a>
 				</div>
 
 				<div class="building-info-actions">
 					<div class="building-title">
 						<a :href="$root.getUrl('info/'+item.i+'/')">
-							{{ item.name }}
+							{{ $root.getLang('TECH', item.i) }}
 						</a>
 						<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ Format.number(item.count) }}</span>
 					</div>
@@ -26,17 +26,14 @@
 
 						<div v-html="item.effects"></div>
 
-						<div v-if="item['can']">
-							<br>
-							<div v-if="item['is_max']">
-								<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
-							</div>
-							<div v-else="" class="buildmax">
-								<a v-on:click.prevent="setMax">
-									max: <font color="lime">{{ Format.number(max) }}</font>
-								</a>
-								<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">
-							</div>
+						<div v-if="item['is_max']">
+							<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
+						</div>
+						<div v-else-if="max > 0" class="buildmax">
+							<a v-on:click.prevent="setMax">
+								max: <font color="lime">{{ Format.number(max) }}</font>
+							</a>
+							<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">
 						</div>
 					</div>
 					<div v-else="" class="building-required">

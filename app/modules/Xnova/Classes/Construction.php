@@ -85,9 +85,6 @@ class Construction
 			}
 		}
 
-		$CurrentMaxFields = $this->planet->getMaxFields();
-		$RoomIsOk = ($this->planet->field_current < ($CurrentMaxFields - $Queue['lenght']));
-
 		$oldStyle = $this->user->getUserOption('only_available');
 
 		$parse['items'] = [];
@@ -110,7 +107,6 @@ class Construction
 			if (!$build)
 				continue;
 
-			$HaveRessources 	= Building::isElementBuyable($this->user, $this->planet, $Element, true, false);
 			$BuildingLevel 		= $build['level'];
 			$BuildingPrice 		= Building::getBuildingPrice($this->user, $this->planet, $Element);
 
@@ -118,10 +114,8 @@ class Construction
 
 			$row['allow']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['name'] 	= _getText('tech', $Element);
 			$row['level'] 	= $BuildingLevel;
 			$row['price'] 	= $BuildingPrice;
-			$row['action'] 	= '';
 
 			if ($isAccess)
 			{
@@ -130,32 +124,6 @@ class Construction
 
 				$row['time'] 	= Building::getBuildingTime($this->user, $this->planet, $Element);
 				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);
-
-				if ($Element == 31)
-				{
-					if ($this->user->b_tech_planet != 0)
-						$row['action'] = 'working';
-				}
-
-				if (!$row['action'])
-				{
-					if ($RoomIsOk && $CanBuildElement)
-					{
-						if ($Queue['lenght'] == 0)
-						{
-							if ($HaveRessources == true)
-								$row['action'] = 'allow';
-							else
-								$row['action'] = 'resources';
-						}
-						else
-							$row['action'] = 'queue';
-					}
-					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['action'] = 'wait';
-					else
-						$row['action'] = 'fields';
-				}
 			}
 			else
 				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
@@ -164,8 +132,9 @@ class Construction
 		}
 
 		$parse['queue'] 			= $Queue['buildlist'];
+		$parse['queue_max'] 		= $MaxBuidSize;
 		$parse['fields_current'] 	= (int) $this->planet->field_current;
-		$parse['fields_max'] 		= $CurrentMaxFields;
+		$parse['fields_max'] 		= (int) $this->planet->getMaxFields();
 		$parse['planet'] 			= 'normaltemp';
 
 		preg_match('/(.*?)planet/', $this->planet->image, $match);
@@ -259,12 +228,11 @@ class Construction
 
 			$row['allow'] 	= $isAccess;
 			$row['i'] 		= $Tech;
-			$row['name'] 	= _getText('tech', $Tech);
 			$row['level']	= $this->user->getTechLevel($Tech);
 			$row['max']		= isset($price['max']) ? $price['max'] : 0;
 			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Tech);
+			$row['build']	= false;
 			$row['effects']	= '';
-			$row['action'] 	= '';
 
 			if ($isAccess)
 			{
@@ -289,26 +257,10 @@ class Construction
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 
-				if (!$TechHandle['working'])
-				{
-					if (isset($price['max']) && $row['level'] >= $price['max'])
-						$row['action'] = 'max';
-					elseif (Building::isElementBuyable($this->user, $this->planet, $Tech))
-					{
-						if (!Building::checkLabSettingsInQueue($this->planet))
-							$row['action'] = 'working';
-						else
-							$row['action'] = 'allow';
-					}
-					else
-						$row['action'] = 'resources';
-				}
-				else
+				if ($TechHandle['working'])
 				{
 					if (isset($queueArray['i']) && $queueArray['i'] == $Tech)
 					{
-						$row['action'] = 'progress';
-
 						$row['build'] = [
 							'id' => (int) $TechHandle['planet']->id,
 							'name' => '',
@@ -382,7 +334,6 @@ class Construction
 
 			$row['allow']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['name'] 	= _getText('tech', $Element);
 			$row['count'] 	= $this->planet->getUnitCount($Element);
 			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Element, false);
 			$row['effects']	= '';
@@ -390,28 +341,22 @@ class Construction
 			if ($isAccess)
 			{
 				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $Element);
-				$row['can']		= Building::isElementBuyable($this->user, $this->planet, $Element, false);
+				$row['is_max']	= false;
 
-				if ($row['can'])
+				$price = Vars::getItemPrice($Element);
+
+				if (isset($price['max']))
 				{
-					$row['is_max'] = false;
+					$total = $this->planet->getUnitCount($Element);
 
-					$price = Vars::getItemPrice($Element);
+					if (isset($BuildArray[$Element]))
+						$total += $BuildArray[$Element];
 
-					if (isset($price['max']))
-					{
-						$total = $this->planet->getUnitCount($Element);
-
-						if (isset($BuildArray[$Element]))
-							$total += $BuildArray[$Element];
-
-						if ($total >= $price['max'])
-							$row['is_max'] = true;
-					}
-
-					$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
+					if ($total >= $price['max'])
+						$row['is_max'] = true;
 				}
 
+				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
 				$row['effects'] = Building::getNextProduction($Element, 0, $this->planet);
 			}
 			else

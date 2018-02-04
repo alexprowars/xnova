@@ -64,7 +64,7 @@
 				return this.$store.state.page;
 			},
 			fields_empty () {
-				return this.page['fields_max'] - this.page['fields_current'];
+				return this.page['fields_max'] - this.page['fields_current'] - this.page.queue.length;
 			}
 		},
 		components: {

@@ -4,14 +4,14 @@
 			<div class="building-info">
 				<div class="building-info-img">
 					<a v-on:click="openWindow">
-						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" class="tooltip img-fluid" :data-content="'<center>'+item.name+'</center>'" data-tooltip-width="150">
+						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" :alt="$root.getLang('TECH', item.i)" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
 					</a>
 				</div>
 
 				<div class="building-info-actions">
 					<div class="building-title">
 						<a :href="$root.getUrl('info/'+item.i+'/')">
-							{{ item.name }}
+							{{ $root.getLang('TECH', item.i) }}
 						</a>
 						<span v-if="item.level" class="positive" title="Текущий уровень постройки">
 							{{ Format.number(item.level) }} <span v-if="item.max > 0">из <font color="yellow">{{ Format.number(item.max) }}</font></span>
@@ -27,26 +27,29 @@
 						</div>
 
 						<div v-html="item.effects"></div>
+
+						<div class="building-info-upgrade">
+							<div v-if="item.build" class="building-info-upgrade-timer">
+								<span v-if="time > 0">
+									{{ Format.time(time, ':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
+								</span>
+								<a v-else :href="$root.getUrl('buildings/research/?chpl='+item.build.id+'')">завершено. продолжить...</a>
+							</div>
+							<div v-else-if="item.max > 0 && item.max <= item.level" class="negative">
+								максимальный уровень
+							</div>
+							<div v-else-if="!hasResources" class="negative text-center">
+								нет ресурсов
+							</div>
+							<a v-else="" :href="$root.getUrl('buildings/research/cmd/search/tech/'+item.i+'/')" :class="{positive: item.level, negative: item.level === 0}">
+								<svg class="icon">
+									<use xlink:href="#icon-research"></use>
+								</svg>
+							</a>
+						</div>
 					</div>
 					<div v-else="" class="building-required">
 						<div v-html="item['need']"></div>
-					</div>
-
-					<div class="building-info-upgrade">
-						<a v-if="item.action === 'allow'" :href="$root.getUrl('buildings/research/cmd/search/tech/'+item.i+'/')" :class="{positive: item.level, negative: item.level === 0}">
-							<svg class="icon">
-								<use xlink:href="#icon-research"></use>
-							</svg>
-						</a>
-						<span v-else-if="item.action === 'max'" class="negative">максимальный уровень</span>
-						<span v-else-if="item.action === 'working'" :class="{positive: item.level, negative: item.level === 0}">{{ item.level ? 'Улучшить' : 'Исследовать' }}</span>
-						<span v-else-if="item.action === 'resources'" class="resNo">нет ресурсов</span>
-						<div v-else-if="item.action === 'progress'" class="building-info-upgrade-timer">
-							<span v-if="time > 0">
-								{{ Format.time(time, ':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
-							</span>
-							<a v-else :href="$root.getUrl('buildings/research/?chpl='+item.build.id+'')">завершено. продолжить...</a>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -66,6 +69,23 @@
 			return {
 				time: 0,
 				timeout: null
+			}
+		},
+		computed: {
+			resources () {
+				return this.$store.state.resources;
+			},
+			hasResources ()
+			{
+				let allow = true;
+
+				['metal', 'crystal', 'deuterium', 'energy'].forEach((res) =>
+				{
+					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0 && this.resources[res].current < this.item.price[res])
+						allow = false;
+				});
+
+				return allow;
 			}
 		},
 		methods: {
