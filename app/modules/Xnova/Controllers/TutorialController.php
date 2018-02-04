@@ -77,12 +77,17 @@ class TutorialController extends Controller
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = $this->user->getTechLevel($element) ? ($this->user->getTechLevel($element) >= $level) : ($this->planet->getBuildLevel($element) >= $level);
+						$type = Vars::getItemType($element);
+
+						if ($type == Vars::ITEM_TYPE_TECH)
+							$check = $this->user->getTechLevel($element) >= $level;
+						elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
+							$check = $this->planet->getUnitCount($element) >= $level;
+						else
+							$check = $this->planet->getBuildLevel($element) >= $level;
 
 						if ($chk == true)
 							$chk = $check;
-
-						$type = Vars::getItemType($element);
 
 						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
@@ -179,9 +184,7 @@ class TutorialController extends Controller
 
 							if ($type == Vars::ITEM_TYPE_TECH)
 								$this->user->setTech($element, $this->user->getTechLevel($element) + $level);
-							elseif ($type == Vars::ITEM_TYPE_FLEET)
-								$this->planet->setUnit($element, $level, true);
-							elseif ($type == Vars::ITEM_TYPE_DEFENSE)
+							elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 								$this->planet->setUnit($element, $level, true);
 							elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							{
@@ -207,7 +210,7 @@ class TutorialController extends Controller
 				$this->user->save();
 				$this->planet->save();
 
-				$this->response->redirect('tutorial/');
+				return $this->response->redirect('tutorial/');
 			}
 
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
@@ -252,7 +255,9 @@ class TutorialController extends Controller
 			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
 		}
 		else
-			$this->response->redirect('tutorial/');
+			return $this->response->redirect('tutorial/');
+
+		return true;
 	}
 	
 	public function indexAction ()

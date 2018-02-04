@@ -37,7 +37,7 @@ class Building
 
 	static function isTechnologieAccessible (User $user, Planet $planet, $element)
 	{
-		$requeriments = Vars::getItemRequeriments($element);
+		$requeriments = Vars::getItemRequirements($element);
 
 		if (!count($requeriments))
 			return true;
@@ -65,7 +65,7 @@ class Building
 
 	static function checkTechnologyRace (User $user, $element)
 	{
-		$requeriments = Vars::getItemRequeriments($element);
+		$requeriments = Vars::getItemRequirements($element);
 
 		if (!count($requeriments))
 			return true;
@@ -102,38 +102,39 @@ class Building
 	{
 		$result = '';
 
-		$requeriments = Vars::getItemRequeriments($element);
-		$elementType = Vars::getItemType($element);
+		$requirements = Vars::getItemRequirements($element);
 
-		if (!count($requeriments))
+		if (!count($requirements))
 			return $result;
 
-		foreach ($requeriments as $ResClass => $Level)
+		foreach ($requirements as $reqId => $level)
 		{
 			$minus = 0;
 
-			if ($ResClass != 700)
+			if ($reqId != 700)
 			{
-				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) >= $Level)
+				$elementType = Vars::getItemType($reqId);
+
+				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) >= $level)
 					continue;
-				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) >= $Level)
+				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($reqId) >= $level)
 					continue;
 
-				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($ResClass) < $Level)
-					$minus = $Level - $user->getTechLevel($ResClass);
-				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($ResClass) < $Level)
-					$minus = $Level - $planet->getBuildLevel($ResClass);
+				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) < $level)
+					$minus = $level - $user->getTechLevel($reqId);
+				elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($reqId) < $level)
+					$minus = $level - $planet->getBuildLevel($reqId);
 			}
 			else
 			{
-				if ($user->race == $Level)
+				if ($user->race == $level)
 					continue;
 
-				$Level = _getText('race', $user->race);
-				$minus = _getText('race', $Level);
+				$level = _getText('race', $user->race);
+				$minus = _getText('race', $level);
 			}
 
-			$result .= '<div><span class="negative">'._getText('tech', $ResClass).' '.$Level.($minus != 0 ? ' ('.$minus.')' : '').'</span></div>';
+			$result .= '<div><span class="negative">'._getText('tech', $reqId).' '.$level.($minus != 0 ? ' ('.$minus.')' : '').'</span></div>';
 		}
 
 		return $result;
@@ -168,7 +169,7 @@ class Building
 
 				foreach ($planet->spaceLabs as $Levels)
 				{
-					$req = Vars::getItemRequeriments($element);
+					$req = Vars::getItemRequirements($element);
 
 					if (!isset($req[31]) || $Levels >= $req[31])
 						$lablevel += $Levels;

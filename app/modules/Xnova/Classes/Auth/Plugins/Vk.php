@@ -48,7 +48,7 @@ class Vk extends Component implements AuthInterface
 		if (!$this->isAuthorized())
 			return false;
 
-		$Row = $this->db->query("SELECT u.id, u.tutorial, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://vk.com/id".$this->request->getPost('viewer_id', 'int')."';")->fetch();
+		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://vk.com/id".$this->request->getPost('viewer_id', 'int')."';")->fetch();
 
 		if (!isset($Row['id']))
 			$this->register();

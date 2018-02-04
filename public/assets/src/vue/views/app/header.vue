@@ -1,10 +1,11 @@
 <template>
 	<header class="game_menu">
 		<div class="d-sm-none text-center bar">
-			<a v-if="user['tutorial'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
+			<a v-if="user['quests'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
 				<svg class="icon">
 					<use xlink:href="#icon-book"></use>
 				</svg>
+				<b>{{ 10 - user['quests'] }}</b>
 			</a>
 			<a class="m1 tooltip" :href="$root.getUrl('chat/')" data-content="Чат">
 				<svg class="icon">
@@ -24,12 +25,14 @@
 				<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
 			</a>
 		</div>
+
 		<div class="bar d-none d-sm-flex">
 			<div class="message_list">
-				<a v-if="user['tutorial'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
+				<a v-if="user['quests'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
 					<svg class="icon">
 						<use xlink:href="#icon-book"></use>
 					</svg>
+					<b>{{ 10 - user['quests'] }}</b>
 				</a>
 				<a class="m1 tooltip" :href="$root.getUrl('chat/')" data-content="Чат">
 					<svg class="icon">

@@ -13,41 +13,36 @@ function load (url)
 	});
 }
 
-var tooltipTimer;
-
 $(document).ready(function()
 {
-	if ($.isFunction($(document).tooltip))
+	var body = $('body');
+
+	body.on('mouseenter', '.tooltip:not(.tooltipstered)', function()
 	{
-		$(document).tooltip({
-			items: ".tooltip",
-			track: !isMobile,
-			show: false,
-			hide: false,
-			position: {my: "left+25 top+15", at: "left bottom", collision: "flipfit"},
-			content: function ()
+		var maxWidth = null;
+		var _this = $(this);
+
+		if (_this.data('width') !== undefined)
+			maxWidth = parseInt(_this.data('width'));
+
+		_this.tooltipster({
+			delay: 100,
+			distance: 0,
+			maxWidth: maxWidth,
+			contentAsHTML: true,
+			interactive: _this.hasClass('sticky'),
+			functionInit: function(instance)
 			{
-				if ($(this).hasClass('script'))
-					return eval($(this).data('content'));
-				else if (typeof $(this).data('content') === "undefined")
-					return $(this).find('.tooltip-content').clone();
+				if (_this.hasClass('script'))
+					instance.content(eval(_this.data('content')));
+				else if (typeof _this.data('content') === "undefined")
+					instance.content(_this.find('.tooltip-content'));
 				else
-					return $(this).data('content');
-			},
-			open: function(ev, obj)
-			{
-				if ($(ev.toElement).data('tooltipWidth') !== undefined)
-					obj.tooltip.css({width: $(ev.toElement).data('tooltipWidth')});
-			},
-			close: function() {
-				$('.ui-helper-hidden-accessible').html('');
+					instance.content(_this.data('content'));
 			}
-		});
-	}
-
-	var body = $("body");
-
-	body.on('click', 'a', function(e)
+		}).tooltipster('open');
+	})
+	.on('click', 'a', function(e)
 	{
 		var el = $(this);
 		var url = el.attr('href');
@@ -149,45 +144,6 @@ $(document).ready(function()
 			}
 		})
 	})
-	.on('mouseenter', ".tooltip_sticky", function (e)
-	{
-   		var tip;
-		var obj = $(this);
-
-		var hasHtml = obj.find('.tooltip-content').length > 0;
-
-		if (hasHtml)
-			tip = obj.find('.tooltip-content');
-		else
-			tip = $('#tooltip');
-
-		tip.css({width: ''});
-
-		tooltipTimer = setTimeout(function()
-		{
-			if (typeof obj.data('content') !== 'undefined')
-				tip.html(obj.data('content'));
-			else
-				tip.show();
-
-			tip.addClass('tooltip_sticky_div');
-
-			tip.css({
-				top : e.pageY - tip.outerHeight() / 2,
-				left : e.pageX - tip.outerWidth() / 2
-			});
-
-			tip.show();
-		}, 400);
-   	})
-	.on('mouseleave', ".tooltip_sticky", function ()
-	{
-		clearTimeout(tooltipTimer);
-	})
-	.on('mouseleave', ".tooltip_sticky_div", function ()
-	{
-   		$('.tooltip_sticky_div').removeClass('tooltip_sticky_div').hide();
-   	})
 	.on('change', 'input.checkAll', function()
 	{
 		var checked = $(this).is(':checked');

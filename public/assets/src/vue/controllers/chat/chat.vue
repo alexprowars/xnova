@@ -1,7 +1,7 @@
 <template>
 	<div class="page-chat">
 		<div class="col-12 th">
-			<div ref="chatbox" class="shoutbox">
+			<div ref="chatbox" class="page-chat-messages">
 				<div v-for="item in messages" class="page-chat-row text-left">
 					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPlayer(item['user'])" style="cursor:pointer;">{{ date('H:m', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:

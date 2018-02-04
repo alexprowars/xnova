@@ -53,7 +53,6 @@ class User extends BaseUser
 	public $ally_id;
 	public $vacation;
 	public $b_tech_planet;
-	public $tutorial;
 	public $ip;
 
 	public $ally = [];
@@ -90,7 +89,6 @@ class User extends BaseUser
 	public $rpg_meta;
 	public $rpg_komandir;
 
-	public $tutorial_value;
 	public $message_block;
 	public $color;
 	public $timezone;

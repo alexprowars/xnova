@@ -35,7 +35,7 @@
 						<span v-else>{{ planets }} заселённые планеты</span>
 					</td>
 					<td class="c" colspan=3>
-						<a class="tooltip_sticky">
+						<a class="tooltip">
 							<div class="tooltip-content">
 								<table width="240">
 									<tr>

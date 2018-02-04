@@ -120,8 +120,6 @@ class User
 			'raids_win' => 0,
 			'raids_lose' => 0,
 			'raids' => 0,
-			'tutorial' => 0,
-			'tutorial_value' => 0,
 			'bonus_multi' => 0,
 			'message_block' => 0
 		];

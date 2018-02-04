@@ -2,7 +2,7 @@
 	<tr class="planetRow">
 		<th width="30">{{ i + 1 }}</th>
 		<th class="img">
-			<a v-if="item && !item['p_delete']" class="tooltip_sticky">
+			<a v-if="item && !item['p_delete']" class="tooltip sticky">
 				<div class="tooltip-content">
 					<table width="240">
 						<tr>
@@ -44,7 +44,7 @@
 			</div>
 		</th>
 		<th style="white-space: nowrap;" width="30">
-			<a v-if="item && !item['l_delete'] && item['l_id']" style="cursor: pointer;" class="tooltip_sticky">
+			<a v-if="item && !item['l_delete'] && item['l_id']" class="tooltip sticky">
 				<div class="tooltip-content">
 					<table width="240">
 						<tr>
@@ -99,7 +99,7 @@
 			<span v-if="item && item['l_delete'] && item['l_id']">~</span>
 		</th>
 		<th :class="[debris_class]" width="30">
-			<a v-if="item && (item['p_metal'] > 0 || item['p_crystal'] > 0)" style="cursor: pointer;" class="tooltip_sticky">
+			<a v-if="item && (item['p_metal'] > 0 || item['p_crystal'] > 0)" class="tooltip sticky">
 				<div class="tooltip-content">
 					<table width="240">
 						<tr>
@@ -144,7 +144,7 @@
 		</th>
 		<th width="150">
 			<div v-if="item && !item['p_delete']">
-				<a style="cursor: pointer;" class="tooltip_sticky">
+				<a class="tooltip sticky">
 					<div class="tooltip-content">
 						<table width="280">
 							<tr>
@@ -189,7 +189,7 @@
 			</a>
 		</th>
 		<th width="80">
-			<a v-if="item && !item.delete && item['a_id']" style="cursor: pointer;" class="tooltip_sticky">
+			<a v-if="item && !item.delete && item['a_id']" class="tooltip sticky">
 				<div class="tooltip-content">
 					<table width="240">
 						<tr>
@@ -239,7 +239,7 @@
 					<span class="sprite skin_r"></span>
 				</a>
 
-				<a v-if="$parent['page']['user']['spy_sonde'] && !item['u_vacation']" title="Шпионаж" class="tooltip_sticky">
+				<a v-if="$parent['page']['user']['spy_sonde'] && !item['u_vacation']" title="Шпионаж" class="tooltip sticky">
 					<div class="tooltip-content">
 						<center>
 							<input type="text" :value="$parent['page']['user'].spy">

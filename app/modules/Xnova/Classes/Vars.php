@@ -110,7 +110,7 @@ class Vars
 		return false;
 	}
 
-	static function getItemRequeriments ($itemId)
+	static function getItemRequirements ($itemId)
 	{
 		if (self::$registry === false)
 			self::init();

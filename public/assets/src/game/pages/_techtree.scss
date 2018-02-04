@@ -1,0 +1,20 @@
+.page-techtree
+{
+	th {
+		padding: 4px;
+	}
+
+	.row > div {
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.row .title {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	.row:nth-child(2n) {
+		background-color: #303F5E;
+	}
+}

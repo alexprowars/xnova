@@ -49,21 +49,3 @@
 		opacity: 0.7;
 	}
 }
-
-#ajaxLoader {
-	//noinspection CssUnknownTarget
-	background: url('../images/loader-cat.svg') no-repeat;
-	width: 100px;
-	height: 100px;
-	position: absolute;
-	top: 25px;
-	left: 25px;
-	opacity: 0;
-	transition: opacity 0.3s;
-	visibility: hidden;
-}
-
-#ajaxLoader.active {
-	visibility: visible;
-	opacity: 1;
-}

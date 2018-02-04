@@ -35,65 +35,77 @@ class TechController extends Controller
 	public function indexAction ()
 	{
 		$parse = [];
+		$items = [];
 
 		foreach (_getText('tech') as $element => $name)
 		{
-			if ($element < 600)
+			if ($element >= 600)
+				continue;
+
+			$pars = [];
+			$pars['name'] = $name;
+
+			if (Vars::getName($element) === false)
 			{
-				$pars = [];
-				$pars['tt_name'] = $name;
-
-				if (Vars::getName($element) === false)
-					$parse[] = $pars;
-				else
+				if (count($items) > 0)
 				{
-					$pars['required_list'] = "";
+					$parse[count($parse) - 1]['items'] = $items;
+					$items = [];
+				}
 
-					$requeriments = Vars::getItemRequeriments($element);
+				$pars['items'] = [];
+				$parse[] = $pars;
+			}
+			else
+			{
+				$pars['required'] = "";
 
-					foreach ($requeriments as $ResClass => $Level)
+				$requeriments = Vars::getItemRequirements($element);
+
+				foreach ($requeriments as $ResClass => $Level)
+				{
+					if ($ResClass != 700)
 					{
-						if ($ResClass != 700)
-						{
-							if ($this->user->getTechLevel($ResClass) >= $Level)
-								$pars['required_list'] .= "<span class=\"positive\">";
-							elseif ($this->planet->getBuildLevel($ResClass) >= $Level)
-								$pars['required_list'] .= "<span class=\"positive\">";
-							else
-								$pars['required_list'] .= "<span class=\"negative\">";
+						$type = Vars::getItemType($ResClass);
 
-							$pars['required_list'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
-
-							if ($this->user->getTechLevel($ResClass) < $Level)
-							{
-								$minus = $Level - $this->user->getTechLevel($ResClass);
-								$pars['required_list'] .= " + <b>" . $minus . "</b>";
-							}
-							elseif ($this->planet->getBuildLevel($ResClass) < $Level)
-							{
-								$minus = $Level - $this->planet->getBuildLevel($ResClass);
-								$pars['required_list'] .= " + <b>" . $minus . "</b>";
-							}
-						}
+						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) >= $Level)
+							$pars['required'] .= "<span class=\"positive\">";
+						elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ResClass) >= $Level)
+							$pars['required'] .= "<span class=\"positive\">";
 						else
+							$pars['required'] .= "<span class=\"negative\">";
+
+						$pars['required'] .= _getText('tech', $ResClass) . " (" . _getText('level') . " " . $Level . "";
+
+						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) < $Level)
 						{
-							$pars['required_list'] .= _getText('tech', $ResClass) . " (";
-
-							if ($this->user->race != $Level)
-								$pars['required_list'] .= "<span class=\"negative\">" . _getText('race', $Level);
-							else
-								$pars['required_list'] .= "<span class=\"positive\">" . _getText('race', $Level);
+							$minus = $Level - $this->user->getTechLevel($ResClass);
+							$pars['required'] .= " + <b>" . $minus . "</b>";
 						}
+						elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ResClass) < $Level)
+						{
+							$minus = $Level - $this->planet->getBuildLevel($ResClass);
+							$pars['required'] .= " + <b>" . $minus . "</b>";
+						}
+					}
+					else
+					{
+						$pars['required'] .= _getText('tech', $ResClass) . " (";
 
-						$pars['required_list'] .= ")</span><br>";
+						if ($this->user->race != $Level)
+							$pars['required'] .= "<span class=\"negative\">" . _getText('race', $Level);
+						else
+							$pars['required'] .= "<span class=\"positive\">" . _getText('race', $Level);
 					}
 
-					$pars['tt_info'] = $element;
-					$parse[] = $pars;
+					$pars['required'] .= ")</span><br>";
 				}
+
+				$pars['info'] = $element;
+				$items[] = $pars;
 			}
 		}
-		
+
 		$this->view->setVar('parse', $parse);
 		$this->showTopPanel(false);
 	}

@@ -55,6 +55,8 @@ const routes = [{
 }];
 
 Vue.component('error-message', require('./views/message.vue'))
+Vue.component('tab', require('./components/tab.vue'));
+Vue.component('tabs', require('./components/tabs.vue'));
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -221,8 +223,6 @@ window.application = new Vue({
 			this.request_block = true;
 			this.loader = true;
 
-			$('[role="tooltip"]').remove()
-
 			$.ajax(
 			{
 				url: url,
@@ -231,8 +231,6 @@ window.application = new Vue({
 				timeout: 10000,
 				success: (result) =>
 				{
-					$('.ui-helper-hidden-accessible').html('');
-
 					closeWindow();
 
 					this.applyData(result.data);
@@ -269,7 +267,6 @@ window.application = new Vue({
 				},
 				complete: () => {
 					this.loader = false;
-					$('#tooltip').hide();
 				}
 			});
 		}

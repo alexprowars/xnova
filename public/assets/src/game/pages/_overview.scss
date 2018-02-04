@@ -1,0 +1,19 @@
+.page-overview-officiers {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 5px;
+}
+
+.page-overview-officiers-item {
+	display: block;
+	margin: 5px 2px 0 2px;
+}
+
+.page-overview-officiers-item + .page-overview-officiers-item {
+	margin-left: 0;
+}
+
+.page-overview .block .content {
+	padding: 5px;
+}

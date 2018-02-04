@@ -38,9 +38,6 @@
 
 	{{ partial('shared/counters') }}
 
-	<div id="windowDialog"></div>
-	<div id="tooltip" class="tip"></div>
-
 	{{ assets.outputCss('footer') }}
 	{{ assets.outputJs('footer') }}
 

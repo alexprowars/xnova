@@ -1,0 +1,67 @@
+@import "../variables";
+
+.page-chat-messages {
+	margin: 5px;
+	vertical-align: text-top;
+	min-height: 200px;
+	height: 70vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: calc(100% - 10px);
+	font-size: 1.2rem;
+
+	.date {
+		&1 {
+			text-decoration: none;
+			font-weight: normal;
+			color: #04AE04;
+			padding: 2px 3px;
+		}
+
+		&2 {
+			text-decoration: none;
+			font-weight: normal;
+			color: #04AE04;
+			padding: 2px 3px;
+			background-color: #00FFAA
+		}
+
+		&3 {
+			text-decoration: none;
+			font-weight: normal;
+			color: #04AE04;
+			background-color: #ddd;
+			padding: 2px 3px;
+		}
+	}
+
+	div {
+		margin: 5px 0;
+	}
+
+	.to {
+		cursor: pointer;
+		color: #ffffff;
+		font-weight: bold;
+	}
+
+	.player {
+		color: #7397E1;
+		cursor: pointer;
+		font-weight: bold;
+
+		a {
+			color: #7397E1;
+		}
+	}
+
+	.private {
+		color: red;
+		cursor: pointer;
+		font-weight: bold;
+
+		a {
+			color: red;
+		}
+	}
+}

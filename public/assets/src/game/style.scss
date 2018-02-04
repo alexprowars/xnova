@@ -1,8 +1,20 @@
 
 
 @import "base";
+
+@import "pages/buildings";
+@import "pages/chat";
+@import "pages/techtree";
+@import "pages/overview";
+@import "pages/galaxy";
+@import "pages/imperium";
+
+@import "components/tooltip";
+@import "components/loader";
+@import "components/tabs";
+@import "components/confirm";
+
 @import "report";
 @import "sprite";
-@import "ui";
 @import "media";
 @import "mobile";

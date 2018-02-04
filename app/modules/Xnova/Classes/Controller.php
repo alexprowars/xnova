@@ -147,7 +147,7 @@ class Controller extends PhalconController
 			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/utils.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/ui.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
 			$this->assets->addJs('assets/js/lang.js', 'footer');
 
@@ -354,9 +354,9 @@ class Controller extends PhalconController
 					'name' => $this->user->ally_name,
 					'messages' => (int) $this->user->messages_ally
 				],
-				'tutorial' => (int) $this->user->tutorial,
 				'planets' => $planets,
-				'timezone' => (int) $this->user->timezone
+				'timezone' => (int) $this->user->timezone,
+				'quests' => $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt']
 			];
 
 			if ($this->getDI()->has('planet'))
