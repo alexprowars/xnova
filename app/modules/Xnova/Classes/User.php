@@ -37,11 +37,11 @@ class User
 
 		$obj = new Message;
 
-		$obj->owner = $owner;
-		$obj->sender = $sender;
+		$obj->user_id = $owner;
+		$obj->from_id = $sender;
 		$obj->time = $time;
 		$obj->type = $type;
-		$obj->from = $from;
+		$obj->theme = $from;
 		$obj->text = addslashes($message);
 
 		if ($obj->create())

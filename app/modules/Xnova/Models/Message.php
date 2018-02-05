@@ -19,12 +19,12 @@ use Phalcon\Mvc\Model;
 class Message extends Model
 {
 	public $id;
-	public $owner;
-	public $sender;
+	public $user_id;
+	public $from_id;
 	public $time;
 	public $type;
 	public $deleted;
-	public $from;
+	public $theme;
 	public $text;
 
 	public function getSource()

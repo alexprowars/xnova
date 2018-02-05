@@ -18,12 +18,12 @@ var TextParser =
 		for (var key in this.texts)
 		{
 			if (this.texts.hasOwnProperty(key))
-				this.parse(this.texts[key].text, this.texts[key].id)
+				$('#'+this.texts[key].id).append(this.parse(this.texts[key].text));
 		}
 
 		this.texts = [];
 	},
-	parse: function (txt, id)
+	parse: function (txt)
 	{
 		var i, j;
 
@@ -54,7 +54,7 @@ var TextParser =
 			}
 		}
 
-		$('#'+id).append(txt);
+		return txt;
 	}
 };
 

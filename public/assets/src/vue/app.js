@@ -8,6 +8,10 @@ Vue.prototype.showWindow = showWindow
 Vue.prototype.Lang = Lang
 Vue.prototype.TextParser = TextParser
 
+let parser = require('./js/parser.js');
+
+Vue.prototype.parser = parser.parser;
+
 let BuildingBuildController = require('./controllers/buildings/build.vue')
 let BuildingTechController = require('./controllers/buildings/tech.vue')
 let BuildingUnitController = require('./controllers/buildings/unit.vue')
@@ -17,6 +21,7 @@ let FleetIndexController = require('./controllers/fleet/fleet-index.vue')
 let FleetOneController = require('./controllers/fleet/fleet-one.vue')
 let FleetTwoController = require('./controllers/fleet/fleet-two.vue')
 let ChatController = require('./controllers/chat/chat.vue')
+let MessagesController = require('./controllers/messages/messages.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -50,6 +55,9 @@ const routes = [{
 	path: '/chat',
 	component: ChatController
 }, {
+	path: '/messages',
+	component: MessagesController
+}, {
 	path: '*',
 	component: HtmlController
 }];
@@ -57,6 +65,8 @@ const routes = [{
 Vue.component('error-message', require('./views/message.vue'))
 Vue.component('tab', require('./components/tab.vue'));
 Vue.component('tabs', require('./components/tabs.vue'));
+Vue.component('pagination', require('./components/pagination.vue'));
+Vue.component('text-viewer', require('./components/text-viewer.vue'));
 
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -77,7 +87,7 @@ router.beforeEach(function(to, from, next)
 		return next();
 	}
 
-	router.app.loadPage(to.path, function(url)
+	router.app.loadPage(to.fullPath, function(url)
 	{
 		next();
 
