@@ -21,8 +21,7 @@
 	{% if parse['description'] != '' %}
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;">
-				<span id="m1"></span>
-				<script type="text/javascript">TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');</script>
+				<text-viewer text="{{ parse['description'] }}"></text-viewer>
 			</td>
 		</tr>
 	{% endif %}

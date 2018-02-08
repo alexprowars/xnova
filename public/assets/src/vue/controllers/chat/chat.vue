@@ -20,7 +20,7 @@
 					<span class="buttons" title="Смайлы" v-on:click="smiles = !smiles"><span class="sprite bb_emoticon_grin"></span></span>
 				</div>
 				<div v-if="smiles" class="smiles">
-					<img v-for="smile in TextParser.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)" style="cursor:pointer">
+					<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)" style="cursor:pointer">
 				</div>
 			</div>
 			<input ref="message" class="page-chat-message" type="text" v-model="message" v-on:keypress="$event.keyCode === '13' ? sendMessage : false" maxlength="750" title="">

@@ -37,7 +37,7 @@ class ContactController extends Controller
 				'name' 	=> $Ops['username'],
 				'auth' 	=> _getText('user_level', $Ops['authlevel']),
 				'mail' 	=> $Ops['email'],
-				'info' 	=> $Ops['about'],
+				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($Ops['about'])),
 			];
 		}
 

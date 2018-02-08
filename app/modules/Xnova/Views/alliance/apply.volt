@@ -1,12 +1,14 @@
 <form action="{{ url('alliance/apply/allyid/'~parse['allyid']~'/') }}" method="POST">
 	<table class="table">
 		{% if parse['text_apply'] != '' %}
-		<tr>
-			<td class="c" colspan="2">Приветствие альянса</td>
-		</tr>
-		<tr>
-			<td class="b" colspan="2" height="100" style="padding:3px;"><span id="m1"></span></td>
-		</tr>
+			<tr>
+				<td class="c" colspan="2">Приветствие альянса</td>
+			</tr>
+			<tr>
+				<td class="b" colspan="2" height="100" style="padding:3px;">
+					<text-viewer text="{{ parse['text_apply'] }}"></text-viewer>
+				</td>
+			</tr>
 		{% endif %}
 		<tr>
 			<td class="c" colspan="2">Написать запрос на вступление в альянс [{{ parse['tag'] }}]</td>
@@ -19,4 +21,3 @@
 		</tr>
 	</table>
 </form>
-<script>TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['text_apply']|stripslashes) }}', 'm1');</script>

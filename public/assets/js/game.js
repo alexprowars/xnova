@@ -129,11 +129,8 @@ $(document).ready(function()
 						});
 					})
 				}
-				else if (result.data.html !== '')
-				{
+				else if (result.data.html !== '') {
 					$('.jconfirm-content').html(result.data.html);
-
-					TextParser.parseAll();
 				}
 			},
 			error: function() {

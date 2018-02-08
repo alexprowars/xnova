@@ -113,10 +113,8 @@
 
 				if (html.length > 0)
 				{
-					setTimeout(() =>
-					{
+					setTimeout(() => {
 						this.$root.evalJs(html);
-						TextParser.parseAll();
 					}, 25);
 
 					this.html_component = new (Vue.extend({
@@ -135,7 +133,8 @@
 			if (window.innerWidth < 480)
 				this.mobile = true;
 		},
-		mounted () {
+		mounted ()
+		{
 			window.addEventListener('resize', this.handleWindowResize);
 
 			if (this.html.length)

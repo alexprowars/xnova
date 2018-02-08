@@ -82,21 +82,7 @@
 				</tr>
 				<tr>
 					<td class="c p-a-0" colspan="2">
-						<div id="editor"></div>
-						<textarea name="text" id="text" rows="10" title=""></textarea>
-
-						<div id="showpanel" style="display:none">
-							<table class="table">
-								<tr>
-									<td class="c"><b>Предварительный просмотр</b></td>
-								</tr>
-								<tr>
-									<td class="b"><span id="showbox"></span></td>
-								</tr>
-							</table>
-						</div>
-
-						<script type="text/javascript">edToolbar('text');</script>
+						<text-editor></text-editor>
 
 						<input type="submit" value="Отправить">
 					</td>

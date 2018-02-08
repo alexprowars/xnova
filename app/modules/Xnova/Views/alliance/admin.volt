@@ -40,25 +40,13 @@
 			</tr>
 			<tr>
 				<th colspan="3" class="p-a-0">
-					<div id="editor"></div>
-					<script type="text/javascript">edToolbar('text');</script>
-					<textarea name="text" id="text" rows="15" title="">{{ preg_replace('!<br.*>!iU', "\n", parse['text']) }}</textarea>
+					<text-editor text="{{ preg_replace('!<br.*>!iU', "\n", parse['text']) }}"></text-editor>
 				</th>
 			</tr>
 			<tr>
 				<th colspan="3"><input type="reset" value="Очистить"><input type="submit" value="Сохранить"></th>
 			</tr>
 		</table>
-		<div id="showpanel" style="display:none">
-			<table align="center" class="table">
-				<tr>
-					<td class="c"><b>Предварительный просмотр</b></td>
-				</tr>
-				<tr>
-					<td class="b" style="padding:3px;"><span id="showbox"></span></td>
-				</tr>
-			</table>
-		</div>
 	</form>
 	<div class="separator"></div>
 	<form action="{{ url('alliance/admin/edit/ally/') }}" method="POST">

@@ -155,20 +155,7 @@
 			<table class="table">
 				<tr>
 					<th colspan="2" class="p-a-0">
-						<div id="editor"></div>
-						<textarea name="text" id="text" cols="" rows="10" title="">{{ replace('!<br.*>!iU', "\n", parse['about']) }}</textarea>
-
-						<div id="showpanel" style="display:none">
-							<table class="table">
-								<tr>
-									<td class="c"><b>Предварительный просмотр</b></td>
-								</tr>
-								<tr>
-									<td class="b"><span id="showbox"></span></td>
-								</tr>
-							</table>
-						</div>
-						<script type="text/javascript">edToolbar('text');</script>
+						<text-editor text="{{ replace('!<br.*>!iU', "\n", parse['about']) }}"></text-editor>
 					</th>
 				</tr>
 				<tr>

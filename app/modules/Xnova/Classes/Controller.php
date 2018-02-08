@@ -143,7 +143,6 @@ class Controller extends PhalconController
 
 			$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
 
-			$this->assets->addJs('assets/js/smiles.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/ed.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/utils.js?v='.VERSION, 'footer');
 			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');

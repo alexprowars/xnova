@@ -84,6 +84,8 @@ class NotesController extends Controller
 			throw new RedirectException(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$parse['id'].'/', 1);
 		}
 
+		$parse['text'] = str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($parse['text']));
+
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle(_getText('Notes'));

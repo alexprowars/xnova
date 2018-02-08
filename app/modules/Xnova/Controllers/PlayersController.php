@@ -116,7 +116,7 @@ class PlayersController extends Controller
 			$parse['planet'] = $daten['planet'];
 			$parse['ally_id'] = $daten['ally_id'];
 			$parse['ally_name'] = $daten['ally_name'];
-			$parse['about'] = $daten['about'];
+			$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($daten['about']));
 			$parse['wons'] = Format::number($daten['raids_win']);
 			$parse['loos'] = Format::number($daten['raids_lose']);
 			$parse['siegprozent'] = round($siegprozent, 2);

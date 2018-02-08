@@ -938,57 +938,6 @@ p {
 	}
 }
 
-.toolbar {
-	text-align: center;
-	padding: 2px 4px;
-	font-size: 0;
-
-	&.inline {
-		display: inline-block;
-	}
-
-	.buttons {
-		border: 1px solid #ccc;
-		margin: 1px;
-		padding: 2px;
-		display: inline-block;
-		font-size: 0;
-		cursor: pointer;
-		background-color: #fff;
-	}
-
-	.ed {
-		width: 400px;
-		height: 150px;
-	}
-
-	.colorpicker {
-		background: #eee;
-		width: 100%;
-		padding: 0;
-		margin-top: 0;
-		display: block;
-		text-align: center;
-	}
-
-	.gensmall {
-		font-size: 1em;
-		margin-top: 0;
-		color: #000000;
-		font-weight: 400;
-
-		select {
-			margin: 4px 0 0 0;
-			padding: 0 0 0 0;
-			font-weight: 400;
-			white-space: nowrap;
-			vertical-align: top;
-			background-color: #f2f4f8;
-			color: #000000;
-		}
-	}
-}
-
 .smiles {
 	position: absolute;
 	z-index: 1000;
@@ -1284,4 +1233,8 @@ header svg.icon {
 
 header a:hover svg.icon {
 	fill: #9c0;
+}
+
+.page-alliance-chat .image {
+	max-width: 556px !important
 }

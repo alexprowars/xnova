@@ -44,7 +44,7 @@
 		},
 		methods: {
 			loadPage (page) {
-				load(this.$store.state.url+(this.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
+				load(application.$store.state.url+(application.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
 			}
 		}
 	}

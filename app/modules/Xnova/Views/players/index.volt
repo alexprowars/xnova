@@ -113,10 +113,7 @@
 		{% if parse['about'] != '' %}
 			<div class="row">
 				<div class="b col-12">
-					<span id="m100500"></span>
-					<script type="text/javascript">
-						TextParser.addText('{{ preg_replace("/(\r\n)/u", "<br>", parse['about']|stripslashes) }}', 'm100500');
-					</script>
+					<text-viewer text="{{ parse['about'] }}"></text-viewer>
 				</div>
 			</div>
 		{% endif %}

@@ -16,6 +16,7 @@ use Friday\Core\Lang;
 use Xnova\Models\Alliance;
 use Xnova\Models\AllianceMember;
 use Xnova\Models\Planet;
+use Xnova\Request;
 use Xnova\User;
 use Xnova\Controller;
 
@@ -139,8 +140,8 @@ class AllianceController extends Controller
 			$parse['owner'] = ($this->ally->owner != $this->user->id) ? $this->MessageForm(_getText('Exit_of_this_alliance'), "", "/alliance/exit/", _getText('Continue')) : '';
 			$parse['image'] = $this->ally->image;
 			$parse['range'] = $range;
-			$parse['description'] = $this->ally->description;
-			$parse['text'] = $this->ally->text;
+			$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($this->ally->description));
+			$parse['text'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($this->ally->text));
 			$parse['web'] = $this->ally->web;
 			$parse['tag'] = $this->ally->tag;
 			$parse['members'] = $this->ally->members;
@@ -876,29 +877,38 @@ class AllianceController extends Controller
 		}
 
 		$parse = [];
-		$parse['messages'] = [];
+		$parse['items'] = [];
 
-		$news_count = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "'")->fetch();
+		$messagesCount = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE ally_id = ?", [$this->user->ally_id])->fetch()['num'];
 
-		if ($news_count['num'] > 0)
+		if ($messagesCount > 0)
 		{
 			$p = $this->request->getQuery('p', 'int', 1);
-
-			$thiss = Helpers::pagination($news_count['num'], 20, $this->url->get('alliance/chat/'), $p);
 
 			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($p - 1) * 20) . ", 20");
 
 			while ($mes = $mess->fetch())
 			{
-				$parse['messages'][] = $mes;
+				$parse['items'][] = [
+					'id' => (int) $mes['id'],
+					'user' => $mes['user'],
+					'user_id' => (int) $mes['user_id'],
+					'time' => (int) $mes['timestamp'],
+					'text' => str_replace(["\r\n", "\n", "\r"], '', stripslashes($mes['message'])),
+				];
 			}
 		}
 
+		$parse['pagination'] = [
+			'total' => (int) $messagesCount,
+			'limit' => 20,
+			'page' => (int) $p
+		];
+
 		$parse['owner'] = ($this->ally->owner == $this->user->id) ? true : false;
-		$parse['pages'] = (isset($thiss)) ? $thiss : '[0]';
 		$parse['parser'] = $this->user->getUserOption('bb_parser') ? true : false;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Альянс-чат');
 		$this->showTopPanel(false);
@@ -923,7 +933,7 @@ class AllianceController extends Controller
 		$parse['member_scount'] = $allyrow['members'];
 		$parse['name'] = $allyrow['name'];
 		$parse['tag'] = $allyrow['tag'];
-		$parse['description'] = $allyrow['description'];
+		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow['description']));
 		$parse['image'] = $allyrow['image'];
 		$parse['web'] = $allyrow['web'];
 		$parse['request'] = ($this->getDI()->has('user') && $this->user->ally_id == 0);
@@ -1062,7 +1072,7 @@ class AllianceController extends Controller
 		$parse = [];
 
 		$parse['allyid'] = $allyid;
-		$parse['text_apply'] = ($allyrow['request']) ? $allyrow['request'] : '';
+		$parse['text_apply'] = ($allyrow['request']) ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow['request'])) : '';
 		$parse['tag'] = $allyrow['tag'];
 
 		$this->view->setVar('parse', $parse);
