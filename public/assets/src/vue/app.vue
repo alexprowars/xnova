@@ -2,7 +2,7 @@
 	<div id="application" :class="['set_'+$store.state.route.controller]">
 
 		<!-- header -->
-		<a v-if="$store.state.view.header && mobile" :class="{active: sidebar === 'menu'}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarToggle('menu')">
+		<a v-if="$store.state.view.header" :class="{active: sidebar === 'menu'}" class="menu-toggle d-sm-none" v-on:click.prevent="sidebarToggle('menu')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
@@ -10,21 +10,21 @@
 			</span>
 		</a>
 
-		<div v-if="$store.state.view.header && mobile" :class="{active: sidebar === 'menu'}" class="menu-sidebar d-sm-none">
+		<div v-if="$store.state.view.header" :class="{active: sidebar === 'menu'}" class="menu-sidebar d-sm-none">
 			<sidebar-menu></sidebar-menu>
 		</div>
 
 		<application-header v-if="$store.state.view.header"></application-header>
-		<application-header-mobile-icons v-if="$store.state.view.header && mobile"></application-header-mobile-icons>
+		<application-header-mobile-icons v-if="$store.state.view.header"></application-header-mobile-icons>
 		<!-- end header -->
 
 		<div class="game_content">
 			<!-- menu -->
-			<main-menu v-if="$store.state.view.menu && !mobile"></main-menu>
+			<main-menu v-if="$store.state.view.menu"></main-menu>
 			<!-- end menu -->
 
 			<!-- planets -->
-			<a v-if="$store.state.view.planets && mobile" :class="{active: sidebar === 'planet'}" class="planet-toggle d-sm-none" v-on:click.prevent="sidebarToggle('planet')"><span>
+			<a v-if="$store.state.view.planets" :class="{active: sidebar === 'planet'}" class="planet-toggle d-sm-none" v-on:click.prevent="sidebarToggle('planet')"><span>
 					<span class="first"></span>
 					<span class="second"></span>
 					<span class="third"></span>
@@ -82,7 +82,6 @@
 		data: function ()
 		{
 			return {
-				mobile: false,
 				sidebar: '',
 				html_component: null
 			}
@@ -102,9 +101,6 @@
 					this.sidebar = '';
 				else
 					this.sidebar = type;
-			},
-			handleWindowResize (event) {
-				this.mobile = (event.currentTarget.innerWidth < 480);
 			},
 			renderHtml (html)
 			{
@@ -128,15 +124,8 @@
 				}
 			}
 		},
-		created ()
-		{
-			if (window.innerWidth < 480)
-				this.mobile = true;
-		},
 		mounted ()
 		{
-			window.addEventListener('resize', this.handleWindowResize);
-
 			if (this.html.length)
 				this.renderHtml(this.html);
 		}

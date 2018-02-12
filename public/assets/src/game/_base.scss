@@ -375,45 +375,7 @@ tr.return th span a {
 
 /* BBCode
  ------------ */
-.quotetitle {
-	margin: 0 0 0 0;
-	padding: 2px 4px;
-	border: solid 1px #C8CBD9;
-	color: #7D8AA0;
-	background-color: #EAECF2;
-	font-size: 0.85em;
-	font-weight: bold;
-}
 
-.quotecontent {
-	margin: 0 0 0 0;
-	padding: 5px;
-	border: 1px solid #C8CBD9;
-	border-top-width: 0;
-	font-weight: normal;
-	background-color: #EFF2F6;
-	color: #444;
-
-	a {
-		color: #7D8AA0;
-	}
-
-	a:hover {
-		color: #9c0;
-		text-decoration: none;
-	}
-}
-
-.quotewrapper {
-	clear: both;
-	margin: 0 0 0 0;
-	//noinspection CssUnknownTarget
-	background: #EAECF2 url(../images/quote_header.gif) top left no-repeat;
-	padding-left: 17px;
-	border: solid 1px #C8CBD9;
-	border-bottom-color: #AEB3C5;
-	border-right-color: #AEB3C5;
-}
 
 iframe {
 	border-width: 0;
@@ -951,6 +913,10 @@ p {
 	right: 25px;
 }
 
+.smiles img {
+	cursor: pointer;
+}
+
 input[type="checkbox"], input[type="radio"] {
 	margin: 3px;
 }
@@ -1120,13 +1086,6 @@ footer {
 	}
 }
 
-.page-chat .page-chat-message {
-	width: calc(100% - 100px);
-	margin-top: 2px;
-	font-size: 1.3rem;
-	padding: 2px;
-}
-
 div.table {
 	padding-left: 5px;
 	padding-right: 5px;
@@ -1235,6 +1194,6 @@ header a:hover svg.icon {
 	fill: #9c0;
 }
 
-.page-alliance-chat .image {
+.page-alliance-chat .image, .page-players .image {
 	max-width: 556px !important
 }

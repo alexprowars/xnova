@@ -63,7 +63,7 @@ export var parser = {
 			"<ul>$1</ul>",
 			"<li>$1</li>",
 			'<object><param name="movie" value="http://www.youtube.com/v/$1"><param name="wmode" value="transparent"><embed src="http://www.youtube.com/v/$1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>',
-			'<div><div class="quotetitle"><b>$1</b> <input type="button" value="Показать" style="width:65px;font-size:10px;margin:0px;padding:0px;background:none;color:#000000;" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != \'\') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'\'; this.innerText = \'\'; this.value = \'Скрыть\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.innerText = \'\'; this.value = \'Показать\'; }" /></div><div class="quotecontent"><div style="display: none;">$2</div></div></div>',
+			'<div><div class="quotetitle"><b>$1</b> <input type="button" value="Показать" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != \'\') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'\'; this.value = \'Скрыть\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.value = \'Показать\'; }" /></div><div class="quotecontent"><div style="display: none;">$2</div></div></div>',
 			'<span style="background-color:#$1;">$2</span>',
 			'<span style="background-image:url($1);background-repeat:no-repeat;display:block;width:$2;height:$3;max-width:716px;">$4</span>',
 			'<p>$1</p>',
@@ -87,35 +87,85 @@ export var parser = {
 	},
 	parse: function (txt)
 	{
-		let i, j;
+		let j = 0;
 
-		j = 0;
-
-		for (i = 0; i < this.patterns.smiles.length; i++)
+		this.patterns.smiles.every((smile) =>
 		{
-			while (txt.indexOf(':'+this.patterns.smiles[i]+':') >= 0)
+			while (txt.indexOf(':'+smile+':') >= 0)
 			{
-				txt = txt.replace(':'+this.patterns.smiles[i]+':', '<img src="'+options.path+'assets/images/smile/' + this.patterns.smiles[i] + '.gif">');
+				txt = txt.replace(':'+smile+':', '<img src="'+options.path+'assets/images/smile/'+smile+'.gif">');
 
 				if (++j >= 3)
 					break;
 			}
 
-			if (j >= 3)
-				break;
-		}
+			return j < 3;
+		})
 
-		for (i in this.patterns.find)
+		this.patterns.find.forEach((part, i) =>
 		{
-			if (this.patterns.find.hasOwnProperty(i))
-			{
-				txt = txt.replace(this.patterns.find[i], this.patterns.replace[i]);
+			txt = txt.replace(part, this.patterns.replace[i]);
 
-				if (i === 3 || i === 4 || i === 23)
-					while(txt.match(this.patterns.find[i])) txt = txt.replace(this.patterns.find[i], this.patterns.replace[i]);
+			if (i === 3 || i === 4 || i === 23)
+			{
+				while (txt.match(part))
+					txt = txt.replace(part, this.patterns.replace[i]);
 			}
-		}
+		});
 
 		return txt;
+	},
+	addTag (tag, select, type)
+	{
+		if (typeof type === 'undefined')
+			type = 0;
+
+		let tags = tag.split('|');
+
+		let openTag = tags[0];
+		let closeTag = tags[1];
+
+		let rep, url;
+
+		if (type === 1)
+			url = prompt('Введите ссылку:', '');
+		else if (type === 2)
+			url = prompt('Введите ссылку на видео:', '');
+		else if (type === 3 || type === 4)
+			url = prompt('Введите ссылку на картинку:', '');
+		else if (type === 6)
+			url = prompt('Введите ссылку на песню:', '');
+
+		if (type > 0 && type <= 6 && (url === '' || url === null))
+			return;
+
+		if (type === 0)
+			rep = openTag + select + closeTag;
+		else if (type === 1)
+		{
+			if (select === "")
+				rep = '[url]' + url + '[/url]';
+			else
+				rep = '[url=' + url + ']' + select + '[/url]';
+		}
+		else if (type === 2)
+			rep = '[youtube]'  + url + '[/youtube]';
+		else if (type === 3)
+			rep = '[img]'  + url + '[/img]';
+		else if (type === 4)
+			rep = '[img_big]'  + url + '[/img_big]';
+		else if (type === 5)
+		{
+			let list = select.split('\n');
+
+			for (let i = 0;i < list.length; i++)
+				list[i] = '[*]' + list[i] + '[/*]';
+
+			rep = openTag + '\n' + list.join("\n") + '\n' +closeTag;
+		}
+		else if (type === 6)
+			rep = '[mp3]'  + url + '[/mp3]';
+
+		return rep;
 	}
 }

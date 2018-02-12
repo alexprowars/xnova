@@ -94,9 +94,7 @@ $(document).ready(function()
 			error: function() {
 				alert('Что-то пошло не так!? Попробуйте еще раз');
 			},
-			complete: function()
-			{
-				$('#tooltip').hide();
+			complete: function() {
 				application.loader = false;
 			}
 		});
@@ -129,8 +127,19 @@ $(document).ready(function()
 						});
 					})
 				}
-				else if (result.data.html !== '') {
-					$('.jconfirm-content').html(result.data.html);
+				else if (result.data.html !== '')
+				{
+					if (htmlRender !== null)
+						htmlRender.$destroy();
+
+					htmlRender = new (Vue.extend({
+						name: 'html-render',
+						template: '<div>'+result.data.html+'</div>'
+					}))().$mount();
+
+					Vue.nextTick(function () {
+						$('.jconfirm-content').html(htmlRender.$el);
+					}.bind(this));
 				}
 			},
 			error: function() {
@@ -140,15 +149,6 @@ $(document).ready(function()
 				application.loader = false;
 			}
 		})
-	})
-	.on('change', 'input.checkAll', function()
-	{
-		var checked = $(this).is(':checked');
-
-		$(this).closest('form').find('input[type=checkbox]').each(function()
-		{
-			$(this).prop('checked', checked);
-		});
 	})
 	.on('click', '.popup-user', function(e)
 	{
@@ -183,6 +183,8 @@ $(document).ready(function()
 	}
 });
 
+var htmlRender = null;
+
 function showWindow (title, url, width)
 {
 	if (isMobile)
@@ -210,7 +212,19 @@ function showWindow (title, url, width)
 				success: function (result)
 				{
 					this.setTitle(result.data.title);
-					this.setContent(result.data.html);
+
+					if (htmlRender !== null)
+						htmlRender.$destroy();
+
+					htmlRender = new (Vue.extend({
+						name: 'html-render',
+						template: '<div>'+result.data.html+'</div>'
+					}))().$mount();
+
+					Vue.nextTick(function () {
+						this.setContent(htmlRender.$el);
+					}.bind(this));
+
 				}.bind(this)
 			});
 		}

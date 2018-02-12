@@ -73,34 +73,32 @@
 				<span class="sprite bb_palette"></span>
 			</button>
 
-			<span class="buttons" title="Предварительный просмотр" v-on:click="showPreview = !showPreview">
+			<span v-if="message.length > 0" class="buttons" title="Предварительный просмотр" v-on:click="showPreview = !showPreview">
 				<span class="sprite bb_tick"></span>
 			</span>
 		</div>
 
-		<div v-show="showColors" id="colorpicker" class="colorpicker">
+		<div v-show="showColors" class="colorpicker">
 			<span v-for="color in colors" v-on:click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color">&nbsp;</span>
 	    </div>
 
-		<div v-show="showBgColors" id="colorpicker2" class="colorpicker">
+		<div v-show="showBgColors" class="colorpicker">
 			<span v-for="color in colors" v-on:click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color">&nbsp;</span>
 	    </div>
 
-		<div v-if="showSmiles" id="smiles" class="colorpicker">
-			<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)" style="cursor:pointer">
+		<div v-if="showSmiles" class="smiles">
+			<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
 		</div>
 		
 		<textarea name="text" ref="text" rows="10" title="" v-model="message"></textarea>
 
-		<div v-if="showPreview" id="showpanel">
-			<table class="table">
-				<tr>
-					<td class="c"><b>Предварительный просмотр</b></td>
-				</tr>
-				<tr>
-					<td class="b" v-html="parser.parse(message)"></td>
-				</tr>
-			</table>
+		<div v-if="showPreview" class="editor-component-preview table">
+			<div class="row">
+				<div class="col-12 c">Предварительный просмотр</div>
+			</div>
+			<div class="row">
+				<div class="col-12 b" v-html="parser.parse(message)"></div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -149,60 +147,11 @@
 
 			addTag (tag, type)
 			{
-				if (typeof type === 'undefined')
-					type = 0;
-
-				let tags = tag.split('|');
-
-				let openTag = tags[0];
-				let closeTag = tags[1];
-
-				let rep, url;
-
-				if (type === 1)
-					url = prompt('Введите ссылку:','');
-				else if (type === 2)
-					url = prompt('Введите ссылку на видео:','');
-				else if (type === 3 || type === 4)
-					url = prompt('Введите ссылку на картинку:','');
-				else if (type === 6)
-					url = prompt('Введите ссылку на песню:','');
-
-				if (type > 0 && type <= 6 && (url === '' || url === null))
-					return;
-
 				let len 	= this.message.length;
 				let start 	= this.$refs.text.selectionStart;
 				let end 	= this.$refs.text.selectionEnd;
 
-				let sel = this.message.substring(start, end);
-
-				if (type === 0)
-					rep = openTag + sel + closeTag;
-				else if (type === 1)
-				{
-					if (sel === "")
-						rep = '[url]' + url + '[/url]';
-					else
-						rep = '[url=' + url + ']' + sel + '[/url]';
-				}
-				else if (type === 2)
-					rep = '[youtube]'  + url + '[/youtube]';
-				else if (type === 3)
-					rep = '[img]'  + url + '[/img]';
-				else if (type === 4)
-					rep = '[img_big]'  + url + '[/img_big]';
-				else if (type === 5)
-				{
-					let list = sel.split('\n');
-
-					for (let i = 0;i < list.length; i++)
-						list[i] = '[*]' + list[i] + '[/*]';
-
-					rep = openTag + '\n' + list.join("\n") + '\n' +closeTag;
-				}
-				else if (type === 6)
-					rep = '[mp3]'  + url + '[/mp3]';
+				let rep = this.parser.addTag(tag, this.message.substring(start, end), type)
 
 				this.message = this.message.substring(0, start) + rep + this.message.substring(end, len);
 			}

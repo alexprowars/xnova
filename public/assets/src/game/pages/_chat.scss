@@ -16,6 +16,7 @@
 			font-weight: normal;
 			color: #04AE04;
 			padding: 2px 3px;
+			cursor: pointer;
 		}
 
 		&2 {
@@ -23,7 +24,8 @@
 			font-weight: normal;
 			color: #04AE04;
 			padding: 2px 3px;
-			background-color: #00FFAA
+			background-color: #00FFAA;
+			cursor: pointer;
 		}
 
 		&3 {
@@ -32,11 +34,8 @@
 			color: #04AE04;
 			background-color: #ddd;
 			padding: 2px 3px;
+			cursor: pointer;
 		}
-	}
-
-	div {
-		margin: 5px 0;
 	}
 
 	.to {
@@ -64,4 +63,17 @@
 			color: red;
 		}
 	}
+
+	.page-chat-messages-row {
+		margin: 5px 0;
+		text-align: left;
+	}
+}
+
+.page-chat .page-chat-message {
+	width: calc(100% - 100px);
+	margin-top: 2px;
+	font-size: 1.3rem;
+	padding: 2px;
+	margin-bottom: 5px;
 }

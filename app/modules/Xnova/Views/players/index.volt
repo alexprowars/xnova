@@ -1,12 +1,9 @@
-<style>.image {
-	max-width: 556px !important
-}</style>
 {% if isPopup is false %}
 <div class="block">
 	<div class="title">Информация об игроке</div>
 	<div class="content container-fluid">
 {% endif %}
-			<div class="table">
+			<div class="table page-players">
 				<div class="row">
 					<div class="col-4 text-center">
 						<img src="{{ parse['avatar'] }}" alt="{{ parse['username'] }}" width="100%">

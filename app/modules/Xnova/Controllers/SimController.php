@@ -61,7 +61,7 @@ class SimController extends Controller
 		foreach ($res AS $id)
 		{
 			if ($this->planet->getUnitCount($id) > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->getUnitCount($id), 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
+				$parse['slot_0'][$id] = ['c' => $this->planet->getUnitCount($id)];
 		
 			if ($this->user->getTechLevel($id) > 0)
 				$parse['slot_0'][$id] = ['c' => $this->user->getTechLevel($id)];

@@ -29,7 +29,6 @@ $lang['main_menu'] = array
 	'records' 					=> array('Рекорды', 'records/', 0),
 	'hall' 						=> array('Зал славы', 'hall/', 0),
 	'log' 						=> array('Логи', 'log/', 0),
-	'calculate' 				=> array('Расчеты', 'calculate/', 0),
 	'admin' 					=> array('Админка', 'admin/', 1, true),
 );
 

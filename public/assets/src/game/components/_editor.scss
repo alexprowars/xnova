@@ -2,6 +2,9 @@
 	text-align: center;
 	padding: 2px 4px;
 	font-size: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&.inline {
 		display: inline-block;
@@ -33,18 +36,67 @@
 
 	.gensmall {
 		font-size: 1em;
-		margin-top: 0;
 		color: #000000;
 		font-weight: 400;
 
 		select {
-			margin: 4px 0 0 0;
-			padding: 0 0 0 0;
 			font-weight: 400;
-			white-space: nowrap;
-			vertical-align: top;
 			background-color: #f2f4f8;
 			color: #000000;
 		}
 	}
+}
+
+.editor-component-preview {
+	width: 99%;
+	margin: 10px auto;
+}
+
+.quotetitle {
+	margin: 3px 0 0 0;
+	padding: 2px 4px;
+	border: solid 1px #C8CBD9;
+	color: #7D8AA0;
+	background-color: #EAECF2;
+	font-size: 0.85em;
+	font-weight: bold;
+
+	input {
+		width: 65px;
+		font-size: 10px;
+		margin: 0;
+		padding: 0;
+		background: none;
+		color: #000000;
+	}
+}
+
+.quotecontent {
+	margin: 0 0 3px 0;
+	padding: 5px;
+	border: 1px solid #C8CBD9;
+	border-top-width: 0;
+	font-weight: normal;
+	background-color: #EFF2F6;
+	color: #444;
+
+	a {
+		color: #7D8AA0;
+	}
+
+	a:hover {
+		color: #9c0;
+		text-decoration: none;
+	}
+}
+
+.quotewrapper {
+	clear: both;
+	margin: 0 0 0 0;
+	//noinspection CssUnknownTarget
+	background: #EAECF2 url(../images/quote_header.gif) top left no-repeat;
+	padding-left: 17px;
+	border: solid 1px #C8CBD9;
+	border-bottom-color: #AEB3C5;
+	border-right-color: #AEB3C5;
 }

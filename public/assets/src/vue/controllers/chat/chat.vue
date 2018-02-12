@@ -2,8 +2,8 @@
 	<div class="page-chat">
 		<div class="col-12 th">
 			<div ref="chatbox" class="page-chat-messages">
-				<div v-for="item in messages" class="page-chat-row text-left">
-					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPlayer(item['user'])" style="cursor:pointer;">{{ date('H:m', item['time']) }}</span>
+				<div v-for="item in messages" class="page-chat-messages-row text-left">
+					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPlayer(item['user'])">{{ date('H:m', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
 					<span v-if="item['to'].length" :class="[item['private'] ? 'private' : 'player']">
 						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click="toPrivate(u)">{{ u }}</a></span>]
@@ -14,19 +14,25 @@
 		</div>
 		<div class="col-12 th">
 			<div class="float-right">
-				<div class="toolbar d-inline-block">
-					<span class="buttons" title="Вставить ссылку" v-on:click="addTag('[url]','[/url]', 1)"><span class="sprite bb_world_link"></span></span>
-					<span class="buttons" title="Вставить картинку" v-on:click="addTag('[img]','[/img]', 3)"><span class="sprite bb_picture_add"></span></span>
-					<span class="buttons" title="Смайлы" v-on:click="smiles = !smiles"><span class="sprite bb_emoticon_grin"></span></span>
+				<div class="editor-component-toolbar d-inline-block">
+					<button type="button" class="buttons" title="Вставить ссылку" v-on:click="addTag('[url]|[/url]', 1)">
+						<span class="sprite bb_world_link"></span>
+					</button>
+					<button type="button" class="buttons" title="Вставить картинку" v-on:click="addTag('[img]|[/img]', 3)">
+						<span class="sprite bb_picture_add"></span>
+					</button>
+					<button type="button" class="buttons" title="Смайлы" v-on:click="smiles = !smiles">
+						<span class="sprite bb_emoticon_grin"></span>
+					</button>
 				</div>
 				<div v-if="smiles" class="smiles">
-					<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)" style="cursor:pointer">
+					<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
 				</div>
 			</div>
-			<input ref="message" class="page-chat-message" type="text" v-model="message" v-on:keypress="$event.keyCode === '13' ? sendMessage : false" maxlength="750" title="">
-			<div class="separator"></div>
-			<input type="button" name="" value="Очистить" v-on:click.prevent="clear">
-			<input type="button" name="" value="Отправить" v-on:click.prevent="sendMessage">
+			<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750" title="">
+
+			<input type="button" value="Очистить" v-on:click.prevent="clear">
+			<input type="button" value="Отправить" v-on:click.prevent="sendMessage">
 		</div>
 	</div>
 </template>
@@ -93,8 +99,15 @@
 			}
 		},
 		methods: {
-			addTag (open, close, type) {
-				this.message = addTagToElement(open, close, type, this.$refs['message'])
+			addTag (tag, type)
+			{
+				let len 	= this.message.length;
+				let start 	= this.$refs.text.selectionStart;
+				let end 	= this.$refs.text.selectionEnd;
+
+				let rep = this.parser.addTag(tag, this.message.substring(start, end), type)
+
+				this.message = this.message.substring(0, start) + rep + this.message.substring(end, len);
 			},
 			addSmile (smile)
 			{
@@ -124,7 +137,13 @@
 
 				this.message = '';
 
-				this.socket.send(encodeURIComponent(message), this.$store.state.user.id, this.$store.state.user.name, this.page['color'], this.page['key']);
+				this.socket.send(
+					encodeURIComponent(message),
+					this.$store.state.user.id,
+					this.$store.state.user.name,
+					this.page['color'],
+					this.page['key']
+				);
 			},
 			init ()
 			{
@@ -156,13 +175,28 @@
 					this.socket.on('message', (message) =>
 					{
 						if (message['id'] <= this.message_id)
-								return false;
+							return false;
 
 						this.message_id = message['id'];
 
 						this.patterns.find.forEach((item, i) => {
 							message['text'] = message['text'].replace(item, this.patterns.replace[i]);
 						});
+
+						let j = 0;
+
+						this.parser.patterns.smiles.every((smile) =>
+						{
+							while (message['text'].indexOf(':'+smile+':') >= 0)
+							{
+								message['text'] = message['text'].replace(':'+smile+':', '<img src="'+this.$root.getUrl('assets/images/smile/'+smile+'.gif')+'">');
+
+								if (++j >= 3)
+									break;
+							}
+
+							return j < 3;
+						})
 
 						this.messages.push({
 							time: message['time'],
