@@ -70,58 +70,70 @@
 		position: fixed;
 		width: 250px !important;
 		height: 100%;
-		background-color: rgba(0,0,0,.90);
+		background-color: rgba(0, 0, 0, .90);
 		top: 0;
 		left: 0;
 		z-index: 190;
-		transform: translate(-250px,0);
+		transform: translate(-250px, 0);
 		transition: all ease-out 0.2s;
 		padding-top: 60px;
 	}
 
 	.menu-sidebar.active, .planet-sidebar.active{
-		transform: translate(0,0);
+		transform: translate(0, 0);
+	}
+
+	.main-planets {
+		margin: 0;
 	}
 
 	.planet-sidebar {
 		right: 0;
 		left: auto;
-		transform: translate(251px,0);
+		transform: translate(251px, 0);
 	}
 
-	.menu-sidebar {
-		.nav {
-			background: inherit;
-			overflow: scroll;
-			overflow-x: hidden;
-			overflow-y: auto;
-			-webkit-overflow-scrolling: touch;
-			width: 100%;
-			height: 100%;
-			padding: 0;
-			margin: 0;
-			top: 0;
-			left: 100%;
-			z-index: 0;
+	.main-menu {
+		margin: 0;
+		width: 0;
 
-			li {
-				list-style: none;
-				display: block;
+		.menu-sidebar {
+			ul {
+				background: inherit;
+				overflow: scroll;
+				overflow-x: hidden;
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+				width: 100%;
+				height: 100%;
 				padding: 0;
 				margin: 0;
-				border-bottom: 1px solid #324a6a;
-			}
+				top: 0;
+				left: 100%;
+				z-index: 0;
 
-			a {
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				overflow: hidden;
-				display: block;
-				padding: 8px 10px 8px 20px;
-				margin: 0;
-				position: relative;
-				color: #ffffff;
-				font-size: 1.25rem;
+				li {
+					list-style: none;
+					display: block;
+					padding: 0;
+					margin: 0;
+					border-bottom: 1px solid #324a6a;
+				}
+
+				a {
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
+					display: block;
+					padding: 8px 10px 8px 20px;
+					margin: 0;
+					position: relative;
+					color: #ffffff;
+					font-size: 1.25rem;
+					background: transparent;
+					border: none;
+					text-align: left;
+				}
 			}
 		}
 	}
@@ -130,7 +142,7 @@
 		padding: 60px 10px 0 10px;
 	}
 
-	.planetList.planet-sidebar .list {
+	.main-planets .planet-sidebar .list {
 		overflow: scroll;
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -139,29 +151,37 @@
 		height: 100%;
 	}
 
-	.planetList.planet-sidebar .list * {
+	.main-planets .planet-sidebar .list * {
 		font-size: 1.2rem;
 	}
 
-	.planetList .list .planet > div {
+	.main-planets .list .planet > div {
 		max-width: 160px;
 	}
 
-	.game_menu {
-		margin-left: 60px;
-		margin-right: 60px;
-		padding-top: 10px;
-		padding-bottom: 10px;
+	.top-menu-container {
+		background: transparent;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		flex-direction: column;
 	}
 
-	.icon-panel {
-		margin-top: 15px;
-		width: 100%;
-		text-align: center;
+	.top-menu-block {
+		justify-content: center;
+	}
 
-		a {
-			margin-right: 4%;
-		}
+	.top-menu-container .left {
+		padding: 10px 0;
+		background: #37476a;
+		border-radius: 0 0 5px 5px;
+		border: 1px solid #415683;
+		margin-left: 60px;
+		margin-right: 60px;
+	}
+
+	.top-menu-container .right {
+		margin-top: 15px;
 	}
 
 	.page-chat-messages {
@@ -234,7 +254,7 @@
 	}
 
 	#application {
-		.game_content {
+		main {
 			width: 100%;
 			padding: 0;
 		}
@@ -242,10 +262,6 @@
 		.game_menu {
 			width: auto;
 		}
-	}
-
-	.bar .m1 {
-	    padding: 0 15px;
 	}
 
 	.page-overview .planet-image a {
@@ -281,13 +297,9 @@
 
 @media only screen and (max-width: 361px)
 {
-	.bar .m1 {
+	.top-menu-block .m1 {
 		padding: 0 15px;
 		white-space: nowrap;
-	}
-
-	.icon-panel a {
-		margin-right: 2%;
 	}
 }
 

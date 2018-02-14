@@ -1,26 +1,24 @@
 <template>
-	<table width="100%">
-		<tr>
-			<th>
-				Текущее производство: <div class="z"></div>
-			</th>
-		</tr>
-		<tr>
-			<th class="k">
-				<div v-for="item in queue" class="row">
-					<div class="col-6 text-left">
-						<span class="positive">{{ item.count }}</span> {{ item.name }}
-					</div>
-					<div class="col-6 text-right">
-						{{ Format.time(item.end - $root.serverTime()) }}
-					</div>
-				</div>
-			</th>
-		</tr>
-		<tr>
-			<td class="c">Оставшееся время {{ Format.time(left_time) }}</td>
-		</tr>
-	</table>
+	<div class="page-building-unit-queue table">
+		<div class="row">
+			<div class="col-12 th">
+				Текущее производство:
+			</div>
+		</div>
+		<div v-for="item in queue" class="row">
+			<div class="col-6 text-left k">
+				<span class="positive">{{ item.count }}</span> {{ item.name }}
+			</div>
+			<div class="col-6 text-right k border-left-0">
+				{{ Format.time(item.end - $root.serverTime()) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12 c">
+				Оставшееся время {{ Format.time(left_time) }}
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>

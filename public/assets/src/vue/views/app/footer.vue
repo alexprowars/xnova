@@ -13,7 +13,7 @@
 					<a :href="$root.getUrl('contact/')">Контакты</a>|
 					<a :href="$root.getUrl('content/help/')">Новичкам</a>|
 					<a :href="$root.getUrl('content/agb/')">Правила</a>|
-					<a onclick="" title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>
+					<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a>/<a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>
 				</div>
 				<div class="clearfix"></div>
 			</div>
@@ -31,7 +31,7 @@
 				<a class="media_1" target="_blank" href="http://xnova.su/">© 2008 - {{ (new Date).getFullYear() }} Xcms</a>
 			</div>
 			<div class="col-4 text-center">
-				<a onclick="" title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a>/<a onclick="" title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>
+				<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a>/<a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>
 			</div>
 		</div>
 	</footer>

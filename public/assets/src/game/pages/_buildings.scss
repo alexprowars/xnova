@@ -4,7 +4,7 @@
 
 	.block > .title {
 		border: 1px solid $border-color;
-		margin: 2px 2px 0;
+		margin: 0 2px 2px 0;
 	}
 
 	&-build-queue {
@@ -19,7 +19,7 @@
 			margin: 0;
 
 			> div {
-				padding: 2px;
+				padding: 0 2px 2px 0;
 			}
 		}
 
@@ -215,22 +215,31 @@
 		background-repeat: no-repeat;
 
 		&.speed {
+			//noinspection CssUnknownTarget
 			background-image: url('../images/icons/speed.png');
 			background-position-y: 1px;
 		}
 
 		&.armor {
+			//noinspection CssUnknownTarget
 			background-image: url('../images/icons/armor.png');
 			background-position-y: 2px;
 		}
 
 		&.damage {
+			//noinspection CssUnknownTarget
 			background-image: url('../images/icons/damage.png');
 		}
 
 		&.shield {
+			//noinspection CssUnknownTarget
 			background-image: url('../images/icons/shield.png');
 			background-position-y: 1px;
 		}
+	}
+
+	.page-building-unit-queue {
+		margin: 0 2px 5px 2px;
+		width: auto;
 	}
 }

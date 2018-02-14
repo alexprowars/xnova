@@ -1,33 +1,7 @@
 <template>
-	<header class="game_menu">
-		<div class="d-sm-none text-center bar">
-			<a v-if="user['quests'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
-				<svg class="icon">
-					<use xlink:href="#icon-book"></use>
-				</svg>
-				<b>{{ 10 - user['quests'] }}</b>
-			</a>
-			<a class="m1 tooltip" :href="$root.getUrl('chat/')" data-content="Чат">
-				<svg class="icon">
-					<use xlink:href="#icon-chat"></use>
-				</svg>
-			</a>
-			<a class="m1 tooltip" :href="$root.getUrl('messages/')" data-content="Сообщения">
-				<svg class="icon">
-					<use xlink:href="#icon-message"></use>
-				</svg>
-				<b v-if="user.messages > 0">{{ user.messages }}</b>
-			</a>
-			<a v-if="user.alliance.id > 0" class="m1 tooltip" :href="$root.getUrl('alliance/chat/')" data-content="Альянс">
-				<svg class="icon">
-					<use xlink:href="#icon-alliance"></use>
-				</svg>
-				<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
-			</a>
-		</div>
-
-		<div class="bar d-none d-sm-flex">
-			<div class="message_list">
+	<header class="top-menu">
+		<div class="top-menu-container">
+			<div class="top-menu-block left">
 				<a v-if="user['quests'] < 10" class="m1 tooltip" :href="$root.getUrl('tutorial/')" data-content="Квесты">
 					<svg class="icon">
 						<use xlink:href="#icon-book"></use>
@@ -52,7 +26,8 @@
 					<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
 				</a>
 			</div>
-			<div class="top_menu">
+
+			<div class="top-menu-block right">
 				<a :href="$root.getUrl('stat/')" class="tooltip m1" data-content="Статистика">
 					<svg class="icon">
 						<use xlink:href="#icon-statistics"></use>

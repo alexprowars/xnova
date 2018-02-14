@@ -1,18 +1,19 @@
 <template>
 	<div class="page-building page-building-build">
 		<div class="block">
-			<div class="title row">
-				<div class="col-12 col-sm-6">
-					Занято полей
-					<span class="positive">{{ page['fields_current'] }}</span> из <span class="negative">{{ page['fields_max'] }}</span>
+			<div class="title">
+				<div class="row">
+					<div class="col-12 col-sm-6">
+						Занято полей
+						<span class="positive">{{ page['fields_current'] }}</span> из <span class="negative">{{ page['fields_max'] }}</span>
+					</div>
+					<div class="text-sm-right col-12 col-sm-6">
+						Осталось
+						<span class="positive">{{ fields_empty }}</span>
+						свободн{{ morph(page.fields_empty, ['ое', 'ых', 'ых']) }}
+						пол{{ morph(page.fields_empty, ['е', 'я', 'ей']) }}
+					</div>
 				</div>
-				<div class="text-sm-right col-12 col-sm-6">
-					Осталось
-					<span class="positive">{{ fields_empty }}</span>
-					свободн{{ morph(page.fields_empty, ['ое', 'ых', 'ых']) }}
-					пол{{ morph(page.fields_empty, ['е', 'я', 'ей']) }}
-				</div>
-				<div class="clearfix"></div>
 			</div>
 
 			<div class="page-building-build-queue" v-if="page.queue.length">

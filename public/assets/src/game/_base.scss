@@ -66,10 +66,9 @@ table th, .table th, .th {
 	font-size: 1.1rem;
 }
 
-.bar {
+.top-menu-container {
 	display: flex;
 	justify-content: space-between;
-	height: 24px;
 }
 
 td.b, div.b {
@@ -478,69 +477,70 @@ textarea#text {
 	width: 100%;
 }
 
-.game_content {
+main {
 	width: 1125px;
 	margin-top: 15px;
 	flex-grow: 2;
 	display: flex;
 	flex-direction: row;
+}
 
-	> .menu {
-		width: 150px;
-		margin: 0 15px 0 0;
+.main-menu {
+	width: 150px;
+	margin-right: 15px;
+	order: 1;
+
+	ul {
 		padding: 0;
-		order: 1;
+		margin: 0;
+	}
 
-		li {
-			display: inline;
+	li {
+		display: inline;
 
-			&:first-child > a {
-				border-radius: 3px 3px 0 0;
-			}
+		&:first-child > a {
+			border-radius: 3px 3px 0 0;
+		}
 
-			&:last-child > a {
-				border-radius: 0 0 3px 3px;
-				border-bottom: 1px solid $menu-border-color;
-			}
+		&:last-child > a {
+			border-radius: 0 0 3px 3px;
+			border-bottom: 1px solid $menu-border-color;
+		}
 
-			> a {
-				background: $menu-bg-color;
-				display: block;
-				float: none;
-				text-align: center;
-				border-top: 1px solid $menu-border-color;
-				border-left: 1px solid $menu-border-color;
-				border-right: 1px solid $menu-border-color;
-				border-bottom: none;
-				margin: 0;
-				color: $text-color;
-				font-weight: normal;
-				padding: 8px;
-				transition-property: background;
-				transition-duration: .25s;
-				font-size: 1.1rem;
+		> a {
+			background: $menu-bg-color;
+			display: block;
+			text-align: center;
+			border: 1px solid $menu-border-color;
+			border-bottom: none;
+			margin: 0;
+			color: $text-color;
+			font-weight: normal;
+			padding: 8px;
+			transition-property: background;
+			transition-duration: .25s;
+			font-size: 1.1rem;
 
-				&.active, &:hover {
-					background: $menu-bg-a-color;
-					text-decoration: none;
-				}
+			&.active, &:hover {
+				background: $menu-bg-a-color;
+				text-decoration: none;
 			}
 		}
 	}
+}
 
-	> .main-content {
-		overflow-x: visible;
-		overflow-y: visible;
-		flex-shrink: 1000000;
-		width: 100%;
-		order: 2;
-	}
+.main-content {
+	overflow-x: visible;
+	overflow-y: visible;
+	flex-shrink: 1000000;
+	width: 100%;
+	order: 2;
+}
 
-	> .planetList {
-		width: 160px;
-		margin-left: 15px;
-		order: 3;
-	}
+.main-planets {
+	order: 3;
+	margin-left: 15px;
+	width: 160px;
 }
 
 #application {
@@ -553,7 +553,7 @@ textarea#text {
 
 	&.set_imperium, &.set_sim {
 
-		.game_content {
+		main {
 
 			> .main-content {
 				white-space: nowrap;
@@ -635,14 +635,14 @@ ul {
 	}
 }
 
-.game_menu {
+.top-menu-container {
 	padding: 10px 0;
 	background: $main-bg-color;
 	border-radius: 0 0 5px 5px;
 	border: 1px solid $border-color;
 }
 
-.planetList {
+.main-planets {
 	.list {
 		overflow-y: auto;
 		overflow-x: hidden;
@@ -876,11 +876,9 @@ p {
 	font-size: 0;
 }
 
-.bar .m1 {
+.top-menu-block .m1 {
 	padding: 0 12px;
-	white-space: nowrap;
 	position: relative;
-	display: inline-block;
 
 	> b {
 		font-size: 1rem;
@@ -1063,10 +1061,9 @@ footer {
 	}
 }
 
-.top_menu {
+.top-menu-block {
 	display: flex;
 	align-items: center;
-	height: 27px;
 }
 
 #prophiler {
@@ -1153,6 +1150,7 @@ input[type=number]::-webkit-outer-spin-button {
 			width: 150px;
 			font-size: 0.9rem;
 			color: #c5c5c5;
+			text-align: left;
 
 			h1 {
 				color: #6f9fc8;

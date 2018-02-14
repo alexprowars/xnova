@@ -107,7 +107,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('max', 'max');
 	$compiler->addFunction('floor', 'floor');
 	$compiler->addFunction('ceil', 'ceil');
-	$compiler->addFunction('array_search', 'array_search');
 	$compiler->addFunction('is_email', 'is_email');
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
 	$compiler->addFunction('rand', 'mt_rand');
@@ -181,4 +180,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '3.2');
+define('VERSION', '4.0');

@@ -1,7 +1,7 @@
 @media (min-width: 480px) and (max-width: 1200px)
 {
 	.set_buildingsindex {
-		.planetList {
+		.main-planets {
 			width: 60px;
 
 			.list {
@@ -24,7 +24,7 @@
 			}
 		}
 
-		.game_content > .main-content {
+		main > .main-content {
 			width: 785px;
 		}
 	}
@@ -33,7 +33,7 @@
 		height: 44px;
 	}
 
-	#application .game_content {
+	main {
 		width: 1000px;
 	}
 
@@ -51,42 +51,49 @@
 
 @media (min-width: 481px) and (max-width: 992px)
 {
-	#application .game_content {
+	main {
 		width: 800px;
 	}
 
-	.planetList .list {
-		width: 60px;
-
-		.planet > div.clear {
-			display: block;
-		}
-
-		.planet img {
-			width: 52px;
-			height: 52px;
-		}
-	}
-
-	.game_content > .planetList {
+	.main-planets {
 		width: 60px;
 		margin-left: 5px;
+
+		.list {
+			width: 60px;
+
+			.planet > div.clear {
+				display: block;
+			}
+
+			.planet img {
+				width: 52px;
+				height: 52px;
+			}
+		}
 	}
 
-	.game_content .menu {
-		width: 100px;
+	.main-menu {
 		margin-right: 5px;
+		width: 100px;
 	}
 
 	.page-chat-messages {
 		width: calc(100% - 10px);
 	}
 
-	.bar .m1 {
+	.top-menu-block .m1 {
 	    padding: 0 6px;
 	}
 
 	.officier {
 		zoom: 0.8
+	}
+}
+
+@media (max-width: 790px) and (min-width: 481px) {
+	main {
+		width: 100%;
+		min-width: 600px;
 	}
 }
