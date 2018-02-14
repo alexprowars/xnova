@@ -21,6 +21,7 @@ let FleetOneController = require('./controllers/fleet/fleet-one.vue')
 let FleetTwoController = require('./controllers/fleet/fleet-two.vue')
 let ChatController = require('./controllers/chat/chat.vue')
 let MessagesController = require('./controllers/messages/messages.vue')
+let MerchantController = require('./controllers/merchant/merchant.vue')
 let AllianceChatController = require('./controllers/alliance/alliance_chat.vue')
 let HtmlController = require('./controllers/html.vue')
 
@@ -57,7 +58,10 @@ const routes = [{
 }, {
 	path: '/messages',
 	component: MessagesController
-},  {
+}, {
+	path: '/merchant',
+	component: MerchantController
+}, {
 	path: '/alliance/chat',
 	component: AllianceChatController
 }, {
@@ -71,6 +75,7 @@ Vue.component('tabs', require('./components/tabs.vue'));
 Vue.component('pagination', require('./components/pagination.vue'));
 Vue.component('text-viewer', require('./components/text-viewer.vue'));
 Vue.component('text-editor', require('./components/text-editor.vue'));
+Vue.component('number', require('./components/number.vue'));
 
 Vue.use(Vuex);
 Vue.use(VueRouter);

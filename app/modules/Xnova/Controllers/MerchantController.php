@@ -10,7 +10,10 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Exceptions\MessageException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Request;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/merchant")
@@ -36,153 +39,66 @@ class MerchantController extends Controller
 	public function indexAction ()
 	{
 		$parse = [];
-		$Message = '';
+
+		$parse['mod'] = [
+			'metal' => 1,
+			'crystal' => 2,
+			'deuterium' => 4,
+		];
 		
-		if (isset($_POST['ress']))
+		if ($this->request->hasPost('exchange'))
 		{
 			if ($this->user->credits <= 0)
 				throw new RedirectException('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/merchant/', 3);
 		
-			$Error = false;
-		
-			$metal = (isset($_POST['metal'])) ? intval($_POST['metal']) : 0;
-			$cristal = (isset($_POST['cristal'])) ? intval($_POST['cristal']) : 0;
-			$deut = (isset($_POST['deut'])) ? intval($_POST['deut']) : 0;
-		
-			switch ($_POST['ress'])
+			$metal = (int) $this->request->getPost('metal', 'int', 0);
+			$crystal = (int) $this->request->getPost('crystal', 'int', 0);
+			$deuterium = (int) $this->request->getPost('deuterium', 'int', 0);
+
+			if ($metal < 0 || $crystal < 0 || $deuterium < 0)
+				throw new MessageException('Злобный читер');
+
+			$type = trim($this->request->getPost('type'));
+
+			if (!in_array($type, Vars::getResources()))
+				throw new MessageException('Злобный читер');
+
+			$exchange = 0;
+
+			foreach (Vars::getResources() as $res)
 			{
-				case 'metal':
-					$Necessaire = ($cristal * 2) + ($deut * 4);
-
-					if ($cristal < 0 || $deut < 0 || $metal != 0 || $Necessaire == 0)
-					{
-						$Message = "Failed";
-						$Error = true;
-					}
-					elseif ($this->planet->metal > $Necessaire)
-						$this->planet->metal -= $Necessaire;
-					else
-					{
-						$Message = _getText('mod_ma_noten') . " " . _getText('Metal') . "! ";
-						$Error = true;
-					}
-
-					break;
-		
-				case 'cristal':
-		
-					$Necessaire = ($metal * 0.5) + ($deut * 2);
-
-					if ($metal < 0 || $deut < 0 || $cristal != 0 || $Necessaire == 0)
-					{
-						$Message = "Failed";
-						$Error = true;
-					}
-					elseif ($this->planet->crystal > $Necessaire)
-						$this->planet->crystal -= $Necessaire;
-					else
-					{
-						$Message = _getText('mod_ma_noten') . " " . _getText('Crystal') . "! ";
-						$Error = true;
-					}
-
-					break;
-		
-				case 'deuterium':
-		
-					$Necessaire = ($metal * 0.25) + ($cristal * 0.5);
-
-					if ($metal < 0 || $cristal < 0 || $deut != 0 || $Necessaire == 0)
-					{
-						$Message = "Failed";
-						$Error = true;
-					}
-					elseif ($this->planet->deuterium > $Necessaire)
-						$this->planet->deuterium -= $Necessaire;
-					else
-					{
-						$Message = _getText('mod_ma_noten') . " " . _getText('Deuterium') . "! ";
-						$Error = true;
-					}
-
-					break;
-		
-				default :
-		
-					$Message = "Ошибочная операция";
-					$Error = true;
-
-					break;
-		
+				if ($res != $type)
+					$exchange += $$res * ($parse['mod'][$res] / $parse['mod'][$type]);
 			}
-		
-			if ($Error == false)
+
+			if ($exchange <= 0)
+				throw new MessageException('Вы не можете обменять такое количество ресурсов');
+
+			if ($this->planet->{$type} < $exchange)
+				throw new MessageException('На планете недостаточно ресурсов данного типа');
+
+			$this->planet->{$type} -= $exchange;
+
+			foreach (Vars::getResources() as $res)
 			{
-				if ($_POST['ress'] != "metal")
-					$this->planet->metal += $metal;
-				if ($_POST['ress'] != "cristal")
-					$this->planet->crystal += $cristal;
-				if ($_POST['ress'] != "deuterium")
-					$this->planet->deuterium += $deut;
-
-				$this->planet->update();
-
-				$this->user->credits -= 1;
-				$this->user->update();
-
-				$tutorial = $this->db->query("SELECT id FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0")->fetch();
-
-				if (isset($tutorial['id']))
-					$this->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
-		
-				$Message = _getText('mod_ma_done');
+				if ($res != $type)
+					$this->planet->{$res} += $$res;
 			}
-		
-			if ($Error == true)
-				$parse['title'] = _getText('mod_ma_error');
-			else
-				$parse['title'] = _getText('mod_ma_donet');
-		
-			$parse['mes'] = $Message;
-		
-			throw new RedirectException($parse['mes'], $parse['title'], '/merchant/', 2);
+
+			$this->planet->update();
+
+			$this->user->credits -= 1;
+			$this->user->update();
+
+			$tutorial = $this->db->query("SELECT id FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0")->fetch();
+
+			if (isset($tutorial['id']))
+				$this->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
+
+			throw new RedirectException('Вы обменяли '.$exchange.' '._getText('res', $type), 'Обмен прошёл успешно', '/merchant/', 2);
 		}
-		elseif (isset($_POST['choix']))
-		{
-			$parse['mod_ma_res'] = "1";
-			$parse['type'] = $_POST['choix'];
-		
-			switch ($_POST['choix'])
-			{
-				case 'metal':
 
-					$parse['mod_ma_res_a'] = "2";
-					$parse['mod_ma_res_b'] = "4";
-
-					break;
-				case 'cristal':
-
-					$parse['mod_ma_res_a'] = "0.5";
-					$parse['mod_ma_res_b'] = "2";
-
-					break;
-				case 'deut':
-
-					$parse['mod_ma_res_a'] = "0.25";
-					$parse['mod_ma_res_b'] = "0.5";
-
-					break;
-				default:
-
-					throw new RedirectException('Злобный читер!', 'Ошибка', '/merchant/', 2);
-
-					break;
-			}
-		}
-		else
-			$parse['type'] = 'main';
-
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Торговец');
 	}

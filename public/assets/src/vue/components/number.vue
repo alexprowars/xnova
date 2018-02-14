@@ -1,0 +1,31 @@
+<template>
+	<input ref="input" v-model="formatValue" type="number" v-on:input="update($event.target.value)">
+</template>
+
+<script>
+	export default {
+		name: "input-zero",
+		props: ['value'],
+		data() {
+			return {
+				formatValue: parseInt(this.value) === 0 ? '' : this.value
+			}
+		},
+		watch: {
+			formatValue (value) {
+				this.formatValue = parseInt(value) === 0 ? '' : value;
+			}
+		},
+		methods: {
+			update (value)
+			{
+				value = parseInt(value);
+
+				if (isNaN(value))
+					value = 0;
+
+				this.$emit('input', value);
+			}
+		}
+	}
+</script>

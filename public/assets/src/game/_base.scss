@@ -66,6 +66,13 @@ table th, .table th, .th {
 	font-size: 1.1rem;
 }
 
+div.th {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+}
+
 .top-menu-container {
 	display: flex;
 	justify-content: space-between;
@@ -408,6 +415,7 @@ input[type=text], input[type=number], input[type=password] {
 	margin: 0;
 	text-align: center;
 	width: auto;
+	max-width: 100%;
 }
 
 .fleet-coordinates-input input[type=number] {
