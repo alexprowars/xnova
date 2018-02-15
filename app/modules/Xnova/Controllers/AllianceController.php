@@ -1097,9 +1097,32 @@ class AllianceController extends Controller
 
 		$parse = [];
 		$parse['name'] = $allyrow['name'];
-		$parse['data'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_stats WHERE id = ".$allyid." AND type = 2 ORDER BY time ASC"));
+		$parse['points'] = [];
 
-		$this->view->setVar('parse', $parse);
+		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$allyid." AND time > ".(time() - 14 * 86400)." AND type = 2 ORDER BY time ASC");
+
+		while ($item = $items->fetch())
+		{
+			$parse['points'][] = [
+				'date' => (int) $item['time'],
+				'rank' => [
+					'tech' => (int) $item['tech_rank'],
+					'build' => (int) $item['build_rank'],
+					'defs' => (int) $item['defs_rank'],
+					'fleet' => (int) $item['fleet_rank'],
+					'total' => (int) $item['total_rank'],
+				],
+				'point' => [
+					'tech' => (int) $item['tech_points'],
+					'build' => (int) $item['build_points'],
+					'defs' => (int) $item['defs_points'],
+					'fleet' => (int) $item['fleet_points'],
+					'total' => (int) $item['total_points'],
+				]
+			];
+		}
+
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Статистика альянса');
 		$this->showTopPanel(false);

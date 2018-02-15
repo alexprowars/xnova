@@ -263,7 +263,7 @@
 				return this.$store.state.page;
 			}
 		},
-		data: function()
+		data ()
 		{
 			return {
 				clock: 0,
@@ -272,27 +272,27 @@
 			}
 		},
 		methods: {
-			clockUpdate: function() {
+			clockUpdate () {
 				this.clock = this.$root.serverTime();
 			},
-			clockStop: function() {
+			clockStop () {
 				clearTimeout(this.clock_timeout);
 			},
-			clockStart: function () {
+			clockStart () {
 				this.clock_timeout = setTimeout(this.clockUpdate, 1000);
 			}
 		},
 		watch: {
-			clock: function() {
+			clock () {
 				this.clockStart();
 			}
 		},
-		mounted: function()
+		mounted ()
 		{
 			this.clockStop();
 			this.clockUpdate();
 		},
-		destroyed: function () {
+		destroyed () {
 			this.clockStop();
 		}
 	}

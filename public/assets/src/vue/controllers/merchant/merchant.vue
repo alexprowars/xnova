@@ -32,9 +32,9 @@
 								<div class="col-6 th"></div>
 							</div>
 							<div v-for="res in ['metal', 'crystal', 'deuterium']" class="row">
-								<div class="col-3 th">{{ $root.getLang('RESOURCES', res) }}</div>
-								<div class="col-3 th">{{ page['mod'][res] / page['mod'][type] }}</div>
-								<div class="col-6 th">
+								<div class="col-3 th middle">{{ $root.getLang('RESOURCES', res) }}</div>
+								<div class="col-3 th middle">{{ page['mod'][res] / page['mod'][type] }}</div>
+								<div class="col-6 th middle">
 									<number v-if="type !== res" :name="res" min="0" v-model="exchange[res]" placeholder="введите кол-во" v-on:input="calculate"></number>
 									<span v-else="">{{ exchange[res] }}</span>
 								</div>

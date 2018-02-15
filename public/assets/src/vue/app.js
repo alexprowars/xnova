@@ -23,6 +23,7 @@ let ChatController = require('./controllers/chat/chat.vue')
 let MessagesController = require('./controllers/messages/messages.vue')
 let MerchantController = require('./controllers/merchant/merchant.vue')
 let AllianceChatController = require('./controllers/alliance/alliance_chat.vue')
+let PlayersStatController = require('./controllers/players/players_stat.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -64,6 +65,12 @@ const routes = [{
 }, {
 	path: '/alliance/chat',
 	component: AllianceChatController
+}, {
+	path: '/alliance/stat/id/:ally_id',
+	component: PlayersStatController
+}, {
+	path: '/players/stat/:user_id',
+	component: PlayersStatController
 }, {
 	path: '*',
 	component: HtmlController
@@ -222,7 +229,7 @@ window.application = new Vue({
 				j.find("script").each(function()
 				{
 					if ($(this).attr('src') !== undefined)
-						$.getScript($(this).attr('src'))
+						$.cachedScript($(this).attr('src'))
 					else
 						jQuery.globalEval($(this).text());
 				});
