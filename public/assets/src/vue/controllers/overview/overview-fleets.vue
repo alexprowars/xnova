@@ -1,7 +1,7 @@
 <template>
-	<table class="table">
-		<tr is="game-page-overview-fleets-row" v-for="item in items" :item="item"></tr>
-	</table>
+	<div class="table overview-fleets">
+		<game-page-overview-fleets-row v-for="item in items" :item="item"></game-page-overview-fleets-row>
+	</div>
 </template>
 
 <script>

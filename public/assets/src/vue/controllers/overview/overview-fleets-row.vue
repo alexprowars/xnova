@@ -1,13 +1,11 @@
 <template>
-	<tr v-if="time >= 0" class="{{ item['status'] }}">
-		<th width="80">
+	<div v-if="time >= 0" class="row overview-fleets-row">
+		<div class="col-2 th">
 			<div class="z">{{ Format.time(time, ':', true) }}</div>
 			<div class="positive">{{ item['date'] }}</div>
-		</th>
-		<th class="text-left" colspan="3">
-			<span :class="[item['status'], item['prefix'], item['mission']]" v-html="item['text']"></span>
-		</th>
-	</tr>
+		</div>
+		<div class="col-10 th text-left" :class="[item['status'], item['prefix'], item['mission']]" v-html="item['text']"></div>
+	</div>
 </template>
 
 <script>

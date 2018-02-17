@@ -354,6 +354,7 @@ class Controller extends PhalconController
 				],
 				'planets' => $planets,
 				'timezone' => (int) $this->user->timezone,
+				'color' => (int) $this->user->color,
 				'quests' => $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt']
 			];
 
@@ -368,6 +369,11 @@ class Controller extends PhalconController
 			}
 
 			Request::addData('user', $user);
+
+			Request::addData('chat', [
+				'key' => md5($this->user->getId().'|'.$this->user->username.'SuperPuperChat'),
+				'server' => 'https://uni5.xnova.su:6677',
+			]);
 
 			Request::addData('resources', false);
 

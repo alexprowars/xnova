@@ -22,6 +22,8 @@
 			</div>
 		</main>
 
+		<chat :visible="$store.state.route.controller !== 'chat'"></chat>
+
 		<application-footer v-if="$store.state.view.header"></application-footer>
 
 		<div id="ajaxLoader" :class="{active: $root.loader}"></div>

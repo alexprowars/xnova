@@ -3,10 +3,10 @@
 		<div class="col-12 th">
 			<div ref="chatbox" class="page-chat-messages">
 				<div v-for="item in messages" class="page-chat-messages-row text-left">
-					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPlayer(item['user'])">{{ date('H:m', item['time']) }}</span>
+					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ date('H:m', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
 					<span v-if="item['to'].length" :class="[item['private'] ? 'private' : 'player']">
-						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click="toPrivate(u)">{{ u }}</a></span>]
+						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click.prevent="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click.prevent="toPrivate(u)">{{ u }}</a></span>]
 					</span>
 					<span class="page-chat-row-message" v-html="item['text']"></span>
 				</div>
@@ -93,12 +93,18 @@
 		},
 		watch: {
 			messages () {
-				Vue.nextTick(() => {
-					$(this.$refs['chatbox']).scrollTop($(this.$refs['chatbox']).height());
-				});
+				setTimeout(() => {
+					this.scrollToBottom()
+				}, 250);
+			},
+			message () {
+				$(this.$refs['text']).focus();
 			}
 		},
 		methods: {
+			scrollToBottom () {
+				$(this.$refs['chatbox']).scrollTop($(this.$refs['chatbox']).prop('scrollHeight'));
+			},
 			addTag (tag, type)
 			{
 				let len 	= this.message.length;
@@ -113,8 +119,6 @@
 			{
 				this.message = this.message+' :'+smile+':';
 				this.smiles = false;
-
-				$(this.$refs['message']).focus();
 			},
 			toPlayer (user) {
 				this.message = 'для ['+user+'] '+this.message;
@@ -211,9 +215,21 @@
 				});
 			}
 		},
-		created () {
-			this.socket = io.connect(this.page['server'], {query: 'userId='+this.$store.state.user.id+'&userName='+this.$store.state.user.name+'&key='+this.page['key'], secure: true});
+		created ()
+		{
+			this.socket = io.connect(this.page['server'], {
+				query: 'userId='+this.$store.state.user.id+'&userName='+this.$store.state.user.name+'&key='+this.page['key'],
+				secure: true
+			});
+
 			this.init();
+
+			$(window).on('resize.chat', () => {
+				this.scrollToBottom()
+			});
+		},
+		destroyed () {
+			$(window).off('resize.chat');
 		}
 	}
 </script>

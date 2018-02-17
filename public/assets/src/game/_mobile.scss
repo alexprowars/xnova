@@ -169,7 +169,7 @@
 	}
 
 	.top-menu-block {
-		justify-content: center;
+		justify-content: space-around;
 	}
 
 	.top-menu-container .left {
@@ -294,13 +294,13 @@
 			display: inline-block;
 		}
 	}
-}
 
-@media only screen and (max-width: 361px)
-{
+	header {
+		width: 100%;
+	}
+
 	.top-menu-block .m1 {
-		padding: 0 15px;
-		white-space: nowrap;
+		padding: 0;
 	}
 }
 

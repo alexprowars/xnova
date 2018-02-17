@@ -83,6 +83,7 @@ Vue.component('pagination', require('./components/pagination.vue'));
 Vue.component('text-viewer', require('./components/text-viewer.vue'));
 Vue.component('text-editor', require('./components/text-editor.vue'));
 Vue.component('number', require('./components/number.vue'));
+Vue.component('chat', require('./components/chat.vue'));
 
 Vue.use(Vuex);
 Vue.use(VueRouter);

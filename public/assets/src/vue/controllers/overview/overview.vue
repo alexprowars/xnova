@@ -133,16 +133,16 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th middle">
-									<img :src="$root.getUrl('assets/images/wins.gif')" alt="" align="absmiddle" class="tooltip" data-content="Победы">
+									<img :src="$root.getUrl('assets/images/wins.gif')" alt="" align="absmiddle" class="tooltip" data-content="Победы">&nbsp;
 									{{ page['raids']['win'] }}
 									&nbsp;&nbsp;
-									<img :src="$root.getUrl('assets/images/losses.gif')" alt="" align="absmiddle" class="tooltip" data-content="Поражения">
+									<img :src="$root.getUrl('assets/images/losses.gif')" alt="" align="absmiddle" class="tooltip" data-content="Поражения">&nbsp;
 									{{ page['raids']['lost'] }}
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									Фракция: <a :href="$root.getUrl('race/')">{{ $store.state['user']['race'] }}</a>
+									Фракция: <a :href="$root.getUrl('race/')">{{ $root.getLang('RACES', $store.state['user']['race']) }}</a>
 								</div>
 							</div>
 							<div class="row">
@@ -233,7 +233,7 @@
 			</div>
 		</div>
 
-		<div v-if="page['chat'].length > 0" class="page-overview-chat">
+		<div v-if="page['chat'].length > 0" class="page-overview-chat d-sm-none">
 			<div class="separator"></div>
 
 			<table class="table" style="max-width: 100%">

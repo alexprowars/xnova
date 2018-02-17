@@ -11,30 +11,26 @@
 	font-size: 1.2rem;
 
 	.date {
-		&1 {
+
+		&1, &2, &3 {
+			padding: 1px 2px;
 			text-decoration: none;
 			font-weight: normal;
-			color: #04AE04;
-			padding: 2px 3px;
 			cursor: pointer;
+		}
+
+		&1 {
+			color: #04AE04;
 		}
 
 		&2 {
-			text-decoration: none;
-			font-weight: normal;
 			color: #04AE04;
-			padding: 2px 3px;
 			background-color: #00FFAA;
-			cursor: pointer;
 		}
 
 		&3 {
-			text-decoration: none;
-			font-weight: normal;
 			color: #04AE04;
 			background-color: #ddd;
-			padding: 2px 3px;
-			cursor: pointer;
 		}
 	}
 
