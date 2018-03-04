@@ -489,11 +489,7 @@ class Planet extends Model
 		$this->planet_updated = true;
 
 		foreach (Vars::getResources() AS $res)
-		{
-			$storage = $this->getBuildLevel($res.'_store');
-
-			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, $storage)))) * $this->user->bonusValue('storage'));
-		}
+			$this->{$res.'_max'}  = floor(($config->game->baseStorageSize + floor(50000 * round(pow(1.6, $this->getBuildLevel($res.'_store'))))) * $this->user->bonusValue('storage'));
 
 		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));
 
@@ -510,15 +506,16 @@ class Planet extends Model
 			foreach (Vars::getResources() AS $res)
 				$this->{$res.'_perhour'} = $config->game->get($res.'_basic_income');
 
-			$production_level = 0;
+			$this->production_level = 0;
 		}
 		elseif ($this->energy_max >= abs($this->energy_used))
 		{
-			$production_level = 100;
-			$akk_add = round(($this->energy_max - abs($this->energy_used)) * ($productionTime / 3600), 2);
+			$this->production_level = 100;
 
-			if ($this->battery_max > ($this->energy_ak + $akk_add))
-				$this->energy_ak += $akk_add;
+			$energy = round(($this->energy_max - abs($this->energy_used)) * ($productionTime / 3600), 2);
+
+			if ($this->battery_max > ($this->energy_ak + $energy))
+				$this->energy_ak += $energy;
 			else
 				$this->energy_ak = $this->battery_max;
 		}
@@ -526,26 +523,24 @@ class Planet extends Model
 		{
 			if ($this->energy_ak > 0)
 			{
-				$need_en = ((abs($this->energy_used) - $this->energy_max) / 3600) * $productionTime;
+				$energy = ((abs($this->energy_used) - $this->energy_max) / 3600) * $productionTime;
 
-				if ($this->energy_ak > $need_en)
+				if ($this->energy_ak > $energy)
 				{
-					$production_level = 100;
-					$this->energy_ak -= round($need_en, 2);
+					$this->production_level = 100;
+					$this->energy_ak -= round($energy, 2);
 				}
 				else
 				{
-					$production_level = round((($this->energy_max + $this->energy_ak * 3600) / abs($this->energy_used)) * 100, 1);
+					$this->production_level = round((($this->energy_max + $this->energy_ak * 3600) / abs($this->energy_used)) * 100, 1);
 					$this->energy_ak = 0;
 				}
 			}
 			else
-				$production_level = round(($this->energy_max / abs($this->energy_used)) * 100, 1);
+				$this->production_level = round(($this->energy_max / abs($this->energy_used)) * 100, 1);
 		}
 
-		$production_level = min(max($production_level, 0), 100);
-
-		$this->production_level = $production_level;
+		$this->production_level = min(max($this->production_level, 0), 100);
 
 		foreach (Vars::getResources() AS $res)
 		{
@@ -553,10 +548,10 @@ class Planet extends Model
 
 			if ($this->{$res} <= $this->{$res.'_max'})
 			{
-				$this->{$res.'_production'} = (($productionTime * ($this->{$res.'_perhour'} / 3600))) * (0.01 * $production_level);
+				$this->{$res.'_production'} = ($productionTime * ($this->{$res.'_perhour'} / 3600)) * (0.01 * $this->production_level);
 
 				if (!$this->user->isVacation())
-					$this->{$res.'_base'} = (($productionTime * ($config->game->get($res.'_basic_income', 0) / 3600)) * $config->game->get('resource_multiplier', 1));
+					$this->{$res.'_base'} = ($productionTime * ($config->game->get($res.'_basic_income', 0) / 3600)) * $config->game->get('resource_multiplier', 1);
 				else
 					$this->{$res.'_base'} = 0;
 
@@ -566,7 +561,7 @@ class Planet extends Model
 					$this->{$res.'_production'} = $this->{$res.'_max'} - $this->{$res};
 			}
 
-			$this->{$res.'_perhour'} = round(floatval($this->{$res.'_perhour'}) * (0.01 * $production_level));
+			$this->{$res.'_perhour'} = round(floatval($this->{$res.'_perhour'}) * (0.01 * $this->production_level));
 			$this->{$res} += $this->{$res.'_production'};
 
 			if ($this->{$res} < 0)
@@ -609,7 +604,7 @@ class Planet extends Model
 			);
 
 			while ($item = $items->fetch())
-				$list[] = $item['level'];
+				$list[] = (int) $item['level'];
 		}
 
 		return $list;

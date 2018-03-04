@@ -24,6 +24,7 @@ let MessagesController = require('./controllers/messages/messages.vue')
 let MerchantController = require('./controllers/merchant/merchant.vue')
 let AllianceChatController = require('./controllers/alliance/alliance_chat.vue')
 let PlayersStatController = require('./controllers/players/players_stat.vue')
+let NotesController = require('./controllers/notes/notes.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -62,6 +63,9 @@ const routes = [{
 }, {
 	path: '/merchant',
 	component: MerchantController
+}, {
+	path: '/notes',
+	component: NotesController
 }, {
 	path: '/alliance/chat',
 	component: AllianceChatController

@@ -1,10 +1,10 @@
 <template>
 	<div v-if="time >= 0" class="row overview-fleets-row">
-		<div class="col-2 th">
+		<div class="col-3 col-sm-2 th">
 			<div class="z">{{ Format.time(time, ':', true) }}</div>
 			<div class="positive">{{ item['date'] }}</div>
 		</div>
-		<div class="col-10 th text-left" :class="[item['status'], item['prefix'], item['mission']]" v-html="item['text']"></div>
+		<div class="col-9 col-sm-10 th text-left" :class="[item['status'], item['prefix'], item['mission']]" v-html="item['text']"></div>
 	</div>
 </template>
 

@@ -12,6 +12,7 @@ use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/notes")
@@ -126,7 +127,7 @@ class NotesController extends Controller
 		$notes = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." ORDER BY time DESC");
 
 		$parse = [];
-		$parse['list'] = [];
+		$parse['items'] = [];
 
 		while ($note = $notes->fetch())
 		{
@@ -139,15 +140,14 @@ class NotesController extends Controller
 			elseif ($note["priority"] == 2)
 				$list['color'] = "red";
 
-			$list['id'] = $note['id'];
-			$list['time'] = $this->game->datezone("Y-m-d h:i:s", $note["time"]);
+			$list['id'] = (int) $note['id'];
+			$list['time'] = $this->game->datezone("Y.m.d h:i:s", $note["time"]);
 			$list['title'] = $note['title'];
-			$list['text'] = mb_strlen($note['text'], 'UTF-8');
 
-			$parse['list'][] = $list;
+			$parse['items'][] = $list;
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Заметки');
 		$this->showTopPanel(false);

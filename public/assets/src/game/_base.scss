@@ -997,36 +997,6 @@ div.errormessage {
 	display: inline-block;
 }
 
-.officiers {
-	.powers {
-		border-spacing: 0 !important;
-		border-collapse: collapse;
-		margin-top: 10px;
-
-		td {
-			padding: 2px 5px;
-			color: #84CFEF;
-		}
-	}
-
-	.row {
-		border-bottom: 0;
-		padding-top: 10px;
-		padding-bottom: 10px;
-		background: $main-bg-color;
-		color: #d7d7d7;
-		border-bottom: 1px solid $border-color;
-
-		> div > img {
-			width: 100%;
-		}
-	}
-
-	&:last-child {
-		border-bottom: 0;
-	}
-}
-
 *{-webkit-font-smoothing: antialiased;}
 
 .e404 {
@@ -1180,8 +1150,11 @@ input[type=number]::-webkit-outer-spin-button {
 	}
 }
 
-.row > div.col-sm-4 + div.col-sm-4 {
-	padding-left: 0;
+@media (min-width: 481px)
+{
+	.row > div.col-sm-4 + div.col-sm-4 {
+		padding-left: 0;
+	}
 }
 
 header svg.icon {
@@ -1196,4 +1169,8 @@ header a:hover svg.icon {
 
 .page-alliance-chat .image, .page-players .image {
 	max-width: 556px !important
+}
+
+.padding-0 {
+	padding: 0 !important;
 }
