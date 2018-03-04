@@ -120,7 +120,11 @@ trait Initializations
 			'username'		=> $this->_config->database->username,
 			'password' 		=> $this->_config->database->password,
 			'dbname'		=> $this->_config->database->dbname,
-			'options'		=> [PDO::ATTR_PERSISTENT => false, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+			'options'		=> [
+				PDO::ATTR_PERSISTENT => false,
+				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+			]
 		]);
 
 		$di->set('db', $connection);
@@ -137,6 +141,15 @@ trait Initializations
 		$modelsManager->setEventsManager($eventsManager);
 
 		$di->set('modelsManager', $modelsManager, true);
+
+		ini_set('phalcon.orm.exception_on_failed_save', true);
+
+		Model::setup([
+			'events' => true,
+			'columnRenaming' => false,
+			'notNullValidations' => false,
+			'virtualForeignKeys '=> true
+		]);
 	}
 
 	/**
@@ -286,13 +299,6 @@ trait Initializations
 
 			return $metaData;
 		});
-
-		Model::setup([
-			'events' 			=> true,
-			'columnRenaming' 	=> false,
-			'notNullValidations'=> false,
-			'virtualForeignKeys'=> true
-		]);
 
 		$di->set('annotations', function () use ($config)
 		{

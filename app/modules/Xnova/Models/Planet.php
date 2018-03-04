@@ -13,7 +13,6 @@ use Phalcon\Exception;
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
 use Xnova\Vars;
-use Xnova\User;
 use Xnova\Models\User as UserModel;
 
 /** @noinspection PhpHierarchyChecksInspection */

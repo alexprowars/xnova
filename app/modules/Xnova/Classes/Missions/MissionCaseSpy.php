@@ -20,7 +20,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$CurrentUser = $this->db->query("SELECT spy_tech, rpg_technocrate FROM game_users WHERE id = '" . $this->_fleet->owner . "';")->fetch();
+		$owner = UserModel::findFirst($this->_fleet->owner);
 
 		$TargetPlanet = Planet::findByCoords($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type);
 
@@ -30,23 +30,25 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			return false;
 		}
 
-		$TargetUser = UserModel::findFirst($TargetPlanet->id_owner);
+		$targetUser = UserModel::findFirst($TargetPlanet->id_owner);
 
-		if (!$TargetUser)
+		if (!$targetUser)
 		{
 			$this->ReturnFleet();
 
 			return false;
 		}
 
-		$TargetPlanet->assignUser($TargetUser);
+		$TargetPlanet->assignUser($targetUser);
 
-		$CurrentSpyLvl = $CurrentUser['spy_tech'];
-		if ($CurrentUser['rpg_technocrate'] > time())
+		$CurrentSpyLvl = $owner->getTechLevel('spy');
+
+		if ($owner->rpg_technocrate > time())
 			$CurrentSpyLvl += 2;
 
-		$TargetSpyLvl = $TargetUser->getTechLevel('spy');
-		if ($TargetUser->rpg_technocrate > time())
+		$TargetSpyLvl = $targetUser->getTechLevel('spy');
+
+		if ($targetUser->rpg_technocrate > time())
 			$TargetSpyLvl += 2;
 
 		// Обновление производства на планете
@@ -108,12 +110,12 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			}
 			if ($ST >= 7)
 			{
-				$TargetTechnInfo = $this->SpyTarget($TargetUser, 4, _getText('tech', 100));
+				$TargetTechnInfo = $this->SpyTarget($targetUser, 4, _getText('tech', 100));
 				$SpyMessage .= $TargetTechnInfo['String'];
 			}
 			if ($ST >= 9)
 			{
-				$TargetOfficierLvlInfo = $this->SpyTarget($TargetUser, 6, _getText('tech', 600));
+				$TargetOfficierLvlInfo = $this->SpyTarget($targetUser, 6, _getText('tech', 600));
 				$SpyMessage .= $TargetOfficierLvlInfo['String'];
 			}
 
@@ -151,10 +153,10 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			foreach ($res AS $id)
 			{
 				if ($TargetPlanet->getUnitCount($id) > 0)
-					$fleet_link .= $id . ',' . $TargetPlanet->getUnitCount($id) . '!' . ((isset($TargetUser->{'fleet_' . $id}) && $ST >= 8) ? $TargetUser->{'fleet_' . $id} : 0) . ';';
+					$fleet_link .= $id . ',' . $TargetPlanet->getUnitCount($id) . '!' . ((isset($targetUser->{'fleet_' . $id}) && $ST >= 8) ? $targetUser->{'fleet_' . $id} : 0) . ';';
 
-				if ($TargetUser->getTechLevel($id) > 0)
-					$fleet_link .= $id . ',' . $TargetUser->getTechLevel($id) . '!' . (($id > 400 && $TargetUser->getTechLevel($id - 50) && $ST >= 8) ? $TargetUser->getTechLevel($id - 50) : 0) . ';';
+				if ($targetUser->getTechLevel($id) > 0)
+					$fleet_link .= $id . ',' . $targetUser->getTechLevel($id) . '!' . (($id > 400 && $targetUser->getTechLevel($id - 50) && $ST >= 8) ? $targetUser->getTechLevel($id - 50) : 0) . ';';
 			}
 
 			$MessageEnd .= "<center><a href=\"#BASEPATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";

@@ -16,9 +16,9 @@ class Option extends Model
 	public $name;
 	public $title;
 	public $value;
-	public $group;
+	public $group_id;
 	public $type;
-	public $default;
+	public $def;
 	public $description;
 
 	public function getSource()
