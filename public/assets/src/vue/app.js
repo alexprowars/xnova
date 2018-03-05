@@ -169,12 +169,15 @@ window.application = new Vue({
 		},
 		messages (val)
 		{
-			val.forEach(function(item)
+			val.forEach((item) =>
 			{
-				$.toast({
-					text: item.text,
-					icon: item.type
-				});
+				if (item['type'].indexOf('-static') <= 0)
+				{
+					$.toast({
+						text: item.text,
+						icon: item.type
+					});
+				}
 			})
 		},
 		url (val) {

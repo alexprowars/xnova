@@ -24,19 +24,16 @@ class StageThree
 		if ($controller->user->vacation > 0)
 			throw new ErrorException("Нет доступа!");
 
-		if (!$controller->request->hasPost('crc') || $_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_03-' . date("dmY", time()) . '-' . $_POST["usedfleet"]))
-			throw new ErrorException('Ошибка контрольной суммы!');
-
 		Lang::includeLang('fleet', 'xnova');
 
-		$galaxy = $controller->request->getPost('galaxy', 'int', 0);
-		$system = $controller->request->getPost('system', 'int', 0);
-		$planet = $controller->request->getPost('planet', 'int', 0);
-		$planettype = $controller->request->getPost('planettype', 'int', 0);
+		$galaxy = (int) $controller->request->getPost('galaxy', 'int', 0);
+		$system = (int) $controller->request->getPost('system', 'int', 0);
+		$planet = (int) $controller->request->getPost('planet', 'int', 0);
+		$planet_type = (int) $controller->request->getPost('planet_type', 'int', 0);
 
-		$fleetmission = $controller->request->getPost('mission', 'int', 0);
+		$fleetmission = (int) $controller->request->getPost('mission', 'int', 0);
 
-		$fleetarray = json_decode(base64_decode(str_rot13($controller->request->getPost('usedfleet', null, ''))), true);
+		$fleetarray = json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		if (!$fleetmission)
 			throw new RedirectException("<span class=\"error\"><b>Не выбрана миссия!</b></span>", 'Ошибка', "/fleet/", 2);
@@ -44,25 +41,27 @@ class StageThree
 		if (($fleetmission == 1 || $fleetmission == 6 || $fleetmission == 9 || $fleetmission == 2) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
 			throw new RedirectException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>", 'Ошибка');
 
+		$allianceId = (int) $controller->request->getPost('alliance', 'int', 0);
+
 		$fleet_group_mr = 0;
 
-		if ($_POST['acs'] > 0)
+		if ($allianceId > 0)
 		{
 			if ($fleetmission == 2)
 			{
-				$aks_count_mr = $controller->db->query("SELECT a.* FROM game_aks a, game_aks_user au WHERE au.aks_id = a.id AND au.user_id = " . $controller->user->id . " AND au.aks_id = " . intval($_POST['acs']) . "");
+				$aks_count_mr = $controller->db->query("SELECT a.* FROM game_aks a, game_aks_user au WHERE au.aks_id = a.id AND au.user_id = ".$controller->user->id." AND au.aks_id = ".$allianceId."");
 
 				if ($aks_count_mr->numRows() > 0)
 				{
 					$aks_tr = $aks_count_mr->fetch();
 
-					if ($aks_tr['galaxy'] == $_POST["galaxy"] && $aks_tr['system'] == $_POST["system"] && $aks_tr['planet'] == $_POST["planet"] && $aks_tr['planet_type'] == $_POST["planettype"])
-						$fleet_group_mr = $_POST['acs'];
+					if ($aks_tr['galaxy'] == $galaxy && $aks_tr['system'] == $system && $aks_tr['planet'] == $planet && $aks_tr['planet_type'] == $planet_type)
+						$fleet_group_mr = $allianceId;
 				}
 			}
 		}
 
-		if (($_POST['acs'] == 0 || $fleet_group_mr == 0) && ($fleetmission == 2))
+		if (($allianceId == 0 || $fleet_group_mr == 0) && ($fleetmission == 2))
 			$fleetmission = 1;
 
 		$protection = $controller->config->game->get('noobprotection');
@@ -81,16 +80,16 @@ class StageThree
 				throw new RedirectException("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
-		if ($planettype != 1 && $planettype != 2 && $planettype != 3 && $planettype != 5)
+		if ($planet_type != 1 && $planet_type != 2 && $planet_type != 3 && $planet_type != 5)
 			throw new RedirectException("<span class=\"error\"><b>Неизвестный тип планеты!</b></span>", 'Ошибка', "/fleet/", 2);
 
-		if ($controller->planet->galaxy == $galaxy && $controller->planet->system == $system && $controller->planet->planet == $planet && $controller->planet->planet_type == $planettype)
+		if ($controller->planet->galaxy == $galaxy && $controller->planet->system == $system && $controller->planet->planet == $planet && $controller->planet->planet_type == $planet_type)
 			throw new RedirectException("<span class=\"error\"><b>Невозможно отправить флот на эту же планету!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		if ($fleetmission == 8)
 			$select = $controller->db->query("SELECT id FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND (planet_type = 1 OR planet_type = 5)");
 		else
-			$select = $controller->db->query("SELECT id FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND planet_type = '" . $planettype . "'");
+			$select = $controller->db->query("SELECT id FROM game_planets WHERE galaxy = '" . $galaxy . "' AND system = '" . $system . "' AND planet = '" . $planet . "' AND planet_type = '" . $planet_type . "'");
 
 		if ($fleetmission != 15)
 		{
@@ -98,7 +97,7 @@ class StageThree
 				throw new RedirectException("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #1', "/fleet/", 20);
 			elseif ($fleetmission == 9 && $select->numRows() == 0)
 				throw new RedirectException("<span class=\"error\"><b>Данной планеты не существует!</b> - [".$galaxy.":".$system.":".$planet."]</span>", 'Ошибка #2', "/fleet/", 20);
-			elseif ($select->numRows() == 0 && $fleetmission == 7 && $planettype != 1)
+			elseif ($select->numRows() == 0 && $fleetmission == 7 && $planet_type != 1)
 				throw new RedirectException("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 		else
@@ -146,7 +145,7 @@ class StageThree
 		if ($fleetmission == 4 && ($TargetPlanet->id_owner == 1 || $controller->user->isAdmin()))
 			$YourPlanet = true;
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planettype], $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planet_type], $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
 
 		if (!in_array($fleetmission, $missiontype))
 			throw new RedirectException("<span class=\"error\"><b>Миссия неизвестна!</b></span>", 'Ошибка', "/fleet/", 2);
@@ -216,7 +215,10 @@ class StageThree
 		if ($fleetmax <= $flyingFleets)
 			throw new RedirectException("Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.", "Ошибка", "/fleet/", 2);
 
-		if (($_POST['resource1'] + $_POST['resource2'] + $_POST['resource3']) < 1 && $fleetmission == 3)
+		$resources = $controller->request->getPost('resource');
+		$resources = array_map('intval', $resources);
+
+		if (array_sum($resources) < 1 && $fleetmission == 3)
 			throw new RedirectException("<span class=\"success\"><b>Нет сырья для транспорта!</b></span>", _getText('type_mission', 3), "/fleet/", 2);
 
 		if ($fleetmission != 15)
@@ -257,7 +259,7 @@ class StageThree
 		if (!in_array($fleetSpeedFactor, $speedPossible))
 			throw new RedirectException("<span class=\"error\"><b>Читеришь со скоростью?</b></span>", 'Ошибка', "/fleet/", 2);
 
-		if (!$planettype)
+		if (!$planet_type)
 			throw new RedirectException("<span class=\"error\"><b>Ошибочный тип планеты!</b></span>", 'Ошибка', "/fleet/", 2);
 
 		$errorlist = "";
@@ -340,27 +342,27 @@ class StageThree
 		$FleetStorage -= $consumption;
 		$StorageNeeded = 0;
 
-		if ($controller->request->getPost('resource1', 'int', 0) < 1)
+		if ($resources['metal'] < 1)
 			$TransMetal = 0;
 		else
 		{
-			$TransMetal = $controller->request->getPost('resource1', 'int', 0);
+			$TransMetal = $resources['metal'];
 			$StorageNeeded += $TransMetal;
 		}
 
-		if ($controller->request->getPost('resource2', 'int', 0) < 1)
+		if ($resources['crystal'] < 1)
 			$TransCrystal = 0;
 		else
 		{
-			$TransCrystal = $controller->request->getPost('resource2', 'int', 0);
+			$TransCrystal = $resources['crystal'];
 			$StorageNeeded += $TransCrystal;
 		}
 
-		if ($controller->request->getPost('resource3', 'int', 0) < 1)
+		if ($resources['deuterium'] < 1)
 			$TransDeuterium = 0;
 		else
 		{
-			$TransDeuterium = $controller->request->getPost('resource3', 'int', 0);
+			$TransDeuterium = $resources['deuterium'];
 			$StorageNeeded += $TransDeuterium;
 		}
 
@@ -478,7 +480,7 @@ class StageThree
 			[
 				'time' 		=> time(),
 				'user_id' 	=> $controller->user->id,
-				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planettype.")];f:[".$fleet_array."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
+				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planet_type.")];f:[".$fleet_array."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
 				'target_id' => $TargetPlanet->id_owner
 			]);
 
@@ -542,7 +544,7 @@ class StageThree
 			'end_galaxy' 			=> $galaxy,
 			'end_system' 			=> $system,
 			'end_planet' 			=> $planet,
-			'end_type' 				=> $planettype,
+			'end_type' 				=> $planet_type,
 			'resource_metal' 		=> $TransMetal,
 			'resource_crystal' 		=> $TransCrystal,
 			'resource_deuterium' 	=> $TransDeuterium,
@@ -560,7 +562,7 @@ class StageThree
 
 		$controller->planet->update();
 
-		$html  = "<table  class='table'>";
+		$html  = "<table class=\"table\">";
 		$html .= "<tr>";
 		$html .= "<td class=\"c\" colspan=\"2\"><span class=\"success\">" . ((isset($str_error)) ? $str_error : _getText('fl_fleet_send')) . "</span></td>";
 		$html .= "</tr><tr>";

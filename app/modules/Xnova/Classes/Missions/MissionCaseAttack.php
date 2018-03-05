@@ -634,13 +634,22 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		if (!isset($this->usersTech[$fleet->owner]))
 		{
-			$info = $this->db->query('SELECT id, username, military_tech, defence_tech, shield_tech, laser_tech, ionic_tech, buster_tech, rpg_admiral, rpg_komandir FROM game_users WHERE id = ' . $fleet->owner)->fetch();
+			$user = UserModel::findFirst($fleet->owner);
 
 			$playerObj = new Player($fleet->owner);
-			$playerObj->setName($info['username']);
+			$playerObj->setName($user->username);
 			$playerObj->setTech(0, 0, 0);
 
-			if ($info['rpg_komandir'] > time())
+			$info = [
+				'military_tech' => $user->getTechLevel('military'),
+				'defence_tech' 	=> $user->getTechLevel('defence'),
+				'shield_tech' 	=> $user->getTechLevel('shield'),
+				'laser_tech' 	=> $user->getTechLevel('laser'),
+				'ionic_tech' 	=> $user->getTechLevel('ionic'),
+				'buster_tech' 	=> $user->getTechLevel('buster'),
+			];
+
+			if ($user->rpg_komandir > time())
 			{
 				$info['military_tech'] 	+= 2;
 				$info['defence_tech'] 	+= 2;

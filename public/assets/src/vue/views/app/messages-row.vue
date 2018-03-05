@@ -1,5 +1,5 @@
 <template>
-	<table class="table"><tr><td :class="['c', item.type]" align="center" v-html="item.text"></td></tr></table><div class="separator"></div>
+	<div class="information-message" :class="['c', item.type.replace('-static', '')]" v-html="item.text"></div>
 </template>
 
 <script>

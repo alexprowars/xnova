@@ -15,9 +15,6 @@ class MessageException extends \Exception
 
 	public function __construct ($message, $title = '', $url = '', $timeout = 5, $showLeft = true)
 	{
-		if (!$title)
-			$title = 'Ошибка';
-
 		$this->title = $title;
 		$this->url = $url;
 		$this->timeout = (int) $timeout;

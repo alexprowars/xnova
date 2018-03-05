@@ -11,7 +11,7 @@
 			<div class="main-content">
 				<planet-panel v-if="$store.state.view.resources" :planet="$store.state.resources"></planet-panel>
 
-				<div v-if="$store.state.messages" v-for="item in $store.state.messages">
+				<div v-if="messages.length" v-for="item in messages">
 					<application-messages-row :item="item"></application-messages-row>
 				</div>
 
@@ -45,6 +45,18 @@
 		computed: {
 			html () {
 				return this.$store.state.html;
+			},
+			messages ()
+			{
+				let items = [];
+
+				this.$store.state.messages.forEach((item) =>
+				{
+					if (item['type'].indexOf('-static') >= 0)
+						items.push(item);
+				});
+
+				return items;
 			}
 		},
 		data: function ()

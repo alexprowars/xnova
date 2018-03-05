@@ -133,8 +133,6 @@ class Planet extends Model
 
 		if ($this->units !== false)
 		{
-			file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../php_errors.log', print_r($this->units, true), FILE_APPEND);
-
 			foreach ($this->units as &$unit)
 			{
 				if ($unit['id'] == 0 && $unit['amount'] > 0)

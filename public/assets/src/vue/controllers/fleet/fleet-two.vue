@@ -3,7 +3,11 @@
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 
 		<input type="hidden" name="fleet" :value="page['fleet']">
-		<input type="hidden" name="mission" :value="page['mission']">
+		<input type="hidden" name="alliance" :value="page['alliance']">
+		<input type="hidden" name="galaxy" :value="page['target']['galaxy']">
+		<input type="hidden" name="system" :value="page['target']['system']">
+		<input type="hidden" name="planet" :value="page['target']['planet']">
+		<input type="hidden" name="planet_type" :value="page['target']['planet_type']">
 
 		<div class="table">
 			<div class="row">
@@ -116,7 +120,7 @@
 				return this.$store.state.page;
 			},
 			resources () {
-				return this.$store.state.resource;
+				return this.$store.state.resources;
 			},
 			position () {
 				return this.$store.state.user.position;

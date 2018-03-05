@@ -111,6 +111,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
 	$compiler->addFunction('rand', 'mt_rand');
 	$compiler->addFunction('implode', 'implode');
+	$compiler->addFunction('slashes', 'addslashes');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
 		return '\Xnova\Format::number(' . $arguments . ')';

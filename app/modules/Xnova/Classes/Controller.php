@@ -276,10 +276,20 @@ class Controller extends PhalconController
 		{
 			$messages = [];
 
+			$globalMessage = Options::get('newsMessage', '');
+
+			if ($globalMessage != '')
+			{
+				$messages[] = [
+					'type' => 'warning-static',
+					'text' => $globalMessage
+				];
+			}
+
 			if ($this->user->deltime > 0)
 			{
 				$messages[] = [
-					'type' => 'info',
+					'type' => 'info-static',
 					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после '.$this->game->datezone("d.m.Y", $this->user->deltime).' в '.$this->game->datezone("H:i:s", $this->user->deltime).'. Выключить режим удаления можно в настройках игры.'
 				];
 			}
@@ -287,7 +297,7 @@ class Controller extends PhalconController
 			if ($this->user->vacation > 0)
 			{
 				$messages[] = [
-					'type' => 'warning',
+					'type' => 'warning-static',
 					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
 				];
 			}

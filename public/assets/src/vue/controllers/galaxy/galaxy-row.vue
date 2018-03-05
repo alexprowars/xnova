@@ -260,7 +260,7 @@
 				</a>
 			</div>
 
-			<a v-if="!item && $parent['page']['user']['colonizer']" :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t0/m7/')" title="Колонизация">
+			<a v-if="!item && $parent['page']['user']['colonizer']" :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+(i + 1)+'/t0/m7/')" title="Колонизация">
 				<span class="sprite skin_e"></span>
 			</a>
 		</th>
@@ -382,13 +382,16 @@
 					dataType: 'json',
 					success: function(result)
 					{
-						result.data.messages.forEach(function(item)
+						result.data.messages.forEach((item) =>
 						{
-							$.toast({
-							  	text : item.text,
-								position : 'bottom-center',
-								icon: item.type
-							});
+							if (item['type'].indexOf('-static') <= 0)
+							{
+								$.toast({
+									text : item.text,
+									position : 'bottom-center',
+									icon: item.type
+								});
+							}
 						});
 
 						obj.prop('disabled', false);
