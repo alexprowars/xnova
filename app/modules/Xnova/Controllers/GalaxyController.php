@@ -193,6 +193,7 @@ class GalaxyController extends Controller
 			'spy' => (int) $this->user->spy,
 			'recycler' => $this->planet->getUnitCount('recycler'),
 			'interplanetary_misil' => $this->planet->getUnitCount('interplanetary_misil'),
+			'allowExpedition' => $this->user->getTechLevel('expedition') > 0,
 			'fleets' => $maxfleet_count,
 			'max_fleets' => $fleetmax
 		];

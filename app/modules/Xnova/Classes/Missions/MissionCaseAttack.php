@@ -44,7 +44,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$owner = UserModel::findFirst($this->_fleet->owner);
+		$owner = UserModel::findFirst((int) $this->_fleet->owner);
 
 		if (!$owner)
 		{
@@ -53,7 +53,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$targetUser = UserModel::findFirst($target->id_owner);
+		$targetUser = UserModel::findFirst((int) $target->id_owner);
 
 		if (!$targetUser)
 		{

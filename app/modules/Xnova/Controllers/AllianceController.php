@@ -879,12 +879,12 @@ class AllianceController extends Controller
 		$parse = [];
 		$parse['items'] = [];
 
+		$p = (int) $this->request->getQuery('p', 'int', 1);
+
 		$messagesCount = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE ally_id = ?", [$this->user->ally_id])->fetch()['num'];
 
 		if ($messagesCount > 0)
 		{
-			$p = $this->request->getQuery('p', 'int', 1);
-
 			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($p - 1) * 20) . ", 20");
 
 			while ($mes = $mess->fetch())

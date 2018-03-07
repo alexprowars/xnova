@@ -124,7 +124,7 @@ class StageThree
 
 		$planetRow = $select->fetch();
 
-		$TargetPlanet = Planet::findFirst($planetRow['id']);
+		$TargetPlanet = Planet::findFirst((int) $planetRow['id']);
 
 		if (!$TargetPlanet)
 		{
@@ -487,7 +487,7 @@ class StageThree
 			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
 		}
 
-		if ($TargetPlanet && $TargetPlanet->id_owner == 1)
+		if (false && $TargetPlanet && $TargetPlanet->id_owner == 1)
 		{
 			$fleet->start_time = time() + 30;
 			$fleet->end_time = time() + 60;

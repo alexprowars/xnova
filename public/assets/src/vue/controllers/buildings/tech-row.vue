@@ -29,7 +29,7 @@
 						<div v-html="item.effects"></div>
 
 						<div class="building-info-upgrade">
-							<div v-if="item.build" class="building-info-upgrade-timer">
+							<div v-if="typeof item.build === 'object'" class="building-info-upgrade-timer">
 								<span v-if="time > 0">
 									{{ Format.time(time, ':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
 								</span>
@@ -41,7 +41,7 @@
 							<div v-else-if="!hasResources" class="negative text-center">
 								нет ресурсов
 							</div>
-							<a v-else="" :href="$root.getUrl('buildings/research/cmd/search/tech/'+item.i+'/')" :class="{positive: item.level, negative: item.level === 0}">
+							<a v-else-if="item.build !== true" :href="$root.getUrl('buildings/research/cmd/search/tech/'+item.i+'/')" :class="{positive: item.level, negative: item.level === 0}">
 								<svg class="icon">
 									<use xlink:href="#icon-research"></use>
 								</svg>
@@ -94,10 +94,13 @@
 			},
 			update ()
 			{
-				if (this.time < 0 || typeof this.item['build'] === 'undefined')
+				if (typeof this.item['build'] !== 'object' || this.time < 0)
+				{
+					this.stop();
 					return;
+				}
 
-				this.time = this.item.build.time - this.$root.serverTime();
+				this.time = this.item['build']['time'] - this.$root.serverTime();
 			},
 			stop () {
 				clearTimeout(this.timeout);
@@ -109,13 +112,16 @@
 		watch: {
 			time () {
 				this.start();
+			},
+			'item.build' (v)
+			{
+				if (typeof v === 'object')
+				{
+					this.stop();
+					this.update();
+					this.start();
+				}
 			}
-		},
-		updated ()
-		{
-			this.stop();
-			this.update();
-			this.start();
 		},
 		mounted ()
 		{

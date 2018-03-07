@@ -61,11 +61,21 @@ class StageTwo
 		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $controller->user->isAdmin()))
 			$missions[] = 4;
 
+		$missions = array_unique($missions);
+
 		$fleetSpeed = (int) $controller->request->getPost('speed', 'int', 10);
 		$stayConsumption = Fleet::GetFleetStay($fleets);
 
 		if ($controller->user->rpg_meta > time())
 			$stayConsumption = ceil($stayConsumption * 0.9);
+
+		if (in_array(15, $missions))
+		{
+			if ($controller->user->getTechLevel('expedition') <= 0)
+				unset($missions[array_search(15, $missions)]);
+			else
+				$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
+		}
 
 		$parse['mission'] = 0;
 		$parse['missions'] = [];
@@ -102,9 +112,6 @@ class StageTwo
 
 			$parse['ships'][] = $ship;
 		}
-
-		if (isset($missions[15]))
-			$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
 
 		Request::addData('page', $parse);
 

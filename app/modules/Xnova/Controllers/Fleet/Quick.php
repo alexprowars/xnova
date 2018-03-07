@@ -30,38 +30,35 @@ class Quick
 		if ($controller->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
-		$Mode 	= $controller->request->getQuery('mode', 'int', 0);
-		$Galaxy = $controller->request->getQuery('g', 'int', 0);
-		$System = $controller->request->getQuery('s', 'int', 0);
-		$Planet = $controller->request->getQuery('p', 'int', 0);
-		$TypePl = $controller->request->getQuery('t', 'int', 0);
-		$num 	= $controller->request->getQuery('count', 'int', 0);
+		$mission 	= (int) $controller->request->getQuery('mission', 'int', 0);
+		$galaxy 	= (int) $controller->request->getQuery('galaxy', 'int', 0);
+		$system 	= (int) $controller->request->getQuery('system', 'int', 0);
+		$planet 	= (int) $controller->request->getQuery('planet', 'int', 0);
+		$planetType = (int) $controller->request->getQuery('type', 'int', 0);
+		$num 		= (int) $controller->request->getQuery('count', 'int', 0);
 
 		if ($MaxFlottes <= $maxfleet)
 			throw new \Exception('Все слоты флота заняты');
-		elseif ($Galaxy > $controller->config->game->maxGalaxyInWorld || $Galaxy < 1)
+		elseif ($galaxy > $controller->config->game->maxGalaxyInWorld || $galaxy < 1)
 			throw new \Exception('Ошибочная галактика!');
-		elseif ($System > $controller->config->game->maxSystemInGalaxy || $System < 1)
+		elseif ($system > $controller->config->game->maxSystemInGalaxy || $system < 1)
 			throw new \Exception('Ошибочная система!');
-		elseif ($Planet > $controller->config->game->maxPlanetInSystem || $Planet < 1)
+		elseif ($planet > $controller->config->game->maxPlanetInSystem || $planet < 1)
 			throw new \Exception('Ошибочная планета!');
-		elseif ($TypePl != 1 && $TypePl != 2 && $TypePl != 3 && $TypePl != 5)
+		elseif ($planetType != 1 && $planetType != 2 && $planetType != 3 && $planetType != 5)
 			throw new \Exception('Ошибочный тип планеты!');
 
-		if ($controller->planet->galaxy == $Galaxy && $controller->planet->system == $System && $controller->planet->planet == $Planet && $controller->planet->planet_type == $TypePl)
-			$target = $controller->planet;
-		else
-			$target = Planet::findFirst(['galaxy = ?0 AND system = ?1 AND planet = ?2 AND (planet_type = '.($TypePl == 2 ? '1 OR planet_type = 5' : $TypePl).')', 'bind' => [$Galaxy, $System, $Planet]]);
+		$target = Planet::findFirst(['galaxy = ?0 AND system = ?1 AND planet = ?2 AND (planet_type = '.($planetType == 2 ? '1 OR planet_type = 5' : $planetType).')', 'bind' => [$galaxy, $system, $planet]]);
 
 		if (!$target)
 			throw new \Exception('Цели не существует!');
 
-		if (($Mode == 1 || $Mode == 6 || $Mode == 9 || $Mode == 2) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
+		if (in_array($mission, [1, 2, 6, 9]) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
 			throw new \Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>");
 
 		$FleetArray = [];
 
-		if ($Mode == 6 && ($TypePl == 1 || $TypePl == 3 || $TypePl == 5))
+		if ($mission == 6 && ($planetType == 1 || $planetType == 3 || $planetType == 5))
 		{
 			if ($num <= 0)
 				throw new \Exception('Вы были забанены за читерство!');
@@ -108,7 +105,7 @@ class Quick
 			$FleetSpeed = min(Fleet::GetFleetMaxSpeed($FleetArray, 0, $controller->user));
 
 		}
-		elseif ($Mode == 8 && $TypePl == 2)
+		elseif ($mission == 8 && $planetType == 2)
 		{
 			$DebrisSize = $target->debris_metal + $target->debris_crystal;
 
@@ -121,7 +118,7 @@ class Quick
 
 			if ($controller->planet->getUnitCount('recycler') > 0 && $DebrisSize > 0)
 			{
-				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + $controller->user->getTechLevel('fleet_209') * ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
+				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
 
 				if ($RecyclerNeeded > $controller->planet->getUnitCount('recycler'))
 					$RecyclerNeeded = $controller->planet->getUnitCount('recycler');
@@ -142,7 +139,7 @@ class Quick
 		if ($FleetSpeed > 0 && count($FleetArray) > 0)
 		{
 			$SpeedFactor = $controller->game->getSpeed('fleet');
-			$distance = Fleet::GetTargetDistance($controller->planet->galaxy, $Galaxy, $controller->planet->system, $System, $controller->planet->planet, $Planet);
+			$distance = Fleet::GetTargetDistance($controller->planet->galaxy, $galaxy, $controller->planet->system, $system, $controller->planet->planet, $planet);
 			$duration = Fleet::GetMissionDuration(10, $FleetSpeed, $distance, $SpeedFactor);
 
 			$consumption = Fleet::GetFleetConsumption($FleetArray, $SpeedFactor, $duration, $distance, $controller->user);
@@ -175,7 +172,7 @@ class Quick
 
 				$fleet->owner = $controller->user->id;
 				$fleet->owner_name = $controller->planet->name;
-				$fleet->mission = $Mode;
+				$fleet->mission = $mission;
 				$fleet->fleet_array = $ShipArray;
 				$fleet->start_time = $duration + time();
 				$fleet->start_galaxy = $controller->planet->galaxy;
@@ -183,14 +180,14 @@ class Quick
 				$fleet->start_planet = $controller->planet->planet;
 				$fleet->start_type = $controller->planet->planet_type;
 				$fleet->end_time = ($duration * 2) + time();
-				$fleet->end_galaxy = $Galaxy;
-				$fleet->end_system = $System;
-				$fleet->end_planet = $Planet;
-				$fleet->end_type = $TypePl;
+				$fleet->end_galaxy = $galaxy;
+				$fleet->end_system = $system;
+				$fleet->end_planet = $planet;
+				$fleet->end_type = $planetType;
 				$fleet->create_time = time();
 				$fleet->update_time = $duration + time();
 
-				if ($Mode == 6 && isset($HeDBRec['id']))
+				if ($mission == 6 && isset($HeDBRec['id']))
 				{
 					$fleet->target_owner = $HeDBRec['id'];
 					$fleet->target_owner_name = $target->name;
@@ -211,14 +208,14 @@ class Quick
 
 						foreach ($quest['TASK'] AS $taskKey => $taskVal)
 						{
-							if ($taskKey == 'FLEET_MISSION' && $taskVal == $Mode)
+							if ($taskKey == 'FLEET_MISSION' && $taskVal == $mission)
 							{
 								$controller->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
 							}
 						}
 					}
 
-					return "Флот отправлен на координаты [" . $Galaxy . ":" . $System . ":" . $Planet . "] с миссией " . _getText('type_mission', $Mode) . " и прибудет к цели в " . $controller->game->datezone("H:i:s", ($duration + time()));
+					return "Флот отправлен на координаты [" . $galaxy . ":" . $system . ":" . $planet . "] с миссией " . _getText('type_mission', $mission) . " и прибудет к цели в " . $controller->game->datezone("H:i:s", ($duration + time()));
 				}
 			}
 		}

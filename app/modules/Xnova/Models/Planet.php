@@ -448,11 +448,33 @@ class Planet extends Model
 
 		foreach ($registry->reslist['prod'] AS $ProdID)
 		{
-			if (!isset($this->buildings[$ProdID]))
+			$type = Vars::getItemType($ProdID);
+
+			if ($type == Vars::ITEM_TYPE_BUILING && $this->getBuildLevel($ProdID) <= 0)
+				continue;
+			elseif ($type == Vars::ITEM_TYPE_FLEET && $this->getUnitCount($ProdID) <= 0)
 				continue;
 
-			$BuildLevelFactor = $this->buildings[$ProdID]['power'];
-			$BuildLevel = $this->buildings[$ProdID]['level'];
+			if (!isset($registry->ProdGrid[$ProdID]))
+				continue;
+
+			$BuildLevelFactor = $BuildLevel = 0;
+
+			if ($type == Vars::ITEM_TYPE_BUILING)
+			{
+				$build = $this->getBuild($ProdID);
+
+				$BuildLevelFactor = $build['power'];
+				$BuildLevel = $build['level'];
+			}
+			elseif ($type == Vars::ITEM_TYPE_FLEET)
+			{
+				$BuildLevel = $this->getUnitCount($ProdID);
+				/**
+				 * @TODO FixIt
+				 */
+				$BuildLevelFactor = 100;
+			}
 
 			if ($ProdID == 12 && $this->deuterium < 100)
 				$BuildLevelFactor = 0;

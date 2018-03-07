@@ -149,7 +149,7 @@ window.application = new Vue({
 			return this.$store.state['url'];
 		},
 		redirect () {
-			return this.$store.state['redirect'];
+			return typeof this.$store.state['redirect'] === 'undefined' ? '' : this.$store.state['redirect'];
 		},
 		messages () {
 			return this.$store.state['messages'];

@@ -494,9 +494,11 @@ class Queue
 			$max = [];
 			$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
-			foreach ($buildTypes as $id => $data)
+			foreach ($buildTypes as $id)
 			{
-				if (isset($data['max']) && $this->planet->getUnitCount($id) > 0)
+				$price = Vars::getItemPrice($id);
+
+				if (isset($price['max']) && $this->planet->getUnitCount($id) > 0)
 					$max[$id] = $this->planet->getUnitCount($id);
 			}
 

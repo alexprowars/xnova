@@ -22,7 +22,7 @@
 
 				<tr is="game-page-galaxy-item" v-for="(item, index) in page['items']" :item="item" :i="index"></tr>
 
-				<tr>
+				<tr v-if="page['user']['allowExpedition']">
 					<th width="30">16</th>
 					<th colspan="8" class="c big">
 						<a :href="$root.getUrl('fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/')">неизведанные дали</a>

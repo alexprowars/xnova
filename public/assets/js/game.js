@@ -213,17 +213,22 @@ function showWindow (title, url, width)
 				{
 					this.setTitle(result.data.title);
 
-					if (htmlRender !== null)
-						htmlRender.$destroy();
+					if (typeof Vue !== "undefined")
+					{
+						if (htmlRender !== null)
+							htmlRender.$destroy();
 
-					htmlRender = new (Vue.extend({
-						name: 'html-render',
-						template: '<div>'+result.data.html+'</div>'
-					}))().$mount();
+						htmlRender = new (Vue.extend({
+							name: 'html-render',
+							template: '<div>'+result.data.html+'</div>'
+						}))().$mount();
 
-					Vue.nextTick(function () {
-						this.setContent(htmlRender.$el);
-					}.bind(this));
+						Vue.nextTick(function () {
+							this.setContent(htmlRender.$el);
+						}.bind(this));
+					}
+					else
+						this.setContent(result.data.html);
 
 				}.bind(this)
 			});

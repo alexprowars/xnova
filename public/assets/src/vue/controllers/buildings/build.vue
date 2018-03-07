@@ -17,12 +17,12 @@
 			</div>
 
 			<div class="page-building-build-queue" v-if="page.queue.length">
-				<table v-for="(item, index) in page.queue" class="table">
-					<tr>
-						<td class="c" width="50%">
+				<div class="table">
+					<div v-for="(item, index) in page.queue" class="row">
+						<div class="col-6 c">
 							{{ item.name }} {{ item.level }}{{ item.mode === 1 ? '. Снос здания' : '' }}
-						</td>
-						<td class="k" v-if="index === 0">
+						</div>
+						<div class="col-6 k" v-if="index === 0">
 							<div v-if="item.time > 0" class="z">
 								{{ Format.time(item.time, ':', true) }}
 								<br>
@@ -34,12 +34,12 @@
 								<a v-on:click="load($root.getUrl('buildings/index/planet/'+$store.state.user.planet+'/'))">Продолжить</a>
 							</div>
 							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
-						</td>
-						<td class="k" v-else>
+						</div>
+						<div class="col-6 k" v-else>
 							<a :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="content page-building-items">

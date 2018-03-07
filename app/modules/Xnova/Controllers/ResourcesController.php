@@ -137,16 +137,33 @@ class ResourcesController extends Controller
 
 		foreach ($this->registry->reslist['prod'] as $ProdID)
 		{
-			if (!$this->planet->getBuildLevel($ProdID) || !isset($this->registry->ProdGrid[$ProdID]))
+			$type = Vars::getItemType($ProdID);
+
+			if ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ProdID) <= 0)
+				continue;
+			elseif ($type == Vars::ITEM_TYPE_FLEET && $this->planet->getUnitCount($ProdID) <= 0)
 				continue;
 
-			$build = $this->planet->getBuild($ProdID);
-
-			if ($build['level'] <= 0)
+			if (!isset($this->registry->ProdGrid[$ProdID]))
 				continue;
 
-			$BuildLevelFactor = $build['power'];
-			$BuildLevel = $build['level'];
+			$BuildLevelFactor = $BuildLevel = 0;
+
+			if ($type == Vars::ITEM_TYPE_BUILING)
+			{
+				$build = $this->planet->getBuild($ProdID);
+
+				$BuildLevelFactor = $build['power'];
+				$BuildLevel = $build['level'];
+			}
+			elseif ($type == Vars::ITEM_TYPE_FLEET)
+			{
+				$BuildLevel = $this->planet->getUnitCount($ProdID);
+				/**
+				 * @TODO FixIt
+				 */
+				$BuildLevelFactor = 100;
+			}
 
 			$result = $this->planet->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
 

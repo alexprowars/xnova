@@ -101,7 +101,7 @@ class StageZero
 			'galaxy' => !$isCurrent ? $galaxy : 0,
 			'system' => !$isCurrent ? $system : 0,
 			'planet' => !$isCurrent ? $planet : 0,
-			'planet_type' => !$isCurrent ? $planet_type : 0,
+			'planet_type' => $planet_type,
 		];
 
 		$parse['ships'] = [];

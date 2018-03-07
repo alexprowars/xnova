@@ -325,11 +325,13 @@ class User extends BaseUser
 
 	public function getTech ($techId)
 	{
+		$_techId = $techId;
+
 		if (!is_numeric($techId))
 			$techId = Vars::getIdByName($techId.'_tech');
 
 		if (!$techId)
-			throw new Exception('getTech not found');
+			throw new Exception('getTech::'.$_techId.' not found');
 
 		$techId = (int) $techId;
 

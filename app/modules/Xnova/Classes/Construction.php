@@ -270,6 +270,8 @@ class Construction
 						if ($TechHandle['planet']->id != $this->planet->id)
 							$row['build']['planet'] = $TechHandle['planet']->name;
 					}
+					else
+						$row['build'] = true;
 				}
 			}
 			else

@@ -9,7 +9,7 @@ namespace Xnova;
  */
 
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 use Phalcon\Di;
 
 class Building
@@ -22,7 +22,7 @@ class Building
 	 * @param bool $destroy
 	 * @return bool
 	 */
-	static function isElementBuyable (User $user, Planet $planet, $element, $incremental = true, $destroy = false)
+	static function isElementBuyable (UserModel $user, Planet $planet, $element, $incremental = true, $destroy = false)
 	{
 		$cost = self::getBuildingPrice($user, $planet, $element, $incremental, $destroy);
 
@@ -35,7 +35,7 @@ class Building
 		return true;
 	}
 
-	static function isTechnologieAccessible (User $user, Planet $planet, $element)
+	static function isTechnologieAccessible (UserModel $user, Planet $planet, $element)
 	{
 		$requeriments = Vars::getItemRequirements($element);
 
@@ -63,7 +63,7 @@ class Building
 		return $enabled;
 	}
 
-	static function checkTechnologyRace (User $user, $element)
+	static function checkTechnologyRace (UserModel $user, $element)
 	{
 		$requeriments = Vars::getItemRequirements($element);
 
@@ -98,7 +98,7 @@ class Building
 		return true;
 	}
 
-	static function getTechTree ($element, User $user, Planet $planet)
+	static function getTechTree ($element, UserModel $user, Planet $planet)
 	{
 		$result = '';
 
@@ -141,12 +141,12 @@ class Building
 	}
 
 	/**
-	 * @param  $user User
+	 * @param  $user UserModel
 	 * @param  $planet Planet
 	 * @param  $element integer
 	 * @return int
 	 */
-	static function getBuildingTime (User $user, Planet $planet, $element)
+	static function getBuildingTime (UserModel $user, Planet $planet, $element)
 	{
 		$config = $user->getDI()->getShared('config');
 
@@ -234,7 +234,7 @@ class Building
 	}
 
 	/**
-	 * @param $user User
+	 * @param $user UserModel
 	 * @param $planet Planet
 	 * @param $element
 	 * @param bool $incremental
@@ -242,7 +242,7 @@ class Building
 	 * @param bool $withBonus
 	 * @return array
 	 */
-	static function getBuildingPrice (User $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
+	static function getBuildingPrice (UserModel $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
 	{
 		$price = Vars::getItemPrice($element);
 		$elementType = Vars::getItemType($element);
@@ -343,10 +343,10 @@ class Building
 	/**
 	 * @param $element int
 	 * @param $count int
-	 * @param $user User
+	 * @param $user UserModel
 	 * @return mixed
 	 */
-	static function getElementRessources ($element, $count, User $user)
+	static function getElementRessources ($element, $count, UserModel $user)
 	{
 		$price = Vars::getItemPrice($element);
 
@@ -375,10 +375,10 @@ class Building
 	/**
 	 * @param $element int
 	 * @param $planet Planet
-	 * @param $user User
+	 * @param $user UserModel
 	 * @return float|int
 	 */
-	static function getMaxConstructibleElements ($element, Planet $planet, User $user)
+	static function getMaxConstructibleElements ($element, Planet $planet, UserModel $user)
 	{
 		$max = -1;
 

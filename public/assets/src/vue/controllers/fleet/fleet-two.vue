@@ -3,6 +3,7 @@
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 
 		<input type="hidden" name="fleet" :value="page['fleet']">
+		<input type="hidden" name="speed" :value="page['speed']">
 		<input type="hidden" name="alliance" :value="page['alliance']">
 		<input type="hidden" name="galaxy" :value="page['target']['galaxy']">
 		<input type="hidden" name="system" :value="page['target']['system']">
