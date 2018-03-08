@@ -46,16 +46,23 @@ class Building
 
 		foreach ($requeriments as $reqElement => $level)
 		{
-			if ($reqElement == 700 && $user->race != $level)
-				return false;
-			elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqElement) >= $level)
+			if ($reqElement == 700)
 			{
-				// break;
+				if ($user->race != $level)
+					return false;
 			}
-			elseif (Vars::getItemType($reqElement) != Vars::ITEM_TYPE_TECH && $planet->getBuildLevel($reqElement) >= $level)
-				$enabled = true;
-			elseif (isset($planet->planet_type) && $planet->planet_type == 5 && ($element == 43 || $element == 502 || $element == 503) && ($reqElement == 21 || $reqElement == 41))
-				$enabled = true;
+			elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH)
+			{
+				if ($user->getTechLevel($reqElement) < $level)
+					return false;
+			}
+			elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING)
+			{
+				if ($planet->getBuildLevel($reqElement) < $level)
+					return false;
+			}
+			elseif ($planet->planet_type == 5 && in_array($element, [43, 502, 503]) && !in_array($reqElement, [21, 41]))
+				return false;
 			else
 				return false;
 		}

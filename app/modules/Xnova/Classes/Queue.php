@@ -74,6 +74,8 @@ class Queue
 
 	public function add($elementId, $count = 1, $destroy = false)
 	{
+		$elementId = (int) $elementId;
+
 		$type = Vars::getItemType($elementId);
 
 		if ($type == Vars::ITEM_TYPE_BUILING)
@@ -93,6 +95,8 @@ class Queue
 
 	public function delete($elementId, $listId = 0)
 	{
+		$elementId = (int) $elementId;
+
 		$type = Vars::getItemType($elementId);
 
 		if ($type == Vars::ITEM_TYPE_BUILING)

@@ -138,6 +138,12 @@ class User extends BaseUser
 				}
 				elseif ($tech['level'] != $tech['~level'])
 				{
+					if ($tech['level'] - $tech['~level'] > 1)
+					{
+						file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n".print_r($_REQUEST, true)."\n\n".print_r($this->technology, true)."\n\n", FILE_APPEND);
+
+					}
+
 					if ($tech['level'] > 0)
 					{
 						$this->db->updateAsDict(DB_PREFIX.'users_tech', [

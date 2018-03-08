@@ -48,6 +48,10 @@ class Vars
 		self::$registry->reslist = $reslist;
 	}
 
+	/**
+	 * @param $id
+	 * @return string|bool
+	 */
 	static function getName ($id)
 	{
 		if (isset(self::$registry->resource[$id]))
@@ -56,6 +60,10 @@ class Vars
 		return false;
 	}
 
+	/**
+	 * @param $name
+	 * @return int|bool
+	 */
 	static function getIdByName ($name)
 	{
 		if (isset(self::$registry->resource_flip[$name]))
@@ -64,6 +72,10 @@ class Vars
 		return false;
 	}
 
+	/**
+	 * @param $itemId
+	 * @return array
+	 */
 	static function getItemPrice ($itemId)
 	{
 		if (self::$registry === false)
@@ -78,6 +90,11 @@ class Vars
 		return [];
 	}
 
+	/**
+	 * @param $itemId
+	 * @param bool $allResources
+	 * @return int
+	 */
 	static function getItemTotalPrice ($itemId, $allResources = false)
 	{
 		$price = self::getItemPrice($itemId);
@@ -88,6 +105,10 @@ class Vars
 			return $price['metal'] + $price['crystal'] + $price['deuterium'];
 	}
 
+	/**
+	 * @param $itemId
+	 * @return bool|string
+	 */
 	static function getItemType ($itemId)
 	{
 		if (self::$registry === false)
@@ -110,6 +131,10 @@ class Vars
 		return false;
 	}
 
+	/**
+	 * @param $itemId
+	 * @return array
+	 */
 	static function getItemRequirements ($itemId)
 	{
 		if (self::$registry === false)
@@ -124,6 +149,10 @@ class Vars
 		return [];
 	}
 
+	/**
+	 * @param $types
+	 * @return array
+	 */
 	static function getItemsByType ($types)
 	{
 		if (!is_array($types))
@@ -140,6 +169,9 @@ class Vars
 		return $result;
 	}
 
+	/**
+	 * @return array
+	 */
 	static function getResources ()
 	{
 		return self::$registry->reslist['res'];
@@ -153,6 +185,10 @@ class Vars
 		return self::$registry->ProdGrid[$buildId];
 	}
 
+	/**
+	 * @param $planetType
+	 * @return array
+	 */
 	static function getAllowedBuilds ($planetType)
 	{
 		if (!isset(self::$registry->reslist['allowed'][(int) $planetType]))

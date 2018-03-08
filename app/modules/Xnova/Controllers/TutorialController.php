@@ -183,7 +183,7 @@ class TutorialController extends Controller
 							$type = Vars::getItemType($element);
 
 							if ($type == Vars::ITEM_TYPE_TECH)
-								$this->user->setTech($element, $this->user->getTechLevel($element) + $level);
+								$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
 							elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
 								$this->planet->setUnit($element, $level, true);
 							elseif ($type == Vars::ITEM_TYPE_OFFICIER)
@@ -194,7 +194,7 @@ class TutorialController extends Controller
 									$this->user->{Vars::getName($element)} = time() + $level;
 							}
 							elseif ($type == Vars::ITEM_TYPE_BUILING)
-								$this->planet->setBuild($element, $this->planet->getBuildLevel($element) + $level);
+								$this->planet->setBuild($element, $this->planet->getBuildLevel($element) + (int) $level);
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')

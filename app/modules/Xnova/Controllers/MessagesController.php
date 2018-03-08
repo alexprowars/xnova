@@ -140,7 +140,7 @@ class MessagesController extends Controller
 		$items = array_map('intval', $items);
 
 		if (count($items))
-			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN ('.implode(',', $items).') AND owner = ?', 'bind' => [$this->user->id]]);
+			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN ('.implode(',', $items).') AND user_id = ?', 'bind' => [$this->user->id]]);
 
 		return true;
 	}

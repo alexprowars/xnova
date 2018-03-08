@@ -2,7 +2,7 @@
 	<div>
 		<div class="row">
 			<div class="col-1 th text-center">
-				<input name="delete[]" type="checkbox" :value="item['id']" style='width:14px;' title="">
+				<input name="delete[]" type="checkbox" :value="item['id']" v-model="item['deleted']" title="Удалить">
 			</div>
 			<div class="col-3 th text-center">{{ date("d.m.y H:i:s", item['time']) }}</div>
 			<div class="col-6 th text-center">

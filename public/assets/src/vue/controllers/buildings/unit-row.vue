@@ -50,7 +50,7 @@
 
 	export default {
 		name: "unit-row",
-		props: ['item', 'index'],
+		props: ['item'],
 		data ()
 		{
 			return {

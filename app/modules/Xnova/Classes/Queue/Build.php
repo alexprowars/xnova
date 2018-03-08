@@ -80,6 +80,8 @@ class Build
 				$planet->setBuild($elementId, $build['level'] + $inArray);
 			}
 
+			$planet->clearBuildingsData();
+
 			if ($queueID == 1)
 				$BuildEndTime = time() + $BuildTime;
 			else

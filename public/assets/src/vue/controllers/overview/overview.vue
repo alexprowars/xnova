@@ -230,6 +230,24 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="clearfix"></div>
+
+				<div v-if="page['build_list'].length > 0">
+					<div class="separator"></div>
+					<div class="table">
+						<div v-for="list in page['build_list']" class="row flight">
+							<div class="th col-4 col-sm-2">
+								<div class="z">{{ Format.time(list[0] - $root.serverTime(), ':', true) }}</div>
+								<span class="positive d-sm-none">{{ date("d.m H:i:s", list[0]) }}</span>
+							</div>
+							<div class="th col-sm-10 col-8 text-left">
+								<span class="flight owndeploy" v-html="list[1]"></span>
+								<span class="positive float-sm-right d-none d-sm-inline">{{ date("d.m H:i:s", list[0]) }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 

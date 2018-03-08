@@ -10,7 +10,7 @@ namespace Xnova;
 
 use Friday\Core\Options;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 use Phalcon\Mvc\User\Component;
 
 /**
@@ -83,7 +83,7 @@ class Galaxy extends Component
 			Options::set('LastSettedPlanetPos', $Planet);
 
 			if (is_null($this->user))
-				$this->user = User::findFirst($user_id);
+				$this->user = UserModel::findFirst($user_id);
 
 			$this->user->saveData([
 				'planet_id'		 => $PlanetID,

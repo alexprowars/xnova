@@ -1,5 +1,5 @@
 <template>
-	<form :action="$root.getUrl('messages/')" method="post">
+	<form ref="form" :action="$root.getUrl('messages/')" method="post">
 		<div class="block">
 			<div class="title">
 				Сообщения
@@ -11,33 +11,33 @@
 					<option v-for="i in limit" :value="i">{{ i }}</option>
 				</select>
 				на странице
-				<div style="float: right">
-					<input name="deletemessages" value="Удалить отмеченные" type="submit">
+				<div v-if="deleteItems.length > 0" class="d-inline-block">
+					<input name="deletemessages" value="Удалить отмеченные" type="button" @click.prevent="submitForm">
 				</div>
 			</div>
 			<div class="content noborder">
 				<div class="table">
 					<div class="row">
 						<div class="col-1 text-center">
-							<input type="checkbox" class="checkAll" style='width:14px;' title="">
+							<input type="checkbox" class="checkAll" title="" v-model="checkAll">
 						</div>
 						<div class="col-3 text-center">Дата</div>
 						<div class="col-6 text-center">От</div>
 						<div class="col-2 text-center"></div>
 					</div>
 
-					<game-page-messages-row v-for="item in page.items" :item="item"></game-page-messages-row>
+					<game-page-messages-row v-for="item in messages" :item="item"></game-page-messages-row>
 
 					<div v-if="page['pagination']['total'] === 0" class="row">
 						<div class="col-12 th text-center">нет сообщений</div>
 					</div>
 				</div>
 
-				<div style="float: left">
+				<div v-if="page['pagination']['total'] > page['pagination']['limit']" class="float-left">
 					<pagination :options="page['pagination']"></pagination>
 				</div>
-				<div style="float: right;padding: 5px">
-					<input name="deletemessages" value="Удалить отмеченные" type="submit">
+				<div v-if="deleteItems.length > 0" class="float-right" style="padding: 5px">
+					<input name="deletemessages" value="Удалить отмеченные" type="button" @click.prevent="submitForm">
 				</div>
 			</div>
 		</div>
@@ -54,15 +54,45 @@
 			page () {
 				return this.$store.state.page;
 			},
+			messages ()
+			{
+				this.$store.state.page.items.forEach((item) =>
+				{
+					Vue.set(item, 'deleted', false);
+				});
+
+				return this.$store.state.page.items;
+			},
+			deleteItems ()
+			{
+				let del = [];
+
+				this.messages.forEach((item, i) =>
+				{
+					if (item.deleted === true)
+						del.push(i);
+				});
+
+				return del;
+			}
 		},
 		data () {
 			return {
+				checkAll: false,
 				limit: [5, 10, 25, 50, 100, 200]
 			}
 		},
+		watch: {
+			checkAll (value)
+			{
+				this.messages.forEach((item) => {
+					item.deleted = value;
+				});
+			}
+		},
 		methods: {
-			submitForm (event) {
-				$(event.target).closest('form').submit();
+			submitForm () {
+				$(this.$refs['form']).submit();
 			}
 		}
 	}

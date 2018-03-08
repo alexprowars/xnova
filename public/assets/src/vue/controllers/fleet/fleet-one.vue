@@ -8,10 +8,10 @@
 			<div class="row">
 				<div class="th col-6">Цель</div>
 				<div class="th col-6 fleet-coordinates-input">
-					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['galaxy']" title="">
-					<input type="number" name="system" min="1" :max="page['system_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['system']" title="">
-					<input type="number" name="planet" min="1" :max="page['planet_max']" v-on:change="info" v-on:keyup="info" v-model="page['target']['planet']" title="">
-					<select name="planet_type" v-model="page['target']['planet_type']" v-on:change="info" title="">
+					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-model="page['target']['galaxy']" title="">
+					<input type="number" name="system" min="1" :max="page['system_max']" v-model="page['target']['system']" title="">
+					<input type="number" name="planet" min="1" :max="page['planet_max']" v-model="page['target']['planet']" title="">
+					<select name="planet_type" v-model="page['target']['planet_type']" title="">
 						<option v-for="(item, index) in $root.getLang('PLANET_TYPE')" :value="index">{{ item }}</option>
 					</select>
 				</div>
@@ -19,7 +19,7 @@
 			<div class="row">
 				<div class="th col-6">Скорость</div>
 				<div class="th col-6">
-					<select name="speed" v-model="speed" v-on:change="info" title="">
+					<select name="speed" v-model="speed" @change="info" title="">
 						<option v-for="i in 10" :value="11 - i">{{ (11 - i) * 10 }}</option>
 					</select> %
 				</div>
@@ -54,7 +54,7 @@
 
 			<div v-if="page['shortcuts'].length > 0" class="row">
 				<div v-for="link in page['shortcuts']" class="th col-6">
-					<a v-on:click.prevent="setTarget(link[1], link[2], link[3], link[4])">
+					<a @click.prevent="setTarget(link[1], link[2], link[3], link[4])">
 						{{ link[0] }} {{ link[1] }}:{{ link[2] }}:{{ link[3] }}
 						<span v-if="link[4] === 1">(P)</span>
 						<span v-if="link[4] === 2">(D)</span>
@@ -68,7 +68,7 @@
 			</div>
 			<div v-if="page['planets'].length > 0" class="row">
 				<div v-for="planet in page['planets']" class="th col-6">
-					<a v-on:click.prevent="setTarget(planet['galaxy'], planet['system'], planet['planet'], planet['planet_type'])">
+					<a @click.prevent="setTarget(planet['galaxy'], planet['system'], planet['planet'], planet['planet_type'])">
 						{{ planet['name'] }} {{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}
 					</a>
 				</div>
@@ -91,7 +91,7 @@
 			</div>
 			<div v-for="(row, index) in page['alliances']" class="row">
 				<div class="th col-12">
-					<a v-on:click.prevent="allianceSet(index)">({{ row['name'] }})</a>
+					<a @click.prevent="allianceSet(index)">({{ row['name'] }})</a>
 				</div>
 			</div>
 
@@ -134,6 +134,12 @@
 		watch: {
 			target_time () {
 				this.startTimer();
+			},
+			'page.target': {
+				handler () {
+					this.info();
+				},
+				deep: true,
 			}
 		},
 		methods: {
@@ -141,7 +147,7 @@
 			{
 				let fleet = require('./../../js/fleet.js');
 
-				this.distance = fleet.distance(this.position, this['page']['target']);
+				this.distance = fleet.distance(this.position, this.page['target']);
 				this.maxspeed = fleet.speed(this.page['ships']);
 
 				this.duration = fleet.duration({
@@ -171,14 +177,14 @@
 			},
 			setTarget (galaxy, system, planet, type)
 			{
-				this.page['galaxy'] = galaxy;
-				this.page['system'] = system;
-				this.page['planet'] = planet;
+				this.page['target']['galaxy'] = galaxy;
+				this.page['target']['system'] = system;
+				this.page['target']['planet'] = planet;
 
 				if (typeof type === 'undefined')
 					type = 1;
 
-				this.page['planet_type'] = type;
+				this.page['target']['planet_type'] = type;
 			},
 			allianceSet (index)
 			{
