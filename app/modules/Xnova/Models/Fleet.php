@@ -83,7 +83,7 @@ class Fleet extends Model
 		if ($this->getDI()->has('url'))
 			$uri = $this->getDI()->getShared('url')->getBaseUri();
 		else
-			$uri = '#BASEPATH#';
+			$uri = '#PATH#';
 
 		return '<a href="'.$uri.'galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
 	}
@@ -93,7 +93,7 @@ class Fleet extends Model
 		if ($this->getDI()->has('url'))
 			$uri = $this->getDI()->getShared('url')->getBaseUri();
 		else
-			$uri = '#BASEPATH#';
+			$uri = '#PATH#';
 
 		return '<a href="'.$uri.'galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
 	}

@@ -879,13 +879,17 @@ class AllianceController extends Controller
 		$parse = [];
 		$parse['items'] = [];
 
-		$p = (int) $this->request->getQuery('p', 'int', 1);
-
 		$messagesCount = $this->db->query("SELECT COUNT(*) AS num FROM game_alliance_chat WHERE ally_id = ?", [$this->user->ally_id])->fetch()['num'];
+
+		$parse['pagination'] = [
+			'total' => (int) $messagesCount,
+			'limit' => 10,
+			'page' => (int) $this->request->getQuery('p', 'int', 1)
+		];
 
 		if ($messagesCount > 0)
 		{
-			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($p - 1) * 20) . ", 20");
+			$mess = $this->db->query("SELECT * FROM game_alliance_chat WHERE ally_id = '" . $this->user->ally_id . "' ORDER BY id DESC limit " . (($parse['pagination']['page'] - 1) * $parse['pagination']['limit']) . ", ".$parse['pagination']['limit']."");
 
 			while ($mes = $mess->fetch())
 			{
@@ -899,11 +903,7 @@ class AllianceController extends Controller
 			}
 		}
 
-		$parse['pagination'] = [
-			'total' => (int) $messagesCount,
-			'limit' => 20,
-			'page' => (int) $p
-		];
+
 
 		$parse['owner'] = ($this->ally->owner == $this->user->id) ? true : false;
 		$parse['parser'] = $this->user->getUserOption('bb_parser') ? true : false;

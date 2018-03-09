@@ -26,17 +26,18 @@
 							<div v-if="item.time > 0" class="z">
 								{{ Format.time(item.time, ':', true) }}
 								<br>
-								<a v-if="cheat <= 0" v-on:click="load($root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/cancel/planet/'+pl+'/'))">Отменить</a>
+								<a v-if="cheat <= 0" :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/cancel/planet/'+pl+'/')">Отменить</a>
 							</div>
 							<div v-else class="z">
 								Завершено
 								<br>
-								<a v-on:click="load($root.getUrl('buildings/index/planet/'+$store.state.user.planet+'/'))">Продолжить</a>
+								<a :href="$root.getUrl('buildings/index/planet/'+$store.state.user.planet+'/')">Продолжить</a>
 							</div>
 							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 						</div>
 						<div class="col-6 k" v-else>
 							<a :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
+							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 						</div>
 					</div>
 				</div>

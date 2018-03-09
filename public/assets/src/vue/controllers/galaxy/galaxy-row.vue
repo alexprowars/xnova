@@ -6,7 +6,7 @@
 				<div class="tooltip-content">
 					<table width="240">
 						<tr>
-							<td class="c" colspan="2">Планета {{ item['p_name'] }} [{{ $parent['page']['galaxy'] }}:{{ $parent['page']['system'] }}:{{ item['planet'] }}]</td>
+							<td class="c" colspan="2">Планета {{ item['p_name'] }} [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]</td>
 						</tr>
 						<tr>
 							<th width="80">
@@ -14,18 +14,18 @@
 							</th>
 							<th align="left">
 								<div v-if="$parent['page']['user']['phalanx'] > 0">
-									<a :onclick="$root.getUrl('phalanx/index/galaxy/'+$parent['page']['galaxy']+'/system/'+$parent['page']['system']+'/planet/'+item['planet']+'/')" target="_blank">Фаланга</a>
+									<a :onclick="$root.getUrl('phalanx/index/galaxy/'+galaxy+'/system/'+system+'/planet/'+item['planet']+'/')" target="_blank">Фаланга</a>
 								</div>
 
 								<div v-if="item['u_id'] !== $store.state['user']['id']">
-									<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t'+item['p_type']+'/m1/')">Атаковать</a>
+									<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m1/')">Атаковать</a>
 									<br>
-									<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t'+item['p_type']+'/m5/')">Удерживать</a>
+									<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m5/')">Удерживать</a>
 								</div>
 								<div v-else>
-									<a v-if="item['u_id'] === $store.state['user']['id']" :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t'+item['p_type']+'/m4/')">Оставить</a>
+									<a v-if="item['u_id'] === $store.state['user']['id']" :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m4/')">Оставить</a>
 								</div>
-								<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t'+item['p_type']+'/m3/')">Транспорт</a>
+								<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m3/')">Транспорт</a>
 							</th>
 						</tr>
 					</table>
@@ -49,7 +49,7 @@
 					<table width="240">
 						<tr>
 							<td class="c" colspan="2">
-								Луна: {{ item['l_name'] }} [{{ $parent['page']['galaxy'] }}:{{ $parent['page']['system'] }}:{{ item['planet'] }}]
+								Луна: {{ item['l_name'] }} [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]
 							</td>
 						</tr>
 						<tr>
@@ -75,18 +75,18 @@
 									<tr>
 										<th colspan="2" align="center">
 											<div v-if="item['u_id'] !== $store.state['user']['id']">
-												<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t3/m1/')">Атаковать</a>
+												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m1/')">Атаковать</a>
 												<br>
-												<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t3/m5/')">Удерживать</a>
+												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m5/')">Удерживать</a>
 
 												<div v-if="$parent['page']['user'].destroy > 0">
-													<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t3/m9/')">Уничтожить</a>
+													<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m9/')">Уничтожить</a>
 												</div>
 											</div>
 											<div v-else>
-												<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t3/m4/')">Оставить</a>
+												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m4/')">Оставить</a>
 											</div>
-											<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t3/m3/')">Транспорт</a>
+											<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m3/')">Транспорт</a>
 										</th>
 									</tr>
 								</table>
@@ -104,7 +104,7 @@
 					<table width="240">
 						<tr>
 							<td class="c" colspan="2">
-								Обломки: [{{ $parent['page']['galaxy'] }}:{{ $parent['page']['system'] }}:{{ item['planet'] }}]
+								Обломки: [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]
 							</td>
 						</tr>
 						<tr>
@@ -126,12 +126,12 @@
 									</tr>
 									<tr v-if="$parent['page']['user']['recycler'] > 0">
 										<th colspan="2" align="left">
-											<a @click.prevent="$parent.fleet.sendMission(8, $parent['page']['galaxy'], $parent['page']['system'], item['planet'], 2, 0)">Собрать</a>
+											<a @click.prevent="$parent.fleet.sendMission(8, galaxy, system, item['planet'], 2, 0)">Собрать</a>
 										</th>
 									</tr>
 									<tr>
 										<th colspan="2" align="left">
-											<a :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+item['planet']+'/t2/m8/')">Отправить флот</a>
+											<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t2/m8/')">Отправить флот</a>
 										</th>
 									</tr>
 								</table>
@@ -235,7 +235,7 @@
 					<span class="sprite skin_b"></span>
 				</a>
 
-				<a v-if="$parent['page']['user']['missile']" :href="$root.getUrl('galaxy/'+$parent['page']['galaxy']+'/'+$parent['page']['system']+'/planet/'+item['planet']+'/r/2/user/'+$store.state['user']['planet']+'/')" title="Ракетная атака">
+				<a v-if="$parent['page']['user']['missile']" :href="$root.getUrl('galaxy/'+galaxy+'/'+system+'/planet/'+item['planet']+'/r/2/user/'+$store.state['user']['planet']+'/')" title="Ракетная атака">
 					<span class="sprite skin_r"></span>
 				</a>
 
@@ -255,12 +255,12 @@
 				<a :href="$root.getUrl('players/'+item['u_id']+'/')" title="Информация об игроке">
 					<span class="sprite skin_s"></span>
 				</a>
-				<a :href="$root.getUrl('fleet/shortcut/add/new/g/'+$parent['page']['galaxy']+'/s/'+$parent['page']['system']+'/p/'+item['planet']+'/t/'+item['p_type']+'/')" title="Добавить в закладки">
+				<a :href="$root.getUrl('fleet/shortcut/add/new/g/'+galaxy+'/s/'+system+'/p/'+item['planet']+'/t/'+item['p_type']+'/')" title="Добавить в закладки">
 					<span class="sprite skin_z"></span>
 				</a>
 			</div>
 
-			<a v-if="!item && $parent['page']['user']['colonizer']" :href="$root.getUrl('fleet/g'+$parent['page']['galaxy']+'/s'+$parent['page']['system']+'/p'+(i + 1)+'/t0/m7/')" title="Колонизация">
+			<a v-if="!item && $parent['page']['user']['colonizer']" :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/')" title="Колонизация">
 				<span class="sprite skin_e"></span>
 			</a>
 		</th>
@@ -278,6 +278,12 @@
 			}
 		},
 		computed: {
+			galaxy () {
+				return this.$parent['page']['galaxy'];
+			},
+			system () {
+				return this.$parent['page']['system'];
+			},
 			user_status: function ()
 			{
 				let CurrentPoints 	= this.$parent['page']['user']['s_points'];
@@ -363,8 +369,7 @@
 		},
 		methods:
 		{
-			sendMessage: function()
-			{
+			sendMessage: function() {
 				showWindow(this.item['u_name']+': отправить сообщение', this.$root.getUrl('messages/write/'+this.item['u_id']+'/'), 680)
 			},
 			spy: function(planet_type, event)
@@ -375,9 +380,8 @@
 
 				let spyNum = obj.parent().find('input[type=text]').val();
 
-				this.$parent.fleet.sendMission(6, this.$parent['page']['galaxy'], this.$parent['page']['system'], this.item['planet'], planet_type, spyNum)
-				.then(() =>
-				{
+				this.$parent.fleet.sendMission(6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum)
+				.then(() => {
 					obj.prop('disabled', false);
 				});
 			}

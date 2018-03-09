@@ -50,7 +50,7 @@ class BuddyController extends Controller
 						'text'		=> strip_tags($this->request->getPost('text', 'string', ''))
 					]);
 
-					User::sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="#BASEPATH#buddy/requests/"><< просмотреть >></a>');
+					User::sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="#PATH#buddy/requests/"><< просмотреть >></a>');
 
 					throw new RedirectException('Запрос отправлен', 'Предложение дружбы', '/buddy/');
 				}

@@ -525,7 +525,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			]);
 		}
 
-		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#BASEPATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
+		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#PATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
 		$raport .= "<font color=\"#COLOR#\">"._getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
 		$raport2  = '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';

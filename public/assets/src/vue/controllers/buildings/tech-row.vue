@@ -3,7 +3,7 @@
 		<div class="page-building-items-item building" :class="{blocked: !item.allow}">
 			<div class="building-info">
 				<div class="building-info-img">
-					<a v-on:click="openWindow">
+					<a @click="openWindow">
 						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" :alt="$root.getLang('TECH', item.i)" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
 					</a>
 				</div>

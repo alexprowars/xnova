@@ -154,7 +154,8 @@ class Construction
 
 		if (!Building::checkLabSettingsInQueue($this->planet))
 		{
-			$NoResearchMessage = _getText('labo_on_update');
+			$this->user->getDI()->getShared('flashSession')->message('error-static', _getText('labo_on_update'));
+
 			$bContinue = false;
 		}
 
@@ -175,7 +176,7 @@ class Construction
 
 		$queueManager->loadQueue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
 
-		if (isset($_GET['cmd']) AND $bContinue != false)
+		if (isset($_GET['cmd']) && $bContinue != false)
 		{
 			$Command 	= $request->getQuery('cmd', null, '');
 			$Techno 	= $request->getQuery('tech', 'int', 0);
@@ -226,7 +227,7 @@ class Construction
 
 			$row = [];
 
-			$row['allow'] 	= $isAccess;
+			$row['allow'] 	= $isAccess && $bContinue;
 			$row['i'] 		= $Tech;
 			$row['level']	= $this->user->getTechLevel($Tech);
 			$row['max']		= isset($price['max']) ? $price['max'] : 0;
@@ -279,8 +280,6 @@ class Construction
 
 			$parse['items'][] = $row;
 		}
-
-		$parse['message'] = $NoResearchMessage;
 
 		return $parse;
 	}

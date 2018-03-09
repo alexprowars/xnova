@@ -21,7 +21,7 @@
 					<a :href="$root.getUrl('messages/write/'+item['from']+'/quote/'+item['id']+'/')" title="Цитировать сообщение">
 						<span class="sprite skin_z"></span>
 					</a>
-					<a v-on:click.prevent="abuse" title="Отправить жалобу">
+					<a @click.prevent="abuse" title="Отправить жалобу">
 						<span class="sprite skin_s"></span>
 					</a>
 				</span>

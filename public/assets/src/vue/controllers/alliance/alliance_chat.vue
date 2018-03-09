@@ -13,7 +13,7 @@
 						{{ date("H:i:s", item['time']) }}
 						<br>
 						<a :href="$root.getUrl('players/'+item['user_id']+'/')" target="_blank">{{ item['user'] }}</a>
-						<a v-on:click.prevent="quote(index)"> -> </a>
+						<a @click.prevent="quote(index)"> -> </a>
 					</div>
 					<div class="col-9 b">
 						<text-viewer v-if="page['parser']" :text="item['text']"></text-viewer>

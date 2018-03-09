@@ -1,6 +1,6 @@
 <template>
 	<div class="main-planets">
-		<a :class="{active: active}" class="planet-toggle d-sm-none" v-on:click.prevent="$parent.sidebarToggle('planet')"><span>
+		<a :class="{active: active}" class="planet-toggle d-sm-none" @click.prevent="$parent.sidebarToggle('planet')"><span>
 				<span class="first"></span>
 				<span class="second"></span>
 				<span class="third"></span>

@@ -18,12 +18,12 @@
 			<div class="content noborder">
 				<div class="table">
 					<div class="row">
-						<div class="col-1 text-center">
+						<div class="col-1 th text-center">
 							<input type="checkbox" class="checkAll" title="" v-model="checkAll">
 						</div>
-						<div class="col-3 text-center">Дата</div>
-						<div class="col-6 text-center">От</div>
-						<div class="col-2 text-center"></div>
+						<div class="col-3 th text-center">Дата</div>
+						<div class="col-6 th text-center">От</div>
+						<div class="col-2 th text-center"></div>
 					</div>
 
 					<game-page-messages-row v-for="item in messages" :item="item"></game-page-messages-row>

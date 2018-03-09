@@ -1,9 +1,9 @@
 <template>
 	<nav>
 		<ul class="pagination pagination-sm">
-			<li v-for="item in items" class="page-item">
-				<a v-if="item > 0" v-on:click.prevent="loadPage(item)" class="page-link">{{ item }}</a>
-				<a v-else="" v-on:click.prevent="loadPage(item)" class="page-link">...</a>
+			<li v-for="item in items" class="page-item" :class="{active: options['page'] === item}">
+				<a v-if="item > 0" href @click.prevent="loadPage(item)" class="page-link">{{ item }}</a>
+				<a v-else="" href @click.prevent="loadPage(item)" class="page-link">...</a>
 			</li>
 		</ul>
 	</nav>

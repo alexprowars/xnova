@@ -112,7 +112,7 @@
 							<div class="row">
 								<div class="col-12 c">
 									Обломки
-									<a v-if="page['debris_mission']" v-on:click.prevent="fleet.sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)">
+									<a v-if="page['debris_mission']" @click.prevent="fleet.sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)">
 										(переработать)
 									</a>
 								</div>

@@ -1,6 +1,5 @@
 <template>
 	<div class="page-building page-building-tech">
-		<div class="negative">{{ page.message }}</div>
 		<div class="block">
 			<div class="title">Исследования</div>
 			<div class="content page-building-items">

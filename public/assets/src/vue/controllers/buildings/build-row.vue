@@ -4,7 +4,7 @@
 
 			<div class="building-info">
 				<div class="building-info-img" :style="'background-image: url('+$root.getUrl('assets/images/buildings/planet/'+$parent.page.planet+'_'+(item.i % 4 + 1)+'.png')+')'">
-					<a v-on:click="openWindow">
+					<a @click.prevent="openWindow">
 						<img :src="$root.getUrl('assets/images/buildings/item/'+item.i+'.png')" align="top" :alt="$root.getLang('TECH', item.i)" class="tooltip" :data-content="$root.getLang('TECH', item.i)" data-width="150">
 					</a>
 					<div class="building-effects" v-html="item.effects"></div>

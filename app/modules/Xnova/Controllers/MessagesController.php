@@ -243,13 +243,20 @@ class MessagesController extends Controller
 
 		foreach ($items as $item)
 		{
+			$item['text'] = str_replace('#PATH#', $this->url->getBaseUri(), $item['text']);
+
+			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item['text'], $match);
+
+			if (isset($match[2]))
+				$item['text'] = str_replace($match[0], $this->game->datezone(trim($match[1]), (int) $match[2]), $item['text']);
+
 			$parse['items'][] = [
 				'id' => (int) $item['id'],
 				'type' => (int) $item['type'],
 				'time' => (int) $item['time'],
 				'from' => (int) $item['from_id'],
 				'theme' => $item['theme'],
-				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes(str_replace('#BASEPATH#', $this->url->getBaseUri(), $item['text']))),
+				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item['text'])),
 			];
 		}
 

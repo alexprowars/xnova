@@ -3,7 +3,7 @@
 		<div class="page-building-items-item building" :class="{blocked: !item.allow}">
 			<div class="building-info">
 				<div class="building-info-img">
-					<a v-on:click="openWindow">
+					<a @click="openWindow">
 						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="$root.getLang('TECH', item.i)" align="top" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
 					</a>
 				</div>
@@ -30,7 +30,7 @@
 							<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
 						</div>
 						<div v-else-if="max > 0" class="buildmax">
-							<a v-on:click.prevent="setMax">
+							<a @click.prevent="setMax">
 								max: <font color="lime">{{ Format.number(max) }}</font>
 							</a>
 							<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">

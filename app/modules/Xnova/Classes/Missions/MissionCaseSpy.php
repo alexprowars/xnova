@@ -131,7 +131,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . _getText('sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"#BASEPATH#fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
+			$AttackLink .= "<a href=\"#PATH#fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
 			$AttackLink .= "p" . $this->_fleet->end_planet . "/t" . $this->_fleet->end_type . "/";
 			$AttackLink .= "m" . $this->_fleet->end_type . "/";
 			$AttackLink .= " \">" . _getText('type_mission', 1) . "";
@@ -159,7 +159,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $targetUser->getTechLevel($id) . '!' . (($id > 400 && $targetUser->getTechLevel($id - 50) && $ST >= 8) ? $targetUser->getTechLevel($id - 50) : 0) . ';';
 			}
 
-			$MessageEnd .= "<center><a href=\"#BASEPATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
+			$MessageEnd .= "<center><a href=\"#PATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
@@ -209,19 +209,17 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		if ($Mode == 0)
 		{
-			$t = time().''.mt_rand(1, 100);
-
 			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
 			$String .= $TitleString . " " . $TargetPlanet->name;
-			$String .= " <a href=\"#BASEPATH#galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
+			$String .= " <a href=\"#PATH#galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
 			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
-			$String .= "<br>на <span id='d".$t."'></span><script>$('#d".$t."').html(date('H:m', " . time() . "));</script></td>";
+			$String .= "<br>на #DATE|H:i:s|".time()."#</td>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>металла:</th><th width=220 align=right>" . Format::number($TargetPlanet->metal) . "</th>";
-			$String .= "<th width=220>кристалла:</th><th width=220 align=right>" . Format::number($TargetPlanet->crystal) . "</th>";
+			$String .= "<th width=25%>Металл:</th><th width=25%>" . Format::number($TargetPlanet->metal) . "</th>";
+			$String .= "<th width=25%>Кристалл:</th><th width=25%>" . Format::number($TargetPlanet->crystal) . "</th>";
 			$String .= "</tr><tr>";
-			$String .= "<th width=220>дейтерия:</th><th width=220 align=right>" . Format::number($TargetPlanet->deuterium) . "</th>";
-			$String .= "<th width=220>энергии:</th><th width=220 align=right>" . Format::number($TargetPlanet->energy_max) . "</th>";
+			$String .= "<th width=25%>Дейтерий:</th><th width=25%>" . Format::number($TargetPlanet->deuterium) . "</th>";
+			$String .= "<th width=25%>Энергия:</th><th width=25%>" . Format::number($TargetPlanet->energy_max) . "</th>";
 			$String .= "</tr>";
 			$LookAtLoop = false;
 		}
