@@ -120,7 +120,7 @@ class Cli extends Console
 
 	/**
 	 * @param $di DiInterface
-	 * @return Loader
+	 * @return \Phalcon\Application
 	 */
 	protected function initModules ($di)
 	{
@@ -142,7 +142,7 @@ class Cli extends Console
 			}
 		}
 
-		parent::registerModules($modules);
+		return parent::registerModules($modules);
 	}
 
 	public function getOutput()

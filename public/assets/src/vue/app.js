@@ -226,7 +226,7 @@ window.application = new Vue({
 				return '##'+$.makeArray(arguments).join('::').toUpperCase()+'##';
 		},
 		getPlanetUrl: function (galaxy, system, planet) {
-			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/system/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
+			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/'+system+'/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
 		},
 		evalJs: function (html)
 		{

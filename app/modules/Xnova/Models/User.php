@@ -126,7 +126,7 @@ class User extends BaseUser
 
 		if ($this->technology !== false)
 		{
-			foreach ($this->technology as $tech)
+			foreach ($this->technology as &$tech)
 			{
 				if ($tech['id'] == 0 && $tech['level'] > 0)
 				{
@@ -135,6 +135,8 @@ class User extends BaseUser
 						'tech_id' => $tech['type'],
 						'level' => $tech['level'],
 					]);
+
+					$tech['id'] = $this->db->lastInsertId();
 				}
 				elseif ($tech['level'] != $tech['~level'])
 				{
@@ -154,8 +156,10 @@ class User extends BaseUser
 						$this->db->delete(DB_PREFIX.'users_tech', 'id = ?', [$tech['id']]);
 				}
 
-				$building['~level'] = $tech['level'];
+				$tech['~level'] = $tech['level'];
 			}
+
+			unset($tech);
 		}
 	}
 

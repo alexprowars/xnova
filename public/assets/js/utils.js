@@ -207,6 +207,9 @@ var Format = {
 		if (typeof full === 'undefined')
 			full = false;
 
+		if (value < 0)
+			return '-';
+
 		var dd = Math.floor(value / (24 * 3600));
 		var hh = Math.floor(value / 3600 % 24);
 		var mm = Math.floor(value / 60 % 60);

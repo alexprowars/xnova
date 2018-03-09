@@ -96,6 +96,7 @@
 			{
 				if (typeof this.item['build'] !== 'object' || this.time < 0)
 				{
+					this.time = 0;
 					this.stop();
 					return;
 				}
@@ -110,8 +111,10 @@
 			}
 		},
 		watch: {
-			time () {
-				this.start();
+			time (v)
+			{
+				if (v > 0)
+					this.start();
 			},
 			'item.build' (v)
 			{

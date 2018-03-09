@@ -114,18 +114,18 @@ class MessagesController extends Controller
 
 		if (isset($_POST['userid']) && $_POST['userid'] != "")
 		{
-			$userid = " AND owner = " . intval($_POST['userid']) . "";
+			$userid = " AND user_id = " . intval($_POST['userid']) . "";
 			$parse['userid'] = intval($_POST['userid']);
 		}
 		elseif (isset($_POST['userid_s']) && $_POST['userid_s'] != "")
 		{
-			$userid = " AND sender = " . intval($_POST['userid_s']) . "";
+			$userid = " AND from_id = " . intval($_POST['userid_s']) . "";
 			$parse['userid_s'] = intval($_POST['userid_s']);
 		}
 		else
 			$userid = "";
 
-		$Messages = $this->db->query("SELECT m.*, u.username FROM game_messages m LEFT JOIN game_users u ON u.id = m.owner WHERE m.type = '" . $Selected . "' " . $userid . " ORDER BY m.time DESC LIMIT " . (($ViewPage - 1) * 25) . ",25;");
+		$Messages = $this->db->query("SELECT m.*, u.username FROM game_messages m LEFT JOIN game_users u ON u.id = m.user_id WHERE m.type = '" . $Selected . "' " . $userid . " ORDER BY m.time DESC LIMIT " . (($ViewPage - 1) * 25) . ",25;");
 
 		$parse['mlst_data_rows'] = [];
 
@@ -134,8 +134,8 @@ class MessagesController extends Controller
 			$row['text'] = str_replace('/admin', '', str_replace('#BASEPATH#', $this->url->getBaseUri(), $row['text']));
 
 			$bloc['mlst_id'] = $row['id'];
-			$bloc['mlst_from'] = $row['from'];
-			$bloc['mlst_to'] = $row['username'] . " ID:" . $row['owner'];
+			$bloc['mlst_from'] = $row['from_id'];
+			$bloc['mlst_to'] = $row['username'] . " ID:" . $row['user_id'];
 			$bloc['mlst_text'] = stripslashes(nl2br($row['text']));
 			$bloc['mlst_time'] = date("d.m.Y H:i:s", $row['time']);
 

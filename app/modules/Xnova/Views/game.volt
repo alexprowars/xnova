@@ -21,6 +21,9 @@
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all">
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->
+	<!--[if IE]>
+		<script type="text/javascript" src="/assets/js/polyfills/promise.js"></script>
+	<![endif]-->
 
 	{% if allowMobile() is not true %}
 		<meta name="viewport" content="width=810">

@@ -604,6 +604,8 @@ class OverviewController extends Controller
 			}
 		}
 
+		$parse['build_list'] = [];
+
 		if (count($build_list) > 0)
 		{
 			$parse['build_list'] = [];

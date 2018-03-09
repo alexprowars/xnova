@@ -126,7 +126,7 @@
 									</tr>
 									<tr v-if="$parent['page']['user']['recycler'] > 0">
 										<th colspan="2" align="left">
-											<a v-on:click.prevent="$parent.fleet.sendMission(8, $parent['page']['galaxy'], $parent['page']['system'], item['planet'], 2, 0)">Собрать</a>
+											<a @click.prevent="$parent.fleet.sendMission(8, $parent['page']['galaxy'], $parent['page']['system'], item['planet'], 2, 0)">Собрать</a>
 										</th>
 									</tr>
 									<tr>
@@ -228,7 +228,7 @@
 
 		<th style="white-space: nowrap;" width="125">
 			<div v-if="item && item['u_id'] !== $store.state['user']['id'] && !item['p_delete']">
-				<a title="Отправить сообщение" :onclick="sendMessage">
+				<a title="Отправить сообщение" @click.prevent="sendMessage">
 					<span class="sprite skin_m"></span>
 				</a>
 				<a :href="$root.getUrl('buddy/new/'+item['u_id']+'/')" title="Добавить в друзья">
@@ -244,9 +244,9 @@
 						<center>
 							<input type="text" :value="$parent['page']['user'].spy">
 							<br>
-							<input type="button" v-on:click.prevent="spy(item['p_type'], $event)" value="Отправить на планету">
+							<input type="button" @click.prevent="spy(item['p_type'], $event)" value="Отправить на планету">
 							<br>
-							<input v-if="!item['l_delete'] && item['l_id']" type="button" v-on:click.prevent="spy(3, $event)" value="Отправить на луну">
+							<input v-if="!item['l_delete'] && item['l_id']" type="button" @click.prevent="spy(3, $event)" value="Отправить на луну">
 						</center>
 					</div>
 					<span class="sprite skin_e"></span>
@@ -375,27 +375,10 @@
 
 				let spyNum = obj.parent().find('input[type=text]').val();
 
-				$.ajax({
-					type: "GET",
-					url: options.path+"fleet/quick/",
-					data: "mode=6&g="+this.$parent['page']['galaxy']+"&s="+this.$parent['page']['system']+"&p="+this.item['planet']+"&t="+planet_type+"&count="+spyNum,
-					dataType: 'json',
-					success: function(result)
-					{
-						result.data.messages.forEach((item) =>
-						{
-							if (item['type'].indexOf('-static') <= 0)
-							{
-								$.toast({
-									text : item.text,
-									position : 'bottom-center',
-									icon: item.type
-								});
-							}
-						});
-
-						obj.prop('disabled', false);
-					}
+				this.$parent.fleet.sendMission(6, this.$parent['page']['galaxy'], this.$parent['page']['system'], this.item['planet'], planet_type, spyNum)
+				.then(() =>
+				{
+					obj.prop('disabled', false);
 				});
 			}
 		}
