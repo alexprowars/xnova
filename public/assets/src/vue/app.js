@@ -1,3 +1,6 @@
+
+import 'es6-promise/auto'
+
 let App = require('./app.vue')
 
 Vue.prototype.Format = Format

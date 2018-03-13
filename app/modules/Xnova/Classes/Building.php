@@ -28,7 +28,12 @@ class Building
 
 		foreach ($cost AS $ResType => $ResCount)
 		{
-			if (!isset($planet->{$ResType}) || $ResCount > $planet->{$ResType})
+			if ($ResType == 'energy')
+			{
+				if ($planet->energy_max < $ResCount)
+					return false;
+			}
+			elseif (!isset($planet->{$ResType}) || $ResCount > $planet->{$ResType})
 				return false;
 		}
 

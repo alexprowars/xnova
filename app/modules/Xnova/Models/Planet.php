@@ -383,6 +383,9 @@ class Planet extends Model
 
 	public function getResourceProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
 	{
+		if ($BuildLevelFactor > 10)
+			$BuildLevelFactor = 10;
+
 		$return = ['energy' => 0];
 
 		$config = $this->getDI()->getShared('config');
@@ -473,7 +476,7 @@ class Planet extends Model
 				/**
 				 * @TODO FixIt
 				 */
-				$BuildLevelFactor = 100;
+				$BuildLevelFactor = 10;
 			}
 
 			if ($ProdID == 12 && $this->deuterium < 100)

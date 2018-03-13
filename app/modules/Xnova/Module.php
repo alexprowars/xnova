@@ -37,9 +37,7 @@ class Module extends Base implements ModuleDefinitionInterface
 			if (!is_array($viewDirs))
 				$viewDirs = [$viewDirs];
 
-			$config = $di->getShared('config');
-
-			$viewDirs[] = ROOT_PATH.$config->application->baseDir.$config->application->modulesDir.'Xnova/Views';
+			$viewDirs[] = __DIR__.'/Views';
 
 			$view->setViewsDir($viewDirs);
 		}

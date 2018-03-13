@@ -29,7 +29,7 @@ gulp.task('sass', function ()
 
 gulp.task('vue', function ()
 {
-	browserify('./public/assets/src/vue/app.js', {debug: false, bundleExternal: false})
+	browserify('./public/assets/src/vue/app.js', {debug: false, bundleExternal: true})
 		.transform(babelify, { presets: ['es2015'] })
 		.transform(vueify)
 		.bundle()

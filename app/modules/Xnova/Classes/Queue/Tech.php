@@ -32,7 +32,7 @@ class Tech
 		{
 			$spaceLabs = [];
 
-			if ($user->getTechLevel('energy') > 0)
+			if ($user->getTechLevel('intergalactic') > 0)
 				$spaceLabs = $planet->getNetworkLevel();
 
 			$planet->spaceLabs = $spaceLabs;

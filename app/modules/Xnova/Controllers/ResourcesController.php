@@ -162,7 +162,7 @@ class ResourcesController extends Controller
 				/**
 				 * @TODO FixIt
 				 */
-				$BuildLevelFactor = 100;
+				$BuildLevelFactor = 10;
 			}
 
 			$result = $this->planet->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);

@@ -149,7 +149,6 @@ class Construction
 	{
 		$request = $this->user->getDI()->getShared('request');
 
-		$NoResearchMessage = "";
 		$bContinue = true;
 
 		if (!Building::checkLabSettingsInQueue($this->planet))
