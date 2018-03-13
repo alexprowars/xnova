@@ -20,12 +20,13 @@ use Friday\Core\Assets\Manager as AssetManager;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Tag;
 use Phalcon\Text;
 
 trait Initializations
 {
 	/**
-	 * @var \Phalcon\Config|\stdClass
+	 * @var \stdClass|\Phalcon\Config
 	 */
 	protected $_config;
 
@@ -127,9 +128,9 @@ trait Initializations
 			]
 		]);
 
-		$di->set('db', $connection);
+		$di->set('db', $connection, true);
 
-		$connection->setEventsManager($eventsManager);
+		/*$connection->setEventsManager($eventsManager);
 
 		$eventsManager->attach('db', function($event, $connection)
 		{
@@ -137,20 +138,29 @@ trait Initializations
 		    {
 		    	@file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../app/logs/db_'.date('d.m.Y_H').'.log', $connection->getRealSQLStatement()."\n".print_r($connection->getSQLVariables(), true)."\n", FILE_APPEND);
 		    }
-		});
+		});*/
 
 		$modelsManager = new ModelsManager();
 		$modelsManager->setEventsManager($eventsManager);
 
 		$di->set('modelsManager', $modelsManager, true);
 
+		if ($this->_config->offsetExists('metadata') && $this->_config->metadata->offsetExists('adapter'))
+			$metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $this->_config->metadata->adapter;
+		else
+			$metadataAdapter = '\Phalcon\Mvc\Model\MetaData\Memory';
+
+		$metaData = new $metadataAdapter($this->_config->metadata->toArray());
+
+		$di->set('modelsMetadata', $metaData, true);
+
 		ini_set('phalcon.orm.exception_on_failed_save', true);
 
 		Model::setup([
-			'events' => true,
-			'columnRenaming' => false,
+			'events' 			 => true,
+			'columnRenaming' 	 => false,
 			'notNullValidations' => false,
-			'virtualForeignKeys '=> true
+			'virtualForeignKeys' => true
 		]);
 	}
 
@@ -191,7 +201,7 @@ trait Initializations
 		$di->remove('flash');
 
 		if (!$di->has('flashSession'))
-			return null;
+			return false;
 
 		$flash = $di->getShared('flashSession');
 
@@ -244,8 +254,7 @@ trait Initializations
 
 			$di->set('profiler', $profiler, true);
 
-			/** @noinspection PhpUnusedParameterInspection */
-			$eventManager->attach('application:afterStartModule', function ($event, $application) use ($profiler)
+			$eventManager->attach('application:afterStartModule', function () use ($profiler)
 			{
 				$pluginManager = new Prophiler\Plugin\Manager\Phalcon($profiler);
 				$pluginManager->register();
@@ -266,8 +275,6 @@ trait Initializations
 			throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
 		});*/
 
-		$config = $this->_config;
-
 		if ($this->_config->application->debug)
 		{
 			ini_set('log_errors', 'On');
@@ -280,53 +287,35 @@ trait Initializations
 		Lang::setLang($this->_config->app->language);
 
 		$di->remove('transactionManager');
-		$di->remove('modelsMetadata');
 
-		$di->set('crypt', function()
-		{
-			$crypt = new Crypt();
-			$crypt->setKey('fsdgdghrdfhgasdfsdqqwedf');
+		$crypt = new Crypt();
+		$crypt->setKey('fsdgdghrdfhgasdfsdqqwedf');
 
-			return $crypt;
-		});
+		$di->set('crypt', $crypt, true);
 
-		$di->set('modelsMetadata', function() use ($config)
-		{
-			if ($config->offsetExists('metadata') && $config->metadata->offsetExists('adapter'))
-				$metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $config->metadata->adapter;
-			else
-				$metadataAdapter = '\Phalcon\Mvc\Model\MetaData\Memory';
+		if ($this->_config->offsetExists('annotations') && $this->_config->annotations->offsetExists('adapter'))
+			$annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $this->_config->annotations->adapter;
+		else
+			$annotationsAdapter = '\Phalcon\Annotations\Adapter\Memory';
 
-			$metaData = new $metadataAdapter($config->metadata->toArray());
+		$di->set('annotations', new $annotationsAdapter($this->_config->annotations->toArray()), true);
 
-			return $metaData;
-		});
+		$cookies = new Cookies();
+		$cookies->useEncryption(false);
 
-		$di->set('annotations', function () use ($config)
-		{
-			if ($config->offsetExists('annotations') && $config->annotations->offsetExists('adapter'))
-				$annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->annotations->adapter;
-			else
-				$annotationsAdapter = '\Phalcon\Annotations\Adapter\Memory';
-
-			return new $annotationsAdapter($config->annotations->toArray());
-		});
-
-		$di->set('cookies', function()
-		{
-			$cookies = new Cookies();
-			$cookies->useEncryption(false);
-
-			return $cookies;
-		});
-
+		$di->set('cookies', $cookies, true);
 		$di->set('auth', new Auth(), true);
+		$di->set('tag', new Tag(), true);
 
 		$registry = $di->getShared('registry');
 
-		$cache = $di->getShared('cache');
+		if ($di->has('cache'))
+			$cache = $di->getShared('cache');
 
-		$resources = $cache->get('FRIDAY_CONTROLLERS');
+		if (isset($cache))
+			$resources = $cache->get('CORE_CONTROLLERS');
+		else
+			$resources = null;
 
 		if (!is_array($resources))
 		{
@@ -351,12 +340,13 @@ trait Initializations
 
 					$resources[] = [
 						'module'	=> strtolower($module['code']),
-						'class'		=> ($module['system'] == VALUE_TRUE ? 'Friday\\' : '').$moduleName.'\Controllers\\'.ucfirst(Text::lower(str_replace('Controller.php', '', $file->getFilename())))
+						'class'		=> ($module['namespace'] != '' ? $module['namespace'] : $moduleName).'\Controllers\\'.ucfirst(Text::lower(str_replace('Controller.php', '', $file->getFilename())))
 					];
 				}
 			}
 
-			$cache->save('FRIDAY_CONTROLLERS', $resources, 3600);
+			if (isset($cache))
+				$cache->save('CORE_CONTROLLERS', $resources, 3600);
 		}
 
 		$registry->controllers = $resources;
@@ -369,9 +359,11 @@ trait Initializations
 	 */
 	protected function initView ($di, $eventManager)
 	{
+		$config = $this->_config;
+
 		$url = new UrlResolver();
-		$url->setStaticBaseUri($this->_config->application->staticUri);
-		$url->setBaseUri($this->_config->application->baseUri);
+		$url->setStaticBaseUri($config->application->staticUri);
+		$url->setBaseUri($config->application->baseUri);
 
 		$di->set('url', $url, true);
 		$di->set('assets', new AssetManager(), true);
@@ -379,10 +371,8 @@ trait Initializations
 		$view = new View();
 		$view->setEventsManager($eventManager);
 
-		if (!is_dir(ROOT_PATH.$this->_config->application->baseDir.$this->_config->application->cacheDir.'views'))
-			mkdir(ROOT_PATH.$this->_config->application->baseDir.$this->_config->application->cacheDir.'views');
-
-		$config = $this->_config;
+		if (!is_dir(ROOT_PATH.$config->application->baseDir.$config->application->cacheDir.'views'))
+			mkdir(ROOT_PATH.$config->application->baseDir.$config->application->cacheDir.'views');
 
 		$view->registerEngines([".volt" => function ($view, $di) use ($config, $eventManager)
 		{
@@ -399,7 +389,7 @@ trait Initializations
 			return $volt;
 		}]);
 
-		$di->setShared('view', $view);
+		$di->set('view', $view, true);
 
 		return $view;
 	}
@@ -415,6 +405,6 @@ trait Initializations
 		$dispatcher = new Dispatcher();
 		$dispatcher->setEventsManager($eventManager);
 
-		$di->set('dispatcher', $dispatcher);
+		$di->set('dispatcher', $dispatcher, true);
 	}
 }

@@ -11,13 +11,13 @@ use Xnova\Models\User;
 /**
  * @var $di DiInterface
  * @var $eventsManager EventsManager
- * @var $loader Loader
  */
 
 $config = $di->getShared('config');
+$loader = $di->getShared('loader');
 
 $loader->registerClasses([
-		'Xnova\Database' => ROOT_PATH.$config->application->baseDir.'modules/Xnova/Classes/Database.php'
+		'Xnova\Database' => __DIR__.'/modules/Xnova/Classes/Database.php'
 ], true);
 
 /** @noinspection PhpUnusedParameterInspection */
@@ -30,6 +30,14 @@ $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 		$auth->addPlugin('\Xnova\Auth\Plugins\Ulogin');
 		$auth->addPlugin('\Xnova\Auth\Plugins\Vk');
 	}
+});
+
+$eventsManager->attach('core:beforeStartSession', function ()
+{
+	if (strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
+		return false;
+
+	return true;
 });
 
 /** @noinspection PhpUnusedParameterInspection */

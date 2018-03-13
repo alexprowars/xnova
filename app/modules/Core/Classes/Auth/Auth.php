@@ -33,6 +33,11 @@ class Auth extends Component
 		$this->_plugins[] = $className;
 	}
 
+	public function getSecret ($password)
+	{
+		return md5 ($password.':'.$this->config->application->encryptKey);
+	}
+
 	function check ()
 	{
 		$result = $this->checkUserAuth();
@@ -81,7 +86,7 @@ class Auth extends Component
 		{
 			$this->_authorized = true;
 
-			if ($UserRow->onlinetime < (time() - 30) || ($this->dispatcher->getControllerName() == "chat" && ($UserRow->onlinetime < time() - 120 || $UserRow->chat == 0)) || ($this->dispatcher->getControllerName() != "chat" && $UserRow->chat > 0))
+			if ($UserRow->onlinetime < (time() - 30))
 				$UserRow->onlinetime = time();
 
 			$ip = sprintf("%u", ip2long($this->request->getClientAddress()));

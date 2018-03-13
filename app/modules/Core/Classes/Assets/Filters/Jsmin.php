@@ -13,13 +13,11 @@ class Jsmin implements FilterInterface
 	 */
 	public function filter($content, $resource)
 	{
-		if (strpos($resource->getPath(), '.min') === false)
-		{
-			$filter = new \Phalcon\Assets\Filters\Jsmin();
-
-			return $filter->filter($content);
-		}
-		else
+		if (strpos($resource->getPath(), '.min') !== false)
 			return $content;
+
+		$filter = new \Phalcon\Assets\Filters\Jsmin();
+
+		return $filter->filter($content);
 	}
 }

@@ -502,7 +502,7 @@ class Queue
 			{
 				$price = Vars::getItemPrice($id);
 
-				if (isset($price['max']) && $this->planet->getUnitCount($id) > 0)
+				if (isset($price['max']))
 					$max[$id] = $this->planet->getUnitCount($id);
 			}
 

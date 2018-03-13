@@ -614,13 +614,21 @@ class Planet extends Model
 
 		if ($this->user->getTechLevel('intergalactic') > 0)
 		{
-			$items = $this->db->query('SELECT id, level FROM game_planets_buildings 
+			$items = $this->db->query('SELECT b.id, b.level FROM game_planets_buildings b 
+				LEFT JOIN game_planets p ON p.id = b.planet_id
 					WHERE 
-				build_id = ?0 AND id_owner = ?1 AND id != ?2 AND level > 0 AND destruyed = 0 AND planet_type = 1 
+				b.build_id = :build AND p.id_owner = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1 
 					ORDER BY 
-				level DESC 
-					LIMIT ?3',
-				[31, $this->user->id, $this->id, $this->user->getTechLevel('intergalactic')]
+				b.level DESC 
+					LIMIT :level',
+				[
+					'build' => 31,
+					'user' => $this->user->id,
+					'planet' => $this->id,
+					'level' => $this->user->getTechLevel('intergalactic')
+				], [
+					'level' => \PDO::PARAM_INT
+				]
 			);
 
 			while ($item = $items->fetch())

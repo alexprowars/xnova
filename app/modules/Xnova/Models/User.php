@@ -122,7 +122,7 @@ class User extends BaseUser
 
 	public function afterUpdate ()
 	{
-		$this->setSnapshotData($this->toArray());
+		parent::afterUpdate();
 
 		if ($this->technology !== false)
 		{

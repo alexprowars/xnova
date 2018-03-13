@@ -23,6 +23,9 @@ class Cache
 	{
 		foreach (self::$cacheDirs as $dir)
 		{
+			if (!file_exists(ROOT_PATH.$dir))
+				continue;
+
 			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(ROOT_PATH.$dir, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 
 			foreach ($files as $file)

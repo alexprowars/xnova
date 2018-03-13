@@ -2,11 +2,20 @@
 
 namespace Friday\Core\Models;
 
+use Friday\Core\Model\Events;
 use Phalcon\Http\Request\File;
 use Phalcon\Mvc\Model;
 
 class User extends Model
 {
+	use Events
+	{
+		beforeUpdate as _beforeUpdate;
+		afterUpdate as _afterUpdate;
+		afterDelete as _afterDelete;
+		beforeCreate as _beforeCreate;
+	}
+
 	public $id;
 	public $email;
 	public $password;
@@ -31,6 +40,45 @@ class User extends Model
 	public function getSource()
 	{
 		return DB_PREFIX."users";
+	}
+
+	public function onConstruct()
+	{
+		$this->useDynamicUpdate(true);
+	}
+
+	public function isAdmin()
+	{
+		if ($this->id > 0)
+			return (in_array(Group::ROLE_ADMIN, $this->getGroupsId()));
+		else
+			return false;
+	}
+
+	public function beforeUpdate ()
+	{
+		$fields = $this->getChangedFields();
+
+		if (in_array('photo', $fields))
+		{
+			$snapshot = $this->getSnapshotData();
+
+			if (file_exists(ROOT_PATH.'/public/'.ltrim($this->photoDir, '/').$snapshot['photo']))
+				unlink(ROOT_PATH.'/public/'.ltrim($this->photoDir, '/').$snapshot['photo']);
+		}
+
+		$this->_beforeUpdate();
+	}
+
+	public function beforeCreate ()
+	{
+		$this->_beforeCreate();
+	}
+
+	public function afterUpdate ()
+	{
+		$this->setSnapshotData($this->toArray());
+		$this->_afterUpdate();
 	}
 
 	/**
@@ -81,6 +129,13 @@ class User extends Model
 		return trim($this->name.' '.$this->second_name.' '.$this->last_name);
 	}
 
+	public function checkPassword ($password)
+	{
+		$config = $this->getDI()->getShared('config');
+
+		return md5($password.':'.$config->application->encryptKey) == $this->password;
+	}
+
 	public function getPhoto ()
 	{
 		if ($this->photo == '')
@@ -126,5 +181,6 @@ class User extends Model
 	public function afterDelete ()
 	{
 		$this->deletePhoto();
+		$this->_afterDelete();
 	}
 }

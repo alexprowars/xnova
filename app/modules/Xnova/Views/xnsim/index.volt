@@ -201,9 +201,6 @@
 				{% else %}
 					<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
 				{% endif %}
-				{% if in_array(fleetId + 100, registry.reslist['tech_f']) %}
-					<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
-				{% endif %}
 			</td>
 		{% endfor %}
 	</tr>
@@ -221,9 +218,6 @@
 						-
 					{% else %}
 						<input class="number" value="0" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
-						{% if in_array(fleetId - 50, registry.reslist['tech_f']) %}
-							<input class="lvl" value="0" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
-						{% endif %}
 					{% endif %}
 				</td>
 			{% endfor %}
