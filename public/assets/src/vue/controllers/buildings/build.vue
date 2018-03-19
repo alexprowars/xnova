@@ -84,7 +84,7 @@
 				this.cheat = 3;
 
 				if (this.page.queue.length > 0)
-					setTimeout(this.timer, 1000);
+					this.timeout = setTimeout(this.timer, 1000);
 			},
 			timer ()
 			{

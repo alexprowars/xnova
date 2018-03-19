@@ -168,6 +168,21 @@ class User
 		return Di::getDefault()->getShared('db')->query($qryPlanets)->fetchAll();
 	}
 
+	public static function getPlanetsId ($userId)
+	{
+		$result = [];
+
+		/** @var $db Database */
+		$db = Di::getDefault()->getShared('db');
+
+		$rows = $db->query('SELECT id FROM game_planets WHERE id_owner = ?', [(int) $userId]);
+
+		while ($row = $rows->fetch())
+			$result[] = (int) $row['id'];
+
+		return $result;
+	}
+
 	public static function getPlanetListSortQuery ($sort = '', $order = 0)
 	{
 		$qryPlanets = ' ';

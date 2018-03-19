@@ -15,13 +15,7 @@
 </head>
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<div id="box" class="set_error">
-		{% if leftMenu is defined and leftMenu == true %}
-			{{ partial('shared/header') }}
-		{% endif %}
 		<div class="game_content">
-			{% if leftMenu is defined and leftMenu == true %}
-				{{ partial('shared/menu') }}
-			{% endif %}
 			<div id="gamediv" class="content container-fluid">
 				<div class="row">
 

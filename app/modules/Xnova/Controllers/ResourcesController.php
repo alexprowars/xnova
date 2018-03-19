@@ -85,7 +85,7 @@ class ResourcesController extends Controller
 
 		unset($planets, $planet);
 
-		$buildsId = [4, 12];
+		$buildsId = [4, 12, 212];
 
 		foreach (Vars::getResources() AS $res)
 			$buildsId[] = $this->registry->resource_flip[$res.'_mine'];
@@ -94,7 +94,12 @@ class ResourcesController extends Controller
 			'power' => $production
 		], 'planet_id IN ('.implode(',', $planetsId).') AND build_id IN ('.implode(',', $buildsId).')');
 
+		$this->db->updateAsDict('game_planets_units', [
+			'power' => $production
+		], 'planet_id IN ('.implode(',', $planetsId).') AND unit_id IN ('.implode(',', $buildsId).')');
+
 		$this->planet->clearBuildingsData();
+		$this->planet->clearUnitsData();
 		$this->planet->resourceUpdate(time(), true);
 
 		return $this->indexAction();
@@ -108,9 +113,6 @@ class ResourcesController extends Controller
 				$this->config->game->offsetSet($res.'_basic_income', 0);
 		}
 
-		$CurrentUser['energy_tech'] = $this->user->getTechLevel('energy');
-		$ValidList['percent'] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-		
 		if ($this->request->isPost())
 		{
 			if ($this->user->vacation > 0)
@@ -118,9 +120,28 @@ class ResourcesController extends Controller
 
 			foreach ($this->request->getPost() as $field => $value)
 			{
-				if (Vars::getIdByName($field) && $this->planet->getBuild($field) && in_array($value, $ValidList['percent']))
-					$this->planet->setBuild($field, false, $value);
+				if (!Vars::getIdByName($field))
+					continue;
+
+				$value = max(0, min(10, (int) $value));
+
+				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING)
+				{
+					$this->db->updateAsDict('game_planets_buildings', [
+						'power' => $value
+					], ['conditions' => 'planet_id = ? AND build_id = ?', 'bind' => [$this->planet->id, Vars::getIdByName($field)]]);
+				}
+
+				if (Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET)
+				{
+					$this->db->updateAsDict('game_planets_units', [
+						'power' => $value
+					], ['conditions' => 'planet_id = ? AND unit_id = ?', 'bind' => [$this->planet->id, Vars::getIdByName($field)]]);
+				}
 			}
+
+			$this->planet->clearBuildingsData();
+			$this->planet->clearUnitsData();
 
 			$this->planet->update();
 			$this->planet->resourceUpdate(time(), true);
@@ -153,16 +174,15 @@ class ResourcesController extends Controller
 			{
 				$build = $this->planet->getBuild($ProdID);
 
-				$BuildLevelFactor = $build['power'];
 				$BuildLevel = $build['level'];
+				$BuildLevelFactor = $build['power'];
 			}
 			elseif ($type == Vars::ITEM_TYPE_FLEET)
 			{
-				$BuildLevel = $this->planet->getUnitCount($ProdID);
-				/**
-				 * @TODO FixIt
-				 */
-				$BuildLevelFactor = 10;
+				$unit = $this->planet->getUnit($ProdID);
+
+				$BuildLevel = $unit['amount'];
+				$BuildLevelFactor = $unit['power'];
 			}
 
 			$result = $this->planet->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);

@@ -185,7 +185,20 @@
 				allSpeed: 0
 			}
 		},
+		watch: {
+			'page.ships' () {
+				this.init();
+			}
+		},
 		methods: {
+			init ()
+			{
+				this.fleets = [];
+				this.page.ships.forEach(() => {
+					this.fleets.push({count: ''});
+				});
+				this.calculateShips();
+			},
 			maxShips (index)
 			{
 				let fleet = this.page['ships'][index];
@@ -248,11 +261,8 @@
 				this.allCapacity = capacity;
 			}
 		},
-		created ()
-		{
-			this.page.ships.forEach(() => {
-				this.fleets.push({count: ''});
-			});
+		created () {
+			this.init();
 		}
 	}
 </script>

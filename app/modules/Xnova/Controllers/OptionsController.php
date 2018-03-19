@@ -20,6 +20,7 @@ use Xnova\Models\Planet;
 use Xnova\User;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/options")
@@ -159,7 +160,7 @@ class OptionsController extends Controller
 		{
 			$vacation = 0;
 
-			if (isset($_POST["urlaubs_modus"]) && $_POST["urlaubs_modus"] == 'on')
+			if ($this->request->hasPost('urlaubs_modus'))
 			{
 				$queueManager = new Queue();
 				$queueCount = 0;
@@ -186,7 +187,18 @@ class OptionsController extends Controller
 					else
 						$vacation = $this->user->vacation;
 
-					$this->db->query("UPDATE game_planets SET metal_mine_porcent = '0', crystal_mine_porcent = '0', deuterium_mine_porcent = '0', solar_plant_porcent = '0', fusion_plant_porcent = '0', solar_satelit_porcent = '0' WHERE id_owner = '" . $this->user->id . "'");
+					$buildsId = [4, 12, 212];
+
+					foreach (Vars::getResources() AS $res)
+						$buildsId[] = $this->registry->resource_flip[$res.'_mine'];
+
+					$this->db->updateAsDict('game_planets_buildings', [
+						'power' => 0
+					], 'planet_id IN ('.implode(',', User::getPlanetsId($this->user->id)).') AND build_id IN ('.implode(',', $buildsId).')');
+
+					$this->db->updateAsDict('game_planets_units', [
+						'power' => 0
+					], 'planet_id IN ('.implode(',', User::getPlanetsId($this->user->id)).') AND unit_id IN ('.implode(',', $buildsId).')');
 				}
 			}
 		}
@@ -322,8 +334,8 @@ class OptionsController extends Controller
 		if ($this->user->vacation > 0)
 		{
 			$parse['um_end_date'] = $this->game->datezone("d.m.Y H:i:s", $this->user->vacation);
-			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked='checked'/" : '';
-			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked='checked'/" : '';
+			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked='checked'" : '';
+			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked='checked'" : '';
 			$parse['opt_usern_data'] = $this->user->username;
 
 			$this->view->pick('options/vacation');
@@ -357,7 +369,7 @@ class OptionsController extends Controller
 			$parse['opt_record_data'] = ($this->user->getUserOption('records') == 1) ? " checked='checked'" : '';
 			$parse['opt_bbcode_data'] = ($this->user->getUserOption('bb_parser') == 1) ? ' checked="checked"' : '';
 			$parse['opt_gameactivity_data'] = ($this->user->getUserOption('gameactivity') == 1) ? " checked='checked'" : '';
-			$parse['opt_planetlist_data'] = ($this->user->getUserOption('planetlist') == 1) ? " checked='checked'/" : '';
+			$parse['opt_planetlist_data'] = ($this->user->getUserOption('planetlist') == 1) ? " checked='checked'" : '';
 			$parse['opt_planetlistselect_data'] = ($this->user->getUserOption('planetlistselect') == 1) ? " checked='checked'" : '';
 			$parse['opt_available_data'] = ($this->user->getUserOption('only_available') == 1) ? " checked='checked'" : '';
 			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked='checked'" : '';

@@ -251,7 +251,7 @@
 			</div>
 		</div>
 
-		<div v-if="page['chat'].length > 0" class="page-overview-chat d-sm-none">
+		<div v-if="page['chat'].length > 0" class="page-overview-chat">
 			<div class="separator"></div>
 
 			<table class="table" style="max-width: 100%">

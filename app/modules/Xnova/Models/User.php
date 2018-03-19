@@ -8,23 +8,24 @@ namespace Xnova\Models;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Phalcon\Exception;
+use Xnova\Database;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Galaxy;
 use Phalcon\Mvc\Model;
 use Friday\Core\Models\User as BaseUser;
-use Xnova\Vars;
+use Xnova\Models\User\Tech;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
 /**
  * @method static User[]|Model\ResultsetInterface find(mixed $parameters = null)
  * @method static User findFirst(mixed $parameters = null)
- * @property \Xnova\Database db
+ * @method Database getWriteConnection
  */
 class User extends BaseUser
 {
-	private $db;
+	use Tech;
+
 	private $optionsData =
 	[
 		'security' 			=> 0,
@@ -95,15 +96,9 @@ class User extends BaseUser
 	public $spy;
 	public $deltime;
 	public $ally_name;
-	/**
-	 * @var bool|array
-	 */
-	private $technology = false;
 
 	public function onConstruct()
 	{
-		$this->db = $this->getDI()->getShared('db');
-
 		$this->useDynamicUpdate(true);
 	}
 
@@ -124,43 +119,7 @@ class User extends BaseUser
 	{
 		parent::afterUpdate();
 
-		if ($this->technology !== false)
-		{
-			foreach ($this->technology as &$tech)
-			{
-				if ($tech['id'] == 0 && $tech['level'] > 0)
-				{
-					$this->db->insertAsDict(DB_PREFIX.'users_tech', [
-						'user_id' => $this->id,
-						'tech_id' => $tech['type'],
-						'level' => $tech['level'],
-					]);
-
-					$tech['id'] = $this->db->lastInsertId();
-				}
-				elseif ($tech['level'] != $tech['~level'])
-				{
-					if ($tech['level'] - $tech['~level'] > 1)
-					{
-						file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n".print_r($_REQUEST, true)."\n\n".print_r($this->technology, true)."\n\n", FILE_APPEND);
-
-					}
-
-					if ($tech['level'] > 0)
-					{
-						$this->db->updateAsDict(DB_PREFIX.'users_tech', [
-							'level' => $tech['level']
-						], ['conditions' => 'id = ?', 'bind' => [$tech['id']]]);
-					}
-					else
-						$this->db->delete(DB_PREFIX.'users_tech', 'id = ?', [$tech['id']]);
-				}
-
-				$tech['~level'] = $tech['level'];
-			}
-
-			unset($tech);
-		}
+		$this->_afterUpdateTechs();
 	}
 
 	public function afterFetch()
@@ -313,74 +272,6 @@ class User extends BaseUser
 		$this->optionsData[$key] = $value;
 	}
 
-	private function getTechnologyData ()
-	{
-		if ($this->technology !== false)
-			return;
-
-		$this->technology = [];
-
-		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'users_tech WHERE user_id = ?', [$this->id]);
-
-		while ($item = $items->fetch())
-		{
-			$this->technology[$item['tech_id']] = [
-				'id'		=> (int) $item['id'],
-				'type'		=> (int) $item['tech_id'],
-				'level'		=> (int) $item['level'],
-				'~level'	=> (int) $item['level']
-			];
-		}
-	}
-
-	public function getTech ($techId)
-	{
-		$_techId = $techId;
-
-		if (!is_numeric($techId))
-			$techId = Vars::getIdByName($techId.'_tech');
-
-		if (!$techId)
-			throw new Exception('getTech::'.$_techId.' not found');
-
-		$techId = (int) $techId;
-
-		if (!$techId)
-			return false;
-
-		if ($this->technology === false)
-			$this->getTechnologyData();
-
-		if (isset($this->technology[$techId]))
-			return $this->technology[$techId];
-
-		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH)
-			return false;
-
-		$this->technology[$techId] = [
-			'id'		=> 0,
-			'type'		=> $techId,
-			'level'		=> 0,
-			'~level'	=> 0
-		];
-
-		return $this->technology[$techId];
-	}
-
-	public function setTech ($techId, $level)
-	{
-		$tech = $this->getTech($techId);
-
-		$this->technology[$tech['type']]['level'] = (int) $level;
-	}
-
-	public function getTechLevel ($techId)
-	{
-		$tech = $this->getTech($techId);
-
-		return $tech ? $tech['level'] : 0;
-	}
-
 	public function loadPlanet ()
 	{
 		if ($this->getDI()->has('planet'))
@@ -450,7 +341,7 @@ class User extends BaseUser
 
 			if ($ally === NULL)
 			{
-				$ally = $this->db->query("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
+				$ally = $this->getWriteConnection()->query("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
 
 				$cache->save('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
@@ -479,7 +370,7 @@ class User extends BaseUser
 			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
 
-			$IsPlanetMine = $this->db->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
+			$IsPlanetMine = $this->getWriteConnection()->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
 
 			if (isset($IsPlanetMine['id']))
 			{
@@ -503,6 +394,6 @@ class User extends BaseUser
 
 	public function saveData ($fields, $userId = 0)
 	{
-		$this->db->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
+		$this->getWriteConnection()->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
 	}
 }

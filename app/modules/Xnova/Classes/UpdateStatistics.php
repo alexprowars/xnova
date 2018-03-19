@@ -510,7 +510,7 @@ class UpdateStatistics extends Injectable
 	public function addToLog ()
 	{
 		$this->db->query("INSERT INTO game_log_stats
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `id`, `type`, `time`)
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
@@ -520,7 +520,7 @@ class UpdateStatistics extends Injectable
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
 
 		$this->db->query("INSERT INTO game_log_stats
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `id`, `type`, `time`)
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,

@@ -11,9 +11,7 @@
 			<div class="main-content">
 				<planet-panel v-if="$store.state.view.resources" :planet="$store.state.resources"></planet-panel>
 
-				<div v-if="messages.length" v-for="item in messages">
-					<application-messages-row :item="item"></application-messages-row>
-				</div>
+				<application-messages-row v-for="item in messages" :item="item"></application-messages-row>
 
 				<div class="main-content-row">
 					<div v-if="html.length" ref="html"></div>

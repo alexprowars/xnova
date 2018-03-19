@@ -465,7 +465,7 @@ class Queue
 					$ThePlanet->queue = json_encode($newQueue);
 					$ThePlanet->update();
 
-					if ($this->user->b_tech_planet == $this->planet->id)
+					if ($ThePlanet->id == $this->planet->id)
 						$this->loadQueue($newQueue);
 				}
 				else

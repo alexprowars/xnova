@@ -3,7 +3,7 @@
 		<div class="col-12 th">
 			<div ref="chatbox" class="page-chat-messages">
 				<div v-for="item in messages" class="page-chat-messages-row text-left">
-					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ date('H:m', item['time']) }}</span>
+					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ date('H:i', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
 					<span v-if="item['to'].length" :class="[item['private'] ? 'private' : 'player']">
 						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click.prevent="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click.prevent="toPrivate(u)">{{ u }}</a></span>]

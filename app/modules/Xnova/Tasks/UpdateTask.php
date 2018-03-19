@@ -37,12 +37,12 @@ class UpdateTask extends ApplicationTask
 
 		$statUpdate = new UpdateStatistics();
 
-		$statUpdate->inactiveUsers();
-		$statUpdate->deleteUsers();
+		//$statUpdate->inactiveUsers();
+		//$statUpdate->deleteUsers();
 		$statUpdate->clearOldStats();
 		$statUpdate->update();
 		$statUpdate->addToLog();
-		$statUpdate->clearGame();
+		//$statUpdate->clearGame();
 		$statUpdate->buildRecordsCache();
 
 		$end = microtime(true);

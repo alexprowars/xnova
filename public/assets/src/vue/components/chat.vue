@@ -36,7 +36,7 @@
 		props: ['visible'],
 		data () {
 			return {
-				mobile: window.innerWidth < 480 || !this.visible,
+				mobile: isMobile || !this.visible,
 				active: localStorage.getItem('mini-chat-active') === 'Y',
 				messages: [],
 				message: '',
@@ -106,7 +106,7 @@
 				}
 			},
 			visible (value) {
-				this.mobile = !value
+				this.mobile = isMobile || !value
 			}
 		},
 		methods: {
@@ -215,8 +215,6 @@
 			{
 				if (this.active)
 					this.scrollToBottom();
-
-				this.mobile = window.innerWidth < 480 || !this.visible;
 			});
 		},
 		destroyed () {

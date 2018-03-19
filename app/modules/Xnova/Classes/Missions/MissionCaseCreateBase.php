@@ -11,13 +11,16 @@ namespace Xnova\Missions;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\User;
+use Xnova\Models\User as UserModel;
 
 class MissionCaseCreateBase extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
+		$owner = UserModel::findFirst($this->_fleet->owner);
+
 		// Определяем максимальное количество баз
-		$iMaxBase = $this->db->fetchColumn("SELECT fleet_base_tech FROM game_users WHERE id = " . $this->_fleet->owner . "");
+		$maxBases = $owner->getTechLevel('fleet_base');
 
 		$galaxy = new Galaxy();
 
@@ -30,9 +33,9 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 		if ($galaxy->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
 		{
 			// Если лимит баз исчерпан
-			if ($iPlanetCount >= $iMaxBase)
+			if ($iPlanetCount >= $maxBases)
 			{
-				$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_colo_maxcolo') . $iMaxBase . _getText('sys_base_planet');
+				$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_colo_maxcolo') . $maxBases . _getText('sys_base_planet');
 
 				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 

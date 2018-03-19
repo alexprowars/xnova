@@ -105,12 +105,12 @@ class Controller extends PhalconController
 			}
 		}
 
-		$this->assets->addCss('assets/css/bootstrap.css?v='.VERSION);
+		$this->assets->addCss('assets/css/bootstrap.css');
 		$this->assets->addCss('assets/css/plugins/ui.css', 'footer');
-		$this->assets->addCss('assets/css/style.css?v='.VERSION);
+		$this->assets->addCss('assets/css/style.css');
 
-		$this->assets->addJs('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js');
-		$this->assets->addJs('assets/js/game.js?v='.VERSION);
+		$this->assets->addJs('assets/js/plugins/jquery.js');
+		$this->assets->addJs('assets/js/game.js');
 
 		Vars::init();
 
@@ -125,6 +125,7 @@ class Controller extends PhalconController
 
 		Request::addData('stats', [
 			'time' => time(),
+			'timezone' => (int) date('Z'),
 			'online' => (int) Options::get('users_online', 0),
 			'users' => (int) Options::get('users_total', 0),
 		]);
@@ -137,13 +138,13 @@ class Controller extends PhalconController
 			$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
 			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 
-			$this->assets->addJs('https://unpkg.com/vue/dist/vue.js', 'footer');
-			$this->assets->addJs('https://unpkg.com/vue-router/dist/vue-router.js', 'footer');
-			$this->assets->addJs('https://unpkg.com/vuex/dist/vuex.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/vue.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/vue-router.js', 'footer');
+			$this->assets->addJs('assets/js/plugins/vuex.js', 'footer');
 
 			$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
 
-			$this->assets->addJs('assets/js/utils.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/utils.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
@@ -152,7 +153,7 @@ class Controller extends PhalconController
 			if (Helpers::allowMobileVersion())
 				$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');
 
-			$this->assets->addJs('assets/js/application.js?v='.VERSION, 'footer');
+			$this->assets->addJs('assets/js/application.js', 'footer');
 
 			$this->view->setMainView('game');
 
@@ -365,6 +366,7 @@ class Controller extends PhalconController
 				'planets' => $planets,
 				'timezone' => (int) $this->user->timezone,
 				'color' => (int) $this->user->color,
+				'vacation' => $this->user->vacation > 0,
 				'quests' => $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt']
 			];
 

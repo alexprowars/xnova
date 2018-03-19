@@ -1,5 +1,5 @@
 <template>
-	<div class="information-message" :class="['c', item.type.replace('-static', '')]" v-html="item.text"></div>
+	<div class="information-message c" :class="[item.type.replace('-static', '')]" v-html="item.text"></div>
 </template>
 
 <script>

@@ -43,7 +43,7 @@
 				</div>
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<div class="tooltip d-none d-sm-inline-block resource-panel-item-icon">
+						<div class="tooltip d-sm-inline-block resource-panel-item-icon">
 							<div class="tooltip-content">
 								<div class="resource-panel-item-tooltip">
 									<h1>Аккумулятор</h1>
@@ -73,7 +73,7 @@
 				</div>
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<a :href="$root.getUrl('credits/')" class="tooltip d-none d-sm-inline-block resource-panel-item-icon">
+						<a :href="$root.getUrl('credits/')" class="tooltip d-sm-inline-block resource-panel-item-icon">
 							<div class="tooltip-content">
 								<table width="550">
 									<tr>
@@ -132,7 +132,7 @@
 
 				this.updated = (new Date).getTime();
 
-				['metal', 'crystal', 'deuterium'].forEach(function(res)
+				['metal', 'crystal', 'deuterium'].forEach((res) =>
 				{
 					if (typeof this.planet[res] === 'undefined')
 						return;
@@ -140,23 +140,22 @@
 					let power = (this.planet[res]['current'] >= this.planet[res]['max']) ? 0 : 1;
 
 					this.planet[res]['current'] += ((this.planet[res]['production'] / 3600) * power * factor);
-				}.bind(this));
+				});
 
 				this.timer = setTimeout(this.update, 1000);
 			}
 		},
-		created: function ()
+		created ()
 		{
 			clearTimeout(this.timer);
 			this.update();
 		},
-		updated: function ()
+		updated ()
 		{
 			clearTimeout(this.timer);
 			this.update();
 		},
-		destroyed: function ()
-		{
+		destroyed () {
 			clearTimeout(this.timer);
 		}
 	}

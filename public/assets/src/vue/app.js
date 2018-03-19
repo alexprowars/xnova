@@ -9,6 +9,7 @@ Vue.prototype.morph = morph
 Vue.prototype.load = load
 Vue.prototype.showWindow = showWindow
 Vue.prototype.Lang = Lang
+Vue.prototype.isMobile = isMobile
 
 let parser = require('./js/parser.js');
 
@@ -123,11 +124,13 @@ router.beforeEach(function(to, from, next)
 	});
 })
 
-let store = new Vuex.Store({
+window.store = new Vuex.Store({
 	state: options,
 	mutations: {
 		PAGE_LOAD (state, data)
 		{
+			application.start_time = Math.floor(((new Date()).getTime() - (new Date()).getTimezoneOffset() * 60000) / 1000)
+
 			for (let key in data)
 			{
 				if (data.hasOwnProperty(key))
@@ -161,7 +164,8 @@ window.application = new Vue({
 	data: {
 		loader: false,
 		request_block: false,
-		router_block: false
+		router_block: false,
+		start_time: Math.floor(((new Date()).getTime() - (new Date()).getTimezoneOffset() * 60000) / 1000)
 	},
 	watch: {
 		title (val) {
@@ -247,7 +251,7 @@ window.application = new Vue({
 			}
 		},
 		serverTime () {
-			return Math.floor(((new Date).getTime() / 1000));
+			return Math.floor((new Date).getTime() / 1000) + this.$store.state.stats.time - this.start_time + this.$store.state.stats.timezone;
 		},
 		applyData: function (data) {
 			this.$store.commit('PAGE_LOAD', data);
@@ -260,52 +264,50 @@ window.application = new Vue({
 			this.request_block = true;
 			this.loader = true;
 
-			$.ajax(
-			{
+			$.ajax({
 				url: url,
 				cache: false,
 				dataType: 'json',
-				timeout: 10000,
-				success: (result) =>
+				timeout: 10000
+			})
+			.then((result) =>
+			{
+				closeWindow();
+
+				this.applyData(result.data);
+
+				if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
 				{
-					closeWindow();
-
-					this.applyData(result.data);
-
-					if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
-					{
-						$.confirm({
-							title: 'Обучение',
-							content: result.data['tutorial']['popup'],
-							confirmButton: 'Продолжить',
-							cancelButton: false,
-							backgroundDismiss: false,
-							confirm: function ()
-							{
-								if (result.data['tutorial']['url'] !== '')
-									load(result.data['tutorial']['url']);
-							}
-						});
-					}
-
-					if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['toast'] !== '')
-					{
-						$.toast({
-							text: result.data['tutorial']['toast'],
-							icon: 'info',
-							stack : 1
-						});
-					}
-
-					callback && callback(result.data.url);
-				},
-				error: () => {
-					document.location = to.path;
-				},
-				complete: () => {
-					this.loader = false;
+					$.confirm({
+						title: 'Обучение',
+						content: result.data['tutorial']['popup'],
+						confirmButton: 'Продолжить',
+						cancelButton: false,
+						backgroundDismiss: false,
+						confirm: function ()
+						{
+							if (result.data['tutorial']['url'] !== '')
+								load(result.data['tutorial']['url']);
+						}
+					});
 				}
-			});
+
+				if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['toast'] !== '')
+				{
+					$.toast({
+						text: result.data['tutorial']['toast'],
+						icon: 'info',
+						stack : 1
+					});
+				}
+
+				callback && callback(result.data.url);
+			}, () => {
+				document.location = url;
+			})
+			.always(() => {
+				this.loader = false;
+			})
 		}
 	},
 	render: h => h(App)

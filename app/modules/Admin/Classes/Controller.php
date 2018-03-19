@@ -234,7 +234,7 @@ class Controller extends PhalconController
 				if (!$this->access->hasAccess($module['code']))
 					continue;
 
-				$class = ($module['system'] == VALUE_TRUE ? 'Friday\\' : '').$moduleName.'\Controllers\\'.str_replace('.php', '', $file->getFilename());
+				$class = ($module['namespace'] != '' ? $module['namespace'] : $moduleName).'\Controllers\\'.str_replace('.php', '', $file->getFilename());
 
 				if (method_exists($class, 'getMenu'))
 				{

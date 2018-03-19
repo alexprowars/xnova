@@ -9,8 +9,7 @@
 		name: "main-menu-item",
 		props: ['item'],
 		computed: {
-			active: function ()
-			{
+			active: function () {
 				return this.$root.getMenuActiveLink === this.item.id
 			}
 		}

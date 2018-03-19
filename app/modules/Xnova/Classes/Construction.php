@@ -173,7 +173,7 @@ class Construction
 
 		$TechHandle = $queueManager->checkTechQueue();
 
-		$queueManager->loadQueue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
+		$queueManager->loadQueue($TechHandle['planet'] ? $TechHandle['planet']->queue : $this->planet->queue);
 
 		if (isset($_GET['cmd']) && $bContinue != false)
 		{

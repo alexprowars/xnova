@@ -136,7 +136,7 @@ trait Initializations
 		{
 		    if ($event->getType() == 'afterQuery')
 		    {
-		    	@file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../app/logs/db_'.date('d.m.Y_H').'.log', $connection->getRealSQLStatement()."\n".print_r($connection->getSQLVariables(), true)."\n", FILE_APPEND);
+		    	@file_put_contents($_SERVER['DOCUMENT_ROOT'].'/../app/logs/db_'.date('d.m.Y_H').'.log', date('c')." - ".$connection->getRealSQLStatement()."\n".print_r($connection->getSQLVariables(), true)."\n", FILE_APPEND);
 		    }
 		});*/
 

@@ -1448,7 +1448,7 @@ $.Tooltipster.prototype = {
 	 * @protected
 	 */
 	_close: function(event, callback, force) {
-		
+
 		var self = this,
 			ok = true;
 		

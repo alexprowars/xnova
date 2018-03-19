@@ -1,5 +1,8 @@
 function date ( format, timestamp )
 {
+	if (typeof store !== 'undefined' && typeof store.state.user.timezone !== 'undefined')
+		timestamp = (timestamp + store.state.user.timezone * 1800);
+
 	var a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
 	var pad = function(n, c){
 		if( (n = n + "").length < c ) {
@@ -259,7 +262,8 @@ function raport_to_bb(raport)
 	txt = txt.replace(/<table cellspacing="1" width="100%">/gi, "[table(w=100)]");
 	txt = txt.replace(/<th width="220" align="right">/gi, "[th(w=33)]");
 	txt = txt.replace(/<th align="right" width="220">/gi, "[th(w=33)]");
-	txt = txt.replace(/<th width="220">/gi, "[th]");
+	txt = txt.replace(/<th width="220">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th width="25%">/gi, "[th(w=25)]");
 	txt = txt.replace(/<br>/gi, " ");
 	txt = txt.replace(/<\/a>/gi, "[\/url]");
 	txt = txt.replace(/<a href="(.*?)">/gi, "[url=https://x.xnova.su$1]");

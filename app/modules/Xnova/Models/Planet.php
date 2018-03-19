@@ -9,7 +9,9 @@ namespace Xnova\Models;
  */
 
 use Phalcon\Di;
-use Phalcon\Exception;
+use Xnova\Database;
+use Xnova\Models\Planet\Build;
+use Xnova\Models\Planet\Unit;
 use Xnova\Queue;
 use Phalcon\Mvc\Model;
 use Xnova\Vars;
@@ -20,13 +22,14 @@ use Xnova\Models\User as UserModel;
 /**
  * @method static Planet[]|Model\ResultsetInterface find(mixed $parameters = null)
  * @method static Planet findFirst(mixed $parameters = null)
- * @property \Xnova\Database db
- * @property \Xnova\Game game
- * @property \Xnova\Models\User user
+ * @method Database getWriteConnection
  */
 class Planet extends Model
 {
-	private $db;
+	use Build;
+	use Unit;
+
+	/** @var \Xnova\Models\User */
 	private $user;
 
 	public $id;
@@ -71,20 +74,10 @@ class Planet extends Model
 	public $deuterium_perhour = 0;
 
 	public $spaceLabs;
-	/**
-	 * @var bool|array
-	 */
-	private $buildings = false;
-	/**
-	 * @var bool|array
-	 */
-	private $units = false;
 
 	public function onConstruct()
 	{
 		$this->useDynamicUpdate(true);
-
-		$this->db = $this->getDI()->getShared('db');
 	}
 
 	public function getSource()
@@ -96,72 +89,8 @@ class Planet extends Model
 	{
 		$this->setSnapshotData($this->toArray());
 
-		if ($this->buildings !== false)
-		{
-			foreach ($this->buildings as &$building)
-			{
-				if ($building['id'] == 0 && $building['level'] > 0)
-				{
-					$this->db->insertAsDict(DB_PREFIX.'planets_buildings', [
-						'planet_id' => $this->id,
-						'build_id' => $building['type'],
-						'level' => $building['level'],
-						'power' => $building['power'] !== false ? $building['power'] : 10
-					]);
-
-					$building['id'] = $this->db->lastInsertId();
-				}
-				elseif ($building['level'] != $building['~level'] || $building['power'] != $building['~power'])
-				{
-					if ($building['level'] > 0)
-					{
-						$this->db->updateAsDict(DB_PREFIX.'planets_buildings', [
-							'level' => $building['level'],
-							'power' => $building['power']
-						], ['conditions' => 'id = ?', 'bind' => [$building['id']]]);
-					}
-					else
-						$this->db->delete(DB_PREFIX.'planets_buildings', 'id = ?', [$building['id']]);
-				}
-
-				$building['~level'] = $building['level'];
-				$building['~power'] = $building['power'];
-			}
-
-			unset($building);
-		}
-
-		if ($this->units !== false)
-		{
-			foreach ($this->units as &$unit)
-			{
-				if ($unit['id'] == 0 && $unit['amount'] > 0)
-				{
-					$this->db->insertAsDict(DB_PREFIX.'planets_units', [
-						'planet_id' => $this->id,
-						'unit_id' => $unit['type'],
-						'amount' => $unit['amount'],
-					]);
-
-					$unit['id'] = $this->db->lastInsertId();
-				}
-				elseif ($unit['amount'] != $unit['~amount'])
-				{
-					if ($unit['amount'] > 0)
-					{
-						$this->db->updateAsDict(DB_PREFIX.'planets_units', [
-							'amount' => $unit['amount']
-						], ['conditions' => 'id = ?', 'bind' => [$unit['id']]]);
-					}
-					else
-						$this->db->delete(DB_PREFIX.'planets_units', 'id = ?', [$unit['id']]);
-				}
-
-				$unit['~amount'] = $unit['amount'];
-			}
-
-			unset($unit);
-		}
+		$this->_afterUpdateBuildings();
+		$this->_afterUpdateUnits();
 	}
 
 	/**
@@ -179,164 +108,6 @@ class Planet extends Model
 	public function assignUser (UserModel $user)
 	{
 		$this->user = $user;
-	}
-
-	private function getBuildingsData ()
-	{
-		if ($this->buildings !== false)
-			return;
-
-		$this->buildings = [];
-
-		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_buildings WHERE planet_id = ?', [$this->id]);
-
-		while ($item = $items->fetch())
-		{
-			$this->buildings[$item['build_id']] = [
-				'id'		=> (int) $item['id'],
-				'type'		=> (int) $item['build_id'],
-				'level'		=> (int) $item['level'],
-				'~level'	=> (int) $item['level'],
-				'power'		=> (int) $item['power'],
-				'~power'	=> (int) $item['power']
-			];
-		}
-	}
-
-	public function clearBuildingsData ()
-	{
-		$this->buildings = false;
-	}
-
-	public function getBuild ($buildId)
-	{
-		if (!is_numeric($buildId))
-			$buildId = Vars::getIdByName($buildId);
-
-		$buildId = (int) $buildId;
-
-		if (!$buildId)
-			throw new Exception('getBuild not found');
-
-		if (!$buildId)
-			return false;
-
-		if ($this->buildings === false)
-			$this->getBuildingsData();
-
-		if (isset($this->buildings[$buildId]))
-			return $this->buildings[$buildId];
-
-		if (Vars::getItemType($buildId) != Vars::ITEM_TYPE_BUILING)
-			return false;
-
-		$this->buildings[$buildId] = [
-			'id'		=> 0,
-			'type'		=> $buildId,
-			'level'		=> 0,
-			'~level'	=> 0,
-			'power'		=> false,
-			'~power'	=> false
-		];
-
-		return $this->buildings[$buildId];
-	}
-
-	public function setBuild ($buildId, $level = false, $power = false)
-	{
-		$build = $this->getBuild($buildId);
-
-		if ($level !== false)
-			$this->buildings[$build['type']]['level'] = (int) $level;
-
-		if ($power !== false)
-		{
-			$power = (int) $power;
-			$power = min(10, max(0, $power));
-
-			$this->buildings[$build['type']]['power'] = $power;
-		}
-	}
-
-	public function getBuildLevel ($buildId)
-	{
-		$build = $this->getBuild($buildId);
-
-		return $build ? $build['level'] : 0;
-	}
-
-	private function getUnitsData ()
-	{
-		if ($this->units !== false)
-			return;
-
-		$this->units = [];
-
-		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_units WHERE planet_id = ?', [$this->id]);
-
-		while ($item = $items->fetch())
-		{
-			$this->units[$item['unit_id']] = [
-				'id'		=> (int) $item['id'],
-				'type'		=> (int) $item['unit_id'],
-				'amount'	=> (int) $item['amount'],
-				'~amount'	=> (int) $item['amount'],
-			];
-		}
-	}
-
-	public function clearUnitsData ()
-	{
-		$this->units = false;
-	}
-
-	public function getUnit ($unitId)
-	{
-		if (!is_numeric($unitId))
-			$unitId = Vars::getIdByName($unitId);
-
-		$unitId = (int) $unitId;
-
-		if (!$unitId)
-			throw new Exception('getUnit not found');
-
-		if (!$unitId)
-			return false;
-
-		if ($this->units === false)
-			$this->getUnitsData();
-
-		if (isset($this->units[$unitId]))
-			return $this->units[$unitId];
-
-		if (!in_array(Vars::getItemType($unitId), [Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]))
-			return false;
-
-		$this->units[$unitId] = [
-			'id'		=> 0,
-			'type'		=> $unitId,
-			'amount'	=> 0,
-			'~amount'	=> 0,
-		];
-
-		return $this->units[$unitId];
-	}
-
-	public function setUnit ($unitId, $count, $isDifferent = false)
-	{
-		$unit = $this->getUnit($unitId);
-
-		if ($isDifferent)
-			$this->units[$unit['type']]['amount'] = $unit['amount'] + (int) $count;
-		else
-			$this->units[$unit['type']]['amount'] = (int) $count;
-	}
-
-	public function getUnitCount ($unitId)
-	{
-		$unit = $this->getUnit($unitId);
-
-		return $unit ? $unit['amount'] : 0;
 	}
 
 	public function checkOwnerPlanet ()
@@ -384,6 +155,7 @@ class Planet extends Model
 	public function getResourceProductionLevel ($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
 	{
 		if ($BuildLevelFactor > 10)
+			/** @noinspection PhpUnusedLocalVariableInspection */
 			$BuildLevelFactor = 10;
 
 		$return = ['energy' => 0];
@@ -467,16 +239,15 @@ class Planet extends Model
 			{
 				$build = $this->getBuild($ProdID);
 
-				$BuildLevelFactor = $build['power'];
 				$BuildLevel = $build['level'];
+				$BuildLevelFactor = $build['power'];
 			}
 			elseif ($type == Vars::ITEM_TYPE_FLEET)
 			{
-				$BuildLevel = $this->getUnitCount($ProdID);
-				/**
-				 * @TODO FixIt
-				 */
-				$BuildLevelFactor = 10;
+				$unit = $this->getUnit($ProdID);
+
+				$BuildLevel = $unit['amount'];
+				$BuildLevelFactor = $unit['power'];
 			}
 
 			if ($ProdID == 12 && $this->deuterium < 100)
@@ -617,7 +388,7 @@ class Planet extends Model
 
 		if ($this->user->getTechLevel('intergalactic') > 0)
 		{
-			$items = $this->db->query('SELECT b.id, b.level FROM game_planets_buildings b 
+			$items = $this->getWriteConnection()->query('SELECT b.id, b.level FROM game_planets_buildings b 
 				LEFT JOIN game_planets p ON p.id = b.planet_id
 					WHERE 
 				b.build_id = :build AND p.id_owner = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1 

@@ -32,10 +32,9 @@
 				}
 			}
 		},
-		methods:
-		{
+		methods: {
 			showPopup () {
-				showWindow('', this.$root.getUrl('info/'+this.building[type]+'/'));
+				showWindow('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
 			}
 		}
 	}

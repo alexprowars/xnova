@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Phalcon\Cache\Backend\Memcache;
+use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
@@ -498,6 +499,20 @@ class OverviewController extends Controller
 
 						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
 					}
+
+					if ($queueManager->getCount($queueManager::QUEUE_TYPE_SHIPYARD))
+					{
+						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+
+						$time = time();
+
+						foreach ($QueueArray AS $CurrBuild)
+						{
+							$time += Building::getBuildingTime($this->user, $UserPlanet, $CurrBuild['i']) * $CurrBuild['l'] - $CurrBuild['s'];
+
+							$build_list[$time][] = [$time, "<a href=\"".$this->url->getBaseUri()."buildings/fleet/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
+						}
+					}
 				}
 			}
 		}
@@ -602,6 +617,20 @@ class OverviewController extends Controller
 
 				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
 			}
+
+			if ($queueManager->getCount($queueManager::QUEUE_TYPE_SHIPYARD))
+			{
+				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+
+				$time = time();
+
+				foreach ($QueueArray AS $CurrBuild)
+				{
+					$time += Building::getBuildingTime($this->user, $this->planet, $CurrBuild['i']) * $CurrBuild['l'] - $CurrBuild['s'];
+
+					$build_list[$time][] = [$time, $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
+				}
+			}
 		}
 
 		$parse['build_list'] = [];
@@ -675,10 +704,10 @@ class OverviewController extends Controller
 		if (!$this->user->getUserOption('gameactivity'))
 			$this->config->view->offsetSet('gameActivityList', 0);
 
-		if ($this->config->view->get('gameActivityList', 0))
-		{
-			$parse['chat'] = [];
+		$parse['chat'] = [];
 
+		if (isMobile())
+		{
 			$memcache = new Memcache(new FrontendCache(), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
 
 			$chatCached = $memcache->get("xnova-5-chat");
