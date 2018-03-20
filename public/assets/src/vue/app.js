@@ -129,7 +129,7 @@ window.store = new Vuex.Store({
 	mutations: {
 		PAGE_LOAD (state, data)
 		{
-			application.start_time = Math.floor(((new Date()).getTime() - (new Date()).getTimezoneOffset() * 60000) / 1000)
+			application.start_time = Math.floor(((new Date()).getTime()) / 1000)
 
 			for (let key in data)
 			{
@@ -165,7 +165,7 @@ window.application = new Vue({
 		loader: false,
 		request_block: false,
 		router_block: false,
-		start_time: Math.floor(((new Date()).getTime() - (new Date()).getTimezoneOffset() * 60000) / 1000)
+		start_time: Math.floor(((new Date()).getTime()) / 1000)
 	},
 	watch: {
 		title (val) {
@@ -251,7 +251,7 @@ window.application = new Vue({
 			}
 		},
 		serverTime () {
-			return Math.floor((new Date).getTime() / 1000) + this.$store.state.stats.time - this.start_time + this.$store.state.stats.timezone;
+			return Math.floor((new Date).getTime() / 1000) + this.$store.state.stats.time - this.start_time;
 		},
 		applyData: function (data) {
 			this.$store.commit('PAGE_LOAD', data);

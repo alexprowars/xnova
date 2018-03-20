@@ -19,8 +19,53 @@ $(document).ready(function()
 
 	body.on('mouseenter', '.tooltip:not(.tooltipstered)', function()
 	{
-		var maxWidth = null;
+		if (isMobile)
+			return;
+
 		var _this = $(this);
+
+		var maxWidth = null;
+
+		if (_this.data('width') !== undefined)
+			maxWidth = parseInt(_this.data('width'));
+
+		_this.tooltipster({
+			delay: 100,
+			distance: 0,
+			maxWidth: maxWidth,
+			contentAsHTML: true,
+			interactive: _this.hasClass('sticky'),
+			functionInit: function(instance)
+			{
+				if (_this.hasClass('script'))
+					instance.content(eval(_this.data('content')));
+				else if (typeof _this.data('content') === "undefined")
+					instance.content(_this.find('.tooltip-content'));
+				else
+					instance.content(_this.data('content'));
+			}
+		}).tooltipster('open');
+	})
+	.on('click', '.tooltip', function(e)
+	{
+		if (!isMobile)
+			return;
+
+		var _this = $(this);
+
+		if (!_this.hasClass('sticky'))
+		{
+			if (typeof _this.data('content') !== 'undefined')
+				return;
+		}
+
+		if (typeof _this.data('tooltipster-ns') !== 'undefined')
+		{
+			_this.tooltipster('open');
+			return;
+		}
+
+		var maxWidth = null;
 
 		if (_this.data('width') !== undefined)
 			maxWidth = parseInt(_this.data('width'));
@@ -87,17 +132,16 @@ $(document).ready(function()
 		    type: 'post',
 			dataType: 'json',
 		    contentType: false,
-		    processData: false,
-			success: function (result) {
-				application.applyData(result.data);
-			},
-			error: function() {
-				alert('Что-то пошло не так!? Попробуйте еще раз');
-			},
-			complete: function() {
-				application.loader = false;
-			}
-		});
+		    processData: false
+		})
+		.then(function (result) {
+			application.applyData(result.data);
+		}, function() {
+			alert('Что-то пошло не так!? Попробуйте еще раз');
+		})
+		.always(function() {
+			application.loader = false;
+		})
 	})
 	.on('submit', '.jconfirm-dialog form', function(e)
 	{
@@ -114,40 +158,43 @@ $(document).ready(function()
 			data: formData,
 			dataType: 'json',
 			processData: false,
-			contentType: false,
-			success: function (result)
+			contentType: false
+		})
+		.then(function (result)
+		{
+			if (result.data.messages.length > 0 )
 			{
-				if (result.data.message.length > 0 && result.data.message !== '')
+				result.data.messages.forEach(function(item)
 				{
-					result.data.message.forEach(function(item)
+					if (item['type'].indexOf('-static') <= 0)
 					{
 						$.toast({
 							text: item.message,
 							icon: item.type
 						});
-					})
-				}
-				else if (result.data.html !== '')
-				{
-					if (htmlRender !== null)
-						htmlRender.$destroy();
-
-					htmlRender = new (Vue.extend({
-						name: 'html-render',
-						template: '<div>'+result.data.html+'</div>'
-					}))().$mount();
-
-					Vue.nextTick(function () {
-						$('.jconfirm-content').html(htmlRender.$el);
-					}.bind(this));
-				}
-			},
-			error: function() {
-				alert('Что-то пошло не так!? Попробуйте еще раз');
-			},
-			complete: function() {
-				application.loader = false;
+					}
+				})
 			}
+
+			if (result.data.html !== '')
+			{
+				if (htmlRender !== null)
+					htmlRender.$destroy();
+
+				htmlRender = new (Vue.extend({
+					name: 'html-render',
+					template: '<div>'+result.data.html+'</div>'
+				}))().$mount();
+
+				Vue.nextTick(function () {
+					$('.jconfirm-content').html(htmlRender.$el);
+				}.bind(this));
+			}
+		}, function() {
+			alert('Что-то пошло не так!? Попробуйте еще раз');
+		})
+		.always(function() {
+			application.loader = false;
 		})
 	})
 	.on('click', '.popup-user', function(e)

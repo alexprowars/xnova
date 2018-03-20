@@ -231,10 +231,15 @@ class Building
 		{
 			if (isset($cost[$type]) && $cost[$type] != 0)
 			{
+				$current = $planet->{$type};
+
+				if ($type == 'energy')
+					$current = $planet->energy_max;
+
 				$text .= "<div><img src='".$uri->get('assets/images/skin/s_'.$type.'.png')."' align=\"absmiddle\" class=\"tooltip\" data-content='".$title."'>";
 
-				if ($cost[$type] > $planet->{$type})
-					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$type] - $planet->{$type})."\">" . Format::number($cost[$type]) . "</span> ";
+				if ($cost[$type] > $current)
+					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$type] - $current)."\">" . Format::number($cost[$type]) . "</span> ";
 				else
 					$text .= "<span class=\"resYes\">" . Format::number($cost[$type]) . "</span> ";
 
@@ -398,7 +403,7 @@ class Building
 
 		foreach ($price as $resType => $resCount)
 		{
-			if (in_array($resType, ['metal', 'crystal', 'deuterium', 'energy']) && $resCount != 0)
+			if (in_array($resType, ['metal', 'crystal', 'deuterium', 'energy']) && $resCount > 0)
 			{
 				$count = floor($planet->{$resType} / $resCount);
 

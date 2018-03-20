@@ -1,6 +1,6 @@
 <template>
 	<div class="resource-panel-item">
-		<div v-on:click="showPopup" class="tooltip resource-panel-item-icon">
+		<div @click="showPopup" class="tooltip resource-panel-item-icon">
 			<div class="tooltip-content">
 				<planet-panel-resource-tooltip :resource="resource" :type="type"></planet-panel-resource-tooltip>
 			</div>
@@ -33,8 +33,10 @@
 			}
 		},
 		methods: {
-			showPopup () {
-				showWindow('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
+			showPopup ($event)
+			{
+				if (typeof $($event.currentTarget).data('tooltipster-ns') !== 'undefined')
+					showWindow('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
 			}
 		}
 	}
