@@ -160,7 +160,7 @@ class Application extends PhalconApplication
 
 		$this->eventsManager->fire('core:beforeOutput', $this, $handle);
 
-		return $handle->getContent().(isset($toolbar) ? $toolbar->render() : '');
+		return $handle->getContent().(isset($toolbar) && defined('SUPERUSER') ? $toolbar->render() : '');
 	}
 
 	/**

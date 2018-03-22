@@ -168,7 +168,16 @@ class StageOne
 		if ($alliances->numRows())
 		{
 			while ($row = $alliances->fetch())
-				$parse['alliances'][] = $row;
+			{
+				$parse['alliances'][] = [
+					'id' => (int) $row['id'],
+					'name' => $row['name'],
+					'galaxy' => (int) $row['galaxy'],
+					'system' => (int) $row['system'],
+					'planet' => (int) $row['planet'],
+					'planet_type' => (int) $row['planet_type'],
+				];
+			}
 		}
 
 		$parse['mission'] = (int) $controller->request->getPost('mission', 'int', 0);

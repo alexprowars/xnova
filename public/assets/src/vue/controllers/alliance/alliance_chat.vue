@@ -54,13 +54,13 @@
 				</tr>
 				<tr>
 					<th class="p-a-0">
-						<text-editor :text="text"></text-editor>
+						<text-editor :text.sync="text"></text-editor>
 					</th>
 				</tr>
 				<tr>
 					<td class="c">
 						<input type="reset" value="Очистить">
-						<input type="submit" value="Отправить">
+						<input type="submit" value="Отправить" @click="text = ''">
 					</td>
 				</tr>
 			</table>

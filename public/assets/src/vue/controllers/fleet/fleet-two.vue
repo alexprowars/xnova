@@ -65,7 +65,7 @@
 							</th>
 						</tr>
 						<tr>
-							<th colspan="3"><a v-on:click.prevent="maxResAll">Всё сырьё</a></th>
+							<th colspan="3"><a v-on:click.prevent="maxResAll">Всё сырьё</a> | <a v-on:click.prevent="clearResAll">Обнулить</a></th>
 						</tr>
 						<tr>
 							<th colspan="3">&nbsp;</th>
@@ -162,25 +162,33 @@
 		methods: {
 			maxRes (type)
 			{
-				this.resource[type] = 0;
-				this.resource[type] = Math.max(this.storage - this.resource.metal - this.resource.crystal - this.resource.deuterium, 0);
+				let current = this.resource.metal + this.resource.crystal + this.resource.deuterium;
+				current -= this.resource[type];
+
+				let free = this.storage - current;
+
+				this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current']), free), 0);
 			},
 			maxResAll ()
 			{
-				let free = this.storage - this.resources['metal']['current'] - this.resources['crystal']['current'] - this.resources['deuterium']['current'];
+				let free = this.storage - Math.floor(this.resources['metal']['current']) - Math.floor(this.resources['crystal']['current']) - Math.floor(this.resources['deuterium']['current']);
 
 				if (free < 0)
 				{
-					this.resource.metal = Math.max(Math.min(this.resources['metal']['current'], this.storage), 0);
-					this.resource.crystal = Math.max(Math.min(this.resources['crystal']['current'], this.storage - this.resource.metal), 0);
-					this.resource.deuterium = Math.max(Math.min(this.resources['deuterium']['current'], this.storage - this.resource.metal - this.resource.crystal), 0);
+					this.resource.metal = Math.max(Math.min(Math.floor(this.resources['metal']['current']), this.storage), 0);
+					this.resource.crystal = Math.max(Math.min(Math.floor(this.resources['crystal']['current']), this.storage - this.resource.metal), 0);
+					this.resource.deuterium = Math.max(Math.min(Math.floor(this.resources['deuterium']['current']), this.storage - this.resource.metal - this.resource.crystal), 0);
 				}
 				else
 				{
-					this.resource.metal = Math.max(this.resources['metal']['current'], 0);
-					this.resource.crystal = Math.max(this.resources['crystal']['current'], 0);
-					this.resource.deuterium = Math.max(this.resources['deuterium']['current'], 0);
+					this.resource.metal = Math.max(Math.floor(this.resources['metal']['current']), 0);
+					this.resource.crystal = Math.max(Math.floor(this.resources['crystal']['current']), 0);
+					this.resource.deuterium = Math.max(Math.floor(this.resources['deuterium']['current']), 0);
 				}
+			},
+			clearResAll ()
+			{
+				this.resource.metal = this.resource.crystal = this.resource.deuterium = 0;
 			},
 			startTimer () {
 				this.target_timeout = setTimeout(() => this.target_time = this.$root.serverTime() + this.duration, 1000);

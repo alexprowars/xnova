@@ -77,6 +77,9 @@ class StageTwo
 				$parse['expedition_hours'] = round($controller->user->getTechLevel('expedition') / 2) + 1;
 		}
 
+		if (!$mission && $acs && in_array(2, $missions))
+			$mission = 2;
+
 		$parse['mission'] = 0;
 		$parse['missions'] = [];
 
@@ -84,7 +87,7 @@ class StageTwo
 		{
 			foreach ($missions as $i => $id)
 			{
-				if (($mission > 0 && $mission == $id) || (!isset($missions[$mission]) && $i == 0) || count($missions) == 1)
+				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1)
 					$parse['mission'] = $id;
 
 				$parse['missions'][] = $id;

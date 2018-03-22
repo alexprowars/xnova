@@ -188,10 +188,10 @@
 			},
 			allianceSet (index)
 			{
-				let al = this.page['alliance'][index];
+				let al = this.page['alliances'][index];
 
 				this.alliance = al['id'];
-				this.setTarget(al['galaxy'], al['system'], al['planet']);
+				this.setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type']);
 			}
 		},
 		mounted () {

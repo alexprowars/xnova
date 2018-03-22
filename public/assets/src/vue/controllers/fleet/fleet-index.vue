@@ -72,10 +72,9 @@
 								<input value="Возврат" type="submit" name="send">
 							</form>
 
-							<form v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :action="$root.getUrl('fleet/verband/')" method="post">
-								<input name="fleetid" :value="item.id" type="hidden">
-								<input value="Объединить" type="submit">
-							</form>
+							<a v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :href="$root.getUrl('fleet/verband/id/'+item.id+'/')" class="button">
+								Объединить
+							</a>
 
 							<form v-if="item['stage'] === 3 && item['mission'] !== 15" :action="$root.getUrl('fleet/back/')" method="post">
 								<input name="fleetid" :value="item.id" type="hidden">

@@ -32,9 +32,7 @@
 				<div v-if="$parent.page['parser']">
 					<text-viewer :text="item['text']"></text-viewer>
 				</div>
-				<div v-else="">
-					{{ item['text'] }}
-				</div>
+				<div v-else="" v-html="item['text']"></div>
 			</div>
 		</div>
 	</div>

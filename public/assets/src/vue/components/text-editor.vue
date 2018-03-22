@@ -2,92 +2,92 @@
 	<div class="editor-component">
 		<div class="editor-component-toolbar">
 			<span class="gensmall">
-				<select name="btnSize" v-on:change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
+				<select name="btnSize" @change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
 					<option value="9">Маленький</option>
 					<option value="11" selected>Нормальный</option>
 					<option value="20">Большой</option>
 					<option value="25">Огромный</option>
 				</select>
 			</span>
-			<button type="button" class="buttons" title="Жирный" v-on:click="addTag('[b]|[/b]')">
+			<button type="button" class="buttons" title="Жирный" @click="addTag('[b]|[/b]')">
 				<span class="sprite bb_text_bold"></span>
 			</button>
-			<button type="button" class="buttons" title="Курсив" v-on:click="addTag('[i]|[/i]')">
+			<button type="button" class="buttons" title="Курсив" @click="addTag('[i]|[/i]')">
 				<span class="sprite bb_text_italic"></span>
 			</button>
-			<button type="button" class="buttons" title="Подчёркнутый" v-on:click="addTag('[u]|[/u]')">
+			<button type="button" class="buttons" title="Подчёркнутый" @click="addTag('[u]|[/u]')">
 				<span class="sprite bb_text_underline"></span>
 			</button>
-			<button type="button" class="buttons" title="Зачёркнутый" v-on:click="addTag('[s]|[/s]')">
+			<button type="button" class="buttons" title="Зачёркнутый" @click="addTag('[s]|[/s]')">
 				<span class="sprite bb_text_strikethrough"></span>
 			</button>
-			<button type="button" class="buttons" title="По центру" v-on:click="addTag('[center]|[/center]')">
+			<button type="button" class="buttons" title="По центру" @click="addTag('[center]|[/center]')">
 				<span class="sprite bb_text_align_center"></span>
 			</button>
-			<button type="button" class="buttons" title="По левому краю" v-on:click="addTag('[left]|[/left]')">
+			<button type="button" class="buttons" title="По левому краю" @click="addTag('[left]|[/left]')">
 				<span class="sprite bb_text_align_left"></span>
 			</button>
-			<button type="button" class="buttons" title="По правому краю" v-on:click="addTag('[right]|[/right]')">
+			<button type="button" class="buttons" title="По правому краю" @click="addTag('[right]|[/right]')">
 				<span class="sprite bb_text_align_right"></span>
 			</button>
-			<button type="button" class="buttons" title="По ширине" v-on:click="addTag('[justify]|[/justify]')">
+			<button type="button" class="buttons" title="По ширине" @click="addTag('[justify]|[/justify]')">
 				<span class="sprite bb_text_align_justify"></span>
 			</button>
-			<button type="button" class="buttons" title="Спойлер" v-on:click="addTag('[spoiler=]|[/spoiler]')">
+			<button type="button" class="buttons" title="Спойлер" @click="addTag('[spoiler=]|[/spoiler]')">
 				<span class="sprite bb_eye"></span>
 			</button>
-			<button type="button" class="buttons" title="YOUTUBE" v-on:click="addTag('[youtube]|[/youtube]', 2)">
+			<button type="button" class="buttons" title="YOUTUBE" @click="addTag('[youtube]|[/youtube]', 2)">
 				<span class="sprite bb_film_add"></span>
 			</button>
-			<button type="button" class="buttons" title="Вставить ссылку" v-on:click="addTag('[url]|[/url]', 1)">
+			<button type="button" class="buttons" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
 				<span class="sprite bb_world_link"></span>
 			</button>
-			<button type="button" class="buttons" title="Вставить картинку" v-on:click="addTag('[img]|[/img]', 3)">
+			<button type="button" class="buttons" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
 				<span class="sprite bb_picture_add"></span>
 			</button>
-			<button type="button" class="buttons" title="Вставить песню" v-on:click="addTag('[mp3]|[/mp3]', 6)">
+			<button type="button" class="buttons" title="Вставить песню" @click="addTag('[mp3]|[/mp3]', 6)">
 				<span class="sprite bb_sound_add"></span>
 			</button>
-			<button type="button" class="buttons" title="Вставить большую картинку" v-on:click="addTag('[img_big]|[/img_big]', 4)">
+			<button type="button" class="buttons" title="Вставить большую картинку" @click="addTag('[img_big]|[/img_big]', 4)">
 				<span class="sprite bb_image_add"></span>
 			</button>
-			<button type="button" class="buttons" title="Нумерованый список" v-on:click="addTag('[numlist]|[/numlist]', 5)">
+			<button type="button" class="buttons" title="Нумерованый список" @click="addTag('[numlist]|[/numlist]', 5)">
 				<span class="sprite bb_text_list_numbers"></span>
 			</button>
-			<button type="button" class="buttons" title="Список" v-on:click="addTag('[list]|[/list]', 5)">
+			<button type="button" class="buttons" title="Список" @click="addTag('[list]|[/list]', 5)">
 				<span class="sprite bb_text_list_bullets"></span>
 			</button>
-			<button type="button" class="buttons" title="Цитата" v-on:click="addTag('[quote]|[/quote]', 0)">
+			<button type="button" class="buttons" title="Цитата" @click="addTag('[quote]|[/quote]', 0)">
 				<span class="sprite bb_text_signature"></span>
 			</button>
-			<button type="button" class="buttons" title="Цитата" v-on:click="addTag('[quote author=]|[/quote]', 0)">
+			<button type="button" class="buttons" title="Цитата" @click="addTag('[quote author=]|[/quote]', 0)">
 				<span class="sprite bb_user_comment"></span>
 			</button>
-			<button type="button" class="buttons" title="Смайлы" v-on:click="showSmiles = !showSmiles">
+			<button type="button" class="buttons" title="Смайлы" @click="showSmiles = !showSmiles">
 				<span class="sprite bb_emoticon_grin"></span>
 			</button>
-			<button type="button" class="buttons" title="Цвет текста" v-on:click="showColors = !showColors">
+			<button type="button" class="buttons" title="Цвет текста" @click="showColors = !showColors">
 				<span class="sprite bb_color_swatch"></span>
 			</button>
-			<button type="button" class="buttons" title="Цвет фона" v-on:click="showBgColors = !showBgColors">
+			<button type="button" class="buttons" title="Цвет фона" @click="showBgColors = !showBgColors">
 				<span class="sprite bb_palette"></span>
 			</button>
 
-			<span v-if="message.length > 0" class="buttons" title="Предварительный просмотр" v-on:click="showPreview = !showPreview">
+			<span v-if="message.length > 0" class="buttons" title="Предварительный просмотр" @click="showPreview = !showPreview">
 				<span class="sprite bb_tick"></span>
 			</span>
 		</div>
 
 		<div v-show="showColors" class="colorpicker">
-			<span v-for="color in colors" v-on:click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color">&nbsp;</span>
+			<span v-for="color in colors" @click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color">&nbsp;</span>
 	    </div>
 
 		<div v-show="showBgColors" class="colorpicker">
-			<span v-for="color in colors" v-on:click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color">&nbsp;</span>
+			<span v-for="color in colors" @click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color">&nbsp;</span>
 	    </div>
 
 		<div v-if="showSmiles" class="smiles">
-			<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
+			<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" @click="addSmile(smile)">
 		</div>
 		
 		<textarea name="text" ref="text" rows="10" title="" v-model="message"></textarea>
@@ -137,6 +137,14 @@
 				}
 
 				return colors;
+			}
+		},
+		watch: {
+			message (val) {
+				this.$emit('update:text', val)
+			},
+			text (val) {
+				this.message = val
 			}
 		},
 		methods:
