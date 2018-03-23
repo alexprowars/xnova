@@ -197,9 +197,9 @@ class Fleet extends Building
 		}
 
 		$FleetPopup .= "</table>";
-		$FleetPopup .= "' class=\"" . $FleetType . "\">" . $Texte . "</a>";
+		$FleetPopup .= "'>" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip\" data-content='" . $FleetPopup;
+		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 
 		return $FleetPopup;
 

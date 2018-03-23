@@ -147,6 +147,7 @@
 					deuterium: 0,
 				},
 				storage: 0,
+				consumption: 0,
 				duration: 0,
 				hold_hours: 1,
 
@@ -167,23 +168,26 @@
 
 				let free = this.storage - current;
 
-				this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current']), free), 0);
+				if (type === 'deuterium')
+					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current'] - this.consumption), free), 0);
+				else
+					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current']), free), 0);
 			},
 			maxResAll ()
 			{
-				let free = this.storage - Math.floor(this.resources['metal']['current']) - Math.floor(this.resources['crystal']['current']) - Math.floor(this.resources['deuterium']['current']);
+				let free = this.storage - Math.floor(this.resources['metal']['current']) - Math.floor(this.resources['crystal']['current']) - Math.floor(this.resources['deuterium']['current'] - this.consumption);
 
 				if (free < 0)
 				{
 					this.resource.metal = Math.max(Math.min(Math.floor(this.resources['metal']['current']), this.storage), 0);
 					this.resource.crystal = Math.max(Math.min(Math.floor(this.resources['crystal']['current']), this.storage - this.resource.metal), 0);
-					this.resource.deuterium = Math.max(Math.min(Math.floor(this.resources['deuterium']['current']), this.storage - this.resource.metal - this.resource.crystal), 0);
+					this.resource.deuterium = Math.max(Math.min(Math.floor(this.resources['deuterium']['current'] - this.consumption), this.storage - this.resource.metal - this.resource.crystal), 0);
 				}
 				else
 				{
 					this.resource.metal = Math.max(Math.floor(this.resources['metal']['current']), 0);
 					this.resource.crystal = Math.max(Math.floor(this.resources['crystal']['current']), 0);
-					this.resource.deuterium = Math.max(Math.floor(this.resources['deuterium']['current']), 0);
+					this.resource.deuterium = Math.max(Math.floor(this.resources['deuterium']['current'] - this.consumption), 0);
 				}
 			},
 			clearResAll ()
@@ -211,14 +215,14 @@
 				universe_speed: this.$store.state['speed']['fleet']
 			});
 
-			let consumption = fleet.consumption({
+			this.consumption = fleet.consumption({
 				ships: this.page['ships'],
 				duration: duration,
 				distance: distance,
 				universe_speed: this.$store.state['speed']['fleet']
 			});
 
-			this.storage = fleet.storage(this.page['ships']) - consumption;
+			this.storage = fleet.storage(this.page['ships']) - this.consumption;
 			this.duration = duration;
 		},
 		mounted () {

@@ -29,6 +29,7 @@ let MerchantController = require('./controllers/merchant/merchant.vue')
 let AllianceChatController = require('./controllers/alliance/alliance_chat.vue')
 let PlayersStatController = require('./controllers/players/players_stat.vue')
 let NotesController = require('./controllers/notes/notes.vue')
+let PhalanxController = require('./controllers/phalanx/phalanx.vue')
 let HtmlController = require('./controllers/html.vue')
 
 const routes = [{
@@ -46,6 +47,9 @@ const routes = [{
 }, {
 	path: '/galaxy*',
 	component: GalaxyController
+}, {
+	path: '/phalanx*',
+	component: PhalanxController
 }, {
 	path: '/fleet/one',
 	component: FleetOneController

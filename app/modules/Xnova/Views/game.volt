@@ -21,9 +21,6 @@
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all">
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->
-	<!--[if IE]>
-		<script type="text/javascript" src="/assets/js/polyfills/promise.js"></script>
-	<![endif]-->
 
 	{% if allowMobile() is not true %}
 		<meta name="viewport" content="width=810">
@@ -45,5 +42,38 @@
 	{{ assets.outputJs('footer') }}
 
 	{{ partial('shared/svg') }}
+
+
+<script src="//dmc1acwvwny3.cloudfront.net/atatus.js"> </script>
+<script type="text/javascript"> atatus.config('6150129e2aa44d03912240c7141a2b40').install(); </script>
+
+<script>
+	function trackVueExceptions(atatus, Vue) {
+	  var Vue = Vue || window.Vue;
+	  var atatus = atatus || window.atatus;
+
+	  // quit if Vue isn't on the page
+	  if (!Vue || !Vue.config) return;
+
+	  // quit if atatus isn't on the page
+	  if (!atatus || !atatus.config) return;
+
+	  var _oldOnError = Vue.config.errorHandler;
+	  Vue.config.errorHandler = function VueErrorHandler(error, vm) {
+	      atatus.notify(error, {
+	        extra: {
+	          componentName: Vue.util.formatComponentName(vm),
+	          propsData: vm.$options.propsData
+	        }
+	      });
+
+	      if (typeof _oldOnError === 'function') {
+	          _oldOnError.call(this, error, vm);
+	      }
+	  };
+	}
+
+	trackVueExceptions();
+	</script>
 </body>
 </html>

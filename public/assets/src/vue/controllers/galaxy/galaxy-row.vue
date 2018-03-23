@@ -14,7 +14,7 @@
 							</th>
 							<th align="left">
 								<div v-if="$parent['page']['user']['phalanx'] > 0">
-									<a :onclick="$root.getUrl('phalanx/index/galaxy/'+galaxy+'/system/'+system+'/planet/'+item['planet']+'/')" target="_blank">Фаланга</a>
+									<a :href="$root.getUrl('phalanx/index/galaxy/'+galaxy+'/system/'+system+'/planet/'+item['planet']+'/')" target="_blank">Фаланга</a>
 								</div>
 
 								<div v-if="item['u_id'] !== $store.state['user']['id']">
@@ -235,7 +235,7 @@
 					<span class="sprite skin_b"></span>
 				</a>
 
-				<a v-if="$parent['page']['user']['missile']" :href="$root.getUrl('galaxy/'+galaxy+'/'+system+'/planet/'+item['planet']+'/r/2/user/'+$store.state['user']['planet']+'/')" title="Ракетная атака">
+				<a v-if="$parent['page']['user']['missile']" @click.prevent="$parent.sendMissile(item['planet'])" title="Ракетная атака">
 					<span class="sprite skin_r"></span>
 				</a>
 

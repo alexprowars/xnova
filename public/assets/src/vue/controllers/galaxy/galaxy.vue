@@ -3,6 +3,43 @@
 		<game-page-galaxy-selector :shortcuts="page['shortcuts']"></game-page-galaxy-selector>
 		<div class="separator"></div>
 
+		<form v-if="missile" :action="'/rocket/?c='+$store.state['user']['planet']+'&mode=2&galaxy='+page['galaxy']+'&system='+page['system']+'&planet='+missilePlanet" method="post">
+			<table border="0" class="table">
+				<tr>
+					<td class="c" colspan="3">
+						Начать ракетную атаку на [{{ page['galaxy'] }}:{{ page['system'] }}:{{ missilePlanet }}]
+					</td>
+				</tr>
+				<tr>
+					<td class="th">
+						Количество ракет (<b>{{ page['user']['interplanetary_misil'] }}</b>):
+						<input type="number" name="count" style="width:25%" min="1" :max="page['user']['interplanetary_misil']" :value="page['user']['interplanetary_misil']">
+					</td>
+					<td class="th">
+						Цель:
+						<select name="target">
+							<option value="all" selected>Вся оборона</option>
+							<option value="0">{{ $root.getLang('TECH', 401) }}</option>
+							<option value="1">{{ $root.getLang('TECH', 402) }}</option>
+							<option value="2">{{ $root.getLang('TECH', 403) }}</option>
+							<option value="3">{{ $root.getLang('TECH', 404) }}</option>
+							<option value="4">{{ $root.getLang('TECH', 405) }}</option>
+							<option value="5">{{ $root.getLang('TECH', 406) }}</option>
+							<option value="6">{{ $root.getLang('TECH', 407) }}</option>
+							<option value="7">{{ $root.getLang('TECH', 408) }}</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="c" colspan="2">
+						<input type="submit" name="send" value="Отправить">
+						<input type="button" value="Отмена" @click.prevent="missile = false">
+					</td>
+				</tr>
+			</table>
+			<div class="separator"></div>
+		</form>
+
 		<div class="table-responsive">
 			<table class="table galaxy">
 				<tr>
@@ -102,7 +139,9 @@
 		},
 		data () {
 			return {
-				fleet: require('./../../js/fleet.js')
+				fleet: require('./../../js/fleet.js'),
+				missile: false,
+				missilePlanet: 0,
 			}
 		},
 		computed: {
@@ -120,6 +159,13 @@
 				});
 
 				return count;
+			}
+		},
+		methods: {
+			sendMissile (planet)
+			{
+				this.missile = true;
+				this.missilePlanet = planet;
 			}
 		}
 	}

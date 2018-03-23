@@ -15,6 +15,7 @@ use Xnova\Helpers;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/phalanx")
@@ -40,9 +41,9 @@ class PhalanxController extends Controller
 		if ($this->user->vacation > 0)
 			throw new ErrorException("Нет доступа!");
 		
-		$g = $this->request->getQuery('galaxy', 'int');
-		$s = $this->request->getQuery('system', 'int');
-		$i = $this->request->getQuery('planet', 'int');
+		$g = (int) $this->request->getQuery('galaxy', 'int');
+		$s = (int) $this->request->getQuery('system', 'int');
+		$i = (int) $this->request->getQuery('planet', 'int');
 		
 		$consomation = 5000;
 		
@@ -63,14 +64,12 @@ class PhalanxController extends Controller
 		elseif ($phalanx == 0)
 			throw new MessageException("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
 		elseif ($this->planet->deuterium < $consomation)
-			throw new MessageException("<b>Недостаточно дейтерия для использования. Необходимо: 5000.</b>", "Ошибка", "", 2, false);
+			throw new MessageException("<b>Недостаточно дейтерия для использования. Необходимо: ".$consomation.".</b>", "Ошибка", "", 2, false);
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
 			throw new MessageException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
-		else
-		{
-			$this->planet->deuterium -= $consomation;
-			$this->planet->update();
-		}
+
+		$this->planet->deuterium -= $consomation;
+		$this->planet->update();
 
 		$planet = Planet::count(['galaxy = ?0 AND system = ?1 AND planet = ?2', 'bind' => [$g, $s, $i]]);
 		
@@ -78,7 +77,7 @@ class PhalanxController extends Controller
 			throw new MessageException("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
 
 		$fleets = FleetModel::find([
-			'conditions' => 'owner != 1 AND ((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
+			'conditions' => '((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',
 			'bind' => ['galaxy' => $g, 'system' => $s, 'planet' => $i],
 			'order' => 'start_time asc'
 		]);
@@ -101,32 +100,47 @@ class PhalanxController extends Controller
 			else
 				$type2 = "планет";
 
-			$item = '';
-		
 			if ($row->start_time > time() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3)))
 			{
-				$item .= "<tr><th><div id=\"bxxfs".$ii."\" class=\"z\"></div><font color=\"lime\">" . $this->game->datezone("H:i:s", $row->start_time) . "</font> </th>";
-				$item .= Helpers::InsertJavaScriptChronoApplet("fs", $ii, $row->start_time - time());
-				$item .= "<th><font color=\"".$color."\">Игрок (" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
-				$item .= " с " . $type . "ы " . $row->owner_name . " <font color=\"white\">[".$row->splitStartPosition()."]</font> летит на " . $type2 . "у " . $row->target_owner_name . " <font color=\"white\">[".$row->splitTargetPosition()."]</font>. Задание:";
-				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th>";
+				$list[] = [
+					'time' => (int) $row->start_time,
+					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'type_1' => $type.'ы',
+					'type_2' => $type2.'у',
+					'planet_name' => $row->owner_name,
+					'planet_position' => $row->splitStartPosition(),
+					'target_name' => $row->target_owner_name,
+					'target_position' => $row->splitTargetPosition(),
+					'mission' => _getText('type_mission', $row->mission),
+					'color' => $color,
+					'direction' => 1
+				];
 			}
 		
 			if ($row->mission <> 4 && !$end && $row->start_type != 3)
 			{
-				$item .= "<tr><th><div id=\"bxxfe".$ii."\" class=\"z\"></div><font color=\"green\">" . $this->game->datezone("H:i:s", $row->end_time) . "</font></th>";
-				$item .= Helpers::InsertJavaScriptChronoApplet("fe", $ii, $row->end_time - time());
-				$item .= "<th><font color=\"".$color."\">Игрок (" . Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user) . ")";
-				$item .= " с " . $type2 . "ы " . $row->target_owner_name . " <font color=\"white\">[".$row->splitTargetPosition()."]</font> возвращается на " . $type . "у " . $row->owner_name . " <font color=\"white\">[".$row->splitStartPosition()."]</font>. Задание:";
-				$item .= " <font color=\"white\">"._getText('type_mission', $row->mission)."</font></th></tr>";
+				$list[] = [
+					'time' => (int) $row->end_time,
+					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'type_1' => $type2.'ы',
+					'type_2' => $type.'у',
+					'planet_name' => $row->target_owner_name,
+					'planet_position' => $row->splitTargetPosition(),
+					'target_name' => $row->owner_name,
+					'target_position' => $row->splitStartPosition(),
+					'mission' => _getText('type_mission', $row->mission),
+					'color' => $color,
+					'direction' => 2
+				];
 			}
-
-			if ($item != '')
-				$list[] = $item;
 		}
 
+		Request::addData('page', [
+			'items' => $list
+		]);
+
 		$this->tag->setTitle('Сенсорная фаланга');
-		$this->view->setVar('list', $list);
+
 		$this->showTopPanel(false);
 		$this->showLeftPanel(false);
 	}
