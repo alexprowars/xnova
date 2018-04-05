@@ -1,0 +1,7 @@
+.header + .main-content {
+	padding-top: 0;
+}
+
+.table .actions {
+	white-space: nowrap;
+}

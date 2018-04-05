@@ -4,6 +4,7 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 use Friday\Core\Lang;
+use Xnova\Helpers;
 
 /**
  * @RoutePrefix("/admin/messages")
@@ -46,7 +47,7 @@ class MessagesController extends Controller
 		$DelDat = !empty($_POST['deldat']);
 		$CurrPage = (!empty($_POST['curr'])) ? intval($_POST['curr']) : 1;
 		$Selected = isset($_POST['type']) ? intval($_POST['type']) : 1;
-		$SelPage = @$_POST['page'];
+		$SelPage = (int) $this->request->get('p', 'int', 1);
 
 		if ($Selected == 6)
 			$Selected = 0;
@@ -147,8 +148,12 @@ class MessagesController extends Controller
 			$this->db->query("DELETE FROM game_messages WHERE id = '" . $_POST['delit'] . "';");
 			$this->message(_getText('mlst_mess_del') . " ( " . $_POST['delit'] . " )", _getText('mlst_title'), "/messages/", 3);
 		}
+
+		$pagination = Helpers::pagination($Mess['max'], 25, '/admin/messages/', $ViewPage);
 		
 		$this->view->setVar('parse', $parse);
+		$this->view->setVar('pagination', $pagination);
+
 		$this->tag->setTitle(_getText('mlst_title'));
 	}
 }

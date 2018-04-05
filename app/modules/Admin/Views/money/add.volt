@@ -1,26 +1,24 @@
-<div class="portlet box green">
-	<div class="portlet-title">
-		<div class="caption">Начисление кредитов на счет</div>
-	</div>
-	<div class="portlet-body form">
-		<form action="{{ url('money/add/') }}" method="post" class="form-horizontal form-bordered">
-			<div class="form-body">
-				<div class="form-group">
-					<label class="col-md-3 control-label">Логин или ID игрока</label>
-					<div class="col-md-9">
+<div class="row">
+	<div class="col-lg-6">
+		<form action="{{ url('money/add/') }}" method="post" class="card">
+			<div class="card-title card-title-bold">Начисление кредитов на счет</div>
+			<div class="card-body">
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Логин или ID игрока</label>
+					<div class="col-sm-8">
 						<input type="text" class="form-control" name="username" title="">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">Сумма</label>
-					<div class="col-md-9">
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Сумма</label>
+					<div class="col-sm-8">
 						<input type="text" class="form-control" name="money" title="">
 					</div>
 				</div>
-				<div class="form-actions">
-					<button type="submit" class="btn green">Начислить</button>
-				</div>
 			</div>
+			<footer class="card-footer text-right">
+				<button class="btn btn-primary" type="submit">Начислить</button>
+			</footer>
 		</form>
 	</div>
 </div>

@@ -21,9 +21,14 @@ class OverviewController extends Controller
 	{
 		return [[
 			'code'	=> 'overview',
-			'title' => 'Активность',
+			'title' => 'Dashboard',
 			'icon'	=> 'home',
 			'sort'	=> 10
+		], [
+			'code'	=> 'separator',
+			'title' => 'Игра',
+			'icon'	=> '',
+			'sort'	=> 11
 		]];
 	}
 
@@ -39,7 +44,7 @@ class OverviewController extends Controller
 		$parse['adm_ov_data_table'] = [];
 
 		$Count = 0;
-		$Color = "lime";
+		$Color = "inherit";
 		$PrevIP = '';
 
 		if ($this->access->canReadController(self::CODE, 'admin'))
@@ -53,7 +58,7 @@ class OverviewController extends Controller
 					if ($PrevIP == $TheUser['ip'])
 						$Color = "red";
 					else
-						$Color = "lime";
+						$Color = "inherit";
 				}
 
 				$PrevIP = $TheUser['ip'];

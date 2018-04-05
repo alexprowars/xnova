@@ -115,6 +115,11 @@ class User extends BaseUser
 		return $this->vacation > 0;
 	}
 
+	public function getFullName ()
+	{
+		return trim($this->username);
+	}
+
 	public function afterUpdate ()
 	{
 		parent::afterUpdate();

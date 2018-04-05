@@ -1,5 +1,7 @@
 function date ( format, timestamp )
 {
+	timestamp = parseInt(timestamp);
+
 	if (typeof store !== 'undefined')
 	{
 		timestamp += (new Date()).getTimezoneOffset() * 60;
@@ -11,7 +13,7 @@ function date ( format, timestamp )
 			timestamp += store.state['user']['timezone'] * 1800;
 	}
 
-	var a, jsdate = new Date(timestamp ? timestamp * 1000 : null);
+	var jsdate = new Date(timestamp ? timestamp * 1000 : null);
 	var pad = function(n, c)
 	{
 		if ((n = n + "").length < c)

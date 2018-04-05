@@ -1,5 +1,5 @@
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
+<div class="card">
+	<table class="table table-striped table-hover table-sm table-responsive">
 		<thead>
 			<tr>
 				<th>Название</th>
@@ -15,16 +15,19 @@
 			</tr>
 		{% endfor %}
 	</table>
-	<div class="row">
-		<div class="col-md-5 col-sm-12">
-			<div class="dataTables_info">
-				Активно {{ parse['total'] }} планет{{ morph(parse['total'], 'feminine', 5) }}
+
+	<footer class="card-footer">
+		<div class="row">
+			<div class="col-md-5 col-sm-12">
+				<div class="dataTables_info">
+					Активно {{ parse['total'] }} планет{{ morph(parse['total'], 'feminine', 5) }}
+				</div>
+			</div>
+			<div class="col-md-7 col-sm-12">
+				<div class="dataTables_paginate paging_bootstrap">
+					{{ pagination }}
+				</div>
 			</div>
 		</div>
-		<div class="col-md-7 col-sm-12">
-			<div class="dataTables_paginate paging_bootstrap">
-				{{ pagination }}
-			</div>
-		</div>
-	</div>
+	</footer>
 </div>

@@ -1,5 +1,5 @@
-<div class="table-responsive">
-	<table class="table table-striped table-bordered table-advance">
+<div class="card">
+	<table class="table table-striped table-bordered table-responsive table-sm">
 		{{ parse['desc'] }}{{ parse['edit'] }}{{ parse['name'] }}{{ parse['member'] }}{{ parse['member_row'] }}{{ parse['mail'] }}{{ parse['leader'] }}
 		<thead>
 			<tr>

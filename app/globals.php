@@ -148,6 +148,10 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	{
 		return '\Xnova\Helpers::BuildPlanetAdressLink(' . $arguments . ')';
 	});
+	$compiler->addFunction('morph', function($arguments)
+	{
+		return '\Xnova\Helpers::morph(' . $arguments . ')';
+	});
 });
 
 /** @noinspection PhpUnusedParameterInspection */

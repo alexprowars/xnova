@@ -1,6 +1,6 @@
 <form action="{{ url('options/') }}" method="post" enctype="multipart/form-data">
-	<div class="portlet light bordered">
-		<div class="portlet-body form">
+	<div class="card">
+		<div class="card-body">
 			<div class="tabbable-line boxless tabbable-reversed">
 				{% set i = 0 %}
 				<ul class="nav nav-tabs">

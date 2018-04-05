@@ -24,6 +24,22 @@ $lang['page_title'] = [
 	'groups_add'			=> 'Добавить группу',
 	'groups_edit'			=> 'Редактировать группу',
 	'options_index'			=> 'Настройки сайта',
+
+	'overview_index'		=>  'Dashboard',
+	'support_index'			=>  'Техподдержка',
+	'support_detail'		=>  'Просмотр тикета',
+	'server_index'			=>  'Переменные сервера',
+	'money_index'			=>  'Денежные транзакции',
+	'money_add'				=>  'Начислить кредиты',
+	'planets_index'			=>  'Список планет',
+	'activeplanet_index'	=>  'Активные планеты',
+	'moons_index'			=>  'Список лун',
+	'flyfleets_index'		=>  'Флоты в полёте',
+	'alliances_index'		=>  'Список альянсов',
+	'email_index'			=>  'Запросы на смену Email',
+	'messages_index'		=>  'Список сообщений',
+	'messageall_index'		=>  'Рассылка сообщений',
+	'content_index'			=>  'Список контента',
 ];
 
 $lang['category'] = array

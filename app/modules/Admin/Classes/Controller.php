@@ -61,7 +61,7 @@ class Controller extends PhalconController
 
 		$this->url->setBaseUri('/admin/');
 
-		Lang::setLang($this->config->app->language, 'xnova');
+		Lang::setLang($this->config->app->language, 'admin');
 		Lang::includeLang($this->dispatcher->getControllerName(), 'admin');
 
 		if (!$this->access->hasAccess('admin'))
@@ -101,8 +101,27 @@ class Controller extends PhalconController
 
 		Vars::init();
 
-		$this->assets->addCss('https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all');
-		$this->assets->addCss('assets/admin/global/plugins/font-awesome/css/font-awesome.css');
+		$this->assets->addCss('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,300i');
+		$this->assets->addCss('assets/admin/plugins/bootstrap/bootstrap.css');
+		$this->assets->addCss('assets/admin/plugins/material-icons/material-icons.css');
+		$this->assets->addCss('assets/admin/plugins/themify-icons/css/themify-icons.css');
+		$this->assets->addCss('assets/admin/plugins/font-awesome/css/font-awesome.css');
+		$this->assets->addCss('assets/admin/plugins/datatables/css/dataTables.bootstrap4.css');
+		$this->assets->addCss('assets/admin/plugins/perfect-scrollbar/css/perfect-scrollbar.css');
+		$this->assets->addCss('assets/admin/css/app.css');
+		$this->assets->addCss('assets/admin/css/custom.css');
+
+		$this->assets->addJs('assets/admin/plugins/jquery/jquery.js');
+		$this->assets->addJs('assets/admin/plugins/popper/popper.js');
+		$this->assets->addJs('assets/admin/plugins/bootstrap/bootstrap.js');
+		//$this->assets->addJs('assets/admin/plugins/bootstrap-validator/validator-bs4.js');
+		$this->assets->addJs('assets/admin/plugins/datatables/js/jquery.dataTables.js');
+		$this->assets->addJs('assets/admin/plugins/datatables/js/dataTables.bootstrap4.js');
+		$this->assets->addJs('assets/admin/plugins/perfect-scrollbar/js/perfect-scrollbar.jquery.js');
+
+		$this->assets->addJs('assets/admin/js/script.js');
+
+		/*$this->assets->addCss('assets/admin/global/plugins/font-awesome/css/font-awesome.css');
 		$this->assets->addCss('assets/admin/global/plugins/simple-line-icons/simple-line-icons.css');
 		$this->assets->addCss('assets/admin/global/plugins/bootstrap/css/bootstrap.css');
 		$this->assets->addCss('assets/admin/global/plugins/bootstrap-switch/css/bootstrap-switch.css');
@@ -121,7 +140,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/admin/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js');
 		$this->assets->addJs('assets/admin/global/plugins/bootstrap-switch/js/bootstrap-switch.js');
 		$this->assets->addJs('assets/admin/global/plugins/bootstrap-select/js/bootstrap-select.js');
-		$this->assets->addJs('assets/admin/global/js/app.js', ['sort' => 10]);
+		$this->assets->addJs('assets/admin/global/js/app.js', ['sort' => 10]);*/
 
 		return true;
 	}
@@ -142,7 +161,7 @@ class Controller extends PhalconController
 
 		$menu = $this->cache->get(self::CACHE_KEY_MENU.'_'.$this->user->authlevel);
 
-		if (!is_array($menu))
+		//if (!is_array($menu))
 		{
 			$menu = $this->generateMenu();
 

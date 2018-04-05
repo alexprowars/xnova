@@ -47,8 +47,6 @@ class Building
 		if (!count($requeriments))
 			return true;
 
-		$enabled = true;
-
 		foreach ($requeriments as $reqElement => $level)
 		{
 			if ($reqElement == 700)
@@ -63,16 +61,20 @@ class Building
 			}
 			elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING)
 			{
+				if ($planet->planet_type == 5 && in_array($element, [43, 502, 503]))
+				{
+					if (in_array($reqElement, [21, 41]))
+						continue;
+				}
+
 				if ($planet->getBuildLevel($reqElement) < $level)
 					return false;
 			}
-			elseif ($planet->planet_type == 5 && in_array($element, [43, 502, 503]) && !in_array($reqElement, [21, 41]))
-				return false;
 			else
 				return false;
 		}
 
-		return $enabled;
+		return true;
 	}
 
 	static function checkTechnologyRace (UserModel $user, $element)

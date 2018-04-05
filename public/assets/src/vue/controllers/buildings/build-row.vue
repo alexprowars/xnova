@@ -78,8 +78,16 @@
 
 				['metal', 'crystal', 'deuterium', 'energy'].forEach((res) =>
 				{
-					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0 && this.resources[res].current < this.item.price[res])
-						allow = false;
+					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0)
+					{
+						if (res === 'energy')
+						{
+							if (this.resources[res].max < this.item.price[res])
+								allow = false;
+						}
+						else if (this.resources[res].current < this.item.price[res])
+							allow = false;
+					}
 				});
 
 				return allow;

@@ -26,3 +26,4 @@ public/assets/admin/global/plugins/bootstrap/css
 /public/assets/js/application.js
 /package-lock.json
 /public/assets/css/plugins/*.css
+/public/assets/admin/css/app.css
