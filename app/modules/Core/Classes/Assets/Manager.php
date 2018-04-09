@@ -95,6 +95,9 @@ class Manager
 			if (($target != self::DEFAULT_COLLECTION_CSS && !isset($resource['options']['collection'])) || (isset($resource['options']['collection']) && $resource['options']['collection'] != $target))
 				continue;
 
+			if ($resource['local'] === true && !file_exists($resource['path']))
+				continue;
+
 			if ($resource['local'] === true && Options::get('assets_minify_css', VALUE_FALSE) == VALUE_FALSE)
 				$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
 
@@ -164,6 +167,9 @@ class Manager
 		foreach ($resources as $resource)
 		{
 			if (($target != self::DEFAULT_COLLECTION_JS && !isset($resource['options']['collection'])) || (isset($resource['options']['collection']) && $resource['options']['collection'] != $target))
+				continue;
+
+			if ($resource['local'] === true && !file_exists($resource['path']))
 				continue;
 
 			if ($resource['local'] === true && Options::get('assets_join_js', VALUE_FALSE) == VALUE_FALSE)

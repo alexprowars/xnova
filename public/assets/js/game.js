@@ -183,7 +183,7 @@ $(document).ready(function()
 
 				htmlRender = new (Vue.extend({
 					name: 'html-render',
-					template: '<div>'+result.data.html+'</div>'
+					template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 				}))().$mount();
 
 				Vue.nextTick(function () {
@@ -267,7 +267,7 @@ function showWindow (title, url, width)
 
 						htmlRender = new (Vue.extend({
 							name: 'html-render',
-							template: '<div>'+result.data.html+'</div>'
+							template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 						}))().$mount();
 
 						Vue.nextTick(function () {

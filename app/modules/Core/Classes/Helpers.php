@@ -83,4 +83,13 @@ class Helpers
 
 		return true;
 	}
+
+	static function translite($st)
+	{
+	 	$st = strtr($st, 'абвгдезийклмнопрстуфх','abvgdezijklmnoprstufx');
+	 	$st = strtr($st, 'АБВГДЕЗИЙКЛМНОПРСТУФХ','ABVGDEZIJKLMNOPRSTUFX');
+	 	$st = strtr($st, ['ё' => 'yo', 'ж' => 'zh', 'ц' => 'cz', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shh', 'ъ' => '``', 'ы' => 'y`', 'ь' => '`', 'э' => 'e`', 'ю' => 'yu', 'я' => 'ya', 'Ё' => 'YO', 'Ж' => 'ZH', 'Ц' => 'CZ', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SHH', 'Ъ' => '``', 'Ы' => 'Y`', 'Ь' => '`', 'Э' => 'E`', 'Ю' => 'YU', 'Я' => 'YA']);
+
+		return $st;
+	}
 }

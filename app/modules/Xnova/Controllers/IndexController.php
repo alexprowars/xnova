@@ -24,23 +24,8 @@ class IndexController extends Controller
 	{
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
-
-		//die();
 		
-		parent::initialize();
-
-		if (!$this->dispatcher->wasForwarded())
-		{
-			$this->assets->clearCss();
-
-			$this->assets->addJs('assets/js/plugins/validate.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
-
-			$this->assets->addCss('assets/css/login.css');
-			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
-		}
-
-		return true;
+		return parent::initialize();
 	}
 
 	public function indexAction ()
@@ -201,7 +186,6 @@ class IndexController extends Controller
 
 					$mail = new PHPMailer();
 
-					$mail->isMail();
 					$mail->isHTML(true);
 					$mail->CharSet = 'utf-8';
 					$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
@@ -243,7 +227,6 @@ class IndexController extends Controller
 
 				$mail = new PHPMailer();
 
-				$mail->isMail();
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
 				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));

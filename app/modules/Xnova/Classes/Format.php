@@ -34,7 +34,7 @@ class Format
 		if (!$time)
 			$time = '-';
 
-		return $time;
+		return trim($time);
 	}
 
 	static function number ($n)

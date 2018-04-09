@@ -43,7 +43,6 @@ class BuildingsController extends Controller
 			throw new ErrorException("Нет доступа!");
 
 		$this->building = new Construction($this->user, $this->planet);
-		$this->building->mode = $this->dispatcher->getActionName();
 	}
 
 	public function fleetAction ()

@@ -10,9 +10,12 @@
 	<link rel="image_src" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}">
 	<link rel="apple-touch-icon" href="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/apple-touch-icon.png') }}">
 
+	<meta property="og:title" content="Вход в игру">
 	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}">
 	<meta property="og:image:width" content="300">
 	<meta property="og:image:height" content="300">
+	<meta property="og:site_name" content="Звездная Империя 5">
+	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.">
 
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
@@ -31,7 +34,7 @@
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<script type="text/javascript">
 		var options = {{ toJson(options) }};
-		options['html'] = {{ replace("\t", "", toJson(content())) }};
+		options['html'] = {{ replace("\t\t", "", toJson(content())) }};
 	</script>
 
 	<div id="application"></div>
@@ -42,38 +45,5 @@
 	{{ assets.outputJs('footer') }}
 
 	{{ partial('shared/svg') }}
-
-
-<script src="//dmc1acwvwny3.cloudfront.net/atatus.js"> </script>
-<script type="text/javascript"> atatus.config('6150129e2aa44d03912240c7141a2b40').install(); </script>
-
-<script>
-	function trackVueExceptions(atatus, Vue) {
-	  var Vue = Vue || window.Vue;
-	  var atatus = atatus || window.atatus;
-
-	  // quit if Vue isn't on the page
-	  if (!Vue || !Vue.config) return;
-
-	  // quit if atatus isn't on the page
-	  if (!atatus || !atatus.config) return;
-
-	  var _oldOnError = Vue.config.errorHandler;
-	  Vue.config.errorHandler = function VueErrorHandler(error, vm) {
-	      atatus.notify(error, {
-	        extra: {
-	          componentName: Vue.util.formatComponentName(vm),
-	          propsData: vm.$options.propsData
-	        }
-	      });
-
-	      if (typeof _oldOnError === 'function') {
-	          _oldOnError.call(this, error, vm);
-	      }
-	  };
-	}
-
-	trackVueExceptions();
-	</script>
 </body>
 </html>

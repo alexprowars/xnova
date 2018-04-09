@@ -74,9 +74,9 @@ $lang['Coordinated'] = 'Координаты';
 $lang['Member_from'] = 'Вступление';
 $lang['Function'] 				= 'Online';
 $lang['Write_a_message'] = 'Написать сообщение';
-$lang['On'] 					= 'Online';
-$lang['15_min'] 					= '15 мин.';
-$lang['Off'] = 'выкл';
+$lang['On'] 					= 'в игре';
+$lang['15_min'] 					= '15 мин';
+$lang['Off'] = '';
 
 //Admin
 $lang['Transfer_alliance'] = 'Передать альянс';

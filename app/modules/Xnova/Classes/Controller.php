@@ -108,9 +108,27 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/css/bootstrap.css');
 		$this->assets->addCss('assets/css/plugins/ui.css', 'footer');
 		$this->assets->addCss('assets/css/style.css');
+		$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
+		$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
+
+		$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
 
 		$this->assets->addJs('assets/js/plugins/jquery.js');
+		$this->assets->addJs('assets/js/plugins/vue.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/vue-router.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/vuex.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
+
+		$this->assets->addJs('assets/js/utils.js', 'footer');
 		$this->assets->addJs('assets/js/game.js');
+		$this->assets->addJs('assets/js/lang.js', 'footer');
+
+		if (Helpers::allowMobileVersion())
+			$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');
+
+		$this->assets->addJs('assets/js/application.js', 'footer');
 
 		Vars::init();
 
@@ -122,6 +140,8 @@ class Controller extends PhalconController
 		Request::addData('path', $this->url->getBaseUri());
 		Request::addData('version', VERSION);
 		Request::addData('host', $_SERVER['HTTP_HOST']);
+		Request::addData('messages', []);
+		Request::addData('page', []);
 
 		Request::addData('stats', [
 			'time' => time(),
@@ -130,30 +150,12 @@ class Controller extends PhalconController
 			'users' => (int) Options::get('users_total', 0),
 		]);
 
+		$this->view->setMainView('game');
+
 		if ($this->auth->isAuthorized())
 		{
 			//if (!$this->user->isAdmin())
 			//	die('Нельзя пока вам сюда');
-
-			$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
-			$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
-
-			$this->assets->addJs('assets/js/plugins/vue.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/vue-router.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/vuex.js', 'footer');
-
-			$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
-
-			$this->assets->addJs('assets/js/utils.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
-			$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
-			$this->assets->addJs('assets/js/lang.js', 'footer');
-
-			if (Helpers::allowMobileVersion())
-				$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');
-
-			$this->assets->addJs('assets/js/application.js', 'footer');
 
 			$this->view->setMainView('game');
 

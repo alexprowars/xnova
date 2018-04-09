@@ -106,6 +106,8 @@
 		{
 			if (this.html.length)
 				this.renderHtml(this.html);
+
+			$('body').attr('page', this.$store.state.route.controller);
 		}
 	}
 </script>

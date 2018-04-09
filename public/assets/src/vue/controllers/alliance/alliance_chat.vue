@@ -36,10 +36,10 @@
 
 				<div v-if="marked.length" class="row">
 					<div class="col-12 th">
-						<select id="deletemessages" name="deletemessages" title="">
-							<option value="deletemarked">Удалить выделенные</option>
-							<option value="deleteunmarked">Удалить не выделенные</option>
-							<option value="deleteall">Удалить все</option>
+						<select id="deletemessages" name="delete_type" title="">
+							<option value="marked">Удалить выделенные</option>
+							<option value="unmarked">Удалить не выделенные</option>
+							<option value="all">Удалить все</option>
 						</select>
 						<input value="Удалить" type="submit">
 					</div>

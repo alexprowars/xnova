@@ -55,12 +55,20 @@
 				<td class="c" colspan="2">Дополнительные настройки</td>
 			</tr>
 			<tr>
-				<th width="150">Домашняя страница</th>
+				<th width="200">Домашняя страница</th>
 				<th><input type="text" name="web" value="{{ parse['web'] }}" style="width:98%;" title=""></th>
 			</tr>
 			<tr>
 				<th>Логотип</th>
-				<th><input type="text" name="image" value="{{ parse['image'] }}" style="width:98%;" title=""></th>
+				<th>
+					<input type="file" name="image" value="" style="width:98%;" title="">
+					{% if parse['image'] != '' %}
+						<img src="{{ parse['image'] }}" style="max-width: 98%;max-height: 400px;">
+						<label>
+							<input type="checkbox" name="delete_image" value="Y"> Удалить
+						</label>
+					{% endif %}
+				</th>
 			</tr>
 			<tr>
 				<th>Ранг основателя</th>
@@ -70,8 +78,8 @@
 				<th>Заявки</th>
 				<th>
 					<select style="width:98%;" name="request_notallow" title="">
-						<option value="1"{{ parse['request_notallow_0'] }}>{{ _text('xnova', 'No_allow_request') }}</option>
-						<option value="0"{{ parse['request_notallow_1'] }}>{{ _text('xnova', 'Allow_request') }}</option>
+						<option value="1" {% if parse['request_allow'] == 1 %}selected{% endif %}>{{ _text('xnova', 'No_allow_request') }}</option>
+						<option value="0" {% if parse['request_allow'] == 0 %}selected{% endif %}>{{ _text('xnova', 'Allow_request') }}</option>
 					</select>
 				</th>
 			</tr>

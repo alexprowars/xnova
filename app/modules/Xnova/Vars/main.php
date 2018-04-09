@@ -517,7 +517,7 @@ $CombatCaps = array
 		'power_up' => 0,
 		'power_armour' => 1,
 		'power_consumption' => 0,
-		'sd' => array()
+		'sd' => []
 	),
 
 	// Корвет
@@ -597,7 +597,7 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 4,
 		'power_armour' => 4,
-		'sd' => array()
+		'sd' => []
 	),
 	402 => array
 	(
@@ -607,7 +607,7 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 4,
 		'power_armour' => 4,
-		'sd' => array()
+		'sd' => []
 	),
 	403 => array
 	(
@@ -617,7 +617,7 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 3,
 		'power_armour' => 3,
-		'sd' => array()
+		'sd' => []
 	),
 	404 => array
 	(
@@ -627,7 +627,7 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 3,
 		'power_armour' => 3,
-		'sd' => array()
+		'sd' => []
 	),
 	405 => array
 	(
@@ -637,7 +637,7 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 0,
 		'power_armour' => 0,
-		'sd' => array()
+		'sd' => []
 	),
 	406 => array
 	(
@@ -647,14 +647,14 @@ $CombatCaps = array
 		'type_armour' => 4,
 		'power_up' => 0,
 		'power_armour' => 0,
-		'sd' => array()
+		'sd' => []
 	),
 
-	407 => array('attack' => 1, 'shield' => 1000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
-	408 => array('attack' => 1, 'shield' => 10000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
+	407 => array('attack' => 1, 'shield' => 1000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
+	408 => array('attack' => 1, 'shield' => 10000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
 
-	502 => array('attack' => 1, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array()),
-	503 => array('attack' => 12000, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => array())
+	502 => array('attack' => 1, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
+	503 => array('attack' => 12000, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => [])
 );
 
 $ProdGrid = array(
@@ -675,7 +675,7 @@ $ProdGrid = array(
 	),
 	12 => array(
 		'deuterium' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return (40 * $BuildLevel * pow(1.05 + $energyTech * 0.01, $BuildLevel)) * (0.1 * $BuildLevelFactor) ;'
+		'energy' => 'return (40 * $BuildLevel * pow(1.05, $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $energyTech * 0.01);'
 	),
 	212 => array(
 		'energy' => 'return floor(($BuildTemp + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor);'

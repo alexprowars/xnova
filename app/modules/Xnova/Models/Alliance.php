@@ -63,9 +63,20 @@ class Alliance extends Model
 		$this->useDynamicUpdate(true);
 	}
 
-	public function getRanks ()
+	public function beforeSave()
 	{
-		if ($this->ranks == NULL)
+		if (is_array($this->ranks))
+			$this->ranks = json_encode($this->ranks);
+	}
+
+	public function afterSave()
+	{
+		$this->getRanks();
+	}
+
+	public function getRanks()
+	{
+		if ($this->ranks == null)
 			$this->ranks = '[]';
 
 		$this->ranks = json_decode($this->ranks, true);

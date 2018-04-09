@@ -125,7 +125,7 @@ export var parser = {
 		let openTag = tags[0];
 		let closeTag = tags[1];
 
-		let rep, url;
+		let rep = '', url;
 
 		if (type === 1)
 			url = prompt('Введите ссылку:', '');
@@ -137,7 +137,7 @@ export var parser = {
 			url = prompt('Введите ссылку на песню:', '');
 
 		if (type > 0 && type <= 6 && (url === '' || url === null))
-			return;
+			return '';
 
 		if (type === 0)
 			rep = openTag + select + closeTag;

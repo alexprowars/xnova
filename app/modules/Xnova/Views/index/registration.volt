@@ -4,7 +4,6 @@
 <script src='//www.google.com/recaptcha/api.js'></script>
 <form action="{{ url('registration/') }}" method="post" id="regForm" class="form">
 	<table class="table">
-		<tbody>
 		<tr>
 			<th width="40%">E-Mail<br>(используется для входа)</th>
 			<th><input name="email" size="20" maxlength="40" type="text" value="{{ request.getPost('email') }}" title=""></th>

@@ -10,21 +10,16 @@ namespace Xnova;
 
 use Phalcon\Di;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 
 class Construction
 {
-	/**
-	 * @var Models\User
-	 */
+	/** @var UserModel */
 	private $user;
-	/**
-	 * @var Models\Planet
-	 */
+	/** @var Models\Planet */
 	private $planet;
-	public $mode = '';
 
-	public function __construct (User $user, Planet $planet)
+	public function __construct (UserModel $user, Planet $planet)
 	{
 		$this->user = $user;
 		$this->planet = $planet;
@@ -254,6 +249,8 @@ class Construction
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 123)
 					$row['effects'] = '<div class="tech-effects-row">+'.$row['level'].'% лабораторий</div>';
+				elseif ($Tech == 113)
+					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.$row['level'].'%</span></div>';
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 
