@@ -9,18 +9,22 @@
 						<span class="negative">Можно менять не чаще раза в сутки</span>
 					</th>
 					<th>
-						{% if parse['opt_usern_datatime'] < (time() - 86400) %}<input name="db_character" size="20" value="{% endif %}{{ parse['opt_usern_data'] }}{% if parse['opt_usern_datatime'] < (time() - 86400) %}" type="text" title="">{% endif %}
+						{% if parse['opt_usern_datatime'] < (time() - 86400) %}
+							<input name="username" size="20" value="{{ parse['opt_usern_data'] }}" type="text" title="">
+						{% else %}
+							{{ parse['opt_usern_data'] }}
+						{% endif %}
 					</th>
 				</tr>
 				{% if config.view.get('socialIframeView', 0) == 0 %}
 					{% if is_email(parse['opt_mail_data']) %}
 						<tr>
 							<th>Старый пароль</th>
-							<th><input name="db_password" size="20" value="" type="password" title=""></th>
+							<th><input name="password" size="20" value="" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (мин. 8 Знаков)</th>
-							<th><input name="newpass1" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (повтор)</th>
@@ -64,7 +68,10 @@
 					<th>Упорядочить планеты по:</th>
 					<th>
 						<select name="settings_sort" style='width:170px' title="">
-							{{ parse['opt_lst_ord_data'] }}
+							<option value="0" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord0') }}</option>
+							<option value="1" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 1 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord1') }}</option>
+							<option value="2" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 2 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord2') }}</option>
+							<option value="3" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 3 %}selected{% endif %}>Типу</option>
 						</select>
 					</th>
 				</tr>
@@ -72,7 +79,8 @@
 					<th>Упорядочить по:</th>
 					<th>
 						<select name="settings_order" style='width:170px' title="">
-							{{ parse['opt_lst_cla_data'] }}
+							<option value="0" {% if parse['settings']['planet_sort_order'] is defined and parse['settings']['planet_sort_order'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_cla0') }}</option>
+							<option value="1" {% if parse['settings']['planet_sort_order'] is defined and parse['settings']['planet_sort_order'] == 1 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_cla1') }}</option>
 						</select>
 					</th>
 				</tr>
@@ -144,7 +152,11 @@
 				</tr>
 				<tr>
 					<th>Аватар</th>
-					<th>{{ parse['avatar'] }} <a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
+					<th>
+						{% if parse['avatar'] != '' %}
+							<img src='{{ parse['avatar'] }} ' height="100"><br>
+						{% endif %}
+						<a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
 				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
@@ -167,7 +179,7 @@
 			<table class="table">
 				<tr>
 					<th width="50%"><a title="Режим отпуска нужен для защиты планет во время вашего отсутствия">Включить режим отпуска</a></th>
-					<th><input name="urlaubs_modus"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
+					<th><input name="vacation"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -176,7 +188,7 @@
 				</tr>
 				<tr>
 					<th><a title="Профиль будет удалён через 7 дней">Удалить профиль</a></th>
-					<th><input name="db_deaktjava"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
+					<th><input name="delete"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">

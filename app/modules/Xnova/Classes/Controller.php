@@ -162,8 +162,9 @@ class Controller extends PhalconController
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
 			{
-				$inf = $this->db->query("SELECT planet_sort, planet_sort_order, color, timezone, spy FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
-				$this->session->set('config', json_encode($inf));
+				$inf = $this->db->query("SELECT settings FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
+
+				$this->session->set('config', $inf['settings']);
 			}
 
 			if (!(int) $this->config->view->get('showPlanetListSelect', 0))

@@ -229,9 +229,9 @@ class InfoController extends Controller
 			{
 				$parse['msg'] = '';
 
-				if (isset($_POST['send']) && isset($_POST['jmpto']))
+				if ($this->request->hasPost('send') && $this->request->hasPost('jmpto'))
 				{
-					$flid = intval($_POST['jmpto']);
+					$flid = (int) $this->request->getPost('jmpto', 'int');
 
 					$fleet = \Xnova\Models\Fleet::findFirst(['id = ?0 AND end_galaxy = ?1 AND end_system = ?2 AND end_planet = ?3 AND end_type = ?4 AND mess = 3', 'bind' => [$this->planet->galaxy, $this->planet->system, $this->planet->planet, $this->planet->planet_type]]);
 
@@ -380,18 +380,18 @@ class InfoController extends Controller
 
 			if ($itemId >= 500 && $itemId < 600)
 			{
-				if (isset($_POST['form']))
+				if ($this->request->hasPost('form'))
 				{
-					$_POST['502'] = abs(intval($_POST['502']));
-					$_POST['503'] = abs(intval($_POST['503']));
+					$icm = abs((int) $this->request->getPost('502', 'int', 0));
+					$ipm = abs((int) $this->request->getPost('503', 'int', 0));
 
-					if ($_POST['502'] > $this->planet->getUnitCount('interceptor_misil'))
-						$_POST['502'] = $this->planet->getUnitCount('interceptor_misil');
-					if ($_POST['503'] > $this->planet->getUnitCount('interplanetary_misil'))
-						$_POST['503'] = $this->planet->getUnitCount('interplanetary_misil');
+					if ($icm > $this->planet->getUnitCount('interceptor_misil'))
+						$icm = $this->planet->getUnitCount('interceptor_misil');
+					if ($ipm > $this->planet->getUnitCount('interplanetary_misil'))
+						$ipm = $this->planet->getUnitCount('interplanetary_misil');
 
-					$this->planet->setUnit('interceptor_misil', -$_POST['502'], true);
-					$this->planet->setUnit('interplanetary_misil', -$_POST['502'], true);
+					$this->planet->setUnit('interceptor_misil', -$icm, true);
+					$this->planet->setUnit('interplanetary_misil', -$ipm, true);
 					$this->planet->update();
 				}
 

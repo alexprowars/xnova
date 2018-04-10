@@ -49,11 +49,13 @@ class MessagesController extends Controller
 
 		$msg = '';
 
-		if (isset($_POST['text']))
+		if ($this->request->hasPost('text'))
 		{
+			$text = $this->request->getPost('text', 'string', '');
+
 			$error = 0;
 
-			if (!$_POST["text"])
+			if ($text == '')
 			{
 				$error++;
 				$msg = "<div class=error>" . _getText('mess_no_text') . "</div>";
@@ -89,7 +91,7 @@ class MessagesController extends Controller
 				{
 					if (mb_strlen($similar['text'], 'UTF-8') < 1000)
 					{
-						similar_text($_POST["text"], $similar['text'], $sim);
+						similar_text($text, $similar['text'], $sim);
 
 						if ($sim > 80)
 						{
@@ -105,7 +107,8 @@ class MessagesController extends Controller
 				$msg = "<div class=success>" . _getText('mess_sended') . "</div>";
 
 				$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
-				$Message = Format::text($_POST['text']);
+
+				$Message = Format::text($text);
 				$Message = preg_replace('/[ ]+/',' ', $Message);
 				$Message = strtr($Message, _getText('stopwords'));
 

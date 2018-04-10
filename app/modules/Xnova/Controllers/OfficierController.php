@@ -39,28 +39,28 @@ class OfficierController extends Controller
 	
 	public function indexAction ()
 	{
-		if (isset($_POST['buy']))
+		if ($this->request->hasPost('buy'))
 		{
-			$need_c = 0;
+			$credits = 0;
 			$times = 0;
 
-			if (isset($_POST['week']) && $_POST['week'] != "")
+			if ($this->request->hasPost('week'))
 			{
-				$need_c = 20;
+				$credits = 20;
 				$times = 604800;
 			}
-			elseif (isset($_POST['2week']) && $_POST['2week'] != "")
+			elseif ($this->request->hasPost('2week'))
 			{
-				$need_c = 40;
+				$credits = 40;
 				$times = 1209600;
 			}
-			elseif (isset($_POST['month']) && $_POST['month'] != "")
+			elseif ($this->request->hasPost('month'))
 			{
-				$need_c = 80;
+				$credits = 80;
 				$times = 2592000;
 			}
 		
-			if ($need_c > 0 && $times > 0 && $this->user->credits >= $need_c)
+			if ($credits > 0 && $times > 0 && $this->user->credits >= $credits)
 			{
 				$selected = $this->request->getPost('buy', 'int', 0);
 
@@ -71,10 +71,10 @@ class OfficierController extends Controller
 					else
 						$this->user->{Vars::getName($selected)} = time() + $times;
 
-					$this->user->credits -= $need_c;
+					$this->user->credits -= $credits;
 					$this->user->update();
 		
-					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
+					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($credits * (-1)) . ", 5)");
 		
 					$Message = _getText('OffiRecrute');
 				}
