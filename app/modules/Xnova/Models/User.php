@@ -28,15 +28,18 @@ class User extends BaseUser
 
 	private $optionsData =
 	[
-		'security' 			=> 0,
-		'widescreen' 		=> 0,
-		'bb_parser' 		=> 0,
-		'ajax_navigation' 	=> 0,
-		'planetlist' 		=> 0,
-		'planetlistselect' 	=> 0,
-		'gameactivity' 		=> 0,
-		'records' 			=> 0,
-		'only_available' 	=> 0
+		'bb_parser' 		=> false,
+		'planetlist' 		=> false,
+		'planetlistselect' 	=> false,
+		'chatbox' 			=> true,
+		'records' 			=> true,
+		'only_available' 	=> false,
+
+		'planet_sort'		=> 0,
+		'planet_sort_order'	=> 0,
+		'color'				=> 0,
+		'timezone'			=> 0,
+		'spy'				=> 0,
 	];
 
 	private $bonusData = [];
@@ -46,7 +49,6 @@ class User extends BaseUser
 	public $authlevel;
 	public $onlinetime;
 	public $banned;
-	public $options;
 	public $planet_current;
 	public $planet_id;
 	public $race;
@@ -79,9 +81,6 @@ class User extends BaseUser
 	public $system;
 	public $planet;
 
-	public $planet_sort;
-	public $planet_sort_order;
-
 	public $rpg_geologue;
 	public $rpg_ingenieur;
 	public $rpg_admiral;
@@ -91,9 +90,6 @@ class User extends BaseUser
 	public $rpg_komandir;
 
 	public $message_block;
-	public $color;
-	public $timezone;
-	public $spy;
 	public $deltime;
 	public $ally_name;
 
@@ -213,8 +209,6 @@ class User extends BaseUser
 			$this->bonusData['fleet_speed'] 	+= 0.1;
 		}
 
-		$this->optionsData = $this->unpackOptions($this->options);
-
 		return true;
 	}
 
@@ -223,45 +217,13 @@ class User extends BaseUser
 		return (time() - $this->onlinetime < 180);
 	}
 
-	public function unpackOptions ($opt, $isToggle = true)
+	public function setOptions ($data)
 	{
-		$result = [];
+		if (!is_array($data))
+			return;
 
-		if ($isToggle)
-		{
-			$o = array_reverse(str_split(decbin($opt)));
-
-			$i = 0;
-
-			foreach ($this->optionsData as $k => $v)
-			{
-				$result[$k] = (isset($o[$i]) ? $o[$i] : 0);
-
-				$i++;
-			}
-		}
-
-		return $result;
-	}
-
-	public function packOptions ($opt, $isToggle = true)
-	{
-		if ($isToggle)
-		{
-			$r = [];
-
-			foreach ($this->optionsData as $k => $v)
-			{
-				if (isset($opt[$k]))
-					$v = $opt[$k];
-
-				$r[] = $v;
-			}
-
-			return bindec(implode('', array_reverse($r)));
-		}
-		else
-			return 0;
+		foreach ($data as $key => $value)
+			$this->optionsData[trim($key)] = $value;
 	}
 
 	public function getUserOption ($key = false)

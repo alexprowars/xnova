@@ -282,18 +282,18 @@ class UpdateStatistics extends Injectable
 
 	public function update ()
 	{
+		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1'");
+
 		$active_users = 0;
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = $this->db->query("SELECT u.*, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
-
-		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1';");
+		$list = $this->db->query("SELECT u.*, ui.settings s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		while ($user = $list->fetch())
 		{
-			$options = $this->user->unpackOptions($user['options']);
-			$user['records'] = $options['records'];
+			$options = json_decode($user['settings'], true);
+			$user['records'] = isset($options['records']) ? $options['records'] : true;
 
 			if ($user['banned'] != 0 || ($user['vacation'] != 0 && $user['vacation'] < (time() - 1036800)))
 				$hide = 1;
@@ -382,12 +382,10 @@ class UpdateStatistics extends Injectable
 				}
 			}
 
-			if ($user['records'] == 1)
+			if ($user['records'])
 			{
 				foreach ($RecordArray AS $id => $amount)
-				{
 					$this->SetMaxInfo($id, $amount, $user);
-				}
 			}
 
 			if ($user['race'] != 0)

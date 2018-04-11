@@ -62,7 +62,6 @@ class Planet extends Model
 	public $system;
 	public $diameter;
 	public $parent_planet;
-	public $sprungtor;
 	public $last_jump_time;
 	public $destruyed;
 	public $id_level;

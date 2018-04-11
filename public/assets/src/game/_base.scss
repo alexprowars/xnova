@@ -1180,3 +1180,10 @@ header a:hover svg.icon {
 	margin-bottom: 10px;
 	text-align: center;
 }
+
+.iframe {
+	main {
+		max-width: 1000px;
+		width: calc(100% - 20px);
+	}
+}

@@ -27,7 +27,10 @@ class StageTwo
 
 		Lang::includeLang('fleet', 'xnova');
 
-		$this->checkJumpGate($controller);
+		$moon = (int) $controller->request->getPost('moon', 'int', 0);
+
+		if ($moon && $moon != $controller->planet->id)
+			$this->checkJumpGate($moon, $controller);
 
 		$parse = [];
 
@@ -121,68 +124,70 @@ class StageTwo
 		$controller->tag->setTitle(_getText('fl_title_2'));
 	}
 
-	private function checkJumpGate (FleetController $controller)
+	private function checkJumpGate ($planetId, FleetController $controller)
 	{
-		if ($controller->request->hasPost('moon') && $controller->request->getPost('moon', 'int') != $controller->planet->id && ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->sprungtor > 0)
+		if (($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->getBuildLevel('jumpgate') > 0)
 		{
 			$nextJumpTime = $controller->planet->getNextJumpTime();
 
 			if ($nextJumpTime == 0)
 			{
-				$TargetGate = Planet::findFirst($controller->request->getPost('moon', 'int'));
+				$targetPlanet = Planet::findFirst($planetId);
 
-				if (($TargetGate->planet_type == 3 || $TargetGate->planet_type == 5) && $TargetGate->sprungtor > 0)
+				if (($targetPlanet->planet_type == 3 || $targetPlanet->planet_type == 5) && $targetPlanet->getBuildLevel('jumpgate') > 0)
 				{
-					$nextJumpTime = $TargetGate->getNextJumpTime();
+					$nextJumpTime = $targetPlanet->getNextJumpTime();
 
 					if ($nextJumpTime == 0)
 					{
-						$ShipArray = [];
+						$success = false;
 
-						foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) AS $Ship)
+						$ships = $controller->request->getPost('ship');
+						$ships = array_map('intval', $ships);
+						$ships = array_map('abs', $ships);
+
+						foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ship)
 						{
-							$ShipLabel = "ship" . $Ship;
-
-							if (!isset($_POST[$ShipLabel]) || !is_numeric($_POST[$ShipLabel]) || intval($_POST[$ShipLabel]) < 0)
+							if (!isset($ships[$ship]) || !$ships[$ship])
 								continue;
 
-							if (abs(intval($_POST[$ShipLabel])) > $controller->planet->getUnitCount($Ship))
-								$ShipArray[$Ship] = $controller->planet->getUnitCount($Ship);
+							if ($ships[$ship] > $controller->planet->getUnitCount($ship))
+								$count = $controller->planet->getUnitCount($ship);
 							else
-								$ShipArray[$Ship] = abs(intval($_POST[$ShipLabel]));
+								$count = $ships[$ship];
 
-							if ($ShipArray[$Ship] != 0)
+							if ($count > 0)
 							{
-								$controller->planet->setUnit($Ship, -$ShipArray[$Ship], true);
-								$TargetGate->setUnit($Ship, $ShipArray[$Ship], true);
+								$controller->planet->setUnit($ship, -$count, true);
+								$targetPlanet->setUnit($ship, $count, true);
+
+								$success = true;
 							}
-							else
-								unset($ShipArray[$Ship]);
 						}
 
-						if (count($ShipArray))
+						if ($success)
 						{
 							$controller->planet->last_jump_time = time();
 							$controller->planet->update();
 
-							$TargetGate->last_jump_time = time();
-							$TargetGate->update();
+							$targetPlanet->last_jump_time = time();
+							$targetPlanet->update();
 
-							$controller->user->update(['planet_current' => $TargetGate->id]);
+							$controller->user->update(['planet_current' => $targetPlanet->id]);
 
-							$RetMessage = _getText('gate_jump_done') . " - " . Format::time($controller->planet->getNextJumpTime());
+							$RetMessage = _getText('gate_jump_done')." ".Format::time($controller->planet->getNextJumpTime());
 						}
 						else
 							$RetMessage = _getText('gate_wait_data');
 					}
 					else
-						$RetMessage = _getText('gate_wait_dest') . " - " . Format::time($nextJumpTime);
+						$RetMessage = _getText('gate_wait_dest')." - ".Format::time($nextJumpTime);
 				}
 				else
 					$RetMessage = _getText('gate_no_dest_g');
 			}
 			else
-				$RetMessage = _getText('gate_wait_star') . " - " . Format::time($nextJumpTime);
+				$RetMessage = _getText('gate_wait_star')." - ".Format::time($nextJumpTime);
 
 			throw new RedirectException($RetMessage, 'Результат', "/fleet/", 5);
 		}

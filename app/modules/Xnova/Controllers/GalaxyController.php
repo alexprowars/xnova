@@ -190,7 +190,7 @@ class GalaxyController extends Controller
 			'stat_points' => isset($records['total_points']) ? $records['total_points'] : 0,
 			'colonizer' => $this->planet->getUnitCount('colonizer'),
 			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
-			'spy' => (int) $this->user->spy,
+			'spy' => (int) $this->user->getUserOption('spy'),
 			'recycler' => $this->planet->getUnitCount('recycler'),
 			'interplanetary_misil' => $this->planet->getUnitCount('interplanetary_misil'),
 			'allowExpedition' => $this->user->getTechLevel('expedition') > 0,

@@ -49,7 +49,7 @@ class StageOne
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = $controller->request->getPost('ships');
+		$ships = $controller->request->getPost('ship');
 
 		if (!is_array($ships))
 			$ships = [];
@@ -132,14 +132,17 @@ class StageOne
 			}
 		}
 
-		$parse['moon_timer'] = '';
+		$parse['gate_time'] = 0;
 		$parse['moons'] = [];
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
 			$moons = Planet::find([
-				'(planet_type = 3 OR planet_type = 5) AND id != ?0 AND id_owner = ?1',
-				'bind' => [$controller->planet->id, $controller->user->id]
+				'conditions' => '(planet_type = 3 OR planet_type = 5) AND id != :id: AND id_owner = :user:',
+				'bind' => [
+					'id' => $controller->planet->id,
+					'user' => $controller->user->id
+				]
 			]);
 
 			if (count($moons))
@@ -147,7 +150,7 @@ class StageOne
 				$timer = $controller->planet->getNextJumpTime();
 
 				if ($timer != 0)
-					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer);
+					$parse['gate_time'] = $timer;
 
 				foreach ($moons as $moon)
 				{

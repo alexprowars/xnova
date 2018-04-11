@@ -57,10 +57,8 @@
 		<tab name="Интерфейс">
 			{% if config.view.get('socialIframeView', 0) != 0 %}
 				<div style="display: none">
-					<input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title="">
+					<input name="chatbox"{{ parse['opt_chatbox_data'] }} type="checkbox" title="">
 					<input name="planetlistselect"{{ parse['opt_planetlistselect_data'] }} type="checkbox" title="">
-					<input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title="">
-					<input name="ajaxnav"{{ parse['opt_ajax_data'] }} type="checkbox" title="">
 				</div>
 			{% endif %}
 			<table class="table">
@@ -102,16 +100,12 @@
 				</tr>
 				{% if config.view.get('socialIframeView', 0) == 0 %}
 					<tr>
-						<th>Включить просмотр игровой активности</th>
-						<th><input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title=""></th>
-					</tr>
-					<tr>
-						<th>Повышенная безопасность входа</th>
-						<th><input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title=""></th>
+						<th>Показывать панель чата</th>
+						<th><input name="chatbox"{{ parse['opt_chatbox_data'] }} type="checkbox" title=""></th>
 					</tr>
 				{% endif %}
 				<tr>
-					<th>Цвет чата</th>
+					<th>Цветcваших сообщений в чате</th>
 					<th>
 						<select name='color' style='width:170px' title="">
 							{% for id, color in _text('xnova', 'colors') if color[1] != '' %}

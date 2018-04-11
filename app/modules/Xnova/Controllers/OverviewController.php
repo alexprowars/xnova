@@ -692,9 +692,6 @@ class OverviewController extends Controller
 			];
 		}
 
-		if (!$this->user->getUserOption('gameactivity'))
-			$this->config->view->offsetSet('gameActivityList', 0);
-
 		$parse['chat'] = [];
 
 		if (isMobile())
@@ -708,7 +705,7 @@ class OverviewController extends Controller
 			else
 				$chat = null;
 
-			if (!is_array($chat))
+			if (!is_array($chat) || !count($chat))
 			{
 				$messages = $this->db->query("SELECT c.*, u.username FROM game_log_chat c LEFT JOIN game_users u ON u.id = c.user WHERE 1 = 1 ORDER BY c.time DESC LIMIT 20");
 

@@ -228,6 +228,27 @@ $(document).ready(function()
 			allowPageScroll: "auto"
 		});
 	}
+
+	if (typeof VK !== 'undefined')
+	{
+		VK.init(function()
+		{
+			console.log('vk init success');
+
+			setInterval(function()
+			{
+				var height = 0;
+
+				$('#application .main-content > div').each(function() {
+					height += $(this).height();
+				});
+
+				VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200));
+
+			}, 1000);
+		},
+		function() {}, '5.74');
+	}
 });
 
 var htmlRender = null;

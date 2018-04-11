@@ -21,7 +21,10 @@ class Vk extends Component implements AuthInterface
 		{
 			if (md5($this->config->vk->id."_".$this->request->getPost('viewer_id', 'int')."_".$this->config->vk->secret) == $this->request->getPost('auth_key'))
 			{
-				$uInfo = $this->send('users.get', array('user_ids' => $_POST['viewer_id'], 'fields' => 'sex'));
+				$uInfo = $this->send('users.get', [
+					'user_ids' => $this->request->getPost('viewer_id'),
+					'fields' => 'sex'
+				]);
 
 				$this->data = $uInfo['response'][0]['user'];
 
@@ -60,7 +63,7 @@ class Vk extends Component implements AuthInterface
 			   	"id = ".$Row['auth_id']
 			);
 
-			$this->auth->auth($Row['id'], $Row['password'], 0, (time() + 2419200));
+			$this->auth->authorize($Row['id'], time() + 2419200);
 		}
 
 		echo '<center>Загрузка...</center><script>parent.location.href="'.$this->url->getBaseUri().'overview/?'.http_build_query($_POST).'";</script>';

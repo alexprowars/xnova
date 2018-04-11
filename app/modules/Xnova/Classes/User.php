@@ -158,12 +158,10 @@ class User
 		if (!$moons)
 			$qryPlanets .= " AND planet_type != 3 ";
 
-		/**
-		 * @var $user Models\User
-		 */
+		/** @var $user Models\User */
 		$user = Di::getDefault()->getShared('user');
 
-		$qryPlanets .= ' ORDER BY '.self::getPlanetListSortQuery($user->planet_sort, $user->planet_sort_order);
+		$qryPlanets .= ' ORDER BY '.self::getPlanetListSortQuery($user->getUserOption('planet_sort'), $user->getUserOption('planet_sort_order'));
 
 		return Di::getDefault()->getShared('db')->query($qryPlanets)->fetchAll();
 	}

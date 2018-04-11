@@ -40,11 +40,6 @@
 <script>
 	export default {
 		name: "chat",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
 		data () {
 			// noinspection RegExpRedundantEscape
 			return {
@@ -145,8 +140,8 @@
 					encodeURIComponent(message),
 					this.$store.state.user.id,
 					this.$store.state.user.name,
-					this.page['color'],
-					this.page['key']
+					this.$store.state['user']['color'],
+					this.$store.state['chat']['key']
 				);
 			},
 			init ()
@@ -217,8 +212,8 @@
 		},
 		created ()
 		{
-			this.socket = io.connect(this.page['server'], {
-				query: 'userId='+this.$store.state.user.id+'&userName='+this.$store.state.user.name+'&key='+this.page['key'],
+			this.socket = io.connect(this.$store.state['chat']['server'], {
+				query: 'userId='+this.$store.state.user.id+'&userName='+this.$store.state.user.name+'&key='+this.$store.state['chat']['key'],
 				secure: true
 			});
 

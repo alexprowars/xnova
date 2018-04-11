@@ -40,8 +40,8 @@ class Game extends Component
 		if ($time == 0)
 			$time = time();
 
-		if ($this->di->has('user') && !is_null($this->user->timezone))
-			$time += $this->user->timezone * 1800;
+		if ($this->di->has('user') && !is_null($this->user->getUserOption('timezone')))
+			$time += $this->user->getUserOption('timezone') * 1800;
 
 		return date($format, $time);
 	}

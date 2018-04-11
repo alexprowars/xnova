@@ -125,7 +125,7 @@
 
 </script>
 
-<form method="post" action="{{ url('xnsim/report/'~(config.view.get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" {{ this.user.getUserOption('ajax_navigation') ? 'class="noajax"' : '' }} target="_blank">
+<form method="post" action="{{ url('xnsim/report/'~(config.view.get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" class="noajax" target="_blank">
 	<input type="hidden" name="r" value="">
 </form>
 

@@ -86,7 +86,7 @@ class ImperiumController extends Controller
 		$queueManager = new Queue();
 		$types = $queueManager->getTypes();
 
-		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => User::getPlanetListSortQuery($this->user->planet_sort, $this->user->planet_sort_order)]);
+		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => User::getPlanetListSortQuery($this->user->getUserOption('planet_sort'), $this->user->getUserOption('planet_sort_order'))]);
 
 		$parse['mount'] = count($planets) + 3;
 

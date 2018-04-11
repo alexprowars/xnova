@@ -41,14 +41,13 @@ class Controller extends PhalconController
 {
 	static private $isInitialized = false;
 
-	public $private = 0;
-
 	private $views = [
 		'header' => true,
 		'footer' => true,
 		'planets' => true,
 		'menu' => true,
-		'resources' => true
+		'resources' => true,
+		'chat' => true
 	];
 
 	public function initialize()
@@ -120,6 +119,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
+		$this->assets->addJs('assets/404/js/spaceinvaders.js', 'footer');
 
 		$this->assets->addJs('assets/js/utils.js', 'footer');
 		$this->assets->addJs('assets/js/game.js');
@@ -150,14 +150,10 @@ class Controller extends PhalconController
 			'users' => (int) Options::get('users_total', 0),
 		]);
 
-		$this->view->setMainView('game');
-
 		if ($this->auth->isAuthorized())
 		{
 			//if (!$this->user->isAdmin())
 			//	die('Нельзя пока вам сюда');
-
-			$this->view->setMainView('game');
 
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
@@ -178,8 +174,9 @@ class Controller extends PhalconController
 
 			if ($this->request->getServer('SERVER_NAME') == 'vk.xnova.su')
 			{
-				$this->config->view->offsetSet('socialIframeView', 2);
-				$this->config->app->offsetSet('ajaxNavigation', 2);
+				$this->config->view->offsetSet('socialIframeView', 1);
+
+				$this->assets->addJs('https://vk.com/js/api/xd_connection.js', 'footer');
 			}
 
 			if ($this->cookies->has($this->config->cookie->prefix."_full") && $this->cookies->get($this->config->cookie->prefix."_full") == 'Y')
@@ -188,26 +185,14 @@ class Controller extends PhalconController
 				$this->config->view->offsetSet('showPlanetListSelect', 0);
 			}
 
-			switch ((int) $this->config->app->get('ajaxNavigation', 0))
-			{
-				case 0:
-					$this->view->setVar('ajaxNavigation', 0);
-					break;
-				case 1:
-					$this->view->setVar('ajaxNavigation', $this->user->getUserOption('ajax_navigation'));
-					break;
-				default:
-					$this->view->setVar('ajaxNavigation', 1);
-			}
-
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode($this->session->get('config'), true);
 
 			if (is_array($inf))
-			{
-				foreach ($inf as $key => $value)
-					$this->user->{$key} = $value;
-			}
+				$this->user->setOptions($inf);
+
+			if (!$this->user->getUserOption('chatbox'))
+				$this->views['chat'] = false;
 
 			$this->view->setVar('isPopup', ($this->request->has('popup') ? 1 : 0));
 			$this->view->setVar('userId', $this->user->getId());
@@ -370,8 +355,8 @@ class Controller extends PhalconController
 					'messages' => (int) $this->user->messages_ally
 				],
 				'planets' => $planets,
-				'timezone' => (int) $this->user->timezone,
-				'color' => (int) $this->user->color,
+				'timezone' => (int) $this->user->getUserOption('timezone'),
+				'color' => (int) $this->user->getUserOption('color'),
 				'vacation' => $this->user->vacation > 0,
 				'quests' => $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt']
 			];

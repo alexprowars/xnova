@@ -80,7 +80,7 @@ class Construction
 			}
 		}
 
-		$oldStyle = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
 		$parse['items'] = [];
 
@@ -91,7 +91,7 @@ class Construction
 
 			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
 			if (!Building::checkTechnologyRace($this->user, $Element))
@@ -203,7 +203,7 @@ class Construction
 		if (count($queueArray) && isset($queueArray[0]))
 			$queueArray = $queueArray[0];
 
-		$oldStyle = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
 		$parse['items'] = [];
 
@@ -211,7 +211,7 @@ class Construction
 		{
 			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Tech);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
 			if (!Building::checkTechnologyRace($this->user, $Tech))
@@ -289,20 +289,22 @@ class Construction
 		else
 			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 
-		if (isset($_POST['fmenge']))
+		$request = Di::getDefault()->getShared('request');
+
+		if ($request->hasPost('fmenge'))
 		{
 			$queueManager->setUserObject($this->user);
 			$queueManager->setPlanetObject($this->planet);
 
-			foreach ($_POST['fmenge'] as $Element => $Count)
+			foreach ($request->getPost('fmenge') as $element => $count)
 			{
-				$Element 	= intval($Element);
-				$Count 		= abs(intval($Count));
+				$element 	= (int) $element;
+				$count 		= abs((int) $count);
 
-				if (!in_array($Element, $elementIDs))
+				if (!in_array($element, $elementIDs))
 					continue;
 
-				$queueManager->add($Element, $Count);
+				$queueManager->add($element, $count);
 			}
 
 			$this->planet->queue = $queueManager->get();
@@ -312,52 +314,52 @@ class Construction
 
 		$BuildArray = $this->extractHangarQueue($queueArray);
 
-		$oldStyle = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
 		$parse = [];
 		$parse['items'] = [];
 
-		foreach ($elementIDs AS $Element)
+		foreach ($elementIDs AS $element)
 		{
-			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $element);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
-			if (!Building::checkTechnologyRace($this->user, $Element))
+			if (!Building::checkTechnologyRace($this->user, $element))
 				continue;
 
 			$row = [];
 
 			$row['allow']	= $isAccess;
-			$row['i'] 		= $Element;
-			$row['count'] 	= $this->planet->getUnitCount($Element);
-			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Element, false);
+			$row['i'] 		= $element;
+			$row['count'] 	= $this->planet->getUnitCount($element);
+			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $element, false);
 			$row['effects']	= '';
 
 			if ($isAccess)
 			{
-				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $element);
 				$row['is_max']	= false;
 
-				$price = Vars::getItemPrice($Element);
+				$price = Vars::getItemPrice($element);
 
 				if (isset($price['max']))
 				{
-					$total = $this->planet->getUnitCount($Element);
+					$total = $this->planet->getUnitCount($element);
 
-					if (isset($BuildArray[$Element]))
-						$total += $BuildArray[$Element];
+					if (isset($BuildArray[$element]))
+						$total += $BuildArray[$element];
 
 					if ($total >= $price['max'])
 						$row['is_max'] = true;
 				}
 
 				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
-				$row['effects'] = Building::getNextProduction($Element, 0, $this->planet);
+				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
 			}
 			else
-				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
+				$row['need'] = Building::getTechTree($element, $this->user, $this->planet);
 
 			$parse['items'][] = $row;
 		}

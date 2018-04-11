@@ -69,7 +69,7 @@ class BuildingsController extends Controller
 	public function defenseAction ()
 	{
 		if ($this->planet->planet_type == 5)
-			$this->user->setUserOption('only_available', 1);
+			$this->user->setUserOption('only_available', true);
 
 		$parse = $this->building->pageShipyard('defense');
 

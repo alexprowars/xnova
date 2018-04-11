@@ -220,17 +220,7 @@ class OptionsController extends Controller
 			if ($spy < 1 || $spy > 1000)
 				$spy = 1;
 
-			$options = $this->user->getUserOption();
-			$options['records'] 		= $this->request->hasPost('records') ? 1 : 0;
-			$options['security'] 		= $this->request->hasPost('security') ? 1 : 0;
-			$options['bb_parser'] 		= $this->request->hasPost('bbcode') ? 1 : 0;
-			$options['ajax_navigation'] = $this->request->hasPost('ajaxnav') ? 1 : 0;
-			$options['gameactivity'] 	= $this->request->hasPost('gameactivity') ? 1 : 0;
-			$options['planetlist']		= $this->request->hasPost('planetlist') ? 1 : 0;
-			$options['planetlistselect']= $this->request->hasPost('planetlistselect') ? 1 : 0;
-			$options['only_available']	= $this->request->hasPost('available') ? 1 : 0;
 
-			$this->user->options = $this->user->packOptions($options);
 			$this->user->sex = $sex;
 			$this->user->vacation = $vacation;
 			$this->user->deltime = $Del_Time;
@@ -239,20 +229,20 @@ class OptionsController extends Controller
 
 			$settings = $userInfo->getSettings();
 
-			if (!isset($settings['planet_sort']) || $SetSort != $settings['planet_sort'])
-				$userInfo->setSetting('planet_sort', (int) $SetSort);
+			$settings['records'] 		= $this->request->hasPost('records');
+			$settings['bb_parser'] 		= $this->request->hasPost('bbcode');
+			$settings['chatbox'] 		= $this->request->hasPost('chatbox');
+			$settings['planetlist']		= $this->request->hasPost('planetlist');
+			$settings['planetlistselect']= $this->request->hasPost('planetlistselect');
+			$settings['only_available']	= $this->request->hasPost('available');
 
-			if (!isset($settings['planet_sort_order']) || $SetOrder != $settings['planet_sort_order'])
-				$userInfo->setSetting('planet_sort_order', (int) $SetOrder);
+			$settings['planet_sort'] 	= (int) $SetSort;
+			$settings['planet_sort_order'] = (int) $SetOrder;
+			$settings['color'] 			= (int) $color;
+			$settings['timezone'] 		= (int) $timezone;
+			$settings['spy'] 			= (int) $spy;
 
-			if (!isset($settings['color']) || $color != $settings['color'])
-				$userInfo->setSetting('color', (int) $color);
-
-			if (!isset($settings['timezone']) || $timezone != $settings['timezone'])
-				$userInfo->setSetting('timezone', (int) $timezone);
-
-			if (!isset($settings['spy']) || $spy != $settings['spy'])
-				$userInfo->setSetting('spy', (int) $spy);
+			$userInfo->setSettings($settings);
 
 			$userInfo->about = $about;
 			$userInfo->update();
@@ -297,8 +287,12 @@ class OptionsController extends Controller
 			if (!preg_match("/^[a-zA-Za-яA-Я0-9_\.\,\-\!\?\*\ ]+$/u", $username) || mb_strlen($username, 'UTF-8') < 5)
 				throw new RedirectException('Дaннoe имя aккayнтa cлишкoм кopoткoe или имeeт зaпpeщeнныe cимвoлы', 'Cмeнa имeни', '/options/', 3);
 
-			$this->db->query("UPDATE game_users SET username = '" . $username . "' WHERE id = '" . $this->user->id . "' LIMIT 1");
-			$this->db->query("UPDATE game_users_info SET username_last = '" . time() . "' WHERE id = '" . $this->user->id . "' LIMIT 1");
+			$this->user->username = $username;
+			$this->user->update();
+
+			$userInfo->username_last = time();
+			$userInfo->update();
+
 			$this->db->query("INSERT INTO game_log_username VALUES (" . $this->user->id . ", " . time() . ", '" . $username . "');");
 
 			throw new RedirectException('Уcпeшнo', 'Cмeнa имeни', '/', 2);
@@ -354,15 +348,14 @@ class OptionsController extends Controller
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $userInfo->email;
 
-			$parse['opt_sec_data'] = ($this->user->getUserOption('security') == 1) ? " checked" : '';
-			$parse['opt_record_data'] = ($this->user->getUserOption('records') == 1) ? " checked" : '';
-			$parse['opt_bbcode_data'] = ($this->user->getUserOption('bb_parser') == 1) ? ' checked' : '';
-			$parse['opt_gameactivity_data'] = ($this->user->getUserOption('gameactivity') == 1) ? " checked" : '';
-			$parse['opt_planetlist_data'] = ($this->user->getUserOption('planetlist') == 1) ? " checked" : '';
-			$parse['opt_planetlistselect_data'] = ($this->user->getUserOption('planetlistselect') == 1) ? " checked" : '';
-			$parse['opt_available_data'] = ($this->user->getUserOption('only_available') == 1) ? " checked" : '';
-			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked" : '';
-			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked" : '';
+			$parse['opt_record_data'] = $this->user->getUserOption('records') ? " checked" : '';
+			$parse['opt_bbcode_data'] = $this->user->getUserOption('bb_parser') ? ' checked' : '';
+			$parse['opt_chatbox_data'] = $this->user->getUserOption('chatbox') ? " checked" : '';
+			$parse['opt_planetlist_data'] = $this->user->getUserOption('planetlist') ? " checked" : '';
+			$parse['opt_planetlistselect_data'] = $this->user->getUserOption('planetlistselect') ? " checked" : '';
+			$parse['opt_available_data'] = $this->user->getUserOption('only_available') ? " checked" : '';
+			$parse['opt_delac_data'] = $this->user->deltime > 0 ? " checked" : '';
+			$parse['opt_modev_data'] = $this->user->vacation > 0 ? " checked" : '';
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = $userInfo->about;

@@ -67,7 +67,7 @@
 				<div class="c col-12">Планеты</div>
 			</div>
 			<div v-if="page['planets'].length > 0" class="row">
-				<div v-for="planet in page['planets']" class="th col-6">
+				<div v-for="(planet, i) in page['planets']" class="th" :class="['col-'+(page['planets'].length % 2 > 0 && i === page['planets'].length - 1 ? 12 : 6)]">
 					<a @click.prevent="setTarget(planet['galaxy'], planet['system'], planet['planet'], planet['planet_type'])">
 						{{ planet['name'] }} {{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}
 					</a>
@@ -76,13 +76,14 @@
 
 			<div v-if="page['moons'].length > 0" class="row">
 				<div class="c col-12">
-					Межгалактические врата{% if parse['moon_timer'] != '' %} - <span id="bxxGate1"></span>{{ parse['moon_timer'] }}{% endif %}
+					Межгалактические врата
+					<span v-if="page['gate_time'] > 0" class="small">(заряжено через {{ Format.time(page['gate_time'], ':', true) }})</span>
 				</div>
 			</div>
 			<div v-if="page['moons'].length > 0" class="row">
-				<div v-for="moon in page['moons']" class="th col-6">
-					<input type="radio" name="moon" value="{{ moon['id'] }}" :id="'moon'+moon['id']">
-					<label :for="'moon'+moon['id']">{{ moon['name'] }} [{{ moon['galaxy'] }}:{{ moon['system'] }}:{{ moon['planet'] }}] {{ Format.time(moon['timer'], ':', true) }}</label>
+				<div v-for="(moon, i) in page['moons']" class="th" :class="['col-'+(page['moons'].length % 2 > 0 && i === page['moons'].length - 1 ? 12 : 6)]">
+					<input type="radio" name="moon" :value="moon['id']" :id="'moon'+moon['id']">
+					<label :for="'moon'+moon['id']">{{ moon['name'] }} [{{ moon['galaxy'] }}:{{ moon['system'] }}:{{ moon['planet'] }}] <span v-if="moon['timer'] > 0">{{ Format.time(moon['timer'], ':', true) }}</span></label>
 				</div>
 			</div>
 
@@ -169,8 +170,22 @@
 				this.clearTimer();
 				this.target_time = this.$root.serverTime() + this.duration;
 			},
-			startTimer () {
-				this.target_timeout = setTimeout(() => this.target_time = this.$root.serverTime() + this.duration, 1000);
+			startTimer ()
+			{
+				this.target_timeout = setTimeout(() =>
+				{
+					this.target_time = this.$root.serverTime() + this.duration;
+
+					if (this.page['gate_time'] > 0)
+						this.page['gate_time']--;
+
+					this.page['moons'].forEach((item) =>
+					{
+						if (item['timer'] > 0)
+							item['timer']--;
+					})
+
+				}, 1000);
 			},
 			clearTimer () {
 				clearTimeout(this.target_timeout);

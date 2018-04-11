@@ -20,7 +20,7 @@
 			</div>
 		</main>
 
-		<chat :visible="$store.state.route.controller !== 'chat' && $store.state.view.menu"></chat>
+		<chat :visible="$store.state.route.controller !== 'chat' && $store.state.view.menu && $store.state.view.chat"></chat>
 
 		<application-footer v-if="$store.state.view.header"></application-footer>
 
