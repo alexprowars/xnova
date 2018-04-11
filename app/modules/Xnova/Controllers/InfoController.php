@@ -40,6 +40,7 @@ class InfoController extends Controller
 	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
 	 * @param null $element
 	 * @throws ErrorException
+	 * @throws \Phalcon\Exception
 	 */
 	public function indexAction ($element = null)
 	{

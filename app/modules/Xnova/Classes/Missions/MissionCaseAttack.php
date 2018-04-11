@@ -23,6 +23,7 @@ use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\Galaxy;
 use Xnova\Models\Planet;
+use Xnova\Models;
 use Xnova\User;
 use Xnova\Models\User as UserModel;
 use Xnova\Models\Fleet as FleetModel;
@@ -505,24 +506,24 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 			$title = '' . $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
-			$this->db->insertAsDict('game_savelog',
-			[
-				'user' 	=> 0,
-				'title' => $title,
-				'log' 	=> $raport
-			]);
+			$battleLog = new Models\BattleLog();
 
-			$id = $this->db->lastInsertId();
+			$battleLog->user_id = 0;
+			$battleLog->title = $title;
+			$battleLog->log = $raport;
 
-			$this->db->insertAsDict('game_hall',
-			[
-				'title' 	=> $title,
-				'debris' 	=> floor($lost / 1000),
-				'time' 		=> time(),
-				'won' 		=> $result['won'],
-				'sab' 		=> $sab,
-				'log' 		=> $id
-			]);
+			if ($battleLog->create())
+			{
+				$this->db->insertAsDict('game_hall',
+				[
+					'title' 	=> $title,
+					'debris' 	=> floor($lost / 1000),
+					'time' 		=> time(),
+					'won' 		=> $result['won'],
+					'sab' 		=> $sab,
+					'log' 		=> $battleLog->id
+				]);
+			}
 		}
 
 		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#PATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";

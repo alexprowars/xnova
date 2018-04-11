@@ -13,7 +13,7 @@
 					</div>
 					<div class="row" v-for="item in page['items']">
 						<div class="col-1 th">
-							<input name="delete" :value="item['id']" v-model="deleteItems" type="checkbox">
+							<input name="delete[]" :value="item['id']" v-model="deleteItems" type="checkbox">
 						</div>
 						<div class="col-3 th">
 							{{ item['time'] }}

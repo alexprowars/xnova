@@ -13,6 +13,7 @@ use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\MessageException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\BattleLog;
 
 /**
  * @RoutePrefix("/log")
@@ -26,10 +27,25 @@ class LogController extends Controller
 		if (!$this->auth->isAuthorized())
 			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
 
-		$list = $this->db->extractResult($this->db->query("SELECT `id`, `user`, `title` FROM game_savelog WHERE `user` = '" . $this->user->id . "' "));
+		$logs = BattleLog::find([
+			'conditions' => 'user_id = ?0',
+			'bind' => [$this->user->id],
+			'order' => 'id DESC'
+		]);
+
+		$list = [];
+
+		foreach ($logs as $log)
+		{
+			$list[] = [
+				'id' => (int) $log->id,
+				'title' => $log->title
+			];
+		}
+
+		$this->view->setVar('list', $list);
 
 		$this->tag->setTitle('Логовница');
-		$this->view->setVar('list', $list);
 		$this->showTopPanel(false);
 	}
 
@@ -41,28 +57,26 @@ class LogController extends Controller
 		if (!$this->auth->isAuthorized())
 			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
 
-		if ($this->request->hasQuery('id'))
-		{
-			$id = $this->request->getQuery('id', 'int', 0);
-
-			if ($id > 0)
-			{
-				$raportrow = $this->db->query("SELECT * FROM game_savelog WHERE id = '" . $id . "'")->fetch();
-
-				if ($this->user->id == $raportrow['user'])
-				{
-					$this->db->delete('game_savelog', 'id = ?', [$id]);
-
-					$this->response->redirect("log/");
-				}
-				else
-					throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
-			}
-			else
-				throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
-		}
-		else
+		if (!$this->request->hasQuery('id'))
 			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+
+		$id = (int) $this->request->getQuery('id', 'int', 0);
+
+		if (!$id)
+			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+
+		$log = BattleLog::findFirst([
+			'conditions' => 'id = ?0 AND user_id = ?1',
+			'bind' => [$id, $this->user->id],
+		]);
+
+		if (!$log)
+			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+
+		if (!$log->delete())
+			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+
+		$this->response->redirect("log/");
 	}
 
 	/**
@@ -75,7 +89,9 @@ class LogController extends Controller
 
 		if ($this->request->isPost())
 		{
-			if ($this->request->getPost('title', 'string', '') == '')
+			$title = $this->request->getPost('title', 'string', '');
+
+			if ($title == '')
 				$message = '<h1><font color=red>Введите название для боевого отчёта.</h1>';
 			elseif ($this->request->getPost('code', 'string', '') == '')
 				$message = '<h1><font color=red>Введите ID боевого отчёта.</h1>';
@@ -111,7 +127,14 @@ class LogController extends Controller
 							$SaveLog = json_encode($SaveLog);
 						}
 
-						$this->db->query("INSERT INTO game_savelog (`user`, `title`, `log`) VALUES ('" . $this->user->id . "', '" . addslashes(htmlspecialchars($_POST['title'])) . "', '" . addslashes($SaveLog) . "')");
+						$log = new BattleLog();
+
+						$log->user_id = $this->user->id;
+						$log->title = addslashes(htmlspecialchars($title));
+						$log->log = addslashes($SaveLog);
+
+						if (!$log->create())
+							throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
 
 						$message = 'Боевой отчёт успешно сохранён.';
 					}
@@ -136,15 +159,17 @@ class LogController extends Controller
 		{
 			$html = '';
 
-			$raportrow = $this->db->query("SELECT * FROM game_savelog WHERE id = '" . $this->request->getQuery('id', 'int', 0) . "' ")->fetch();
+			$id = (int) $this->request->getQuery('id', 'int', 0);
 
-			if (isset($raportrow['id']))
+			$raportrow = BattleLog::findFirst($id);
+
+			if ($raportrow)
 			{
-				$result = json_decode($raportrow['log'], true);
+				$result = json_decode($raportrow->log, true);
 
 				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
 				{
-					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200)))
+					if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200)))
 						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
 					else
 					{
@@ -159,13 +184,13 @@ class LogController extends Controller
 				}
 				else
 				{
-					$html = "<!DOCTYPE html><html><head><title>" . stripslashes($raportrow["title"]) . "</title>";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
+					$html = "<!DOCTYPE html><html><head><title>" . stripslashes($raportrow->title) . "</title>";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/bootstrap.css')."\">";
+					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/style.css')."\">";
 					$html .= "</head><body>";
 					$html .= "<table width=\"99%\"><tr><td>";
 
-					if (!is_array($result) || ($raportrow['user'] == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
+					if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
 						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
 					else
 					{
@@ -189,7 +214,7 @@ class LogController extends Controller
 					throw new ErrorException('Запрашиваемого лога не существует в базе данных');
 				else
 				{
-					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/bootstrap.css\">";
+					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/bootstrap.css')."\">";
 					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
 					$html .= "</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>";
 

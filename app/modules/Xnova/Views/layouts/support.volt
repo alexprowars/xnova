@@ -10,10 +10,10 @@
 			<th style="width:15%">Статус</th>
 			<th style="width:25%">Дата</th>
 		</tr>
-		{% for id, item in list %}
+		{% for item in list %}
 			<tr>
-				<td class="c">{{ id }}</td>
-				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ id }}');">{{ item['subject'] }}</a></td>
+				<td class="c">{{ item['id'] }}</td>
+				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ item['id'] }}');">{{ item['subject'] }}</a></td>
 				<td class="c">
 					{% if item['status'] == 0 %}
 						<span style="color:red">закрыто</span>
@@ -30,9 +30,9 @@
 		{% endfor %}
 	</table>
 	<div class="separator"></div>
-	{% for id, item in list %}
-		<div id="ticket_{{ id }}" style="display:none;" class="tickets">
-			<form action="{{ url('support/answer/'~id~'/') }}" method="POST">
+	{% for item in list %}
+		<div id="ticket_{{ item['id'] }}" style="display:none;" class="tickets">
+			<form action="{{ url('support/answer/'~item['id']~'/') }}" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>

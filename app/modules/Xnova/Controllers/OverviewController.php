@@ -225,39 +225,36 @@ class OverviewController extends Controller
 		{
 			if ($this->user->id != $this->planet->id_owner)
 				throw new RedirectException("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
-			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
-			{
-				$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
 
-				if ($checkFleets > 0)
-					throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
-				else
-				{
-					$destruyed = time() + 60 * 60 * 24;
-
-					$this->planet->destruyed = $destruyed;
-					$this->planet->id_owner = 0;
-					$this->planet->update();
-
-					$this->user->planet_current = $this->user->planet_id;
-					$this->user->update();
-
-					if ($this->planet->parent_planet != 0)
-						$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
-
-					if ($this->session->has('fleet_shortcut'))
-						$this->session->remove('fleet_shortcut');
-
-					$this->cache->delete('app::planetlist_'.$this->user->id);
-
-					throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
-				}
-
-			}
-			elseif ($this->user->planet_id == $this->user->planet_current)
+			if ($this->user->planet_id == $this->user->planet_current)
 				throw new RedirectException(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
-			else
+
+			if (md5(trim($this->request->getPost('pw'))) != $this->request->getPost('password'))
 				throw new RedirectException(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
+
+			$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
+
+			if ($checkFleets > 0)
+				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
+
+			$destruyed = time() + 60 * 60 * 24;
+
+			$this->planet->destruyed = $destruyed;
+			$this->planet->id_owner = 0;
+			$this->planet->update();
+
+			$this->user->planet_current = $this->user->planet_id;
+			$this->user->update();
+
+			if ($this->planet->parent_planet != 0)
+				$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
+
+			if ($this->session->has('fleet_shortcut'))
+				$this->session->remove('fleet_shortcut');
+
+			$this->cache->delete('app::planetlist_'.$this->user->id);
+
+			throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
 		}
 
 		$parse['number_1'] 		= mt_rand(1, 100);
@@ -301,48 +298,42 @@ class OverviewController extends Controller
 				$parse['type'] = $type;
 		}
 
-		if (isset($_POST['action']) && $_POST['action'] == _getText('namer'))
+		if ($this->request->hasPost('action') && $this->request->getPost('action') == _getText('namer'))
 		{
-			$newName = strip_tags(trim($this->request->getPost('newname', 'string', '')));
+			$name = strip_tags(trim($this->request->getPost('newname', 'string', '')));
 
-			if ($newName != "")
+			if ($name != '')
 			{
-				if (preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $newName))
-				{
-					if (mb_strlen($newName, 'UTF-8') > 1 && mb_strlen($newName, 'UTF-8') < 20)
-					{
-						$this->planet->name = $newName;
-						$this->planet->update();
-
-						if ($this->session->has('fleet_shortcut'))
-							$this->session->remove('fleet_shortcut');
-					}
-					else
-						throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
-				}
-				else
+				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
 					throw new RedirectException('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
+
+				if (mb_strlen($name, 'UTF-8') <= 1 || mb_strlen($name, 'UTF-8') >= 20)
+					throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
+
+				$this->planet->name = $name;
+				$this->planet->update();
+
+				if ($this->session->has('fleet_shortcut'))
+					$this->session->remove('fleet_shortcut');
 			}
 		}
-		elseif (isset($_POST['action']) && $this->request->hasPost('image'))
+		elseif ($this->request->hasPost('action') && $this->request->hasPost('image'))
 		{
 			if ($this->user->credits < 1)
 				throw new RedirectException('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
 
-			$image = $this->request->getPost('image', 'int', 0);
+			$image = (int) $this->request->getPost('image', 'int', 0);
 
-			if ($image > 0 && $image <= $parse['images'][$parse['type']])
-			{
-				$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
-				$this->planet->update();
-
-				$this->user->credits--;
-				$this->user->update();
-
-				$this->response->redirect('overview/');
-			}
-			else
+			if ($image <= 0 || $image > $parse['images'][$parse['type']])
 				throw new RedirectException('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
+
+			$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
+			$this->planet->update();
+
+			$this->user->credits--;
+			$this->user->update();
+
+			$this->response->redirect('overview/');
 		}
 
 		$parse['planet_name'] = $this->planet->name;

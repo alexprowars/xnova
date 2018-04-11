@@ -32,6 +32,7 @@ class StageThree
 		$planet_type = (int) $controller->request->getPost('planet_type', 'int', 0);
 
 		$fleetMission = (int) $controller->request->getPost('mission', 'int', 0);
+		$expTime = (int) $controller->request->getPost('expeditiontime', 'int', 0);
 
 		$fleetarray = json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
@@ -118,7 +119,7 @@ class StageThree
 			elseif ($ExpeditionEnCours >= $MaxExpedition)
 				throw new RedirectException("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", 'Ошибка', "/fleet/", 2);
 
-			if (intval($_POST['expeditiontime']) <= 0 || intval($_POST['expeditiontime']) > (round($controller->user->getTechLevel('expedition') / 2) + 1))
+			if ($expTime <= 0 || $expTime > (round($controller->user->getTechLevel('expedition') / 2) + 1))
 				throw new RedirectException("<span class=\"error\"><b>Вы не можете столько времени летать в экспедиции!</b></span>", 'Ошибка', "/fleet/", 2);
 		}
 
@@ -310,7 +311,7 @@ class StageThree
 
 		if ($fleetMission == 15)
 		{
-			$StayDuration = $controller->request->getPost('expeditiontime', 'int', 0) * 3600;
+			$StayDuration = $expTime * 3600;
 			$StayTime = $fleet->start_time + $StayDuration;
 		}
 		else
@@ -367,17 +368,17 @@ class StageThree
 
 		if ($fleetMission == 5)
 		{
-			$StayArrayTime = [0, 1, 2, 4, 8, 16, 32];
+			$holdTime = (int) $controller->request->getPost('holdingtime', 'int', 0);
 
-			if (!$controller->request->hasPost('holdingtime') || !in_array($_POST['holdingtime'], $StayArrayTime))
-				$_POST['holdingtime'] = 0;
+			if (!in_array($holdTime, [0, 1, 2, 4, 8, 16, 32]))
+				$holdTime = 0;
 
 			$FleetStayConsumption = Fleet::GetFleetStay($fleetarray);
 
 			if ($controller->user->rpg_meta > time())
 				$FleetStayConsumption = ceil($FleetStayConsumption * 0.9);
 
-			$FleetStayAll = $FleetStayConsumption * $controller->request->getPost('holdingtime', 'int', 0);
+			$FleetStayAll = $FleetStayConsumption * $holdTime;
 
 			if ($FleetStayAll >= ($controller->planet->deuterium - $TransDeuterium))
 				$TotalFleetCons = $controller->planet->deuterium - $TransDeuterium;

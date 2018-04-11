@@ -49,11 +49,16 @@ class StageOne
 		$parse['ships'] = [];
 		$fleets = [];
 
+		$ships = $controller->request->getPost('ships');
+
+		if (!is_array($ships))
+			$ships = [];
+
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
 		{
-			if (isset($_POST['ship'][$i]) && intval($_POST['ship'][$i]) > 0)
+			if (isset($ships[$i]) && (int) $ships[$i] > 0)
 			{
-				$cnt = (int) $_POST['ship'][$i];
+				$cnt = (int) $ships[$i];
 
 				if ($cnt > $controller->planet->getUnitCount($i))
 					continue;

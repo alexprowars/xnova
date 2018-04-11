@@ -346,6 +346,9 @@ class AllianceController extends Controller
 							if (strpos($fileType, 'image/') === false)
 								throw new ErrorException('Разрешены к загрузке только изображения');
 
+							if ($this->ally->image > 0)
+								Files::delete($this->ally->image);
+
 							$this->ally->image = Files::save($file);
 						}
 					}
