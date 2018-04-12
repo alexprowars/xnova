@@ -1,7 +1,6 @@
 {% if message is defined %}
 	<div class="error">{{ message }}</div>
 {% endif %}
-<script src='//www.google.com/recaptcha/api.js'></script>
 <form action="{{ url('registration/') }}" method="post" id="regForm" class="form">
 	<table class="table">
 		<tr>
@@ -18,7 +17,7 @@
 		</tr>
 		<tr>
 			<th colspan="2" align="center" class="text-center">
-				<div class="g-recaptcha" data-sitekey="{{ config.recaptcha.public_key }}"></div>
+				<div class="g-recaptcha" id="recaptcha" data-sitekey="{{ config.recaptcha.public_key }}"></div>
 			</th>
 		</tr>
 		<tr>
@@ -41,6 +40,8 @@
 <script>
 	$(document).ready(function()
 	{
+		grecaptcha.render('recaptcha');
+
 		$('#regForm').validate({
 			submitHandler: function(form)
 			{

@@ -188,9 +188,16 @@ $(document).ready(function()
 
 				Vue.nextTick(function () {
 					$('.jconfirm-content').html(htmlRender.$el);
+
+					setTimeout(function () {
+						application.evalJs(result.data.html);
+					}, 100);
 				}.bind(this));
 			}
-		}, function() {
+
+			application.$store.state.redirect = result.data.redirect;
+		},
+		function() {
 			alert('Что-то пошло не так!? Попробуйте еще раз');
 		})
 		.always(function() {
@@ -292,7 +299,11 @@ function showWindow (title, url, width)
 						}))().$mount();
 
 						Vue.nextTick(function () {
-							this.setContent(htmlRender.$el);
+							this.setContent(htmlRender.$el, true);
+
+							setTimeout(function () {
+								application.evalJs(result.data.html);
+							}, 100);
 						}.bind(this));
 					}
 					else

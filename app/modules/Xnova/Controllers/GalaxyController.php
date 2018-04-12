@@ -8,6 +8,7 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Files;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Controller;
@@ -278,6 +279,16 @@ class GalaxyController extends Controller
 				$row['p_active'] = floor((time() - $row['p_active']) / 60);
 			else
 				$row['p_active'] = 60;
+
+			if ($row['u_image'] > 0)
+			{
+				$file = Files::getById($row['u_image']);
+
+				if ($file)
+					$row['u_image'] = $file['src'];
+				else
+					$row['u_image'] = '';
+			}
 
 			unset($row['p_parent'], $row['l_update'], $row['p_id']);
 		

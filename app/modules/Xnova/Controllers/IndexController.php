@@ -24,6 +24,8 @@ class IndexController extends Controller
 	{
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
+
+		$this->assets->addJs('https://www.google.com/recaptcha/api.js', 'footer');
 		
 		return parent::initialize();
 	}

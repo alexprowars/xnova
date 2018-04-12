@@ -1,7 +1,7 @@
 <div class="block start">
 	<div class="title">Основная информация</div>
 	<div class="content">
-		{% if message != '' %}
+		{% if message is defined and message != '' %}
 			<div class="errormessage">{{ message }}</div>
 		{% endif %}
 		<form action="" method="POST">

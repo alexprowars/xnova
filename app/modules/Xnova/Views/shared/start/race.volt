@@ -1,7 +1,7 @@
 <div class="block start race">
 	<div class="title">Выбор фракции</div>
 	<div class="content">
-		{% if message != '' %}
+		{% if message is defined and message != '' %}
 			<div class="errormessage">{{ message }}</div>
 		{% endif %}
 		<form action="" method="POST" id="tabs">

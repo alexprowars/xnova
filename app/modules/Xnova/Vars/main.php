@@ -671,11 +671,11 @@ $ProdGrid = array(
 		'energy' => 'return -(30 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
 	),
 	4 => array(
-		'energy' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $energyTech * 0.01);'
+		'energy' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $energyTech * 0.02);'
 	),
 	12 => array(
 		'deuterium' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return (40 * $BuildLevel * pow(1.05, $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $energyTech * 0.01);'
+		'energy' => 'return (40 * $BuildLevel * pow(1.05, $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $energyTech * 0.02);'
 	),
 	212 => array(
 		'energy' => 'return floor(($BuildTemp + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor);'

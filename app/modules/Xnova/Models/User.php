@@ -174,7 +174,7 @@ class User extends BaseUser
 		}
 		if ($this->rpg_meta > time())
 		{
-			$this->bonusData['fleet_fuel'] 		-= 0.1;
+			$this->bonusData['fleet_fuel'] 		-= 0.2;
 		}
 
 		// Расчет бонусов от рас
@@ -244,7 +244,7 @@ class User extends BaseUser
 		if ($this->getDI()->has('planet'))
 			return;
 
-		if ($this->planet_current == 0 && $this->planet_id == 0)
+		if (!$this->planet_current && !$this->planet_id)
 		{
 			if ($this->race > 0)
 			{
@@ -255,11 +255,9 @@ class User extends BaseUser
 			}
 		}
 
-		if ($this->planet_current > 0 && $this->planet_id > 0)
+		if ($this->planet_current && $this->planet_id)
 		{
-			/**
-			 * Выбираем информацию о планете
-			 */
+			/** Выбираем информацию о планете */
 			$planet = Planet::findFirst($this->planet_current);
 
 			if (!$planet && $this->planet_id > 0)
@@ -306,7 +304,7 @@ class User extends BaseUser
 
 			$ally = $cache->get('user::ally_' . $this->id . '_' . $this->ally_id);
 
-			if ($ally === NULL)
+			if ($ally === null)
 			{
 				$ally = $this->getWriteConnection()->query("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM game_alliance a, game_alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id)->fetch();
 
@@ -332,16 +330,16 @@ class User extends BaseUser
 
 		if ($request->hasQuery('chpl') && is_numeric($request->getQuery('chpl')))
 		{
-			$selectPlanet = $request->getQuery('chpl', 'int');
+			$selectPlanet = (int) $request->getQuery('chpl', 'int');
 
 			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
 
-			$IsPlanetMine = $this->getWriteConnection()->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
+			$isExistPlanet = $this->getWriteConnection()->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
 
-			if (isset($IsPlanetMine['id']))
+			if ($isExistPlanet)
 			{
-				if ($IsPlanetMine['id_ally'] > 0 && $IsPlanetMine['id_owner'] != $this->getId() && !$this->ally['rights']['planet'])
+				if ($isExistPlanet['id_ally'] && $isExistPlanet['id_owner'] != $this->getId() && !$this->ally['rights']['planet'])
 					throw new RedirectException("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
 
 				$this->planet_current = $selectPlanet;
@@ -359,8 +357,16 @@ class User extends BaseUser
 		return (isset($this->bonusData[$key]) ? $this->bonusData[$key] : ($default !== false ? $default : 1));
 	}
 
+	public function setBonusValue ($key, $value)
+	{
+		$this->bonusData[$key] = $value;
+	}
+
 	public function saveData ($fields, $userId = 0)
 	{
-		$this->getWriteConnection()->updateAsDict($this->getSource(), $fields, ['conditions' => 'id = ?', 'bind' => array(($userId > 0 ? $userId : $this->id))]);
+		$this->getWriteConnection()->updateAsDict($this->getSource(), $fields, [
+			'conditions' => 'id = ?',
+			'bind' => array(($userId > 0 ? $userId : $this->id))
+		]);
 	}
 }

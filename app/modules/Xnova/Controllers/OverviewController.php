@@ -434,7 +434,7 @@ class OverviewController extends Controller
 		{
 			$lune = $this->cache->get('app::lune_'.$this->planet->parent_planet);
 
-			if ($lune === NULL)
+			if ($lune === null)
 			{
 				$lune = Planet::findFirst(['columns' => 'id, name, image, destruyed', 'conditions' => 'id = ?0 AND planet_type = 3', 'bind' => [$this->planet->parent_planet]]);
 

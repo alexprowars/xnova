@@ -355,7 +355,10 @@ class AllianceController extends Controller
 				}
 
 				if ($this->request->getPost('delete_image'))
-					Files::delete($this->ally->image);
+				{
+					if (Files::delete($this->ally->image))
+						$this->ally->image = 0;
+				}
 
 				$this->ally->request_notallow = (int) $this->request->getPost('request_notallow', 'int', 0);
 

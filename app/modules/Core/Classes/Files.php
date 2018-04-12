@@ -26,10 +26,13 @@ class Files
 		$fileModel = new Models\File();
 		$fileModel->name = $fileName;
 
-		$fileName = Helpers::translite($fileName);
+		$fileInfo = pathinfo($fileName);
+		$fileInfo['filename'] = Helpers::translite($fileInfo['filename']);
 
-		if (strlen($fileName) > 255)
+		if (strlen($fileInfo['filename']) > 255)
 			throw new \Exception('Слишком длинное имя файла');
+
+		$fileName = $fileInfo['filename'].'.'.$fileInfo['extension'];
 
 		$dir = ROOT_PATH.'/public/upload';
 		$subdir = '';
@@ -70,8 +73,6 @@ class Files
 			$i++;
 		}
 
-		p($dir."/".$subdir);
-
 		if (!is_dir($dir."/".$subdir))
 			mkdir($dir."/".$subdir);
 
@@ -95,10 +96,26 @@ class Files
 
 	public static function getById ($fileId)
 	{
+		static $_staticCache = [];
+
 		$fileId = (int) $fileId;
 
 		if (!$fileId)
 			return false;
+
+		if (isset($_staticCache[$fileId]))
+			return $_staticCache[$fileId];
+
+		$_cache = Di::getDefault()->getShared('cache');
+
+		$result = $_cache->get('core::file_'.$fileId);
+
+		if ($result !== null)
+		{
+			$_staticCache[$fileId] = $result;
+
+			return $result;
+		}
 
 		$file = Models\File::findFirst((int) $fileId);
 
@@ -107,25 +124,29 @@ class Files
 
 		$src = Di::getDefault()->getShared('url')->getStatic('upload/'.$file->src);
 
-		return [
+		$result = [
 			'id' => (int) $file->id,
 			'size' => (int) $file->size,
 			'name' => $file->name,
 			'mime' => $file->mime,
-			'src' => $src,
-			'model' => $file,
+			'src' => $src
 		];
+
+		$_cache->save('core::file_'.$fileId, $result, 600);
+		$_staticCache[$fileId] = $result;
+
+		return $result;
 	}
 
 	public static function delete ($fileId)
 	{
-		$file = self::getById($fileId);
+		$file = Models\File::findFirst((int) $fileId);
 
 		if (!$file)
 			return true;
 
-		if (unlink(ROOT_PATH.'/public/upload/'.$file['model']->src))
-			$file['model']->delete();
+		if (unlink(ROOT_PATH.'/public/upload/'.$file->src))
+			$file->delete();
 
 		return true;
 	}

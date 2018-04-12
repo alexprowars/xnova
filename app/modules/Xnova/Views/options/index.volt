@@ -63,7 +63,7 @@
 			{% endif %}
 			<table class="table">
 				<tr>
-					<th>Упорядочить планеты по:</th>
+					<th rowspan="2" width="50%">Упорядочить планеты по:</th>
 					<th>
 						<select name="settings_sort" style='width:170px' title="">
 							<option value="0" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord0') }}</option>
@@ -74,7 +74,6 @@
 					</th>
 				</tr>
 				<tr>
-					<th>Упорядочить по:</th>
 					<th>
 						<select name="settings_order" style='width:170px' title="">
 							<option value="0" {% if parse['settings']['planet_sort_order'] is defined and parse['settings']['planet_sort_order'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_cla0') }}</option>
@@ -83,7 +82,7 @@
 					</th>
 				</tr>
 				<tr>
-					<th>Кол-во по умолчанию отправляемых<br> шпионских зондов в меню "Космос"</th>
+					<th>Кол-во отправляемых шпионских зондов в меню "Космос"</th>
 					<th><input name="spy" value="{{ parse['spy'] }}" type="text" title=""></th>
 				</tr>
 				<tr>
@@ -105,7 +104,7 @@
 					</tr>
 				{% endif %}
 				<tr>
-					<th>Цветcваших сообщений в чате</th>
+					<th>Цвет ваших сообщений в чате</th>
 					<th>
 						<select name='color' style='width:170px' title="">
 							{% for id, color in _text('xnova', 'colors') if color[1] != '' %}
@@ -148,9 +147,17 @@
 					<th>Аватар</th>
 					<th>
 						{% if parse['avatar'] != '' %}
-							<img src='{{ parse['avatar'] }} ' height="100"><br>
+							<img src="{{ parse['avatar'] }}" height="100"><br>
+							<label>
+								<input type="checkbox" name="image_delete" value="Y">
+								Удалить
+							</label>
+							<br><br>
 						{% endif %}
-						<a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
+
+						<input type="file" name="image" value=""><br>
+						<small>Картинки уменьшаются до размера в 300x300 пикселей</small>
+					</th>
 				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>

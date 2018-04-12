@@ -8,7 +8,11 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Files;
 use Friday\Core\Options;
+use Friday\Core\Upload\Upload;
+use Gumlet\ImageResize;
+use Phalcon\Http\Request\File;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Format;
@@ -244,6 +248,44 @@ class OptionsController extends Controller
 
 			$userInfo->setSettings($settings);
 
+			if ($this->request->hasFiles())
+			{
+				/** @var $files \Phalcon\Http\Request\File[] */
+				$files = $this->request->getUploadedFiles();
+
+				foreach ($files as $file)
+				{
+					if ($file->isUploadedFile() && $file->getKey() == 'image')
+					{
+						$fileType = $file->getRealType();
+
+						if (strpos($fileType, 'image/') === false)
+							throw new ErrorException('Разрешены к загрузке только изображения');
+
+						if ($userInfo->image > 0)
+							Files::delete($userInfo->image);
+
+						$userInfo->image = Files::save($file);
+
+						$f = Files::getById($userInfo->image);
+
+						if ($f)
+						{
+							$image = new ImageResize($this->request->getServer('DOCUMENT_ROOT').$f['src']);
+							$image->quality_jpg = 90;
+							$image->crop(300, 300, ImageResize::CROPCENTER);
+							$image->save($this->request->getServer('DOCUMENT_ROOT').$f['src']);
+						}
+					}
+				}
+			}
+
+			if ($this->request->getPost('image_delete'))
+			{
+				if (Files::delete($userInfo->image))
+					$userInfo->image = 0;
+			}
+
 			$userInfo->about = $about;
 			$userInfo->update();
 
@@ -334,14 +376,12 @@ class OptionsController extends Controller
 
 			$parse['avatar'] = '';
 
-			if ($userInfo->image != '')
-				$parse['avatar'] = $this->url->getStatic('assets/avatars/'.$userInfo->image);
-			elseif ($this->user->avatar != 0)
+			if ($userInfo->image > 0)
 			{
-				if ($this->user->avatar != 99)
-					$parse['avatar'] = $this->url->getStatic('assets/images/faces/'.$this->user->sex.'/'.$this->user->avatar.'s.png');
-				else
-					$parse['avatar'] = $this->url->getStatic('assets/avatars/upload_'.$this->user->id.'.jpg');
+				$file = Files::getById($userInfo->image);
+
+				if ($file)
+					$parse['avatar'] = $file['src'];
 			}
 
 			$parse['opt_usern_datatime'] = $userInfo->username_last;

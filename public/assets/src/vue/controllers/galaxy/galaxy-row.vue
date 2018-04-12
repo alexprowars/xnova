@@ -348,7 +348,7 @@
 			user_avatar: function()
 			{
 				if (this.item['u_image'].length > 0)
-					return this.$root.getUrl('assets/avatars/'+this.item['u_image']);
+					return this.$root.getUrl(this.item['u_image']);
 				else if (this.item['u_avatar'] > 0)
 				{
 					if (this.item['u_avatar'] !== 99)

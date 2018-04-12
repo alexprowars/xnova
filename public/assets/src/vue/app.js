@@ -163,7 +163,7 @@ window.application = new Vue({
 			return this.$store.state['url'];
 		},
 		redirect () {
-			return typeof this.$store.state['redirect'] === 'undefined' ? '' : this.$store.state['redirect'];
+			return this.$store.state['redirect'];
 		},
 		messages () {
 			return this.$store.state['messages'];
@@ -179,8 +179,10 @@ window.application = new Vue({
 		title (val) {
 			document.title = val;
 		},
-		redirect (val) {
-			window.location.href = val;
+		redirect (val)
+		{
+			if (val.length > 0)
+				window.location.href = val;
 		},
 		messages (val)
 		{
@@ -213,7 +215,7 @@ window.application = new Vue({
 	methods:
 	{
 		getUrl: function (url) {
-			return this.$store.state.path+url;
+			return this.$store.state.path + url.replace(/^\//g, '');
 		},
 		getLang ()
 		{

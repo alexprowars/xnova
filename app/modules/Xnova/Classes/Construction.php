@@ -250,7 +250,7 @@ class Construction
 				elseif ($Tech == 123)
 					$row['effects'] = '<div class="tech-effects-row">+'.$row['level'].'% лабораторий</div>';
 				elseif ($Tech == 113)
-					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.$row['level'].'%</span></div>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.($row['level'] * 2).'%</span></div>';
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 

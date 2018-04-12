@@ -3,6 +3,8 @@
         "php" : ">=5.6",
         "fabfuel/prophiler": "^1.6",
         "longman/telegram-bot": "^0.52.0",
-        "phpmailer/phpmailer": "^6.0"
+        "phpmailer/phpmailer": "^6.0",
+        "nubs/random-name-generator": "^2.1",
+        "gumlet/php-image-resize": "^1.8"
     }
 }

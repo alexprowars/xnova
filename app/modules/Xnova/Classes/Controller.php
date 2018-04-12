@@ -119,6 +119,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/validate.js', 'footer');
 		$this->assets->addJs('assets/404/js/spaceinvaders.js', 'footer');
 
 		$this->assets->addJs('assets/js/utils.js', 'footer');
@@ -140,6 +141,7 @@ class Controller extends PhalconController
 		Request::addData('path', $this->url->getBaseUri());
 		Request::addData('version', VERSION);
 		Request::addData('host', $_SERVER['HTTP_HOST']);
+		Request::addData('redirect', '');
 		Request::addData('messages', []);
 		Request::addData('page', []);
 
