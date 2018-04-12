@@ -168,8 +168,6 @@ class CombatReport extends Component
 					{
 						if ($ship_count > 0)
 						{
-							$l = $ship_id > 400 ? ($ship_id - 50) : ($ship_id + 100);
-
 							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
@@ -184,7 +182,7 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 
-							$attTech = 1 + $this->attackUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0) * ($this->registry->CombatCaps[$ship_id]['power_up'] / 100));
+							$attTech = 1 + $this->attackUsers[$user]['tech']['military_tech'] * 0.05;
 
 							if ($this->registry->CombatCaps[$ship_id]['type_gun'] == 1)
 								$attTech += $this->attackUsers[$user]['tech']['laser_tech'] * 0.05;
@@ -194,7 +192,7 @@ class CombatReport extends Component
 								$attTech += $this->attackUsers[$user]['tech']['buster_tech'] * 0.05;
 
 							$raport3 .= "<th>" . Format::number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->attackUsers[$user]['flvl'][$l]) ? $this->attackUsers[$user]['flvl'][$l] : 0)) / 100) + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + $this->attackUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -239,8 +237,6 @@ class CombatReport extends Component
 					{
 						if ($ship_count > 0)
 						{
-							$l = $ship_id > 400 ? ($ship_id - 50) : ($ship_id + 100);
-
 							$raport1 .= "<th>" . _getText('tech', $ship_id) . "</th>";
 
 							if ($round == 0)
@@ -255,7 +251,7 @@ class CombatReport extends Component
 								$raport2 .= "</th>";
 							}
 
-							$attTech = 1 + $this->defenseUsers[$user]['tech']['military_tech'] * 0.05 + ((isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0) * ($this->registry->CombatCaps[$ship_id]['power_up'] / 100));
+							$attTech = 1 + $this->defenseUsers[$user]['tech']['military_tech'] * 0.05;
 
 							if ($this->registry->CombatCaps[$ship_id]['type_gun'] == 1)
 								$attTech += $this->defenseUsers[$user]['tech']['laser_tech'] * 0.05;
@@ -265,7 +261,7 @@ class CombatReport extends Component
 								$attTech += $this->defenseUsers[$user]['tech']['buster_tech'] * 0.05;
 
 							$raport3 .= "<th>" . Format::number(round($this->registry->CombatCaps[$ship_id]['attack'] * $attTech)) . "</th>";
-							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + (($this->registry->CombatCaps[$ship_id]['power_armour'] * (isset($this->defenseUsers[$user]['flvl'][$l]) ? $this->defenseUsers[$user]['flvl'][$l] : 0)) / 100) + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
+							$raport4 .= "<th>" . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + $this->defenseUsers[$user]['tech']['defence_tech'] * 0.05))) . "</th>";
 						}
 					}
 
@@ -392,7 +388,7 @@ class CombatReport extends Component
 			}
 
 			foreach ($a AS $s => $c)
-				$t[] = $s.','.$c.'!'.(isset($result[1][$usersInfo[$i]]['flvl'][$s+100]) ? $result[1][$usersInfo[$i]]['flvl'][$s+100] : 0).'';
+				$t[] = $s.','.$c;
 
 			$att[] = implode(';', $t);
 
@@ -422,7 +418,7 @@ class CombatReport extends Component
 			}
 
 			foreach ($a AS $s => $c)
-				$t[] = $s.','.$c.'!'.(isset($result[2][$usersInfo[$i]]['flvl'][$s+100]) ? $result[2][$usersInfo[$i]]['flvl'][$s+100] : 0).'';
+				$t[] = $s.','.$c;
 
 			$def[] = implode(';', $t);
 
@@ -435,6 +431,6 @@ class CombatReport extends Component
 			$def[] = '';
 		}
 
-		return 'http://uni'.$this->config->game->universe.'.xnova.su/xnsim/report/?r='.implode('|', $att).'|'.implode('|', $def).'';
+		return $this->url->get('/xnsim/report/?r='.implode('|', $att).'|'.implode('|', $def));
 	}
 }

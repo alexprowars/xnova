@@ -53,19 +53,19 @@ class MissionCaseCreateBase extends FleetEngine implements Mission
 
 					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_base_mess_from'), $TheMessage);
 
-					$NewFleet = "";
+					$newFleet = [];
 
 					$fleetData = $this->_fleet->getShips();
 
 					foreach ($fleetData as $shipId => $shipArr)
 					{
-						if ($shipId == 216 && $shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . ($shipArr['cnt'] - 1) . "!0;";
-						elseif ($shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . $shipArr['cnt'] . "!;";
+						if ($shipId == 216 && $shipArr['count'] > 0)
+							$shipArr['count']--;
+
+						$newFleet[] = $shipArr;
 					}
 
-					$this->_fleet->fleet_array = $NewFleet;
+					$this->_fleet->fleet_array = $newFleet;
 					$this->_fleet->end_type = 5;
 
 					$this->RestoreFleetToPlanet(false);

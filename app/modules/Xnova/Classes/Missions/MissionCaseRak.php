@@ -48,8 +48,8 @@ class MissionCaseRak extends FleetEngine implements Mission
 			if ($shipId != 503)
 				continue;
 
-			$Raks = $shipArr['cnt'];
-			$Primary = $shipArr['lvl'];
+			$Raks = $shipArr['count'];
+			$Primary = $shipArr['target'];
 		}
 
 		$TargetDefensive = [];

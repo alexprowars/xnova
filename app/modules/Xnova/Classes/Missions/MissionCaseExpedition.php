@@ -40,11 +40,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 		foreach ($this->_fleet->getShips() as $type => $ship)
 		{
-			$FleetCount[$type] = $ship['cnt'];
+			$FleetCount[$type] = $ship['count'];
 
-			$FleetCapacity += $ship['cnt'] * $this->registry->CombatCaps[$type]['capacity'];
+			$FleetCapacity += $ship['count'] * $this->registry->CombatCaps[$type]['capacity'];
 
-			$FleetPoints += $ship['cnt'] * $Expowert[$type];
+			$FleetPoints += $ship['count'] * $Expowert[$type];
 		}
 
 		$StatFactor = $this->db->fetchColumn("SELECT MAX(total_points) as total FROM game_statpoints WHERE stat_type = 1");
@@ -148,7 +148,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$FoundShips = max(round($Size * min($FleetPoints, ($upperLimit / 2))), 10000);
 
 				$FoundShipMess = "";
-				$NewFleetArray = "";
+				$NewFleetArray = [];
 
 				$Found = [];
 
@@ -177,11 +177,16 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				}
 
 				foreach ($FleetCount as $ID => $Count)
-					$NewFleetArray .= $ID.",".($Count + (isset($Found[$ID]) ? floor($Found[$ID]) : 0))."!0;";
+				{
+					$NewFleetArray[] = [
+						'id' => (int) $ID,
+						'count' => (int) ($Count + (isset($Found[$ID]) ? floor($Found[$ID]) : 0))
+					];
+				}
 
 				$Message .= $FoundShipMess;
 
-				$this->ReturnFleet(['fleet_array' => $NewFleetArray]);
+				$this->ReturnFleet(['fleet_array' => json_encode($NewFleetArray)]);
 
 				break;
 
@@ -197,7 +202,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Name = _getText('sys_expe_attackname_1');
 					$Add = 0;
 					$Rand = [5, 3, 2];
-					$defenderFleetArray = "204,5!0;206,3!0;207,2!0;";
+					$defenderFleetArray = [
+						['id' => 204, 'count' => 5],
+						['id' => 206, 'count' => 3],
+						['id' => 207, 'count' => 2]
+					];
 				}
 				else
 				{
@@ -207,7 +216,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Name = _getText('sys_expe_attackname_2');
 					$Add = 0.1;
 					$Rand = [4, 3, 2];
-					$defenderFleetArray = "205,5!0;207,5!0;213,2!0;";
+					$defenderFleetArray = [
+						['id' => 205, 'count' => 5],
+						['id' => 207, 'count' => 5],
+						['id' => 213, 'count' => 2]
+					];
 				}
 
 				$FindSize = mt_rand(0, 100);
@@ -230,7 +243,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($FleetCount as $ID => $count)
 				{
-					$defenderFleetArray .= $ID . "," . round($count * $MaxAttackerPoints) . "!0;";
+					$defenderFleetArray[] = [
+						'id' => $ID,
+						'count' => round($count * $MaxAttackerPoints),
+					];
 				}
 
 				LangManager::getInstance()->setImplementation(new LangImplementation());
@@ -255,11 +271,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
-					if ($shipId < 100 || $shipId > 300)
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET)
 						continue;
 
-					$res[$shipId] = $shipArr['cnt'];
-					$res[$shipId + 100] = $shipArr['lvl'];
+					$res[$shipId] = $shipArr['count'];
 				}
 
 				$playerObj = new Player(0);
@@ -278,10 +293,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
-					if ($shipId < 100 || $shipId > 300 || !$shipArr['cnt'])
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count'])
 						continue;
 
-					$fleetObj->addShipType($mission->getShipType($shipId, [$shipArr['cnt'], $shipArr['lvl']], $res));
+					$fleetObj->addShipType($mission->getShipType($shipId, $shipArr['count'], $res));
 				}
 
 				if (!$fleetObj->isEmpty())
@@ -322,25 +337,26 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($attackFleets as $fleetID => $attacker)
 				{
-					$fleetArray = '';
-					$totalCount = 0;
+					$fleetArray = [];
 
 					foreach ($attacker as $element => $amount)
 					{
 						if (!is_numeric($element) || !$amount)
 							continue;
 
-						$fleetArray .= $element . ',' . $amount . '!0;';
-						$totalCount += $amount;
+						$fleetArray[] = [
+							'id' => (int) $element,
+							'count' => (int) $amount
+						];
 					}
 
-					if ($totalCount <= 0)
+					if (count($fleetArray))
 						$this->KillFleet($fleetID);
 					else
 					{
 						$this->db->updateAsDict($this->_fleet->getSource(),
 						[
-							'fleet_array' 	=> substr($fleetArray, 0, -1),
+							'fleet_array' 	=> json_encode($fleetArray),
 							'@update_time' 	=> 'end_time',
 							'mess'			=> 1,
 							'won'			=> $result['won']

@@ -184,15 +184,15 @@ class UpdateStatistics extends Injectable
 		foreach ($CurrentFleet as $type => $ship)
 		{
 			$Units = Vars::getItemTotalPrice($type, true);
-			$FleetPoints += ($Units * $ship['cnt']);
+			$FleetPoints += ($Units * $ship['count']);
 
 			if ($type != 212)
-				$FleetCounts += $ship['cnt'];
+				$FleetCounts += $ship['count'];
 
 			if (isset($FleetArray[$type]))
-				$FleetArray[$type] += $ship['cnt'];
+				$FleetArray[$type] += $ship['count'];
 			else
-				$FleetArray[$type] = $ship['cnt'];
+				$FleetArray[$type] = $ship['count'];
 		}
 
 		$RetValue['FleetCount'] = $FleetCounts;

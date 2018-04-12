@@ -23,7 +23,7 @@
 				{% endif %}
 			</th>
 			<th>
-				<a class="tooltip" data-content="{% for t, f in item.getShips() %}{{ _text('xnova', 'tech', t) }}: {{ f['cnt'] }}<br>{% endfor %}">
+				<a class="tooltip" data-content="{% for t, f in item.getShips() %}{{ _text('xnova', 'tech', t) }}: {{ f['count'] }}<br>{% endfor %}">
 					{{ pretty_number(item.getTotalShips()) }}
 				</a>
 			</th>

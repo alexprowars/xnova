@@ -38,7 +38,7 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 				$fleetData = $this->_fleet->getShips();
 
 				if (isset($fleetData[214]))
-					$Rips = $fleetData[214]['cnt'];
+					$Rips = $fleetData[214]['count'];
 
 				if ($Rips > 0)
 				{

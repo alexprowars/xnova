@@ -68,17 +68,17 @@ class ImperiumController extends Controller
 				if (!isset($fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId]))
 					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] = 0;
 
-				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] -= $shipArr['cnt'];
+				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] -= $shipArr['count'];
 
 				if ($fleet->target_owner == $this->user->id)
-					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] += $shipArr['cnt'];
+					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] += $shipArr['count'];
 
 				if ($fleet->target_owner == $this->user->id)
 				{
 					if (!isset($build_hangar_full[$shipId]))
 						$build_hangar_full[$shipId] = 0;
 
-					$build_hangar_full[$shipId] += $shipArr['cnt'];
+					$build_hangar_full[$shipId] += $shipArr['count'];
 				}
 			}
 		}

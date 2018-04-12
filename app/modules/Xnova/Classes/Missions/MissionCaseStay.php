@@ -31,7 +31,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['cnt'];
+				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['count'];
 			}
 
 			$TargetMessage = sprintf(_getText('sys_stat_mess'),
@@ -69,7 +69,7 @@ class MissionCaseStay extends FleetEngine implements Mission
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['cnt'];
+				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['count'];
 			}
 
 			$TargetMessage = _getText('sys_stay_mess_back') . $this->_fleet->getTargetAdressLink() . _getText('sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;

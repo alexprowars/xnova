@@ -92,9 +92,7 @@ class XnsimController extends Controller
 			$result[2] = $this->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
 
 			for ($_i = 0; $_i <= $report->getLastRoundNumber(); $_i++)
-			{
 				$result[0]['rw'][] = $this->convertRoundToArray($report->getRound($_i));
-			}
 
 			if ($report->attackerHasWin())
 				$result[0]['won'] = 1;
@@ -120,13 +118,9 @@ class XnsimController extends Controller
 			{
 				foreach ($_player as $_idFleet => $_fleet)
 				{
-					/**
-					 * @var ShipType $_ship
-					 */
+					/** @var ShipType $_ship */
 					foreach ($_fleet as $_shipID => $_ship)
-					{
 						$result[6][$_idFleet][$_shipID] = $_ship->getCount();
-					}
 				}
 			}
 
@@ -155,8 +149,7 @@ class XnsimController extends Controller
 
 			if ($check == 0)
 			{
-				$this->db->insertAsDict('game_log_sim',
-				[
+				$this->db->insertAsDict('game_log_sim', [
 					'sid' => $sid,
 					'time' => time(),
 					'data' => json_encode($result)
@@ -182,8 +175,7 @@ class XnsimController extends Controller
 			$result[$_player->getId()] = [
 				'username' => $_player->getName(),
 				'fleet' => [$_player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
-				'tech' =>
-				[
+				'tech' => [
 					'military_tech' => isset($this->usersInfo[$_player->getId()][109]) ? $this->usersInfo[$_player->getId()][109] : 0,
 					'shield_tech' 	=> isset($this->usersInfo[$_player->getId()][110]) ? $this->usersInfo[$_player->getId()][110] : 0,
 					'defence_tech' 	=> isset($this->usersInfo[$_player->getId()][111]) ? $this->usersInfo[$_player->getId()][111] : 0,
@@ -269,17 +261,31 @@ class XnsimController extends Controller
 				$res = [];
 				$fleets = [];
 
-				$fleetData = $model->getShips($r[$i]);
+				$rFleet = [];
+
+				$fleetData = explode(';', $r[$i]);
+
+				foreach ($fleetData as $data)
+				{
+					$f = explode(',', $data);
+
+					if ($f[1] > 0)
+					{
+						$rFleet[] = [
+							'id' => $f[0],
+							'count' => $f[1]
+						];
+					}
+				}
+
+				$fleetData = $model->getShips($rFleet);
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
 					if ($shipId > 200)
-						$fleets[$shipId] = [$shipArr['cnt'], $shipArr['lvl']];
+						$fleets[$shipId] = [$shipArr['count'], 0];
 
-					$res[$shipId] = $shipArr['cnt'];
-
-					if ($shipArr['lvl'] > 0)
-						$res[($shipId > 400 ? ($shipId - 50) : ($shipId + 100))] = $shipArr['lvl'];
+					$res[$shipId] = $shipArr['count'];
 				}
 
 				$fleetId = $i;

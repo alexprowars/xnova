@@ -57,6 +57,7 @@ class Quick
 			throw new \Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>");
 
 		$FleetArray = [];
+		$HeDBRec = false;
 
 		if ($mission == 6 && ($planetType == 1 || $planetType == 3 || $planetType == 5))
 		{
@@ -144,21 +145,21 @@ class Quick
 
 			$consumption = Fleet::GetFleetConsumption($FleetArray, $SpeedFactor, $duration, $distance, $controller->user);
 
-			$ShipCount = 0;
-			$ShipArray = '';
+			$shipArray = [];
 			$FleetStorage = 0;
 
-			foreach ($FleetArray as $Ship => $Count)
+			foreach ($FleetArray as $shipId => $count)
 			{
-				$controller->planet->setUnit($Ship, -$Count, true);
+				$count = (int) $count;
 
-				$ShipArray .=  $Ship . "," . $Count . "!" . (isset($controller->user->{'fleet_' . $Ship}) ? $controller->user->{'fleet_' . $Ship} : 0) . ";";
-				$ShipCount += $Count;
+				$controller->planet->setUnit($shipId, -$count, true);
 
-				if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->registry->CombatCaps[$Ship]['power_consumption']) && $controller->registry->CombatCaps[$Ship]['power_consumption'] > 0)
-					$FleetStorage += round($controller->registry->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->registry->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
-				else
-					$FleetStorage += $controller->registry->CombatCaps[$Ship]['capacity'] * $Count;
+				$shipArray[] = [
+					'id' => (int) $shipId,
+					'count' => $count
+				];
+
+				$FleetStorage += $controller->registry->CombatCaps[$shipId]['capacity'] * $count;
 			}
 
 			if ($FleetStorage < $consumption)
@@ -166,14 +167,14 @@ class Quick
 			if ($controller->planet->deuterium < $consumption)
 				throw new \Exception('Не хватает топлива на полёт! (необходимо еще ' . ($consumption - $controller->planet->deuterium) . ')');
 
-			if ($ShipCount > 0)
+			if (count($shipArray))
 			{
 				$fleet = new \Xnova\Models\Fleet();
 
 				$fleet->owner = $controller->user->id;
 				$fleet->owner_name = $controller->planet->name;
 				$fleet->mission = $mission;
-				$fleet->fleet_array = $ShipArray;
+				$fleet->fleet_array = $shipArray;
 				$fleet->start_time = $duration + time();
 				$fleet->start_galaxy = $controller->planet->galaxy;
 				$fleet->start_system = $controller->planet->system;
@@ -187,7 +188,7 @@ class Quick
 				$fleet->create_time = time();
 				$fleet->update_time = $duration + time();
 
-				if ($mission == 6 && isset($HeDBRec['id']))
+				if ($mission == 6 && $HeDBRec)
 				{
 					$fleet->target_owner = $HeDBRec['id'];
 					$fleet->target_owner_name = $target->name;

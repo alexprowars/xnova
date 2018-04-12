@@ -245,7 +245,7 @@ class InfoController extends Controller
 						foreach ($fleet->getShips() as $type => $ship)
 						{
 							if ($type > 100)
-								$tt += $this->registry->CombatCaps[$type]['stay'] * $ship['cnt'];
+								$tt += $this->registry->CombatCaps[$type]['stay'] * $ship['count'];
 						}
 
 						$max = $this->planet->getBuildLevel($itemId) * 10000;

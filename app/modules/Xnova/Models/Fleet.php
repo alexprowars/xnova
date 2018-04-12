@@ -105,38 +105,46 @@ class Fleet extends Model
 		$data = $this->getShips();
 
 		foreach ($data as $type)
-			$result += $type['cnt'];
+			$result += $type['count'];
 
 		return $result;
 	}
 
-	public function getShips ($fleetAmount = '')
+	public function getShips ($fleets = false)
 	{
-		if (!$fleetAmount)
-			$fleetAmount = $this->fleet_array;
+		if (!$fleets)
+			$fleets = $this->fleet_array;
 
-		$fleetTyps = explode(';', $fleetAmount);
+		$result = [];
 
-		$fleetAmount = [];
+		if (!is_array($fleets))
+			$fleets = json_decode($fleets, true);
 
-		foreach ($fleetTyps as $fleetTyp)
+		if (!is_array($fleets))
+			return [];
+
+		foreach ($fleets as $fleet)
 		{
-			$temp = explode(',', $fleetTyp);
-
-			if (empty($temp[0]))
+			if (!isset($fleet['id']))
 				continue;
 
-			if (!isset($fleetAmount[$temp[0]]))
-				$fleetAmount[$temp[0]] = ['cnt' => 0, 'lvl' => 0];
+			$fleetId = (int) $fleet['id'];
 
-			$lvl = explode("!", $temp[1]);
+			$result[$fleetId] = [
+				'id' => $fleetId,
+				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0
+			];
 
-			$fleetAmount[$temp[0]]['cnt'] += (int) $lvl[0];
-
-			if (isset($lvl[1]))
-				$fleetAmount[$temp[0]]['lvl'] = (int) $lvl[1];
+			if (isset($fleet['target']))
+				$result[$fleetId]['target'] = (int) $fleet['target'];
 		}
 
-		return $fleetAmount;
+		return $result;
+	}
+
+	public function beforeSave ()
+	{
+		if (is_array($this->fleet_array))
+			$this->fleet_array = json_encode(array_values($this->fleet_array));
 	}
 }

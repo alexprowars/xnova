@@ -61,22 +61,26 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		$fleetData = $this->_fleet->getShips();
 
 		if (isset($fleetData[210]))
-			$LS = $fleetData[210]['cnt'];
+			$LS = $fleetData[210]['count'];
 
 		if ($LS > 0)
 		{
-			$def = Fleet::find(['colums' => 'fleet_array', 'conditions' => 'end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3', 'bind' => [$this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type]]);
+			$defenders = Fleet::find([
+				'colums' => 'fleet_array',
+				'conditions' => 'end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3',
+				'bind' => [$this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type]
+			]);
 
-			foreach ($def as $row)
+			foreach ($defenders as $row)
 			{
 				$fleetData = $row->getShips();
 
-				foreach ($fleetData AS $Element => $Fleet)
+				foreach ($fleetData AS $shipId => $shipData)
 				{
-					if ($Element < 100)
+					if ($shipId < 100)
 						continue;
 
-					$TargetPlanet->setUnit($Element, $Fleet['cnt'], true);
+					$TargetPlanet->setUnit($shipId, $shipData['count'], true);
 				}
 			}
 

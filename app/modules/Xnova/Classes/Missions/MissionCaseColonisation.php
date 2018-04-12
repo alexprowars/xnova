@@ -51,19 +51,19 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 
 					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_colo_mess_from'), $TheMessage);
 
-					$NewFleet = "";
+					$newFleet = [];
 
 					$fleetData = $this->_fleet->getShips();
 
 					foreach ($fleetData as $shipId => $shipArr)
 					{
-						if ($shipId == 208 && $shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . ($shipArr['cnt'] - 1) . "!0;";
-						elseif ($shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . $shipArr['cnt'] . "!;";
+						if ($shipId == 208 && $shipArr['count'] > 0)
+							$shipArr['count']--;
+
+						$newFleet[] = $shipArr;
 					}
 
-					$this->_fleet->fleet_array = $NewFleet;
+					$this->_fleet->fleet_array = $newFleet;
 
 					$this->RestoreFleetToPlanet(false);
 					$this->KillFleet();

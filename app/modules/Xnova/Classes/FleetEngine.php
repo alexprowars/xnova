@@ -85,8 +85,8 @@ class FleetEngine extends Injectable
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
-					if ($shipArr['cnt'] > 0)
-						$TargetPlanet->setUnit($shipId, $shipArr['cnt'], true);
+					if ($shipArr['count'] > 0)
+						$TargetPlanet->setUnit($shipId, $shipArr['count'], true);
 				}
 			}
 
@@ -160,10 +160,10 @@ class FleetEngine extends Injectable
 			$res = Vars::getItemPrice($fleetId);
 
 			if (isset($res['metal']) && $res['metal'] > 0)
-				$debris['metal'] += floor($fleetData['cnt'] * $res['metal'] * $this->config->game->get('fleetDebrisRate', 0));
+				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * $this->config->game->get('fleetDebrisRate', 0));
 
 			if (isset($res['crystal']) && $res['crystal'] > 0)
-				$debris['crystal'] += floor($fleetData['cnt'] * $res['crystal'] * $this->config->game->get('fleetDebrisRate', 0));
+				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * $this->config->game->get('fleetDebrisRate', 0));
 		}
 
 		return $debris;

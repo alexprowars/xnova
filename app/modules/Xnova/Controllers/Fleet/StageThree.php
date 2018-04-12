@@ -321,18 +321,17 @@ class StageThree
 		}
 
 		$FleetStorage = 0;
-		$fleet_array = "";
+		$fleet_array = [];
 
 		foreach ($fleetarray as $Ship => $Count)
 		{
-			$Count = intval($Count);
+			$Count = (int) $Count;
+			$FleetStorage += $controller->registry->CombatCaps[$Ship]['capacity'] * $Count;
 
-			if (isset($controller->user->{'fleet_' . $Ship}) && isset($controller->registry->CombatCaps[$Ship]['power_consumption']) && $controller->registry->CombatCaps[$Ship]['power_consumption'] > 0)
-				$FleetStorage += round($controller->registry->CombatCaps[$Ship]['capacity'] * (1 + $controller->user->{'fleet_' . $Ship} * ($controller->registry->CombatCaps[$Ship]['power_consumption'] / 100))) * $Count;
-			else
-				$FleetStorage += $controller->registry->CombatCaps[$Ship]['capacity'] * $Count;
-
-			$fleet_array .= (isset($controller->user->{'fleet_' . $Ship})) ? $Ship . "," . $Count . "!" . $controller->user->{'fleet_' . $Ship} . ";" : $Ship . "," . $Count . "!0;";
+			$fleet_array[] = [
+				'id' => (int) $Ship,
+				'count' => $Count
+			];
 
 			$controller->planet->setUnit($Ship, -$Count, true);
 		}

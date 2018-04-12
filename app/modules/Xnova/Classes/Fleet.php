@@ -163,7 +163,7 @@ class Fleet extends Building
 		$Total = 0;
 
 		foreach ($FleetRec as $fleet)
-			$Total += $fleet['cnt'];
+			$Total += $fleet['count'];
 
 		if ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 2)
 		{
@@ -189,10 +189,10 @@ class Fleet extends Building
 
 			foreach ($FleetRec as $id => $fleet)
 			{
-				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['cnt']) . "<font></td></tr>";
+				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['count']) . "<font></td></tr>";
 
 				if ($r != 'javascript:;')
-					$r .= $id.','.$fleet['cnt'].'!'.$fleet['lvl'].';';
+					$r .= $id.','.$fleet['count'].';';
 			}
 		}
 
