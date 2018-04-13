@@ -20,7 +20,7 @@
 
 		window.addEventListener("keydown", function keydown(e)
 		{
-			var keycode = e.which || window.event.keycode;
+			var keycode = window.event.keycode;
 
 			if (keycode === 37 || keycode === 39 || keycode === 32)
 				e.preventDefault();
@@ -28,10 +28,8 @@
 			game.keyDown(keycode);
 		});
 
-		window.addEventListener("keyup", function keydown(e)
-		{
-			var keycode = e.which || window.event.keycode;
-			game.keyUp(keycode);
+		window.addEventListener("keyup", function keydown(e) {
+			game.keyUp(window.event.keycode);
 		});
 
 		function toggleMute()

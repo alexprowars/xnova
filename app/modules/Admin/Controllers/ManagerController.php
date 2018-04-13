@@ -196,7 +196,7 @@ class ManagerController extends Controller
 				$parse['adm_sub_form4'] .= "<td>S:" . $log['planet_start'] . "</td>";
 				$parse['adm_sub_form4'] .= "<td width=30%>E:" . $log['planet_end'] . "</td></tr>";
 
-				$parse['adm_sub_form4'] .= "<tr><td colspan=3><a href=\"".$this->url->get("rw/".$log['battle_log']."/".md5('xnovasuka' . $log['battle_log'])."/")."\" target=\"_blank\">" . $log['fleet'] . "</a></td></tr>";
+				$parse['adm_sub_form4'] .= "<tr><td colspan=3><a href=\"".$this->url->get("rw/".$log['battle_log']."/".md5($this->config->application->encryptKey . $log['battle_log'])."/")."\" target=\"_blank\">" . $log['fleet'] . "</a></td></tr>";
 			}
 
 			$parse['adm_sub_form4'] .= "</table>";

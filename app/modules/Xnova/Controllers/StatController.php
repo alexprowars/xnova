@@ -136,7 +136,7 @@ class StatController extends Controller
 		{
 			$PageValue = ($Page * 100) + 1;
 			$PageRange = $PageValue + 99;
-			$rangeStr .= "<option value=\"" . $PageValue . "\"" . (($start == $Page) ? " SELECTED" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
+			$rangeStr .= '<option value="'.$PageValue.'" '.($start == $Page ? 'selected' : '').'>' . $PageValue . '-' . $PageRange . '</option>';
 		}
 
 		$start *= 100;
@@ -163,24 +163,24 @@ class StatController extends Controller
 			$ranking = $rank_old - $rank_new;
 
 			if ($ranking == 0)
-				$stats['rankplus'] = "<font color=\"#87CEEB\">*</font>";
+				$stats['rankplus'] = '<font color="#87CEEB">*</font>';
 			if ($ranking < 0)
-				$stats['rankplus'] = "<span class=\"negative\">" . $ranking . "</span>";
+				$stats['rankplus'] = '<span class="negative">' . $ranking . '</span>';
 			if ($ranking > 0)
-				$stats['rankplus'] = "<span class=\"positive\">+" . $ranking . "</span>";
+				$stats['rankplus'] = '<span class="positive">+' . $ranking . '</span>';
 
 			if (($this->auth->isAuthorized() && $StatRow['id_owner'] == $this->user->id) || $StatRow['id_owner'] == $this->pid)
-				$stats['name'] = "<span class=\"neutral\">" . $StatRow['username'] . "</span>";
+				$stats['name'] = '<span class="neutral">' . $StatRow['username'] . '</span>';
 			else
 				$stats['name'] = $StatRow['username'];
 
 			if ($this->auth->isAuthorized())
-				$stats['mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '".$this->url->getBaseUri()."messages/write/" . $StatRow['id_owner'] . "/', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
+				$stats['mes'] = '<a href="javascript:;" onclick="showWindow(\''.$StatRow['username'].': отправить сообщение\', \''.$this->url->get('messages/write/'.$StatRow['id_owner'].'/').'\', 680)" title="Сообщение"><span class="sprite skin_m"></span></a>';
 
 			if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
-				$stats['alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
+				$stats['alliance'] = '<font color="#33CCFF">' . $StatRow['ally_name'] . '</font>';
 			elseif ($StatRow['ally_name'] != '')
-				$stats['alliance'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['id_ally'] . "/\">" . $StatRow['ally_name'] . "</a>";
+				$stats['alliance'] = '<a href="'.$this->url->get('alliance/info/'.$StatRow['id_ally'].'/').'">' . $StatRow['ally_name'] . '</a>';
 			else
 				$stats['alliance'] = '&nbsp;';
 
@@ -214,7 +214,7 @@ class StatController extends Controller
 		{
 			$PageValue = ($Page * 100) + 1;
 			$PageRange = $PageValue + 99;
-			$rangeStr .= "<option value=\"" . $PageValue . "\"" . (($start == $Page) ? " SELECTED" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
+			$rangeStr .= "<option value=\"" . $PageValue . "\" " . (($start == $Page) ? " selected" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
 		}
 
 		$start *= 100;
@@ -241,7 +241,7 @@ class StatController extends Controller
 			if (isset($this->user) && $StatRow['name'] == $this->user->ally_name)
 				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
 			else
-				$stats['name'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
+				$stats['name'] = "<a href=\"".$this->url->get("alliance/info/" . $StatRow['ally_id'] . "/")."\">" . $StatRow['name'] . "</a>";
 
 			$stats['mes'] = '';
 			$stats['members'] = $StatRow['members'];

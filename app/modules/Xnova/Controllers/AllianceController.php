@@ -283,7 +283,7 @@ class AllianceController extends Controller
 				foreach ($this->ally->ranks as $a => $b)
 				{
 					$list['id'] = $a;
-					$list['delete'] = "<a href=\"".$this->url->get('alliance/admin/edit/rights/d/'.$a.'/')."\"><img src=\"".$this->url->getStatic('assets/images/abort.gif')."\" alt=\"Удалить ранг\" border=0></a>";
+					$list['delete'] = '<a href="'.$this->url->get('alliance/admin/edit/rights/d/'.$a.'/').'"><img src="'.$this->url->getStatic('assets/images/abort.gif').'" alt="Удалить ранг" border=0></a>';
 					$list['r0'] = $b['name'];
 					$list['a'] = $a;
 

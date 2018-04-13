@@ -44,7 +44,7 @@ class OverviewController extends Controller
 		$this->user->loadPlanet();
 	}
 
-	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner, $Label, $Record)
+	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner)
 	{
 		$FleetStyle = [
 			1 => 'attack',
@@ -393,15 +393,15 @@ class OverviewController extends Controller
 			if ($FleetRow->owner == $this->user->id)
 			{
 				if ($FleetRow->start_time > time())
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true);
 
 				if ($FleetRow->end_stay > time())
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true);
 
 				if (!($FleetRow->mission == 7 && $FleetRow->mess == 0))
 				{
 					if (($FleetRow->end_time > time() AND $FleetRow->mission != 4) OR ($FleetRow->mess == 1 AND $FleetRow->mission == 4))
-						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
+						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true);
 				}
 
 				if ($FleetRow->group_id != 0 && !in_array($FleetRow->group_id, $aks))
@@ -411,7 +411,7 @@ class OverviewController extends Controller
 					foreach ($AKSFleets as $AKFleet)
 					{
 						$Record++;
-						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
+						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false);
 					}
 
 					$aks[] = $FleetRow->group_id;
@@ -422,9 +422,9 @@ class OverviewController extends Controller
 				$Record++;
 
 				if ($FleetRow->start_time > time())
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false);
 				if ($FleetRow->mission == 5 && $FleetRow->end_stay > time())
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false);
 			}
 		}
 
@@ -480,7 +480,7 @@ class OverviewController extends Controller
 
 						foreach ($QueueArray AS $CurrBuild)
 						{
-							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"".$this->url->getBaseUri()."buildings/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
+							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"".$this->url->get("buildings/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
 						}
 					}
 
@@ -488,7 +488,7 @@ class OverviewController extends Controller
 					{
 						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
 
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
+						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->get("buildings/research/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
 					}
 
 					if ($queueManager->getCount($queueManager::QUEUE_TYPE_SHIPYARD))
@@ -501,7 +501,7 @@ class OverviewController extends Controller
 						{
 							$time += Building::getBuildingTime($this->user, $UserPlanet, $CurrBuild['i']) * $CurrBuild['l'] - $CurrBuild['s'];
 
-							$build_list[$time][] = [$time, "<a href=\"".$this->url->getBaseUri()."buildings/fleet/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
+							$build_list[$time][] = [$time, "<a href=\"".$this->url->get("buildings/fleet/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
 						}
 					}
 				}

@@ -102,7 +102,7 @@ class LogController extends Controller
 				$key = substr($code, 0, 32);
 				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
-				if (md5('xnovasuka' . $id) != $key)
+				if (md5($this->config->application->encryptKey.$id) != $key)
 					throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
 				else
 				{
@@ -214,9 +214,9 @@ class LogController extends Controller
 					throw new ErrorException('Запрашиваемого лога не существует в базе данных');
 				else
 				{
-					$html = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/bootstrap.css')."\">";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getBaseUri()."assets/css/style.css\">";
-					$html .= "</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>";
+					$html = '<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="'.$this->url->getStatic('assets/css/bootstrap.css').'">';
+					$html .= '<link rel="stylesheet" type="text/css" href="'.$this->url->getBaseUri()."assets/css/style.css\">";
+					$html .= '</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>';
 
 					echo $html;
 

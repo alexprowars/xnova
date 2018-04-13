@@ -100,19 +100,19 @@ class PlayersController extends Controller
 			$parse['total_points'] = Format::number($points['total_points']);
 		
 			if ($ownid != 0)
-				$parse['player_buddy'] = "<a href=\"".$this->url->getBaseUri()."buddy/new/" . $playerid . "/\" title=\"Добавить в друзья\">Добавить в друзья</a>";
+				$parse['player_buddy'] = '<a href="'.$this->url->get('buddy/new/' . $playerid . '/').'" title="Добавить в друзья">Добавить в друзья</a>';
 			else
-				$parse['player_buddy'] = "";
+				$parse['player_buddy'] = '';
 		
 			if ($ownid != 0)
-				$parse['player_mes'] = "<a href=\"".$this->url->getBaseUri()."messages/write/" . $playerid . "/\">Написать сообщение</a>";
+				$parse['player_mes'] = '<a href="'.$this->url->get('messages/write/' . $playerid . '/').'">Написать сообщение</a>';
 			else
-				$parse['player_mes'] = "";
+				$parse['player_mes'] = '';
 		
 			if ($daten['sex'] == 2)
-				$parse['sex'] = "Женский";
+				$parse['sex'] = 'Женский';
 			else
-				$parse['sex'] = "Мужской";
+				$parse['sex'] = 'Мужской';
 
 			$parse['ingame'] = ($ownid != 0) ? true : false;
 			$parse['id'] = $daten['id'];

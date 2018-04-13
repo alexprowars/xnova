@@ -43,7 +43,7 @@ class RwController extends Controller
 
 		$user_list = json_decode($raportrow['id_users'], true);
 		
-		if (isset($raportrow['id']) && !$this->user->isAdmin() && (!isset($_GET['k']) ||  md5('xnovasuka' . $raportrow['id']) != $_GET['k']))
+		if (isset($raportrow['id']) && !$this->user->isAdmin() && (!isset($_GET['k']) ||  md5($this->config->application->encryptKey.$raportrow['id']) != $_GET['k']))
 			throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
 		elseif (!in_array($this->user->id, $user_list) && !$this->user->isAdmin())
 			throw new MessageException('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
@@ -65,7 +65,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "<div class='separator'></div><<div class='text-center'>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
+				$Page .= "<div class='separator'></div><<div class='text-center'>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5($this->config->application->encryptKey.$raportrow['id']) . $raportrow['id'] . "/\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></div>";
 
 				$this->tag->setTitle('Боевой доклад');
 				$this->view->setVar('html', $Page);
@@ -96,7 +96,7 @@ class RwController extends Controller
 					$Page .= $formatted_cr['html'];
 				}
 		
-				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
+				$Page .= "</td></tr><tr align=center><td>ID боевого доклада: <a href=\"".$this->url->get('log/new/')."?code=" . md5($this->config->application->encryptKey.$raportrow['id']) . $raportrow['id'] . "\"><font color=red>" . md5('xnovasuka' . $raportrow['id']) . $raportrow['id'] . "</font></a></td></tr>";
 				$Page .= "</table></body></html>";
 		
 				echo $Page;

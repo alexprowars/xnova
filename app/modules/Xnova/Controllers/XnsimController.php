@@ -269,7 +269,7 @@ class XnsimController extends Controller
 				{
 					$f = explode(',', $data);
 
-					if ($f[1] > 0)
+					if (isset($f[1]) && $f[1] > 0)
 					{
 						$rFleet[] = [
 							'id' => $f[0],

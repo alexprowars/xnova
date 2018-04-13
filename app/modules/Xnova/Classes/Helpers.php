@@ -184,21 +184,16 @@ class Helpers
 
 	static function BuildPlanetAdressLink ($CurrentPlanet)
 	{
-		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+		$uri = Di::getDefault()->getShared('url')->get('galaxy/'.$CurrentPlanet['galaxy'].'/'.$CurrentPlanet['system'].'/');
 
-		return "<a href=\"".$uri."galaxy/".$CurrentPlanet['galaxy']."/".$CurrentPlanet['system']."/\">[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
+		return '<a href="'.$uri.'">[' . $CurrentPlanet['galaxy'] . ':' . $CurrentPlanet['system'] . ':' . $CurrentPlanet['planet'] . ']</a>';
 	}
 
 	static function BuildHostileFleetPlayerLink ($FleetRow)
 	{
-		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+		$uri = Di::getDefault()->getShared('url')->get('messages/write/'.$FleetRow->owner.'/');
 
-		return $FleetRow->username . " <a href=\"".$uri."messages/write/" . $FleetRow->owner . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
-	}
-
-	static function InsertJavaScriptChronoApplet ($Type, $Ref, $Value)
-	{
-		return "<script>FlotenTime('bxx" . $Type . $Ref . "', " . $Value . ");</script>";
+		return $FleetRow->username.' <a href="'.$uri.'" title="'._getText('ov_message').'"><span class=\'sprite skin_m\'></span></a>';
 	}
 
 	public static function phoneFormat ($phone)

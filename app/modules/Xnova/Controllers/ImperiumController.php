@@ -106,9 +106,9 @@ class ImperiumController extends Controller
 
 			$planet->field_max = $planet->getMaxFields();
 
-			@$parse['file_images'] .= '<th width=75><a href="'.$this->url->getBaseUri().'overview/?chpl=' . $planet->id . '"><img src="'.$this->url->getBaseUri().'assets/images/planeten/small/s_' . $planet->image . '.jpg" border="0" height="75" width="75"></a></th>';
+			@$parse['file_images'] .= '<th width=75><a href="'.$this->url->get('overview/?chpl=' . $planet->id) . '"><img src="'.$this->url->getStatic('assets/images/planeten/small/s_' . $planet->image . '.jpg').'" border="0" height="75" width="75"></a></th>';
 			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
-			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->getBaseUri()."galaxy/".$planet->galaxy."/".$planet->system."/\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
+			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->get("galaxy/".$planet->galaxy."/".$planet->system."/")."\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
 			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
 			@$parse['file_energy'] .= '<th>' . Format::number($planet->energy_max - abs($planet->energy_used)) . '</th>';
 			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) . '</font>%</th>';

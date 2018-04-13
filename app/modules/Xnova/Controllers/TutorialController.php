@@ -38,6 +38,7 @@ class TutorialController extends Controller
 	/**
 	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
 	 * @param $stage
+	 * @return bool|\Phalcon\Http\Response
 	 */
 	public function infoAction ($stage)
 	{

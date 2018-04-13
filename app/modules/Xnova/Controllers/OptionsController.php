@@ -10,9 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Files;
 use Friday\Core\Options;
-use Friday\Core\Upload\Upload;
 use Gumlet\ImageResize;
-use Phalcon\Http\Request\File;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Format;

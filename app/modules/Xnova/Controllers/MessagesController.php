@@ -46,44 +46,33 @@ class MessagesController extends Controller
 		if (!isset($OwnerRecord['id']))
 			throw new ErrorException(_getText('mess_no_owner'), _getText('mess_error'));
 
-		$msg = '';
-
 		if ($this->request->hasPost('text'))
 		{
-			$text = $this->request->getPost('text', 'string', '');
-
-			$error = 0;
-
-			if ($text == '')
+			try
 			{
-				$error++;
-				$msg = "<div class=error>" . _getText('mess_no_text') . "</div>";
-			}
+				$text = $this->request->getPost('text', 'string', '');
 
-			if (!$error && $this->user->message_block > time())
-			{
-				$error++;
-				$msg = "<div class=error>" . _getText('mess_similar') . "</div>";
-			}
+				$error = 0;
 
-			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
-			{
-				$registerTime = $this->db->fetchColumn("SELECT create_time FROM game_users_info WHERE id = ".$this->user->id."");
+				if ($text == '')
+					throw new ErrorException('<div class="error">'._getText('mess_no_text').'</div>');
 
-				if ($registerTime > time() - 86400)
+				if (!$error && $this->user->message_block > time())
+					throw new ErrorException('<div class="error">'._getText('mess_similar').'</div>');
+
+				if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
 				{
-					$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (1 * 60))."");
+					$registerTime = $this->db->fetchColumn("SELECT create_time FROM game_users_info WHERE id = ".$this->user->id."");
 
-					if ($lastSend > 0)
+					if ($registerTime > time() - 86400)
 					{
-						$error++;
-						$msg = "<div class=error>" . _getText('mess_limit') . "</div>";
+						$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (1 * 60))."");
+
+						if ($lastSend > 0)
+							throw new ErrorException('<div class="error">'._getText('mess_limit').'</div>');
 					}
 				}
-			}
 
-			if (!$error)
-			{
 				$similar = $this->db->query("SELECT text FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (5 * 60))." ORDER BY time DESC LIMIT 1")->fetch();
 
 				if (isset($similar['text']))
@@ -93,17 +82,9 @@ class MessagesController extends Controller
 						similar_text($text, $similar['text'], $sim);
 
 						if ($sim > 80)
-						{
-							$error++;
-							$msg = "<div class=error>" . _getText('mess_similar') . "</div>";
-						}
+							throw new ErrorException('<div class="error">'._getText('mess_similar').'</div>');
 					}
 				}
-			}
-
-			if ($error == 0)
-			{
-				$msg = "<div class=success>" . _getText('mess_sended') . "</div>";
 
 				$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
 
@@ -112,10 +93,15 @@ class MessagesController extends Controller
 				$Message = strtr($Message, _getText('stopwords'));
 
 				User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
+
+				$this->view->setVar('msg', '<div class=success>'._getText('mess_sended').'</div>');
+			}
+			catch (ErrorException $e)
+			{
+				$this->view->setVar('msg', $e->getMessage());
 			}
 		}
 
-		$this->view->setVar('msg', $msg);
 		$this->view->setVar('text', '');
 		$this->view->setVar('id', $OwnerRecord['id']);
 		$this->view->setVar('to', $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]");
@@ -142,7 +128,17 @@ class MessagesController extends Controller
 		$items = array_map('intval', $items);
 
 		if (count($items))
-			$this->db->updateAsDict('game_messages', ['deleted' => 1], ['conditions' => 'id IN ('.implode(',', $items).') AND user_id = ?', 'bind' => [$this->user->id]]);
+		{
+			$this->db->updateAsDict('game_messages',
+				['deleted' => 1],
+				[
+					'conditions' => 'id IN ('.implode(',', $items).') AND user_id = ?',
+					'bind' => [
+						$this->user->id
+					]
+				]
+			);
+		}
 
 		return true;
 	}
@@ -197,7 +193,7 @@ class MessagesController extends Controller
 
 		$page = (int) $this->request->get('p', 'int', 0);
 
-		if (!$page)
+		if ($page <= 0)
 			$page = 1;
 
 		if (!$this->session->has('m_limit') || $this->session->get('m_limit') != $limit)
@@ -245,7 +241,13 @@ class MessagesController extends Controller
 
 		foreach ($items as $item)
 		{
-			$item['text'] = str_replace('#PATH#', $this->url->getBaseUri(), $item['text']);
+			preg_match_all('/href=\\\"(.*?)\\\"/i', $item['text'], $match);
+
+			if (isset($match[1]))
+			{
+				foreach ($match[1] as $rep)
+					$item['text'] = str_replace($rep, $this->url->get($rep), $item['text']);
+			}
 
 			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item['text'], $match);
 
@@ -268,7 +270,7 @@ class MessagesController extends Controller
 			'page' => (int) $page->current
 		];
 
-		$parse['parser'] = $this->user->getUserOption('bb_parser') > 0;
+		$parse['parser'] = $this->user->getUserOption('bb_parser');
 
 		Request::addData('page', $parse);
 

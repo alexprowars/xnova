@@ -92,7 +92,7 @@ class Alliance extends Model
 
 	/**
 	 * @param int $userId
-	 * @return AllianceMember
+	 * @return void
 	 */
 	public function getMember ($userId)
 	{

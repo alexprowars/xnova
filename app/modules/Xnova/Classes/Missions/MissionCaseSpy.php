@@ -8,6 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Tag;
 use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\Models\Fleet;
@@ -135,7 +136,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . _getText('sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"#PATH#fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
+			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
 			$AttackLink .= "p" . $this->_fleet->end_planet . "/t" . $this->_fleet->end_type . "/";
 			$AttackLink .= "m" . $this->_fleet->end_type . "/";
 			$AttackLink .= " \">" . _getText('type_mission', 1) . "";
@@ -163,7 +164,13 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $targetUser->getTechLevel($id) . '!' . (($id > 400 && $targetUser->getTechLevel($id - 50) && $ST >= 8) ? $targetUser->getTechLevel($id - 50) : 0) . ';';
 			}
 
-			$MessageEnd .= "<center><a href=\"#PATH#sim/" . $fleet_link . "/\" ".($this->config->view->get('openRaportInNewWindow', 0) ? 'target="_blank"' : '').">Симуляция</a></center>";
+			$MessageEnd .= "<center>";
+			$MessageEnd .= Tag::renderAttributes('<a', [
+				'href' => '/sim/'.$fleet_link.'/',
+				'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
+			]);
+
+			$MessageEnd .= ">Симуляция</a></center>";
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
@@ -215,7 +222,7 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		{
 			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
 			$String .= $TitleString . " " . $TargetPlanet->name;
-			$String .= " <a href=\"#PATH#galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
+			$String .= " <a href=\"/galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
 			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
 			$String .= "<br>на #DATE|H:i:s|".time()."#</td>";
 			$String .= "</tr><tr>";

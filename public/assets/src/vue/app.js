@@ -3,6 +3,8 @@ import 'es6-promise/auto'
 
 let App = require('./app.vue')
 
+Vue.config.productionTip = false;
+
 Vue.prototype.Format = Format
 Vue.prototype.date = date
 Vue.prototype.morph = morph

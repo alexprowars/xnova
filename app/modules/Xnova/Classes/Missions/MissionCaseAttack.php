@@ -8,6 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Tag;
 use Xnova\Battle\Core\Battle;
 use Xnova\Battle\Core\Round;
 use Xnova\Battle\LangImplementation;
@@ -304,7 +305,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 				if ($result['won'] == 1 && ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0))
 				{
-					if (isset($res_procent[$fleetID]))
+					if (isset($res_procent) && isset($res_procent[$fleetID]))
 					{
 						$update['+resource_metal'] 		= round($res_procent[$fleetID] * $steal['metal']);
 						$update['+resource_crystal'] 	= round($res_procent[$fleetID] * $steal['crystal']);
@@ -519,8 +520,13 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 
-		$raport = "<center><a ".($this->config->view->get('openRaportInNewWindow', 0) == 1 ? 'target="_blank"' : '')." href=\"#PATH#rw/" . $ids . "/" . md5('xnovasuka' . $ids) . "/\">";
-		$raport .= "<font color=\"#COLOR#\">"._getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
+		$raport = "<center>";
+		$raport .= Tag::renderAttributes('<a', [
+			'href' => '/rw/'.$ids.'/'.md5($this->config->application->encryptKey.$ids).'/',
+			'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
+		]);
+
+		$raport .= "><font color=\"#COLOR#\">"._getText('sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
 		$raport2  = '<br><br><font color=\'red\'>' . _getText('sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . _getText('sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
 		$raport2 .= _getText('sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';

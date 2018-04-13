@@ -1,4 +1,6 @@
-{% if msg %}{{ msg }}{% endif %}
+{% if msg is defined %}
+	{{ msg }}
+{% endif %}
 <form action="{{ url('messages/write/'~id~'/') }}" method="post" {% if isPopup %}class="popup"{% endif %}>
 	<table class="table form-group">
 		{% if isPopup is false %}

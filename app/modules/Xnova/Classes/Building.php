@@ -238,7 +238,7 @@ class Building
 				if ($type == 'energy')
 					$current = $planet->energy_max;
 
-				$text .= "<div><img src='".$uri->get('assets/images/skin/s_'.$type.'.png')."' align=\"absmiddle\" class=\"tooltip\" data-content='".$title."'>";
+				$text .= "<div><img src='".$uri->getStatic('assets/images/skin/s_'.$type.'.png')."' align=\"absmiddle\" class=\"tooltip\" data-content='".$title."'>";
 
 				if ($cost[$type] > $current)
 					$text .= "<span class=\"resNo tooltip\" data-content=\"необходимо: ".Format::number($cost[$type] - $current)."\">" . Format::number($cost[$type]) . "</span> ";

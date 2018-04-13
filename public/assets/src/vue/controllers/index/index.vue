@@ -13,13 +13,13 @@
 								<input class="input-text" name="password" placeholder="Пароль" value="" type="password">
 								<input class="input-submit" type="submit" value="Вход">
 								<div class="remember">
-									<input name="rememberme" id="rememberme" type="checkbox"><label for="rememberme">Запомнить?</label>
+									<input name="rememberme" id="rememberme" type="checkbox"><label for="rememberme">Запомнить меня</label>
 								</div>
 							</div>
 						</form>
 					</div>
 					<div class="lost-pass">
-						<a @click.prevent="showRemindPassword" title="Восстановление пароля">Забыли?</a>
+						<a @click.prevent="showRemindPassword" title="Восстановление пароля">Забыли пароль?</a>
 					</div>
 					<div class="sm">
 						Войти с помощью:<br><br>

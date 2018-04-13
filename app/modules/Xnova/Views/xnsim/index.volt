@@ -237,6 +237,9 @@
     </tr>
 </table>
 
+</td>
+</tr>
+</table>
 <script type="text/javascript">
 	vis_cols("TD","gr",0,1);
 	vis_cols("TD","gr",{{ config.game.get('maxSlotsInSim', 5) }},1);

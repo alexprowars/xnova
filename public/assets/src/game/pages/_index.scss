@@ -134,12 +134,10 @@ body[page=index] {
 	}
 
 	.input-text {
-		display: block;
-		float: left;
-		background: url('../images/login_input.png') no-repeat;
-		width: 115px; /* 121 - 3*2 */
-		height: 17px; /*23 - 3*2 */
-		border: none;
+		display: inline-block;
+		background: #000;
+		border: 1px solid #464545;
+		width: 115px;
 		color: #ffffff;
 		padding: 3px 3px;
 		margin-right: 9px;
@@ -148,20 +146,24 @@ body[page=index] {
 	}
 
 	.input-submit {
-		display: block;
-		float: left;
+		display: inline-block;
 		background: #fcfcfc;
-		background: linear-gradient(to bottom, #fcfcfc 0%, #eaeaea 50%, #eaeaea 51%, #c4c4c4 100%);
 		width: 92px;
-		height: 23px;
 		color: #333;
-		margin-right: 9px;
 		cursor: pointer;
 		border: 1px solid #000;
 	}
 
+	.input-submit:hover {
+		color: #727272;
+	}
+
+	.remember {
+		margin-top: 5px;
+	}
+
 	.lost-pass {
-		padding-left: 201px;
+		padding-left: 145px;
 	}
 
 	.lost-pass a {
@@ -195,7 +197,7 @@ body[page=index] {
 	}
 
 	h1 {
-		font-size: 19px;
+		font-size: 20px;
 		font-weight: normal;
 		margin: 0;
 		text-align: left;
@@ -204,7 +206,7 @@ body[page=index] {
 	p {
 		margin: 12px 0 0 0;
 		font-weight: normal;
-		font-size: 1.1rem;
+		font-size: 1.2rem;
 	}
 
 	.smm {

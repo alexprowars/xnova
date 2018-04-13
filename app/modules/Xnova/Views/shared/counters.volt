@@ -1,13 +1,3 @@
-{% if request.getServer('SERVER_NAME') == 'vk.xnova.su' %}
-	<script src="//vk.com/js/api/xd_connection.js" type="text/javascript"></script>
-	<script type="application/javascript">
-		$(window).load(function()
-		{
-			  VK.init(function() { console.log('vk init success'); }, function() {}, '5.24');
-		});
-	</script>
-{% endif %}
-
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {
