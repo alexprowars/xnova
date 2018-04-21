@@ -453,63 +453,6 @@ class OverviewController extends Controller
 			}
 		}
 
-		$build_list = [];
-
-		$planets = Planet::find([
-			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
-			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current, 'queue' => '[]']
-		]);
-
-		if (count($planets) > 0)
-		{
-			foreach ($planets as $UserPlanet)
-			{
-				if (!$UserPlanet->isEmptyQueue())
-				{
-					if (!isset($queueManager))
-						$queueManager = new Queue();
-
-					$queueManager->loadQueue($UserPlanet->queue);
-
-					if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
-					{
-						$UserPlanet->assignUser($this->user);
-						$UserPlanet->updateQueueList();
-
-						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
-
-						foreach ($QueueArray AS $CurrBuild)
-						{
-							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"".$this->url->get("buildings/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
-						}
-					}
-
-					if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
-					{
-						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->get("buildings/research/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
-					}
-
-					if ($queueManager->getCount($queueManager::QUEUE_TYPE_SHIPYARD))
-					{
-						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
-
-						$time = time();
-
-						foreach ($QueueArray AS $CurrBuild)
-						{
-							$time += Building::getBuildingTime($this->user, $UserPlanet, $CurrBuild['i']) * $CurrBuild['l'] - $CurrBuild['s'];
-
-							$build_list[$time][] = [$time, "<a href=\"".$this->url->get("buildings/fleet/?chpl=" . $UserPlanet->id) . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
-						}
-					}
-				}
-			}
-		}
-
-		unset($planets);
-
 		$parse['planet'] = [
 			'type' => _getText('type_planet', $this->planet->planet_type),
 			'name' => $this->planet->name,
@@ -583,44 +526,68 @@ class OverviewController extends Controller
 
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getUnitCount('recycler') > 0);
 
-		if (!$this->planet->isEmptyQueue())
+		$build_list = [];
+		$planetsName = [];
+
+		$planets = Planet::find([
+			'columns' => 'id, name',
+			'conditions' => 'id_owner = :user:',
+			'bind' => [
+				'user' => $this->user->id
+			]
+		]);
+
+		foreach ($planets as $item)
+			$planetsName[$item->id] = $item->name;
+
+		$queueManager = new Queue($this->user);
+
+		if ($queueManager->getCount($queueManager::TYPE_BUILDING))
 		{
-			if (!isset($queueManager))
-				$queueManager = new Queue();
+			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			$queueManager->loadQueue($this->planet->queue);
-
-			if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
+			foreach ($queueArray AS $item)
 			{
-				$this->planet->updateQueueList();
-
-				$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
-
-				foreach ($BuildQueue AS $CurrBuild)
-				{
-					$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['d'] == 0 ? $CurrBuild['l'] - 1 : $CurrBuild['l'] + 1) . ' -> ' . ($CurrBuild['l']) . ')'];
-				}
+				$build_list[$item->time_end][] = [
+					$item->time_end,
+					$item->planet_id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1).' -> '.$item->level.')'
+				];
 			}
+		}
 
-			if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
+		if ($queueManager->getCount($queueManager::TYPE_RESEARCH))
+		{
+			$queueArray = $queueManager->get($queueManager::TYPE_RESEARCH);
+
+			foreach ($queueArray AS $item)
 			{
-				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->getTechLevel($QueueArray[0]['i']) . ' -> ' . ($this->user->getTechLevel($QueueArray[0]['i']) + 1) . ')'];
+				$build_list[$item->time_end][] = [
+					$item->time_end,
+					$item->planet_id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.$this->user->getTechLevel($item->object_id).' -> '.($this->user->getTechLevel($item->object_id) + 1).')'
+				];
 			}
+		}
 
-			if ($queueManager->getCount($queueManager::QUEUE_TYPE_SHIPYARD))
+		if ($queueManager->getCount($queueManager::TYPE_SHIPYARD))
+		{
+			$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
+
+			$time = time();
+
+			foreach ($queueArray AS $item)
 			{
-				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+				$time += Building::getBuildingTime($this->user, $this->planet, $item->object_id) * $item->level - $item->time;
 
-				$time = time();
-
-				foreach ($QueueArray AS $CurrBuild)
-				{
-					$time += Building::getBuildingTime($this->user, $this->planet, $CurrBuild['i']) * $CurrBuild['l'] - $CurrBuild['s'];
-
-					$build_list[$time][] = [$time, $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . $CurrBuild['l'] . ')'];
-				}
+				$build_list[$time][] = [
+					$time,
+					$this->planet->id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.$item->level.')'
+				];
 			}
 		}
 

@@ -95,15 +95,15 @@ class Building
 
 	static function checkLabSettingsInQueue (Planet $planet)
 	{
-		$queueManager = new Queue($planet->queue);
+		$queueManager = new Queue($planet->id_owner, $planet);
 
-		if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
+		if ($queueManager->getCount($queueManager::TYPE_BUILDING))
 		{
 			$config = $planet->getDI()->getShared('config');
 
-			$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
+			$BuildQueue = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			if ($BuildQueue[0]['i'] == 31 && $config->game->get('BuildLabWhileRun', 0) != 1)
+			if ($BuildQueue[0]->object_id == 31 && $config->game->get('BuildLabWhileRun', 0) != 1)
 				return false;
 			else
 				return true;
@@ -158,21 +158,22 @@ class Building
 	 * @param  $user UserModel
 	 * @param  $planet Planet
 	 * @param  $element integer
+	 * @param int $level
 	 * @return int
 	 */
-	static function getBuildingTime (UserModel $user, Planet $planet, $element)
+	static function getBuildingTime (UserModel $user, Planet $planet, $element, $level = 0)
 	{
 		$config = $user->getDI()->getShared('config');
 
 		$elementType = Vars::getItemType($element);
 		$time = 0;
 
-		$cost = self::getBuildingPrice($user, $planet, $element, !in_array($elementType,  [Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_FLEET]), false, false);
+		$cost = self::getBuildingPrice($user, $planet, $element, !in_array($elementType,  [Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_FLEET]), false, false, $level);
 		$cost = $cost['metal'] + $cost['crystal'];
 
 		if ($elementType == Vars::ITEM_TYPE_BUILING)
 		{
-			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('nano_factory') + 1)) * pow(0.5, $planet->getBuildLevel('robot_factory'));
+			$time = ($cost / $config->game->get('game_speed')) * (1 / ($planet->getBuildLevel('robot_factory') + 1)) * pow(0.5, $planet->getBuildLevel('nano_factory'));
 			$time = floor($time * 3600 * $user->bonusValue('time_building'));
 		}
 		elseif ($elementType == Vars::ITEM_TYPE_TECH)
@@ -261,11 +262,11 @@ class Building
 	 * @param bool $withBonus
 	 * @return array
 	 */
-	static function getBuildingPrice (UserModel $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true)
+	static function getBuildingPrice (UserModel $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true, $level = 0)
 	{
 		$price = Vars::getItemPrice($element);
 		$elementType = Vars::getItemType($element);
-		$level = 0;
+		$level = (int) $level;
 
 		if ($incremental)
 		{

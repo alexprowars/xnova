@@ -36,7 +36,7 @@
 							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 						</div>
 						<div class="col-6 k" v-else>
-							<a :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
+							<a :href="$root.getUrl('buildings/index/listid/'+index+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
 							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
 						</div>
 					</div>

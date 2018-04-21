@@ -83,9 +83,6 @@ class ImperiumController extends Controller
 			}
 		}
 
-		$queueManager = new Queue();
-		$types = $queueManager->getTypes();
-
 		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => User::getPlanetListSortQuery($this->user->getUserOption('planet_sort'), $this->user->getUserOption('planet_sort_order'))]);
 
 		$parse['mount'] = count($planets) + 3;
@@ -134,26 +131,26 @@ class ImperiumController extends Controller
 
 			$build_hangar = [];
 
-			$queueManager->loadQueue($planet->queue);
+			$queueManager = new Queue($this->user, $planet);
 
-			foreach ($types AS $type)
+			foreach ($queueManager->getTypes() AS $type)
 			{
-				if ($queueManager->getCount($type))
+				$queue = $queueManager->get($type);
+
+				if (!count($queue))
+					continue;
+
+				foreach ($queue AS $q)
 				{
-					$queue = $queueManager->get($type);
+					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
+						$build_hangar[$q->object_id] = $q->level;
+					else
+						$build_hangar[$q->object_id] += $q->level;
 
-					foreach ($queue AS $q)
-					{
-						if (!isset($build_hangar[$q['i']]) || Vars::getItemType($q['i']) == Vars::ITEM_TYPE_BUILING)
-							$build_hangar[$q['i']]  = $q['l'];
-						else
-							$build_hangar[$q['i']] += $q['l'];
-
-						if (!isset($build_hangar_full[$q['i']]) || Vars::getItemType($q['i']) == Vars::ITEM_TYPE_BUILING)
-							$build_hangar_full[$q['i']]  = $q['l'];
-						else
-							$build_hangar_full[$q['i']] += $q['l'];
-					}
+					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
+						$build_hangar_full[$q->object_id] = $q->level;
+					else
+						$build_hangar_full[$q->object_id] += $q->level;
 				}
 			}
 
@@ -172,7 +169,6 @@ class ImperiumController extends Controller
 				}
 				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET)
 				{
-
 					$r[$i] .= '<th>';
 
 					if ($planet->getUnitCount($i) == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))

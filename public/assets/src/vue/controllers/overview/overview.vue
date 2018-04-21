@@ -242,7 +242,10 @@
 								<span class="positive d-sm-none">{{ date("d.m H:i:s", list[0]) }}</span>
 							</div>
 							<div class="th col-sm-10 col-8 text-left">
-								<span class="flight owndeploy" v-html="list[1]"></span>
+								<span class="flight owndeploy">
+									<a v-if="list[1] === $store.state.user.planet" :href="$root.getUrl('buildings/?chpl='+list[1])" style="color:#33ff33;">{{ list[2] }}</a><span v-else="">{{ list[2] }}</span>:
+								</span>
+								<span class="holding colony">{{ list[3] }}</span>
 								<span class="positive float-sm-right d-none d-sm-inline">{{ date("d.m H:i:s", list[0]) }}</span>
 							</div>
 						</div>

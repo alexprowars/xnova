@@ -56,7 +56,6 @@ class Ai
 			$planet->assignUser($this->_playerData);
 			$planet->checkUsedFields();
 			$planet->resourceUpdate();
-			$planet->updateQueueList();
 
 			$this->addLog('planet uid: '.$planet->id.' name: "'.$planet->name.'" updated');
 

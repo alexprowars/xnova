@@ -11,6 +11,7 @@ namespace Xnova\Queue;
 use Xnova\Building;
 use Phalcon\Di;
 use Xnova\Queue;
+use Xnova\Models;
 
 class Build
 {
@@ -29,10 +30,11 @@ class Build
 		$user = $this->_queue->getUser();
 		
 		$maxBuidSize = $config->game->maxBuildingQueue;
+
 		if ($user->rpg_constructeur > time())
 			$maxBuidSize += 2;
 
-		$actualCount = $this->_queue->getCount(Queue::QUEUE_TYPE_BUILDING);
+		$actualCount = $this->_queue->getCount(Queue::TYPE_BUILDING);
 
 		if ($actualCount < $maxBuidSize)
 			$queueID = $actualCount + 1;
@@ -47,9 +49,9 @@ class Build
 			{
 				$inArray = 0;
 
-				foreach ($this->_queue->get(Queue::QUEUE_TYPE_BUILDING) AS $item)
+				foreach ($this->_queue->get(Queue::TYPE_BUILDING) as $item)
 				{
-					if ($item['i'] == $elementId)
+					if ($item->object_id == $elementId)
 						$inArray++;
 				}
 			}
@@ -61,111 +63,71 @@ class Build
 			if (!$build)
 				return false;
 
-			$ActualLevel = $build['level'];
+			$item = new Models\Queue();
 
-			if (!$destroy)
-			{
-				$BuildLevel = $ActualLevel + 1 + $inArray;
-
-				$planet->setBuild($elementId, $build['level'] + $inArray);
-				$BuildTime = Building::getBuildingTime($user, $planet, $elementId);
-				$planet->setBuild($elementId, $build['level'] - $inArray);
-			}
-			else
-			{
-				$BuildLevel = $ActualLevel - 1 + $inArray;
-
-				$planet->setBuild($elementId, $build['level'] - $inArray);
-				$BuildTime = Building::getBuildingTime($user, $planet, $elementId) / 2;
-				$planet->setBuild($elementId, $build['level'] + $inArray);
-			}
-
-			$planet->clearBuildingsData();
-
-			if ($queueID == 1)
-				$BuildEndTime = time() + $BuildTime;
-			else
-			{
-				$queueArray = $this->_queue->get(Queue::QUEUE_TYPE_BUILDING);
-
-				$PrevBuild = $queueArray[$actualCount - 1];
-				$BuildEndTime = $PrevBuild['e'] + $BuildTime;
-			}
-
-			$this->_queue->set(Queue::QUEUE_TYPE_BUILDING, [
-				'i' => $elementId,
-				'l' => $BuildLevel,
-				't' => 0,
-				's' => 0,
-				'e' => $BuildEndTime,
-				'd' => $destroy ? 1 : 0
+			$item->create([
+				'type' => $item::TYPE_BUILD,
+				'operation' => $destroy ? $item::OPERATION_DESTROY : $item::OPERATION_BUILD,
+				'user_id' => $user->getId(),
+				'planet_id' => $planet->id,
+				'object_id' => $elementId,
+				'time' => 0,
+				'time_end' => 0,
+				'level' => $build['level'] + 1 + $inArray
 			]);
+
+			$this->_queue->loadQueue();
+			$this->_queue->nextBuildingQueue();
 		}
 
 		return true;
 	}
 
-	public function delete ($elementId)
+	public function delete ($indexId)
 	{
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 
-		if ($this->_queue->getCount(Queue::QUEUE_TYPE_BUILDING))
+		if ($this->_queue->getCount(Queue::TYPE_BUILDING))
 		{
-			$queueArray = $this->_queue->get(Queue::QUEUE_TYPE_BUILDING);
+			$queueArray = $this->_queue->get(Queue::TYPE_BUILDING);
 
-			if (!isset($queueArray[$elementId]))
+			if (!isset($queueArray[$indexId]))
 				return;
 
-			$canceledArray = $queueArray[$elementId];
+			$buildItem = $queueArray[$indexId];
+			$this->_queue->deleteInQueue($buildItem->id);
 
-			$queue = $this->_queue->get();
-
-			if (count($queueArray) > 1)
+			if ($buildItem->time > 0)
 			{
-				unset($queueArray[$elementId]);
-
-				$queueArray = array_values($queueArray);
-
-				if ($elementId == 0)
-					$BuildEndTime = time();
-				else
-					$BuildEndTime = $queueArray[0]['s'];
-
-				foreach ($queueArray AS $i => &$listArray)
-				{
-					$listArray['t'] = Building::getBuildingTime($user, $planet, $listArray['i']);
-
-					if ($listArray['d'] == 1)
-						$listArray['t'] = ceil($listArray['t'] / 2);
-
-					$BuildEndTime += $listArray['t'];
-
-					$listArray['e'] = $BuildEndTime;
-
-					if ($canceledArray['i'] == $listArray['i'] && $elementId <= $i)
-						$listArray['l']--;
-				}
-
-				unset($listArray);
-
-				$queue[Queue::QUEUE_TYPE_BUILDING] = $queueArray;
-			}
-			else
-				unset($queue[Queue::QUEUE_TYPE_BUILDING]);
-
-			$this->_queue->set(false, $queue);
-
-			if ($canceledArray['s'] > 0)
-			{
-				$cost = Building::getBuildingPrice($user, $planet, $canceledArray['i'], true, ($canceledArray['d'] == 1));
+				$cost = Building::getBuildingPrice($user, $planet, $buildItem->object_id, true, ($buildItem->operation == $buildItem::OPERATION_DESTROY));
 
 				$planet->metal 		+= $cost['metal'];
 				$planet->crystal 	+= $cost['crystal'];
 				$planet->deuterium 	+= $cost['deuterium'];
+
+				$planet->update();
 			}
 
-			$this->_queue->saveQueue();
+			if (count($queueArray) > 1)
+			{
+				unset($queueArray[$indexId]);
+
+				/** @var Models\Queue[] $queueArray */
+				$queueArray = array_values($queueArray);
+
+				foreach ($queueArray as $i => $item)
+				{
+					if ($buildItem->object_id == $item->object_id && $indexId <= $i)
+					{
+						$item->level--;
+						$item->update();
+					}
+				}
+			}
+
+			$this->_queue->loadQueue();
+			$this->_queue->nextBuildingQueue();
 		}
 	}
 }

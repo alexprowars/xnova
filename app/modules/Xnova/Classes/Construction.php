@@ -9,6 +9,7 @@ namespace Xnova;
  */
 
 use Phalcon\Di;
+use Xnova\Models;
 use Xnova\Models\Planet;
 use Xnova\Models\User as UserModel;
 
@@ -46,13 +47,11 @@ class Construction
 		{
 			$Command 	= $request->getQuery('cmd', null, '');
 			$Element 	= $request->getQuery('building', 'int', 0);
-			$ListID 	= $request->getQuery('listid', 'int', 0);
+			$ListID 	= (int) $request->getQuery('listid', 'int', 0);
 
 			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{
-				$queueManager = new Queue($this->planet->queue);
-				$queueManager->setUserObject($this->user);
-				$queueManager->setPlanetObject($this->planet);
+				$queueManager = new Queue($this->user, $this->planet);
 
 				switch ($Command)
 				{
@@ -60,7 +59,7 @@ class Construction
 						$queueManager->delete(1, 0);
 						break;
 					case 'remove':
-						$queueManager->delete(1, ($ListID - 1));
+						$queueManager->delete(1, $ListID);
 						break;
 					case 'insert':
 
@@ -76,7 +75,7 @@ class Construction
 						break;
 				}
 
-				$this->user->getDI()->getShared('response')->redirect("buildings/");
+				return Di::getDefault()->getShared('response')->redirect('buildings/');
 			}
 		}
 
@@ -162,46 +161,43 @@ class Construction
 
 		$res_array = Vars::getItemsByType(Vars::ITEM_TYPE_TECH);
 
-		$queueManager = new Queue();
-		$queueManager->setUserObject($this->user);
-		$queueManager->setPlanetObject($this->planet);
+		$techHandle = Models\Queue::findFirst([
+			'conditions' => 'user_id = :user: AND type = :type:',
+			'bind' => [
+				'user' => $this->user->id,
+				'type' => Models\Queue::TYPE_TECH
+			]
+		]);
 
-		$TechHandle = $queueManager->checkTechQueue();
-
-		$queueManager->loadQueue($TechHandle['planet'] ? $TechHandle['planet']->queue : $this->planet->queue);
-
-		if (isset($_GET['cmd']) && $bContinue != false)
+		if ($request->hasQuery('cmd') && $bContinue != false)
 		{
-			$Command 	= $request->getQuery('cmd', null, '');
-			$Techno 	= $request->getQuery('tech', 'int', 0);
+			$queueManager = new Queue($this->user, $this->planet);
 
-			if ($Techno > 0 && in_array($Techno, $res_array))
+			$command 	= $request->getQuery('cmd', 'string', '');
+			$techId 	= (int) $request->getQuery('tech', 'int', 0);
+
+			if ($techId > 0 && in_array($techId, $res_array))
 			{
-				switch ($Command)
+				switch ($command)
 				{
 					case 'cancel':
 
-						if ($queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
-							$queueManager->delete($Techno);
+						if ($queueManager->getCount(Queue::TYPE_RESEARCH))
+							$queueManager->delete($techId);
 
 						break;
 
 					case 'search':
 
-						if (!$queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
-							$queueManager->add($Techno);
+						if (!$queueManager->getCount(Queue::TYPE_RESEARCH))
+							$queueManager->add($techId);
 
 						break;
 				}
 
-				$this->user->getDI()->getShared('response')->redirect("buildings/research/");
+				Di::getDefault()->getShared('response')->redirect('buildings/research/');
 			}
 		}
-
-		$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-		if (count($queueArray) && isset($queueArray[0]))
-			$queueArray = $queueArray[0];
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
@@ -254,18 +250,27 @@ class Construction
 
 				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 
-				if ($TechHandle['working'])
+				if ($techHandle)
 				{
-					if (isset($queueArray['i']) && $queueArray['i'] == $Tech)
+					if ($techHandle->object_id == $Tech)
 					{
 						$row['build'] = [
-							'id' => (int) $TechHandle['planet']->id,
+							'id' => (int) $techHandle->planet_id,
 							'name' => '',
-							'time' => $queueArray['e']
+							'time' => $techHandle->time + $row['time']
 						];
 
-						if ($TechHandle['planet']->id != $this->planet->id)
-							$row['build']['planet'] = $TechHandle['planet']->name;
+						if ($techHandle->planet_id != $this->planet->id)
+						{
+							$planet = Planet::findFirst([
+								'columns' => 'id, name',
+								'conditions' => 'id = :id:',
+								'bind' => ['id' => $techHandle->planet_id]
+							]);
+
+							if ($planet)
+								$row['build']['planet'] = $planet->name;
+						}
 					}
 					else
 						$row['build'] = true;
@@ -282,7 +287,7 @@ class Construction
 
 	public function pageShipyard ($mode = 'fleet')
 	{
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
 		if ($mode == 'defense')
 			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
@@ -293,9 +298,6 @@ class Construction
 
 		if ($request->hasPost('fmenge'))
 		{
-			$queueManager->setUserObject($this->user);
-			$queueManager->setPlanetObject($this->planet);
-
 			foreach ($request->getPost('fmenge') as $element => $count)
 			{
 				$element 	= (int) $element;
@@ -310,7 +312,7 @@ class Construction
 			$this->planet->queue = $queueManager->get();
 		}
 
-		$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+		$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
 
 		$BuildArray = $this->extractHangarQueue($queueArray);
 
@@ -375,7 +377,7 @@ class Construction
 		{
 			foreach ($queue AS $element)
 			{
-				$result[$element['i']] = $element['l'];
+				$result[$element->object_id] = $element->level;
 			}
 		}
 
@@ -384,60 +386,68 @@ class Construction
 
 	private function ShowBuildingQueue ()
 	{
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
-		$ActualCount = $queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING);
+		$queueCount = $queueManager->getCount($queueManager::TYPE_BUILDING);
 
-		$ListIDRow = [];
+		$listRow = [];
 
-		if ($ActualCount != 0)
+		if ($queueCount != 0)
 		{
-			$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
+			$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			foreach ($QueueArray AS $item)
+			$end = 0;
+
+			foreach ($queueItems as $item)
 			{
-				if ($item['e'] >= time())
-				{
-					$ListIDRow[] = Array
-					(
-						'name' 	=> _getText('tech', $item['i']),
-						'level' => $item['d'] == 0 ? $item['l'] : $item['l'] + 1,
-						'mode' 	=> $item['d'],
-						'time' 	=> ($item['e'] - time()),
-						'end' 	=> $item['e']
-					);
-				}
+				if (!$end)
+					$end = $item->time;
+
+				$elementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level);
+
+				$end += $elementTime;
+
+				$listRow[] = [
+					'name' 	=> _getText('tech', $item->object_id),
+					'level' => $item->operation = Models\Queue::OPERATION_BUILD ? $item->level : $item->level + 1,
+					'mode' 	=> $item->operation = Models\Queue::OPERATION_DESTROY,
+					'time' 	=> $end - time(),
+					'end' 	=> $end
+				];
 			}
 		}
 
-		$RetValue['lenght'] 	= $ActualCount;
-		$RetValue['buildlist'] 	= $ListIDRow;
+		$RetValue['lenght'] 	= $queueCount;
+		$RetValue['buildlist'] 	= $listRow;
 
 		return $RetValue;
 	}
 
 	public function ElementBuildListBox ()
 	{
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
-		$ElementQueue = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+		$queueItems = $queueManager->get($queueManager::TYPE_SHIPYARD);
 
 		$data = [];
 
-		if (count($ElementQueue))
+		if (count($queueItems))
 		{
-			$end = time();
+			$end = 0;
 
-			foreach ($ElementQueue as $queueArray)
+			foreach ($queueItems as $item)
 			{
-				$ElementTime = Building::getBuildingTime($this->user, $this->planet, $queueArray['i']);
+				if (!$end)
+					$end = $item->time;
 
-				$end += ($ElementTime * $queueArray['l']) - $queueArray['s'];
+				$ElementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
+
+				$end += $ElementTime * $item->level;
 
 				$row = [
-					'i'		=> $queueArray['i'],
-					'name'	=> _getText('tech', $queueArray['i']),
-					'count'	=> $queueArray['l'],
+					'i'		=> $item->object_id,
+					'name'	=> _getText('tech', $item->object_id),
+					'count'	=> $item->level,
 					'time'	=> $ElementTime,
 					'end'	=> $end
 				];

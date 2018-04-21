@@ -116,7 +116,6 @@ class User
 			'planet' => 0,
 			'vacation' => 0,
 			'deltime' => 0,
-			'b_tech_planet' => 0,
 			'raids_win' => 0,
 			'raids_lose' => 0,
 			'raids' => 0,

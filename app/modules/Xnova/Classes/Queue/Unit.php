@@ -11,6 +11,7 @@ namespace Xnova\Queue;
 use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Vars;
+use Xnova\Models;
 
 class Unit
 {
@@ -29,7 +30,7 @@ class Unit
 		if (!Building::isTechnologieAccessible($user, $planet, $elementId))
 			return;
 
-		$BuildArray = $this->_queue->get(Queue::QUEUE_TYPE_SHIPYARD);
+		$buildItems = $this->_queue->get(Queue::TYPE_SHIPYARD);
 
 		if ($elementId == 502 || $elementId == 503)
 		{
@@ -37,12 +38,12 @@ class Unit
 			$Missiles[502] = $planet->getUnitCount('interceptor_misil');
 			$Missiles[503] = $planet->getUnitCount('interplanetary_misil');
 
-			$MaxMissiles = $planet->getBuildLevel('missile_facility') * 10;
+			$maxMissiles = $planet->getBuildLevel('missile_facility') * 10;
 
-			foreach ($BuildArray AS $item)
+			foreach ($buildItems AS $item)
 			{
-				if (($item['i'] == 502 || $item['i'] == 503) && $item['l'] != 0)
-					$Missiles[$item['i']] += $item['l'];
+				if (($item->object_id == 502 || $item->object_id == 503) && $item->level != 0)
+					$Missiles[$item->object_id] += $item->level;
 			}
 		}
 
@@ -52,16 +53,16 @@ class Unit
 		{
 			$total = $planet->getUnitCount($elementId);
 
-			if (isset($BuildArray[$elementId]))
-				$total += $BuildArray[$elementId];
+			if (isset($buildItems[$elementId]))
+				$total += $buildItems[$elementId];
 
 			$count = min($count, max(($price['max'] - $total), 0));
 		}
 
-		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($MaxMissiles))
+		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($maxMissiles))
 		{
 			$ActuMissiles 	= $Missiles[502] + (2 * $Missiles[503]);
-			$MissilesSpace 	= $MaxMissiles - $ActuMissiles;
+			$MissilesSpace 	= $maxMissiles - $ActuMissiles;
 
 			if ($MissilesSpace > 0)
 			{
@@ -81,22 +82,27 @@ class Unit
 
 		if ($count > 0)
 		{
-			$Ressource = Building::getElementRessources($elementId, $count, $user);
+			$cost = Building::getElementRessources($elementId, $count, $user);
 
-			$planet->metal 		-= $Ressource['metal'];
-			$planet->crystal 	-= $Ressource['crystal'];
-			$planet->deuterium 	-= $Ressource['deuterium'];
+			$planet->metal 		-= $cost['metal'];
+			$planet->crystal 	-= $cost['crystal'];
+			$planet->deuterium 	-= $cost['deuterium'];
+			$planet->update();
 
-			$this->_queue->set(Queue::QUEUE_TYPE_SHIPYARD, [
-				'i' => $elementId,
-				'l' => $count,
-				't' => 0,
-				's' => 0,
-				'e' => 0,
-				'd' => 0
+			$buildTime = Building::getBuildingTime($user, $planet, $elementId);
+
+			$item = new Models\Queue();
+
+			$item->create([
+				'type' => Models\Queue::TYPE_UNIT,
+				'operation' => Models\Queue::OPERATION_BUILD,
+				'user_id' => $user->getId(),
+				'planet_id' => $planet->id,
+				'object_id' => $elementId,
+				'time' => time(),
+				'time_end' => $buildTime + time(),
+				'level' => $count
 			]);
-
-			$this->_queue->saveQueue();
 		}
 	}
 }

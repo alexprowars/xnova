@@ -42,17 +42,8 @@ class RaceController extends Controller
 
 			if ($r > 0)
 			{
-				$queueManager = new Queue();
-				$queueCount = 0;
-
-				$BuildOnPlanets = Planet::find(['columns' => 'queue', 'conditions' => 'id_owner = ?0', 'bind' => [$this->user->id]]);
-
-				foreach ($BuildOnPlanets as $BuildOnPlanet)
-				{
-					$queueManager->loadQueue($BuildOnPlanet->queue);
-
-					$queueCount += $queueManager->getCount();
-				}
+				$queueManager = new Queue($this->user);
+				$queueCount = $queueManager->getCount();
 
 				$UserFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 

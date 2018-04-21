@@ -54,7 +54,6 @@ class Planet extends Model
 	public $queue;
 	public $last_active;
 	public $production_level;
-	public $b_hangar;
 	public $debris_metal;
 	public $debris_crystal;
 	public $galaxy;
@@ -361,24 +360,10 @@ class Planet extends Model
 				$this->{$res} = 0;
 		}
 
-		$isBuilded = $this->updateQueueList($productionTime);
-
-		if ($simulation && $isBuilded > 0)
-			$simulation = false;
-
 		if (!$simulation)
 			$this->update();
 
 		return true;
-	}
-
-	public function updateQueueList ($time = 0)
-	{
-		$queueManager = new Queue($this->queue);
-		$queueManager->setUserObject($this->user);
-		$queueManager->setPlanetObject($this);
-
-		return $queueManager->update($time);
 	}
 
 	public function getNetworkLevel()

@@ -11,6 +11,7 @@ namespace Xnova\Queue;
 use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Vars;
+use Xnova\Models;
 
 class Tech
 {
@@ -25,10 +26,16 @@ class Tech
 	{
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
-		
-		$TechHandle = $this->_queue->checkTechQueue();
 
-		if (!$TechHandle['working'])
+		$techHandle = Models\Queue::findFirst([
+			'conditions' => 'user_id = :user: AND type = :type:',
+			'bind' => [
+				'user' => $user->id,
+				'type' => Models\Queue::TYPE_TECH
+			]
+		]);
+
+		if (!$techHandle)
 		{
 			$spaceLabs = [];
 
@@ -46,51 +53,51 @@ class Tech
 				$planet->metal 		-= $costs['metal'];
 				$planet->crystal 	-= $costs['crystal'];
 				$planet->deuterium 	-= $costs['deuterium'];
+				$planet->update();
 
-				$time = Building::getBuildingTime($user, $planet, $elementId);
+				$buildTime = Building::getBuildingTime($user, $planet, $elementId);
 
-				$this->_queue->set(Queue::QUEUE_TYPE_RESEARCH, [
-					'i' => $elementId,
-					'l' => $user->getTechLevel($elementId) + 1,
-					't' => $time,
-					's' => time(),
-					'e' => time() + $time,
-					'd' => 0
+				$item = new Models\Queue();
+
+				$item->create([
+					'type' => Models\Queue::TYPE_TECH,
+					'operation' => Models\Queue::OPERATION_BUILD,
+					'user_id' => $user->getId(),
+					'planet_id' => $planet->id,
+					'object_id' => $elementId,
+					'time' => time(),
+					'time_end' => time() + $buildTime,
+					'level' => $user->getTechLevel($elementId) + 1
 				]);
-
-				$this->_queue->saveQueue();
-
-				$user->update(['b_tech_planet' => $planet->id]);
 			}
 		}
 	}
 
-	public function delete ($elementId, $listId = 0)
+	public function delete ($elementId)
 	{
-		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 
-		$TechHandle = $this->_queue->checkTechQueue();
+		$techHandle = Models\Queue::findFirst([
+			'conditions' => 'user_id = :user: AND type = :type:',
+			'bind' => [
+				'user' => $user->id,
+				'type' => Models\Queue::TYPE_TECH
+			]
+		]);
 
-		$queue = $this->_queue->get();
-
-		if (isset($queue[Queue::QUEUE_TYPE_RESEARCH][$listId]) && $TechHandle['working'] && $queue[Queue::QUEUE_TYPE_RESEARCH][$listId]['i'] == $elementId)
+		if ($techHandle && $techHandle->object_id == $elementId)
 		{
-			$nedeed = Building::getBuildingPrice($user, $TechHandle['planet'], $elementId);
+			$planet = Models\Planet::findFirst((int) $techHandle->planet_id);
 
-			$TechHandle['planet']->metal 		+= $nedeed['metal'];
-			$TechHandle['planet']->crystal 		+= $nedeed['crystal'];
-			$TechHandle['planet']->deuterium 	+= $nedeed['deuterium'];
+			$cost = Building::getBuildingPrice($user, $planet, $elementId);
 
-			unset($queue[Queue::QUEUE_TYPE_RESEARCH][$listId]);
+			$planet->metal 		+= $cost['metal'];
+			$planet->crystal 	+= $cost['crystal'];
+			$planet->deuterium 	+= $cost['deuterium'];
+			$planet->update();
 
-			if (isset($queue[Queue::QUEUE_TYPE_BUILDING]) && !count($queue[Queue::QUEUE_TYPE_BUILDING]))
-				unset($queue[Queue::QUEUE_TYPE_BUILDING]);
-
-			$TechHandle['planet']->queue = json_encode($queue);
-			$TechHandle['planet']->update();
-
-			$user->update(['b_tech_planet' => $planet->id]);
+			$techHandle->delete();
+			$this->_queue->loadQueue();
 		}
 	}
 }

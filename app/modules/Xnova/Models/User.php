@@ -55,7 +55,6 @@ class User extends BaseUser
 	public $sex;
 	public $ally_id;
 	public $vacation;
-	public $b_tech_planet;
 	public $ip;
 
 	public $ally = [];
