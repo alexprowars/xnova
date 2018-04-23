@@ -320,8 +320,8 @@ class XnsimController extends Controller
 
 	private function getShipType($id, $count, $res)
 	{
-		$attDef 	= ($count[1] * ($this->registry->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
-		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->registry->CombatCaps[$id]['power_up'] / 100));
+		$attDef 	= $count[1] + (isset($res[111]) ? $res[111] : 0) * 0.05;
+		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + $count[1];
 
 		if ($this->registry->CombatCaps[$id]['type_gun'] == 1)
 			$attTech += (isset($res[120]) ? $res[120] : 0) * 0.05;

@@ -263,8 +263,7 @@ $gun_armour = array
 $CombatCaps = array
 (
 	// малый транспорт
-	202 => array
-	(
+	202 => array(
 		'attack' => 5,
 		'shield' => 10,
 		'consumption' => 10,
@@ -275,14 +274,10 @@ $CombatCaps = array
 		'stay' => 5,
 		'type_gun' => 1,
 		'type_armour' => 1,
-		'power_up' => 0,
-		'power_armour' => 3,
-		'power_consumption' => 5,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// большой транспорт
-	203 => array
-	(
+	203 => array(
 		'attack' => 5,
 		'shield' => 25,
 		'consumption' => 50,
@@ -292,14 +287,10 @@ $CombatCaps = array
 		'stay' => 5,
 		'type_gun' => 1,
 		'type_armour' => 2,
-		'power_up' => 0,
-		'power_armour' => 5,
-		'power_consumption' => 5,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// легкий истребитель
-	204 => array
-	(
+	204 => array(
 		'attack' => 50,
 		'shield' => 10,
 		'consumption' => 20,
@@ -309,9 +300,6 @@ $CombatCaps = array
 		'stay' => 2,
 		'type_gun' => 1,
 		'type_armour' => 1,
-		'power_up' => 5,
-		'power_armour' => 8,
-		'power_consumption' => 0,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// тяжелый истребитель
@@ -325,14 +313,10 @@ $CombatCaps = array
 		'stay' => 7,
 		'type_gun' => 3,
 		'type_armour' => 2,
-		'power_up' => 5,
-		'power_armour' => 10,
-		'power_consumption' => 0,
 		'sd' => array (202 => 3, 210 => 5, 212 => 5)
 	),
 	// крейсер
-	206 => array
-	(
+	206 => array(
 		'attack' => 400,
 		'shield' => 50,
 		'consumption' => 300,
@@ -342,14 +326,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 1,
-		'power_up' => 8,
-		'power_armour' => 12,
-		'power_consumption' => 0,
 		'sd' => array (204 => 6, 401 => 10, 210 => 5, 212 => 5)
 	),
 	// Линкор
-	207 => array
-	(
+	207 => array(
 		'attack' => 1000,
 		'shield' => 200,
 		'consumption' => 500,
@@ -359,14 +339,10 @@ $CombatCaps = array
 		'stay' => 50,
 		'type_gun' => 3,
 		'type_armour' => 2,
-		'power_up' => 8,
-		'power_armour' => 15,
-		'power_consumption' => 0,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// Колонизатор
-	208 => array
-	(
+	208 => array(
 		'attack' => 50,
 		'shield' => 100,
 		'consumption' => 1000,
@@ -376,14 +352,10 @@ $CombatCaps = array
 		'stay' => 100,
 		'type_gun' => 1,
 		'type_armour' => 4,
-		'power_up' => 0,
-		'power_armour' => 10,
-		'power_consumption' => 0,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// Переработчик
-	209 => array
-	(
+	209 => array(
 		'attack' => 1,
 		'shield' => 10,
 		'consumption' => 300,
@@ -393,14 +365,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 1,
 		'type_armour' => 3,
-		'power_up' => 0,
-		'power_armour' => 3,
-		'power_consumption' => 5,
 		'sd' => array (210 => 5, 212 => 5)
 	),
 	// Шпионский зонд
-	210 => array
-	(
+	210 => array(
 		'attack' => 1,
 		'shield' => 0,
 		'consumption' => 1,
@@ -410,14 +378,10 @@ $CombatCaps = array
 		'stay' => 0.1,
 		'type_gun' => 1,
 		'type_armour' => 1,
-		'power_up' => 0,
-		'power_armour' => 5,
-		'power_consumption' => 0,
 		'sd' => array ()
 	),
 	// Бомбардировщик
-	211 => array
-	(
+	211 => array(
 		'attack' => 1000,
 		'shield' => 500,
 		'consumption' => 1000,
@@ -428,14 +392,10 @@ $CombatCaps = array
 		'stay' => 100,
 		'type_gun' => 1,
 		'type_armour' => 3,
-		'power_up' => 11,
-		'power_armour' => 16,
-		'power_consumption' => 0,
 		'sd' => array (210 => 5, 212 => 5, 401 =>  20, 402 =>  20, 403 =>  10, 405 =>  10)
 	),
 	// Солнечный спутник
-	212 => array
-	(
+	212 => array(
 		'attack' => 1,
 		'shield' => 1,
 		'consumption' => 0,
@@ -445,14 +405,10 @@ $CombatCaps = array
 		'stay' => 0,
 		'type_gun' => 1,
 		'type_armour' => 3,
-		'power_up' => 0,
-		'power_armour' => 1,
-		'power_consumption' => 0,
 		'sd' => array ()
 	),
 	// Уничтожитель
-	213 => array
-	(
+	213 => array(
 		'attack' => 2000,
 		'shield' => 500,
 		'consumption' => 1000,
@@ -462,14 +418,10 @@ $CombatCaps = array
 		'stay' => 100,
 		'type_gun' => 3,
 		'type_armour' => 3,
-		'power_up' => 11,
-		'power_armour' => 18,
-		'power_consumption' => 0,
 		'sd' => array (210 => 5, 212 => 5, 215 => 2, 221 => 3, 402 =>  10)
 	),
 	// Звезда смерти
-	214 => array
-	(
+	214 => array(
 		'attack' => 200000,
 		'shield' => 50000,
 		'consumption' => 1,
@@ -479,14 +431,10 @@ $CombatCaps = array
 		'stay' => 0.1,
 		'type_gun' => 2,
 		'type_armour' => 4,
-		'power_up' => 15,
-		'power_armour' => 25,
-		'power_consumption' => 0,
 		'sd' => array (210 => 1250, 212 => 1250, 202 => 250, 203 => 250, 208 => 250, 209 => 250, 204 => 200, 205 => 100, 206 => 33, 207 => 30, 211 => 25, 215 => 15, 213 => 5, 220 => 10, 221 => 10, 222 => 10, 223 => 10, 401 => 200, 402 => 200, 403 => 100, 404 =>  50, 405 => 100)
 	),
 	// Линейный крейсер
-	215 => array
-	(
+	215 => array(
 		'attack' => 700,
 		'shield' => 400,
 		'consumption' => 250,
@@ -496,15 +444,10 @@ $CombatCaps = array
 		'stay' => 25,
 		'type_gun' => 1,
 		'type_armour' => 2,
-		'power_up' => 8,
-		'power_armour' => 13,
-		'power_consumption' => 0,
 		'sd' => array (202 => 3, 203 => 3, 205 => 4, 206 => 4, 207 => 10, 210 => 5, 212 => 5, 223 => 3)
 	),
-
 	// Передвижная база
-	216 => array
-	(
+	216 => array(
 		'attack' => 10,
 		'shield' => 10,
 		'consumption' => 40,
@@ -514,15 +457,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 1,
 		'type_armour' => 1,
-		'power_up' => 0,
-		'power_armour' => 1,
-		'power_consumption' => 0,
 		'sd' => []
 	),
-
 	// Корвет
-	220 => array
-	(
+	220 => array(
 		'attack' => 500,
 		'shield' => 300,
 		'consumption' => 250,
@@ -532,14 +470,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 2,
-		'power_up' => 8,
-		'power_armour' => 11,
-		'power_consumption' => 0,
 		'sd' => array(210 => 5, 212 => 5, 2104 => 5, 205 => 4, 206 => 2)
 	),
 	// Перехватчик
-	221 => array
-	(
+	221 => array(
 		'attack' => 300,
 		'shield' => 100,
 		'consumption' => 330,
@@ -549,14 +483,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 1,
 		'type_armour' => 1,
-		'power_up' => 7,
-		'power_armour' => 11,
-		'power_consumption' => 0,
 		'sd' => array(204 => 2, 210 => 5, 212 => 5)
 	),
 	// Дредноут
-	222 => array
-	(
+	222 => array(
 		'attack' => 1250,
 		'shield' => 200,
 		'consumption' => 700,
@@ -566,14 +496,10 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 2,
-		'power_up' => 8,
-		'power_armour' => 16,
-		'power_consumption' => 0,
 		'sd' => array(210 => 5, 212 => 5, 206 => 2, 207 => 5, 401 => 2, 402 => 2)
 	),
 	// Корсар
-	223 => array
-	(
+	223 => array(
 		'attack' => 200,
 		'shield' => 50,
 		'consumption' => 50,
@@ -583,78 +509,78 @@ $CombatCaps = array
 		'stay' => 30,
 		'type_gun' => 3,
 		'type_armour' => 2,
-		'power_up' => 5,
-		'power_armour' => 11,
-		'power_consumption' => 0,
 		'sd' => array(210 => 5, 212 => 5, 401 => 4, 402 => 3)
 	),
-
-	401 => array
-	(
+	401 => array(
 		'attack' => 80,
 		'shield' => 20,
 		'type_gun' => 1,
 		'type_armour' => 4,
-		'power_up' => 4,
-		'power_armour' => 4,
 		'sd' => []
 	),
-	402 => array
-	(
+	402 => array(
 		'attack' => 100,
 		'shield' => 25,
 		'type_gun' => 1,
 		'type_armour' => 4,
-		'power_up' => 4,
-		'power_armour' => 4,
 		'sd' => []
 	),
-	403 => array
-	(
+	403 => array(
 		'attack' => 250,
 		'shield' => 100,
 		'type_gun' => 1,
 		'type_armour' => 4,
-		'power_up' => 3,
-		'power_armour' => 3,
 		'sd' => []
 	),
-	404 => array
-	(
+	404 => array(
 		'attack' => 1100,
 		'shield' => 200,
 		'type_gun' => 3,
 		'type_armour' => 4,
-		'power_up' => 3,
-		'power_armour' => 3,
 		'sd' => []
 	),
-	405 => array
-	(
+	405 => array(
 		'attack' => 150,
 		'shield' => 500,
 		'type_gun' => 2,
 		'type_armour' => 4,
-		'power_up' => 0,
-		'power_armour' => 0,
 		'sd' => []
 	),
-	406 => array
-	(
+	406 => array(
 		'attack' => 3000,
 		'shield' => 300,
 		'type_gun' => 3,
 		'type_armour' => 4,
-		'power_up' => 0,
-		'power_armour' => 0,
 		'sd' => []
 	),
-
-	407 => array('attack' => 1, 'shield' => 1000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
-	408 => array('attack' => 1, 'shield' => 10000, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
-
-	502 => array('attack' => 1, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => []),
-	503 => array('attack' => 12000, 'shield' => 0, 'type_gun' => 0, 'type_armour' => 0, 'power_up' => 0, 'power_armour' => 0, 'sd' => [])
+	407 => array(
+		'attack' => 1,
+		'shield' => 1000,
+		'type_gun' => 0,
+		'type_armour' => 0,
+		'sd' => []
+	),
+	408 => array(
+		'attack' => 1,
+		'shield' => 10000,
+		'type_gun' => 0,
+		'type_armour' => 0,
+		'sd' => []
+	),
+	502 => array(
+		'attack' => 1,
+		'shield' => 0,
+		'type_gun' => 0,
+		'type_armour' => 0,
+		'sd' => []
+	),
+	503 => array(
+		'attack' => 12000,
+		'shield' => 0,
+		'type_gun' => 0,
+		'type_armour' => 0,
+		'sd' => []
+	)
 );
 
 $ProdGrid = array(

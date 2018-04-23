@@ -288,9 +288,9 @@ class InfoController extends Controller
 		{
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (($this->registry->CombatCaps[$itemId]['power_up'] * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05))) . ')';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ($this->registry->CombatCaps[$itemId]['power_up'] / 100)) + $this->user->getTechLevel('military') * 0.05;
+			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
 			if ($this->registry->CombatCaps[$itemId]['type_gun'] == 1)
 				$attTech += $this->user->getTechLevel('laser') * 0.05;
@@ -310,8 +310,7 @@ class InfoController extends Controller
 			$parse['capacity_pt'] = Format::number($this->registry->CombatCaps[$itemId]['capacity']);
 			$parse['base_speed'] = Format::number($this->registry->CombatCaps[$itemId]['speed']) . ' (' . Format::number(Fleet::GetFleetMaxSpeed('', $itemId, $this->user)) . ')';
 			$parse['base_conso'] = Format::number($this->registry->CombatCaps[$itemId]['consumption']);
-			$parse['block'] = $this->registry->CombatCaps[$itemId]['power_armour'];
-			$parse['upgrade'] = $this->registry->CombatCaps[$itemId]['power_up'];
+
 			$parse['met'] = Format::number($price['metal']) . ' (' . Format::number($price['metal'] * $this->user->bonusValue('res_fleet')) . ')';
 			$parse['cry'] = Format::number($price['crystal']) . ' (' . Format::number($price['crystal'] * $this->user->bonusValue('res_fleet')) . ')';
 			$parse['deu'] = Format::number($price['deuterium']) . ' (' . Format::number($price['deuterium'] * $this->user->bonusValue('res_fleet')) . ')';
@@ -332,14 +331,14 @@ class InfoController extends Controller
 			$parse['element_typ'] = _getText('tech', 400);
 			$parse['hull_pt']  = floor(($price['metal'] + $price['crystal']) / 10);
 			$parse['~hull_pt'] = $parse['hull_pt'];
-			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05 + (((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) * ((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0)) / 100)))) . ')';
+			$parse['hull_pt']  = Format::number($parse['hull_pt']) . ' (' . Format::number(round($parse['hull_pt'] * (1 + $this->user->getTechLevel('defence') * 0.05))) . ')';
 
 			if (isset($this->registry->CombatCaps[$itemId]['shield']))
 				$parse['shield_pt'] = Format::number($this->registry->CombatCaps[$itemId]['shield']);
 			else
 				$parse['shield_pt'] = '';
 
-			$attTech = 1 + (((isset($this->user->{'fleet_' . $itemId})) ? $this->user->{'fleet_' . $itemId} : 0) * ((isset($this->registry->CombatCaps[$itemId]['power_up']) ? $this->registry->CombatCaps[$itemId]['power_up'] : 0) / 100)) + $this->user->getTechLevel('military') * 0.05;
+			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
 			$parse['attack_pt'] = Format::number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Format::number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
 			$parse['met'] = Format::number($price['metal']);
@@ -424,7 +423,7 @@ class InfoController extends Controller
 
 			if ($build && $build['level'] > 0)
 			{
-				$DestroyTime = Building::getBuildingTime($this->user, $this->planet, $itemId) / 2;
+				$DestroyTime = ceil(Building::getBuildingTime($this->user, $this->planet, $itemId) / 2);
 
 				if ($DestroyTime < 1)
 					$DestroyTime = 1;

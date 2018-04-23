@@ -89,18 +89,18 @@ class UpdateTask extends ApplicationTask
 
 		Lang::includeLang("fleet_engine", 'xnova');
 
+		if (function_exists('sys_getloadavg'))
+		{
+			$load = sys_getloadavg();
+
+			if ($load[0] > 3)
+				die('Server too busy. Please try again later.');
+		}
+
 		$totalRuns = 1;
 
 		while ($totalRuns < MAX_RUNS)
 		{
-			if (function_exists('sys_getloadavg'))
-			{
-				$load = sys_getloadavg();
-
-				if ($load[0] > 3)
-					die('Server too busy. Please try again later.');
-			}
-
 			$_fleets = Models\Fleet::find([
 				'(start_time <= :time: AND mess = 0) OR (end_stay <= :time: AND mess != 1 AND end_stay != 0) OR (end_time < :time: AND mess != 0)',
 				'bind' 	=> ['time' => time()],
@@ -155,42 +155,45 @@ class UpdateTask extends ApplicationTask
 
 		Vars::init();
 
-		define('MAX_RUNS', 12);
+		define('MAX_RUNS', 20);
 		define('TIME_LIMIT', 60);
+
+		if (function_exists('sys_getloadavg'))
+		{
+			$load = sys_getloadavg();
+
+			if ($load[0] > 3)
+				die('Server too busy. Please try again later.');
+		}
 
 		$totalRuns = 1;
 
 		while ($totalRuns < MAX_RUNS)
 		{
-			if (function_exists('sys_getloadavg'))
-			{
-				$load = sys_getloadavg();
-
-				if ($load[0] > 3)
-					die('Server too busy. Please try again later.');
-			}
-
 			$items = Models\Queue::find([
 				'conditions' => 'time_end <= :time:',
 				'group' => 'user_id, planet_id',
 				'bind' => [
-					'time' => time()
+					'time' => time() + 10
 				],
+				'order' => 'id ASC'
 			]);
 
 			foreach ($items as $item)
 			{
-				try
+				//try
 				{
 					$user = Models\User::findFirst((int) $item->user_id);
+
 					$planet = Models\Planet::findFirst((int) $item->planet_id);
+					$planet->assignUser($user);
 
 					$queueManager = new \Xnova\Queue($user, $planet);
 					$queueManager->update();
 				}
-				catch (Exception $e) {
-					echo $e->getMessage();
-				}
+				//catch (Exception $e) {
+				//	echo $e->getMessage();
+				//}
 			}
 
 			$totalRuns++;

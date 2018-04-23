@@ -27,7 +27,8 @@ class Cli extends Console
 
 	protected $_loaders =
 	[
-		'cache'
+		'cache',
+		'url'
 	];
 	private $_paths = [];
 

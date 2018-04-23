@@ -388,14 +388,12 @@ class Construction
 	{
 		$queueManager = new Queue($this->user, $this->planet);
 
-		$queueCount = $queueManager->getCount($queueManager::TYPE_BUILDING);
+		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
 		$listRow = [];
 
-		if ($queueCount != 0)
+		if (count($queueItems))
 		{
-			$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
-
 			$end = 0;
 
 			foreach ($queueItems as $item)
@@ -403,21 +401,24 @@ class Construction
 				if (!$end)
 					$end = $item->time;
 
-				$elementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level);
+				$elementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+
+				if ($item->operation == $item::OPERATION_DESTROY)
+					$elementTime = ceil($elementTime / 2);
 
 				$end += $elementTime;
 
 				$listRow[] = [
 					'name' 	=> _getText('tech', $item->object_id),
-					'level' => $item->operation = Models\Queue::OPERATION_BUILD ? $item->level : $item->level + 1,
-					'mode' 	=> $item->operation = Models\Queue::OPERATION_DESTROY,
+					'level' => $item->level,
+					'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
 					'time' 	=> $end - time(),
 					'end' 	=> $end
 				];
 			}
 		}
 
-		$RetValue['lenght'] 	= $queueCount;
+		$RetValue['lenght'] 	= count($listRow);
 		$RetValue['buildlist'] 	= $listRow;
 
 		return $RetValue;

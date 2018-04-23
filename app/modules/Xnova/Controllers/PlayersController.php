@@ -48,6 +48,8 @@ class PlayersController extends Controller
 		
 		if ($daten = $PlayerCard->fetch())
 		{
+			$parse['avatar'] = 'assets/images/no_photo.gif';
+
 			if ($daten['image'] > 0)
 			{
 				$file = Files::getById($daten['image']);
@@ -62,8 +64,6 @@ class PlayersController extends Controller
 				else
 					$parse['avatar'] = "assets/avatars/upload_" . $daten['id'] . ".jpg";
 			}
-			else
-				$parse['avatar'] = 'assets/images/no_photo.gif';
 
 			$parse['avatar'] = $this->url->getStatic($parse['avatar']);
 

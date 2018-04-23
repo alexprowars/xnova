@@ -35,6 +35,7 @@ class Application extends PhalconApplication
 		'routers',
 		'flash',
 		'session',
+		'url',
 		'view',
 		'dispatcher'
 	];

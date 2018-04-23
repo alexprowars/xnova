@@ -559,6 +559,6 @@ class UpdateStatistics extends Injectable
 		if (!file_exists(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir))
 			mkdir(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir, 0777);
 
-		file_put_contents(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."/CacheRecords.php", $file);
+		file_put_contents(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."CacheRecords.php", $file);
 	}
 }

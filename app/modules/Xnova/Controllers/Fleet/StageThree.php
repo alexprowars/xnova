@@ -477,7 +477,7 @@ class StageThree
 			[
 				'time' 		=> time(),
 				'user_id' 	=> $controller->user->id,
-				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planet_type.")];f:[".$fleet_array."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
+				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planet_type.")];f:[".print_r($fleet_array, true)."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
 				'target_id' => $targetPlanet->id_owner
 			]);
 

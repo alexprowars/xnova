@@ -355,9 +355,9 @@ trait Initializations
 	/**
 	 * @param $di DiInterface
 	 * @param $eventManager EventsManager
-	 * @return View
+	 * @return UrlResolver
 	 */
-	protected function initView ($di, $eventManager)
+	protected function initUrl ($di, $eventManager)
 	{
 		$config = $this->_config;
 
@@ -366,6 +366,19 @@ trait Initializations
 		$url->setBaseUri($config->application->baseUri);
 
 		$di->set('url', $url, true);
+
+		return $url;
+	}
+
+	/**
+	 * @param $di DiInterface
+	 * @param $eventManager EventsManager
+	 * @return View
+	 */
+	protected function initView ($di, $eventManager)
+	{
+		$config = $this->_config;
+
 		$di->set('assets', new AssetManager(), true);
 
 		$view = new View();

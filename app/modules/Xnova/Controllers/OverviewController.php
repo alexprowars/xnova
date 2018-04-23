@@ -247,7 +247,32 @@ class OverviewController extends Controller
 			$this->user->update();
 
 			if ($this->planet->parent_planet != 0)
-				$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
+			{
+				$this->db->updateAsDict('game_planets', [
+					'destruyed' => $destruyed,
+					'id_owner' => 0
+				], "id = '".$this->planet->parent_planet."'");
+
+				$queue = \Xnova\Models\Queue::find([
+					'conditions' => 'planet_id = :planet:',
+					'bind' => [
+						'planet' => $this->planet->parent_planet
+					]
+				]);
+
+				foreach ($queue as $item)
+					$item->delete();
+			}
+
+			$queue = \Xnova\Models\Queue::find([
+				'conditions' => 'planet_id = :planet:',
+				'bind' => [
+					'planet' => $this->planet->id
+				]
+			]);
+
+			foreach ($queue as $item)
+				$item->delete();
 
 			if ($this->session->has('fleet_shortcut'))
 				$this->session->remove('fleet_shortcut');

@@ -119,7 +119,7 @@ class Quick
 
 			if ($controller->planet->getUnitCount('recycler') > 0 && $DebrisSize > 0)
 			{
-				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'] * (1 + ($controller->registry->CombatCaps[209]['power_consumption'] / 100)))) + 1;
+				$RecyclerNeeded = floor($DebrisSize / ($controller->registry->CombatCaps[209]['capacity'])) + 1;
 
 				if ($RecyclerNeeded > $controller->planet->getUnitCount('recycler'))
 					$RecyclerNeeded = $controller->planet->getUnitCount('recycler');

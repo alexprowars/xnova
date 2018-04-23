@@ -240,10 +240,7 @@ class MissionCaseAttack extends FleetEngine implements Mission
 					if ($Element == 210)
 						continue;
 
-					if (isset($attackUsers[$fleetToUser[$fleet]]['flvl'][$Element + 100]) && isset($this->registry->CombatCaps[$Element]['power_consumption']) && $this->registry->CombatCaps[$Element]['power_consumption'] > 0)
-						$capacity = $this->registry->CombatCaps[$Element]['capacity'] * $amount * (1 + $attackUsers[$fleetToUser[$fleet]]['flvl'][$Element + 100] * ($this->registry->CombatCaps[$Element]['power_consumption'] / 100));
-					else
-						$capacity = $this->registry->CombatCaps[$Element]['capacity'] * $amount;
+					$capacity = $this->registry->CombatCaps[$Element]['capacity'] * $amount;
 
 					$max_resources += $capacity;
 					$max_fleet_res[$fleet] += $capacity;

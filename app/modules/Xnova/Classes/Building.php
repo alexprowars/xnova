@@ -260,6 +260,7 @@ class Building
 	 * @param bool $incremental
 	 * @param bool $destroy
 	 * @param bool $withBonus
+	 * @param int $level
 	 * @return array
 	 */
 	static function getBuildingPrice (UserModel $user, Planet $planet, $element, $incremental = true, $destroy = false, $withBonus = true, $level = 0)
@@ -268,7 +269,7 @@ class Building
 		$elementType = Vars::getItemType($element);
 		$level = (int) $level;
 
-		if ($incremental)
+		if ($incremental && !$level)
 		{
 			if ($elementType == Vars::ITEM_TYPE_BUILING)
 				$level = $planet->getBuildLevel($element);

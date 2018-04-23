@@ -165,7 +165,7 @@ class Queue
 		}
 	}
 
-	public function update ($time = 0)
+	public function update ()
 	{
 		if (!($this->planet instanceof Models\Planet))
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
@@ -203,67 +203,66 @@ class Queue
 
 	private function checkBuildQueue ()
 	{
-		if ($this->getCount(self::TYPE_BUILDING))
+		$queueArray = $this->get(self::TYPE_BUILDING);
+
+		if (!count($queueArray))
+			return false;
+
+		$buildItem = $queueArray[0];
+
+		$build = $this->planet->getBuild($buildItem->object_id);
+		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
+
+		$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $build['level']);
+
+		if ($isDestroy)
+			$buildTime = ceil($buildTime / 2);
+
+		if ($buildItem->time + $buildTime != $buildItem->time_end)
+			file_put_contents(ROOT_PATH.'/queue.log', print_r($buildItem->toArray(), true)."\n\n\n", FILE_APPEND);
+
+		if ($buildItem->time + $buildTime <= time() + 5)
 		{
-			$queueArray = $this->get(self::TYPE_BUILDING);
+			$config = Di::getDefault()->getShared('config');
+			$registry = Di::getDefault()->getShared('registry');
 
-			$buildItem = $queueArray[0];
+			$cost = Building::getBuildingPrice($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
+			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 
-			$build = $this->planet->getBuild($buildItem->object_id);
-			$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
+			$xp = 0;
 
-			$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $build['level']);
+			if (in_array($buildItem->object_id, $registry->reslist['build_exp']))
+			{
+				if (!$isDestroy)
+					$xp += floor($units / $config->game->get('buildings_exp_mult', 1000));
+				else
+					$xp -= floor($units / $config->game->get('buildings_exp_mult', 1000));
+			}
 
 			if (!$isDestroy)
-				$buildTime /= 2;
-
-			if ($buildItem->time + $buildTime <= time())
 			{
-				$config = Di::getDefault()->getShared('config');
-				$registry = Di::getDefault()->getShared('registry');
-
-				$Needed = Building::getBuildingPrice($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
-				$Units = $Needed['metal'] + $Needed['crystal'] + $Needed['deuterium'];
-
-				$XP = 0;
-
-				if (in_array($buildItem->object_id, $registry->reslist['build_exp']))
-				{
-					if (!$isDestroy)
-						$XP += floor($Units / $config->game->get('buildings_exp_mult', 1000));
-					else
-						$XP -= floor($Units / $config->game->get('buildings_exp_mult', 1000));
-				}
-
-				if (!$isDestroy)
-				{
-					$this->planet->field_current++;
-					$this->planet->setBuild($buildItem->object_id, $build['level'] + 1);
-				}
-				else
-				{
-					$this->planet->field_current--;
-					$this->planet->setBuild($buildItem->object_id, $build['level'] - 1);
-				}
-
-				$this->deleteInQueue($buildItem->id);
-
-				if ($XP != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
-				{
-					$this->user->xpminier += $XP;
-
-					if ($this->user->xpminier < 0)
-						$this->user->xpminier = 0;
-
-					$this->user->update();
-				}
-
-				unset($queueArray[0]);
-
-				return true;
+				$this->planet->field_current++;
+				$this->planet->setBuild($buildItem->object_id, $build['level'] + 1);
 			}
 			else
-				return false;
+			{
+				$this->planet->field_current--;
+				$this->planet->setBuild($buildItem->object_id, $build['level'] - 1);
+			}
+
+			$this->deleteInQueue($buildItem->id);
+
+			if ($xp != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
+			{
+				$this->user->xpminier += $xp;
+
+				if ($this->user->xpminier < 0)
+					$this->user->xpminier = 0;
+
+				$this->user->update();
+			}
+
+			return true;
 		}
 
 		return false;
@@ -317,10 +316,10 @@ class Queue
 				$this->planet->deuterium 	-= $cost['deuterium'];
 				$this->planet->update();
 
-				$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $build['level']);
+				$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $buildItem->level);
 
 				if ($isDestroy)
-					$buildTime /= 2;
+					$buildTime = ceil($buildTime / 2);
 
 				$buildItem->update([
 					'time' => time(),
@@ -407,9 +406,12 @@ class Queue
 			else
 				$planet = $this->planet;
 
-			$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $buildItem->level);
+			$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id);
 
-			if ($buildItem->time + $buildTime <= time())
+			if ($buildItem->time + $buildTime != $buildItem->time_end)
+				file_put_contents(ROOT_PATH.'/queue.log', print_r($buildItem->toArray(), true)."\n\n\n", FILE_APPEND);
+
+			if ($buildItem->time + $buildTime <= time() + 5)
 			{
 				$this->user->setTech($buildItem->object_id, $this->user->getTechLevel($buildItem->object_id) + 1);
 				$this->deleteInQueue($buildItem->id);

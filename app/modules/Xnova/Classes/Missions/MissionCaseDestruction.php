@@ -78,6 +78,16 @@ class MissionCaseDestruction extends FleetEngine implements Mission
 
 						$this->db->query("UPDATE ".$this->_fleet->getSource()." SET start_type = 1 WHERE start_galaxy = " . $this->_fleet->end_galaxy . " AND start_system = " . $this->_fleet->end_system . " AND start_planet = " . $this->_fleet->end_planet . " AND start_type = 3;");
 						$this->db->query("UPDATE ".$this->_fleet->getSource()." SET end_type = 1 WHERE end_galaxy = " . $this->_fleet->end_galaxy . " AND end_system = " . $this->_fleet->end_system . " AND end_planet = " . $this->_fleet->end_planet . " AND end_type = 3;");
+
+						$queue = \Xnova\Models\Queue::find([
+							'conditions' => 'planet_id = :planet:',
+							'bind' => [
+								'planet' => $TargetMoon['id']
+							]
+						]);
+
+						foreach ($queue as $item)
+							$item->delete();
 					}
 					else
 					{

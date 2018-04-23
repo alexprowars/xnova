@@ -113,10 +113,7 @@ class FleetController extends Controller
 			'stay' 			=> $this->registry->CombatCaps[$type]['stay'],
 		];
 
-		if (isset($this->user->{'fleet_' . $type}) && isset($this->registry->CombatCaps[$type]['power_consumption']) && $this->registry->CombatCaps[$type]['power_consumption'] > 0)
-			$ship['capacity'] = round($this->registry->CombatCaps[$type]['capacity'] * (1 + $this->user->{'fleet_' . $type} * ($this->registry->CombatCaps[$type]['power_consumption'] / 100)));
-		else
-			$ship['capacity'] = $this->registry->CombatCaps[$type]['capacity'];
+		$ship['capacity'] = $this->registry->CombatCaps[$type]['capacity'];
 
 		return $ship;
 	}
