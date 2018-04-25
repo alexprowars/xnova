@@ -316,7 +316,7 @@ class Queue
 				$this->planet->deuterium 	-= $cost['deuterium'];
 				$this->planet->update();
 
-				$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $buildItem->level);
+				$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id);
 
 				if ($isDestroy)
 					$buildTime = ceil($buildTime / 2);
@@ -373,10 +373,14 @@ class Queue
 
 				array_shift($queueArray);
 
+				$this->deleteInQueue($buildItem->id);
+
 				if (!count($queueArray))
 					$loop = false;
 			}
 		}
+
+		$this->loadQueue();
 
 		return true;
 	}
@@ -511,13 +515,15 @@ class Queue
 					}
 				}
 
+				$this->planet->update();
+
 				if ($item->level > 0)
 				{
 					$item->time_end = $item->time + $buildTime;
 					$item->update();
-				}
 
-				$this->planet->update();
+					break;
+				}
 			}
 
 			return $builded > 0;

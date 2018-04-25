@@ -32,6 +32,11 @@
 							<div v-if="$parent.fields_empty <= 0" class="negative">
 								нет места
 							</div>
+							<a v-else-if="$parent.page['queue_max'] > 1 && $parent.page['queue'].length > 0" :href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
+								<svg class="icon">
+									<use xlink:href="#icon-constraction"></use>
+								</svg>
+							</a>
 							<div v-else-if="!hasResources" class="negative text-center">
 								нет ресурсов
 							</div>
@@ -39,11 +44,6 @@
 								очередь заполнена
 							</div>
 							<a v-else-if="$parent.page['queue'].length === 0" :href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
-								<svg class="icon">
-									<use xlink:href="#icon-constraction"></use>
-								</svg>
-							</a>
-							<a v-else-if="$parent.page['queue_max'] > 1" :href="$root.getUrl('buildings/index/cmd/insert/building/'+item.i+'/')">
 								<svg class="icon">
 									<use xlink:href="#icon-constraction"></use>
 								</svg>

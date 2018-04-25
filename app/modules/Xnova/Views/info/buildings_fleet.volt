@@ -51,16 +51,6 @@
 			<th>Тип брони</th>
 			<th>{{ parse['armour'] }}</th>
 		</tr>
-		<tr>
-			<th>Блокировка атаки</th>
-			<th>{{ parse['block'] }}%</th>
-		</tr>
-		{% if parse['upgrade'] %}
-			<tr>
-				<th>Усиление на уровень</th>
-				<th>{{ parse['upgrade'] }}%</th>
-			</tr>
-		{% endif %}
 	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>

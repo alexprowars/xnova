@@ -65,7 +65,22 @@ class RaceController extends Controller
 
 					$this->user->update();
 
-					$this->db->query("UPDATE game_planets SET corvete = 0, interceptor = 0, dreadnought = 0, corsair = 0 WHERE id_owner = " . $this->user->id . ";");
+					$planets = Planet::find([
+						'conditions' => 'id_owner = :user:',
+						'bind' => [
+							'user' => $this->user->id
+						]
+					]);
+
+					foreach ($planets as $planet)
+					{
+						$planet->setUnit(Vars::getIdByName('corvete'), 0);
+						$planet->setUnit(Vars::getIdByName('interceptor'), 0);
+						$planet->setUnit(Vars::getIdByName('dreadnought'), 0);
+						$planet->setUnit(Vars::getIdByName('corsair'), 0);
+
+						$planet->update();
+					}
 
 					$this->response->redirect("overview/");
 				}
