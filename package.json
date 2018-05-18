@@ -15,12 +15,13 @@
     "fs": "0.0.1-security",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
-    "gulp-minify-css": "latest",
+    "gulp-clean-css": "^3.9.3",
     "gulp-rename": "latest",
     "gulp-sass": "latest",
     "gulp-uglify": "latest",
     "vue": "^2.5.13",
-    "vueify": "^9.4.1"
+    "vueify": "^9.4.1",
+    "run-sequence": "^2.2.1"
   },
   "author": "AlexPro (alexprowars@gmail.com)",
   "license": "ISC",
