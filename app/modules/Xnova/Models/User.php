@@ -39,7 +39,7 @@ class User extends BaseUser
 		'planet_sort_order'	=> 0,
 		'color'				=> 0,
 		'timezone'			=> 0,
-		'spy'				=> 0,
+		'spy'				=> 1,
 	];
 
 	private $bonusData = [];

@@ -56,6 +56,5 @@ catch (Exception $e)
 
 	file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n".print_r($_REQUEST, true)."\n\n".$e->getMessage()."\n\n", FILE_APPEND);
 
-
 	echo '</pre>';
 }

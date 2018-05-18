@@ -37,12 +37,8 @@ class Tech
 
 		if (!$techHandle)
 		{
-			$spaceLabs = [];
-
 			if ($user->getTechLevel('intergalactic') > 0)
-				$spaceLabs = $planet->getNetworkLevel();
-
-			$planet->spaceLabs = $spaceLabs;
+				$planet->spaceLabs = $planet->getNetworkLevel();
 
 			$price = Vars::getItemPrice($elementId);
 

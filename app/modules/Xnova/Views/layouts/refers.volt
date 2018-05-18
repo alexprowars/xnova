@@ -43,17 +43,19 @@
 		<tr>
 			<th colspan="2" style="padding:15px;">
 				Помоги проекту, поделись им с друзьями!<br><br>
-				<script type="text/javascript" src="//yandex.st/share/share.js"
-		charset="utf-8"></script>
-		<div class="yashare-auto-init"
-			data-yashareL10n="ru"
-			data-yashareTheme="counter"
-			data-yashareType="small"
-			data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus"
-			data-yashareLink="//uni{{ config.game.universe }}.xnova.su/?{{ userId }}"
-			data-yashareTitle="{{ option('site_title') }}"
-		></div>
-		</th></tr></table>
+
+				<script type="text/javascript" src="https://yandex.st/share/share.js" charset="utf-8"></script>
+				<div class="yashare-auto-init"
+					data-yashareL10n="ru"
+					data-yashareTheme="counter"
+					data-yashareType="small"
+					data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus"
+					data-yashareLink="//{{ config.game.universe }}.xnova.su/?{{ userId }}"
+					data-yashareTitle="{{ option('site_title') }}"
+				></div>
+			</th>
+		</tr>
+	</table>
 
 	<div class="separator"></div>
 	<table class="table">
@@ -68,10 +70,10 @@
 				<br><br>
 				HTML код:
 				<br>
-				<input style="width:100%" type="text" value="{{ htmlspecialchars('<a href="//uni'~config.game.universe~'.xnova.su/?'~userId~'"><img src="http://uni'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg"></a>') }}" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('<a href="//'~config.game.universe~'.xnova.su/?'~userId~'"><img src="http://'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg"></a>') }}" title="">
 				<div class="separator"></div>
 				BB код:
-				<input style="width:100%" type="text" value="{{ htmlspecialchars('[url=http://uni'~config.game.universe~'.xnova.su/?'~userId~'][img]http://uni'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg[/img][/url]') }}" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('[url=http://'~config.game.universe~'.xnova.su/?'~userId~'][img]http://'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg[/img][/url]') }}" title="">
 			</th>
 		</tr>
 	</table>

@@ -219,7 +219,11 @@ class Queue
 			$buildTime = ceil($buildTime / 2);
 
 		if ($buildItem->time + $buildTime != $buildItem->time_end)
-			file_put_contents(ROOT_PATH.'/queue.log', print_r($buildItem->toArray(), true)."\n\n\n", FILE_APPEND);
+		{
+			$buildItem->update([
+				'time_end' => $buildItem->time + $buildTime
+			]);
+		}
 
 		if ($buildItem->time + $buildTime <= time() + 5)
 		{
@@ -406,14 +410,29 @@ class Queue
 		if ($buildItem)
 		{
 			if ($buildItem->planet_id != $this->planet->id)
+			{
 				$planet = Models\Planet::findFirst((int) $buildItem->planet_id);
+
+				if ($planet)
+					$planet->assignUser($this->user);
+			}
 			else
 				$planet = $this->planet;
 
-			$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id);
+			if (!$planet)
+				throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+
+			if ($this->user->getTechLevel('intergalactic') > 0)
+				$planet->spaceLabs = $planet->getNetworkLevel();
+
+			$buildTime = Building::getBuildingTime($this->user, $planet, $buildItem->object_id);
 
 			if ($buildItem->time + $buildTime != $buildItem->time_end)
-				file_put_contents(ROOT_PATH.'/queue.log', print_r($buildItem->toArray(), true)."\n\n\n", FILE_APPEND);
+			{
+				$buildItem->update([
+					'time_end' => $buildItem->time + $buildTime
+				]);
+			}
 
 			if ($buildItem->time + $buildTime <= time() + 5)
 			{
@@ -510,6 +529,9 @@ class Queue
 					if ($item->level <= 0)
 					{
 						$this->deleteInQueue($item->id);
+
+						if (isset($buildQueue[$i + 1]))
+							$buildQueue[$i + 1]->time = $item->time;
 
 						break;
 					}

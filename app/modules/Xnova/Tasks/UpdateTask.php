@@ -181,19 +181,27 @@ class UpdateTask extends ApplicationTask
 
 			foreach ($items as $item)
 			{
-				//try
+				try
 				{
 					$user = Models\User::findFirst((int) $item->user_id);
 
 					$planet = Models\Planet::findFirst((int) $item->planet_id);
-					$planet->assignUser($user);
+
+					if ($planet)
+						$planet->assignUser($user);
+
+					if (!$user || !$planet)
+						throw new Exception('Cron::update::queueAction::user or planet not found');
 
 					$queueManager = new \Xnova\Queue($user, $planet);
 					$queueManager->update();
 				}
-				//catch (Exception $e) {
-				//	echo $e->getMessage();
-				//}
+				catch (Exception $e)
+				{
+					file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".$e->getMessage()."\n\n", FILE_APPEND);
+
+					echo $e->getMessage();
+				}
 			}
 
 			$totalRuns++;

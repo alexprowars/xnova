@@ -99,6 +99,9 @@ class Vars
 	{
 		$price = self::getItemPrice($itemId);
 
+		if (!count($price))
+			return 0;
+
 		if (!$allResources)
 			return $price['metal'] + $price['crystal'];
 		else

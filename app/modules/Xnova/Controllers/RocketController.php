@@ -44,7 +44,7 @@ class RocketController extends Controller
 		$count = (int) $this->request->getPost('count', 'int');
 		$destroyType = $this->request->getPost('target', 'string');
 		
-		$distance = (($s - $this->planet->system) * (-1));
+		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
 		$targetPlanet = Planet::findByCoords($g, $s, $i, 1);
@@ -62,7 +62,7 @@ class RocketController extends Controller
 		elseif ((!is_numeric($destroyType) && $destroyType != "all") OR ($destroyType < 0 && $destroyType > 7 && $destroyType != "all"))
 			throw new ErrorException('Не найдена цель', 'Ошибка');
 		
-		if ($destroyType == "all")
+		if ($destroyType == 'all')
 			$destroyType = 0;
 		else
 			$destroyType = (int) $destroyType;

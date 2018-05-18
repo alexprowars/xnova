@@ -178,11 +178,6 @@ class GalaxyController extends Controller
 		
 		if ($this->planet->getUnitCount('dearth_star') > 0)
 			$Destroy = 1;
-		
-		$html = '';
-		
-		if ($mode == 2)
-			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->getUnitCount('interplanetary_misil'));
 
 		$jsUser = [
 			'phalanx' => $Phalanx,
@@ -307,39 +302,5 @@ class GalaxyController extends Controller
 
 		$this->tag->setTitle('Галактика');
 		$this->showTopPanel(false);
-	}
-
-	private function ShowGalaxyMISelector ($Galaxy, $System, $Planet, $Current, $MICount)
-	{
-		$Result = "<form action=\"/rocket/?c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
-		$Result .= "<table border=\"0\" class=\"table\">";
-		$Result .= "<tr>";
-		$Result .= "<td class=\"c\" colspan=\"3\">";
-		$Result .= _getText('gm_launch') . " [" . $Galaxy . ":" . $System . ":" . $Planet . "]";
-		$Result .= "</td>";
-		$Result .= "</tr>";
-		$Result .= "<tr>";
-		$String = sprintf(_getText('gm_restmi'), $MICount);
-		$Result .= "<td class=\"c\">" . $String . " <input type=\"text\" name=\"SendMI\" size=\"2\" maxlength=\"7\" /></td>";
-		$Result .= "<td class=\"c\">" . _getText('gm_target') . " <select name=\"Target\">";
-		$Result .= "<option value=\"all\" selected>" . _getText('gm_all') . "</option>";
-		$Result .= "<option value=\"0\">" . _getText('tech', 401) . "</option>";
-		$Result .= "<option value=\"1\">" . _getText('tech', 402) . "</option>";
-		$Result .= "<option value=\"2\">" . _getText('tech', 403) . "</option>";
-		$Result .= "<option value=\"3\">" . _getText('tech', 404) . "</option>";
-		$Result .= "<option value=\"4\">" . _getText('tech', 405) . "</option>";
-		$Result .= "<option value=\"5\">" . _getText('tech', 406) . "</option>";
-		$Result .= "<option value=\"6\">" . _getText('tech', 407) . "</option>";
-		$Result .= "<option value=\"7\">" . _getText('tech', 408) . "</option>";
-		$Result .= "</select>";
-		$Result .= "</td>";
-		$Result .= "</tr>";
-		$Result .= "<tr>";
-		$Result .= "<td class=\"c\" colspan=\"2\"><input type=\"submit\" name=\"aktion\" value=\"" . _getText('gm_send') . "\"></td>";
-		$Result .= "</tr>";
-		$Result .= "</table>";
-		$Result .= "</form>";
-
-		return $Result;
 	}
 }

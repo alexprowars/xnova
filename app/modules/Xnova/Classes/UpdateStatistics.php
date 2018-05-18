@@ -238,7 +238,7 @@ class UpdateStatistics extends Injectable
 				$mail->addAddress($user['email']);
 				$mail->Subject = Options::get('site_title').': Уведомление об удалении аккаунта: ' . $this->config->game->universe . ' вселенная';
 				$mail->Body = "Уважаемый \"" . $user['username'] . "\"! Уведомляем вас, что ваш аккаунт перешел в режим удаления и через " . floor($this->config->stat->get('deleteTime', (7 * 86400)) / 86400) . " дней будет удалён из игры.<br>
-				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://uni" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
+				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
 				$mail->send();
 			}
 

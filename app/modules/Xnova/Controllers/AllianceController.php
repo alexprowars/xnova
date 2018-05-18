@@ -428,10 +428,10 @@ class AllianceController extends Controller
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_ACCEPT) && !$this->ally->canAccess(Alliance::REQUEST_ACCESS))
 				throw new ErrorException(_getText('Denied_access'), _getText('Check_the_requests'));
 
+			$show = (int) $this->request->getQuery('show', 'int', 0);
+
 			if (($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT)) && $this->request->hasPost('action'))
 			{
-				$show = $this->request->getQuery('show', 'int', 0);
-
 				if ($this->request->getPost('action') == "Принять")
 				{
 					if ($this->ally->members >= 150)
@@ -896,17 +896,20 @@ class AllianceController extends Controller
 			elseif ($deleteType == 'marked' || $deleteType == 'unmarked')
 			{
 				$messages = $this->request->getPost('delete');
-				$messages = array_map('intval', $messages);
 
-				if (count($messages))
-					$this->db->query("DELETE FROM game_alliance_chat WHERE id " . (($deleteType == 'unmarked') ? 'NOT' : '') . " IN (" . implode(',', $messages) . ") AND ally_id = :ally", ['ally' => $this->user->ally_id]);
+				if (is_array($messages))
+				{
+					$messages = array_map('intval', $messages);
+
+					if (count($messages))
+						$this->db->query("DELETE FROM game_alliance_chat WHERE id " . (($deleteType == 'unmarked') ? 'NOT' : '') . " IN (" . implode(',', $messages) . ") AND ally_id = :ally", ['ally' => $this->user->ally_id]);
+				}
 			}
 		}
 
 		if ($this->request->hasPost('text') && $this->request->getPost('text', null, '') != '')
 		{
-			$this->db->insertAsDict('game_alliance_chat',
-			[
+			$this->db->insertAsDict('game_alliance_chat', [
 				'ally_id' 	=> $this->user->ally_id,
 				'user' 		=> $this->user->username,
 				'user_id' 	=> $this->user->id,
@@ -960,9 +963,9 @@ class AllianceController extends Controller
 	public function infoAction ($id = '')
 	{
 		if ($id != '' && !is_numeric($id))
-			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE tag = '" . $id . "'")->fetch();
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE tag = '" . addslashes(htmlspecialchars($id)) . "'")->fetch();
 		elseif ($id > 0 && is_numeric($id))
-			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . $id . "'")->fetch();
+			$allyrow = $this->db->query("SELECT * FROM game_alliance WHERE id = '" . (int) $id . "'")->fetch();
 		else
 			throw new ErrorException("Указанного альянса не существует в игре!", "Информация об альянсе");
 
@@ -977,7 +980,19 @@ class AllianceController extends Controller
 		$parse['name'] = $allyrow['name'];
 		$parse['tag'] = $allyrow['tag'];
 		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow['description']));
-		$parse['image'] = $allyrow['image'];
+		$parse['image'] = '';
+
+		if ($allyrow['image'] > 0)
+		{
+			$file = Files::getById($allyrow['image']);
+
+			if ($file)
+				$parse['image'] = $file['src'];
+		}
+
+		if ($allyrow['web'] != '' && strpos($allyrow['web'], 'http') === false)
+			$allyrow['web'] = 'http://'.$allyrow['web'];
+
 		$parse['web'] = $allyrow['web'];
 		$parse['request'] = ($this->getDI()->has('user') && $this->user->ally_id == 0);
 

@@ -87,7 +87,7 @@
 					data: form.serialize(),
 					success: function(result)
 					{
-						if (result.status && data.result.redirect !== undefined)
+						if (result.status && result.data.redirect !== undefined)
 							window.location.href = result.data.redirect;
 						else
 						{

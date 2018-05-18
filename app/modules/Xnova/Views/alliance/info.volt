@@ -5,7 +5,6 @@
 	{% if parse['image'] != "" %}
 		<tr><th colspan="2"><img src="{{ parse['image'] }}" style="max-width:100%"></th></tr>
 	{% endif %}
-	{{ parse['image'] }}
 	<tr>
 		<th>{{ _text('xnova', 'Tag') }}</th>
 		<th>{{ parse['tag'] }}</th>
@@ -30,6 +29,10 @@
 	{% endif %}
 
 	{% if userId is defined and userId != 0 and parse['request'] %}
-		<tr><th>Вступление</th><th><a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}">Нажмите сюда для подачи заявки</a></th></tr>
+		<tr>
+			<th colspan="2">
+				<a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}" class="button">Вступить в альянс</a>
+			</th>
+		</tr>
 	{% endif %}
 </table>

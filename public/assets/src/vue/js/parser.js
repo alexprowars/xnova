@@ -82,7 +82,7 @@ export var parser = {
 			'happy','heart','hello','help','hummer','hummer2','ill','inlove','jack','jedy','killed','king','kiss2','knut','lick','lips','lol','med','roze','mol',
 			'ninja','nunchak','ogo','pare','police','prise','punk','ravvin','rip','rupor','scare','shut','sleep','song','strong','training','user','wall','rofl',
 			'hunter','bratan','diskot','vglaz','duet','ff','smoke','bita','perec','popope','morpeh','naem','pirat','baraban','klizma','gamer2','pulemet','good2',
-			'negative','quiet','ball','pooh','vv','fig1'
+			'negative','quiet','ball','pooh','vv','fig1', 'spam', 'arbuz'
 		],
 	},
 	parse: function (txt)

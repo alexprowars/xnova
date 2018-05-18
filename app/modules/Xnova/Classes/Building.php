@@ -178,7 +178,7 @@ class Building
 		}
 		elseif ($elementType == Vars::ITEM_TYPE_TECH)
 		{
-			if (isset($planet->spaceLabs) && count($planet->spaceLabs))
+			if (isset($planet->spaceLabs) && is_array($planet->spaceLabs) && count($planet->spaceLabs))
 			{
 				$lablevel = 0;
 

@@ -24,14 +24,14 @@ class MissionCaseRak extends FleetEngine implements Mission
 		if (!$targetPlanet)
 			return;
 
-		$defTech = $this->db->query('SELECT * FROM game_users_tech WHERE user_id = ?0 AND tech_id = ?1',
-				[$this->_fleet->target_owner, Vars::getIdByName('defence')])->fetch();
+		$defTech = $this->db->query('SELECT level FROM game_users_tech WHERE user_id = ? AND tech_id = ?',
+				[$this->_fleet->target_owner, Vars::getIdByName('defence_tech')])->fetch();
 
 		if (!$defTech)
 			$defTech['level'] = 0;
 
-		$attTech = $this->db->query('SELECT * FROM game_users_tech WHERE user_id = ?0 AND tech_id = ?1',
-				[$this->_fleet->owner, Vars::getIdByName('military')])->fetch();
+		$attTech = $this->db->query('SELECT level FROM game_users_tech WHERE user_id = ? AND tech_id = ?',
+				[$this->_fleet->owner, Vars::getIdByName('military_tech')])->fetch();
 
 		if (!$attTech)
 			$attTech['level'] = 0;
@@ -112,45 +112,45 @@ class MissionCaseRak extends FleetEngine implements Mission
 		return;
 	}
 
-	private function raketenangriff ($TargetDefTech, $OwnerAttTech, $ipm, $TargetDefensive, $pri_target = 0)
+	private function raketenangriff ($targetDefTech, $ownerAttTech, $missiles, $targetDefensive, $firstTarget = 0)
 	{
-		unset($TargetDefensive[502]);
+		if (!$missiles)
+			return [];
 
-		$life_fac = $TargetDefTech / 10 + 1;
-		$life_fac_a = $this->registry->CombatCaps[503]['attack'] * ($OwnerAttTech / 10 + 1);
+		unset($targetDefensive[502]);
 
-		$max_dam = $ipm * $life_fac_a;
-		$i = 0;
+		$totalDamage = $missiles * $this->registry->CombatCaps[503]['attack'] * ($ownerAttTech / 10 + 1);
 
-		$ship_res = [];
+		$result = [];
 
-		foreach ($TargetDefensive as $Element => $Count)
+		if (isset($targetDefensive[$firstTarget]))
 		{
-			if ($i == 0)
-				$target = $pri_target;
-			elseif ($Element <= $pri_target)
-				$target = $Element - 1;
-			else
-				$target = $Element;
+			$c = $targetDefensive[$firstTarget];
+
+			unset($targetDefensive[$firstTarget]);
+			$targetDefensive = [$firstTarget => $c] + $targetDefensive;
+		}
+
+		foreach ($targetDefensive as $target => $count)
+		{
+			if (!$target)
+				continue;
 
 			$price = Vars::getItemTotalPrice($target);
 
-			$Dam = $max_dam - $price / 10 * $TargetDefensive[$target] * $life_fac;
+			$structure = ($price / 10 * ($targetDefTech / 10 + 1));
 
-			if ($Dam > 0)
-			{
-				$dest = $TargetDefensive[$target];
-				$ship_res[$target] = $dest;
-			}
-			else
-			{
-				$dest = floor($max_dam / ($price / 10 * $life_fac));
-				$ship_res[$target] = $dest;
-			}
-			$max_dam -= $dest * round($price / 10 * $life_fac);
-			$i++;
+			$destroyCount = floor($totalDamage / $structure);
+			$destroyCount = min($destroyCount, $count);
+
+			$result[$target] = $destroyCount;
+
+			$totalDamage -= $destroyCount * $structure;
+
+			if ($totalDamage <= 0)
+				break;
 		}
 
-		return $ship_res;
+		return $result;
 	}
 }

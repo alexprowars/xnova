@@ -441,15 +441,15 @@ class Construction
 				if (!$end)
 					$end = $item->time;
 
-				$ElementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
+				$time = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
 
-				$end += $ElementTime * $item->level;
+				$end += $time * $item->level;
 
 				$row = [
-					'i'		=> $item->object_id,
+					'i'		=> (int) $item->object_id,
 					'name'	=> _getText('tech', $item->object_id),
-					'count'	=> $item->level,
-					'time'	=> $ElementTime,
+					'count'	=> (int) $item->level,
+					'time'	=> $time,
 					'end'	=> $end
 				];
 

@@ -82,7 +82,7 @@ class RaceController extends Controller
 						$planet->update();
 					}
 
-					$this->response->redirect("overview/");
+					$this->response->redirect('overview/');
 				}
 			}
 		}

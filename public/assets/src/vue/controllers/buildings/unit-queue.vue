@@ -40,6 +40,9 @@
 			},
 			update ()
 			{
+				if (this.queue.length === 0)
+					return;
+
 				let last = this.queue[this.queue.length - 1];
 				this.left_time = last.end - this.$root.serverTime()
 

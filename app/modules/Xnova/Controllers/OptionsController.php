@@ -388,9 +388,9 @@ class OptionsController extends Controller
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = $userInfo->about;
-			$parse['timezone'] = $settings['timezone'];
-			$parse['spy'] = $settings['spy'];
-			$parse['color'] = $settings['color'];
+			$parse['timezone'] = isset($settings['timezone']) ? $settings['timezone'] : 0;
+			$parse['spy'] = isset($settings['spy']) ? $settings['spy'] : 1;
+			$parse['color'] = isset($settings['color']) ? $settings['color'] : 0;
 
 			$parse['auth'] = $this->db->extractResult($this->db->query("SELECT * FROM game_users_auth WHERE user_id = ".$this->user->getId().""));
 
