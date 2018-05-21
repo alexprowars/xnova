@@ -59,7 +59,6 @@ gulp.task('bootstrap', function ()
 	return gulp.src('./public/assets/src/bootstrap/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
-		.pipe(cssmin())
     	.pipe(gulp.dest('./public/assets/css'));
 });
 

@@ -28,7 +28,7 @@
 						</tr>
 						<tr>
 							<th>Новый пароль (повтор)</th>
-							<th><input name="newpass2" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password_confirm" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 					{% endif %}
 					<tr>
