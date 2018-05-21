@@ -3,7 +3,7 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
-use Xnova\Models\User;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/admin/support")
@@ -38,7 +38,7 @@ class SupportController extends Controller
 	{
 		$tickets = ['open' => [], 'closed' => []];
 
-		$query = $this->db->query("SELECT s.*, u.username FROM game_support s, game_users u WHERE u.id = s.player_id AND status != 0 ORDER BY s.time LIMIT 100;");
+		$query = $this->db->query("SELECT s.*, u.username FROM game_support s, game_users u WHERE u.id = s.user_id AND status != 0 ORDER BY s.time LIMIT 100;");
 
 		while ($ticket = $query->fetch())
 		{
@@ -60,7 +60,7 @@ class SupportController extends Controller
 					$status = '';
 			}
 
-			if ($id > 0 && $id == $ticket['ID'])
+			if ($id > 0 && $id == $ticket['id'])
 				$TINFO = $ticket;
 
 			if ($ticket['status'] == 0)
@@ -69,7 +69,7 @@ class SupportController extends Controller
 					continue;
 
 				$tickets['closed'][] = [
-					'id' => $ticket['ID'],
+					'id' => $ticket['id'],
 					'username' => $ticket['username'],
 					'subject' => $ticket['subject'],
 					'status' => $status,
@@ -79,7 +79,7 @@ class SupportController extends Controller
 			else
 			{
 				$tickets['open'][] = [
-					'id' => $ticket['ID'],
+					'id' => $ticket['id'],
 					'username' => $ticket['username'],
 					'subject' => $ticket['subject'],
 					'status' => $status,
@@ -109,7 +109,7 @@ class SupportController extends Controller
 			}
 
 			$parse = [
-				't_id' => $TINFO['ID'],
+				't_id' => $TINFO['id'],
 				't_username' => $TINFO['username'],
 				't_statustext' => $status,
 				't_status' => $TINFO['status'],
@@ -140,15 +140,15 @@ class SupportController extends Controller
 		if (!$text || !$id)
 			$this->message('Не заполнены все поля', 'Ошибка', '/admin/support/', 3);
 
-		$ticket = $this->db->query("SELECT player_id, text FROM game_support WHERE id = '" . $id . "'")->fetch();
+		$ticket = $this->db->query("SELECT user_id, text FROM game_support WHERE id = '" . $id . "'")->fetch();
 
-		if (isset($ticket['player_id']))
+		if (isset($ticket['user_id']))
 		{
 			$newtext = $ticket['text'].'<br><br><hr>' . $this->user->username.'  ответил в '.date("d.m.Y H:i:s", time()).':<br>' . $text;
 
 			$this->db->query("UPDATE game_support SET text = '".addslashes($newtext)."',status = '2' WHERE id = '".$id."'");
 
-			User::sendMessage($ticket['player_id'], false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
+			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
 		}
 
 		$this->indexAction();
@@ -162,7 +162,7 @@ class SupportController extends Controller
 		if (!$id)
 			$this->message('Не заполнены все поля', 'Ошибка', '/admin/support/', 3);
 
-		$ticket = $this->db->query("SELECT id, text, player_id FROM game_support WHERE id = '" . $id . "';")->fetch();
+		$ticket = $this->db->query("SELECT id, text, user_id FROM game_support WHERE id = '" . $id . "';")->fetch();
 
 		if (isset($ticket['id']))
 		{
@@ -170,7 +170,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['player_id'], false, time(), 4, $this->user->username, 'Был открыт тикет №' . $id);
+			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Был открыт тикет №' . $id);
 		}
 
 		$this->indexAction();
@@ -184,7 +184,7 @@ class SupportController extends Controller
 		if (!$id)
 			$this->message('Не заполнены все поля', 'Ошибка', '/admin/support/', 3);
 
-		$ticket = $this->db->query("SELECT id, text, player_id FROM game_support WHERE id = '" . $id . "';")->fetch();
+		$ticket = $this->db->query("SELECT id, text, user_id FROM game_support WHERE id = '" . $id . "';")->fetch();
 
 		if (isset($ticket['id']))
 		{
@@ -192,7 +192,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE game_support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['player_id'], false, time(), 4, $this->user->username, 'Тикет №'.$id.' закрыт');
+			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Тикет №'.$id.' закрыт');
 		}
 
 		$this->indexAction();

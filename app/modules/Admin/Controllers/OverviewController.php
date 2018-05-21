@@ -3,6 +3,7 @@
 namespace Admin\Controllers;
 
 use Admin\Controller;
+use Xnova\Format;
 use Xnova\Helpers;
 
 /**
@@ -20,9 +21,14 @@ class OverviewController extends Controller
 	{
 		return [[
 			'code'	=> 'overview',
-			'title' => 'Активность',
+			'title' => 'Dashboard',
 			'icon'	=> 'home',
 			'sort'	=> 10
+		], [
+			'code'	=> 'separator',
+			'title' => 'Игра',
+			'icon'	=> '',
+			'sort'	=> 11
 		]];
 	}
 
@@ -38,7 +44,7 @@ class OverviewController extends Controller
 		$parse['adm_ov_data_table'] = [];
 
 		$Count = 0;
-		$Color = "lime";
+		$Color = "inherit";
 		$PrevIP = '';
 
 		if ($this->access->canReadController(self::CODE, 'admin'))
@@ -52,7 +58,7 @@ class OverviewController extends Controller
 					if ($PrevIP == $TheUser['ip'])
 						$Color = "red";
 					else
-						$Color = "lime";
+						$Color = "inherit";
 				}
 
 				$PrevIP = $TheUser['ip'];
@@ -64,7 +70,7 @@ class OverviewController extends Controller
 				$Bloc['adm_ov_data_clip'] = $Color;
 				$Bloc['adm_ov_data_adip'] = long2ip($TheUser['ip']);
 				$Bloc['adm_ov_data_ally'] = $TheUser['ally_name'];
-				$Bloc['adm_ov_data_activ'] = Helpers::pretty_time(time() - $TheUser['onlinetime']);
+				$Bloc['adm_ov_data_activ'] = Format::time(time() - $TheUser['onlinetime']);
 
 				$parse['adm_ov_data_table'][] = $Bloc;
 				$Count++;

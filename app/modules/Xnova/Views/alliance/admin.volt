@@ -40,25 +40,13 @@
 			</tr>
 			<tr>
 				<th colspan="3" class="p-a-0">
-					<div id="editor"></div>
-					<script type="text/javascript">edToolbar('text');</script>
-					<textarea name="text" id="text" rows="15" title="">{{ preg_replace('!<br.*>!iU', "\n", parse['text']) }}</textarea>
+					<text-editor text="{{ preg_replace('!<br.*>!iU', "\n", parse['text']) }}"></text-editor>
 				</th>
 			</tr>
 			<tr>
 				<th colspan="3"><input type="reset" value="Очистить"><input type="submit" value="Сохранить"></th>
 			</tr>
 		</table>
-		<div id="showpanel" style="display:none">
-			<table align="center" class="table">
-				<tr>
-					<td class="c"><b>Предварительный просмотр</b></td>
-				</tr>
-				<tr>
-					<td class="b" style="padding:3px;"><span id="showbox"></span></td>
-				</tr>
-			</table>
-		</div>
 	</form>
 	<div class="separator"></div>
 	<form action="{{ url('alliance/admin/edit/ally/') }}" method="POST">
@@ -67,12 +55,20 @@
 				<td class="c" colspan="2">Дополнительные настройки</td>
 			</tr>
 			<tr>
-				<th width="150">Домашняя страница</th>
+				<th width="200">Домашняя страница</th>
 				<th><input type="text" name="web" value="{{ parse['web'] }}" style="width:98%;" title=""></th>
 			</tr>
 			<tr>
 				<th>Логотип</th>
-				<th><input type="text" name="image" value="{{ parse['image'] }}" style="width:98%;" title=""></th>
+				<th>
+					<input type="file" name="image" value="" style="width:98%;" title="">
+					{% if parse['image'] != '' %}
+						<img src="{{ parse['image'] }}" style="max-width: 98%;max-height: 400px;">
+						<label>
+							<input type="checkbox" name="delete_image" value="Y"> Удалить
+						</label>
+					{% endif %}
+				</th>
 			</tr>
 			<tr>
 				<th>Ранг основателя</th>
@@ -82,8 +78,8 @@
 				<th>Заявки</th>
 				<th>
 					<select style="width:98%;" name="request_notallow" title="">
-						<option value="1"{{ parse['request_notallow_0'] }}>{{ _text('xnova', 'No_allow_request') }}</option>
-						<option value="0"{{ parse['request_notallow_1'] }}>{{ _text('xnova', 'Allow_request') }}</option>
+						<option value="1" {% if parse['request_allow'] == 1 %}selected{% endif %}>{{ _text('xnova', 'No_allow_request') }}</option>
+						<option value="0" {% if parse['request_allow'] == 0 %}selected{% endif %}>{{ _text('xnova', 'Allow_request') }}</option>
 					</select>
 				</th>
 			</tr>
@@ -96,12 +92,12 @@
 	<div class="separator"></div>
 	<div class="row">
 		{% if parse['Disolve_alliance'] is defined %}
-			<div class="col-xs-6">
+			<div class="col-6">
 				{{ parse['Disolve_alliance'] }}
 			</div>
 		{% endif %}
 		{% if parse['Transfer_alliance'] is defined %}
-			<div class="col-xs-6">
+			<div class="col-6">
 				{{ parse['Transfer_alliance'] }}
 			</div>
 		{% endif %}

@@ -1,0 +1,247 @@
+.tooltipster-base {
+	display: flex;
+	pointer-events: none;
+	position: absolute;
+}
+
+.tooltipster-box {
+	flex: 1 1 auto;
+}
+
+.tooltipster-content {
+	box-sizing: border-box;
+	max-height: 100%;
+	max-width: 100%;
+	overflow: auto;
+}
+
+.tooltipster-ruler {
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	visibility: hidden;
+}
+
+.tooltipster-fade {
+	opacity: 0;
+	transition-property: opacity;
+}
+.tooltipster-fade.tooltipster-show {
+	opacity: 1;
+}
+
+.tooltipster-grow {
+	transform: scale(0,0);
+	transition-property: transform;
+	-webkit-backface-visibility: hidden;
+}
+.tooltipster-grow.tooltipster-show {
+	transform: scale(1,1);
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+
+.tooltipster-swing {
+	opacity: 0;
+	transform: rotateZ(4deg);
+	transition-property: transform;
+}
+.tooltipster-swing.tooltipster-show {
+	opacity: 1;
+	transform: rotateZ(0deg);
+	transition-timing-function: cubic-bezier(0.230, 0.635, 0.495, 2.4);
+}
+
+.tooltipster-fall {
+	transition-property: top;
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+
+.tooltipster-fall.tooltipster-initial {
+	top: 0 !important;
+}
+
+.tooltipster-fall.tooltipster-dying {
+	transition-property: all;
+	top: 0 !important;
+	opacity: 0;
+}
+
+.tooltipster-slide {
+	transition-property: left;
+	transition-timing-function: cubic-bezier(0.175, 0.885, 0.320, 1.15);
+}
+.tooltipster-slide.tooltipster-initial {
+	left: -40px !important;
+}
+.tooltipster-slide.tooltipster-show {
+}
+.tooltipster-slide.tooltipster-dying {
+	transition-property: all;
+	left: 0 !important;
+	opacity: 0;
+}
+
+@keyframes tooltipster-fading {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.tooltipster-update-fade {
+	animation: tooltipster-fading 400ms;
+}
+
+@keyframes tooltipster-rotating {
+	25% {
+		transform: rotate(-2deg);
+	}
+	75% {
+		transform: rotate(2deg);
+	}
+	100% {
+		transform: rotate(0);
+	}
+}
+
+.tooltipster-update-rotate {
+	animation: tooltipster-rotating 600ms;
+}
+
+@keyframes tooltipster-scaling {
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.tooltipster-update-scale {
+	animation: tooltipster-scaling 600ms;
+}
+
+.tooltipster-sidetip {
+
+	.tooltipster-box {
+		margin: 8px;
+	}
+
+	.tooltipster-content {
+		color: white;
+		line-height: 18px;
+		padding: 6px 8px;
+		background: #252f39;
+		border-radius: 5px;
+		border: 1px solid #415683;
+		text-align: center;
+	}
+
+	.tooltipster-arrow {
+		overflow: hidden;
+		position: absolute;
+	}
+
+	&.tooltipster-bottom .tooltipster-arrow {
+		height: 9px;
+		margin-left: -10px;
+		top: 0;
+		width: 20px;
+	}
+
+	&.tooltipster-left .tooltipster-arrow {
+		height: 20px;
+		margin-top: -10px;
+		right: 0;
+		top: 0;
+		width: 10px;
+	}
+
+	&.tooltipster-right .tooltipster-arrow {
+		height: 20px;
+		margin-top: -10px;
+		left: 0;
+		top: 0;
+		width: 10px;
+	}
+
+	&.tooltipster-top .tooltipster-arrow {
+		bottom: -1px;
+		height: 10px;
+		margin-left: -10px;
+		width: 20px;
+	}
+
+	.tooltipster-arrow-background, .tooltipster-arrow-border {
+		height: 0;
+		position: absolute;
+		width: 0;
+	}
+
+	.tooltipster-arrow-background {
+		border: 10px solid transparent;
+	}
+
+	&.tooltipster-bottom .tooltipster-arrow-background {
+		border-bottom-color: #252f39;
+		left: 0;
+		top: 2px;
+	}
+
+	&.tooltipster-left .tooltipster-arrow-background {
+		border-left-color: #252f39;
+		left: -2px;
+		top: 0;
+	}
+
+	&.tooltipster-right .tooltipster-arrow-background {
+		border-right-color: #252f39;
+		left: 2px;
+		top: 0;
+	}
+
+	&.tooltipster-top .tooltipster-arrow-background {
+		border-top-color: #252f39;
+		left: 0;
+		top: -2px;
+	}
+
+	.tooltipster-arrow-border {
+		border: 10px solid transparent;
+		left: 0;
+		top: 0;
+	}
+
+	&.tooltipster-bottom .tooltipster-arrow-border {
+		border-bottom-color: #415683;
+	}
+
+	&.tooltipster-left .tooltipster-arrow-border {
+		border-left-color: #415683;
+	}
+
+	&.tooltipster-right .tooltipster-arrow-border {
+		border-right-color: #415683;
+	}
+
+	&.tooltipster-top .tooltipster-arrow-border {
+		border-top-color: #415683;
+	}
+
+	.tooltipster-arrow-uncropped {
+		position: relative;
+	}
+
+	&.tooltipster-bottom .tooltipster-arrow-uncropped {
+		top: -10px;
+	}
+
+	&.tooltipster-right .tooltipster-arrow-uncropped {
+		left: -10px;
+	}
+}

@@ -4,11 +4,12 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/sim")
@@ -55,15 +56,15 @@ class SimController extends Controller
 			}
 		}
 		
-		$res = array_merge($this->registry->reslist['fleet'], $this->registry->reslist['defense'], $this->registry->reslist['tech']);
+		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
 		
 		foreach ($res AS $id)
 		{
-			if (isset($this->planet->{$this->registry->resource[$id]}) && $this->planet->{$this->registry->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->{$this->registry->resource[$id]}, 'l' => ((isset($this->user->{'fleet_' . $id})) ? $this->user->{'fleet_' . $id} : 0)];
+			if ($this->planet->getUnitCount($id) > 0)
+				$parse['slot_0'][$id] = ['c' => $this->planet->getUnitCount($id)];
 		
-			if (isset($this->user->{$this->registry->resource[$id]}) && $this->user->{$this->registry->resource[$id]} > 0)
-				$parse['slot_0'][$id] = ['c' => $this->user->{$this->registry->resource[$id]}];
+			if ($this->user->getTechLevel($id) > 0)
+				$parse['slot_0'][$id] = ['c' => $this->user->getTechLevel($id)];
 		}
 
 		$this->view->setVar('parse', $parse);

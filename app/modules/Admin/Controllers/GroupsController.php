@@ -47,13 +47,6 @@ class GroupsController extends Controller
 
 		$this->view->setVar('groups', $groups);
 
-		$this->assets->addJs('assets/admin/global/js/datatable.js');
-		$this->assets->addJs('assets/admin/global/plugins/datatables/datatables.min.js');
-		$this->assets->addJs('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js');
-
-		$this->assets->addCss('assets/admin/global/plugins/datatables/datatables.min.css', 100);
-		$this->assets->addCss('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css', 101);
-
 		$this->tag->setTitle(Lang::getText('admin', 'page_title_index'));
 	}
 

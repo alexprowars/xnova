@@ -9,7 +9,7 @@
 				<table class="margin5">
 					<tr>
 						<td valign="top"><img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ parse['image'] }}.gif" class="info" align="top" border="0" height="120" width="120"></td>
-						<td valign="top" class="text-xs-left">{{ parse['description'] }}</td>
+						<td valign="top" class="text-left">{{ parse['description'] }}</td>
 					</tr>
 				</table>
 			</th>
@@ -60,13 +60,13 @@
 	<div class="separator"></div>
 	<table class="table">
 		<tr>
-			<td class="c text-xs-left">Скорострел</td>
+			<td class="c text-left">Скорострел</td>
 			<td class="c positive">Поражает флот</td>
 			<td class="c negative">Теряет флот</td>
 		</tr>
 		{% for fId, battle in parse['speedBattle'] %}
 			<tr>
-				<th class="text-xs-left"><a href="{{ url('info/'~fId~'/') }}">{{ _text('xnova', 'tech', fId) }}</a></th>
+				<th class="text-left"><a href="{{ url('info/'~fId~'/') }}">{{ _text('xnova', 'tech', fId) }}</a></th>
 				<th class="positive">
 					{% if battle['TO'] is defined %}
 						{{ battle['TO'] }}

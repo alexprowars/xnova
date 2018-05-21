@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -18,6 +18,7 @@ use Xnova\Controllers\Fleet\StageZero;
 use Xnova\Controllers\Fleet\Verband;
 use Xnova\Fleet;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/fleet")
@@ -50,19 +51,19 @@ class FleetController extends Controller
 		$action->show($this);
 	}
 
-	public function stageoneAction ()
+	public function oneAction ()
 	{
 		$action = new StageOne();
 		$action->show($this);
 	}
 
-	public function stagetwoAction ()
+	public function twoAction ()
 	{
 		$action = new StageTwo();
 		$action->show($this);
 	}
 
-	public function stagethreeAction ()
+	public function threeAction ()
 	{
 		$action = new StageThree();
 		$action->show($this);
@@ -89,19 +90,17 @@ class FleetController extends Controller
 	{
 		$action = new Quick();
 
-		$result = $action->show($this);
-
-		$this->view->disable();
-
-		if (!is_array($result))
+		try
 		{
-			$this->game->setRequestStatus(0);
-			$this->game->setRequestMessage($result);
+			$result = $action->show($this);
+
+			$this->flashSession->notice($result);
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->game->setRequestStatus($result[0]);
-			$this->game->setRequestMessage($result[1]);
+			$this->flashSession->error($e->getMessage());
+
+			Request::setStatus(false);
 		}
 	}
 
@@ -114,10 +113,7 @@ class FleetController extends Controller
 			'stay' 			=> $this->registry->CombatCaps[$type]['stay'],
 		];
 
-		if (isset($this->user->{'fleet_' . $type}) && isset($this->registry->CombatCaps[$type]['power_consumption']) && $this->registry->CombatCaps[$type]['power_consumption'] > 0)
-			$ship['capacity'] = round($this->registry->CombatCaps[$type]['capacity'] * (1 + $this->user->{'fleet_' . $type} * ($this->registry->CombatCaps[$type]['power_consumption'] / 100)));
-		else
-			$ship['capacity'] = $this->registry->CombatCaps[$type]['capacity'];
+		$ship['capacity'] = $this->registry->CombatCaps[$type]['capacity'];
 
 		return $ship;
 	}

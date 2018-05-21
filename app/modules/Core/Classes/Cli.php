@@ -17,13 +17,18 @@ include_once(ROOT_PATH."/app/functions.php");
 define('VALUE_TRUE', 'Y');
 define('VALUE_FALSE', 'N');
 
+/**
+ * Class Cli
+ * @property \stdClass|\Phalcon\Config _config
+ */
 class Cli extends Console
 {
 	use Initializations;
 
 	protected $_loaders =
 	[
-		'cache'
+		'cache',
+		'url'
 	];
 	private $_paths = [];
 
@@ -42,7 +47,7 @@ class Cli extends Console
 		];
 
 		$di->set('registry', $registry);
-		$di->setShared('config', $this->_config);
+		$di->set('config', $this->_config, true);
 
 		parent::__construct();
 
@@ -66,8 +71,8 @@ class Cli extends Console
 		$this->setEventsManager($eventsManager);
 
 		$namespaces = [];
-		$namespaces['Friday\Core'] = ROOT_PATH.$this->_config->application->baseDir.'modules/Core/Classes';
-		$namespaces['Friday\Core\Models'] = ROOT_PATH.$this->_config->application->baseDir.'modules/Core/Models';
+		$namespaces[__NAMESPACE__] = dirname(__DIR__).'/Classes';
+		$namespaces[__NAMESPACE__.'\Models'] = dirname(__DIR__).'/Models';
 
 		$loader = new Loader();
 
@@ -120,7 +125,7 @@ class Cli extends Console
 
 	/**
 	 * @param $di DiInterface
-	 * @return Loader
+	 * @return \Phalcon\Application
 	 */
 	protected function initModules ($di)
 	{
@@ -135,14 +140,16 @@ class Cli extends Console
 				if ($module['active'] != VALUE_TRUE)
 					continue;
 
+				$namespace = ($module['namespace'] != '' ? $module['namespace'] : ucfirst($module['code']));
+
 				$modules[mb_strtolower($module['code'])] = [
-					'className'	=> ($module['system'] == VALUE_TRUE ? 'Friday\\' : '').ucfirst($module['code']).'\Module',
+					'className'	=> $namespace.'\Module',
 					'path' 		=> $registry->directories->modules.ucfirst($module['code']).'/Module.php'
 				];
 			}
 		}
 
-		parent::registerModules($modules);
+		return parent::registerModules($modules);
 	}
 
 	public function getOutput()

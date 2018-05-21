@@ -2,6 +2,7 @@
 
 namespace Friday\Core\Models;
 
+use Phalcon\Di;
 use Phalcon\Mvc\Model;
 use Phalcon\Security\Random;
 
@@ -48,7 +49,9 @@ class Session extends Model
 
 	public static function start ($type, $id, $lifetime = 3600)
 	{
-		if (strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
+		$event = Di::getDefault()->getShared('eventsManager')->fire('core:beforeStartSession', null, $id);
+
+		if ($event !== null && is_bool($event) && $event === false)
 			return false;
 
 		$session = new self;

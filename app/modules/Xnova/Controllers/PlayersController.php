@@ -4,14 +4,17 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Files;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Helpers;
+use Xnova\Format;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Request;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/players")
@@ -45,8 +48,15 @@ class PlayersController extends Controller
 		
 		if ($daten = $PlayerCard->fetch())
 		{
-			if ($daten['image'] != '')
-				$parse['avatar'] = "assets/avatars/".$daten['image'];
+			$parse['avatar'] = 'assets/images/no_photo.gif';
+
+			if ($daten['image'] > 0)
+			{
+				$file = Files::getById($daten['image']);
+
+				if ($file)
+					$parse['avatar'] = $file['src'];
+			}
 			elseif ($daten['avatar'] != 0)
 			{
 				if ($daten['avatar'] != 99)
@@ -54,10 +64,8 @@ class PlayersController extends Controller
 				else
 					$parse['avatar'] = "assets/avatars/upload_" . $daten['id'] . ".jpg";
 			}
-			else
-				$parse['avatar'] = 'assets/images/no_photo.gif';
 
-			$parse['avatar'] = $this->url->getBaseUri().$parse['avatar'];
+			$parse['avatar'] = $this->url->getStatic($parse['avatar']);
 
 			$gesamtkaempfe = $daten['raids_win'] + $daten['raids_lose'];
 
@@ -80,31 +88,31 @@ class PlayersController extends Controller
 				$parse['userplanet'] = $planet->name;
 		
 			$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $daten['id'] . "';")->fetch();
-			$parse['tech_rank'] = Helpers::pretty_number($points['tech_rank']);
-			$parse['tech_points'] = Helpers::pretty_number($points['tech_points']);
-			$parse['build_rank'] = Helpers::pretty_number($points['build_rank']);
-			$parse['build_points'] = Helpers::pretty_number($points['build_points']);
-			$parse['fleet_rank'] = Helpers::pretty_number($points['fleet_rank']);
-			$parse['fleet_points'] = Helpers::pretty_number($points['fleet_points']);
-			$parse['defs_rank'] = Helpers::pretty_number($points['defs_rank']);
-			$parse['defs_points'] = Helpers::pretty_number($points['defs_points']);
-			$parse['total_rank'] = Helpers::pretty_number($points['total_rank']);
-			$parse['total_points'] = Helpers::pretty_number($points['total_points']);
+			$parse['tech_rank'] = Format::number($points['tech_rank']);
+			$parse['tech_points'] = Format::number($points['tech_points']);
+			$parse['build_rank'] = Format::number($points['build_rank']);
+			$parse['build_points'] = Format::number($points['build_points']);
+			$parse['fleet_rank'] = Format::number($points['fleet_rank']);
+			$parse['fleet_points'] = Format::number($points['fleet_points']);
+			$parse['defs_rank'] = Format::number($points['defs_rank']);
+			$parse['defs_points'] = Format::number($points['defs_points']);
+			$parse['total_rank'] = Format::number($points['total_rank']);
+			$parse['total_points'] = Format::number($points['total_points']);
 		
 			if ($ownid != 0)
-				$parse['player_buddy'] = "<a href=\"".$this->url->getBaseUri()."buddy/new/" . $playerid . "/\" title=\"Добавить в друзья\">Добавить в друзья</a>";
+				$parse['player_buddy'] = '<a href="'.$this->url->get('buddy/new/' . $playerid . '/').'" title="Добавить в друзья">Добавить в друзья</a>';
 			else
-				$parse['player_buddy'] = "";
+				$parse['player_buddy'] = '';
 		
 			if ($ownid != 0)
-				$parse['player_mes'] = "<a href=\"".$this->url->getBaseUri()."messages/write/" . $playerid . "/\">Написать сообщение</a>";
+				$parse['player_mes'] = '<a href="'.$this->url->get('messages/write/' . $playerid . '/').'">Написать сообщение</a>';
 			else
-				$parse['player_mes'] = "";
+				$parse['player_mes'] = '';
 		
 			if ($daten['sex'] == 2)
-				$parse['sex'] = "Женский";
+				$parse['sex'] = 'Женский';
 			else
-				$parse['sex'] = "Мужской";
+				$parse['sex'] = 'Мужской';
 
 			$parse['ingame'] = ($ownid != 0) ? true : false;
 			$parse['id'] = $daten['id'];
@@ -115,15 +123,15 @@ class PlayersController extends Controller
 			$parse['planet'] = $daten['planet'];
 			$parse['ally_id'] = $daten['ally_id'];
 			$parse['ally_name'] = $daten['ally_name'];
-			$parse['about'] = $daten['about'];
-			$parse['wons'] = Helpers::pretty_number($daten['raids_win']);
-			$parse['loos'] = Helpers::pretty_number($daten['raids_lose']);
+			$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($daten['about']));
+			$parse['wons'] = Format::number($daten['raids_win']);
+			$parse['loos'] = Format::number($daten['raids_lose']);
 			$parse['siegprozent'] = round($siegprozent, 2);
 			$parse['loosprozent'] = round($loosprozent, 2);
 			$parse['total'] = $daten['raids'];
 			$parse['totalprozent'] = 100;
-			$parse['m'] = $this->user->getRankId($daten['lvl_minier']);
-			$parse['f'] = $this->user->getRankId($daten['lvl_raid']);
+			$parse['m'] = User::getRankId($daten['lvl_minier']);
+			$parse['f'] = User::getRankId($daten['lvl_raid']);
 		}
 		else
 			throw new ErrorException('Параметр задан неверно');
@@ -152,9 +160,32 @@ class PlayersController extends Controller
 
 		$parse = [];
 		$parse['name'] = $player['username'];
-		$parse['data'] = $this->db->extractResult($this->db->query("SELECT * FROM game_log_stats WHERE id = ".$playerid." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC"));
+		$parse['points'] = [];
 
-		$this->view->setVar('parse', $parse);
+		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$playerid." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC");
+
+		while ($item = $items->fetch())
+		{
+			$parse['points'][] = [
+				'date' => (int) $item['time'],
+				'rank' => [
+					'tech' => (int) $item['tech_rank'],
+					'build' => (int) $item['build_rank'],
+					'defs' => (int) $item['defs_rank'],
+					'fleet' => (int) $item['fleet_rank'],
+					'total' => (int) $item['total_rank'],
+				],
+				'point' => [
+					'tech' => (int) $item['tech_points'],
+					'build' => (int) $item['build_points'],
+					'defs' => (int) $item['defs_points'],
+					'fleet' => (int) $item['fleet_points'],
+					'total' => (int) $item['total_points'],
+				]
+			];
+		}
+
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Статистика игрока');
 		$this->showTopPanel(false);

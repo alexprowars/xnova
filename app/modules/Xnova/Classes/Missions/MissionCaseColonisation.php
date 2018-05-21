@@ -4,24 +4,26 @@ namespace Xnova\Missions;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
+use Xnova\User;
 
 class MissionCaseColonisation extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$MaxColo = $this->db->query("SELECT colonisation_tech FROM game_users WHERE id = ".$this->_fleet->owner."")->fetch();
-		$iMaxColo = $MaxColo['colonisation_tech'] + 1;
+		$owner = UserModel::findFirst($this->_fleet->owner);
 
-		if ($iMaxColo > $this->config->game->get('maxPlanets', 9))
-			$iMaxColo = $this->config->game->get('maxPlanets', 9);
+		$maxPlanets = $owner->getTechLevel('colonisation') + 1;
+
+		if ($maxPlanets > $this->config->game->get('maxPlanets', 9))
+			$maxPlanets = $this->config->game->get('maxPlanets', 9);
 
 		$galaxy = new Galaxy();
 
@@ -31,9 +33,9 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 
 		if ($galaxy->isPositionFree($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet))
 		{
-			if ($iPlanetCount >= $iMaxColo)
+			if ($iPlanetCount >= $maxPlanets)
 			{
-				$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_colo_maxcolo') . $iMaxColo . _getText('sys_colo_planet');
+				$TheMessage = _getText('sys_colo_arrival') . $TargetAdress . _getText('sys_colo_maxcolo') . $maxPlanets . _getText('sys_colo_planet');
 
 				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_colo_mess_from'), $TheMessage);
 
@@ -49,19 +51,19 @@ class MissionCaseColonisation extends FleetEngine implements Mission
 
 					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, _getText('sys_colo_mess_from'), $TheMessage);
 
-					$NewFleet = "";
+					$newFleet = [];
 
 					$fleetData = $this->_fleet->getShips();
 
 					foreach ($fleetData as $shipId => $shipArr)
 					{
-						if ($shipId == 208 && $shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . ($shipArr['cnt'] - 1) . "!0;";
-						elseif ($shipArr['cnt'] > 0)
-							$NewFleet .= $shipId . "," . $shipArr['cnt'] . "!;";
+						if ($shipId == 208 && $shipArr['count'] > 0)
+							$shipArr['count']--;
+
+						$newFleet[] = $shipArr;
 					}
 
-					$this->_fleet->fleet_array = $NewFleet;
+					$this->_fleet->fleet_array = $newFleet;
 
 					$this->RestoreFleetToPlanet(false);
 					$this->KillFleet();

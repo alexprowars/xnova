@@ -1,18 +1,6 @@
 <form action="{{ url('options/change/') }}" method="post">
-	<div id="tabs" class="ui-tabs ui-widget ui-widget-content">
-		<div class="head">
-			<ul class="ui-tabs-nav ui-widget-header">
-				<li><a href="#tabs-0">Информация</a></li>
-				<li><a href="#tabs-1">Интерфейс</a></li>
-				<li><a href="#tabs-2">Описание</a></li>
-				<li><a href="#tabs-3">Отпуск / Удаление</a></li>
-				<li><a href="#tabs-4">Личное дело</a></li>
-				{% if config.view.get('socialIframeView', 0) == 0 %}
-					<li><a href="#tabs-5">Точки входа</a></li>
-				{% endif %}
-			</ul>
-		</div>
-		<div id="tabs-0" class="ui-tabs-panel ui-widget-content">
+	<tabs>
+		<tab name="Информация">
 			<table class="table">
 				<tr>
 					<th width="50%">
@@ -21,22 +9,26 @@
 						<span class="negative">Можно менять не чаще раза в сутки</span>
 					</th>
 					<th>
-						{% if parse['opt_usern_datatime'] < (time() - 86400) %}<input name="db_character" size="20" value="{% endif %}{{ parse['opt_usern_data'] }}{% if parse['opt_usern_datatime'] < (time() - 86400) %}" type="text" title="">{% endif %}
+						{% if parse['opt_usern_datatime'] < (time() - 86400) %}
+							<input name="username" size="20" value="{{ parse['opt_usern_data'] }}" type="text" title="">
+						{% else %}
+							{{ parse['opt_usern_data'] }}
+						{% endif %}
 					</th>
 				</tr>
 				{% if config.view.get('socialIframeView', 0) == 0 %}
 					{% if is_email(parse['opt_mail_data']) %}
 						<tr>
 							<th>Старый пароль</th>
-							<th><input name="db_password" size="20" value="" type="password" title=""></th>
+							<th><input name="password" size="20" value="" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (мин. 8 Знаков)</th>
-							<th><input name="newpass1" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (повтор)</th>
-							<th><input name="newpass2" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password_confirm" size="20" maxlength="40" type="password" title=""></th>
 						</tr>
 					{% endif %}
 					<tr>
@@ -61,35 +53,36 @@
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
 				</tr>
 			</table>
-		</div>
-		<div id="tabs-1" class="ui-tabs-panel ui-widget-content"  style="display: none">
+		</tab>
+		<tab name="Интерфейс">
 			{% if config.view.get('socialIframeView', 0) != 0 %}
 				<div style="display: none">
-					<input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title="">
+					<input name="chatbox"{{ parse['opt_chatbox_data'] }} type="checkbox" title="">
 					<input name="planetlistselect"{{ parse['opt_planetlistselect_data'] }} type="checkbox" title="">
-					<input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title="">
-					<input name="ajaxnav"{{ parse['opt_ajax_data'] }} type="checkbox" title="">
 				</div>
 			{% endif %}
 			<table class="table">
 				<tr>
-					<th>Упорядочить планеты по:</th>
+					<th rowspan="2" width="50%">Упорядочить планеты по:</th>
 					<th>
 						<select name="settings_sort" style='width:170px' title="">
-							{{ parse['opt_lst_ord_data'] }}
+							<option value="0" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord0') }}</option>
+							<option value="1" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 1 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord1') }}</option>
+							<option value="2" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 2 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_ord2') }}</option>
+							<option value="3" {% if parse['settings']['planet_sort'] is defined and parse['settings']['planet_sort'] == 3 %}selected{% endif %}>Типу</option>
 						</select>
 					</th>
 				</tr>
 				<tr>
-					<th>Упорядочить по:</th>
 					<th>
 						<select name="settings_order" style='width:170px' title="">
-							{{ parse['opt_lst_cla_data'] }}
+							<option value="0" {% if parse['settings']['planet_sort_order'] is defined and parse['settings']['planet_sort_order'] == 0 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_cla0') }}</option>
+							<option value="1" {% if parse['settings']['planet_sort_order'] is defined and parse['settings']['planet_sort_order'] == 1 %}selected{% endif %}>{{ _text('xnova', 'opt_lst_cla1') }}</option>
 						</select>
 					</th>
 				</tr>
 				<tr>
-					<th>Кол-во по умолчанию отправляемых<br> шпионских зондов в меню "Космос"</th>
+					<th>Кол-во отправляемых шпионских зондов в меню "Космос"</th>
 					<th><input name="spy" value="{{ parse['spy'] }}" type="text" title=""></th>
 				</tr>
 				<tr>
@@ -106,26 +99,12 @@
 				</tr>
 				{% if config.view.get('socialIframeView', 0) == 0 %}
 					<tr>
-						<th>Включить просмотр игровой активности</th>
-						<th><input name="gameactivity"{{ parse['opt_gameactivity_data'] }} type="checkbox" title=""></th>
-					</tr>
-					<tr>
-						<th>Выпадающий список планет</th>
-						<th><input name="planetlistselect"{{ parse['opt_planetlistselect_data'] }} type="checkbox" title=""></th>
-					</tr>
-					<tr>
-						<th>Повышенная безопасность входа</th>
-						<th><input name="security"{{ parse['opt_sec_data'] }} type="checkbox" title=""></th>
-					</tr>
-					<tr>
-						<th>
-							Включить ускорение интерфейса игры
-						</th>
-						<th><input name="ajaxnav"{{ parse['opt_ajax_data'] }} type="checkbox" title=""></th>
+						<th>Показывать панель чата</th>
+						<th><input name="chatbox"{{ parse['opt_chatbox_data'] }} type="checkbox" title=""></th>
 					</tr>
 				{% endif %}
 				<tr>
-					<th>Цвет чата</th>
+					<th>Цвет ваших сообщений в чате</th>
 					<th>
 						<select name='color' style='width:170px' title="">
 							{% for id, color in _text('xnova', 'colors') if color[1] != '' %}
@@ -166,43 +145,42 @@
 				</tr>
 				<tr>
 					<th>Аватар</th>
-					<th>{{ parse['avatar'] }} <a href="{{ url('avatar/') }}" class="button">Выбрать аватар</a></th>
-				</tr>
-				<tr>
-					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
-				</tr>
-			</table>
-		</div>
-		<div id="tabs-2" class="ui-tabs-panel ui-widget-content"  style="display: none">
-			<table class="table">
-				<tr>
-					<th colspan="2" class="p-a-0">
-						<div id="editor"></div>
-						<textarea name="text" id="text" cols="" rows="10" title="">{{ replace('!<br.*>!iU', "\n", parse['about']) }}</textarea>
+					<th>
+						{% if parse['avatar'] != '' %}
+							<img src="{{ parse['avatar'] }}" height="100"><br>
+							<label>
+								<input type="checkbox" name="image_delete" value="Y">
+								Удалить
+							</label>
+							<br><br>
+						{% endif %}
 
-						<div id="showpanel" style="display:none">
-							<table class="table">
-								<tr>
-									<td class="c"><b>Предварительный просмотр</b></td>
-								</tr>
-								<tr>
-									<td class="b"><span id="showbox"></span></td>
-								</tr>
-							</table>
-						</div>
-						<script type="text/javascript">edToolbar('text');</script>
+						<input type="file" name="image" value=""><br>
+						<small>Картинки уменьшаются до размера в 300x300 пикселей</small>
 					</th>
 				</tr>
 				<tr>
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
 				</tr>
 			</table>
-		</div>
-		<div id="tabs-3" class="ui-tabs-panel ui-widget-content"  style="display: none">
+		</tab>
+		<tab name="Описание">
+			<table class="table">
+				<tr>
+					<th colspan="2" class="p-a-0">
+						<text-editor text="{{ replace('!<br.*>!iU', "\n", parse['about']) }}"></text-editor>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
+				</tr>
+			</table>
+		</tab>
+		<tab name="Отпуск / Удаление">
 			<table class="table">
 				<tr>
 					<th width="50%"><a title="Режим отпуска нужен для защиты планет во время вашего отсутствия">Включить режим отпуска</a></th>
-					<th><input name="urlaubs_modus"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
+					<th><input name="vacation"{{ parse['opt_modev_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -211,7 +189,7 @@
 				</tr>
 				<tr>
 					<th><a title="Профиль будет удалён через 7 дней">Удалить профиль</a></th>
-					<th><input name="db_deaktjava"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
+					<th><input name="delete"{{ parse['opt_delac_data'] }} type="checkbox" title=""></th>
 				</tr>
 				<tr>
 					<th colspan="2">
@@ -222,8 +200,8 @@
 					<th colspan="2"><input value="Сохранить изменения" type="submit"></th>
 				</tr>
 			</table>
-		</div>
-		<div id="tabs-4" class="ui-tabs-panel ui-widget-content"  style="display: none">
+		</tab>
+		<tab name="Личное дело">
 			<table class="table">
 				<tr>
 					<td class="c">Добавить запись в личное дело</td>
@@ -235,9 +213,9 @@
 					<th><input value="Записать" type="submit"></th>
 				</tr>
 			</table>
-		</div>
+		</tab>
 		{% if config.view.get('socialIframeView', 0) == 0 %}
-			<div id="tabs-5" class="ui-tabs-panel ui-widget-content"  style="display: none">
+			<tab name="Точки входа">
 				{% if parse['auth']|length %}
 					<table class="table">
 						<tr>
@@ -267,22 +245,16 @@
 						</th>
 					</tr>
 				</table>
-			</div>
+			</tab>
 		{% endif %}
-	</div>
+	</tabs>
 </form>
-<script type="text/javascript">
-	$(document).ready(function()
-	{
-		$( "#tabs" ).tabs();
-	});
-</script>
 
 {% if parse['bot_auth'] is type('array') %}
 	<br><br>
 	<div class="table">
 		<div class="row">
-			<div class="col-xs-12 th">
+			<div class="col-12 th">
 				Ваш код для привязки Telegram-бота:<br><br><b>{{ parse['bot_auth']['code'] }}</b>
 			</div>
 		</div>

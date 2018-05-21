@@ -1,0 +1,24 @@
+.set_sim input.number {
+	width: 50px;
+	text-align: right;
+	padding: 2px;
+}
+
+.set_sim input.lvl {
+	width: 25px;
+	padding: 2px;
+	text-align: right;
+}
+
+.set_sim .table-responsive .table {
+	width: auto;
+}
+
+.set_sim .table-responsive .table td, .set_sim .table-responsive .table th {
+	white-space: nowrap;
+}
+
+.set_sim main {
+	min-width: 1125px;
+	width: auto !important;
+}

@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -16,7 +16,7 @@ use Xnova\Exceptions\MessageException;
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
- * @Private
+ * @Public
  */
 class LogoutController extends Controller
 {
@@ -27,7 +27,8 @@ class LogoutController extends Controller
 	
 	public function indexAction ()
 	{
-		$this->auth->remove();
+		if ($this->auth->isAuthorized())
+			$this->auth->remove();
 
 		throw new MessageException('Вы вышли из игры', 'Сессия закрыта', "/", 3, false);
 	}

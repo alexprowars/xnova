@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -19,6 +19,7 @@ use Xnova\Battle\Models\ShipType;
 use Xnova\CombatReport;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/xnsim")
@@ -91,9 +92,7 @@ class XnsimController extends Controller
 			$result[2] = $this->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
 
 			for ($_i = 0; $_i <= $report->getLastRoundNumber(); $_i++)
-			{
 				$result[0]['rw'][] = $this->convertRoundToArray($report->getRound($_i));
-			}
 
 			if ($report->attackerHasWin())
 				$result[0]['won'] = 1;
@@ -119,13 +118,9 @@ class XnsimController extends Controller
 			{
 				foreach ($_player as $_idFleet => $_fleet)
 				{
-					/**
-					 * @var ShipType $_ship
-					 */
+					/** @var ShipType $_ship */
 					foreach ($_fleet as $_shipID => $_ship)
-					{
 						$result[6][$_idFleet][$_shipID] = $_ship->getCount();
-					}
 				}
 			}
 
@@ -154,8 +149,7 @@ class XnsimController extends Controller
 
 			if ($check == 0)
 			{
-				$this->db->insertAsDict('game_log_sim',
-				[
+				$this->db->insertAsDict('game_log_sim', [
 					'sid' => $sid,
 					'time' => time(),
 					'data' => json_encode($result)
@@ -181,8 +175,7 @@ class XnsimController extends Controller
 			$result[$_player->getId()] = [
 				'username' => $_player->getName(),
 				'fleet' => [$_player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
-				'tech' =>
-				[
+				'tech' => [
 					'military_tech' => isset($this->usersInfo[$_player->getId()][109]) ? $this->usersInfo[$_player->getId()][109] : 0,
 					'shield_tech' 	=> isset($this->usersInfo[$_player->getId()][110]) ? $this->usersInfo[$_player->getId()][110] : 0,
 					'defence_tech' 	=> isset($this->usersInfo[$_player->getId()][111]) ? $this->usersInfo[$_player->getId()][111] : 0,
@@ -268,17 +261,31 @@ class XnsimController extends Controller
 				$res = [];
 				$fleets = [];
 
-				$fleetData = $model->getShips($r[$i]);
+				$rFleet = [];
+
+				$fleetData = explode(';', $r[$i]);
+
+				foreach ($fleetData as $data)
+				{
+					$f = explode(',', $data);
+
+					if (isset($f[1]) && $f[1] > 0)
+					{
+						$rFleet[] = [
+							'id' => $f[0],
+							'count' => $f[1]
+						];
+					}
+				}
+
+				$fleetData = $model->getShips($rFleet);
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
 					if ($shipId > 200)
-						$fleets[$shipId] = [$shipArr['cnt'], $shipArr['lvl']];
+						$fleets[$shipId] = [$shipArr['count'], 0];
 
-					$res[$shipId] = $shipArr['cnt'];
-
-					if ($shipArr['lvl'] > 0)
-						$res[($shipId > 400 ? ($shipId - 50) : ($shipId + 100))] = $shipArr['lvl'];
+					$res[$shipId] = $shipArr['count'];
 				}
 
 				$fleetId = $i;
@@ -313,8 +320,8 @@ class XnsimController extends Controller
 
 	private function getShipType($id, $count, $res)
 	{
-		$attDef 	= ($count[1] * ($this->registry->CombatCaps[$id]['power_armour'] / 100)) + (isset($res[111]) ? $res[111] : 0) * 0.05;
-		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + ($count[1] * ($this->registry->CombatCaps[$id]['power_up'] / 100));
+		$attDef 	= $count[1] + (isset($res[111]) ? $res[111] : 0) * 0.05;
+		$attTech 	= (isset($res[109]) ? $res[109] : 0) * 0.05 + $count[1];
 
 		if ($this->registry->CombatCaps[$id]['type_gun'] == 1)
 			$attTech += (isset($res[120]) ? $res[120] : 0) * 0.05;
@@ -323,9 +330,11 @@ class XnsimController extends Controller
 		elseif ($this->registry->CombatCaps[$id]['type_gun'] == 3)
 			$attTech += (isset($res[122]) ? $res[122] : 0) * 0.05;
 
-		$cost = [$this->registry->pricelist[$id]['metal'], $this->registry->pricelist[$id]['crystal']];
+		$price = Vars::getItemPrice($id);
 
-		if (in_array($id, $this->registry->reslist['fleet']))
+		$cost = [$price['metal'], $price['crystal']];
+
+		if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET)
 			return new Ship($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);
 
 		return new Defense($id, $count[0], $this->registry->CombatCaps[$id]['sd'], $this->registry->CombatCaps[$id]['shield'], $cost, $this->registry->CombatCaps[$id]['attack'], $attTech, ((isset($res[110]) ? $res[110] : 0) * 0.05), $attDef);

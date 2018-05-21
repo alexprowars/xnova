@@ -98,6 +98,7 @@ class BattleReport
 	 * @param int $att (BATTLE_WIN ,BATTLE_LOSE, BATTLE_DRAW)
 	 * @param int $def (BATTLE_WIN ,BATTLE_LOSE, BATTLE_DRAW)
 	 * @return void
+	 * @throws Exception
 	 */
 	public function setBattleResult($att, $def)
 	{
@@ -105,22 +106,22 @@ class BattleReport
 		$this->getRound('END')->getAfterBattleDefenders()->battleResult = $def;
 	}
 
-
 	/**
 	 * BattleReport::attackerHasWin()
 	 * Check if attackers won the battle
 	 * @return boolean
+	 * @throws Exception
 	 */
 	public function attackerHasWin()
 	{
 		return $this->getRound('END')->getAfterBattleAttackers()->battleResult === BATTLE_WIN;
 	}
 
-
 	/**
 	 * BattleReport::defenderHasWin()
 	 * Check if defenders won the battle
 	 * @return boolean
+	 * @throws Exception
 	 */
 	public function defenderHasWin()
 	{
@@ -131,6 +132,7 @@ class BattleReport
 	 * BattleReport::isAdraw()
 	 * Check if the battle ended with a draw
 	 * @return boolean
+	 * @throws Exception
 	 */
 	public function isAdraw()
 	{

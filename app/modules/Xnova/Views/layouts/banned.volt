@@ -13,25 +13,25 @@
 
 		{% for u in bannedList %}
 			<tr>
-				<td class="b text-xs-center"><a href="{{ url('players/'~u['who']~'/') }}">{{ u['user_1'] }}</a></td>
-				<td class="b text-xs-center">
+				<td class="b text-center"><a href="{{ url('players/'~u['who']~'/') }}">{{ u['user_1'] }}</a></td>
+				<td class="b text-center">
 					<small>{{ game.datezone("d/m/Y H:m:s", u['time']) }}</small>
 				</td>
-				<td class="b text-xs-center">
+				<td class="b text-center">
 					<small>{{ game.datezone("d/m/Y H:m:s", u['longer']) }}</small>
 				</td>
-				<td class="b text-xs-center">{{ u['theme'] }}</td>
-				<td class="b text-xs-center"><a href="{{ url('players/'~u['author']~'/') }}">{{ u['user_2'] }}</a></td>
+				<td class="b text-center">{{ u['theme'] }}</td>
+				<td class="b text-center"><a href="{{ url('players/'~u['author']~'/') }}">{{ u['user_2'] }}</a></td>
 			</tr>
 		{% endfor %}
 
 		<tr>
-			<td class="b text-xs-center" colspan="5">Всего {{ bannedList|length }} аккаунтов заблокировано</td>
+			<td class="b text-center" colspan="5">Всего {{ bannedList|length }} аккаунтов заблокировано</td>
 		</tr>
 
 	{% else %}
 		<tr>
-			<th class="b text-xs-center" colspan="5">Нет заблокированных игроков</th>
+			<th class="b text-center" colspan="5">Нет заблокированных игроков</th>
 		</tr>
 	{% endif %}
 </table>

@@ -6,7 +6,7 @@ use Phalcon\Di;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -66,7 +66,7 @@ class Helpers
 		return $st;
 	}
 
-	static function CheckString ($str, $cut = false)
+	static function checkString ($str, $cut = false)
 	{
 		if ($cut)
 			$str = strip_tags($str);
@@ -99,16 +99,6 @@ class Helpers
 	    }
 	}
 
-	static function formatBytes ($size)
-	{
-	     $units = [' B', ' KiB', ' MiB', ' GiB', ' TiB'];
-
-	     for ($i = 0; $size >= 1024 && $i < 4; $i++)
-			 $size /= 1024;
-
-	     return round($size, 2).$units[$i];
-	}
-
 	static function colorNumber ($n)
 	{
 		if ($n > 0)
@@ -119,66 +109,9 @@ class Helpers
 			return $n;
 	}
 
-	static function pretty_number ($n)
-	{
-		if ($n > 1000000000)
-			return number_format(floor($n / 1000000), 0, ",", ".").'kk';
-
-		return number_format($n, 0, ",", ".");
-	}
-
-	static function pretty_phone ($phone)
-	{
-		$phone = self::phoneFormat($phone);
-
-		if ($phone != '')
-		{
-			$phone = preg_replace("/([0-9a-zA-Z]{1})([0-9a-zA-Z]{3})([0-9a-zA-Z]{3})([0-9a-zA-Z]{2})([0-9a-zA-Z]{2})/", "8 ($2) $3-$4-$5", $phone);
-		}
-
-		return $phone;
-	}
-
-	static function pretty_time ($seconds, $separator = '')
-	{
-		$day    = floor($seconds / (24 * 3600));
-		$hh     = floor($seconds / 3600 % 24);
-		$mm     = floor($seconds / 60 % 60);
-		$ss     = floor($seconds / 1 % 60);
-
-		$time = '';
-
-		if ($day != 0)
-			$time .= $day.(($separator != '') ? $separator : ' д. ');
-
-		if ($hh > 0)
-			$time .= $hh.(($separator != '') ? $separator : ' ч. ');
-
-		if ($mm > 0)
-			$time .= $mm.(($separator != '') ? $separator : ' мин. ');
-
-		if ($ss != 0)
-			$time .= $ss.(($separator != '') ? '' : ' с. ');
-
-		if (!$time)
-			$time = '-';
-
-		return $time;
-	}
-
 	static function is_email($email)
 	{
 		return (preg_match('#^[^\\x00-\\x1f@]+@[^\\x00-\\x1f@]{2,}\.[a-z]{2,}$#iu', $email) != 0);
-	}
-
-	static function FormatText ($text)
-	{
-		$text = htmlspecialchars(str_replace("'", '&#39;', $text));
-		$text = addslashes($text);
-		$text = trim ( nl2br ( strip_tags ( $text, '<br>' ) ) );
-		$text = str_replace(["\r\n", "\n", "\r"], '', $text);
-
-		return $text;
 	}
 
 	static function cutString($string, $maxlen)
@@ -228,9 +161,9 @@ class Helpers
 					$end = 0;
 
 					if ($i == $page)
-						$pages .= '<div class="page-item active"><a href="' . $link . '&p=' . $i . '" class="page-link">' . $i . '</a></div>';
+						$pages .= '<div class="page-item active"><a href="' . $link . (strpos($link, '?') === false ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
 					else
-						$pages .= '<div class="page-item"><a href="' . $link . '&p=' . $i . '" class="page-link">' . $i . '</a></div>';
+						$pages .= '<div class="page-item"><a href="' . $link . (strpos($link, '?') === false ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
 				}
 				else
 				{
@@ -251,21 +184,16 @@ class Helpers
 
 	static function BuildPlanetAdressLink ($CurrentPlanet)
 	{
-		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+		$uri = Di::getDefault()->getShared('url')->get('galaxy/'.$CurrentPlanet['galaxy'].'/'.$CurrentPlanet['system'].'/');
 
-		return "<a href=\"".$uri."galaxy/".$CurrentPlanet['galaxy']."/".$CurrentPlanet['system']."/\">[" . $CurrentPlanet['galaxy'] . ":" . $CurrentPlanet['system'] . ":" . $CurrentPlanet['planet'] . "]</a>";
+		return '<a href="'.$uri.'">[' . $CurrentPlanet['galaxy'] . ':' . $CurrentPlanet['system'] . ':' . $CurrentPlanet['planet'] . ']</a>';
 	}
 
 	static function BuildHostileFleetPlayerLink ($FleetRow)
 	{
-		$uri = Di::getDefault()->getShared('url')->getBaseUri();
+		$uri = Di::getDefault()->getShared('url')->get('messages/write/'.$FleetRow->owner.'/');
 
-		return $FleetRow->username . " <a href=\"".$uri."messages/write/" . $FleetRow->owner . "/\" title=\"" . _getText('ov_message') . "\"><span class='sprite skin_m'></span></a>";
-	}
-
-	static function InsertJavaScriptChronoApplet ($Type, $Ref, $Value)
-	{
-		return "<script>FlotenTime('bxx" . $Type . $Ref . "', " . $Value . ");</script>";
+		return $FleetRow->username.' <a href="'.$uri.'" title="'._getText('ov_message').'"><span class=\'sprite skin_m\'></span></a>';
 	}
 
 	public static function phoneFormat ($phone)

@@ -4,26 +4,23 @@ namespace Xnova;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Di;
+use Xnova\Models;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 
 class Construction
 {
-	/**
-	 * @var Models\User
-	 */
+	/** @var UserModel */
 	private $user;
-	/**
-	 * @var Models\Planet
-	 */
+	/** @var Models\Planet */
 	private $planet;
-	public $mode = '';
 
-	public function __construct (User $user, Planet $planet)
+	public function __construct (UserModel $user, Planet $planet)
 	{
 		$this->user = $user;
 		$this->planet = $planet;
@@ -33,15 +30,12 @@ class Construction
 	{
 		$parse = [];
 
-		$request 	= $this->user->getDI()->getShared('request');
-		$storage 	= $this->user->getDI()->getShared('registry');
-		$config 	= $this->user->getDI()->getShared('config');
-		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
+		$request 	= Di::getDefault()->getShared('request');
+		$storage 	= Di::getDefault()->getShared('registry');
+		$config 	= Di::getDefault()->getShared('config');
 
 		if ($this->planet->id_ally > 0 && $this->planet->id_ally == $this->user->ally_id)
 			$storage->reslist['allowed'][5] = [14, 21, 34, 44];
-
-		$this->planet->setNextBuildingQueue();
 
 		$Queue = $this->ShowBuildingQueue();
 
@@ -53,13 +47,11 @@ class Construction
 		{
 			$Command 	= $request->getQuery('cmd', null, '');
 			$Element 	= $request->getQuery('building', 'int', 0);
-			$ListID 	= $request->getQuery('listid', 'int', 0);
+			$ListID 	= (int) $request->getQuery('listid', 'int', 0);
 
-			if (in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
+			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{
-				$queueManager = new Queue($this->planet->queue);
-				$queueManager->setUserObject($this->user);
-				$queueManager->setPlanetObject($this->planet);
+				$queueManager = new Queue($this->user, $this->planet);
 
 				switch ($Command)
 				{
@@ -67,7 +59,7 @@ class Construction
 						$queueManager->delete(1, 0);
 						break;
 					case 'remove':
-						$queueManager->delete(1, ($ListID - 1));
+						$queueManager->delete(1, $ListID);
 						break;
 					case 'insert':
 
@@ -83,365 +75,295 @@ class Construction
 						break;
 				}
 
-				$this->user->getDI()->getShared('response')->redirect("buildings/");
+				return Di::getDefault()->getShared('response')->redirect('buildings/');
 			}
 		}
 
-		$CurrentMaxFields = $this->planet->getMaxFields();
-		$RoomIsOk = ($this->planet->field_current < ($CurrentMaxFields - $Queue['lenght']));
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		$oldStyle = $this->user->getUserOption('only_available');
+		$parse['items'] = [];
 
-		$parse['BuildingsList'] = [];
-
-		foreach ($storage->reslist['build'] as $Element)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
 		{
-			if (!in_array($Element, $storage->reslist['allowed'][$this->planet->planet_type]))
+			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)))
 				continue;
 
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
 			if (!Building::checkTechnologyRace($this->user, $Element))
 				continue;
 
-			$HaveRessources 	= Building::IsElementBuyable($this->user, $this->planet, $Element, true, false);
-			$BuildingLevel 		= (int) $this->planet->{$storage->resource[$Element]};
-			$BuildingPrice 		= Building::GetBuildingPrice($this->user, $this->planet, $Element);
+			$build = $this->planet->getBuild($Element);
+
+			if (!$build)
+				continue;
+
+			$BuildingLevel 		= $build['level'];
+			$BuildingPrice 		= Building::getBuildingPrice($this->user, $this->planet, $Element);
 
 			$row = [];
 
-			$row['access']	= $isAccess;
+			$row['allow']	= $isAccess;
 			$row['i'] 		= $Element;
-			$row['count'] 	= $BuildingLevel;
-			$row['price'] 	= Building::GetElementPrice($BuildingPrice, $this->planet);
+			$row['level'] 	= $BuildingLevel;
+			$row['price'] 	= $BuildingPrice;
 
 			if ($isAccess)
 			{
 				if (in_array($Element, $storage->reslist['build_exp']))
 					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / $config->game->get('buildings_exp_mult', 1000));
 
-				$row['time'] 	= Building::GetBuildingTime($this->user, $this->planet, $Element);
-				$row['add'] 	= Building::GetNextProduction($Element, $BuildingLevel, $this->planet);
-				$row['click'] 	= '';
-
-				if ($Element == 31)
-				{
-					if ($this->user->b_tech_planet != 0)
-						$row['click'] = "<span class=\"resNo\">" . _getText('in_working') . "</span>";
-				}
-
-				if (!$row['click'])
-				{
-					if ($RoomIsOk && $CanBuildElement)
-					{
-						if ($Queue['lenght'] == 0)
-						{
-							if ($HaveRessources == true)
-								$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить').(isset($row['exp']) && $row['exp'] > 0 ? ' <span class="exp">(+'.$row['exp'].' exp)</span>' : '')."</span></a>";
-							else
-								$row['click'] = "<span class=\"resNo\">нет ресурсов</span>";
-						}
-						else
-							$row['click'] = "<a href=\"".$baseUri."buildings/index/cmd/insert/building/" . $Element . "/\"><span class=\"resYes\">В очередь ".(isset($row['exp']) && $row['exp'] > 0 ? ' (+ '.$row['exp'].' exp)' : '')."</span></a>";
-					}
-					elseif ($RoomIsOk && !$CanBuildElement)
-						$row['click'] = "<span class=\"resNo\">".((!$this->planet->{$storage->resource[$Element]}) ? 'Построить' : 'Улучшить')."</span>";
-					else
-						$row['click'] = "<span class=\"resNo\">нет места</span>";
-				}
+				$row['time'] 	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);
 			}
+			else
+				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
 
-			$parse['BuildingsList'][] = $row;
+			$parse['items'][] = $row;
 		}
 
-		$parse['BuildList'] 			= $Queue['buildlist'];
-		$parse['planet_field_current'] 	= $this->planet->field_current;
-		$parse['planet_field_max'] 		= $CurrentMaxFields;
-		$parse['field_libre'] 			= $parse['planet_field_max'] - $this->planet->field_current;
+		$parse['queue'] 			= $Queue['buildlist'];
+		$parse['queue_max'] 		= $MaxBuidSize;
+		$parse['fields_current'] 	= (int) $this->planet->field_current;
+		$parse['fields_max'] 		= (int) $this->planet->getMaxFields();
+		$parse['planet'] 			= 'normaltemp';
+
+		preg_match('/(.*?)planet/', $this->planet->image, $match);
+
+		if (isset($match[1]))
+			$parse['planet'] = trim($match[1]);
 
 		return $parse;
 	}
 
-	public function pageResearch ($mode = '')
+	public function pageResearch ()
 	{
-		$request 	= $this->user->getDI()->getShared('request');
-		$storage 	= $this->user->getDI()->getShared('registry');
-		$baseUri 	= $this->user->getDI()->getShared('url')->getBaseUri();
+		$request = $this->user->getDI()->getShared('request');
 
-		$TechHandle = $this->planet->checkResearchQueue();
-
-		$NoResearchMessage = "";
 		$bContinue = true;
 
-		if (!Building::CheckLabSettingsInQueue($this->planet))
+		if (!Building::checkLabSettingsInQueue($this->planet))
 		{
-			$NoResearchMessage = _getText('labo_on_update');
+			$this->user->getDI()->getShared('flashSession')->message('error-static', _getText('labo_on_update'));
+
 			$bContinue = false;
 		}
 
 		$spaceLabs = [];
 
-		if ($this->user->{$storage->resource[123]} > 0)
+		if ($this->user->getTechLevel('intergalactic') > 0)
 			$spaceLabs = $this->planet->getNetworkLevel();
 
 		$this->planet->spaceLabs = $spaceLabs;
 
-		if ($mode == 'fleet')
-			$res_array = $storage->reslist['tech_f'];
-		else
-			$res_array = $storage->reslist['tech'];
+		$res_array = Vars::getItemsByType(Vars::ITEM_TYPE_TECH);
 
-		$PageParse['mode'] = $this->mode;
+		$techHandle = Models\Queue::findFirst([
+			'conditions' => 'user_id = :user: AND type = :type:',
+			'bind' => [
+				'user' => $this->user->id,
+				'type' => Models\Queue::TYPE_TECH
+			]
+		]);
 
-		$queueManager = new Queue((is_object($TechHandle['planet']) ? $TechHandle['planet']->queue : $this->planet->queue));
-
-		if (isset($_GET['cmd']) AND $bContinue != false)
+		if ($request->hasQuery('cmd') && $bContinue != false)
 		{
-			$Command 	= $request->getQuery('cmd', null, '');
-			$Techno 	= $request->getQuery('tech', 'int', 0);
+			$queueManager = new Queue($this->user, $this->planet);
 
-			$queueManager->setUserObject($this->user);
-			$queueManager->setPlanetObject($this->planet);
+			$command 	= $request->getQuery('cmd', 'string', '');
+			$techId 	= (int) $request->getQuery('tech', 'int', 0);
 
-			if ($Techno > 0 && in_array($Techno, $res_array))
+			if ($techId > 0 && in_array($techId, $res_array))
 			{
-				switch ($Command)
+				switch ($command)
 				{
 					case 'cancel':
 
-						if ($queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
-							$queueManager->delete($Techno);
+						if ($queueManager->getCount(Queue::TYPE_RESEARCH))
+							$queueManager->delete($techId);
 
 						break;
 
 					case 'search':
 
-						if (!$queueManager->getCount(Queue::QUEUE_TYPE_RESEARCH))
-							$queueManager->add($Techno);
+						if (!$queueManager->getCount(Queue::TYPE_RESEARCH))
+							$queueManager->add($techId);
 
 						break;
 				}
 
-				$this->user->getDI()->getShared('response')->redirect("buildings/research".($mode != '' ? '_'.$mode : '')."/");
+				Di::getDefault()->getShared('response')->redirect('buildings/research/');
 			}
 		}
 
-		$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		if (count($queueArray) && isset($queueArray[0]))
-			$queueArray = $queueArray[0];
-
-		$oldStyle = $this->user->getUserOption('only_available');
-
-		$PageParse['technolist'] = [];
+		$parse['items'] = [];
 
 		foreach ($res_array AS $Tech)
 		{
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Tech);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Tech);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
 			if (!Building::checkTechnologyRace($this->user, $Tech))
 				continue;
 
+			$price = Vars::getItemPrice($Tech);
+
 			$row = [];
-			$row['access'] = $isAccess;
-			$row['i'] = $Tech;
 
-			$building_level = $this->user->{$storage->resource[$Tech]};
-
-			$row['tech_level'] = ($building_level == 0) ? "<font color=#FF0000>" . $building_level . "</font>" : "<font color=#00FF00>" . $building_level . "</font>";
-
-			if (isset($storage->pricelist[$Tech]['max']))
-				$row['tech_level'] .= ' из <font color=yellow>' . $storage->pricelist[$Tech]['max'] . '</font>';
-
-			$row['tech_price'] = Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Tech), $this->planet);
+			$row['allow'] 	= $isAccess && $bContinue;
+			$row['i'] 		= $Tech;
+			$row['level']	= $this->user->getTechLevel($Tech);
+			$row['max']		= isset($price['max']) ? $price['max'] : 0;
+			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Tech);
+			$row['build']	= false;
+			$row['effects']	= '';
 
 			if ($isAccess)
 			{
-				if ($Tech > 300 && $Tech < 400)
-				{
-					$l = ($Tech < 350 ? ($Tech - 100) : ($Tech + 50));
-
-					if (isset($storage->CombatCaps[$l]['power_up']) && $storage->CombatCaps[$l]['power_up'] > 0)
-					{
-						$row['add'] = '+' . ($storage->CombatCaps[$l]['power_up'] * $building_level) . '% атака<br>';
-						$row['add'] .= '+' . ($storage->CombatCaps[$l]['power_armour'] * $building_level) . '% прочность<br>';
-					}
-					if (isset($storage->CombatCaps[$l]['power_consumption']) && $storage->CombatCaps[($Tech < 350 ? ($Tech - 100) : ($Tech + 50))]['power_consumption'] > 0)
-						$row['add'] = '+' . ($storage->CombatCaps[$l]['power_consumption'] * $building_level) . '% вместимость<br>';
-				}
-				elseif ($Tech >= 120 && $Tech <= 122)
-					$row['add'] = '+' . (5 * $building_level) . '% атака<br>';
+				if ($Tech >= 120 && $Tech <= 122)
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 115)
-					$row['add'] = '+' . (10 * $building_level) . '% скорости РД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(10 * $row['level']).'%</span></div>';
 				elseif ($Tech == 117)
-					$row['add'] = '+' . (20 * $building_level) . '% скорости ИД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(20 * $row['level']).'%</span></div>';
 				elseif ($Tech == 118)
-					$row['add'] = '+' . (30 * $building_level) . '% скорости ГД<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(30 * $row['level']).'%</span></div>';
 				elseif ($Tech == 108)
-					$row['add'] = '+' . ($building_level + 1) . ' слотов флота<br>';
+					$row['effects'] = '<div class="tech-effects-row">+'.($row['level'] + 1).' слотов флота</div>';
 				elseif ($Tech == 109)
-					$row['add'] = '+' . (5 * $building_level) . '% атаки<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 110)
-					$row['add'] = '+' . (3 * $building_level) . '% защиты<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">'.(3 * $row['level']).'%</span></div>';
 				elseif ($Tech == 111)
-					$row['add'] = '+' . (5 * $building_level) . '% прочности<br>';
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
 				elseif ($Tech == 123)
-					$row['add'] = '+' . ($building_level) . '% лабораторий<br>';
+					$row['effects'] = '<div class="tech-effects-row">+'.$row['level'].'% лабораторий</div>';
+				elseif ($Tech == 113)
+					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.($row['level'] * 2).'%</span></div>';
 
-				$SearchTime = Building::GetBuildingTime($this->user, $this->planet, $Tech);
-				$row['search_time'] = $SearchTime;
-				$CanBeDone = Building::IsElementBuyable($this->user, $this->planet, $Tech);
+				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
 
-				if (!$TechHandle['working'])
+				if ($techHandle)
 				{
-					$LevelToDo = 1 + $this->user->{$storage->resource[$Tech]};
-
-					if (isset($storage->pricelist[$Tech]['max']) && $this->user->{$storage->resource[$Tech]} >= $storage->pricelist[$Tech]['max'])
-						$TechnoLink = '<font color=#FF0000>максимальный уровень</font>';
-					elseif ($CanBeDone)
+					if ($techHandle->object_id == $Tech)
 					{
-						if (!Building::CheckLabSettingsInQueue($this->planet))
-						{
-							if ($LevelToDo == 1)
-								$TechnoLink = "<font color=#FF0000>Исследовать</font>";
-							else
-								$TechnoLink = "<font color=#FF0000>Улучшить</font>";
-						}
-						else
-						{
-							$TechnoLink = "<a href=\"".$baseUri."buildings/" . $this->mode. "/cmd/search/tech/" . $Tech . "/\">";
+						$row['build'] = [
+							'id' => (int) $techHandle->planet_id,
+							'name' => '',
+							'time' => $techHandle->time + $row['time']
+						];
 
-							if ($LevelToDo == 1)
-								$TechnoLink .= "<font color=#00FF00>Исследовать</font>";
-							else
-								$TechnoLink .= "<font color=#00FF00>Улучшить</font>";
+						if ($techHandle->planet_id != $this->planet->id)
+						{
+							$planet = Planet::findFirst([
+								'columns' => 'id, name',
+								'conditions' => 'id = :id:',
+								'bind' => ['id' => $techHandle->planet_id]
+							]);
 
-							$TechnoLink .= "</a>";
+							if ($planet)
+								$row['build']['planet'] = $planet->name;
 						}
 					}
 					else
-						$TechnoLink = '<span class="resNo">нет ресурсов</span>';
+						$row['build'] = true;
 				}
-				else
-				{
-					if (isset($queueArray['i']) && $queueArray['i'] == $Tech)
-					{
-						$bloc = [];
-
-						if ($TechHandle['planet']->id != $this->planet->id)
-							$bloc['tech_name'] 	= ' на ' . $TechHandle['planet']->name;
-						else
-							$bloc['tech_name'] 	= "";
-
-						$bloc['tech_time'] 	= $queueArray['e'] - time();
-						$bloc['tech_home'] 	= $TechHandle['planet']->id;
-						$bloc['tech_id'] 	= $queueArray['i'];
-
-						$TechnoLink = $bloc;
-					}
-					else
-						$TechnoLink = "<center>-</center>";
-				}
-				$row['tech_link'] = $TechnoLink;
 			}
+			else
+				$row['need'] = Building::getTechTree($Tech, $this->user, $this->planet);
 
-			$PageParse['technolist'][] = $row;
+			$parse['items'][] = $row;
 		}
 
-		$PageParse['noresearch'] = $NoResearchMessage;
-
-		return $PageParse;
+		return $parse;
 	}
 
 	public function pageShipyard ($mode = 'fleet')
 	{
-		$storage = $this->user->getDI()->getShared('registry');
-
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
 		if ($mode == 'defense')
-			$elementIDs = $storage->reslist['defense'];
+			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
 		else
-			$elementIDs = $storage->reslist['fleet'];
+			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 
-		if (isset($_POST['fmenge']))
+		$request = Di::getDefault()->getShared('request');
+
+		if ($request->hasPost('fmenge'))
 		{
-			$queueManager->setUserObject($this->user);
-			$queueManager->setPlanetObject($this->planet);
-
-			foreach ($_POST['fmenge'] as $Element => $Count)
+			foreach ($request->getPost('fmenge') as $element => $count)
 			{
-				$Element 	= intval($Element);
-				$Count 		= abs(intval($Count));
+				$element 	= (int) $element;
+				$count 		= abs((int) $count);
 
-				if (!in_array($Element, $elementIDs))
+				if (!in_array($element, $elementIDs))
 					continue;
 
-				$queueManager->add($Element, $Count);
+				$queueManager->add($element, $count);
 			}
 
 			$this->planet->queue = $queueManager->get();
 		}
 
-		$queueArray = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
+		$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
 
 		$BuildArray = $this->extractHangarQueue($queueArray);
 
-		$oldStyle = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
 		$parse = [];
-		$parse['buildlist'] = [];
+		$parse['items'] = [];
 
-		foreach ($elementIDs AS $Element)
+		foreach ($elementIDs AS $element)
 		{
-			$isAccess = Building::IsTechnologieAccessible($this->user, $this->planet, $Element);
+			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $element);
 
-			if (!$isAccess && $oldStyle)
+			if (!$isAccess && $viewOnlyAvailable)
 				continue;
 
-			if (!Building::checkTechnologyRace($this->user, $Element))
+			if (!Building::checkTechnologyRace($this->user, $element))
 				continue;
 
 			$row = [];
 
-			$row['access']	= $isAccess;
-			$row['i'] 		= $Element;
-			$row['count'] 	= $this->planet->{$storage->resource[$Element]};
-			$row['price'] 	= Building::GetElementPrice(Building::GetBuildingPrice($this->user, $this->planet, $Element, false), $this->planet);
+			$row['allow']	= $isAccess;
+			$row['i'] 		= $element;
+			$row['count'] 	= $this->planet->getUnitCount($element);
+			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $element, false);
+			$row['effects']	= '';
 
 			if ($isAccess)
 			{
-				$row['time'] 	 	= Building::GetBuildingTime($this->user, $this->planet, $Element);
-				$row['can_build'] 	= Building::IsElementBuyable($this->user, $this->planet, $Element, false);
+				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $element);
+				$row['is_max']	= false;
 
-				if ($row['can_build'])
+				$price = Vars::getItemPrice($element);
+
+				if (isset($price['max']))
 				{
-					$row['maximum'] = false;
+					$total = $this->planet->getUnitCount($element);
 
-					if (isset($storage->pricelist[$Element]['max']))
-					{
-						$total = $this->planet->{$storage->resource[$Element]};
+					if (isset($BuildArray[$element]))
+						$total += $BuildArray[$element];
 
-						if (isset($BuildArray[$Element]))
-							$total += $BuildArray[$Element];
-
-						if ($total >= $storage->pricelist[$Element]['max'])
-							$row['maximum'] = true;
-					}
-
-					$row['max'] = Building::GetMaxConstructibleElements($Element, $this->planet, $this->user);
+					if ($total >= $price['max'])
+						$row['is_max'] = true;
 				}
 
-				$row['add'] = Building::GetNextProduction($Element, 0, $this->planet);
+				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
+				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
 			}
+			else
+				$row['need'] = Building::getTechTree($element, $this->user, $this->planet);
 
-			$parse['buildlist'][] = $row;
+			$parse['items'][] = $row;
 		}
 
 		return $parse;
@@ -455,7 +377,7 @@ class Construction
 		{
 			foreach ($queue AS $element)
 			{
-				$result[$element['i']] = $element['l'];
+				$result[$element->object_id] = $element->level;
 			}
 		}
 
@@ -464,78 +386,77 @@ class Construction
 
 	private function ShowBuildingQueue ()
 	{
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
-		$ActualCount = $queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING);
+		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
-		$ListIDRow = [];
+		$listRow = [];
 
-		if ($ActualCount != 0)
+		if (count($queueItems))
 		{
-			$PlanetID = $this->planet->id;
+			$end = 0;
 
-			$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
-
-			foreach ($QueueArray AS $i => $item)
+			foreach ($queueItems as $item)
 			{
-				if ($item['e'] >= time())
-				{
-					$ListIDRow[] = Array
-					(
-						'ListID' 		=> ($i + 1),
-						'ElementTitle' 	=> _getText('tech', $item['i']),
-						'BuildLevel' 	=> $item['d'] == 0 ? $item['l'] : $item['l'] + 1,
-						'BuildMode' 	=> $item['d'],
-						'BuildTime' 	=> ($item['e'] - time()),
-						'PlanetID' 		=> $PlanetID,
-						'BuildEndTime' 	=> $item['e']
-					);
-				}
+				if (!$end)
+					$end = $item->time;
+
+				$elementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+
+				if ($item->operation == $item::OPERATION_DESTROY)
+					$elementTime = ceil($elementTime / 2);
+
+				$end += $elementTime;
+
+				$listRow[] = [
+					'name' 	=> _getText('tech', $item->object_id),
+					'level' => $item->level,
+					'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
+					'time' 	=> $end - time(),
+					'end' 	=> $end
+				];
 			}
 		}
 
-		$RetValue['lenght'] 	= $ActualCount;
-		$RetValue['buildlist'] 	= $ListIDRow;
+		$RetValue['lenght'] 	= count($listRow);
+		$RetValue['buildlist'] 	= $listRow;
 
 		return $RetValue;
 	}
 
 	public function ElementBuildListBox ()
 	{
-		$queueManager = new Queue($this->planet->queue);
+		$queueManager = new Queue($this->user, $this->planet);
 
-		$ElementQueue = $queueManager->get($queueManager::QUEUE_TYPE_SHIPYARD);
-		$NbrePerType = "";
-		$NamePerType = "";
-		$TimePerType = "";
-		$QueueTime = 0;
+		$queueItems = $queueManager->get($queueManager::TYPE_SHIPYARD);
 
-		$parse = [];
+		$data = [];
 
-		if (count($ElementQueue))
+		if (count($queueItems))
 		{
-			foreach ($ElementQueue as $queueArray)
+			$end = 0;
+
+			foreach ($queueItems as $item)
 			{
-				$ElementTime = Building::GetBuildingTime($this->user, $this->planet, $queueArray['i']);
+				if (!$end)
+					$end = $item->time;
 
-				$QueueTime += $ElementTime * $queueArray['l'];
+				$time = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
 
-				$TimePerType .= "" . $ElementTime . ",";
-				$NamePerType .= "'" . html_entity_decode(_getText('tech', $queueArray['i'])) . "',";
-				$NbrePerType .= "" . $queueArray['l'] . ",";
+				$end += $time * $item->level;
+
+				$row = [
+					'i'		=> (int) $item->object_id,
+					'name'	=> _getText('tech', $item->object_id),
+					'count'	=> (int) $item->level,
+					'time'	=> $time,
+					'end'	=> $end
+				];
+
+				$data[] = $row;
 			}
-
-
-			$parse['a'] = $NbrePerType;
-			$parse['b'] = $NamePerType;
-			$parse['c'] = $TimePerType;
-			$parse['b_hangar_id_plus'] = $ElementQueue[0]['s'];
-
-			$parse['time'] = Helpers::pretty_time($QueueTime - $ElementQueue[0]['s']);
 		}
 
-		$parse['count'] = count($ElementQueue);
-
-		return $parse;
+		return $data;
 	}
 }

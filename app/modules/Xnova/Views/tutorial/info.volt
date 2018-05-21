@@ -5,12 +5,12 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="k text-xs-left">
+		<td class="k text-left">
 			<div class="row">
-				<div class="col-xs-4 text-xs-center">
+				<div class="col-4 text-center">
 					<img src="{{ url.getBaseUri() }}assets/images/tutorial/{{ stage }}.jpg" class="pic">
 				</div>
-				<div class="col-xs-8">
+				<div class="col-8">
 					<div class="description">
 						{{ parse['info']['DESCRIPTION'] }}
 					</div>

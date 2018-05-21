@@ -4,13 +4,13 @@ namespace Xnova\Missions;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\FleetEngine;
-use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\Format;
+use Xnova\User;
 
 class MissionCaseRecycling extends FleetEngine implements Mission
 {
@@ -27,10 +27,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				if (isset($shipArr['lvl']) && $shipArr['lvl'] > 0 && isset($this->registry->CombatCaps[$shipId]["power_consumption"]) && $this->registry->CombatCaps[$shipId]["power_consumption"] > 0)
-					$capacity = round($this->registry->CombatCaps[$shipId]["capacity"] * (1 + $shipArr['lvl'] * ($this->registry->CombatCaps[$shipId]["power_consumption"] / 100))) * $shipArr['cnt'];
-				else
-					$capacity = $this->registry->CombatCaps[$shipId]["capacity"] * $shipArr['cnt'];
+				$capacity = $this->registry->CombatCaps[$shipId]["capacity"] * $shipArr['count'];
 
 				if ($shipId == 209)
 					$RecyclerCapacity += $capacity;
@@ -83,7 +80,7 @@ class MissionCaseRecycling extends FleetEngine implements Mission
 
 			$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 
-			$Message = sprintf(_getText('sys_recy_gotten'), Helpers::pretty_number($RecycledGoods["metal"]), _getText('Metal'), Helpers::pretty_number($RecycledGoods["crystal"]), _getText('Crystal'), $this->_fleet->getTargetAdressLink());
+			$Message = sprintf(_getText('sys_recy_gotten'), Format::number($RecycledGoods["metal"]), _getText('Metal'), Format::number($RecycledGoods["crystal"]), _getText('Crystal'), $this->_fleet->getTargetAdressLink());
 		}
 		else
 		{

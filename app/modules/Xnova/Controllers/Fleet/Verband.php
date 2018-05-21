@@ -4,35 +4,34 @@ namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
-use Xnova\Models\User;
+use Xnova\User;
 
 class Verband
 {
 	public function show (FleetController $controller)
 	{
-		$parse = [];
-
 		Lang::includeLang('fleet', 'xnova');
 
-		$fleetid = $controller->request->getPost('fleetid', 'int');
+		$fleetId = (int) $controller->request->get('id', 'int');
 
-		if (!is_numeric($fleetid) || empty($fleetid) || $fleetid == 0)
-			return $controller->response->redirect("overview/");
+		if ($fleetId <= 0)
+			throw new RedirectException('Флот не выбран', '', 'fleet/');
 
-		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetid, $controller->user->id, 1]]);
+		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetId, $controller->user->id, 1]]);
 
 		if (!$fleet)
 			throw new ErrorException('Этот флот не существует!');
 
-		$aks = $controller->db->fetchOne("SELECT * FROM game_aks WHERE id = '" . $fleet->group_id . "'");
+		$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = :id", ['id' => $fleet->group_id])->fetch();
 
 		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1)
 			throw new ErrorException('Ваш флот возвращается на планету!');
@@ -41,55 +40,54 @@ class Verband
 		{
 			$action = $controller->request->getPost('action');
 
-			if ($action == 'addaks')
+			if ($action == 'add')
 			{
-				if (!$fleet->group_id)
-				{
-					$controller->db->insertAsDict('game_aks',
-					[
-						'name' 			=> $controller->request->getPost('groupname', 'string'),
-						'fleet_id' 		=> $fleet->id,
-						'galaxy' 		=> $fleet->end_galaxy,
-						'system' 		=> $fleet->end_system,
-						'planet' 		=> $fleet->end_planet,
-						'planet_type' 	=> $fleet->end_type,
-						'user_id' 		=> $controller->user->id,
-					]);
-
-					$aksid = $controller->db->lastInsertId();
-
-					if (!$aksid)
-						throw new ErrorException('Невозможно получить идентификатор САБ атаки');
-
-					$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = '" . $aksid . "'")->fetch();
-
-					/*if ($this->user->data['ally_id'] > 0)
-					{
-						$allyMembers = $this->db->query("SELECT u_id FROM game_alliance_members WHERE a_id = ".$this->user->data['ally_id']."");
-
-						while ($member = db::fetch($allyMembers))
-						{
-							$this->db->query("INSERT INTO game_aks_user VALUES (" . $aks['id'] . ", " . $member['u_id'] . ")");
-						}
-					}*/
-
-					$fleet->group_id = $aksid;
-					$fleet->update();
-				}
-				else
+				if ($fleet->group_id)
 					throw new ErrorException('Для этого флота уже задана ассоциация!');
+
+				$controller->db->insertAsDict(DB_PREFIX.'aks', [
+					'name' 			=> $controller->request->getPost('name', 'string'),
+					'fleet_id' 		=> $fleet->id,
+					'galaxy' 		=> $fleet->end_galaxy,
+					'system' 		=> $fleet->end_system,
+					'planet' 		=> $fleet->end_planet,
+					'planet_type' 	=> $fleet->end_type,
+					'user_id' 		=> $controller->user->id,
+				]);
+
+				$id = $controller->db->lastInsertId();
+
+				if (!$id)
+					throw new ErrorException('Невозможно получить идентификатор САБ атаки');
+
+				$controller->db->insertAsDict(DB_PREFIX.'aks_user', [
+					'aks_id'	=> $id,
+					'user_id'	=> $controller->user->id
+				]);
+
+				$aks = $controller->db->query("SELECT * FROM game_aks WHERE id = :id", ['id' => $id])->fetch();
+
+				$fleet->group_id = $id;
+				$fleet->update();
 			}
 			elseif ($action == 'adduser')
 			{
 				if ($aks['fleet_id'] != $fleet->id)
-					throw new ErrorException("Вы не можете менять имя ассоциации");
+					throw new ErrorException("Вы не можете добавлять сюда игроков");
 
-				if ($controller->request->hasPost('userid'))
-					$user_data = $controller->db->fetchOne("SELECT * FROM game_users WHERE id = '" . $controller->request->getPost('userid', 'int') . "'");
-				else
-					$user_data = $controller->db->fetchOne("SELECT * FROM game_users WHERE username = '" . $_POST['addtogroup'] . "'");
+				$user_data = false;
 
-				if (!isset($user_data['id']))
+				$byId = (int) $controller->request->getPost('user_id', 'int');
+
+				if ($byId > 0)
+					$user_data = $controller->db->fetchOne("SELECT * FROM game_users WHERE id = '" . $controller->request->getPost('user_id', 'int') . "'");
+
+				$byName = trim($controller->request->getPost('user_name', 'string'));
+
+				if ($byName != '')
+					$user_data = $controller->db->query("SELECT * FROM game_users WHERE username = :name", ['name' => $byName])->fetch();
+
+				if (!$user_data)
 					throw new ErrorException("Игрок не найден");
 
 				$aks_user = $controller->db->query("SELECT * FROM game_aks_user WHERE aks_id = " . $aks['id'] . " AND user_id = " . $user_data['id'] . "");
@@ -97,8 +95,7 @@ class Verband
 				if ($aks_user->numRows() > 0)
 					throw new ErrorException("Игрок уже приглашён для нападения");
 
-				$controller->db->insertAsDict('game_aks_user',
-				[
+				$controller->db->insertAsDict('game_aks_user', [
 					'aks_id' 	=> $aks['id'],
 					'user_id' 	=> $user_data['id']
 				]);
@@ -115,12 +112,12 @@ class Verband
 				if ($aks['fleet_id'] != $fleet->id)
 					throw new ErrorException("Вы не можете менять имя ассоциации");
 
-				$name = $controller->request->getPost('groupname', 'string');
+				$name = $controller->request->getPost('name', 'string');
 
-				if (mb_strlen($name, 'UTF-8') < 5)
+				if (mb_strlen($name) < 5)
 					throw new ErrorException("Слишком короткое имя ассоциации");
 
-				if (mb_strlen($name, 'UTF-8') > 20)
+				if (mb_strlen($name) > 20)
 					throw new ErrorException("Слишком длинное имя ассоциации");
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
@@ -128,9 +125,9 @@ class Verband
 
 				$name = strip_tags($name);
 
-				$x = $controller->db->query("SELECT * FROM game_aks WHERE name = '" . $name . "'");
+				$x = $controller->db->query("SELECT * FROM game_aks WHERE name = :name", ['name' => $name]);
 
-				if ($x->numRows() >= 1)
+				if ($x->numRows() > 0)
 					throw new ErrorException("Имя уже зарезервировано другим игроком");
 
 				$aks['name'] = $name;
@@ -144,6 +141,7 @@ class Verband
 		else
 			$fq = Fleet::find(['conditions' => 'group_id = ?0', 'bind' => [$fleet->group_id]]);
 
+		$parse = [];
 		$parse['group'] = $fleet->group_id;
 		$parse['fleetid'] = $fleet->id;
 		$parse['aks'] = $aks;
@@ -184,7 +182,5 @@ class Verband
 
 		$controller->tag->setTitle("Совместная атака");
 		$controller->view->setVar('parse', $parse);
-
-		return true;
 	}
 }

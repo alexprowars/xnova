@@ -2,7 +2,6 @@
 
 namespace Friday\Core\Models;
 
-use Loyalty\Models\Client;
 use Phalcon\Mvc\Model;
 
 /** @noinspection PhpHierarchyChecksInspection */

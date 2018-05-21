@@ -4,15 +4,16 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/officier")
@@ -38,42 +39,42 @@ class OfficierController extends Controller
 	
 	public function indexAction ()
 	{
-		if (isset($_POST['buy']))
+		if ($this->request->hasPost('buy'))
 		{
-			$need_c = 0;
+			$credits = 0;
 			$times = 0;
 
-			if (isset($_POST['week']) && $_POST['week'] != "")
+			if ($this->request->hasPost('week'))
 			{
-				$need_c = 20;
+				$credits = 20;
 				$times = 604800;
 			}
-			elseif (isset($_POST['2week']) && $_POST['2week'] != "")
+			elseif ($this->request->hasPost('2week'))
 			{
-				$need_c = 40;
+				$credits = 40;
 				$times = 1209600;
 			}
-			elseif (isset($_POST['month']) && $_POST['month'] != "")
+			elseif ($this->request->hasPost('month'))
 			{
-				$need_c = 80;
+				$credits = 80;
 				$times = 2592000;
 			}
 		
-			if ($need_c > 0 && $times > 0 && $this->user->credits >= $need_c)
+			if ($credits > 0 && $times > 0 && $this->user->credits >= $credits)
 			{
 				$selected = $this->request->getPost('buy', 'int', 0);
 
-				if (in_array($selected, $this->registry->reslist['officier']))
+				if (Vars::getItemType($selected) == Vars::ITEM_TYPE_OFFICIER)
 				{
-					if ($this->user->{$this->registry->resource[$selected]} > time())
-						$this->user->{$this->registry->resource[$selected]} = $this->user->{$this->registry->resource[$selected]} + $times;
+					if ($this->user->{Vars::getName($selected)} > time())
+						$this->user->{Vars::getName($selected)} = $this->user->{Vars::getName($selected)} + $times;
 					else
-						$this->user->{$this->registry->resource[$selected]} = time() + $times;
+						$this->user->{Vars::getName($selected)} = time() + $times;
 
-					$this->user->credits -= $need_c;
+					$this->user->credits -= $credits;
 					$this->user->update();
 		
-					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($need_c * (-1)) . ", 5)");
+					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($credits * (-1)) . ", 5)");
 		
 					$Message = _getText('OffiRecrute');
 				}
@@ -88,17 +89,17 @@ class OfficierController extends Controller
 		else
 		{
 			$parse['off_points'] = _getText('off_points');
-			$parse['alv_points'] = Helpers::pretty_number($this->user->credits);
+			$parse['alv_points'] = Format::number($this->user->credits);
 			$parse['list'] = [];
 
-			foreach ($this->registry->reslist['officier'] AS $officier)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 			{
 				$bloc['off_id'] = $officier;
 				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
 
-				if ($this->user->{$this->registry->resource[$officier]} > time())
+				if ($this->user->{Vars::getName($officier)} > time())
 				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{$this->registry->resource[$officier]}) . "</font>";
+					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{Vars::getName($officier)}) . "</font>";
 					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
 				}
 				else
@@ -110,7 +111,7 @@ class OfficierController extends Controller
 				$bloc['off_desc'] = _getText('Desc', $officier);
 				$bloc['off_powr'] = _getText('power', $officier);
 
-				$bloc['off_link'] .= "<br><br><input type=\"hidden\" name=\"buy\" value=\"" . $officier . "\"><input type=\"submit\" name=\"week\" value=\"на неделю\"><br>Стоимость:&nbsp;<font color=\"lime\">20</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"2week\" value=\"на 2 недели\"><br>Стоимость:&nbsp;<font color=\"lime\">40</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"month\" value=\"на месяц\"><br>Стоимость:&nbsp;<font color=\"lime\">80</font>&nbsp;кр.<div class=\"separator\"></div>";
+				$bloc['off_link'] .= "<br><input type=\"hidden\" name=\"buy\" value=\"" . $officier . "\"><input type=\"submit\" name=\"week\" value=\"на неделю\"><br>Стоимость:&nbsp;<font color=\"lime\">20</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"2week\" value=\"на 2 недели\"><br>Стоимость:&nbsp;<font color=\"lime\">40</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"month\" value=\"на месяц\"><br>Стоимость:&nbsp;<font color=\"lime\">80</font>&nbsp;кр.<div class=\"separator\"></div>";
 				$parse['list'][] = $bloc;
 			}
 

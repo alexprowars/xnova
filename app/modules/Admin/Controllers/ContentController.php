@@ -29,7 +29,12 @@ class ContentController extends Controller
 			'code'	=> 'content',
 			'title' => 'Контент',
 			'icon'	=> 'doc',
-			'sort'	=> 180
+			'sort'	=> 190
+		], [
+			'code'	=> 'separator',
+			'title' => 'Администрирование',
+			'icon'	=> '',
+			'sort'	=> 200
 		]];
 	}
 

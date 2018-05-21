@@ -10,30 +10,32 @@ class Battle
 	private $defenders;
 	private $report;
 	private $battleStarted;
+	private $rounds = 6;
 
 	/**
 	 * Battle::__construct()
 	 *
 	 * @param PlayerGroup $attackers
 	 * @param PlayerGroup $defenders
-	 * @return Battle
+	 * @param int $rounds
 	 */
-	public function __construct(PlayerGroup $attackers, PlayerGroup $defenders)
+	public function __construct(PlayerGroup $attackers, PlayerGroup $defenders, $rounds = 6)
 	{
 		$this->attackers = $attackers;
 		$this->defenders = $defenders;
 		$this->battleStarted = false;
 		$this->report = new BattleReport();
+		$this->rounds = $rounds;
 	}
 
 	/**
 	 * Battle::startBattle()
 	 *
 	 * @param bool $debug
-	 * @param int $rounds
-	 * @return null
+	 * @return bool
+	 * @throws \Exception
 	 */
-	public function startBattle($debug = false, $rounds = 6)
+	public function startBattle($debug = false)
 	{
 		if (!$debug)
 			ob_start();
@@ -46,7 +48,7 @@ class Battle
 		$round = new Round($this->attackers, $this->defenders, 0);
 		$this->report->addRound($round);
 
-		for ($i = 1; $i <= $rounds; $i++)
+		for ($i = 1; $i <= $this->rounds; $i++)
 		{
 			$att_lose = $this->attackers->isEmpty();
 			$deff_lose = $this->defenders->isEmpty();
@@ -84,7 +86,6 @@ class Battle
 	 * Assign to groups the status win,lose or draw
 	 * @param boolean $att_lose
 	 * @param boolean $deff_lose
-	 * @return null
 	 */
 	private function checkWhoWon($att_lose, $deff_lose)
 	{
@@ -110,6 +111,7 @@ class Battle
 	 * Start the battle if not and return the report.
 	 * @param bool $debug
 	 * @return BattleReport
+	 * @throws \Exception
 	 */
 	public function getReport($debug = false)
 	{

@@ -4,14 +4,15 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/tutorial")
@@ -37,6 +38,7 @@ class TutorialController extends Controller
 	/**
 	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
 	 * @param $stage
+	 * @return bool|\Phalcon\Http\Response
 	 */
 	public function infoAction ($stage)
 	{
@@ -76,16 +78,23 @@ class TutorialController extends Controller
 
 					foreach ($taskVal AS $element => $level)
 					{
-						$check = isset($this->user->{$this->registry->resource[$element]}) ? ($this->user->{$this->registry->resource[$element]} >= $level) : ($this->planet->{$this->registry->resource[$element]} >= $level);
+						$type = Vars::getItemType($element);
+
+						if ($type == Vars::ITEM_TYPE_TECH)
+							$check = $this->user->getTechLevel($element) >= $level;
+						elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
+							$check = $this->planet->getUnitCount($element) >= $level;
+						else
+							$check = $this->planet->getBuildLevel($element) >= $level;
 
 						if ($chk == true)
 							$chk = $check;
 
-						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
-						elseif (in_array($element, $this->registry->reslist['fleet']))
+						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
-						elseif (in_array($element, $this->registry->reslist['defense']))
+						elseif ($type == Vars::ITEM_TYPE_DEFENSE)
 							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
 							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
@@ -121,7 +130,7 @@ class TutorialController extends Controller
 				{
 					if ($taskVal === true)
 					{
-						$check = $this->planet->{$this->registry->resource[22]} > 0 || $this->planet->{$this->registry->resource[23]} > 0 || $this->planet->{$this->registry->resource[24]} > 0;
+						$check = $this->planet->getBuildLevel('metal_store') > 0 || $this->planet->getBuildLevel('crystal_store') > 0 || $this->planet->getBuildLevel('deuterium_store') > 0;
 
 						$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 					}
@@ -158,81 +167,76 @@ class TutorialController extends Controller
 
 			if ($this->request->hasQuery('continue') && !$errors && $qInfo['finish'] == 0)
 			{
-				//$this->db->query("UPDATE game_planets SET `" . $this->registry->resource[401] . "` = `" . $this->registry->resource[401] . "` + 3 WHERE `id` = '" . $this->planet->id . "';");
-
-				$planetData = [];
-				$userData = [];
-
 				foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 				{
 					if ($rewardKey == 'metal')
-						$planetData['+metal'] = $rewardVal;
+						$this->planet->metal += $rewardVal;
 					elseif ($rewardKey == 'crystal')
-						$planetData['+crystal'] = $rewardVal;
+						$this->planet->crystal += $rewardVal;
 					elseif ($rewardKey == 'deuterium')
-						$planetData['+deuterium'] = $rewardVal;
+						$this->planet->deuterium += $rewardVal;
 					elseif ($rewardKey == 'credits')
-						$userData['+credits'] = $rewardVal;
+						$this->user->credits += $rewardVal;
 					elseif ($rewardKey == 'BUILD')
 					{
 						foreach ($rewardVal AS $element => $level)
 						{
-							if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
-								$userData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['fleet']))
-								$planetData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['defense']))
-								$planetData['+'.$this->registry->resource[$element]] = $level;
-							elseif (in_array($element, $this->registry->reslist['officier']))
+							$type = Vars::getItemType($element);
+
+							if ($type == Vars::ITEM_TYPE_TECH)
+								$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
+							elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
+								$this->planet->setUnit($element, $level, true);
+							elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							{
-								if ($this->user->{$this->registry->resource[$element]} > time())
-									$userData['+'.$this->registry->resource[$element]] = $level;
+								if ($this->user->{Vars::getName($element)} > time())
+									$this->user->{Vars::getName($element)} += $level;
 								else
-									$userData[$this->registry->resource[$element]] = time() + $level;
+									$this->user->{Vars::getName($element)} = time() + $level;
 							}
-							else
-								$planetData['+'.$this->registry->resource[$element]] = $level;
+							elseif ($type == Vars::ITEM_TYPE_BUILING)
+								$this->planet->setBuild($element, $this->planet->getBuildLevel($element) + (int) $level);
 						}
 					}
 					elseif ($rewardKey == 'STORAGE_RAND')
 					{
 						$r = mt_rand(22, 24);
 
-						$planetData['+'.$this->registry->resource[$r]] = 1;
+						$this->planet->setBuild($r, $this->planet->getBuildLevel($r) + 1);
 					}
 				}
 
 				$this->db->updateAsDict('game_users_quests', ['finish' => '1'], 'id = '.$qInfo['id']);
 
-				if (count($planetData))
-					$this->planet->saveData($planetData);
-				if (count($userData))
-					$this->user->saveData($userData);
+				$this->user->save();
+				$this->planet->save();
 
-				$this->response->redirect('tutorial/');
+				return $this->response->redirect('tutorial/');
 			}
 
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 			{
 				if ($rewardKey == 'metal')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Metal').'а';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Metal').'а';
 				elseif ($rewardKey == 'crystal')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Crystal').'а';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Crystal').'а';
 				elseif ($rewardKey == 'deuterium')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Deuterium').'';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Deuterium').'';
 				elseif ($rewardKey == 'credits')
-					$parse['rewd'][] = Helpers::pretty_number($rewardVal).' ед. '._getText('Credits').'';
+					$parse['rewd'][] = Format::number($rewardVal).' ед. '._getText('Credits').'';
 				elseif ($rewardKey == 'BUILD')
 				{
 					foreach ($rewardVal AS $element => $level)
 					{
-						if (in_array($element, array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f'])))
+						$type = Vars::getItemType($element);
+
+						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['rewd'][] = 'Исследование <b>'._getText('tech', $element).'</b> '.$level.' уровня';
-						elseif (in_array($element, $this->registry->reslist['fleet']))
+						elseif ($type == Vars::ITEM_TYPE_FLEET)
 							$parse['rewd'][] = $level.' ед. флота типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->registry->reslist['defense']))
+						elseif ($type == Vars::ITEM_TYPE_DEFENSE)
 							$parse['rewd'][] = $level.' ед. обороны типа <b>'._getText('tech', $element).'</b>';
-						elseif (in_array($element, $this->registry->reslist['officier']))
+						elseif ($type == Vars::ITEM_TYPE_OFFICIER)
 							$parse['rewd'][] = 'Офицер <b>'._getText('tech', $element).'</b> на '.round($level / 3600 / 24, 1).' суток';
 						else
 							$parse['rewd'][] = 'Постройка <b>'._getText('tech', $element).'</b> '.$level.' уровня';
@@ -252,7 +256,9 @@ class TutorialController extends Controller
 			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
 		}
 		else
-			$this->response->redirect('tutorial/');
+			return $this->response->redirect('tutorial/');
+
+		return true;
 	}
 	
 	public function indexAction ()

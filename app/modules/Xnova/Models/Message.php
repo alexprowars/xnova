@@ -4,7 +4,7 @@ namespace Xnova\Models;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -19,12 +19,12 @@ use Phalcon\Mvc\Model;
 class Message extends Model
 {
 	public $id;
-	public $owner;
-	public $sender;
+	public $user_id;
+	public $from_id;
 	public $time;
 	public $type;
 	public $deleted;
-	public $from;
+	public $theme;
 	public $text;
 
 	public function getSource()

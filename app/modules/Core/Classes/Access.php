@@ -3,7 +3,7 @@
 namespace Friday\Core;
 
 use Friday\Core\Models\Group;
-use Xnova\Models\User;
+use Friday\Core\Models\User;
 use Phalcon\Di\Injectable;
 
 class Access extends Injectable
@@ -86,11 +86,11 @@ class Access extends Injectable
 
 	public function has ($role, $module)
 	{
-		$module = mb_strtolower($module);
-		$role = mb_strtolower($role);
-
 		if ($this->isAdmin())
 			return true;
+
+		$module = mb_strtolower($module);
+		$role = mb_strtolower($role);
 
 		if (!isset($this->_accessList[$module]))
 			$this->prepare($module);

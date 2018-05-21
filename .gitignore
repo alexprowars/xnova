@@ -22,3 +22,10 @@ public/assets/admin/pages/css
 public/assets/admin/global/css
 app/modules/Core/Classes/Prophiler/View/css
 public/assets/admin/global/plugins/bootstrap/css
+/public/assets/js/application.js
+/package-lock.json
+/public/assets/css/plugins/*.css
+/public/assets/css/*.min.css
+/public/assets/js/*.min.js
+/public/assets/js/plugins/*.min.js
+/public/assets/admin/css/app.css

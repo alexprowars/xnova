@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -37,7 +37,7 @@ class ContactController extends Controller
 				'name' 	=> $Ops['username'],
 				'auth' 	=> _getText('user_level', $Ops['authlevel']),
 				'mail' 	=> $Ops['email'],
-				'info' 	=> $Ops['about'],
+				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($Ops['about'])),
 			];
 		}
 

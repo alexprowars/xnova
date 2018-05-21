@@ -1,26 +1,24 @@
-<div class="portlet box green">
-	<div class="portlet-title">
-		<div class="caption">Отправить сообщение всем игрокам</div>
+<div class="card">
+	<div class="card-title card-title-bold">
+		Отправить сообщение всем игрокам
 	</div>
-	<div class="portlet-body form">
-		<form action="{{ url('messageall/') }}" method="post" class="form-horizontal form-bordered">
-			<div class="form-body">
-				<div class="form-group">
-					<label class="col-md-3 control-label">Тема сообщения</label>
-					<div class="col-md-9">
-						<input type="text" class="form-control" name="temat" title="">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">Сообщение</label>
-					<div class="col-md-9">
-						<textarea name="tresc" cols="" rows="10" class="form-control" title=""></textarea>
-					</div>
-				</div>
-				<div class="form-actions">
-					<button type="submit" class="btn green">Отправить</button>
+	<form action="{{ url('messageall/') }}" method="post">
+		<div class="card-body">
+			<div class="form-group row">
+				<label class="col-md-4 col-form-label">Тема сообщения</label>
+				<div class="col-md-8">
+					<input type="text" class="form-control" name="temat" title="">
 				</div>
 			</div>
-		</form>
-	</div>
+			<div class="form-group row">
+				<label class="col-md-4 col-form-label">Сообщение</label>
+				<div class="col-md-8">
+					<textarea name="tresc" cols="" rows="10" class="form-control" title=""></textarea>
+				</div>
+			</div>
+		</div>
+		<footer class="card-footer text-right">
+			<button class="btn btn-primary" type="submit">Отправить</button>
+		</footer>
+	</form>
 </div>

@@ -9,7 +9,7 @@
 			<table class="margin5">
 				<tr>
 					<td valign="top"><img src="{{ url.getBaseUri() }}assets/images/gebaeude/{{ parse['image'] }}.gif" class="info" align="top" border="0" height="120" width="120"></td>
-					<td valign="top" class="text-xs-left">{{ parse['description'] }}<br><br>{{ parse['rf_info_to'] }}{{ parse['rf_info_fr'] }}</td>
+					<td valign="top" class="text-left">{{ parse['description'] }}<br><br>{{ parse['rf_info_to'] }}{{ parse['rf_info_fr'] }}</td>
 				</tr>
 			</table>
 		</th>
@@ -51,16 +51,6 @@
 			<th>Тип брони</th>
 			<th>{{ parse['armour'] }}</th>
 		</tr>
-		<tr>
-			<th>Блокировка атаки</th>
-			<th>{{ parse['block'] }}%</th>
-		</tr>
-		{% if parse['upgrade'] %}
-			<tr>
-				<th>Усиление на уровень</th>
-				<th>{{ parse['upgrade'] }}%</th>
-			</tr>
-		{% endif %}
 	{% endif %}
 	<tr>
 		<td class="c" colspan="2">Затраты на производство</td>

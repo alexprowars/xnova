@@ -43,7 +43,7 @@
 				<th width="100">КПД</th>
 			</tr>
 			<tr>
-				<th class="text-xs-left" nowrap>Базовое производство</th>
+				<th class="text-left" nowrap>Базовое производство</th>
 				<td class="k">-</td>
 				<td class="k">-</td>
 				<td class="k">{{ parse['metal_basic_income'] }}</td>
@@ -54,7 +54,7 @@
 			</tr>
 			{% for resource in parse['resource_row'] %}
 				<tr>
-					<th class="text-xs-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('xnova', 'tech', resource['id']) }}</a></th>
+					<th class="text-left" nowrap><a href="javascript:" onclick="showWindow('{{ _text('xnova', 'tech', resource['id']) }}', '{{ url('info/'~resource['id']~'/') }}', 600)">{{ _text('xnova', 'tech', resource['id']) }}</a></th>
 					<th><font color="#ffffff">{{ resource['level_type'] }}</font></th>
 					<th><font color="#ffffff">{{ resource['bonus'] }}%</font></th>
 					{% for res in registry.reslist['res'] %}

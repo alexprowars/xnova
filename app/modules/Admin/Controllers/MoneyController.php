@@ -4,7 +4,7 @@ namespace Admin\Controllers;
 
 use Admin\Controller;
 use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/admin/money")

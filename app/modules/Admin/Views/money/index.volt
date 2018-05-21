@@ -1,5 +1,5 @@
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
+<div class="card">
+	<table class="table table-striped table-hover table-sm table-responsive">
 		<thead>
 			<tr>
 				<th>transaction_id</th>
@@ -19,16 +19,19 @@
 			</tr>
 		{% endfor %}
 	</table>
-</div>
-<div class="row">
-	<div class="col-md-5 col-sm-12">
-		<div class="dataTables_info">
-			Совершенно <b>{{ parse['total'] }}</b> транзакций
+
+	<footer class="card-footer">
+		<div class="row">
+			<div class="col-md-5 col-sm-12">
+				<div class="dataTables_info">
+					Совершенно <b>{{ parse['total'] }}</b> транзакций
+				</div>
+			</div>
+			<div class="col-md-7 col-sm-12">
+				<div class="dataTables_paginate paging_bootstrap">
+					{{ parse['pagination'] }}
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="col-md-7 col-sm-12">
-		<div class="dataTables_paginate paging_bootstrap">
-			{{ parse['pagination'] }}
-		</div>
-	</div>
+	</footer>
 </div>

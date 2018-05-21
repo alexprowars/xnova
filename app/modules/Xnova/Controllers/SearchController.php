@@ -4,11 +4,11 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Helpers;
+use Xnova\Format;
 use Xnova\Controller;
 
 /**
@@ -71,7 +71,7 @@ class SearchController extends Controller
 					}
 					elseif ($type == 'allytag' || $type == 'allyname')
 					{
-						$r['total_points'] = Helpers::pretty_number($r['total_points']);
+						$r['total_points'] = Format::number($r['total_points']);
 
 						$parse['result'][] = $r;
 					}

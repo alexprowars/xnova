@@ -125,41 +125,14 @@
 
 </script>
 
-<style>
-	.set_sim input.number {
-		width: 50px;
-		text-align: right;
-		padding: 2px;
-	}
-
-	.set_sim input.lvl {
-		width: 25px;
-		padding: 2px;
-		text-align: right;
-	}
-
-	.set_sim .table-responsive .table {
-		width: auto;
-	}
-
-	.set_sim .table-responsive .table td, .set_sim .table-responsive .table th {
-		white-space: nowrap;
-	}
-
-	.set_sim .game_content {
-		min-width: 1125px;
-		width: auto !important;
-	}
-</style>
-
-<form method="post" action="{{ url('xnsim/report/'~(config.view.get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" {{ this.user.getUserOption('ajax_navigation') ? 'class="noajax"' : '' }} target="_blank">
+<form method="post" action="{{ url('xnsim/report/'~(config.view.get('socialIframeView', 0) ? '?ingame' : '')) }}" name="form" id="result" autocomplete="off" class="noajax" target="_blank">
 	<input type="hidden" name="r" value="">
 </form>
 
 <div class="table-responsive">
 <table id="form" class="table">
 	<tr>
-		<th> XNova SIM</th>
+		<th>XNova SIM</th>
 		<th colspan="{{ constant('MAX_SLOTS') * 2 + 2 }}" class="spezial">
 
 			<select NAME="Att" SIZE="1" onchange='vis_cols("TH","gr",0,this.value);' title="">
@@ -213,9 +186,6 @@
 					{% else %}
 						<input class="number" value="{{ parse['slot_'~i] is defined and parse['slot_'~i][fleetId]['c'] is defined ? parse['slot_'~i][fleetId]['c'] : 0 }}" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
 					{% endif %}
-					{% if in_array(fleetId + 100, registry.reslist['tech_f']) %}
-						<input class="lvl" value="{{ parse['slot_'~i] is defined and parse['slot_'~i][fleetId]['l'] is defined ? parse['slot_'~i][fleetId]['l'] : 0 }}" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
-					{% endif %}
 				</th>
 			{% endfor %}
 		</tr>
@@ -232,9 +202,6 @@
 						-
 					{% else %}
 						<input class="number" value="{{ parse['slot_'~i] is defined and parse['slot_'~i][fleetId]['c'] is defined ? parse['slot_'~i][fleetId]['c'] : 0 }}" type="text" name="gr{{ i }}-{{ fleetId }}" maxlength="7" title="">
-						{% if in_array(fleetId - 50, registry.reslist['tech_f']) %}
-							<input class="lvl" value="{{ parse['slot_'~i] is defined and parse['slot_'~i][fleetId]['l'] is defined ? parse['slot_'~i][fleetId]['l'] : 0 }}" type="text" id="gr{{ i }}-{{ fleetId }}-l" maxlength="2" title="">
-						{% endif %}
 					{% endif %}
 				</th>
 			{% endfor %}

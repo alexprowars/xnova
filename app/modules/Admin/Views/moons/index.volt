@@ -1,11 +1,12 @@
-<div class="util-btn-margin-bottom-5">
-	<a href="{{ url('moons/add/') }}">
-		<button type="button" class="btn blue btn-sm">Создать</button>
-	</a>
-</div>
-<div class="clearfix"></div>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
+<div class="card">
+	<header class="card-header">
+		<div class="card-header-actions">
+			<a href="{{ url('moons/add/') }}" class="btn btn-sm btn-primary">
+				Создать
+			</a>
+		</div>
+	</header>
+	<table class="table table-striped table-hover table-sm table-responsive">
 		<thead>
 			<tr>
 				<th>ID</th>
@@ -27,13 +28,16 @@
 			</tr>
 		{% endfor %}
 	</table>
-</div>
-<div class="row">
-	<div class="col-md-5 col-sm-12">
-		{% if parse['moons']|length == 1 %}
-			В игре одна луна
-		{% else %}
-			В игре {{ parse['moons']|length }} лун
-		{% endif %}
-	</div>
+
+	<footer class="card-footer">
+		<div class="row">
+			<div class="col-md-5 col-sm-12">
+				{% if parse['moons']|length == 1 %}
+					В игре одна луна
+				{% else %}
+					В игре {{ parse['moons']|length }} лун{{ morph(parse['moons']|length, 'feminine', 5) }}
+				{% endif %}
+			</div>
+		</div>
+	</footer>
 </div>

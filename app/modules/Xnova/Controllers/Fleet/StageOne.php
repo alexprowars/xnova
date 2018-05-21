@@ -4,17 +4,19 @@ namespace Xnova\Controllers\Fleet;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
+use Xnova\Request;
+use Xnova\User;
+use Xnova\Vars;
 
 class StageOne
 {
@@ -23,83 +25,70 @@ class StageOne
 		if ($controller->user->vacation > 0)
 			throw new ErrorException("Нет доступа!");
 
-		if (!isset($_POST['crc']) || ($_POST['crc'] != md5($controller->user->id . '-CHeAT_CoNTROL_Stage_01-' . date("dmY", time()))))
-			throw new ErrorException('Ошибка контрольной суммы!');
-
 		Lang::includeLang('fleet', 'xnova');
 
 		$parse = [];
 
-		$speed = [];
-
-		for ($i = 10; $i >= 1; $i--)
-			$speed[$i] = $i * 10;
-
-		$g = $controller->request->getPost('galaxy', 'int', 0);
-		$s = $controller->request->getPost('system', 'int', 0);
-		$p = $controller->request->getPost('planet', 'int', 0);
-		$t = $controller->request->getPost('planet_type', 'int', 0);
+		$g = (int) $controller->request->getPost('galaxy', 'int', 0);
+		$s = (int) $controller->request->getPost('system', 'int', 0);
+		$p = (int) $controller->request->getPost('planet', 'int', 0);
+		$t = (int) $controller->request->getPost('planet_type', 'int', 0);
 
 		if (!$g)
-			$g = $controller->planet->galaxy;
+			$g = (int) $controller->planet->galaxy;
 
 		if (!$s)
-			$s = $controller->planet->system;
+			$s = (int) $controller->planet->system;
 
 		if (!$p)
-			$p = $controller->planet->planet;
+			$p = (int) $controller->planet->planet;
 
 		if (!$t)
 			$t = 1;
 
-		$fleet['fleetlist'] = "";
-		$fleet['amount'] = 0;
+		$parse['ships'] = [];
+		$fleets = [];
 
-		foreach ($controller->registry->reslist['fleet'] as $n => $i)
+		$ships = $controller->request->getPost('ship');
+
+		if (!is_array($ships))
+			$ships = [];
+
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
 		{
-			if (isset($_POST["ship" . $i]) && in_array($i, $controller->registry->reslist['fleet']) && intval($_POST["ship" . $i]) > 0)
+			if (isset($ships[$i]) && (int) $ships[$i] > 0)
 			{
-				if (intval($_POST["ship" . $i]) > $controller->planet->{$controller->registry->resource[$i]})
+				$cnt = (int) $ships[$i];
+
+				if ($cnt > $controller->planet->getUnitCount($i))
 					continue;
 
-				$fleet['fleetarray'][$i] = intval($_POST["ship" . $i]);
-				$fleet['fleetlist'] .= $i . "," . intval($_POST["ship" . $i]) . ";";
-				$fleet['amount'] += intval($_POST["ship" . $i]);
+				$fleets[$i] = $cnt;
 
-				$ship = [
-					'id' => $i,
-					'count' => intval($_POST["ship" . $i]),
-					'consumption' => Fleet::GetShipConsumption($i, $controller->user),
-					'speed' => Fleet::GetFleetMaxSpeed("", $i, $controller->user)
-				];
-
-				if (isset($controller->user->{'fleet_' . $i}) && isset($controller->registry->CombatCaps[$i]['power_consumption']) && $controller->registry->CombatCaps[$i]['power_consumption'] > 0)
-					$ship['capacity'] = round($controller->registry->CombatCaps[$i]['capacity'] * (1 + $controller->user->{'fleet_' . $i} * ($controller->registry->CombatCaps[$i]['power_consumption'] / 100)));
-				else
-					$ship['capacity'] = $controller->registry->CombatCaps[$i]['capacity'];
+				$ship = $controller->getShipInfo($i);
+				$ship['count'] = $cnt;
 
 				$parse['ships'][] = $ship;
 			}
 		}
 
-		if (!$fleet['fleetlist'])
+		if (!count($fleets))
 			throw new RedirectException(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
 
-		$parse['usedfleet'] = str_rot13(base64_encode(json_encode($fleet['fleetarray'])));
-		$parse['thisgalaxy'] = $controller->planet->galaxy;
-		$parse['thissystem'] = $controller->planet->system;
-		$parse['thisplanet'] = $controller->planet->planet;
-		$parse['thistype'] = $controller->planet->planet_type;
-		$parse['galaxyend'] = $g;
-		$parse['systemend'] = $s;
-		$parse['planetend'] = $p;
-		$parse['typeend'] = $t;
-		$parse['thisresource1'] = floor($controller->planet->metal);
-		$parse['thisresource2'] = floor($controller->planet->crystal);
-		$parse['thisresource3'] = floor($controller->planet->deuterium);
-		$parse['speed'] = $speed;
+		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 
-		$parse['shortcut'] = [];
+		$parse['target'] = [
+			'galaxy' => (int) $g,
+			'system' => (int) $s,
+			'planet' => (int) $p,
+			'planet_type' => (int) $t,
+		];
+
+		$parse['galaxy_max'] = (int) $controller->config->game->maxGalaxyInWorld;
+		$parse['system_max'] = (int) $controller->config->game->maxSystemInGalaxy;
+		$parse['planet_max'] = (int) $controller->config->game->maxPlanetInSystem + 1;
+
+		$parse['shortcuts'] = [];
 
 		$inf = $controller->db->query("SELECT fleet_shortcut FROM game_users_info WHERE id = " . $controller->user->id . ";")->fetch();
 
@@ -113,14 +102,14 @@ class StageOne
 				{
 					$c = explode(',', $b);
 
-					$parse['shortcut'][] = $c;
+					$parse['shortcuts'][] = $c;
 				}
 			}
 		}
 
 		$parse['planets'] = [];
 
-		$kolonien = $controller->user->getUserPlanets($controller->user->getId(), true, $controller->user->ally_id);
+		$kolonien = User::getPlanets($controller->user->getId(), true, $controller->user->ally_id);
 
 		if (count($kolonien) > 1)
 		{
@@ -132,18 +121,28 @@ class StageOne
 				if ($row['planet_type'] == 3)
 					$row['name'] .= " " . _getText('fl_shrtcup3');
 
-				$parse['planets'][] = $row;
+				$parse['planets'][] =  [
+					'id' => $row['id'],
+					'name' => $row['name'],
+					'galaxy' => $row['galaxy'],
+					'system' => $row['system'],
+					'planet' => $row['planet'],
+					'planet_type' => $row['planet_type'],
+				];
 			}
 		}
 
-		$parse['moon_timer'] = '';
+		$parse['gate_time'] = 0;
 		$parse['moons'] = [];
 
 		if ($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5)
 		{
 			$moons = Planet::find([
-				'(planet_type = 3 OR planet_type = 5) AND '.$controller->registry->resource[43].' > 0 AND id != ?0 AND id_owner = ?1',
-				'bind' => [$controller->planet->id, $controller->user->id]
+				'conditions' => '(planet_type = 3 OR planet_type = 5) AND id != :id: AND id_owner = :user:',
+				'bind' => [
+					'id' => $controller->planet->id,
+					'user' => $controller->user->id
+				]
 			]);
 
 			if (count($moons))
@@ -151,36 +150,48 @@ class StageOne
 				$timer = $controller->planet->getNextJumpTime();
 
 				if ($timer != 0)
-					$parse['moon_timer'] = Helpers::InsertJavaScriptChronoApplet("Gate", "1", $timer);
+					$parse['gate_time'] = $timer;
 
 				foreach ($moons as $moon)
 				{
-					$r = $moon->toArray();
-					$r['timer'] = $moon->getNextJumpTime();
+					if ($moon->getBuildLevel('jumpgate') <= 0)
+						continue;
 
-					$parse['moons'][] = $r;
+					$parse['moons'][] = [
+						'id' => $moon->id,
+						'name' => $moon->name,
+						'galaxy' => $moon->galaxy,
+						'system' => $moon->system,
+						'planet' => $moon->planet,
+						'timer' => $moon->getNextJumpTime()
+					];
 				}
 			}
 		}
 
-		$parse['aks'] = [];
+		$parse['alliances'] = [];
 
-		$aks_madnessred = $controller->db->query("SELECT a.* FROM game_aks a, game_aks_user au WHERE au.aks_id = a.id AND au.user_id = " . $controller->user->id . " ;");
+		$alliances = $controller->db->query("SELECT a.* FROM game_aks a, game_aks_user au WHERE au.aks_id = a.id AND au.user_id = " . $controller->user->id . " ;");
 
-		if ($aks_madnessred->numRows())
+		if ($alliances->numRows())
 		{
-			while ($row = $aks_madnessred->fetch())
+			while ($row = $alliances->fetch())
 			{
-				$parse['aks'][] = $row;
+				$parse['alliances'][] = [
+					'id' => (int) $row['id'],
+					'name' => $row['name'],
+					'galaxy' => (int) $row['galaxy'],
+					'system' => (int) $row['system'],
+					'planet' => (int) $row['planet'],
+					'planet_type' => (int) $row['planet_type'],
+				];
 			}
 		}
 
-		$parse['maxepedition'] = intval($_POST['maxepedition']);
-		$parse['curepedition'] = intval($_POST['curepedition']);
-		$parse['target_mission'] = intval($_POST['target_mission']);
-		$parse['crc'] =  md5($controller->user->id . '-CHeAT_CoNTROL_Stage_02-' . date("dmY", time()) . '-' . str_rot13(base64_encode(json_encode($fleet['fleetarray']))));
+		$parse['mission'] = (int) $controller->request->getPost('mission', 'int', 0);
 
-		$controller->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$controller->tag->setTitle(_getText('fl_title_1'));
 	}
 }

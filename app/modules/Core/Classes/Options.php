@@ -7,7 +7,7 @@ use Phalcon\Di;
 
 class Options
 {
-	const CACHE_KEY = 'FRIDAY_OPTIONS';
+	const CACHE_KEY = 'CORE_OPTIONS';
 	const CACHE_TIME = 600;
 
 	protected static $options = [];
@@ -45,7 +45,7 @@ class Options
 			$options = Option::find(["conditions" => "cached = ?0", "bind" => ['Y']]);
 
 			foreach ($options as $option)
-				self::$options[$option->name] = is_null($option->value) ? $option->default : $option->value;
+				self::$options[$option->name] = is_null($option->value) ? $option->def : $option->value;
 
 			$cache->save(self::CACHE_KEY, self::$options, self::CACHE_TIME);
 		}
@@ -95,7 +95,7 @@ class Options
 			$option->value 	= $data['value'];
 
 			if (isset($data['default']))
-				$option->default = $data['value'];
+				$option->def = $data['value'];
 
 			if (isset($data['description']))
 				$option->description = $data['description'];
@@ -104,7 +104,7 @@ class Options
 				$option->type = $data['type'];
 
 			if (isset($data['group']))
-				$option->group = $data['group'];
+				$option->group_id = $data['group'];
 
 			$option->create();
 		}

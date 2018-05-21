@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -35,48 +35,41 @@ class RocketController extends Controller
 	public function indexAction ()
 	{
 		if (!$this->request->isPost())
-		{
-			$this->response->redirect('galaxy/');
-			return;
-		}
+			return $this->response->redirect('galaxy/');
 
-		$g = $this->request->getQuery('galaxy', 'int');
-		$s = $this->request->getQuery('system', 'int');
-		$i = $this->request->getQuery('planet', 'int');
+		$g = (int) $this->request->getQuery('galaxy', 'int');
+		$s = (int) $this->request->getQuery('system', 'int');
+		$i = (int) $this->request->getQuery('planet', 'int');
 
-		$anz = intval($_POST['SendMI']);
-		$destroyType = $_POST['Target'];
+		$count = (int) $this->request->getPost('count', 'int');
+		$destroyType = $this->request->getPost('target', 'string');
 		
-		$tempvar1 = (($s - $this->planet->system) * (-1));
-		$tempvar2 = ($this->user->impulse_motor_tech * 5) - 1;
-		$tempvar3 = Planet::findByCoords($g, $s, $i, 1);
+		$distance = abs($s - $this->planet->system);
+		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$error = 0;
-		
-		if ($this->planet->silo < 4)
-			$error = 1;
-		elseif ($this->user->impulse_motor_tech == 0)
-			$error = 2;
-		elseif ($tempvar1 >= $tempvar2 || $g != $this->planet->galaxy)
-			$error = 3;
-		elseif (!$tempvar3)
-			$error = 4;
-		elseif ($anz > $this->planet->interplanetary_misil)
-			$error = 5;
+		$targetPlanet = Planet::findByCoords($g, $s, $i, 1);
+
+		if ($this->planet->getBuildLevel('missile_facility') < 4)
+			throw new ErrorException('Постройте ракетную шахту', 'Ошибка');
+		elseif ($this->user->getTechLevel('impulse_motor') == 0)
+			throw new ErrorException('Необходима технология "Импульсный двигатель"', 'Ошибка');
+		elseif ($distance >= $maxDistance || $g != $this->planet->galaxy)
+			throw new ErrorException('Превышена дистанция ракетной атаки', 'Ошибка');
+		elseif (!$targetPlanet)
+			throw new ErrorException('Планета не найдена', 'Ошибка');
+		elseif ($count > $this->planet->getUnitCount('interplanetary_misil'))
+			throw new ErrorException('У вас нет такого кол-ва ракет', 'Ошибка');
 		elseif ((!is_numeric($destroyType) && $destroyType != "all") OR ($destroyType < 0 && $destroyType > 7 && $destroyType != "all"))
-			$error = 6;
+			throw new ErrorException('Не найдена цель', 'Ошибка');
 		
-		if ($error != 0)
-			throw new ErrorException('Возможно у вас нет столько межпланетных ракет, или вы не имеете достоточно развитую технологию импульсного двигателя, или вводите неккоректные данные при отправке.', 'Ошибка ' . $error . '');
-		
-		if ($destroyType == "all")
+		if ($destroyType == 'all')
 			$destroyType = 0;
 		else
-			$destroyType = intval($destroyType);
+			$destroyType = (int) $destroyType;
 		
-		$select = $this->db->fetchOne("SELECT id, vacation FROM game_users WHERE id = " . $tempvar3->id_owner);
+		$select = $this->db->fetchOne("SELECT id, vacation FROM game_users WHERE id = " . $targetPlanet->id_owner);
 		
-		if (!isset($select['id']))
+		if (!$select)
 			throw new ErrorException('Игрока не существует');
 		
 		if ($select['vacation'] > 0)
@@ -85,14 +78,14 @@ class RocketController extends Controller
 		if ($this->user->vacation > 0)
 			throw new ErrorException('Вы в режиме отпуска');
 		
-		$time = 30 + (60 * $tempvar1);
+		$time = 30 + (60 * $distance);
 		
 		$fleet = new Fleet();
 		$fleet->create([
 			'owner' 			=> $this->user->id,
 			'owner_name' 		=> $this->planet->name,
 			'mission' 			=> 20,
-			'fleet_array' 		=> '503,'.$anz.'!'.$destroyType,
+			'fleet_array' 		=> [['id' => 503, 'count' => $count, 'target' => $destroyType]],
 			'start_time' 		=> time() + $time,
 			'start_galaxy' 		=> $this->planet->galaxy,
 			'start_system' 		=> $this->planet->system,
@@ -103,21 +96,18 @@ class RocketController extends Controller
 			'end_system' 		=> $s,
 			'end_planet' 		=> $i,
 			'end_type' 			=> 1,
-			'target_owner' 		=> $tempvar3->id_owner,
-			'target_owner_name' => $tempvar3->name,
+			'target_owner' 		=> $targetPlanet->id_owner,
+			'target_owner_name' => $targetPlanet->name,
 			'create_time' 		=> time(),
 			'update_time' 		=> time() + $time,
 		]);
 
 		if ($fleet->id > 0)
 		{
-			$this->planet->interplanetary_misil -= $anz;
+			$this->planet->setUnit('interplanetary_misil', -$count, true);
 			$this->planet->update();
 		}
 
-		$this->view->setVar('anz', $anz);
-
-		$this->tag->setTitle('Межпланетная атака');
-		$this->showTopPanel(false);
+		throw new ErrorException('<b>'.$count.'</b> межпланетные ракеты запущены для атаки удалённой планеты!', 'Атака межпланетными ракетами');
 	}
 }

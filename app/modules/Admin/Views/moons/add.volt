@@ -1,44 +1,42 @@
-<div class="portlet box green">
-	<div class="portlet-title">
-		<div class="caption">Создать луну</div>
-	</div>
-	<div class="portlet-body form">
-		<form action="{{ url('moons/add/') }}" method="post" class="form-horizontal form-bordered">
-			<div class="form-body">
-				<div class="form-group">
-					<label class="col-md-3 control-label">Галактика</label>
-					<div class="col-md-9">
+<div class="row">
+	<div class="col-lg-6">
+		<form action="{{ url('moons/add/') }}" method="post" class="card">
+			<div class="card-title card-title-bold">Создать луну</div>
+			<div class="card-body">
+				<div class="form-group row">
+					<label class="col-md-4 col-form-label">Галактика</label>
+					<div class="col-md-8">
 						<input type="text" class="form-control" name="galaxy" title="">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">Система</label>
-					<div class="col-md-9">
+				<div class="form-group row">
+					<label class="col-md-4 col-form-label">Система</label>
+					<div class="col-md-8">
 						<input type="text" class="form-control" name="system" title="">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">Планета</label>
-					<div class="col-md-9">
+				<div class="form-group row">
+					<label class="col-md-4 col-form-label">Планета</label>
+					<div class="col-md-8">
 						<input type="text" class="form-control" name="planet" title="">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">user ID</label>
-					<div class="col-md-9">
+				<div class="form-group row">
+					<label class="col-md-4 col-form-label">user ID</label>
+					<div class="col-md-8">
 						<input type="text" class="form-control" name="user" title="">
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="col-md-3 control-label">ШВЛ</label>
-					<div class="col-md-9">
+				<div class="form-group row">
+					<label class="col-md-4 col-form-label">ШВЛ</label>
+					<div class="col-md-8">
 						<input type="text" class="form-control" name="diameter" value="20" title="">
 					</div>
 				</div>
-				<div class="form-actions">
-					<button type="submit" class="btn green">Создать</button>
-				</div>
 			</div>
+			<footer class="card-footer text-right">
+				<button class="btn btn-primary" type="submit">Создать</button>
+			</footer>
 		</form>
 	</div>
 </div>

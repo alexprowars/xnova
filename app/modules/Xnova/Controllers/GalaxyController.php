@@ -4,13 +4,16 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Friday\Core\Files;
 use Xnova\Fleet;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
+use Xnova\User;
 
 /**
  * @RoutePrefix("/galaxy")
@@ -38,7 +41,9 @@ class GalaxyController extends Controller
 	 */
 	public function indexAction ()
 	{
-		$fleetmax = $this->user->computer_tech + 1;
+		$parse = [];
+
+		$fleetmax = $this->user->getTechLevel('computer') + 1;
 		
 		if ($this->user->rpg_admiral > time())
 			$fleetmax += 2;
@@ -74,18 +79,20 @@ class GalaxyController extends Controller
 		}
 		elseif ($mode == 1)
 		{
-			if ($this->request->hasPost('galaxyLeft'))
+			$direction = trim($this->request->getPost('direction', 'string', ''));
+
+			if ($direction == 'galaxyLeft')
 				$galaxy = $this->request->getPost('galaxy', 'int') - 1;
-			elseif ($this->request->hasPost('galaxyRight'))
+			elseif ($direction == 'galaxyRight')
 				$galaxy = $this->request->getPost('galaxy', 'int') + 1;
 			elseif ($this->request->hasPost('galaxy'))
 				$galaxy = $this->request->getPost('galaxy', 'int');
 			else
 				$galaxy = $this->planet->galaxy;
 		
-			if ($this->request->hasPost('systemLeft'))
+			if ($direction == 'systemLeft')
 				$system = $this->request->getPost('system', 'int') - 1;
-			elseif ($this->request->hasPost('systemRight'))
+			elseif ($direction == 'systemRight')
 				$system = $this->request->getPost('system', 'int') + 1;
 			elseif ($this->request->hasPost('system'))
 				$system = $this->request->getPost('system', 'int');
@@ -110,7 +117,7 @@ class GalaxyController extends Controller
 		
 		if (!$this->session->has('fleet_shortcut'))
 		{
-			$array = $this->user->getUserPlanets($this->user->getId(), false, $this->user->ally_id);
+			$array = User::getPlanets($this->user->getId(), false, $this->user->ally_id);
 			$j = [];
 		
 			foreach ($array AS $a)
@@ -137,9 +144,9 @@ class GalaxyController extends Controller
 		
 		$Phalanx = 0;
 		
-		if ($this->planet->phalanx != 0)
+		if ($this->planet->getBuildLevel('phalanx') > 0)
 		{
-			$Range = Fleet::GetPhalanxRange($this->planet->phalanx);
+			$Range = Fleet::GetPhalanxRange($this->planet->getBuildLevel('phalanx'));
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
@@ -148,7 +155,7 @@ class GalaxyController extends Controller
 				$Phalanx = 1;
 		}
 		
-		if ($this->planet->interplanetary_misil <> 0)
+		if ($this->planet->getUnitCount('interplanetary_misil') > 0)
 		{
 			if ($galaxy == $this->planet->galaxy)
 			{
@@ -169,18 +176,32 @@ class GalaxyController extends Controller
 
 		$Destroy = 0;
 		
-		if ($this->planet->dearth_star > 0)
+		if ($this->planet->getUnitCount('dearth_star') > 0)
 			$Destroy = 1;
-		
-		$html = '';
-		
-		if ($mode == 2)
-			$html .= $this->ShowGalaxyMISelector($galaxy, $system, $planet, $this->planet->id, $this->planet->interplanetary_misil);
 
-		$html .= "<div id='galaxy' class='container-fluid'></div>";
-		$html .= "<script>var Deuterium = '0';var time = " . time() . "; var dpath = '".$this->url->getBaseUri()."assets/images/'; var user = {id:" . $this->user->id . ", phalanx:" . $Phalanx . ", destroy:" . $Destroy . ", missile:" . $MissileBtn . ", total_points:" . (isset($records['total_points']) ? $records['total_points'] : 0) . ", ally_id:" . $this->user->ally_id . ", planet_current:" . $this->user->planet_current . ", colonizer:" . $this->planet->colonizer . ", spy_sonde:" . $this->planet->spy_sonde . ", spy:".intval($this->user->spy).", recycler:" . $this->planet->recycler . ", interplanetary_misil:" . $this->planet->interplanetary_misil . ", fleets: " . $maxfleet_count . ", max_fleets: " . $fleetmax . "}; var galaxy = " . $galaxy . "; var system = " . $system . "; var row = []; ";
-		
-		$html .= " var fleet_shortcut = new Array(); ";
+		$jsUser = [
+			'phalanx' => $Phalanx,
+			'destroy' => $Destroy,
+			'missile' => $MissileBtn,
+			'stat_points' => isset($records['total_points']) ? $records['total_points'] : 0,
+			'colonizer' => $this->planet->getUnitCount('colonizer'),
+			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
+			'spy' => (int) $this->user->getUserOption('spy'),
+			'recycler' => $this->planet->getUnitCount('recycler'),
+			'interplanetary_misil' => $this->planet->getUnitCount('interplanetary_misil'),
+			'allowExpedition' => $this->user->getTechLevel('expedition') > 0,
+			'fleets' => $maxfleet_count,
+			'max_fleets' => $fleetmax
+		];
+
+		$parse['galaxy'] = (int) $galaxy;
+		$parse['system'] = (int) $system;
+		$parse['user'] = $jsUser;
+		$parse['items'] = [];
+		$parse['shortcuts'] = [];
+
+		for ($i = 1; $i <= 15; $i++)
+			$parse['items'][$i - 1] = false;
 
 		if ($this->session->has('fleet_shortcut'))
 		{
@@ -191,22 +212,24 @@ class GalaxyController extends Controller
 
 			foreach ($array AS $id => $a)
 			{
-				$html .= " fleet_shortcut[" . $id . "] = new Array('" . base64_decode($a[0]) . "', " . $a[1] . ", " . $a[2] . ", " . $a[3] . ", " . (($a[1] == $galaxy && $a[2] == $system) ? 1 : 0) . "); ";
+				$parse['shortcuts'][] = [
+					'n' => base64_decode($a[0]),
+					'g' => (int) $a[1],
+					's' => (int) $a[2],
+					'p' => (int) $a[3],
+					'c'	=> $a[1] == $galaxy && $a[2] == $system
+				];
 			}
 		}
-		
-		$html .= "$('#galaxy').append(PrintSelector(fleet_shortcut)); ";
-		
-		$galaxyRow = '';
-		
+
 		$GalaxyRow = $this->db->query("SELECT
-								p.planet, p.id AS planet_id, p.id_ally AS ally_planet, p.debris_metal AS metal, p.debris_crystal AS crystal, p.name, p.planet_type, p.destruyed, p.image, p.last_active, p.parent_planet,
-								p2.id AS luna_id, p2.name AS luna_name, p2.destruyed AS luna_destruyed, p2.last_active AS luna_update, p2.diameter AS luna_diameter, p2.temp_min AS luna_temp,
-								u.id AS user_id, u.username, u.race, u.ally_id, u.authlevel, u.onlinetime, u.vacation, u.banned, u.sex, u.avatar,
-								ui.image AS user_image,
-								a.name AS ally_name, a.members AS ally_members, a.web AS ally_web, a.tag AS ally_tag,
-								ad.type,
-								s.total_rank, s.total_points
+								p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
+								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
+								u.id AS u_id, u.username as u_name, u.race as u_race, u.ally_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned as u_ban, u.sex as u_sex, u.avatar as u_avatar,
+								ui.image AS u_image,
+								a.name AS a_name, a.members AS a_members, a.web AS a_web, a.tag AS a_tag,
+								ad.type as d_type,
+								s.total_rank as s_rank, s.total_points as s_points
 				FROM game_planets p 
 				LEFT JOIN game_planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0) 
 				LEFT JOIN game_users u ON (u.id = p.id_owner AND p.id_owner != 0)
@@ -216,112 +239,68 @@ class GalaxyController extends Controller
 				LEFT JOIN game_statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1') 
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "';", '');
 		
-		$rows = [];
-		
 		while ($row = $GalaxyRow->fetch())
 		{
-			if ($row['luna_update'] != "" && $row['luna_update'] > $row['last_active'])
-				$row['last_active'] = $row['luna_update'];
+			if ($row['l_update'] != "" && $row['l_update'] > $row['p_active'])
+				$row['p_active'] = $row['l_update'];
 		
-			unset($row['luna_update']);
-		
-			if ($row['destruyed'] != 0 && $row["planet_id"] != '')
-				$this->checkAbandonPlanetState($row);
-		
-			if ($row["luna_id"] != "" && $row["luna_destruyed"] != 0)
-				$this->checkAbandonMoonState($row);
+			if ($row['p_delete'] > 0 && $row['p_delete'] <= time())
+			{
+				$this->db->delete('game_planets', 'id = ?', [$row['p_id']]);
 
-			$online = $row['onlinetime'];
-		
-			if ($online < (time() - 60 * 60 * 24 * 7) && $online > (time() - 60 * 60 * 24 * 28))
-				$row['onlinetime'] = 1;
-			elseif ($online < (time() - 60 * 60 * 24 * 28))
-				$row['onlinetime'] = 2;
+				if ($row['p_parent'] != 0)
+					$this->db->delete('game_planets', 'id = ?', [$row['p_parent']]);
+			}
+
+			if ($row["l_id"] != "" && $row["l_delete"] != 0 && $row['l_delete'] <= time())
+			{
+				$this->db->delete('game_planets', 'id = ?', [$row['l_id']]);
+				$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$row['l_id']);
+
+				$row['l_id'] = 0;
+			}
+
+			if ($row['u_online'] < (time() - 60 * 60 * 24 * 7) && $row['u_online'] > (time() - 60 * 60 * 24 * 28))
+				$row['u_online'] = 1;
+			elseif ($row['u_online'] < (time() - 60 * 60 * 24 * 28))
+				$row['u_online'] = 2;
 			else
-				$row['onlinetime'] = 0;
+				$row['u_online'] = 0;
 		
-			if ($row['vacation'] > 0)
-				$row['vacation'] = 1;
+			if ($row['u_vacation'] > 0)
+				$row['u_vacation'] = 1;
 		
-			if ($row['last_active'] > (time() - 59 * 60))
-				$row['last_active'] = floor((time() - $row['last_active']) / 60);
+			if ($row['p_active'] > (time() - 59 * 60))
+				$row['p_active'] = floor((time() - $row['p_active']) / 60);
 			else
-				$row['last_active'] = 60;
+				$row['p_active'] = 60;
+
+			if ($row['u_image'] > 0)
+			{
+				$file = Files::getById($row['u_image']);
+
+				if ($file)
+					$row['u_image'] = $file['src'];
+				else
+					$row['u_image'] = '';
+			}
+
+			unset($row['p_parent'], $row['l_update'], $row['p_id']);
 		
 			foreach ($row AS &$v)
+			{
 				if (is_numeric($v))
-					$v = intval($v);
+					$v = (int) $v;
+			}
 
 			unset($v);
 		
-			$rows[] = $row;
+			$parse['items'][$row['planet'] - 1] = $row;
 		}
 		
-		foreach ($rows AS $row)
-			$galaxyRow .= 'row[' . $row['planet'] . '] = '.json_encode($row, true).';';
-		
-		$html .= $galaxyRow;
-		
-		$html .= "$('#galaxy').append(PrintRow());</script>";
+		Request::addData('page', $parse);
 
-		$this->view->setVar('html', $html);
 		$this->tag->setTitle('Галактика');
 		$this->showTopPanel(false);
-	}
-
-	private function ShowGalaxyMISelector ($Galaxy, $System, $Planet, $Current, $MICount)
-	{
-		$Result = "<form action=\"/rocket/?c=" . $Current . "&mode=2&galaxy=" . $Galaxy . "&system=" . $System . "&planet=" . $Planet . "\" method=\"POST\">";
-		$Result .= "<table border=\"0\" class=\"table\">";
-		$Result .= "<tr>";
-		$Result .= "<td class=\"c\" colspan=\"3\">";
-		$Result .= _getText('gm_launch') . " [" . $Galaxy . ":" . $System . ":" . $Planet . "]";
-		$Result .= "</td>";
-		$Result .= "</tr>";
-		$Result .= "<tr>";
-		$String = sprintf(_getText('gm_restmi'), $MICount);
-		$Result .= "<td class=\"c\">" . $String . " <input type=\"text\" name=\"SendMI\" size=\"2\" maxlength=\"7\" /></td>";
-		$Result .= "<td class=\"c\">" . _getText('gm_target') . " <select name=\"Target\">";
-		$Result .= "<option value=\"all\" selected>" . _getText('gm_all') . "</option>";
-		$Result .= "<option value=\"0\">" . _getText('tech', 401) . "</option>";
-		$Result .= "<option value=\"1\">" . _getText('tech', 402) . "</option>";
-		$Result .= "<option value=\"2\">" . _getText('tech', 403) . "</option>";
-		$Result .= "<option value=\"3\">" . _getText('tech', 404) . "</option>";
-		$Result .= "<option value=\"4\">" . _getText('tech', 405) . "</option>";
-		$Result .= "<option value=\"5\">" . _getText('tech', 406) . "</option>";
-		$Result .= "<option value=\"6\">" . _getText('tech', 407) . "</option>";
-		$Result .= "<option value=\"7\">" . _getText('tech', 408) . "</option>";
-		$Result .= "</select>";
-		$Result .= "</td>";
-		$Result .= "</tr>";
-		$Result .= "<tr>";
-		$Result .= "<td class=\"c\" colspan=\"2\"><input type=\"submit\" name=\"aktion\" value=\"" . _getText('gm_send') . "\"></td>";
-		$Result .= "</tr>";
-		$Result .= "</table>";
-		$Result .= "</form>";
-
-		return $Result;
-	}
-
-	private function checkAbandonMoonState (&$lunarow)
-	{
-		if ($lunarow['luna_destruyed'] <= time())
-		{
-			$this->db->delete('game_planets', 'id = ?', [$lunarow['luna_id']]);
-			$this->db->updateAsDict('game_planets', ['parent_planet' => 0], 'parent_planet = '.$lunarow['luna_id']);
-
-			$lunarow['id_luna'] = 0;
-		}
-	}
-
-	private function checkAbandonPlanetState (&$planet)
-	{
-		if ($planet['destruyed'] <= time())
-		{
-			$this->db->delete('game_planets', 'id = ?', [$planet['planet_id']]);
-
-			if ($planet['parent_planet'] != 0)
-				$this->db->delete('game_planets', 'id = ?', [$planet['parent_planet']]);
-		}
 	}
 }

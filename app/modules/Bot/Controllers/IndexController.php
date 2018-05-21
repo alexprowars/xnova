@@ -46,7 +46,7 @@ class IndexController extends Controller
 		{
 			$telegram = new Telegram($this->config->telegram->token, $this->config->telegram->login);
 		
-			$result = $telegram->unsetWebHook();
+			$result = $telegram->deleteWebhook();
 		
 			if ($result->isOk())
 				echo $result->getDescription();
@@ -63,26 +63,14 @@ class IndexController extends Controller
 		{
 			$telegram = new Telegram($this->config->telegram->token, $this->config->telegram->login);
 
-			// Enable MySQL
 			$telegram->enableExternalMysql($this->db->getInternalHandler(), 'bot_');
-		
-			// Add an additional commands path
 			$telegram->addCommandsPath(ROOT_PATH.$this->config->application->baseDir.$this->config->application->modulesDir.'Bot/Commands/');
-		
-			// Here you can enable admin interface for the channel you want to manage
 			$telegram->enableAdmins(['134099267']);
-		
-			// Set custom Upload and Download path
-			//$telegram->setDownloadPath('../Download');
-			//$telegram->setUploadPath('../Upload');
 
 			$telegram->handle();
 		} 
 		catch (TelegramException $e) 
 		{
-			// Silence is golden!
-			// log telegram errors
-
 			//echo $e;
 		}
 	}

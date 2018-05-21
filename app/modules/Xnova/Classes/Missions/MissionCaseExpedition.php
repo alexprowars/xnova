@@ -4,7 +4,7 @@ namespace Xnova\Missions;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -15,8 +15,9 @@ use Xnova\Battle\Models\PlayerGroup;
 use Xnova\Battle\Models\Fleet;
 use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
-use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\Format;
+use Xnova\User;
+use Xnova\Vars;
 
 class MissionCaseExpedition extends FleetEngine implements Mission
 {
@@ -29,8 +30,8 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 	{
 		$Expowert = [];
 
-		foreach ($this->registry->reslist['fleet'] as $ID)
-			$Expowert[$ID] = ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']) / 200;
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
+			$Expowert[$ID] = Vars::getItemTotalPrice($ID) / 200;
 
 		$FleetPoints = 0;
 
@@ -39,11 +40,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 		foreach ($this->_fleet->getShips() as $type => $ship)
 		{
-			$FleetCount[$type] = $ship['cnt'];
+			$FleetCount[$type] = $ship['count'];
 
-			$FleetCapacity += $ship['cnt'] * $this->registry->CombatCaps[$type]['capacity'];
+			$FleetCapacity += $ship['count'] * $this->registry->CombatCaps[$type]['capacity'];
 
-			$FleetPoints += $ship['cnt'] * $Expowert[$type];
+			$FleetPoints += $ship['count'] * $Expowert[$type];
 		}
 
 		$StatFactor = $this->db->fetchColumn("SELECT MAX(total_points) as total FROM game_statpoints WHERE stat_type = 1");
@@ -147,16 +148,16 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 				$FoundShips = max(round($Size * min($FleetPoints, ($upperLimit / 2))), 10000);
 
 				$FoundShipMess = "";
-				$NewFleetArray = "";
+				$NewFleetArray = [];
 
 				$Found = [];
 
-				foreach ($this->registry->reslist['fleet'] as $ID)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
 				{
 					if(!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214)
 						continue;
 
-					$MaxFound = floor($FoundShips / ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']));
+					$MaxFound = floor($FoundShips / Vars::getItemTotalPrice($ID));
 
 					if ($MaxFound <= 0)
 						continue;
@@ -168,19 +169,24 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 					$Found[$ID]	= $Count;
 
-					$FoundShips	 		-= $Count * ($this->registry->pricelist[$ID]['metal'] + $this->registry->pricelist[$ID]['crystal']);
-					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Helpers::pretty_number($Count);
+					$FoundShips	 		-= $Count * Vars::getItemTotalPrice($ID);
+					$FoundShipMess   	.= '<br>'._getText('tech', $ID).': '.Format::number($Count);
 
 					if ($FoundShips <= 0)
 						break;
 				}
 
 				foreach ($FleetCount as $ID => $Count)
-					$NewFleetArray .= $ID.",".($Count + (isset($Found[$ID]) ? floor($Found[$ID]) : 0))."!0;";
+				{
+					$NewFleetArray[] = [
+						'id' => (int) $ID,
+						'count' => (int) ($Count + (isset($Found[$ID]) ? floor($Found[$ID]) : 0))
+					];
+				}
 
 				$Message .= $FoundShipMess;
 
-				$this->ReturnFleet(['fleet_array' => $NewFleetArray]);
+				$this->ReturnFleet(['fleet_array' => json_encode($NewFleetArray)]);
 
 				break;
 
@@ -196,7 +202,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Name = _getText('sys_expe_attackname_1');
 					$Add = 0;
 					$Rand = [5, 3, 2];
-					$defenderFleetArray = "204,5!0;206,3!0;207,2!0;";
+					$defenderFleetArray = [
+						['id' => 204, 'count' => 5],
+						['id' => 206, 'count' => 3],
+						['id' => 207, 'count' => 2]
+					];
 				}
 				else
 				{
@@ -206,7 +216,11 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 					$Name = _getText('sys_expe_attackname_2');
 					$Add = 0.1;
 					$Rand = [4, 3, 2];
-					$defenderFleetArray = "205,5!0;207,5!0;213,2!0;";
+					$defenderFleetArray = [
+						['id' => 205, 'count' => 5],
+						['id' => 207, 'count' => 5],
+						['id' => 213, 'count' => 2]
+					];
 				}
 
 				$FindSize = mt_rand(0, 100);
@@ -229,7 +243,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($FleetCount as $ID => $count)
 				{
-					$defenderFleetArray .= $ID . "," . round($count * $MaxAttackerPoints) . "!0;";
+					$defenderFleetArray[] = [
+						'id' => $ID,
+						'count' => round($count * $MaxAttackerPoints),
+					];
 				}
 
 				LangManager::getInstance()->setImplementation(new LangImplementation());
@@ -254,21 +271,20 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
-					if ($shipId < 100 || $shipId > 300)
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET)
 						continue;
 
-					$res[$shipId] = $shipArr['cnt'];
-					$res[$shipId + 100] = $shipArr['lvl'];
+					$res[$shipId] = $shipArr['count'];
 				}
 
 				$playerObj = new Player(0);
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
-				foreach ($this->registry->reslist['tech'] AS $techId)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 				{
-					if (isset($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
-						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] + $Def), 0);
+					if (isset($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
+						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] + $Def), 0);
 				}
 
 				$mission->usersTech[0] = $res;
@@ -277,10 +293,10 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($fleetData as $shipId => $shipArr)
 				{
-					if ($shipId < 100 || $shipId > 300 || !$shipArr['cnt'])
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count'])
 						continue;
 
-					$fleetObj->addShipType($mission->getShipType($shipId, [$shipArr['cnt'], $shipArr['lvl']], $res));
+					$fleetObj->addShipType($mission->getShipType($shipId, $shipArr['count'], $res));
 				}
 
 				if (!$fleetObj->isEmpty())
@@ -321,25 +337,26 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 				foreach ($attackFleets as $fleetID => $attacker)
 				{
-					$fleetArray = '';
-					$totalCount = 0;
+					$fleetArray = [];
 
 					foreach ($attacker as $element => $amount)
 					{
 						if (!is_numeric($element) || !$amount)
 							continue;
 
-						$fleetArray .= $element . ',' . $amount . '!0;';
-						$totalCount += $amount;
+						$fleetArray[] = [
+							'id' => (int) $element,
+							'count' => (int) $amount
+						];
 					}
 
-					if ($totalCount <= 0)
+					if (count($fleetArray))
 						$this->KillFleet($fleetID);
 					else
 					{
 						$this->db->updateAsDict($this->_fleet->getSource(),
 						[
-							'fleet_array' 	=> substr($fleetArray, 0, -1),
+							'fleet_array' 	=> json_encode($fleetArray),
 							'@update_time' 	=> 'end_time',
 							'mess'			=> 1,
 							'won'			=> $result['won']
@@ -378,7 +395,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="#BASEPATH#rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5('xnovasuka' . $ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, _getText('sys_perte_attaquant'), Helpers::pretty_number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Helpers::pretty_number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
+				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5($this->config->application->encryptKey.$ids), $ColorAtt, 'Боевой доклад', sprintf(_getText('sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, _getText('sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, _getText('sys_perte_defenseur'), Format::number($result['lost']['def']), _getText('sys_gain'), _getText('Metal'), 0, _getText('Crystal'), 0, _getText('Deuterium'), 0, _getText('sys_debris'), _getText('Metal'), 0, _getText('Crystal'), 0);
 
 				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, _getText('sys_mess_tower'), $MessageAtt);
 
@@ -436,7 +453,7 @@ class MissionCaseExpedition extends FleetEngine implements Mission
 
 	public function ReturnEvent()
 	{
-		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Helpers::pretty_number($this->_fleet->resource_metal), _getText('Crystal'), Helpers::pretty_number($this->_fleet->resource_crystal),  _getText('Deuterium'), Helpers::pretty_number($this->_fleet->resource_deuterium));
+		$Message = sprintf(_getText('sys_expe_back_home'), _getText('Metal'), Format::number($this->_fleet->resource_metal), _getText('Crystal'), Format::number($this->_fleet->resource_crystal),  _getText('Deuterium'), Format::number($this->_fleet->resource_deuterium));
 
 		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 15, _getText('sys_expe_report'), $Message);
 

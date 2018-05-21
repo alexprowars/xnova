@@ -4,14 +4,13 @@ namespace Xnova;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Friday\Core\Options;
 use Xnova\Models\Fleet;
-use Xnova\Models\User;
 use Phalcon\Di\Injectable;
 
 /**
@@ -39,7 +38,7 @@ class UpdateStatistics extends Injectable
 	public function __construct()
 	{
 		$this->start = time();
-		$this->user = new User;
+		$this->user = new Models\User;
 	}
 
 	private function SetMaxInfo ($ID, $Count, $Data)
@@ -54,107 +53,124 @@ class UpdateStatistics extends Injectable
 			$this->maxinfos[$ID] = ['maxlvl' => $Count, 'username' => $Data['username']];
 	}
 
-	private function GetTechnoPoints ($CurrentUser)
+	private function GetTechnoPoints ($user)
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
 
-		$res_array = array_merge($this->registry->reslist['tech'], $this->registry->reslist['tech_f']);
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'users_tech WHERE user_id = ?', [$user['id']]);
 
-		foreach ($res_array as $Techno)
+		while ($item = $items->fetch())
 		{
-			if ($CurrentUser[$this->registry->resource[$Techno]] == 0)
+			if ($item['level'] <= 0)
 				continue;
 
-			if ($CurrentUser['records'] == 1 && $Techno < 300)
-				$this->SetMaxInfo($Techno, $CurrentUser[$this->registry->resource[$Techno]], $CurrentUser);
+			if ($user['records'] == 1 && $item['tech_id'] < 300)
+				$this->SetMaxInfo($item['tech_id'], $item['level'], $user);
 
-			$Units = $this->registry->pricelist[$Techno]['metal'] + $this->registry->pricelist[$Techno]['crystal'] + $this->registry->pricelist[$Techno]['deuterium'];
+			$price = Vars::getItemPrice($item['tech_id']);
 
-			for ($Level = 1; $Level <= $CurrentUser[$this->registry->resource[$Techno]]; $Level++)
-			{
-				$TechPoints += $Units * pow($this->registry->pricelist[$Techno]['factor'], $Level);
-			}
-			$TechCounts += $CurrentUser[$this->registry->resource[$Techno]];
+			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+
+			for ($Level = 1; $Level <= $item['level']; $Level++)
+				$TechPoints += $Units * pow($price['factor'], $Level);
+
+			$TechCounts += $item['level'];
 		}
+
 		$RetValue['TechCount'] = $TechCounts;
 		$RetValue['TechPoint'] = $TechPoints;
 
 		return $RetValue;
 	}
 
-	private function GetBuildPoints ($CurrentPlanet, $User)
+	private function GetBuildPoints ($planet, $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
-		foreach ($this->registry->reslist['build'] as $Build)
+
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_buildings WHERE planet_id = ?', [$planet['id']]);
+
+		while ($item = $items->fetch())
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Build]] == 0)
+			if ($item['level'] <= 0)
 				continue;
 
-			if ($User['records'] == 1)
-				$this->SetMaxInfo($Build, $CurrentPlanet[$this->registry->resource[$Build]], $User);
+			if ($user['records'] == 1)
+				$this->SetMaxInfo($item['build_id'], $item['level'], $user);
 
-			$Units = $this->registry->pricelist[$Build]['metal'] + $this->registry->pricelist[$Build]['crystal'] + $this->registry->pricelist[$Build]['deuterium'];
-			for ($Level = 1; $Level <= $CurrentPlanet[$this->registry->resource[$Build]]; $Level++)
-			{
-				$BuildPoints += $Units * pow($this->registry->pricelist[$Build]['factor'], $Level);
-			}
-			$BuildCounts += $CurrentPlanet[$this->registry->resource[$Build]];
+			$price = Vars::getItemPrice($item['build_id']);
+
+			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+
+			for ($Level = 1; $Level <= $item['level']; $Level++)
+				$BuildPoints += $Units * pow($price['factor'], $Level);
+
+			$BuildCounts += $item['level'];
 		}
+
 		$RetValue['BuildCount'] = $BuildCounts;
 		$RetValue['BuildPoint'] = $BuildPoints;
 
 		return $RetValue;
 	}
 
-	private function GetDefensePoints ($CurrentPlanet, &$RecordArray)
+	private function GetDefensePoints ($planet, &$RecordArray)
 	{
-		$DefenseCounts = 0;
-		$DefensePoints = 0;
+		$UnitsCounts = 0;
+		$UnitsPoints = 0;
 
-		foreach ($this->registry->reslist['defense'] as $Defense)
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_units WHERE planet_id = ? AND unit_id IN ('.implode(',', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE)).')', [$planet['id']]);
+
+		while ($item = $items->fetch())
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Defense]] > 0)
-			{
-				if (isset($RecordArray[$Defense]))
-					$RecordArray[$Defense] += $CurrentPlanet[$this->registry->resource[$Defense]];
-				else
-					$RecordArray[$Defense] = $CurrentPlanet[$this->registry->resource[$Defense]];
+			if ($item['amount'] <= 0)
+				continue;
 
-				$Units = $this->registry->pricelist[$Defense]['metal'] + $this->registry->pricelist[$Defense]['crystal'] + $this->registry->pricelist[$Defense]['deuterium'];
-				$DefensePoints += ($Units * $CurrentPlanet[$this->registry->resource[$Defense]]);
-				$DefenseCounts += $CurrentPlanet[$this->registry->resource[$Defense]];
-			}
+			if (!isset($RecordArray[$item['unit_id']]))
+				$RecordArray[$item['unit_id']] = 0;
+
+			$RecordArray[$item['unit_id']] += $item['amount'];
+
+			$Units = Vars::getItemTotalPrice($item['unit_id'], true);
+
+			$UnitsPoints += ($Units * $item['amount']);
+			$UnitsCounts += $item['amount'];
 		}
-		$RetValue['DefenseCount'] = $DefenseCounts;
-		$RetValue['DefensePoint'] = $DefensePoints;
+
+		$RetValue['DefenseCount'] = $UnitsCounts;
+		$RetValue['DefensePoint'] = $UnitsPoints;
 
 		return $RetValue;
 	}
 
-	private function GetFleetPoints ($CurrentPlanet, &$RecordArray)
+	private function GetFleetPoints ($planet, &$RecordArray)
 	{
-		$FleetCounts = 0;
-		$FleetPoints = 0;
+		$UnitsCounts = 0;
+		$UnitsPoints = 0;
 
-		foreach ($this->registry->reslist['fleet'] as $Fleet)
+		$items = $this->db->query('SELECT * FROM '.DB_PREFIX.'planets_units WHERE planet_id = ? AND unit_id IN ('.implode(',', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET)).')', [$planet['id']]);
+
+		while ($item = $items->fetch())
 		{
-			if ($CurrentPlanet[$this->registry->resource[$Fleet]] > 0)
-			{
-				if (isset($RecordArray[$Fleet]))
-					$RecordArray[$Fleet] += $CurrentPlanet[$this->registry->resource[$Fleet]];
-				else
-					$RecordArray[$Fleet] = $CurrentPlanet[$this->registry->resource[$Fleet]];
+			if ($item['amount'] <= 0)
+				continue;
 
-				$Units = $this->registry->pricelist[$Fleet]['metal'] + $this->registry->pricelist[$Fleet]['crystal'] + $this->registry->pricelist[$Fleet]['deuterium'];
-				$FleetPoints += ($Units * $CurrentPlanet[$this->registry->resource[$Fleet]]);
-				if ($Fleet != 212)
-					$FleetCounts += $CurrentPlanet[$this->registry->resource[$Fleet]];
-			}
+			if (!isset($RecordArray[$item['unit_id']]))
+				$RecordArray[$item['unit_id']] = 0;
+
+			$RecordArray[$item['unit_id']] += $item['amount'];
+
+			$Units = Vars::getItemTotalPrice($item['unit_id'], true);
+
+			$UnitsPoints += ($Units * $item['amount']);
+
+			if ($item['unit_id'] != 212)
+				$UnitsCounts += $item['amount'];
 		}
-		$RetValue['FleetCount'] = $FleetCounts;
-		$RetValue['FleetPoint'] = $FleetPoints;
+
+		$RetValue['FleetCount'] = $UnitsCounts;
+		$RetValue['FleetPoint'] = $UnitsPoints;
 
 		return $RetValue;
 	}
@@ -167,16 +183,16 @@ class UpdateStatistics extends Injectable
 
 		foreach ($CurrentFleet as $type => $ship)
 		{
-			$Units = $this->registry->pricelist[$type]['metal'] + $this->registry->pricelist[$type]['crystal'] + $this->registry->pricelist[$type]['deuterium'];
-			$FleetPoints += ($Units * $ship['cnt']);
+			$Units = Vars::getItemTotalPrice($type, true);
+			$FleetPoints += ($Units * $ship['count']);
 
 			if ($type != 212)
-				$FleetCounts += $ship['cnt'];
+				$FleetCounts += $ship['count'];
 
 			if (isset($FleetArray[$type]))
-				$FleetArray[$type] += $ship['cnt'];
+				$FleetArray[$type] += $ship['count'];
 			else
-				$FleetArray[$type] = $ship['cnt'];
+				$FleetArray[$type] = $ship['count'];
 		}
 
 		$RetValue['FleetCount'] = $FleetCounts;
@@ -194,7 +210,7 @@ class UpdateStatistics extends Injectable
 
 		while ($user = $list->fetch())
 		{
-			if ($this->user->deleteById($user['id']))
+			if (User::deleteById($user['id']))
 				$result[] = $user['username'];
 		}
 
@@ -222,7 +238,7 @@ class UpdateStatistics extends Injectable
 				$mail->addAddress($user['email']);
 				$mail->Subject = Options::get('site_title').': Уведомление об удалении аккаунта: ' . $this->config->game->universe . ' вселенная';
 				$mail->Body = "Уважаемый \"" . $user['username'] . "\"! Уведомляем вас, что ваш аккаунт перешел в режим удаления и через " . floor($this->config->stat->get('deleteTime', (7 * 86400)) / 86400) . " дней будет удалён из игры.<br>
-				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://uni" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
+				<br><br>Во избежании удаления аккаунта вам нужно будет зайти в игру и через <a href=\"http://" . $this->config->game->universe . ".xnova.su/options/\">настройки профиля</a> отменить процедуру удаления.<br><br>С уважением, команда <a href=\"http://uni" . $this->config->game->universe . ".xnova.su\">XNOVA.SU</a>";
 				$mail->send();
 			}
 
@@ -266,18 +282,18 @@ class UpdateStatistics extends Injectable
 
 	public function update ()
 	{
+		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1'");
+
 		$active_users = 0;
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = $this->db->query("SELECT u.*, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
-
-		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1';");
+		$list = $this->db->query("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		while ($user = $list->fetch())
 		{
-			$options = $this->user->unpackOptions($user['options']);
-			$user['records'] = $options['records'];
+			$options = json_decode($user['settings'], true);
+			$user['records'] = isset($options['records']) ? $options['records'] : true;
 
 			if ($user['banned'] != 0 || ($user['vacation'] != 0 && $user['vacation'] < (time() - 1036800)))
 				$hide = 1;
@@ -366,12 +382,10 @@ class UpdateStatistics extends Injectable
 				}
 			}
 
-			if ($user['records'] == 1)
+			if ($user['records'])
 			{
 				foreach ($RecordArray AS $id => $amount)
-				{
 					$this->SetMaxInfo($id, $amount, $user);
-				}
 			}
 
 			if ($user['race'] != 0)
@@ -494,7 +508,7 @@ class UpdateStatistics extends Injectable
 	public function addToLog ()
 	{
 		$this->db->query("INSERT INTO game_log_stats
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `id`, `type`, `time`)
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
@@ -504,7 +518,7 @@ class UpdateStatistics extends Injectable
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
 
 		$this->db->query("INSERT INTO game_log_stats
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `id`, `type`, `time`)
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
@@ -532,7 +546,7 @@ class UpdateStatistics extends Injectable
 
 	public function buildRecordsCache ()
 	{
-		$Elements = array_merge($this->registry->reslist['build'], $this->registry->reslist['tech'], $this->registry->reslist['fleet'], $this->registry->reslist['defense']);
+		$Elements = Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		$array = "";
 		foreach ($Elements as $ElementID)
@@ -545,6 +559,6 @@ class UpdateStatistics extends Injectable
 		if (!file_exists(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir))
 			mkdir(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir, 0777);
 
-		file_put_contents(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."/CacheRecords.php", $file);
+		file_put_contents(ROOT_PATH.$this->config->application->baseDir.$this->config->application->cacheDir."CacheRecords.php", $file);
 	}
 }

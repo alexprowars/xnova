@@ -1,0 +1,39 @@
+.tabs-component {
+	background-color: #344566;
+	border: 1px solid #415680;
+	color: #ffffff;
+	font-size: 1.1em;
+
+	.tabs-component-tabs {
+		background-color: #253046;
+		color: #ffffff;
+		padding: .1em;
+		margin: 0;
+	}
+
+	.tabs-component-tab {
+		list-style: none;
+		display: inline-block;
+		position: relative;
+		top: 0;
+		margin: 0;
+		white-space: nowrap;
+		border: 0;
+		background: none;
+		color: #fff;
+		padding: 1px;
+
+		&.active {
+			background: #2B354E;
+			border: 1px solid #415683;
+			color: #fff;
+			padding: 0;
+		}
+
+		.tabs-component-tab-a {
+			padding: .5em 1em;
+			color: #ccc;
+			display: block;
+		}
+	}
+}

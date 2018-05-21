@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -12,6 +12,7 @@ use Xnova\Construction;
 use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/buildings")
@@ -42,70 +43,40 @@ class BuildingsController extends Controller
 			throw new ErrorException("Нет доступа!");
 
 		$this->building = new Construction($this->user, $this->planet);
-		$this->building->mode = $this->dispatcher->getActionName();
 	}
 
 	public function fleetAction ()
 	{
-		if ($this->planet->{$this->registry->resource[21]} == 0)
-			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
-
 		$parse = $this->building->pageShipyard('fleet');
+
 		$parse['mode'] = $this->dispatcher->getActionName();
+		$parse['queue'] = $this->building->ElementBuildListBox();
 
-		$this->view->partial('buildings/shipyard');
-		$this->view->setVar('parse', $parse);
-
-		$data = $this->building->ElementBuildListBox();
-
-		if ($data['count'] > 0)
-		{
-			$this->view->setVar('build', $data);
-			$this->view->partial('buildings/script');
-		}
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Верфь');
 	}
 
 	public function researchAction ()
 	{
-		if ($this->planet->{$this->registry->resource[31]} == 0)
-			throw new ErrorException(_getText('no_laboratory'), _getText('Research'));
+		$parse = $this->building->pageResearch();
 
-		$parse = $this->building->pageResearch(($this->dispatcher->getActionName() == 'research_fleet' ? 'fleet' : ''));
-
-		$this->view->pick('buildings/research');
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Исследования');
 	}
 
-	public function research_fleetAction ()
-	{
-		$this->researchAction();
-	}
-
 	public function defenseAction ()
 	{
-		if ($this->planet->{$this->registry->resource[21]} == 0 && $this->planet->planet_type != 5)
-			throw new ErrorException(_getText('need_hangar'), _getText('tech', 21));
-
 		if ($this->planet->planet_type == 5)
-			$this->user->setUserOption('only_available', 1);
+			$this->user->setUserOption('only_available', true);
 
 		$parse = $this->building->pageShipyard('defense');
+
 		$parse['mode'] = $this->dispatcher->getActionName();
+		$parse['queue'] = $this->building->ElementBuildListBox();
 
-		$this->view->partial('buildings/shipyard');
-		$this->view->setVar('parse', $parse);
-
-		$data = $this->building->ElementBuildListBox();
-
-		if ($data['count'] > 0)
-		{
-			$this->view->setVar('build', $data);
-			$this->view->partial('buildings/script');
-		}
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Оборона');
 	}
@@ -114,15 +85,7 @@ class BuildingsController extends Controller
 	{
 		$parse = $this->building->pageBuilding();
 
-		if ($this->planet->planet_type == 3)
-			$parse['planettype'] = 'moon';
-		elseif ($this->planet->planet_type == 5)
-			$parse['planettype'] = 'base';
-		else
-			$parse['planettype'] = 'planet';
-
-		$this->view->pick('buildings/index');
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Постройки');
 	}

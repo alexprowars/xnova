@@ -47,7 +47,7 @@
 	{% endif %}
 	<tr>
 		<td class="b" colspan="2" height="100" style="padding:3px;">
-			<span id="m1"></span>
+			<text-viewer text="{{ parse['description'] }}"></text-viewer>
 		</td>
 	</tr>
 	{% if parse['web'] %}
@@ -61,7 +61,7 @@
 	</tr>
 	<tr>
 		<td class="b" colspan="2" height="100" style="padding:3px;">
-			<span id="m2"></span>
+			<text-viewer text="{{ parse['text'] }}"></text-viewer>
 		</td>
 	</tr>
 	{% if parse['owner'] != '' %}
@@ -72,7 +72,3 @@
 	</tr>
 	{% endif %}
 </table>
-<script>
-	TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');
-	TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['text']|stripslashes) }}', 'm2');
-</script>

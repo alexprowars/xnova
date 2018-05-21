@@ -1,7 +1,24 @@
-
-
-@import "variables";
 @import "base";
+
+@import "pages/buildings";
+@import "pages/chat";
+@import "pages/techtree";
+@import "pages/overview";
+@import "pages/galaxy";
+@import "pages/imperium";
+@import "pages/sim";
+@import "pages/fleet";
+@import "pages/officiers";
+@import "pages/notes";
+@import "pages/index";
+
+@import "components/tooltip";
+@import "components/loader";
+@import "components/tabs";
+@import "components/confirm";
+@import "components/editor";
+@import "components/chat";
+
 @import "report";
 @import "sprite";
 @import "media";

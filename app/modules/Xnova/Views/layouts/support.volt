@@ -1,44 +1,50 @@
 <div id="content" class="content">
-<table class="table">
-	<tr>
-		<td class="c" colspan="4">Служба техподдержки</td>
-	</tr>
-	{% if list|length > 0 %}
+	<table class="table">
 		<tr>
-			<th style="width:10%">ID</th>
-			<th style="width:50%">Тема</th>
-			<th style="width:15%">Статус</th>
-			<th style="width:25%">Дата</th>
+			<td class="c" colspan="4">Служба техподдержки</td>
 		</tr>
-		{% for id, item in list %}
+		{% if list|length == 0 %}
 			<tr>
-				<td class="c">{{ id }}</td>
-				<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ id }}');">{{ item['subject'] }}</a></td>
-				<td class="c">
-					{% if item['status'] == 0 %}
-						<span style="color:red">закрыто</span>
-					{% elseif item['status'] == 1 %}
-						<span style="color:green">открыто</span>
-					{% elseif item['status'] == 2 %}
-						<span style="color:orange">ответ админа</span>
-					{% elseif item['status'] == 3 %}
-						<span style="color:green">ответ игрока</span>
-					{% endif %}
-				</td>
-				<td class="c">{{ item['date'] }}</td>
+				<th colspan="4">Нет запросов в техподдержку</th>
 			</tr>
-		{% endfor %}
+		{% else %}
+			<tr>
+				<th style="width:10%">ID</th>
+				<th style="width:50%">Тема</th>
+				<th style="width:15%">Статус</th>
+				<th style="width:25%">Дата</th>
+			</tr>
+			{% for item in list %}
+				<tr>
+					<td class="c">{{ item['id'] }}</td>
+					<td class="c"><a href="javascript:;" onclick="ShowHiddenBlock('ticket_{{ item['id'] }}');">{{ item['subject'] }}</a></td>
+					<td class="c">
+						{% if item['status'] == 0 %}
+							<span style="color:red">закрыто</span>
+						{% elseif item['status'] == 1 %}
+							<span style="color:green">открыто</span>
+						{% elseif item['status'] == 2 %}
+							<span style="color:orange">ответ админа</span>
+						{% elseif item['status'] == 3 %}
+							<span style="color:green">ответ игрока</span>
+						{% endif %}
+					</td>
+					<td class="c">{{ item['date'] }}</td>
+				</tr>
+			{% endfor %}
+		{% endif %}
 	</table>
+
 	<div class="separator"></div>
-	{% for id, item in list %}
-		<div id="ticket_{{ id }}" style="display:none;" class="tickets">
-			<form action="{{ url('support/answer/'~id~'/') }}" method="POST">
+	{% for item in list %}
+		<div id="ticket_{{ item['id'] }}" style="display:none;" class="tickets">
+			<form action="{{ url('support/answer/'~item['id']~'/') }}" method="POST">
 				<table class="table">
 					<tr>
 						<th>Текст запроса</th>
 					</tr>
 					<tr>
-						<td class="c text-xs-left">{{ item['text'] }}</td>
+						<td class="c text-left">{{ item['text'] }}</td>
 					</tr>
 					{% if item['status'] == 0 %}<tr><th>Закрыт</th></tr>{% endif %}
 					<tr>
@@ -51,13 +57,7 @@
 				</table>
 			</form>
 		</div>
-		{% endfor %}
-	{% else %}
-		<tr>
-			<th colspan="4">Нет запросов в техподдержку</th>
-		</tr>
-	</table>
-	{% endif %}
+	{% endfor %}
 	<br><br>
 
 	<div id="newbutton" style="display:block;">
@@ -82,21 +82,7 @@
 				</tr>
 				<tr>
 					<td class="c p-a-0" colspan="2">
-						<div id="editor"></div>
-						<textarea name="text" id="text" rows="10" title=""></textarea>
-
-						<div id="showpanel" style="display:none">
-							<table class="table">
-								<tr>
-									<td class="c"><b>Предварительный просмотр</b></td>
-								</tr>
-								<tr>
-									<td class="b"><span id="showbox"></span></td>
-								</tr>
-							</table>
-						</div>
-
-						<script type="text/javascript">edToolbar('text');</script>
+						<text-editor></text-editor>
 
 						<input type="submit" value="Отправить">
 					</td>

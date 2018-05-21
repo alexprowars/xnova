@@ -1,10 +1,8 @@
 {% if message is defined %}
 	<div class="error">{{ message }}</div>
 {% endif %}
-<script src='//www.google.com/recaptcha/api.js'></script>
 <form action="{{ url('registration/') }}" method="post" id="regForm" class="form">
 	<table class="table">
-		<tbody>
 		<tr>
 			<th width="40%">E-Mail<br>(используется для входа)</th>
 			<th><input name="email" size="20" maxlength="40" type="text" value="{{ request.getPost('email') }}" title=""></th>
@@ -18,18 +16,18 @@
 			<th><input name="rpassword" size="20" maxlength="20" type="password" title=""></th>
 		</tr>
 		<tr>
-			<th colspan="2" align="center" class="text-xs-center">
-				<div class="g-recaptcha" data-sitekey="{{ config.recaptcha.public_key }}"></div>
+			<th colspan="2" align="center" class="text-center">
+				<div class="g-recaptcha" id="recaptcha" data-sitekey="{{ config.recaptcha.public_key }}"></div>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-xs-left">
+			<th colspan="2" class="text-left">
 				<input name="sogl" id="sogl" type="checkbox" {{ request.getPost('sogl') != '' ? 'checked' : '' }}>
 				<label for="sogl">Я принимаю</label> <a href="{{ url('content/agreement/') }}" target="_blank">Пользовательское соглашение</a>
 			</th>
 		</tr>
 		<tr>
-			<th colspan="2" class="text-xs-left">
+			<th colspan="2" class="text-left">
 				<input name="rgt" id="rgt" type="checkbox" {{ request.getPost('rgt') != '' ? 'checked' : '' }}>
 				<label for="rgt">Я принимаю</label> <a href="{{ url('content/agb/') }}" target="_blank">Законы игры</a>
 			</th>
@@ -42,18 +40,22 @@
 <script>
 	$(document).ready(function()
 	{
+		grecaptcha.render('recaptcha');
+
 		$('#regForm').validate({
 			submitHandler: function(form)
 			{
-				$(form).ajaxSubmit({
-					data: {ajax: 'Y'},
+				$.ajax({
+					url: $(form).attr('action'),
+					type: 'post',
+					data: $(form).serialize(),
 					dataType: 'json',
 					success: function (data)
 					{
-						if (data.status == 1 && data.data.redirect !== undefined)
+						if (data.status && data.data.redirect !== undefined)
 							window.location.href = data.data.redirect;
 						else
-							$('#windowDialog').html(data.html);
+							$('.jconfirm-content').html(data.html);
 					}
 				});
 			},

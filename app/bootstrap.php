@@ -5,6 +5,8 @@ use Xnova\Exceptions\MessageException;
 if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 
+require_once(ROOT_PATH.'/vendor/autoload.php');
+
 try
 {
 	require_once(ROOT_PATH."/app/modules/Core/Classes/Initializations.php");
@@ -51,6 +53,8 @@ catch (Exception $e)
 
 	if (defined('SUPERUSER'))
 		print_r($e->getTraceAsString());
+
+	file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n".print_r($_REQUEST, true)."\n\n".$e->getMessage()."\n\n", FILE_APPEND);
 
 	echo '</pre>';
 }

@@ -1,7 +1,7 @@
-@media (max-width: 1200px)
+@media (min-width: 480px) and (max-width: 1200px)
 {
 	.set_buildingsindex {
-		.planetList {
+		.main-planets {
 			width: 60px;
 
 			.list {
@@ -24,7 +24,7 @@
 			}
 		}
 
-		.game_content > .content {
+		main > .main-content {
 			width: 785px;
 		}
 	}
@@ -33,138 +33,56 @@
 		height: 44px;
 	}
 
-	#box .game_menu, #box .game_content {
+	main {
 		width: 1000px;
 	}
-}
 
-@media (min-width: 1200px)
-{
-	#box .game_menu, #box .game_content {
-		width: 1125px;
-	}
-
-	.game_content > .menu {
-		width: 150px;
-	}
-
-	.game_content > .planetList {
-		width: 160px;
-	}
-
-	.game_content > .menu li > a {
-		padding: 8px;
-		height:auto;
-	}
-
-	.topnav {
-		margin-bottom: 10px;
-	}
-
-	.shoutbox {
-		width: 765px;
-	}
-
-	.doubleth {
-		height: 44px;
-	}
-
-	#box.set_log .game_content, #box.set_imperium .game_content {
-		max-width: 95%;
+	html {
+		font-size: 10px;
 	}
 }
 
-@media (min-width: 1600px)
+@media (min-width: 1200px) and (max-width: 1600px)
 {
-	body {
-		font-size: 12px;
-	}
-
-	#box .game_menu, #box .game_content {
-		width: 1200px;
-	}
-
-	.planetList .list .planet {
+	html {
 		font-size: 11px;
-	}
-
-	.block > .title {
-		font-size: 14px;
-	}
-
-	.shoutbox {
-		font-size: 14px;
-		width: calc(100% - 10px);
-	}
-
-	.buildings .actions {
-		padding: 4px;
-	}
-
-	.buildings .title {
-		padding: 4px;
-	}
-
-	table td.c, table th, table td.k, .table th {
-		padding: 4px;
-	}
-
-	.doubleth {
-		height: 48px;
-	}
-
-	.block > .content {
-		font-size: 12px;
-	}
-
-	.set_buildingsindex .content-row > .block {
-		width: 784px;
-		margin: 0 auto;
 	}
 }
 
 @media (min-width: 481px) and (max-width: 992px)
 {
-	#box .game_menu, #box .game_content {
-		width: 790px;
+	main {
+		width: 800px;
 	}
 
-	.planetList .list {
-		width: 60px;
-
-		.planet > div.clear {
-			display: block;
-		}
-
-		.planet img {
-			width: 52px;
-			height: 52px;
-		}
-	}
-
-	.game_content > .planetList {
+	.main-planets {
 		width: 60px;
 		margin-left: 5px;
+
+		.list {
+			width: 60px;
+
+			.planet > div.clear {
+				display: block;
+			}
+
+			.planet img {
+				width: 52px;
+				height: 52px;
+			}
+		}
 	}
 
-	.game_content .menu {
-		width: 90px;
+	.main-menu {
 		margin-right: 5px;
+		width: 100px;
 	}
 
-	.set_buildingsindex #tabs-0, .set_buildingsindex #tab_area, .set_buildingsindex #tabs-0 * {
-		display: none !important;
-	}
-
-	.set_buildings .content {
-		overflow-x: hidden;
-	}
-
-	.shoutbox {
+	.page-chat-messages {
 		width: calc(100% - 10px);
 	}
 
-	.bar .m1 {
+	.top-menu-block .m1 {
 	    padding: 0 6px;
 	}
 
@@ -173,266 +91,9 @@
 	}
 }
 
-@media (min-width: 481px) and (max-width: 790px)
-{
-	#box .game_menu, #box .game_content, #box {
+@media (max-width: 790px) and (min-width: 481px) {
+	main {
 		width: 100%;
 		min-width: 600px;
-	}
-}
-
-@media (min-width: 992px)
-{
-	.buildings.area {
-		color: #D4D4D4;
-		position: relative;
-
-		&.planet {
-			height: 634px;
-			background: url(../images/buildings/area.jpg) no-repeat 0 0;
-			font-size: 0;
-			width: 780px;
-			margin: 0 auto;
-		}
-
-		&.moon, &.base {
-			height: 702px;
-			background: url(../images/buildings/moon.jpg) no-repeat 0 0;
-			font-size: 0;
-		}
-
-		.object {
-			position: absolute;
-			cursor: pointer;
-			text-align: left;
-
-			&:hover {
-				opacity: 0.8;
-			}
-
-			&.empty img {
-				opacity: 0.3;
-			}
-
-			&.i_1 {
-				top: 76px;
-				left: 122px;
-
-				img {
-					width: 90px;
-					height: 79px;
-				}
-			}
-
-			&.i_2 {
-				top: 457px;
-				left: 193px;
-
-				img {
-					width: 130px;
-					height: 106px;
-				}
-			}
-
-			&.i_3 {
-				top: 298px;
-				left: 640px;
-				width: 100px;
-
-				img {
-					width: 90px;
-					height: 88px;
-				}
-			}
-
-			&.i_4 {
-				top: 155px;
-				left: 546px;
-
-				img {
-					width: 90px;
-					height: 75px;
-				}
-			}
-
-			&.i_12 {
-				top: 74px;
-				left: 634px;
-
-				img {
-					width: 90px;
-					height: 69px;
-				}
-			}
-
-			&.i_14 {
-				top: 307px;
-				left: 253px;
-
-				img {
-					width: 100px;
-					height: 61px;
-				}
-			}
-
-			&.i_15 {
-				top: 303px;
-				left: 25px;
-
-				img {
-					width: 120px;
-					height: 100px;
-				}
-			}
-
-			&.i_21 {
-				top: 310px;
-				left: 380px;
-
-				img {
-					width: 160px;
-					height: 130px;
-				}
-			}
-
-			&.i_22 {
-				top: 146px;
-				left: 22px;
-
-				img {
-					width: 90px;
-					height: 63px;
-				}
-			}
-
-			&.i_23 {
-				top: 520px;
-				left: 350px;
-				width: 100px;
-
-				img {
-					width: 90px;
-					height: 54px;
-				}
-			}
-
-			&.i_24 {
-				top: 398px;
-				left: 581px;
-				width: 100px;
-
-				img {
-					width: 90px;
-					height: 76px;
-				}
-			}
-
-			&.i_31 {
-				top: 193px;
-				left: 108px;
-
-				img {
-					width: 90px;
-					height: 100px;
-				}
-			}
-
-			&.i_33 {
-				top: 150px;
-				left: 310px;
-
-				img {
-					width: 100px;
-					height: 80px;
-				}
-			}
-
-			&.i_34 {
-				top: 508px;
-				left: 520px;
-				width: 140px;
-
-				img {
-					width: 120px;
-					height: 106px;
-				}
-			}
-
-			&.i_41 {
-				top: 223px;
-				left: 115px;
-
-				img {
-					width: 110px;
-					height: 170px;
-				}
-			}
-
-			&.i_42 {
-				top: 217px;
-				left: 529px;
-
-				img {
-					width: 150px;
-					height: 174px;
-				}
-			}
-
-			&.i_43 {
-				top: 20px;
-				left: 150px;
-
-				img {
-					width: 270px;
-					height: 248px;
-				}
-			}
-
-			&.i_44 {
-				top: 46px;
-				left: 388px;
-
-				img {
-					width: 130px;
-					height: 76px;
-				}
-			}
-
-			.name {
-				width: 100%;
-				border: 1px solid #415680;
-				background-color: #253046;
-				padding: 3px;
-				margin: 0 auto;
-				z-index: 10;
-				position: absolute;
-				font-size: 11px;
-				text-align: center;
-
-				span {
-					color: #ffd653;
-				}
-			}
-		}
-
-		&.moon .object.i_14, &.base .object.i_14 {
-			top: 110px;
-			left: 490px;
-		}
-
-		&.base .object.i_34 {
-			top: 280px;
-			left: 91px;
-		}
-
-		&.base .object.i_44 {
-			top: 570px;
-			left: 230px;
-		}
-
-		&.moon .object.i_21 {
-			top: 510px;
-			left: 250px;
-		}
 	}
 }

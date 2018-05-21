@@ -18,7 +18,6 @@ $lang['main_menu'] = array
 	'fleet' 					=> array('Флот', 'fleet/', 0),
 	'buildingsindex' 			=> array('Постройки', 'buildings/', 0),
 	'buildingsresearch' 		=> array('Наука', 'buildings/research/', 0),
-	'buildingsresearch_fleet' 	=> array('Фабрика', 'buildings/research_fleet/', 0),
 	'buildingsfleet' 			=> array('Верфь', 'buildings/fleet/', 0),
 	'buildingsdefense' 			=> array('Оборона', 'buildings/defense/', 0),
 	'resources' 				=> array('Сырьё', 'resources/', 0),
@@ -30,7 +29,6 @@ $lang['main_menu'] = array
 	'records' 					=> array('Рекорды', 'records/', 0),
 	'hall' 						=> array('Зал славы', 'hall/', 0),
 	'log' 						=> array('Логи', 'log/', 0),
-	'calculate' 				=> array('Расчеты', 'calculate/', 0),
 	'admin' 					=> array('Админка', 'admin/', 1, true),
 );
 
@@ -99,6 +97,13 @@ $lang['res'] = array
 	'metal'        => "Металл",
 	'crystal'      => "Кристалл",
 	'deuterium'    => "Дейтерий"
+);
+
+$lang['res_builds'] = array
+(
+	'metal'        => 1,
+	'crystal'      => 2,
+	'deuterium'    => 3
 );
 
 $lang['stopwords'] = array(
@@ -245,32 +250,6 @@ $lang['tech'] = array(
 	221 => "Перехватчик",
 	222 => "Дредноут",
 	223 => "Корсар",
-
-	300 => "Исследования кораблей",
-
-	302 => "Малый транспорт",
-	303 => "Большой транспорт",
-	304 => "Лёгкий истребитель",
-	305 => "Тяжёлый истребитель",
-	306 => "Крейсер",
-	307 => "Линкор",
-	309 => "Переработчик",
-	311 => "Бомбардировщик",
-	313 => "Уничтожитель",
-	314 => "Звезда смерти",
-	315 => "Линейный крейсер",
-
-	320 => "Корвет",
-	321 => "Перехватчик",
-	322 => "Дредноут",
-	323 => "Корсар",
-
-	351 => "Ракетная установка",
-	352 => "Легкий лазер",
-	353 => "Тяжёлый лазер",
-	354 => "Пушка Гаусса",
-	355 => "Ионное орудие",
-	356 => "Плазменное орудие",
 
 	400 => "Оборона",
 	401 => "Ракетная установка",

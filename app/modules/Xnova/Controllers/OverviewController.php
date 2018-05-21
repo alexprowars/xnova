@@ -4,11 +4,12 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Phalcon\Cache\Backend\Memcache;
+use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
@@ -19,6 +20,8 @@ use Xnova\Queue;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Controller;
 use Phalcon\Cache\Frontend\None as FrontendCache;
+use Xnova\Request;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/overview")
@@ -41,7 +44,7 @@ class OverviewController extends Controller
 		$this->user->loadPlanet();
 	}
 
-	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner, $Label, $Record)
+	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner)
 	{
 		$FleetStyle = [
 			1 => 'attack',
@@ -174,7 +177,6 @@ class OverviewController extends Controller
 		if ($Status == 0)
 		{
 			$Time = $FleetRow->start_time;
-			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
 			$EventString .= _getText('ov_atteint');
@@ -184,7 +186,6 @@ class OverviewController extends Controller
 		elseif ($Status == 1)
 		{
 			$Time = $FleetRow->end_stay;
-			$Rest = $Time - time();
 			$EventString .= _getText('ov_vennant');
 			$EventString .= $StartID;
 
@@ -199,7 +200,6 @@ class OverviewController extends Controller
 		else
 		{
 			$Time = $FleetRow->end_time;
-			$Rest = $Time - time();
 			$EventString .= _getText('ov_rentrant');
 			$EventString .= $TargetID;
 			$EventString .= $StartID;
@@ -208,14 +208,13 @@ class OverviewController extends Controller
 
 		$EventString .= $FleetCapacity;
 
-		$bloc['fleet_status'] = $FleetStatus[$Status];
-		$bloc['fleet_prefix'] = $FleetPrefix;
-		$bloc['fleet_style'] = $FleetStyle[$MissionType];
-		$bloc['fleet_order'] = $Label . $Record;
-		$bloc['fleet_time'] = $this->game->datezone("H:i:s", $Time);
-		$bloc['fleet_count_time'] = Helpers::pretty_time($Rest, ':');
-		$bloc['fleet_descr'] = $EventString;
-		$bloc['fleet_javas'] = Helpers::InsertJavaScriptChronoApplet($Label, $Record, $Rest);
+		$bloc['id'] = (int) $FleetRow->id;
+		$bloc['status'] = $FleetStatus[$Status];
+		$bloc['prefix'] = $FleetPrefix;
+		$bloc['mission'] = $FleetStyle[$MissionType];
+		$bloc['date'] = $this->game->datezone("H:i:s", $Time);
+		$bloc['time'] = $Time;
+		$bloc['text'] = $EventString;
 
 		return $bloc;
 	}
@@ -226,39 +225,61 @@ class OverviewController extends Controller
 		{
 			if ($this->user->id != $this->planet->id_owner)
 				throw new RedirectException("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
-			elseif (md5(trim($_POST['pw'])) == $_POST["password"] && $this->user->planet_id != $this->user->planet_current)
-			{
-				$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
 
-				if ($checkFleets > 0)
-					throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
-				else
-				{
-					$destruyed = time() + 60 * 60 * 24;
-
-					$this->planet->destruyed = $destruyed;
-					$this->planet->id_owner = 0;
-					$this->planet->update();
-
-					$this->user->planet_current = $this->user->planet_id;
-					$this->user->update();
-
-					if ($this->planet->parent_planet != 0)
-						$this->db->updateAsDict('game_planets', ['destruyed' => $destruyed, 'id_owner' => 0], "id = '".$this->planet->parent_planet."'");
-
-					if ($this->session->has('fleet_shortcut'))
-						$this->session->remove('fleet_shortcut');
-
-					$this->cache->delete('app::planetlist_'.$this->user->id);
-
-					throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
-				}
-
-			}
-			elseif ($this->user->planet_id == $this->user->planet_current)
+			if ($this->user->planet_id == $this->user->planet_current)
 				throw new RedirectException(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
-			else
+
+			if (md5(trim($this->request->getPost('pw'))) != $this->request->getPost('password'))
 				throw new RedirectException(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
+
+			$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
+
+			if ($checkFleets > 0)
+				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
+
+			$destruyed = time() + 60 * 60 * 24;
+
+			$this->planet->destruyed = $destruyed;
+			$this->planet->id_owner = 0;
+			$this->planet->update();
+
+			$this->user->planet_current = $this->user->planet_id;
+			$this->user->update();
+
+			if ($this->planet->parent_planet != 0)
+			{
+				$this->db->updateAsDict('game_planets', [
+					'destruyed' => $destruyed,
+					'id_owner' => 0
+				], "id = '".$this->planet->parent_planet."'");
+
+				$queue = \Xnova\Models\Queue::find([
+					'conditions' => 'planet_id = :planet:',
+					'bind' => [
+						'planet' => $this->planet->parent_planet
+					]
+				]);
+
+				foreach ($queue as $item)
+					$item->delete();
+			}
+
+			$queue = \Xnova\Models\Queue::find([
+				'conditions' => 'planet_id = :planet:',
+				'bind' => [
+					'planet' => $this->planet->id
+				]
+			]);
+
+			foreach ($queue as $item)
+				$item->delete();
+
+			if ($this->session->has('fleet_shortcut'))
+				$this->session->remove('fleet_shortcut');
+
+			$this->cache->delete('app::planetlist_'.$this->user->id);
+
+			throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
 		}
 
 		$parse['number_1'] 		= mt_rand(1, 100);
@@ -302,48 +323,42 @@ class OverviewController extends Controller
 				$parse['type'] = $type;
 		}
 
-		if (isset($_POST['action']) && $_POST['action'] == _getText('namer'))
+		if ($this->request->hasPost('action') && $this->request->getPost('action') == _getText('namer'))
 		{
-			$newName = strip_tags(trim($this->request->getPost('newname', 'string', '')));
+			$name = strip_tags(trim($this->request->getPost('newname', 'string', '')));
 
-			if ($newName != "")
+			if ($name != '')
 			{
-				if (preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $newName))
-				{
-					if (mb_strlen($newName, 'UTF-8') > 1 && mb_strlen($newName, 'UTF-8') < 20)
-					{
-						$this->planet->name = $newName;
-						$this->planet->update();
-
-						if ($this->session->has('fleet_shortcut'))
-							$this->session->remove('fleet_shortcut');
-					}
-					else
-						throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
-				}
-				else
+				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
 					throw new RedirectException('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
+
+				if (mb_strlen($name, 'UTF-8') <= 1 || mb_strlen($name, 'UTF-8') >= 20)
+					throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
+
+				$this->planet->name = $name;
+				$this->planet->update();
+
+				if ($this->session->has('fleet_shortcut'))
+					$this->session->remove('fleet_shortcut');
 			}
 		}
-		elseif (isset($_POST['action']) && $this->request->hasPost('image'))
+		elseif ($this->request->hasPost('action') && $this->request->hasPost('image'))
 		{
 			if ($this->user->credits < 1)
 				throw new RedirectException('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
 
-			$image = $this->request->getPost('image', 'int', 0);
+			$image = (int) $this->request->getPost('image', 'int', 0);
 
-			if ($image > 0 && $image <= $parse['images'][$parse['type']])
-			{
-				$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
-				$this->planet->update();
-
-				$this->user->credits--;
-				$this->user->update();
-
-				$this->response->redirect('overview/');
-			}
-			else
+			if ($image <= 0 || $image > $parse['images'][$parse['type']])
 				throw new RedirectException('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
+
+			$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
+			$this->planet->update();
+
+			$this->user->credits--;
+			$this->user->update();
+
+			$this->response->redirect('overview/');
 		}
 
 		$parse['planet_name'] = $this->planet->name;
@@ -403,15 +418,15 @@ class OverviewController extends Controller
 			if ($FleetRow->owner == $this->user->id)
 			{
 				if ($FleetRow->start_time > time())
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true, "fs", $Record);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true);
 
 				if ($FleetRow->end_stay > time())
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true, "ft", $Record);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true);
 
 				if (!($FleetRow->mission == 7 && $FleetRow->mess == 0))
 				{
 					if (($FleetRow->end_time > time() AND $FleetRow->mission != 4) OR ($FleetRow->mess == 1 AND $FleetRow->mission == 4))
-						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true, "fe", $Record);
+						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true);
 				}
 
 				if ($FleetRow->group_id != 0 && !in_array($FleetRow->group_id, $aks))
@@ -421,32 +436,30 @@ class OverviewController extends Controller
 					foreach ($AKSFleets as $AKFleet)
 					{
 						$Record++;
-						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false, "fs", $Record);
+						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false);
 					}
 
 					$aks[] = $FleetRow->group_id;
 				}
-
 			}
 			elseif ($FleetRow->mission != 8)
 			{
 				$Record++;
 
 				if ($FleetRow->start_time > time())
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false, "ofs", $Record);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false);
 				if ($FleetRow->mission == 5 && $FleetRow->end_stay > time())
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false, "oft", $Record);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false);
 			}
 		}
 
-		$parse['moon_img'] 	= '';
-		$parse['moon'] 		= '';
+		$parse['moon'] 	= false;
 
 		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id)
 		{
 			$lune = $this->cache->get('app::lune_'.$this->planet->parent_planet);
 
-			if ($lune === NULL)
+			if ($lune === null)
 			{
 				$lune = Planet::findFirst(['columns' => 'id, name, image, destruyed', 'conditions' => 'id = ?0 AND planet_type = 3', 'bind' => [$this->planet->parent_planet]]);
 
@@ -454,66 +467,30 @@ class OverviewController extends Controller
 					$this->cache->save('app::lune_'.$this->planet->parent_planet, $lune->toArray(), 300);
 			}
 
-			if (isset($lune['id']))
+			if (isset($lune['id']) && !$lune['destruyed'])
 			{
-				$parse['moon_img'] = "<a href=\"/overview/?chpl=" . $lune['id'] . "\" title=\"" . $lune['name'] . "\"><img src=\"".$this->url->getBaseUri()."assets/images/planeten/" . $lune['image'] . ".jpg\" height=\"50\" width=\"50\"></a>";
-				$parse['moon'] = ($lune['destruyed'] == 0) ? $lune['name'] : 'Фантом';
+				$parse['moon'] = [
+					'id' => $lune['id'],
+					'name' => $lune['name'],
+					'image' => $lune['image']
+
+				];
 			}
 		}
 
-		$build_list = [];
-
-		$planets = Planet::find([
-			'conditions' => 'id_owner = :user: AND planet_type != :type: AND id != :id: AND queue IS NOT NULL AND queue != :queue:',
-			'bind' => ['user' => $this->user->id, 'type' => 3, 'id' => $this->user->planet_current, 'queue' => '[]']
-		]);
-
-		if (count($planets) > 0)
-		{
-			foreach ($planets as $UserPlanet)
-			{
-				if (!$UserPlanet->isEmptyQueue())
-				{
-					if (!isset($queueManager))
-						$queueManager = new Queue();
-
-					$queueManager->loadQueue($UserPlanet->queue);
-
-					if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
-					{
-						$UserPlanet->assignUser($this->user);
-						$UserPlanet->updateQueueList();
-
-						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
-
-						foreach ($QueueArray AS $CurrBuild)
-						{
-							$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], "<a href=\"".$this->url->getBaseUri()."buildings/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['l'] - 1) . ' -> ' . $CurrBuild['l'] . ')'];
-						}
-					}
-
-					if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
-					{
-						$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-						$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], "<a href=\"".$this->url->getBaseUri()."buildings/research" . (($QueueArray[0]['i'] > 300) ? '_fleet' : '') . "/?chpl=" . $UserPlanet->id . "\" style=\"color:#33ff33;\">" . $UserPlanet->name . "</a>: </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
-					}
-				}
-			}
-		}
-
-		unset($planets);
-
-		$parse['planet_type'] = $this->planet->planet_type;
-		$parse['planet_name'] = $this->planet->name;
-		$parse['planet_diameter'] = $this->planet->diameter;
-		$parse['planet_field_current'] = $this->planet->field_current;
-		$parse['planet_field_max'] = $this->planet->getMaxFields();
-		$parse['planet_temp_min'] = $this->planet->temp_min;
-		$parse['planet_temp_max'] = $this->planet->temp_max;
-		$parse['galaxy_galaxy'] = $this->planet->galaxy;
-		$parse['galaxy_planet'] = $this->planet->planet;
-		$parse['galaxy_system'] = $this->planet->system;
+		$parse['planet'] = [
+			'type' => _getText('type_planet', $this->planet->planet_type),
+			'name' => $this->planet->name,
+			'image' => $this->planet->image,
+			'diameter' => (int) $this->planet->diameter,
+			'field_used' => (int) $this->planet->field_current,
+			'field_max' => (int) $this->planet->getMaxFields(),
+			'temp_min' => (int) $this->planet->temp_min,
+			'temp_max' => (int) $this->planet->temp_max,
+			'galaxy' => (int) $this->planet->galaxy,
+			'system' => (int) $this->planet->system,
+			'planet' => (int) $this->planet->planet
+		];
 
 		$records = $this->cache->get('app::records_'.$this->user->getId());
 
@@ -527,34 +504,29 @@ class OverviewController extends Controller
 			$this->cache->save('app::records_'.$this->user->getId().'', $records, 1800);
 		}
 
+		$parse['points'] = [
+			'build' => 0,
+			'tech' => 0,
+			'fleet' => 0,
+			'defs' => 0,
+			'total' => 0,
+			'place' => 0,
+			'diff' => 0
+		];
+
 		if (count($records))
 		{
-			$parse['user_points'] = $records['build_points'];
-			$parse['player_points_tech'] = $records['tech_points'];
-			$parse['total_points'] = $records['total_points'];
-			$parse['user_fleet'] = $records['fleet_points'];
-			$parse['user_defs'] = $records['defs_points'];
-
-			$parse['user_rank'] = $records['total_rank'] + 0;
-
 			if (!$records['total_old_rank'])
 				$records['total_old_rank'] = $records['total_rank'];
 
-			$parse['ile'] = $records['total_old_rank'] - $records['total_rank'];
+			$parse['points']['build'] = (int) $records['build_points'];
+			$parse['points']['tech'] = (int) $records['tech_points'];
+			$parse['points']['fleet'] = (int) $records['fleet_points'];
+			$parse['points']['defs'] = (int) $records['defs_points'];
+			$parse['points']['total'] = (int) $records['total_points'];
+			$parse['points']['place'] = (int) $records['total_rank'];
+			$parse['points']['diff'] = (int) $records['total_old_rank'] - (int) $records['total_rank'];
 		}
-		else
-		{
-			$parse['user_points'] = 0;
-			$parse['player_points_tech'] = 0;
-			$parse['total_points'] = 0;
-			$parse['user_fleet'] = 0;
-			$parse['user_defs'] = 0;
-
-			$parse['user_rank'] = 0;
-			$parse['ile'] = 0;
-		}
-
-		$parse['user_username'] = $this->user->username;
 
 		$flotten = [];
 
@@ -570,40 +542,91 @@ class OverviewController extends Controller
 			}
 		}
 
-		$parse['fleet_list'] = $flotten;
+		$parse['fleets'] = $flotten;
 
-		$parse['planet_image'] = $this->planet->image;
-		$parse['metal_debris'] = $this->planet->debris_metal;
-		$parse['crystal_debris'] = $this->planet->debris_crystal;
+		$parse['debris'] = [
+			'metal' => (int) $this->planet->debris_metal,
+			'crystal' => (int) $this->planet->debris_crystal,
+		];
 
-		$parse['get_link'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->{$this->registry->resource[209]} != 0);
+		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getUnitCount('recycler') > 0);
 
-		if (!$this->planet->isEmptyQueue())
+		$build_list = [];
+		$planetsName = [];
+
+		$planets = Planet::find([
+			'columns' => 'id, name',
+			'conditions' => 'id_owner = :user:',
+			'bind' => [
+				'user' => $this->user->id
+			]
+		]);
+
+		foreach ($planets as $item)
+			$planetsName[$item->id] = $item->name;
+
+		$queueManager = new Queue($this->user);
+
+		if ($queueManager->getCount($queueManager::TYPE_BUILDING))
 		{
-			if (!isset($queueManager))
-				$queueManager = new Queue();
+			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			$queueManager->loadQueue($this->planet->queue);
+			$endTime = 0;
 
-			if ($queueManager->getCount($queueManager::QUEUE_TYPE_BUILDING))
+			foreach ($queueArray AS $item)
 			{
-				$this->planet->updateQueueList();
+				if (!$endTime)
+					$endTime = $item->time;
 
-				$BuildQueue = $queueManager->get($queueManager::QUEUE_TYPE_BUILDING);
+				$endTime += Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level - 1);
 
-				foreach ($BuildQueue AS $CurrBuild)
-				{
-					$build_list[$CurrBuild['e']][] = [$CurrBuild['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $CurrBuild['i']) . ' (' . ($CurrBuild['d'] == 0 ? $CurrBuild['l'] - 1 : $CurrBuild['l'] + 1) . ' -> ' . ($CurrBuild['l']) . ')'];
-				}
-			}
-
-			if ($queueManager->getCount($queueManager::QUEUE_TYPE_RESEARCH))
-			{
-				$QueueArray = $queueManager->get($queueManager::QUEUE_TYPE_RESEARCH);
-
-				$build_list[$QueueArray[0]['e']][] = [$QueueArray[0]['e'], $this->planet->name . ": </span><span class=\"holding colony\"> " . _getText('tech', $QueueArray[0]['i']) . ' (' . $this->user->{$this->registry->resource[$QueueArray[0]['i']]} . ' -> ' . ($this->user->{$this->registry->resource[$QueueArray[0]['i']]} + 1) . ')'];
+				$build_list[$endTime][] = [
+					$endTime,
+					$item->planet_id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1).' -> '.$item->level.')'
+				];
 			}
 		}
+
+		if ($queueManager->getCount($queueManager::TYPE_RESEARCH))
+		{
+			$queueArray = $queueManager->get($queueManager::TYPE_RESEARCH);
+
+			foreach ($queueArray AS $item)
+			{
+				$build_list[$item->time_end][] = [
+					$item->time_end,
+					$item->planet_id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.$this->user->getTechLevel($item->object_id).' -> '.($this->user->getTechLevel($item->object_id) + 1).')'
+				];
+			}
+		}
+
+		if ($queueManager->getCount($queueManager::TYPE_SHIPYARD))
+		{
+			$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
+
+			$time = 0;
+
+			foreach ($queueArray AS $item)
+			{
+				if (!$time)
+					$time = $item->time;
+
+				$time += Building::getBuildingTime($this->user, $this->planet, $item->object_id) * $item->level;
+
+				$build_list[$time][] = [
+					$time,
+					$this->planet->id,
+					$planetsName[$item->planet_id],
+					_getText('tech', $item->object_id).' ('.$item->level.')'
+				];
+			}
+		}
+
+		$parse['build_list'] = [];
 
 		if (count($build_list) > 0)
 		{
@@ -622,52 +645,60 @@ class OverviewController extends Controller
 		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->planet->getMaxFields() * 100);
 		$parse['case_pourcentage'] = min($parse['case_pourcentage'], 100);
 
-		$parse['race'] = _getText('race', $this->user->race);
+		$parse['lvl'] = [
+			'mine' => [
+				'p' => (int) $this->user->xpminier,
+				'l' => (int) $this->user->lvl_minier,
+				'u' => (int) $XpMinierUp,
+			],
+			'raid' => [
+				'p' => (int) $this->user->xpraid,
+				'l' => (int) $this->user->lvl_raid,
+				'u' => (int) $XpRaidUp
+			]
+		];
 
-		$parse['xpminier'] = $this->user->xpminier;
-		$parse['xpraid'] = $this->user->xpraid;
-		$parse['lvl_minier'] = $this->user->lvl_minier;
-		$parse['lvl_raid'] = $this->user->lvl_raid;
-		$parse['user_id'] = $this->user->id;
-		$parse['links'] = $this->user->links;
+		$parse['links'] = (int) $this->user->links;
+		$parse['refers'] = (int) $this->user->refers;
+		$parse['noob'] = $this->config->game->get('noob', 0);
 
-		$parse['raids_win'] = $this->user->raids_win;
-		$parse['raids_lose'] = $this->user->raids_lose;
-		$parse['raids'] = $this->user->raids;
+		$parse['raids'] = [
+			'win' => (int) $this->user->raids_win,
+			'lost' => (int) $this->user->raids_lose,
+			'total' => (int) $this->user->raids
+		];
 
-		$parse['lvl_up_minier'] = $XpMinierUp;
-		$parse['lvl_up_raid'] = $XpRaidUp;
-
-		$parse['bonus'] = ($this->user->bonus < time()) ? true : false;
+		$parse['bonus'] = $this->user->bonus < time();
 
 		if ($parse['bonus'])
 		{
-			$parse['bonus_multi'] = $this->user->bonus_multi + 1;
+			$bonus = $this->user->bonus_multi + 1;
 
-			if ($parse['bonus_multi'] > 50)
-				$parse['bonus_multi'] = 50;
+			if ($bonus > 50)
+				$bonus = 50;
 
 			if ($this->user->bonus < (time() - 86400))
-				$parse['bonus_multi'] = 1;
-		}
+				$bonus = 1;
 
-		$parse['refers'] = $this->user->refers;
+			$parse['bonus_count'] = $bonus * 500 * $this->game->getSpeed('mine');
+		}
 
 		$parse['officiers'] = [];
 
-		foreach ($this->registry->reslist['officier'] AS $officier)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 		{
-			$parse['officiers'][$officier] = $this->user->{$this->registry->resource[$officier]};
+			$parse['officiers'][] = [
+				'id' => (int) $officier,
+				'time' => (int) $this->user->{Vars::getName($officier)},
+				'name' => _getText('tech', $officier)
+			];
 		}
 
-		if (!$this->user->getUserOption('gameactivity'))
-			$this->config->view->offsetSet('gameActivityList', 0);
+		$parse['chat'] = [];
 
-		if ($this->config->view->get('gameActivityList', 0))
+		if (isMobile())
 		{
-			$parse['activity'] = ['chat' => [], 'forum' => []];
-
-			$memcache = new Memcache(new FrontendCache([]), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
+			$memcache = new Memcache(new FrontendCache(), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
 
 			$chatCached = $memcache->get("xnova-5-chat");
 
@@ -676,7 +707,7 @@ class OverviewController extends Controller
 			else
 				$chat = null;
 
-			if (!is_array($chat))
+			if (!is_array($chat) || !count($chat))
 			{
 				$messages = $this->db->query("SELECT c.*, u.username FROM game_log_chat c LEFT JOIN game_users u ON u.id = c.user WHERE 1 = 1 ORDER BY c.time DESC LIMIT 20");
 
@@ -749,9 +780,9 @@ class OverviewController extends Controller
 
 					$message[5] = implode(' ', $t);
 
-					$parse['activity']['chat'][] = [
-						'TIME' => $message[1],
-						'MESS' => '<span class="title"><span class="to">'.$message[2].'</span> написал'.(count($message[3]) ? ' <span class="to">'.implode(', ', $message[3]).'</span>' : '').'</span>: '.$message[5].''
+					$parse['chat'][] = [
+						'time' => $message[1],
+						'message' => '<span class="title"><span class="to">'.$message[2].'</span> написал'.(count($message[3]) ? ' <span class="to">'.implode(', ', $message[3]).'</span>' : '').'</span>: '.$message[5].''
 					];
 
 					$i++;
@@ -761,16 +792,17 @@ class OverviewController extends Controller
 
 		$showMessage = false;
 
-		foreach ($this->registry->reslist['res'] AS $res)
+		foreach (Vars::getResources() AS $res)
 		{
-			if (!$this->planet->{$res.'_mine_porcent'})
+			if ($this->planet->getBuildLevel($res.'_mine') && !$this->planet->getBuild($res.'_mine')['power'])
 				$showMessage = true;
 		}
 
 		if ($showMessage)
 			$this->view->setVar('globalMessage', '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="'.$this->url->get('resources/').'">Сырьё</a>" и восстановите производство.</span>');
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$this->tag->setTitle('Обзор');
 	}
 }

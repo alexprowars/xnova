@@ -1,0 +1,32 @@
+.component-chat {
+	position: fixed;
+	width: 300px;
+	bottom: 25px;
+	right: 20px;
+
+	.page-chat-messages {
+		height: auto;
+		max-height: 40vh;
+		font-size: 1.1rem;
+
+		.to, .player {
+			font-weight: normal;
+		}
+	}
+
+	.page-chat-message {
+		width: 100%
+	}
+
+	input[type=button] {
+		min-width: auto;
+	}
+
+	.block > .title {
+		cursor:pointer;
+	}
+
+	&:not(.active) {
+		border-bottom: 1px solid #415683;
+	}
+}

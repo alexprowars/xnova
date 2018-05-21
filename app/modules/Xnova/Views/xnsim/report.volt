@@ -14,7 +14,7 @@
 				</tr>
 			</table>
 			Ссылка на результат симуляции<br><br>
-			<input type="text" value="//{{ _SERVER['SERVER_NAME'] }}/xnsim/report/?sid={{ sid }}" style="width:500px;padding:5px;text-align: center;" title="">
+			<input type="text" value="http://{{ _SERVER['SERVER_NAME'] }}/xnsim/report/?sid={{ sid }}" style="width:500px;padding:5px;text-align: center;" title="">
 			<br><br>
 			{% if statistics is defined %}
 				Результаты потерь после 50 симуляций:
@@ -34,7 +34,8 @@
 				</table>
 			{% endif %}
 			<br><br>
-			Made by AlexPro for <a href="http://xnova.su/" target="_blank">XNova - {{ config.game.universe }} UNIVERSE</a>
+			Made by AlexPro for <a href="http://xnova.su/" target="_blank">XNova</a>
+			<br><br>
 		</center>
 	</body>
 </html>

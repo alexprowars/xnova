@@ -11,13 +11,13 @@ use Xnova\Models\User;
 /**
  * @var $di DiInterface
  * @var $eventsManager EventsManager
- * @var $loader Loader
  */
 
 $config = $di->getShared('config');
+$loader = $di->getShared('loader');
 
 $loader->registerClasses([
-		'Xnova\Database' => ROOT_PATH.$config->application->baseDir.'modules/Xnova/Classes/Database.php'
+		'Xnova\Database' => __DIR__.'/modules/Xnova/Classes/Database.php'
 ], true);
 
 /** @noinspection PhpUnusedParameterInspection */
@@ -29,6 +29,36 @@ $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 	{
 		$auth->addPlugin('\Xnova\Auth\Plugins\Ulogin');
 		$auth->addPlugin('\Xnova\Auth\Plugins\Vk');
+	}
+});
+
+$eventsManager->attach('core:beforeStartSession', function ()
+{
+	if (strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
+		return false;
+
+	return true;
+});
+
+/** @noinspection PhpUnusedParameterInspection */
+$eventsManager->attach('core:beforeOutput', function ($event, \Friday\Core\Application $app, Phalcon\Http\Response $handle)
+{
+	if ($app->dispatcher->getModuleName() == 'admin')
+		return;
+
+	if ($app->request->isAjax())
+	{
+		\Xnova\Request::addData('html', $handle->getContent());
+
+		/** @noinspection PhpUndefinedFieldInspection */
+		$app->response->setJsonContent(
+		[
+			'status' 	=> \Xnova\Request::getStatus(),
+			'data' 		=> \Xnova\Request::getData()
+		]);
+		$app->response->setContentType('text/json', 'utf8');
+		$app->response->send();
+		die();
 	}
 });
 
@@ -70,15 +100,14 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFilter('floor', 'floor');
 	$compiler->addFilter('round', 'round');
 	$compiler->addFilter('ceil', 'ceil');
-	$compiler->addFunction('number_format', 'number_format');
 	$compiler->addFunction('in_array', 'in_array');
-	$compiler->addFunction('long2ip', 'long2ip');
 
 	$compiler->addFunction('allowMobile', function($arguments)
 	{
 		return 'class_exists("\Xnova\Helpers") && \Xnova\Helpers::allowMobileVersion(' . $arguments . ')';
 	});
 
+	$compiler->addFunction('toJson', 'json_encode');
 	$compiler->addFunction('replace', 'str_replace');
 	$compiler->addFunction('preg_replace', 'preg_replace');
 	$compiler->addFunction('md5', 'md5');
@@ -86,19 +115,18 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('max', 'max');
 	$compiler->addFunction('floor', 'floor');
 	$compiler->addFunction('ceil', 'ceil');
-	$compiler->addFunction('array_search', 'array_search');
 	$compiler->addFunction('is_email', 'is_email');
 	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
 	$compiler->addFunction('rand', 'mt_rand');
 	$compiler->addFunction('implode', 'implode');
-	$compiler->addFunction('http_build_query', 'http_build_query');
+	$compiler->addFunction('slashes', 'addslashes');
 	$compiler->addFunction('pretty_number', function($arguments)
 	{
-		return '\Xnova\Helpers::pretty_number(' . $arguments . ')';
+		return '\Xnova\Format::number(' . $arguments . ')';
 	});
 	$compiler->addFunction('pretty_time', function($arguments)
 	{
-		return '\Xnova\Helpers::pretty_time(' . $arguments . ')';
+		return '\Xnova\Format::time(' . $arguments . ')';
 	});
 	$compiler->addFunction('option', function($arguments)
 	{
@@ -110,11 +138,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	});
 	$compiler->addFunction('isTechnologieAccessible', function($arguments)
 	{
-		return '\Xnova\Building::IsTechnologieAccessible(' . $arguments . ')';
-	});
-	$compiler->addFunction('morph', function($arguments)
-	{
-		return '\Xnova\Helpers::morph(' . $arguments . ')';
+		return '\Xnova\Building::isTechnologieAccessible(' . $arguments . ')';
 	});
 	$compiler->addFunction('colorNumber', function($arguments)
 	{
@@ -123,6 +147,10 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('planetLink', function($arguments)
 	{
 		return '\Xnova\Helpers::BuildPlanetAdressLink(' . $arguments . ')';
+	});
+	$compiler->addFunction('morph', function($arguments)
+	{
+		return '\Xnova\Helpers::morph(' . $arguments . ')';
 	});
 });
 
@@ -141,18 +169,14 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 			if ($dispatcher->getControllerName() == $dispatcher->getPreviousControllerName() && $dispatcher->getActionName() == $dispatcher->getPreviousActionName())
 				return true;
 
-			$dispatcher->forward(
-				[
-					'module'		=> 'xnova',
-					'controller'	=> 'error',
-					'action'		=> 'notFound',
-					'namespace'		=> 'Xnova\Controllers'
-				]
-			);
+			$dispatcher->forward([
+				'module'		=> 'xnova',
+				'controller'	=> 'error',
+				'action'		=> 'notFound',
+				'namespace'		=> 'Xnova\Controllers'
+			]);
 
 			return false;
-
-			break;
 
 		case 10:
 
@@ -169,4 +193,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '3.1.1');
+define('VERSION', '4.0');

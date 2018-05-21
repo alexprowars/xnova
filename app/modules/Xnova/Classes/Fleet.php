@@ -4,7 +4,7 @@ namespace Xnova;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -60,13 +60,13 @@ class Fleet extends Building
 			switch ($storage->CombatCaps[$Ship]['type_engine'])
 			{
 				case 1:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->combustion_tech * 0.1));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('combustion') * 0.1));
 					break;
 				case 2:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->impulse_motor_tech * 0.2));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('impulse_motor') * 0.2));
 					break;
 				case 3:
-					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->hyperspace_motor_tech * 0.3));
+					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'] * (1 + ($user->getTechLevel('hyperspace_motor') * 0.3));
 					break;
 				default:
 					$speedalls[$Ship] = $storage->CombatCaps[$Ship]['speed'];
@@ -86,11 +86,11 @@ class Fleet extends Building
 	{
 		$storage = $user->getDI()->getShared('registry');
 
-		foreach ($storage->reslist['fleet'] as $Ship)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship)
 		{
 			if (isset($storage->CombatCaps[$Ship]) && isset($storage->CombatCaps[$Ship]['engine_up']))
 			{
-				if ($user->{$storage->resource[$storage->CombatCaps[$Ship]['engine_up']['tech']]} >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
+				if ($user->getTechLevel($storage->CombatCaps[$Ship]['engine_up']['tech']) >= $storage->CombatCaps[$Ship]['engine_up']['lvl'])
 				{
 					$tmp = $storage['CombatCaps'];
 
@@ -163,24 +163,24 @@ class Fleet extends Building
 		$Total = 0;
 
 		foreach ($FleetRec as $fleet)
-			$Total += $fleet['cnt'];
+			$Total += $fleet['count'];
 
-		if ($FleetRow->owner != $user->id && $user->spy_tech < 2)
+		if ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 2)
 		{
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
 		}
-		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 4)
+		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 4)
 		{
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		}
-		elseif ($FleetRow->owner != $user->id && $user->spy_tech < 8)
+		elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 8)
 		{
 			foreach ($FleetRec as $id => $fleet)
 			{
 				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . _getText('tech', $id) . "<font></td></tr>";
 			}
 
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($Total) . "<font></td></tr>";
+			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		}
 		else
 		{
@@ -189,17 +189,17 @@ class Fleet extends Building
 
 			foreach ($FleetRec as $id => $fleet)
 			{
-				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Helpers::pretty_number($fleet['cnt']) . "<font></td></tr>";
+				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . _getText('tech', $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['count']) . "<font></td></tr>";
 
 				if ($r != 'javascript:;')
-					$r .= $id.','.$fleet['cnt'].'!'.$fleet['lvl'].';';
+					$r .= $id.','.$fleet['count'].';';
 			}
 		}
 
 		$FleetPopup .= "</table>";
-		$FleetPopup .= "' class=\"" . $FleetType . "\">" . $Texte . "</a>";
+		$FleetPopup .= "'>" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip\" data-content='" . $FleetPopup;
+		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 
 		return $FleetPopup;
 
@@ -212,9 +212,9 @@ class Fleet extends Building
 		if ($FleetTotalC != 0)
 		{
 			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_metal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_crystal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Helpers::pretty_number($FleetRow->resource_deuterium) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Metal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_metal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Crystal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_crystal) . "<font></td></tr>";
+			$FRessource .= "<tr><td width=50% align=left><font color=white>" . _getText('Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_deuterium) . "<font></td></tr>";
 			$FRessource .= "</table>";
 		}
 		else
@@ -235,40 +235,40 @@ class Fleet extends Building
 		if ($target[2] == 16)
 		{
 			if (!(count($fleetArray) == 1 && isset($fleetArray[210])))
-				$result[15] = _getText('type_mission', 15);
+				$result[] = 15;
 		}
 		else
 		{
 			if ($target[3] == 2 && isset($fleetArray[209]))
-				$result[8] = _getText('type_mission', 8); // Переработка
+				$result[] = 8; // Переработка
 			elseif ($target[3] == 1 || $target[3] == 3 || $target[3] == 5)
 			{
 				if (isset($fleetArray[216]) && !$isActivePlanet && $target[3] == 1)
-					$result[10] = _getText('type_mission', 10); // Создать базу
+					$result[] = 10; // Создать базу
 
 				if (isset($fleetArray[210]) && !$isYouPlanet)
-					$result[6] = _getText('type_mission', 6); // Шпионаж
+					$result[] = 6; // Шпионаж
 
 				if (isset($fleetArray[208]) && !$isActivePlanet)
-					$result[7] = _getText('type_mission', 7); // Колонизировать
+					$result[] = 7; // Колонизировать
 
 				if (!$isYouPlanet && $isActivePlanet && !isset($fleetArray[208]) && !isset($fleetArray[209]) && !isset($fleetArray[216]))
-					$result[1] = _getText('type_mission', 1); // Атаковать
+					$result[] = 1; // Атаковать
 
 				if ($isActivePlanet && !$isYouPlanet && !(count($fleetArray) == 1 && isset($fleetArray[210])))
-					$result[5] = _getText('type_mission', 5); // Удерживать
+					$result[] = 5; // Удерживать
 
 				if (isset($fleetArray[202]) || isset($fleetArray[203]))
-					$result[3] = _getText('type_mission', 3); // Транспорт
+					$result[] = 3; // Транспорт
 
 				if ($isYouPlanet)
-					$result[4] = _getText('type_mission', 4); // Оставить
+					$result[] = 4; // Оставить
 
 				if ($isAcs > 0 && $isActivePlanet)
-					$result[2] = _getText('type_mission', 2); // Объединить
+					$result[] = 2; // Объединить
 
 				if ($target[3] == 3 && isset($fleetArray[214]) && !$isYouPlanet && $isActivePlanet)
-					$result[9] = _getText('type_mission', 9);
+					$result[] = 9;
 			}
 		}
 
@@ -277,14 +277,10 @@ class Fleet extends Building
 
 	static function GetMissileRange (User $user)
 	{
-		$storage = $user->getDI()->getShared('registry');
+		if ($user->getTechLevel('impulse_motor') > 0)
+			return ($user->getTechLevel('impulse_motor') * 5) - 1;
 
-		if ($user->{$storage->resource[117]} > 0)
-			$MissileRange = ($user->{$storage->resource[117]} * 5) - 1;
-		else
-			$MissileRange = 0;
-
-		return $MissileRange;
+		return 0;
 	}
 
 	static function GetPhalanxRange ($PhalanxLevel)

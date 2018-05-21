@@ -4,12 +4,12 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Friday\Core\Options;
-use Xnova\Helpers;
+use Xnova\Format;
 use Friday\Core\Lang;
 use Phalcon\Mvc\View;
 use Xnova\Controller;
@@ -136,7 +136,7 @@ class StatController extends Controller
 		{
 			$PageValue = ($Page * 100) + 1;
 			$PageRange = $PageValue + 99;
-			$rangeStr .= "<option value=\"" . $PageValue . "\"" . (($start == $Page) ? " SELECTED" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
+			$rangeStr .= '<option value="'.$PageValue.'" '.($start == $Page ? 'selected' : '').'>' . $PageValue . '-' . $PageRange . '</option>';
 		}
 
 		$start *= 100;
@@ -163,30 +163,30 @@ class StatController extends Controller
 			$ranking = $rank_old - $rank_new;
 
 			if ($ranking == 0)
-				$stats['rankplus'] = "<font color=\"#87CEEB\">*</font>";
+				$stats['rankplus'] = '<font color="#87CEEB">*</font>';
 			if ($ranking < 0)
-				$stats['rankplus'] = "<span class=\"negative\">" . $ranking . "</span>";
+				$stats['rankplus'] = '<span class="negative">' . $ranking . '</span>';
 			if ($ranking > 0)
-				$stats['rankplus'] = "<span class=\"positive\">+" . $ranking . "</span>";
+				$stats['rankplus'] = '<span class="positive">+' . $ranking . '</span>';
 
 			if (($this->auth->isAuthorized() && $StatRow['id_owner'] == $this->user->id) || $StatRow['id_owner'] == $this->pid)
-				$stats['name'] = "<span class=\"neutral\">" . $StatRow['username'] . "</span>";
+				$stats['name'] = '<span class="neutral">' . $StatRow['username'] . '</span>';
 			else
 				$stats['name'] = $StatRow['username'];
 
 			if ($this->auth->isAuthorized())
-				$stats['mes'] = "<a href=\"javascript:;\" onclick=\"showWindow('" . $StatRow['username'] . ": отправить сообщение', '".$this->url->getBaseUri()."messages/write/" . $StatRow['id_owner'] . "/', 680)\" title=\"Сообщение\"><span class='sprite skin_m'></span></a>";
+				$stats['mes'] = '<a href="javascript:;" onclick="showWindow(\''.$StatRow['username'].': отправить сообщение\', \''.$this->url->get('messages/write/'.$StatRow['id_owner'].'/').'\', 680)" title="Сообщение"><span class="sprite skin_m"></span></a>';
 
 			if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
-				$stats['alliance'] = "<font color=\"#33CCFF\">" . $StatRow['ally_name'] . "</font>";
+				$stats['alliance'] = '<font color="#33CCFF">' . $StatRow['ally_name'] . '</font>';
 			elseif ($StatRow['ally_name'] != '')
-				$stats['alliance'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['id_ally'] . "/\">" . $StatRow['ally_name'] . "</a>";
+				$stats['alliance'] = '<a href="'.$this->url->get('alliance/info/'.$StatRow['id_ally'].'/').'">' . $StatRow['ally_name'] . '</a>';
 			else
 				$stats['alliance'] = '&nbsp;';
 
 			$stats['race'] = $StatRow['race'];
 
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
 
 			$stat[] = $stats;
 
@@ -214,7 +214,7 @@ class StatController extends Controller
 		{
 			$PageValue = ($Page * 100) + 1;
 			$PageRange = $PageValue + 99;
-			$rangeStr .= "<option value=\"" . $PageValue . "\"" . (($start == $Page) ? " SELECTED" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
+			$rangeStr .= "<option value=\"" . $PageValue . "\" " . (($start == $Page) ? " selected" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
 		}
 
 		$start *= 100;
@@ -241,12 +241,12 @@ class StatController extends Controller
 			if (isset($this->user) && $StatRow['name'] == $this->user->ally_name)
 				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
 			else
-				$stats['name'] = "<a href=\"".$this->url->getBaseUri()."alliance/info/" . $StatRow['ally_id'] . "/\">" . $StatRow['name'] . "</a>";
+				$stats['name'] = "<a href=\"".$this->url->get("alliance/info/" . $StatRow['ally_id'] . "/")."\">" . $StatRow['name'] . "</a>";
 
 			$stats['mes'] = '';
 			$stats['members'] = $StatRow['members'];
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
-			$stats['members_points'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
+			$stats['members_points'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
 
 			$stat[] = $stats;
 
@@ -271,10 +271,10 @@ class StatController extends Controller
 			$stats['rank'] = $StatRow[$this->field.'_rank'];
 			$stats['race'] = $StatRow['race'];
 			$stats['count'] = $StatRow['total_count'];
-			$stats['points'] = Helpers::pretty_number($StatRow[$this->field.'_points']);
+			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
 
 			if ($StatRow['total_count'] > 0)
-				$stats['pointatuser'] = Helpers::pretty_number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
+				$stats['pointatuser'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
 			else
 				$stats['pointatuser'] = 0;
 

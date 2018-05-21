@@ -4,11 +4,12 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Models\User;
+use Xnova\User;
+use Xnova\Models\User as UserModel;
 use Xnova\Controller;
 
 /**
@@ -39,7 +40,7 @@ class PaymentController extends Controller
 
 			if (!isset($check['id']))
 			{
-				$user = User::findFirst(['conditions' => 'id = ?0', 'bind' => [intval($this->request->get("Shp_UID"))]]);
+				$user = UserModel::findFirst(['conditions' => 'id = ?0', 'bind' => [intval($this->request->get("Shp_UID"))]]);
 
 				if ($user)
 				{

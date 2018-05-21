@@ -409,6 +409,7 @@ class ShipType extends Type
 	 * ShipType::cleanShips()
 	 * Start the task of explosion system.
 	 * @return ShipsCleaner
+	 * @throws Exception
 	 */
 	public function cleanShips()
 	{

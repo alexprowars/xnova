@@ -1,0 +1,39 @@
+.page-galaxy {
+
+	&-select {
+		input[type=button] {
+			min-width: 0;
+		}
+
+		input[type=number] {
+			width: 60px;
+		}
+	}
+
+	.table.galaxy {
+
+		.debris_0 {
+			background: rgb(0, 100, 0) none;
+		}
+
+		.debris_50 {
+			background: rgb(100, 100, 0) none;
+		}
+
+		.debris_100 {
+			background: rgb(100, 0, 0) none;
+		}
+
+		> tr > th {
+			padding: 1px;
+			vertical-align: middle;
+			text-align: center;
+		}
+
+		.img {
+			width: 30px;
+			height: 32px;
+			padding-right: 0;
+		}
+	}
+}

@@ -11,7 +11,6 @@ $lang['E-Mail']            	= 'E-Mail Адрес (прим. addy@mail.com)';
 $lang['MainPlanet']        	= 'Название главной планеты';
 $lang['GameName']          	= 'Логин';
 $lang['Sex']				= 'Пол';
-$lang['accept']            	= 'Я принимаю <a href="../../game/agb.php?conditions">Основные положения и правила</a>';
 $lang['signup']            	= 'Регистрация';
 $lang['neededpass']        	= 'Пароль';
 $lang['Languese']          	= 'Язык';

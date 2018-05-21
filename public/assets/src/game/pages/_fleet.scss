@@ -1,0 +1,22 @@
+.page-fleet-fly-item > div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.page-fleet-fly-item:nth-child(even) > div {
+	background-color: #303F5E;
+}
+
+.page-fleet-fly-item form {
+	width: 100%;
+}
+
+.page-fleet-fly-item input[type=submit], .page-fleet-fly-item .button {
+	min-width: 100%;
+}
+
+.page-fleet-fly .content, .page-fleet-select .content {
+	border: none;
+}

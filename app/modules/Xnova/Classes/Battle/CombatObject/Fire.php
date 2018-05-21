@@ -90,6 +90,7 @@ class Fire
 	 * Fire::calculateRf()
 	 * This function implement the RF component of above function
 	 * @return void
+	 * @throws \Exception
 	 */
 	private function calculateRf()
 	{
@@ -107,6 +108,7 @@ class Fire
 	 * This function return the number of shots caused by RF from one ShipType to all defenders
 	 * @param ShipType $shipType_A
 	 * @return int
+	 * @throws \Exception
 	 */
 	private function getShotsFromOneAttackerShipOfType(ShipType $shipType_A)
 	{

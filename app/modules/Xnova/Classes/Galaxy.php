@@ -4,13 +4,13 @@ namespace Xnova;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Friday\Core\Options;
 use Xnova\Models\Planet;
-use Xnova\Models\User;
+use Xnova\Models\User as UserModel;
 use Phalcon\Mvc\User\Component;
 
 /**
@@ -29,7 +29,7 @@ use Phalcon\Mvc\User\Component;
  * @property \Phalcon\Cache\Backend\Memcache cache
  * @property \Phalcon\Mvc\Url url
  * @property \Xnova\Models\User user
- * @property \App\Auth\Auth auth
+ * @property \Friday\Core\Auth\Auth auth
  * @property \Phalcon\Mvc\Dispatcher dispatcher
  * @property \Phalcon\Flash\Direct flash
  * @property \Phalcon\Registry|\stdClass storage
@@ -83,7 +83,7 @@ class Galaxy extends Component
 			Options::set('LastSettedPlanetPos', $Planet);
 
 			if (is_null($this->user))
-				$this->user = User::findFirst($user_id);
+				$this->user = UserModel::findFirst($user_id);
 
 			$this->user->saveData([
 				'planet_id'		 => $PlanetID,
@@ -211,7 +211,7 @@ class Galaxy extends Component
 	public function sizeRandomiser ($Position, $HomeWorld = false, $Base = false)
 	{
 		$planetData = [];
-		require(ROOT_PATH.'/app/varsPlanet.php');
+		require(dirname(__DIR__).'/Vars/planet.php');
 
 		$planet = new Planet;
 

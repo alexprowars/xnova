@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -39,9 +39,9 @@ class ErrorController extends Controller
 
     public function notFoundAction()
     {
-		file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_SERVER, true)."\n\n".print_r($_REQUEST, true)."\n\n", FILE_APPEND);
+		file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".print_r($_REQUEST, true)."\n\n", FILE_APPEND);
 
-		$this->view->setMainView('404');
+		//$this->view->setMainView('404');
         $this->response->setStatusCode(404, 'Not Found');
     }
 }

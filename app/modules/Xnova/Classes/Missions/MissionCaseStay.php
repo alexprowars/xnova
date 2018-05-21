@@ -4,13 +4,13 @@ namespace Xnova\Missions;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Xnova\FleetEngine;
-use Xnova\Helpers;
-use Xnova\Models\User;
+use Xnova\Format;
+use Xnova\User;
 
 class MissionCaseStay extends FleetEngine implements Mission
 {
@@ -31,14 +31,14 @@ class MissionCaseStay extends FleetEngine implements Mission
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['cnt'];
+				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['count'];
 			}
 
 			$TargetMessage = sprintf(_getText('sys_stat_mess'),
 								$this->_fleet->getTargetAdressLink(),
-								Helpers::pretty_number($this->_fleet->resource_metal), _getText('Metal'),
-								Helpers::pretty_number($this->_fleet->resource_crystal), _getText('Crystal'),
-								Helpers::pretty_number($this->_fleet->resource_deuterium), _getText('Deuterium'));
+								Format::number($this->_fleet->resource_metal), _getText('Metal'),
+								Format::number($this->_fleet->resource_crystal), _getText('Crystal'),
+								Format::number($this->_fleet->resource_deuterium), _getText('Deuterium'));
 
 			if ($TargetAddedGoods != '')
 				$TargetMessage .= '<br>'.trim(substr($TargetAddedGoods, 1));
@@ -63,13 +63,13 @@ class MissionCaseStay extends FleetEngine implements Mission
 			$this->RestoreFleetToPlanet();
 			$this->KillFleet();
 
-			$TargetAddedGoods = sprintf(_getText('sys_stay_mess_goods'), _getText('Metal'), Helpers::pretty_number($this->_fleet->resource_metal), _getText('Crystal'), Helpers::pretty_number($this->_fleet->resource_crystal), _getText('Deuterium'), Helpers::pretty_number($this->_fleet->resource_deuterium));
+			$TargetAddedGoods = sprintf(_getText('sys_stay_mess_goods'), _getText('Metal'), Format::number($this->_fleet->resource_metal), _getText('Crystal'), Format::number($this->_fleet->resource_crystal), _getText('Deuterium'), Format::number($this->_fleet->resource_deuterium));
 
 			$fleetData = $this->_fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr)
 			{
-				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['cnt'];
+				$TargetAddedGoods .= ', ' . _getText('tech', $shipId) . ': ' . $shipArr['count'];
 			}
 
 			$TargetMessage = _getText('sys_stay_mess_back') . $this->_fleet->getTargetAdressLink() . _getText('sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;

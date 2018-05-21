@@ -6,12 +6,10 @@
 
 // Core variables and mixins
 @import "custom";
+@import "functions";
 @import "variables";
 @import "mixins";
-
-// Reset and dependencies
-@import "normalize";
-//@import "print";
+@import "root";
 
 // Core CSS
 @import "reboot";
@@ -24,7 +22,7 @@
 //@import "buttons";
 
 // Components
-//@import "animation";
+@import "transitions";
 //@import "dropdown";
 //@import "button-group";
 //@import "input-group";
@@ -34,13 +32,12 @@
 //@import "card";
 //@import "breadcrumb";
 @import "pagination";
-//@import "tags";
+//@import "badge";
 //@import "jumbotron";
 //@import "alert";
 //@import "progress";
 @import "media";
 //@import "list-group";
-//@import "responsive-embed";
 //@import "close";
 
 // Components w/ JavaScript
@@ -51,3 +48,4 @@
 
 // Utility classes
 @import "utilities";
+//@import "print";

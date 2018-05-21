@@ -3,17 +3,41 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
-var minifyCss = require("gulp-minify-css");
+var cssmin = require("gulp-clean-css");
 var rename = require("gulp-rename");
 var uglify = require("gulp-uglify");
+var runSequence = require('run-sequence').use(gulp);
 
-gulp.task('sass', function ()
+var fs = require("fs")
+var browserify = require('browserify')
+var vueify = require('vueify')
+var babelify = require('babelify')
+
+process.env.NODE_ENV = 'production';
+
+gulp.task('sass-core', function ()
 {
-	gulp.src('./public/assets/src/game/**/*.scss')
+	return gulp.src('./public/assets/src/game/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
-		.pipe(minifyCss())
     	.pipe(gulp.dest('./public/assets/css'));
+});
+
+gulp.task('sass-plugins', function ()
+{
+	return gulp.src('./public/assets/src/plugins/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(autoprefixer({ browsers: ['last 3 versions'], cascade: false}))
+    	.pipe(gulp.dest('./public/assets/css/plugins'));
+});
+
+gulp.task('vue', function ()
+{
+	return browserify('./public/assets/src/vue/app.js', {debug: false, bundleExternal: true})
+		.transform(babelify, { presets: ['es2015'] })
+		.transform(vueify)
+		.bundle()
+		.pipe(fs.createWriteStream("./public/assets/js/application.js"))
 });
 
 gulp.task('watch', function ()
@@ -22,32 +46,55 @@ gulp.task('watch', function ()
 	gulp.watch('./public/assets/src/bootstrap/**/*.scss', ['bootstrap']);
 });
 
+gulp.task('watch-vue', function ()
+{
+	gulp.watch('./public/assets/src/vue/*.js', ['vue']);
+	gulp.watch('./public/assets/src/vue/*.vue', ['vue']);
+	gulp.watch('./public/assets/src/vue/**/*.vue', ['vue']);
+	gulp.watch('./public/assets/src/vue/**/**/*.vue', ['vue']);
+});
+
 gulp.task('bootstrap', function ()
 {
-	gulp.src('./public/assets/src/bootstrap/**/*.scss')
+	return gulp.src('./public/assets/src/bootstrap/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
-		.pipe(minifyCss())
     	.pipe(gulp.dest('./public/assets/css'));
 });
 
 gulp.task('admin', function ()
 {
-	gulp.src('./public/assets/src/admin/bootstrap.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/global/plugins/bootstrap/css/'));
-	gulp.src('./public/assets/src/admin/global/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/global/css'));
-	gulp.src('./public/assets/src/admin/pages/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
-	gulp.src('./public/assets/src/admin/layout/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
-	gulp.src('./public/assets/src/admin/layout/themes/*.scss').pipe(sass()).pipe(gulp.dest('./public/assets/admin/pages/css'));
-	gulp.src('./app/modules/Core/Classes/Prophiler/View/sass/*.scss').pipe(sass()).pipe(minifyCss()).pipe(gulp.dest('./app/modules/Core/Classes/Prophiler/View/css'));
-
-	gulp.src(['./public/assets/admin/global/css/*.css', '!./public/assets/admin/global/css/*.min.css']).pipe(minifyCss()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/global/css'));
-	gulp.src(['./public/assets/admin/pages/css/*.css', '!./public/assets/admin/pages/css/*.min.css']).pipe(minifyCss()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/pages/css'));
-
-	gulp.src(['./public/assets/admin/global/plugins/bootstrap/css/*.css', '!./public/assets/admin/global/plugins/bootstrap/css/*.min.css']).pipe(minifyCss()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/global/plugins/bootstrap/css'));
-
-	gulp.src(['./public/assets/admin/global/js/*.js', '!./public/assets/admin/global/js/*.min.js']).pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/global/js'));
-	gulp.src(['./public/assets/admin/pages/js/*.js', '!./public/assets/admin/pages/js/*.min.js']).pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/pages/js'));
-	gulp.src(['./public/assets/admin/layout/js/*.js', '!./public/assets/admin/layout/js/*.min.js']).pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('./public/assets/admin/layout/js'));
+	return gulp.src('./public/assets/admin/src/scss/*.scss')
+		.pipe(sass())
+		.pipe(gulp.dest('./public/assets/admin/css'));
 });
 
-gulp.task('default', ['sass', 'bootstrap', 'admin']);
+gulp.task('minimize', function ()
+{
+	gulp.src(['./public/assets/css/plugins/*.css', '!./public/assets/css/plugins/*.min.css'])
+		.pipe(cssmin())
+		.pipe(rename({suffix: '.min'}))
+		.pipe(gulp.dest('./public/assets/css/plugins'));
+
+	gulp.src(['./public/assets/css/*.css', '!./public/assets/css/*.min.css'])
+		.pipe(cssmin())
+		.pipe(rename({suffix: '.min'}))
+		.pipe(gulp.dest('./public/assets/css'));
+
+	gulp.src(['./public/assets/js/*.js', '!./public/assets/js/*.min.js'])
+	    .pipe(uglify())
+		.pipe(rename({suffix: '.min'}))
+	    .pipe(gulp.dest('./public/assets/js'));
+
+	gulp.src(['./public/assets/js/plugins/*.js', '!./public/assets/js/plugins/*.min.js'])
+	    .pipe(uglify())
+		.pipe(rename({suffix: '.min'}))
+	    .pipe(gulp.dest('./public/assets/js/plugins'));
+});
+
+gulp.task('build', function ()
+{
+	return runSequence(['sass-core', 'sass-plugins', 'vue', 'bootstrap', 'admin'], 'minimize')
+});
+
+gulp.task('default', ['build']);

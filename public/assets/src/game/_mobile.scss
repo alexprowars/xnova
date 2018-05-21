@@ -33,6 +33,7 @@
 		position: absolute;
 		width: 17px;
 		height: 16px;
+		//noinspection CssUnknownTarget
 		background: transparent url('../images/icon-city.svg') 0 0 no-repeat;
 		left: 14px;
 		top: 14px;
@@ -42,94 +43,98 @@
 	.menu-toggle:active span span,.planet-toggle:active span span{background-color: #fbbe69;}
 	.menu-toggle > span,.planet-toggle > span{top: 50%;margin-top: -11px;position: absolute;left: 12px;width: 24px;height: 22px;}
 
-	.planet-toggle > span,.planet-toggle.act:before{opacity: 0;}
-	.planet-toggle.act > span{opacity: 1;}
+	.planet-toggle > span,.planet-toggle.active:before{opacity: 0;}
+	.planet-toggle.active > span{opacity: 1;}
 
 	.menu-toggle span.first,.planet-toggle span.first{top: 0;}
 	.menu-toggle span.second,.planet-toggle span.second{top: 10px;}
 	.menu-toggle span.third,.planet-toggle span.third{top: 20px;}
 
-	.menu-toggle.act span.second,.planet-toggle.act span.second{opacity: 0;left: -5px;}
-	.menu-toggle.act span.first,
-	.planet-toggle.act span.first{
+	.menu-toggle.active span.second,.planet-toggle.active span.second{opacity: 0;left: -5px;}
+	.menu-toggle.active span.first,
+	.planet-toggle.active span.first{
 		top: 2px;
 		transform: rotate(45deg);
 	}
-	.menu-toggle.act span.third,
-	.planet-toggle.act span.third{
+	.menu-toggle.active span.third,
+	.planet-toggle.active span.third{
 		top: 2px;
 		transform: rotate(-45deg);
 	}
-	.menu-toggle.act span.first,
-	.menu-toggle.act span.third,
-	.planet-toggle.act span.first,
-	.planet-toggle.act span.third{top: 10px}
-
-	.menu-toggle1.act {
-		transform: translate(190px,0);
-	}
-
-	.planet-toggle1.act {
-		transform: translate(-190px,0);
-	}
+	.menu-toggle.active span.first,
+	.menu-toggle.active span.third,
+	.planet-toggle.active span.first,
+	.planet-toggle.active span.third{top: 10px}
 
 	.menu-sidebar, .planet-sidebar{
 		position: fixed;
 		width: 250px !important;
 		height: 100%;
-		background-color: rgba(0,0,0,.90);
+		background-color: rgba(0, 0, 0, .90);
 		top: 0;
 		left: 0;
 		z-index: 190;
-		transform: translate(-250px,0);
+		transform: translate(-250px, 0);
 		transition: all ease-out 0.2s;
 		padding-top: 60px;
-		display: none;
 	}
 
-	.menu-sidebar.opened, .planet-sidebar.opened{
-		transform: translate(0,0);
+	.menu-sidebar.active, .planet-sidebar.active{
+		transform: translate(0, 0);
+	}
+
+	.main-planets {
+		margin: 0;
+		width: 0;
 	}
 
 	.planet-sidebar {
 		right: 0;
 		left: auto;
-		transform: translate(251px,0);
+		transform: translate(251px, 0);
 	}
 
-	.menu-sidebar {
-		.nav {
-			background: inherit;
-			overflow: scroll;
-			overflow-x: hidden;
-			overflow-y: auto;
-			-webkit-overflow-scrolling: touch;
-			width: 100%;
-			height: 100%;
-			padding: 0;
-			margin: 0;
-			top: 0;
-			left: 100%;
-			z-index: 0;
+	.main-menu {
+		margin: 0;
+		width: 0;
 
-			li {
-				list-style: none;
-				display: block;
+		.menu-sidebar {
+			ul {
+				background: inherit;
+				overflow: scroll;
+				overflow-x: hidden;
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+				width: 100%;
+				height: 100%;
 				padding: 0;
 				margin: 0;
-				border-bottom: 1px solid #324a6a;
-			}
+				top: 0;
+				left: 100%;
+				z-index: 0;
 
-			a {
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				overflow: hidden;
-				display: block;
-				padding: 8px 10px 8px 20px;
-				margin: 0;
-				position: relative;
-				color: #ffffff;
-				font-size: 15px;
+				li {
+					list-style: none;
+					display: block;
+					padding: 0;
+					margin: 0;
+					border-bottom: 1px solid #324a6a;
+				}
+
+				a {
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
+					display: block;
+					padding: 8px 10px 8px 20px;
+					margin: 0;
+					position: relative;
+					color: #ffffff;
+					font-size: 1.25rem;
+					background: transparent;
+					border: none;
+					text-align: left;
+				}
 			}
 		}
 	}
@@ -138,7 +143,7 @@
 		padding: 60px 10px 0 10px;
 	}
 
-	.planetList.planet-sidebar .list {
+	.main-planets .planet-sidebar .list {
 		overflow: scroll;
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -147,32 +152,40 @@
 		height: 100%;
 	}
 
-	.planetList.planet-sidebar .list * {
-		font-size: 14px;
+	.main-planets .planet-sidebar .list * {
+		font-size: 1.2rem;
 	}
 
-	.planetList .list .planet > div {
+	.main-planets .list .planet > div {
 		max-width: 160px;
 	}
 
-	.game_menu {
+	.top-menu-container {
+		background: transparent;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		flex-direction: column;
+	}
+
+	.top-menu-block {
+		justify-content: space-around;
+	}
+
+	.top-menu-container .left {
+		padding: 10px 0;
+		background: #37476a;
+		border-radius: 0 0 5px 5px;
+		border: 1px solid #415683;
 		margin-left: 60px;
 		margin-right: 60px;
-		padding-top: 10px;
-		padding-bottom: 10px;
 	}
 
-	.icon-panel {
+	.top-menu-container .right {
 		margin-top: 15px;
-		width: 100%;
-		text-align: center;
-
-		a {
-			margin-right: 4%;
-		}
 	}
 
-	.shoutbox {
+	.page-chat-messages {
 		width: 100%;
 		margin: 0;
 
@@ -186,15 +199,15 @@
 	}
 
 	body {
-		font-size: 12px;
+		font-size: 1rem;
 	}
 
 	.block > .title {
-		font-size: 14px;
+		font-size: 1.2rem;
 	}
 
-	.shoutbox {
-		font-size: 14px;
+	.page-chat-messages {
+		font-size: 1.2rem;
 	}
 
 	.buildings {
@@ -229,10 +242,6 @@
 		}
 	}
 
-	.contentBox {
-		margin: 0 auto -42px;
-	}
-
 	 #clock {
 		 float: none !important;
 	 }
@@ -245,8 +254,8 @@
 		white-space: normal !important;
 	}
 
-	#box {
-		.game_content {
+	#application {
+		main {
 			width: 100%;
 			padding: 0;
 		}
@@ -256,24 +265,47 @@
 		}
 	}
 
-	.bar .m1 {
-	    padding: 0 15px;
+	.page-overview .planet-image a {
+		max-width: 50%;
+		margin: 0 auto;
+	}
+
+	.main-content-row {
+		margin: 0 10px;
+	}
+
+	.information-message {
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 
 	input[type=text], input[type=number], input[type=password] {
-		font-size: 15px;
-	}
-}
-
-@media only screen and (max-width: 361px)
-{
-	.bar .m1 {
-		padding: 0 15px;
-		white-space: nowrap;
+		font-size: 1.25rem;
 	}
 
-	.icon-panel a {
-		margin-right: 2%;
+	.resource-panel-item {
+
+		.skin_metal,
+		.skin_crystal,
+		.skin_deuterium,
+		.skin_energy {
+			display: none;
+		}
+
+		.skin_s_metal,
+		.skin_s_crystal,
+		.skin_s_deuterium,
+		.skin_s_energy {
+			display: inline-block;
+		}
+	}
+
+	header {
+		width: 100%;
+	}
+
+	.top-menu-block .m1 {
+		padding: 0;
 	}
 }
 

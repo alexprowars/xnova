@@ -4,7 +4,7 @@ namespace Xnova\Auth\Plugins;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -21,7 +21,10 @@ class Vk extends Component implements AuthInterface
 		{
 			if (md5($this->config->vk->id."_".$this->request->getPost('viewer_id', 'int')."_".$this->config->vk->secret) == $this->request->getPost('auth_key'))
 			{
-				$uInfo = $this->send('users.get', array('user_ids' => $_POST['viewer_id'], 'fields' => 'sex'));
+				$uInfo = $this->send('users.get', [
+					'user_ids' => $this->request->getPost('viewer_id'),
+					'fields' => 'sex'
+				]);
 
 				$this->data = $uInfo['response'][0]['user'];
 
@@ -48,7 +51,7 @@ class Vk extends Component implements AuthInterface
 		if (!$this->isAuthorized())
 			return false;
 
-		$Row = $this->db->query("SELECT u.id, u.tutorial, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://vk.com/id".$this->request->getPost('viewer_id', 'int')."';")->fetch();
+		$Row = $this->db->query("SELECT u.id, ui.password, a.id AS auth_id FROM game_users u, game_users_info ui, game_users_auth a WHERE ui.id = u.id AND a.user_id = u.id AND a.external_id = 'http://vk.com/id".$this->request->getPost('viewer_id', 'int')."';")->fetch();
 
 		if (!isset($Row['id']))
 			$this->register();
@@ -60,7 +63,7 @@ class Vk extends Component implements AuthInterface
 			   	"id = ".$Row['auth_id']
 			);
 
-			$this->auth->auth($Row['id'], $Row['password'], 0, (time() + 2419200));
+			$this->auth->authorize($Row['id'], time() + 2419200);
 		}
 
 		echo '<center>Загрузка...</center><script>parent.location.href="'.$this->url->getBaseUri().'overview/?'.http_build_query($_POST).'";</script>';

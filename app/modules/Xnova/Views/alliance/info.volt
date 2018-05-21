@@ -5,7 +5,6 @@
 	{% if parse['image'] != "" %}
 		<tr><th colspan="2"><img src="{{ parse['image'] }}" style="max-width:100%"></th></tr>
 	{% endif %}
-	{{ parse['image'] }}
 	<tr>
 		<th>{{ _text('xnova', 'Tag') }}</th>
 		<th>{{ parse['tag'] }}</th>
@@ -21,8 +20,7 @@
 	{% if parse['description'] != '' %}
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;">
-				<span id="m1"></span>
-				<script type="text/javascript">TextParser.addText('{{ replace(["\r\n", "\n", "\r"], '', parse['description']|stripslashes) }}', 'm1');</script>
+				<text-viewer text="{{ parse['description'] }}"></text-viewer>
 			</td>
 		</tr>
 	{% endif %}
@@ -31,6 +29,10 @@
 	{% endif %}
 
 	{% if userId is defined and userId != 0 and parse['request'] %}
-		<tr><th>Вступление</th><th><a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}">Нажмите сюда для подачи заявки</a></th></tr>
+		<tr>
+			<th colspan="2">
+				<a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}" class="button">Вступить в альянс</a>
+			</th>
+		</tr>
 	{% endif %}
 </table>

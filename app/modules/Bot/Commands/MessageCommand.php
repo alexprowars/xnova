@@ -2,10 +2,11 @@
 
 namespace Longman\TelegramBot\Commands\UserCommands;
 
-use Xnova\Models\User;
+use Xnova\User;
+use Xnova\Models\User as UserModel;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Conversation;
-use Longman\TelegramBot\Entities\ReplyKeyboardHide;
+use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Request;
 use Phalcon\Di;
 
@@ -76,12 +77,12 @@ class MessageCommand extends UserCommand
 					$this->conversation->update();
 
 					$data['text'] = 'Введите логин игрока';
-					$data['reply_markup'] = new ReplyKeyBoardHide(['selective' => true]);
+					$data['reply_markup'] = Keyboard::remove(['selective' => true]);
 
 					break;
 				}
 
-				$user = User::findFirst(['columns' => 'id, username', 'conditions' => 'username = ?0', 'bind' => [$text]]);
+				$user = UserModel::findFirst(['columns' => 'id, username', 'conditions' => 'username = ?0', 'bind' => [$text]]);
 
 				if (!$user)
 				{
@@ -107,7 +108,7 @@ class MessageCommand extends UserCommand
 
 				$this->conversation->notes['text'] = $text;
 
-				$user = User::findFirst(['columns' => 'id', 'conditions' => 'username = ?0', 'bind' => [$this->conversation->notes['login']]]);
+				$user = UserModel::findFirst(['columns' => 'id', 'conditions' => 'username = ?0', 'bind' => [$this->conversation->notes['login']]]);
 
 				if (!$user)
 				{
@@ -128,6 +129,7 @@ class MessageCommand extends UserCommand
 				}
 
 			case 2:
+
 				$this->conversation->update();
 				$this->conversation->stop();
 

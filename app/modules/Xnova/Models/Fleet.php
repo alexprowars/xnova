@@ -4,7 +4,7 @@ namespace Xnova\Models;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -80,22 +80,22 @@ class Fleet extends Model
 
 	public function getStartAdressLink ($FleetType = '')
 	{
-		if ($this->getDI()->has('url'))
-			$uri = $this->getDI()->getShared('url')->getBaseUri();
-		else
-			$uri = '#BASEPATH#';
+		$uri = '/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/';
 
-		return '<a href="'.$uri.'galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
+		if ($this->getDI()->has('url'))
+			$uri = $this->getDI()->getShared('url')->get($uri);
+
+		return '<a href="'.$uri.'" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
 	}
 
 	public function getTargetAdressLink ($FleetType = '')
 	{
-		if ($this->getDI()->has('url'))
-			$uri = $this->getDI()->getShared('url')->getBaseUri();
-		else
-			$uri = '#BASEPATH#';
+		$uri = '/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/';
 
-		return '<a href="'.$uri.'galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
+		if ($this->getDI()->has('url'))
+			$uri = $this->getDI()->getShared('url')->get($uri);
+
+		return '<a href="'.$uri.'" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
 	}
 
 	public function getTotalShips ()
@@ -105,38 +105,46 @@ class Fleet extends Model
 		$data = $this->getShips();
 
 		foreach ($data as $type)
-			$result += $type['cnt'];
+			$result += $type['count'];
 
 		return $result;
 	}
 
-	public function getShips ($fleetAmount = '')
+	public function getShips ($fleets = false)
 	{
-		if (!$fleetAmount)
-			$fleetAmount = $this->fleet_array;
+		if (!$fleets)
+			$fleets = $this->fleet_array;
 
-		$fleetTyps = explode(';', $fleetAmount);
+		$result = [];
 
-		$fleetAmount = [];
+		if (!is_array($fleets))
+			$fleets = json_decode($fleets, true);
 
-		foreach ($fleetTyps as $fleetTyp)
+		if (!is_array($fleets))
+			return [];
+
+		foreach ($fleets as $fleet)
 		{
-			$temp = explode(',', $fleetTyp);
-
-			if (empty($temp[0]))
+			if (!isset($fleet['id']))
 				continue;
 
-			if (!isset($fleetAmount[$temp[0]]))
-				$fleetAmount[$temp[0]] = ['cnt' => 0, 'lvl' => 0];
+			$fleetId = (int) $fleet['id'];
 
-			$lvl = explode("!", $temp[1]);
+			$result[$fleetId] = [
+				'id' => $fleetId,
+				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0
+			];
 
-			$fleetAmount[$temp[0]]['cnt'] += $lvl[0];
-
-			if (isset($lvl[1]))
-				$fleetAmount[$temp[0]]['lvl'] = $lvl[1];
+			if (isset($fleet['target']))
+				$result[$fleetId]['target'] = (int) $fleet['target'];
 		}
 
-		return $fleetAmount;
+		return $result;
+	}
+
+	public function beforeSave ()
+	{
+		if (is_array($this->fleet_array))
+			$this->fleet_array = json_encode(array_values($this->fleet_array));
 	}
 }

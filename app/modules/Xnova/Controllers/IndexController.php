@@ -4,15 +4,16 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 use Friday\Core\Lang;
 use Friday\Core\Options;
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @Route("/")
@@ -23,27 +24,10 @@ class IndexController extends Controller
 	{
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
+
+		$this->assets->addJs('https://www.google.com/recaptcha/api.js', 'footer');
 		
-		parent::initialize();
-
-		if (!$this->dispatcher->wasForwarded())
-		{
-			$this->assets->clearJs();
-			$this->assets->clearCss();
-
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js');
-			$this->assets->addJs('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-			$this->assets->addJs('assets/js/jquery.form.min.js');
-			$this->assets->addJs('assets/js/jquery.fancybox.min.js');
-			$this->assets->addJs('assets/js/game.js');
-			$this->assets->addJs('assets/js/jquery.validate.js');
-
-			$this->assets->addCss('assets/css/jquery-ui.css');
-			$this->assets->addCss('assets/css/jquery.fancybox.css');
-			$this->assets->addCss('assets/css/login.css');
-		}
-
-		return true;
+		return parent::initialize();
 	}
 
 	public function indexAction ()
@@ -167,10 +151,7 @@ class IndexController extends Controller
 				$this->auth->authorize($iduser, 0);
 
 				if ($this->request->isAjax())
-				{
-					$this->game->setRequestStatus(1);
-					$this->game->setRequestData(['redirect' => $this->url->get('overview/')]);
-				}
+					Request::addData('redirect', $this->url->get('overview/'));
 				else
 					$this->response->redirect('overview/');
 
@@ -207,7 +188,6 @@ class IndexController extends Controller
 
 					$mail = new PHPMailer();
 
-					$mail->isMail();
 					$mail->isHTML(true);
 					$mail->CharSet = 'utf-8';
 					$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
@@ -249,7 +229,6 @@ class IndexController extends Controller
 
 				$mail = new PHPMailer();
 
-				$mail->isMail();
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
 				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
@@ -296,8 +275,8 @@ class IndexController extends Controller
 
 						if ($this->request->isAjax())
 						{
-							$this->game->setRequestStatus(1);
-							$this->game->setRequestData(['redirect' => $this->url->getBaseUri().'overview/']);
+							Request::setStatus(true);
+							Request::addData('redirect', $this->url->getBaseUri().'overview/');
 						}
 						else
 							$this->response->redirect('overview/');
@@ -316,8 +295,11 @@ class IndexController extends Controller
 
 		if ($error != '')
 		{
-			$this->game->setRequestMessage($error);
-			$this->game->setRequestStatus(0);
+			Request::setStatus(false);
+			Request::addData('messages', [[
+				'type' => 'error',
+				'text' => $error
+			]]);
 		}
 
 		return false;

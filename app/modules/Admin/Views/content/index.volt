@@ -1,5 +1,5 @@
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-advance">
+<div class="card">
+	<table class="table table-striped table-hover table-responsive table-sm">
 		<thead>
 			<tr>
 				<th>ID</th>
@@ -14,9 +14,8 @@
 				<td>{{ data['title'] }}</td>
 			</tr>
 		{% endfor %}
-
-		<tr>
-			<th class="b text-center" colspan="4">{{ parse['total'] }} страниц</th>
-		</tr>
 	</table>
+	<footer class="card-footer text-center">
+		<b>{{ parse['total'] }}</b> страниц
+	</footer>
 </div>

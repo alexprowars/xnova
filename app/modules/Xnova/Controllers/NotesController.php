@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -12,6 +12,8 @@ use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\Note;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/notes")
@@ -36,23 +38,27 @@ class NotesController extends Controller
 	{
 		if ($this->request->isPost())
 		{
-			$priority = $this->request->getPost('u', 'int', 0);
+			$priority = (int) $this->request->getPost('u', 'int', 0);
 
-			$title 	= $this->request->getPost('title', 'string', '') ? $this->request->getPost('title', 'string') : _getText('NoTitle');
-			$text 	= $this->request->getPost('text', 'string', '') ? $this->request->getPost('text', 'string') : _getText('NoText');
+			$title = $this->request->getPost('title', 'string', '');
+			$text = $this->request->getPost('text', 'string', '');
 
-			$this->db->insertAsDict('game_notes',
-			[
-				'owner' 	=> $this->user->id,
-				'time' 		=> time(),
-				'priority' 	=> $priority,
-				'title' 	=> $title,
-				'text' 		=> $text
-			]);
+			if ($title == '')
+				$title = _getText('NoTitle');
 
-			$id = $this->db->lastInsertId();
+			if ($text == '')
+				$text = _getText('NoText');
 
-			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$id.'/', 1);
+			$note = new Note();
+
+			$note->user_id = $this->user->id;
+			$note->priority = $priority;
+			$note->title = $title;
+			$note->text = $text;
+
+			$note->create();
+
+			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 1);
 		}
 
 		$this->tag->setTitle('Создание заметки');
@@ -61,28 +67,46 @@ class NotesController extends Controller
 
 	public function editAction ($noteId = 0)
 	{
-		$parse = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." AND id = ".intval($noteId)."")->fetch();
+		$note = Note::findFirst([
+			'conditions' => 'user_id = :user: AND id = :id:',
+			'bind' => [
+				'user' => $this->user->id,
+				'id' => (int) $noteId
+			]
+		]);
 
-		if (!$parse['id'])
+		if (!$note)
 			throw new ErrorException(_getText('notpossiblethisway'), _getText('Error'));
 
 		if ($this->request->isPost())
 		{
-			$priority = $this->request->getPost('u', 'int', 0);
+			$priority = (int) $this->request->getPost('u', 'int', 0);
 
-			$title 	= $this->request->getPost('title', 'string', '') ? $this->request->getPost('title', 'string') : _getText('NoTitle');
-			$text 	= $this->request->getPost('text', 'string', '') ? $this->request->getPost('text', 'string') : _getText('NoText');
+			$title = $this->request->getPost('title', 'string', '');
+			$text = $this->request->getPost('text', 'string', '');
 
-			$this->db->updateAsDict('game_notes',
-			[
-				'time' 		=> time(),
-				'priority' 	=> $priority,
-				'title' 	=> $title,
-				'text' 		=> $text
-			], "id = ".$parse['id']);
+			if ($title == '')
+				$title = _getText('NoTitle');
 
-			throw new RedirectException(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$parse['id'].'/', 1);
+			if ($text == '')
+				$text = _getText('NoText');
+
+			$note->time = time();
+			$note->priority = $priority;
+			$note->title = $title;
+			$note->text = $text;
+
+			$note->update();
+
+			throw new RedirectException(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 1);
 		}
+
+		$parse = [
+			'id' => (int) $note->id,
+			'priority' => (int) $note->priority,
+			'title' => $note->title,
+			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
+		];
 
 		$this->view->setVar('parse', $parse);
 
@@ -94,58 +118,58 @@ class NotesController extends Controller
 	{
 		if ($this->request->isPost())
 		{
-			$deleted = 0;
+			$deleteIds = $this->request->getPost('delete');
 
-			foreach ($_POST as $a => $b)
+			if (!is_array($deleteIds))
+				$deleteIds = [];
+
+			foreach ($deleteIds as $id)
 			{
-				if (preg_match("/delmes/iu", $a) && $b == "y")
-				{
-					$id = intval(trim(str_replace("delmes", "", $a)));
+				$note = Note::findFirst([
+					'conditions' => 'user_id = :user: AND id = :id:',
+					'bind' => [
+						'user' => $this->user->id,
+						'id' => (int) $id
+					]
+				]);
 
-					$note_query = $this->db->query("SELECT id FROM game_notes WHERE id = ".$id." AND owner = ".$this->user->id."")->fetch();
-
-					if (isset($note_query['id']))
-					{
-						$deleted++;
-						$this->db->query("DELETE FROM game_notes WHERE `id` = ".$note_query['id']."");
-					}
-				}
+				if ($note)
+					$note->delete();
 			}
 
-			if ($deleted)
-			{
-				$mes = ($deleted == 1) ? _getText('NoteDeleted') : _getText('NoteDeleteds');
-				throw new RedirectException($mes, _getText('Please_Wait'), '/notes/', 3);
-			}
-			else
-				$this->response->redirect("notes/");
+			throw new RedirectException(_getText('NoteDeleteds'), _getText('Please_Wait'), '/notes/', 2);
 		}
 
-		$notes = $this->db->query("SELECT * FROM game_notes WHERE owner = ".$this->user->id." ORDER BY time DESC");
+		$notes = Note::find([
+			'conditions' => 'user_id = :user:',
+			'bind' => [
+				'user' => $this->user->id
+			],
+			'order' => 'time DESC'
+		]);
 
 		$parse = [];
-		$parse['list'] = [];
+		$parse['items'] = [];
 
-		while ($note = $notes->fetch())
+		foreach ($notes as $note)
 		{
 			$list = [];
 
-			if ($note["priority"] == 0)
+			if ($note->priority == 0)
 				$list['color'] = "lime";
-			elseif ($note["priority"] == 1)
+			elseif ($note->priority == 1)
 				$list['color'] = "yellow";
-			elseif ($note["priority"] == 2)
+			elseif ($note->priority == 2)
 				$list['color'] = "red";
 
-			$list['id'] = $note['id'];
-			$list['time'] = $this->game->datezone("Y-m-d h:i:s", $note["time"]);
-			$list['title'] = $note['title'];
-			$list['text'] = mb_strlen($note['text'], 'UTF-8');
+			$list['id'] = (int) $note->id;
+			$list['time'] = $this->game->datezone("Y.m.d h:i:s", $note->time);
+			$list['title'] = $note->title;
 
-			$parse['list'][] = $list;
+			$parse['items'][] = $list;
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Заметки');
 		$this->showTopPanel(false);

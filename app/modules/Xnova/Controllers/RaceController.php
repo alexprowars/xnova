@@ -4,7 +4,7 @@ namespace Xnova\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -13,6 +13,7 @@ use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Vars;
 
 /**
  * @RoutePrefix("/race")
@@ -41,17 +42,8 @@ class RaceController extends Controller
 
 			if ($r > 0)
 			{
-				$queueManager = new Queue();
-				$queueCount = 0;
-
-				$BuildOnPlanets = Planet::find(['columns' => 'queue', 'conditions' => 'id_owner = ?0', 'bind' => [$this->user->id]]);
-
-				foreach ($BuildOnPlanets as $BuildOnPlanet)
-				{
-					$queueManager->loadQueue($BuildOnPlanet->queue);
-
-					$queueCount += $queueManager->getCount();
-				}
+				$queueManager = new Queue($this->user);
+				$queueCount = $queueManager->getCount();
 
 				$UserFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 
@@ -73,9 +65,24 @@ class RaceController extends Controller
 
 					$this->user->update();
 
-					$this->db->query("UPDATE game_planets SET corvete = 0, interceptor = 0, dreadnought = 0, corsair = 0 WHERE id_owner = " . $this->user->id . ";");
+					$planets = Planet::find([
+						'conditions' => 'id_owner = :user:',
+						'bind' => [
+							'user' => $this->user->id
+						]
+					]);
 
-					$this->response->redirect("overview/");
+					foreach ($planets as $planet)
+					{
+						$planet->setUnit(Vars::getIdByName('corvete'), 0);
+						$planet->setUnit(Vars::getIdByName('interceptor'), 0);
+						$planet->setUnit(Vars::getIdByName('dreadnought'), 0);
+						$planet->setUnit(Vars::getIdByName('corsair'), 0);
+
+						$planet->update();
+					}
+
+					$this->response->redirect('overview/');
 				}
 			}
 		}
@@ -94,8 +101,8 @@ class RaceController extends Controller
 			{
 				$update = ['race' => intval($r), 'bonus' => time() + 86400];
 
-				foreach ($this->registry->reslist['officier'] AS $oId)
-					$update[$this->registry->resource[$oId]] = time() + 86400;
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
+					$update[Vars::getName($oId)] = time() + 86400;
 					
 				$this->user->update($update);
 		

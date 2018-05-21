@@ -5,9 +5,7 @@
 		</tr>
 		<tr>
 			<th style="text-align:left;font-weight:normal;">
-				<span id="um{{ parse['id'] }}" style="display:none;"></span>
-				<span id="m{{ parse['id'] }}"></span>
-				<script>TextParser.addText('{{ replace(["\n", "\r", "\n\r"], '<br>', parse['text']|slashes) }}', 'm{{ parse['id'] }}');</script>
+				<text-viewer text="{{ parse['text'] }}"></text-viewer>
 			</th>
 		</tr>
 	</table>
@@ -21,7 +19,7 @@
 				<select name="u" title="">
 					<option value="2" {{ parse['priority'] == 2 ? 'selected' : '' }}>{{ _text('xnova', 'Important') }}</option>
 					<option value="1" {{ parse['priority'] == 1 ? 'selected' : '' }}>{{ _text('xnova', 'Normal') }}</option>
-					<option value="0" {{ parse['priority'] == 0 ? 'selected' : '' }}>{{ _text('xnova', 'Unimportant') }}</option
+					<option value="0" {{ parse['priority'] == 0 ? 'selected' : '' }}>{{ _text('xnova', 'Unimportant') }}</option>
 				</select>
 			</th>
 			<th>Тема:
@@ -30,9 +28,7 @@
 		</tr>
 		<tr>
 			<th colspan="2" class="p-a-0">
-				<div id="editor"></div>
-				<textarea name="text" id="text" rows="10" placeholder="Введите текст">{{ parse['text'] }}</textarea>
-				<script type="text/javascript">edToolbar('text');</script>
+				<text-editor text="{{ parse['text'] }}"></text-editor>
 			</th>
 		</tr>
 		<tr>
@@ -42,15 +38,5 @@
 			</td>
 		</tr>
 	</table>
-	<div id="showpanel" style="display:none">
-		<table align="center" width='651'>
-			<tr>
-				<td class="c"><b>Предварительный просмотр</b></td>
-			</tr>
-			<tr>
-				<td class="b"><span id="showbox"></span></td>
-			</tr>
-		</table>
-	</div>
 </form>
 <span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="{{ url('notes/') }}">Назад</a></span>

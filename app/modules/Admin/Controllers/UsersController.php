@@ -6,7 +6,7 @@ use Admin\Controller;
 use Friday\Core\Form\Builder;
 use Admin\Forms\UserForm;
 use Friday\Core\Lang;
-use Friday\Core\Mail\PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 use Friday\Core\Modules;
 use Friday\Core\Models\Group;
 use Friday\Core\Models\User;
@@ -65,13 +65,6 @@ class UsersController extends Controller
 
 	public function indexAction ()
 	{
-		$this->assets->addJs('/assets/admin/global/js/datatable.js');
-		$this->assets->addJs('/assets/admin/global/plugins/datatables/datatables.min.js');
-		$this->assets->addJs('/assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js');
-
-		$this->assets->addCss('/assets/admin/global/plugins/datatables/datatables.min.css', 100);
-		$this->assets->addCss('/assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css', 101);
-
 		$this->tag->setTitle(Lang::getText('admin', 'page_title_index'));
 	}
 
@@ -345,10 +338,7 @@ class UsersController extends Controller
 				'email' 	=> $item->user->email,
 				'name' 		=> $item->user->getFullName(),
 				'date' 		=> date("d.m.Y", strtotime($item->user->create_date)),
-				'actions'	=> $canWrite ? '
-					<a href="'.$this->url->get('users/edit/'.$item->user->id.'/').'" class="btn btn-outline btn-sm purple"><i class="fa fa-edit"></i> Изменить </a>
-					<a href="javascript:;" onclick="if (window.confirm(\'Удалить пользователя\')) location.href=\''.$this->url->get('users/delete/'.$item->user->id.'/').'\';" class="btn btn-outline dark btn-sm black"><i class="fa fa-trash-o"></i> Удалить </a>
-				' : ''
+				'actions'	=> $canWrite
 			];
 		}
 

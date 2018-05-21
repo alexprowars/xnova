@@ -4,7 +4,7 @@ namespace Xnova\Models;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2016 XNova Game Group
+ * @copyright 2008 - 2018 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -63,9 +63,20 @@ class Alliance extends Model
 		$this->useDynamicUpdate(true);
 	}
 
-	public function getRanks ()
+	public function beforeSave()
 	{
-		if ($this->ranks == NULL)
+		if (is_array($this->ranks))
+			$this->ranks = json_encode($this->ranks);
+	}
+
+	public function afterSave()
+	{
+		$this->getRanks();
+	}
+
+	public function getRanks()
+	{
+		if ($this->ranks == null)
 			$this->ranks = '[]';
 
 		$this->ranks = json_decode($this->ranks, true);
@@ -81,7 +92,7 @@ class Alliance extends Model
 
 	/**
 	 * @param int $userId
-	 * @return AllianceMember
+	 * @return void
 	 */
 	public function getMember ($userId)
 	{
