@@ -29,10 +29,11 @@ class UserInfo extends Model
 	public $gender;
 	public $photo;
 	public $create_time;
-	public $about;
-	public $settings;
+	public $about = '';
+	public $settings = '{}';
 	public $image;
 	public $username_last;
+	public $fleet_shortcut = '';
 
 	public function getSource()
 	{

@@ -40,7 +40,9 @@
 <script>
 	$(document).ready(function()
 	{
-		grecaptcha.render('recaptcha');
+		setTimeout(function () {
+			grecaptcha.render('recaptcha')
+		}, 250);
 
 		$('#regForm').validate({
 			submitHandler: function(form)

@@ -32,4 +32,5 @@ Phalcon
 9. Установить Composer **https://getcomposer.org/**
 10. Перейти в корневой каталог проекта и установить зависимости **composer install**
 11. Скомпилировать стили командой **gulp**
+12. Настроить cron **install/cron.conf**
 12. Логин и пароль администратора **admin@xnova.su** / **123456**

@@ -26,8 +26,7 @@ class User extends BaseUser
 {
 	use Tech;
 
-	private $optionsData =
-	[
+	private $optionsData = [
 		'bb_parser' 		=> false,
 		'planetlist' 		=> false,
 		'planetlistselect' 	=> false,

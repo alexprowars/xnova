@@ -69,12 +69,10 @@
 	export default {
 		name: "index",
 		methods: {
-			showRegistration ()
-			{
+			showRegistration () {
 				showWindow('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
 			},
-			showRemindPassword ()
-			{
+			showRemindPassword () {
 				showWindow('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
 			},
 			authAction ()
@@ -101,7 +99,8 @@
 			}
 		},
 		mounted() {
-			$.cachedScript('//ulogin.ru/js/ulogin.js')
+			$.cachedScript('https://ulogin.ru/js/ulogin.js');
+			$.cachedScript('https://www.google.com/recaptcha/api.js');
 		}
 	}
 </script>

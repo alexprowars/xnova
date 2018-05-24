@@ -13,6 +13,8 @@ use Friday\Core\Options;
 use PHPMailer\PHPMailer\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;
+use Xnova\Models\User;
+use Xnova\Models\UserInfo;
 use Xnova\Request;
 
 /**
@@ -25,8 +27,6 @@ class IndexController extends Controller
 		if ($this->auth->isAuthorized())
 			return $this->response->redirect('overview/');
 
-		$this->assets->addJs('https://www.google.com/recaptcha/api.js', 'footer');
-		
 		return parent::initialize();
 	}
 
@@ -44,38 +44,25 @@ class IndexController extends Controller
 
 		if ($this->request->isPost())
 		{
-			$errors = 0;
-			$errorlist = "";
+			$errorlist = '';
 
 			$email = strip_tags(trim($this->request->getPost('email')));
 
 			if (!is_email($email))
-			{
 				$errorlist .= "\"" . $email . "\" " . _getText('error_mail');
-				$errors++;
-			}
 
 			if (mb_strlen($this->request->getPost('password'), 'UTF-8') < 4)
-			{
 				$errorlist .= _getText('error_password');
-				$errors++;
-			}
 
 			if (!$this->request->hasPost('rgt') || !$this->request->hasPost('sogl') || $this->request->getPost('rgt') != 'on' || $this->request->getPost('sogl') != 'on')
-			{
 				$errorlist .= _getText('error_rgt');
-				$errors++;
-			}
 
 			$ExistMail = $this->db->query("SELECT `id` FROM game_users_info WHERE `email` = '" . $email . "' LIMIT 1")->fetch();
 
 			if (isset($ExistMail['id']))
-			{
 				$errorlist .= _getText('error_emailexist');
-				$errors++;
-			}
 
-			if (!$errors)
+			if ($errorlist == '')
 			{
 				$curl = curl_init();
 				curl_setopt($curl, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
@@ -88,51 +75,48 @@ class IndexController extends Controller
 				curl_close($curl);
 
 				if (!$captcha['success'])
-				{
-					$errors++;
-					$errorlist .= "Неправильный регистрационный код!<br>";
-				}
+					$errorlist .= "Вы не прошли проверку на бота!<br>";
 			}
 
-			if ($errors != 0)
-			{
+			if ($errorlist != '')
 				$this->view->setVar('message', $errorlist);
-			}
 			else
 			{
 				$newpass = trim($this->request->getPost('password'));
 				$md5newpass = md5($newpass);
 
-				$this->db->insertAsDict(
-				   	"game_users",
-					[
-						'username' 		=> '',
-						'sex' 			=> 0,
-						'planet_id' 	=> 0,
-						'ip' 			=> convertIp($this->request->getClientAddress()),
-						'bonus' 		=> time(),
-						'onlinetime' 	=> time()
-					]
-				);
+				$user = new User();
+				$user->create([
+					'username' 		=> '',
+					'sex' 			=> 0,
+					'planet_id' 	=> 0,
+					'ip' 			=> convertIp($this->request->getClientAddress()),
+					'bonus' 		=> time(),
+					'onlinetime' 	=> time()
+				]);
 
-				$iduser = $this->db->lastInsertId();
+				if (!$user->id)
+					throw new \Exception('create user error');
 
-				$this->db->insertAsDict(
-					"game_users_info",
-					[
-						'id' 			=> $iduser,
-						'email' 		=> $email,
-						'create_time' 	=> time(),
-						'password' 		=> $md5newpass
-					]
-				);
+				$userInfo = new UserInfo();
+				$userInfo->create([
+					'id' 			=> $user->id,
+					'email' 		=> $email,
+					'create_time' 	=> time(),
+					'password' 		=> $md5newpass
+				]);
 
 				if ($this->session->has('ref'))
 				{
 					$refe = $this->db->query("SELECT id FROM game_users WHERE id = ".$this->session->get('ref'))->fetch();
 
 					if (isset($refe['id']))
-						$this->db->insertAsDict('game_refs', Array('r_id' => $iduser, 'u_id' => $this->session->get('ref')));
+					{
+						$this->db->insertAsDict('game_refs', [
+							'r_id' => $user->id,
+							'u_id' => $this->session->get('ref')
+						]);
+					}
 				}
 
 				$total = $this->db->query("SELECT `value` FROM game_options WHERE `name` = 'users_total'")->fetch();
@@ -145,10 +129,18 @@ class IndexController extends Controller
 				$mail->isHTML(true);
 				$mail->CharSet = 'utf-8';
 				$mail->Subject = Options::get('site_title').": Регистрация";
-				$mail->Body = "Вы успешно зарегистрировались в игре ".Options::get('site_title').".<br>Ваши данные для входа в игру:<br>Email: " . $this->request->getPost('email') . "<br>Пароль:" . $newpass . "";
+
+				$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/registration.html');
+				$template = strtr($template, [
+					'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
+					'#EMAIL#' => $this->request->getPost('email'),
+					'#PASSWORD#' => $newpass,
+				]);
+
+				$mail->Body = $template;
 				$mail->send();
 
-				$this->auth->authorize($iduser, 0);
+				$this->auth->authorize($user->id, 0);
 
 				if ($this->request->isAjax())
 					Request::addData('redirect', $this->url->get('overview/'));
@@ -169,37 +161,45 @@ class IndexController extends Controller
 
 		if ($this->request->hasQuery('id') && $this->request->hasQuery('key') && is_numeric($this->request->getQuery('id')) && intval($this->request->getQuery('id')) > 0 && $this->request->getQuery('key') != "")
 		{
-			$id = intval($this->request->getQuery('id'));
+			$id = (int) $this->request->getQuery('id');
 			$key = addslashes($this->request->getQuery('key'));
 
-			$Lost = $this->db->query("SELECT * FROM game_lostpasswords WHERE keystring = '" . $key . "' AND user_id = '" . $id . "' AND time > " . time() . "-3600 AND active = '0' LIMIT 1;")->fetch();
+			$request = $this->db->query("SELECT * FROM game_lostpasswords WHERE keystring = '" . $key . "' AND user_id = '" . $id . "' AND time > " . time() . "-3600 AND active = '0' LIMIT 1;")->fetch();
 
-			if (isset($Lost['id']))
+			if (isset($request['id']))
 			{
-				$Mail = $this->db->query("SELECT u.username, ui.email FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.id = '" . $Lost['user_id'] . "'")->fetch();
+				$user = $this->db->query("SELECT u.username, ui.email FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.id = '" . $request['user_id'] . "'")->fetch();
 
 				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9]+$/u", $key))
 					$message = 'Ошибка выборки E-mail адреса!';
-				elseif (empty($Mail['email']))
+				elseif (empty($user['email']))
 					$message = 'Ошибка выборки E-mail адреса!';
 				else
 				{
-					$NewPass = Text::random(Text::RANDOM_ALNUM, 9);
+					$password = Text::random(Text::RANDOM_ALNUM, 9);
 
 					$mail = new PHPMailer();
 
 					$mail->isHTML(true);
 					$mail->CharSet = 'utf-8';
 					$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
-					$mail->addAddress($Mail['email'], Options::get('site_title'));
+					$mail->addAddress($user['email'], Options::get('site_title'));
 					$mail->Subject = 'Новый пароль в '.Options::get('site_title').'';
-					$mail->Body = "Ваш новый пароль от игрового аккаунта: " . $Mail['username'] . ": " . $NewPass;
+
+					$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_2.html');
+					$template = strtr($template, [
+						'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
+						'#EMAIL#' => $user['username'],
+						'#PASSWORD#' => $password,
+					]);
+
+					$mail->Body = $template;
 					$mail->send();
 
-					$this->db->query("UPDATE game_users_info SET `password` ='" . md5($NewPass) . "' WHERE `id` = '" . $id . "'");
+					$this->db->query("UPDATE game_users_info SET `password` ='" . md5($password) . "' WHERE `id` = '" . $id . "'");
 					$this->db->query("DELETE FROM game_lostpasswords WHERE user_id = '" . $id . "'");
 
-					$message = 'Ваш новый пароль: ' . $NewPass . '. Копия пароля отправлена на почтовый ящик!';
+					$message = 'Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!';
 				}
 			}
 			else
@@ -212,8 +212,6 @@ class IndexController extends Controller
 
 			if (isset($inf['id']))
 			{
-				$ip = $this->request->getClientAddress();
-
 				$key = md5($inf['id'] . date("d-m-Y H:i:s", time()) . "ыыы");
 
 				$this->db->insertAsDict(
@@ -222,7 +220,7 @@ class IndexController extends Controller
 						'user_id' 		=> $inf['id'],
 						'keystring' 	=> $key,
 						'time'			=> time(),
-						'ip'			=> $ip,
+						'ip'			=> $this->request->getClientAddress(),
 						'active'		=> 0
 				   	]
 				);
@@ -235,10 +233,14 @@ class IndexController extends Controller
 				$mail->addAddress($inf['email']);
 				$mail->Subject = 'Восстановление забытого пароля';
 
-				$body = "Доброго времени суток Вам!\nКто то с IP адреса " . $ip . " запросил пароль к персонажу " . $inf['username'] . " в онлайн-игре ".Options::get('site_title').".\nТак как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.\n\n
-				Для восстановления пароля перейдите по ссылке: <a href='http://".$_SERVER['HTTP_HOST']."/remind/?id=" . $inf['id'] . "&key=" . $key . "'>http://".$_SERVER['HTTP_HOST']."/remind/?id=" . $inf['id'] . "&key=" . $key . "</a>";
+				$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_1.html');
+				$template = strtr($template, [
+					'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
+					'#EMAIL#' => $inf['username'],
+					'#URL#' => $this->url->get('/remind/?id='.$inf['id'].'&key='.$key),
+				]);
 
-				$mail->Body = $body;
+				$mail->Body = $template;
 
 				if ($mail->send())
 					$message = 'Ссылка на восстановления пароля отправлена на ваш E-mail';
