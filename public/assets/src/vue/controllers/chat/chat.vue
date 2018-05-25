@@ -2,6 +2,9 @@
 	<div class="page-chat">
 		<div class="col-12 th">
 			<div ref="chatbox" class="page-chat-messages">
+				<div class="page-chat-history">
+					<a @click="loadMore">загрузить прошлые сообщения</a>
+				</div>
 				<div v-for="item in messages" class="page-chat-messages-row text-left">
 					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ date('H:i', item['time']) }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
@@ -46,6 +49,7 @@
 				smiles: false,
 				message: '',
 				message_id: 1,
+				history_id: 0,
 				messages: [],
 				socket: null,
 				patterns: {
@@ -87,11 +91,6 @@
 			}
 		},
 		watch: {
-			messages () {
-				setTimeout(() => {
-					this.scrollToBottom()
-				}, 250);
-			},
 			message () {
 				$(this.$refs['text']).focus();
 			}
@@ -124,6 +123,32 @@
 			clear () {
 				this.messages = [];
 				this.smiles = false;
+			},
+			reformat (message)
+			{
+				this.patterns.find.forEach((item, i) => {
+					message['text'] = message['text'].replace(item, this.patterns.replace[i]);
+				});
+
+				let j = 0;
+
+				this.parser.patterns.smiles.every((smile) =>
+				{
+					while (message['text'].indexOf(':'+smile+':') >= 0)
+					{
+						message['text'] = message['text'].replace(':'+smile+':', '<img src="'+this.$root.getUrl('assets/images/smile/'+smile+'.gif')+'">');
+
+						if (++j >= 3)
+							break;
+					}
+
+					return j < 3;
+				})
+
+				return message;
+			},
+			loadMore () {
+				this.socket.emit('history', this.history_id, this.$store.state.user.name);
 			},
 			sendMessage ()
 			{
@@ -178,26 +203,13 @@
 
 						this.message_id = message['id'];
 
-						this.patterns.find.forEach((item, i) => {
-							message['text'] = message['text'].replace(item, this.patterns.replace[i]);
-						});
+						if (message['id'] < this.history_id || this.history_id === 0)
+							this.history_id = message['id'];
 
-						let j = 0;
-
-						this.parser.patterns.smiles.every((smile) =>
-						{
-							while (message['text'].indexOf(':'+smile+':') >= 0)
-							{
-								message['text'] = message['text'].replace(':'+smile+':', '<img src="'+this.$root.getUrl('assets/images/smile/'+smile+'.gif')+'">');
-
-								if (++j >= 3)
-									break;
-							}
-
-							return j < 3;
-						})
+						message = this.reformat(message);
 
 						this.messages.push({
+							id: message['id'],
 							time: message['time'],
 							user: message['user'],
 							to: message['to'],
@@ -206,7 +218,42 @@
 							me: message['me'],
 							my: message['my']
 						});
+
+						setTimeout(() => {
+							this.scrollToBottom()
+						}, 250);
 					});
+				});
+
+				this.socket.on('history', (list) =>
+				{
+					if (list.length === 0)
+						return;
+
+					this.messages.reverse();
+
+					list.forEach((message) =>
+					{
+						message = this.reformat(message);
+
+						if (message['id'] < this.history_id || this.history_id === 0)
+							this.history_id = message['id'];
+
+						this.messages.push({
+							id: message['id'],
+							time: message['time'],
+							user: message['user'],
+							to: message['to'],
+							text: message['text'],
+							private: message['private'],
+							me: message['me'],
+							my: message['my']
+						});
+					})
+
+					this.messages.reverse();
+
+					$(this.$refs['chatbox']).scrollTop(0);
 				});
 			}
 		},

@@ -698,9 +698,13 @@ class OverviewController extends Controller
 
 		if (isMobile())
 		{
-			$memcache = new Memcache(new FrontendCache(), ['host' => 'localhost', 'port' => 11211, 'persistent' => true]);
+			$memcache = new Memcache(new FrontendCache(), [
+				'host' => $this->config->memcache->host,
+				'port' => $this->config->memcache->port,
+				'persistent' => true
+			]);
 
-			$chatCached = $memcache->get("xnova-5-chat");
+			$chatCached = $memcache->get($this->config->chat->cache);
 
 			if (is_string($chatCached))
 				$chat = json_decode($chatCached, true);
@@ -749,7 +753,7 @@ class OverviewController extends Controller
 
 				$chat = array_reverse($chat);
 
-				$memcache->save('xnova-5-chat', json_encode($chat), 86400);
+				$memcache->save($this->config->chat->cache, json_encode($chat), 86400);
 			}
 
 			if (is_array($chat) && count($chat))

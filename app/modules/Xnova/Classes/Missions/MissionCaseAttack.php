@@ -112,13 +112,11 @@ class MissionCaseAttack extends FleetEngine implements Mission
 			}
 		}
 
-
-
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 		{
 			$level = $targetUser->getTechLevel($techId);
 
-			if ($targetUser->rpg_komandir > time() && in_array(Vars::getName($techId), ['military', 'defence', 'shield']))
+			if ($targetUser->rpg_komandir > time() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech']))
 				$level += 2;
 
 			if ($level > 0)

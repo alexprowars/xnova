@@ -376,8 +376,8 @@ class Controller extends PhalconController
 			Request::addData('user', $user);
 
 			Request::addData('chat', [
-				'key' => md5($this->user->getId().'|'.$this->user->username.'SuperPuperChat'),
-				'server' => 'https://uni5.xnova.su:6677',
+				'key' => md5($this->user->getId().'|'.$this->user->username.$this->config->chat->key),
+				'server' => $this->request->getScheme().'://'.$this->request->getServerName().':'.$this->config->chat->port,
 			]);
 
 			Request::addData('resources', false);
