@@ -80,7 +80,7 @@ function chatResize()
 	if (XNova.isMobile)
 		return;
 
-	var height = $(window).height() - 135;
+	var height = $(window).height() - 200;
 
 	$('#shoutbox').css('height', height);
 

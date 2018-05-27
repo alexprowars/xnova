@@ -22,7 +22,7 @@ var allowResize = {{ config.view.get('socialIframeView', 0) == 1 ? 0 : 1 }};
 var userId = {{ user.getId() }};
 var userName = '{{ user.username }}';
 var key = '{{ md5(user.getId()~'|'~user.username~'SuperPuperChat') }}';
-var server = 'https://uni5.xnova.su:6677';
+var server = 'https://xnova.su:6677';
 var color = {{ user.color }};
 
 $(document).ready(function()
