@@ -377,7 +377,7 @@ class Controller extends PhalconController
 
 			Request::addData('chat', [
 				'key' => md5($this->user->getId().'|'.$this->user->username.$this->config->chat->key),
-				'server' => $this->request->getScheme().'://'.$this->request->getServerName().':'.$this->config->chat->port,
+				'server' => $this->config->chat->host.':'.$this->config->chat->port,
 			]);
 
 			Request::addData('resources', false);
