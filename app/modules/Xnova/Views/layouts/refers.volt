@@ -50,7 +50,7 @@
 					data-yashareTheme="counter"
 					data-yashareType="small"
 					data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus"
-					data-yashareLink="//{{ config.game.universe }}.xnova.su/?{{ userId }}"
+					data-yashareLink="http{{ request.isSecure() ? 's' : '' }}://{{ request.getHttpHost() }}/?{{ userId }}"
 					data-yashareTitle="{{ option('site_title') }}"
 				></div>
 			</th>
@@ -70,10 +70,10 @@
 				<br><br>
 				HTML код:
 				<br>
-				<input style="width:100%" type="text" value="{{ htmlspecialchars('<a href="//'~config.game.universe~'.xnova.su/?'~userId~'"><img src="http://'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg"></a>') }}" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('<a href="http'~(request.isSecure() ? 's' : '')~'://'~request.getHttpHost()~'/?'~userId~'"><img src="http'~(request.isSecure() ? 's' : '')~'://'~request.getHttpHost()~'/userbar'~userId~'.jpg"></a>') }}" title="">
 				<div class="separator"></div>
 				BB код:
-				<input style="width:100%" type="text" value="{{ htmlspecialchars('[url=http://'~config.game.universe~'.xnova.su/?'~userId~'][img]http://'~config.game.universe~'.xnova.su/userbar'~userId~'.jpg[/img][/url]') }}" title="">
+				<input style="width:100%" type="text" value="{{ htmlspecialchars('[url=http'~(request.isSecure() ? 's' : '')~'://'~request.getHttpHost()~'.xnova.su/?'~userId~'][img]http'~(request.isSecure() ? 's' : '')~'://'~request.getHttpHost()~'.xnova.su/userbar'~userId~'.jpg[/img][/url]') }}" title="">
 			</th>
 		</tr>
 	</table>

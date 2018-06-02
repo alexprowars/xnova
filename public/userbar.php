@@ -103,8 +103,8 @@ if ($id > 0)
 			imagettftext($image, 6, 0, 13, 37, $txt_color2, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
 
 			// Очки
-			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Helpers::formatNumber(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Helpers::formatNumber(intval($stats['total_rank']))." из ".\Xnova\Helpers::formatNumber(Options::get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Format::number(intval($stats['total_points']))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Format::number(intval($stats['total_rank']))." из ".\Xnova\Format::number(Options::get('users_total', 0))."");
 
 			// Дата генерации
 			imagettftext($image, 6, 0, 365, 13, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", date("d.m.Y"));

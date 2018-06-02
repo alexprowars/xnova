@@ -140,7 +140,7 @@ class Controller extends PhalconController
 
 		Request::addData('path', $this->url->getBaseUri());
 		Request::addData('version', VERSION);
-		Request::addData('host', $_SERVER['HTTP_HOST']);
+		Request::addData('host', $this->request->getHttpHost());
 		Request::addData('redirect', '');
 		Request::addData('messages', []);
 		Request::addData('page', []);
