@@ -509,7 +509,8 @@ INSERT INTO `game_modules` (`id`, `code`, `sort`, `namespace`, `active`) VALUES
 (4, 'bot', 40, '', 'Y');
 
 CREATE TABLE `game_moneys` (
-  `id` bigint(20) NOT NULL DEFAULT '0',
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `ip` varchar(50) NOT NULL DEFAULT '',
   `time` bigint(20) NOT NULL DEFAULT '0',
   `referer` varchar(250) NOT NULL DEFAULT '',
@@ -988,8 +989,8 @@ ALTER TABLE `game_modules`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `game_moneys`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `ip` (`ip`),
-  ADD KEY `id` (`id`),
   ADD KEY `time` (`time`);
 
 ALTER TABLE `game_notes`
@@ -1158,6 +1159,9 @@ ALTER TABLE `game_messages`
 
 ALTER TABLE `game_modules`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `game_moneys`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `game_notes`
   MODIFY `id` bigint(11) NOT NULL AUTO_INCREMENT;
