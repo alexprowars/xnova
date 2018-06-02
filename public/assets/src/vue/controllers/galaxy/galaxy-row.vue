@@ -207,7 +207,7 @@
 								<a :href="$root.getUrl('stat/alliance/start/0/')">Статистика</a>
 							</th>
 						</tr>
-						<tr v-if="item['a_web'].length">
+						<tr v-if="item['a_web'] && item['a_web'].length">
 							<th>
 								<a :href="$root.getUrl(item['a_web'])" target="_blank">Сайт альянса</a>
 							</th>
@@ -309,6 +309,8 @@
 					return "N";
 				else if (RowUserPoints > CurrentLevel && CurrentPoints < 50000)
 					return "S";
+				else
+					return '';
 			},
 			user_status_class: function ()
 			{
@@ -347,6 +349,9 @@
 			},
 			user_avatar: function()
 			{
+				if (!this.item)
+					return '';
+
 				if (this.item['u_image'].length > 0)
 					return this.$root.getUrl(this.item['u_image']);
 				else if (this.item['u_avatar'] > 0)
@@ -361,7 +366,7 @@
 			},
 			stat_page: function ()
 			{
-				if (this.item['s_rank'] < 100)
+				if (!this.item || this.item['s_rank'] < 100)
 					return 1;
 
 				return (Math.floor(this.item['s_rank'] / 100 ) * 100) + 1;

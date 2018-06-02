@@ -5,7 +5,7 @@
 		</tr>
 		<tr>
 			<th>Текущий пароль</th>
-			<th><input name="db_password" size="20" value="" type="password" title=""></th>
+			<th><input name="password" size="20" value="" type="password" title=""></th>
 		</tr>
 		<tr>
 			<th>Новый EMAIL адрес</th>
