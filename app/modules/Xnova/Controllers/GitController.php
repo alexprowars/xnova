@@ -67,7 +67,7 @@ class GitController extends Controller
 		            $date = explode(':', $line, 2);
 		            $date = trim(end($date));
 
-		            $git_history[$last_hash]['date'] = date('d/m/Y H:i:s A', strtotime($date));
+		            $git_history[$last_hash]['date'] = date('d.m.Y H:i:s', strtotime($date));
 		        }
 		        else
 		            $git_history[$last_hash]['message'] .= $line ."<br>";

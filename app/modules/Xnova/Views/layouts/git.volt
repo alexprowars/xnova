@@ -11,7 +11,7 @@
 			<br>
 			{{ news['message'] }}
 			<br>
-			Commit hash <a href="https://gitlab.com/alexprowars/xnova-uni5/commit/{{ hash }}/" target="_blank">{{ hash }}</a>
+			Commit hash <a href="https://github.com/alexprowars/xnova-game/commit/{{ hash }}/" target="_blank">{{ hash }}</a>
 		</td>
 	</tr>
 	{% endfor %}
