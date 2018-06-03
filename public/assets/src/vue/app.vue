@@ -93,6 +93,7 @@
 
 					this.html_component = new (Vue.extend({
 						name: 'html-render',
+						parent: this,
 						template: '<div>'+html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 					}))().$mount();
 

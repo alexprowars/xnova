@@ -39,8 +39,11 @@ class CreditsController extends Controller
 			$this->view->setVar('invid', $id);
 		}
 
-		$this->view->setVar('userid', $this->user->getId());
-		$this->view->setVar('useremail', $userinf['email']);
+		$userId = $this->request->hasPost('userId') && (int) $this->request->getPost('userId') > 0 ?
+			(int) $this->request->getPost('userId') : $this->user->getId();
+
+		$this->view->setVar('userId', $userId);
+		$this->view->setVar('userEmail', $userinf['email']);
 
 		$this->tag->setTitle('Покупка кредитов');
 		$this->showTopPanel(false);

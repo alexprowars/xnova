@@ -292,9 +292,6 @@
 				if (!RowUserPoints)
 	                RowUserPoints = 0;
 
-				let CurrentLevel  	= CurrentPoints * 5;
-				let RowUserLevel  	= RowUserPoints * 5;
-
 				if (this.item['u_ban'] > this.$root.serverTime() && this.item['u_vacation'] > 0)
 					return "UG";
 				else if (this.item['u_ban'] > this.$root.serverTime())
@@ -305,9 +302,9 @@
 					return "i";
 				else if (this.item['u_online'] === 2)
 					return "iI";
-				else if (RowUserLevel < CurrentPoints && RowUserPoints < 50000)
+				else if (RowUserPoints * 5 < CurrentPoints || RowUserPoints <= 5000)
 					return "N";
-				else if (RowUserPoints > CurrentLevel && CurrentPoints < 50000)
+				else if (RowUserPoints > CurrentPoints * 5)
 					return "S";
 				else
 					return '';

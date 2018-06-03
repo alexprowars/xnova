@@ -26,8 +26,8 @@ class User extends BaseUser
 {
 	use Tech;
 
-	private $optionsData = [
-		'bb_parser' 		=> false,
+	private $_optionsDefault = [
+		'bb_parser' 		=> true,
 		'planetlist' 		=> false,
 		'planetlistselect' 	=> false,
 		'chatbox' 			=> true,
@@ -40,6 +40,8 @@ class User extends BaseUser
 		'timezone'			=> 0,
 		'spy'				=> 1,
 	];
+
+	private $optionsData = [];
 
 	private $bonusData = [];
 
@@ -215,8 +217,11 @@ class User extends BaseUser
 		return (time() - $this->onlinetime < 180);
 	}
 
-	public function setOptions ($data)
+	public function setOptions ($data, $clear = true)
 	{
+		if ($clear)
+			$this->optionsData = [];
+
 		if (!is_array($data))
 			return;
 
@@ -229,7 +234,7 @@ class User extends BaseUser
 		if ($key === false)
 			return $this->optionsData;
 
-		return (isset($this->optionsData[$key]) ? $this->optionsData[$key] : 0);
+		return (isset($this->optionsData[$key]) ? $this->optionsData[$key] : (isset($this->_optionsDefault[$key]) ? $this->_optionsDefault[$key] : 0));
 	}
 
 	public function setUserOption ($key, $value)

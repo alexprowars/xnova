@@ -373,6 +373,8 @@ class OptionsController extends Controller
 					$parse['avatar'] = $file['src'];
 			}
 
+			$this->user->setOptions($settings);
+
 			$parse['opt_usern_datatime'] = $userInfo->username_last;
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $userInfo->email;

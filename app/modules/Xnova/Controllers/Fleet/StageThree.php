@@ -65,12 +65,7 @@ class StageThree
 		if (($allianceId == 0 || $fleet_group_mr == 0) && ($fleetMission == 2))
 			$fleetMission = 1;
 
-		$protection = (int) $controller->config->game->get('noobprotection');
-		$protectiontime = (int) $controller->config->game->get('noobprotectiontime');
-		$protectionmulti = (int) $controller->config->game->get('noobprotectionmulti');
-
-		if ($protectiontime < 1)
-			$protectiontime = 9999999999999999;
+		$protection = (int) $controller->config->game->get('noobprotection') > 0;
 
 		if (!is_array($fleetarray))
 			throw new RedirectException("<span class=\"error\"><b>Ошибка в передаче параметров!</b></span>", 'Ошибка', "/fleet/", 2);
@@ -180,23 +175,33 @@ class StageThree
 				throw new RedirectException("<span class=\"error\"><b>Заключён мир или перемирие с альянсом атакуемого игрока.</b></span>", "Ошибка дипломатии", "/fleet/", 2);
 		}
 
-		if ($targetPlanet && in_array($fleetMission, [1, 2, 5, 6, 9]) && $controller->user->authlevel < 2)
+		if ($protection && $targetPlanet && in_array($fleetMission, [1, 2, 5, 6, 9]) && $controller->user->authlevel < 2)
 		{
-			$MyGameLevel = (int) $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = :id", ['id' => $controller->user->id]);
-			$HeGameLevel = (int) $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = :id", ['id' => $targerUser['id']]);
+			$protectionPoints = (int) $controller->config->game->get('noobprotectionPoints');
+			$protectionFactor = (int) $controller->config->game->get('noobprotectionFactor');
+
+			if ($protectionPoints <= 0)
+				$protection = false;
 
 			if ($targerUser['onlinetime'] < (time() - 86400 * 7) || $targerUser['banned'] > 0)
-				$protection = 0;
+				$protection = false;
 
 			if ($fleetMission == 5 && $targerUser['ally_id'] == $controller->user->ally_id)
-				$protection = 0;
+				$protection = false;
 
-			if ($protection && $HeGameLevel < ($protectiontime * 1000))
+			if ($protection)
 			{
-				if ($MyGameLevel > ($HeGameLevel * $protectionmulti))
+				$MyPoints = (int) $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = :id", ['id' => $controller->user->id]);
+				$HePoints = (int) $controller->db->fetchColumn("SELECT total_points FROM game_statpoints WHERE stat_type = '1' AND stat_code = '1' AND id_owner = :id", ['id' => $targerUser['id']]);
+
+				if ($HePoints < $protectionPoints)
 					throw new RedirectException("<span class=\"success\"><b>Игрок находится под защитой новичков!</b></span>", 'Защита новичков', "/fleet/", 2);
-				if (($MyGameLevel * $protectionmulti) < $HeGameLevel)
+
+				if ($MyPoints < $protectionPoints)
 					throw new RedirectException("<span class=\"success\"><b>Вы слишком слабы для нападения на этого игрока!</b></span>", 'Защита новичков', "/fleet/", 2);
+
+				if ($protectionFactor && $MyPoints > $HePoints * $protectionFactor)
+					throw new RedirectException("<span class=\"success\"><b>Этот игрок слишком слабый для вас!</b></span>", 'Защита новичков', "/fleet/", 2);
 			}
 		}
 

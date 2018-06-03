@@ -39,7 +39,7 @@
 		{% else %}
 			<tr>
 				<th colspan="13" align="center">нет рангов</th>
-			<tr>
+			</tr>
 		{% endif %}
 	</table>
 </form>

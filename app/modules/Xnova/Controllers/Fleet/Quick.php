@@ -86,12 +86,19 @@ class Quick
 
 			if ($controller->user->authlevel != 3)
 			{
-				if ($NoobNoActive == 0 AND $HeGameLevel < ($controller->config->game->get('noobprotectiontime') * 1000))
+				if ($NoobNoActive == 0)
 				{
-					if ($MyGameLevel > ($HeGameLevel * $controller->config->game->get('noobprotectionmulti')))
+					$protectionPoints = (int) $controller->config->game->get('noobprotectionPoints');
+					$protectionFactor = (int) $controller->config->game->get('noobprotectionFactor');
+
+					if ($HeGameLevel < $protectionPoints)
 						throw new \Exception('Игрок находится под защитой новичков!');
-					if (($MyGameLevel * $controller->config->game->get('noobprotectionmulti')) < $HeGameLevel)
+
+					if ($MyGameLevel < $protectionPoints)
 						throw new \Exception('Вы слишком слабы для нападения на этого игрока!');
+
+					if ($protectionFactor && $MyGameLevel > $HeGameLevel * $protectionFactor)
+						throw new \Exception('Этот игрок слишком слабый для вас!');
 				}
 			}
 

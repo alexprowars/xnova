@@ -61,8 +61,6 @@ class PlayersController extends Controller
 			{
 				if ($daten['avatar'] != 99)
 					$parse['avatar'] = "assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . ".png";
-				else
-					$parse['avatar'] = "assets/avatars/upload_" . $daten['id'] . ".jpg";
 			}
 
 			$parse['avatar'] = $this->url->getStatic($parse['avatar']);
