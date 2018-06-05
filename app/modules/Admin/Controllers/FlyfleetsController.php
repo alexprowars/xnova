@@ -24,6 +24,8 @@ class FlyFleetsController extends Controller
 
 		if (!$this->access->canReadController(self::CODE, 'admin'))
 			throw new \Exception('Access denied');
+
+		Lang::includeLang('main', 'xnova');
 	}
 
 	public static function getMenu ()

@@ -40,6 +40,9 @@ $lang['page_title'] = [
 	'messages_index'		=>  'Список сообщений',
 	'messageall_index'		=>  'Рассылка сообщений',
 	'content_index'			=>  'Список контента',
+
+	'manager_data' 			=> 'Просмотр игрового профиля',
+	'manager_ip' 			=> 'Поиск по IP',
 ];
 
 $lang['category'] = array

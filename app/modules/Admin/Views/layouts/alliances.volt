@@ -1,5 +1,5 @@
 <div class="card">
-	<table class="table table-striped table-bordered table-responsive table-sm">
+	<table class="table table-striped">
 		{{ parse['desc'] }}{{ parse['edit'] }}{{ parse['name'] }}{{ parse['member'] }}{{ parse['member_row'] }}{{ parse['mail'] }}{{ parse['leader'] }}
 		<thead>
 			<tr>
@@ -21,7 +21,7 @@
 				<td><a href="{{ url('alliances/allyname/'~u['id']~'/') }}">{{ u['tag'] }}</a></td>
 				<td><a href="{{ url('alliances/leader/'~u['id']~'/') }}">{{ u['username'] }}</a></td>
 				<td>{{ date("d/m/Y H:i:s", u['create_time']) }}</td>
-				<td><a href="{{ url('alliances/desc/'~u['id']~'/') }}">Смотреть</a>/<a href="{{ url('alliances/edit/'~u['id']~'/') }}">Редактировать</a></td>
+				<td><a href="{{ url('alliances/desc/'~u['id']~'/') }}">Смотреть</a> / <a href="{{ url('alliances/edit/'~u['id']~'/') }}">Редактировать</a></td>
 				<td><a href="{{ url('alliances/mitglieder/'~u['id']~'/') }}">{{ u['members'] }}</a></td>
 				<td><a href="{{ url('alliances/mail/'~u['id']~'/') }}"><img src="{{ static_url('assets/images/alliance/r5.png') }}"></a></td>
 				<td><a href="{{ url('alliances/del/'~u['id']~'/') }}">X</a></td>
