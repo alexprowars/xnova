@@ -39,7 +39,7 @@ class TechController extends Controller
 
 		foreach (_getText('tech') as $element => $name)
 		{
-			if ($element >= 600)
+			if ($element > 600)
 				continue;
 
 			$pars = [];
@@ -105,6 +105,9 @@ class TechController extends Controller
 				$items[] = $pars;
 			}
 		}
+
+		if (!count($parse[count($parse) - 1]['items']))
+			unset($parse[count($parse) - 1]);
 
 		$this->view->setVar('parse', $parse);
 		$this->showTopPanel(false);

@@ -252,7 +252,10 @@
 					<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
 					<td>{{ history['planet'] }}</td>
 					<td>{{ parse['history_actions'][history['operation']] }}</td>
-					<td>{{ (history['build_id'] > 0 ? _text('xnova', 'tech', history['build_id']) : '') }}</td>
+					<td>
+						{{ (history['build_id'] > 0 ? _text('xnova', 'tech', history['build_id']) : '') }}
+						{{ (history['tech_id'] > 0 ? _text('xnova', 'tech', history['tech_id']) : '') }}
+					</td>
 					<td>{{ (history['count'] ? history['count'] : history['level']) }}</td>
 					<td>{{ history['from_metal'] }} -> {{ history['to_metal'] }} ({{ (history['to_metal'] - history['from_metal']) }})</td>
 					<td>{{ history['from_crystal'] }} -> {{ history['to_crystal'] }} ({{ (history['to_crystal'] - history['from_crystal']) }})</td>

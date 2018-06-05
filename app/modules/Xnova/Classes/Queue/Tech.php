@@ -8,6 +8,7 @@ namespace Xnova\Queue;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Di;
 use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Vars;
@@ -65,6 +66,26 @@ class Tech
 					'time_end' => time() + $buildTime,
 					'level' => $user->getTechLevel($elementId) + 1
 				]);
+
+				$config = Di::getDefault()->getShared('config');
+
+				if ($config->log->get('research', false) == true)
+				{
+					Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
+						'user_id' 			=> $user->getId(),
+						'time' 				=> time(),
+						'operation' 		=> 1,
+						'planet' 			=> $planet->id,
+						'from_metal' 		=> $planet->metal + $costs['metal'],
+						'from_crystal' 		=> $planet->crystal + $costs['crystal'],
+						'from_deuterium' 	=> $planet->deuterium + $costs['deuterium'],
+						'to_metal' 			=> $planet->metal,
+						'to_crystal' 		=> $planet->crystal,
+						'to_deuterium' 		=> $planet->deuterium,
+						'tech_id' 			=> $elementId,
+						'level' 			=> $user->getTechLevel($elementId) + 1
+					]);
+				}
 			}
 		}
 	}

@@ -93,9 +93,9 @@ class TutorialController extends Controller
 						if ($type == Vars::ITEM_TYPE_TECH)
 							$parse['task'][] = ['Исследовать <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
 						elseif ($type == Vars::ITEM_TYPE_FLEET)
-							$parse['task'][] = ['Постороить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
+							$parse['task'][] = ['Построить '.$level.' ед. флота типа <b>'._getText('tech', $element).'</b>', $check];
 						elseif ($type == Vars::ITEM_TYPE_DEFENSE)
-							$parse['task'][] = ['Постороить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
+							$parse['task'][] = ['Построить '.$level.' ед. обороны типа <b>'._getText('tech', $element).'</b>', $check];
 						else
 							$parse['task'][] = ['Построить <b>'._getText('tech', $element).'</b> '.$level.' уровня', $check];
 					}

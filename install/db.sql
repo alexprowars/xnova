@@ -403,6 +403,7 @@ CREATE TABLE `game_log_email` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `game_log_history` (
+  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `time` int(11) NOT NULL,
   `planet` int(11) NOT NULL,
@@ -955,6 +956,7 @@ ALTER TABLE `game_log_email`
   ADD KEY `user_id` (`user_id`);
 
 ALTER TABLE `game_log_history`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 ALTER TABLE `game_log_load`
@@ -1141,6 +1143,9 @@ ALTER TABLE `game_hall`
 
 ALTER TABLE `game_log_chat`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `game_log_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `game_log_sim`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

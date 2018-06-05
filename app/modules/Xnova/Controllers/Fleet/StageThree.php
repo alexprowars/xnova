@@ -478,11 +478,29 @@ class StageThree
 			//if ($equiv > 15000000)
 			//	throw new RedirectException("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку с количеством ресурсов большим чем 15кк в эквиваленте металла.</b></span>", 'Ошибка', "/fleet/", 5);
 
-			$controller->db->insertAsDict('game_log_transfers',
-			[
-				'time' 		=> time(),
-				'user_id' 	=> $controller->user->id,
-				'data' 		=> "s:[".$controller->planet->galaxy.":".$controller->planet->system.":".$controller->planet->planet."(".$controller->planet->planet_type.")];e:[".$galaxy.":".$system.":".$planet."(".$planet_type.")];f:[".print_r($fleet_array, true)."];m:".$TransMetal.";c:".$TransCrystal.";d:".$TransDeuterium.";",
+			$controller->db->insertAsDict('game_log_transfers', [
+				'time' => time(),
+				'user_id' => $controller->user->id,
+				'data' => json_encode([
+					'planet' => [
+						'galaxy' => $controller->planet->galaxy,
+						'system' => $controller->planet->system,
+						'planet' => $controller->planet->planet,
+						'type' => $controller->planet->planet_type,
+					],
+					'target' => [
+						'galaxy' => $galaxy,
+						'system' => $system,
+						'planet' => $planet,
+						'type' => $planet_type,
+					],
+					'fleet' => $fleet_array,
+					'resources' => [
+						'metal' => $TransMetal,
+						'crystal' => $TransCrystal,
+						'deuterium' => $TransDeuterium,
+					]
+				]),
 				'target_id' => $targetPlanet->id_owner
 			]);
 
