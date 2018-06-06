@@ -116,9 +116,6 @@ class Controller extends PhalconController
 		$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
 
 		$this->assets->addJs('assets/js/plugins/jquery.js');
-		$this->assets->addJs('assets/js/plugins/vue.js', 'footer');
-		$this->assets->addJs('assets/js/plugins/vue-router.js', 'footer');
-		$this->assets->addJs('assets/js/plugins/vuex.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');

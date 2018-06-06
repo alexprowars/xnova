@@ -21,17 +21,27 @@
 		$('#lostForm').validate({
 			submitHandler: function(form)
 			{
-				$(form).ajaxSubmit({
-					data: {ajax: 'Y'},
+				var formData = new FormData(form);
+				formData.append('ajax', 'Y');
+
+				$.ajax({
+				    url: form.attr('action'),
+				    data: formData,
+				    type: 'post',
 					dataType: 'json',
-					success: function (data)
-					{
-						if (data.status == 1 && data.data.redirect !== undefined)
-							window.location.href = data.data.redirect;
-						else
-							$('#windowDialog').html(data.html);
-					}
-				});
+				    contentType: false,
+				    processData: false
+				})
+				.then(function (result)
+				{
+					if (result.status && result.data.redirect !== undefined)
+						window.location.href = result.data.redirect;
+					else
+						$('#windowDialog').html(result.html);
+				},
+				function() {
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				})
 			},
 			focusInvalid: false,
 			focusCleanup: true,

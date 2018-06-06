@@ -19,9 +19,11 @@
     "gulp-rename": "latest",
     "gulp-sass": "latest",
     "gulp-uglify": "latest",
+    "run-sequence": "^2.2.1",
     "vue": "^2.5.13",
+    "vue-router": "^3.0.1",
     "vueify": "^9.4.1",
-    "run-sequence": "^2.2.1"
+    "vuex": "^3.0.1"
   },
   "author": "AlexPro (alexprowars@gmail.com)",
   "license": "ISC",
