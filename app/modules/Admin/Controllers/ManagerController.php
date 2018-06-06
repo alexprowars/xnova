@@ -105,16 +105,6 @@ class ManagerController extends Controller
 
 			$parse['planet_list'] = $this->db->fetchAll("SELECT * FROM game_planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC");
 
-			$parse['history_actions'] = [
-				1 => 'Постройка здания',
-				2 => 'Снос здания',
-				3 => 'Отмена постройки',
-				4 => 'Отмена сноса',
-				5 => 'Исследование',
-				6 => 'Отмена исследования',
-				7 => 'Постройка обороны/флота',
-			];
-
 			$parse['list_transfer'] = [];
 			$parse['list_transfer_income'] = [];
 
@@ -203,7 +193,7 @@ class ManagerController extends Controller
 
 				while ($ip = $ips->fetch())
 				{
-					$parse['list_mult'] = [
+					$parse['list_mult'][] = [
 						'date' => $this->game->datezone("d.m.Y H:i", $ip['time']),
 						'ip' => long2ip($log['ip']),
 						'user_id' => $ip['id'],

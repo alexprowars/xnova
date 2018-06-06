@@ -251,7 +251,7 @@
 				<tr>
 					<td>{{ date("d.m.Y H:i:s", history['time']) }}</td>
 					<td>{{ history['planet'] }}</td>
-					<td>{{ parse['history_actions'][history['operation']] }}</td>
+					<td>{{ _text('admin', 'adm_history_actions', history['operation']) }}</td>
 					<td>
 						{{ (history['build_id'] > 0 ? _text('xnova', 'tech', history['build_id']) : '') }}
 						{{ (history['tech_id'] > 0 ? _text('xnova', 'tech', history['tech_id']) : '') }}

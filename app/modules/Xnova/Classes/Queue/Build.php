@@ -96,7 +96,9 @@ class Build
 				return;
 
 			$buildItem = $queueArray[$indexId];
-			$this->_queue->deleteInQueue($buildItem->id);
+
+			if (!$this->_queue->deleteInQueue($buildItem->id))
+				$buildItem->delete();
 
 			if ($buildItem->time > 0)
 			{

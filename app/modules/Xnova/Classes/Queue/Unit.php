@@ -8,6 +8,7 @@ namespace Xnova\Queue;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Phalcon\Di;
 use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Vars;
@@ -103,6 +104,26 @@ class Unit
 				'time_end' => $buildTime + time(),
 				'level' => $count
 			]);
+
+			$config = Di::getDefault()->getShared('config');
+
+			if ($config->log->get('units', false) == true)
+			{
+				Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
+					'user_id' 			=> $user->id,
+					'time' 				=> time(),
+					'operation' 		=> 7,
+					'planet' 			=> $planet->id,
+					'from_metal' 		=> $planet->metal + $cost['metal'],
+					'from_crystal' 		=> $planet->crystal + $cost['crystal'],
+					'from_deuterium' 	=> $planet->deuterium + $cost['deuterium'],
+					'to_metal' 			=> $planet->metal,
+					'to_crystal' 		=> $planet->crystal,
+					'to_deuterium' 		=> $planet->deuterium,
+					'build_id' 			=> $elementId,
+					'count' 			=> $count
+				]);
+			}
 		}
 	}
 }

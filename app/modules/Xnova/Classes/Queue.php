@@ -158,11 +158,17 @@ class Queue
 			if ($item->id == $id)
 			{
 				if ($item->delete())
+				{
 					unset($this->queue[$i]);
+
+					return true;
+				}
 
 				break;
 			}
 		}
+
+		return false;
 	}
 
 	public function update ()
@@ -254,7 +260,8 @@ class Queue
 				$this->planet->setBuild($buildItem->object_id, $build['level'] - 1);
 			}
 
-			$this->deleteInQueue($buildItem->id);
+			if (!$this->deleteInQueue($buildItem->id))
+				$buildItem->delete();
 
 			if ($xp != 0 && $this->user->lvl_minier < $config->game->get('level.max_ind', 100))
 			{
@@ -264,6 +271,26 @@ class Queue
 					$this->user->xpminier = 0;
 
 				$this->user->update();
+			}
+
+			$config = Di::getDefault()->getShared('config');
+
+			if ($config->log->get('buildings', false) == true)
+			{
+				Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
+					'user_id' 			=> $this->user->id,
+					'time' 				=> time(),
+					'operation' 		=> 9,
+					'planet' 			=> $this->planet->id,
+					'from_metal' 		=> $this->planet->metal,
+					'from_crystal' 		=> $this->planet->crystal,
+					'from_deuterium' 	=> $this->planet->deuterium,
+					'to_metal' 			=> $this->planet->metal,
+					'to_crystal' 		=> $this->planet->crystal,
+					'to_deuterium' 		=> $this->planet->deuterium,
+					'build_id' 			=> $buildItem->object_id,
+					'level' 			=> $this->planet->getBuildLevel($buildItem->object_id)
+				]);
 			}
 
 			return true;
@@ -293,7 +320,8 @@ class Queue
 			{
 				array_shift($queueArray);
 
-				$this->deleteInQueue($buildItem->id);
+				if (!$this->deleteInQueue($buildItem->id))
+					$buildItem->delete();
 
 				if (!count($queueArray))
 					$loop = false;
@@ -377,7 +405,8 @@ class Queue
 
 				array_shift($queueArray);
 
-				$this->deleteInQueue($buildItem->id);
+				if (!$this->deleteInQueue($buildItem->id))
+					$buildItem->delete();
 
 				if (!count($queueArray))
 					$loop = false;
@@ -436,11 +465,33 @@ class Queue
 
 			if ($buildItem->time + $buildTime <= time() + 5)
 			{
-				$this->user->setTech($buildItem->object_id, $this->user->getTechLevel($buildItem->object_id) + 1);
-				$this->deleteInQueue($buildItem->id);
+				$this->user->setTech($buildItem->object_id, $buildItem->level);
+
+				if (!$this->deleteInQueue($buildItem->id))
+					$buildItem->delete();
 
 				if ($planet->id == $this->planet->id)
 					$this->loadQueue();
+
+				$config = Di::getDefault()->getShared('config');
+
+				if ($config->log->get('research', false) == true)
+				{
+					Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
+						'user_id' 			=> $this->user->id,
+						'time' 				=> time(),
+						'operation' 		=> 8,
+						'planet' 			=> $planet->id,
+						'from_metal' 		=> $planet->metal,
+						'from_crystal' 		=> $planet->crystal,
+						'from_deuterium' 	=> $planet->deuterium,
+						'to_metal' 			=> $planet->metal,
+						'to_crystal' 		=> $planet->crystal,
+						'to_deuterium' 		=> $planet->deuterium,
+						'build_id' 			=> $buildItem->object_id,
+						'level' 			=> $buildItem->level
+					]);
+				}
 
 				$result	= true;
 			}
@@ -528,7 +579,8 @@ class Queue
 
 					if ($item->level <= 0)
 					{
-						$this->deleteInQueue($item->id);
+						if (!$this->deleteInQueue($item->id))
+							$item->delete();
 
 						if (isset($buildQueue[$i + 1]))
 							$buildQueue[$i + 1]->time = $item->time;

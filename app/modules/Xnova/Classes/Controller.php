@@ -85,6 +85,9 @@ class Controller extends PhalconController
 		{
 			$params = $this->router->getParams();
 
+			if (isset($params[0]) && is_numeric($params[0]))
+				unset($params[0]);
+
 			foreach ($params as $key => $value)
 			{
 				if (!is_numeric($key))

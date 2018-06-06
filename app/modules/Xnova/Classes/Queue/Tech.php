@@ -74,7 +74,7 @@ class Tech
 					Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
-						'operation' 		=> 1,
+						'operation' 		=> 5,
 						'planet' 			=> $planet->id,
 						'from_metal' 		=> $planet->metal + $costs['metal'],
 						'from_crystal' 		=> $planet->crystal + $costs['crystal'],
@@ -82,7 +82,7 @@ class Tech
 						'to_metal' 			=> $planet->metal,
 						'to_crystal' 		=> $planet->crystal,
 						'to_deuterium' 		=> $planet->deuterium,
-						'tech_id' 			=> $elementId,
+						'build_id' 			=> $elementId,
 						'level' 			=> $user->getTechLevel($elementId) + 1
 					]);
 				}
@@ -115,6 +115,26 @@ class Tech
 
 			$techHandle->delete();
 			$this->_queue->loadQueue();
+
+			$config = Di::getDefault()->getShared('config');
+
+			if ($config->log->get('research', false) == true)
+			{
+				Di::getDefault()->getShared('db')->insertAsDict('game_log_history', [
+					'user_id' 			=> $user->getId(),
+					'time' 				=> time(),
+					'operation' 		=> 6,
+					'planet' 			=> $planet->id,
+					'from_metal' 		=> $planet->metal - $cost['metal'],
+					'from_crystal' 		=> $planet->crystal - $cost['crystal'],
+					'from_deuterium' 	=> $planet->deuterium - $cost['deuterium'],
+					'to_metal' 			=> $planet->metal,
+					'to_crystal' 		=> $planet->crystal,
+					'to_deuterium' 		=> $planet->deuterium,
+					'build_id' 			=> $elementId,
+					'level' 			=> $user->getTechLevel($elementId) + 1
+				]);
+			}
 		}
 	}
 }
