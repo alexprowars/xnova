@@ -121,6 +121,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/validate.js', 'footer');
 		$this->assets->addJs('assets/404/js/spaceinvaders.js', 'footer');
+		$this->assets->addJs('assets/js/techtree.js', 'footer');
 
 		$this->assets->addJs('assets/js/utils.js', 'footer');
 		$this->assets->addJs('assets/js/game.js');

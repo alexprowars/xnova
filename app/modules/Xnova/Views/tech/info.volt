@@ -1,6 +1,5 @@
 <!--suppress ALL -->
 <div id="rf_techinfo"></div>
-<script type="text/javascript" src="{{ url.getBaseUri() }}assets/js/techtree.js"></script>
 <script type="text/javascript">
 
 	var objx = ({
@@ -82,5 +81,4 @@
 	}
 
 	CreateTree(1, -1, {{ element }}, '{{ level }}', {{ isTechnologieAccessible(this.user, this.planet, element) ? 1 : 0 }});
-
 </script>

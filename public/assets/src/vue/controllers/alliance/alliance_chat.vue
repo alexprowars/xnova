@@ -86,8 +86,18 @@
 			}
 		},
 		methods: {
-			quote (messageIndex) {
+			quote (messageIndex)
+			{
+				if (typeof this.page['items'][messageIndex] === 'undefined')
+					return;
 
+				let message = this.page['items'][messageIndex];
+
+				let text = message['text'];
+				text = text.replace(/<br>/gi, "\n");
+			    text = text.replace(/<br \/>/gi, "\n");
+
+				this.text = this.text + '[quote author='+message['user']+']'+text+'[/quote]';
 			}
 		}
 	}

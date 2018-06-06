@@ -205,6 +205,12 @@ class Controller extends PhalconController
 
 		$this->tag->setTitle(($title ? strip_tags($title) : 'Сообщение'));
 
+		/** @var \Xnova\Controller $controller */
+		$controller = $this->dispatcher->getActiveController();
+
+		if ($controller)
+			$controller->afterExecuteRoute();
+
 		$this->view->start();
 
 		$this->view->render(

@@ -16,6 +16,14 @@ Vue.prototype.showWindow = showWindow
 Vue.prototype.Lang = Lang
 Vue.prototype.isMobile = isMobile
 
+Vue.filter("upper", (value) => {
+	return value.toUpperCase();
+});
+
+Vue.filter("lower", (value) => {
+	return value.toLowerCase();
+});
+
 let parser = require('./js/parser.js');
 
 Vue.prototype.parser = parser.parser;

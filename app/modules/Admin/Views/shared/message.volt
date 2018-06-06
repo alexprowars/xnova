@@ -1,8 +1,6 @@
-<div class="note note-danger">
-	<h4 class="block">{{ title }}</h4>
-	<p>
-		{{ text }}
-	</p>
+<div class="alert alert-success" role="alert">
+	<h4 class="alert-heading">{{ title }}</h4>
+	<p>{{ text }}</p>
 </div>
 
 {% if time and destination %}

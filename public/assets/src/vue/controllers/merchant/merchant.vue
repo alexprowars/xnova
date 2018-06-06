@@ -11,7 +11,7 @@
 						<div class="negative">Каждая операция обмена будет стоить вам 1 кредит.</div><br><br>
 
 						<select v-model="type">
-							<option value="">Выберите ресурс</option>
+							<option value="">Выберите ресурс для обмена</option>
 							<option value="metal">Металл</option>
 							<option value="crystal">Кристалл</option>
 							<option value="deuterium">Дейтерий</option>
@@ -24,7 +24,7 @@
 					<div v-if="type !== ''" class="col th">
 						<div class="table">
 							<div class="row">
-								<div class="c col">Обменять на {{ $root.getLang('RESOURCES', type) }}</div>
+								<div class="c col">Обменять {{ $root.getLang('RESOURCES', type)|lower }} на</div>
 							</div>
 							<div class="row">
 								<div class="col-3 th"></div>

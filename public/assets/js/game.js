@@ -17,12 +17,21 @@ $(document).ready(function()
 {
 	var body = $('body');
 
-	body.on('mouseenter', '.tooltip:not(.tooltipstered)', function()
+	body.on('mouseenter', '.tooltip', function()
 	{
 		if (isMobile)
 			return;
 
 		var _this = $(this);
+
+		var status = false;
+
+		try {
+			status = _this.tooltipster('status');
+		} catch (err) {}
+
+		if (status)
+			return;
 
 		var maxWidth = null;
 
@@ -53,10 +62,20 @@ $(document).ready(function()
 
 		var _this = $(this);
 
-		if (!_this.hasClass('sticky'))
+		var status = false;
+
+		try {
+			status = _this.tooltipster('status');
+		} catch (err) {}
+
+		if (!_this.hasClass('sticky') && status)
 		{
-			if (typeof _this.data('content') !== 'undefined')
-				return;
+			if (status.open)
+				_this.tooltipster('close');
+			else
+				_this.tooltipster('open');
+
+			return;
 		}
 
 		if (typeof _this.data('tooltipster-ns') !== 'undefined')
