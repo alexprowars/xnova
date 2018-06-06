@@ -555,7 +555,8 @@ INSERT INTO `game_options` (`id`, `name`, `title`, `value`, `group_id`, `type`, 
 (13, 'LastSettedSystemPos', 'Система', '1', 'xnova', 'integer', '1', '', 'N'),
 (14, 'newsMessage', 'Информационное сообщение', '', 'xnova', 'text', '', '', 'Y'),
 (15, 'stat_update', 'Последнее обновление статистики', '0', 'xnova', 'integer', '', '', 'Y'),
-(16, 'email_notify', 'Email для оповещений', 'info@xnova.su', 'general', 'string', '', '', 'Y');
+(16, 'email_notify', 'Email для оповещений', 'info@xnova.su', 'general', 'string', '', '', 'Y'),
+(17, 'assets_use_minify', 'Подключать сжатые js/css файлы', 'Y', 'general', 'checkbox', 'N', '', 'Y');
 
 CREATE TABLE `game_planets` (
   `id` int(11) UNSIGNED NOT NULL,

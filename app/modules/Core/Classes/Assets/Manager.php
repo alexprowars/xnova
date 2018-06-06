@@ -99,7 +99,18 @@ class Manager
 				continue;
 
 			if ($resource['local'] === true && Options::get('assets_minify_css', VALUE_FALSE) == VALUE_FALSE)
-				$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
+			{
+				$minFile = str_replace('.css', '.min.css', $resource['path']);
+
+				if (Options::get('assets_use_minify', VALUE_FALSE) == VALUE_TRUE
+					&& file_exists($minFile)
+					&& filemtime($minFile) >= filemtime($resource['path'])
+				){
+					$resource['path'] = $minFile.(strpos($minFile, '?') !== false ? '&' : '?').filemtime($minFile);
+				}
+				else
+					$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
+			}
 
 			$collection->addCss($resource['path'], $resource['local'], $resource['local']);
 
@@ -173,7 +184,18 @@ class Manager
 				continue;
 
 			if ($resource['local'] === true && Options::get('assets_join_js', VALUE_FALSE) == VALUE_FALSE)
-				$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
+			{
+				$minFile = str_replace('.js', '.min.js', $resource['path']);
+
+				if (Options::get('assets_use_minify', VALUE_FALSE) == VALUE_TRUE
+					&& file_exists($minFile)
+					&& filemtime($minFile) >= filemtime($resource['path'])
+				){
+					$resource['path'] = $minFile.(strpos($minFile, '?') !== false ? '&' : '?').filemtime($minFile);
+				}
+				else
+					$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
+			}
 
 			$collection->addJs($resource['path'], $resource['local'], $resource['local']);
 

@@ -29,5 +29,8 @@
   "license": "ISC",
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.23.0"
+  },
+  "browser": {
+    "vue": "vue/dist/vue.common.js"
   }
 }
