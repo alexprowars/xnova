@@ -189,7 +189,9 @@ class Queue
 			{
 				if ($this->checkBuildQueue())
 				{
+					$this->planet->update();
 					$this->planet->resourceProductions();
+
 					$this->nextBuildingQueue();
 				}
 				else
@@ -230,7 +232,7 @@ class Queue
 		if ($buildItem->time + $buildTime <= time() + 5)
 		{
 			if (!$this->planet->planet_updated)
-				$this->planet->resourceUpdate();
+				$this->planet->resourceUpdate(0, true);
 
 			$config = Di::getDefault()->getShared('config');
 			$registry = Di::getDefault()->getShared('registry');
