@@ -571,17 +571,10 @@ class OverviewController extends Controller
 		{
 			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			$endTime = 0;
-
 			foreach ($queueArray AS $item)
 			{
-				if (!$endTime)
-					$endTime = $item->time;
-
-				$endTime += Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level - 1);
-
-				$build_list[$endTime][] = [
-					$endTime,
+				$build_list[$item->time_end][] = [
+					$item->time_end,
 					$item->planet_id,
 					$planetsName[$item->planet_id],
 					_getText('tech', $item->object_id).' ('.($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1).' -> '.$item->level.')'
@@ -608,18 +601,20 @@ class OverviewController extends Controller
 		{
 			$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
 
-			$time = 0;
+			$end = [];
 
 			foreach ($queueArray AS $item)
 			{
-				if (!$time)
-					$time = $item->time;
+				if (!isset($end[$item->planet_id]))
+					$end[$item->planet_id] = $item->time;
 
-				$time += Building::getBuildingTime($this->user, $this->planet, $item->object_id) * $item->level;
+				$time = $item->time_end - $item->time;
 
-				$build_list[$time][] = [
-					$time,
-					$this->planet->id,
+				$end[$item->planet_id] += $time * $item->level;
+
+				$build_list[$end[$item->planet_id]][] = [
+					$end[$item->planet_id],
+					$item->planet_id,
 					$planetsName[$item->planet_id],
 					_getText('tech', $item->object_id).' ('.$item->level.')'
 				];
