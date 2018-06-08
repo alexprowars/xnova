@@ -94,9 +94,6 @@ class Quick
 					if ($HeGameLevel < $protectionPoints)
 						throw new \Exception('Игрок находится под защитой новичков!');
 
-					if ($MyGameLevel < $protectionPoints)
-						throw new \Exception('Вы слишком слабы для нападения на этого игрока!');
-
 					if ($protectionFactor && $MyGameLevel > $HeGameLevel * $protectionFactor)
 						throw new \Exception('Этот игрок слишком слабый для вас!');
 				}

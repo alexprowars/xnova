@@ -571,10 +571,17 @@ class OverviewController extends Controller
 		{
 			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);
 
+			$end = [];
+
 			foreach ($queueArray AS $item)
 			{
-				$build_list[$item->time_end][] = [
-					$item->time_end,
+				if (!isset($end[$item->planet_id]))
+					$end[$item->planet_id] = $item->time;
+
+				$end[$item->planet_id] += $item->time_end - $item->time;
+
+				$build_list[$end[$item->planet_id]][] = [
+					$end[$item->planet_id],
 					$item->planet_id,
 					$planetsName[$item->planet_id],
 					_getText('tech', $item->object_id).' ('.($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1).' -> '.$item->level.')'

@@ -197,9 +197,6 @@ class StageThree
 				if ($HePoints < $protectionPoints)
 					throw new RedirectException("<span class=\"success\"><b>Игрок находится под защитой новичков!</b></span>", 'Защита новичков', "/fleet/", 2);
 
-				if ($MyPoints < $protectionPoints)
-					throw new RedirectException("<span class=\"success\"><b>Вы слишком слабы для нападения на этого игрока!</b></span>", 'Защита новичков', "/fleet/", 2);
-
 				if ($protectionFactor && $MyPoints > $HePoints * $protectionFactor)
 					throw new RedirectException("<span class=\"success\"><b>Этот игрок слишком слабый для вас!</b></span>", 'Защита новичков', "/fleet/", 2);
 			}

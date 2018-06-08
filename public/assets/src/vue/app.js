@@ -185,6 +185,7 @@ window.application = new Vue({
 	data: {
 		loader: false,
 		request_block: false,
+		request_block_timer: null,
 		router_block: false,
 		start_time: Math.floor(((new Date()).getTime()) / 1000)
 	},
@@ -215,14 +216,6 @@ window.application = new Vue({
 			this.$router.push(val, () => this.router_block = false, () => this.router_block = false);
 
 			$('body').attr('page', this.$store.state.route.controller);
-		},
-		loader (val, old)
-		{
-			if (val === old)
-				return;
-
-			if (val)
-				setTimeout(() => this.request_block = false, 500);
 		}
 	},
 	methods:
@@ -289,6 +282,10 @@ window.application = new Vue({
 			this.request_block = true;
 			this.loader = true;
 
+			this.request_block_timer = setTimeout(() => {
+				this.request_block = false
+			}, 500);
+
 			$.ajax({
 				url: url,
 				cache: false,
@@ -330,8 +327,12 @@ window.application = new Vue({
 			}, () => {
 				document.location = url;
 			})
-			.always(() => {
+			.always(() =>
+			{
 				this.loader = false;
+				this.request_block = false;
+
+				clearTimeout(this.request_block_timer);
 			})
 		}
 	},

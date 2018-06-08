@@ -286,8 +286,8 @@
 			},
 			user_status: function ()
 			{
-				let CurrentPoints 	= this.$parent['page']['user']['s_points'];
-				let RowUserPoints 	= this.item['stat_points'];
+				let CurrentPoints 	= this.$parent['page']['user']['stat_points'];
+				let RowUserPoints 	= this.item['s_points'];
 
 				if (!RowUserPoints)
 	                RowUserPoints = 0;

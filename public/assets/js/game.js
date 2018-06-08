@@ -257,23 +257,27 @@ $(document).ready(function()
 
 	if (typeof VK !== 'undefined')
 	{
-		VK.init(function()
+		try
 		{
-			console.log('vk init success');
-
-			setInterval(function()
+			VK.init(function()
 			{
-				var height = 0;
+				console.log('vk init success');
 
-				$('#application .main-content > div').each(function() {
-					height += $(this).height();
-				});
+				setInterval(function()
+				{
+					var height = 0;
 
-				VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200));
+					$('#application .main-content > div').each(function() {
+						height += $(this).height();
+					});
 
-			}, 1000);
-		},
-		function() {}, '5.74');
+					VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200));
+
+				}, 1000);
+			},
+			function() {}, '5.74');
+		}
+		catch (e) {}
 	}
 });
 
