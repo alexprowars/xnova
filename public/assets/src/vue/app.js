@@ -541,6 +541,7 @@ window.application = new Vue({
 
 						app.html_component = new (Vue.extend({
 							name: 'html-render',
+							parent: app,
 							template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 						}))().$mount();
 
@@ -571,7 +572,7 @@ window.application = new Vue({
 		},
 		openPopup (title, url, width)
 		{
-			if (app.$store.state.mobile)
+			if (this.$store.state.mobile)
 				return window.location.href = url.split('ajax').join('').split('popup').join('');
 
 			let app = this;
@@ -604,6 +605,7 @@ window.application = new Vue({
 
 							app.html_component = new (Vue.extend({
 								name: 'html-render',
+								parent: app,
 								template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 							}))().$mount();
 

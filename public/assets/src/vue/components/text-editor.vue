@@ -87,7 +87,7 @@
 	    </div>
 
 		<div v-if="showSmiles" class="smiles">
-			<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" @click="addSmile(smile)">
+			<img v-for="smile in smilesList" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" @click="addSmile(smile)">
 		</div>
 		
 		<textarea name="text" ref="text" rows="10" title="" v-model="message"></textarea>
@@ -121,6 +121,7 @@
 				showBgColors: false,
 				showSmiles: false,
 				showPreview: false,
+				smilesList: parser.patterns.smiles
 			}
 		},
 		computed: {

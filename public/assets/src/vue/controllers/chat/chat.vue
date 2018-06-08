@@ -29,7 +29,7 @@
 					</button>
 				</div>
 				<div v-if="smiles" class="smiles">
-					<img v-for="smile in parser.patterns.smiles" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
+					<img v-for="smile in smilesList" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
 				</div>
 			</div>
 			<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750" title="">
@@ -49,6 +49,7 @@
 			// noinspection RegExpRedundantEscape
 			return {
 				smiles: false,
+				smilesList: parser.patterns.smiles,
 				message: '',
 				message_id: 1,
 				history_id: 0,
