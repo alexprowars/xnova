@@ -340,6 +340,13 @@ class InfoController extends Controller
 
 			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
+			if ($this->registry->CombatCaps[$itemId]['type_gun'] == 1)
+				$attTech += $this->user->getTechLevel('laser') * 0.05;
+			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 2)
+				$attTech += $this->user->getTechLevel('ionic') * 0.05;
+			elseif ($this->registry->CombatCaps[$itemId]['type_gun'] == 3)
+				$attTech += $this->user->getTechLevel('buster') * 0.05;
+
 			$parse['attack_pt'] = Format::number($this->registry->CombatCaps[$itemId]['attack']) . ' (' . Format::number(round($this->registry->CombatCaps[$itemId]['attack'] * $attTech)) . ')';
 			$parse['met'] = Format::number($price['metal']);
 			$parse['cry'] = Format::number($price['crystal']);

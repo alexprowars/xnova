@@ -113,18 +113,15 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/css/plugins/toast.css', 'footer');
 		$this->assets->addCss('assets/css/plugins/confirm.css', 'footer');
 
-		$this->assets->addJs('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js', 'footer');
-
 		$this->assets->addJs('assets/js/plugins/jquery.js');
 		$this->assets->addJs('assets/js/plugins/toast.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/tooltip.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/confirm.js', 'footer');
 		$this->assets->addJs('assets/js/plugins/validate.js', 'footer');
+		$this->assets->addJs('assets/js/plugins/socket.io.js', 'footer');
 		$this->assets->addJs('assets/404/js/spaceinvaders.js', 'footer');
 		$this->assets->addJs('assets/js/techtree.js', 'footer');
-
-		$this->assets->addJs('assets/js/utils.js', 'footer');
-		$this->assets->addJs('assets/js/game.js');
+		$this->assets->addJs('assets/js/game.js', 'footer');
 
 		if (Helpers::allowMobileVersion())
 			$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');
