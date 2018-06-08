@@ -10,8 +10,8 @@
 			</tr>
 			<tr v-for="(item, index) in page.items">
 				<th>
-					<div class="z">{{ Format.time(times[index], ':', true) }}</div>
-					<font :color="item['direction'] === 1 ? 'lime' : 'green'">{{ date("H:i:s", item['time']) }}</font>
+					<div class="z">{{ times[index]|time(':', true) }}</div>
+					<font :color="item['direction'] === 1 ? 'lime' : 'green'">{{ item['time']|date('H:i:s') }}</font>
 				</th>
 				<th>
 					<font :color="item['color']">

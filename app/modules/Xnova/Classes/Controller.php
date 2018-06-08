@@ -125,7 +125,6 @@ class Controller extends PhalconController
 
 		$this->assets->addJs('assets/js/utils.js', 'footer');
 		$this->assets->addJs('assets/js/game.js');
-		$this->assets->addJs('assets/js/lang.js', 'footer');
 
 		if (Helpers::allowMobileVersion())
 			$this->assets->addJs('assets/js/plugins/touchswipe.js', 'footer');

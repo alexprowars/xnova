@@ -70,10 +70,10 @@
 		name: "index",
 		methods: {
 			showRegistration () {
-				showWindow('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
+				this.$root.openPopup('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
 			},
 			showRemindPassword () {
-				showWindow('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
+				this.$root.openPopup('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
 			},
 			authAction ()
 			{

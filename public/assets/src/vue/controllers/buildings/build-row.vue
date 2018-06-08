@@ -16,7 +16,7 @@
 							{{ $root.getLang('TECH', item.i) }}
 						</a>
 						<span v-if="item.level" class="positive" title="Текущий уровень постройки">
-							{{ Format.number(item.level) }}
+							{{ item.level|number }}
 						</span>
 					</div>
 
@@ -25,7 +25,7 @@
 							<svg class="icon">
 								<use xlink:href="#icon-time"></use>
 							</svg>
-							{{ Format.time(item.time) }}
+							{{ item.time|time }}
 						</div>
 
 						<div class="building-info-upgrade">
@@ -95,7 +95,7 @@
 		},
 		methods: {
 			openWindow: function () {
-				showWindow('', this.$root.getUrl('info/'+this.item.i+'/'), 600)
+				this.$root.openPopup('', this.$root.getUrl('info/'+this.item.i+'/'), 600)
 			}
 		}
 	}

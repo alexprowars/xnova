@@ -34,7 +34,7 @@
 							<th><font color="red">Миссия не возможна!</font></th>
 						</tr>
 						<tr>
-							<th>Время прилёта: {{ date('d.m.Y H:i:s', target_time) }}</th>
+							<th>Время прилёта: {{ target_time|date('d.m.Y H:i:s') }}</th>
 						</tr>
 					</table>
 				</div>
@@ -61,7 +61,7 @@
 						<tr>
 							<th>Остаток</th>
 							<th colspan="2">
-								<span :class="[capacity >= 0 ? 'positive' : 'negative']">{{ Format.number(capacity) }}</span>
+								<span :class="[capacity >= 0 ? 'positive' : 'negative']">{{ capacity|number }}</span>
 							</th>
 						</tr>
 						<tr>
@@ -97,7 +97,7 @@
 									<option value="32">32</option>
 								</select>
 								<div v-if="hold > 0">
-									<br>Потребуется <span class="positive">{{ Format.number(hold) }}</span> дейтерия
+									<br>Потребуется <span class="positive">{{ hold|number }}</span> дейтерия
 								</div>
 							</th>
 						</tr>

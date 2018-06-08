@@ -10,7 +10,7 @@
 		<div class="neutral">{{ $root.getLang('RESOURCES', type) }}</div>
 		<div title="Количество ресурса на планете">
 			<span :class="[resource.max > resource.current ? 'positive' : 'negative']">
-				{{ Format.number(resource.current) }}
+				{{ resource.current|number }}
 			</span>
 		</div>
 	</div>
@@ -36,7 +36,7 @@
 			showPopup ($event)
 			{
 				if (typeof $($event.currentTarget).data('tooltipster-ns') !== 'undefined')
-					showWindow('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
+					this.$root.openPopup('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
 			}
 		}
 	}

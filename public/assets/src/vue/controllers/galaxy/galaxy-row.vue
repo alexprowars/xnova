@@ -63,7 +63,7 @@
 									</tr>
 									<tr>
 										<th>Диаметр</th>
-										<th>{{ Format.number(item['l_diameter']) }}</th>
+										<th>{{ item['l_diameter']|number }}</th>
 									</tr>
 									<tr>
 										<th>Температура</th>
@@ -372,7 +372,7 @@
 		methods:
 		{
 			sendMessage: function() {
-				showWindow(this.item['u_name']+': отправить сообщение', this.$root.getUrl('messages/write/'+this.item['u_id']+'/'), 680)
+				this.$root.openPopup(this.item['u_name']+': отправить сообщение', this.$root.getUrl('messages/write/'+this.item['u_id']+'/'), 680)
 			},
 			spy: function(planet_type, event)
 			{

@@ -42,7 +42,7 @@
 										{{ $root.getLang('TECH', fleetId) }}: {{ fleetData['cnt'] }}
 									</div>
 								</div>
-								{{ Format.number(item.amount) }}
+								{{ item.amount|number }}
 							</a>
 						</div>
 						<div class="col-4 col-sm-2 th">
@@ -51,7 +51,7 @@
 									[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]
 								</a>
 							</div>
-							{{ date("d.m H:i:s", item['start']['time']) }}
+							{{ item['start']['time']|date('d.m H:i:s') }}
 						</div>
 						<div class="col-4 col-sm-2 th">
 							<div>
@@ -59,11 +59,11 @@
 									[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]
 								</a>
 							</div>
-							{{ date("d.m H:i:s", item['target']['time']) }}
+							{{ item['target']['time']|date('d.m H:i:s') }}
 						</div>
 						<div class="col-4 col-sm-2 th">
 							<font color="lime">
-								{{ (item['target']['time'] > $root.serverTime() ? Format.time(item['target']['time'] - $root.serverTime(), '', true) : '...') }}
+								{{ (item['target']['time'] > $root.serverTime() ? $options.filters.time(item['target']['time'] - $root.serverTime(), '', true) : '...') }}
 							</font>
 						</div>
 						<div class="col-4 col-sm-2 th">
@@ -117,7 +117,7 @@
 								<a :title="$root.getLang('TECH', ship.id)">{{ $root.getLang('TECH', ship.id) }}</a>
 							</div>
 							<div class="th col-sm-2 col-2 middle">
-								<a @click.prevent="maxShips(index)">{{ Format.number(ship['count']) }}</a>
+								<a @click.prevent="maxShips(index)">{{ ship['count']|number }}</a>
 							</div>
 							<div v-if="ship.id === 212" class="th col-sm-3 col-4"></div>
 							<div v-else="" class="th col-sm-3 col-4">
@@ -141,12 +141,12 @@
 							<div v-if="count" class="row">
 								<div class="th col-4 col-sm-7">&nbsp;</div>
 								<div class="th col-4 col-sm-2">Вместимость</div>
-								<div class="th col-4 col-sm-3">{{ allCapacity ? Format.number(allCapacity) : '-' }}</div>
+								<div class="th col-4 col-sm-3">{{ allCapacity ? $options.filters.number(allCapacity) : '-' }}</div>
 							</div>
 							<div v-if="count" class="row">
 								<div class="th col-4 col-sm-7">&nbsp;</div>
 								<div class="th col-4 col-sm-2">Скорость</div>
-								<div class="th col-4 col-sm-3">{{ allSpeed ? Format.number(allSpeed) : '-'}}</div>
+								<div class="th col-4 col-sm-3">{{ allSpeed ? $options.filters.number(allSpeed) : '-'}}</div>
 							</div>
 							<div v-if="count && page['curFleets'] < page['maxFleets']" class="row">
 								<div class="th col-12"><input type="submit" value=" Далее "></div>

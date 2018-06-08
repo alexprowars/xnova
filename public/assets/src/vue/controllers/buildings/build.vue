@@ -24,7 +24,7 @@
 						</div>
 						<div class="col-6 k" v-if="index === 0">
 							<div v-if="item.time > 0" class="z">
-								{{ Format.time(item.time, ':', true) }}
+								{{ item.time|time(':', true) }}
 								<br>
 								<a v-if="cheat <= 0" :href="$root.getUrl('buildings/index/listid/'+(index + 1)+'/cmd/cancel/planet/'+pl+'/')">Отменить</a>
 							</div>
@@ -33,11 +33,11 @@
 								<br>
 								<a :href="$root.getUrl('buildings/index/planet/'+$store.state.user.planet+'/')">Продолжить</a>
 							</div>
-							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
+							<div class="positive">{{ item.end|date('d.m H:i:s') }}</div>
 						</div>
 						<div class="col-6 k" v-else>
 							<a :href="$root.getUrl('buildings/index/listid/'+index+'/cmd/remove/planet/'+$store.state.user.planet+'/')">Удалить</a>
-							<div class="positive">{{ date("d.m H:i:s", item.end) }}</div>
+							<div class="positive">{{ item.end|date('d.m H:i:s') }}</div>
 						</div>
 					</div>
 				</div>

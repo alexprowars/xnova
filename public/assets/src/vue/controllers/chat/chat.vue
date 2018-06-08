@@ -6,7 +6,7 @@
 					<a @click="loadMore">загрузить прошлые сообщения</a>
 				</div>
 				<div v-for="item in messages" class="page-chat-messages-row text-left">
-					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ date('H:i', item['time']) }}</span>
+					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ item['time']|date('H:i') }}</span>
 					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
 					<span v-if="item['to'].length" :class="[item['private'] ? 'private' : 'player']">
 						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click.prevent="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click.prevent="toPrivate(u)">{{ u }}</a></span>]
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+	import {parser} from '../../js/parser'
+
 	export default {
 		name: "chat",
 		data () {
@@ -105,7 +107,7 @@
 				let start 	= this.$refs.text.selectionStart;
 				let end 	= this.$refs.text.selectionEnd;
 
-				let rep = this.parser.addTag(tag, this.message.substring(start, end), type)
+				let rep = parser.addTag(tag, this.message.substring(start, end), type)
 
 				this.message = this.message.substring(0, start) + rep + this.message.substring(end, len);
 			},
@@ -132,7 +134,7 @@
 
 				let j = 0;
 
-				this.parser.patterns.smiles.every((smile) =>
+				parser.patterns.smiles.every((smile) =>
 				{
 					while (message['text'].indexOf(':'+smile+':') >= 0)
 					{

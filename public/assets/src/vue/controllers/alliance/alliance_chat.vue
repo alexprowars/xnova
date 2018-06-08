@@ -10,7 +10,7 @@
 
 				<div v-for="(item, index) in page['items']" class="row">
 					<div class="col-2 b text-center">
-						{{ date("H:i:s", item['time']) }}
+						{{ item['time']|date('H:i:s') }}
 						<br>
 						<a :href="$root.getUrl('players/'+item['user_id']+'/')" target="_blank">{{ item['user'] }}</a>
 						<a @click.prevent="quote(index)"> -> </a>

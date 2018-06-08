@@ -110,6 +110,8 @@
 				this.renderHtml(this.html);
 
 			$('body').attr('page', this.$store.state.route.controller);
+
+			this.$root.init();
 		}
 	}
 </script>

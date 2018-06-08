@@ -10,12 +10,12 @@
 				<span class="positive">{{ item.count }}</span> {{ item.name }}
 			</div>
 			<div class="col-6 text-right k border-left-0">
-				{{ Format.time(item.end - $root.serverTime()) }}
+				{{ (item.end - $root.serverTime())|time }}
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-12 c">
-				Оставшееся время {{ Format.time(left_time) }}
+				Оставшееся время {{ left_time|time }}
 			</div>
 		</div>
 	</div>

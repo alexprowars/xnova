@@ -13,7 +13,7 @@
 						<a :href="$root.getUrl('info/'+item.i+'/')">
 							{{ $root.getLang('TECH', item.i) }}
 						</a>
-						<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ Format.number(item.count) }}</span>
+						<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ item.count|number }}</span>
 					</div>
 
 					<div class="building-info-info" v-if="item.allow">
@@ -21,7 +21,7 @@
 							<svg class="icon">
 								<use xlink:href="#icon-time"></use>
 							</svg>
-							{{ Format.time(item.time) }}
+							{{ item.time|time }}
 						</div>
 
 						<div v-html="item.effects"></div>
@@ -31,7 +31,7 @@
 						</div>
 						<div v-else-if="max > 0" class="buildmax">
 							<a @click.prevent="setMax">
-								max: <font color="lime">{{ Format.number(max) }}</font>
+								max: <font color="lime">{{ max|number }}</font>
 							</a>
 							<input type="number" min="0" :max="max" :name="'fmenge['+item.i+']'" :alt="item.name" v-model="count" style="width: 80px" maxlength="5" value="" placeholder="0">
 						</div>
@@ -83,7 +83,7 @@
 		},
 		methods: {
 			openWindow () {
-				showWindow('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
+				this.$root.openPopup('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
 			},
 			setMax ()
 			{

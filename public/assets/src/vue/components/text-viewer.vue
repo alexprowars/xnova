@@ -3,12 +3,14 @@
 </template>
 
 <script>
+	import {parser} from '../js/parser'
+
 	export default {
 		name: "text-viewer",
 		props: ['text'],
 		computed: {
 			parsed () {
-				return this.parser.parse(this.text);
+				return parser.parse(this.text);
 			}
 		}
 	}

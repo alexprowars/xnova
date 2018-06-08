@@ -4,7 +4,7 @@
 			<div class="col-1 th text-center">
 				<input name="delete[]" type="checkbox" :value="item['id']" v-model="item['deleted']" title="Удалить">
 			</div>
-			<div class="col-3 th text-center">{{ date("d.m.y H:i:s", item['time']) }}</div>
+			<div class="col-3 th text-center">{{ item['time']|date('d.m.y H:i:s') }}</div>
 			<div class="col-6 th text-center">
 				<a v-if="item['from'] > 0" :href="$root.getUrl('players/'+item['from']+'/')" class="window popup-user">
 					{{ item['theme'] }}

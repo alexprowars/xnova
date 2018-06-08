@@ -7,7 +7,7 @@
 				</tr>
 				<tr>
 					<th>
-						Сейчас вы можете получить по <b class="positive">{{ Format.number(page['bonus_count']) }}</b> Металла, Кристаллов и Дейтерия.<br>
+						Сейчас вы можете получить по <b class="positive">{{ page['bonus_count']|number }}</b> Металла, Кристаллов и Дейтерия.<br>
 						Каждый день размер бонуса будет увеличиваться.<br>
 						<br>
 						<a :href="$root.getUrl('overview/bonus/')" class="button">Получить ресурсы</a><br>
@@ -27,7 +27,7 @@
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
-						<div class="float-sm-right">{{ date("d.m.Y H:i:s", clock) }}</div>
+						<div class="float-sm-right">{{ clock|date('d.m.Y H:i:s') }}</div>
 						<div class="clearfix d-sm-none"></div>
 					</div>
 				</div>
@@ -72,7 +72,7 @@
 											{{ item['name'] }}
 											<br>
 											<span v-if="item['time'] > $root.serverTime()">
-												Нанят до <font color="lime">{{ date("d.m.Y H:i", item['time']) }}</font>
+												Нанят до <font color="lime">{{ item['time']|date('d.m.Y H:i') }}</font>
 											</span>
 											<font v-else="" color="lime">Не нанят</font>
 										</div>
@@ -90,7 +90,7 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									{{ Format.number(page['planet']['diameter']) }} км
+									{{ page['planet']['diameter']|number }} км
 								</div>
 							</div>
 							<div class="row">
@@ -121,10 +121,10 @@
 								<div class="col-12 th doubleth middle">
 									<div>
 										<img :src="$root.getUrl('assets/images/skin/s_metal.png')" alt="" align="absmiddle" class="tooltip" data-content="Металл">
-										{{ Format.number(page['debris']['metal']) }}
+										{{ page['debris']['metal']|number }}
 										/
 										<img :src="$root.getUrl('assets/images/skin/s_crystal.png')" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
-										{{ Format.number(page['debris']['crystal']) }}
+										{{ page['debris']['crystal']|number }}
 									</div>
 								</div>
 							</div>
@@ -164,31 +164,31 @@
 							<div class="row">
 								<div class="th col-sm-5 col-6">Постройки:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page['points']['build']) }}</span>
+									<span class="positive">{{ page['points']['build']|number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Флот:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page['points']['fleet']) }}</span>
+									<span class="positive">{{ page['points']['fleet']|number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Оборона:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page['points']['defs']) }}</span>
+									<span class="positive">{{ page['points']['defs']|number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Наука:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page['points']['tech']) }}</span>
+									<span class="positive">{{ page['points']['tech']|number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Всего:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ Format.number(page['points']['total']) }}</span>
+									<span class="positive">{{ page['points']['total']|number }}</span>
 								</div>
 							</div>
 							<div class="row">
@@ -211,7 +211,7 @@
 							</div>
 							<div class="row">
 								<div class="th col-12">
-									{{ Format.number(page['lvl']['mine']['p']) }} / {{ Format.number(page['lvl']['mine']['u']) }} exp
+									{{ page['lvl']['mine']['p']|number }} / {{ page['lvl']['mine']['u']|number }} exp
 								</div>
 							</div>
 							<div class="row">
@@ -224,7 +224,7 @@
 							</div>
 							<div class="row">
 								<div class="th col-12">
-									{{ Format.number(page['lvl']['raid']['p']) }} / {{ Format.number(page['lvl']['raid']['u']) }} exp
+									{{ page['lvl']['raid']['p']|number }} / {{ page['lvl']['raid']['u']|number }} exp
 								</div>
 							</div>
 						</div>
@@ -238,15 +238,15 @@
 					<div class="table">
 						<div v-for="list in page['build_list']" class="row flight">
 							<div class="th col-4 col-sm-2">
-								<div class="z">{{ Format.time(list[0] - $root.serverTime(), ':', true) }}</div>
-								<span class="positive d-sm-none">{{ date("d.m H:i:s", list[0]) }}</span>
+								<div class="z">{{ $options.filters.time(list[0] - $root.serverTime(), ':', true) }}</div>
+								<span class="positive d-sm-none">{{ list[0]|date('d.m H:i:s') }}</span>
 							</div>
 							<div class="th col-sm-10 col-8 text-left">
 								<span class="flight owndeploy">
 									<a v-if="list[1] === $store.state.user.planet" :href="$root.getUrl('buildings/?chpl='+list[1])" style="color:#33ff33;">{{ list[2] }}</a><span v-else="">{{ list[2] }}</span>:
 								</span>
 								<span class="holding colony">{{ list[3] }}</span>
-								<span class="positive float-sm-right d-none d-sm-inline">{{ date("d.m H:i:s", list[0]) }}</span>
+								<span class="positive float-sm-right d-none d-sm-inline">{{ list[0]|date('d.m H:i:s') }}</span>
 							</div>
 						</div>
 					</div>
@@ -262,7 +262,7 @@
 					<th class="text-left">
 						<div style="overflow-y: auto;overflow-x: hidden;">
 							<div v-for="item in page['chat']" class="activity">
-								<div class="date1" style="display: inline-block;padding-right:5px;">{{ date("H:i", item.time) }}</div>
+								<div class="date1" style="display: inline-block;padding-right:5px;">{{ item.time|date('H:i') }}</div>
 								<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
 							</div>
 						</div>

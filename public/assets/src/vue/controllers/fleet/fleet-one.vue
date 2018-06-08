@@ -26,27 +26,27 @@
 			</div>
 			<div class="row">
 				<div class="th col-6">Расстояние</div>
-				<div class="th col-6">{{ Format.number(distance) }}</div>
+				<div class="th col-6">{{ distance|number }}</div>
 			</div>
 			<div class="row">
 				<div class="th col-6">Продолжительность полёта (к цели)</div>
-				<div class="th col-6">{{ Format.time(duration, ':', true) }}</div>
+				<div class="th col-6">{{ duration|time(':', true) }}</div>
 			</div>
 			<div class="row">
 				<div class="th col-6">Время прибытия (к цели)</div>
-				<div class="th col-6">{{ date('d.m.Y H:i:s', target_time) }}</div>
+				<div class="th col-6">{{ target_time|date('d.m.Y H:i:s') }}</div>
 			</div>
 			<div class="row">
 				<div class="th col-6">Максимальная скорость</div>
-				<div class="th col-6">{{ Format.number(maxspeed) }}</div>
+				<div class="th col-6">{{ maxspeed|number }}</div>
 			</div>
 			<div class="row">
 				<div class="th col-6">Потребление топлива</div>
-				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ Format.number(consumption) }}</span></div>
+				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ consumption|number }}</span></div>
 			</div>
 			<div class="row">
 				<div class="th col-6">Грузоподъёмность</div>
-				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ Format.number(storage) }}</span></div>
+				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ storage|number }}</span></div>
 			</div>
 			<div class="row">
 				<div class="c col-12">Ссылки <a :href="$root.getUrl('fleet/shortcut/')">(Просмотр / Редактирование)</a></div>
@@ -77,13 +77,13 @@
 			<div v-if="page['moons'].length > 0" class="row">
 				<div class="c col-12">
 					Межгалактические врата
-					<span v-if="page['gate_time'] > 0" class="small">(заряжено через {{ Format.time(page['gate_time'], ':', true) }})</span>
+					<span v-if="page['gate_time'] > 0" class="small">(заряжено через {{ page['gate_time']|time(':', true) }})</span>
 				</div>
 			</div>
 			<div v-if="page['moons'].length > 0" class="row">
 				<div v-for="(moon, i) in page['moons']" class="th" :class="['col-'+(page['moons'].length % 2 > 0 && i === page['moons'].length - 1 ? 12 : 6)]">
 					<input type="radio" name="moon" :value="moon['id']" :id="'moon'+moon['id']">
-					<label :for="'moon'+moon['id']">{{ moon['name'] }} [{{ moon['galaxy'] }}:{{ moon['system'] }}:{{ moon['planet'] }}] <span v-if="moon['timer'] > 0">{{ Format.time(moon['timer'], ':', true) }}</span></label>
+					<label :for="'moon'+moon['id']">{{ moon['name'] }} [{{ moon['galaxy'] }}:{{ moon['system'] }}:{{ moon['planet'] }}] <span v-if="moon['timer'] > 0">{{ moon['timer']|time(':', true) }}</span></label>
 				</div>
 			</div>
 

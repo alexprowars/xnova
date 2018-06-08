@@ -14,7 +14,7 @@
 							{{ $root.getLang('TECH', item.i) }}
 						</a>
 						<span v-if="item.level" class="positive" title="Текущий уровень постройки">
-							{{ Format.number(item.level) }} <span v-if="item.max > 0">из <font color="yellow">{{ Format.number(item.max) }}</font></span>
+							{{ item.level|number }} <span v-if="item.max > 0">из <font color="yellow">{{ item.max|number }}</font></span>
 						</span>
 					</div>
 
@@ -23,7 +23,7 @@
 							<svg class="icon">
 								<use xlink:href="#icon-time"></use>
 							</svg>
-							{{ Format.time(item.time) }}
+							{{ item.time|time }}
 						</div>
 
 						<div v-html="item.effects"></div>
@@ -31,7 +31,7 @@
 						<div class="building-info-upgrade">
 							<div v-if="typeof item.build === 'object'" class="building-info-upgrade-timer">
 								<span v-if="time > 0">
-									{{ Format.time(time, ':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
+									{{ time|time(':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
 								</span>
 								<a v-else :href="$root.getUrl('buildings/research/?chpl='+item.build.id+'')">завершено. продолжить...</a>
 							</div>
@@ -90,7 +90,7 @@
 		},
 		methods: {
 			openWindow () {
-				showWindow('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
+				this.$root.openPopup('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
 			},
 			update ()
 			{

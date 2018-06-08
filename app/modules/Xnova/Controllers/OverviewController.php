@@ -552,10 +552,9 @@ class OverviewController extends Controller
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getUnitCount('recycler') > 0);
 
 		$build_list = [];
-		$planetsName = [];
+		$planetsData = [];
 
 		$planets = Planet::find([
-			'columns' => 'id, name',
 			'conditions' => 'id_owner = :user:',
 			'bind' => [
 				'user' => $this->user->id
@@ -563,7 +562,7 @@ class OverviewController extends Controller
 		]);
 
 		foreach ($planets as $item)
-			$planetsName[$item->id] = $item->name;
+			$planetsData[$item->id] = $item;
 
 		$queueManager = new Queue($this->user);
 
@@ -578,12 +577,17 @@ class OverviewController extends Controller
 				if (!isset($end[$item->planet_id]))
 					$end[$item->planet_id] = $item->time;
 
-				$end[$item->planet_id] += $item->time_end - $item->time;
+				$time = Building::getBuildingTime($this->user, $planetsData[$item->planet_id], $item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+
+				if ($item->operation == $item::OPERATION_DESTROY)
+					$time = ceil($time / 2);
+
+				$end[$item->planet_id] += $time;
 
 				$build_list[$end[$item->planet_id]][] = [
 					$end[$item->planet_id],
 					$item->planet_id,
-					$planetsName[$item->planet_id],
+					$planetsData[$item->planet_id]->name,
 					_getText('tech', $item->object_id).' ('.($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1).' -> '.$item->level.')'
 				];
 			}
@@ -598,7 +602,7 @@ class OverviewController extends Controller
 				$build_list[$item->time_end][] = [
 					$item->time_end,
 					$item->planet_id,
-					$planetsName[$item->planet_id],
+					$planetsData[$item->planet_id]->name,
 					_getText('tech', $item->object_id).' ('.$this->user->getTechLevel($item->object_id).' -> '.($this->user->getTechLevel($item->object_id) + 1).')'
 				];
 			}
@@ -622,7 +626,7 @@ class OverviewController extends Controller
 				$build_list[$end[$item->planet_id]][] = [
 					$end[$item->planet_id],
 					$item->planet_id,
-					$planetsName[$item->planet_id],
+					$planetsData[$item->planet_id]->name,
 					_getText('tech', $item->object_id).' ('.$item->level.')'
 				];
 			}

@@ -121,8 +121,8 @@
 					<td class="c" colspan="3"><span id="missiles">{{ page['user']['interplanetary_misil'] }}</span> межпланетных ракет</td>
 					<td class="c" colspan="3"><span id="slots">{{ page['user']['fleets'] }}</span>/{{ page['user']['max_fleets'] }} флотов</td>
 					<td class="c" colspan="3">
-						<span id="recyclers">{{ Format.number(page['user']['recycler']) }}</span> переработчиков<br>
-						<span id="probes">{{ Format.number(page['user']['spy_sonde']) }}</span> шпионских зондов
+						<span id="recyclers">{{ page['user']['recycler']|number }}</span> переработчиков<br>
+						<span id="probes">{{ page['user']['spy_sonde']|number }}</span> шпионских зондов
 					</td>
 				</tr>
 			</table>

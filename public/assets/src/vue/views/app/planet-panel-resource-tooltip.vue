@@ -10,11 +10,11 @@
 			</tr>
 			<tr>
 				<td>Производство:</td>
-				<td align="right">{{ Format.number(resource['production']) }}</td>
+				<td align="right">{{ resource['production']|number }}</td>
 			</tr>
 			<tr>
 				<td>Вместимость:</td>
-				<td align="right">{{ Format.number(resource['max']) }}</td>
+				<td align="right">{{ resource['max']|number }}</td>
 			</tr>
 		</table>
 	</div>

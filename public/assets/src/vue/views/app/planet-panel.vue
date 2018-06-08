@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<div onclick="showWindow('', '/info/4/')" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
+						<div @click="$root.openPopup('', '/info/4/')" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
 							<div class="tooltip-content">
 								<div class="resource-panel-item-tooltip">
 									<h1>Энергия</h1>
@@ -19,15 +19,15 @@
 									<table>
 										<tr>
 											<td>Доступно:</td>
-											<td align="right">{{ Format.number(planet['energy']['current']) }}</td>
+											<td align="right">{{ planet['energy']['current']|number }}</td>
 										</tr>
 										<tr>
 											<td>Производится:</td>
-											<td align="right">{{ Format.number(planet['energy']['max']) }}</td>
+											<td align="right">{{ planet['energy']['max']|number }}</td>
 										</tr>
 										<tr>
 											<td>Потребление:</td>
-											<td align="right">{{ Format.number(planet['energy']['max'] - planet['energy']['current']) }}</td>
+											<td align="right">{{ $options.filters.number(planet['energy']['max'] - planet['energy']['current']) }}</td>
 										</tr>
 									</table>
 								</div>
@@ -37,7 +37,7 @@
 						</div>
 						<div class="neutral">{{ $root.getLang('RESOURCES', 'energy') }}</div>
 						<div title="Доступно энергии">
-							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ Format.number(planet['energy']['current']) }}</span>
+							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ planet['energy']['current']|number }}</span>
 						</div>
 					</div>
 				</div>
@@ -51,11 +51,11 @@
 									<table>
 										<tr>
 											<td>Заряд:</td>
-											<td align="right">{{ Format.number(planet['battery']['current']) }}</td>
+											<td align="right">{{ planet['battery']['current']|number }}</td>
 										</tr>
 										<tr>
 											<td>Емкость:</td>
-											<td align="right">{{ Format.number(planet['battery']['max']) }}</td>
+											<td align="right">{{ planet['battery']['max']|number }}</td>
 										</tr>
 										<tr v-if="planet['battery']['tooltip'].length">
 											<td colspan="2">{{ planet['battery']['tooltip'] }}</td>
@@ -84,7 +84,7 @@
 									</tr>
 									<tr>
 										<td v-for="time in planet['officiers']" align="center">
-											<span v-if="time > $root.serverTime()">Нанят до <font color="lime">{{ date('d.m.Y H:i', time) }}</font></span>
+											<span v-if="time > $root.serverTime()">Нанят до <font color="lime">{{ time|date('d.m.Y H:i') }}</font></span>
 											<span v-else><font color="lime">Не нанят</font></span>
 										</td>
 									</tr>
@@ -93,7 +93,7 @@
 							<span class="sprite skin_kredits"></span>
 						</a>
 						<div class="neutral">Кредиты</div>
-						{{ Format.number(planet['credits']) }}
+						{{ planet['credits']|number }}
 					</div>
 				</div>
 			</div>

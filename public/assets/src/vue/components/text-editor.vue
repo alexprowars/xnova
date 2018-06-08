@@ -104,6 +104,8 @@
 </template>
 
 <script>
+	import {parser} from '../js/parser'
+
 	export default {
 		name: "text-editor",
 		props: {
@@ -159,7 +161,7 @@
 				let start 	= this.$refs.text.selectionStart;
 				let end 	= this.$refs.text.selectionEnd;
 
-				let rep = this.parser.addTag(tag, this.message.substring(start, end), type)
+				let rep = parser.addTag(tag, this.message.substring(start, end), type)
 
 				this.message = this.message.substring(0, start) + rep + this.message.substring(end, len);
 			}

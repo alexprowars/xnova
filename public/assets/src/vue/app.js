@@ -4,17 +4,16 @@ import VueRouter from 'vue-router'
 
 import 'es6-promise/auto'
 
-let App = require('./app.vue')
+import App from './app.vue'
 
 Vue.config.productionTip = false;
 
-Vue.prototype.Format = Format
-Vue.prototype.date = date
 Vue.prototype.morph = morph
 Vue.prototype.load = load
-Vue.prototype.showWindow = showWindow
-Vue.prototype.Lang = Lang
 Vue.prototype.isMobile = isMobile
+
+import Lang from './js/lang'
+import Format from './js/format'
 
 Vue.filter("upper", (value) => {
 	return value.toUpperCase();
@@ -24,27 +23,35 @@ Vue.filter("lower", (value) => {
 	return value.toLowerCase();
 });
 
-let parser = require('./js/parser.js');
+Vue.filter("number", (value) => {
+	return Format.number(value);
+});
 
-Vue.prototype.parser = parser.parser;
+Vue.filter("date", (value, format) => {
+	return Format.date(format, value);
+});
 
-let BuildingBuildController = require('./controllers/buildings/build.vue')
-let BuildingTechController = require('./controllers/buildings/tech.vue')
-let BuildingUnitController = require('./controllers/buildings/unit.vue')
-let GalaxyController = require('./controllers/galaxy/galaxy.vue')
-let OverviewController = require('./controllers/overview/overview.vue')
-let FleetIndexController = require('./controllers/fleet/fleet-index.vue')
-let FleetOneController = require('./controllers/fleet/fleet-one.vue')
-let FleetTwoController = require('./controllers/fleet/fleet-two.vue')
-let ChatController = require('./controllers/chat/chat.vue')
-let MessagesController = require('./controllers/messages/messages.vue')
-let MerchantController = require('./controllers/merchant/merchant.vue')
-let AllianceChatController = require('./controllers/alliance/alliance_chat.vue')
-let PlayersStatController = require('./controllers/players/players_stat.vue')
-let NotesController = require('./controllers/notes/notes.vue')
-let PhalanxController = require('./controllers/phalanx/phalanx.vue')
-let IndexController = require('./controllers/index/index.vue')
-let HtmlController = require('./controllers/html.vue')
+Vue.filter("time", (value, separator, full) => {
+	return Format.time(value, separator, full);
+});
+
+import BuildingBuildController from './controllers/buildings/build.vue'
+import BuildingTechController from './controllers/buildings/tech.vue'
+import BuildingUnitController from './controllers/buildings/unit.vue'
+import GalaxyController from './controllers/galaxy/galaxy.vue'
+import OverviewController from './controllers/overview/overview.vue'
+import FleetIndexController from './controllers/fleet/fleet-index.vue'
+import FleetOneController from './controllers/fleet/fleet-one.vue'
+import FleetTwoController from './controllers/fleet/fleet-two.vue'
+import ChatController from './controllers/chat/chat.vue'
+import MessagesController from './controllers/messages/messages.vue'
+import MerchantController from './controllers/merchant/merchant.vue'
+import AllianceChatController from './controllers/alliance/alliance_chat.vue'
+import PlayersStatController from './controllers/players/players_stat.vue'
+import NotesController from './controllers/notes/notes.vue'
+import PhalanxController from './controllers/phalanx/phalanx.vue'
+import IndexController from './controllers/index/index.vue'
+import HtmlController from './controllers/html.vue'
 
 const routes = [{
 	path: '/buildings/research*',
@@ -187,7 +194,8 @@ window.application = new Vue({
 		request_block: false,
 		request_block_timer: null,
 		router_block: false,
-		start_time: Math.floor(((new Date()).getTime()) / 1000)
+		start_time: Math.floor(((new Date()).getTime()) / 1000),
+		html_component: null
 	},
 	watch: {
 		title (val) {
@@ -334,6 +342,274 @@ window.application = new Vue({
 
 				clearTimeout(this.request_block_timer);
 			})
+		},
+		init ()
+		{
+			let body = $('body');
+			let app = this;
+
+			body.on('mouseenter', '.tooltip', function()
+			{
+				if (isMobile)
+					return;
+
+				let _this = $(this);
+
+				let status = false;
+
+				try {
+					status = _this.tooltipster('status');
+				} catch (err) {}
+
+				if (status)
+					return;
+
+				let maxWidth = null;
+
+				if (_this.data('width') !== undefined)
+					maxWidth = parseInt(_this.data('width'));
+
+				_this.tooltipster({
+					delay: 100,
+					distance: 0,
+					maxWidth: maxWidth,
+					contentAsHTML: true,
+					interactive: _this.hasClass('sticky'),
+					functionInit: function(instance)
+					{
+						if (_this.hasClass('script'))
+							instance.content(eval(_this.data('content')));
+						else if (typeof _this.data('content') === "undefined")
+							instance.content(_this.find('.tooltip-content'));
+						else
+							instance.content(_this.data('content'));
+					}
+				}).tooltipster('open');
+			})
+			.on('click', '.tooltip', function()
+			{
+				if (!isMobile)
+					return;
+
+				let _this = $(this);
+
+				let status = false;
+
+				try {
+					status = _this.tooltipster('status');
+				} catch (err) {}
+
+				if (!_this.hasClass('sticky') && status)
+				{
+					if (status.open)
+						_this.tooltipster('close');
+					else
+						_this.tooltipster('open');
+
+					return;
+				}
+
+				if (typeof _this.data('tooltipster-ns') !== 'undefined')
+				{
+					_this.tooltipster('open');
+					return;
+				}
+
+				let maxWidth = null;
+
+				if (_this.data('width') !== undefined)
+					maxWidth = parseInt(_this.data('width'));
+
+				_this.tooltipster({
+					delay: 100,
+					distance: 0,
+					maxWidth: maxWidth,
+					contentAsHTML: true,
+					interactive: _this.hasClass('sticky'),
+					functionInit: function(instance)
+					{
+						if (_this.hasClass('script'))
+							instance.content(eval(_this.data('content')));
+						else if (typeof _this.data('content') === "undefined")
+							instance.content(_this.find('.tooltip-content'));
+						else
+							instance.content(_this.data('content'));
+					}
+				}).tooltipster('open');
+			})
+			.on('click', 'a', function(e)
+			{
+				let el = $(this);
+				let url = el.attr('href');
+
+				if (!url || el.hasClass('window') || url.indexOf('#') === 0)
+					return false;
+
+				if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
+					return true;
+				else
+				{
+					e.preventDefault();
+
+					load(url);
+				}
+
+				return false;
+			})
+			.on('click', '.main-content form[class!=noajax] input[type=submit], .main-content form[class!=noajax] button[type=submit]', function(e)
+			{
+				e.preventDefault();
+
+				let button = $(this);
+				let form = button.closest('form');
+
+				form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
+				form.submit();
+			})
+			.on('submit', '.main-content form[class!=noajax]', function(e)
+			{
+				e.preventDefault();
+
+				let form = $(this);
+
+				app.loader = true;
+
+				let formData = new FormData(this);
+
+				$.ajax({
+				    url: form.attr('action'),
+				    data: formData,
+				    type: 'post',
+					dataType: 'json',
+				    contentType: false,
+				    processData: false
+				})
+				.then((result) => {
+					app.applyData(result.data);
+				}, () => {
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				})
+				.always(() => {
+					app.loader = false;
+				})
+			})
+			.on('submit', '.jconfirm-dialog form', function(e)
+			{
+				e.preventDefault();
+
+				app.loader = true;
+
+				let formData = new FormData(this);
+				formData.append('popup', 'Y');
+
+				$.ajax({
+					url: $(this).attr('action'),
+					type: 'post',
+					data: formData,
+					dataType: 'json',
+					processData: false,
+					contentType: false
+				})
+				.then((result) =>
+				{
+					if (result.data.messages.length > 0 )
+					{
+						result.data.messages.forEach(function(item)
+						{
+							if (item['type'].indexOf('-static') <= 0)
+							{
+								$.toast({
+									text: item.message,
+									icon: item.type
+								});
+							}
+						})
+					}
+
+					if (result.data.html !== '')
+					{
+						if (app.html_component !== null)
+							app.html_component.$destroy();
+
+						app.html_component = new (Vue.extend({
+							name: 'html-render',
+							template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+						}))().$mount();
+
+						Vue.nextTick(() =>
+						{
+							$('.jconfirm-content').html(app.html_component.$el);
+
+							setTimeout(() => {
+								app.evalJs(result.data.html);
+							}, 100);
+						});
+					}
+
+					app.$store.state.redirect = result.data.redirect;
+				}, () => {
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				})
+				.always(() => {
+					app.loader = false;
+				})
+			})
+			.on('click', '.popup-user', function(e)
+			{
+				e.preventDefault();
+
+				app.openPopup('', $(this).attr('href'))
+			});
+		},
+		openPopup (title, url, width)
+		{
+			if (isMobile)
+				return window.location.href = url.split('ajax').join('').split('popup').join('');
+
+			let app = this;
+
+			if (width === undefined)
+				width = 600;
+
+			$.dialog({
+				title: '',
+				theme: 'dialog',
+				useBootstrap: false,
+				boxWidth: width,
+				backgroundDismiss: true,
+				animation: 'opacity',
+				closeAnimation: 'opacity',
+				animateFromElement: false,
+				draggable: false,
+				content: function ()
+				{
+					return $.ajax({
+						url: url,
+						type: 'get',
+						data: {'popup': 'Y'},
+						success: (result) =>
+						{
+							this.setTitle(result.data.title);
+
+							if (app.html_component !== null)
+								app.html_component.$destroy();
+
+							app.html_component = new (Vue.extend({
+								name: 'html-render',
+								template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+							}))().$mount();
+
+							Vue.nextTick(() => {
+								this.setContent(app.html_component.$el, true);
+
+								setTimeout(() => {
+									app.evalJs(result.data.html);
+								}, 100);
+							});
+						}
+					});
+				}
+			});
 		}
 	},
 	render: h => h(App)

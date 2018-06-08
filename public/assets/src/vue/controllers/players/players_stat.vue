@@ -84,7 +84,7 @@
 
 				this.page.points.forEach((item) =>
 				{
-					labels.push(this.date('d.m', item.date));
+					labels.push(this.$options.filters.date(item.date, 'd.m'));
 					points.push(item.point[this.typeChart]);
 				});
 
@@ -107,7 +107,7 @@
 						tooltips: {
 							callbacks: {
 								label: (tooltipItem) => {
-									return Format.number(tooltipItem.yLabel);
+									return this.$options.filters.number(tooltipItem.yLabel);
 								}
 							}
 						},
@@ -127,7 +127,7 @@
 								},
 								ticks: {
 									callback: (value) => {
-										return Format.number(value);
+										return $options.filters.number(value);
 									}
 								}
 							}]
@@ -162,7 +162,7 @@
 
 				this.page.points.forEach((item) =>
 				{
-					labels.push(this.date('d.m', item.date));
+					labels.push(this.$options.filters.number(item.date, 'd.m'));
 
 					ranks.build.push(item.rank.build);
 					ranks.tech.push(item.rank.tech);
