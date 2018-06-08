@@ -26,9 +26,8 @@
 		name: "galaxy-selector-shortcut",
 		props: ["items"],
 		methods: {
-			changePlanet: function($event)
-			{
-				load(this.$root.getUrl('galaxy/r/3/?'+$($event.target).val()));
+			changePlanet: ($event) => {
+				this.$root.load(this.$root.getUrl('galaxy/r/3/?'+$($event.target).val()));
 			}
 		}
 	}

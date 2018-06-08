@@ -39,7 +39,7 @@
 		props: ['visible'],
 		data () {
 			return {
-				mobile: isMobile || !this.visible,
+				mobile: this.$store.state.mobile || !this.visible,
 				active: localStorage.getItem('mini-chat-active') === 'Y',
 				messages: [],
 				message: '',
@@ -109,7 +109,7 @@
 				}
 			},
 			visible (value) {
-				this.mobile = isMobile || !value
+				this.mobile = this.$store.state.mobile || !value
 			}
 		},
 		methods: {

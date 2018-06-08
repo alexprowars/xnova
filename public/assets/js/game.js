@@ -1,5 +1,3 @@
-var isMobile = /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-
 function ShowHiddenBlock (id)
 {
     $('#'+id).toggle();

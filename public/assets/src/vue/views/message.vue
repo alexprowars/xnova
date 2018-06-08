@@ -23,7 +23,7 @@
 			if (this.time > 0)
 			{
 				this.timeout = setTimeout(() => {
-					load(this.redirect)
+					this.$root.load(this.redirect)
 				}, this.time * 1000);
 			}
 		},

@@ -2,18 +2,17 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 
+Vue.config.productionTip = false;
+
 import 'es6-promise/auto'
 
 import App from './app.vue'
-
-Vue.config.productionTip = false;
-
-Vue.prototype.morph = morph
-Vue.prototype.load = load
-Vue.prototype.isMobile = isMobile
-
 import Lang from './js/lang'
 import Format from './js/format'
+
+Vue.filter("morph", (value, titles) => {
+	return Format.morph(value, titles);
+});
 
 Vue.filter("upper", (value) => {
 	return value.toUpperCase();
@@ -153,7 +152,9 @@ router.beforeEach(function(to, from, next)
 })
 
 window.store = new Vuex.Store({
-	state: options,
+	state: Object.assign({}, {
+		mobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+	}, options),
 	mutations: {
 		PAGE_LOAD (state, data)
 		{
@@ -282,6 +283,13 @@ window.application = new Vue({
 		applyData: function (data) {
 			this.$store.commit('PAGE_LOAD', data);
 		},
+		load: function (url)
+		{
+			this.$router.push(url, () => {},
+			() => {
+				this.loadPage(url);
+			});
+		},
 		loadPage (url, callback)
 		{
 			if (this.request_block)
@@ -314,10 +322,10 @@ window.application = new Vue({
 						confirmButton: 'Продолжить',
 						cancelButton: false,
 						backgroundDismiss: false,
-						confirm: function ()
+						confirm: () =>
 						{
 							if (result.data['tutorial']['url'] !== '')
-								load(result.data['tutorial']['url']);
+								this.load(result.data['tutorial']['url']);
 						}
 					});
 				}
@@ -350,7 +358,7 @@ window.application = new Vue({
 
 			body.on('mouseenter', '.tooltip', function()
 			{
-				if (isMobile)
+				if (app.$store.state.mobile)
 					return;
 
 				let _this = $(this);
@@ -388,7 +396,7 @@ window.application = new Vue({
 			})
 			.on('click', '.tooltip', function()
 			{
-				if (!isMobile)
+				if (!app.$store.state.mobile)
 					return;
 
 				let _this = $(this);
@@ -451,7 +459,7 @@ window.application = new Vue({
 				{
 					e.preventDefault();
 
-					load(url);
+					app.load(url);
 				}
 
 				return false;
@@ -563,7 +571,7 @@ window.application = new Vue({
 		},
 		openPopup (title, url, width)
 		{
-			if (isMobile)
+			if (app.$store.state.mobile)
 				return window.location.href = url.split('ajax').join('').split('popup').join('');
 
 			let app = this;

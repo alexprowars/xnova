@@ -10,8 +10,8 @@
 					<div class="text-sm-right col-12 col-sm-6">
 						Осталось
 						<span class="positive">{{ fields_empty }}</span>
-						свободн{{ morph(page.fields_empty, ['ое', 'ых', 'ых']) }}
-						пол{{ morph(page.fields_empty, ['е', 'я', 'ей']) }}
+						свободн{{ page.fields_empty|morph(['ое', 'ых', 'ых']) }}
+						пол{{ page.fields_empty|morph(['е', 'я', 'ей']) }}
 					</div>
 				</div>
 			</div>
@@ -96,7 +96,7 @@
 				if (this.page.queue[0].time <= 0)
 				{
 					this.timeout = setTimeout(() => {
-						load(this.$root.getUrl('buildings/index/planet/'+this.$store.state.user.planet+'/'));
+						this.$root.load(this.$root.getUrl('buildings/index/planet/'+this.$store.state.user.planet+'/'));
 					}, 5000);
 				}
 				else
