@@ -34,7 +34,7 @@ $eventsManager->attach('core:beforeAuthCheck', function ($event, Auth $auth)
 
 $eventsManager->attach('core:beforeStartSession', function ()
 {
-	if (strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
+	if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'python-requests') !== false)
 		return false;
 
 	return true;
