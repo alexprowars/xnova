@@ -241,12 +241,12 @@ class MessagesController extends Controller
 
 		foreach ($items as $item)
 		{
-			preg_match_all('/href=\\\"(.*?)\\\"/i', $item['text'], $match);
+			preg_match_all('/href=\\\"\/(.*?)\\\"/i', $item['text'], $match);
 
 			if (isset($match[1]))
 			{
 				foreach ($match[1] as $rep)
-					$item['text'] = str_replace($rep, $this->url->get($rep), $item['text']);
+					$item['text'] = str_replace('/'.$rep, $this->url->get($rep), $item['text']);
 			}
 
 			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item['text'], $match);

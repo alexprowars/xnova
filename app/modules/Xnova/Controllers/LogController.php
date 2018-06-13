@@ -131,7 +131,7 @@ class LogController extends Controller
 
 						$log->user_id = $this->user->id;
 						$log->title = addslashes(htmlspecialchars($title));
-						$log->log = addslashes($SaveLog);
+						$log->log = $SaveLog;
 
 						if (!$log->create())
 							throw new ErrorException('Произошла ошибка при сохранении боевого отчета');

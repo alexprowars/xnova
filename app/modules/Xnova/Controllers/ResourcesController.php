@@ -199,11 +199,25 @@ class ResourcesController extends Controller
 			$CurrRow['id'] = $ProdID;
 			$CurrRow['name'] = Vars::getName($ProdID);
 			$CurrRow['porcent'] = $BuildLevelFactor;
+			$CurrRow['bonus'] = 0;
 
-			$CurrRow['bonus'] = ($ProdID == 4 || $ProdID == 12 || $ProdID == 212) ? (($ProdID == 212) ? $this->user->bonusValue('solar') : $this->user->bonusValue('energy')) : (($ProdID == 1) ? $this->user->bonusValue('metal') : (($ProdID == 2) ? $this->user->bonusValue('crystal') : (($ProdID == 3) ? $this->user->bonusValue('deuterium') : 0)));
+			if ($ProdID == 4 || $ProdID == 12)
+			{
+				$CurrRow['bonus'] += $this->user->bonusValue('energy');
+				$CurrRow['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
+			}
 
-			if ($ProdID == 4)
-				$CurrRow['bonus'] += $this->user->getTechLevel('energy') / 100;
+			if ($ProdID == 212)
+				$CurrRow['bonus'] += $this->user->bonusValue('solar');
+
+			if ($ProdID == 1)
+				$CurrRow['bonus'] += $this->user->bonusValue('metal');
+
+			if ($ProdID == 2)
+				$CurrRow['bonus'] += $this->user->bonusValue('crystal');
+
+			if ($ProdID == 3)
+				$CurrRow['bonus'] += $this->user->bonusValue('deuterium');
 
 			$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
 

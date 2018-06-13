@@ -108,6 +108,11 @@ class Planet extends Model
 		$this->user = $user;
 	}
 
+	public function getUser ()
+	{
+		return $this->user;
+	}
+
 	public function checkOwnerPlanet ()
 	{
 		if ($this->id_owner != $this->user->id && $this->id_ally > 0 && ($this->id_ally != $this->user->ally_id || !$this->user->ally['rights']['planet']))

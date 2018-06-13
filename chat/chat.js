@@ -78,7 +78,7 @@ io.sockets.on('connection', function (socket)
 
 		connection.connect();
 
-		connection.query('INSERT INTO game_log_chat SET ?', {user: userId, time: Math.floor(Date.now() / 1000), text: msg}, function(err, result)
+		connection.query('INSERT INTO game_log_chat SET ?', {user: userId, user_name: userName, time: Math.floor(Date.now() / 1000), text: msg}, function(err, result)
 		{
 		  	if (err)
 			  	throw err;
@@ -151,6 +151,9 @@ io.sockets.on('connection', function (socket)
 					user = [];
 
 				item['text'] = item['text'].trim();
+
+				if (item['user_name'].length)
+					item['username'] = item['user_name'];
 
 				var insert = [item['id'], item['time'], item['username'], user, isPrivate, item['text'], 0];
 

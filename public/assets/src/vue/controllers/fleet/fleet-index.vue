@@ -39,7 +39,7 @@
 							<a class="tooltip">
 								<div class="tooltip-content">
 									<div v-for="(fleetData, fleetId) in item.units">
-										{{ $root.getLang('TECH', fleetId) }}: {{ fleetData['cnt'] }}
+										{{ $root.getLang('TECH', fleetId) }}: {{ fleetData['count'] }}
 									</div>
 								</div>
 								{{ item.amount|number }}

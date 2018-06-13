@@ -164,13 +164,17 @@ class MissionCaseSpy extends FleetEngine implements Mission
 					$fleet_link .= $id . ',' . $targetUser->getTechLevel($id) . '!' . (($id > 400 && $targetUser->getTechLevel($id - 50) && $ST >= 8) ? $targetUser->getTechLevel($id - 50) : 0) . ';';
 			}
 
-			$MessageEnd .= "<center>";
-			$MessageEnd .= Tag::renderAttributes('<a', [
-				'href' => '/sim/'.$fleet_link.'/',
-				'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
-			]);
+			if ($fleet_link != '')
+			{
+				$MessageEnd .= "<center>";
+				$MessageEnd .= Tag::renderAttributes('<a', [
+					'href' => '/sim/'.$fleet_link.'/',
+					'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
+				]);
 
-			$MessageEnd .= ">Симуляция</a></center>";
+				$MessageEnd .= ">Симуляция</a></center>";
+			}
+
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
 
 			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
@@ -210,6 +214,12 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		$this->KillFleet();
 	}
 
+	/**
+	 * @param $TargetPlanet Planet
+	 * @param $Mode
+	 * @param $TitleString
+	 * @return mixed
+	 */
 	private function SpyTarget ($TargetPlanet, $Mode, $TitleString)
 	{
 		$LookAtLoop = true;
@@ -223,7 +233,13 @@ class MissionCaseSpy extends FleetEngine implements Mission
 			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
 			$String .= $TitleString . " " . $TargetPlanet->name;
 			$String .= " <a href=\"/galaxy/" . $TargetPlanet->galaxy . "/" . $TargetPlanet->system . "/\">";
-			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a>";
+			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a> ";
+
+			$targetUser = $TargetPlanet->getUser();
+
+			if ($targetUser)
+				$String .= ' <a href="/players/'.$TargetPlanet->getUser()->getId().'/">'.$TargetPlanet->getUser()->username.'</a>';
+
 			$String .= "<br>на #DATE|H:i:s|".time()."#</td>";
 			$String .= "</tr><tr>";
 			$String .= "<th width=25%>Металл:</th><th width=25%>" . Format::number($TargetPlanet->metal) . "</th>";

@@ -385,6 +385,7 @@ CREATE TABLE `game_log_chat` (
   `id` int(11) UNSIGNED NOT NULL,
   `time` int(11) NOT NULL DEFAULT '0',
   `user` int(11) NOT NULL DEFAULT '0',
+  `user_name` varchar(100) NOT NULL DEFAULT '',
   `text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

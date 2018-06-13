@@ -406,6 +406,13 @@ class Construction
 				if ($item->operation == $item::OPERATION_DESTROY)
 					$elementTime = ceil($elementTime / 2);
 
+				if ($item->time > 0 && $item->time_end - $item->time != $elementTime)
+				{
+					$item->update($item->id, [
+						'time_end' => $item->time + $elementTime
+					]);
+				}
+
 				$end += $elementTime;
 
 				$listRow[] = [
