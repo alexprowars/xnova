@@ -408,7 +408,7 @@ class Construction
 
 				if ($item->time > 0 && $item->time_end - $item->time != $elementTime)
 				{
-					$item->update($item->id, [
+					$item->update([
 						'time_end' => $item->time + $elementTime
 					]);
 				}

@@ -54,8 +54,11 @@ class Unit
 		{
 			$total = $planet->getUnitCount($elementId);
 
-			if (isset($buildItems[$elementId]))
-				$total += $buildItems[$elementId];
+			foreach ($buildItems AS $item)
+			{
+				if ($item->object_id == $elementId)
+					$total += $item->level;
+			}
 
 			$count = min($count, max(($price['max'] - $total), 0));
 		}

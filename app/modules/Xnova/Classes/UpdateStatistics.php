@@ -532,13 +532,13 @@ class UpdateStatistics extends Injectable
 	{
 		$this->db->query("DELETE FROM game_messages WHERE `time` <= '" . (time() - (86400 * 14)) . "' AND type != 1;");
 		$this->db->query("DELETE FROM game_rw WHERE `time` <= '" . (time() - 172800) . "';");
-		$this->db->query("DELETE FROM game_alliance_chat WHERE `timestamp` <= '" . (time() - 1209600) . "';");
+		//$this->db->query("DELETE FROM game_alliance_chat WHERE `timestamp` <= '" . (time() - 1209600) . "';");
 		$this->db->query("DELETE FROM game_lostpasswords WHERE `time` <= '" . (time() - 86400) . "';");
 		$this->db->query("DELETE FROM game_logs WHERE `time` <= '" . (time() - 259200) . "';");
 		$this->db->query("DELETE FROM game_log_attack WHERE `time` <= '" . (time() - 604800) . "';");
 		$this->db->query("DELETE FROM game_log_credits WHERE `time` <= '" . (time() - 604800) . "';");
 		$this->db->query("DELETE FROM game_log_ip WHERE `time` <= '" . (time() - 604800) . "';");
-		$this->db->query("DELETE FROM game_log_load WHERE `time` <= '" . (time() - 604800) . "';");
+		//$this->db->query("DELETE FROM game_log_load WHERE `time` <= '" . (time() - 604800) . "';");
 		$this->db->query("DELETE FROM game_log_history WHERE `time` <= '" . (time() - 604800) . "';");
 		$this->db->query("DELETE FROM game_log_stats WHERE `time` <= '" . (time() - (86400 * 30)) . "';");
 		$this->db->query("DELETE FROM game_log_sim WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
