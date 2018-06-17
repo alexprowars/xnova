@@ -17,6 +17,7 @@ use Phalcon\Mvc\User\Component;
  * @property \Phalcon\Http\Response response
  * @property \Phalcon\Mvc\Router router
  * @property \Phalcon\Config|\stdClass config
+ * @property \Phalcon\Cache\Backend\Memcache cache
  */
 class Auth extends Component
 {
@@ -69,7 +70,15 @@ class Auth extends Component
 
 		$sessionId = $this->cookies->get($this->getSessionKey())->getValue();
 
-		$session = Session::findFirst(["conditions" => "token = ?0", "bind" => [$sessionId]]);
+		$session = Session::findFirst([
+			'conditions' => 'token = ?0',
+			'bind' => [$sessionId],
+			'cache' => [
+				'key'     => 'app::sessions::'.md5($sessionId),
+				'service' => 'cache',
+				'lifetime' => 3600,
+			]
+		]);
 
 		if (!$session || $session->object_type != Session::OBJECT_TYPE_USER)
 		{
@@ -145,6 +154,9 @@ class Auth extends Component
 
 		if ($session)
 			$session->delete();
+
+		if ($this->di->has('cache'))
+			$this->cache->delete('app::sessions::'.md5($sessionId));
 
 		$sessionCookie->delete();
 

@@ -208,6 +208,8 @@ class TutorialController extends Controller
 
 				$this->db->updateAsDict('game_users_quests', ['finish' => '1'], 'id = '.$qInfo['id']);
 
+				$this->cache->delete('app::quests::'.$this->user->getId());
+
 				$this->user->save();
 				$this->planet->save();
 

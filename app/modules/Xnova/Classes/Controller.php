@@ -341,6 +341,15 @@ class Controller extends PhalconController
 				];
 			}
 
+			$quests = $this->cache->get('app::quests::'.$this->user->getId());
+
+			if ($quests === null)
+			{
+				$quests = $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt'];
+
+				$this->cache->save('app::quests::'.$this->user->getId(), $quests, 3600);
+			}
+
 			$user = [
 				'id' => (int) $this->user->id,
 				'name' => trim($this->user->username),
@@ -357,7 +366,7 @@ class Controller extends PhalconController
 				'timezone' => (int) $this->user->getUserOption('timezone'),
 				'color' => (int) $this->user->getUserOption('color'),
 				'vacation' => $this->user->vacation > 0,
-				'quests' => $this->db->query("SELECT COUNT(*) AS cnt FROM game_users_quests WHERE user_id = ".$this->user->id." AND finish = '1'")->fetch()['cnt']
+				'quests' => (int) $quests
 			];
 
 			if ($this->getDI()->has('planet'))

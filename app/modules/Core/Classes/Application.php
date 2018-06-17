@@ -98,11 +98,18 @@ class Application extends PhalconApplication
 				$appBenchmark = $di->getShared('profiler')->start(__CLASS__.'::run', [], 'Application');
 
 			$this->initDatabase($di, $eventsManager);
+			$this->initCache($di);
 
 			$registry = $di->get('registry');
 
 			/** @noinspection PhpUndefinedFieldInspection */
-			$registry->modules = Module::find()->toArray();
+			$registry->modules = Module::find([
+				'cache' => [
+					'key'     => 'app::modules',
+					'service' => 'cache',
+					'lifetime' => 3600,
+				],
+			])->toArray();
 
 			if ($this->request->hasQuery('clear_cache'))
 				CacheHelper::clearAll();
