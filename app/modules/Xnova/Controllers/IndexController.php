@@ -265,7 +265,7 @@ class IndexController extends Controller
 		{
 			if ($this->request->getPost('email') != '')
 			{
-				$login = $this->db->query("SELECT u.id, u.options, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
+				$login = $this->db->query("SELECT u.id, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
 
 				if (isset($login['id']))
 				{

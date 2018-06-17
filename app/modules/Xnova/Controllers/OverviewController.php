@@ -623,6 +623,9 @@ class OverviewController extends Controller
 
 				$end[$item->planet_id] += $time * $item->level;
 
+				if ($end[$item->planet_id] < time())
+					continue;
+
 				$build_list[$end[$item->planet_id]][] = [
 					$end[$item->planet_id],
 					$item->planet_id,

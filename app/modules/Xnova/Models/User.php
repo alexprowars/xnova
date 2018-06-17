@@ -14,6 +14,7 @@ use Xnova\Galaxy;
 use Phalcon\Mvc\Model;
 use Friday\Core\Models\User as BaseUser;
 use Xnova\Models\User\Tech;
+use Xnova\Queue;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -287,7 +288,12 @@ class User extends BaseUser
 				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60)))
 					$planet->resourceUpdate(time(), true);
 				else
+				{
 					$planet->resourceUpdate();
+
+					$queueManager = new Queue($this, $planet);
+					$queueManager->checkUnitQueue();
+				}
 
 				$this->getDI()->setShared('planet', $planet);
 			}

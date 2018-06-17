@@ -25,6 +25,7 @@ use Xnova\Format;
 use Xnova\Galaxy;
 use Xnova\Models\Planet;
 use Xnova\Models;
+use Xnova\Queue;
 use Xnova\User;
 use Xnova\Models\User as UserModel;
 use Xnova\Models\Fleet as FleetModel;
@@ -66,6 +67,9 @@ class MissionCaseAttack extends FleetEngine implements Mission
 
 		$target->assignUser($targetUser);
 		$target->resourceUpdate($this->_fleet->start_time);
+
+		$queueManager = new Queue($targetUser, $target);
+		$queueManager->checkUnitQueue();
 
 		LangManager::getInstance()->setImplementation(new LangImplementation());
 

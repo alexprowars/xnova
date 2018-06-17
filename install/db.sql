@@ -707,7 +707,6 @@ CREATE TABLE `game_users` (
   `banned` int(11) NOT NULL DEFAULT '0',
   `onlinetime` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ip` bigint(20) NOT NULL DEFAULT '0',
-  `options` bigint(20) UNSIGNED NOT NULL DEFAULT '204',
   `sex` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `race` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `planet_id` int(11) UNSIGNED NOT NULL DEFAULT '0',

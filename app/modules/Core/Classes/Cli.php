@@ -85,11 +85,18 @@ class Cli extends Console
 			include_once(ROOT_PATH.$this->_config->application->baseDir.'globals.php');
 
 		$this->initDatabase($di, $eventsManager);
+		$this->initCache($di);
 
 		$registry = $di->get('registry');
 
 		/** @noinspection PhpUndefinedFieldInspection */
-		$registry->modules = Module::find()->toArray();
+		$registry->modules = Module::find([
+			'cache' => [
+				'key'     => 'app::modules',
+				'service' => 'cache',
+				'lifetime' => 3600,
+			],
+		])->toArray();
 
 		$this->initModules($di);
 		$this->initLoaders($di);

@@ -200,7 +200,7 @@ class Queue
 		}
 
 		$this->checkTechQueue();
-		$this->checkUnitQueue();
+		//$this->checkUnitQueue();
 
 		return true;
 	}
@@ -503,7 +503,7 @@ class Queue
 		return $result;
 	}
 
-	private function checkUnitQueue ()
+	public function checkUnitQueue ()
 	{
 		if ($this->getCount(self::TYPE_SHIPYARD))
 		{

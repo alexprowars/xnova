@@ -13,6 +13,7 @@ use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
+use Xnova\Queue;
 use Xnova\User;
 use Xnova\Models\User as UserModel;
 use Xnova\Vars;
@@ -41,6 +42,10 @@ class MissionCaseSpy extends FleetEngine implements Mission
 		}
 
 		$TargetPlanet->assignUser($targetUser);
+		$TargetPlanet->resourceUpdate($this->_fleet->start_time);
+
+		$queueManager = new Queue($targetUser, $TargetPlanet);
+		$queueManager->checkUnitQueue();
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');
 
@@ -51,11 +56,6 @@ class MissionCaseSpy extends FleetEngine implements Mission
 
 		if ($targetUser->rpg_technocrate > time())
 			$TargetSpyLvl += 2;
-
-		// Обновление производства на планете
-		// =============================================================================
-		$TargetPlanet->resourceUpdate($this->_fleet->start_time);
-		// =============================================================================
 
 		$LS = 0;
 

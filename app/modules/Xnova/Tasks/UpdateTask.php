@@ -171,10 +171,11 @@ class UpdateTask extends ApplicationTask
 		while ($totalRuns < MAX_RUNS)
 		{
 			$items = Models\Queue::find([
-				'conditions' => 'time_end <= :time:',
+				'conditions' => 'time > 0 AND time_end <= :time: AND type != :type:',
 				'group' => 'user_id, planet_id',
 				'bind' => [
-					'time' => time() + 10
+					'time' => time() + 10,
+					'type' => 'unit'
 				],
 				'order' => 'id ASC'
 			]);

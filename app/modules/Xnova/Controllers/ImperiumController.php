@@ -132,6 +132,7 @@ class ImperiumController extends Controller
 			$build_hangar = [];
 
 			$queueManager = new Queue($this->user, $planet);
+			$queueManager->checkUnitQueue();
 
 			foreach ($queueManager->getTypes() AS $type)
 			{
