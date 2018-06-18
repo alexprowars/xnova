@@ -87,7 +87,8 @@ body[class*=jconfirm-no-scroll-] {
 		}
 	}
 	.jconfirm-box {
-		background: white;
+		background: #50608a;
+		border: 1px solid #415683;
 		border-radius: 4px;
 		position: relative;
 		outline: none;
@@ -462,14 +463,14 @@ body[class*=jconfirm-no-scroll-] {
 
 			.jconfirm-title-c .jconfirm-icon-c {
 				margin-right: 8px;
-				margin-left: 0px;
+				margin-left: 0;
 			}
 			.jconfirm-buttons {
 				float: right;
 
 				button {
 					text-transform: uppercase;
-					font-size: 14px;
+					font-size: 12px;
 					font-weight: bold;
 					text-shadow: none;
 				}
@@ -486,7 +487,7 @@ body[class*=jconfirm-no-scroll-] {
 		&.jconfirm-rtl {
 			.jconfirm-title-c .jconfirm-icon-c {
 				margin-left: 8px;
-				margin-right: 0px;
+				margin-right: 0;
 			}
 		}
 	}
@@ -504,7 +505,7 @@ body[class*=jconfirm-no-scroll-] {
 
 			.jconfirm-title-c .jconfirm-icon-c {
 				margin-right: 8px;
-				margin-left: 0px;
+				margin-left: 0;
 			}
 
 			.jconfirm-buttons {
@@ -535,7 +536,7 @@ body[class*=jconfirm-no-scroll-] {
 		&.jconfirm-rtl {
 			.jconfirm-title-c .jconfirm-icon-c {
 				margin-left: 8px;
-				margin-right: 0px;
+				margin-right: 0;
 			}
 		}
 	}
@@ -569,7 +570,7 @@ body[class*=jconfirm-no-scroll-] {
 
 @keyframes glow {
 	0%, 100% {
-		box-shadow: 0 0 0px red;
+		box-shadow: 0 0 0 red;
 	}
 	50% {
 		box-shadow: 0 0 30px red;
@@ -618,10 +619,10 @@ body[class*=jconfirm-no-scroll-] {
 			transform: translate(0px, -100px);
 		}
 		&.jconfirm-animation-left {
-			transform: translate(-100px, 0px);
+			transform: translate(-100px, 0);
 		}
 		&.jconfirm-animation-right {
-			transform: translate(100px, 0px);
+			transform: translate(100px, 0);
 		}
 		&.jconfirm-animation-bottom {
 			transform: translate(0px, 100px);

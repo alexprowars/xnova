@@ -44,6 +44,41 @@ const actions = {
 				reject(error)
 			})
 		})
+	},
+	submitForm ({commit}, params)
+	{
+		return new Promise((resolve, reject) =>
+		{
+			let headers = {
+				'X-Requested-With': 'XMLHttpRequest'
+			}
+
+			if (params['data'].toString().indexOf('FormData') < 0)
+				params['data'] = $.param(params['data']);
+			else
+				headers['Content-Type'] = 'multipart/form-data'
+
+			axios({
+				url: params['url'],
+				method: 'POST',
+				data: params['data'],
+				timeout: 10000,
+				headers: headers
+			})
+			.then(result =>
+			{
+				if (result.data.data !== undefined)
+				{
+					commit('PAGE_LOAD', result.data.data)
+					resolve(result.data.data)
+				}
+				else
+					reject()
+			})
+			.catch((error) => {
+				reject(error)
+			})
+		})
 	}
 }
 

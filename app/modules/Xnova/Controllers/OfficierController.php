@@ -13,6 +13,7 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -32,91 +33,83 @@ class OfficierController extends Controller
 			return;
 		
 		if ($this->user->vacation > 0)
-			throw new ErrorException("Нет доступа!");
+			throw new ErrorException('В режиме отпуска данный раздел недоступен!');
 
 		Lang::includeLang('officier', 'xnova');
+	}
+
+	public function buyAction ()
+	{
+		$id = (int) $this->request->getPost('id');
+		$duration = (int) $this->request->getPost('duration');
+
+		if (!$id || !$duration)
+			throw new RedirectException('Ошибка входных параметров', _getText('Officier'), '/officier/', 2);
+
+		switch ($duration)
+		{
+			case 7:
+				$credits = 20;
+			break;
+
+			case 14:
+				$credits = 40;
+			break;
+
+			case 30:
+				$credits = 80;
+			break;
+
+			default:
+				throw new RedirectException('Ошибка входных параметров', _getText('Officier'), '/officier/', 2);
+		}
+
+		$time = $duration * 86400;
+
+		if (!$credits || !$time || $this->user->credits < $credits)
+			throw new RedirectException(_getText('NoPoints'), _getText('Officier'), '/officier/', 2);
+
+		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER)
+			throw new RedirectException('Выбран неверный элемент', _getText('Officier'), '/officier/', 2);
+
+		if ($this->user->{Vars::getName($id)} > time())
+			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)} + $time;
+		else
+			$this->user->{Vars::getName($id)} = time() + $time;
+
+		$this->user->credits -= $credits;
+		$this->user->update();
+
+		$this->db->insertAsDict('game_log_credits', [
+			'uid' => $this->user->id,
+			'time' => time(),
+			'credits' => $credits * (-1),
+			'type' => 5
+		]);
+
+		throw new RedirectException(_getText('OffiRecrute'), _getText('Officier'), '/officier/', 2);
 	}
 	
 	public function indexAction ()
 	{
-		if ($this->request->hasPost('buy'))
+		$parse['credits'] = (int) $this->user->credits;
+		$parse['items'] = [];
+
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
 		{
-			$credits = 0;
-			$times = 0;
+			$row['id'] = $officier;
+			$row['time'] = 0;
 
-			if ($this->request->hasPost('week'))
-			{
-				$credits = 20;
-				$times = 604800;
-			}
-			elseif ($this->request->hasPost('2week'))
-			{
-				$credits = 40;
-				$times = 1209600;
-			}
-			elseif ($this->request->hasPost('month'))
-			{
-				$credits = 80;
-				$times = 2592000;
-			}
-		
-			if ($credits > 0 && $times > 0 && $this->user->credits >= $credits)
-			{
-				$selected = $this->request->getPost('buy', 'int', 0);
+			if ($this->user->{Vars::getName($officier)} > time())
+				$row['time'] = $this->user->{Vars::getName($officier)};
 
-				if (Vars::getItemType($selected) == Vars::ITEM_TYPE_OFFICIER)
-				{
-					if ($this->user->{Vars::getName($selected)} > time())
-						$this->user->{Vars::getName($selected)} = $this->user->{Vars::getName($selected)} + $times;
-					else
-						$this->user->{Vars::getName($selected)} = time() + $times;
+			$row['description'] = _getText('Desc', $officier);
+			$row['power'] = _getText('power', $officier);
 
-					$this->user->credits -= $credits;
-					$this->user->update();
-		
-					$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . ($credits * (-1)) . ", 5)");
-		
-					$Message = _getText('OffiRecrute');
-				}
-				else
-					$Message = "НУ ТЫ И ЧИТАК!!!!!!";
-			}
-			else
-				$Message = _getText('NoPoints');
-		
-			throw new RedirectException($Message, _getText('Officier'), '/officier/', 2);
+			$parse['items'][] = $row;
 		}
-		else
-		{
-			$parse['off_points'] = _getText('off_points');
-			$parse['alv_points'] = Format::number($this->user->credits);
-			$parse['list'] = [];
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
-			{
-				$bloc['off_id'] = $officier;
-				$bloc['off_tx_lvl'] = _getText('ttle', $officier);
-
-				if ($this->user->{Vars::getName($officier)} > time())
-				{
-					$bloc['off_lvl'] = "<font color=\"#00ff00\">Нанят до : " . $this->game->datezone("d.m.Y H:i", $this->user->{Vars::getName($officier)}) . "</font>";
-					$bloc['off_link'] = "<font color=\"red\">Продлить</font>";
-				}
-				else
-				{
-					$bloc['off_lvl'] = "<font color=\"#ff0000\">Не нанят</font>";
-					$bloc['off_link'] = "<font color=\"red\">Нанять</font>";
-				}
-
-				$bloc['off_desc'] = _getText('Desc', $officier);
-				$bloc['off_powr'] = _getText('power', $officier);
-
-				$bloc['off_link'] .= "<br><input type=\"hidden\" name=\"buy\" value=\"" . $officier . "\"><input type=\"submit\" name=\"week\" value=\"на неделю\"><br>Стоимость:&nbsp;<font color=\"lime\">20</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"2week\" value=\"на 2 недели\"><br>Стоимость:&nbsp;<font color=\"lime\">40</font>&nbsp;кр.<div class=\"separator\"></div><input type=\"submit\" name=\"month\" value=\"на месяц\"><br>Стоимость:&nbsp;<font color=\"lime\">80</font>&nbsp;кр.<div class=\"separator\"></div>";
-				$parse['list'][] = $bloc;
-			}
-
-			$this->view->setVar('parse', $parse);
-		}
+		Request::addData('page', $parse);
 		
 		$this->tag->setTitle('Офицеры');
 		$this->showTopPanel(false);

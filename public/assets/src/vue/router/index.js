@@ -20,6 +20,7 @@ import NotesController from './../controllers/notes/notes.vue'
 import PhalanxController from './../controllers/phalanx/phalanx.vue'
 import IndexController from './../controllers/index/index.vue'
 import ResourcesController from './../controllers/resources/resources.vue'
+import OfficierController from './../controllers/officier/officier.vue'
 import HtmlController from './../controllers/html.vue'
 
 export default new VueRouter({
@@ -66,6 +67,9 @@ export default new VueRouter({
 	}, {
 		path: '/resources*',
 		component: ResourcesController
+	}, {
+		path: '/officier*',
+		component: OfficierController
 	}, {
 		path: '/notes',
 		component: NotesController

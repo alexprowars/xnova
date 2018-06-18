@@ -52,7 +52,14 @@ const config = {
 	module: {
 		rules: [{
 			test: /\.vue$/,
-			loader: 'vue-loader',
+			use: [{
+				loader: 'vue-loader',
+				options: {
+					compilerOptions: {
+						preserveWhitespace: false
+					}
+				}
+			}],
 		}, {
 			test: /\.js$/,
 			exclude: /node_modules/,
