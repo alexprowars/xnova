@@ -21,6 +21,7 @@ import PhalanxController from './../controllers/phalanx/phalanx.vue'
 import IndexController from './../controllers/index/index.vue'
 import ResourcesController from './../controllers/resources/resources.vue'
 import OfficierController from './../controllers/officier/officier.vue'
+import CreditsController from './../controllers/credits/credits.vue'
 import HtmlController from './../controllers/html.vue'
 
 export default new VueRouter({
@@ -70,6 +71,9 @@ export default new VueRouter({
 	}, {
 		path: '/officier*',
 		component: OfficierController
+	}, {
+		path: '/credits*',
+		component: CreditsController
 	}, {
 		path: '/notes',
 		component: NotesController

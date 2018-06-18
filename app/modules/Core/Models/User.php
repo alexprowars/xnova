@@ -34,7 +34,7 @@ class User extends Model
 
 	public function getId()
 	{
-		return $this->id;
+		return (int) $this->id;
 	}
 
 	public function getSource()

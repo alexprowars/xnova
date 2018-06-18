@@ -9,6 +9,8 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Models\UserInfo;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/credits")
@@ -26,24 +28,36 @@ class CreditsController extends Controller
 	
 	public function indexAction ()
 	{
-		$userinf = $this->db->query("SELECT email FROM game_users_info WHERE id = " . $this->user->getId())->fetch();
+		$parse = [];
 
-		if ($this->request->hasPost('OutSum'))
+		$userId = $this->request->hasPost('userId') && (int) $this->request->getPost('userId') > 0 ?
+			(int) $this->request->getPost('userId') : $this->user->getId();
+
+		$parse['id'] = $userId;
+		$parse['payment'] = false;
+
+		if ($this->request->hasPost('summ'))
 		{
+			$summ = (int) $this->request->getPost('summ', 'int');
+
 			do
 			{
 				$id = mt_rand(1000000000000, 9999999999999);
 			}
 			while (isset($this->db->fetchOne("SELECT id FROM game_users_payments WHERE transaction_id = ".$id)['id']));
 
-			$this->view->setVar('invid', $id);
+			$info = UserInfo::findFirst($this->user->getId());
+
+			$parse['payment'] = [
+				'id' => $id,
+				'hash' => md5($this->config->robokassa->login.":".$summ.":".$id.":".$this->config->robokassa->public.":Shp_UID=".$parse['id']),
+				'summ' => $summ,
+				'email' => $info->email,
+				'merchant' => $this->config->robokassa->login
+			];
 		}
 
-		$userId = $this->request->hasPost('userId') && (int) $this->request->getPost('userId') > 0 ?
-			(int) $this->request->getPost('userId') : $this->user->getId();
-
-		$this->view->setVar('userId', $userId);
-		$this->view->setVar('userEmail', $userinf['email']);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Покупка кредитов');
 		$this->showTopPanel(false);

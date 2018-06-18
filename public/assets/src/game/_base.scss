@@ -934,11 +934,14 @@ input[type="checkbox"], input[type="radio"] {
 		input[type=submit] {
 			padding: 0 10px 2px 10px;
 		}
+
+		+ .content {
+			border-top: 0;
+		}
 	}
 
 	> .content {
 		border: 1px solid $border-color;
-		border-top: 0;
 		border-radius: 0 0 3px 3px;
 		background: $main-bg-color;
 		color: $text-color;
