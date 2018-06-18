@@ -10,10 +10,9 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Format;
-use Xnova\Helpers;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -149,12 +148,18 @@ class ResourcesController extends Controller
 		
 		$parse = [];
 
+		$parse['resources'] = Vars::getResources();
+
 		$production_level = $this->planet->production_level;
 
-		$parse['buy_form'] = ($this->planet->planet_type == 1 && $this->user->vacation <= 0);
+		$parse['buy_form'] = [
+			'visible' => ($this->planet->planet_type == 1 && $this->user->vacation <= 0),
+			'time' => max(0, $this->planet->merchand - time())
+		];
+
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
 
-		$parse['resource_row'] = [];
+		$parse['items'] = [];
 
 		foreach ($this->registry->reslist['prod'] as $ProdID)
 		{
@@ -195,67 +200,63 @@ class ResourcesController extends Controller
 
 			$energy = $result['energy'];
 
-			$CurrRow = [];
-			$CurrRow['id'] = $ProdID;
-			$CurrRow['name'] = Vars::getName($ProdID);
-			$CurrRow['porcent'] = $BuildLevelFactor;
-			$CurrRow['bonus'] = 0;
+			$row = [];
+			$row['id'] = $ProdID;
+			$row['name'] = Vars::getName($ProdID);
+			$row['factor'] = $BuildLevelFactor;
+			$row['bonus'] = 0;
 
 			if ($ProdID == 4 || $ProdID == 12)
 			{
-				$CurrRow['bonus'] += $this->user->bonusValue('energy');
-				$CurrRow['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
+				$row['bonus'] += $this->user->bonusValue('energy');
+				$row['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
 			}
 
 			if ($ProdID == 212)
-				$CurrRow['bonus'] += $this->user->bonusValue('solar');
+				$row['bonus'] += $this->user->bonusValue('solar');
 
 			if ($ProdID == 1)
-				$CurrRow['bonus'] += $this->user->bonusValue('metal');
+				$row['bonus'] += $this->user->bonusValue('metal');
 
 			if ($ProdID == 2)
-				$CurrRow['bonus'] += $this->user->bonusValue('crystal');
+				$row['bonus'] += $this->user->bonusValue('crystal');
 
 			if ($ProdID == 3)
-				$CurrRow['bonus'] += $this->user->bonusValue('deuterium');
+				$row['bonus'] += $this->user->bonusValue('deuterium');
 
-			$CurrRow['bonus'] = ($CurrRow['bonus'] - 1) * 100;
+			$row['bonus'] = ($row['bonus'] - 1) * 100;
 
-			$CurrRow['level_type'] = $BuildLevel;
+			$row['level'] = $BuildLevel;
 
 			foreach (Vars::getResources() AS $res)
-				$CurrRow[$res.'_type'] = $$res;
+				$row['resources'][$res] = $$res;
 
-			$CurrRow['energy_type'] = $energy;
+			$row['resources']['energy'] = $energy;
 
-			$parse['resource_row'][] = $CurrRow;
+			$parse['items'][] = $row;
 		}
+
+		$parse['production'] = [];
 
 		foreach (Vars::getResources() AS $res)
 		{
+			$row = [];
+
 			if (!$this->user->isVacation())
-				$parse[$res.'_basic_income'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
+				$row['basic'] = $this->config->game->get($res.'_basic_income', 0) * $this->config->game->get('resource_multiplier', 1);
 			else
-				$parse[$res.'_basic_income'] = 0;
+				$row['basic'] = 0;
 
-			$parse[$res.'_max'] = '<font color="#' . (($this->planet->{$res.'_max'} < $this->planet->{$res}) ? 'ff00' : '00ff') . '00">';
-			$parse[$res.'_max'] .= Format::number($this->planet->{$res.'_max'} / 1000) . " k</font>";
+			$row['max'] = (int) $this->planet->{$res.'_max'};
+			$row['total'] = $this->planet->{$res.'_perhour'} + $row['basic'];
+			$row['storage'] = floor($this->planet->{$res} / $this->planet->{$res.'_max'} * 100);
 
-			$parse[$res.'_total'] = $this->planet->{$res.'_perhour'} + $parse[$res.'_basic_income'];
-			$parse[$res.'_storage'] = floor($this->planet->{$res} / $this->planet->{$res.'_max'} * 100);
-			$parse[$res.'_storage_bar'] = floor(($this->planet->{$res} / $this->planet->{$res.'_max'}) * 100);
+			$parse['buy_form'][$res] = $row['total'] * 8;
 
-			if ($parse[$res.'_storage_bar'] >= 100)
-				$parse[$res.'_storage_barcolor'] = '#C00000';
-			elseif ($parse[$res.'_storage_bar'] >= 80)
-				$parse[$res.'_storage_barcolor'] = '#C0C000';
-			else
-				$parse[$res.'_storage_barcolor'] = '#00C000';
+			if ($parse['buy_form'][$res] < 0)
+				$parse['buy_form'][$res] = 0;
 
-			$parse['buy_'.$res] = $parse[$res.'_total'] * 8;
-
-			if ($parse['buy_'.$res] < 0)
-				$parse['buy_'.$res] = 0;
+			$parse['production'][$res] = $row;
 		}
 
 		if ($this->request->hasQuery('buy') && $this->planet->id > 0 && $this->planet->planet_type == 1)
@@ -263,24 +264,18 @@ class ResourcesController extends Controller
 			$this->buy($parse);
 		}
 
-		foreach (Vars::getResources() AS $res)
-			$parse['buy_'.$res] = Helpers::colorNumber(Format::number($parse['buy_'.$res]));
+		$parse['production']['energy'] = [
+			'basic' => (int) $this->config->game->get('energy_basic_income'),
+			'max' => floor($this->planet->energy_max),
+			'total' => floor(($this->planet->energy_max + $this->config->game->get('energy_basic_income')) + $this->planet->energy_used)
+		];
 
-		$parse['energy_basic_income'] = $this->config->game->get('energy_basic_income');
+		$parse['production_level'] = $production_level;
 
-		$parse['energy_total'] = Helpers::colorNumber(Format::number(floor(($this->planet->energy_max + $parse['energy_basic_income']) + $this->planet->energy_used)));
-		$parse['energy_max'] = Format::number(floor($this->planet->energy_max));
+		$parse['planet_name'] = $this->planet->name;
+		$parse['energy_tech'] = $this->user->getTechLevel('energy');
 
-		$parse['merchand'] = $this->planet->merchand;
-
-		$parse['production_level_bar'] = $production_level;
-		$parse['production_level'] = "{$production_level}%";
-		$parse['production_level_barcolor'] = '#00ff00';
-		$parse['name'] = $this->planet->name;
-
-		$parse['et'] = $this->user->getTechLevel('energy');
-
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Сырьё');
 	}

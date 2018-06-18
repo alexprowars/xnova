@@ -64,7 +64,7 @@ export default new VueRouter({
 		path: '/merchant',
 		component: MerchantController
 	}, {
-		path: '/resources',
+		path: '/resources*',
 		component: ResourcesController
 	}, {
 		path: '/notes',

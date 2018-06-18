@@ -944,6 +944,10 @@ input[type="checkbox"], input[type="radio"] {
 		color: $text-color;
 		font-size: 1rem;
 	}
+
+	+ .block {
+		margin-top: 5px;
+	}
 }
 
 .table.table-noborder > tbody > tr > th, .table.table-noborder > tbody > tr > td {
