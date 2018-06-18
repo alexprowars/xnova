@@ -22,6 +22,8 @@ import IndexController from './../controllers/index/index.vue'
 import ResourcesController from './../controllers/resources/resources.vue'
 import OfficierController from './../controllers/officier/officier.vue'
 import CreditsController from './../controllers/credits/credits.vue'
+import TechController from './../controllers/tech/tech.vue'
+import TechInfoController from './../controllers/tech/tech-info.vue'
 import HtmlController from './../controllers/html.vue'
 
 export default new VueRouter({
@@ -74,6 +76,12 @@ export default new VueRouter({
 	}, {
 		path: '/credits*',
 		component: CreditsController
+	}, {
+		path: '/tech/:tech_id',
+		component: TechInfoController
+	}, {
+		path: '/tech*',
+		component: TechController
 	}, {
 		path: '/notes',
 		component: NotesController

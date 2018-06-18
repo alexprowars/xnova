@@ -8,7 +8,9 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Building;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -109,7 +111,8 @@ class TechController extends Controller
 		if (!count($parse[count($parse) - 1]['items']))
 			unset($parse[count($parse) - 1]);
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$this->showTopPanel(false);
 	}
 
@@ -119,18 +122,52 @@ class TechController extends Controller
 	 */
 	public function infoAction ($element)
 	{
+		$page = [];
+
 		$element = (int) $element;
 
 		if ($element > 0 && Vars::getName($element))
 		{
-			$this->view->setVar('element', $element);
-			$this->view->setVar('level', $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getBuildLevel($element));
+			$page['element'] = $element;
+			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getBuildLevel($element);
+			$page['access'] = Building::isTechnologieAccessible($this->user, $this->planet, $element);
 
 			if (isset($this->registry->requeriments[$element]))
-				$this->view->setVar('req', $this->registry->requeriments[$element]);
+				$page['req'] = $this->registry->requeriments[$element];
 
 			$this->tag->setTitle(_getText('tech')[$element]);
 		}
+
+		$data = [
+			0 => []
+		];
+
+		foreach ($this->registry->resource as $id => $code)
+		{
+			$data[$id] = [
+				'name' => _getText('tech', $id),
+				'img' => $id.'.gif',
+				'req' => [],
+			];
+
+			if (isset($this->registry->requeriments[$id]) && count($this->registry->requeriments[$id]))
+			{
+				foreach ($this->registry->requeriments[$id] as $ids => $level)
+				{
+					$data[$id]['req'][] = [
+						$ids,
+						_getText('tech', $ids),
+						$level,
+						-1,
+						$level
+					];
+				}
+			}
+		}
+
+		$page['data'] = $data;
+
+		Request::addData('page', $page);
 
 		$this->showTopPanel(false);
 	}

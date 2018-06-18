@@ -1,33 +1,5 @@
-/*-------------------------------------------------------------------------------------------
-|     ECOTree.js
-|--------------------------------------------------------------------------------------------
-| (c) 2006 Emilio Cortegoso Lobato
-|     
-|     ECOTree is a javascript component for tree drawing. It implements the node positioning
-|     algorithm of John Q. Walker II "Positioning nodes for General Trees".
-|    
-|     Basic features include:
-|       - Layout features: Different node sizes, colors, link types, alignments, separations
-|                          root node positions, etc...
-|       - Nodes can include a title and an hyperlink, and a hidden metadata.
-|       - Subtrees can be collapsed and expanded at will.
-|       - Single and Multiple selection modes.
-|       - Search nodes using title and metadata as well.     
-|     
-|     This code is free source, but you will be kind if you don't distribute modified versions
-|     with the same name, to avoid version collisions. Otherwise, please hack it!
-|
-|     References:
-|                                                                
-|     Walker II, J. Q., "A Node-Positioning Algorithm for General Trees"
-|	     			   Software � Practice and Experience 10, 1980 553-561.    
-|                      (Obtained from C++ User's journal. Feb. 1991)                                                                              
-|					   
-|     Last updated: October 26th, 2006
-|     Version: 1.0
-\------------------------------------------------------------------------------------------*/
 
-ECONode = function (id, pid, dsc, w, h, c, linkc, bc, target, meta) {
+function ECONode (id, pid, dsc, w, h, c, linkc, bc, target, meta) {
 	this.id = id;
 	this.pid = pid;
 	this.dsc = dsc;
@@ -58,7 +30,7 @@ ECONode = function (id, pid, dsc, w, h, c, linkc, bc, target, meta) {
 }
 
 ECONode.prototype._getLevel = function () {
-	if (this.nodeParent.id == -1) {return 0;}
+	if (this.nodeParent.id === -1) {return 0;}
 	else return this.nodeParent._getLevel() + 1;
 }
 
@@ -66,13 +38,13 @@ ECONode.prototype._isAncestorCollapsed = function () {
 	if (this.nodeParent.isCollapsed) { return true; }
 	else 
 	{
-		if (this.nodeParent.id == -1) { return false; }
+		if (this.nodeParent.id === -1) { return false; }
 		else	{ return this.nodeParent._isAncestorCollapsed(); }
 	}
 }
 
 ECONode.prototype._setAncestorsExpanded = function () {
-	if (this.nodeParent.id == -1) { return; }
+	if (this.nodeParent.id === -1) { return; }
 	else 
 	{
 		this.nodeParent.isCollapsed = false;
@@ -89,14 +61,14 @@ ECONode.prototype._getChildrenCount = function () {
 }
 
 ECONode.prototype._getLeftSibling = function () {
-    if(this.leftNeighbor != null && this.leftNeighbor.nodeParent == this.nodeParent)
+    if(this.leftNeighbor != null && this.leftNeighbor.nodeParent === this.nodeParent)
         return this.leftNeighbor;
     else
         return null;	
 }
 
 ECONode.prototype._getRightSibling = function () {
-    if(this.rightNeighbor != null && this.rightNeighbor.nodeParent == this.nodeParent)
+    if(this.rightNeighbor != null && this.rightNeighbor.nodeParent === this.nodeParent)
         return this.rightNeighbor;
     else
         return null;	
@@ -107,8 +79,8 @@ ECONode.prototype._getChildAt = function (i) {
 }
 
 ECONode.prototype._getChildrenCenter = function (tree) {
-    node = this._getFirstChild();
-    node1 = this._getLastChild();
+    let node = this._getFirstChild();
+	let node1 = this._getLastChild();
     return node.prelim + ((node1.prelim - node.prelim) + tree._getNodeSize(node1)) / 2;	
 }
 
@@ -121,9 +93,9 @@ ECONode.prototype._getLastChild = function () {
 }
 
 ECONode.prototype._drawChildrenLinks = function (tree) {
-	var s = [];
-	var xa = 0, ya = 0, xb = 0, yb = 0, xc = 0, yc = 0, xd = 0, yd = 0;
-	var node1 = null;
+	let s = [];
+	let xa = 0, ya = 0, xb = 0, yb = 0, xc = 0, yc = 0, xd = 0, yd = 0;
+	let node1 = null;
 	
 	switch(tree.config.iRootOrientation)
 	{
@@ -148,7 +120,7 @@ ECONode.prototype._drawChildrenLinks = function (tree) {
 			break;		
 	}
 	
-	for (var k = 0; k < this.nodeChildren.length; k++)
+	for (let k = 0; k < this.nodeChildren.length; k++)
 	{
 		node1 = this.nodeChildren[k];
 				
@@ -259,7 +231,7 @@ ECONode.prototype._drawChildrenLinks = function (tree) {
 	
 	return s.join('');
 }
-ECOTree = function (obj, elm) {
+function ECOTree (obj, elm) {
 	this.config = {
 		iMaxDepth : 100,
 		iLevelSeparation : 60,
@@ -363,13 +335,13 @@ ECOTree._roundedRect = function (ctx,x,y,width,height,radius) {
 }
 
 ECOTree._canvasNodeClickHandler = function (tree,target,nodeid) {
-	if (target != nodeid) return;
+	if (target !== nodeid) return;
 	tree.selectNode(nodeid,true);
 }
 
 //Layout algorithm
 ECOTree._firstWalk = function (tree, node, level) {
-		var leftSibling = null;
+		let leftSibling = null;
 		
         node.XPosition = 0;
         node.YPosition = 0;
@@ -380,7 +352,7 @@ ECOTree._firstWalk = function (tree, node, level) {
         tree._setLevelHeight(node, level);
         tree._setLevelWidth(node, level);
         tree._setNeighbors(node, level);
-        if(node._getChildrenCount() == 0 || level == tree.config.iMaxDepth)
+        if(node._getChildrenCount() === 0 || level === tree.config.iMaxDepth)
         {
             leftSibling = node._getLeftSibling();
             if(leftSibling != null)
@@ -390,14 +362,14 @@ ECOTree._firstWalk = function (tree, node, level) {
         } 
         else
         {
-            var n = node._getChildrenCount();
-            for(var i = 0; i < n; i++)
+            let n = node._getChildrenCount();
+            for(let i = 0; i < n; i++)
             {
-                var iChild = node._getChildAt(i);
+                let iChild = node._getChildAt(i);
                 ECOTree._firstWalk(tree, iChild, level + 1);
             }
 
-            var midPoint = node._getChildrenCenter(tree);
+            let midPoint = node._getChildrenCenter(tree);
             midPoint -= tree._getNodeSize(node) / 2;
             leftSibling = node._getLeftSibling();
             if(leftSibling != null)
@@ -414,16 +386,16 @@ ECOTree._firstWalk = function (tree, node, level) {
 }
 
 ECOTree._apportion = function (tree, node, level) {
-        var firstChild = node._getFirstChild();
-        var firstChildLeftNeighbor = firstChild.leftNeighbor;
-        var j = 1;
-        for(var k = tree.config.iMaxDepth - level; firstChild != null && firstChildLeftNeighbor != null && j <= k;)
+        let firstChild = node._getFirstChild();
+        let firstChildLeftNeighbor = firstChild.leftNeighbor;
+        let j = 1;
+        for(let k = tree.config.iMaxDepth - level; firstChild != null && firstChildLeftNeighbor != null && j <= k;)
         {
-            var modifierSumRight = 0;
-            var modifierSumLeft = 0;
-            var rightAncestor = firstChild;
-            var leftAncestor = firstChildLeftNeighbor;
-            for(var l = 0; l < j; l++)
+            let modifierSumRight = 0;
+            let modifierSumLeft = 0;
+            let rightAncestor = firstChild;
+            let leftAncestor = firstChildLeftNeighbor;
+            for(let l = 0; l < j; l++)
             {
                 rightAncestor = rightAncestor.nodeParent;
                 leftAncestor = leftAncestor.nodeParent;
@@ -431,19 +403,19 @@ ECOTree._apportion = function (tree, node, level) {
                 modifierSumLeft += leftAncestor.modifier;
             }
 
-            var totalGap = (firstChildLeftNeighbor.prelim + modifierSumLeft + tree._getNodeSize(firstChildLeftNeighbor) + tree.config.iSubtreeSeparation) - (firstChild.prelim + modifierSumRight);
+            let totalGap = (firstChildLeftNeighbor.prelim + modifierSumLeft + tree._getNodeSize(firstChildLeftNeighbor) + tree.config.iSubtreeSeparation) - (firstChild.prelim + modifierSumRight);
             if(totalGap > 0)
             {
-                var subtreeAux = node;
-                var numSubtrees = 0;
-                for(; subtreeAux != null && subtreeAux != leftAncestor; subtreeAux = subtreeAux._getLeftSibling())
+                let subtreeAux = node;
+                let numSubtrees = 0;
+                for(; subtreeAux != null && subtreeAux !== leftAncestor; subtreeAux = subtreeAux._getLeftSibling())
                     numSubtrees++;
 
                 if(subtreeAux != null)
                 {
-                    var subtreeMoveAux = node;
-                    var singleGap = totalGap / numSubtrees;
-                    for(; subtreeMoveAux != leftAncestor; subtreeMoveAux = subtreeMoveAux._getLeftSibling())
+                    let subtreeMoveAux = node;
+                    let singleGap = totalGap / numSubtrees;
+                    for(; subtreeMoveAux !== leftAncestor; subtreeMoveAux = subtreeMoveAux._getLeftSibling())
                     {
                         subtreeMoveAux.prelim += totalGap;
                         subtreeMoveAux.modifier += totalGap;
@@ -453,7 +425,7 @@ ECOTree._apportion = function (tree, node, level) {
                 }
             }
             j++;
-            if(firstChild._getChildrenCount() == 0)
+            if(firstChild._getChildrenCount() === 0)
                 firstChild = tree._getLeftmost(node, 0, j);
             else
                 firstChild = firstChild._getFirstChild();
@@ -465,11 +437,11 @@ ECOTree._apportion = function (tree, node, level) {
 ECOTree._secondWalk = function (tree, node, level, X, Y) {
         if(level <= tree.config.iMaxDepth)
         {
-            var xTmp = tree.rootXOffset + node.prelim + X;
-            var yTmp = tree.rootYOffset + Y;
-            var maxsizeTmp = 0;
-            var nodesizeTmp = 0;
-            var flag = false;
+            let xTmp = tree.rootXOffset + node.prelim + X;
+            let yTmp = tree.rootYOffset + Y;
+            let maxsizeTmp = 0;
+            let nodesizeTmp = 0;
+            let flag = false;
             
             switch(tree.config.iRootOrientation)
             {            
@@ -505,7 +477,7 @@ ECOTree._secondWalk = function (tree, node, level, X, Y) {
             }
             if(flag)
             {
-                var swapTmp = node.XPosition;
+                let swapTmp = node.XPosition;
                 node.XPosition = node.YPosition;
                 node.YPosition = swapTmp;
             }
@@ -519,9 +491,9 @@ ECOTree._secondWalk = function (tree, node, level, X, Y) {
 	                node.XPosition = -node.XPosition - nodesizeTmp;
 	                break;
             }
-            if(node._getChildrenCount() != 0)
+            if(node._getChildrenCount() !== 0)
                 ECOTree._secondWalk(tree, node._getFirstChild(), level + 1, X + node.modifier, Y + maxsizeTmp + tree.config.iLevelSeparation);
-            var rightSibling = node._getRightSibling();
+            let rightSibling = node._getRightSibling();
             if(rightSibling != null)
                 ECOTree._secondWalk(tree, rightSibling, level, X, Y);
         }	
@@ -587,13 +559,13 @@ ECOTree.prototype._getNodeSize = function (node) {
 
 ECOTree.prototype._getLeftmost = function (node, level, maxlevel) {
     if(level >= maxlevel) return node;
-    if(node._getChildrenCount() == 0) return null;
+    if(node._getChildrenCount() === 0) return null;
     
-    var n = node._getChildrenCount();
-    for(var i = 0; i < n; i++)
+    let n = node._getChildrenCount();
+    for(let i = 0; i < n; i++)
     {
-        var iChild = node._getChildAt(i);
-        var leftmostDescendant = this._getLeftmost(iChild, level + 1, maxlevel);
+        let iChild = node._getChildAt(i);
+        let leftmostDescendant = this._getLeftmost(iChild, level + 1, maxlevel);
         if(leftmostDescendant != null)
             return leftmostDescendant;
     }
@@ -602,9 +574,9 @@ ECOTree.prototype._getLeftmost = function (node, level, maxlevel) {
 }
 
 ECOTree.prototype._selectNodeInt = function (dbindex, flagToggle) {
-	if (this.config.selectMode == ECOTree.SL_SINGLE)
+	if (this.config.selectMode === ECOTree.SL_SINGLE)
 	{
-		if ((this.iSelectedNode != dbindex) && (this.iSelectedNode != -1))
+		if ((this.iSelectedNode !== dbindex) && (this.iSelectedNode != -1))
 		{
 			this.nDatabaseNodes[this.iSelectedNode].isSelected = false;
 		}		
@@ -614,8 +586,8 @@ ECOTree.prototype._selectNodeInt = function (dbindex, flagToggle) {
 }
 
 ECOTree.prototype._collapseAllInt = function (flag) {
-	var node = null;
-	for (var n = 0; n < this.nDatabaseNodes.length; n++)
+	let node = null;
+	for (let n = 0; n < this.nDatabaseNodes.length; n++)
 	{ 
 		node = this.nDatabaseNodes[n];
 		if (node.canCollapse) node.isCollapsed = flag;
@@ -624,8 +596,8 @@ ECOTree.prototype._collapseAllInt = function (flag) {
 }
 
 ECOTree.prototype._selectAllInt = function (flag) {
-	var node = null;
-	for (var k = 0; k < this.nDatabaseNodes.length; k++)
+	let node = null;
+	for (let k = 0; k < this.nDatabaseNodes.length; k++)
 	{ 
 		node = this.nDatabaseNodes[k];
 		node.isSelected = flag;
@@ -635,12 +607,12 @@ ECOTree.prototype._selectAllInt = function (flag) {
 }
 
 ECOTree.prototype._drawTree = function () {
-	var s = [];
-	var node = null;
-	var color = "";
-	var border = "";
+	let s = [];
+	let node = null;
+	let color = "";
+	let border = "";
 			
-	for (var n = 0; n < this.nDatabaseNodes.length; n++)
+	for (let n = 0; n < this.nDatabaseNodes.length; n++)
 	{ 
 		node = this.nDatabaseNodes[n];
 		
@@ -650,7 +622,7 @@ ECOTree.prototype._drawTree = function () {
 				border = node.bc;
 				break;
 			case ECOTree.CS_LEVEL:
-				var iColor = node._getLevel() % this.config.levelColors.length;
+				let iColor = node._getLevel() % this.config.levelColors.length;
 				color = this.config.levelColors[iColor];
 				iColor = node._getLevel() % this.config.levelBorderColors.length;
 				border = this.config.levelBorderColors[iColor];
@@ -664,7 +636,7 @@ ECOTree.prototype._drawTree = function () {
 			this.ctx.strokeStyle = border;
 			switch (this.config.nodeFill) {
 				case ECOTree.NF_GRADIENT:							
-					var lgradient = this.ctx.createLinearGradient(node.XPosition,0,node.XPosition+node.w,0);
+					let lgradient = this.ctx.createLinearGradient(node.XPosition,0,node.XPosition+node.w,0);
 					lgradient.addColorStop(0.0,((node.isSelected)?this.config.nodeSelColor:color));
 					lgradient.addColorStop(1.0,"#F5FFF5");
 					this.ctx.fillStyle = lgradient;
@@ -692,7 +664,7 @@ ECOTree.prototype._drawTree = function () {
 }
 
 ECOTree.prototype.toString = function () {	
-	var s = [];
+	let s = [];
 	
 	this._positionTree();
 	
@@ -705,16 +677,16 @@ ECOTree.prototype.toString = function () {
 
 ECOTree.prototype.UpdateTree = function () {	
 	this.elm.innerHTML = this;
-	if (this.render == "CANVAS") {
-		var canvas = document.getElementById("ECOTreecanvas");
+	if (this.render === "CANVAS") {
+		let canvas = document.getElementById("ECOTreecanvas");
 		if (canvas && canvas.getContext)  {
 			this.canvasoffsetLeft = canvas.offsetLeft;
 			this.canvasoffsetTop = canvas.offsetTop;
 			this.ctx = canvas.getContext('2d');
-			var h = this._drawTree();	
-			var r = this.elm.ownerDocument.createRange();
+			let h = this._drawTree();
+			let r = this.elm.ownerDocument.createRange();
 			r.setStartBefore(this.elm);
-			var parsedHTML = r.createContextualFragment(h);								
+			let parsedHTML = r.createContextualFragment(h);
 			//this.elm.parentNode.insertBefore(parsedHTML,this.elm)
 			//this.elm.parentNode.appendChild(parsedHTML);
 			this.elm.appendChild(parsedHTML);
@@ -724,24 +696,24 @@ ECOTree.prototype.UpdateTree = function () {
 }
 
 ECOTree.prototype.add = function (id, pid, dsc, w, h, c, linkc, bc, target, meta) {	
-	var nw = w || this.config.defaultNodeWidth; //Width, height, colors, target and metadata defaults...
-	var nh = h || this.config.defaultNodeHeight;
-	var color = c || this.config.nodeColor;
-	var linkclr = linkc || this.config.linkColor;
-	var border = bc || this.config.nodeBorderColor;
-	var tg = (this.config.useTarget) ? ((typeof target == "undefined") ? (this.config.defaultTarget) : target) : null;
-	var metadata = (typeof meta != "undefined")	? meta : "";
+	let nw = w || this.config.defaultNodeWidth; //Width, height, colors, target and metadata defaults...
+	let nh = h || this.config.defaultNodeHeight;
+	let color = c || this.config.nodeColor;
+	let linkclr = linkc || this.config.linkColor;
+	let border = bc || this.config.nodeBorderColor;
+	let tg = (this.config.useTarget) ? ((typeof target === "undefined") ? (this.config.defaultTarget) : target) : null;
+	let metadata = (typeof meta !== "undefined")	? meta : "";
 	
-	var pnode = null; //Search for parent node in database
-	if (pid == -1) 
+	let pnode = null; //Search for parent node in database
+	if (pid === -1)
 		{
 			pnode = this.root;
 		}
 	else
 		{
-			for (var k = 0; k < this.nDatabaseNodes.length; k++)
+			for (let k = 0; k < this.nDatabaseNodes.length; k++)
 			{
-				if (this.nDatabaseNodes[k].id == pid)
+				if (this.nDatabaseNodes[k].id === pid)
 				{
 					pnode = this.nDatabaseNodes[k];
 					break;
@@ -749,43 +721,43 @@ ECOTree.prototype.add = function (id, pid, dsc, w, h, c, linkc, bc, target, meta
 			}	
 		}
 	
-	var node = new ECONode(id, pid, dsc, nw, nh, color, linkclr, border, tg, metadata);	//New node creation...
+	let node = new ECONode(id, pid, dsc, nw, nh, color, linkclr, border, tg, metadata);	//New node creation...
 	node.nodeParent = pnode;  //Set it's parent
 	pnode.canCollapse = true; //It's obvious that now the parent can collapse	
-	var i = this.nDatabaseNodes.length;	//Save it in database
+	let i = this.nDatabaseNodes.length;	//Save it in database
 	node.dbIndex = this.mapIDs[id] = i;	 
 	this.nDatabaseNodes[i] = node;	
-	var h = pnode.nodeChildren.length; //Add it as child of it's parent
-	node.siblingIndex = h;
-	pnode.nodeChildren[h] = node;
+	let hs = pnode.nodeChildren.length; //Add it as child of it's parent
+	node.siblingIndex = hs;
+	pnode.nodeChildren[hs] = node;
 }
 
 ECOTree.prototype.searchNodes = function (str) {
-	var node = null;
-	var m = this.config.searchMode;
-	var sm = (this.config.selectMode == ECOTree.SL_SINGLE);	 
+	let node = null;
+	let m = this.config.searchMode;
+	let sm = (this.config.selectMode === ECOTree.SL_SINGLE);
 	
-	if (typeof str == "undefined") return;
-	if (str == "") return;
+	if (typeof str === "undefined") return;
+	if (str === "") return;
 	
-	var found = false;
-	var n = (sm) ? this.iLastSearch : 0;
-	if (n == this.nDatabaseNodes.length) n = this.iLastSeach = 0;
+	let found = false;
+	let n = (sm) ? this.iLastSearch : 0;
+	if (n === this.nDatabaseNodes.length) n = this.iLastSeach = 0;
 	
 	str = str.toLocaleUpperCase();
 	
 	for (; n < this.nDatabaseNodes.length; n++)
 	{ 		
 		node = this.nDatabaseNodes[n];				
-		if (node.dsc.toLocaleUpperCase().indexOf(str) != -1 && ((m == ECOTree.SM_DSC) || (m == ECOTree.SM_BOTH))) { node._setAncestorsExpanded(); this._selectNodeInt(node.dbIndex, false); found = true; }
-		if (node.meta.toLocaleUpperCase().indexOf(str) != -1 && ((m == ECOTree.SM_META) || (m == ECOTree.SM_BOTH))) { node._setAncestorsExpanded(); this._selectNodeInt(node.dbIndex, false); found = true; }
+		if (node.dsc.toLocaleUpperCase().indexOf(str) !== -1 && ((m === ECOTree.SM_DSC) || (m === ECOTree.SM_BOTH))) { node._setAncestorsExpanded(); this._selectNodeInt(node.dbIndex, false); found = true; }
+		if (node.meta.toLocaleUpperCase().indexOf(str) !== -1 && ((m === ECOTree.SM_META) || (m === ECOTree.SM_BOTH))) { node._setAncestorsExpanded(); this._selectNodeInt(node.dbIndex, false); found = true; }
 		if (sm && found) {this.iLastSearch = n + 1; break;}
 	}	
 	this.UpdateTree();	
 }
 
 ECOTree.prototype.selectAll = function () {
-	if (this.config.selectMode != ECOTree.SL_MULTIPLE) return;
+	if (this.config.selectMode !== ECOTree.SL_MULTIPLE) return;
 	this._selectAllInt(true);
 }
 
@@ -802,8 +774,8 @@ ECOTree.prototype.expandAll = function () {
 }
 
 ECOTree.prototype.collapseNode = function (nodeid, upd) {
-	var dbindex = this.mapIDs[nodeid];
-	if (this.nDatabaseNodes[dbindex].canCollapse == true)
+	let dbindex = this.mapIDs[nodeid];
+	if (this.nDatabaseNodes[dbindex].canCollapse === true)
 	{
 		this.nDatabaseNodes[dbindex].isCollapsed = !this.nDatabaseNodes[dbindex].isCollapsed;
 		if (upd) this.UpdateTree();
@@ -816,36 +788,36 @@ ECOTree.prototype.selectNode = function (nodeid, upd) {
 }
 
 ECOTree.prototype.setNodeTitle = function (nodeid, title, upd) {
-	var dbindex = this.mapIDs[nodeid];
+	let dbindex = this.mapIDs[nodeid];
 	this.nDatabaseNodes[dbindex].dsc = title;
 	if (upd) this.UpdateTree();
 }
 
 ECOTree.prototype.setNodeMetadata = function (nodeid, meta, upd) {
-	var dbindex = this.mapIDs[nodeid];
+	let dbindex = this.mapIDs[nodeid];
 	this.nDatabaseNodes[dbindex].meta = meta;
 	if (upd) this.UpdateTree();
 }
 
 ECOTree.prototype.setNodeTarget = function (nodeid, target, upd) {
-	var dbindex = this.mapIDs[nodeid];
+	let dbindex = this.mapIDs[nodeid];
 	this.nDatabaseNodes[dbindex].target = target;
 	if (upd) this.UpdateTree();	
 }
 
 ECOTree.prototype.setNodeColors = function (nodeid, color, border, upd) {
-	var dbindex = this.mapIDs[nodeid];
+	let dbindex = this.mapIDs[nodeid];
 	if (color) this.nDatabaseNodes[dbindex].c = color;
 	if (border) this.nDatabaseNodes[dbindex].bc = border;
 	if (upd) this.UpdateTree();	
 }
 
 ECOTree.prototype.getSelectedNodes = function () {
-	var node = null;
-	var selection = [];
-	var selnode = null;	
+	let node = null;
+	let selection = [];
+	let selnode = null;
 	
-	for (var n=0; n<this.nDatabaseNodes.length; n++) {
+	for (let n=0; n<this.nDatabaseNodes.length; n++) {
 		node = this.nDatabaseNodes[n];
 		if (node.isSelected)
 		{			
@@ -859,3 +831,8 @@ ECOTree.prototype.getSelectedNodes = function () {
 	}
 	return selection;
 }
+
+export {
+	ECOTree,
+	ECONode
+};
