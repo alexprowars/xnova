@@ -1,3 +1,5 @@
+import './scss/admin.scss';
+
 jQuery.fn.hasDataAttr = function(name) {
   return $(this)[0].hasAttribute('data-'+ name);
 };

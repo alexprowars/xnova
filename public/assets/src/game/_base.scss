@@ -47,8 +47,7 @@ table table td, .table table td {
 }
 
 body {
-	//noinspection CssUnknownTarget
-	background: #000 url(../images/background_1.jpg) no-repeat bottom fixed;
+	background: #000 url(../../images/background_1.jpg) no-repeat bottom fixed;
 	height: 100%;
 	width: 100%;
 	font: 1rem verdana, arial, sans-serif;
@@ -672,8 +671,7 @@ ul {
 			}
 
 			.reload {
-				//noinspection CssUnknownTarget
-				background: url(../images/reload-icon.png) 0 0 no-repeat;
+				background: url(../../images/reload-icon.png) 0 0 no-repeat;
 				width: 20px;
 				height: 20px;
 				cursor: pointer;
@@ -1011,8 +1009,7 @@ div.errormessage {
 }
 
 footer {
-	//noinspection CssUnknownTarget
-	background: #000 url(../images/bar-bg.gif) repeat-x top;
+	background: #000 url(../../images/bar-bg.gif) repeat-x top;
 	color: #848484;
 	height: 25px;
 	line-height: 25px;

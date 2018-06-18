@@ -42,6 +42,7 @@
 
 <script>
 	import {parser} from '../../js/parser'
+	import io from 'socket.io'
 
 	export default {
 		name: "chat",

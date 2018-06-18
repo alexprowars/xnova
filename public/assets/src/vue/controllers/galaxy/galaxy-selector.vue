@@ -4,7 +4,7 @@
 
 		<div class="row">
 			<div class="col-12 d-sm-none">
-				<game-page-galaxy-selector-shortcut :items="shortcuts"></game-page-galaxy-selector-shortcut>
+				<galaxy-selector-shortcut :items="shortcuts"></galaxy-selector-shortcut>
 			</div>
 			<div class="separator d-sm-none"></div>
 			<div class="col-sm-4 col-6">
@@ -28,7 +28,7 @@
 				</table>
 			</div>
 			<div class="col-sm-4 d-none d-sm-block">
-				<game-page-galaxy-selector-shortcut :items="shortcuts"></game-page-galaxy-selector-shortcut>
+				<galaxy-selector-shortcut :items="shortcuts"></galaxy-selector-shortcut>
 			</div>
 			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
@@ -56,6 +56,7 @@
 
 <script>
 	import Vue from 'vue'
+	import GalaxySelectorShortcut from './galaxy-selector-shortcut.vue'
 
 	export default {
 		name: "galaxy-selector",
@@ -80,7 +81,7 @@
 			}
 		},
 		components: {
-			'game-page-galaxy-selector-shortcut': require('./galaxy-selector-shortcut.vue'),
+			GalaxySelectorShortcut
 		}
 	}
 </script>

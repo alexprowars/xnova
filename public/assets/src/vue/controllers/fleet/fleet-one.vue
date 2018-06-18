@@ -107,6 +107,8 @@
 </template>
 
 <script>
+	import * as fleet from './../../js/fleet.js'
+
 	export default {
 		name: "fleet-one",
 		computed: {
@@ -146,8 +148,6 @@
 		methods: {
 			info ()
 			{
-				let fleet = require('./../../js/fleet.js');
-
 				this.distance = fleet.distance(this.position, this.page['target']);
 				this.maxspeed = fleet.speed(this.page['ships']);
 

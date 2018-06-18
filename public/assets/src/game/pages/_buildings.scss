@@ -1,5 +1,3 @@
-@import "../variables";
-
 .page-building {
 
 	.block > .title {
@@ -48,8 +46,7 @@
 			}
 
 			&.blocked .building-info-img:after {
-				//noinspection CssUnknownTarget
-				background: url(../images/buildings/blocked_frame.png) no-repeat;
+				background: url(../../../images/buildings/blocked_frame.png) no-repeat;
 				width: 98px;
 				height: 98px;
 				content: " ";
@@ -179,8 +176,7 @@
 	&.page-building-unit .page-building-items-item.building {
 
 		&.blocked .building-info-img:after {
-			//noinspection CssUnknownTarget
-			background: url(../images/buildings/blocked_frame-full.png) no-repeat;
+			background: url(../../../images/buildings/blocked_frame-full.png) no-repeat;
 			background-size: cover;
 		}
 
@@ -215,25 +211,21 @@
 		background-repeat: no-repeat;
 
 		&.speed {
-			//noinspection CssUnknownTarget
-			background-image: url('../images/icons/speed.png');
+			background-image: url('../../../images/icons/speed.png');
 			background-position-y: 1px;
 		}
 
 		&.armor {
-			//noinspection CssUnknownTarget
-			background-image: url('../images/icons/armor.png');
+			background-image: url('../../../images/icons/armor.png');
 			background-position-y: 2px;
 		}
 
 		&.damage {
-			//noinspection CssUnknownTarget
-			background-image: url('../images/icons/damage.png');
+			background-image: url('../../../images/icons/damage.png');
 		}
 
 		&.shield {
-			//noinspection CssUnknownTarget
-			background-image: url('../images/icons/shield.png');
+			background-image: url('../../../images/icons/shield.png');
 			background-position-y: 1px;
 		}
 	}

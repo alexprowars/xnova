@@ -33,6 +33,7 @@
 <script>
 	import Vue from 'vue'
 	import {parser} from '../js/parser'
+	import io from 'socket.io'
 
 	export default {
 		name: "chat",

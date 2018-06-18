@@ -1,15 +1,17 @@
 <template>
 	<div class="table overview-fleets">
-		<game-page-overview-fleets-row v-for="item in items" :item="item"></game-page-overview-fleets-row>
+		<fleets-row v-for="item in items" :key="item['id']" :item="item"></fleets-row>
 	</div>
 </template>
 
 <script>
+	import FleetsRow from './overview-fleets-row.vue'
+
 	export default {
 		name: "overview-fleets",
 		props: ['items'],
 		components: {
-			'game-page-overview-fleets-row': require('./overview-fleets-row.vue'),
+			FleetsRow
 		},
 	}
 </script>

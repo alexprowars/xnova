@@ -11,7 +11,7 @@
 			<div class="main-content">
 				<planet-panel v-if="$store.state.view.resources" :planet="$store.state.resources"></planet-panel>
 
-				<application-messages-row v-for="item in messages" :item="item"></application-messages-row>
+				<application-messages-row v-for="(item, i) in messages" :key="i" :item="item"></application-messages-row>
 
 				<div class="main-content-row">
 					<div v-if="html.length" ref="html"></div>
@@ -30,16 +30,22 @@
 
 <script>
 	import Vue from 'vue'
+	import MainMenu from './views/app/main-menu.vue'
+	import ApplicationHeader from './views/app/header.vue'
+	import ApplicationFooter from './views/app/footer.vue'
+	import ApplicationPlanetsList from './views/app/planets-list.vue'
+	import ApplicationMessagesRow from './views/app/messages-row.vue'
+	import PlanetPanel from './views/app/planet-panel.vue'
 
 	export default {
 		name: "application",
 		components: {
-			'main-menu': require('./views/app/main-menu.vue'),
-			'application-header': require('./views/app/header.vue'),
-			'application-footer': require('./views/app/footer.vue'),
-			'application-planets-list': require('./views/app/planets-list.vue'),
-			'planet-panel': require('./views/app/planet-panel.vue'),
-			'application-messages-row': require('./views/app/messages-row.vue'),
+			MainMenu,
+			ApplicationHeader,
+			ApplicationFooter,
+			ApplicationPlanetsList,
+			ApplicationMessagesRow,
+			PlanetPanel,
 		},
 		computed: {
 			html () {

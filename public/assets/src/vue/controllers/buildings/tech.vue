@@ -4,7 +4,7 @@
 			<div class="title">Исследования</div>
 			<div class="content page-building-items">
 				<div class="row">
-					<game-page-buildings-tech-item v-for="item in page.items" :item="item"></game-page-buildings-tech-item>
+					<tech-row v-for="(item, i) in page.items" :key="i" :item="item"></tech-row>
 				</div>
 			</div>
 		</div>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+	import TechRow from './tech-row.vue'
+
 	export default {
 		name: "tech",
 		computed: {
@@ -20,7 +22,7 @@
 			},
 		},
 		components: {
-			'game-page-buildings-tech-item': require('./tech-row.vue')
+			TechRow
 		},
 	}
 </script>

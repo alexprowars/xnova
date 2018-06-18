@@ -1,6 +1,6 @@
 <template>
 	<div class="page-building page-building-unit">
-		<game-page-buildings-unit-queue v-if="page.queue.length > 0" :queue="page.queue"></game-page-buildings-unit-queue>
+		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
 		<div class="content page-building-items">
 			<form ref="form" :action="$root.getUrl('buildings/'+page.mode+'/')" method="post" class="noajax" @submit.prevent="constructAction">
 				<div class="row">
@@ -10,7 +10,7 @@
 						</div>
 					</div>
 
-					<game-page-buildings-unit-item v-for="item in page.items" :item="item"></game-page-buildings-unit-item>
+					<unit-row v-for="(item, i) in page.items" :key="i" :item="item"></unit-row>
 
 					<div class="col-12">
 						<div class="c">
@@ -24,6 +24,9 @@
 </template>
 
 <script>
+	import UnitRow from './unit-row.vue'
+	import UnitQueue from './unit-queue.vue'
+
 	export default {
 		name: "unit",
 		computed: {
@@ -32,8 +35,8 @@
 			},
 		},
 		components: {
-			'game-page-buildings-unit-item': require('./unit-row.vue'),
-			'game-page-buildings-unit-queue': require('./unit-queue.vue'),
+			UnitRow,
+			UnitQueue
 		},
 		methods: {
 			constructAction ()

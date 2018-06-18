@@ -1,4 +1,4 @@
-export function distance (from, to)
+function distance (from, to)
 {
 	let distance = 5;
 
@@ -12,7 +12,7 @@ export function distance (from, to)
 	return distance;
 }
 
-export function speed (ships)
+function speed (ships)
 {
 	let speed = 1000000000;
 
@@ -25,7 +25,7 @@ export function speed (ships)
 	return speed;
 }
 
-export function consumption (params)
+function consumption (params)
 {
 	let consumption = 0;
 
@@ -38,7 +38,7 @@ export function consumption (params)
 	return Math.round(consumption) + 1;
 }
 
-export function duration (params)
+function duration (params)
 {
 	let duration = Math.round((35000 / params.factor * Math.sqrt(params.distance * 10 / params.max_speed) + 10) / params.universe_speed);
 
@@ -48,7 +48,7 @@ export function duration (params)
 	return duration;
 }
 
-export function storage (ships)
+function storage (ships)
 {
 	let storage = 0;
 
@@ -60,7 +60,7 @@ export function storage (ships)
 	return storage;
 }
 
-export function sendMission (mission, galaxy, system, planet, type, count)
+function sendMission (mission, galaxy, system, planet, type, count)
 {
 	return $.ajax({
 		type: "get",
@@ -89,4 +89,13 @@ export function sendMission (mission, galaxy, system, planet, type, count)
 			}
 		});
 	});
+}
+
+export {
+	distance,
+	speed,
+	consumption,
+	duration,
+	storage,
+	sendMission
 }

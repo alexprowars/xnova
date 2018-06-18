@@ -2,9 +2,9 @@
 	<div class="row resource-panel">
 		<div class="col-md-6 col-sm-6 col-12">
 			<div class="row">
-				<div class="col-4 text-center"><planet-panel-resource :type="'metal'" :resource="planet.metal"></planet-panel-resource></div>
-				<div class="col-4 text-center"><planet-panel-resource :type="'crystal'" :resource="planet.crystal"></planet-panel-resource></div>
-				<div class="col-4 text-center"><planet-panel-resource :type="'deuterium'" :resource="planet.deuterium"></planet-panel-resource></div>
+				<div class="col-4 text-center"><panel-resource :type="'metal'" :resource="planet.metal"></panel-resource></div>
+				<div class="col-4 text-center"><panel-resource :type="'crystal'" :resource="planet.crystal"></panel-resource></div>
+				<div class="col-4 text-center"><panel-resource :type="'deuterium'" :resource="planet.deuterium"></panel-resource></div>
 			</div>
 		</div>
 		<div class="col-md-6 col-sm-6 col-12">
@@ -98,10 +98,12 @@
 				</div>
 			</div>
 		</div>
-	</div>'
+	</div>
 </template>
 
 <script>
+	import PanelResource from './planet-panel-resource.vue'
+
 	export default {
 		name: "application-planet-panel",
 		props: ['planet'],
@@ -113,7 +115,7 @@
 			}
 		},
 		components: {
-			'planet-panel-resource': require('./planet-panel-resource.vue')
+			PanelResource
 		},
 		methods:
 		{

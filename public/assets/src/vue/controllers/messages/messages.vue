@@ -26,7 +26,7 @@
 						<div class="col-2 th text-center"></div>
 					</div>
 
-					<game-page-messages-row v-for="item in messages" :item="item"></game-page-messages-row>
+					<messages-row v-for="item in messages" :key="item['id']" :item="item"></messages-row>
 
 					<div v-if="page['pagination']['total'] === 0" class="row">
 						<div class="col-12 th text-center">нет сообщений</div>
@@ -46,11 +46,12 @@
 
 <script>
 	import Vue from 'vue'
+	import MessagesRow from './messages-row.vue'
 
 	export default {
 		name: "messages",
 		components: {
-			'game-page-messages-row': require('./messages-row.vue'),
+			MessagesRow
 		},
 		computed: {
 			page () {

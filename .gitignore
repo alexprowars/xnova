@@ -29,3 +29,4 @@ public/assets/admin/global/plugins/bootstrap/css
 /public/assets/js/*.min.js
 /public/assets/js/plugins/*.min.js
 /public/assets/admin/css/app.css
+/public/assets/build/*

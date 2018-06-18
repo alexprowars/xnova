@@ -41,12 +41,13 @@
 					</div>
 				</div>
 			</div>
-			<game-page-buildings-build-row-price :price="item.price"></game-page-buildings-build-row-price>
+			<build-row-price :price="item.price"></build-row-price>
 		</div>
 	</div>
 </template>
 
 <script>
+	import BuildRowPrice from './build-row-price.vue'
 
 	export default {
 		name: "unit-row",
@@ -79,7 +80,7 @@
 			}
 		},
 		components: {
-			'game-page-buildings-build-row-price': require('./build-row-price.vue')
+			BuildRowPrice
 		},
 		methods: {
 			openWindow () {

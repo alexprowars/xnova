@@ -2,7 +2,7 @@
 	<div class="resource-panel-item">
 		<div @click="showPopup" class="tooltip resource-panel-item-icon">
 			<div class="tooltip-content">
-				<planet-panel-resource-tooltip :resource="resource" :type="type"></planet-panel-resource-tooltip>
+				<resource-tooltip :resource="resource" :type="type"></resource-tooltip>
 			</div>
 			<span class="sprite" :class="['skin_'+type]"></span>
 			<span class="sprite" :class="['skin_s_'+type]"></span>
@@ -17,11 +17,13 @@
 </template>
 
 <script>
+	import ResourceTooltip from './planet-panel-resource-tooltip.vue'
+
 	export default {
 		name: "application-planet-panel-resource",
 		props: ['resource', 'type'],
 		components: {
-			'planet-panel-resource-tooltip': require('./planet-panel-resource-tooltip.vue')
+			ResourceTooltip
 		},
 		data () {
 			return {

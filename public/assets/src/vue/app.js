@@ -1,10 +1,12 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import VueRouter from 'vue-router'
-
-Vue.config.productionTip = false;
+import './../bootstrap/bootstrap.scss';
+import './../game/style.scss';
 
 import 'es6-promise/auto'
+import 'babel-polyfill';
+
+import Vue from 'vue'
+
+Vue.config.productionTip = false;
 
 import App from './app.vue'
 import Lang from './js/lang'
@@ -34,99 +36,10 @@ Vue.filter("time", (value, separator, full) => {
 	return Format.time(value, separator, full);
 });
 
-import BuildingBuildController from './controllers/buildings/build.vue'
-import BuildingTechController from './controllers/buildings/tech.vue'
-import BuildingUnitController from './controllers/buildings/unit.vue'
-import GalaxyController from './controllers/galaxy/galaxy.vue'
-import OverviewController from './controllers/overview/overview.vue'
-import FleetIndexController from './controllers/fleet/fleet-index.vue'
-import FleetOneController from './controllers/fleet/fleet-one.vue'
-import FleetTwoController from './controllers/fleet/fleet-two.vue'
-import ChatController from './controllers/chat/chat.vue'
-import MessagesController from './controllers/messages/messages.vue'
-import MerchantController from './controllers/merchant/merchant.vue'
-import AllianceChatController from './controllers/alliance/alliance_chat.vue'
-import PlayersStatController from './controllers/players/players_stat.vue'
-import NotesController from './controllers/notes/notes.vue'
-import PhalanxController from './controllers/phalanx/phalanx.vue'
-import IndexController from './controllers/index/index.vue'
-import HtmlController from './controllers/html.vue'
+import store from './store'
+import router from './router'
 
-const routes = [{
-	path: '/buildings/research*',
-	component: BuildingTechController
-}, {
-	path: '/buildings/fleet*',
-	component: BuildingUnitController
-}, {
-	path: '/buildings/defense*',
-	component: BuildingUnitController
-}, {
-	path: '/buildings*',
-	component: BuildingBuildController
-}, {
-	path: '/galaxy*',
-	component: GalaxyController
-}, {
-	path: '/phalanx*',
-	component: PhalanxController
-}, {
-	path: '/fleet/one',
-	component: FleetOneController
-}, {
-	path: '/fleet/two',
-	component: FleetTwoController
-}, {
-	path: '/fleet*',
-	component: FleetIndexController
-}, {
-	path: '/overview*',
-	component: OverviewController
-}, {
-	path: '/chat',
-	component: ChatController
-}, {
-	path: '/messages',
-	component: MessagesController
-}, {
-	path: '/merchant',
-	component: MerchantController
-}, {
-	path: '/notes',
-	component: NotesController
-}, {
-	path: '/alliance/chat',
-	component: AllianceChatController
-}, {
-	path: '/alliance/stat/id/:ally_id',
-	component: PlayersStatController
-}, {
-	path: '/players/stat/:user_id',
-	component: PlayersStatController
-}, {
-	path: '/',
-	component: IndexController
-}, {
-	path: '*',
-	component: HtmlController
-}];
-
-Vue.component('error-message', require('./views/message.vue'))
-Vue.component('tab', require('./components/tab.vue'));
-Vue.component('tabs', require('./components/tabs.vue'));
-Vue.component('pagination', require('./components/pagination.vue'));
-Vue.component('text-viewer', require('./components/text-viewer.vue'));
-Vue.component('text-editor', require('./components/text-editor.vue'));
-Vue.component('number', require('./components/number.vue'));
-Vue.component('chat', require('./components/chat.vue'));
-
-Vue.use(Vuex);
-Vue.use(VueRouter);
-
-let router = new VueRouter({
-	mode: 'history',
-	routes
-})
+import './components'
 
 router.beforeEach(function(to, from, next)
 {
@@ -151,32 +64,11 @@ router.beforeEach(function(to, from, next)
 	});
 })
 
-window.store = new Vuex.Store({
-	state: Object.assign({}, {
-		mobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
-	}, options),
-	mutations: {
-		PAGE_LOAD (state, data)
-		{
-			application.start_time = Math.floor(((new Date()).getTime()) / 1000)
-
-			for (let key in data)
-			{
-				if (data.hasOwnProperty(key))
-					state[key] = data[key];
-			}
-		}
-	}
-});
-
 window.application = new Vue({
 	router,
 	store,
 	el: '#application',
 	computed: {
-		getMenuActiveLink: function () {
-			return this.$store.state['route']['controller']+(this.$store.state['route']['controller'] === 'buildings' ? this.$store.state['route']['action'] : '');
-		},
 		title () {
 			return this.$store.state['title'];
 		},
@@ -302,48 +194,40 @@ window.application = new Vue({
 				this.request_block = false
 			}, 500);
 
-			$.ajax({
-				url: url,
-				cache: false,
-				dataType: 'json',
-				timeout: 10000
-			})
-			.then((result) =>
+			this.$store.dispatch('loadPage', url).then((data) =>
 			{
 				closeWindow();
 
-				this.applyData(result.data);
-
-				if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['popup'] !== '')
+				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['popup'] !== '')
 				{
 					$.confirm({
 						title: 'Обучение',
-						content: result.data['tutorial']['popup'],
+						content: data['tutorial']['popup'],
 						confirmButton: 'Продолжить',
 						cancelButton: false,
 						backgroundDismiss: false,
 						confirm: () =>
 						{
-							if (result.data['tutorial']['url'] !== '')
-								this.load(result.data['tutorial']['url']);
+							if (data['tutorial']['url'] !== '')
+								this.load(data['tutorial']['url']);
 						}
 					});
 				}
 
-				if (typeof result.data['tutorial'] !== 'undefined' && result.data['tutorial']['toast'] !== '')
+				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['toast'] !== '')
 				{
 					$.toast({
-						text: result.data['tutorial']['toast'],
+						text: data['tutorial']['toast'],
 						icon: 'info',
 						stack : 1
 					});
 				}
 
-				callback && callback(result.data.url);
+				callback && callback(data.url);
 			}, () => {
 				document.location = url;
 			})
-			.always(() =>
+			.then(() =>
 			{
 				this.loader = false;
 				this.request_block = false;

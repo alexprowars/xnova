@@ -45,7 +45,7 @@
 
 			<div class="content page-building-items">
 				<div class="row">
-					<game-page-buildings-build-item v-for="item in page.items" :item="item"></game-page-buildings-build-item>
+					<build-row v-for="(item, i) in page.items" :key="i" :item="item"></build-row>
 				</div>
 			</div>
 		</div>
@@ -53,6 +53,8 @@
 </template>
 
 <script>
+	import BuildRow from './build-row.vue'
+
 	export default {
 		name: "build",
 		data () {
@@ -70,7 +72,7 @@
 			}
 		},
 		components: {
-			'game-page-buildings-build-item': require('./build-row.vue')
+			BuildRow
 		},
 		mounted () {
 			this.init();

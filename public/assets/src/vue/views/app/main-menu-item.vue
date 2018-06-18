@@ -10,7 +10,7 @@
 		props: ['item'],
 		computed: {
 			active: function () {
-				return this.$root.getMenuActiveLink === this.item.id
+				return this.$store.getters.menuActiveLink === this.item.id
 			}
 		}
 	}

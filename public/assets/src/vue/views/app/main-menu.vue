@@ -17,6 +17,8 @@
 </template>
 
 <script>
+	import MainMenuItem from './main-menu-item.vue'
+
 	export default {
 		name: "application-main-menu",
 		props: ['active'],
@@ -26,7 +28,7 @@
 			}
 		},
 		components: {
-			'main-menu-item': require('./main-menu-item.vue')
+			MainMenuItem
 		}
 	}
 </script>

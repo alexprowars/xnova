@@ -9,5 +9,5 @@ $menu-bg-a-color: #6B354E;
 $menu-border-color: #40567f;
 
 :root {
-	--main-color: $main-bg-color;
+	--main-color: #{$main-bg-color};
 }

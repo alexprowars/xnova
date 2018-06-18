@@ -4,33 +4,50 @@
   "description": "Xnova Game Styles",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "NODE_ENV=production webpack",
+    "dev": "NODE_ENV=development webpack"
   },
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babelify": "^8.0.0",
-    "browserify": "^15.2.0",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "autoprefixer": "^8.6.2",
+    "axios": "^0.18.0",
+    "babel-loader": "^8.0.0-beta",
+    "babel-polyfill": "^6.26.0",
+    "chart.js": "^2.7.2",
+    "css-loader": "^0.28.11",
     "es6-promise": "^4.2.4",
-    "fs": "0.0.1-security",
-    "gulp": "latest",
-    "gulp-autoprefixer": "latest",
-    "gulp-clean-css": "^3.9.3",
-    "gulp-rename": "latest",
-    "gulp-sass": "latest",
-    "gulp-uglify": "latest",
-    "run-sequence": "^2.2.1",
+    "extract-loader": "^2.0.1",
+    "file-loader": "^1.1.11",
+    "imports-loader": "^0.8.0",
+    "jquery": "^3.3.1",
+    "jquery-confirm": "^3.3.2",
+    "jquery-toast-plugin": "^1.3.2",
+    "jquery-touchswipe": "^1.6.18",
+    "jquery-validation": "^1.17.0",
+    "node-sass": "^4.9.0",
+    "postcss-loader": "^2.1.5",
+    "resolve-url-loader": "^2.3.0",
+    "sass-loader": "^7.0.3",
+    "socket.io-client": "^2.1.1",
+    "tooltipster": "^4.2.6",
     "vue": "^2.5.16",
+    "vue-loader": "^15.2.4",
     "vue-router": "^3.0.1",
-    "vueify": "^9.4.1",
-    "vuex": "^3.0.1"
+    "vue-template-compiler": "^2.5.16",
+    "vuex": "^3.0.1",
+    "webpack": "^4.12.0",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-concat-plugin": "^3.0.0"
   },
   "author": "AlexPro (alexprowars@gmail.com)",
   "license": "ISC",
-  "devDependencies": {
-    "babel-plugin-transform-runtime": "^6.23.0"
-  },
   "browser": {
     "vue": "vue/dist/vue.common.js"
-  }
+  },
+  "browserslist": [
+    "last 3 versions"
+  ]
 }

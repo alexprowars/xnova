@@ -34,7 +34,7 @@
 			</div>
 			<div class="content">
 				<div v-if="page['fleets']['length']">
-					<game-page-overview-fleets :items="page['fleets']"></game-page-overview-fleets>
+					<fleets :items="page['fleets']"></fleets>
 					<div class="separator"></div>
 				</div>
 				<div class="row overview">
@@ -274,10 +274,13 @@
 </template>
 
 <script>
+	import Fleets from './overview-fleets.vue'
+	import * as fleet from './../../js/fleet.js'
+
 	export default {
 		name: "overview",
 		components: {
-			'game-page-overview-fleets': require('./overview-fleets.vue'),
+			Fleets
 		},
 		computed: {
 			page () {
@@ -288,8 +291,7 @@
 		{
 			return {
 				clock: 0,
-				clock_timeout: null,
-				fleet: require('./../../js/fleet.js')
+				clock_timeout: null
 			}
 		},
 		methods: {

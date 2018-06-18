@@ -1,6 +1,6 @@
 <template>
 	<div class="page-galaxy">
-		<game-page-galaxy-selector :shortcuts="page['shortcuts']"></game-page-galaxy-selector>
+		<galaxy-selector :shortcuts="page['shortcuts']"></galaxy-selector>
 		<div class="separator"></div>
 
 		<form v-if="missile" :action="'/rocket/?c='+$store.state['user']['planet']+'&mode=2&galaxy='+page['galaxy']+'&system='+page['system']+'&planet='+missilePlanet" method="post">
@@ -57,7 +57,7 @@
 					<td class="c">Действия</td>
 				</tr>
 
-				<tr is="game-page-galaxy-item" v-for="(item, index) in page['items']" :item="item" :i="index"></tr>
+				<tr is="galaxy-row" v-for="(item, index) in page['items']" :item="item" :i="index"></tr>
 
 				<tr v-if="page['user']['allowExpedition']">
 					<th width="30">16</th>
@@ -131,15 +131,17 @@
 </template>
 
 <script>
+	import GalaxyRow from './galaxy-row.vue'
+	import GalaxySelector from './galaxy-selector.vue'
+
 	export default {
 		name: "galaxy",
 		components: {
-			'game-page-galaxy-item': require('./galaxy-row.vue'),
-			'game-page-galaxy-selector': require('./galaxy-selector.vue'),
+			GalaxyRow,
+			GalaxySelector
 		},
 		data () {
 			return {
-				fleet: require('./../../js/fleet.js'),
 				missile: false,
 				missilePlanet: 0,
 			}

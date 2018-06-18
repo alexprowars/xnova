@@ -43,6 +43,8 @@
 </template>
 
 <script>
+	import Chart from 'chart';
+
 	export default {
 		name: "players_stat",
 		computed: {
@@ -146,93 +148,90 @@
 		},
 		mounted ()
 		{
-			$.cachedScript(this.$root.getUrl('assets/js/plugins/chart.js')).done(() =>
+			Chart.defaults.global.defaultFontColor = '#e0e0e0';
+
+			let labels = [];
+
+			let ranks = {
+				'build': [],
+				'tech': [],
+				'defs': [],
+				'fleet': [],
+				'total': [],
+			};
+
+			this.page.points.forEach((item) =>
 			{
-				Chart.defaults.global.defaultFontColor = '#e0e0e0';
+				labels.push(this.$options.filters.number(item.date, 'd.m'));
 
-				let labels = [];
-
-				let ranks = {
-					'build': [],
-					'tech': [],
-					'defs': [],
-					'fleet': [],
-					'total': [],
-				};
-
-				this.page.points.forEach((item) =>
-				{
-					labels.push(this.$options.filters.number(item.date, 'd.m'));
-
-					ranks.build.push(item.rank.build);
-					ranks.tech.push(item.rank.tech);
-					ranks.defs.push(item.rank.defs);
-					ranks.fleet.push(item.rank.fleet);
-					ranks.total.push(item.rank.total);
-				});
-
-				new Chart(this.$refs['rank_chart'], {
-					type: 'line',
-					data: {
-						labels: labels,
-						datasets: [{
-							label: 'Постройки',
-							fill: false,
-							borderColor: this.typeChartColors.build,
-							backgroundColor: this.typeChartColors.build,
-							data: ranks.build
-						}, {
-							label: 'Технологии',
-							fill: false,
-							borderColor: this.typeChartColors.tech,
-							backgroundColor: this.typeChartColors.tech,
-							data: ranks.tech
-						}, {
-							label: 'Оборона',
-							fill: false,
-							borderColor: this.typeChartColors.defs,
-							backgroundColor: this.typeChartColors.defs,
-							data: ranks.defs
-						}, {
-							label: 'Флот',
-							fill: false,
-							borderColor: this.typeChartColors.fleet,
-							backgroundColor: this.typeChartColors.fleet,
-							data: ranks.fleet
-						}, {
-							label: 'Место',
-							fill: false,
-							borderColor: this.typeChartColors.total,
-							backgroundColor: this.typeChartColors.total,
-							data: ranks.total
-						}, ]
-					},
-					options: {
-						scales: {
-							xAxes: [{
-								display: true,
-								scaleLabel: {
-									display: true,
-									labelString: 'Дни'
-								}
-							}],
-							yAxes: [{
-								display: true,
-								scaleLabel: {
-									display: true,
-									labelString: 'Место'
-								},
-								ticks: {
-									reverse: true,
-									min: 1
-								},
-							}]
-						}
-					}
-				});
-
-				this.updatePointChart();
+				ranks.build.push(item.rank.build);
+				ranks.tech.push(item.rank.tech);
+				ranks.defs.push(item.rank.defs);
+				ranks.fleet.push(item.rank.fleet);
+				ranks.total.push(item.rank.total);
 			});
+
+			new Chart(this.$refs['rank_chart'], {
+				type: 'line',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: 'Постройки',
+						fill: false,
+						borderColor: this.typeChartColors.build,
+						backgroundColor: this.typeChartColors.build,
+						data: ranks.build
+					}, {
+						label: 'Технологии',
+						fill: false,
+						borderColor: this.typeChartColors.tech,
+						backgroundColor: this.typeChartColors.tech,
+						data: ranks.tech
+					}, {
+						label: 'Оборона',
+						fill: false,
+						borderColor: this.typeChartColors.defs,
+						backgroundColor: this.typeChartColors.defs,
+						data: ranks.defs
+					}, {
+						label: 'Флот',
+						fill: false,
+						borderColor: this.typeChartColors.fleet,
+						backgroundColor: this.typeChartColors.fleet,
+						data: ranks.fleet
+					}, {
+						label: 'Место',
+						fill: false,
+						borderColor: this.typeChartColors.total,
+						backgroundColor: this.typeChartColors.total,
+						data: ranks.total
+					}, ]
+				},
+				options: {
+					scales: {
+						xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Дни'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Место'
+							},
+							ticks: {
+								reverse: true,
+								min: 1
+							},
+						}]
+					}
+				}
+			});
+
+			this.updatePointChart();
 		}
 	}
 </script>

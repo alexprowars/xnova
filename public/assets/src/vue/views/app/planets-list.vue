@@ -8,7 +8,7 @@
 		</a>
 		<div :class="{active: active}" class="planet-sidebar">
 			<div class="list">
-				<application-planets-list-row v-for="item in items" :item="item"></application-planets-list-row>
+				<planet-row v-for="item in items" :key="item['id']" :item="item"></planet-row>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+	import PlanetRow from './planets-list-row.vue'
+
 	export default {
 		name: "application-planets-list",
 		props: ['active'],
@@ -25,7 +27,7 @@
 			}
 		},
 		components: {
-			'application-planets-list-row': require('./planets-list-row.vue')
+			PlanetRow
 		}
 	}
 </script>
