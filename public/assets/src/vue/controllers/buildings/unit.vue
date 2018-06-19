@@ -2,7 +2,7 @@
 	<div class="page-building page-building-unit">
 		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
 		<div class="content page-building-items">
-			<form ref="form" :action="$root.getUrl('buildings/'+page.mode+'/')" method="post" class="noajax" @submit.prevent="constructAction">
+			<form ref="form" action="" method="post" class="noajax" @submit.prevent="constructAction">
 				<div class="row">
 					<div class="col-12">
 						<div class="c">
@@ -26,6 +26,7 @@
 <script>
 	import UnitRow from './unit-row.vue'
 	import UnitQueue from './unit-queue.vue'
+	import { $post } from 'api'
 
 	export default {
 		name: "unit",
@@ -43,17 +44,7 @@
 			{
 				this.$root.loader = true;
 
-				$.ajax({
-				    url: this.$root.getUrl('buildings/'+this.page.mode+'/'),
-				    data: new FormData(this.$refs['form']),
-				    type: 'post',
-					dataType: 'json',
-				    contentType: false,
-				    processData: false,
-					complete: () => {
-						this.$root.loader = false;
-					}
-				})
+				$post('/buildings/'+this.page.mode+'/', new FormData(this.$refs['form']))
 				.then((result) =>
 				{
 					this.$children.forEach((item) =>
@@ -62,7 +53,7 @@
 							item['count'] = '';
 					});
 
-					this.$root.applyData(result.data);
+					this.$store.commit('PAGE_LOAD', result)
 				}, () => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})

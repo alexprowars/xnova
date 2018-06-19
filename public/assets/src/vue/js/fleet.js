@@ -1,3 +1,5 @@
+import { $get } from './api'
+
 function distance (from, to)
 {
 	let distance = 5;
@@ -62,22 +64,17 @@ function storage (ships)
 
 function sendMission (mission, galaxy, system, planet, type, count)
 {
-	return $.ajax({
-		type: "get",
-		url: application.getUrl('fleet/quick/'),
-		data: {
-			mission: mission,
-			galaxy: galaxy,
-			system: system,
-			planet: planet,
-			type: type,
-			count: count,
-		},
-		dataType: 'json'
+	return $get('fleet/quick/', {
+		mission: mission,
+		galaxy: galaxy,
+		system: system,
+		planet: planet,
+		type: type,
+		count: count
 	})
-	.then((result) =>
+	.then(result =>
 	{
-		result.data.messages.forEach((item) =>
+		result.messages.forEach((item) =>
 		{
 			if (item['type'].indexOf('-static') <= 0)
 			{
@@ -88,7 +85,7 @@ function sendMission (mission, galaxy, system, planet, type, count)
 				});
 			}
 		});
-	});
+	})
 }
 
 export {

@@ -108,7 +108,7 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/admin/plugins/font-awesome/css/font-awesome.css');
 		$this->assets->addCss('assets/admin/plugins/datatables/css/dataTables.bootstrap4.css');
 		$this->assets->addCss('assets/admin/plugins/perfect-scrollbar/css/perfect-scrollbar.css');
-		$this->assets->addCss('assets/admin/css/app.css');
+		$this->assets->addCss('assets/build/css/admin.css');
 		$this->assets->addCss('assets/admin/css/custom.css');
 
 		$this->assets->addJs('assets/admin/plugins/jquery/jquery.js');
@@ -119,28 +119,8 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/admin/plugins/datatables/js/dataTables.bootstrap4.js');
 		$this->assets->addJs('assets/admin/plugins/perfect-scrollbar/js/perfect-scrollbar.jquery.js');
 
-		$this->assets->addJs('assets/admin/js/script.js');
-
-		/*$this->assets->addCss('assets/admin/global/plugins/font-awesome/css/font-awesome.css');
-		$this->assets->addCss('assets/admin/global/plugins/simple-line-icons/simple-line-icons.css');
-		$this->assets->addCss('assets/admin/global/plugins/bootstrap/css/bootstrap.css');
-		$this->assets->addCss('assets/admin/global/plugins/bootstrap-switch/css/bootstrap-switch.css');
-		$this->assets->addCss('assets/admin/global/plugins/bootstrap-select/css/bootstrap-select.css');
-		$this->assets->addCss('assets/admin/global/css/components.css', ['sort' => 1000]);
-		$this->assets->addCss('assets/admin/global/css/plugins.css', ['sort' => 1001]);
-		$this->assets->addCss('assets/admin/pages/css/layout.css', ['sort' => 1002]);
-		$this->assets->addCss('assets/admin/pages/css/darkblue.css', ['sort' => 1003]);
-		$this->assets->addCss('assets/admin/pages/css/custom.css', ['sort' => 1004]);
-
-		$this->assets->addJs('assets/admin/global/plugins/jquery.min.js');
-		$this->assets->addJs('assets/admin/global/plugins/bootstrap/js/bootstrap.js');
-		$this->assets->addJs('assets/admin/global/plugins/js.cookie.min.js');
-		$this->assets->addJs('assets/admin/global/plugins/jquery.blockui.min.js');
-		$this->assets->addJs('assets/admin/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js');
-		$this->assets->addJs('assets/admin/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js');
-		$this->assets->addJs('assets/admin/global/plugins/bootstrap-switch/js/bootstrap-switch.js');
-		$this->assets->addJs('assets/admin/global/plugins/bootstrap-select/js/bootstrap-select.js');
-		$this->assets->addJs('assets/admin/global/js/app.js', ['sort' => 10]);*/
+		$this->assets->addJs('assets/build/runtime.js');
+		$this->assets->addJs('assets/build/js/admin.js');
 
 		return true;
 	}

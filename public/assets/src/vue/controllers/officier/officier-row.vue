@@ -48,6 +48,8 @@
 </template>
 
 <script>
+	import { $post } from 'api'
+
 	export default {
 		name: "officier-row",
 		props: {
@@ -64,12 +66,12 @@
 							text: 'нанять',
 							action: () =>
 							{
-								this.$store.dispatch('submitForm', {
-									url: this.$root.getUrl('officier/buy/'),
-									data: {
-										id: this.item['id'],
-										duration: value
-									}
+								$post('/officier/buy/', {
+									id: this.item['id'],
+									duration: value
+								})
+								.then((result) => {
+									this.$store.commit('PAGE_LOAD', result)
 								})
 							}
 						},

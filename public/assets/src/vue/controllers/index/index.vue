@@ -7,7 +7,7 @@
 
 					<div class="login-inputs">
 						<div class="error" id="authError"></div>
-						<form ref="authForm" :action="$root.getUrl('login/')" method="post" class="noajax" id="authForm" @submit.prevent="authAction">
+						<form ref="form" :action="$root.getUrl('login/')" method="post" class="noajax" id="authForm" @submit.prevent="authAction">
 							<div>
 								<input class="input-text" name="email" placeholder="Email" value="" type="text">
 								<input class="input-text" name="password" placeholder="Пароль" value="" type="password">
@@ -66,6 +66,8 @@
 </template>
 
 <script>
+	import { $post } from 'api'
+
 	export default {
 		name: "index",
 		methods: {
@@ -77,25 +79,18 @@
 			},
 			authAction ()
 			{
-				let form = $(this.$refs['authForm']);
-
-				$.ajax({
-					url: this.$root.getUrl('login/'),
-					type: 'post',
-					data: form.serialize(),
-					success: function(result)
+				$post('/login/', new FormData(this.$refs['form']))
+				.then((result) =>
+				{
+					if (result.redirect !== undefined)
+						window.location.href = result.redirect;
+					else
 					{
-						if (result.status && result.data.redirect !== undefined)
-							window.location.href = result.data.redirect;
-						else
-						{
-							result.data.messages.forEach(function(item)
-							{
-								$('#authError').html(item.text);
-							});
-						}
+						result.messages.forEach((item) => {
+							$('#authError').html(item.text);
+						});
 					}
-				});
+				})
 			}
 		},
 		mounted() {

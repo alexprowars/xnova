@@ -110,6 +110,7 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/build/css/bootstrap.css');
 		$this->assets->addCss('assets/build/css/style.css');
 
+		$this->assets->addJs('assets/build/runtime.js', 'footer');
 		$this->assets->addJs('assets/build/global.js', 'footer');
 		$this->assets->addJs('assets/build/vendor.js', 'footer');
 		$this->assets->addJs('assets/build/js/app.js', 'footer');

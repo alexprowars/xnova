@@ -5,6 +5,7 @@ import 'es6-promise/auto'
 import 'babel-polyfill';
 
 import Vue from 'vue'
+import { $get, $post } from 'api'
 
 Vue.config.productionTip = false;
 
@@ -194,8 +195,11 @@ window.application = new Vue({
 				this.request_block = false
 			}, 500);
 
-			this.$store.dispatch('loadPage', url).then((data) =>
+			$get(url)
+			.then((data) =>
 			{
+				this.$store.commit('PAGE_LOAD', data)
+
 				closeWindow();
 
 				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['popup'] !== '')
@@ -368,20 +372,13 @@ window.application = new Vue({
 
 				let formData = new FormData(this);
 
-				$.ajax({
-				    url: form.attr('action'),
-				    data: formData,
-				    type: 'post',
-					dataType: 'json',
-				    contentType: false,
-				    processData: false
-				})
+				$post(form.attr('action'), formData)
 				.then((result) => {
-					app.applyData(result.data);
+					app.$store.commit('PAGE_LOAD', result)
 				}, () => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})
-				.always(() => {
+				.then(() => {
 					app.loader = false;
 				})
 			})
@@ -394,19 +391,12 @@ window.application = new Vue({
 				let formData = new FormData(this);
 				formData.append('popup', 'Y');
 
-				$.ajax({
-					url: $(this).attr('action'),
-					type: 'post',
-					data: formData,
-					dataType: 'json',
-					processData: false,
-					contentType: false
-				})
+				$post($(this).attr('action'), formData)
 				.then((result) =>
 				{
-					if (result.data.messages.length > 0 )
+					if (result.messages.length > 0 )
 					{
-						result.data.messages.forEach(function(item)
+						result.messages.forEach(function(item)
 						{
 							if (item['type'].indexOf('-static') <= 0)
 							{
@@ -418,7 +408,7 @@ window.application = new Vue({
 						})
 					}
 
-					if (result.data.html !== '')
+					if (result.html !== '')
 					{
 						if (app.html_component !== null)
 							app.html_component.$destroy();
@@ -426,7 +416,7 @@ window.application = new Vue({
 						app.html_component = new (Vue.extend({
 							name: 'html-render',
 							parent: app,
-							template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+							template: '<div>'+result.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 						}))().$mount();
 
 						Vue.nextTick(() =>
@@ -434,16 +424,16 @@ window.application = new Vue({
 							$('.jconfirm-content').html(app.html_component.$el);
 
 							setTimeout(() => {
-								app.evalJs(result.data.html);
+								app.evalJs(result.html);
 							}, 100);
 						});
 					}
 
-					app.$store.state.redirect = result.data.redirect;
+					app.$store.state.redirect = result.redirect;
 				}, () => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})
-				.always(() => {
+				.then(() => {
 					app.loader = false;
 				})
 			})
@@ -474,34 +464,43 @@ window.application = new Vue({
 				closeAnimation: 'opacity',
 				animateFromElement: false,
 				draggable: false,
-				content: function ()
+				content ()
 				{
-					return $.ajax({
-						url: url,
-						type: 'get',
-						data: {'popup': 'Y'},
-						success: (result) =>
-						{
-							this.setTitle(result.data.title);
+					let promise = new $.Deferred();
 
-							if (app.html_component !== null)
-								app.html_component.$destroy();
+					$get(url, {
+						'popup': 'Y'
+					})
+					.then(result => {
+						promise.resolve(result);
+					})
+					.catch((error) => {
+						promise.reject(error)
+					})
 
-							app.html_component = new (Vue.extend({
-								name: 'html-render',
-								parent: app,
-								template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
-							}))().$mount();
+					promise.then((result) =>
+					{
+						this.setTitle(result.title);
 
-							Vue.nextTick(() => {
-								this.setContent(app.html_component.$el, true);
+						if (app.html_component !== null)
+							app.html_component.$destroy();
 
-								setTimeout(() => {
-									app.evalJs(result.data.html);
-								}, 100);
-							});
-						}
+						app.html_component = new (Vue.extend({
+							name: 'html-render',
+							parent: app,
+							template: '<div>'+result.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+						}))().$mount();
+
+						Vue.nextTick(() => {
+							this.setContent(app.html_component.$el, true);
+
+							setTimeout(() => {
+								app.evalJs(result.html);
+							}, 100);
+						});
 					});
+
+					return promise.promise();
 				}
 			});
 		}

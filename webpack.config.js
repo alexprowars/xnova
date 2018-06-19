@@ -30,9 +30,7 @@ const config = {
 				}
 			})
 		],
-		runtimeChunk: {
-			name: 'vendor'
-		},
+		runtimeChunk: 'single',
 		splitChunks: {
 			cacheGroups: {
 				default: false,
@@ -129,8 +127,10 @@ const config = {
 	],
 	resolve: {
 		alias: {
+			'jquery': 'jquery/dist/jquery.slim.js',
 			'chart': 'chart.js/dist/Chart.js',
 			'socket.io': 'socket.io-client/dist/socket.io.slim.js',
+			'api': __dirname+'/public/assets/src/vue/js/api.js',
 		}
 	},
 	stats: {
