@@ -25,6 +25,7 @@ import CreditsController from './../controllers/credits/credits.vue'
 import TechController from './../controllers/tech/tech.vue'
 import TechInfoController from './../controllers/tech/tech-info.vue'
 import SupportController from './../controllers/support/support.vue'
+import StatController from './../controllers/stat/stat.vue'
 import HtmlController from './../controllers/html.vue'
 
 export default new VueRouter({
@@ -86,6 +87,9 @@ export default new VueRouter({
 	}, {
 		path: '/support',
 		component: SupportController
+	}, {
+		path: '/stat*',
+		component: StatController
 	}, {
 		path: '/notes',
 		component: NotesController

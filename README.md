@@ -4,7 +4,7 @@
 
 ## Адрес игры
 
-https://xnova.su/
+https://xnova.su/  
 https://x.xnova.su/
 
 ## Framework
@@ -31,7 +31,7 @@ Phalcon
 8. Перейти в корневой каталог проекта и установить зависимости **npm install**
 9. Установить Composer **https://getcomposer.org/**
 10. Перейти в корневой каталог проекта и установить зависимости **composer install**
-11. Скомпилировать стили командой **gulp**
+11. Скомпилировать стили командой **npm run dev** (тестовая среда) или **npm run build** (рабочая среда)
 12. Настроить cron **install/cron.conf**
 13. Запуск чата:
 	- получить ssl сертификат (можно воспользоваться letsencrypt)

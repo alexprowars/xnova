@@ -92,11 +92,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 		return '\Friday\Core\Lang::getText(' . $arguments . ')';
 	});
 
-	$compiler->addFunction('plural', function($arguments)
-	{
-		return '\Friday\Core\Helpers::getPlural(' . $arguments . ')';
-	});
-
 	$compiler->addFilter('floor', 'floor');
 	$compiler->addFilter('round', 'round');
 	$compiler->addFilter('ceil', 'ceil');
@@ -109,7 +104,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 
 	$compiler->addFunction('toJson', 'json_encode');
 	$compiler->addFunction('replace', 'str_replace');
-	$compiler->addFunction('preg_replace', 'preg_replace');
 	$compiler->addFunction('md5', 'md5');
 	$compiler->addFunction('min', 'min');
 	$compiler->addFunction('max', 'max');
@@ -133,18 +127,6 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 	$compiler->addFunction('option', function($arguments)
 	{
 		return '\Friday\Core\Options::get(' . $arguments . ')';
-	});
-	$compiler->addFunction('getTechTree', function($arguments)
-	{
-		return '\Xnova\Building::getTechTree(' . $arguments . ')';
-	});
-	$compiler->addFunction('isTechnologieAccessible', function($arguments)
-	{
-		return '\Xnova\Building::isTechnologieAccessible(' . $arguments . ')';
-	});
-	$compiler->addFunction('colorNumber', function($arguments)
-	{
-		return '\Xnova\Helpers::colorNumber(' . $arguments . ')';
 	});
 	$compiler->addFunction('planetLink', function($arguments)
 	{

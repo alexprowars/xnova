@@ -9,10 +9,8 @@ namespace Xnova\Controllers;
  */
 
 use Friday\Core\Options;
-use Xnova\Format;
-use Friday\Core\Lang;
-use Phalcon\Mvc\View;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/stat")
@@ -23,7 +21,7 @@ use Xnova\Controller;
 class StatController extends Controller
 {
 	private $field = '';
-	private $range = 0;
+	private $page = 1;
 	private $pid = 0;
 
 	public function initialize ()
@@ -33,19 +31,16 @@ class StatController extends Controller
 		if ($this->dispatcher->wasForwarded())
 			return;
 
-		Lang::includeLang('stat', 'xnova');
+		$this->page = (int) $this->request->get('range', 'int', 0);
+		$this->page = max($this->page, 1);
 
-		$this->range = $this->request->get('range', 'int', 0);
-		$this->pid = $this->request->getQuery('pid', 'int', 0);
+		$this->pid = (int) $this->request->getQuery('pid', 'int', 0);
 
-		$type = $this->request->get('type', 'int', 1);
+		$type = (int) $this->request->get('type', 'int', 1);
 		$who = $this->dispatcher->getActionName();
 
 		if ($who == 'index')
 			$who = 'players';
-
-		if (($who != $this->request->getPost('old_who', 'string', '') && $this->request->getPost('old_who', 'string', '') > 0) || ($type != $this->request->getPost('old_type', 'string', '') && $this->request->getPost('old_type', 'string', '') > 0))
-			$this->range = 0;
 
 		if ($who != 'players' && $type > 5)
 			$type = 1;
@@ -76,25 +71,6 @@ class StatController extends Controller
 
 		$this->tag->setTitle('Статистика');
 		$this->showTopPanel(false);
-
-		$this->view->disableLevel(View::LEVEL_ACTION_VIEW);
-	}
-
-	private function showTop ($range = '')
-	{
-		$type 	= $this->request->get('type', 'int', 1);
-		$who 	= $this->dispatcher->getActionName();
-
-		if ($who == '')
-			$who = 'players';
-
-		$this->view->partial('stat/top',
-		[
-			'update' 	=> $this->game->datezone("d.m.Y - H:i:s", Options::get('stat_update', 0)),
-			'who' 		=> $who,
-			'type' 		=> $type,
-			'range'		=> $range
-		]);
 	}
 	
 	public function indexAction ()
@@ -104,13 +80,20 @@ class StatController extends Controller
 
 	public function playersAction ()
 	{
-		$stats = $stat = [];
+		$type = (int) $this->request->get('type', 'int', 1);
 
-		if (!$this->range && $this->getDI()->has('user'))
+		$parse = [
+			'update' => $this->game->datezone("d.m.Y - H:i:s", Options::get('stat_update', 0)),
+			'list' => $this->dispatcher->getActionName(),
+			'type' => $type,
+			'page' => 1
+		];
+
+		if (!$this->page && $this->getDI()->has('user'))
 		{
 			$records = $this->cache->get('app::records_'.$this->user->getId().'');
 
-			if ($records === NULL)
+			if ($records === null)
 			{
 				$records = $this->db->query("SELECT `build_points`, `tech_points`, `fleet_points`, `defs_points`, `total_points`, `total_old_rank`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $this->user->getId() . "';")->fetch();
 
@@ -121,168 +104,133 @@ class StatController extends Controller
 			}
 
 			if (isset($records[$this->field.'_rank']))
-				$this->range = $records[$this->field.'_rank'];
+				$this->page = $records[$this->field.'_rank'];
 		}
 
-		if (Options::get('active_users') > 100)
-			$LastPage = floor(Options::get('active_users') / 100);
-		else
-			$LastPage = 0;
+		$users = (int) Options::get('active_users', 0);
 
-		$rangeStr = '';
-		$start = max(floor(($this->range - 1) / 100), 0);
+		$parse['elements'] = $users;
+		$parse['page'] = $this->page;
 
-		for ($Page = 0; $Page <= $LastPage; $Page++)
-		{
-			$PageValue = ($Page * 100) + 1;
-			$PageRange = $PageValue + 99;
-			$rangeStr .= '<option value="'.$PageValue.'" '.($start == $Page ? 'selected' : '').'>' . $PageValue . '-' . $PageRange . '</option>';
-		}
-
-		$start *= 100;
-
-		$type = $this->request->get('type', 'int', 1);
+		$position = ($parse['page'] - 1) * 100;
 
 		if ($type == 6 || $type == 7)
-			$query = $this->db->query("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_".$this->field." as ".$this->field."_points, 0 as ".$this->field."_old_rank FROM game_users u LEFT JOIN game_alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_".$this->field." DESC, u.xp".$this->field." DESC LIMIT " . $start . ", 100");
+			$query = $this->db->query("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_".$this->field." as ".$this->field."_points, 0 as ".$this->field."_old_rank FROM game_users u LEFT JOIN game_alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_".$this->field." DESC, u.xp".$this->field." DESC LIMIT " . $position . ", 100");
 		else
-			$query = $this->db->query("SELECT s.*, u.username, u.race FROM game_statpoints s LEFT JOIN game_users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $start . ", 100");
+			$query = $this->db->query("SELECT s.*, u.username, u.race FROM game_statpoints s LEFT JOIN game_users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
 
-		$start++;
+		$position++;
 
-		while ($StatRow = $query->fetch())
+		$parse['items'] = [];
+
+		while ($item = $query->fetch())
 		{
-			$stats['id'] = $StatRow['id_owner'];
-			$stats['rank'] = $start;
+			$row = [];
+			$row['id'] = (int) $item['id_owner'];
+			$row['position'] = $position;
 
-			$rank_old = $StatRow[$this->field.'_old_rank'];
-			if ($rank_old == 0)
-				$rank_old = $start;
+			$oldPosition = (int) $item[$this->field.'_old_rank'];
 
-			$rank_new = $start;
-			$ranking = $rank_old - $rank_new;
+			if ($oldPosition == 0)
+				$oldPosition = $position;
 
-			if ($ranking == 0)
-				$stats['rankplus'] = '<font color="#87CEEB">*</font>';
-			if ($ranking < 0)
-				$stats['rankplus'] = '<span class="negative">' . $ranking . '</span>';
-			if ($ranking > 0)
-				$stats['rankplus'] = '<span class="positive">+' . $ranking . '</span>';
+			$row['diff'] = $oldPosition - $position;
+			$row['name'] = $item['username'];
+			$row['name_marked'] = ($this->auth->isAuthorized() && $item['id_owner'] == $this->user->id) || $item['id_owner'] == $this->pid;
 
-			if (($this->auth->isAuthorized() && $StatRow['id_owner'] == $this->user->id) || $StatRow['id_owner'] == $this->pid)
-				$stats['name'] = '<span class="neutral">' . $StatRow['username'] . '</span>';
-			else
-				$stats['name'] = $StatRow['username'];
+			$row['alliance'] = false;
 
-			if ($this->auth->isAuthorized())
-				$stats['mes'] = '<a href="javascript:;" onclick="showWindow(\''.$StatRow['username'].': отправить сообщение\', \''.$this->url->get('messages/write/'.$StatRow['id_owner'].'/').'\', 680)" title="Сообщение"><span class="sprite skin_m"></span></a>';
+			if ($item['id_ally'])
+			{
+				$row['alliance'] = [
+					'id' => (int) $item['id_ally'],
+					'name' => $item['ally_name'],
+					'marked' => $this->auth->isAuthorized() && $item['ally_name'] == $this->user->ally_name
+				];
+			}
 
-			if ($this->auth->isAuthorized() && $StatRow['ally_name'] == $this->user->ally_name)
-				$stats['alliance'] = '<font color="#33CCFF">' . $StatRow['ally_name'] . '</font>';
-			elseif ($StatRow['ally_name'] != '')
-				$stats['alliance'] = '<a href="'.$this->url->get('alliance/info/'.$StatRow['id_ally'].'/').'">' . $StatRow['ally_name'] . '</a>';
-			else
-				$stats['alliance'] = '&nbsp;';
+			$row['race'] = (int) $item['race'];
+			$row['points'] = (int) $item[$this->field.'_points'];
 
-			$stats['race'] = $StatRow['race'];
+			$parse['items'][] = $row;
 
-			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
-
-			$stat[] = $stats;
-
-			$start++;
+			$position++;
 		}
 
-		$this->showTop($rangeStr);
-		$this->view->setVar('stat', $stat);
-		$this->view->partial('stat/players');
+		Request::addData('page', $parse);
 	}
 
-	public function allianceAction ()
+	public function alliancesAction ()
 	{
-		$stat = [];
+		$type = (int) $this->request->get('type', 'int', 1);
 
-		if (Options::get('active_alliance') > 100)
-			$LastPage = floor(Options::get('active_alliance') / 100);
-		else
-			$LastPage = 0;
+		$parse = [
+			'update' => $this->game->datezone("d.m.Y - H:i:s", Options::get('stat_update', 0)),
+			'list' => $this->dispatcher->getActionName(),
+			'type' => $type,
+			'page' => 1
+		];
 
-		$rangeStr = '';
-		$start = max(floor(($this->range - 1) / 100), 0);
+		$alliances = (int) Options::get('active_alliance', 0);
 
-		for ($Page = 0; $Page <= $LastPage; $Page++)
+		$parse['elements'] = $alliances;
+		$parse['page'] = $this->page;
+
+		$position = ($parse['page'] - 1) * 100;
+
+		$query = $this->db->query("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+
+		$position++;
+
+		$parse['items'] = [];
+
+		while ($item = $query->fetch())
 		{
-			$PageValue = ($Page * 100) + 1;
-			$PageRange = $PageValue + 99;
-			$rangeStr .= "<option value=\"" . $PageValue . "\" " . (($start == $Page) ? " selected" : "") . ">" . $PageValue . "-" . $PageRange . "</option>";
+			$row = [];
+			$row['id'] = (int) $item['ally_id'];
+			$row['position'] = $position;
+
+			$oldPosition = (int) $item[$this->field.'_old_rank'];
+
+			if ($oldPosition == 0)
+				$oldPosition = $position;
+
+			$row['diff'] = $oldPosition - $position;
+			$row['name'] = $item['name'];
+			$row['name_marked'] = isset($this->user) && $item['name'] == $this->user->ally_name;
+			$row['members'] = (int) $item['members'];
+			$row['points'] = (int) $item[$this->field.'_points'];
+
+			$parse['items'][] = $row;
+
+			$position++;
 		}
 
-		$start *= 100;
-		$query = $this->db->query("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM game_statpoints s, game_alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $start . ",100;");
-
-		$start++;
-
-		while ($StatRow = $query->fetch())
-		{
-			$stats['id'] = $StatRow['ally_id'];
-			$stats['rank'] = $start;
-			$rank_old = $StatRow[$this->field.'_old_rank'];
-			$rank_new = $start;
-
-			$ranking = $rank_old - $rank_new;
-
-			if ($ranking == 0)
-				$stats['rankplus'] = "<font color=\"#87CEEB\">*</font>";
-			if ($ranking < 0)
-				$stats['rankplus'] = "<font color=\"red\">" . $ranking . "</font>";
-			if ($ranking > 0)
-				$stats['rankplus'] = "<font color=\"green\">+" . $ranking . "</font>";
-
-			if (isset($this->user) && $StatRow['name'] == $this->user->ally_name)
-				$stats['name'] = "<font color=\"#33CCFF\">" . $StatRow['name'] . "</font>";
-			else
-				$stats['name'] = "<a href=\"".$this->url->get("alliance/info/" . $StatRow['ally_id'] . "/")."\">" . $StatRow['name'] . "</a>";
-
-			$stats['mes'] = '';
-			$stats['members'] = $StatRow['members'];
-			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
-			$stats['members_points'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['members']));
-
-			$stat[] = $stats;
-
-			$start++;
-		}
-
-		$this->showTop($rangeStr);
-		$this->view->setVar('stat', $stat);
-		$this->view->partial('stat/alliance');
+		Request::addData('page', $parse);
 	}
 
-	public function raceAction ()
+	public function racesAction ()
 	{
-		$stat = [];
-
-		$rangeStr = "<option value='0'>1-4</option>";
+		$parse = [
+			'update' => $this->game->datezone("d.m.Y - H:i:s", Options::get('stat_update', 0)),
+			'list' => $this->dispatcher->getActionName(),
+			'type' => 0,
+			'page' => 0
+		];
 
 		$query = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $this->field . "_rank` ASC;");
 
-		while ($StatRow = $query->fetch())
+		while ($item = $query->fetch())
 		{
-			$stats['rank'] = $StatRow[$this->field.'_rank'];
-			$stats['race'] = $StatRow['race'];
-			$stats['count'] = $StatRow['total_count'];
-			$stats['points'] = Format::number($StatRow[$this->field.'_points']);
+			$row = [];
+			$row['position'] = (int) $item[$this->field.'_rank'];
+			$row['race'] = (int) $item['race'];
+			$row['count'] = (int) $item['total_count'];
+			$row['points'] = (int) $item[$this->field.'_points'];
 
-			if ($StatRow['total_count'] > 0)
-				$stats['pointatuser'] = Format::number(floor($StatRow[$this->field.'_points'] / $StatRow['total_count']));
-			else
-				$stats['pointatuser'] = 0;
-
-			$stat[] = $stats;
+			$parse['items'][] = $row;
 		}
 
-		$this->showTop($rangeStr);
-		$this->view->setVar('stat', $stat);
-		$this->view->partial('stat/race');
+		Request::addData('page', $parse);
 	}
 }
