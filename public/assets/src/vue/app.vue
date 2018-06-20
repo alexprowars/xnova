@@ -15,6 +15,9 @@
 
 				<div class="main-content-row">
 					<div v-if="html.length" ref="html"></div>
+
+					<error-message v-if="error" :data="error"></error-message>
+
 					<router-view v-if="$store.state.page"></router-view>
 				</div>
 			</div>
@@ -50,6 +53,9 @@
 		computed: {
 			html () {
 				return this.$store.state.html;
+			},
+			error () {
+				return this.$store.state.error;
 			},
 			messages ()
 			{

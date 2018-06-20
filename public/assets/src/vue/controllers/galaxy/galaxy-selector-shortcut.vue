@@ -27,7 +27,7 @@
 		props: ["items"],
 		methods: {
 			changePlanet: ($event) => {
-				this.$root.load(this.$root.getUrl('galaxy/r/3/?'+$($event.target).val()));
+				this.$root.load('/galaxy/r/3/?'+$($event.target).val());
 			}
 		}
 	}

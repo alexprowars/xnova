@@ -74,7 +74,7 @@ function sendMission (mission, galaxy, system, planet, type, count)
 	})
 	.then(result =>
 	{
-		result.messages.forEach((item) =>
+		result.data.messages.forEach((item) =>
 		{
 			if (item['type'].indexOf('-static') <= 0)
 			{

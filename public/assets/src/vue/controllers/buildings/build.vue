@@ -98,7 +98,7 @@
 				if (this.page.queue[0].time <= 0)
 				{
 					this.timeout = setTimeout(() => {
-						this.$root.load(this.$root.getUrl('buildings/index/planet/'+this.$store.state.user.planet+'/'));
+						this.$root.load('/buildings/index/planet/'+this.$store.state.user.planet+'/');
 					}, 5000);
 				}
 				else

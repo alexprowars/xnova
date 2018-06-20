@@ -90,7 +90,7 @@
 			<img v-for="smile in smilesList" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" @click="addSmile(smile)">
 		</div>
 		
-		<textarea name="text" ref="text" rows="10" title="" v-model="message"></textarea>
+		<textarea name="text" ref="text" rows="10" title="" v-model="message" v-on:input="update"></textarea>
 
 		<div v-if="showPreview" class="editor-component-preview table">
 			<div class="row">
@@ -112,11 +112,15 @@
 			text: {
 				default: '',
 				type: String
+			},
+			value: {
+				default: '',
+				type: String
 			}
 		},
 		data () {
 			return {
-				message: this.text,
+				message: '',
 				showColors: false,
 				showBgColors: false,
 				showSmiles: false,
@@ -165,7 +169,17 @@
 				let rep = parser.addTag(tag, this.message.substring(start, end), type)
 
 				this.message = this.message.substring(0, start) + rep + this.message.substring(end, len);
+			},
+			update () {
+				this.$emit('input', this.message);
 			}
+		},
+		created ()
+		{
+			if (this.value.length > 0)
+				this.text = this.value
+			else
+				this.message = this.text
 		}
 	}
 </script>

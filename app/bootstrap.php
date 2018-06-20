@@ -1,6 +1,7 @@
 <?php
 
-use Xnova\Exceptions\MessageException;
+use Xnova\Exceptions\MainException;
+use Xnova\Request;
 
 if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
@@ -17,9 +18,36 @@ try
 
 	echo $application->getOutput();
 }
-catch (MessageException $e)
+catch (MainException $e)
 {
-	echo $e;
+	/** @var \Xnova\Controller $controller */
+	$controller = $application->dispatcher->getActiveController();
+
+	if ($controller)
+		$controller->afterExecuteRoute();
+
+	if ($application->request->isAjax())
+	{
+		Request::addData('html', str_replace(["\t", "\n"], '', $application->view->getContent()));
+
+		$application->response->setJsonContent([
+			'status' 	=> Request::getStatus(),
+			'data' 		=> Request::getData()
+		]);
+
+		$application->response->setContentType('text/json', 'utf8');
+		$application->response->send();
+
+		return '';
+	}
+	else
+	{
+		$application->view->start();
+		$application->view->render('error', 'index');
+		$application->view->finish();
+
+   		echo $application->view->getContent();
+	}
 }
 catch (Exception $e)
 {

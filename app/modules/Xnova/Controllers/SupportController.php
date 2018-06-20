@@ -8,9 +8,12 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Exceptions\SuccessException;
 use Xnova\Helpers;
 use Xnova\Models\Support;
+use Xnova\Request;
 use Xnova\User;
 use Xnova\Sms;
 use Xnova\Controller;
@@ -32,13 +35,13 @@ class SupportController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function newAction ()
+	public function addAction ()
 	{
 		$text = $this->request->getPost('text', 'string', '');
 		$subject = $this->request->getPost('subject', 'string', '');
 
 		if (empty($text) || empty($subject))
-			throw new RedirectException('Не заполнены все поля', 'Ошибка', '/support/', 3);
+			throw new ErrorException('Не заполнены все поля', 'Ошибка');
 
 		$ticket = new Support();
 
@@ -53,7 +56,7 @@ class SupportController extends Controller
 		$sms = new Sms();
 		$sms->send($this->config->sms->login, 'Создан новый тикет №' . $ticket->id . ' ('.$this->user->username.')');
 
-		throw new RedirectException('Задача добавлена', 'Успех', '/support/', 3);
+		throw new SuccessException('Задача добавлена', 'Успех');
 	}
 
 	public function answerAction ($id = 0)
@@ -66,7 +69,7 @@ class SupportController extends Controller
 		$text = $this->request->getPost('text', 'string', '');
 
 		if (empty($text))
-			throw new RedirectException('Не заполнены все поля', 'Ошибка', '/support/', 3);
+			throw new ErrorException('Не заполнены все поля', 'Ошибка');
 
 		$ticket = Support::findFirst($id);
 
@@ -85,7 +88,7 @@ class SupportController extends Controller
 			$sms->send($this->config->sms->login, 'Поступил ответ на тикет №' . $ticket->id . ' ('.$this->user->username.')');
 		}
 
-		throw new RedirectException('Задача обновлена', 'Успех', '/support/', 3);
+		throw new SuccessException('Задача обновлена', 'Успех');
 	}
 	
 	public function indexAction ()
@@ -104,11 +107,36 @@ class SupportController extends Controller
 				'id' => (int) $ticket->id,
 				'status' => (int) $ticket->status,
 				'subject' => $ticket->subject,
-				'date' => $this->game->datezone("d.m.Y H:i:s", $ticket->time),
-				'text' => html_entity_decode($ticket->text, ENT_NOQUOTES, "CP1251"),
+				'date' => $this->game->datezone("d.m.Y H:i:s", $ticket->time)
 			];
 		}
 
-		$this->view->setVar('list', $list);
+		Request::addData('page', [
+			'items' => $list
+		]);
+	}
+
+	public function infoAction ($id)
+	{
+		$ticket = Support::findFirst([
+			'conditions' => 'user_id = :user: AND id = :id:',
+			'bind' => [
+				'user' => $this->user->id,
+				'id' => $id
+			],
+		]);
+
+		if (!$ticket)
+			throw new \Exception('Тикет не найден');
+
+		Request::setData([
+			'id' => (int) $ticket->id,
+			'status' => (int) $ticket->status,
+			'subject' => $ticket->subject,
+			'date' => $this->game->datezone("d.m.Y H:i:s", $ticket->time),
+			'text' => html_entity_decode($ticket->text, ENT_NOQUOTES, "CP1251"),
+		]);
+
+		$this->view->disable();
 	}
 }

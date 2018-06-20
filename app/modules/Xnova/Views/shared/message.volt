@@ -1,1 +1,0 @@
-<error-message :title="'{{ title }}'" :text="'{{ slashes(replace('"', "'", text)) }}'" :time="{{ time }}" :redirect="'{{ destination }}'"></error-message>

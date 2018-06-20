@@ -2,7 +2,7 @@
 
 namespace Xnova\Exceptions;
 
-class ErrorException extends MessageException
+class ErrorException extends MainException
 {
 	public function __construct ($message = '', $title = '')
 	{

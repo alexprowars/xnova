@@ -1,18 +1,20 @@
 <template>
 	<table class="table">
-		<tr v-if="title.length">
-			<td class="c error" v-html="title"></td>
+		<tr v-if="data['title'] && data['title'].length">
+			<td class="c error" v-html="data['title']"></td>
 		</tr>
 		<tr>
-			<th class="errormessage" v-html="text"></th>
+			<th class="errormessage" v-html="data['message']"></th>
 		</tr>
 	</table>
 </template>
 
 <script>
 	export default {
-		name: "message",
-		props: ['title', 'text', 'time', 'redirect'],
+		name: "error-message",
+		props: {
+			data: Object
+		},
 		data () {
 			return {
 				timeout: null
@@ -20,11 +22,11 @@
 		},
 		mounted ()
 		{
-			if (this.time > 0)
+			if (this.data['timeout'] > 0 && this.data['redirect'])
 			{
 				this.timeout = setTimeout(() => {
-					this.$root.load(this.redirect)
-				}, this.time * 1000);
+					this.$root.load(this.data['redirect'])
+				}, this.data['timeout'] * 1000);
 			}
 		},
 		destroyed () {

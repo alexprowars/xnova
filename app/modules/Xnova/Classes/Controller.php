@@ -213,6 +213,7 @@ class Controller extends PhalconController
 			]);
 
 			Request::addData('page', false);
+			Request::addData('error', false);
 
 			$this->user->getAllyInfo();
 

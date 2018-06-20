@@ -2,7 +2,7 @@
 
 namespace Xnova\Exceptions;
 
-class RedirectException extends MessageException
+class RedirectException extends MainException
 {
 	protected $url = '';
 	protected $timeout = 5;
@@ -17,6 +17,10 @@ class RedirectException extends MessageException
 		if ($timeout > 0)
 			$this->timeout = (int) $timeout;
 
-		parent::__construct($message, $title, $url, $timeout);
+		parent::__construct($message, $title, [
+			'type' => MainException::REDIRECT,
+			'url' => $url,
+			'timeout' => $timeout
+		]);
 	}
 }
