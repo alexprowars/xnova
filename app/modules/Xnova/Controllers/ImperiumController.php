@@ -14,6 +14,7 @@ use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\User;
 use Xnova\Vars;
 
@@ -40,8 +41,6 @@ class ImperiumController extends Controller
 
 	public function indexAction()
 	{
-		$r = [];
-		$r1 = [];
 		$parse = [];
 
 		$build_hangar_full = [];
@@ -83,18 +82,15 @@ class ImperiumController extends Controller
 			}
 		}
 
-		$planets = Planet::find(["id_owner = " . $this->user->getId(), "order" => User::getPlanetListSortQuery($this->user->getUserOption('planet_sort'), $this->user->getUserOption('planet_sort_order'))]);
+		$planets = Planet::find([
+			'id_owner = :user:',
+			'bind' => [
+				'user' => $this->user->getId()
+			],
+			'order' => User::getPlanetListSortQuery($this->user->getUserOption('planet_sort'), $this->user->getUserOption('planet_sort_order'))
+		]);
 
-		$parse['mount'] = count($planets) + 3;
-
-		foreach (Vars::getResources() as $res)
-		{
-			$parse['file_'.$res.'_t'] = 0;
-			$parse['file_'.$res.'_ph_t'] = 0;
-			$parse['file_'.$res] = [];
-			$parse['file_'.$res.'_ph'] = [];
-			$parse['file_'.$res.'_p'] = [];
-		}
+		$parse['planets'] = [];
 
 		foreach ($planets AS $planet)
 		{
@@ -103,31 +99,39 @@ class ImperiumController extends Controller
 
 			$planet->field_max = $planet->getMaxFields();
 
-			@$parse['file_images'] .= '<th width=75><a href="'.$this->url->get('overview/?chpl=' . $planet->id) . '"><img src="'.$this->url->getStatic('assets/images/planeten/small/s_' . $planet->image . '.jpg').'" border="0" height="75" width="75"></a></th>';
-			@$parse['file_names'] .= "<th>" . $planet->name . "</th>";
-			@$parse['file_coordinates'] .= "<th>[<a href=\"".$this->url->get("galaxy/".$planet->galaxy."/".$planet->system."/")."\">".$planet->galaxy.":".$planet->system.":".$planet->planet."</a>]</th>";
-			@$parse['file_fields'] .= '<th>' . $planet->field_current . '/' . $planet->field_max . '</th>';
-			@$parse['file_energy'] .= '<th>' . Format::number($planet->energy_max - abs($planet->energy_used)) . '</th>';
-			@$parse['file_zar'] .= '<th><font color="#00ff00">' . round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) . '</font>%</th>';
+			$row = [];
 
-			@$parse['file_fields_c'] += $planet->field_current;
-			@$parse['file_fields_t'] += $planet->field_max;
+			$row['id'] = (int) $planet->id;
+			$row['image'] = $planet->image;
+			$row['name'] = $planet->name;
+			$row['position'] = [
+				'galaxy' => (int) $planet->galaxy,
+				'system' => (int) $planet->system,
+				'planet' => (int) $planet->planet,
+			];
+			$row['fields'] = (int) $planet->field_current;
+			$row['fields_max'] = (int) $planet->field_max;
 
-			@$parse['file_energy_t'] += $planet->energy_max - abs($planet->energy_used);
+			$row['resources'] = [];
+			$row['factor'] = [];
+
+			$row['resources']['energy'] = [
+				'current' => $planet->energy_max - abs($planet->energy_used),
+				'production' => $planet->energy_max,
+				'storage' => $planet->getBuildLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) : 0
+			];
 
 			foreach (Vars::getResources() as $res)
 			{
-				$parse['file_'.$res.'_t'] += $planet->{$res};
-				$parse['file_'.$res.'_ph_t'] += $planet->{$res.'_perhour'};
-
-				$parse['file_'.$res][] = $planet->{$res};
-				$parse['file_'.$res.'_ph'][] = $planet->{$res.'_perhour'};
-				$parse['file_'.$res.'_p'][] = $planet->getBuild($res.'_mine')['power'] * 10;
+				$row['resources'][$res] = [
+					'current' => $planet->{$res},
+					'production' => $planet->{$res.'_perhour'},
+					'storage' => floor(($this->config->game->baseStorageSize + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res.'_store'))))) * $this->user->bonusValue('storage'))
+				];
 			}
 
-			@$parse['file_solar_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('solar_plant')['power'] * 10) . '</font>%</th>';
-			@$parse['file_fusion_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('fusion_plant')['power'] * 10) . '</font>%</th>';
-			@$parse['file_solar2_p'] .= '<th><font color="#00FF00">' . ($planet->getBuild('solar_satelit')['power'] * 10) . '</font>%</th>';
+			foreach ($this->registry->reslist['prod'] as $ProdID)
+				$row['factor'][$ProdID] = $planet->getBuild($ProdID)['power'] * 10;
 
 			$build_hangar = [];
 
@@ -155,81 +159,67 @@ class ImperiumController extends Controller
 				}
 			}
 
+			$items = [];
+
 			foreach ($this->registry->resource as $i => $res)
 			{
-				if (!isset($r[$i]))
-					$r[$i] = '';
-				if (!isset($r1[$i]))
-					$r1[$i] = 0;
+				if (!isset($items[$i]))
+				{
+					$items[$i] = [
+						'current' => 0,
+						'build' => 0,
+						'fly' => 0
+					];
+				}
 
 				if (Vars::getItemType($i) == Vars::ITEM_TYPE_BUILING)
 				{
-					$r[$i] .= ($planet->getBuildLevel($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getBuildLevel($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					if ($r1[$i] < $planet->getBuildLevel($i))
-						$r1[$i] = $planet->getBuildLevel($i);
+					$items[$i]['current'] = $planet->getBuildLevel($i);
+					$items[$i]['build'] = $build_hangar[$i] ?? 0;
 				}
 				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET)
 				{
-					$r[$i] .= '<th>';
-
-					if ($planet->getUnitCount($i) == 0 && !isset($build_hangar[$i]) && !isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
-						$r[$i] .= '-';
-					else
-					{
-						if ($planet->getUnitCount($i) >= 0)
-							$r[$i] .= $planet->getUnitCount($i);
-						if (isset($build_hangar[$i]))
-							$r[$i] .= ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>';
-						if (isset($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i]))
-							$r[$i] .= ' <font color=yellow>' . (($fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] > 0) ? '+' : '') . '' . $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] . '</font>';
-						$r[$i] .= '</th>';
-					}
-
-					$r1[$i] += $planet->getUnitCount($i);
+					$items[$i]['current'] = $planet->getUnitCount($i);
+					$items[$i]['build'] = $build_hangar[$i] ?? 0;
+					$items[$i]['fly'] = $fleet_fly[$planet->galaxy.':'.$planet->system.':'.$planet->planet.':'.$planet->planet_type][$i] ?? 0;
 				}
 				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_DEFENSE)
 				{
-					$r[$i] .= ($planet->getUnitCount($i) == 0) ? '<th>' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '-') . '</th>' : '<th>' . $planet->getUnitCount($i) . '' . ((isset($build_hangar[$i])) ? ' <font color=#00FF00>+' . $build_hangar[$i] . '</font>' : '') . '</th>';
-					$r1[$i] += $planet->getUnitCount($i);
+					$items[$i]['current'] = $planet->getUnitCount($i);
+					$items[$i]['build'] = $build_hangar[$i] ?? 0;
 				}
 			}
+
+			$row['elements'] = [];
+
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i)
+				$row['elements'][$i] = $items[$i];
+
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
+				$row['elements'][$i] = $items[$i];
+
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i)
+				$row['elements'][$i] = $items[$i];
+
+			$parse['planets'][] = $row;
 		}
 
-		foreach (Vars::getResources() as $res)
-		{
-			$parse['file_'.$res.'_t'] = Format::number($parse['file_'.$res.'_t']);
-			$parse['file_'.$res.'_ph_t'] = Format::number($parse['file_'.$res.'_ph_t']);
-		}
+		$parse['credits'] = (int) $this->user->credits;
 
-		$parse['file_energy_t'] = Format::number($parse['file_energy_t']);
-		$parse['file_kredits'] = Format::number($this->user->credits);
-
-		$parse['building_row'] = '';
-		$parse['fleet_row'] = '';
-		$parse['defense_row'] = '';
-		$parse['technology_row'] = '';
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i)
-		{
-			$parse['building_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $this->planet->getBuildLevel($i) . " (" . $r1[$i] . ")</th></tr>";
-		}
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
-		{
-			$parse['fleet_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
-		}
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i)
-		{
-			$parse['defense_row'] .= "<tr><th colspan=\"2\">" . _getText('tech', $i) . "</th>" . $r[$i] . "<th>" . $r1[$i] . "" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>+' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
-		}
+		$parse['tech'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i)
 		{
-			$parse['technology_row'] .= "<tr><th colspan=\"" . ($parse['mount'] - 1) . "\">" . _getText('tech', $i) . "</th><th><font color=#FFFF00>" . $this->user->getTechLevel($i) . "</font>" . ((isset($build_hangar_full[$i])) ? ' <font color=#00FF00>-> ' . $build_hangar_full[$i] . '</font>' : '') . "</th></tr>";
+			if ($this->user->getTechLevel($i) <= 0)
+				continue;
+
+			$parse['tech'][$i] = [
+				'current' => $this->user->getTechLevel($i),
+				'build' => $build_hangar_full[$i] ?? 0,
+			];
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Империя');
 		$this->showTopPanel(false);

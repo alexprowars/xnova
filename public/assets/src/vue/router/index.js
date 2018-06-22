@@ -26,6 +26,7 @@ import TechController from './../controllers/tech/tech.vue'
 import TechInfoController from './../controllers/tech/tech-info.vue'
 import SupportController from './../controllers/support/support.vue'
 import StatController from './../controllers/stat/stat.vue'
+import ImperiumController from './../controllers/imperium/imperium.vue'
 import HtmlController from './../controllers/html.vue'
 
 export default new VueRouter({
@@ -69,6 +70,9 @@ export default new VueRouter({
 	}, {
 		path: '/merchant',
 		component: MerchantController
+	}, {
+		path: '/imperium',
+		component: ImperiumController
 	}, {
 		path: '/resources*',
 		component: ResourcesController
