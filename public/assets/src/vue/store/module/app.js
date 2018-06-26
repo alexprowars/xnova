@@ -1,4 +1,4 @@
-import axios from 'axios'
+import app from 'app'
 
 const state = Object.assign({}, {
 	mobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
@@ -7,12 +7,15 @@ const state = Object.assign({}, {
 const mutations = {
 	PAGE_LOAD (state, data)
 	{
-		application.start_time = Math.floor(((new Date()).getTime()) / 1000)
+		app.start_time = Math.floor(((new Date()).getTime()) / 1000)
 
 		for (let key in data)
 		{
 			if (data.hasOwnProperty(key))
-				state[key] = data[key];
+			{
+				if (key !== 'page' || (key === 'page' && data[key] === false))
+					state[key] = data[key];
+			}
 		}
 	}
 }

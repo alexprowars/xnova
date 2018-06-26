@@ -1,8 +1,8 @@
 <template>
-	<div class="block start">
+	<div v-if="page" class="block start">
 		<div class="title">Обмен сырья</div>
 		<div class="content border-0">
-			<form :action="$root.getUrl('merchant/')" method="post" class="container-fluid table">
+			<form action="/merchant/" method="post" class="container-fluid table">
 				<input type="hidden" name="exchange" value="Y">
 				<input type="hidden" name="type" v-model="type">
 				<div class="row">
@@ -54,13 +54,11 @@
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "merchant",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 		data () {
 			return {
 				type: '',

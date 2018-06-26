@@ -4,7 +4,7 @@
 
 <script>
 	export default {
-		name: "application-messages-row",
+		name: "messages-row",
 		props: ['item']
 	}
 </script>

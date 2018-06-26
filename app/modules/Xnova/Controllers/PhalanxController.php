@@ -9,7 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\MessageException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Models\Planet;
@@ -59,13 +59,13 @@ class PhalanxController extends Controller
 		$systemgora = $this->planet->system + pow($phalanx, 2);
 		
 		if ($this->planet->planet_type != 3)
-			throw new MessageException("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1, false);
+			throw new RedirectException("Вы можете использовать фалангу только на луне!", "Ошибка", "", 1);
 		elseif ($phalanx == 0)
-			throw new MessageException("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1, false);
+			throw new RedirectException("Постройте сначало сенсорную фалангу", "Ошибка", "/overview/", 1);
 		elseif ($this->planet->deuterium < $consomation)
-			throw new MessageException("<b>Недостаточно дейтерия для использования. Необходимо: ".$consomation.".</b>", "Ошибка", "", 2, false);
+			throw new RedirectException("<b>Недостаточно дейтерия для использования. Необходимо: ".$consomation.".</b>", "Ошибка", "", 2);
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
-			throw new MessageException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1, false);
+			throw new RedirectException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "Ошибка", "", 1);
 
 		$this->planet->deuterium -= $consomation;
 		$this->planet->update();
@@ -73,7 +73,7 @@ class PhalanxController extends Controller
 		$planet = Planet::count(['galaxy = ?0 AND system = ?1 AND planet = ?2', 'bind' => [$g, $s, $i]]);
 		
 		if ($planet == 0)
-			throw new MessageException("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1, false);
+			throw new RedirectException("Чит детектед! Режим бога активирован! Приятной игры!", "Ошибка", "", 1);
 
 		$fleets = FleetModel::find([
 			'conditions' => '((start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type != 3) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet:))',

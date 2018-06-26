@@ -19,7 +19,7 @@
 	import PlanetRow from './planets-list-row.vue'
 
 	export default {
-		name: "application-planets-list",
+		name: "planets-list",
 		props: ['active'],
 		computed: {
 			items () {

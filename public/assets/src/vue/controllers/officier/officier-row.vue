@@ -61,6 +61,7 @@
 				$.confirm({
 					content: 'Вы действительно хотите нанять "<b>'+this.$root.getLang('TECH', this.item['id'])+'</b>" на <b>'+value+'</b> дней за <b>'+price+'</b> кредитов?',
 					title: 'Вербовка офицера',
+					backgroundDismiss: true,
 					buttons: {
 						confirm: {
 							text: 'нанять',

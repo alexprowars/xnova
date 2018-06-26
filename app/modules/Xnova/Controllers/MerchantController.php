@@ -10,7 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
-use Xnova\Exceptions\MessageException;
+use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Request;
 use Xnova\Vars;
@@ -56,12 +56,12 @@ class MerchantController extends Controller
 			$deuterium = (int) $this->request->getPost('deuterium', 'int', 0);
 
 			if ($metal < 0 || $crystal < 0 || $deuterium < 0)
-				throw new MessageException('Злобный читер');
+				throw new ErrorException('Злобный читер');
 
 			$type = trim($this->request->getPost('type'));
 
 			if (!in_array($type, Vars::getResources()))
-				throw new MessageException('Злобный читер');
+				throw new ErrorException('Злобный читер');
 
 			$exchange = 0;
 
@@ -72,10 +72,10 @@ class MerchantController extends Controller
 			}
 
 			if ($exchange <= 0)
-				throw new MessageException('Вы не можете обменять такое количество ресурсов');
+				throw new ErrorException('Вы не можете обменять такое количество ресурсов');
 
 			if ($this->planet->{$type} < $exchange)
-				throw new MessageException('На планете недостаточно ресурсов данного типа');
+				throw new ErrorException('На планете недостаточно ресурсов данного типа');
 
 			$this->planet->{$type} -= $exchange;
 

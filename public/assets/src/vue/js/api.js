@@ -21,8 +21,8 @@ const $get = (url, data) =>
 		})
 		.then(result =>
 		{
-			if (result.data !== undefined)
-				resolve(result.data)
+			if (result.data.data !== undefined)
+				resolve(result.data.data)
 			else
 				reject()
 		})
@@ -51,8 +51,8 @@ const $post = (url, data) =>
 		})
 		.then(result =>
 		{
-			if (result.data !== undefined)
-				resolve(result.data)
+			if (result.data.data !== undefined)
+				resolve(result.data.data)
 			else
 				reject()
 		})

@@ -1,6 +1,6 @@
 <template>
 	<nav class="main-menu">
-		<a :class="{active: active}" class="menu-toggle d-sm-none" v-on:click.prevent="$parent.sidebarToggle('menu')">
+		<a :class="{active: active}" class="menu-toggle d-sm-none" @click.prevent="$parent.sidebarToggle('menu')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
@@ -20,7 +20,7 @@
 	import MainMenuItem from './main-menu-item.vue'
 
 	export default {
-		name: "application-main-menu",
+		name: "main-menu",
 		props: ['active'],
 		computed: {
 			items () {

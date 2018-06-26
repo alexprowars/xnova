@@ -308,16 +308,20 @@ h1 {
 	}
 }
 
-.error {
-	color: red;
-}
-
 .warning {
 	color: orange;
 }
 
 .success {
 	color: lime;
+}
+
+input[type=text].error, input[type=password].error, input[type=email].error, textarea.error {
+	border-color: #ff453a !important;
+}
+
+input[type=checkbox].error {
+	box-shadow: 0 0 10px 2px #ff453a;
 }
 
 .errormessage a {
@@ -399,7 +403,7 @@ input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover, .bu
 	text-decoration: none;
 }
 
-input[type=text], input[type=number], input[type=password] {
+input[type=text], input[type=email], input[type=number], input[type=password] {
 	background: $head-bg-color;
 	border: 1px solid $border-color;
 	color: $text-color;
@@ -414,7 +418,7 @@ input[type=text], input[type=number], input[type=password] {
 	width: 50px;
 }
 
-input[type=text]:hover, input[type=password]:hover, textarea:hover {
+input[type=text]:hover, input[type=email]:hover, input[type=password]:hover, textarea:hover {
 	border-color: #517db5;
 }
 
@@ -587,7 +591,7 @@ main {
 	border: 0 !important;
 }
 
-.error {
+.information-message .error, .message.error {
 	padding: 10px;
 	color: red;
 	text-align: center;
@@ -730,7 +734,7 @@ table td.c, table th, .table th {
   color: yellow !important;
 }
 
-.error, .negative {
+.negative {
   color: #FF3F3E !important;
 }
 

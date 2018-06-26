@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<div @click="$root.openPopup('', '/info/4/')" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
+						<popup-link :to="'/info/4/'" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
 							<div class="tooltip-content">
 								<div class="resource-panel-item-tooltip">
 									<h1>Энергия</h1>
@@ -34,7 +34,7 @@
 							</div>
 							<span class="sprite skin_energy"></span>
 							<span class="sprite skin_s_energy"></span>
-						</div>
+						</popup-link>
 						<div class="neutral">{{ $root.getLang('RESOURCES', 'energy') }}</div>
 						<div title="Доступно энергии">
 							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ planet['energy']['current']|number }}</span>
@@ -73,7 +73,7 @@
 				</div>
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<a :href="$root.getUrl('credits/')" class="tooltip d-sm-inline-block resource-panel-item-icon">
+						<router-link to="/credits/" class="tooltip d-sm-inline-block resource-panel-item-icon">
 							<div class="tooltip-content">
 								<table width="550">
 									<tr>
@@ -91,7 +91,7 @@
 								</table>
 							</div>
 							<span class="sprite skin_kredits"></span>
-						</a>
+						</router-link>
 						<div class="neutral">Кредиты</div>
 						{{ planet['credits']|number }}
 					</div>
@@ -105,7 +105,7 @@
 	import PanelResource from './planet-panel-resource.vue'
 
 	export default {
-		name: "application-planet-panel",
+		name: "planet-panel",
 		props: ['planet'],
 		data: function()
 		{

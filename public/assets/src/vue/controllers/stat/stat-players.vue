@@ -25,13 +25,13 @@
 						<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
 					</div>
 					<div class="th col-sm-4 col-5">
-						<a :href="$root.getUrl('players/'+item['id']+'/')" class="window popup-user">
+						<popup-link :to="'/players/'+item['id']+'/'">
 							<span :class="{neutral: item['name_marked']}">{{ item['name'] }}</span>
-						</a>
+						</popup-link>
 						<div v-if="item['alliance']" class="d-sm-none">
-							<a :class="{neutral: item['alliance']['marked']}" :href="$root.getUrl('alliance/info/'+item['alliance']['id']+'/')">
+							<router-link :class="{neutral: item['alliance']['marked']}" :to="'/alliance/info/'+item['alliance']['id']+'/'">
 								{{ item['alliance']['name'] }}
-							</a>
+							</router-link>
 						</div>
 						<div v-else class="d-sm-none">
 							&nbsp;
@@ -40,22 +40,22 @@
 					<div class="th col-sm-1 col-2">
 						<img v-if="item['race']" :src="$root.getUrl('assets/images/skin/race'+item['race']+'.gif')" width="16" height="16" style="margin-right:7px;">
 
-						<a v-if="$store.state.user" @click="$root.openPopup(item['name']+': отправить сообщение', $root.getUrl('messages/write/'+item['id']+'/'), 680)" title="Сообщение">
+						<popup-link v-if="$store.state.user" :to="'/messages/write/'+item['id']+'/'" :width="680" :title="item['name']+': отправить сообщение'">
 							<span class="sprite skin_m"></span>
-						</a>
+						</popup-link>
 					</div>
 					<div class="th col-sm-3 d-none d-sm-block row-alliance">
-						<a v-if="item['alliance']" :class="{neutral: item['alliance']['marked']}" :href="$root.getUrl('alliance/info/'+item['alliance']['id']+'/')">
+						<router-link v-if="item['alliance']" :class="{neutral: item['alliance']['marked']}" :to="'/alliance/info/'+item['alliance']['id']+'/'">
 							{{ item['alliance']['name'] }}
-						</a>
+						</router-link>
 						<div v-else>
 							&nbsp;
 						</div>
 					</div>
 					<div class="th col-sm-2 col-3 middle">
-						<a :href="$root.getUrl('players/stat/'+item['id']+'/')">
+						<router-link :to="'/players/stat/'+item['id']+'/'">
 							{{ item['points']|number }}
-						</a>
+						</router-link>
 					</div>
 				</div>
 			</div>

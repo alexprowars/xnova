@@ -1,5 +1,5 @@
 <template>
-	<div class="page-stat">
+	<div v-if="page" class="page-stat">
 		<div class="block">
 			<div class="title text-center">
 				Статистика: {{ page['update'] }}
@@ -50,9 +50,11 @@
 	import StatRaces from './stat-races.vue'
 	import { $post } from 'api'
 	import Vue from 'vue'
+	import router from 'router-mixin'
 
 	export default {
 		name: "stat",
+		mixins: [router],
 		components: {
 			StatPlayers,
 			StatAlliances,
@@ -69,18 +71,6 @@
 				items: []
 			}
 		},
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
-		created ()
-		{
-			this.form.list = this.page['list'];
-			this.form.type = this.page['type'];
-			this.form.pages = Math.ceil(this.page['elements'] / 100)
-			this.items = this.page['items']
-		},
 		watch: {
 			'form.list'() {
 				this.form.type = 1;
@@ -93,17 +83,24 @@
 		methods: {
 			loadItems ()
 			{
-				Vue.nextTick(() => {
+				Vue.nextTick(() =>
+				{
 					$post('/stat/'+this.form.list+'/', {
 						type: this.form.type,
 						range: this.form.page
 					})
-					.then((result) =>
-					{
-						this.items = result.data.page.items
+					.then((result) => {
+						this.items = result.page.items
 					})
 				})
-			}
+			},
+			afterLoad ()
+			{
+				this.form.list = this.page['list'];
+				this.form.type = this.page['type'];
+				this.form.pages = Math.ceil(this.page['elements'] / 100)
+				this.items = this.page['items']
+			},
 		}
 	}
 </script>

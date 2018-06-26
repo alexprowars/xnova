@@ -1,5 +1,5 @@
 <template>
-	<div class="page-resources">
+	<div v-if="page" class="page-resources">
 		<div class="table">
 			<div class="row">
 				<div class="col-5 c">Уровень производства</div>
@@ -10,7 +10,7 @@
 			</div>
 			<div class="row">
 				<div class="col-5 c">
-					<a :href="$root.getUrl('info/113/')">{{ $root.getLang('TECH', 113) }}</a>
+					<router-link to="/info/113/">{{ $root.getLang('TECH', 113) }}</router-link>
 				</div>
 				<div class="col-2 th">
 					{{ page['energy_tech'] }} ур.
@@ -29,10 +29,14 @@
 				<div class="table">
 					<div class="row">
 						<div class="col col-sm-6 th">
-							<a :href="$root.getUrl('resources/production/active/Y/')" class="button">Включить на всех<br>планетах</a>
+							<router-link to="/resources/production/active/Y/" class="button">
+								Включить на всех<br>планетах
+							</router-link>
 						</div>
 						<div class="col col-sm-6 th">
-							<a :href="$root.getUrl('resources/production/active/N/')" class="button">Выключить на всех<br>планетах</a>
+							<router-link to="/resources/production/active/N/" class="button">
+								Выключить на всех<br>планетах
+							</router-link>
 						</div>
 					</div>
 				</div>
@@ -45,16 +49,16 @@
 			</div>
 			<div class="content border-0">
 				<div class="table-responsive">
-					<form :action="$root.getUrl('resources/')" method="post">
+					<form action="/resources/" method="post">
 						<table width="100%">
 							<tr>
 								<th width="200"></th>
 								<th>Ур.</th>
 								<th>Бонус</th>
-								<th><a @click.prevent="$root.openPopup($root.getLang('TECH', 1), $root.getUrl('info/1/'), 600)">Металл</a></th>
-								<th><a @click.prevent="$root.openPopup($root.getLang('TECH', 2), $root.getUrl('info/2/'), 600)">Кристалл</a></th>
-								<th><a @click.prevent="$root.openPopup($root.getLang('TECH', 3), $root.getUrl('info/3/'), 600)">Дейтерий</a></th>
-								<th><a @click.prevent="$root.openPopup($root.getLang('TECH', 4), $root.getUrl('info/4/'), 600)">Энергия</a></th>
+								<th><popup-link to="/info/1/" :title="$root.getLang('TECH', 1)">Металл</popup-link></th>
+								<th><popup-link to="/info/2/" :title="$root.getLang('TECH', 2)">Кристалл</popup-link></th>
+								<th><popup-link to="/info/3/" :title="$root.getLang('TECH', 3)">Дейтерий</popup-link></th>
+								<th><popup-link to="/info/4/" :title="$root.getLang('TECH', 4)">Энергия</popup-link></th>
 								<th width="100">КПД</th>
 							</tr>
 							<tr>
@@ -67,9 +71,9 @@
 							</tr>
 							<tr v-for="item in page['items']">
 								<th class="text-left" nowrap>
-									<a @click.prevent="$root.openPopup($root.getLang('TECH', item['id']), $root.getUrl('info/'+item['id']+'/'), 600)">
+									<popup-link :to="'/info/'+item['id']+'/'" :title="$root.getLang('TECH', item['id'])">
 										{{ $root.getLang('TECH', item['id']) }}
-									</a>
+									</popup-link>
 								</th>
 								<th>
 									<colored :value="item['level']"></colored>
@@ -179,7 +183,7 @@
 					<div class="row">
 						<div class="col-4 th">
 							<span v-if="!page['buy_form']['time']">
-								<a :href="$root.getUrl('resources/?buy=Y')" class="button">Купить за 10 кредитов</a>
+								<a @click.prevent="buyResources" class="button">Купить за 10 кредитов</a>
 							</span>
 							<span v-else>
 								Следующая покупка через
@@ -202,16 +206,42 @@
 
 <script>
 	import ResourcesBar from './resources-bar.vue'
+	import { $get } from 'api'
+	import router from 'router-mixin'
 
 	export default {
 		name: "resources",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 		components: {
 			ResourcesBar
+		},
+		methods: {
+			buyResources ()
+			{
+				$.confirm({
+					content: 'Купить ресурсы за 10 кредитов?',
+					title: 'Ресурсы',
+					backgroundDismiss: true,
+					buttons: {
+						confirm: {
+							text: 'да',
+							action: () =>
+							{
+								$get('/resources/', {
+									buy: 'Y'
+								})
+								.then((result) => {
+									this.setPageData(result.page)
+									this.$store.commit('PAGE_LOAD', result)
+								})
+							}
+						},
+						cancel: {
+							text: 'нет'
+						}
+					}
+				})
+			}
 		}
 	}
 </script>

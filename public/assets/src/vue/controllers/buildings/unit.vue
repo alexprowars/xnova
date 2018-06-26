@@ -1,5 +1,5 @@
 <template>
-	<div class="page-building page-building-unit">
+	<div v-if="page" class="page-building page-building-unit">
 		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
 		<div class="content page-building-items">
 			<form ref="form" action="" method="post" class="noajax" @submit.prevent="constructAction">
@@ -27,14 +27,11 @@
 	import UnitRow from './unit-row.vue'
 	import UnitQueue from './unit-queue.vue'
 	import { $post } from 'api'
+	import router from 'router-mixin'
 
 	export default {
 		name: "unit",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			},
-		},
+		mixins: [router],
 		components: {
 			UnitRow,
 			UnitQueue

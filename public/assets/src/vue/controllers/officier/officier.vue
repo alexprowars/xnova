@@ -1,5 +1,5 @@
 <template>
-	<div class="page-officiers block">
+	<div v-if="page" class="page-officiers block">
 		<div class="title">
 			Доступно кредитов: {{ page['credits']|number }}
 		</div>
@@ -9,7 +9,7 @@
 					<img :src="$root.getUrl('assets/images/officiers/bigcredits.jpg')" alt="">
 				</div>
 				<div class="col-12 col-sm-7 text-left">
-					Кредиты (<a :href="$root.getUrl('credits/')"><span class="positive">Получить</span></a>)
+					Кредиты (<router-link to="/credits/"><span class="positive">Получить</span></router-link>)
 					<br><br>
 					Инженеры берут за свою работу только межгалактичесие кредиты. В зависимости от суммы контракта работают на вас в течении всего времени найма.
 					<table class="powers">
@@ -24,9 +24,9 @@
 					</table>
 				</div>
 				<div class="col-sm-3 d-none d-sm-block text-center">
-					<a :href="$root.getUrl('credits/')" class="button positive">
+					<router-link to="/credits/" class="button positive">
 						Получить кредиты
-					</a>
+					</router-link>
 				</div>
 			</div>
 			<officier-row v-for="item in page['items']" :key="item['id']" :item="item"></officier-row>
@@ -36,14 +36,11 @@
 
 <script>
 	import OfficierRow from './officier-row.vue'
+	import router from 'router-mixin'
 
 	export default {
 		name: "officiers",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 		components: {
 			OfficierRow
 		}

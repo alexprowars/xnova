@@ -1,13 +1,13 @@
 <template>
-	<form ref="form" :action="$root.getUrl('messages/')" method="post">
+	<form v-if="page" ref="form" action="/messages/" method="post">
 		<div class="block">
 			<div class="title">
 				Сообщения
-				<select name="category" title="" v-on:change.prevent="submitForm" v-model="page['category']">
+				<select name="category" title="" @change.prevent="submitForm" v-model="page['category']">
 					<option v-for="(type, index) in $root.getLang('MESSAGE_TYPES')" :value="index">{{ type }}</option>
 				</select>
 				по
-				<select name="limit" title="" v-on:change.prevent="submitForm" v-model="page['limit']">
+				<select name="limit" title="" @change.prevent="submitForm" v-model="page['limit']">
 					<option v-for="i in limit" :value="i">{{ i }}</option>
 				</select>
 				на странице
@@ -47,20 +47,18 @@
 <script>
 	import Vue from 'vue'
 	import MessagesRow from './messages-row.vue'
+	import router from 'router-mixin'
 
 	export default {
 		name: "messages",
+		mixins: [router],
 		components: {
 			MessagesRow
 		},
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
 			messages ()
 			{
-				this.$store.state.page.items.forEach((item) =>
-				{
+				this.$store.state.page.items.forEach((item) => {
 					Vue.set(item, 'deleted', false);
 				});
 

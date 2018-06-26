@@ -1,6 +1,6 @@
 <template>
 	<div class="planet" :class="['type_'+item.t, ($store.state.user.planet === item.id ? 'current' : '')]">
-		<a v-on:click="changeItem" :title="item.name">
+		<a @click.prevent="changeItem" :title="item.name">
 			<img :src="$root.getUrl('assets/images/planeten/small/s_'+item.image+'.jpg')" height="40" width="40" :alt="item.name">
 		</a>
 		<span class="d-none d-sm-block d-md-none" v-html="$root.getPlanetUrl(item.g, item.s, item.p)">{{ $root.getPlanetUrl(item.g, item.s, item.p) }}</span>
@@ -14,7 +14,7 @@
 
 <script>
 	export default {
-		name: "application-planets-list-row",
+		name: "planets-list-row",
 		props: ['item'],
 		methods:
 		{

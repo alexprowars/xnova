@@ -26,17 +26,15 @@ $lang['mail_welcome']      	= '
 $lang['mail_title']        	= 'Регистрация в игре XNova (xnova.su)';
 $lang['thanksforregistry'] 	= '<a href="/">На главную...</a><br /><br />Спасибо за регистрацию.<br />Копия пароля выслана вам на E-mail адрес';
 
-$lang['error_mail']        	= 'Неверный E-Mail!<br />';
-$lang['error_captcha']		= 'Неверный код с картинки!<br />';
-$lang['error_planet']      	= 'Другая планета уже имеет то же название!<br />';
-$lang['error_hplanetnum']  	= 'В название планеты не должны содержаться некорректные символы.<br />';
+$lang['error_mail']        	= 'Неверный E-Mail!';
 $lang['error_character']   	= 'Неверное имя.<br />';
 $lang['error_charalpha']   	= 'Вы можете использовать только латинские буквы и цифры!<br />';
 $lang['error_lang']   		= 'Неверно указан язык игры.<br />';
-$lang['error_password']    	= 'Пароль должен состоять как минимум из 4 знаков!<br />';
-$lang['error_rgt']         	= 'Вы должны согласиться с правилами!<br />';
+$lang['error_password']    	= 'Пароль должен состоять как минимум из 4 знаков!';
+$lang['error_confirm']    	= 'Пароли должны быть одинаковыми';
+$lang['error_rgt']         	= 'Вы должны согласиться с правилами!';
 $lang['error_userexist']   	= 'Такое имя уже используется!<br />';
-$lang['error_emailexist']  	= 'Такой e-mail уже используется!<br />';
+$lang['error_emailexist']  	= 'Такой e-mail уже используется!';
 $lang['error_sex']         	= 'Ошибка в выборе пола!<br />';
 $lang['error_mailsend']    	= 'Ошибка в отправлении электронной почти, ваш пароль: ';
 $lang['reg_welldone']      	= 'Регистрация завершена!';

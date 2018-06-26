@@ -11,7 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\CombatReport;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\MessageException;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * @RoutePrefix("/rw")
@@ -39,14 +39,14 @@ class RwController extends Controller
 		$raportrow = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $this->request->getQuery('id', 'int') . "'")->fetch();
 
 		if (!isset($raportrow['id']))
-			throw new MessageException('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0, false);
+			throw new RedirectException('Данный боевой отчет удалён с сервера', 'Ошибка', '', 0);
 
 		$user_list = json_decode($raportrow['id_users'], true);
 		
 		if (isset($raportrow['id']) && !$this->user->isAdmin() && (!isset($_GET['k']) ||  md5($this->config->application->encryptKey.$raportrow['id']) != $_GET['k']))
-			throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
+			throw new RedirectException('Не правильный ключ', 'Ошибка', '', 0);
 		elseif (!in_array($this->user->id, $user_list) && !$this->user->isAdmin())
-			throw new MessageException('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0, false);
+			throw new RedirectException('Вы не можете просматривать этот боевой доклад', 'Ошибка', '', 0);
 		else
 		{
 			if ($this->request->isAjax() && $this->auth->isAuthorized())

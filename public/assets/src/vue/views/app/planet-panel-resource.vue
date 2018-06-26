@@ -20,7 +20,7 @@
 	import ResourceTooltip from './planet-panel-resource-tooltip.vue'
 
 	export default {
-		name: "application-planet-panel-resource",
+		name: "planet-panel-resource",
 		props: ['resource', 'type'],
 		components: {
 			ResourceTooltip
@@ -38,7 +38,7 @@
 			showPopup ($event)
 			{
 				if (typeof $($event.currentTarget).data('tooltipster-ns') !== 'undefined')
-					this.$root.openPopup('', this.$root.getUrl('info/'+this.building[this.type]+'/'));
+					this.$root.openPopup('', '/info/'+this.building[this.type]+'/');
 			}
 		}
 	}

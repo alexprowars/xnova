@@ -12,7 +12,6 @@ use Phalcon\Di;
 use Xnova\Database;
 use Xnova\Models\Planet\Build;
 use Xnova\Models\Planet\Unit;
-use Xnova\Queue;
 use Phalcon\Mvc\Model;
 use Xnova\Vars;
 use Xnova\Models\User as UserModel;

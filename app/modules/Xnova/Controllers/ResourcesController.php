@@ -46,14 +46,21 @@ class ResourcesController extends Controller
 				$this->planet->merchand = time() + 172800;
 
 				foreach (Vars::getResources() AS $res)
-					$this->planet->{$res} += $parse['buy_'.$res];
+					$this->planet->{$res} += $parse['buy_form'][$res];
 
 				$this->planet->update();
 
-				$this->db->query('UPDATE game_users SET credits = credits - 10 WHERE id = ' . $this->user->id . ';');
-				$this->db->query("INSERT INTO game_log_credits (uid, time, credits, type) VALUES (" . $this->user->id . ", " . time() . ", " . (10 * (-1)) . ", 2)");
+				$this->user->credits -= 10;
+				$this->user->update();
 
-				throw new RedirectException('Вы успешно купили ' . $parse['buy_metal'] . ' металла, ' . $parse['buy_crystal'] . ' кристалла, ' . $parse['buy_deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
+				$this->db->insertAsDict('game_log_credits', [
+					'uid' => $this->user->id,
+					'time' => time(),
+					'credits' => 10 * (-1),
+					'type' => 2
+				]);
+
+				throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
 			}
 			else
 				throw new RedirectException('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '/resources/', 2);

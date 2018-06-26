@@ -44,7 +44,7 @@
 		},
 		methods: {
 			loadPage (page) {
-				this.$root.load(application.$store.state.url+(application.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
+				this.$root.load(this.$store.state.url+(this.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
 			}
 		}
 	}

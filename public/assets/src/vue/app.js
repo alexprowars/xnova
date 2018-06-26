@@ -1,13 +1,17 @@
 import './../bootstrap/bootstrap.scss';
 import './../game/style.scss';
 
-import 'es6-promise/auto'
-import 'babel-polyfill';
+import 'core-js/fn/object/assign';
+import 'core-js/fn/promise';
 
 import Vue from 'vue'
+import Vuelidate from 'vuelidate'
+
 import { $get, $post } from 'api'
 
 Vue.config.productionTip = false;
+
+Vue.use(Vuelidate)
 
 import App from './app.vue'
 import Lang from './js/lang'
@@ -39,35 +43,11 @@ Vue.filter("time", (value, separator, full) => {
 
 import store from './store'
 import router from './router'
+import { addScript } from 'helpers'
 
 import './components'
 
-router.beforeEach(function(to, from, next)
-{
-	if (from.name === null && typeof from.name === "object")
-		return next();
-
-	if (router.app.router_block)
-	{
-		router.app.router_block = false;
-		return next();
-	}
-
-	router.app.loadPage(to.fullPath).then((data) =>
-	{
-		let url = data['url'];
-
-		next();
-
-		if (to.path !== url)
-		{
-			router.app.router_block = true;
-			router.replace(url, () => router.app.router_block = false, () => router.app.router_block = false);
-		}
-	});
-})
-
-window.application = new Vue({
+const application = new Vue({
 	router,
 	store,
 	el: '#application',
@@ -116,9 +96,6 @@ window.application = new Vue({
 			})
 		},
 		url (val) {
-			this.router_block = true;
-			this.$router.push(val, () => this.router_block = false, () => this.router_block = false);
-
 			$('body').attr('page', this.$store.state.route.controller);
 		}
 	},
@@ -166,7 +143,7 @@ window.application = new Vue({
 				j.find("script").each(function()
 				{
 					if ($(this).attr('src') !== undefined)
-						$.cachedScript($(this).attr('src'))
+						addScript($(this).attr('src'))
 					else
 						jQuery.globalEval($(this).text());
 				});
@@ -175,43 +152,27 @@ window.application = new Vue({
 		serverTime () {
 			return Math.floor((new Date).getTime() / 1000) + this.$store.state.stats.time - this.start_time;
 		},
-		load: function (url)
+		load (url)
 		{
-			return new Promise((resolve, reject) =>
-			{
-				this.$router.push(url, () => {
-					resolve()
-				}, () => {
-					this.loadPage(url).then(() => {
-						resolve()
-					})
-					.catch(() => {
-						reject()
-					})
-				});
-			})
+			this.loader = true;
+			this.$router.push(url);
 		},
 		loadPage (url)
 		{
-			if (this.request_block)
-				return;
-
-			this.request_block = true;
-			this.loader = true;
-
-			this.request_block_timer = setTimeout(() => {
-				this.request_block = false
-			}, 500);
-
 			return new Promise((resolve, reject) =>
 			{
-				$get(url)
-				.then((result) =>
+				if (this.request_block)
+					return reject('request block');
+
+				this.request_block = true;
+				this.loader = true;
+
+				this.request_block_timer = setTimeout(() => {
+					this.request_block = false
+				}, 500);
+
+				$get(url).then((data) =>
 				{
-					let data = result.data;
-
-					this.$store.commit('PAGE_LOAD', data)
-
 					if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['popup'] !== '')
 					{
 						$.confirm({
@@ -345,12 +306,69 @@ window.application = new Vue({
 					}
 				}).tooltipster('open');
 			})
+			.on('submit', '.jconfirm-dialog form:not(.noajax)', function(e)
+			{
+				e.preventDefault();
+
+				app.loader = true;
+
+				let formData = new FormData(this);
+				formData.append('popup', 'Y');
+
+				$post($(this).attr('action'), formData)
+				.then((result) =>
+				{
+					if (result.messages.length > 0 )
+					{
+						result.messages.forEach(function(item)
+						{
+							if (item['type'].indexOf('-static') <= 0)
+							{
+								$.toast({
+									text: item.message,
+									icon: item.type
+								});
+							}
+						})
+					}
+
+					if (result.html !== '')
+					{
+						if (app.html_component !== null)
+							app.html_component.$destroy();
+
+						app.html_component = new (Vue.extend({
+							name: 'html-render',
+							parent: app,
+							template: '<div>'+result.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
+						}))().$mount();
+
+						Vue.nextTick(() =>
+						{
+							$('.jconfirm-content').html(app.html_component.$el);
+
+							setTimeout(() => {
+								app.evalJs(result.html);
+							}, 100);
+						});
+					}
+
+					app.$store.state.redirect = result.redirect;
+				}, () => {
+					alert('Что-то пошло не так!? Попробуйте еще раз');
+				})
+				.then(() => {
+					app.loader = false;
+				})
+			})
+
+			body.find('.main-content')
 			.on('click', 'a', function(e)
 			{
 				let el = $(this);
 				let url = el.attr('href');
 
-				if (!url || el.hasClass('window') || url.indexOf('#') === 0)
+				if (!url || el.hasClass('skip') || url.indexOf('#') === 0)
 					return false;
 
 				if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
@@ -364,7 +382,7 @@ window.application = new Vue({
 
 				return false;
 			})
-			.on('click', '.main-content form[class!=noajax] input[type=submit], .main-content form[class!=noajax] button[type=submit]', function(e)
+			.on('click', 'form:not(.noajax) input[type=submit], form[class!=noajax] button[type=submit]', function(e)
 			{
 				e.preventDefault();
 
@@ -374,7 +392,7 @@ window.application = new Vue({
 				form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
 				form.submit();
 			})
-			.on('submit', '.main-content form[class!=noajax]', function(e)
+			.on('submit', 'form[class!=noajax]', function(e)
 			{
 				e.preventDefault();
 
@@ -386,74 +404,13 @@ window.application = new Vue({
 
 				$post(form.attr('action'), formData)
 				.then((result) => {
-					app.$store.commit('PAGE_LOAD', result.data)
+					app.$store.commit('PAGE_LOAD', result)
 				}, () => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})
 				.then(() => {
 					app.loader = false;
 				})
-			})
-			.on('submit', '.jconfirm-dialog form', function(e)
-			{
-				e.preventDefault();
-
-				app.loader = true;
-
-				let formData = new FormData(this);
-				formData.append('popup', 'Y');
-
-				$post($(this).attr('action'), formData)
-				.then((result) =>
-				{
-					if (result.data.messages.length > 0 )
-					{
-						result.data.messages.forEach(function(item)
-						{
-							if (item['type'].indexOf('-static') <= 0)
-							{
-								$.toast({
-									text: item.message,
-									icon: item.type
-								});
-							}
-						})
-					}
-
-					if (result.data.html !== '')
-					{
-						if (app.html_component !== null)
-							app.html_component.$destroy();
-
-						app.html_component = new (Vue.extend({
-							name: 'html-render',
-							parent: app,
-							template: '<div>'+result.data.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
-						}))().$mount();
-
-						Vue.nextTick(() =>
-						{
-							$('.jconfirm-content').html(app.html_component.$el);
-
-							setTimeout(() => {
-								app.evalJs(result.data.html);
-							}, 100);
-						});
-					}
-
-					app.$store.state.redirect = result.redirect;
-				}, () => {
-					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
-				.then(() => {
-					app.loader = false;
-				})
-			})
-			.on('click', '.popup-user', function(e)
-			{
-				e.preventDefault();
-
-				app.openPopup('', $(this).attr('href'))
 			});
 		},
 		openPopup (title, url, width)
@@ -467,7 +424,7 @@ window.application = new Vue({
 				width = 600;
 
 			$.dialog({
-				title: '',
+				title: title,
 				theme: 'dialog',
 				useBootstrap: false,
 				boxWidth: width,
@@ -484,7 +441,7 @@ window.application = new Vue({
 						'popup': 'Y'
 					})
 					.then(result => {
-						promise.resolve(result.data);
+						promise.resolve(result);
 					})
 					.catch((error) => {
 						promise.reject(error)
@@ -492,24 +449,53 @@ window.application = new Vue({
 
 					promise.then((result) =>
 					{
-						this.setTitle(result.title);
+						if (title === '')
+							this.setTitle(result.title);
 
-						if (app.html_component !== null)
-							app.html_component.$destroy();
+						let component = app.$router.getMatchedComponents(url)
 
-						app.html_component = new (Vue.extend({
-							name: 'html-render',
-							parent: app,
-							template: '<div>'+result.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
-						}))().$mount();
+						if (component.length)
+						{
+							if (typeof component[0] === 'object')
+							{
+								let com = new (Vue.extend(Object.assign(component[0], {parent: app})))().$mount()
 
-						Vue.nextTick(() => {
-							this.setContent(app.html_component.$el, true);
+								if (com && com.$data.page !== undefined)
+								{
+									com.$data.page = result.page
 
-							setTimeout(() => {
-								app.evalJs(result.html);
-							}, 100);
-						});
+									if (typeof com.afterLoad === 'function')
+									{
+										Vue.nextTick(() => {
+											com.afterLoad()
+										})
+									}
+								}
+
+								this.setContent(com.$el, true);
+							}
+							else
+							{
+								component[0]().then((r) =>
+								{
+									let com = new (Vue.extend(Object.assign(r.default, {parent: app})))().$mount()
+
+									if (com && com.$data.page !== undefined)
+									{
+										com.$data.page = result.page
+
+										if (typeof com.afterLoad === 'function')
+										{
+											Vue.nextTick(() => {
+												com.afterLoad()
+											})
+										}
+									}
+
+									this.setContent(com.$el, true);
+								});
+							}
+						}
 					});
 
 					return promise.promise();
@@ -519,3 +505,5 @@ window.application = new Vue({
 	},
 	render: h => h(App)
 })
+
+export default application

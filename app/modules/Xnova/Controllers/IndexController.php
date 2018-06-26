@@ -13,6 +13,8 @@ use Friday\Core\Options;
 use PHPMailer\PHPMailer\PHPMailer;
 use Phalcon\Text;
 use Xnova\Controller;
+use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\SuccessException;
 use Xnova\Models\User;
 use Xnova\Models\UserInfo;
 use Xnova\Request;
@@ -40,47 +42,50 @@ class IndexController extends Controller
 	 */
 	public function registrationAction ()
 	{
+		$errors = [];
+
 		Lang::includeLang('reg', 'xnova');
 
 		if ($this->request->isPost())
 		{
-			$errorlist = '';
-
 			$email = strip_tags(trim($this->request->getPost('email')));
 
 			if (!is_email($email))
-				$errorlist .= "\"" . $email . "\" " . _getText('error_mail');
+				$errors[] = '"'.$email.'" '._getText('error_mail');
 
 			if (mb_strlen($this->request->getPost('password'), 'UTF-8') < 4)
-				$errorlist .= _getText('error_password');
+				$errors[] = _getText('error_password');
 
-			if (!$this->request->hasPost('rgt') || !$this->request->hasPost('sogl') || $this->request->getPost('rgt') != 'on' || $this->request->getPost('sogl') != 'on')
-				$errorlist .= _getText('error_rgt');
+			if ($this->request->getPost('password') != $this->request->getPost('password_confirm'))
+				$errors[] = _getText('error_confirm');
 
-			$ExistMail = $this->db->query("SELECT `id` FROM game_users_info WHERE `email` = '" . $email . "' LIMIT 1")->fetch();
+			$checkExist = UserInfo::count(['email = :email:', 'bind' => ['email' => $email]]) > 0;
 
-			if (isset($ExistMail['id']))
-				$errorlist .= _getText('error_emailexist');
+			if ($checkExist)
+				$errors[] = _getText('error_emailexist');
 
-			if ($errorlist == '')
+			if (!count($errors))
 			{
 				$curl = curl_init();
+
 				curl_setopt($curl, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($curl, CURLOPT_POST, true);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, "secret=".$this->config->recaptcha->secret_key."&response=".$this->request->getPost('g-recaptcha-response')."&remoteip=".$this->request->getClientAddress()."");
+				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
+					'secret' => $this->config->recaptcha->secret_key,
+					'response' => $this->request->getPost('captcha'),
+					'remoteip' => $this->request->getClientAddress()
+				]));
 
 				$captcha = json_decode(curl_exec($curl), true);
 
 				curl_close($curl);
 
 				if (!$captcha['success'])
-					$errorlist .= "Вы не прошли проверку на бота!<br>";
+					$errors[] = "Вы не прошли проверку на бота!";
 			}
 
-			if ($errorlist != '')
-				$this->view->setVar('message', $errorlist);
-			else
+			if (!count($errors))
 			{
 				$newpass = trim($this->request->getPost('password'));
 				$md5newpass = md5($newpass);
@@ -108,20 +113,18 @@ class IndexController extends Controller
 
 				if ($this->session->has('ref'))
 				{
-					$refe = $this->db->query("SELECT id FROM game_users WHERE id = ".$this->session->get('ref'))->fetch();
+					$refer = User::findFirst((int) $this->session->get('ref'));
 
-					if (isset($refe['id']))
+					if ($refer)
 					{
 						$this->db->insertAsDict('game_refs', [
 							'r_id' => $user->id,
-							'u_id' => $this->session->get('ref')
+							'u_id' => $refer->getId()
 						]);
 					}
 				}
 
-				$total = $this->db->query("SELECT `value` FROM game_options WHERE `name` = 'users_total'")->fetch();
-
-				Options::set('users_total', $total['value'] + 1);
+				Options::set('users_total', Options::get('users_total', 0, true) + 1);
 
 				$mail = new PHPMailer();
 				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
@@ -150,6 +153,13 @@ class IndexController extends Controller
 				$this->view->disable();
 			}
 		}
+
+		Request::addData('page', [
+			'captcha' => $this->config->recaptcha->public_key,
+			'errors' => $errors
+		]);
+
+		$this->tag->setTitle('Регистрация');
 	}
 
 	/**
@@ -157,8 +167,6 @@ class IndexController extends Controller
 	 */
 	public function remindAction ()
 	{
-		$message = '';
-
 		if ($this->request->hasQuery('id') && $this->request->hasQuery('key') && is_numeric($this->request->getQuery('id')) && intval($this->request->getQuery('id')) > 0 && $this->request->getQuery('key') != "")
 		{
 			$id = (int) $this->request->getQuery('id');
@@ -166,92 +174,84 @@ class IndexController extends Controller
 
 			$request = $this->db->query("SELECT * FROM game_lostpasswords WHERE keystring = '" . $key . "' AND user_id = '" . $id . "' AND time > " . time() . "-3600 AND active = '0' LIMIT 1;")->fetch();
 
-			if (isset($request['id']))
-			{
-				$user = $this->db->query("SELECT u.username, ui.email FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.id = '" . $request['user_id'] . "'")->fetch();
+			if (!isset($request['id']))
+				throw new ErrorException('Действие данной ссылки истекло, попробуйте пройти процедуру заново!');
 
-				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9]+$/u", $key))
-					$message = 'Ошибка выборки E-mail адреса!';
-				elseif (empty($user['email']))
-					$message = 'Ошибка выборки E-mail адреса!';
-				else
-				{
-					$password = Text::random(Text::RANDOM_ALNUM, 9);
+			$user = $this->db->query("SELECT u.username, ui.email FROM game_users u, game_users_info ui WHERE ui.id = u.id AND u.id = '" . $request['user_id'] . "'")->fetch();
 
-					$mail = new PHPMailer();
+			if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9]+$/u", $key))
+				throw new ErrorException('Ошибка выборки E-mail адреса!');
 
-					$mail->isHTML(true);
-					$mail->CharSet = 'utf-8';
-					$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
-					$mail->addAddress($user['email'], Options::get('site_title'));
-					$mail->Subject = 'Новый пароль в '.Options::get('site_title').'';
+			if (empty($user['email']))
+				throw new ErrorException('Ошибка выборки E-mail адреса!');
 
-					$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_2.html');
-					$template = strtr($template, [
-						'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
-						'#EMAIL#' => $user['username'],
-						'#PASSWORD#' => $password,
-					]);
+			$password = Text::random(Text::RANDOM_ALNUM, 9);
 
-					$mail->Body = $template;
-					$mail->send();
+			$mail = new PHPMailer();
 
-					$this->db->query("UPDATE game_users_info SET `password` ='" . md5($password) . "' WHERE `id` = '" . $id . "'");
-					$this->db->query("DELETE FROM game_lostpasswords WHERE user_id = '" . $id . "'");
+			$mail->isHTML(true);
+			$mail->CharSet = 'utf-8';
+			$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
+			$mail->addAddress($user['email'], Options::get('site_title'));
+			$mail->Subject = 'Новый пароль в '.Options::get('site_title').'';
 
-					$message = 'Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!';
-				}
-			}
-			else
-				$message = 'Действие данной ссылки истекло, попробуйте пройти процедуру заново!';
+			$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_2.html');
+			$template = strtr($template, [
+				'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
+				'#EMAIL#' => $user['username'],
+				'#PASSWORD#' => $password,
+			]);
+
+			$mail->Body = $template;
+			$mail->send();
+
+			$this->db->query("UPDATE game_users_info SET `password` ='" . md5($password) . "' WHERE `id` = '" . $id . "'");
+			$this->db->query("DELETE FROM game_lostpasswords WHERE user_id = '" . $id . "'");
+
+			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
 		}
 
 		if ($this->request->hasPost('email'))
 		{
 			$inf = $this->db->query("SELECT u.*, ui.email FROM game_users u, game_users_info ui WHERE ui.email = '".addslashes(htmlspecialchars($this->request->getPost('email')))."' AND u.id = ui.id")->fetch();
 
-			if (isset($inf['id']))
-			{
-				$key = md5($inf['id'] . date("d-m-Y H:i:s", time()) . "ыыы");
+			if (!isset($inf['id']))
+				throw new ErrorException('Персонаж не найден в базе');
 
-				$this->db->insertAsDict(
-				   	"game_lostpasswords",
-					[
-						'user_id' 		=> $inf['id'],
-						'keystring' 	=> $key,
-						'time'			=> time(),
-						'ip'			=> $this->request->getClientAddress(),
-						'active'		=> 0
-				   	]
-				);
+			$key = md5($inf['id'] . date("d-m-Y H:i:s", time()) . "ыыы");
 
-				$mail = new PHPMailer();
+			$this->db->insertAsDict("game_lostpasswords", [
+				'user_id' 		=> $inf['id'],
+				'keystring' 	=> $key,
+				'time'			=> time(),
+				'ip'			=> $this->request->getClientAddress(),
+				'active'		=> 0
+			]);
 
-				$mail->isHTML(true);
-				$mail->CharSet = 'utf-8';
-				$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
-				$mail->addAddress($inf['email']);
-				$mail->Subject = 'Восстановление забытого пароля';
+			$mail = new PHPMailer();
 
-				$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_1.html');
-				$template = strtr($template, [
-					'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
-					'#EMAIL#' => $inf['username'],
-					'#URL#' => $this->url->get('/remind/?id='.$inf['id'].'&key='.$key),
-				]);
+			$mail->isHTML(true);
+			$mail->CharSet = 'utf-8';
+			$mail->setFrom(Options::get('email_notify'), Options::get('site_title'));
+			$mail->addAddress($inf['email']);
+			$mail->Subject = 'Восстановление забытого пароля';
 
-				$mail->Body = $template;
+			$template = file_get_contents(ROOT_PATH.'/app/modules/Xnova/Views/email/remind_1.html');
+			$template = strtr($template, [
+				'#SERVER#' => $this->request->getScheme().'://'.$this->request->getServerName(),
+				'#EMAIL#' => $inf['username'],
+				'#URL#' => $this->url->get('/remind/?id='.$inf['id'].'&key='.$key),
+			]);
 
-				if ($mail->send())
-					$message = 'Ссылка на восстановления пароля отправлена на ваш E-mail';
-				else
-					$message = 'Произошла ошибка при отправке сообщения. Обратитесь к администратору сайта за помощью.';
-			}
-			else
-				$message = 'Персонаж не найден в базе';
+			$mail->Body = $template;
+
+			if (!$mail->send())
+				throw new ErrorException('Произошла ошибка при отправке сообщения. Обратитесь к администратору сайта за помощью.');
+
+			throw new SuccessException('Ссылка на восстановления пароля отправлена на ваш E-mail');
 		}
 
-		$this->view->setVar('message', $message);
+		$this->tag->setTitle('Восстановление пароля');
 	}
 
 	/**
@@ -259,51 +259,34 @@ class IndexController extends Controller
 	 */
 	public function loginAction ()
 	{
-		$error = '';
-
 		if ($this->request->hasPost('email'))
 		{
-			if ($this->request->getPost('email') != '')
+			if ($this->request->getPost('email') == '')
+				throw new ErrorException('Введите хоть что-нибудь!');
+
+			$login = $this->db->query("SELECT u.id, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
+
+			if (!isset($login['id']))
+				throw new ErrorException('Игрока с таким E-mail адресом не найдено');
+
+			if ($login['password'] != md5($this->request->getPost('password')))
+				throw new ErrorException('Неверный E-mail и/или пароль');
+
+			$expiretime = $this->request->hasPost("rememberme") ? (time() + 2419200) : 0;
+
+			$this->auth->authorize($login['id'], $expiretime);
+
+			if ($this->request->isAjax())
 			{
-				$login = $this->db->query("SELECT u.id, ui.password FROM game_users u, game_users_info ui WHERE ui.id = u.id AND ui.`email` = '" . $this->request->getPost('email') . "' LIMIT 1")->fetch();
-
-				if (isset($login['id']))
-				{
-					if ($login['password'] == md5($this->request->getPost('password')))
-					{
-						$expiretime = $this->request->hasPost("rememberme") ? (time() + 2419200) : 0;
-
-						$this->auth->authorize($login['id'], $expiretime);
-
-						if ($this->request->isAjax())
-						{
-							Request::setStatus(true);
-							Request::addData('redirect', $this->url->getBaseUri().'overview/');
-						}
-						else
-							$this->response->redirect('overview/');
-
-						$this->view->disable();
-					}
-					else
-						$error = 'Неверный E-mail и/или пароль';
-				}
-				else
-					$error = 'Игрока с таким E-mail адресом не найдено';
+				Request::setStatus(true);
+				Request::addData('redirect', $this->url->getBaseUri().'overview/');
 			}
 			else
-				$error = 'Введите хоть что-нибудь!';
+				$this->response->redirect('overview/');
+
+			$this->view->disable();
 		}
 
-		if ($error != '')
-		{
-			Request::setStatus(false);
-			Request::addData('messages', [[
-				'type' => 'error',
-				'text' => $error
-			]]);
-		}
-
-		return false;
+		throw new ErrorException(';)');
 	}
 }

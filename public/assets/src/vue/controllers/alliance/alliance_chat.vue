@@ -1,10 +1,10 @@
 <template>
-	<div class="page-alliance-chat">
-		<form :action="$root.getUrl('alliance/chat/')" method="post">
+	<div v-if="page" class="page-alliance-chat">
+		<form action=/alliance/chat/" method="post">
 			<div class="table">
 				<div class="row">
 					<div class="col-12 c">
-						<a :href="$root.getUrl('alliance/chat/')">Обновить</a>
+						<router-link to="/alliance/chat/">Обновить</router-link>
 					</div>
 				</div>
 
@@ -66,19 +66,17 @@
 			</table>
 		</form>
 		<span style="float:left;margin-left:10px;margin-top:7px;">
-			<a :href="$root.getUrl('alliance/')">[назад к альянсу]</a>
+			<router-link to="/alliance/">[назад к альянсу]</router-link>
 		</span>
 	</div>
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "alliance_chat",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 		data () {
 			return {
 				text: '',

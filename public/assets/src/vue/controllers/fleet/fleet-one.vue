@@ -1,5 +1,5 @@
 <template>
-	<form :action="$root.getUrl('fleet/two/')" method="post">
+	<form v-if="page" action="/fleet/two/" method="post">
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 		<div class="table">
 			<div class="row">
@@ -49,7 +49,7 @@
 				<div class="th col-6"><span :class="[storage > consumption ? 'positive' : 'negative']">{{ storage|number }}</span></div>
 			</div>
 			<div class="row">
-				<div class="c col-12">Ссылки <a :href="$root.getUrl('fleet/shortcut/')">(Просмотр / Редактирование)</a></div>
+				<div class="c col-12">Ссылки <router-link to="/fleet/shortcut/">(Просмотр / Редактирование)</router-link></div>
 			</div>
 
 			<div v-if="page['shortcuts'].length > 0" class="row">
@@ -108,13 +108,12 @@
 
 <script>
 	import * as fleet from './../../js/fleet.js'
+	import router from 'router-mixin'
 
 	export default {
 		name: "fleet-one",
+		mixin: [router],
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
 			position () {
 				return this.$store.state.user.position;
 			},

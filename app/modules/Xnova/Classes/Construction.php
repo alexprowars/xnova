@@ -43,11 +43,11 @@ class Construction
 
 		$CanBuildElement = ($Queue['lenght'] < $MaxBuidSize);
 
-		if ($request->has('cmd'))
+		if ($request->hasPost('cmd'))
 		{
-			$Command 	= $request->getQuery('cmd', null, '');
-			$Element 	= $request->getQuery('building', 'int', 0);
-			$ListID 	= (int) $request->getQuery('listid', 'int', 0);
+			$Command 	= $request->getPost('cmd', null, '');
+			$Element 	= $request->getPost('building', 'int', 0);
+			$ListID 	= (int) $request->getPost('listid', 'int', 0);
 
 			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{

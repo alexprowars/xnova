@@ -1,5 +1,5 @@
 <template>
-	<input ref="input" v-model="formatValue" type="number" v-on:input="update($event.target.value)">
+	<input ref="input" v-model="formatValue" type="number" @input="update($event.target.value)">
 </template>
 
 <script>

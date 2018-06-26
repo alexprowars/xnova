@@ -12,15 +12,15 @@ class Options
 
 	protected static $options = [];
 
-	public static function get ($name, $default = "")
+	public static function get ($name, $default = '', $skipCache = false)
 	{
 		if (empty($name))
 			throw new \Exception("ArgumentNullException");
 
-		if (empty(self::$options))
+		if (empty(self::$options) && !$skipCache)
 			self::load();
 
-		if (isset(self::$options[$name]))
+		if (isset(self::$options[$name]) && !$skipCache)
 			return self::$options[$name];
 
 		$option = Option::findFirst(["columns" => "value, type", "conditions" => "name = :name:", "bind" => ["name" => $name]]);

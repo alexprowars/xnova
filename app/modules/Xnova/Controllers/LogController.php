@@ -11,7 +11,6 @@ namespace Xnova\Controllers;
 use Xnova\CombatReport;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\MessageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\BattleLog;
 
@@ -103,7 +102,7 @@ class LogController extends Controller
 				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 				if (md5($this->config->application->encryptKey.$id) != $key)
-					throw new MessageException('Не правильный ключ', 'Ошибка', '', 0, false);
+					throw new RedirectException('Не правильный ключ', 'Ошибка', '', 0);
 				else
 				{
 					$log = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $id . "'")->fetch();

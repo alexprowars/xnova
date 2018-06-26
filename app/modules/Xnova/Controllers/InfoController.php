@@ -12,9 +12,9 @@ use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Fleet;
 use Xnova\Format;
-use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -45,11 +45,11 @@ class InfoController extends Controller
 	public function indexAction ($element = null)
 	{
 		if (is_numeric($element))
-			$html = $this->ShowBuildingInfoPage($element);
+			$title = $this->ShowBuildingInfoPage($element);
 		else
-			$html = '';
+			$title = '';
 
-		$this->tag->setTitle($html);
+		$this->tag->setTitle($title);
 		$this->showTopPanel(false);
 	}
 
@@ -141,12 +141,14 @@ class InfoController extends Controller
 		if ($BuildStartLvl < 1)
 			$BuildStartLvl = 1;
 
-		$Table = [];
+		$items = [];
 
 		$ProdFirst = 0;
 
 		for ($BuildLevel = $BuildStartLvl; $BuildLevel < $BuildStartLvl + 10; $BuildLevel++)
 		{
+			$row = [];
+
 			if ($BuildID != 42 && !($BuildID >= 22 && $BuildID <= 24))
 			{
 				$res = $this->planet->getResourceProductionLevel($BuildID, $BuildLevel);
@@ -156,22 +158,21 @@ class InfoController extends Controller
 				$Prod[3] = $res['deuterium'];
 				$Prod[4] = $res['energy'];
 
-				$bloc['build_lvl'] = ($CurrentBuildtLvl == $BuildLevel) ? "<font color=\"#ff0000\">" . $BuildLevel . "</font>" : $BuildLevel;
-
 				if ($BuildID != 12)
 				{
-					$bloc['build_prod'] = Format::number(floor($Prod[$BuildID]));
-					$bloc['build_prod_diff'] = Helpers::colorNumber(Format::number(floor($Prod[$BuildID] - $ActualProd)));
-					$bloc['build_need'] = Helpers::colorNumber(Format::number(floor($Prod[4])));
-					$bloc['build_need_diff'] = Helpers::colorNumber(Format::number(floor($Prod[4] - $ActualNeed)));
+					$row['prod'] = floor($Prod[$BuildID]);
+					$row['prod_diff'] = floor($Prod[$BuildID] - $ActualProd);
+					$row['need'] = floor($Prod[4]);
+					$row['need_diff'] = floor($Prod[4] - $ActualNeed);
 				}
 				else
 				{
-					$bloc['build_prod'] = Format::number(floor($Prod[4]));
-					$bloc['build_prod_diff'] = Helpers::colorNumber(Format::number(floor($Prod[4] - $ActualProd)));
-					$bloc['build_need'] = Helpers::colorNumber(Format::number(floor($Prod[3])));
-					$bloc['build_need_diff'] = Helpers::colorNumber(Format::number(floor($Prod[3] - $ActualNeed)));
+					$row['prod'] = floor($Prod[4]);
+					$row['prod_diff'] = floor($Prod[4] - $ActualProd);
+					$row['need'] = floor($Prod[3]);
+					$row['need_diff'] = floor($Prod[3] - $ActualNeed);
 				}
+
 				if ($ProdFirst == 0)
 				{
 					if ($BuildID != 12)
@@ -182,19 +183,20 @@ class InfoController extends Controller
 			}
 			elseif ($BuildID >= 22 && $BuildID <= 24)
 			{
-				$bloc['build_lvl'] = ($CurrentBuildtLvl == $BuildLevel) ? "<font color=\"#ff0000\">" . $BuildLevel . "</font>" : $BuildLevel;
-				$bloc['build_range'] = floor(($this->config->game->baseStorageSize + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
+				$row['range'] = floor(($this->config->game->baseStorageSize + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
 			}
 			else
 			{
-				$bloc['build_lvl'] = ($CurrentBuildtLvl == $BuildLevel) ? "<font color=\"#ff0000\">" . $BuildLevel . "</font>" : $BuildLevel;
-				$bloc['build_range'] = ($BuildLevel * $BuildLevel) - 1;
+				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
 			}
 
-			$Table[] = $bloc;
+			$row['current'] = $CurrentBuildtLvl == $BuildLevel;
+			$row['level'] = $BuildLevel;
+
+			$items[] = $row;
 		}
 
-		return $Table;
+		return $items;
 	}
 
 	/**
@@ -214,15 +216,13 @@ class InfoController extends Controller
 
 		$price = Vars::getItemPrice($itemId);
 
+		$parse['i'] = (int) $itemId;
 		$parse['name'] = _getText('tech', $itemId);
-		$parse['image'] = $itemId;
 		$parse['description'] = _getText('info', $itemId);
 
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24))
 		{
 			$parse['table_data'] = $this->ShowProductionTable($itemId);
-			$this->view->setVar('parse', $parse);
-			$this->view->partial('info/buildings_table');
 		}
 		elseif (($itemId >= 14 && $itemId <= 34) || $itemId == 6 || $itemId == 43 || $itemId == 44 || $itemId == 41 || ($itemId >= 106 && $itemId <= 199))
 		{
@@ -443,6 +443,8 @@ class InfoController extends Controller
 				$this->view->partial('info/buildings_destroy');
 			}
 		}
+
+		Request::addData('page', $parse);
 
 		return $parse['name'];
 	}

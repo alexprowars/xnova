@@ -1,5 +1,5 @@
 <template>
-	<div class="page-galaxy">
+	<div v-if="page" class="page-galaxy">
 		<galaxy-selector :shortcuts="page['shortcuts']"></galaxy-selector>
 		<div class="separator"></div>
 
@@ -62,7 +62,7 @@
 				<tr v-if="page['user']['allowExpedition']">
 					<th width="30">16</th>
 					<th colspan="8" class="c big">
-						<a :href="$root.getUrl('fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/')">неизведанные дали</a>
+						<router-link :to="'fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/'">неизведанные дали</router-link>
 					</th>
 				</tr>
 				<tr>
@@ -133,9 +133,11 @@
 <script>
 	import GalaxyRow from './galaxy-row.vue'
 	import GalaxySelector from './galaxy-selector.vue'
+	import router from 'router-mixin'
 
 	export default {
 		name: "galaxy",
+		mixins: [router],
 		components: {
 			GalaxyRow,
 			GalaxySelector
@@ -147,14 +149,11 @@
 			}
 		},
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
-			planets: function ()
+			planets ()
 			{
 				let count = 0;
 
-				this.page.items.forEach(function(item)
+				this.page.items.forEach((item) =>
 				{
 					if (item !== false)
 						count++;

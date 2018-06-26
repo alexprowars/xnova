@@ -18,7 +18,6 @@ use Xnova\Helpers;
 use Friday\Core\Lang;
 use PHPMailer\PHPMailer\PHPMailer;
 use Xnova\Models\Fleet;
-use Xnova\Models\Planet;
 use Xnova\Models\UserInfo;
 use Xnova\User;
 use Xnova\Queue;

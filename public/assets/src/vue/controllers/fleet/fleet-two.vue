@@ -1,5 +1,5 @@
 <template>
-	<form :action="$root.getUrl('fleet/three/')" method="post">
+	<form v-if="page" action="/fleet/three/" method="post">
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 
 		<input type="hidden" name="fleet" :value="page['fleet']">
@@ -115,13 +115,12 @@
 
 <script>
 	import * as fleet from './../../js/fleet.js'
+	import router from 'router-mixin'
 
 	export default {
 		name: "fleet-two",
+		mixins: [router],
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
 			resources () {
 				return this.$store.state.resources;
 			},

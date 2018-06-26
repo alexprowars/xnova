@@ -1,17 +1,14 @@
 <template>
-	<div id="rf_techinfo"></div>
+	<div v-if="page" id="rf_techinfo"></div>
 </template>
 
 <script>
 	import {ECOTree} from '../../../../js/techtree'
+	import router from 'router-mixin'
 
 	export default {
 		name: "techtree-info",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 		methods: {
 			createTree (tid, prntid, element, level, access, fwrd)
 			{

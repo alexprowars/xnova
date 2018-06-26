@@ -8,6 +8,7 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use DirectoryIterator;
 use Friday\Core\Lang;
 use Friday\Core\Options;
 use Phalcon\Mvc\Controller as PhalconController;
@@ -107,13 +108,46 @@ class Controller extends PhalconController
 			}
 		}
 
-		$this->assets->addCss('assets/build/css/bootstrap.css');
-		$this->assets->addCss('assets/build/css/style.css');
+		$this->assets->addJs('assets/build/runtime.js', 'footer_js');
 
-		$this->assets->addJs('assets/build/runtime.js', 'footer');
-		$this->assets->addJs('assets/build/global.js', 'footer');
-		$this->assets->addJs('assets/build/vendor.js', 'footer');
-		$this->assets->addJs('assets/build/js/app.js', 'footer');
+		$files = new DirectoryIterator(ROOT_PATH.'/public/assets/build/app/');
+
+		foreach ($files as $file)
+		{
+			if (!$file->isFile())
+				continue;
+
+			if (strpos($file->getFilename(), '.css') !== false)
+			{
+				$sort = 100;
+
+				if (strpos($file->getFilename(), 'bootstrap') !== false)
+					$sort = 0;
+
+				$this->assets->addCss('assets/build/app/'.$file->getFilename(), $sort);
+			}
+			else if (strpos($file->getFilename(), 'view-') === false || strpos($file->getFilename(), 'view-main') !== false)
+			{
+				$sort = 100;
+
+				if (preg_match('_([0-9]+)_', $file->getFilename(), $match))
+					$sort = (int) $match[1];
+
+				$this->assets->addJs('assets/build/app/'.$file->getFilename(), ['collection' => 'footer_js', 'sort' => $sort]);
+
+				$this->assets->addCss('assets/build/app/'.$file->getFilename(), [
+					'attributes' => ['type' => null, 'rel' => 'preload', 'as' => 'script']
+				]);
+			}
+			else
+			{
+				//$this->assets->addJs('assets/build/app/'.$file->getFilename(), 'footer_js');
+
+				//$this->assets->addCss('assets/build/app/'.$file->getFilename(), [
+				//	'attributes' => ['type' => null, 'rel' => 'prefetch', 'as' => 'script']
+				//]);
+			}
+		}
 
 		Vars::init();
 

@@ -1,5 +1,5 @@
 <template>
-	<div class="page-imperium table-responsive">
+	<div v-if="page" class="page-imperium table-responsive">
 		<table class="table">
 			<tr valign="left">
 				<td class="c" :colspan="rows">Обзор империи</td>
@@ -7,23 +7,23 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th v-for="planet in page['planets']" width="75">
-					<a :href="$root.getUrl('overview/?chpl='+planet['id'])">
+					<router-link :to="'/overview/?chpl='+planet['id']">
 						<img :src="$root.getUrl('assets/images/planeten/small/s_'+planet['image']+'.jpg')" height="75" width="75">
-					</a>
+					</router-link>
 				</th>
 				<th width="100">Сумма</th>
 			</tr>
 			<tr>
 				<th>Название</th>
 				<th v-for="planet in page['planets']">
-					<a :href="$root.getUrl('overview/?chpl='+planet['id'])">{{ planet['name'] }}</a>
+					<router-link :to="'/overview/?chpl='+planet['id']">{{ planet['name'] }}</router-link>
 				</th>
 				<th>&nbsp;</th>
 			</tr>
 			<tr>
 				<th>Координаты</th>
 				<th v-for="planet in page['planets']">
-					[<a :href="$root.getUrl('galaxy/'+planet['position']['galaxy']+'/'+planet['position']['system']+'/')">{{ planet['position']['galaxy'] }}:{{ planet['position']['system'] }}:{{ planet['position']['planet'] }}</a>]
+					[<router-link :to="'/galaxy/'+planet['position']['galaxy']+'/'+planet['position']['system']+'/'">{{ planet['position']['galaxy'] }}:{{ planet['position']['system'] }}:{{ planet['position']['planet'] }}</router-link>]
 				</th>
 				<th>&nbsp;</th>
 			</tr>
@@ -175,12 +175,12 @@
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "imperium",
+		mixins: [router],
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
 			rows () {
 				return this.page['planets'].length + 2
 			},

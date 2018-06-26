@@ -1,5 +1,5 @@
 <template>
-	<form :action="$root.getUrl('galaxy/r/1/')" method="post" class="page-galaxy-select">
+	<form action="'/galaxy/r/1/'" method="post" class="page-galaxy-select">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">

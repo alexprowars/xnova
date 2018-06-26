@@ -1,5 +1,5 @@
 <template>
-	<div class="page-credits">
+	<div v-if="page" class="page-credits">
 		<div class="block">
 			<div class="content container-fluid">
 				<div class="row">
@@ -26,7 +26,7 @@
 						<br><br>
 
 
-						<form :action="$root.getUrl('credits/')" method="post">
+						<form action="/credits/" method="post">
 							Введите ID игрока, на счет которого будут зачислены кредиты:
 							<br>(если поле не заполнено, то кредиты поступят на ваш счет)
 							<br><br>
@@ -72,12 +72,10 @@
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "credits",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
+		mixins: [router],
 	}
 </script>

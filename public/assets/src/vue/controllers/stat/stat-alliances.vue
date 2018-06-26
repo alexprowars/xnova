@@ -26,19 +26,19 @@
 						<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
 					</div>
 					<div class="th col-sm-5 col-4 middle">
-						<a :class="{neutral: item['name_marked']}" :href="$root.getUrl('alliance/info/'+item['id']+'/')">{{ item['name'] }}</a>
+						<router-link :class="{neutral: item['name_marked']}" :to="'/alliance/info/'+item['id']+'/'">{{ item['name'] }}</router-link>
 					</div>
 					<div class="th col-sm-1 col-2 middle">
 						{{ item['members'] }}
 					</div>
 					<div class="th col-sm-2 d-none d-sm-block">
-						<a :href="$root.getUrl('alliance/stat/id/'+item['id']+'/')">{{ item['points']|number }}</a>
+						<router-link :to="'/alliance/stat/id/'+item['id']+'/'">{{ item['points']|number }}</router-link>
 					</div>
 					<div class="th col-sm-2 d-none d-sm-block">
 						{{ $options.filters.number(Math.floor(item['points'] / item['members'])) }}
 					</div>
 					<div class="th d-sm-none col-4">
-						<a :href="$root.getUrl('alliance/stat/id/'+item['id']+'/')">{{ item['points']|number }}</a>
+						<router-link :to="'/alliance/stat/id/'+item['id']+'/'">{{ item['points']|number }}</router-link>
 						<br>
 						{{ $options.filters.number(Math.floor(item['points'] / item['members'])) }}
 					</div>

@@ -1,5 +1,5 @@
 <template>
-	<div class="page-building page-building-tech">
+	<div v-if="page" class="page-building page-building-tech">
 		<div class="block">
 			<div class="title">Исследования</div>
 			<div class="content page-building-items">
@@ -13,14 +13,11 @@
 
 <script>
 	import TechRow from './tech-row.vue'
+	import router from 'router-mixin'
 
 	export default {
 		name: "tech",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			},
-		},
+		mixins: [router],
 		components: {
 			TechRow
 		},

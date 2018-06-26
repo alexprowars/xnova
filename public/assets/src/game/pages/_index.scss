@@ -10,7 +10,7 @@ body[page=index] {
 	background: #000000 url('../../../images/main_background.jpg') center no-repeat;
 }
 
-.set_index {
+.page-index {
 
 	.right {
 		width: 50%;
@@ -149,6 +149,7 @@ body[page=index] {
 		display: inline-block;
 		background: #fcfcfc;
 		width: 92px;
+		min-width: auto;
 		color: #333;
 		cursor: pointer;
 		border: 1px solid #000;

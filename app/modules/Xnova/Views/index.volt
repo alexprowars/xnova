@@ -41,8 +41,8 @@
 
 	{{ partial('shared/counters') }}
 
-	{{ assets.outputCss('footer') }}
-	{{ assets.outputJs('footer') }}
+	{{ assets.outputJs('footer_js') }}
+	{{ assets.outputCss('footer_css') }}
 
 	{{ partial('shared/svg') }}
 </body>

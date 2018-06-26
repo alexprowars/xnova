@@ -1,5 +1,5 @@
 <template>
-	<div class="page-overview">
+	<div v-if="page" class="page-overview">
 		<div v-if="page['bonus']" class="page-overview-bonus">
 			<table class="table">
 				<tr>
@@ -10,7 +10,7 @@
 						Сейчас вы можете получить по <b class="positive">{{ page['bonus_count']|number }}</b> Металла, Кристаллов и Дейтерия.<br>
 						Каждый день размер бонуса будет увеличиваться.<br>
 						<br>
-						<a :href="$root.getUrl('overview/bonus/')" class="button">Получить ресурсы</a><br>
+						<router-link to="/overview/bonus/" class="button">Получить ресурсы</router-link><br>
 					</th>
 				</tr>
 			</table>
@@ -22,8 +22,8 @@
 				<div class="row">
 					<div class="col-12 col-sm-6">
 						{{ page['planet']['type'] }} "{{ page['planet']['name'] }}"
-						<a :href="$root.getUrl('galaxy/'+page['planet']['galaxy']+'/'+page['planet']['system']+'/')">[{{ page['planet']['galaxy'] }}:{{ page['planet']['system'] }}:{{ page['planet']['planet'] }}]</a>
-						<a :href="$root.getUrl('overview/rename/')" title="Редактирование планеты">(изменить)</a>
+						<router-link :to="'/galaxy/'+page['planet']['galaxy']+'/'+page['planet']['system']+'/'">[{{ page['planet']['galaxy'] }}:{{ page['planet']['system'] }}:{{ page['planet']['planet'] }}]</router-link>
+						<router-link :to="'/overview/rename/'" title="Редактирование планеты">(изменить)</router-link>
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
@@ -42,13 +42,13 @@
 						<div class="row">
 							<div class="col-12">
 								<div class="planet-image">
-									<a :href="$root.getUrl('overview/rename/')">
+									<router-link to="/overview/rename/">
 										<img :src="$root.getUrl('assets/images/planeten/'+page['planet']['image']+'.jpg')" alt="">
-									</a>
+									</router-link>
 									<div v-if="page['moon']" class="moon-image">
-										<a :href="$root.getUrl('overview/?chpl='+page['moon']['id'])" :title="page['moon']['name']">
+										<router-link :to="'/overview/?chpl='+page['moon']['id']" :title="page['moon']['name']">
 											<img :src="$root.getUrl('assets/images/planeten/'+page['moon']['image']+'.jpg')" height="50" width="50">
-										</a>
+										</router-link>
 									</div>
 								</div>
 
@@ -67,7 +67,7 @@
 							</div>
 							<div class="col-12 page-overview-officiers">
 								<div v-for="item in page['officiers']" class="page-overview-officiers-item">
-									<a :href="$root.getUrl('officier/')" class="tooltip">
+									<router-link to="/officier/" class="tooltip">
 										<div class="tooltip-content">
 											{{ item['name'] }}
 											<br>
@@ -77,7 +77,7 @@
 											<font v-else="" color="lime">Не нанят</font>
 										</div>
 										<span class="officier" :class="['of'+item['id']+(item['time'] > $root.serverTime() ? '_ikon' : '')]"></span>
-									</a>
+									</router-link>
 								</div>
 							</div>
 						</div>
@@ -112,7 +112,7 @@
 							<div class="row">
 								<div class="col-12 c">
 									Обломки
-									<a v-if="page['debris_mission']" @click.prevent="fleet.sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)">
+									<a v-if="page['debris_mission']" @click.prevent="sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)">
 										(переработать)
 									</a>
 								</div>
@@ -142,12 +142,15 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									Фракция: <a :href="$root.getUrl('race/')">{{ $root.getLang('RACES', $store.state['user']['race']) }}</a>
+									Фракция: <router-link to="/race/">{{ $root.getLang('RACES', $store.state['user']['race']) }}</router-link>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									<a :href="$root.getUrl('refers/')">https://{{ $store.state['host'] }}/?{{ $store.state['user']['id'] }}</a> [{{ page['links'] }}]
+									<router-link to="/refers/">
+										https://{{ $store.state['host'] }}/?{{ $store.state['user']['id'] }}
+									</router-link>
+									[{{ page['links'] }}]
 								</div>
 							</div>
 						</div>
@@ -158,7 +161,7 @@
 							<div class="row">
 								<div class="c col-sm-5 col-6">Игрок:</div>
 								<div class="c col-sm-7 col-6" style="word-break: break-all;">
-									<a :href="$root.getUrl('players/'+$store.state['user']['id']+'/')" class="window popup-user">{{ $store.state['user']['name'] }}</a>
+									<popup-link :to="'/players/'+$store.state['user']['id']+'/'">{{ $store.state['user']['name'] }}</popup-link>
 								</div>
 							</div>
 							<div class="row">
@@ -194,7 +197,7 @@
 							<div class="row">
 								<div class="th col-sm-5 col-6">Место:</div>
 								<div class="th col-sm-7 col-6">
-									<a :href="$root.getUrl('stat/players/range/'+page['points']['place']+'/')">{{ page['points']['place'] }}</a>
+									<router-link :to="'/stat/players/range/'+page['points']['place']+'/'">{{ page['points']['place'] }}</router-link>
 									<span title="Изменение места в рейтинге">
 										<span v-if="page['points']['diff'] >= 1" class="positive">+{{ page['points']['diff'] }}</span>
 										<span v-else-if="page['points']['diff'] < 0" class="negative">{{ page['points']['diff'] }}</span>
@@ -243,7 +246,7 @@
 							</div>
 							<div class="th col-sm-10 col-8 text-left">
 								<span class="flight owndeploy">
-									<a v-if="list[1] === $store.state.user.planet" :href="$root.getUrl('buildings/?chpl='+list[1])" style="color:#33ff33;">{{ list[2] }}</a><span v-else="">{{ list[2] }}</span>:
+									<router-link v-if="list[1] === $store.state.user.planet" :to="'/buildings/?chpl='+list[1]" style="color:#33ff33;">{{ list[2] }}</router-link><span v-else>{{ list[2] }}</span>:
 								</span>
 								<span class="holding colony">{{ list[3] }}</span>
 								<span class="positive float-sm-right d-none d-sm-inline">{{ list[0]|date('d.m H:i:s') }}</span>
@@ -275,17 +278,14 @@
 
 <script>
 	import Fleets from './overview-fleets.vue'
-	import * as fleet from './../../js/fleet.js'
+	import { sendMission } from './../../js/fleet.js'
+	import router from 'router-mixin'
 
 	export default {
 		name: "overview",
+		mixins: [router],
 		components: {
 			Fleets
-		},
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
 		},
 		data ()
 		{

@@ -152,6 +152,9 @@
 			},
 			text (val) {
 				this.message = val
+			},
+			value (val) {
+				this.message = val
 			}
 		},
 		methods:

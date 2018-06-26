@@ -2,6 +2,8 @@
 
 namespace Xnova\Exceptions;
 
+use Phalcon\Di;
+
 class RedirectException extends MainException
 {
 	protected $url = '';
@@ -9,6 +11,9 @@ class RedirectException extends MainException
 
 	public function __construct ($message = '', $title = '', $url = '', $timeout = 5)
 	{
+		if ($url == '')
+			$url = Di::getDefault()->getShared('router')->getRewriteUri();
+
 		if (!$url)
 			throw new $this(get_class($this).': Unknown $url parameter');
 

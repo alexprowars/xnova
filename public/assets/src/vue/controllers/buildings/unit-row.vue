@@ -3,16 +3,16 @@
 		<div class="page-building-items-item building" :class="{blocked: !item.allow}">
 			<div class="building-info">
 				<div class="building-info-img">
-					<a @click="openWindow">
+					<popup-link :to="'/info/'+this.item['i']+'/'">
 						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" :alt="$root.getLang('TECH', item.i)" align="top" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
-					</a>
+					</popup-link>
 				</div>
 
 				<div class="building-info-actions">
 					<div class="building-title">
-						<a :href="$root.getUrl('info/'+item.i+'/')">
+						<router-link :to="'/info/'+item.i+'/'">
 							{{ $root.getLang('TECH', item.i) }}
-						</a>
+						</router-link>
 						<span :class="{positive: item.count > 0, negative: item.count === 0}">{{ item.count|number }}</span>
 					</div>
 
@@ -63,7 +63,9 @@
 			{
 				let max = -1;
 
-				['metal', 'crystal', 'deuterium', 'energy'].forEach((item) =>
+				let resources = Object.keys(this.$root.getLang('RESOURCES'));
+
+				resources.forEach((item) =>
 				{
 					let count = Math.floor(this.$store.state.resources[item]['current'] / this.item['price'][item]);
 
@@ -83,9 +85,6 @@
 			BuildRowPrice
 		},
 		methods: {
-			openWindow () {
-				this.$root.openPopup('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
-			},
 			setMax ()
 			{
 				if (this.count === '' || parseInt(this.count) === 0)

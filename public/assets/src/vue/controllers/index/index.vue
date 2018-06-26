@@ -1,22 +1,12 @@
 <template>
-	<div>
+	<div class="page-index">
 		<div class="left">
 			<div class="middle">
 				<div class="loginform">
 					<div class="login">Вход в игру:</div>
 
 					<div class="login-inputs">
-						<div class="error" id="authError"></div>
-						<form ref="form" :action="$root.getUrl('login/')" method="post" class="noajax" id="authForm" @submit.prevent="authAction">
-							<div>
-								<input class="input-text" name="email" placeholder="Email" value="" type="text">
-								<input class="input-text" name="password" placeholder="Пароль" value="" type="password">
-								<input class="input-submit" type="submit" value="Вход">
-								<div class="remember">
-									<input name="rememberme" id="rememberme" type="checkbox"><label for="rememberme">Запомнить меня</label>
-								</div>
-							</div>
-						</form>
+						<index-auth></index-auth>
 					</div>
 					<div class="lost-pass">
 						<a @click.prevent="showRemindPassword" title="Восстановление пароля">Забыли пароль?</a>
@@ -51,11 +41,12 @@
 			<div class="desk">Звездная Империя - онлайн-игра</div>
 			<div class="nav">
 				<a href="http://forum.xnova.su" title="Официальный форум" target="_blank">Форум</a>  |
-				<a :href="$root.getUrl('xnsim/')">Симулятор</a>  |  <a :href="$root.getUrl('stat/')">Статистика</a>  |
+				<router-link to="/xnsim/">Симулятор</router-link>  |
+				<router-link to="/stat/">Статистика</router-link>  |
 				<a href="//vkontakte.ru/xnova_game" title="Официальная группа ВКонтакте" target="_blank">ВКонтакте</a>  |
-				<a :href="$root.getUrl('content/agb/')">Правила</a>  |
-				<a :href="$root.getUrl('banned/')">Блокировки</a>  |
-				<a :href="$root.getUrl('contact/')">Администрация</a>
+				<router-link to="/content/agb/">Правила</router-link>  |
+				<router-link to="/banned/">Блокировки</router-link>  |
+				<router-link to="/contact/">Администрация</router-link>
 			</div>
 			<div class="copy">
 				<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a> / <a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>&nbsp;&nbsp;&nbsp;&copy; {{ (new Date).getFullYear() }} XNOVA.SU
@@ -66,36 +57,25 @@
 </template>
 
 <script>
-	import { $post } from 'api'
+	import IndexAuth from './index-auth.vue'
+	import { addScript } from 'helpers'
 
 	export default {
 		name: "index",
+		components: {
+			IndexAuth
+		},
 		methods: {
 			showRegistration () {
 				this.$root.openPopup('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
 			},
 			showRemindPassword () {
 				this.$root.openPopup('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
-			},
-			authAction ()
-			{
-				$post('/login/', new FormData(this.$refs['form']))
-				.then((result) =>
-				{
-					if (result.redirect !== undefined)
-						window.location.href = result.redirect;
-					else
-					{
-						result.messages.forEach((item) => {
-							$('#authError').html(item.text);
-						});
-					}
-				})
 			}
 		},
 		mounted() {
-			$.cachedScript('https://ulogin.ru/js/ulogin.js');
-			$.cachedScript('https://www.google.com/recaptcha/api.js');
+			addScript('https://ulogin.ru/js/ulogin.js');
+			addScript('https://www.google.com/recaptcha/api.js');
 		}
 	}
 </script>

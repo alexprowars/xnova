@@ -22,7 +22,7 @@
 
 <script>
 	export default {
-		name: "application-planet-panel-resource-tooltip",
+		name: "planet-panel-resource-tooltip",
 		props: ['resource', 'type']
 	}
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<table class="table">
+	<table v-if="page" class="table">
 		<tr>
 			<td class="c" colspan="2">
 				Обнаружена следующая активность на планете:
@@ -27,13 +27,11 @@
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "phalanx",
-		computed: {
-			page () {
-				return this.$store.state.page;
-			},
-		},
+		mixins: [router],
 		data () {
 			return {
 				timer: null,

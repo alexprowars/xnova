@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\SuccessException;
 use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Message;
@@ -48,73 +49,70 @@ class MessagesController extends Controller
 
 		if ($this->request->hasPost('text'))
 		{
-			try
+			$text = $this->request->getPost('text', 'string', '');
+
+			$error = 0;
+
+			if ($text == '')
+				throw new ErrorException(_getText('mess_no_text'));
+
+			if (!$error && $this->user->message_block > time())
+				throw new ErrorException(_getText('mess_similar'));
+
+			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
 			{
-				$text = $this->request->getPost('text', 'string', '');
+				$registerTime = $this->db->fetchColumn("SELECT create_time FROM game_users_info WHERE id = ".$this->user->id."");
 
-				$error = 0;
-
-				if ($text == '')
-					throw new ErrorException('<div class="error">'._getText('mess_no_text').'</div>');
-
-				if (!$error && $this->user->message_block > time())
-					throw new ErrorException('<div class="error">'._getText('mess_similar').'</div>');
-
-				if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
+				if ($registerTime > time() - 86400)
 				{
-					$registerTime = $this->db->fetchColumn("SELECT create_time FROM game_users_info WHERE id = ".$this->user->id."");
+					$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (1 * 60))."");
 
-					if ($registerTime > time() - 86400)
-					{
-						$lastSend = $this->db->fetchColumn("SELECT COUNT(*) as num FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (1 * 60))."");
-
-						if ($lastSend > 0)
-							throw new ErrorException('<div class="error">'._getText('mess_limit').'</div>');
-					}
+					if ($lastSend > 0)
+						throw new ErrorException(_getText('mess_limit'));
 				}
-
-				$similar = $this->db->query("SELECT text FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (5 * 60))." ORDER BY time DESC LIMIT 1")->fetch();
-
-				if (isset($similar['text']))
-				{
-					if (mb_strlen($similar['text'], 'UTF-8') < 1000)
-					{
-						similar_text($text, $similar['text'], $sim);
-
-						if ($sim > 80)
-							throw new ErrorException('<div class="error">'._getText('mess_similar').'</div>');
-					}
-				}
-
-				$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
-
-				$Message = Format::text($text);
-				$Message = preg_replace('/[ ]+/',' ', $Message);
-				$Message = strtr($Message, _getText('stopwords'));
-
-				User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
-
-				$this->view->setVar('msg', '<div class=success>'._getText('mess_sended').'</div>');
 			}
-			catch (ErrorException $e)
+
+			$similar = $this->db->query("SELECT text FROM game_messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (5 * 60))." ORDER BY time DESC LIMIT 1")->fetch();
+
+			if (isset($similar['text']))
 			{
-				$this->view->setVar('msg', $e->getMessage());
+				if (mb_strlen($similar['text'], 'UTF-8') < 1000)
+				{
+					similar_text($text, $similar['text'], $sim);
+
+					if ($sim > 80)
+						throw new ErrorException(_getText('mess_similar'));
+				}
 			}
+
+			$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
+
+			$Message = Format::text($text);
+			$Message = preg_replace('/[ ]+/',' ', $Message);
+			$Message = strtr($Message, _getText('stopwords'));
+
+			User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
+
+			throw new SuccessException(_getText('mess_sended'));
 		}
 
-		$this->view->setVar('text', '');
-		$this->view->setVar('id', $OwnerRecord['id']);
-		$this->view->setVar('to', $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]");
+		$page = [
+			'text' => '',
+			'id' => $OwnerRecord['id'],
+			'to' => $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]"
+		];
 
 		if ($this->request->hasQuery('quote'))
 		{
 			$mes = Message::findFirst(['columns' => 'id, text', 'conditions' => 'id = ?0 AND (user_id = ?1 OR from_id = ?1)', 'bind' => [$this->request->getQuery('quote', 'int'), $this->user->id]]);
 
 			if ($mes)
-				$this->view->setVar('text', '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes->text) . '[/quote]');
+				$page['text'] = '[quote]' . preg_replace('/\<br(\s*)?\/?\>/iu', "", $mes->text) . '[/quote]';
 		}
 
-		$this->tag->setTitle('Сообщения');
+		Request::addData('page', $page);
+
+		$this->tag->setTitle('Отправка сообщения');
 		$this->showTopPanel(false);
 	}
 

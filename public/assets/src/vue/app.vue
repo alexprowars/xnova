@@ -14,11 +14,9 @@
 				<application-messages-row v-for="(item, i) in messages" :key="i" :item="item"></application-messages-row>
 
 				<div class="main-content-row">
-					<div v-if="html.length" ref="html"></div>
-
 					<error-message v-if="error" :data="error"></error-message>
 
-					<router-view v-if="$store.state.page"></router-view>
+					<router-view ref="router"></router-view>
 				</div>
 			</div>
 		</main>
@@ -32,7 +30,6 @@
 </template>
 
 <script>
-	import Vue from 'vue'
 	import MainMenu from './views/app/main-menu.vue'
 	import ApplicationHeader from './views/app/header.vue'
 	import ApplicationFooter from './views/app/footer.vue'
@@ -51,9 +48,6 @@
 			PlanetPanel,
 		},
 		computed: {
-			html () {
-				return this.$store.state.html;
-			},
 			error () {
 				return this.$store.state.error;
 			},
@@ -73,17 +67,13 @@
 		data: function ()
 		{
 			return {
-				sidebar: '',
-				html_component: null
+				sidebar: ''
 			}
 		},
 		watch: {
 		    '$route' () {
 				this.sidebar = '';
-		    },
-			html (val) {
-		    	this.renderHtml(val);
-			}
+		    }
 		},
 		methods: {
 			sidebarToggle (type)
@@ -92,35 +82,10 @@
 					this.sidebar = '';
 				else
 					this.sidebar = type;
-			},
-			renderHtml (html)
-			{
-				if (this.html_component !== null)
-					this.html_component.$destroy();
-
-				if (html.length > 0)
-				{
-					setTimeout(() => {
-						this.$root.evalJs(html);
-					}, 25);
-
-					this.html_component = new (Vue.extend({
-						name: 'html-render',
-						parent: this,
-						template: '<div>'+html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
-					}))().$mount();
-
-					Vue.nextTick(() => {
-						$(this.$refs['html']).html(this.html_component.$el);
-					});
-				}
 			}
 		},
 		mounted ()
 		{
-			if (this.html.length)
-				this.renderHtml(this.html);
-
 			$('body').attr('page', this.$store.state.route.controller);
 
 			this.$root.init();

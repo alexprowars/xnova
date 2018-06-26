@@ -64,7 +64,7 @@ function storage (ships)
 
 function sendMission (mission, galaxy, system, planet, type, count)
 {
-	return $get('fleet/quick/', {
+	return $get('/fleet/quick/', {
 		mission: mission,
 		galaxy: galaxy,
 		system: system,
@@ -74,7 +74,7 @@ function sendMission (mission, galaxy, system, planet, type, count)
 	})
 	.then(result =>
 	{
-		result.data.messages.forEach((item) =>
+		result.messages.forEach((item) =>
 		{
 			if (item['type'].indexOf('-static') <= 0)
 			{

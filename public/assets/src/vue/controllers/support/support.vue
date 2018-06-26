@@ -1,5 +1,5 @@
 <template>
-	<div class="page-support">
+	<div v-if="page" class="page-support">
 		<div class="block">
 			<div class="title text-center">
 				Служба техподдержки
@@ -52,9 +52,11 @@
 	import SupportDetail from './support-detail.vue'
 	import SupportNew from './support-new.vue'
 	import { $get } from 'api'
+	import router from 'router-mixin'
 
 	export default {
 		name: "support",
+		mixins: [router],
 		data () {
 			return {
 				detail: false,
@@ -65,11 +67,6 @@
 			SupportDetail,
 			SupportNew
 		},
-		computed: {
-			page () {
-				return this.$store.state.page;
-			}
-		},
 		methods: {
 			newRequest () {
 				this.request = !this.request
@@ -78,7 +75,7 @@
 			{
 				$get('/support/info/'+id+'/')
 				.then((result) => {
-					this.detail = result.data
+					this.detail = result
 				})
 			}
 		}

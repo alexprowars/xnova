@@ -18,14 +18,14 @@
 								</div>
 
 								<div v-if="item['u_id'] !== $store.state['user']['id']">
-									<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m1/')">Атаковать</a>
+									<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m1/'">Атаковать</router-link>
 									<br>
-									<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m5/')">Удерживать</a>
+									<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m5/'">Удерживать</router-link>
 								</div>
 								<div v-else>
-									<a v-if="item['u_id'] === $store.state['user']['id']" :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m4/')">Оставить</a>
+									<router-link v-if="item['u_id'] === $store.state['user']['id']" :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m4/'">Оставить</router-link>
 								</div>
-								<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m3/')">Транспорт</a>
+								<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m3/'">Транспорт</router-link>
 							</th>
 						</tr>
 					</table>
@@ -75,18 +75,18 @@
 									<tr>
 										<th colspan="2" align="center">
 											<div v-if="item['u_id'] !== $store.state['user']['id']">
-												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m1/')">Атаковать</a>
+												<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m1/'">Атаковать</router-link>
 												<br>
-												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m5/')">Удерживать</a>
+												<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m5/'">Удерживать</router-link>
 
 												<div v-if="$parent['page']['user'].destroy > 0">
-													<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m9/')">Уничтожить</a>
+													<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m9/'">Уничтожить</router-link>
 												</div>
 											</div>
 											<div v-else>
-												<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m4/')">Оставить</a>
+												<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m4/'">Оставить</router-link>
 											</div>
-											<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m3/')">Транспорт</a>
+											<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m3/'">Транспорт</router-link>
 										</th>
 									</tr>
 								</table>
@@ -131,7 +131,7 @@
 									</tr>
 									<tr>
 										<th colspan="2" align="left">
-											<a :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t2/m8/')">Отправить флот</a>
+											<router-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t2/m8/'">Отправить флот</router-link>
 										</th>
 									</tr>
 								</table>
@@ -155,17 +155,17 @@
 								<td v-else width="122" height="126" rowspan="3" valign="middle" class="c">нет<br>аватара</td>
 
 								<th v-if="item['u_id'] !== $store.state['user']['id']">
-									<a :href="$root.getUrl('messages/write/'+item['u_id']+'/')">Послать сообщение</a>
+									<router-link :to="'/messages/write/'+item['u_id']+'/'">Послать сообщение</router-link>
 								</th>
 							</tr>
 							<tr v-if="item['u_id'] !== $store.state['user']['id']">
 								<th>
-									<a :href="$root.getUrl('buddy/new/'+item['u_id']+'/')">Добавить в друзья</a>
+									<router-link :to="'/buddy/new/'+item['u_id']+'/'">Добавить в друзья</router-link>
 								</th>
 							</tr>
 							<tr>
 								<th valign="top">
-									<a :href="$root.getUrl('stat/players/range/'+stat_page+'/pid/'+item['u_id']+'/')">Статистика</a>
+									<router-link :to="'/stat/players/range/'+stat_page+'/pid/'+item['u_id']+'/'">Статистика</router-link>
 								</th>
 							</tr>
 						</table>
@@ -175,7 +175,7 @@
 				</a>
 
 				<span v-if="user_status" :class="[user_status_class]">
-					<font color="white">(</font><span v-if="user_status === 'UG' || user_status === 'G'"><a :href="$root.getUrl('banned/')" :class="[user_status_class]">{{ user_status }}</a></span><span v-else="">{{ user_status }}</span><font color="white">)</font>
+					<font color="white">(</font><span v-if="user_status === 'UG' || user_status === 'G'"><router-link to="/banned/" :class="[user_status_class]">{{ user_status }}</router-link></span><span v-else="">{{ user_status }}</span><font color="white">)</font>
 				</span>
 
 				<font v-if="item['u_admin'] === 3" color="red">A</font>
@@ -184,9 +184,9 @@
 			</div>
 		</th>
 		<th width="16">
-			<a v-if="item && !item.delete && item['u_race']" :href="$root.getUrl('info/70'+item['u_race']+'/')">
+			<router-link v-if="item && !item.delete && item['u_race']" :to="'/info/70'+item['u_race']+'/'">
 				<img :src="$root.getUrl('assets/images/skin/race'+item['u_race']+'.gif')" width="16" height="16" :alt="races[item['u_race']]" :title="races[item['u_race']]">
-			</a>
+			</router-link>
 		</th>
 		<th width="80">
 			<a v-if="item && !item.delete && item['a_id']" class="tooltip sticky">
@@ -199,17 +199,17 @@
 						</tr>
 						<tr>
 							<th>
-								<a :href="$root.getUrl('alliance/info/'+item['a_id']+'/')">Информация</a>
+								<router-link :to="'alliance/info/'+item['a_id']+'/'">Информация</router-link>
 							</th>
 						</tr>
 						<tr>
 							<th>
-								<a :href="$root.getUrl('stat/alliance/start/0/')">Статистика</a>
+								<router-link to="/stat/alliance/start/0/">Статистика</router-link>
 							</th>
 						</tr>
 						<tr v-if="item['a_web'] && item['a_web'].length">
 							<th>
-								<a :href="$root.getUrl(item['a_web'])" target="_blank">Сайт альянса</a>
+								<a :href="item['a_web']" target="_blank">Сайт альянса</a>
 							</th>
 						</tr>
 					</table>
@@ -228,12 +228,12 @@
 
 		<th style="white-space: nowrap;" width="125">
 			<div v-if="item && item['u_id'] !== $store.state['user']['id'] && !item['p_delete']">
-				<a title="Отправить сообщение" @click.prevent="sendMessage">
+				<popup-link :title="item['u_name']+': отправить сообщение'" :to="'/messages/write/'+item['u_id']+'/'" :width="680">
 					<span class="sprite skin_m"></span>
-				</a>
-				<a :href="$root.getUrl('buddy/new/'+item['u_id']+'/')" title="Добавить в друзья">
+				</popup-link>
+				<router-link :to="'/buddy/new/'+item['u_id']+'/'" title="Добавить в друзья">
 					<span class="sprite skin_b"></span>
-				</a>
+				</router-link>
 
 				<a v-if="$parent['page']['user']['missile']" @click.prevent="$parent.sendMissile(item['planet'])" title="Ракетная атака">
 					<span class="sprite skin_r"></span>
@@ -252,26 +252,28 @@
 					<span class="sprite skin_e"></span>
 				</a>
 
-				<a :href="$root.getUrl('players/'+item['u_id']+'/')" title="Информация об игроке">
+				<router-link :to="'/players/'+item['u_id']+'/'" title="Информация об игроке">
 					<span class="sprite skin_s"></span>
-				</a>
-				<a :href="$root.getUrl('fleet/shortcut/add/new/g/'+galaxy+'/s/'+system+'/p/'+item['planet']+'/t/'+item['p_type']+'/')" title="Добавить в закладки">
+				</router-link>
+				<router-link :to="'/fleet/shortcut/add/new/g/'+galaxy+'/s/'+system+'/p/'+item['planet']+'/t/'+item['p_type']+'/'" title="Добавить в закладки">
 					<span class="sprite skin_z"></span>
-				</a>
+				</router-link>
 			</div>
 
-			<a v-if="!item && $parent['page']['user']['colonizer']" :href="$root.getUrl('fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/')" title="Колонизация">
+			<router-link v-if="!item && $parent['page']['user']['colonizer']" :to="'fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/'" title="Колонизация">
 				<span class="sprite skin_e"></span>
-			</a>
+			</router-link>
 		</th>
 	</tr>
 </template>
 
 <script>
+	import { sendMission } from "../../js/fleet"
+
 	export default {
 		name: "row",
 		props: ['item', 'i'],
-		data: function ()
+		data ()
 		{
 			return {
 				'races': ['', 'Конфедерация', 'Бионики', 'Сайлоны', 'Древние']
@@ -284,7 +286,7 @@
 			system () {
 				return this.$parent['page']['system'];
 			},
-			user_status: function ()
+			user_status ()
 			{
 				let CurrentPoints 	= this.$parent['page']['user']['stat_points'];
 				let RowUserPoints 	= this.item['s_points'];
@@ -309,7 +311,7 @@
 				else
 					return '';
 			},
-			user_status_class: function ()
+			user_status_class ()
 			{
 				if (this.user_status === 'UG')
 					return "vacation";
@@ -328,7 +330,7 @@
 
 				return '';
 			},
-			debris_class: function()
+			debris_class ()
 			{
 				if (!this.item)
 					return '';
@@ -344,7 +346,7 @@
 
 				return '';
 			},
-			user_avatar: function()
+			user_avatar ()
 			{
 				if (!this.item)
 					return '';
@@ -361,7 +363,7 @@
 
 				return '';
 			},
-			stat_page: function ()
+			stat_page ()
 			{
 				if (!this.item || this.item['s_rank'] < 100)
 					return 1;
@@ -371,10 +373,7 @@
 		},
 		methods:
 		{
-			sendMessage: function() {
-				this.$root.openPopup(this.item['u_name']+': отправить сообщение', this.$root.getUrl('messages/write/'+this.item['u_id']+'/'), 680)
-			},
-			spy: function(planet_type, event)
+			spy (planet_type, event)
 			{
 				let obj = $(event.target);
 
@@ -382,8 +381,7 @@
 
 				let spyNum = obj.parent().find('input[type=text]').val();
 
-				this.$parent.fleet.sendMission(6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum)
-				.then(() => {
+				sendMission(6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum).then(() => {
 					obj.prop('disabled', false);
 				});
 			}

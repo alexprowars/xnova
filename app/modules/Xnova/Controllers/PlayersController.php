@@ -41,100 +41,73 @@ class PlayersController extends Controller
 
 		if (!$playerid)
 			throw new ErrorException('Профиль не найден');
+		
+		$user = $this->db->query("SELECT u.*, ui.about, ui.image FROM game_users u LEFT JOIN game_users_info ui ON ui.id = u.id WHERE ".(is_numeric($playerid) ? "u.id" : "u.username")." = '" . $playerid . "';")->fetch();
+		
+		if (!$user)
+			throw new ErrorException('Профиль не найден');
 
-		$ownid = ($this->auth->isAuthorized()) ? $this->user->id : 0;
-		
-		$PlayerCard = $this->db->query("SELECT u.*, ui.about, ui.image FROM game_users u LEFT JOIN game_users_info ui ON ui.id = u.id WHERE ".(is_numeric($playerid) ? "u.id" : "u.username")." = '" . $playerid . "';");
-		
-		if ($daten = $PlayerCard->fetch())
+		$parse['avatar'] = 'assets/images/no_photo.gif';
+
+		if ($user['image'] > 0)
 		{
-			$parse['avatar'] = 'assets/images/no_photo.gif';
+			$file = Files::getById($user['image']);
 
-			if ($daten['image'] > 0)
-			{
-				$file = Files::getById($daten['image']);
-
-				if ($file)
-					$parse['avatar'] = $file['src'];
-			}
-			elseif ($daten['avatar'] != 0)
-			{
-				if ($daten['avatar'] != 99)
-					$parse['avatar'] = "assets/images/faces/".$daten['sex']."/" . $daten['avatar'] . ".png";
-			}
-
-			$parse['avatar'] = $this->url->getStatic($parse['avatar']);
-
-			$gesamtkaempfe = $daten['raids_win'] + $daten['raids_lose'];
-
-			if ($gesamtkaempfe == 0)
-			{
-				$siegprozent = 0;
-				$loosprozent = 0;
-			}
-			else
-			{
-				$siegprozent = 100 / $gesamtkaempfe * $daten['raids_win'];
-				$loosprozent = 100 / $gesamtkaempfe * $daten['raids_lose'];
-			}
-
-			$parse['userplanet'] = '';
-
-			$planet = Planet::findByCoords($daten['galaxy'], $daten['system'], $daten['planet'], 1);
-
-			if ($planet)
-				$parse['userplanet'] = $planet->name;
-		
-			$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $daten['id'] . "';")->fetch();
-			$parse['tech_rank'] = Format::number($points['tech_rank']);
-			$parse['tech_points'] = Format::number($points['tech_points']);
-			$parse['build_rank'] = Format::number($points['build_rank']);
-			$parse['build_points'] = Format::number($points['build_points']);
-			$parse['fleet_rank'] = Format::number($points['fleet_rank']);
-			$parse['fleet_points'] = Format::number($points['fleet_points']);
-			$parse['defs_rank'] = Format::number($points['defs_rank']);
-			$parse['defs_points'] = Format::number($points['defs_points']);
-			$parse['total_rank'] = Format::number($points['total_rank']);
-			$parse['total_points'] = Format::number($points['total_points']);
-		
-			if ($ownid != 0)
-				$parse['player_buddy'] = '<a href="'.$this->url->get('buddy/new/' . $playerid . '/').'" title="Добавить в друзья">Добавить в друзья</a>';
-			else
-				$parse['player_buddy'] = '';
-		
-			if ($ownid != 0)
-				$parse['player_mes'] = '<a href="'.$this->url->get('messages/write/' . $playerid . '/').'">Написать сообщение</a>';
-			else
-				$parse['player_mes'] = '';
-		
-			if ($daten['sex'] == 2)
-				$parse['sex'] = 'Женский';
-			else
-				$parse['sex'] = 'Мужской';
-
-			$parse['ingame'] = ($ownid != 0) ? true : false;
-			$parse['id'] = $daten['id'];
-			$parse['username'] = $daten['username'];
-			$parse['race'] = $daten['race'];
-			$parse['galaxy'] = $daten['galaxy'];
-			$parse['system'] = $daten['system'];
-			$parse['planet'] = $daten['planet'];
-			$parse['ally_id'] = $daten['ally_id'];
-			$parse['ally_name'] = $daten['ally_name'];
-			$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($daten['about']));
-			$parse['wons'] = Format::number($daten['raids_win']);
-			$parse['loos'] = Format::number($daten['raids_lose']);
-			$parse['siegprozent'] = round($siegprozent, 2);
-			$parse['loosprozent'] = round($loosprozent, 2);
-			$parse['total'] = $daten['raids'];
-			$parse['totalprozent'] = 100;
-			$parse['m'] = User::getRankId($daten['lvl_minier']);
-			$parse['f'] = User::getRankId($daten['lvl_raid']);
+			if ($file)
+				$parse['avatar'] = $file['src'];
 		}
-		else
-			throw new ErrorException('Параметр задан неверно');
+		elseif ($user['avatar'] != 0)
+		{
+			if ($user['avatar'] != 99)
+				$parse['avatar'] = "assets/images/faces/".$user['sex']."/" . $user['avatar'] . ".png";
+		}
 
-		$this->view->setVar('parse', $parse);
+		$parse['avatar'] = $this->url->getStatic($parse['avatar']);
+		$parse['userplanet'] = '';
+
+		$planet = Planet::findByCoords($user['galaxy'], $user['system'], $user['planet'], 1);
+
+		if ($planet)
+			$parse['userplanet'] = $planet->name;
+
+		$parse['stats'] = false;
+
+		$points = $this->db->query("SELECT * FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user['id'] . "';")->fetch();
+
+		if ($points)
+		{
+			$parse['stats'] = [
+				'tech_rank' => (int) $points['tech_rank'] ?? 0,
+				'tech_points' => (int) $points['tech_points'] ?? 0,
+				'build_rank' => (int) $points['build_rank'] ?? 0,
+				'build_points' => (int) $points['build_points'] ?? 0,
+				'fleet_rank' => (int) $points['fleet_rank'] ?? 0,
+				'fleet_points' => (int) $points['fleet_points'] ?? 0,
+				'defs_rank' => (int) $points['defs_rank'] ?? 0,
+				'defs_points' => (int) $points['defs_points'] ?? 0,
+				'total_rank' => (int) $points['total_rank'] ?? 0,
+				'total_points' => (int) $points['total_points'] ?? 0,
+			];
+		}
+
+		$parse['sex'] = (int) $user['sex'];
+		$parse['id'] = (int) $user['id'];
+		$parse['username'] = $user['username'];
+		$parse['race'] = (int) $user['race'];
+		$parse['galaxy'] = (int) $user['galaxy'];
+		$parse['system'] = (int) $user['system'];
+		$parse['planet'] = (int) $user['planet'];
+		$parse['ally_id'] = (int) $user['ally_id'];
+		$parse['ally_name'] = $user['ally_name'];
+		$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($user['about']));
+		$parse['wons'] = (int) $user['raids_win'];
+		$parse['loos'] = (int) $user['raids_lose'];
+		$parse['total'] = (int) $user['raids'];
+
+		$parse['m'] = User::getRankId($user['lvl_minier']);
+		$parse['f'] = User::getRankId($user['lvl_raid']);
+
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Информация о игроке');
 		$this->showTopPanel(false);

@@ -3,16 +3,16 @@
 		<div class="page-building-items-item building" :class="{blocked: !item.allow}">
 			<div class="building-info">
 				<div class="building-info-img">
-					<a @click="openWindow">
+					<popup-link :to="'/info/'+this.item['i']+'/'">
 						<img :src="$root.getUrl('assets/images/gebaeude/'+item.i+'.gif')" align="top" :alt="$root.getLang('TECH', item.i)" class="tooltip img-fluid" :data-content="$root.getLang('TECH', item.i)" data-width="150">
-					</a>
+					</popup-link>
 				</div>
 
 				<div class="building-info-actions">
 					<div class="building-title">
-						<a :href="$root.getUrl('info/'+item.i+'/')">
+						<router-link :to="'/info/'+item.i+'/'">
 							{{ $root.getLang('TECH', item.i) }}
-						</a>
+						</router-link>
 						<span v-if="item.level" class="positive" title="Текущий уровень постройки">
 							{{ item.level|number }} <span v-if="item.max > 0">из <font color="yellow">{{ item.max|number }}</font></span>
 						</span>
@@ -31,9 +31,9 @@
 						<div class="building-info-upgrade">
 							<div v-if="typeof item.build === 'object'" class="building-info-upgrade-timer">
 								<span v-if="time > 0">
-									{{ time|time(':', true) }}&nbsp;<a :href="$root.getUrl('buildings/research/cmd/cancel/tech/'+item.i+'/')">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
+									{{ time|time(':', true) }}&nbsp;<a @click.prevent="cancelAction">Отменить<span v-if="item.build.name.length">на {{ item.build.name }}</span></a>
 								</span>
-								<a v-else :href="$root.getUrl('buildings/research/?chpl='+item.build.id+'')">завершено. продолжить...</a>
+								<router-link v-else :to="'/buildings/research/?chpl='+item.build.id">завершено. продолжить...</router-link>
 							</div>
 							<div v-else-if="item.max > 0 && item.max <= item.level" class="negative">
 								максимальный уровень
@@ -41,11 +41,11 @@
 							<div v-else-if="!hasResources" class="negative text-center">
 								нет ресурсов
 							</div>
-							<a v-else-if="item.build !== true" :href="$root.getUrl('buildings/research/cmd/search/tech/'+item.i+'/')" :class="{positive: item.level, negative: item.level === 0}">
+							<router-link v-else-if="item.build !== true" :to="'/buildings/research/cmd/search/tech/'+item.i+'/'" :class="{positive: item.level, negative: item.level === 0}">
 								<svg class="icon">
 									<use xlink:href="#icon-research"></use>
 								</svg>
-							</a>
+							</router-link>
 						</div>
 					</div>
 					<div v-else="" class="building-required">
@@ -63,7 +63,9 @@
 
 	export default {
 		name: "tech-row",
-		props: ['item'],
+		props: {
+			item: Object
+		},
 		components: {
 			BuildRowPrice
 		},
@@ -81,7 +83,9 @@
 			{
 				let allow = true;
 
-				['metal', 'crystal', 'deuterium', 'energy'].forEach((res) =>
+				let resources = Object.keys(this.$root.getLang('RESOURCES'));
+
+				resources.forEach((res) =>
 				{
 					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0 && this.resources[res].current < this.item.price[res])
 						allow = false;
@@ -91,9 +95,6 @@
 			}
 		},
 		methods: {
-			openWindow () {
-				this.$root.openPopup('', this.$root.getUrl('info/'+this.item['i']+'/'), 600)
-			},
 			update ()
 			{
 				if (typeof this.item['build'] !== 'object' || this.time < 0)
@@ -110,6 +111,32 @@
 			},
 			start () {
 				this.timeout = setTimeout(this.update, 1000);
+			},
+			cancelAction ()
+			{
+				$.confirm({
+					content: 'Отменить исследование <b>'+this.item['name']+' '+this.item['level']+' ур.</b>?',
+					title: 'Очередь построек',
+					backgroundDismiss: true,
+					buttons: {
+						confirm: {
+							text: 'отменить',
+							action: () =>
+							{
+								$post('/buildings/research/', {
+									cmd: 'cancel',
+									tech: item.i
+								})
+								.then((result) => {
+									this.$store.commit('PAGE_LOAD', result)
+								})
+							}
+						},
+						cancel: {
+							text: 'закрыть'
+						}
+					}
+				})
 			}
 		},
 		watch: {

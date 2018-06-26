@@ -1,5 +1,5 @@
 <template>
-	<div class="page-fleet">
+	<div v-if="page" class="page-fleet">
 		<div class="page-fleet-fly block">
 			<div class="title">
 				<div class="row">
@@ -47,17 +47,17 @@
 						</div>
 						<div class="col-4 col-sm-2 th">
 							<div>
-								<a :href="$root.getUrl('galaxy/'+item['target']['galaxy']+'/'+item['target']['system']+'/')" class="negative">
+								<router-link :to="'/galaxy/'+item['target']['galaxy']+'/'+item['target']['system']+'/'" class="negative">
 									[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]
-								</a>
+								</router-link>
 							</div>
 							{{ item['start']['time']|date('d.m H:i:s') }}
 						</div>
 						<div class="col-4 col-sm-2 th">
 							<div>
-								<a :href="$root.getUrl('galaxy/'+item['start']['galaxy']+'/'+item['start']['system']+'/')" class="positive">
+								<router-link :to="'/galaxy/'+item['start']['galaxy']+'/'+item['start']['system']+'/'" class="positive">
 									[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]
-								</a>
+								</router-link>
 							</div>
 							{{ item['target']['time']|date('d.m H:i:s') }}
 						</div>
@@ -67,16 +67,16 @@
 							</font>
 						</div>
 						<div class="col-4 col-sm-2 th">
-							<form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" :action="$root.getUrl('fleet/back/')" method="post">
+							<form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" action="/fleet/back/" method="post">
 								<input name="fleetid" :value="item.id" type="hidden">
 								<input value="Возврат" type="submit" name="send">
 							</form>
 
-							<a v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :href="$root.getUrl('fleet/verband/id/'+item.id+'/')" class="button">
+							<router-link v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :to="'/fleet/verband/id/'+item.id+'/'" class="button">
 								Объединить
-							</a>
+							</router-link>
 
-							<form v-if="item['stage'] === 3 && item['mission'] !== 15" :action="$root.getUrl('fleet/back/')" method="post">
+							<form v-if="item['stage'] === 3 && item['mission'] !== 15" action="/fleet/back/" method="post">
 								<input name="fleetid" :value="item.id" type="hidden">
 								<input value="Отозвать" type="submit" name="send">
 							</form>
@@ -104,7 +104,7 @@
 				</div>
 			</div>
 			<div class="content">
-				<form :action="$root.getUrl('fleet/one/')" method="post">
+				<form action="/fleet/one/" method="post">
 					<div class="table fleet_ships container">
 						<div class="row">
 							<div class="th col-sm-7 col-6">Тип корабля</div>
@@ -165,12 +165,12 @@
 </template>
 
 <script>
+	import router from 'router-mixin'
+
 	export default {
 		name: "fleet-index",
+		mixins: [router],
 		computed: {
-			page () {
-				return this.$store.state.page;
-			},
 			count () {
 				return this.fleets.reduce((total, item) => {
 					return total + (item.count === '' ? 0 : parseInt(item.count));
@@ -259,9 +259,6 @@
 				this.allSpeed = speed;
 				this.allCapacity = capacity;
 			}
-		},
-		created () {
-			this.init();
 		}
 	}
 </script>

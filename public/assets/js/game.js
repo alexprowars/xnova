@@ -1,16 +1,3 @@
-function ShowHiddenBlock (id)
-{
-    $('#'+id).toggle();
-}
-
-function load (url)
-{
-	application.$router.push(url, function() {},
-	function() {
-		application.loadPage(url);
-	});
-}
-
 $(document).ready(function()
 {
 	if (typeof swipe !== 'undefined' && !navigator.userAgent.match(/(\(iPod|\(iPhone|\(iPad)/))
@@ -75,17 +62,6 @@ function closeWindow()
 		item.close();
 	});
 }
-
-jQuery.cachedScript = function (url, options)
-{
-	options = $.extend(options || {}, {
-		dataType: "script",
-		cache: true,
-		url: url
-	});
-
-	return jQuery.ajax(options);
-};
 
 function raport_to_bb(raport)
 {

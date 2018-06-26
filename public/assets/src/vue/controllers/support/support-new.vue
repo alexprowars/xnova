@@ -48,21 +48,21 @@
 				})
 				.then((result) =>
 				{
-					if (result.data.error)
+					if (result.error)
 					{
 						$.alert({
-							title: result.data.error.title,
-							content: result.data.error.message
+							title: result.error.title,
+							content: result.error.message
 						});
 
-						if (result.data.error.type === 'success')
+						if (result.error.type === 'success')
 						{
-							this.$root.loadPage('/support/');
+							this.$root.load('/support/');
 							this.$emit('close');
 						}
 					}
 					else
-						this.$store.commit('PAGE_LOAD', result.data);
+						this.$store.commit('PAGE_LOAD', result);
 				})
 			}
 		}

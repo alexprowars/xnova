@@ -6,22 +6,22 @@
 			</div>
 			<div class="col-3 th text-center">{{ item['time']|date('d.m.y H:i:s') }}</div>
 			<div class="col-6 th text-center">
-				<a v-if="item['from'] > 0" :href="$root.getUrl('players/'+item['from']+'/')" class="window popup-user">
+				<popup-link v-if="item['from'] > 0" :to="'/players/'+item['from']+'/'">
 					{{ item['theme'] }}
-				</a>
-				<span v-else="">
+				</popup-link>
+				<span v-else>
 					{{ item['theme'] }}
 				</span>
 			</div>
 			<div class="col-2 th text-center">
 				<span v-if="item['type'] === 1">
-					<a :href="$root.getUrl('messages/write/'+item['from']+'/')" title="Ответить">
+					<router-link :to="'/messages/write/'+item['from']+'/'" title="Ответить">
 						<span class="sprite skin_m"></span>
-					</a>
-					<a :href="$root.getUrl('messages/write/'+item['from']+'/quote/'+item['id']+'/')" title="Цитировать сообщение">
+					</router-link>
+					<router-link :to="'/messages/write/'+item['from']+'/quote/'+item['id']+'/'" title="Цитировать сообщение">
 						<span class="sprite skin_z"></span>
-					</a>
-					<a @click.prevent="abuse" title="Отправить жалобу">
+					</router-link>
+					<a @click.prevent="abuseAction" title="Отправить жалобу">
 						<span class="sprite skin_s"></span>
 					</a>
 				</span>
@@ -32,7 +32,7 @@
 				<div v-if="$parent.page['parser']">
 					<text-viewer :text="item['text']"></text-viewer>
 				</div>
-				<div v-else="" v-html="item['text']"></div>
+				<div v-else v-html="item['text']"></div>
 			</div>
 		</div>
 	</div>
@@ -41,12 +41,28 @@
 <script>
 	export default {
 		name: "messages-row",
-		props: ['item'],
+		props: {
+			item: Object
+		},
 		methods: {
-			abuse ()
+			abuseAction ()
 			{
-				if (window.confirm("Вы уверены что хотите отправить жалобу на это сообщение?"))
-					window.location.href = $root.getUrl('messages/abuse/'+item['id']+'/');
+				$.confirm({
+					content: 'Вы уверены что хотите отправить жалобу на это сообщение?',
+					title: 'Сообщения',
+					backgroundDismiss: true,
+					buttons: {
+						confirm: {
+							text: 'да',
+							action: () => {
+								this.$root.load('/messages/abuse/'+item['id']+'/')
+							}
+						},
+						cancel: {
+							text: 'нет'
+						}
+					}
+				});
 			}
 		}
 	}

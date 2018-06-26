@@ -14,7 +14,7 @@ use Xnova\Galaxy;
 use Phalcon\Mvc\Model;
 use Friday\Core\Models\User as BaseUser;
 use Xnova\Models\User\Tech;
-use Xnova\Queue;
+use Xnova\Queue as QueueManager;
 
 /** @noinspection PhpHierarchyChecksInspection */
 
@@ -291,7 +291,7 @@ class User extends BaseUser
 				{
 					$planet->resourceUpdate();
 
-					$queueManager = new Queue($this, $planet);
+					$queueManager = new QueueManager($this, $planet);
 					$queueManager->checkUnitQueue();
 				}
 
