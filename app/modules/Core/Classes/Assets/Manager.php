@@ -112,7 +112,7 @@ class Manager
 					$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
 			}
 
-			$collection->addCss($resource['path'], $resource['local'], $resource['local']);
+			$collection->addCss($resource['path'], $resource['local'], $resource['local'], $resource['options']['attributes'] ?? null);
 
 			$hashString .= $resource['path'];
 		}
@@ -197,7 +197,7 @@ class Manager
 					$resource['path'] = $resource['path'].(strpos($resource['path'], '?') !== false ? '&' : '?').filemtime($resource['path']);
 			}
 
-			$collection->addJs($resource['path'], $resource['local'], $resource['local']);
+			$collection->addJs($resource['path'], $resource['local'], $resource['local'], $resource['options']['attributes'] ?? null);
 
 			$hashString .= $resource['path'];
 		}

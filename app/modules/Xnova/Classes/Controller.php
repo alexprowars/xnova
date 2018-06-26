@@ -134,18 +134,6 @@ class Controller extends PhalconController
 					$sort = (int) $match[1];
 
 				$this->assets->addJs('assets/build/app/'.$file->getFilename(), ['collection' => 'footer_js', 'sort' => $sort]);
-
-				$this->assets->addCss('assets/build/app/'.$file->getFilename(), [
-					'attributes' => ['type' => null, 'rel' => 'preload', 'as' => 'script']
-				]);
-			}
-			else
-			{
-				//$this->assets->addJs('assets/build/app/'.$file->getFilename(), 'footer_js');
-
-				//$this->assets->addCss('assets/build/app/'.$file->getFilename(), [
-				//	'attributes' => ['type' => null, 'rel' => 'prefetch', 'as' => 'script']
-				//]);
 			}
 		}
 
@@ -425,8 +413,6 @@ class Controller extends PhalconController
 
 		Request::addData('title', $this->tag->getTitle(false));
 		Request::addData('url', $this->router->getRewriteUri());
-
-		Request::addData('html', '');
 
 		$this->view->setVar('options', Request::getData());
 

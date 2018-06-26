@@ -34,7 +34,12 @@
 <body class="{{ config.view.get('socialIframeView', 0) == 1 ? 'iframe' : 'window' }}">
 	<script type="text/javascript">
 		var options = {{ toJson(options) }};
-		options['html'] = {{ replace("\t\t", "", toJson(content())) }};
+
+		if (!options['page'])
+		{
+			options['page'] = {};
+			options['page']['html'] = {{ replace("\t\t", "", toJson(content())) }};
+		}
 	</script>
 
 	<div id="application"></div>

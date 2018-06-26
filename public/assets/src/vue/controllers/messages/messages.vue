@@ -58,11 +58,11 @@
 		computed: {
 			messages ()
 			{
-				this.$store.state.page.items.forEach((item) => {
+				this.page.items.forEach((item) => {
 					Vue.set(item, 'deleted', false);
 				});
 
-				return this.$store.state.page.items;
+				return this.page.items;
 			},
 			deleteItems ()
 			{

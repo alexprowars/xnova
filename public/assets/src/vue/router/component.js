@@ -42,7 +42,7 @@ const router = {
 				{
 					app.$store.commit('PAGE_LOAD', data)
 
-					next(vm => {
+					return next(vm => {
 						vm.page = data.page
 						vm.afterLoad && vm.afterLoad()
 					})

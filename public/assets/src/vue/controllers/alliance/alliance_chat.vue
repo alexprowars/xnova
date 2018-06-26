@@ -1,6 +1,6 @@
 <template>
 	<div v-if="page" class="page-alliance-chat">
-		<form action=/alliance/chat/" method="post">
+		<form action="/alliance/chat/" method="post">
 			<div class="table">
 				<div class="row">
 					<div class="col-12 c">

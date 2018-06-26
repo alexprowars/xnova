@@ -48,7 +48,8 @@ $eventsManager->attach('core:beforeOutput', function ($event, \Friday\Core\Appli
 
 	if ($app->request->isAjax())
 	{
-		\Xnova\Request::addData('html', $handle->getContent());
+		if (strlen($handle->getContent()) > 0)
+			\Xnova\Request::addData('page', ['html' => $handle->getContent()]);
 
 		/** @noinspection PhpUndefinedFieldInspection */
 		$app->response->setJsonContent(

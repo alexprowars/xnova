@@ -1,17 +1,18 @@
 <template>
-	<div ref="component"></div>
+	<div class="page-html" ref="component"></div>
 </template>
 
 <script>
 	import Vue from 'vue'
 	import router from 'router-mixin'
+	import { addScript } from 'helpers'
 
 	export default {
 		name: "html-render",
 		mixins: [router],
 		computed: {
 			html () {
-				return this.$store.state.html;
+				return this.page.html;
 			},
 		},
 		data () {
@@ -27,7 +28,7 @@
 				if (this.html.length > 0)
 				{
 					setTimeout(() => {
-						this.$root.evalJs(this.html);
+						this.evalJs(this.html);
 					}, 25);
 
 					this.component = new (Vue.extend({
@@ -43,7 +44,22 @@
 			},
 			afterLoad () {
 				this.render()
-			}
+			},
+			evalJs (html)
+			{
+				if (html.length > 0)
+				{
+					let j = $('<div/>').append(html)
+
+					j.find("script").each(function()
+					{
+						if ($(this).attr('src') !== undefined)
+							addScript($(this).attr('src'))
+						else
+							jQuery.globalEval($(this).text());
+					});
+				}
+			},
 		},
 		destroyed () {
 			this.component.$destroy();

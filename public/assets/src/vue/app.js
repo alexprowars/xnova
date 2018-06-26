@@ -43,7 +43,6 @@ Vue.filter("time", (value, separator, full) => {
 
 import store from './store'
 import router from './router'
-import { addScript } from 'helpers'
 
 import './components'
 
@@ -70,8 +69,7 @@ const application = new Vue({
 		request_block: false,
 		request_block_timer: null,
 		router_block: false,
-		start_time: Math.floor(((new Date()).getTime()) / 1000),
-		html_component: null
+		start_time: Math.floor(((new Date()).getTime()) / 1000)
 	},
 	watch: {
 		title (val) {
@@ -95,7 +93,7 @@ const application = new Vue({
 				}
 			})
 		},
-		url (val) {
+		url () {
 			$('body').attr('page', this.$store.state.route.controller);
 		}
 	},
@@ -133,21 +131,6 @@ const application = new Vue({
 		},
 		getPlanetUrl: function (galaxy, system, planet) {
 			return '<a href="'+this.getUrl('galaxy/'+galaxy+'/'+system+'/'+planet+'/')+'">['+galaxy+':'+system+':'+planet+']</a>';
-		},
-		evalJs: function (html)
-		{
-			if (html.length > 0)
-			{
-				let j = $('<div/>').append(html)
-
-				j.find("script").each(function()
-				{
-					if ($(this).attr('src') !== undefined)
-						addScript($(this).attr('src'))
-					else
-						jQuery.globalEval($(this).text());
-				});
-			}
 		},
 		serverTime () {
 			return Math.floor((new Date).getTime() / 1000) + this.$store.state.stats.time - this.start_time;
@@ -209,207 +192,6 @@ const application = new Vue({
 					this.request_block = false;
 
 					clearTimeout(this.request_block_timer);
-				})
-			});
-		},
-		init ()
-		{
-			let body = $('body');
-			let app = this;
-
-			body.on('mouseenter', '.tooltip', function()
-			{
-				if (app.$store.state.mobile)
-					return;
-
-				let _this = $(this);
-
-				let status = false;
-
-				try {
-					status = _this.tooltipster('status');
-				} catch (err) {}
-
-				if (status)
-					return;
-
-				let maxWidth = null;
-
-				if (_this.data('width') !== undefined)
-					maxWidth = parseInt(_this.data('width'));
-
-				_this.tooltipster({
-					delay: 100,
-					distance: 0,
-					maxWidth: maxWidth,
-					contentAsHTML: true,
-					interactive: _this.hasClass('sticky'),
-					functionInit: function(instance)
-					{
-						if (_this.hasClass('script'))
-							instance.content(eval(_this.data('content')));
-						else if (typeof _this.data('content') === "undefined")
-							instance.content(_this.find('.tooltip-content'));
-						else
-							instance.content(_this.data('content'));
-					}
-				}).tooltipster('open');
-			})
-			.on('click', '.tooltip', function()
-			{
-				if (!app.$store.state.mobile)
-					return;
-
-				let _this = $(this);
-
-				let status = false;
-
-				try {
-					status = _this.tooltipster('status');
-				} catch (err) {}
-
-				if (!_this.hasClass('sticky') && status)
-				{
-					if (status.open)
-						_this.tooltipster('close');
-					else
-						_this.tooltipster('open');
-
-					return;
-				}
-
-				if (typeof _this.data('tooltipster-ns') !== 'undefined')
-				{
-					_this.tooltipster('open');
-					return;
-				}
-
-				let maxWidth = null;
-
-				if (_this.data('width') !== undefined)
-					maxWidth = parseInt(_this.data('width'));
-
-				_this.tooltipster({
-					delay: 100,
-					distance: 0,
-					maxWidth: maxWidth,
-					contentAsHTML: true,
-					interactive: _this.hasClass('sticky'),
-					functionInit: function(instance)
-					{
-						if (_this.hasClass('script'))
-							instance.content(eval(_this.data('content')));
-						else if (typeof _this.data('content') === "undefined")
-							instance.content(_this.find('.tooltip-content'));
-						else
-							instance.content(_this.data('content'));
-					}
-				}).tooltipster('open');
-			})
-			.on('submit', '.jconfirm-dialog form:not(.noajax)', function(e)
-			{
-				e.preventDefault();
-
-				app.loader = true;
-
-				let formData = new FormData(this);
-				formData.append('popup', 'Y');
-
-				$post($(this).attr('action'), formData)
-				.then((result) =>
-				{
-					if (result.messages.length > 0 )
-					{
-						result.messages.forEach(function(item)
-						{
-							if (item['type'].indexOf('-static') <= 0)
-							{
-								$.toast({
-									text: item.message,
-									icon: item.type
-								});
-							}
-						})
-					}
-
-					if (result.html !== '')
-					{
-						if (app.html_component !== null)
-							app.html_component.$destroy();
-
-						app.html_component = new (Vue.extend({
-							name: 'html-render',
-							parent: app,
-							template: '<div>'+result.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
-						}))().$mount();
-
-						Vue.nextTick(() =>
-						{
-							$('.jconfirm-content').html(app.html_component.$el);
-
-							setTimeout(() => {
-								app.evalJs(result.html);
-							}, 100);
-						});
-					}
-
-					app.$store.state.redirect = result.redirect;
-				}, () => {
-					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
-				.then(() => {
-					app.loader = false;
-				})
-			})
-
-			body.find('.main-content')
-			.on('click', 'a', function(e)
-			{
-				let el = $(this);
-				let url = el.attr('href');
-
-				if (!url || el.hasClass('skip') || url.indexOf('#') === 0)
-					return false;
-
-				if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
-					return true;
-				else
-				{
-					e.preventDefault();
-
-					app.load(url);
-				}
-
-				return false;
-			})
-			.on('click', 'form:not(.noajax) input[type=submit], form[class!=noajax] button[type=submit]', function(e)
-			{
-				e.preventDefault();
-
-				let button = $(this);
-				let form = button.closest('form');
-
-				form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
-				form.submit();
-			})
-			.on('submit', 'form[class!=noajax]', function(e)
-			{
-				e.preventDefault();
-
-				let form = $(this);
-
-				app.loader = true;
-
-				let formData = new FormData(this);
-
-				$post(form.attr('action'), formData)
-				.then((result) => {
-					app.$store.commit('PAGE_LOAD', result)
-				}, () => {
-					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
-				.then(() => {
-					app.loader = false;
 				})
 			});
 		},
