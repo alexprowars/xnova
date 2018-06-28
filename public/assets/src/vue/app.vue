@@ -36,7 +36,7 @@
 	import ApplicationPlanetsList from './views/app/planets-list.vue'
 	import ApplicationMessagesRow from './views/app/messages-row.vue'
 	import PlanetPanel from './views/app/planet-panel.vue'
-	import { $post } from 'api'
+	import { tooltip, swipe, loaders } from './js/jquery'
 
 	export default {
 		name: "application",
@@ -86,151 +86,34 @@
 			},
 			init ()
 			{
-				let body = $('body');
-				let app = this.$root;
+				tooltip()
+				swipe()
+				loaders()
 
-				body.on('mouseenter', '.tooltip', function()
+				if (typeof VK !== 'undefined')
 				{
-					if (app.$store.state.mobile)
-						return;
-
-					let _this = $(this);
-
-					let status = false;
-
-					try {
-						status = _this.tooltipster('status');
-					} catch (err) {}
-
-					if (status)
-						return;
-
-					let maxWidth = null;
-
-					if (_this.data('width') !== undefined)
-						maxWidth = parseInt(_this.data('width'));
-
-					_this.tooltipster({
-						delay: 100,
-						distance: 0,
-						maxWidth: maxWidth,
-						contentAsHTML: true,
-						interactive: _this.hasClass('sticky'),
-						functionInit: function(instance)
+					try
+					{
+						VK.init(() =>
 						{
-							if (_this.hasClass('script'))
-								instance.content(eval(_this.data('content')));
-							else if (typeof _this.data('content') === "undefined")
-								instance.content(_this.find('.tooltip-content'));
-							else
-								instance.content(_this.data('content'));
-						}
-					}).tooltipster('open');
-				})
-				.on('click', '.tooltip', function()
-				{
-					if (!app.$store.state.mobile)
-						return;
+							console.log('vk init success');
 
-					let _this = $(this);
+							setInterval(() =>
+							{
+								let height = 0;
 
-					let status = false;
+								$('#application .main-content > div').each(function() {
+									height += $(this).height();
+								});
 
-					try {
-						status = _this.tooltipster('status');
-					} catch (err) {}
+								VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200));
 
-					if (!_this.hasClass('sticky') && status)
-					{
-						if (status.open)
-							_this.tooltipster('close');
-						else
-							_this.tooltipster('open');
-
-						return;
+							}, 1000);
+						},
+						() => {}, '5.74');
 					}
-
-					if (typeof _this.data('tooltipster-ns') !== 'undefined')
-					{
-						_this.tooltipster('open');
-						return;
-					}
-
-					let maxWidth = null;
-
-					if (_this.data('width') !== undefined)
-						maxWidth = parseInt(_this.data('width'));
-
-					_this.tooltipster({
-						delay: 100,
-						distance: 0,
-						maxWidth: maxWidth,
-						contentAsHTML: true,
-						interactive: _this.hasClass('sticky'),
-						functionInit: function(instance)
-						{
-							if (_this.hasClass('script'))
-								instance.content(eval(_this.data('content')));
-							else if (typeof _this.data('content') === "undefined")
-								instance.content(_this.find('.tooltip-content'));
-							else
-								instance.content(_this.data('content'));
-						}
-					}).tooltipster('open');
-				})
-
-				body.find('.main-content')
-				.on('click', '.page-html a', function(e)
-				{
-					let el = $(this);
-					let url = el.attr('href');
-
-					if (!url || el.hasClass('skip') || url.indexOf('#') === 0)
-						return false;
-
-					if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
-						return true;
-					else
-					{
-						e.preventDefault();
-
-						app.load(url);
-					}
-
-					return false;
-				})
-				.on('click', 'form:not(.noajax) input[type=submit], form[class!=noajax] button[type=submit]', function(e)
-				{
-					e.preventDefault();
-
-					let button = $(this);
-					let form = button.closest('form');
-
-					form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
-					form.submit();
-				})
-				.on('submit', 'form[class!=noajax]', function(e)
-				{
-					e.preventDefault();
-
-					let form = $(this);
-
-					app.loader = true;
-
-					let formData = new FormData(this);
-
-					$post(form.attr('action'), formData)
-					.then((result) =>
-					{
-						app.$store.commit('PAGE_LOAD', result)
-						app.$router.replace(result['url'])
-					}, () => {
-						alert('Что-то пошло не так!? Попробуйте еще раз');
-					})
-					.then(() => {
-						app.loader = false;
-					})
-				});
+					catch (e) {}
+				}
 			},
 		},
 		mounted ()

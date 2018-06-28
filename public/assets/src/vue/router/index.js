@@ -83,6 +83,9 @@ const router = new VueRouter({
 		path: '/notes',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/notes/notes.vue')
 	}, {
+		path: '/race',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/race/race.vue')
+	}, {
 		path: '/alliance/chat',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/alliance/alliance_chat.vue')
 	}, {

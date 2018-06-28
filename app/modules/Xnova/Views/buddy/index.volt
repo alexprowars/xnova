@@ -58,7 +58,7 @@
 						  <td style="text-align:center;">
 							  {{ okArray[data['ok_uid']]['name'] }}
 							  {% if okArray[data['ok_uid']]['name'] != data['username'] %}<br>[{{ data['username'] }}]{% endif %}
-							  <a href="javascript:;" onclick="showWindow('{{ data['username'] }}: отправить сообщение', '{{ url('messages/write/'~data['id']~'/') }}', 680)" data-link="Y" title="Сообщение"><span class='sprite skin_m'></span></a>
+							  <popup-link to="/messages/write/{{ data['id'] }}/" data-link="Y" title="{{ data['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link>
 						  </td>
 						</tr>
 						<tr>

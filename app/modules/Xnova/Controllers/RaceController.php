@@ -13,6 +13,7 @@ use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 use Xnova\Queue;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -111,11 +112,12 @@ class RaceController extends Controller
 		}
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
-		
-		$this->view->setVar('race', $this->user->race);
-		$this->view->setVar('free_race_change', $numChanges);
-		$this->view->setVar('isChangeAvailable', $isChangeAvailable);
 
+		Request::addData('page' , [
+			'change' => (int) $numChanges,
+			'change_available' => $isChangeAvailable
+		]);
+		
 		$this->tag->setTitle('Фракции');
 		$this->showTopPanel(false);
 		$this->showLeftPanel(!($this->user->race == 0));

@@ -37,7 +37,7 @@
 					<tr>
 						<th>{{ result['username'] }}</th>
 						<th nowrap>
-							<a href="javascript:;" onclick="showWindow('{{ result['username'] }}: отправить сообщение', '{{ url('messages/write/'~result['id']~'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a>
+							<popup-link to="/messages/write/{{ result['id'] }}/" title="{{ result['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link>
 							<a href="{{ url('buddy/new/'~result['id']~'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
 						</th>
 						<th>{% if result['race'] != 0 %}<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ result['race'] }}.gif" width="16" height="16">{% else %}&nbsp;{% endif %}

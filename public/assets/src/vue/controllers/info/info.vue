@@ -1,6 +1,6 @@
 <template>
 	<div v-if="page" class="page-info">
-		<div class="block">
+		<div class="page-info-description block">
 			<div class="title">{{ $root.getLang('TECH', page['i']) }}</div>
 			<div class="content border-0">
 				<div class="table">

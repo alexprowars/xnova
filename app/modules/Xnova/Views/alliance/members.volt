@@ -19,7 +19,7 @@
 			<tr>
 				<th>{{ m['i'] }}</th>
 				<th>{{ m['username'] }}</th>
-				<th><a href="javascript:;" onclick="showWindow('{{ m['username'] }}: отправить сообщение', '{{ url('messages/write/'~m['id']~'/') }}', 680)" title="Написать сообщение"><span class='sprite skin_m'></span></a></th>
+				<th><popup-link to="/messages/write/{{ m['id'] }}/" title="{{ m['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link></th>
 				<th><img src="{{ url.getBaseUri() }}assets/images/skin/race{{ m['race'] }}.gif" width="16" height="16"></th>
 				<th>{{ m['range'] }}</th>
 				<th>{{ m['points'] }}</th>

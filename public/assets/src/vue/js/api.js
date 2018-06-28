@@ -7,6 +7,10 @@ const $api = axios.create({
 	headers: {'X-Requested-With': 'XMLHttpRequest'}
 });
 
+const $url = (url) => {
+	return store.state.path+url.replace(/^\/+/g, '');
+}
+
 const $get = (url, data) =>
 {
 	return new Promise((resolve, reject) =>
@@ -63,6 +67,7 @@ const $post = (url, data) =>
 }
 
 export {
+	$url,
 	$api,
 	$get,
 	$post
