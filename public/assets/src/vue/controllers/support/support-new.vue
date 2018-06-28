@@ -57,12 +57,15 @@
 
 						if (result.error.type === 'success')
 						{
-							this.$root.load('/support/');
+							this.$router.replace(this.$route.fullPath);
 							this.$emit('close');
 						}
 					}
 					else
+					{
 						this.$store.commit('PAGE_LOAD', result);
+						this.$router.replace(this.$route.fullPath);
+					}
 				})
 			}
 		}

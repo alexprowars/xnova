@@ -231,8 +231,8 @@
 									buy: 'Y'
 								})
 								.then((result) => {
-									this.setPageData(result.page)
 									this.$store.commit('PAGE_LOAD', result)
+									this.$router.replace(this.$route.fullPath);
 								})
 							}
 						},

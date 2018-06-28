@@ -35,7 +35,7 @@
 	<script type="text/javascript">
 		var options = {{ toJson(options) }};
 
-		if (!options['page'])
+		if (!options['page'] && !options['error'])
 		{
 			options['page'] = {};
 			options['page']['html'] = {{ replace("\t\t", "", toJson(content())) }};

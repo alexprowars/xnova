@@ -202,7 +202,7 @@
 				clearTimeout(this.target_timeout);
 			},
 		},
-		created ()
+		afterLoad ()
 		{
 			let distance = fleet.distance(this.position, this.page['target']);
 			let maxspeed = fleet.speed(this.page['ships']);

@@ -1,6 +1,7 @@
 import app from 'app'
 
 const state = Object.assign({}, {
+	loaded: false,
 	mobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 }, options)
 
@@ -13,8 +14,10 @@ const mutations = {
 		{
 			if (data.hasOwnProperty(key))
 			{
-				if (key !== 'page' || (key === 'page' && data[key] === false))
-					state[key] = data[key];
+				state[key] = data[key];
+
+				if (key === 'page')
+					state.loaded = false
 			}
 		}
 	}

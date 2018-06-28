@@ -112,7 +112,7 @@
 
 	export default {
 		name: "fleet-one",
-		mixin: [router],
+		mixins: [router],
 		computed: {
 			position () {
 				return this.$store.state.user.position;
@@ -147,6 +147,9 @@
 		methods: {
 			info ()
 			{
+				if (!this.page)
+					return;
+
 				this.distance = fleet.distance(this.position, this.page['target']);
 				this.maxspeed = fleet.speed(this.page['ships']);
 
@@ -208,10 +211,10 @@
 				this.setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type']);
 			}
 		},
-		mounted () {
+		afterLoad () {
 			this.info();
 		},
-		destroyed: function () {
+		destroyed () {
 			this.clearTimer();
 		}
 	}

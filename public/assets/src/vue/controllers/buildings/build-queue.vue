@@ -41,7 +41,7 @@
 				if (this.queue[0]['time'] <= 0)
 				{
 					this.timeout = setTimeout(() => {
-						this.$root.load('/buildings/index/planet/'+this.$store.state.user.planet+'/');
+						this.$router.push('/buildings/index/planet/'+this.$store.state.user.planet+'/');
 					}, 5000);
 				}
 				else

@@ -51,6 +51,7 @@
 					});
 
 					this.$store.commit('PAGE_LOAD', result)
+					this.$router.replace(result['url'])
 				}, () => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})

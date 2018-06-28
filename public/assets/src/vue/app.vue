@@ -1,15 +1,15 @@
 <template>
 	<div id="application" :class="['set_'+$store.state.route.controller]">
 
-		<application-header v-if="$store.state.view.header"></application-header>
+		<application-header v-if="$store.state['view']['header']"></application-header>
 
 		<main>
-			<main-menu v-if="$store.state.view.menu" :active="sidebar === 'menu'"></main-menu>
+			<main-menu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"></main-menu>
 
-			<application-planets-list v-if="$store.state.view.planets" :active="sidebar === 'planet'"></application-planets-list>
+			<application-planets-list v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"></application-planets-list>
 
 			<div class="main-content">
-				<planet-panel v-if="$store.state.view.resources" :planet="$store.state.resources"></planet-panel>
+				<planet-panel v-if="$store.state['view']['resources']" :planet="$store.state.resources"></planet-panel>
 
 				<application-messages-row v-for="(item, i) in messages" :key="i" :item="item"></application-messages-row>
 
@@ -21,9 +21,9 @@
 			</div>
 		</main>
 
-		<chat :visible="$store.state.route.controller !== 'chat' && $store.state.view.menu && $store.state.view.chat"></chat>
+		<chat :visible="$store.state.route.controller !== 'chat' && $store.state['view']['menu'] && $store.state.view.chat"></chat>
 
-		<application-footer v-if="$store.state.view.header"></application-footer>
+		<application-footer v-if="$store.state['view']['header']"></application-footer>
 
 		<div id="ajaxLoader" :class="{active: $root.loader}"></div>
 	</div>
@@ -36,6 +36,7 @@
 	import ApplicationPlanetsList from './views/app/planets-list.vue'
 	import ApplicationMessagesRow from './views/app/messages-row.vue'
 	import PlanetPanel from './views/app/planet-panel.vue'
+	import { $post } from 'api'
 
 	export default {
 		name: "application",
@@ -219,8 +220,10 @@
 					let formData = new FormData(this);
 
 					$post(form.attr('action'), formData)
-					.then((result) => {
+					.then((result) =>
+					{
 						app.$store.commit('PAGE_LOAD', result)
+						app.$router.replace(result['url'])
 					}, () => {
 						alert('Что-то пошло не так!? Попробуйте еще раз');
 					})

@@ -12,7 +12,7 @@
 		mixins: [router],
 		computed: {
 			html () {
-				return this.page.html;
+				return this.page ? this.page.html : '';
 			},
 		},
 		data () {
@@ -61,8 +61,10 @@
 				}
 			},
 		},
-		destroyed () {
-			this.component.$destroy();
+		destroyed ()
+		{
+			if (this.component)
+				this.component.$destroy();
 		}
 	}
 </script>

@@ -60,6 +60,7 @@
 
 <script>
 	import BuildRowPrice from './build-row-price.vue'
+	import { $post } from 'api'
 
 	export default {
 		name: "tech-row",
@@ -128,7 +129,8 @@
 									tech: item.i
 								})
 								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result)
+									this.$store.commit('PAGE_LOAD', result);
+									this.$router.replace(result['url']);
 								})
 							}
 						},

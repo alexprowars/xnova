@@ -50,6 +50,7 @@
 								})
 								.then((result) => {
 									this.$store.commit('PAGE_LOAD', result)
+									this.$router.replace(result['url'])
 								})
 							}
 						},
@@ -76,6 +77,7 @@
 								})
 								.then((result) => {
 									this.$store.commit('PAGE_LOAD', result)
+									this.$router.replace(result['url'])
 								})
 							}
 						},

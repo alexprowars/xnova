@@ -25,7 +25,7 @@
 			if (this.data['timeout'] > 0 && this.data['redirect'])
 			{
 				this.timeout = setTimeout(() => {
-					this.$root.load(this.data['redirect'])
+					this.$router.push(this.data['redirect'])
 				}, this.data['timeout'] * 1000);
 			}
 		},

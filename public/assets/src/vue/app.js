@@ -7,7 +7,7 @@ import 'core-js/fn/promise';
 import Vue from 'vue'
 import Vuelidate from 'vuelidate'
 
-import { $get, $post } from 'api'
+import { $get } from 'api'
 
 Vue.config.productionTip = false;
 
@@ -68,7 +68,6 @@ const application = new Vue({
 		loader: false,
 		request_block: false,
 		request_block_timer: null,
-		router_block: false,
 		start_time: Math.floor(((new Date()).getTime()) / 1000)
 	},
 	watch: {
@@ -244,7 +243,7 @@ const application = new Vue({
 
 								if (com && com.$data.page !== undefined)
 								{
-									com.$data.page = result.page
+									com.setPageData(result.page)
 
 									if (typeof com.afterLoad === 'function')
 									{
@@ -264,7 +263,7 @@ const application = new Vue({
 
 									if (com && com.$data.page !== undefined)
 									{
-										com.$data.page = result.page
+										com.setPageData(result.page)
 
 										if (typeof com.afterLoad === 'function')
 										{
