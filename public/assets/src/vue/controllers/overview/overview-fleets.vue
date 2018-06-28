@@ -1,6 +1,6 @@
 <template>
 	<div class="table overview-fleets">
-		<fleets-row v-for="item in items" :key="item['id']" :item="item"></fleets-row>
+		<fleets-row v-for="(item, i) in items" :key="i" :item="item"></fleets-row>
 	</div>
 </template>
 

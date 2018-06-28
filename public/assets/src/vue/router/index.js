@@ -35,7 +35,7 @@ const router = new VueRouter({
 		path: '/fleet/two',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-two.vue')
 	}, {
-		path: '/fleet',
+		path: '/fleet*',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-index.vue')
 	}, {
 		path: '/overview*',

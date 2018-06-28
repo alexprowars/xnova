@@ -27,7 +27,7 @@
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
-						<div class="float-sm-right">{{ clock|date('d.m.Y H:i:s') }}</div>
+						<div class="float-sm-right"><clock></clock></div>
 						<div class="clearfix d-sm-none"></div>
 					</div>
 				</div>
@@ -112,7 +112,7 @@
 							<div class="row">
 								<div class="col-12 c">
 									Обломки
-									<a v-if="page['debris_mission']" @click.prevent="sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)">
+									<a v-if="page['debris_mission']" @click.prevent="sendRecycle">
 										(переработать)
 									</a>
 								</div>
@@ -239,19 +239,7 @@
 				<div v-if="page['build_list'].length > 0">
 					<div class="separator"></div>
 					<div class="table">
-						<div v-for="list in page['build_list']" class="row flight">
-							<div class="th col-4 col-sm-2">
-								<div class="z">{{ $options.filters.time(list[0] - $root.serverTime(), ':', true) }}</div>
-								<span class="positive d-sm-none">{{ list[0]|date('d.m H:i:s') }}</span>
-							</div>
-							<div class="th col-sm-10 col-8 text-left">
-								<span class="flight owndeploy">
-									<router-link v-if="list[1] === $store.state.user.planet" :to="'/buildings/?chpl='+list[1]" style="color:#33ff33;">{{ list[2] }}</router-link><span v-else>{{ list[2] }}</span>:
-								</span>
-								<span class="holding colony">{{ list[3] }}</span>
-								<span class="positive float-sm-right d-none d-sm-inline">{{ list[0]|date('d.m H:i:s') }}</span>
-							</div>
-						</div>
+						<queue-row v-for="(list, i) in page['build_list']" :key="i" :item="list"></queue-row>
 					</div>
 				</div>
 			</div>
@@ -278,6 +266,8 @@
 
 <script>
 	import Fleets from './overview-fleets.vue'
+	import Clock from './overview-clock.vue'
+	import QueueRow from './overview-queue-row.vue'
 	import { sendMission } from './../../js/fleet.js'
 	import router from 'router-mixin'
 
@@ -285,38 +275,14 @@
 		name: "overview",
 		mixins: [router],
 		components: {
-			Fleets
-		},
-		data ()
-		{
-			return {
-				clock: 0,
-				clock_timeout: null
-			}
+			Fleets,
+			Clock,
+			QueueRow
 		},
 		methods: {
-			clockUpdate () {
-				this.clock = this.$root.serverTime();
-			},
-			clockStop () {
-				clearTimeout(this.clock_timeout);
-			},
-			clockStart () {
-				this.clock_timeout = setTimeout(this.clockUpdate, 1000);
+			sendRecycle () {
+				sendMission(8, page['planet']['galaxy'], page['planet']['system'], page['planet']['planet'], 2)
 			}
-		},
-		watch: {
-			clock () {
-				this.clockStart();
-			}
-		},
-		mounted ()
-		{
-			this.clockStop();
-			this.clockUpdate();
-		},
-		destroyed () {
-			this.clockStop();
 		}
 	}
 </script>

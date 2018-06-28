@@ -10,6 +10,7 @@ import Number from './number.vue'
 import Chat from './chat.vue'
 import Colored from './colored.vue'
 import PopupLink from './popup-link.vue'
+import Timer from './timer.vue'
 
 Vue.component('error-message', ErrorMessage)
 Vue.component('tab', Tab);
@@ -21,3 +22,4 @@ Vue.component('number', Number);
 Vue.component('chat', Chat);
 Vue.component('colored', Colored);
 Vue.component('popup-link', PopupLink);
+Vue.component('timer', Timer);

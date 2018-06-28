@@ -41,11 +41,11 @@
 							<div v-else-if="!hasResources" class="negative text-center">
 								нет ресурсов
 							</div>
-							<router-link v-else-if="item.build !== true" :to="'/buildings/research/cmd/search/tech/'+item.i+'/'" :class="{positive: item.level, negative: item.level === 0}">
+							<a v-else-if="item.build !== true" @click.prevent="addAction" :class="{positive: item.level, negative: item.level === 0}">
 								<svg class="icon">
 									<use xlink:href="#icon-research"></use>
 								</svg>
-							</router-link>
+							</a>
 						</div>
 					</div>
 					<div v-else="" class="building-required">
@@ -113,10 +113,21 @@
 			start () {
 				this.timeout = setTimeout(this.update, 1000);
 			},
+			addAction ()
+			{
+				$post('/buildings/research/', {
+					cmd: 'search',
+					tech: this.item['i']
+				})
+				.then((result) => {
+					this.$store.commit('PAGE_LOAD', result);
+					this.$router.replace(result['url']);
+				})
+			},
 			cancelAction ()
 			{
 				$.confirm({
-					content: 'Отменить исследование <b>'+this.item['name']+' '+this.item['level']+' ур.</b>?',
+					content: 'Отменить изучение <b>'+this.$root.getLang('TECH', this.item['i'])+' '+this.item['level']+' ур.</b>?',
 					title: 'Очередь построек',
 					backgroundDismiss: true,
 					buttons: {
@@ -126,7 +137,7 @@
 							{
 								$post('/buildings/research/', {
 									cmd: 'cancel',
-									tech: item.i
+									tech: this.item['i']
 								})
 								.then((result) => {
 									this.$store.commit('PAGE_LOAD', result);

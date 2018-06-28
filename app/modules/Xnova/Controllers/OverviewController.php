@@ -213,7 +213,7 @@ class OverviewController extends Controller
 		$bloc['prefix'] = $FleetPrefix;
 		$bloc['mission'] = $FleetStyle[$MissionType];
 		$bloc['date'] = $this->game->datezone("H:i:s", $Time);
-		$bloc['time'] = $Time;
+		$bloc['time'] = (int) $Time;
 		$bloc['text'] = $EventString;
 
 		return $bloc;

@@ -15,18 +15,17 @@
 			<div class="content">
 				<div class="table">
 					<div class="row">
-						<div class="col-2 col-sm-1 th">№</div>
-						<div class="col-4 col-sm-2 th">Миссия</div>
-						<div class="col-2 col-sm-1 th">Кол</div>
-						<div class="col-4 col-sm-2 th">Цель</div>
-						<div class="col-2 th d-none d-sm-block">Возврат</div>
-						<div class="col-2 th d-none d-sm-block">Через</div>
+						<div class="col-3 col-sm-1 th">№</div>
+						<div class="col-6 col-sm-2 th">Миссия</div>
+						<div class="col-3 col-sm-1 th">Кол-во</div>
+						<div class="col-4 col-sm-3 th d-none d-sm-block">Цель</div>
+						<div class="col-2 col-sm-3 th d-none d-sm-block">Возврат</div>
 						<div class="col-2 th d-none d-sm-block">Приказы</div>
 					</div>
 
 					<div class="row page-fleet-fly-item" v-for="(item, index) in page.fleets">
-						<div class="col-2 col-sm-1 th">{{ index + 1 }}</div>
-						<div class="col-4 col-sm-2 th">
+						<div class="col-3 col-sm-1 th">{{ index + 1 }}</div>
+						<div class="col-6 col-sm-2 th">
 							<a>{{ $root.getLang('FLEET_MISSION', item.mission) }}</a>
 							<div v-if="item.start.time + 1 === item.target.time">
 								<a title="Возврат домой">(R)</a>
@@ -35,36 +34,33 @@
 								<a title="Полёт к цели">(A)</a>
 							</div>
 						</div>
-						<div class="col-2 col-sm-1 th">
+						<div class="col-3 col-sm-1 th">
 							<a class="tooltip">
 								<div class="tooltip-content">
 									<div v-for="(fleetData, fleetId) in item.units">
 										{{ $root.getLang('TECH', fleetId) }}: {{ fleetData['count'] }}
 									</div>
 								</div>
-								{{ item.amount|number }}
+								{{ item['amount']|number }}
 							</a>
 						</div>
-						<div class="col-4 col-sm-2 th">
+						<div class="col-4 col-sm-3 th">
 							<div>
 								<router-link :to="'/galaxy/'+item['target']['galaxy']+'/'+item['target']['system']+'/'" class="negative">
 									[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]
 								</router-link>
 							</div>
 							{{ item['start']['time']|date('d.m H:i:s') }}
+							<timer :value="item['start']['time']" delimiter="" class="positive"></timer>
 						</div>
-						<div class="col-4 col-sm-2 th">
+						<div class="col-4 col-sm-3 th">
 							<div>
 								<router-link :to="'/galaxy/'+item['start']['galaxy']+'/'+item['start']['system']+'/'" class="positive">
 									[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]
 								</router-link>
 							</div>
 							{{ item['target']['time']|date('d.m H:i:s') }}
-						</div>
-						<div class="col-4 col-sm-2 th">
-							<font color="lime">
-								{{ (item['target']['time'] > $root.serverTime() ? $options.filters.time(item['target']['time'] - $root.serverTime(), '', true) : '...') }}
-							</font>
+							<timer :value="item['target']['time']" delimiter="" class="positive"></timer>
 						</div>
 						<div class="col-4 col-sm-2 th">
 							<form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" action="/fleet/back/" method="post">

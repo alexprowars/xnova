@@ -169,12 +169,12 @@ class Construction
 			]
 		]);
 
-		if ($request->hasQuery('cmd') && $bContinue != false)
+		if ($request->hasPost('cmd') && $bContinue != false)
 		{
 			$queueManager = new Queue($this->user, $this->planet);
 
-			$command 	= $request->getQuery('cmd', 'string', '');
-			$techId 	= (int) $request->getQuery('tech', 'int', 0);
+			$command 	= $request->getPost('cmd', 'string', '');
+			$techId 	= (int) $request->getPost('tech', 'int', 0);
 
 			if ($techId > 0 && in_array($techId, $res_array))
 			{
