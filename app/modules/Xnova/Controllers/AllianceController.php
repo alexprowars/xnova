@@ -519,6 +519,8 @@ class AllianceController extends Controller
 				$this->ally->update();
 
 				$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "' WHERE ally_id = '" . $this->ally->id . "';");
+
+				throw new RedirectException('Название альянса изменено', '', '/alliance/admin/edit/name/');
 			}
 
 			$parse['question'] = 'Введите новое название альянса';

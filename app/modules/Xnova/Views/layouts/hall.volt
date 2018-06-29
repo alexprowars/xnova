@@ -1,14 +1,14 @@
 <table class="table">
 	<tr>
 		<td class="c" width="100">TOP50</td>
-		<td class="c"><a href="{{ url('hall/') }}">Зал Славы</a></td>
+		<td class="c"><router-link to="{{ url('hall/') }}">Зал Славы</router-link></td>
 		<td class="c" width="137">
-			<form method="post" action="{{ url('hall/') }}" id="hall">
+			<router-form action="{{ url('hall/') }}" id="hall">
 				<select name="visible" onChange="$('#hall').submit()" title="">
 					<option value="1" {{ request.getPost('visible', 'int', 0) <= 1 ? 'selected' : '' }}>Бои</option>
 					<option value="2" {{ request.getPost('visible', 'int', 0) == 2 ? 'selected' : '' }}>САБ</option>
 				</select>
-			</form>
+			</router-form>
 		</td>
 	</tr>
 </table>

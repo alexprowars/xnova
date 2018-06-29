@@ -88,7 +88,6 @@
 			{
 				tooltip()
 				swipe()
-				loaders()
 
 				if (typeof VK !== 'undefined')
 				{

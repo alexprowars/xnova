@@ -118,7 +118,7 @@
 				<div class="row">
 					<div class="th col-sx-12">
 						На планетах не должно идти строительство, исследования, летать флот и весь флот фракции подлежит демонтировке (без возврата ресурсов).<br><br>
-						<form v-if="page['change_available']" action="/race/change/" method="post">
+						<router-form v-if="page['change_available']" action="/race/change/">
 							<select name="race" title="">
 								<option value="0">выбрать...</option>
 								<option value="1">Конфедерация</option>
@@ -128,7 +128,7 @@
 							</select>
 							<br><br>
 							<input type="submit" value="Сменить фракцию">
-						</form>
+						</router-form>
 					</div>
 				</div>
 			</div>
@@ -138,6 +138,7 @@
 
 <script>
 	import router from 'router-mixin'
+	import { popup } from './../../js/jquery.js'
 
 	export default {
 		name: "race",
@@ -150,7 +151,7 @@
 		mounted ()
 		{
 			if (this.race === 0)
-				this.$root.openPopup('Информация', '/content/welcome/')
+				popup('Информация', '/content/welcome/')
 		}
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div v-if="error" v-html="error.message" :class="[error.type]" class="message"></div>
-		<form action="" method="post" class="noajax" @submit.prevent="send">
+		<form action="" method="post" @submit.prevent="send">
 			<input :class="{error: $v.email.$error}" @change="$v.email.$touch()" name="email" class="input-text" placeholder="Email" v-model="email" type="email">
 			<input :class="{error: $v.password.$error}" @change="$v.password.$touch()" name="password" class="input-text" placeholder="Пароль" v-model="password" type="password">
 			<button type="submit" class="input-submit">Вход</button>

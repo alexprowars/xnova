@@ -1,7 +1,7 @@
 <template>
 	<div v-if="page" class="page-messages-write">
 		<div v-if="error" v-html="error.message" :class="[error.type]" class="message"></div>
-		<form action="" method="post" class="noajax" @submit.prevent="send">
+		<form action="" method="post" @submit.prevent="send">
 			<div class="block">
 				<div class="title">
 					Отправка сообщения

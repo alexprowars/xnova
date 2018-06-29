@@ -14,17 +14,17 @@
 		{% for id, list in parse['list'] %}
 			<tr>
 				<th width="20">{{ id + 1 }}</th>
-				<th><a href="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</a></th>
+				<th><router-link to="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</router-link></th>
 				<th>{{ list['ally'] }}</th>
-				<th><a href="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</a></th>
+				<th><router-link to="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</router-link></th>
 				<th>{{ list['online'] }}</th>
 				<th>
 					{% if parse['isMy'] %}
-						<a href="{{ url('buddy/delete/'~list['id']~'/') }}">Удалить запрос</a>
+						<router-link to="{{ url('buddy/delete/'~list['id']~'/') }}">Удалить запрос</router-link>
 					{% else %}
-						<a href="{{ url('buddy/approve/'~list['id']~'/') }}">Применить</a>
+						<router-link to="{{ url('buddy/approve/'~list['id']~'/') }}">Применить</router-link>
 						<br/>
-						<a href="{{ url('buddy/delete/'~list['id']~'/') }}">Отклонить</a>
+						<router-link to="{{ url('buddy/delete/'~list['id']~'/') }}">Отклонить</router-link>
 					{% endif %}
 				</th>
 			</tr>
@@ -35,6 +35,6 @@
 		</tr>
 	{% endif %}
 	<tr>
-		<td colspan="6" class="c"><a href="{{ url('buddy/') }}">назад</a></td>
+		<td colspan="6" class="c"><router-link to="{{ url('buddy/') }}">назад</router-link></td>
 	</tr>
 </table>

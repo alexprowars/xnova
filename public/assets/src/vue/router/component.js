@@ -1,5 +1,6 @@
 import app from 'app'
 import Vue from 'vue'
+import { loadPage } from './../js/helpers.js'
 
 const router = {
 	data () {
@@ -9,7 +10,7 @@ const router = {
 	},
 	fetchData (url)
 	{
-		app.loadPage(url).then((data) => {
+		loadPage(url).then((data) => {
 			this.setPageData(data.page)
 		});
 	},
@@ -49,7 +50,7 @@ const router = {
 				}
 			}
 
-			app.loadPage(to.fullPath).then((data) =>
+			loadPage(to.fullPath).then((data) =>
 			{
 				if (to.path !== data['url'])
 					app.$router.replace(data['url'])
@@ -98,7 +99,7 @@ const router = {
 			}
 		}
 
-		app.loadPage(to.fullPath).then((data) =>
+		loadPage(to.fullPath).then((data) =>
 		{
 			next()
 

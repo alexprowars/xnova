@@ -3,7 +3,7 @@
 		<galaxy-selector :shortcuts="page['shortcuts']"></galaxy-selector>
 		<div class="separator"></div>
 
-		<form v-if="missile" :action="'/rocket/?c='+$store.state['user']['planet']+'&mode=2&galaxy='+page['galaxy']+'&system='+page['system']+'&planet='+missilePlanet" method="post">
+		<router-form v-if="missile" :action="'/rocket/?c='+$store.state['user']['planet']+'&mode=2&galaxy='+page['galaxy']+'&system='+page['system']+'&planet='+missilePlanet">
 			<table border="0" class="table">
 				<tr>
 					<td class="c" colspan="3">
@@ -38,7 +38,7 @@
 				</tr>
 			</table>
 			<div class="separator"></div>
-		</form>
+		</router-form>
 
 		<div class="table-responsive">
 			<table class="table galaxy">

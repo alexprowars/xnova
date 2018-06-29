@@ -12,7 +12,9 @@
 <script>
 	export default {
 		name: "pagination",
-		props: ['options'],
+		props: {
+			options: Object
+		},
 		computed: {
 			pages () {
 				return Math.ceil(this.options['total'] / this.options['limit']);
@@ -44,7 +46,7 @@
 		},
 		methods: {
 			loadPage (page) {
-				this.$root.load(this.$store.state.url+(this.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
+				this.$router.push(this.$store.state.url+(this.$store.state.url.indexOf('?') >= 0 ? '&' : '?')+'p='+page);
 			}
 		}
 	}

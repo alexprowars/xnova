@@ -1,4 +1,4 @@
-<form action="{{ url('buddy/new/'~parse["id"]~'/') }}" method="post">
+<router-form action="{{ url('buddy/new/'~parse["id"]~'/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Предложение подружиться</td>
@@ -11,8 +11,8 @@
 			<th colspan="2"><textarea name="text" cols="60" rows="10" title=""></textarea></th>
 		</tr>
 		<tr>
-			<td class="c"><a href="javascript:back();">назад</a></td>
+			<td class="c"><router-link to="/buddy/">назад</router-link></td>
 			<td class="c"><input type="submit" value="Отправить заявку"></td>
 		</tr>
 	</table>
-</form>
+</router-form>

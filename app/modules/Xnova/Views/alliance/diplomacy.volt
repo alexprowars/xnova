@@ -8,7 +8,7 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -27,8 +27,8 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/appwiz.gif" alt="Подтвердить"></a>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
+					<router-link to="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/appwiz.gif" alt="Подтвердить"></router-link>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -47,7 +47,7 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<a href="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></a>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -56,7 +56,7 @@
 	{% endif %}
 </table>
 <div class="separator"></div>
-<form action="{{ url('alliance/diplomacy/edit/add/') }}" method="post">
+<router-form action="{{ url('alliance/diplomacy/edit/add/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Добавить альянс в список</td>
@@ -80,10 +80,10 @@
 		</tr>
 
 		<tr>
-			<td class="c"><a href="{{ url('alliance/') }}">назад</a></td>
+			<td class="c"><router-link to="{{ url('alliance/') }}">назад</router-link></td>
 			<td class="c">
 				<input type="submit" value="Добавить">
 			</td>
 		</tr>
 	</table>
-</form>
+</router-form>

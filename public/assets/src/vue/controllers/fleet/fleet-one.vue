@@ -1,5 +1,5 @@
 <template>
-	<form v-if="page" action="/fleet/two/" method="post">
+	<router-form v-if="page" action="/fleet/two/">
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 		<div class="table">
 			<div class="row">
@@ -103,7 +103,7 @@
 		<input type="hidden" name="alliance" v-model="alliance">
 		<input type="hidden" name="fleet" :value="page['fleet']">
 		<input type="hidden" name="mission" :value="page['mission']">
-	</form>
+	</router-form>
 </template>
 
 <script>

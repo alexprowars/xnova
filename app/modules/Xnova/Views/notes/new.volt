@@ -1,4 +1,4 @@
-<form action="{{ url('notes/new/') }}" method="post">
+<router-form action="{{ url('notes/new/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">{{ _text('xnova', 'Createnote') }}</td>
@@ -27,5 +27,5 @@
 			</td>
 		</tr>
 	</table>
-</form>
-<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="{{ url('notes/') }}">Назад</a></span>
+</router-form>
+<span style="float:left;margin-left: 10px;margin-top: 10px;"><router-link to="{{ url('notes/') }}">Назад</router-link></span>

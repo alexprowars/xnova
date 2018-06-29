@@ -23,7 +23,7 @@
 		methods: {
 			render () {
 				if (this.component !== null)
-					this.component.$destroy();
+					this.destroy();
 
 				if (this.html.length > 0)
 				{
@@ -37,8 +37,9 @@
 						template: '<div>'+this.html.replace(/<script[^>]*>(?:(?!<\/script>)[^])*<\/script>/g, '')+'</div>'
 					}))().$mount();
 
-					Vue.nextTick(() => {
-						$(this.$refs['component']).html(this.component.$el);
+					this.$nextTick(() => {
+						this.$refs['component'].innerHTML = ''
+						this.$refs['component'].appendChild(this.component.$el)
 					});
 				}
 			},
@@ -60,11 +61,19 @@
 					});
 				}
 			},
+			destroy ()
+			{
+				this.component.$destroy();
+				this.component = null
+
+				if (this.$refs['component'])
+					this.$refs['component'].innerHTML = ''
+			}
 		},
-		destroyed ()
+		beforeDestroy ()
 		{
 			if (this.component)
-				this.component.$destroy();
+				this.destroy();
 		}
 	}
 </script>

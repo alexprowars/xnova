@@ -18,6 +18,7 @@
 
 <script>
 	import ResourceTooltip from './planet-panel-resource-tooltip.vue'
+	import { popup } from './../../js/jquery.js'
 
 	export default {
 		name: "planet-panel-resource",
@@ -38,7 +39,7 @@
 			showPopup ($event)
 			{
 				if (typeof $($event.currentTarget).data('tooltipster-ns') !== 'undefined')
-					this.$root.openPopup('', '/info/'+this.building[this.type]+'/');
+					popup('', '/info/'+this.building[this.type]+'/');
 			}
 		}
 	}

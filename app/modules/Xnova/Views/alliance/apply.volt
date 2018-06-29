@@ -1,4 +1,4 @@
-<form action="{{ url('alliance/apply/allyid/'~parse['allyid']~'/') }}" method="POST">
+<router-form action="{{ url('alliance/apply/allyid/'~parse['allyid']~'/') }}">
 	<table class="table">
 		{% if parse['text_apply'] != '' %}
 			<tr>
@@ -20,4 +20,4 @@
 			<th colspan="2"><input type="submit" name="further" value="Отправить"></th>
 		</tr>
 	</table>
-</form>
+</router-form>

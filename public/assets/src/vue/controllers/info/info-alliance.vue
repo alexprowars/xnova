@@ -2,7 +2,7 @@
 	<div class="block">
 		<div class="title">Отправка топлива</div>
 		<div class="content border-0">
-			<form action="/info/34/" method="post">
+			<router-form action="/info/34/">
 				<div class="table">
 					<div class="row">
 						<div class="col th">Флоты на удержании возле планеты</div>
@@ -21,7 +21,7 @@
 						</div>
 					</div>
 				</div>
-			</form>
+			</router-form>
 		</div>
 	</div>
 </template>

@@ -1,10 +1,11 @@
 import store from '../store'
 import app from 'app'
-import { $post } from 'api'
+import Vue from 'vue'
+import { $get } from 'api'
 
 const tooltip = () =>
 {
-	$('body').on('mouseenter', '.tooltip', function()
+	$('body').on('mouseenter', '.tooltip', function ()
 	{
 		if (store.state.mobile)
 			return;
@@ -31,7 +32,7 @@ const tooltip = () =>
 			maxWidth: maxWidth,
 			contentAsHTML: true,
 			interactive: _this.hasClass('sticky'),
-			functionInit: function(instance)
+			functionInit (instance)
 			{
 				if (_this.hasClass('script'))
 					instance.content(eval(_this.data('content')));
@@ -42,7 +43,7 @@ const tooltip = () =>
 			}
 		}).tooltipster('open');
 	})
-	.on('click', '.tooltip', function()
+	.on('click', '.tooltip', function ()
 	{
 		if (!store.state.mobile)
 			return;
@@ -82,7 +83,7 @@ const tooltip = () =>
 			maxWidth: maxWidth,
 			contentAsHTML: true,
 			interactive: _this.hasClass('sticky'),
-			functionInit: function(instance)
+			functionInit (instance)
 			{
 				if (_this.hasClass('script'))
 					instance.content(eval(_this.data('content')));
@@ -97,18 +98,18 @@ const tooltip = () =>
 
 const swipe = () =>
 {
-	if (typeof swipe !== 'undefined' && !navigator.userAgent.match(/(\(iPod|\(iPhone|\(iPad)/))
+	if (typeof swipe !== 'undefined' && !store.state.mobile)
 	{
 		$('body').swipe(
 		{
-			swipeLeft: function()
+			swipeLeft ()
 			{
 				if ($('.menu-sidebar').hasClass('active'))
 					$('.menu-toggle').click();
 				else
 					$('.planet-toggle').click();
 			},
-			swipeRight: function()
+			swipeRight ()
 			{
 				if ($('.planet-sidebar').hasClass('active'))
 					$('.planet-toggle').click();
@@ -123,65 +124,96 @@ const swipe = () =>
 	}
 }
 
-const loaders = () =>
+const popup = (title, url, width) =>
 {
-	$('body .main-content')
-	.on('click', '.page-html a', function(e)
-	{
-		let el = $(this);
-		let url = el.attr('href');
+	if (store.state.mobile)
+		return window.location.href = url.split('ajax').join('').split('popup').join('');
 
-		if (!url || el.hasClass('skip') || url.indexOf('#') === 0)
-			return false;
+	if (width === undefined)
+		width = 600;
 
-		if (url.indexOf('javascript') === 0 || url.indexOf('mailto') === 0 || url.indexOf('#') >= 0 || el.attr('target') === '_blank')
-			return true;
-		else
+	$.dialog({
+		title: title,
+		theme: 'dialog',
+		useBootstrap: false,
+		boxWidth: width,
+		backgroundDismiss: true,
+		animation: 'opacity',
+		closeAnimation: 'opacity',
+		animateFromElement: false,
+		draggable: false,
+		content ()
 		{
-			e.preventDefault();
+			let promise = new $.Deferred();
 
-			app.loader = true;
-			app.$router.push(url);
+			$get(url, {
+				'popup': 'Y'
+			})
+			.then(result => {
+				promise.resolve(result);
+			})
+			.catch((error) => {
+				promise.reject(error)
+			})
+
+			promise.then((result) =>
+			{
+				if (title === '')
+					this.setTitle(result.title);
+
+				let component = app.$router.getMatchedComponents(url)
+
+				if (component.length)
+				{
+					if (typeof component[0] === 'object')
+					{
+						let com = new (Vue.extend(Object.assign(component[0], {parent: app})))().$mount()
+
+						if (com && com.$data.page !== undefined)
+						{
+							com.setPageData(result.page)
+
+							if (typeof com.afterLoad === 'function')
+							{
+								com.$nextTick(() => {
+									com.afterLoad()
+								})
+							}
+						}
+
+						this.setContent(com.$el, true);
+					}
+					else
+					{
+						component[0]().then((r) =>
+						{
+							let com = new (Vue.extend(Object.assign(r.default, {parent: app})))().$mount()
+
+							if (com && com.$data.page !== undefined)
+							{
+								com.setPageData(result.page)
+
+								if (typeof com.afterLoad === 'function')
+								{
+									com.$nextTick(() => {
+										com.afterLoad()
+									})
+								}
+							}
+
+							this.setContent(com.$el, true);
+						});
+					}
+				}
+			});
+
+			return promise.promise();
 		}
-
-		return false;
-	})
-	.on('click', 'form:not(.noajax) input[type=submit], form[class!=noajax] button[type=submit]', function(e)
-	{
-		e.preventDefault();
-
-		let button = $(this);
-		let form = button.closest('form');
-
-		form.append($('<input/>', {type: 'hidden', name: button.attr('name'), value: button.attr('value')}));
-		form.submit();
-	})
-	.on('submit', 'form[class!=noajax]', function(e)
-	{
-		e.preventDefault();
-
-		let form = $(this);
-
-		app.loader = true;
-
-		let formData = new FormData(this);
-
-		$post(form.attr('action'), formData)
-		.then((result) =>
-		{
-			store.commit('PAGE_LOAD', result)
-			app.$router.replace(result['url'])
-		}, () => {
-			alert('Что-то пошло не так!? Попробуйте еще раз');
-		})
-		.then(() => {
-			app.loader = false;
-		})
 	});
 }
 
 export {
 	tooltip,
 	swipe,
-	loaders
+	popup
 }

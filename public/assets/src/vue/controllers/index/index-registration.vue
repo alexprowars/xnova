@@ -1,7 +1,7 @@
 <template>
 	<div v-if="page" class="page-registration">
 		<div v-for="error in page.errors" v-html="error" class="message error"></div>
-		<form action="" method="post" class="form noajax" @submit.prevent="send">
+		<form action="" method="post" class="form" @submit.prevent="send">
 			<div class="table">
 				<div class="row">
 					<div class="col-5 th">E-Mail<br>(используется для входа)</div>

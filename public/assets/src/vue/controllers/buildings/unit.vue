@@ -2,7 +2,7 @@
 	<div v-if="page" class="page-building page-building-unit">
 		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
 		<div class="content page-building-items">
-			<form ref="form" action="" method="post" class="noajax" @submit.prevent="constructAction">
+			<form ref="form" action="" method="post" @submit.prevent="constructAction">
 				<div class="row">
 					<div class="col-12">
 						<div class="c">

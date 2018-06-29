@@ -138,7 +138,7 @@ const config = {
 	],
 	resolve: {
 		alias: {
-			'jquery': 'jquery/dist/jquery.slim.js',
+			'jquery': 'jquery/dist/jquery.js',
 			'chart': 'chart.js/dist/Chart.js',
 			'socket.io': 'socket.io-client/dist/socket.io.slim.js',
 			'api': __dirname+'/public/assets/src/vue/js/api.js',

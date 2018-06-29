@@ -29,7 +29,7 @@
 		</th>
 	</tr>
 	<tr>
-		<td class="c" colspan="2"><a href="{{ url('alliance/admin/edit/ally/') }}">вернутся к обзору</a></td>
+		<td class="c" colspan="2"><router-link to="{{ url('alliance/admin/edit/ally/') }}">вернутся к обзору</router-link></td>
 	</tr>
 </table>
 

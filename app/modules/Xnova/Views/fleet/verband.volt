@@ -44,7 +44,7 @@
 
 {% if parse['group'] == 0 %}
 	<div class="separator"></div>
-	<form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}" method="POST">
+	<router-form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}">
 		<input type="hidden" name="action" value="add">
 		<table class="table">
 		<tr>
@@ -58,7 +58,7 @@
 			</th>
 		</tr>
 		</table>
-	</form>
+	</router-form>
 {% elseif parse['aks'] is defined and parse['fleetid'] == parse['aks']['fleet_id'] %}
 	<div class="separator"></div>
 	<table class="table">
@@ -67,12 +67,12 @@
 		</tr>
 		<tr>
 			<th colspan="2">
-				<form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}" method="POST">
+				<router-form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}">
 					<input type="hidden" name="action" value="changename"/>
 					<input type="text" name="name" value="{{ parse['aks']['name'] }}" size=50 title="">
 					<br/>
 					<input type="submit" value="Изменить"/>
-				</form>
+				</router-form>
 			</th>
 		</tr>
 		<tr>
@@ -95,7 +95,7 @@
 							</select>
 						</th>
 						<th>
-							<form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}" method="post">
+							<router-form action="{{ url('fleet/verband/id/'~parse['fleetid']~'/') }}">
 								<input type="hidden" name="action" value="adduser">
 								{% if parse['friends']|length or parse['alliance']|length %}
 									<select name="user_id" size="10" style="width:75%;" title="">
@@ -121,7 +121,7 @@
 								<input type="text" name="user_name" size="40" placeholder="Введите игровой ник" />
 								<br>
 								<input type="submit" value="OK" />
-							</form>
+							</router-form>
 						</th>
 					</tr>
 				</table>

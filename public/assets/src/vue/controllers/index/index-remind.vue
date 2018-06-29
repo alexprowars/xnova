@@ -1,7 +1,7 @@
 <template>
 	<div class="page-remind">
 		<div v-if="error" v-html="error.message" :class="[error.type]" class="message"></div>
-		<form action="" method="post" class="form noajax" @submit.prevent="send">
+		<form action="" method="post" class="form" @submit.prevent="send">
 			<div class="table">
 				<div class="row">
 					<div class="col th">

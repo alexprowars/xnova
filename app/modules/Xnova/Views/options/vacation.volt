@@ -1,4 +1,4 @@
-<form action="{{ url('options/change/') }}" method="post">
+<router-form action="{{ url('options/change/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Режим отпуска</td>
@@ -24,4 +24,4 @@
 			<th colspan="2"><input type="submit" value="Сохранить изменения"/></th>
 		</tr>
 	</table>
-</form>
+</router-form>

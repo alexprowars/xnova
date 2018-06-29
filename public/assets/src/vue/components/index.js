@@ -11,6 +11,8 @@ import Chat from './chat.vue'
 import Colored from './colored.vue'
 import PopupLink from './popup-link.vue'
 import Timer from './timer.vue'
+import PlanetLink from './planet-link.vue'
+import RouterForm from './router-form.vue'
 
 Vue.component('error-message', ErrorMessage)
 Vue.component('tab', Tab);
@@ -23,3 +25,5 @@ Vue.component('chat', Chat);
 Vue.component('colored', Colored);
 Vue.component('popup-link', PopupLink);
 Vue.component('timer', Timer);
+Vue.component('planet-link', PlanetLink);
+Vue.component('router-form', RouterForm);

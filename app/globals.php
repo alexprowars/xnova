@@ -105,6 +105,7 @@ $eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
 
 	$compiler->addFunction('toJson', 'json_encode');
 	$compiler->addFunction('replace', 'str_replace');
+	$compiler->addFunction('preg_replace', 'preg_replace');
 	$compiler->addFunction('md5', 'md5');
 	$compiler->addFunction('min', 'min');
 	$compiler->addFunction('max', 'max');

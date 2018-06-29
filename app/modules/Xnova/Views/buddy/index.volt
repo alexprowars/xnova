@@ -3,10 +3,10 @@
 		<td class="c" colspan="6">Список друзей</td>
 	</tr>
 	<tr>
-		<th colspan="6"><a href="{{ url('buddy/requests/') }}">Запросы</a></th>
+		<th colspan="6"><router-link to="{{ url('buddy/requests/') }}">Запросы</router-link></th>
 	</tr>
 	<tr>
-		<th colspan="6"><a href="{{ url('buddy/requests/my/') }}">Мои запросы</a></th>
+		<th colspan="6"><router-link to="{{ url('buddy/requests/my/') }}">Мои запросы</router-link></th>
 	</tr>
 	<tr>
 		<td class="c">&nbsp;</td>
@@ -21,12 +21,12 @@
 		{% for id, list in parse['list'] %}
 			<tr>
 				<th width="20">{{ id + 1 }}</th>
-				<th><a href="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</a></th>
+				<th><router-link to="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</router-link></th>
 				<th>{{ list['ally'] }}</th>
-				<th><a href="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</a></th>
+				<th><router-link to="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</router-link></th>
 				<th>{{ list['online'] }}</th>
 				<th>
-					<a href="{{ url('buddy/delete/'~list['id']~'/') }}">Удалить</a>
+					<router-link to="{{ url('buddy/delete/'~list['id']~'/') }}">Удалить</router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -64,7 +64,7 @@
 						<tr>
 							<td>
 								{{ data['planet_name'] }}<br>
-								<a href="{{ url('galaxy/'~data['galaxy']~'/'~data['system']~'/') }}">[{{ data['galaxy'] }}:{{ data['system'] }}:{{ data['planet'] }}]</a>
+								<router-link to="{{ url('galaxy/'~data['galaxy']~'/'~data['system']~'/') }}">[{{ data['galaxy'] }}:{{ data['system'] }}:{{ data['planet'] }}]</router-link>
 							</td>
 					  </tr>
 					</table>

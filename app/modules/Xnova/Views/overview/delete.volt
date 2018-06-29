@@ -1,4 +1,4 @@
-<form action="{{ url("overview/delete/") }}" method=POST>
+<router-form action="{{ url("overview/delete/") }}">
 	<input type="hidden" name="password" value="{{ md5(parse['number_check']) }}">
 	<table class="table">
 		<tr>
@@ -14,4 +14,4 @@
 		</tr>
 	</table>
 	<input type="hidden" name="id" value="{{ parse['id'] }}">
-</form>
+</router-form>

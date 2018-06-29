@@ -9,7 +9,7 @@
 	</tr>
 	<tr>
 		<th colspan="2">
-			<form action="{{ url('alliance/') }}" method="POST"><input type="hidden" name="r_id" value="{{ list[0] }}"><input type="submit" name="bcancel" value="Убрать заявку"></form>
+			<router-form action="{{ url('alliance/') }}"><input type="hidden" name="r_id" value="{{ list[0] }}"><input type="submit" name="bcancel" value="Убрать заявку"></router-form>
 		</th>
 	</tr>
 	{% endfor %}

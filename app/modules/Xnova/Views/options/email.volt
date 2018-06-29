@@ -1,4 +1,4 @@
-<form action="{{ url('options/email/') }}" method="post">
+<router-form action="{{ url('options/email/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Смена адреса электронной почты</td>
@@ -20,4 +20,4 @@
 			<td colspan="2" class="c"><input type="submit" value="Отправить на модерацию"></td>
 		</tr>
 	</table>
-</form>
+</router-form>

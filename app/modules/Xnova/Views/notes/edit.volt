@@ -1,4 +1,4 @@
-<form action="{{ url('notes/edit/'~parse['id']~'/') }}" method="post">
+<router-form action="{{ url('notes/edit/'~parse['id']~'/') }}">
 	<table class="table">
 		<tr>
 			<td class="c">Просмотр заметки</td>
@@ -38,5 +38,5 @@
 			</td>
 		</tr>
 	</table>
-</form>
-<span style="float:left;margin-left: 10px;margin-top: 10px;"><a href="{{ url('notes/') }}">Назад</a></span>
+</router-form>
+<span style="float:left;margin-left: 10px;margin-top: 10px;"><router-link to="{{ url('notes/') }}">Назад</router-link></span>

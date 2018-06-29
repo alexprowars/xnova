@@ -14,7 +14,7 @@
 					{% if game.datezone("d", list['create_time']) >= 15 %}
 						+
 					{% endif %}
-					<a href="{{ url('players/'~list['id']~'/') }}">{{ list['username'] }}</a>
+					<router-link to="{{ url('players/'~list['id']~'/') }}">{{ list['username'] }}</router-link>
 				</th>
 				<th>{{ game.datezone("d.m.Y H:i", list['create_time']) }}</th>
 				<th>П:{{ list['lvl_minier'] }}, В:{{ list['lvl_raid'] }}</th>
@@ -32,7 +32,7 @@
 	<table class="table">
 		<tr>
 			<th>Вы были привлечены игроком:</th>
-			<th><a href="{{ url('players/'~parse['you']['id']~'/') }}">{{ parse['you']['username'] }}</a></th>
+			<th><router-link to="{{ url('players/'~parse['you']['id']~'/') }}">{{ parse['you']['username'] }}</router-link></th>
 		</tr>
 	</table>
 {% endif %}

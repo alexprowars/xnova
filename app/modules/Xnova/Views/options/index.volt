@@ -1,4 +1,4 @@
-<form action="{{ url('options/change/') }}" method="post">
+<router-form action="{{ url('options/change/') }}">
 	<tabs>
 		<tab name="Информация">
 			<table class="table">
@@ -37,7 +37,7 @@
 							{% if is_email(parse['opt_mail_data']) is false %}
 								<input type="text" name="email" value="" title="">
 							{% else %}
-								{{ parse['opt_mail_data'] }} <a href="{{ url('options/email/') }}" class="button">сменить</a>
+								{{ parse['opt_mail_data'] }} <router-link to="{{ url('options/email/') }}" class="button">сменить</router-link>
 							{% endif %}
 						</th>
 					</tr>
@@ -248,7 +248,7 @@
 			</tab>
 		{% endif %}
 	</tabs>
-</form>
+</router-form>
 
 {% if parse['bot_auth'] is type('array') %}
 	<br><br>

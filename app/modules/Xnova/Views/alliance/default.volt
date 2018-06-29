@@ -3,8 +3,8 @@
 		<td class="c" colspan="2">Альянсы</td>
 	</tr>
 	<tr>
-		<th><a href="{{ url('alliance/make/') }}">Создать альянс</a></th>
-		<th><a href="{{ url('alliance/search/') }}">Поиск альянса</a></th>
+		<th><router-link to="{{ url('alliance/make/') }}">Создать альянс</router-link></th>
+		<th><router-link to="{{ url('alliance/search/') }}">Поиск альянса</router-link></th>
 	</tr>
 </table>
 {% if parse['list']|length > 0 %}
@@ -20,7 +20,7 @@
 	</tr>
 	<tr>
 		<th colspan="2">
-			<form action="{{ url('alliance/') }}" method="POST"><input type="hidden" name="r_id" value="{{ list[0] }}"><input type="submit" name="bcancel" value="Убрать заявку"></form>
+			<router-form action="{{ url('alliance/') }}"><input type="hidden" name="r_id" value="{{ list[0] }}"><input type="submit" name="bcancel" value="Убрать заявку"></router-form>
 		</th>
 	</tr>
 	{% endfor %}
@@ -40,7 +40,7 @@
 			{% set i = i + 1 %}
 			<tr>
 				<th>{{ i }}</th>
-				<th><a href="{{ url('alliance/info/'~list['id']~'/') }}">{{ list['name'] }} [{{ list['tag'] }}]</a></th>
+				<th><router-link to="{{ url('alliance/info/'~list['id']~'/') }}">{{ list['name'] }} [{{ list['tag'] }}]</router-link></th>
 				<th>{{ list['members'] }}</th>
 				<th>{{ list['total_points'] }}</th>
 			</tr>

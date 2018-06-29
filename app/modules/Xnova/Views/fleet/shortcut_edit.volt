@@ -1,4 +1,4 @@
-<form method="POST" action="{{ url('fleet/shortcut/view/'~a~'/') }}">
+<router-form action="{{ url('fleet/shortcut/view/'~a~'/') }}">
 	<table class="table">
 		<tr>
 			<td colspan="2" class="c">{{ c[0] }} [{{ c[1] }}:{{ c[2] }}:{{ c[3] }}]</td>
@@ -21,7 +21,7 @@
 			</th>
 		</tr>
 		<tr>
-			<td colspan="2" class="c"><a href="{{ url('fleet/shortcut/') }}">Назад</a></td>
+			<td colspan="2" class="c"><router-link to="{{ url('fleet/shortcut/') }}">Назад</router-link></td>
 		</tr>
 	</table>
-</form>
+</router-form>

@@ -2,7 +2,7 @@
 	<div v-if="missile['interceptor'] > 0 || missile['interplanetary'] > 0" class="block">
 		<div class="title">Уничтожитель ракет</div>
 		<div class="content border-0">
-			<form :action="'/info/'+item+'/'" method="post">
+			<router-form :action="'/info/'+item+'/'">
 				<input type="hidden" name="missiles" value="Y">
 				<div class="table">
 					<div v-if="missile['interceptor'] > 0" class="row">
@@ -19,7 +19,7 @@
 						</div>
 					</div>
 				</div>
-			</form>
+			</router-form>
 		</div>
 	</div>
 </template>

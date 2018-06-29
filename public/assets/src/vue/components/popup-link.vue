@@ -5,6 +5,8 @@
 </template>
 
 <script>
+	import { popup } from './../js/jquery.js'
+
 	export default {
 		name: "popup-link",
 		props: {
@@ -20,7 +22,7 @@
 		},
 		methods: {
 			load () {
-				this.$root.openPopup(this.title, this.to, this.width)
+				popup(this.title, this.to, this.width)
 			}
 		}
 	}

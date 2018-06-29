@@ -2,7 +2,7 @@
 	<div v-if="page" class="block start">
 		<div class="title">Обмен сырья</div>
 		<div class="content border-0">
-			<form action="/merchant/" method="post" class="container-fluid table">
+			<router-form action="/merchant/" class="container-fluid table">
 				<input type="hidden" name="exchange" value="Y">
 				<input type="hidden" name="type" v-model="type">
 				<div class="row">
@@ -48,7 +48,7 @@
 						</div>
 					</div>
 				</div>
-			</form>
+			</router-form>
 		</div>
 	</div>
 </template>

@@ -55,7 +55,7 @@
 						confirm: {
 							text: 'да',
 							action: () => {
-								this.$root.load('/messages/abuse/'+item['id']+'/')
+								this.$router.push('/messages/abuse/'+item['id']+'/')
 							}
 						},
 						cancel: {

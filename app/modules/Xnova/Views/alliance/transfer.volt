@@ -1,4 +1,4 @@
-<form action="{{ url('alliance/admin/edit/give/id/'~parse['id']~'/') }}" method="POST">
+<router-form action="{{ url('alliance/admin/edit/give/id/'~parse['id']~'/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="8">Передача альянса</td>
@@ -9,7 +9,7 @@
 				<th colspan="3"><input type="submit" value="Передача"></th>
 			</tr>
 		<tr>
-			<td class="c" colspan="8"><a href="{{ url('alliance/admin/edit/ally/') }}">назад</a></td>
+			<td class="c" colspan="8"><router-link to="{{ url('alliance/admin/edit/ally/') }}">назад</router-link></td>
 		</tr>
 	</table>
-</form>
+</router-form>

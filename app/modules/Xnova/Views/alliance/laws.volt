@@ -1,4 +1,4 @@
-<form action="{{ url('alliance/admin/edit/rights/') }}" method="POST">
+<router-form action="{{ url('alliance/admin/edit/rights/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="13">{{ _text('xnova', 'Configure_laws') }}</td>
@@ -42,9 +42,9 @@
 			</tr>
 		{% endif %}
 	</table>
-</form>
+</router-form>
 <div class="separator"></div>
-<form action="{{ url('alliance/admin/edit/rights/add/name/') }}" method="POST">
+<router-form action="{{ url('alliance/admin/edit/rights/add/name/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">{{ _text('xnova', 'Range_make') }}</td>
@@ -57,7 +57,7 @@
 			<th colspan="2"><input type="submit" value="{{ _text('xnova', 'Make') }}"></th>
 		</tr>
 	</table>
-</form>
+</router-form>
 <div class="separator"></div>
 <table class="table">
 	<tr>
@@ -104,6 +104,6 @@
 		<th>Дипломатия</th>
 	</tr>
 	<tr>
-		<td class="c" colspan="2"><a href="{{ url('alliance/admin/edit/ally/') }}">{{ _text('xnova', 'Return_to_overview') }}</a></td>
+		<td class="c" colspan="2"><router-link to="{{ url('alliance/admin/edit/ally/') }}">{{ _text('xnova', 'Return_to_overview') }}</router-link></td>
 	</tr>
 </table>

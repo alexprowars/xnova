@@ -1,4 +1,4 @@
-<form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}" method="POST">
+<router-form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="3">Переименовать или покинуть планету</td>
@@ -7,7 +7,7 @@
 			<tr>
 				<th class="d-none d-sm-table-cell">{{ parse['galaxy_galaxy'] }}:{{ parse['galaxy_system'] }}:{{ parse['galaxy_planet'] }}</th>
 				<th>{{ parse['planet_name'] }}</th>
-				<th><a href="{{ url("overview/delete/") }}"><input type="button" value="Покинуть колонию" alt="Покинуть колонию"></a></th>
+				<th><router-link to="{{ url("overview/delete/") }}"><input type="button" value="Покинуть колонию" alt="Покинуть колонию"></router-link></th>
 			</tr>
 		{% endif %}
 		<tr>
@@ -16,10 +16,10 @@
 			<th><input type="submit" name="action" value="Сменить название"></th>
 		</tr>
 	</table>
-</form>
+</router-form>
 {% if parse['type'] != '' %}
 	<div class="separator"></div>
-	<form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}" method="POST">
+	<router-form action="{{ url("overview/rename/pl/"~parse['planet_id']~"/") }}">
 		<table class="table">
 			<tr>
 				<td class="c">Сменить фон планеты</td>
@@ -42,5 +42,5 @@
 				</th>
 			</tr>
 		</table>
-	</form>
+	</router-form>
 {% endif %}

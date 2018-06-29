@@ -1,5 +1,5 @@
 <template>
-	<form action="'/galaxy/r/1/'" method="post" class="page-galaxy-select">
+	<router-form action="/galaxy/r/1/" class="page-galaxy-select">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">
@@ -51,7 +51,7 @@
 				</table>
 			</div>
 		</div>
-	</form>
+	</router-form>
 </template>
 
 <script>

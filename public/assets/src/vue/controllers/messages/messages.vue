@@ -1,5 +1,5 @@
 <template>
-	<form v-if="page" ref="form" action="/messages/" method="post">
+	<router-form v-if="page" ref="form" action="/messages/">
 		<div class="block">
 			<div class="title">
 				Сообщения
@@ -41,7 +41,7 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</router-form>
 </template>
 
 <script>

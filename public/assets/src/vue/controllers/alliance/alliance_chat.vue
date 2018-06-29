@@ -1,6 +1,6 @@
 <template>
 	<div v-if="page" class="page-alliance-chat">
-		<form action="/alliance/chat/" method="post">
+		<router-form action="/alliance/chat/">
 			<div class="table">
 				<div class="row">
 					<div class="col-12 c">
@@ -45,9 +45,9 @@
 					</div>
 				</div>
 			</div>
-		</form>
+		</router-form>
 		<div class="separator"></div>
-		<form :action="$root.getUrl('alliance/chat/')" method="post">
+		<router-form :action="$root.getUrl('alliance/chat/')">
 			<table class="table">
 				<tr>
 					<td class="c">Отправить сообщение в чат альянса</td>
@@ -64,7 +64,7 @@
 					</td>
 				</tr>
 			</table>
-		</form>
+		</router-form>
 		<span style="float:left;margin-left:10px;margin-top:7px;">
 			<router-link to="/alliance/">[назад к альянсу]</router-link>
 		</span>

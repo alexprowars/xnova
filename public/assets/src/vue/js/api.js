@@ -3,7 +3,7 @@ import store from '../store'
 
 const $api = axios.create({
 	baseURL: store.state.path,
-	timeout: 10000,
+	timeout: 15000,
 	headers: {'X-Requested-With': 'XMLHttpRequest'}
 });
 

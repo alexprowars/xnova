@@ -26,7 +26,7 @@
 						<br><br>
 
 
-						<form action="/credits/" method="post">
+						<router-form action="/credits/">
 							Введите ID игрока, на счет которого будут зачислены кредиты:
 							<br>(если поле не заполнено, то кредиты поступят на ваш счет)
 							<br><br>
@@ -37,7 +37,7 @@
 							<input type="text" name="summ" value="10" title="">
 							<br>
 							<input type="submit" value="Купить">
-						</form>
+						</router-form>
 
 						<br><br>
 					</div>
@@ -46,7 +46,7 @@
 						Счет сформирован. Нажмите кнопку "перейти к оплате" для продолжения процедуры покупки кредитов
 						<br><br>
 
-						<form class="noajax" action="http://www.free-kassa.ru/merchant/cash.php" method="post" target="_blank">
+						<form action="http://www.free-kassa.ru/merchant/cash.php" method="post" target="_blank">
 							<input type="hidden" name="MrchLogin" :value="page['payment']['merchant']">
 							<input type="hidden" name="InvDesc" value="Покупка кредитов">
 							<input type="hidden" name="InvId" :value="page['payment']['id']">

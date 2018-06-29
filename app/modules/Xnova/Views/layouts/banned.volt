@@ -13,7 +13,7 @@
 
 		{% for u in bannedList %}
 			<tr>
-				<td class="b text-center"><a href="{{ url('players/'~u['who']~'/') }}">{{ u['user_1'] }}</a></td>
+				<td class="b text-center"><router-link to="{{ url('players/'~u['who']~'/') }}">{{ u['user_1'] }}</router-link></td>
 				<td class="b text-center">
 					<small>{{ game.datezone("d/m/Y H:m:s", u['time']) }}</small>
 				</td>
@@ -21,7 +21,7 @@
 					<small>{{ game.datezone("d/m/Y H:m:s", u['longer']) }}</small>
 				</td>
 				<td class="b text-center">{{ u['theme'] }}</td>
-				<td class="b text-center"><a href="{{ url('players/'~u['author']~'/') }}">{{ u['user_2'] }}</a></td>
+				<td class="b text-center"><router-link to="{{ url('players/'~u['author']~'/') }}">{{ u['user_2'] }}</router-link></td>
 			</tr>
 		{% endfor %}
 

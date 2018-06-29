@@ -49,7 +49,7 @@
 			</div>
 			<div class="content border-0">
 				<div class="table-responsive">
-					<form action="/resources/" method="post">
+					<router-form action="/resources/">
 						<table width="100%">
 							<tr>
 								<th width="200"></th>
@@ -114,7 +114,7 @@
 								<td class="k">{{ page['production']['energy']['total']|number }}</td>
 							</tr>
 						</table>
-					</form>
+					</router-form>
 				</div>
 			</div>
 		</div>

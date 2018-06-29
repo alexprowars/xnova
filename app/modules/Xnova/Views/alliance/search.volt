@@ -1,4 +1,4 @@
-<form action="{{ url('alliance/search/') }}" method="POST">
+<router-form action="{{ url('alliance/search/') }}">
 	<table class="table">
 		<tr>
 			<td class="c" colspan="2">Поиск альянса</td>
@@ -10,7 +10,7 @@
 			</th>
 		</tr>
 	</table>
-</form>
+</router-form>
 
 {% if parse['result'] is defined and parse['result']|length > 0 %}
 	<div class="separator"></div>

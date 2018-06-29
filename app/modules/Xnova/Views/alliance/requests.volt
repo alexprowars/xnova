@@ -5,7 +5,7 @@
 	{% if parse['request'] is type('array') %}
 		<tr>
 			<td colspan="2" class="padding-0">
-				<form action="{{ url('alliance/admin/edit/requests/show/'~parse['request']['id']~'/') }}" method="post">
+				<router-form action="{{ url('alliance/admin/edit/requests/show/'~parse['request']['id']~'/') }}">
 					<div class="separator"></div>
 					<div class="table">
 						<div class="row">
@@ -28,23 +28,23 @@
 						</div>
 					</div>
 					<div class="separator"></div>
-				</form>
+				</router-form>
 			</td>
 		</tr>
 	{% endif %}
 	{% if parse['list']|length > 0 %}
 		<tr>
 			<td class="c text-center">
-				<a href="{{ url('alliance/admin/edit/requests/sort/1/') }}">Логин</a>
+				<router-link to="{{ url('alliance/admin/edit/requests/sort/1/') }}">Логин</router-link>
 			</td>
 			<td class="c text-center">
-				<a href="{{ url('alliance/admin/edit/requests/sort/0/') }}">Дата подачи заявки</a>
+				<router-link to="{{ url('alliance/admin/edit/requests/sort/0/') }}">Дата подачи заявки</router-link>
 			</td>
 		</tr>
 		{% for list in parse['list'] %}
 			<tr>
 				<th class="text-center">
-					<a href="{{ url('alliance/admin/edit/requests/show/'~list['id']~'/') }}">{{ list['username'] }}</a>
+					<router-link to="{{ url('alliance/admin/edit/requests/show/'~list['id']~'/') }}">{{ list['username'] }}</router-link>
 				</th>
 				<th class="text-center">
 					{{ list['time'] }}
@@ -57,6 +57,6 @@
 		</tr>
 	{% endif %}
 	<tr>
-		<td class="c" colspan="2"><a href="{{ url('alliance/') }}">Назад</a></td>
+		<td class="c" colspan="2"><router-link to="{{ url('alliance/') }}">Назад</router-link></td>
 	</tr>
 </table>

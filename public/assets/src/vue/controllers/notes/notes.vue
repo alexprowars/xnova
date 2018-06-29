@@ -4,7 +4,7 @@
 			Заметки
 		</div>
 		<div class="content">
-			<form action="/notes/" method="post">
+			<router-form action="/notes/">
 				<div class="table">
 					<div class="row">
 						<div class="col-1 c"></div>
@@ -33,7 +33,7 @@
 					<input v-if="deleteItems.length > 0" class="negative" value="Удалить выбранное" type="submit">
 					<router-link class="button" to="/notes/new/">Создать новую заметку</router-link>
 				</div>
-			</form>
+			</router-form>
 		</div>
 	</div>
 </template>

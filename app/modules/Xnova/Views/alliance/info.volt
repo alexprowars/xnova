@@ -31,7 +31,7 @@
 	{% if userId is defined and userId != 0 and parse['request'] %}
 		<tr>
 			<th colspan="2">
-				<a href="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}" class="button">Вступить в альянс</a>
+				<router-link to="{{ url('alliance/apply/allyid/'~parse['id']~'/') }}" class="button">Вступить в альянс</router-link>
 			</th>
 		</tr>
 	{% endif %}

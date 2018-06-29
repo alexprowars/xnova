@@ -59,6 +59,7 @@
 <script>
 	import IndexAuth from './index-auth.vue'
 	import { addScript } from 'helpers'
+	import { popup } from './../../js/jquery.js'
 
 	export default {
 		name: "index",
@@ -67,10 +68,10 @@
 		},
 		methods: {
 			showRegistration () {
-				this.$root.openPopup('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
+				popup('Регистрация', '/registration/', (window.orientation !== undefined ? 300 : 600), 400);
 			},
 			showRemindPassword () {
-				this.$root.openPopup('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
+				popup('Восстановление пароля', '/remind/', (window.orientation !== undefined ? 300 : 600), 200);
 			}
 		},
 		mounted() {

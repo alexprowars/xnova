@@ -59,7 +59,7 @@
 
 						if (result.error.type === 'success')
 						{
-							this.$root.load('/support/');
+							this.$router.replace('/support/');
 							this.$emit('close');
 						}
 					}

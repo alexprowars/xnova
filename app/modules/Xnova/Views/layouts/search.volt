@@ -1,4 +1,4 @@
-<form action="{{ url('search/') }}" method="post">
+<router-form action="{{ url('search/') }}">
 	<table class="table">
 		<tr>
 			<td class="c">Поиск по игре</td>
@@ -18,7 +18,7 @@
 			</th>
 		</tr>
 	</table>
-</form>
+</router-form>
 <div class="separator"></div>
 {% if parse['searchtext'] != '' %}
 	{% if parse['type'] is defined and (parse['type'] == 'playername' or parse['type'] == 'planetname') %}
@@ -38,14 +38,14 @@
 						<th>{{ result['username'] }}</th>
 						<th nowrap>
 							<popup-link to="/messages/write/{{ result['id'] }}/" title="{{ result['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link>
-							<a href="{{ url('buddy/new/'~result['id']~'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></a>
+							<router-link to="{{ url('buddy/new/'~result['id']~'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></router-link>
 						</th>
 						<th>{% if result['race'] != 0 %}<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ result['race'] }}.gif" width="16" height="16">{% else %}&nbsp;{% endif %}
 						</th>
 						<th>{{ result['ally_name'] }}</th>
 						<th>{{ result['planet_name'] }}</th>
-						<th><a href="{{ url('galaxy/'~result['g']~'/'~result['s']~'/') }}">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</a></th>
-						<th><a href="{{ url('stat/players/range/'~result['total_rank']~'/') }}">{{ result['total_rank'] }}</a></th>
+						<th><router-link to="{{ url('galaxy/'~result['g']~'/'~result['s']~'/') }}">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</router-link></th>
+						<th><router-link to="{{ url('stat/players/range/'~result['total_rank']~'/') }}">{{ result['total_rank'] }}</router-link></th>
 					</tr>
 				{% endfor %}
 			{% else %}
@@ -66,7 +66,7 @@
 			{% if parse['result']|length > 0 %}
 				{% for result in parse['result'] %}
 					<tr>
-						<th><a href="{{ url('alliance/info/'~result['id']~'/') }}">{{ result['tag'] }}</a></th>
+						<th><router-link to="{{ url('alliance/info/'~result['id']~'/') }}">{{ result['tag'] }}</router-link></th>
 						<th>{{ result['name'] }}</th>
 						<th>{{ result['members'] }}</th>
 						<th>{{ result['total_points'] }}</th>

@@ -1,7 +1,7 @@
 {% if html is defined %}
 	{{ html }}
 {% else %}
-	<form action="{{ url('alliance/make/yes/1/') }}" method="POST">
+	<router-form action="{{ url('alliance/make/yes/1/') }}">
 		<table class="table">
 			<tr>
 				<td class="c" colspan="2">Создать альянс</td>
@@ -18,5 +18,5 @@
 				<th colspan="2"><input type="submit" value="Создать"></th>
 			</tr>
 		</table>
-	</form>
+	</router-form>
 {% endif %}

@@ -63,19 +63,19 @@
 							<timer :value="item['target']['time']" delimiter="" class="positive"></timer>
 						</div>
 						<div class="col-4 col-sm-2 th">
-							<form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" action="/fleet/back/" method="post">
+							<router-form v-if="item['stage'] === 0 && item['mission'] !== 20 && item.target.id !== 1" action="/fleet/back/">
 								<input name="fleetid" :value="item.id" type="hidden">
 								<input value="Возврат" type="submit" name="send">
-							</form>
+							</router-form>
 
 							<router-link v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :to="'/fleet/verband/id/'+item.id+'/'" class="button">
 								Объединить
 							</router-link>
 
-							<form v-if="item['stage'] === 3 && item['mission'] !== 15" action="/fleet/back/" method="post">
+							<router-form v-if="item['stage'] === 3 && item['mission'] !== 15" action="/fleet/back/">
 								<input name="fleetid" :value="item.id" type="hidden">
 								<input value="Отозвать" type="submit" name="send">
-							</form>
+							</router-form>
 						</div>
 					</div>
 
@@ -100,7 +100,7 @@
 				</div>
 			</div>
 			<div class="content">
-				<form action="/fleet/one/" method="post">
+				<router-form action="/fleet/one/">
 					<div class="table fleet_ships container">
 						<div class="row">
 							<div class="th col-sm-7 col-6">Тип корабля</div>
@@ -154,7 +154,7 @@
 					<input type="hidden" name="planet" :value="page['selected']['planet']">
 					<input type="hidden" name="planet_type" :value="page['selected']['planet_type']">
 					<input type="hidden" name="mission" :value="page['selected']['mission']">
-				</form>
+				</router-form>
 			</div>
 		</div>
 	</div>

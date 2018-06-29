@@ -4,7 +4,7 @@
 		{% if message is defined and message != '' %}
 			<div class="errormessage">{{ message }}</div>
 		{% endif %}
-		<form action="" method="POST">
+		<router-form action="">
 			<input type="hidden" name="save" value="Y">
 			<table class="table table-noborder">
 				<tr>
@@ -42,6 +42,6 @@
 					</th>
 				</tr>
 			</table>
-		</form>
+		</router-form>
 	</div>
 </div>
