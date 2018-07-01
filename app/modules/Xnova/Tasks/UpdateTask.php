@@ -155,7 +155,7 @@ class UpdateTask extends ApplicationTask
 
 		Vars::init();
 
-		define('MAX_RUNS', 20);
+		define('MAX_RUNS', 15);
 		define('TIME_LIMIT', 60);
 
 		if (function_exists('sys_getloadavg'))

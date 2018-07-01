@@ -151,6 +151,9 @@
 		computed: {
 			planets ()
 			{
+				if (!this.page.items)
+					return 0;
+
 				let count = 0;
 
 				this.page.items.forEach((item) =>

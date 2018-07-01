@@ -1,24 +1,26 @@
 <template>
 	<div v-if="page" class="page-building page-building-unit">
 		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
-		<div class="content page-building-items">
-			<form ref="form" action="" method="post" @submit.prevent="constructAction">
-				<div class="row">
-					<div class="col-12">
-						<div class="c">
-							<input type="submit" value="Построить">
+		<div class="block">
+			<div class="content page-building-items">
+				<form ref="form" action="" method="post" @submit.prevent="constructAction">
+					<div class="row">
+						<div class="col-12">
+							<div class="c">
+								<input type="submit" value="Построить">
+							</div>
+						</div>
+
+						<unit-row v-for="(item, i) in page.items" :key="i" :item="item"></unit-row>
+
+						<div class="col-12">
+							<div class="c">
+								<input type="submit" value="Построить">
+							</div>
 						</div>
 					</div>
-
-					<unit-row v-for="(item, i) in page.items" :key="i" :item="item"></unit-row>
-
-					<div class="col-12">
-						<div class="c">
-							<input type="submit" value="Построить">
-						</div>
-					</div>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	</div>
 </template>

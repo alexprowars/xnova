@@ -1,6 +1,6 @@
 .page-building {
 
-	.block > .title {
+	&:not(.page-building-unit) .block > .title {
 		border: 1px solid $border-color;
 		margin: 0 2px 2px 0;
 	}
@@ -231,7 +231,6 @@
 	}
 
 	.page-building-unit-queue {
-		margin: 0 2px 5px 2px;
-		width: auto;
+		margin-right: 2px;
 	}
 }

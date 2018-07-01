@@ -108,8 +108,7 @@ class Controller extends PhalconController
 		$this->assets->addCss('assets/admin/plugins/font-awesome/css/font-awesome.css');
 		$this->assets->addCss('assets/admin/plugins/datatables/css/dataTables.bootstrap4.css');
 		$this->assets->addCss('assets/admin/plugins/perfect-scrollbar/css/perfect-scrollbar.css');
-		$this->assets->addCss('assets/build/css/admin.css');
-		$this->assets->addCss('assets/admin/css/custom.css');
+		$this->assets->addCss('assets/build/admin/admin.css');
 
 		$this->assets->addJs('assets/admin/plugins/jquery/jquery.js');
 		$this->assets->addJs('assets/admin/plugins/popper/popper.js');
@@ -120,7 +119,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/admin/plugins/perfect-scrollbar/js/perfect-scrollbar.jquery.js');
 
 		$this->assets->addJs('assets/build/runtime.js');
-		$this->assets->addJs('assets/build/js/admin.js');
+		$this->assets->addJs('assets/build/admin/app.js');
 
 		return true;
 	}

@@ -36,7 +36,11 @@
 		name: "build",
 		mixins: [router],
 		computed: {
-			fields_empty () {
+			fields_empty ()
+			{
+				if (!this.page)
+					return 0;
+
 				return this.page['fields_max'] - this.page['fields_current'] - this.page.queue.length;
 			}
 		},

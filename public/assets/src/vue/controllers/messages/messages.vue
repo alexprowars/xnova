@@ -58,6 +58,9 @@
 		computed: {
 			messages ()
 			{
+				if (!this.page.items)
+					return [];
+
 				this.page.items.forEach((item) => {
 					Vue.set(item, 'deleted', false);
 				});

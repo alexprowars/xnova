@@ -148,14 +148,14 @@ class ImperiumController extends Controller
 				foreach ($queue AS $q)
 				{
 					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
-						$build_hangar[$q->object_id] = $q->level;
+						$build_hangar[$q->object_id] = (int) $q->level;
 					else
-						$build_hangar[$q->object_id] += $q->level;
+						$build_hangar[$q->object_id] += (int) $q->level;
 
 					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
-						$build_hangar_full[$q->object_id] = $q->level;
+						$build_hangar_full[$q->object_id] = (int) $q->level;
 					else
-						$build_hangar_full[$q->object_id] += $q->level;
+						$build_hangar_full[$q->object_id] += (int) $q->level;
 				}
 			}
 

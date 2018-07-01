@@ -117,7 +117,11 @@
 			FlyRow
 		},
 		computed: {
-			count () {
+			count ()
+			{
+				if (!this.fleets)
+					return 0
+
 				return this.fleets.reduce((total, item) => {
 					return total + (item.count === '' ? 0 : parseInt(item.count));
 				}, 0);

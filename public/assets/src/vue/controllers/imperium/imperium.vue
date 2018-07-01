@@ -109,17 +109,17 @@
 			<tr>
 				<td class="c" :colspan="rows" align="left">Флот</td>
 			</tr>
-			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 200 && id < 300 && (total['elements'][id]['current'] > 0 || total['elements'][id]['build'] > 0 || total['elements'][id]['fly'] > 0)">
+			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 200 && id < 300 && (total['elements'][id]['current'] > 0 || total['elements'][id]['build'] > 0 || total['elements'][id]['fly'] !== 0)">
 				<th>{{ name }}</th>
 				<th v-for="planet in page['planets']">
-					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0 || planet['elements'][id]['fly'] > 0">
+					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0 || planet['elements'][id]['fly'] !== 0">
 						{{ planet['elements'][id]['current']|number }}
 					</span>
 					<span v-else>-</span>
 					<span v-if="planet['elements'][id]['build'] > 0" class="positive">
 						+ {{ planet['elements'][id]['build']|number }}
 					</span>
-					<span v-if="planet['elements'][id]['fly'] > 0" class="neutral">
+					<span v-if="planet['elements'][id]['fly'] !== 0" class="neutral">
 						+ {{ planet['elements'][id]['fly']|number }}
 					</span>
 				</th>
@@ -130,7 +130,7 @@
 					<span v-if="total['elements'][id]['build'] > 0" class="positive">
 						+ {{ total['elements'][id]['build']|number }}
 					</span>
-					<span v-if="total['elements'][id]['fly'] > 0" class="neutral">
+					<span v-if="total['elements'][id]['fly'] !== 0" class="neutral">
 						+ {{ total['elements'][id]['fly']|number }}
 					</span>
 				</th>
@@ -181,7 +181,11 @@
 		name: "imperium",
 		mixins: [router],
 		computed: {
-			rows () {
+			rows ()
+			{
+				if (!this.page)
+					return 2;
+
 				return this.page['planets'].length + 2
 			},
 			total () {
@@ -210,6 +214,9 @@
 						fly: 0
 					};
 				}
+
+				if (!this.page)
+					return result
 
 				this.page['planets'].forEach((planet) =>
 				{

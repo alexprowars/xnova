@@ -179,4 +179,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '4.0');
+define('VERSION', '4.1');

@@ -45,17 +45,17 @@
 						</tr>
 						<tr>
 							<th>Металл</th>
-							<th><a v-on:click.prevent="maxRes('metal')">макс.</a></th>
+							<th><a @click.prevent="maxRes('metal')">макс.</a></th>
 							<th><input name="resource[metal]" v-model="resource.metal" alt="Металл" size="10" type="text" title=""></th>
 						</tr>
 						<tr>
 							<th>Кристалл</th>
-							<th><a v-on:click.prevent="maxRes('crystal')">макс.</a></th>
+							<th><a @click.prevent="maxRes('crystal')">макс.</a></th>
 							<th><input name="resource[crystal]" v-model="resource.crystal" alt="Кристалл" size="10" type="text" title=""></th>
 						</tr>
 						<tr>
 							<th>Дейтерий</th>
-							<th><a v-on:click.prevent="maxRes('deuterium')">макс.</a></th>
+							<th><a @click.prevent="maxRes('deuterium')">макс.</a></th>
 							<th><input name="resource[deuterium]" v-model="resource.deuterium" alt="Дейтерий" size="10" type="text" title=""></th>
 						</tr>
 						<tr>
@@ -65,7 +65,7 @@
 							</th>
 						</tr>
 						<tr>
-							<th colspan="3"><a v-on:click.prevent="maxResAll">Всё сырьё</a> | <a v-on:click.prevent="clearResAll">Обнулить</a></th>
+							<th colspan="3"><a @click.prevent="maxResAll">Всё сырьё</a> | <a @click.prevent="clearResAll">Обнулить</a></th>
 						</tr>
 						<tr>
 							<th colspan="3">&nbsp;</th>
@@ -129,6 +129,9 @@
 			},
 			hold ()
 			{
+				if (!this.page)
+					return 0
+
 				let hold = 0;
 
 				if (this.page['mission'] === 5)
@@ -201,28 +204,28 @@
 			clearTimer () {
 				clearTimeout(this.target_timeout);
 			},
-		},
-		afterLoad ()
-		{
-			let distance = fleet.distance(this.position, this.page['target']);
-			let maxspeed = fleet.speed(this.page['ships']);
+			afterLoad ()
+			{
+				let distance = fleet.distance(this.position, this.page['target']);
+				let maxspeed = fleet.speed(this.page['ships']);
 
-			let duration = fleet.duration({
-				factor: this.page['speed'],
-				distance: distance,
-				max_speed: maxspeed,
-				universe_speed: this.$store.state['speed']['fleet']
-			});
+				let duration = fleet.duration({
+					factor: this.page['speed'],
+					distance: distance,
+					max_speed: maxspeed,
+					universe_speed: this.$store.state['speed']['fleet']
+				});
 
-			this.consumption = fleet.consumption({
-				ships: this.page['ships'],
-				duration: duration,
-				distance: distance,
-				universe_speed: this.$store.state['speed']['fleet']
-			});
+				this.consumption = fleet.consumption({
+					ships: this.page['ships'],
+					duration: duration,
+					distance: distance,
+					universe_speed: this.$store.state['speed']['fleet']
+				});
 
-			this.storage = fleet.storage(this.page['ships']) - this.consumption;
-			this.duration = duration;
+				this.storage = fleet.storage(this.page['ships']) - this.consumption;
+				this.duration = duration;
+			}
 		},
 		mounted () {
 			this.target_time = this.$root.serverTime() + this.duration

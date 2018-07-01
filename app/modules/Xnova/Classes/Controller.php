@@ -126,7 +126,7 @@ class Controller extends PhalconController
 
 				$this->assets->addCss('assets/build/app/'.$file->getFilename(), $sort);
 			}
-			else if (strpos($file->getFilename(), 'view-') === false || strpos($file->getFilename(), 'view-main') !== false)
+			else
 			{
 				$sort = 100;
 
@@ -247,9 +247,19 @@ class Controller extends PhalconController
 			$controller = $this->dispatcher->getControllerName();
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout']))
+			{
+				$this->view->disable();
+				$this->response->redirect('start/');
+
 				throw new \Exception(serialize(['controller' => 'start', 'action' => 'index']), 10);
+			}
 			elseif ($controller == 'index')
+			{
+				$this->view->disable();
+				$this->response->redirect('overview/');
+
 				throw new \Exception(serialize(['controller' => 'overview', 'action' => 'index']), 10);
+			}
 		}
 		else
 		{

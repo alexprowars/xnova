@@ -83,7 +83,7 @@ class StartController extends Controller
 
 					$this->user->update($arUpdate);
 
-					$this->response->redirect('overview/');
+					$this->response->redirect('start/');
 					$this->view->disable();
 				}
 
