@@ -142,7 +142,7 @@
 		methods: {
 			init ()
 			{
-				if (!this.page.ships)
+				if (!this.page || !this.page.ships)
 					return;
 
 				this.fleets = [];

@@ -43,9 +43,11 @@
 <script>
 	import {parser} from '../../js/parser'
 	import io from 'socket.io'
+	import router from 'router-mixin'
 
 	export default {
 		name: "chat",
+		mixins: [router],
 		data () {
 			// noinspection RegExpRedundantEscape
 			return {

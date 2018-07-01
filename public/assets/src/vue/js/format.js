@@ -1,3 +1,5 @@
+import store from '../store'
+
 export default {
 	number: function(value)
 	{

@@ -27,7 +27,7 @@ class ChatController extends Controller
 		//if ($regTime > (time() - 43200))
 		//	$this->message('Доступ к чату будет открыт спустя 12 часов после регистрации.');
 
-		Request::addData('page', true);
+		Request::addData('page', ['loaded' => true]);
 
 		$this->tag->setTitle('Межгалактический чат');
 		$this->showTopPanel(false);

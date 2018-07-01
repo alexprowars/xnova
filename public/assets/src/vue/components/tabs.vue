@@ -2,7 +2,7 @@
     <div class="tabs-component">
         <ul role="tablist" class="tabs-component-tabs">
             <li v-for="(tab, i) in tabs" :key="i" :class="{active: tab.active}" class="tabs-component-tab" role="presentation">
-                <a v-html="tab.header" @click="selectTab(tab.hash)" :href="tab.hash" class="tabs-component-tab-a" role="tab"></a>
+                <a v-html="tab.header" @click.prevent="selectTab(tab.hash)" :href="tab.hash" class="tabs-component-tab-a" role="tab"></a>
             </li>
         </ul>
         <div class="tabs-component-panels">

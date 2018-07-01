@@ -60,9 +60,11 @@
 	import IndexAuth from './index-auth.vue'
 	import { addScript } from 'helpers'
 	import { popup } from './../../js/jquery.js'
+	import router from 'router-mixin'
 
 	export default {
 		name: "index",
+		mixins: [router],
 		components: {
 			IndexAuth
 		},
