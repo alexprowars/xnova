@@ -1,5 +1,5 @@
 <template>
-	<router-form action="/galaxy/r/1/" class="page-galaxy-select">
+	<router-form ref="form" action="/galaxy/r/1/" class="page-galaxy-select">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">
@@ -16,7 +16,7 @@
 					</tr>
 					<tr>
 						<th>
-							<input value="&lt;-" type="button" v-on:click.prevent="direction = 'galaxyLeft'">
+							<input value="&lt;-" type="button" @click.prevent="direction = 'galaxyLeft'">
 						</th>
 						<th>
 							<input name="galaxy" :value="$parent.page.galaxy" maxlength="3" tabindex="1" min="1" type="number">
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-	import Vue from 'vue'
 	import GalaxySelectorShortcut from './galaxy-selector-shortcut.vue'
 
 	export default {
@@ -73,8 +72,8 @@
 			{
 				if (val !== '')
 				{
-					Vue.nextTick(() => {
-						$('.page-galaxy-select').submit();
+					this.$nextTick(() => {
+						this.$refs['form'].send();
 						setTimeout(() => this.direction = '', 100);
 					});
 				}

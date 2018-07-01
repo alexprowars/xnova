@@ -138,6 +138,9 @@
 		methods: {
 			init ()
 			{
+				if (!this.page.ships)
+					return;
+
 				this.fleets = [];
 				this.page.ships.forEach(() => {
 					this.fleets.push({count: ''});

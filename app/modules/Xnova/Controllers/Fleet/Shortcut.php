@@ -10,6 +10,7 @@ namespace Xnova\Controllers\Fleet;
 
 use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Request;
 
 class Shortcut
 {
@@ -26,10 +27,10 @@ class Shortcut
 				if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
 					$name = 'Планета';
 
-				$g = $controller->request->getPost('g', 'int', 0);
-				$s = $controller->request->getPost('s', 'int', 0);
-				$p = $controller->request->getPost('p', 'int', 0);
-				$t = $controller->request->getPost('t', 'int', 0);
+				$g = (int) $controller->request->getPost('g', 'int', 0);
+				$s = (int) $controller->request->getPost('s', 'int', 0);
+				$p = (int) $controller->request->getPost('p', 'int', 0);
+				$t = (int) $controller->request->getPost('t', 'int', 0);
 
 				if ($g < 1 || $g > $controller->config->game->maxGalaxyInWorld)
 					$g = 1;
@@ -50,10 +51,10 @@ class Shortcut
 				throw new RedirectException("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/", 1);
 			}
 
-			$g = $controller->request->get('g', 'int', 0);
-			$s = $controller->request->get('s', 'int', 0);
-			$p = $controller->request->get('p', 'int', 0);
-			$t = $controller->request->get('t', 'int', 0);
+			$g = (int) $controller->request->get('g', 'int', 0);
+			$s = (int) $controller->request->get('s', 'int', 0);
+			$p = (int) $controller->request->get('p', 'int', 0);
+			$t = (int) $controller->request->get('t', 'int', 0);
 
 			if ($g < 1 || $g > $controller->config->game->maxGalaxyInWorld)
 				$g = 1;
@@ -64,15 +65,18 @@ class Shortcut
 			if ($t != 1 && $t != 2 && $t != 3 && $t != 5)
 				$t = 1;
 
-			$controller->view->pick('fleet/shortcut_new');
-			$controller->view->setVar('g', $g);
-			$controller->view->setVar('s', $s);
-			$controller->view->setVar('i', $p);
-			$controller->view->setVar('t', $t);
+			Request::addData('page', [
+				'id' => -1,
+				'name' => '',
+				'galaxy' => $g,
+				'system' => $s,
+				'planet' => $p,
+				'type' => $t,
+			]);
 		}
 		elseif ($controller->request->hasQuery('view'))
 		{
-			$id = $controller->request->getQuery('view', 'int', 0);
+			$id = (int) $controller->request->getQuery('view', 'int', 0);
 
 			if ($controller->request->isPost())
 			{
@@ -86,7 +90,9 @@ class Shortcut
 					unset($scarray[$id]);
 					$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
-					$controller->db->updateAsDict('game_users_info', ['fleet_shortcut' => $inf['fleet_shortcut']], 'id = '.$controller->user->getId());
+					$controller->db->updateAsDict('game_users_info', [
+						'fleet_shortcut' => $inf['fleet_shortcut']
+					], 'id = '.$controller->user->getId());
 
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
@@ -98,10 +104,10 @@ class Shortcut
 					$r = explode(",", $scarray[$id]);
 
 					$r[0] = strip_tags(str_replace(',', '', $controller->request->getPost('n', 'string', '')));
-					$r[1] = $controller->request->getPost('g', 'int', 0);
-					$r[2] = $controller->request->getPost('s', 'int', 0);
-					$r[3] = $controller->request->getPost('p', 'int', 0);
-					$r[4] = $controller->request->getPost('t', 'int', 0);
+					$r[1] = (int) $controller->request->getPost('g', 'int', 0);
+					$r[2] = (int) $controller->request->getPost('s', 'int', 0);
+					$r[3] = (int) $controller->request->getPost('p', 'int', 0);
+					$r[4] = (int) $controller->request->getPost('t', 'int', 0);
 
 					if ($r[1] < 1 || $r[1] > $controller->config->game->maxGalaxyInWorld)
 						$r[1] = 1;
@@ -115,7 +121,9 @@ class Shortcut
 					$scarray[$id] = implode(",", $r);
 					$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
-					$controller->db->updateAsDict('game_users_info', ['fleet_shortcut' => $inf['fleet_shortcut']], 'id = '.$controller->user->getId());
+					$controller->db->updateAsDict('game_users_info', [
+						'fleet_shortcut' => $inf['fleet_shortcut']
+					], 'id = '.$controller->user->getId());
 
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
@@ -132,9 +140,14 @@ class Shortcut
 				{
 					$c = explode(',', $scarray[$id]);
 
-					$controller->view->pick('fleet/shortcut_edit');
-					$controller->view->setVar('c', $c);
-					$controller->view->setVar('a', $id);
+					Request::addData('page', [
+						'id' => $id,
+						'name' => $c[0],
+						'galaxy' => (int) $c[1],
+						'system' => (int) $c[2],
+						'planet' => (int) $c[3],
+						'type' => (int) $c[4],
+					]);
 				}
 				else
 					throw new RedirectException("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
@@ -177,7 +190,9 @@ class Shortcut
 				}
 			}
 
-			$controller->view->setVar('links', $links);
+			Request::addData('page', [
+				'items' => $links
+			]);
 		}
 
 		$controller->tag->setTitle("Закладки");

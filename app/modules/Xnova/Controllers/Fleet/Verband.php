@@ -13,6 +13,7 @@ use Friday\Core\Lang;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
+use Xnova\Request;
 use Xnova\User;
 
 class Verband
@@ -141,11 +142,38 @@ class Verband
 		else
 			$fq = Fleet::find(['conditions' => 'group_id = ?0', 'bind' => [$fleet->group_id]]);
 
+		if ($aks)
+			$aks['fleet_id'] = (int) $aks['fleet_id'];
+
 		$parse = [];
-		$parse['group'] = $fleet->group_id;
-		$parse['fleetid'] = $fleet->id;
+		$parse['group'] = (int) $fleet->group_id;
+		$parse['fleetid'] = (int) $fleet->id;
 		$parse['aks'] = $aks;
-		$parse['list'] = $fq;
+		$parse['list'] = [];
+
+		foreach ($fq as $row)
+		{
+			$parse['list'][] = [
+				'id' => (int) $row->id,
+				'ships' => $row->getShips(),
+				'ships_total' => $row->getTotalShips(),
+				'mission' => (int) $row->mission,
+				'start' => [
+					'galaxy' => (int) $row->start_galaxy,
+					'system' => (int) $row->start_system,
+					'planet' => (int) $row->start_planet,
+					'time' => (int) $row->start_time,
+					'name' => $row->owner_name,
+				],
+				'target' => [
+					'galaxy' => (int) $row->end_system,
+					'system' => (int) $row->end_system,
+					'planet' => (int) $row->end_planet,
+					'time' => (int) $row->end_time,
+					'name' => $row->target_owner_name,
+				],
+			];
+		}
 
 		if ($fleet->id == $aks['fleet_id'])
 		{
@@ -180,7 +208,8 @@ class Verband
 			}
 		}
 
+		Request::addData('page', $parse);
+
 		$controller->tag->setTitle("Совместная атака");
-		$controller->view->setVar('parse', $parse);
 	}
 }

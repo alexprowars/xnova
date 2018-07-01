@@ -35,6 +35,18 @@ const router = new VueRouter({
 		path: '/fleet/two',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-two.vue')
 	}, {
+		path: '/fleet/shortcut/add*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut-add.vue')
+	}, {
+		path: '/fleet/shortcut/view*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut-add.vue')
+	}, {
+		path: '/fleet/shortcut*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut.vue')
+	}, {
+		path: '/fleet/verband*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-verband.vue')
+	}, {
 		path: '/fleet*',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-index.vue')
 	}, {
