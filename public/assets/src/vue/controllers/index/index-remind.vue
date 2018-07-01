@@ -11,7 +11,7 @@
 				</div>
 				<div class="row">
 					<div class="col th">
-						Ваш Email: <input :class="{error: $v.email.$error}" @change="$v.email.$touch()" type="email" name="email" v-model="email" title="">
+						Ваш Email: <input :class="{error: $v.email.$error}" @change="$v.email.$touch()" type="email" name="email" v-model="email">
 					</div>
 				</div>
 				<div class="row">

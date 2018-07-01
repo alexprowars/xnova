@@ -11,7 +11,7 @@
 							<input type="text" name="g" :value="page['galaxy']" size="3" maxlength="2" title="Галактика">
 							<input type="text" name="s" :value="page['system']" size="3" maxlength="3" title="Система">
 							<input type="text" name="p" :value="page['planet']" size="3" maxlength="2" title="Планета">
-							<select name="t" title="" v-model="page['type']">
+							<select name="t" v-model="page['type']">
 								<option v-for="(title, type) in $root.getLang('PLANET_TYPE')" :value="type">{{ title }}</option>
 							</select>
 						</div>

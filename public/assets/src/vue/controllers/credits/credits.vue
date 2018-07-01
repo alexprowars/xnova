@@ -30,11 +30,11 @@
 							Введите ID игрока, на счет которого будут зачислены кредиты:
 							<br>(если поле не заполнено, то кредиты поступят на ваш счет)
 							<br><br>
-							<input type="text" name="userId" value="" title="">
+							<input type="text" name="userId" value="">
 							<br><br>
 							Введите число желаемых кредитов:
 							<br>
-							<input type="text" name="summ" value="10" title="">
+							<input type="text" name="summ" value="10">
 							<br>
 							<input type="submit" value="Купить">
 						</router-form>

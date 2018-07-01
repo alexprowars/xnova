@@ -20,7 +20,7 @@
 						<div v-else="">{{ item['text'] }}</div>
 					</div>
 					<div v-if="page['owner']" class="col-1 b text-center">
-						<input name="delete[]" type="checkbox" :value="item['id']" title="" v-model="marked">
+						<input name="delete[]" type="checkbox" :value="item['id']" v-model="marked">
 					</div>
 				</div>
 
@@ -36,7 +36,7 @@
 
 				<div v-if="marked.length" class="row">
 					<div class="col-12 th">
-						<select id="deletemessages" name="delete_type" title="">
+						<select id="deletemessages" name="delete_type">
 							<option value="marked">Удалить выделенные</option>
 							<option value="unmarked">Удалить не выделенные</option>
 							<option value="all">Удалить все</option>

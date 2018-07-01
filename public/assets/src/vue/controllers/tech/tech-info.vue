@@ -20,9 +20,9 @@
 					active = "red";
 
 				if (element !== -1)
-					window.object.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+data.name+'</span></div><img id="tch_img_'+tid+'" name="'+element+'" src="'+this.$root.getUrl('assets/images/gebaeude/' + data.img)+'" class="tch_icon_' + active + '" /><div class="tch_tx_lvl">'+level+'</div>', null, null, active, active, active);
+					window.object.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+data.name+'</span></div><img id="tch_img_'+tid+'" name="'+element+'" src="'+this.$root.getUrl('assets/images/gebaeude/' + data.img)+'" class="tch_icon_' + active + '"><div class="tch_tx_lvl">'+level+'</div>', null, null, active, active, active);
 				else
-					window.object.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+fwrd+'</span></div><img id="tch_img_'+tid+'" src="skins/sn_space_blue/images/pixel.png" class="tch_icon_' + active + '" /><div class="tch_tx_lvl">'+level+'</div>', null, null, active, active, active);
+					window.object.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">'+fwrd+'</span></div><img id="tch_img_'+tid+'" src="skins/sn_space_blue/images/pixel.png" class="tch_icon_' + active + '"><div class="tch_tx_lvl">'+level+'</div>', null, null, active, active, active);
 
 				this.counter++
 				window.object.UpdateTree();

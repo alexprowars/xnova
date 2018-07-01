@@ -46,17 +46,17 @@
 						<tr>
 							<th>Металл</th>
 							<th><a @click.prevent="maxRes('metal')">макс.</a></th>
-							<th><input name="resource[metal]" v-model="resource.metal" alt="Металл" size="10" type="text" title=""></th>
+							<th><input name="resource[metal]" v-model="resource.metal" alt="Металл" size="10" type="text"></th>
 						</tr>
 						<tr>
 							<th>Кристалл</th>
 							<th><a @click.prevent="maxRes('crystal')">макс.</a></th>
-							<th><input name="resource[crystal]" v-model="resource.crystal" alt="Кристалл" size="10" type="text" title=""></th>
+							<th><input name="resource[crystal]" v-model="resource.crystal" alt="Кристалл" size="10" type="text"></th>
 						</tr>
 						<tr>
 							<th>Дейтерий</th>
 							<th><a @click.prevent="maxRes('deuterium')">макс.</a></th>
-							<th><input name="resource[deuterium]" v-model="resource.deuterium" alt="Дейтерий" size="10" type="text" title=""></th>
+							<th><input name="resource[deuterium]" v-model="resource.deuterium" alt="Дейтерий" size="10" type="text"></th>
 						</tr>
 						<tr>
 							<th>Остаток</th>
@@ -76,7 +76,7 @@
 						</tr>
 						<tr v-if="page['mission'] === 15 && page['missions'].indexOf(15) >= 0" class="mission m_15">
 							<th colspan="3">
-								<select name="expeditiontime" title="">
+								<select name="expeditiontime">
 									<option v-for="i in page['expedition_hours']" :value="i">{{ i }} ч.</option>
 								</select>
 							</th>
@@ -87,7 +87,7 @@
 						</tr>
 						<tr v-if="page['mission'] === 5 && page['missions'].indexOf(5) >= 0" class="mission m_5">
 							<th colspan="3">
-								<select name="holdingtime" v-model="hold_hours" title="">
+								<select name="holdingtime" v-model="hold_hours">
 									<option value="0">0</option>
 									<option value="1">1</option>
 									<option value="2">2</option>

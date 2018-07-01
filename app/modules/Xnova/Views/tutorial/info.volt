@@ -33,7 +33,7 @@
 	<tr>
 		<td class="k">
 			{% if errors is false %}
-				<input type="button" class="end" onclick="application.load('{{ url.getBaseUri() }}tutorial/{{ stage }}/?continue=Y')" value="Закончить">
+				<input type="button" class="end" onclick="application.$router.push('/tutorial/{{ stage }}/?continue=Y')" value="Закончить">
 			{% endif %}
 			<div class="solution">
 				{{ parse['info']['SOLUTION'] }}

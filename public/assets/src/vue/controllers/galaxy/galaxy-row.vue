@@ -54,7 +54,7 @@
 						</tr>
 						<tr>
 							<th width="80">
-								<img :src="$root.getUrl('assets/images/planeten/mond.jpg')" height=75 width=75 />
+								<img :src="$root.getUrl('assets/images/planeten/mond.jpg')" height=75 width=75>
 							</th>
 							<th>
 								<table class="table">
@@ -126,7 +126,7 @@
 									</tr>
 									<tr v-if="$parent['page']['user']['recycler'] > 0">
 										<th colspan="2" align="left">
-											<a @click.prevent="$parent.fleet.sendMission(8, galaxy, system, item['planet'], 2, 0)">Собрать</a>
+											<a @click.prevent="debris">Собрать</a>
 										</th>
 									</tr>
 									<tr>
@@ -199,7 +199,7 @@
 						</tr>
 						<tr>
 							<th>
-								<router-link :to="'alliance/info/'+item['a_id']+'/'">Информация</router-link>
+								<router-link :to="'/alliance/info/'+item['a_id']+'/'">Информация</router-link>
 							</th>
 						</tr>
 						<tr>
@@ -260,7 +260,7 @@
 				</router-link>
 			</div>
 
-			<router-link v-if="!item && $parent['page']['user']['colonizer']" :to="'fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/'" title="Колонизация">
+			<router-link v-if="!item && $parent['page']['user']['colonizer']" :to="'/fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/'" title="Колонизация">
 				<span class="sprite skin_e"></span>
 			</router-link>
 		</th>
@@ -384,6 +384,9 @@
 				sendMission(6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum).then(() => {
 					obj.prop('disabled', false);
 				});
+			},
+			debris () {
+				sendMission(8, this.galaxy, this.system, this.item['planet'], 2, 0)
 			}
 		}
 	}

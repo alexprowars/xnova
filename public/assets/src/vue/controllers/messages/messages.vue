@@ -3,11 +3,11 @@
 		<div class="block">
 			<div class="title">
 				Сообщения
-				<select name="category" title="" @change.prevent="submitForm" v-model="page['category']">
+				<select name="category" @change.prevent="submitForm" v-model="page['category']">
 					<option v-for="(type, index) in $root.getLang('MESSAGE_TYPES')" :value="index">{{ type }}</option>
 				</select>
 				по
-				<select name="limit" title="" @change.prevent="submitForm" v-model="page['limit']">
+				<select name="limit" @change.prevent="submitForm" v-model="page['limit']">
 					<option v-for="i in limit" :value="i">{{ i }}</option>
 				</select>
 				на странице
@@ -19,7 +19,7 @@
 				<div class="table">
 					<div class="row">
 						<div class="col-1 th text-center">
-							<input type="checkbox" class="checkAll" title="" v-model="checkAll">
+							<input type="checkbox" class="checkAll" v-model="checkAll">
 						</div>
 						<div class="col-3 th text-center">Дата</div>
 						<div class="col-6 th text-center">От</div>

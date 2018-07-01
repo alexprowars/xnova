@@ -62,7 +62,7 @@
 				<tr v-if="page['user']['allowExpedition']">
 					<th width="30">16</th>
 					<th colspan="8" class="c big">
-						<router-link :to="'fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/'">неизведанные дали</router-link>
+						<router-link :to="'/fleet/g'+page['galaxy']+'/s'+page['system']+'/p16/t0/m15/'">неизведанные дали</router-link>
 					</th>
 				</tr>
 				<tr>

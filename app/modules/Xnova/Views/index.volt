@@ -14,8 +14,11 @@
 	<meta property="og:image" content="//{{ request.getServer('HTTP_HOST') }}{{ static_url('assets/images/logo.jpg') }}">
 	<meta property="og:image:width" content="300">
 	<meta property="og:image:height" content="300">
-	<meta property="og:site_name" content="Звездная Империя 5">
+	<meta property="og:site_name" content="Звездная Империя">
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.">
+
+	<script src="//dmc1acwvwny3.cloudfront.net/atatus.js"> </script>
+	<script type="text/javascript"> atatus.config('cab13a7ebb0e4722be9ea9f77d1ebfbf').install(); </script>
 
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
@@ -48,6 +51,36 @@
 
 	{{ assets.outputJs('footer_js') }}
 	{{ assets.outputCss('footer_css') }}
+
+	<script>
+
+		function trackVueExceptions(atatus, Vue) {
+		  var Vue = Vue || window.Vue;
+		  var atatus = atatus || window.atatus;
+
+		  // quit if Vue isn't on the page
+		  if (!Vue || !Vue.config) return;
+
+		  // quit if atatus isn't on the page
+		  if (!atatus || !atatus.config) return;
+
+		  var _oldOnError = Vue.config.errorHandler;
+		  Vue.config.errorHandler = function VueErrorHandler(error, vm) {
+		      atatus.notify(error, {
+		        extra: {
+		          componentName: Vue.util.formatComponentName(vm),
+		          propsData: vm.$options.propsData
+		        }
+		      });
+
+		      if (typeof _oldOnError === 'function') {
+		          _oldOnError.call(this, error, vm);
+		      }
+		  };
+		}
+
+		trackVueExceptions();
+		</script>
 
 	{{ partial('shared/svg') }}
 </body>

@@ -47,7 +47,7 @@
   "author": "AlexPro (alexprowars@gmail.com)",
   "license": "ISC",
   "browser": {
-    "vue": "vue/dist/vue.common.js"
+    "vue": "vue/dist/vue.esm.js"
   },
   "browserslist": [
     "last 3 versions"

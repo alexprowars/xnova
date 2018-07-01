@@ -32,7 +32,7 @@
 					<img v-for="smile in smilesList" :src="$root.getUrl('assets/images/smile/'+smile+'.gif')" :alt="smile" v-on:click="addSmile(smile)">
 				</div>
 			</div>
-			<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750" title="">
+			<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750">
 
 			<input type="button" value="Очистить" v-on:click.prevent="clear">
 			<input type="button" value="Отправить" v-on:click.prevent="sendMessage">
@@ -85,7 +85,7 @@
 						'<div align="right">$1<\/div>',
 						'<div style="text-align:justify;">$1<\/div>',
 						'<span style="font-size: $1px;">$2</span>',
-						'<a href="$1" target="_blank"><img src="$1" style="max-width:350px;" alt="" /></a>',
+						'<a href="$1" target="_blank"><img src="$1" style="max-width:350px;" alt=""></a>',
 						'<a href="$1" target="_blank">$2</a>',
 						'<a href="$1" target="_blank">$1</a>',
 						'<p>$1</p>',

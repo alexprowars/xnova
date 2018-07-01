@@ -88,7 +88,7 @@
 									<colored :value="item['resources']['energy']"></colored>
 								</th>
 								<th>
-									<select :name="item['name']" title="">
+									<select :name="item['name']">
 										<option v-for="j in 10" :value="j" :selected="item['factor'] === j">{{ j * 10 }}%</option>
 									</select>
 								</th>
@@ -96,7 +96,7 @@
 							<tr>
 								<th colspan="2">Вместимость:</th>
 								<th>{{ page['bonus_h'] }}%</th>
-								<td v-for="res in page['resources']" class="k">
+								<td v-for="res in page['resources']" class="k" v-once>
 									<span :class="[(page['production'][res]['max'] > $store.state['resources'][res]['current']) ? 'positive' : 'negative']">
 										{{(page['production'][res]['max'] / 1000)|number }} k
 									</span>

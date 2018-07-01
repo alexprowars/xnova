@@ -21,7 +21,7 @@
 					</div>
 				</div>
 				<div class="col-12 th d-flex">
-					<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750" title="">
+					<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750">
 
 					<input type="button" value="Отправить" v-on:click.prevent="sendMessage">
 				</div>

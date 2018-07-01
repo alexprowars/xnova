@@ -14,7 +14,7 @@
 						</div>
 						<div class="row">
 							<div class="col th">{{ page['number_1'] }} + {{ page['number_2'] }} * {{ page['number_3'] }} = ???</div>
-							<div class="col th"><input type="text" name="pw" title=""></div>
+							<div class="col th"><input type="text" name="pw"></div>
 							<div class="col th"><input type="submit" name="action" value="Удалить колонию"></div>
 						</div>
 					</div>

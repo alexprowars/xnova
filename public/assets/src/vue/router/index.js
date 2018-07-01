@@ -3,7 +3,29 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+import BuildingBuildController from './../controllers/buildings/build.vue'
+import BuildingTechController from './../controllers/buildings/tech.vue'
+import BuildingUnitController from './../controllers/buildings/unit.vue'
+import GalaxyController from './../controllers/galaxy/galaxy.vue'
+import OverviewController from './../controllers/overview/overview.vue'
+import FleetIndexController from './../controllers/fleet/fleet-index.vue'
+import FleetOneController from './../controllers/fleet/fleet-one.vue'
+import FleetTwoController from './../controllers/fleet/fleet-two.vue'
+import ChatController from './../controllers/chat/chat.vue'
+import MessagesController from './../controllers/messages/messages.vue'
+import MessagesWriteController from './../controllers/messages/messages-write.vue'
+import MerchantController from './../controllers/merchant/merchant.vue'
+import AllianceChatController from './../controllers/alliance/alliance_chat.vue'
+import NotesController from './../controllers/notes/notes.vue'
+import PhalanxController from './../controllers/phalanx/phalanx.vue'
 import IndexController from './../controllers/index/index.vue'
+import ResourcesController from './../controllers/resources/resources.vue'
+import OfficierController from './../controllers/officier/officier.vue'
+import CreditsController from './../controllers/credits/credits.vue'
+import TechController from './../controllers/tech/tech.vue'
+import SupportController from './../controllers/support/support.vue'
+import StatController from './../controllers/stat/stat.vue'
+import ImperiumController from './../controllers/imperium/imperium.vue'
 import RegistrationController from './../controllers/index/index-registration.vue'
 import RemindController from './../controllers/index/index-remind.vue'
 import HtmlController from './../controllers/html.vue'
@@ -12,100 +34,100 @@ const router = new VueRouter({
 	mode: 'history',
 	routes: [{
 		path: '/buildings/research*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/buildings/tech.vue')
+		component: BuildingTechController
 	}, {
 		path: '/buildings/fleet*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/buildings/unit.vue')
+		component: BuildingUnitController
 	}, {
 		path: '/buildings/defense*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/buildings/unit.vue')
+		component: BuildingUnitController
 	}, {
 		path: '/buildings*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/buildings/build.vue')
+		component: BuildingBuildController
 	}, {
 		path: '/galaxy*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/galaxy/galaxy.vue')
+		component: GalaxyController
 	}, {
 		path: '/phalanx*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/phalanx/phalanx.vue')
+		component: PhalanxController
 	}, {
 		path: '/fleet/one',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-one.vue')
+		component: FleetOneController
 	}, {
 		path: '/fleet/two',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-two.vue')
+		component: FleetTwoController
 	}, {
 		path: '/fleet/shortcut/add*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut-add.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
 	}, {
 		path: '/fleet/shortcut/view*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut-add.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
 	}, {
 		path: '/fleet/shortcut*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-shortcut.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut.vue')
 	}, {
 		path: '/fleet/verband*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-verband.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-verband.vue')
 	}, {
 		path: '/fleet*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-index.vue')
+		component: FleetIndexController
 	}, {
 		path: '/overview/rename*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview-rename.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/overview/overview-rename.vue')
 	}, {
 		path: '/overview/delete*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview-delete.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/overview/overview-delete.vue')
 	}, {
 		path: '/overview*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview.vue')
+		component: OverviewController
 	}, {
 		path: '/chat',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/chat/chat.vue')
+		component: ChatController
 	}, {
 		path: '/messages/write/*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/messages/messages-write.vue')
+		component: MessagesWriteController
 	}, {
 		path: '/messages',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/messages/messages.vue')
+		component: MessagesController
 	}, {
 		path: '/merchant',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/merchant/merchant.vue')
+		component: MerchantController
 	}, {
 		path: '/imperium',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/imperium/imperium.vue')
+		component: ImperiumController
 	}, {
 		path: '/resources*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/resources/resources.vue')
+		component: ResourcesController
 	}, {
 		path: '/officier*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/officier/officier.vue')
+		component: OfficierController
 	}, {
 		path: '/credits*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/credits/credits.vue')
+		component: CreditsController
 	}, {
 		path: '/info*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/info/info.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/info/info.vue')
 	}, {
 		path: '/tech/:tech_id',
 		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/tech/tech-info.vue')
 	}, {
 		path: '/tech*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/tech/tech.vue')
+		component: TechController
 	}, {
 		path: '/support',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/support/support.vue')
+		component: SupportController
 	}, {
 		path: '/stat*',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/stat/stat.vue')
+		component: StatController
 	}, {
 		path: '/notes',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/notes/notes.vue')
+		component: NotesController
 	}, {
 		path: '/race',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/race/race.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/race/race.vue')
 	}, {
 		path: '/alliance/chat',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/alliance/alliance_chat.vue')
+		component: AllianceChatController
 	}, {
 		path: '/alliance/stat/id/:ally_id',
 		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players_stat.vue')
@@ -114,7 +136,7 @@ const router = new VueRouter({
 		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players_stat.vue')
 	}, {
 		path: '/players/:user_id',
-		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/players/players.vue')
+		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players.vue')
 	}, {
 		path: '/registration/',
 		component: RegistrationController

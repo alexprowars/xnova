@@ -8,10 +8,10 @@
 			<div class="row">
 				<div class="th col-6">Цель</div>
 				<div class="th col-6 fleet-coordinates-input">
-					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-model="page['target']['galaxy']" title="">
-					<input type="number" name="system" min="1" :max="page['system_max']" v-model="page['target']['system']" title="">
-					<input type="number" name="planet" min="1" :max="page['planet_max']" v-model="page['target']['planet']" title="">
-					<select name="planet_type" v-model="page['target']['planet_type']" title="">
+					<input type="number" name="galaxy" min="1" :max="page['galaxy_max']" v-model="page['target']['galaxy']">
+					<input type="number" name="system" min="1" :max="page['system_max']" v-model="page['target']['system']">
+					<input type="number" name="planet" min="1" :max="page['planet_max']" v-model="page['target']['planet']">
+					<select name="planet_type" v-model="page['target']['planet_type']">
 						<option v-for="(item, index) in $root.getLang('PLANET_TYPE')" :value="index">{{ item }}</option>
 					</select>
 				</div>
@@ -19,7 +19,7 @@
 			<div class="row">
 				<div class="th col-6">Скорость</div>
 				<div class="th col-6">
-					<select name="speed" v-model="speed" @change="info" title="">
+					<select name="speed" v-model="speed" @change="info">
 						<option v-for="i in 10" :value="11 - i">{{ (11 - i) * 10 }}</option>
 					</select> %
 				</div>

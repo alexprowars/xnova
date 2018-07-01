@@ -6,19 +6,19 @@
 				<div class="row">
 					<div class="col-5 th">E-Mail<br>(используется для входа)</div>
 					<div class="col-7 th">
-						<input :class="{error: $v.email.$error}" @change="$v.email.$touch()" name="email" type="email" v-model="email" title="">
+						<input :class="{error: $v.email.$error}" @change="$v.email.$touch()" name="email" type="email" v-model="email">
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-5 th">Пароль</div>
 					<div class="col-7 th">
-						<input :class="{error: $v.password.$error}" type="password" v-model="password" @change="$v.password.$touch()" title="">
+						<input :class="{error: $v.password.$error}" type="password" v-model="password" @change="$v.password.$touch()">
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-5 th">Подтверждение пароля</div>
 					<div class="col-7 th">
-						<input :class="{error: $v.password_confirm.$error}" type="password" v-model="password_confirm" @change="$v.password_confirm.$touch()" title="">
+						<input :class="{error: $v.password_confirm.$error}" type="password" v-model="password_confirm" @change="$v.password_confirm.$touch()">
 					</div>
 				</div>
 				<div class="row">

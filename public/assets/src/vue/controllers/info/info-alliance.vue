@@ -9,7 +9,7 @@
 					</div>
 					<div class="row">
 						<div class="col th">
-							<select name="fleet" title="" v-model="fleet">
+							<select name="fleet" v-model="fleet">
 								<option :value="0">-</option>
 								<option v-for="fleet in data['fleets']" :value="fleet['id']">[{{ fleet['galaxy'] }}:{{ fleet['system'] }}:{{ fleet['planet'] }}] {{ fleet['name']}}</option>
 							</select>

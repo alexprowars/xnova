@@ -7,11 +7,11 @@
 				<div class="table">
 					<div v-if="missile['interceptor'] > 0" class="row">
 						<div class="col th">{{ $root.getLang('TECH', 502) }}: {{ missile['interceptor'] }}</div>
-						<div class="col th"><number name="interceptor" v-model="interceptor" title=""></number></div>
+						<div class="col th"><number name="interceptor" v-model="interceptor"></number></div>
 					</div>
 					<div v-if="missile['interplanetary'] > 0" class="row">
 						<div class="col th">{{ $root.getLang('TECH', 502) }}: {{ missile['interplanetary'] }}</div>
-						<div class="col th"><number name="interplanetary" v-model="interplanetary" title=""></number></div>
+						<div class="col th"><number name="interplanetary" v-model="interplanetary"></number></div>
 					</div>
 					<div v-if="interceptor > 0 || interplanetary > 0" class="row">
 						<div class="col th">

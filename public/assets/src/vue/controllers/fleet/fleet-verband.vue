@@ -52,7 +52,7 @@
 					<div class="table">
 						<div class="row">
 							<div class="col th">
-								<input type="text" name="name" :value="'AKS'+rand(100000, 999999999)" size="50" title="">
+								<input type="text" name="name" :value="'AKS'+rand(100000, 999999999)" size="50">
 								<br>
 								<input type="submit" value="Создать">
 							</div>
@@ -70,7 +70,7 @@
 						<div class="col th">
 							<router-form :action="'/fleet/verband/id/'+page['fleetid']+'/'">
 								<input type="hidden" name="action" value="changename">
-								<input type="text" name="name" :value="page['aks']['name']" size="50" title="">
+								<input type="text" name="name" :value="page['aks']['name']" size="50">
 								<br>
 								<input type="submit" value="Изменить">
 							</router-form>
@@ -85,7 +85,7 @@
 								</tr>
 								<tr>
 									<th width="50%" valign="top">
-										<select size="10" style="width:75%;" title="">
+										<select size="10" style="width:75%;">
 											<option v-for="user in page['users']">{{ user }}</option>
 											<option v-if="page['users'].length === 0">нет участников</option>
 										</select>
@@ -94,7 +94,7 @@
 										<router-form :action="'/fleet/verband/id/'+page['fleetid']+'/'">
 											<input type="hidden" name="action" value="adduser">
 											<div v-if="page['friends'].length > 0 || page['alliance'].length > 0">
-												<select name="user_id" size="10" style="width:75%;" title="">
+												<select name="user_id" size="10" style="width:75%;">
 													<option value="">-не выбрано-</option>
 													<optgroup v-if="page['friends'].length > 0" label="Список друзей">
 														<option v-for="user in page['friends']" :value="user['id']">{{ user['username'] }}</option>

@@ -8,6 +8,7 @@ import Vue from 'vue'
 import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false;
+Vue.config.devtools = true;
 
 Vue.use(Vuelidate)
 
@@ -132,5 +133,7 @@ const application = new Vue({
 	},
 	render: h => h(App)
 })
+
+window.application = application
 
 export default application
