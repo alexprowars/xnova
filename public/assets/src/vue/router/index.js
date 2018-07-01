@@ -38,6 +38,12 @@ const router = new VueRouter({
 		path: '/fleet*',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/fleet/fleet-index.vue')
 	}, {
+		path: '/overview/rename*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview-rename.vue')
+	}, {
+		path: '/overview/delete*',
+		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview-delete.vue')
+	}, {
 		path: '/overview*',
 		component: () => import(/* webpackChunkName: "app/view-main" */ './../controllers/overview/overview.vue')
 	}, {

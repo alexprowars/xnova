@@ -25,7 +25,7 @@
 				if (this.component !== null)
 					this.destroy();
 
-				if (this.html.length > 0)
+				if (this.html && this.html.length > 0)
 				{
 					setTimeout(() => {
 						this.evalJs(this.html);

@@ -11,7 +11,7 @@
 								<popup-link :to="'/messages/write/'+page['id']+'/'" :width="680" :title="page['username']+': отправить сообщение'">
 									<span class="sprite skin_m"></span>
 								</popup-link>&nbsp;
-								<router-link :to="'buddy/new/'+page['id']+'/'" title="Добавить в друзья">
+								<router-link :to="'/buddy/new/'+page['id']+'/'" title="Добавить в друзья">
 									<span class='sprite skin_b'></span>
 								</router-link>
 							</div>

@@ -7,8 +7,6 @@ import 'core-js/fn/promise';
 import Vue from 'vue'
 import Vuelidate from 'vuelidate'
 
-import { $get } from 'api'
-
 Vue.config.productionTip = false;
 
 Vue.use(Vuelidate)

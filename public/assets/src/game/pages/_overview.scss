@@ -21,3 +21,16 @@
 .page-overview .block .content {
 	padding: 5px;
 }
+
+.page-overview-planet-image input[type=radio] {
+	visibility: hidden;
+	position: absolute;
+}
+
+.page-overview-planet-image label {
+	border: 1px solid transparent;
+}
+
+.page-overview-planet-image input[type=radio]:checked + label {
+	border-color: #3abc55;
+}

@@ -8,12 +8,6 @@ const router = {
 			page: null
 		}
 	},
-	fetchData (url)
-	{
-		loadPage(url).then((data) => {
-			this.setPageData(data.page)
-		});
-	},
 	methods: {
 		setPageData (data) {
 			this.page = data
@@ -104,7 +98,11 @@ const router = {
 			next()
 
 			if (to.path !== data['url'])
-				app.$router.replace(data['url'])
+			{
+				Vue.nextTick(() => {
+					app.$router.replace(data['url'])
+				})
+			}
 			else
 			{
 				let pageData = JSON.parse(JSON.stringify(data.page));

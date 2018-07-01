@@ -285,14 +285,15 @@ class OverviewController extends Controller
 		$parse['number_1'] 		= mt_rand(1, 100);
 		$parse['number_2'] 		= mt_rand(1, 100);
 		$parse['number_3'] 		= mt_rand(1, 100);
-		$parse['number_check'] 	= $parse['number_1'] + $parse['number_2'] * $parse['number_3'];
+		$parse['number_check'] 	= md5($parse['number_1'] + $parse['number_2'] * $parse['number_3']);
 
 		$parse['id'] = $this->planet->id;
 		$parse['galaxy'] = $this->planet->galaxy;
 		$parse['system'] = $this->planet->system;
 		$parse['planet'] = $this->planet->planet;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$this->tag->setTitle('Покинуть колонию');
 		$this->showTopPanel(false);
 	}
@@ -363,7 +364,8 @@ class OverviewController extends Controller
 
 		$parse['planet_name'] = $this->planet->name;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$this->tag->setTitle('Переименовать планету');
 		$this->showTopPanel(false);
 	}

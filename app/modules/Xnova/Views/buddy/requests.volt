@@ -14,7 +14,7 @@
 		{% for id, list in parse['list'] %}
 			<tr>
 				<th width="20">{{ id + 1 }}</th>
-				<th><router-link to="{{ url('messages/write/'~list['userid']~'') }}">{{ list['username'] }}</router-link></th>
+				<th><router-link to="{{ url('messages/write/'~list['userid']~'') }}/">{{ list['username'] }}</router-link></th>
 				<th>{{ list['ally'] }}</th>
 				<th><router-link to="{{ url('galaxy/'~list['g']~'/'~list['s']~'/') }}">{{ list['g'] }}:{{ list['s'] }}:{{ list['p'] }}</router-link></th>
 				<th>{{ list['online'] }}</th>

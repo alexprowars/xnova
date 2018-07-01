@@ -29,7 +29,7 @@
 		</div>
 		<div class="row">
 			<div :style="'background-color:'+$root.getLang('MESSAGE_TYPES_BACKGROUNDS', item['type'])" class="col-12 b">
-				<div v-if="$parent.page['parser']">
+				<div v-if="$parent.$parent.page['parser']">
 					<text-viewer :text="item['text']"></text-viewer>
 				</div>
 				<div v-else v-html="item['text']"></div>

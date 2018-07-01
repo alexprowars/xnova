@@ -35,10 +35,12 @@
 						formData.append(item.name, item.value)
 				})
 
-				if (this.action.length === 0)
-					this.action = this.$route.fullPath
+				let action = this.action
 
-				$post(this.action, formData)
+				if (action.length === 0)
+					action = this.$route.fullPath
+
+				$post(action, formData)
 				.then((result) =>
 				{
 					app.$store.commit('PAGE_LOAD', result)

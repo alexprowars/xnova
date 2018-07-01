@@ -413,7 +413,7 @@ class StageThree
 			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Format::number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		// Баш контроль
-		if ($fleetMission == 1)
+		if ($fleetMission == 1 && !$protection)
 		{
 			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
 
@@ -457,7 +457,7 @@ class StageThree
 
 		if ($fleetMission == 3 && $targerUser['id'] != $controller->user->id && !$controller->user->isAdmin())
 		{
-			if (isset($NoobNoActive) && $NoobNoActive == 1)
+			if ($targerUser['onlinetime'] < (time() - 86400 * 7))
 				throw new RedirectException("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" к неактивному игроку.</b></span>", 'Ошибка', "/fleet/", 5);
 
 			$cnt = $controller->db->fetchColumn("SELECT COUNT(*) as num FROM game_log_transfers WHERE user_id = ".$controller->user->id." AND target_id = ".$targerUser['id']." AND time > ".(time() - 86400 * 7)."");

@@ -39,7 +39,7 @@ class UpdateTask extends ApplicationTask
 		$statUpdate = new UpdateStatistics();
 
 		//$statUpdate->inactiveUsers();
-		//$statUpdate->deleteUsers();
+		$statUpdate->deleteUsers();
 		$statUpdate->clearOldStats();
 		$statUpdate->update();
 		$statUpdate->addToLog();

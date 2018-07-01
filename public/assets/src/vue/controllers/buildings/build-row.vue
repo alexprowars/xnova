@@ -27,6 +27,12 @@
 							</svg>
 							{{ item.time|time }}
 						</div>
+						<div v-if="item.exp > 0" class="building-info-time" title="Опыт">
+							<svg class="icon">
+								<use xlink:href="#icon-exp"></use>
+							</svg>
+							{{ item.exp|number }} exp
+						</div>
 
 						<div class="building-info-upgrade">
 							<div v-if="$parent.fields_empty <= 0" class="negative">

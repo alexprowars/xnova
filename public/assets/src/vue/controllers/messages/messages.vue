@@ -93,7 +93,7 @@
 		},
 		methods: {
 			submitForm () {
-				$(this.$refs['form']).submit();
+				this.$refs['form'].send()
 			}
 		}
 	}
