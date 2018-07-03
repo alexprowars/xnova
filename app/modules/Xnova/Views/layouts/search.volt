@@ -1,24 +1,26 @@
-<router-form action="{{ url('search/') }}">
-	<table class="table">
-		<tr>
-			<td class="c">Поиск по игре</td>
-		</tr>
-		<tr>
-			<th>
-				<select name="type" title="">
-					<option value="playername" {{ parse['type'] == "playername" ? "selected" : "" }}>Логин игрока</option>
-					<option value="planetname" {{ parse['type'] == "planetname" ? "selected" : "" }}>Название планеты</option>
-					<option value="allytag" {{ parse['type'] == "allytag" ? "selected" : "" }}>Аббревиатура альянса</option>
-					<option value="allyname" {{ parse['type'] == "allyname" ? "selected" : "" }}>Название альянса</option>
-				</select>
-				&nbsp;&nbsp;
-				<input type="text" name="searchtext" value="{{ parse['searchtext'] }}" title="">
-				&nbsp;&nbsp;
-				<input type="submit" value="Поиск">
-			</th>
-		</tr>
-	</table>
-</router-form>
+<div class="block">
+	<div class="title">Поиск по игре</div>
+	<div class="content border-0">
+		<router-form action="{{ url('search/') }}">
+			<div class="table middle">
+				<div class="row">
+					<div class="col th">
+						<select name="type" title="">
+							<option value="playername" {{ parse['type'] == "playername" ? "selected" : "" }}>Логин игрока</option>
+							<option value="planetname" {{ parse['type'] == "planetname" ? "selected" : "" }}>Название планеты</option>
+							<option value="allytag" {{ parse['type'] == "allytag" ? "selected" : "" }}>Аббревиатура альянса</option>
+							<option value="allyname" {{ parse['type'] == "allyname" ? "selected" : "" }}>Название альянса</option>
+						</select>
+						&nbsp;&nbsp;
+						<input type="text" name="searchtext" value="{{ parse['searchtext'] }}" title="">
+						&nbsp;&nbsp;
+						<input type="submit" value="Поиск">
+					</div>
+				</div>
+			</div>
+		</router-form>
+	</div>
+</div>
 <div class="separator"></div>
 {% if parse['searchtext'] != '' %}
 	{% if parse['type'] is defined and (parse['type'] == 'playername' or parse['type'] == 'planetname') %}

@@ -2,6 +2,15 @@
 
 $lang['news'] = array(
 
+'<font color="lime">4.1</font>' => 'Made by AlexPro
+FIX: Исправление ошибок
+',
+
+'<font color="lime">4.0</font>' => 'Made by AlexPro
+CORE: Переписан интерфейс на Vue.js
+CORE: Переезд на публичный репозиторий <a href="https://github.com/alexprowars/xnova-game" target="_blank">GitHub</a>
+',
+
 '<font color="lime">3.0</font>' => 'Made by AlexPro
 CORE: Переезд на MVC фреймворк Phalcon
 ',

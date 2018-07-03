@@ -286,7 +286,7 @@ class UpdateStatistics extends Injectable
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = $this->db->query("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
+		$list = $this->db->query("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (game_users u, game_users_info ui) LEFT JOIN game_statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		$this->db->query("DELETE FROM game_statpoints WHERE `stat_type` = '1'");
 

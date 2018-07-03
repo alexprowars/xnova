@@ -60,7 +60,7 @@ class GitController extends Controller
 		            $author = explode(':', $line);
 		            $author = trim(end($author));
 
-		            $git_history[$last_hash]['author'] = $author;
+		            $git_history[$last_hash]['author'] = htmlspecialchars($author);
 		        }
 		        elseif (strpos($line, 'Date') !== false)
 				{

@@ -76,6 +76,14 @@ class User
 			}
 		}
 
+		$planets = $db->query('SELECT id FROM '.DB_PREFIX.'planets WHERE id_owner = ?', [$userId]);
+
+		while ($planet = $planets->fetch())
+		{
+			$db->delete(DB_PREFIX.'planets_buildings', 'planet_id = ?', [$planet['id']]);
+			$db->delete(DB_PREFIX.'planets_units', 'planet_id = ?', [$planet['id']]);
+		}
+
 		$db->delete(DB_PREFIX.'alliance_requests', 'u_id = ?', [$userId]);
 		$db->delete(DB_PREFIX.'statpoints', 'stat_type = 1 AND id_owner = ?', [$userId]);
 		$db->delete(DB_PREFIX.'planets', 'id_owner = ?', [$userId]);
@@ -95,6 +103,7 @@ class User
 		$db->delete(DB_PREFIX.'banned', 'who = ?', [$userId]);
 		$db->delete(DB_PREFIX.'log_ip', 'id = ?', [$userId]);
 		$db->delete(DB_PREFIX.'users_tech', 'user_id = ?', [$userId]);
+		$db->delete(DB_PREFIX.'users_quests', 'user_id = ?', [$userId]);
 
 		$update = [
 			'authlevel' => 0,
@@ -120,7 +129,8 @@ class User
 			'raids_lose' => 0,
 			'raids' => 0,
 			'bonus_multi' => 0,
-			'message_block' => 0
+			'message_block' => 0,
+			'credits' => 0
 		];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)

@@ -46,15 +46,15 @@ class XnsimController extends Controller
 		$techList = [109, 110, 111, 120, 121, 122];
 
 		$this->assets->addCss('assets/css/xnsim.css');
-		$this->assets->addJs('//yastatic.net/jquery/1.11.3/jquery.min.js');
+		$this->assets->addJs('assets/build/app/_0_global.js');
 
 		$this->view->setVar('techList', $techList);
 	}
 
 	public function reportAction ()
 	{
-		$this->assets->addCss('assets/css/bootstrap.css');
-		$this->assets->addCss('assets/css/style.css');
+		$this->assets->addCss('assets/build/app/bootstrap.css');
+		$this->assets->addCss('assets/build/app/style.css');
 
 		if ($this->request->hasQuery('sid'))
 		{

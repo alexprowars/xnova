@@ -14,7 +14,7 @@
 				</tr>
 			</table>
 			Ссылка на результат симуляции<br><br>
-			<input type="text" value="http://{{ _SERVER['SERVER_NAME'] }}/xnsim/report/?sid={{ sid }}" style="width:500px;padding:5px;text-align: center;" title="">
+			<input type="text" value="https://{{ _SERVER['SERVER_NAME'] }}/xnsim/report/?sid={{ sid }}" style="width:500px;padding:5px;text-align: center;" title="">
 			<br><br>
 			{% if statistics is defined %}
 				Результаты потерь после 50 симуляций:
