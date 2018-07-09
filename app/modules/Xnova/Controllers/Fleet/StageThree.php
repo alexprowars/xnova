@@ -413,7 +413,7 @@ class StageThree
 			throw new RedirectException("<span class=\"error\"><b>" . _getText('fl_nostoragespa') . Format::number($StorageNeeded - $FleetStorage) . "</b></span>", 'Ошибка', "/fleet/", 2);
 
 		// Баш контроль
-		if ($fleetMission == 1 && !$protection)
+		if ($fleetMission == 1)
 		{
 			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
 

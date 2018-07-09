@@ -54,9 +54,6 @@ class ImperiumController extends Controller
 			if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type]))
 				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type] = [];
 
-			if (!isset($fleet_fly[$fleet->splitTargetPosition() . ':' . $fleet->end_type]))
-				$fleet_fly[$fleet->splitTargetPosition() . ':' . $fleet->end_type] = [];
-
 			$fleetData = $fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr)
@@ -64,13 +61,7 @@ class ImperiumController extends Controller
 				if (!isset($fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId]))
 					$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] = 0;
 
-				if (!isset($fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId]))
-					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] = 0;
-
-				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] -= $shipArr['count'];
-
-				if ($fleet->target_owner == $this->user->id)
-					$fleet_fly[$fleet->splitTargetPosition().':'.$fleet->end_type][$shipId] += $shipArr['count'];
+				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] += $shipArr['count'];
 
 				if ($fleet->target_owner == $this->user->id)
 				{

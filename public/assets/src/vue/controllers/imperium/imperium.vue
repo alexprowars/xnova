@@ -88,7 +88,7 @@
 			<tr>
 				<td class="c" :colspan="rows" align="left">Постройки</td>
 			</tr>
-			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id < 100 && (total['elements'][id]['current'] > 0 || total['elements'][id]['build'] > 0)">
+			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id < 100">
 				<th>{{ name }}</th>
 				<th v-for="planet in page['planets']">
 					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0">
@@ -109,17 +109,17 @@
 			<tr>
 				<td class="c" :colspan="rows" align="left">Флот</td>
 			</tr>
-			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 200 && id < 300 && (total['elements'][id]['current'] > 0 || total['elements'][id]['build'] > 0 || total['elements'][id]['fly'] !== 0)">
+			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 200 && id < 300">
 				<th>{{ name }}</th>
 				<th v-for="planet in page['planets']">
-					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0 || planet['elements'][id]['fly'] !== 0">
+					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0 || planet['elements'][id]['fly'] > 0">
 						{{ planet['elements'][id]['current']|number }}
 					</span>
 					<span v-else>-</span>
 					<span v-if="planet['elements'][id]['build'] > 0" class="positive">
 						+ {{ planet['elements'][id]['build']|number }}
 					</span>
-					<span v-if="planet['elements'][id]['fly'] !== 0" class="neutral">
+					<span v-if="planet['elements'][id]['fly'] > 0" class="neutral">
 						+ {{ planet['elements'][id]['fly']|number }}
 					</span>
 				</th>
@@ -130,7 +130,7 @@
 					<span v-if="total['elements'][id]['build'] > 0" class="positive">
 						+ {{ total['elements'][id]['build']|number }}
 					</span>
-					<span v-if="total['elements'][id]['fly'] !== 0" class="neutral">
+					<span v-if="total['elements'][id]['fly'] > 0" class="neutral">
 						+ {{ total['elements'][id]['fly']|number }}
 					</span>
 				</th>
@@ -138,7 +138,7 @@
 			<tr>
 				<td class="c" :colspan="rows" align="left">Оборона</td>
 			</tr>
-			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 400 && id < 500 && (total['elements'][id]['current'] > 0 || total['elements'][id]['build'] > 0)">
+			<tr v-for="(name, id) in $root.getLang('TECH')" v-if="id > 400 && id < 600">
 				<th>{{ name }}</th>
 				<th v-for="planet in page['planets']">
 					<span v-if="planet['elements'][id]['current'] > 0 || planet['elements'][id]['build'] > 0">
@@ -245,7 +245,7 @@
 							result.elements[id].build += planet['elements'][id]['build']
 							result.elements[id].fly += planet['elements'][id]['fly']
 						}
-						else if (id > 400 && id < 500)
+						else if (id > 400 && id < 600)
 						{
 							result.elements[id].current += planet['elements'][id]['current']
 							result.elements[id].build += planet['elements'][id]['build']
