@@ -8,7 +8,6 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
@@ -88,8 +87,6 @@ class ImperiumController extends Controller
 			$planet->assignUser($this->user);
 			$planet->resourceUpdate(time(), true);
 
-			$planet->field_max = $planet->getMaxFields();
-
 			$row = [];
 
 			$row['id'] = (int) $planet->id;
@@ -101,7 +98,7 @@ class ImperiumController extends Controller
 				'planet' => (int) $planet->planet,
 			];
 			$row['fields'] = (int) $planet->field_current;
-			$row['fields_max'] = (int) $planet->field_max;
+			$row['fields_max'] = $planet->getMaxFields();
 
 			$row['resources'] = [];
 			$row['factor'] = [];

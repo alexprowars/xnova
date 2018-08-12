@@ -1,10 +1,10 @@
-<router-form action="{{ url('alliance/admin/edit/name/') }}">
+<router-form action="{{ url('alliance/admin/edit/tag/') }}">
 	<div class="block">
-		<div class="title">Введите новое название альянса</div>
+		<div class="title">Введите новую аббревиатуру альянса</div>
 		<div class="content table border-0 middle">
 			<div class="row">
 				<div class="col th">
-					<input type="text" name="name" value="{{ name }}">
+					<input type="text" name="tag" value="{{ tag }}">
 					<input type="submit" value="Изменить">
 				</div>
 			</div>

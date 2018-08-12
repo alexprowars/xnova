@@ -18,6 +18,8 @@ const $get = (url, data) =>
 		if (data === undefined)
 			data = {}
 
+		data['_'] = Math.random()
+
 		$api({
 			method: 'get',
 			url: url,

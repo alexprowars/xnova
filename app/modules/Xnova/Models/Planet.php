@@ -404,7 +404,7 @@ class Planet extends Model
 	{
 		$config = $this->getDI()->getShared('config');
 
-		$fields = $this->field_max;
+		$fields = (int) $this->field_max;
 
 		$fields += $this->getBuildLevel('terraformer') * 5;
 		$fields += $config->game->fieldsByMoonBase * $this->getBuildLevel('moonbase');

@@ -508,9 +508,12 @@ class AllianceController extends Controller
 			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
 				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
-			if ($this->request->hasPost('newname'))
+			if ($this->request->hasPost('name'))
 			{
-				$name = $this->request->getPost('newname', 'string', '');
+				$name = trim($this->request->getPost('name', 'string', ''));
+
+				if ($name == '')
+					throw new RedirectException("Введите новое название альянса", _getText('make_alliance'));
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
 					throw new ErrorException("Название альянса содержит запрещённые символы", _getText('make_alliance'));
@@ -520,15 +523,11 @@ class AllianceController extends Controller
 
 				$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "' WHERE ally_id = '" . $this->ally->id . "';");
 
-				throw new RedirectException('Название альянса изменено', '', '/alliance/admin/edit/name/');
+				throw new RedirectException('Название альянса изменено', 'Управление альянсом', '/alliance/admin/edit/name/');
 			}
 
-			$parse['question'] = 'Введите новое название альянса';
-			$parse['name'] = 'newname';
-			$parse['form'] = 'name';
-
 			$this->view->pick('alliance/rename');
-			$this->view->setVar('parse', $parse);
+			$this->view->setVar('name', $this->ally->name);
 
 			$this->tag->setTitle('Управление альянсом');
 			$this->showTopPanel(false);
@@ -538,23 +537,24 @@ class AllianceController extends Controller
 			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
 				throw new ErrorException(_getText('Denied_access'), _getText('Members_list'));
 
-			if ($this->request->hasPost('newtag'))
+			if ($this->request->hasPost('tag'))
 			{
-				$tag = $this->request->getPost('newtag', 'string', '');
+				$tag = trim($this->request->getPost('tag', 'string', ''));
+
+				if ($tag == '')
+					throw new RedirectException("Введите новую абревиатуру альянса", _getText('make_alliance'));
 
 				if (!preg_match('/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u', $tag))
 					throw new ErrorException("Абревиатура альянса содержит запрещённые символы", _getText('make_alliance'));
 
 				$this->ally->tag = addslashes(htmlspecialchars($tag));
 				$this->ally->update();
+
+				throw new RedirectException('Абревиатура альянса изменена', 'Управление альянсом', '/alliance/admin/edit/tag/');
 			}
 
-			$parse['question'] = 'Введите новую аббревиатуру альянса';
-			$parse['name'] = 'newtag';
-			$parse['form'] = 'tag';
-
-			$this->view->pick('alliance/rename');
-			$this->view->setVar('parse', $parse);
+			$this->view->pick('alliance/tag');
+			$this->view->setVar('tag', $this->ally->tag);
 
 			$this->tag->setTitle('Управление альянсом');
 			$this->showTopPanel(false);
