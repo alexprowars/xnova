@@ -11,6 +11,8 @@ Thumbs.db
 *.map
 *.lock
 *.json
+!package.json
+!composer.json
 *.phar
 public/mur/*
 public/assets/avatars/*

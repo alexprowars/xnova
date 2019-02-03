@@ -17,13 +17,10 @@
 	<meta property="og:site_name" content="Звездная Империя">
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.">
 
-	<script src="//dmc1acwvwny3.cloudfront.net/atatus.js"> </script>
-	<script type="text/javascript"> atatus.config('cab13a7ebb0e4722be9ea9f77d1ebfbf').install(); </script>
-
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
 
-	<!--[if lte IE 9]>
+	<!--[if lte IE 10]>
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all">
 		<script type="text/javascript" src="https://rawgit.com/codefucker/finalReject/master/reject/reject.min.js"></script>
 	<![endif]-->

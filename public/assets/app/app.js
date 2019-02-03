@@ -1,10 +1,3 @@
-import './../bootstrap/bootstrap.scss';
-import './../game/style.scss';
-
-import 'core-js/fn/object/assign';
-import 'core-js/fn/array/find';
-import 'core-js/fn/promise';
-
 import Vue from 'vue'
 import Vuelidate from 'vuelidate'
 
@@ -12,6 +5,20 @@ Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
 Vue.use(Vuelidate)
+
+import './styles/bootstrap/bootstrap.scss';
+import './app.scss';
+
+import 'core-js/fn/object/assign';
+import 'core-js/fn/array/find';
+import 'core-js/modules/es6.promise';
+import 'core-js/modules/es6.array.iterator';
+
+import 'jquery-confirm'
+require("jquery-toast-plugin");
+require("jquery-touchswipe");
+require("tooltipster");
+require("./../js/game.js");
 
 import App from './app.vue'
 import Lang from './js/lang'

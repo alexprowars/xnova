@@ -58,25 +58,25 @@ const router = new VueRouter({
 		component: FleetTwoController
 	}, {
 		path: '/fleet/shortcut/add*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
 	}, {
 		path: '/fleet/shortcut/view*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/fleet/fleet-shortcut-add.vue')
 	}, {
 		path: '/fleet/shortcut*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-shortcut.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/fleet/fleet-shortcut.vue')
 	}, {
 		path: '/fleet/verband*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/fleet/fleet-verband.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/fleet/fleet-verband.vue')
 	}, {
 		path: '/fleet*',
 		component: FleetIndexController
 	}, {
 		path: '/overview/rename*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/overview/overview-rename.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/overview/overview-rename.vue')
 	}, {
 		path: '/overview/delete*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/overview/overview-delete.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/overview/overview-delete.vue')
 	}, {
 		path: '/overview*',
 		component: OverviewController
@@ -106,10 +106,10 @@ const router = new VueRouter({
 		component: CreditsController
 	}, {
 		path: '/info*',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/info/info.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/info/info.vue')
 	}, {
 		path: '/tech/:tech_id',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/tech/tech-info.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/tech/tech-info.vue')
 	}, {
 		path: '/tech*',
 		component: TechController
@@ -124,19 +124,19 @@ const router = new VueRouter({
 		component: NotesController
 	}, {
 		path: '/race',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/race/race.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/race/race.vue')
 	}, {
 		path: '/alliance/chat',
 		component: AllianceChatController
 	}, {
 		path: '/alliance/stat/id/:ally_id',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players_stat.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/players/players_stat.vue')
 	}, {
 		path: '/players/stat/:user_id',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players_stat.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/players/players_stat.vue')
 	}, {
 		path: '/players/:user_id',
-		component: () => import(/* webpackChunkName: "app/view-other" */ './../controllers/players/players.vue')
+		component: () => import(/* webpackChunkName: "app-other" */ './../controllers/players/players.vue')
 	}, {
 		path: '/registration/',
 		component: RegistrationController

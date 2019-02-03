@@ -1,17 +1,19 @@
 const { VueLoaderPlugin } = require('vue-loader');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const ConcatPlugin = require('webpack-concat-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require('webpack');
 
 const env = process.env.NODE_ENV;
 
 const config = {
 	context: __dirname,
 	entry: {
-		'app/app': './public/assets/src/vue/app.js',
-		'admin/app': './public/assets/admin/src/app.js',
+		'app': './public/assets/app/app.js',
+		'admin': './public/assets/admin/src/app.js',
 	},
 	mode: env,
 	devtool: false,
@@ -24,22 +26,17 @@ const config = {
 	optimization: {
 	    minimize: env === 'production',
 		minimizer: [
-			new UglifyJsPlugin({
-				uglifyOptions: {
-					output: {
-						comments: false
-					}
-				}
-			})
+			new TerserPlugin({}),
+			new OptimizeCSSAssetsPlugin({})
 		],
-		runtimeChunk: 'single',
+		runtimeChunk: false,
 		splitChunks: {
 			minChunks: 2,
 			cacheGroups: {
 				default: false,
 				commons: {
-					test: /node_modules/,
-					name: "app/_1_vendor",
+					test: /node_modules\/(.*)\.js/,
+					name: "vendor",
 					chunks: "initial",
 					enforce: true,
 				}
@@ -58,6 +55,12 @@ const config = {
 				replace: 'false',
 			}
 		}, {
+			test: require.resolve('jquery'),
+			use: [{
+				loader: 'expose-loader',
+				options: '$'
+			}]
+		}, {
 			test: /\.vue$/,
 			use: [{
 				loader: 'vue-loader',
@@ -71,23 +74,16 @@ const config = {
 			test: /\.js$/,
 			exclude: /node_modules/,
 			loader: 'babel-loader'
-		},{
+		}, {
 			test: /\.scss$/,
 			use: [{
-					loader: 'file-loader',
+					loader: MiniCssExtractPlugin.loader,
 					options: {
-						name: '[name].css',
-						outputPath (file) {
-							return (file.includes('admin') ? 'admin' : 'app')+'/'+file
-						},
-						publicPath: './'
+						publicPath: '../'
 					}
-				}, {
-				   loader: 'extract-loader'
 				}, {
 					loader: "css-loader",
 					options: {
-						minimize: env === 'production',
 						url: false
 					}
 				}, {
@@ -98,7 +94,10 @@ const config = {
 						}
 					}
 				}, {
-					loader: "resolve-url-loader"
+					loader: "resolve-url-loader",
+					options: {
+						keepQuery: true
+					}
 				}, {
 					loader: 'sass-loader',
 					options: {
@@ -110,25 +109,16 @@ const config = {
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new ConcatPlugin({
-		    uglify: env === 'production',
-		    sourceMap: false,
-		    name: 'global',
-		    outputPath: '',
-		    fileName: 'app/_0_[name].js',
-		    filesToConcat: [
-		    	'jquery',
-				'jquery-confirm',
-				'jquery-toast-plugin',
-				'jquery-touchswipe',
-				'tooltipster',
-				'./public/assets/js/game.js'
-			],
-		    attributes: {
-		        async: true
-		    }
+		new MiniCssExtractPlugin({
+		  	filename: '[name].css'
 		}),
-		new CleanWebpackPlugin(['build/*.*', 'build/app/*.*', 'build/admin/*.*'], {
+		new webpack.ProvidePlugin({
+			$: 'jquery',
+			jQuery: 'jquery',
+			'window.jQuery': 'jquery',
+			'window.$': 'jquery'
+		}),
+		new CleanWebpackPlugin(['build/*.*'], {
 			root: __dirname+'/public/assets/',
 			verbose: true
 		}),
@@ -136,15 +126,18 @@ const config = {
 			analyzerPort: 1234
 		})*/
 	],
+	externals: {
+		"window": "window"
+	},
 	resolve: {
 		alias: {
-			'jquery': 'jquery/dist/jquery.js',
+			'jquery': 'jquery/dist/jquery.slim.js',
 			'chart': 'chart.js/dist/Chart.js',
 			'socket.io': 'socket.io-client/dist/socket.io.slim.js',
-			'api': __dirname+'/public/assets/src/vue/js/api.js',
-			'router-mixin': __dirname+'/public/assets/src/vue/router/component.js',
-			'app': __dirname+'/public/assets/src/vue/app.js',
-			'helpers': __dirname+'/public/assets/src/vue/js/helpers.js',
+			'api': __dirname+'/public/assets/app/js/api.js',
+			'router-mixin': __dirname+'/public/assets/app/router/component.js',
+			'app': __dirname+'/public/assets/app/app.js',
+			'helpers': __dirname+'/public/assets/app/js/helpers.js',
 		}
 	},
 	stats: {

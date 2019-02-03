@@ -108,34 +108,10 @@ class Controller extends PhalconController
 			}
 		}
 
-		$this->assets->addJs('assets/build/runtime.js', 'footer_js');
+		$this->assets->addJs('assets/build/app.js', 'footer_js');
+		$this->assets->addJs('assets/build/vendor.js', 'footer_js');
 
-		$files = new DirectoryIterator(ROOT_PATH.'/public/assets/build/app/');
-
-		foreach ($files as $file)
-		{
-			if (!$file->isFile())
-				continue;
-
-			if (strpos($file->getFilename(), '.css') !== false)
-			{
-				$sort = 100;
-
-				if (strpos($file->getFilename(), 'bootstrap') !== false)
-					$sort = 0;
-
-				$this->assets->addCss('assets/build/app/'.$file->getFilename(), $sort);
-			}
-			else
-			{
-				$sort = 100;
-
-				if (preg_match('_([0-9]+)_', $file->getFilename(), $match))
-					$sort = (int) $match[1];
-
-				$this->assets->addJs('assets/build/app/'.$file->getFilename(), ['collection' => 'footer_js', 'sort' => $sort]);
-			}
-		}
+		$this->assets->addCss('assets/build/app.css');
 
 		Vars::init();
 

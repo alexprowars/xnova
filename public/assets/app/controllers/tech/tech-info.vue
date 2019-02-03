@@ -3,7 +3,7 @@
 </template>
 
 <script>
-	import {ECOTree} from '../../../../js/techtree'
+	import {ECOTree} from '../../../js/techtree'
 	import router from 'router-mixin'
 
 	export default {

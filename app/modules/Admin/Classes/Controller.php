@@ -118,8 +118,7 @@ class Controller extends PhalconController
 		$this->assets->addJs('assets/admin/plugins/datatables/js/dataTables.bootstrap4.js');
 		$this->assets->addJs('assets/admin/plugins/perfect-scrollbar/js/perfect-scrollbar.jquery.js');
 
-		$this->assets->addJs('assets/build/runtime.js');
-		$this->assets->addJs('assets/build/admin/app.js');
+		$this->assets->addJs('assets/build/admin.js');
 
 		return true;
 	}

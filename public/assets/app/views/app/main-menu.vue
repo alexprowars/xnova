@@ -10,7 +10,7 @@
 
 		<div :class="{active: active}" class="menu-sidebar">
 			<ul>
-				<li is="main-menu-item" v-for="item in items" :item="item"></li>
+				<li is="main-menu-item" v-for="(item, i) in items" :item="item" :key="i"></li>
 			</ul>
 		</div>
 	</nav>

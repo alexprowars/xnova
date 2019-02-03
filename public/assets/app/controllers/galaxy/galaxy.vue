@@ -57,7 +57,7 @@
 					<td class="c">Действия</td>
 				</tr>
 
-				<tr is="galaxy-row" v-for="(item, index) in page['items']" :item="item" :i="index"></tr>
+				<tr is="galaxy-row" v-for="(item, index) in page['items']" :item="item" :key="index" :i="index"></tr>
 
 				<tr v-if="page['user']['allowExpedition']">
 					<th width="30">16</th>

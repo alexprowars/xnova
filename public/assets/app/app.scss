@@ -1,0 +1,32 @@
+@import "styles/game/base";
+
+@import "styles/game/pages/buildings";
+@import "styles/game/pages/chat";
+@import "styles/game/pages/techtree";
+@import "styles/game/pages/overview";
+@import "styles/game/pages/galaxy";
+@import "styles/game/pages/imperium";
+@import "styles/game/pages/sim";
+@import "styles/game/pages/fleet";
+@import "styles/game/pages/officiers";
+@import "styles/game/pages/notes";
+@import "styles/game/pages/index";
+@import "styles/game/pages/stat";
+@import "styles/game/pages/messages";
+@import "styles/game/pages/players";
+@import "styles/game/pages/info";
+
+@import "styles/game/components/tooltip";
+@import "styles/game/components/loader";
+@import "styles/game/components/tabs";
+@import "styles/game/components/confirm";
+@import "styles/game/components/editor";
+@import "styles/game/components/chat";
+
+@import "styles/game/report";
+@import "styles/game/sprite";
+@import "styles/game/media";
+@import "styles/game/mobile";
+
+@import "styles/plugins/confirm";
+@import "styles/plugins/toast";
