@@ -28,6 +28,11 @@ import StatController from './../controllers/stat/stat.vue'
 import ImperiumController from './../controllers/imperium/imperium.vue'
 import RegistrationController from './../controllers/index/index-registration.vue'
 import RemindController from './../controllers/index/index-remind.vue'
+import BannedController from './../controllers/banned/banned.vue'
+import ContactsController from './../controllers/contacts/contacts.vue'
+import RecordsController from './../controllers/records/records.vue'
+import SimController from './../controllers/sim/sim.vue'
+import TextController from './../controllers/text.vue'
 import HtmlController from './../controllers/html.vue'
 
 const router = new VueRouter({
@@ -143,6 +148,21 @@ const router = new VueRouter({
 	}, {
 		path: '/remind/',
 		component: RemindController
+	}, {
+		path: '/banned/',
+		component: BannedController
+	}, {
+		path: '/contacts/',
+		component: ContactsController
+	}, {
+		path: '/records/',
+		component: RecordsController
+	}, {
+		path: '/sim/',
+		component: SimController
+	}, {
+		path: '/content/*',
+		component: TextController
 	}, {
 		path: '/',
 		component: IndexController

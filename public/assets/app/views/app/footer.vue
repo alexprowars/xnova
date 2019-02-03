@@ -10,7 +10,7 @@
 					<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 					<router-link to="/banned/">Тёмные</router-link>|
 					<a href="//vk.com/xnova_game" target="_blank">ВК</a>|
-					<router-link to="/contact/">Контакты</router-link>|
+					<router-link to="/contacts/">Контакты</router-link>|
 					<router-link to="/content/help/">Новичкам</router-link>|
 					<router-link to="/content/agb/">Правила</router-link>|
 					<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a>/<a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>
@@ -22,7 +22,7 @@
 			<div class="col-12 text-center">
 				<a href="http://forum.xnova.su/" target="_blank">Форум</a>|
 				<router-link to="/banned/">Тёмные</router-link>|
-				<router-link to="/contact/">Контакты</router-link>|
+				<router-link to="/contacts/">Контакты</router-link>|
 				<router-link to="/content/help/">Новичкам</router-link>|
 				<router-link to="/content/agb/">Правила</router-link>
 			</div>

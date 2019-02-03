@@ -13,6 +13,7 @@ const config = {
 	context: __dirname,
 	entry: {
 		'app': './public/assets/app/app.js',
+		'sim': './public/assets/app/sim.js',
 		'admin': './public/assets/admin/src/app.js',
 	},
 	mode: env,

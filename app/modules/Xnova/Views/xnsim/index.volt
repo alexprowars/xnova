@@ -145,7 +145,7 @@
 <thead>
 	<tr>
 		<th class="spezial"> XNova SIM </th>
-		<th colspan="11" class="spezial">
+		<th colspan="20" class="spezial">
 			<select name="Att" SIZE="1" onchange='vis_cols("TD","gr",0,this.value);' title="">
 				{% for i in 1..config.game.get('maxSlotsInSim', 5) %}
 					<option value="{{ i }}">{{ i }}</option>
@@ -176,7 +176,7 @@
 	</tr>
 </thead>
 <tr>
-	<td colspan="12" class="spezial" id="tech_td"><b>Исследования и офицеры</b></td>
+	<td colspan="21" class="spezial" id="tech_td"><b>Исследования и офицеры</b></td>
 </tr>
 {% for techId in techList %}
 	<tr align=center>
@@ -188,7 +188,7 @@
 {% endfor %}
 
 <tr>
-	<td colspan="12" class="spezial" id="fleet_td"><b>Флот</b></td>
+	<td colspan="21" class="spezial" id="fleet_td"><b>Флот</b></td>
 </tr>
 
 {% for fleetId in registry.reslist['fleet'] %}
@@ -207,7 +207,7 @@
 {% endfor %}
 
 <tr>
-	<td colspan="12" class="spezial" id="def_td"><b>Защита</b></td>
+	<td colspan="21" class="spezial" id="def_td"><b>Защита</b></td>
 </tr>
 	{% for fleetId in registry.reslist['defense'] %}
 		<tr align=center>
@@ -232,7 +232,7 @@
 		{% endfor %}
   	</tr>
     <tr>
-     	<td colspan="12" align="center">
+     	<td colspan="21" align="center">
     	<input name="SendBtn" type="submit" id="SendBtn" value="Расчитать!" onclick="opt()">
     </tr>
 </table>
@@ -251,26 +251,7 @@
 
 <center>Made by AlexPro for <a href="http://xnova.su/" target="_blank">XNova Game</a></center>
 
-	<!-- Yandex.Metrika counter -->
-	<script type="text/javascript">
-	(function (d, w, c) {
-		(w[c] = w[c] || []).push(function() {
-			try {
-				w.yaCounter25961143 = new Ya.Metrika({id:25961143});
-			} catch(e) { }
-		});
-
-	    var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); };
-	    s.type = "text/javascript";
-	    s.async = true;
-	    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
-
-	    if (w.opera == "[object Opera]") {
-	        d.addEventListener("DOMContentLoaded", f, false);
-	    } else { f(); }
-	})(document, window, "yandex_metrika_callbacks");
-	</script>
-	<!-- /Yandex.Metrika counter -->
+{{ partial('shared/counters') }}
 
 </body>
 </html>

@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -36,11 +37,18 @@ class SimController extends Controller
 	{
 		$data = explode(";", $data);
 
-		define('MAX_SLOTS', $this->config->game->get('maxSlotsInSim', 5));
-		
+		$maxSlots = $this->config->game->get('maxSlotsInSim', 5);
+
 		$parse = [];
-		$parse['slot_0'] = [];
-		$parse['slot_'.MAX_SLOTS] = [];
+		$parse['slots'] = [
+			'max' => $maxSlots,
+			'attackers' => [
+				0 => []
+			],
+			'defenders' => [
+				0 => []
+			],
+		];
 
 		$parse['tech'] = [109, 110, 111, 120, 121, 122];
 		
@@ -52,7 +60,7 @@ class SimController extends Controller
 				$Count = explode("!", $Element[1]);
 
 				if (isset($Count[1]))
-					$parse['slot_'.MAX_SLOTS][$Element[0]] = ['c' => $Count[0], 'l' => $Count[1]];
+					$parse['slots']['defenders'][0][$Element[0]] = ['c' => $Count[0], 'l' => $Count[1]];
 			}
 		}
 		
@@ -61,13 +69,13 @@ class SimController extends Controller
 		foreach ($res AS $id)
 		{
 			if ($this->planet->getUnitCount($id) > 0)
-				$parse['slot_0'][$id] = ['c' => $this->planet->getUnitCount($id)];
+				$parse['slots']['attackers'][0][$id] = ['c' => $this->planet->getUnitCount($id)];
 		
 			if ($this->user->getTechLevel($id) > 0)
-				$parse['slot_0'][$id] = ['c' => $this->user->getTechLevel($id)];
+				$parse['slots']['attackers'][0][$id] = ['c' => $this->user->getTechLevel($id)];
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Симулятор');
 		$this->showTopPanel(false);

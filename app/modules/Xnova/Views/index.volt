@@ -18,7 +18,6 @@
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.">
 
 	{{ assets.outputCss() }}
-	{{ assets.outputJs() }}
 
 	<!--[if lte IE 10]>
 		<link rel="stylesheet" href="https://rawgit.com/codefucker/finalReject/master/reject/reject.css" media="all">
@@ -46,8 +45,7 @@
 
 	{{ partial('shared/counters') }}
 
-	{{ assets.outputJs('footer_js') }}
-	{{ assets.outputCss('footer_css') }}
+	{{ assets.outputJs() }}
 
 	{{ partial('shared/svg') }}
 </body>

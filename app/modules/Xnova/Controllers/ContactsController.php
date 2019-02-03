@@ -10,18 +10,14 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
- * @RoutePrefix("/contact")
+ * @RoutePrefix("/contacts")
  * @Route("/")
  */
-class ContactController extends Controller
+class ContactsController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-
 	function indexAction ()
 	{
 		Lang::includeLang('contact', 'xnova');
@@ -33,7 +29,7 @@ class ContactController extends Controller
 		while ($Ops = $GameOps->fetch())
 		{
 			$contacts[] = [
-				'id' 	=> $Ops['id'],
+				'id' 	=> (int) $Ops['id'],
 				'name' 	=> $Ops['username'],
 				'auth' 	=> _getText('user_level', $Ops['authlevel']),
 				'mail' 	=> $Ops['email'],
@@ -41,7 +37,9 @@ class ContactController extends Controller
 			];
 		}
 
-		$this->view->setVar('contacts', $contacts);
+		Request::addData('page', [
+			'items' => $contacts
+		]);
 
 		$this->tag->setTitle(_getText('ctc_title'));
 		$this->showTopPanel(false);

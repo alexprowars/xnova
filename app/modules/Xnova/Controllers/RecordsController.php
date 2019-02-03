@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Friday\Core\Options;
 use Xnova\Format;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/records")
@@ -21,11 +22,6 @@ use Xnova\Controller;
  */
 class RecordsController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-	
 	public function indexAction ()
 	{
 		$RecordsArray = [];
@@ -87,11 +83,11 @@ class RecordsController extends Controller
 		];
 
 		$parse = [
-			'Records'	=> $Records,
-			'update'	=> Options::get('stat_update'),
+			'items' => $Records,
+			'update' => Options::get('stat_update'),
 		];
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Таблица рекордов');
 		$this->showTopPanel(false);

@@ -46,7 +46,7 @@
 				<a href="//vkontakte.ru/xnova_game" title="Официальная группа ВКонтакте" target="_blank">ВКонтакте</a>  |
 				<router-link to="/content/agb/">Правила</router-link>  |
 				<router-link to="/banned/">Блокировки</router-link>  |
-				<router-link to="/contact/">Администрация</router-link>
+				<router-link to="/contacts/">Администрация</router-link>
 			</div>
 			<div class="copy">
 				<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a> / <a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>&nbsp;&nbsp;&nbsp;&copy; {{ (new Date).getFullYear() }} XNOVA.SU

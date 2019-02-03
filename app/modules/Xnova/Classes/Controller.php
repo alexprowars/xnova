@@ -108,8 +108,8 @@ class Controller extends PhalconController
 			}
 		}
 
-		$this->assets->addJs('assets/build/app.js', 'footer_js');
-		$this->assets->addJs('assets/build/vendor.js', 'footer_js');
+		$this->assets->addJs('assets/build/app.js');
+		$this->assets->addJs('assets/build/vendor.js');
 
 		$this->assets->addCss('assets/build/app.css');
 
@@ -160,7 +160,7 @@ class Controller extends PhalconController
 			{
 				$this->config->view->offsetSet('socialIframeView', 1);
 
-				$this->assets->addJs('https://vk.com/js/api/xd_connection.js', 'footer');
+				$this->assets->addJs('https://vk.com/js/api/xd_connection.js');
 			}
 
 			if ($this->cookies->has($this->config->cookie->prefix."_full") && $this->cookies->get($this->config->cookie->prefix."_full") == 'Y')

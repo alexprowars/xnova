@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/content")
@@ -35,7 +36,9 @@ class ContentController extends Controller
 		if (!isset($content['id']))
 			throw new ErrorException('Страница не найдена!');
 
-		$this->view->setVar('html', stripslashes($content['html']));
+		Request::addData('page', [
+			'html' => stripslashes($content['html'])
+		]);
 
 		$this->tag->setTitle($content['title']);
 		$this->showTopPanel(false);

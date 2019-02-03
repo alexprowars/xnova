@@ -22,11 +22,6 @@ use Xnova\Controller;
  */
 class BuddyController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-
 	public function newAction ($userId)
 	{
 		$u = $this->db->query("SELECT id, username FROM game_users WHERE id = '" . intval($userId) . "'")->fetch();

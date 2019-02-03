@@ -21,11 +21,6 @@ use Xnova\Request;
  */
 class CreditsController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-	
 	public function indexAction ()
 	{
 		$parse = [];
