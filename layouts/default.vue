@@ -1,5 +1,5 @@
 <template>
-	<div id="application" :class="['set_'+$store.state.route.controller]">
+	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]">
 
 		<AppHeader v-if="$store.state['view']['header']"></AppHeader>
 
@@ -91,7 +91,8 @@
 		data ()
 		{
 			return {
-				sidebar: ''
+				sidebar: '',
+				loader: false,
 			}
 		},
 		head () {
@@ -167,6 +168,7 @@
 		mounted ()
 		{
 			this.init();
+			this.loader = true;
 		}
 	}
 </script>

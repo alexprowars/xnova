@@ -1,0 +1,11 @@
+.page-switch-leave-active, .page-switch-enter-active{transition: opacity .1s linear;}
+
+.page-switch-leave-active{opacity: 1;}
+.page-switch-leave-to{opacity: 0;}
+
+.page-switch-enter-active{opacity: 0;}
+.page-switch-enter-to{opacity: 1;}
+
+.preload * {
+	transition: none !important;
+}

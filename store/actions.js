@@ -22,8 +22,24 @@ export default {
 			}
 		});
 	},
-	loadPage ({ commit }, url)
+	loadPage ({ state, commit }, url)
 	{
+		if (state.page !== null)
+		{
+			let page = JSON.parse(JSON.stringify(state.page))
+
+			commit('PAGE_LOAD', {
+				page: null
+			})
+
+			return new Promise((resolve) =>
+			{
+				return resolve({
+					page
+				});
+			})
+		}
+
 		commit('setLoadingStatus', true)
 
 		return this.$get(url).then((data) =>
@@ -34,6 +50,31 @@ export default {
 				this.$router.replace(data['url'])
 			else
 			{
+				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['popup'] !== '')
+				{
+					$.confirm({
+						title: 'Обучение',
+						content: data['tutorial']['popup'],
+						confirmButton: 'Продолжить',
+						cancelButton: false,
+						backgroundDismiss: false,
+						confirm: () =>
+						{
+							if (data['tutorial']['url'] !== '')
+								this.$router.push(data['tutorial']['url']);
+						}
+					});
+				}
+
+				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['toast'] !== '')
+				{
+					$.toast({
+						text: data['tutorial']['toast'],
+						icon: 'info',
+						stack: 1
+					});
+				}
+
 				let page = JSON.parse(JSON.stringify(data.page))
 
 				delete data.page

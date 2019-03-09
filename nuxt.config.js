@@ -29,10 +29,12 @@ module.exports = {
 		'~/plugins/components.js',
 		{src: '~/plugins/jquery.js', ssr: false},
 		{src: '~/plugins/modal.js', ssr: false},
+		{src: '~/plugins/router.js', ssr: false}
 	],
 	router: {
 		base: '/',
 		middleware: 'router',
+		prefetchLinks: false,
 		extendRoutes (routes, resolve)
 		{
 			routes.push({
@@ -89,6 +91,9 @@ module.exports = {
 					options: 'jQuery'
 				}]
 			});
+
+			config.resolve.alias['jquery'] = 'jquery/dist/jquery.slim.js'
+			config.resolve.alias['socket.io-client'] = 'socket.io-client/dist/socket.io.slim.js'
 
 			if (isClient)
 			{

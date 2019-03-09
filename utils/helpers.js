@@ -1,6 +1,3 @@
-//import {$get} from 'api'
-//import app from 'app'
-
 export function addScript (url)
 {
 	let script = document.createElement('script');
@@ -25,62 +22,35 @@ export function getLocation (href)
     }
 }
 
-const loadPage = (url) =>
+export function raport_to_bb (raport)
 {
-	return new Promise((resolve, reject) =>
-	{
-		if (app.request_block)
-			return reject('request block');
+	raport = $('#'+raport);
 
-		app.request_block = true;
-		app.loader = true;
+	var txt = raport.html();
 
-		app.request_block_timer = setTimeout(() => {
-			app.request_block = false
-		}, 500);
+	txt = txt.replace(/<tbody>/gi, "");
+	txt = txt.replace(/<\/tbody>/gi, "");
+	txt = txt.replace(/<tr>/gi, "[tr]");
+	txt = txt.replace(/<\/tr>/gi, "[\/tr]");
+	txt = txt.replace(/<td>/gi, "[td]");
+	txt = txt.replace(/<\/td>/gi, "[\/td]");
+	txt = txt.replace(/<\/table>/gi, "[\/table]");
+	txt = txt.replace(/<th>/gi, "[th]");
+	txt = txt.replace(/<th width="40%">/gi, "[th(w=40)]");
+	txt = txt.replace(/<th width="10%">/gi, "[th(w=10)]");
+	txt = txt.replace(/<\/th>/gi, "[\/th]");
+	txt = txt.replace(/<td class="c" colspan="4">/gi, "[td(cl=c)(cs=4)]");
+	txt = txt.replace(/<td colspan="4" class="c">/gi, "[td(cl=c)(cs=4)]");
+	txt = txt.replace(/<table width="100%">/gi, "[table(w=100)]");
+	txt = txt.replace(/<table width="100%" cellspacing="1">/gi, "[table(w=100)]");
+	txt = txt.replace(/<table cellspacing="1" width="100%">/gi, "[table(w=100)]");
+	txt = txt.replace(/<th width="220" align="right">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th align="right" width="220">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th width="220">/gi, "[th(w=33)]");
+	txt = txt.replace(/<th width="25%">/gi, "[th(w=25)]");
+	txt = txt.replace(/<br>/gi, " ");
+	txt = txt.replace(/<\/a>/gi, "[\/url]");
+	txt = txt.replace(/<a href="(.*?)">/gi, "[url=https://x.xnova.su$1]");
 
-		$get(url).then((data) =>
-		{
-			if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['popup'] !== '')
-			{
-				$.confirm({
-					title: 'Обучение',
-					content: data['tutorial']['popup'],
-					confirmButton: 'Продолжить',
-					cancelButton: false,
-					backgroundDismiss: false,
-					confirm: () =>
-					{
-						if (data['tutorial']['url'] !== '')
-							app.$router.push(data['tutorial']['url']);
-					}
-				});
-			}
-
-			if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['toast'] !== '')
-			{
-				$.toast({
-					text: data['tutorial']['toast'],
-					icon: 'info',
-					stack: 1
-				});
-			}
-
-			resolve(data)
-		}, () => {
-			reject();
-			document.location = url;
-		})
-		.then(() =>
-		{
-			app.loader = false;
-			app.request_block = false;
-
-			clearTimeout(app.request_block_timer);
-		})
-	});
-}
-
-export {
-	loadPage
+	raport.html(txt);
 }

@@ -5,9 +5,6 @@
 </template>
 
 <script>
-	//import { $post } from 'api'
-	//import app from 'app'
-
 	export default {
 		name: "router-form",
 		props: {

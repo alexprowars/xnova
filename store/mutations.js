@@ -6,12 +6,7 @@ export default {
 		for (let key in data)
 		{
 			if (data.hasOwnProperty(key))
-			{
 				state[key] = data[key];
-
-				//if (key === 'page')
-				//	state.loaded = false
-			}
 		}
 	},
 	setLoadingStatus (state, status) {

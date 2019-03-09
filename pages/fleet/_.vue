@@ -1,5 +1,5 @@
 <template>
-	<div class="page-fleet">
+	<div v-if="page" class="page-fleet">
 		<div class="page-fleet-fly block">
 			<div class="title">
 				<div class="row">

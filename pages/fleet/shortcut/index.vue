@@ -14,7 +14,7 @@
 					</div>
 					<div class="row">
 						<div class="col c">
-							<nuxt-link to="/fleet/shortcut/add/new/" class="button">Добавить</nuxt-link>
+							<nuxt-link to="/fleet/shortcut/add/" class="button">Добавить</nuxt-link>
 							<nuxt-link to="/fleet/" class="button">Назад</nuxt-link>
 						</div>
 					</div>

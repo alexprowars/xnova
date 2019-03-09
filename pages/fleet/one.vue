@@ -1,5 +1,5 @@
 <template>
-	<router-form action="/fleet/two/">
+	<router-form v-if="page" action="/fleet/two/">
 		<input v-for="ship in page.ships" type="hidden" :name="'ship['+ship.id+']'" :value="ship['count']">
 		<div class="table">
 			<div class="row">
