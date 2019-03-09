@@ -186,7 +186,7 @@ class Controller extends PhalconController
 
 					$menu[] = [
 						'id' => $code,
-						'url' => $this->url->get($data[1]),
+						'url' => $this->url->get($data[1], null, null, '/'),
 						'text' => trim($data[0]),
 						'new' => isset($data[3])
 					];

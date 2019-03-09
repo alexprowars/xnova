@@ -1,33 +1,24 @@
 <template>
 	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]">
-
-		<AppHeader v-if="$store.state['view']['header']"></AppHeader>
-
+		<AppHeader v-if="$store.state['view']['header']"/>
 		<main>
-			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"></MainMenu>
-
-			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"></PlanetsList>
-
+			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"/>
+			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"/>
 			<div class="main-content">
-
-				<PlanetPanel v-if="$store.state['view']['resources']" :planet="$store.state.resources"></PlanetPanel>
-
-				<MessagesRow v-for="(item, i) in messages" :key="i" :item="item"></MessagesRow>
-
+				<PlanetPanel v-if="$store.state['view']['resources']"/>
+				<MessagesRow v-for="(item, i) in messages" :key="i" :item="item"/>
 				<div class="main-content-row">
-					<error-message v-if="error" :data="error"></error-message>
-
-					<nuxt></nuxt>
+					<error-message v-if="error" :data="error"/>
+					<nuxt/>
 				</div>
-
 			</div>
 		</main>
 
 		<no-ssr>
-			<chat :visible="$store.state.route.controller !== 'chat' && $store.state['view']['menu'] && $store.state.view.chat"></chat>
+			<chat v-if="$store.getters.isAuthorized()" :visible="$store.state.route.controller !== 'chat' && $store.state['view']['menu'] && $store.state.view.chat"></chat>
 		</no-ssr>
 
-		<AppFooter v-if="$store.state['view']['header']"></AppFooter>
+		<AppFooter v-if="$store.state['view']['header']"/>
 
 		<div id="ajaxLoader" :class="{active: $store.state.loading}"></div>
 

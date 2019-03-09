@@ -602,7 +602,7 @@ class OverviewController extends Controller
 			foreach ($queueArray AS $item)
 			{
 				$build_list[$item->time_end][] = [
-					$item->time_end,
+					(int) $item->time_end,
 					$item->planet_id,
 					$planetsData[$item->planet_id]->name,
 					_getText('tech', $item->object_id).' ('.$this->user->getTechLevel($item->object_id).' -> '.($this->user->getTechLevel($item->object_id) + 1).')'

@@ -11,5 +11,13 @@ export default {
 	},
 	setLoadingStatus (state, status) {
 		state.loading = status
+	},
+	setPlanetResources (state, resources)
+	{
+		for (let res in resources)
+		{
+			if (resources.hasOwnProperty(res))
+				state.resources[res]['current'] = resources[res]
+		}
 	}
 }

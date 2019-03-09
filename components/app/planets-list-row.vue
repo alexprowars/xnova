@@ -27,8 +27,12 @@
 			changeItem ()
 			{
 				let path = window.location.pathname.replace(this.$store.state.path, '').split('/');
+
+				if (path[0] === '')
+					path.splice(0, 1)
+
 				let url = '/'+path[0]+(path[1] !== undefined && path[1] !== '' && path[0] !== 'galaxy' && path[0] !== 'fleet' ? '/'+path[1] : '')+'/?chpl='+this.item.id;
-	
+
 				this.$router.replace(url);
 			}
 		}

@@ -112,8 +112,7 @@
 
 	export default {
 		name: "planet-panel",
-		props: ['planet'],
-		data: function()
+		data ()
 		{
 			return {
 				updated: 0,
@@ -122,6 +121,11 @@
 		},
 		components: {
 			PanelResource
+		},
+		computed: {
+			planet () {
+				return this.$store.state.resources;
+			}
 		},
 		methods:
 		{
@@ -139,6 +143,7 @@
 					return;
 
 				this.updated = (new Date).getTime();
+				let resources = {};
 
 				['metal', 'crystal', 'deuterium'].forEach((res) =>
 				{
@@ -147,8 +152,11 @@
 
 					let power = (this.planet[res]['current'] >= this.planet[res]['max']) ? 0 : 1;
 
-					this.planet[res]['current'] += ((this.planet[res]['production'] / 3600) * power * factor);
+					resources[res] = this.planet[res]['current'] + ((this.planet[res]['production'] / 3600) * power * factor);
 				});
+
+				if (Object.keys(resources).length > 0)
+					this.$store.commit('setPlanetResources', resources)
 
 				this.timer = setTimeout(this.update, 1000);
 			}
