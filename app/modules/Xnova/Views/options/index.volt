@@ -10,7 +10,7 @@
 					</th>
 					<th>
 						{% if parse['opt_usern_datatime'] < (time() - 86400) %}
-							<input name="username" size="20" value="{{ parse['opt_usern_data'] }}" type="text" title="">
+							<input name="username" size="20" value="{{ parse['opt_usern_data'] }}" type="text" title="" autocomplete="username">
 						{% else %}
 							{{ parse['opt_usern_data'] }}
 						{% endif %}
@@ -20,15 +20,15 @@
 					{% if is_email(parse['opt_mail_data']) %}
 						<tr>
 							<th>Старый пароль</th>
-							<th><input name="password" size="20" value="" type="password" title=""></th>
+							<th><input name="password" size="20" value="" type="password" title="" autocomplete="current-password"></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (мин. 8 Знаков)</th>
-							<th><input name="new_password" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password" size="20" maxlength="40" type="password" title="" autocomplete="new-password"></th>
 						</tr>
 						<tr>
 							<th>Новый пароль (повтор)</th>
-							<th><input name="new_password_confirm" size="20" maxlength="40" type="password" title=""></th>
+							<th><input name="new_password_confirm" size="20" maxlength="40" type="password" title="" autocomplete="new-password"></th>
 						</tr>
 					{% endif %}
 					<tr>

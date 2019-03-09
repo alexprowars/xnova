@@ -1,0 +1,354 @@
+
+body[page=index] {
+	margin: 0;
+	padding: 0;
+	color: #ffffff;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 13px;
+	width: 100%;
+	height: 100%;
+	background: #000000 url('/images/main_background.jpg') center no-repeat;
+}
+
+.page-index {
+
+	.right {
+		width: 50%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 10px;
+	}
+
+	.right .middle {
+		height: 132px;
+		position: absolute;
+		top: 40%;
+		margin: -66px 0 0 0;
+		width: 100%;
+	}
+
+	.right .middle .text {
+		margin: 0 auto;
+		max-width: 600px;
+	}
+
+	.left {
+		width: 50%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 10px;
+	}
+
+	.left .middle {
+		height: 78px;
+		position: absolute;
+		top: 40%;
+		margin: -39px 0 0 0;
+		width: 100%;
+	}
+
+	.left .middle .loginform {
+		width: 362px;
+		margin: 0 auto;
+	}
+
+	.bottom {
+		position: absolute;
+		height: 27px;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		background: url('/images/main_bottom.png') repeat-x;
+	}
+
+	.bottom .desk {
+		color: #848484;
+		position: absolute;
+		left: 7px;
+		top: 7px;
+		font-size: 11px;
+	}
+
+	.bottom .nav {
+		color: #ffffff;
+		position: absolute;
+		left: 7px;
+		right: 7px;
+		top: 7px;
+		text-align: center;
+		font-size: 11px;
+	}
+
+	.bottom .copy {
+		color: #848484;
+		position: absolute;
+		right: 7px;
+		top: 7px;
+		font-size: 11px;
+	}
+
+	.bottom a {
+		color: #ffffff;
+	}
+
+	.bottom a:hover {
+		color: #feefaa;
+	}
+
+	#reg_button {
+		margin-top: 18px;
+		text-align: center;
+		background: #ffb76b;
+		background: linear-gradient(to bottom, #ffb76b 0%, #ffa73d 50%, #ff7c00 51%, #ff7f04 100%);
+		height: 40px;
+		line-height: 40px;
+		width: 150px;
+		color: #111;
+		border: 1px solid #000;
+		font-size: 16px;
+		border-radius: 5px;
+		font-weight: bold;
+		font-family: Arial;
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	#reg_button a {
+		text-decoration: none;
+		color: #111;
+	}
+
+	#reg_button img {
+		cursor: pointer;
+	}
+
+	.login {
+		font-size: 19px;
+	}
+
+	.login-inputs {
+		margin-top: 6px;
+	}
+
+	.input-text {
+		display: inline-block;
+		background: #000;
+		border: 1px solid #464545;
+		width: 115px;
+		color: #ffffff;
+		padding: 3px 3px;
+		margin-right: 9px;
+		font-size: 1.1rem;
+		text-align: left;
+	}
+
+	.input-submit {
+		display: inline-block;
+		background: #fcfcfc;
+		width: 92px;
+		min-width: auto;
+		color: #333;
+		cursor: pointer;
+		border: 1px solid #000;
+	}
+
+	.input-submit:hover {
+		color: #727272;
+	}
+
+	.remember {
+		margin-top: 5px;
+	}
+
+	.lost-pass {
+		padding-left: 145px;
+	}
+
+	.lost-pass a {
+		color: #ffffff;
+		text-decoration: none;
+		border-bottom: 1px dotted #ffffff;
+	}
+
+	.lost-pass a:hover {
+		color: #feefaa;
+		text-decoration: none;
+		border-bottom: 1px dotted #feefaa;
+	}
+
+	textarea, input {
+		outline: none;
+		min-width: auto;
+	}
+
+	a {
+		outline: none;
+		color: #ffebc7;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	a:focus {
+		-moz-outline-style: none;
+	}
+
+	h1 {
+		font-size: 20px;
+		font-weight: normal;
+		margin: 0;
+		text-align: left;
+	}
+
+	p {
+		margin: 12px 0 0 0;
+		font-weight: normal;
+		font-size: 1.2rem;
+	}
+
+	.smm {
+		text-align: center;
+		position: absolute;
+		bottom: 12%;
+		height: 24px;
+		width: 100%;
+		margin: -12px 0 0 0;
+	}
+
+	#mask {
+		display: none;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: #000000;
+	}
+
+	.sm {
+		margin-top: 14px;
+	}
+
+	#uLogin div {
+		display: none;
+	}
+
+	.remember input {
+		margin-left: 0;
+	}
+
+	.table {
+		width: 100%;
+		border-spacing: 0;
+		border-collapse: collapse;
+	}
+
+	th {
+		text-align: center;
+		padding: 3px 3px;
+		background: #354566;
+		color: #bebebe;
+		border: 1px solid #415683;
+		font-size: 10px !important;
+	}
+
+	.text-left {
+		text-align: left;
+	}
+
+	.form input[type=submit], .form input[type=button] {
+		background: #2b354e;
+		border: 1px solid #415683;
+		color: #ffffff;
+		padding: 4px 10px;
+		margin: 1px;
+		font-size: 12px !important;
+		font-weight: normal;
+	}
+
+	.form input[type=text], .form input[type=password] {
+		background: #2b354e;
+		border: 1px solid #415683;
+		color: #ffffff;
+		font-size: 12px !important;
+		margin: 0;
+		width: 95%;
+		padding: 4px;
+		text-align: left;
+	}
+
+	label.error, div.error {
+		display: block;
+		color: #ff453a;
+		text-align: left;
+		font-weight: normal;
+	}
+
+	div.error {
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding: 0;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.right {
+			position: static;
+			width: auto;
+		}
+
+		.left {
+			position: static;
+			width: auto;
+		}
+
+		.right .middle {
+			position: static;
+			margin: 0;
+			height: auto;
+			padding: 15px;
+		}
+
+		.left .middle {
+			position: static;
+			margin: 0;
+			height: 200px;
+			padding: 15px 15px 50px;
+		}
+
+		#reg_button {
+			margin: 10px auto 0 auto;
+		}
+
+		.left .middle .loginform {
+			width: auto;
+		}
+
+		.bottom {
+			background: #231f0c;
+			height: 40px;
+		}
+
+		.bottom .desk, .bottom .copy {
+			display: none;
+		}
+
+		.right .middle .text {
+			text-align: center;
+		}
+
+		.input-text {
+			width: 105px;
+			border: 1px solid #a2a2a2;
+		}
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	body[page=index] {
+		background: #000 url(/images/starfield_01.gif) repeat 0 0 fixed;
+	}
+}

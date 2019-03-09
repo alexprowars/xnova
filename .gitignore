@@ -1,4 +1,5 @@
 .idea/*
+.nuxt
 app/cache/*
 app/config/*.ini
 vendor/*

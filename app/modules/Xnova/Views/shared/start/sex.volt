@@ -21,7 +21,7 @@
 								{% for i in 1..8 %}
 									<input type="radio" name="face" value="1_{{ i }}" id="f1_{{ i }}" {{ request.getPost('face') == '1_'~i ? 'checked' : '' }} title="">
 									<label for="f1_{{ i }}" class="avatar">
-										<img src="{{ url.getBaseUri() }}assets/images/faces/1/{{ i }}s.png" alt="">
+										<img src="{{ url.getBaseUri() }}images/faces/1/{{ i }}s.png" alt="">
 									</label>
 								{% endfor %}
 							</tab>
@@ -29,7 +29,7 @@
 								{% for i in 1..8 %}
 									<input type="radio" name="face" value="2_{{ i }}" id="f2_{{ i }}" {{ request.getPost('face') == '2_'~i ? 'checked' : '' }} title="">
 									<label for="f2_{{ i }}" class="avatar">
-										<img src="{{ url.getBaseUri() }}assets/images/faces/2/{{ i }}s.png" alt="">
+										<img src="{{ url.getBaseUri() }}images/faces/2/{{ i }}s.png" alt="">
 									</label>
 								{% endfor %}
 							</tab>

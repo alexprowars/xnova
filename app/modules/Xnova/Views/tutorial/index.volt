@@ -5,7 +5,7 @@
 	{% for quest in parse['list'] %}
 		<tr>
 			<th width="30">{{ quest['ID'] }}</th>
-			<th width="30"><img src="{{ url.getBaseUri() }}assets/images/{{ quest['FINISH'] ? 'check' : 'none' }}.gif" height="11" width="12"></th>
+			<th width="30"><img src="{{ url.getBaseUri() }}images/{{ quest['FINISH'] ? 'check' : 'none' }}.gif" height="11" width="12"></th>
 			<th class="text-left">
 				{% if quest['AVAILABLE'] %}
 					<router-link to="{{ url('tutorial/'~quest['ID']~'/') }}"><span class="positive">{{ quest['TITLE'] }}</span></router-link>

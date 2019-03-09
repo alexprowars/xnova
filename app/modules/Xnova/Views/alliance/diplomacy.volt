@@ -8,7 +8,7 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -27,8 +27,8 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<router-link to="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/appwiz.gif" alt="Подтвердить"></router-link>
-					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
+					<router-link to="{{ url('alliance/diplomacy/edit/suc/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}images/appwiz.gif" alt="Подтвердить"></router-link>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}
@@ -47,7 +47,7 @@
 				<th>{{ diplo['name'] }}</th>
 				<th>{{ _text('xnova', 'diplomacyStatus', diplo['type']) }}</th>
 				<th>
-					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/abort.gif" alt="Удалить заявку"></router-link>
+					<router-link to="{{ url('alliance/diplomacy/edit/del/id/'~diplo['id']~'/') }}"><img src="{{ url.getBaseUri() }}images/abort.gif" alt="Удалить заявку"></router-link>
 				</th>
 			</tr>
 		{% endfor %}

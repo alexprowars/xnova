@@ -1,0 +1,93 @@
+.sprite {
+	display: inline-block;
+	overflow: hidden;
+	background: url(/images/sprite.png) no-repeat;
+}
+
+.bb {
+	&_color_swatch {width:16px; height:16px; background-position: -341px -1px}
+	&_emoticon_grin {width:16px; height:16px; background-position: -324px -1px}
+	&_eye {width:16px; height:16px; background-position: -358px -1px}
+	&_film_add {width:16px; height:16px; background-position: -307px -1px}
+	&_image_add {width:16px; height:16px; background-position: -273px -1px}
+	&_palette {width:16px; height:16px; background-position: -256px -1px}
+	&_picture_add {width:16px; height:16px; background-position: -290px -1px}
+	&_rainbow {width:16px; height:16px; background-position: -477px -1px}
+	&_sound_add {width:16px; height:16px; background-position: -494px -1px}
+	&_television {width:16px; height:16px; background-position: -409px -1px}
+	&_text_align_center {width:16px; height:16px; background-position: -392px -1px}
+	&_text_align_justify {width:16px; height:16px; background-position: -426px -1px}
+	&_text_align_left {width:16px; height:16px; background-position: -460px -1px}
+	&_text_align_right {width:16px; height:16px; background-position: -443px -1px}
+	&_text_bold {width:16px; height:16px; background-position: -375px -1px}
+	&_text_italic {width:16px; height:16px; background-position: -18px -1px}
+	&_text_list_bullets {width:16px; height:16px; background-position: -69px -1px}
+	&_text_list_numbers {width:16px; height:16px; background-position: -52px -1px}
+	&_text_signature {width:16px; height:16px; background-position: -86px -1px}
+	&_text_strikethrough {width:16px; height:16px; background-position: -35px -1px}
+	&_text_underline {width:16px; height:16px; background-position: -1px -1px}
+	&_tick {width:16px; height:16px; background-position: -103px -1px}
+	&_user_comment {width:16px; height:16px; background-position: -154px -1px}
+	&_world_link {width:16px; height:16px; background-position: -205px -1px}
+}
+
+.ico {
+	&_alliance {width:24px; height:24px; background-position: -333px -23px}
+	&_chat {width:24px; height:24px; background-position: -308px -23px}
+	&_exit {width:24px; height:24px; background-position: -358px -24px}
+	&_forum {width:24px; height:24px; background-position: -533px -24px}
+	&_fullscreen {width:24px; height:24px; background-position: -408px -24px}
+	&_mail {width:24px; height:24px; background-position: -458px -23px}
+	&_search {width:24px; height:24px; background-position: -483px -24px}
+	&_settings {width:24px; height:24px; background-position: -433px -24px}
+	&_sim {width:24px; height:24px; background-position: -383px -24px}
+	&_space {width:24px; height:24px; background-position: -508px -24px}
+	&_stats {width:24px; height:24px; background-position: -558px -24px}
+	&_support {width:24px; height:24px; background-position: -608px -24px}
+	&_tech {width:24px; height:24px; background-position: -633px -24px}
+	&_tutorial {width:24px; height:24px; background-position: -583px -23px}
+}
+
+.skin {
+	&_b {width:16px; height:16px; background-position: -188px -1px}
+	&_batt0 {width:42px; height:22px; background-position: -597px -1px}
+	&_batt100 {width:42px; height:22px; background-position: -87px -24px}
+	&_deuterium {width:42px; height:22px; background-position: -1px -24px}
+	&_e {width:16px; height:16px; background-position: -222px -1px}
+	&_energy {width:42px; height:22px; background-position: -554px -1px}
+	&_kredits {width:42px; height:22px; background-position: -44px -24px}
+	&_crystal {width:42px; height:22px; background-position: -511px -1px}
+	&_m {width:16px; height:16px; background-position: -171px -1px}
+	&_message {width:42px; height:22px; background-position: -130px -24px}
+	&_metal {width:42px; height:22px; background-position: -242px -24px}
+	&_r {width:16px; height:16px; background-position: -137px -1px}
+	&_s {width:16px; height:16px; background-position: -120px -1px}
+	&_s_deuterium {width:22px; height:22px; background-position: -285px -24px}
+	&_s_energy {width:22px; height:22px; background-position: -219px -24px}
+	&_s_crystal {width:22px; height:22px; background-position: -196px -23px}
+	&_s_metal {width:22px; height:22px; background-position: -173px -22px}
+	&_z {width:16px; height:16px; background-position: -239px -1px}
+}
+
+.officier {
+	display: inline-block;
+	overflow: hidden;
+	background: url(/images/officiers.png) no-repeat;
+}
+
+.of {
+	&601 {width:32px; height:32px; background-position: -444px -2px}
+	&601_ikon {width:32px; height:32px; background-position: -410px -2px}
+	&602 {width:32px; height:32px; background-position: -376px -2px}
+	&602_ikon {width:32px; height:32px; background-position: -342px -2px}
+	&603 {width:32px; height:32px; background-position: -308px -2px}
+	&603_ikon {width:32px; height:32px; background-position: -274px -2px}
+	&604 {width:32px; height:32px; background-position: -240px -2px}
+	&604_ikon {width:32px; height:32px; background-position: -206px -2px}
+	&605 {width:32px; height:32px; background-position: -172px -2px}
+	&605_ikon {width:32px; height:32px; background-position: -138px -2px}
+	&606 {width:32px; height:32px; background-position: -104px -2px}
+	&606_ikon {width:32px; height:32px; background-position: -70px -2px}
+	&607 {width:32px; height:32px; background-position: -36px -2px}
+	&607_ikon {width:32px; height:32px; background-position: -2px -2px}
+}

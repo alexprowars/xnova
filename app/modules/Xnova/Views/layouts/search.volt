@@ -42,7 +42,7 @@
 							<popup-link to="/messages/write/{{ result['id'] }}/" title="{{ result['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link>
 							<router-link to="{{ url('buddy/new/'~result['id']~'/') }}" title="Предложение подружиться"><span class='sprite skin_b'></span></router-link>
 						</th>
-						<th>{% if result['race'] != 0 %}<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ result['race'] }}.gif" width="16" height="16">{% else %}&nbsp;{% endif %}
+						<th>{% if result['race'] != 0 %}<img src="{{ url.getBaseUri() }}images/skin/race{{ result['race'] }}.gif" width="16" height="16">{% else %}&nbsp;{% endif %}
 						</th>
 						<th>{{ result['ally_name'] }}</th>
 						<th>{{ result['planet_name'] }}</th>

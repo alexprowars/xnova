@@ -5,16 +5,16 @@
 		</tr>
 		<tr>
 			<th colspan="2">Имя ранга</th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r1.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r2.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r3.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r4.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r5.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r6.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r7.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r8.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r9.png width="16"></th>
-			<th><img src={{ url.getBaseUri() }}assets/images/alliance/r10.gif width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r1.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r2.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r3.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r4.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r5.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r6.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r7.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r8.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r9.png width="16"></th>
+			<th><img src={{ url.getBaseUri() }}images/alliance/r10.gif width="16"></th>
 		</tr>
 		{% if parse['list']|length > 0 %}
 			{% for r in parse['list'] %}
@@ -64,43 +64,43 @@
 		<td class="c" colspan="2">{{ _text('xnova', 'Law_leyends') }}</td>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r1.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r1.png></th>
 		<th>{{ _text('xnova', 'Alliance_dissolve') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r2.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r2.png></th>
 		<th>{{ _text('xnova', 'Expel_users') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r3.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r3.png></th>
 		<th>{{ _text('xnova', 'See_the_requests') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r4.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r4.png></th>
 		<th>{{ _text('xnova', 'See_the_list_members') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r5.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r5.png></th>
 		<th>{{ _text('xnova', 'Check_the_requests') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r6.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r6.png></th>
 		<th>{{ _text('xnova', 'Alliance_admin') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r7.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r7.png></th>
 		<th>{{ _text('xnova', 'See_the_online_list_member') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r8.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r8.png></th>
 		<th>{{ _text('xnova', 'Make_a_circular_message') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r9.png></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r9.png></th>
 		<th>{{ _text('xnova', 'Left_hand_text') }}</th>
 	</tr>
 	<tr>
-		<th><img src={{ url.getBaseUri() }}assets/images/alliance/r10.gif></th>
+		<th><img src={{ url.getBaseUri() }}images/alliance/r10.gif></th>
 		<th>Дипломатия</th>
 	</tr>
 	<tr>

@@ -8,7 +8,7 @@
 		<td class="k text-left">
 			<div class="row">
 				<div class="col-4 text-center">
-					<img src="{{ url.getBaseUri() }}assets/images/tutorial/{{ stage }}.jpg" class="pic">
+					<img src="{{ url.getBaseUri() }}images/tutorial/{{ stage }}.jpg" class="pic">
 				</div>
 				<div class="col-8">
 					<div class="description">
@@ -19,7 +19,7 @@
 						{% for task in parse['task'] %}
 							<li>
 								<span>{{ task[0] }}</span>
-								<span><img src="{{ url.getBaseUri() }}assets/images/{{ task[1] ? 'check' : 'none' }}.gif" height="11" width="12"></span>
+								<span><img src="{{ url.getBaseUri() }}images/{{ task[1] ? 'check' : 'none' }}.gif" height="11" width="12"></span>
 							</li>
 						{% endfor %}
 					</ul>

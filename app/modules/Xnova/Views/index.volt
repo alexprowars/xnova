@@ -46,7 +46,5 @@
 	{{ partial('shared/counters') }}
 
 	{{ assets.outputJs() }}
-
-	{{ partial('shared/svg') }}
 </body>
 </html>

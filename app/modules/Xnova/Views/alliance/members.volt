@@ -20,13 +20,13 @@
 				<th>{{ m['i'] }}</th>
 				<th>{{ m['username'] }}</th>
 				<th><popup-link to="/messages/write/{{ m['id'] }}/" title="{{ m['username'] }}: отправить сообщение" :width="680"><span class='sprite skin_m'></span></popup-link></th>
-				<th><img src="{{ url.getBaseUri() }}assets/images/skin/race{{ m['race'] }}.gif" width="16" height="16"></th>
+				<th><img src="{{ url.getBaseUri() }}images/skin/race{{ m['race'] }}.gif" width="16" height="16"></th>
 				<th>{{ m['range'] }}</th>
 				<th>{{ m['points'] }}</th>
 				<th><router-link to="{{ url('galaxy/'~m['galaxy']~'/'~m['system']~'/') }}">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</router-link></th>
 				<th>{{ m['time'] }}</th>
 				{% if parse['status'] %}<th>{{ m['onlinetime'] }}</th>{% endif %}
-				{% if parse['admin'] %}<th><a href="{{ url('alliance/admin/edit/members/kick/'~m['id']~'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="{{ url.getBaseUri() }}assets/images/abort.gif"></a>&nbsp;<router-link to="{{ url('alliance/admin/edit/members/rank/'~m['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/key.gif"></router-link></th>{% endif %}
+				{% if parse['admin'] %}<th><a href="{{ url('alliance/admin/edit/members/kick/'~m['id']~'/') }}" onclick="return confirm('Вы действительно хотите исключить данного игрока из альянса?');"><img src="{{ url.getBaseUri() }}images/abort.gif"></a>&nbsp;<router-link to="{{ url('alliance/admin/edit/members/rank/'~m['id']~'/') }}"><img src="{{ url.getBaseUri() }}assets/images/key.gif"></router-link></th>{% endif %}
 			</tr>
 		{% else %}
 			<tr>

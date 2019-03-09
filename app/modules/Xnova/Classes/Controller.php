@@ -74,11 +74,7 @@ class Controller extends PhalconController
 
 		Lang::setLang($this->config->app->language, 'xnova');
 
-		if ($this->request->isAjax())
-			$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-		else
-	        $this->tag->setDocType(Tag::HTML5);
-
+		$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		$this->tag->setTitleSeparator(' :: ');
 		$this->tag->setTitle(Options::get('site_title'));
 
@@ -107,11 +103,6 @@ class Controller extends PhalconController
 					$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
 			}
 		}
-
-		$this->assets->addJs('assets/build/app.js');
-		$this->assets->addJs('assets/build/vendor.js');
-
-		$this->assets->addCss('assets/build/app.css');
 
 		Vars::init();
 
@@ -184,7 +175,7 @@ class Controller extends PhalconController
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
 
-			if (!$this->request->isAjax())
+			//if (!$this->request->isAjax())
 			{
 				$menu = [];
 

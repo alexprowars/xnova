@@ -9,7 +9,7 @@
 			{% for i, name in _text('xnova', 'race') if name != '' %}
 				<input type="radio" name="race" value="{{ i }}" id="f_{{ i }}" {{ request.getPost('race') == i ? 'checked' : '' }}>
 				<label for="f_{{ i }}" class="avatar">
-					<img src="{{ url.getBaseUri() }}assets/images/skin/race{{ i }}.gif" alt=""><br>
+					<img src="{{ url.getBaseUri() }}images/skin/race{{ i }}.gif" alt=""><br>
 					<h3>{{ name }}</h3>
 					<span>
 						{{ _text('xnova', 'info', 700 + i) }}
