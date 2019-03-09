@@ -9,6 +9,7 @@
 			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"></PlanetsList>
 
 			<div class="main-content">
+
 				<PlanetPanel v-if="$store.state['view']['resources']" :planet="$store.state.resources"></PlanetPanel>
 
 				<MessagesRow v-for="(item, i) in messages" :key="i" :item="item"></MessagesRow>
@@ -18,6 +19,7 @@
 
 					<nuxt></nuxt>
 				</div>
+
 			</div>
 		</main>
 
@@ -58,6 +60,9 @@
 			error () {
 				return this.$store.state.error;
 			},
+			redirect () {
+				return this.$store.state.redirect;
+			},
 			messages ()
 			{
 				let items = [];
@@ -65,6 +70,18 @@
 				this.$store.state.messages.forEach((item) =>
 				{
 					if (item['type'].indexOf('-static') >= 0)
+						items.push(item);
+				});
+
+				return items;
+			},
+			notifications ()
+			{
+				let items = [];
+
+				this.$store.state.messages.forEach((item) =>
+				{
+					if (item['type'].indexOf('-static') < 0)
 						items.push(item);
 				});
 
@@ -79,6 +96,7 @@
 		},
 		head () {
 			return {
+				title: this.$store.state.title,
 				bodyAttrs: {
 					page: this.$store.state.route.controller
 				}
@@ -88,6 +106,21 @@
 		    '$route' () {
 				this.sidebar = '';
 		    },
+			redirect (val)
+			{
+				if (val && val.length > 0)
+					window.location.href = val;
+			},
+			notifications (val)
+			{
+				val.forEach((item) =>
+				{
+					$.toast({
+						text: item.text,
+						icon: item.type
+					});
+				})
+			},
 		},
 		methods: {
 			sidebarToggle (type)

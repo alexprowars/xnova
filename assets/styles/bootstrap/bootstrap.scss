@@ -1,28 +1,22 @@
-/*!
- * Bootstrap v4.0.0-alpha.2 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
-
 // Core variables and mixins
 @import "custom";
-@import "functions";
-@import "variables";
-@import "mixins";
-@import "root";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
 
 // Core CSS
-@import "reboot";
-@import "type";
-@import "images";
-@import "code";
-@import "grid";
-@import "tables";
-@import "forms";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/code";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
 //@import "buttons";
 
 // Components
-@import "transitions";
+@import "~bootstrap/scss/transitions";
 //@import "dropdown";
 //@import "button-group";
 //@import "input-group";
@@ -31,12 +25,12 @@
 //@import "navbar";
 //@import "card";
 //@import "breadcrumb";
-@import "pagination";
+@import "~bootstrap/scss/pagination";
 //@import "badge";
 //@import "jumbotron";
-@import "alert";
+@import "~bootstrap/scss/alert";
 //@import "progress";
-@import "media";
+@import "~bootstrap/scss/media";
 //@import "list-group";
 //@import "close";
 
@@ -47,5 +41,5 @@
 //@import "carousel";
 
 // Utility classes
-@import "utilities";
+@import "~bootstrap/scss/utilities";
 //@import "print";

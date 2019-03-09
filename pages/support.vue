@@ -55,8 +55,9 @@
 	export default {
 		name: "support",
 		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.path)
+			return store.dispatch('loadPage', route.fullPath)
 		},
+		watchQuery: true,
 		middleware: ['auth'],
 		data () {
 			return {

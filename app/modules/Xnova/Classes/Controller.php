@@ -175,7 +175,7 @@ class Controller extends PhalconController
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
 
-			//if (!$this->request->isAjax())
+			if ($this->request->has('initial'))
 			{
 				$menu = [];
 

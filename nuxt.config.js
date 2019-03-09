@@ -17,6 +17,10 @@ module.exports = {
 		'~/assets/styles/bootstrap/bootstrap.scss',
 		'~/assets/app.scss',
 	],
+	transition: {
+		name: 'page-switch',
+		mode: 'out-in'
+	},
 	plugins: [
 		'~/plugins/api.js',
 		'~/plugins/validate.js',

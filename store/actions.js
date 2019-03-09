@@ -1,3 +1,5 @@
+import { getLocation } from '~/utils/helpers'
+
 export default {
 	nuxtServerInit (store, context)
 	{
@@ -6,8 +8,8 @@ export default {
 		if (headers.cookie === undefined)
 			headers.cookie = '';
 
-		return context.app.$get('/', {
-
+		return context.app.$get(context.route.fullPath, {
+			initial: 'Y'
 		})
 		.then((data) =>
 		{
@@ -26,7 +28,9 @@ export default {
 
 		return this.$get(url).then((data) =>
 		{
-			if (url !== data['url'])
+			let loc = getLocation(url);
+
+			if (loc['pathname'] !== data['url'])
 				this.$router.replace(data['url'])
 			else
 			{

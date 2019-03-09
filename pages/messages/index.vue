@@ -45,14 +45,14 @@
 </template>
 
 <script>
-	import Vue from 'vue'
 	import MessagesRow from '~/components/page/messages/row.vue'
 
 	export default {
 		name: "messages",
 		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.path)
+			return store.dispatch('loadPage', route.fullPath)
 		},
+		watchQuery: true,
 		middleware: ['auth'],
 		components: {
 			MessagesRow
@@ -64,7 +64,7 @@
 					return [];
 
 				this.page.items.forEach((item) => {
-					Vue.set(item, 'deleted', false);
+					this.$set(item, 'deleted', false);
 				});
 
 				return this.page.items;

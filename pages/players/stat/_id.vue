@@ -48,8 +48,9 @@
 	export default {
 		name: "players_stat",
 		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.path)
+			return store.dispatch('loadPage', route.fullPath)
 		},
+		watchQuery: true,
 		data () {
 			return {
 				pageType: typeof this.$route.params['ally_id'] !== 'undefined' ? 'ally' : 'user',

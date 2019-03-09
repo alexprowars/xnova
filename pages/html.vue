@@ -10,8 +10,9 @@
 		name: "html-render",
 		asyncData ({ store, route }) {
 			console.log('asyncData');
-			return store.dispatch('loadPage', route.path)
+			return store.dispatch('loadPage', route.fullPath)
 		},
+		watchQuery: true,
 		computed: {
 			html () {
 				return this.page ? this.page.html : '';

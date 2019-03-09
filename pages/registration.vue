@@ -62,7 +62,7 @@
 		},
 		asyncData ({ store, route })
 		{
-			return store.dispatch('loadPage', route.path).then ((data) =>
+			return store.dispatch('loadPage', route.fullPath).then ((data) =>
 			{
 				return {
 					data: data.page

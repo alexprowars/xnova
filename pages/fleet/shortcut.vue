@@ -28,8 +28,9 @@
 	export default {
 		name: "fleet-shortcut",
 		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.path)
+			return store.dispatch('loadPage', route.fullPath)
 		},
+		watchQuery: true,
 		middleware: ['auth'],
 	}
 </script>
