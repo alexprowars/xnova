@@ -26,7 +26,7 @@
 							{{ item.time|time }}
 						</div>
 
-						<div v-html="item.effects"></div>
+						<div v-html="item['effects']"></div>
 
 						<div class="building-info-upgrade">
 							<div v-if="typeof item.build === 'object'" class="building-info-upgrade-timer">
@@ -53,7 +53,7 @@
 					</div>
 				</div>
 			</div>
-			<build-row-price :price="item.price"></build-row-price>
+			<build-row-price :price="item['price']"></build-row-price>
 		</div>
 	</div>
 </template>
@@ -64,7 +64,9 @@
 	export default {
 		name: "tech-row",
 		props: {
-			item: Object
+			item: {
+				type: Object
+			}
 		},
 		components: {
 			BuildRowPrice

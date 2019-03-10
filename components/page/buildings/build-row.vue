@@ -72,7 +72,11 @@
 
 	export default {
 		name: "build-row",
-		props: ['item'],
+		props: {
+			item: {
+				type: Object
+			}
+		},
 		components: {
 			BuildRowPrice
 		},

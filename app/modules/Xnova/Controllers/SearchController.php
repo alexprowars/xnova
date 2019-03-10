@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Format;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/search")
@@ -32,10 +33,12 @@ class SearchController extends Controller
 	
 	public function indexAction ()
 	{
-		$parse = [];
+		$parse = [
+			'result' => []
+		];
 
 		$searchtext = $this->request->getPost('searchtext', 'string', '');
-		$type = $this->request->getPost('type', 'string', '');
+		$type = $this->request->getPost('type', 'string', 'playername');
 
 		if ($searchtext != '' && $type != '')
 		{
@@ -53,8 +56,6 @@ class SearchController extends Controller
 				case "allyname":
 					$search = $this->db->query("SELECT a.id, a.name, a.tag, a.members, s.total_points FROM game_alliance a LEFT JOIN game_statpoints s ON s.id_owner = a.id AND s.stat_type = 2 WHERE a.name LIKE '%" . $searchtext . "%' LIMIT 30");
 			}
-
-			$parse['result'] = [];
 
 			if (isset($search))
 			{
@@ -82,7 +83,8 @@ class SearchController extends Controller
 		$parse['searchtext'] = $searchtext;
 		$parse['type'] = $type;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
+
 		$this->tag->setTitle('Поиск');
 	}
 }

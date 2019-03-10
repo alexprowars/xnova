@@ -164,7 +164,7 @@ class AllianceController extends Controller
 			$parse['members'] = $this->ally->members;
 			$parse['name'] = $this->ally->name;
 
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle('Ваш альянс');
 			$this->showTopPanel(false);
@@ -727,7 +727,7 @@ class AllianceController extends Controller
 		while ($a_list = $ally_list->fetch())
 			$parse['a_list'][] = $a_list;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Дипломатия');
 		$this->showTopPanel(false);
@@ -757,8 +757,6 @@ class AllianceController extends Controller
 	public function membersAction ()
 	{
 		$this->parseInfo($this->user->ally_id);
-
-		$this->view->pick('alliance/members');
 
 		$parse = [];
 
@@ -870,7 +868,7 @@ class AllianceController extends Controller
 		$parse['s'] = $s;
 		$parse['status'] = $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS);
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle(_getText('Members_list'));
 		$this->showTopPanel(false);
@@ -998,7 +996,7 @@ class AllianceController extends Controller
 		$parse['web'] = $allyrow['web'];
 		$parse['request'] = ($this->getDI()->has('user') && $this->user->ally_id == 0);
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Альянс ' . $allyrow['name']);
 		$this->showTopPanel(false);

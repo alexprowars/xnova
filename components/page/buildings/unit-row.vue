@@ -21,10 +21,10 @@
 							<svg class="icon">
 								<use xlink:href="/images/symbols.svg#icon-time"></use>
 							</svg>
-							{{ item.time|time }}
+							{{ item.time | time }}
 						</div>
 
-						<div v-html="item.effects"></div>
+						<div v-html="item['effects']"></div>
 
 						<div v-if="item['is_max']">
 							<center><font color="red">Вы можете построить только {{ item.max }} постройку данного типа</font></center>
@@ -41,7 +41,7 @@
 					</div>
 				</div>
 			</div>
-			<build-row-price :price="item.price"></build-row-price>
+			<build-row-price :price="item['price']"></build-row-price>
 		</div>
 	</div>
 </template>
@@ -51,7 +51,11 @@
 
 	export default {
 		name: "unit-row",
-		props: ['item'],
+		props: {
+			item: {
+				type: Object
+			}
+		},
 		data ()
 		{
 			return {
@@ -62,6 +66,9 @@
 			max ()
 			{
 				let max = -1;
+
+				if (this.$store.state.resources === false)
+					return max;
 
 				let resources = Object.keys(this.$t('RESOURCES'));
 

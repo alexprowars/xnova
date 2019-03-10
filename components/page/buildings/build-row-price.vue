@@ -30,7 +30,11 @@
 <script>
 	export default {
 		name: "build-row-price",
-		props: ['price'],
+		props: {
+			price: {
+				type: Object
+			}
+		},
 		computed: {
 			resources () {
 				return this.$store.state.resources

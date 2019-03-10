@@ -2,7 +2,7 @@
 	<div class="row officiers-item">
 		<div class="col-12 officiers-item-title">
 			{{ $t('TECH.'+item['id']) }}
-			(<span v-if="item['time'] > 0" class="positive">Нанят до: {{ item['time']|date('d.m.Y H:i') }}</span><span v-else class="negative">Не нанят</span>)
+			(<span v-if="item['time'] > 0" class="positive">Нанят до: {{ item['time'] | date('d.m.Y H:i') }}</span><span v-else class="negative">Не нанят</span>)
 		</div>
 		<div class="d-none d-sm-block col-sm-2 text-center officiers-item-image">
 			<img :src="'/images/officiers/'+item['id']+'.jpg'" align="top" alt="">
@@ -10,14 +10,16 @@
 		<div class="col-12 col-sm-7 text-left officiers-item-description">
 			{{ item['description'] }}
 			<table class="powers">
+				<tbody>
 				<tr>
 					<td :rowspan="(item['power'].length + 1)" valign="top" class="padding-0">
-						<img :src="'/images/officiers/'+item['id']+'.gif'">
+						<img :src="'/images/officiers/'+item['id']+'.gif'" :alt="$t('TECH.'+item['id'])">
 					</td>
 				</tr>
 				<tr v-for="power in item['power']">
 					<td class="up">{{ power }}</td>
 				</tr>
+				</tbody>
 			</table>
 		</div>
 		<div class="clearfix d-sm-none">

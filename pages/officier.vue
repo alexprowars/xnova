@@ -13,14 +13,16 @@
 					<br><br>
 					Инженеры берут за свою работу только межгалактичесие кредиты. В зависимости от суммы контракта работают на вас в течении всего времени найма.
 					<table class="powers">
+						<tbody>
 						<tr>
 							<td class="padding-0">
-								<img :src="'/images/officiers/smalcredts.gif'">
+								<img src="/images/officiers/smalcredts.gif" alt="">
 							</td>
 							<td>
 								При помощи кредитов можно нанять инженеров
 							</td>
 						</tr>
+						</tbody>
 					</table>
 				</div>
 				<div class="col-sm-3 d-none d-sm-block text-center">

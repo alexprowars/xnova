@@ -7,9 +7,9 @@
 					<div class="row">
 						<div class="col d-flex">
 							<div>
-								<img v-if="page['i'] < 600" :src="'/images/gebaeude/'+page['i']+'.gif'" class="info" align="top" height="120" width="120">
-								<img v-else-if="page['i'] < 700" :src="'/images/officiers/'+page['i']+'.jpg'" class="info" align="top" height="120" width="120">
-								<img v-else :src="'/images/skin/race'+(page['i'] - 700)+'.gif'" style="float:left;margin:0 20px 10px 0" height="35" width="35">
+								<img v-if="page['i'] < 600" :src="'/images/gebaeude/'+page['i']+'.gif'" class="info" align="top" height="120" width="120" alt="">
+								<img v-else-if="page['i'] < 700" :src="'/images/officiers/'+page['i']+'.jpg'" class="info" align="top" height="120" width="120" alt="">
+								<img v-else :src="'/images/skin/race'+(page['i'] - 700)+'.gif'" style="float:left;margin:0 20px 10px 0" height="35" width="35" alt="">
 							</div>
 							<div v-html="page['description']"></div>
 						</div>
@@ -18,12 +18,12 @@
 			</div>
 		</div>
 
-		<info-production v-if="page['production']" :item="page['i']" :production="page['production']"></info-production>
-		<info-fleet v-if="page['fleet']" :item="page['i']" :fleet="page['fleet']"></info-fleet>
-		<info-defence v-if="page['defence']" :item="page['i']" :defence="page['defence']"></info-defence>
-		<info-missile v-if="page['missile']" :item="page['i']" :missile="page['missile']"></info-missile>
+		<InfoProduction v-if="page['production']" :item="page['i']" :production="page['production']"/>
+		<InfoFleet v-if="page['fleet']" :item="page['i']" :fleet="page['fleet']"/>
+		<InfoDefence v-if="page['defence']" :item="page['i']" :defence="page['defence']"/>
+		<InfoMissile v-if="page['missile']" :item="page['i']" :missile="page['missile']"/>
 
-		<info-destroy v-if="page['destroy']" :item="page['i']" :data="page['destroy']"></info-destroy>
+		<InfoDestroy v-if="page['destroy']" :item="page['i']" :data="page['destroy']"/>
 	</div>
 </template>
 

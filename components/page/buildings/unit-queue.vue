@@ -24,7 +24,14 @@
 <script>
 	export default {
 		name: "unit-queue",
-		props: ['queue'],
+		props: {
+			queue: {
+				type: Array,
+				default: () => {
+					return []
+				}
+			}
+		},
 		data () {
 			return {
 				left_time: 0,

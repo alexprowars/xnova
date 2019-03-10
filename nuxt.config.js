@@ -35,13 +35,6 @@ module.exports = {
 		base: '/',
 		middleware: 'router',
 		prefetchLinks: false,
-		extendRoutes (routes, resolve)
-		{
-			routes.push({
-				path: '*',
-				component: resolve(__dirname, 'pages/html.vue')
-			});
-		}
 	},
 	loading: false,
 	build: {
