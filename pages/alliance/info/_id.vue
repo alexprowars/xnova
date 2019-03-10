@@ -29,7 +29,7 @@
 		</tr>
 		<tr v-if="page['request']">
 			<th colspan="2">
-				<router-link :to="'/alliance/apply/allyid/'+page['id']+'/'" class="button">Вступить в альянс</router-link>
+				<nuxt-link :to="'/alliance/apply/allyid/'+page['id']+'/'" class="button">Вступить в альянс</nuxt-link>
 			</th>
 		</tr>
 	</table>

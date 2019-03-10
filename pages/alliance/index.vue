@@ -21,7 +21,7 @@
 			<th>
 				{{ page['members'] }}
 				<template v-if="page['members_list']">
-					(<router-link :to="'/alliance/members/'">список</router-link>)
+					(<nuxt-link :to="'/alliance/members/'">список</nuxt-link>)
 				</template>
 			</th>
 		</tr>
@@ -30,14 +30,14 @@
 			<th>
 				{{ page['range'] }}
 				<template v-if="page['alliance_admin']">
-					(<router-link :to="'/alliance/admin/edit/ally/'">управление альянсом</router-link>)
+					(<nuxt-link :to="'/alliance/admin/edit/ally/'">управление альянсом</nuxt-link>)
 				</template>
 			</th>
 		</tr>
 		<tr v-if="page['diplomacy'] !== false">
 			<th>Дипломатия</th>
 			<th>
-				<router-link :to="'/alliance/diplomacy/'">Просмотр</router-link>
+				<nuxt-link :to="'/alliance/diplomacy/'">Просмотр</nuxt-link>
 				<template v-if="page['diplomacy'] > 0">
 					({{ page['diplomacy'] }} новых запросов)
 				</template>
@@ -46,7 +46,7 @@
 		<tr v-if="page['requests'] > 0">
 			<th>Заявки</th>
 			<th>
-				<router-link :to="'/alliance/admin/edit/requests/'">{{ page['requests'] }} заявок</router-link>
+				<nuxt-link :to="'/alliance/admin/edit/requests/'">{{ page['requests'] }} заявок</nuxt-link>
 			</th>
 		</tr>
 		<tr v-if="page['chat_access']">
@@ -56,7 +56,7 @@
 					({{ $store.state.user.alliance.messages }} новых)
 				</template>
 			</th>
-			<th><router-link :to="'/alliance/chat/'">Войти в чат</router-link></th>
+			<th><nuxt-link :to="'/alliance/chat/'">Войти в чат</nuxt-link></th>
 		</tr>
 		<tr>
 			<td class="b" colspan="2" height="100" style="padding:3px;">

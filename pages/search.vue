@@ -42,17 +42,17 @@
 							<popup-link :to="'/messages/write/'+result['id']+'/'" :title="result['username']+': отправить сообщение'" :width="680">
 								<span class='sprite skin_m'></span>
 							</popup-link>
-							<router-link :to="'/buddy/new/'+result['id']+'/'" title="Предложение подружиться">
+							<nuxt-link :to="'/buddy/new/'+result['id']+'/'" title="Предложение подружиться">
 								<span class='sprite skin_b'></span>
-							</router-link>
+							</nuxt-link>
 						</th>
 						<th>
 							<img v-if="result['race'] !== 0" :src="'/images/skin/race'+result['race']+'.gif'" width="16" height="16" alt="">
 						</th>
 						<th>{{ result['ally_name'] }}</th>
 						<th>{{ result['planet_name'] }}</th>
-						<th><router-link :to="'/galaxy/'+result['g']+'/'+result['s']+'/'">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</router-link></th>
-						<th><router-link :to="'/stat/players/range/'+result['total_rank']+'/'">{{ result['total_rank'] }}</router-link></th>
+						<th><nuxt-link :to="'/galaxy/'+result['g']+'/'+result['s']+'/'">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</nuxt-link></th>
+						<th><nuxt-link :to="'/stat/players/range/'+result['total_rank']+'/'">{{ result['total_rank'] }}</nuxt-link></th>
 					</tr>
 					<tr v-if="page['result'].length === 0">
 						<th colspan="7">Поиск не дал результатов</th>
@@ -69,9 +69,9 @@
 					</tr>
 					<tr v-for="result in page['result']">
 						<th>
-							<router-link :to="'/alliance/info/'+result['id']+'/'">
+							<nuxt-link :to="'/alliance/info/'+result['id']+'/'">
 								{{ result['tag'] }}
-							</router-link>
+							</nuxt-link>
 						</th>
 						<th>{{ result['name'] }}</th>
 						<th>{{ result['members'] }}</th>

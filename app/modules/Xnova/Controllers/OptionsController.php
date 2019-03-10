@@ -19,6 +19,7 @@ use Friday\Core\Lang;
 use PHPMailer\PHPMailer\PHPMailer;
 use Xnova\Models\Fleet;
 use Xnova\Models\UserInfo;
+use Xnova\Request;
 use Xnova\User;
 use Xnova\Queue;
 use Xnova\Controller;
@@ -346,15 +347,15 @@ class OptionsController extends Controller
 		$userInfo = UserInfo::findFirst($this->user->id);
 
 		$parse = [];
+		$parse['social'] = $this->config->view->get('socialIframeView', 0) > 0;
+		$parse['vacation'] = $this->user->vacation > 0;
 
 		if ($this->user->vacation > 0)
 		{
 			$parse['um_end_date'] = $this->game->datezone("d.m.Y H:i:s", $this->user->vacation);
-			$parse['opt_delac_data'] = ($this->user->deltime > 0) ? " checked" : '';
-			$parse['opt_modev_data'] = ($this->user->vacation > 0) ? " checked" : '';
+			$parse['opt_delac_data'] = ($this->user->deltime > 0);
+			$parse['opt_modev_data'] = ($this->user->vacation > 0);
 			$parse['opt_usern_data'] = $this->user->username;
-
-			$this->view->pick('options/vacation');
 		}
 		else
 		{
@@ -374,21 +375,22 @@ class OptionsController extends Controller
 
 			$this->user->setOptions($settings);
 
-			$parse['opt_usern_datatime'] = $userInfo->username_last;
+			$parse['opt_usern_datatime'] = $userInfo->username_last < (time() - 86400);
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $userInfo->email;
+			$parse['opt_isemail'] = is_email($userInfo->email);
 
-			$parse['opt_record_data'] = $this->user->getUserOption('records') ? " checked" : '';
-			$parse['opt_bbcode_data'] = $this->user->getUserOption('bb_parser') ? ' checked' : '';
-			$parse['opt_chatbox_data'] = $this->user->getUserOption('chatbox') ? " checked" : '';
-			$parse['opt_planetlist_data'] = $this->user->getUserOption('planetlist') ? " checked" : '';
-			$parse['opt_planetlistselect_data'] = $this->user->getUserOption('planetlistselect') ? " checked" : '';
-			$parse['opt_available_data'] = $this->user->getUserOption('only_available') ? " checked" : '';
-			$parse['opt_delac_data'] = $this->user->deltime > 0 ? " checked" : '';
-			$parse['opt_modev_data'] = $this->user->vacation > 0 ? " checked" : '';
+			$parse['opt_record_data'] = $this->user->getUserOption('records');
+			$parse['opt_bbcode_data'] = $this->user->getUserOption('bb_parser');
+			$parse['opt_chatbox_data'] = $this->user->getUserOption('chatbox');
+			$parse['opt_planetlist_data'] = $this->user->getUserOption('planetlist');
+			$parse['opt_planetlistselect_data'] = $this->user->getUserOption('planetlistselect');
+			$parse['opt_available_data'] = $this->user->getUserOption('only_available');
+			$parse['opt_delac_data'] = $this->user->deltime > 0;
+			$parse['opt_modev_data'] = $this->user->vacation > 0;
 
 			$parse['sex'] = $this->user->sex;
-			$parse['about'] = $userInfo->about;
+			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $userInfo->about);
 			$parse['timezone'] = isset($settings['timezone']) ? $settings['timezone'] : 0;
 			$parse['spy'] = isset($settings['spy']) ? $settings['spy'] : 1;
 			$parse['color'] = isset($settings['color']) ? $settings['color'] : 0;
@@ -398,7 +400,7 @@ class OptionsController extends Controller
 			$parse['bot_auth'] = $this->db->fetchOne('SELECT * FROM bot_requests WHERE user_id = '.$this->user->getId().'');
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Hacтpoйки');
 	}

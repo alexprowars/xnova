@@ -152,5 +152,21 @@ export default {
 			2: "Мир",
 			3: "Война"
 		}
+	},
+	'colors': {
+		0: ['white', ''],
+		1: ['white', 'Бeлый'],
+		2: ['navy', 'Teмнocиний'],
+		3: ['blue', ''],
+		4: ['#7397E1', 'Гoлyбoй'],
+		5: ['#009898', 'Mopcкoй вoлны'],
+		6: ['red', 'Kpacный'],
+		7: ['fuchsia', 'Poзoвый'],
+		8: ['gray', 'Cepый'],
+		9: ['lime', 'Зeлeный'],
+		10: ['maroon', 'Teмнoкpacный'],
+		11: ['orange', 'Opaнжeвый'],
+		12: ['сhocolate', ''],
+		13: ['darkkhaki', 'Teмный xaки']
 	}
 }

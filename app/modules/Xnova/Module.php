@@ -25,23 +25,6 @@ class Module extends Base implements ModuleDefinitionInterface
 
 	public function registerServices(DiInterface $di)
 	{
-		if ($di->has('view'))
-		{
-			$view = $di->getShared('view');
-
-			$viewDirs = $view->getViewsDir();
-
-			if (is_null($viewDirs))
-				$viewDirs = [];
-
-			if (!is_array($viewDirs))
-				$viewDirs = [$viewDirs];
-
-			$viewDirs[] = __DIR__.'/Views';
-
-			$view->setViewsDir($viewDirs);
-		}
-
 		$di->setShared('game', function ()
 		{
 			return new Game();

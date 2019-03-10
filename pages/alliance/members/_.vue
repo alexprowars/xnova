@@ -6,22 +6,22 @@
 		<tr>
 			<th>№</th>
 			<th>
-				<router-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/1/sort2/'+page['s']+'/'">Ник</router-link>
+				<nuxt-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/1/sort2/'+page['s']+'/'">Ник</nuxt-link>
 			</th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
 			<th>
-				<router-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/2/sort2/'+page['s']+'/'">Ранг</router-link>
+				<nuxt-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/2/sort2/'+page['s']+'/'">Ранг</nuxt-link>
 			</th>
 			<th>
-				<router-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/3/sort2/'+page['s']+'/'">Очки</router-link>
+				<nuxt-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/3/sort2/'+page['s']+'/'">Очки</nuxt-link>
 			</th>
 			<th>Координаты</th>
 			<th>
-				<router-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/4/sort2/'+page['s']+'/'">Дата вступления</router-link>
+				<nuxt-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/4/sort2/'+page['s']+'/'">Дата вступления</nuxt-link>
 			</th>
 			<th v-if="page['status']">
-				<router-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/5/sort2/'+page['s']+'/'">Активность</router-link>
+				<nuxt-link :to="'/alliance/'+(page['admin'] ? 'admin/edit/members' : 'members')+'/sort1/5/sort2/'+page['s']+'/'">Активность</nuxt-link>
 			</th>
 			<th v-if="page['admin']">Управление</th>
 		</tr>
@@ -46,7 +46,7 @@
 					{{ m['points'] }}
 				</th>
 				<th>
-					<router-link :to="'/galaxy/'+m['galaxy']+'/'+m['system']+'/'">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</router-link>
+					<nuxt-link :to="'/galaxy/'+m['galaxy']+'/'+m['system']+'/'">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</nuxt-link>
 				</th>
 				<th>
 					{{ m['time'] }}
@@ -57,9 +57,9 @@
 						<img src="/images/abort.gif" alt="">
 					</a>
 					&nbsp;
-					<router-link :to="'/alliance/admin/edit/members/rank/'+m['id']+'/'">
+					<nuxt-link :to="'/alliance/admin/edit/members/rank/'+m['id']+'/'">
 						<img src="/images/key.gif" alt="">
-					</router-link>
+					</nuxt-link>
 				</th>
 			</tr>
 			<tr v-else>
@@ -78,7 +78,7 @@
 		</template>
 		<tr>
 			<td class="c" colspan="10">
-				<router-link :to="'/alliance'+(page['admin'] ? '/admin/edit/ally' : '')+'/'">вернутся к обзору</router-link>
+				<nuxt-link :to="'/alliance'+(page['admin'] ? '/admin/edit/ally' : '')+'/'">вернутся к обзору</nuxt-link>
 			</td>
 		</tr>
 	</table>

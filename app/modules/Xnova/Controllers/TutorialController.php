@@ -12,6 +12,7 @@ use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Request;
 use Xnova\Vars;
 
 /**
@@ -250,10 +251,11 @@ class TutorialController extends Controller
 				}
 			}
 
-			$this->view->setVar('stage', $stage);
-			$this->view->setVar('errors', $errors);
+			$parse['rewd'] = implode(', ', $parse['rewd']);
+			$parse['stage'] = $stage;
+			$parse['errors'] = $errors;
 
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle('Задание. '.$parse['info']['TITLE']);
 		}
@@ -273,6 +275,8 @@ class TutorialController extends Controller
 
 		while ($res = $dbRes->fetch())
 		{
+			$res['finish'] = (int) $res['finish'];
+
 			$userQuests[$res['quest_id']] = $res;
 		}
 
@@ -307,7 +311,7 @@ class TutorialController extends Controller
 			$parse['list'][] = $quest;
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Обучение');
 	}

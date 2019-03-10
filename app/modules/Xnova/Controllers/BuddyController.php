@@ -4,6 +4,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Request;
 use Xnova\User;
 use Xnova\Controller;
 
@@ -57,7 +58,7 @@ class BuddyController extends Controller
 			{
 				$parse = $u;
 
-				$this->view->setVar('parse', $parse);
+				Request::addData('page', $parse);
 
 				$this->tag->setTitle('Друзья');
 				$this->showTopPanel(false);
@@ -74,7 +75,6 @@ class BuddyController extends Controller
 		if ($isMy !== false)
 			$isMy = true;
 
-		$this->view->pick('buddy/requests');
 		$this->indexAction(true, $isMy);
 	}
 
@@ -134,7 +134,7 @@ class BuddyController extends Controller
 		
 			$u = $this->db->query("SELECT id, username, galaxy, system, planet, onlinetime, ally_id, ally_name FROM game_users WHERE id = " . $uid)->fetch();
 		
-			$UserAlly = ($u["ally_id"] != 0) ? "<a href=\"".$this->url->get('alliance/info/'.$u["ally_id"].'/') ."\">" . $u["ally_name"] . "</a>" : "";
+			$UserAlly = ($u["ally_id"] != 0) ? "<a href=\"".$this->url->get('alliance/info/'.$u["ally_id"].'/', null, null, '/') ."\">" . $u["ally_name"] . "</a>" : "";
 		
 			if ($isRequests)
 				$LastOnline = $b["text"];
@@ -164,7 +164,7 @@ class BuddyController extends Controller
 			$parse['list'][] = $q;
 		}
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Список друзей');
 		$this->showTopPanel(false);
