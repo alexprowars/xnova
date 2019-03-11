@@ -173,51 +173,9 @@ class AllianceController extends Controller
 
 	public function adminAction ()
 	{
-		$edit = $this->request->getQuery('edit', null, '');
+		$edit = $this->request->getQuery('edit', null, 'ally');
 
 		$this->parseInfo($this->user->ally_id);
-
-		if ($this->user->isAdmin() && $edit == 'planets')
-		{
-			if ($this->ally->owner != $this->user->id)
-				throw new ErrorException(_getText('Denied_access'), "Управление планетами");
-
-			$parse = [];
-
-			$parse['list'] = $this->db->extractResult($this->db->query("SELECT id, id_ally, name, galaxy, system, planet FROM game_planets WHERE planet_type = 5 AND id_owner = ".$this->user->id.""));
-			$parse['credits'] = $this->user->credits;
-
-			$parse['bases'] = Planet::count(['planet_type = 5 AND id_ally = ?0', 'bind' => [$this->ally->id]]);
-
-			$parse['need'] = 100 * ($parse['bases'] > 0 ? (5 + ((int) $parse['bases'] - 1) * 5) : 1);
-
-			if ($this->request->hasQuery('ally'))
-			{
-				$id = $this->request->getQuery('ally', 'int', 0);
-
-				$check = $this->db->query("SELECT id, id_ally FROM game_planets WHERE planet_type = 5 AND id_ally = 0 AND id_owner = ".$this->user->id." AND id = ".$id."")->fetch();
-
-				if (isset($check['id']))
-				{
-					if ($this->user->credits >= $parse['need'])
-					{
-						$this->db->updateAsDict('game_planets', ['id_ally' => $this->ally->id, 'name' => $this->ally->name], 'id = '.$check['id']);
-
-						$this->user->saveData(['-credits' => $parse['need']]);
-
-						throw new RedirectException("Планета была успешно преобразована", "Управление планетами", "/alliance/admin/edit/planets/", 3);
-					}
-					else
-						throw new ErrorException("Недостаточно кредитов для преобразования планеты", "Управление планетами");
-				}
-			}
-
-			$this->view->pick('alliance/planets');
-			$this->view->setVar('parse', $parse);
-
-			$this->tag->setTitle('Управление планетами');
-			$this->showTopPanel(false);
-		}
 
 		if ($edit == 'rights')
 		{
@@ -311,8 +269,7 @@ class AllianceController extends Controller
 				}
 			}
 
-			$this->view->pick('alliance/laws');
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Law_settings'));
 			$this->showTopPanel(false);
@@ -381,16 +338,16 @@ class AllianceController extends Controller
 
 			if ($t == 3)
 			{
-				$parse['text'] = $this->ally->request;
+				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->request);
 				$parse['Show_of_request_text'] = "Текст заявок альянса";
 			}
 			elseif ($t == 2)
 			{
-				$parse['text'] = $this->ally->text;
+				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->text);
 				$parse['Show_of_request_text'] = "Внутренний текст альянса";
 			}
 			else
-				$parse['text'] = $this->ally->description;
+				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->description);
 
 			$parse['t'] = $t;
 			$parse['owner'] = $this->ally->owner;
@@ -417,8 +374,7 @@ class AllianceController extends Controller
 			if ($this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
 				$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/edit/exit/", 'Продолжить');
 
-			$this->view->pick('alliance/admin');
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Alliance_admin'));
 			$this->showTopPanel(false);
@@ -493,12 +449,11 @@ class AllianceController extends Controller
 			if (isset($show) && $show != 0 && count($parse['list']) > 0 && isset($s))
 				$parse['request'] = $s;
 			else
-				$parse['request'] = '';
+				$parse['request'] = null;
 
 			$parse['tag'] = $this->ally->tag;
 
-			$this->view->pick('alliance/requests');
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Check_the_requests'));
 			$this->showTopPanel(false);
@@ -526,8 +481,9 @@ class AllianceController extends Controller
 				throw new RedirectException('Название альянса изменено', 'Управление альянсом', '/alliance/admin/edit/name/');
 			}
 
-			$this->view->pick('alliance/rename');
-			$this->view->setVar('name', $this->ally->name);
+			Request::addData('page', [
+				'name' => $this->ally->name
+			]);
 
 			$this->tag->setTitle('Управление альянсом');
 			$this->showTopPanel(false);
@@ -553,8 +509,9 @@ class AllianceController extends Controller
 				throw new RedirectException('Абревиатура альянса изменена', 'Управление альянсом', '/alliance/admin/edit/tag/');
 			}
 
-			$this->view->pick('alliance/tag');
-			$this->view->setVar('tag', $this->ally->tag);
+			Request::addData('page', [
+				'tag' => $this->ally->tag
+			]);
 
 			$this->tag->setTitle('Управление альянсом');
 			$this->showTopPanel(false);
@@ -598,8 +555,7 @@ class AllianceController extends Controller
 
 			$parse['id'] = $this->user->id;
 
-			$this->view->pick('alliance/transfer');
-			$this->view->setVar('parse', $parse);
+			Request::addData('page', $parse);
 
 			$this->tag->setTitle('Передача альянса');
 			$this->showTopPanel(false);

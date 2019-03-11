@@ -108,7 +108,7 @@ class NotesController extends Controller
 			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle(_getText('Notes'));
 		$this->showTopPanel(false);

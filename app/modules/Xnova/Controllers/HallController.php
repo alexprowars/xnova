@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/hall")
@@ -26,9 +27,10 @@ class HallController extends Controller
 	
 	public function indexAction ()
 	{
-		$sab = (!isset($_POST['visible']) || $_POST['visible'] <= 1) ? 0 : 1;
+		$sab = (int) $this->request->get('visible', 'integer', 0);
 
 		$parse = [];
+		$parse['type'] = $sab;
 		$parse['hall'] = [];
 
 		$halls = $this->db->query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $sab . " ORDER BY debris DESC LIMIT 50");
@@ -45,7 +47,7 @@ class HallController extends Controller
 
 		$parse['time'] = $time;
 
-		$this->view->setVar('parse', $parse);
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Зал славы');
 		$this->showTopPanel(false);
