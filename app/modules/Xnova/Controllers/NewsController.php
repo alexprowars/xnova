@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Lang;
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/news")
@@ -36,16 +37,15 @@ class NewsController extends Controller
 
 		foreach (_getText('news') as $a => $b)
 		{
-			$news[] = [$a, nl2br($b)];
+			$news[] = [
+				'title' => $a,
+				'text' => nl2br($b)
+			];
 		}
 
-		$this->view->setVar('parse', $news);
-
-		exec('cd '.ROOT_PATH.' && git rev-parse --verify HEAD 2> /dev/null', $output);
-
-		$lastCommit = $output[0];
-
-		$this->view->setVar('lastCommit', $lastCommit);
+		Request::addData('page', [
+			'items' => $news
+		]);
 
 		$this->tag->setTitle('Новости');
 		$this->showTopPanel(false);

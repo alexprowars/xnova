@@ -35,7 +35,8 @@
 	import PlanetsList from '../components/app/planets-list.vue'
 	import MessagesRow from '../components/app/messages-row.vue'
 	import PlanetPanel from '../components/app/planet-panel.vue'
-	import { tooltip, swipe } from '../utils/jquery'
+	import { tooltip, swipe } from '~/utils/jquery'
+	import { addScript } from '~/utils/helpers'
 
 	export default {
 		name: "application",
@@ -91,7 +92,10 @@
 				title: this.$store.state.title,
 				bodyAttrs: {
 					page: this.$store.state.route.controller
-				}
+				},
+				meta: [
+					{ hid: 'og:title', property: 'og:title', content: this.$store.state.title }
+				]
 			}
 		},
 		watch: {
@@ -158,6 +162,9 @@
 		},
 		mounted ()
 		{
+			if (this.$store.state.isSocial)
+				addScript('https://vk.com/js/api/xd_connection.js')
+
 			this.init();
 			this.loader = true;
 		}

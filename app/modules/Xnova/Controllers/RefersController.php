@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/refers")
@@ -41,6 +42,8 @@ class RefersController extends Controller
 			$parse['you'] = $refers;
 
 		$this->view->setVar('parse', $parse);
+
+		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Рефералы');
 		$this->showTopPanel(false);

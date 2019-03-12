@@ -7,6 +7,12 @@ module.exports = {
 			{ charset: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
 			{ 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
+			{ property: 'og:title', content: 'XNova Game', hid: 'og:title' },
+			{ property: 'og:image', content: '/images/logo.jpg' },
+			{ property: 'og:image:width', content: '300' },
+			{ property: 'og:image:height', content: '300' },
+			{ property: 'og:site_name', content: 'Звездная Империя' },
+			{ property: 'og:description', content: 'Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.' },
 		],
 		link: [
 			{ rel: 'image_src', href: '/images/logo.jpg' },
@@ -29,7 +35,8 @@ module.exports = {
 		'~/plugins/components.js',
 		{src: '~/plugins/jquery.js', ssr: false},
 		{src: '~/plugins/modal.js', ssr: false},
-		{src: '~/plugins/router.js', ssr: false}
+		{src: '~/plugins/router.js', ssr: false},
+		{src: '~/plugins/metrika.js', ssr: false},
 	],
 	router: {
 		base: '/',

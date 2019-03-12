@@ -1,4 +1,5 @@
 export const state = () => ({
+	isSocial: false,
 	path: null,
 	version: null,
 	host: null,

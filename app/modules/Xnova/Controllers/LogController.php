@@ -13,6 +13,7 @@ use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\BattleLog;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/log")
@@ -42,7 +43,9 @@ class LogController extends Controller
 			];
 		}
 
-		$this->view->setVar('list', $list);
+		Request::addData('page', [
+			'items' => $list
+		]);
 
 		$this->tag->setTitle('Логовница');
 		$this->showTopPanel(false);
