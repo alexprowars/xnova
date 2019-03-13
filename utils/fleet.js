@@ -62,9 +62,9 @@ function storage (ships)
 	return storage;
 }
 
-function sendMission (mission, galaxy, system, planet, type, count)
+function sendMission (_this, mission, galaxy, system, planet, type, count)
 {
-	return $get('/fleet/quick/', {
+	return _this.$get('/fleet/quick/', {
 		mission: mission,
 		galaxy: galaxy,
 		system: system,
@@ -74,17 +74,9 @@ function sendMission (mission, galaxy, system, planet, type, count)
 	})
 	.then(result =>
 	{
-		result.messages.forEach((item) =>
-		{
-			if (item['type'].indexOf('-static') <= 0)
-			{
-				$.toast({
-					text : item['text'],
-					position : 'bottom-center',
-					icon: item['type']
-				});
-			}
-		});
+		_this.$store.commit('PAGE_LOAD', {
+			messages: result.messages
+		})
 	})
 }
 

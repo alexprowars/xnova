@@ -35,30 +35,24 @@
 		methods: {
 			destroyAction ()
 			{
-				$.confirm({
-					content: 'Снести постройку <b>'+this.$t('TECH.'+this.item)+' '+this.data['level']+' ур.</b>?',
-					title: 'Очередь построек',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'снести',
-							action: () =>
-							{
-								this.$post('/buildings/', {
-									cmd: 'destroy',
-									building: this.item
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result);
-									this.$router.replace(result['url'])
-								})
-							}
-						},
-						cancel: {
-							text: 'закрыть'
-						}
-					}
-				})
+				this.$dialog
+					.confirm({
+						body: 'Снести постройку <b>'+this.$t('TECH.'+this.item)+' '+this.data['level']+' ур.</b>?',
+					}, {
+						okText: 'Снести',
+						cancelText: 'Закрыть',
+					})
+					.then(() =>
+					{
+						this.$post('/buildings/', {
+							cmd: 'destroy',
+							building: this.item
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result);
+							this.$router.replace(result['url'])
+						})
+					})
 			}
 		}
 	}

@@ -22,9 +22,28 @@
 	export default {
 		name: "main-menu",
 		props: ['active'],
-		computed: {
-			items () {
-				return this.$store.state.menu;
+		data () {
+			return {
+				items: [
+					{ id: 'overview', title: 'Обзор', url: '/overview/' },
+					{ id: 'imperium', title: 'Империя', url: '/imperium/' },
+					{ id: 'galaxy', title: 'Космос', url: '/galaxy/' },
+					{ id: 'fleet', title: 'Флот', url: '/fleet/' },
+					{ id: 'buildingsindex', title: 'Постройки', url: '/buildings/' },
+					{ id: 'buildingsresearch', title: 'Наука', url: '/buildings/research/' },
+					{ id: 'buildingsfleet', title: 'Верфь', url: '/buildings/fleet/' },
+					{ id: 'buildingsdefense', title: 'Оборона', url: '/buildings/defense/' },
+					{ id: 'resources', title: 'Сырьё', url: '/resources/' },
+					{ id: 'merchant', title: 'Рынок', url: '/merchant/' },
+					{ id: 'officier', title: 'Офицеры', url: '/officier/' },
+					{ id: 'alliance', title: 'Альянс', url: '/alliance/' },
+					{ id: 'buddy', title: 'Друзья', url: '/buddy/' },
+					{ id: 'notes', title: 'Заметки', url: '/notes/' },
+					{ id: 'records', title: 'Рекорды', url: '/records/' },
+					{ id: 'hall', title: 'Зал славы', url: '/hall/' },
+					{ id: 'log', title: 'Логи', url: '/log/' },
+					{ id: 'records', title: 'Рекорды', url: '/records/' },
+				]
 			}
 		},
 		components: {

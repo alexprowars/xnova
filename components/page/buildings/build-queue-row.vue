@@ -33,57 +33,48 @@
 		methods: {
 			deleteItem ()
 			{
-				$.confirm({
-					content: 'Удалить <b>'+this.item['name']+' '+this.item['level']+' ур.</b> из очереди?',
-					title: 'Очередь построек',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'удалить',
-							action: () =>
-							{
-								this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
-									cmd: 'remove',
-									listid: this.index
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result)
-									this.$router.replace(result['url'])
-								})
-							}
-						},
-						cancel: {
-							text: 'закрыть'
-						}
-					}
-				})
+				this.$dialog
+					.confirm({
+						body: 'Удалить <b>'+this.item['name']+' '+this.item['level']+' ур.</b> из очереди?',
+						title: 'Очередь построек'
+					}, {
+						okText: 'Удалить',
+						cancelText: 'Закрыть',
+					})
+					.then(() =>
+					{
+						this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
+							cmd: 'remove',
+							listid: this.index
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result)
+							this.$router.replace(result['url'])
+						})
+					})
 			},
 			cancelItem ()
 			{
-				$.confirm({
-					content: 'Отменить постройку <b>'+this.item['name']+' '+this.item['level']+' ур.</b>?',
-					title: 'Очередь построек',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'отменить',
-							action: () =>
-							{
-								this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
-									cmd: 'cancel',
-									listid: this.index - 1
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result)
-									this.$router.replace(result['url'])
-								})
-							}
-						},
-						cancel: {
-							text: 'закрыть'
-						}
-					}
-				})
+				this.$dialog
+					.confirm({
+						body: 'Отменить постройку <b>'+this.item['name']+' '+this.item['level']+' ур.</b>?',
+						title: 'Очередь построек'
+					}, {
+						okText: 'Отменить',
+						cancelText: 'Закрыть',
+					})
+					.then(() =>
+					{
+						this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
+							cmd: 'cancel',
+							listid: this.index - 1
+						})
+						.then((result) =>
+						{
+							this.$store.commit('PAGE_LOAD', result)
+							this.$router.replace(result['url'])
+						})
+					})
 			}
 		}
 	}

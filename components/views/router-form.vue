@@ -43,18 +43,5 @@
 				})
 			}
 		},
-		mounted ()
-		{
-			let form = $(this.$refs['form']);
-
-			form.on('click', 'input[type=submit], button[type=submit]', function ()
-			{
-				if (this.name && this.name.length > 0)
-					form.append('<input type="hidden" name="'+this.name+'" value="'+this.value+'">');
-			})
-		},
-		beforeDestroy () {
-			$(this.$refs['form']).off('click', 'input[type=submit], button[type=submit]');
-		}
 	}
 </script>

@@ -58,30 +58,25 @@
 		methods: {
 			submit (value, price)
 			{
-				$.confirm({
-					content: 'Вы действительно хотите нанять "<b>'+this.$t('TECH.'+this.item['id'])+'</b>" на <b>'+value+'</b> дней за <b>'+price+'</b> кредитов?',
-					title: 'Вербовка офицера',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'нанять',
-							action: () =>
-							{
-								this.$post('/officier/buy/', {
-									id: this.item['id'],
-									duration: value
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result);
-									this.$router.replace(this.$route.fullPath);
-								})
-							}
-						},
-						cancel: {
-							text: 'отменить'
-						}
-					}
-				})
+				this.$dialog
+					.confirm({
+						body: 'Вы действительно хотите нанять "<b>'+this.$t('TECH.'+this.item['id'])+'</b>" на <b>'+value+'</b> дней за <b>'+price+'</b> кредитов?',
+						title: 'Вербовка офицера'
+					}, {
+						okText: 'Нанять',
+						cancelText: 'Отменить',
+					})
+					.then(() =>
+					{
+						this.$post('/officier/buy/', {
+							id: this.item['id'],
+							duration: value
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result);
+							this.$router.replace(this.$route.fullPath);
+						})
+					})
 			}
 		}
 	}

@@ -24,12 +24,6 @@ class ErrorController extends Controller
 		Modules::init('xnova');
 
 		parent::initialize();
-
-		if (!$this->auth->isAuthorized())
-		{
-			$this->assets->addCss('assets/css/bootstrap.css');
-			$this->assets->addCss('assets/css/style.css');
-		}
 	}
 
 	public function indexAction()

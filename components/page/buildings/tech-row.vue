@@ -53,7 +53,7 @@
 					</div>
 				</div>
 			</div>
-			<build-row-price :price="item['price']"></build-row-price>
+			<BuildRowPrice :price="item['price']"></BuildRowPrice>
 		</div>
 	</div>
 </template>
@@ -120,7 +120,8 @@
 					cmd: 'search',
 					tech: this.item['i']
 				})
-				.then((result) => {
+				.then((result) =>
+				{
 					this.$store.commit('PAGE_LOAD', result);
 					this.$router.replace(result['url']);
 				})
@@ -129,9 +130,8 @@
 			{
 				this.$dialog
 					.confirm('Отменить изучение <b>'+this.$t('TECH.'+this.item['i'])+' '+this.item['level']+' ур.</b>?', {
-						okText: 'отменить',
-						cancelText: 'закрыть',
-						backdropClose: true,
+						okText: 'Отменить',
+						cancelText: 'Закрыть',
 					})
 					.then(() =>
 					{
@@ -139,7 +139,8 @@
 							cmd: 'cancel',
 							tech: this.item['i']
 						})
-						.then((result) => {
+						.then((result) =>
+						{
 							this.$store.commit('PAGE_LOAD', result);
 							this.$router.replace(result['url']);
 						})

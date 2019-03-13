@@ -393,12 +393,12 @@
 
 				let spyNum = obj.parent().find('input[type=text]').val();
 
-				sendMission(6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum).then(() => {
+				sendMission(this, 6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum).then(() => {
 					obj.prop('disabled', false);
 				});
 			},
 			debris () {
-				sendMission(8, this.galaxy, this.system, this.item['planet'], 2, 0)
+				sendMission(this, 8, this.galaxy, this.system, this.item['planet'], 2, 0)
 			}
 		}
 	}

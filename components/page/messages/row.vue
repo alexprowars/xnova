@@ -6,10 +6,10 @@
 			</div>
 			<div class="col-3 th text-center">{{ item['time']|date('d.m.y H:i:s') }}</div>
 			<div class="col-6 th text-center">
-				<popup-link v-if="item['from'] > 0" :to="'/players/'+item['from']+'/'">
+				<popup-link v-if="item['from'] > 0" :to="'/players/'+item['from']+'/'" title="От кого" v-html="item['theme']">
 					{{ item['theme'] }}
 				</popup-link>
-				<span v-else>
+				<span v-else v-html="item['theme']">
 					{{ item['theme'] }}
 				</span>
 			</div>
@@ -47,22 +47,22 @@
 		methods: {
 			abuseAction ()
 			{
-				$.confirm({
-					content: 'Вы уверены что хотите отправить жалобу на это сообщение?',
-					title: 'Сообщения',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'да',
-							action: () => {
-								this.$router.push('/messages/abuse/'+item['id']+'/')
-							}
-						},
-						cancel: {
-							text: 'нет'
-						}
-					}
-				});
+				this.$dialog
+					.confirm('Вы уверены что хотите отправить жалобу на это сообщение?', {
+						okText: 'Да',
+						cancelText: 'Нет',
+					})
+					.then(() =>
+					{
+						this.$post('/messages/abuse/'+this.item['id']+'/', {
+
+						})
+						.then((result) =>
+						{
+							this.$store.commit('PAGE_LOAD', result);
+							this.$router.replace(result['url']);
+						})
+					})
 			}
 		}
 	}

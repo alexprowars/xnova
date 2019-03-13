@@ -146,8 +146,11 @@
 			GalaxyRow,
 			GalaxySelector
 		},
-		asyncData ({ store, route }) {
+		asyncData ({ store, route, error }) {
 			return store.dispatch('loadPage', route.fullPath)
+				.catch((error) => {
+					error({statusCode: '404', message: error.message})
+				})
 		},
 		watchQuery: true,
 		middleware: ['auth'],

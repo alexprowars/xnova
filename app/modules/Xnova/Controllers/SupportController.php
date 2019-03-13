@@ -56,7 +56,7 @@ class SupportController extends Controller
 		$sms = new Sms();
 		$sms->send($this->config->sms->login, 'Создан новый тикет №' . $ticket->id . ' ('.$this->user->username.')');
 
-		throw new SuccessException('Задача добавлена', 'Успех');
+		$this->flashSession->notice('Задача добавлена');
 	}
 
 	public function answerAction ($id = 0)

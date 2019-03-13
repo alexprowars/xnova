@@ -288,7 +288,7 @@
 		},
 		methods: {
 			sendRecycle () {
-				sendMission(8, this.page['planet']['galaxy'], this.page['planet']['system'], this.page['planet']['planet'], 2)
+				sendMission(this, 8, this.page['planet']['galaxy'], this.page['planet']['system'], this.page['planet']['planet'], 2)
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <template>
 	<li>
-		<nuxt-link :class="{active: active}" :to="item.url" :target="(item.new === true ? '_blank' : '')">{{ item.text }}</nuxt-link>
+		<nuxt-link :class="{active: active}" :to="item.url">{{ item.title }}</nuxt-link>
 	</li>
 </template>
 

@@ -89,8 +89,13 @@
 		head () {
 			return {
 				title: this.$store.state.title,
+				titleTemplate: '%s | Звездная Империя',
+				htmlAttrs: {
+					lang: 'ru',
+				},
 				bodyAttrs: {
-					page: this.$store.state.route.controller
+					page: this.$store.state.route.controller,
+					class: this.$store.state.isSocial ? 'iframe' : 'window'
 				},
 				meta: [
 					{ hid: 'og:title', property: 'og:title', content: this.$store.state.title }

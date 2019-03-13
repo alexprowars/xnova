@@ -1,5 +1,5 @@
 <template>
-	<a :href="to" @click.prevent="load" class="skip" :title="title">
+	<a :href="to" @click.prevent="load" :title="title">
 		<slot></slot>
 	</a>
 </template>

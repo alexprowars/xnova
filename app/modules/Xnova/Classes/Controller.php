@@ -73,7 +73,8 @@ class Controller extends PhalconController
 		Lang::setLang($this->config->app->language, 'xnova');
 
 		$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-		$this->tag->setTitleSeparator(' :: ');
+		$this->view->disable();
+
 		$this->tag->setTitle(Options::get('site_title'));
 
 		if (is_array($this->router->getParams()) && count($this->router->getParams()))
@@ -170,33 +171,13 @@ class Controller extends PhalconController
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
 
-			if ($this->request->has('initial'))
-			{
-				$menu = [];
-
-				foreach (_getText('main_menu') as $code => $data)
-				{
-					if ($data[2] > $this->user->authlevel)
-						continue;
-
-					$menu[] = [
-						'id' => $code,
-						'url' => $this->url->get($data[1], null, null, '/'),
-						'text' => trim($data[0]),
-						'new' => isset($data[3])
-					];
-				}
-
-				Request::addData('menu', $menu);
-			}
-
 			Request::addData('speed', [
 				'game' => $this->game->getSpeed('build'),
 				'fleet' => $this->game->getSpeed('fleet'),
 				'resources' => $this->game->getSpeed('mine')
 			]);
 
-			Request::addData('page', false);
+			Request::addData('page', null);
 			Request::addData('error', false);
 
 			$this->user->getAllyInfo();
@@ -237,9 +218,6 @@ class Controller extends PhalconController
 
 	public function afterExecuteRoute ()
 	{
-		if ($this->view->isDisabled())
-			return true;
-
 		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
 
 		if (!$this->request->isAjax() && Request::getDataItem('redirect'))
@@ -379,10 +357,6 @@ class Controller extends PhalconController
 			$this->showTopPanel(false);
 
 		Request::addData('view', $this->views);
-
-		if (!$this->request->has('popup'))
-			$this->tag->appendTitle(Options::get('site_title'));
-
 		Request::addData('title', $this->tag->getTitle(false));
 		Request::addData('url', $this->router->getRewriteUri());
 

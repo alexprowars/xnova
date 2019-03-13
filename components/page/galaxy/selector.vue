@@ -1,5 +1,6 @@
 <template>
-	<router-form ref="form" action="/galaxy/r/1/" class="page-galaxy-select">
+	<router-form ref="form" action="/galaxy/" class="page-galaxy-select">
+		<input type="hidden" name="r" value="1">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">
@@ -10,22 +11,22 @@
 			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
 					<tbody>
-					<tr>
-						<td class="c" colspan="3">
-							Галактика
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<input value="&lt;-" type="button" @click.prevent="direction = 'galaxyLeft'">
-						</th>
-						<th>
-							<input name="galaxy" :value="$parent.page.galaxy" maxlength="3" tabindex="1" min="1" type="number">
-						</th>
-						<th>
-							<input value="-&gt;" type="button" v-on:click.prevent="direction = 'galaxyRight'">
-						</th>
-					</tr>
+						<tr>
+							<td class="c" colspan="3">
+								Галактика
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<input value="&lt;-" type="button" @click.prevent="direction = 'galaxyLeft'">
+							</th>
+							<th>
+								<input name="galaxy" :value="$parent.page.galaxy" maxlength="3" tabindex="1" min="1" type="number">
+							</th>
+							<th>
+								<input value="-&gt;" type="button" v-on:click.prevent="direction = 'galaxyRight'">
+							</th>
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -35,22 +36,22 @@
 			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
 					<tbody>
-					<tr>
-						<td class="c" colspan="3">
-							Солнечная система
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<input value="&lt;-" type="button" v-on:click.prevent="direction = 'systemLeft'">
-						</th>
-						<th>
-							<input name="system" :value="$parent.page.system" maxlength="3" tabindex="2" min="1" type="number">
-						</th>
-						<th>
-							<input value="-&gt;" type="button" v-on:click.prevent="direction = 'systemRight'">
-						</th>
-					</tr>
+						<tr>
+							<td class="c" colspan="3">
+								Солнечная система
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<input value="&lt;-" type="button" v-on:click.prevent="direction = 'systemLeft'">
+							</th>
+							<th>
+								<input name="system" :value="$parent.page.system" maxlength="3" tabindex="2" min="1" type="number">
+							</th>
+							<th>
+								<input value="-&gt;" type="button" v-on:click.prevent="direction = 'systemRight'">
+							</th>
+						</tr>
 					</tbody>
 				</table>
 			</div>

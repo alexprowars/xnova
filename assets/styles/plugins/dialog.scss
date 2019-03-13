@@ -1,0 +1,36 @@
+.dg-main-content {
+	background: #50608a;
+	border: 1px solid #415683;
+	padding: 15px;
+
+	.dg-content-body {
+		border: 0;
+	}
+
+	.dg-content {
+	}
+
+	.dg-btn {
+		font-weight: normal;
+		padding: 8px 22px 9px 22px;
+		border: 0;
+	}
+
+	.dg-btn--ok {
+		color: #fff;
+		background-color: #27ae60;
+	}
+
+	.dg-btn--ok:hover {
+		background-color: #2ecc71;
+	}
+
+	.dg-btn--cancel {
+		color: #fff;
+		background-color: #c0392b;
+	}
+
+	.dg-btn--cancel:hover {
+		background-color: #e74c3c;
+	}
+}

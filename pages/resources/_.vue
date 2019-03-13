@@ -220,29 +220,23 @@
 		methods: {
 			buyResources ()
 			{
-				$.confirm({
-					content: 'Купить ресурсы за 10 кредитов?',
-					title: 'Ресурсы',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'да',
-							action: () =>
-							{
-								this.$get('/resources/', {
-									buy: 'Y'
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result)
-									this.$router.replace(this.$route.fullPath);
-								})
-							}
-						},
-						cancel: {
-							text: 'нет'
-						}
-					}
-				})
+				this.$dialog
+					.confirm({
+						body: 'Купить ресурсы за 10 кредитов?',
+					}, {
+						okText: 'Да',
+						cancelText: 'Нет',
+					})
+					.then(() =>
+					{
+						this.$get('/resources/', {
+							buy: 'Y'
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result)
+							this.$router.replace(this.$route.fullPath);
+						})
+					})
 			}
 		}
 	}

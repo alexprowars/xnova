@@ -48,21 +48,17 @@
 				{
 					if (result.error)
 					{
-						$.alert({
+						this.$dialog.alert({
 							title: result.error.title,
-							content: result.error.message
+							body: result.error.message
+						}, {
+							okText: 'Закрыть'
 						});
-
-						if (result.error.type === 'success')
-						{
-							this.$router.replace(this.$route.fullPath);
-							this.$emit('close');
-						}
 					}
 					else
 					{
-						this.$store.commit('PAGE_LOAD', result);
-						this.$router.replace(this.$route.fullPath);
+						this.$store.dispatch('loadPage', this.$route.fullPath)
+						this.$emit('close');
 					}
 				})
 			}

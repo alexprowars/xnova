@@ -50,9 +50,11 @@
 				{
 					if (result.error && (result.error.type === 'error' || result.error.type === 'success'))
 					{
-						$.alert({
+						this.$dialog.alert({
 							title: result.error.title,
-							content: result.error.message
+							body: result.error.message,
+						}, {
+							okText: 'Закрыть'
 						});
 
 						if (result.error.type === 'success')

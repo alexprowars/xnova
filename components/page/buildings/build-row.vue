@@ -114,7 +114,8 @@
 					cmd: 'insert',
 					building: this.item['i']
 				})
-				.then((result) => {
+				.then((result) =>
+				{
 					this.$store.commit('PAGE_LOAD', result)
 					this.$router.replace(result['url'])
 				})
