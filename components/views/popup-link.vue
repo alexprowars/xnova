@@ -21,7 +21,7 @@
 		methods: {
 			load ()
 			{
-				if (this.$store.state.mobile)
+				if (this.$store.getters.isMobile)
 					return window.location.href = url.split('ajax').join('').split('popup').join('');
 
 				this.$get(this.to, {

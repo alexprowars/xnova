@@ -18,12 +18,12 @@
 							<a v-if="(item['start']['time'] + 1) === item['target']['time']">(F)</a>
 						</th>
 						<th>
-							<a class="tooltip">
-								<div class="tooltip-content">
+							<v-popover>
+								<template slot="popover">
 									<div v-for="data in item['ships']">{{ $t('TECH.'+data['id']) }}: {{ data['count'] }}</div>
-								</div>
+								</template>
 								{{ item['ships_total']|number }}
-							</a>
+							</v-popover>
 						</th>
 						<th>
 							<planet-link :galaxy="item['start']['galaxy']" :system="item['start']['system']" :planet="item['start']['planet']"></planet-link>

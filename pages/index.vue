@@ -71,7 +71,7 @@
 		methods: {
 			showRegistration ()
 			{
-				if (this.$store.state.mobile)
+				if (this.$store.getters.isMobile)
 					return window.location.href = '/registration/'
 
 				this.$get('/registration/').then((data) =>
@@ -86,7 +86,7 @@
 			},
 			showRemindPassword ()
 			{
-				if (this.$store.state.mobile)
+				if (this.$store.getters.isMobile)
 					return window.location.href = '/remind/'
 
 				this.$get('/remind/').then((data) =>

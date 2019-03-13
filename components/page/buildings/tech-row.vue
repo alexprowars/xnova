@@ -4,7 +4,7 @@
 			<div class="building-info">
 				<div class="building-info-img">
 					<popup-link :to="'/info/'+this.item['i']+'/'">
-						<img :src="'/images/gebaeude/'+item.i+'.gif'" align="top" :alt="$t('TECH.'+item.i)" class="tooltip img-fluid" :data-content="$t('TECH.'+item.i)" data-width="150">
+						<img :src="'/images/gebaeude/'+item.i+'.gif'" align="top" :alt="$t('TECH.'+item.i)" class="img-fluid" :v-tooltip="$t('TECH.'+item.i)" data-width="150">
 					</popup-link>
 				</div>
 
@@ -127,30 +127,23 @@
 			},
 			cancelAction ()
 			{
-				$.confirm({
-					content: 'Отменить изучение <b>'+this.$t('TECH.'+this.item['i'])+' '+this.item['level']+' ур.</b>?',
-					title: 'Очередь построек',
-					backgroundDismiss: true,
-					buttons: {
-						confirm: {
-							text: 'отменить',
-							action: () =>
-							{
-								this.$post('/buildings/research/', {
-									cmd: 'cancel',
-									tech: this.item['i']
-								})
-								.then((result) => {
-									this.$store.commit('PAGE_LOAD', result);
-									this.$router.replace(result['url']);
-								})
-							}
-						},
-						cancel: {
-							text: 'закрыть'
-						}
-					}
-				})
+				this.$dialog
+					.confirm('Отменить изучение <b>'+this.$t('TECH.'+this.item['i'])+' '+this.item['level']+' ур.</b>?', {
+						okText: 'отменить',
+						cancelText: 'закрыть',
+						backdropClose: true,
+					})
+					.then(() =>
+					{
+						this.$post('/buildings/research/', {
+							cmd: 'cancel',
+							tech: this.item['i']
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result);
+							this.$router.replace(result['url']);
+						})
+					})
 			}
 		},
 		watch: {

@@ -2,8 +2,8 @@
 	<tr class="planetRow">
 		<th width="30">{{ i + 1 }}</th>
 		<th class="img">
-			<a v-if="item && !item['p_delete']" class="tooltip sticky">
-				<div class="tooltip-content">
+			<v-popover v-if="item && !item['p_delete']">
+				<template slot="popover">
 					<table width="240">
 						<tbody>
 						<tr>
@@ -31,9 +31,9 @@
 						</tr>
 						</tbody>
 					</table>
-				</div>
+				</template>
 				<img :src="'/images/planeten/small/s_'+item['p_image']+'.jpg'" height=30 width="30" alt="">
-			</a>
+			</v-popover>
 		</th>
 		<th width="130">
 			<div v-if="item && !item['p_delete']">
@@ -46,8 +46,8 @@
 			</div>
 		</th>
 		<th style="white-space: nowrap;" width="30">
-			<a v-if="item && !item['l_delete'] && item['l_id']" class="tooltip sticky">
-				<div class="tooltip-content">
+			<v-popover v-if="item && !item['l_delete'] && item['l_id']">
+				<template slot="popover">
 					<table width="240">
 						<tbody>
 						<tr>
@@ -99,14 +99,14 @@
 						</tr>
 						</tbody>
 					</table>	
-				</div>
+				</template>
 				<img :src="'/images/planeten/small/s_mond.jpg'" height="30" width="30" alt="">
-			</a>
+			</v-popover>
 			<span v-if="item && item['l_delete'] && item['l_id']">~</span>
 		</th>
 		<th :class="[debris_class]" width="30">
-			<a v-if="item && (item['p_metal'] > 0 || item['p_crystal'] > 0)" class="tooltip sticky">
-				<div class="tooltip-content">
+			<v-popover v-if="item && (item['p_metal'] > 0 || item['p_crystal'] > 0)">
+				<template slot="popover">
 					<table width="240">
 						<tbody>
 						<tr>
@@ -146,14 +146,14 @@
 						</tr>
 						</tbody>
 					</table>	
-				</div>
+				</template>
 				<img :src="'/images/planeten/debris.jpg'" height="22" width="22" alt="">
-			</a>	
+			</v-popover>
 		</th>
 		<th width="150">
 			<div v-if="item && !item['p_delete']">
-				<a class="tooltip sticky">
-					<div class="tooltip-content">
+				<v-popover>
+					<template slot="popover">
 						<table width="280">
 							<tbody>
 							<tr>
@@ -179,10 +179,10 @@
 							</tr>
 							</tbody>
 						</table>
-					</div>
+					</template>
 
 					<span :class="[user_status_class]">{{ item['u_name'] }}</span>
-				</a>
+				</v-popover>
 
 				<span v-if="user_status" :class="[user_status_class]">
 					<font color="white">(</font><span v-if="user_status === 'UG' || user_status === 'G'"><nuxt-link to="/banned/" :class="[user_status_class]">{{ user_status }}</nuxt-link></span><span v-else="">{{ user_status }}</span><font color="white">)</font>
@@ -199,8 +199,8 @@
 			</nuxt-link>
 		</th>
 		<th width="80">
-			<a v-if="item && !item.delete && item['a_id']" class="tooltip sticky">
-				<div class="tooltip-content">
+			<v-popover v-if="item && !item.delete && item['a_id']">
+				<template slot="popover">
 					<table width="240">
 						<tbody>
 						<tr>
@@ -225,10 +225,10 @@
 						</tr>
 						</tbody>
 					</table>
-				</div>
+				</template>
 
 				<span :class="{allymember: $store.state['user']['alliance']['id'] === item['a_id']}">{{ item['a_tag'] }}</span>
-			</a>
+			</v-popover>
 
 			<div v-if="$store.state['user']['alliance']['id'] !== item['a_id']">
 				<small v-if="item['d_type'] === 0">[нейтральное]</small>
@@ -251,8 +251,8 @@
 					<span class="sprite skin_r"></span>
 				</a>
 
-				<a v-if="$parent['page']['user']['spy_sonde'] && !item['u_vacation']" title="Шпионаж" class="tooltip sticky">
-					<div class="tooltip-content">
+				<v-popover v-if="$parent['page']['user']['spy_sonde'] && !item['u_vacation']" title="Шпионаж">
+					<template slot="popover">
 						<center>
 							<input type="text" :value="$parent['page']['user'].spy">
 							<br>
@@ -260,9 +260,9 @@
 							<br>
 							<input v-if="!item['l_delete'] && item['l_id']" type="button" @click.prevent="spy(3, $event)" value="Отправить на луну">
 						</center>
-					</div>
+					</template>
 					<span class="sprite skin_e"></span>
-				</a>
+				</v-popover>
 
 				<nuxt-link :to="'/players/'+item['u_id']+'/'" title="Информация об игроке">
 					<span class="sprite skin_s"></span>

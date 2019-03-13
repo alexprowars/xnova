@@ -1,10 +1,10 @@
 <template>
-	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]">
+	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]" v-touch:swipe.left.right="swipe">
 		<AppHeader v-if="$store.state['view']['header']"/>
 		<main>
 			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"/>
 			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"/>
-			<div class="main-content">
+			<div class="main-content" v-touch:tap="tap">
 				<PlanetPanel v-if="$store.state['view']['resources']"/>
 				<MessagesRow v-for="(item, i) in messages" :key="i" :item="item"/>
 				<div class="main-content-row">
@@ -35,7 +35,6 @@
 	import PlanetsList from '../components/app/planets-list.vue'
 	import MessagesRow from '../components/app/messages-row.vue'
 	import PlanetPanel from '../components/app/planet-panel.vue'
-	import { tooltip, swipe } from '~/utils/jquery'
 	import { addScript } from '~/utils/helpers'
 
 	export default {
@@ -111,9 +110,8 @@
 			{
 				val.forEach((item) =>
 				{
-					$.toast({
-						text: item.text,
-						icon: item.type
+					this.$toasted.show(item.text, {
+						type: item.type
 					});
 				})
 			},
@@ -126,14 +124,30 @@
 				else
 					this.sidebar = type;
 			},
+			swipe (direction, ev)
+			{
+				if (!this.$store.getters.isMobile)
+					return
+
+				if (ev.target.closest('.table-responsive') !== null)
+					return;
+
+				if (direction === 'left')
+					this.sidebar = 'planet'
+
+				if (direction === 'right')
+					this.sidebar = 'menu'
+			},
+			tap ()
+			{
+				if (!this.$store.getters.isMobile)
+					return
+
+				if (this.sidebar !== '')
+					this.sidebar = ''
+			},
 			init ()
 			{
-				if (!this.$store.state.mobile)
-				{
-					tooltip()
-					swipe()
-				}
-
 				if (typeof VK !== 'undefined')
 				{
 					try

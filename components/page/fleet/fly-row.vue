@@ -11,14 +11,14 @@
 			</div>
 		</div>
 		<div class="col-3 col-sm-1 th">
-			<a class="tooltip">
-				<div class="tooltip-content">
+			<v-popover>
+				<template slot="popover">
 					<div v-for="(fleetData, fleetId) in item.units">
 						{{ $t('TECH.'+fleetId) }}: {{ fleetData['count'] }}
 					</div>
-				</div>
+				</template>
 				{{ item['amount']|number }}
-			</a>
+			</v-popover>
 		</div>
 		<div class="col-4 col-sm-3 th">
 			<div>

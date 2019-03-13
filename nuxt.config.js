@@ -33,10 +33,14 @@ module.exports = {
 		'~/plugins/i18n.js',
 		'~/plugins/filters.js',
 		'~/plugins/components.js',
-		{src: '~/plugins/jquery.js', ssr: false},
+		{src: '~/plugins/global.js', ssr: false},
 		{src: '~/plugins/modal.js', ssr: false},
 		{src: '~/plugins/router.js', ssr: false},
 		{src: '~/plugins/metrika.js', ssr: false},
+		{src: '~/plugins/tooltip.js', ssr: true},
+		{src: '~/plugins/swipe.js', ssr: false},
+		{src: '~/plugins/toast.js', ssr: false},
+		{src: '~/plugins/dialog.js', ssr: false},
 	],
 	router: {
 		base: '/',
@@ -74,25 +78,6 @@ module.exports = {
 				});
 			}
 
-			config.plugins.push(new webpack.ProvidePlugin({
-				$: 'jquery',
-				jQuery: 'jquery',
-				'window.jQuery': 'jquery',
-				'window.$': 'jquery'
-			}));
-
-			config.module.rules.push({
-				test: require.resolve('jquery'),
-				use: [{
-					loader: 'expose-loader',
-					options: '$'
-				}, {
-					loader: 'expose-loader',
-					options: 'jQuery'
-				}]
-			});
-
-			config.resolve.alias['jquery'] = 'jquery/dist/jquery.slim.js'
 			config.resolve.alias['socket.io-client'] = 'socket.io-client/dist/socket.io.slim.js'
 
 			if (isClient)

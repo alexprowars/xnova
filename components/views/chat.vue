@@ -39,7 +39,7 @@
 		props: ['visible'],
 		data () {
 			return {
-				mobile: this.$store.state.mobile || !this.visible,
+				mobile: this.$store.getters.isMobile || !this.visible,
 				active: localStorage.getItem('mini-chat-active') === 'Y',
 				messages: [],
 				message: '',
@@ -91,7 +91,7 @@
 				}, 250);
 			},
 			message () {
-				$(this.$refs['text']).focus();
+				this.$refs['text'].focus();
 			},
 			mobile (value)
 			{
@@ -109,7 +109,7 @@
 				}
 			},
 			visible (value) {
-				this.mobile = this.$store.state.mobile || !value
+				this.mobile = this.$store.getters.isMobile || !value
 			}
 		},
 		methods: {
@@ -207,6 +207,11 @@
 						});
 					});
 				});
+			},
+			onResize ()
+			{
+				if (this.active)
+					this.scrollToBottom();
 			}
 		},
 		mounted ()
@@ -214,14 +219,10 @@
 			if (this.active && !this.mobile)
 				this.init();
 
-			$(window).on('resize.mini-chat', () =>
-			{
-				if (this.active)
-					this.scrollToBottom();
-			});
+			window.addEventListener('resize', this.onResize, true);
 		},
 		destroyed () {
-			$(window).off('resize.mini-chat');
+			window.removeEventListener('resize', this.onResize)
 		}
 	}
 </script>

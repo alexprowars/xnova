@@ -69,16 +69,18 @@
 							</div>
 							<div class="col-12 page-overview-officiers">
 								<div v-for="item in page['officiers']" class="page-overview-officiers-item">
-									<nuxt-link to="/officier/" class="tooltip">
-										<div class="tooltip-content">
-											{{ item['name'] }}
-											<br>
-											<span v-if="item['time'] > $store.getters.getServerTime()">
-												Нанят до <font color="lime">{{ item['time']|date('d.m.Y H:i') }}</font>
-											</span>
-											<font v-else="" color="lime">Не нанят</font>
-										</div>
-										<span class="officier" :class="['of'+item['id']+(item['time'] > $store.getters.getServerTime() ? '_ikon' : '')]"></span>
+									<nuxt-link to="/officier/">
+										<v-popover>
+											<template slot="popover">
+												{{ item['name'] }}
+												<br>
+												<span v-if="item['time'] > $store.getters.getServerTime()">
+													Нанят до <font color="lime">{{ item['time']|date('d.m.Y H:i') }}</font>
+												</span>
+												<font v-else="" color="lime">Не нанят</font>
+											</template>
+											<span class="officier" :class="['of'+item['id']+(item['time'] > $store.getters.getServerTime() ? '_ikon' : '')]"></span>
+										</v-popover>
 									</nuxt-link>
 								</div>
 							</div>
@@ -122,10 +124,10 @@
 							<div class="row">
 								<div class="col-12 th doubleth middle">
 									<div>
-										<img :src="'/images/skin/s_metal.png'" alt="" align="absmiddle" class="tooltip" data-content="Металл">
+										<img :src="'/images/skin/s_metal.png'" alt="" align="absmiddle" v-tooltip="'Металл'">
 										{{ page['debris']['metal']|number }}
 										/
-										<img :src="'/images/skin/s_crystal.png'" alt="" align="absmiddle" class="tooltip" data-content="Кристалл">
+										<img :src="'/images/skin/s_crystal.png'" alt="" align="absmiddle" v-tooltip="'Кристалл'">
 										{{ page['debris']['crystal']|number }}
 									</div>
 								</div>
@@ -135,10 +137,10 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th middle">
-									<img :src="'/images/wins.gif'" alt="" align="absmiddle" class="tooltip" data-content="Победы">&nbsp;
+									<img :src="'/images/wins.gif'" alt="" align="absmiddle" v-tooltip="'Победы'">&nbsp;
 									{{ page['raids']['win'] }}
 									&nbsp;&nbsp;
-									<img :src="'/images/losses.gif'" alt="" align="absmiddle" class="tooltip" data-content="Поражения">&nbsp;
+									<img :src="'/images/losses.gif'" alt="" align="absmiddle" v-tooltip="'Поражения'">&nbsp;
 									{{ page['raids']['lost'] }}
 								</div>
 							</div>

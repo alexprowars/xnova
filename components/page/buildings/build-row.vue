@@ -5,7 +5,7 @@
 			<div class="building-info">
 				<div class="building-info-img" :style="'background-image: url(/images/buildings/planet/'+$parent.page.planet+'_'+(item.i % 4 + 1)+'.png)'">
 					<popup-link :to="'/info/'+item['i']+'/'">
-						<img :src="'/images/buildings/item/'+item.i+'.png'" align="top" :alt="$t('TECH.'+item.i)" class="tooltip" :data-content="$t('TECH.'+item.i)" data-width="150">
+						<img :src="'/images/buildings/item/'+item.i+'.png'" align="top" :alt="$t('TECH.'+item.i)" :v-tooltip="$t('TECH.'+item.i)" data-width="150">
 					</popup-link>
 					<div class="building-effects" v-html="item['effects']"></div>
 				</div>

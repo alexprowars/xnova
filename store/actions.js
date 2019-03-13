@@ -68,10 +68,8 @@ export default {
 
 				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['toast'] !== '')
 				{
-					$.toast({
-						text: data['tutorial']['toast'],
-						icon: 'info',
-						stack: 1
+					this.$toasted.show(data['tutorial']['toast'], {
+						type: 'info'
 					});
 				}
 

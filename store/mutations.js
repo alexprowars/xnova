@@ -19,5 +19,5 @@ export default {
 			if (resources.hasOwnProperty(res))
 				state.resources[res]['current'] = resources[res]
 		}
-	}
+	},
 }

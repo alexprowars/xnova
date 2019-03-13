@@ -4,7 +4,7 @@
 			<div class="building-info">
 				<div class="building-info-img">
 					<popup-link :to="'/info/'+this.item['i']+'/'">
-						<img :src="'/images/gebaeude/'+item.i+'.gif'" :alt="$t('TECH.'+item.i)" align="top" class="tooltip img-fluid" :data-content="$t('TECH.'+item.i)" data-width="150">
+						<img :src="'/images/gebaeude/'+item.i+'.gif'" :alt="$t('TECH.'+item.i)" align="top" class="img-fluid" :v-tooltip="$t('TECH.'+item.i)" data-width="150">
 					</popup-link>
 				</div>
 

@@ -75,8 +75,8 @@
 						<span v-else>{{ planets }} заселённые планеты</span>
 					</td>
 					<td class="c" colspan=3>
-						<a class="tooltip">
-							<div class="tooltip-content">
+						<v-popover>
+							<template slot="popover">
 								<table width="240">
 									<tbody>
 									<tr>
@@ -117,9 +117,9 @@
 									</tr>
 									</tbody>
 								</table>
-							</div>
+							</template>
 							Легенда
-						</a>
+						</v-popover>
 					</td>
 				</tr>
 				<tr>

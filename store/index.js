@@ -16,5 +16,4 @@ export const state = () => ({
 	resources: null,
 	start_time: Math.floor(((new Date()).getTime()) / 1000),
 	loading: false,
-	//mobile: /Android|Mini|webOS|iPhone|iPad|iPod|BlackBerry/i.test(window.navigator.userAgent)
 });

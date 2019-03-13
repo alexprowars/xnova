@@ -34,9 +34,9 @@ export default ({ store, $axios }, inject) =>
 		let headers = {}
 
 		if (data.toString().indexOf('FormData') < 0)
-			data = $.param(data);
-		else
-			headers['Content-Type'] = 'multipart/form-data'
+			data = objectToFormData(data)
+
+		headers['Content-Type'] = 'multipart/form-data'
 
 		return $axios({
 			url: url,
@@ -60,4 +60,44 @@ export default ({ store, $axios }, inject) =>
 
 	inject('get', $get)
 	inject('post', $post)
+}
+
+function objectToFormData (obj, rootName)
+{
+	let formData = new FormData();
+
+	function appendFormData(data, root)
+	{
+		root = root || '';
+
+		if (data instanceof File)
+			formData.append(root, data);
+		else if (Array.isArray(data))
+		{
+			for (let i = 0; i < data.length; i++)
+				appendFormData(data[i], root + '[' + i + ']');
+		}
+		else if (typeof data === 'object' && data)
+		{
+			for (let key in data)
+			{
+				if (data.hasOwnProperty(key))
+				{
+					if (root === '')
+						appendFormData(data[key], key);
+					else
+						appendFormData(data[key], root + '[' + key + ']');
+				}
+			}
+		}
+		else
+		{
+			if (data !== null && typeof data !== 'undefined')
+				formData.append(root, data);
+		}
+	}
+
+	appendFormData(obj, rootName);
+
+	return formData;
 }

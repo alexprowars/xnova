@@ -11,32 +11,34 @@
 			<div class="row">
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<no-ssr>
-							<popup-link :to="'/info/4/'" title="Солнечная батарея" class="tooltip resource-panel-item-icon">
-								<div class="tooltip-content">
-									<div class="resource-panel-item-tooltip">
-										<h1>Энергия</h1>
-										<div class="line"></div>
-										<table>
-											<tr>
-												<td>Доступно:</td>
-												<td align="right">{{ planet['energy']['current']|number }}</td>
-											</tr>
-											<tr>
-												<td>Производится:</td>
-												<td align="right">{{ planet['energy']['max']|number }}</td>
-											</tr>
-											<tr>
-												<td>Потребление:</td>
-												<td align="right">{{ (planet['energy']['max'] - planet['energy']['current']) | number }}</td>
-											</tr>
-										</table>
-									</div>
-								</div>
+						<popup-link :to="'/info/4/'" title="Солнечная батарея" class="resource-panel-item-icon">
+							<v-popover>
+								<template slot="popover">
+									<no-ssr>
+										<div class="resource-panel-item-tooltip">
+											<h1>Энергия</h1>
+											<div class="line"></div>
+											<table>
+												<tr>
+													<td>Доступно:</td>
+													<td align="right">{{ planet['energy']['current']|number }}</td>
+												</tr>
+												<tr>
+													<td>Производится:</td>
+													<td align="right">{{ planet['energy']['max']|number }}</td>
+												</tr>
+												<tr>
+													<td>Потребление:</td>
+													<td align="right">{{ (planet['energy']['max'] - planet['energy']['current']) | number }}</td>
+												</tr>
+											</table>
+										</div>
+									</no-ssr>
+								</template>
 								<span class="sprite skin_energy"></span>
 								<span class="sprite skin_s_energy"></span>
-							</popup-link>
-						</no-ssr>
+							</v-popover>
+						</popup-link>
 						<div class="neutral">{{ $t('RESOURCES.energy') }}</div>
 						<div title="Доступно энергии">
 							<span :class="[planet['energy']['current'] >= 0 ? 'positive' : 'negative']">{{ planet['energy']['current']|number }}</span>
@@ -45,9 +47,9 @@
 				</div>
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<no-ssr>
-							<div class="tooltip d-sm-inline-block resource-panel-item-icon">
-								<div class="tooltip-content">
+						<v-popover class="d-sm-inline-block resource-panel-item-icon">
+							<template slot="popover">
+								<no-ssr>
 									<div class="resource-panel-item-tooltip">
 										<h1>Аккумулятор</h1>
 										<div class="line"></div>
@@ -65,39 +67,41 @@
 											</tr>
 										</table>
 									</div>
-								</div>
-								<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
-								<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
-								<br>
-							</div>
-						</no-ssr>
+								</no-ssr>
+							</template>
+							<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
+							<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
+							<br>
+						</v-popover>
 						<div class="neutral">Аккумулятор</div>
 						{{ planet['battery']['power'] }}%
 					</div>
 				</div>
 				<div class="col-4 text-center">
 					<div class="resource-panel-item">
-						<no-ssr>
-							<router-link to="/credits/" class="tooltip d-sm-inline-block resource-panel-item-icon">
-								<div class="tooltip-content">
-									<table width="550">
-										<tr>
-											<td v-for="(time, index) in planet['officiers']" align="center" width="14%">
-												<div class="separator"></div>
-												<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
-											</td>
-										</tr>
-										<tr>
-											<td v-for="time in planet['officiers']" align="center">
-												<span v-if="time > $store.getters.getServerTime()">Нанят до <font color="lime">{{ time | date('d.m.Y H:i') }}</font></span>
-												<span v-else><font color="lime">Не нанят</font></span>
-											</td>
-										</tr>
-									</table>
-								</div>
+						<nuxt-link to="/credits/" class="d-sm-inline-block resource-panel-item-icon">
+							<v-popover>
+								<template slot="popover">
+									<no-ssr>
+										<table width="550">
+											<tr>
+												<td v-for="(time, index) in planet['officiers']" align="center" width="14%">
+													<div class="separator"></div>
+													<span :class="['officier', 'of'+index+(time > ((new Date).getTime() / 1000) ? '_ikon' : '')]"></span>
+												</td>
+											</tr>
+											<tr>
+												<td v-for="time in planet['officiers']" align="center">
+													<span v-if="time > $store.getters.getServerTime()">Нанят до <font color="lime">{{ time | date('d.m.Y H:i') }}</font></span>
+													<span v-else><font color="lime">Не нанят</font></span>
+												</td>
+											</tr>
+										</table>
+									</no-ssr>
+								</template>
 								<span class="sprite skin_kredits"></span>
-							</router-link>
-						</no-ssr>
+							</v-popover>
+						</nuxt-link>
 						<div class="neutral">Кредиты</div>
 						{{ planet['credits']|number }}
 					</div>
