@@ -1012,6 +1012,10 @@ div.errormessage {
 	display: inline-block;
 }
 
+.error-message {
+	color: #ff4d56;
+}
+
 .e404 {
 	font-size: 30px;
 	text-align: center;
@@ -1106,6 +1110,10 @@ div.table {
 	.table {
 		background: transparent;
 	}
+}
+
+.table + .block {
+	padding-top: 10px;
 }
 
 input[type=number]::-webkit-inner-spin-button,

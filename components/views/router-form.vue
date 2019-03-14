@@ -34,12 +34,11 @@
 				this.$post(action, formData).then((result) =>
 				{
 					this.$store.commit('PAGE_LOAD', result)
-					this.$router.replace(result['url'])
-				}, () => {
-					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
-				.then(() => {
 					this.$store.commit('setLoadingStatus', false)
+					this.$router.push(result['url'])
+				})
+				.catch(() => {
+					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})
 			}
 		},

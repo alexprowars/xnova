@@ -26,9 +26,6 @@ class IndexController extends Controller
 {
 	public function initialize()
 	{
-		if ($this->auth->isAuthorized())
-			return $this->response->redirect('overview/');
-
 		return parent::initialize();
 	}
 

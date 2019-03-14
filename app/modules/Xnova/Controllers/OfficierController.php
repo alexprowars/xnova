@@ -87,7 +87,7 @@ class OfficierController extends Controller
 			'type' => 5
 		]);
 
-		throw new RedirectException(_getText('OffiRecrute'), _getText('Officier'), '/officier/', 2);
+		throw new RedirectException(_getText('OffiRecrute'), _getText('Officier'), '/officier/', 5);
 	}
 	
 	public function indexAction ()

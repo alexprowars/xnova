@@ -18,7 +18,7 @@
 		</tr>
 	</table>
 	
-	<router-form :action="'/alliance/admin/edit/ally/t/'+page['t']+'/'">
+	<router-form :action="'/alliance/admin/edit/ally/'">
 		<input type="hidden" name="t" :value="page['t']">
 		<table class="table">
 			<tr>

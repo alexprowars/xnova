@@ -72,9 +72,7 @@ class Controller extends PhalconController
 
 		Lang::setLang($this->config->app->language, 'xnova');
 
-		$this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
 		$this->view->disable();
-
 		$this->tag->setTitle(Options::get('site_title'));
 
 		if (is_array($this->router->getParams()) && count($this->router->getParams()))
@@ -110,7 +108,7 @@ class Controller extends PhalconController
 			'action' => $this->dispatcher->getActionName(),
 		]);
 
-		Request::addData('path', $this->url->getBaseUri());
+		Request::addData('path', '/');
 		Request::addData('version', VERSION);
 		Request::addData('host', $this->request->getHttpHost());
 		Request::addData('redirect', '');
@@ -195,13 +193,6 @@ class Controller extends PhalconController
 				$this->response->redirect('start/');
 
 				throw new \Exception(serialize(['controller' => 'start', 'action' => 'index']), 10);
-			}
-			elseif ($controller == 'index')
-			{
-				$this->view->disable();
-				$this->response->redirect('overview/');
-
-				throw new \Exception(serialize(['controller' => 'overview', 'action' => 'index']), 10);
 			}
 		}
 		else
@@ -358,7 +349,7 @@ class Controller extends PhalconController
 
 		Request::addData('view', $this->views);
 		Request::addData('title', $this->tag->getTitle(false));
-		Request::addData('url', $this->router->getRewriteUri());
+		Request::addData('url', str_replace('/api', '', $this->router->getRewriteUri()));
 
 		$this->view->setVar('options', Request::getData());
 

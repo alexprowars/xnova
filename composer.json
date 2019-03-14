@@ -11,6 +11,8 @@
         "nubs/random-name-generator": "^2.1",
         "gumlet/php-image-resize": "^1.8",
 		"ext-mbstring": "*",
-		"ext-json": "*"
+		"ext-json": "*",
+		"ext-curl": "*",
+		"ext-pdo": "*"
 	}
 }

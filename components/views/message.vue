@@ -1,12 +1,12 @@
 <template>
-	<table class="table">
-		<tr v-if="data['title'] && data['title'].length">
-			<td class="c error" v-html="data['title']"></td>
-		</tr>
-		<tr>
-			<th class="errormessage" v-html="data['message']"></th>
-		</tr>
-	</table>
+	<div class="table">
+		<div class="row" v-if="data['title'] && data['title'].length">
+			<div class="col-12 c error" v-html="data['title']"></div>
+		</div>
+		<div class="row">
+			<div class="col-12 th error-message" v-html="data['message']"></div>
+		</div>
+	</div>
 </template>
 
 <script>

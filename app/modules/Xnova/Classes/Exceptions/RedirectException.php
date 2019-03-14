@@ -17,7 +17,7 @@ class RedirectException extends MainException
 		if (!$url)
 			throw new $this(get_class($this).': Unknown $url parameter');
 
-		$this->url = $url;
+		$this->url = ltrim($url, '/');
 
 		if ($timeout > 0)
 			$this->timeout = (int) $timeout;

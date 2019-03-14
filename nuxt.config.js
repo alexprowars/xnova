@@ -105,11 +105,11 @@ module.exports = {
 		proxy: true,
 		proxyHeaders: true,
 		credentials: true,
-		baseURL: 'http://test.xnova.su/',
+		baseURL: 'http://test.xnova.su/api/',
 	},
 	proxy: {
-		'/api': {target: 'http://test.xnova.su', pathRewrite: {'^/api' : ''}, cookieDomainRewrite: {"*": ""}},
-		'/upload': {target: 'http://test.xnova.su'},
+		'/api': {target: 'http://test.xnova.su', cookieDomainRewrite: {"*": ""}},
+		'/upload': {target: 'http://test.xnova.su/api'},
 	},
 	vue: {
 		config: {

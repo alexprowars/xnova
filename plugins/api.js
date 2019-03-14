@@ -15,17 +15,11 @@ export default ({ store, $axios }, inject) =>
 			url: url,
 			params: data
 		})
-		.then(result =>
-		{
-			if (result.data.data !== undefined)
-			{
-				if (result.data.data.page !== undefined && Array.isArray(result.data.data.page) && result.data.data.page.length === 0)
-					result.data.data.page = null
-
-				return result.data.data
-			}
-			else
-				throw new Error("request error");
+		.then(result => {
+			return parseData(result.data.data)
+		})
+		.catch((error) => {
+			return parseData(error.response.data.data)
 		})
 	}
 
@@ -44,22 +38,29 @@ export default ({ store, $axios }, inject) =>
 			data: data,
 			headers: headers
 		})
-		.then(result =>
-		{
-			if (result.data.data !== undefined)
-			{
-				if (result.data.data.page !== undefined && Array.isArray(result.data.data.page) && result.data.data.page.length === 0)
-					result.data.data.page = null
-
-				return result.data.data
-			}
-			else
-				throw new Error("request error");
+		.then(result => {
+			return parseData(result.data.data)
+		})
+		.catch((error) => {
+			return parseData(error.response.data.data)
 		})
 	}
 
 	inject('get', $get)
 	inject('post', $post)
+}
+
+function parseData (data)
+{
+	if (data !== undefined)
+	{
+		if (data.page !== undefined && Array.isArray(data.page) && data.page.length === 0)
+			data.page = null
+
+		return data
+	}
+	else
+		throw new Error("request error");
 }
 
 function objectToFormData (obj, rootName)

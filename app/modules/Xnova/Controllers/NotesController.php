@@ -58,7 +58,7 @@ class NotesController extends Controller
 
 			$note->create();
 
-			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 1);
+			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 5);
 		}
 
 		$this->tag->setTitle('Создание заметки');

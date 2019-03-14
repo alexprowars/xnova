@@ -46,21 +46,15 @@ $eventsManager->attach('core:beforeOutput', function ($event, \Friday\Core\Appli
 	if ($app->dispatcher->getModuleName() == 'admin')
 		return;
 
-	if ($app->request->isAjax())
-	{
-		if (strlen($handle->getContent()) > 0)
-			\Xnova\Request::addData('page', ['html' => $handle->getContent()]);
-
-		/** @noinspection PhpUndefinedFieldInspection */
-		$app->response->setJsonContent(
-		[
-			'status' 	=> \Xnova\Request::getStatus(),
-			'data' 		=> \Xnova\Request::getData()
-		]);
-		$app->response->setContentType('text/json', 'utf8');
-		$app->response->send();
-		die();
-	}
+	/** @noinspection PhpUndefinedFieldInspection */
+	$app->response->setJsonContent(
+	[
+		'status' 	=> \Xnova\Request::getStatus(),
+		'data' 		=> \Xnova\Request::getData()
+	]);
+	$app->response->setContentType('text/json', 'utf8');
+	$app->response->send();
+	die();
 });
 
 /** @noinspection PhpUnusedParameterInspection */
@@ -81,63 +75,6 @@ $eventsManager->attach('core:afterAuthCheck', function ($event, Auth $auth, User
 			$user->banned = 0;
 		}
 	}
-});
-
-/** @noinspection PhpUnusedParameterInspection */
-$eventsManager->attach('view:afterEngineRegister', function ($event, Volt $volt)
-{
-	$compiler = $volt->getCompiler();
-
-	$compiler->addFunction('_text', function($arguments)
-	{
-		return '\Friday\Core\Lang::getText(' . $arguments . ')';
-	});
-
-	$compiler->addFilter('floor', 'floor');
-	$compiler->addFilter('round', 'round');
-	$compiler->addFilter('ceil', 'ceil');
-	$compiler->addFunction('in_array', 'in_array');
-
-	$compiler->addFunction('allowMobile', function($arguments)
-	{
-		return 'class_exists("\Xnova\Helpers") && \Xnova\Helpers::allowMobileVersion(' . $arguments . ')';
-	});
-
-	$compiler->addFunction('toJson', 'json_encode');
-	$compiler->addFunction('replace', 'str_replace');
-	$compiler->addFunction('preg_replace', 'preg_replace');
-	$compiler->addFunction('md5', 'md5');
-	$compiler->addFunction('min', 'min');
-	$compiler->addFunction('max', 'max');
-	$compiler->addFunction('floor', 'floor');
-	$compiler->addFunction('ceil', 'ceil');
-	$compiler->addFunction('is_email', 'is_email');
-	$compiler->addFunction('htmlspecialchars', 'htmlspecialchars');
-	$compiler->addFunction('rand', 'mt_rand');
-	$compiler->addFunction('implode', 'implode');
-	$compiler->addFunction('slashes', 'addslashes');
-	$compiler->addFunction('array_search', 'array_search');
-	$compiler->addFunction('number_format', 'number_format');
-	$compiler->addFunction('pretty_number', function($arguments)
-	{
-		return '\Xnova\Format::number(' . $arguments . ')';
-	});
-	$compiler->addFunction('pretty_time', function($arguments)
-	{
-		return '\Xnova\Format::time(' . $arguments . ')';
-	});
-	$compiler->addFunction('option', function($arguments)
-	{
-		return '\Friday\Core\Options::get(' . $arguments . ')';
-	});
-	$compiler->addFunction('planetLink', function($arguments)
-	{
-		return '\Xnova\Helpers::BuildPlanetAdressLink(' . $arguments . ')';
-	});
-	$compiler->addFunction('morph', function($arguments)
-	{
-		return '\Xnova\Helpers::morph(' . $arguments . ')';
-	});
 });
 
 /** @noinspection PhpUnusedParameterInspection */
@@ -179,4 +116,4 @@ $eventsManager->attach("dispatch:beforeException", function($event, $dispatcher,
 	return true;
 });
 
-define('VERSION', '4.1');
+define('VERSION', '4.5');

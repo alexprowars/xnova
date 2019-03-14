@@ -19,7 +19,7 @@ class MainException extends \Exception
 			'type' => isset($params['type']) ? $params['type'] : self::ERROR,
 			'title' => $title,
 			'message' => $message,
-			'redirect' => isset($params['url']) ? $url->get($params['url']) : false,
+			'redirect' => isset($params['url']) ? $url->get($params['url'], null, null, '/') : false,
 			'timeout' => isset($params['timeout']) ? $params['timeout'] : 0
 		]);
 
