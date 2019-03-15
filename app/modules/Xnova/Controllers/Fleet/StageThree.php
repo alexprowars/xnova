@@ -37,7 +37,7 @@ class StageThree
 		$fleetarray = json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		if (!$fleetMission)
-			throw new RedirectException("<span class=\"error\"><b>Не выбрана миссия!</b></span>", 'Ошибка', "/fleet/", 2);
+			throw new RedirectException("<span class=\"error\"><b>Не выбрана миссия!</b></span>", "/fleet/");
 
 		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && Options::get('disableAttacks', 0) > 0 && time() < Options::get('disableAttacks', 0))
 			throw new RedirectException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . $controller->game->datezone("d.m.Y H ч. i мин.", Options::get('disableAttacks', 0)) . "</b></span>", 'Ошибка');

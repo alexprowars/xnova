@@ -7,6 +7,7 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Request;
 use Xnova\User;
 use Xnova\Controller;
+use Xnova\Models;
 
 /**
  * @author AlexPro
@@ -25,49 +26,55 @@ class BuddyController extends Controller
 {
 	public function newAction ($userId)
 	{
-		$u = $this->db->query("SELECT id, username FROM game_users WHERE id = '" . intval($userId) . "'")->fetch();
+		/** @var Models\User $user */
+		$user = Models\User::query()
+			->columns(['id', 'username'])
+			->where('id = :user:')
+			->bind(['user' => (int) $userId])
+			->execute()->getFirst();
 
-		if (isset($u['id']))
+		if (!$user)
+			throw new ErrorException('Друг не найден');
+
+		if ($this->request->isPost())
 		{
-			if ($this->request->isPost())
-			{
-				$buddy = $this->db->query("SELECT id FROM game_buddy WHERE sender = ".$this->user->id." AND owner = ".$userId." OR sender = ".$userId." AND owner = ".$this->user->id."")->fetch();
+			$buddy = Models\Buddy::query()
+				->columns(['id'])
+				->where('(sender = :current: AND owner = :user:) OR (sender = :user: AND owner = :current:)')
+				->bind(['user' => $userId, 'current' => $this->user->id])
+				->limit(1)
+				->execute()->getFirst();
 
-				if (!isset($buddy['id']))
-				{
-					if (mb_strlen($this->request->getPost('text', 'string', ''), 'UTF-8') > 5000)
-						throw new ErrorException("Максимальная длинна сообщения 5000 символов!", "Ошибка");
+			if ($buddy)
+				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
 
-					$this->db->insertAsDict('game_buddy',
-					[
-						'sender'	=> $this->user->id,
-						'owner'		=> $u['id'],
-						'active'	=> 0,
-						'text'		=> strip_tags($this->request->getPost('text', 'string', ''))
-					]);
+			$text = strip_tags($this->request->getPost('text', 'string', ''));
 
-					User::sendMessage($u['id'], 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+			if (mb_strlen($text) > 5000)
+				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
 
-					throw new RedirectException('Запрос отправлен', 'Предложение дружбы', '/buddy/');
-				}
-				else
-					throw new ErrorException('Запрос дружбы был уже отправлен ранее', 'Предложение дружбы');
-			}
+			$this->db->insertAsDict('game_buddy', [
+				'sender' => $this->user->id,
+				'owner' => $user->id,
+				'active' => 0,
+				'text' => $text
+			]);
 
-			if ($u['id'] != $this->user->id)
-			{
-				$parse = $u;
+			User::sendMessage($user->id, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
-				Request::addData('page', $parse);
-
-				$this->tag->setTitle('Друзья');
-				$this->showTopPanel(false);
-			}
-			else
-				throw new ErrorException('Нельзя дружить сам с собой', 'Предложение дружбы');
+			throw new RedirectException('Запрос отправлен', '/buddy/');
 		}
-		else
-			throw new ErrorException('Друг не найден', 'Предложение дружбы');
+
+		if ($user->id == $this->user->id)
+			throw new ErrorException('Нельзя дружить сам с собой');
+
+		Request::addData('page', [
+			'id' => $user->id,
+			'username' => $user->username,
+		]);
+
+		$this->tag->setTitle('Друзья');
+		$this->showTopPanel(false);
 	}
 
 	public function requestsAction ($isMy = false)
@@ -80,18 +87,22 @@ class BuddyController extends Controller
 
 	public function deleteAction ($id)
 	{
-		$buddy = $this->db->query("SELECT * FROM game_buddy WHERE `id` = '" . intval($id) . "'")->fetch();
+		$buddy = Models\Buddy::findFirst((int) $id);
 
-		if (isset($buddy['id']))
+		if (!$buddy)
+			throw new ErrorException('Заявка не найдена');
+
+		if ($buddy->owner == $this->user->id)
 		{
-			if ($buddy['owner'] == $this->user->id && $buddy['active'] == 1)
-				$this->db->delete('game_buddy', 'id = ?', [$buddy['id']]);
-			elseif ($buddy['sender'] == $this->user->id)
-				$this->db->delete('game_buddy', 'id = ?', [$buddy['id']]);
-			else
-				throw new ErrorException('Заявка не найдена');
+			$this->db->delete('game_buddy', 'id = ?', [$buddy->id]);
 
-			$this->response->redirect('buddy/');
+			throw new RedirectException('Заявка отклонена', '/buddy/requests/');
+		}
+		elseif ($buddy->sender == $this->user->id)
+		{
+			$this->db->delete('game_buddy', 'id = ?', [$buddy->id]);
+
+			throw new RedirectException('Заявка удалена', '/buddy/requests/my/');
 		}
 		else
 			throw new ErrorException('Заявка не найдена');
@@ -99,19 +110,18 @@ class BuddyController extends Controller
 
 	public function approveAction ($id)
 	{
-		$buddy = $this->db->query("SELECT * FROM game_buddy WHERE `id` = '" . intval($id) . "'")->fetch();
+		$buddy = Models\Buddy::findFirst((int) $id);
 
-		if (isset($buddy['id']))
-		{
-			if ($buddy['owner'] == $this->user->id && $buddy['active'] == 0)
-				$this->db->query("UPDATE game_buddy SET `active` = '1' WHERE `id` = '" . $buddy['id'] . "'");
-			else
-				throw new ErrorException('Заявка не найдена');
-
-			$this->response->redirect('buddy/');
-		}
-		else
+		if (!$buddy)
 			throw new ErrorException('Заявка не найдена');
+
+		if (!($buddy->owner == $this->user->id && $buddy->active == 0))
+			throw new ErrorException('Заявка не найдена');
+
+		$buddy->active = 1;
+		$buddy->update();
+
+		throw new RedirectException('', '/buddy/');
 	}
 	
 	public function indexAction ($isRequests = false, $isMy = false)
@@ -119,49 +129,69 @@ class BuddyController extends Controller
 		if ($isRequests)
 			$parse['title'] = $isMy ? 'Мои запросы' : 'Другие запросы';
 
-		$parse['list'] = [];
+		$parse['items'] = [];
 		$parse['isMy'] = $isMy;
 
-		$query = $isRequests ? ($isMy ? "active = 0 AND ignor = 0 AND sender = ".$this->user->id : "active = 0 AND ignor = 0 AND owner = " . $this->user->id) : "active = 1 AND ignor = 0 AND (sender = " . $this->user->id . " OR owner = " . $this->user->id . ")";
-		
-		$buddyrow = $this->db->query("SELECT * FROM game_buddy WHERE " . $query);
+		$items = Models\Buddy::query()
+			->orderBy('id DESC')
+			->bind(['user' => $this->user->id]);
 
-		while ($b = $buddyrow->fetch())
+		if ($isRequests)
 		{
-			$q = [];
-
-			$uid = ($b["owner"] == $this->user->id) ? $b["sender"] : $b["owner"];
-		
-			$u = $this->db->query("SELECT id, username, galaxy, system, planet, onlinetime, ally_id, ally_name FROM game_users WHERE id = " . $uid)->fetch();
-		
-			$UserAlly = ($u["ally_id"] != 0) ? "<a href=\"".$this->url->get('alliance/info/'.$u["ally_id"].'/', null, null, '/') ."\">" . $u["ally_name"] . "</a>" : "";
-		
-			if ($isRequests)
-				$LastOnline = $b["text"];
+			if ($isMy)
+				$items->where('active = 0 AND ignor = 0 AND sender = :user:');
 			else
+				$items->where('active = 0 AND ignor = 0 AND owner = :user:');
+		}
+		else
+			$items->where('active = 1 AND ignor = 0 AND (sender = :user: OR owner = :user:)');
+
+		$items = $items->execute();
+
+		/** @var Models\Buddy $item */
+		foreach ($items as $item)
+		{
+			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
+
+			/** @var Models\User $user */
+			$user = Models\User::query()
+				->columns(['id', 'username', 'galaxy', 'system', 'planet', 'onlinetime', 'ally_id', 'ally_name'])
+				->where('id = :user:')
+				->bind(['user' => $userId])
+				->execute()->getFirst();
+
+			if (!$user)
 			{
-				$LastOnline = "<font color=";
-		
-				if ($u["onlinetime"] + 60 * 10 >= time())
-					$LastOnline .= "lime>В игре";
-				elseif ($u["onlinetime"] + 60 * 20 >= time())
-					$LastOnline .= "yellow>15 мин.";
-				else
-					$LastOnline .= "red>Не в игре";
-		
-				$LastOnline .= "</font>";
+				$item->delete();
+				continue;
 			}
-		
-			$q['id'] = $b["id"];
-			$q['userid'] = $u["id"];
-			$q['username'] = $u["username"];
-			$q['ally'] = $UserAlly;
-			$q['g'] = $u["galaxy"];
-			$q['s'] = $u["system"];
-			$q['p'] = $u["planet"];
-			$q['online'] = $LastOnline;
-		
-			$parse['list'][] = $q;
+
+			$row = [
+				'id' => (int) $item->id,
+				'online' => 0,
+				'text' => $item->text,
+				'user' => [
+					'id' => (int) $user->id,
+					'name' => $user->username,
+					'alliance' => [
+						'id' => (int) $user->ally_id,
+						'name' => $user->ally_name
+					],
+					'galaxy' => (int) $user->galaxy,
+					'system' => (int) $user->system,
+					'planet' => (int) $user->planet,
+				]
+			];
+
+			if (!$isRequests)
+			{
+				if ($user->onlinetime > (time() - 59 * 60))
+					$row['online'] = floor((time() - $user->onlinetime) / 60);
+				else
+					$row['online'] = 60;
+			}
+
+			$parse['items'][] = $row;
 		}
 
 		Request::addData('page', $parse);

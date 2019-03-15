@@ -44,7 +44,7 @@ class OfficierController extends Controller
 		$duration = (int) $this->request->getPost('duration');
 
 		if (!$id || !$duration)
-			throw new RedirectException('Ошибка входных параметров', _getText('Officier'), '/officier/', 2);
+			throw new ErrorException('Ошибка входных параметров');
 
 		switch ($duration)
 		{
@@ -61,16 +61,16 @@ class OfficierController extends Controller
 			break;
 
 			default:
-				throw new RedirectException('Ошибка входных параметров', _getText('Officier'), '/officier/', 2);
+				throw new ErrorException('Ошибка входных параметров');
 		}
 
 		$time = $duration * 86400;
 
 		if (!$credits || !$time || $this->user->credits < $credits)
-			throw new RedirectException(_getText('NoPoints'), _getText('Officier'), '/officier/', 2);
+			throw new ErrorException(_getText('NoPoints'));
 
 		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER)
-			throw new RedirectException('Выбран неверный элемент', _getText('Officier'), '/officier/', 2);
+			throw new ErrorException('Выбран неверный элемент');
 
 		if ($this->user->{Vars::getName($id)} > time())
 			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)} + $time;
@@ -87,7 +87,7 @@ class OfficierController extends Controller
 			'type' => 5
 		]);
 
-		throw new RedirectException(_getText('OffiRecrute'), _getText('Officier'), '/officier/', 5);
+		throw new RedirectException(_getText('OffiRecrute'), '/officier/');
 	}
 	
 	public function indexAction ()

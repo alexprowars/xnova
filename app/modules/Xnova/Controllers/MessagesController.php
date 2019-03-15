@@ -40,12 +40,12 @@ class MessagesController extends Controller
 	public function writeAction ($userId = 0)
 	{
 		if (!$userId)
-			throw new ErrorException(_getText('mess_no_ownerid'), _getText('mess_error'));
+			throw new ErrorException(_getText('mess_no_ownerid'));
 
 		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE ".(is_numeric($userId) ? '`id`' : '`username`')." = '" . $userId . "';")->fetch();
 
 		if (!isset($OwnerRecord['id']))
-			throw new ErrorException(_getText('mess_no_owner'), _getText('mess_error'));
+			throw new ErrorException(_getText('mess_no_owner'));
 
 		if ($this->request->hasPost('text'))
 		{

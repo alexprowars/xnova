@@ -9,7 +9,6 @@ namespace Xnova\Models;
  */
 
 use Xnova\Database;
-use Xnova\Exceptions\RedirectException;
 use Xnova\Galaxy;
 use Phalcon\Mvc\Model;
 use Friday\Core\Models\User as BaseUser;
@@ -344,18 +343,13 @@ class User extends BaseUser
 			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
 
-			$isExistPlanet = $this->getWriteConnection()->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "' OR (id_ally > 0 AND id_ally = '".$this->ally_id."'))")->fetch();
+			$isExistPlanet = $this->getWriteConnection()->query("SELECT id, id_owner, id_ally FROM game_planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "')")->fetch();
 
-			if ($isExistPlanet)
-			{
-				if ($isExistPlanet['id_ally'] && $isExistPlanet['id_owner'] != $this->getId() && !$this->ally['rights']['planet'])
-					throw new RedirectException("Вы не можете переключится на эту планету. Недостаточно прав.", "Альянс", "/overview/", 2);
-
-				$this->planet_current = $selectPlanet;
-				$this->update();
-			}
-			else
+			if (!$isExistPlanet)
 				return false;
+
+			$this->planet_current = $selectPlanet;
+			$this->update();
 		}
 
 		return true;

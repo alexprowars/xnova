@@ -41,7 +41,7 @@ class SupportController extends Controller
 		$subject = $this->request->getPost('subject', 'string', '');
 
 		if (empty($text) || empty($subject))
-			throw new ErrorException('Не заполнены все поля', 'Ошибка');
+			throw new ErrorException('Не заполнены все поля');
 
 		$ticket = new Support();
 
@@ -64,17 +64,17 @@ class SupportController extends Controller
 		$id = (int) $id;
 
 		if (!$id)
-			throw new RedirectException('Не задан ID тикета', 'Ошибка', '/support/');
+			throw new RedirectException('Не задан ID тикета', '/support/');
 
 		$text = $this->request->getPost('text', 'string', '');
 
 		if (empty($text))
-			throw new ErrorException('Не заполнены все поля', 'Ошибка');
+			throw new ErrorException('Не заполнены все поля');
 
 		$ticket = Support::findFirst($id);
 
 		if (!$ticket)
-			throw new RedirectException('Тикет не найден', 'Ошибка', '/support/');
+			throw new RedirectException('Тикет не найден', '/support/');
 
 		$text = $ticket->text . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($text) . '';
 
@@ -88,7 +88,7 @@ class SupportController extends Controller
 			$sms->send($this->config->sms->login, 'Поступил ответ на тикет №' . $ticket->id . ' ('.$this->user->username.')');
 		}
 
-		throw new SuccessException('Задача обновлена', 'Успех');
+		throw new SuccessException('Задача обновлена');
 	}
 	
 	public function indexAction ()

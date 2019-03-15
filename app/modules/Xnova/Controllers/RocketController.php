@@ -50,17 +50,17 @@ class RocketController extends Controller
 		$targetPlanet = Planet::findByCoords($g, $s, $i, 1);
 
 		if ($this->planet->getBuildLevel('missile_facility') < 4)
-			throw new ErrorException('Постройте ракетную шахту', 'Ошибка');
+			throw new ErrorException('Постройте ракетную шахту');
 		elseif ($this->user->getTechLevel('impulse_motor') == 0)
-			throw new ErrorException('Необходима технология "Импульсный двигатель"', 'Ошибка');
+			throw new ErrorException('Необходима технология "Импульсный двигатель"');
 		elseif ($distance >= $maxDistance || $g != $this->planet->galaxy)
-			throw new ErrorException('Превышена дистанция ракетной атаки', 'Ошибка');
+			throw new ErrorException('Превышена дистанция ракетной атаки');
 		elseif (!$targetPlanet)
-			throw new ErrorException('Планета не найдена', 'Ошибка');
+			throw new ErrorException('Планета не найдена');
 		elseif ($count > $this->planet->getUnitCount('interplanetary_misil'))
-			throw new ErrorException('У вас нет такого кол-ва ракет', 'Ошибка');
+			throw new ErrorException('У вас нет такого кол-ва ракет');
 		elseif ((!is_numeric($destroyType) && $destroyType != "all") OR ($destroyType < 0 && $destroyType > 7 && $destroyType != "all"))
-			throw new ErrorException('Не найдена цель', 'Ошибка');
+			throw new ErrorException('Не найдена цель');
 		
 		if ($destroyType == 'all')
 			$destroyType = 0;
@@ -108,6 +108,6 @@ class RocketController extends Controller
 			$this->planet->update();
 		}
 
-		throw new ErrorException('<b>'.$count.'</b> межпланетные ракеты запущены для атаки удалённой планеты!', 'Атака межпланетными ракетами');
+		throw new ErrorException('<b>'.$count.'</b> межпланетные ракеты запущены для атаки удалённой планеты!');
 	}
 }

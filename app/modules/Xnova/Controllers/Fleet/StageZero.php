@@ -20,7 +20,7 @@ class StageZero
 	public function show (FleetController $controller)
 	{
 		if (!$controller->planet)
-			throw new ErrorException(_getText('fl_noplanetrow'), _getText('fl_error'));
+			throw new ErrorException(_getText('fl_noplanetrow'));
 
 		$flyingFleets = Fleet::count(['owner = ?0', 'bind' => [$controller->user->id]]);
 

@@ -4,10 +4,8 @@ namespace Xnova\Exceptions;
 
 class SuccessException extends MainException
 {
-	public function __construct ($message = '', $title = '')
+	public function __construct ($message = '')
 	{
-		parent::__construct($message, $title, [
-			'type' => MainException::SUCCESS
-		]);
+		parent::__construct($message);
 	}
 }

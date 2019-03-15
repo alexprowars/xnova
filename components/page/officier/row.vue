@@ -60,7 +60,7 @@
 			{
 				this.$dialog
 					.confirm({
-						body: 'Вы действительно хотите нанять "<b>'+this.$t('TECH.'+this.item['id'])+'</b>" на <b>'+value+'</b> дней за <b>'+price+'</b> кредитов?',
+						body: 'Вы действительно хотите нанять офицера "<b>'+this.$t('TECH.'+this.item['id'])+'</b>" на <b>'+value+'</b> дней за <b>'+price+'</b> кредитов?',
 						title: 'Вербовка офицера'
 					}, {
 						okText: 'Нанять',
@@ -74,7 +74,6 @@
 						})
 						.then((result) => {
 							this.$store.commit('PAGE_LOAD', result);
-							this.$router.replace(this.$route.fullPath);
 						})
 					})
 			}

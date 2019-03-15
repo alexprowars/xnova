@@ -58,7 +58,7 @@ class NotesController extends Controller
 
 			$note->create();
 
-			throw new RedirectException(_getText('NoteAdded'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 5);
+			throw new RedirectException(_getText('NoteAdded'), '/notes/edit/'.$note->id.'/');
 		}
 
 		$this->tag->setTitle('Создание заметки');
@@ -76,7 +76,7 @@ class NotesController extends Controller
 		]);
 
 		if (!$note)
-			throw new ErrorException(_getText('notpossiblethisway'), _getText('Error'));
+			throw new ErrorException(_getText('notpossiblethisway'));
 
 		if ($this->request->isPost())
 		{
@@ -98,7 +98,7 @@ class NotesController extends Controller
 
 			$note->update();
 
-			throw new RedirectException(_getText('NoteUpdated'), _getText('Please_Wait'), '/notes/edit/'.$note->id.'/', 1);
+			throw new RedirectException(_getText('NoteUpdated'), '/notes/edit/'.$note->id.'/');
 		}
 
 		$parse = [
@@ -137,7 +137,7 @@ class NotesController extends Controller
 					$note->delete();
 			}
 
-			throw new RedirectException(_getText('NoteDeleteds'), _getText('Please_Wait'), '/notes/', 2);
+			throw new RedirectException(_getText('NoteDeleteds'), '/notes/');
 		}
 
 		$notes = Note::find([

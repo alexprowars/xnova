@@ -109,7 +109,7 @@
 			redirect (val)
 			{
 				if (val && val.length > 0)
-					window.location.href = val;
+					this.$router.push(val);
 			},
 			notifications (val)
 			{

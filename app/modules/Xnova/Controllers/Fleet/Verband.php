@@ -25,7 +25,7 @@ class Verband
 		$fleetId = (int) $controller->request->get('id', 'int');
 
 		if ($fleetId <= 0)
-			throw new RedirectException('Флот не выбран', '', 'fleet/');
+			throw new ErrorException('Флот не выбран');
 
 		$fleet = Fleet::findFirst(['conditions' => 'id = ?0 AND owner = ?1 AND mission = ?2', 'bind' => [$fleetId, $controller->user->id, 1]]);
 
@@ -122,7 +122,7 @@ class Verband
 					throw new ErrorException("Слишком длинное имя ассоциации");
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
-					throw new ErrorException("Имя ассоциации содержит запрещённые символы", _getText('error'));
+					throw new ErrorException("Имя ассоциации содержит запрещённые символы");
 
 				$name = strip_tags($name);
 

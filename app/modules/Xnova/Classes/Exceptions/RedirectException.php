@@ -3,13 +3,14 @@
 namespace Xnova\Exceptions;
 
 use Phalcon\Di;
+use Xnova\Request;
 
 class RedirectException extends MainException
 {
 	protected $url = '';
 	protected $timeout = 5;
 
-	public function __construct ($message = '', $title = '', $url = '', $timeout = 5)
+	public function __construct ($message = '', $url = '')
 	{
 		if ($url == '')
 			$url = Di::getDefault()->getShared('router')->getRewriteUri();
@@ -19,13 +20,10 @@ class RedirectException extends MainException
 
 		$this->url = ltrim($url, '/');
 
-		if ($timeout > 0)
-			$this->timeout = (int) $timeout;
+		$url = Di::getDefault()->getShared('url')->get($url, null, null, '/');
 
-		parent::__construct($message, $title, [
-			'type' => MainException::REDIRECT,
-			'url' => $url,
-			'timeout' => $timeout
-		]);
+		Request::addData('redirect', $url);
+
+		parent::__construct($message);
 	}
 }

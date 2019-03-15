@@ -224,18 +224,18 @@ class OverviewController extends Controller
 		if ($this->request->isPost() && $this->request->hasPost('id') && $this->request->getPost('id', 'int', 0) == $this->user->planet_current)
 		{
 			if ($this->user->id != $this->planet->id_owner)
-				throw new RedirectException("Удалить планету может только владелец", _getText('colony_abandon'), '/overview/rename/');
+				throw new RedirectException("Удалить планету может только владелец", '/overview/rename/');
 
 			if ($this->user->planet_id == $this->user->planet_current)
-				throw new RedirectException(_getText('deletemessage_wrong'), _getText('colony_abandon'), '/overview/rename/');
+				throw new RedirectException(_getText('deletemessage_wrong'), '/overview/rename/');
 
 			if (md5(trim($this->request->getPost('pw'))) != $this->request->getPost('password'))
-				throw new RedirectException(_getText('deletemessage_fail'), _getText('colony_abandon'), '/overview/delete/');
+				throw new RedirectException(_getText('deletemessage_fail'), '/overview/delete/');
 
 			$checkFleets = FleetModel::count(['(start_galaxy = :galaxy: AND start_system = :system: AND start_planet = :planet: AND start_type = :type:) OR (end_galaxy = :galaxy: AND end_system = :system: AND end_planet = :planet: AND end_type = :type:)', 'bind' => ['galaxy' => $this->planet->galaxy, 'system' => $this->planet->system, 'planet' => $this->planet->planet, 'type' => $this->planet->planet_type]]);
 
 			if ($checkFleets > 0)
-				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', _getText('colony_abandon'), '/overview/rename/');
+				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', '/overview/rename/');
 
 			$destruyed = time() + 60 * 60 * 24;
 
@@ -279,7 +279,7 @@ class OverviewController extends Controller
 
 			$this->cache->delete('app::planetlist_'.$this->user->id);
 
-			throw new RedirectException(_getText('deletemessage_ok'), _getText('colony_abandon'), '/overview/');
+			throw new RedirectException(_getText('deletemessage_ok'), '/overview/');
 		}
 
 		$parse['number_1'] 		= mt_rand(1, 100);
@@ -331,10 +331,10 @@ class OverviewController extends Controller
 			if ($name != '')
 			{
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
-					throw new RedirectException('Введённое имя содержит недопустимые символы', 'Ошибка', $this->url->get('overview/rename/'), 5);
+					throw new ErrorException('Введённое имя содержит недопустимые символы');
 
 				if (mb_strlen($name, 'UTF-8') <= 1 || mb_strlen($name, 'UTF-8') >= 20)
-					throw new RedirectException('Введённо слишком длинное или короткое имя планеты', 'Ошибка', $this->url->get('overview/rename/'), 5);
+					throw new ErrorException('Введённо слишком длинное или короткое имя планеты');
 
 				$this->planet->name = $name;
 				$this->planet->update();
@@ -346,12 +346,12 @@ class OverviewController extends Controller
 		elseif ($this->request->hasPost('action') && $this->request->hasPost('image'))
 		{
 			if ($this->user->credits < 1)
-				throw new RedirectException('Недостаточно кредитов', 'Ошибка', '/overview/rename/');
+				throw new ErrorException('Недостаточно кредитов');
 
 			$image = (int) $this->request->getPost('image', 'int', 0);
 
 			if ($image <= 0 || $image > $parse['images'][$parse['type']])
-				throw new RedirectException('Недостаточно читерских навыков', 'Ошибка', '/overview/rename/');
+				throw new ErrorException('Недостаточно читерских навыков');
 
 			$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
 			$this->planet->update();
@@ -359,7 +359,7 @@ class OverviewController extends Controller
 			$this->user->credits--;
 			$this->user->update();
 
-			$this->response->redirect('overview/');
+			throw new RedirectException('Картинка планеты изменена', '/overview/');
 		}
 
 		$parse['planet_name'] = $this->planet->name;
@@ -372,32 +372,30 @@ class OverviewController extends Controller
 
 	public function bonusAction ()
 	{
-		if ($this->user->bonus < time())
-		{
-			$multi = ($this->user->bonus_multi < 50) ? ($this->user->bonus_multi + 1) : 50;
-
-			if ($this->user->bonus < (time() - 86400))
-				$multi = 1;
-
-			$add = $multi * 500 * $this->game->getSpeed('mine');
-
-			$this->planet->metal += $add;
-			$this->planet->crystal += $add;
-			$this->planet->deuterium += $add;
-			$this->planet->update();
-
-			$this->user->bonus = time() + 86400;
-			$this->user->bonus_multi = $multi;
-
-			if ($this->user->bonus_multi > 1)
-				$this->user->credits++;
-
-			$this->user->update();
-
-			throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', 'Ежедневный бонус', '/overview/', 2);
-		}
-		else
+		if ($this->user->bonus > time())
 			throw new ErrorException('Ошибочка вышла, сорри :(');
+
+		$multi = ($this->user->bonus_multi < 50) ? ($this->user->bonus_multi + 1) : 50;
+
+		if ($this->user->bonus < (time() - 86400))
+			$multi = 1;
+
+		$add = $multi * 500 * $this->game->getSpeed('mine');
+
+		$this->planet->metal += $add;
+		$this->planet->crystal += $add;
+		$this->planet->deuterium += $add;
+		$this->planet->update();
+
+		$this->user->bonus = time() + 86400;
+		$this->user->bonus_multi = $multi;
+
+		if ($this->user->bonus_multi > 1)
+			$this->user->credits++;
+
+		$this->user->update();
+
+		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', '/overview/');
 	}
 
 	public function indexAction ()

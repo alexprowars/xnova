@@ -27,6 +27,8 @@ export default ({ store, $axios }, inject) =>
 	{
 		let headers = {}
 
+		data = data || {}
+
 		if (data.toString().indexOf('FormData') < 0)
 			data = objectToFormData(data)
 

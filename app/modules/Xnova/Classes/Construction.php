@@ -9,6 +9,7 @@ namespace Xnova;
  */
 
 use Phalcon\Di;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
 use Xnova\Models\Planet;
 use Xnova\Models\User as UserModel;
@@ -195,7 +196,7 @@ class Construction
 						break;
 				}
 
-				Di::getDefault()->getShared('response')->redirect('buildings/research/');
+				throw new RedirectException('', '', '/buildings/research/');
 			}
 		}
 

@@ -109,18 +109,10 @@ class Controller extends PhalconController
 		]);
 
 		Request::addData('path', '/');
-		Request::addData('version', VERSION);
 		Request::addData('host', $this->request->getHttpHost());
 		Request::addData('redirect', '');
 		Request::addData('messages', []);
 		Request::addData('page', []);
-
-		Request::addData('stats', [
-			'time' => time(),
-			'timezone' => (int) date('Z'),
-			'online' => (int) Options::get('users_online', 0),
-			'users' => (int) Options::get('users_total', 0),
-		]);
 
 		if ($this->auth->isAuthorized())
 		{
@@ -168,12 +160,6 @@ class Controller extends PhalconController
 
 			if ($this->request->has('popup'))
 				Request::addData('popup', true);
-
-			Request::addData('speed', [
-				'game' => $this->game->getSpeed('build'),
-				'fleet' => $this->game->getSpeed('fleet'),
-				'resources' => $this->game->getSpeed('mine')
-			]);
 
 			Request::addData('page', null);
 			Request::addData('error', false);
@@ -343,15 +329,27 @@ class Controller extends PhalconController
 				$this->topPlanetPanel();
 			else
 				$this->showTopPanel(false);
+
+			Request::addData('speed', [
+				'game' => $this->game->getSpeed('build'),
+				'fleet' => $this->game->getSpeed('fleet'),
+				'resources' => $this->game->getSpeed('mine')
+			]);
 		}
 		else
 			$this->showTopPanel(false);
 
+		Request::addData('stats', [
+			'time' => time(),
+			'timezone' => (int) date('Z'),
+			'online' => (int) Options::get('users_online', 0),
+			'users' => (int) Options::get('users_total', 0),
+		]);
+
 		Request::addData('view', $this->views);
 		Request::addData('title', $this->tag->getTitle(false));
 		Request::addData('url', str_replace('/api', '', $this->router->getRewriteUri()));
-
-		$this->view->setVar('options', Request::getData());
+		Request::addData('version', VERSION);
 
 		return true;
 	}
