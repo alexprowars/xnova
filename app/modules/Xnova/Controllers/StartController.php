@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
@@ -83,8 +84,7 @@ class StartController extends Controller
 
 					$this->user->update($arUpdate);
 
-					$this->response->redirect('start/');
-					$this->view->disable();
+					throw new RedirectException('', '/start/');
 				}
 
 				$this->view->pick('shared/start/sex');
@@ -108,20 +108,17 @@ class StartController extends Controller
 					$r = (int) $this->request->getPost('race', 'int', 0);
 					$r = ($r < 1 || $r > 4) ? 0 : $r;
 
-					if ($r != 0)
-					{
-						$update = ['race' => $r, 'bonus' => (time() + 86400)];
-
-						foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
-							$update[Vars::getName($oId)] = time() + 86400;
-
-						$this->user->update($update);
-
-						$this->response->redirect('tutorial/');
-						$this->view->disable();
-					}
-					else
+					if ($r <= 0)
 						throw new ErrorException('Выберите фракцию');
+
+					$update = ['race' => $r, 'bonus' => (time() + 86400)];
+
+					foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
+						$update[Vars::getName($oId)] = time() + 86400;
+
+					$this->user->update($update);
+
+					throw new RedirectException('', '/tutorial/');
 				}
 			}
 		}

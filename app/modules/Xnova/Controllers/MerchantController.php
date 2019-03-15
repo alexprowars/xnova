@@ -49,7 +49,7 @@ class MerchantController extends Controller
 		if ($this->request->hasPost('exchange'))
 		{
 			if ($this->user->credits <= 0)
-				throw new RedirectException('Недостаточно кредитов для проведения обменной операции', 'Ошибка', '/merchant/', 3);
+				throw new RedirectException('Недостаточно кредитов для проведения обменной операции', '/merchant/');
 		
 			$metal = (int) $this->request->getPost('metal', 'int', 0);
 			$crystal = (int) $this->request->getPost('crystal', 'int', 0);
@@ -95,7 +95,7 @@ class MerchantController extends Controller
 			if (isset($tutorial['id']))
 				$this->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
 
-			throw new RedirectException('Вы обменяли '.$exchange.' '._getText('res', $type), 'Обмен прошёл успешно', '/merchant/', 2);
+			throw new RedirectException('Вы обменяли '.$exchange.' '._getText('res', $type), '/merchant/');
 		}
 
 		Request::addData('page', $parse);

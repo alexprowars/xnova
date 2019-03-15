@@ -26,6 +26,7 @@ class Message extends Model
 	public $deleted;
 	public $theme;
 	public $text;
+	public $from;
 
 	public function getSource()
 	{

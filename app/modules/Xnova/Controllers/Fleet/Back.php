@@ -72,6 +72,6 @@ class Back
 				$BoxMessage = _getText('fl_onlyyours');
 		}
 
-		throw new RedirectException("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", $BoxTitle, "/fleet/", 2);
+		throw new RedirectException("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", "/fleet/");
 	}
 }

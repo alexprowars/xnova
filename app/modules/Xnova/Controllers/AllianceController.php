@@ -410,7 +410,7 @@ class AllianceController extends Controller
 
 							User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
-							return $this->response->redirect("alliance/members/");
+							throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
 						}
 					}
 				}
@@ -522,7 +522,7 @@ class AllianceController extends Controller
 
 			$this->ally->deleteAlly();
 
-			return $this->response->redirect('alliance/');
+			throw new RedirectException('Альянс удалён', '/alliance/');
 		}
 		elseif ($edit == 'give')
 		{
@@ -539,7 +539,7 @@ class AllianceController extends Controller
 				$this->db->query("UPDATE game_alliance SET owner = '" . $info['id'] . "' WHERE id = " . $this->user->ally_id . " ");
 				$this->db->query("UPDATE game_alliance_members SET rank = '0' WHERE u_id = '" . $info['id'] . "';");
 
-				return $this->response->redirect('alliance/');
+				throw new RedirectException('Правление передано', '/alliance/');
 			}
 
 			$listuser = $this->db->query("SELECT u.username, u.id, m.rank FROM game_users u LEFT JOIN game_alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $this->ally->owner . " AND m.rank != 0;");
@@ -597,9 +597,7 @@ class AllianceController extends Controller
 			$this->membersAction();
 		}
 		else
-			return $this->response->redirect('alliance/');
-
-		return true;
+			throw new RedirectException('Запрашиваемого действия не существует', '/alliance/');
 	}
 
 	public function diplomacyAction ()
@@ -874,7 +872,7 @@ class AllianceController extends Controller
 
 			$this->db->query("UPDATE game_users SET messages_ally = messages_ally + '1' WHERE ally_id = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");
 
-			$this->response->redirect('alliance/chat/');
+			throw new RedirectException('Сообщение отправлено', '/alliance/chat/');
 		}
 
 		$parse = [];

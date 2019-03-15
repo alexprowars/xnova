@@ -12,6 +12,7 @@ use Phalcon\Cache\Backend\Memcache;
 use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Exceptions\SuccessException;
 use Xnova\Fleet;
 use Xnova\Helpers;
 use Friday\Core\Lang;
@@ -359,7 +360,7 @@ class OverviewController extends Controller
 			$this->user->credits--;
 			$this->user->update();
 
-			throw new RedirectException('Картинка планеты изменена', '/overview/');
+			$this->$this->flashSession->success('Картинка планеты изменена');
 		}
 
 		$parse['planet_name'] = $this->planet->name;
@@ -395,7 +396,7 @@ class OverviewController extends Controller
 
 		$this->user->update();
 
-		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', '/overview/');
+		throw new SuccessException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'');
 	}
 
 	public function indexAction ()

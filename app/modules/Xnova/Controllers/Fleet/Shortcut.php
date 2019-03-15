@@ -48,7 +48,7 @@ class Shortcut
 				if ($controller->session->has('fleet_shortcut'))
 					$controller->session->remove('fleet_shortcut');
 
-				throw new RedirectException("Ссылка на планету добавлена!", "Добавление ссылки", "/fleet/shortcut/", 1);
+				throw new RedirectException("Ссылка на планету добавлена!", "/fleet/shortcut/");
 			}
 
 			$g = (int) $controller->request->get('g', 'int', 0);
@@ -83,7 +83,7 @@ class Shortcut
 				$scarray = explode("\r\n", $inf['fleet_shortcut']);
 
 				if (!isset($scarray[$id]))
-					$controller->response->redirect('fleet/shortcut/');
+					throw new RedirectException('Ошибка', '/fleet/shortcut/');
 
 				if ($controller->request->hasPost('delete'))
 				{
@@ -97,7 +97,7 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					throw new RedirectException("Ссылка была успешно удалена!", "Удаление ссылки", "/fleet/shortcut/", 1);
+					throw new RedirectException("Ссылка была успешно удалена!", "/fleet/shortcut/");
 				}
 				else
 				{
@@ -128,7 +128,7 @@ class Shortcut
 					if ($controller->session->has('fleet_shortcut'))
 						$controller->session->remove('fleet_shortcut');
 
-					throw new RedirectException("Ссылка была обновлена!", "Обновление ссылки", "/fleet/shortcut/", 1);
+					throw new RedirectException("Ссылка была обновлена!", "/fleet/shortcut/");
 				}
 			}
 
@@ -150,10 +150,10 @@ class Shortcut
 					]);
 				}
 				else
-					throw new RedirectException("Данной ссылки не существует!", "Ссылки", "/fleet/shortcut/");
+					throw new RedirectException("Данной ссылки не существует!", "/fleet/shortcut/");
 			}
 			else
-				throw new RedirectException("Ваш список быстрых ссылок пуст!", "Ссылки", "/fleet/shortcut/");
+				throw new RedirectException("Ваш список быстрых ссылок пуст!", "/fleet/shortcut/");
 		}
 		else
 		{

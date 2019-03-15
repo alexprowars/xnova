@@ -39,34 +39,30 @@ class ResourcesController extends Controller
 		if ($this->user->vacation > 0)
 			throw new ErrorException("Включен режим отпуска!");
 
-		if ($this->user->credits >= 10)
-		{
-			if ($this->planet->merchand < time())
-			{
-				$this->planet->merchand = time() + 172800;
+		if ($this->user->credits < 10)
+			throw new ErrorException('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
 
-				foreach (Vars::getResources() AS $res)
-					$this->planet->{$res} += $parse['buy_form'][$res];
+		if ($this->planet->merchand > time())
+			throw new ErrorException('Покупать ресурсы можно только раз в 48 часов');
 
-				$this->planet->update();
+		$this->planet->merchand = time() + 172800;
 
-				$this->user->credits -= 10;
-				$this->user->update();
+		foreach (Vars::getResources() AS $res)
+			$this->planet->{$res} += $parse['buy_form'][$res];
 
-				$this->db->insertAsDict('game_log_credits', [
-					'uid' => $this->user->id,
-					'time' => time(),
-					'credits' => 10 * (-1),
-					'type' => 2
-				]);
+		$this->planet->update();
 
-				throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', 'Успешная покупка', '/resources/', 2);
-			}
-			else
-				throw new RedirectException('Покупать ресурсы можно только раз в 48 часов', 'Ошибка', '/resources/', 2);
-		}
-		else
-			throw new RedirectException('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов', 'Ошибка', '/resources/', 2);
+		$this->user->credits -= 10;
+		$this->user->update();
+
+		$this->db->insertAsDict('game_log_credits', [
+			'uid' => $this->user->id,
+			'time' => time(),
+			'credits' => 10 * (-1),
+			'type' => 2
+		]);
+
+		throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', '/resources/');
 	}
 
 	public function productionAction ()

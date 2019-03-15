@@ -57,7 +57,7 @@
 					}
 					else
 					{
-						this.$store.dispatch('loadPage', this.$route.fullPath)
+						this.$store.dispatch('PAGE_LOAD', result)
 						this.$emit('close');
 					}
 				})

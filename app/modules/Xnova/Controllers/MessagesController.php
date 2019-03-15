@@ -17,6 +17,7 @@ use Xnova\Request;
 use Xnova\User;
 use Phalcon\Paginator\Adapter\QueryBuilder as PaginatorQueryBuilder;
 use Xnova\Controller;
+use Xnova\Models;
 
 /**
  * @RoutePrefix("/messages")
@@ -145,19 +146,27 @@ class MessagesController extends Controller
 	{
 		$mes = Message::findFirst(['id = ?0 AND user_id = ?1', 'bind' => [$id, $this->user->id]]);
 
-		if ($mes)
+		if (!$mes)
+			throw new ErrorException('Сообщение не найдено');
+
+		$users = Models\User::query()
+			->columns(['id'])
+			->where('authlevel != 0')
+			->execute();
+
+		/** @var Models\User $user */
+		foreach ($users as $user)
 		{
-			$c = $this->db->query("SELECT `id` FROM game_users WHERE `authlevel` != 0");
-
-			while ($cc = $c->fetch())
-			{
-				User::sendMessage($cc['id'], $this->user->id, 0, 1, '<font color=red>' . $this->user->username . '</font>', 'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text);
-			}
-
-			$this->flashSession->message('alert', 'Жалоба отправлена администрации игры');
+			User::sendMessage($user->id,
+				$this->user->id,
+				0,
+				1,
+				'<font color=red>' . $this->user->username . '</font>',
+				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text
+			);
 		}
 
-		return $this->response->redirect('messages/');
+		throw new SuccessException('Жалоба отправлена администрации игры');
 	}
 	
 	public function indexAction ()

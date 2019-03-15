@@ -60,12 +60,12 @@ class LogController extends Controller
 			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
 
 		if (!$this->request->hasQuery('id'))
-			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+			throw new RedirectException("Ошибка удаления.", "/log/");
 
 		$id = (int) $this->request->getQuery('id', 'int', 0);
 
 		if (!$id)
-			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+			throw new RedirectException("Ошибка удаления.", "/log/");
 
 		$log = BattleLog::findFirst([
 			'conditions' => 'id = ?0 AND user_id = ?1',
@@ -73,10 +73,10 @@ class LogController extends Controller
 		]);
 
 		if (!$log)
-			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+			throw new RedirectException("Ошибка удаления.", "/log/");
 
 		if (!$log->delete())
-			throw new RedirectException("Ошибка удаления.", "Логовница", "/log/", 2);
+			throw new RedirectException("Ошибка удаления.", "/log/");
 
 		$this->response->redirect("log/");
 	}
@@ -105,7 +105,7 @@ class LogController extends Controller
 				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 				if (md5($this->config->application->encryptKey.$id) != $key)
-					throw new RedirectException('Не правильный ключ', 'Ошибка', '', 0);
+					throw new RedirectException('Не правильный ключ', '');
 				else
 				{
 					$log = $this->db->query("SELECT * FROM game_rw WHERE `id` = '" . $id . "'")->fetch();
@@ -145,7 +145,7 @@ class LogController extends Controller
 				}
 			}
 
-			throw new RedirectException($message, "Логовница", "/log/", 2);
+			throw new RedirectException($message, "/log/");
 		}
 
 		$this->tag->setTitle('Логовница');

@@ -73,7 +73,7 @@ class StageOne
 		}
 
 		if (!count($fleets))
-			throw new RedirectException(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
+			throw new RedirectException(_getText('fl_unselectall'), "/fleet/");
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 

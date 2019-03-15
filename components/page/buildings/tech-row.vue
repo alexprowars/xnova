@@ -79,7 +79,7 @@
 		},
 		computed: {
 			resources () {
-				return this.$store.state.resources;
+				return this.$store.state.resources || {};
 			},
 			hasResources ()
 			{
@@ -89,7 +89,8 @@
 
 				resources.forEach((res) =>
 				{
-					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0 && this.resources[res].current < this.item.price[res])
+					if (typeof this.item.price[res] !== 'undefined' && this.item.price[res] > 0
+						&& this.resources[res] && this.resources[res].current < this.item.price[res])
 						allow = false;
 				});
 
@@ -120,10 +121,8 @@
 					cmd: 'search',
 					tech: this.item['i']
 				})
-				.then((result) =>
-				{
+				.then((result) => {
 					this.$store.commit('PAGE_LOAD', result);
-					this.$router.replace(result['url']);
 				})
 			},
 			cancelAction ()
@@ -139,10 +138,8 @@
 							cmd: 'cancel',
 							tech: this.item['i']
 						})
-						.then((result) =>
-						{
+						.then((result) => {
 							this.$store.commit('PAGE_LOAD', result);
-							this.$router.replace(result['url']);
 						})
 					})
 			}

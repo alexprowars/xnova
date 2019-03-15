@@ -30,6 +30,6 @@ class LogoutController extends Controller
 		if ($this->auth->isAuthorized())
 			$this->auth->remove();
 
-		throw new RedirectException('Вы вышли из игры', 'Сессия закрыта', "/", 3);
+		throw new RedirectException('Вы вышли из игры', "/");
 	}
 }

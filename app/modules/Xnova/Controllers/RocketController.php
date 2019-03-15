@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 
@@ -35,7 +36,7 @@ class RocketController extends Controller
 	public function indexAction ()
 	{
 		if (!$this->request->isPost())
-			return $this->response->redirect('galaxy/');
+			throw new RedirectException('Ошибка', '/galaxy/');
 
 		$g = (int) $this->request->getQuery('galaxy', 'int');
 		$s = (int) $this->request->getQuery('system', 'int');

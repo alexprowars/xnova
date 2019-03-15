@@ -43,7 +43,7 @@
 		methods: {
 			constructAction ()
 			{
-				this.$root.loader = true;
+				this.$store.commit('setLoadingStatus', true)
 
 				this.$post('/buildings/'+this.page.mode+'/', new FormData(this.$refs['form']))
 				.then((result) =>
@@ -55,13 +55,11 @@
 					});
 
 					this.$store.commit('PAGE_LOAD', result)
-					this.$router.replace(result['url'])
-				}, () => {
+					this.$store.commit('setLoadingStatus', false)
+				})
+				.catch(() => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
-				.then(() => {
-					this.$root.loader = false;
-				})
+				});
 			}
 		}
 	}

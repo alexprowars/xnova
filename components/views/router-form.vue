@@ -35,9 +35,8 @@
 				{
 					this.$store.commit('PAGE_LOAD', result)
 					this.$store.commit('setLoadingStatus', false)
-					this.$router.push(result['url'])
 				})
-				.catch(() => {
+				.catch(_ => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');
 				})
 			}

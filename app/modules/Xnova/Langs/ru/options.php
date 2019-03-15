@@ -3,8 +3,8 @@
 $lang['changue_pass'] = "Сменить пароль";
 $lang['Download'] = "Загрузка";
 $lang['Search'] = "Поиск";
-$lang['succeful_changepass'] = "Пароль успешно изменён.<br /><a href=\"/\" target=\"_top\">Назад</a>";
-$lang['succeful_save'] = /** @lang text */"Настройки успешно изменены.<br /><a href=\"/options/\">Назад</a>";
+$lang['succeful_changepass'] = "Пароль успешно изменён";
+$lang['succeful_save'] = "Настройки успешно изменены";
 $lang['mode_vacations_error'] = "Невозможно включить режим отпуска. Для включения у вас не должно идти строительство на планете и не должен летать флот.";
 
 $lang['userdata'] = "Информация";

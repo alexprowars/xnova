@@ -1,5 +1,5 @@
 <template>
-	<div class="row resource-panel">
+	<div v-if="planet" class="row resource-panel">
 		<div class="col-md-6 col-sm-6 col-12">
 			<div class="row">
 				<div class="col-4 text-center"><panel-resource :type="'metal'" :resource="planet.metal"></panel-resource></div>
@@ -128,12 +128,12 @@
 		},
 		computed: {
 			planet () {
-				return this.$store.state.resources;
+				return this.$store.state.resources || false;
 			}
 		},
 		methods:
 		{
-			update: function ()
+			update ()
 			{
 				if (typeof this.planet === 'undefined' || this.planet === false)
 					return;

@@ -44,7 +44,7 @@ class StageTwo
 		$fleets 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		if (!count($fleets))
-			throw new RedirectException(_getText('fl_unselectall'), _getText('fl_error'), "/fleet/", 1);
+			throw new RedirectException(_getText('fl_unselectall'), "/fleet/");
 
 		$YourPlanet = false;
 		$UsedPlanet = false;
@@ -189,7 +189,7 @@ class StageTwo
 			else
 				$RetMessage = _getText('gate_wait_star')." - ".Format::time($nextJumpTime);
 
-			throw new RedirectException($RetMessage, 'Результат', "/fleet/", 5);
+			throw new RedirectException($RetMessage, "/fleet/");
 		}
 	}
 }

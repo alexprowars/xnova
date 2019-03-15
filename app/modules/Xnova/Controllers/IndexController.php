@@ -142,12 +142,7 @@ class IndexController extends Controller
 
 				$this->auth->authorize($user->id, 0);
 
-				if ($this->request->isAjax())
-					Request::addData('redirect', $this->url->get('overview/'));
-				else
-					$this->response->redirect('overview/');
-
-				$this->view->disable();
+				Request::addData('redirect', '/overview/');
 			}
 		}
 
@@ -273,13 +268,8 @@ class IndexController extends Controller
 
 			$this->auth->authorize($login['id'], $expiretime);
 
-			if ($this->request->isAjax())
-			{
-				Request::setStatus(true);
-				Request::addData('redirect', $this->url->getBaseUri().'overview/');
-			}
-			else
-				$this->response->redirect('overview/');
+			Request::setStatus(true);
+			Request::addData('redirect', '/overview/');
 
 			$this->view->disable();
 		}

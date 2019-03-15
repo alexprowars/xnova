@@ -196,7 +196,7 @@ class Construction
 						break;
 				}
 
-				throw new RedirectException('', '', '/buildings/research/');
+				throw new RedirectException('', '/buildings/research/');
 			}
 		}
 

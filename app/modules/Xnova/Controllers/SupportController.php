@@ -56,7 +56,7 @@ class SupportController extends Controller
 		$sms = new Sms();
 		$sms->send($this->config->sms->login, 'Создан новый тикет №' . $ticket->id . ' ('.$this->user->username.')');
 
-		$this->flashSession->notice('Задача добавлена');
+		throw new SuccessException('Задача добавлена');
 	}
 
 	public function answerAction ($id = 0)
@@ -78,7 +78,9 @@ class SupportController extends Controller
 
 		$text = $ticket->text . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($text) . '';
 
-		$this->db->query("UPDATE game_support SET text = '" . addslashes($text) . "', status = '3' WHERE id = '" . $id . "';");
+		$ticket->text = $text;
+		$ticket->status = 3;
+		$ticket->update();
 
 		User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
 

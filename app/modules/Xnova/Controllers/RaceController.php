@@ -49,9 +49,9 @@ class RaceController extends Controller
 				$UserFlyingFleets = Fleet::count(['owner = ?0', 'bind' => [$this->user->id]]);
 
 				if ($queueCount > 0)
-					throw new RedirectException('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "Oшибкa", "/race/", 5);
+					throw new RedirectException('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "/race/");
 				elseif ($UserFlyingFleets > 0)
-					throw new RedirectException('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "Oшибкa", "/race/", 5);
+					throw new RedirectException('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "/race/");
 				else
 				{
 					$this->user->race = $r;
@@ -83,7 +83,7 @@ class RaceController extends Controller
 						$planet->update();
 					}
 
-					$this->response->redirect('overview/');
+					throw new RedirectException('Фракция изменена', '/overview/');
 				}
 			}
 		}
