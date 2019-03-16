@@ -114,7 +114,7 @@
 		},
 		methods: {
 			scrollToBottom () {
-				$(this.$refs['chatbox']).scrollTop($(this.$refs['chatbox']).prop('scrollHeight'));
+				this.$refs['chatbox'].scrollTop = this.$refs['chatbox'].scrollHeight;
 			},
 			toggleActive ()
 			{

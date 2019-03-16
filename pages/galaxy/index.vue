@@ -1,5 +1,5 @@
 <template>
-	<div class="page-galaxy">
+	<div v-if="page" class="page-galaxy">
 		<galaxy-selector :shortcuts="page['shortcuts']"></galaxy-selector>
 		<div class="separator"></div>
 
@@ -52,7 +52,7 @@
 					<td class="c">№</td>
 					<td class="c">&nbsp;</td>
 					<td class="c">Планета</td>
-					<td class="c">Луна</td>
+					<td class="c">&nbsp;</td>
 					<td class="c">ПО</td>
 					<td class="c">Игрок</td>
 					<td class="c">&nbsp;</td>
@@ -146,10 +146,11 @@
 			GalaxyRow,
 			GalaxySelector
 		},
-		asyncData ({ store, route, error }) {
+		asyncData ({ store, route, error })
+		{
 			return store.dispatch('loadPage', route.fullPath)
-				.catch((error) => {
-					error({statusCode: '404', message: error.message})
+				.catch((e) => {
+					error({statusCode: '404', message: e.message})
 				})
 		},
 		watchQuery: true,

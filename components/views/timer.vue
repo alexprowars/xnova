@@ -1,5 +1,5 @@
 <template>
-	<div>{{ time|time(delimiter, true) }}</div>
+	<div>{{ time | time(delimiter, true) }}</div>
 </template>
 
 <script>
@@ -17,7 +17,7 @@
 		},
 		data () {
 			return {
-				time: 0,
+				time: -1,
 				timeout: null
 			}
 		},
@@ -42,7 +42,7 @@
 			}
 		},
 		created () {
-			this.time = this.value
+			this.time = this.value - this.$store.getters.getServerTime()
 		},
 		mounted ()
 		{

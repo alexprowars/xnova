@@ -374,7 +374,7 @@ class OverviewController extends Controller
 	public function bonusAction ()
 	{
 		if ($this->user->bonus > time())
-			throw new ErrorException('Ошибочка вышла, сорри :(');
+			throw new ErrorException('Вы не можете получить ежедневный бонус в данное время');
 
 		$multi = ($this->user->bonus_multi < 50) ? ($this->user->bonus_multi + 1) : 50;
 
@@ -812,8 +812,10 @@ class OverviewController extends Controller
 				$showMessage = true;
 		}
 
+		$parse['error'] = false;
+
 		if ($showMessage)
-			$this->view->setVar('globalMessage', '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="'.$this->url->get('resources/').'">Сырьё</a>" и восстановите производство.</span>');
+			$parse['error'] = '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="'.$this->url->get('resources/').'">Сырьё</a>" и восстановите производство.</span>';
 
 		Request::addData('page', $parse);
 

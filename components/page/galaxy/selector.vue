@@ -1,6 +1,5 @@
 <template>
 	<router-form ref="form" action="/galaxy/" class="page-galaxy-select">
-		<input type="hidden" name="r" value="1">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">

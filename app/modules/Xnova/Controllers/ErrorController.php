@@ -30,4 +30,9 @@ class ErrorController extends Controller
 	{
 
 	}
+
+	public function notFoundAction()
+	{
+
+	}
 }

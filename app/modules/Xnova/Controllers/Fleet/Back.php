@@ -19,7 +19,6 @@ class Back
 	{
 		Lang::includeLang('fleet', 'xnova');
 
-		$BoxTitle = _getText('fl_error');
 		$TxtColor = "red";
 		$BoxMessage = _getText('fl_notback');
 
@@ -61,7 +60,6 @@ class Back
 						'mess' 			=> 1,
 					]);
 
-					$BoxTitle = _getText('fl_sback');
 					$TxtColor = "lime";
 					$BoxMessage = _getText('fl_isback');
 				}

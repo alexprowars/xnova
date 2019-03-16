@@ -106,7 +106,7 @@
 		},
 		methods: {
 			scrollToBottom () {
-				$(this.$refs['chatbox']).scrollTop($(this.$refs['chatbox']).prop('scrollHeight'));
+				this.$refs['chatbox'].scrollTop = this.$refs['chatbox'].scrollHeight;
 			},
 			addTag (tag, type)
 			{
@@ -275,12 +275,10 @@
 
 			this.init();
 
-			$(window).on('resize.chat', () => {
-				this.scrollToBottom()
-			});
+			window.addEventListener('resize', this.scrollToBottom, true);
 		},
 		destroyed () {
-			$(window).off('resize.chat');
+			window.removeEventListener('resize', this.scrollToBottom)
 		}
 	}
 </script>

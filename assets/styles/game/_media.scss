@@ -49,6 +49,13 @@
 	}
 }
 
+@media (max-width: 1600px)
+{
+	.resource-panel {
+		width: 100%;
+	}
+}
+
 @media (min-width: 481px) and (max-width: 992px)
 {
 	main {

@@ -113,3 +113,21 @@
 #application .tooltip-inner {
 	display: none;
 }
+
+.v-popover {
+	display: inline-block;
+}
+
+.popover {
+	box-shadow: 0 0 30px 5px rgba(40, 40, 40, 0.75);
+}
+
+.toasted {
+	display: inline-block !important;
+	padding-top: 10px !important;
+	padding-bottom: 10px !important;
+}
+
+.toasted .primary, .toasted.toasted-primary {
+	color: #ffffff !important;
+}

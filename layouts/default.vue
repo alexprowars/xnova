@@ -5,11 +5,12 @@
 			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"/>
 			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"/>
 			<div class="main-content" v-touch:tap="tap">
-				<PlanetPanel v-if="$store.state['view']['resources']"/>
-				<MessagesRow v-for="(item, i) in messages" :key="i" :item="item"/>
+				<transition name="page-switch" mode="out-in">
+					<PlanetPanel v-if="$store.state['view']['resources'] && !delayPanelTransition"/>
+				</transition>
 				<div class="main-content-row">
 					<error-message v-if="error" :data="error"/>
-					<nuxt/>
+					<Nuxt/>
 				</div>
 			</div>
 		</main>
@@ -66,6 +67,9 @@
 
 				return items;
 			},
+			views () {
+				return this.$store.state['view'] || {}
+			},
 			notifications ()
 			{
 				let items = [];
@@ -84,6 +88,7 @@
 			return {
 				sidebar: '',
 				loader: false,
+				delayPanelTransition: false,
 			}
 		},
 		head () {
@@ -120,6 +125,17 @@
 					});
 				})
 			},
+			'views.resources' (val, old)
+			{
+		    	if (val === true && old === false)
+				{
+					this.delayPanelTransition = true;
+
+					setTimeout(() => {
+						this.delayPanelTransition = false;
+					}, 250);
+				}
+			}
 		},
 		methods: {
 			sidebarToggle (type)

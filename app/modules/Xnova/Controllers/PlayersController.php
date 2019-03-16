@@ -10,7 +10,6 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Files;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Format;
 use Xnova\Models\Planet;
 use Xnova\Controller;
 use Xnova\Request;
@@ -25,11 +24,6 @@ use Xnova\User;
  */
 class PlayersController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-
 	/**
 	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
 	 */

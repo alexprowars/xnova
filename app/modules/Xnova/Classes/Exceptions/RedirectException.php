@@ -20,7 +20,7 @@ class RedirectException extends MainException
 
 		$this->url = ltrim($url, '/');
 
-		$url = Di::getDefault()->getShared('url')->get($url, null, null, '/');
+		$url = Di::getDefault()->getShared('url')->get($url);
 
 		Request::addData('redirect', $url);
 

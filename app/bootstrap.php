@@ -2,6 +2,7 @@
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\MainException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\SuccessException;
 use Xnova\Request;
 
@@ -9,6 +10,8 @@ if (!defined('ROOT_PATH'))
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 
 require_once(ROOT_PATH.'/vendor/autoload.php');
+
+$_GET['_url'] = str_replace('/api', '', $_GET['_url'] ?? '');
 
 try
 {
@@ -22,7 +25,7 @@ try
 }
 catch (MainException $e)
 {
-	if ($e->getMessage() != '')
+	if ($e->getMessage() != '' && !($e instanceof PageException))
 	{
 		$type = 'notice';
 
@@ -37,6 +40,15 @@ catch (MainException $e)
 		]]);
 	}
 
+	if ($e instanceof PageException)
+	{
+		/** @var \Xnova\Controller $controller */
+		$controller = $application->dispatcher->getActiveController();
+
+		if ($controller)
+			$controller->afterExecuteRoute();
+	}
+
 	$application->response->setJsonContent([
 		'status' 	=> Request::getStatus(),
 		'data' 		=> Request::getData()
@@ -47,6 +59,8 @@ catch (MainException $e)
 }
 catch (Exception $e)
 {
+	echo $e->getMessage();
+
 	file_put_contents(ROOT_PATH.'/php_errors.log',
 		"\n\n".print_r($_SERVER, true)."
 		\n\n".print_r($_REQUEST, true)."

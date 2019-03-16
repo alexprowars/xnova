@@ -489,7 +489,7 @@ textarea#text {
 
 main {
 	width: 1125px;
-	margin-top: 15px;
+	margin-top: 10px;
 	flex-grow: 2;
 	display: flex;
 	flex-direction: row;
@@ -715,8 +715,8 @@ ul {
 }
 
 .resource-panel {
-	margin: 0 0 10px 0;
-	line-height: 1.4em;
+	margin: 0 auto 10px auto;
+	width: 80%;
 
 	.empty {
 		color: #3abc55

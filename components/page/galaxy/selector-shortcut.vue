@@ -29,7 +29,7 @@
 		props: ["items"],
 		methods: {
 			changePlanet ($event) {
-				this.$router.push('/galaxy/r/3/?'+$event.target.value);
+				this.$router.push('/galaxy/?'+$event.target.value);
 			}
 		}
 	}

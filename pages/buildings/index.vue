@@ -10,17 +10,17 @@
 					<div class="text-sm-right col-12 col-sm-6">
 						Осталось
 						<span class="positive">{{ fields_empty }}</span>
-						свободн{{ page.fields_empty|morph(['ое', 'ых', 'ых']) }}
-						пол{{ page.fields_empty|morph(['е', 'я', 'ей']) }}
+						{{ page['fields_empty'] | morph(['свободное', 'свободных', 'свободных']) }}
+						{{ page['fields_empty'] | morph(['поле', 'поля', 'полей']) }}
 					</div>
 				</div>
 			</div>
 
-			<build-queue v-if="page.queue && page.queue.length" :queue="page.queue"></build-queue>
+			<BuildQueue v-if="page.queue && page.queue.length" :queue="page.queue"></BuildQueue>
 
 			<div class="content page-building-items">
 				<div class="row">
-					<build-row v-for="(item, i) in page.items" :key="i" :item="item"></build-row>
+					<BuildRow v-for="(item, i) in page.items" :key="i" :item="item"></BuildRow>
 				</div>
 			</div>
 		</div>
@@ -33,6 +33,10 @@
 
 	export default {
 		name: "build",
+		components: {
+			BuildRow,
+			BuildQueue
+		},
 		asyncData ({ store, route }) {
 			return store.dispatch('loadPage', route.fullPath)
 		},
@@ -47,9 +51,5 @@
 				return this.page['fields_max'] - this.page['fields_current'] - this.page.queue.length;
 			}
 		},
-		components: {
-			BuildRow,
-			BuildQueue
-		}
 	}
 </script>

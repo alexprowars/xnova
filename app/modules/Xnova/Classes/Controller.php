@@ -11,7 +11,6 @@ namespace Xnova;
 use Friday\Core\Lang;
 use Friday\Core\Options;
 use Phalcon\Mvc\Controller as PhalconController;
-use Phalcon\Mvc\View;
 
 /**
  * Class ControllerBase
@@ -110,6 +109,7 @@ class Controller extends PhalconController
 
 		Request::addData('path', '/');
 		Request::addData('host', $this->request->getHttpHost());
+		Request::addData('url', $this->router->getRewriteUri());
 		Request::addData('redirect', '');
 		Request::addData('messages', []);
 		Request::addData('page', []);
@@ -348,7 +348,6 @@ class Controller extends PhalconController
 
 		Request::addData('view', $this->views);
 		Request::addData('title', $this->tag->getTitle(false));
-		Request::addData('url', str_replace('/api', '', $this->router->getRewriteUri()));
 		Request::addData('version', VERSION);
 
 		return true;

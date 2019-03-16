@@ -46,7 +46,7 @@ class Lang
 	static function getText ()
 	{
 		if (func_num_args() < 1)
-			return '##EMPTY_PARAMS##';
+			return null;
 
 		$args = func_get_args();
 
@@ -80,6 +80,6 @@ class Lang
 		if ($value !== false)
 			return $value;
 		else
-			return '##'. Text::upper(implode('::', $args)).'##';
+			return null;
 	}
 }

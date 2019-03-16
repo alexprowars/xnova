@@ -10,7 +10,6 @@ namespace Xnova\Controllers;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Format;
 use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Request;

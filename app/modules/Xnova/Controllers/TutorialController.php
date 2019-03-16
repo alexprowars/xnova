@@ -8,11 +8,14 @@ namespace Xnova\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Format;
 use Friday\Core\Lang;
+use Xnova\Models\Buddy;
 use Xnova\Models\Planet;
 use Xnova\Controller;
+use Xnova\Models\UserQuest;
 use Xnova\Request;
 use Xnova\Vars;
 
@@ -41,6 +44,7 @@ class TutorialController extends Controller
 	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
 	 * @param $stage
 	 * @return void
+	 * @throws PageException
 	 * @throws RedirectException
 	 */
 	public function infoAction ($stage)
@@ -48,26 +52,31 @@ class TutorialController extends Controller
 		$stage = (int) $stage;
 
 		if ($stage <= 0)
-			throw new RedirectException('Не выбрано задание', '/tutorial/');
+			throw new PageException('Не выбрано задание', '/tutorial/');
+
+		if (!_getText('tutorial', $stage))
+			throw new PageException('Задание не существует', '/tutorial/');
 
 		$parse['info'] = _getText('tutorial', $stage);
 		$parse['task'] = [];
 		$parse['rewd'] = [];
 
-		$qInfo = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = ".$stage."")->fetch();
+		/** @var UserQuest $qInfo */
+		$qInfo = UserQuest::query()
+			->where('user_id = :user: AND quest_id = :quest:')
+			->bind(['user' => $this->user->getId(), 'quest' => $stage])
+			->execute()->getFirst();
 
-		if (!isset($qInfo['id']))
+		if (!$qInfo)
 		{
-			$qInfo = [
+			$qInfo = new UserQuest();
+
+			$qInfo->create([
 				'user_id' 	=> $this->user->getId(),
 				'quest_id' 	=> $stage,
 				'finish' 	=> 0,
 				'stage' 	=> 0
-			];
-
-			$this->db->insertAsDict('game_users_quests', $qInfo);
-
-			$qInfo['id'] = $this->db->lastInsertId();
+			]);
 		}
 
 		$errors = 0;
@@ -116,7 +125,9 @@ class TutorialController extends Controller
 
 			if ($taskKey == 'BUDDY_COUNT')
 			{
-				$count = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_buddy WHERE sender = ".$this->user->id." OR owner = ".$this->user->id."");
+				$count = Buddy::count(['sender = ?0 OR owner = ?0',
+					'bind' => [$this->user->id]]
+				);
 
 				$check = $count >= $taskVal ? true : false;
 
@@ -142,21 +153,23 @@ class TutorialController extends Controller
 
 			if ($taskKey == 'TRADE')
 			{
-				$check = $qInfo['stage'] > 0 ? true : false;
+				$check = $qInfo->stage > 0;
 
 				$parse['task'][] = ['Обменять ресурсы у торговца', $check];
 			}
 
 			if ($taskKey == 'FLEET_MISSION')
 			{
-				$check = $qInfo['stage'] > 0 ? true : false;
+				$check = $qInfo->stage > 0;
 
 				$parse['task'][] = ['Отправить флот в миссию: '._getText('type_mission', $taskVal), $check];
 			}
 
 			if ($taskKey == 'PLANETS')
 			{
-				$count = Planet::count(['id_owner = ?0 AND planet_type = 1', 'bind' => [$this->user->getId()]]);
+				$count = Planet::count(['id_owner = ?0 AND planet_type = 1',
+					'bind' => [$this->user->getId()]]
+				);
 
 				$check = $count >= $taskVal ? true : false;
 
@@ -166,10 +179,10 @@ class TutorialController extends Controller
 			$errors += !$check ? 1 : 0;
 		}
 
-		if ($qInfo['finish'] > 0)
+		if ($qInfo->finish > 0)
 			$errors++;
 
-		if ($this->request->hasQuery('continue') && !$errors && $qInfo['finish'] == 0)
+		if ($this->request->hasQuery('continue') && !$errors && $qInfo->finish == 0)
 		{
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 			{
@@ -210,7 +223,8 @@ class TutorialController extends Controller
 				}
 			}
 
-			$this->db->updateAsDict('game_users_quests', ['finish' => '1'], 'id = '.$qInfo['id']);
+			$qInfo->finish = 1;
+			$qInfo->update();
 
 			$this->cache->delete('app::quests::'.$this->user->getId());
 
@@ -269,13 +283,15 @@ class TutorialController extends Controller
 
 		$userQuests = [];
 
-		$dbRes = $this->db->query("SELECT * FROM game_users_quests WHERE user_id = ".$this->user->getId()."");
+		$quests = UserQuest::query()
+			->where('user_id = :user:')
+			->bind(['user' => $this->user->getId()])
+			->execute();
 
-		while ($res = $dbRes->fetch())
+		/** @var UserQuest $quest */
+		foreach ($quests as $quest)
 		{
-			$res['finish'] = (int) $res['finish'];
-
-			$userQuests[$res['quest_id']] = $res;
+			$userQuests[$quest->quest_id] = $quest->toArray();
 		}
 
 		$parse['list'] = [];

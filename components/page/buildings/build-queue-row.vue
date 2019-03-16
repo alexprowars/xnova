@@ -12,13 +12,13 @@
 			<div v-else class="z">
 				Завершено
 				<br>
-				<nuxt-link :to="'/buildings/index/planet/'+$store.state.user.planet+'/'">Продолжить</nuxt-link>
+				<nuxt-link :to="'/buildings/?planet='+$store.state.user.planet+''">Продолжить</nuxt-link>
 			</div>
-			<div class="positive">{{ item['end']|date('d.m H:i:s') }}</div>
+			<div class="positive">{{ item['end'] | date('d.m H:i:s') }}</div>
 		</div>
 		<div class="col-6 k" v-else>
 			<a @click.prevent="deleteItem">Удалить</a>
-			<div class="positive">{{ item['end']|date('d.m H:i:s') }}</div>
+			<div class="positive">{{ item['end'] | date('d.m H:i:s') }}</div>
 		</div>
 	</div>
 </template>
@@ -43,7 +43,7 @@
 					})
 					.then(() =>
 					{
-						this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
+						this.$post('/buildings/?planet='+this.$store.state.user.planet, {
 							cmd: 'remove',
 							listid: this.index
 						})
@@ -65,7 +65,7 @@
 					})
 					.then(() =>
 					{
-						this.$post('/buildings/index/planet/'+this.$store.state.user.planet+'/', {
+						this.$post('/buildings/?planet='+this.$store.state.user.planet, {
 							cmd: 'cancel',
 							listid: this.index - 1
 						})

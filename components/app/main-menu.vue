@@ -42,7 +42,6 @@
 					{ id: 'records', title: 'Рекорды', url: '/records/' },
 					{ id: 'hall', title: 'Зал славы', url: '/hall/' },
 					{ id: 'log', title: 'Логи', url: '/log/' },
-					{ id: 'records', title: 'Рекорды', url: '/records/' },
 				]
 			}
 		},

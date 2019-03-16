@@ -12,6 +12,7 @@ use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\UserQuest;
 use Xnova\Request;
 use Xnova\Vars;
 
@@ -24,6 +25,12 @@ use Xnova\Vars;
  */
 class MerchantController extends Controller
 {
+	private $modifiers = [
+		'metal' => 1,
+		'crystal' => 2,
+		'deuterium' => 4,
+	];
+
 	public function initialize ()
 	{
 		parent::initialize();
@@ -38,68 +45,73 @@ class MerchantController extends Controller
 	
 	public function indexAction ()
 	{
-		$parse = [];
-
-		$parse['mod'] = [
-			'metal' => 1,
-			'crystal' => 2,
-			'deuterium' => 4,
-		];
-		
 		if ($this->request->hasPost('exchange'))
-		{
-			if ($this->user->credits <= 0)
-				throw new RedirectException('Недостаточно кредитов для проведения обменной операции', '/merchant/');
-		
-			$metal = (int) $this->request->getPost('metal', 'int', 0);
-			$crystal = (int) $this->request->getPost('crystal', 'int', 0);
-			$deuterium = (int) $this->request->getPost('deuterium', 'int', 0);
+			$this->exchange();
 
-			if ($metal < 0 || $crystal < 0 || $deuterium < 0)
-				throw new ErrorException('Злобный читер');
-
-			$type = trim($this->request->getPost('type'));
-
-			if (!in_array($type, Vars::getResources()))
-				throw new ErrorException('Злобный читер');
-
-			$exchange = 0;
-
-			foreach (Vars::getResources() as $res)
-			{
-				if ($res != $type)
-					$exchange += $$res * ($parse['mod'][$res] / $parse['mod'][$type]);
-			}
-
-			if ($exchange <= 0)
-				throw new ErrorException('Вы не можете обменять такое количество ресурсов');
-
-			if ($this->planet->{$type} < $exchange)
-				throw new ErrorException('На планете недостаточно ресурсов данного типа');
-
-			$this->planet->{$type} -= $exchange;
-
-			foreach (Vars::getResources() as $res)
-			{
-				if ($res != $type)
-					$this->planet->{$res} += $$res;
-			}
-
-			$this->planet->update();
-
-			$this->user->credits -= 1;
-			$this->user->update();
-
-			$tutorial = $this->db->query("SELECT id FROM game_users_quests WHERE user_id = ".$this->user->getId()." AND quest_id = 6 AND finish = '0' AND stage = 0")->fetch();
-
-			if (isset($tutorial['id']))
-				$this->db->query("UPDATE game_users_quests SET stage = 1 WHERE id = " . $tutorial['id'] . ";");
-
-			throw new RedirectException('Вы обменяли '.$exchange.' '._getText('res', $type), '/merchant/');
-		}
-
-		Request::addData('page', $parse);
+		Request::addData('page', [
+			'modifiers' => $this->modifiers
+		]);
 
 		$this->tag->setTitle('Торговец');
+	}
+
+	private function exchange ()
+	{
+		if ($this->user->credits <= 0)
+			throw new ErrorException('Недостаточно кредитов для проведения обменной операции');
+
+		$metal = (int) $this->request->getPost('metal', 'int', 0);
+		$crystal = (int) $this->request->getPost('crystal', 'int', 0);
+		$deuterium = (int) $this->request->getPost('deuterium', 'int', 0);
+
+		if ($metal < 0 || $crystal < 0 || $deuterium < 0)
+			throw new ErrorException('Злобный читер');
+
+		$type = trim($this->request->getPost('type'));
+
+		if (!in_array($type, Vars::getResources()))
+			throw new ErrorException('Ресурс не существует');
+
+		$exchange = 0;
+
+		foreach (Vars::getResources() as $res)
+		{
+			if ($res != $type)
+				$exchange += $$res * ($this->modifiers[$res] / $this->modifiers[$type]);
+		}
+
+		if ($exchange <= 0)
+			throw new ErrorException('Вы не можете обменять такое количество ресурсов');
+
+		if ($this->planet->{$type} < $exchange)
+			throw new ErrorException('На планете недостаточно ресурсов данного типа');
+
+		$this->planet->{$type} -= $exchange;
+
+		foreach (Vars::getResources() as $res)
+		{
+			if ($res != $type)
+				$this->planet->{$res} += $$res;
+		}
+
+		$this->planet->update();
+
+		$this->user->credits -= 1;
+		$this->user->update();
+
+		/** @var UserQuest $tutorial */
+		$tutorial = UserQuest::query()
+			->columns(['id'])
+			->where('user_id = :user: AND quest_id = 6 AND finish = 0 AND stage = 0')
+			->bind(['user' => $this->user->getId()])
+			->execute()->getFirst();
+
+		if ($tutorial)
+		{
+			$tutorial->stage = 1;
+			$tutorial->update();
+		}
+
+		throw new RedirectException('Вы обменяли '.$exchange.' '._getText('res', $type), '/merchant/');
 	}
 }

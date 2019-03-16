@@ -22,10 +22,10 @@ module.exports = {
 		'~/assets/app.scss',
 		'vuejs-dialog/dist/vuejs-dialog.min.css',
 	],
-	/*transition: {
+	transition: {
 		name: 'page-switch',
 		mode: 'out-in'
-	},*/
+	},
 	plugins: [
 		'~/plugins/api.js',
 		'~/plugins/validate.js',

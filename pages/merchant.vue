@@ -18,7 +18,7 @@
 						</select>
 
 						<br><br>
-						(курс {{ page['mod']['deuterium'] }}/{{ page['mod']['crystal'] }}/{{ page['mod']['metal'] }})
+						(курс {{ page['modifiers']['deuterium'] }}/{{ page['modifiers']['crystal'] }}/{{ page['modifiers']['metal'] }})
 						<br><br>
 					</div>
 					<div v-if="type !== ''" class="col th">
@@ -33,14 +33,14 @@
 							</div>
 							<div v-for="res in ['metal', 'crystal', 'deuterium']" class="row">
 								<div class="col-3 th middle">{{ $t('RESOURCES.'+res) }}</div>
-								<div class="col-3 th middle">{{ page['mod'][res] / page['mod'][type] }}</div>
+								<div class="col-3 th middle">{{ page['modifiers'][res] / page['modifiers'][type] }}</div>
 								<div class="col-6 th middle">
 									<number v-if="type !== res" :name="res" min="0" v-model="exchange[res]" placeholder="введите кол-во" v-on:input="calculate"></number>
 									<span v-else="">{{ exchange[res] }}</span>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col th negative">Внимание! Стоимость обмена 1 кр.</div>
+								<div class="col th negative">Внимание! Стоимость обмена 1 кредит</div>
 							</div>
 							<div class="row">
 								<div class="col c"><input type="submit" value="Обменять ресурсы"></div>
@@ -79,7 +79,7 @@
 				['metal', 'crystal', 'deuterium'].forEach((item) =>
 				{
 					if (this.type !== item)
-						res += this.exchange[item] * (this.page['mod'][item] / this.page['mod'][this.type]);
+						res += this.exchange[item] * (this.page['modifiers'][item] / this.page['modifiers'][this.type]);
 				});
 
 				this.exchange[this.type] = res;

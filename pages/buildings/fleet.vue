@@ -1,6 +1,6 @@
 <template>
 	<div class="page-building page-building-unit">
-		<unit-queue v-if="page.queue.length > 0" :queue="page.queue"></unit-queue>
+		<UnitQueue v-if="page.queue.length > 0" :queue="page.queue"></UnitQueue>
 		<div class="block">
 			<div class="content page-building-items">
 				<form ref="form" action="" method="post" @submit.prevent="constructAction">
@@ -11,7 +11,7 @@
 							</div>
 						</div>
 
-						<unit-row v-for="(item, i) in page.items" :key="i" :item="item"></unit-row>
+						<UnitRow v-for="(item, i) in page.items" :key="i" :item="item"></UnitRow>
 
 						<div class="col-12">
 							<div class="c">
@@ -56,6 +56,9 @@
 
 					this.$store.commit('PAGE_LOAD', result)
 					this.$store.commit('setLoadingStatus', false)
+
+					if (typeof result.page === 'object')
+						this.$router.push(result['url'])
 				})
 				.catch(() => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');

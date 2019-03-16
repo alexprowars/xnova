@@ -248,7 +248,7 @@ class XnsimController extends Controller
 		return $result;
 	}
 
-	private function getAttackers($s = 0, $r)
+	private function getAttackers($s, $r)
 	{
 		$playerGroupObj = new PlayerGroup();
 

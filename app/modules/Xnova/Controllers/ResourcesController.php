@@ -103,12 +103,13 @@ class ResourcesController extends Controller
 		$this->planet->clearBuildingsData();
 		$this->planet->clearUnitsData();
 		$this->planet->resourceUpdate(time(), true);
-
-		return $this->indexAction();
 	}
 	
 	public function indexAction ()
 	{
+		if ($this->request->has('production'))
+			$this->productionAction();
+
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
 		{
 			foreach (Vars::getResources() AS $res)

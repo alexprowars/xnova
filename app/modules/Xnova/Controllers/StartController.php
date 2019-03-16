@@ -13,7 +13,6 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
 use Friday\Core\Lang;
 use Xnova\Controller;
-use Xnova\Request;
 use Xnova\Vars;
 
 /**

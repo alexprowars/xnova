@@ -1,7 +1,7 @@
 <template>
 	<div class="page-building-build-queue">
 		<div class="table">
-			<build-queue-row v-for="(item, index) in queue" :key="index" :index="index" :item="item"></build-queue-row>
+			<BuildQueueRow v-for="(item, index) in queue" :key="index" :index="index" :item="item"></BuildQueueRow>
 		</div>
 	</div>
 </template>
@@ -41,7 +41,7 @@
 				if (this.queue[0]['time'] <= 0)
 				{
 					this.timeout = setTimeout(() => {
-						this.$router.push('/buildings/index/planet/'+this.$store.state.user.planet+'/');
+						this.$router.push('/buildings/?planet='+this.$store.state.user.planet);
 					}, 5000);
 				}
 				else

@@ -5,7 +5,7 @@
 				<div class="col-5 c">Уровень производства</div>
 				<div class="col-2 th">{{ page['production_level'] }}%</div>
 				<div class="col-5 th">
-					<resources-bar :value="page['production_level']" :reverse="true"></resources-bar>
+					<ResourcesBar :value="page['production_level']" :reverse="true"></ResourcesBar>
 				</div>
 			</div>
 			<div class="row">
@@ -29,12 +29,12 @@
 				<div class="table">
 					<div class="row">
 						<div class="col col-sm-6 th">
-							<nuxt-link to="/resources/production/active/Y/" class="button">
+							<nuxt-link to="/resources/?production&active=Y" class="button">
 								Включить на всех<br>планетах
 							</nuxt-link>
 						</div>
 						<div class="col col-sm-6 th">
-							<nuxt-link to="/resources/production/active/N/" class="button">
+							<nuxt-link to="/resources/?production&active=N" class="button">
 								Выключить на всех<br>планетах
 							</nuxt-link>
 						</div>
@@ -167,7 +167,7 @@
 							{{ page['production'][res]['storage'] }}%
 						</div>
 						<div class="col-9 th">
-							<resources-bar :value="Math.min(100, Math.max(0, page['production'][res]['storage']))"></resources-bar>
+							<ResourcesBar :value="Math.min(100, Math.max(0, page['production'][res]['storage']))"></ResourcesBar>
 						</div>
 					</div>
 				</div>
@@ -191,11 +191,13 @@
 								{{ page['buy_form']['time']|time }}
 							</span>
 						</div>
-						<div class="col-8 th">
-							Вы можете купить:
-							<colored :value="page['buy_form']['metal']"></colored> металла,
-							<colored :value="page['buy_form']['crystal']"></colored> кристалла,
-							<colored :value="page['buy_form']['deuterium']"></colored> дейтерия
+						<div class="col-8 th middle">
+							<div>
+								Вы можете купить:
+								<colored :value="page['buy_form']['metal']"></colored> металла,
+								<colored :value="page['buy_form']['crystal']"></colored> кристалла,
+								<colored :value="page['buy_form']['deuterium']"></colored> дейтерия
+							</div>
 						</div>
 					</div>
 				</div>

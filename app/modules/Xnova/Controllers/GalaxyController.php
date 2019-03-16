@@ -35,9 +35,8 @@ class GalaxyController extends Controller
 	}
 
 	/**
-	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}{params:(/.*)*}", paths={r="-"})
-	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}/{r:[0-9]}{params:(/.*)*}")
-	 * @Route("/r/{r:[0-9]}{params:(/.*)*}")
+	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}{params:(/.*)*}")
+	 * @Route("/{galaxy:[0-9]{1,2}}{params:(/.*)*}")
 	 */
 	public function indexAction ()
 	{
@@ -62,59 +61,39 @@ class GalaxyController extends Controller
 			$this->cache->save('app::records_'.$this->user->getId(), $records, 1800);
 		}
 
-		if ($this->request->get('r', 'string', '') == '-')
-			$mode = 3;
-		else
-			$mode = (int) $this->request->get('r', 'int', 0);
+		$galaxy = $this->planet->galaxy;
+		$system = $this->planet->system;
 
-		$galaxy = 1;
-		$system = 1;
-		$planet = 1;
-		
-		if ($mode == 0)
-		{
-			$galaxy = $this->planet->galaxy;
-			$system = $this->planet->system;
-			$planet = $this->planet->planet;
-		}
-		elseif ($mode == 1)
+		if ($this->request->hasPost('direction'))
 		{
 			$direction = trim($this->request->getPost('direction', 'string', ''));
 
 			if ($direction == 'galaxyLeft')
-				$galaxy = $this->request->getPost('galaxy', 'int') - 1;
+				$galaxy = (int) $this->request->getPost('galaxy', 'int') - 1;
 			elseif ($direction == 'galaxyRight')
-				$galaxy = $this->request->getPost('galaxy', 'int') + 1;
+				$galaxy = (int) $this->request->getPost('galaxy', 'int') + 1;
 			elseif ($this->request->hasPost('galaxy'))
-				$galaxy = $this->request->getPost('galaxy', 'int');
-			else
-				$galaxy = $this->planet->galaxy;
-		
+				$galaxy = (int) $this->request->getPost('galaxy', 'int');
+
 			if ($direction == 'systemLeft')
-				$system = $this->request->getPost('system', 'int') - 1;
+				$system = (int) $this->request->getPost('system', 'int') - 1;
 			elseif ($direction == 'systemRight')
-				$system = $this->request->getPost('system', 'int') + 1;
+				$system = (int) $this->request->getPost('system', 'int') + 1;
 			elseif ($this->request->hasPost('system'))
-				$system = $this->request->getPost('system', 'int');
-			else
-				$system = $this->planet->system;
+				$system = (int) $this->request->getPost('system', 'int');
 		}
-		elseif ($mode == 2)
+		else
 		{
-			$galaxy = $this->request->getQuery('galaxy', 'int', 1);
-			$system = $this->request->getQuery('system', 'int', 1);
-			$planet = $this->request->getQuery('planet', 'int', 1);
-		}
-		elseif ($mode == 3)
-		{
-			$galaxy = $this->request->getQuery('galaxy', 'int', 1);
-			$system = $this->request->getQuery('system', 'int', 1);
+			if ($this->request->has('galaxy'))
+				$galaxy = (int) $this->request->get('galaxy', 'int', 1);
+
+			if ($this->request->has('system'))
+				$system = (int) $this->request->get('system', 'int', 1);
 		}
 
 		$galaxy = min(max($galaxy, 1), $this->config->game->maxGalaxyInWorld);
 		$system = min(max($system, 1), $this->config->game->maxSystemInGalaxy);
-		$planet = min(max($planet, 1), $this->config->game->maxPlanetInSystem);
-		
+
 		if (!$this->session->has('fleet_shortcut'))
 		{
 			$array = User::getPlanets($this->user->getId(), false, $this->user->ally_id);

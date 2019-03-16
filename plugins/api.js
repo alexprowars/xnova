@@ -1,4 +1,4 @@
-export default ({ store, $axios }, inject) =>
+export default ({ store, $axios, error }, inject) =>
 {
 	$axios.setHeader('X-Requested-With', 'XMLHttpRequest');
 	$axios.defaults.timeout = 15000;
@@ -15,11 +15,19 @@ export default ({ store, $axios }, inject) =>
 			url: url,
 			params: data
 		})
-		.then(result => {
+		.then(result =>
+		{
+			if (typeof result.data === 'string')
+				throw new Error(result.data);
+
 			return parseData(result.data.data)
 		})
-		.catch((error) => {
-			return parseData(error.response.data.data)
+		.catch((e) =>
+		{
+			if (typeof e.response === 'undefined')
+				throw new Error(e);
+
+			return parseData(e.response.data.data)
 		})
 	}
 
@@ -40,10 +48,18 @@ export default ({ store, $axios }, inject) =>
 			data: data,
 			headers: headers
 		})
-		.then(result => {
+		.then(result =>
+		{
+			if (typeof result.data === 'string')
+				throw new Error(result.data);
+
 			return parseData(result.data.data)
 		})
-		.catch((error) => {
+		.catch((error) =>
+		{
+			if (typeof error.response === 'undefined')
+				throw new Error(error);
+
 			return parseData(error.response.data.data)
 		})
 	}

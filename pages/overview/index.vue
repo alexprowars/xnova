@@ -11,7 +11,7 @@
 							Сейчас вы можете получить по <b class="positive">{{ page['bonus_count'] | number }}</b> Металла, Кристаллов и Дейтерия.<br>
 							Каждый день размер бонуса будет увеличиваться.<br>
 							<br>
-							<nuxt-link to="/overview/bonus/" class="button">Получить ресурсы</nuxt-link><br>
+							<button @click.prevent="getDailyBonus" class="button">Получить ресурсы</button><br>
 						</th>
 					</tr>
 				</tbody>
@@ -35,6 +35,12 @@
 				</div>
 			</div>
 			<div class="content">
+
+				<div v-if="page['error']" class="row">
+					<div class="col text-center" v-html="page['error']"></div>
+					<div class="separator"></div>
+				</div>
+
 				<div v-if="page['fleets']['length']">
 					<fleets :items="page['fleets']"></fleets>
 					<div class="separator"></div>
@@ -289,6 +295,12 @@
 		methods: {
 			sendRecycle () {
 				sendMission(this, 8, this.page['planet']['galaxy'], this.page['planet']['system'], this.page['planet']['planet'], 2)
+			},
+			getDailyBonus ()
+			{
+				this.$post('/overview/bonus/').then((result) => {
+					this.$store.commit('PAGE_LOAD', result);
+				})
 			}
 		}
 	}

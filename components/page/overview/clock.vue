@@ -28,6 +28,9 @@
 				this.clockStart();
 			}
 		},
+		created () {
+			this.clockUpdate();
+		},
 		mounted ()
 		{
 			this.clockStop();

@@ -11,6 +11,7 @@
 	}
 
 	.table.galaxy {
+		border-spacing: 0;
 
 		.debris_0 {
 			background: rgb(0, 100, 0) none;
@@ -31,9 +32,21 @@
 		}
 
 		.img {
-			width: 30px;
-			height: 32px;
-			padding-right: 0;
+			max-height: 34px;
+			padding: 0;
+			font-size: 0;
+		}
+
+		.actions {
+			font-size: 0;
+
+			a {
+				display: inline-block;
+			}
+
+			a + a, a + .v-popover, .v-popover + a {
+				margin-left: 4px;
+			}
 		}
 	}
 }
