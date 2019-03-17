@@ -300,6 +300,7 @@
 			{
 				this.$post('/overview/bonus/').then((result) => {
 					this.$store.commit('PAGE_LOAD', result);
+					this.$router.push(result['url'])
 				})
 			}
 		}

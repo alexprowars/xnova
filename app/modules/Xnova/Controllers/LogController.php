@@ -11,6 +11,7 @@ namespace Xnova\Controllers;
 use Xnova\CombatReport;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\BattleLog;
 use Xnova\Request;
@@ -154,77 +155,30 @@ class LogController extends Controller
 
 	/**
 	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
+	 * @param $id
+	 * @throws PageException
 	 */
-	public function infoAction ()
+	public function infoAction ($id)
 	{
-		if ($this->request->hasQuery('id'))
-		{
-			$html = '';
+		$id = (int) $id;
 
-			$id = (int) $this->request->getQuery('id', 'int', 0);
+		$raportrow = BattleLog::findFirst($id);
 
-			$raportrow = BattleLog::findFirst($id);
+		if (!$raportrow)
+			throw new PageException('Запрашиваемого лога не существует в базе данных');
 
-			if ($raportrow)
-			{
-				$result = json_decode($raportrow->log, true);
+		$result = json_decode($raportrow->log, true);
 
-				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
-				{
-					if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200)))
-						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
-					else
-					{
-						$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
+		if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
+			throw new PageException('Данный лог боя пока недоступен для просмотра!');
 
-						$html .= $report->report()['html'];
-					}
+		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
 
-					$this->tag->setTitle('Боевой доклад');
-					$this->view->setVar('html', $html);
-					$this->showTopPanel(false);
-				}
-				else
-				{
-					$html = "<!DOCTYPE html><html><head><title>" . stripslashes($raportrow->title) . "</title>";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/bootstrap.css')."\">";
-					$html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".$this->url->getStatic('assets/css/style.css')."\">";
-					$html .= "</head><body>";
-					$html .= "<table width=\"99%\"><tr><td>";
+		Request::addData('page', [
+			'raport' => $report->report()['html']
+		]);
 
-					if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin()))
-						$html .= "<center>Данный лог боя пока недоступен для просмотра!</center>";
-					else
-					{
-						$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
-
-						$html .= $report->report()['html'];
-					}
-
-					$html .= "</td></tr></table>";
-					$html .= $this->view->partial('shared/counters');
-					$html .= "</body></html>";
-
-					echo $html;
-
-					$this->view->disable();
-				}
-			}
-			else
-			{
-				if (!$this->config->game->get('openRaportInNewWindow', 0) && $this->auth->isAuthorized())
-					throw new ErrorException('Запрашиваемого лога не существует в базе данных');
-				else
-				{
-					$html = '<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="'.$this->url->getStatic('assets/css/bootstrap.css').'">';
-					$html .= '<link rel="stylesheet" type="text/css" href="'.$this->url->getBaseUri()."assets/css/style.css\">";
-					$html .= '</head><body><center>Запрашиваемого лога не существует в базе данных</center></body></html>';
-
-					echo $html;
-
-					$this->view->disable();
-				}
-			}
-		}
+		$this->tag->setTitle('Боевой доклад');
+		$this->showTopPanel(false);
 	}
 }

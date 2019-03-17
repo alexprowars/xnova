@@ -16,11 +16,15 @@ export default {
 			for (let key in data)
 			{
 				if (data.hasOwnProperty(key))
-				{
 					store.state[key] = data[key];
-				}
 			}
-		});
+
+			if (data.route.controller === 'error')
+				throw new Error('Страница не найдена')
+		})
+		.catch((e) => {
+			return context.error(e);
+		})
 	},
 	loadPage ({ state, commit }, url)
 	{

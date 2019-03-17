@@ -59,6 +59,9 @@
 			{
 				let items = [];
 
+				if (this.$store.state.messages === null)
+					return items
+
 				this.$store.state.messages.forEach((item) =>
 				{
 					if (item['type'].indexOf('-static') >= 0)
@@ -73,6 +76,9 @@
 			notifications ()
 			{
 				let items = [];
+
+				if (this.$store.state.messages === null)
+					return items
 
 				this.$store.state.messages.forEach((item) =>
 				{
