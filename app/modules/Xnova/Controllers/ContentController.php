@@ -18,11 +18,6 @@ use Xnova\Request;
  */
 class ContentController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-
 	/**
 	 * @Route("/{article:[a-zA-Z0-9]+}{params:(/.*)*}")
 	 */
@@ -41,6 +36,5 @@ class ContentController extends Controller
 		]);
 
 		$this->tag->setTitle($content['title']);
-		$this->showTopPanel(false);
 	}
 }

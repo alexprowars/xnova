@@ -36,8 +36,6 @@ class TutorialController extends Controller
 		Lang::includeLang('tutorial', 'xnova');
 
 		$this->user->loadPlanet();
-
-		$this->showTopPanel(false);
 	}
 
 	/**

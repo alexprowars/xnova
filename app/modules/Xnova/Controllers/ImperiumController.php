@@ -210,6 +210,5 @@ class ImperiumController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Империя');
-		$this->showTopPanel(false);
 	}
 }

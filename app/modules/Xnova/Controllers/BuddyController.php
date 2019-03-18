@@ -74,7 +74,6 @@ class BuddyController extends Controller
 		]);
 
 		$this->tag->setTitle('Друзья');
-		$this->showTopPanel(false);
 	}
 
 	public function requestsAction ($isMy = false)
@@ -197,6 +196,5 @@ class BuddyController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Список друзей');
-		$this->showTopPanel(false);
 	}
 }

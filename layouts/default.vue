@@ -6,7 +6,7 @@
 			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"/>
 			<div class="main-content" v-touch:tap="tap">
 				<transition name="page-switch" mode="out-in">
-					<PlanetPanel v-if="$store.state['view']['resources'] && !delayPanelTransition"/>
+					<PlanetPanel v-if="$store.state['view']['resources']"/>
 				</transition>
 				<div class="main-content-row">
 					<error-message v-if="error" :data="error"/>

@@ -20,11 +20,6 @@ use Xnova\Request;
  */
 class HallController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-	
 	public function indexAction ()
 	{
 		$sab = (int) $this->request->get('visible', 'integer', 0);
@@ -50,6 +45,5 @@ class HallController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Зал славы');
-		$this->showTopPanel(false);
 	}
 }

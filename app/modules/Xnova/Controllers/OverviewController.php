@@ -296,7 +296,6 @@ class OverviewController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Покинуть колонию');
-		$this->showTopPanel(false);
 	}
 
 	public function renameAction ()
@@ -368,7 +367,6 @@ class OverviewController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Переименовать планету');
-		$this->showTopPanel(false);
 	}
 
 	public function bonusAction ()
@@ -401,6 +399,9 @@ class OverviewController extends Controller
 
 	public function indexAction ()
 	{
+		if ($this->request->has('bonus'))
+			$this->bonusAction();
+
 		$parse = [];
 
 		$XpMinierUp = pow($this->user->lvl_minier, 3);

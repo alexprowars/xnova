@@ -31,7 +31,7 @@
 					</nuxt-link>
 				</div>
 			</div>
-			<officier-row v-for="item in page['items']" :key="item['id']" :item="item"></officier-row>
+			<OfficierRow v-for="item in page['items']" :key="item['id']" :item="item"></OfficierRow>
 		</div>
 	</div>
 </template>

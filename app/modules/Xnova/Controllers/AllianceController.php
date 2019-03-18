@@ -103,7 +103,6 @@ class AllianceController extends Controller
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle(_getText('alliance'));
-		$this->showTopPanel(false);
 	}
 	
 	public function indexAction ()
@@ -166,7 +165,6 @@ class AllianceController extends Controller
 			Request::addData('page', $parse);
 
 			$this->tag->setTitle('Ваш альянс');
-			$this->showTopPanel(false);
 		}
 	}
 
@@ -271,7 +269,6 @@ class AllianceController extends Controller
 			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Law_settings'));
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'ally')
 		{
@@ -376,7 +373,6 @@ class AllianceController extends Controller
 			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Alliance_admin'));
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'requests')
 		{
@@ -455,7 +451,6 @@ class AllianceController extends Controller
 			Request::addData('page', $parse);
 
 			$this->tag->setTitle(_getText('Check_the_requests'));
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'name')
 		{
@@ -485,7 +480,6 @@ class AllianceController extends Controller
 			]);
 
 			$this->tag->setTitle('Управление альянсом');
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'tag')
 		{
@@ -513,7 +507,6 @@ class AllianceController extends Controller
 			]);
 
 			$this->tag->setTitle('Управление альянсом');
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'exit')
 		{
@@ -557,7 +550,6 @@ class AllianceController extends Controller
 			Request::addData('page', $parse);
 
 			$this->tag->setTitle('Передача альянса');
-			$this->showTopPanel(false);
 		}
 		elseif ($edit == 'members')
 		{
@@ -683,7 +675,6 @@ class AllianceController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Дипломатия');
-		$this->showTopPanel(false);
 	}
 
 	public function exitAction ()
@@ -704,7 +695,6 @@ class AllianceController extends Controller
 
 		$this->tag->setTitle('Выход их альянса');
 		$this->view->setVar('html', $html);
-		$this->showTopPanel(false);
 	}
 
 	public function membersAction ()
@@ -824,7 +814,6 @@ class AllianceController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle(_getText('Members_list'));
-		$this->showTopPanel(false);
 	}
 
 	public function chatAction ()
@@ -910,7 +899,6 @@ class AllianceController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Альянс-чат');
-		$this->showTopPanel(false);
 	}
 
 	public function infoAction ($id = '')
@@ -952,7 +940,6 @@ class AllianceController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Альянс ' . $allyrow['name']);
-		$this->showTopPanel(false);
 	}
 
 	public function makeAction ()
@@ -963,7 +950,7 @@ class AllianceController extends Controller
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
 		if ($this->user->ally_id > 0 || $ally_request > 0)
-			return $this->indexAction();
+			throw new ErrorException(_getText('Denied_access'));
 
 		if ($this->request->hasQuery('yes') && $this->request->isPost())
 		{
@@ -1012,10 +999,6 @@ class AllianceController extends Controller
 		}
 		else
 			$this->tag->setTitle(_getText('make_alliance'));
-
-		$this->showTopPanel(false);
-
-		return true;
 	}
 
 	public function searchAction ()
@@ -1026,7 +1009,7 @@ class AllianceController extends Controller
 		$ally_request = $this->db->fetchColumn("SELECT COUNT(*) AS num FROM game_alliance_requests WHERE u_id = " . $this->user->id . ";");
 
 		if ($this->user->ally_id > 0 || $ally_request > 0)
-			return $this->indexAction();
+			throw new ErrorException(_getText('Denied_access'));
 
 		$parse = [];
 
@@ -1061,11 +1044,7 @@ class AllianceController extends Controller
 		$parse['searchtext'] = $text;
 
 		$this->view->setVar('parse', $parse);
-
 		$this->tag->setTitle(_getText('search_alliance'));
-		$this->showTopPanel(false);
-
-		return true;
 	}
 
 	public function applyAction ()
@@ -1074,7 +1053,7 @@ class AllianceController extends Controller
 			throw new ErrorException(_getText('Denied_access'));
 	
 		if ($this->user->ally_id > 0)
-			return $this->indexAction();
+			throw new ErrorException(_getText('Denied_access'));
 
 		$allyid = $this->request->getQuery('allyid', 'int', 0);
 
@@ -1112,15 +1091,12 @@ class AllianceController extends Controller
 		$this->view->setVar('parse', $parse);
 
 		$this->tag->setTitle('Запрос на вступление');
-		$this->showTopPanel(false);
-
-		return true;
 	}
 
 	public function statAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			return $this->indexAction();
+			throw new ErrorException(_getText('Denied_access'));
 
 		$allyid = $this->request->get('id', null, 0);
 
@@ -1159,9 +1135,6 @@ class AllianceController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Статистика альянса');
-		$this->showTopPanel(false);
-
-		return true;
 	}
 
 	private function MessageForm ($Title, $Message, $Goto = '', $Button = ' ok ', $TwoLines = false)

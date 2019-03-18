@@ -49,7 +49,6 @@
 						})
 						.then((result) => {
 							this.$store.commit('PAGE_LOAD', result)
-							this.$router.replace(result['url'])
 						})
 					})
 			},
@@ -69,10 +68,8 @@
 							cmd: 'cancel',
 							listid: this.index - 1
 						})
-						.then((result) =>
-						{
+						.then((result) => {
 							this.$store.commit('PAGE_LOAD', result)
-							this.$router.replace(result['url'])
 						})
 					})
 			}

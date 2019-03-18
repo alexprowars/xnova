@@ -119,7 +119,6 @@ class RaceController extends Controller
 		]);
 		
 		$this->tag->setTitle('Фракции');
-		$this->showTopPanel(false);
 		$this->showLeftPanel(!($this->user->race == 0));
 	}
 }

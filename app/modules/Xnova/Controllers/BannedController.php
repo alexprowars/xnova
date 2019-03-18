@@ -47,6 +47,5 @@ class BannedController extends Controller
 		]);
 
 		$this->tag->setTitle('Список заблокированных игроков');
-		$this->showTopPanel(false);
 	}
 }

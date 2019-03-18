@@ -42,6 +42,5 @@ class ContactsController extends Controller
 		]);
 
 		$this->tag->setTitle(_getText('ctc_title'));
-		$this->showTopPanel(false);
 	}
 }

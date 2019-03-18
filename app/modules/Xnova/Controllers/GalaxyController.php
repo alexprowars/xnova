@@ -280,6 +280,5 @@ class GalaxyController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Галактика');
-		$this->showTopPanel(false);
 	}
 }

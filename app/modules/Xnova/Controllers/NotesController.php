@@ -62,7 +62,6 @@ class NotesController extends Controller
 		}
 
 		$this->tag->setTitle('Создание заметки');
-		$this->showTopPanel(false);
 	}
 
 	public function editAction ($noteId = 0)
@@ -111,7 +110,6 @@ class NotesController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle(_getText('Notes'));
-		$this->showTopPanel(false);
 	}
 	
 	public function indexAction ()
@@ -172,6 +170,5 @@ class NotesController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Заметки');
-		$this->showTopPanel(false);
 	}
 }

@@ -488,7 +488,7 @@ textarea#text {
 }
 
 main {
-	width: 1125px;
+	width: $container-width;
 	margin-top: 10px;
 	flex-grow: 2;
 	display: flex;
@@ -496,7 +496,7 @@ main {
 }
 
 .main-menu {
-	width: 150px;
+	width: $menu-width;
 	margin-right: 15px;
 	order: 1;
 
@@ -550,7 +550,7 @@ main {
 .main-planets {
 	order: 3;
 	margin-left: 15px;
-	width: 160px;
+	width: $planets-width;
 }
 
 #application {
@@ -562,7 +562,7 @@ main {
 	align-items: center;
 	//position: relative;
 
-	&.set_imperium, &.set_sim {
+	&.set_sim {
 
 		main {
 

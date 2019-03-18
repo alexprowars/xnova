@@ -42,8 +42,6 @@ class OptionsController extends Controller
 			return;
 
 		Lang::includeLang('options', 'xnova');
-
-		$this->showTopPanel(false);
 	}
 
 	public function externalAction ()

@@ -46,7 +46,6 @@ class InfoController extends Controller
 		$this->ShowBuildingInfoPage((int) $element);
 
 		$this->tag->setTitle(_getText('tech', $element));
-		$this->showTopPanel(false);
 	}
 
 	private function ShowRapidFireTo ($BuildID)

@@ -90,6 +90,5 @@ class RecordsController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Таблица рекордов');
-		$this->showTopPanel(false);
 	}
 }

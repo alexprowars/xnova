@@ -64,10 +64,7 @@
 						}
 					}
 					else
-					{
 						this.$store.commit('PAGE_LOAD', result);
-						this.$router.replace(this.$route.fullPath);
-					}
 				})
 			}
 		}

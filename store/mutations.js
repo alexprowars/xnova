@@ -8,6 +8,9 @@ export default {
 			if (data.hasOwnProperty(key))
 				state[key] = data[key];
 		}
+
+		if (typeof data.page === 'object' && typeof data['url'] !== 'undefined')
+			this.$router.push(data['url'])
 	},
 	setLoadingStatus (state, status) {
 		state.loading = status

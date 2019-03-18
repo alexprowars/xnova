@@ -48,6 +48,5 @@ class NewsController extends Controller
 		]);
 
 		$this->tag->setTitle('Новости');
-		$this->showTopPanel(false);
 	}
 }

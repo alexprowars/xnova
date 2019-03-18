@@ -57,10 +57,8 @@
 						this.$post('/messages/abuse/'+this.item['id']+'/', {
 
 						})
-						.then((result) =>
-						{
+						.then((result) => {
 							this.$store.commit('PAGE_LOAD', result);
-							this.$router.replace(result['url']);
 						})
 					})
 			}

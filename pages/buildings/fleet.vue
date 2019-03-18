@@ -56,9 +56,6 @@
 
 					this.$store.commit('PAGE_LOAD', result)
 					this.$store.commit('setLoadingStatus', false)
-
-					if (typeof result.page === 'object')
-						this.$router.push(result['url'])
 				})
 				.catch(() => {
 					alert('Что-то пошло не так!? Попробуйте еще раз');

@@ -55,6 +55,5 @@ class CreditsController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Покупка кредитов');
-		$this->showTopPanel(false);
 	}
 }

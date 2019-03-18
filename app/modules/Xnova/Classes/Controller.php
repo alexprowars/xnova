@@ -175,11 +175,13 @@ class Controller extends PhalconController
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout']))
 			{
-				$this->view->disable();
 				$this->response->redirect('start/');
 
 				throw new \Exception(serialize(['controller' => 'start', 'action' => 'index']), 10);
 			}
+
+			if ($this->request->has('initial'))
+				$this->user->loadPlanet();
 		}
 		else
 		{
@@ -249,7 +251,7 @@ class Controller extends PhalconController
 			if ($this->user->messages_ally > 0 && $this->user->ally_id == 0)
 			{
 				$this->user->messages_ally = 0;
-				$this->db->updateAsDict('game_users', ['messages_ally' => 0], "id = ".$this->user->id);
+				$this->user->update();
 			}
 
 			$planetsList = $this->cache->get('app::planetlist_'.$this->user->getId());
@@ -323,12 +325,12 @@ class Controller extends PhalconController
 				'server' => $this->config->chat->host.':'.$this->config->chat->port,
 			]);
 
-			Request::addData('resources', false);
+			//Request::addData('resources', false);
 
 			if ($this->getDI()->has('planet'))
 				$this->topPlanetPanel();
-			else
-				$this->showTopPanel(false);
+			//else
+			//	$this->showTopPanel(false);
 
 			Request::addData('speed', [
 				'game' => $this->game->getSpeed('build'),

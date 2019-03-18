@@ -1,22 +1,19 @@
 <template>
 	<div class="page-overview">
-		<div v-if="page['bonus']" class="page-overview-bonus">
-			<table class="table">
-				<tbody>
-					<tr>
-						<td class="c">Ежедневный бонус</td>
-					</tr>
-					<tr>
-						<th>
-							Сейчас вы можете получить по <b class="positive">{{ page['bonus_count'] | number }}</b> Металла, Кристаллов и Дейтерия.<br>
-							Каждый день размер бонуса будет увеличиваться.<br>
-							<br>
-							<button @click.prevent="getDailyBonus" class="button">Получить ресурсы</button><br>
-						</th>
-					</tr>
-				</tbody>
-			</table>
-			<div class="separator"></div>
+		<div v-if="page['bonus']" class="block page-overview-bonus">
+			<div class="title text-center">
+				Ежедневный бонус
+			</div>
+			<div class="table">
+				<div class="row">
+					<div class="col th">
+						Сейчас вы можете получить по <b class="positive">{{ page['bonus_count'] | number }}</b> Металла, Кристаллов и Дейтерия.<br>
+						Каждый день размер бонуса будет увеличиваться.<br>
+						<br>
+						<button @click.prevent="getDailyBonus" class="button">Получить ресурсы</button><br>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="block">
@@ -298,9 +295,10 @@
 			},
 			getDailyBonus ()
 			{
-				this.$post('/overview/bonus/').then((result) => {
+				this.$post('/overview/', {
+					bonus: 'Y'
+				}).then((result) => {
 					this.$store.commit('PAGE_LOAD', result);
-					this.$router.push(result['url'])
 				})
 			}
 		}
