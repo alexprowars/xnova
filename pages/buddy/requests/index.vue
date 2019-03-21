@@ -26,7 +26,7 @@
 							<template v-else>-</template>
 						</div>
 						<div class="col-2 th middle">
-							<nuxt-link :to="'/galaxy/'+item['user']['galaxy']+'/'+item['user']['system']+'/'">{{ item['user']['galaxy'] }}:{{ item['user']['system'] }}:{{ item['user']['planet'] }}</nuxt-link>
+							<nuxt-link :to="'/galaxy/?galaxy='+item['user']['galaxy']+'&system='+item['user']['system']">{{ item['user']['galaxy'] }}:{{ item['user']['system'] }}:{{ item['user']['planet'] }}</nuxt-link>
 						</div>
 						<div class="col th middle" v-html="item['text']">	</div>
 						<div class="col th text-center">

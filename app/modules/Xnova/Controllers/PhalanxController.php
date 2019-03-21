@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
 use Xnova\Models\Fleet as FleetModel;
@@ -38,7 +39,7 @@ class PhalanxController extends Controller
 	public function indexAction ()
 	{
 		if ($this->user->vacation > 0)
-			throw new ErrorException("Нет доступа!");
+			throw new PageException("Нет доступа!");
 		
 		$g = (int) $this->request->getQuery('galaxy', 'int');
 		$s = (int) $this->request->getQuery('system', 'int');
@@ -59,13 +60,13 @@ class PhalanxController extends Controller
 		$systemgora = $this->planet->system + pow($phalanx, 2);
 		
 		if ($this->planet->planet_type != 3)
-			throw new RedirectException("Вы можете использовать фалангу только на луне!", "");
+			throw new PageException("Вы можете использовать фалангу только на луне!");
 		elseif ($phalanx == 0)
-			throw new RedirectException("Постройте сначало сенсорную фалангу", "/overview/");
+			throw new PageException("Постройте сначало сенсорную фалангу");
 		elseif ($this->planet->deuterium < $consomation)
-			throw new RedirectException("<b>Недостаточно дейтерия для использования. Необходимо: ".$consomation.".</b>", "");
+			throw new PageException("<b>Недостаточно дейтерия для использования. Необходимо: ".$consomation.".</b>");
 		elseif (($s <= $systemdol OR $s >= $systemgora) OR $g != $this->planet->galaxy)
-			throw new RedirectException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.", "");
+			throw new PageException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.");
 
 		$this->planet->deuterium -= $consomation;
 		$this->planet->update();

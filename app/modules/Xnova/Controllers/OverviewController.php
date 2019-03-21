@@ -324,42 +324,49 @@ class OverviewController extends Controller
 				$parse['type'] = $type;
 		}
 
-		if ($this->request->hasPost('action') && $this->request->getPost('action') == _getText('namer'))
+		if ($this->request->hasPost('action'))
 		{
-			$name = strip_tags(trim($this->request->getPost('newname', 'string', '')));
+			$action = $this->request->getPost('action');
 
-			if ($name != '')
+			if ($action == 'name')
 			{
+				$name = strip_tags(trim($this->request->getPost('name', 'string', '')));
+
+				if ($name == '')
+					throw new ErrorException('Ввведите новое название планеты');
+
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_\.\,\-\!\?\*\ ]+$/u", $name))
-					throw new ErrorException('Введённое имя содержит недопустимые символы');
+					throw new ErrorException('Введённое название содержит недопустимые символы');
 
 				if (mb_strlen($name, 'UTF-8') <= 1 || mb_strlen($name, 'UTF-8') >= 20)
-					throw new ErrorException('Введённо слишком длинное или короткое имя планеты');
+					throw new ErrorException('Введённо слишком длинное или короткое название планеты');
 
 				$this->planet->name = $name;
 				$this->planet->update();
 
 				if ($this->session->has('fleet_shortcut'))
 					$this->session->remove('fleet_shortcut');
+
+				throw new RedirectException('Название планеты изменено', '/overview/');
 			}
-		}
-		elseif ($this->request->hasPost('action') && $this->request->hasPost('image'))
-		{
-			if ($this->user->credits < 1)
-				throw new ErrorException('Недостаточно кредитов');
+			elseif ($action == 'image')
+			{
+				if ($this->user->credits < 1)
+					throw new ErrorException('Недостаточно кредитов');
 
-			$image = (int) $this->request->getPost('image', 'int', 0);
+				$image = (int) $this->request->getPost('image', 'int', 0);
 
-			if ($image <= 0 || $image > $parse['images'][$parse['type']])
-				throw new ErrorException('Недостаточно читерских навыков');
+				if ($image <= 0 || $image > $parse['images'][$parse['type']])
+					throw new ErrorException('Недостаточно читерских навыков');
 
-			$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
-			$this->planet->update();
+				$this->planet->image = $parse['type'].'planet'.($image < 10 ? '0' : '').$image;
+				$this->planet->update();
 
-			$this->user->credits--;
-			$this->user->update();
+				$this->user->credits--;
+				$this->user->update();
 
-			$this->$this->flashSession->success('Картинка планеты изменена');
+				throw new RedirectException('Картинка планеты изменена', '/overview/');
+			}
 		}
 
 		$parse['planet_name'] = $this->planet->name;
@@ -394,7 +401,7 @@ class OverviewController extends Controller
 
 		$this->user->update();
 
-		throw new SuccessException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'');
+		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия'.($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '').'', '/overview/');
 	}
 
 	public function indexAction ()

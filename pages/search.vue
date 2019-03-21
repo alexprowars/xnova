@@ -51,8 +51,8 @@
 						</th>
 						<th>{{ result['ally_name'] }}</th>
 						<th>{{ result['planet_name'] }}</th>
-						<th><nuxt-link :to="'/galaxy/'+result['g']+'/'+result['s']+'/'">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</nuxt-link></th>
-						<th><nuxt-link :to="'/stat/players/range/'+result['total_rank']+'/'">{{ result['total_rank'] }}</nuxt-link></th>
+						<th><nuxt-link :to="'/galaxy/?galaxy='+result['g']+'&system='+result['s']">{{ result['g'] }}:{{ result['s'] }}:{{ result['p'] }}</nuxt-link></th>
+						<th><nuxt-link :to="'/stat/?view=players&range='+result['total_rank']">{{ result['total_rank'] }}</nuxt-link></th>
 					</tr>
 					<tr v-if="page['result'].length === 0">
 						<th colspan="7">Поиск не дал результатов</th>

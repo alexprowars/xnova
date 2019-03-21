@@ -32,13 +32,13 @@
 						{{ item['members'] }}
 					</div>
 					<div class="th col-sm-2 d-none d-sm-block">
-						<nuxt-link :to="'/alliance/stat/id/'+item['id']+'/'">{{ item['points']|number }}</nuxt-link>
+						<nuxt-link :to="'/alliance/stat/'+item['id']+'/'">{{ item['points']|number }}</nuxt-link>
 					</div>
 					<div class="th col-sm-2 d-none d-sm-block">
 						{{ $options.filters.number(Math.floor(item['points'] / item['members'])) }}
 					</div>
 					<div class="th d-sm-none col-4">
-						<nuxt-link :to="'/alliance/stat/id/'+item['id']+'/'">{{ item['points']|number }}</nuxt-link>
+						<nuxt-link :to="'/alliance/stat/'+item['id']+'/'">{{ item['points']|number }}</nuxt-link>
 						<br>
 						{{ $options.filters.number(Math.floor(item['points'] / item['members'])) }}
 					</div>

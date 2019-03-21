@@ -412,6 +412,11 @@ class Planet extends Model
 		return $fields;
 	}
 
+	public function isAvailableJumpGate ()
+	{
+		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->getBuildLevel('jumpgate') > 0;
+	}
+
 	public function getNextJumpTime ()
 	{
 		$jumpGate = $this->getBuild('jumpgate');

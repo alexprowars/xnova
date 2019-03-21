@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Files;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Models\Planet;
 use Xnova\Controller;
 use Xnova\Request;
@@ -24,22 +25,19 @@ use Xnova\User;
  */
 class PlayersController extends Controller
 {
-	/**
-	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
-	 */
-	public function indexAction ()
+	public function indexAction ($userId)
 	{
 		$parse = [];
 		
-		$playerid = htmlspecialchars($this->request->get('id', null, ''));
+		$userId = (int) $userId;
 
-		if (!$playerid)
-			throw new ErrorException('Профиль не найден');
+		if (!$userId)
+			throw new PageException('Профиль не найден');
 		
-		$user = $this->db->query("SELECT u.*, ui.about, ui.image FROM game_users u LEFT JOIN game_users_info ui ON ui.id = u.id WHERE ".(is_numeric($playerid) ? "u.id" : "u.username")." = '" . $playerid . "';")->fetch();
+		$user = $this->db->query("SELECT u.*, ui.about, ui.image FROM game_users u LEFT JOIN game_users_info ui ON ui.id = u.id WHERE u.id = '" . $userId . "';")->fetch();
 		
 		if (!$user)
-			throw new ErrorException('Профиль не найден');
+			throw new PageException('Профиль не найден');
 
 		$parse['avatar'] = 'assets/images/no_photo.gif';
 
@@ -107,17 +105,14 @@ class PlayersController extends Controller
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
-	/**
-	 * @Route("/stat/{id:[0-9]+}{params:(/.*)*}")
-	 */
-	public function statAction ()
+	public function statAction ($userId)
 	{
 		if (!$this->auth->isAuthorized())
-			$this->indexAction();
+			throw new PageException('Доступ запрещен');
 
-		$playerid = $this->request->get('id', null, 0);
+		$userId = (int) $userId;
 
-		$player = $this->db->query("SELECT id, username FROM game_users WHERE id = ".$playerid."")->fetch();
+		$player = $this->db->query("SELECT id, username FROM game_users WHERE id = ".$userId."")->fetch();
 
 		if (!isset($player['id']))
 			throw new ErrorException('Информация о данном игроке не найдена');
@@ -126,7 +121,7 @@ class PlayersController extends Controller
 		$parse['name'] = $player['username'];
 		$parse['points'] = [];
 
-		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$playerid." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC");
+		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$userId." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC");
 
 		while ($item = $items->fetch())
 		{

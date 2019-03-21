@@ -46,7 +46,7 @@
 					{{ m['points'] }}
 				</th>
 				<th>
-					<nuxt-link :to="'/galaxy/'+m['galaxy']+'/'+m['system']+'/'">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</nuxt-link>
+					<nuxt-link :to="'/galaxy/?galaxy='+m['galaxy']+'&system='+m['system']">{{ m['galaxy'] }}:{{ m['system'] }}:{{ m['planet'] }}</nuxt-link>
 				</th>
 				<th>
 					{{ m['time'] }}

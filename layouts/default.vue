@@ -2,12 +2,10 @@
 	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]" v-touch:swipe.left.right="swipe">
 		<AppHeader v-if="$store.state['view']['header']"/>
 		<main>
-			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'"/>
-			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'"/>
+			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'" @toggle="sidebarToggle('menu')"/>
+			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')"/>
 			<div class="main-content" v-touch:tap="tap">
-				<transition name="page-switch" mode="out-in">
-					<PlanetPanel v-if="$store.state['view']['resources']"/>
-				</transition>
+				<PlanetPanel v-if="$store.state['view']['resources']"/>
 				<div class="main-content-row">
 					<error-message v-if="error" :data="error"/>
 					<Nuxt/>

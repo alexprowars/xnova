@@ -1,5 +1,5 @@
 <template>
-	<div class="page-fleet-verband">
+	<div v-if="page" class="page-fleet-verband">
 		<div class="block">
 			<div class="title">Флоты в совместной атаке</div>
 			<div class="content border-0">
@@ -47,7 +47,7 @@
 		<div v-if="page['group'] === 0" class="block">
 			<div class="title">Создание ассоциации флота</div>
 			<div class="content border-0">
-				<router-form :action="'/fleet/verband/id/'+page['fleetid']+'/'">
+				<router-form :action="'/fleet/verband/'+page['fleetid']+'/'">
 					<input type="hidden" name="action" value="add">
 					<div class="table">
 						<div class="row">
@@ -68,7 +68,7 @@
 				<div class="table">
 					<div class="row">
 						<div class="col th">
-							<router-form :action="'/fleet/verband/id/'+page['fleetid']+'/'">
+							<router-form :action="'/fleet/verband/'+page['fleetid']+'/'">
 								<input type="hidden" name="action" value="changename">
 								<input type="text" name="name" :value="page['aks']['name']" size="50">
 								<br>
@@ -91,7 +91,7 @@
 										</select>
 									</th>
 									<th>
-										<router-form :action="'/fleet/verband/id/'+page['fleetid']+'/'">
+										<router-form :action="'/fleet/verband/'+page['fleetid']+'/'">
 											<input type="hidden" name="action" value="adduser">
 											<div v-if="page['friends'].length > 0 || page['alliance'].length > 0">
 												<select name="user_id" size="10" style="width:75%;">

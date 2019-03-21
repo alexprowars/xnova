@@ -25,7 +25,7 @@
 								<div class="row">
 									<div class="col-4 text-left p-a-0">Планета:</div>
 									<div class="col-8 p-a-0">
-										<nuxt-link :to="'/galaxy/'+page['galaxy']+'/'+page['system']+'/'" style="font-weight:normal">
+										<nuxt-link :to="'/galaxy/?galaxy='+page['galaxy']+'&system='+page['system']" style="font-weight:normal">
 											{{ page['userplanet'] }} [{{ page['galaxy'] }}:{{ page['system'] }}:{{ page['planet'] }}]
 										</nuxt-link>
 									</div>

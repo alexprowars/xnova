@@ -10,8 +10,8 @@
 					<div class="text-sm-right col-12 col-sm-6">
 						Осталось
 						<span class="positive">{{ fields_empty }}</span>
-						{{ page['fields_empty'] | morph(['свободное', 'свободных', 'свободных']) }}
-						{{ page['fields_empty'] | morph(['поле', 'поля', 'полей']) }}
+						{{ page['fields_empty'] | morph('свободное', 'свободных', 'свободных') }}
+						{{ page['fields_empty'] | morph('поле', 'поля', 'полей') }}
 					</div>
 				</div>
 			</div>

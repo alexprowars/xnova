@@ -58,7 +58,7 @@ class SupportController extends Controller
 		throw new SuccessException('Задача добавлена');
 	}
 
-	public function answerAction ($id = 0)
+	public function answerAction ($id)
 	{
 		$id = (int) $id;
 

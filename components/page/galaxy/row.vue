@@ -1,34 +1,34 @@
 <template>
 	<tr class="planetRow">
-		<th width="35">{{ i + 1 }}</th>
+		<th width="35">{{ planet }}</th>
 		<th width="34" class="img">
 			<v-popover v-if="item && !item['p_delete']">
 				<template slot="popover">
 					<table width="240">
 						<tbody>
-						<tr>
-							<td class="c" colspan="2">Планета {{ item['p_name'] }} [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]</td>
-						</tr>
-						<tr>
-							<th width="80">
-								<img :src="'/images/planeten/small/s_'+item['p_image']+'.jpg'" height="75" width="75" alt="">
-							</th>
-							<th align="left">
-								<div v-if="$parent['page']['user']['phalanx'] > 0">
-									<a :href="'/index/galaxy/'+galaxy+'/system/'+system+'/planet/'+item['planet']+'/'" target="_blank">Фаланга</a>
-								</div>
+							<tr>
+								<td class="c" colspan="2">Планета {{ item['p_name'] }} [{{ galaxy }}:{{ system }}:{{ planet }}]</td>
+							</tr>
+							<tr>
+								<th width="80">
+									<img :src="'/images/planeten/small/s_'+item['p_image']+'.jpg'" height="75" width="75" alt="">
+								</th>
+								<th align="left">
+									<div v-if="user['phalanx'] > 0">
+										<a :href="'/phalanx/?galaxy='+galaxy+'&system='+system+'&planet='+planet+''" target="_blank">Фаланга</a>
+									</div>
 
-								<div v-if="item['u_id'] !== $store.state['user']['id']">
-									<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m1/'">Атаковать</nuxt-link>
-									<br>
-									<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m5/'">Удерживать</nuxt-link>
-								</div>
-								<div v-else>
-									<nuxt-link v-if="item['u_id'] === $store.state['user']['id']" :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m4/'">Оставить</nuxt-link>
-								</div>
-								<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t'+item['p_type']+'/m3/'">Транспорт</nuxt-link>
-							</th>
-						</tr>
+									<div v-if="item['u_id'] !== $store.state['user']['id']">
+										<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type='+item['p_type']+'&mission=1'">Атаковать</nuxt-link>
+										<br>
+										<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type='+item['p_type']+'&mission=5'">Удерживать</nuxt-link>
+									</div>
+									<div v-else>
+										<nuxt-link v-if="item['u_id'] === $store.state['user']['id']" :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type='+item['p_type']+'&mission=4'">Оставить</nuxt-link>
+									</div>
+									<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type='+item['p_type']+'&mission=3'">Транспорт</nuxt-link>
+								</th>
+							</tr>
 						</tbody>
 					</table>
 				</template>
@@ -50,57 +50,57 @@
 				<template slot="popover">
 					<table width="240">
 						<tbody>
-						<tr>
-							<td class="c" colspan="2">
-								Луна: {{ item['l_name'] }} [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]
-							</td>
-						</tr>
-						<tr>
-							<th width="80">
-								<img :src="'/images/planeten/mond.jpg'" height="75" width="75" alt="">
-							</th>
-							<th>
-								<table class="table">
-									<tbody>
-									<tr>
-										<td class="c" colspan="2">Характеристики</td>
-									</tr>
-									<tr>
-										<th>Диаметр</th>
-										<th>{{ item['l_diameter']|number }}</th>
-									</tr>
-									<tr>
-										<th>Температура</th>
-										<th>{{ item['l_temp'] }}</th>
-									</tr>
-									<tr>
-										<td class="c" colspan="2">Действия</td>
-									</tr>
-									<tr>
-										<th colspan="2" align="center">
-											<div v-if="item['u_id'] !== $store.state['user']['id']">
-												<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m1/'">Атаковать</nuxt-link>
-												<br>
-												<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m5/'">Удерживать</nuxt-link>
+							<tr>
+								<td class="c" colspan="2">
+									Луна: {{ item['l_name'] }} [{{ galaxy }}:{{ system }}:{{ planet }}]
+								</td>
+							</tr>
+							<tr>
+								<th width="80">
+									<img src="/images/planeten/mond.jpg" height="75" width="75" alt="">
+								</th>
+								<th>
+									<table class="table">
+										<tbody>
+										<tr>
+											<td class="c" colspan="2">Характеристики</td>
+										</tr>
+										<tr>
+											<th>Диаметр</th>
+											<th>{{ item['l_diameter']|number }}</th>
+										</tr>
+										<tr>
+											<th>Температура</th>
+											<th>{{ item['l_temp'] }}</th>
+										</tr>
+										<tr>
+											<td class="c" colspan="2">Действия</td>
+										</tr>
+										<tr>
+											<th colspan="2" align="center">
+												<div v-if="item['u_id'] !== $store.state['user']['id']">
+													<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=3&mission=1'">Атаковать</nuxt-link>
+													<br>
+													<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=3&mission=5'">Удерживать</nuxt-link>
 
-												<div v-if="$parent['page']['user'].destroy > 0">
-													<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m9/'">Уничтожить</nuxt-link>
+													<div v-if="user['destroy'] > 0">
+														<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=3&mission=9'">Уничтожить</nuxt-link>
+													</div>
 												</div>
-											</div>
-											<div v-else>
-												<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m4/'">Оставить</nuxt-link>
-											</div>
-											<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t3/m3/'">Транспорт</nuxt-link>
-										</th>
-									</tr>
-									</tbody>
-								</table>
-							</th>
-						</tr>
+												<div v-else>
+													<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=3&mission=4'">Оставить</nuxt-link>
+												</div>
+												<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=3&mission=3'">Транспорт</nuxt-link>
+											</th>
+										</tr>
+										</tbody>
+									</table>
+								</th>
+							</tr>
 						</tbody>
 					</table>	
 				</template>
-				<img :src="'/images/planeten/small/s_mond.jpg'" height="34" width="34" alt="">
+				<img src="/images/planeten/small/s_mond.jpg" height="34" width="34" alt="">
 			</v-popover>
 			<span v-if="item && item['l_delete'] && item['l_id']">~</span>
 		</th>
@@ -109,45 +109,45 @@
 				<template slot="popover">
 					<table width="240">
 						<tbody>
-						<tr>
-							<td class="c" colspan="2">
-								Обломки: [{{ galaxy }}:{{ system }}:{{ item['planet'] }}]
-							</td>
-						</tr>
-						<tr>
-							<th width="80">
-								<img :src="'/images/planeten/debris.jpg'" height="75" width="75" alt="">
-							</th>
-							<th>
-								<table class="table">
-									<tr>
-										<td class="c" colspan="2">Ресурсы</td>
-									</tr>
-									<tr>
-										<th>Металл</th>
-										<th>{{ item['p_metal'] }}</th>
-									</tr>
-									<tr>
-										<th>Кристалл</th>
-										<th>{{ item['p_crystal'] }}</th>
-									</tr>
-									<tr v-if="$parent['page']['user']['recycler'] > 0">
-										<th colspan="2" align="left">
-											<a @click.prevent="debris">Собрать</a>
-										</th>
-									</tr>
-									<tr>
-										<th colspan="2" align="left">
-											<nuxt-link :to="'/fleet/g'+galaxy+'/s'+system+'/p'+item['planet']+'/t2/m8/'">Отправить флот</nuxt-link>
-										</th>
-									</tr>
-								</table>
-							</th>
-						</tr>
+							<tr>
+								<td class="c" colspan="2">
+									Обломки: [{{ galaxy }}:{{ system }}:{{ planet }}]
+								</td>
+							</tr>
+							<tr>
+								<th width="80">
+									<img src="/images/planeten/debris.jpg" height="75" width="75" alt="">
+								</th>
+								<th>
+									<table class="table">
+										<tr>
+											<td class="c" colspan="2">Ресурсы</td>
+										</tr>
+										<tr>
+											<th>Металл</th>
+											<th>{{ item['p_metal'] }}</th>
+										</tr>
+										<tr>
+											<th>Кристалл</th>
+											<th>{{ item['p_crystal'] }}</th>
+										</tr>
+										<tr v-if="user['recycler'] > 0">
+											<th colspan="2" align="left">
+												<a @click.prevent="debris">Собрать</a>
+											</th>
+										</tr>
+										<tr>
+											<th colspan="2" align="left">
+												<nuxt-link :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type=2&mission=8'">Отправить флот</nuxt-link>
+											</th>
+										</tr>
+									</table>
+								</th>
+							</tr>
 						</tbody>
 					</table>	
 				</template>
-				<img :src="'/images/planeten/debris.jpg'" height="22" width="22" alt="">
+				<img src="/images/planeten/debris.jpg" height="22" width="22" alt="">
 			</v-popover>
 		</th>
 		<th width="180">
@@ -155,27 +155,27 @@
 				<template slot="popover">
 					<table width="280">
 						<tbody>
-						<tr>
-							<td class="c" colspan="2">Игрок {{ item['u_name'] }}, место {{ item['s_rank'] }}</td>
-						</tr>
-						<tr>
-							<td v-if="user_avatar !== ''" width="122" height="126" rowspan="3" valign="middle" class="c" :style="'background:url('+user_avatar+') 50% 50% no-repeat;background-size:cover;'"></td>
-							<td v-else width="122" height="126" rowspan="3" valign="middle" class="c">нет<br>аватара</td>
+							<tr>
+								<td class="c" colspan="2">Игрок {{ item['u_name'] }}, место {{ item['s_rank'] }}</td>
+							</tr>
+							<tr>
+								<td v-if="user_avatar !== ''" width="122" height="126" rowspan="3" valign="middle" class="c" :style="'background:url('+user_avatar+') 50% 50% no-repeat;background-size:cover;'"></td>
+								<td v-else width="122" height="126" rowspan="3" valign="middle" class="c">нет<br>аватара</td>
 
-							<th v-if="item['u_id'] !== $store.state['user']['id']">
-								<nuxt-link :to="'/messages/write/'+item['u_id']+'/'">Послать сообщение</nuxt-link>
-							</th>
-						</tr>
-						<tr v-if="item['u_id'] !== $store.state['user']['id']">
-							<th>
-								<nuxt-link :to="'/buddy/new/'+item['u_id']+'/'">Добавить в друзья</nuxt-link>
-							</th>
-						</tr>
-						<tr>
-							<th valign="top">
-								<nuxt-link :to="'/stat/players/range/'+stat_page+'/pid/'+item['u_id']+'/'">Статистика</nuxt-link>
-							</th>
-						</tr>
+								<th v-if="item['u_id'] !== $store.state['user']['id']">
+									<nuxt-link :to="'/messages/write/'+item['u_id']+'/'">Послать сообщение</nuxt-link>
+								</th>
+							</tr>
+							<tr v-if="item['u_id'] !== $store.state['user']['id']">
+								<th>
+									<nuxt-link :to="'/buddy/new/'+item['u_id']+'/'">Добавить в друзья</nuxt-link>
+								</th>
+							</tr>
+							<tr>
+								<th valign="top">
+									<nuxt-link :to="'/stat/?view=players&range='+stat_page+'&pid='+item['u_id']">Статистика</nuxt-link>
+								</th>
+							</tr>
 						</tbody>
 					</table>
 				</template>
@@ -186,9 +186,9 @@
 					<font color="white">(</font><span v-if="user_status === 'UG' || user_status === 'G'"><nuxt-link to="/banned/" :class="[user_status_class]">{{ user_status }}</nuxt-link></span><span v-else="">{{ user_status }}</span><font color="white">)</font>
 				</span>
 
-				<font v-if="item['u_admin'] === 3" color="red">A</font>
-				<font v-if="item['u_admin'] === 2" color="orange">SGo</font>
-				<font v-if="item['u_admin'] === 1" color="green">Go</font>
+				<span v-if="item['u_admin'] === 3" class="negative">A</span>
+				<span v-if="item['u_admin'] === 2" class="neutral">SGo</span>
+				<span v-if="item['u_admin'] === 1" class="positive">Go</span>
 			</v-popover>
 		</th>
 		<th width="20">
@@ -201,26 +201,26 @@
 				<template slot="popover">
 					<table width="240">
 						<tbody>
-						<tr>
-							<td class="c">
-								Альянс {{ item['a_name'] }} с {{ item['a_members'] }} членами
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<nuxt-link :to="'/alliance/info/'+item['a_id']+'/'">Информация</nuxt-link>
-							</th>
-						</tr>
-						<tr>
-							<th>
-								<nuxt-link to="/stat/alliance/start/0/">Статистика</nuxt-link>
-							</th>
-						</tr>
-						<tr v-if="item['a_web'] && item['a_web'].length">
-							<th>
-								<a :href="item['a_web']" target="_blank">Сайт альянса</a>
-							</th>
-						</tr>
+							<tr>
+								<td class="c">
+									Альянс {{ item['a_name'] }} с {{ item['a_members'] }} членами
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<nuxt-link :to="'/alliance/info/'+item['a_id']+'/'">Информация</nuxt-link>
+								</th>
+							</tr>
+							<tr>
+								<th>
+									<nuxt-link to="/stat/?view=alliance&start=0">Статистика</nuxt-link>
+								</th>
+							</tr>
+							<tr v-if="item['a_web'] && item['a_web'].length">
+								<th>
+									<a :href="item['a_web']" target="_blank">Сайт альянса</a>
+								</th>
+							</tr>
 						</tbody>
 					</table>
 				</template>
@@ -245,19 +245,19 @@
 					<span class="sprite skin_b"></span>
 				</nuxt-link>
 
-				<a v-if="$parent['page']['user']['missile']" @click.prevent="$parent.sendMissile(item['planet'])" title="Ракетная атака">
+				<a v-if="user['missile']" @click.prevent="$emit('sendMissile')" title="Ракетная атака">
 					<span class="sprite skin_r"></span>
 				</a>
 
-				<v-popover v-if="$parent['page']['user']['spy_sonde'] && !item['u_vacation']" title="Шпионаж">
+				<v-popover v-if="user['spy_sonde'] && !item['u_vacation']" title="Шпионаж">
 					<template slot="popover">
 						<center>
-							<input type="text" :value="$parent['page']['user'].spy">
+							<input type="text" v-model.number="spyCount">
 							<br>
 							<input type="button" @click.prevent="spy(item['p_type'], $event)" value="Отправить на планету">
 							<br>
 							<input v-if="!item['l_delete'] && item['l_id']" type="button" @click.prevent="spy(3, $event)" value="Отправить на луну">
-						</center>
+						</center>s
 					</template>
 					<span class="sprite skin_e"></span>
 				</v-popover>
@@ -265,12 +265,12 @@
 				<nuxt-link :to="'/players/'+item['u_id']+'/'" title="Информация об игроке">
 					<span class="sprite skin_s"></span>
 				</nuxt-link>
-				<nuxt-link :to="'/fleet/shortcut/add/new/g/'+galaxy+'/s/'+system+'/p/'+item['planet']+'/t/'+item['p_type']+'/'" title="Добавить в закладки">
+				<nuxt-link :to="'/fleet/shortcut/add/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&type='+item['p_type']+''" title="Добавить в закладки">
 					<span class="sprite skin_z"></span>
 				</nuxt-link>
 			</template>
 
-			<nuxt-link v-if="!item && $parent['page']['user']['colonizer']" :to="'/fleet/g'+galaxy+'/s'+system+'/p'+(i + 1)+'/t0/m7/'" title="Колонизация">
+			<nuxt-link v-if="!item && user['colonizer']" :to="'/fleet/?galaxy='+galaxy+'&system='+system+'&planet='+planet+'&mission=7'" title="Колонизация">
 				<span class="sprite skin_e"></span>
 			</nuxt-link>
 		</th>
@@ -282,23 +282,35 @@
 
 	export default {
 		name: "row",
-		props: ['item', 'i'],
+		props: {
+			galaxy: {
+				type: Number,
+				default: 1
+			},
+			system: {
+				type: Number,
+				default: 1
+			},
+			planet: {
+				type: Number,
+				default: 1
+			},
+			item: {},
+			user: {
+				type: Object
+			},
+		},
 		data ()
 		{
 			return {
-				'races': ['', 'Конфедерация', 'Бионики', 'Сайлоны', 'Древние']
+				races: ['', 'Конфедерация', 'Бионики', 'Сайлоны', 'Древние'],
+				spyCount: this.user['spy']
 			}
 		},
 		computed: {
-			galaxy () {
-				return this.$parent['page']['galaxy'];
-			},
-			system () {
-				return this.$parent['page']['system'];
-			},
 			user_status ()
 			{
-				let CurrentPoints 	= this.$parent['page']['user']['stat_points'];
+				let CurrentPoints 	= this.user['stat_points'];
 				let RowUserPoints 	= this.item['s_points'];
 
 				if (!RowUserPoints)
@@ -385,18 +397,14 @@
 		{
 			spy (planet_type, event)
 			{
-				let obj = $(event.target);
+				event.target.setAttribute('disabled', 'disabled')
 
-				obj.prop('disabled', true);
-
-				let spyNum = obj.parent().find('input[type=text]').val();
-
-				sendMission(this, 6, this.galaxy, this.system, this.item['planet'], planet_type, spyNum).then(() => {
-					obj.prop('disabled', false);
+				sendMission(this, 6, this.galaxy, this.system, this.planet, planet_type, this.spyCount).then(() => {
+					event.target.setAttribute('disabled', '')
 				});
 			},
 			debris () {
-				sendMission(this, 8, this.galaxy, this.system, this.item['planet'], 2, 0)
+				sendMission(this, 8, this.galaxy, this.system, this.planet, 2, 0)
 			}
 		}
 	}

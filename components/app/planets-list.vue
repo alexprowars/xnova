@@ -1,6 +1,7 @@
 <template>
 	<div class="main-planets">
-		<a :class="{active: active}" class="planet-toggle d-sm-none" @click.prevent="$parent.sidebarToggle('planet')"><span>
+		<a :class="{active: active}" class="planet-toggle d-sm-none" @click.prevent="$emit('toggle')">
+			<span>
 				<span class="first"></span>
 				<span class="second"></span>
 				<span class="third"></span>
@@ -8,7 +9,7 @@
 		</a>
 		<div :class="{active: active}" class="planet-sidebar">
 			<div class="list">
-				<planet-row v-for="item in items" :key="item['id']" :item="item"></planet-row>
+				<PlanetRow v-for="item in items" :key="item['id']" :item="item"></PlanetRow>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -28,6 +29,6 @@
 		},
 		components: {
 			PlanetRow
-		}
+		},
 	}
 </script>

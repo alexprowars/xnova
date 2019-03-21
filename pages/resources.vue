@@ -50,69 +50,50 @@
 			<div class="content border-0">
 				<div class="table-responsive">
 					<router-form action="/resources/">
-						<table width="100%">
-							<tr>
-								<th width="200"></th>
-								<th>Ур.</th>
-								<th>Бонус</th>
-								<th><popup-link to="/info/1/" :title="$t('TECH.1')">Металл</popup-link></th>
-								<th><popup-link to="/info/2/" :title="$t('TECH.2')">Кристалл</popup-link></th>
-								<th><popup-link to="/info/3/" :title="$t('TECH.3')">Дейтерий</popup-link></th>
-								<th><popup-link to="/info/4/" :title="$t('TECH.4')">Энергия</popup-link></th>
-								<th width="100">КПД</th>
-							</tr>
-							<tr>
-								<th class="text-left" nowrap>Базовое производство</th>
-								<td class="k">-</td>
-								<td class="k">-</td>
-								<td v-for="res in page['resources']" class="k">{{ page['production'][res]['basic'] }}</td>
-								<td class="k">{{ page['production']['energy']['basic'] }}</td>
-								<td class="k">100%</td>
-							</tr>
-							<tr v-for="item in page['items']">
-								<th class="text-left" nowrap>
-									<popup-link :to="'/info/'+item['id']+'/'" :title="$t('TECH.'+item['id'])">
-										{{ $t('TECH.'+item['id']) }}
-									</popup-link>
-								</th>
-								<th>
-									<colored :value="item['level']"></colored>
-								</th>
-								<th>
-									{{ item['bonus'] }}%
-								</th>
-								<th v-for="res in page['resources']">
-									<colored :value="item['resources'][res]"></colored>
-								</th>
-								<th>
-									<colored :value="item['resources']['energy']"></colored>
-								</th>
-								<th>
-									<select :name="item['name']">
-										<option v-for="j in 10" :value="j" :selected="item['factor'] === j">{{ j * 10 }}%</option>
-									</select>
-								</th>
-							</tr>
-							<tr>
-								<th colspan="2">Вместимость:</th>
-								<th>{{ page['bonus_h'] }}%</th>
-								<td v-for="res in page['resources']" class="k" v-once>
-									<span :class="[(page['production'][res]['max'] > $store.state['resources'][res]['current']) ? 'positive' : 'negative']">
-										{{(page['production'][res]['max'] / 1000)|number }} k
-									</span>
-								</td>
-								<td class="k">
-									<font color="#00ff00">{{ page['production']['energy']['max']|number }}</font>
-								</td>
-								<td class="k"><input name="action" value="Пересчитать" type="submit"></td>
-							</tr>
-							<tr>
-								<th colspan="3">Сумма:</th>
-								<td v-for="res in page['resources']" class="k">
-									<colored :value="page['production'][res]['total']"></colored>
-								</td>
-								<td class="k">{{ page['production']['energy']['total']|number }}</td>
-							</tr>
+						<table class="table">
+							<tbody>
+								<tr>
+									<th width="200"></th>
+									<th>Ур.</th>
+									<th>Бонус</th>
+									<th><popup-link to="/info/1/" :title="$t('TECH.1')">Металл</popup-link></th>
+									<th><popup-link to="/info/2/" :title="$t('TECH.2')">Кристалл</popup-link></th>
+									<th><popup-link to="/info/3/" :title="$t('TECH.3')">Дейтерий</popup-link></th>
+									<th><popup-link to="/info/4/" :title="$t('TECH.4')">Энергия</popup-link></th>
+									<th width="100">КПД</th>
+								</tr>
+								<tr>
+									<th class="text-left" nowrap>Базовое производство</th>
+									<td class="k">-</td>
+									<td class="k">-</td>
+									<td v-for="res in page['resources']" class="k">{{ page['production'][res]['basic'] }}</td>
+									<td class="k">{{ page['production']['energy']['basic'] }}</td>
+									<td class="k">100%</td>
+								</tr>
+								<tr is="resources-row" v-for="(item, index) in page['items']" :key="index" :item="item" :resources="page['resources']"></tr>
+								<tr>
+									<th colspan="2">Вместимость:</th>
+									<th>{{ page['bonus_h'] }}%</th>
+									<td v-for="res in page['resources']" class="k" v-once>
+										<span :class="[(page['production'][res]['max'] > $store.state['resources'][res]['current']) ? 'positive' : 'negative']">
+											{{(page['production'][res]['max'] / 1000)|number }} k
+										</span>
+									</td>
+									<td class="k">
+										<font color="#00ff00">{{ page['production']['energy']['max']|number }}</font>
+									</td>
+									<td class="k">
+										<input name="action" value="Пересчитать" type="submit">
+									</td>
+								</tr>
+								<tr>
+									<th colspan="3">Сумма:</th>
+									<td v-for="res in page['resources']" class="k">
+										<colored :value="page['production'][res]['total']"></colored>
+									</td>
+									<td class="k">{{ page['production']['energy']['total']|number }}</td>
+								</tr>
+							</tbody>
 						</table>
 					</router-form>
 				</div>
@@ -208,6 +189,7 @@
 
 <script>
 	import ResourcesBar from '~/components/page/resources/bar.vue'
+	import ResourcesRow from '~/components/page/resources/row.vue'
 
 	export default {
 		name: "resources",
@@ -217,7 +199,8 @@
 		watchQuery: true,
 		middleware: ['auth'],
 		components: {
-			ResourcesBar
+			ResourcesBar,
+			ResourcesRow,
 		},
 		methods: {
 			buyResources ()

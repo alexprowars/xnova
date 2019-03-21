@@ -38,12 +38,14 @@ class MessagesController extends Controller
 		Lang::includeLang('messages', 'xnova');
 	}
 
-	public function writeAction ($userId = 0)
+	public function writeAction ($userId)
 	{
 		if (!$userId)
 			throw new ErrorException(_getText('mess_no_ownerid'));
 
-		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE ".(is_numeric($userId) ? '`id`' : '`username`')." = '" . $userId . "';")->fetch();
+		$userId = (int) $userId;
+
+		$OwnerRecord = $this->db->query("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM game_users WHERE `id` = '" . $userId . "';")->fetch();
 
 		if (!isset($OwnerRecord['id']))
 			throw new ErrorException(_getText('mess_no_owner'));
@@ -142,9 +144,9 @@ class MessagesController extends Controller
 		return true;
 	}
 
-	public function abuseAction ($id)
+	public function abuseAction ($messageId)
 	{
-		$mes = Message::findFirst(['id = ?0 AND user_id = ?1', 'bind' => [$id, $this->user->id]]);
+		$mes = Message::findFirst(['id = ?0 AND user_id = ?1', 'bind' => [(int) $messageId, $this->user->id]]);
 
 		if (!$mes)
 			throw new ErrorException('Сообщение не найдено');

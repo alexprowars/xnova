@@ -64,7 +64,7 @@ class NotesController extends Controller
 		$this->tag->setTitle('Создание заметки');
 	}
 
-	public function editAction ($noteId = 0)
+	public function editAction ($noteId)
 	{
 		$note = Note::findFirst([
 			'conditions' => 'user_id = :user: AND id = :id:',

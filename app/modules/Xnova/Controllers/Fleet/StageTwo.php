@@ -9,8 +9,7 @@ namespace Xnova\Controllers\Fleet;
  */
 
 use Xnova\Controllers\FleetController;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
+use Xnova\Exceptions\PageException;
 use Xnova\Fleet;
 use Xnova\Format;
 use Friday\Core\Lang;
@@ -23,7 +22,7 @@ class StageTwo
 	public function show (FleetController $controller)
 	{
 		if ($controller->user->vacation > 0)
-			throw new ErrorException("Нет доступа!");
+			throw new PageException("Нет доступа!");
 
 		Lang::includeLang('fleet', 'xnova');
 
@@ -44,7 +43,7 @@ class StageTwo
 		$fleets 	= json_decode(base64_decode(str_rot13($controller->request->getPost('fleet', null, ''))), true);
 
 		if (!count($fleets))
-			throw new RedirectException(_getText('fl_unselectall'), "/fleet/");
+			throw new PageException(_getText('fl_unselectall'), '/fleet/');
 
 		$YourPlanet = false;
 		$UsedPlanet = false;
@@ -126,70 +125,60 @@ class StageTwo
 
 	private function checkJumpGate ($planetId, FleetController $controller)
 	{
-		if (($controller->planet->planet_type == 3 || $controller->planet->planet_type == 5) && $controller->planet->getBuildLevel('jumpgate') > 0)
+		if (!$controller->planet->isAvailableJumpGate())
+			throw new PageException(_getText('gate_no_dest_g'), '/fleet/');
+
+		$nextJumpTime = $controller->planet->getNextJumpTime();
+
+		if ($nextJumpTime > 0)
+			throw new PageException(_getText('gate_wait_star')." - ".Format::time($nextJumpTime), '/fleet/');
+
+		$targetPlanet = Planet::findFirst($planetId);
+
+		if (!$targetPlanet->isAvailableJumpGate())
+			throw new PageException(_getText('gate_no_dest_g'), '/fleet/');
+
+		$nextJumpTime = $targetPlanet->getNextJumpTime();
+
+		if ($nextJumpTime > 0)
+			throw new PageException(_getText('gate_wait_dest')." - ".Format::time($nextJumpTime), '/fleet/');
+
+		$success = false;
+
+		$ships = $controller->request->getPost('ship');
+		$ships = array_map('intval', $ships);
+		$ships = array_map('abs', $ships);
+
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ship)
 		{
-			$nextJumpTime = $controller->planet->getNextJumpTime();
+			if (!isset($ships[$ship]) || !$ships[$ship])
+				continue;
 
-			if ($nextJumpTime == 0)
-			{
-				$targetPlanet = Planet::findFirst($planetId);
-
-				if (($targetPlanet->planet_type == 3 || $targetPlanet->planet_type == 5) && $targetPlanet->getBuildLevel('jumpgate') > 0)
-				{
-					$nextJumpTime = $targetPlanet->getNextJumpTime();
-
-					if ($nextJumpTime == 0)
-					{
-						$success = false;
-
-						$ships = $controller->request->getPost('ship');
-						$ships = array_map('intval', $ships);
-						$ships = array_map('abs', $ships);
-
-						foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ship)
-						{
-							if (!isset($ships[$ship]) || !$ships[$ship])
-								continue;
-
-							if ($ships[$ship] > $controller->planet->getUnitCount($ship))
-								$count = $controller->planet->getUnitCount($ship);
-							else
-								$count = $ships[$ship];
-
-							if ($count > 0)
-							{
-								$controller->planet->setUnit($ship, -$count, true);
-								$targetPlanet->setUnit($ship, $count, true);
-
-								$success = true;
-							}
-						}
-
-						if ($success)
-						{
-							$controller->planet->last_jump_time = time();
-							$controller->planet->update();
-
-							$targetPlanet->last_jump_time = time();
-							$targetPlanet->update();
-
-							$controller->user->update(['planet_current' => $targetPlanet->id]);
-
-							$RetMessage = _getText('gate_jump_done')." ".Format::time($controller->planet->getNextJumpTime());
-						}
-						else
-							$RetMessage = _getText('gate_wait_data');
-					}
-					else
-						$RetMessage = _getText('gate_wait_dest')." - ".Format::time($nextJumpTime);
-				}
-				else
-					$RetMessage = _getText('gate_no_dest_g');
-			}
+			if ($ships[$ship] > $controller->planet->getUnitCount($ship))
+				$count = $controller->planet->getUnitCount($ship);
 			else
-				$RetMessage = _getText('gate_wait_star')." - ".Format::time($nextJumpTime);
+				$count = $ships[$ship];
 
-			throw new RedirectException($RetMessage, "/fleet/");
+			if ($count > 0)
+			{
+				$controller->planet->setUnit($ship, -$count, true);
+				$targetPlanet->setUnit($ship, $count, true);
+
+				$success = true;
+			}
 		}
+
+		if (!$success)
+			throw new PageException(_getText('gate_wait_data'), '/fleet/');
+
+		$controller->planet->last_jump_time = time();
+		$controller->planet->update();
+
+		$targetPlanet->last_jump_time = time();
+		$targetPlanet->update();
+
+		$controller->user->update(['planet_current' => $targetPlanet->id]);
+
+		throw new PageException(_getText('gate_jump_done')." ".Format::time($controller->planet->getNextJumpTime()), '/fleet/');
 	}
 }

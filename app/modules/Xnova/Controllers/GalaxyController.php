@@ -34,10 +34,6 @@ class GalaxyController extends Controller
 		Lang::includeLang('galaxy', 'xnova');
 	}
 
-	/**
-	 * @Route("/{galaxy:[0-9]{1,2}}/{system:[0-9]{1,3}}{params:(/.*)*}")
-	 * @Route("/{galaxy:[0-9]{1,2}}{params:(/.*)*}")
-	 */
 	public function indexAction ()
 	{
 		$parse = [];

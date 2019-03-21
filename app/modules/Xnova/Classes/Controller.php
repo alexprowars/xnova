@@ -74,32 +74,6 @@ class Controller extends PhalconController
 		$this->view->disable();
 		$this->tag->setTitle(Options::get('site_title'));
 
-		if (is_array($this->router->getParams()) && count($this->router->getParams()))
-		{
-			$params = $this->router->getParams();
-
-			if (isset($params[0]) && is_numeric($params[0]))
-				unset($params[0]);
-
-			foreach ($params as $key => $value)
-			{
-				if (!is_numeric($key))
-				{
-					$_REQUEST[$key] = $_GET[$key] = $value;
-
-					unset($params[$key]);
-				}
-			}
-
-			$params = array_values($params);
-
-			for ($i = 0; $i < count($params); $i += 2)
-			{
-				if (isset($params[$i]) && $params[$i] != '' && !is_numeric($params[$i]))
-					$_REQUEST[$params[$i]] = $_GET[$params[$i]] = (isset($params[$i+1])) ? $params[$i+1] : '';
-			}
-		}
-
 		Vars::init();
 
 		Request::addData('route', [
@@ -116,9 +90,6 @@ class Controller extends PhalconController
 
 		if ($this->auth->isAuthorized())
 		{
-			//if (!$this->user->isAdmin())
-			//	die('Нельзя пока вам сюда');
-
 			// Кэшируем настройки профиля в сессию
 			if (!$this->session->has('config') || strlen($this->session->get('config')) < 10)
 			{
@@ -198,9 +169,6 @@ class Controller extends PhalconController
 	public function afterExecuteRoute ()
 	{
 		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
-
-		if (!$this->request->isAjax() && Request::getDataItem('redirect'))
-			return $this->response->redirect(Request::getDataItem('redirect'));
 
 		if ($this->auth->isAuthorized())
 		{
@@ -325,8 +293,6 @@ class Controller extends PhalconController
 				'server' => $this->config->chat->host.':'.$this->config->chat->port,
 			]);
 
-			//Request::addData('resources', false);
-
 			if ($this->getDI()->has('planet'))
 				$this->topPlanetPanel();
 			//else
@@ -351,8 +317,6 @@ class Controller extends PhalconController
 		Request::addData('view', $this->views);
 		Request::addData('title', $this->tag->getTitle(false));
 		Request::addData('version', VERSION);
-
-		return true;
 	}
 
 	public function topPlanetPanel ()
@@ -405,16 +369,22 @@ class Controller extends PhalconController
 		Request::addData('resources', $data);
 	}
 
+	public function setViews ($view, $mode)
+	{
+		if (isset($this->views[$view]))
+			$this->views[$view] = (bool) $mode;
+	}
+
 	public function showTopPanel ($view = true)
 	{
-		$this->views['resources'] = $view;
+		$this->setViews('resources', $view);
 	}
 
 	public function showLeftPanel ($view = true)
 	{
-		$this->views['header'] = $view;
-		$this->views['footer'] = $view;
-		$this->views['menu'] = $view;
-		$this->views['planets'] = $view;
+		$this->setViews('header', $view);
+		$this->setViews('footer', $view);
+		$this->setViews('menu', $view);
+		$this->setViews('planets', $view);
 	}
 }

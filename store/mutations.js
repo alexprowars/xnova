@@ -9,7 +9,7 @@ export default {
 				state[key] = data[key];
 		}
 
-		if (typeof data.page === 'object' && typeof data['url'] !== 'undefined')
+		if (data.page !== null && typeof data.page === 'object' && typeof data['url'] !== 'undefined')
 			this.$router.push(data['url'])
 	},
 	setLoadingStatus (state, status) {

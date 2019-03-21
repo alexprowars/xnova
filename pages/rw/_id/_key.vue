@@ -8,7 +8,7 @@
 		asyncData ({ store, route }) {
 			return store.dispatch('loadPage', route.fullPath)
 		},
-		layout: 'log',
+		layout: 'empty',
 		created ()
 		{
 			if (this.$store.state.user !== null && !this.page)

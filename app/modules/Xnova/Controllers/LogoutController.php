@@ -20,11 +20,6 @@ use Xnova\Exceptions\RedirectException;
  */
 class LogoutController extends Controller
 {
-	public function initialize ()
-	{
-		parent::initialize();
-	}
-	
 	public function indexAction ()
 	{
 		if ($this->auth->isAuthorized())

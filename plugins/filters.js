@@ -3,7 +3,7 @@ import { number, morph, date, time } from '~/utils/format'
 
 export default ({ store }) =>
 {
-	Vue.filter("morph", (value, titles) => {
+	Vue.filter("morph", (value, ...titles) => {
 		return morph(value, titles);
 	});
 

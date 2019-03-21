@@ -1,5 +1,5 @@
 <template>
-	<router-link :to="'/galaxy/'+galaxy+'/'+system+'/'+planet+'/'">
+	<router-link :to="'/galaxy/?galaxy='+galaxy+'&system='+system+'&planet='+planet">
 		[{{ galaxy }}:{{ system }}:{{ planet }}]
 	</router-link>
 </template>

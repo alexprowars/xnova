@@ -10,6 +10,7 @@ namespace Xnova\Controllers;
 
 use Friday\Core\Files;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Format;
 use Xnova\Helpers;
@@ -387,27 +388,25 @@ class AllianceController extends Controller
 				{
 					if ($this->ally->members >= 150)
 						throw new ErrorException('Альянс не может иметь больше 150 участников');
-					else
+
+					if ($this->request->getPost('text') != '')
+						$text_ot = strip_tags($this->request->getPost('text'));
+
+					$check = $this->db->query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "")->fetch();
+
+					if (isset($check['a_id']))
 					{
-						if ($this->request->getPost('text') != '')
-							$text_ot = strip_tags($this->request->getPost('text'));
+						$this->db->delete('game_alliance_requests', "u_id = ?", [$show]);
+						$this->db->delete('game_alliance_members', "u_id = ?", [$show]);
 
-						$check = $this->db->query("SELECT a_id FROM game_alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "")->fetch();
+						$this->db->insertAsDict('game_alliance_members', ['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
 
-						if (isset($check['a_id']))
-						{
-							$this->db->delete('game_alliance_requests', "u_id = ?", [$show]);
-							$this->db->delete('game_alliance_members', "u_id = ?", [$show]);
+						$this->db->execute("UPDATE game_alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
+						$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
 
-							$this->db->insertAsDict('game_alliance_members', ['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
+						User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
-							$this->db->execute("UPDATE game_alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
-							$this->db->query("UPDATE game_users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
-
-							User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
-
-							throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
-						}
+						throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
 					}
 				}
 				elseif ($this->request->getPost('action') == "Отклонить")
@@ -1093,23 +1092,23 @@ class AllianceController extends Controller
 		$this->tag->setTitle('Запрос на вступление');
 	}
 
-	public function statAction ()
+	public function statAction ($id)
 	{
 		if (!$this->auth->isAuthorized())
-			throw new ErrorException(_getText('Denied_access'));
+			throw new PageException(_getText('Denied_access'));
 
-		$allyid = $this->request->get('id', null, 0);
+		$id = (int) $id;
 
-		$allyrow = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . $allyid . "'")->fetch();
+		$allyrow = $this->db->query("SELECT id, name FROM game_alliance WHERE id = '" . $id . "'")->fetch();
 
 		if (!isset($allyrow['id']))
-			throw new ErrorException('Информация о данном альянсе не найдена');
+			throw new PageException('Информация о данном альянсе не найдена');
 
 		$parse = [];
 		$parse['name'] = $allyrow['name'];
 		$parse['points'] = [];
 
-		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$allyid." AND time > ".(time() - 14 * 86400)." AND type = 2 ORDER BY time ASC");
+		$items = $this->db->query("SELECT * FROM game_log_stats WHERE object_id = ".$id." AND time > ".(time() - 14 * 86400)." AND type = 2 ORDER BY time ASC");
 
 		while ($item = $items->fetch())
 		{

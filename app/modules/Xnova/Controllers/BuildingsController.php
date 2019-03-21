@@ -12,6 +12,7 @@ use Xnova\Construction;
 use Friday\Core\Lang;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Request;
 
 /**
@@ -40,7 +41,7 @@ class BuildingsController extends Controller
 		$this->user->loadPlanet();
 
 		if ($this->user->vacation > 0)
-			throw new ErrorException("Нет доступа!");
+			throw new PageException("Нет доступа!");
 
 		$this->building = new Construction($this->user, $this->planet);
 	}

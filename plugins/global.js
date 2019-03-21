@@ -4,6 +4,7 @@ import 'core-js/fn/object/assign';
 import 'core-js/fn/array/find';
 import 'core-js/modules/es6.promise';
 import 'core-js/modules/es6.array.iterator';
+import 'core-js/modules/es6.array.find';
 import closest from 'element-closest'
 
 if (!process.server)

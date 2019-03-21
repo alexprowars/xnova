@@ -1,10 +1,10 @@
 <template>
-	<router-form ref="form" action="/galaxy/" class="page-galaxy-select">
+	<form ref="form" action="" class="page-galaxy-select" @submit.prevent="send">
 		<input type="hidden" name="direction" v-model="direction">
 
 		<div class="row">
 			<div class="col-12 d-sm-none">
-				<galaxy-selector-shortcut :items="shortcuts"></galaxy-selector-shortcut>
+				<GalaxySelectorShortcut :items="shortcuts"></GalaxySelectorShortcut>
 			</div>
 			<div class="separator d-sm-none"></div>
 			<div class="col-sm-4 col-6">
@@ -20,17 +20,17 @@
 								<input value="&lt;-" type="button" @click.prevent="direction = 'galaxyLeft'">
 							</th>
 							<th>
-								<input name="galaxy" :value="$parent.page.galaxy" maxlength="3" tabindex="1" min="1" type="number">
+								<input name="galaxy" v-model.number="inputGalaxy" maxlength="3" tabindex="1" min="1" type="number">
 							</th>
 							<th>
-								<input value="-&gt;" type="button" v-on:click.prevent="direction = 'galaxyRight'">
+								<input value="-&gt;" type="button" @click.prevent="direction = 'galaxyRight'">
 							</th>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 			<div class="col-sm-4 d-none d-sm-block">
-				<galaxy-selector-shortcut :items="shortcuts"></galaxy-selector-shortcut>
+				<GalaxySelectorShortcut :items="shortcuts"></GalaxySelectorShortcut>
 			</div>
 			<div class="col-sm-4 col-6">
 				<table style="margin: 0 auto">
@@ -42,20 +42,20 @@
 						</tr>
 						<tr>
 							<th>
-								<input value="&lt;-" type="button" v-on:click.prevent="direction = 'systemLeft'">
+								<input value="&lt;-" type="button" @click.prevent="direction = 'systemLeft'">
 							</th>
 							<th>
-								<input name="system" :value="$parent.page.system" maxlength="3" tabindex="2" min="1" type="number">
+								<input name="system" v-model.number="inputSystem" maxlength="3" tabindex="2" min="1" type="number">
 							</th>
 							<th>
-								<input value="-&gt;" type="button" v-on:click.prevent="direction = 'systemRight'">
+								<input value="-&gt;" type="button" @click.prevent="direction = 'systemRight'">
 							</th>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
-	</router-form>
+	</form>
 </template>
 
 <script>
@@ -63,28 +63,58 @@
 
 	export default {
 		name: "galaxy-selector",
-		props: [
-			"shortcuts"
-		],
-		data: function() {
+		props: {
+			galaxy: {
+				type: Number,
+				default: 1
+			},
+			system: {
+				type: Number,
+				default: 1
+			},
+			shortcuts: {
+				type: Array,
+				default: () => {
+					return []
+				}
+			}
+		},
+		data () {
 			return {
-				direction: ''
+				direction: '',
+				inputGalaxy: this.galaxy,
+				inputSystem: this.system,
 			}
 		},
 		watch: {
+			galaxy (val) {
+				this.inputGalaxy = val
+			},
+			system (val) {
+				this.inputSystem = val
+			},
 			direction (val)
 			{
 				if (val !== '')
-				{
-					this.$nextTick(() => {
-						this.$refs['form'].send();
-						setTimeout(() => this.direction = '', 100);
-					});
-				}
+					this.send()
 			}
 		},
 		components: {
 			GalaxySelectorShortcut
+		},
+		methods: {
+			send () 
+			{
+				this.$post('/galaxy/', {
+					galaxy: this.inputGalaxy,
+					system: this.inputSystem,
+					direction: this.direction
+				})
+				.then((result) => {
+					this.direction = ''
+					this.$store.commit('PAGE_LOAD', result)
+				})
+			}
 		}
 	}
 </script>

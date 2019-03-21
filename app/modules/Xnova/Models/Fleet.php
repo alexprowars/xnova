@@ -80,7 +80,7 @@ class Fleet extends Model
 
 	public function getStartAdressLink ($FleetType = '')
 	{
-		$uri = '/galaxy/'.$this->start_galaxy.'/'.$this->start_system.'/';
+		$uri = '/galaxy/?galaxy='.$this->start_galaxy.'&system='.$this->start_system;
 
 		if ($this->getDI()->has('url'))
 			$uri = $this->getDI()->getShared('url')->get($uri);
@@ -90,7 +90,7 @@ class Fleet extends Model
 
 	public function getTargetAdressLink ($FleetType = '')
 	{
-		$uri = '/galaxy/'.$this->end_galaxy.'/'.$this->end_system.'/';
+		$uri = '/galaxy/?galaxy='.$this->end_galaxy.'&system='.$this->end_system;
 
 		if ($this->getDI()->has('url'))
 			$uri = $this->getDI()->getShared('url')->get($uri);
@@ -146,5 +146,10 @@ class Fleet extends Model
 	{
 		if (is_array($this->fleet_array))
 			$this->fleet_array = json_encode(array_values($this->fleet_array));
+	}
+
+	public function canBack ()
+	{
+		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_owner != 1);
 	}
 }

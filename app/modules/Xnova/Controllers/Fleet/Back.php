@@ -10,6 +10,7 @@ namespace Xnova\Controllers\Fleet;
 
 use Xnova\Controllers\FleetController;
 use Friday\Core\Lang;
+use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
 
@@ -17,59 +18,49 @@ class Back
 {
 	public function show (FleetController $controller)
 	{
+		$fleetId = (int) $controller->request->getPost('id', 'int', 0);
+
+		if ($fleetId <= 0)
+			throw new ErrorException('Не выбран флот');
+
 		Lang::includeLang('fleet', 'xnova');
 
-		$TxtColor = "red";
-		$BoxMessage = _getText('fl_notback');
+		$fleet = Fleet::findFirst($fleetId);
 
-		if ($controller->request->hasPost('fleetid'))
+		if (!$fleet || $fleet->owner != $controller->user->id)
+			throw new ErrorException(_getText('fl_onlyyours'));
+
+		if (!$fleet->canBack())
+			throw new ErrorException(_getText('fl_notback'));
+
+		if ($fleet->end_stay != 0)
 		{
-			$fleetid = $controller->request->getPost('fleetid', 'int', 0);
-
-			$FleetRow = Fleet::findFirst($fleetid);
-
-			if ($FleetRow && $FleetRow->owner == $controller->user->id)
-			{
-				if (($FleetRow->mess == 0 || ($FleetRow->mess == 3 && $FleetRow->mission != 15) && $FleetRow->mission != 20 && $FleetRow->target_owner != 1))
-				{
-					if ($FleetRow->end_stay != 0)
-					{
-						if ($FleetRow->start_time > time())
-							$CurrentFlyingTime = time() - $FleetRow->create_time;
-						else
-							$CurrentFlyingTime = $FleetRow->start_time - $FleetRow->create_time;
-					}
-					else
-						$CurrentFlyingTime = time() - $FleetRow->create_time;
-
-					$ReturnFlyingTime = $CurrentFlyingTime + time();
-
-					if ($FleetRow->group_id != 0 && $FleetRow->mission == 1)
-					{
-						$controller->db->delete('game_aks', 'id = ?', [$FleetRow->group_id]);
-						$controller->db->delete('game_aks_user', 'aks_id = ?', [$FleetRow->group_id]);
-					}
-
-					$FleetRow->update([
-						'start_time'	=> time() - 1,
-						'end_stay' 		=> 0,
-						'end_time' 		=> $ReturnFlyingTime + 1,
-						'target_owner' 	=> $controller->user->id,
-						'group_id' 		=> 0,
-						'update_time' 	=> $ReturnFlyingTime + 1,
-						'mess' 			=> 1,
-					]);
-
-					$TxtColor = "lime";
-					$BoxMessage = _getText('fl_isback');
-				}
-				else
-					$BoxMessage = _getText('fl_notback');
-			}
+			if ($fleet->start_time > time())
+				$CurrentFlyingTime = time() - $fleet->create_time;
 			else
-				$BoxMessage = _getText('fl_onlyyours');
+				$CurrentFlyingTime = $fleet->start_time - $fleet->create_time;
+		}
+		else
+			$CurrentFlyingTime = time() - $fleet->create_time;
+
+		$ReturnFlyingTime = $CurrentFlyingTime + time();
+
+		if ($fleet->group_id != 0 && $fleet->mission == 1)
+		{
+			$controller->db->delete('game_aks', 'id = ?', [$fleet->group_id]);
+			$controller->db->delete('game_aks_user', 'aks_id = ?', [$fleet->group_id]);
 		}
 
-		throw new RedirectException("<font color=\"" . $TxtColor . "\">" . $BoxMessage . "</font>", "/fleet/");
+		$fleet->update([
+			'start_time'	=> time() - 1,
+			'end_stay' 		=> 0,
+			'end_time' 		=> $ReturnFlyingTime + 1,
+			'target_owner' 	=> $controller->user->id,
+			'group_id' 		=> 0,
+			'update_time' 	=> $ReturnFlyingTime + 1,
+			'mess' 			=> 1,
+		]);
+
+		throw new RedirectException(_getText('fl_isback'), '/xnova/');
 	}
 }

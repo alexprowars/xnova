@@ -24,11 +24,6 @@ use Xnova\Request;
  */
 class IndexController extends Controller
 {
-	public function initialize()
-	{
-		return parent::initialize();
-	}
-
 	public function indexAction ()
 	{
 		$this->tag->setTitle('Вход в игру');

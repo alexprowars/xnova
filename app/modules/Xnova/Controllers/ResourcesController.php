@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Planet;
 use Xnova\Controller;
@@ -68,7 +69,7 @@ class ResourcesController extends Controller
 	public function productionAction ()
 	{
 		if ($this->user->vacation > 0)
-			throw new ErrorException("Включен режим отпуска!");
+			throw new PageException("Включен режим отпуска!");
 
 		$production = $this->request->getQuery('active', null, 'Y');
 		$production = $production == 'Y' ? 10 : 0;

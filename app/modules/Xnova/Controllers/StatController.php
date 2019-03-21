@@ -37,12 +37,9 @@ class StatController extends Controller
 		$this->pid = (int) $this->request->getQuery('pid', 'int', 0);
 
 		$type = (int) $this->request->get('type', 'int', 1);
-		$who = $this->dispatcher->getActionName();
+		$view = $this->request->get('мшуц', 'string', 'players');
 
-		if ($who == 'index')
-			$who = 'players';
-
-		if ($who != 'players' && $type > 5)
+		if ($view != 'players' && $type > 5)
 			$type = 1;
 
 		switch ($type)

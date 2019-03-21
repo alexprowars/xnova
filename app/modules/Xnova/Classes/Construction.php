@@ -76,7 +76,7 @@ class Construction
 						break;
 				}
 
-				return Di::getDefault()->getShared('response')->redirect('buildings/');
+				throw new RedirectException('', 'buildings/');
 			}
 		}
 

@@ -94,7 +94,7 @@
 						'<a href="$1" target="_blank">$2</a>',
 						'<a href="$1" target="_blank">$1</a>',
 						'<p>$1</p>',
-						'<a href="'+this.$store.state.path+'galaxy/$1/$2/">[$1:$2:$3]</a>'
+						'<a href="'+this.$store.state.path+'galaxy/?galaxy=$1&system=$2">[$1:$2:$3]</a>'
 					]
 				}
 			}

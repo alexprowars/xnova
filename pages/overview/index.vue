@@ -21,7 +21,7 @@
 				<div class="row">
 					<div class="col-12 col-sm-6">
 						{{ page['planet']['type'] }} "{{ page['planet']['name'] }}"
-						<nuxt-link :to="'/galaxy/'+page['planet']['galaxy']+'/'+page['planet']['system']+'/'">[{{ page['planet']['galaxy'] }}:{{ page['planet']['system'] }}:{{ page['planet']['planet'] }}]</nuxt-link>
+						<nuxt-link :to="'/galaxy/?galaxy='+page['planet']['galaxy']+'&system='+page['planet']['system']">[{{ page['planet']['galaxy'] }}:{{ page['planet']['system'] }}:{{ page['planet']['planet'] }}]</nuxt-link>
 						<nuxt-link :to="'/overview/rename/'" title="Редактирование планеты">(изменить)</nuxt-link>
 					</div>
 					<div class="separator d-sm-none"></div>
@@ -204,7 +204,7 @@
 							<div class="row">
 								<div class="th col-sm-5 col-6">Место:</div>
 								<div class="th col-sm-7 col-6">
-									<nuxt-link :to="'/stat/players/range/'+page['points']['place']+'/'">{{ page['points']['place'] }}</nuxt-link>
+									<nuxt-link :to="'/stat/?view=players&range='+page['points']['place']">{{ page['points']['place'] }}</nuxt-link>
 									<span title="Изменение места в рейтинге">
 										<span v-if="page['points']['diff'] >= 1" class="positive">+{{ page['points']['diff'] }}</span>
 										<span v-else-if="page['points']['diff'] < 0" class="negative">{{ page['points']['diff'] }}</span>

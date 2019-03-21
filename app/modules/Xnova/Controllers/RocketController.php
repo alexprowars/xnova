@@ -10,7 +10,8 @@ namespace Xnova\Controllers;
 
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
+use Xnova\Exceptions\PageException;
+use Xnova\Exceptions\SuccessException;
 use Xnova\Models\Fleet;
 use Xnova\Models\Planet;
 
@@ -36,19 +37,22 @@ class RocketController extends Controller
 	public function indexAction ()
 	{
 		if (!$this->request->isPost())
-			throw new RedirectException('Ошибка', '/galaxy/');
+			throw new PageException('Ошибка', '/galaxy/');
 
-		$g = (int) $this->request->getQuery('galaxy', 'int');
-		$s = (int) $this->request->getQuery('system', 'int');
-		$i = (int) $this->request->getQuery('planet', 'int');
+		$g = (int) $this->request->getPost('galaxy', 'int', 0);
+		$s = (int) $this->request->getPost('system', 'int', 0);
+		$p = (int) $this->request->getPost('planet', 'int', 0);
 
-		$count = (int) $this->request->getPost('count', 'int');
-		$destroyType = $this->request->getPost('target', 'string');
+		if ($g <= 0 || $s <= 0 || $p <= 0)
+			throw new ErrorException('Координаты не определены');
+
+		$count = (int) $this->request->getPost('count', 'int', 1);
+		$destroyType = $this->request->getPost('target', 'string', 'all');
 		
 		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$targetPlanet = Planet::findByCoords($g, $s, $i, 1);
+		$targetPlanet = Planet::findByCoords($g, $s, $p, 1);
 
 		if ($this->planet->getBuildLevel('missile_facility') < 4)
 			throw new ErrorException('Постройте ракетную шахту');
@@ -95,7 +99,7 @@ class RocketController extends Controller
 			'end_time' 			=> 0,
 			'end_galaxy' 		=> $g,
 			'end_system' 		=> $s,
-			'end_planet' 		=> $i,
+			'end_planet' 		=> $p,
 			'end_type' 			=> 1,
 			'target_owner' 		=> $targetPlanet->id_owner,
 			'target_owner_name' => $targetPlanet->name,
@@ -109,6 +113,6 @@ class RocketController extends Controller
 			$this->planet->update();
 		}
 
-		throw new ErrorException('<b>'.$count.'</b> межпланетные ракеты запущены для атаки удалённой планеты!');
+		throw new SuccessException('<b>'.$count.'</b> межпланетные ракеты запущены для атаки удалённой планеты!');
 	}
 }

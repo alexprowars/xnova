@@ -1,6 +1,6 @@
 <template>
 	<nav class="main-menu">
-		<a :class="{active: active}" class="menu-toggle d-sm-none" @click.prevent="$parent.sidebarToggle('menu')">
+		<a :class="{active: active}" class="menu-toggle d-sm-none" @click.prevent="$emit('toggle')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>

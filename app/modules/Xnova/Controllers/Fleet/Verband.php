@@ -17,11 +17,11 @@ use Xnova\User;
 
 class Verband
 {
-	public function show (FleetController $controller)
+	public function show (FleetController $controller, $fleetId)
 	{
 		Lang::includeLang('fleet', 'xnova');
 
-		$fleetId = (int) $controller->request->get('id', 'int');
+		$fleetId = (int) $fleetId;
 
 		if ($fleetId <= 0)
 			throw new ErrorException('Флот не выбран');

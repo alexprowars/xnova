@@ -10,6 +10,7 @@ namespace Xnova\Controllers\Fleet;
 
 use Xnova\Controllers\FleetController;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Friday\Core\Lang;
 use Xnova\Models\Planet;
@@ -22,7 +23,7 @@ class StageOne
 	public function show (FleetController $controller)
 	{
 		if ($controller->user->vacation > 0)
-			throw new ErrorException("Нет доступа!");
+			throw new PageException("Нет доступа!");
 
 		Lang::includeLang('fleet', 'xnova');
 
@@ -72,7 +73,7 @@ class StageOne
 		}
 
 		if (!count($fleets))
-			throw new RedirectException(_getText('fl_unselectall'), "/fleet/");
+			throw new PageException(_getText('fl_unselectall'), "/fleet/");
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 

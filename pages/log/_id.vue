@@ -8,6 +8,6 @@
 		asyncData ({ store, route }) {
 			return store.dispatch('loadPage', route.fullPath)
 		},
-		layout: 'log',
+		layout: 'empty',
 	}
 </script>

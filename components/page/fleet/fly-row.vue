@@ -22,7 +22,7 @@
 		</div>
 		<div class="col-4 col-sm-3 th">
 			<div>
-				<nuxt-link :to="'/galaxy/'+item['target']['galaxy']+'/'+item['target']['system']+'/'" class="negative">
+				<nuxt-link :to="'/galaxy/?galaxy='+item['target']['galaxy']+'&system='+item['target']['system']" class="negative">
 					[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]
 				</nuxt-link>
 			</div>
@@ -31,7 +31,7 @@
 		</div>
 		<div v-if="item['target']['time']" class="col-4 col-sm-3 th">
 			<div>
-				<nuxt-link :to="'/galaxy/'+item['start']['galaxy']+'/'+item['start']['system']+'/'" class="positive">
+				<nuxt-link :to="'/galaxy/?galaxy='+item['start']['galaxy']+'&system='+item['start']['system']" class="positive">
 					[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]
 				</nuxt-link>
 			</div>
@@ -47,14 +47,11 @@
 				<input value="Возврат" type="submit" name="send">
 			</router-form>
 
-			<nuxt-link v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :to="'/fleet/verband/id/'+item.id+'/'" class="button">
+			<nuxt-link v-if="item['stage'] === 0 && item['mission'] === 1 && item.target.id !== 1" :to="'/fleet/verband/'+item.id+'/'" class="button">
 				Объединить
 			</nuxt-link>
 
-			<router-form v-if="item['stage'] === 3 && item['mission'] !== 15" action="/fleet/back/">
-				<input name="fleetid" :value="item.id" type="hidden">
-				<input value="Отозвать" type="submit" name="send">
-			</router-form>
+			<button v-if="item['stage'] === 3 && item['mission'] !== 15" @click.prevent="backAction">Отозвать</button>
 		</div>
 	</div>
 </template>
@@ -65,6 +62,27 @@
 		props: {
 			i: Number,
 			item: Object
+		},
+		methods: {
+			backAction ()
+			{
+				this.$dialog
+					.confirm({
+						body: 'Вернуть флот?',
+					}, {
+						okText: 'Да',
+						cancelText: 'Нет',
+					})
+					.then(() =>
+					{
+						this.$post('/fleet/back/', {
+							id: this.item['id'],
+						})
+						.then((result) => {
+							this.$store.commit('PAGE_LOAD', result);
+						})
+					})
+			}
 		}
 	}
 </script>

@@ -33,6 +33,6 @@ class ErrorController extends Controller
 
 	public function notFoundAction()
 	{
-
+		$this->setViews('resources', false);
 	}
 }

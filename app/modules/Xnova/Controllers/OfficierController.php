@@ -9,6 +9,7 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Exceptions\ErrorException;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Friday\Core\Lang;
 use Xnova\Controller;
@@ -32,7 +33,9 @@ class OfficierController extends Controller
 			return;
 		
 		if ($this->user->vacation > 0)
-			throw new ErrorException('В режиме отпуска данный раздел недоступен!');
+			throw new PageException('В режиме отпуска данный раздел недоступен!');
+
+		$this->user->loadPlanet();
 
 		Lang::includeLang('officier', 'xnova');
 	}

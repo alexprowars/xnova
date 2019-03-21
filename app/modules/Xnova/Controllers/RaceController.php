@@ -106,8 +106,8 @@ class RaceController extends Controller
 					$update[Vars::getName($oId)] = time() + 86400;
 					
 				$this->user->update($update);
-		
-				$this->response->redirect("tutorial/");
+
+				throw new RedirectException('', 'tutorial/');
 			}
 		}
 

@@ -38,13 +38,6 @@ class TutorialController extends Controller
 		$this->user->loadPlanet();
 	}
 
-	/**
-	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
-	 * @param $stage
-	 * @return void
-	 * @throws PageException
-	 * @throws RedirectException
-	 */
 	public function infoAction ($stage)
 	{
 		$stage = (int) $stage;

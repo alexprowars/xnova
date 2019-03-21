@@ -85,7 +85,8 @@
 			{
 				this.$nextTick(() =>
 				{
-					this.$post('/stat/'+this.form.list+'/', {
+					this.$post('/stat/', {
+						view: this.form.list,
 						type: this.form.type,
 						range: this.form.page
 					})

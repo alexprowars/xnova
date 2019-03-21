@@ -1,5 +1,7 @@
 import { getLocation } from '~/utils/helpers'
 
+let timer;
+
 export default {
 	nuxtServerInit (store, context)
 	{
@@ -44,7 +46,10 @@ export default {
 			})
 		}
 
-		commit('setLoadingStatus', true)
+		clearTimeout(timer)
+		timer = setTimeout(() => {
+			commit('setLoadingStatus', true)
+		}, 1000)
 
 		return this.$get(url).then((data) =>
 		{
@@ -80,6 +85,8 @@ export default {
 				let page = JSON.parse(JSON.stringify(data.page))
 
 				delete data.page
+
+				clearTimeout(timer)
 
 				commit('PAGE_LOAD', data)
 				commit('setLoadingStatus', false)

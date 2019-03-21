@@ -80,10 +80,10 @@ class FleetController extends Controller
 		$action->show($this);
 	}
 
-	public function verbandAction ()
+	public function verbandAction ($id)
 	{
 		$action = new Verband();
-		$action->show($this);
+		$action->show($this, $id);
 	}
 
 	public function quickAction ()

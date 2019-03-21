@@ -34,6 +34,7 @@
 		},
 		watchQuery: true,
 		middleware: ['auth'],
+		layout: 'empty',
 		data () {
 			return {
 				timer: null,

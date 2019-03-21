@@ -3,7 +3,8 @@
 		<div class="block">
 			<div class="title">Переименовать или покинуть планету</div>
 			<div class="content border-0">
-				<router-form :action="'/overview/rename/pl/'+page['planet_id']+'/'">
+				<router-form :action="'/overview/rename/?planet='+page['planet_id']">
+					<input type="hidden" name="action" value="name">
 					<div class="table middle">
 						<div class="row">
 							<div class="col th d-none d-sm-flex">{{ page['galaxy_galaxy'] }}:{{ page['galaxy_system'] }}:{{ page['galaxy_planet'] }}</div>
@@ -16,8 +17,8 @@
 						</div>
 						<div class="row">
 							<div class="col th d-none d-sm-flex">Сменить название</div>
-							<div class="col th"><input type="text" :placeholder="page['planet_name']" name="newname" maxlength="20"></div>
-							<div class="col th"><input type="submit" name="action" value="Сменить название"></div>
+							<div class="col th"><input type="text" :placeholder="page['planet_name']" name="name" maxlength="20"></div>
+							<div class="col th"><button type="submit">Сменить название</button></div>
 						</div>
 					</div>
 				</router-form>
@@ -26,7 +27,8 @@
 		<div v-if="page['type'] !== ''" class="block page-overview-planet-image">
 			<div class="title">Сменить фон планеты</div>
 			<div class="content border-0">
-				<router-form :action="'/overview/rename/pl/'+page['planet_id']+'/'">
+				<router-form :action="'/overview/rename/?planet='+page['planet_id']">
+					<input type="hidden" name="action" value="image">
 					<div class="table">
 						<div class="row">
 							<div v-for="i in page['images'][page['type']]" class="col-6 col-sm-3 col-md-2">
@@ -38,7 +40,7 @@
 						</div>
 						<div v-if="image > 0" class="row">
 							<div class="col th">
-								<input type="submit" name="action" value="Сменить картинку (1 кредит)">
+								<button type="submit">Сменить картинку (1 кредит)</button>
 							</div>
 						</div>
 					</div>

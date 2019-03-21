@@ -83,32 +83,32 @@ class InfoController extends Controller
 	}
 
 	/**
-	 * @param  $BuildID
+	 * @param  $buildId
 	 * @return array
 	 * @throws \Phalcon\Exception
 	 */
-	private function ShowProductionTable ($BuildID)
+	private function ShowProductionTable ($buildId)
 	{
-		$CurrentBuildtLvl = $this->planet->getBuildLevel($BuildID);
+		$CurrentBuildtLvl = $this->planet->getBuildLevel($buildId);
 
 		$ActualNeed = $ActualProd = 0;
 
-		if ($BuildID != 42 && !($BuildID >= 22 && $BuildID <= 24))
+		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24))
 		{
-			$BuildLevelFactor = $this->planet->getBuild($BuildID)['power'];
+			$BuildLevelFactor = $this->planet->getBuild($buildId)['power'];
 			$BuildLevel = ($CurrentBuildtLvl > 0) ? $CurrentBuildtLvl : 1;
 
-			$res = $this->planet->getResourceProductionLevel($BuildID, $BuildLevel, $BuildLevelFactor);
+			$res = $this->planet->getResourceProductionLevel($buildId, $BuildLevel, $BuildLevelFactor);
 
 			$Prod[1] = $res['metal'];
 			$Prod[2] = $res['crystal'];
 			$Prod[3] = $res['deuterium'];
 			$Prod[4] = $res['energy'];
 
-			if ($BuildID != 12)
+			if ($buildId != 12)
 			{
 				$ActualNeed = floor($Prod[4]);
-				$ActualProd = floor($Prod[$BuildID]);
+				$ActualProd = floor($Prod[$buildId]);
 			}
 			else
 			{
@@ -130,19 +130,19 @@ class InfoController extends Controller
 		{
 			$row = [];
 
-			if ($BuildID != 42 && !($BuildID >= 22 && $BuildID <= 24))
+			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24))
 			{
-				$res = $this->planet->getResourceProductionLevel($BuildID, $BuildLevel);
+				$res = $this->planet->getResourceProductionLevel($buildId, $BuildLevel);
 
 				$Prod[1] = $res['metal'];
 				$Prod[2] = $res['crystal'];
 				$Prod[3] = $res['deuterium'];
 				$Prod[4] = $res['energy'];
 
-				if ($BuildID != 12)
+				if ($buildId != 12)
 				{
-					$row['prod'] = floor($Prod[$BuildID]);
-					$row['prod_diff'] = floor($Prod[$BuildID] - $ActualProd);
+					$row['prod'] = floor($Prod[$buildId]);
+					$row['prod_diff'] = floor($Prod[$buildId] - $ActualProd);
 					$row['need'] = floor($Prod[4]);
 					$row['need_diff'] = floor($Prod[4] - $ActualNeed);
 				}
@@ -156,13 +156,13 @@ class InfoController extends Controller
 
 				if ($ProdFirst == 0)
 				{
-					if ($BuildID != 12)
-						$ProdFirst = floor($Prod[$BuildID]);
+					if ($buildId != 12)
+						$ProdFirst = floor($Prod[$buildId]);
 					else
 						$ProdFirst = floor($Prod[4]);
 				}
 			}
-			elseif ($BuildID >= 22 && $BuildID <= 24)
+			elseif ($buildId >= 22 && $buildId <= 24)
 			{
 				$row['range'] = floor(($this->config->game->baseStorageSize + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
 			}

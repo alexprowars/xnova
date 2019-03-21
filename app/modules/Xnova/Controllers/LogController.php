@@ -57,15 +57,15 @@ class LogController extends Controller
 	public function deleteAction ()
 	{
 		if (!$this->auth->isAuthorized())
-			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
+			throw new PageException('Доступ запрещен');
 
 		if (!$this->request->hasQuery('id'))
-			throw new RedirectException("Ошибка удаления.", "/log/");
+			throw new RedirectException('Ошибка удаления.', '/log/');
 
 		$id = (int) $this->request->getQuery('id', 'int', 0);
 
 		if (!$id)
-			throw new RedirectException("Ошибка удаления.", "/log/");
+			throw new RedirectException('Ошибка удаления.', '/log/');
 
 		$log = BattleLog::findFirst([
 			'conditions' => 'id = ?0 AND user_id = ?1',
@@ -73,12 +73,12 @@ class LogController extends Controller
 		]);
 
 		if (!$log)
-			throw new RedirectException("Ошибка удаления.", "/log/");
+			throw new RedirectException('Ошибка удаления.', '/log/');
 
 		if (!$log->delete())
-			throw new RedirectException("Ошибка удаления.", "/log/");
-
-		$this->response->redirect("log/");
+			throw new RedirectException('Ошибка удаления.', '/log/');
+		
+		throw new RedirectException('Отчет удалён', '/log/');
 	}
 
 	/**
@@ -145,7 +145,7 @@ class LogController extends Controller
 				}
 			}
 
-			throw new RedirectException($message, "/log/");
+			throw new RedirectException($message, '/log/');
 		}
 
 		$this->tag->setTitle('Логовница');
