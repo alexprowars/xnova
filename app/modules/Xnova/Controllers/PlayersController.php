@@ -102,6 +102,7 @@ class PlayersController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Информация о игроке');
+		$this->showTopPanel(false);
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
@@ -147,6 +148,7 @@ class PlayersController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Статистика игрока');
+		$this->showTopPanel(false);
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 }

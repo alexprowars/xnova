@@ -114,5 +114,6 @@ class OfficierController extends Controller
 		Request::addData('page', $parse);
 		
 		$this->tag->setTitle('Офицеры');
+		$this->showTopPanel(false);
 	}
 }

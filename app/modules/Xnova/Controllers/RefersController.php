@@ -41,5 +41,6 @@ class RefersController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Рефералы');
+		$this->showTopPanel(false);
 	}
 }

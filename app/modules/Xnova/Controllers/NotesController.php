@@ -32,6 +32,7 @@ class NotesController extends Controller
 			return;
 		
 		Lang::includeLang('notes', 'xnova');
+		$this->showTopPanel(false);
 	}
 
 	public function newAction ()

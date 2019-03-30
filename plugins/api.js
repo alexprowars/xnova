@@ -1,3 +1,5 @@
+import qs from 'qs';
+
 export default ({ store, $axios, error }, inject) =>
 {
 	$axios.setHeader('X-Requested-With', 'XMLHttpRequest');
@@ -37,10 +39,19 @@ export default ({ store, $axios, error }, inject) =>
 
 		data = data || {}
 
-		if (data.toString().indexOf('FormData') < 0)
-			data = objectToFormData(data)
+		if (!process.server)
+		{
+			if (data.toString().indexOf('FormData') < 0)
+				data = objectToFormData(data)
 
-		headers['Content-Type'] = 'multipart/form-data'
+			headers['Content-Type'] = 'multipart/form-data'
+		}
+		else
+		{
+			headers['Content-Type'] = 'application/x-www-form-urlencoded'
+
+			data = qs.stringify(data);
+		}
 
 		return $axios({
 			url: url,

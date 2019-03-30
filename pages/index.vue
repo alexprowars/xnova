@@ -68,6 +68,9 @@
 		components: {
 			AuthForm
 		},
+		asyncDatadd ({ store, route }) {
+			return store.dispatch('loadPage', route.fullPath)
+		},
 		methods: {
 			showRegistration ()
 			{
@@ -91,7 +94,6 @@
 
 				this.$get('/remind/').then((data) =>
 				{
-					console.log(data.page);
 					this.$modal.show(RemindForm, {
 						popup: data.page
 					}, {

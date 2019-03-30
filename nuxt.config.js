@@ -23,8 +23,7 @@ module.exports = {
 		'vuejs-dialog/dist/vuejs-dialog.min.css',
 	],
 	transition: {
-		name: 'page-switch',
-		mode: 'out-in'
+		css: false
 	},
 	plugins: [
 		'~/plugins/api.js',

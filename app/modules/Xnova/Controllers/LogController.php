@@ -49,6 +49,7 @@ class LogController extends Controller
 		]);
 
 		$this->tag->setTitle('Логовница');
+		$this->showTopPanel(false);
 	}
 
 	/**
@@ -149,6 +150,7 @@ class LogController extends Controller
 		}
 
 		$this->tag->setTitle('Логовница');
+		$this->showTopPanel(false);
 	}
 
 	/**

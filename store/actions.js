@@ -1,4 +1,5 @@
 import { getLocation } from '~/utils/helpers'
+const { parse } = require('querystring');
 
 let timer;
 
@@ -10,23 +11,64 @@ export default {
 		if (headers.cookie === undefined)
 			headers.cookie = '';
 
-		return context.app.$get(context.route.fullPath, {
-			initial: 'Y'
-		})
-		.then((data) =>
+		if (context.req.method === 'POST')
 		{
-			for (let key in data)
+			let body = new Promise((resolve) =>
 			{
-				if (data.hasOwnProperty(key))
-					store.state[key] = data[key];
-			}
+				let body = '';
 
-			if (data.route.controller === 'error')
-				throw new Error('Страница не найдена')
-		})
-		.catch((e) => {
-			return context.error(e);
-		})
+				context.req.on('data', chunk => {
+					body += chunk.toString();
+
+					if (body.length > 1e6)
+						context.req.connection.destroy();
+				});
+
+				context.req.on('end', async () => {
+					resolve(parse(body));
+				});
+			});
+
+			return body.then((body) =>
+			{
+				body['initial'] = 'Y';
+
+				return context.app.$post(context.route.fullPath, body).then((data) =>
+				{
+					for (let key in data)
+					{
+						if (data.hasOwnProperty(key))
+							store.state[key] = data[key];
+					}
+
+					if (data.route.controller === 'error')
+						throw new Error('Страница не найдена')
+				})
+				.catch((e) => {
+					return context.error(e);
+				})
+			});
+		}
+		else
+		{
+			return context.app.$get(context.route.fullPath, {
+				initial: 'Y'
+			})
+			.then((data) =>
+			{
+				for (let key in data)
+				{
+					if (data.hasOwnProperty(key))
+						store.state[key] = data[key];
+				}
+
+				if (data.route.controller === 'error')
+					throw new Error('Страница не найдена')
+			})
+			.catch((e) => {
+				return context.error(e);
+			})
+		}
 	},
 	loadPage ({ state, commit }, url)
 	{
@@ -50,6 +92,11 @@ export default {
 		timer = setTimeout(() => {
 			commit('setLoadingStatus', true)
 		}, 1000)
+
+		if (this.app.context.req.method === 'POST')
+			return;
+
+		console.log(this.app.context.req.method);
 
 		return this.$get(url).then((data) =>
 		{

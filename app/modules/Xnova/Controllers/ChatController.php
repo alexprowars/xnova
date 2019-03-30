@@ -30,5 +30,6 @@ class ChatController extends Controller
 		Request::addData('page', ['loaded' => true]);
 
 		$this->tag->setTitle('Межгалактический чат');
+		$this->showTopPanel(false);
 	}
 }

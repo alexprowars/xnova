@@ -43,6 +43,7 @@ class AllianceController extends Controller
 			return;
 
 		Lang::includeLang('alliance', 'xnova');
+		$this->showTopPanel(false);
 	}
 
 	private function parseInfo ($allyId)

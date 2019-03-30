@@ -1,5 +1,5 @@
 <template>
-	<div class="page-overview">
+	<div v-if="page && $store.state['user']" class="page-overview">
 		<div v-if="page['bonus']" class="block page-overview-bonus">
 			<div class="title text-center">
 				Ежедневный бонус
@@ -22,7 +22,7 @@
 					<div class="col-12 col-sm-6">
 						{{ page['planet']['type'] }} "{{ page['planet']['name'] }}"
 						<nuxt-link :to="'/galaxy/?galaxy='+page['planet']['galaxy']+'&system='+page['planet']['system']">[{{ page['planet']['galaxy'] }}:{{ page['planet']['system'] }}:{{ page['planet']['planet'] }}]</nuxt-link>
-						<nuxt-link :to="'/overview/rename/'" title="Редактирование планеты">(изменить)</nuxt-link>
+						<nuxt-link to="/overview/rename/" title="Редактирование планеты">(изменить)</nuxt-link>
 					</div>
 					<div class="separator d-sm-none"></div>
 					<div class="col-12 col-sm-6">
@@ -66,24 +66,24 @@
 
 								<div v-if="page['noob']">
 									<div class="separator"></div>
-									<img :src="'/images/warning.png'" align="absmiddle" alt="">
+									<img src="/images/warning.png" align="absmiddle" alt="">
 									<span style="font-weight:normal;"><span class="positive">Активен режим ускорения новичков.</span><br>Режим будет деактивирован после достижения 1000 очков.</span>
 								</div>
 							</div>
 							<div class="col-12 page-overview-officiers">
 								<div v-for="item in page['officiers']" class="page-overview-officiers-item">
 									<nuxt-link to="/officier/">
-										<v-popover>
-											<template slot="popover">
-												{{ item['name'] }}
-												<br>
-												<span v-if="item['time'] > $store.getters.getServerTime()">
-													Нанят до <font color="lime">{{ item['time']|date('d.m.Y H:i') }}</font>
-												</span>
-												<font v-else="" color="lime">Не нанят</font>
+										<Popper>
+											{{ item['name'] }}
+											<br>
+											<span v-if="item['time'] > $store.getters.getServerTime()">
+												Нанят до <font color="lime">{{ item['time'] | date('d.m.Y H:i') }}</font>
+											</span>
+											<font v-else="" color="lime">Не нанят</font>
+											<template slot="reference">
+												<span class="officier" :class="['of'+item['id']+(item['time'] > $store.getters.getServerTime() ? '_ikon' : '')]"></span>
 											</template>
-											<span class="officier" :class="['of'+item['id']+(item['time'] > $store.getters.getServerTime() ? '_ikon' : '')]"></span>
-										</v-popover>
+										</Popper>
 									</nuxt-link>
 								</div>
 							</div>
@@ -97,7 +97,7 @@
 							</div>
 							<div class="row">
 								<div class="col-12 th">
-									{{ page['planet']['diameter']|number }} км
+									{{ page['planet']['diameter'] | number }} км
 								</div>
 							</div>
 							<div class="row">
@@ -127,10 +127,10 @@
 							<div class="row">
 								<div class="col-12 th doubleth middle">
 									<div>
-										<img :src="'/images/skin/s_metal.png'" alt="" align="absmiddle" v-tooltip="'Металл'">
+										<img src="/images/skin/s_metal.png" alt="" align="absmiddle" v-tooltip="'Металл'">
 										{{ page['debris']['metal']|number }}
 										/
-										<img :src="'/images/skin/s_crystal.png'" alt="" align="absmiddle" v-tooltip="'Кристалл'">
+										<img src="/images/skin/s_crystal.png" alt="" align="absmiddle" v-tooltip="'Кристалл'">
 										{{ page['debris']['crystal']|number }}
 									</div>
 								</div>
@@ -174,31 +174,31 @@
 							<div class="row">
 								<div class="th col-sm-5 col-6">Постройки:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ page['points']['build']|number }}</span>
+									<span class="positive">{{ page['points']['build'] | number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Флот:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ page['points']['fleet']|number }}</span>
+									<span class="positive">{{ page['points']['fleet'] | number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Оборона:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ page['points']['defs']|number }}</span>
+									<span class="positive">{{ page['points']['defs'] | number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Наука:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ page['points']['tech']|number }}</span>
+									<span class="positive">{{ page['points']['tech'] | number }}</span>
 								</div>
 							</div>
 							<div class="row">
 								<div class="th col-sm-5 col-6">Всего:</div>
 								<div class="th col-sm-7 col-6">
-									<span class="positive">{{ page['points']['total']|number }}</span>
+									<span class="positive">{{ page['points']['total'] | number }}</span>
 								</div>
 							</div>
 							<div class="row">
@@ -221,7 +221,7 @@
 							</div>
 							<div class="row">
 								<div class="th col-12">
-									{{ page['lvl']['mine']['p']|number }} / {{ page['lvl']['mine']['u']|number }} exp
+									{{ page['lvl']['mine']['p'] | number }} / {{ page['lvl']['mine']['u'] | number }} exp
 								</div>
 							</div>
 							<div class="row">
@@ -234,7 +234,7 @@
 							</div>
 							<div class="row">
 								<div class="th col-12">
-									{{ page['lvl']['raid']['p']|number }} / {{ page['lvl']['raid']['u']|number }} exp
+									{{ page['lvl']['raid']['p'] | number }} / {{ page['lvl']['raid']['u'] | number }} exp
 								</div>
 							</div>
 						</div>
@@ -260,7 +260,7 @@
 					<th class="text-left">
 						<div style="overflow-y: auto;overflow-x: hidden;">
 							<div v-for="item in page['chat']" class="activity">
-								<div class="date1" style="display: inline-block;padding-right:5px;">{{ item.time|date('H:i') }}</div>
+								<div class="date1" style="display: inline-block;padding-right:5px;">{{ item.time | date('H:i') }}</div>
 								<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
 							</div>
 						</div>
@@ -287,7 +287,7 @@
 		components: {
 			Fleets,
 			Clock,
-			QueueRow
+			QueueRow,
 		},
 		methods: {
 			sendRecycle () {

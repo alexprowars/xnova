@@ -23,10 +23,10 @@ export default ({ store }) =>
 	{
 		value += (new Date()).getTimezoneOffset() * 60;
 
-		if (typeof store.state['stats']['timezone'] !== 'undefined')
+		if (store.state['stats'] && store.state['stats']['timezone'])
 			value += store.state['stats']['timezone'];
 
-		if (typeof store.state['user']['timezone'] !== 'undefined')
+		if (store.state['user'] && store.state['user']['timezone'])
 			value += store.state['user']['timezone'] * 1800;
 
 		return date(format, value);

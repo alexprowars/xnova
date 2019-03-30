@@ -6,10 +6,10 @@
 					<a @click="loadMore">загрузить прошлые сообщения</a>
 				</div>
 				<div v-for="item in messages" class="page-chat-messages-row text-left">
-					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" v-on:click="toPrivate(item['user'])">{{ item['time']|date('H:i') }}</span>
-					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" v-on:click="toPlayer(item['user'])">{{ item['user'] }}</span>:
+					<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" @click="toPrivate(item['user'])">{{ item['time']|date('H:i') }}</span>
+					<span v-if="item['my']" class="negative">{{ item['user'] }}</span><span v-else="" class="to" @click="toPlayer(item['user'])">{{ item['user'] }}</span>:
 					<span v-if="item['to'].length" :class="[item['private'] ? 'private' : 'player']">
-						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" v-on:click.prevent="toPlayer(u)">{{ u }}</a><a v-else="" v-on:click.prevent="toPrivate(u)">{{ u }}</a></span>]
+						{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['to']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" @click.prevent="toPlayer(u)">{{ u }}</a><a v-else="" @click.prevent="toPrivate(u)">{{ u }}</a></span>]
 					</span>
 					<span class="page-chat-row-message" v-html="item['text']"></span>
 				</div>
@@ -18,24 +18,24 @@
 		<div class="col-12 th">
 			<div class="float-right">
 				<div class="editor-component-toolbar d-inline-block">
-					<button type="button" class="buttons" title="Вставить ссылку" v-on:click="addTag('[url]|[/url]', 1)">
+					<button type="button" class="buttons" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
 						<span class="sprite bb_world_link"></span>
 					</button>
-					<button type="button" class="buttons" title="Вставить картинку" v-on:click="addTag('[img]|[/img]', 3)">
+					<button type="button" class="buttons" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
 						<span class="sprite bb_picture_add"></span>
 					</button>
-					<button type="button" class="buttons" title="Смайлы" v-on:click="smiles = !smiles">
+					<button type="button" class="buttons" title="Смайлы" @click="smiles = !smiles">
 						<span class="sprite bb_emoticon_grin"></span>
 					</button>
 				</div>
 				<div v-if="smiles" class="smiles">
-					<img v-for="smile in smilesList" :src="'/images/smile/'+smile+'.gif'" :alt="smile" v-on:click="addSmile(smile)">
+					<img v-for="smile in smilesList" :src="'/images/smile/'+smile+'.gif'" :alt="smile" @click="addSmile(smile)">
 				</div>
 			</div>
-			<input ref="text" class="page-chat-message" type="text" v-model="message" v-on:keypress.13.prevent="sendMessage" maxlength="750">
+			<input ref="text" class="page-chat-message" type="text" v-model="message" @keypress.13.prevent="sendMessage" maxlength="750">
 
-			<input type="button" value="Очистить" v-on:click.prevent="clear">
-			<input type="button" value="Отправить" v-on:click.prevent="sendMessage">
+			<input type="button" value="Очистить" @click.prevent="clear">
+			<input type="button" value="Отправить" @click.prevent="sendMessage">
 		</div>
 	</div>
 </template>

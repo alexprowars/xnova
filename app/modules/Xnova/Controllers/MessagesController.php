@@ -284,5 +284,6 @@ class MessagesController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Сообщения');
+		$this->showTopPanel(false);
 	}
 }

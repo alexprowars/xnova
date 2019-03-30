@@ -36,5 +36,6 @@ class ContentController extends Controller
 		]);
 
 		$this->tag->setTitle($content['title']);
+		$this->showTopPanel(false);
 	}
 }

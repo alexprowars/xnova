@@ -45,12 +45,12 @@
 							<span v-else>{{ planets }} {{ planets | morph('заселённая планета', 'заселённые планеты', 'заселённых планет') }}</span>
 						</td>
 						<td class="c" colspan=3>
-							<v-popover>
-								<template slot="popover">
-									<GalaxyLegend/>
+							<Popper>
+								<GalaxyLegend/>
+								<template slot="reference">
+									Легенда
 								</template>
-								Легенда
-							</v-popover>
+							</Popper>
 						</td>
 					</tr>
 					<tr>

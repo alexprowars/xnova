@@ -32,6 +32,7 @@ class SupportController extends Controller
 		parent::initialize();
 
 		$this->tag->setTitle('Техподдержка');
+		$this->showTopPanel(false);
 	}
 
 	public function addAction ()

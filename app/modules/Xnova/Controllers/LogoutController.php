@@ -9,7 +9,9 @@ namespace Xnova\Controllers;
  */
 
 use Xnova\Controller;
+use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Request;
 
 /**
  * @RoutePrefix("/logout")
@@ -25,6 +27,11 @@ class LogoutController extends Controller
 		if ($this->auth->isAuthorized())
 			$this->auth->remove();
 
-		throw new RedirectException('Вы вышли из игры', "/");
+		Request::addData('user', null);
+
+		$this->showTopPanel(false);
+		$this->showLeftPanel(false);
+
+		throw new PageException('Вы вышли из игры', "/");
 	}
 }

@@ -11,14 +11,14 @@
 			</div>
 		</div>
 		<div class="col-3 col-sm-1 th">
-			<v-popover>
-				<template slot="popover">
-					<div v-for="(fleetData, fleetId) in item.units">
-						{{ $t('TECH.'+fleetId) }}: {{ fleetData['count'] }}
-					</div>
+			<Popper>
+				<div v-for="(fleetData, fleetId) in item.units">
+					{{ $t('TECH.'+fleetId) }}: {{ fleetData['count'] }}
+				</div>
+				<template slot="reference">
+					{{ item['amount'] | number }}
 				</template>
-				{{ item['amount']|number }}
-			</v-popover>
+			</Popper>
 		</div>
 		<div class="col-4 col-sm-3 th">
 			<div>

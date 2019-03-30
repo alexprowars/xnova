@@ -296,6 +296,7 @@ class OverviewController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Покинуть колонию');
+		$this->showTopPanel(false);
 	}
 
 	public function renameAction ()
@@ -374,6 +375,7 @@ class OverviewController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Переименовать планету');
+		$this->showTopPanel(false);
 	}
 
 	public function bonusAction ()

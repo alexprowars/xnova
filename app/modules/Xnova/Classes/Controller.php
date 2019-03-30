@@ -87,6 +87,7 @@ class Controller extends PhalconController
 		Request::addData('redirect', '');
 		Request::addData('messages', []);
 		Request::addData('page', []);
+		Request::addData('error', false);
 
 		if ($this->auth->isAuthorized())
 		{
@@ -133,7 +134,6 @@ class Controller extends PhalconController
 				Request::addData('popup', true);
 
 			Request::addData('page', null);
-			Request::addData('error', false);
 
 			$this->user->getAllyInfo();
 
@@ -168,8 +168,6 @@ class Controller extends PhalconController
 
 	public function afterExecuteRoute ()
 	{
-		$this->view->setVar('controller', $this->dispatcher->getControllerName().($this->dispatcher->getControllerName() == 'buildings' ? $this->dispatcher->getActionName() : ''));
-
 		if ($this->auth->isAuthorized())
 		{
 			$messages = [];

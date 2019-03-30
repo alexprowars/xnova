@@ -1,15 +1,15 @@
 <template>
 	<div class="resource-panel-item">
 		<popup-link :to="'/info/'+building[type]+'/'" class="resource-panel-item-icon">
-			<v-popover>
-				<template slot="popover">
-					<no-ssr>
-						<resource-tooltip :resource="resource" :type="type"></resource-tooltip>
-					</no-ssr>
+			<Popper>
+				<no-ssr>
+					<resource-tooltip :resource="resource" :type="type"></resource-tooltip>
+				</no-ssr>
+				<template slot="reference">
+					<span class="sprite" :class="['skin_'+type]"></span>
+					<span class="sprite" :class="['skin_s_'+type]"></span>
 				</template>
-				<span class="sprite" :class="['skin_'+type]"></span>
-				<span class="sprite" :class="['skin_s_'+type]"></span>
-			</v-popover>
+			</Popper>
 		</popup-link>
 		<div class="neutral">{{ $t('RESOURCES.'+type+'') }}</div>
 		<div title="Количество ресурса на планете">

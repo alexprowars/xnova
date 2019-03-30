@@ -45,5 +45,6 @@ class HallController extends Controller
 		Request::addData('page', $parse);
 
 		$this->tag->setTitle('Зал славы');
+		$this->showTopPanel(false);
 	}
 }

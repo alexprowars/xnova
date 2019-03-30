@@ -44,7 +44,7 @@
 				display: inline-block;
 			}
 
-			a + a, a + .v-popover, .v-popover + a {
+			a + a, a + span, span + a {
 				margin-left: 4px;
 			}
 		}

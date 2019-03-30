@@ -74,6 +74,7 @@ class BuddyController extends Controller
 		]);
 
 		$this->tag->setTitle('Друзья');
+		$this->showTopPanel(false);
 	}
 
 	public function requestsAction ($isMy = false)
