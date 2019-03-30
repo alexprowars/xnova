@@ -10,6 +10,7 @@ namespace Xnova\Auth\Plugins;
 
 use Friday\Core\Options;
 use Phalcon\Mvc\User\Component;
+use Xnova\Exceptions\RedirectException;
 
 class Ulogin extends Component implements AuthInterface
 {
@@ -71,10 +72,7 @@ class Ulogin extends Component implements AuthInterface
 			$this->auth->authorize($Row['id'], (time() + 2419200));
 		}
 
-		$this->response->redirect('overview/');
-		$this->response->send();
-
-		die();
+		throw new RedirectException('', '/overview/');
 	}
 
 	public function register ()

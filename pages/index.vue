@@ -48,7 +48,7 @@
 				<nuxt-link to="/banned/">Блокировки</nuxt-link>  |
 				<nuxt-link to="/contacts/">Администрация</nuxt-link>
 			</div>
-			<div class="copy">
+			<div v-if="$store.state['stats']" class="copy">
 				<a @click.prevent title="Игроков в сети" style="color:green">{{ $store.state['stats']['online'] }}</a> / <a @click.prevent title="Всего игроков" style="color:yellow">{{ $store.state['stats']['users'] }}</a>&nbsp;&nbsp;&nbsp;&copy; {{ (new Date).getFullYear() }} XNOVA.SU
 			</div>
 		</div>
@@ -68,7 +68,7 @@
 		components: {
 			AuthForm
 		},
-		asyncDatadd ({ store, route }) {
+		asyncData ({ store, route }) {
 			return store.dispatch('loadPage', route.fullPath)
 		},
 		methods: {

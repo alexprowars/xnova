@@ -3,11 +3,16 @@
 </template>
 
 <script>
-	import parser from '../../utils/parser.js'
+	import parser from '~/utils/parser'
 
 	export default {
 		name: "text-viewer",
-		props: ['text'],
+		props: {
+			text: {
+				type: String,
+				default: '',
+			}
+		},
 		computed: {
 			parsed () {
 				return parser.parse(this.text);

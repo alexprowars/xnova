@@ -20,7 +20,9 @@
 	export default {
 		name: "planets-list-row",
 		props: {
-			item: Object
+			item: {
+				type: Object
+			}
 		},
 		methods:
 		{

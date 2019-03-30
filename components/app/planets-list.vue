@@ -21,14 +21,19 @@
 
 	export default {
 		name: "planets-list",
-		props: ['active'],
-		computed: {
-			items () {
-				return this.$store.state.user.planets;
-			}
-		},
 		components: {
 			PlanetRow
+		},
+		props: {
+			active: {
+				type: Boolean,
+				default: true,
+			}
+		},
+		computed: {
+			items () {
+				return this.$store.state.user.planets || [];
+			}
 		},
 	}
 </script>

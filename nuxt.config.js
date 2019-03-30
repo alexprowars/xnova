@@ -44,6 +44,7 @@ module.exports = {
 		base: '/',
 		middleware: 'router',
 		prefetchLinks: false,
+		linkExactActiveClass: 'active',
 	},
 	loading: false,
 	build: {

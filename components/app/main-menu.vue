@@ -21,7 +21,15 @@
 
 	export default {
 		name: "main-menu",
-		props: ['active'],
+		components: {
+			MainMenuItem
+		},
+		props: {
+			active: {
+				type: Boolean,
+				default: true
+			}
+		},
 		data () {
 			return {
 				items: [
@@ -45,8 +53,5 @@
 				]
 			}
 		},
-		components: {
-			MainMenuItem
-		}
 	}
 </script>

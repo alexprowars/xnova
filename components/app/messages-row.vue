@@ -5,6 +5,10 @@
 <script>
 	export default {
 		name: "messages-row",
-		props: ['item']
+		props: {
+			item: {
+				type: Object
+			}
+		}
 	}
 </script>

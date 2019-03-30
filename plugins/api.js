@@ -1,6 +1,6 @@
 import qs from 'qs';
 
-export default ({ store, $axios, error }, inject) =>
+export default ({ res, store, $axios, error }, inject) =>
 {
 	$axios.setHeader('X-Requested-With', 'XMLHttpRequest');
 	$axios.defaults.timeout = 15000;
@@ -61,6 +61,9 @@ export default ({ store, $axios, error }, inject) =>
 		})
 		.then(result =>
 		{
+			if (process.server && result.headers['set-cookie'])
+				res.setHeader('Set-Cookie', result.headers['set-cookie'])
+
 			if (typeof result.data === 'string')
 				throw new Error(result.data);
 

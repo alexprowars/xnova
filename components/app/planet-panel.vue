@@ -116,15 +116,14 @@
 
 	export default {
 		name: "planet-panel",
-		data ()
-		{
+		components: {
+			PanelResource
+		},
+		data () {
 			return {
 				updated: 0,
 				timer: null
 			}
-		},
-		components: {
-			PanelResource
 		},
 		computed: {
 			planet () {

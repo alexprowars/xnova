@@ -11,11 +11,11 @@
 				</tr>
 				<tr>
 					<td>Производство:</td>
-					<td align="right">{{ resource['production']|number }}</td>
+					<td align="right">{{ resource['production'] | number }}</td>
 				</tr>
 				<tr>
 					<td>Вместимость:</td>
-					<td align="right">{{ resource['max']|number }}</td>
+					<td align="right">{{ resource['max'] | number }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -25,6 +25,14 @@
 <script>
 	export default {
 		name: "planet-panel-resource-tooltip",
-		props: ['resource', 'type']
+		props: {
+			resource: {
+				type: Object
+			},
+			type: {
+				type: String,
+				default: ''
+			}
+		},
 	}
 </script>

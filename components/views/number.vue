@@ -5,7 +5,12 @@
 <script>
 	export default {
 		name: "input-zero",
-		props: ['value'],
+		props: {
+			value: {
+				type: Number,
+				default: 0,
+			}
+		},
 		data() {
 			return {
 				formatValue: parseInt(this.value) === 0 ? '' : this.value

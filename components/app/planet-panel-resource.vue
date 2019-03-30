@@ -14,7 +14,7 @@
 		<div class="neutral">{{ $t('RESOURCES.'+type+'') }}</div>
 		<div title="Количество ресурса на планете">
 			<span :class="[resource.max > resource.current ? 'positive' : 'negative']">
-				{{ resource.current|number }}
+				{{ resource.current | number }}
 			</span>
 		</div>
 	</div>
@@ -25,9 +25,17 @@
 
 	export default {
 		name: "planet-panel-resource",
-		props: ['resource', 'type'],
 		components: {
 			ResourceTooltip
+		},
+		props: {
+			resource: {
+				type: Object
+			},
+			type: {
+				type: String,
+				default: ''
+			}
 		},
 		data () {
 			return {

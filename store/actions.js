@@ -35,13 +35,16 @@ export default {
 
 				return context.app.$post(context.route.fullPath, body).then((data) =>
 				{
+					if (data.redirect && data.redirect.length > 0)
+						return context.redirect(data.redirect)
+
 					for (let key in data)
 					{
 						if (data.hasOwnProperty(key))
 							store.state[key] = data[key];
 					}
 
-					if (data.route.controller === 'error')
+					if (data.route && data.route.controller === 'error')
 						throw new Error('Страница не найдена')
 				})
 				.catch((e) => {
@@ -56,13 +59,16 @@ export default {
 			})
 			.then((data) =>
 			{
+				if (data.redirect && data.redirect.length > 0)
+					return context.redirect(data.redirect)
+
 				for (let key in data)
 				{
 					if (data.hasOwnProperty(key))
 						store.state[key] = data[key];
 				}
 
-				if (data.route.controller === 'error')
+				if (data.route && data.route.controller === 'error')
 					throw new Error('Страница не найдена')
 			})
 			.catch((e) => {
@@ -93,10 +99,8 @@ export default {
 			commit('setLoadingStatus', true)
 		}, 1000)
 
-		if (this.app.context.req.method === 'POST')
+		if (this.app.context.req && this.app.context.req.method === 'POST')
 			return;
-
-		console.log(this.app.context.req.method);
 
 		return this.$get(url).then((data) =>
 		{

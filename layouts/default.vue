@@ -1,11 +1,11 @@
 <template>
-	<div id="application" :class="['set_'+$store.state.route.controller, (!loader ? 'preload' : '')]" v-touch:swipe.left.right="swipe">
-		<AppHeader v-if="$store.state['view']['header']"/>
+	<div ref="application" class="application" :class="['set_'+controller, (!loader ? 'preload' : '')]" v-touch:swipe.left.right="swipe">
+		<AppHeader v-if="views && views['header']"/>
 		<main>
-			<MainMenu v-if="$store.state['view']['menu']" :active="sidebar === 'menu'" @toggle="sidebarToggle('menu')"/>
-			<PlanetsList v-if="$store.state['view']['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')"/>
+			<MainMenu v-if="views['menu']" :active="sidebar === 'menu'" @toggle="sidebarToggle('menu')"/>
+			<PlanetsList v-if="views['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')"/>
 			<div class="main-content" v-touch:tap="tap">
-				<PlanetPanel v-if="$store.state['view']['resources']"/>
+				<PlanetPanel v-if="views['resources']"/>
 				<div class="main-content-row">
 					<error-message v-if="error" :data="error"/>
 					<Nuxt/>
@@ -14,12 +14,12 @@
 		</main>
 
 		<no-ssr>
-			<chat v-if="$store.getters.isAuthorized()" :visible="$store.state.route.controller !== 'chat' && $store.state['view']['menu'] && $store.state.view.chat"></chat>
+			<chat v-if="$store.getters.isAuthorized()" :visible="controller !== 'chat' && views['menu'] && views['chat']"/>
 		</no-ssr>
 
-		<AppFooter v-if="$store.state['view']['header']"/>
+		<AppFooter v-if="views && views['header']"/>
 
-		<div id="ajaxLoader" :class="{active: $store.state.loading}"></div>
+		<div class="loader" :class="{active: $store.state.loading}"></div>
 
 		<no-ssr>
 			<modals-container/>
@@ -47,11 +47,14 @@
 			PlanetPanel,
 		},
 		computed: {
+			controller () {
+				return (this.$store.state.route && this.$store.state.route.controller) || 'index'
+			},
 			error () {
-				return this.$store.state.error;
+				return this.$store.state.error || false;
 			},
 			redirect () {
-				return this.$store.state.redirect;
+				return this.$store.state.redirect || '';
 			},
 			messages ()
 			{
@@ -92,22 +95,21 @@
 			return {
 				sidebar: '',
 				loader: false,
-				delayPanelTransition: false,
 			}
 		},
 		head () {
 			return {
-				title: this.$store.state.title,
+				title: this.$store.state.title || '',
 				titleTemplate: '%s | Звездная Империя',
 				htmlAttrs: {
 					lang: 'ru',
 				},
 				bodyAttrs: {
-					page: this.$store.state.route.controller,
+					page: this.controller,
 					class: this.$store.state.isSocial ? 'iframe' : 'window'
 				},
 				meta: [
-					{ hid: 'og:title', property: 'og:title', content: this.$store.state.title }
+					{ hid: 'og:title', property: 'og:title', content: this.$store.state.title || '' }
 				]
 			}
 		},
@@ -129,17 +131,6 @@
 					});
 				})
 			},
-			'views.resources' (val, old)
-			{
-		    	if (val === true && old === false)
-				{
-					this.delayPanelTransition = true;
-
-					setTimeout(() => {
-						this.delayPanelTransition = false;
-					}, 250);
-				}
-			}
 		},
 		methods: {
 			sidebarToggle (type)
@@ -185,7 +176,7 @@
 							{
 								let height = 0;
 
-								$('#application .main-content > div').each(function() {
+								$(this.$refs['application']).find('.main-content > div').each(function() {
 									height += $(this).height();
 								});
 

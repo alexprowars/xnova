@@ -36,7 +36,12 @@
 
 	export default {
 		name: "chat",
-		props: ['visible'],
+		props: {
+			visible: {
+				type: Boolean,
+				default: false,
+			}
+		},
 		data () {
 			return {
 				mobile: this.$store.getters.isMobile || !this.visible,

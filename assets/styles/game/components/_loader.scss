@@ -1,4 +1,4 @@
-#ajaxLoader {
+.loader {
 	background: url('/images/loader-cat.svg') no-repeat;
 	width: 100px;
 	height: 100px;
@@ -8,9 +8,9 @@
 	opacity: 0;
 	transition: opacity 0.3s;
 	visibility: hidden;
-}
 
-#ajaxLoader.active {
-	visibility: visible;
-	opacity: 1;
+	.active {
+		visibility: visible;
+		opacity: 1;
+	}
 }

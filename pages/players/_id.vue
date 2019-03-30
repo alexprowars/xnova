@@ -1,5 +1,5 @@
 <template>
-	<div class="page-players">
+	<div v-if="page" class="page-players">
 		<div class="page-players-main block">
 			<div class="title">Информация об игроке</div>
 			<div class="content border-0">
