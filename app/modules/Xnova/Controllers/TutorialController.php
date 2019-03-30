@@ -22,6 +22,8 @@ use Xnova\Vars;
 /**
  * @RoutePrefix("/tutorial")
  * @Route("/")
+ * @Route("/{action}/")
+ * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
 class TutorialController extends Controller
@@ -40,9 +42,12 @@ class TutorialController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function infoAction ($stage)
+	/**
+	 * @Route("/info/{stage:[0-9]+}{params:(/.*)*}")
+	 */
+	public function infoAction ()
 	{
-		$stage = (int) $stage;
+		$stage = (int) $this->dispatcher->getParam('stage');
 
 		if ($stage <= 0)
 			throw new PageException('Не выбрано задание', '/tutorial/');

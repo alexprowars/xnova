@@ -25,11 +25,14 @@ use Xnova\User;
  */
 class PlayersController extends Controller
 {
-	public function indexAction ($userId)
+	/**
+	 * @Route("/{user:[0-9]+}{params:(/.*)*}")
+	 */
+	public function indexAction ()
 	{
 		$parse = [];
 		
-		$userId = (int) $userId;
+		$userId = (int) $this->dispatcher->getParam('user');
 
 		if (!$userId)
 			throw new PageException('Профиль не найден');

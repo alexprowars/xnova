@@ -17,7 +17,7 @@
 							<h3>Задачи:</h3>
 							<ul>
 								<li v-for="task in page['task']">
-									<span>{{ task[0] }}</span>
+									<span v-html="task[0]"></span>
 									<span>
 										<img :src="'/images/'+(task[1] ? 'check' : 'none')+'.gif'" height="11" width="12" alt="">
 									</span>

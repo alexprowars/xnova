@@ -11,6 +11,7 @@ namespace Xnova;
 use Friday\Core\Lang;
 use Friday\Core\Options;
 use Phalcon\Mvc\Controller as PhalconController;
+use Xnova\Exceptions\RedirectException;
 
 /**
  * Class ControllerBase
@@ -145,13 +146,9 @@ class Controller extends PhalconController
 			$controller = $this->dispatcher->getControllerName();
 
 			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout']))
-			{
-				$this->response->redirect('start/');
+				throw new RedirectException('', '/start/');
 
-				throw new \Exception(serialize(['controller' => 'start', 'action' => 'index']), 10);
-			}
-
-			if ($this->request->has('initial'))
+			if ($this->request->has('initial') && $this->user->planet_id > 0)
 				$this->user->loadPlanet();
 		}
 		else

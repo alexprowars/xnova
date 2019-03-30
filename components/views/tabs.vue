@@ -16,10 +16,10 @@
 		data: () => ({
 			tabs: [],
 		}),
-		created() {
+		created () {
 			this.tabs = this.$children;
 		},
-		mounted()
+		mounted ()
 		{
 			if (this.tabs.length)
 				this.selectTab(this.tabs[0].hash);
