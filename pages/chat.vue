@@ -52,6 +52,7 @@
 		watchQuery: true,
 		middleware: ['auth'],
 		data () {
+			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			// noinspection RegExpRedundantEscape
 			return {
 				smiles: false,
@@ -101,7 +102,7 @@
 		},
 		watch: {
 			message () {
-				$(this.$refs['text']).focus();
+				this.$refs['text'].focus();
 			}
 		},
 		methods: {
@@ -262,7 +263,7 @@
 
 					this.messages.reverse();
 
-					$(this.$refs['chatbox']).scrollTop(0);
+					this.$refs['chatbox'].scrollTop = 0;
 				});
 			}
 		},
@@ -277,8 +278,12 @@
 
 			window.addEventListener('resize', this.scrollToBottom, true);
 		},
-		destroyed () {
-			window.removeEventListener('resize', this.scrollToBottom)
+		beforeDestroy ()
+		{
+			window.removeEventListener('resize', this.scrollToBottom);
+
+			this.socket.close();
+			this.socket = null;
 		}
 	}
 </script>

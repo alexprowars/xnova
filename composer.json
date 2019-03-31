@@ -15,6 +15,7 @@
 		"ext-curl": "*",
 		"ext-pdo": "*",
 		"ext-iconv": "*",
-		"ext-apc": "*"
+		"ext-apc": "*",
+		"ext-gd": "*"
 	}
 }

@@ -12,7 +12,7 @@
 							<img :src="'/images/'+(quest['FINISH'] ? 'check' : 'none')+'.gif'" height="11" width="12" alt="">
 						</div>
 						<div class="col th text-left">
-							<nuxt-link v-if="quest['AVAILABLE']" :to="'/tutorial/info/'+quest['ID']+'/'"><span class="positive">{{ quest['TITLE'] }}</span></nuxt-link>
+							<nuxt-link v-if="quest['AVAILABLE']" :to="'/tutorial/'+quest['ID']+'/'"><span class="positive">{{ quest['TITLE'] }}</span></nuxt-link>
 							<span v-else class="positive">{{ quest['TITLE'] }}</span>
 							<template v-if="quest['AVAILABLE'] === false && Object.keys(quest['REQUIRED']).length > 0">
 								<br><br>Требования:

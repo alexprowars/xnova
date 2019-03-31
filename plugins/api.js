@@ -27,7 +27,10 @@ export default ({ res, store, $axios, error }, inject) =>
 		.catch((e) =>
 		{
 			if (typeof e.response === 'undefined')
-				throw new Error(e);
+				return error({message: e});
+
+			if (e.response && e.response.status !== 200)
+				return error({message: e.response.statusText, statusCode: e.response.status});
 
 			return parseData(e.response.data.data)
 		})
@@ -69,12 +72,15 @@ export default ({ res, store, $axios, error }, inject) =>
 
 			return parseData(result.data.data)
 		})
-		.catch((error) =>
+		.catch((e) =>
 		{
-			if (typeof error.response === 'undefined')
-				throw new Error(error);
+			if (typeof e.response === 'undefined')
+				throw new Error(e);
 
-			return parseData(error.response.data.data)
+			if (e.response && e.response.status !== 200)
+				return error({message: e.response.statusText, statusCode: e.response.status});
+
+			return parseData(e.response.data.data)
 		})
 	}
 

@@ -62,7 +62,7 @@ if ($id > 0)
 	}
 	else
 	{
-		$image = imagecreatefrompng(ROOT_PATH .'/public/assets/images/userbar.png');
+		$image = imagecreatefrompng(ROOT_PATH .'/static/images/userbar.png');
 
 		$lang = array();
 		$lang[1]  = "Конфедерация";
@@ -92,29 +92,29 @@ if ($id > 0)
 			$txt_color2 = imagecolorallocatealpha($image, 255, 255, 255, 40);
 
 			// Имя пользователя
-			imagettftext($image, 9, 0, 15, 25, $txt_shadow, ROOT_PATH."/public/assets/images/terminator.ttf", $user->username);
-			imagettftext($image, 9, 0, 13, 23, $txt_color, ROOT_PATH."/public/assets/images/terminator.ttf", $user->username);
+			imagettftext($image, 9, 0, 15, 25, $txt_shadow, ROOT_PATH."/static/images/terminator.ttf", $user->username);
+			imagettftext($image, 9, 0, 13, 23, $txt_color, ROOT_PATH."/static/images/terminator.ttf", $user->username);
 
 			// Вселенная
-			imagettftext($image, 6, 0, 331, 76, $txt_shadow, ROOT_PATH."/public/assets/images/terminator.ttf", "XNOVA.SU UNI ".$config->game->universe);
-			imagettftext($image, 6, 0, 330, 75, $txt_color, ROOT_PATH."/public/assets/images/terminator.ttf", "XNOVA.SU UNI ".$config->game->universe);
+			imagettftext($image, 6, 0, 331, 76, $txt_shadow, ROOT_PATH."/static/images/terminator.ttf", "XNOVA.SU UNI ".$config->game->universe);
+			imagettftext($image, 6, 0, 330, 75, $txt_color, ROOT_PATH."/static/images/terminator.ttf", "XNOVA.SU UNI ".$config->game->universe);
 
 			// Планета
-			imagettftext($image, 6, 0, 13, 37, $txt_color2, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
+			imagettftext($image, 6, 0, 13, 37, $txt_color2, ROOT_PATH."/static/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
 
 			// Очки
-			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Format::number(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", "Место: ".\Xnova\Format::number(intval($stats['total_rank']))." из ".\Xnova\Format::number(Options::get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Format::number(intval($stats['total_points']))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Место: ".\Xnova\Format::number(intval($stats['total_rank']))." из ".\Xnova\Format::number(Options::get('users_total', 0))."");
 
 			// Дата генерации
-			imagettftext($image, 6, 0, 365, 13, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", date("d.m.Y"));
-			imagettftext($image, 6, 0, 377, 25, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", date("H:i:s"));
+			imagettftext($image, 6, 0, 365, 13, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", date("d.m.Y"));
+			imagettftext($image, 6, 0, 377, 25, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", date("H:i:s"));
 
 			$m = User::getRankId($user->lvl_minier);
 			$f = User::getRankId($user->lvl_raid);
 
 			$img = imagecreatetruecolor(32, 32);
-			$source = imagecreatefrompng(ROOT_PATH.'/public/assets/images/ranks/m'.$m.'.png');
+			$source = imagecreatefrompng(ROOT_PATH.'/static/images/ranks/m'.$m.'.png');
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
 			imagecopyresized($img, $source, 0, 0, 0, 0, 32, 32, 64, 64);
@@ -124,7 +124,7 @@ if ($id > 0)
 			imagedestroy($source);
 
 			$img = imagecreatetruecolor(32, 32);
-			$source = imagecreatefrompng(ROOT_PATH.'/public/assets/images/ranks/f'.$f.'.png');
+			$source = imagecreatefrompng(ROOT_PATH.'/static/images/ranks/f'.$f.'.png');
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
 			imagecopyresized($img, $source, 0, 0, 0, 0, 32, 32, 64, 64);
@@ -134,7 +134,7 @@ if ($id > 0)
 			imagedestroy($source);
 
 			// Расса
-			imagettftext($image, 6, 0, 245, 65, $txt_color, ROOT_PATH."/public/assets/images/KLMNFP2005.ttf", $lang[$user->race]);
+			imagettftext($image, 6, 0, 245, 65, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", $lang[$user->race]);
 		}
 
 		imagejpeg($image, $path.'/userbar_'.$id.'.jpg', 90);
@@ -144,7 +144,7 @@ if ($id > 0)
 }
 else
 {
-	$image = imagecreatefrompng(ROOT_PATH.'/public/assets/images/userbar.png');
+	$image = imagecreatefrompng(ROOT_PATH.'/static/images/userbar.png');
 	imagejpeg($image, NULL, 85);
 	imagedestroy($image);
 }

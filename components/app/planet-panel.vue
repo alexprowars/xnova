@@ -68,7 +68,7 @@
 								</div>
 							</no-ssr>
 							<template slot="reference">
-								<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/assets/images/batt.php?p='+planet['battery']['power']" width="42" alt="">
+								<img v-if="planet['battery']['power'] > 0 && planet['battery']['power'] < 100" :src="'/api/battery.php?p='+planet['battery']['power']" width="42" alt="">
 								<span v-else="" class="sprite" :class="['skin_batt'+planet['battery']['power']]"></span>
 								<br>
 							</template>

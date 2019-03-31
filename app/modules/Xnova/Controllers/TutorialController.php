@@ -43,7 +43,7 @@ class TutorialController extends Controller
 	}
 
 	/**
-	 * @Route("/info/{stage:[0-9]+}{params:(/.*)*}")
+	 * @Route("/{stage:[0-9]+}{params:(/.*)*}")
 	 */
 	public function infoAction ()
 	{

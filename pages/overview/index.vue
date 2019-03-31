@@ -61,7 +61,8 @@
 
 								<div style="border: 1px solid rgb(153, 153, 255); width: 100%; margin: 0 auto;">
 									<div id="CaseBarre" :style="'background-color: #'+(page['case_pourcentage'] > 80 ? 'C00000' : (page['case_pourcentage'] > 60 ? 'C0C000' : '00C000'))+'; width: '+page['case_pourcentage']+'%;  margin: 0 auto; text-align:center;'">
-										<font color="#000000"><b>{{ page['case_pourcentage'] }}%</b></font></div>
+										<font color="#000000"><b>{{ page['case_pourcentage'] }}%</b></font>
+									</div>
 								</div>
 
 								<div v-if="page['noob']">

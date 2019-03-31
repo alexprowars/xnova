@@ -52,6 +52,7 @@
 		},
 		watchQuery: true,
 		data () {
+			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				pageType: typeof this.$route.params['ally_id'] !== 'undefined' ? 'ally' : 'user',
 				typeChart: 'total',

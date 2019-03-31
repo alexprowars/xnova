@@ -21,12 +21,12 @@ use Xnova\User;
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
- * @Private
  */
 class PlayersController extends Controller
 {
 	/**
 	 * @Route("/{user:[0-9]+}{params:(/.*)*}")
+	 * @Public
 	 */
 	public function indexAction ()
 	{
@@ -42,7 +42,7 @@ class PlayersController extends Controller
 		if (!$user)
 			throw new PageException('Профиль не найден');
 
-		$parse['avatar'] = 'assets/images/no_photo.gif';
+		$parse['avatar'] = 'images/no_photo.gif';
 
 		if ($user['image'] > 0)
 		{
@@ -54,7 +54,7 @@ class PlayersController extends Controller
 		elseif ($user['avatar'] != 0)
 		{
 			if ($user['avatar'] != 99)
-				$parse['avatar'] = "assets/images/faces/".$user['sex']."/" . $user['avatar'] . ".png";
+				$parse['avatar'] = "images/faces/".$user['sex']."/" . $user['avatar'] . ".png";
 		}
 
 		$parse['avatar'] = $this->url->getStatic($parse['avatar']);
@@ -109,12 +109,16 @@ class PlayersController extends Controller
 		$this->showLeftPanel($this->auth->isAuthorized());
 	}
 
-	public function statAction ($userId)
+	/*
+	 * @Route("/stat/{user:[0-9]+}{params:(/.*)*}")
+	 * @Private
+	 */
+	public function statAction ()
 	{
 		if (!$this->auth->isAuthorized())
 			throw new PageException('Доступ запрещен');
 
-		$userId = (int) $userId;
+		$userId = (int) $this->dispatcher->getParam('user');
 
 		$player = $this->db->query("SELECT id, username FROM game_users WHERE id = ".$userId."")->fetch();
 

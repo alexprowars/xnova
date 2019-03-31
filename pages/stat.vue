@@ -61,6 +61,7 @@
 			StatRaces
 		},
 		data () {
+			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				form: {
 					list: '',

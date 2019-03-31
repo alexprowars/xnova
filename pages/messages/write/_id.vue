@@ -55,6 +55,7 @@
 		watchQuery: true,
 		middleware: ['auth'],
 		data () {
+			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				page: {},
 				text: '',

@@ -67,28 +67,28 @@
 					</div>
 					<div class="row">
 						<div class="c col">Постройки</div>
-						<div class="th col">{{ page['stats']['build_points']|number }}</div>
-						<div class="th col">{{ page['stats']['build_rank']|number }}</div>
+						<div class="th col">{{ page['stats']['build_points'] | number }}</div>
+						<div class="th col">{{ page['stats']['build_rank'] | number }}</div>
 					</div>
 					<div class="row">
 						<div class="c col">Иследования</div>
-						<div class="th col">{{ page['stats']['tech_points']|number }}</div>
-						<div class="th col">{{ page['stats']['tech_rank']|number }}</div>
+						<div class="th col">{{ page['stats']['tech_points'] | number }}</div>
+						<div class="th col">{{ page['stats']['tech_rank'] | number }}</div>
 					</div>
 					<div class="row">
 						<div class="c col">Флот</div>
-						<div class="th col">{{ page['stats']['fleet_points']|number }}</div>
-						<div class="th col">{{ page['stats']['fleet_rank']|number }}</div>
+						<div class="th col">{{ page['stats']['fleet_points'] | number }}</div>
+						<div class="th col">{{ page['stats']['fleet_rank'] | number }}</div>
 					</div>
 					<div class="row">
 						<div class="c col">Оборона</div>
-						<div class="th col">{{ page['stats']['defs_points']|number }}</div>
-						<div class="th col">{{ page['stats']['defs_rank']|number }}</div>
+						<div class="th col">{{ page['stats']['defs_points'] | number }}</div>
+						<div class="th col">{{ page['stats']['defs_rank'] | number }}</div>
 					</div>
 					<div class="row">
 						<div class="c col">Всего</div>
-						<div class="th col">{{ page['stats']['total_points']|number }}</div>
-						<div class="th col">{{ page['stats']['total_rank']|number }}</div>
+						<div class="th col">{{ page['stats']['total_points'] | number }}</div>
+						<div class="th col">{{ page['stats']['total_rank'] | number }}</div>
 					</div>
 				</div>
 			</div>
@@ -98,26 +98,23 @@
 			<div class="content border-0">
 				<div class="table">
 					<div class="row">
-						<div class="c col">Статистика боёв</div>
-					</div>
-					<div class="row">
 						<div class="c col">&nbsp;</div>
 						<div class="c col">Сумма</div>
 						<div class="c col">Процент</div>
 					</div>
-					<div class="row">
+					<div v-if="page['wons'] > 0" class="row">
 						<div class="c col">Победы</div>
-						<div class="th col"><b>{{ page['wons']|number }}</b></div>
+						<div class="th col"><b>{{ page['wons'] | number }}</b></div>
 						<div class="th col">{{ Math.round((100 / (page['wons'] + page['loos'])) * page['wons']) }} %</div>
 					</div>
-					<div class="row">
+					<div v-if="page['loos'] > 0" class="row">
 						<div class="c col">Поражения</div>
-						<div class="th col"><b>{{ page['loos']|number }}</b></div>
+						<div class="th col"><b>{{ page['loos'] | number }}</b></div>
 						<div class="th col">{{ Math.round((100 / (page['wons'] + page['loos'])) * page['loos']) }} %</div>
 					</div>
 					<div class="row">
 						<div class="c col">Всего вылетов</div>
-						<div class="th col"><b>{{ page['total']|number }}</b></div>
+						<div class="th col"><b>{{ page['total'] | number }}</b></div>
 						<div class="th col">100 %</div>
 					</div>
 				</div>
