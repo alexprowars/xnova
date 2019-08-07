@@ -178,12 +178,12 @@
 
 <script>
 	export default {
-		name: "imperium",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'imperium',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			rows ()
 			{

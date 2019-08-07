@@ -19,11 +19,11 @@
 
 <script>
 	export default {
-		name: "alliance-edit-tag",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'alliance-edit-tag',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 	}
 </script>

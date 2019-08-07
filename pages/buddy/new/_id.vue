@@ -21,11 +21,11 @@
 
 <script>
 	export default {
-		name: "buddy-new",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'buddy-new',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 	}
 </script>

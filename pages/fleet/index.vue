@@ -108,15 +108,15 @@
 	import FlyRow from '~/components/page/fleet/fly-row.vue'
 
 	export default {
-		name: "fleet-index",
+		name: 'fleet-index',
 		components: {
 			FlyRow
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			count ()
 			{

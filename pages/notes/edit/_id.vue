@@ -47,11 +47,11 @@
 
 <script>
 	export default {
-		name: "notes-edit",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'notes-edit',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 	}
 </script>

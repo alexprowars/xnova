@@ -30,16 +30,16 @@
 	import UnitQueue from '~/components/page/buildings/unit-queue.vue'
 
 	export default {
-		name: "unit",
+		name: 'unit',
 		components: {
 			UnitRow,
 			UnitQueue
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		methods: {
 			constructAction ()
 			{

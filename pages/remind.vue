@@ -25,23 +25,22 @@
 </template>
 
 <script>
-	import { required, email, minLength } from 'vuelidate/lib/validators'
+	import { required, email } from 'vuelidate/lib/validators'
 
 	export default {
-		name: "index-remind",
+		name: 'index-remind',
 		props: {
 			popup: {
 				type: Object
 			}
 		},
-		asyncData ({ store, route })
+		async asyncData ({ store })
 		{
-			return store.dispatch('loadPage', route.fullPath).then ((data) =>
-			{
-				return {
-					data: data.page
-				}
-			})
+			const data = await store.dispatch('loadPage')
+
+			return {
+				data: data.page
+			}
 		},
 		data () {
 			return {

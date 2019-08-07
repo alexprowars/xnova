@@ -4,9 +4,9 @@
 
 <script>
 	export default {
-		name: "log-info",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'log-info',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		layout: 'empty',
 	}

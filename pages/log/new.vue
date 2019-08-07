@@ -20,6 +20,6 @@
 
 <script>
 	export default {
-		name: "log-new"
+		name: 'log-new'
 	}
 </script>

@@ -40,12 +40,12 @@
 	import OfficierRow from '~/components/page/officier/row.vue'
 
 	export default {
-		name: "officiers",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'officiers',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		components: {
 			OfficierRow
 		}

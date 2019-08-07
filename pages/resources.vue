@@ -192,12 +192,12 @@
 	import ResourcesRow from '~/components/page/resources/row.vue'
 
 	export default {
-		name: "resources",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'resources',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		components: {
 			ResourcesBar,
 			ResourcesRow,

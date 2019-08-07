@@ -53,12 +53,12 @@
 	import SupportNew from '~/components/page/support/new.vue'
 
 	export default {
-		name: "support",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'support',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
 			return {
 				detail: false,

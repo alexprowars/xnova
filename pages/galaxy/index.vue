@@ -74,18 +74,18 @@
 	import MissileAttack from '~/components/page/galaxy/missile-attack.vue'
 
 	export default {
-		name: "galaxy",
+		name: 'galaxy',
 		components: {
 			GalaxyRow,
 			GalaxySelector,
 			GalaxyLegend,
 			MissileAttack,
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
 			return {
 				missile: false,

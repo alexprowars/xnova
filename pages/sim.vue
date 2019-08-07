@@ -4,96 +4,98 @@
 			<input type="hidden" name="r" value="">
 		</form>
 		<table ref="form" class="table">
-			<tr>
-				<th>XNova SIM</th>
-				<th :colspan="cols - 1" class="spezial">
+			<tbody>
+				<tr>
+					<th>XNova SIM</th>
+					<th :colspan="cols - 1" class="spezial">
 
-					<select size="1" v-model.number="attackers" title="">
-						<option v-for="i in page['slots']['max']" :value="i">{{ i }}</option>
-					</select>
+						<select size="1" v-model.number="attackers" title="">
+							<option v-for="i in page['slots']['max']" :value="i">{{ i }}</option>
+						</select>
 
-					Исходная ситуация
+						Исходная ситуация
 
-					<select size="1" v-model.number="defenders" title="">
-						<option v-for="i in page['slots']['max']" :value="i">{{ i }}</option>
-					</select>
+						<select size="1" v-model.number="defenders" title="">
+							<option v-for="i in page['slots']['max']" :value="i">{{ i }}</option>
+						</select>
 
-				</th>
-			</tr>
-			<tr>
-				<th>&nbsp;</th>
-				<th>Ведущий</th>
-				<th v-for="i in page['slots']['max'] - 1" v-if="i < attackers" class="angreifer leftcol_data">
-					Атакующий&nbsp;{{ i }}
-				</th>
-				<th>Планета</th>
-				<th v-for="i in page['slots']['max'] - 1" v-if="i < defenders" class="angreifer leftcol_data">
-					Защитник&nbsp;{{ i }}
-				</th>
-			</tr>
-			<tr>
-				<td class="c" :colspan="cols">Исследования и офицеры</td>
-			</tr>
-			<tr v-for="techId in page['tech']" align="center">
-				<th>{{ $t('TECH.'+techId) }}</th>
+					</th>
+				</tr>
+				<tr>
+					<th>&nbsp;</th>
+					<th>Ведущий</th>
+					<th v-for="i in page['slots']['max'] - 1" v-if="i < attackers" class="angreifer leftcol_data">
+						Атакующий&nbsp;{{ i }}
+					</th>
+					<th>Планета</th>
+					<th v-for="i in page['slots']['max'] - 1" v-if="i < defenders" class="angreifer leftcol_data">
+						Защитник&nbsp;{{ i }}
+					</th>
+				</tr>
+				<tr>
+					<td class="c" :colspan="cols">Исследования и офицеры</td>
+				</tr>
+				<tr v-for="techId in page['tech']" align="center">
+					<th>{{ $t('TECH.'+techId) }}</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
-					<input class="number" :value="page['slots']['attackers'][i] !== undefined && page['slots']['attackers'][i][techId] !== undefined ? page['slots']['attackers'][i][techId]['c'] : 0" type="text" :name="'gr'+i+'-'+techId" maxlength="2" title="">
-				</th>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
+						<input class="number" :value="page['slots']['attackers'][i] !== undefined && page['slots']['attackers'][i][techId] !== undefined ? page['slots']['attackers'][i][techId]['c'] : 0" type="text" :name="'gr'+i+'-'+techId" maxlength="2" title="">
+					</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
-					<input class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][techId] !== undefined ? page['slots']['defenders'][i]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+techId" maxlength="2" title="">
-				</th>
-			</tr>
-			<tr>
-				<td class="c" :colspan="cols">Флот</td>
-			</tr>
-			<tr v-for="(name, fleetId) in $t('TECH')" v-if="fleetId > 200 && fleetId < 300" align="center">
-				<th>{{ name }}</th>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
+						<input class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][techId] !== undefined ? page['slots']['defenders'][i]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+techId" maxlength="2" title="">
+					</th>
+				</tr>
+				<tr>
+					<td class="c" :colspan="cols">Флот</td>
+				</tr>
+				<tr v-for="(name, fleetId) in $t('TECH')" v-if="fleetId > 200 && fleetId < 300" align="center">
+					<th>{{ name }}</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
-					<template v-if="parseInt(fleetId) === 212">-</template>
-					<input v-else class="number" :value="page['slots']['attackers'][i] !== undefined && page['slots']['attackers'][i][fleetId] !== undefined ? page['slots']['attackers'][i][fleetId]['c'] : 0" type="text" :name="'gr'+i+'-'+fleetId" maxlength="7" title="">
-				</th>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
+						<template v-if="parseInt(fleetId) === 212">-</template>
+						<input v-else class="number" :value="page['slots']['attackers'][i] !== undefined && page['slots']['attackers'][i][fleetId] !== undefined ? page['slots']['attackers'][i][fleetId]['c'] : 0" type="text" :name="'gr'+i+'-'+fleetId" maxlength="7" title="">
+					</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
-					<input class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][fleetId] !== undefined ? page['slots']['defenders'][i][fleetId]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+fleetId" maxlength="7" title="">
-				</th>
-			</tr>
-			<tr>
-				<td class="c" :colspan="cols">Оборона</td>
-			</tr>
-			<tr v-for="(name, fleetId) in $t('TECH')" v-if="fleetId > 400 && fleetId < 500" align="center">
-				<th>{{ name }}</th>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
+						<input class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][fleetId] !== undefined ? page['slots']['defenders'][i][fleetId]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+fleetId" maxlength="7" title="">
+					</th>
+				</tr>
+				<tr>
+					<td class="c" :colspan="cols">Оборона</td>
+				</tr>
+				<tr v-for="(name, fleetId) in $t('TECH')" v-if="fleetId > 400 && fleetId < 500" align="center">
+					<th>{{ name }}</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
-					-
-				</th>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < attackers">
+						-
+					</th>
 
-				<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
-					<template v-if="(parseInt(fleetId) === 407 || parseInt(fleetId) === 408) && i > 0">-</template>
-					<input v-else class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][fleetId] !== undefined ? page['slots']['defenders'][i][fleetId]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+fleetId" maxlength="7" title="">
-				</th>
-			</tr>
-			<tr align="center">
-				<th>&nbsp;</th>
-				<th v-for="i in range(0, (page['slots']['max'] - 1))" v-if="i < attackers"><a href="" @click.prevent="clear(i)">Очистить</a></th>
-				<th v-for="i in range(0, (page['slots']['max'] - 1))" v-if="i < defenders"><a href="" @click.prevent="clear(page['slots']['max'] + i)">Очистить</a></th>
-			</tr>
-			<tr>
-				<th :colspan="cols">
-					<input class="button" type="button" value="Симуляция" @click.prevent="calculate">
-				</th>
-			</tr>
+					<th v-for="i in range(0, page['slots']['max'] - 1)" v-if="i < defenders">
+						<template v-if="(parseInt(fleetId) === 407 || parseInt(fleetId) === 408) && i > 0">-</template>
+						<input v-else class="number" :value="page['slots']['defenders'][i] !== undefined && page['slots']['defenders'][i][fleetId] !== undefined ? page['slots']['defenders'][i][fleetId]['c'] : 0" type="text" :name="'gr'+(i +page['slots']['max'])+'-'+fleetId" maxlength="7" title="">
+					</th>
+				</tr>
+				<tr align="center">
+					<th>&nbsp;</th>
+					<th v-for="i in range(0, (page['slots']['max'] - 1))" v-if="i < attackers"><a href="" @click.prevent="clear(i)">Очистить</a></th>
+					<th v-for="i in range(0, (page['slots']['max'] - 1))" v-if="i < defenders"><a href="" @click.prevent="clear(page['slots']['max'] + i)">Очистить</a></th>
+				</tr>
+				<tr>
+					<th :colspan="cols">
+						<input class="button" type="button" value="Симуляция" @click.prevent="calculate">
+					</th>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </template>
 
 <script>
 	export default {
-		name: "sim",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'sim',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 		data () {

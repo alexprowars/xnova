@@ -20,7 +20,6 @@
 	import Game from '~/utils/spaceinvaders'
 
 	export default {
-		name: "error",
 		props: {
 			error: Object
 		},

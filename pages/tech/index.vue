@@ -16,9 +16,9 @@
 
 <script>
 	export default {
-		name: "techtree",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'techtree',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 	}

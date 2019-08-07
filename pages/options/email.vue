@@ -26,6 +26,6 @@
 
 <script>
 	export default {
-		name: "options-email"
+		name: 'options-email'
 	}
 </script>

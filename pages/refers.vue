@@ -80,12 +80,12 @@
 	import { addScript } from '~/utils/helpers'
 
 	export default {
-		name: "refers",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'refers',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			host () {
 				return process.server ? '' : window.location.origin

@@ -7,14 +7,14 @@
 			<div class="main-content" v-touch:tap="tap">
 				<PlanetPanel v-if="views['resources']"/>
 				<div class="main-content-row">
-					<error-message v-if="error" :data="error"/>
+					<ErrorMessage v-if="error" :data="error"/>
 					<Nuxt/>
 				</div>
 			</div>
 		</main>
 
 		<no-ssr>
-			<chat v-if="$store.getters.isAuthorized()" :visible="controller !== 'chat' && views['menu'] && views['chat']"/>
+			<Chat v-if="$store.getters.isAuthorized()" :visible="controller !== 'chat' && views['menu'] && views['chat']"/>
 		</no-ssr>
 
 		<AppFooter v-if="views && views['header']"/>
@@ -28,16 +28,17 @@
 </template>
 
 <script>
-	import MainMenu from '../components/app/main-menu.vue'
-	import AppHeader from '../components/app/header.vue'
-	import AppFooter from '../components/app/footer.vue'
-	import PlanetsList from '../components/app/planets-list.vue'
-	import MessagesRow from '../components/app/messages-row.vue'
-	import PlanetPanel from '../components/app/planet-panel.vue'
+	import MainMenu from '~/components/app/main-menu.vue'
+	import AppHeader from '~/components/app/header.vue'
+	import AppFooter from '~/components/app/footer.vue'
+	import PlanetsList from '~/components/app/planets-list.vue'
+	import MessagesRow from '~/components/app/messages-row.vue'
+	import PlanetPanel from '~/components/app/planet-panel.vue'
+	import Chat from '~/components/views/chat.vue'
+	import ErrorMessage from '~/components/views/message.vue'
 	import { addScript } from '~/utils/helpers'
 
 	export default {
-		name: "application",
 		components: {
 			MainMenu,
 			AppHeader,
@@ -45,20 +46,22 @@
 			PlanetsList,
 			MessagesRow,
 			PlanetPanel,
+			Chat,
+			ErrorMessage,
 		},
 		computed: {
 			controller () {
 				return (this.$store.state.route && this.$store.state.route.controller) || 'index'
 			},
 			error () {
-				return this.$store.state.error || false;
+				return this.$store.state.error || false
 			},
 			redirect () {
-				return this.$store.state.redirect || '';
+				return this.$store.state.redirect || ''
 			},
 			messages ()
 			{
-				let items = [];
+				let items = []
 
 				if (this.$store.state.messages === null)
 					return items
@@ -66,17 +69,17 @@
 				this.$store.state.messages.forEach((item) =>
 				{
 					if (item['type'].indexOf('-static') >= 0)
-						items.push(item);
-				});
+						items.push(item)
+				})
 
-				return items;
+				return items
 			},
 			views () {
 				return this.$store.state['view'] || {}
 			},
 			notifications ()
 			{
-				let items = [];
+				let items = []
 
 				if (this.$store.state.messages === null)
 					return items
@@ -84,10 +87,10 @@
 				this.$store.state.messages.forEach((item) =>
 				{
 					if (item['type'].indexOf('-static') < 0)
-						items.push(item);
-				});
+						items.push(item)
+				})
 
-				return items;
+				return items
 			}
 		},
 		data ()
@@ -115,12 +118,12 @@
 		},
 		watch: {
 		    '$route' () {
-				this.sidebar = '';
+				this.sidebar = ''
 		    },
 			redirect (val)
 			{
 				if (val && val.length > 0)
-					this.$router.push(val);
+					this.$router.push(val)
 			},
 			notifications (val)
 			{
@@ -128,7 +131,7 @@
 				{
 					this.$toasted.show(item.text, {
 						type: item.type
-					});
+					})
 				})
 			},
 		},
@@ -136,9 +139,9 @@
 			sidebarToggle (type)
 			{
 				if (this.sidebar === type)
-					this.sidebar = '';
+					this.sidebar = ''
 				else
-					this.sidebar = type;
+					this.sidebar = type
 			},
 			swipe (direction, ev)
 			{
@@ -146,7 +149,7 @@
 					return
 
 				if (ev.target.closest('.table-responsive') !== null)
-					return;
+					return
 
 				if (direction === 'left')
 					this.sidebar = 'planet'
@@ -170,21 +173,21 @@
 					{
 						VK.init(() =>
 						{
-							console.log('vk init success');
+							console.log('vk init success')
 
 							setInterval(() =>
 							{
-								let height = 0;
+								let height = 0
 
 								$(this.$refs['application']).find('.main-content > div').each(function() {
-									height += $(this).height();
-								});
+									height += $(this).height()
+								})
 
-								VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200));
+								VK.callMethod("resizeWindow", 1000, (height < 600 ? 700 : height + 200))
 
-							}, 1000);
+							}, 1000)
 						},
-						() => {}, '5.74');
+						() => {}, '5.74')
 					}
 					catch (e) {}
 				}
@@ -195,8 +198,8 @@
 			if (this.$store.state.isSocial)
 				addScript('https://vk.com/js/api/xd_connection.js')
 
-			this.init();
-			this.loader = true;
+			this.init()
+			this.loader = true
 		}
 	}
 </script>

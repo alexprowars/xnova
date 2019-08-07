@@ -83,11 +83,11 @@
 
 <script>
 	export default {
-		name: "alliance-diplomacy",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'alliance-diplomacy',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 	}
 </script>

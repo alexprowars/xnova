@@ -45,14 +45,13 @@
 	import io from 'socket.io-client'
 
 	export default {
-		name: "chat",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'chat',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
-			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			// noinspection RegExpRedundantEscape
 			return {
 				smiles: false,
@@ -106,8 +105,10 @@
 			}
 		},
 		methods: {
-			scrollToBottom () {
-				this.$refs['chatbox'].scrollTop = this.$refs['chatbox'].scrollHeight;
+			scrollToBottom ()
+			{
+				if (this.$refs['chatbox'])
+					this.$refs['chatbox'].scrollTop = this.$refs['chatbox'].scrollHeight;
 			},
 			addTag (tag, type)
 			{
@@ -272,18 +273,18 @@
 			this.socket = io.connect(this.$store.state['chat']['server'], {
 				query: 'userId='+this.$store.state.user.id+'&userName='+this.$store.state.user.name+'&key='+this.$store.state['chat']['key'],
 				secure: true
-			});
+			})
 
-			this.init();
+			this.init()
 
-			window.addEventListener('resize', this.scrollToBottom, true);
+			window.addEventListener('resize', this.scrollToBottom, true)
 		},
 		beforeDestroy ()
 		{
-			window.removeEventListener('resize', this.scrollToBottom);
+			window.removeEventListener('resize', this.scrollToBottom)
 
-			this.socket.close();
-			this.socket = null;
+			this.socket.close()
+			this.socket = null
 		}
 	}
 </script>

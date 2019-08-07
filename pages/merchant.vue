@@ -55,12 +55,12 @@
 
 <script>
 	export default {
-		name: "merchant",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'merchant',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
 			return {
 				type: '',

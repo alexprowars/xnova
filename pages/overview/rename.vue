@@ -52,12 +52,12 @@
 
 <script>
 	export default {
-		name: "overview-rename",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'overview-rename',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
 			return {
 				image: 0

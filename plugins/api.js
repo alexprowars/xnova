@@ -1,4 +1,4 @@
-import qs from 'qs';
+import qs from 'qs'
 
 export default ({ res, store, $axios, error }, inject) =>
 {

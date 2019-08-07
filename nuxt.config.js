@@ -22,7 +22,7 @@ module.exports = {
 		'~/assets/app.scss',
 		'vuejs-dialog/dist/vuejs-dialog.min.css',
 	],
-	transition: {
+	pageTransition: {
 		css: false
 	},
 	plugins: [
@@ -45,11 +45,28 @@ module.exports = {
 		middleware: 'router',
 		prefetchLinks: false,
 		linkExactActiveClass: 'active',
+		scrollBehavior: function (to, from)
+		{
+			if (to.path === from.path)
+				return false;
+			else if (to.matched.length < 2 && from.matched.length < 2)
+				return { x: 0, y: 0 };
+			else if (to.matched.length >= 2 && from.matched.length < 2)
+				return { x: 0, y: 0 };
+			else if (to.matched.length < 2 && from.matched.length >= 2)
+				return { x: 0, y: 0 };
+			else
+				return false;
+		},
 	},
-	loading: false,
+	loading: {
+		color: '#9a1915',
+	},
+	modern: process.env.NODE_ENV === 'production',
 	build: {
+		indicator: false,
 		cssSourceMap: false,
-		extractCSS: true,
+		extractCSS: process.env.NODE_ENV === 'production',
 		publicPath: '/static/',
 		loaders: {
 			vue: {
@@ -105,11 +122,10 @@ module.exports = {
 		proxy: true,
 		proxyHeaders: true,
 		credentials: true,
-		baseURL: 'http://test.xnova.su/api/',
 	},
 	proxy: {
 		'/api': {target: 'http://test.xnova.su', cookieDomainRewrite: {"*": ""}},
-		'/upload': {target: 'http://test.xnova.su/api'},
+		'/upload': {target: 'http://test.xnova.su/upload'},
 	},
 	vue: {
 		config: {

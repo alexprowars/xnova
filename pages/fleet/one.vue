@@ -107,15 +107,15 @@
 </template>
 
 <script>
-	import * as fleet from '~/utils/fleet'
+	import { getDistance, getSpeed, getDuration, getConsumption, getStorage } from '~/utils/fleet'
 
 	export default {
-		name: "fleet-one",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'fleet-one',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			position () {
 				return this.$store.state.user.position;
@@ -138,11 +138,11 @@
 		},
 		watch: {
 			target_time () {
-				this.startTimer();
+				this.startTimer()
 			},
 			'page.target': {
 				handler () {
-					this.info();
+					this.info()
 				},
 				deep: true,
 			}
@@ -151,74 +151,74 @@
 			info ()
 			{
 				if (!this.page)
-					return;
+					return
 
-				this.distance = fleet.distance(this.position, this.page['target']);
-				this.maxspeed = fleet.speed(this.page['ships']);
+				this.distance = getDistance(this.position, this.page['target'])
+				this.maxspeed = getSpeed(this.page['ships'])
 
-				this.duration = fleet.duration({
+				this.duration = getDuration({
 					factor: this.speed,
 					distance: this.distance,
 					max_speed: this.maxspeed,
 					universe_speed: this.$store.state['speed']['fleet']
-				});
+				})
 
-				this.consumption = fleet.consumption({
+				this.consumption = getConsumption({
 					ships: this.page['ships'],
 					duration: this.duration,
 					distance: this.distance,
 					universe_speed: this.$store.state['speed']['fleet']
-				});
+				})
 
-				this.storage = fleet.storage(this.page['ships']) - this.consumption;
+				this.storage = getStorage(this.page['ships']) - this.consumption
 
-				this.clearTimer();
-				this.target_time = this.$store.getters.getServerTime() + this.duration;
+				this.clearTimer()
+				this.target_time = this.$store.getters.getServerTime() + this.duration
 			},
 			startTimer ()
 			{
 				this.target_timeout = setTimeout(() =>
 				{
-					this.target_time = this.$store.getters.getServerTime() + this.duration;
+					this.target_time = this.$store.getters.getServerTime() + this.duration
 
 					if (this.page['gate_time'] > 0)
-						this.page['gate_time']--;
+						this.page['gate_time']--
 
 					this.page['moons'].forEach((item) =>
 					{
 						if (item['timer'] > 0)
-							item['timer']--;
+							item['timer']--
 					})
 
-				}, 1000);
+				}, 1000)
 			},
 			clearTimer () {
-				clearTimeout(this.target_timeout);
+				clearTimeout(this.target_timeout)
 			},
 			setTarget (galaxy, system, planet, type)
 			{
-				this.page['target']['galaxy'] = galaxy;
-				this.page['target']['system'] = system;
-				this.page['target']['planet'] = planet;
+				this.page['target']['galaxy'] = galaxy
+				this.page['target']['system'] = system
+				this.page['target']['planet'] = planet
 
 				if (typeof type === 'undefined')
-					type = 1;
+					type = 1
 
-				this.page['target']['planet_type'] = type;
+				this.page['target']['planet_type'] = type
 			},
 			allianceSet (index)
 			{
-				let al = this.page['alliances'][index];
+				let al = this.page['alliances'][index]
 
-				this.alliance = al['id'];
-				this.setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type']);
+				this.alliance = al['id']
+				this.setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type'])
 			}
 		},
 		mounted () {
-			this.info();
+			this.info()
 		},
 		destroyed () {
-			this.clearTimer();
+			this.clearTimer()
 		}
 	}
 </script>

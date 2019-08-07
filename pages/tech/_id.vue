@@ -6,9 +6,9 @@
 	import { ECOTree } from '~/utils/techtree'
 
 	export default {
-		name: "techtree-info",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'techtree-info',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 		methods: {

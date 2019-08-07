@@ -1,15 +1,15 @@
 import { getLocation } from '~/utils/helpers'
-const { parse } = require('querystring');
+const { parse } = require('querystring')
 
-let timer;
+let timer
 
 export default {
 	nuxtServerInit (store, context)
 	{
-		const headers = context.req && context.req.headers;
+		const headers = context.req && context.req.headers
 
 		if (headers.cookie === undefined)
-			headers.cookie = '';
+			headers.cookie = ''
 
 		if (context.req.method === 'POST')
 		{
@@ -78,6 +78,9 @@ export default {
 	},
 	loadPage ({ state, commit }, url)
 	{
+		if (typeof url === 'undefined')
+			url = this.app.context.route.fullPath
+
 		if (state.page !== null)
 		{
 			let page = JSON.parse(JSON.stringify(state.page))
@@ -90,7 +93,7 @@ export default {
 			{
 				return resolve({
 					page
-				});
+				})
 			})
 		}
 
@@ -100,11 +103,11 @@ export default {
 		}, 1000)
 
 		if (this.app.context.req && this.app.context.req.method === 'POST')
-			return;
+			return
 
 		return this.$get(url).then((data) =>
 		{
-			let loc = getLocation(url);
+			let loc = getLocation(url)
 
 			if (loc['pathname'] !== data['url'])
 				this.$router.replace(data['url'])
@@ -123,14 +126,14 @@ export default {
 							if (data['tutorial']['url'] !== '')
 								this.$router.push(data['tutorial']['url']);
 						}
-					});
+					})
 				}
 
 				if (typeof data['tutorial'] !== 'undefined' && data['tutorial']['toast'] !== '')
 				{
 					this.$toasted.show(data['tutorial']['toast'], {
 						type: 'info'
-					});
+					})
 				}
 
 				let page = JSON.parse(JSON.stringify(data.page))
@@ -144,8 +147,8 @@ export default {
 
 				return {
 					page
-				};
+				}
 			}
-		});
+		})
 	}
-};
+}

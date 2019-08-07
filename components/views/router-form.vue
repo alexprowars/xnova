@@ -6,7 +6,7 @@
 
 <script>
 	export default {
-		name: "router-form",
+		name: 'router-form',
 		props: {
 			method: {
 				type: String,
@@ -18,7 +18,7 @@
 			}
 		},
 		methods: {
-			send ()
+			async send ()
 			{
 				let form = this.$refs['form']
 
@@ -31,14 +31,16 @@
 				if (action.length === 0)
 					action = this.$route.fullPath
 
-				this.$post(action, formData).then((result) =>
+				try
 				{
+					const result = await this.$post(action, formData)
+
 					this.$store.commit('PAGE_LOAD', result)
 					this.$store.commit('setLoadingStatus', false)
-				})
-				.catch(_ => {
-					alert('Что-то пошло не так!? Попробуйте еще раз');
-				})
+				}
+				catch(e) {
+					alert(e.message)
+				}
 			}
 		},
 	}

@@ -43,19 +43,17 @@
 				type: Object
 			}
 		},
-		asyncData ({ store, route })
+		async asyncData ({ store })
 		{
-			return store.dispatch('loadPage', route.fullPath).then ((data) =>
-			{
-				return {
-					data: data.page
-				}
-			})
+			const data = await store.dispatch('loadPage')
+
+			return {
+				data: data.page
+			}
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		data () {
-			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				page: {},
 				text: '',

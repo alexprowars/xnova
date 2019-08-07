@@ -32,16 +32,16 @@
 	import BuildQueue from '~/components/page/buildings/build-queue.vue'
 
 	export default {
-		name: "build",
+		name: 'build',
 		components: {
 			BuildRow,
 			BuildQueue
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			fields_empty ()
 			{

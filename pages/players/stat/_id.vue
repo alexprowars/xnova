@@ -43,16 +43,15 @@
 </template>
 
 <script>
-	import Chart from 'chart.js';
+	import Chart from 'chart.js'
 
 	export default {
-		name: "players_stat",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'players_stat',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 		data () {
-			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				pageType: typeof this.$route.params['ally_id'] !== 'undefined' ? 'ally' : 'user',
 				typeChart: 'total',

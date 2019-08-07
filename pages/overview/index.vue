@@ -257,16 +257,18 @@
 			<div class="separator"></div>
 
 			<table class="table" style="max-width: 100%">
-				<tr>
-					<th class="text-left">
-						<div style="overflow-y: auto;overflow-x: hidden;">
-							<div v-for="item in page['chat']" class="activity">
-								<div class="date1" style="display: inline-block;padding-right:5px;">{{ item.time | date('H:i') }}</div>
-								<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
+				<tbody>
+					<tr>
+						<th class="text-left">
+							<div style="overflow-y: auto;overflow-x: hidden;">
+								<div v-for="item in page['chat']" class="activity">
+									<div class="date1" style="display: inline-block;padding-right:5px;">{{ item.time | date('H:i') }}</div>
+									<div style="display: inline;white-space:pre-wrap" v-html="item.message"></div>
+								</div>
 							</div>
-						</div>
-					</th>
-				</tr>
+						</th>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>
@@ -279,12 +281,11 @@
 	import { sendMission } from '~/utils/fleet'
 
 	export default {
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
-		name: "overview",
+		middleware: 'auth',
 		components: {
 			Fleets,
 			Clock,
@@ -294,13 +295,13 @@
 			sendRecycle () {
 				sendMission(this, 8, this.page['planet']['galaxy'], this.page['planet']['system'], this.page['planet']['planet'], 2)
 			},
-			getDailyBonus ()
+			async getDailyBonus ()
 			{
-				this.$post('/overview/', {
+				const result = await this.$post('/overview/', {
 					bonus: 'Y'
-				}).then((result) => {
-					this.$store.commit('PAGE_LOAD', result);
 				})
+
+				this.$store.commit('PAGE_LOAD', result);
 			}
 		}
 	}

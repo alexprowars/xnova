@@ -1,13 +1,17 @@
 <template>
 	<div class="log-layout">
-		<error-message v-if="error" :data="error"/>
+		<ErrorMessage v-if="error" :data="error"/>
 		<Nuxt/>
 	</div>
 </template>
 
 <script>
+	import ErrorMessage from '~/components/views/message.vue'
+
 	export default {
-		name: "empty",
+		components: {
+			ErrorMessage,
+		},
 		computed: {
 			error () {
 				return this.$store.state.error || false;

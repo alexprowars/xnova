@@ -1,68 +1,58 @@
-//import { $get } from './api'
-
-function distance (from, to)
+export function getDistance (from, to)
 {
-	let distance = 5;
-
 	if ((to['galaxy'] - from['galaxy']) !== 0)
-		distance = Math.abs(to['galaxy'] - from['galaxy']) * 20000;
+		return Math.abs(to['galaxy'] - from['galaxy']) * 20000
 	else if ((to['system'] - from['system']) !== 0)
-		distance = Math.abs(to['system'] - from['system']) * 5 * 19 + 2700;
+		return Math.abs(to['system'] - from['system']) * 5 * 19 + 2700
 	else if ((to['planet'] - from['planet']) !== 0)
-		distance = Math.abs(to['planet'] - from['planet']) * 5 + 1000;
+		return Math.abs(to['planet'] - from['planet']) * 5 + 1000
 
-	return distance;
+	return 5
 }
 
-function speed (ships)
+export function getSpeed (ships)
 {
-	let speed = 1000000000;
+	let speed = 1000000000
 
 	ships.forEach((item) =>
 	{
 		if (!isNaN(parseInt(item['speed'])) && parseInt(item['speed']) > 0)
-			speed = Math.min(speed, parseInt(item['speed']));
-	});
+			speed = Math.min(speed, parseInt(item['speed']))
+	})
 
-	return speed;
+	return speed
 }
 
-function consumption (params)
+export function getConsumption (params)
 {
-	let consumption = 0;
-
-	params.ships.forEach((item) =>
+	const consumption = params.ships.reduce((sum, item) =>
 	{
-		let speed = 35000 / (params.duration * params.universe_speed - 10) * Math.sqrt(params.distance * 10 / item['speed']);
-		consumption += (item['consumption'] * item['count']) * params.distance / 35000 * ((speed / 10) + 1) * ((speed / 10) + 1);
-	});
+		let speed = 35000 / (params.duration * params.universe_speed - 10) * Math.sqrt(params.distance * 10 / item['speed'])
 
-	return Math.round(consumption) + 1;
+		return sum + (item['consumption'] * item['count']) * params.distance / 35000 * ((speed / 10) + 1) * ((speed / 10) + 1)
+	}, 0)
+
+	return Math.round(consumption) + 1
 }
 
-function duration (params)
+export function getDuration (params)
 {
-	let duration = Math.round((35000 / params.factor * Math.sqrt(params.distance * 10 / params.max_speed) + 10) / params.universe_speed);
+	let duration = Math.round((35000 / params.factor * Math.sqrt(params.distance * 10 / params.max_speed) + 10) / params.universe_speed)
 
 	if (duration <= 1)
-		duration = 2;
+		duration = 2
 
-	return duration;
+	return duration
 }
 
-function storage (ships)
+export function getStorage (ships)
 {
-	let storage = 0;
-
-	ships.forEach((item) =>
-	{
-		storage += item['count'] * item['capacity'];
-	});
-
-	return storage;
+	return ships.reduce((sum, item) => {
+		return sum + item['count'] * item['capacity']
+	}, 0)
 }
 
-function sendMission (_this, mission, galaxy, system, planet, type, count)
+export function sendMission (_this, mission, galaxy, system, planet, type, count)
 {
 	return _this.$get('/fleet/quick/', {
 		mission: mission,
@@ -78,13 +68,4 @@ function sendMission (_this, mission, galaxy, system, planet, type, count)
 			messages: result.messages
 		})
 	})
-}
-
-export {
-	distance,
-	speed,
-	consumption,
-	duration,
-	storage,
-	sendMission
 }

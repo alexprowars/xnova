@@ -15,14 +15,14 @@
 	import TechRow from '~/components/page/buildings/tech-row.vue'
 
 	export default {
-		name: "tech",
+		name: 'tech',
 		components: {
 			TechRow
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 	}
 </script>

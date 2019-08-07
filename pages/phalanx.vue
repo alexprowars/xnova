@@ -28,12 +28,12 @@
 
 <script>
 	export default {
-		name: "phalanx",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'phalanx',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		layout: 'empty',
 		data () {
 			return {

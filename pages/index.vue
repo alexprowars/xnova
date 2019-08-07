@@ -57,19 +57,19 @@
 </template>
 
 <script>
-	import AuthForm from '../components/page/index/authForm.vue'
+	import AuthForm from '~/components/page/index/authForm.vue'
 	import RegistrationForm from './registration.vue'
 	import RemindForm from './remind.vue'
 
 	import { addScript } from '~/utils/helpers'
 
 	export default {
-		name: "index",
+		name: 'index',
 		components: {
 			AuthForm
 		},
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		methods: {
 			showRegistration ()

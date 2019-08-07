@@ -5,8 +5,8 @@
 <script>
 	export default {
 		name: 'logout',
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 	}
 </script>

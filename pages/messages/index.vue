@@ -48,12 +48,12 @@
 	import MessagesRow from '~/components/page/messages/row.vue'
 
 	export default {
-		name: "messages",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'messages',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		components: {
 			MessagesRow
 		},

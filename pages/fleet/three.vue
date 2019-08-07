@@ -4,6 +4,6 @@
 
 <script>
 	export default {
-		name: "fleet-three",
+		name: 'fleet-three',
 	}
 </script>

@@ -1,61 +1,76 @@
 <template>
 	<div>
-	<table class="table">
-		<tr>
-			<td class="c" width="100">TOP50</td>
-			<td class="c"><router-link to="/hall/">Зал Славы</router-link></td>
-			<td class="c" width="137">
-				<router-form action="/hall/">
-					<select name="visible" title="" v-model="page['type']">
-						<option value="1">Бои</option>
-						<option value="2">САБ</option>
+		<div class="table">
+			<div class="row">
+				<div class="col-1 c middle">TOP50</div>
+				<div class="col c middle">Зал Славы</div>
+				<div class="col-3 c middle">
+					<select v-model.number="page['type']">
+						<option value="0">Одиночные</option>
+						<option value="1">Командные</option>
 					</select>
-				</router-form>
-			</td>
-		</tr>
-	</table>
-	<div class="separator"></div>
-	<table class="table">
-		<tr>
-			<td class="c" width="35">Место</td>
-			<td class="c"><font color=#CDB5CD>{{ page['type'] <= 1 ? 'Самые разрушительные бои' : 'Самые разрушительные групповые бои' }}</font></td>
-			<td class="c" width="45">Итог</td>
-			<td class="c" width="125">Дата</td>
-		</tr>
-		<tr v-for="(log, i) in page['hall']">
-			<th>{{ i + 1 }}</th>
-			<th>
-				<a :href="'/log/'+log['log']+'/'" target="_blank">{{ log['title'] }}</a>
-			</th>
-			<th>
-				<template v-if="log['won'] === 0">
-					Н
-				</template>
-				<template v-if="log['won'] === 1">
-					А
-				</template>
-				<template v-else>
-					О
-				</template>
-			</th>
-			<th nowrap :class="{positive: page['time'] === log['time']}">
-				{{ log['time'] | date('d.m.y H:i') }}
-			</th>
-		</tr>
-		<tr v-if="page['hall'].length === 0">
-			<th colspan="4">В этой вселенной еще не было крупных боев</th>
-		</tr>
-	</table>
+				</div>
+			</div>
+		</div>
+		<div class="separator"></div>
+		<div class="table">
+			<div class="row">
+				<div class="col-1 c">Место</div>
+				<div class="col c">
+					{{ page['type'] === 0 ? 'Самые разрушительные бои' : 'Самые разрушительные групповые бои' }}
+				</div>
+				<div class="col-1 c">Итог</div>
+				<div class="col-2 c">Дата</div>
+			</div>
+			<div v-for="(log, i) in page['hall']" class="row">
+				<div class="col-1 th">{{ i + 1 }}</div>
+				<div class="col th">
+					<a :href="'/log/'+log['log']+'/'" target="_blank">{{ log['title'] }}</a>
+				</div>
+				<div class="col-1 th">
+					<template v-if="log['won'] === 0">Н</template>
+					<template v-if="log['won'] === 1">А</template>
+					<template v-else>О</template>
+				</div>
+				<div class="col-2 th" :class="{positive: page['time'] === log['time']}">
+					{{ log['time'] | date('d.m.y H:i') }}
+				</div>
+			</div>
+			<div v-if="page['hall'].length === 0" class="row">
+				<div class="col th">В этой вселенной еще не было крупных боев</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		name: "hall",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'hall',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
+		watch: {
+			'page.type' () {
+				this.load()
+			}
+		},
+		methods: {
+			async load ()
+			{
+				try
+				{
+					const result = await this.$post('/hall/', {
+						type: this.page['type']
+					})
+
+					this.page = result['page']
+				}
+				catch(e) {
+					alert(e.message)
+				}
+			}
+		}
 	}
 </script>

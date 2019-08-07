@@ -42,9 +42,9 @@
 
 <script>
 	export default {
-		name: "banned",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'banned',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 	}

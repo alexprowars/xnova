@@ -56,12 +56,12 @@
 
 <script>
 	export default {
-		name: "buddy-requests",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'buddy-requests',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		methods: {
 			approveRequest (id)
 			{

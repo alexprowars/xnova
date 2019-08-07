@@ -50,9 +50,9 @@
 	import StatRaces from '~/components/page/stat/races.vue'
 
 	export default {
-		name: "stat",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'stat',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 		components: {
@@ -61,7 +61,6 @@
 			StatRaces
 		},
 		data () {
-			Object.defineProperty(this.constructor, '_dataRefresh', {value: false, writable: true});
 			return {
 				form: {
 					list: '',

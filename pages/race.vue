@@ -138,12 +138,12 @@
 
 <script>
 	export default {
-		name: "race",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'race',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			race () {
 				return this.$store.state.user ? this.$store.state.user.race : 0

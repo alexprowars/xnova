@@ -22,13 +22,13 @@ class HallController extends Controller
 {
 	public function indexAction ()
 	{
-		$sab = (int) $this->request->get('visible', 'integer', 0);
+		$type = (int) $this->request->get('type', 'int', 0);
 
 		$parse = [];
-		$parse['type'] = $sab;
+		$parse['type'] = $type;
 		$parse['hall'] = [];
 
-		$halls = $this->db->query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $sab . " ORDER BY debris DESC LIMIT 50");
+		$halls = $this->db->query("SELECT * FROM game_hall WHERE time < " . (time() - 3600) . " AND sab = " . $type . " ORDER BY debris DESC LIMIT 50");
 
 		$time = 0;
 

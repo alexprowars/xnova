@@ -122,12 +122,12 @@
 
 <script>
 	export default {
-		name: "fleet-verband",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'fleet-verband',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		methods: {
 			rand (min, max) {
 				return Math.floor(Math.random() * (max - min + 1)) + min

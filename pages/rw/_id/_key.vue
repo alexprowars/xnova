@@ -4,9 +4,9 @@
 
 <script>
 	export default {
-		name: "rw",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'rw',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		layout: 'empty',
 		created ()

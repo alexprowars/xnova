@@ -22,18 +22,25 @@
 			load ()
 			{
 				if (this.$store.getters.isMobile)
-					return window.location.href = url.split('ajax').join('').split('popup').join('');
+					return window.location.href = this.to.split('ajax').join('').split('popup').join('')
 
 				this.$get(this.to, {
 					popup: 'Y'
 				})
-				.then(result =>
+				.then(async (result) =>
 				{
 					let component = this.$router.getMatchedComponents(this.to)
 
 					if (component.length)
 					{
-						this.$modal.show(component[0], {
+						let comp = null
+
+						if (typeof component[0] === 'object')
+							comp = component[0]
+						else
+							comp = await component[0]()
+
+						this.$modal.show(comp, {
 							popup: result['page']
 						}, {
 							width: this.width,

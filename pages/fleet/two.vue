@@ -114,36 +114,36 @@
 </template>
 
 <script>
-	import * as fleet from '~/utils/fleet'
+	import { getDistance, getSpeed, getDuration, getConsumption, getStorage } from '~/utils/fleet'
 
 	export default {
-		name: "fleet-two",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'fleet-two',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
-		middleware: ['auth'],
+		middleware: 'auth',
 		computed: {
 			resources () {
-				return this.$store.state.resources;
+				return this.$store.state.resources
 			},
 			position () {
-				return this.$store.state.user.position;
+				return this.$store.state.user.position
 			},
 			hold ()
 			{
 				if (!this.page)
 					return 0
 
-				let hold = 0;
+				let hold = 0
 
 				if (this.page['mission'] === 5)
-					hold = this.page['hold'] * this.hold_hours;
+					hold = this.page['hold'] * this.hold_hours
 
-				return hold;
+				return hold
 			},
 			capacity () {
-				return this.storage - this.resource.metal - this.resource.crystal - this.resource.deuterium - this.hold;
+				return this.storage - this.resource.metal - this.resource.crystal - this.resource.deuterium - this.hold
 			}
 		},
 		data () {
@@ -164,75 +164,72 @@
 		},
 		watch: {
 			target_time () {
-				this.startTimer();
+				this.startTimer()
 			}
 		},
 		methods: {
 			maxRes (type)
 			{
-				let current = this.resource.metal + this.resource.crystal + this.resource.deuterium;
-				current -= this.resource[type];
+				let current = this.resource.metal + this.resource.crystal + this.resource.deuterium
+				current -= this.resource[type]
 
-				let free = this.storage - current;
+				let free = this.storage - current
 
 				if (type === 'deuterium')
-					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current'] - this.consumption), free), 0);
+					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current'] - this.consumption), free), 0)
 				else
-					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current']), free), 0);
+					this.resource[type] = Math.max(Math.min(Math.floor(this.resources[type]['current']), free), 0)
 			},
 			maxResAll ()
 			{
-				let free = this.storage - Math.floor(this.resources['metal']['current']) - Math.floor(this.resources['crystal']['current']) - Math.floor(this.resources['deuterium']['current'] - this.consumption);
+				let free = this.storage - Math.floor(this.resources['metal']['current']) - Math.floor(this.resources['crystal']['current']) - Math.floor(this.resources['deuterium']['current'] - this.consumption)
 
 				if (free < 0)
 				{
-					this.resource.metal = Math.max(Math.min(Math.floor(this.resources['metal']['current']), this.storage), 0);
-					this.resource.crystal = Math.max(Math.min(Math.floor(this.resources['crystal']['current']), this.storage - this.resource.metal), 0);
-					this.resource.deuterium = Math.max(Math.min(Math.floor(this.resources['deuterium']['current'] - this.consumption), this.storage - this.resource.metal - this.resource.crystal), 0);
+					this.resource.metal = Math.max(Math.min(Math.floor(this.resources['metal']['current']), this.storage), 0)
+					this.resource.crystal = Math.max(Math.min(Math.floor(this.resources['crystal']['current']), this.storage - this.resource.metal), 0)
+					this.resource.deuterium = Math.max(Math.min(Math.floor(this.resources['deuterium']['current'] - this.consumption), this.storage - this.resource.metal - this.resource.crystal), 0)
 				}
 				else
 				{
-					this.resource.metal = Math.max(Math.floor(this.resources['metal']['current']), 0);
-					this.resource.crystal = Math.max(Math.floor(this.resources['crystal']['current']), 0);
-					this.resource.deuterium = Math.max(Math.floor(this.resources['deuterium']['current'] - this.consumption), 0);
+					this.resource.metal = Math.max(Math.floor(this.resources['metal']['current']), 0)
+					this.resource.crystal = Math.max(Math.floor(this.resources['crystal']['current']), 0)
+					this.resource.deuterium = Math.max(Math.floor(this.resources['deuterium']['current'] - this.consumption), 0)
 				}
 			},
-			clearResAll ()
-			{
-				this.resource.metal = this.resource.crystal = this.resource.deuterium = 0;
+			clearResAll () {
+				this.resource.metal = this.resource.crystal = this.resource.deuterium = 0
 			},
 			startTimer () {
-				this.target_timeout = setTimeout(() => this.target_time = this.$store.getters.getServerTime() + this.duration, 1000);
+				this.target_timeout = setTimeout(() => this.target_time = this.$store.getters.getServerTime() + this.duration, 1000)
 			},
 			clearTimer () {
-				clearTimeout(this.target_timeout);
+				clearTimeout(this.target_timeout)
 			},
 		},
 		mounted ()
 		{
 			if (!this.page)
-				return;
+				return
 
-			let distance = fleet.distance(this.position, this.page['target']);
-			let maxspeed = fleet.speed(this.page['ships']);
+			let distance = getDistance(this.position, this.page['target'])
+			let maxspeed = getSpeed(this.page['ships'])
 
-			let duration = fleet.duration({
+			this.duration = getDuration({
 				factor: this.page['speed'],
 				distance: distance,
 				max_speed: maxspeed,
 				universe_speed: this.$store.state['speed']['fleet']
-			});
+			})
 
-			this.consumption = fleet.consumption({
+			this.consumption = getConsumption({
 				ships: this.page['ships'],
-				duration: duration,
+				duration: this.duration,
 				distance: distance,
 				universe_speed: this.$store.state['speed']['fleet']
-			});
+			})
 
-			this.storage = fleet.storage(this.page['ships']) - this.consumption;
-			this.duration = duration;
-
+			this.storage = getStorage(this.page['ships']) - this.consumption
 			this.target_time = this.$store.getters.getServerTime() + this.duration
 		}
 	}

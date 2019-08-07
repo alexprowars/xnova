@@ -1,4 +1,4 @@
-const number = (value) =>
+export function number (value)
 {
 	if (value > 1000000000)
 		return number_format(Math.floor(value / 1000000), 0, ',', '.')+'kk';
@@ -6,7 +6,7 @@ const number = (value) =>
 	return number_format(value, 0, ',', '.');
 }
 
-const time = (value, separator, full) =>
+export function time (value, separator, full)
 {
 	if (typeof separator === 'undefined')
 		separator = '';
@@ -41,7 +41,7 @@ const time = (value, separator, full) =>
 	return time;
 }
 
-const date = (format, timestamp) =>
+export function date (format, timestamp)
 {
 	timestamp = parseInt(timestamp);
 
@@ -200,16 +200,9 @@ const date = (format, timestamp) =>
 	});
 }
 
-const morph = (n, titles) =>
+export function morph (n, titles)
 {
 	return titles[(n % 10 === 1 && n % 100 !== 11) ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2]
-}
-
-export {
-	number,
-	time,
-	date,
-	morph,
 }
 
 function number_format(number, decimals, dec_point, thousands_sep)

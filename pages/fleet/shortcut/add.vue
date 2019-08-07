@@ -37,9 +37,9 @@
 
 <script>
 	export default {
-		name: "fleet-shortcut-add",
-		asyncData ({ store, route }) {
-			return store.dispatch('loadPage', route.fullPath)
+		name: 'fleet-shortcut-add',
+		async asyncData ({ store }) {
+			return await store.dispatch('loadPage')
 		},
 		watchQuery: true,
 	}
