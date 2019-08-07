@@ -1,41 +1,47 @@
-## Описание
+## Description
 
-Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик. Вы начинаете на своей собственой планете и строите там экономическую и военную инфраструктуру. Исследования дают Вам доступ к новым технологиям и более совершенным системам вооружения.
+SPA ogame clone writen on php and vue.js
 
-## Адрес игры
+## Demo
 
 https://xnova.su/  
 https://x.xnova.su/
 
-## Framework
+## Frameworks
 
-Phalcon
+Phalcon (**https://phalconphp.com/en/**)  
+Vue.js (**https://vuejs.org/**)  
+Nuxt.js (**https://nuxtjs.org/**)  
 
-## Системные требования:
-- PHP 7.0 и выше
-- MySQL 5.7 и выше
-- Phalcon 3.3 и выше
-- NodeJs
+## System requirements:
+- PHP 7.0 and higher
+- MySQL 5.7 and higher
+- Phalcon 3.3 and higher
+- NodeJs 10 and higher
 
-**Рекомендуется использовать связку Nginx + php-fpm для максимальной производительности**
+## Installation
+- Install **Phalcon** framework on server (**https://phalconphp.com/ru/download**)
+- Configure Nginx as proxy (sample config install/nginx.conf)
+- Upload database **install/db.sql**
+- Rename config file **app/config/_.core.ini** to **core.ini**
+- Install NodeJs dependencies **npm install**
+- Install Composer dependencies **composer install**
+- Install crontab **install/cron.conf**
 
-## Установка
-1. Скомпилировать и установить PHP расширение **Phalcon** (**https://phalconphp.com/ru/download**)
-2. Настроить Nginx (**https://docs.phalconphp.com/ru/latest/webserver-setup#nginx**)
-2.1. Или настроить Apache (**https://docs.phalconphp.com/ru/latest/webserver-setup#apache**)
-3. Залить скрипты игры на сервер (с использованием git или напрямую)
-4. Залить базу данных (**install/db.sql**)
-5. Переименовать или скопировать конфиг **app/config/_.core.ini** в **core.ini**
-6. Внести параметры подключения к базе данных в файле **app/config/core.ini**
-7. Установить NodeJS
-8. Перейти в корневой каталог проекта и установить зависимости **npm install**
-9. Установить Composer **https://getcomposer.org/**
-10. Перейти в корневой каталог проекта и установить зависимости **composer install**
-11. Скомпилировать стили командой **npm run dev** (тестовая среда) или **npm run build** (рабочая среда)
-12. Настроить cron **install/cron.conf**
-13. Запуск чата:
-	- получить ssl сертификат (можно воспользоваться letsencrypt)
-	- настроить секцию **[chat]** в конфиге
-	- запустить через консоль командой **node chat/chat.js**
-	- для постоянной работы можно использовать **http://pm2.keymetrics.io/**
-14. Логин и пароль администратора **admin@xnova.su** / **123456**
+## Usage
+
+####Development:
+**npm run dev**  
+  
+####Production:
+**npm run build**  
+**npm run start** or use PM2 (**http://pm2.keymetrics.io/**)
+
+#### Login Information
+login **admin@xnova.su**  
+password **123456**
+
+## Chat launch
+- Get ssl certificate (example **letsencrypt**)
+- Fill in the settings in the section **[chat]** in **app/config/core.ini**
+- Start daemon **node chat/chat.js** or use PM2 (**http://pm2.keymetrics.io/**)
