@@ -1,4 +1,7 @@
-module.exports = {
+const GTM_ID = 'GTM-TD5227C'
+const SENTRY_ID = 'https://07e2069e69bf41138e52c89088230e98@sentry.io/1524173'
+
+let config = {
 	head: {
 		title: 'XNova Game',
 		meta: [
@@ -34,7 +37,6 @@ module.exports = {
 		{src: '~/plugins/global.js', ssr: false},
 		{src: '~/plugins/modal.js', ssr: false},
 		{src: '~/plugins/router.js', ssr: false},
-		{src: '~/plugins/metrika.js', ssr: false},
 		{src: '~/plugins/tooltip.js', ssr: true},
 		{src: '~/plugins/swipe.js', ssr: false},
 		{src: '~/plugins/toast.js', ssr: false},
@@ -45,18 +47,31 @@ module.exports = {
 		middleware: 'router',
 		prefetchLinks: false,
 		linkExactActiveClass: 'active',
-		scrollBehavior: function (to, from)
+		scrollBehavior: function (to, from, savedPosition)
 		{
+			let position = false
+
 			if (to.path === from.path)
-				return false;
-			else if (to.matched.length < 2 && from.matched.length < 2)
-				return { x: 0, y: 0 };
+				return false
+
+			if (to.matched.length < 2 && from.matched.length < 2)
+				position = { x: 0, y: 0 }
 			else if (to.matched.length >= 2 && from.matched.length < 2)
-				return { x: 0, y: 0 };
+				position = { x: 0, y: 0 }
 			else if (to.matched.length < 2 && from.matched.length >= 2)
-				return { x: 0, y: 0 };
-			else
-				return false;
+				position = { x: 0, y: 0 }
+			else if (to.matched.some((r) => r.components.default.options.scrollToTop))
+		    	position = { x: 0, y: 0 }
+
+			if (savedPosition)
+				position = savedPosition
+
+			return new Promise(resolve =>
+			{
+				window.$nuxt.$once('triggerScroll', () => {
+					resolve(position)
+				})
+			})
 		},
 	},
 	loading: {
@@ -132,4 +147,38 @@ module.exports = {
 			productionTip: false
 		}
 	},
-};
+}
+
+
+if (SENTRY_ID !== '')
+{
+	config.modules.push('@nuxtjs/sentry')
+
+	config.sentry = {
+		dsn: SENTRY_ID,
+		options: {
+			disabled: process.env.NODE_ENV !== 'production'
+		},
+		clientIntegrations: {
+			ReportingObserver: false,
+		},
+		clientConfig: {
+			beforeSend (event)
+			{
+				if (event.message && event.message.indexOf('gCrWeb') > -1)
+					return null
+
+				return event
+			},
+		},
+	}
+}
+
+if (GTM_ID !== '')
+{
+	config.modules.push(['@nuxtjs/google-tag-manager', {
+		id: GTM_ID
+	}])
+}
+
+module.exports = config

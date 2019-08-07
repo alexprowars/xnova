@@ -30,10 +30,10 @@ Nuxt.js (**https://nuxtjs.org/**)
 
 ## Usage
 
-####Development:
+#### Development:
 **npm run dev**  
   
-####Production:
+#### Production:
 **npm run build**  
 **npm run start** or use PM2 (**http://pm2.keymetrics.io/**)
 
