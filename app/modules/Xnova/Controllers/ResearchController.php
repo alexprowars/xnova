@@ -15,13 +15,13 @@ use Xnova\Exceptions\PageException;
 use Xnova\Request;
 
 /**
- * @RoutePrefix("/buildings")
+ * @RoutePrefix("/research")
  * @Route("/")
  * @Route("/{action}/")
  * @Route("/{action}{params:(/.*)*}")
  * @Private
  */
-class BuildingsController extends Controller
+class ResearchController extends Controller
 {
 	public function initialize ()
 	{
@@ -41,10 +41,10 @@ class BuildingsController extends Controller
 	public function indexAction ()
 	{
 		$construction = new Construction($this->user, $this->planet);
-		$parse = $construction->pageBuilding();
+		$parse = $construction->pageResearch();
 
 		Request::addData('page', $parse);
 
-		$this->tag->setTitle('Постройки');
+		$this->tag->setTitle('Исследования');
 	}
 }
