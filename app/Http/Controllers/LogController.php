@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Xnova\CombatReport;
 use Xnova\Controller;
@@ -62,10 +62,10 @@ class LogController extends Controller
 		if (!Auth::check())
 			throw new PageException('Доступ запрещен');
 
-		if (!Input::has('id'))
+		if (!Request::has('id'))
 			throw new RedirectException('Ошибка удаления.', '/log/');
 
-		$id = (int) Input::query('id', 0);
+		$id = (int) Request::query('id', 0);
 
 		if (!$id)
 			throw new RedirectException('Ошибка удаления.', '/log/');
@@ -94,20 +94,20 @@ class LogController extends Controller
 
 		if (Request::instance()->isMethod('post'))
 		{
-			$title = Input::post('title', '');
+			$title = Request::post('title', '');
 
 			if ($title == '')
 				$message = '<h1><font color=red>Введите название для боевого отчёта.</h1>';
-			elseif (Input::post('code', '') == '')
+			elseif (Request::post('code', '') == '')
 				$message = '<h1><font color=red>Введите ID боевого отчёта.</h1>';
 			else
 			{
-				$code = Input::post('code', '');
+				$code = Request::post('code', '');
 
 				$key = substr($code, 0, 32);
 				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
-				if (md5($this->config->application->encryptKey.$id) != $key)
+				if (md5(Config::get('app.key').$id) != $key)
 					throw new RedirectException('Не правильный ключ', '');
 				else
 				{
@@ -138,7 +138,7 @@ class LogController extends Controller
 						$log->title = addslashes(htmlspecialchars($title));
 						$log->log = $SaveLog;
 
-						if (!$log->create())
+						if (!$log->save())
 							throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
 
 						$message = 'Боевой отчёт успешно сохранён.';

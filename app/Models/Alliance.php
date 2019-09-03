@@ -58,6 +58,11 @@ class Alliance extends Model
 			$this->ranks = $ranks;
 	}
 
+	public function getMember ($userId)
+	{
+		$this->member = AllianceMember::query()->where('u_id', $userId)->get();
+	}
+
 	public function parseRights ($userId = 0)
 	{
 		if (!$userId && Auth::check())

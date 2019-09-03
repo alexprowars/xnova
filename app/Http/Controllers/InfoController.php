@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\SuccessException;
@@ -190,9 +190,9 @@ class InfoController extends Controller
 		{
 			$parse['msg'] = '';
 
-			if (Input::post('send') && Input::post('fleet'))
+			if (Request::post('send') && Request::post('fleet'))
 			{
-				$fleetId = (int) Input::post('fleet', 0);
+				$fleetId = (int) Request::post('fleet', 0);
 
 				$fleet = Models\Fleet::query()
 					->where('id', $fleetId)
@@ -384,10 +384,10 @@ class InfoController extends Controller
 
 			if ($itemId >= 500 && $itemId < 600)
 			{
-				if (Input::post('missiles'))
+				if (Request::post('missiles'))
 				{
-					$icm = abs((int) Input::post('interceptor', 0));
-					$ipm = abs((int) Input::post('interplanetary', 0));
+					$icm = abs((int) Request::post('interceptor', 0));
+					$ipm = abs((int) Request::post('interplanetary', 0));
 
 					if ($icm > $this->planet->getUnitCount('interceptor_misil'))
 						$icm = $this->planet->getUnitCount('interceptor_misil');

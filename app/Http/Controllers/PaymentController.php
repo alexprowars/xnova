@@ -10,7 +10,7 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\User;
 use Xnova\Models;
 use Xnova\Controller;
@@ -24,16 +24,16 @@ class PaymentController extends Controller
 
 	public function robokassa ()
 	{
-		if (!Input::has('InvId') || Input::get("InvId") == '' || !is_numeric(Input::get("InvId")))
+		if (!Request::has('InvId') || Request::input("InvId") == '' || !is_numeric(Request::input("InvId")))
 			die('InvId nulled');
 
-		$sign_hash = strtoupper(md5(Input::get('OutSum').":".Input::get('InvId').":".Config::get('game.robokassa.secret').":Shp_UID=".Input::get('Shp_UID')));
+		$sign_hash = strtoupper(md5(Request::input('OutSum').":".Request::input('InvId').":".Config::get('game.robokassa.secret').":Shp_UID=".Request::input('Shp_UID')));
 
-		if (strtoupper(Input::get('SignatureValue')) !== $sign_hash)
+		if (strtoupper(Request::input('SignatureValue')) !== $sign_hash)
 			die('signature verification failed');
 
 		$check = DB::table('users_payments')
-			->where('transaction_id', (int) Input::get("InvId"))
+			->where('transaction_id', (int) Request::input("InvId"))
 			->where('user', '!=', 0)
 			->exists();
 
@@ -41,16 +41,16 @@ class PaymentController extends Controller
 			die('already paid');
 
 		/** @var Models\Users $user */
-		$user = Models\Users::query()->find((int) Input::get("Shp_UID"));
+		$user = Models\Users::query()->find((int) Request::input("Shp_UID"));
 
 		if (!$user)
 			die('userId not found');
 
-		$amount = (int) Input::get('OutSum');
+		$amount = (int) Request::input('OutSum');
 
 		if ($amount > 0)
 		{
-			if (!Input::has('IncCurrLabel'))
+			if (!Request::has('IncCurrLabel'))
 				$_REQUEST['IncCurrLabel'] = 'Free-Kassa';
 
 			$user->credits += $amount;
@@ -60,7 +60,7 @@ class PaymentController extends Controller
 				'user' 				=> $user->id,
 				'call_id' 			=> '',
 				'method' 			=> addslashes($_REQUEST['IncCurrLabel']),
-				'transaction_id' 	=> (int) Input::get("InvId"),
+				'transaction_id' 	=> (int) Request::input("InvId"),
 				'transaction_time' 	=> date("Y-m-d H:i:s", time()),
 				'uid' 				=> 0,
 				'amount' 			=> $amount,
@@ -76,7 +76,7 @@ class PaymentController extends Controller
 				'type' 		=> 1,
 			]);
 
-			echo 'OK'.Input::get("InvId");
+			echo 'OK'.Request::input("InvId");
 		}
 	}
 }

@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Xnova\Battle\Core\Battle;
 use Xnova\Battle\Core\Round;
@@ -43,9 +42,9 @@ class XnsimController extends Controller
 	{
 		$this->assets->addCss('assets/build/app.css');
 
-		if (Input::has('sid'))
+		if (Request::has('sid'))
 		{
-			$log = $this->db->query("SELECT * FROM log_sim WHERE sid = '".addslashes(htmlspecialchars(Input::query('sid', '')))."' LIMIT 1")->fetch();
+			$log = $this->db->query("SELECT * FROM log_sim WHERE sid = '".addslashes(htmlspecialchars(Request::query('sid', '')))."' LIMIT 1")->fetch();
 
 			if (!isset($log['id']))
 				die('Лога не существует');
@@ -56,7 +55,7 @@ class XnsimController extends Controller
 		}
 		else
 		{
-			$r = explode("|", Input::get('r', ''));
+			$r = explode("|", Request::input('r', ''));
 
 			if (!isset($r[0]) || !isset($r[10]))
 				die('Нет данных для симуляции боя');

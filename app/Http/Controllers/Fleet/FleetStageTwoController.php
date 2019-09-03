@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
 use Xnova\Fleet;
@@ -23,21 +23,21 @@ class FleetStageTwoController extends Controller
 		if ($this->user->vacation > 0)
 			throw new PageException("Нет доступа!");
 
-		$moon = (int) Input::post('moon', 0);
+		$moon = (int) Request::post('moon', 0);
 
 		if ($moon && $moon != $this->planet->id)
 			$this->checkJumpGate($moon);
 
 		$parse = [];
 
-		$galaxy = (int) Input::post('galaxy', 0);
-		$system = (int) Input::post('system', 0);
-		$planet = (int) Input::post('planet', 0);
-		$type 	= (int) Input::post('planet_type', 0);
-		$acs 	= (int) Input::post('alliance', 0);
+		$galaxy = (int) Request::post('galaxy', 0);
+		$system = (int) Request::post('system', 0);
+		$planet = (int) Request::post('planet', 0);
+		$type 	= (int) Request::post('planet_type', 0);
+		$acs 	= (int) Request::post('alliance', 0);
 
-		$mission 	= (int) Input::post('mission', 0);
-		$fleets 	= json_decode(base64_decode(str_rot13(Input::post('fleet', ''))), true);
+		$mission 	= (int) Request::post('mission', 0);
+		$fleets 	= json_decode(base64_decode(str_rot13(Request::post('fleet', ''))), true);
 
 		if (!count($fleets))
 			throw new PageException(__('fleet.fl_unselectall'), '/fleet/');
@@ -62,7 +62,7 @@ class FleetStageTwoController extends Controller
 
 		$missions = array_unique($missions);
 
-		$fleetSpeed = (int) Input::post('speed', 10);
+		$fleetSpeed = (int) Request::post('speed', 10);
 		$stayConsumption = Fleet::GetFleetStay($fleets);
 
 		if ($this->user->rpg_meta > time())
@@ -103,7 +103,7 @@ class FleetStageTwoController extends Controller
 		$parse['hold'] = $stayConsumption;
 		$parse['alliance'] = $acs;
 		$parse['speed'] = $fleetSpeed;
-		$parse['fleet'] = Input::post('fleet', '');
+		$parse['fleet'] = Request::post('fleet', '');
 
 		$parse['ships'] = [];
 
@@ -143,7 +143,7 @@ class FleetStageTwoController extends Controller
 
 		$success = false;
 
-		$ships = Input::post('ship');
+		$ships = Request::post('ship');
 		$ships = array_map('intval', $ships);
 		$ships = array_map('abs', $ships);
 

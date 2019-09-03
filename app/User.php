@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Xnova\Exceptions\Exception;
 use Xnova\Models\Alliance;
@@ -267,9 +267,9 @@ class User extends Models\Users
 
 	public function setSelectedPlanet ()
 	{
-		if (Input::has('chpl') && is_numeric(Input::get('chpl')))
+		if (Request::has('chpl') && is_numeric(Request::input('chpl')))
 		{
-			$selectPlanet = (int) Input::get('chpl');
+			$selectPlanet = (int) Request::input('chpl');
 
 			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
 				return true;
@@ -526,5 +526,17 @@ class User extends Models\Users
 		Models\Users::query()->where('id', $userId)->update($update);
 
 		return true;
+	}
+
+	public static function getPlanetsId ($userId)
+	{
+		$result = [];
+
+		$rows = DB::select('SELECT id FROM game_planets WHERE id_owner = ?', [(int) $userId]);
+
+		foreach ($rows as $row)
+			$result[] = (int) $row->id;
+
+		return $result;
 	}
 }

@@ -11,8 +11,9 @@ namespace Xnova\Http\Controllers;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Xnova\Files;
 use Xnova\Fleet;
 use Xnova\Controller;
 use Xnova\Models;
@@ -56,31 +57,31 @@ class GalaxyController extends Controller
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
 
-		if (Input::post('direction'))
+		if (Request::post('direction'))
 		{
-			$direction = trim(Input::post('direction', ''));
+			$direction = trim(Request::post('direction', ''));
 
 			if ($direction == 'galaxyLeft')
-				$galaxy = (int) Input::post('galaxy') - 1;
+				$galaxy = (int) Request::post('galaxy') - 1;
 			elseif ($direction == 'galaxyRight')
-				$galaxy = (int) Input::post('galaxy') + 1;
-			elseif (Input::post('galaxy'))
-				$galaxy = (int) Input::post('galaxy');
+				$galaxy = (int) Request::post('galaxy') + 1;
+			elseif (Request::post('galaxy'))
+				$galaxy = (int) Request::post('galaxy');
 
 			if ($direction == 'systemLeft')
-				$system = (int) Input::post('system') - 1;
+				$system = (int) Request::post('system') - 1;
 			elseif ($direction == 'systemRight')
-				$system = (int) Input::post('system') + 1;
-			elseif (Input::post('system'))
-				$system = (int) Input::post('system');
+				$system = (int) Request::post('system') + 1;
+			elseif (Request::post('system'))
+				$system = (int) Request::post('system');
 		}
 		else
 		{
-			if (Input::post('galaxy'))
-				$galaxy = (int) Input::query('galaxy', 1);
+			if (Request::post('galaxy'))
+				$galaxy = (int) Request::query('galaxy', 1);
 
-			if (Input::post('system'))
-				$system = (int) Input::query('system', 1);
+			if (Request::post('system'))
+				$system = (int) Request::query('system', 1);
 		}
 
 		$galaxy = min(max($galaxy, 1), Config::get('game.maxGalaxyInWorld'));

@@ -13,9 +13,8 @@
 		"ext-pdo": "*",
 		"ext-iconv": "*",
 		"ext-gd": "*",
-        "laravel/framework": "^5.8",
-        "spatie/laravel-permission": "^2.37",
-        "nutnet/laravel-sms": "^0.5.0",
+        "laravel/framework": "^6.0",
+        "spatie/laravel-permission": "^3.0",
         "zelenin/smsru": "^4.1"
 	},
 	"replace": {
@@ -39,7 +38,6 @@
  	},
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
-        "barryvdh/laravel-ide-helper": "^2.6",
         "doctrine/dbal": "^2.9"
     }
 }

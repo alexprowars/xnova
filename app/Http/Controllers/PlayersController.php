@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
+use Xnova\Files;
 use Xnova\Models\Planets;
 use Xnova\Controller;
 use Xnova\User;

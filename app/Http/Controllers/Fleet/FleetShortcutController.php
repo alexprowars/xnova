@@ -9,7 +9,6 @@ namespace Xnova\Http\Controllers\Fleet;
  */
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Xnova\Controller;
@@ -24,19 +23,19 @@ class FleetShortcutController extends Controller
 
 		$inf = Models\UsersInfo::query()->find($this->user->id, ['fleet_shortcut']);
 
-		if (Input::has('add'))
+		if (Request::has('add'))
 		{
 			if (Request::instance()->isMethod('post'))
 			{
-				$name = Input::post('n', '');
+				$name = Request::post('n', '');
 
 				if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name))
 					$name = 'Планета';
 
-				$g = (int) Input::post('g', 0);
-				$s = (int) Input::post('s', 0);
-				$p = (int) Input::post('p', 0);
-				$t = (int) Input::post('t', 0);
+				$g = (int) Request::post('g', 0);
+				$s = (int) Request::post('s', 0);
+				$p = (int) Request::post('p', 0);
+				$t = (int) Request::post('t', 0);
 
 				if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld'))
 					$g = 1;
@@ -57,10 +56,10 @@ class FleetShortcutController extends Controller
 				throw new RedirectException("Ссылка на планету добавлена!", "/fleet/shortcut/");
 			}
 
-			$g = (int) Input::get('g', 0);
-			$s = (int) Input::get('s', 0);
-			$p = (int) Input::get('p', 0);
-			$t = (int) Input::get('t', 0);
+			$g = (int) Request::input('g', 0);
+			$s = (int) Request::input('s', 0);
+			$p = (int) Request::input('p', 0);
+			$t = (int) Request::input('t', 0);
 
 			if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld'))
 				$g = 1;
@@ -80,9 +79,9 @@ class FleetShortcutController extends Controller
 				'type' => $t,
 			];
 		}
-		elseif (Input::has('view'))
+		elseif (Request::has('view'))
 		{
-			$id = (int) Input::query('view', 0);
+			$id = (int) Request::query('view', 0);
 
 			if (Request::instance()->isMethod('post'))
 			{
@@ -91,7 +90,7 @@ class FleetShortcutController extends Controller
 				if (!isset($scarray[$id]))
 					throw new RedirectException('Ошибка', '/fleet/shortcut/');
 
-				if (Input::has('delete'))
+				if (Request::has('delete'))
 				{
 					unset($scarray[$id]);
 					$inf['fleet_shortcut'] = implode("\r\n", $scarray);
@@ -107,11 +106,11 @@ class FleetShortcutController extends Controller
 				{
 					$r = explode(",", $scarray[$id]);
 
-					$r[0] = strip_tags(str_replace(',', '', Input::post('n', '')));
-					$r[1] = (int) Input::post('g', 0);
-					$r[2] = (int) Input::post('s', 0);
-					$r[3] = (int) Input::post('p', 0);
-					$r[4] = (int) Input::post('t', 0);
+					$r[0] = strip_tags(str_replace(',', '', Request::post('n', '')));
+					$r[1] = (int) Request::post('g', 0);
+					$r[2] = (int) Request::post('s', 0);
+					$r[3] = (int) Request::post('p', 0);
+					$r[4] = (int) Request::post('t', 0);
 
 					if ($r[1] < 1 || $r[1] > Config::get('game.maxGalaxyInWorld'))
 						$r[1] = 1;

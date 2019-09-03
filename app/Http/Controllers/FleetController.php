@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Fleet;
 use Xnova\Models;
@@ -49,11 +49,11 @@ class FleetController extends Controller
 		if ($this->user->rpg_admiral > time())
 			$maxFleets += 2;
 
-		$galaxy = (int) Input::query('galaxy', 0);
-		$system = (int) Input::query('system', 0);
-		$planet = (int) Input::query('planet', 0);
-		$planet_type = (int) Input::query('type', 0);
-		$mission = (int) Input::query('mission', 0);
+		$galaxy = (int) Request::query('galaxy', 0);
+		$system = (int) Request::query('system', 0);
+		$planet = (int) Request::query('planet', 0);
+		$planet_type = (int) Request::query('type', 0);
+		$mission = (int) Request::query('mission', 0);
 
 		if (!$galaxy)
 			$galaxy = (int) $this->planet->galaxy;

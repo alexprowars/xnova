@@ -11,7 +11,7 @@ namespace Xnova\Http\Controllers;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\ErrorException;
@@ -37,9 +37,9 @@ class MessagesController extends Controller
 		if (!$OwnerRecord)
 			throw new ErrorException(__('messages.mess_no_owner'));
 
-		if (Input::post('text'))
+		if (Request::post('text'))
 		{
-			$text = Input::post('text', '');
+			$text = Request::post('text', '');
 
 			$error = 0;
 
@@ -95,11 +95,11 @@ class MessagesController extends Controller
 			'to' => $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]"
 		];
 
-		if (Input::query('quote'))
+		if (Request::query('quote'))
 		{
 			$mes = Messages::query()
 				->select(['id', 'text'])
-				->where('id', Input::query('quote'))
+				->where('id', Request::query('quote'))
 				->where(function (Builder $query) {
 					$query->where('user_id', $this->user->id)
 						->orWhere('from_id', $this->user->id);
@@ -118,7 +118,7 @@ class MessagesController extends Controller
 
 	public function delete ()
 	{
-		$items = Input::post('delete');
+		$items = Request::post('delete');
 
 		if (!is_array($items) || !count($items))
 			return false;
@@ -178,8 +178,8 @@ class MessagesController extends Controller
 		if (Session::has('m_cat'))
 			$category = (int) Session::get('m_cat');
 
-		if (Input::post('category'))
-			$category = (int) Input::post('category', 100);
+		if (Request::post('category'))
+			$category = (int) Request::post('category', 100);
 
 		if (!in_array($category, $types))
 			$category = 100;
@@ -189,13 +189,13 @@ class MessagesController extends Controller
 		if (Session::has('m_limit'))
 			$limit = (int) Session::get('m_limit');
 
-		if (Input::post('limit'))
-			$limit = (int) Input::post('limit', 10);
+		if (Request::post('limit'))
+			$limit = (int) Request::post('limit', 10);
 
 		if (!in_array($limit, $limits))
 			$limit = 10;
 
-		$page = (int) Input::query('p', 0);
+		$page = (int) Request::query('p', 0);
 
 		if ($page <= 0)
 			$page = 1;
@@ -206,7 +206,7 @@ class MessagesController extends Controller
 		if (!Session::has('m_cat') || Session::get('m_cat') != $category)
 			Session::put('m_cat', $category);
 
-		if (Input::post('delete'))
+		if (Request::post('delete'))
 			$this->delete();
 
 		$parse['limit'] = $limit;

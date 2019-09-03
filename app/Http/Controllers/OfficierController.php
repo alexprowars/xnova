@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
@@ -25,8 +25,8 @@ class OfficierController extends Controller
 		if ($this->user->vacation > 0)
 			throw new PageException('В режиме отпуска данный раздел недоступен!');
 
-		$id = (int) Input::post('id');
-		$duration = (int) Input::post('duration');
+		$id = (int) Request::post('id');
+		$duration = (int) Request::post('duration');
 
 		if (!$id || !$duration)
 			throw new ErrorException('Ошибка входных параметров');

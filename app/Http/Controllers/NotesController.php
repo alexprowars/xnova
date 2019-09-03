@@ -8,7 +8,6 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
@@ -29,10 +28,10 @@ class NotesController extends Controller
 	{
 		if (Request::instance()->isMethod('post'))
 		{
-			$priority = (int) Input::post('u', 0);
+			$priority = (int) Request::post('u', 0);
 
-			$title = Input::post('title', '');
-			$text = Input::post('text', '');
+			$title = Request::post('title', '');
+			$text = Request::post('text', '');
 
 			if ($title == '')
 				$title = __('notes.NoTitle');
@@ -70,10 +69,10 @@ class NotesController extends Controller
 
 		if (Request::instance()->isMethod('post'))
 		{
-			$priority = (int) Input::post('u', 0);
+			$priority = (int) Request::post('u', 0);
 
-			$title = Input::post('title', '');
-			$text = Input::post('text', '');
+			$title = Request::post('title', '');
+			$text = Request::post('text', '');
 
 			if ($title == '')
 				$title = __('notes.NoTitle');
@@ -107,7 +106,7 @@ class NotesController extends Controller
 	{
 		if (Request::instance()->isMethod('post'))
 		{
-			$deleteIds = Input::post('delete');
+			$deleteIds = Request::post('delete');
 
 			if (!is_array($deleteIds))
 				$deleteIds = [];

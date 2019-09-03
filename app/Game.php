@@ -46,7 +46,7 @@ class Game
 		if (Session::has('uid'))
 			return;
 
-		$id = (int) Request::instance()->server('QUERY_STRING', 0);
+		$id = (int) Request::server('QUERY_STRING', 0);
 
 		if (!$id)
 			return;
@@ -67,8 +67,8 @@ class Game
 			'user_id'		=> $user->id,
 			'time'			=> time(),
 			'ip'			=> $ip,
-			'referer'		=> Request::instance()->server('HTTP_REFERER'),
-			'user_agent'	=> Request::instance()->server('HTTP_USER_AGENT'),
+			'referer'		=> Request::server('HTTP_REFERER'),
+			'user_agent'	=> Request::server('HTTP_USER_AGENT'),
 		]);
 
 		$user->links++;

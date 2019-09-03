@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Xnova\Controller;
 use Xnova\Game;
@@ -27,13 +27,13 @@ class StatController extends Controller
 	{
 		parent::__construct();
 
-		$this->page = (int) Input::get('range', 0);
+		$this->page = (int) Request::input('range', 0);
 		$this->page = max($this->page, 1);
 
-		$this->pid = (int) Input::query('pid', 0);
+		$this->pid = (int) Request::query('pid', 0);
 
-		$type = (int) Input::get('type', 1);
-		$view = Input::get('view', 'players');
+		$type = (int) Request::input('type', 1);
+		$view = Request::input('view', 'players');
 
 		if ($view != 'players' && $type > 5)
 			$type = 1;
@@ -68,7 +68,7 @@ class StatController extends Controller
 
 	public function index ()
 	{
-		$view = Input::get('view', 'players');
+		$view = Request::input('view', 'players');
 
 		switch ($view)
 		{
@@ -83,7 +83,7 @@ class StatController extends Controller
 
 	private function players ()
 	{
-		$type = (int) Input::get('type', 1);
+		$type = (int) Request::input('type', 1);
 
 		$parse = [
 			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),
@@ -172,7 +172,7 @@ class StatController extends Controller
 
 	private function alliances ()
 	{
-		$type = (int) Input::get('type', 1);
+		$type = (int) Request::input('type', 1);
 
 		$parse = [
 			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),

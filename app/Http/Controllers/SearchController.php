@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Format;
 use Xnova\Controller;
 
@@ -23,8 +23,8 @@ class SearchController extends Controller
 			'result' => []
 		];
 
-		$searchtext = Input::post('searchtext', '');
-		$type = Input::post('type', 'playername');
+		$searchtext = Request::post('searchtext', '');
+		$type = Request::post('type', 'playername');
 
 		if ($searchtext != '' && $type != '')
 		{

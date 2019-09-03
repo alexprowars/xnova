@@ -10,9 +10,9 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
-use Xnova\Models\UserInfo;
+use Xnova\Models;
 
 class CreditsController extends Controller
 {
@@ -20,22 +20,23 @@ class CreditsController extends Controller
 	{
 		$parse = [];
 
-		$userId = Input::post('userId') && (int) Input::post('userId') > 0 ?
-			(int) Input::post('userId') : $this->user->getId();
+		$userId = Request::post('userId') && (int) Request::post('userId') > 0 ?
+			(int) Request::post('userId') : $this->user->getId();
 
 		$parse['id'] = $userId;
 		$parse['payment'] = false;
 
-		if (Input::post('summ'))
+		if (Request::post('summ'))
 		{
-			$summ = (int) Input::post('summ', 0);
+			$summ = (int) Request::post('summ', 0);
 
 			do {
 				$id = mt_rand(1000000000000, 9999999999999);
 			}
 			while (DB::selectOne("SELECT id FROM users_payments WHERE transaction_id = ".$id) ? true : false);
 
-			$info = UserInfo::query()->find($this->user->getId());
+			/** @var Models\UsersInfo $info */
+			$info = Models\UsersInfo::query()->find($this->user->getId());
 
 			$parse['payment'] = [
 				'id' => $id,

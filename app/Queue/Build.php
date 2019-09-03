@@ -61,7 +61,7 @@ class Build
 			if (!$build)
 				return false;
 
-			$item = Models\Queue::query()->create([
+			Models\Queue::query()->create([
 				'type' => Models\Queue::TYPE_BUILD,
 				'operation' => $destroy ? Models\Queue::OPERATION_DESTROY : Models\Queue::OPERATION_BUILD,
 				'user_id' => $user->getId(),

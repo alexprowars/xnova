@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
@@ -27,7 +27,7 @@ class MerchantController extends Controller
 
 	public function index ()
 	{
-		if (Input::has('exchange'))
+		if (Request::has('exchange'))
 			$this->exchange();
 
 		$this->setTitle('Торговец');
@@ -42,14 +42,14 @@ class MerchantController extends Controller
 		if ($this->user->credits <= 0)
 			throw new ErrorException('Недостаточно кредитов для проведения обменной операции');
 
-		$metal = (int) Input::post('metal', 0);
-		$crystal = (int) Input::post('crystal', 0);
-		$deuterium = (int) Input::post('deuterium', 0);
+		$metal = (int) Request::post('metal', 0);
+		$crystal = (int) Request::post('crystal', 0);
+		$deuterium = (int) Request::post('deuterium', 0);
 
 		if ($metal < 0 || $crystal < 0 || $deuterium < 0)
 			throw new ErrorException('Злобный читер');
 
-		$type = trim(Input::post('type'));
+		$type = trim(Request::post('type'));
 
 		if (!in_array($type, Vars::getResources()))
 			throw new ErrorException('Ресурс не существует');

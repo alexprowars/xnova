@@ -9,14 +9,14 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 
 class HallController extends Controller
 {
 	public function index ()
 	{
-		$type = (int) Input::get('type', 0);
+		$type = (int) Request::input('type', 0);
 
 		$parse = [];
 		$parse['type'] = $type;

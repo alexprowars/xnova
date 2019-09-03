@@ -11,7 +11,7 @@ namespace Xnova\Http\Controllers\Fleet;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
 use Xnova\Fleet;
@@ -28,10 +28,10 @@ class FleetStageOneController extends Controller
 
 		$parse = [];
 
-		$g = (int) Input::post('galaxy', 0);
-		$s = (int) Input::post('system', 0);
-		$p = (int) Input::post('planet', 0);
-		$t = (int) Input::post('planet_type', 0);
+		$g = (int) Request::post('galaxy', 0);
+		$s = (int) Request::post('system', 0);
+		$p = (int) Request::post('planet', 0);
+		$t = (int) Request::post('planet_type', 0);
 
 		if (!$g)
 			$g = (int) $this->planet->galaxy;
@@ -48,7 +48,7 @@ class FleetStageOneController extends Controller
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = Input::post('ship');
+		$ships = Request::post('ship');
 
 		if (!is_array($ships))
 			$ships = [];
@@ -193,7 +193,7 @@ class FleetStageOneController extends Controller
 			}
 		}
 
-		$parse['mission'] = (int) Input::post('mission', 0);
+		$parse['mission'] = (int) Request::post('mission', 0);
 
 		$this->setTitle(__('fleet.fl_title_1'));
 

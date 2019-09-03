@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\Fleet;
 use Xnova\Planet;
@@ -27,7 +27,7 @@ class RaceController extends Controller
 
 		if ($this->user->race != 0 && $isChangeAvailable)
 		{
-			$r = Input::post('race', 0);
+			$r = Request::post('race', 0);
 			$r = max(min($r, 4), 1);
 
 			if ($r > 0)
@@ -86,9 +86,9 @@ class RaceController extends Controller
 	{
 		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_info WHERE id = ' . $this->user->id)->free_race_change;
 
-		if (Input::has('sel') && $this->user->race == 0)
+		if (Request::has('sel') && $this->user->race == 0)
 		{
-			$r = Input::get('sel', 0);
+			$r = Request::input('sel', 0);
 			$r = max(min($r, 4), 1);
 
 			if ($r > 0)

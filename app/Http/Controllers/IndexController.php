@@ -10,10 +10,9 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -43,15 +42,15 @@ class IndexController extends Controller
 
 		if (Request::instance()->isMethod('post'))
 		{
-			$email = strip_tags(trim(Input::post('email')));
+			$email = strip_tags(trim(Request::post('email')));
 
 			if (!is_email($email))
 				$errors[] = '"'.$email.'" '.__('reg.error_mail');
 
-			if (mb_strlen(Input::post('password')) < 4)
+			if (mb_strlen(Request::post('password')) < 4)
 				$errors[] = __('reg.error_password');
 
-			if (Input::post('password') != Input::post('password_confirm'))
+			if (Request::post('password') != Request::post('password_confirm'))
 				$errors[] = __('reg.error_confirm');
 
 			$checkExist = Models\UsersInfo::query()->where('email', $email)->exists();
@@ -68,7 +67,7 @@ class IndexController extends Controller
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
 					'secret' => Config::get('game.recaptcha->secret_key'),
-					'response' => Input::post('captcha'),
+					'response' => Request::post('captcha'),
 					'remoteip' => Request::ip()
 				]));
 
@@ -82,7 +81,7 @@ class IndexController extends Controller
 
 			if (!count($errors))
 			{
-				$newpass = trim(Input::post('password'));
+				$newpass = trim(Request::post('password'));
 				$md5newpass = md5($newpass);
 
 				/** @var Models\Users $user */
@@ -121,8 +120,8 @@ class IndexController extends Controller
 
 				Options::set('game.users_total', Options::get('users_total', 0) + 1);
 
-				Mail::to(Input::post('email'))->send(new UserRegistration([
-					'#EMAIL#' => Input::post('email'),
+				Mail::to(Request::post('email'))->send(new UserRegistration([
+					'#EMAIL#' => Request::post('email'),
 					'#PASSWORD#' => $newpass,
 				]));
 
@@ -142,10 +141,10 @@ class IndexController extends Controller
 
 	public function remind ()
 	{
-		if (Input::has('id') && Input::has('key') && (int) Input::query('id') > 0 && Input::query('key') != '')
+		if (Request::has('id') && Request::has('key') && (int) Request::query('id') > 0 && Request::query('key') != '')
 		{
-			$id = (int) Input::query('id');
-			$key = addslashes(Input::query('key'));
+			$id = (int) Request::query('id');
+			$key = addslashes(Request::query('key'));
 
 			$request = DB::table('lostpasswords')
 				->where('keystring', $key)
@@ -157,12 +156,12 @@ class IndexController extends Controller
 			if (!$request)
 				throw new ErrorException('Действие данной ссылки истекло, попробуйте пройти процедуру заново!');
 
-			$user = $this->db->query("SELECT u.username, ui.email FROM users u, users_info ui WHERE ui.id = u.id AND u.id = '" . $request['user_id'] . "'")->fetch();
+			$user = DB::selectOne("SELECT u.username, ui.email FROM users u, users_info ui WHERE ui.id = u.id AND u.id = '" . $request['user_id'] . "'");
 
 			if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9]+$/u", $key))
 				throw new ErrorException('Ошибка выборки E-mail адреса!');
 
-			if (empty($user['email']))
+			if (empty($user->email))
 				throw new ErrorException('Ошибка выборки E-mail адреса!');
 
 			$password = Str::random(9);
@@ -170,34 +169,34 @@ class IndexController extends Controller
 			DB::table('users_info')->where('id', $id)->update(['password' => md5($password)]);
 			DB::table('lostpasswords')->where('user_id', $id)->delete();
 
-			Mail::to($user['email'])->send(new UserLostPasswordSuccess([
-				'#EMAIL#' => $user['username'],
+			Mail::to($user->email)->send(new UserLostPasswordSuccess([
+				'#EMAIL#' => $user->username,
 				'#PASSWORD#' => $password,
 			]));
 
 			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
 		}
 
-		if (Input::post('email'))
+		if (Request::post('email'))
 		{
-			$inf = $this->db->query("SELECT u.*, ui.email FROM users u, users_info ui WHERE ui.email = '".addslashes(htmlspecialchars(Input::post('email')))."' AND u.id = ui.id")->fetch();
+			$inf = DB::selectOne("SELECT u.*, ui.email FROM users u, users_info ui WHERE ui.email = '".addslashes(htmlspecialchars(Request::post('email')))."' AND u.id = ui.id");
 
-			if (!isset($inf['id']))
+			if (!$inf)
 				throw new ErrorException('Персонаж не найден в базе');
 
-			$key = md5($inf['id'] . date("d-m-Y H:i:s", time()) . "ыыы");
+			$key = md5($inf->id . date("d-m-Y H:i:s", time()) . "ыыы");
 
 			DB::table('lostpasswords')->insert([
-				'user_id' 		=> $inf['id'],
+				'user_id' 		=> $inf->id,
 				'keystring' 	=> $key,
 				'time'			=> time(),
 				'ip'			=> Request::ip(),
 				'active'		=> 0
 			]);
 
-			$mail = Mail::to($inf['email'])->send(new UserLostPassword([
-				'#EMAIL#' => $inf['username'],
-				'#URL#' => URL::to('remind/?id='.$inf['id'].'&key='.$key),
+			$mail = Mail::to($inf->email)->send(new UserLostPassword([
+				'#EMAIL#' => $inf->username,
+				'#URL#' => URL::to('remind/?id='.$inf->id.'&key='.$key),
 			]));
 
 			if (!$mail)
@@ -211,22 +210,22 @@ class IndexController extends Controller
 
 	public function login ()
 	{
-		if (Input::has('email'))
+		if (Request::has('email'))
 		{
-			if (Input::post('email') == '')
+			if (Request::post('email') == '')
 				throw new ErrorException('Введите хоть что-нибудь!');
 
-			$login = $this->db->query("SELECT u.id, ui.password FROM users u, users_info ui WHERE ui.id = u.id AND ui.`email` = '" . Input::post('email') . "' LIMIT 1")->fetch();
+			$login = DB::selectOne("SELECT u.id, ui.password FROM users u, users_info ui WHERE ui.id = u.id AND ui.`email` = '" . Request::post('email') . "' LIMIT 1");
 
-			if (!isset($login['id']))
+			if (!$login)
 				throw new ErrorException('Игрока с таким E-mail адресом не найдено');
 
-			if ($login['password'] != md5(Input::post('password')))
+			if ($login->password != md5(Request::post('password')))
 				throw new ErrorException('Неверный E-mail и/или пароль');
 
-			$expiretime = Input::post("rememberme") ? (time() + 2419200) : 0;
+			$expiretime = Request::post("rememberme") ? (time() + 2419200) : 0;
 
-			$this->auth->authorize($login['id'], $expiretime);
+			$this->auth->authorize($login->id, $expiretime);
 
 			return Redirect::to('overview/');
 		}

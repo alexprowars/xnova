@@ -11,7 +11,7 @@ namespace Xnova\Http\Controllers\Fleet;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
@@ -29,15 +29,15 @@ class FleetStageThreeController extends Controller
 		if ($this->user->vacation > 0)
 			throw new PageException("Нет доступа!");
 
-		$galaxy = (int) Input::post('galaxy', 0);
-		$system = (int) Input::post('system', 0);
-		$planet = (int) Input::post('planet', 0);
-		$planet_type = (int) Input::post('planet_type', 0);
+		$galaxy = (int) Request::post('galaxy', 0);
+		$system = (int) Request::post('system', 0);
+		$planet = (int) Request::post('planet', 0);
+		$planet_type = (int) Request::post('planet_type', 0);
 
-		$fleetMission = (int) Input::post('mission', 0);
-		$expTime = (int) Input::post('expeditiontime', 0);
+		$fleetMission = (int) Request::post('mission', 0);
+		$expTime = (int) Request::post('expeditiontime', 0);
 
-		$fleetarray = json_decode(base64_decode(str_rot13(Input::post('fleet', ''))), true);
+		$fleetarray = json_decode(base64_decode(str_rot13(Request::post('fleet', ''))), true);
 
 		if (!$fleetMission)
 			throw new ErrorException("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
@@ -45,7 +45,7 @@ class FleetStageThreeController extends Controller
 		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && Config::get('game.disableAttacks', 0) > 0 && time() < Config::get('game.disableAttacks', 0))
 			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('game.disableAttacks', 0)) . "</b></span>", '/fleet/');
 
-		$allianceId = (int) Input::post('alliance', 0);
+		$allianceId = (int) Request::post('alliance', 0);
 
 		$fleet_group_mr = 0;
 
@@ -248,7 +248,7 @@ class FleetStageThreeController extends Controller
 		if ($maxFleets <= $flyingFleets)
 			throw new PageException("Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.", "/fleet/");
 
-		$resources = Input::post('resource');
+		$resources = Request::post('resource');
 		$resources = array_map('intval', $resources);
 
 		if (array_sum($resources) < 1 && $fleetMission == 3)
@@ -297,7 +297,7 @@ class FleetStageThreeController extends Controller
 		$speedPossible = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
 		$maxFleetSpeed 		= min(Fleet::GetFleetMaxSpeed($fleetarray, 0, $this->user));
-		$fleetSpeedFactor 	= Input::post('speed', 10);
+		$fleetSpeedFactor 	= Request::post('speed', 10);
 		$gameFleetSpeed 	= Game::getSpeed('fleet');
 
 		if (!in_array($fleetSpeedFactor, $speedPossible))
@@ -416,7 +416,7 @@ class FleetStageThreeController extends Controller
 
 		if ($fleetMission == 5)
 		{
-			$holdTime = (int) Input::post('holdingtime', 0);
+			$holdTime = (int) Request::post('holdingtime', 0);
 
 			if (!in_array($holdTime, [0, 1, 2, 4, 8, 16, 32]))
 				$holdTime = 0;
@@ -612,7 +612,7 @@ class FleetStageThreeController extends Controller
 
 		if ($fleetMission == 1)
 		{
-			$raunds = Input::post('raunds', 6);
+			$raunds = Request::post('raunds', 6);
 			$raunds = max(min(10, $raunds), 6);
 		}
 		else

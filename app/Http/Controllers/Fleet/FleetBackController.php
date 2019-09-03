@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers\Fleet;
  */
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
@@ -19,7 +19,7 @@ class FleetBackController extends Controller
 {
 	public function index ()
 	{
-		$fleetId = (int) Input::post('id', 0);
+		$fleetId = (int) Request::post('id', 0);
 
 		if ($fleetId <= 0)
 			throw new ErrorException('Не выбран флот');

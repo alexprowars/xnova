@@ -10,7 +10,7 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
@@ -26,9 +26,9 @@ class PhalanxController extends Controller
 		if ($this->user->vacation > 0)
 			throw new PageException('Нет доступа!');
 
-		$g = (int) Input::post('galaxy');
-		$s = (int) Input::post('system');
-		$i = (int) Input::post('planet');
+		$g = (int) Request::post('galaxy');
+		$s = (int) Request::post('system');
+		$i = (int) Request::post('planet');
 
 		$consomation = 5000;
 

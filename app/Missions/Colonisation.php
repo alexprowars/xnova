@@ -8,26 +8,31 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
-use Xnova\Models\Planet;
-use Xnova\Models\User as UserModel;
+use Xnova\Models;
 use Xnova\User;
 
 class Colonisation extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$owner = UserModel::findFirst($this->_fleet->owner);
+		/** @var User $owner */
+		$owner = User::query()->find($this->_fleet->owner);
 
 		$maxPlanets = $owner->getTechLevel('colonisation') + 1;
 
-		if ($maxPlanets > $this->config->game->get('maxPlanets', 9))
-			$maxPlanets = $this->config->game->get('maxPlanets', 9);
+		if ($maxPlanets > Config::get('game.maxPlanets', 9))
+			$maxPlanets = Config::get('game.maxPlanets', 9);
 
 		$galaxy = new Galaxy();
 
-		$iPlanetCount = Planet::count(['id_owner = ?0 AND planet_type = 1', 'bind' => [$this->_fleet->owner]]);
+		$iPlanetCount = Models\Planets::query()
+			->where('id_owner', $this->_fleet->owner)
+			->where('planet_type', 1)
+			->count();
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 
@@ -68,7 +73,7 @@ class Colonisation extends FleetEngine implements Mission
 					$this->RestoreFleetToPlanet(false);
 					$this->KillFleet();
 
-					$this->cache->delete('app::planetlist_'.$this->_fleet->owner);
+					Cache::forget('app::planetlist_'.$this->_fleet->owner);
 				}
 				else
 				{

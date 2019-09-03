@@ -8,6 +8,8 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Xnova\Battle\Core\Battle;
 use Xnova\Battle\LangImplementation;
 use Xnova\Battle\Models\Player;
@@ -16,6 +18,8 @@ use Xnova\Battle\Models\Fleet;
 use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
 use Xnova\Format;
+use Xnova\Models\Statpoints;
+use Xnova\Models;
 use Xnova\User;
 use Xnova\Vars;
 
@@ -42,12 +46,13 @@ class Expedition extends FleetEngine implements Mission
 		{
 			$FleetCount[$type] = $ship['count'];
 
-			$FleetCapacity += $ship['count'] * $this->registry->CombatCaps[$type]['capacity'];
+			$fleetData = Vars::getUnitData($type);
 
+			$FleetCapacity += $ship['count'] * $fleetData['capacity'];
 			$FleetPoints += $ship['count'] * $Expowert[$type];
 		}
 
-		$StatFactor = $this->db->fetchColumn("SELECT MAX(total_points) as total FROM statpoints WHERE stat_type = 1");
+		$StatFactor = Statpoints::query()->where('stat_type', 1)->max('total_points');
 
 		if ($StatFactor < 10000)
 			$upperLimit = 200;
@@ -72,17 +77,17 @@ class Expedition extends FleetEngine implements Mission
 
 				if (10 < $FindSize)
 				{
-					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + ($this->config->game->get('resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (Config::get('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_1_' . mt_rand(1, 4));
 				}
 				elseif (0 < $FindSize && 10 >= $FindSize)
 				{
-					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + ($this->config->game->get('resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (Config::get('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_2_' . mt_rand(1, 3));
 				}
 				else
 				{
-					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + ($this->config->game->get('resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (Config::get('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_3_' . mt_rand(1, 2));
 				}
 
@@ -120,7 +125,8 @@ class Expedition extends FleetEngine implements Mission
 
 				$Message = __('fleet_engine.sys_expe_found_dm_1_'.mt_rand(1,5));
 
-				$this->db->updateAsDict('users', ['+credits' => $Size], "id = ".$this->_fleet->owner);
+				Models\Users::query()->where('id', $this->_fleet->owner)
+					->update(['credits' => DB::raw('credits + '.$Size)]);
 
 				$this->ReturnFleet();
 
@@ -283,7 +289,7 @@ class Expedition extends FleetEngine implements Mission
 
 				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
 				{
-					if (isset($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->_fleet->owner][$this->registry->resource[$techId]] > 0)
+					if (isset($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] > 0)
 						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] + $Def), 0);
 				}
 
@@ -304,8 +310,8 @@ class Expedition extends FleetEngine implements Mission
 
 				$defenders->addPlayer($playerObj);
 
-				$this->config->game->offsetSet('repairDefenceFactor', 0);
-				$this->config->game->offsetSet('battleRounds', 6);
+				Config::set('game.repairDefenceFactor', 0);
+				Config::set('game.battleRounds', 6);
 
 				$engine = new Battle($attackers, $defenders);
 
@@ -354,13 +360,13 @@ class Expedition extends FleetEngine implements Mission
 						$this->KillFleet($fleetID);
 					else
 					{
-						$this->db->updateAsDict($this->_fleet->getSource(),
-						[
-							'fleet_array' 	=> json_encode($fleetArray),
-							'@update_time' 	=> 'end_time',
-							'mess'			=> 1,
-							'won'			=> $result['won']
-						], "id = ".$fleetID);
+						Models\Fleet::query()->where('id', $fleetID)
+							->update([
+								'fleet_array' 	=> json_encode($fleetArray),
+								'update_time' 	=> DB::raw('end_time'),
+								'mess'			=> 1,
+								'won'			=> $result['won']
+							]);
 					}
 				}
 
@@ -371,12 +377,22 @@ class Expedition extends FleetEngine implements Mission
 					$FleetsUsers[] = $info['tech']['id'];
 				}
 
-				// Упаковка в строку
-				$raport = json_encode([$result, $attackUsers, $defenseUsers, array('metal' => 0, 'crystal' => 0, 'deuterium' => 0), 0, '', []]);
-				// Добавление в базу
-				$this->db->query("INSERT INTO rw SET time = " . time() . ", id_users = '" . json_encode($FleetsUsers) . "', no_contact = '0', raport = '" . addslashes($raport) . "';");
-				// Ключи авторизации доклада
-				$ids = $this->db->lastInsertId();
+				$raport = json_encode([
+					$result,
+					$attackUsers,
+					$defenseUsers,
+					['metal' => 0, 'crystal' => 0, 'deuterium' => 0],
+					0,
+					'',
+					[]
+				]);
+
+				$ids = Models\Rw::query()->insertGetId([
+					'time' => time(),
+					'id_users' => json_encode($FleetsUsers),
+					'no_contact' => 0,
+					'raport' => addslashes($raport),
+				]);
 
 				$ColorAtt = $ColorDef = '';
 
@@ -395,7 +411,7 @@ class Expedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5($this->config->application->encryptKey.$ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
+				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5(Config::get('app.key').$ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
 
 				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_tower'), $MessageAtt);
 

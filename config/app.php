@@ -40,7 +40,7 @@ return [
          * Package Service Providers...
          */
 
-		Nutnet\LaravelSms\ServiceProvider::class,
+		//Nutnet\LaravelSms\ServiceProvider::class,
         /*
          * Application Service Providers...
          */

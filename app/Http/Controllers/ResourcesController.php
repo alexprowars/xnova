@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
@@ -59,7 +58,7 @@ class ResourcesController extends Controller
 		if ($this->user->vacation > 0)
 			throw new PageException("Включен режим отпуска!");
 
-		$production = Input::query('active', 'Y');
+		$production = Request::query('active', 'Y');
 		$production = $production == 'Y' ? 10 : 0;
 
 		$planetsId = [];
@@ -104,7 +103,7 @@ class ResourcesController extends Controller
 
 	public function index ()
 	{
-		if (Input::has('production'))
+		if (Request::has('production'))
 			$this->productionAction();
 
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
@@ -118,7 +117,7 @@ class ResourcesController extends Controller
 			if ($this->user->vacation > 0)
 				throw new ErrorException("Включен режим отпуска!");
 
-			foreach (Input::post() as $field => $value)
+			foreach (Request::post() as $field => $value)
 			{
 				if (!Vars::getIdByName($field))
 					continue;
@@ -266,7 +265,7 @@ class ResourcesController extends Controller
 			$parse['production'][$res] = $row;
 		}
 
-		if (Input::query('buy') && $this->planet->id > 0 && $this->planet->planet_type == 1)
+		if (Request::query('buy') && $this->planet->id > 0 && $this->planet->planet_type == 1)
 		{
 			$this->buy($parse);
 		}

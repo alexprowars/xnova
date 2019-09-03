@@ -8,9 +8,8 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Nutnet\LaravelSms\SmsSender;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\Exception;
@@ -34,8 +33,8 @@ class SupportController extends Controller
 
 	public function add ()
 	{
-		$text = Input::post('text', '');
-		$subject = Input::post('subject', '');
+		$text = Request::post('text', '');
+		$subject = Request::post('subject', '');
 
 		if (empty($text) || empty($subject))
 			throw new ErrorException('Не заполнены все поля');
@@ -63,7 +62,7 @@ class SupportController extends Controller
 		if (!$id)
 			throw new RedirectException('Не задан ID тикета', '/support/');
 
-		$text = Input::post('text', '');
+		$text = Request::post('text', '');
 
 		if (empty($text))
 			throw new ErrorException('Не заполнены все поля');

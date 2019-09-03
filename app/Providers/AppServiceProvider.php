@@ -2,7 +2,6 @@
 
 namespace Xnova\Providers;
 
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Support\Facades\Config;
@@ -31,9 +30,6 @@ class AppServiceProvider extends ServiceProvider
 	{
 	    if ($this->app->environment() !== 'production')
 	    {
-			if ($this->app->runningInConsole())
-				$this->app->register(IdeHelperServiceProvider::class);
-
 			$this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
 		}
 

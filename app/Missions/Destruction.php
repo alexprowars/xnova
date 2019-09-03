@@ -8,8 +8,10 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Xnova\FleetEngine;
-use Xnova\Models\Fleet;
+use Xnova\Models;
 use Xnova\User;
 
 class Destruction extends FleetEngine implements Mission
@@ -21,7 +23,8 @@ class Destruction extends FleetEngine implements Mission
 
 		if ($result == true)
 		{
-			$checkFleet = Fleet::findFirst(['columns' => 'fleet_array, won', 'conditions' => 'id = ?0', 'bind' => [$this->_fleet->id]]);
+			/** @var Models\Fleet $checkFleet */
+			$checkFleet = Models\Fleet::query()->find($this->_fleet->id, ['fleet_array', 'won']);
 
 			if ($checkFleet && $checkFleet->won == 1)
 			{
@@ -42,16 +45,16 @@ class Destruction extends FleetEngine implements Mission
 
 				if ($Rips > 0)
 				{
-					$TargetMoon = $this->db->query("SELECT id, id_owner, diameter FROM planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '3';")->fetch();
-					$CurrentUser = $this->db->query("SELECT rpg_admiral, rpg_ingenieur FROM users WHERE id = '" . $this->_fleet->owner . "';")->fetch();
+					$TargetMoon = DB::selectOne("SELECT id, id_owner, diameter FROM planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '3'");
+					$CurrentUser = DB::selectOne("SELECT rpg_admiral, rpg_ingenieur FROM users WHERE id = '" . $this->_fleet->owner . "'");
 
-					$moonDestroyChance = round((100 - sqrt($TargetMoon['diameter'])) * (sqrt($Rips)));
+					$moonDestroyChance = round((100 - sqrt($TargetMoon->diameter)) * (sqrt($Rips)));
 
 					if ($CurrentUser['rpg_admiral'] > time())
 						$moonDestroyChance = $moonDestroyChance * 1.1;
 
 					$moonDestroyChance 	= max(min(floor($moonDestroyChance), 100), 0);
-					$fleetDestroyChance = (sqrt($TargetMoon['diameter'])) / 4;
+					$fleetDestroyChance = (sqrt($TargetMoon->diameter)) / 4;
 
 					if ($Rips > 150)
 						$fleetDestroyChance *= 0.1;
@@ -73,21 +76,13 @@ class Destruction extends FleetEngine implements Mission
 					{
 						$moonDestroyed = true;
 
-						$this->db->query("UPDATE planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE id = '" . $TargetMoon['id'] . "';");
-						$this->db->query("UPDATE users SET planet_current = planet_id WHERE id = " . $TargetMoon['id_owner'] . ";");
+						DB::statement("UPDATE planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE id = '" . $TargetMoon->id . "'");
+						DB::statement("UPDATE users SET planet_current = planet_id WHERE id = " . $TargetMoon->id_owner . "");
 
-						$this->db->query("UPDATE ".$this->_fleet->getSource()." SET start_type = 1 WHERE start_galaxy = " . $this->_fleet->end_galaxy . " AND start_system = " . $this->_fleet->end_system . " AND start_planet = " . $this->_fleet->end_planet . " AND start_type = 3;");
-						$this->db->query("UPDATE ".$this->_fleet->getSource()." SET end_type = 1 WHERE end_galaxy = " . $this->_fleet->end_galaxy . " AND end_system = " . $this->_fleet->end_system . " AND end_planet = " . $this->_fleet->end_planet . " AND end_type = 3;");
+						DB::statement("UPDATE fleets SET start_type = 1 WHERE start_galaxy = " . $this->_fleet->end_galaxy . " AND start_system = " . $this->_fleet->end_system . " AND start_planet = " . $this->_fleet->end_planet . " AND start_type = 3");
+						DB::statement("UPDATE fleets SET end_type = 1 WHERE end_galaxy = " . $this->_fleet->end_galaxy . " AND end_system = " . $this->_fleet->end_system . " AND end_planet = " . $this->_fleet->end_planet . " AND end_type = 3");
 
-						$queue = \Xnova\Models\Queue::find([
-							'conditions' => 'planet_id = :planet:',
-							'bind' => [
-								'planet' => $TargetMoon['id']
-							]
-						]);
-
-						foreach ($queue as $item)
-							$item->delete();
+						Models\Queue::query()->where('planet_id', $TargetMoon->id)->delete();
 					}
 					else
 					{
@@ -103,12 +98,14 @@ class Destruction extends FleetEngine implements Mission
 
 							if ($debree['metal'] > 0 && $debree['crystal'] > 0)
 							{
-								$this->db->updateAsDict('planets',
-								[
-									'+debris_metal' 	=> $debree['metal'],
-									'+debris_crystal' 	=> $debree['crystal']
-								],
-								"galaxy = ".$this->_fleet->end_galaxy." AND system = ".$this->_fleet->end_system." AND planet = ".$this->_fleet->end_planet." AND planet_type != 3");
+								Models\Planets::query()->where('galaxy', $this->_fleet->end_galaxy)
+									->where('system', $this->_fleet->end_system)
+									->where('planet', $this->_fleet->end_planet)
+									->where('planet_type', '!=', 3)
+									->update([
+										'debris_metal' => DB::raw('debris_metal + '.$debree['metal']),
+										'debris_crystal' => DB::raw('debris_metal + '.$debree['crystal']),
+									]);
 							}
 						}
 					}
@@ -130,9 +127,9 @@ class Destruction extends FleetEngine implements Mission
 					$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
 
 					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_destruc_report'), $message);
-					User::sendMessage($TargetMoon['id_owner'], 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_destruc_report'), $message);
+					User::sendMessage($TargetMoon->id_owner, 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_destruc_report'), $message);
 
-					$this->cache->delete('app::planetlist_'.$TargetMoon['id_owner']);
+					Cache::forget('app::planetlist_'.$TargetMoon->id_owner);
 				}
 				else
 					User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));

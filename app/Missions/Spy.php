@@ -8,20 +8,21 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Config;
 use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\Models\Fleet;
 use Xnova\Planet;
 use Xnova\Queue;
 use Xnova\User;
-use Xnova\Models\User as UserModel;
 use Xnova\Vars;
 
 class Spy extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$owner = UserModel::findFirst($this->_fleet->owner);
+		/** @var User $owner */
+		$owner = User::query()->find($this->_fleet->owner);
 
 		$TargetPlanet = Planet::findByCoords($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type);
 
@@ -31,7 +32,8 @@ class Spy extends FleetEngine implements Mission
 			return false;
 		}
 
-		$targetUser = UserModel::findFirst($TargetPlanet->id_owner);
+		/** @var User $targetUser */
+		$targetUser = User::query()->find($TargetPlanet->id_owner);
 
 		if (!$targetUser)
 		{
@@ -166,12 +168,8 @@ class Spy extends FleetEngine implements Mission
 			if ($fleet_link != '')
 			{
 				$MessageEnd .= "<center>";
-				$MessageEnd .= Tag::renderAttributes('<a', [
-					'href' => '/sim/'.$fleet_link.'/',
-					'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
-				]);
-
-				$MessageEnd .= ">Симуляция</a></center>";
+				$MessageEnd .= '<a href="/sim/'.$fleet_link.'/" target="'.Config::get('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : ''.'">';
+				$MessageEnd .= "Симуляция</a></center>";
 			}
 
 			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
@@ -214,7 +212,7 @@ class Spy extends FleetEngine implements Mission
 	}
 
 	/**
-	 * @param $TargetPlanet Planet
+	 * @param $TargetPlanet Planet|User
 	 * @param $Mode
 	 * @param $TitleString
 	 * @return mixed
@@ -284,7 +282,7 @@ class Spy extends FleetEngine implements Mission
 
 		if ($LookAtLoop == true)
 		{
-			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * $this->config->game->get('spyReportRow', 1)) + ($this->config->game->get('spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
+			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * Config::get('game.spyReportRow', 1)) + (Config::get('game.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
 			$Count = 0;
 			$CurrentLook = 0;
 
@@ -319,7 +317,7 @@ class Spy extends FleetEngine implements Mission
 						$Count += $Item < 600 ? $level : 1;
 						$row++;
 
-						if ($row == $this->config->game->get('spyReportRow', 1))
+						if ($row == Config::get('game.spyReportRow', 1))
 						{
 							$String .= "</tr>";
 							$row = 0;
@@ -332,7 +330,7 @@ class Spy extends FleetEngine implements Mission
 					$String .= "<th width=40%>&nbsp;</th><th width=10%>&nbsp;</th>";
 					$row++;
 
-					if ($row == $this->config->game->get('spyReportRow', 1))
+					if ($row == Config::get('game.spyReportRow', 1))
 					{
 						$String .= "</tr>";
 						$row = 0;

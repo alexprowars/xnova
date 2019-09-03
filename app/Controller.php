@@ -3,12 +3,10 @@
 namespace Xnova;
 
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -70,13 +68,13 @@ class Controller extends BaseController
 			if (!(int) Config::get('game.view.showPlanetListSelect', 0))
 				Config::set('game.view.showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
 
-			if (Input::get('fullscreen') == 'Y')
+			if (Request::input('fullscreen') == 'Y')
 			{
-				Cookie::put("full", "Y", (time() + 30 * 86400), "/", null, $_SERVER["SERVER_NAME"], 0);
+				Cookie::queue("full", "Y", (time() + 30 * 86400), "/", null, $_SERVER["SERVER_NAME"], 0);
 				$_COOKIE["full"] = 'Y';
 			}
 
-			if (Request::instance()->server('SERVER_NAME') == 'vk.xnova.su')
+			if (Request::server('SERVER_NAME') == 'vk.xnova.su')
 				Config::set('game.view.socialIframeView', 1);
 
 			if (Cookie::has("full") && Cookie::get("full") == 'Y')
@@ -105,7 +103,7 @@ class Controller extends BaseController
 			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout']))
 				throw new RedirectException('', '/start/');
 
-			if (Input::has('initial') || $this->loadPlanet)
+			if (Request::has('initial') || $this->loadPlanet)
 				$this->planet = $this->user->getCurrentPlanet();
 		}
 		else

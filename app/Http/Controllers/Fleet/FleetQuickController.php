@@ -10,7 +10,7 @@ namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
 use Xnova\Exceptions\SuccessException;
@@ -34,12 +34,12 @@ class FleetQuickController extends Controller
 		if ($this->user->rpg_admiral > time())
 			$MaxFlottes += 2;
 
-		$mission 	= (int) Input::query('mission', 0);
-		$galaxy 	= (int) Input::query('galaxy', 0);
-		$system 	= (int) Input::query('system', 0);
-		$planet 	= (int) Input::query('planet', 0);
-		$planetType = (int) Input::query('type', 0);
-		$num 		= (int) Input::query('count', 0);
+		$mission 	= (int) Request::query('mission', 0);
+		$galaxy 	= (int) Request::query('galaxy', 0);
+		$system 	= (int) Request::query('system', 0);
+		$planet 	= (int) Request::query('planet', 0);
+		$planetType = (int) Request::query('type', 0);
+		$num 		= (int) Request::query('count', 0);
 
 		if ($MaxFlottes <= $maxfleet)
 			throw new Exception('Все слоты флота заняты');

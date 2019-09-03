@@ -8,6 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\DB;
 use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\User;
@@ -76,7 +77,7 @@ class Recycling extends FleetEngine implements Mission
 				}
 			}
 
-			$this->db->query("UPDATE planets SET debris_metal = debris_metal - '" . $RecycledGoods["metal"] . "', debris_crystal = debris_crystal - '" . $RecycledGoods["crystal"] . "' WHERE id = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
+			DB::statement("UPDATE planets SET debris_metal = debris_metal - '" . $RecycledGoods["metal"] . "', debris_crystal = debris_crystal - '" . $RecycledGoods["crystal"] . "' WHERE id = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
 
 			$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 

@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -210,7 +209,7 @@ class OverviewController extends Controller
 
 	public function delete ()
 	{
-		if (Request::instance()->isMethod('post') && Input::post('id') && Input::post('id', 0) == $this->user->planet_current)
+		if (Request::instance()->isMethod('post') && Request::post('id') && Request::post('id', 0) == $this->user->planet_current)
 		{
 			if ($this->user->id != $this->planet->id_owner)
 				throw new RedirectException("Удалить планету может только владелец", '/overview/rename/');
@@ -218,7 +217,7 @@ class OverviewController extends Controller
 			if ($this->user->planet_id == $this->user->planet_current)
 				throw new RedirectException(__('overview.deletemessage_wrong'), '/overview/rename/');
 
-			if (md5(trim(Input::post('pw'))) != Input::post('password'))
+			if (md5(trim(Request::post('pw'))) != Request::post('password'))
 				throw new RedirectException(__('overview.deletemessage_fail'), '/overview/delete/');
 
 			$checkFleets = Models\Fleet::query()
@@ -316,13 +315,13 @@ class OverviewController extends Controller
 				$parse['type'] = $type;
 		}
 
-		if (Input::post('action'))
+		if (Request::post('action'))
 		{
-			$action = Input::post('action');
+			$action = Request::post('action');
 
 			if ($action == 'name')
 			{
-				$name = strip_tags(trim(Input::post('name', '')));
+				$name = strip_tags(trim(Request::post('name', '')));
 
 				if ($name == '')
 					throw new ErrorException('Ввведите новое название планеты');
@@ -346,7 +345,7 @@ class OverviewController extends Controller
 				if ($this->user->credits < 1)
 					throw new ErrorException('Недостаточно кредитов');
 
-				$image = (int) Input::post('image', 0);
+				$image = (int) Request::post('image', 0);
 
 				if ($image <= 0 || $image > $parse['images'][$parse['type']])
 					throw new ErrorException('Недостаточно читерских навыков');
@@ -399,7 +398,7 @@ class OverviewController extends Controller
 
 	public function index ()
 	{
-		if (Input::has('bonus'))
+		if (Request::has('bonus'))
 			$this->bonus();
 
 		$parse = [];

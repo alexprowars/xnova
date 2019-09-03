@@ -8,7 +8,6 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
@@ -26,15 +25,15 @@ class RocketController extends Controller
 		if (!Request::instance()->isMethod('post'))
 			throw new PageException('Ошибка', '/galaxy/');
 
-		$g = (int) Input::post('galaxy', 0);
-		$s = (int) Input::post('system', 0);
-		$p = (int) Input::post('planet', 0);
+		$g = (int) Request::post('galaxy', 0);
+		$s = (int) Request::post('system', 0);
+		$p = (int) Request::post('planet', 0);
 
 		if ($g <= 0 || $s <= 0 || $p <= 0)
 			throw new ErrorException('Координаты не определены');
 
-		$count = (int) Input::post('count', 1);
-		$destroyType = Input::post('target', 'all');
+		$count = (int) Request::post('count', 1);
+		$destroyType = Request::post('target', 'all');
 
 		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;

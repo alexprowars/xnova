@@ -9,7 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Format;
@@ -158,7 +158,7 @@ class TutorialController extends Controller
 		if ($qInfo->finish > 0)
 			$errors++;
 
-		if (Input::has('continue') && !$errors && $qInfo->finish == 0)
+		if (Request::has('continue') && !$errors && $qInfo->finish == 0)
 		{
 			foreach ($parse['info']['REWARD'] AS $rewardKey => $rewardVal)
 			{

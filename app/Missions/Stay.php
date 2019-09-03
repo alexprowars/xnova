@@ -8,6 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\DB;
 use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\User;
@@ -16,9 +17,9 @@ class Stay extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$TargetPlanet = $this->db->query("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '" . $this->_fleet->end_type . "'")->fetch();
+		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '" . $this->_fleet->end_type . "'");
 
-		if ($TargetPlanet['id_owner'] != $this->_fleet->target_owner)
+		if ($TargetPlanet->id_owner != $this->_fleet->target_owner)
 			$this->ReturnFleet();
 		else
 		{
@@ -35,10 +36,11 @@ class Stay extends FleetEngine implements Mission
 			}
 
 			$TargetMessage = sprintf(__('fleet_engine.sys_stat_mess'),
-								$this->_fleet->getTargetAdressLink(),
-								Format::number($this->_fleet->resource_metal), __('main.Metal'),
-								Format::number($this->_fleet->resource_crystal), __('main.Crystal'),
-								Format::number($this->_fleet->resource_deuterium), __('main.Deuterium'));
+				$this->_fleet->getTargetAdressLink(),
+				Format::number($this->_fleet->resource_metal), __('main.Metal'),
+				Format::number($this->_fleet->resource_crystal), __('main.Crystal'),
+				Format::number($this->_fleet->resource_deuterium), __('main.Deuterium')
+			);
 
 			if ($TargetAddedGoods != '')
 				$TargetMessage .= '<br>'.trim(substr($TargetAddedGoods, 1));
@@ -54,9 +56,9 @@ class Stay extends FleetEngine implements Mission
 
 	public function ReturnEvent()
 	{
-		$TargetPlanet = $this->db->query("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->start_galaxy . "' AND system = '" . $this->_fleet->start_system . "' AND planet = '" . $this->_fleet->start_planet . "' AND planet_type = '" . $this->_fleet->start_type . "';")->fetch();
+		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->start_galaxy . "' AND system = '" . $this->_fleet->start_system . "' AND planet = '" . $this->_fleet->start_planet . "' AND planet_type = '" . $this->_fleet->start_type . "';");
 
-		if ($TargetPlanet['id_owner'] != $this->_fleet->owner)
+		if ($TargetPlanet->id_owner != $this->_fleet->owner)
 			$this->KillFleet();
 		else
 		{

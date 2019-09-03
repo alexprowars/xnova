@@ -271,12 +271,14 @@ class Attack extends FleetEngine implements Mission
 
 		if ($totalDebree > 0)
 		{
-			$this->db->updateAsDict('planets',
-			[
-				'+debris_metal' 	=> ($result['debree']['att'][0] + $result['debree']['def'][0]),
-				'+debris_crystal' 	=> ($result['debree']['att'][1] + $result['debree']['def'][1])
-			],
-			"galaxy = ".$target->galaxy." AND system = ".$target->system." AND planet = ".$target->planet." AND planet_type != 3");
+			Planet::query()->where('galaxy', $target->galaxy)
+				->where('system', $target->system)
+				->where('planet', $target->planet)
+				->where('planet_type', '!=', 3)
+				->update([
+					'debris_metal' => DB::raw('debris_metal + '.($result['debree']['att'][0] + $result['debree']['def'][0])),
+					'debris_crystal' => DB::raw('debris_metal + '.($result['debree']['att'][1] + $result['debree']['def'][1])),
+				]);
 		}
 
 		foreach ($attackFleets as $fleetID => $attacker)
@@ -341,11 +343,11 @@ class Attack extends FleetEngine implements Mission
 					$this->KillFleet($fleetID);
 				else
 				{
-					$this->db->updateAsDict([
-						'fleet_array' 	=> json_encode($fleetArray),
-						'@update_time' 	=> 'end_time'
-					],
-					"id = ".$fleetID);
+					Planet::query()->where('id', $fleetID)
+						->update([
+							'fleet_array' => json_encode($fleetArray),
+							'update_time' => DB::raw('end_time')
+						]);
 				}
 			}
 			else
@@ -454,20 +456,17 @@ class Attack extends FleetEngine implements Mission
 		// Уничтожен в первой волне
 		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 
-		$this->db->insertAsDict('rw',
-		[
+		$ids = Models\Rw::query()->insertGetId([
 			'time' 			=> time(),
 			'id_users' 		=> json_encode($FleetsUsers),
 			'no_contact' 	=> $no_contact,
 			'raport' 		=> $raport,
 		]);
-		// Ключи авторизации доклада
-		$ids = $this->db->lastInsertId();
 
 		if ($this->_fleet->group_id != 0)
 		{
-			$this->db->delete('aks', 'id = ?', [$this->_fleet->group_id]);
-			$this->db->delete('aks_user', 'aks_id = ?', [$this->_fleet->group_id]);
+			Models\Aks::query()->where('id', $this->_fleet->group_id)->delete();
+			Models\AksUser::query()->where('aks_id', $this->_fleet->group_id)->delete();
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
@@ -524,10 +523,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$raport = "<center>";
-		$raport .= Tag::renderAttributes('<a', [
-			'href' => '/rw/'.$ids.'/'.md5($this->config->application->encryptKey.$ids).'/',
-			'target' => $this->config->view->get('openRaportInNewWindow', 0) == 1 ? '_blank' : ''
-		]);
+		$raport .= '<a href="/rw/'.$ids.'/'.md5(Config::get('app.key').$ids).'/" target="'.(Config::get('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '').'">';
 
 		$raport .= "><font color=\"#COLOR#\">".__('fleet_engine.sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
@@ -672,10 +668,10 @@ class Attack extends FleetEngine implements Mission
 
 			if ($playerObj === false)
 			{
-				$info = $this->db->query('SELECT id, username FROM users WHERE id = ' . $fleet->owner)->fetch();
+				$info = DB::selectOne('SELECT id, username FROM users WHERE id = ' . $fleet->owner);
 
 				$playerObj = new Player($fleet->owner);
-				$playerObj->setName($info['username']);
+				$playerObj->setName($info->username);
 				$playerObj->setTech(0, 0, 0);
 			}
 

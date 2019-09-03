@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
@@ -23,9 +23,9 @@ class StartController extends Controller
 	{
 		if ($this->user->sex == 0 || $this->user->avatar == 0)
 		{
-			if (Input::post('save'))
+			if (Request::post('save'))
 			{
-				$username = strip_tags(trim(Input::post('character')));
+				$username = strip_tags(trim(Request::post('character')));
 
 				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $username))
 					throw new ErrorException(__('start.error_charalpha'));
@@ -38,7 +38,7 @@ class StartController extends Controller
 				if ($ExistUser)
 					throw new ErrorException(__('reg.error_userexist'));
 
-				$face = Helpers::checkString(Input::post('face', ''));
+				$face = Helpers::checkString(Request::post('face', ''));
 
 				if ($face != '')
 				{
@@ -75,9 +75,9 @@ class StartController extends Controller
 		}
 		elseif ($this->user->race == 0)
 		{
-			if (Input::post('save'))
+			if (Request::post('save'))
 			{
-				$r = (int) Input::post('race', 0);
+				$r = (int) Request::post('race', 0);
 				$r = ($r < 1 || $r > 4) ? 0 : $r;
 
 				if ($r <= 0)

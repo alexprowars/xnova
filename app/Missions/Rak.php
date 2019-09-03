@@ -8,6 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\DB;
 use Xnova\FleetEngine;
 use Xnova\Planet;
 use Xnova\User;
@@ -24,17 +25,23 @@ class Rak extends FleetEngine implements Mission
 		if (!$targetPlanet)
 			return;
 
-		$defTech = $this->db->query('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
-				[$this->_fleet->target_owner, Vars::getIdByName('defence_tech')])->fetch();
+		$defTech = DB::selectOne('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
+				[$this->_fleet->target_owner, Vars::getIdByName('defence_tech')]);
 
 		if (!$defTech)
-			$defTech['level'] = 0;
+		{
+			$defTech = new \stdClass();
+			$defTech->level = 0;
+		}
 
-		$attTech = $this->db->query('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
-				[$this->_fleet->owner, Vars::getIdByName('military_tech')])->fetch();
+		$attTech = DB::selectOne('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
+				[$this->_fleet->owner, Vars::getIdByName('military_tech')]);
 
 		if (!$attTech)
-			$attTech['level'] = 0;
+		{
+			$attTech = new \stdClass();
+			$attTech->level = 0;
+		}
 
 		$message = '';
 
@@ -79,7 +86,7 @@ class Rak extends FleetEngine implements Mission
 
 			$Raks -= $defenceMissiles;
 
-			$irak = $this->raketenangriff($defTech['level'], $attTech['level'], $Raks, $TargetDefensive, $Primary);
+			$irak = $this->raketenangriff($defTech->level, $attTech->level, $Raks, $TargetDefensive, $Primary);
 
 			ksort($irak, SORT_NUMERIC);
 
@@ -119,7 +126,9 @@ class Rak extends FleetEngine implements Mission
 
 		unset($targetDefensive[502]);
 
-		$totalDamage = $missiles * $this->registry->CombatCaps[503]['attack'] * ($ownerAttTech / 10 + 1);
+		$fleetData = Vars::getUnitData(503);
+
+		$totalDamage = $missiles * $fleetData['attack'] * ($ownerAttTech / 10 + 1);
 
 		$result = [];
 

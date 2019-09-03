@@ -8,16 +8,18 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Cache;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\User;
-use Xnova\Models\User as UserModel;
+use Xnova\Models;
 
 class CreateBase extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$owner = UserModel::findFirst($this->_fleet->owner);
+		/** @var User $owner */
+		$owner = User::query()->find($this->_fleet->owner);
 
 		// Определяем максимальное количество баз
 		$maxBases = $owner->getTechLevel('fleet_base');
@@ -25,7 +27,8 @@ class CreateBase extends FleetEngine implements Mission
 		$galaxy = new Galaxy();
 
 		// Получение общего количества построенных баз
-		$iPlanetCount = $this->db->fetchColumn("SELECT count(*) as num FROM planets WHERE id_owner = '" . $this->_fleet->owner . "' AND planet_type = '5'");
+		$iPlanetCount = Models\Planets::query()->where('id_owner', $this->_fleet->owner)
+			->where('planet_type', 5)->count();
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet);
 
@@ -71,7 +74,7 @@ class CreateBase extends FleetEngine implements Mission
 					$this->RestoreFleetToPlanet(false);
 					$this->KillFleet();
 
-					$this->cache->delete('app::planetlist_'.$this->_fleet->owner);
+					Cache::forget('app::planetlist_'.$this->_fleet->owner);
 				}
 				else
 				{

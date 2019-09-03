@@ -4,7 +4,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
@@ -48,7 +47,7 @@ class BuddyController extends Controller
 			if ($buddy)
 				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
 
-			$text = strip_tags(Input::post('text', ''));
+			$text = strip_tags(Request::post('text', ''));
 
 			if (mb_strlen($text) > 5000)
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');

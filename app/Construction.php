@@ -9,9 +9,7 @@ namespace Xnova;
  */
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Session;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
 
@@ -40,9 +38,9 @@ class Construction
 
 		if (Request::instance()->isMethod('post'))
 		{
-			$Command = Input::post('cmd', '');
-			$Element = (int) Input::post('building', 0);
-			$ListID = (int) Input::post('listid', 0);
+			$Command = Request::post('cmd', '');
+			$Element = (int) Request::post('building', 0);
+			$ListID = (int) Request::post('listid', 0);
 
 			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
 			{
@@ -140,7 +138,7 @@ class Construction
 
 		if (!Building::checkLabSettingsInQueue($this->planet))
 		{
-			Session::flash('error-static', __('buildings.labo_on_update'));
+			session()->flash('error-static', __('buildings.labo_on_update'));
 
 			$bContinue = false;
 		}
@@ -159,12 +157,12 @@ class Construction
 			->where('type', Models\Queue::TYPE_TECH)
 			->first();
 
-		if (Input::post('cmd') && $bContinue != false)
+		if (Request::post('cmd') && $bContinue != false)
 		{
 			$queueManager = new Queue($this->user, $this->planet);
 
-			$command = Input::post('cmd', '');
-			$techId = (int) Input::post('tech', 0);
+			$command = Request::post('cmd', '');
+			$techId = (int) Request::post('tech', 0);
 
 			if ($techId > 0 && in_array($techId, $res_array))
 			{
@@ -283,9 +281,9 @@ class Construction
 		else
 			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 
-		if (Input::post('fmenge'))
+		if (Request::post('fmenge'))
 		{
-			foreach (Input::post('fmenge', []) as $element => $count)
+			foreach (Request::post('fmenge', []) as $element => $count)
 			{
 				$element 	= (int) $element;
 				$count 		= abs((int) $count);
