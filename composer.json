@@ -1,13 +1,10 @@
 {
     "config": {
         "platform": {
-            "php": "7.0"
+            "php": "7.3"
         }
     },
     "require": {
-        "fabfuel/prophiler": "^1.6",
-        "longman/telegram-bot": "^0.52.0",
-        "phpmailer/phpmailer": "^6.0",
         "nubs/random-name-generator": "^2.1",
         "gumlet/php-image-resize": "^1.8",
 		"ext-mbstring": "*",
@@ -15,7 +12,34 @@
 		"ext-curl": "*",
 		"ext-pdo": "*",
 		"ext-iconv": "*",
-		"ext-apc": "*",
-		"ext-gd": "*"
-	}
+		"ext-gd": "*",
+        "laravel/framework": "^5.8",
+        "spatie/laravel-permission": "^2.37",
+        "nutnet/laravel-sms": "^0.5.0",
+        "zelenin/smsru": "^4.1"
+	},
+	"replace": {
+		"symfony/polyfill-mbstring": "*",
+		"symfony/polyfill-php72": "*",
+		"symfony/polyfill-php73": "*",
+		"symfony/polyfill-iconv": "*",
+		"symfony/polyfill-ctype": "*",
+		"symfony/polyfill-intl-idn": "*"
+	},
+	"autoload": {
+		 "psr-4": {
+			 "Xnova\\": "app/"
+		 }
+	},
+	"scripts": {
+     	"post-autoload-dump": [
+         	"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+         	"@php artisan package:discover --ansi"
+     	]
+ 	},
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.2",
+        "barryvdh/laravel-ide-helper": "^2.6",
+        "doctrine/dbal": "^2.9"
+    }
 }
