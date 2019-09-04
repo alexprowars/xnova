@@ -192,7 +192,9 @@ class UpdateTask extends ApplicationTask
 						$planet->assignUser($user);
 
 					if (!$user || !$planet)
-						throw new Exception('Cron::update::queueAction::user or planet not found');
+					{
+						throw new Exception('Cron::update::queueAction::user or planet not found: '.$item->user_id.'-'.$item->planet_id);
+					}
 
 					$queueManager = new \Xnova\Queue($user, $planet);
 					$queueManager->update();

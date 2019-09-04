@@ -231,7 +231,7 @@ class ResourcesController extends Controller
 			if ($ProdID == 3)
 				$row['bonus'] += $this->user->bonusValue('deuterium');
 
-			$row['bonus'] = ($row['bonus'] - 1) * 100;
+			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
 
 			$row['level'] = $BuildLevel;
 

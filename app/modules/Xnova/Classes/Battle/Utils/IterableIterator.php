@@ -5,10 +5,10 @@ namespace Xnova\Battle\Utils;
 use Iterator;
 
 /**
- * Class Iterable
+ * Class IterableIterator
  * @package App\Battle\Utils
  */
-class Iterable implements Iterator
+class IterableIterator implements Iterator
 {
 	public function rewind()
 	{

@@ -17,9 +17,6 @@
 	<meta property="og:site_name" content="Звездная Империя">
 	<meta property="og:description" content="Вы являетесь межгалактическим императором, который распространяет своё влияние посредством различных стратегий на множество галактик.">
 
-	<script src="//dmc1acwvwny3.cloudfront.net/atatus.js"> </script>
-	<script type="text/javascript"> atatus.config('cab13a7ebb0e4722be9ea9f77d1ebfbf').install(); </script>
-
 	{{ assets.outputCss() }}
 	{{ assets.outputJs() }}
 

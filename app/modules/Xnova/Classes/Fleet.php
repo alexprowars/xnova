@@ -52,6 +52,9 @@ class Fleet extends Building
 
 		$speedalls = [];
 
+		if (!is_array($FleetArray))
+			$FleetArray = [];
+
 		if ($Fleet != 0)
 			$FleetArray[$Fleet] = 1;
 

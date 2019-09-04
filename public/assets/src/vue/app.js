@@ -137,4 +137,30 @@ const application = new Vue({
 
 window.application = application
 
+function trackExceptions (atatus, Vue)
+{
+	if (!Vue || !Vue.config)
+		return;
+
+	if (!atatus || !atatus.config)
+		return;
+
+	let _oldOnError = Vue.config.errorHandler;
+
+	Vue.config.errorHandler = function VueErrorHandler (error, vm)
+	{
+		atatus.notify(error, {
+			extra: {
+				componentName: Vue.util.formatComponentName(vm),
+				propsData: vm.$options.propsData
+			}
+		});
+
+		if (typeof _oldOnError === 'function')
+			_oldOnError.call(this, error, vm);
+	};
+}
+
+//trackExceptions(window.atatus, Vue);
+
 export default application

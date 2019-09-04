@@ -2,7 +2,7 @@
 
 use Phalcon\Mvc\View\Engine\Volt;
 
-class ViewsTest extends PHPUnit_Framework_TestCase
+class ViewsTest extends \PHPUnit\Framework\TestCase
 {
 	public function setUp ()
 	{

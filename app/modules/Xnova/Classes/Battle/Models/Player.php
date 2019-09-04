@@ -3,7 +3,7 @@
 namespace Xnova\Battle\Models;
 
 use Xnova\Battle\CombatObject\FireManager;
-use Xnova\Battle\Utils\Iterable;
+use Xnova\Battle\Utils\IterableIterator;
 use Exception;
 
 /**
@@ -11,7 +11,7 @@ use Exception;
  * @package App\Battle\Models
  * @method Fleet[] getIterator
  */
-class Player extends Iterable
+class Player extends IterableIterator
 {
 	private $id;
 	/**
