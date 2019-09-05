@@ -8,6 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -125,7 +126,7 @@ class IndexController extends Controller
 					'#PASSWORD#' => $newpass,
 				]));
 
-				$this->auth->authorize($user->id, 0);
+				Auth::loginUsingId($user->id, true);
 
 				return Redirect::to('overview/');
 			}
@@ -210,26 +211,22 @@ class IndexController extends Controller
 
 	public function login ()
 	{
-		if (Request::has('email'))
-		{
-			if (Request::post('email') == '')
-				throw new ErrorException('Введите хоть что-нибудь!');
+		if (!Request::has('email'))
+			throw new ErrorException(';)');
 
-			$login = DB::selectOne("SELECT u.id, ui.password FROM users u, users_info ui WHERE ui.id = u.id AND ui.`email` = '" . Request::post('email') . "' LIMIT 1");
+		if (Request::post('email') == '')
+			throw new ErrorException('Введите хоть что-нибудь!');
 
-			if (!$login)
-				throw new ErrorException('Игрока с таким E-mail адресом не найдено');
+		$isExist = Models\UsersInfo::query()->where('email', Request::post('email'))->exists();
 
-			if ($login->password != md5(Request::post('password')))
-				throw new ErrorException('Неверный E-mail и/или пароль');
+		if (!$isExist)
+			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
 
-			$expiretime = Request::post("rememberme") ? (time() + 2419200) : 0;
+		$credentials = Request::only(['email', 'password']);
 
-			$this->auth->authorize($login->id, $expiretime);
+		if (!Auth::attempt($credentials, Request::has('rememberme')))
+			throw new ErrorException('Неверный E-mail и/или пароль');
 
-			return Redirect::to('overview/');
-		}
-
-		throw new ErrorException(';)');
+		return Redirect::intended('overview/');
 	}
 }

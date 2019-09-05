@@ -3,6 +3,7 @@
 namespace Xnova\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,4 +45,9 @@ class Handler extends ExceptionHandler
 
         return parent::render($request, $exception);
     }
+
+	protected function unauthenticated ($request, AuthenticationException $exception)
+	{
+		return redirect()->guest('');
+	}
 }

@@ -41,13 +41,4 @@ class Alliance extends Model
 	{
 		$this->getRanks();
 	}
-
-	/**
-	 * @param int $userId
-	 * @return void
-	 */
-	public function getMember ($userId)
-	{
-		$this->member = $this->getRelated('member', "u_id = ".$userId."");
-	}
 }

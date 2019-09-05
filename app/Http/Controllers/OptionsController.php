@@ -9,6 +9,7 @@ namespace Xnova\Http\Controllers;
  */
 
 use Gumlet\ImageResize;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -294,7 +295,7 @@ class OptionsController extends Controller
 			$userInfo->password = md5(Request::post('new_password'));
 			$userInfo->update();
 
-			$this->auth->remove(false);
+			Auth::logout();
 
 			throw new RedirectException('Пароль успешно изменён', '/');
 		}

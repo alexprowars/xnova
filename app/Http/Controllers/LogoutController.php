@@ -16,8 +16,7 @@ class LogoutController extends Controller
 {
 	public function index ()
 	{
-		if (Auth::check())
-			$this->auth->remove();
+		Auth::logout();
 
 		$this->showTopPanel(false);
 		$this->showLeftPanel(false);

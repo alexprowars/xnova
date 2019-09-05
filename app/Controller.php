@@ -33,6 +33,16 @@ class Controller extends BaseController
 
 	public function __construct ()
 	{
+		$this->middleware(function ($request, $next)
+		{
+			$this->init();
+
+			return $next($request);
+		});
+	}
+
+	private function init ()
+	{
 		if (function_exists('sys_getloadavg'))
 		{
 			$load = sys_getloadavg();
@@ -47,11 +57,6 @@ class Controller extends BaseController
 		$this->setTitle(Config::get('game.site_title', ''));
 
 		Vars::init();
-
-		if (!Auth::check())
-		{
-			Auth::loginUsingId(1);
-		}
 
 		if (Auth::check())
 		{

@@ -58,6 +58,12 @@ class Users extends Authenticatable
 	public $timestamps = false;
 	public $table = 'users';
 	protected $guarded = [];
+	protected $hidden = ['password'];
+
+	public function info ()
+	{
+		return $this->hasOne(UsersInfo::class, 'id', 'id');
+	}
 
 	public function getId (): int
 	{

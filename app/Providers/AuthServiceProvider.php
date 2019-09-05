@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Providers;
+namespace Xnova\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -25,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+		Auth::provider('authuserprovider', function($app, array $config) {
+			return new AuthUserProvider($app['hash'], $config['model']);
+		});
     }
 }

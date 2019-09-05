@@ -42,8 +42,6 @@ class User extends Models\Users
 	public $deltime;
 	public $ally_name;
 
-	protected $hidden = ['ally'];
-
 	public function isOnline ()
 	{
 		return (time() - $this->onlinetime < 180);
@@ -194,15 +192,15 @@ class User extends Models\Users
 				Cache::put('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
 
-			if (isset($ally['id']))
+			if ($ally)
 			{
-				if (!$ally['ranks'])
-					$ally['ranks'] = 'a:0:{}';
+				if (!$ally->ranks)
+					$ally->ranks = 'a:0:{}';
 
-				$ranks = json_decode($ally['ranks'], true);
+				$ranks = json_decode($ally->ranks, true);
 
-				$this->ally = $ally;
-				$this->ally['rights'] = isset($ranks[$ally['rank'] - 1]) ? $ranks[$ally['rank'] - 1] : ['name' => '', 'planet' => 0];
+				$this->ally = (array) $ally;
+				$this->ally['rights'] = isset($ranks[$ally->rank - 1]) ? $ranks[$ally->rank - 1] : ['name' => '', 'planet' => 0];
 			}
 		}
 	}

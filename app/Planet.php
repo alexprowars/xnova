@@ -330,7 +330,7 @@ class Planet extends Models\Planets
 			);
 
 			foreach ($items as $item)
-				$list[] = (int) $item['level'];
+				$list[] = (int) $item->level;
 		}
 
 		return $list;

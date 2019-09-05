@@ -10,7 +10,11 @@ use Xnova\User;
 
 class EventServiceProvider extends ServiceProvider
 {
-    protected $listen = [];
+    protected $listen = [
+		'Illuminate\Auth\Events\Authenticated' => [
+			'Xnova\Listeners\UserAuthenticated',
+		],
+	];
 
     public function boot()
     {

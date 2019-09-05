@@ -31,10 +31,15 @@ class ApiResponse
 
 		if ($response instanceof RedirectResponse)
 		{
+			$route = Route::current();
+
+			$uri = rtrim(str_replace($request->root(), '', $response->getTargetUrl()), '/').'/';
+			$uri = str_replace('/'.$route->getPrefix(), '', $uri);
+
 			return new JsonResponse([
 				'success' => true,
 				'data' => [
-					'redirect' => rtrim(str_replace($request->root(), '', $response->getTargetUrl()), '/').'/'
+					'redirect' => $uri
 				],
 			]);
 		}
@@ -84,7 +89,8 @@ class ApiResponse
 		{
 			if ($response->exception instanceof RedirectException)
 				$data['redirect'] = $original['redirect'];
-			elseif ($response->exception instanceof PageException)
+
+			if ($response->exception instanceof PageException)
 				$data['error'] = $original;
 			elseif ($response->exception instanceof Exception)
 			{

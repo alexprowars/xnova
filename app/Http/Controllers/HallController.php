@@ -32,7 +32,7 @@ class HallController extends Controller
 
 		foreach ($halls as $hall)
 		{
-			$parse['hall'][] = $hall->toArray();
+			$parse['hall'][] = (array) $hall;
 
 			if ($time < $hall->time)
 				$time = $hall->time;

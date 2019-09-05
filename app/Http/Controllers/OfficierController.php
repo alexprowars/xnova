@@ -88,8 +88,8 @@ class OfficierController extends Controller
 			if ($this->user->{Vars::getName($officier)} > time())
 				$row['time'] = $this->user->{Vars::getName($officier)};
 
-			$row['description'] = __('officier.Desc', $officier);
-			$row['power'] = __('officier.power', $officier);
+			$row['description'] = __('officier.Desc.'.$officier);
+			$row['power'] = __('officier.power.'.$officier);
 
 			$parse['items'][] = $row;
 		}

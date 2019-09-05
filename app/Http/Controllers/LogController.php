@@ -10,6 +10,7 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\CombatReport;
 use Xnova\Controller;
@@ -17,24 +18,17 @@ use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models\BattleLog;
+use Xnova\Models\Rw;
 
-/**
- * @RoutePrefix("/log")
- * @Route("/")
- * @Private
- */
 class LogController extends Controller
 {
 	public function index ()
 	{
 		if (!Auth::check())
-			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
+			return redirect('/');
 
-		$logs = BattleLog::find([
-			'conditions' => 'user_id = ?0',
-			'bind' => [$this->user->id],
-			'order' => 'id DESC'
-		]);
+		$logs = BattleLog::query()->where('user_id', $this->user->id)
+			->orderByDesc('id')->get();
 
 		$list = [];
 
@@ -84,87 +78,75 @@ class LogController extends Controller
 		throw new RedirectException('Отчет удалён', '/log/');
 	}
 
-	/**
-	 * @Route("/new/")
-	 */
-	public function newAction ()
+	public function new ()
 	{
 		if (!Auth::check())
-			$this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
-
-		if (Request::instance()->isMethod('post'))
-		{
-			$title = Request::post('title', '');
-
-			if ($title == '')
-				$message = '<h1><font color=red>Введите название для боевого отчёта.</h1>';
-			elseif (Request::post('code', '') == '')
-				$message = '<h1><font color=red>Введите ID боевого отчёта.</h1>';
-			else
-			{
-				$code = Request::post('code', '');
-
-				$key = substr($code, 0, 32);
-				$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
-
-				if (md5(Config::get('app.key').$id) != $key)
-					throw new RedirectException('Не правильный ключ', '');
-				else
-				{
-					$log = $this->db->query("SELECT * FROM rw WHERE `id` = '" . $id . "'")->fetch();
-
-					if (isset($log['id']))
-					{
-						$user_list = json_decode($log['id_users']);
-
-						if ($user_list[0] == $this->user->id && $log['no_contact'] == 1)
-							$SaveLog = "Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)";
-						else
-						{
-							$SaveLog = json_decode($log['raport'], true);
-
-							foreach ($SaveLog[0]['rw'] as $round => $data1)
-							{
-								unset($SaveLog[0]['rw'][$round]['logA']);
-								unset($SaveLog[0]['rw'][$round]['logD']);
-							}
-
-							$SaveLog = json_encode($SaveLog);
-						}
-
-						$log = new BattleLog();
-
-						$log->user_id = $this->user->id;
-						$log->title = addslashes(htmlspecialchars($title));
-						$log->log = $SaveLog;
-
-						if (!$log->save())
-							throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
-
-						$message = 'Боевой отчёт успешно сохранён.';
-					}
-					else
-						$message = 'Боевой отчёт не найден в базе';
-				}
-			}
-
-			throw new RedirectException($message, '/log/');
-		}
+			return redirect('/');
 
 		$this->setTitle('Логовница');
 		$this->showTopPanel(false);
+
+		return [];
 	}
 
-	/**
-	 * @Route("/{id:[0-9]+}{params:(/.*)*}")
-	 * @param $id
-	 * @throws PageException
-	 */
-	public function infoAction ($id)
+	public function newSave ()
+	{
+		$title = Request::post('title', '');
+
+		if ($title == '')
+			throw new RedirectException('<h1><font color=red>Введите название для боевого отчёта.</h1>', '/log/');
+		elseif (Request::post('code', '') == '')
+			throw new RedirectException('<h1><font color=red>Введите ID боевого отчёта.</h1>', '/log/');
+
+		$code = Request::post('code', '');
+
+		$key = substr($code, 0, 32);
+		$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
+
+		if (md5(Config::get('app.key').$id) != $key)
+			throw new RedirectException('Неправильный ключ', '/log/');
+
+		/** @var Rw $log */
+		$log = Rw::query()->find($id);
+
+		if (!$log)
+			throw new RedirectException('Боевой отчёт не найден в базе', '/log/');
+
+		$user_list = json_decode($log->id_users);
+
+		if ($user_list[0] == $this->user->id && $log->no_contact == 1)
+			$SaveLog = "Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)";
+		else
+		{
+			$SaveLog = json_decode($log->raport, true);
+
+			foreach ($SaveLog[0]['rw'] as $round => $data1)
+			{
+				unset($SaveLog[0]['rw'][$round]['logA']);
+				unset($SaveLog[0]['rw'][$round]['logD']);
+			}
+
+			$SaveLog = json_encode($SaveLog);
+		}
+
+		$new = new BattleLog();
+
+		$new->user_id = $this->user->id;
+		$new->title = addslashes(htmlspecialchars($title));
+		$new->log = $SaveLog;
+
+		if (!$new->save())
+			throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
+
+		throw new RedirectException('Боевой отчёт успешно сохранён.', '/log/');
+	}
+
+	public function info ($id)
 	{
 		$id = (int) $id;
 
-		$raportrow = BattleLog::findFirst($id);
+		/** @var BattleLog $raportrow */
+		$raportrow = BattleLog::query()->find($id);
 
 		if (!$raportrow)
 			throw new PageException('Запрашиваемого лога не существует в базе данных');

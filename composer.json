@@ -37,7 +37,6 @@
      	]
  	},
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.2",
-        "doctrine/dbal": "^2.9"
+        "barryvdh/laravel-debugbar": "^3.2"
     }
 }

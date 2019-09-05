@@ -22,12 +22,7 @@ class InfoController extends Controller
 {
 	private $loadPlanet = true;
 
-	/**
-	 * @Route("/{element:[0-9]+}{params:(/.*)*}")
-	 * @param null $element
-	 * @throws \Exception
-	 */
-	public function index ($element = null)
+	public function index (int $element)
 	{
 		$this->ShowBuildingInfoPage((int) $element);
 

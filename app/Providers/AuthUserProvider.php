@@ -1,0 +1,21 @@
+<?php
+
+namespace Xnova\Providers;
+
+use Illuminate\Auth\EloquentUserProvider as UserProvider;
+use Xnova\User;
+
+class AuthUserProvider extends UserProvider
+{
+	public function retrieveByCredentials (array $credentials): ?User
+	{
+		if (empty($credentials) || !isset($credentials['email']) || !isset($credentials['password']))
+			return null;
+
+		return $this->newModelQuery()
+			->select(['users.*', 'info.password'])
+			->join('users_info as info', 'info.id', '=', 'users.id')
+			->where('info.email', $credentials['email'])
+			->get()->first();
+	}
+}

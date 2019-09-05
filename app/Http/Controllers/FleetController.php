@@ -23,8 +23,13 @@ class FleetController extends Controller
 	{
 		parent::__construct();
 
-		// Устанавливаем обновлённые двигателя кораблей
-		Fleet::SetShipsEngine($this->user);
+		$this->middleware(function ($request, $next)
+		{
+			// Устанавливаем обновлённые двигателя кораблей
+			Fleet::SetShipsEngine($this->user);
+
+			return $next($request);
+		});
 	}
 
 	public function index ()
