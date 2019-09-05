@@ -15,7 +15,9 @@
 		"ext-gd": "*",
         "laravel/framework": "^6.0",
         "spatie/laravel-permission": "^3.0",
-        "zelenin/smsru": "^4.1"
+        "zelenin/smsru": "^4.1",
+        "laravel/socialite": "^4.2",
+        "socialiteproviders/vkontakte": "^4.0"
 	},
 	"replace": {
 		"symfony/polyfill-mbstring": "*",

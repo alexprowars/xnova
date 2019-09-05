@@ -9,7 +9,7 @@ class AuthUserProvider extends UserProvider
 {
 	public function retrieveByCredentials (array $credentials): ?User
 	{
-		if (empty($credentials) || !isset($credentials['email']) || !isset($credentials['password']))
+		if (empty($credentials) || !isset($credentials['email']))
 			return null;
 
 		return $this->newModelQuery()

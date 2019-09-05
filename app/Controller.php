@@ -109,7 +109,7 @@ class Controller extends BaseController
 				throw new RedirectException('', '/start/');
 
 			if (Request::has('initial') || $this->loadPlanet)
-				$this->planet = $this->user->getCurrentPlanet();
+				$this->planet = $this->user->getCurrentPlanet(true);
 		}
 		else
 		{

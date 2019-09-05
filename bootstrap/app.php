@@ -3,6 +3,19 @@
 if (!defined('VERSION'))
 	define('VERSION', '5.0');
 
+function log_var($name, $value)
+{
+	if (is_array($value))
+		$value = var_export($value);
+
+	log_comment("$name = $value");
+}
+
+function log_comment($comment)
+{
+	echo "[log]$comment<br>\n";
+}
+
 $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
 );

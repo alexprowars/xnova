@@ -6,15 +6,18 @@ Route::get('banned', 'BannedController@index')->name('banned');
 Route::get('contacts', 'ContactsController@index')->name('contacts');
 Route::get('content', 'ContentController@index')->name('content');
 Route::get('/', 'IndexController@index')->name('index');
-Route::match(['get', 'post'],'registration', 'IndexController@registration')->name('registration');
-Route::match(['get', 'post'],'remind', 'IndexController@remind')->name('remind');
-Route::post('login', 'IndexController@login')->name('login');
+Route::post('registration', 'IndexController@Registration')->name('registration');
 Route::get('log/{id}', 'LogController@info')->name('log.info');
 Route::get('news', 'NewsController@index')->name('news');
 Route::match(['get', 'post'],'payment/robokassa', 'PaymentController@robokassa')->name('payment.robokassa');
 Route::match(['get', 'post'], 'stat', 'StatController@index')->name('stat');
 Route::match(['get', 'post'],'xnsim', 'XnsimController@index')->name('xnsim');
 Route::get('players/{id}', 'PlayersController@index')->name('players');
+
+Route::post('login', 'LoginController@LoginByCredentials')->name('login');
+Route::get( 'login/social/{service}', 'LoginController@LoginBySocialServices')->name('login.socials');
+Route::get( 'login/callback/{service}', 'LoginController@SocialServicesCallback')->name('login.callback');
+Route::match(['get', 'post'],'login/reset', 'LoginController@ResetPassword')->name('login.reset');
 
 Route::middleware(['auth'])->group(function ()
 {
@@ -51,6 +54,8 @@ Route::middleware(['auth'])->group(function ()
 	Route::match(['get', 'post'],'messages', 'MessagesController@index')->name('messages');
 	Route::match(['get', 'post'],'messages/write/{id}', 'MessagesController@write')->name('messages');
 	Route::match(['get', 'post'],'notes', 'NotesController@index')->name('notes');
+	Route::match(['get', 'post'],'notes/edit/{id}', 'NotesController@edit')->name('notes.edit');
+	Route::match(['get', 'post'],'notes/new', 'NotesController@new')->name('notes.new');
 	Route::match(['get', 'post'],'officier', 'OfficierController@index')->name('officier');
 	Route::match(['get', 'post'],'options', 'OptionsController@index')->name('options');
 	Route::match(['get', 'post'],'overview', 'OverviewController@index')->name('overview');

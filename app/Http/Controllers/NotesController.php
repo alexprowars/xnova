@@ -4,7 +4,7 @@ namespace Xnova\Http\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
+ * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -15,6 +15,7 @@ use Xnova\Exceptions\RedirectException;
 use Xnova\Game;
 use Xnova\Models\Note;
 
+/** @noinspection PhpUnused */
 class NotesController extends Controller
 {
 	public function __construct ()
@@ -24,7 +25,7 @@ class NotesController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function newAction ()
+	public function new ()
 	{
 		if (Request::instance()->isMethod('post'))
 		{
@@ -46,23 +47,21 @@ class NotesController extends Controller
 			$note->title = $title;
 			$note->text = $text;
 
-			$note->create();
+			$note->save();
 
 			throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/'.$note->id.'/');
 		}
 
 		$this->setTitle('Создание заметки');
+
+		return [];
 	}
 
-	public function editAction ($noteId)
+	public function edit (int $noteId)
 	{
-		$note = Note::findFirst([
-			'conditions' => 'user_id = :user: AND id = :id:',
-			'bind' => [
-				'user' => $this->user->id,
-				'id' => (int) $noteId
-			]
-		]);
+		/** @var Note $note */
+		$note = Note::query()->where('user_id', $this->user->id)
+			->where('id', (int) $noteId)->first();
 
 		if (!$note)
 			throw new ErrorException(__('notes.notpossiblethisway'));
@@ -106,35 +105,19 @@ class NotesController extends Controller
 	{
 		if (Request::instance()->isMethod('post'))
 		{
-			$deleteIds = Request::post('delete');
+			$deleteIds = array_map('int', Request::post('delete'));
 
-			if (!is_array($deleteIds))
-				$deleteIds = [];
-
-			foreach ($deleteIds as $id)
+			if (is_array($deleteIds) && count($deleteIds))
 			{
-				$note = Note::findFirst([
-					'conditions' => 'user_id = :user: AND id = :id:',
-					'bind' => [
-						'user' => $this->user->id,
-						'id' => (int) $id
-					]
-				]);
-
-				if ($note)
-					$note->delete();
+				Note::query()->where('user_id', $this->user->id)
+					->whereIn('id', $deleteIds)->delete();
 			}
 
 			throw new RedirectException(__('notes.NoteDeleteds'), '/notes/');
 		}
 
-		$notes = Note::find([
-			'conditions' => 'user_id = :user:',
-			'bind' => [
-				'user' => $this->user->id
-			],
-			'order' => 'time DESC'
-		]);
+		$notes = Note::query()->where('user_id', $this->user->id)
+			->orderByDesc('time')->get();
 
 		$parse = [];
 		$parse['items'] = [];

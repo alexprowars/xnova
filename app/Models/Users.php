@@ -4,7 +4,10 @@ namespace Xnova\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Spatie\Permission\Traits\HasRoles;
+use Xnova\Mail\UserLostPassword;
 
 /**
  * @property int $id
@@ -91,5 +94,28 @@ class Users extends Authenticatable
 	public function isOnline ()
 	{
 		return (time() - $this->onlinetime < 180);
+	}
+
+	public function getEmailForPasswordReset ()
+	{
+		/** @var UsersInfo $info */
+		$info = UsersInfo::query()->find($this->id, ['email']);
+
+		return $info->email ?? null;
+	}
+
+	public function sendPasswordResetNotification ($token)
+	{
+		$email = $this->getEmailForPasswordReset();
+
+		try
+		{
+			Mail::to($email)->send(new UserLostPassword([
+				'#EMAIL#' => $email,
+				'#NAME#' => $this->username,
+				'#URL#' => URL::route('login.reset', ['token' => $token, 'user' => $email]),
+			]));
+		}
+		catch (\Exception $e) {}
 	}
 }

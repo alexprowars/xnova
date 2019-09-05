@@ -4,7 +4,7 @@ namespace Xnova\Http\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
+ * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -119,7 +119,7 @@ class OptionsController extends Controller
 		else
 			$username = $this->user->username;
 
-		if (Request::post('email') && !is_email($userInfo->email) && is_email(Request::post('email')))
+		if (Request::post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email(Request::post('email')))
 		{
 			$e = addslashes(htmlspecialchars(trim(Request::post('email'))));
 
@@ -374,7 +374,7 @@ class OptionsController extends Controller
 			$parse['opt_usern_datatime'] = $userInfo->username_last < (time() - 86400);
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $userInfo->email;
-			$parse['opt_isemail'] = is_email($userInfo->email);
+			$parse['opt_isemail'] = Helpers::is_email($userInfo->email);
 
 			$parse['opt_record_data'] = $this->user->getUserOption('records');
 			$parse['opt_bbcode_data'] = $this->user->getUserOption('bb_parser');

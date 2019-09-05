@@ -108,14 +108,16 @@ class ApiResponse
 			}
 			elseif ($response->exception instanceof \Exception)
 			{
-				$data['messages'][] = [
-					'type' => 'error',
-					'text' => $response->exception->getMessage(),
-				];
+				return $response->setData([
+					'success' => false,
+					'data' => $response->exception->getMessage(),
+				]);
 			}
 
 			$original = null;
 		}
+
+		$response->setStatusCode(200);
 
 		$data['page'] = $original ?? [];
 
@@ -135,9 +137,12 @@ class ApiResponse
 		/** @var User $user */
 		$user = Auth::user();
 
-		$result = [
-			'resources' => $user->getCurrentPlanet()->getTopPanelRosources(),
-		];
+		$result = [];
+
+		$planet = $user->getCurrentPlanet();
+
+		if ($planet)
+			$result['resources'] = $planet->getTopPanelRosources();
 
 		$messages = [];
 
@@ -241,8 +246,6 @@ class ApiResponse
 			'vacation' => $user->vacation > 0,
 			'quests' => (int) $quests
 		];
-
-		$planet = $user->getCurrentPlanet();
 
 		if ($planet)
 		{

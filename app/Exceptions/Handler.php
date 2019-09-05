@@ -39,7 +39,8 @@ class Handler extends ExceptionHandler
     	if ($exception instanceof NotFoundHttpException)
 		{
 			return new JsonResponse([
-				'message' => $exception->getMessage(),
+				'status' => false,
+				'data' => 'Страница не найдена',
 			], 404);
 		}
 

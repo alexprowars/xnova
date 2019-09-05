@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\URL;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
+ * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -109,9 +109,9 @@ class Helpers
 			return $n;
 	}
 
-	static function is_email($email)
+	static function is_email ($email)
 	{
-		return (preg_match('#^[^\\x00-\\x1f@]+@[^\\x00-\\x1f@]{2,}\.[a-z]{2,}$#iu', $email) != 0);
+		return !!filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
 	static function cutString($string, $maxlen)

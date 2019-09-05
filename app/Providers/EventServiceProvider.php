@@ -11,8 +11,11 @@ use Xnova\User;
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-		'Illuminate\Auth\Events\Authenticated' => [
+		\Illuminate\Auth\Events\Authenticated::class => [
 			'Xnova\Listeners\UserAuthenticated',
+		],
+		\SocialiteProviders\Manager\SocialiteWasCalled::class => [
+			'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
 		],
 	];
 

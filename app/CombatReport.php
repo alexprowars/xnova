@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\URL;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
+ * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 

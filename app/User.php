@@ -6,12 +6,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Xnova\Exceptions\Exception;
+use Xnova\Mail\UserRegistration;
 use Xnova\Models\Alliance;
 use Xnova\Models\LogCredits;
 use Xnova\Models\Messages;
+use Xnova\Models\Options;
 use Xnova\User\Tech;
 use Xnova\Queue as QueueManager;
 
@@ -303,9 +309,9 @@ class User extends Models\Users
 		return DB::select($qryPlanets);
 	}
 
-	public function getCurrentPlanet (): Planet
+	public function getCurrentPlanet (bool $loading = false): ?Planet
 	{
-		if ($this->_planet)
+		if ($this->_planet || !$loading)
 			return $this->_planet;
 
 		if (!$this->planet_current && !$this->planet_id)
@@ -358,8 +364,8 @@ class User extends Models\Users
 			}
 		}
 
-		if (!$this->_planet)
-			throw new Exception('planet not found');
+		//if (!$this->_planet)
+		//	throw new Exception('planet not found');
 
 		return $this->_planet;
 	}
@@ -536,5 +542,64 @@ class User extends Models\Users
 			$result[] = (int) $row->id;
 
 		return $result;
+	}
+
+	public static function creation (array $data)
+	{
+		if (!isset($data['password']) || $data['password'] == '')
+			$data['password'] = Str::random(10);
+
+		return DB::transaction(function () use ($data)
+		{
+			/** @var Models\Users $user */
+			$user = Models\Users::query()->create([
+				'username' 		=> $data['name'] ?? '',
+				'sex' 			=> 0,
+				'planet_id' 	=> 0,
+				'ip' 			=> Helpers::convertIp(Request::ip()),
+				'bonus' 		=> time(),
+				'onlinetime' 	=> time()
+			]);
+
+			if (!$user->id)
+				throw new Exception('create user error');
+
+			Models\UsersInfo::query()->create([
+				'id' 			=> $user->id,
+				'email' 		=> $data['email'] ?? '',
+				'create_time' 	=> time(),
+				'password' 		=> Hash::make($data['password'])
+			]);
+
+			if (Session::has('ref'))
+			{
+				/** @var Models\Users $refer */
+				$refer = Models\Users::query()->find((int) Session::get('ref'), ['id']);
+
+				if ($refer)
+				{
+					DB::table('refs')->insert([
+						'r_id' => $user->id,
+						'u_id' => $refer->getId()
+					]);
+				}
+			}
+
+			Options::set('game.users_total', Options::get('users_total', 0) + 1);
+
+			if (isset($data['email']) && $data['email'] != '')
+			{
+				try
+				{
+					Mail::to($data['email'])->send(new UserRegistration([
+						'#EMAIL#' => $data['email'],
+						'#PASSWORD#' => $data['password'],
+					]));
+				}
+				catch (\Exception $e) {}
+			}
+
+			return $user->id;
+		});
 	}
 }

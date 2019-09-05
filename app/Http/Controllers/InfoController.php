@@ -4,7 +4,7 @@ namespace Xnova\Http\Controllers;
 
 /**
  * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
+ * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
@@ -24,10 +24,10 @@ class InfoController extends Controller
 
 	public function index (int $element)
 	{
-		$this->ShowBuildingInfoPage((int) $element);
-
-		$this->setTitle(__('tech', $element));
+		$this->setTitle(__('main.tech.'.$element));
 		$this->showTopPanel(false);
+
+		return $this->ShowBuildingInfoPage((int) $element);
 	}
 
 	private function ShowRapidFireTo ($BuildID)
@@ -42,7 +42,7 @@ class InfoController extends Controller
 		{
 			if (isset($storage['CombatCaps'][$BuildID]['sd'][$Type]) && $storage['CombatCaps'][$BuildID]['sd'][$Type] > 1)
 			{
-				$ResultString .= __('info.nfo_rf_again') . " <font color=\"#00ff00\">" . $storage['CombatCaps'][$BuildID]['sd'][$Type] . "</font> единиц " .__('main.tech', $Type) . "<br>";
+				$ResultString .= __('info.nfo_rf_again') . " <font color=\"#00ff00\">" . $storage['CombatCaps'][$BuildID]['sd'][$Type] . "</font> единиц " .__('main.tech.'.$Type) . "<br>";
 			}
 		}
 
@@ -161,7 +161,7 @@ class InfoController extends Controller
 	{
 		$parse = [];
 
-		if (!__('info.info', $itemId, true))
+		if (!__('info.info.'.$itemId))
 			throw new ErrorException('Мы не сможем дать вам эту информацию');
 
 		$price = Vars::getItemPrice($itemId);
