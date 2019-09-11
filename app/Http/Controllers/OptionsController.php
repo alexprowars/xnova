@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Files;
@@ -128,7 +129,7 @@ class OptionsController extends Controller
 			if ($email)
 				throw new ErrorException('Данный email уже используется в игре.');
 
-			$password = Helpers::randomSequence();
+			$password = Str::random(10);
 
 			Models\UsersInfo::query()->where('id', $this->user->getId())
 				->update([

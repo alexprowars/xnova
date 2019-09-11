@@ -53,5 +53,7 @@ return [
 		Xnova\Providers\RouteServiceProvider::class,
 		Spatie\Permission\PermissionServiceProvider::class,
     ],
-    'aliases' => [],
+    'aliases' => [
+		'Session' => Illuminate\Support\Facades\Session::class,
+	],
 ];

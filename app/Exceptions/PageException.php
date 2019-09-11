@@ -24,10 +24,10 @@ class PageException extends Exception
 
 	public function render ()
 	{
-		return new JsonResponse([
+		return new JsonResponse(['error' => [
 			'message' => $this->getMessage(),
 			'redirect' => $this->url,
 			'timeout' => 5,
-		]);
+		]]);
 	}
 }

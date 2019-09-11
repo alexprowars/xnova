@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\PageException;
 use Xnova\Game;
+use Xnova\Helpers;
 use Xnova\Models\Banned;
 use Xnova\User;
 
@@ -36,7 +37,7 @@ class UserAuthenticated
 		if ($user->onlinetime < (time() - 30))
 			$user->onlinetime = time();
 
-		$ip = sprintf("%u", ip2long(Request::ip()));
+		$ip = Helpers::convertIp(Request::ip());
 
 		if ($user->ip != $ip)
 		{
@@ -49,7 +50,7 @@ class UserAuthenticated
 			]);
 		}
 
-		if ($user->wasChanged())
+		if ($user->isDirty())
 			$user->update();
 	}
 }

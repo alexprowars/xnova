@@ -3,31 +3,23 @@
 namespace Xnova\Providers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
-    protected $policies = [
-        // 'App\Model' => 'App\Policies\ModelPolicy',
-    ];
+    protected $policies = [];
 
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(GateContract $gate)
     {
         $this->registerPolicies();
 
 		Auth::provider('authuserprovider', function($app, array $config) {
 			return new AuthUserProvider($app['hash'], $config['model']);
+		});
+
+		$gate->before(function ($user) {
+			return $user->id === 1;
 		});
     }
 }

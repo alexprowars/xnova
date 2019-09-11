@@ -56,7 +56,7 @@ class Game
 		if (!$user)
 			return;
 
-		$ip = sprintf("%u", ip2long(Request::ip()));
+		$ip = Helpers::convertIp(Request::ip());
 
 		$res = DB::selectOne("SELECT `id` FROM moneys where `ip` = '" . $ip . "' AND `time` > '" . (time() - 86400) . "'");
 

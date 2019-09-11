@@ -12,11 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
-use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\Exception;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Exceptions\SuccessException;
 use Xnova\Game;
 use Xnova\Controller;
 use Xnova\Models\UsersQuest;
@@ -46,8 +42,6 @@ class ApiResponse
 
 		if (!($response instanceof JsonResponse))
 			return $response;
-
-		$original = $response->getOriginalContent();
 
 		$route = Route::current();
 		/** @var Controller $controller */
@@ -81,45 +75,25 @@ class ApiResponse
 			'user' => null,
 			'view' => $controller->getViews(),
 			'version' => VERSION,
+			'page' => null,
 		];
-
-		$data = array_merge($data, $this->afterExecuteRoute());
 
 		if ($response->exception)
 		{
-			if ($response->exception instanceof RedirectException)
-				$data['redirect'] = $original['redirect'];
-
-			if ($response->exception instanceof PageException)
-				$data['error'] = $original;
-			elseif ($response->exception instanceof Exception)
+			if ($response->exception instanceof Exception)
+				$data = array_merge($data, $response->getOriginalContent());
+			else
 			{
-				$type = 'notice';
-
-				if ($response->exception instanceof ErrorException)
-					$type = 'error';
-				elseif ($response->exception instanceof SuccessException)
-					$type = 'success';
-
-				$data['messages'][] = [
-					'type' => $type,
-					'text' => $response->exception->getMessage(),
-				];
-			}
-			elseif ($response->exception instanceof \Exception)
-			{
-				return $response->setData([
+				return new JsonResponse([
 					'success' => false,
-					'data' => $response->exception->getMessage(),
-				]);
+					'data' => $response->getOriginalContent(),
+				], $response->exception->getCode() > 0 ? $response->exception->getCode() : 500);
 			}
-
-			$original = null;
 		}
+		else
+			$data['page'] = $response->getOriginalContent();
 
-		$response->setStatusCode(200);
-
-		$data['page'] = $original ?? [];
+		$this->afterExecuteRoute($data);
 
 		$response->setData([
 			'success' => true,
@@ -129,28 +103,24 @@ class ApiResponse
 		return $response;
 	}
 
-	public function afterExecuteRoute ()
+	private function afterExecuteRoute (&$result)
 	{
 		if (!Auth::check())
-			return [];
+			return;
 
 		/** @var User $user */
 		$user = Auth::user();
-
-		$result = [];
 
 		$planet = $user->getCurrentPlanet();
 
 		if ($planet)
 			$result['resources'] = $planet->getTopPanelRosources();
 
-		$messages = [];
-
 		$globalMessage = Config::get('game.newsMessage', '');
 
 		if ($globalMessage != '')
 		{
-			$messages[] = [
+			$result['messages'][] = [
 				'type' => 'warning-static',
 				'text' => $globalMessage
 			];
@@ -158,7 +128,7 @@ class ApiResponse
 
 		if ($user->deltime > 0)
 		{
-			$messages[] = [
+			$result['messages'][] = [
 				'type' => 'info-static',
 				'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после '.Game::datezone("d.m.Y", $user->deltime).' в '.Game::datezone("H:i:s", $user->deltime).'. Выключить режим удаления можно в настройках игры.'
 			];
@@ -166,7 +136,7 @@ class ApiResponse
 
 		if ($user->vacation > 0)
 		{
-			$messages[] = [
+			$result['messages'][] = [
 				'type' => 'warning-static',
 				'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
 			];
@@ -178,14 +148,12 @@ class ApiResponse
 
 			foreach ($keys as $key)
 			{
-				$messages[] = [
+				$result['messages'][] = [
 					'type' => $key,
 					'text' => Session::get($key)
 				];
 			}
 		}
-
-		$result['messages'] = $messages;
 
 		if ($user->messages_ally > 0 && $user->ally_id == 0)
 		{
@@ -223,7 +191,7 @@ class ApiResponse
 
 		if ($quests === null)
 		{
-			$quests = (int) UsersQuest::get()->where('user_id', $user->getId())->where('finish', 1)->count();
+			$quests = (int) UsersQuest::query()->where('user_id', $user->getId())->where('finish', 1)->count();
 
 			Cache::put('app::quests::'.$user->getId(), $quests, 3600);
 		}
@@ -267,7 +235,5 @@ class ApiResponse
 			'fleet' => Game::getSpeed('fleet'),
 			'resources' => Game::getSpeed('mine')
 		];
-
-		return $result;
 	}
 }

@@ -12,16 +12,6 @@ use Illuminate\Support\Facades\URL;
 
 class Helpers
 {
-	static function strtolower ($text)
-	{
-		return mb_strtolower($text, 'UTF-8');
-	}
-
-	static function strtoupper ($text)
-	{
-		return mb_strtoupper($text, 'UTF-8');
-	}
-
 	static function getDateString ($type, $value)
 	{
 		$data = [];
@@ -121,22 +111,6 @@ class Helpers
 		$cutStr = mb_substr($string, 0, $len);
 
 		return (mb_strlen($string) > $maxlen) ? '' . $cutStr . '...' : '' . $cutStr . '';
-	}
-
-	static function randomSequence ($dictionary = '', $length = 6)
-	{
-		if ($dictionary == '')
-			$dictionary = 'aazertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890';
-
-		$count 		= mb_strlen($dictionary, 'UTF-8');
-		$sequence 	= '';
-
-		for ($i = 0; $i < $length; $i++)
-		{
-			$sequence .= substr($dictionary, rand(0, $count - 1), 1);
-		}
-
-		return $sequence;
 	}
 
 	static function pagination ($count, $per_page, $link, $page = 0)

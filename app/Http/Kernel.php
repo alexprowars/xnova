@@ -8,6 +8,7 @@ use Illuminate;
 class Kernel extends HttpKernel
 {
 	protected $middleware = [
+		Middleware\CheckOverload::class,
 		//Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
 		//Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
 	];
@@ -20,8 +21,9 @@ class Kernel extends HttpKernel
 			//Illuminate\Routing\Middleware\SubstituteBindings::class,
 			Middleware\ApiResponse::class,
 		],
-		'admin' => [//'throttle:60,1',
-			//'bindings',
+		'admin' => [
+			Middleware\AdminCanAccess::class,
+			Middleware\AdminViewData::class,
 		],
 	];
 
@@ -43,5 +45,7 @@ class Kernel extends HttpKernel
 		//Illuminate\Routing\Middleware\SubstituteBindings::class,
 		Illuminate\Auth\Middleware\Authorize::class,
 		Middleware\ApiResponse::class,
+		Middleware\AdminCanAccess::class,
+		Middleware\AdminViewData::class,
 	];
 }
