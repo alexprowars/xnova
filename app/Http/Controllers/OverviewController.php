@@ -9,7 +9,6 @@ namespace Xnova\Http\Controllers;
  */
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +27,7 @@ use Xnova\Queue;
 use Xnova\Models\Fleet as FleetModel;
 use Xnova\Controller;
 use Xnova\Vars;
+use Xnova\Entity;
 
 class OverviewController extends Controller
 {
@@ -594,7 +594,9 @@ class OverviewController extends Controller
 				if (!isset($end[$item->planet_id]))
 					$end[$item->planet_id] = $item->time;
 
-				$time = Building::getBuildingTime($this->user, $planetsData[$item->planet_id], $item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+				$entity = new Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+
+				$time = $entity->getTime();
 
 				if ($item->operation == $item::OPERATION_DESTROY)
 					$time = ceil($time / 2);

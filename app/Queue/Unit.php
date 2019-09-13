@@ -10,10 +10,10 @@ namespace Xnova\Queue;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Vars;
 use Xnova\Models;
+use Xnova\Entity;
 
 class Unit
 {
@@ -29,7 +29,14 @@ class Unit
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 
-		if (!Building::isTechnologieAccessible($user, $planet, $elementId))
+		$context = new Entity\Context($user, $planet);
+
+		if (Vars::getItemType($elementId) === Vars::ITEM_TYPE_DEFENSE)
+			$entity = new Entity\Defence($elementId, $context);
+		else
+			$entity = new Entity\Fleet($elementId, $context);
+
+		if (!$entity->isAvailable())
 			return;
 
 		$buildItems = $this->_queue->get(Queue::TYPE_SHIPYARD);
@@ -83,18 +90,18 @@ class Unit
 		if (!$count)
 			return;
 
-		$count = min($count, Building::getMaxConstructibleElements($elementId, $planet, $user));
+		$count = min($count, $entity->getMaxConstructible());
 
 		if ($count > 0)
 		{
-			$cost = Building::getElementRessources($elementId, $count, $user);
+			$cost = $entity->getPrice();
 
 			$planet->metal 		-= $cost['metal'];
 			$planet->crystal 	-= $cost['crystal'];
 			$planet->deuterium 	-= $cost['deuterium'];
 			$planet->update();
 
-			$buildTime = Building::getBuildingTime($user, $planet, $elementId);
+			$buildTime = $entity->getTime();
 
 			Models\Queue::query()->create([
 				'type' => Models\Queue::TYPE_UNIT,

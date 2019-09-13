@@ -11,6 +11,7 @@ namespace Xnova\Http\Controllers;
 use Xnova\Building;
 use Xnova\Controller;
 use Xnova\Vars;
+use Xnova\Entity;
 
 class TechController extends Controller
 {
@@ -108,9 +109,11 @@ class TechController extends Controller
 
 		if ($element > 0 && Vars::getName($element))
 		{
+			$entity = new Entity\Base($element, new Entity\Context($this->user, $this->planet));
+
 			$page['element'] = $element;
 			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getBuildLevel($element);
-			$page['access'] = Building::isTechnologieAccessible($this->user, $this->planet, $element);
+			$page['access'] = $entity->isAvailable();
 			$page['req'] = Vars::getItemRequirements($element);
 
 			$this->setTitle(__('main.tech.'.$element));

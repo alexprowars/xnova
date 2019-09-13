@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Xnova\Building;
 use Xnova\Queue;
 use Xnova\Models;
+use Xnova\Entity;
 
 class Build
 {
@@ -98,7 +99,9 @@ class Build
 
 			if ($buildItem->time > 0)
 			{
-				$cost = Building::getBuildingPrice($user, $planet, $buildItem->object_id, true, ($buildItem->operation == $buildItem::OPERATION_DESTROY));
+				$entity = new Entity\Building($buildItem->object_id, $buildItem->level, new Entity\Context($user, $planet));
+
+				$cost = $buildItem->operation == $buildItem::OPERATION_DESTROY ? $entity->getDestroyPrice() : $entity->getPrice();
 
 				$planet->metal 		+= $cost['metal'];
 				$planet->crystal 	+= $cost['crystal'];

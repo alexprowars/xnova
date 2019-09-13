@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 use Xnova\AdminController;
+use Xnova\Entity\Building;
+use Xnova\Entity\Fleet;
 use Xnova\Format;
 use Xnova\Helpers;
 

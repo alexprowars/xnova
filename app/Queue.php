@@ -14,6 +14,7 @@ use Xnova\Exceptions\ErrorException;
 use Xnova\Queue\Build;
 use Xnova\Queue\Tech;
 use Xnova\Queue\Unit;
+use Xnova\Entity;
 
 class Queue
 {
@@ -28,15 +29,14 @@ class Queue
 	/** @var Planet planet */
 	private $planet;
 
-	public function __construct ($user, $planet = null)
+	public function __construct ($user, ?Planet $planet = null)
 	{
 		if ($user instanceof Models\Users)
 			$this->user = $user;
 		else
 			$this->user = Models\Users::find((int) $user);
 
-		if ($planet instanceof Models\Planets)
-			$this->planet = $planet;
+		$this->planet = $planet;
 
 		$this->loadQueue();
 	}
@@ -215,7 +215,9 @@ class Queue
 		$build = $this->planet->getBuild($buildItem->object_id);
 		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
 
-		$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id, $build['level']);
+		$entity = new Entity\Building($buildItem->object_id, $build['level'], new Entity\Context($this->user, $this->planet));
+
+		$buildTime = $entity->getTime();
 
 		if ($isDestroy)
 			$buildTime = ceil($buildTime / 2);
@@ -232,7 +234,7 @@ class Queue
 			if (!$this->planet->planet_updated)
 				$this->planet->resourceUpdate(0, true);
 
-			$cost = Building::getBuildingPrice($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
+			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
 			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 
 			$xp = 0;
@@ -325,24 +327,27 @@ class Queue
 
 			$isDestroy = $buildItem->operation == $buildItem::OPERATION_DESTROY;
 
+			$entity = new Entity\Building($buildItem->object_id, 0, new Entity\Context($this->user, $this->planet));
+			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
+
 			if ($isDestroy && $build['level'] == 0)
 			{
 				$HaveRessources = false;
 				$HaveNoMoreLevel = true;
 			}
 			else
-				$HaveRessources = Building::isElementBuyable($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
-
-			if ($HaveRessources && (Building::isTechnologieAccessible($this->user, $this->planet, $buildItem->object_id) || $isDestroy))
 			{
-				$cost = Building::getBuildingPrice($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
+				$HaveRessources = $entity->canBuy($isDestroy ? $entity->getDestroyPrice() : $entity->getPrice());
+			}
 
+			if ($HaveRessources && ($entity->isAvailable() || $isDestroy))
+			{
 				$this->planet->metal 		-= $cost['metal'];
 				$this->planet->crystal 		-= $cost['crystal'];
 				$this->planet->deuterium 	-= $cost['deuterium'];
 				$this->planet->update();
 
-				$buildTime = Building::getBuildingTime($this->user, $this->planet, $buildItem->object_id);
+				$buildTime = $entity->getTime();
 
 				if ($isDestroy)
 					$buildTime = ceil($buildTime / 2);
@@ -378,8 +383,6 @@ class Queue
 					$message = sprintf(__('main.sys_nomore_level'), __('main.tech.'.$buildItem->object_id));
 				elseif (!$HaveRessources)
 				{
-					$cost = Building::getBuildingPrice($this->user, $this->planet, $buildItem->object_id, true, $isDestroy);
-
 					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.'.$buildItem->object_id) . '" на планете '.$this->planet->name.' '.Helpers::BuildPlanetAdressLink($this->planet->toArray()).'.<br>Вам необходимо ещё: <br>';
 
 					if ($cost['metal'] > $this->planet->metal)
@@ -443,7 +446,9 @@ class Queue
 			if ($this->user->getTechLevel('intergalactic') > 0)
 				$planet->spaceLabs = $planet->getNetworkLevel();
 
-			$buildTime = Building::getBuildingTime($this->user, $planet, $buildItem->object_id);
+			$entity = new Entity\Research($buildItem->object_id, $buildItem->level, new Entity\Context($this->user, $planet));
+
+			$buildTime = $entity->getTime();
 
 			if ($buildItem->time + $buildTime != $buildItem->time_end)
 			{
@@ -549,12 +554,19 @@ class Queue
 
 			unset($item);
 
+			$context = new Entity\Context($this->user, $this->planet);
+
 			foreach ($buildQueue as $i => $item)
 			{
 				if (!in_array($item->object_id, $buildTypes))
 					continue;
 
-				$buildTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
+				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE)
+					$entity = new Entity\Defence($item->object_id, $context);
+				else
+					$entity = new Entity\Fleet($item->object_id, $context);
+
+				$buildTime = $entity->getTime();
 
 				while ($item->time + $buildTime < time())
 				{

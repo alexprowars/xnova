@@ -10,11 +10,11 @@ namespace Xnova\Queue;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Xnova\Building;
 use Xnova\Planet;
 use Xnova\Queue;
 use Xnova\Vars;
 use Xnova\Models;
+use Xnova\Entity;
 
 class Tech
 {
@@ -40,18 +40,19 @@ class Tech
 			if ($user->getTechLevel('intergalactic') > 0)
 				$planet->spaceLabs = $planet->getNetworkLevel();
 
+			$entity = new Entity\Research($elementId, $user->getTechLevel($elementId), new Entity\Context($user, $planet));
+			$cost = $entity->getPrice();
+
 			$price = Vars::getItemPrice($elementId);
 
-			if (Building::isTechnologieAccessible($user, $planet, $elementId) && Building::isElementBuyable($user, $planet, $elementId) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
+			if ($entity->isAvailable() && $entity->canBuy($cost) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
 			{
-				$costs = Building::getBuildingPrice($user, $planet, $elementId);
-
-				$planet->metal 		-= $costs['metal'];
-				$planet->crystal 	-= $costs['crystal'];
-				$planet->deuterium 	-= $costs['deuterium'];
+				$planet->metal 		-= $cost['metal'];
+				$planet->crystal 	-= $cost['crystal'];
+				$planet->deuterium 	-= $cost['deuterium'];
 				$planet->update();
 
-				$buildTime = Building::getBuildingTime($user, $planet, $elementId);
+				$buildTime = $entity->getTime();
 
 				Models\Queue::query()->create([
 					'type' => Models\Queue::TYPE_TECH,
@@ -71,9 +72,9 @@ class Tech
 						'time' 				=> time(),
 						'operation' 		=> 5,
 						'planet' 			=> $planet->id,
-						'from_metal' 		=> $planet->metal + $costs['metal'],
-						'from_crystal' 		=> $planet->crystal + $costs['crystal'],
-						'from_deuterium' 	=> $planet->deuterium + $costs['deuterium'],
+						'from_metal' 		=> $planet->metal + $cost['metal'],
+						'from_crystal' 		=> $planet->crystal + $cost['crystal'],
+						'from_deuterium' 	=> $planet->deuterium + $cost['deuterium'],
 						'to_metal' 			=> $planet->metal,
 						'to_crystal' 		=> $planet->crystal,
 						'to_deuterium' 		=> $planet->deuterium,
@@ -89,6 +90,7 @@ class Tech
 	{
 		$user = $this->_queue->getUser();
 
+		/** @var Models\Queue $techHandle */
 		$techHandle = Models\Queue::query()->where('user_id', $user->id)
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
@@ -97,7 +99,9 @@ class Tech
 			/** @var Planet $planet */
 			$planet = Planet::query()->find((int) $techHandle->planet_id);
 
-			$cost = Building::getBuildingPrice($user, $planet, $elementId);
+			$entity = new Entity\Research($elementId, $techHandle->level, new Entity\Context($user, $planet));
+
+			$cost = $entity->getPrice();
 
 			$planet->metal 		+= $cost['metal'];
 			$planet->crystal 	+= $cost['crystal'];

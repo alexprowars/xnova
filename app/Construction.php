@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
+use Xnova\Entity;
 
 class Construction
 {
@@ -74,6 +75,8 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
+		$context = new Entity\Context($this->user, $this->planet);
+
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
@@ -81,7 +84,14 @@ class Construction
 			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)))
 				continue;
 
-			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Element);
+			$build = $this->planet->getBuild($Element);
+
+			if (!$build)
+				continue;
+
+			$entity = new Entity\Building($Element, $build['level'], $context);
+
+			$isAccess = $entity->isAvailable();
 
 			if (!$isAccess && $viewOnlyAvailable)
 				continue;
@@ -89,13 +99,8 @@ class Construction
 			if (!Building::checkTechnologyRace($this->user, $Element))
 				continue;
 
-			$build = $this->planet->getBuild($Element);
-
-			if (!$build)
-				continue;
-
 			$BuildingLevel = $build['level'];
-			$BuildingPrice = Building::getBuildingPrice($this->user, $this->planet, $Element);
+			$BuildingPrice = $entity->getPrice();
 
 			$row = [];
 
@@ -109,7 +114,7 @@ class Construction
 				if (in_array($Element, Vars::getItemsByType('build_exp')))
 					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / Config::get('game.buildings_exp_mult', 1000));
 
-				$row['time'] 	= Building::getBuildingTime($this->user, $this->planet, $Element);
+				$row['time'] 	= $entity->getTime();
 				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);
 			}
 			else
@@ -189,11 +194,15 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
+		$context = new Entity\Context($this->user, $this->planet);
+
 		$parse['items'] = [];
 
 		foreach ($res_array AS $Tech)
 		{
-			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $Tech);
+			$entity = new Entity\Research($Tech, null, $context);
+
+			$isAccess = $entity->isAvailable();
 
 			if (!$isAccess && $viewOnlyAvailable)
 				continue;
@@ -209,7 +218,7 @@ class Construction
 			$row['i'] 		= $Tech;
 			$row['level']	= $this->user->getTechLevel($Tech);
 			$row['max']		= isset($price['max']) ? $price['max'] : 0;
-			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $Tech);
+			$row['price'] 	= $entity->getPrice();
 			$row['build']	= false;
 			$row['effects']	= '';
 
@@ -236,7 +245,7 @@ class Construction
 				elseif ($Tech == 113)
 					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.($row['level'] * 2).'%</span></div>';
 
-				$row['time'] = Building::getBuildingTime($this->user, $this->planet, $Tech);
+				$row['time'] = $entity->getTime();
 
 				if ($techHandle)
 				{
@@ -306,9 +315,16 @@ class Construction
 		$parse = [];
 		$parse['items'] = [];
 
+		$context = new Entity\Context($this->user, $this->planet);
+
 		foreach ($elementIDs AS $element)
 		{
-			$isAccess = Building::isTechnologieAccessible($this->user, $this->planet, $element);
+			if (Vars::getItemType($element) === Vars::ITEM_TYPE_DEFENSE)
+				$entity = new Entity\Defence($element, $context);
+			else
+				$entity = new Entity\Fleet($element, $context);
+
+			$isAccess = $entity->isAvailable();
 
 			if (!$isAccess && $viewOnlyAvailable)
 				continue;
@@ -321,13 +337,13 @@ class Construction
 			$row['allow']	= $isAccess;
 			$row['i'] 		= $element;
 			$row['count'] 	= $this->planet->getUnitCount($element);
-			$row['price'] 	= Building::getBuildingPrice($this->user, $this->planet, $element, false);
+			$row['price'] 	= $entity->getPrice();
 			$row['effects']	= '';
 
 			if ($isAccess)
 			{
-				$row['time']	= Building::getBuildingTime($this->user, $this->planet, $element);
-				$row['is_max']	= false;
+				$row['time'] = $entity->getTime();
+				$row['is_max'] = false;
 
 				$price = Vars::getItemPrice($element);
 
@@ -386,7 +402,9 @@ class Construction
 				if (!$end)
 					$end = $item->time;
 
-				$elementTime = Building::getBuildingTime($this->user, $this->planet, $item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+				$entity = new Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0), new Entity\Context($this->user, $this->planet));
+
+				$elementTime = $entity->getTime();
 
 				if ($item->operation == $item::OPERATION_DESTROY)
 					$elementTime = ceil($elementTime / 2);
@@ -433,7 +451,12 @@ class Construction
 				if (!$end)
 					$end = $item->time;
 
-				$time = Building::getBuildingTime($this->user, $this->planet, $item->object_id);
+				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE)
+					$entity = new Entity\Defence($item->object_id);
+				else
+					$entity = new Entity\Fleet($item->object_id);
+
+				$time = $entity->getTime();
 
 				$end += $time * $item->level;
 

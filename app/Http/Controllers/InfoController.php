@@ -17,6 +17,7 @@ use Xnova\Fleet;
 use Xnova\Models;
 use Xnova\Controller;
 use Xnova\Vars;
+use Xnova\Entity;
 
 class InfoController extends Controller
 {
@@ -409,14 +410,16 @@ class InfoController extends Controller
 
 			if ($build && $build['level'] > 0)
 			{
-				$time = ceil(Building::getBuildingTime($this->user, $this->planet, $itemId) / 2);
+				$entity = new Entity\Building($itemId, $build['level'], new Entity\Context($this->user, $this->planet));
+
+				$time = ceil($entity->getTime() / 2);
 
 				if ($time < 1)
 					$time = 1;
 
 				$parse['destroy'] = [
 					'level' => $build['level'],
-					'resources' => Building::getBuildingPrice($this->user, $this->planet, $itemId, true, true),
+					'resources' => $entity->getDestroyPrice(),
 					'time' => $time
 				];
 			}
