@@ -7,19 +7,15 @@ use Xnova\Vars;
 
 class Research extends Base
 {
-	private $level = 0;
-
 	public function __construct ($elementId, ?int $level = null, $context = null)
 	{
 		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_TECH)
 			throw new Exception('wrong entity type');
 
-		parent::__construct($elementId, $context);
+		if ($level === null)
+			$level = ($context ? $context : $this->getContext())->getUser()->getTechLevel($elementId);
 
-		if (!$level)
-			$level = $this->getContext()->getUser()->getTechLevel($this->elementId);
-
-		$this->level = $level;
+		parent::__construct($elementId, $level, $context);
 	}
 
 	public function getTime (): int

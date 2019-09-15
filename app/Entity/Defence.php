@@ -7,12 +7,12 @@ use Xnova\Vars;
 
 class Defence extends Unit
 {
-	public function __construct ($elementId, $context = null)
+	public function __construct ($elementId, $count = 1, $context = null)
 	{
 		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_DEFENSE)
 			throw new Exception('wrong entity type');
 
-		parent::__construct($elementId, $context);
+		parent::__construct($elementId, $count, $context);
 	}
 
 	public function getTime (): int

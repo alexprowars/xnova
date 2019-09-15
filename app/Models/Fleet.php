@@ -49,8 +49,28 @@ class Fleet extends Model
 {
 	public $timestamps = false;
 	public $table = 'fleets';
+	protected $guarded = [];
 
 	public $username = '';
+
+	public static function boot ()
+	{
+		parent::boot();
+
+		self::creating(function (self $model) {
+			$model->_beforeSave($model);
+		});
+
+		self::updating(function (self $model) {
+			$model->_beforeSave($model);
+		});
+	}
+
+	private function _beforeSave ($model)
+	{
+		if (is_array($model->fleet_array))
+			$model->fleet_array = json_encode($model->fleet_array);
+	}
 
 	public function splitStartPosition ()
 	{

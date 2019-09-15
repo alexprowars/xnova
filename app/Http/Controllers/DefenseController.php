@@ -15,7 +15,7 @@ use Xnova\Exceptions\PageException;
 
 class DefenseController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

@@ -15,7 +15,7 @@ use Xnova\Controller;
 
 class SearchController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

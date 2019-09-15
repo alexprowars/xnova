@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\PageException;
@@ -19,7 +19,7 @@ use Xnova\Controller;
 
 class PhalanxController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

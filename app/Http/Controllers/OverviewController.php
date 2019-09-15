@@ -31,7 +31,7 @@ use Xnova\Entity;
 
 class OverviewController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	private function BuildFleetEventTable (FleetModel $FleetRow, $Status, $Owner)
 	{
@@ -56,7 +56,7 @@ class OverviewController extends Controller
 		$MissionType 	= $FleetRow->mission;
 
 		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, __('overview.ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
-		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, __('main.type_mission', $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
+		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, __('main.type_mission.'.$MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
 
 		$StartPlanet 	= $FleetRow->owner_name;
 		$StartType 		= $FleetRow->start_type;

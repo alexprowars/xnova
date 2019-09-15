@@ -39,7 +39,10 @@ class Handler extends ExceptionHandler
 				$data['trace'] = $exception->getTraceAsString();
 
 			return new JsonResponse(
-				$data,
+				[
+					'status' => false,
+					'data' => $data
+				],
 				$this->isHttpException($exception) ? $exception->getStatusCode() : 500,
 				$this->isHttpException($exception) ? $exception->getHeaders() : [],
 				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES

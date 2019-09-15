@@ -8,7 +8,7 @@ namespace Xnova\Http\Controllers;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -218,29 +218,23 @@ class MessagesController extends Controller
 			$this->user->update();
 		}
 
-		$messages = DB::table('messages')
-			->select(['messages.id', 'messages.type', 'messages.time', 'messages.text', 'messages.from_id'])
-			->orderBy('messages.time', 'DESC');
+		$messages = Messages::query()
+			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
+			->orderBy('time', 'DESC');
 
-		if ($category < 100)
+		if ($category == 101)
 		{
-			$messages->addSelect('messages.theme')->where('user_id', $this->user->id)
-				->where('type', $category)
-				->where('deleted', 0);
-		}
-		elseif ($category == 101)
-		{
-			$messages->addSelect(DB::raw('CONCAT(u.username, \' [\', u.galaxy,\':\', u.system,\':\',u.planet, \']\') as theme'));
-			$messages->join('users', function (JoinClause $join)
-			{
-				$join->on('users.id', '=', 'messages.user_id')
-					->on('messages.from_id', '=', $this->user->id);
-			});
+			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\',users.planet, \']\') as theme'))
+				->join('users', 'users.id', '=', 'user_id')
+				->where('from_id', $this->user->id);
 		}
 		else
 		{
-			$messages->where('messages.user_id', $this->user->id)
-				->where('messages.deleted', 0);
+			$messages->addSelect('theme')->where('user_id', $this->user->id)
+				->where('deleted', 0);
+
+			if ($category < 100)
+				$messages->where('type', $category);
 		}
 
 		$paginator = $messages->paginate($limit, null, null, $page);
@@ -250,26 +244,26 @@ class MessagesController extends Controller
 
 		foreach ($items as $item)
 		{
-			preg_match_all('/href=\\\"\/(.*?)\\\"/i', $item['text'], $match);
+			preg_match_all('/href=\\\"\/(.*?)\\\"/i', $item->text, $match);
 
 			if (isset($match[1]))
 			{
 				foreach ($match[1] as $rep)
-					$item['text'] = str_replace('/'.$rep, URL::to($rep), $item['text']);
+					$item->text = str_replace('/'.$rep, URL::to($rep), $item->text);
 			}
 
-			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item['text'], $match);
+			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match);
 
 			if (isset($match[2]))
-				$item['text'] = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item['text']);
+				$item->text = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->text);
 
 			$parse['items'][] = [
-				'id' => (int) $item['id'],
-				'type' => (int) $item['type'],
-				'time' => (int) $item['time'],
-				'from' => (int) $item['from_id'],
-				'theme' => $item['theme'],
-				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item['text'])),
+				'id' => (int) $item->id,
+				'type' => (int) $item->type,
+				'time' => (int) $item->time,
+				'from' => (int) $item->from_id,
+				'theme' => $item->theme ?? '',
+				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->text)),
 			];
 		}
 

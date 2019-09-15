@@ -29,7 +29,7 @@ class Controller extends BaseController
 	/** @var Planet */
 	protected $planet = null;
 
-	private $loadPlanet = true;
+	protected $loadPlanet = false;
 
 	public function __construct ()
 	{
@@ -99,6 +99,8 @@ class Controller extends BaseController
 
 			if (Request::has('initial') || $this->loadPlanet)
 				$this->planet = $this->user->getCurrentPlanet(true);
+
+			Fleet::SetShipsEngine($this->user);
 		}
 		else
 		{

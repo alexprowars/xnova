@@ -10,27 +10,14 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Fleet;
 use Xnova\Models;
 use Xnova\Controller;
 use Xnova\Vars;
+use Xnova\Entity;
 
 class FleetController extends Controller
 {
-	private $loadPlanet = true;
-
-	public function __construct ()
-	{
-		parent::__construct();
-
-		$this->middleware(function ($request, $next)
-		{
-			// Устанавливаем обновлённые двигателя кораблей
-			Fleet::SetShipsEngine($this->user);
-
-			return $next($request);
-		});
-	}
+	protected $loadPlanet = true;
 
 	public function index ()
 	{
@@ -119,15 +106,10 @@ class FleetController extends Controller
 
 		$parse['ships'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $n => $i)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
 		{
 			if ($this->planet->getUnitCount($i) > 0)
-			{
-				$ship = Fleet::getShipInfo($i);
-				$ship['count'] = $this->planet->getUnitCount($i);
-
-				$parse['ships'][] = $ship;
-			}
+				$parse['ships'][] = (new Entity\Fleet($i, $this->planet->getUnitCount($i)))->getInfo();
 		}
 
 		$this->setTitle(__('fleet.fl_title_0'));

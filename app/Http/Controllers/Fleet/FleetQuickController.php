@@ -8,17 +8,17 @@ namespace Xnova\Http\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
 use Xnova\Exceptions\SuccessException;
-use Xnova\Fleet;
 use Xnova\Models;
 use Xnova\Game;
 use Xnova\Planet;
 use Xnova\Vars;
+use Xnova\Entity;
 
 class FleetQuickController extends Controller
 {
@@ -132,8 +132,6 @@ class FleetQuickController extends Controller
 
 			$FleetArray[210] = $num;
 
-			$FleetSpeed = min(Fleet::GetFleetMaxSpeed($FleetArray, 0, $this->user));
-
 		}
 		elseif ($mission == 8 && $planetType == 2)
 		{
@@ -157,27 +155,24 @@ class FleetQuickController extends Controller
 			}
 
 			if ($RecyclerNeeded > 0)
-			{
 				$FleetArray[209] = $RecyclerNeeded;
-
-				$FleetSpeed = min(Fleet::GetFleetMaxSpeed($FleetArray, 0, $this->user));
-			}
 			else
 				throw new Exception('Произошла какая-то непонятная ситуация');
 		}
 		else
 			throw new Exception('Такой миссии не существует!');
 
+		$fleetCollection = Entity\FleetCollection::createFromArray($FleetArray);
+
+		$FleetSpeed = $fleetCollection->getSpeed();
+
 		if ($FleetSpeed > 0 && count($FleetArray) > 0)
 		{
-			$SpeedFactor = Game::getSpeed('fleet');
-			$distance = Fleet::GetTargetDistance($this->planet->galaxy, $galaxy, $this->planet->system, $system, $this->planet->planet, $planet);
-			$duration = Fleet::GetMissionDuration(10, $FleetSpeed, $distance, $SpeedFactor);
-
-			$consumption = Fleet::GetFleetConsumption($FleetArray, $SpeedFactor, $duration, $distance, $this->user);
+			$distance = $fleetCollection->getDistance($this->planet->galaxy, $galaxy, $this->planet->system, $system, $this->planet->planet, $planet);
+			$duration = $fleetCollection->getDuration(10, $distance);
+			$consumption = $fleetCollection->getConsumption($duration, $distance);
 
 			$shipArray = [];
-			$FleetStorage = 0;
 
 			foreach ($FleetArray as $shipId => $count)
 			{
@@ -189,11 +184,9 @@ class FleetQuickController extends Controller
 					'id' => (int) $shipId,
 					'count' => $count
 				];
-
-				$fleetData = Vars::getUnitData(Vars::getIdByName('recycler'));
-
-				$FleetStorage += $fleetData['capacity'] * $count;
 			}
+
+			$FleetStorage = $fleetCollection->getStorage();
 
 			if ($FleetStorage < $consumption)
 				throw new Exception('Не хватает места в трюме для топлива! (необходимо еще ' . ($consumption - $FleetStorage) . ')');

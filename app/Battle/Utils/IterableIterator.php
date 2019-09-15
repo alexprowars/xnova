@@ -8,7 +8,7 @@ use Iterator;
  * Class Iterable
  * @package App\Battle\Utils
  */
-class Iterable implements Iterator
+class IterableIterator implements Iterator
 {
 	public function rewind()
 	{

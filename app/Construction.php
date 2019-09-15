@@ -315,14 +315,12 @@ class Construction
 		$parse = [];
 		$parse['items'] = [];
 
-		$context = new Entity\Context($this->user, $this->planet);
-
 		foreach ($elementIDs AS $element)
 		{
 			if (Vars::getItemType($element) === Vars::ITEM_TYPE_DEFENSE)
-				$entity = new Entity\Defence($element, $context);
+				$entity = new Entity\Defence($element);
 			else
-				$entity = new Entity\Fleet($element, $context);
+				$entity = new Entity\Fleet($element);
 
 			$isAccess = $entity->isAvailable();
 

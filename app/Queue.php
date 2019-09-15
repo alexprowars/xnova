@@ -562,9 +562,9 @@ class Queue
 					continue;
 
 				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE)
-					$entity = new Entity\Defence($item->object_id, $context);
+					$entity = new Entity\Defence($item->object_id, 1, $context);
 				else
-					$entity = new Entity\Fleet($item->object_id, $context);
+					$entity = new Entity\Fleet($item->object_id, 1, $context);
 
 				$buildTime = $entity->getTime();
 

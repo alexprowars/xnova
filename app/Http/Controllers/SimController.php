@@ -14,7 +14,7 @@ use Xnova\Vars;
 
 class SimController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	/**
 	 * @Route("/{data:[0-9!;,]+}{params:(/.*)*}")

@@ -8,19 +8,22 @@ namespace Xnova\Http\Controllers\Fleet;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
+use Xnova\Entity;
 use Xnova\Fleet;
 use Xnova\Planet;
 use Xnova\Models;
 use Xnova\Vars;
 
-class FleetStageOneController extends Controller
+class FleetController extends Controller
 {
+	protected $loadPlanet = true;
+
 	public function index ()
 	{
 		if ($this->user->vacation > 0)
@@ -28,22 +31,22 @@ class FleetStageOneController extends Controller
 
 		$parse = [];
 
-		$g = (int) Request::post('galaxy', 0);
-		$s = (int) Request::post('system', 0);
-		$p = (int) Request::post('planet', 0);
-		$t = (int) Request::post('planet_type', 0);
+		$galaxy = (int) Request::post('galaxy', 0);
+		$system = (int) Request::post('system', 0);
+		$planet = (int) Request::post('planet', 0);
+		$type = (int) Request::post('planet_type', 0);
 
-		if (!$g)
-			$g = (int) $this->planet->galaxy;
+		if (!$galaxy)
+			$galaxy = (int) $this->planet->galaxy;
 
-		if (!$s)
-			$s = (int) $this->planet->system;
+		if (!$system)
+			$system = (int) $this->planet->system;
 
-		if (!$p)
-			$p = (int) $this->planet->planet;
+		if (!$planet)
+			$planet = (int) $this->planet->planet;
 
-		if (!$t)
-			$t = 1;
+		if (!$type)
+			$type = 1;
 
 		$parse['ships'] = [];
 		$fleets = [];
@@ -64,7 +67,7 @@ class FleetStageOneController extends Controller
 
 				$fleets[$i] = $cnt;
 
-				$ship = Fleet::getShipInfo($i);
+				$ship = (new Entity\Fleet($i))->getInfo();
 				$ship['count'] = $cnt;
 
 				$parse['ships'][] = $ship;
@@ -72,15 +75,15 @@ class FleetStageOneController extends Controller
 		}
 
 		if (!count($fleets))
-			throw new PageException(__('fleet.fl_unselectall'), '/fleet/');
+			return redirect('/fleet/');
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 
 		$parse['target'] = [
-			'galaxy' => (int) $g,
-			'system' => (int) $s,
-			'planet' => (int) $p,
-			'planet_type' => (int) $t,
+			'galaxy' => (int) $galaxy,
+			'system' => (int) $system,
+			'planet' => (int) $planet,
+			'planet_type' => (int) $type,
 		];
 
 		$parse['galaxy_max'] = (int) Config::get('game.maxGalaxyInWorld');
@@ -193,7 +196,57 @@ class FleetStageOneController extends Controller
 			}
 		}
 
-		$parse['mission'] = (int) Request::post('mission', 0);
+		$acs 	= (int) Request::post('alliance', 0);
+		$mission 	= (int) Request::post('mission', 0);
+
+		$YourPlanet = false;
+		$UsedPlanet = false;
+
+		$targetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
+
+		if ($targetPlanet)
+		{
+			$UsedPlanet = true;
+
+			if ($targetPlanet->id_owner == $this->user->id)
+				$YourPlanet = true;
+		}
+
+		$missions = Fleet::getFleetMissions($fleets, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
+
+		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $this->user->isAdmin()))
+			$missions[] = 4;
+
+		$missions = array_values(array_unique($missions));
+
+		if (in_array(15, $missions))
+		{
+			if ($this->user->getTechLevel('expedition') <= 0)
+				unset($missions[array_search(15, $missions)]);
+			else
+				$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
+		}
+
+		if (!$mission && $acs && in_array(2, $missions))
+			$mission = 2;
+
+		$parse['missions'] = [];
+
+		if (count($missions) > 0)
+		{
+			foreach ($missions as $i => $id)
+			{
+				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1)
+					$parse['mission'] = $id;
+
+				$parse['missions'][] = $id;
+			}
+
+			if (!$mission)
+				$mission = $missions[0];
+		}
+
+		$parse['mission'] = $mission;
 
 		$this->setTitle(__('fleet.fl_title_1'));
 

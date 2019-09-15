@@ -15,7 +15,7 @@ use Xnova\Entity;
 
 class TechController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

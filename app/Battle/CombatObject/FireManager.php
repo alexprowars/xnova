@@ -2,14 +2,14 @@
 
 namespace Xnova\Battle\CombatObject;
 
-use Xnova\Battle\Utils\Iterable;
+use Xnova\Battle\Utils\IterableIterator;
 
 /**
  * Class FireManager
  * @package App\Battle\CombatObject
  * @method Fire[] getIterator
  */
-class FireManager extends Iterable
+class FireManager extends IterableIterator
 {
 	/**
 	 * @var Fire[] $array

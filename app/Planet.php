@@ -9,9 +9,6 @@ use Xnova\User as UsersModel;
 use Xnova\Planet\Build;
 use Xnova\Planet\Unit;
 
-/**
- * @method static self findByCoords(int $galaxy, int $system, int $planet, int $type = 1)
- */
 class Planet extends Models\Planets
 {
 	use Build;

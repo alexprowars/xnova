@@ -3,7 +3,7 @@
 namespace Xnova\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Xnova\Missions\Mission;
 use Xnova\Models;
 use Xnova\Vars;
@@ -59,7 +59,7 @@ class Fleet extends Command
 						->where('mess', '!=', 0)
 						->where('end_stay', '!=', 0);
 				})
-				->where(function (Builder $query) {
+				->orWhere(function (Builder $query) {
 					$query->where('end_time', '<=', time())
 						->where('mess', '!=', 0);
 				})

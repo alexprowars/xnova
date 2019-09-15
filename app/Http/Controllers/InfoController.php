@@ -21,7 +21,7 @@ use Xnova\Entity;
 
 class InfoController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index (int $element)
 	{
@@ -277,9 +277,6 @@ class InfoController extends Controller
 			elseif ($storage['CombatCaps'][$itemId]['type_gun'] == 3)
 				$attTech += $this->user->getTechLevel('buster') * 0.05;
 
-			// Устанавливаем обновлённые двигателя кораблей
-			Fleet::SetShipsEngine($this->user);
-
 			$fleet['rapidfire'] = [
 				'to' => $this->ShowRapidFireTo($itemId),
 				'from' => $this->ShowRapidFireFrom($itemId)
@@ -290,7 +287,7 @@ class InfoController extends Controller
 			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
 			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
 			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
-			$fleet['speed_full'] = Fleet::GetFleetMaxSpeed([], $itemId, $this->user);
+			$fleet['speed_full'] = (new Entity\Fleet($itemId))->getSpeed();
 			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
 
 			$fleet['resources'] = [];

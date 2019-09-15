@@ -17,7 +17,7 @@ use Xnova\Vars;
 
 class MerchantController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	private $modifiers = [
 		'metal' => 1,

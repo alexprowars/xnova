@@ -2,7 +2,7 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;

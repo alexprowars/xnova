@@ -14,7 +14,7 @@ use Xnova\Exceptions\PageException;
 
 class BuildingsController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

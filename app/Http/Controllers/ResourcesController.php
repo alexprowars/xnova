@@ -20,7 +20,7 @@ use Xnova\Vars;
 
 class ResourcesController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	private function buy ($parse)
 	{

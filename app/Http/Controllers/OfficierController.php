@@ -18,7 +18,7 @@ use Xnova\Vars;
 
 class OfficierController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function buy ()
 	{

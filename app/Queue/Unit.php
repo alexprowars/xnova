@@ -32,9 +32,9 @@ class Unit
 		$context = new Entity\Context($user, $planet);
 
 		if (Vars::getItemType($elementId) === Vars::ITEM_TYPE_DEFENSE)
-			$entity = new Entity\Defence($elementId, $context);
+			$entity = new Entity\Defence($elementId, 1, $context);
 		else
-			$entity = new Entity\Fleet($elementId, $context);
+			$entity = new Entity\Fleet($elementId, 1, $context);
 
 		if (!$entity->isAvailable())
 			return;

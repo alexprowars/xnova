@@ -11,25 +11,30 @@ class Base
 {
 	protected $elementId;
 	protected $context;
+	protected $level = 0;
 
-	public function __construct ($elementId, ?Context $context = null)
+	public function __construct ($elementId, int $level = 1, ?Context $context = null)
 	{
 		$this->elementId = $elementId;
-
-		if (!$context)
-		{
-			/** @var User $user */
-			$user = Auth::user();
-
-			$context = new Context($user);
-		}
-
+		$this->level = $level;
 		$this->context = $context;
 	}
 
 	protected function getContext (): Context
 	{
+		if (!$this->context)
+		{
+			/** @var User $user */
+			$user = Auth::user();
+			$this->context = new Context($user);
+		}
+
 		return $this->context;
+	}
+
+	public function getLevel (): int
+	{
+		return $this->level;
 	}
 
 	public function getBasePrice (): array

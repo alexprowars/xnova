@@ -38,7 +38,7 @@ class Planets extends Model
 	public $table = 'planets';
 	protected $hidden = ['planet_updated'];
 
-	public static function findByCoords (int $galaxy, int $system, int $planet, int $type = 1): self
+	public static function findByCoords (int $galaxy, int $system, int $planet, int $type = 1): ?self
 	{
 		return self::query()->where('galaxy', $galaxy)
 			->where('system', $system)

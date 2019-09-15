@@ -19,7 +19,7 @@ use Xnova\Vars;
 
 class TutorialController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function __construct ()
 	{

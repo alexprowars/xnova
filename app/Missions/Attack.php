@@ -301,8 +301,8 @@ class Attack extends FleetEngine implements Mission
 			else
 			{
 				$update = [
-					'fleet_array' 	=> json_encode($fleetArray),
-					'@update_time' 	=> 'end_time',
+					'fleet_array' 	=> $fleetArray,
+					'update_time' 	=> DB::raw('end_time'),
 					'mess'			=> 1,
 					'group_id'		=> 0,
 					'won'			=> $result['won']
@@ -312,9 +312,9 @@ class Attack extends FleetEngine implements Mission
 				{
 					if (isset($res_procent) && isset($res_procent[$fleetID]))
 					{
-						$update['+resource_metal'] 		= round($res_procent[$fleetID] * $steal['metal']);
-						$update['+resource_crystal'] 	= round($res_procent[$fleetID] * $steal['crystal']);
-						$update['+resource_deuterium'] 	= round($res_procent[$fleetID] * $steal['deuterium']);
+						$update['resource_metal'] 		= DB::raw('resource_metal + '. (int) round($res_procent[$fleetID] * $steal['metal']));
+						$update['resource_crystal'] 	= DB::raw('resource_crystal + '. (int) round($res_procent[$fleetID] * $steal['crystal']));
+						$update['resource_deuterium'] 	= DB::raw('resource_deuterium + '. (int) round($res_procent[$fleetID] * $steal['deuterium']));
 					}
 				}
 
@@ -418,15 +418,15 @@ class Attack extends FleetEngine implements Mission
 
 				if ($this->_fleet->mission != 6)
 				{
-					$update = ['+raids' => 1];
+					$update = ['raids' => DB::raw('raids + 1')];
 
 					if ($result['won'] == 1)
-						$update['+raids_win'] = 1;
+						$update['raids_win'] = DB::raw('raids_win + 1');
 					elseif ($result['won'] == 2)
-						$update['+raids_lose'] = 1;
+						$update['raids_lose'] =  DB::raw('raids_lose + 1');
 
 					if ($AddWarPoints > 0)
-						$update['+xpraid'] = ceil($AddWarPoints / $realAttackersUsers);
+						$update['xpraid'] = DB::raw('xpraid + '.ceil($AddWarPoints / $realAttackersUsers));
 
 					Models\Users::query()->where('id', $info['tech']['id'])->update($update);
 				}
@@ -440,12 +440,12 @@ class Attack extends FleetEngine implements Mission
 
 				if ($this->_fleet->mission != 6)
 				{
-					$update = ['+raids' => 1];
+					$update = ['raids' => DB::raw('raids + 1')];
 
 					if ($result['won'] == 2)
-						$update['+raids_win'] = 1;
+						$update['raids_win'] = DB::raw('raids_win + 1');
 					elseif ($result['won'] == 1)
-						$update['+raids_lose'] = 1;
+						$update['raids_lose'] = DB::raw('raids_lose + 1');
 
 					Models\Users::query()->where('id', $info['tech']['id'])->update($update);
 				}
@@ -525,7 +525,7 @@ class Attack extends FleetEngine implements Mission
 		$raport = "<center>";
 		$raport .= '<a href="/rw/'.$ids.'/'.md5(Config::get('app.key').$ids).'/" target="'.(Config::get('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '').'">';
 
-		$raport .= "><font color=\"#COLOR#\">".__('fleet_engine.sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
+		$raport .= "<font color=\"#COLOR#\">".__('fleet_engine.sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 
 		$raport2  = '<br><br><font color=\'red\'>' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
 		$raport2 .= __('fleet_engine.sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';

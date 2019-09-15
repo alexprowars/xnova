@@ -20,7 +20,7 @@ use Xnova\Models;
 
 class GalaxyController extends Controller
 {
-	private $loadPlanet = true;
+	protected $loadPlanet = true;
 
 	public function index ()
 	{

@@ -8,83 +8,13 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Auth;
-use Xnova\Exceptions\Exception;
 use Xnova\Models;
 
 class Fleet extends Building
 {
-	static function GetTargetDistance ($OrigGalaxy, $DestGalaxy, $OrigSystem, $DestSystem, $OrigPlanet, $DestPlanet)
-	{
-		if (($OrigGalaxy - $DestGalaxy) != 0)
-			return abs($OrigGalaxy - $DestGalaxy) * 20000;
-
-		if (($OrigSystem - $DestSystem) != 0)
-			return abs($OrigSystem - $DestSystem) * 95 + 2700;
-
-		if (($OrigPlanet - $DestPlanet) != 0)
-			return abs($OrigPlanet - $DestPlanet) * 5 + 1000;
-
-		return 5;
-	}
-
-	/**
-	 * @param int $fleetSpeedFactor скорость полёта, от 1 до 10
-	 * @param int $maxFleetSpeed
-	 * @param int $distance
-	 * @param float $gameFleetSpeed множитель скорости полётов
-	 * @return float
-	 */
-	static function GetMissionDuration ($fleetSpeedFactor, $maxFleetSpeed, $distance, $gameFleetSpeed)
-	{
-		return round(((35000 / $fleetSpeedFactor) * sqrt($distance * 10 / $maxFleetSpeed) + 10) / $gameFleetSpeed);
-	}
-
-	/**
-	 * @param  $FleetArray
-	 * @param  $Fleet
-	 * @param  $user user
-	 * @return array|int
-	 */
-	static function GetFleetMaxSpeed (array $FleetArray, int $Fleet, User $user)
-	{
-		$storage = Vars::getStorage();
-
-		$speedalls = [];
-
-		if ($Fleet != 0)
-			$FleetArray[$Fleet] = 1;
-
-		foreach ($FleetArray as $Ship => $Count)
-		{
-			switch ($storage['CombatCaps'][$Ship]['type_engine'])
-			{
-				case 1:
-					$speedalls[$Ship] = $storage['CombatCaps'][$Ship]['speed'] * (1 + ($user->getTechLevel('combustion') * 0.1));
-					break;
-				case 2:
-					$speedalls[$Ship] = $storage['CombatCaps'][$Ship]['speed'] * (1 + ($user->getTechLevel('impulse_motor') * 0.2));
-					break;
-				case 3:
-					$speedalls[$Ship] = $storage['CombatCaps'][$Ship]['speed'] * (1 + ($user->getTechLevel('hyperspace_motor') * 0.3));
-					break;
-				default:
-					$speedalls[$Ship] = $storage['CombatCaps'][$Ship]['speed'];
-			}
-
-			if ($user->bonusValue('fleet_speed') != 1)
-				$speedalls[$Ship] = round($speedalls[$Ship] * $user->bonusValue('fleet_speed'));
-		}
-
-		if ($Fleet != 0)
-			$speedalls = $speedalls[$Fleet];
-
-		return $speedalls;
-	}
-
 	static function SetShipsEngine (User $user)
 	{
-		$storage = @Vars::getStorage();
+		$storage = Vars::getStorage();
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship)
 		{
@@ -102,55 +32,6 @@ class Fleet extends Building
 				}
 			}
 		}
-	}
-
-	/**
-	 * @param  $Ship
-	 * @param  $user user
-	 * @return float
-	 */
-	static function GetShipConsumption ($Ship, User $user)
-	{
-		$storage = Vars::getStorage();
-
-		return ceil($storage['CombatCaps'][$Ship]['consumption'] * $user->bonusValue('fleet_fuel'));
-	}
-
-	static function GetFleetConsumption ($FleetArray, $gameFleetSpeed, $MissionDuration, $MissionDistance, $Player)
-	{
-		$consumption = 0;
-
-		if ($MissionDuration <= 1)
-			$MissionDuration = 2;
-
-		foreach ($FleetArray as $Ship => $Count)
-		{
-			if ($Ship > 0)
-			{
-				$spd = 35000 / ($MissionDuration * $gameFleetSpeed - 10) * sqrt($MissionDistance * 10 / self::GetFleetMaxSpeed([], $Ship, $Player));
-
-				$consumption += (self::GetShipConsumption($Ship, $Player) * $Count) * $MissionDistance / 35000 * (($spd / 10) + 1) * (($spd / 10) + 1);
-			}
-		}
-
-		$consumption = round($consumption) + 1;
-
-		return $consumption;
-	}
-
-	static function GetFleetStay ($FleetArray)
-	{
-		$storage = Vars::getStorage();
-
-		$stay = 0;
-
-		foreach ($FleetArray as $Ship => $Count)
-		{
-			if ($Ship > 0)
-				$stay += $storage['CombatCaps'][$Ship]['stay'] * $Count;
-		}
-
-		return $stay;
 	}
 
 	static function CreateFleetPopupedFleetLink (Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
@@ -199,7 +80,7 @@ class Fleet extends Building
 		$FleetPopup .= "</table>";
 		$FleetPopup .= "'>" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "/' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
+		$FleetPopup = "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 
 		return $FleetPopup;
 
@@ -258,7 +139,7 @@ class Fleet extends Building
 				if ($isActivePlanet && !$isYouPlanet && !(count($fleetArray) == 1 && isset($fleetArray[210])))
 					$result[] = 5; // Удерживать
 
-				if (isset($fleetArray[202]) || isset($fleetArray[203]))
+				if ($isActivePlanet && (isset($fleetArray[202]) || isset($fleetArray[203])))
 					$result[] = 3; // Транспорт
 
 				if ($isYouPlanet)
@@ -297,27 +178,5 @@ class Fleet extends Building
 		}
 
 		return $PhalanxRange;
-	}
-
-	public static function getShipInfo (int $type)
-	{
-		$storage = Vars::getUnitData($type);
-
-		if (!$storage)
-			throw new Exception('unit does not exist');
-
-		/** @var User $user */
-		$user = Auth::user();
-
-		$ship = [
-			'id' => $type,
-			'consumption' => Fleet::GetShipConsumption($type, $user),
-			'speed' => Fleet::GetFleetMaxSpeed([], $type, $user),
-			'stay' => $storage['stay'] ?? 0,
-		];
-
-		$ship['capacity'] = $storage['capacity'] ?? 0;
-
-		return $ship;
 	}
 }

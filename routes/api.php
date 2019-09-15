@@ -38,11 +38,12 @@ Route::middleware(['auth'])->group(function ()
 	Route::match(['get', 'post'],'defense', 'DefenseController@index')->name('defense');
 	Route::get('fleet', 'FleetController@index')->name('fleet');
 	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', 'FleetController@index')->name('fleet');
-	Route::match(['get', 'post'],'fleet/one', 'Fleet\FleetStageOneController@index')->name('fleet.one');
-	Route::match(['get', 'post'],'fleet/two', 'Fleet\FleetStageTwoController@index')->name('fleet.two');
-	Route::match(['get', 'post'],'fleet/three', 'Fleet\FleetStageThreeController@index')->name('fleet.three');
+	Route::match(['get', 'post'],'fleet/checkout', 'Fleet\FleetController@index')->name('fleet.checkout');
+	Route::match(['get', 'post'],'fleet/send', 'Fleet\FleetSendController@index')->name('fleet.send');
 	Route::match(['get', 'post'],'fleet/back', 'Fleet\FleetBackController@index')->name('fleet.back');
 	Route::match(['get', 'post'],'fleet/shortcut', 'Fleet\FleetShortcutController@index')->name('fleet.shortcut');
+	Route::match(['get', 'post'],'fleet/shortcut/add', 'Fleet\FleetShortcutController@add')->name('fleet.shortcut.add');
+	Route::match(['get', 'post'],'fleet/shortcut/{id}', 'Fleet\FleetShortcutController@view')->name('fleet.shortcut.view');
 	Route::match(['get', 'post'],'fleet/verband/{id}', 'Fleet\FleetVerbandController@index')->name('fleet.verband');
 	Route::match(['get', 'post'],'fleet/quick', 'Fleet\FleetQuickController@index')->name('fleet.quick');
 	Route::match(['get', 'post'],'galaxy', 'GalaxyController@index')->name('galaxy');
