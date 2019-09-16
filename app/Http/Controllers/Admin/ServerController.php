@@ -12,7 +12,7 @@ class ServerController extends AdminController
 		return [[
 			'code'	=> 'server',
 			'title' => 'Информация',
-			'icon'	=> 'information',
+			'icon'	=> 'server',
 			'sort'	=> 30
 		]];
 	}

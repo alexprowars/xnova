@@ -28,7 +28,7 @@ class Build
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 
-		$maxBuidSize = Config::get('game.maxBuildingQueue', 1);
+		$maxBuidSize = Config::get('settings.maxBuildingQueue', 1);
 
 		if ($user->rpg_constructeur > time())
 			$maxBuidSize += 2;

@@ -2,6 +2,7 @@
 
 namespace Xnova;
 
+use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -17,7 +18,6 @@ use Xnova\Mail\UserRegistration;
 use Xnova\Models\Alliance;
 use Xnova\Models\LogCredits;
 use Xnova\Models\Messages;
-use Xnova\Models\Options;
 use Xnova\User\Tech;
 use Xnova\Queue as QueueManager;
 
@@ -218,17 +218,17 @@ class User extends Models\Users
 
 		$giveCredits = 0;
 
-		if ($this->xpminier >= $indNextXp && $this->lvl_minier < Config::get('game.level.max_ind', 100))
+		if ($this->xpminier >= $indNextXp && $this->lvl_minier < Config::get('settings.level.max_ind', 100))
 		{
 			$this->lvl_minier++;
-			$this->credits += Config::get('game.level.credits', 10);
+			$this->credits += Config::get('settings.level.credits', 10);
 			$this->xpminier -= $indNextXp;
 
 			$this->update();
 
 			self::sendMessage($this->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
-			$giveCredits += Config::get('game.level.credits', 10);
+			$giveCredits += Config::get('settings.level.credits', 10);
 		}
 
 		if ($this->xpraid >= $warNextXp && $this->lvl_raid < Config::get('game.level.max_war', 100))
@@ -585,7 +585,7 @@ class User extends Models\Users
 				}
 			}
 
-			Options::set('game.users_total', Options::get('users_total', 0) + 1);
+			Setting::set('users_total', (Setting::get('users_total') ?? 0) + 1);
 
 			if (isset($data['email']) && $data['email'] != '')
 			{

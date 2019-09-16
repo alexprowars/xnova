@@ -51,8 +51,8 @@ class FleetSendController extends Controller
 		if (!$fleetMission)
 			throw new ErrorException("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
 
-		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && Config::get('game.disableAttacks', 0) > 0 && time() < Config::get('game.disableAttacks', 0))
-			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('game.disableAttacks', 0)) . "</b></span>", '/fleet/');
+		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && Config::get('settings.disableAttacks', 0) > 0 && time() < Config::get('settings.disableAttacks', 0))
+			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('settings.disableAttacks', 0)) . "</b></span>", '/fleet/');
 
 		$allianceId = (int) Request::post('alliance', 0);
 
@@ -80,7 +80,7 @@ class FleetSendController extends Controller
 		if (($allianceId == 0 || $fleet_group_mr == 0) && ($fleetMission == 2))
 			$fleetMission = 1;
 
-		$protection = (int) Config::get('game.noobprotection') > 0;
+		$protection = (int) Config::get('settings.noobprotection') > 0;
 
 		if (!is_array($fleetarray))
 			throw new PageException("<span class=\"error\"><b>Ошибка в передаче параметров!</b></span>", "/fleet/");
@@ -208,8 +208,8 @@ class FleetSendController extends Controller
 
 		if ($protection && $targetPlanet && in_array($fleetMission, [1, 2, 5, 6, 9]) && $this->user->authlevel < 2)
 		{
-			$protectionPoints = (int) Config::get('game.noobprotectionPoints');
-			$protectionFactor = (int) Config::get('game.noobprotectionFactor');
+			$protectionPoints = (int) Config::get('settings.noobprotectionPoints');
+			$protectionFactor = (int) Config::get('settings.noobprotectionFactor');
 
 			if ($protectionPoints <= 0)
 				$protection = false;
@@ -318,13 +318,13 @@ class FleetSendController extends Controller
 
 		$errorlist = "";
 
-		if (!$galaxy || $galaxy > Config::get('game.maxGalaxyInWorld') || $galaxy < 1)
+		if (!$galaxy || $galaxy > Config::get('settings.maxGalaxyInWorld') || $galaxy < 1)
 			$errorlist .= __('fleet.fl_limit_galaxy');
 
-		if (!$system || $system > Config::get('game.maxSystemInGalaxy') || $system < 1)
+		if (!$system || $system > Config::get('settings.maxSystemInGalaxy') || $system < 1)
 			$errorlist .= __('fleet.fl_limit_system');
 
-		if (!$planet || $planet > (Config::get('game.maxPlanetInSystem') + 1) || $planet < 1)
+		if (!$planet || $planet > (Config::get('settings.maxPlanetInSystem') + 1) || $planet < 1)
 			$errorlist .= __('fleet.fl_limit_planet');
 
 		if ($errorlist != '')

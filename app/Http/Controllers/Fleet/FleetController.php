@@ -86,9 +86,9 @@ class FleetController extends Controller
 			'planet_type' => (int) $type,
 		];
 
-		$parse['galaxy_max'] = (int) Config::get('game.maxGalaxyInWorld');
-		$parse['system_max'] = (int) Config::get('game.maxSystemInGalaxy');
-		$parse['planet_max'] = (int) Config::get('game.maxPlanetInSystem') + 1;
+		$parse['galaxy_max'] = (int) Config::get('settings.maxGalaxyInWorld');
+		$parse['system_max'] = (int) Config::get('settings.maxSystemInGalaxy');
+		$parse['planet_max'] = (int) Config::get('settings.maxPlanetInSystem') + 1;
 
 		$parse['shortcuts'] = [];
 

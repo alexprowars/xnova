@@ -43,7 +43,7 @@ class Controller extends BaseController
 
 	private function init ()
 	{
-		$this->setTitle(Config::get('game.site_title', ''));
+		$this->setTitle(Config::get('settings.site_title', ''));
 
 		Vars::init();
 
@@ -59,8 +59,8 @@ class Controller extends BaseController
 				Session::put('config', $inf->settings);
 			}
 
-			if (!(int) Config::get('game.view.showPlanetListSelect', 0))
-				Config::set('game.view.showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
+			if (!(int) Config::get('settings.view.showPlanetListSelect', 0))
+				Config::set('settings.view.showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
 
 			if (Request::input('fullscreen') == 'Y')
 			{
@@ -69,12 +69,12 @@ class Controller extends BaseController
 			}
 
 			if (Request::server('SERVER_NAME') == 'vk.xnova.su')
-				Config::set('game.view.socialIframeView', 1);
+				Config::set('settings.view.socialIframeView', 1);
 
 			if (Cookie::has("full") && Cookie::get("full") == 'Y')
 			{
-				Config::set('game.view.socialIframeView', 0);
-				Config::set('game.view.showPlanetListSelect', 0);
+				Config::set('settings.view.socialIframeView', 0);
+				Config::set('settings.view.showPlanetListSelect', 0);
 			}
 
 			// Заносим настройки профиля в основной массив

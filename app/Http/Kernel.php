@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
 			Middleware\AdminCanAccess::class,
 			Middleware\AdminViewData::class,
 		],
+		'web' => []
 	];
 
 	protected $routeMiddleware = [

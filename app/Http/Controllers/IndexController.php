@@ -57,7 +57,7 @@ class IndexController extends Controller
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
-					'secret' => Config::get('game.recaptcha->secret_key'),
+					'secret' => Config::get('settings.recaptcha->secret_key'),
 					'response' => Request::post('captcha'),
 					'remoteip' => Request::ip()
 				]));
@@ -89,7 +89,7 @@ class IndexController extends Controller
 		$this->setTitle('Регистрация');
 
 		return [
-			'captcha' => Config::get('game.recaptcha.public_key'),
+			'captcha' => Config::get('settings.recaptcha.public_key'),
 			'errors' => $errors
 		];
 	}

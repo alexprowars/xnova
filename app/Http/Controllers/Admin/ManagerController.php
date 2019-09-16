@@ -12,7 +12,7 @@ class ManagerController extends AdminController
 		return [[
 			'code'	=> 'manager',
 			'title' => 'Редактор',
-			'icon'	=> 'magic-wand',
+			'icon'	=> 'edit',
 			'sort'	=> 70,
 			'childrens' => [[
 				'code'	=> 'ip',

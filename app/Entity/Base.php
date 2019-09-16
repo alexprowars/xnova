@@ -90,7 +90,7 @@ class Base
 		$cost = $this->getBasePrice();
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		$time = ($cost / Config::get('game.game_speed')) * 3600;
+		$time = ($cost / Config::get('settings.game_speed')) * 3600;
 
 		return max(1, $time);
 	}

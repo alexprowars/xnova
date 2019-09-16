@@ -168,7 +168,7 @@ class Spy extends FleetEngine implements Mission
 			if ($fleet_link != '')
 			{
 				$MessageEnd .= "<center>";
-				$MessageEnd .= '<a href="/sim/'.$fleet_link.'/" target="'.Config::get('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : ''.'">';
+				$MessageEnd .= '<a href="/sim/'.$fleet_link.'/" target="'.Config::get('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : ''.'">';
 				$MessageEnd .= "Симуляция</a></center>";
 			}
 
@@ -282,7 +282,7 @@ class Spy extends FleetEngine implements Mission
 
 		if ($LookAtLoop == true)
 		{
-			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * Config::get('game.spyReportRow', 1)) + (Config::get('game.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
+			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * Config::get('settings.spyReportRow', 1)) + (Config::get('settings.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
 			$Count = 0;
 			$CurrentLook = 0;
 
@@ -317,7 +317,7 @@ class Spy extends FleetEngine implements Mission
 						$Count += $Item < 600 ? $level : 1;
 						$row++;
 
-						if ($row == Config::get('game.spyReportRow', 1))
+						if ($row == Config::get('settings.spyReportRow', 1))
 						{
 							$String .= "</tr>";
 							$row = 0;
@@ -330,7 +330,7 @@ class Spy extends FleetEngine implements Mission
 					$String .= "<th width=40%>&nbsp;</th><th width=10%>&nbsp;</th>";
 					$row++;
 
-					if ($row == Config::get('game.spyReportRow', 1))
+					if ($row == Config::get('settings.spyReportRow', 1))
 					{
 						$String .= "</tr>";
 						$row = 0;

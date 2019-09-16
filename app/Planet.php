@@ -90,7 +90,7 @@ class Planet extends Models\Planets
 		$fields = (int) $this->field_max;
 
 		$fields += $this->getBuildLevel('terraformer') * 5;
-		$fields += Config::get('game.fieldsByMoonBase', 0) * $this->getBuildLevel('moonbase');
+		$fields += Config::get('settings.fieldsByMoonBase', 0) * $this->getBuildLevel('moonbase');
 
 		return $fields;
 	}
@@ -111,7 +111,7 @@ class Planet extends Models\Planets
 		$this->planet_updated = true;
 
 		foreach (Vars::getResources() AS $res)
-			$this->{$res.'_max'}  = floor((Config::get('game.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->getBuildLevel($res.'_store'))))) * $this->user->bonusValue('storage'));
+			$this->{$res.'_max'}  = floor((Config::get('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->getBuildLevel($res.'_store'))))) * $this->user->bonusValue('storage'));
 
 		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));
 
@@ -126,7 +126,7 @@ class Planet extends Models\Planets
 		if ($this->energy_max == 0)
 		{
 			foreach (Vars::getResources() AS $res)
-				$this->{$res.'_perhour'} = Config::get('game.'.$res.'_basic_income', 0);
+				$this->{$res.'_perhour'} = Config::get('settings.'.$res.'_basic_income', 0);
 
 			$this->production_level = 0;
 		}
@@ -173,7 +173,7 @@ class Planet extends Models\Planets
 				$this->{$res.'_production'} = ($productionTime * ($this->{$res.'_perhour'} / 3600)) * (0.01 * $this->production_level);
 
 				if (!$this->user->isVacation())
-					$this->{$res.'_base'} = ($productionTime * (Config::get('game.'.$res.'_basic_income', 0) / 3600)) * Config::get('game.resource_multiplier', 1);
+					$this->{$res.'_base'} = ($productionTime * (Config::get('settings.'.$res.'_basic_income', 0) / 3600)) * Config::get('settings.resource_multiplier', 1);
 				else
 					$this->{$res.'_base'} = 0;
 
@@ -210,7 +210,7 @@ class Planet extends Models\Planets
 		if (in_array($this->planet_type, [3, 5]))
 		{
 			foreach (Vars::getResources() AS $res)
-				Config::set('game.'.$res.'_basic_income', 0);
+				Config::set('settings.'.$res.'_basic_income', 0);
 
 			return;
 		}
@@ -287,7 +287,7 @@ class Planet extends Models\Planets
 		foreach (Vars::getResources() AS $res)
 		{
 			if (isset($production[$res]))
-				$return[$res] = floor(eval($production[$res]) * Config::get('game.resource_multiplier') * $this->user->bonusValue($res));
+				$return[$res] = floor(eval($production[$res]) * Config::get('settings.resource_multiplier') * $this->user->bonusValue($res));
 		}
 
 		if (isset($production['energy']))
@@ -371,7 +371,7 @@ class Planet extends Models\Planets
 			];
 
 			if (!$user->isVacation())
-				$data[$res]['production'] = $this->{$res.'_perhour'} + floor(Config::get('game.'.$res.'_basic_income', 0) * Config::get('game.resource_multiplier', 1));
+				$data[$res]['production'] = $this->{$res.'_perhour'} + floor(Config::get('settings.'.$res.'_basic_income', 0) * Config::get('settings.resource_multiplier', 1));
 		}
 
 		$data['energy'] = [

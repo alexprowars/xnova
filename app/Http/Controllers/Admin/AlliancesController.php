@@ -12,7 +12,7 @@ class AlliancesController extends AdminController
 		return [[
 			'code'	=> 'alliances',
 			'title' => 'Список альянсов',
-			'icon'	=> 'organization',
+			'icon'	=> 'hand-grab-o',
 			'sort'	=> 120
 		]];
 	}

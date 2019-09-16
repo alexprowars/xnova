@@ -36,7 +36,7 @@ class Building
 		{
 			$BuildQueue = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			if ($BuildQueue[0]->object_id == 31 && Config::get('game.BuildLabWhileRun', 0) != 1)
+			if ($BuildQueue[0]->object_id == 31 && Config::get('settings.BuildLabWhileRun', 0) != 1)
 				return false;
 			else
 				return true;

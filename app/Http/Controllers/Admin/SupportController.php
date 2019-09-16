@@ -13,7 +13,7 @@ class SupportController extends AdminController
 		return [[
 			'code'	=> 'support',
 			'title' => 'Техподдержка',
-			'icon'	=> 'chat-2',
+			'icon'	=> 'support',
 			'sort'	=> 20
 		]];
 	}

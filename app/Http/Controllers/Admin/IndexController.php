@@ -18,8 +18,8 @@ class IndexController extends AdminController
 	{
 		return [[
 			'code'	=> 'index',
-			'title' => 'Dashboard',
-			'icon'	=> 'architecture-and-city',
+			'title' => 'Панель управления',
+			'icon'	=> 'dashboard',
 			'sort'	=> 10
 		], [
 			'code'	=> null,

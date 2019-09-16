@@ -33,7 +33,7 @@ class Construction
 
 		$Queue = $this->ShowBuildingQueue();
 
-		$MaxBuidSize = Config::get('game.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
+		$MaxBuidSize = Config::get('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
 
 		$CanBuildElement = ($Queue['lenght'] < $MaxBuidSize);
 
@@ -112,7 +112,7 @@ class Construction
 			if ($isAccess)
 			{
 				if (in_array($Element, Vars::getItemsByType('build_exp')))
-					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / Config::get('game.buildings_exp_mult', 1000));
+					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / Config::get('settings.buildings_exp_mult', 1000));
 
 				$row['time'] 	= $entity->getTime();
 				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);

@@ -14,7 +14,7 @@ class MoneyController extends AdminController
 		return [[
 			'code'	=> 'money',
 			'title' => 'Финансы',
-			'icon'	=> 'gift-1',
+			'icon'	=> 'money',
 			'sort'	=> 40,
 			'childrens' => [[
 				'code'	=> 'add',

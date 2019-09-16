@@ -77,17 +77,17 @@ class Expedition extends FleetEngine implements Mission
 
 				if (10 < $FindSize)
 				{
-					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (Config::get('game.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_1_' . mt_rand(1, 4));
 				}
 				elseif (0 < $FindSize && 10 >= $FindSize)
 				{
-					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (Config::get('game.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_2_' . mt_rand(1, 3));
 				}
 				else
 				{
-					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (Config::get('game.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_3_' . mt_rand(1, 2));
 				}
 
@@ -310,8 +310,8 @@ class Expedition extends FleetEngine implements Mission
 
 				$defenders->addPlayer($playerObj);
 
-				Config::set('game.repairDefenceFactor', 0);
-				Config::set('game.battleRounds', 6);
+				Config::set('settings.repairDefenceFactor', 0);
+				Config::set('settings.battleRounds', 6);
 
 				$engine = new Battle($attackers, $defenders);
 

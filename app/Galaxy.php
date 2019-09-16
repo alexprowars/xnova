@@ -8,8 +8,8 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Session;
-use Xnova\Models\Options;
 use Illuminate\Support\Facades\Config;
 use Xnova\Models\Planets;
 use Xnova\Models\Users as UserModel;
@@ -18,30 +18,30 @@ class Galaxy
 {
 	public function createPlanetByUserId ($userId)
 	{
-		$Galaxy = Options::get('LastSettedGalaxyPos');
-		$System = Options::get('LastSettedSystemPos');
-		$Planet = Options::get('LastSettedPlanetPos');
+		$Galaxy = Setting::get('LastSettedGalaxyPos');
+		$System = Setting::get('LastSettedSystemPos');
+		$Planet = Setting::get('LastSettedPlanetPos');
 
 		do
 		{
-			$free = self::getFreePositions($Galaxy, $System, round(Config::get('game.maxPlanetInSystem') * 0.2), round(Config::get('game.maxPlanetInSystem') * 0.8));
+			$free = self::getFreePositions($Galaxy, $System, round(Config::get('settings.maxPlanetInSystem') * 0.2), round(Config::get('settings.maxPlanetInSystem') * 0.8));
 
 			if (count($free) > 0)
 				$position = $free[array_rand($free)];
 			else
 				$position = 0;
 
-            if ($position > 0 && $Planet < Config::get('game.maxRegPlanetsInSystem', 3))
+            if ($position > 0 && $Planet < Config::get('settings.maxRegPlanetsInSystem', 3))
 				$Planet += 1;
             else
 			{
 				$Planet = 1;
 
-				if ($System >= Config::get('game.maxSystemInGalaxy'))
+				if ($System >= Config::get('settings.maxSystemInGalaxy'))
 				{
 					$System = 1;
 
-					if ($Galaxy >= Config::get('game.maxGalaxyInWorld'))
+					if ($Galaxy >= Config::get('settings.maxGalaxyInWorld'))
 						$Galaxy = 1;
 					else
 						$Galaxy += 1;
@@ -56,9 +56,9 @@ class Galaxy
 
 		if ($PlanetID !== false)
 		{
-			Options::set('LastSettedGalaxyPos', $Galaxy);
-			Options::set('LastSettedSystemPos', $System);
-			Options::set('LastSettedPlanetPos', $Planet);
+			Setting::set('LastSettedGalaxyPos', $Galaxy);
+			Setting::set('LastSettedSystemPos', $System);
+			Setting::set('LastSettedPlanetPos', $Planet);
 
 			$user = UserModel::find($userId);
 			$user->update([
@@ -81,9 +81,9 @@ class Galaxy
 		{
 			$planet = $this->sizeRandomiser($Position, $HomeWorld, $Base);
 
-			$planet->metal 		= Config::get('game.baseMetalProduction');
-			$planet->crystal 	= Config::get('game.baseCristalProduction');
-			$planet->deuterium 	= Config::get('game.baseDeuteriumProduction');
+			$planet->metal 		= Config::get('settings.baseMetalProduction');
+			$planet->crystal 	= Config::get('settings.baseCristalProduction');
+			$planet->deuterium 	= Config::get('settings.baseDeuteriumProduction');
 
 			$planet->galaxy = $Galaxy;
 			$planet->system = $System;
@@ -209,11 +209,11 @@ class Galaxy
 		$planet = new Planets;
 
 		if ($HomeWorld)
-			$planet->field_max = (int) Config::get('game.initial_fields', 163);
+			$planet->field_max = (int) Config::get('settings.initial_fields', 163);
 		elseif ($Base)
-			$planet->field_max = (int) Config::get('game.initial_base_fields', 10);
+			$planet->field_max = (int) Config::get('settings.initial_base_fields', 10);
 		else
-			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) Config::get('game.planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) Config::get('settings.planetFactor', 1));
 
 		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));
 

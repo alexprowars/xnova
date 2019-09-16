@@ -2,6 +2,7 @@
 
 namespace Xnova\Models;
 
+use Backpack\CRUD\CrudTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Mail;
@@ -57,6 +58,7 @@ use Xnova\Mail\UserLostPassword;
 class Users extends Authenticatable
 {
 	use HasRoles;
+	use CrudTrait;
 
 	public $timestamps = false;
 	public $table = 'users';

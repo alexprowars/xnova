@@ -14,7 +14,7 @@ class FleetsController extends AdminController
 		return [[
 			'code'	=> 'fleets',
 			'title' => 'Флоты в полёте',
-			'icon'	=> 'paperplane',
+			'icon'	=> 'plane',
 			'sort'	=> 110
 		]];
 	}

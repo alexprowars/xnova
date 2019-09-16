@@ -40,10 +40,10 @@ class CreditsController extends Controller
 
 			$parse['payment'] = [
 				'id' => $id,
-				'hash' => md5(Config::get('game.robokassa.login').":".$summ.":".$id.":".Config::get('game.robokassa.public').":Shp_UID=".$parse['id']),
+				'hash' => md5(Config::get('settings.robokassa.login').":".$summ.":".$id.":".Config::get('settings.robokassa.public').":Shp_UID=".$parse['id']),
 				'summ' => $summ,
 				'email' => $info->email,
-				'merchant' => Config::get('game.robokassa.login'),
+				'merchant' => Config::get('settings.robokassa.login'),
 			];
 		}
 

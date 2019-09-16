@@ -471,7 +471,7 @@ class Attack extends FleetEngine implements Mission
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
 
-		if ($lost >= Config::get('game.hallPoints', 1000000))
+		if ($lost >= Config::get('settings.hallPoints', 1000000))
 		{
 			$sab = 0;
 
@@ -523,7 +523,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$raport = "<center>";
-		$raport .= '<a href="/rw/'.$ids.'/'.md5(Config::get('app.key').$ids).'/" target="'.(Config::get('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '').'">';
+		$raport .= '<a href="/rw/'.$ids.'/'.md5(Config::get('app.key').$ids).'/" target="'.(Config::get('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '').'">';
 
 		$raport .= "<font color=\"#COLOR#\">".__('fleet_engine.sys_mess_attack_report') . " [" . $this->_fleet->end_galaxy . ":" . $this->_fleet->end_system . ":" . $this->_fleet->end_planet . "]</font></a>";
 

@@ -35,6 +35,24 @@ class UsersController extends AdminController
 				'code'	=> 'unban',
 				'title'	=> 'Разблокировать',
 			]],
+		], [
+			'code' => 'role',
+			'url' => backpack_url('role'),
+			'title' => 'Роли',
+			'icon' => 'group',
+			'sort'	=> 1001,
+		], [
+			'code' => 'permission',
+			'url' => backpack_url('permission'),
+			'title' => 'Права',
+			'icon' => 'key',
+			'sort'	=> 1002,
+		], [
+			'code' => 'setting',
+			'url' => backpack_url('setting'),
+			'title' => 'Настройки',
+			'icon' => 'cog',
+			'sort'	=> 1003,
 		]];
 	}
 

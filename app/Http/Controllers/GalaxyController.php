@@ -84,8 +84,8 @@ class GalaxyController extends Controller
 				$system = (int) Request::query('system', 1);
 		}
 
-		$galaxy = min(max($galaxy, 1), Config::get('game.maxGalaxyInWorld'));
-		$system = min(max($system, 1), Config::get('game.maxSystemInGalaxy'));
+		$galaxy = min(max($galaxy, 1), Config::get('settings.maxGalaxyInWorld'));
+		$system = min(max($system, 1), Config::get('settings.maxSystemInGalaxy'));
 
 		if (!Session::has('fleet_shortcut'))
 		{

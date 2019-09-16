@@ -8,12 +8,12 @@ namespace Xnova;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Xnova\Mail\UserDelete;
 use Xnova\Models\Fleet;
-use Xnova\Models\Options;
 use Xnova\Models\Statpoints;
 
 class UpdateStatistics
@@ -229,11 +229,11 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - Config::get('game.stat.inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - Config::get('settings.stat.inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		foreach ($list as $user)
 		{
-			DB::statement("UPDATE users SET `deltime` = '" . (time() + Config::get('game.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
+			DB::statement("UPDATE users SET `deltime` = '" . (time() + Config::get('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
 
 			if (Helpers::is_email($user->email))
 			{
@@ -429,9 +429,9 @@ class UpdateStatistics
 
 		$active_alliance = Statpoints::query()->where('stat_type', 2)->where('stat_hide', 0)->count();
 
-		Options::set('stat_update', time());
-		Options::set('active_users', $active_users);
-		Options::set('active_alliance', $active_alliance);
+		Setting::set('stat_update', time());
+		Setting::set('active_users', $active_users);
+		Setting::set('active_alliance', $active_alliance);
 	}
 
 	private function calcPositions ()

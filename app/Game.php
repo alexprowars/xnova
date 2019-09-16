@@ -32,11 +32,11 @@ class Game
 	public static function getSpeed ($type = '')
 	{
 		if ($type == 'fleet')
-			return (int) Config::get('game.fleet_speed', 2500) / 2500;
+			return (int) Config::get('settings.fleet_speed', 2500) / 2500;
 		if ($type == 'mine')
-			return (int) Config::get('game.resource_multiplier', 1);
+			return (int) Config::get('settings.resource_multiplier', 1);
 		if ($type == 'build')
-			return round((int) Config::get('game.game_speed', 2500) / 2500, 1);
+			return round((int) Config::get('settings.game_speed', 2500) / 2500, 1);
 
 		return 1;
 	}

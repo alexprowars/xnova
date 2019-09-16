@@ -24,8 +24,8 @@ class Colonisation extends FleetEngine implements Mission
 
 		$maxPlanets = $owner->getTechLevel('colonisation') + 1;
 
-		if ($maxPlanets > Config::get('game.maxPlanets', 9))
-			$maxPlanets = Config::get('game.maxPlanets', 9);
+		if ($maxPlanets > Config::get('settings.maxPlanets', 9))
+			$maxPlanets = Config::get('settings.maxPlanets', 9);
 
 		$galaxy = new Galaxy();
 

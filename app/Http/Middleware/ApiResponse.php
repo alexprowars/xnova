@@ -67,8 +67,8 @@ class ApiResponse
 			'stats' => [
 				'time' => time(),
 				'timezone' => (int) date('Z'),
-				'online' => (int) Config::get('game.users_online', 0),
-				'users' => (int) Config::get('game.users_total', 0),
+				'online' => (int) Config::get('settings.users_online', 0),
+				'users' => (int) Config::get('settings.users_total', 0),
 			],
 			'title' => $controller->getTitle(),
 			'url' => str_replace('/'.$route->getPrefix(), '', $request->getPathInfo()),
@@ -116,7 +116,7 @@ class ApiResponse
 		if ($planet)
 			$result['resources'] = $planet->getTopPanelRosources();
 
-		$globalMessage = Config::get('game.newsMessage', '');
+		$globalMessage = Config::get('settings.newsMessage', '');
 
 		if ($globalMessage != '')
 		{

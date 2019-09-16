@@ -87,7 +87,7 @@ class AdminViewData
 
 					$url = $item['url'] ?? null;
 
-					if ($item['code'])
+					if ($item['code'] && !$url)
 						$url = URL::route('admin.'.$item['code'], [], false);
 
 					foreach ($item['childrens'] as $i => $child)

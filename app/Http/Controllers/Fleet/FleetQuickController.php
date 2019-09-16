@@ -43,11 +43,11 @@ class FleetQuickController extends Controller
 
 		if ($MaxFlottes <= $maxfleet)
 			throw new Exception('Все слоты флота заняты');
-		elseif ($galaxy > Config::get('game.maxGalaxyInWorld') || $galaxy < 1)
+		elseif ($galaxy > Config::get('settings.maxGalaxyInWorld') || $galaxy < 1)
 			throw new Exception('Ошибочная галактика!');
-		elseif ($system > Config::get('game.maxSystemInGalaxy') || $system < 1)
+		elseif ($system > Config::get('settings.maxSystemInGalaxy') || $system < 1)
 			throw new Exception('Ошибочная система!');
-		elseif ($planet > Config::get('game.maxPlanetInSystem') || $planet < 1)
+		elseif ($planet > Config::get('settings.maxPlanetInSystem') || $planet < 1)
 			throw new Exception('Ошибочная планета!');
 		elseif ($planetType != 1 && $planetType != 2 && $planetType != 3 && $planetType != 5)
 			throw new Exception('Ошибочный тип планеты!');
@@ -69,8 +69,8 @@ class FleetQuickController extends Controller
 		if (!$target)
 			throw new Exception('Цели не существует!');
 
-		if (in_array($mission, [1, 2, 6, 9]) && Config::get('game.disableAttacks', 0) > 0 && time() < Config::get('game.disableAttacks', 0))
-			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('game.disableAttacks', 0)) . "</b></span>");
+		if (in_array($mission, [1, 2, 6, 9]) && Config::get('settings.disableAttacks', 0) > 0 && time() < Config::get('settings.disableAttacks', 0))
+			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('settings.disableAttacks', 0)) . "</b></span>");
 
 		$FleetArray = [];
 		$HeDBRec = false;
@@ -113,8 +113,8 @@ class FleetQuickController extends Controller
 			{
 				if ($NoobNoActive == 0)
 				{
-					$protectionPoints = (int) Config::get('game.noobprotectionPoints');
-					$protectionFactor = (int) Config::get('game.noobprotectionFactor');
+					$protectionPoints = (int) Config::get('settings.noobprotectionPoints');
+					$protectionFactor = (int) Config::get('settings.noobprotectionFactor');
 
 					if ($HeGameLevel < $protectionPoints)
 						throw new Exception('Игрок находится под защитой новичков!');

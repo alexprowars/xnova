@@ -32,11 +32,11 @@ class PhalanxController extends Controller
 
 		$consomation = 5000;
 
-		if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld'))
+		if ($g < 1 || $g > Config::get('settings.maxGalaxyInWorld'))
 			$g = $this->planet->galaxy;
-		if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy'))
+		if ($s < 1 || $s > Config::get('settings.maxSystemInGalaxy'))
 			$s = $this->planet->system;
-		if ($i < 1 || $i > Config::get('game.maxPlanetInSystem'))
+		if ($i < 1 || $i > Config::get('settings.maxPlanetInSystem'))
 			$i = $this->planet->planet;
 
 		$phalanx = $this->planet->getBuildLevel('phalanx');

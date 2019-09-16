@@ -2,10 +2,10 @@
 
 namespace Xnova\Console\Commands;
 
+use Backpack\Settings\app\Models\Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Xnova\Models;
-use Xnova\Models\Options;
 
 class UpdateOnline extends Command
 {
@@ -15,10 +15,10 @@ class UpdateOnline extends Command
     public function handle ()
     {
 		$online = Models\Users::query()
-			->where('onlinetime', '>', time() - Config::get('game.onlinetime') * 60)
+			->where('onlinetime', '>', time() - Config::get('settings.onlinetime') * 60)
 			->count();
 
-		Options::set('users_online', $online);
+		Setting::set('users_online', $online);
 
 		echo $online." users online\n";
     }
