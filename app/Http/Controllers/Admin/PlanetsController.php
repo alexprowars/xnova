@@ -2,73 +2,134 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
-use Xnova\Helpers;
+use Xnova\Http\Requests\Admin\PlanetRequest;
+use Xnova\Models\Planets;
+use Backpack\CRUD\app\Http\Controllers\Operations;
 
-class PlanetsController extends AdminController
+/** @noinspection PhpUnused */
+class PlanetsController extends CrudController
 {
+	use Operations\ListOperation;
+	use Operations\UpdateOperation;
+	use Operations\CreateOperation;
+	use Operations\ShowOperation;
+	use Operations\DeleteOperation;
+
 	public static function getMenu ()
 	{
 		return [[
 			'code'	=> 'planets',
 			'title' => 'Список планет',
+			'url'	=> backpack_url('planets'),
 			'icon'	=> 'globe',
 			'sort'	=> 80
 		]];
 	}
 
-	public function index ()
+	public function setup ()
 	{
-		$p = $this->request->getQuery('p', 'int', 1);
-		if ($p < 1)
-			$p = 1;
+		$this->crud->setModel(Planets::class);
+		$this->crud->setEntityNameStrings('планету', 'планеты');
+		$this->crud->setRoute(backpack_url('planets'));
 
-		$list = $this->db->query("SELECT `id`, `name`, `galaxy`, `system`, `planet` FROM planets WHERE planet_type = '1' ORDER by id LIMIT " . (($p - 1) * 50) . ", 50");
+		$this->crud->operation('list', function ()
+		{
+			$this->crud->orderBy('id', 'desc');
+			$this->crud->enableExportButtons();
 
-		$total = $this->db->query("SELECT COUNT(*) AS num FROM planets WHERE planet_type = '1'")->fetch();
+			$this->crud->setColumns([
+				[
+					'name'  => 'id',
+					'label' => 'ID',
+				], [
+					'name'  => 'name',
+					'label' => 'Название',
+				], [
+					'name'  => 'galaxy',
+					'label' => 'Галактика',
+				], [
+					'name'  => 'system',
+					'label' => 'Система',
+				], [
+					'name'  => 'planet',
+					'label' => 'Планета',
+				],
+			]);
+		});
 
-		$pagination = Helpers::pagination($total['num'], 50, '/admin/planets/', $p);
+		$this->crud->operation(['create', 'update'], function()
+		{
+			$this->crud->setValidation(PlanetRequest::class);
+			$this->crud->setTitle('Создание планеты');
+			$this->crud->setSubheading('Создание планеты');
 
-		View::share('title', 'Список планет');
+			$this->crud->addField([
+				'name'       => 'name',
+				'label'      => 'Название',
+				'type'       => 'text',
+				'default'	=> __('main.sys_colo_defaultname'),
+			]);
 
-		return view('admin.planets.index', ['planetlist' => $this->db->extractResult($list), 'all' => $total['num'], 'pagination' => $pagination]);
+			$this->crud->addField([
+				'name'       => 'galaxy',
+				'label'      => 'Галактика',
+				'type'       => 'number',
+			]);
+
+			$this->crud->addField([
+				'name'       => 'system',
+				'label'      => 'Система',
+				'type'       => 'number',
+			]);
+
+			$this->crud->addField([
+				'name'       => 'planet',
+				'label'      => 'Планета',
+				'type'       => 'number',
+			]);
+
+			$this->crud->addField([
+				'name'       => 'id_owner',
+				'label'      => 'Пользователь',
+				'type'       => 'number',
+			]);
+		});
+
+		$this->crud->operation('update', function()
+		{
+			$this->crud->setTitle('Редактирование планеты');
+			$this->crud->setSubheading('Редактирование планеты');
+		});
 	}
 
-	public function add ()
+	public function store ()
 	{
-		if (isset($_POST['user']))
-		{
-			$Galaxy = $this->request->getPost('galaxy', 'int', 0);
-			$System = $this->request->getPost('system', 'int', 0);
-			$Planet = $this->request->getPost('planet', 'int', 0);
-			$UserId = $this->request->getPost('user', 'int', 0);
+		$this->crud->applyConfigurationFromSettings('create');
+		$this->crud->hasAccessOrFail('create');
 
-			if ($Galaxy > $this->config->game->maxGalaxyInWorld || $Galaxy < 1)
-				$this->message('Ошибочная галактика!');
-			if ($System > $this->config->game->maxSystemInGalaxy || $System < 1)
-				$this->message('Ошибочная система!');
-			if ($Planet > $this->config->game->maxPlanetInSystem || $Planet < 1)
-				$this->message('Ошибочная планета!');
+		$this->crud->validateRequest();
 
-			$check = $this->db->query("SELECT id FROM users WHERE id = " . $UserId . "")->fetch();
+		$fields = $this->crud->getStrippedSaveRequest();
 
-			if (!isset($check['id']))
-				$this->message('Пользователя не существует');
+		$planetId = (new Galaxy())->createPlanet(
+			$fields['galaxy'],
+			$fields['system'],
+			$fields['planet'],
+			$fields['id_owner'],
+			$fields['name'],
+			false
+		);
 
-			$galaxy = new Galaxy();
+		if ($planetId)
+			Alert::success('Планета создана, id: ' . $planetId);
+		else
+			Alert::error('Не удалось создать планету');
 
-			$planet = $galaxy->createPlanet($Galaxy, $System, $Planet, $UserId, _getText('sys_colo_defaultname'), false);
+		$this->crud->setSaveAction();
 
-			if ($planet !== false)
-				$this->message('ID: ' . $planet);
-			else
-				$this->message('Луна не создана');
-		}
-
-		View::share('title', 'Создание планеты');
-
-		return view('admin.planets.add', []);
+		return $this->crud->performSaveAction($planetId);
 	}
 }

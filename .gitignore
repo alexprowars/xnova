@@ -23,3 +23,4 @@ Thumbs.db
 /_ide_helper*.php
 /.phpstorm.meta.php
 /public/assets/build/
+/public/packages/

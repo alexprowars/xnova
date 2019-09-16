@@ -2,6 +2,7 @@
 
 namespace Xnova\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -34,9 +35,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Planets extends Model
 {
+	use CrudTrait;
+
 	public $timestamps = false;
 	public $table = 'planets';
 	protected $hidden = ['planet_updated'];
+	protected $guarded = [];
 
 	public static function findByCoords (int $galaxy, int $system, int $planet, int $type = 1): ?self
 	{

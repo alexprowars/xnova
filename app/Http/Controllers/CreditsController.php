@@ -33,7 +33,7 @@ class CreditsController extends Controller
 			do {
 				$id = mt_rand(1000000000000, 9999999999999);
 			}
-			while (DB::selectOne("SELECT id FROM users_payments WHERE transaction_id = ".$id) ? true : false);
+			while (DB::selectOne("SELECT id FROM payments WHERE transaction_id = ".$id) ? true : false);
 
 			/** @var Models\UsersInfo $info */
 			$info = Models\UsersInfo::query()->find($this->user->getId());

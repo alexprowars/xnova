@@ -6,7 +6,7 @@
 	<link href="{{ asset('assets/admin/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet">
 	<link href="{{ asset('assets/admin/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet">
 @endpush
-@extends('layouts.admin')
+@extends(backpack_view('blank'))
 @section('content')
 <div class="card">
 	<header class="card-header">

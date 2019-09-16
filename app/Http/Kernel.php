@@ -8,7 +8,7 @@ use Illuminate;
 class Kernel extends HttpKernel
 {
 	protected $middleware = [
-		Middleware\CheckOverload::class,
+		//Middleware\CheckOverload::class,
 		//Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
 		//Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
 	];
@@ -22,6 +22,10 @@ class Kernel extends HttpKernel
 			Middleware\ApiResponse::class,
 		],
 		'admin' => [
+			Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+			Illuminate\Session\Middleware\StartSession::class,
+			Illuminate\View\Middleware\ShareErrorsFromSession::class,
+			Illuminate\Session\Middleware\AuthenticateSession::class,
 			Middleware\AdminCanAccess::class,
 			Middleware\AdminViewData::class,
 		],
@@ -41,7 +45,7 @@ class Kernel extends HttpKernel
 
 	protected $middlewarePriority = [
 		Illuminate\Session\Middleware\StartSession::class,
-		//Illuminate\View\Middleware\ShareErrorsFromSession::class,
+		Illuminate\View\Middleware\ShareErrorsFromSession::class,
 		Illuminate\Session\Middleware\AuthenticateSession::class,
 		//Illuminate\Routing\Middleware\SubstituteBindings::class,
 		Illuminate\Auth\Middleware\Authorize::class,

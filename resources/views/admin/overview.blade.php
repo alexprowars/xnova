@@ -1,22 +1,24 @@
-@extends('backpack::layout')
+@extends(backpack_view('blank'))
 @section('header')
-	<section class="content-header">
-		<h1>Панель управления</h1>
-	</section>
+    <section class="content-header">
+        <div class="container-fluid mb-3">
+            <h1>Панель управления</h1>
+        </div>
+    </section>
 @endsection
 @section('content')
 	<div class="row">
-		<div class="col-xs-12">
-			<div class="box">
-				<div class="box-header with-border">
-					<h3 class="box-title">Активные игроки</h3>
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					Активные игроки
 				</div>
-				<div class="box-body table-responsive">
+				<div class="card-body table-responsive">
 					<div class="alert alert-success">
 						Версия сервера: <strong class="text-danger">{{ $parse['adm_ov_data_yourv'] }}</strong>
 					</div>
-					<table class="table table-hover table-light table-striped">
-						<tbody>
+					<table class="table table-hover table-striped table-responsive-sm table-bordered">
+						<thead>
 							<tr>
 								<th width="30"><a href="{{ url('overview/cmd/sort/type/id/') }}">&nbsp;</a></th>
 								<th><a href="{{ url('overview/cmd/sort/type/username/') }}">Логин игрока</a></th>
@@ -24,6 +26,8 @@
 								<th><a href="{{ url('overview/cmd/sort/type/ally_name/') }}">Альянс</a></th>
 								<th><a href="{{ url('overview/cmd/sort/type/onlinetime/') }}">Активность</a></th>
 							</tr>
+						</thead>
+						<tbody>
 							@foreach ($parse['adm_ov_data_table'] as $list)
 								<tr>
 									<td>
@@ -40,7 +44,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="box-footer">
+				<div class="card-footer">
 					<div class="alert alert-info">
 						Игроков в сети: {{ $parse['adm_ov_data_count'] }}
 					</div>

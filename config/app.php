@@ -33,7 +33,8 @@ return [
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         Illuminate\Session\SessionServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
-        //Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\Validation\ValidationServiceProvider::class,
+		Illuminate\Foundation\Providers\FormRequestServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
         /*
@@ -51,6 +52,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
 		Xnova\Providers\EventServiceProvider::class,
 		Xnova\Providers\RouteServiceProvider::class,
+		Xnova\Providers\ValidationServiceProvider::class,
 		Spatie\Permission\PermissionServiceProvider::class,
     ],
     'aliases' => [

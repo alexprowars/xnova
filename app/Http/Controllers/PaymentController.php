@@ -32,9 +32,9 @@ class PaymentController extends Controller
 		if (strtoupper(Request::input('SignatureValue')) !== $sign_hash)
 			die('signature verification failed');
 
-		$check = DB::table('users_payments')
+		$check = DB::table('payments')
 			->where('transaction_id', (int) Request::input("InvId"))
-			->where('user', '!=', 0)
+			->where('user_id', '!=', 0)
 			->exists();
 
 		if ($check)
@@ -56,8 +56,8 @@ class PaymentController extends Controller
 			$user->credits += $amount;
 			$user->save();
 
-			DB::table('users_payments')->insert([
-				'user' 				=> $user->id,
+			DB::table('payments')->insert([
+				'user_id' 			=> $user->id,
 				'call_id' 			=> '',
 				'method' 			=> addslashes($_REQUEST['IncCurrLabel']),
 				'transaction_id' 	=> (int) Request::input("InvId"),
