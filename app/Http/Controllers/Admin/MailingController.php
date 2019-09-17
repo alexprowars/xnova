@@ -21,7 +21,7 @@ class MailingController extends AdminController
 		return [[
 			'code'	=> 'mailing',
 			'title' => 'Рассылка',
-			'icon'	=> 'mail-1',
+			'icon'	=> 'edit',
 			'sort'	=> 180
 		]];
 	}

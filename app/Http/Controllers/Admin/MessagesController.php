@@ -13,7 +13,7 @@ class MessagesController extends AdminController
 		return [[
 			'code'	=> 'messages',
 			'title' => 'Сообщения',
-			'icon'	=> 'email',
+			'icon'	=> 'comments-o',
 			'sort'	=> 170
 		]];
 	}

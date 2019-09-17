@@ -3,12 +3,16 @@
 namespace Xnova\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
 use Xnova\Http\Requests\Admin\PlanetRequest;
 use Xnova\Models\Planets;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
+/**
+ * @property CrudPanel $crud
+ */
 /** @noinspection PhpUnused */
 class PlanetsController extends CrudController
 {
@@ -38,6 +42,7 @@ class PlanetsController extends CrudController
 		$this->crud->operation('list', function ()
 		{
 			$this->crud->orderBy('id', 'desc');
+			//$this->crud->addClause('where', 'planet_type', '=', 1);
 			$this->crud->enableExportButtons();
 
 			$this->crud->setColumns([
@@ -56,6 +61,18 @@ class PlanetsController extends CrudController
 				], [
 					'name'  => 'planet',
 					'label' => 'Планета',
+				], [
+					'name'  => 'planet_type',
+					'label' => 'Тип',
+					'type'	=> 'select_from_array',
+					'options'	=> __('main.type_planet'),
+				], [
+					'name'  => 'last_update',
+					'label' => 'Время обновления',
+					'type'	=> 'closure',
+					'function' => function ($entry) {
+						return date('d.m.Y H:i:s', $entry->last_update);
+					},
 				],
 			]);
 		});

@@ -5,8 +5,10 @@ namespace Xnova\Http\Controllers\Admin;
 use Illuminate\Support\Facades\View;
 use Xnova\AdminController;
 use Xnova\Fleet;
-use Xnova\Models\Fleet as FleetModel;
+use Xnova\Game;
+use Xnova\Models;
 
+/** @noinspection PhpUnused */
 class FleetsController extends AdminController
 {
 	public static function getMenu ()
@@ -21,35 +23,36 @@ class FleetsController extends AdminController
 
 	public function index ()
 	{
-		$table = [];
+		$items = [];
 
-		$FlyingFleets = FleetModel::find(['order' => 'end_time asc']);
+		$fleets = Models\Fleet::query()->orderBy('end_time', 'asc');
 
-		foreach ($FlyingFleets as $CurrentFleet)
+		foreach ($fleets as $fleet)
 		{
-			$Bloc['Id'] = $CurrentFleet->id;
-			$Bloc['Mission'] = Fleet::CreateFleetPopupedMissionLink($CurrentFleet, _getText('type_mission', $CurrentFleet->mission), '');
-			$Bloc['Mission'] .= "<br>" . (($CurrentFleet->mess == 1) ? "R" : "A");
+			$row = [];
+			$row['Id'] = $fleet->id;
+			$row['Mission'] = Fleet::CreateFleetPopupedMissionLink($fleet, __('main.type_mission.'.$fleet->mission), '');
+			$row['Mission'] .= "<br>" . (($fleet->mess == 1) ? "R" : "A");
 
-			$Bloc['Fleet'] = Fleet::CreateFleetPopupedFleetLink($CurrentFleet, _getText('tech', 200), '', $this->user);
-			$Bloc['St_Owner'] = "[" . $CurrentFleet->owner . "]<br>" . $CurrentFleet->owner_name;
-			$Bloc['St_Posit'] = "[" . $CurrentFleet->start_galaxy . ":" . $CurrentFleet->start_system . ":" . $CurrentFleet->start_planet . "]<br>" . (($CurrentFleet->start_type == 1) ? "[P]" : (($CurrentFleet->start_type == 2) ? "D" : "L")) . "";
-			$Bloc['St_Time'] = $this->game->datezone('H:i:s d/n/Y', $CurrentFleet->start_time);
+			$row['Fleet'] = Fleet::CreateFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);
+			$row['St_Owner'] = "[" . $fleet->owner . "]<br>" . $fleet->owner_name;
+			$row['St_Posit'] = "[" . $fleet->start_galaxy . ":" . $fleet->start_system . ":" . $fleet->start_planet . "]<br>" . (($fleet->start_type == 1) ? "[P]" : (($fleet->start_type == 2) ? "D" : "L")) . "";
+			$row['St_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->start_time);
 
-			if (!empty($CurrentFleet->target_owner))
-				$Bloc['En_Owner'] = "[" . $CurrentFleet->target_owner . "]<br>" . $CurrentFleet->target_owner_name;
+			if (!empty($fleet->target_owner))
+				$row['En_Owner'] = "[" . $fleet->target_owner . "]<br>" . $fleet->target_owner_name;
 			else
-				$Bloc['En_Owner'] = "";
+				$row['En_Owner'] = "";
 
-			$Bloc['En_Posit'] = "[" . $CurrentFleet->end_galaxy . ":" . $CurrentFleet->end_system . ":" . $CurrentFleet->end_planet . "]<br>" . (($CurrentFleet->end_type == 1) ? "[P]" : (($CurrentFleet->end_type == 2) ? "D" : "L")) . "";
+			$row['En_Posit'] = "[" . $fleet->end_galaxy . ":" . $fleet->end_system . ":" . $fleet->end_planet . "]<br>" . (($fleet->end_type == 1) ? "[P]" : (($fleet->end_type == 2) ? "D" : "L")) . "";
 
-			$Bloc['En_Time'] = $this->game->datezone('H:i:s d/n/Y', $CurrentFleet->end_time);
+			$row['En_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->end_time);
 
-			$table[] = $Bloc;
+			$items[] = $row;
 		}
 
-		View::share('title', __('flt_title'));
+		View::share('title', __('admin.page_title.fleets_index'));
 
-		return view('admin.fleets', ['flt_table' => $table]);
+		return view('admin.fleets', ['items' => $items]);
 	}
 }

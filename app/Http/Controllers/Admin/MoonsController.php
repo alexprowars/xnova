@@ -2,80 +2,134 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
-use Admin\Controller;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
+use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
+use Backpack\CRUD\app\Http\Controllers\Operations;
+use Xnova\Http\Requests\Admin\MoonRequest;
+use Xnova\Models\Planets;
 
-class MoonsController extends AdminController
+/**
+ * @property CrudPanel $crud
+ */
+/** @noinspection PhpUnused */
+class MoonsController extends CrudController
 {
+	use Operations\ListOperation;
+	use Operations\CreateOperation;
+	use Operations\ShowOperation;
+	use Operations\DeleteOperation;
+
 	public static function getMenu ()
 	{
 		return [[
 			'code'	=> 'moons',
 			'title' => 'Список лун',
-			'icon'	=> 'star',
+			'url'	=> backpack_url('moons'),
+			'icon'	=> 'moon-o',
 			'sort'	=> 100
 		]];
 	}
 
-	public function index ()
+	public function setup ()
 	{
-		$parse = [];
+		$this->crud->setModel(Planets::class);
+		$this->crud->setEntityNameStrings('луну', 'луны');
+		$this->crud->setRoute(backpack_url('moons'));
 
-		$parse['moons'] = [];
-
-		$query = $this->db->query("SELECT * FROM planets WHERE planet_type='3' ORDER BY galaxy,system,planet");
-
-		while ($u = $query->fetch())
+		$this->crud->operation('list', function ()
 		{
-			$parse['moons'][] = $u;
-		}
+			$this->crud->orderBy('id', 'desc');
+			$this->crud->addClause('where', 'planet_type', '=', 3);
+			$this->crud->enableExportButtons();
 
-		View::share('title', 'Список лун');
+			$this->crud->setColumns([
+				[
+					'name'  => 'id',
+					'label' => 'ID',
+				], [
+					'name'  => 'name',
+					'label' => 'Название',
+				], [
+					'name'  => 'galaxy',
+					'label' => 'Галактика',
+				], [
+					'name'  => 'system',
+					'label' => 'Система',
+				], [
+					'name'  => 'planet',
+					'label' => 'Планета',
+				],
+			]);
+		});
 
-		return view('admin.moons.index', ['parse' => $parse]);
+		$this->crud->operation('create', function()
+		{
+			$this->crud->setValidation(MoonRequest::class);
+			$this->crud->setTitle('Создание луны');
+			$this->crud->setSubheading('Создание луны');
+
+			$this->crud->addField([
+				'name'	=> 'galaxy',
+				'label'	=> 'Галактика',
+				'type'	=> 'number',
+			]);
+
+			$this->crud->addField([
+				'name'	=> 'system',
+				'label'	=> 'Система',
+				'type'	=> 'number',
+			]);
+
+			$this->crud->addField([
+				'name'	=> 'planet',
+				'label'	=> 'Планета',
+				'type'	 => 'number',
+			]);
+
+			$this->crud->addField([
+				'name'	=> 'id_owner',
+				'label'	=> 'Пользователь',
+				'type'	=> 'number',
+			]);
+
+			$this->crud->addField([
+				'name'	=> 'diameter',
+				'label'	=> 'Диаметр',
+				'type'	=> 'number',
+				'default' => 1,
+			]);
+		});
 	}
 
-	public function add ()
+	public function store ()
 	{
-		if (!$this->access->canWriteController(self::CODE, 'admin'))
-			throw new \Exception('Access denied');
+		$this->crud->applyConfigurationFromSettings('create');
+		$this->crud->hasAccessOrFail('create');
 
-		if (isset($_POST['user']))
-		{
-			$Galaxy = $this->request->getPost('galaxy', 'int', 0);
-			$System = $this->request->getPost('system', 'int', 0);
-			$Planet = $this->request->getPost('planet', 'int', 0);
-			$UserId = $this->request->getPost('user', 'int', 0);
-			$Diamet = $this->request->getPost('diameter', 'int', 0);
+		$this->crud->validateRequest();
 
-			if ($Galaxy > $this->config->game->maxGalaxyInWorld || $Galaxy < 1)
-				$this->message('Ошибочная галактика!');
-			if ($System > $this->config->game->maxSystemInGalaxy || $System < 1)
-				$this->message('Ошибочная система!');
-			if ($Planet > $this->config->game->maxPlanetInSystem || $Planet < 1)
-				$this->message('Ошибочная планета!');
+		$fields = $this->crud->getStrippedSaveRequest();
 
-			$check = $this->db->query("SELECT id FROM users WHERE id = " . $UserId . "")->fetch();
+		$diameter = min(max($fields['diameter'], 20), 0);
 
-			if (!isset($check['id']))
-				$this->message('Пользователя не существует');
+		$planetId = (new Galaxy())->createMoon(
+			$fields['galaxy'],
+			$fields['system'],
+			$fields['planet'],
+			$fields['id_owner'],
+			$diameter,
+		);
 
-			$Diamet = min(max($Diamet, 20), 0);
+		if ($planetId)
+			Alert::success('Луна создана, id: ' . $planetId);
+		else
+			Alert::error('Не удалось создать луну');
 
-			$galaxy = new Galaxy();
+		$this->crud->setSaveAction();
 
-			$moon = $galaxy->createMoon($Galaxy, $System, $Planet, $UserId, $Diamet);
-
-			if ($moon !== false)
-				$this->message('ID: ' . $moon);
-			else
-				$this->message('Луна не создана');
-		}
-
-		View::share('title', 'Создание луны');
-
-		return view('admin.moons.add', []);
+		return $this->crud->performSaveAction($planetId);
 	}
 }

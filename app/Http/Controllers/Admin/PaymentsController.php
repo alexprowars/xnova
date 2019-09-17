@@ -3,6 +3,7 @@
 namespace Xnova\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Support\Facades\DB;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Http\Requests\Admin\PaymentRequest;
@@ -11,6 +12,9 @@ use Xnova\Models\Users;
 use Xnova\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
+/**
+ * @property CrudPanel $crud
+ */
 /** @noinspection PhpUnused */
 class PaymentsController extends CrudController
 {
