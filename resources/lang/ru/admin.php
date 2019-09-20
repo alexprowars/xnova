@@ -1,27 +1,10 @@
 <?php
 
-$lang['module_access'] = [
-	'controller_read::users' => 'Просмотр пользователей',
-	'controller_write::users' => 'Редактирование пользователей',
-	'controller_read::options' => 'Просмотр настроек',
-	'controller_write::options' => 'Редактирование настроек',
-	'controller_read::modules' => 'Просмотр модулей',
-	'controller_write::modules' => 'Редактирование модулей',
-	'controller_read::groups' => 'Просмотр групп',
-	'controller_write::groups' => 'Редактирование групп',
-];
-
 $lang['page_title'] = [
 	'users_index'			=> 'Пользователи',
 	'users_edit'			=> 'Редактирование пользователя',
 	'users_add'				=> 'Добавление нового пользователя',
 	'dashboard_index'		=> 'Стартовый экран',
-	'modules_index'			=> 'Список модулей',
-	'modules_edit'			=> 'Редактирование',
-	'groups_index'			=> 'Список групп',
-	'groups_add'			=> 'Добавить группу',
-	'groups_edit'			=> 'Редактировать группу',
-	'options_index'			=> 'Настройки сайта',
 
 	'index_index'			=>  'Dashboard',
 	'support_index'			=>  'Техподдержка',
@@ -30,11 +13,9 @@ $lang['page_title'] = [
 	'money_index'			=>  'Денежные транзакции',
 	'money_add'				=>  'Начислить кредиты',
 	'planets_index'			=>  'Список планет',
-	'activeplanet_index'	=>  'Активные планеты',
 	'moons_index'			=>  'Список лун',
 	'fleets_index'			=>  'Флоты в полёте',
 	'alliances_index'		=>  'Список альянсов',
-	'email_index'			=>  'Запросы на смену Email',
 	'messages_index'		=>  'Список сообщений',
 	'messageall_index'		=>  'Рассылка сообщений',
 	'content_index'			=>  'Список контента',

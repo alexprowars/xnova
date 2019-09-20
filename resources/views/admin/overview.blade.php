@@ -1,11 +1,4 @@
 @extends(backpack_view('blank'))
-@section('header')
-    <section class="content-header">
-        <div class="container-fluid mb-3">
-            <h1>Панель управления</h1>
-        </div>
-    </section>
-@endsection
 @section('content')
 	<div class="row">
 		<div class="col-12">

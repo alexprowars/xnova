@@ -2,14 +2,14 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
 use Xnova\Fleet;
 use Xnova\Game;
 use Xnova\Models;
 
 /** @noinspection PhpUnused */
-class FleetsController extends AdminController
+class FleetsController extends Controller
 {
 	public static function getMenu ()
 	{
@@ -52,6 +52,10 @@ class FleetsController extends AdminController
 		}
 
 		View::share('title', __('admin.page_title.fleets_index'));
+		View::share('breadcrumbs', [
+			'Панель управления' => backpack_url('/'),
+			__('admin.page_title.fleets_index') => false,
+		]);
 
 		return view('admin.fleets', ['items' => $items]);
 	}

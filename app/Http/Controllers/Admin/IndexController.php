@@ -2,17 +2,16 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
-use Xnova\Entity\Building;
-use Xnova\Entity\Fleet;
 use Xnova\Format;
 use Xnova\Helpers;
 
-class IndexController extends AdminController
+/** @noinspection PhpUnused */
+class IndexController extends Controller
 {
 	public static function getMenu ()
 	{
@@ -76,7 +75,10 @@ class IndexController extends AdminController
 
 		$parse['adm_ov_data_count'] = $Count;
 
-		View::share('title', 'Активность на сервере');
+		View::share('title', 'Панель управления');
+		View::share('breadcrumbs', [
+			'Панель управления' => false,
+		]);
 
 		return view('admin.overview', ['parse' => $parse]);
 	}

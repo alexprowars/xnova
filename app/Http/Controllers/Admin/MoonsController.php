@@ -4,7 +4,6 @@ namespace Xnova\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
-use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
 use Backpack\CRUD\app\Http\Controllers\Operations;
@@ -120,7 +119,7 @@ class MoonsController extends CrudController
 			$fields['system'],
 			$fields['planet'],
 			$fields['id_owner'],
-			$diameter,
+			$diameter
 		);
 
 		if ($planetId)

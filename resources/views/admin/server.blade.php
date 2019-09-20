@@ -1,16 +1,10 @@
 @extends(backpack_view('blank'))
-@section('header')
-    <section class="content-header">
-        <div class="container-fluid mb-3">
-            <h1>Переменные сервера</h1>
-        </div>
-    </section>
-@endsection
 @section('content')
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div class="card-body">
+				<div class="card-header">Переменные сервера</div>
+				<div class="card-body table-responsive">
 					<table class="table table-bordered table-striped">
 						@foreach ($_SERVER as $key => $value)
 							<tr>

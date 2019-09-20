@@ -2,10 +2,11 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
 
-class ServerController extends AdminController
+/** @noinspection PhpUnused */
+class ServerController extends Controller
 {
 	public static function getMenu ()
 	{
@@ -19,7 +20,11 @@ class ServerController extends AdminController
 
 	public function index ()
 	{
-		View::share('title', 'Серверное окружение');
+		View::share('title', 'Переменные сервера');
+		View::share('breadcrumbs', [
+			'Панель управления' => backpack_url('/'),
+			'Переменные сервера' => false,
+		]);
 
 		return view('admin.server');
 	}

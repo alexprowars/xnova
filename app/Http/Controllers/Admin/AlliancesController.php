@@ -2,10 +2,10 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
 
-class AlliancesController extends AdminController
+class AlliancesController extends Controller
 {
 	public static function getMenu ()
 	{

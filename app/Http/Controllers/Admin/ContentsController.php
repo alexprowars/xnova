@@ -4,7 +4,6 @@ namespace Xnova\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
-use Illuminate\Support\Facades\View;
 use Xnova\Http\Requests\Admin\ContentRequest;
 use Xnova\Models\Content;
 use Backpack\CRUD\app\Http\Controllers\Operations;

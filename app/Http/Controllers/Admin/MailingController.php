@@ -2,20 +2,18 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
-use Admin\Controller;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
+use Xnova\Models\Users;
 use Xnova\User;
 
-/**
- * @RoutePrefix("/admin/messageall")
- * @Route("/")
- * @Route("/{action}/")
- * @Route("/{action}{params:(/.*)*}")
- * @Private
- */
-class MailingController extends AdminController
+class MailingController extends Controller
 {
+	use ValidatesRequests;
+
 	public static function getMenu ()
 	{
 		return [[
@@ -26,38 +24,47 @@ class MailingController extends AdminController
 		]];
 	}
 
-	public function index ()
+	public function index (Request $request)
 	{
-		if ($this->request->hasPost("tresc"))
+		if ($request->isMethod('POST'))
 		{
-			$kolor = '';
+			$fields = $this->validate($request, [
+				'message' => 'required',
+				'theme' => 'required',
+			], [
+				'required' => 'Поле ":attribute" обязательно для заполнения',
+			]);
 
-			if ($this->user->authlevel == 3)
-				$kolor = 'yellow';
-			elseif ($this->user->authlevel == 1)
-				$kolor = 'skyblue';
-			elseif ($this->user->authlevel == 2)
-				$kolor = 'yellow';
+			/** @var User $currentUser */
+			$currentUser = Auth::user();
 
-			if ((isset($_POST["tresc"]) && $_POST["tresc"] != '') && (isset($_POST["temat"]) && $_POST["temat"] != ''))
-			{
-				$sq = $this->db->query("SELECT `id` FROM users");
-
-				$Time = time();
-
-				$From 		= "<font color=\"" . $kolor . "\">Информационное сообщение (".$this->user->username.")</font>";
-				$Message 	= $_POST['tresc'];
-
-				while ($u = $sq->fetch())
-					User::sendMessage($u['id'], false, $Time, 1, $From, $Message);
-
-				$this->message("<font color=\"lime\">Сообщение успешно отправлено всем игрокам!</font>", "Выполнено", "/admin/messageall/", 3);
-			}
+			if ($currentUser->isAdmin())
+				$color = 'yellow';
 			else
-				$this->message("<font color=\"red\">Не все поля заполнены!</font>", "Ошибка", "/admin/messageall/", 3);
+				$color = 'skyblue';
+
+			$users = Users::query()->get(['id']);
+
+			foreach ($users as $user)
+			{
+				User::sendMessage(
+					$user->id,
+					false,
+					time(),
+					1,
+					'<font color="'.$color.'">Информационное сообщение ('.$currentUser->username.')</font>',
+					$fields['message']
+				);
+			}
+
+			return redirect(backpack_url('mailing'))->with('success', 'Сообщение успешно отправлено всем игрокам!');
 		}
 
 		View::share('title', 'Рассылка');
+		View::share('breadcrumbs', [
+			'Панель управления' => backpack_url('/'),
+			'Рассылка' => false,
+		]);
 
 		return view('admin.mailing');
 	}

@@ -2,27 +2,40 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
-use Admin\Forms\UserForm;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
-use Xnova\AdminController;
-use Xnova\Exceptions\Exception;
+use Prologue\Alerts\Facades\Alert;
+use Xnova\Models\Banned;
+use Xnova\Models;
 use Xnova\Models\Users;
 use Xnova\Models\UsersInfo;
+use Backpack\CRUD\app\Http\Controllers\Operations;
+use Xnova\User;
+use Xnova\Vars;
 
-class UsersController extends AdminController
+/**
+ * @property CrudPanel $crud
+ */
+/** @noinspection PhpUnused */
+class UsersController extends CrudController
 {
-	public function initialize()
-	{
-		$this->addToBreadcrumbs(Lang::getText('admin', 'page_title_index'), self::CODE);
-	}
+	use ValidatesRequests;
+	use Operations\ListOperation;
+	use Operations\ShowOperation;
+	use Operations\UpdateOperation;
+	use Operations\CreateOperation;
+	use Operations\DeleteOperation;
 
 	public static function getMenu ()
 	{
 		return [[
 			'code'	=> 'users',
 			'title' => 'Пользователи',
+			'url'	=> backpack_url('users'),
 			'icon'	=> 'user',
 			'sort'	=> 1000,
 			'childrens' => [[
@@ -30,9 +43,11 @@ class UsersController extends AdminController
 				'title'	=> 'Список',
 			], [
 				'code'	=> 'ban',
+				'url'	=> backpack_url('users/ban'),
 				'title'	=> 'Заблокировать',
 			], [
 				'code'	=> 'unban',
+				'url'	=> backpack_url('users/unban'),
 				'title'	=> 'Разблокировать',
 			]],
 		], [
@@ -56,313 +71,243 @@ class UsersController extends AdminController
 		]];
 	}
 
-	public function index ()
+	public function setup ()
 	{
-		View::share('title', __('admin.page_title_index'));
+		$this->crud->setModel(Users::class);
+		$this->crud->setEntityNameStrings('пользователь', 'пользователи');
+		$this->crud->setRoute(backpack_url('users'));
 
-		return view('admin.users.index', []);
+		$this->crud->operation('list', function ()
+		{
+			$this->crud->orderBy('id', 'desc');
+			$this->crud->enableExportButtons();
+
+			$this->crud->setColumns([
+				[
+					'name'  => 'id',
+					'label' => 'ID',
+				], [
+					'name'  => 'username',
+					'label' => 'Никнейм',
+				], [
+					'name'  => 'galaxy',
+					'label' => 'Галактика',
+				], [
+					'name'  => 'system',
+					'label' => 'Система',
+				], [
+					'name'  => 'planet',
+					'label' => 'Планета',
+				],  [
+					'label' => 'Email',
+					'type' => 'select',
+					'name' => 'email',
+					'entity' => 'info',
+					'attribute' => 'email',
+					'model' => UsersInfo::class
+				], [
+					'label' => 'Дата регистрации',
+					'type' => 'closure',
+					'name' => 'create_time',
+					'entity' => 'info',
+					'attribute' => 'create_time',
+					'model' => UsersInfo::class,
+					'function' => function ($entry) {
+						return date('d.m.Y H:i:s', $entry->info->create_time ?? 0);
+					},
+				], [
+					'label'     => trans('backpack::permissionmanager.roles'),
+					'type'      => 'select_multiple',
+					'name'      => 'roles',
+					'entity'    => 'roles',
+					'attribute' => 'name',
+					'model'     => config('permission.models.role'),
+				],
+			]);
+		});
+
+		$this->crud->addField([
+			'name'	=> 'email',
+			'label'	=> 'Email',
+			'type'	=> 'email',
+			'entity' => 'info',
+			'attribute' => 'email',
+			'model' => UsersInfo::class
+		]);
+
+		$this->crud->operation('update', function()
+		{
+			$this->crud->addField([
+				'name'	=> 'username',
+				'label'	=> 'Никнейм',
+				'type'	=> 'text',
+			]);
+
+			$this->crud->addField([
+				'label'             => trans('backpack::permissionmanager.user_role_permission'),
+				'field_unique_name' => 'user_role_permission',
+				'type'              => 'checklist_dependency',
+				'name'              => [
+					'roles',
+					'permissions',
+				],
+				'subfields' => [
+					'primary' => [
+						'label'            => trans('backpack::permissionmanager.roles'),
+						'name'             => 'roles',
+						'entity'           => 'roles',
+						'entity_secondary' => 'permissions',
+						'attribute'        => 'name',
+						'model'            => config('permission.models.role'),
+						'pivot'            => true,
+						'number_columns'   => 3,
+					],
+					'secondary' => [
+						'label'          => ucfirst(trans('backpack::permissionmanager.permission_singular')),
+						'name'           => 'permissions',
+						'entity'         => 'permissions',
+						'entity_primary' => 'roles',
+						'attribute'      => 'name',
+						'model'          => config('permission.models.permission'),
+						'pivot'          => true,
+						'number_columns' => 3,
+					],
+				],
+			]);
+		});
+
+		$this->crud->operation('create', function()
+		{
+			$this->crud->addField([
+				'name'  => 'password',
+				'label' => trans('backpack::permissionmanager.password'),
+				'type'  => 'password',
+			]);
+
+			$this->crud->addField([
+				'name'  => 'password_confirmation',
+				'label' => trans('backpack::permissionmanager.password_confirmation'),
+				'type'  => 'password',
+			]);
+		});
 	}
 
-	public function add ()
+	public function store ()
 	{
-		if (!$this->user->can('edit users'))
-			throw new Exception('Access denied');
+		$this->crud->applyConfigurationFromSettings('create');
+		$this->crud->hasAccessOrFail('create');
 
-		if (request()->isMethod('POST'))
-		{
-			return redirect()->route('admin.users.edit', ['id' => $this->user->id], false)
-				->with('flash|success', 'Пользователь добавлен');
-		}
+		$this->crud->validateRequest();
 
-		return view('admin.users.add', ['title_hide' => true]);
+		$fields = $this->crud->getStrippedSaveRequest();
+
+		$userId = User::creation([
+			'email' => $fields['email'],
+			'password' => $fields['password'],
+		]);
+
+  		Alert::success(trans('backpack::crud.insert_success'))->flash();
+
+		$this->crud->setSaveAction();
+
+		return $this->crud->performSaveAction($userId);
 	}
 
-	public function edit ($userId)
+	public function ban (Request $request)
 	{
-		if (!$this->access->canWriteController(self::CODE, 'admin'))
-			throw new \Exception('Access denied');
-
-		$user = User::findFirst($userId);
-
-		if (!$user)
+		if ($request->isMethod('POST'))
 		{
-			$this->flashSession->error('Пользователь не найден');
+			$name = htmlspecialchars($request->post('name', ''));
+			$reason = htmlspecialchars($request->post('why', ''));
 
-			return $this->response->redirect(self::CODE.'/');
-		}
+			$days = $request->post('days', 0);
+			$hour = $request->post('hour', 0);
+			$mins = $request->post('mins', 0);
 
-		if ($this->access->hasAccess('loyalty'))
-			Modules::init('loyalty');
+			$user = Users::query()->where('username', $name)->first();
 
-		$form = new UserForm($user);
-		$form->setAction($this->url->get('users/edit/'.$user->id.'/'));
-
-		$groups = [];
-
-		foreach ($user->groups as $item)
-		{
-			$groups[] = $item->group_id;
-		}
-
-		if ($this->request->isPost())
-		{
-			if ($form->isValid($this->request->getPost()))
-			{
-				if ($this->request->hasPost('photo_delete'))
-					$user->deletePhoto();
-
-				if ($this->request->hasFiles())
-				{
-					$files = $this->request->getUploadedFiles();
-
-					foreach ($files as $file)
-					{
-						$user->uploadPhoto($file);
-
-						break;
-					}
-				}
-
-				$groupsResult = [];
-
-				$formGroups = $form->getValue('groups_id');
-
-				if (is_array($formGroups) && count($formGroups))
-				{
-					foreach ($formGroups as $groupId)
-					{
-						if (!in_array($groupId, $groups))
-						{
-							$group = Group::findFirst($groupId);
-
-							if ($group)
-							{
-								$item = new UserGroup();
-
-								$item->group_id = $group->id;
-								$item->user_id = $user->id;
-
-								if ($item->create())
-									$groupsResult[] = $item->group_id;
-							}
-						}
-						else
-							$groupsResult[] = $groupId;
-					}
-
-					$diff = array_diff($groups, $formGroups);
-
-					if (count($diff))
-						UserGroup::find(["conditions" => "user_id = :user: AND group_id IN (".implode(',', $diff).")", "bind" => ["user" => $user->id]])->delete();
-				}
-				else
-					UserGroup::find(["conditions" => "user_id = :user:", "bind" => ["user" => $user->id]])->delete();
-
-				$groups = $groupsResult;
-
-				if ($user->update())
-				{
-					$this->flashSession->success('Изменения сохранены');
-
-					return $this->response->redirect(self::CODE.'/edit/'.$user->getId().'/');
-				}
-			}
-			else
-			{
-				foreach ($form->getMessages() as $message)
-				{
-					$this->flashSession->error($message);
-				}
-			}
-		}
-
-		$tabGroups = new Builder\Tab('Группы', 'groups');
-		$tabGroups->setPartial('users/tab_group');
-
-		$form->addTab($tabGroups);
-
-		//$this->view->setVar('form', $form);
-		//$this->view->setVar('groups', Group::find());
-		//$this->view->setVar('groups_values', $groups);
-
-		return view('admin.users.edit', ['title_hide' => true]);
-	}
-
-	public function delete ($userId)
-	{
-		if (!$this->user->can('edit users'))
-			throw new Exception('Access denied');
-
-		$user = Users::query()->find($userId);
-
-		if (!$user)
-			return redirect()->route('admin.users')->with('message|error', 'Пользователь не найден');
-
-		if ($user->delete())
-			return redirect()->route('admin.users')->with('message|success', 'Пользователь удалён');
-
-		return redirect()->route('admin.users')->with('message|error', 'Произошла ошибка');
-	}
-
-	public function list ()
-	{
-		$limit = Request::post('length', 10);
-		$start = Request::post('start', 0);
-
-		$limit = max(10, min(999, $limit));
-		$start = max(0, $start);
-
-		$page = floor($start / $limit) + 1;
-
-		$order = 'id asc';
-
-		if (Request::has('order'))
-		{
-			$columns = Request::post('columns');
-			$orders = Request::post('order');
-
-			foreach ($orders as $item)
-			{
-				if ($columns[$item['column']]['data'] != 'actions')
-					$order = $columns[$item['column']]['data'].' '.$item['dir'];
-			}
-		}
-
-		$search = '';
-
-		if (Request::has('search'))
-			$search = Request::post('search')['value'];
-
-		$result = ['data' => []];
-
-		$builder = Users::query()->select(['users.*', 'info.email', 'info.create_time'])
-			->join((new UsersInfo())->getTable().' as info', 'info.id', '=', 'users.id')
-			->orderByRaw($order);
-
-		if ($search != '')
-			$builder->whereRaw('CONCAT(users.username, \' \', info.email) LIKE \'%'.$search.'%\'');
-
-		$paginator = $builder->paginate($limit, null, null, $page);
-
-		$canWrite = $this->user->can('edit users');
-
-		/** @var Users $item */
-		foreach ($paginator->items() as $item)
-		{
-			$result['data'][] = [
-				'id' 		=> (int) $item->id,
-				'email' 	=> $item->email,
-				'name' 		=> $item->getFullName(),
-				'date' 		=> date("d.m.Y", $item->create_time),
-				'actions'	=> $canWrite,
-			];
-		}
-
-		$result['draw'] = (int) Request::post('draw', 0);
-		$result['recordsTotal'] = $paginator->total();
-		$result['recordsFiltered'] = $paginator->total();
-
-		return $result;
-	}
-
-	public function find ()
-	{
-		$result = [];
-
-		$query = Request::query('q', '');
-
-		if (mb_strlen($query) >= 3)
-		{
-			$users = Users::query()->select(['id', 'CONCAT(name, \' \', last_name) as name'])
-				->where('name', 'LIKE', '%'.$query.'%')
-				->limit(10)->get();
-
-			foreach ($users as $user)
-				$result[] = ['id' => (int) $user->id, 'value' => $user->name];
-		}
-
-		return $result;
-	}
-
-	public function ban ()
-	{
-		if ($this->request->getPost('name', 'string', '') != '')
-		{
-			$name = htmlspecialchars($this->request->getPost('name', 'string', ''));
-			$reas = htmlspecialchars($this->request->getPost('why', 'string', ''));
-
-			$days = $this->request->getPost('days', 'int', 0);
-			$hour = $this->request->getPost('hour', 'int', 0);
-			$mins = $this->request->getPost('mins', 'int', 0);
-
-			$userz = $this->db->query("SELECT id FROM users WHERE username = '" . $name . "';")->fetch();
-
-			if (!isset($userz['id']))
-				$this->message(_getText('sys_noalloaw'), 'Игрок не найден');
+			if (!$user)
+				return redirect(backpack_url('users/ban'))->with('error', 'Игрок не найден');
 
 			$BanTime = $days * 86400;
 			$BanTime += $hour * 3600;
 			$BanTime += $mins * 60;
 			$BanTime += time();
 
-			$this->db->insertAsDict('banned', [
-				'who'		=> $userz['id'],
-				'theme'		=> $reas,
+			Banned::query()->insert([
+				'who'		=> $user->id,
+				'theme'		=> $reason,
 				'time'		=> time(),
 				'longer'	=> $BanTime,
-				'author'	=> $this->user->getId(),
+				'author'	=> Auth::id(),
 			]);
 
 			$update = ['banned' => $BanTime];
 
-			if ($this->request->getPost('ro', 'int', 0) == 1)
+			if ($request->post('ro', 0) == 1)
 				$update['vacation'] = 1;
 
-			$this->user->saveData($update, $userz['id']);
+			$user->update($update);
 
-			if ($this->request->getPost('ro', 'int', 0) == 1)
+			if ($request->post('ro', 0) == 1)
 			{
-				$arFields = [
-					$this->registry->resource[4].'_porcent' 	=> 0,
-					$this->registry->resource[12].'_porcent' 	=> 0,
-					$this->registry->resource[212].'_porcent' 	=> 0,
-				];
+				$buildsId = [4, 12, 212];
 
-				foreach ($this->registry->reslist['res'] AS $res)
-					$arFields[$res.'_mine_porcent'] = 0;
+				foreach (Vars::getResources() AS $res)
+					$buildsId[] = Vars::getIdByName($res.'_mine');
 
-				$this->db->updateAsDict($arFields, "id_owner = ".$userz['id']);
+				Models\PlanetsBuildings::query()->whereIn('planet_id', User::getPlanetsId($user->id))
+					->whereIn('build_id', $buildsId)
+					->update(['power' => 0]);
+
+				Models\PlanetsUnits::query()->whereIn('planet_id', User::getPlanetsId($user->id))
+					->whereIn('unit_id', $buildsId)
+					->update(['power' => 0]);
 			}
 
-			$this->message(_getText('adm_bn_thpl') . " " . $name . " " . _getText('adm_bn_isbn'), _getText('adm_bn_ttle'));
+			return redirect(backpack_url('users/ban'))->with('success', 'Игрок "'.$name.'" добавлен в список блокировки');
 		}
 
-		View::share('title', __('adm_bn_ttle'));
+		View::share('title', 'Блокировка доступа');
+		View::share('breadcrumbs', [
+			'Панель управления' => backpack_url('/'),
+			'Блокировка доступа' => false,
+		]);
 
 		return view('admin.users.ban', []);
 	}
 
-	public function unban ()
+	public function unban (Request $request)
 	{
-		if ($this->request->getPost('username', 'string', '') != '')
+		if ($request->isMethod('POST') != '')
 		{
-			$info = $this->db->query("SELECT id, username, banned, vacation FROM users WHERE username = '".addslashes($this->request->getPost('username', 'string', ''))."';")->fetch();
+			$fields = $this->validate($request, [
+				'username' => 'required',
+			], [
+				'required' => 'Поле ":attribute" обязательно для заполнения',
+			]);
 
-			if (isset($info['id']))
-			{
-				$this->db->query("DELETE FROM banned WHERE who = '" . $info['id'] . "'");
-				$this->db->query("UPDATE users SET banned = 0 WHERE id = '" . $info['id'] . "'");
+			$user = Users::query()->where('username', $fields['username'])->get(['id', 'username', 'banned', 'vacation'])->first();
 
-				if ($info['vacation'] == 1)
-					$this->db->query("UPDATE users SET vacation = 0 WHERE id = '" . $info['id'] . "'");
+			if (!$user)
+				return redirect(backpack_url('users/unban'))->with('error', 'Игрок не найден');
 
-				$this->message("Игрок ".$info['username']." разбанен!", 'Информация');
-			}
-			else
-				$this->message("Игрок не найден!", 'Информация');
+			Banned::query()->where('who', $user->id)->delete();
+			$user->banned = 0;
+
+			if ($user->vacation == 1)
+				$user->vacation = 0;
+
+			$user->save();
+
+			return redirect(backpack_url('users/unban'))->with('error', 'Игрок "'.$user->username.'" разбанен!');
 		}
 
-		View::share('title', 'Разблокировка');
+		View::share('title', 'Разблокировка доступа');
+		View::share('breadcrumbs', [
+			'Панель управления' => backpack_url('/'),
+			'Разблокировка доступа' => false,
+		]);
 
 		return view('admin.users.unban', []);
 	}

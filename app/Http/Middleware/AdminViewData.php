@@ -39,8 +39,6 @@ class AdminViewData
 		}
 
 		View::share('main_menu', $menu);
-		View::share('notifications', []);
-		View::share('breadcrumbs', []);
 
 		return $next($request);
 	}
@@ -99,7 +97,7 @@ class AdminViewData
 							if ($child['code'] === 'index')
 								$item['childrens'][$i]['url'] = $url;
 							else
-								$item['childrens'][$i]['url'] = $item['url'] ?? URL::route('admin.'.$item['code'].'.'.$child['code'], [], false);
+								$item['childrens'][$i]['url'] = $child['url'] ?? URL::route('admin.'.$item['code'].'.'.$child['code'], [], false);
 						}
 					}
 

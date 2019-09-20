@@ -10,4 +10,9 @@ class UserObserver
 	{
 		$model->_afterUpdateTechs();
 	}
+
+	public function deleted (User $model)
+	{
+		User::deleteById($model->id);
+	}
 }

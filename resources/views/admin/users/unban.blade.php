@@ -1,20 +1,27 @@
-<div class="portlet box green">
-	<div class="portlet-title">
-		<div class="caption">Форма разбана</div>
-	</div>
-	<div class="portlet-body form">
-		<form action="{{ url('users/unban/') }}" method="post" class="form-horizontal form-bordered">
-			<div class="form-body">
-				<div class="form-group">
-					<label class="col-md-3 control-label">Логин игрока</label>
-					<div class="col-md-9">
-						<input type="text" class="form-control" name="username" title="">
-					</div>
+@extends(backpack_view('blank'))
+@section('content')
+	<div class="row">
+		<div class="col-12">
+			@include('admin.components.flash-message')
+			<div class="card">
+				<div class="card-header">
+					Форма разбана
 				</div>
-				<div class="form-actions">
-					<button type="submit" class="btn green">Разбанить</button>
+				<div class="card-body">
+					<form action="" method="post" class="form-horizontal">
+						<div class="form-group row">
+							<label class="col-md-3 col-form-label">Логин игрока</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" name="username">
+							</div>
+						</div>
+						<div class="form-actions">
+							<button type="submit" class="btn btn-success">Разбанить</button>
+						</div>
+					</form>
 				</div>
 			</div>
-		</form>
+		</div>
 	</div>
 </div>
+@endsection
