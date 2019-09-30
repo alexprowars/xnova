@@ -30,14 +30,6 @@ class PaymentsController extends CrudController
 			'url'	=> backpack_url('payments'),
 			'icon'	=> 'money',
 			'sort'	=> 40,
-			'childrens' => [[
-				'code'	=> 'add',
-				'url'	=> backpack_url('payments/add'),
-				'title' => 'Начислить кредиты',
-			], [
-				'code'	=> 'index',
-				'title' => 'Транзакции',
-			]]
 		]];
 	}
 

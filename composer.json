@@ -4,8 +4,6 @@
             "php": "7.3"
         }
     },
-	"minimum-stability": "dev",
-	"prefer-stable": true,
     "require": {
         "nubs/random-name-generator": "^2.1",
         "gumlet/php-image-resize": "^1.8",
@@ -21,8 +19,8 @@
         "laravel/socialite": "^4.2",
         "socialiteproviders/vkontakte": "^4.0",
         "backpack/crud": "^4.0",
-        "backpack/permissionmanager": "^4.0",
-        "backpack/settings": "^4.0"
+        "backpack/permissionmanager": "^5.0",
+        "backpack/settings": "^3.0"
 	},
 	"replace": {
 		"symfony/polyfill-mbstring": "*",
