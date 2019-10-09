@@ -158,6 +158,7 @@ class AllianceController extends Controller
 			$parse['tag'] = $this->ally->tag;
 			$parse['members'] = $this->ally->members;
 			$parse['name'] = $this->ally->name;
+			$parse['id'] = $this->ally->id;
 
 			$this->setTitle('Ваш альянс');
 
@@ -165,425 +166,439 @@ class AllianceController extends Controller
 		}
 	}
 
-	public function adminAction ()
+	public function admin ()
 	{
-		$edit = Request::query('edit', 'ally');
-
 		$this->parseInfo($this->user->ally_id);
 
-		if ($edit == 'rights')
+		if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		$t = (int) Request::query('t', 1);
+
+		if ($t != 1 && $t != 2 && $t != 3)
+			$t = 1;
+
+		if (Request::post('options'))
 		{
-			if (!$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin())
-				throw new ErrorException(__('alliance.Denied_access'));
-			elseif (!empty(Request::post('newrangname')))
-			{
-				$this->ally->ranks[] = [
-					'name' => strip_tags(Request::post('newrangname')),
-					Alliance::CAN_DELETE_ALLIANCE => 0,
-					Alliance::CAN_KICK => 0,
-					Alliance::REQUEST_ACCESS => 0,
-					Alliance::CAN_WATCH_MEMBERLIST => 0,
-					Alliance::CAN_ACCEPT => 0,
-					Alliance::ADMIN_ACCESS => 0,
-					Alliance::CAN_WATCH_MEMBERLIST_STATUS => 0,
-					Alliance::CHAT_ACCESS => 0,
-					Alliance::CAN_EDIT_RIGHTS => 0,
-					Alliance::DIPLOMACY_ACCESS => 0,
-					Alliance::PLANET_ACCESS => 0
-				];
+			$this->ally->owner_range = Helpers::checkString(Request::post('owner_range', ''), true);
+			$this->ally->web = Helpers::checkString(Request::post('web', ''), true);
 
-				DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
-			}
-			elseif (Request::post('id') && is_array(Request::post('id')))
+			if (Request::instance()->hasFile('image'))
 			{
-				$ally_ranks_new = [];
+				$file = Request::instance()->file('image');
 
-				foreach (Request::post('id') as $id)
+				if ($file->isValid())
 				{
-					$name = $this->ally->ranks[$id]['name'];
+					$fileType = $file->getMimeType();
 
-					$ally_ranks_new[$id]['name'] = $name;
+					if (strpos($fileType, 'image/') === false)
+						throw new ErrorException('Разрешены к загрузке только изображения');
 
-					$ally_ranks_new[$id][Alliance::CAN_DELETE_ALLIANCE] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r0') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_DELETE_ALLIANCE]);
-					$ally_ranks_new[$id][Alliance::CAN_KICK] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r1') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_KICK]);
-					$ally_ranks_new[$id][Alliance::REQUEST_ACCESS] = Request::post('u' . $id . 'r2') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST] = Request::post('u' . $id . 'r3') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::CAN_ACCEPT] = Request::post('u' . $id . 'r4') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::ADMIN_ACCESS] = Request::post('u' . $id . 'r5') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS] = Request::post('u' . $id . 'r6') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::CHAT_ACCESS] = Request::post('u' . $id . 'r7') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::CAN_EDIT_RIGHTS] = Request::post('u' . $id . 'r8') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::DIPLOMACY_ACCESS] = Request::post('u' . $id . 'r9') ? 1 : 0;
-					$ally_ranks_new[$id][Alliance::PLANET_ACCESS] = Request::post('u' . $id . 'r10') ? 1 : 0;
-				}
+					if ($this->ally->image > 0)
+						Files::delete($this->ally->image);
 
-				$this->ally->ranks = $ally_ranks_new;
-
-				DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
-			}
-			elseif (Request::query('d') && isset($this->ally->ranks[Request::query('d', 'int')]))
-			{
-				unset($this->ally->ranks[Request::query('d', 'int')]);
-
-				DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
-			}
-
-			$parse['list'] = [];
-
-			if (is_array($this->ally->ranks) && count($this->ally->ranks) > 0)
-			{
-				foreach ($this->ally->ranks as $a => $b)
-				{
-					$list['id'] = $a;
-					$list['delete'] = '<a href="'.URL::to('alliance/admin/edit/rights/d/'.$a.'/').'"><img src="/images/abort.gif" alt="Удалить ранг"></a>';
-					$list['r0'] = $b['name'];
-					$list['a'] = $a;
-
-					if ($this->ally->owner == $this->user->id)
-						$list['r1'] = "<input type=checkbox name=\"u".$a."r0\"" . (($b[Alliance::CAN_DELETE_ALLIANCE] == 1) ? ' checked="checked"' : '') . ">";
-					else
-						$list['r1'] = "<b>" . (($b['delete'] == 1) ? '+' : '-') . "</b>";
-
-					if ($this->ally->owner == $this->user->id)
-						$list['r2'] = "<input type=checkbox name=\"u".$a."r1\"" . (($b[Alliance::CAN_KICK] == 1) ? ' checked="checked"' : '') . ">";
-					else
-						$list['r2'] = "<b>" . (($b['kick'] == 1) ? '+' : '-') . "</b>";
-
-					$list['r3']  = "<input type=checkbox name=\"u".$a."r2\"" .  (($b[Alliance::REQUEST_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r4']  = "<input type=checkbox name=\"u".$a."r3\"" .  (($b[Alliance::CAN_WATCH_MEMBERLIST] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r5']  = "<input type=checkbox name=\"u".$a."r4\"" .  (($b[Alliance::CAN_ACCEPT] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r6']  = "<input type=checkbox name=\"u".$a."r5\"" .  (($b[Alliance::ADMIN_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r7']  = "<input type=checkbox name=\"u".$a."r6\"" .  (($b[Alliance::CAN_WATCH_MEMBERLIST_STATUS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r8']  = "<input type=checkbox name=\"u".$a."r7\"" .  (($b[Alliance::CHAT_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r9']  = "<input type=checkbox name=\"u".$a."r8\"" .  (($b[Alliance::CAN_EDIT_RIGHTS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r10'] = "<input type=checkbox name=\"u".$a."r9\"" .  (($b[Alliance::DIPLOMACY_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
-					$list['r11'] = "<input type=checkbox name=\"u".$a."r10\"" . (($b[Alliance::PLANET_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
-
-					$parse['list'][] = $list;
+					$this->ally->image = Files::save($file);
 				}
 			}
 
-			$this->setTitle(__('alliance.Law_settings'));
+			if (Request::post('delete_image'))
+			{
+				if (Files::delete($this->ally->image))
+					$this->ally->image = 0;
+			}
 
-			return $parse;
+			$this->ally->request_notallow = (int) Request::post('request_notallow', 0);
+
+			if ($this->ally->request_notallow != 0 && $this->ally->request_notallow != 1)
+				throw new ErrorException("Недопустимое значение атрибута!");
+
+			$this->ally->update();
 		}
-		elseif ($edit == 'ally')
+		elseif (Request::post('t'))
 		{
-			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			$t = (int) Request::query('t', 1);
-
-			if ($t != 1 && $t != 2 && $t != 3)
-				$t = 1;
-
-			if (Request::post('options'))
-			{
-				$this->ally->owner_range = Helpers::checkString(Request::post('owner_range', ''), true);
-				$this->ally->web = Helpers::checkString(Request::post('web', ''), true);
-
-				if (Request::instance()->hasFile('image'))
-				{
-					$file = Request::instance()->file('image');
-
-					if ($file->isValid())
-					{
-						$fileType = $file->getMimeType();
-
-						if (strpos($fileType, 'image/') === false)
-							throw new ErrorException('Разрешены к загрузке только изображения');
-
-						if ($this->ally->image > 0)
-							Files::delete($this->ally->image);
-
-						$this->ally->image = Files::save($file);
-					}
-				}
-
-				if (Request::post('delete_image'))
-				{
-					if (Files::delete($this->ally->image))
-						$this->ally->image = 0;
-				}
-
-				$this->ally->request_notallow = (int) Request::post('request_notallow', 0);
-
-				if ($this->ally->request_notallow != 0 && $this->ally->request_notallow != 1)
-					throw new ErrorException("Недопустимое значение атрибута!");
-
-				$this->ally->update();
-			}
-			elseif (Request::post('t'))
-			{
-				if ($t == 3)
-					$this->ally->request = Format::text(Request::post('text', ''));
-				elseif ($t == 2)
-					$this->ally->text = Format::text(Request::post('text', ''));
-				else
-					$this->ally->description = Format::text(Request::post('text', ''));
-
-				$this->ally->update();
-			}
-
 			if ($t == 3)
-			{
-				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->request);
-				$parse['Show_of_request_text'] = "Текст заявок альянса";
-			}
+				$this->ally->request = Format::text(Request::post('text', ''));
 			elseif ($t == 2)
-			{
-				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->text);
-				$parse['Show_of_request_text'] = "Внутренний текст альянса";
-			}
+				$this->ally->text = Format::text(Request::post('text', ''));
 			else
-				$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->description);
+				$this->ally->description = Format::text(Request::post('text', ''));
 
-			$parse['t'] = $t;
-			$parse['owner'] = $this->ally->owner;
-			$parse['web'] = $this->ally->web;
-
-			$parse['image'] = '';
-
-			if ((int) $this->ally->image > 0)
-			{
-				$image = Files::getById($this->ally->image);
-
-				if ($image)
-					$parse['image'] = $image['src'];
-			}
-
-			$parse['request_allow'] = $this->ally->request_notallow;
-			$parse['owner_range'] = $this->ally->owner_range;
-
-			$parse['can_view_members'] = $this->ally->canAccess(Alliance::CAN_KICK);
-
-			if ($this->ally->owner == $this->user->id)
-				$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/edit/give/", 'Продолжить');
-
-			if ($this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
-				$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/edit/exit/", 'Продолжить');
-
-			$this->setTitle(__('alliance.Alliance_admin'));
-
-			return $parse;
+			$this->ally->update();
 		}
-		elseif ($edit == 'requests')
+
+		if ($t == 3)
 		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_ACCEPT) && !$this->ally->canAccess(Alliance::REQUEST_ACCESS))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			$show = (int) Request::query('show', 0);
-
-			if (($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT)) && Request::post('action'))
-			{
-				if (Request::post('action') == "Принять")
-				{
-					if ($this->ally->members >= 150)
-						throw new ErrorException('Альянс не может иметь больше 150 участников');
-
-					if (Request::post('text') != '')
-						$text_ot = strip_tags(Request::post('text'));
-
-					$check = DB::selectOne("SELECT a_id FROM alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "");
-
-					if ($check)
-					{
-						AllianceRequests::query()->where('u_id', $show)->delete();
-						AllianceMember::query()->where('u_id', $show)->delete();
-
-						DB::table('alliance_members')->insert(['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
-
-						DB::statement("UPDATE alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
-						DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
-
-						User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
-
-						throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
-					}
-				}
-				elseif (Request::post('action') == "Отклонить")
-				{
-					if (Request::post('text') != '')
-						$text_ot = strip_tags(Request::post('text'));
-
-					AllianceRequests::query()->where('u_id', $show)->where('a_id', $this->ally->id)->delete();
-
-					User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
-				}
-			}
-
-			$parse = [];
-			$parse['list'] = [];
-
-			$query = DB::select("SELECT u.id, u.username, r.* FROM alliance_requests r LEFT JOIN users u ON u.id = r.u_id WHERE a_id = '" . $this->ally->id . "'");
-
-			foreach ($query as $r)
-			{
-				if (isset($show) && $r->id == $show)
-				{
-					$s = [];
-					$s['username'] = $r->username;
-					$s['request_text'] = nl2br($r->request);
-					$s['id'] = $r->id;
-				}
-
-				$r->time = Game::datezone("Y-m-d H:i:s", $r->time);
-
-				$parse['list'][] = $r;
-			}
-
-			if (isset($show) && $show != 0 && count($parse['list']) > 0 && isset($s))
-				$parse['request'] = $s;
-			else
-				$parse['request'] = null;
-
-			$parse['tag'] = $this->ally->tag;
-
-			$this->setTitle(__('alliance.Check_the_requests'));
-
-			return $parse;
+			$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->request);
+			$parse['Show_of_request_text'] = "Текст заявок альянса";
 		}
-		elseif ($edit == 'name')
+		elseif ($t == 2)
 		{
-			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			if (Request::post('name'))
-			{
-				$name = trim(Request::post('name', ''));
-
-				if ($name == '')
-					throw new ErrorException("Введите новое название альянса");
-
-				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name))
-					throw new ErrorException("Название альянса содержит запрещённые символы");
-
-				$this->ally->name = addslashes(htmlspecialchars($name));
-				$this->ally->update();
-
-				DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "' WHERE ally_id = '" . $this->ally->id . "';");
-
-				throw new RedirectException('Название альянса изменено', '/alliance/admin/edit/name/');
-			}
-
-			$this->setTitle('Управление альянсом');
-
-			return [
-				'name' => $this->ally->name
-			];
-		}
-		elseif ($edit == 'tag')
-		{
-			if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			if (Request::post('tag'))
-			{
-				$tag = trim(Request::post('tag', ''));
-
-				if ($tag == '')
-					throw new RedirectException("Введите новую абревиатуру альянса", __('alliance.make_alliance'));
-
-				if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag))
-					throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
-
-				$this->ally->tag = addslashes(htmlspecialchars($tag));
-				$this->ally->update();
-
-				throw new RedirectException('Абревиатура альянса изменена', '/alliance/admin/edit/tag/');
-			}
-
-			$this->setTitle('Управление альянсом');
-
-			return [
-				'tag' => $this->ally->tag
-			];
-		}
-		elseif ($edit == 'exit')
-		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			$this->ally->deleteAlly();
-
-			throw new RedirectException('Альянс удалён', '/alliance/');
-		}
-		elseif ($edit == 'give')
-		{
-			if ($this->ally->owner != $this->user->id)
-				throw new RedirectException("Доступ запрещён.", "/alliance/");
-
-			if (Request::post('newleader') && $this->ally->owner == $this->user->id)
-			{
-				$info = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . Request::post('newleader', 'int') . "'");
-
-				if (!$info || $info->ally_id != $this->user->ally_id)
-					throw new RedirectException("Операция невозможна.", "/alliance/");
-
-				DB::statement("UPDATE alliance SET owner = '" . $info->id . "' WHERE id = " . $this->user->ally_id . " ");
-				DB::statement("UPDATE alliance_members SET rank = '0' WHERE u_id = '" . $info->id . "';");
-
-				throw new RedirectException('Правление передано', '/alliance/');
-			}
-
-			$listuser = DB::select("SELECT u.username, u.id, m.rank FROM users u LEFT JOIN alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $this->ally->owner . " AND m.rank != 0;");
-
-			$parse['righthand'] = '';
-
-			foreach ($listuser as $u)
-			{
-				if ($this->ally->ranks[$u->rank - 1][Alliance::CAN_EDIT_RIGHTS] == 1)
-					$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->username . "&nbsp;[" . $this->ally->ranks[$u->rank - 1]['name'] . "]&nbsp;&nbsp;</option>";
-			}
-
-			$parse['id'] = $this->user->id;
-
-			$this->setTitle('Передача альянса');
-
-			return $parse;
-		}
-		elseif ($edit == 'members')
-		{
-			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
-				throw new ErrorException(__('alliance.Denied_access'));
-
-			if (Request::query('kick'))
-			{
-				$kick = Request::query('kick', 0);
-
-				if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK) && $kick > 0)
-					throw new ErrorException(__('alliance.Denied_access'));
-
-				$u = DB::selectOne("SELECT * FROM users WHERE id = '" . $kick . "' LIMIT 1");
-
-				if ($u->ally_id == $this->ally->id && $u->id != $this->ally->owner)
-				{
-					DB::statement("UPDATE planets SET id_ally = 0 WHERE id_owner = ".$u->id." AND id_ally = ".$this->ally->id."");
-
-					DB::statement("UPDATE users SET ally_id = '0', ally_name = '' WHERE id = '" . $u->id . "'");
-					DB::statement("DELETE FROM alliance_members WHERE u_id = " . $u->id . ";");
-				}
-				else
-					throw new ErrorException(__('alliance.Denied_access'));
-			}
-			elseif (Request::post('newrang', '') != '' && Request::input('id', 0) != 0)
-			{
-				$id = Request::input('id', 0);
-				$rank = Request::post('newrang', 0);
-
-				$q = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . $id . "' LIMIT 1");
-
-				if ((isset($this->ally->ranks[$rank - 1]) || $rank == 0) && $q->id != $this->ally->owner && $q->ally_id == $this->ally->id)
-					DB::statement("UPDATE alliance_members SET rank = '" . $rank . "' WHERE u_id = '" . $id . "';");
-			}
-
-			return $this->membersAction();
+			$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->text);
+			$parse['Show_of_request_text'] = "Внутренний текст альянса";
 		}
 		else
-			throw new RedirectException('Запрашиваемого действия не существует', '/alliance/');
+			$parse['text'] = preg_replace('!<br.*>!iU', "\n", $this->ally->description);
+
+		$parse['t'] = $t;
+		$parse['owner'] = $this->ally->owner;
+		$parse['web'] = $this->ally->web;
+
+		$parse['image'] = '';
+
+		if ((int) $this->ally->image > 0)
+		{
+			$image = Files::getById($this->ally->image);
+
+			if ($image)
+				$parse['image'] = $image['src'];
+		}
+
+		$parse['request_allow'] = $this->ally->request_notallow;
+		$parse['owner_range'] = $this->ally->owner_range;
+
+		$parse['can_view_members'] = $this->ally->canAccess(Alliance::CAN_KICK);
+
+		if ($this->ally->owner == $this->user->id)
+			$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/give", 'Продолжить');
+
+		if ($this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
+			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/exit", 'Продолжить');
+
+		$this->setTitle(__('alliance.Alliance_admin'));
+
+		return $parse;
 	}
 
-	public function diplomacyAction ()
+	public function adminRights ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if (!$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin())
+			throw new ErrorException(__('alliance.Denied_access'));
+		elseif (!empty(Request::post('newrangname')))
+		{
+			$this->ally->ranks[] = [
+				'name' => strip_tags(Request::post('newrangname')),
+				Alliance::CAN_DELETE_ALLIANCE => 0,
+				Alliance::CAN_KICK => 0,
+				Alliance::REQUEST_ACCESS => 0,
+				Alliance::CAN_WATCH_MEMBERLIST => 0,
+				Alliance::CAN_ACCEPT => 0,
+				Alliance::ADMIN_ACCESS => 0,
+				Alliance::CAN_WATCH_MEMBERLIST_STATUS => 0,
+				Alliance::CHAT_ACCESS => 0,
+				Alliance::CAN_EDIT_RIGHTS => 0,
+				Alliance::DIPLOMACY_ACCESS => 0,
+				Alliance::PLANET_ACCESS => 0
+			];
+
+			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+		}
+		elseif (Request::post('id') && is_array(Request::post('id')))
+		{
+			$ally_ranks_new = [];
+
+			foreach (Request::post('id') as $id)
+			{
+				$name = $this->ally->ranks[$id]['name'];
+
+				$ally_ranks_new[$id]['name'] = $name;
+
+				$ally_ranks_new[$id][Alliance::CAN_DELETE_ALLIANCE] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r0') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_DELETE_ALLIANCE]);
+				$ally_ranks_new[$id][Alliance::CAN_KICK] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r1') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_KICK]);
+				$ally_ranks_new[$id][Alliance::REQUEST_ACCESS] = Request::post('u' . $id . 'r2') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST] = Request::post('u' . $id . 'r3') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_ACCEPT] = Request::post('u' . $id . 'r4') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::ADMIN_ACCESS] = Request::post('u' . $id . 'r5') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS] = Request::post('u' . $id . 'r6') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CHAT_ACCESS] = Request::post('u' . $id . 'r7') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_EDIT_RIGHTS] = Request::post('u' . $id . 'r8') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::DIPLOMACY_ACCESS] = Request::post('u' . $id . 'r9') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::PLANET_ACCESS] = Request::post('u' . $id . 'r10') ? 1 : 0;
+			}
+
+			$this->ally->ranks = $ally_ranks_new;
+
+			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+		}
+		elseif (Request::query('d') && isset($this->ally->ranks[Request::query('d', 'int')]))
+		{
+			unset($this->ally->ranks[Request::query('d', 'int')]);
+
+			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+		}
+
+		$parse['list'] = [];
+
+		if (is_array($this->ally->ranks) && count($this->ally->ranks) > 0)
+		{
+			foreach ($this->ally->ranks as $a => $b)
+			{
+				$list['id'] = $a;
+				$list['delete'] = '<a href="'.URL::to('alliance/admin/rights?d='.$a.'').'"><img src="/images/abort.gif" alt="Удалить ранг"></a>';
+				$list['r0'] = $b['name'];
+				$list['a'] = $a;
+
+				if ($this->ally->owner == $this->user->id)
+					$list['r1'] = "<input type=checkbox name=\"u".$a."r0\"" . (($b[Alliance::CAN_DELETE_ALLIANCE] == 1) ? ' checked="checked"' : '') . ">";
+				else
+					$list['r1'] = "<b>" . (($b['delete'] == 1) ? '+' : '-') . "</b>";
+
+				if ($this->ally->owner == $this->user->id)
+					$list['r2'] = "<input type=checkbox name=\"u".$a."r1\"" . (($b[Alliance::CAN_KICK] == 1) ? ' checked="checked"' : '') . ">";
+				else
+					$list['r2'] = "<b>" . (($b['kick'] == 1) ? '+' : '-') . "</b>";
+
+				$list['r3']  = "<input type=checkbox name=\"u".$a."r2\"" .  (($b[Alliance::REQUEST_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r4']  = "<input type=checkbox name=\"u".$a."r3\"" .  (($b[Alliance::CAN_WATCH_MEMBERLIST] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r5']  = "<input type=checkbox name=\"u".$a."r4\"" .  (($b[Alliance::CAN_ACCEPT] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r6']  = "<input type=checkbox name=\"u".$a."r5\"" .  (($b[Alliance::ADMIN_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r7']  = "<input type=checkbox name=\"u".$a."r6\"" .  (($b[Alliance::CAN_WATCH_MEMBERLIST_STATUS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r8']  = "<input type=checkbox name=\"u".$a."r7\"" .  (($b[Alliance::CHAT_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r9']  = "<input type=checkbox name=\"u".$a."r8\"" .  (($b[Alliance::CAN_EDIT_RIGHTS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r10'] = "<input type=checkbox name=\"u".$a."r9\"" .  (($b[Alliance::DIPLOMACY_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
+				$list['r11'] = "<input type=checkbox name=\"u".$a."r10\"" . (($b[Alliance::PLANET_ACCESS] == 1) ? ' checked="checked"' : '') . ">";
+
+				$parse['list'][] = $list;
+			}
+		}
+
+		$this->setTitle(__('alliance.Law_settings'));
+
+		return $parse;
+	}
+
+	public function adminRequests ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_ACCEPT) && !$this->ally->canAccess(Alliance::REQUEST_ACCESS))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		$show = (int) Request::query('show', 0);
+
+		if (($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT)) && Request::post('action'))
+		{
+			if (Request::post('action') == "Принять")
+			{
+				if ($this->ally->members >= 150)
+					throw new ErrorException('Альянс не может иметь больше 150 участников');
+
+				if (Request::post('text') != '')
+					$text_ot = strip_tags(Request::post('text'));
+
+				$check = DB::selectOne("SELECT a_id FROM alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "");
+
+				if ($check)
+				{
+					AllianceRequests::query()->where('u_id', $show)->delete();
+					AllianceMember::query()->where('u_id', $show)->delete();
+
+					DB::table('alliance_members')->insert(['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
+
+					DB::statement("UPDATE alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
+					DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
+
+					User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
+
+					throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
+				}
+			}
+			elseif (Request::post('action') == "Отклонить")
+			{
+				if (Request::post('text') != '')
+					$text_ot = strip_tags(Request::post('text'));
+
+				AllianceRequests::query()->where('u_id', $show)->where('a_id', $this->ally->id)->delete();
+
+				User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
+			}
+		}
+
+		$parse = [];
+		$parse['list'] = [];
+
+		$query = DB::select("SELECT u.id, u.username, r.* FROM alliance_requests r LEFT JOIN users u ON u.id = r.u_id WHERE a_id = '" . $this->ally->id . "'");
+
+		foreach ($query as $r)
+		{
+			if (isset($show) && $r->id == $show)
+			{
+				$s = [];
+				$s['username'] = $r->username;
+				$s['request_text'] = nl2br($r->request);
+				$s['id'] = $r->id;
+			}
+
+			$r->time = Game::datezone("Y-m-d H:i:s", $r->time);
+
+			$parse['list'][] = $r;
+		}
+
+		if (isset($show) && $show != 0 && count($parse['list']) > 0 && isset($s))
+			$parse['request'] = $s;
+		else
+			$parse['request'] = null;
+
+		$parse['tag'] = $this->ally->tag;
+
+		$this->setTitle(__('alliance.Check_the_requests'));
+
+		return $parse;
+	}
+
+	public function adminName ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		if (Request::post('name'))
+		{
+			$name = trim(Request::post('name', ''));
+
+			if ($name == '')
+				throw new ErrorException("Введите новое название альянса");
+
+			if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name))
+				throw new ErrorException("Название альянса содержит запрещённые символы");
+
+			$this->ally->name = addslashes(htmlspecialchars($name));
+			$this->ally->update();
+
+			DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "' WHERE ally_id = '" . $this->ally->id . "';");
+
+			throw new RedirectException('Название альянса изменено', '/alliance/admin/name');
+		}
+
+		$this->setTitle('Управление альянсом');
+
+		return [
+			'name' => $this->ally->name
+		];
+	}
+
+	public function adminTag ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if (!$this->ally->canAccess(Alliance::ADMIN_ACCESS))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		if (Request::post('tag'))
+		{
+			$tag = trim(Request::post('tag', ''));
+
+			if ($tag == '')
+				throw new RedirectException("Введите новую абревиатуру альянса", __('alliance.make_alliance'));
+
+			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag))
+				throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
+
+			$this->ally->tag = addslashes(htmlspecialchars($tag));
+			$this->ally->update();
+
+			throw new RedirectException('Абревиатура альянса изменена', '/alliance/admin/tag');
+		}
+
+		$this->setTitle('Управление альянсом');
+
+		return [
+			'tag' => $this->ally->tag
+		];
+	}
+
+	public function adminExit ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_DELETE_ALLIANCE))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		$this->ally->deleteAlly();
+
+		throw new RedirectException('Альянс удалён', '/alliance/');
+	}
+
+	public function adminGive ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if ($this->ally->owner != $this->user->id)
+			throw new RedirectException("Доступ запрещён.", "/alliance/");
+
+		if (Request::post('newleader') && $this->ally->owner == $this->user->id)
+		{
+			$info = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . Request::post('newleader', 'int') . "'");
+
+			if (!$info || $info->ally_id != $this->user->ally_id)
+				throw new RedirectException("Операция невозможна.", "/alliance/");
+
+			DB::statement("UPDATE alliance SET owner = '" . $info->id . "' WHERE id = " . $this->user->ally_id . " ");
+			DB::statement("UPDATE alliance_members SET rank = '0' WHERE u_id = '" . $info->id . "';");
+
+			throw new RedirectException('Правление передано', '/alliance/');
+		}
+
+		$listuser = DB::select("SELECT u.username, u.id, m.rank FROM users u LEFT JOIN alliance_members m ON m.u_id = u.id WHERE u.ally_id = '" . $this->user->ally_id . "' AND u.id != " . $this->ally->owner . " AND m.rank != 0;");
+
+		$parse['righthand'] = '';
+
+		foreach ($listuser as $u)
+		{
+			if ($this->ally->ranks[$u->rank - 1][Alliance::CAN_EDIT_RIGHTS] == 1)
+				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->username . "&nbsp;[" . $this->ally->ranks[$u->rank - 1]['name'] . "]&nbsp;&nbsp;</option>";
+		}
+
+		$parse['id'] = $this->user->id;
+
+		$this->setTitle('Передача альянса');
+
+		return $parse;
+	}
+
+	public function adminMembers ()
+	{
+		$this->parseInfo($this->user->ally_id);
+
+		if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK))
+			throw new ErrorException(__('alliance.Denied_access'));
+
+		if (Request::query('kick'))
+		{
+			$kick = Request::query('kick', 0);
+
+			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK) && $kick > 0)
+				throw new ErrorException(__('alliance.Denied_access'));
+
+			$u = DB::selectOne("SELECT * FROM users WHERE id = '" . $kick . "' LIMIT 1");
+
+			if ($u->ally_id == $this->ally->id && $u->id != $this->ally->owner)
+			{
+				DB::statement("UPDATE planets SET id_ally = 0 WHERE id_owner = ".$u->id." AND id_ally = ".$this->ally->id."");
+
+				DB::statement("UPDATE users SET ally_id = '0', ally_name = '' WHERE id = '" . $u->id . "'");
+				DB::statement("DELETE FROM alliance_members WHERE u_id = " . $u->id . ";");
+			}
+			else
+				throw new ErrorException(__('alliance.Denied_access'));
+		}
+		elseif (Request::post('newrang', '') != '' && Request::input('id', 0) != 0)
+		{
+			$id = Request::input('id', 0);
+			$rank = Request::post('newrang', 0);
+
+			$q = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . $id . "' LIMIT 1");
+
+			if ((isset($this->ally->ranks[$rank - 1]) || $rank == 0) && $q->id != $this->ally->owner && $q->ally_id == $this->ally->id)
+				DB::statement("UPDATE alliance_members SET rank = '" . $rank . "' WHERE u_id = '" . $id . "';");
+		}
+
+		return $this->members();
+	}
+
+	public function diplomacy ()
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -668,7 +683,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function exitAction ()
+	public function exit ()
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -687,7 +702,7 @@ class AllianceController extends Controller
 		$this->setTitle('Выход их альянса');
 	}
 
-	public function membersAction ()
+	public function members ()
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -806,7 +821,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function chatAction ()
+	public function chat ()
 	{
 		if ($this->user->messages_ally != 0)
 		{
@@ -889,7 +904,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function infoAction ($id = '')
+	public function info ($id)
 	{
 		if ($id != '' && !is_numeric($id))
 			$allyrow = DB::selectOne("SELECT * FROM alliance WHERE tag = '" . addslashes(htmlspecialchars($id)) . "'");
@@ -930,7 +945,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function makeAction ()
+	public function make ()
 	{
 		if (!Auth::check())
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -940,10 +955,10 @@ class AllianceController extends Controller
 		if ($this->user->ally_id > 0 || $ally_request)
 			throw new ErrorException(__('alliance.Denied_access'));
 
-		if (Request::has('yes') && Request::instance()->isMethod('post'))
+		if (Request::instance()->isMethod('post'))
 		{
-			$tag = Request::post('atag', '');
-			$name = Request::post('aname', '');
+			$tag = Request::post('tag', '');
+			$name = Request::post('name', '');
 
 			if ($tag == '')
 				throw new ErrorException(__('alliance.have_not_tag'));
@@ -983,13 +998,16 @@ class AllianceController extends Controller
 			$this->user->update();
 
 			$this->setTitle(__('alliance.make_alliance'));
-			$this->view->setVar('html', $this->MessageForm(str_replace('%s', $alliance->tag, __('alliance.ally_maked')), str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), "/alliance/", __('alliance.Ok')));
+
+			throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');
 		}
 		else
 			$this->setTitle(__('alliance.make_alliance'));
+
+		return [];
 	}
 
-	public function searchAction ()
+	public function search ()
 	{
 		if (!Auth::check())
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -1000,6 +1018,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 
 		$parse = [];
+		$parse['result'] = [];
 
 		$text = '';
 
@@ -1013,8 +1032,6 @@ class AllianceController extends Controller
 			$search = Alliance::query()->where('name', 'LIKE', '%'.$text.'%')
 				->orWhere('tag', 'LIKE', '%'.$text.'%')
 				->limit(30)->get();
-
-			$parse['result'] = [];
 
 			if ($search->count())
 			{
@@ -1038,7 +1055,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function applyAction ()
+	public function apply ()
 	{
 		if (!Auth::check())
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -1084,7 +1101,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function statAction ($id)
+	public function stat ($id)
 	{
 		if (!Auth::check())
 			throw new PageException(__('alliance.Denied_access'));

@@ -31,7 +31,26 @@ Route::middleware(['auth'])->group(function ()
 	Route::get('info/{id}', 'InfoController@index')->name('info');
 	Route::get('hall', 'HallController@index')->name('hall');
 	Route::get('chat', 'ChatController@index')->name('chat');
+
 	Route::match(['get', 'post'],'alliance', 'AllianceController@index')->name('alliance');
+	Route::match(['get', 'post'],'alliance/search', 'AllianceController@search')->name('alliance.search');
+	Route::match(['get', 'post'],'alliance/make', 'AllianceController@make')->name('alliance.make');
+	Route::match(['get', 'post'],'alliance/apply', 'AllianceController@apply')->name('alliance.apply');
+	Route::match(['get', 'post'],'alliance/chat', 'AllianceController@chat')->name('alliance.chat');
+	Route::match(['get', 'post'],'alliance/admin', 'AllianceController@admin')->name('alliance.admin');
+	Route::match(['get', 'post'],'alliance/admin/rights', 'AllianceController@adminRights')->name('alliance.admin.rights');
+	Route::match(['get', 'post'],'alliance/admin/requests', 'AllianceController@adminRequests')->name('alliance.admin.requests');
+	Route::match(['get', 'post'],'alliance/admin/name', 'AllianceController@adminName')->name('alliance.admin.name');
+	Route::match(['get', 'post'],'alliance/admin/tag', 'AllianceController@adminTag')->name('alliance.admin.tag');
+	Route::match(['get', 'post'],'alliance/admin/exit', 'AllianceController@adminExit')->name('alliance.admin.exit');
+	Route::match(['get', 'post'],'alliance/admin/give', 'AllianceController@adminGive')->name('alliance.admin.give');
+	Route::match(['get', 'post'],'alliance/admin/members', 'AllianceController@adminMembers')->name('alliance.admin.members');
+	Route::match(['get', 'post'],'alliance/diplomacy', 'AllianceController@diplomacy')->name('alliance.diplomacy');
+	Route::match(['get', 'post'],'alliance/exit', 'AllianceController@exit')->name('alliance.exit');
+	Route::match(['get', 'post'],'alliance/members', 'AllianceController@members')->name('alliance.members');
+	Route::get('alliance/info/{id}', 'AllianceController@info')->name('alliance.info');
+	Route::get('alliance/stat/{id}', 'AllianceController@stat')->name('alliance.stat');
+
 	Route::match(['get', 'post'],'buddy', 'BuddyController@index')->name('buddy');
 	Route::match(['get', 'post'],'buildings', 'BuildingsController@index')->name('buildings');
 	Route::match(['get', 'post'],'credits', 'CreditsController@index')->name('credits');

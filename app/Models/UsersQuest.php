@@ -15,4 +15,5 @@ class UsersQuest extends Model
 {
 	public $timestamps = false;
 	public $table = 'users_quests';
+	protected $guarded = [];
 }
