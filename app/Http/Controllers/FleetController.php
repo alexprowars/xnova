@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
@@ -19,10 +19,11 @@ class FleetController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index ()
+	public function index()
 	{
-		if (!$this->planet)
+		if (!$this->planet) {
 			throw new ErrorException(__('fleet.fl_noplanetrow'));
+		}
 
 		$flyingFleets = Models\Fleet::query()->where('owner', $this->user->id)->count();
 
@@ -30,16 +31,16 @@ class FleetController extends Controller
 		$curExpeditions = 0;
 		$maxExpeditions = 0;
 
-		if ($expeditionTech >= 1)
-		{
+		if ($expeditionTech >= 1) {
 			$curExpeditions = Models\Fleet::query()->where('owner', $this->user->id)->where('mission', 15)->count();
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
 		$maxFleets = 1 + $this->user->getTechLevel('computer');
 
-		if ($this->user->rpg_admiral > time())
+		if ($this->user->rpg_admiral > time()) {
 			$maxFleets += 2;
+		}
 
 		$galaxy = (int) Request::query('galaxy', 0);
 		$system = (int) Request::query('system', 0);
@@ -47,17 +48,21 @@ class FleetController extends Controller
 		$planet_type = (int) Request::query('type', 0);
 		$mission = (int) Request::query('mission', 0);
 
-		if (!$galaxy)
+		if (!$galaxy) {
 			$galaxy = (int) $this->planet->galaxy;
+		}
 
-		if (!$system)
+		if (!$system) {
 			$system = (int) $this->planet->system;
+		}
 
-		if (!$planet)
+		if (!$planet) {
 			$planet = (int) $this->planet->planet;
+		}
 
-		if (!$planet_type)
+		if (!$planet_type) {
 			$planet_type = 1;
+		}
 
 		$parse = [];
 		$parse['curFleets'] = $flyingFleets;
@@ -70,8 +75,7 @@ class FleetController extends Controller
 
 		$parse['fleets'] = [];
 
-		foreach ($fleets as $fleet)
-		{
+		foreach ($fleets as $fleet) {
 			$parse['fleets'][] = [
 				'id' => (int) $fleet->id,
 				'mission' => (int) $fleet->mission,
@@ -106,10 +110,10 @@ class FleetController extends Controller
 
 		$parse['ships'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
-		{
-			if ($this->planet->getUnitCount($i) > 0)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
+			if ($this->planet->getUnitCount($i) > 0) {
 				$parse['ships'][] = (new Entity\Fleet($i, $this->planet->getUnitCount($i)))->getInfo();
+			}
 		}
 
 		$this->setTitle(__('fleet.fl_title_0'));

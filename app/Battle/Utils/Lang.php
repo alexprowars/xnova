@@ -19,5 +19,3 @@ interface Lang
 	public function getMoonProb($prob);
 	public function getNewMoon();
 }
-
-?>

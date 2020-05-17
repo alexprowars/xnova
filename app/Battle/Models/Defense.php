@@ -4,7 +4,7 @@ namespace Xnova\Battle\Models;
 
 class Defense extends ShipType
 {
-	public function getType ()
+	public function getType()
 	{
 		return 'Defense';
 	}
@@ -14,5 +14,3 @@ class Defense extends ShipType
 		return ($this->repairProb > 0 ? $this->repairProb : DEFENSE_REPAIR_PROB);
 	}
 }
-
-?>

@@ -26,10 +26,10 @@ class Queue extends Model
 
 	protected $guarded = [];
 
-	const TYPE_BUILD = 'build';
-	const TYPE_TECH = 'tech';
-	const TYPE_UNIT = 'unit';
+	public const TYPE_BUILD = 'build';
+	public const TYPE_TECH = 'tech';
+	public const TYPE_UNIT = 'unit';
 
-	const OPERATION_BUILD = 'build';
-	const OPERATION_DESTROY = 'destroy';
+	public const OPERATION_BUILD = 'build';
+	public const OPERATION_DESTROY = 'destroy';
 }

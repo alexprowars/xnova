@@ -11,18 +11,16 @@ abstract class Math
 {
 	public static function divide(Number2 $num, Number2 $denum, $real = false)
 	{
-		if ($real)
-		{
-			if ($denum->result == 0)
+		if ($real) {
+			if ($denum->result == 0) {
 				throw new Exception('denum is zero');
+			}
 
 			$shots = floor($num->result / $denum->result);
 			$rest = Math::rest($num->result, $denum->result);
 
 			return new Number($shots, $rest);
-		}
-		else
-		{
+		} else {
 			$shots = $num->result / $denum->result;
 
 			return new Number($shots);
@@ -33,8 +31,9 @@ abstract class Math
 	{
 		$result = $first->result * $second->result;
 
-		if ($real)
-			return new Number(floor($result),$result - floor($result));
+		if ($real) {
+			return new Number(floor($result), $result - floor($result));
+		}
 
 		return new Number($result);
 	}
@@ -44,15 +43,13 @@ abstract class Math
 		return ($x >= $y ? 1 : 0);
 	}
 
-	public static function rest ($dividendo, $divisore, $real = true)
+	public static function rest($dividendo, $divisore, $real = true)
 	{
-		while ($divisore < 1)
-		{
+		while ($divisore < 1) {
 			$divisore *= 10;
 			$dividendo *= 10;
 		}
-		if (!$real)
-		{
+		if (!$real) {
 			$decimal = (int)$dividendo - $dividendo;
 			return $divisore % $dividendo + $decimal;
 		}
@@ -61,11 +58,13 @@ abstract class Math
 
 	public static function tryEvent($probability, $callback, $callbackParam)
 	{
-		if (!is_callable($callback))
+		if (!is_callable($callback)) {
 			throw new Exception();
+		}
 
-		if (mt_rand(0, 99) < $probability)
+		if (mt_rand(0, 99) < $probability) {
 			return call_user_func($callback, $callbackParam);
+		}
 
 		return false;
 	}
@@ -75,11 +74,10 @@ abstract class Math
 		$sum = 0;
 		$array_obj = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));
 
-		foreach ($array_obj as $key => $value)
+		foreach ($array_obj as $key => $value) {
 			$sum += $value;
+		}
 
 		return $sum;
 	}
 }
-
-?>

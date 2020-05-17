@@ -1,12 +1,12 @@
 <?
 
-namespace Xnova\Missions;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Missions;
 
 use Illuminate\Support\Facades\Config;
 use Xnova\FleetEngine;
@@ -22,9 +22,9 @@ class Spy extends FleetEngine implements Mission
 	public function TargetEvent()
 	{
 		/** @var User $owner */
-		$owner = User::query()->find($this->_fleet->owner);
+		$owner = User::query()->find($this->fleet->owner);
 
-		$TargetPlanet = Planet::findByCoords($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type);
+		$TargetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
 
 		if ($TargetPlanet->id_owner == 0)
 		{
@@ -43,7 +43,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		$TargetPlanet->assignUser($targetUser);
-		$TargetPlanet->resourceUpdate($this->_fleet->start_time);
+		$TargetPlanet->resourceUpdate($this->fleet->start_time);
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();
@@ -60,7 +60,7 @@ class Spy extends FleetEngine implements Mission
 
 		$LS = 0;
 
-		$fleetData = $this->_fleet->getShips();
+		$fleetData = $this->fleet->getShips();
 
 		if (isset($fleetData[210]))
 			$LS = $fleetData[210]['count'];
@@ -70,7 +70,7 @@ class Spy extends FleetEngine implements Mission
 			$defenders = Fleet::find([
 				'colums' => 'fleet_array',
 				'conditions' => 'end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3',
-				'bind' => [$this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, $this->_fleet->end_type]
+				'bind' => [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type]
 			]);
 
 			foreach ($defenders as $row)
@@ -137,9 +137,9 @@ class Spy extends FleetEngine implements Mission
 				$DestProba = "<font color=\"red\">" . __('fleet_engine.sys_mess_spy_destroyed') . "</font>";
 
 			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"/fleet/g" . $this->_fleet->end_galaxy . "/s" . $this->_fleet->end_system . "/";
-			$AttackLink .= "p" . $this->_fleet->end_planet . "/t" . $this->_fleet->end_type . "/";
-			$AttackLink .= "m" . $this->_fleet->end_type . "/";
+			$AttackLink .= "<a href=\"/fleet/g" . $this->fleet->end_galaxy . "/s" . $this->fleet->end_system . "/";
+			$AttackLink .= "p" . $this->fleet->end_planet . "/t" . $this->fleet->end_type . "/";
+			$AttackLink .= "m" . $this->fleet->end_type . "/";
 			$AttackLink .= " \">" . __('main.type_mission.1') . "";
 			$AttackLink .= "</a></center>";
 
@@ -172,23 +172,23 @@ class Spy extends FleetEngine implements Mission
 				$MessageEnd .= "Симуляция</a></center>";
 			}
 
-			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->_fleet->start_time . "')\">BB-код</a></center>";
+			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->fleet->start_time . "')\">BB-код</a></center>";
 
-			$SpyMessage = "<div id=\"sp" . $this->_fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
+			$SpyMessage = "<div id=\"sp" . $this->fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
 
-			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 0, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
+			User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
 
-			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->_fleet->owner_name ." ";
-			$TargetMessage .= $this->_fleet->getStartAdressLink();
+			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->fleet->owner_name ." ";
+			$TargetMessage .= $this->fleet->getStartAdressLink();
 			$TargetMessage .= __('fleet_engine.sys_mess_spy_seen_at') . " " . $TargetPlanet->name;
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
 			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . ".";
 
-			User::sendMessage($TargetPlanet->id_owner, 0, $this->_fleet->start_time, 0, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
+			User::sendMessage($TargetPlanet->id_owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
 
 			if ($TargetChances > $SpyerChances)
 			{
-				$mission = new Attack($this->_fleet);
+				$mission = new Attack($this->fleet);
 				$mission->TargetEvent();
 			}
 			else

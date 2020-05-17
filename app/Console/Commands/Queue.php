@@ -11,28 +11,27 @@ use Xnova\Vars;
 
 class Queue extends Command
 {
-    protected $signature = 'game:queue';
-    protected $description = '';
+	protected $signature = 'game:queue';
+	protected $description = '';
 
-    public function handle ()
-    {
+	public function handle()
+	{
 		Vars::init();
 
 		define('MAX_RUNS', 15);
 		define('TIME_LIMIT', 60);
 
-		if (function_exists('sys_getloadavg'))
-		{
+		if (function_exists('sys_getloadavg')) {
 			$load = sys_getloadavg();
 
-			if ($load[0] > 3)
+			if ($load[0] > 3) {
 				die('Server too busy. Please try again later.');
+			}
 		}
 
 		$totalRuns = 1;
 
-		while ($totalRuns < MAX_RUNS)
-		{
+		while ($totalRuns < MAX_RUNS) {
 			$items = Models\Queue::query()
 				->where('time', '>', 0)
 				->where('time_end', '<=', time() + 10)
@@ -42,28 +41,26 @@ class Queue extends Command
 				->get();
 
 			/** @var Models\Queue $item */
-			foreach ($items as $item)
-			{
-				try
-				{
+			foreach ($items as $item) {
+				try {
 					/** @var User $user */
 					$user = User::query()->find((int) $item->user_id);
 
 					/** @var Planet $planet */
 					$planet = Planet::query()->find((int) $item->planet_id);
 
-					if ($planet)
+					if ($planet) {
 						$planet->assignUser($user);
+					}
 
-					if (!$user || !$planet)
+					if (!$user || !$planet) {
 						throw new Exception('Cron::update::queueAction::user or planet not found');
+					}
 
 					$queueManager = new \Xnova\Queue($user, $planet);
 					$queueManager->update();
-				}
-				catch (Exception $e)
-				{
-					file_put_contents(ROOT_PATH.'/php_errors.log', "\n\n".$e->getMessage()."\n\n", FILE_APPEND);
+				} catch (Exception $e) {
+					file_put_contents(ROOT_PATH . '/php_errors.log', "\n\n" . $e->getMessage() . "\n\n", FILE_APPEND);
 
 					echo $e->getMessage();
 				}

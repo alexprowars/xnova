@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,31 +20,32 @@ use Xnova\User;
 
 class PlayersController extends Controller
 {
-	public function index ($userId)
+	public function index($userId)
 	{
 		$parse = [];
 
-		if (!$userId)
+		if (!$userId) {
 			throw new PageException('Профиль не найден');
+		}
 
 		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN users_info ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
 
-		if (!$user)
+		if (!$user) {
 			throw new PageException('Профиль не найден');
+		}
 
 		$parse['avatar'] = 'images/no_photo.gif';
 
-		if ($user->image > 0)
-		{
+		if ($user->image > 0) {
 			$file = Files::getById($user->image);
 
-			if ($file)
+			if ($file) {
 				$parse['avatar'] = $file['src'];
-		}
-		elseif ($user->avatar != 0)
-		{
-			if ($user->avatar != 99)
-				$parse['avatar'] = "images/faces/".$user->sex."/" . $user->avatar . ".png";
+			}
+		} elseif ($user->avatar != 0) {
+			if ($user->avatar != 99) {
+				$parse['avatar'] = "images/faces/" . $user->sex . "/" . $user->avatar . ".png";
+			}
 		}
 
 		$parse['avatar'] = URL::asset($parse['avatar']);
@@ -52,15 +53,15 @@ class PlayersController extends Controller
 
 		$planet = Planets::findByCoords($user->galaxy, $user->system, $user->planet, 1);
 
-		if ($planet)
+		if ($planet) {
 			$parse['userplanet'] = $planet->name;
+		}
 
 		$parse['stats'] = false;
 
 		$points = DB::selectOne("SELECT * FROM statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "'");
 
-		if ($points)
-		{
+		if ($points) {
 			$parse['stats'] = [
 				'tech_rank' => (int) $points->tech_rank ?? 0,
 				'tech_points' => (int) $points->tech_points ?? 0,
@@ -99,24 +100,25 @@ class PlayersController extends Controller
 		return $parse;
 	}
 
-	public function stat ($userId)
+	public function stat($userId)
 	{
-		if (!Auth::check())
+		if (!Auth::check()) {
 			throw new PageException('Доступ запрещен');
+		}
 
-		$player = DB::selectOne("SELECT id, username FROM users WHERE id = ".$userId."");
+		$player = DB::selectOne("SELECT id, username FROM users WHERE id = " . $userId . "");
 
-		if (!$player)
+		if (!$player) {
 			throw new ErrorException('Информация о данном игроке не найдена');
+		}
 
 		$parse = [];
 		$parse['name'] = $player->username;
 		$parse['points'] = [];
 
-		$items = DB::select("SELECT * FROM log_stats WHERE object_id = ".$userId." AND type = 1 AND time > ".(time() - 14 * 86400)." ORDER BY time ASC");
+		$items = DB::select("SELECT * FROM log_stats WHERE object_id = " . $userId . " AND type = 1 AND time > " . (time() - 14 * 86400) . " ORDER BY time ASC");
 
-		foreach ($items as $item)
-		{
+		foreach ($items as $item) {
 			$parse['points'][] = [
 				'date' => (int) $item->time,
 				'rank' => [

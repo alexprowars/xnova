@@ -9,17 +9,17 @@ use Xnova\Models;
 
 class UpdateOnline extends Command
 {
-    protected $signature = 'game:update.online';
-    protected $description = '';
+	protected $signature = 'game:update.online';
+	protected $description = '';
 
-    public function handle ()
-    {
+	public function handle()
+	{
 		$online = Models\Users::query()
 			->where('onlinetime', '>', time() - Config::get('settings.onlinetime') * 60)
 			->count();
 
 		Setting::set('users_online', $online);
 
-		echo $online." users online\n";
-    }
+		echo $online . " users online\n";
+	}
 }

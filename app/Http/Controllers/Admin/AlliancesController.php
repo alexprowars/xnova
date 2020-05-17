@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\View;
 
 class AlliancesController extends Controller
 {
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'alliances',
@@ -17,7 +17,7 @@ class AlliancesController extends Controller
 		]];
 	}
 
-	public function index ()
+	public function index()
 	{
 		$query = $this->db->query("SELECT a.`id`, a.`name`, a.`tag`,  a.`owner`, a.`create_time`, a.`description`, a.`text`, a.`members`, u.`username` FROM alliance a, users u WHERE u.id = a.owner");
 
@@ -32,13 +32,11 @@ class AlliancesController extends Controller
 		$parse['mail'] = '';
 		$parse['leader'] = '';
 
-		while ($u = $query->fetch())
-		{
+		while ($u = $query->fetch()) {
 			$parse['alliance'][] = $u;
 		}
 
-		if (isset($_GET['desc']))
-		{
+		if (isset($_GET['desc'])) {
 			$ally_id = intval($_GET['desc']);
 			$info = $this->db->query("SELECT `description` FROM alliance WHERE id='" . $ally_id . "'");
 			$ally_text = $info->fetch();
@@ -50,8 +48,7 @@ class AlliancesController extends Controller
 					. "</tr>";
 		}
 
-		if (isset($_GET['edit']))
-		{
+		if (isset($_GET['edit'])) {
 			$ally_id = intval($_GET['edit']);
 			$info = $this->db->query("SELECT `description` FROM alliance WHERE id='" . $ally_id . "'");
 			$ally_text = $info->fetch();
@@ -66,10 +63,10 @@ class AlliancesController extends Controller
 					. "<td class=b colspan=9><center><b><input type=submit value=Speichern></center></b></td>"
 					. "</form></tr>";
 
-			if (isset($_POST['desc']))
-			{
-				if (!$this->access->canWriteController(self::CODE, 'admin'))
+			if (isset($_POST['desc'])) {
+				if (!$this->access->canWriteController(self::CODE, 'admin')) {
 					throw new \Exception('Access denied');
+				}
 
 				$this->db->query("UPDATE alliance SET `description` = '" . addslashes($_POST['desc']) . "' WHERE `id` = '" . intval($_GET['edit']) . "'");
 
@@ -78,8 +75,7 @@ class AlliancesController extends Controller
 		}
 
 
-		if (isset($_GET['allyname']))
-		{
+		if (isset($_GET['allyname'])) {
 			$ally_id = intval($_GET['allyname']);
 
 			$u = $this->db->query("SELECT `image`, `web`, `name`, `tag` FROM alliance WHERE `id` = '" . $ally_id . "'")->fetch();
@@ -103,19 +99,17 @@ class AlliancesController extends Controller
 					. "<td class=b colspan=9><center><b><input type=submit value=Сохранить></center></b></td>"
 					. "</form></tr>";
 
-			if (isset($_POST['name']))
-			{
-				if (!$this->access->canWriteController(self::CODE, 'admin'))
+			if (isset($_POST['name'])) {
+				if (!$this->access->canWriteController(self::CODE, 'admin')) {
 					throw new \Exception('Access denied');
+				}
 
 				$this->db->query("UPDATE alliance SET `name` = '" . addslashes($_POST['name']) . "', `tag` = '" . addslashes($_POST['tag']) . "', `image` = '" . addslashes($_POST['image']) . "', `web` = '" . addslashes($_POST['web']) . "' WHERE `id` = '" . intval($_GET['allyname']) . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
-
 		}
 
-		if (isset($_GET['mitglieder']))
-		{
+		if (isset($_GET['mitglieder'])) {
 			$ally_id = intval($_GET['mitglieder']);
 
 			$users = $this->db->query("SELECT `id`, `username` FROM users WHERE ally_id='" . $ally_id . "'");
@@ -123,8 +117,7 @@ class AlliancesController extends Controller
 			$parse['member_row'] = '';
 
 			$i = 0;
-			while ($u = $users->fetch())
-			{
+			while ($u = $users->fetch()) {
 				$parse['member_row'] .= "<tr>"
 						. "<td class=b colspan=2><center><b>" . $u['id'] . "</center></b></td>"
 						. "<td class=b  colspan=5><center><b><a href=?set=messages&mode=write&id=" . $u['id'] . ">" . $u['username'] . "</a></center></b></td>"
@@ -134,8 +127,7 @@ class AlliancesController extends Controller
 			}
 		}
 
-		if (isset($_GET['ent']))
-		{
+		if (isset($_GET['ent'])) {
 			$user_id = intval($_GET['ent']);
 
 			$parse['name'] .= "<tr>"
@@ -147,20 +139,18 @@ class AlliancesController extends Controller
 					. "<td class=b colspan=9><center><b><input type=submit value=Удалить name=ent></center></b></td>"
 					. "</form></tr>";
 
-			if (isset($_POST['ent']))
-			{
-				if (!$this->access->canWriteController(self::CODE, 'admin'))
+			if (isset($_POST['ent'])) {
+				if (!$this->access->canWriteController(self::CODE, 'admin')) {
 					throw new \Exception('Access denied');
+				}
 
 				$user_id = $_GET['ent'];
 				$this->db->query("UPDATE users SET `ally_id`=0, `ally_name` = '' WHERE `id`='" . $user_id . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
-
 		}
 
-		if (isset($_GET['mail']))
-		{
+		if (isset($_GET['mail'])) {
 			$ally_id = $_GET['mail'];
 
 			$parse['mail'] = "<tr>"
@@ -174,15 +164,14 @@ class AlliancesController extends Controller
 					. "<td class=b colspan=9><center><b><input type=submit value=Отправить></center></b></td>"
 					. "</form></tr>";
 
-			if (isset($_POST['text']))
-			{
-				if (!$this->access->canWriteController(self::CODE, 'admin'))
+			if (isset($_POST['text'])) {
+				if (!$this->access->canWriteController(self::CODE, 'admin')) {
 					throw new \Exception('Access denied');
+				}
 
 				$ally_id = intval($_GET['mail']);
 				$sq = $this->db->query("SELECT id FROM users WHERE ally_id='" . $ally_id . "'");
-				while ($u = $sq->fetch())
-				{
+				while ($u = $sq->fetch()) {
 					$this->db->query("INSERT INTO messages SET
 											`owner`='{$u['id']}',
 											`sender`='Администрация' ,
@@ -196,8 +185,7 @@ class AlliancesController extends Controller
 			}
 		}
 
-		if (isset($_GET['leader']))
-		{
+		if (isset($_GET['leader'])) {
 			$ally_id = intval($_GET['leader']);
 
 			$query = $this->db->query("SELECT `owner` FROM alliance");
@@ -219,16 +207,15 @@ class AlliancesController extends Controller
 					. "<td class=b colspan=9><center><b><input type=submit value=Сохранить></center></b></td>"
 					. "</form></tr>";
 
-			if (isset($_POST['leader']))
-			{
-				if (!$this->access->canWriteController(self::CODE, 'admin'))
+			if (isset($_POST['leader'])) {
+				if (!$this->access->canWriteController(self::CODE, 'admin')) {
 					throw new \Exception('Access denied');
+				}
 
 				$sq = $this->db->query("SELECT ally_id FROM users WHERE id='" . intval($_POST['leader']) . "'");
 				$a = $sq->fetch();
 
-				if ($a['ally_id'] == $_GET['leader'])
-				{
+				if ($a['ally_id'] == $_GET['leader']) {
 					$this->db->query("UPDATE alliance SET `owner` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
 				}
 

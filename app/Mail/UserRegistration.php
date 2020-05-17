@@ -11,20 +11,20 @@ class UserRegistration extends Mailable
 {
 	protected $fields = [];
 
-    public function __construct (array $fields)
-    {
+	public function __construct(array $fields)
+	{
 		$this->fields = $fields;
 		$this->fields['#SERVER#'] = Request::instance()->getHttpHost();
-    }
+	}
 
-    public function build ()
-    {
+	public function build()
+	{
 		$this->from(Config::get('settings.email_notify'), Config::get('settings.site_title'))
-			->subject(Config::get('settings.site_title').": Регистрация");
+			->subject(Config::get('settings.site_title') . ": Регистрация");
 
 		$template = File::get(resource_path('/views/email/registration.html'));
 		$template = strtr($template, $this->fields);
 
 		return $this->html($template);
-    }
+	}
 }

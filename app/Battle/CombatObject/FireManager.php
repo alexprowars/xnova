@@ -25,8 +25,9 @@ class FireManager extends IterableIterator
 	{
 		$tmp = 0;
 
-		foreach ($this->array as $id => $fire)
+		foreach ($this->array as $id => $fire) {
 			$tmp += $fire->getAttackerTotalShots();
+		}
 
 		return $tmp;
 	}
@@ -34,8 +35,9 @@ class FireManager extends IterableIterator
 	{
 		$tmp = 0;
 
-		foreach ($this->array as $id => $fire)
+		foreach ($this->array as $id => $fire) {
 			$tmp += $fire->getAttackerTotalFire();
+		}
 
 		return $tmp;
 	}

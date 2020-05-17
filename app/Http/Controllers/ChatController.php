@@ -1,18 +1,18 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+namespace Xnova\Http\Controllers;
+
 use Xnova\Controller;
 
 class ChatController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		//$regTime = $this->db->fetchColumn("SELECT create_time FROM users_info WHERE id = ".$this->user->getId()."");
 

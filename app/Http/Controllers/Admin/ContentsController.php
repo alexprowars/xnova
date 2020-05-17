@@ -20,7 +20,7 @@ class ContentsController extends CrudController
 	use Operations\ShowOperation;
 	use Operations\DeleteOperation;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'contents',
@@ -36,14 +36,13 @@ class ContentsController extends CrudController
 		]];
 	}
 
-	public function setup ()
+	public function setup()
 	{
 		$this->crud->setModel(Content::class);
 		$this->crud->setEntityNameStrings('контент', 'контент');
 		$this->crud->setRoute(backpack_url('contents'));
 
-		$this->crud->operation('list', function ()
-		{
+		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			$this->crud->enableExportButtons();
 
@@ -61,8 +60,7 @@ class ContentsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation(['create', 'update'], function()
-		{
+		$this->crud->operation(['create', 'update'], function () {
 			$this->crud->setValidation(ContentRequest::class);
 			$this->crud->setTitle('Создание страницы');
 			$this->crud->setSubheading('Создание страницы');
@@ -86,8 +84,7 @@ class ContentsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation('update', function()
-		{
+		$this->crud->operation('update', function () {
 			$this->crud->setTitle('Редактирование страницы');
 			$this->crud->setSubheading('Редактирование страницы');
 		});

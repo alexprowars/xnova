@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -21,13 +21,13 @@ class Construction
 	/** @var Planet */
 	private $planet;
 
-	public function __construct (User $user, Planet $planet)
+	public function __construct(User $user, Planet $planet)
 	{
 		$this->user = $user;
 		$this->planet = $planet;
 	}
 
-	public function pageBuilding ()
+	public function pageBuilding()
 	{
 		$parse = [];
 
@@ -37,18 +37,15 @@ class Construction
 
 		$CanBuildElement = ($Queue['lenght'] < $MaxBuidSize);
 
-		if (Request::instance()->isMethod('post'))
-		{
+		if (Request::instance()->isMethod('post')) {
 			$Command = Request::post('cmd', '');
 			$Element = (int) Request::post('building', 0);
 			$ListID = (int) Request::post('listid', 0);
 
-			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove')))
-			{
+			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove'))) {
 				$queueManager = new Queue($this->user, $this->planet);
 
-				switch ($Command)
-				{
+				switch ($Command) {
 					case 'cancel':
 						$queueManager->delete(1, 0);
 						break;
@@ -56,15 +53,15 @@ class Construction
 						$queueManager->delete(1, $ListID);
 						break;
 					case 'insert':
-
-						if ($CanBuildElement)
+						if ($CanBuildElement) {
 							$queueManager->add($Element);
+						}
 
 						break;
 					case 'destroy':
-
-						if ($CanBuildElement)
+						if ($CanBuildElement) {
 							$queueManager->add($Element, 1, true);
+						}
 
 						break;
 				}
@@ -79,25 +76,28 @@ class Construction
 
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element)
-		{
-			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)))
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element) {
+			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type))) {
 				continue;
+			}
 
 			$build = $this->planet->getBuild($Element);
 
-			if (!$build)
+			if (!$build) {
 				continue;
+			}
 
 			$entity = new Entity\Building($Element, $build['level'], $context);
 
 			$isAccess = $entity->isAvailable();
 
-			if (!$isAccess && $viewOnlyAvailable)
+			if (!$isAccess && $viewOnlyAvailable) {
 				continue;
+			}
 
-			if (!Building::checkTechnologyRace($this->user, $Element))
+			if (!Building::checkTechnologyRace($this->user, $Element)) {
 				continue;
+			}
 
 			$BuildingLevel = $build['level'];
 			$BuildingPrice = $entity->getPrice();
@@ -109,16 +109,16 @@ class Construction
 			$row['level'] 	= $BuildingLevel;
 			$row['price'] 	= $BuildingPrice;
 
-			if ($isAccess)
-			{
-				if (in_array($Element, Vars::getItemsByType('build_exp')))
+			if ($isAccess) {
+				if (in_array($Element, Vars::getItemsByType('build_exp'))) {
 					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / Config::get('settings.buildings_exp_mult', 1000));
+				}
 
 				$row['time'] 	= $entity->getTime();
 				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);
-			}
-			else
+			} else {
 				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
+			}
 
 			$parse['items'][] = $row;
 		}
@@ -131,18 +131,18 @@ class Construction
 
 		preg_match('/(.*?)planet/', $this->planet->image, $match);
 
-		if (isset($match[1]))
+		if (isset($match[1])) {
 			$parse['planet'] = trim($match[1]);
+		}
 
 		return $parse;
 	}
 
-	public function pageResearch ()
+	public function pageResearch()
 	{
 		$bContinue = true;
 
-		if (!Building::checkLabSettingsInQueue($this->planet))
-		{
+		if (!Building::checkLabSettingsInQueue($this->planet)) {
 			session()->flash('error-static', __('buildings.labo_on_update'));
 
 			$bContinue = false;
@@ -150,8 +150,9 @@ class Construction
 
 		$spaceLabs = [];
 
-		if ($this->user->getTechLevel('intergalactic') > 0)
+		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$spaceLabs = $this->planet->getNetworkLevel();
+		}
 
 		$this->planet->spaceLabs = $spaceLabs;
 
@@ -162,28 +163,25 @@ class Construction
 			->where('type', Models\Queue::TYPE_TECH)
 			->first();
 
-		if (Request::post('cmd') && $bContinue != false)
-		{
+		if (Request::post('cmd') && $bContinue != false) {
 			$queueManager = new Queue($this->user, $this->planet);
 
 			$command = Request::post('cmd', '');
 			$techId = (int) Request::post('tech', 0);
 
-			if ($techId > 0 && in_array($techId, $res_array))
-			{
-				switch ($command)
-				{
+			if ($techId > 0 && in_array($techId, $res_array)) {
+				switch ($command) {
 					case 'cancel':
-
-						if ($queueManager->getCount(Queue::TYPE_RESEARCH))
+						if ($queueManager->getCount(Queue::TYPE_RESEARCH)) {
 							$queueManager->delete($techId);
+						}
 
 						break;
 
 					case 'search':
-
-						if (!$queueManager->getCount(Queue::TYPE_RESEARCH))
+						if (!$queueManager->getCount(Queue::TYPE_RESEARCH)) {
 							$queueManager->add($techId);
+						}
 
 						break;
 				}
@@ -198,17 +196,18 @@ class Construction
 
 		$parse['items'] = [];
 
-		foreach ($res_array AS $Tech)
-		{
+		foreach ($res_array as $Tech) {
 			$entity = new Entity\Research($Tech, null, $context);
 
 			$isAccess = $entity->isAvailable();
 
-			if (!$isAccess && $viewOnlyAvailable)
+			if (!$isAccess && $viewOnlyAvailable) {
 				continue;
+			}
 
-			if (!Building::checkTechnologyRace($this->user, $Tech))
+			if (!Building::checkTechnologyRace($this->user, $Tech)) {
 				continue;
+			}
 
 			$price = Vars::getItemPrice($Tech);
 
@@ -222,58 +221,56 @@ class Construction
 			$row['build']	= false;
 			$row['effects']	= '';
 
-			if ($isAccess)
-			{
-				if ($Tech >= 120 && $Tech <= 122)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
-				elseif ($Tech == 115)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(10 * $row['level']).'%</span></div>';
-				elseif ($Tech == 117)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(20 * $row['level']).'%</span></div>';
-				elseif ($Tech == 118)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">'.(30 * $row['level']).'%</span></div>';
-				elseif ($Tech == 108)
-					$row['effects'] = '<div class="tech-effects-row">+'.($row['level'] + 1).' слотов флота</div>';
-				elseif ($Tech == 109)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
-				elseif ($Tech == 110)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">'.(3 * $row['level']).'%</span></div>';
-				elseif ($Tech == 111)
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">'.(5 * $row['level']).'%</span></div>';
-				elseif ($Tech == 123)
-					$row['effects'] = '<div class="tech-effects-row">+'.$row['level'].'% лабораторий</div>';
-				elseif ($Tech == 113)
-					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">'.($row['level'] * 2).'%</span></div>';
+			if ($isAccess) {
+				if ($Tech >= 120 && $Tech <= 122) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 115) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 117) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 118) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 108) {
+					$row['effects'] = '<div class="tech-effects-row">+' . ($row['level'] + 1) . ' слотов флота</div>';
+				} elseif ($Tech == 109) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 110) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 111) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
+				} elseif ($Tech == 123) {
+					$row['effects'] = '<div class="tech-effects-row">+' . $row['level'] . '% лабораторий</div>';
+				} elseif ($Tech == 113) {
+					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($row['level'] * 2) . '%</span></div>';
+				}
 
 				$row['time'] = $entity->getTime();
 
-				if ($techHandle)
-				{
-					if ($techHandle->object_id == $Tech)
-					{
+				if ($techHandle) {
+					if ($techHandle->object_id == $Tech) {
 						$row['build'] = [
 							'id' => (int) $techHandle->planet_id,
 							'name' => '',
 							'time' => $techHandle->time + $row['time']
 						];
 
-						if ($techHandle->planet_id != $this->planet->id)
-						{
+						if ($techHandle->planet_id != $this->planet->id) {
 							$planet = Models\Planets::query()
 								->select(['id', 'name'])
 								->where('id', $techHandle->planet_id)
 								->first();
 
-							if ($planet)
+							if ($planet) {
 								$row['build']['planet'] = $planet->name;
+							}
 						}
-					}
-					else
+					} else {
 						$row['build'] = true;
+					}
 				}
-			}
-			else
+			} else {
 				$row['need'] = Building::getTechTree($Tech, $this->user, $this->planet);
+			}
 
 			$parse['items'][] = $row;
 		}
@@ -281,24 +278,24 @@ class Construction
 		return $parse;
 	}
 
-	public function pageShipyard ($mode = 'fleet')
+	public function pageShipyard($mode = 'fleet')
 	{
 		$queueManager = new Queue($this->user, $this->planet);
 
-		if ($mode == 'defense')
+		if ($mode == 'defense') {
 			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
-		else
+		} else {
 			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
+		}
 
-		if (Request::post('fmenge'))
-		{
-			foreach (Request::post('fmenge', []) as $element => $count)
-			{
+		if (Request::post('fmenge')) {
+			foreach (Request::post('fmenge', []) as $element => $count) {
 				$element 	= (int) $element;
 				$count 		= abs((int) $count);
 
-				if (!in_array($element, $elementIDs))
+				if (!in_array($element, $elementIDs)) {
 					continue;
+				}
 
 				$queueManager->add($element, $count);
 			}
@@ -315,20 +312,22 @@ class Construction
 		$parse = [];
 		$parse['items'] = [];
 
-		foreach ($elementIDs AS $element)
-		{
-			if (Vars::getItemType($element) === Vars::ITEM_TYPE_DEFENSE)
+		foreach ($elementIDs as $element) {
+			if (Vars::getItemType($element) === Vars::ITEM_TYPE_DEFENSE) {
 				$entity = new Entity\Defence($element);
-			else
+			} else {
 				$entity = new Entity\Fleet($element);
+			}
 
 			$isAccess = $entity->isAvailable();
 
-			if (!$isAccess && $viewOnlyAvailable)
+			if (!$isAccess && $viewOnlyAvailable) {
 				continue;
+			}
 
-			if (!Building::checkTechnologyRace($this->user, $element))
+			if (!Building::checkTechnologyRace($this->user, $element)) {
 				continue;
+			}
 
 			$row = [];
 
@@ -338,29 +337,29 @@ class Construction
 			$row['price'] 	= $entity->getPrice();
 			$row['effects']	= '';
 
-			if ($isAccess)
-			{
+			if ($isAccess) {
 				$row['time'] = $entity->getTime();
 				$row['is_max'] = false;
 
 				$price = Vars::getItemPrice($element);
 
-				if (isset($price['max']))
-				{
+				if (isset($price['max'])) {
 					$total = $this->planet->getUnitCount($element);
 
-					if (isset($BuildArray[$element]))
+					if (isset($BuildArray[$element])) {
 						$total += $BuildArray[$element];
+					}
 
-					if ($total >= $price['max'])
+					if ($total >= $price['max']) {
 						$row['is_max'] = true;
+					}
 				}
 
 				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
 				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
-			}
-			else
+			} else {
 				$row['need'] = Building::getTechTree($element, $this->user, $this->planet);
+			}
 
 			$parse['items'][] = $row;
 		}
@@ -368,14 +367,12 @@ class Construction
 		return $parse;
 	}
 
-	private function extractHangarQueue ($queue = '')
+	private function extractHangarQueue($queue = '')
 	{
 		$result = [];
 
-		if (is_array($queue) && count($queue))
-		{
-			foreach ($queue AS $element)
-			{
+		if (is_array($queue) && count($queue)) {
+			foreach ($queue as $element) {
 				$result[$element->object_id] = $element->level;
 			}
 		}
@@ -383,7 +380,7 @@ class Construction
 		return $result;
 	}
 
-	private function ShowBuildingQueue ()
+	private function ShowBuildingQueue()
 	{
 		$queueManager = new Queue($this->user, $this->planet);
 
@@ -391,24 +388,23 @@ class Construction
 
 		$listRow = [];
 
-		if (count($queueItems))
-		{
+		if (count($queueItems)) {
 			$end = 0;
 
-			foreach ($queueItems as $item)
-			{
-				if (!$end)
+			foreach ($queueItems as $item) {
+				if (!$end) {
 					$end = $item->time;
+				}
 
 				$entity = new Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0), new Entity\Context($this->user, $this->planet));
 
 				$elementTime = $entity->getTime();
 
-				if ($item->operation == $item::OPERATION_DESTROY)
+				if ($item->operation == $item::OPERATION_DESTROY) {
 					$elementTime = ceil($elementTime / 2);
+				}
 
-				if ($item->time > 0 && $item->time_end - $item->time != $elementTime)
-				{
+				if ($item->time > 0 && $item->time_end - $item->time != $elementTime) {
 					$item->update([
 						'time_end' => $item->time + $elementTime
 					]);
@@ -417,7 +413,7 @@ class Construction
 				$end += $elementTime;
 
 				$listRow[] = [
-					'name' 	=> __('main.tech.'.$item->object_id),
+					'name' 	=> __('main.tech.' . $item->object_id),
 					'level' => $item->level,
 					'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
 					'time' 	=> $end - time(),
@@ -432,7 +428,7 @@ class Construction
 		return $RetValue;
 	}
 
-	public function ElementBuildListBox ()
+	public function ElementBuildListBox()
 	{
 		$queueManager = new Queue($this->user, $this->planet);
 
@@ -440,19 +436,19 @@ class Construction
 
 		$data = [];
 
-		if (count($queueItems))
-		{
+		if (count($queueItems)) {
 			$end = 0;
 
-			foreach ($queueItems as $item)
-			{
-				if (!$end)
+			foreach ($queueItems as $item) {
+				if (!$end) {
 					$end = $item->time;
+				}
 
-				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE)
+				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE) {
 					$entity = new Entity\Defence($item->object_id);
-				else
+				} else {
 					$entity = new Entity\Fleet($item->object_id);
+				}
 
 				$time = $entity->getTime();
 
@@ -460,7 +456,7 @@ class Construction
 
 				$row = [
 					'i'		=> (int) $item->object_id,
-					'name'	=> __('main.tech.'.$item->object_id),
+					'name'	=> __('main.tech.' . $item->object_id),
 					'count'	=> (int) $item->level,
 					'time'	=> $time,
 					'end'	=> $end

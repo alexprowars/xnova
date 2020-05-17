@@ -12,23 +12,26 @@ use Xnova\User;
 
 class AdminCanAccess
 {
-	public function handle (Request $request, Closure $next): Response
+	public function handle(Request $request, Closure $next): Response
 	{
 		Auth::onceUsingId(1);
 
-		if (Auth::guest())
+		if (Auth::guest()) {
 			throw UnauthorizedException::notLoggedIn();
+		}
 
 		/** @var User $user */
 		$user = Auth::user();
 
-		if (!$user->getRoleNames()->count())
+		if (!$user->getRoleNames()->count()) {
 			throw new UnauthorizedException('access dined');
+		}
 
 		$route = Route::current();
 
-		if (!$user->can('controller '.$route->getName()))
-			throw UnauthorizedException::forPermissions(['controller '.$route->getName()]);
+		if (!$user->can('controller ' . $route->getName())) {
+			throw UnauthorizedException::forPermissions(['controller ' . $route->getName()]);
+		}
 
 		return $next($request);
 	}

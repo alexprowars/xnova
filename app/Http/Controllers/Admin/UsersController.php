@@ -30,7 +30,7 @@ class UsersController extends CrudController
 	use Operations\CreateOperation;
 	use Operations\DeleteOperation;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'users',
@@ -71,14 +71,13 @@ class UsersController extends CrudController
 		]];
 	}
 
-	public function setup ()
+	public function setup()
 	{
 		$this->crud->setModel(Users::class);
 		$this->crud->setEntityNameStrings('пользователь', 'пользователи');
 		$this->crud->setRoute(backpack_url('users'));
 
-		$this->crud->operation('list', function ()
-		{
+		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			$this->crud->enableExportButtons();
 
@@ -135,8 +134,7 @@ class UsersController extends CrudController
 			'model' => UsersInfo::class
 		]);
 
-		$this->crud->operation('update', function()
-		{
+		$this->crud->operation('update', function () {
 			$this->crud->addField([
 				'name'	=> 'username',
 				'label'	=> 'Никнейм',
@@ -176,8 +174,7 @@ class UsersController extends CrudController
 			]);
 		});
 
-		$this->crud->operation('create', function()
-		{
+		$this->crud->operation('create', function () {
 			$this->crud->addField([
 				'name'  => 'password',
 				'label' => trans('backpack::permissionmanager.password'),
@@ -192,7 +189,7 @@ class UsersController extends CrudController
 		});
 	}
 
-	public function store ()
+	public function store()
 	{
 		$this->crud->applyConfigurationFromSettings('create');
 		$this->crud->hasAccessOrFail('create');
@@ -206,17 +203,16 @@ class UsersController extends CrudController
 			'password' => $fields['password'],
 		]);
 
-  		Alert::success(trans('backpack::crud.insert_success'))->flash();
+		Alert::success(trans('backpack::crud.insert_success'))->flash();
 
 		$this->crud->setSaveAction();
 
 		return $this->crud->performSaveAction($userId);
 	}
 
-	public function ban (Request $request)
+	public function ban(Request $request)
 	{
-		if ($request->isMethod('POST'))
-		{
+		if ($request->isMethod('POST')) {
 			$name = htmlspecialchars($request->post('name', ''));
 			$reason = htmlspecialchars($request->post('why', ''));
 
@@ -226,8 +222,9 @@ class UsersController extends CrudController
 
 			$user = Users::query()->where('username', $name)->first();
 
-			if (!$user)
+			if (!$user) {
 				return redirect(backpack_url('users/ban'))->with('error', 'Игрок не найден');
+			}
 
 			$BanTime = $days * 86400;
 			$BanTime += $hour * 3600;
@@ -244,17 +241,18 @@ class UsersController extends CrudController
 
 			$update = ['banned' => $BanTime];
 
-			if ($request->post('ro', 0) == 1)
+			if ($request->post('ro', 0) == 1) {
 				$update['vacation'] = 1;
+			}
 
 			$user->update($update);
 
-			if ($request->post('ro', 0) == 1)
-			{
+			if ($request->post('ro', 0) == 1) {
 				$buildsId = [4, 12, 212];
 
-				foreach (Vars::getResources() AS $res)
-					$buildsId[] = Vars::getIdByName($res.'_mine');
+				foreach (Vars::getResources() as $res) {
+					$buildsId[] = Vars::getIdByName($res . '_mine');
+				}
 
 				Models\PlanetsBuildings::query()->whereIn('planet_id', User::getPlanetsId($user->id))
 					->whereIn('build_id', $buildsId)
@@ -265,7 +263,7 @@ class UsersController extends CrudController
 					->update(['power' => 0]);
 			}
 
-			return redirect(backpack_url('users/ban'))->with('success', 'Игрок "'.$name.'" добавлен в список блокировки');
+			return redirect(backpack_url('users/ban'))->with('success', 'Игрок "' . $name . '" добавлен в список блокировки');
 		}
 
 		View::share('title', 'Блокировка доступа');
@@ -277,10 +275,9 @@ class UsersController extends CrudController
 		return view('admin.users.ban', []);
 	}
 
-	public function unban (Request $request)
+	public function unban(Request $request)
 	{
-		if ($request->isMethod('POST') != '')
-		{
+		if ($request->isMethod('POST') != '') {
 			$fields = $this->validate($request, [
 				'username' => 'required',
 			], [
@@ -289,18 +286,20 @@ class UsersController extends CrudController
 
 			$user = Users::query()->where('username', $fields['username'])->get(['id', 'username', 'banned', 'vacation'])->first();
 
-			if (!$user)
+			if (!$user) {
 				return redirect(backpack_url('users/unban'))->with('error', 'Игрок не найден');
+			}
 
 			Banned::query()->where('who', $user->id)->delete();
 			$user->banned = 0;
 
-			if ($user->vacation == 1)
+			if ($user->vacation == 1) {
 				$user->vacation = 0;
+			}
 
 			$user->save();
 
-			return redirect(backpack_url('users/unban'))->with('error', 'Игрок "'.$user->username.'" разбанен!');
+			return redirect(backpack_url('users/unban'))->with('error', 'Игрок "' . $user->username . '" разбанен!');
 		}
 
 		View::share('title', 'Разблокировка доступа');

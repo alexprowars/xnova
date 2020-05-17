@@ -4,7 +4,7 @@ namespace Xnova\Entity;
 
 class Unit extends Base
 {
-	public function getTime (): int
+	public function getTime(): int
 	{
 		$time = parent::getTime();
 
@@ -16,7 +16,7 @@ class Unit extends Base
 		return max(1, $time);
 	}
 
-	public function getMaxConstructible (): int
+	public function getMaxConstructible(): int
 	{
 		$planet = $this->getContext()->getPlanet();
 
@@ -24,18 +24,19 @@ class Unit extends Base
 
 		$price = parent::getPrice();
 
-		foreach ($price as $type => $count)
-		{
-			if (!in_array($type, ['metal', 'crystal', 'deuterium', 'energy']) || $count <= 0)
+		foreach ($price as $type => $count) {
+			if (!in_array($type, ['metal', 'crystal', 'deuterium', 'energy']) || $count <= 0) {
 				continue;
+			}
 
 			$count = floor($planet->{$type} / $count);
 
 			$max = max($max, $count);
 		}
 
-		if (isset($price['max']) && $max > $price['max'])
+		if (isset($price['max']) && $max > $price['max']) {
 			$max = $price['max'];
+		}
 
 		return (int) $max;
 	}

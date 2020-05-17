@@ -12,7 +12,7 @@ class Payment extends Model
 	public $timestamps = false;
 	protected $guarded = [];
 
-	public function user ()
+	public function user()
 	{
 		return $this->hasOne(Users::class, 'id', 'user_id');
 	}

@@ -45,6 +45,6 @@ class Type
 
 	public function cloneMe()
 	{
-		return new Type($this->id,$this->count);
+		return new Type($this->id, $this->count);
 	}
 }

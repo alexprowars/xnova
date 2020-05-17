@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -18,50 +18,59 @@ use Xnova\Models\Users;
 
 class Game
 {
-	public static function datezone ($format, $time = 0)
+	public static function datezone($format, $time = 0)
 	{
-		if ($time == 0)
+		if ($time == 0) {
 			$time = time();
+		}
 
-		if (Auth::check() && !is_null(Auth::user()->getUserOption('timezone')))
+		if (Auth::check() && !is_null(Auth::user()->getUserOption('timezone'))) {
 			$time += Auth::user()->getUserOption('timezone') * 1800;
+		}
 
 		return date($format, $time);
 	}
 
-	public static function getSpeed ($type = '')
+	public static function getSpeed($type = '')
 	{
-		if ($type == 'fleet')
+		if ($type == 'fleet') {
 			return (int) Config::get('settings.fleet_speed', 2500) / 2500;
-		if ($type == 'mine')
+		}
+		if ($type == 'mine') {
 			return (int) Config::get('settings.resource_multiplier', 1);
-		if ($type == 'build')
+		}
+		if ($type == 'build') {
 			return round((int) Config::get('settings.game_speed', 2500) / 2500, 1);
+		}
 
 		return 1;
 	}
 
-	public static function checkReferLink ()
+	public static function checkReferLink()
 	{
-		if (Session::has('uid'))
+		if (Session::has('uid')) {
 			return;
+		}
 
 		$id = (int) Request::server('QUERY_STRING', 0);
 
-		if (!$id)
+		if (!$id) {
 			return;
+		}
 
 		$user = Users::find($id);
 
-		if (!$user)
+		if (!$user) {
 			return;
+		}
 
 		$ip = Helpers::convertIp(Request::ip());
 
 		$res = DB::selectOne("SELECT `id` FROM moneys where `ip` = '" . $ip . "' AND `time` > '" . (time() - 86400) . "'");
 
-		if ($res)
+		if ($res) {
 			return;
+		}
 
 		Moneys::query()->create([
 			'user_id'		=> $user->id,

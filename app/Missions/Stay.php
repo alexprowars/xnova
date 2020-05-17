@@ -17,35 +17,38 @@ class Stay extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->end_galaxy . "' AND system = '" . $this->_fleet->end_system . "' AND planet = '" . $this->_fleet->end_planet . "' AND planet_type = '" . $this->_fleet->end_type . "'");
+		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type = '" . $this->fleet->end_type . "'");
 
-		if ($TargetPlanet->id_owner != $this->_fleet->target_owner)
+		if ($TargetPlanet->id_owner != $this->fleet->target_owner) {
 			$this->ReturnFleet();
-		else
-		{
+		} else {
 			$this->RestoreFleetToPlanet(false);
 			$this->KillFleet();
 
 			$TargetAddedGoods = '';
 
-			$fleetData = $this->_fleet->getShips();
+			$fleetData = $this->fleet->getShips();
 
-			foreach ($fleetData as $shipId => $shipArr)
-			{
-				$TargetAddedGoods .= ', ' . __('main.tech.'.$shipId) . ': ' . $shipArr['count'];
+			foreach ($fleetData as $shipId => $shipArr) {
+				$TargetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
 			}
 
-			$TargetMessage = sprintf(__('fleet_engine.sys_stat_mess'),
-				$this->_fleet->getTargetAdressLink(),
-				Format::number($this->_fleet->resource_metal), __('main.Metal'),
-				Format::number($this->_fleet->resource_crystal), __('main.Crystal'),
-				Format::number($this->_fleet->resource_deuterium), __('main.Deuterium')
+			$TargetMessage = sprintf(
+				__('fleet_engine.sys_stat_mess'),
+				$this->fleet->getTargetAdressLink(),
+				Format::number($this->fleet->resource_metal),
+				__('main.Metal'),
+				Format::number($this->fleet->resource_crystal),
+				__('main.Crystal'),
+				Format::number($this->fleet->resource_deuterium),
+				__('main.Deuterium')
 			);
 
-			if ($TargetAddedGoods != '')
-				$TargetMessage .= '<br>'.trim(substr($TargetAddedGoods, 1));
+			if ($TargetAddedGoods != '') {
+				$TargetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
+			}
 
-			User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 
@@ -56,27 +59,25 @@ class Stay extends FleetEngine implements Mission
 
 	public function ReturnEvent()
 	{
-		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->_fleet->start_galaxy . "' AND system = '" . $this->_fleet->start_system . "' AND planet = '" . $this->_fleet->start_planet . "' AND planet_type = '" . $this->_fleet->start_type . "';");
+		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->start_galaxy . "' AND system = '" . $this->fleet->start_system . "' AND planet = '" . $this->fleet->start_planet . "' AND planet_type = '" . $this->fleet->start_type . "';");
 
-		if ($TargetPlanet->id_owner != $this->_fleet->owner)
+		if ($TargetPlanet->id_owner != $this->fleet->owner) {
 			$this->KillFleet();
-		else
-		{
+		} else {
 			$this->RestoreFleetToPlanet();
 			$this->KillFleet();
 
-			$TargetAddedGoods = sprintf(__('fleet_engine.sys_stay_mess_goods'), __('main.Metal'), Format::number($this->_fleet->resource_metal), __('main.Crystal'), Format::number($this->_fleet->resource_crystal), __('main.Deuterium'), Format::number($this->_fleet->resource_deuterium));
+			$TargetAddedGoods = sprintf(__('fleet_engine.sys_stay_mess_goods'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 
-			$fleetData = $this->_fleet->getShips();
+			$fleetData = $this->fleet->getShips();
 
-			foreach ($fleetData as $shipId => $shipArr)
-			{
-				$TargetAddedGoods .= ', ' . __('main.tech.'.$shipId) . ': ' . $shipArr['count'];
+			foreach ($fleetData as $shipId => $shipArr) {
+				$TargetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
 			}
 
-			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->_fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
+			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
 
-			User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 }

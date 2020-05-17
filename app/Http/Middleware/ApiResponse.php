@@ -20,17 +20,16 @@ use Xnova\User;
 
 class ApiResponse
 {
-	public function handle (Request $request, Closure $next): Response
+	public function handle(Request $request, Closure $next): Response
 	{
 		/** @var JsonResponse $response */
 		$response = $next($request);
 
-		if ($response instanceof RedirectResponse)
-		{
+		if ($response instanceof RedirectResponse) {
 			$route = Route::current();
 
-			$uri = rtrim(str_replace($request->root(), '', $response->getTargetUrl()), '/').'/';
-			$uri = str_replace('/'.$route->getPrefix(), '', $uri);
+			$uri = rtrim(str_replace($request->root(), '', $response->getTargetUrl()), '/') . '/';
+			$uri = str_replace('/' . $route->getPrefix(), '', $uri);
 
 			return new JsonResponse([
 				'success' => true,
@@ -40,8 +39,9 @@ class ApiResponse
 			]);
 		}
 
-		if (!($response instanceof JsonResponse))
+		if (!($response instanceof JsonResponse)) {
 			return $response;
+		}
 
 		$route = Route::current();
 		/** @var Controller $controller */
@@ -71,27 +71,25 @@ class ApiResponse
 				'users' => (int) Config::get('settings.users_total', 0),
 			],
 			'title' => $controller->getTitle(),
-			'url' => str_replace('/'.$route->getPrefix(), '', $request->getPathInfo()),
+			'url' => str_replace('/' . $route->getPrefix(), '', $request->getPathInfo()),
 			'user' => null,
 			'view' => $controller->getViews(),
 			'version' => VERSION,
 			'page' => null,
 		];
 
-		if ($response->exception)
-		{
-			if ($response->exception instanceof Exception)
+		if ($response->exception) {
+			if ($response->exception instanceof Exception) {
 				$data = array_merge($data, $response->getOriginalContent());
-			else
-			{
+			} else {
 				return new JsonResponse([
 					'success' => false,
 					'data' => $response->getOriginalContent(),
 				], $response->exception->getCode() > 0 ? $response->exception->getCode() : 500);
 			}
-		}
-		else
+		} else {
 			$data['page'] = $response->getOriginalContent();
+		}
 
 		$this->afterExecuteRoute($data);
 
@@ -103,51 +101,48 @@ class ApiResponse
 		return $response;
 	}
 
-	private function afterExecuteRoute (&$result)
+	private function afterExecuteRoute(&$result)
 	{
-		if (!Auth::check())
+		if (!Auth::check()) {
 			return;
+		}
 
 		/** @var User $user */
 		$user = Auth::user();
 
 		$planet = $user->getCurrentPlanet();
 
-		if ($planet)
+		if ($planet) {
 			$result['resources'] = $planet->getTopPanelRosources();
+		}
 
 		$globalMessage = Config::get('settings.newsMessage', '');
 
-		if ($globalMessage != '')
-		{
+		if ($globalMessage != '') {
 			$result['messages'][] = [
 				'type' => 'warning-static',
 				'text' => $globalMessage
 			];
 		}
 
-		if ($user->deltime > 0)
-		{
+		if ($user->deltime > 0) {
 			$result['messages'][] = [
 				'type' => 'info-static',
-				'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после '.Game::datezone("d.m.Y", $user->deltime).' в '.Game::datezone("H:i:s", $user->deltime).'. Выключить режим удаления можно в настройках игры.'
+				'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' . Game::datezone("d.m.Y", $user->deltime) . ' в ' . Game::datezone("H:i:s", $user->deltime) . '. Выключить режим удаления можно в настройках игры.'
 			];
 		}
 
-		if ($user->vacation > 0)
-		{
+		if ($user->vacation > 0) {
 			$result['messages'][] = [
 				'type' => 'warning-static',
 				'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
 			];
 		}
 
-		if (Session::has('_flash'))
-		{
+		if (Session::has('_flash')) {
 			$keys = Session::get('_flash')['new'] ?? [];
 
-			foreach ($keys as $key)
-			{
+			foreach ($keys as $key) {
 				$result['messages'][] = [
 					'type' => $key,
 					'text' => Session::get($key)
@@ -155,26 +150,24 @@ class ApiResponse
 			}
 		}
 
-		if ($user->messages_ally > 0 && $user->ally_id == 0)
-		{
+		if ($user->messages_ally > 0 && $user->ally_id == 0) {
 			$user->messages_ally = 0;
 			$user->update();
 		}
 
-		$planetsList = Cache::get('app::planetlist_'.$user->getId());
+		$planetsList = Cache::get('app::planetlist_' . $user->getId());
 
-		if (!$planetsList)
-		{
+		if (!$planetsList) {
 			$planetsList = $user->getPlanets();
 
-			if (count($planetsList))
-				Cache::put('app::planetlist_'.$user->getId(), $planetsList, 600);
+			if (count($planetsList)) {
+				Cache::put('app::planetlist_' . $user->getId(), $planetsList, 600);
+			}
 		}
 
 		$planets = [];
 
-		foreach ($planetsList as $item)
-		{
+		foreach ($planetsList as $item) {
 			$planets[] = [
 				'id' => (int) $item->id,
 				'name' => $item->name,
@@ -187,13 +180,12 @@ class ApiResponse
 			];
 		}
 
-		$quests = Cache::get('app::quests::'.$user->getId());
+		$quests = Cache::get('app::quests::' . $user->getId());
 
-		if ($quests === null)
-		{
+		if ($quests === null) {
 			$quests = (int) UsersQuest::query()->where('user_id', $user->getId())->where('finish', 1)->count();
 
-			Cache::put('app::quests::'.$user->getId(), $quests, 3600);
+			Cache::put('app::quests::' . $user->getId(), $quests, 3600);
 		}
 
 		$result['user'] = [
@@ -215,8 +207,7 @@ class ApiResponse
 			'quests' => (int) $quests
 		];
 
-		if ($planet)
-		{
+		if ($planet) {
 			$result['user']['position'] = [
 				'galaxy' => (int) $planet->galaxy,
 				'system' => (int) $planet->system,
@@ -226,8 +217,8 @@ class ApiResponse
 		}
 
 		$result['chat'] = [
-			'key' => md5($user->getId().'|'.$user->username.Config::get('chat.key')),
-			'server' => Config::get('chat.host').':'.Config::get('chat.port'),
+			'key' => md5($user->getId() . '|' . $user->username . Config::get('chat.key')),
+			'server' => Config::get('chat.host') . ':' . Config::get('chat.port'),
 		];
 
 		$result['speed'] = [

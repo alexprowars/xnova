@@ -29,10 +29,12 @@ class PhysicShot
 		\log_var('damage', $damage);
 		\log_var('count', $count);
 
-		if ($damage < 0)
+		if ($damage < 0) {
 			throw new Exception('Negative damage');
-		if ($count < 0)
+		}
+		if ($count < 0) {
 			throw new Exception('Negative amount of shots');
+		}
 
 		$this->fighters = $shipType->cloneMe();
 		$this->damage = $damage;
@@ -128,8 +130,9 @@ class PhysicShot
 		$unbauncedDamage = $this->clamp($damage, $shieldCellValue);
 		$currentShield = $this->fighters->getCurrentShield();
 
-		if (USE_HITSHIP_LIMITATION)
+		if (USE_HITSHIP_LIMITATION) {
 			$currentShield = $currentShield * $this->getHitShips() / $this->fighters->getCount();
+		}
 
 		$this->assorbedDamage = min($unbauncedDamage * $count, $currentShield);
 	}
@@ -156,10 +159,10 @@ class PhysicShot
 	 */
 	private function clamp($a, $b)
 	{
-		if ($a > $b)
+		if ($a > $b) {
 			return $a;
+		}
 
 		return 0;
 	}
-
 }

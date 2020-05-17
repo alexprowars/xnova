@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @author AlexPro
+ * @copyright 2008 - 2019 XNova Game Group
+ * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
+ */
+
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -11,15 +17,9 @@ use Xnova\User;
 use Xnova\Controller;
 use Xnova\Models;
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 class BuddyController extends Controller
 {
-	public function newAction ($userId)
+	public function newAction($userId)
 	{
 		/** @var Models\Users $user */
 		$user = Models\Users::query()
@@ -27,11 +27,11 @@ class BuddyController extends Controller
 			->where('id', $userId)
 			->first();
 
-		if (!$user)
+		if (!$user) {
 			throw new ErrorException('Друг не найден');
+		}
 
-		if (Request::instance()->isMethod('post'))
-		{
+		if (Request::instance()->isMethod('post')) {
 			$buddy = Models\Buddy::query()
 				->select(['id'])
 				->where(function (Builder $query) use ($userId) {
@@ -44,13 +44,15 @@ class BuddyController extends Controller
 				})
 				->first();
 
-			if ($buddy)
+			if ($buddy) {
 				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
+			}
 
 			$text = strip_tags(Request::post('text', ''));
 
-			if (mb_strlen($text) > 5000)
+			if (mb_strlen($text) > 5000) {
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
+			}
 
 			DB::table('buddy')->insert([
 				'sender' => $this->user->id,
@@ -59,13 +61,14 @@ class BuddyController extends Controller
 				'text' => $text
 			]);
 
-			User::sendMessage($user->id, 0, time(), 1, 'Запрос дружбы', 'Игрок '.$this->user->username.' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+			User::sendMessage($user->id, 0, time(), 1, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
 			throw new RedirectException('Запрос отправлен', '/buddy/');
 		}
 
-		if ($user->id == $this->user->id)
+		if ($user->id == $this->user->id) {
 			throw new ErrorException('Нельзя дружить сам с собой');
+		}
 
 		$this->setTitle('Друзья');
 		$this->showTopPanel(false);
@@ -76,48 +79,49 @@ class BuddyController extends Controller
 		];
 	}
 
-	public function requestsAction ($isMy = false)
+	public function requestsAction($isMy = false)
 	{
-		if ($isMy !== false)
+		if ($isMy !== false) {
 			$isMy = true;
+		}
 
 		$this->index(true, $isMy);
 	}
 
-	public function deleteAction (int $id)
+	public function deleteAction(int $id)
 	{
 		/** @var Models\Buddy $buddy */
 		$buddy = Models\Buddy::query()->find($id);
 
-		if (!$buddy)
+		if (!$buddy) {
 			throw new ErrorException('Заявка не найдена');
+		}
 
-		if ($buddy->owner == $this->user->id)
-		{
+		if ($buddy->owner == $this->user->id) {
 			$buddy->delete();
 
 			throw new RedirectException('Заявка отклонена', '/buddy/requests/');
-		}
-		elseif ($buddy->sender == $this->user->id)
-		{
+		} elseif ($buddy->sender == $this->user->id) {
 			$buddy->delete();
 
 			throw new RedirectException('Заявка удалена', '/buddy/requests/my/');
-		}
-		else
+		} else {
 			throw new ErrorException('Заявка не найдена');
+		}
 	}
 
-	public function approveAction (int $id)
+	public function approveAction(int $id)
 	{
 		/** @var Models\Buddy $buddy */
 		$buddy = Models\Buddy::query()->find($id);
 
-		if (!$buddy)
+		if (!$buddy) {
 			throw new ErrorException('Заявка не найдена');
+		}
 
-		if (!($buddy->owner == $this->user->id && $buddy->active == 0))
+		if (!($buddy->owner == $this->user->id && $buddy->active == 0)) {
 			throw new ErrorException('Заявка не найдена');
+		}
 
 		$buddy->active = 1;
 		$buddy->update();
@@ -125,10 +129,11 @@ class BuddyController extends Controller
 		throw new RedirectException('', '/buddy/');
 	}
 
-	public function index ($isRequests = false, $isMy = false)
+	public function index($isRequests = false, $isMy = false)
 	{
-		if ($isRequests)
+		if ($isRequests) {
 			$parse['title'] = $isMy ? 'Мои запросы' : 'Другие запросы';
+		}
 
 		$parse['items'] = [];
 		$parse['isMy'] = $isMy;
@@ -137,27 +142,26 @@ class BuddyController extends Controller
 			->orderBy('id', 'DESC')
 			->where('ignor', 0);
 
-		if ($isRequests)
-		{
+		if ($isRequests) {
 			$items->where('active', 0);
 
-			if ($isMy)
+			if ($isMy) {
 				$items->where('sender', $this->user->id);
-			else
+			} else {
 				$items->where('owner', $this->user->id);
-		}
-		else
+			}
+		} else {
 			$items->where('active', 0)
 			->where(function (Builder $query) {
 				$query->where('sender', $this->user->id)
 					->where('owner', $this->user->id);
 			});
+		}
 
 		$items = $items->get();
 
 		/** @var Models\Buddy $item */
-		foreach ($items as $item)
-		{
+		foreach ($items as $item) {
 			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
 
 			/** @var Models\Users $user */
@@ -166,8 +170,7 @@ class BuddyController extends Controller
 				->where('id', $userId)
 				->first();
 
-			if (!$user)
-			{
+			if (!$user) {
 				$item->delete();
 				continue;
 			}
@@ -189,12 +192,12 @@ class BuddyController extends Controller
 				]
 			];
 
-			if (!$isRequests)
-			{
-				if ($user->onlinetime > (time() - 59 * 60))
+			if (!$isRequests) {
+				if ($user->onlinetime > (time() - 59 * 60)) {
 					$row['online'] = floor((time() - $user->onlinetime) / 60);
-				else
+				} else {
 					$row['online'] = 60;
+				}
 			}
 
 			$parse['items'][] = $row;

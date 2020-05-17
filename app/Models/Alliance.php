@@ -44,29 +44,32 @@ class Alliance extends Model
 
 	public function getRanks()
 	{
-		if ($this->ranks == null)
+		if ($this->ranks == null) {
 			$this->ranks = '[]';
+		}
 
 		$this->ranks = json_decode($this->ranks, true);
 	}
 
 	public function setRanks($ranks)
 	{
-		if (is_array($ranks))
+		if (is_array($ranks)) {
 			$this->ranks = json_encode($ranks);
-		else
+		} else {
 			$this->ranks = $ranks;
+		}
 	}
 
-	public function getMember ($userId)
+	public function getMember($userId)
 	{
 		$this->member = AllianceMember::query()->where('u_id', $userId)->get();
 	}
 
-	public function parseRights ($userId = 0)
+	public function parseRights($userId = 0)
 	{
-		if (!$userId && Auth::check())
+		if (!$userId && Auth::check()) {
 			$userId = Auth::user()->getId();
+		}
 
 		$this->rights = [
 			self::CAN_WATCH_MEMBERLIST_STATUS 	=> false,
@@ -82,8 +85,7 @@ class Alliance extends Model
 			self::REQUEST_ACCESS 				=> false,
 		];
 
-		if ($this->owner == $userId)
-		{
+		if ($this->owner == $userId) {
 			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= true;
 			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= true;
 			$this->rights[self::CHAT_ACCESS] 					= true;
@@ -95,9 +97,7 @@ class Alliance extends Model
 			$this->rights[self::DIPLOMACY_ACCESS] 				= true;
 			$this->rights[self::PLANET_ACCESS] 					= true;
 			$this->rights[self::REQUEST_ACCESS] 				= true;
-		}
-		elseif ($this->member && $this->member->rank == 0)
-		{
+		} elseif ($this->member && $this->member->rank == 0) {
 			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= false;
 			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= false;
 			$this->rights[self::CHAT_ACCESS] 					= false;
@@ -109,9 +109,7 @@ class Alliance extends Model
 			$this->rights[self::DIPLOMACY_ACCESS] 				= false;
 			$this->rights[self::PLANET_ACCESS] 					= false;
 			$this->rights[self::REQUEST_ACCESS] 				= false;
-		}
-		elseif (isset($this->ranks[$this->member->rank - 1]))
-		{
+		} elseif (isset($this->ranks[$this->member->rank - 1])) {
 			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST_STATUS] == 1);
 			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST] == 1);
 			$this->rights[self::CHAT_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::CHAT_ACCESS] == 1);
@@ -126,15 +124,16 @@ class Alliance extends Model
 		}
 	}
 
-	public function canAccess ($method)
+	public function canAccess($method)
 	{
-		if (!count($this->rights))
+		if (!count($this->rights)) {
 			$this->parseRights();
+		}
 
 		return (isset($this->rights[$method]) ? $this->rights[$method] : false);
 	}
 
-	public function deleteMember ($userId)
+	public function deleteMember($userId)
 	{
 		Alliance::query()->where('id', $this->id)->update(['members' => $this->members - 1]);
 		AllianceMember::query()->where('u_id', $userId)->delete();
@@ -143,7 +142,7 @@ class Alliance extends Model
 		Users::query()->where('id', $userId)->update(['ally_id' => 0, 'ally_name' => '']);
 	}
 
-	public function deleteAlly ()
+	public function deleteAlly()
 	{
 		Users::query()->where('ally_id', $this->id)->update(['ally_id' => 0, 'ally_name' => '']);
 

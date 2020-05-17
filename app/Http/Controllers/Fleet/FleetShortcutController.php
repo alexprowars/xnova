@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers\Fleet;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -18,7 +18,7 @@ use Xnova\Exceptions\RedirectException;
 /** @noinspection PhpUnused */
 class FleetShortcutController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$this->setTitle('Закладки');
 
@@ -26,24 +26,22 @@ class FleetShortcutController extends Controller
 
 		$links = [];
 
-		if ($inf->fleet_shortcut)
-		{
+		if ($inf->fleet_shortcut) {
 			$scarray = explode("\r\n", $inf->fleet_shortcut);
 
-			foreach ($scarray as $a => $b)
-			{
-				if ($b != '')
-				{
+			foreach ($scarray as $a => $b) {
+				if ($b != '') {
 					$c = explode(',', $b);
 
 					$type = '';
 
-					if ($c[4] == 2)
+					if ($c[4] == 2) {
 						$type = " (E)";
-					elseif ($c[4] == 3)
+					} elseif ($c[4] == 3) {
 						$type = " (L)";
-					elseif ($c[4] == 5)
+					} elseif ($c[4] == 5) {
 						$type = " (B)";
+					}
 
 					$links[] =
 					[
@@ -51,7 +49,7 @@ class FleetShortcutController extends Controller
 						'galaxy' => $c[1],
 						'system' => $c[2],
 						'planet' => $c[3],
-						'type'=> $type
+						'type' => $type
 					];
 				}
 			}
@@ -62,39 +60,44 @@ class FleetShortcutController extends Controller
 		];
 	}
 
-	public function add ()
+	public function add()
 	{
 		$this->setTitle('Добавление в закладки');
 
 		$inf = Models\UsersInfo::query()->find($this->user->id, ['fleet_shortcut']);
 
-		if (Request::instance()->isMethod('post'))
-		{
+		if (Request::instance()->isMethod('post')) {
 			$name = Request::post('title', '');
 
-			if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name))
+			if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
 				$name = 'Планета';
+			}
 
 			$g = (int) Request::post('galaxy', 0);
 			$s = (int) Request::post('system', 0);
 			$p = (int) Request::post('planet', 0);
 			$t = (int) Request::post('planet_type', 0);
 
-			if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld'))
+			if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld')) {
 				$g = 1;
-			if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy'))
+			}
+			if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy')) {
 				$s = 1;
-			if ($p < 1 || $p > Config::get('game.maxPlanetInSystem'))
+			}
+			if ($p < 1 || $p > Config::get('game.maxPlanetInSystem')) {
 				$p = 1;
-			if ($t != 1 && $t != 2 && $t != 3 && $t != 5)
+			}
+			if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
 				$t = 1;
+			}
 
 			$inf['fleet_shortcut'] .= strip_tags(str_replace(',', '', $name)) . "," . $g . "," . $s . "," . $p . "," . $t . "\r\n";
 
 			Models\UsersInfo::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
-			if (Session::has('fleet_shortcut'))
+			if (Session::has('fleet_shortcut')) {
 				Session::remove('fleet_shortcut');
+			}
 
 			throw new RedirectException("Ссылка на планету добавлена!", "/fleet/shortcut/");
 		}
@@ -104,14 +107,18 @@ class FleetShortcutController extends Controller
 		$p = (int) Request::input('p', 0);
 		$t = (int) Request::input('t', 0);
 
-		if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld'))
+		if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld')) {
 			$g = 1;
-		if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy'))
+		}
+		if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy')) {
 			$s = 1;
-		if ($p < 1 || $p > Config::get('game.maxPlanetInSystem'))
+		}
+		if ($p < 1 || $p > Config::get('game.maxPlanetInSystem')) {
 			$p = 1;
-		if ($t != 1 && $t != 2 && $t != 3 && $t != 5)
+		}
+		if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
 			$t = 1;
+		}
 
 		return [
 			'id' => -1,
@@ -123,33 +130,31 @@ class FleetShortcutController extends Controller
 		];
 	}
 
-	public function view (int $id)
+	public function view(int $id)
 	{
 		$this->setTitle('Редактирование закладки');
 
 		$inf = Models\UsersInfo::query()->find($this->user->id, ['fleet_shortcut']);
 
-		if (Request::instance()->isMethod('post'))
-		{
+		if (Request::instance()->isMethod('post')) {
 			$scarray = explode("\r\n", $inf['fleet_shortcut']);
 
-			if (!isset($scarray[$id]))
+			if (!isset($scarray[$id])) {
 				throw new RedirectException('Ошибка', '/fleet/shortcut/');
+			}
 
-			if (Request::has('delete'))
-			{
+			if (Request::has('delete')) {
 				unset($scarray[$id]);
 				$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
 				Models\UsersInfo::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
-				if (Session::has('fleet_shortcut'))
+				if (Session::has('fleet_shortcut')) {
 					Session::remove('fleet_shortcut');
+				}
 
 				throw new RedirectException("Ссылка была успешно удалена!", "/fleet/shortcut/");
-			}
-			else
-			{
+			} else {
 				$r = explode(",", $scarray[$id]);
 
 				$r[0] = strip_tags(str_replace(',', '', Request::post('n', '')));
@@ -158,34 +163,41 @@ class FleetShortcutController extends Controller
 				$r[3] = (int) Request::post('p', 0);
 				$r[4] = (int) Request::post('t', 0);
 
-				if ($r[1] < 1 || $r[1] > Config::get('game.maxGalaxyInWorld'))
+				if ($r[1] < 1 || $r[1] > Config::get('game.maxGalaxyInWorld')) {
 					$r[1] = 1;
-				if ($r[2] < 1 || $r[2] > Config::get('game.maxSystemInGalaxy'))
+				}
+				if ($r[2] < 1 || $r[2] > Config::get('game.maxSystemInGalaxy')) {
 					$r[2] = 1;
-				if ($r[3] < 1 || $r[3] > Config::get('game.maxPlanetInSystem'))
+				}
+				if ($r[3] < 1 || $r[3] > Config::get('game.maxPlanetInSystem')) {
 					$r[3] = 1;
-				if ($r[4] != 1 && $r[4] != 2 && $r[4] != 3 && $r[4] != 5)
+				}
+				if ($r[4] != 1 && $r[4] != 2 && $r[4] != 3 && $r[4] != 5) {
 					$r[4] = 1;
+				}
 
 				$scarray[$id] = implode(",", $r);
 				$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
 				Models\UsersInfo::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
-				if (Session::has('fleet_shortcut'))
+				if (Session::has('fleet_shortcut')) {
 					Session::remove('fleet_shortcut');
+				}
 
 				throw new RedirectException("Ссылка была обновлена!", "/fleet/shortcut/");
 			}
 		}
 
-		if (!$inf['fleet_shortcut'])
+		if (!$inf['fleet_shortcut']) {
 			throw new RedirectException("Ваш список быстрых ссылок пуст!", "/fleet/shortcut/");
+		}
 
 		$scarray = explode("\r\n", $inf['fleet_shortcut']);
 
-		if (!isset($scarray[$id]))
+		if (!isset($scarray[$id])) {
 			throw new RedirectException("Данной ссылки не существует!", "/fleet/shortcut/");
+		}
 
 		$c = explode(',', $scarray[$id]);
 

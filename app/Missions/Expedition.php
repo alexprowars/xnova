@@ -34,16 +34,16 @@ class Expedition extends FleetEngine implements Mission
 	{
 		$Expowert = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID) {
 			$Expowert[$ID] = Vars::getItemTotalPrice($ID) / 200;
+		}
 
 		$FleetPoints = 0;
 
 		$FleetCapacity = 0;
 		$FleetCount = [];
 
-		foreach ($this->_fleet->getShips() as $type => $ship)
-		{
+		foreach ($this->fleet->getShips() as $type => $ship) {
 			$FleetCount[$type] = $ship['count'];
 
 			$fleetData = Vars::getUnitData($type);
@@ -54,39 +54,33 @@ class Expedition extends FleetEngine implements Mission
 
 		$StatFactor = Statpoints::query()->where('stat_type', 1)->max('total_points');
 
-		if ($StatFactor < 10000)
+		if ($StatFactor < 10000) {
 			$upperLimit = 200;
-		elseif ($StatFactor < 100000)
+		} elseif ($StatFactor < 100000) {
 			$upperLimit = 2400;
-		elseif ($StatFactor < 1000000)
+		} elseif ($StatFactor < 1000000) {
 			$upperLimit = 6000;
-		elseif ($StatFactor < 5000000)
+		} elseif ($StatFactor < 5000000) {
 			$upperLimit = 9000;
-		else
+		} else {
 			$upperLimit = 12000;
+		}
 
-		$FleetCapacity -= $this->_fleet->resource_metal + $this->_fleet->resource_crystal + $this->_fleet->resource_deuterium;
+		$FleetCapacity -= $this->fleet->resource_metal + $this->fleet->resource_crystal + $this->fleet->resource_deuterium;
 		$GetEvent = mt_rand(1, 10);
 
-		switch ($GetEvent)
-		{
+		switch ($GetEvent) {
 			case 1:
-
 				$WitchFound = mt_rand(1, 3);
 				$FindSize = mt_rand(0, 100);
 
-				if (10 < $FindSize)
-				{
+				if (10 < $FindSize) {
 					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_1_' . mt_rand(1, 4));
-				}
-				elseif (0 < $FindSize && 10 >= $FindSize)
-				{
+				} elseif (0 < $FindSize && 10 >= $FindSize) {
 					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_2_' . mt_rand(1, 3));
-				}
-				else
-				{
+				} else {
 					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_3_' . mt_rand(1, 2));
 				}
@@ -95,8 +89,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$update = [];
 
-				switch ($WitchFound)
-				{
+				switch ($WitchFound) {
 					case 1:
 						$update['+resource_metal'] = $Size;
 						break;
@@ -113,40 +106,33 @@ class Expedition extends FleetEngine implements Mission
 				break;
 
 			case 2:
-
 				$FindSize = mt_rand(0, 100);
-				if(10 < $FindSize) {
+				if (10 < $FindSize) {
 					$Size		= mt_rand(1, 2);
-				} elseif(0 < $FindSize && 10 >= $FindSize) {
+				} elseif (0 < $FindSize && 10 >= $FindSize) {
 					$Size		= mt_rand(2, 5);
 				} else {
 					$Size	 	= mt_rand(5, 10);
 				}
 
-				$Message = __('fleet_engine.sys_expe_found_dm_1_'.mt_rand(1,5));
+				$Message = __('fleet_engine.sys_expe_found_dm_1_' . mt_rand(1, 5));
 
-				Models\Users::query()->where('id', $this->_fleet->owner)
-					->update(['credits' => DB::raw('credits + '.$Size)]);
+				Models\Users::query()->where('id', $this->fleet->owner)
+					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
 				$this->ReturnFleet();
 
 				break;
 
 			case 3:
-
 				$FindSize = mt_rand(0, 100);
-				if (10 < $FindSize)
-				{
+				if (10 < $FindSize) {
 					$Size = mt_rand(10, 50);
 					$Message = __('fleet_engine.sys_expe_found_ships_1_' . mt_rand(1, 4));
-				}
-				elseif (0 < $FindSize && 10 >= $FindSize)
-				{
+				} elseif (0 < $FindSize && 10 >= $FindSize) {
 					$Size = mt_rand(52, 100);
 					$Message = __('fleet_engine.sys_expe_found_ships_2_' . mt_rand(1, 2));
-				}
-				else
-				{
+				} else {
 					$Size = mt_rand(102, 200);
 					$Message = __('fleet_engine.sys_expe_found_ships_3_' . mt_rand(1, 2));
 				}
@@ -158,32 +144,34 @@ class Expedition extends FleetEngine implements Mission
 
 				$Found = [];
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID)
-				{
-					if(!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214)
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID) {
+					if (!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214) {
 						continue;
+					}
 
 					$MaxFound = floor($FoundShips / Vars::getItemTotalPrice($ID));
 
-					if ($MaxFound <= 0)
+					if ($MaxFound <= 0) {
 						continue;
+					}
 
 					$Count = mt_rand(0, $MaxFound);
 
-					if ($Count <= 0)
+					if ($Count <= 0) {
 						continue;
+					}
 
 					$Found[$ID]	= $Count;
 
 					$FoundShips	 		-= $Count * Vars::getItemTotalPrice($ID);
-					$FoundShipMess   	.= '<br>'.__('main.tech.'.$ID).': '.Format::number($Count);
+					$FoundShipMess   	.= '<br>' . __('main.tech.' . $ID) . ': ' . Format::number($Count);
 
-					if ($FoundShips <= 0)
+					if ($FoundShips <= 0) {
 						break;
+					}
 				}
 
-				foreach ($FleetCount as $ID => $Count)
-				{
+				foreach ($FleetCount as $ID => $Count) {
 					$NewFleetArray[] = [
 						'id' => (int) $ID,
 						'count' => (int) ($Count + (isset($Found[$ID]) ? floor($Found[$ID]) : 0))
@@ -197,11 +185,9 @@ class Expedition extends FleetEngine implements Mission
 				break;
 
 			case 4:
-
 				$Chance = mt_rand(1, 2);
 
-				if ($Chance == 1)
-				{
+				if ($Chance == 1) {
 					$Points = [-3, -5, -8];
 					$Which = 1;
 					$Def = -3;
@@ -213,9 +199,7 @@ class Expedition extends FleetEngine implements Mission
 						['id' => 206, 'count' => 3],
 						['id' => 207, 'count' => 2]
 					];
-				}
-				else
-				{
+				} else {
 					$Points = [-4, -6, -9];
 					$Which = 2;
 					$Def = 3;
@@ -231,24 +215,18 @@ class Expedition extends FleetEngine implements Mission
 
 				$FindSize = mt_rand(0, 100);
 
-				if (10 < $FindSize)
-				{
+				if (10 < $FindSize) {
 					$Message = __('fleet_engine.sys_expe_attack_' . $Which . '_1_' . $Rand[0]);
 					$MaxAttackerPoints = 0.3 + $Add + (mt_rand($Points[0], abs($Points[0])) * 0.01);
-				}
-				elseif (0 < $FindSize && 10 >= $FindSize)
-				{
+				} elseif (0 < $FindSize && 10 >= $FindSize) {
 					$Message = __('fleet_engine.sys_expe_attack_' . $Which . '_2_' . $Rand[1]);
 					$MaxAttackerPoints = 0.3 + $Add + (mt_rand($Points[1], abs($Points[1])) * 0.01);
-				}
-				else
-				{
+				} else {
 					$Message = __('fleet_engine.sys_expe_attack_' . $Which . '_3_' . $Rand[2]);
 					$MaxAttackerPoints = 0.3 + $Add + (mt_rand($Points[2], abs($Points[2])) * 0.01);
 				}
 
-				foreach ($FleetCount as $ID => $count)
-				{
+				foreach ($FleetCount as $ID => $count) {
 					$defenderFleetArray[] = [
 						'id' => $ID,
 						'count' => round($count * $MaxAttackerPoints),
@@ -262,23 +240,23 @@ class Expedition extends FleetEngine implements Mission
 				$attackers = new PlayerGroup();
 				$defenders = new PlayerGroup();
 
-				$mission->getGroupFleet($this->_fleet, $attackers);
+				$mission->getGroupFleet($this->fleet, $attackers);
 
-				$fleetData = $this->_fleet->getShips($defenderFleetArray);
+				$fleetData = $this->fleet->getShips($defenderFleetArray);
 
 				$mission->usersInfo[0] = [];
 				$mission->usersInfo[0][0] = [
-					'galaxy' => $this->_fleet->end_galaxy,
-					'system' => $this->_fleet->end_system,
-					'planet' => $this->_fleet->end_planet
+					'galaxy' => $this->fleet->end_galaxy,
+					'system' => $this->fleet->end_system,
+					'planet' => $this->fleet->end_planet
 				];
 
 				$res = [];
 
-				foreach ($fleetData as $shipId => $shipArr)
-				{
-					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET)
+				foreach ($fleetData as $shipId => $shipArr) {
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET) {
 						continue;
+					}
 
 					$res[$shipId] = $shipArr['count'];
 				}
@@ -287,26 +265,27 @@ class Expedition extends FleetEngine implements Mission
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) AS $techId)
-				{
-					if (isset($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] > 0)
-						$res[$techId] = mt_rand(abs($mission->usersTech[$this->_fleet->owner][Vars::getName($techId)] + $Def), 0);
+				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
+					if (isset($mission->usersTech[$this->fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->fleet->owner][Vars::getName($techId)] > 0) {
+						$res[$techId] = mt_rand(abs($mission->usersTech[$this->fleet->owner][Vars::getName($techId)] + $Def), 0);
+					}
 				}
 
 				$mission->usersTech[0] = $res;
 
 				$fleetObj = new Fleet(0);
 
-				foreach ($fleetData as $shipId => $shipArr)
-				{
-					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count'])
+				foreach ($fleetData as $shipId => $shipArr) {
+					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count']) {
 						continue;
+					}
 
 					$fleetObj->addShipType($mission->getShipType($shipId, $shipArr['count'], $res));
 				}
 
-				if (!$fleetObj->isEmpty())
+				if (!$fleetObj->isEmpty()) {
 					$playerObj->addFleet($fleetObj);
+				}
 
 				$defenders->addPlayer($playerObj);
 
@@ -322,17 +301,19 @@ class Expedition extends FleetEngine implements Mission
 				$attackUsers 	= $mission->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
 				$defenseUsers 	= $mission->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
 
-				for ( $_i = 0; $_i <= $report->getLastRoundNumber(); $_i++)
-				{
+				for ($_i = 0; $_i <= $report->getLastRoundNumber(); $_i++) {
 					$result['rw'][] = $mission->convertRoundToArray($report->getRound($_i));
 				}
 
-				if ($report->attackerHasWin())
+				if ($report->attackerHasWin()) {
 					$result['won'] = 1;
-				if ($report->defenderHasWin())
+				}
+				if ($report->defenderHasWin()) {
 					$result['won'] = 2;
-				if ($report->isAdraw())
+				}
+				if ($report->isAdraw()) {
 					$result['won'] = 0;
+				}
 
 				$result['lost'] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
 
@@ -341,14 +322,13 @@ class Expedition extends FleetEngine implements Mission
 
 				$attackFleets = $mission->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 
-				foreach ($attackFleets as $fleetID => $attacker)
-				{
+				foreach ($attackFleets as $fleetID => $attacker) {
 					$fleetArray = [];
 
-					foreach ($attacker as $element => $amount)
-					{
-						if (!is_numeric($element) || !$amount)
+					foreach ($attacker as $element => $amount) {
+						if (!is_numeric($element) || !$amount) {
 							continue;
+						}
 
 						$fleetArray[] = [
 							'id' => (int) $element,
@@ -356,10 +336,9 @@ class Expedition extends FleetEngine implements Mission
 						];
 					}
 
-					if (count($fleetArray))
+					if (count($fleetArray)) {
 						$this->KillFleet($fleetID);
-					else
-					{
+					} else {
 						Models\Fleet::query()->where('id', $fleetID)
 							->update([
 								'fleet_array' 	=> json_encode($fleetArray),
@@ -372,8 +351,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$FleetsUsers = [];
 
-				foreach ($attackUsers AS $info)
-				{
+				foreach ($attackUsers as $info) {
 					$FleetsUsers[] = $info['tech']['id'];
 				}
 
@@ -396,8 +374,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$ColorAtt = $ColorDef = '';
 
-				switch ($result['won'])
-				{
+				switch ($result['won']) {
 					case 2:
 						$ColorAtt = "red";
 						$ColorDef = "green";
@@ -411,14 +388,13 @@ class Expedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5(Config::get('app.key').$ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
+				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5(Config::get('app.key') . $ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
 
-				User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 3, __('fleet_engine.sys_mess_tower'), $MessageAtt);
+				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 3, __('fleet_engine.sys_mess_tower'), $MessageAtt);
 
 				break;
 
 			case 5:
-
 				$this->KillFleet();
 
 				$Message = __('fleet_engine.sys_expe_lost_fleet_' . mt_rand(1, 4));
@@ -426,7 +402,6 @@ class Expedition extends FleetEngine implements Mission
 				break;
 
 			case 6:
-
 				$MoreTime       = mt_rand(0, 100);
 				$Wrapper        = [];
 				$Wrapper[]      = 2;
@@ -440,38 +415,34 @@ class Expedition extends FleetEngine implements Mission
 				$Wrapper[]      = 3;
 				$Wrapper[]      = 5;
 
-				if ($MoreTime < 75)
-				{
-					$this->_fleet->end_time += ($this->_fleet->end_stay - $this->_fleet->start_time) * (array_rand($Wrapper) - 1);
+				if ($MoreTime < 75) {
+					$this->fleet->end_time += ($this->fleet->end_stay - $this->fleet->start_time) * (array_rand($Wrapper) - 1);
 
-					$Message = __('fleet_engine.sys_expe_time_slow_'.mt_rand(1,6));
-				}
-				else
-				{
-					$this->_fleet->end_time -= max(1, (($this->_fleet->end_stay - $this->_fleet->start_time) / 3 * array_rand($Wrapper)));
+					$Message = __('fleet_engine.sys_expe_time_slow_' . mt_rand(1, 6));
+				} else {
+					$this->fleet->end_time -= max(1, (($this->fleet->end_stay - $this->fleet->start_time) / 3 * array_rand($Wrapper)));
 
-					$Message = __('fleet_engine.sys_expe_time_fast_'.mt_rand(1,3));
+					$Message = __('fleet_engine.sys_expe_time_fast_' . mt_rand(1, 3));
 				}
 
 				$this->ReturnFleet();
 
-           		break;
+				break;
 
 			default:
-
 				$this->ReturnFleet();
 
 				$Message = __('fleet_engine.sys_expe_nothing_' . mt_rand(1, 8));
 		}
 
-		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_stay, 15, __('fleet_engine.sys_expe_report'), $Message);
+		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_stay, 15, __('fleet_engine.sys_expe_report'), $Message);
 	}
 
 	public function ReturnEvent()
 	{
-		$Message = sprintf(__('fleet_engine.sys_expe_back_home'), __('main.Metal'), Format::number($this->_fleet->resource_metal), __('main.Crystal'), Format::number($this->_fleet->resource_crystal),  __('main.Deuterium'), Format::number($this->_fleet->resource_deuterium));
+		$Message = sprintf(__('fleet_engine.sys_expe_back_home'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 
-		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->end_time, 15, __('fleet_engine.sys_expe_report'), $Message);
+		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 15, __('fleet_engine.sys_expe_report'), $Message);
 
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

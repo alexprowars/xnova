@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +23,7 @@ class StatController extends Controller
 	private $page = 1;
 	private $pid = 0;
 
-	public function __construct ()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -35,11 +35,11 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 		$view = Request::input('view', 'players');
 
-		if ($view != 'players' && $type > 5)
+		if ($view != 'players' && $type > 5) {
 			$type = 1;
+		}
 
-		switch ($type)
-		{
+		switch ($type) {
 			case 2:
 				$this->field = 'fleet';
 				break;
@@ -66,12 +66,11 @@ class StatController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function index ()
+	public function index()
 	{
 		$view = Request::input('view', 'players');
 
-		switch ($view)
-		{
+		switch ($view) {
 			case 'alliances':
 				return $this->alliances();
 			case 'races':
@@ -81,7 +80,7 @@ class StatController extends Controller
 		}
 	}
 
-	private function players ()
+	private function players()
 	{
 		$type = (int) Request::input('type', 1);
 
@@ -92,12 +91,10 @@ class StatController extends Controller
 			'page' => 1
 		];
 
-		if (!$this->page && Auth::check())
-		{
-			$records = Cache::get('app::records_'.$this->user->getId().'');
+		if (!$this->page && Auth::check()) {
+			$records = Cache::get('app::records_' . $this->user->getId() . '');
 
-			if ($records === null)
-			{
+			if ($records === null) {
 				$records = DB::table('statpoints')
 					->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 					->where('stat_type', 1)
@@ -105,16 +102,18 @@ class StatController extends Controller
 					->where('id_owner', $this->user->getId())
 					->first();
 
-				if (!$records)
+				if (!$records) {
 					$records = [];
-				else
+				} else {
 					$records = $records->toArray();
+				}
 
-				Cache::put('app::records_'.$this->user->getId().'', $records, 1800);
+				Cache::put('app::records_' . $this->user->getId() . '', $records, 1800);
 			}
 
-			if (isset($records[$this->field.'_rank']))
-				$this->page = $records[$this->field.'_rank'];
+			if (isset($records[$this->field . '_rank'])) {
+				$this->page = $records[$this->field . '_rank'];
+			}
 		}
 
 		$users = (int) Config::get('game.active_users', 0);
@@ -124,25 +123,26 @@ class StatController extends Controller
 
 		$position = ($parse['page'] - 1) * 100;
 
-		if ($type == 6 || $type == 7)
-			$query = DB::select("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_".$this->field." as ".$this->field."_points, 0 as ".$this->field."_old_rank FROM users u LEFT JOIN alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_".$this->field." DESC, u.xp".$this->field." DESC LIMIT " . $position . ", 100");
-		else
+		if ($type == 6 || $type == 7) {
+			$query = DB::select("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
+		} else {
 			$query = DB::select("SELECT s.*, u.username, u.race FROM statpoints s LEFT JOIN users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
+		}
 
 		$position++;
 
 		$parse['items'] = [];
 
-		foreach ($query as $item)
-		{
+		foreach ($query as $item) {
 			$row = [];
 			$row['id'] = (int) $item->id_owner;
 			$row['position'] = $position;
 
-			$oldPosition = (int) $item->{$this->field.'_old_rank'};
+			$oldPosition = (int) $item->{$this->field . '_old_rank'};
 
-			if ($oldPosition == 0)
+			if ($oldPosition == 0) {
 				$oldPosition = $position;
+			}
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->username;
@@ -150,8 +150,7 @@ class StatController extends Controller
 
 			$row['alliance'] = false;
 
-			if ($item->id_ally)
-			{
+			if ($item->id_ally) {
 				$row['alliance'] = [
 					'id' => (int) $item->id_ally,
 					'name' => $item->ally_name,
@@ -160,7 +159,7 @@ class StatController extends Controller
 			}
 
 			$row['race'] = (int) $item->race;
-			$row['points'] = (int) $item->{$this->field.'_points'};
+			$row['points'] = (int) $item->{$this->field . '_points'};
 
 			$parse['items'][] = $row;
 
@@ -170,7 +169,7 @@ class StatController extends Controller
 		return $parse;
 	}
 
-	private function alliances ()
+	private function alliances()
 	{
 		$type = (int) Request::input('type', 1);
 
@@ -194,22 +193,22 @@ class StatController extends Controller
 
 		$parse['items'] = [];
 
-		foreach ($query as $item)
-		{
+		foreach ($query as $item) {
 			$row = [];
 			$row['id'] = (int) $item->ally_id;
 			$row['position'] = $position;
 
-			$oldPosition = (int) $item->{$this->field.'_old_rank'};
+			$oldPosition = (int) $item->{$this->field . '_old_rank'};
 
-			if ($oldPosition == 0)
+			if ($oldPosition == 0) {
 				$oldPosition = $position;
+			}
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->name;
 			$row['name_marked'] = Auth::check() && $item->name == $this->user->ally_name;
 			$row['members'] = (int) $item->members;
-			$row['points'] = (int) $item->{$this->field.'_points'};
+			$row['points'] = (int) $item->{$this->field . '_points'};
 
 			$parse['items'][] = $row;
 
@@ -219,7 +218,7 @@ class StatController extends Controller
 		return $parse;
 	}
 
-	private function races ()
+	private function races()
 	{
 		$parse = [
 			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),
@@ -230,13 +229,12 @@ class StatController extends Controller
 
 		$query = DB::select("SELECT * FROM statpoints WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $this->field . "_rank` ASC;");
 
-		foreach ($query as $item)
-		{
+		foreach ($query as $item) {
 			$row = [];
-			$row['position'] = (int) $item->{$this->field.'_rank'};
+			$row['position'] = (int) $item->{$this->field . '_rank'};
 			$row['race'] = (int) $item->race;
 			$row['count'] = (int) $item->total_count;
-			$row['points'] = (int) $item->{$this->field.'_points'};
+			$row['points'] = (int) $item->{$this->field . '_points'};
 
 			$parse['items'][] = $row;
 		}

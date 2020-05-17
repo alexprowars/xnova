@@ -34,17 +34,18 @@ class UsersInfo extends Model
 	protected $guarded = [];
 	public $table = 'users_info';
 
-	public function getSettings ()
+	public function getSettings()
 	{
 		$data = json_decode($this->settings, true);
 
-		if (!is_array($data))
+		if (!is_array($data)) {
 			$data = [];
+		}
 
 		return $data;
 	}
 
-	public function setSetting ($key, $value)
+	public function setSetting($key, $value)
 	{
 		$data = $this->getSettings();
 		$data[$key] = $value;
@@ -52,10 +53,11 @@ class UsersInfo extends Model
 		$this->setSettings($data);
 	}
 
-	public function setSettings ($data)
+	public function setSettings($data)
 	{
-		if (!is_array($data))
+		if (!is_array($data)) {
 			$data = [];
+		}
 
 		$this->settings = json_encode($data);
 	}

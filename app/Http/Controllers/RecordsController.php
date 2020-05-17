@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Xnova\Format;
@@ -14,12 +14,13 @@ use Xnova\Controller;
 
 class RecordsController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$RecordsArray = [];
 
-		if (file_exists(base_path('bootstrap/cache/CacheRecords.php')))
+		if (file_exists(base_path('bootstrap/cache/CacheRecords.php'))) {
 			require_once(base_path('bootstrap/cache/CacheRecords.php'));
+		}
 
 		$Builds = [];
 		$MoonsBuilds = [];
@@ -27,39 +28,29 @@ class RecordsController extends Controller
 		$Fleet = [];
 		$Defense = [];
 
-		foreach ($RecordsArray as $ElementID => $ElementIDArray)
-		{
-			if ($ElementID >= 1 && $ElementID <= 39 || $ElementID == 44)
-			{
-				$Builds[__('main.tech.'.$ElementID)] = [
+		foreach ($RecordsArray as $ElementID => $ElementIDArray) {
+			if ($ElementID >= 1 && $ElementID <= 39 || $ElementID == 44) {
+				$Builds[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
-			}
-			elseif ($ElementID >= 41 && $ElementID <= 99 && $ElementID != 44)
-			{
-				$MoonsBuilds[__('main.tech.'.$ElementID)] = [
+			} elseif ($ElementID >= 41 && $ElementID <= 99 && $ElementID != 44) {
+				$MoonsBuilds[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
-			}
-			elseif ($ElementID >= 101 && $ElementID <= 199)
-			{
-				$Techno[__('main.tech.'.$ElementID)] = [
+			} elseif ($ElementID >= 101 && $ElementID <= 199) {
+				$Techno[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
-			}
-			elseif ($ElementID >= 201 && $ElementID <= 399)
-			{
-				$Fleet[__('main.tech.'.$ElementID)] = [
+			} elseif ($ElementID >= 201 && $ElementID <= 399) {
+				$Fleet[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
-			}
-			elseif ($ElementID >= 401 && $ElementID <= 599)
-			{
-				$Defense[__('main.tech'.$ElementID)] = [
+			} elseif ($ElementID >= 401 && $ElementID <= 599) {
+				$Defense[__('main.tech' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];

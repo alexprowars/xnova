@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\View;
 /** @noinspection PhpUnused */
 class ServerController extends Controller
 {
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'server',
@@ -18,7 +18,7 @@ class ServerController extends Controller
 		]];
 	}
 
-	public function index ()
+	public function index()
 	{
 		View::share('title', 'Переменные сервера');
 		View::share('breadcrumbs', [

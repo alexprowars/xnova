@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -21,53 +21,56 @@ class Queue
 	/** @var Models\Queue[]|bool */
 	private $queue = false;
 
-	const TYPE_BUILDING = Models\Queue::TYPE_BUILD;
-	const TYPE_RESEARCH = Models\Queue::TYPE_TECH;
-	const TYPE_SHIPYARD = Models\Queue::TYPE_UNIT;
+	public const TYPE_BUILDING = Models\Queue::TYPE_BUILD;
+	public const TYPE_RESEARCH = Models\Queue::TYPE_TECH;
+	public const TYPE_SHIPYARD = Models\Queue::TYPE_UNIT;
 	/** @var User user */
 	private $user;
 	/** @var Planet planet */
 	private $planet;
 
-	public function __construct ($user, ?Planet $planet = null)
+	public function __construct($user, ?Planet $planet = null)
 	{
-		if ($user instanceof Models\Users)
+		if ($user instanceof Models\Users) {
 			$this->user = $user;
-		else
+		} else {
 			$this->user = Models\Users::find((int) $user);
+		}
 
 		$this->planet = $planet;
 
 		$this->loadQueue();
 	}
 
-	public function loadQueue ()
+	public function loadQueue()
 	{
 		$this->queue = [];
 
 		$query = Models\Queue::query()->where('user_id', $this->user->getId())
 			->orderBy('id', 'ASC');
 
-		if ($this->planet)
+		if ($this->planet) {
 			$query->where('planet_id', $this->planet->id);
+		}
 
 		$items = $query->get();
 
-		foreach ($items as $item)
+		foreach ($items as $item) {
 			$this->queue[] = $item;
+		}
 	}
 
-	public function setPlanet (Planet $planet)
+	public function setPlanet(Planet $planet)
 	{
 		$this->planet = $planet;
 	}
 
-	public function getPlanet ()
+	public function getPlanet()
 	{
 		return $this->planet;
 	}
 
-	public function getUser ()
+	public function getUser()
 	{
 		return $this->user;
 	}
@@ -78,12 +81,16 @@ class Queue
 
 		$type = Vars::getItemType($elementId);
 
-		if ($type == Vars::ITEM_TYPE_BUILING)
-			(new Build($this))->add($elementId, $destroy);
-		elseif ($type == Vars::ITEM_TYPE_TECH)
-			(new Tech($this))->add($elementId);
-		elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE)
-			(new Unit($this))->add($elementId, $count);
+		if ($type == Vars::ITEM_TYPE_BUILING) {
+			(new Build($this)
+			)->add($elementId, $destroy);
+		} elseif ($type == Vars::ITEM_TYPE_TECH) {
+			(new Tech($this)
+			)->add($elementId);
+		} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
+			(new Unit($this)
+			)->add($elementId, $count);
+		}
 	}
 
 	public function delete($elementId, $listId = 0)
@@ -92,71 +99,71 @@ class Queue
 
 		$type = Vars::getItemType($elementId);
 
-		if ($type == Vars::ITEM_TYPE_BUILING)
-			(new Build($this))->delete($listId);
-		elseif ($type == Vars::ITEM_TYPE_TECH)
-			(new Tech($this))->delete($elementId);
+		if ($type == Vars::ITEM_TYPE_BUILING) {
+			(new Build($this)
+			)->delete($listId);
+		} elseif ($type == Vars::ITEM_TYPE_TECH) {
+			(new Tech($this)
+			)->delete($elementId);
+		}
 	}
 
 	public function get($type = '')
 	{
-		if (!is_array($this->queue))
+		if (!is_array($this->queue)) {
 			$this->loadQueue();
+		}
 
-		if (!$type)
+		if (!$type) {
 			return $this->queue;
-		elseif (in_array($type, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD]))
-		{
+		} elseif (in_array($type, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD])) {
 			$r = [];
 
-			foreach ($this->queue as $item)
-			{
-				if ($item->type == $type)
+			foreach ($this->queue as $item) {
+				if ($item->type == $type) {
 					$r[] = $item;
+				}
 			}
 
 			return $r;
-		}
-		else
+		} else {
 			return [];
+		}
 	}
 
 	public function getCount($queueType = '')
 	{
-		if (!is_array($this->queue))
+		if (!is_array($this->queue)) {
 			$this->loadQueue();
+		}
 
-		if (!$queueType)
+		if (!$queueType) {
 			return count($this->queue);
-		elseif (in_array($queueType, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD]))
-		{
+		} elseif (in_array($queueType, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD])) {
 			$cnt = 0;
 
-			foreach ($this->queue as $item)
-			{
-				if ($item->type == $queueType)
+			foreach ($this->queue as $item) {
+				if ($item->type == $queueType) {
 					$cnt++;
+				}
 			}
 
 			return $cnt;
-		}
-		else
+		} else {
 			return 0;
+		}
 	}
 
-	public function getTypes ()
+	public function getTypes()
 	{
 		return [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD];
 	}
 
-	public function deleteInQueue ($id)
+	public function deleteInQueue($id)
 	{
-		foreach ($this->queue as $i => $item)
-		{
-			if ($item->id == $id)
-			{
-				if ($item->delete())
-				{
+		foreach ($this->queue as $i => $item) {
+			if ($item->id == $id) {
+				if ($item->delete()) {
 					unset($this->queue[$i]);
 
 					return true;
@@ -169,31 +176,30 @@ class Queue
 		return false;
 	}
 
-	public function update ()
+	public function update()
 	{
-		if (!($this->planet instanceof Planet))
+		if (!($this->planet instanceof Planet)) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
+		}
 
-		if (!($this->user instanceof User))
+		if (!($this->user instanceof User)) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::User');
+		}
 
 		$buildingsCount = $this->getCount(self::TYPE_BUILDING);
 
-		if ($buildingsCount)
-		{
+		if ($buildingsCount) {
 			$this->nextBuildingQueue();
 
-			for ($i = 0; $i < $buildingsCount; $i++)
-			{
-				if ($this->checkBuildQueue())
-				{
+			for ($i = 0; $i < $buildingsCount; $i++) {
+				if ($this->checkBuildQueue()) {
 					$this->planet->update();
 					$this->planet->resourceProductions();
 
 					$this->nextBuildingQueue();
-				}
-				else
+				} else {
 					break;
+				}
 			}
 		}
 
@@ -203,12 +209,13 @@ class Queue
 		return true;
 	}
 
-	private function checkBuildQueue ()
+	private function checkBuildQueue()
 	{
 		$queueArray = $this->get(self::TYPE_BUILDING);
 
-		if (!count($queueArray))
+		if (!count($queueArray)) {
 			return false;
+		}
 
 		$buildItem = $queueArray[0];
 
@@ -219,60 +226,57 @@ class Queue
 
 		$buildTime = $entity->getTime();
 
-		if ($isDestroy)
+		if ($isDestroy) {
 			$buildTime = ceil($buildTime / 2);
+		}
 
-		if ($buildItem->time + $buildTime != $buildItem->time_end)
-		{
+		if ($buildItem->time + $buildTime != $buildItem->time_end) {
 			$buildItem->update([
 				'time_end' => $buildItem->time + $buildTime
 			]);
 		}
 
-		if ($buildItem->time + $buildTime <= time() + 5)
-		{
-			if (!$this->planet->planet_updated)
+		if ($buildItem->time + $buildTime <= time() + 5) {
+			if (!$this->planet->planet_updated) {
 				$this->planet->resourceUpdate(0, true);
+			}
 
 			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
 			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 
 			$xp = 0;
 
-			if (in_array($buildItem->object_id, Vars::getItemsByType('build_exp')))
-			{
-				if (!$isDestroy)
+			if (in_array($buildItem->object_id, Vars::getItemsByType('build_exp'))) {
+				if (!$isDestroy) {
 					$xp += floor($units / Config::get('game.buildings_exp_mult', 1000));
-				else
+				} else {
 					$xp -= floor($units / Config::get('game.buildings_exp_mult', 1000));
+				}
 			}
 
-			if (!$isDestroy)
-			{
+			if (!$isDestroy) {
 				$this->planet->field_current++;
 				$this->planet->setBuild($buildItem->object_id, $build['level'] + 1);
-			}
-			else
-			{
+			} else {
 				$this->planet->field_current--;
 				$this->planet->setBuild($buildItem->object_id, $build['level'] - 1);
 			}
 
-			if (!$this->deleteInQueue($buildItem->id))
+			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
+			}
 
-			if ($xp != 0 && $this->user->lvl_minier < Config::get('game.level.max_ind', 100))
-			{
+			if ($xp != 0 && $this->user->lvl_minier < Config::get('game.level.max_ind', 100)) {
 				$this->user->xpminier += $xp;
 
-				if ($this->user->xpminier < 0)
+				if ($this->user->xpminier < 0) {
 					$this->user->xpminier = 0;
+				}
 
 				$this->user->update();
 			}
 
-			if (Config::get('game.log.buildings', false) == true)
-			{
+			if (Config::get('game.log.buildings', false) == true) {
 				DB::table('log_history')->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
@@ -295,32 +299,33 @@ class Queue
 		return false;
 	}
 
-	public function nextBuildingQueue ()
+	public function nextBuildingQueue()
 	{
 		$queueArray = $this->get(self::TYPE_BUILDING);
 
-		if (!count($queueArray) || $queueArray[0]->time > 0)
+		if (!count($queueArray) || $queueArray[0]->time > 0) {
 			return false;
+		}
 
 		$loop = true;
 
-		while ($loop)
-		{
+		while ($loop) {
 			$buildItem = $queueArray[0];
 
 			$HaveNoMoreLevel = false;
 
 			$build = $this->planet->getBuild($buildItem->object_id);
 
-			if (!$build)
-			{
+			if (!$build) {
 				array_shift($queueArray);
 
-				if (!$this->deleteInQueue($buildItem->id))
+				if (!$this->deleteInQueue($buildItem->id)) {
 					$buildItem->delete();
+				}
 
-				if (!count($queueArray))
+				if (!count($queueArray)) {
 					$loop = false;
+				}
 
 				continue;
 			}
@@ -330,18 +335,14 @@ class Queue
 			$entity = new Entity\Building($buildItem->object_id, 0, new Entity\Context($this->user, $this->planet));
 			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
 
-			if ($isDestroy && $build['level'] == 0)
-			{
+			if ($isDestroy && $build['level'] == 0) {
 				$HaveRessources = false;
 				$HaveNoMoreLevel = true;
-			}
-			else
-			{
+			} else {
 				$HaveRessources = $entity->canBuy($isDestroy ? $entity->getDestroyPrice() : $entity->getPrice());
 			}
 
-			if ($HaveRessources && ($entity->isAvailable() || $isDestroy))
-			{
+			if ($HaveRessources && ($entity->isAvailable() || $isDestroy)) {
 				$this->planet->metal 		-= $cost['metal'];
 				$this->planet->crystal 		-= $cost['crystal'];
 				$this->planet->deuterium 	-= $cost['deuterium'];
@@ -349,8 +350,9 @@ class Queue
 
 				$buildTime = $entity->getTime();
 
-				if ($isDestroy)
+				if ($isDestroy) {
 					$buildTime = ceil($buildTime / 2);
+				}
 
 				$buildItem->update([
 					'time' => time(),
@@ -359,8 +361,7 @@ class Queue
 
 				$loop = false;
 
-				if (Config::get('game.log.buildings', false) == true)
-				{
+				if (Config::get('game.log.buildings', false) == true) {
 					DB::table('log_history')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
@@ -376,35 +377,39 @@ class Queue
 						'level' 			=> ($build['level'] + 1)
 					]);
 				}
-			}
-			else
-			{
-				if ($HaveNoMoreLevel)
-					$message = sprintf(__('main.sys_nomore_level'), __('main.tech.'.$buildItem->object_id));
-				elseif (!$HaveRessources)
-				{
-					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.'.$buildItem->object_id) . '" на планете '.$this->planet->name.' '.Helpers::BuildPlanetAdressLink($this->planet->toArray()).'.<br>Вам необходимо ещё: <br>';
+			} else {
+				if ($HaveNoMoreLevel) {
+					$message = sprintf(__('main.sys_nomore_level'), __('main.tech.' . $buildItem->object_id));
+				} elseif (!$HaveRessources) {
+					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.' . $buildItem->object_id) . '" на планете ' . $this->planet->name . ' ' . Helpers::BuildPlanetAdressLink($this->planet->toArray()) . '.<br>Вам необходимо ещё: <br>';
 
-					if ($cost['metal'] > $this->planet->metal)
+					if ($cost['metal'] > $this->planet->metal) {
 						$message .= Format::number($cost['metal'] - $this->planet->metal) . ' металла<br>';
-					if ($cost['crystal'] > $this->planet->crystal)
+					}
+					if ($cost['crystal'] > $this->planet->crystal) {
 						$message .= Format::number($cost['crystal'] - $this->planet->crystal) . ' кристалла<br>';
-					if ($cost['deuterium'] > $this->planet->deuterium)
+					}
+					if ($cost['deuterium'] > $this->planet->deuterium) {
 						$message .= Format::number($cost['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
-					if (isset($cost['energy']) && isset($this->planet->energy_max) && $cost['energy'] > $this->planet->energy_max)
+					}
+					if (isset($cost['energy']) && isset($this->planet->energy_max) && $cost['energy'] > $this->planet->energy_max) {
 						$message .= Format::number($cost['energy'] - $this->planet->energy_max) . ' энергии<br>';
+					}
 				}
 
-				if (isset($message))
+				if (isset($message)) {
 					User::sendMessage($this->user->id, 0, 0, 99, __('main.sys_buildlist'), $message);
+				}
 
 				array_shift($queueArray);
 
-				if (!$this->deleteInQueue($buildItem->id))
+				if (!$this->deleteInQueue($buildItem->id)) {
 					$buildItem->delete();
+				}
 
-				if (!count($queueArray))
+				if (!count($queueArray)) {
 					$loop = false;
+				}
 			}
 		}
 
@@ -413,13 +418,15 @@ class Queue
 		return true;
 	}
 
-	public function checkTechQueue ()
+	public function checkTechQueue()
 	{
-		if (!($this->planet instanceof Planet))
+		if (!($this->planet instanceof Planet)) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
+		}
 
-		if (!($this->user instanceof User))
+		if (!($this->user instanceof User)) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::User');
+		}
 
 		$result	= false;
 
@@ -427,48 +434,48 @@ class Queue
 		$buildItem = Models\Queue::query()->where('user_id', $this->user->id)
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
-		if ($buildItem)
-		{
-			if ($buildItem->planet_id != $this->planet->id)
-			{
+		if ($buildItem) {
+			if ($buildItem->planet_id != $this->planet->id) {
 				/** @var Planet $planet */
 				$planet = Planet::query()->find((int) $buildItem->planet_id);
 
-				if ($planet)
+				if ($planet) {
 					$planet->assignUser($this->user);
-			}
-			else
+				}
+			} else {
 				$planet = $this->planet;
+			}
 
-			if (!$planet)
+			if (!$planet) {
 				throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+			}
 
-			if ($this->user->getTechLevel('intergalactic') > 0)
+			if ($this->user->getTechLevel('intergalactic') > 0) {
 				$planet->spaceLabs = $planet->getNetworkLevel();
+			}
 
 			$entity = new Entity\Research($buildItem->object_id, $buildItem->level, new Entity\Context($this->user, $planet));
 
 			$buildTime = $entity->getTime();
 
-			if ($buildItem->time + $buildTime != $buildItem->time_end)
-			{
+			if ($buildItem->time + $buildTime != $buildItem->time_end) {
 				$buildItem->update([
 					'time_end' => $buildItem->time + $buildTime
 				]);
 			}
 
-			if ($buildItem->time + $buildTime <= time() + 5)
-			{
+			if ($buildItem->time + $buildTime <= time() + 5) {
 				$this->user->setTech($buildItem->object_id, $buildItem->level);
 
-				if (!$this->deleteInQueue($buildItem->id))
+				if (!$this->deleteInQueue($buildItem->id)) {
 					$buildItem->delete();
+				}
 
-				if ($planet->id == $this->planet->id)
+				if ($planet->id == $this->planet->id) {
 					$this->loadQueue();
+				}
 
-				if (Config::get('game.log.research', false) == true)
-				{
+				if (Config::get('game.log.research', false) == true) {
 					DB::table('log_history')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
@@ -494,10 +501,9 @@ class Queue
 		return $result;
 	}
 
-	public function checkUnitQueue ()
+	public function checkUnitQueue()
 	{
-		if ($this->getCount(self::TYPE_SHIPYARD))
-		{
+		if ($this->getCount(self::TYPE_SHIPYARD)) {
 			$buildQueue = $this->get(self::TYPE_SHIPYARD);
 
 			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->getUnitCount('interceptor_misil') + (2 * $this->planet->getUnitCount('interplanetary_misil')));
@@ -505,50 +511,49 @@ class Queue
 			$max = [];
 			$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
-			foreach ($buildTypes as $id)
-			{
+			foreach ($buildTypes as $id) {
 				$price = Vars::getItemPrice($id);
 
-				if (isset($price['max']))
+				if (isset($price['max'])) {
 					$max[$id] = $this->planet->getUnitCount($id);
+				}
 			}
 
 			$builded = 0;
 
-			foreach ($buildQueue as &$item)
-			{
-				if ($item->object_id == 502 || $item->object_id == 503)
-				{
-					if ($item->object_id == 502)
-					{
-						if ($item->level > $MissilesSpace)
+			foreach ($buildQueue as &$item) {
+				if ($item->object_id == 502 || $item->object_id == 503) {
+					if ($item->object_id == 502) {
+						if ($item->level > $MissilesSpace) {
 							$item->level = $MissilesSpace;
-						else
+						} else {
 							$MissilesSpace -= $item->level;
-					}
-					else
-					{
-						if ($item->level > floor($MissilesSpace / 2))
+						}
+					} else {
+						if ($item->level > floor($MissilesSpace / 2)) {
 							$item->level = floor($MissilesSpace / 2);
-						else
+						} else {
 							$MissilesSpace -= $item->level;
+						}
 					}
 				}
 
 				$price = Vars::getItemPrice($item->object_id);
 
-				if (isset($price['max']))
-				{
-					if ($item->level > $price['max'])
+				if (isset($price['max'])) {
+					if ($item->level > $price['max']) {
 						$item->level = $price['max'];
+					}
 
-					if ($max[$item->object_id] + $item->level > $price['max'])
+					if ($max[$item->object_id] + $item->level > $price['max']) {
 						$item->level = $price['max'] - $max[$item->object_id];
+					}
 
-					if ($item->level > 0)
+					if ($item->level > 0) {
 						$max[$item->object_id] += $item->level;
-					else
+					} else {
 						$item->level = 0;
+					}
 				}
 			}
 
@@ -556,33 +561,34 @@ class Queue
 
 			$context = new Entity\Context($this->user, $this->planet);
 
-			foreach ($buildQueue as $i => $item)
-			{
-				if (!in_array($item->object_id, $buildTypes))
+			foreach ($buildQueue as $i => $item) {
+				if (!in_array($item->object_id, $buildTypes)) {
 					continue;
+				}
 
-				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE)
+				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE) {
 					$entity = new Entity\Defence($item->object_id, 1, $context);
-				else
+				} else {
 					$entity = new Entity\Fleet($item->object_id, 1, $context);
+				}
 
 				$buildTime = $entity->getTime();
 
-				while ($item->time + $buildTime < time())
-				{
+				while ($item->time + $buildTime < time()) {
 					$item->time += $buildTime;
 
 					$builded++;
 					$this->planet->setUnit($item->object_id, 1, true);
 					$item->level--;
 
-					if ($item->level <= 0)
-					{
-						if (!$this->deleteInQueue($item->id))
+					if ($item->level <= 0) {
+						if (!$this->deleteInQueue($item->id)) {
 							$item->delete();
+						}
 
-						if (isset($buildQueue[$i + 1]))
+						if (isset($buildQueue[$i + 1])) {
 							$buildQueue[$i + 1]->time = $item->time;
+						}
 
 						break;
 					}
@@ -590,8 +596,7 @@ class Queue
 
 				$this->planet->update();
 
-				if ($item->level > 0)
-				{
+				if ($item->level > 0) {
 					$item->time_end = $item->time + $buildTime;
 					$item->update();
 

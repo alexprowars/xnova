@@ -17,24 +17,36 @@ class Transport extends FleetEngine implements Mission
 	{
 		$this->RestoreFleetToPlanet(false, false);
 
-		$Message = sprintf(__('fleet_engine.sys_tran_mess_owner'),
-					$this->_fleet->target_owner_name, $this->_fleet->getTargetAdressLink(),
-					$this->_fleet->resource_metal, __('main.Metal'),
-					$this->_fleet->resource_crystal, __('main.Crystal'),
-					$this->_fleet->resource_deuterium, __('main.Deuterium'));
+		$Message = sprintf(
+			__('fleet_engine.sys_tran_mess_owner'),
+			$this->fleet->target_owner_name,
+			$this->fleet->getTargetAdressLink(),
+			$this->fleet->resource_metal,
+			__('main.Metal'),
+			$this->fleet->resource_crystal,
+			__('main.Crystal'),
+			$this->fleet->resource_deuterium,
+			__('main.Deuterium')
+		);
 
-		User::sendMessage($this->_fleet->owner, 0, $this->_fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
+		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
 
-		if ($this->_fleet->target_owner != $this->_fleet->owner)
-		{
-			$Message = sprintf(__('fleet_engine.sys_tran_mess_user'),
-						$this->_fleet->owner_name, $this->_fleet->getStartAdressLink(),
-						$this->_fleet->target_owner_name, $this->_fleet->getTargetAdressLink(),
-						$this->_fleet->resource_metal, __('main.Metal'),
-						$this->_fleet->resource_crystal, __('main.Crystal'),
-						$this->_fleet->resource_deuterium, __('main.Deuterium'));
+		if ($this->fleet->target_owner != $this->fleet->owner) {
+			$Message = sprintf(
+				__('fleet_engine.sys_tran_mess_user'),
+				$this->fleet->owner_name,
+				$this->fleet->getStartAdressLink(),
+				$this->fleet->target_owner_name,
+				$this->fleet->getTargetAdressLink(),
+				$this->fleet->resource_metal,
+				__('main.Metal'),
+				$this->fleet->resource_crystal,
+				__('main.Crystal'),
+				$this->fleet->resource_deuterium,
+				__('main.Deuterium')
+			);
 
-			User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
+			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
 		}
 
 		$this->ReturnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);

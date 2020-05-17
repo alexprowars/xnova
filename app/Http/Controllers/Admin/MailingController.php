@@ -14,7 +14,7 @@ class MailingController extends Controller
 {
 	use ValidatesRequests;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'mailing',
@@ -24,10 +24,9 @@ class MailingController extends Controller
 		]];
 	}
 
-	public function index (Request $request)
+	public function index(Request $request)
 	{
-		if ($request->isMethod('POST'))
-		{
+		if ($request->isMethod('POST')) {
 			$fields = $this->validate($request, [
 				'message' => 'required',
 				'theme' => 'required',
@@ -38,21 +37,21 @@ class MailingController extends Controller
 			/** @var User $currentUser */
 			$currentUser = Auth::user();
 
-			if ($currentUser->isAdmin())
+			if ($currentUser->isAdmin()) {
 				$color = 'yellow';
-			else
+			} else {
 				$color = 'skyblue';
+			}
 
 			$users = Users::query()->get(['id']);
 
-			foreach ($users as $user)
-			{
+			foreach ($users as $user) {
 				User::sendMessage(
 					$user->id,
 					false,
 					time(),
 					1,
-					'<font color="'.$color.'">Информационное сообщение ('.$currentUser->username.')</font>',
+					'<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
 					$fields['message']
 				);
 			}

@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Config;
@@ -33,22 +33,25 @@ class UpdateStatistics
 	public function __construct()
 	{
 		$this->start = time();
-		$this->user = new Models\Users;
+		$this->user = new Models\Users();
 	}
 
-	private function SetMaxInfo ($ID, $Count, Models\Users $Data)
+	private function SetMaxInfo($ID, $Count, Models\Users $Data)
 	{
-		if ($Data->isAdmin() || $Data->banned != 0)
+		if ($Data->isAdmin() || $Data->banned != 0) {
 			return;
+		}
 
-		if (!isset($this->maxinfos[$ID]))
+		if (!isset($this->maxinfos[$ID])) {
 			$this->maxinfos[$ID] = ['maxlvl' => 0, 'username' => ''];
+		}
 
-		if ($this->maxinfos[$ID]['maxlvl'] < $Count)
+		if ($this->maxinfos[$ID]['maxlvl'] < $Count) {
 			$this->maxinfos[$ID] = ['maxlvl' => $Count, 'username' => $Data->username];
+		}
 	}
 
-	private function GetTechnoPoints (Models\Users $user)
+	private function GetTechnoPoints(Models\Users $user)
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
@@ -57,20 +60,22 @@ class UpdateStatistics
 			->where('user_id', $user->id)
 			->get();
 
-		foreach ($items as $item)
-		{
-			if ($item->level <= 0)
+		foreach ($items as $item) {
+			if ($item->level <= 0) {
 				continue;
+			}
 
-			if ($user->records == 1 && $item->tech_id < 300)
+			if ($user->records == 1 && $item->tech_id < 300) {
 				$this->SetMaxInfo($item->tech_id, $item->level, $user);
+			}
 
 			$price = Vars::getItemPrice($item->tech_id);
 
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
-			for ($Level = 1; $Level <= $item->level; $Level++)
+			for ($Level = 1; $Level <= $item->level; $Level++) {
 				$TechPoints += $Units * pow($price['factor'], $Level);
+			}
 
 			$TechCounts += $item->level;
 		}
@@ -81,7 +86,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetBuildPoints (Models\Planets $planet, $user)
+	private function GetBuildPoints(Models\Planets $planet, $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
@@ -90,20 +95,22 @@ class UpdateStatistics
 			->where('planet_id', $planet->id)
 			->get();
 
-		foreach ($items as $item)
-		{
-			if ($item->level <= 0)
+		foreach ($items as $item) {
+			if ($item->level <= 0) {
 				continue;
+			}
 
-			if ($user['records'] == 1)
+			if ($user['records'] == 1) {
 				$this->SetMaxInfo($item->build_id, $item->level, $user);
+			}
 
 			$price = Vars::getItemPrice($item->build_id);
 
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
-			for ($Level = 1; $Level <= $item->level; $Level++)
+			for ($Level = 1; $Level <= $item->level; $Level++) {
 				$BuildPoints += $Units * pow($price['factor'], $Level);
+			}
 
 			$BuildCounts += $item->level;
 		}
@@ -114,7 +121,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetDefensePoints (Models\Planets $planet, &$RecordArray)
+	private function GetDefensePoints(Models\Planets $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -124,13 +131,14 @@ class UpdateStatistics
 			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE))
 			->get();
 
-		foreach ($items as $item)
-		{
-			if ($item->amount <= 0)
+		foreach ($items as $item) {
+			if ($item->amount <= 0) {
 				continue;
+			}
 
-			if (!isset($RecordArray[$item->unit_id]))
+			if (!isset($RecordArray[$item->unit_id])) {
 				$RecordArray[$item->unit_id] = 0;
+			}
 
 			$RecordArray[$item->unit_id] += $item->amount;
 
@@ -146,7 +154,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetFleetPoints (Models\Planets $planet, &$RecordArray)
+	private function GetFleetPoints(Models\Planets $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -156,13 +164,14 @@ class UpdateStatistics
 			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET))
 			->get();
 
-		foreach ($items as $item)
-		{
-			if ($item->amount <= 0)
+		foreach ($items as $item) {
+			if ($item->amount <= 0) {
 				continue;
+			}
 
-			if (!isset($RecordArray[$item->unit_id]))
+			if (!isset($RecordArray[$item->unit_id])) {
 				$RecordArray[$item->unit_id] = 0;
+			}
 
 			$RecordArray[$item->unit_id] += $item->amount;
 
@@ -170,8 +179,9 @@ class UpdateStatistics
 
 			$UnitsPoints += ($Units * $item->amount);
 
-			if ($item->unit_id != 212)
+			if ($item->unit_id != 212) {
 				$UnitsCounts += $item->amount;
+			}
 		}
 
 		$RetValue['FleetCount'] = $UnitsCounts;
@@ -180,24 +190,25 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetFleetPointsOnTour ($CurrentFleet)
+	private function GetFleetPointsOnTour($CurrentFleet)
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
 		$FleetArray = [];
 
-		foreach ($CurrentFleet as $type => $ship)
-		{
+		foreach ($CurrentFleet as $type => $ship) {
 			$Units = Vars::getItemTotalPrice($type, true);
 			$FleetPoints += ($Units * $ship['count']);
 
-			if ($type != 212)
+			if ($type != 212) {
 				$FleetCounts += $ship['count'];
+			}
 
-			if (isset($FleetArray[$type]))
+			if (isset($FleetArray[$type])) {
 				$FleetArray[$type] += $ship['count'];
-			else
+			} else {
 				$FleetArray[$type] = $ship['count'];
+			}
 		}
 
 		$RetValue['FleetCount'] = $FleetCounts;
@@ -207,7 +218,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	public function deleteUsers ()
+	public function deleteUsers()
 	{
 		$result = [];
 
@@ -216,27 +227,25 @@ class UpdateStatistics
 			->where('deltime', '>', 0)
 			->get(['id', 'username']);
 
-		foreach ($list as $user)
-		{
-			if (User::deleteById($user->id))
+		foreach ($list as $user) {
+			if (User::deleteById($user->id)) {
 				$result[] = $user->username;
+			}
 		}
 
 		return $result;
 	}
 
-	public function inactiveUsers ()
+	public function inactiveUsers()
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, users_info i WHERE i.id = u.id AND u.`onlinetime` < ".(time() - Config::get('settings.stat.inactiveTime', (21 * 86400)))." AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, users_info i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - Config::get('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
-		foreach ($list as $user)
-		{
+		foreach ($list as $user) {
 			DB::statement("UPDATE users SET `deltime` = '" . (time() + Config::get('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
 
-			if (Helpers::is_email($user->email))
-			{
+			if (Helpers::is_email($user->email)) {
 				Mail::to($user->email)->send(new UserDelete([
 					'#NAME#' => $user->username,
 				]));
@@ -248,24 +257,22 @@ class UpdateStatistics
 		return $result;
 	}
 
-	public function clearOldStats ()
+	public function clearOldStats()
 	{
 		Statpoints::query()->where('stat_code', '>=', 2)->delete();
 		Statpoints::query()->increment('stat_code', 1);
 	}
 
-	public function getTotalFleetPoints ()
+	public function getTotalFleetPoints()
 	{
 		$fleetPoints = [];
 
 		$UsrFleets = Fleet::query()->get();
 
-		foreach ($UsrFleets as $CurFleet)
-		{
+		foreach ($UsrFleets as $CurFleet) {
 			$Points = $this->GetFleetPointsOnTour($CurFleet->getShips());
 
-			if (!isset($fleetPoints[$CurFleet->owner]))
-			{
+			if (!isset($fleetPoints[$CurFleet->owner])) {
 				$fleetPoints[$CurFleet->owner] = [];
 				$fleetPoints[$CurFleet->owner]['points'] = 0;
 				$fleetPoints[$CurFleet->owner]['count'] = 0;
@@ -280,7 +287,7 @@ class UpdateStatistics
 		return $fleetPoints;
 	}
 
-	public function update ()
+	public function update()
 	{
 		$active_users = 0;
 
@@ -290,30 +297,28 @@ class UpdateStatistics
 
 		Statpoints::query()->where('stat_code', 1)->delete();
 
-		foreach ($list as $user)
-		{
+		foreach ($list as $user) {
 			$options = json_decode($user->settings, true);
 			$user->records = $options['records'] ?? true;
 
-			if ($user->banned != 0 || ($user->vacation != 0 && $user->vacation < (time() - 1036800)))
+			if ($user->banned != 0 || ($user->vacation != 0 && $user->vacation < (time() - 1036800))) {
 				$hide = 1;
-			else
+			} else {
 				$hide = 0;
+			}
 
-			if ($hide == 0)
+			if ($hide == 0) {
 				$active_users++;
+			}
 
 			// Запоминаем старое место в стате
-			if ($user->total_rank != '')
-			{
+			if ($user->total_rank != '') {
 				$OldTotalRank 	= $user->total_rank;
 				$OldTechRank 	= $user->tech_rank;
 				$OldFleetRank 	= $user->fleet_rank;
 				$OldBuildRank	= $user->build_rank;
 				$OldDefsRank 	= $user->defs_rank;
-			}
-			else
-			{
+			} else {
 				$OldTotalRank 	= 0;
 				$OldTechRank 	= 0;
 				$OldBuildRank 	= 0;
@@ -338,8 +343,7 @@ class UpdateStatistics
 
 			$RecordArray = [];
 
-			foreach ($planets as $planet)
-			{
+			foreach ($planets as $planet) {
 				$Points = $this->GetBuildPoints($planet, $user);
 				$TBuildCount += $Points['BuildCount'];
 				$GCount += $Points['BuildCount'];
@@ -362,34 +366,31 @@ class UpdateStatistics
 			}
 
 			// Складываем очки флота
-			if (isset($fleetPoints[$user['id']]['points']))
-			{
+			if (isset($fleetPoints[$user['id']]['points'])) {
 				$TFleetCount += $fleetPoints[$user['id']]['count'];
 				$GCount += $fleetPoints[$user['id']]['count'];
 				$TFleetPoints += $fleetPoints[$user['id']]['points'];
 				$PlanetPoints = $fleetPoints[$user['id']]['points'];
 				$GPoints += $PlanetPoints;
 
-				foreach ($fleetPoints[$user['id']]['array'] AS $fleet)
-				{
-					foreach ($fleet AS $id => $amount)
-					{
-						if (isset($RecordArray[$id]))
+				foreach ($fleetPoints[$user['id']]['array'] as $fleet) {
+					foreach ($fleet as $id => $amount) {
+						if (isset($RecordArray[$id])) {
 							$RecordArray[$id] += $amount;
-						else
+						} else {
 							$RecordArray[$id] = $amount;
+						}
 					}
 				}
 			}
 
-			if ($user['records'])
-			{
-				foreach ($RecordArray AS $id => $amount)
+			if ($user['records']) {
+				foreach ($RecordArray as $id => $amount) {
 					$this->SetMaxInfo($id, $amount, $user);
+				}
 			}
 
-			if ($user['race'] != 0)
-			{
+			if ($user['race'] != 0) {
 				$this->StatRace[$user['race']]['count'] += 1;
 				$this->StatRace[$user['race']]['total'] += $GPoints;
 				$this->StatRace[$user['race']]['fleet'] += $TFleetPoints;
@@ -434,14 +435,13 @@ class UpdateStatistics
 		Setting::set('active_alliance', $active_alliance);
 	}
 
-	private function calcPositions ()
+	private function calcPositions()
 	{
 		$qryFormat = 'UPDATE statpoints SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `id_owner` ASC;';
 
 		$rankNames = ['tech', 'fleet', 'defs', 'build', 'total'];
 
-		foreach ($rankNames as $rankName)
-		{
+		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
 			DB::statement(sprintf($qryFormat, $rankName, 1));
 		}
@@ -474,14 +474,12 @@ class UpdateStatistics
 
 		DB::statement("DELETE FROM statpoints WHERE `stat_code` >= 2");
 
-		foreach ($rankNames as $rankName)
-		{
+		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
 			DB::statement(sprintf($qryFormat, $rankName, 2));
 		}
 
-		foreach ($this->StatRace AS $race => $arr)
-		{
+		foreach ($this->StatRace as $race => $arr) {
 			Statpoints::query()->insert([
 				'race' => $race,
 				'stat_type' => 3,
@@ -495,8 +493,7 @@ class UpdateStatistics
 			]);
 		}
 
-		foreach ($rankNames as $rankName)
-		{
+		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
 			DB::statement(sprintf($qryFormat, $rankName, 3));
 		}
@@ -504,14 +501,14 @@ class UpdateStatistics
 		DB::statement("OPTIMIZE TABLE statpoints");
 	}
 
-	public function addToLog ()
+	public function addToLog()
 	{
 		DB::statement("INSERT INTO log_stats
 			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`id_owner`, 1, ".$this->start."
+		        u.`id_owner`, 1, " . $this->start . "
 		    FROM statpoints as u
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
@@ -521,13 +518,13 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`id_owner`, 2, ".$this->start."
+		        u.`id_owner`, 2, " . $this->start . "
 		    FROM statpoints as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
 	}
 
-	public function clearGame ()
+	public function clearGame()
 	{
 		DB::statement("DELETE FROM messages WHERE `time` <= '" . (time() - (86400 * 14)) . "' AND type != 1;");
 		DB::statement("DELETE FROM rw WHERE `time` <= '" . (time() - 172800) . "';");
@@ -543,16 +540,16 @@ class UpdateStatistics
 		DB::statement("DELETE FROM log_sim WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
 	}
 
-	public function buildRecordsCache ()
+	public function buildRecordsCache()
 	{
 		$Elements = Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		$array = "";
 
-		foreach ($Elements as $ElementID)
-		{
-			if ($ElementID != 407 && $ElementID != 408)
+		foreach ($Elements as $ElementID) {
+			if ($ElementID != 407 && $ElementID != 408) {
 				$array .= $ElementID . " => array('username' => '" . (isset($this->maxinfos[$ElementID]['username']) ? $this->maxinfos[$ElementID]['username'] : '-') . "', 'maxlvl' => '" . (isset($this->maxinfos[$ElementID]['maxlvl']) ? $this->maxinfos[$ElementID]['maxlvl'] : '-') . "'),\n";
+			}
 		}
 
 		$file = "<?php \n//The File is created on " . date("d. M y H:i:s", time()) . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";

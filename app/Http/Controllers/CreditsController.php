@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +16,7 @@ use Xnova\Models;
 
 class CreditsController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$parse = [];
 
@@ -26,21 +26,19 @@ class CreditsController extends Controller
 		$parse['id'] = $userId;
 		$parse['payment'] = false;
 
-		if (Request::post('summ'))
-		{
+		if (Request::post('summ')) {
 			$summ = (int) Request::post('summ', 0);
 
 			do {
 				$id = mt_rand(1000000000000, 9999999999999);
-			}
-			while (DB::selectOne("SELECT id FROM payments WHERE transaction_id = ".$id) ? true : false);
+			} while (DB::selectOne("SELECT id FROM payments WHERE transaction_id = " . $id) ? true : false);
 
 			/** @var Models\UsersInfo $info */
 			$info = Models\UsersInfo::query()->find($this->user->getId());
 
 			$parse['payment'] = [
 				'id' => $id,
-				'hash' => md5(Config::get('settings.robokassa.login').":".$summ.":".$id.":".Config::get('settings.robokassa.public').":Shp_UID=".$parse['id']),
+				'hash' => md5(Config::get('settings.robokassa.login') . ":" . $summ . ":" . $id . ":" . Config::get('settings.robokassa.public') . ":Shp_UID=" . $parse['id']),
 				'summ' => $summ,
 				'email' => $info->email,
 				'merchant' => Config::get('settings.robokassa.login'),

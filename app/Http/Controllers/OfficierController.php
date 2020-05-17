@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -20,30 +20,31 @@ class OfficierController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function buy ()
+	public function buy()
 	{
-		if ($this->user->vacation > 0)
+		if ($this->user->vacation > 0) {
 			throw new PageException('В режиме отпуска данный раздел недоступен!');
+		}
 
 		$id = (int) Request::post('id');
 		$duration = (int) Request::post('duration');
 
-		if (!$id || !$duration)
+		if (!$id || !$duration) {
 			throw new ErrorException('Ошибка входных параметров');
+		}
 
-		switch ($duration)
-		{
+		switch ($duration) {
 			case 7:
 				$credits = 20;
-			break;
+				break;
 
 			case 14:
 				$credits = 40;
-			break;
+				break;
 
 			case 30:
 				$credits = 80;
-			break;
+				break;
 
 			default:
 				throw new ErrorException('Ошибка входных параметров');
@@ -51,16 +52,19 @@ class OfficierController extends Controller
 
 		$time = $duration * 86400;
 
-		if (!$credits || !$time || $this->user->credits < $credits)
+		if (!$credits || !$time || $this->user->credits < $credits) {
 			throw new ErrorException(__('officier.NoPoints'));
+		}
 
-		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER)
+		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER) {
 			throw new ErrorException('Выбран неверный элемент');
+		}
 
-		if ($this->user->{Vars::getName($id)} > time())
+		if ($this->user->{Vars::getName($id)} > time()) {
 			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)} + $time;
-		else
+		} else {
 			$this->user->{Vars::getName($id)} = time() + $time;
+		}
 
 		$this->user->credits -= $credits;
 		$this->user->update();
@@ -75,21 +79,21 @@ class OfficierController extends Controller
 		throw new RedirectException(__('officier.OffiRecrute'), '/officier/');
 	}
 
-	public function index ()
+	public function index()
 	{
 		$parse['credits'] = (int) $this->user->credits;
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $officier)
-		{
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
 			$row['id'] = $officier;
 			$row['time'] = 0;
 
-			if ($this->user->{Vars::getName($officier)} > time())
+			if ($this->user->{Vars::getName($officier)} > time()) {
 				$row['time'] = $this->user->{Vars::getName($officier)};
+			}
 
-			$row['description'] = __('officier.Desc.'.$officier);
-			$row['power'] = __('officier.power.'.$officier);
+			$row['description'] = __('officier.Desc.' . $officier);
+			$row['power'] = __('officier.power.' . $officier);
 
 			$parse['items'][] = $row;
 		}

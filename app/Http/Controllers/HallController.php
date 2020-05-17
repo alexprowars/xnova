@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -14,7 +14,7 @@ use Xnova\Controller;
 
 class HallController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$type = (int) Request::input('type', 0);
 
@@ -30,12 +30,12 @@ class HallController extends Controller
 
 		$time = 0;
 
-		foreach ($halls as $hall)
-		{
+		foreach ($halls as $hall) {
 			$parse['hall'][] = (array) $hall;
 
-			if ($time < $hall->time)
+			if ($time < $hall->time) {
 				$time = $hall->time;
+			}
 		}
 
 		$parse['time'] = $time;

@@ -11,18 +11,17 @@ class PageException extends Exception
 {
 	protected $url = false;
 
-	public function __construct ($message = '', $url = false)
+	public function __construct($message = '', $url = false)
 	{
-		if ($url)
-		{
-			$this->url = str_replace(Request::root(), '', rtrim(URL::to($url), '/')).'/';
-			$this->url = str_replace('/'.Route::current()->getPrefix(), '', $this->url);
+		if ($url) {
+			$this->url = str_replace(Request::root(), '', rtrim(URL::to($url), '/')) . '/';
+			$this->url = str_replace('/' . Route::current()->getPrefix(), '', $this->url);
 		}
 
 		parent::__construct($message);
 	}
 
-	public function render ()
+	public function render()
 	{
 		return new JsonResponse(['error' => [
 			'message' => $this->getMessage(),

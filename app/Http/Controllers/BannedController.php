@@ -1,26 +1,25 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
-use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+namespace Xnova\Http\Controllers;
+
+use Illuminate\Support\Facades\DB;
+use Xnova\Controller;
+
 class BannedController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$query = DB::select('SELECT u.username AS user_1, u2.username AS user_2, b.* FROM banned b LEFT JOIN users u ON u.id = b.who LEFT JOIN users u2 ON u2.id = b.author ORDER BY b.id DESC');
 
 		$items = [];
 
-		foreach ($query as $u)
-		{
+		foreach ($query as $u) {
 			$items[] = [
 				'user' => [
 					'id' => (int) $u['who'],

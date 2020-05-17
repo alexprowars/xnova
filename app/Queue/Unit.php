@@ -19,81 +19,80 @@ class Unit
 {
 	private $_queue = null;
 
-	public function __construct (Queue $queue)
+	public function __construct(Queue $queue)
 	{
 		$this->_queue = $queue;
 	}
 
-	public function add ($elementId, $count)
+	public function add($elementId, $count)
 	{
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
 
 		$context = new Entity\Context($user, $planet);
 
-		if (Vars::getItemType($elementId) === Vars::ITEM_TYPE_DEFENSE)
+		if (Vars::getItemType($elementId) === Vars::ITEM_TYPE_DEFENSE) {
 			$entity = new Entity\Defence($elementId, 1, $context);
-		else
+		} else {
 			$entity = new Entity\Fleet($elementId, 1, $context);
+		}
 
-		if (!$entity->isAvailable())
+		if (!$entity->isAvailable()) {
 			return;
+		}
 
 		$buildItems = $this->_queue->get(Queue::TYPE_SHIPYARD);
 
-		if ($elementId == 502 || $elementId == 503)
-		{
+		if ($elementId == 502 || $elementId == 503) {
 			$Missiles = [];
 			$Missiles[502] = $planet->getUnitCount('interceptor_misil');
 			$Missiles[503] = $planet->getUnitCount('interplanetary_misil');
 
 			$maxMissiles = $planet->getBuildLevel('missile_facility') * 10;
 
-			foreach ($buildItems AS $item)
-			{
-				if (($item->object_id == 502 || $item->object_id == 503) && $item->level != 0)
+			foreach ($buildItems as $item) {
+				if (($item->object_id == 502 || $item->object_id == 503) && $item->level != 0) {
 					$Missiles[$item->object_id] += $item->level;
+				}
 			}
 		}
 
 		$price = Vars::getItemPrice($elementId);
 
-		if (isset($price['max']))
-		{
+		if (isset($price['max'])) {
 			$total = $planet->getUnitCount($elementId);
 
-			foreach ($buildItems AS $item)
-			{
-				if ($item->object_id == $elementId)
+			foreach ($buildItems as $item) {
+				if ($item->object_id == $elementId) {
 					$total += $item->level;
+				}
 			}
 
 			$count = min($count, max(($price['max'] - $total), 0));
 		}
 
-		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($maxMissiles))
-		{
+		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($maxMissiles)) {
 			$ActuMissiles 	= $Missiles[502] + (2 * $Missiles[503]);
 			$MissilesSpace 	= $maxMissiles - $ActuMissiles;
 
-			if ($MissilesSpace > 0)
-			{
-				if ($elementId == 502)
+			if ($MissilesSpace > 0) {
+				if ($elementId == 502) {
 					$count = min($count, $MissilesSpace);
-				else
+				} else {
 					$count = min($count, floor($MissilesSpace / 2));
-			}
-			else
+				}
+			} else {
 				$count = 0;
+			}
 		}
 
-		if (!$count)
+		if (!$count) {
 			return;
+		}
 
 		$count = min($count, $entity->getMaxConstructible());
 
-		if ($count > 0)
-		{
+		if ($count > 0) {
 			$cost = $entity->getPrice();
 
 			$planet->metal 		-= $cost['metal'];
@@ -114,8 +113,7 @@ class Unit
 				'level' => $count
 			]);
 
-			if (Config::get('game.log.units', false) == true)
-			{
+			if (Config::get('game.log.units', false) == true) {
 				DB::table('log_history')->insert([
 					'user_id' 			=> $user->id,
 					'time' 				=> time(),

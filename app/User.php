@@ -25,7 +25,7 @@ class User extends Models\Users
 {
 	use Tech;
 
-	private $_optionsDefault = [
+	private $optionsDefault = [
 		'bb_parser' 		=> true,
 		'planetlist' 		=> false,
 		'planetlistselect' 	=> false,
@@ -43,42 +43,46 @@ class User extends Models\Users
 	private $optionsData = [];
 	private $bonusData = null;
 	public $ally = [];
-	private $_planet;
+	private $planet;
 	public $message_block;
 	public $deltime;
 	public $ally_name;
 
-	public function isOnline ()
+	public function isOnline()
 	{
 		return (time() - $this->onlinetime < 180);
 	}
 
-	public function setOptions ($data, $clear = true)
+	public function setOptions($data, $clear = true)
 	{
-		if ($clear)
+		if ($clear) {
 			$this->optionsData = [];
+		}
 
-		if (!is_array($data))
+		if (!is_array($data)) {
 			return;
+		}
 
-		foreach ($data as $key => $value)
+		foreach ($data as $key => $value) {
 			$this->optionsData[trim($key)] = $value;
+		}
 	}
 
-	public function getUserOption ($key = false)
+	public function getUserOption($key = false)
 	{
-		if ($key === false)
+		if ($key === false) {
 			return $this->optionsData;
+		}
 
-		return (isset($this->optionsData[$key]) ? $this->optionsData[$key] : (isset($this->_optionsDefault[$key]) ? $this->_optionsDefault[$key] : 0));
+		return (isset($this->optionsData[$key]) ? $this->optionsData[$key] : (isset($this->optionsDefault[$key]) ? $this->optionsDefault[$key] : 0));
 	}
 
-	public function setUserOption ($key, $value)
+	public function setUserOption($key, $value)
 	{
 		$this->optionsData[$key] = $value;
 	}
 
-	private function fillBobusData ()
+	private function fillBobusData()
 	{
 		$bonusArrays = [
 			'storage', 'metal', 'crystal', 'deuterium', 'energy', 'solar',
@@ -90,74 +94,60 @@ class User extends Models\Users
 		$this->bonusData = [];
 
 		// Значения по умолчанию
-		foreach ($bonusArrays AS $name)
-		{
+		foreach ($bonusArrays as $name) {
 			$this->bonusData[$name] = 1;
 		}
 
 		$this->bonusData['queue'] = 0;
 
 		// Расчет бонусов от офицеров
-		if ($this->rpg_geologue > time())
-		{
+		if ($this->rpg_geologue > time()) {
 			$this->bonusData['metal'] 			+= 0.25;
 			$this->bonusData['crystal'] 		+= 0.25;
 			$this->bonusData['deuterium'] 		+= 0.25;
 			$this->bonusData['storage'] 		+= 0.25;
 		}
-		if ($this->rpg_ingenieur > time())
-		{
+		if ($this->rpg_ingenieur > time()) {
 			$this->bonusData['energy'] 			+= 0.15;
 			$this->bonusData['solar'] 			+= 0.15;
 			$this->bonusData['res_defence'] 	-= 0.1;
 		}
-		if ($this->rpg_admiral > time())
-		{
+		if ($this->rpg_admiral > time()) {
 			$this->bonusData['res_fleet'] 		-= 0.1;
 			$this->bonusData['fleet_speed'] 	+= 0.25;
 		}
-		if ($this->rpg_constructeur > time())
-		{
+		if ($this->rpg_constructeur > time()) {
 			$this->bonusData['time_fleet'] 		-= 0.25;
 			$this->bonusData['time_defence'] 	-= 0.25;
 			$this->bonusData['time_building'] 	-= 0.25;
 			$this->bonusData['queue'] 			+= 2;
 		}
-		if ($this->rpg_technocrate > time())
-		{
+		if ($this->rpg_technocrate > time()) {
 			$this->bonusData['time_research'] 	-= 0.25;
 		}
-		if ($this->rpg_meta > time())
-		{
+		if ($this->rpg_meta > time()) {
 			$this->bonusData['fleet_fuel'] 		-= 0.2;
 		}
 
 		// Расчет бонусов от рас
-		if ($this->race == 1)
-		{
+		if ($this->race == 1) {
 			$this->bonusData['metal'] 			+= 0.15;
 			$this->bonusData['solar'] 			+= 0.15;
 			$this->bonusData['res_levelup'] 	-= 0.1;
 			$this->bonusData['time_fleet'] 		-= 0.1;
-		}
-		elseif ($this->race == 2)
-		{
+		} elseif ($this->race == 2) {
 			$this->bonusData['deuterium'] 		+= 0.15;
 			$this->bonusData['solar'] 			+= 0.05;
 			$this->bonusData['storage'] 		+= 0.2;
 			$this->bonusData['res_fleet'] 		-= 0.1;
-		}
-		elseif ($this->race == 3)
-		{
+		} elseif ($this->race == 3) {
 			$this->bonusData['metal'] 			+= 0.05;
 			$this->bonusData['crystal'] 		+= 0.05;
 			$this->bonusData['deuterium'] 		+= 0.05;
 			$this->bonusData['res_defence'] 	-= 0.05;
 			$this->bonusData['res_building'] 	-= 0.05;
 			$this->bonusData['time_building'] 	-= 0.1;
-		}
-		elseif ($this->race == 4)
-		{
+		} elseif ($this->race == 4) {
 			$this->bonusData['crystal'] 		+= 0.15;
 			$this->bonusData['energy'] 			+= 0.05;
 			$this->bonusData['res_research'] 	-= 0.1;
@@ -167,41 +157,41 @@ class User extends Models\Users
 		return true;
 	}
 
-	public function bonusValue ($key, $default = false)
+	public function bonusValue($key, $default = false)
 	{
-		if (!$this->bonusData)
+		if (!$this->bonusData) {
 			$this->fillBobusData();
+		}
 
 		return $this->bonusData[$key] ?? ($default !== false ? $default : 1);
 	}
 
-	public function setBonusValue ($key, $value)
+	public function setBonusValue($key, $value)
 	{
-		if (!$this->bonusData)
+		if (!$this->bonusData) {
 			$this->fillBobusData();
+		}
 
 		$this->bonusData[$key] = $value;
 	}
 
-	public function getAllyInfo ()
+	public function getAllyInfo()
 	{
 		$this->ally = [];
 
-		if ($this->ally_id > 0)
-		{
+		if ($this->ally_id > 0) {
 			$ally = Cache::get('user::ally_' . $this->id . '_' . $this->ally_id);
 
-			if ($ally === null)
-			{
+			if ($ally === null) {
 				$ally = DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliance a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
 
 				Cache::put('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
 
-			if ($ally)
-			{
-				if (!$ally->ranks)
+			if ($ally) {
+				if (!$ally->ranks) {
 					$ally->ranks = 'a:0:{}';
+				}
 
 				$ranks = json_decode($ally->ranks, true);
 
@@ -211,15 +201,14 @@ class User extends Models\Users
 		}
 	}
 
-	public function checkLevel ()
+	public function checkLevel()
 	{
 		$indNextXp = pow($this->lvl_minier, 3);
 		$warNextXp = pow($this->lvl_raid, 2);
 
 		$giveCredits = 0;
 
-		if ($this->xpminier >= $indNextXp && $this->lvl_minier < Config::get('settings.level.max_ind', 100))
-		{
+		if ($this->xpminier >= $indNextXp && $this->lvl_minier < Config::get('settings.level.max_ind', 100)) {
 			$this->lvl_minier++;
 			$this->credits += Config::get('settings.level.credits', 10);
 			$this->xpminier -= $indNextXp;
@@ -231,8 +220,7 @@ class User extends Models\Users
 			$giveCredits += Config::get('settings.level.credits', 10);
 		}
 
-		if ($this->xpraid >= $warNextXp && $this->lvl_raid < Config::get('game.level.max_war', 100))
-		{
+		if ($this->xpraid >= $warNextXp && $this->lvl_raid < Config::get('game.level.max_war', 100)) {
 			$this->lvl_raid++;
 			$this->credits += Config::get('game.level.credits', 10);
 			$this->xpraid -= $warNextXp;
@@ -244,8 +232,7 @@ class User extends Models\Users
 			$giveCredits += Config::get('game.level.credits', 10);
 		}
 
-		if ($giveCredits != 0)
-		{
+		if ($giveCredits != 0) {
 			LogCredits::query()->create([
 				'uid' 		=> $this->getId(),
 				'time' 		=> time(),
@@ -255,8 +242,7 @@ class User extends Models\Users
 
 			$reffer = DB::selectOne("SELECT u_id FROM refs WHERE r_id = " . $this->getId());
 
-			if (isset($reffer['u_id']))
-			{
+			if (isset($reffer['u_id'])) {
 				DB::table('users')->where('id', $reffer['u_id'])->increment('credits', round($giveCredits / 2));
 
 				LogCredits::query()->create([
@@ -269,19 +255,20 @@ class User extends Models\Users
 		}
 	}
 
-	public function setSelectedPlanet ()
+	public function setSelectedPlanet()
 	{
-		if (Request::has('chpl') && is_numeric(Request::input('chpl')))
-		{
+		if (Request::has('chpl') && is_numeric(Request::input('chpl'))) {
 			$selectPlanet = (int) Request::input('chpl');
 
-			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0)
+			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0) {
 				return true;
+			}
 
 			$isExistPlanet = DB::selectOne("SELECT id, id_owner, id_ally FROM planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "')");
 
-			if (!$isExistPlanet)
+			if (!$isExistPlanet) {
 				return false;
+			}
 
 			$this->planet_current = $selectPlanet;
 			$this->update();
@@ -290,34 +277,34 @@ class User extends Models\Users
 		return true;
 	}
 
-	public function getPlanets ($moons = true)
+	public function getPlanets($moons = true)
 	{
 		$qryPlanets = "SELECT id, name, image, galaxy, `system`, planet, planet_type, destruyed FROM planets WHERE id_owner = '" . $this->id . "' ";
 
-		$qryPlanets .= ($this->ally_id > 0 ? " OR id_ally = '".$this->ally_id."'" : "");
+		$qryPlanets .= ($this->ally_id > 0 ? " OR id_ally = '" . $this->ally_id . "'" : "");
 
-		if (!$moons)
+		if (!$moons) {
 			$qryPlanets .= " AND planet_type != 3 ";
+		}
 
 		$sort = self::getPlanetListSortQuery(
 			$this->getUserOption('planet_sort'),
 			$this->getUserOption('planet_sort_order')
 		);
 
-		$qryPlanets .= ' ORDER BY '.$sort['fields'].' '.$sort['order'];
+		$qryPlanets .= ' ORDER BY ' . $sort['fields'] . ' ' . $sort['order'];
 
 		return DB::select($qryPlanets);
 	}
 
-	public function getCurrentPlanet (bool $loading = false): ?Planet
+	public function getCurrentPlanet(bool $loading = false): ?Planet
 	{
-		if ($this->_planet || !$loading)
-			return $this->_planet;
+		if ($this->planet || !$loading) {
+			return $this->planet;
+		}
 
-		if (!$this->planet_current && !$this->planet_id)
-		{
-			if ($this->race > 0)
-			{
+		if (!$this->planet_current && !$this->planet_id) {
+			if ($this->race > 0) {
 				$galaxy = new Galaxy();
 
 				$this->planet_id = $galaxy->createPlanetByUserId($this->getId());
@@ -325,21 +312,18 @@ class User extends Models\Users
 			}
 		}
 
-		if ($this->planet_current && $this->planet_id)
-		{
+		if ($this->planet_current && $this->planet_id) {
 			/** @var Planet $planet */
 			$planet = Planet::query()->find($this->planet_current);
 
-			if (!$planet && $this->planet_id > 0)
-			{
+			if (!$planet && $this->planet_id > 0) {
 				$this->planet_current = $this->planet_id;
 				$this->update();
 
 				$planet = Planet::query()->find($this->planet_current);
 			}
 
-			if ($planet)
-			{
+			if ($planet) {
 				$planet->assignUser($this);
 				$planet->checkOwnerPlanet();
 
@@ -350,32 +334,30 @@ class User extends Models\Users
 				$action = Route::current()->getActionName();
 
 				// Обновляем ресурсы на планете когда это необходимо
-				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60)))
+				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60))) {
 					$planet->resourceUpdate(time(), true);
-				else
-				{
+				} else {
 					$planet->resourceUpdate();
 
 					$queueManager = new QueueManager($this, $planet);
 					$queueManager->checkUnitQueue();
 				}
 
-				$this->_planet = $planet;
+				$this->planet = $planet;
 			}
 		}
 
 		//if (!$this->_planet)
 		//	throw new Exception('planet not found');
 
-		return $this->_planet;
+		return $this->planet;
 	}
 
-	public static function getPlanetListSortQuery ($sort = '', $order = 0)
+	public static function getPlanetListSortQuery($sort = '', $order = 0)
 	{
 		$qryPlanets = '';
 
-		switch ($sort)
-		{
+		switch ($sort) {
 			case 1:
 				$qryPlanets .= "galaxy, system, planet, planet_type";
 				break;
@@ -395,27 +377,32 @@ class User extends Models\Users
 		];
 	}
 
-	public static function sendMessage ($owner, $sender, $time, $type, $from, $message): bool
+	public static function sendMessage($owner, $sender, $time, $type, $from, $message): bool
 	{
-		if (!$time)
+		if (!$time) {
 			$time = time();
+		}
 
 		/** @var self|bool $user */
 		$user = Auth::check() ? Auth::user() : false;
 
-		if (!$owner && $user)
+		if (!$owner && $user) {
 			$owner = $user->id;
+		}
 
-		if (!$owner)
+		if (!$owner) {
 			return false;
+		}
 
-		if ($sender === false && $user)
+		if ($sender === false && $user) {
 			$sender = $user->id;
+		}
 
-		if ($user && $owner == $user->getId())
+		if ($user && $owner == $user->getId()) {
 			$user->messages++;
+		}
 
-		$obj = new Messages;
+		$obj = new Messages();
 
 		$obj->user_id = $owner;
 		$obj->from_id = $sender;
@@ -424,8 +411,7 @@ class User extends Models\Users
 		$obj->theme = $from;
 		$obj->text = addslashes($message);
 
-		if ($obj->save())
-		{
+		if ($obj->save()) {
 			DB::table('users')->where('id', $owner)->increment('messages');
 
 			return true;
@@ -434,43 +420,44 @@ class User extends Models\Users
 		return false;
 	}
 
-	public static function getRankId ($lvl)
+	public static function getRankId($lvl)
 	{
-		if ($lvl <= 1)
+		if ($lvl <= 1) {
 			$lvl = 0;
+		}
 
-		if ($lvl <= 80)
+		if ($lvl <= 80) {
 			return (ceil($lvl / 4) + 1);
-		else
+		} else {
 			return 22;
+		}
 	}
 
-	public static function deleteById (int $userId)
+	public static function deleteById(int $userId)
 	{
 		/** @var Models\Users $userInfo */
 		$userInfo = Models\Users::query()->find((int) $userId, ['id', 'ally_id']);
 
-		if (!$userInfo)
+		if (!$userInfo) {
 			return false;
+		}
 
-		if ($userInfo->ally_id > 0)
-		{
+		if ($userInfo->ally_id > 0) {
 			/** @var Alliance $ally */
 			$ally = Alliance::query()->find($userInfo->ally_id);
 
-			if ($ally)
-			{
-				if ($ally->owner != $userId)
+			if ($ally) {
+				if ($ally->owner != $userId) {
 					$ally->deleteMember($userId);
-				else
+				} else {
 					$ally->deleteAlly();
+				}
 			}
 		}
 
 		$planets = Models\Planets::query()->where('id_owner', $userId)->get(['id'])->pluck('id');
 
-		foreach ($planets as $planet)
-		{
+		foreach ($planets as $planet) {
 			Models\PlanetsBuildings::query()->where('planet_id', $planet)->delete();
 			Models\PlanetsUnits::query()->where('planet_id', $planet)->delete();
 		}
@@ -524,33 +511,35 @@ class User extends Models\Users
 			'credits' => 0
 		];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) AS $oId)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
 			$update[Vars::getName($oId)] = 0;
+		}
 
 		Models\Users::query()->where('id', $userId)->update($update);
 
 		return true;
 	}
 
-	public static function getPlanetsId ($userId)
+	public static function getPlanetsId($userId)
 	{
 		$result = [];
 
 		$rows = DB::select('SELECT id FROM game_planets WHERE id_owner = ?', [(int) $userId]);
 
-		foreach ($rows as $row)
+		foreach ($rows as $row) {
 			$result[] = (int) $row->id;
+		}
 
 		return $result;
 	}
 
-	public static function creation (array $data)
+	public static function creation(array $data)
 	{
-		if (!isset($data['password']) || $data['password'] == '')
+		if (!isset($data['password']) || $data['password'] == '') {
 			$data['password'] = Str::random(10);
+		}
 
-		return DB::transaction(function () use ($data)
-		{
+		return DB::transaction(function () use ($data) {
 			/** @var Models\Users $user */
 			$user = Models\Users::query()->create([
 				'username' 		=> $data['name'] ?? '',
@@ -561,8 +550,9 @@ class User extends Models\Users
 				'onlinetime' 	=> time()
 			]);
 
-			if (!$user->id)
+			if (!$user->id) {
 				throw new Exception('create user error');
+			}
 
 			Models\UsersInfo::query()->create([
 				'id' 			=> $user->id,
@@ -571,13 +561,11 @@ class User extends Models\Users
 				'password' 		=> Hash::make($data['password'])
 			]);
 
-			if (Session::has('ref'))
-			{
+			if (Session::has('ref')) {
 				/** @var Models\Users $refer */
 				$refer = Models\Users::query()->find((int) Session::get('ref'), ['id']);
 
-				if ($refer)
-				{
+				if ($refer) {
 					DB::table('refs')->insert([
 						'r_id' => $user->id,
 						'u_id' => $refer->getId()
@@ -587,16 +575,14 @@ class User extends Models\Users
 
 			Setting::set('users_total', (Setting::get('users_total') ?? 0) + 1);
 
-			if (isset($data['email']) && $data['email'] != '')
-			{
-				try
-				{
+			if (isset($data['email']) && $data['email'] != '') {
+				try {
 					Mail::to($data['email'])->send(new UserRegistration([
 						'#EMAIL#' => $data['email'],
 						'#PASSWORD#' => $data['password'],
 					]));
+				} catch (\Exception $e) {
 				}
-				catch (\Exception $e) {}
 			}
 
 			return $user->id;

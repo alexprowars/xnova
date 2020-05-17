@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class MoonRequest extends FormRequest
 {
-	public function rules ()
+	public function rules()
 	{
 		return [
 			'galaxy' => 'required|numeric|galaxy',
@@ -17,7 +17,7 @@ class MoonRequest extends FormRequest
 		];
 	}
 
-	public function messages ()
+	public function messages()
 	{
 		return [
 			'numeric' => 'Введите число',

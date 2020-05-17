@@ -13,7 +13,7 @@ use Xnova\Helpers;
 /** @noinspection PhpUnused */
 class IndexController extends Controller
 {
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'index',
@@ -28,12 +28,13 @@ class IndexController extends Controller
 		]];
 	}
 
-	public function index ()
+	public function index()
 	{
-		if (Request::query('cmd') == 'sort')
+		if (Request::query('cmd') == 'sort') {
 			$TypeSort = Request::query('type');
-		else
+		} else {
 			$TypeSort = "ip";
+		}
 
 		$parse = [];
 		$parse['adm_ov_data_yourv'] = VERSION;
@@ -43,18 +44,16 @@ class IndexController extends Controller
 		$Color = "inherit";
 		$PrevIP = '';
 
-		if (Auth::user()->can('list index:online'))
-		{
+		if (Auth::user()->can('list index:online')) {
 			$Last15Mins = DB::select("SELECT `id`, `username`, `ip`, `ally_name`, `onlinetime` FROM users WHERE `onlinetime` >= '" . (time() - 15 * 60) . "' ORDER BY `" . $TypeSort . "` ASC;");
 
-			foreach ($Last15Mins as $TheUser)
-			{
-				if ($PrevIP != "")
-				{
-					if ($PrevIP == $TheUser->ip)
+			foreach ($Last15Mins as $TheUser) {
+				if ($PrevIP != "") {
+					if ($PrevIP == $TheUser->ip) {
 						$Color = "red";
-					else
+					} else {
 						$Color = "inherit";
+					}
 				}
 
 				$PrevIP = $TheUser->ip;

@@ -4,7 +4,7 @@ namespace Xnova\Battle\Models;
 
 class Ship extends ShipType
 {
-	public function getType ()
+	public function getType()
 	{
 		return 'Ship';
 	}
@@ -14,5 +14,3 @@ class Ship extends ShipType
 		return ($this->repairProb > 0 ? $this->repairProb : SHIP_REPAIR_PROB);
 	}
 }
-
-?>

@@ -24,8 +24,7 @@ class PlayerGroup extends IterableIterator
 	public function __construct($players = [])
 	{
 		$this->id = ++self::$id_count;
-		foreach ($players as $player)
-		{
+		foreach ($players as $player) {
 			$this->addPlayer($player);
 		}
 	}
@@ -35,13 +34,11 @@ class PlayerGroup extends IterableIterator
 	}
 	public function decrement($idPlayer, $idFleet, $idShipType, $count)
 	{
-		if (!$this->existPlayer($idPlayer))
-		{
+		if (!$this->existPlayer($idPlayer)) {
 			throw new Exception('Player with id : ' . $idPlayer . ' not exist');
 		}
 		$this->array[$idPlayer]->decrement($idFleet, $idShipType, $count);
-		if ($this->array[$idPlayer]->isEmpty())
-		{
+		if ($this->array[$idPlayer]->isEmpty()) {
 			unset($this->array[$idPlayer]);
 		}
 	}
@@ -63,8 +60,7 @@ class PlayerGroup extends IterableIterator
 
 	public function createPlayerIfNotExist($id, $fleets, $militaryTech, $shieldTech, $defenceTech)
 	{
-		if (!$this->existPlayer($id))
-		{
+		if (!$this->existPlayer($id)) {
 			$this->addPlayer(new Player($id, $fleets, $militaryTech, $shieldTech, $defenceTech));
 		}
 		return $this->getPlayer($id);
@@ -72,10 +68,8 @@ class PlayerGroup extends IterableIterator
 
 	public function isEmpty()
 	{
-		foreach ($this->array as $id => $player)
-		{
-			if (!$player->isEmpty())
-			{
+		foreach ($this->array as $id => $player) {
+			if (!$player->isEmpty()) {
 				return false;
 			}
 		}
@@ -90,7 +84,7 @@ class PlayerGroup extends IterableIterator
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$_playerGroup = $this;
 
-		require(dirname(__DIR__)."/Views/playerGroup.html");
+		require(dirname(__DIR__) . "/Views/playerGroup.html");
 
 		return ob_get_clean();
 	}
@@ -98,8 +92,7 @@ class PlayerGroup extends IterableIterator
 	public function inflictDamage(FireManager $fire)
 	{
 		$physicShots = [];
-		foreach ($this->array as $idPlayer => $player)
-		{
+		foreach ($this->array as $idPlayer => $player) {
 			echo "---------** firing to player with ID = $idPlayer **---------- <br>";
 			$ps = $player->inflictDamage($fire);
 			$physicShots[$idPlayer] = $ps;
@@ -110,13 +103,11 @@ class PlayerGroup extends IterableIterator
 	public function cleanShips()
 	{
 		$shipsCleaners = [];
-		foreach ($this->array as $idPlayer => $player)
-		{
+		foreach ($this->array as $idPlayer => $player) {
 			echo "---------** cleanShips to player with ID = $idPlayer **---------- <br>";
 			$sc = $player->cleanShips();
 			$shipsCleaners[] = $sc;
-			if ($player->isEmpty())
-			{
+			if ($player->isEmpty()) {
 				unset($this->array[$idPlayer]);
 			}
 		}
@@ -125,8 +116,7 @@ class PlayerGroup extends IterableIterator
 
 	public function repairShields($round = 0)
 	{
-		foreach ($this->array as $idPlayer => $player)
-		{
+		foreach ($this->array as $idPlayer => $player) {
 			$player->repairShields($round);
 		}
 	}
@@ -134,8 +124,7 @@ class PlayerGroup extends IterableIterator
 	public function getEquivalentFleetContent()
 	{
 		$merged = new Fleet(-1);
-		foreach ($this->array as $idPlayer => $player) // cloning don't have any sense because we don't touch the array,maybe php bug :(
-		{
+		foreach ($this->array as $idPlayer => $player) { // cloning don't have any sense because we don't touch the array,maybe php bug :(
 			$merged->mergeFleet($player->getEquivalentFleetContent());
 		}
 		return $merged;
@@ -144,12 +133,10 @@ class PlayerGroup extends IterableIterator
 	public function getTotalCount()
 	{
 		$amount = 0;
-		foreach ($this->array as $idPlayer => $player)
-		{
+		foreach ($this->array as $idPlayer => $player) {
 			$amount += $player->getTotalCount();
 		}
 		return $amount;
-
 	}
 
 	public function cloneMe()
@@ -161,6 +148,4 @@ class PlayerGroup extends IterableIterator
 		self::$id_count--;
 		return $tmp;
 	}
-
-
 }

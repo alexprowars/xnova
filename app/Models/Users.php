@@ -65,40 +65,41 @@ class Users extends Authenticatable
 	protected $guarded = [];
 	protected $hidden = ['password'];
 
-	public function info ()
+	public function info()
 	{
 		return $this->hasOne(UsersInfo::class, 'id', 'id');
 	}
 
-	public function getId (): int
+	public function getId(): int
 	{
 		return (int) $this->id;
 	}
 
-	public function isAdmin ()
+	public function isAdmin()
 	{
-		if ($this->id > 0)
+		if ($this->id > 0) {
 			return $this->hasRole('admin');
-		else
+		} else {
 			return false;
+		}
 	}
 
-	public function isVacation ()
+	public function isVacation()
 	{
 		return $this->vacation > 0;
 	}
 
-	public function getFullName ()
+	public function getFullName()
 	{
 		return trim($this->username);
 	}
 
-	public function isOnline ()
+	public function isOnline()
 	{
 		return (time() - $this->onlinetime < 180);
 	}
 
-	public function getEmailForPasswordReset ()
+	public function getEmailForPasswordReset()
 	{
 		/** @var UsersInfo $info */
 		$info = UsersInfo::query()->find($this->id, ['email']);
@@ -106,18 +107,17 @@ class Users extends Authenticatable
 		return $info->email ?? null;
 	}
 
-	public function sendPasswordResetNotification ($token)
+	public function sendPasswordResetNotification($token)
 	{
 		$email = $this->getEmailForPasswordReset();
 
-		try
-		{
+		try {
 			Mail::to($email)->send(new UserLostPassword([
 				'#EMAIL#' => $email,
 				'#NAME#' => $this->username,
 				'#URL#' => URL::route('login.reset', ['token' => $token, 'user' => $email]),
 			]));
+		} catch (\Exception $e) {
 		}
-		catch (\Exception $e) {}
 	}
 }

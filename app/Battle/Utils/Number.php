@@ -18,5 +18,3 @@ class Number
 		return "result=$this->result;rest=$this->rest;";
 	}
 }
-
-?>

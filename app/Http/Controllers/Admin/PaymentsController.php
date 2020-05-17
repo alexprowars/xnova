@@ -22,7 +22,7 @@ class PaymentsController extends CrudController
 	use Operations\CreateOperation;
 	use Operations\ShowOperation;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'payments',
@@ -33,15 +33,14 @@ class PaymentsController extends CrudController
 		]];
 	}
 
-	public function setup ()
+	public function setup()
 	{
 		$this->crud->setModel(Payment::class);
 		$this->crud->setEntityNameStrings('транзакцию', 'транзакции');
 		$this->crud->setRoute(backpack_url('payments'));
 		$this->crud->setTitle('Транзакции');
 
-		$this->crud->operation('list', function ()
-		{
+		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			$this->crud->enableExportButtons();
 
@@ -68,8 +67,7 @@ class PaymentsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation('create', function ()
-		{
+		$this->crud->operation('create', function () {
 			$this->crud->setValidation(PaymentRequest::class);
 			$this->crud->setTitle('Начисление кредитов');
 
@@ -87,7 +85,7 @@ class PaymentsController extends CrudController
 		});
 	}
 
-	public function store ()
+	public function store()
 	{
 		$this->crud->applyConfigurationFromSettings('create');
 		$this->crud->hasAccessOrFail('create');
@@ -98,17 +96,17 @@ class PaymentsController extends CrudController
 
 		$checkUser = Users::query();
 
-		if (is_numeric($fields['name']))
+		if (is_numeric($fields['name'])) {
 			$checkUser->where('id', (int) $fields['name']);
-		else
+		} else {
 			$checkUser->where('username', addslashes($fields['name']));
+		}
 
 		$checkUser = $checkUser->first(['id']);
 
-		if (!$checkUser)
+		if (!$checkUser) {
 			Alert::error('Не удалось создать планету');
-		else
-		{
+		} else {
 			Users::query()->where('id', $checkUser->id)->increment('credits', (int) $fields['amount']);
 
 			DB::table('log_credits')->insert([
@@ -120,7 +118,7 @@ class PaymentsController extends CrudController
 
 			User::sendMessage($checkUser->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');
 
-			Alert::success('Начисление '.$fields['amount'].' кредитов прошло успешно');
+			Alert::success('Начисление ' . $fields['amount'] . ' кредитов прошло успешно');
 		}
 
 		$this->crud->setSaveAction();

@@ -12,21 +12,23 @@ class RedirectException extends Exception
 	protected $url = '';
 	protected $timeout = 5;
 
-	public function __construct ($message = '', $url = '')
+	public function __construct($message = '', $url = '')
 	{
-		if ($url == '')
+		if ($url == '') {
 			$url = Route::current()->uri();
+		}
 
-		if (!$url)
-			throw new $this(get_class($this).': Unknown $url parameter');
+		if (!$url) {
+			throw new $this(get_class($this) . ': Unknown $url parameter');
+		}
 
-		$this->url = str_replace(Request::root(), '', rtrim(URL::to($url), '/')).'/';
-		$this->url = str_replace('/'.Route::current()->getPrefix(), '', $this->url);
+		$this->url = str_replace(Request::root(), '', rtrim(URL::to($url), '/')) . '/';
+		$this->url = str_replace('/' . Route::current()->getPrefix(), '', $this->url);
 
 		parent::__construct($message);
 	}
 
-	public function render ()
+	public function render()
 	{
 		return new JsonResponse([
 			'messages' => [[

@@ -14,8 +14,7 @@ class LangManager
 
 	public static function getInstance()
 	{
-		if (empty(self::$instance))
-		{
+		if (empty(self::$instance)) {
 			self::$instance = new LangManager();
 		}
 		return self::$instance;
@@ -23,10 +22,8 @@ class LangManager
 
 	public function __call($name, $arguments)
 	{
-		if (empty($this->impl))
-		{
-			if (empty($arguments))
-			{
+		if (empty($this->impl)) {
+			if (empty($arguments)) {
 				return $name;
 			}
 			return $arguments[0];
@@ -39,5 +36,3 @@ class LangManager
 		return !empty($this->impl);
 	}
 }
-
-?>

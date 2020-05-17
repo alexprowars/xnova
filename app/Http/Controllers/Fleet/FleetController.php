@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers\Fleet;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
@@ -24,10 +24,11 @@ class FleetController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index ()
+	public function index()
 	{
-		if ($this->user->vacation > 0)
+		if ($this->user->vacation > 0) {
 			throw new PageException('Нет доступа!');
+		}
 
 		$parse = [];
 
@@ -36,34 +37,38 @@ class FleetController extends Controller
 		$planet = (int) Request::post('planet', 0);
 		$type = (int) Request::post('planet_type', 0);
 
-		if (!$galaxy)
+		if (!$galaxy) {
 			$galaxy = (int) $this->planet->galaxy;
+		}
 
-		if (!$system)
+		if (!$system) {
 			$system = (int) $this->planet->system;
+		}
 
-		if (!$planet)
+		if (!$planet) {
 			$planet = (int) $this->planet->planet;
+		}
 
-		if (!$type)
+		if (!$type) {
 			$type = 1;
+		}
 
 		$parse['ships'] = [];
 		$fleets = [];
 
 		$ships = Request::post('ship');
 
-		if (!is_array($ships))
+		if (!is_array($ships)) {
 			$ships = [];
+		}
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
-		{
-			if (isset($ships[$i]) && (int) $ships[$i] > 0)
-			{
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
+			if (isset($ships[$i]) && (int) $ships[$i] > 0) {
 				$cnt = (int) $ships[$i];
 
-				if ($cnt > $this->planet->getUnitCount($i))
+				if ($cnt > $this->planet->getUnitCount($i)) {
 					continue;
+				}
 
 				$fleets[$i] = $cnt;
 
@@ -74,8 +79,9 @@ class FleetController extends Controller
 			}
 		}
 
-		if (!count($fleets))
+		if (!count($fleets)) {
 			return redirect('/fleet/');
+		}
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 
@@ -94,14 +100,11 @@ class FleetController extends Controller
 
 		$shortcuts = Models\UsersInfo::query()->find($this->user->id, ['fleet_shortcut'])->value('fleet_shortcut');
 
-		if ($shortcuts)
-		{
+		if ($shortcuts) {
 			$scarray = explode("\r\n", $shortcuts);
 
-			foreach ($scarray as $a => $b)
-			{
-				if ($b != '')
-				{
+			foreach ($scarray as $a => $b) {
+				if ($b != '') {
 					$c = explode(',', $b);
 
 					$parse['shortcuts'][] = $c;
@@ -113,15 +116,15 @@ class FleetController extends Controller
 
 		$kolonien = $this->user->getPlanets();
 
-		if (count($kolonien) > 1)
-		{
-			foreach ($kolonien AS $row)
-			{
-				if ($row->id == $this->planet->id)
+		if (count($kolonien) > 1) {
+			foreach ($kolonien as $row) {
+				if ($row->id == $this->planet->id) {
 					continue;
+				}
 
-				if ($row->planet_type == 3)
+				if ($row->planet_type == 3) {
 					$row->name .= " " . __('fleet.fl_shrtcup3');
+				}
 
 				$parse['planets'][] =  [
 					'id' => $row->id,
@@ -137,8 +140,7 @@ class FleetController extends Controller
 		$parse['gate_time'] = 0;
 		$parse['moons'] = [];
 
-		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5)
-		{
+		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
 			$moons = Planet::query()
 				->where(function (Builder $planet) {
 					$planet->where('planet_type', 3)
@@ -148,18 +150,18 @@ class FleetController extends Controller
 				->where('id_owner', $this->user->id)
 				->get();
 
-			if ($moons->count())
-			{
+			if ($moons->count()) {
 				$timer = $this->planet->getNextJumpTime();
 
-				if ($timer != 0)
+				if ($timer != 0) {
 					$parse['gate_time'] = $timer;
+				}
 
 				/** @var Planet $moon */
-				foreach ($moons as $moon)
-				{
-					if ($moon->getBuildLevel('jumpgate') <= 0)
+				foreach ($moons as $moon) {
+					if ($moon->getBuildLevel('jumpgate') <= 0) {
 						continue;
+					}
 
 					$parse['moons'][] = [
 						'id' => $moon->id,
@@ -181,10 +183,8 @@ class FleetController extends Controller
 			->where('aks_user.user_id', $this->user->id)
 			->get();
 
-		if ($alliances->count())
-		{
-			foreach ($alliances as $row)
-			{
+		if ($alliances->count()) {
+			foreach ($alliances as $row) {
 				$parse['alliances'][] = [
 					'id' => (int) $row->id,
 					'name' => $row->name,
@@ -204,46 +204,48 @@ class FleetController extends Controller
 
 		$targetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
 
-		if ($targetPlanet)
-		{
+		if ($targetPlanet) {
 			$UsedPlanet = true;
 
-			if ($targetPlanet->id_owner == $this->user->id)
+			if ($targetPlanet->id_owner == $this->user->id) {
 				$YourPlanet = true;
+			}
 		}
 
 		$missions = Fleet::getFleetMissions($fleets, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
 
-		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $this->user->isAdmin()))
+		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $this->user->isAdmin())) {
 			$missions[] = 4;
+		}
 
 		$missions = array_values(array_unique($missions));
 
-		if (in_array(15, $missions))
-		{
-			if ($this->user->getTechLevel('expedition') <= 0)
+		if (in_array(15, $missions)) {
+			if ($this->user->getTechLevel('expedition') <= 0) {
 				unset($missions[array_search(15, $missions)]);
-			else
+			} else {
 				$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
+			}
 		}
 
-		if (!$mission && $acs && in_array(2, $missions))
+		if (!$mission && $acs && in_array(2, $missions)) {
 			$mission = 2;
+		}
 
 		$parse['missions'] = [];
 
-		if (count($missions) > 0)
-		{
-			foreach ($missions as $i => $id)
-			{
-				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1)
+		if (count($missions) > 0) {
+			foreach ($missions as $i => $id) {
+				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1) {
 					$parse['mission'] = $id;
+				}
 
 				$parse['missions'][] = $id;
 			}
 
-			if (!$mission)
+			if (!$mission) {
 				$mission = $missions[0];
+			}
 		}
 
 		$parse['mission'] = $mission;

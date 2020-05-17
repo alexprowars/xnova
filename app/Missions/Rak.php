@@ -20,25 +20,28 @@ class Rak extends FleetEngine implements Mission
 	{
 		$this->KillFleet();
 
-		$targetPlanet = Planet::findByCoords($this->_fleet->end_galaxy, $this->_fleet->end_system, $this->_fleet->end_planet, 1);
+		$targetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, 1);
 
-		if (!$targetPlanet)
+		if (!$targetPlanet) {
 			return;
+		}
 
-		$defTech = DB::selectOne('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
-				[$this->_fleet->target_owner, Vars::getIdByName('defence_tech')]);
+		$defTech = DB::selectOne(
+			'SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
+			[$this->fleet->target_owner, Vars::getIdByName('defence_tech')]
+		);
 
-		if (!$defTech)
-		{
+		if (!$defTech) {
 			$defTech = new \stdClass();
 			$defTech->level = 0;
 		}
 
-		$attTech = DB::selectOne('SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
-				[$this->_fleet->owner, Vars::getIdByName('military_tech')]);
+		$attTech = DB::selectOne(
+			'SELECT level FROM users_tech WHERE user_id = ? AND tech_id = ?',
+			[$this->fleet->owner, Vars::getIdByName('military_tech')]
+		);
 
-		if (!$attTech)
-		{
+		if (!$attTech) {
 			$attTech = new \stdClass();
 			$attTech->level = 0;
 		}
@@ -48,12 +51,12 @@ class Rak extends FleetEngine implements Mission
 		$Raks = 0;
 		$Primary = 401;
 
-		$fleetData = $this->_fleet->getShips();
+		$fleetData = $this->fleet->getShips();
 
-		foreach ($fleetData as $shipId => $shipArr)
-		{
-			if ($shipId != 503)
+		foreach ($fleetData as $shipId => $shipArr) {
+			if ($shipId != 503) {
 				continue;
+			}
 
 			$Raks = $shipArr['count'];
 			$Primary = $shipArr['target'];
@@ -61,25 +64,22 @@ class Rak extends FleetEngine implements Mission
 
 		$TargetDefensive = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $Element)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $Element) {
 			$TargetDefensive[$Element] = $targetPlanet->getUnitCount($Element);
+		}
 
 		$defenceMissiles = $targetPlanet->getUnitCount('interceptor_misil');
 
-		if ($defenceMissiles >= $Raks)
-		{
+		if ($defenceMissiles >= $Raks) {
 			$message .= 'Вражеская ракетная атака была отбита ракетами-перехватчиками<br>';
 
 			$targetPlanet->setUnit('interceptor_misil', -$Raks, true);
-		}
-		else
-		{
-			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->_fleet->owner_name . ' <a href="/galaxy/?galaxy=' . $this->_fleet->start_galaxy . '&system=' . $this->_fleet->start_system . '">[' . $this->_fleet->start_galaxy . ':' . $this->_fleet->start_system . ':' . $this->_fleet->start_planet . ']</a>';
-			$message .= ' на планету ' . $this->_fleet->target_owner_name . ' <a href="/galaxy/?galaxy=' . $this->_fleet->end_galaxy . '&system=' . $this->_fleet->end_system . '">[' . $this->_fleet->end_galaxy . ':' . $this->_fleet->end_system . ':' . $this->_fleet->end_planet . ']</a>.<br><br>';
+		} else {
+			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->fleet->owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
+			$message .= ' на планету ' . $this->fleet->target_owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
 
-			if ($defenceMissiles > 0)
-			{
-				$message .= $defenceMissiles." ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>";
+			if ($defenceMissiles > 0) {
+				$message .= $defenceMissiles . " ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>";
 
 				$targetPlanet->setUnit('interceptor_misil', 0);
 			}
@@ -90,12 +90,12 @@ class Rak extends FleetEngine implements Mission
 
 			ksort($irak, SORT_NUMERIC);
 
-			foreach ($irak as $Element => $destroy)
-			{
-				if (empty($Element) || $destroy == 0)
+			foreach ($irak as $Element => $destroy) {
+				if (empty($Element) || $destroy == 0) {
 					continue;
+				}
 
-				$message .= __('main.tech.'.$Element) . " (" . $destroy . " уничтожено)<br>";
+				$message .= __('main.tech.' . $Element) . " (" . $destroy . " уничтожено)<br>";
 
 				$targetPlanet->setUnit($Element, -$destroy, true);
 			}
@@ -103,10 +103,11 @@ class Rak extends FleetEngine implements Mission
 
 		$targetPlanet->update();
 
-		if (empty($message))
+		if (empty($message)) {
 			$message = "Нет обороны для разрушения!";
+		}
 
-		User::sendMessage($this->_fleet->target_owner, 0, $this->_fleet->start_time, 3, 'Ракетная атака', $message);
+		User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 3, 'Ракетная атака', $message);
 	}
 
 	public function EndStayEvent()
@@ -119,10 +120,11 @@ class Rak extends FleetEngine implements Mission
 		return;
 	}
 
-	private function raketenangriff ($targetDefTech, $ownerAttTech, $missiles, $targetDefensive, $firstTarget = 0)
+	private function raketenangriff($targetDefTech, $ownerAttTech, $missiles, $targetDefensive, $firstTarget = 0)
 	{
-		if (!$missiles)
+		if (!$missiles) {
 			return [];
+		}
 
 		unset($targetDefensive[502]);
 
@@ -132,18 +134,17 @@ class Rak extends FleetEngine implements Mission
 
 		$result = [];
 
-		if (isset($targetDefensive[$firstTarget]))
-		{
+		if (isset($targetDefensive[$firstTarget])) {
 			$c = $targetDefensive[$firstTarget];
 
 			unset($targetDefensive[$firstTarget]);
 			$targetDefensive = [$firstTarget => $c] + $targetDefensive;
 		}
 
-		foreach ($targetDefensive as $target => $count)
-		{
-			if (!$target)
+		foreach ($targetDefensive as $target => $count) {
+			if (!$target) {
 				continue;
+			}
 
 			$price = Vars::getItemTotalPrice($target);
 
@@ -156,8 +157,9 @@ class Rak extends FleetEngine implements Mission
 
 			$totalDamage -= $destroyCount * $structure;
 
-			if ($totalDamage <= 0)
+			if ($totalDamage <= 0) {
 				break;
+			}
 		}
 
 		return $result;

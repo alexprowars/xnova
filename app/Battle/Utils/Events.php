@@ -15,5 +15,3 @@ abstract class Events
 		return array('size' => $size, 'fields' => $fields);
 	}
 }
-
-?>

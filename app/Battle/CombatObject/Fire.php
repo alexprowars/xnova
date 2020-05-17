@@ -31,7 +31,7 @@ class Fire
 	 */
 	public function __construct(ShipType $attackerShipType, Fleet $defenderFleet)
 	{
-		\log_comment('calculating fire from attacker '.$attackerShipType->getId());
+		\log_comment('calculating fire from attacker ' . $attackerShipType->getId());
 
 		$this->attackerShipType = $attackerShipType;
 		$this->defenderFleet = $defenderFleet;
@@ -80,10 +80,11 @@ class Fire
 		$this->shots += $this->attackerShipType->getCount();
 		$this->power += $this->getNormalPower();
 
-		if (USE_RF)
+		if (USE_RF) {
 			$this->calculateRf();
+		}
 
-		\log_var('$this->shots',$this->shots);
+		\log_var('$this->shots', $this->shots);
 	}
 
 	/**
@@ -97,7 +98,7 @@ class Fire
 		//rapid fire
 		$tmpshots = round($this->getShotsFromOneAttackerShipOfType($this->attackerShipType) * $this->attackerShipType->getCount());
 
-		\log_var('$tmpshots',$tmpshots);
+		\log_var('$tmpshots', $tmpshots);
 
 		$this->power += $tmpshots * $this->attackerShipType->getPower();
 		$this->shots += $tmpshots;
@@ -115,8 +116,7 @@ class Fire
 		$p = $this->getProbabilityToShotAgainForAttackerShipOfType($shipType_A);
 		$meanShots = GeometricDistribution::getMeanFromProbability(1 - $p) - 1;
 
-		if (USE_RANDOMIC_RF)
-		{
+		if (USE_RANDOMIC_RF) {
 			$max = $meanShots * (1 + MAX_RF_BUFF);
 			$min = $meanShots * (1 - MAX_RF_NERF);
 
@@ -140,8 +140,7 @@ class Fire
 	{
 		$p = 0;
 
-		foreach ($this->defenderFleet->getIterator() as $idFleet => $shipType_D)
-		{
+		foreach ($this->defenderFleet->getIterator() as $idFleet => $shipType_D) {
 			$RF = $shipType_A->getRfTo($shipType_D);
 			$probabilityToShotAgain = 1 - GeometricDistribution::getProbabilityFromMean($RF);
 			$probabilityToHitThisType = $shipType_D->getCount() / $this->defenderFleet->getTotalCount();

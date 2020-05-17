@@ -31,48 +31,45 @@ class Controller extends BaseController
 
 	protected $loadPlanet = false;
 
-	public function __construct ()
+	public function __construct()
 	{
-		$this->middleware(function ($request, $next)
-		{
+		$this->middleware(function ($request, $next) {
 			$this->init();
 
 			return $next($request);
 		});
 	}
 
-	private function init ()
+	private function init()
 	{
 		$this->setTitle(Config::get('settings.site_title', ''));
 
 		Vars::init();
 
-		if (Auth::check())
-		{
+		if (Auth::check()) {
 			$this->user = Auth::user();
 
 			// Кэшируем настройки профиля в сессию
-			if (!Session::has('config') || strlen(Session::get('config')) < 10)
-			{
+			if (!Session::has('config') || strlen(Session::get('config')) < 10) {
 				$inf = DB::table('users_info')->select('settings')->where('id', Auth::id())->first();
 
 				Session::put('config', $inf->settings);
 			}
 
-			if (!(int) Config::get('settings.view.showPlanetListSelect', 0))
+			if (!(int) Config::get('settings.view.showPlanetListSelect', 0)) {
 				Config::set('settings.view.showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
+			}
 
-			if (Request::input('fullscreen') == 'Y')
-			{
+			if (Request::input('fullscreen') == 'Y') {
 				Cookie::queue("full", "Y", (time() + 30 * 86400), "/", null, $_SERVER["SERVER_NAME"], 0);
 				$_COOKIE["full"] = 'Y';
 			}
 
-			if (Request::server('SERVER_NAME') == 'vk.xnova.su')
+			if (Request::server('SERVER_NAME') == 'vk.xnova.su') {
 				Config::set('settings.view.socialIframeView', 1);
+			}
 
-			if (Cookie::has("full") && Cookie::get("full") == 'Y')
-			{
+			if (Cookie::has("full") && Cookie::get("full") == 'Y') {
 				Config::set('settings.view.socialIframeView', 0);
 				Config::set('settings.view.showPlanetListSelect', 0);
 			}
@@ -80,11 +77,13 @@ class Controller extends BaseController
 			// Заносим настройки профиля в основной массив
 			$inf = json_decode(Session::get('config'), true);
 
-			if (is_array($inf))
+			if (is_array($inf)) {
 				$this->user->setOptions($inf);
+			}
 
-			if (!$this->user->getUserOption('chatbox'))
+			if (!$this->user->getUserOption('chatbox')) {
 				$this->views['chat'] = false;
+			}
 
 			$this->user->getAllyInfo();
 			$this->user->checkLevel();
@@ -94,16 +93,16 @@ class Controller extends BaseController
 
 			$controller = Route::current()->getName();
 
-			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout']))
+			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout'])) {
 				throw new RedirectException('', '/start/');
+			}
 
-			if (Request::has('initial') || $this->loadPlanet)
+			if (Request::has('initial') || $this->loadPlanet) {
 				$this->planet = $this->user->getCurrentPlanet(true);
+			}
 
 			Fleet::SetShipsEngine($this->user);
-		}
-		else
-		{
+		} else {
 			$this->showTopPanel(false);
 			$this->showLeftPanel(false);
 
@@ -111,23 +110,24 @@ class Controller extends BaseController
 		}
 	}
 
-	public function setViews ($view, $mode)
+	public function setViews($view, $mode)
 	{
-		if (isset($this->views[$view]))
+		if (isset($this->views[$view])) {
 			$this->views[$view] = (bool) $mode;
+		}
 	}
 
-	public function getViews () : array
+	public function getViews(): array
 	{
 		return $this->views;
 	}
 
-	public function showTopPanel ($view = true)
+	public function showTopPanel($view = true)
 	{
 		$this->setViews('resources', $view);
 	}
 
-	public function showLeftPanel ($view = true)
+	public function showLeftPanel($view = true)
 	{
 		$this->setViews('header', $view);
 		$this->setViews('footer', $view);
@@ -135,12 +135,12 @@ class Controller extends BaseController
 		$this->setViews('planets', $view);
 	}
 
-	public function setTitle (string $title = '')
+	public function setTitle(string $title = '')
 	{
 		$this->title = $title;
 	}
 
-	public function getTitle (): string
+	public function getTitle(): string
 	{
 		return $this->title;
 	}

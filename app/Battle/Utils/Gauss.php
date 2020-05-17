@@ -47,20 +47,22 @@ class Gauss
 	{
 		$i = 0;
 
-		if ($min > $m || $max < $m)
+		if ($min > $m || $max < $m) {
 			throw new Exception("Mean is not bounded by min and max");
+		}
 
-		while (true)
-		{
+		while (true) {
 			$n = self::getNextMs($m, $s);
 
-			if ($n >= $min && $n <= $max)
+			if ($n >= $min && $n <= $max) {
 				return $n;
+			}
 
 			$i++;
 
-			if ($i > 10)
+			if ($i > 10) {
 				return mt_rand($min, $max);
+			}
 		}
 
 		return 0;
@@ -103,5 +105,3 @@ class Gauss
  *	 echo $s . $id . '(' . $v . ')' . '<br>';
  * }
  */
-
-?>

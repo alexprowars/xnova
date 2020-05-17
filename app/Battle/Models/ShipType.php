@@ -77,13 +77,15 @@ class ShipType extends Type
 	 */
 	public function setWeaponsTech($level)
 	{
-		if (!is_numeric($level) || $level <= 0)
+		if (!is_numeric($level) || $level <= 0) {
 			return;
+		}
 
 		$diff = $level - $this->weapons_tech;
 
-		if ($diff < 0)
+		if ($diff < 0) {
 			throw new Exception('Trying to decrease tech');
+		}
 
 		$this->weapons_tech = $level;
 		$incr = 1 + WEAPONS_TECH_INCREMENT_FACTOR * $diff;
@@ -99,13 +101,15 @@ class ShipType extends Type
 	 */
 	public function setShieldsTech($level)
 	{
-		if (!is_numeric($level) || $level <= 0)
+		if (!is_numeric($level) || $level <= 0) {
 			return;
+		}
 
 		$diff = $level - $this->shields_tech;
 
-		if ($diff < 0)
+		if ($diff < 0) {
 			throw new Exception('Trying to decrease tech');
+		}
 
 		$this->shields_tech = $level;
 		$incr = 1 + SHIELDS_TECH_INCREMENT_FACTOR * $diff;
@@ -122,13 +126,15 @@ class ShipType extends Type
 	 */
 	public function setArmourTech($level)
 	{
-		if (!is_numeric($level) || $level <= 0)
+		if (!is_numeric($level) || $level <= 0) {
 			return;
+		}
 		
 		$diff = $level - $this->armour_tech;
 
-		if ($diff < 0)
+		if ($diff < 0) {
 			throw new Exception('Trying to decrease tech');
+		}
 
 		$this->armour_tech = $level;
 		$incr = 1 + ARMOUR_TECH_INCREMENT_FACTOR * $diff;
@@ -148,12 +154,10 @@ class ShipType extends Type
 	public function increment($number, $newLife = null, $newShield = null)
 	{
 		parent::increment($number);
-		if ($newLife == null)
-		{
+		if ($newLife == null) {
 			$newLife = $this->singleLife;
 		}
-		if ($newShield == null)
-		{
+		if ($newShield == null) {
 			$newShield = $this->singleShield;
 		}
 		$this->fullLife += $this->singleLife * $number;
@@ -175,12 +179,10 @@ class ShipType extends Type
 	public function decrement($number, $remainLife = null, $remainShield = null)
 	{
 		parent::decrement($number);
-		if ($remainLife == null)
-		{
+		if ($remainLife == null) {
 			$remainLife = $this->singleLife;
 		}
-		if ($remainShield == null)
-		{
+		if ($remainShield == null) {
 			$remainShield = $this->singleShield;
 		}
 		$this->fullLife -= $this->singleLife * $number;
@@ -203,12 +205,9 @@ class ShipType extends Type
 	{
 		parent::setCount($number);
 		$diff = $number - $this->getCount();
-		if ($diff > 0)
-		{
+		if ($diff > 0) {
 			$this->increment($diff, $life, $shield);
-		}
-		elseif ($diff < 0)
-		{
+		} elseif ($diff < 0) {
 			$this->decrement($diff, $life, $shield);
 		}
 	}
@@ -292,8 +291,7 @@ class ShipType extends Type
 	 */
 	public function getShieldCellValue()
 	{
-		if ($this->isShieldDisabled())
-		{
+		if ($this->isShieldDisabled()) {
 			return 0;
 		}
 		return $this->singleShield / SHIELD_CELLS;
@@ -359,10 +357,12 @@ class ShipType extends Type
 	 */
 	public function inflictDamage($damage, $shotsToThisShipType)
 	{
-		if ($shotsToThisShipType == 0)
+		if ($shotsToThisShipType == 0) {
 			return false;
-		if ($shotsToThisShipType < 0)
+		}
+		if ($shotsToThisShipType < 0) {
 			throw new Exception("Negative amount of shotsToThisShipType!");
+		}
 
 		\log_var('Defender single hull', $this->singleLife);
 		\log_var('Defender count', $this->getCount());
@@ -375,16 +375,14 @@ class ShipType extends Type
 		\log_var('$ps->getAssorbedDamage()', $ps->getAssorbedDamage());
 		$this->currentShield -= $ps->getAssorbedDamage();
 
-		if ($this->currentShield < 0 && $this->currentShield > -EPSILON)
-		{
+		if ($this->currentShield < 0 && $this->currentShield > -EPSILON) {
 			\log_comment('fixing double number currentshield');
 			$this->currentShield = 0;
 		}
 
 		$this->currentLife -= $ps->getHullDamage();
 
-		if ($this->currentLife < 0 && $this->currentLife > -EPSILON)
-		{
+		if ($this->currentLife < 0 && $this->currentLife > -EPSILON) {
 			\log_comment('fixing double number currentlife');
 			$this->currentLife = 0;
 		}
@@ -395,12 +393,15 @@ class ShipType extends Type
 		\log_var('lastShipHit after', $this->lastShipHit);
 		\log_var('lastShots after', $this->lastShots);
 
-		if ($this->currentLife < 0)
+		if ($this->currentLife < 0) {
 			throw new Exception('Negative currentLife!');
-		if ($this->currentShield < 0)
+		}
+		if ($this->currentShield < 0) {
 			throw new Exception('Negative currentShield!');
-		if ($this->lastShipHit < 0)
+		}
+		if ($this->lastShipHit < 0) {
 			throw new Exception('Negative lastShipHit!');
+		}
 
 		return $ps; //for web
 	}
@@ -433,8 +434,9 @@ class ShipType extends Type
 	 */
 	public function repairShields($round = 0)
 	{
-		if ($round > 4)
+		if ($round > 4) {
 			$round = 4;
+		}
 
 		$this->currentShield = ceil($this->fullShield * (1 - 0.25 * $round));
 	}
@@ -449,7 +451,7 @@ class ShipType extends Type
 		return $this->currentShield / $this->getCount() < 0.01;
 	}
 
-	public function setRepairProb ($factor = 0)
+	public function setRepairProb($factor = 0)
 	{
 		$this->repairProb = floatval($factor);
 	}

@@ -8,11 +8,11 @@ use Xnova\Vars;
 
 class UpdateStats extends Command
 {
-    protected $signature = 'game:update.stats';
-    protected $description = '';
+	protected $signature = 'game:update.stats';
+	protected $description = '';
 
-    public function handle ()
-    {
+	public function handle()
+	{
 		Vars::init();
 
 		$start = microtime(true);
@@ -29,6 +29,6 @@ class UpdateStats extends Command
 
 		$end = microtime(true);
 
-		echo "stats updated in ".($end - $start)." sec\n";
-    }
+		echo "stats updated in " . ($end - $start) . " sec\n";
+	}
 }

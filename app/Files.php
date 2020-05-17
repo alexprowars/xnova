@@ -10,7 +10,7 @@ use Xnova\Exceptions\Exception;
 
 class Files
 {
-	public static function save (UploadedFile $file)
+	public static function save(UploadedFile $file)
 	{
 		$fileName = $file->getClientOriginalName();
 
@@ -20,11 +20,13 @@ class Files
 
 		$p = mb_strrpos($fileName, "/");
 
-		if ($p !== false)
+		if ($p !== false) {
 			$fileName = mb_substr($fileName, $p + 1);
+		}
 
-		if (preg_match('/\.(php|php5|php4|php3|phtml|pl|py|cgi|asp|js)$/i', $fileName))
+		if (preg_match('/\.(php|php5|php4|php3|phtml|pl|py|cgi|asp|js)$/i', $fileName)) {
 			throw new Exception('invalid name');
+		}
 
 		$fileModel = new Models\File();
 		$fileModel->name = $fileName;
@@ -32,41 +34,40 @@ class Files
 		$fileInfo = pathinfo($fileName);
 		$fileInfo['filename'] = Helpers::translite($fileInfo['filename']);
 
-		if (strlen($fileInfo['filename']) > 255)
+		if (strlen($fileInfo['filename']) > 255) {
 			throw new Exception('Слишком длинное имя файла');
+		}
 
-		$fileName = $fileInfo['filename'].'.'.$fileInfo['extension'];
+		$fileName = $fileInfo['filename'] . '.' . $fileInfo['extension'];
 
 		/** @var FilesystemAdapter $storage */
 		$storage = Storage::disk('public');
 
 		/** @noinspection PhpUndefinedMethodInspection */
-		$dir = $storage->getDriver()->getAdapter()->getPathPrefix().'files';
+		$dir = $storage->getDriver()->getAdapter()->getPathPrefix() . 'files';
 		$subdir = '';
 
 		$i = 0;
 
-		while (true)
-		{
+		while (true) {
 			$subdir = substr(md5(uniqid("", true)), 0, 3);
 
-			if (!file_exists($dir."/".$subdir."/".$fileName))
+			if (!file_exists($dir . "/" . $subdir . "/" . $fileName)) {
 				break;
+			}
 
-			if ($i >= 25)
-			{
+			if ($i >= 25) {
 				$j = 0;
 
-				while(true)
-				{
-					$subdir = substr(md5(mt_rand()), 0, 3)."/".substr(md5(mt_rand()), 0, 3);
+				while (true) {
+					$subdir = substr(md5(mt_rand()), 0, 3) . "/" . substr(md5(mt_rand()), 0, 3);
 
-					if (!file_exists($dir."/".$subdir."/".$fileName))
+					if (!file_exists($dir . "/" . $subdir . "/" . $fileName)) {
 						break;
+					}
 
-					if ($j >= 25)
-					{
-						$subdir = substr(md5(mt_rand()), 0, 3)."/".md5(mt_rand());
+					if ($j >= 25) {
+						$subdir = substr(md5(mt_rand()), 0, 3) . "/" . md5(mt_rand());
 
 						break;
 					}
@@ -83,35 +84,38 @@ class Files
 		$fileModel->mime = $file->getMimeType();
 		$fileModel->size = $file->getSize();
 
-		if ($storage->putFileAs('files/'.$subdir, $file, $fileName))
+		if ($storage->putFileAs('files/' . $subdir, $file, $fileName)) {
 			throw new Exception('Не удалось записать файл');
+		}
 
-		$fileModel->src = $subdir.'/'.$fileName;
+		$fileModel->src = $subdir . '/' . $fileName;
 
-		if ($fileModel->save())
+		if ($fileModel->save()) {
 			return $fileModel->id;
+		}
 
-		$storage->delete('files/'.$subdir.'/'.$fileName);
+		$storage->delete('files/' . $subdir . '/' . $fileName);
 
 		throw new Exception('Не удалось сохранить файл');
 	}
 
-	public static function getById (int $fileId)
+	public static function getById(int $fileId)
 	{
 		static $_staticCache = [];
 
 		$fileId = (int) $fileId;
 
-		if (!$fileId)
+		if (!$fileId) {
 			return false;
+		}
 
-		if (isset($_staticCache[$fileId]))
+		if (isset($_staticCache[$fileId])) {
 			return $_staticCache[$fileId];
+		}
 
-		$result = Cache::get('core::file_'.$fileId);
+		$result = Cache::get('core::file_' . $fileId);
 
-		if ($result !== null)
-		{
+		if ($result !== null) {
 			$_staticCache[$fileId] = $result;
 
 			return $result;
@@ -120,8 +124,9 @@ class Files
 		/** @var Models\File $file */
 		$file = Models\File::query()->find((int) $fileId);
 
-		if (!$file)
+		if (!$file) {
 			return false;
+		}
 
 		/** @var FilesystemAdapter $storage */
 		$storage = Storage::disk('public');
@@ -131,26 +136,28 @@ class Files
 			'size' => (int) $file->size,
 			'name' => $file->name,
 			'mime' => $file->mime,
-			'src' => $storage->url('files/'.$file->src),
-			'path' => $storage->path('files/'.$file->src),
+			'src' => $storage->url('files/' . $file->src),
+			'path' => $storage->path('files/' . $file->src),
 		];
 
-		Cache::put('core::file_'.$fileId, $result, 600);
+		Cache::put('core::file_' . $fileId, $result, 600);
 		$_staticCache[$fileId] = $result;
 
 		return $result;
 	}
 
-	public static function delete (int $fileId)
+	public static function delete(int $fileId)
 	{
 		/** @var Models\File $file */
 		$file = Models\File::query()->find((int) $fileId);
 
-		if (!$file)
+		if (!$file) {
 			return true;
+		}
 
-		if (Storage::disk('public')->delete('files/'.$file->src))
+		if (Storage::disk('public')->delete('files/' . $file->src)) {
 			$file->delete();
+		}
 
 		return true;
 	}

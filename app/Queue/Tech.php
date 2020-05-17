@@ -20,12 +20,12 @@ class Tech
 {
 	private $_queue = null;
 
-	public function __construct (Queue $queue)
+	public function __construct(Queue $queue)
 	{
 		$this->_queue = $queue;
 	}
 
-	public function add ($elementId)
+	public function add($elementId)
 	{
 		$planet = $this->_queue->getPlanet();
 		$user = $this->_queue->getUser();
@@ -35,18 +35,17 @@ class Tech
 			->where('type', Models\Queue::TYPE_TECH)
 			->exists();
 
-		if (!$techHandle)
-		{
-			if ($user->getTechLevel('intergalactic') > 0)
+		if (!$techHandle) {
+			if ($user->getTechLevel('intergalactic') > 0) {
 				$planet->spaceLabs = $planet->getNetworkLevel();
+			}
 
 			$entity = new Entity\Research($elementId, $user->getTechLevel($elementId), new Entity\Context($user, $planet));
 			$cost = $entity->getPrice();
 
 			$price = Vars::getItemPrice($elementId);
 
-			if ($entity->isAvailable() && $entity->canBuy($cost) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max']))
-			{
+			if ($entity->isAvailable() && $entity->canBuy($cost) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max'])) {
 				$planet->metal 		-= $cost['metal'];
 				$planet->crystal 	-= $cost['crystal'];
 				$planet->deuterium 	-= $cost['deuterium'];
@@ -65,8 +64,7 @@ class Tech
 					'level' => $user->getTechLevel($elementId) + 1
 				]);
 
-				if (Config::get('game.log.research', false) == true)
-				{
+				if (Config::get('game.log.research', false) == true) {
 					DB::table('log_history')->insert([
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
@@ -86,7 +84,7 @@ class Tech
 		}
 	}
 
-	public function delete ($elementId)
+	public function delete($elementId)
 	{
 		$user = $this->_queue->getUser();
 
@@ -94,8 +92,7 @@ class Tech
 		$techHandle = Models\Queue::query()->where('user_id', $user->id)
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
-		if ($techHandle && $techHandle->object_id == $elementId)
-		{
+		if ($techHandle && $techHandle->object_id == $elementId) {
 			/** @var Planet $planet */
 			$planet = Planet::query()->find((int) $techHandle->planet_id);
 
@@ -111,8 +108,7 @@ class Tech
 			$techHandle->delete();
 			$this->_queue->loadQueue();
 
-			if (Config::get('game.log.research', false) == true)
-			{
+			if (Config::get('game.log.research', false) == true) {
 				DB::table('log_history')->insert([
 					'user_id' 			=> $user->getId(),
 					'time' 				=> time(),

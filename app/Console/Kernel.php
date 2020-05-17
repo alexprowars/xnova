@@ -8,13 +8,13 @@ use Illuminate\Foundation\Console;
 class Kernel extends Console\Kernel
 {
 	protected $commands = [
-	    Commands\UpdateOnline::class,
-	    Commands\UpdateStats::class,
-	    Commands\Fleet::class,
-	    Commands\Queue::class,
+		Commands\UpdateOnline::class,
+		Commands\UpdateStats::class,
+		Commands\Fleet::class,
+		Commands\Queue::class,
 	];
 
-	protected function schedule (Schedule $schedule)
+	protected function schedule(Schedule $schedule)
 	{
 		$schedule->command(Commands\UpdateOnline::class)->everyFifteenMinutes();
 		$schedule->command(Commands\UpdateStats::class)->cron('5 */6 * * *');

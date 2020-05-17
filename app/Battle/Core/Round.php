@@ -8,7 +8,7 @@ use Xnova\Battle\Models\PlayerGroup;
 
 /**
  * Round
- * 
+ *
  * This class rappresent the round in a battle.
  * When it is started, the PlayerGroup objects inside it will be updated.
  * Then, this class offers some methods to retrive informations about the round and the updated players.
@@ -59,24 +59,18 @@ class Round
 		// here we add to fire manager each fire shotted from an attacker's ShipType to all defenders
 		$defendersMerged = $this->defenders->getEquivalentFleetContent();
 
-		foreach ($this->attackers->getIterator() as $idPlayer => $player)
-		{
-			foreach ($player->getIterator() as $idFleet => $fleet)
-			{
-				foreach ($fleet->getIterator() as $idShipType => $shipType)
-				{
+		foreach ($this->attackers->getIterator() as $idPlayer => $player) {
+			foreach ($player->getIterator() as $idFleet => $fleet) {
+				foreach ($fleet->getIterator() as $idShipType => $shipType) {
 					$this->fire_a->add(new Fire($shipType, $defendersMerged));
 				}
 			}
 		}
 		// here we add to fire manager each fire shotted from an defender's ShipType to all attackers
 		$attackersMerged = $this->attackers->getEquivalentFleetContent();
-		foreach ($this->defenders->getIterator() as $idPlayer => $player)
-		{
-			foreach ($player->getIterator() as $idFleet => $fleet)
-			{
-				foreach ($fleet->getIterator() as $idShipType => $shipType)
-				{
+		foreach ($this->defenders->getIterator() as $idPlayer => $player) {
+			foreach ($player->getIterator() as $idFleet => $fleet) {
+				foreach ($fleet->getIterator() as $idShipType => $shipType) {
 					$this->fire_d->add(new Fire($shipType, $attackersMerged));
 				}
 			}
@@ -229,17 +223,14 @@ class Round
 	{
 		$ass = 0;
 
-		if (!is_array($playerGroupPS))
+		if (!is_array($playerGroupPS)) {
 			return $ass;
+		}
 
-		foreach ($playerGroupPS as $idPlayer => $playerPs)
-		{
-			foreach ($playerPs as $idFleet => $fleetPS)
-			{
-				foreach ($fleetPS as $idTypeD => $typeDPS)
-				{
-					foreach ($typeDPS as $typeAPS)
-					{
+		foreach ($playerGroupPS as $idPlayer => $playerPs) {
+			foreach ($playerPs as $idFleet => $fleetPS) {
+				foreach ($fleetPS as $idTypeD => $typeDPS) {
+					foreach ($typeDPS as $typeAPS) {
 						/**
 						 * @var \Xnova\Battle\CombatObject\PhysicShot $typeAPS
 						 */

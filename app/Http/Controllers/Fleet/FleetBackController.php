@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers\Fleet;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -17,36 +17,38 @@ use Xnova\Models\Fleet;
 
 class FleetBackController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$fleetId = (int) Request::post('id', 0);
 
-		if ($fleetId <= 0)
+		if ($fleetId <= 0) {
 			throw new ErrorException('Не выбран флот');
+		}
 
 		/** @var Fleet $fleet */
 		$fleet = Fleet::query()->find($fleetId);
 
-		if (!$fleet || $fleet->owner != $this->user->id)
+		if (!$fleet || $fleet->owner != $this->user->id) {
 			throw new ErrorException(__('fleet.fl_onlyyours'));
-
-		if (!$fleet->canBack())
-			throw new ErrorException(__('fleet.fl_notback'));
-
-		if ($fleet->end_stay != 0)
-		{
-			if ($fleet->start_time > time())
-				$CurrentFlyingTime = time() - $fleet->create_time;
-			else
-				$CurrentFlyingTime = $fleet->start_time - $fleet->create_time;
 		}
-		else
+
+		if (!$fleet->canBack()) {
+			throw new ErrorException(__('fleet.fl_notback'));
+		}
+
+		if ($fleet->end_stay != 0) {
+			if ($fleet->start_time > time()) {
+				$CurrentFlyingTime = time() - $fleet->create_time;
+			} else {
+				$CurrentFlyingTime = $fleet->start_time - $fleet->create_time;
+			}
+		} else {
 			$CurrentFlyingTime = time() - $fleet->create_time;
+		}
 
 		$ReturnFlyingTime = $CurrentFlyingTime + time();
 
-		if ($fleet->group_id != 0 && $fleet->mission == 1)
-		{
+		if ($fleet->group_id != 0 && $fleet->mission == 1) {
 			DB::table('aks')->delete($fleet->group_id);
 			DB::table('aks_user')->where('aks_id', $fleet->group_id)->delete();
 		}

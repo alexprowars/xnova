@@ -6,64 +6,64 @@ use Xnova\Battle\Utils\Lang;
 
 class LangImplementation implements Lang
 {
-	public function getShipName ($id)
+	public function getShipName($id)
 	{
-		return __('main.tech.'.$id);
+		return __('main.tech.' . $id);
 	}
 
-	public function getAttackersAttackingDescr ($amount, $damage)
+	public function getAttackersAttackingDescr($amount, $damage)
 	{
-		return 'Атакующий флот делает '.$amount." выстрела(ов) с общей мощностью ".$damage." по защитнику. ";
+		return 'Атакующий флот делает ' . $amount . " выстрела(ов) с общей мощностью " . $damage . " по защитнику. ";
 	}
 
-	public function getDefendersDefendingDescr ($damage)
+	public function getDefendersDefendingDescr($damage)
 	{
-		return 'Щиты защитника поглощают '.$damage.' мощности.';
+		return 'Щиты защитника поглощают ' . $damage . ' мощности.';
 	}
 
-	public function getDefendersAttackingDescr ($amount, $damage)
+	public function getDefendersAttackingDescr($amount, $damage)
 	{
-		return 'Защитный флот делает '.$amount." выстрела(ов) с общей мощностью ".$damage." по атакующему. ";
+		return 'Защитный флот делает ' . $amount . " выстрела(ов) с общей мощностью " . $damage . " по атакующему. ";
 	}
 
-	public function getAttackersDefendingDescr ($damage)
+	public function getAttackersDefendingDescr($damage)
 	{
-		return 'Щиты атакующего поглащают '.$damage.' мощности.';
+		return 'Щиты атакующего поглащают ' . $damage . ' мощности.';
 	}
 
-	public function getAttackerHasWon ()
-	{
-	}
-
-	public function getDefendersHasWon ()
+	public function getAttackerHasWon()
 	{
 	}
 
-	public function getDraw ()
+	public function getDefendersHasWon()
 	{
 	}
 
-	public function getStoleDescr ($metal, $crystal, $deuterium)
+	public function getDraw()
 	{
 	}
 
-	public function getAttackersLostUnits ($units)
+	public function getStoleDescr($metal, $crystal, $deuterium)
 	{
 	}
 
-	public function getDefendersLostUnits ($units)
+	public function getAttackersLostUnits($units)
 	{
 	}
 
-	public function getFloatingDebris ($metal, $crystal)
+	public function getDefendersLostUnits($units)
 	{
 	}
 
-	public function getMoonProb ($prob)
+	public function getFloatingDebris($metal, $crystal)
 	{
 	}
 
-	public function getNewMoon ()
+	public function getMoonProb($prob)
+	{
+	}
+
+	public function getNewMoon()
 	{
 	}
 }

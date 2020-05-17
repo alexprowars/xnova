@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -17,41 +17,45 @@ use Xnova\Controller;
 
 class PaymentController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		return [];
 	}
 
-	public function robokassa ()
+	public function robokassa()
 	{
-		if (!Request::has('InvId') || Request::input("InvId") == '' || !is_numeric(Request::input("InvId")))
+		if (!Request::has('InvId') || Request::input("InvId") == '' || !is_numeric(Request::input("InvId"))) {
 			die('InvId nulled');
+		}
 
-		$sign_hash = strtoupper(md5(Request::input('OutSum').":".Request::input('InvId').":".Config::get('game.robokassa.secret').":Shp_UID=".Request::input('Shp_UID')));
+		$sign_hash = strtoupper(md5(Request::input('OutSum') . ":" . Request::input('InvId') . ":" . Config::get('game.robokassa.secret') . ":Shp_UID=" . Request::input('Shp_UID')));
 
-		if (strtoupper(Request::input('SignatureValue')) !== $sign_hash)
+		if (strtoupper(Request::input('SignatureValue')) !== $sign_hash) {
 			die('signature verification failed');
+		}
 
 		$check = DB::table('payments')
 			->where('transaction_id', (int) Request::input("InvId"))
 			->where('user_id', '!=', 0)
 			->exists();
 
-		if ($check)
+		if ($check) {
 			die('already paid');
+		}
 
 		/** @var Models\Users $user */
 		$user = Models\Users::query()->find((int) Request::input("Shp_UID"));
 
-		if (!$user)
+		if (!$user) {
 			die('userId not found');
+		}
 
 		$amount = (int) Request::input('OutSum');
 
-		if ($amount > 0)
-		{
-			if (!Request::has('IncCurrLabel'))
+		if ($amount > 0) {
+			if (!Request::has('IncCurrLabel')) {
 				$_REQUEST['IncCurrLabel'] = 'Free-Kassa';
+			}
 
 			$user->credits += $amount;
 			$user->save();
@@ -67,7 +71,7 @@ class PaymentController extends Controller
 				'product_code' 		=> addslashes(json_encode($_REQUEST)),
 			]);
 
-			User::sendMessage($user->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено '.$amount.' кредитов');
+			User::sendMessage($user->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $amount . ' кредитов');
 
 			DB::table('log_credits')->insert([
 				'uid' 		=> $user->id,
@@ -76,7 +80,7 @@ class PaymentController extends Controller
 				'type' 		=> 1,
 			]);
 
-			echo 'OK'.Request::input("InvId");
+			echo 'OK' . Request::input("InvId");
 		}
 	}
 }

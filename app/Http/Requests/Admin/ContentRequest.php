@@ -15,7 +15,7 @@ class ContentRequest extends FormRequest
 		];
 	}
 
-	public function messages ()
+	public function messages()
 	{
 		return [
 			'required' => 'Поле ":attribute" обязательно для заполнения',

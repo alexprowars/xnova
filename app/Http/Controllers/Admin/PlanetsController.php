@@ -22,7 +22,7 @@ class PlanetsController extends CrudController
 	use Operations\ShowOperation;
 	use Operations\DeleteOperation;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'planets',
@@ -33,14 +33,13 @@ class PlanetsController extends CrudController
 		]];
 	}
 
-	public function setup ()
+	public function setup()
 	{
 		$this->crud->setModel(Planets::class);
 		$this->crud->setEntityNameStrings('планету', 'планеты');
 		$this->crud->setRoute(backpack_url('planets'));
 
-		$this->crud->operation('list', function ()
-		{
+		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			//$this->crud->addClause('where', 'planet_type', '=', 1);
 			$this->crud->enableExportButtons();
@@ -77,8 +76,7 @@ class PlanetsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation(['create', 'update'], function()
-		{
+		$this->crud->operation(['create', 'update'], function () {
 			$this->crud->setValidation(PlanetRequest::class);
 			$this->crud->setTitle('Создание планеты');
 			$this->crud->setSubheading('Создание планеты');
@@ -115,14 +113,13 @@ class PlanetsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation('update', function()
-		{
+		$this->crud->operation('update', function () {
 			$this->crud->setTitle('Редактирование планеты');
 			$this->crud->setSubheading('Редактирование планеты');
 		});
 	}
 
-	public function store ()
+	public function store()
 	{
 		$this->crud->applyConfigurationFromSettings('create');
 		$this->crud->hasAccessOrFail('create');
@@ -140,10 +137,11 @@ class PlanetsController extends CrudController
 			false
 		);
 
-		if ($planetId)
+		if ($planetId) {
 			Alert::success('Планета создана, id: ' . $planetId);
-		else
+		} else {
 			Alert::error('Не удалось создать планету');
+		}
 
 		$this->crud->setSaveAction();
 

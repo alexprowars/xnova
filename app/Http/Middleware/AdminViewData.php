@@ -16,7 +16,7 @@ use Xnova\Vars;
 
 class AdminViewData
 {
-	public function handle (Request $request, Closure $next): Response
+	public function handle(Request $request, Closure $next): Response
 	{
 		Vars::init();
 
@@ -29,13 +29,13 @@ class AdminViewData
 		View::share('route_action', $route->getActionMethod());
 		View::share('user', $user);
 
-		$menu = Cache::get('ADMIN_SIDEBAR_MENU_'.$user->id);
+		$menu = Cache::get('ADMIN_SIDEBAR_MENU_' . $user->id);
 
 		//if (!$menu)
 		{
 			$menu = $this->generateMenu();
 
-			Cache::put('ADMIN_SIDEBAR_MENU_'.$user->id, $menu, 3600);
+			Cache::put('ADMIN_SIDEBAR_MENU_' . $user->id, $menu, 3600);
 		}
 
 		View::share('main_menu', $menu);
@@ -43,7 +43,7 @@ class AdminViewData
 		return $next($request);
 	}
 
-	private function generateMenu ()
+	private function generateMenu()
 	{
 		/** @var User $user */
 		$user = Auth::user();
@@ -52,52 +52,56 @@ class AdminViewData
 
 		$files = new DirectoryIterator(app_path('Http/Controllers/Admin'));
 
-		foreach ($files as $file)
-		{
-			if (!$file->isFile() || strpos($file->getFilename(), 'Controller.php') === false)
+		foreach ($files as $file) {
+			if (!$file->isFile() || strpos($file->getFilename(), 'Controller.php') === false) {
 				continue;
+			}
 
-			$class = 'Xnova\Http\Controllers\Admin\\'.str_replace('.php', '', $file->getFilename());
+			$class = 'Xnova\Http\Controllers\Admin\\' . str_replace('.php', '', $file->getFilename());
 
-			if (method_exists($class, 'getMenu'))
-			{
+			if (method_exists($class, 'getMenu')) {
 				$items = $class::getMenu();
 
-				if (!isset($items[0]))
+				if (!isset($items[0])) {
 					$items = [$items];
+				}
 
-				foreach ($items as $item)
-				{
-					if (!isset($item['title']) || empty($item['title']))
+				foreach ($items as $item) {
+					if (!isset($item['title']) || empty($item['title'])) {
 						continue;
+					}
 
-					if (!$user->can('controller '.$item['code']))
+					if (!$user->can('controller ' . $item['code'])) {
 						continue;
+					}
 
-					if (!isset($item['icon']))
+					if (!isset($item['icon'])) {
 						$item['icon'] = '';
+					}
 
-					if (!isset($item['childrens']) || !is_array($item['childrens']))
+					if (!isset($item['childrens']) || !is_array($item['childrens'])) {
 						$item['childrens'] = [];
+					}
 
-					if (!isset($item['sort']))
+					if (!isset($item['sort'])) {
 						$item['sort'] = '';
+					}
 
 					$url = $item['url'] ?? null;
 
-					if ($item['code'] && !$url)
-						$url = URL::route('admin.'.$item['code'], [], false);
+					if ($item['code'] && !$url) {
+						$url = URL::route('admin.' . $item['code'], [], false);
+					}
 
-					foreach ($item['childrens'] as $i => $child)
-					{
+					foreach ($item['childrens'] as $i => $child) {
 						$item['childrens'][$i]['url'] = $item['url'] ?? null;
 
-						if ($child['code'])
-						{
-							if ($child['code'] === 'index')
+						if ($child['code']) {
+							if ($child['code'] === 'index') {
 								$item['childrens'][$i]['url'] = $url;
-							else
-								$item['childrens'][$i]['url'] = $child['url'] ?? URL::route('admin.'.$item['code'].'.'.$child['code'], [], false);
+							} else {
+								$item['childrens'][$i]['url'] = $child['url'] ?? URL::route('admin.' . $item['code'] . '.' . $child['code'], [], false);
+							}
 						}
 					}
 

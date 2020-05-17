@@ -6,14 +6,15 @@ use Illuminate\Http\JsonResponse;
 
 class Exception extends \Exception
 {
-	public function render ()
+	public function render()
 	{
 		$type = 'notice';
 
-		if ($this instanceof ErrorException)
+		if ($this instanceof ErrorException) {
 			$type = 'error';
-		elseif ($this instanceof SuccessException)
+		} elseif ($this instanceof SuccessException) {
 			$type = 'success';
+		}
 
 		$message = [
 			'type' => $type,

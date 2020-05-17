@@ -5,7 +5,7 @@ use Xnova\User;
 
 class UserSeed extends Seeder
 {
-	public function run ()
+	public function run()
 	{
 		/** @var User $user */
 		$user = User::query()->create([

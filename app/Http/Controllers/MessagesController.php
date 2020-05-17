@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -25,63 +25,64 @@ use Xnova\Models;
 
 class MessagesController extends Controller
 {
-	public function write ($userId)
+	public function write($userId)
 	{
-		if (!$userId)
+		if (!$userId) {
 			throw new ErrorException(__('messages.mess_no_ownerid'));
+		}
 
 		$userId = (int) $userId;
 
 		$OwnerRecord = DB::selectOne("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM users WHERE `id` = '" . $userId . "'");
 
-		if (!$OwnerRecord)
+		if (!$OwnerRecord) {
 			throw new ErrorException(__('messages.mess_no_owner'));
+		}
 
-		if (Request::post('text'))
-		{
+		if (Request::post('text')) {
 			$text = Request::post('text', '');
 
 			$error = 0;
 
-			if ($text == '')
+			if ($text == '') {
 				throw new ErrorException(__('messages.mess_no_text'));
+			}
 
-			if (!$error && $this->user->message_block > time())
+			if (!$error && $this->user->message_block > time()) {
 				throw new ErrorException(__('messages.mess_similar'));
+			}
 
-			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid)
-			{
-				$registerTime = DB::selectOne("SELECT create_time FROM users_info WHERE id = ".$this->user->id."")->create_time;
+			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
+				$registerTime = DB::selectOne("SELECT create_time FROM users_info WHERE id = " . $this->user->id . "")->create_time;
 
-				if ($registerTime > time() - 86400)
-				{
+				if ($registerTime > time() - 86400) {
 					$lastSend = Messages::query()
 						->where('user_id', $this->user->id)
 						->where('time', time() - (1 * 60))
 						->count();
 
-					if ($lastSend > 0)
+					if ($lastSend > 0) {
 						throw new ErrorException(__('messages.mess_limit'));
+					}
 				}
 			}
 
-			$similar = DB::selectOne("SELECT text FROM messages WHERE user_id = " . $this->user->id . " AND time > ".(time() - (5 * 60))." ORDER BY time DESC");
+			$similar = DB::selectOne("SELECT text FROM messages WHERE user_id = " . $this->user->id . " AND time > " . (time() - (5 * 60)) . " ORDER BY time DESC");
 
-			if ($similar)
-			{
-				if (mb_strlen($similar->text) < 1000)
-				{
+			if ($similar) {
+				if (mb_strlen($similar->text) < 1000) {
 					similar_text($text, $similar->text, $sim);
 
-					if ($sim > 80)
+					if ($sim > 80) {
 						throw new ErrorException(__('messages.mess_similar'));
+					}
 				}
 			}
 
 			$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
 
 			$Message = Format::text($text);
-			$Message = preg_replace('/[ ]+/',' ', $Message);
+			$Message = preg_replace('/[ ]+/', ' ', $Message);
 			$Message = strtr($Message, __('messages.stopwords'));
 
 			User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
@@ -95,8 +96,7 @@ class MessagesController extends Controller
 			'to' => $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]"
 		];
 
-		if (Request::query('quote'))
-		{
+		if (Request::query('quote')) {
 			$mes = Messages::query()
 				->select(['id', 'text'])
 				->where('id', Request::query('quote'))
@@ -106,8 +106,9 @@ class MessagesController extends Controller
 				})
 				->first();
 
-			if ($mes)
+			if ($mes) {
 				$page['text'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->text) . '[/quote]';
+			}
 		}
 
 		$this->setTitle('Отправка сообщения');
@@ -116,17 +117,17 @@ class MessagesController extends Controller
 		return $page;
 	}
 
-	public function delete ()
+	public function delete()
 	{
 		$items = Request::post('delete');
 
-		if (!is_array($items) || !count($items))
+		if (!is_array($items) || !count($items)) {
 			return false;
+		}
 
 		$items = array_map('intval', $items);
 
-		if (count($items))
-		{
+		if (count($items)) {
 			DB::table('messages')
 				->whereIn('id', $items)
 				->where('user_id', $this->user->id)
@@ -136,15 +137,16 @@ class MessagesController extends Controller
 		return true;
 	}
 
-	public function abuse ($messageId)
+	public function abuse($messageId)
 	{
 		$mes = Messages::query()
 			->where('id', (int) $messageId)
 			->where('user_id', $this->user->id)
 			->first();
 
-		if (!$mes)
+		if (!$mes) {
 			throw new ErrorException('Сообщение не найдено');
+		}
 
 		$users = Models\Users::query()
 			->select(['id'])
@@ -152,9 +154,9 @@ class MessagesController extends Controller
 			->get();
 
 		/** @var Models\Users $user */
-		foreach ($users as $user)
-		{
-			User::sendMessage($user->id,
+		foreach ($users as $user) {
+			User::sendMessage(
+				$user->id,
 				$this->user->id,
 				0,
 				1,
@@ -166,7 +168,7 @@ class MessagesController extends Controller
 		throw new SuccessException('Жалоба отправлена администрации игры');
 	}
 
-	public function index ()
+	public function index()
 	{
 		$parse = [];
 
@@ -175,45 +177,54 @@ class MessagesController extends Controller
 
 		$category = 100;
 
-		if (Session::has('m_cat'))
+		if (Session::has('m_cat')) {
 			$category = (int) Session::get('m_cat');
+		}
 
-		if (Request::post('category'))
+		if (Request::post('category')) {
 			$category = (int) Request::post('category', 100);
+		}
 
-		if (!in_array($category, $types))
+		if (!in_array($category, $types)) {
 			$category = 100;
+		}
 
 		$limit = 10;
 
-		if (Session::has('m_limit'))
+		if (Session::has('m_limit')) {
 			$limit = (int) Session::get('m_limit');
+		}
 
-		if (Request::post('limit'))
+		if (Request::post('limit')) {
 			$limit = (int) Request::post('limit', 10);
+		}
 
-		if (!in_array($limit, $limits))
+		if (!in_array($limit, $limits)) {
 			$limit = 10;
+		}
 
 		$page = (int) Request::query('p', 0);
 
-		if ($page <= 0)
+		if ($page <= 0) {
 			$page = 1;
+		}
 
-		if (!Session::has('m_limit') || Session::get('m_limit') != $limit)
+		if (!Session::has('m_limit') || Session::get('m_limit') != $limit) {
 			Session::put('m_limit', $limit);
+		}
 
-		if (!Session::has('m_cat') || Session::get('m_cat') != $category)
+		if (!Session::has('m_cat') || Session::get('m_cat') != $category) {
 			Session::put('m_cat', $category);
+		}
 
-		if (Request::post('delete'))
+		if (Request::post('delete')) {
 			$this->delete();
+		}
 
 		$parse['limit'] = $limit;
 		$parse['category'] = $category;
 
-		if ($this->user->messages > 0)
-		{
+		if ($this->user->messages > 0) {
 			$this->user->messages = 0;
 			$this->user->update();
 		}
@@ -222,19 +233,17 @@ class MessagesController extends Controller
 			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
 			->orderBy('time', 'DESC');
 
-		if ($category == 101)
-		{
+		if ($category == 101) {
 			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\',users.planet, \']\') as theme'))
 				->join('users', 'users.id', '=', 'user_id')
 				->where('from_id', $this->user->id);
-		}
-		else
-		{
+		} else {
 			$messages->addSelect('theme')->where('user_id', $this->user->id)
 				->where('deleted', 0);
 
-			if ($category < 100)
+			if ($category < 100) {
 				$messages->where('type', $category);
+			}
 		}
 
 		$paginator = $messages->paginate($limit, null, null, $page);
@@ -242,20 +251,20 @@ class MessagesController extends Controller
 		$items = $paginator->items();
 		$parse['items'] = [];
 
-		foreach ($items as $item)
-		{
+		foreach ($items as $item) {
 			preg_match_all('/href=\\\"\/(.*?)\\\"/i', $item->text, $match);
 
-			if (isset($match[1]))
-			{
-				foreach ($match[1] as $rep)
-					$item->text = str_replace('/'.$rep, URL::to($rep), $item->text);
+			if (isset($match[1])) {
+				foreach ($match[1] as $rep) {
+					$item->text = str_replace('/' . $rep, URL::to($rep), $item->text);
+				}
 			}
 
 			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match);
 
-			if (isset($match[2]))
+			if (isset($match[2])) {
 				$item->text = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->text);
+			}
 
 			$parse['items'][] = [
 				'id' => (int) $item->id,

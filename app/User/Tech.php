@@ -18,30 +18,24 @@ trait Tech
 	/** @var bool|array */
 	private $technology = false;
 
-	public function _afterUpdateTechs ()
+	public function _afterUpdateTechs()
 	{
-		if ($this->technology !== false)
-		{
-			foreach ($this->technology as &$tech)
-			{
-				if ($tech['id'] == 0 && $tech['level'] > 0)
-				{
+		if ($this->technology !== false) {
+			foreach ($this->technology as &$tech) {
+				if ($tech['id'] == 0 && $tech['level'] > 0) {
 					$tech['id'] = DB::table('users_tech')->insertGetId([
 						'user_id' => $this->id,
 						'tech_id' => $tech['type'],
 						'level' => $tech['level']
 					]);
-				}
-				elseif ($tech['id'] > 0 && $tech['level'] != $tech['~level'])
-				{
-					if ($tech['level'] > 0)
-					{
+				} elseif ($tech['id'] > 0 && $tech['level'] != $tech['~level']) {
+					if ($tech['level'] > 0) {
 						DB::table('users_tech')
 							->where('id', $tech['id'])
 							->update(['level' => $tech['level']]);
-					}
-					else
+					} else {
 						DB::table('users_tech')->where('id', $tech['id'])->delete();
+					}
 				}
 
 				$tech['~level'] = $tech['level'];
@@ -51,10 +45,11 @@ trait Tech
 		}
 	}
 
-	private function getTechnologyData ()
+	private function getTechnologyData()
 	{
-		if ($this->technology !== false)
+		if ($this->technology !== false) {
 			return;
+		}
 
 		$this->technology = [];
 
@@ -62,8 +57,7 @@ trait Tech
 			->where('user_id', $this->id)
 			->get();
 
-		foreach ($items as $item)
-		{
+		foreach ($items as $item) {
 			$this->technology[$item->tech_id] = [
 				'id'		=> (int) $item->id,
 				'type'		=> (int) $item->tech_id,
@@ -73,29 +67,35 @@ trait Tech
 		}
 	}
 
-	public function getTech ($techId)
+	public function getTech($techId)
 	{
 		$_techId = $techId;
 
-		if (!is_numeric($techId))
-			$techId = Vars::getIdByName($techId.'_tech');
+		if (!is_numeric($techId)) {
+			$techId = Vars::getIdByName($techId . '_tech');
+		}
 
-		if (!$techId)
-			throw new Exception('getTech::'.$_techId.' not found');
+		if (!$techId) {
+			throw new Exception('getTech::' . $_techId . ' not found');
+		}
 
 		$techId = (int) $techId;
 
-		if (!$techId)
+		if (!$techId) {
 			return false;
+		}
 
-		if ($this->technology === false)
+		if ($this->technology === false) {
 			$this->getTechnologyData();
+		}
 
-		if (isset($this->technology[$techId]))
+		if (isset($this->technology[$techId])) {
 			return $this->technology[$techId];
+		}
 
-		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH)
+		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH) {
 			return false;
+		}
 
 		$this->technology[$techId] = [
 			'id'		=> 0,
@@ -107,14 +107,14 @@ trait Tech
 		return $this->technology[$techId];
 	}
 
-	public function setTech ($techId, $level)
+	public function setTech($techId, $level)
 	{
 		$tech = $this->getTech($techId);
 
 		$this->technology[$tech['type']]['level'] = (int) $level;
 	}
 
-	public function getTechLevel ($techId)
+	public function getTechLevel($techId)
 	{
 		$tech = $this->getTech($techId);
 

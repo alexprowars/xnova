@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Xnova\Models\Fleet;
@@ -32,24 +32,24 @@ class ImperiumController extends Controller
 			->where('owner', $this->user->getId())
 			->get();
 
-		foreach ($fleets as $fleet)
-		{
-			if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type]))
+		foreach ($fleets as $fleet) {
+			if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type])) {
 				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type] = [];
+			}
 
 			$fleetData = $fleet->getShips();
 
-			foreach ($fleetData as $shipId => $shipArr)
-			{
-				if (!isset($fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId]))
-					$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] = 0;
+			foreach ($fleetData as $shipId => $shipArr) {
+				if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId])) {
+					$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId] = 0;
+				}
 
-				$fleet_fly[$fleet->splitStartPosition().':'.$fleet->start_type][$shipId] += $shipArr['count'];
+				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId] += $shipArr['count'];
 
-				if ($fleet->target_owner == $this->user->id)
-				{
-					if (!isset($build_hangar_full[$shipId]))
+				if ($fleet->target_owner == $this->user->id) {
+					if (!isset($build_hangar_full[$shipId])) {
 						$build_hangar_full[$shipId] = 0;
+					}
 
 					$build_hangar_full[$shipId] += $shipArr['count'];
 				}
@@ -68,8 +68,7 @@ class ImperiumController extends Controller
 			->orderBy($sort['fields'], $sort['order'])
 			->get();
 
-		foreach ($planets AS $planet)
-		{
+		foreach ($planets as $planet) {
 			$planet->assignUser($this->user);
 			$planet->resourceUpdate(time(), true);
 
@@ -95,41 +94,42 @@ class ImperiumController extends Controller
 				'storage' => $planet->getBuildLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) : 0
 			];
 
-			foreach (Vars::getResources() as $res)
-			{
+			foreach (Vars::getResources() as $res) {
 				$row['resources'][$res] = [
 					'current' => $planet->{$res},
-					'production' => $planet->{$res.'_perhour'},
-					'storage' => floor((Config::get('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res.'_store'))))) * $this->user->bonusValue('storage'))
+					'production' => $planet->{$res . '_perhour'},
+					'storage' => floor((Config::get('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
 				];
 			}
 
-			foreach (Vars::getItemsByType('prod') as $ProdID)
+			foreach (Vars::getItemsByType('prod') as $ProdID) {
 				$row['factor'][$ProdID] = $planet->getBuild($ProdID)['power'] * 10;
+			}
 
 			$build_hangar = [];
 
 			$queueManager = new Queue($this->user, $planet);
 			$queueManager->checkUnitQueue();
 
-			foreach ($queueManager->getTypes() AS $type)
-			{
+			foreach ($queueManager->getTypes() as $type) {
 				$queue = $queueManager->get($type);
 
-				if (!count($queue))
+				if (!count($queue)) {
 					continue;
+				}
 
-				foreach ($queue AS $q)
-				{
-					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
+				foreach ($queue as $q) {
+					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING) {
 						$build_hangar[$q->object_id] = (int) $q->level;
-					else
+					} else {
 						$build_hangar[$q->object_id] += (int) $q->level;
+					}
 
-					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING)
+					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING) {
 						$build_hangar_full[$q->object_id] = (int) $q->level;
-					else
+					} else {
 						$build_hangar_full[$q->object_id] += (int) $q->level;
+					}
 				}
 			}
 
@@ -137,10 +137,8 @@ class ImperiumController extends Controller
 
 			$items = [];
 
-			foreach ($resources as $i => $res)
-			{
-				if (!isset($items[$i]))
-				{
+			foreach ($resources as $i => $res) {
+				if (!isset($items[$i])) {
 					$items[$i] = [
 						'current' => 0,
 						'build' => 0,
@@ -148,19 +146,14 @@ class ImperiumController extends Controller
 					];
 				}
 
-				if (Vars::getItemType($i) == Vars::ITEM_TYPE_BUILING)
-				{
+				if (Vars::getItemType($i) == Vars::ITEM_TYPE_BUILING) {
 					$items[$i]['current'] = $planet->getBuildLevel($i);
 					$items[$i]['build'] = $build_hangar[$i] ?? 0;
-				}
-				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET)
-				{
+				} elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET) {
 					$items[$i]['current'] = $planet->getUnitCount($i);
 					$items[$i]['build'] = $build_hangar[$i] ?? 0;
-					$items[$i]['fly'] = $fleet_fly[$planet->galaxy.':'.$planet->system.':'.$planet->planet.':'.$planet->planet_type][$i] ?? 0;
-				}
-				elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_DEFENSE)
-				{
+					$items[$i]['fly'] = $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] ?? 0;
+				} elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_DEFENSE) {
 					$items[$i]['current'] = $planet->getUnitCount($i);
 					$items[$i]['build'] = $build_hangar[$i] ?? 0;
 				}
@@ -168,14 +161,17 @@ class ImperiumController extends Controller
 
 			$row['elements'] = [];
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i) {
 				$row['elements'][$i] = $items[$i];
+			}
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
 				$row['elements'][$i] = $items[$i];
+			}
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i)
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i) {
 				$row['elements'][$i] = $items[$i];
+			}
 
 			$parse['planets'][] = $row;
 		}
@@ -184,10 +180,10 @@ class ImperiumController extends Controller
 
 		$parse['tech'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i)
-		{
-			if ($this->user->getTechLevel($i) <= 0)
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i) {
+			if ($this->user->getTechLevel($i) <= 0) {
 				continue;
+			}
 
 			$parse['tech'][$i] = [
 				'current' => $this->user->getTechLevel($i),

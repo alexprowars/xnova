@@ -21,7 +21,7 @@ class MoonsController extends CrudController
 	use Operations\ShowOperation;
 	use Operations\DeleteOperation;
 
-	public static function getMenu ()
+	public static function getMenu()
 	{
 		return [[
 			'code'	=> 'moons',
@@ -32,14 +32,13 @@ class MoonsController extends CrudController
 		]];
 	}
 
-	public function setup ()
+	public function setup()
 	{
 		$this->crud->setModel(Planets::class);
 		$this->crud->setEntityNameStrings('луну', 'луны');
 		$this->crud->setRoute(backpack_url('moons'));
 
-		$this->crud->operation('list', function ()
-		{
+		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			$this->crud->addClause('where', 'planet_type', '=', 3);
 			$this->crud->enableExportButtons();
@@ -64,8 +63,7 @@ class MoonsController extends CrudController
 			]);
 		});
 
-		$this->crud->operation('create', function()
-		{
+		$this->crud->operation('create', function () {
 			$this->crud->setValidation(MoonRequest::class);
 			$this->crud->setTitle('Создание луны');
 			$this->crud->setSubheading('Создание луны');
@@ -103,7 +101,7 @@ class MoonsController extends CrudController
 		});
 	}
 
-	public function store ()
+	public function store()
 	{
 		$this->crud->applyConfigurationFromSettings('create');
 		$this->crud->hasAccessOrFail('create');
@@ -122,10 +120,11 @@ class MoonsController extends CrudController
 			$diameter
 		);
 
-		if ($planetId)
+		if ($planetId) {
 			Alert::success('Луна создана, id: ' . $planetId);
-		else
+		} else {
 			Alert::error('Не удалось создать луну');
+		}
 
 		$this->crud->setSaveAction();
 

@@ -53,7 +53,7 @@ class Fleet extends Model
 
 	public $username = '';
 
-	public static function boot ()
+	public static function boot()
 	{
 		parent::boot();
 
@@ -66,23 +66,24 @@ class Fleet extends Model
 		});
 	}
 
-	private function _beforeSave ($model)
+	private function _beforeSave($model)
 	{
-		if (is_array($model->fleet_array))
+		if (is_array($model->fleet_array)) {
 			$model->fleet_array = json_encode($model->fleet_array);
+		}
 	}
 
-	public function splitStartPosition ()
+	public function splitStartPosition()
 	{
-		return $this->start_galaxy.':'.$this->start_system.':'.$this->start_planet;
+		return $this->start_galaxy . ':' . $this->start_system . ':' . $this->start_planet;
 	}
 
-	public function splitTargetPosition ()
+	public function splitTargetPosition()
 	{
-		return $this->end_galaxy.':'.$this->end_system.':'.$this->end_planet;
+		return $this->end_galaxy . ':' . $this->end_system . ':' . $this->end_planet;
 	}
 
-	public function getStartAdressLink ($FleetType = '')
+	public function getStartAdressLink($FleetType = '')
 	{
 		$uri = URL::route('galaxy', [
 			'galaxy' => $this->start_galaxy,
@@ -91,10 +92,10 @@ class Fleet extends Model
 
 		$uri = str_replace('/api', '', $uri);
 
-		return '<a href="'.$uri.'" '.$FleetType.'>['.$this->splitStartPosition().']</a>';
+		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitStartPosition() . ']</a>';
 	}
 
-	public function getTargetAdressLink ($FleetType = '')
+	public function getTargetAdressLink($FleetType = '')
 	{
 		$uri = URL::route('galaxy', [
 			'galaxy' => $this->end_galaxy,
@@ -103,38 +104,42 @@ class Fleet extends Model
 
 		$uri = str_replace('/api', '', $uri);
 
-		return '<a href="'.$uri.'" '.$FleetType.'>['.$this->splitTargetPosition().']</a>';
+		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitTargetPosition() . ']</a>';
 	}
 
-	public function getTotalShips ()
+	public function getTotalShips()
 	{
 		$result = 0;
 
 		$data = $this->getShips();
 
-		foreach ($data as $type)
+		foreach ($data as $type) {
 			$result += $type['count'];
+		}
 
 		return $result;
 	}
 
-	public function getShips ($fleets = false)
+	public function getShips($fleets = false)
 	{
-		if (!$fleets)
+		if (!$fleets) {
 			$fleets = $this->fleet_array;
+		}
 
 		$result = [];
 
-		if (!is_array($fleets))
+		if (!is_array($fleets)) {
 			$fleets = json_decode($fleets, true);
+		}
 
-		if (!is_array($fleets))
+		if (!is_array($fleets)) {
 			return [];
+		}
 
-		foreach ($fleets as $fleet)
-		{
-			if (!isset($fleet['id']))
+		foreach ($fleets as $fleet) {
+			if (!isset($fleet['id'])) {
 				continue;
+			}
 
 			$fleetId = (int) $fleet['id'];
 
@@ -143,20 +148,22 @@ class Fleet extends Model
 				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0
 			];
 
-			if (isset($fleet['target']))
+			if (isset($fleet['target'])) {
 				$result[$fleetId]['target'] = (int) $fleet['target'];
+			}
 		}
 
 		return $result;
 	}
 
-	public function beforeSave ()
+	public function beforeSave()
 	{
-		if (is_array($this->fleet_array))
+		if (is_array($this->fleet_array)) {
 			$this->fleet_array = json_encode(array_values($this->fleet_array));
+		}
 	}
 
-	public function canBack ()
+	public function canBack()
 	{
 		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_owner != 1);
 	}

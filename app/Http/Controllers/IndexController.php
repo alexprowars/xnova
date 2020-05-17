@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -20,37 +20,39 @@ use Xnova\User;
 
 class IndexController extends Controller
 {
-	public function index ()
+	public function index()
 	{
 		$this->setTitle('Вход в игру');
 
 		return [];
 	}
 
-	public function Registration ()
+	public function Registration()
 	{
 		$errors = [];
 
-		if (Request::instance()->isMethod('post'))
-		{
+		if (Request::instance()->isMethod('post')) {
 			$email = strip_tags(trim(Request::post('email')));
 
-			if (!Helpers::is_email($email))
-				$errors[] = '"'.$email.'" '.__('reg.error_mail');
+			if (!Helpers::is_email($email)) {
+				$errors[] = '"' . $email . '" ' . __('reg.error_mail');
+			}
 
-			if (mb_strlen(Request::post('password')) < 4)
+			if (mb_strlen(Request::post('password')) < 4) {
 				$errors[] = __('reg.error_password');
+			}
 
-			if (Request::post('password') != Request::post('password_confirm'))
+			if (Request::post('password') != Request::post('password_confirm')) {
 				$errors[] = __('reg.error_confirm');
+			}
 
 			$checkExist = Models\UsersInfo::query()->where('email', $email)->exists();
 
-			if ($checkExist)
+			if ($checkExist) {
 				$errors[] = __('reg.error_emailexist');
+			}
 
-			if (!count($errors))
-			{
+			if (!count($errors)) {
 				$curl = curl_init();
 
 				curl_setopt($curl, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
@@ -66,19 +68,20 @@ class IndexController extends Controller
 
 				curl_close($curl);
 
-				if (!$captcha['success'])
+				if (!$captcha['success']) {
 					$errors[] = "Вы не прошли проверку на бота!";
+				}
 			}
 
-			if (!count($errors))
-			{
+			if (!count($errors)) {
 				$userId = User::creation([
 					'email' => $email,
 					'password' => trim(Request::post('password')),
 				]);
 
-				if (!$userId)
+				if (!$userId) {
 					throw new Exception('create user error');
+				}
 
 				Auth::loginUsingId($userId, true);
 

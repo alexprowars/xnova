@@ -7,18 +7,20 @@ use Xnova\Vars;
 
 class Building extends Base
 {
-	public function __construct ($elementId, ?int $level = null, $context = null)
+	public function __construct($elementId, ?int $level = null, $context = null)
 	{
-		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_BUILING)
+		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_BUILING) {
 			throw new Exception('wrong entity type');
+		}
 
-		if ($level === null)
+		if ($level === null) {
 			$level = ($context ? $context : $this->getContext())->getPlanet()->getBuildLevel($elementId);
+		}
 
 		parent::__construct($elementId, $level, $context);
 	}
 
-	public function getBasePrice (): array
+	public function getBasePrice(): array
 	{
 		$cost = parent::getBasePrice();
 
@@ -29,7 +31,7 @@ class Building extends Base
 		}, $cost);
 	}
 
-	public function getDestroyPrice (): array
+	public function getDestroyPrice(): array
 	{
 		$cost = $this->getPrice();
 
@@ -38,7 +40,7 @@ class Building extends Base
 		}, $cost);
 	}
 
-	public function getTime (): int
+	public function getTime(): int
 	{
 		$user = $this->getContext()->getUser();
 		$planet = $this->getContext()->getPlanet();

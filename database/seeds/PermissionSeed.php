@@ -6,7 +6,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeed extends Seeder
 {
-	public function run ()
+	public function run()
 	{
 		//Artisan::call('cache:clear');
 		/** @noinspection PhpUndefinedMethodInspection */

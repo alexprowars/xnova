@@ -18,30 +18,24 @@ trait Build
 	/** @var bool|array */
 	private $buildings = false;
 
-	public function _afterUpdateBuildings ()
+	public function _afterUpdateBuildings()
 	{
-		if ($this->buildings !== false)
-		{
-			foreach ($this->buildings as &$building)
-			{
-				if ($building['id'] == 0 && $building['level'] > 0)
-				{
+		if ($this->buildings !== false) {
+			foreach ($this->buildings as &$building) {
+				if ($building['id'] == 0 && $building['level'] > 0) {
 					$building['id'] = DB::table('planets_buildings')->insertGetId([
 						'planet_id' => $this->id,
 						'build_id' => $building['type'],
 						'level' => $building['level']
 					]);
-				}
-				elseif ($building['id'] > 0 && $building['level'] != $building['~level'])
-				{
-					if ($building['level'] > 0)
-					{
+				} elseif ($building['id'] > 0 && $building['level'] != $building['~level']) {
+					if ($building['level'] > 0) {
 						DB::table('planets_buildings')
 							->where('id', $building['id'])
 							->update(['level' => $building['level']]);
-					}
-					else
+					} else {
 						DB::table('planets_buildings')->where('id', $building['id'])->delete();
+					}
 				}
 
 				$building['~level'] = $building['level'];
@@ -51,17 +45,17 @@ trait Build
 		}
 	}
 
-	private function getBuildingsData ()
+	private function getBuildingsData()
 	{
-		if ($this->buildings !== false)
+		if ($this->buildings !== false) {
 			return;
+		}
 
 		$this->buildings = [];
 
 		$items = PlanetsBuildings::query()->where('planet_id', $this->id)->get();
 
-		foreach ($items as $item)
-		{
+		foreach ($items as $item) {
 			$this->buildings[$item->build_id] = [
 				'id'		=> (int) $item->id,
 				'type'		=> (int) $item->build_id,
@@ -73,32 +67,38 @@ trait Build
 		}
 	}
 
-	public function clearBuildingsData ()
+	public function clearBuildingsData()
 	{
 		$this->buildings = false;
 	}
 
-	public function getBuild ($buildId)
+	public function getBuild($buildId)
 	{
-		if (!is_numeric($buildId))
+		if (!is_numeric($buildId)) {
 			$buildId = Vars::getIdByName($buildId);
+		}
 
 		$buildId = (int) $buildId;
 
-		if (!$buildId)
+		if (!$buildId) {
 			throw new Exception('getBuild not found');
+		}
 
-		if (!$buildId)
+		if (!$buildId) {
 			return false;
+		}
 
-		if ($this->buildings === false)
+		if ($this->buildings === false) {
 			$this->getBuildingsData();
+		}
 
-		if (isset($this->buildings[$buildId]))
+		if (isset($this->buildings[$buildId])) {
 			return $this->buildings[$buildId];
+		}
 
-		if (Vars::getItemType($buildId) != Vars::ITEM_TYPE_BUILING)
+		if (Vars::getItemType($buildId) != Vars::ITEM_TYPE_BUILING) {
 			return false;
+		}
 
 		$this->buildings[$buildId] = [
 			'id'		=> 0,
@@ -112,14 +112,14 @@ trait Build
 		return $this->buildings[$buildId];
 	}
 
-	public function setBuild ($buildId, $level)
+	public function setBuild($buildId, $level)
 	{
 		$build = $this->getBuild($buildId);
 
 		$this->buildings[$build['type']]['level'] = max(0, (int) $level);
 	}
 
-	public function getBuildLevel ($buildId)
+	public function getBuildLevel($buildId)
 	{
 		$build = $this->getBuild($buildId);
 

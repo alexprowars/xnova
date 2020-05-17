@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -22,23 +22,23 @@ class GalaxyController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index ()
+	public function index()
 	{
 		$parse = [];
 
 		$fleetmax = $this->user->getTechLevel('computer') + 1;
 
-		if ($this->user->rpg_admiral > time())
+		if ($this->user->rpg_admiral > time()) {
 			$fleetmax += 2;
+		}
 
 		$maxfleet_count = Models\Fleet::query()
 			->where('owner', $this->user->id)
 			->count();
 
-		$records = Cache::get('app::records_'.$this->user->getId());
+		$records = Cache::get('app::records_' . $this->user->getId());
 
-		if ($records === null)
-		{
+		if ($records === null) {
 			$records = DB::table('statpoints')
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
@@ -46,68 +46,67 @@ class GalaxyController extends Controller
 				->where('id_owner', $this->user->getId())
 				->first();
 
-			if (!$records)
+			if (!$records) {
 				$records = [];
-			else
+			} else {
 				$records = $records->toArray();
+			}
 
-			Cache::put('app::records_'.$this->user->getId(), $records, 1800);
+			Cache::put('app::records_' . $this->user->getId(), $records, 1800);
 		}
 
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
 
-		if (Request::post('direction'))
-		{
+		if (Request::post('direction')) {
 			$direction = trim(Request::post('direction', ''));
 
-			if ($direction == 'galaxyLeft')
+			if ($direction == 'galaxyLeft') {
 				$galaxy = (int) Request::post('galaxy') - 1;
-			elseif ($direction == 'galaxyRight')
+			} elseif ($direction == 'galaxyRight') {
 				$galaxy = (int) Request::post('galaxy') + 1;
-			elseif (Request::post('galaxy'))
+			} elseif (Request::post('galaxy')) {
 				$galaxy = (int) Request::post('galaxy');
+			}
 
-			if ($direction == 'systemLeft')
+			if ($direction == 'systemLeft') {
 				$system = (int) Request::post('system') - 1;
-			elseif ($direction == 'systemRight')
+			} elseif ($direction == 'systemRight') {
 				$system = (int) Request::post('system') + 1;
-			elseif (Request::post('system'))
+			} elseif (Request::post('system')) {
 				$system = (int) Request::post('system');
-		}
-		else
-		{
-			if (Request::post('galaxy'))
+			}
+		} else {
+			if (Request::post('galaxy')) {
 				$galaxy = (int) Request::query('galaxy', 1);
+			}
 
-			if (Request::post('system'))
+			if (Request::post('system')) {
 				$system = (int) Request::query('system', 1);
+			}
 		}
 
 		$galaxy = min(max($galaxy, 1), Config::get('settings.maxGalaxyInWorld'));
 		$system = min(max($system, 1), Config::get('settings.maxSystemInGalaxy'));
 
-		if (!Session::has('fleet_shortcut'))
-		{
+		if (!Session::has('fleet_shortcut')) {
 			$array = $this->user->getPlanets(false);
 			$j = [];
 
-			foreach ($array AS $a)
+			foreach ($array as $a) {
 				$j[] = [base64_encode($a->name), $a->galaxy, $a->system, $a->planet];
+			}
 
 			$shortcuts = DB::table('users_info')
 				->select(['fleet_shortcut'])
 				->where('id', $this->user->id)
 				->first();
 
-			if ($shortcuts)
-			{
+			if ($shortcuts) {
 				$scarray = explode("\r\n", $shortcuts->fleet_shortcut);
 
-				foreach ($scarray as $b)
-				{
-					if ($b != "")
-					{
+				foreach ($scarray as $b) {
+					if ($b != "") {
 						$c = explode(',', $b);
 						$j[] = [base64_encode($c[0]), intval($c[1]), intval($c[2]), intval($c[3])];
 					}
@@ -119,41 +118,41 @@ class GalaxyController extends Controller
 
 		$Phalanx = 0;
 
-		if ($this->planet->getBuildLevel('phalanx') > 0)
-		{
+		if ($this->planet->getBuildLevel('phalanx') > 0) {
 			$Range = Fleet::GetPhalanxRange($this->planet->getBuildLevel('phalanx'));
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
 
-			if ($system <= $SystemLimitMax && $system >= $SystemLimitMin)
+			if ($system <= $SystemLimitMax && $system >= $SystemLimitMin) {
 				$Phalanx = 1;
+			}
 		}
 
-		if ($this->planet->getUnitCount('interplanetary_misil') > 0)
-		{
-			if ($galaxy == $this->planet->galaxy)
-			{
+		if ($this->planet->getUnitCount('interplanetary_misil') > 0) {
+			if ($galaxy == $this->planet->galaxy) {
 				$Range = Fleet::GetMissileRange($this->user);
 
 				$SystemLimitMin = max(1, $this->planet->system - $Range);
 				$SystemLimitMax = $this->planet->system + $Range;
 
-				if ($system <= $SystemLimitMax)
+				if ($system <= $SystemLimitMax) {
 					$MissileBtn = ($system >= $SystemLimitMin) ? 1 : 0;
-				else
+				} else {
 					$MissileBtn = 0;
-			}
-			else
+				}
+			} else {
 				$MissileBtn = 0;
-		}
-		else
+			}
+		} else {
 			$MissileBtn = 0;
+		}
 
 		$Destroy = 0;
 
-		if ($this->planet->getUnitCount('dearth_star') > 0)
+		if ($this->planet->getUnitCount('dearth_star') > 0) {
 			$Destroy = 1;
+		}
 
 		$jsUser = [
 			'phalanx' => $Phalanx,
@@ -176,18 +175,18 @@ class GalaxyController extends Controller
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];
 
-		for ($i = 1; $i <= 15; $i++)
+		for ($i = 1; $i <= 15; $i++) {
 			$parse['items'][$i - 1] = false;
+		}
 
-		if (Session::get('fleet_shortcut'))
-		{
+		if (Session::get('fleet_shortcut')) {
 			$array = json_decode(Session::get('fleet_shortcut'), true);
 
-			if (!is_array($array))
+			if (!is_array($array)) {
 				$array = [];
+			}
 
-			foreach ($array AS $id => $a)
-			{
+			foreach ($array as $id => $a) {
 				$parse['shortcuts'][] = [
 					'n' => base64_decode($a[0]),
 					'g' => (int) $a[1],
@@ -206,67 +205,69 @@ class GalaxyController extends Controller
 								a.name AS a_name, a.members AS a_members, a.web AS a_web, a.tag AS a_tag,
 								ad.type as d_type,
 								s.total_rank as s_rank, s.total_points as s_points
-				FROM planets p 
-				LEFT JOIN planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0) 
+				FROM planets p
+				LEFT JOIN planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0)
 				LEFT JOIN users u ON (u.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN users_info ui ON (ui.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN alliance a ON (a.id = u.ally_id AND u.ally_id != 0)
 				LEFT JOIN alliance_diplomacy ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
-				LEFT JOIN statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1') 
+				LEFT JOIN statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1')
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
-		foreach ($GalaxyRow as $row)
-		{
-			if ($row->l_update != "" && $row->l_update > $row->p_active)
+		foreach ($GalaxyRow as $row) {
+			if ($row->l_update != "" && $row->l_update > $row->p_active) {
 				$row->p_active = $row->l_update;
-
-			if ($row->p_delete > 0 && $row->p_delete <= time())
-			{
-				DB::table('planets')->delete($row->p_id);
-
-				if ($row->p_parent != 0)
-					DB::table('planets')->delete($row->p_parent);
 			}
 
-			if ($row->l_id != '' && $row->l_delete != 0 && $row->l_delete <= time())
-			{
+			if ($row->p_delete > 0 && $row->p_delete <= time()) {
+				DB::table('planets')->delete($row->p_id);
+
+				if ($row->p_parent != 0) {
+					DB::table('planets')->delete($row->p_parent);
+				}
+			}
+
+			if ($row->l_id != '' && $row->l_delete != 0 && $row->l_delete <= time()) {
 				DB::table('planets')->delete($row->l_id);
 				DB::table('planets')->where('parent_planet', $row->l_id)->update(['parent_planet' => 0]);
 
 				$row->l_id = 0;
 			}
 
-			if ($row->u_online < (time() - 60 * 60 * 24 * 7) && $row->u_online > (time() - 60 * 60 * 24 * 28))
+			if ($row->u_online < (time() - 60 * 60 * 24 * 7) && $row->u_online > (time() - 60 * 60 * 24 * 28)) {
 				$row->u_online = 1;
-			elseif ($row->u_online < (time() - 60 * 60 * 24 * 28))
+			} elseif ($row->u_online < (time() - 60 * 60 * 24 * 28)) {
 				$row->u_online = 2;
-			else
+			} else {
 				$row->u_online = 0;
+			}
 
-			if ($row->u_vacation > 0)
+			if ($row->u_vacation > 0) {
 				$row->u_vacation = 1;
+			}
 
-			if ($row->p_active > (time() - 59 * 60))
+			if ($row->p_active > (time() - 59 * 60)) {
 				$row->p_active = floor((time() - $row->p_active) / 60);
-			else
+			} else {
 				$row->p_active = 60;
+			}
 
-			if ($row->u_image > 0)
-			{
+			if ($row->u_image > 0) {
 				$file = Files::getById($row['u_image']);
 
-				if ($file)
+				if ($file) {
 					$row->u_image = $file['src'];
-				else
+				} else {
 					$row->u_image = '';
+				}
 			}
 
 			unset($row->p_parent, $row->l_update, $row->p_id);
 
-			foreach ($row AS &$v)
-			{
-				if (is_numeric($v))
+			foreach ($row as &$v) {
+				if (is_numeric($v)) {
 					$v = (int) $v;
+				}
 			}
 
 			unset($v);

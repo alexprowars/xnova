@@ -7,36 +7,38 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    protected $dontReport = [];
+	protected $dontReport = [];
 
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
+	protected $dontFlash = [
+		'password',
+		'password_confirmation',
+	];
 
-    public function report (Exception $exception)
-    {
-        parent::report($exception);
-    }
+	public function report(Throwable $exception)
+	{
+		parent::report($exception);
+	}
 
-    public function render ($request, Exception $exception)
-    {
-    	if (strpos($request->path(), 'admin/') === false &&
+	public function render($request, Throwable $exception)
+	{
+		if (
+			strpos($request->path(), 'admin/') === false &&
 			$exception instanceof Exception &&
 				!method_exists($exception, 'render')
-		)
-		{
+		) {
 			$data = [
 				'message' => $exception->getMessage(),
 			];
 
 			$debug = Config::get('app.debug');
 
-			if ($debug)
+			if ($debug) {
 				$data['trace'] = $exception->getTraceAsString();
+			}
 
 			return new JsonResponse(
 				[
@@ -49,10 +51,10 @@ class Handler extends ExceptionHandler
 			);
 		}
 
-        return parent::render($request, $exception);
-    }
+		return parent::render($request, $exception);
+	}
 
-	protected function unauthenticated ($request, AuthenticationException $exception)
+	protected function unauthenticated($request, AuthenticationException $exception)
 	{
 		return redirect()->guest('');
 	}

@@ -37,8 +37,9 @@ class Battle
 	 */
 	public function startBattle($debug = false)
 	{
-		if (!$debug)
+		if (!$debug) {
 			ob_start();
+		}
 
 		$this->battleStarted = true;
 
@@ -48,18 +49,17 @@ class Battle
 		$round = new Round($this->attackers, $this->defenders, 0);
 		$this->report->addRound($round);
 
-		for ($i = 1; $i <= $this->rounds; $i++)
-		{
+		for ($i = 1; $i <= $this->rounds; $i++) {
 			$att_lose = $this->attackers->isEmpty();
 			$deff_lose = $this->defenders->isEmpty();
 
-			if ($att_lose || $deff_lose)
-			{
+			if ($att_lose || $deff_lose) {
 				$this->checkWhoWon($att_lose, $deff_lose);
 				$this->report->setBattleResult($this->attackers->battleResult, $this->defenders->battleResult);
 
-				if (!$debug)
+				if (!$debug) {
 					ob_get_clean();
+				}
 
 				return false;
 			}
@@ -75,8 +75,9 @@ class Battle
 
 		$this->checkWhoWon($this->attackers->isEmpty(), $this->defenders->isEmpty());
 
-		if (!$debug)
+		if (!$debug) {
 			ob_get_clean();
+		}
 
 		return true;
 	}
@@ -89,18 +90,13 @@ class Battle
 	 */
 	private function checkWhoWon($att_lose, $deff_lose)
 	{
-		if ($att_lose && !$deff_lose)
-		{
+		if ($att_lose && !$deff_lose) {
 			$this->attackers->battleResult = BATTLE_LOSE;
 			$this->defenders->battleResult = BATTLE_WIN;
-		}
-		elseif (!$att_lose && $deff_lose)
-		{
+		} elseif (!$att_lose && $deff_lose) {
 			$this->attackers->battleResult = BATTLE_WIN;
 			$this->defenders->battleResult = BATTLE_LOSE;
-		}
-		else
-		{
+		} else {
 			$this->attackers->battleResult = BATTLE_DRAW;
 			$this->defenders->battleResult = BATTLE_DRAW;
 		}
@@ -115,8 +111,9 @@ class Battle
 	 */
 	public function getReport($debug = false)
 	{
-		if (!$this->battleStarted)
+		if (!$this->battleStarted) {
 			$this->startBattle($debug);
+		}
 
 		return $this->report;
 	}

@@ -15,32 +15,32 @@ use Xnova\User;
 
 class UserAuthenticated
 {
-	public function handle (Authenticated $event)
+	public function handle(Authenticated $event)
 	{
 		$route = Route::current()->getName();
 
-		if ($route === 'banned')
+		if ($route === 'banned') {
 			return;
+		}
 
 		/** @var User $user */
 		$user = $event->user;
 
-		if ($user->banned > time())
-			throw new PageException('Ваш аккаунт заблокирован. Срок окончания блокировки: '.Game::datezone("d.m.Y H:i:s", $user->banned).'<br>Для получения дополнительной информации зайдите <a href="'.URL::to('banned/').'">сюда</a>');
-		elseif ($user->banned > 0 && $user->banned < time())
-		{
+		if ($user->banned > time()) {
+			throw new PageException('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->banned) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('banned/') . '">сюда</a>');
+		} elseif ($user->banned > 0 && $user->banned < time()) {
 			$user->banned = 0;
 
 			Banned::query()->where('who', $user->id)->delete();
 		}
 
-		if ($user->onlinetime < (time() - 30))
+		if ($user->onlinetime < (time() - 30)) {
 			$user->onlinetime = time();
+		}
 
 		$ip = Helpers::convertIp(Request::ip());
 
-		if ($user->ip != $ip)
-		{
+		if ($user->ip != $ip) {
 			$user->ip = $ip;
 
 			DB::table('log_ip')->insert([
@@ -50,7 +50,8 @@ class UserAuthenticated
 			]);
 		}
 
-		if ($user->isDirty())
+		if ($user->isDirty()) {
 			$user->update();
+		}
 	}
 }

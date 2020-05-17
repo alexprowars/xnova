@@ -7,15 +7,16 @@ use Xnova\Vars;
 
 class Fleet extends Unit
 {
-	public function __construct ($elementId, $count = 1, $context = null)
+	public function __construct($elementId, $count = 1, $context = null)
 	{
-		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_FLEET)
+		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_FLEET) {
 			throw new Exception('wrong entity type');
+		}
 
 		parent::__construct($elementId, $count, $context);
 	}
 
-	public function getTime (): int
+	public function getTime(): int
 	{
 		$user = $this->getContext()->getUser();
 
@@ -25,20 +26,19 @@ class Fleet extends Unit
 		return max(1, floor($time));
 	}
 
-	public function getConsumption (): int
+	public function getConsumption(): int
 	{
 		$shipData = Vars::getUnitData($this->elementId);
 
 		return (int) ceil($shipData['consumption'] * $this->getContext()->getUser()->bonusValue('fleet_fuel'));
 	}
 
-	public function getSpeed (): int
+	public function getSpeed(): int
 	{
 		$shipData = Vars::getUnitData($this->elementId);
 		$user = $this->getContext()->getUser();
 
-		switch ($shipData['type_engine'])
-		{
+		switch ($shipData['type_engine']) {
 			case 1:
 				$speed = $shipData['speed'] * (1 + ($user->getTechLevel('combustion') * 0.1));
 				break;
@@ -52,41 +52,46 @@ class Fleet extends Unit
 				$speed = $shipData['speed'];
 		}
 
-		if ($user->bonusValue('fleet_speed') != 1)
+		if ($user->bonusValue('fleet_speed') != 1) {
 			$speed = $speed * $user->bonusValue('fleet_speed');
+		}
 
 		return (int) floor($speed);
 	}
 
-	public function getStorage (): int
+	public function getStorage(): int
 	{
 		$shipData = Vars::getUnitData($this->elementId);
 
-		if (!$shipData)
+		if (!$shipData) {
 			return 0;
+		}
 
 		return (int) $shipData['capacity'];
 	}
 
-	public function getStayConsumption (): int
+	public function getStayConsumption(): int
 	{
 		$shipData = Vars::getUnitData($this->elementId);
 
-		if (!$shipData)
+		if (!$shipData) {
 			return 0;
+		}
 
-		if ($this->getContext()->getUser()->rpg_meta > time())
+		if ($this->getContext()->getUser()->rpg_meta > time()) {
 			return (int) ceil($shipData['stay'] * 0.9);
-		else
+		} else {
 			return (int) $shipData['stay'];
+		}
 	}
 
-	public function getInfo (): array
+	public function getInfo(): array
 	{
 		$shipData = Vars::getUnitData($this->elementId);
 
-		if (!$shipData)
+		if (!$shipData) {
 			throw new Exception('unit does not exist');
+		}
 
 		$ship = [
 			'id' => $this->elementId,

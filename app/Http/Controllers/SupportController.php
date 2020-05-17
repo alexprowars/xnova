@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -23,7 +23,7 @@ use Xnova\Controller;
 
 class SupportController extends Controller
 {
-	public function __construct ()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -31,13 +31,14 @@ class SupportController extends Controller
 		$this->showTopPanel(false);
 	}
 
-	public function add ()
+	public function add()
 	{
 		$text = Request::post('text', '');
 		$subject = Request::post('subject', '');
 
-		if (empty($text) || empty($subject))
+		if (empty($text) || empty($subject)) {
 			throw new ErrorException('Не заполнены все поля');
+		}
 
 		$ticket = new Support();
 
@@ -46,32 +47,36 @@ class SupportController extends Controller
 		$ticket->text = Helpers::checkString($text);
 		$ticket->status = 1;
 
-		if (!$ticket->save())
+		if (!$ticket->save()) {
 			throw new Exception('Не удалось создать тикет');
+		}
 
 		app(SmsSender::class)
-			->send(Config::get('game.sms.login'), 'Создан новый тикет №' . $ticket->id . ' ('.$this->user->username.')');
+			->send(Config::get('game.sms.login'), 'Создан новый тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 
 		throw new SuccessException('Задача добавлена');
 	}
 
-	public function answer ($id)
+	public function answer($id)
 	{
 		$id = (int) $id;
 
-		if (!$id)
+		if (!$id) {
 			throw new RedirectException('Не задан ID тикета', '/support/');
+		}
 
 		$text = Request::post('text', '');
 
-		if (empty($text))
+		if (empty($text)) {
 			throw new ErrorException('Не заполнены все поля');
+		}
 
 		/** @var Support $ticket */
 		$ticket = Support::query()->find($id);
 
-		if (!$ticket)
+		if (!$ticket) {
 			throw new RedirectException('Тикет не найден', '/support/');
+		}
 
 		$text = $ticket->text . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($text) . '';
 
@@ -81,16 +86,15 @@ class SupportController extends Controller
 
 		User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
 
-		if ($ticket->status == 2)
-		{
+		if ($ticket->status == 2) {
 			app(SmsSender::class)
-				->send(Config::get('game.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' ('.$this->user->username.')');
+				->send(Config::get('game.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 		}
 
 		throw new SuccessException('Задача обновлена');
 	}
 
-	public function index ()
+	public function index()
 	{
 		$list = [];
 
@@ -99,8 +103,7 @@ class SupportController extends Controller
 			->orderByDesc('time')
 			->get();
 
-		foreach ($tickets as $ticket)
-		{
+		foreach ($tickets as $ticket) {
 			$list[] = [
 				'id' => (int) $ticket->id,
 				'status' => (int) $ticket->status,
@@ -114,7 +117,7 @@ class SupportController extends Controller
 		];
 	}
 
-	public function info ($id)
+	public function info($id)
 	{
 		/** @var Support $ticket */
 		$ticket = Support::query()
@@ -122,8 +125,9 @@ class SupportController extends Controller
 			->where('id', $id)
 			->get();
 
-		if (!$ticket)
+		if (!$ticket) {
 			throw new \Exception('Тикет не найден');
+		}
 
 		return [
 			'id' => (int) $ticket->id,

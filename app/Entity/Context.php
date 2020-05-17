@@ -8,28 +8,30 @@ use Xnova\User;
 
 class Context
 {
-	private $_user;
-	private $_planet;
+	private $user;
+	private $planet;
 
-	public function __construct (?User $user, ?Planet $planet = null)
+	public function __construct(?User $user, ?Planet $planet = null)
 	{
-		$this->_user = $user;
-		$this->_planet = $planet;
+		$this->user = $user;
+		$this->planet = $planet;
 	}
 
-	public function getUser (): User
+	public function getUser(): User
 	{
-		return $this->_user;
+		return $this->user;
 	}
 
-	public function getPlanet (): Planet
+	public function getPlanet(): Planet
 	{
-		if (!$this->_planet && $this->_user)
-			$this->_planet = $this->_user->getCurrentPlanet(true);
+		if (!$this->planet && $this->user) {
+			$this->planet = $this->user->getCurrentPlanet(true);
+		}
 
-		if (!$this->_planet)
+		if (!$this->planet) {
 			throw new Exception('planet not found in context');
+		}
 
-		return $this->_planet;
+		return $this->planet;
 	}
 }
