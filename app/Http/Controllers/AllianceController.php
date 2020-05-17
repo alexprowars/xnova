@@ -292,7 +292,7 @@ class AllianceController extends Controller
 				Alliance::PLANET_ACCESS => 0
 			];
 
-			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 		} elseif (Request::post('id') && is_array(Request::post('id'))) {
 			$ally_ranks_new = [];
 
@@ -316,11 +316,11 @@ class AllianceController extends Controller
 
 			$this->ally->ranks = $ally_ranks_new;
 
-			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 		} elseif (Request::query('d') && isset($this->ally->ranks[Request::query('d', 'int')])) {
 			unset($this->ally->ranks[Request::query('d', 'int')]);
 
-			DB::statement("UPDATE alliance SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
+			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 		}
 
 		$parse['list'] = [];
@@ -391,7 +391,7 @@ class AllianceController extends Controller
 
 					DB::table('alliance_members')->insert(['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
 
-					DB::statement("UPDATE alliance SET members = members + 1 WHERE id = ?", [$this->ally->id]);
+					DB::statement("UPDATE alliances SET members = members + 1 WHERE id = ?", [$this->ally->id]);
 					DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
 
 					User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
@@ -534,7 +534,7 @@ class AllianceController extends Controller
 				throw new RedirectException("Операция невозможна.", "/alliance/");
 			}
 
-			DB::statement("UPDATE alliance SET owner = '" . $info->id . "' WHERE id = " . $this->user->ally_id . " ");
+			DB::statement("UPDATE alliances SET owner = '" . $info->id . "' WHERE id = " . $this->user->ally_id . " ");
 			DB::statement("UPDATE alliance_members SET rank = '0' WHERE u_id = '" . $info->id . "';");
 
 			throw new RedirectException('Правление передано', '/alliance/');
@@ -609,7 +609,7 @@ class AllianceController extends Controller
 		if (Request::query('edit')) {
 			if (Request::query('edit', '') == "add") {
 				$st = (int) Request::post('status', 0);
-				$al = DB::selectOne("SELECT id, name FROM alliance WHERE id = '" . intval(Request::post('ally')) . "'");
+				$al = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . intval(Request::post('ally')) . "'");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
@@ -625,36 +625,36 @@ class AllianceController extends Controller
 					$st = 0;
 				}
 
-				DB::statement("INSERT INTO alliance_diplomacy VALUES (NULL, " . $this->ally->id . ", " . $al->id . ", " . $st . ", 0, 1)");
-				DB::statement("INSERT INTO alliance_diplomacy VALUES (NULL, " . $al->id . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
+				DB::statement("INSERT INTO alliance_diplomacies VALUES (NULL, " . $this->ally->id . ", " . $al->id . ", " . $st . ", 0, 1)");
+				DB::statement("INSERT INTO alliance_diplomacies VALUES (NULL, " . $al->id . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
 				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy/");
 			} elseif (Request::query('edit', '') == "del") {
-				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacy WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
+				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				DB::statement("DELETE FROM alliance_diplomacy WHERE a_id = " . $al->a_id . " AND d_id = " . $al->d_id . ";");
-				DB::statement("DELETE FROM alliance_diplomacy WHERE a_id = " . $al->d_id . " AND d_id = " . $al->a_id . ";");
+				DB::statement("DELETE FROM alliance_diplomacies WHERE a_id = " . $al->a_id . " AND d_id = " . $al->d_id . ";");
+				DB::statement("DELETE FROM alliance_diplomacies WHERE a_id = " . $al->d_id . " AND d_id = " . $al->a_id . ";");
 
 				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy/");
 			} elseif (Request::query('edit', '') == "suc") {
-				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacy WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
+				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				DB::statement("UPDATE alliance_diplomacy SET status = 1 WHERE a_id = " . $al->a_id . " AND d_id = " . $al->d_id . ";");
-				DB::statement("UPDATE alliance_diplomacy SET status = 1 WHERE a_id = " . $al->d_id . " AND d_id = " . $al->a_id . ";");
+				DB::statement("UPDATE alliance_diplomacies SET status = 1 WHERE a_id = " . $al->a_id . " AND d_id = " . $al->d_id . ";");
+				DB::statement("UPDATE alliance_diplomacies SET status = 1 WHERE a_id = " . $al->d_id . " AND d_id = " . $al->a_id . ";");
 
 				throw new RedirectException("Отношение между вашими альянсами подтверждено", "/alliance/diplomacy/");
 			}
 		}
 
-		$dp = DB::select("SELECT ad.*, a.name FROM alliance_diplomacy ad, alliance a WHERE a.id = ad.d_id AND ad.a_id = '" . $this->ally->id . "'");
+		$dp = DB::select("SELECT ad.*, a.name FROM alliance_diplomacies ad, alliances a WHERE a.id = ad.d_id AND ad.a_id = '" . $this->ally->id . "'");
 
 		foreach ($dp as $diplo) {
 			if ($diplo->status == 0) {
@@ -807,7 +807,7 @@ class AllianceController extends Controller
 		}
 
 		if ($i != $this->ally->members) {
-			DB::statement("UPDATE alliance SET members = '" . $i . "' WHERE id = '" . $this->ally->id . "'");
+			DB::statement("UPDATE alliances SET members = '" . $i . "' WHERE id = '" . $this->ally->id . "'");
 		}
 
 		$parse['i'] = $i;
@@ -836,7 +836,7 @@ class AllianceController extends Controller
 			$deleteType = Request::post('delete_type');
 
 			if ($deleteType == 'all') {
-				DB::statement("DELETE FROM alliance_chat WHERE ally_id = :ally", ['ally' => $this->user->ally_id]);
+				DB::statement("DELETE FROM alliance_chats WHERE ally_id = :ally", ['ally' => $this->user->ally_id]);
 			} elseif ($deleteType == 'marked' || $deleteType == 'unmarked') {
 				$messages = Request::post('delete');
 
@@ -844,14 +844,14 @@ class AllianceController extends Controller
 					$messages = array_map('intval', $messages);
 
 					if (count($messages)) {
-						DB::statement("DELETE FROM alliance_chat WHERE id " . (($deleteType == 'unmarked') ? 'NOT' : '') . " IN (" . implode(',', $messages) . ") AND ally_id = :ally", ['ally' => $this->user->ally_id]);
+						DB::statement("DELETE FROM alliance_chats WHERE id " . (($deleteType == 'unmarked') ? 'NOT' : '') . " IN (" . implode(',', $messages) . ") AND ally_id = :ally", ['ally' => $this->user->ally_id]);
 					}
 				}
 			}
 		}
 
 		if (Request::has('text') && Request::post('text', '') != '') {
-			DB::table('alliance_chat')->insert([
+			DB::table('alliance_chats')->insert([
 				'ally_id' 	=> $this->user->ally_id,
 				'user' 		=> $this->user->username,
 				'user_id' 	=> $this->user->id,
@@ -867,7 +867,7 @@ class AllianceController extends Controller
 		$parse = [];
 		$parse['items'] = [];
 
-		$messagesCount = DB::selectOne("SELECT COUNT(*) AS num FROM alliance_chat WHERE ally_id = ?", [$this->user->ally_id])->num;
+		$messagesCount = DB::selectOne("SELECT COUNT(*) AS num FROM alliance_chats WHERE ally_id = ?", [$this->user->ally_id])->num;
 
 		$parse['pagination'] = [
 			'total' => (int) $messagesCount,
@@ -900,9 +900,9 @@ class AllianceController extends Controller
 	public function info($id)
 	{
 		if ($id != '' && !is_numeric($id)) {
-			$allyrow = DB::selectOne("SELECT * FROM alliance WHERE tag = '" . addslashes(htmlspecialchars($id)) . "'");
+			$allyrow = DB::selectOne("SELECT * FROM alliances WHERE tag = '" . addslashes(htmlspecialchars($id)) . "'");
 		} elseif ($id > 0 && is_numeric($id)) {
-			$allyrow = DB::selectOne("SELECT * FROM alliance WHERE id = '" . (int) $id . "'");
+			$allyrow = DB::selectOne("SELECT * FROM alliances WHERE id = '" . (int) $id . "'");
 		} else {
 			throw new ErrorException("Указанного альянса не существует в игре!");
 		}
@@ -1076,7 +1076,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.it_is_not_posible_to_apply'));
 		}
 
-		$allyrow = DB::selectOne("SELECT tag, request, request_notallow FROM alliance WHERE id = '" . $allyid . "'");
+		$allyrow = DB::selectOne("SELECT tag, request, request_notallow FROM alliances WHERE id = '" . $allyid . "'");
 
 		if (!$allyrow) {
 			throw new ErrorException("Альянса не существует!");
@@ -1117,7 +1117,7 @@ class AllianceController extends Controller
 
 		$id = (int) $id;
 
-		$allyrow = DB::selectOne("SELECT id, name FROM alliance WHERE id = '" . $id . "'");
+		$allyrow = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . $id . "'");
 
 		if (!$allyrow) {
 			throw new PageException('Информация о данном альянсе не найдена');

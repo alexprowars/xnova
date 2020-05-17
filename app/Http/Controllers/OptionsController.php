@@ -50,10 +50,10 @@ class OptionsController extends Controller
 			if (isset($data['identity'])) {
 				$identity = isset($data['profile']) && $data['profile'] != '' ? $data['profile'] : $data['identity'];
 
-				$check = DB::selectOne("SELECT user_id FROM users_auth WHERE external_id = '" . $identity . "'");
+				$check = DB::selectOne("SELECT user_id FROM authentications WHERE provider_id = '" . $identity . "'");
 
 				if (!$check) {
-					DB::table('users_auth')->insert(['user_id' => $this->user->getId(), 'external_id' => $identity, 'create_time' => time()]);
+					DB::table('authentications')->insert(['user_id' => $this->user->getId(), 'provider_id' => $identity, 'create_time' => time()]);
 				} else {
 					throw new RedirectException('Данная точка входа уже используется', '/options/');
 				}
@@ -75,19 +75,11 @@ class OptionsController extends Controller
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
-			$email = DB::selectOne("SELECT user_id FROM log_email WHERE user_id = " . $this->user->id . " AND ok = 0;");
-
-			if ($email) {
-				throw new ErrorException('Заявка была отправлена ранее и ожидает модерации.');
-			}
-
-			$email = DB::selectOne("SELECT id FROM users_info WHERE email = '" . addslashes(htmlspecialchars(trim(Request::post('email')))) . "';");
+			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . addslashes(htmlspecialchars(trim(Request::post('email')))) . "';");
 
 			if ($email) {
 				throw new ErrorException('Данный email уже используется в игре.');
 			}
-
-			DB::statement("INSERT INTO log_email VALUES (" . $this->user->id . ", " . time() . ", '" . addslashes(htmlspecialchars(Request::post('email'))) . "', 0);");
 
 			User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars(Request::post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
 
@@ -126,7 +118,7 @@ class OptionsController extends Controller
 		if (Request::post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email(Request::post('email'))) {
 			$e = addslashes(htmlspecialchars(trim(Request::post('email'))));
 
-			$email = DB::selectOne("SELECT id FROM users_info WHERE email = '" . $e . "'");
+			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . $e . "'");
 
 			if ($email) {
 				throw new ErrorException('Данный email уже используется в игре.');
@@ -325,23 +317,10 @@ class OptionsController extends Controller
 			$userInfo->username_last = time();
 			$userInfo->update();
 
-			DB::statement("INSERT INTO log_username VALUES (" . $this->user->id . ", " . time() . ", '" . $username . "');");
-
 			throw new RedirectException('Имя пользователя изменено', '/options/');
 		}
 
 		throw new RedirectException(__('options.succeful_save'), '/options/');
-	}
-
-	private function ld()
-	{
-		if (!Request::post('ld') || Request::post('ld') == '') {
-			throw new ErrorException('Ввведите текст сообщения');
-		}
-
-		DB::statement("INSERT INTO private (u_id, text, time) VALUES (" . $this->user->id . ", '" . addslashes(htmlspecialchars(Request::post('ld'))) . "', " . time() . ")");
-
-		throw new RedirectException('Запись добавлена в личное дело', '/options/');
 	}
 
 	public function index()

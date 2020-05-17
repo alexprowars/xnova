@@ -485,7 +485,7 @@ class Attack extends FleetEngine implements Mission
 			$battleLog->log = $raport;
 
 			if ($battleLog->save()) {
-				DB::table('hall')->insert([
+				DB::table('halls')->insert([
 					'title' 	=> $title,
 					'debris' 	=> floor($lost / 1000),
 					'time' 		=> time(),
@@ -553,7 +553,7 @@ class Attack extends FleetEngine implements Mission
 			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $defendersReport);
 		}
 
-		DB::table('log_attack')->insert([
+		DB::table('log_attacks')->insert([
 			'uid' 			=> $this->fleet->owner,
 			'time'			=> time(),
 			'planet_start' 	=> 0,

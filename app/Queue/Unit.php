@@ -114,7 +114,7 @@ class Unit
 			]);
 
 			if (Config::get('game.log.units', false) == true) {
-				DB::table('log_history')->insert([
+				DB::table('log_histories')->insert([
 					'user_id' 			=> $user->id,
 					'time' 				=> time(),
 					'operation' 		=> 7,

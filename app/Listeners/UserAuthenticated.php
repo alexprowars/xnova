@@ -43,7 +43,7 @@ class UserAuthenticated
 		if ($user->ip != $ip) {
 			$user->ip = $ip;
 
-			DB::table('log_ip')->insert([
+			DB::table('log_ips')->insert([
 				'id'	=> $user->id,
 				'time'	=> time(),
 				'ip'	=> $ip

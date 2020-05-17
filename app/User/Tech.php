@@ -23,18 +23,18 @@ trait Tech
 		if ($this->technology !== false) {
 			foreach ($this->technology as &$tech) {
 				if ($tech['id'] == 0 && $tech['level'] > 0) {
-					$tech['id'] = DB::table('users_tech')->insertGetId([
+					$tech['id'] = DB::table('user_teches')->insertGetId([
 						'user_id' => $this->id,
 						'tech_id' => $tech['type'],
 						'level' => $tech['level']
 					]);
 				} elseif ($tech['id'] > 0 && $tech['level'] != $tech['~level']) {
 					if ($tech['level'] > 0) {
-						DB::table('users_tech')
+						DB::table('user_teches')
 							->where('id', $tech['id'])
 							->update(['level' => $tech['level']]);
 					} else {
-						DB::table('users_tech')->where('id', $tech['id'])->delete();
+						DB::table('user_teches')->where('id', $tech['id'])->delete();
 					}
 				}
 

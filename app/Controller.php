@@ -51,7 +51,7 @@ class Controller extends BaseController
 
 			// Кэшируем настройки профиля в сессию
 			if (!Session::has('config') || strlen(Session::get('config')) < 10) {
-				$inf = DB::table('users_info')->select('settings')->where('id', Auth::id())->first();
+				$inf = DB::table('accounts')->select('settings')->where('id', Auth::id())->first();
 
 				Session::put('config', $inf->settings);
 			}

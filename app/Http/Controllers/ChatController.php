@@ -14,7 +14,7 @@ class ChatController extends Controller
 {
 	public function index()
 	{
-		//$regTime = $this->db->fetchColumn("SELECT create_time FROM users_info WHERE id = ".$this->user->getId()."");
+		//$regTime = $this->db->fetchColumn("SELECT create_time FROM accounts WHERE id = ".$this->user->getId()."");
 
 		//if ($regTime > (time() - 43200))
 		//	$this->message('Доступ к чату будет открыт спустя 12 часов после регистрации.');

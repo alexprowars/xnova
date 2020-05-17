@@ -54,7 +54,7 @@ class BuddyController extends Controller
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
 			}
 
-			DB::table('buddy')->insert([
+			DB::table('friends')->insert([
 				'sender' => $this->user->id,
 				'owner' => $user->id,
 				'active' => 0,

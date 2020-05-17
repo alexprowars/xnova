@@ -23,18 +23,18 @@ trait Unit
 		if ($this->units !== false) {
 			foreach ($this->units as &$unit) {
 				if ($unit['id'] == 0 && $unit['amount'] > 0) {
-					$unit['id'] = DB::table('planets_units')->insertGetId([
+					$unit['id'] = DB::table('planet_units')->insertGetId([
 						'planet_id' => $this->id,
 						'unit_id' => $unit['type'],
 						'amount' => $unit['amount']
 					]);
 				} elseif ($unit['id'] > 0 && $unit['amount'] != $unit['~amount']) {
 					if ($unit['amount'] > 0) {
-						DB::table('planets_units')
+						DB::table('planet_units')
 							->where('id', $unit['id'])
 							->update(['amount' => $unit['amount']]);
 					} else {
-						DB::table('planets_units')->where('id', $unit['id'])->delete();
+						DB::table('planet_units')->where('id', $unit['id'])->delete();
 					}
 				}
 

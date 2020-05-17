@@ -65,7 +65,7 @@ class Tech
 				]);
 
 				if (Config::get('game.log.research', false) == true) {
-					DB::table('log_history')->insert([
+					DB::table('log_histories')->insert([
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
 						'operation' 		=> 5,
@@ -109,7 +109,7 @@ class Tech
 			$this->_queue->loadQueue();
 
 			if (Config::get('game.log.research', false) == true) {
-				DB::table('log_history')->insert([
+				DB::table('log_histories')->insert([
 					'user_id' 			=> $user->getId(),
 					'time' 				=> time(),
 					'operation' 		=> 6,

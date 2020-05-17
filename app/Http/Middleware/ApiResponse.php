@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Xnova\Exceptions\Exception;
 use Xnova\Game;
 use Xnova\Controller;
@@ -82,10 +83,16 @@ class ApiResponse
 			if ($response->exception instanceof Exception) {
 				$data = array_merge($data, $response->getOriginalContent());
 			} else {
+				$code = 500;
+
+				if ($response->exception instanceof HttpException) {
+					$code = $response->exception->getStatusCode();
+				}
+
 				return new JsonResponse([
 					'success' => false,
 					'data' => $response->getOriginalContent(),
-				], $response->exception->getCode() > 0 ? $response->exception->getCode() : 500);
+				], $code);
 			}
 		} else {
 			$data['page'] = $response->getOriginalContent();

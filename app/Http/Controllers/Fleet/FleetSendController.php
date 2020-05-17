@@ -64,11 +64,11 @@ class FleetSendController extends Controller
 
 		if ($allianceId > 0) {
 			if ($fleetMission == 2) {
-				$aks_tr = DB::table('aks')
-					->select('aks.*')
-					->join('aks_user', 'aks_user.aks_id', '=', 'aks.id')
-					->where('aks_user.user_id', $this->user->id)
-					->where('aks_user.aks_id', $allianceId)
+				$aks_tr = DB::table('assaults')
+					->select('assaults.*')
+					->join('assaults_users', 'assaults_users.aks_id', '=', 'assaults.id')
+					->where('assaults_users.user_id', $this->user->id)
+					->where('assaults_users.aks_id', $allianceId)
 					->first();
 
 				if ($aks_tr) {
@@ -614,7 +614,7 @@ class FleetSendController extends Controller
 			$consumption = 0;
 		}
 
-		$tutorial = DB::selectOne("SELECT id, quest_id FROM users_quests WHERE user_id = " . $this->user->getId() . " AND finish = '0' AND stage = 0");
+		$tutorial = DB::selectOne("SELECT id, quest_id FROM user_quests WHERE user_id = " . $this->user->getId() . " AND finish = '0' AND stage = 0");
 
 		if ($tutorial) {
 			$quest = __('tutorial.tutorial', $tutorial->quest_id);

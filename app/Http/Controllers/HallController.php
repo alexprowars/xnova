@@ -22,7 +22,7 @@ class HallController extends Controller
 		$parse['type'] = $type;
 		$parse['hall'] = [];
 
-		$halls = DB::table('hall')
+		$halls = DB::table('halls')
 			->where('time', '<', time() - 3600)
 			->where('sab', $type)
 			->orderBy('debris', 'DESC')

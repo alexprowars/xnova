@@ -183,7 +183,7 @@ class User extends Models\User
 			$ally = Cache::get('user::ally_' . $this->id . '_' . $this->ally_id);
 
 			if ($ally === null) {
-				$ally = DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliance a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
+				$ally = DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
 
 				Cache::put('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
 			}
@@ -240,7 +240,7 @@ class User extends Models\User
 				'type' 		=> 4,
 			]);
 
-			$reffer = DB::selectOne("SELECT u_id FROM refs WHERE r_id = " . $this->getId());
+			$reffer = DB::selectOne("SELECT u_id FROM referals WHERE r_id = " . $this->getId());
 
 			if (isset($reffer['u_id'])) {
 				DB::table('users')->where('id', $reffer['u_id'])->increment('credits', round($giveCredits / 2));
@@ -463,25 +463,23 @@ class User extends Models\User
 		}
 
 		DB::table('alliance_requests')->where('u_id', $userId)->delete();
-		DB::table('statpoints')->where('stat_type', 1)->where('id_owner', $userId)->delete();
+		DB::table('statistics')->where('stat_type', 1)->where('id_owner', $userId)->delete();
 		DB::table('planets')->where('id_owner', $userId)->delete();
 		DB::table('notes')->where('user_id', $userId)->delete();
 		DB::table('fleets')->where('owner', $userId)->delete();
-		DB::table('buddy')->where('sender', $userId)->orWhere('owner', $userId)->delete();
-		DB::table('refs')->where('r_id', $userId)->orWhere('u_id', $userId)->delete();
-		DB::table('log_attack')->where('uid', $userId)->delete();
+		DB::table('friends')->where('sender', $userId)->orWhere('owner', $userId)->delete();
+		DB::table('referals')->where('r_id', $userId)->orWhere('u_id', $userId)->delete();
+		DB::table('log_attacks')->where('uid', $userId)->delete();
 		DB::table('log_credits')->where('uid', $userId)->delete();
-		DB::table('log_email')->where('user_id', $userId)->delete();
-		DB::table('log_history')->where('user_id', $userId)->delete();
+		DB::table('log_histories')->where('user_id', $userId)->delete();
 		DB::table('log_transfers')->where('user_id', $userId)->delete();
-		DB::table('log_username')->where('user_id', $userId)->delete();
 		DB::table('log_stats')->where('id', $userId)->where('type', 1)->delete();
 		DB::table('logs')->where('s_id', $userId)->orWhere('e_id', $userId)->delete();
 		DB::table('messages')->where('user_id', $userId)->where('from_id', $userId)->delete();
-		DB::table('banned')->where('who', $userId)->delete();
-		DB::table('log_ip')->where('id', $userId)->delete();
-		DB::table('users_tech')->where('user_id', $userId)->delete();
-		DB::table('users_quests')->where('user_id', $userId)->delete();
+		DB::table('blocked')->where('who', $userId)->delete();
+		DB::table('log_ips')->where('id', $userId)->delete();
+		DB::table('user_teches')->where('user_id', $userId)->delete();
+		DB::table('user_quests')->where('user_id', $userId)->delete();
 
 		$update = [
 			'authlevel' => 0,
@@ -566,7 +564,7 @@ class User extends Models\User
 				$refer = Models\User::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
-					DB::table('refs')->insert([
+					DB::table('referals')->insert([
 						'r_id' => $user->id,
 						'u_id' => $refer->getId()
 					]);

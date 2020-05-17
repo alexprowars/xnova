@@ -277,7 +277,7 @@ class Queue
 			}
 
 			if (Config::get('game.log.buildings', false) == true) {
-				DB::table('log_history')->insert([
+				DB::table('log_histories')->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
 					'operation' 		=> 9,
@@ -362,7 +362,7 @@ class Queue
 				$loop = false;
 
 				if (Config::get('game.log.buildings', false) == true) {
-					DB::table('log_history')->insert([
+					DB::table('log_histories')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
 						'operation' 		=> ($isDestroy ? 2 : 1),
@@ -476,7 +476,7 @@ class Queue
 				}
 
 				if (Config::get('game.log.research', false) == true) {
-					DB::table('log_history')->insert([
+					DB::table('log_histories')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
 						'operation' 		=> 8,

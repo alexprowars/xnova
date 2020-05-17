@@ -240,7 +240,7 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, users_info i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - Config::get('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, accounts i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - Config::get('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		foreach ($list as $user) {
 			DB::statement("UPDATE users SET `deltime` = '" . (time() + Config::get('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
@@ -293,7 +293,7 @@ class UpdateStatistics
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, users_info ui) LEFT JOIN statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
+		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, accounts ui) LEFT JOIN statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
@@ -446,7 +446,7 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 1));
 		}
 
-		DB::statement("INSERT INTO statpoints
+		DB::statement("INSERT INTO statistics
 		      (`tech_points`, `tech_count`, `build_points`, `build_count`, `defs_points`, `defs_count`,
 		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `id_owner`, `id_ally`, `stat_type`, `stat_code`,
 		        `tech_old_rank`, `build_old_rank`, `defs_old_rank`, `fleet_old_rank`, `total_old_rank`
@@ -461,7 +461,7 @@ class UpdateStatistics
 		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.id_ally<>0
 		      GROUP BY u.`id_ally`");
 
-		DB::statement("UPDATE statpoints as new
+		DB::statement("UPDATE statistics as new
 		      LEFT JOIN statpoints as old ON old.id_owner = new.id_owner AND old.stat_code = 2 AND old.stat_type = 1
 		    SET
 		      new.tech_old_rank = old.tech_rank,
@@ -472,7 +472,7 @@ class UpdateStatistics
 		    WHERE
 		      new.stat_type = 2 AND new.stat_code = 2;");
 
-		DB::statement("DELETE FROM statpoints WHERE `stat_code` >= 2");
+		DB::statement("DELETE FROM statistics WHERE `stat_code` >= 2");
 
 		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
@@ -498,7 +498,7 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 3));
 		}
 
-		DB::statement("OPTIMIZE TABLE statpoints");
+		DB::statement("OPTIMIZE TABLE statistics");
 	}
 
 	public function addToLog()
@@ -527,17 +527,16 @@ class UpdateStatistics
 	public function clearGame()
 	{
 		DB::statement("DELETE FROM messages WHERE `time` <= '" . (time() - (86400 * 14)) . "' AND type != 1;");
-		DB::statement("DELETE FROM rw WHERE `time` <= '" . (time() - 172800) . "';");
-		//DB::statement("DELETE FROM alliance_chat WHERE `timestamp` <= '" . (time() - 1209600) . "';");
-		DB::statement("DELETE FROM lostpasswords WHERE `time` <= '" . (time() - 86400) . "';");
+		DB::statement("DELETE FROM reports WHERE `time` <= '" . (time() - 172800) . "';");
+		//DB::statement("DELETE FROM alliance_chats WHERE `timestamp` <= '" . (time() - 1209600) . "';");
+		DB::statement("DELETE FROM password_resets WHERE `created_at` <= '" . (time() - 86400) . "';");
 		DB::statement("DELETE FROM logs WHERE `time` <= '" . (time() - 259200) . "';");
-		DB::statement("DELETE FROM log_attack WHERE `time` <= '" . (time() - 604800) . "';");
+		DB::statement("DELETE FROM log_attacks WHERE `time` <= '" . (time() - 604800) . "';");
 		DB::statement("DELETE FROM log_credits WHERE `time` <= '" . (time() - 604800) . "';");
-		DB::statement("DELETE FROM log_ip WHERE `time` <= '" . (time() - 604800) . "';");
-		//DB::statement("DELETE FROM log_load WHERE `time` <= '" . (time() - 604800) . "';");
-		DB::statement("DELETE FROM log_history WHERE `time` <= '" . (time() - 604800) . "';");
+		DB::statement("DELETE FROM log_ips WHERE `time` <= '" . (time() - 604800) . "';");
+		DB::statement("DELETE FROM log_histories WHERE `time` <= '" . (time() - 604800) . "';");
 		DB::statement("DELETE FROM log_stats WHERE `time` <= '" . (time() - (86400 * 30)) . "';");
-		DB::statement("DELETE FROM log_sim WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
+		DB::statement("DELETE FROM log_simulations WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
 	}
 
 	public function buildRecordsCache()

@@ -134,7 +134,7 @@ class XnsimController extends Controller
 			$check = $this->db->fetchColumn("SELECT COUNT(*) AS NUM FROM log_sim WHERE sid = '" . $sid . "'");
 
 			if ($check == 0) {
-				DB::table('log_sim')->insert([
+				DB::table('log_simulations')->insert([
 					'sid' => $sid,
 					'time' => time(),
 					'data' => json_encode($result)

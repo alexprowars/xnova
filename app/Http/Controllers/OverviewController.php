@@ -501,7 +501,7 @@ class OverviewController extends Controller
 		$records = Cache::get('app::records_' . $this->user->getId());
 
 		if ($records === null) {
-			$records = DB::table('statpoints')
+			$records = DB::table('statistics')
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)

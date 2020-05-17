@@ -53,7 +53,7 @@ class MessagesController extends Controller
 			}
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
-				$registerTime = DB::selectOne("SELECT create_time FROM users_info WHERE id = " . $this->user->id . "")->create_time;
+				$registerTime = DB::selectOne("SELECT create_time FROM accounts WHERE id = " . $this->user->id . "")->create_time;
 
 				if ($registerTime > time() - 86400) {
 					$lastSend = Message::query()

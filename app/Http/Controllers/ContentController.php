@@ -21,7 +21,7 @@ class ContentController extends Controller
 			throw new ErrorException('Страница не найдена!');
 		}
 
-		$content = DB::selectOne("SELECT * FROM content WHERE alias = '" . Request::query('article') . "'");
+		$content = DB::selectOne("SELECT * FROM contents WHERE alias = '" . Request::query('article') . "'");
 
 		if (!$content) {
 			throw new ErrorException('Страница не найдена!');

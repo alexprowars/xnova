@@ -38,7 +38,7 @@ class FleetVerbandController extends Controller
 			throw new ErrorException('Этот флот не существует!');
 		}
 
-		$aks = DB::selectOne("SELECT * FROM aks WHERE id = :id", ['id' => $fleet->group_id]);
+		$aks = DB::selectOne("SELECT * FROM assaults WHERE id = :id", ['id' => $fleet->group_id]);
 
 		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1) {
 			throw new ErrorException('Ваш флот возвращается на планету!');
@@ -103,7 +103,7 @@ class FleetVerbandController extends Controller
 					throw new ErrorException("Игрок уже приглашён для нападения");
 				}
 
-				DB::table('aks_user')->insert([
+				DB::table('assaults_users')->insert([
 					'aks_id' 	=> $aks->id,
 					'user_id' 	=> $user_data->id
 				]);

@@ -39,7 +39,7 @@ class GalaxyController extends Controller
 		$records = Cache::get('app::records_' . $this->user->getId());
 
 		if ($records === null) {
-			$records = DB::table('statpoints')
+			$records = DB::table('statistics')
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
@@ -97,7 +97,7 @@ class GalaxyController extends Controller
 				$j[] = [base64_encode($a->name), $a->galaxy, $a->system, $a->planet];
 			}
 
-			$shortcuts = DB::table('users_info')
+			$shortcuts = DB::table('accounts')
 				->select(['fleet_shortcut'])
 				->where('id', $this->user->id)
 				->first();
@@ -208,7 +208,7 @@ class GalaxyController extends Controller
 				FROM planets p
 				LEFT JOIN planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0)
 				LEFT JOIN users u ON (u.id = p.id_owner AND p.id_owner != 0)
-				LEFT JOIN users_info ui ON (ui.id = p.id_owner AND p.id_owner != 0)
+				LEFT JOIN accounts ui ON (ui.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN alliance a ON (a.id = u.ally_id AND u.ally_id != 0)
 				LEFT JOIN alliance_diplomacy ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
 				LEFT JOIN statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1')

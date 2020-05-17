@@ -21,7 +21,7 @@ class RaceController extends Controller
 {
 	public function change()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_info WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM accounts WHERE id = ' . $this->user->id)->free_race_change;
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
 
@@ -43,11 +43,11 @@ class RaceController extends Controller
 					$this->user->race = $r;
 
 					if ($numChanges > 0) {
-						DB::table('users_info')->where('id', $this->user->id)->decrement('free_race_change', 1);
+						DB::table('accounts')->where('id', $this->user->id)->decrement('free_race_change', 1);
 					} else {
 						$this->user->credits -= 100;
 
-						DB::table('users_info')->insert([
+						DB::table('accounts')->insert([
 							'uid' => $this->user->id,
 							'time' => time(),
 							'credits' => 100,
@@ -79,7 +79,7 @@ class RaceController extends Controller
 
 	public function index()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_info WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM accounts WHERE id = ' . $this->user->id)->free_race_change;
 
 		if (Request::has('sel') && $this->user->race == 0) {
 			$r = Request::input('sel', 0);

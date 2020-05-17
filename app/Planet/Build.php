@@ -23,18 +23,18 @@ trait Build
 		if ($this->buildings !== false) {
 			foreach ($this->buildings as &$building) {
 				if ($building['id'] == 0 && $building['level'] > 0) {
-					$building['id'] = DB::table('planets_buildings')->insertGetId([
+					$building['id'] = DB::table('planet_buildings')->insertGetId([
 						'planet_id' => $this->id,
 						'build_id' => $building['type'],
 						'level' => $building['level']
 					]);
 				} elseif ($building['id'] > 0 && $building['level'] != $building['~level']) {
 					if ($building['level'] > 0) {
-						DB::table('planets_buildings')
+						DB::table('planet_buildings')
 							->where('id', $building['id'])
 							->update(['level' => $building['level']]);
 					} else {
-						DB::table('planets_buildings')->where('id', $building['id'])->delete();
+						DB::table('planet_buildings')->where('id', $building['id'])->delete();
 					}
 				}
 

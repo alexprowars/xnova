@@ -15,7 +15,7 @@ class AuthUserProvider extends UserProvider
 
 		return $this->newModelQuery()
 			->select(['users.*', 'info.password'])
-			->join('users_info as info', 'info.id', '=', 'users.id')
+			->join('accounts as info', 'info.id', '=', 'users.id')
 			->where('info.email', $credentials['email'])
 			->get()->first();
 	}

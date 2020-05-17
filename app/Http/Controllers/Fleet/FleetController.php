@@ -177,10 +177,10 @@ class FleetController extends Controller
 
 		$parse['alliances'] = [];
 
-		$alliances = DB::table('aks')
-			->select('aks.*')
-			->join('aks_user', 'aks_user.aks_id', '=', 'aks.id')
-			->where('aks_user.user_id', $this->user->id)
+		$alliances = DB::table('assaults')
+			->select('assaults.*')
+			->join('assaults_users', 'assaults_users.aks_id', '=', 'assaults.id')
+			->where('assaults_users.user_id', $this->user->id)
 			->get();
 
 		if ($alliances->count()) {

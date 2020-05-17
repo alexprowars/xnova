@@ -87,14 +87,14 @@ class ResourcesController extends Controller
 			$buildsId[] = Vars::getIdByName($res . '_mine');
 		}
 
-		DB::table('planets_buildings')
+		DB::table('planet_buildings')
 			->whereIn('planet_id', $planetsId)
 			->whereIn('build_id', $buildsId)
 			->update([
 				'power' => $production,
 			]);
 
-		DB::table('planets_units')
+		DB::table('planet_units')
 			->whereIn('planet_id', $planetsId)
 			->whereIn('unit_id', $buildsId)
 			->update([
@@ -131,7 +131,7 @@ class ResourcesController extends Controller
 				$value = max(0, min(10, (int) $value));
 
 				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING) {
-					DB::table('planets_buildings')
+					DB::table('planet_buildings')
 						->whereIn('planet_id', $this->planet->id)
 						->whereIn('build_id', Vars::getIdByName($field))
 						->update([
@@ -140,7 +140,7 @@ class ResourcesController extends Controller
 				}
 
 				if (Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET) {
-					DB::table('planets_units')
+					DB::table('planet_units')
 						->whereIn('planet_id', $this->planet->id)
 						->whereIn('unit_id', Vars::getIdByName($field))
 						->update([

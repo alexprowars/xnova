@@ -28,7 +28,7 @@ class PlayersController extends Controller
 			throw new PageException('Профиль не найден');
 		}
 
-		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN users_info ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
+		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN accounts ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
 
 		if (!$user) {
 			throw new PageException('Профиль не найден');
@@ -59,7 +59,7 @@ class PlayersController extends Controller
 
 		$parse['stats'] = false;
 
-		$points = DB::selectOne("SELECT * FROM statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "'");
+		$points = DB::selectOne("SELECT * FROM statistics WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "'");
 
 		if ($points) {
 			$parse['stats'] = [
