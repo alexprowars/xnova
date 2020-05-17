@@ -8,7 +8,7 @@ class CreateUserTechsTable extends Migration
 {
 	public function up()
 	{
-		Schema::create('user_techs', function (Blueprint $table) {
+		Schema::create('user_teches', function (Blueprint $table) {
 			$table->integer('id', true);
 			$table->integer('user_id')->nullable();
 			$table->integer('tech_id')->nullable();
@@ -19,6 +19,6 @@ class CreateUserTechsTable extends Migration
 
 	public function down()
 	{
-		Schema::drop('user_techs');
+		Schema::drop('user_teches');
 	}
 }
