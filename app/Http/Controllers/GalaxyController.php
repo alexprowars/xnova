@@ -253,7 +253,7 @@ class GalaxyController extends Controller
 			}
 
 			if ($row->u_image > 0) {
-				$file = Files::getById($row['u_image']);
+				$file = Files::getById($row->u_image);
 
 				if ($file) {
 					$row->u_image = $file['src'];

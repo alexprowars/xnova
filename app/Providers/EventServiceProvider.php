@@ -10,7 +10,7 @@ use Xnova\User;
 
 class EventServiceProvider extends ServiceProvider
 {
-    protected $listen = [
+	protected $listen = [
 		\Illuminate\Auth\Events\Authenticated::class => [
 			'Xnova\Listeners\UserAuthenticated',
 		],
@@ -19,11 +19,11 @@ class EventServiceProvider extends ServiceProvider
 		],
 	];
 
-    public function boot()
-    {
-        parent::boot();
+	public function boot()
+	{
+		parent::boot();
 
 		Planet::observe(PlanetObserver::class);
 		User::observe(UserObserver::class);
-    }
+	}
 }

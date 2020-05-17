@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * @author AlexPro

@@ -8,18 +8,18 @@ use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    protected $policies = [];
+	protected $policies = [];
 
-    public function boot(GateContract $gate)
-    {
-        $this->registerPolicies();
+	public function boot(GateContract $gate)
+	{
+		$this->registerPolicies();
 
-		Auth::provider('authuserprovider', function($app, array $config) {
+		Auth::provider('authuserprovider', function ($app, array $config) {
 			return new AuthUserProvider($app['hash'], $config['model']);
 		});
 
 		$gate->before(function ($user) {
 			return $user->id === 1;
 		});
-    }
+	}
 }

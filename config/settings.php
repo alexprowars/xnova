@@ -78,7 +78,7 @@ return [
 		'factory'   => 1,
 	],
 	'sms' => [
-		'id'=> '',
+		'id' => '',
 		'login' => '',
 		'password' => '',
 		'from' => '',

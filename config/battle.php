@@ -1,7 +1,8 @@
 <?php
 
-if (defined('BATTLE_WIN'))
+if (defined('BATTLE_WIN')) {
 	return;
+}
 
 define('BATTLE_WIN', 1);
 define('BATTLE_LOSE', -1);
@@ -20,7 +21,7 @@ define('MIN_PROB_TO_EXPLODE', 0.3); //minimum probability at one the ships/defen
 define('DEFENSE_REPAIR_PROB', 0.7);
 define('SHIP_REPAIR_PROB', 0); //same as below but for ships.
 define('USE_HITSHIP_LIMITATION', false); //this option will limit the number of exploding ships to the number of total shots received by all defender's ships.
-define('USE_EXPLODED_LIMITATION',true); //if true the number of exploded ships each round are limited to the damaged ships amount.
+define('USE_EXPLODED_LIMITATION', true); //if true the number of exploded ships each round are limited to the damaged ships amount.
 define('USE_RF', true); // enable rapid fire
 define('USE_RANDOMIC_RF', true); // enable below system values
 define('MAX_RF_BUFF', 0.1); // how much the rapid fire can be randomically increased.
@@ -28,7 +29,7 @@ define('MAX_RF_NERF', 0.1); // how much the rapid fire can be randomically decre
 
 define('ONLY_FIRST_AND_LAST_ROUND', false);
 
-define('REPAIRED_DO_DEBRIS',true);
+define('REPAIRED_DO_DEBRIS', true);
 define('SHIP_DEBRIS_FACTOR', 0.3);
 define('DEFENSE_DEBRIS_FACTOR', 0);
 define('POINT_UNIT', 1000);

@@ -14,13 +14,13 @@ class RouteServiceProvider extends Providers\RouteServiceProvider
 		parent::boot();
 	}
 
-	public function map ()
+	public function map()
 	{
 		$this->mapApiRoutes();
 		$this->mapAdminRoutes();
 	}
 
-	protected function mapApiRoutes ()
+	protected function mapApiRoutes()
 	{
 		Route::prefix('api')
 			->middleware('api')
@@ -28,11 +28,11 @@ class RouteServiceProvider extends Providers\RouteServiceProvider
 			->group(base_path('routes/api.php'));
 	}
 
-	protected function mapAdminRoutes ()
+	protected function mapAdminRoutes()
 	{
 		Route::prefix('admin')
 			->middleware('admin')
-			->namespace($this->namespace.'\Admin')
+			->namespace($this->namespace . '\Admin')
 			->group(base_path('routes/admin.php'));
 	}
 }
