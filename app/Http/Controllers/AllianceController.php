@@ -22,7 +22,7 @@ use Xnova\Game;
 use Xnova\Helpers;
 use Xnova\Models\Alliance;
 use Xnova\Models\AllianceMember;
-use Xnova\Models\AllianceRequests;
+use Xnova\Models\AllianceRequest;
 use Xnova\Models;
 use Xnova\User;
 use Xnova\Controller;
@@ -45,7 +45,7 @@ class AllianceController extends Controller
 		$ally = Alliance::query()->find($allyId);
 
 		if (!$ally) {
-			Models\Users::query()->where('id', $this->user->id)->update(['ally_id' => 0]);
+			Models\User::query()->where('id', $this->user->id)->update(['ally_id' => 0]);
 			Models\AllianceMember::query()->where('u_id', $this->user->id)->delete();
 
 			throw new RedirectException(__('alliance.ally_notexist'), '/alliance/');
@@ -386,7 +386,7 @@ class AllianceController extends Controller
 				$check = DB::selectOne("SELECT a_id FROM alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "");
 
 				if ($check) {
-					AllianceRequests::query()->where('u_id', $show)->delete();
+					AllianceRequest::query()->where('u_id', $show)->delete();
 					AllianceMember::query()->where('u_id', $show)->delete();
 
 					DB::table('alliance_members')->insert(['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
@@ -403,7 +403,7 @@ class AllianceController extends Controller
 					$text_ot = strip_tags(Request::post('text'));
 				}
 
-				AllianceRequests::query()->where('u_id', $show)->where('a_id', $this->ally->id)->delete();
+				AllianceRequest::query()->where('u_id', $show)->where('a_id', $this->ally->id)->delete();
 
 				User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
 			}
@@ -948,7 +948,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		$ally_request = AllianceRequests::query()->where('u_id', $this->user->id)->count();
+		$ally_request = AllianceRequest::query()->where('u_id', $this->user->id)->count();
 
 		if ($this->user->ally_id > 0 || $ally_request) {
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -1018,7 +1018,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		$ally_request = AllianceRequests::query()->where('u_id', $this->user->id)->count();
+		$ally_request = AllianceRequest::query()->where('u_id', $this->user->id)->count();
 
 		if ($this->user->ally_id > 0 || $ally_request) {
 			throw new ErrorException(__('alliance.Denied_access'));

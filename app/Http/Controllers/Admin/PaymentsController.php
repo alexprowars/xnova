@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Http\Requests\Admin\PaymentRequest;
 use Xnova\Models\Payment;
-use Xnova\Models\Users;
 use Xnova\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
@@ -62,7 +61,7 @@ class PaymentsController extends CrudController
 					'name' => 'user',
 					'entity' => 'user',
 					'attribute' => 'username',
-					'model' => Users::class
+					'model' => User::class
 				],
 			]);
 		});
@@ -94,7 +93,7 @@ class PaymentsController extends CrudController
 
 		$fields = $this->crud->getStrippedSaveRequest();
 
-		$checkUser = Users::query();
+		$checkUser = User::query();
 
 		if (is_numeric($fields['name'])) {
 			$checkUser->where('id', (int) $fields['name']);
@@ -107,7 +106,7 @@ class PaymentsController extends CrudController
 		if (!$checkUser) {
 			Alert::error('Не удалось создать планету');
 		} else {
-			Users::query()->where('id', $checkUser->id)->increment('credits', (int) $fields['amount']);
+			User::query()->where('id', $checkUser->id)->increment('credits', (int) $fields['amount']);
 
 			DB::table('log_credits')->insert([
 				'uid' => $checkUser->id,

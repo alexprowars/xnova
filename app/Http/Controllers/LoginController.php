@@ -40,7 +40,7 @@ class LoginController extends Controller
 			throw new ErrorException('Введите хоть что-нибудь!');
 		}
 
-		$isExist = Models\UsersInfo::query()->where('email', Request::post('email'))->exists();
+		$isExist = Models\Account::query()->where('email', Request::post('email'))->exists();
 
 		if (!$isExist) {
 			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
@@ -77,9 +77,9 @@ class LoginController extends Controller
 			return Redirect::to('/');
 		}
 
-		/** @var Models\UsersAuth $authData */
-		$authData = Models\UsersAuth::query()->where('service', $service)
-			->where('service_id', $user->id)->first();
+		/** @var Models\Authentication $authData */
+		$authData = Models\Authentication::query()->where('provider', $service)
+			->where('provider_id', $user->id)->first();
 
 		if ($authData) {
 			$authData->enter_time = time();
@@ -96,10 +96,10 @@ class LoginController extends Controller
 				throw new Exception('create user error');
 			}
 
-			Models\UsersAuth::query()->insert([
+			Models\Authentication::query()->insert([
 				'user_id' 		=> $userId,
-				'service'		=> $service,
-				'service_id' 	=> $user->id,
+				'provider'		=> $service,
+				'provider_id' 	=> $user->id,
 				'create_time' 	=> time(),
 				'enter_time' 	=> time()
 			]);
@@ -126,8 +126,8 @@ class LoginController extends Controller
 
 			$response = $broker->reset(
 				['email' => $email, 'token' => $token, 'password' => $password],
-				function (Models\Users $user, $password) {
-					Models\UsersInfo::query()->where('id', $user->id)->update([
+				function (Models\User $user, $password) {
+					Models\Account::query()->where('id', $user->id)->update([
 						'password' => Hash::make($password)
 					]);
 

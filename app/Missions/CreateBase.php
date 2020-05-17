@@ -27,7 +27,7 @@ class CreateBase extends FleetEngine implements Mission
 		$galaxy = new Galaxy();
 
 		// Получение общего количества построенных баз
-		$iPlanetCount = Models\Planets::query()->where('id_owner', $this->fleet->owner)
+		$iPlanetCount = Models\Planet::query()->where('id_owner', $this->fleet->owner)
 			->where('planet_type', 5)->count();
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);

@@ -21,8 +21,8 @@ class BuddyController extends Controller
 {
 	public function newAction($userId)
 	{
-		/** @var Models\Users $user */
-		$user = Models\Users::query()
+		/** @var Models\User $user */
+		$user = Models\User::query()
 			->select(['id', 'username'])
 			->where('id', $userId)
 			->first();
@@ -32,7 +32,7 @@ class BuddyController extends Controller
 		}
 
 		if (Request::instance()->isMethod('post')) {
-			$buddy = Models\Buddy::query()
+			$buddy = Models\Friend::query()
 				->select(['id'])
 				->where(function (Builder $query) use ($userId) {
 					$query->where('sender', $userId)
@@ -90,8 +90,8 @@ class BuddyController extends Controller
 
 	public function deleteAction(int $id)
 	{
-		/** @var Models\Buddy $buddy */
-		$buddy = Models\Buddy::query()->find($id);
+		/** @var Models\Friend $buddy */
+		$buddy = Models\Friend::query()->find($id);
 
 		if (!$buddy) {
 			throw new ErrorException('Заявка не найдена');
@@ -112,8 +112,8 @@ class BuddyController extends Controller
 
 	public function approveAction(int $id)
 	{
-		/** @var Models\Buddy $buddy */
-		$buddy = Models\Buddy::query()->find($id);
+		/** @var Models\Friend $buddy */
+		$buddy = Models\Friend::query()->find($id);
 
 		if (!$buddy) {
 			throw new ErrorException('Заявка не найдена');
@@ -138,7 +138,7 @@ class BuddyController extends Controller
 		$parse['items'] = [];
 		$parse['isMy'] = $isMy;
 
-		$items = Models\Buddy::query()
+		$items = Models\Friend::query()
 			->orderBy('id', 'DESC')
 			->where('ignor', 0);
 
@@ -160,12 +160,12 @@ class BuddyController extends Controller
 
 		$items = $items->get();
 
-		/** @var Models\Buddy $item */
+		/** @var Models\Friend $item */
 		foreach ($items as $item) {
 			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
 
-			/** @var Models\Users $user */
-			$user = Models\Users::query()
+			/** @var Models\User $user */
+			$user = Models\User::query()
 				->select(['id', 'username', 'galaxy', 'system', 'planet', 'onlinetime', 'ally_id', 'ally_name'])
 				->where('id', $userId)
 				->first();

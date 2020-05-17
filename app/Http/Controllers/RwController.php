@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\URL;
 use Xnova\CombatReport;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
-use Xnova\Models\Rw;
+use Xnova\Models\Report;
 
 class RwController extends Controller
 {
@@ -23,8 +23,8 @@ class RwController extends Controller
 			throw new PageException('Боевой отчет не найден');
 		}
 
-		/** @var Rw $raportrow */
-		$raportrow = Rw::query()->find((int) $id);
+		/** @var Report $raportrow */
+		$raportrow = Report::query()->find((int) $id);
 
 		if (!$raportrow) {
 			throw new PageException('Данный боевой отчет не найден или удалён');

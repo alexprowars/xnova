@@ -18,7 +18,7 @@ use Xnova\Battle\Models\Fleet;
 use Xnova\Battle\Utils\LangManager;
 use Xnova\FleetEngine;
 use Xnova\Format;
-use Xnova\Models\Statpoints;
+use Xnova\Models\Statistic;
 use Xnova\Models;
 use Xnova\User;
 use Xnova\Vars;
@@ -52,7 +52,7 @@ class Expedition extends FleetEngine implements Mission
 			$FleetPoints += $ship['count'] * $Expowert[$type];
 		}
 
-		$StatFactor = Statpoints::query()->where('stat_type', 1)->max('total_points');
+		$StatFactor = Statistic::query()->where('stat_type', 1)->max('total_points');
 
 		if ($StatFactor < 10000) {
 			$upperLimit = 200;
@@ -117,7 +117,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$Message = __('fleet_engine.sys_expe_found_dm_1_' . mt_rand(1, 5));
 
-				Models\Users::query()->where('id', $this->fleet->owner)
+				Models\User::query()->where('id', $this->fleet->owner)
 					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
 				$this->ReturnFleet();
@@ -365,7 +365,7 @@ class Expedition extends FleetEngine implements Mission
 					[]
 				]);
 
-				$ids = Models\Rw::query()->insertGetId([
+				$ids = Models\Report::query()->insertGetId([
 					'time' => time(),
 					'id_users' => json_encode($FleetsUsers),
 					'no_contact' => 0,

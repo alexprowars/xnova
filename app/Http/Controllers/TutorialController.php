@@ -42,14 +42,14 @@ class TutorialController extends Controller
 		$parse['task'] = [];
 		$parse['rewd'] = [];
 
-		/** @var Models\UsersQuest $qInfo */
-		$qInfo = Models\UsersQuest::query()
+		/** @var Models\UserQuest $qInfo */
+		$qInfo = Models\UserQuest::query()
 			->where('user_id', $this->user->getId())
 			->where('quest_id', $stage)
 			->first();
 
 		if (!$qInfo) {
-			$qInfo = Models\UsersQuest::query()->create([
+			$qInfo = Models\UserQuest::query()->create([
 				'user_id' 	=> $this->user->getId(),
 				'quest_id' 	=> $stage,
 				'finish' 	=> 0,
@@ -101,7 +101,7 @@ class TutorialController extends Controller
 			}
 
 			if ($taskKey == 'BUDDY_COUNT') {
-				$count = Models\Buddy::query()->where('sender', $this->user->id)->orWhere('owner', $this->user->id)->count();
+				$count = Models\Friend::query()->where('sender', $this->user->id)->orWhere('owner', $this->user->id)->count();
 
 				$check = $count >= $taskVal ? true : false;
 
@@ -135,7 +135,7 @@ class TutorialController extends Controller
 			}
 
 			if ($taskKey == 'PLANETS') {
-				$count = Models\Planets::query()
+				$count = Models\Planet::query()
 					->where('id_owner', $this->user->getId())
 					->where('planet_type', 1)
 					->count();
@@ -243,11 +243,11 @@ class TutorialController extends Controller
 
 		$userQuests = [];
 
-		$quests = Models\UsersQuest::query()
+		$quests = Models\UserQuest::query()
 			->where('user_id', $this->user->getId())
 			->get();
 
-		/** @var Models\UsersQuest $quest */
+		/** @var Models\UserQuest $quest */
 		foreach ($quests as $quest) {
 			$userQuests[$quest->quest_id] = $quest->toArray();
 		}

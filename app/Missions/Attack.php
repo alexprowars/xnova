@@ -405,7 +405,7 @@ class Attack extends FleetEngine implements Mission
 						$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
 					}
 
-					Models\Users::query()->where('id', $info['tech']['id'])->update($update);
+					Models\User::query()->where('id', $info['tech']['id'])->update($update);
 				}
 			}
 		}
@@ -422,7 +422,7 @@ class Attack extends FleetEngine implements Mission
 						$update['raids_lose'] = DB::raw('raids_lose + 1');
 					}
 
-					Models\Users::query()->where('id', $info['tech']['id'])->update($update);
+					Models\User::query()->where('id', $info['tech']['id'])->update($update);
 				}
 			}
 		}
@@ -431,7 +431,7 @@ class Attack extends FleetEngine implements Mission
 		// Уничтожен в первой волне
 		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 
-		$ids = Models\Rw::query()->insertGetId([
+		$ids = Models\Report::query()->insertGetId([
 			'time' 			=> time(),
 			'id_users' 		=> json_encode($FleetsUsers),
 			'no_contact' 	=> $no_contact,
@@ -439,8 +439,8 @@ class Attack extends FleetEngine implements Mission
 		]);
 
 		if ($this->fleet->group_id != 0) {
-			Models\Aks::query()->where('id', $this->fleet->group_id)->delete();
-			Models\AksUser::query()->where('aks_id', $this->fleet->group_id)->delete();
+			Models\Assault::query()->where('id', $this->fleet->group_id)->delete();
+			Models\AssaultUser::query()->where('aks_id', $this->fleet->group_id)->delete();
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
@@ -478,7 +478,7 @@ class Attack extends FleetEngine implements Mission
 
 			$title = '' . $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
-			$battleLog = new Models\BattleLog();
+			$battleLog = new Models\LogBattle();
 
 			$battleLog->user_id = 0;
 			$battleLog->title = $title;

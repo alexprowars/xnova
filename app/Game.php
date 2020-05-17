@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Xnova\Models\Moneys;
-use Xnova\Models\Users;
+use Xnova\Models\Money;
+use Xnova\Models\User;
 
 class Game
 {
@@ -58,7 +58,7 @@ class Game
 			return;
 		}
 
-		$user = Users::find($id);
+		$user = User::find($id);
 
 		if (!$user) {
 			return;
@@ -72,7 +72,7 @@ class Game
 			return;
 		}
 
-		Moneys::query()->create([
+		Money::query()->create([
 			'user_id'		=> $user->id,
 			'time'			=> time(),
 			'ip'			=> $ip,

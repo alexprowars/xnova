@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
 class Queue extends Model
 {
 	public $timestamps = false;
-	public $table = 'queue';
 
 	protected $attributes = [
 		'operation' => self::OPERATION_BUILD,

@@ -11,8 +11,8 @@ namespace Xnova;
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Config;
-use Xnova\Models\Planets;
-use Xnova\Models\Users as UserModel;
+use Xnova\Models\Planet;
+use Xnova\Models\User as UserModel;
 
 class Galaxy
 {
@@ -162,7 +162,7 @@ class Galaxy
 			return false;
 		}
 
-		$exist = Planets::query()->where('galaxy', $galaxy)
+		$exist = Planet::query()->where('galaxy', $galaxy)
 			->where('system', $system)
 			->where('planet', $planet);
 
@@ -177,7 +177,7 @@ class Galaxy
 
 	public function getFreePositions($galaxy, $system, $start = 1, $end = 15)
 	{
-		$search = Planets::query()->select('id, planet')
+		$search = Planet::query()->select('id, planet')
 			->where('galaxy', $galaxy)
 			->where('system', $system)
 			->where('planet', '>=', $start)
@@ -205,7 +205,7 @@ class Galaxy
 		$planetData = [];
 		require(app_path('Vars/planet.php'));
 
-		$planet = new Planets();
+		$planet = new Planet();
 
 		if ($HomeWorld) {
 			$planet->field_max = (int) Config::get('settings.initial_fields', 163);

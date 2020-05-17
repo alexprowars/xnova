@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
 use Xnova\Http\Requests\Admin\PlanetRequest;
-use Xnova\Models\Planets;
+use Xnova\Models\Planet;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
 /**
@@ -35,7 +35,7 @@ class PlanetsController extends CrudController
 
 	public function setup()
 	{
-		$this->crud->setModel(Planets::class);
+		$this->crud->setModel(Planet::class);
 		$this->crud->setEntityNameStrings('планету', 'планеты');
 		$this->crud->setRoute(backpack_url('planets'));
 

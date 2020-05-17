@@ -17,8 +17,8 @@ use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
-use Xnova\Models\BattleLog;
-use Xnova\Models\Rw;
+use Xnova\Models\LogBattle;
+use Xnova\Models\Report;
 
 class LogController extends Controller
 {
@@ -28,7 +28,7 @@ class LogController extends Controller
 			return redirect('/');
 		}
 
-		$logs = BattleLog::query()->where('user_id', $this->user->id)
+		$logs = LogBattle::query()->where('user_id', $this->user->id)
 			->orderByDesc('id')->get();
 
 		$list = [];
@@ -67,7 +67,7 @@ class LogController extends Controller
 			throw new RedirectException('Ошибка удаления.', '/log/');
 		}
 
-		$log = BattleLog::findFirst([
+		$log = LogBattle::findFirst([
 			'conditions' => 'id = ?0 AND user_id = ?1',
 			'bind' => [$id, $this->user->id],
 		]);
@@ -114,8 +114,8 @@ class LogController extends Controller
 			throw new RedirectException('Неправильный ключ', '/log/');
 		}
 
-		/** @var Rw $log */
-		$log = Rw::query()->find($id);
+		/** @var Report $log */
+		$log = Report::query()->find($id);
 
 		if (!$log) {
 			throw new RedirectException('Боевой отчёт не найден в базе', '/log/');
@@ -136,7 +136,7 @@ class LogController extends Controller
 			$SaveLog = json_encode($SaveLog);
 		}
 
-		$new = new BattleLog();
+		$new = new LogBattle();
 
 		$new->user_id = $this->user->id;
 		$new->title = addslashes(htmlspecialchars($title));
@@ -153,8 +153,8 @@ class LogController extends Controller
 	{
 		$id = (int) $id;
 
-		/** @var BattleLog $raportrow */
-		$raportrow = BattleLog::query()->find($id);
+		/** @var LogBattle $raportrow */
+		$raportrow = LogBattle::query()->find($id);
 
 		if (!$raportrow) {
 			throw new PageException('Запрашиваемого лога не существует в базе данных');

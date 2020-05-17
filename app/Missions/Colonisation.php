@@ -30,7 +30,7 @@ class Colonisation extends FleetEngine implements Mission
 
 		$galaxy = new Galaxy();
 
-		$iPlanetCount = Models\Planets::query()
+		$iPlanetCount = Models\Planet::query()
 			->where('id_owner', $this->fleet->owner)
 			->where('planet_type', 1)
 			->count();

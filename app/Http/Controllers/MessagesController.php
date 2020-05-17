@@ -18,7 +18,7 @@ use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\SuccessException;
 use Xnova\Format;
 use Xnova\Game;
-use Xnova\Models\Messages;
+use Xnova\Models\Message;
 use Xnova\User;
 use Xnova\Controller;
 use Xnova\Models;
@@ -56,7 +56,7 @@ class MessagesController extends Controller
 				$registerTime = DB::selectOne("SELECT create_time FROM users_info WHERE id = " . $this->user->id . "")->create_time;
 
 				if ($registerTime > time() - 86400) {
-					$lastSend = Messages::query()
+					$lastSend = Message::query()
 						->where('user_id', $this->user->id)
 						->where('time', time() - (1 * 60))
 						->count();
@@ -97,7 +97,7 @@ class MessagesController extends Controller
 		];
 
 		if (Request::query('quote')) {
-			$mes = Messages::query()
+			$mes = Message::query()
 				->select(['id', 'text'])
 				->where('id', Request::query('quote'))
 				->where(function (Builder $query) {
@@ -139,7 +139,7 @@ class MessagesController extends Controller
 
 	public function abuse($messageId)
 	{
-		$mes = Messages::query()
+		$mes = Message::query()
 			->where('id', (int) $messageId)
 			->where('user_id', $this->user->id)
 			->first();
@@ -148,12 +148,12 @@ class MessagesController extends Controller
 			throw new ErrorException('Сообщение не найдено');
 		}
 
-		$users = Models\Users::query()
+		$users = Models\User::query()
 			->select(['id'])
 			->where('authlevel', '!=', 0)
 			->get();
 
-		/** @var Models\Users $user */
+		/** @var Models\User $user */
 		foreach ($users as $user) {
 			User::sendMessage(
 				$user->id,
@@ -229,7 +229,7 @@ class MessagesController extends Controller
 			$this->user->update();
 		}
 
-		$messages = Messages::query()
+		$messages = Message::query()
 			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
 			->orderBy('time', 'DESC');
 

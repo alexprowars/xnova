@@ -46,7 +46,7 @@ class IndexController extends Controller
 				$errors[] = __('reg.error_confirm');
 			}
 
-			$checkExist = Models\UsersInfo::query()->where('email', $email)->exists();
+			$checkExist = Models\Account::query()->where('email', $email)->exists();
 
 			if ($checkExist) {
 				$errors[] = __('reg.error_emailexist');

@@ -14,7 +14,7 @@ class UpdateOnline extends Command
 
 	public function handle()
 	{
-		$online = Models\Users::query()
+		$online = Models\User::query()
 			->where('onlinetime', '>', time() - Config::get('settings.onlinetime') * 60)
 			->count();
 

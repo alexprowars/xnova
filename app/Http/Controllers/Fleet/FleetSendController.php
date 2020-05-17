@@ -177,7 +177,7 @@ class FleetSendController extends Controller
 		}
 
 		if ($targetPlanet) {
-			$targerUser = Models\Users::query()->find($targetPlanet->id_owner);
+			$targerUser = Models\User::query()->find($targetPlanet->id_owner);
 
 			if (!$targerUser) {
 				throw new PageException("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU" . $targetPlanet->id_owner . "</b></span>", "/fleet/");
@@ -222,14 +222,14 @@ class FleetSendController extends Controller
 			}
 
 			if ($protection) {
-				$MyPoints = Models\Statpoints::query()
+				$MyPoints = Models\Statistic::query()
 					->select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
 					->where('id_owner', $this->user->id)
 					->value('total_points') ?? 0;
 
-				$HePoints = Models\Statpoints::query()
+				$HePoints = Models\Statistic::query()
 					->select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
@@ -283,7 +283,7 @@ class FleetSendController extends Controller
 			}
 
 			if ($fleetMission == 5) {
-				$friend = Models\Buddy::query()
+				$friend = Models\Friend::query()
 					->where(function (Builder $query) use ($targerUser) {
 						$query->where(function (Builder $query) use ($targerUser) {
 							$query->where('sender', $this->user->id)
@@ -621,7 +621,7 @@ class FleetSendController extends Controller
 
 			foreach ($quest['TASK'] as $taskKey => $taskVal) {
 				if ($taskKey == 'FLEET_MISSION' && $taskVal == $fleetMission) {
-					Models\UsersQuest::query()->where('id', $tutorial->id)->update(['stage' => 1]);
+					Models\UserQuest::query()->where('id', $tutorial->id)->update(['stage' => 1]);
 				}
 			}
 		}

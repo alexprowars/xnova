@@ -29,7 +29,7 @@ class StartController extends Controller
 					throw new ErrorException(__('start.error_charalpha'));
 				}
 
-				$ExistUser = Models\Users::query()
+				$ExistUser = Models\User::query()
 					->where('username', $username)
 					->where('id', '!=', $this->user->getId())
 					->exists();

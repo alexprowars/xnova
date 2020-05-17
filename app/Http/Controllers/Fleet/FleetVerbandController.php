@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
-use Xnova\Models\Aks;
-use Xnova\Models\AksUser;
+use Xnova\Models\Assault;
+use Xnova\Models\AssaultUser;
 use Xnova\Models\Fleet;
 use Xnova\User;
 
@@ -52,8 +52,8 @@ class FleetVerbandController extends Controller
 					throw new ErrorException('Для этого флота уже задана ассоциация!');
 				}
 
-				/** @var Aks $aks */
-				$aks = Aks::query()->create([
+				/** @var Assault $aks */
+				$aks = Assault::query()->create([
 					'name' 			=> Request::post('name', 'string'),
 					'fleet_id' 		=> $fleet->id,
 					'galaxy' 		=> $fleet->end_galaxy,
@@ -67,7 +67,7 @@ class FleetVerbandController extends Controller
 					throw new ErrorException('Невозможно получить идентификатор САБ атаки');
 				}
 
-				AksUser::query()->create([
+				AssaultUser::query()->create([
 					'aks_id'	=> $aks->id,
 					'user_id'	=> $this->user->id
 				]);
@@ -143,7 +143,7 @@ class FleetVerbandController extends Controller
 
 				$aks->name = $name;
 
-				Aks::query()->where('id', $aks->id)->update(['name' => $name]);
+				Assault::query()->where('id', $aks->id)->update(['name' => $name]);
 			}
 		}
 

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\PageException;
 use Xnova\Game;
 use Xnova\Helpers;
-use Xnova\Models\Banned;
+use Xnova\Models\Blocked;
 use Xnova\User;
 
 class UserAuthenticated
@@ -31,7 +31,7 @@ class UserAuthenticated
 		} elseif ($user->banned > 0 && $user->banned < time()) {
 			$user->banned = 0;
 
-			Banned::query()->where('who', $user->id)->delete();
+			Blocked::query()->where('who', $user->id)->delete();
 		}
 
 		if ($user->onlinetime < (time() - 30)) {

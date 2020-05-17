@@ -48,7 +48,6 @@ use Illuminate\Support\Facades\URL;
 class Fleet extends Model
 {
 	public $timestamps = false;
-	public $table = 'fleets';
 	protected $guarded = [];
 
 	public $username = '';

@@ -9,7 +9,7 @@ use Xnova\User as UsersModel;
 use Xnova\Planet\Build;
 use Xnova\Planet\Unit;
 
-class Planet extends Models\Planets
+class Planet extends Models\Planet
 {
 	use Build;
 	use Unit;
@@ -316,12 +316,12 @@ class Planet extends Models\Planets
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$items = DB::select(
-				'SELECT b.id, b.level FROM planets_buildings b 
+				'SELECT b.id, b.level FROM planets_buildings b
 				LEFT JOIN planets p ON p.id = b.planet_id
-					WHERE 
-				b.build_id = :build AND p.id_owner = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1 
-					ORDER BY 
-				b.level DESC 
+					WHERE
+				b.build_id = :build AND p.id_owner = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1
+					ORDER BY
+				b.level DESC
 					LIMIT :level',
 				[
 					'build' => 31,

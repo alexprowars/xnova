@@ -37,7 +37,7 @@ class FleetEngine
 
 		if ($fleet) {
 			if ($Start && $this->fleet->start_type == 3) {
-				$CheckFleet = Models\Planets::query()
+				$CheckFleet = Models\Planet::query()
 					->where('galaxy', $this->fleet->start_galaxy)
 					->where('system', $this->fleet->start_system)
 					->where('planet', $this->fleet->start_planet)
@@ -48,7 +48,7 @@ class FleetEngine
 					$this->fleet->start_type = 1;
 				}
 			} elseif ($this->fleet->end_type == 3) {
-				$CheckFleet = Models\Planets::query()
+				$CheckFleet = Models\Planet::query()
 					->where('galaxy', $this->fleet->end_galaxy)
 					->where('system', $this->fleet->end_system)
 					->where('planet', $this->fleet->end_planet)
@@ -115,7 +115,7 @@ class FleetEngine
 			$p = 'end';
 		}
 
-		Models\Planets::query()
+		Models\Planet::query()
 			->where('galaxy', $this->fleet->{$p . '_galaxy'})
 			->where('system', $this->fleet->{$p . '_system'})
 			->where('planet', $this->fleet->{$p . '_planet'})
@@ -135,8 +135,8 @@ class FleetEngine
 		Models\Fleet::query()->where('id', $fleetId)->update($update);
 
 		if ($this->fleet->group_id > 0) {
-			Models\Aks::query()->where('id', $this->fleet->group_id)->delete();
-			Models\AksUser::query()->where('aks_id', $this->fleet->group_id)->delete();
+			Models\Assault::query()->where('id', $this->fleet->group_id)->delete();
+			Models\AssaultUser::query()->where('aks_id', $this->fleet->group_id)->delete();
 		}
 	}
 

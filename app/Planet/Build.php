@@ -10,7 +10,7 @@ namespace Xnova\Planet;
 
 use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\Exception;
-use Xnova\Models\PlanetsBuildings;
+use Xnova\Models\PlanetBuilding;
 use Xnova\Vars;
 
 trait Build
@@ -53,7 +53,7 @@ trait Build
 
 		$this->buildings = [];
 
-		$items = PlanetsBuildings::query()->where('planet_id', $this->id)->get();
+		$items = PlanetBuilding::query()->where('planet_id', $this->id)->get();
 
 		foreach ($items as $item) {
 			$this->buildings[$item->build_id] = [

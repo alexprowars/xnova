@@ -10,7 +10,7 @@ namespace Xnova\Planet;
 
 use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\Exception;
-use Xnova\Models\PlanetsUnits;
+use Xnova\Models\PlanetUnit;
 use Xnova\Vars;
 
 trait Unit
@@ -53,7 +53,7 @@ trait Unit
 
 		$this->units = [];
 
-		$items = PlanetsUnits::query()->where('planet_id', $this->id)->get();
+		$items = PlanetUnit::query()->where('planet_id', $this->id)->get();
 
 		foreach ($items as $item) {
 			$this->units[$item->unit_id] = [

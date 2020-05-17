@@ -98,7 +98,7 @@ class FleetController extends Controller
 
 		$parse['shortcuts'] = [];
 
-		$shortcuts = Models\UsersInfo::query()->find($this->user->id, ['fleet_shortcut'])->value('fleet_shortcut');
+		$shortcuts = Models\Account::query()->find($this->user->id, ['fleet_shortcut'])->value('fleet_shortcut');
 
 		if ($shortcuts) {
 			$scarray = explode("\r\n", $shortcuts);

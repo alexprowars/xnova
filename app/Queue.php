@@ -31,10 +31,10 @@ class Queue
 
 	public function __construct($user, ?Planet $planet = null)
 	{
-		if ($user instanceof Models\Users) {
+		if ($user instanceof Models\User) {
 			$this->user = $user;
 		} else {
-			$this->user = Models\Users::find((int) $user);
+			$this->user = Models\User::find((int) $user);
 		}
 
 		$this->planet = $planet;

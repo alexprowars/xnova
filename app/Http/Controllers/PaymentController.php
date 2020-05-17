@@ -43,8 +43,8 @@ class PaymentController extends Controller
 			die('already paid');
 		}
 
-		/** @var Models\Users $user */
-		$user = Models\Users::query()->find((int) Request::input("Shp_UID"));
+		/** @var Models\User $user */
+		$user = Models\User::query()->find((int) Request::input("Shp_UID"));
 
 		if (!$user) {
 			die('userId not found');

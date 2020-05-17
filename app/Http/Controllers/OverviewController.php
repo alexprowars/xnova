@@ -240,7 +240,7 @@ class OverviewController extends Controller
 			$this->user->update();
 
 			if ($this->planet->parent_planet != 0) {
-				Models\Planets::query()
+				Models\Planet::query()
 					->where('id', $this->planet->parent_planet)
 					->update([
 						'destruyed' => $destruyed,
@@ -463,7 +463,7 @@ class OverviewController extends Controller
 			$lune = Cache::get('app::lune_' . $this->planet->parent_planet);
 
 			if ($lune === null) {
-				$lune = Models\Planets::query()
+				$lune = Models\Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
 					->where('id', $this->planet->parent_planet)
 					->where('planet_type', 3)

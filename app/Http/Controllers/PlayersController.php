@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Files;
-use Xnova\Models\Planets;
+use Xnova\Models\Planet;
 use Xnova\Controller;
 use Xnova\User;
 
@@ -51,7 +51,7 @@ class PlayersController extends Controller
 		$parse['avatar'] = URL::asset($parse['avatar']);
 		$parse['userplanet'] = '';
 
-		$planet = Planets::findByCoords($user->galaxy, $user->system, $user->planet, 1);
+		$planet = Planet::findByCoords($user->galaxy, $user->system, $user->planet, 1);
 
 		if ($planet) {
 			$parse['userplanet'] = $planet->name;

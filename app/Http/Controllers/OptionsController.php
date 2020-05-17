@@ -67,8 +67,8 @@ class OptionsController extends Controller
 
 	public function emailAction()
 	{
-		/** @var Models\UsersInfo $userInfo */
-		$userInfo = Models\UsersInfo::query()->find($this->user->id);
+		/** @var Models\Account $userInfo */
+		$userInfo = Models\Account::query()->find($this->user->id);
 
 		if (Request::post('password') && Request::post('email')) {
 			if (md5(Request::post('password')) != $userInfo->password) {
@@ -103,8 +103,8 @@ class OptionsController extends Controller
 			$this->ld();
 		}
 
-		/** @var Models\UsersInfo $userInfo */
-		$userInfo = Models\UsersInfo::query()->find($this->user->id);
+		/** @var Models\Account $userInfo */
+		$userInfo = Models\Account::query()->find($this->user->id);
 
 		if (
 			Request::post('username')
@@ -134,7 +134,7 @@ class OptionsController extends Controller
 
 			$password = Str::random(10);
 
-			Models\UsersInfo::query()->where('id', $this->user->getId())
+			Models\Account::query()->where('id', $this->user->getId())
 				->update([
 					'email' => $e,
 					'password' => md5($password)
@@ -176,11 +176,11 @@ class OptionsController extends Controller
 						$buildsId[] = Vars::getIdByName($res . '_mine');
 					}
 
-					Models\PlanetsBuildings::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
+					Models\PlanetBuilding::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
 						->whereIn('build_id', $buildsId)
 						->update(['power' => 0]);
 
-					Models\PlanetsUnits::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
+					Models\PlanetUnit::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
 						->whereIn('unit_id', $buildsId)
 						->update(['power' => 0]);
 				}
@@ -346,8 +346,8 @@ class OptionsController extends Controller
 
 	public function index()
 	{
-		/** @var Models\UsersInfo $userInfo */
-		$userInfo = Models\UsersInfo::query()->find($this->user->id);
+		/** @var Models\Account $userInfo */
+		$userInfo = Models\Account::query()->find($this->user->id);
 
 		$parse = [];
 		$parse['social'] = Config::get('game.view.socialIframeView', 0) > 0;

@@ -10,7 +10,7 @@ namespace Xnova\User;
 
 use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\Exception;
-use Xnova\Models\UsersTech;
+use Xnova\Models\UserTech;
 use Xnova\Vars;
 
 trait Tech
@@ -53,7 +53,7 @@ trait Tech
 
 		$this->technology = [];
 
-		$items = UsersTech::query()
+		$items = UserTech::query()
 			->where('user_id', $this->id)
 			->get();
 

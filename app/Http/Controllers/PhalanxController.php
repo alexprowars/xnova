@@ -61,7 +61,7 @@ class PhalanxController extends Controller
 		$this->planet->deuterium -= $consomation;
 		$this->planet->update();
 
-		$planet = Models\Planets::query()
+		$planet = Models\Planet::query()
 			->where('galaxy', $g)
 			->where('system', $s)
 			->where('planet', $i)

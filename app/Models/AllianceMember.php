@@ -13,5 +13,4 @@ use Illuminate\Database\Eloquent\Model;
 class AllianceMember extends Model
 {
 	public $timestamps = false;
-	public $table = 'alliance_members';
 }

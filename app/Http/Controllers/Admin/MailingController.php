@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
-use Xnova\Models\Users;
+use Xnova\Models\User;
 use Xnova\User;
 
 class MailingController extends Controller
@@ -43,7 +43,7 @@ class MailingController extends Controller
 				$color = 'skyblue';
 			}
 
-			$users = Users::query()->get(['id']);
+			$users = User::query()->get(['id']);
 
 			foreach ($users as $user) {
 				User::sendMessage(

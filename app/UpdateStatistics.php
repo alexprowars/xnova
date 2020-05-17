@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Xnova\Mail\UserDelete;
 use Xnova\Models\Fleet;
-use Xnova\Models\Statpoints;
+use Xnova\Models\Statistic;
 
 class UpdateStatistics
 {
@@ -33,10 +33,10 @@ class UpdateStatistics
 	public function __construct()
 	{
 		$this->start = time();
-		$this->user = new Models\Users();
+		$this->user = new Models\User();
 	}
 
-	private function SetMaxInfo($ID, $Count, Models\Users $Data)
+	private function SetMaxInfo($ID, $Count, Models\User $Data)
 	{
 		if ($Data->isAdmin() || $Data->banned != 0) {
 			return;
@@ -51,12 +51,12 @@ class UpdateStatistics
 		}
 	}
 
-	private function GetTechnoPoints(Models\Users $user)
+	private function GetTechnoPoints(Models\User $user)
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
 
-		$items = Models\UsersTech::query()
+		$items = Models\UserTech::query()
 			->where('user_id', $user->id)
 			->get();
 
@@ -86,12 +86,12 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetBuildPoints(Models\Planets $planet, $user)
+	private function GetBuildPoints(Models\Planet $planet, $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
 
-		$items = Models\PlanetsBuildings::query()
+		$items = Models\PlanetBuilding::query()
 			->where('planet_id', $planet->id)
 			->get();
 
@@ -121,12 +121,12 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetDefensePoints(Models\Planets $planet, &$RecordArray)
+	private function GetDefensePoints(Models\Planet $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = Models\PlanetsUnits::query()
+		$items = Models\PlanetUnit::query()
 			->where('planet_id', $planet->id)
 			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE))
 			->get();
@@ -154,12 +154,12 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetFleetPoints(Models\Planets $planet, &$RecordArray)
+	private function GetFleetPoints(Models\Planet $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = Models\PlanetsUnits::query()
+		$items = Models\PlanetUnit::query()
 			->where('planet_id', $planet->id)
 			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET))
 			->get();
@@ -222,7 +222,7 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = Models\Users::query()
+		$list = Models\User::query()
 			->where('deltime', '<', time())
 			->where('deltime', '>', 0)
 			->get(['id', 'username']);
@@ -259,8 +259,8 @@ class UpdateStatistics
 
 	public function clearOldStats()
 	{
-		Statpoints::query()->where('stat_code', '>=', 2)->delete();
-		Statpoints::query()->increment('stat_code', 1);
+		Statistic::query()->where('stat_code', '>=', 2)->delete();
+		Statistic::query()->increment('stat_code', 1);
 	}
 
 	public function getTotalFleetPoints()
@@ -295,7 +295,7 @@ class UpdateStatistics
 
 		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, users_info ui) LEFT JOIN statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
-		Statpoints::query()->where('stat_code', 1)->delete();
+		Statistic::query()->where('stat_code', 1)->delete();
 
 		foreach ($list as $user) {
 			$options = json_decode($user->settings, true);
@@ -339,7 +339,7 @@ class UpdateStatistics
 			$GCount = $TTechCount;
 			$GPoints = $TTechPoints;
 
-			$planets = Models\Planets::query()->where('id_owner', $user->id)->get();
+			$planets = Models\Planet::query()->where('id_owner', $user->id)->get();
 
 			$RecordArray = [];
 
@@ -399,7 +399,7 @@ class UpdateStatistics
 				$this->StatRace[$user['race']]['defs'] += $TDefsPoints;
 			}
 
-			Statpoints::query()->insert([
+			Statistic::query()->insert([
 				'id_owner' => $user->id,
 				'username' => addslashes($user->username),
 				'race' => $user->race,
@@ -428,7 +428,7 @@ class UpdateStatistics
 
 		$this->calcPositions();
 
-		$active_alliance = Statpoints::query()->where('stat_type', 2)->where('stat_hide', 0)->count();
+		$active_alliance = Statistic::query()->where('stat_type', 2)->where('stat_hide', 0)->count();
 
 		Setting::set('stat_update', time());
 		Setting::set('active_users', $active_users);
@@ -480,7 +480,7 @@ class UpdateStatistics
 		}
 
 		foreach ($this->StatRace as $race => $arr) {
-			Statpoints::query()->insert([
+			Statistic::query()->insert([
 				'race' => $race,
 				'stat_type' => 3,
 				'stat_code' => 1,

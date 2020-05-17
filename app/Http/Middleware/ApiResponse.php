@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Xnova\Exceptions\Exception;
 use Xnova\Game;
 use Xnova\Controller;
-use Xnova\Models\UsersQuest;
+use Xnova\Models\UserQuest;
 use Xnova\User;
 
 class ApiResponse
@@ -183,7 +183,7 @@ class ApiResponse
 		$quests = Cache::get('app::quests::' . $user->getId());
 
 		if ($quests === null) {
-			$quests = (int) UsersQuest::query()->where('user_id', $user->getId())->where('finish', 1)->count();
+			$quests = (int) UserQuest::query()->where('user_id', $user->getId())->where('finish', 1)->count();
 
 			Cache::put('app::quests::' . $user->getId(), $quests, 3600);
 		}

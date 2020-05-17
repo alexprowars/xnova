@@ -9,10 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
-use Xnova\Models\Banned;
+use Xnova\Models\Blocked;
 use Xnova\Models;
-use Xnova\Models\Users;
-use Xnova\Models\UsersInfo;
+use Xnova\Models\Account;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 use Xnova\User;
 use Xnova\Vars;
@@ -73,7 +72,7 @@ class UsersController extends CrudController
 
 	public function setup()
 	{
-		$this->crud->setModel(Users::class);
+		$this->crud->setModel(User::class);
 		$this->crud->setEntityNameStrings('пользователь', 'пользователи');
 		$this->crud->setRoute(backpack_url('users'));
 
@@ -103,14 +102,14 @@ class UsersController extends CrudController
 					'name' => 'email',
 					'entity' => 'info',
 					'attribute' => 'email',
-					'model' => UsersInfo::class
+					'model' => Account::class
 				], [
 					'label' => 'Дата регистрации',
 					'type' => 'closure',
 					'name' => 'create_time',
 					'entity' => 'info',
 					'attribute' => 'create_time',
-					'model' => UsersInfo::class,
+					'model' => Account::class,
 					'function' => function ($entry) {
 						return date('d.m.Y H:i:s', $entry->info->create_time ?? 0);
 					},
@@ -131,7 +130,7 @@ class UsersController extends CrudController
 			'type'	=> 'email',
 			'entity' => 'info',
 			'attribute' => 'email',
-			'model' => UsersInfo::class
+			'model' => Account::class
 		]);
 
 		$this->crud->operation('update', function () {
@@ -220,7 +219,7 @@ class UsersController extends CrudController
 			$hour = $request->post('hour', 0);
 			$mins = $request->post('mins', 0);
 
-			$user = Users::query()->where('username', $name)->first();
+			$user = User::query()->where('username', $name)->first();
 
 			if (!$user) {
 				return redirect(backpack_url('users/ban'))->with('error', 'Игрок не найден');
@@ -231,7 +230,7 @@ class UsersController extends CrudController
 			$BanTime += $mins * 60;
 			$BanTime += time();
 
-			Banned::query()->insert([
+			Blocked::query()->insert([
 				'who'		=> $user->id,
 				'theme'		=> $reason,
 				'time'		=> time(),
@@ -254,11 +253,11 @@ class UsersController extends CrudController
 					$buildsId[] = Vars::getIdByName($res . '_mine');
 				}
 
-				Models\PlanetsBuildings::query()->whereIn('planet_id', User::getPlanetsId($user->id))
+				Models\PlanetBuilding::query()->whereIn('planet_id', User::getPlanetsId($user->id))
 					->whereIn('build_id', $buildsId)
 					->update(['power' => 0]);
 
-				Models\PlanetsUnits::query()->whereIn('planet_id', User::getPlanetsId($user->id))
+				Models\PlanetUnit::query()->whereIn('planet_id', User::getPlanetsId($user->id))
 					->whereIn('unit_id', $buildsId)
 					->update(['power' => 0]);
 			}
@@ -284,13 +283,13 @@ class UsersController extends CrudController
 				'required' => 'Поле ":attribute" обязательно для заполнения',
 			]);
 
-			$user = Users::query()->where('username', $fields['username'])->get(['id', 'username', 'banned', 'vacation'])->first();
+			$user = User::query()->where('username', $fields['username'])->get(['id', 'username', 'banned', 'vacation'])->first();
 
 			if (!$user) {
 				return redirect(backpack_url('users/unban'))->with('error', 'Игрок не найден');
 			}
 
-			Banned::query()->where('who', $user->id)->delete();
+			Blocked::query()->where('who', $user->id)->delete();
 			$user->banned = 0;
 
 			if ($user->vacation == 1) {

@@ -40,7 +40,7 @@ class RocketController extends Controller
 		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$targetPlanet = Models\Planets::findByCoords($g, $s, $p, 1);
+		$targetPlanet = Models\Planet::findByCoords($g, $s, $p, 1);
 
 		if ($this->planet->getBuildLevel('missile_facility') < 4) {
 			throw new ErrorException('Постройте ракетную шахту');
@@ -62,8 +62,8 @@ class RocketController extends Controller
 			$destroyType = (int) $destroyType;
 		}
 
-		/** @var Models\Users $targetUser */
-		$targetUser = Models\Users::query()->find($targetPlanet->id_owner, ['id', 'vacation']);
+		/** @var Models\User $targetUser */
+		$targetUser = Models\User::query()->find($targetPlanet->id_owner, ['id', 'vacation']);
 
 		if (!$targetUser) {
 			throw new ErrorException('Игрока не существует');

@@ -91,17 +91,17 @@ class FleetQuickController extends Controller
 				throw new Exception('Невозможно выполнить задание!');
 			}
 
-			/** @var Models\Users $HeDBRec */
-			$HeDBRec = Models\Users::query()->find($target->id_owner, ['id', 'onlinetime', 'vacation']);
+			/** @var Models\User $HeDBRec */
+			$HeDBRec = Models\User::query()->find($target->id_owner, ['id', 'onlinetime', 'vacation']);
 
-			$MyGameLevel = Models\Statpoints::query()
+			$MyGameLevel = Models\Statistic::query()
 				->select('total_points')
 				->where('stat_type', 1)
 				->where('stat_code', 1)
 				->where('id_owner', $this->user->id)
 				->value('total_points') ?? 0;
 
-			$HeGameLevel = Models\Statpoints::query()
+			$HeGameLevel = Models\Statistic::query()
 				->select('total_points')
 				->where('stat_type', 1)
 				->where('stat_code', 1)
@@ -233,7 +233,7 @@ class FleetQuickController extends Controller
 					$this->planet->deuterium -= $consumption;
 					$this->planet->update();
 
-					$tutorial = Models\UsersQuest::query()
+					$tutorial = Models\UserQuest::query()
 						->select(['id', 'quest_id'])
 						->where('user_id', $this->user->getId())
 						->where('finish', 0)

@@ -94,7 +94,7 @@ class Destruction extends FleetEngine implements Mission
 							$debree = $this->convertFleetToDebris($fleetData);
 
 							if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
-								Models\Planets::query()->where('galaxy', $this->fleet->end_galaxy)
+								Models\Planet::query()->where('galaxy', $this->fleet->end_galaxy)
 									->where('system', $this->fleet->end_system)
 									->where('planet', $this->fleet->end_planet)
 									->where('planet_type', '!=', 3)

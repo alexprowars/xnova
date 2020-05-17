@@ -15,5 +15,4 @@ use Illuminate\Database\Eloquent\Model;
 class AllianceChat extends Model
 {
 	public $timestamps = false;
-	public $table = 'alliance_chat';
 }

@@ -255,7 +255,7 @@ class Construction
 						];
 
 						if ($techHandle->planet_id != $this->planet->id) {
-							$planet = Models\Planets::query()
+							$planet = Models\Planet::query()
 								->select(['id', 'name'])
 								->where('id', $techHandle->planet_id)
 								->first();

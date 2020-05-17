@@ -8,7 +8,7 @@ use Prologue\Alerts\Facades\Alert;
 use Xnova\Galaxy;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 use Xnova\Http\Requests\Admin\MoonRequest;
-use Xnova\Models\Planets;
+use Xnova\Models\Planet;
 
 /**
  * @property CrudPanel $crud
@@ -34,7 +34,7 @@ class MoonsController extends CrudController
 
 	public function setup()
 	{
-		$this->crud->setModel(Planets::class);
+		$this->crud->setModel(Planet::class);
 		$this->crud->setEntityNameStrings('луну', 'луны');
 		$this->crud->setRoute(backpack_url('moons'));
 

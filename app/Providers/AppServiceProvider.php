@@ -5,6 +5,7 @@ namespace Xnova\Providers;
 use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {

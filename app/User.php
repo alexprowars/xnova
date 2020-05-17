@@ -16,12 +16,12 @@ use Illuminate\Support\Str;
 use Xnova\Exceptions\Exception;
 use Xnova\Mail\UserRegistration;
 use Xnova\Models\Alliance;
-use Xnova\Models\LogCredits;
-use Xnova\Models\Messages;
+use Xnova\Models\LogCredit;
+use Xnova\Models\Message;
 use Xnova\User\Tech;
 use Xnova\Queue as QueueManager;
 
-class User extends Models\Users
+class User extends Models\User
 {
 	use Tech;
 
@@ -233,7 +233,7 @@ class User extends Models\Users
 		}
 
 		if ($giveCredits != 0) {
-			LogCredits::query()->create([
+			LogCredit::query()->create([
 				'uid' 		=> $this->getId(),
 				'time' 		=> time(),
 				'credits' 	=> $giveCredits,
@@ -245,7 +245,7 @@ class User extends Models\Users
 			if (isset($reffer['u_id'])) {
 				DB::table('users')->where('id', $reffer['u_id'])->increment('credits', round($giveCredits / 2));
 
-				LogCredits::query()->create([
+				LogCredit::query()->create([
 					'uid' 		=> $reffer['u_id'],
 					'time' 		=> time(),
 					'credits' 	=> round($giveCredits / 2),
@@ -402,7 +402,7 @@ class User extends Models\Users
 			$user->messages++;
 		}
 
-		$obj = new Messages();
+		$obj = new Message();
 
 		$obj->user_id = $owner;
 		$obj->from_id = $sender;
@@ -435,8 +435,8 @@ class User extends Models\Users
 
 	public static function deleteById(int $userId)
 	{
-		/** @var Models\Users $userInfo */
-		$userInfo = Models\Users::query()->find((int) $userId, ['id', 'ally_id']);
+		/** @var Models\User $userInfo */
+		$userInfo = Models\User::query()->find((int) $userId, ['id', 'ally_id']);
 
 		if (!$userInfo) {
 			return false;
@@ -455,11 +455,11 @@ class User extends Models\Users
 			}
 		}
 
-		$planets = Models\Planets::query()->where('id_owner', $userId)->get(['id'])->pluck('id');
+		$planets = Models\Planet::query()->where('id_owner', $userId)->get(['id'])->pluck('id');
 
 		foreach ($planets as $planet) {
-			Models\PlanetsBuildings::query()->where('planet_id', $planet)->delete();
-			Models\PlanetsUnits::query()->where('planet_id', $planet)->delete();
+			Models\PlanetBuilding::query()->where('planet_id', $planet)->delete();
+			Models\PlanetUnit::query()->where('planet_id', $planet)->delete();
 		}
 
 		DB::table('alliance_requests')->where('u_id', $userId)->delete();
@@ -515,7 +515,7 @@ class User extends Models\Users
 			$update[Vars::getName($oId)] = 0;
 		}
 
-		Models\Users::query()->where('id', $userId)->update($update);
+		Models\User::query()->where('id', $userId)->update($update);
 
 		return true;
 	}
@@ -540,8 +540,8 @@ class User extends Models\Users
 		}
 
 		return DB::transaction(function () use ($data) {
-			/** @var Models\Users $user */
-			$user = Models\Users::query()->create([
+			/** @var Models\User $user */
+			$user = Models\User::query()->create([
 				'username' 		=> $data['name'] ?? '',
 				'sex' 			=> 0,
 				'planet_id' 	=> 0,
@@ -554,7 +554,7 @@ class User extends Models\Users
 				throw new Exception('create user error');
 			}
 
-			Models\UsersInfo::query()->create([
+			Models\Account::query()->create([
 				'id' 			=> $user->id,
 				'email' 		=> $data['email'] ?? '',
 				'create_time' 	=> time(),
@@ -562,8 +562,8 @@ class User extends Models\Users
 			]);
 
 			if (Session::has('ref')) {
-				/** @var Models\Users $refer */
-				$refer = Models\Users::query()->find((int) Session::get('ref'), ['id']);
+				/** @var Models\User $refer */
+				$refer = Models\User::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
 					DB::table('refs')->insert([
