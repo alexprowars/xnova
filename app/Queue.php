@@ -8,7 +8,6 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Queue\Build;
@@ -248,9 +247,9 @@ class Queue
 
 			if (in_array($buildItem->object_id, Vars::getItemsByType('build_exp'))) {
 				if (!$isDestroy) {
-					$xp += floor($units / Config::get('game.buildings_exp_mult', 1000));
+					$xp += floor($units / config('game.buildings_exp_mult', 1000));
 				} else {
-					$xp -= floor($units / Config::get('game.buildings_exp_mult', 1000));
+					$xp -= floor($units / config('game.buildings_exp_mult', 1000));
 				}
 			}
 
@@ -266,7 +265,7 @@ class Queue
 				$buildItem->delete();
 			}
 
-			if ($xp != 0 && $this->user->lvl_minier < Config::get('game.level.max_ind', 100)) {
+			if ($xp != 0 && $this->user->lvl_minier < config('game.level.max_ind', 100)) {
 				$this->user->xpminier += $xp;
 
 				if ($this->user->xpminier < 0) {
@@ -276,7 +275,7 @@ class Queue
 				$this->user->update();
 			}
 
-			if (Config::get('game.log.buildings', false) == true) {
+			if (config('game.log.buildings', false) == true) {
 				DB::table('log_histories')->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
@@ -361,7 +360,7 @@ class Queue
 
 				$loop = false;
 
-				if (Config::get('game.log.buildings', false) == true) {
+				if (config('game.log.buildings', false) == true) {
 					DB::table('log_histories')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
@@ -473,7 +472,7 @@ class Queue
 					$this->loadQueue();
 				}
 
-				if (Config::get('game.log.research', false) == true) {
+				if (config('game.log.research', false) == true) {
 					DB::table('log_histories')->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),

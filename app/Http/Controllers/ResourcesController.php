@@ -253,7 +253,7 @@ class ResourcesController extends Controller
 			$row = [];
 
 			if (!$this->user->isVacation()) {
-				$row['basic'] = Config::get('game.' . $res . '_basic_income', 0) * Config::get('game.resource_multiplier', 1);
+				$row['basic'] = config('game.' . $res . '_basic_income', 0) * config('game.resource_multiplier', 1);
 			} else {
 				$row['basic'] = 0;
 			}
@@ -276,9 +276,9 @@ class ResourcesController extends Controller
 		}
 
 		$parse['production']['energy'] = [
-			'basic' => (int) Config::get('game.energy_basic_income'),
+			'basic' => (int) config('game.energy_basic_income'),
 			'max' => floor($this->planet->energy_max),
-			'total' => floor(($this->planet->energy_max + Config::get('game.energy_basic_income')) + $this->planet->energy_used)
+			'total' => floor(($this->planet->energy_max + config('game.energy_basic_income')) + $this->planet->energy_used)
 		];
 
 		$parse['production_level'] = $production_level;

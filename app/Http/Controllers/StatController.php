@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -85,7 +84,7 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('game.stat_update', 0)),
 			'list' => 'players',
 			'type' => $type,
 			'page' => 1
@@ -116,7 +115,7 @@ class StatController extends Controller
 			}
 		}
 
-		$users = (int) Config::get('game.active_users', 0);
+		$users = (int) config('game.active_users', 0);
 
 		$parse['elements'] = $users;
 		$parse['page'] = $this->page;
@@ -174,13 +173,13 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('game.stat_update', 0)),
 			'list' => Route::current()->getActionMethod(),
 			'type' => $type,
 			'page' => 1
 		];
 
-		$alliances = (int) Config::get('game.active_alliance', 0);
+		$alliances = (int) config('game.active_alliance', 0);
 
 		$parse['elements'] = $alliances;
 		$parse['page'] = $this->page;
@@ -221,7 +220,7 @@ class StatController extends Controller
 	private function races()
 	{
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", Config::get('game.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('game.stat_update', 0)),
 			'list' => Route::current()->getActionMethod(),
 			'type' => 0,
 			'page' => 0

@@ -1,15 +1,14 @@
 <?php
 
-namespace Xnova\Missions;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+namespace Xnova\Missions;
+
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\Models;
@@ -23,8 +22,8 @@ class Colonisation extends FleetEngine implements Mission
 
 		$maxPlanets = $owner->getTechLevel('colonisation') + 1;
 
-		if ($maxPlanets > Config::get('settings.maxPlanets', 9)) {
-			$maxPlanets = Config::get('settings.maxPlanets', 9);
+		if ($maxPlanets > config('settings.maxPlanets', 9)) {
+			$maxPlanets = config('settings.maxPlanets', 9);
 		}
 
 		$galaxy = new Galaxy();
@@ -42,7 +41,7 @@ class Colonisation extends FleetEngine implements Mission
 
 				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_colo_mess_from'), $TheMessage);
 
-				$this->ReturnFleet();
+				$this->returnFleet();
 			} else {
 				$NewOwnerPlanet = $galaxy->createPlanet($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->owner, __('fleet_engine.sys_colo_defaultname'), false);
 
@@ -65,12 +64,12 @@ class Colonisation extends FleetEngine implements Mission
 
 					$this->fleet->fleet_array = $newFleet;
 
-					$this->RestoreFleetToPlanet(false);
-					$this->KillFleet();
+					$this->restoreFleetToPlanet(false);
+					$this->killFleet();
 
 					Cache::forget('app::planetlist_' . $this->fleet->owner);
 				} else {
-					$this->ReturnFleet();
+					$this->returnFleet();
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_badpos');
 
@@ -78,7 +77,7 @@ class Colonisation extends FleetEngine implements Mission
 				}
 			}
 		} else {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_notfree');
 
@@ -93,7 +92,7 @@ class Colonisation extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

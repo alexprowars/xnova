@@ -15,7 +15,7 @@ class Transport extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$this->RestoreFleetToPlanet(false, false);
+		$this->restoreFleetToPlanet(false, false);
 
 		$Message = sprintf(
 			__('fleet_engine.sys_tran_mess_owner'),
@@ -49,7 +49,7 @@ class Transport extends FleetEngine implements Mission
 			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
 		}
 
-		$this->ReturnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
+		$this->returnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
 	}
 
 	public function endStayEvent()
@@ -59,7 +59,7 @@ class Transport extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

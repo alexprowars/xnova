@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Battle\Core\Battle;
@@ -59,7 +58,7 @@ class XnsimController extends Controller
 				die('Нет данных для симуляции боя');
 			}
 
-			define('MAX_SLOTS', Config::get('game.maxSlotsInSim', 5));
+			define('MAX_SLOTS', config('game.maxSlotsInSim', 5));
 
 			include_once(ROOT_PATH . "/app/config/battle.php");
 

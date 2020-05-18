@@ -9,7 +9,6 @@
 namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Xnova\Controller;
 use Xnova\Models;
@@ -78,13 +77,13 @@ class FleetShortcutController extends Controller
 			$p = (int) $request->post('planet', 0);
 			$t = (int) $request->post('planet_type', 0);
 
-			if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld')) {
+			if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 				$g = 1;
 			}
-			if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy')) {
+			if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 				$s = 1;
 			}
-			if ($p < 1 || $p > Config::get('game.maxPlanetInSystem')) {
+			if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
 				$p = 1;
 			}
 			if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
@@ -107,13 +106,13 @@ class FleetShortcutController extends Controller
 		$p = (int) $request->input('p', 0);
 		$t = (int) $request->input('t', 0);
 
-		if ($g < 1 || $g > Config::get('game.maxGalaxyInWorld')) {
+		if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 			$g = 1;
 		}
-		if ($s < 1 || $s > Config::get('game.maxSystemInGalaxy')) {
+		if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 			$s = 1;
 		}
-		if ($p < 1 || $p > Config::get('game.maxPlanetInSystem')) {
+		if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
 			$p = 1;
 		}
 		if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
@@ -163,13 +162,13 @@ class FleetShortcutController extends Controller
 				$r[3] = (int) $request->post('p', 0);
 				$r[4] = (int) $request->post('t', 0);
 
-				if ($r[1] < 1 || $r[1] > Config::get('game.maxGalaxyInWorld')) {
+				if ($r[1] < 1 || $r[1] > config('game.maxGalaxyInWorld')) {
 					$r[1] = 1;
 				}
-				if ($r[2] < 1 || $r[2] > Config::get('game.maxSystemInGalaxy')) {
+				if ($r[2] < 1 || $r[2] > config('game.maxSystemInGalaxy')) {
 					$r[2] = 1;
 				}
-				if ($r[3] < 1 || $r[3] > Config::get('game.maxPlanetInSystem')) {
+				if ($r[3] < 1 || $r[3] > config('game.maxPlanetInSystem')) {
 					$r[3] = 1;
 				}
 				if ($r[4] != 1 && $r[4] != 2 && $r[4] != 3 && $r[4] != 5) {

@@ -72,11 +72,11 @@ class Recycling extends FleetEngine implements Mission
 
 			DB::statement("UPDATE planets SET debris_metal = debris_metal - '" . $RecycledGoods["metal"] . "', debris_crystal = debris_crystal - '" . $RecycledGoods["crystal"] . "' WHERE id = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
 
-			$this->ReturnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
+			$this->returnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
 
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), Format::number($RecycledGoods["metal"]), __('main.Metal'), Format::number($RecycledGoods["crystal"]), __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		} else {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
@@ -91,7 +91,7 @@ class Recycling extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

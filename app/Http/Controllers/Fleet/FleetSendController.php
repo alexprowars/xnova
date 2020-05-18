@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Xnova\Controller;
 use Xnova\Entity\FleetCollection;
@@ -54,8 +53,8 @@ class FleetSendController extends Controller
 			throw new ErrorException("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
 		}
 
-		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && Config::get('settings.disableAttacks', 0) > 0 && time() < Config::get('settings.disableAttacks', 0)) {
-			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('settings.disableAttacks', 0)) . "</b></span>", '/fleet/');
+		if (($fleetMission == 1 || $fleetMission == 6 || $fleetMission == 9 || $fleetMission == 2) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
+			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>", '/fleet/');
 		}
 
 		$allianceId = (int) $request->post('alliance', 0);
@@ -83,7 +82,7 @@ class FleetSendController extends Controller
 			$fleetMission = 1;
 		}
 
-		$protection = (int) Config::get('settings.noobprotection') > 0;
+		$protection = (int) config('settings.noobprotection') > 0;
 
 		if (!is_array($fleetarray)) {
 			throw new PageException("<span class=\"error\"><b>Ошибка в передаче параметров!</b></span>", "/fleet/");
@@ -205,8 +204,8 @@ class FleetSendController extends Controller
 		}
 
 		if ($protection && $targetPlanet && in_array($fleetMission, [1, 2, 5, 6, 9]) && $this->user->authlevel < 2) {
-			$protectionPoints = (int) Config::get('settings.noobprotectionPoints');
-			$protectionFactor = (int) Config::get('settings.noobprotectionFactor');
+			$protectionPoints = (int) config('settings.noobprotectionPoints');
+			$protectionFactor = (int) config('settings.noobprotectionFactor');
 
 			if ($protectionPoints <= 0) {
 				$protection = false;
@@ -330,15 +329,15 @@ class FleetSendController extends Controller
 
 		$errorlist = "";
 
-		if (!$galaxy || $galaxy > Config::get('settings.maxGalaxyInWorld') || $galaxy < 1) {
+		if (!$galaxy || $galaxy > config('settings.maxGalaxyInWorld') || $galaxy < 1) {
 			$errorlist .= __('fleet.fl_limit_galaxy');
 		}
 
-		if (!$system || $system > Config::get('settings.maxSystemInGalaxy') || $system < 1) {
+		if (!$system || $system > config('settings.maxSystemInGalaxy') || $system < 1) {
 			$errorlist .= __('fleet.fl_limit_system');
 		}
 
-		if (!$planet || $planet > (Config::get('settings.maxPlanetInSystem') + 1) || $planet < 1) {
+		if (!$planet || $planet > (config('settings.maxPlanetInSystem') + 1) || $planet < 1) {
 			$errorlist .= __('fleet.fl_limit_planet');
 		}
 

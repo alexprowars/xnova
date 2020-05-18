@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Xnova\CombatReport;
 use Xnova\Controller;
@@ -32,7 +31,7 @@ class RwController extends Controller
 		$user_list = json_decode($report->id_users, true);
 
 		if (!$this->user->isAdmin()) {
-			if (md5(Config::get('app.key') . $report->id) != $key) {
+			if (md5(config('app.key') . $report->id) != $key) {
 				throw new PageException('Не правильный ключ');
 			}
 
@@ -46,10 +45,10 @@ class RwController extends Controller
 		}
 
 		$result = json_decode($report->raport, true);
-		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5]);
+		$combatReport = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5]);
 
-		$html = $report->report()['html'];
-		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(Config::get('app.key') . $report->id) . $report->id . "/\"><font color=red>" . md5('xnovasuka' . $report->id) . $report->id . "</font></a></div>";
+		$html = $combatReport->report()['html'];
+		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(config('app.key') . $report->id) . $report->id . "/\"><font color=red>" . md5('xnovasuka' . $report->id) . $report->id . "</font></a></div>";
 
 		$this->setTitle('Боевой доклад');
 		$this->showTopPanel(false);

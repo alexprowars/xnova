@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
@@ -38,10 +37,10 @@ class CreditsController extends Controller
 
 			$parse['payment'] = [
 				'id' => $id,
-				'hash' => md5(Config::get('settings.robokassa.login') . ":" . $summ . ":" . $id . ":" . Config::get('settings.robokassa.public') . ":Shp_UID=" . $parse['id']),
+				'hash' => md5(config('settings.robokassa.login') . ":" . $summ . ":" . $id . ":" . config('settings.robokassa.public') . ":Shp_UID=" . $parse['id']),
 				'summ' => $summ,
 				'email' => $info->email,
-				'merchant' => Config::get('settings.robokassa.login'),
+				'merchant' => config('settings.robokassa.login'),
 			];
 		}
 

@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Config;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,7 +33,7 @@ class Handler extends ExceptionHandler
 				'message' => $exception->getMessage(),
 			];
 
-			$debug = Config::get('app.debug');
+			$debug = config('app.debug');
 
 			if ($debug) {
 				$data['trace'] = $exception->getTraceAsString();

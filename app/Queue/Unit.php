@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\Queue;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Config;
+namespace Xnova\Queue;
+
 use Illuminate\Support\Facades\DB;
 use Xnova\Queue;
 use Xnova\Vars;
@@ -17,17 +16,17 @@ use Xnova\Entity;
 
 class Unit
 {
-	private $_queue = null;
+	private $queue;
 
 	public function __construct(Queue $queue)
 	{
-		$this->_queue = $queue;
+		$this->queue = $queue;
 	}
 
 	public function add($elementId, $count)
 	{
-		$planet = $this->_queue->getPlanet();
-		$user = $this->_queue->getUser();
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
 
 		$context = new Entity\Context($user, $planet);
 
@@ -41,7 +40,7 @@ class Unit
 			return;
 		}
 
-		$buildItems = $this->_queue->get(Queue::TYPE_SHIPYARD);
+		$buildItems = $this->queue->get(Queue::TYPE_SHIPYARD);
 
 		if ($elementId == 502 || $elementId == 503) {
 			$Missiles = [];
@@ -113,7 +112,7 @@ class Unit
 				'level' => $count
 			]);
 
-			if (Config::get('game.log.units', false) == true) {
+			if (config('game.log.units', false) == true) {
 				DB::table('log_histories')->insert([
 					'user_id' 			=> $user->id,
 					'time' 				=> time(),

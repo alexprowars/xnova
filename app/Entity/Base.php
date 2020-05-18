@@ -3,8 +3,6 @@
 namespace Xnova\Entity;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Xnova\User;
 use Xnova\Vars;
 
 class Base
@@ -85,7 +83,7 @@ class Base
 		$cost = $this->getBasePrice();
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		$time = ($cost / Config::get('settings.game_speed')) * 3600;
+		$time = ($cost / config('settings.game_speed')) * 3600;
 
 		return max(1, $time);
 	}

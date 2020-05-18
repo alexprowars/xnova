@@ -11,7 +11,6 @@ namespace Xnova\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -673,7 +672,7 @@ class OverviewController extends Controller
 
 		$parse['links'] = (int) $this->user->links;
 		$parse['refers'] = (int) $this->user->refers;
-		$parse['noob'] = Config::get('game.noob', 0);
+		$parse['noob'] = config('game.noob', 0);
 
 		$parse['raids'] = [
 			'win' => (int) $this->user->raids_win,
@@ -710,7 +709,7 @@ class OverviewController extends Controller
 		$parse['chat'] = [];
 
 		if (Helpers::isMobile()) {
-			$chatCached = Cache::get(Config::get('chat.cache'));
+			$chatCached = Cache::get(config('chat.cache'));
 
 			if (is_string($chatCached)) {
 				$chat = json_decode($chatCached, true);
@@ -755,7 +754,7 @@ class OverviewController extends Controller
 
 				$chat = array_reverse($chat);
 
-				Cache::put(Config::get('chat.cache'), json_encode($chat), 86400);
+				Cache::put(config('chat.cache'), json_encode($chat), 86400);
 			}
 
 			if (is_array($chat) && count($chat)) {

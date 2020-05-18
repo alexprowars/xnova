@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\Missions;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Config;
+namespace Xnova\Missions;
+
 use Illuminate\Support\Facades\DB;
 use Xnova\Battle\Core\Battle;
 use Xnova\Battle\Core\Round;
@@ -41,7 +40,7 @@ class Attack extends FleetEngine implements Mission
 		$target = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
 
 		if (!isset($target->id) || !$target->id_owner || $target->destruyed > 0) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			return false;
 		}
@@ -50,7 +49,7 @@ class Attack extends FleetEngine implements Mission
 			->find((int) $this->fleet->owner);
 
 		if (!$owner) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			return false;
 		}
@@ -59,7 +58,7 @@ class Attack extends FleetEngine implements Mission
 			->find((int) $target->id_owner);
 
 		if (!$targetUser) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			return false;
 		}
@@ -282,7 +281,7 @@ class Attack extends FleetEngine implements Mission
 			}
 
 			if (!count($fleetArray)) {
-				$this->KillFleet($fleetID);
+				$this->killFleet($fleetID);
 			} else {
 				$update = [
 					'fleet_array' 	=> $fleetArray,
@@ -320,7 +319,7 @@ class Attack extends FleetEngine implements Mission
 				}
 
 				if (!count($fleetArray)) {
-					$this->KillFleet($fleetID);
+					$this->killFleet($fleetID);
 				} else {
 					Planet::query()->where('id', $fleetID)
 						->update([
@@ -445,7 +444,7 @@ class Attack extends FleetEngine implements Mission
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
 
-		if ($lost >= Config::get('settings.hallPoints', 1000000)) {
+		if ($lost >= config('settings.hallPoints', 1000000)) {
 			$sab = 0;
 
 			$UserList = [];
@@ -497,7 +496,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$raport = "<center>";
-		$raport .= '<a href="/rw/' . $ids . '/' . md5(Config::get('app.key') . $ids) . '/" target="' . (Config::get('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
+		$raport .= '<a href="/rw/' . $ids . '/' . md5(config('app.key') . $ids) . '/" target="' . (config('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
 
 		$raport .= "<font color=\"#COLOR#\">" . __('fleet_engine.sys_mess_attack_report') . " [" . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ":" . $this->fleet->end_planet . "]</font></a>";
 
@@ -572,8 +571,8 @@ class Attack extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 
 	public function getGroupFleet(FleetModel $fleet, PlayerGroup $playerGroup)
@@ -582,7 +581,7 @@ class Attack extends FleetEngine implements Mission
 
 		if (!count($fleetData)) {
 			if ($fleet->mission == 1 || ($fleet->mission == 2 && count($fleetData) == 1 && isset($fleetData[210]))) {
-				$this->ReturnFleet([], $fleet->id);
+				$this->returnFleet([], $fleet->id);
 			}
 
 			return;

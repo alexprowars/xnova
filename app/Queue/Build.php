@@ -1,40 +1,38 @@
 <?php
 
-namespace Xnova\Queue;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Config;
-use Xnova\Building;
+namespace Xnova\Queue;
+
 use Xnova\Queue;
 use Xnova\Models;
 use Xnova\Entity;
 
 class Build
 {
-	private $_queue = null;
+	private $queue;
 
 	public function __construct(Queue $queue)
 	{
-		$this->_queue = $queue;
+		$this->queue = $queue;
 	}
 
 	public function add($elementId, $destroy = false)
 	{
-		$planet = $this->_queue->getPlanet();
-		$user = $this->_queue->getUser();
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
 
-		$maxBuidSize = Config::get('settings.maxBuildingQueue', 1);
+		$maxBuidSize = config('settings.maxBuildingQueue', 1);
 
 		if ($user->rpg_constructeur > time()) {
 			$maxBuidSize += 2;
 		}
 
-		$actualCount = $this->_queue->getCount(Queue::TYPE_BUILDING);
+		$actualCount = $this->queue->getCount(Queue::TYPE_BUILDING);
 
 		if ($actualCount < $maxBuidSize) {
 			$queueID = $actualCount + 1;
@@ -48,7 +46,7 @@ class Build
 			if ($queueID > 1) {
 				$inArray = 0;
 
-				foreach ($this->_queue->get(Queue::TYPE_BUILDING) as $item) {
+				foreach ($this->queue->get(Queue::TYPE_BUILDING) as $item) {
 					if ($item->object_id == $elementId) {
 						$inArray++;
 					}
@@ -74,8 +72,8 @@ class Build
 				'level' => $build['level'] + (!$destroy ? 1 : 0) + $inArray
 			]);
 
-			$this->_queue->loadQueue();
-			$this->_queue->nextBuildingQueue();
+			$this->queue->loadQueue();
+			$this->queue->nextBuildingQueue();
 		}
 
 		return true;
@@ -83,11 +81,11 @@ class Build
 
 	public function delete($indexId)
 	{
-		$planet = $this->_queue->getPlanet();
-		$user = $this->_queue->getUser();
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
 
-		if ($this->_queue->getCount(Queue::TYPE_BUILDING)) {
-			$queueArray = $this->_queue->get(Queue::TYPE_BUILDING);
+		if ($this->queue->getCount(Queue::TYPE_BUILDING)) {
+			$queueArray = $this->queue->get(Queue::TYPE_BUILDING);
 
 			if (!isset($queueArray[$indexId])) {
 				return;
@@ -95,7 +93,7 @@ class Build
 
 			$buildItem = $queueArray[$indexId];
 
-			if (!$this->_queue->deleteInQueue($buildItem->id)) {
+			if (!$this->queue->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
 			}
 
@@ -125,8 +123,8 @@ class Build
 				}
 			}
 
-			$this->_queue->loadQueue();
-			$this->_queue->nextBuildingQueue();
+			$this->queue->loadQueue();
+			$this->queue->nextBuildingQueue();
 		}
 	}
 }

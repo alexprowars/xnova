@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Xnova\Files;
@@ -86,8 +85,8 @@ class GalaxyController extends Controller
 			}
 		}
 
-		$galaxy = min(max($galaxy, 1), Config::get('settings.maxGalaxyInWorld'));
-		$system = min(max($system, 1), Config::get('settings.maxSystemInGalaxy'));
+		$galaxy = min(max($galaxy, 1), config('settings.maxGalaxyInWorld'));
+		$system = min(max($system, 1), config('settings.maxSystemInGalaxy'));
 
 		if (!Session::has('fleet_shortcut')) {
 			$array = $this->user->getPlanets(false);

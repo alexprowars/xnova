@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Xnova\Models\Fleet;
 use Xnova\Planet;
 use Xnova\Queue;
@@ -98,7 +97,7 @@ class ImperiumController extends Controller
 				$row['resources'][$res] = [
 					'current' => $planet->{$res},
 					'production' => $planet->{$res . '_perhour'},
-					'storage' => floor((Config::get('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
+					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
 				];
 			}
 

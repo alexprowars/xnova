@@ -88,7 +88,7 @@ class Destruction extends FleetEngine implements Mission
 						if ($randChance <= $fleetDestroyChance) {
 							$ripsKilled = true;
 
-							$this->KillFleet();
+							$this->killFleet();
 
 							$debree = $this->convertFleetToDebris($fleetData);
 
@@ -145,7 +145,7 @@ class Destruction extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

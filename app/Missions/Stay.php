@@ -20,10 +20,10 @@ class Stay extends FleetEngine implements Mission
 		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type = '" . $this->fleet->end_type . "'");
 
 		if ($TargetPlanet->id_owner != $this->fleet->target_owner) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 		} else {
-			$this->RestoreFleetToPlanet(false);
-			$this->KillFleet();
+			$this->restoreFleetToPlanet(false);
+			$this->killFleet();
 
 			$TargetAddedGoods = '';
 
@@ -62,10 +62,10 @@ class Stay extends FleetEngine implements Mission
 		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->start_galaxy . "' AND system = '" . $this->fleet->start_system . "' AND planet = '" . $this->fleet->start_planet . "' AND planet_type = '" . $this->fleet->start_type . "';");
 
 		if ($TargetPlanet->id_owner != $this->fleet->owner) {
-			$this->KillFleet();
+			$this->killFleet();
 		} else {
-			$this->RestoreFleetToPlanet();
-			$this->KillFleet();
+			$this->restoreFleetToPlanet();
+			$this->killFleet();
 
 			$TargetAddedGoods = sprintf(__('fleet_engine.sys_stay_mess_goods'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 

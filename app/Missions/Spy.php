@@ -8,7 +8,6 @@
 
 namespace Xnova\Missions;
 
-use Illuminate\Support\Facades\Config;
 use Xnova\FleetEngine;
 use Xnova\Format;
 use Xnova\Models\Fleet;
@@ -26,14 +25,14 @@ class Spy extends FleetEngine implements Mission
 		$TargetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
 
 		if ($TargetPlanet->id_owner == 0) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 			return false;
 		}
 
 		$targetUser = User::query()->find($TargetPlanet->id_owner);
 
 		if (!$targetUser) {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			return false;
 		}
@@ -164,7 +163,7 @@ class Spy extends FleetEngine implements Mission
 
 			if ($fleet_link != '') {
 				$MessageEnd .= "<center>";
-				$MessageEnd .= '<a href="/sim/' . $fleet_link . '/" target="' . Config::get('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '' . '">';
+				$MessageEnd .= '<a href="/sim/' . $fleet_link . '/" target="' . config('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '' . '">';
 				$MessageEnd .= "Симуляция</a></center>";
 			}
 
@@ -186,10 +185,10 @@ class Spy extends FleetEngine implements Mission
 				$mission = new Attack($this->fleet);
 				$mission->targetEvent();
 			} else {
-				$this->ReturnFleet();
+				$this->returnFleet();
 			}
 		} else {
-			$this->ReturnFleet();
+			$this->returnFleet();
 		}
 
 		return true;
@@ -202,8 +201,8 @@ class Spy extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 
 	/**
@@ -266,7 +265,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		if ($LookAtLoop == true) {
-			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * Config::get('settings.spyReportRow', 1)) + (Config::get('settings.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
+			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * config('settings.spyReportRow', 1)) + (config('settings.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
 			$Count = 0;
 			$CurrentLook = 0;
 
@@ -301,7 +300,7 @@ class Spy extends FleetEngine implements Mission
 						$Count += $Item < 600 ? $level : 1;
 						$row++;
 
-						if ($row == Config::get('settings.spyReportRow', 1)) {
+						if ($row == config('settings.spyReportRow', 1)) {
 							$String .= "</tr>";
 							$row = 0;
 						}
@@ -312,7 +311,7 @@ class Spy extends FleetEngine implements Mission
 					$String .= "<th width=40%>&nbsp;</th><th width=10%>&nbsp;</th>";
 					$row++;
 
-					if ($row == Config::get('settings.spyReportRow', 1)) {
+					if ($row == config('settings.spyReportRow', 1)) {
 						$String .= "</tr>";
 						$row = 0;
 					}

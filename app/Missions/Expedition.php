@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Missions;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
+
+namespace Xnova\Missions;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +27,7 @@ class Expedition extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$this->StayFleet();
+		$this->stayFleet();
 	}
 
 	public function endStayEvent()
@@ -75,13 +75,13 @@ class Expedition extends FleetEngine implements Mission
 				$FindSize = mt_rand(0, 100);
 
 				if (10 < $FindSize) {
-					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(10, 50) / $WitchFound) *  (1 + (config('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_1_' . mt_rand(1, 4));
 				} elseif (0 < $FindSize && 10 >= $FindSize) {
-					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(50, 100) / $WitchFound) * (1 + (config('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_2_' . mt_rand(1, 3));
 				} else {
-					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (Config::get('settings.resource_multiplier') - 1) / 10);
+					$Factor = (mt_rand(100, 200) / $WitchFound) * (1 + (config('settings.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_3_' . mt_rand(1, 2));
 				}
 
@@ -101,7 +101,7 @@ class Expedition extends FleetEngine implements Mission
 						break;
 				}
 
-				$this->ReturnFleet($update);
+				$this->returnFleet($update);
 
 				break;
 
@@ -120,7 +120,7 @@ class Expedition extends FleetEngine implements Mission
 				Models\User::query()->where('id', $this->fleet->owner)
 					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
-				$this->ReturnFleet();
+				$this->returnFleet();
 
 				break;
 
@@ -180,7 +180,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$Message .= $FoundShipMess;
 
-				$this->ReturnFleet(['fleet_array' => json_encode($NewFleetArray)]);
+				$this->returnFleet(['fleet_array' => json_encode($NewFleetArray)]);
 
 				break;
 
@@ -337,7 +337,7 @@ class Expedition extends FleetEngine implements Mission
 					}
 
 					if (count($fleetArray)) {
-						$this->KillFleet($fleetID);
+						$this->killFleet($fleetID);
 					} else {
 						Models\Fleet::query()->where('id', $fleetID)
 							->update([
@@ -388,14 +388,14 @@ class Expedition extends FleetEngine implements Mission
 						$ColorDef = "red";
 						break;
 				}
-				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5(Config::get('app.key') . $ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
+				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $ids, md5(config('app.key') . $ids), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
 
 				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 3, __('fleet_engine.sys_mess_tower'), $MessageAtt);
 
 				break;
 
 			case 5:
-				$this->KillFleet();
+				$this->killFleet();
 
 				$Message = __('fleet_engine.sys_expe_lost_fleet_' . mt_rand(1, 4));
 
@@ -425,12 +425,12 @@ class Expedition extends FleetEngine implements Mission
 					$Message = __('fleet_engine.sys_expe_time_fast_' . mt_rand(1, 3));
 				}
 
-				$this->ReturnFleet();
+				$this->returnFleet();
 
 				break;
 
 			default:
-				$this->ReturnFleet();
+				$this->returnFleet();
 
 				$Message = __('fleet_engine.sys_expe_nothing_' . mt_rand(1, 8));
 		}
@@ -444,7 +444,7 @@ class Expedition extends FleetEngine implements Mission
 
 		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 15, __('fleet_engine.sys_expe_report'), $Message);
 
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

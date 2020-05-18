@@ -3,7 +3,6 @@
 namespace Xnova;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Xnova\User as UsersModel;
 use Xnova\Planet\Build;
@@ -89,7 +88,7 @@ class Planet extends Models\Planet
 		$fields = (int) $this->field_max;
 
 		$fields += $this->getBuildLevel('terraformer') * 5;
-		$fields += Config::get('settings.fieldsByMoonBase', 0) * $this->getBuildLevel('moonbase');
+		$fields += config('settings.fieldsByMoonBase', 0) * $this->getBuildLevel('moonbase');
 
 		return $fields;
 	}
@@ -113,7 +112,7 @@ class Planet extends Models\Planet
 		$this->planet_updated = true;
 
 		foreach (Vars::getResources() as $res) {
-			$this->{$res . '_max'}  = floor((Config::get('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'));
+			$this->{$res . '_max'}  = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'));
 		}
 
 		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));
@@ -129,7 +128,7 @@ class Planet extends Models\Planet
 
 		if ($this->energy_max == 0) {
 			foreach (Vars::getResources() as $res) {
-				$this->{$res . '_perhour'} = Config::get('settings.' . $res . '_basic_income', 0);
+				$this->{$res . '_perhour'} = config('settings.' . $res . '_basic_income', 0);
 			}
 
 			$this->production_level = 0;
@@ -168,7 +167,7 @@ class Planet extends Models\Planet
 				$this->{$res . '_production'} = ($productionTime * ($this->{$res . '_perhour'} / 3600)) * (0.01 * $this->production_level);
 
 				if (!$this->user->isVacation()) {
-					$this->{$res . '_base'} = ($productionTime * (Config::get('settings.' . $res . '_basic_income', 0) / 3600)) * Config::get('settings.resource_multiplier', 1);
+					$this->{$res . '_base'} = ($productionTime * (config('settings.' . $res . '_basic_income', 0) / 3600)) * config('settings.resource_multiplier', 1);
 				} else {
 					$this->{$res . '_base'} = 0;
 				}
@@ -210,7 +209,7 @@ class Planet extends Models\Planet
 
 		if (in_array($this->planet_type, [3, 5])) {
 			foreach (Vars::getResources() as $res) {
-				Config::set('settings.' . $res . '_basic_income', 0);
+				config(['settings.' . $res . '_basic_income' => 0]);
 			}
 
 			return;
@@ -263,7 +262,8 @@ class Planet extends Models\Planet
 		}
 	}
 
-	public function getResourceProductionLevel($Element, /** @noinspection PhpUnusedParameterInspection */$BuildLevel, /** @noinspection PhpUnusedParameterInspection */$BuildLevelFactor = 10)
+	/** @noinspection PhpUnusedParameterInspection */
+	public function getResourceProductionLevel($Element, $BuildLevel, $BuildLevelFactor = 10)
 	{
 		if ($BuildLevelFactor > 10) {
 			/** @noinspection PhpUnusedLocalVariableInspection */
@@ -291,7 +291,7 @@ class Planet extends Models\Planet
 
 		foreach (Vars::getResources() as $res) {
 			if (isset($production[$res])) {
-				$return[$res] = floor(eval($production[$res]) * Config::get('settings.resource_multiplier') * $this->user->bonusValue($res));
+				$return[$res] = floor(eval($production[$res]) * config('settings.resource_multiplier') * $this->user->bonusValue($res));
 			}
 		}
 
@@ -375,7 +375,7 @@ class Planet extends Models\Planet
 			];
 
 			if (!$user->isVacation()) {
-				$data[$res]['production'] = $this->{$res . '_perhour'} + floor(Config::get('settings.' . $res . '_basic_income', 0) * Config::get('settings.resource_multiplier', 1));
+				$data[$res]['production'] = $this->{$res . '_perhour'} + floor(config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1));
 			}
 		}
 

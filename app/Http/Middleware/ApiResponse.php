@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,8 +67,8 @@ class ApiResponse
 			'stats' => [
 				'time' => time(),
 				'timezone' => (int) date('Z'),
-				'online' => (int) Config::get('settings.users_online', 0),
-				'users' => (int) Config::get('settings.users_total', 0),
+				'online' => (int) config('settings.users_online', 0),
+				'users' => (int) config('settings.users_total', 0),
 			],
 			'title' => $controller->getTitle(),
 			'url' => str_replace('/' . $route->getPrefix(), '', $request->getPathInfo()),
@@ -122,7 +121,7 @@ class ApiResponse
 			$result['resources'] = $planet->getTopPanelRosources();
 		}
 
-		$globalMessage = Config::get('settings.newsMessage', '');
+		$globalMessage = config('settings.newsMessage', '');
 
 		if ($globalMessage != '') {
 			$result['messages'][] = [
@@ -223,8 +222,8 @@ class ApiResponse
 		}
 
 		$result['chat'] = [
-			'key' => md5($user->getId() . '|' . $user->username . Config::get('chat.key')),
-			'server' => Config::get('chat.host') . ':' . Config::get('chat.port'),
+			'key' => md5($user->getId() . '|' . $user->username . config('chat.key')),
+			'server' => config('chat.host') . ':' . config('chat.port'),
 		];
 
 		$result['speed'] = [

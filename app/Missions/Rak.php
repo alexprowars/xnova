@@ -18,7 +18,7 @@ class Rak extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$this->KillFleet();
+		$this->killFleet();
 
 		$targetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, 1);
 

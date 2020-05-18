@@ -9,7 +9,6 @@
 namespace Xnova;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -34,13 +33,13 @@ class Game
 	public static function getSpeed($type = '')
 	{
 		if ($type == 'fleet') {
-			return (int) Config::get('settings.fleet_speed', 2500) / 2500;
+			return (int) config('settings.fleet_speed', 2500) / 2500;
 		}
 		if ($type == 'mine') {
-			return (int) Config::get('settings.resource_multiplier', 1);
+			return (int) config('settings.resource_multiplier', 1);
 		}
 		if ($type == 'build') {
-			return round((int) Config::get('settings.game_speed', 2500) / 2500, 1);
+			return round((int) config('settings.game_speed', 2500) / 2500, 1);
 		}
 
 		return 1;

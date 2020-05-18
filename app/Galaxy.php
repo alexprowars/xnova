@@ -10,7 +10,6 @@ namespace Xnova;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Config;
 use Xnova\Models\Planet;
 use Xnova\Models\User as UserModel;
 
@@ -23,7 +22,7 @@ class Galaxy
 		$Planet = Setting::get('LastSettedPlanetPos');
 
 		do {
-			$free = self::getFreePositions($Galaxy, $System, round(Config::get('settings.maxPlanetInSystem') * 0.2), round(Config::get('settings.maxPlanetInSystem') * 0.8));
+			$free = self::getFreePositions($Galaxy, $System, round(config('settings.maxPlanetInSystem') * 0.2), round(config('settings.maxPlanetInSystem') * 0.8));
 
 			if (count($free) > 0) {
 				$position = $free[array_rand($free)];
@@ -31,15 +30,15 @@ class Galaxy
 				$position = 0;
 			}
 
-			if ($position > 0 && $Planet < Config::get('settings.maxRegPlanetsInSystem', 3)) {
+			if ($position > 0 && $Planet < config('settings.maxRegPlanetsInSystem', 3)) {
 				$Planet += 1;
 			} else {
 				$Planet = 1;
 
-				if ($System >= Config::get('settings.maxSystemInGalaxy')) {
+				if ($System >= config('settings.maxSystemInGalaxy')) {
 					$System = 1;
 
-					if ($Galaxy >= Config::get('settings.maxGalaxyInWorld')) {
+					if ($Galaxy >= config('settings.maxGalaxyInWorld')) {
 						$Galaxy = 1;
 					} else {
 						$Galaxy += 1;
@@ -77,9 +76,9 @@ class Galaxy
 		if ($this->isPositionFree($Galaxy, $System, $Position)) {
 			$planet = $this->sizeRandomiser($Position, $HomeWorld, $Base);
 
-			$planet->metal 		= Config::get('settings.baseMetalProduction');
-			$planet->crystal 	= Config::get('settings.baseCristalProduction');
-			$planet->deuterium 	= Config::get('settings.baseDeuteriumProduction');
+			$planet->metal 		= config('settings.baseMetalProduction');
+			$planet->crystal 	= config('settings.baseCristalProduction');
+			$planet->deuterium 	= config('settings.baseDeuteriumProduction');
 
 			$planet->galaxy = $Galaxy;
 			$planet->system = $System;
@@ -208,11 +207,11 @@ class Galaxy
 		$planet = new Planet();
 
 		if ($HomeWorld) {
-			$planet->field_max = (int) Config::get('settings.initial_fields', 163);
+			$planet->field_max = (int) config('settings.initial_fields', 163);
 		} elseif ($Base) {
-			$planet->field_max = (int) Config::get('settings.initial_base_fields', 10);
+			$planet->field_max = (int) config('settings.initial_base_fields', 10);
 		} else {
-			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) Config::get('settings.planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) config('settings.planetFactor', 1));
 		}
 
 		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));

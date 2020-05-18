@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Nutnet\LaravelSms\SmsSender;
 use Xnova\Exceptions\ErrorException;
@@ -52,7 +51,7 @@ class SupportController extends Controller
 		}
 
 		app(SmsSender::class)
-			->send(Config::get('game.sms.login'), 'Создан новый тикет №' . $ticket->id . ' (' . $this->user->username . ')');
+			->send(config('game.sms.login'), 'Создан новый тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 
 		throw new SuccessException('Задача добавлена');
 	}
@@ -87,7 +86,7 @@ class SupportController extends Controller
 
 		if ($ticket->status == 2) {
 			app(SmsSender::class)
-				->send(Config::get('game.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' (' . $this->user->username . ')');
+				->send(config('game.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 		}
 
 		throw new SuccessException('Задача обновлена');

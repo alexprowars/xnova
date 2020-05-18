@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
 use Xnova\Exceptions\SuccessException;
@@ -45,11 +44,11 @@ class FleetQuickController extends Controller
 
 		if ($MaxFlottes <= $maxfleet) {
 			throw new Exception('Все слоты флота заняты');
-		} elseif ($galaxy > Config::get('settings.maxGalaxyInWorld') || $galaxy < 1) {
+		} elseif ($galaxy > config('settings.maxGalaxyInWorld') || $galaxy < 1) {
 			throw new Exception('Ошибочная галактика!');
-		} elseif ($system > Config::get('settings.maxSystemInGalaxy') || $system < 1) {
+		} elseif ($system > config('settings.maxSystemInGalaxy') || $system < 1) {
 			throw new Exception('Ошибочная система!');
-		} elseif ($planet > Config::get('settings.maxPlanetInSystem') || $planet < 1) {
+		} elseif ($planet > config('settings.maxPlanetInSystem') || $planet < 1) {
 			throw new Exception('Ошибочная планета!');
 		} elseif ($planetType != 1 && $planetType != 2 && $planetType != 3 && $planetType != 5) {
 			throw new Exception('Ошибочный тип планеты!');
@@ -72,8 +71,8 @@ class FleetQuickController extends Controller
 			throw new Exception('Цели не существует!');
 		}
 
-		if (in_array($mission, [1, 2, 6, 9]) && Config::get('settings.disableAttacks', 0) > 0 && time() < Config::get('settings.disableAttacks', 0)) {
-			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('settings.disableAttacks', 0)) . "</b></span>");
+		if (in_array($mission, [1, 2, 6, 9]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
+			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>");
 		}
 
 		$FleetArray = [];
@@ -119,8 +118,8 @@ class FleetQuickController extends Controller
 
 			if ($this->user->authlevel != 3) {
 				if ($NoobNoActive == 0) {
-					$protectionPoints = (int) Config::get('settings.noobprotectionPoints');
-					$protectionFactor = (int) Config::get('settings.noobprotectionFactor');
+					$protectionPoints = (int) config('settings.noobprotectionPoints');
+					$protectionFactor = (int) config('settings.noobprotectionFactor');
 
 					if ($HeGameLevel < $protectionPoints) {
 						throw new Exception('Игрок находится под защитой новичков!');

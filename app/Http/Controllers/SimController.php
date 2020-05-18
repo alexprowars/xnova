@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Xnova\Controller;
 use Xnova\Vars;
 
@@ -24,7 +23,7 @@ class SimController extends Controller
 	{
 		$data = explode(";", $data);
 
-		$maxSlots = Config::get('settings.maxSlotsInSim', 5);
+		$maxSlots = config('settings.maxSlotsInSim', 5);
 
 		$parse = [];
 		$parse['slots'] = [

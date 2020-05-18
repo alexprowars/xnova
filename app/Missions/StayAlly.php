@@ -15,7 +15,7 @@ class StayAlly extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$this->StayFleet();
+		$this->stayFleet();
 
 		$Message = sprintf(__('fleet_engine.sys_stay_mess_user'), $this->fleet->owner_name, $this->fleet->getStartAdressLink(), $this->fleet->target_owner_name, $this->fleet->getTargetAdressLink());
 
@@ -24,12 +24,12 @@ class StayAlly extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		$this->ReturnFleet();
+		$this->returnFleet();
 	}
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }

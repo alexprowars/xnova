@@ -12,7 +12,6 @@ use Gumlet\ImageResize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -150,7 +149,7 @@ class OptionsController extends Controller
 					throw new ErrorException('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
 					if ($this->user->vacation == 0) {
-						$vacation = time() + Config::get('game.vocationModeTime', 172800);
+						$vacation = time() + config('game.vocationModeTime', 172800);
 					} else {
 						$vacation = $this->user->vacation;
 					}
@@ -321,7 +320,7 @@ class OptionsController extends Controller
 		$userInfo = Models\Account::query()->find($this->user->id);
 
 		$parse = [];
-		$parse['social'] = Config::get('game.view.socialIframeView', 0) > 0;
+		$parse['social'] = config('game.view.socialIframeView', 0) > 0;
 		$parse['vacation'] = $this->user->vacation > 0;
 
 		if ($this->user->vacation > 0) {

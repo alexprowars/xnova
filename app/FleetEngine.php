@@ -8,19 +8,18 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\Config;
 use Xnova\Models;
 
 class FleetEngine
 {
 	public $fleet;
 
-	function __construct(Models\Fleet $Fleet)
+	public function __construct(Models\Fleet $Fleet)
 	{
 		$this->fleet = $Fleet;
 	}
 
-	public function KillFleet($fleetId = false)
+	public function killFleet($fleetId = false)
 	{
 		if (!$fleetId) {
 			$fleetId = $this->fleet->id;
@@ -29,7 +28,7 @@ class FleetEngine
 		Models\Fleet::query()->where('id', $fleetId)->delete();
 	}
 
-	public function RestoreFleetToPlanet($Start = true, $fleet = true)
+	public function restoreFleetToPlanet($Start = true, $fleet = true)
 	{
 		if (!isset($this->fleet->id)) {
 			return;
@@ -95,7 +94,7 @@ class FleetEngine
 		}
 	}
 
-	public function StoreGoodsToPlanet($Start = true)
+	public function storeGoodsToPlanet($Start = true)
 	{
 		if (!isset($this->fleet->id)) {
 			return;
@@ -122,7 +121,7 @@ class FleetEngine
 			->update($update);
 	}
 
-	public function ReturnFleet($update = [], $fleetId = false)
+	public function returnFleet($update = [], $fleetId = false)
 	{
 		$update['mess'] = 1;
 		$update['update_time'] = $this->fleet->end_time;
@@ -139,7 +138,7 @@ class FleetEngine
 		}
 	}
 
-	public function StayFleet($update = [])
+	public function stayFleet($update = [])
 	{
 		$update['mess'] = 3;
 		$update['update_time'] = $this->fleet->end_stay;
@@ -155,11 +154,11 @@ class FleetEngine
 			$res = Vars::getItemPrice($fleetId);
 
 			if (isset($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * Config::get('settings.fleetDebrisRate', 0));
+				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * config('settings.fleetDebrisRate', 0));
 			}
 
 			if (isset($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * Config::get('settings.fleetDebrisRate', 0));
+				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * config('settings.fleetDebrisRate', 0));
 			}
 		}
 

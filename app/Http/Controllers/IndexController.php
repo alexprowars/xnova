@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
@@ -59,7 +58,7 @@ class IndexController extends Controller
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
-					'secret' => Config::get('settings.recaptcha->secret_key'),
+					'secret' => config('settings.recaptcha->secret_key'),
 					'response' => $request->post('captcha'),
 					'remoteip' => $request->ip()
 				]));
@@ -92,7 +91,7 @@ class IndexController extends Controller
 		$this->setTitle('Регистрация');
 
 		return [
-			'captcha' => Config::get('settings.recaptcha.public_key'),
+			'captcha' => config('settings.recaptcha.public_key'),
 			'errors' => $errors
 		];
 	}

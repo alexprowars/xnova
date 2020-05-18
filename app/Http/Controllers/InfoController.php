@@ -8,12 +8,9 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
-use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\SuccessException;
-use Xnova\Fleet;
 use Xnova\Models;
 use Xnova\Controller;
 use Xnova\Vars;
@@ -132,7 +129,7 @@ class InfoController extends Controller
 					}
 				}
 			} elseif ($buildId >= 22 && $buildId <= 24) {
-				$row['range'] = floor((Config::get('game.baseStorageSize') + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
+				$row['range'] = floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
 			} else {
 				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
 			}

@@ -9,7 +9,6 @@
 namespace Xnova;
 
 use Backpack\Settings\app\Models\Setting;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Xnova\Mail\UserDelete;
@@ -240,10 +239,10 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, accounts i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - Config::get('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, accounts i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		foreach ($list as $user) {
-			DB::statement("UPDATE users SET `deltime` = '" . (time() + Config::get('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
+			DB::statement("UPDATE users SET `deltime` = '" . (time() + config('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
 
 			if (Helpers::is_email($user->email)) {
 				Mail::to($user->email)->send(new UserDelete([

@@ -9,8 +9,6 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\CombatReport;
 use Xnova\Controller;
@@ -110,7 +108,7 @@ class LogController extends Controller
 		$key = substr($code, 0, 32);
 		$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
-		if (md5(Config::get('app.key') . $id) != $key) {
+		if (md5(config('app.key') . $id) != $key) {
 			throw new RedirectException('Неправильный ключ', '/log/');
 		}
 

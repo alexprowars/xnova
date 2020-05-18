@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\Queue;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\Config;
+namespace Xnova\Queue;
+
 use Illuminate\Support\Facades\DB;
 use Xnova\Planet;
 use Xnova\Queue;
@@ -18,17 +17,17 @@ use Xnova\Entity;
 
 class Tech
 {
-	private $_queue = null;
+	private $queue;
 
 	public function __construct(Queue $queue)
 	{
-		$this->_queue = $queue;
+		$this->queue = $queue;
 	}
 
 	public function add($elementId)
 	{
-		$planet = $this->_queue->getPlanet();
-		$user = $this->_queue->getUser();
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
 
 		$techHandle = Models\Queue::query()
 			->where('user_id', $user->id)
@@ -64,7 +63,7 @@ class Tech
 					'level' => $user->getTechLevel($elementId) + 1
 				]);
 
-				if (Config::get('game.log.research', false) == true) {
+				if (config('game.log.research', false) == true) {
 					DB::table('log_histories')->insert([
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
@@ -86,7 +85,7 @@ class Tech
 
 	public function delete($elementId)
 	{
-		$user = $this->_queue->getUser();
+		$user = $this->queue->getUser();
 
 		$techHandle = Models\Queue::query()
 			->where('user_id', $user->id)
@@ -106,9 +105,9 @@ class Tech
 			$planet->update();
 
 			$techHandle->delete();
-			$this->_queue->loadQueue();
+			$this->queue->loadQueue();
 
-			if (Config::get('game.log.research', false) == true) {
+			if (config('game.log.research', false) == true) {
 				DB::table('log_histories')->insert([
 					'user_id' 			=> $user->getId(),
 					'time' 				=> time(),

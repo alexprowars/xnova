@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
@@ -92,9 +91,9 @@ class FleetController extends Controller
 			'planet_type' => (int) $type,
 		];
 
-		$parse['galaxy_max'] = (int) Config::get('settings.maxGalaxyInWorld');
-		$parse['system_max'] = (int) Config::get('settings.maxSystemInGalaxy');
-		$parse['planet_max'] = (int) Config::get('settings.maxPlanetInSystem') + 1;
+		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
+		$parse['system_max'] = (int) config('settings.maxSystemInGalaxy');
+		$parse['planet_max'] = (int) config('settings.maxPlanetInSystem') + 1;
 
 		$parse['shortcuts'] = [];
 

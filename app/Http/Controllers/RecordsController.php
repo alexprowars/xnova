@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use Xnova\Format;
 use Xnova\Controller;
 
@@ -67,7 +66,7 @@ class RecordsController extends Controller
 
 		$parse = [
 			'items' => $Records,
-			'update' => Config::get('game.stat_update'),
+			'update' => config('game.stat_update'),
 		];
 
 		$this->setTitle('Таблица рекордов');

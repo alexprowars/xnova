@@ -5,7 +5,6 @@ namespace Xnova;
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -43,6 +42,7 @@ class User extends Models\User
 	private $optionsData = [];
 	private $bonusData = null;
 	public $ally = [];
+	/** @var Planet */
 	private $planet;
 	public $message_block;
 	public $deltime;
@@ -208,28 +208,28 @@ class User extends Models\User
 
 		$giveCredits = 0;
 
-		if ($this->xpminier >= $indNextXp && $this->lvl_minier < Config::get('settings.level.max_ind', 100)) {
+		if ($this->xpminier >= $indNextXp && $this->lvl_minier < config('settings.level.max_ind', 100)) {
 			$this->lvl_minier++;
-			$this->credits += Config::get('settings.level.credits', 10);
+			$this->credits += config('settings.level.credits', 10);
 			$this->xpminier -= $indNextXp;
 
 			$this->update();
 
 			self::sendMessage($this->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
-			$giveCredits += Config::get('settings.level.credits', 10);
+			$giveCredits += config('settings.level.credits', 10);
 		}
 
-		if ($this->xpraid >= $warNextXp && $this->lvl_raid < Config::get('game.level.max_war', 100)) {
+		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('game.level.max_war', 100)) {
 			$this->lvl_raid++;
-			$this->credits += Config::get('game.level.credits', 10);
+			$this->credits += config('game.level.credits', 10);
 			$this->xpraid -= $warNextXp;
 
 			$this->update();
 
 			User::sendMessage($this->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
-			$giveCredits += Config::get('game.level.credits', 10);
+			$giveCredits += config('game.level.credits', 10);
 		}
 
 		if ($giveCredits != 0) {

@@ -39,7 +39,7 @@ class CreateBase extends FleetEngine implements Mission
 
 				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
-				$this->ReturnFleet();
+				$this->returnFleet();
 			} else {
 				// Создание планеты-базы
 				$NewOwnerPlanet = $galaxy->createPlanet($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->owner, __('fleet_engine.sys_base_defaultname'), false, true);
@@ -65,12 +65,12 @@ class CreateBase extends FleetEngine implements Mission
 					$this->fleet->fleet_array = $newFleet;
 					$this->fleet->end_type = 5;
 
-					$this->RestoreFleetToPlanet(false);
-					$this->KillFleet();
+					$this->restoreFleetToPlanet(false);
+					$this->killFleet();
 
 					Cache::forget('app::planetlist_' . $this->fleet->owner);
 				} else {
-					$this->ReturnFleet();
+					$this->returnFleet();
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
@@ -78,7 +78,7 @@ class CreateBase extends FleetEngine implements Mission
 				}
 			}
 		} else {
-			$this->ReturnFleet();
+			$this->returnFleet();
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 
@@ -93,7 +93,7 @@ class CreateBase extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$this->RestoreFleetToPlanet();
-		$this->KillFleet();
+		$this->restoreFleetToPlanet();
+		$this->killFleet();
 	}
 }
