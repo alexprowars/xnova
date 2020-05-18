@@ -114,7 +114,6 @@ class ApiResponse
 			return;
 		}
 
-		/** @var User $user */
 		$user = Auth::user();
 
 		$planet = $user->getCurrentPlanet();

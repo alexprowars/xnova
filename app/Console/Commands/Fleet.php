@@ -32,7 +32,7 @@ class Fleet extends Command
 
 		$missionObjPattern = [
 			1	=> 'Attack',
-			2   => 'ACS',
+			2   => 'Assault',
 			3   => 'Transport',
 			4   => 'Stay',
 			5   => 'StayAlly',
@@ -67,7 +67,6 @@ class Fleet extends Command
 				->get();
 
 			if ($_fleets->count()) {
-				/** @var Models\Fleet $fleetRow */
 				foreach ($_fleets as $fleetRow) {
 					if (!isset($missionObjPattern[$fleetRow->mission])) {
 						$fleetRow->delete();

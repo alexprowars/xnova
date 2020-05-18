@@ -313,7 +313,6 @@ class User extends Models\User
 		}
 
 		if ($this->planet_current && $this->planet_id) {
-			/** @var Planet $planet */
 			$planet = Planet::query()->find($this->planet_current);
 
 			if (!$planet && $this->planet_id > 0) {
@@ -383,7 +382,6 @@ class User extends Models\User
 			$time = time();
 		}
 
-		/** @var self|bool $user */
 		$user = Auth::check() ? Auth::user() : false;
 
 		if (!$owner && $user) {
@@ -435,7 +433,6 @@ class User extends Models\User
 
 	public static function deleteById(int $userId)
 	{
-		/** @var Models\User $userInfo */
 		$userInfo = Models\User::query()->find((int) $userId, ['id', 'ally_id']);
 
 		if (!$userInfo) {
@@ -443,7 +440,6 @@ class User extends Models\User
 		}
 
 		if ($userInfo->ally_id > 0) {
-			/** @var Alliance $ally */
 			$ally = Alliance::query()->find($userInfo->ally_id);
 
 			if ($ally) {
@@ -538,7 +534,6 @@ class User extends Models\User
 		}
 
 		return DB::transaction(function () use ($data) {
-			/** @var Models\User $user */
 			$user = Models\User::query()->create([
 				'username' 		=> $data['name'] ?? '',
 				'sex' 			=> 0,
@@ -560,7 +555,6 @@ class User extends Models\User
 			]);
 
 			if (Session::has('ref')) {
-				/** @var Models\User $refer */
 				$refer = Models\User::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {

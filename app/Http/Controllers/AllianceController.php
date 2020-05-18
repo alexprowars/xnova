@@ -8,9 +8,9 @@
 
 namespace Xnova\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\ErrorException;
@@ -41,17 +41,16 @@ class AllianceController extends Controller
 
 	private function parseInfo($allyId)
 	{
-		/** @var Alliance $ally */
-		$ally = Alliance::query()->find($allyId);
+		$alliance = Alliance::query()->find($allyId);
 
-		if (!$ally) {
+		if (!$alliance) {
 			Models\User::query()->where('id', $this->user->id)->update(['ally_id' => 0]);
 			Models\AllianceMember::query()->where('u_id', $this->user->id)->delete();
 
 			throw new RedirectException(__('alliance.ally_notexist'), '/alliance/');
 		}
 
-		$this->ally = $ally;
+		$this->ally = $alliance;
 		$this->ally->getMember($this->user->id);
 		$this->ally->getRanks();
 
@@ -67,10 +66,10 @@ class AllianceController extends Controller
 		}
 	}
 
-	private function noAlly()
+	private function noAlly(Request $request)
 	{
-		if (Request::post('bcancel') && Request::post('r_id')) {
-			DB::statement("DELETE FROM alliance_requests WHERE a_id = " . intval(Request::post('r_id')) . " AND u_id = " . $this->user->id);
+		if ($request->post('bcancel') && $request->post('r_id')) {
+			DB::statement("DELETE FROM alliance_requests WHERE a_id = " . intval($request->post('r_id')) . " AND u_id = " . $this->user->id);
 
 			throw new RedirectException("Вы отозвали свою заявку на вступление в альянс", "/alliance/");
 		}
@@ -99,14 +98,14 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 		if (!Auth::check()) {
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
 		if ($this->user->ally_id == 0) {
-			return $this->noAlly();
+			return $this->noAlly($request);
 		} else {
 			$this->parseInfo($this->user->ally_id);
 
@@ -167,7 +166,7 @@ class AllianceController extends Controller
 		}
 	}
 
-	public function admin()
+	public function admin(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -175,18 +174,18 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		$t = (int) Request::query('t', 1);
+		$t = (int) $request->query('t', 1);
 
 		if ($t != 1 && $t != 2 && $t != 3) {
 			$t = 1;
 		}
 
-		if (Request::post('options')) {
-			$this->ally->owner_range = Helpers::checkString(Request::post('owner_range', ''), true);
-			$this->ally->web = Helpers::checkString(Request::post('web', ''), true);
+		if ($request->post('options')) {
+			$this->ally->owner_range = Helpers::checkString($request->post('owner_range', ''), true);
+			$this->ally->web = Helpers::checkString($request->post('web', ''), true);
 
-			if (Request::instance()->hasFile('image')) {
-				$file = Request::instance()->file('image');
+			if ($request->hasFile('image')) {
+				$file = $request->file('image');
 
 				if ($file->isValid()) {
 					$fileType = $file->getMimeType();
@@ -203,26 +202,26 @@ class AllianceController extends Controller
 				}
 			}
 
-			if (Request::post('delete_image')) {
+			if ($request->post('delete_image')) {
 				if (Files::delete($this->ally->image)) {
 					$this->ally->image = 0;
 				}
 			}
 
-			$this->ally->request_notallow = (int) Request::post('request_notallow', 0);
+			$this->ally->request_notallow = (int) $request->post('request_notallow', 0);
 
 			if ($this->ally->request_notallow != 0 && $this->ally->request_notallow != 1) {
 				throw new ErrorException("Недопустимое значение атрибута!");
 			}
 
 			$this->ally->update();
-		} elseif (Request::post('t')) {
+		} elseif ($request->post('t')) {
 			if ($t == 3) {
-				$this->ally->request = Format::text(Request::post('text', ''));
+				$this->ally->request = Format::text($request->post('text', ''));
 			} elseif ($t == 2) {
-				$this->ally->text = Format::text(Request::post('text', ''));
+				$this->ally->text = Format::text($request->post('text', ''));
 			} else {
-				$this->ally->description = Format::text(Request::post('text', ''));
+				$this->ally->description = Format::text($request->post('text', ''));
 			}
 
 			$this->ally->update();
@@ -270,15 +269,15 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function adminRights()
+	public function adminRights(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
 		if (!$this->ally->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
 			throw new ErrorException(__('alliance.Denied_access'));
-		} elseif (!empty(Request::post('newrangname'))) {
+		} elseif (!empty($request->post('newrangname'))) {
 			$this->ally->ranks[] = [
-				'name' => strip_tags(Request::post('newrangname')),
+				'name' => strip_tags($request->post('newrangname')),
 				Alliance::CAN_DELETE_ALLIANCE => 0,
 				Alliance::CAN_KICK => 0,
 				Alliance::REQUEST_ACCESS => 0,
@@ -293,32 +292,32 @@ class AllianceController extends Controller
 			];
 
 			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
-		} elseif (Request::post('id') && is_array(Request::post('id'))) {
+		} elseif ($request->post('id') && is_array($request->post('id'))) {
 			$ally_ranks_new = [];
 
-			foreach (Request::post('id') as $id) {
+			foreach ($request->post('id') as $id) {
 				$name = $this->ally->ranks[$id]['name'];
 
 				$ally_ranks_new[$id]['name'] = $name;
 
-				$ally_ranks_new[$id][Alliance::CAN_DELETE_ALLIANCE] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r0') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_DELETE_ALLIANCE]);
-				$ally_ranks_new[$id][Alliance::CAN_KICK] = ($this->ally->owner == $this->user->id ? (Request::post('u' . $id . 'r1') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_KICK]);
-				$ally_ranks_new[$id][Alliance::REQUEST_ACCESS] = Request::post('u' . $id . 'r2') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST] = Request::post('u' . $id . 'r3') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_ACCEPT] = Request::post('u' . $id . 'r4') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::ADMIN_ACCESS] = Request::post('u' . $id . 'r5') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS] = Request::post('u' . $id . 'r6') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CHAT_ACCESS] = Request::post('u' . $id . 'r7') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_EDIT_RIGHTS] = Request::post('u' . $id . 'r8') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::DIPLOMACY_ACCESS] = Request::post('u' . $id . 'r9') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::PLANET_ACCESS] = Request::post('u' . $id . 'r10') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_DELETE_ALLIANCE] = ($this->ally->owner == $this->user->id ? ($request->post('u' . $id . 'r0') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_DELETE_ALLIANCE]);
+				$ally_ranks_new[$id][Alliance::CAN_KICK] = ($this->ally->owner == $this->user->id ? ($request->post('u' . $id . 'r1') ? 1 : 0) : $this->ally->ranks[$id][Alliance::CAN_KICK]);
+				$ally_ranks_new[$id][Alliance::REQUEST_ACCESS] = $request->post('u' . $id . 'r2') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST] = $request->post('u' . $id . 'r3') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_ACCEPT] = $request->post('u' . $id . 'r4') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::ADMIN_ACCESS] = $request->post('u' . $id . 'r5') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS] = $request->post('u' . $id . 'r6') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CHAT_ACCESS] = $request->post('u' . $id . 'r7') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::CAN_EDIT_RIGHTS] = $request->post('u' . $id . 'r8') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::DIPLOMACY_ACCESS] = $request->post('u' . $id . 'r9') ? 1 : 0;
+				$ally_ranks_new[$id][Alliance::PLANET_ACCESS] = $request->post('u' . $id . 'r10') ? 1 : 0;
 			}
 
 			$this->ally->ranks = $ally_ranks_new;
 
 			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
-		} elseif (Request::query('d') && isset($this->ally->ranks[Request::query('d', 'int')])) {
-			unset($this->ally->ranks[Request::query('d', 'int')]);
+		} elseif ($request->query('d') && isset($this->ally->ranks[$request->query('d', 'int')])) {
+			unset($this->ally->ranks[$request->query('d', 'int')]);
 
 			DB::statement("UPDATE alliances SET ranks = '" . addslashes(json_encode($this->ally->ranks)) . "' WHERE id = " . $this->ally->id);
 		}
@@ -363,7 +362,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function adminRequests()
+	public function adminRequests(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -371,16 +370,16 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		$show = (int) Request::query('show', 0);
+		$show = (int) $request->query('show', 0);
 
-		if (($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT)) && Request::post('action')) {
-			if (Request::post('action') == "Принять") {
+		if (($this->ally->owner == $this->user->id || $this->ally->canAccess(Alliance::CAN_ACCEPT)) && $request->post('action')) {
+			if ($request->post('action') == "Принять") {
 				if ($this->ally->members >= 150) {
 					throw new ErrorException('Альянс не может иметь больше 150 участников');
 				}
 
-				if (Request::post('text') != '') {
-					$text_ot = strip_tags(Request::post('text'));
+				if ($request->post('text') != '') {
+					$text_ot = strip_tags($request->post('text'));
 				}
 
 				$check = DB::selectOne("SELECT a_id FROM alliance_requests WHERE a_id = " . $this->ally->id . " AND u_id = " . $show . "");
@@ -398,9 +397,9 @@ class AllianceController extends Controller
 
 					throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
 				}
-			} elseif (Request::post('action') == "Отклонить") {
-				if (Request::post('text') != '') {
-					$text_ot = strip_tags(Request::post('text'));
+			} elseif ($request->post('action') == "Отклонить") {
+				if ($request->post('text') != '') {
+					$text_ot = strip_tags($request->post('text'));
 				}
 
 				AllianceRequest::query()->where('u_id', $show)->where('a_id', $this->ally->id)->delete();
@@ -440,7 +439,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function adminName()
+	public function adminName(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -448,8 +447,8 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if (Request::post('name')) {
-			$name = trim(Request::post('name', ''));
+		if ($request->post('name')) {
+			$name = trim($request->post('name', ''));
 
 			if ($name == '') {
 				throw new ErrorException("Введите новое название альянса");
@@ -474,7 +473,7 @@ class AllianceController extends Controller
 		];
 	}
 
-	public function adminTag()
+	public function adminTag(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -482,8 +481,8 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if (Request::post('tag')) {
-			$tag = trim(Request::post('tag', ''));
+		if ($request->post('tag')) {
+			$tag = trim($request->post('tag', ''));
 
 			if ($tag == '') {
 				throw new RedirectException("Введите новую абревиатуру альянса", __('alliance.make_alliance'));
@@ -519,7 +518,7 @@ class AllianceController extends Controller
 		throw new RedirectException('Альянс удалён', '/alliance/');
 	}
 
-	public function adminGive()
+	public function adminGive(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -527,8 +526,8 @@ class AllianceController extends Controller
 			throw new RedirectException("Доступ запрещён.", "/alliance/");
 		}
 
-		if (Request::post('newleader') && $this->ally->owner == $this->user->id) {
-			$info = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . Request::post('newleader', 'int') . "'");
+		if ($request->post('newleader') && $this->ally->owner == $this->user->id) {
+			$info = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . $request->post('newleader', 'int') . "'");
 
 			if (!$info || $info->ally_id != $this->user->ally_id) {
 				throw new RedirectException("Операция невозможна.", "/alliance/");
@@ -557,7 +556,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function adminMembers()
+	public function adminMembers(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -565,8 +564,8 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if (Request::query('kick')) {
-			$kick = Request::query('kick', 0);
+		if ($request->query('kick')) {
+			$kick = $request->query('kick', 0);
 
 			if ($this->ally->owner != $this->user->id && !$this->ally->canAccess(Alliance::CAN_KICK) && $kick > 0) {
 				throw new ErrorException(__('alliance.Denied_access'));
@@ -582,9 +581,9 @@ class AllianceController extends Controller
 			} else {
 				throw new ErrorException(__('alliance.Denied_access'));
 			}
-		} elseif (Request::post('newrang', '') != '' && Request::input('id', 0) != 0) {
-			$id = Request::input('id', 0);
-			$rank = Request::post('newrang', 0);
+		} elseif ($request->post('newrang', '') != '' && $request->input('id', 0) != 0) {
+			$id = $request->input('id', 0);
+			$rank = $request->post('newrang', 0);
 
 			$q = DB::selectOne("SELECT id, ally_id FROM users WHERE id = '" . $id . "' LIMIT 1");
 
@@ -593,10 +592,10 @@ class AllianceController extends Controller
 			}
 		}
 
-		return $this->members();
+		return $this->members($request);
 	}
 
-	public function diplomacy()
+	public function diplomacy(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -606,10 +605,10 @@ class AllianceController extends Controller
 
 		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
 
-		if (Request::query('edit')) {
-			if (Request::query('edit', '') == "add") {
-				$st = (int) Request::post('status', 0);
-				$al = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . intval(Request::post('ally')) . "'");
+		if ($request->query('edit')) {
+			if ($request->query('edit', '') == "add") {
+				$st = (int) $request->post('status', 0);
+				$al = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . intval($request->post('ally')) . "'");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
@@ -629,8 +628,8 @@ class AllianceController extends Controller
 				DB::statement("INSERT INTO alliance_diplomacies VALUES (NULL, " . $al->id . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
 				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy/");
-			} elseif (Request::query('edit', '') == "del") {
-				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
+			} elseif ($request->query('edit', '') == "del") {
+				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND a_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
@@ -640,8 +639,8 @@ class AllianceController extends Controller
 				DB::statement("DELETE FROM alliance_diplomacies WHERE a_id = " . $al->d_id . " AND d_id = " . $al->a_id . ";");
 
 				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy/");
-			} elseif (Request::query('edit', '') == "suc") {
-				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) Request::query('id') . "' AND a_id = " . $this->ally->id . "");
+			} elseif ($request->query('edit', '') == "suc") {
+				$al = DB::selectOne("SELECT a_id, d_id FROM alliance_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND a_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
@@ -681,7 +680,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function exit()
+	public function exit(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -689,7 +688,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Owner_cant_go_out'));
 		}
 
-		if (Request::query('yes')) {
+		if ($request->query('yes')) {
 			$this->ally->deleteMember($this->user->id);
 
 			$html = $this->MessageForm(__('alliance.Go_out_welldone'), "<br>", '/alliance/', __('alliance.Ok'));
@@ -700,7 +699,7 @@ class AllianceController extends Controller
 		$this->setTitle('Выход их альянса');
 	}
 
-	public function members()
+	public function members(Request $request)
 	{
 		$this->parseInfo($this->user->ally_id);
 
@@ -716,10 +715,10 @@ class AllianceController extends Controller
 			$parse['admin'] = false;
 		}
 
-		$sort1 = Request::query('sort1', 0);
-		$sort2 = Request::query('sort2', 0);
+		$sort1 = $request->query('sort1', 0);
+		$sort2 = $request->query('sort2', 0);
 
-		$rank = Request::query('rank', 0);
+		$rank = $request->query('rank', 0);
 
 		$sort = "";
 
@@ -819,7 +818,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function chat()
+	public function chat(Request $request)
 	{
 		if ($this->user->messages_ally != 0) {
 			$this->user->messages_ally = 0;
@@ -832,13 +831,13 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if (Request::post('delete_type') && $this->ally->owner == $this->user->id) {
-			$deleteType = Request::post('delete_type');
+		if ($request->post('delete_type') && $this->ally->owner == $this->user->id) {
+			$deleteType = $request->post('delete_type');
 
 			if ($deleteType == 'all') {
 				DB::statement("DELETE FROM alliance_chats WHERE ally_id = :ally", ['ally' => $this->user->ally_id]);
 			} elseif ($deleteType == 'marked' || $deleteType == 'unmarked') {
-				$messages = Request::post('delete');
+				$messages = $request->post('delete');
 
 				if (is_array($messages)) {
 					$messages = array_map('intval', $messages);
@@ -850,12 +849,12 @@ class AllianceController extends Controller
 			}
 		}
 
-		if (Request::has('text') && Request::post('text', '') != '') {
+		if ($request->has('text') && $request->post('text', '') != '') {
 			DB::table('alliance_chats')->insert([
 				'ally_id' 	=> $this->user->ally_id,
 				'user' 		=> $this->user->username,
 				'user_id' 	=> $this->user->id,
-				'message' 	=> Format::text(Request::post('text')),
+				'message' 	=> Format::text($request->post('text')),
 				'timestamp'	=> time()
 			]);
 
@@ -872,7 +871,7 @@ class AllianceController extends Controller
 		$parse['pagination'] = [
 			'total' => (int) $messagesCount,
 			'limit' => 10,
-			'page' => (int) Request::query('p', 1)
+			'page' => (int) $request->query('p', 1)
 		];
 
 		if ($messagesCount > 0) {
@@ -942,7 +941,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function make()
+	public function make(Request $request)
 	{
 		if (!Auth::check()) {
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -954,9 +953,9 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if (Request::instance()->isMethod('post')) {
-			$tag = Request::post('tag', '');
-			$name = Request::post('name', '');
+		if ($request->isMethod('post')) {
+			$tag = $request->post('tag', '');
+			$name = $request->post('name', '');
 
 			if ($tag == '') {
 				throw new ErrorException(__('alliance.have_not_tag'));
@@ -1012,7 +1011,7 @@ class AllianceController extends Controller
 		return [];
 	}
 
-	public function search()
+	public function search(Request $request)
 	{
 		if (!Auth::check()) {
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -1029,8 +1028,8 @@ class AllianceController extends Controller
 
 		$text = '';
 
-		if (Request::post('searchtext') && Request::post('searchtext') != '') {
-			$text = Request::post('searchtext');
+		if ($request->post('searchtext') && $request->post('searchtext') != '') {
+			$text = $request->post('searchtext');
 
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $text)) {
 				throw new RedirectException("Строка поиска содержит запрещённые символы", '/alliance/search/');
@@ -1060,7 +1059,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function apply()
+	public function apply(Request $request)
 	{
 		if (!Auth::check()) {
 			throw new ErrorException(__('alliance.Denied_access'));
@@ -1070,7 +1069,7 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		$allyid = Request::query('allyid', 0);
+		$allyid = $request->query('allyid', 0);
 
 		if ($allyid <= 0) {
 			throw new ErrorException(__('alliance.it_is_not_posible_to_apply'));
@@ -1086,11 +1085,11 @@ class AllianceController extends Controller
 			throw new ErrorException("Данный альянс является закрытым для вступлений новых членов");
 		}
 
-		if (Request::post('further')) {
+		if ($request->post('further')) {
 			$request = DB::selectOne("SELECT COUNT(*) AS num FROM alliance_requests WHERE a_id = " . $allyid . " AND u_id = " . $this->user->id . ";");
 
 			if ($request->num == 0) {
-				DB::statement("INSERT INTO alliance_requests VALUES (" . $allyid . ", " . $this->user->id . ", " . time() . ", '" . strip_tags(Request::post('text')) . "')");
+				DB::statement("INSERT INTO alliance_requests VALUES (" . $allyid . ", " . $this->user->id . ", " . time() . ", '" . strip_tags($request->post('text')) . "')");
 
 				throw new RedirectException(__('alliance.apply_registered'), '/alliance/');
 			} else {

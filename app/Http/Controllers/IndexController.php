@@ -8,9 +8,9 @@
 
 namespace Xnova\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
@@ -27,22 +27,22 @@ class IndexController extends Controller
 		return [];
 	}
 
-	public function Registration()
+	public function Registration(Request $request)
 	{
 		$errors = [];
 
-		if (Request::instance()->isMethod('post')) {
-			$email = strip_tags(trim(Request::post('email')));
+		if ($request->isMethod('post')) {
+			$email = strip_tags(trim($request->post('email')));
 
 			if (!Helpers::is_email($email)) {
 				$errors[] = '"' . $email . '" ' . __('reg.error_mail');
 			}
 
-			if (mb_strlen(Request::post('password')) < 4) {
+			if (mb_strlen($request->post('password')) < 4) {
 				$errors[] = __('reg.error_password');
 			}
 
-			if (Request::post('password') != Request::post('password_confirm')) {
+			if ($request->post('password') != $request->post('password_confirm')) {
 				$errors[] = __('reg.error_confirm');
 			}
 
@@ -60,8 +60,8 @@ class IndexController extends Controller
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
 					'secret' => Config::get('settings.recaptcha->secret_key'),
-					'response' => Request::post('captcha'),
-					'remoteip' => Request::ip()
+					'response' => $request->post('captcha'),
+					'remoteip' => $request->ip()
 				]));
 
 				$captcha = json_decode(curl_exec($curl), true);
@@ -76,7 +76,7 @@ class IndexController extends Controller
 			if (!count($errors)) {
 				$userId = User::creation([
 					'email' => $email,
-					'password' => trim(Request::post('password')),
+					'password' => trim($request->post('password')),
 				]);
 
 				if (!$userId) {

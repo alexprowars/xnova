@@ -9,11 +9,11 @@
 namespace Xnova\Http\Controllers;
 
 use Gumlet\ImageResize;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -25,7 +25,6 @@ use Xnova\Format;
 use Xnova\Game;
 use Xnova\Helpers;
 use Xnova\Mail\UserLostPasswordSuccess;
-use Xnova\Models\Fleet;
 use Xnova\Models;
 use Xnova\User;
 use Xnova\Queue;
@@ -65,23 +64,22 @@ class OptionsController extends Controller
 		throw new RedirectException('', '/options/');
 	}
 
-	public function emailAction()
+	public function emailAction(Request $request)
 	{
-		/** @var Models\Account $userInfo */
 		$userInfo = Models\Account::query()->find($this->user->id);
 
-		if (Request::post('password') && Request::post('email')) {
-			if (md5(Request::post('password')) != $userInfo->password) {
+		if ($request->post('password') && $request->post('email')) {
+			if (md5($request->post('password')) != $userInfo->password) {
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
-			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . addslashes(htmlspecialchars(trim(Request::post('email')))) . "';");
+			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . addslashes(htmlspecialchars(trim($request->post('email')))) . "';");
 
 			if ($email) {
 				throw new ErrorException('Данный email уже используется в игре.');
 			}
 
-			User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars(Request::post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
+			User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
 
 			throw new RedirectException('Заявка отправлена на рассмотрение', '/options/');
 		}
@@ -89,24 +87,19 @@ class OptionsController extends Controller
 		$this->setTitle('Hacтpoйки');
 	}
 
-	public function changeAction()
+	public function changeAction(Request $request)
 	{
-		if (Request::post('ld') && Request::post('ld') != '') {
-			$this->ld();
-		}
-
-		/** @var Models\Account $userInfo */
 		$userInfo = Models\Account::query()->find($this->user->id);
 
 		if (
-			Request::post('username')
-			&& trim(Request::post('username')) != ''
-			&& trim(Request::post('username')) != $this->user->username
-			&& mb_strlen(trim(Request::post('username')), 'UTF-8') > 3
+			$request->post('username')
+			&& trim($request->post('username')) != ''
+			&& trim($request->post('username')) != $this->user->username
+			&& mb_strlen(trim($request->post('username')), 'UTF-8') > 3
 		) {
-			$username = preg_replace("/([\s\x{0}\x{0B}]+)/iu", " ", trim(Request::post('username')));
+			$username = preg_replace("/([\s\x{0}\x{0B}]+)/iu", " ", trim($request->post('username')));
 
-			if (preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-\!\~\.@ ]+$/u", $username)) {
+			if (preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $username)) {
 				$username = addslashes($username);
 			} else {
 				$username = $this->user->username;
@@ -115,8 +108,8 @@ class OptionsController extends Controller
 			$username = $this->user->username;
 		}
 
-		if (Request::post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email(Request::post('email'))) {
-			$e = addslashes(htmlspecialchars(trim(Request::post('email'))));
+		if ($request->post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email($request->post('email'))) {
+			$e = addslashes(htmlspecialchars(trim($request->post('email'))));
 
 			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . $e . "'");
 
@@ -145,7 +138,7 @@ class OptionsController extends Controller
 		} else {
 			$vacation = 0;
 
-			if (Request::post('vacation')) {
+			if ($request->post('vacation')) {
 				$queueManager = new Queue($this->user);
 				$queueCount = $queueManager->getCount();
 
@@ -179,28 +172,28 @@ class OptionsController extends Controller
 			}
 		}
 
-		$Del_Time = Request::post('delete') ? (time() + 604800) : 0;
+		$Del_Time = $request->post('delete') ? (time() + 604800) : 0;
 
 		if (!$this->user->isVacation()) {
-			$sex = (Request::post('sex', 'M') == 'F') ? 2 : 1;
+			$sex = ($request->post('sex', 'M') == 'F') ? 2 : 1;
 
-			$color = Request::post('color', 1);
+			$color = $request->post('color', 1);
 			$color = max(1, min(13, $color));
 
 			if ($color < 1 || $color > 13) {
 				$color = 1;
 			}
 
-			$timezone = Request::post('timezone', 0);
+			$timezone = $request->post('timezone', 0);
 
 			if ($timezone < -32 || $timezone > 16) {
 				$timezone = 0;
 			}
 
-			$SetSort = Request::post('settings_sort', 0);
-			$SetOrder = Request::post('settings_order', 0);
-			$about = Format::text(Request::post('text', ''));
-			$spy = Request::post('spy', 1);
+			$SetSort = $request->post('settings_sort', 0);
+			$SetOrder = $request->post('settings_order', 0);
+			$about = Format::text($request->post('text', ''));
+			$spy = $request->post('spy', 1);
 
 			if ($spy < 1 || $spy > 1000) {
 				$spy = 1;
@@ -215,12 +208,12 @@ class OptionsController extends Controller
 
 			$settings = $userInfo->getSettings();
 
-			$settings['records'] 		= Request::post('records');
-			$settings['bb_parser'] 		= Request::post('bbcode');
-			$settings['chatbox'] 		= Request::post('chatbox');
-			$settings['planetlist']		= Request::post('planetlist');
-			$settings['planetlistselect'] = Request::post('planetlistselect');
-			$settings['only_available']	= Request::post('available');
+			$settings['records'] 		= $request->post('records');
+			$settings['bb_parser'] 		= $request->post('bbcode');
+			$settings['chatbox'] 		= $request->post('chatbox');
+			$settings['planetlist']		= $request->post('planetlist');
+			$settings['planetlistselect'] = $request->post('planetlistselect');
+			$settings['only_available']	= $request->post('available');
 
 			$settings['planet_sort'] 	= (int) $SetSort;
 			$settings['planet_sort_order'] = (int) $SetOrder;
@@ -230,8 +223,8 @@ class OptionsController extends Controller
 
 			$userInfo->setSettings($settings);
 
-			if (Request::instance()->hasFile('image')) {
-				$file = Request::instance()->file('image');
+			if ($request->hasFile('image')) {
+				$file = $request->file('image');
 
 				if ($file->isValid()) {
 					$fileType = $file->getMimeType();
@@ -257,7 +250,7 @@ class OptionsController extends Controller
 				}
 			}
 
-			if (Request::post('image_delete')) {
+			if ($request->post('image_delete')) {
 				if (Files::delete($userInfo->image)) {
 					$userInfo->image = 0;
 				}
@@ -276,19 +269,19 @@ class OptionsController extends Controller
 		}
 
 		if (
-			Request::post('password')
-			&& Request::post('password') != ''
-			&& Request::post('new_password') != ''
+			$request->post('password')
+			&& $request->post('password') != ''
+			&& $request->post('new_password') != ''
 		) {
-			if (md5(Request::post('password')) != $userInfo->password) {
+			if (md5($request->post('password')) != $userInfo->password) {
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
-			if (Request::post('new_password') != Request::post('new_password_confirm')) {
+			if ($request->post('new_password') != $request->post('new_password_confirm')) {
 				throw new ErrorException('Bвeдeнныe пapoли нe coвпaдaют');
 			}
 
-			$userInfo->password = md5(Request::post('new_password'));
+			$userInfo->password = md5($request->post('new_password'));
 			$userInfo->update();
 
 			Auth::logout();
@@ -325,7 +318,6 @@ class OptionsController extends Controller
 
 	public function index()
 	{
-		/** @var Models\Account $userInfo */
 		$userInfo = Models\Account::query()->find($this->user->id);
 
 		$parse = [];

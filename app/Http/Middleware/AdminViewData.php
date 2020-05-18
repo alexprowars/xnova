@@ -20,7 +20,6 @@ class AdminViewData
 	{
 		Vars::init();
 
-		/** @var User $user */
 		$user = Auth::user();
 
 		$route = Route::current();
@@ -45,7 +44,6 @@ class AdminViewData
 
 	private function generateMenu()
 	{
-		/** @var User $user */
 		$user = Auth::user();
 
 		$menu = [];

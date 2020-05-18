@@ -10,7 +10,7 @@ namespace Xnova\Missions;
 
 use Xnova\FleetEngine;
 
-class ACS extends FleetEngine implements Mission
+class Assault extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{

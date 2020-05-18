@@ -8,20 +8,22 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Models\Content;
 
 class ContentController extends Controller
 {
-	function index()
+	public function index(Request $request)
 	{
-		if (!Request::query('article')) {
+		if (!$request->query('article')) {
 			throw new ErrorException('Страница не найдена!');
 		}
 
-		$content = DB::selectOne("SELECT * FROM contents WHERE alias = '" . Request::query('article') . "'");
+		$content = Content::query()
+			->where('alias', $request->query('article'))
+			->first();
 
 		if (!$content) {
 			throw new ErrorException('Страница не найдена!');

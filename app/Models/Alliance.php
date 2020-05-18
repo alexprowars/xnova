@@ -29,17 +29,17 @@ class Alliance extends Model
 	/** @var AllianceMember */
 	public $member;
 
-	const CAN_WATCH_MEMBERLIST_STATUS = 'onlinestatus';
-	const CAN_WATCH_MEMBERLIST = 'memberlist';
-	const CHAT_ACCESS = 'chat';
-	const CAN_KICK = 'kick';
-	const CAN_EDIT_RIGHTS = 'rights';
-	const CAN_DELETE_ALLIANCE = 'delete';
-	const CAN_ACCEPT = 'accept';
-	const ADMIN_ACCESS = 'admin';
-	const DIPLOMACY_ACCESS = 'diplomacy';
-	const PLANET_ACCESS = 'planet';
-	const REQUEST_ACCESS = 'request';
+	public const CAN_WATCH_MEMBERLIST_STATUS = 'onlinestatus';
+	public const CAN_WATCH_MEMBERLIST = 'memberlist';
+	public const CHAT_ACCESS = 'chat';
+	public const CAN_KICK = 'kick';
+	public const CAN_EDIT_RIGHTS = 'rights';
+	public const CAN_DELETE_ALLIANCE = 'delete';
+	public const CAN_ACCEPT = 'accept';
+	public const ADMIN_ACCESS = 'admin';
+	public const DIPLOMACY_ACCESS = 'diplomacy';
+	public const PLANET_ACCESS = 'planet';
+	public const REQUEST_ACCESS = 'request';
 
 	public function getRanks()
 	{

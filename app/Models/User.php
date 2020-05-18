@@ -100,7 +100,6 @@ class User extends Authenticatable
 
 	public function getEmailForPasswordReset()
 	{
-		/** @var Account $info */
 		$info = Account::query()->find($this->id, ['email']);
 
 		return $info->email ?? null;

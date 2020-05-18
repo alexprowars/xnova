@@ -46,8 +46,8 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		/** @var User $owner */
-		$owner = User::query()->find((int) $this->fleet->owner);
+		$owner = User::query()
+			->find((int) $this->fleet->owner);
 
 		if (!$owner) {
 			$this->ReturnFleet();
@@ -55,8 +55,8 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		/** @var User $targetUser */
-		$targetUser = User::query()->find((int) $target->id_owner);
+		$targetUser = User::query()
+			->find((int) $target->id_owner);
 
 		if (!$targetUser) {
 			$this->ReturnFleet();
@@ -609,7 +609,6 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		if (!isset($this->usersTech[$fleet->owner])) {
-			/** @var User $user */
 			$user = User::query()->find($fleet->owner);
 
 			$playerObj = new Player($fleet->owner);

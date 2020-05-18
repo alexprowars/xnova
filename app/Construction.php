@@ -8,7 +8,6 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
@@ -33,7 +32,7 @@ class Construction
 
 		$Queue = $this->ShowBuildingQueue();
 
-		$MaxBuidSize = Config::get('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
+		$MaxBuidSize = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
 
 		$CanBuildElement = ($Queue['lenght'] < $MaxBuidSize);
 
@@ -111,7 +110,7 @@ class Construction
 
 			if ($isAccess) {
 				if (in_array($Element, Vars::getItemsByType('build_exp'))) {
-					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / Config::get('settings.buildings_exp_mult', 1000));
+					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / config('settings.buildings_exp_mult', 1000));
 				}
 
 				$row['time'] 	= $entity->getTime();

@@ -2,10 +2,10 @@
 
 namespace Xnova\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 use Xnova\Format;
 use Xnova\Helpers;
@@ -28,10 +28,10 @@ class IndexController extends Controller
 		]];
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
-		if (Request::query('cmd') == 'sort') {
-			$TypeSort = Request::query('type');
+		if ($request->query('cmd') == 'sort') {
+			$TypeSort = $request->query('type');
 		} else {
 			$TypeSort = "ip";
 		}

@@ -70,7 +70,6 @@ class FleetEngine
 		$TargetPlanet = Planet::findByCoords($this->fleet->{$p . '_galaxy'}, $this->fleet->{$p . '_system'}, $this->fleet->{$p . '_planet'}, $this->fleet->{$p . '_type'});
 
 		if ($TargetPlanet && $TargetPlanet->id_owner > 0) {
-			/** @var User $TargetUser */
 			$TargetUser = User::query()->find($TargetPlanet->id_owner);
 
 			if ($TargetUser) {

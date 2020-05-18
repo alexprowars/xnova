@@ -8,7 +8,7 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Helpers;
@@ -19,11 +19,11 @@ use Nubs\RandomNameGenerator;
 
 class StartController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
 		if ($this->user->sex == 0 || $this->user->avatar == 0) {
-			if (Request::post('save')) {
-				$username = strip_tags(trim(Request::post('character')));
+			if ($request->post('save')) {
+				$username = strip_tags(trim($request->post('character')));
 
 				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $username)) {
 					throw new ErrorException(__('start.error_charalpha'));
@@ -38,7 +38,7 @@ class StartController extends Controller
 					throw new ErrorException(__('reg.error_userexist'));
 				}
 
-				$face = Helpers::checkString(Request::post('face', ''));
+				$face = Helpers::checkString($request->post('face', ''));
 
 				if ($face != '') {
 					$face = explode('_', $face);
@@ -69,8 +69,8 @@ class StartController extends Controller
 				$this->user->username = $generator->getName();
 			}
 		} elseif ($this->user->race == 0) {
-			if (Request::post('save')) {
-				$r = (int) Request::post('race', 0);
+			if ($request->post('save')) {
+				$r = (int) $request->post('race', 0);
 				$r = ($r < 1 || $r > 4) ? 0 : $r;
 
 				if ($r <= 0) {

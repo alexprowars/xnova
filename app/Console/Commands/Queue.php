@@ -40,13 +40,10 @@ class Queue extends Command
 				->groupBy('user_id', 'planet_id')
 				->get();
 
-			/** @var Models\Queue $item */
 			foreach ($items as $item) {
 				try {
-					/** @var User $user */
 					$user = User::query()->find((int) $item->user_id);
 
-					/** @var Planet $planet */
 					$planet = Planet::query()->find((int) $item->planet_id);
 
 					if ($planet) {

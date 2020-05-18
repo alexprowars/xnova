@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
-use Xnova\Models\User;
 use Xnova\User;
 
 class MailingController extends Controller
@@ -34,7 +33,6 @@ class MailingController extends Controller
 				'required' => 'Поле ":attribute" обязательно для заполнения',
 			]);
 
-			/** @var User $currentUser */
 			$currentUser = Auth::user();
 
 			if ($currentUser->isAdmin()) {

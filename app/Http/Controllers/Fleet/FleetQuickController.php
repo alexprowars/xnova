@@ -9,8 +9,8 @@
 namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\Exception;
 use Xnova\Exceptions\SuccessException;
@@ -22,7 +22,7 @@ use Xnova\Entity;
 
 class FleetQuickController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
 		if ($this->user->vacation > 0) {
 			throw new Exception('Нет доступа!');
@@ -36,12 +36,12 @@ class FleetQuickController extends Controller
 			$MaxFlottes += 2;
 		}
 
-		$mission 	= (int) Request::query('mission', 0);
-		$galaxy 	= (int) Request::query('galaxy', 0);
-		$system 	= (int) Request::query('system', 0);
-		$planet 	= (int) Request::query('planet', 0);
-		$planetType = (int) Request::query('type', 0);
-		$num 		= (int) Request::query('count', 0);
+		$mission 	= (int) $request->query('mission', 0);
+		$galaxy 	= (int) $request->query('galaxy', 0);
+		$system 	= (int) $request->query('system', 0);
+		$planet 	= (int) $request->query('planet', 0);
+		$planetType = (int) $request->query('type', 0);
+		$num 		= (int) $request->query('count', 0);
 
 		if ($MaxFlottes <= $maxfleet) {
 			throw new Exception('Все слоты флота заняты');
@@ -55,7 +55,6 @@ class FleetQuickController extends Controller
 			throw new Exception('Ошибочный тип планеты!');
 		}
 
-		/** @var Planet $target */
 		$target = Planet::query()
 			->where('galaxy', $galaxy)
 			->where('system', $system)
@@ -91,8 +90,8 @@ class FleetQuickController extends Controller
 				throw new Exception('Невозможно выполнить задание!');
 			}
 
-			/** @var Models\User $HeDBRec */
-			$HeDBRec = Models\User::query()->find($target->id_owner, ['id', 'onlinetime', 'vacation']);
+			$HeDBRec = Models\User::query()
+				->find($target->id_owner, ['id', 'onlinetime', 'vacation']);
 
 			$MyGameLevel = Models\Statistic::query()
 				->select('total_points')

@@ -9,8 +9,8 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\User;
@@ -19,9 +19,8 @@ use Xnova\Models;
 
 class BuddyController extends Controller
 {
-	public function newAction($userId)
+	public function newAction(Request $request, $userId)
 	{
-		/** @var Models\User $user */
 		$user = Models\User::query()
 			->select(['id', 'username'])
 			->where('id', $userId)
@@ -31,7 +30,7 @@ class BuddyController extends Controller
 			throw new ErrorException('Друг не найден');
 		}
 
-		if (Request::instance()->isMethod('post')) {
+		if ($request->isMethod('post')) {
 			$buddy = Models\Friend::query()
 				->select(['id'])
 				->where(function (Builder $query) use ($userId) {
@@ -48,7 +47,7 @@ class BuddyController extends Controller
 				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
 			}
 
-			$text = strip_tags(Request::post('text', ''));
+			$text = strip_tags($request->post('text', ''));
 
 			if (mb_strlen($text) > 5000) {
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
@@ -90,19 +89,18 @@ class BuddyController extends Controller
 
 	public function deleteAction(int $id)
 	{
-		/** @var Models\Friend $buddy */
-		$buddy = Models\Friend::query()->find($id);
+		$friend = Models\Friend::query()->find($id);
 
-		if (!$buddy) {
+		if (!$friend) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
-		if ($buddy->owner == $this->user->id) {
-			$buddy->delete();
+		if ($friend->owner == $this->user->id) {
+			$friend->delete();
 
 			throw new RedirectException('Заявка отклонена', '/buddy/requests/');
-		} elseif ($buddy->sender == $this->user->id) {
-			$buddy->delete();
+		} elseif ($friend->sender == $this->user->id) {
+			$friend->delete();
 
 			throw new RedirectException('Заявка удалена', '/buddy/requests/my/');
 		} else {
@@ -112,19 +110,18 @@ class BuddyController extends Controller
 
 	public function approveAction(int $id)
 	{
-		/** @var Models\Friend $buddy */
-		$buddy = Models\Friend::query()->find($id);
+		$friend = Models\Friend::query()->find($id);
 
-		if (!$buddy) {
+		if (!$friend) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
-		if (!($buddy->owner == $this->user->id && $buddy->active == 0)) {
+		if (!($friend->owner == $this->user->id && $friend->active == 0)) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
-		$buddy->active = 1;
-		$buddy->update();
+		$friend->active = 1;
+		$friend->update();
 
 		throw new RedirectException('', '/buddy/');
 	}
@@ -160,11 +157,9 @@ class BuddyController extends Controller
 
 		$items = $items->get();
 
-		/** @var Models\Friend $item */
 		foreach ($items as $item) {
 			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
 
-			/** @var Models\User $user */
 			$user = Models\User::query()
 				->select(['id', 'username', 'galaxy', 'system', 'planet', 'onlinetime', 'ally_id', 'ally_name'])
 				->where('id', $userId)

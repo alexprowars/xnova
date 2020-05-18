@@ -23,9 +23,7 @@ class Base
 	protected function getContext(): Context
 	{
 		if (!$this->context) {
-			/** @var User $user */
-			$user = Auth::user();
-			$this->context = new Context($user);
+			$this->context = new Context(Auth::user());
 		}
 
 		return $this->context;

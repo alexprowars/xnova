@@ -71,7 +71,6 @@ class SupportController extends Controller
 			throw new ErrorException('Не заполнены все поля');
 		}
 
-		/** @var Support $ticket */
 		$ticket = Support::query()->find($id);
 
 		if (!$ticket) {
@@ -119,11 +118,9 @@ class SupportController extends Controller
 
 	public function info($id)
 	{
-		/** @var Support $ticket */
 		$ticket = Support::query()
 			->where('user_id', $this->user->id)
-			->where('id', $id)
-			->get();
+			->where('id', $id)->first();
 
 		if (!$ticket) {
 			throw new \Exception('Тикет не найден');

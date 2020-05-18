@@ -8,8 +8,8 @@
 
 namespace Xnova\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Format;
 use Xnova\Controller;
 
@@ -17,14 +17,14 @@ class SearchController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		$parse = [
 			'result' => []
 		];
 
-		$searchtext = Request::post('searchtext', '');
-		$type = Request::post('type', 'playername');
+		$searchtext = $request->post('searchtext', '');
+		$type = $request->post('type', 'playername');
 
 		if ($searchtext != '' && $type != '') {
 			$search = null;

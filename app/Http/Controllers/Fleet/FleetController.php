@@ -9,9 +9,9 @@
 namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\PageException;
 use Xnova\Entity;
@@ -24,7 +24,7 @@ class FleetController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		if ($this->user->vacation > 0) {
 			throw new PageException('Нет доступа!');
@@ -32,10 +32,10 @@ class FleetController extends Controller
 
 		$parse = [];
 
-		$galaxy = (int) Request::post('galaxy', 0);
-		$system = (int) Request::post('system', 0);
-		$planet = (int) Request::post('planet', 0);
-		$type = (int) Request::post('planet_type', 0);
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
+		$type = (int) $request->post('planet_type', 0);
 
 		if (!$galaxy) {
 			$galaxy = (int) $this->planet->galaxy;
@@ -56,7 +56,7 @@ class FleetController extends Controller
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = Request::post('ship');
+		$ships = $request->post('ship');
 
 		if (!is_array($ships)) {
 			$ships = [];
@@ -157,7 +157,6 @@ class FleetController extends Controller
 					$parse['gate_time'] = $timer;
 				}
 
-				/** @var Planet $moon */
 				foreach ($moons as $moon) {
 					if ($moon->getBuildLevel('jumpgate') <= 0) {
 						continue;
@@ -196,8 +195,8 @@ class FleetController extends Controller
 			}
 		}
 
-		$acs 	= (int) Request::post('alliance', 0);
-		$mission 	= (int) Request::post('mission', 0);
+		$acs 	= (int) $request->post('alliance', 0);
+		$mission 	= (int) $request->post('mission', 0);
 
 		$YourPlanet = false;
 		$UsedPlanet = false;

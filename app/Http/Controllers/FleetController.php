@@ -8,7 +8,7 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models;
 use Xnova\Controller;
@@ -19,7 +19,7 @@ class FleetController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		if (!$this->planet) {
 			throw new ErrorException(__('fleet.fl_noplanetrow'));
@@ -42,11 +42,11 @@ class FleetController extends Controller
 			$maxFleets += 2;
 		}
 
-		$galaxy = (int) Request::query('galaxy', 0);
-		$system = (int) Request::query('system', 0);
-		$planet = (int) Request::query('planet', 0);
-		$planet_type = (int) Request::query('type', 0);
-		$mission = (int) Request::query('mission', 0);
+		$galaxy = (int) $request->query('galaxy', 0);
+		$system = (int) $request->query('system', 0);
+		$planet = (int) $request->query('planet', 0);
+		$planet_type = (int) $request->query('type', 0);
+		$mission = (int) $request->query('mission', 0);
 
 		if (!$galaxy) {
 			$galaxy = (int) $this->planet->galaxy;

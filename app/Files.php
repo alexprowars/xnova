@@ -40,10 +40,8 @@ class Files
 
 		$fileName = $fileInfo['filename'] . '.' . $fileInfo['extension'];
 
-		/** @var FilesystemAdapter $storage */
 		$storage = Storage::disk('public');
 
-		/** @noinspection PhpUndefinedMethodInspection */
 		$dir = $storage->getDriver()->getAdapter()->getPathPrefix() . 'files';
 		$subdir = '';
 
@@ -121,14 +119,12 @@ class Files
 			return $result;
 		}
 
-		/** @var Models\File $file */
 		$file = Models\File::query()->find((int) $fileId);
 
 		if (!$file) {
 			return false;
 		}
 
-		/** @var FilesystemAdapter $storage */
 		$storage = Storage::disk('public');
 
 		$result = [
@@ -148,8 +144,8 @@ class Files
 
 	public static function delete(int $fileId)
 	{
-		/** @var Models\File $file */
-		$file = Models\File::query()->find((int) $fileId);
+		$file = Models\File::query()
+			->find((int) $fileId);
 
 		if (!$file) {
 			return true;

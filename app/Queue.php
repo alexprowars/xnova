@@ -430,13 +430,11 @@ class Queue
 
 		$result	= false;
 
-		/** @var Models\Queue $buildItem */
 		$buildItem = Models\Queue::query()->where('user_id', $this->user->id)
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
 		if ($buildItem) {
 			if ($buildItem->planet_id != $this->planet->id) {
-				/** @var Planet $planet */
 				$planet = Planet::query()->find((int) $buildItem->planet_id);
 
 				if ($planet) {

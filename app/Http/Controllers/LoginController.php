@@ -4,12 +4,12 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Laravel\Socialite\AbstractUser as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;
@@ -30,25 +30,25 @@ class LoginController extends Controller
 		'google',
 	];
 
-	public function LoginByCredentials()
+	public function LoginByCredentials(Request $request)
 	{
-		if (!Request::has('email')) {
+		if (!$request->has('email')) {
 			throw new ErrorException(';)');
 		}
 
-		if (Request::post('email') == '') {
+		if ($request->post('email') == '') {
 			throw new ErrorException('Введите хоть что-нибудь!');
 		}
 
-		$isExist = Models\Account::query()->where('email', Request::post('email'))->exists();
+		$isExist = Models\Account::query()->where('email', $request->post('email'))->exists();
 
 		if (!$isExist) {
 			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
 		}
 
-		$credentials = Request::only(['email', 'password']);
+		$credentials = $request->only(['email', 'password']);
 
-		if (!Auth::attempt($credentials, Request::has('rememberme'))) {
+		if (!Auth::attempt($credentials, $request->has('rememberme'))) {
 			throw new ErrorException('Неверный E-mail и/или пароль');
 		}
 
@@ -77,7 +77,6 @@ class LoginController extends Controller
 			return Redirect::to('/');
 		}
 
-		/** @var Models\Authentication $authData */
 		$authData = Models\Authentication::query()->where('provider', $service)
 			->where('provider_id', $user->id)->first();
 
@@ -110,16 +109,14 @@ class LoginController extends Controller
 		return Redirect::intended('overview/');
 	}
 
-	public function ResetPassword()
+	public function ResetPassword(Request $request)
 	{
 		$this->setTitle('Восстановление пароля');
 
-		if (Request::has(['email', 'token'])) {
-			$email = (int) Request::query('email');
-			$token = addslashes(Request::query('token'));
+		if ($request->has(['email', 'token'])) {
+			$email = (int) $request->query('email');
+			$token = addslashes($request->query('token'));
 
-			/** @var PasswordBroker $broker */
-			/** @noinspection PhpUndefinedMethodInspection */
 			$broker = Password::broker();
 
 			$password = Str::random(10);
@@ -159,12 +156,10 @@ class LoginController extends Controller
 			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
 		}
 
-		if (Request::post('email')) {
-			/** @var PasswordBroker $broker */
-			/** @noinspection PhpUndefinedMethodInspection */
+		if ($request->post('email')) {
 			$broker = Password::broker();
 
-			$response = $broker->sendResetLink(['email' => Request::post('email')]);
+			$response = $broker->sendResetLink(['email' => $request->post('email')]);
 
 			if ($response == PasswordBroker::INVALID_USER) {
 				throw new ErrorException('Аккаунт не найден');

@@ -8,10 +8,10 @@
 
 namespace Xnova\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Xnova\Files;
 use Xnova\Fleet;
@@ -22,7 +22,7 @@ class GalaxyController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		$parse = [];
 
@@ -58,31 +58,31 @@ class GalaxyController extends Controller
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
 
-		if (Request::post('direction')) {
-			$direction = trim(Request::post('direction', ''));
+		if ($request->post('direction')) {
+			$direction = trim($request->post('direction', ''));
 
 			if ($direction == 'galaxyLeft') {
-				$galaxy = (int) Request::post('galaxy') - 1;
+				$galaxy = (int) $request->post('galaxy') - 1;
 			} elseif ($direction == 'galaxyRight') {
-				$galaxy = (int) Request::post('galaxy') + 1;
-			} elseif (Request::post('galaxy')) {
-				$galaxy = (int) Request::post('galaxy');
+				$galaxy = (int) $request->post('galaxy') + 1;
+			} elseif ($request->post('galaxy')) {
+				$galaxy = (int) $request->post('galaxy');
 			}
 
 			if ($direction == 'systemLeft') {
-				$system = (int) Request::post('system') - 1;
+				$system = (int) $request->post('system') - 1;
 			} elseif ($direction == 'systemRight') {
-				$system = (int) Request::post('system') + 1;
-			} elseif (Request::post('system')) {
-				$system = (int) Request::post('system');
+				$system = (int) $request->post('system') + 1;
+			} elseif ($request->post('system')) {
+				$system = (int) $request->post('system');
 			}
 		} else {
-			if (Request::post('galaxy')) {
-				$galaxy = (int) Request::query('galaxy', 1);
+			if ($request->post('galaxy')) {
+				$galaxy = (int) $request->query('galaxy', 1);
 			}
 
-			if (Request::post('system')) {
-				$system = (int) Request::query('system', 1);
+			if ($request->post('system')) {
+				$system = (int) $request->query('system', 1);
 			}
 		}
 

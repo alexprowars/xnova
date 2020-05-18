@@ -9,13 +9,12 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
-use Xnova\Building;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
@@ -33,7 +32,7 @@ class OverviewController extends Controller
 {
 	protected $loadPlanet = true;
 
-	private function BuildFleetEventTable(FleetModel $FleetRow, $Status, $Owner)
+	private function buildFleetEventTable(FleetModel $FleetRow, $Status, $Owner)
 	{
 		$FleetStyle = [
 			1 => 'attack',
@@ -196,9 +195,9 @@ class OverviewController extends Controller
 		return $bloc;
 	}
 
-	public function delete()
+	public function delete(Request $request)
 	{
-		if (Request::instance()->isMethod('post') && Request::post('id') && Request::post('id', 0) == $this->user->planet_current) {
+		if ($request->isMethod('post') && $request->post('id') && $request->post('id', 0) == $this->user->planet_current) {
 			if ($this->user->id != $this->planet->id_owner) {
 				throw new RedirectException("Удалить планету может только владелец", '/overview/rename/');
 			}
@@ -207,7 +206,7 @@ class OverviewController extends Controller
 				throw new RedirectException(__('overview.deletemessage_wrong'), '/overview/rename/');
 			}
 
-			if (md5(trim(Request::post('pw'))) != Request::post('password')) {
+			if (md5(trim($request->post('pw'))) != $request->post('password')) {
 				throw new RedirectException(__('overview.deletemessage_fail'), '/overview/delete/');
 			}
 
@@ -281,7 +280,7 @@ class OverviewController extends Controller
 		return $parse;
 	}
 
-	public function rename()
+	public function rename(Request $request)
 	{
 		$parse = [];
 		$parse['planet_id'] = $this->planet->id;
@@ -307,11 +306,11 @@ class OverviewController extends Controller
 			}
 		}
 
-		if (Request::post('action')) {
-			$action = Request::post('action');
+		if ($request->post('action')) {
+			$action = $request->post('action');
 
 			if ($action == 'name') {
-				$name = strip_tags(trim(Request::post('name', '')));
+				$name = strip_tags(trim($request->post('name', '')));
 
 				if ($name == '') {
 					throw new ErrorException('Ввведите новое название планеты');
@@ -338,7 +337,7 @@ class OverviewController extends Controller
 					throw new ErrorException('Недостаточно кредитов');
 				}
 
-				$image = (int) Request::post('image', 0);
+				$image = (int) $request->post('image', 0);
 
 				if ($image <= 0 || $image > $parse['images'][$parse['type']]) {
 					throw new ErrorException('Недостаточно читерских навыков');
@@ -393,9 +392,9 @@ class OverviewController extends Controller
 		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : '') . '', '/overview/');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
-		if (Request::has('bonus')) {
+		if ($request->has('bonus')) {
 			$this->bonus();
 		}
 
@@ -418,16 +417,16 @@ class OverviewController extends Controller
 
 			if ($FleetRow->owner == $this->user->id) {
 				if ($FleetRow->start_time > time()) {
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, true);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 0, true);
 				}
 
 				if ($FleetRow->end_stay > time()) {
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, true);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 1, true);
 				}
 
 				if (!($FleetRow->mission == 7 && $FleetRow->mess == 0)) {
 					if (($FleetRow->end_time > time() and $FleetRow->mission != 4) or ($FleetRow->mess == 1 and $FleetRow->mission == 4)) {
-						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 2, true);
+						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 2, true);
 					}
 				}
 
@@ -440,7 +439,7 @@ class OverviewController extends Controller
 
 					foreach ($AKSFleets as $AKFleet) {
 						$Record++;
-						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->BuildFleetEventTable($AKFleet, 0, false);
+						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
 					}
 
 					$aks[] = $FleetRow->group_id;
@@ -449,10 +448,10 @@ class OverviewController extends Controller
 				$Record++;
 
 				if ($FleetRow->start_time > time()) {
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 0, false);
+					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 0, false);
 				}
 				if ($FleetRow->mission == 5 && $FleetRow->end_stay > time()) {
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->BuildFleetEventTable($FleetRow, 1, false);
+					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 1, false);
 				}
 			}
 		}

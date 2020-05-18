@@ -19,7 +19,6 @@ class Colonisation extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		/** @var User $owner */
 		$owner = User::query()->find($this->fleet->owner);
 
 		$maxPlanets = $owner->getTechLevel('colonisation') + 1;

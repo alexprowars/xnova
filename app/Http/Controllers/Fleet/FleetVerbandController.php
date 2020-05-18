@@ -8,8 +8,8 @@
 
 namespace Xnova\Http\Controllers\Fleet;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models\Assault;
@@ -19,7 +19,7 @@ use Xnova\User;
 
 class FleetVerbandController extends Controller
 {
-	public function index($fleetId)
+	public function index(Request $request, $fleetId)
 	{
 		$fleetId = (int) $fleetId;
 
@@ -27,7 +27,6 @@ class FleetVerbandController extends Controller
 			throw new ErrorException('Флот не выбран');
 		}
 
-		/** @var Fleet $fleet */
 		$fleet = Fleet::query()
 			->where('id', $fleetId)
 			->where('owner', $this->user->id)
@@ -44,17 +43,16 @@ class FleetVerbandController extends Controller
 			throw new ErrorException('Ваш флот возвращается на планету!');
 		}
 
-		if (Request::has('action')) {
-			$action = Request::post('action');
+		if ($request->has('action')) {
+			$action = $request->post('action');
 
 			if ($action == 'add') {
 				if ($fleet->group_id) {
 					throw new ErrorException('Для этого флота уже задана ассоциация!');
 				}
 
-				/** @var Assault $aks */
 				$aks = Assault::query()->create([
-					'name' 			=> Request::post('name', 'string'),
+					'name' 			=> $request->post('name', 'string'),
 					'fleet_id' 		=> $fleet->id,
 					'galaxy' 		=> $fleet->end_galaxy,
 					'system' 		=> $fleet->end_system,
@@ -81,13 +79,13 @@ class FleetVerbandController extends Controller
 
 				$user_data = false;
 
-				$byId = (int) Request::post('user_id', 'int');
+				$byId = (int) $request->post('user_id', 'int');
 
 				if ($byId > 0) {
-					$user_data = DB::selectOne("SELECT * FROM users WHERE id = '" . Request::post('user_id', 'int') . "'");
+					$user_data = DB::selectOne("SELECT * FROM users WHERE id = '" . $request->post('user_id', 'int') . "'");
 				}
 
-				$byName = trim(Request::post('user_name', 'string'));
+				$byName = trim($request->post('user_name', 'string'));
 
 				if ($byName != '') {
 					$user_data = DB::selectOne("SELECT * FROM users WHERE username = :name", ['name' => $byName]);
@@ -119,7 +117,7 @@ class FleetVerbandController extends Controller
 					throw new ErrorException("Вы не можете менять имя ассоциации");
 				}
 
-				$name = Request::post('name', 'string');
+				$name = $request->post('name', 'string');
 
 				if (mb_strlen($name) < 5) {
 					throw new ErrorException("Слишком короткое имя ассоциации");

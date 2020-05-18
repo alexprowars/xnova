@@ -62,8 +62,8 @@ class RocketController extends Controller
 			$destroyType = (int) $destroyType;
 		}
 
-		/** @var Models\User $targetUser */
-		$targetUser = Models\User::query()->find($targetPlanet->id_owner, ['id', 'vacation']);
+		$targetUser = Models\User::query()
+			->find($targetPlanet->id_owner, ['id', 'vacation']);
 
 		if (!$targetUser) {
 			throw new ErrorException('Игрока не существует');
@@ -79,7 +79,6 @@ class RocketController extends Controller
 
 		$time = 30 + (60 * $distance);
 
-		/** @var Fleet $fleet */
 		$fleet = Fleet::query()->create([
 			'owner' 			=> $this->user->id,
 			'owner_name' 		=> $this->planet->name,

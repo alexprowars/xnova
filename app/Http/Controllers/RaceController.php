@@ -61,7 +61,6 @@ class RaceController extends Controller
 						->where('id_owner', $this->user->id)
 						->get();
 
-					/** @var Planet $planet */
 					foreach ($planets as $planet) {
 						$planet->setUnit(Vars::getIdByName('corvete'), 0);
 						$planet->setUnit(Vars::getIdByName('interceptor'), 0);

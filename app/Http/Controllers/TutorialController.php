@@ -42,7 +42,6 @@ class TutorialController extends Controller
 		$parse['task'] = [];
 		$parse['rewd'] = [];
 
-		/** @var Models\UserQuest $qInfo */
 		$qInfo = Models\UserQuest::query()
 			->where('user_id', $this->user->getId())
 			->where('quest_id', $stage)
@@ -247,7 +246,6 @@ class TutorialController extends Controller
 			->where('user_id', $this->user->getId())
 			->get();
 
-		/** @var Models\UserQuest $quest */
 		foreach ($quests as $quest) {
 			$userQuests[$quest->quest_id] = $quest->toArray();
 		}

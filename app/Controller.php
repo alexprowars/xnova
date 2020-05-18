@@ -4,13 +4,13 @@ namespace Xnova;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\Account;
 
 class Controller extends BaseController
 {
@@ -42,7 +42,7 @@ class Controller extends BaseController
 
 	private function init()
 	{
-		$this->setTitle(Config::get('settings.site_title', ''));
+		$this->setTitle(config('settings.site_title', ''));
 
 		Vars::init();
 
@@ -51,13 +51,14 @@ class Controller extends BaseController
 
 			// Кэшируем настройки профиля в сессию
 			if (!Session::has('config') || strlen(Session::get('config')) < 10) {
-				$inf = DB::table('accounts')->select('settings')->where('id', Auth::id())->first();
+				$info = Account::query()
+					->find(Auth::id(), ['settings']);
 
-				Session::put('config', $inf->settings);
+				Session::put('config', $info->settings);
 			}
 
-			if (!(int) Config::get('settings.view.showPlanetListSelect', 0)) {
-				Config::set('settings.view.showPlanetListSelect', $this->user->getUserOption('planetlistselect'));
+			if (!(int) config('settings.view.showPlanetListSelect', 0)) {
+				config(['settings.view.showPlanetListSelect' => $this->user->getUserOption('planetlistselect')]);
 			}
 
 			if (Request::input('fullscreen') == 'Y') {
@@ -66,12 +67,12 @@ class Controller extends BaseController
 			}
 
 			if (Request::server('SERVER_NAME') == 'vk.xnova.su') {
-				Config::set('settings.view.socialIframeView', 1);
+				config(['settings.view.socialIframeView' => 1]);
 			}
 
 			if (Cookie::has("full") && Cookie::get("full") == 'Y') {
-				Config::set('settings.view.socialIframeView', 0);
-				Config::set('settings.view.showPlanetListSelect', 0);
+				config(['settings.view.socialIframeView' => 0]);
+				config(['settings.view.showPlanetListSelect' => 0]);
 			}
 
 			// Заносим настройки профиля в основной массив

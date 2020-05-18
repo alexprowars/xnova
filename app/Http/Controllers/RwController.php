@@ -23,17 +23,16 @@ class RwController extends Controller
 			throw new PageException('Боевой отчет не найден');
 		}
 
-		/** @var Report $raportrow */
-		$raportrow = Report::query()->find((int) $id);
+		$report = Report::query()->find($id);
 
-		if (!$raportrow) {
+		if (!$report) {
 			throw new PageException('Данный боевой отчет не найден или удалён');
 		}
 
-		$user_list = json_decode($raportrow->id_users, true);
+		$user_list = json_decode($report->id_users, true);
 
 		if (!$this->user->isAdmin()) {
-			if (md5(Config::get('app.key') . $raportrow->id) != $key) {
+			if (md5(Config::get('app.key') . $report->id) != $key) {
 				throw new PageException('Не правильный ключ');
 			}
 
@@ -41,16 +40,16 @@ class RwController extends Controller
 				throw new PageException('Вы не можете просматривать этот боевой доклад');
 			}
 
-			if ($user_list[0] == $this->user->id && $raportrow->no_contact == 1) {
+			if ($user_list[0] == $this->user->id && $report->no_contact == 1) {
 				throw new PageException('Контакт с вашим флотом потерян.<br>(Ваш флот был уничтожен в первой волне атаки.)');
 			}
 		}
 
-		$result = json_decode($raportrow->raport, true);
+		$result = json_decode($report->raport, true);
 		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5]);
 
 		$html = $report->report()['html'];
-		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(Config::get('app.key') . $raportrow->id) . $raportrow->id . "/\"><font color=red>" . md5('xnovasuka' . $raportrow->id) . $raportrow->id . "</font></a></div>";
+		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(Config::get('app.key') . $report->id) . $report->id . "/\"><font color=red>" . md5('xnovasuka' . $report->id) . $report->id . "</font></a></div>";
 
 		$this->setTitle('Боевой доклад');
 		$this->showTopPanel(false);

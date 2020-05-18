@@ -18,7 +18,6 @@ class CreateBase extends FleetEngine implements Mission
 {
 	public function TargetEvent()
 	{
-		/** @var User $owner */
 		$owner = User::query()->find($this->fleet->owner);
 
 		// Определяем максимальное количество баз

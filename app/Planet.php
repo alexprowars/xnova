@@ -14,7 +14,7 @@ class Planet extends Models\Planet
 	use Build;
 	use Unit;
 
-	/** @var \Xnova\User */
+	/** @var User */
 	private $user;
 	public $ally = [];
 
@@ -362,7 +362,6 @@ class Planet extends Models\Planet
 
 	public function getTopPanelRosources(): array
 	{
-		/** @var User $user */
 		$user = Auth::user();
 
 		$data = [];

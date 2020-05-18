@@ -8,8 +8,8 @@
 
 namespace Xnova\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
@@ -20,14 +20,14 @@ class OfficierController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function buy()
+	public function buy(Request $request)
 	{
 		if ($this->user->vacation > 0) {
 			throw new PageException('В режиме отпуска данный раздел недоступен!');
 		}
 
-		$id = (int) Request::post('id');
-		$duration = (int) Request::post('duration');
+		$id = (int) $request->post('id');
+		$duration = (int) $request->post('duration');
 
 		if (!$id || !$duration) {
 			throw new ErrorException('Ошибка входных параметров');

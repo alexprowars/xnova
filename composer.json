@@ -42,6 +42,7 @@
      	]
  	},
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.3"
+        "barryvdh/laravel-debugbar": "^3.3",
+        "barryvdh/laravel-ide-helper": "^2.7"
     }
 }

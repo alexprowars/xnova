@@ -8,8 +8,8 @@
 
 namespace Xnova\Http\Controllers\Fleet;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
@@ -17,15 +17,14 @@ use Xnova\Models\Fleet;
 
 class FleetBackController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		$fleetId = (int) Request::post('id', 0);
+		$fleetId = (int) $request->post('id', 0);
 
 		if ($fleetId <= 0) {
 			throw new ErrorException('Не выбран флот');
 		}
 
-		/** @var Fleet $fleet */
 		$fleet = Fleet::query()->find($fleetId);
 
 		if (!$fleet || $fleet->owner != $this->user->id) {

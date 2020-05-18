@@ -20,7 +20,6 @@ class AdminCanAccess
 			throw UnauthorizedException::notLoggedIn();
 		}
 
-		/** @var User $user */
 		$user = Auth::user();
 
 		if (!$user->getRoleNames()->count()) {

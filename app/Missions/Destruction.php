@@ -22,7 +22,6 @@ class Destruction extends FleetEngine implements Mission
 		$result = $mission->TargetEvent();
 
 		if ($result == true) {
-			/** @var Models\Fleet $checkFleet */
 			$checkFleet = Models\Fleet::query()->find($this->fleet->id, ['fleet_array', 'won']);
 
 			if ($checkFleet && $checkFleet->won == 1) {

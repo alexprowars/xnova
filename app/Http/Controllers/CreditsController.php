@@ -31,10 +31,10 @@ class CreditsController extends Controller
 
 			do {
 				$id = mt_rand(1000000000000, 9999999999999);
-			} while (DB::selectOne("SELECT id FROM payments WHERE transaction_id = " . $id) ? true : false);
+			} while (DB::selectOne("SELECT id FROM payments WHERE transaction_id = " . $id));
 
-			/** @var Models\Account $info */
-			$info = Models\Account::query()->find($this->user->getId());
+			$info = Models\Account::query()
+				->find($this->user->getId(), ['email']);
 
 			$parse['payment'] = [
 				'id' => $id,

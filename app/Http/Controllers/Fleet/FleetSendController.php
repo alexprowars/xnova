@@ -9,9 +9,9 @@
 namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
 use Xnova\Entity\FleetCollection;
 use Xnova\Exceptions\ErrorException;
@@ -28,27 +28,27 @@ class FleetSendController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		if ($this->user->vacation > 0) {
 			throw new PageException("Нет доступа!");
 		}
 
-		$moon = (int) Request::post('moon', 0);
+		$moon = (int) $request->post('moon', 0);
 
 		if ($moon && $moon != $this->planet->id) {
 			$this->checkJumpGate($moon);
 		}
 
-		$galaxy = (int) Request::post('galaxy', 0);
-		$system = (int) Request::post('system', 0);
-		$planet = (int) Request::post('planet', 0);
-		$planet_type = (int) Request::post('planet_type', 0);
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
+		$planet_type = (int) $request->post('planet_type', 0);
 
-		$fleetMission = (int) Request::post('mission', 0);
-		$expTime = (int) Request::post('expeditiontime', 0);
+		$fleetMission = (int) $request->post('mission', 0);
+		$expTime = (int) $request->post('expeditiontime', 0);
 
-		$fleetarray = json_decode(base64_decode(str_rot13(Request::post('fleet', ''))), true);
+		$fleetarray = json_decode(base64_decode(str_rot13($request->post('fleet', ''))), true);
 
 		if (!$fleetMission) {
 			throw new ErrorException("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
@@ -58,7 +58,7 @@ class FleetSendController extends Controller
 			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", Config::get('settings.disableAttacks', 0)) . "</b></span>", '/fleet/');
 		}
 
-		$allianceId = (int) Request::post('alliance', 0);
+		$allianceId = (int) $request->post('alliance', 0);
 
 		$fleet_group_mr = 0;
 
@@ -103,7 +103,6 @@ class FleetSendController extends Controller
 			throw new ErrorException('Невозможно отправить флот на эту же планету!');
 		}
 
-		/** @var Planet $targetPlanet */
 		$targetPlanet = Planet::query()
 			->where('galaxy', $galaxy)
 			->where('system', $system)
@@ -262,7 +261,7 @@ class FleetSendController extends Controller
 			throw new PageException('Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.', "/fleet/");
 		}
 
-		$resources = Request::post('resource');
+		$resources = $request->post('resource');
 		$resources = array_map('intval', $resources);
 
 		if (array_sum($resources) < 1 && $fleetMission == 3) {
@@ -319,7 +318,7 @@ class FleetSendController extends Controller
 		$fleetCollection = FleetCollection::createFromArray($fleetarray);
 
 		$maxFleetSpeed 		= $fleetCollection->getSpeed();
-		$fleetSpeedFactor 	= Request::post('speed', 10);
+		$fleetSpeedFactor 	= $request->post('speed', 10);
 
 		if (!in_array($fleetSpeedFactor, $speedPossible)) {
 			throw new ErrorException('Читеришь со скоростью?');
@@ -357,12 +356,13 @@ class FleetSendController extends Controller
 
 		if ($fleet_group_mr > 0) {
 			// Вычисляем время самого медленного флота в совместной атаке
-			$flet = Models\Fleet::query()->where('group_id', $fleet_group_mr)->get(['id', 'start_time', 'end_time']);
+			$flet = Models\Fleet::query()
+				->where('group_id', $fleet_group_mr)
+				->get(['id', 'start_time', 'end_time']);
 
 			$fleet_group_time = $duration + time();
 			$arrr = [];
 
-			/** @var Models\Fleet $flt */
 			foreach ($flet as $i => $flt) {
 				if ($flt->start_time > $fleet_group_time) {
 					$fleet_group_time = $flt->start_time;
@@ -432,7 +432,7 @@ class FleetSendController extends Controller
 		$TotalFleetCons = 0;
 
 		if ($fleetMission == 5) {
-			$holdTime = (int) Request::post('holdingtime', 0);
+			$holdTime = (int) $request->post('holdingtime', 0);
 
 			if (!in_array($holdTime, [0, 1, 2, 4, 8, 16, 32])) {
 				$holdTime = 0;
@@ -627,7 +627,7 @@ class FleetSendController extends Controller
 		}
 
 		if ($fleetMission == 1) {
-			$raunds = Request::post('raunds', 6);
+			$raunds = $request->post('raunds', 6);
 			$raunds = max(min(10, $raunds), 6);
 		} else {
 			$raunds = 0;
@@ -718,7 +718,6 @@ class FleetSendController extends Controller
 			throw new PageException(__('fleet.gate_wait_star') . " - " . Format::time($nextJumpTime), '/fleet/');
 		}
 
-		/** @var Planet $targetPlanet */
 		$targetPlanet = Planet::query()->find($planetId);
 
 		if (!$targetPlanet->isAvailableJumpGate()) {
@@ -733,7 +732,7 @@ class FleetSendController extends Controller
 
 		$success = false;
 
-		$ships = Request::post('ship');
+		$ships = request()->post('ship');
 		$ships = array_map('intval', $ships);
 		$ships = array_map('abs', $ships);
 

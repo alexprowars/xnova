@@ -9,8 +9,7 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Fleet;
@@ -21,25 +20,25 @@ class PhalanxController extends Controller
 {
 	protected $loadPlanet = true;
 
-	public function index()
+	public function index(Request $request)
 	{
 		if ($this->user->vacation > 0) {
 			throw new PageException('Нет доступа!');
 		}
 
-		$g = (int) Request::post('galaxy');
-		$s = (int) Request::post('system');
-		$i = (int) Request::post('planet');
+		$g = (int) $request->post('galaxy');
+		$s = (int) $request->post('system');
+		$i = (int) $request->post('planet');
 
 		$consomation = 5000;
 
-		if ($g < 1 || $g > Config::get('settings.maxGalaxyInWorld')) {
+		if ($g < 1 || $g > config('settings.maxGalaxyInWorld')) {
 			$g = $this->planet->galaxy;
 		}
-		if ($s < 1 || $s > Config::get('settings.maxSystemInGalaxy')) {
+		if ($s < 1 || $s > config('settings.maxSystemInGalaxy')) {
 			$s = $this->planet->system;
 		}
-		if ($i < 1 || $i > Config::get('settings.maxPlanetInSystem')) {
+		if ($i < 1 || $i > config('settings.maxPlanetInSystem')) {
 			$i = $this->planet->planet;
 		}
 
@@ -49,13 +48,13 @@ class PhalanxController extends Controller
 		$systemgora = $this->planet->system + pow($phalanx, 2);
 
 		if ($this->planet->planet_type != 3) {
-			throw new PageException("Вы можете использовать фалангу только на луне!");
+			throw new PageException('Вы можете использовать фалангу только на луне!');
 		} elseif ($phalanx == 0) {
-			throw new PageException("Постройте сначало сенсорную фалангу");
+			throw new PageException('Постройте сначало сенсорную фалангу');
 		} elseif ($this->planet->deuterium < $consomation) {
-			throw new PageException("<b>Недостаточно дейтерия для использования. Необходимо: " . $consomation . ".</b>");
+			throw new PageException('Недостаточно дейтерия для использования. Необходимо: ' . $consomation . '.');
 		} elseif (($s <= $systemdol or $s >= $systemgora) or $g != $this->planet->galaxy) {
-			throw new PageException("Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.");
+			throw new PageException('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
 		}
 
 		$this->planet->deuterium -= $consomation;

@@ -9,9 +9,8 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Xnova\Exceptions\ErrorException;
@@ -25,7 +24,7 @@ use Xnova\Models;
 
 class MessagesController extends Controller
 {
-	public function write($userId)
+	public function write(Request $request, $userId)
 	{
 		if (!$userId) {
 			throw new ErrorException(__('messages.mess_no_ownerid'));
@@ -39,8 +38,8 @@ class MessagesController extends Controller
 			throw new ErrorException(__('messages.mess_no_owner'));
 		}
 
-		if (Request::post('text')) {
-			$text = Request::post('text', '');
+		if ($request->post('text')) {
+			$text = $request->post('text', '');
 
 			$error = 0;
 
@@ -96,10 +95,10 @@ class MessagesController extends Controller
 			'to' => $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]"
 		];
 
-		if (Request::query('quote')) {
+		if ($request->query('quote')) {
 			$mes = Message::query()
 				->select(['id', 'text'])
-				->where('id', Request::query('quote'))
+				->where('id', $request->query('quote'))
 				->where(function (Builder $query) {
 					$query->where('user_id', $this->user->id)
 						->orWhere('from_id', $this->user->id);
@@ -117,9 +116,9 @@ class MessagesController extends Controller
 		return $page;
 	}
 
-	public function delete()
+	public function delete(Request $request)
 	{
-		$items = Request::post('delete');
+		$items = $request->post('delete');
 
 		if (!is_array($items) || !count($items)) {
 			return false;
@@ -153,7 +152,6 @@ class MessagesController extends Controller
 			->where('authlevel', '!=', 0)
 			->get();
 
-		/** @var Models\User $user */
 		foreach ($users as $user) {
 			User::sendMessage(
 				$user->id,
@@ -168,7 +166,7 @@ class MessagesController extends Controller
 		throw new SuccessException('Жалоба отправлена администрации игры');
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 		$parse = [];
 
@@ -181,8 +179,8 @@ class MessagesController extends Controller
 			$category = (int) Session::get('m_cat');
 		}
 
-		if (Request::post('category')) {
-			$category = (int) Request::post('category', 100);
+		if ($request->post('category')) {
+			$category = (int) $request->post('category', 100);
 		}
 
 		if (!in_array($category, $types)) {
@@ -195,15 +193,15 @@ class MessagesController extends Controller
 			$limit = (int) Session::get('m_limit');
 		}
 
-		if (Request::post('limit')) {
-			$limit = (int) Request::post('limit', 10);
+		if ($request->post('limit')) {
+			$limit = (int) $request->post('limit', 10);
 		}
 
 		if (!in_array($limit, $limits)) {
 			$limit = 10;
 		}
 
-		$page = (int) Request::query('p', 0);
+		$page = (int) $request->query('p', 0);
 
 		if ($page <= 0) {
 			$page = 1;
@@ -217,8 +215,8 @@ class MessagesController extends Controller
 			Session::put('m_cat', $category);
 		}
 
-		if (Request::post('delete')) {
-			$this->delete();
+		if ($request->post('delete')) {
+			$this->delete($request);
 		}
 
 		$parse['limit'] = $limit;

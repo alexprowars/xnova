@@ -114,7 +114,6 @@ class LogController extends Controller
 			throw new RedirectException('Неправильный ключ', '/log/');
 		}
 
-		/** @var Report $log */
 		$log = Report::query()->find($id);
 
 		if (!$log) {
@@ -153,7 +152,6 @@ class LogController extends Controller
 	{
 		$id = (int) $id;
 
-		/** @var LogBattle $raportrow */
 		$raportrow = LogBattle::query()->find($id);
 
 		if (!$raportrow) {

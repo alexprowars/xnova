@@ -88,21 +88,21 @@ class Tech
 	{
 		$user = $this->_queue->getUser();
 
-		/** @var Models\Queue $techHandle */
-		$techHandle = Models\Queue::query()->where('user_id', $user->id)
+		$techHandle = Models\Queue::query()
+			->where('user_id', $user->id)
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
 		if ($techHandle && $techHandle->object_id == $elementId) {
-			/** @var Planet $planet */
-			$planet = Planet::query()->find((int) $techHandle->planet_id);
+			$planet = Planet::query()
+				->find((int) $techHandle->planet_id);
 
 			$entity = new Entity\Research($elementId, $techHandle->level, new Entity\Context($user, $planet));
 
 			$cost = $entity->getPrice();
 
-			$planet->metal 		+= $cost['metal'];
-			$planet->crystal 	+= $cost['crystal'];
-			$planet->deuterium 	+= $cost['deuterium'];
+			$planet->metal += $cost['metal'];
+			$planet->crystal += $cost['crystal'];
+			$planet->deuterium += $cost['deuterium'];
 			$planet->update();
 
 			$techHandle->delete();

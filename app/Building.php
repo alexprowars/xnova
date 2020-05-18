@@ -8,8 +8,6 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\Config;
-
 class Building
 {
 	public static function checkTechnologyRace(User $user, $element)
@@ -36,7 +34,7 @@ class Building
 		if ($queueManager->getCount($queueManager::TYPE_BUILDING)) {
 			$BuildQueue = $queueManager->get($queueManager::TYPE_BUILDING);
 
-			if ($BuildQueue[0]->object_id == 31 && Config::get('settings.BuildLabWhileRun', 0) != 1) {
+			if ($BuildQueue[0]->object_id == 31 && config('settings.BuildLabWhileRun', 0) != 1) {
 				return false;
 			} else {
 				return true;
