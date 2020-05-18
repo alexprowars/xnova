@@ -16,7 +16,7 @@ use Xnova\Vars;
 
 class Rak extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$this->KillFleet();
 
@@ -110,12 +110,12 @@ class Rak extends FleetEngine implements Mission
 		User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 3, 'Ракетная атака', $message);
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		return;
 	}

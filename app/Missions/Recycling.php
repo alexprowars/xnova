@@ -15,7 +15,7 @@ use Xnova\User;
 
 class Recycling extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type != 3 LIMIT 1;")->fetch();
 
@@ -84,12 +84,12 @@ class Recycling extends FleetEngine implements Mission
 		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_spy_control'), $Message);
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

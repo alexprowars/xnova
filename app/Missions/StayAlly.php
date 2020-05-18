@@ -13,7 +13,7 @@ use Xnova\User;
 
 class StayAlly extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$this->StayFleet();
 
@@ -22,12 +22,12 @@ class StayAlly extends FleetEngine implements Mission
 		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_mess_tower'), $Message);
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		$this->ReturnFleet();
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

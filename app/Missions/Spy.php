@@ -19,7 +19,7 @@ use Xnova\Vars;
 
 class Spy extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$owner = User::query()->find($this->fleet->owner);
 
@@ -184,7 +184,7 @@ class Spy extends FleetEngine implements Mission
 
 			if ($TargetChances > $SpyerChances) {
 				$mission = new Attack($this->fleet);
-				$mission->TargetEvent();
+				$mission->targetEvent();
 			} else {
 				$this->ReturnFleet();
 			}
@@ -195,12 +195,12 @@ class Spy extends FleetEngine implements Mission
 		return true;
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

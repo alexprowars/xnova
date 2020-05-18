@@ -13,7 +13,7 @@ use Xnova\User;
 
 class Transport extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$this->RestoreFleetToPlanet(false, false);
 
@@ -52,12 +52,12 @@ class Transport extends FleetEngine implements Mission
 		$this->ReturnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

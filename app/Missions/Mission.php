@@ -1,18 +1,18 @@
 <?php
 
-namespace Xnova\Missions;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
+namespace Xnova\Missions;
+
 interface Mission
 {
-	public function TargetEvent();
+	public function targetEvent();
 
-	public function EndStayEvent();
+	public function endStayEvent();
 
-	public function ReturnEvent();
+	public function returnEvent();
 }

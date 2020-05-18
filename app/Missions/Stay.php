@@ -15,7 +15,7 @@ use Xnova\User;
 
 class Stay extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type = '" . $this->fleet->end_type . "'");
 
@@ -52,12 +52,12 @@ class Stay extends FleetEngine implements Mission
 		}
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->start_galaxy . "' AND system = '" . $this->fleet->start_system . "' AND planet = '" . $this->fleet->start_planet . "' AND planet_type = '" . $this->fleet->start_type . "';");
 

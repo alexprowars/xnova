@@ -16,7 +16,7 @@ use Xnova\Models;
 
 class CreateBase extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$owner = User::query()->find($this->fleet->owner);
 
@@ -86,12 +86,12 @@ class CreateBase extends FleetEngine implements Mission
 		}
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

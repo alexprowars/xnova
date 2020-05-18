@@ -36,7 +36,7 @@ class Attack extends FleetEngine implements Mission
 	public $usersTech = [];
 	public $usersInfo = [];
 
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$target = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
 
@@ -565,12 +565,12 @@ class Attack extends FleetEngine implements Mission
 		return true;
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();

@@ -82,11 +82,11 @@ class Fleet extends Command
 					$mission = new $missionName($fleetRow);
 
 					if ($fleetRow->mess == 0 && $fleetRow->start_time <= time()) {
-						$mission->TargetEvent();
+						$mission->targetEvent();
 					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay <= time()) {
-						$mission->EndStayEvent();
+						$mission->endStayEvent();
 					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time <= time()) {
-						$mission->ReturnEvent();
+						$mission->returnEvent();
 					}
 
 					unset($mission);

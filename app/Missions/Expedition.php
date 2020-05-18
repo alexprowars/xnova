@@ -25,12 +25,12 @@ use Xnova\Vars;
 
 class Expedition extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$this->StayFleet();
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		$Expowert = [];
 
@@ -438,7 +438,7 @@ class Expedition extends FleetEngine implements Mission
 		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_stay, 15, __('fleet_engine.sys_expe_report'), $Message);
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$Message = sprintf(__('fleet_engine.sys_expe_back_home'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 

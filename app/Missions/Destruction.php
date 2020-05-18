@@ -16,10 +16,10 @@ use Xnova\User;
 
 class Destruction extends FleetEngine implements Mission
 {
-	public function TargetEvent()
+	public function targetEvent()
 	{
 		$mission = new Attack($this->fleet);
-		$result = $mission->TargetEvent();
+		$result = $mission->targetEvent();
 
 		if ($result == true) {
 			$checkFleet = Models\Fleet::query()->find($this->fleet->id, ['fleet_array', 'won']);
@@ -138,12 +138,12 @@ class Destruction extends FleetEngine implements Mission
 		}
 	}
 
-	public function EndStayEvent()
+	public function endStayEvent()
 	{
 		return;
 	}
 
-	public function ReturnEvent()
+	public function returnEvent()
 	{
 		$this->RestoreFleetToPlanet();
 		$this->KillFleet();
