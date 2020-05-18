@@ -9,7 +9,6 @@
 namespace Xnova;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Xnova\Models\Money;
@@ -65,18 +64,21 @@ class Game
 
 		$ip = Helpers::convertIp(Request::ip());
 
-		$res = DB::selectOne("SELECT `id` FROM moneys where `ip` = '" . $ip . "' AND `time` > '" . (time() - 86400) . "'");
+		$res = Money::query()
+			->where('ip', $ip)
+			->where('time', '>', time() - 86400)
+			->exists();
 
 		if ($res) {
 			return;
 		}
 
 		Money::query()->create([
-			'user_id'		=> $user->id,
-			'time'			=> time(),
-			'ip'			=> $ip,
-			'referer'		=> Request::server('HTTP_REFERER'),
-			'user_agent'	=> Request::server('HTTP_USER_AGENT'),
+			'user_id' => $user->id,
+			'time' => time(),
+			'ip' => $ip,
+			'referer' => Request::server('HTTP_REFERER'),
+			'user_agent' => Request::server('HTTP_USER_AGENT'),
 		]);
 
 		$user->links++;

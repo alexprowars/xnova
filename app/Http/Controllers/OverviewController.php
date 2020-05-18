@@ -458,19 +458,15 @@ class OverviewController extends Controller
 		$parse['moon'] 	= false;
 
 		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id) {
-			$lune = Cache::get('app::lune_' . $this->planet->parent_planet);
-
-			if ($lune === null) {
+			$lune = Cache::remember('app::lune_' . $this->planet->parent_planet, 300, function () {
 				$lune = Models\Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
 					->where('id', $this->planet->parent_planet)
 					->where('planet_type', 3)
 					->first();
 
-				if ($lune) {
-					Cache::put('app::lune_' . $this->planet->parent_planet, $lune->toArray(), 300);
-				}
-			}
+				return $lune ? $lune->toArray() : null;
+			});
 
 			if (isset($lune['id']) && !$lune['destruyed']) {
 				$parse['moon'] = [
@@ -496,24 +492,16 @@ class OverviewController extends Controller
 			'planet' => (int) $this->planet->planet
 		];
 
-		$records = Cache::get('app::records_' . $this->user->getId());
-
-		if ($records === null) {
-			$records = DB::table('statistics')
+		$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
+			$records = Models\Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
 				->where('id_owner', $this->user->getId())
 				->first();
 
-			if (!$records) {
-				$records = [];
-			} else {
-				$records = $records->toArray();
-			}
-
-			Cache::put('app::records_' . $this->user->getId() . '', $records, 1800);
-		}
+			return $records ? $records->toArray() : null;
+		});
 
 		$parse['points'] = [
 			'build' => 0,
@@ -525,7 +513,7 @@ class OverviewController extends Controller
 			'diff' => 0
 		];
 
-		if (count($records)) {
+		if ($records) {
 			if (!$records['total_old_rank']) {
 				$records['total_old_rank'] = $records['total_rank'];
 			}
@@ -709,15 +697,7 @@ class OverviewController extends Controller
 		$parse['chat'] = [];
 
 		if (Helpers::isMobile()) {
-			$chatCached = Cache::get(config('chat.cache'));
-
-			if (is_string($chatCached)) {
-				$chat = json_decode($chatCached, true);
-			} else {
-				$chat = null;
-			}
-
-			if (!is_array($chat) || !count($chat)) {
+			$chatCached = Cache::remember(config('chat.cache'), 86400, function () {
 				$messages = DB::select("SELECT c.*, u.username FROM log_chat c LEFT JOIN users u ON u.id = c.user WHERE 1 = 1 ORDER BY c.time DESC LIMIT 20");
 
 				$chat = [];
@@ -752,12 +732,16 @@ class OverviewController extends Controller
 					$chat[] = [$message->id, $message->time, $message->username, $to[1], $isPrivate, $message->text, 0];
 				}
 
-				$chat = array_reverse($chat);
+				return json_encode(array_reverse($chat));
+			});
 
-				Cache::put(config('chat.cache'), json_encode($chat), 86400);
+			if (is_string($chatCached)) {
+				$chat = json_decode($chatCached, true);
+			} else {
+				$chat = null;
 			}
 
-			if (is_array($chat) && count($chat)) {
+			if ($chat && count($chat)) {
 				$chat = array_reverse($chat);
 
 				$i = 0;

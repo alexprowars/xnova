@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Xnova\Controller;
 use Xnova\Game;
+use Xnova\Models\Statistic;
 
 class StatController extends Controller
 {
@@ -91,26 +92,18 @@ class StatController extends Controller
 		];
 
 		if (!$this->page && Auth::check()) {
-			$records = Cache::get('app::records_' . $this->user->getId() . '');
-
-			if ($records === null) {
-				$records = DB::table('statistics')
+			$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
+				$records = Statistic::query()
 					->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 					->where('stat_type', 1)
 					->where('stat_code', 1)
 					->where('id_owner', $this->user->getId())
 					->first();
 
-				if (!$records) {
-					$records = [];
-				} else {
-					$records = $records->toArray();
-				}
+				return $records ? $records->toArray() : null;
+			});
 
-				Cache::put('app::records_' . $this->user->getId() . '', $records, 1800);
-			}
-
-			if (isset($records[$this->field . '_rank'])) {
+			if ($records) {
 				$this->page = $records[$this->field . '_rank'];
 			}
 		}

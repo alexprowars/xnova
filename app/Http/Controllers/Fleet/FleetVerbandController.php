@@ -101,9 +101,9 @@ class FleetVerbandController extends Controller
 					throw new ErrorException("Игрок уже приглашён для нападения");
 				}
 
-				DB::table('assaults_users')->insert([
-					'aks_id' 	=> $aks->id,
-					'user_id' 	=> $user_data->id
+				AssaultUser::query()->insert([
+					'aks_id' => $aks->id,
+					'user_id' => $user_data->id,
 				]);
 
 				$planet_daten = DB::selectOne("SELECT `id_owner`, `name` FROM planets WHERE galaxy = '" . $aks->galaxy . "' AND system = '" . $aks->system . "' AND planet = '" . $aks->planet . "' AND planet_type = '" . $aks->planet_type . "'");

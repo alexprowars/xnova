@@ -3,7 +3,6 @@
 namespace Xnova\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -51,9 +50,6 @@ use Xnova\Mail\UserLostPassword;
  * @property $rpg_meta
  * @property $rpg_komandir
  * @property $deltime
- *
- * @method static self find(int $id)
- * @method static Builder where($column, $operator = null, $value = null)
  */
 class User extends Authenticatable
 {

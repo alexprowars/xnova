@@ -28,14 +28,9 @@ class AdminViewData
 		View::share('route_action', $route->getActionMethod());
 		View::share('user', $user);
 
-		$menu = Cache::get('ADMIN_SIDEBAR_MENU_' . $user->id);
-
-		//if (!$menu)
-		{
-			$menu = $this->generateMenu();
-
-			Cache::put('ADMIN_SIDEBAR_MENU_' . $user->id, $menu, 3600);
-		}
+		$menu = Cache::remember('ADMIN_SIDEBAR_MENU_' . $user->id, 3600, function () {
+			return $this->generateMenu();
+		});
 
 		View::share('main_menu', $menu);
 

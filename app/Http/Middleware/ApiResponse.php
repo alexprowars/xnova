@@ -160,15 +160,9 @@ class ApiResponse
 			$user->update();
 		}
 
-		$planetsList = Cache::get('app::planetlist_' . $user->getId());
-
-		if (!$planetsList) {
-			$planetsList = $user->getPlanets();
-
-			if (count($planetsList)) {
-				Cache::put('app::planetlist_' . $user->getId(), $planetsList, 600);
-			}
-		}
+		$planetsList = Cache::remember('app::planetlist_' . $user->getId(), 600, function () use ($user) {
+			return $user->getPlanets();
+		});
 
 		$planets = [];
 
@@ -185,13 +179,12 @@ class ApiResponse
 			];
 		}
 
-		$quests = Cache::get('app::quests::' . $user->getId());
-
-		if ($quests === null) {
-			$quests = (int) UserQuest::query()->where('user_id', $user->getId())->where('finish', 1)->count();
-
-			Cache::put('app::quests::' . $user->getId(), $quests, 3600);
-		}
+		$quests = Cache::remember('app::quests::' . $user->getId(), 3600, function () use ($user) {
+			return (int) UserQuest::query()
+				->where('user_id', $user->getId())
+				->where('finish', 1)
+				->count();
+		});
 
 		$result['user'] = [
 			'id' => (int) $user->id,

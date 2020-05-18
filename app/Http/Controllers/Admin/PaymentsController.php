@@ -4,9 +4,9 @@ namespace Xnova\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
-use Illuminate\Support\Facades\DB;
 use Prologue\Alerts\Facades\Alert;
 use Xnova\Http\Requests\Admin\PaymentRequest;
+use Xnova\Models\LogCredit;
 use Xnova\Models\Payment;
 use Xnova\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
@@ -108,11 +108,11 @@ class PaymentsController extends CrudController
 		} else {
 			User::query()->where('id', $checkUser->id)->increment('credits', (int) $fields['amount']);
 
-			DB::table('log_credits')->insert([
+			LogCredit::query()->insert([
 				'uid' => $checkUser->id,
 				'time' => time(),
 				'credits' => (int) $fields['amount'],
-				'type' => 6
+				'type' => 6,
 			]);
 
 			User::sendMessage($checkUser->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');

@@ -13,7 +13,7 @@ use Xnova\Controller;
 
 class ContactsController extends Controller
 {
-	function index()
+	public function index()
 	{
 		$contacts = [];
 

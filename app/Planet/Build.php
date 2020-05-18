@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\Planet;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\DB;
+namespace Xnova\Planet;
+
 use Xnova\Exceptions\Exception;
 use Xnova\Models\PlanetBuilding;
 use Xnova\Vars;
@@ -23,18 +22,18 @@ trait Build
 		if ($this->buildings !== false) {
 			foreach ($this->buildings as &$building) {
 				if ($building['id'] == 0 && $building['level'] > 0) {
-					$building['id'] = DB::table('planet_buildings')->insertGetId([
+					$building['id'] = PlanetBuilding::query()->insertGetId([
 						'planet_id' => $this->id,
 						'build_id' => $building['type'],
 						'level' => $building['level']
 					]);
 				} elseif ($building['id'] > 0 && $building['level'] != $building['~level']) {
 					if ($building['level'] > 0) {
-						DB::table('planet_buildings')
+						PlanetBuilding::query()
 							->where('id', $building['id'])
 							->update(['level' => $building['level']]);
 					} else {
-						DB::table('planet_buildings')->where('id', $building['id'])->delete();
+						PlanetBuilding::query()->where('id', $building['id'])->delete();
 					}
 				}
 

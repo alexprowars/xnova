@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use Xnova\Mail\UserDelete;
 use Xnova\Models\Fleet;
 use Xnova\Models\Statistic;
+use Xnova\Models;
 
 class UpdateStatistics
 {
@@ -35,7 +36,7 @@ class UpdateStatistics
 		$this->user = new Models\User();
 	}
 
-	private function SetMaxInfo($ID, $Count, Models\User $Data)
+	private function setMaxInfo($ID, $Count, Models\User $Data)
 	{
 		if ($Data->isAdmin() || $Data->banned != 0) {
 			return;
@@ -50,7 +51,7 @@ class UpdateStatistics
 		}
 	}
 
-	private function GetTechnoPoints(Models\User $user)
+	private function getTechnoPoints(Models\User $user)
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
@@ -65,7 +66,7 @@ class UpdateStatistics
 			}
 
 			if ($user->records == 1 && $item->tech_id < 300) {
-				$this->SetMaxInfo($item->tech_id, $item->level, $user);
+				$this->setMaxInfo($item->tech_id, $item->level, $user);
 			}
 
 			$price = Vars::getItemPrice($item->tech_id);
@@ -85,7 +86,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetBuildPoints(Models\Planet $planet, $user)
+	private function getBuildPoints(Models\Planet $planet, $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
@@ -100,7 +101,7 @@ class UpdateStatistics
 			}
 
 			if ($user['records'] == 1) {
-				$this->SetMaxInfo($item->build_id, $item->level, $user);
+				$this->setMaxInfo($item->build_id, $item->level, $user);
 			}
 
 			$price = Vars::getItemPrice($item->build_id);
@@ -120,7 +121,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetDefensePoints(Models\Planet $planet, &$RecordArray)
+	private function getDefensePoints(Models\Planet $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -153,7 +154,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetFleetPoints(Models\Planet $planet, &$RecordArray)
+	private function getFleetPoints(Models\Planet $planet, &$RecordArray)
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -189,7 +190,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function GetFleetPointsOnTour($CurrentFleet)
+	private function getFleetPointsOnTour($CurrentFleet)
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
@@ -269,7 +270,7 @@ class UpdateStatistics
 		$UsrFleets = Fleet::query()->get();
 
 		foreach ($UsrFleets as $CurFleet) {
-			$Points = $this->GetFleetPointsOnTour($CurFleet->getShips());
+			$Points = $this->getFleetPointsOnTour($CurFleet->getShips());
 
 			if (!isset($fleetPoints[$CurFleet->owner])) {
 				$fleetPoints[$CurFleet->owner] = [];
@@ -325,7 +326,7 @@ class UpdateStatistics
 				$OldFleetRank 	= 0;
 			}
 
-			$Points = $this->GetTechnoPoints($user);
+			$Points = $this->getTechnoPoints($user);
 			$TTechCount = $Points['TechCount'];
 			$TTechPoints = ($Points['TechPoint'] / 1000);
 
@@ -343,19 +344,19 @@ class UpdateStatistics
 			$RecordArray = [];
 
 			foreach ($planets as $planet) {
-				$Points = $this->GetBuildPoints($planet, $user);
+				$Points = $this->getBuildPoints($planet, $user);
 				$TBuildCount += $Points['BuildCount'];
 				$GCount += $Points['BuildCount'];
 				$PlanetPoints = ($Points['BuildPoint'] / 1000);
 				$TBuildPoints += ($Points['BuildPoint'] / 1000);
 
-				$Points = $this->GetDefensePoints($planet, $RecordArray);
+				$Points = $this->getDefensePoints($planet, $RecordArray);
 				$TDefsCount += $Points['DefenseCount'];
 				$GCount += $Points['DefenseCount'];
 				$PlanetPoints += ($Points['DefensePoint'] / 1000);
 				$TDefsPoints += ($Points['DefensePoint'] / 1000);
 
-				$Points = $this->GetFleetPoints($planet, $RecordArray);
+				$Points = $this->getFleetPoints($planet, $RecordArray);
 				$TFleetCount += $Points['FleetCount'];
 				$GCount += $Points['FleetCount'];
 				$PlanetPoints += ($Points['FleetPoint'] / 1000);
@@ -385,7 +386,7 @@ class UpdateStatistics
 
 			if ($user['records']) {
 				foreach ($RecordArray as $id => $amount) {
-					$this->SetMaxInfo($id, $amount, $user);
+					$this->setMaxInfo($id, $amount, $user);
 				}
 			}
 
@@ -525,15 +526,15 @@ class UpdateStatistics
 
 	public function clearGame()
 	{
-		DB::statement("DELETE FROM messages WHERE `time` <= '" . (time() - (86400 * 14)) . "' AND type != 1;");
-		DB::statement("DELETE FROM reports WHERE `time` <= '" . (time() - 172800) . "';");
+		Models\Message::query()->where('time', '<', time() - (86400 * 14))->where('type', '!=', 1)->delete();
+		Models\Report::query()->where('time', '<', time() - 172800)->delete();
 		//DB::statement("DELETE FROM alliance_chats WHERE `timestamp` <= '" . (time() - 1209600) . "';");
 		DB::statement("DELETE FROM password_resets WHERE `created_at` <= '" . (time() - 86400) . "';");
 		DB::statement("DELETE FROM logs WHERE `time` <= '" . (time() - 259200) . "';");
 		DB::statement("DELETE FROM log_attacks WHERE `time` <= '" . (time() - 604800) . "';");
-		DB::statement("DELETE FROM log_credits WHERE `time` <= '" . (time() - 604800) . "';");
 		DB::statement("DELETE FROM log_ips WHERE `time` <= '" . (time() - 604800) . "';");
-		DB::statement("DELETE FROM log_histories WHERE `time` <= '" . (time() - 604800) . "';");
+		Models\LogCredit::query()->where('time', '<', time() - 604800)->delete();
+		Models\LogHistory::query()->where('time', '<', time() - 604800)->delete();
 		DB::statement("DELETE FROM log_stats WHERE `time` <= '" . (time() - (86400 * 30)) . "';");
 		DB::statement("DELETE FROM log_simulations WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
 	}

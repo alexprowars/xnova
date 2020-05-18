@@ -9,12 +9,14 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Controller;
+use Xnova\Models\LogCredit;
+use Xnova\Models\PlanetBuilding;
+use Xnova\Models\PlanetUnit;
 use Xnova\Planet;
 use Xnova\Vars;
 
@@ -47,7 +49,7 @@ class ResourcesController extends Controller
 		$this->user->credits -= 10;
 		$this->user->update();
 
-		DB::table('log_credits')->insert([
+		LogCredit::query()->insert([
 			'uid' => $this->user->id,
 			'time' => time(),
 			'credits' => 10 * (-1),
@@ -87,14 +89,14 @@ class ResourcesController extends Controller
 			$buildsId[] = Vars::getIdByName($res . '_mine');
 		}
 
-		DB::table('planet_buildings')
+		PlanetBuilding::query()
 			->whereIn('planet_id', $planetsId)
 			->whereIn('build_id', $buildsId)
 			->update([
 				'power' => $production,
 			]);
 
-		DB::table('planet_units')
+		PlanetUnit::query()
 			->whereIn('planet_id', $planetsId)
 			->whereIn('unit_id', $buildsId)
 			->update([
@@ -131,7 +133,7 @@ class ResourcesController extends Controller
 				$value = max(0, min(10, (int) $value));
 
 				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING) {
-					DB::table('planet_buildings')
+					PlanetBuilding::query()
 						->whereIn('planet_id', $this->planet->id)
 						->whereIn('build_id', Vars::getIdByName($field))
 						->update([
@@ -140,7 +142,7 @@ class ResourcesController extends Controller
 				}
 
 				if (Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET) {
-					DB::table('planet_units')
+					PlanetUnit::query()
 						->whereIn('planet_id', $this->planet->id)
 						->whereIn('unit_id', Vars::getIdByName($field))
 						->update([

@@ -9,11 +9,11 @@
 namespace Xnova\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Controller;
+use Xnova\Models\LogCredit;
 use Xnova\Vars;
 
 class OfficierController extends Controller
@@ -69,7 +69,7 @@ class OfficierController extends Controller
 		$this->user->credits -= $credits;
 		$this->user->update();
 
-		DB::table('log_credits')->insert([
+		LogCredit::query()->insert([
 			'uid' => $this->user->id,
 			'time' => time(),
 			'credits' => $credits * (-1),

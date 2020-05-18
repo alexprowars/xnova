@@ -41,17 +41,24 @@ class OptionsController extends Controller
 
 	public function externalAction()
 	{
-		if (isset($_REQUEST['token']) && $_REQUEST['token'] != '') {
+		$token = request()->input('token', '');
+
+		if (!empty($token)) {
 			$s = file_get_contents('http://u-login.com/token.php?token=' . $_REQUEST['token'] . '&host=' . $_SERVER['HTTP_HOST']);
 			$data = json_decode($s, true);
 
 			if (isset($data['identity'])) {
 				$identity = isset($data['profile']) && $data['profile'] != '' ? $data['profile'] : $data['identity'];
 
-				$check = DB::selectOne("SELECT user_id FROM authentications WHERE provider_id = '" . $identity . "'");
+				$check = Models\Authentication::query()
+					->where('provider_id', $identity)->exists();
 
 				if (!$check) {
-					DB::table('authentications')->insert(['user_id' => $this->user->getId(), 'provider_id' => $identity, 'create_time' => time()]);
+					Models\Authentication::query()->insert([
+						'user_id' => $this->user->getId(),
+						'provider_id' => $identity,
+						'create_time' => time(),
+					]);
 				} else {
 					throw new RedirectException('Данная точка входа уже используется', '/options/');
 				}

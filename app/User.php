@@ -15,8 +15,8 @@ use Illuminate\Support\Str;
 use Xnova\Exceptions\Exception;
 use Xnova\Mail\UserRegistration;
 use Xnova\Models\Alliance;
-use Xnova\Models\LogCredit;
 use Xnova\Models\Message;
+use Xnova\Models;
 use Xnova\User\Tech;
 use Xnova\Queue as QueueManager;
 
@@ -180,13 +180,9 @@ class User extends Models\User
 		$this->ally = [];
 
 		if ($this->ally_id > 0) {
-			$ally = Cache::get('user::ally_' . $this->id . '_' . $this->ally_id);
-
-			if ($ally === null) {
-				$ally = DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
-
-				Cache::put('user::ally_' . $this->id . '_' . $this->ally_id, $ally, 300);
-			}
+			$ally = Cache::remember('user::ally_' . $this->id . '_' . $this->ally_id, 300, function () {
+				return DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
+			});
 
 			if ($ally) {
 				if (!$ally->ranks) {
@@ -233,23 +229,26 @@ class User extends Models\User
 		}
 
 		if ($giveCredits != 0) {
-			LogCredit::query()->create([
+			Models\LogCredit::query()->create([
 				'uid' 		=> $this->getId(),
 				'time' 		=> time(),
 				'credits' 	=> $giveCredits,
 				'type' 		=> 4,
 			]);
 
-			$reffer = DB::selectOne("SELECT u_id FROM referals WHERE r_id = " . $this->getId());
+			$reffer = Models\Referal::query()
+				->where('r_id', $this->getId())
+				->first();
 
-			if (isset($reffer['u_id'])) {
-				DB::table('users')->where('id', $reffer['u_id'])->increment('credits', round($giveCredits / 2));
+			if ($reffer) {
+				User::query()->where('id', $reffer['u_id'])
+					->increment('credits', round($giveCredits / 2));
 
-				LogCredit::query()->create([
-					'uid' 		=> $reffer['u_id'],
-					'time' 		=> time(),
-					'credits' 	=> round($giveCredits / 2),
-					'type' 		=> 3,
+				Models\LogCredit::query()->create([
+					'uid' => $reffer['u_id'],
+					'time' => time(),
+					'credits' => round($giveCredits / 2),
+					'type' => 3,
 				]);
 			}
 		}
@@ -264,7 +263,10 @@ class User extends Models\User
 				return true;
 			}
 
-			$isExistPlanet = DB::selectOne("SELECT id, id_owner, id_ally FROM planets WHERE id = '" . $selectPlanet . "' AND (id_owner = '" . $this->getId() . "')");
+			$isExistPlanet = Planet::query()
+				->where('id', $selectPlanet)
+				->where('id_owner', $this->getId())
+				->exists();
 
 			if (!$isExistPlanet) {
 				return false;
@@ -277,14 +279,18 @@ class User extends Models\User
 		return true;
 	}
 
-	public function getPlanets($moons = true)
+	public function getPlanets(bool $moons = true): array
 	{
-		$qryPlanets = "SELECT id, name, image, galaxy, `system`, planet, planet_type, destruyed FROM planets WHERE id_owner = '" . $this->id . "' ";
+		$query = Planet::query()
+			->select(['id', 'name', 'image', 'galaxy', 'system', 'planet', 'planet_type', 'destruyed'])
+			->where('id_owner', $this->id);
 
-		$qryPlanets .= ($this->ally_id > 0 ? " OR id_ally = '" . $this->ally_id . "'" : "");
+		if ($this->ally_id > 0) {
+			$query->orWhere('id_ally', $this->ally_id);
+		}
 
 		if (!$moons) {
-			$qryPlanets .= " AND planet_type != 3 ";
+			$query->where('planet_type', '!=', 3);
 		}
 
 		$sort = self::getPlanetListSortQuery(
@@ -292,9 +298,9 @@ class User extends Models\User
 			$this->getUserOption('planet_sort_order')
 		);
 
-		$qryPlanets .= ' ORDER BY ' . $sort['fields'] . ' ' . $sort['order'];
+		$query->orderBy($sort['fields'], $sort['order']);
 
-		return DB::select($qryPlanets);
+		return $query->get();
 	}
 
 	public function getCurrentPlanet(bool $loading = false): ?Planet
@@ -410,7 +416,8 @@ class User extends Models\User
 		$obj->text = addslashes($message);
 
 		if ($obj->save()) {
-			DB::table('users')->where('id', $owner)->increment('messages');
+			User::query()->find($owner)
+				->increment('messages');
 
 			return true;
 		}
@@ -458,24 +465,24 @@ class User extends Models\User
 			Models\PlanetUnit::query()->where('planet_id', $planet)->delete();
 		}
 
-		DB::table('alliance_requests')->where('u_id', $userId)->delete();
-		DB::table('statistics')->where('stat_type', 1)->where('id_owner', $userId)->delete();
-		DB::table('planets')->where('id_owner', $userId)->delete();
-		DB::table('notes')->where('user_id', $userId)->delete();
-		DB::table('fleets')->where('owner', $userId)->delete();
-		DB::table('friends')->where('sender', $userId)->orWhere('owner', $userId)->delete();
-		DB::table('referals')->where('r_id', $userId)->orWhere('u_id', $userId)->delete();
+		Models\AllianceRequest::query()->where('u_id', $userId)->delete();
+		Models\Statistic::query()->where('stat_type', 1)->where('id_owner', $userId)->delete();
+		Models\Planet::query()->where('id_owner', $userId)->delete();
+		Models\Note::query()->where('user_id', $userId)->delete();
+		Models\Fleet::query()->where('owner', $userId)->delete();
+		Models\Friend::query()->where('sender', $userId)->orWhere('owner', $userId)->delete();
+		Models\Referal::query()->where('r_id', $userId)->orWhere('u_id', $userId)->delete();
 		DB::table('log_attacks')->where('uid', $userId)->delete();
-		DB::table('log_credits')->where('uid', $userId)->delete();
-		DB::table('log_histories')->where('user_id', $userId)->delete();
+		Models\LogCredit::query()->where('uid', $userId)->delete();
+		Models\LogHistory::query()->where('user_id', $userId)->delete();
 		DB::table('log_transfers')->where('user_id', $userId)->delete();
 		DB::table('log_stats')->where('id', $userId)->where('type', 1)->delete();
 		DB::table('logs')->where('s_id', $userId)->orWhere('e_id', $userId)->delete();
-		DB::table('messages')->where('user_id', $userId)->where('from_id', $userId)->delete();
-		DB::table('blocked')->where('who', $userId)->delete();
+		Models\Message::query()->where('user_id', $userId)->where('from_id', $userId)->delete();
+		Models\Blocked::query()->where('who', $userId)->delete();
 		DB::table('log_ips')->where('id', $userId)->delete();
-		DB::table('user_teches')->where('user_id', $userId)->delete();
-		DB::table('user_quests')->where('user_id', $userId)->delete();
+		Models\UserTech::query()->where('user_id', $userId)->delete();
+		Models\UserQuest::query()->where('user_id', $userId)->delete();
 
 		$update = [
 			'authlevel' => 0,
@@ -514,11 +521,12 @@ class User extends Models\User
 		return true;
 	}
 
-	public static function getPlanetsId($userId)
+	public static function getPlanetsId(int $userId): array
 	{
 		$result = [];
 
-		$rows = DB::select('SELECT id FROM game_planets WHERE id_owner = ?', [(int) $userId]);
+		$rows = Planet::query()->where('id_owner', $userId)
+			->get(['id']);
 
 		foreach ($rows as $row) {
 			$result[] = (int) $row->id;
@@ -535,12 +543,12 @@ class User extends Models\User
 
 		return DB::transaction(function () use ($data) {
 			$user = Models\User::query()->create([
-				'username' 		=> $data['name'] ?? '',
-				'sex' 			=> 0,
-				'planet_id' 	=> 0,
-				'ip' 			=> Helpers::convertIp(Request::ip()),
-				'bonus' 		=> time(),
-				'onlinetime' 	=> time()
+				'username' => $data['name'] ?? '',
+				'sex' => 0,
+				'planet_id' => 0,
+				'ip' => Helpers::convertIp(Request::ip()),
+				'bonus' => time(),
+				'onlinetime' => time(),
 			]);
 
 			if (!$user->id) {
@@ -548,17 +556,17 @@ class User extends Models\User
 			}
 
 			Models\Account::query()->create([
-				'id' 			=> $user->id,
-				'email' 		=> $data['email'] ?? '',
-				'create_time' 	=> time(),
-				'password' 		=> Hash::make($data['password'])
+				'id' => $user->id,
+				'email' => $data['email'] ?? '',
+				'create_time' => time(),
+				'password' => Hash::make($data['password']),
 			]);
 
 			if (Session::has('ref')) {
 				$refer = Models\User::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
-					DB::table('referals')->insert([
+					Models\Referal::query()->insert([
 						'r_id' => $user->id,
 						'u_id' => $refer->getId()
 					]);

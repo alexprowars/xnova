@@ -5,7 +5,6 @@ namespace Xnova;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -62,7 +61,7 @@ class Controller extends BaseController
 			}
 
 			if (Request::input('fullscreen') == 'Y') {
-				Cookie::queue("full", "Y", (time() + 30 * 86400), "/", null, $_SERVER["SERVER_NAME"], 0);
+				Cookie::queue('full', 'Y', (time() + 30 * 86400), '/', null, $_SERVER['SERVER_NAME'], 0);
 				$_COOKIE["full"] = 'Y';
 			}
 
@@ -70,7 +69,7 @@ class Controller extends BaseController
 				config(['settings.view.socialIframeView' => 1]);
 			}
 
-			if (Cookie::has("full") && Cookie::get("full") == 'Y') {
+			if (Cookie::has('full') && Cookie::get("full") == 'Y') {
 				config(['settings.view.socialIframeView' => 0]);
 				config(['settings.view.showPlanetListSelect' => 0]);
 			}

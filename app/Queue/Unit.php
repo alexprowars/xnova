@@ -8,7 +8,7 @@
 
 namespace Xnova\Queue;
 
-use Illuminate\Support\Facades\DB;
+use Xnova\Models\LogHistory;
 use Xnova\Queue;
 use Xnova\Vars;
 use Xnova\Models;
@@ -113,7 +113,7 @@ class Unit
 			]);
 
 			if (config('game.log.units', false) == true) {
-				DB::table('log_histories')->insert([
+				LogHistory::query()->insert([
 					'user_id' 			=> $user->id,
 					'time' 				=> time(),
 					'operation' 		=> 7,

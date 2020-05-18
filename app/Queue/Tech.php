@@ -8,7 +8,7 @@
 
 namespace Xnova\Queue;
 
-use Illuminate\Support\Facades\DB;
+use Xnova\Models\LogHistory;
 use Xnova\Planet;
 use Xnova\Queue;
 use Xnova\Vars;
@@ -64,7 +64,7 @@ class Tech
 				]);
 
 				if (config('game.log.research', false) == true) {
-					DB::table('log_histories')->insert([
+					LogHistory::query()->insert([
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
 						'operation' 		=> 5,
@@ -108,7 +108,7 @@ class Tech
 			$this->queue->loadQueue();
 
 			if (config('game.log.research', false) == true) {
-				DB::table('log_histories')->insert([
+				LogHistory::query()->insert([
 					'user_id' 			=> $user->getId(),
 					'time' 				=> time(),
 					'operation' 		=> 6,

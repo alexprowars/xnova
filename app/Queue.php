@@ -8,8 +8,8 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\ErrorException;
+use Xnova\Models\LogHistory;
 use Xnova\Queue\Build;
 use Xnova\Queue\Tech;
 use Xnova\Queue\Unit;
@@ -276,7 +276,7 @@ class Queue
 			}
 
 			if (config('game.log.buildings', false) == true) {
-				DB::table('log_histories')->insert([
+				LogHistory::query()->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
 					'operation' 		=> 9,
@@ -361,7 +361,7 @@ class Queue
 				$loop = false;
 
 				if (config('game.log.buildings', false) == true) {
-					DB::table('log_histories')->insert([
+					LogHistory::query()->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
 						'operation' 		=> ($isDestroy ? 2 : 1),
@@ -473,7 +473,7 @@ class Queue
 				}
 
 				if (config('game.log.research', false) == true) {
-					DB::table('log_histories')->insert([
+					LogHistory::query()->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
 						'operation' 		=> 8,

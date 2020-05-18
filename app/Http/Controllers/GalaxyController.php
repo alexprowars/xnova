@@ -35,24 +35,16 @@ class GalaxyController extends Controller
 			->where('owner', $this->user->id)
 			->count();
 
-		$records = Cache::get('app::records_' . $this->user->getId());
-
-		if ($records === null) {
-			$records = DB::table('statistics')
+		$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
+			$records = Models\Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
 				->where('id_owner', $this->user->getId())
 				->first();
 
-			if (!$records) {
-				$records = [];
-			} else {
-				$records = $records->toArray();
-			}
-
-			Cache::put('app::records_' . $this->user->getId(), $records, 1800);
-		}
+			return $records ? $records->toArray() : null;
+		});
 
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
@@ -96,7 +88,7 @@ class GalaxyController extends Controller
 				$j[] = [base64_encode($a->name), $a->galaxy, $a->system, $a->planet];
 			}
 
-			$shortcuts = DB::table('accounts')
+			$shortcuts = Models\Account::query()
 				->select(['fleet_shortcut'])
 				->where('id', $this->user->id)
 				->first();
@@ -157,7 +149,7 @@ class GalaxyController extends Controller
 			'phalanx' => $Phalanx,
 			'destroy' => $Destroy,
 			'missile' => $MissileBtn,
-			'stat_points' => isset($records['total_points']) ? $records['total_points'] : 0,
+			'stat_points' => $records ? $records['total_points'] : 0,
 			'colonizer' => $this->planet->getUnitCount('colonizer'),
 			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
 			'spy' => (int) $this->user->getUserOption('spy'),
@@ -214,21 +206,21 @@ class GalaxyController extends Controller
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
 		foreach ($GalaxyRow as $row) {
-			if ($row->l_update != "" && $row->l_update > $row->p_active) {
+			if (!empty($row->l_update) && $row->l_update > $row->p_active) {
 				$row->p_active = $row->l_update;
 			}
 
 			if ($row->p_delete > 0 && $row->p_delete <= time()) {
-				DB::table('planets')->delete($row->p_id);
+				Models\Planet::query()->where('id', $row->p_id)->delete();
 
 				if ($row->p_parent != 0) {
-					DB::table('planets')->delete($row->p_parent);
+					Models\Planet::query()->where('id', $row->p_parent)->delete();
 				}
 			}
 
-			if ($row->l_id != '' && $row->l_delete != 0 && $row->l_delete <= time()) {
-				DB::table('planets')->delete($row->l_id);
-				DB::table('planets')->where('parent_planet', $row->l_id)->update(['parent_planet' => 0]);
+			if (!empty($row->l_id) && $row->l_delete != 0 && $row->l_delete <= time()) {
+				Models\Planet::query()->where('id', $row->l_id)->delete();
+				Models\Planet::query()->where('parent_planet', $row->l_id)->update(['parent_planet' => 0]);
 
 				$row->l_id = 0;
 			}

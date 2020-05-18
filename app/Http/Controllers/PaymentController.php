@@ -8,7 +8,6 @@
 
 namespace Xnova\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\User;
 use Xnova\Models;
@@ -33,7 +32,7 @@ class PaymentController extends Controller
 			die('signature verification failed');
 		}
 
-		$check = DB::table('payments')
+		$check = Models\Payment::query()
 			->where('transaction_id', (int) Request::input("InvId"))
 			->where('user_id', '!=', 0)
 			->exists();
@@ -59,7 +58,7 @@ class PaymentController extends Controller
 			$user->credits += $amount;
 			$user->save();
 
-			DB::table('payments')->insert([
+			Models\Payment::query()->insert([
 				'user_id' 			=> $user->id,
 				'call_id' 			=> '',
 				'method' 			=> addslashes($_REQUEST['IncCurrLabel']),
@@ -72,11 +71,11 @@ class PaymentController extends Controller
 
 			User::sendMessage($user->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $amount . ' кредитов');
 
-			DB::table('log_credits')->insert([
-				'uid' 		=> $user->id,
-				'time' 		=> time(),
-				'credits' 	=> $amount,
-				'type' 		=> 1,
+			Models\LogCredit::query()->insert([
+				'uid' => $user->id,
+				'time' => time(),
+				'credits' => $amount,
+				'type' => 1,
 			]);
 
 			echo 'OK' . Request::input("InvId");

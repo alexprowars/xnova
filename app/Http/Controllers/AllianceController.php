@@ -388,10 +388,17 @@ class AllianceController extends Controller
 					AllianceRequest::query()->where('u_id', $show)->delete();
 					AllianceMember::query()->where('u_id', $show)->delete();
 
-					DB::table('alliance_members')->insert(['a_id' => $this->ally->id, 'u_id' => $show, 'time' => time()]);
+					AllianceMember::insert([
+						'a_id' => $this->ally->id,
+					   'u_id' => $show,
+					   'time' => time(),
+					 ]);
 
-					DB::statement("UPDATE alliances SET members = members + 1 WHERE id = ?", [$this->ally->id]);
-					DB::statement("UPDATE users SET ally_name = '" . $this->ally->name . "', ally_id = '" . $this->ally->id . "' WHERE id = '" . $show . "'");
+					Alliance::query()->where('id', $this->ally->id)->increment('members');
+					User::query()->where('id', $show)->update([
+						'ally_name' => $this->ally->name,
+						'ally_id' => $this->ally->id,
+					]);
 
 					User::sendMessage($show, $this->user->id, 0, 2, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
@@ -850,12 +857,12 @@ class AllianceController extends Controller
 		}
 
 		if ($request->has('text') && $request->post('text', '') != '') {
-			DB::table('alliance_chats')->insert([
+			Models\AllianceChat::query()->insert([
 				'ally_id' 	=> $this->user->ally_id,
 				'user' 		=> $this->user->username,
 				'user_id' 	=> $this->user->id,
 				'message' 	=> Format::text($request->post('text')),
-				'timestamp'	=> time()
+				'timestamp'	=> time(),
 			]);
 
 			DB::statement("UPDATE users SET messages_ally = messages_ally + '1' WHERE ally_id = '" . $this->user->ally_id . "' AND id != " . $this->user->id . "");

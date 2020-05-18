@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\Planet;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\DB;
+namespace Xnova\Planet;
+
 use Xnova\Exceptions\Exception;
 use Xnova\Models\PlanetUnit;
 use Xnova\Vars;
@@ -23,18 +22,18 @@ trait Unit
 		if ($this->units !== false) {
 			foreach ($this->units as &$unit) {
 				if ($unit['id'] == 0 && $unit['amount'] > 0) {
-					$unit['id'] = DB::table('planet_units')->insertGetId([
+					$unit['id'] = PlanetUnit::query()->insertGetId([
 						'planet_id' => $this->id,
 						'unit_id' => $unit['type'],
 						'amount' => $unit['amount']
 					]);
 				} elseif ($unit['id'] > 0 && $unit['amount'] != $unit['~amount']) {
 					if ($unit['amount'] > 0) {
-						DB::table('planet_units')
+						PlanetUnit::query()
 							->where('id', $unit['id'])
 							->update(['amount' => $unit['amount']]);
 					} else {
-						DB::table('planet_units')->where('id', $unit['id'])->delete();
+						PlanetUnit::query()->where('id', $unit['id'])->delete();
 					}
 				}
 

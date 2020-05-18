@@ -11,6 +11,7 @@ namespace Xnova\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\Account;
 use Xnova\Models\Fleet;
 use Xnova\Planet;
 use Xnova\Queue;
@@ -43,11 +44,11 @@ class RaceController extends Controller
 					$this->user->race = $r;
 
 					if ($numChanges > 0) {
-						DB::table('accounts')->where('id', $this->user->id)->decrement('free_race_change', 1);
+						Account::query()->where('id', $this->user->id)->decrement('free_race_change', 1);
 					} else {
 						$this->user->credits -= 100;
 
-						DB::table('accounts')->insert([
+						Account::query()->insert([
 							'uid' => $this->user->id,
 							'time' => time(),
 							'credits' => 100,

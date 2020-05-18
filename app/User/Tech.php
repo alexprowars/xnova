@@ -1,14 +1,13 @@
 <?php
 
-namespace Xnova\User;
-
 /**
  * @author AlexPro
  * @copyright 2008 - 2019 XNova Game Group
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Illuminate\Support\Facades\DB;
+namespace Xnova\User;
+
 use Xnova\Exceptions\Exception;
 use Xnova\Models\UserTech;
 use Xnova\Vars;
@@ -23,18 +22,18 @@ trait Tech
 		if ($this->technology !== false) {
 			foreach ($this->technology as &$tech) {
 				if ($tech['id'] == 0 && $tech['level'] > 0) {
-					$tech['id'] = DB::table('user_teches')->insertGetId([
+					$tech['id'] = UserTech::query()->insertGetId([
 						'user_id' => $this->id,
 						'tech_id' => $tech['type'],
 						'level' => $tech['level']
 					]);
 				} elseif ($tech['id'] > 0 && $tech['level'] != $tech['~level']) {
 					if ($tech['level'] > 0) {
-						DB::table('user_teches')
+						UserTech::query()
 							->where('id', $tech['id'])
 							->update(['level' => $tech['level']]);
 					} else {
-						DB::table('user_teches')->where('id', $tech['id'])->delete();
+						UserTech::query()->where('id', $tech['id'])->delete();
 					}
 				}
 

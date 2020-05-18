@@ -10,7 +10,6 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\User;
@@ -53,11 +52,11 @@ class BuddyController extends Controller
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
 			}
 
-			DB::table('friends')->insert([
+			Models\Friend::query()->insert([
 				'sender' => $this->user->id,
 				'owner' => $user->id,
 				'active' => 0,
-				'text' => $text
+				'text' => $text,
 			]);
 
 			User::sendMessage($user->id, 0, time(), 1, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');

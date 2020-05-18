@@ -127,7 +127,7 @@ class MessagesController extends Controller
 		$items = array_map('intval', $items);
 
 		if (count($items)) {
-			DB::table('messages')
+			Message::query()
 				->whereIn('id', $items)
 				->where('user_id', $this->user->id)
 				->update(['deleted' => 1]);

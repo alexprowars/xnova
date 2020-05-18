@@ -9,10 +9,11 @@
 namespace Xnova\Http\Controllers\Fleet;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Xnova\Controller;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\RedirectException;
+use Xnova\Models\Assault;
+use Xnova\Models\AssaultUser;
 use Xnova\Models\Fleet;
 
 class FleetBackController extends Controller
@@ -48,8 +49,8 @@ class FleetBackController extends Controller
 		$ReturnFlyingTime = $CurrentFlyingTime + time();
 
 		if ($fleet->group_id != 0 && $fleet->mission == 1) {
-			DB::table('assaults')->delete($fleet->group_id);
-			DB::table('assault_users')->where('aks_id', $fleet->group_id)->delete();
+			Assault::query()->delete($fleet->group_id);
+			AssaultUser::query()->where('aks_id', $fleet->group_id)->delete();
 		}
 
 		$fleet->update([
