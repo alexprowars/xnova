@@ -9,7 +9,7 @@ class CreatePlanetUnitsTable extends Migration
 	public function up()
 	{
 		Schema::create('planet_units', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('planet_id')->nullable();
 			$table->integer('unit_id')->nullable();
 			$table->integer('amount')->default(0);

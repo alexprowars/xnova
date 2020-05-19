@@ -9,7 +9,7 @@ class CreateFleetsTable extends Migration
 	public function up()
 	{
 		Schema::create('fleets', function (Blueprint $table) {
-			$table->bigInteger('id', true);
+			$table->id();
 			$table->integer('owner')->default(0)->index('fleet_owner');
 			$table->string('owner_name', 35)->default('');
 			$table->integer('mission')->default(0);

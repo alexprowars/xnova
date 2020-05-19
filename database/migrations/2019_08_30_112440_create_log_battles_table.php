@@ -9,7 +9,7 @@ class CreateSavelogTable extends Migration
 	public function up()
 	{
 		Schema::create('log_battles', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->integer('user_id')->default(0)->index('user');
 			$table->integer('time');
 			$table->string('title')->default('');

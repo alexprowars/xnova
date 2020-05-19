@@ -9,7 +9,7 @@ class CreateUserDetailsTable extends Migration
 	public function up()
 	{
 		Schema::create('user_details', function (Blueprint $table) {
-			$table->integer('id')->unsigned()->default(0)->primary();
+			$table->id();
 			$table->string('password', 100)->default('');
 			$table->string('email', 30);
 			$table->string('name', 100)->default('');

@@ -9,7 +9,7 @@ class CreateContentsTable extends Migration
 	public function up()
 	{
 		Schema::create('contents', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->string('title', 150)->default('');
 			$table->string('alias', 100)->default('')->unique('alias');
 			$table->text('html');

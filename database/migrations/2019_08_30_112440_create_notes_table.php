@@ -9,7 +9,7 @@ class CreateNotesTable extends Migration
 	public function up()
 	{
 		Schema::create('notes', function (Blueprint $table) {
-			$table->bigInteger('id', true);
+			$table->id();
 			$table->integer('user_id')->nullable()->index('owner');
 			$table->integer('time')->nullable();
 			$table->boolean('priority')->nullable();

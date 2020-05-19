@@ -9,7 +9,7 @@ class CreateLogStatsTable extends Migration
 	public function up()
 	{
 		Schema::create('log_stats', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('object_id')->default(0);
 			$table->boolean('type')->default(0);
 			$table->integer('time')->default(0);

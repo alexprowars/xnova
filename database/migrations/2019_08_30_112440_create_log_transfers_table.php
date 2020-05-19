@@ -9,7 +9,7 @@ class CreateLogTransfersTable extends Migration
 	public function up()
 	{
 		Schema::create('log_transfers', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('time')->default(0);
 			$table->integer('user_id')->default(0)->index('user_id');
 			$table->text('data');

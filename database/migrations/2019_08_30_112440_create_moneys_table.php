@@ -9,7 +9,7 @@ class CreateMoneysTable extends Migration
 	public function up()
 	{
 		Schema::create('moneys', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id');
 			$table->string('ip', 50)->default('')->index('ip');
 			$table->bigInteger('time')->default(0)->index('time');

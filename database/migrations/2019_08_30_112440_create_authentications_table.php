@@ -9,7 +9,7 @@ class CreateAuthenticationsTable extends Migration
 	public function up()
 	{
 		Schema::create('authentications', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id')->default(0)->index('user_id');
 			$table->string('provider', 50);
 			$table->string('provider_id')->index('external_id');

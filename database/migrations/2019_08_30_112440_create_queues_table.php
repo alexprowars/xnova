@@ -9,7 +9,7 @@ class CreateQueuesTable extends Migration
 	public function up()
 	{
 		Schema::create('queues', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->enum('type', array('build','tech','unit'));
 			$table->integer('user_id');
 			$table->integer('planet_id');

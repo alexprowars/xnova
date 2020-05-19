@@ -9,7 +9,7 @@ class CreateAssaultsTable extends Migration
 	public function up()
 	{
 		Schema::create('assaults', function (Blueprint $table) {
-			$table->bigInteger('id', true)->unsigned();
+			$table->id();
 			$table->string('name', 50)->nullable();
 			$table->integer('fleet_id')->nullable();
 			$table->integer('galaxy')->nullable();

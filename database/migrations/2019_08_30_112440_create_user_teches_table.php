@@ -9,7 +9,7 @@ class CreateUserTechsTable extends Migration
 	public function up()
 	{
 		Schema::create('user_teches', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id')->nullable();
 			$table->integer('tech_id')->nullable();
 			$table->smallInteger('level')->default(0);

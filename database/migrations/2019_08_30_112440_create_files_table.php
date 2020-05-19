@@ -9,7 +9,7 @@ class CreateFilesTable extends Migration
 	public function up()
 	{
 		Schema::create('files', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->string('src', 200)->default('');
 			$table->string('name', 100)->default('');
 			$table->integer('size')->default(0);

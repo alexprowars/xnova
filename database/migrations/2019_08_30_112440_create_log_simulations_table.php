@@ -15,7 +15,7 @@ class CreateLogSimulationsTable extends Migration
 	public function up()
 	{
 		Schema::create('log_simulations', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->string('sid', 50)->default('')->unique('sid');
 			$table->integer('time')->default(0);
 			$table->text('data');

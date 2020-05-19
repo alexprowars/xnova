@@ -9,7 +9,7 @@ class CreateAllianceChatsTable extends Migration
 	public function up()
 	{
 		Schema::create('alliance_chats', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->integer('ally_id')->unsigned()->default(0)->index('ally_id');
 			$table->string('user', 50)->default('');
 			$table->integer('user_id')->unsigned()->default(0);

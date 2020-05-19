@@ -16,7 +16,6 @@ use Xnova\Exceptions\Exception;
 use Xnova\Game;
 use Xnova\Controller;
 use Xnova\Models\UserQuest;
-use Xnova\User;
 
 class ApiResponse
 {
@@ -48,7 +47,6 @@ class ApiResponse
 		$controller = $route->getController();
 
 		$data = [
-			'chat' => null,
 			'error' => false,
 			'host' => $request->getHttpHost(),
 			'messages' => [],
@@ -213,11 +211,6 @@ class ApiResponse
 				'planet_type' => (int) $planet->planet_type,
 			];
 		}
-
-		$result['chat'] = [
-			'key' => md5($user->getId() . '|' . $user->username . config('chat.key')),
-			'server' => config('chat.host') . ':' . config('chat.port'),
-		];
 
 		$result['speed'] = [
 			'game' => Game::getSpeed('build'),

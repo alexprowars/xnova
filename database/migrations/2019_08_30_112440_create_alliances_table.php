@@ -9,7 +9,7 @@ class CreateAlliancesTable extends Migration
 	public function up()
 	{
 		Schema::create('alliances', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->string('name', 32);
 			$table->string('tag', 8);
 			$table->integer('owner')->default(0);

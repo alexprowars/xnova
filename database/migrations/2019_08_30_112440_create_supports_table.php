@@ -9,7 +9,7 @@ class CreateSupportsTable extends Migration
 	public function up()
 	{
 		Schema::create('supports', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id')->default(0)->index('player_id');
 			$table->integer('time')->default(0);
 			$table->string('subject')->default('');

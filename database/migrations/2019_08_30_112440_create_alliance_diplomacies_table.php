@@ -9,7 +9,7 @@ class CreateAllianceDiplomaciesTable extends Migration
 	public function up()
 	{
 		Schema::create('alliance_diplomacies', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('a_id')->default(0);
 			$table->integer('d_id')->default(0);
 			$table->boolean('type')->default(0);

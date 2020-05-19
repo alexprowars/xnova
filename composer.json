@@ -20,7 +20,8 @@
         "socialiteproviders/vkontakte": "^4.0",
         "backpack/crud": "^4.1",
         "backpack/permissionmanager": "^5.0",
-        "backpack/settings": "^3.0"
+        "backpack/settings": "^3.0",
+        "predis/predis": "^1.1"
 	},
 	"replace": {
 		"symfony/polyfill-mbstring": "*",

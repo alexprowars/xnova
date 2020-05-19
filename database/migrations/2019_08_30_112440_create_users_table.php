@@ -9,7 +9,7 @@ class CreateUsersTable extends Migration
 	public function up()
 	{
 		Schema::create('users', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->string('username', 30);
 			$table->boolean('authlevel')->default(0);
 			$table->smallInteger('group_id')->default(0);

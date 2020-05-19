@@ -9,7 +9,7 @@ class CreateStatisticsTable extends Migration
 	public function up()
 	{
 		Schema::create('statistics', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('id_owner')->default(0)->index('id_owner');
 			$table->string('username', 35)->default('');
 			$table->boolean('race')->default(0);

@@ -9,7 +9,7 @@ class CreateFriendsTable extends Migration
 	public function up()
 	{
 		Schema::create('friends', function (Blueprint $table) {
-			$table->bigInteger('id', true);
+			$table->id();
 			$table->integer('sender')->default(0)->index('sender');
 			$table->integer('owner')->default(0)->index('owner');
 			$table->boolean('ignor')->default(0);

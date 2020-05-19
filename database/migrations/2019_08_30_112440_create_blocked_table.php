@@ -9,7 +9,7 @@ class CreateBlockedTable extends Migration
 	public function up()
 	{
 		Schema::create('blocked', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('who')->default(0);
 			$table->text('theme');
 			$table->integer('time')->default(0);

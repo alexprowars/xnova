@@ -9,7 +9,7 @@ class CreateHallsTable extends Migration
 	public function up()
 	{
 		Schema::create('halls', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->string('title', 150);
 			$table->integer('debris');
 			$table->integer('time')->index('time');

@@ -300,7 +300,7 @@ class User extends Models\User
 
 		$query->orderBy($sort['fields'], $sort['order']);
 
-		return $query->get();
+		return $query->get()->all();
 	}
 
 	public function getCurrentPlanet(bool $loading = false): ?Planet

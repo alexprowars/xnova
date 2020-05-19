@@ -9,7 +9,7 @@ class CreatePlanetsTable extends Migration
 	public function up()
 	{
 		Schema::create('planets', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->string('name', 50)->nullable();
 			$table->integer('id_owner')->unsigned()->nullable()->index('id_owner');
 			$table->integer('id_ally')->default(0)->index('id_ally');

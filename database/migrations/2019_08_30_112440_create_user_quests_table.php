@@ -9,7 +9,7 @@ class CreateUserQuestsTable extends Migration
 	public function up()
 	{
 		Schema::create('user_quests', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id')->default(0)->index('user_id');
 			$table->integer('quest_id')->default(0);
 			$table->enum('finish', array('0','1'))->default('0');

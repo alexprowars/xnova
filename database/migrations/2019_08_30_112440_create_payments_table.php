@@ -9,7 +9,7 @@ class CreateUsersPaymentsTable extends Migration
 	public function up()
 	{
 		Schema::create('payments', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user')->default(0);
 			$table->string('product_code', 100)->default('');
 			$table->integer('call_id')->default(0);

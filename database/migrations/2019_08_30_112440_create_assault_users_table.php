@@ -9,7 +9,7 @@ class CreateAssaultUsersTable extends Migration
 	public function up()
 	{
 		Schema::create('assault_users', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('aks_id')->unsigned()->default(0)->index('aks_id');
 			$table->integer('user_id')->unsigned()->default(0);
 		});

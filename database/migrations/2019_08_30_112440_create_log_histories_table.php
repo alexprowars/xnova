@@ -9,7 +9,7 @@ class CreateLogHistoriesTable extends Migration
 	public function up()
 	{
 		Schema::create('log_histories', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->id();
 			$table->integer('user_id')->index('user_id');
 			$table->integer('time');
 			$table->integer('planet');
