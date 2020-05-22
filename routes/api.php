@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('hall', 'HallController@index')->name('hall');
 	Route::get('chat', 'ChatController@index')->name('chat');
 	Route::post('chat/send', 'ChatController@sendMessage')->name('chat.send');
-	Route::get('chat/history', 'ChatController@history')->name('chat.history');
+	Route::get('chat/last', 'ChatController@last')->name('chat.last');
 
 	Route::match(['get', 'post'], 'alliance', 'AllianceController@index')->name('alliance');
 	Route::match(['get', 'post'], 'alliance/search', 'AllianceController@search')->name('alliance.search');

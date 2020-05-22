@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Xnova\Controller;
 use Xnova\Events\ChatMessage;
 use Xnova\Events\ChatPrivateMessage;
+use Xnova\Exceptions\Exception;
 use Xnova\Models\Chat;
 
 class ChatController extends Controller
@@ -23,52 +24,54 @@ class ChatController extends Controller
 		$this->setTitle('Межгалактический чат');
 		$this->showTopPanel(false);
 
-		return $this->history(true);
+		return [];
 	}
 
 	public function sendMessage(Request $request)
 	{
 		$message = $request->post('message', null);
 
-		if ($message) {
-			$chatMessage = Chat::query()->create([
-				'user_id' => Auth::id(),
-				'message' => $message,
-			]);
-
-			$parsedMessage = $chatMessage->parse();
-
-			if ($parsedMessage['private']) {
-				foreach ($parsedMessage['toi'] as $userId) {
-					event(new ChatPrivateMessage($userId, $parsedMessage));
-				}
-
-				event(new ChatPrivateMessage(Auth::id(), $parsedMessage));
-			} else {
-				event(new ChatMessage($chatMessage->parse()));
-			}
+		if (!$message) {
+			throw new Exception('Введите текст сообщения');
 		}
+
+		$chatMessage = Chat::query()->create([
+			'user_id' => Auth::id(),
+			'message' => $message,
+		]);
+
+		$parsedMessage = $chatMessage->parse();
+
+		if ($parsedMessage['private']) {
+			foreach ($parsedMessage['toi'] as $userId) {
+				event(new ChatPrivateMessage($userId, $parsedMessage));
+			}
+
+			event(new ChatPrivateMessage(Auth::id(), $parsedMessage));
+		} else {
+			event(new ChatMessage($chatMessage->parse()));
+		}
+
+		return [
+			'message' => $parsedMessage,
+		];
 	}
 
-	public function history(bool $last = false)
+	public function last()
 	{
 		$items = Chat::query()
 			->orderByDesc('id')
-			->limit($last ? 15 : 50);
+			->limit(30);
 
-		if ($last) {
-			$lastMessage = Chat::query()
-				->orderByDesc('id')
-				->first(['id'])->id ?? 0;
+		$lastMessage = Chat::query()
+			->orderByDesc('id')
+			->first(['id'])->id ?? 0;
 
-			if ($lastMessage) {
-				$items->where(function ($query) use ($lastMessage) {
-					$query->where('id', '>=', $lastMessage - 15)
-						->orWhere('created_at', '>', Carbon::now()->subMinutes(30));
-				});
-			}
-		} else {
-			$items->where('message', 'not like', '%приватно [%');
+		if ($lastMessage) {
+			$items->where(function ($query) use ($lastMessage) {
+				$query->where('id', '>=', $lastMessage - 30)
+					->orWhere('created_at', '>', Carbon::now()->subMinutes(30));
+			});
 		}
 
 		$items = $items->get();

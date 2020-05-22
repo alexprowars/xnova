@@ -21,10 +21,11 @@ class ChatPrivateMessage implements ShouldBroadcast
 	{
 		$this->userId = $userId;
 		$this->message = $message;
+		$this->dontBroadcastToCurrentUser();
 	}
 
 	public function broadcastOn()
 	{
-		return new PrivateChannel('chat.' . $this->userId);
+		return new PrivateChannel('game.' . $this->userId);
 	}
 }
