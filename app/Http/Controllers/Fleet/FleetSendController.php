@@ -90,7 +90,7 @@ class FleetSendController extends Controller
 		}
 
 		foreach ($fleetarray as $Ship => $Count) {
-			if ($Count > $this->planet->getUnitCount($Ship)) {
+			if ($Count > $this->planet->getLevel($Ship)) {
 				throw new PageException("<span class=\"error\"><b>Недостаточно флота для отправки на планете!</b></span>", "/fleet/");
 			}
 		}
@@ -277,7 +277,7 @@ class FleetSendController extends Controller
 				throw new ErrorException('Место занято');
 			}
 
-			if ($targetPlanet && $targetPlanet->getBuildLevel('ally_deposit') == 0 && $targerUser->id != $this->user->id && $fleetMission == 5) {
+			if ($targetPlanet && $targetPlanet->getLevel('ally_deposit') == 0 && $targerUser->id != $this->user->id && $fleetMission == 5) {
 				throw new ErrorException('На планете нет склада альянса!');
 			}
 
@@ -406,7 +406,7 @@ class FleetSendController extends Controller
 				'count' => $Count,
 			];
 
-			$this->planet->setUnit($Ship, -$Count, true);
+			$this->planet->updateAmount($Ship, -$Count, true);
 		}
 
 		$FleetStorage -= $consumption;
@@ -745,15 +745,15 @@ class FleetSendController extends Controller
 				continue;
 			}
 
-			if ($ships[$ship] > $this->planet->getUnitCount($ship)) {
-				$count = $this->planet->getUnitCount($ship);
+			if ($ships[$ship] > $this->planet->getLevel($ship)) {
+				$count = $this->planet->getLevel($ship);
 			} else {
 				$count = $ships[$ship];
 			}
 
 			if ($count > 0) {
-				$this->planet->setUnit($ship, -$count, true);
-				$targetPlanet->setUnit($ship, $count, true);
+				$this->planet->updateAmount($ship, -$count, true);
+				$targetPlanet->updateAmount($ship, $count, true);
 
 				$success = true;
 			}

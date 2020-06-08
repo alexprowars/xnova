@@ -38,7 +38,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		$TargetPlanet->assignUser($targetUser);
-		$TargetPlanet->resourceUpdate($this->fleet->start_time);
+		$TargetPlanet->getProduction()->update($this->fleet->start_time);
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();
@@ -78,7 +78,7 @@ class Spy extends FleetEngine implements Mission
 						continue;
 					}
 
-					$TargetPlanet->setUnit($shipId, $shipData['count'], true);
+					$TargetPlanet->updateAmount($shipId, $shipData['count'], true);
 				}
 			}
 
@@ -152,8 +152,8 @@ class Spy extends FleetEngine implements Mission
 			}
 
 			foreach ($res as $id) {
-				if ($TargetPlanet->getUnitCount($id) > 0) {
-					$fleet_link .= $id . ',' . $TargetPlanet->getUnitCount($id) . '!' . ((isset($targetUser->{'fleet_' . $id}) && $ST >= 8) ? $targetUser->{'fleet_' . $id} : 0) . ';';
+				if ($TargetPlanet->getLevel($id) > 0) {
+					$fleet_link .= $id . ',' . $TargetPlanet->getLevel($id) . '!' . ((isset($targetUser->{'fleet_' . $id}) && $ST >= 8) ? $targetUser->{'fleet_' . $id} : 0) . ';';
 				}
 
 				if ($targetUser->getTechLevel($id) > 0) {
@@ -281,9 +281,9 @@ class Spy extends FleetEngine implements Mission
 					$type = Vars::getItemType($Item);
 
 					if ($type == Vars::ITEM_TYPE_BUILING) {
-						$level = $TargetPlanet->getBuildLevel($Item);
+						$level = $TargetPlanet->getLevel($Item);
 					} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
-						$level = $TargetPlanet->getUnitCount($Item);
+						$level = $TargetPlanet->getLevel($Item);
 					} elseif ($type == Vars::ITEM_TYPE_OFFICIER) {
 						$level = $TargetPlanet->{Vars::getName($Item)};
 					} elseif ($type == Vars::ITEM_TYPE_TECH) {

@@ -66,15 +66,15 @@ class Rak extends FleetEngine implements Mission
 		$TargetDefensive = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $Element) {
-			$TargetDefensive[$Element] = $targetPlanet->getUnitCount($Element);
+			$TargetDefensive[$Element] = $targetPlanet->getLevel($Element);
 		}
 
-		$defenceMissiles = $targetPlanet->getUnitCount('interceptor_misil');
+		$defenceMissiles = $targetPlanet->getLevel('interceptor_misil');
 
 		if ($defenceMissiles >= $Raks) {
 			$message .= 'Вражеская ракетная атака была отбита ракетами-перехватчиками<br>';
 
-			$targetPlanet->setUnit('interceptor_misil', -$Raks, true);
+			$targetPlanet->updateAmount('interceptor_misil', -$Raks, true);
 		} else {
 			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->fleet->owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
 			$message .= ' на планету ' . $this->fleet->target_owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
@@ -82,7 +82,7 @@ class Rak extends FleetEngine implements Mission
 			if ($defenceMissiles > 0) {
 				$message .= $defenceMissiles . " ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>";
 
-				$targetPlanet->setUnit('interceptor_misil', 0);
+				$targetPlanet->updateAmount('interceptor_misil', 0);
 			}
 
 			$Raks -= $defenceMissiles;
@@ -98,7 +98,7 @@ class Rak extends FleetEngine implements Mission
 
 				$message .= __('main.tech.' . $Element) . " (" . $destroy . " уничтожено)<br>";
 
-				$targetPlanet->setUnit($Element, -$destroy, true);
+				$targetPlanet->updateAmount($Element, -$destroy, true);
 			}
 		}
 

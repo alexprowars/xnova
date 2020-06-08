@@ -43,7 +43,7 @@ class RocketController extends Controller
 
 		$targetPlanet = Models\Planet::findByCoordinates(new Coordinates($g, $s, $p, 1));
 
-		if ($this->planet->getBuildLevel('missile_facility') < 4) {
+		if ($this->planet->getLevel('missile_facility') < 4) {
 			throw new ErrorException('Постройте ракетную шахту');
 		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
 			throw new ErrorException('Необходима технология "Импульсный двигатель"');
@@ -51,7 +51,7 @@ class RocketController extends Controller
 			throw new ErrorException('Превышена дистанция ракетной атаки');
 		} elseif (!$targetPlanet) {
 			throw new ErrorException('Планета не найдена');
-		} elseif ($count > $this->planet->getUnitCount('interplanetary_misil')) {
+		} elseif ($count > $this->planet->getLevel('interplanetary_misil')) {
 			throw new ErrorException('У вас нет такого кол-ва ракет');
 		} elseif ((!is_numeric($destroyType) && $destroyType != "all") or ($destroyType < 0 && $destroyType > 7 && $destroyType != "all")) {
 			throw new ErrorException('Не найдена цель');
@@ -102,7 +102,7 @@ class RocketController extends Controller
 		]);
 
 		if ($fleet->id > 0) {
-			$this->planet->setUnit('interplanetary_misil', -$count, true);
+			$this->planet->updateAmount('interplanetary_misil', -$count, true);
 			$this->planet->update();
 		}
 

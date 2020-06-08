@@ -340,9 +340,9 @@ class User extends Models\User
 
 				// Обновляем ресурсы на планете когда это необходимо
 				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60))) {
-					$planet->resourceUpdate(time(), true);
+					$planet->getProduction()->update(time(), true);
 				} else {
-					$planet->resourceUpdate();
+					$planet->getProduction()->update();
 
 					$queueManager = new QueueManager($this, $planet);
 					$queueManager->checkUnitQueue();

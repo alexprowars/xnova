@@ -4,13 +4,14 @@ namespace Xnova\Entity;
 
 use Illuminate\Support\Collection;
 use Xnova\Game;
+use Xnova\Planet\Entity\Ship;
 
 class FleetCollection extends Collection
 {
 	public static function createFromArray(array $items): self
 	{
 		return (new self($items))->map(function ($count, $item) {
-			return new Fleet($item, $count);
+			return new Ship($item, $count);
 		});
 	}
 

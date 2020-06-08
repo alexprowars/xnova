@@ -83,7 +83,7 @@ class FleetQuickController extends Controller
 			if ($num <= 0) {
 				throw new Exception('Вы были забанены за читерство!');
 			}
-			if ($this->planet->getUnitCount('spy_sonde') == 0) {
+			if ($this->planet->getLevel('spy_sonde') == 0) {
 				throw new Exception('Нет шпионских зондов ля отправки!');
 			}
 			if ($target->id_owner == $this->user->id) {
@@ -136,8 +136,8 @@ class FleetQuickController extends Controller
 				throw new Exception('Игрок в режиме отпуска!');
 			}
 
-			if ($this->planet->getUnitCount('spy_sonde') < $num) {
-				$num = $this->planet->getUnitCount('spy_sonde');
+			if ($this->planet->getLevel('spy_sonde') < $num) {
+				$num = $this->planet->getLevel('spy_sonde');
 			}
 
 			$FleetArray[210] = $num;
@@ -147,19 +147,19 @@ class FleetQuickController extends Controller
 			if ($DebrisSize == 0) {
 				throw new Exception('Нет обломков для сбора!');
 			}
-			if ($this->planet->getUnitCount('recycler') == 0) {
+			if ($this->planet->getLevel('recycler') == 0) {
 				throw new Exception('Нет переработчиков для сбора обломков!');
 			}
 
 			$RecyclerNeeded = 0;
 
-			if ($this->planet->getUnitCount('recycler') > 0 && $DebrisSize > 0) {
+			if ($this->planet->getLevel('recycler') > 0 && $DebrisSize > 0) {
 				$fleetData = Vars::getUnitData(Vars::getIdByName('recycler'));
 
 				$RecyclerNeeded = floor($DebrisSize / ($fleetData['capacity'])) + 1;
 
-				if ($RecyclerNeeded > $this->planet->getUnitCount('recycler')) {
-					$RecyclerNeeded = $this->planet->getUnitCount('recycler');
+				if ($RecyclerNeeded > $this->planet->getLevel('recycler')) {
+					$RecyclerNeeded = $this->planet->getLevel('recycler');
 				}
 			}
 
@@ -189,7 +189,7 @@ class FleetQuickController extends Controller
 			foreach ($FleetArray as $shipId => $count) {
 				$count = (int) $count;
 
-				$this->planet->setUnit($shipId, -$count, true);
+				$this->planet->updateAmount($shipId, -$count, true);
 
 				$shipArray[] = [
 					'id' => (int) $shipId,

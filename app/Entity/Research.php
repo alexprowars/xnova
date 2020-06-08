@@ -3,21 +3,22 @@
 namespace Xnova\Entity;
 
 use Xnova\Exceptions\Exception;
+use Xnova\Planet\Entity\BaseEntity;
 use Xnova\Vars;
 
-class Research extends Base
+class Research extends BaseEntity
 {
-	public function __construct($elementId, ?int $level = null, $context = null)
+	public function __construct($entityId, ?int $level = null, $context = null)
 	{
-		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_TECH) {
+		if (Vars::getItemType($entityId) !== Vars::ITEM_TYPE_TECH) {
 			throw new Exception('wrong entity type');
 		}
 
 		if ($level === null) {
-			$level = ($context ? $context : $this->getContext())->getUser()->getTechLevel($elementId);
+			$level = ($context ? $context : $this->getContext())->getUser()->getTechLevel($entityId);
 		}
 
-		parent::__construct($elementId, $level, $context);
+		parent::__construct($entityId, $level, $context);
 	}
 
 	public function getTime(): int
@@ -31,14 +32,14 @@ class Research extends Base
 			$lablevel = 0;
 
 			foreach ($planet->spaceLabs as $Levels) {
-				$req = Vars::getItemRequirements($this->elementId);
+				$req = Vars::getItemRequirements($this->entityId);
 
 				if (!isset($req[31]) || $Levels >= $req[31]) {
 					$lablevel += $Levels;
 				}
 			}
 		} else {
-			$lablevel = $planet->getBuildLevel('laboratory');
+			$lablevel = $planet->getLevel('laboratory');
 		}
 
 		$time /= ($lablevel + 1) * 2;

@@ -1,19 +1,20 @@
 <?php
 
-namespace Xnova\Entity;
+namespace Xnova\Planet\Entity;
 
 use Illuminate\Support\Facades\Auth;
+use Xnova\Planet\Contracts\PlanetEntityInterface;
 use Xnova\Vars;
 
-class Base
+class BaseEntity implements PlanetEntityInterface
 {
-	protected $elementId;
+	protected $entityId;
 	protected $context;
 	protected $level = 0;
 
-	public function __construct($elementId, int $level = 1, ?Context $context = null)
+	public function __construct(int $entityId, int $level = 1, ?Context $context = null)
 	{
-		$this->elementId = $elementId;
+		$this->entityId = $entityId;
 		$this->level = $level;
 		$this->context = $context;
 	}
@@ -32,9 +33,9 @@ class Base
 		return $this->level;
 	}
 
-	public function getBasePrice(): array
+	protected function getBasePrice(): array
 	{
-		$price = Vars::getItemPrice($this->elementId);
+		$price = Vars::getItemPrice($this->entityId);
 
 		$cost = [];
 
@@ -54,7 +55,7 @@ class Base
 		$cost = $this->getBasePrice();
 		$user = $this->getContext()->getUser();
 
-		$elementType = Vars::getItemType($this->elementId);
+		$elementType = Vars::getItemType($this->entityId);
 
 		foreach ($cost as $resType => $value) {
 			switch ($elementType) {
@@ -88,9 +89,9 @@ class Base
 		return max(1, $time);
 	}
 
-	public function isAvailable()
+	public function isAvailable(): bool
 	{
-		$requeriments = Vars::getItemRequirements($this->elementId);
+		$requeriments = Vars::getItemRequirements($this->entityId);
 
 		if (!count($requeriments)) {
 			return true;
@@ -109,13 +110,13 @@ class Base
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
-				if ($planet->planet_type == 5 && in_array($this->elementId, [43, 502, 503])) {
+				if ($planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;
 					}
 				}
 
-				if ($planet->getBuildLevel($reqElement) < $level) {
+				if ($planet->getLevel($reqElement) < $level) {
 					return false;
 				}
 			} else {
@@ -126,7 +127,7 @@ class Base
 		return true;
 	}
 
-	public function canBuy(?array $cost = null)
+	public function canConstruct(?array $cost = null): bool
 	{
 		if (!$cost) {
 			$cost = $this->getPrice();

@@ -63,10 +63,10 @@ class RaceController extends Controller
 						->get();
 
 					foreach ($planets as $planet) {
-						$planet->setUnit(Vars::getIdByName('corvete'), 0);
-						$planet->setUnit(Vars::getIdByName('interceptor'), 0);
-						$planet->setUnit(Vars::getIdByName('dreadnought'), 0);
-						$planet->setUnit(Vars::getIdByName('corsair'), 0);
+						$planet->updateAmount(Vars::getIdByName('corvete'), 0);
+						$planet->updateAmount(Vars::getIdByName('interceptor'), 0);
+						$planet->updateAmount(Vars::getIdByName('dreadnought'), 0);
+						$planet->updateAmount(Vars::getIdByName('corsair'), 0);
 
 						$planet->update();
 					}

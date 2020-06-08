@@ -76,7 +76,7 @@ class ResourcesController extends Controller
 
 		foreach ($planets as $planet) {
 			$planet->assignUser($this->user);
-			$planet->resourceUpdate();
+			$planet->getProduction()->update();
 
 			$planetsId[] = $planet->id;
 		}
@@ -105,7 +105,7 @@ class ResourcesController extends Controller
 
 		$this->planet->clearBuildingsData();
 		$this->planet->clearUnitsData();
-		$this->planet->resourceUpdate(time(), true);
+		$this->planet->getProduction()->update(time(), true);
 	}
 
 	public function index()
@@ -155,7 +155,7 @@ class ResourcesController extends Controller
 			$this->planet->clearUnitsData();
 
 			$this->planet->update();
-			$this->planet->resourceUpdate(time(), true);
+			$this->planet->getProduction()->update(time(), true);
 		}
 
 		$parse = [];
@@ -173,78 +173,61 @@ class ResourcesController extends Controller
 
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType('prod') as $ProdID) {
-			$type = Vars::getItemType($ProdID);
+		$context = new Planet\Entity\Context($this->user, $this->planet);
 
-			if ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ProdID) <= 0) {
-				continue;
-			} elseif ($type == Vars::ITEM_TYPE_FLEET && $this->planet->getUnitCount($ProdID) <= 0) {
-				continue;
-			}
+		foreach (Vars::getItemsByType('prod') as $productionId) {
+			$build = $this->planet->getEntity($productionId);
 
-			if (!Vars::getBuildProduction($ProdID)) {
+			if (!$build || $this->planet->getLevel($productionId) <= 0) {
 				continue;
 			}
 
-			$BuildLevelFactor = $BuildLevel = 0;
-
-			if ($type == Vars::ITEM_TYPE_BUILING) {
-				$build = $this->planet->getBuild($ProdID);
-
-				$BuildLevel = $build['level'];
-				$BuildLevelFactor = $build['power'];
-			} elseif ($type == Vars::ITEM_TYPE_FLEET) {
-				$unit = $this->planet->getUnit($ProdID);
-
-				$BuildLevel = $unit['amount'];
-				$BuildLevelFactor = $unit['power'];
+			if (!Vars::getBuildProduction($productionId)) {
+				continue;
 			}
 
-			$result = $this->planet->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
+			$result = $build->getProduction($context);
 
 			foreach (Vars::getResources() as $res) {
-				$$res = $result[$res];
+				$$res = $result->get($res);
 				$$res = round($$res * 0.01 * $production_level);
 			}
 
-			$energy = $result['energy'];
-
 			$row = [];
-			$row['id'] = $ProdID;
-			$row['name'] = Vars::getName($ProdID);
-			$row['factor'] = $BuildLevelFactor;
+			$row['id'] = $productionId;
+			$row['name'] = Vars::getName($productionId);
+			$row['factor'] = $build->factor;
 			$row['bonus'] = 0;
 
-			if ($ProdID == 4 || $ProdID == 12) {
+			if ($productionId == 4 || $productionId == 12) {
 				$row['bonus'] += $this->user->bonusValue('energy');
 				$row['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
 			}
 
-			if ($ProdID == 212) {
+			if ($productionId == 212) {
 				$row['bonus'] += $this->user->bonusValue('solar');
 			}
 
-			if ($ProdID == 1) {
+			if ($productionId == 1) {
 				$row['bonus'] += $this->user->bonusValue('metal');
 			}
 
-			if ($ProdID == 2) {
+			if ($productionId == 2) {
 				$row['bonus'] += $this->user->bonusValue('crystal');
 			}
 
-			if ($ProdID == 3) {
+			if ($productionId == 3) {
 				$row['bonus'] += $this->user->bonusValue('deuterium');
 			}
 
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
-
-			$row['level'] = $BuildLevel;
+			$row['level'] = $build->amount;
 
 			foreach (Vars::getResources() as $res) {
 				$row['resources'][$res] = $$res;
 			}
 
-			$row['resources']['energy'] = $energy;
+			$row['resources']['energy'] = $result->get('energy');
 
 			$parse['items'][] = $row;
 		}

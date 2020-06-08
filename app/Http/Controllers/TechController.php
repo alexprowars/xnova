@@ -10,6 +10,7 @@ namespace Xnova\Http\Controllers;
 
 use Xnova\Building;
 use Xnova\Controller;
+use Xnova\Planet\EntityFactory;
 use Xnova\Vars;
 use Xnova\Entity;
 
@@ -51,7 +52,7 @@ class TechController extends Controller
 
 						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) >= $Level) {
 							$pars['required'] .= "<span class=\"positive\">";
-						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ResClass) >= $Level) {
+						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getLevel($ResClass) >= $Level) {
 							$pars['required'] .= "<span class=\"positive\">";
 						} else {
 							$pars['required'] .= "<span class=\"negative\">";
@@ -62,8 +63,8 @@ class TechController extends Controller
 						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) < $Level) {
 							$minus = $Level - $this->user->getTechLevel($ResClass);
 							$pars['required'] .= " + <b>" . $minus . "</b>";
-						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getBuildLevel($ResClass) < $Level) {
-							$minus = $Level - $this->planet->getBuildLevel($ResClass);
+						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getLevel($ResClass) < $Level) {
+							$minus = $Level - $this->planet->getLevel($ResClass);
 							$pars['required'] .= " + <b>" . $minus . "</b>";
 						}
 					} else {
@@ -100,10 +101,10 @@ class TechController extends Controller
 		$element = (int) $element;
 
 		if ($element > 0 && Vars::getName($element)) {
-			$entity = new Entity\Base($element, new Entity\Context($this->user, $this->planet));
+			$entity = EntityFactory::create($element, 1, new \Xnova\Planet\Entity\Context($this->user, $this->planet));
 
 			$page['element'] = $element;
-			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getBuildLevel($element);
+			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getLevel($element);
 			$page['access'] = $entity->isAvailable();
 			$page['req'] = Vars::getItemRequirements($element);
 

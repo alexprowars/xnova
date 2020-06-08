@@ -8,7 +8,6 @@ class PlanetObserver
 {
 	public function saved(Planet $model)
 	{
-		$model->_afterUpdateBuildings();
-		$model->_afterUpdateUnits();
+		$model->afterUpdate();
 	}
 }

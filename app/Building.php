@@ -62,14 +62,14 @@ class Building
 
 				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) >= $level) {
 					continue;
-				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($reqId) >= $level) {
+				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getLevel($reqId) >= $level) {
 					continue;
 				}
 
 				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) < $level) {
 					$minus = $level - $user->getTechLevel($reqId);
-				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getBuildLevel($reqId) < $level) {
-					$minus = $level - $planet->getBuildLevel($reqId);
+				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getLevel($reqId) < $level) {
+					$minus = $level - $planet->getLevel($reqId);
 				}
 			} else {
 				if ($user->race == $level) {

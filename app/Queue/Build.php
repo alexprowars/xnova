@@ -10,7 +10,7 @@ namespace Xnova\Queue;
 
 use Xnova\Queue;
 use Xnova\Models;
-use Xnova\Entity;
+use Xnova\Planet\Entity;
 
 class Build
 {
@@ -55,7 +55,7 @@ class Build
 				$inArray = 0;
 			}
 
-			$build = $planet->getBuild($elementId);
+			$build = $planet->getEntity($elementId);
 
 			if (!$build) {
 				return false;
@@ -69,7 +69,7 @@ class Build
 				'object_id' => $elementId,
 				'time' => 0,
 				'time_end' => 0,
-				'level' => $build['level'] + (!$destroy ? 1 : 0) + $inArray
+				'level' => $build->amount + (!$destroy ? 1 : 0) + $inArray
 			]);
 
 			$this->queue->loadQueue();

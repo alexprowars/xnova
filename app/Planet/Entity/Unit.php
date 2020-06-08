@@ -1,8 +1,10 @@
 <?php
 
-namespace Xnova\Entity;
+namespace Xnova\Planet\Entity;
 
-class Unit extends Base
+use Xnova\Planet\Contracts\PlanetUnitEntityInterface;
+
+class Unit extends BaseEntity implements PlanetUnitEntityInterface
 {
 	public function getTime(): int
 	{
@@ -10,8 +12,8 @@ class Unit extends Base
 
 		$planet = $this->getContext()->getPlanet();
 
-		$time *= (1 / ($planet->getBuildLevel('hangar') + 1));
-		$time *= pow(1 / 2, $planet->getBuildLevel('nano_factory'));
+		$time *= (1 / ($planet->getLevel('hangar') + 1));
+		$time *= pow(1 / 2, $planet->getLevel('nano_factory'));
 
 		return max(1, $time);
 	}

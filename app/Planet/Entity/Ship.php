@@ -1,19 +1,19 @@
 <?php
 
-namespace Xnova\Entity;
+namespace Xnova\Planet\Entity;
 
 use Xnova\Exceptions\Exception;
 use Xnova\Vars;
 
-class Fleet extends Unit
+class Ship extends Unit
 {
-	public function __construct($elementId, $count = 1, $context = null)
+	public function __construct($entityId, $count = 1, $context = null)
 	{
-		if (Vars::getItemType($elementId) !== Vars::ITEM_TYPE_FLEET) {
+		if (Vars::getItemType($entityId) !== Vars::ITEM_TYPE_FLEET) {
 			throw new Exception('wrong entity type');
 		}
 
-		parent::__construct($elementId, $count, $context);
+		parent::__construct($entityId, $count, $context);
 	}
 
 	public function getTime(): int
@@ -28,14 +28,14 @@ class Fleet extends Unit
 
 	public function getConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->elementId);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		return (int) ceil($shipData['consumption'] * $this->getContext()->getUser()->bonusValue('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
 	{
-		$shipData = Vars::getUnitData($this->elementId);
+		$shipData = Vars::getUnitData($this->entityId);
 		$user = $this->getContext()->getUser();
 
 		switch ($shipData['type_engine']) {
@@ -61,7 +61,7 @@ class Fleet extends Unit
 
 	public function getStorage(): int
 	{
-		$shipData = Vars::getUnitData($this->elementId);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			return 0;
@@ -72,7 +72,7 @@ class Fleet extends Unit
 
 	public function getStayConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->elementId);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			return 0;
@@ -87,14 +87,14 @@ class Fleet extends Unit
 
 	public function getInfo(): array
 	{
-		$shipData = Vars::getUnitData($this->elementId);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			throw new Exception('unit does not exist');
 		}
 
 		$ship = [
-			'id' => $this->elementId,
+			'id' => $this->entityId,
 			'consumption' => $this->getConsumption(),
 			'speed' => $this->getSpeed(),
 			'stay' => $this->getStayConsumption(),

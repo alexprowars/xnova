@@ -76,7 +76,7 @@ class FleetEngine
 
 			if ($targetUser) {
 				$targetPlanet->assignUser($targetUser);
-				$targetPlanet->resourceUpdate(time());
+				$targetPlanet->getProduction()->update();
 			}
 
 			if ($fleet) {
@@ -84,7 +84,7 @@ class FleetEngine
 
 				foreach ($fleetData as $shipId => $shipArr) {
 					if ($shipArr['count'] > 0) {
-						$targetPlanet->setUnit($shipId, $shipArr['count'], true);
+						$targetPlanet->updateAmount($shipId, $shipArr['count'], true);
 					}
 				}
 			}

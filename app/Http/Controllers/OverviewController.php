@@ -545,7 +545,7 @@ class OverviewController extends Controller
 			'crystal' => (int) $this->planet->debris_crystal,
 		];
 
-		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getUnitCount('recycler') > 0);
+		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
 
 		$build_list = [];
 		$planetsData = [];
@@ -570,7 +570,7 @@ class OverviewController extends Controller
 					$end[$item->planet_id] = $item->time;
 				}
 
-				$entity = new Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+				$entity = new Planet\Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
 
 				$time = $entity->getTime();
 
@@ -684,16 +684,6 @@ class OverviewController extends Controller
 			$parse['bonus_count'] = $bonus * 500 * Game::getSpeed('mine');
 		}
 
-		$parse['officiers'] = [];
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
-			$parse['officiers'][] = [
-				'id' => (int) $officier,
-				'time' => (int) $this->user->{Vars::getName($officier)},
-				'name' => __('main.tech.' . $officier)
-			];
-		}
-
 		$parse['chat'] = [];
 
 		if (Helpers::isMobile()) {
@@ -780,7 +770,7 @@ class OverviewController extends Controller
 		$showMessage = false;
 
 		foreach (Vars::getResources() as $res) {
-			if ($this->planet->getBuildLevel($res . '_mine') && !$this->planet->getBuild($res . '_mine')['power']) {
+			if ($this->planet->getLevel($res . '_mine') && !$this->planet->getEntity($res . '_mine')->factor) {
 				$showMessage = true;
 			}
 		}

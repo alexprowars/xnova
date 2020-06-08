@@ -65,13 +65,13 @@ class FleetController extends Controller
 			if (isset($ships[$i]) && (int) $ships[$i] > 0) {
 				$cnt = (int) $ships[$i];
 
-				if ($cnt > $this->planet->getUnitCount($i)) {
+				if ($cnt > $this->planet->getLevel($i)) {
 					continue;
 				}
 
 				$fleets[$i] = $cnt;
 
-				$ship = (new Entity\Fleet($i))->getInfo();
+				$ship = (new Planet\Entity\Ship($i))->getInfo();
 				$ship['count'] = $cnt;
 
 				$parse['ships'][] = $ship;
@@ -159,7 +159,7 @@ class FleetController extends Controller
 				}
 
 				foreach ($moons as $moon) {
-					if ($moon->getBuildLevel('jumpgate') <= 0) {
+					if ($moon->getLevel('jumpgate') <= 0) {
 						continue;
 					}
 

@@ -52,8 +52,8 @@ class SimController extends Controller
 		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
 
 		foreach ($res as $id) {
-			if ($this->planet->getUnitCount($id) > 0) {
-				$parse['slots']['attackers'][0][$id] = ['c' => $this->planet->getUnitCount($id)];
+			if ($this->planet->getLevel($id) > 0) {
+				$parse['slots']['attackers'][0][$id] = ['c' => $this->planet->getLevel($id)];
 			}
 
 			if ($this->user->getTechLevel($id) > 0) {

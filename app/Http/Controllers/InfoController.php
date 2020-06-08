@@ -64,12 +64,12 @@ class InfoController extends Controller
 
 	private function ShowProductionTable($buildId)
 	{
-		$CurrentBuildtLvl = $this->planet->getBuildLevel($buildId);
+		$CurrentBuildtLvl = $this->planet->getLevel($buildId);
 
 		$ActualNeed = $ActualProd = 0;
 
 		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-			$BuildLevelFactor = $this->planet->getBuild($buildId)['power'];
+			$BuildLevelFactor = $this->planet->getEntity($buildId)->factor;
 			$BuildLevel = ($CurrentBuildtLvl > 0) ? $CurrentBuildtLvl : 1;
 
 			$res = $this->planet->getResourceProductionLevel($buildId, $BuildLevel, $BuildLevelFactor);
@@ -192,7 +192,7 @@ class InfoController extends Controller
 						}
 					}
 
-					$max = $this->planet->getBuildLevel($itemId) * 10000;
+					$max = $this->planet->getLevel($itemId) * 10000;
 
 					if ($max > $this->planet->deuterium) {
 						$cur = $this->planet->deuterium;
@@ -213,7 +213,7 @@ class InfoController extends Controller
 				}
 			}
 
-			if ($this->planet->getBuildLevel($itemId) > 0) {
+			if ($this->planet->getLevel($itemId) > 0) {
 				$list = [];
 
 				$fleets = Models\Fleet::query()
@@ -237,7 +237,7 @@ class InfoController extends Controller
 
 				$parse['alliance'] = [
 					'fleets' => $list,
-					'cost' => $this->planet->getBuildLevel($itemId) * 10000,
+					'cost' => $this->planet->getLevel($itemId) * 10000,
 				];
 			}
 		} elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_FLEET) {
@@ -266,7 +266,7 @@ class InfoController extends Controller
 			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
 			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
 			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
-			$fleet['speed_full'] = (new Entity\Fleet($itemId))->getSpeed();
+			$fleet['speed_full'] = (new \Xnova\Planet\Entity\Ship($itemId))->getSpeed();
 			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
 
 			$fleet['resources'] = [];
@@ -360,32 +360,32 @@ class InfoController extends Controller
 					$icm = abs((int) Request::post('interceptor', 0));
 					$ipm = abs((int) Request::post('interplanetary', 0));
 
-					if ($icm > $this->planet->getUnitCount('interceptor_misil')) {
-						$icm = $this->planet->getUnitCount('interceptor_misil');
+					if ($icm > $this->planet->getLevel('interceptor_misil')) {
+						$icm = $this->planet->getLevel('interceptor_misil');
 					}
-					if ($ipm > $this->planet->getUnitCount('interplanetary_misil')) {
-						$ipm = $this->planet->getUnitCount('interplanetary_misil');
+					if ($ipm > $this->planet->getLevel('interplanetary_misil')) {
+						$ipm = $this->planet->getLevel('interplanetary_misil');
 					}
 
-					$this->planet->setUnit('interceptor_misil', -$icm, true);
-					$this->planet->setUnit('interplanetary_misil', -$ipm, true);
+					$this->planet->updateAmount('interceptor_misil', -$icm, true);
+					$this->planet->updateAmount('interplanetary_misil', -$ipm, true);
 					$this->planet->update();
 
 					throw new SuccessException('Ракеты уничтожены');
 				}
 
 				$parse['missile'] = [
-					'interceptor' => $this->planet->getUnitCount('interceptor_misil'),
-					'interplanetary' => $this->planet->getUnitCount('interplanetary_misil')
+					'interceptor' => $this->planet->getLevel('interceptor_misil'),
+					'interplanetary' => $this->planet->getLevel('interplanetary_misil')
 				];
 			}
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
-			$build = $this->planet->getBuild($itemId);
+			$build = $this->planet->getEntity($itemId);
 
-			if ($build && $build['level'] > 0) {
-				$entity = new Entity\Building($itemId, $build['level'], new Entity\Context($this->user, $this->planet));
+			if ($build && $build->amount > 0) {
+				$entity = new \Xnova\Planet\Entity\Building($itemId, $build->amount, new \Xnova\Planet\Entity\Context($this->user, $this->planet));
 
 				$time = ceil($entity->getTime() / 2);
 
@@ -394,7 +394,7 @@ class InfoController extends Controller
 				}
 
 				$parse['destroy'] = [
-					'level' => $build['level'],
+					'level' => $build->amount,
 					'resources' => $entity->getDestroyPrice(),
 					'time' => $time
 				];

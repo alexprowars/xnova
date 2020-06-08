@@ -70,9 +70,9 @@ class TutorialController extends Controller
 					if ($type == Vars::ITEM_TYPE_TECH) {
 						$check = $this->user->getTechLevel($element) >= $level;
 					} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
-						$check = $this->planet->getUnitCount($element) >= $level;
+						$check = $this->planet->getLevel($element) >= $level;
 					} else {
-						$check = $this->planet->getBuildLevel($element) >= $level;
+						$check = $this->planet->getLevel($element) >= $level;
 					}
 
 					if ($chk == true) {
@@ -115,7 +115,7 @@ class TutorialController extends Controller
 
 			if ($taskKey == 'STORAGE') {
 				if ($taskVal === true) {
-					$check = $this->planet->getBuildLevel('metal_store') > 0 || $this->planet->getBuildLevel('crystal_store') > 0 || $this->planet->getBuildLevel('deuterium_store') > 0;
+					$check = $this->planet->getLevel('metal_store') > 0 || $this->planet->getLevel('crystal_store') > 0 || $this->planet->getLevel('deuterium_store') > 0;
 
 					$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
 				}
@@ -168,7 +168,7 @@ class TutorialController extends Controller
 						if ($type == Vars::ITEM_TYPE_TECH) {
 							$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
 						} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
-							$this->planet->setUnit($element, $level, true);
+							$this->planet->updateAmount($element, $level, true);
 						} elseif ($type == Vars::ITEM_TYPE_OFFICIER) {
 							if ($this->user->{Vars::getName($element)} > time()) {
 								$this->user->{Vars::getName($element)} += $level;
@@ -176,13 +176,13 @@ class TutorialController extends Controller
 								$this->user->{Vars::getName($element)} = time() + $level;
 							}
 						} elseif ($type == Vars::ITEM_TYPE_BUILING) {
-							$this->planet->setBuild($element, $this->planet->getBuildLevel($element) + (int) $level);
+							$this->planet->updateAmount($element, (int) $level, true);
 						}
 					}
 				} elseif ($rewardKey == 'STORAGE_RAND') {
 					$r = mt_rand(22, 24);
 
-					$this->planet->setBuild($r, $this->planet->getBuildLevel($r) + 1);
+					$this->planet->updateAmount($r, 1, true);
 				}
 			}
 

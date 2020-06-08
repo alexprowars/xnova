@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Entity;
+namespace Xnova\Planet\Entity;
 
 use Xnova\Exceptions\Exception;
 use Xnova\Planet;

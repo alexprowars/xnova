@@ -111,8 +111,8 @@ class FleetController extends Controller
 		$parse['ships'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
-			if ($this->planet->getUnitCount($i) > 0) {
-				$parse['ships'][] = (new Entity\Fleet($i, $this->planet->getUnitCount($i)))->getInfo();
+			if ($this->planet->getLevel($i) > 0) {
+				$parse['ships'][] = (new \Xnova\Planet\Entity\Ship($i, $this->planet->getLevel($i)))->getInfo();
 			}
 		}
 

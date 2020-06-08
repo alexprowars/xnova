@@ -10,6 +10,7 @@ namespace Xnova;
 
 use Xnova\Exceptions\ErrorException;
 use Xnova\Models\LogHistory;
+use Xnova\Planet\EntityFactory;
 use Xnova\Queue\Build;
 use Xnova\Queue\Tech;
 use Xnova\Queue\Unit;
@@ -218,10 +219,10 @@ class Queue
 
 		$buildItem = $queueArray[0];
 
-		$build = $this->planet->getBuild($buildItem->object_id);
+		$build = $this->planet->getEntity($buildItem->object_id);
 		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
 
-		$entity = new Entity\Building($buildItem->object_id, $build['level'], new Entity\Context($this->user, $this->planet));
+		$entity = EntityFactory::create($buildItem->object_id, $build->amount, new Planet\Entity\Context($this->user, $this->planet));
 
 		$buildTime = $entity->getTime();
 
@@ -237,7 +238,7 @@ class Queue
 
 		if ($buildItem->time + $buildTime <= time() + 5) {
 			if (!$this->planet->planet_updated) {
-				$this->planet->resourceUpdate(0, true);
+				$this->planet->getProduction()->update(0, true);
 			}
 
 			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
@@ -255,10 +256,10 @@ class Queue
 
 			if (!$isDestroy) {
 				$this->planet->field_current++;
-				$this->planet->setBuild($buildItem->object_id, $build['level'] + 1);
+				$this->planet->updateAmount($buildItem->object_id, 1, true);
 			} else {
 				$this->planet->field_current--;
-				$this->planet->setBuild($buildItem->object_id, $build['level'] - 1);
+				$this->planet->updateAmount($buildItem->object_id, -1, true);
 			}
 
 			if (!$this->deleteInQueue($buildItem->id)) {
@@ -288,7 +289,7 @@ class Queue
 					'to_crystal' 		=> $this->planet->crystal,
 					'to_deuterium' 		=> $this->planet->deuterium,
 					'build_id' 			=> $buildItem->object_id,
-					'level' 			=> $this->planet->getBuildLevel($buildItem->object_id)
+					'level' 			=> $this->planet->getLevel($buildItem->object_id)
 				]);
 			}
 
@@ -313,7 +314,7 @@ class Queue
 
 			$HaveNoMoreLevel = false;
 
-			$build = $this->planet->getBuild($buildItem->object_id);
+			$build = $this->planet->getEntity($buildItem->object_id);
 
 			if (!$build) {
 				array_shift($queueArray);
@@ -331,14 +332,14 @@ class Queue
 
 			$isDestroy = $buildItem->operation == $buildItem::OPERATION_DESTROY;
 
-			$entity = new Entity\Building($buildItem->object_id, 0, new Entity\Context($this->user, $this->planet));
+			$entity = new Planet\Entity\Building($buildItem->object_id, 0, new Planet\Entity\Context($this->user, $this->planet));
 			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
 
-			if ($isDestroy && $build['level'] == 0) {
+			if ($isDestroy && $build->amount == 0) {
 				$HaveRessources = false;
 				$HaveNoMoreLevel = true;
 			} else {
-				$HaveRessources = $entity->canBuy($isDestroy ? $entity->getDestroyPrice() : $entity->getPrice());
+				$HaveRessources = $entity->canConstruct($isDestroy ? $entity->getDestroyPrice() : null);
 			}
 
 			if ($HaveRessources && ($entity->isAvailable() || $isDestroy)) {
@@ -373,7 +374,7 @@ class Queue
 						'to_crystal' 		=> $this->planet->crystal,
 						'to_deuterium' 		=> $this->planet->deuterium,
 						'build_id' 			=> $buildItem->object_id,
-						'level' 			=> ($build['level'] + 1)
+						'level' 			=> $build->amount + 1,
 					]);
 				}
 			} else {
@@ -451,7 +452,7 @@ class Queue
 				$planet->spaceLabs = $planet->getNetworkLevel();
 			}
 
-			$entity = new Entity\Research($buildItem->object_id, $buildItem->level, new Entity\Context($this->user, $planet));
+			$entity = new Entity\Research($buildItem->object_id, $buildItem->level, new Planet\Entity\Context($this->user, $planet));
 
 			$buildTime = $entity->getTime();
 
@@ -503,7 +504,7 @@ class Queue
 		if ($this->getCount(self::TYPE_SHIPYARD)) {
 			$buildQueue = $this->get(self::TYPE_SHIPYARD);
 
-			$MissilesSpace = ($this->planet->getBuildLevel('missile_facility') * 10) - ($this->planet->getUnitCount('interceptor_misil') + (2 * $this->planet->getUnitCount('interplanetary_misil')));
+			$MissilesSpace = ($this->planet->getLevel('missile_facility') * 10) - ($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
 
 			$max = [];
 			$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
@@ -512,7 +513,7 @@ class Queue
 				$price = Vars::getItemPrice($id);
 
 				if (isset($price['max'])) {
-					$max[$id] = $this->planet->getUnitCount($id);
+					$max[$id] = $this->planet->getLevel($id);
 				}
 			}
 
@@ -556,18 +557,14 @@ class Queue
 
 			unset($item);
 
-			$context = new Entity\Context($this->user, $this->planet);
+			$context = new Planet\Entity\Context($this->user, $this->planet);
 
 			foreach ($buildQueue as $i => $item) {
 				if (!in_array($item->object_id, $buildTypes)) {
 					continue;
 				}
 
-				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE) {
-					$entity = new Entity\Defence($item->object_id, 1, $context);
-				} else {
-					$entity = new Entity\Fleet($item->object_id, 1, $context);
-				}
+				$entity = EntityFactory::create($item->object_id, 1, $context);
 
 				$buildTime = $entity->getTime();
 
@@ -575,7 +572,7 @@ class Queue
 					$item->time += $buildTime;
 
 					$builded++;
-					$this->planet->setUnit($item->object_id, 1, true);
+					$this->planet->updateAmount($item->object_id, 1, true);
 					$item->level--;
 
 					if ($item->level <= 0) {

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
 use Xnova\Entity;
+use Xnova\Planet\EntityFactory;
 
 class Construction
 {
@@ -71,7 +72,7 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		$context = new Entity\Context($this->user, $this->planet);
+		$context = new Planet\Entity\Context($this->user, $this->planet);
 
 		$parse['items'] = [];
 
@@ -80,13 +81,13 @@ class Construction
 				continue;
 			}
 
-			$build = $this->planet->getBuild($Element);
+			$build = $this->planet->getEntity($Element);
 
 			if (!$build) {
 				continue;
 			}
 
-			$entity = new Entity\Building($Element, $build['level'], $context);
+			$entity = EntityFactory::create($Element, $build->amount, $context);
 
 			$isAccess = $entity->isAvailable();
 
@@ -98,7 +99,7 @@ class Construction
 				continue;
 			}
 
-			$BuildingLevel = $build['level'];
+			$BuildingLevel = $build->amount;
 			$BuildingPrice = $entity->getPrice();
 
 			$row = [];
@@ -191,12 +192,12 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		$context = new Entity\Context($this->user, $this->planet);
+		$context = new Planet\Entity\Context($this->user, $this->planet);
 
 		$parse['items'] = [];
 
 		foreach ($res_array as $Tech) {
-			$entity = new Entity\Research($Tech, null, $context);
+			$entity = EntityFactory::create($Tech, null, $context);
 
 			$isAccess = $entity->isAvailable();
 
@@ -312,11 +313,7 @@ class Construction
 		$parse['items'] = [];
 
 		foreach ($elementIDs as $element) {
-			if (Vars::getItemType($element) === Vars::ITEM_TYPE_DEFENSE) {
-				$entity = new Entity\Defence($element);
-			} else {
-				$entity = new Entity\Fleet($element);
-			}
+			$entity = EntityFactory::create($element);
 
 			$isAccess = $entity->isAvailable();
 
@@ -332,7 +329,7 @@ class Construction
 
 			$row['allow']	= $isAccess;
 			$row['i'] 		= $element;
-			$row['count'] 	= $this->planet->getUnitCount($element);
+			$row['count'] 	= $this->planet->getLevel($element);
 			$row['price'] 	= $entity->getPrice();
 			$row['effects']	= '';
 
@@ -343,7 +340,7 @@ class Construction
 				$price = Vars::getItemPrice($element);
 
 				if (isset($price['max'])) {
-					$total = $this->planet->getUnitCount($element);
+					$total = $this->planet->getLevel($element);
 
 					if (isset($BuildArray[$element])) {
 						$total += $BuildArray[$element];
@@ -395,7 +392,7 @@ class Construction
 					$end = $item->time;
 				}
 
-				$entity = new Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0), new Entity\Context($this->user, $this->planet));
+				$entity = EntityFactory::create($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0), new Planet\Entity\Context($this->user, $this->planet));
 
 				$elementTime = $entity->getTime();
 
@@ -443,11 +440,7 @@ class Construction
 					$end = $item->time;
 				}
 
-				if (Vars::getItemType($item->object_id) === Vars::ITEM_TYPE_DEFENSE) {
-					$entity = new Entity\Defence($item->object_id);
-				} else {
-					$entity = new Entity\Fleet($item->object_id);
-				}
+				$entity = EntityFactory::create($item->object_id);
 
 				$time = $entity->getTime();
 

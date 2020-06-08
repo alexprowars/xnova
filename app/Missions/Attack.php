@@ -64,7 +64,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$target->assignUser($targetUser);
-		$target->resourceUpdate($this->fleet->start_time);
+		$target->getProduction()->update($this->fleet->start_time);
 
 		$queueManager = new Queue($targetUser, $target);
 		$queueManager->checkUnitQueue();
@@ -107,8 +107,8 @@ class Attack extends FleetEngine implements Mission
 		$units = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
 		foreach ($units as $i) {
-			if ($target->getUnitCount($i) > 0) {
-				$res[$i] = $target->getUnitCount($i);
+			if ($target->getLevel($i) > 0) {
+				$res[$i] = $target->getLevel($i);
 
 				$l = $i > 400 ? ($i - 50) : ($i + 100);
 
@@ -135,8 +135,8 @@ class Attack extends FleetEngine implements Mission
 		$homeFleet = new HomeFleet(0);
 
 		foreach ($units as $i) {
-			if ($target->getUnitCount($i) > 0) {
-				$shipType = $this->getShipType($i, $target->getUnitCount($i), $res);
+			if ($target->getLevel($i) > 0) {
+				$shipType = $this->getShipType($i, $target->getLevel($i), $res);
 
 				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship') {
 					$shipType->setRepairProb(0.8);
@@ -343,8 +343,8 @@ class Attack extends FleetEngine implements Mission
 				}
 
 				foreach ($units as $i) {
-					if (isset($defender[$i]) && $target->getUnitCount($i) > 0) {
-						$target->setUnit($i, $defender[$i]);
+					if (isset($defender[$i]) && $target->getLevel($i) > 0) {
+						$target->updateAmount($i, $defender[$i]);
 					}
 				}
 

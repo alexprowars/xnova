@@ -69,7 +69,7 @@ class ImperiumController extends Controller
 
 		foreach ($planets as $planet) {
 			$planet->assignUser($this->user);
-			$planet->resourceUpdate(time(), true);
+			$planet->getProduction()->update(time(), true);
 
 			$row = [];
 
@@ -90,19 +90,19 @@ class ImperiumController extends Controller
 			$row['resources']['energy'] = [
 				'current' => $planet->energy_max - abs($planet->energy_used),
 				'production' => $planet->energy_max,
-				'storage' => $planet->getBuildLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getBuildLevel('solar_plant')) * 100) : 0
+				'storage' => $planet->getLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getLevel('solar_plant')) * 100) : 0
 			];
 
 			foreach (Vars::getResources() as $res) {
 				$row['resources'][$res] = [
 					'current' => $planet->{$res},
 					'production' => $planet->{$res . '_perhour'},
-					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
+					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
 				];
 			}
 
 			foreach (Vars::getItemsByType('prod') as $ProdID) {
-				$row['factor'][$ProdID] = $planet->getBuild($ProdID)['power'] * 10;
+				$row['factor'][$ProdID] = $planet->getEntity($ProdID)->factor * 10;
 			}
 
 			$build_hangar = [];
@@ -145,16 +145,11 @@ class ImperiumController extends Controller
 					];
 				}
 
-				if (Vars::getItemType($i) == Vars::ITEM_TYPE_BUILING) {
-					$items[$i]['current'] = $planet->getBuildLevel($i);
-					$items[$i]['build'] = $build_hangar[$i] ?? 0;
-				} elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET) {
-					$items[$i]['current'] = $planet->getUnitCount($i);
-					$items[$i]['build'] = $build_hangar[$i] ?? 0;
+				$items[$i]['current'] = $planet->getLevel($i);
+				$items[$i]['build'] = $build_hangar[$i] ?? 0;
+
+				if (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET) {
 					$items[$i]['fly'] = $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] ?? 0;
-				} elseif (Vars::getItemType($i) == Vars::ITEM_TYPE_DEFENSE) {
-					$items[$i]['current'] = $planet->getUnitCount($i);
-					$items[$i]['build'] = $build_hangar[$i] ?? 0;
 				}
 			}
 

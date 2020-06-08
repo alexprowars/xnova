@@ -109,8 +109,8 @@ class GalaxyController extends Controller
 
 		$Phalanx = 0;
 
-		if ($this->planet->getBuildLevel('phalanx') > 0) {
-			$Range = Fleet::GetPhalanxRange($this->planet->getBuildLevel('phalanx'));
+		if ($this->planet->getLevel('phalanx') > 0) {
+			$Range = Fleet::GetPhalanxRange($this->planet->getLevel('phalanx'));
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
@@ -120,7 +120,7 @@ class GalaxyController extends Controller
 			}
 		}
 
-		if ($this->planet->getUnitCount('interplanetary_misil') > 0) {
+		if ($this->planet->getLevel('interplanetary_misil') > 0) {
 			if ($galaxy == $this->planet->galaxy) {
 				$Range = Fleet::GetMissileRange($this->user);
 
@@ -141,7 +141,7 @@ class GalaxyController extends Controller
 
 		$Destroy = 0;
 
-		if ($this->planet->getUnitCount('dearth_star') > 0) {
+		if ($this->planet->getLevel('dearth_star') > 0) {
 			$Destroy = 1;
 		}
 
@@ -150,11 +150,11 @@ class GalaxyController extends Controller
 			'destroy' => $Destroy,
 			'missile' => $MissileBtn,
 			'stat_points' => $records ? $records['total_points'] : 0,
-			'colonizer' => $this->planet->getUnitCount('colonizer'),
-			'spy_sonde' => $this->planet->getUnitCount('spy_sonde'),
+			'colonizer' => $this->planet->getLevel('colonizer'),
+			'spy_sonde' => $this->planet->getLevel('spy_sonde'),
 			'spy' => (int) $this->user->getUserOption('spy'),
-			'recycler' => $this->planet->getUnitCount('recycler'),
-			'interplanetary_misil' => $this->planet->getUnitCount('interplanetary_misil'),
+			'recycler' => $this->planet->getLevel('recycler'),
+			'interplanetary_misil' => $this->planet->getLevel('interplanetary_misil'),
 			'allowExpedition' => $this->user->getTechLevel('expedition') > 0,
 			'fleets' => $maxfleet_count,
 			'max_fleets' => $fleetmax

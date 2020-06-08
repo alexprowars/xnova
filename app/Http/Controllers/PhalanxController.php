@@ -42,7 +42,7 @@ class PhalanxController extends Controller
 			$i = $this->planet->planet;
 		}
 
-		$phalanx = $this->planet->getBuildLevel('phalanx');
+		$phalanx = $this->planet->getLevel('phalanx');
 
 		$systemdol 	= $this->planet->system - pow($phalanx, 2);
 		$systemgora = $this->planet->system + pow($phalanx, 2);

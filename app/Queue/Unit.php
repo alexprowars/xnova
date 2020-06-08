@@ -9,10 +9,10 @@
 namespace Xnova\Queue;
 
 use Xnova\Models\LogHistory;
+use Xnova\Planet\EntityFactory;
 use Xnova\Queue;
 use Xnova\Vars;
 use Xnova\Models;
-use Xnova\Entity;
 
 class Unit
 {
@@ -28,13 +28,9 @@ class Unit
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
-		$context = new Entity\Context($user, $planet);
+		$context = new \Xnova\Planet\Entity\Context($user, $planet);
 
-		if (Vars::getItemType($elementId) === Vars::ITEM_TYPE_DEFENSE) {
-			$entity = new Entity\Defence($elementId, 1, $context);
-		} else {
-			$entity = new Entity\Fleet($elementId, 1, $context);
-		}
+		$entity = EntityFactory::create($elementId, 1, $context);
 
 		if (!$entity->isAvailable()) {
 			return;
@@ -44,10 +40,10 @@ class Unit
 
 		if ($elementId == 502 || $elementId == 503) {
 			$Missiles = [];
-			$Missiles[502] = $planet->getUnitCount('interceptor_misil');
-			$Missiles[503] = $planet->getUnitCount('interplanetary_misil');
+			$Missiles[502] = $planet->getLevel('interceptor_misil');
+			$Missiles[503] = $planet->getLevel('interplanetary_misil');
 
-			$maxMissiles = $planet->getBuildLevel('missile_facility') * 10;
+			$maxMissiles = $planet->getLevel('missile_facility') * 10;
 
 			foreach ($buildItems as $item) {
 				if (($item->object_id == 502 || $item->object_id == 503) && $item->level != 0) {
@@ -59,7 +55,7 @@ class Unit
 		$price = Vars::getItemPrice($elementId);
 
 		if (isset($price['max'])) {
-			$total = $planet->getUnitCount($elementId);
+			$total = $planet->getLevel($elementId);
 
 			foreach ($buildItems as $item) {
 				if ($item->object_id == $elementId) {

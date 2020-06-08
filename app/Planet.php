@@ -2,17 +2,15 @@
 
 namespace Xnova;
 
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\DB;
+use Xnova\Models\PlanetEntity;
+use Xnova\Planet\EntityCollection;
+use Xnova\Planet\Production;
 use Xnova\User as UsersModel;
-use Xnova\Planet\Build;
-use Xnova\Planet\Unit;
 
-class Planet extends Models\Planet
+class Planet extends Models\Planet implements Arrayable
 {
-	use Build;
-	use Unit;
-
 	/** @var User */
 	private $user;
 	public $ally = [];
@@ -36,6 +34,9 @@ class Planet extends Models\Planet
 	public $crystal_base;
 	public $deuterium_production;
 	public $deuterium_base;
+
+	/** @var EntityCollection */
+	public $entities;
 
 	public function assignUser(UsersModel $user)
 	{
@@ -65,20 +66,29 @@ class Planet extends Models\Planet
 		return true;
 	}
 
+	private function collectEntities()
+	{
+		if (!($this->entities instanceof EntityCollection)) {
+			$this->entities = EntityCollection::getForPlanet($this);
+		}
+	}
+
 	public function checkUsedFields()
 	{
-		$this->getBuildingsData();
+		$this->collectEntities();
 
-		$cnt = 0;
+		$count = 0;
+
+		$buildings = $this->entities->getForTypes(Vars::ITEM_TYPE_BUILING);
 
 		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
-			if (isset($this->buildings[$type])) {
-				$cnt += $this->buildings[$type]['level'];
+			if (isset($buildings[$type])) {
+				$count += $buildings[$type]->amount;
 			}
 		}
 
-		if ($this->field_current != $cnt) {
-			$this->field_current = $cnt;
+		if ($this->field_current != $count) {
+			$this->field_current = $count;
 			$this->update();
 		}
 	}
@@ -87,232 +97,68 @@ class Planet extends Models\Planet
 	{
 		$fields = (int) $this->field_max;
 
-		$fields += $this->getBuildLevel('terraformer') * 5;
-		$fields += config('settings.fieldsByMoonBase', 0) * $this->getBuildLevel('moonbase');
+		$fields += $this->entities->getEntityAmount('terraformer') * 5;
+		$fields += config('settings.fieldsByMoonBase', 0) * $this->entities->getEntityAmount('moonbase');
 
 		return $fields;
 	}
 
-	public function resourceUpdate($updateTime = 0, $simulation = false)
+	public function getLevel($entityId): int
 	{
-		if (!$this->user instanceof UsersModel) {
-			return false;
+		return $this->entities->getEntityAmount($entityId);
+	}
+
+	public function getEntity($entityId): ?PlanetEntity
+	{
+		return $this->entities->getEntity($entityId);
+	}
+
+	public function updateAmount($entityId, int $amount, bool $isDifferent = false)
+	{
+		if (!is_numeric($entityId)) {
+			$entityId = Vars::getIdByName($entityId);
 		}
 
-		if (!$updateTime) {
-			$updateTime = time();
+		$entity = $this->getEntity($entityId);
+
+		if (!$entity) {
+			$entity = new PlanetEntity([
+				'planet_id' => $this->id,
+				'entity_id' => $entityId,
+				'amount' => 0,
+			]);
+
+			$this->entities->add($entity);
 		}
 
-		if ($updateTime < $this->last_update) {
-			return false;
-		}
-
-		$this->getBuildingsData();
-
-		$this->planet_updated = true;
-
-		foreach (Vars::getResources() as $res) {
-			$this->{$res . '_max'}  = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->getBuildLevel($res . '_store'))))) * $this->user->bonusValue('storage'));
-		}
-
-		$this->battery_max = floor(250 * $this->getBuildLevel('solar_plant'));
-
-		$this->resourceProductions();
-
-		$productionTime = $updateTime - $this->last_update;
-		$this->last_update = $updateTime;
-
-		if (!defined('CRON')) {
-			$this->last_active = $this->last_update;
-		}
-
-		if ($this->energy_max == 0) {
-			foreach (Vars::getResources() as $res) {
-				$this->{$res . '_perhour'} = config('settings.' . $res . '_basic_income', 0);
-			}
-
-			$this->production_level = 0;
-		} elseif ($this->energy_max >= abs($this->energy_used)) {
-			$this->production_level = 100;
-
-			$energy = round(($this->energy_max - abs($this->energy_used)) * ($productionTime / 3600), 2);
-
-			if ($this->battery_max > ($this->energy_ak + $energy)) {
-				$this->energy_ak += $energy;
-			} else {
-				$this->energy_ak = $this->battery_max;
-			}
+		if ($isDifferent) {
+			$entity->amount += $amount;
 		} else {
-			if ($this->energy_ak > 0) {
-				$energy = ((abs($this->energy_used) - $this->energy_max) / 3600) * $productionTime;
-
-				if ($this->energy_ak > $energy) {
-					$this->production_level = 100;
-					$this->energy_ak -= round($energy, 2);
-				} else {
-					$this->production_level = round((($this->energy_max + $this->energy_ak * 3600) / abs($this->energy_used)) * 100, 1);
-					$this->energy_ak = 0;
-				}
-			} else {
-				$this->production_level = round(($this->energy_max / abs($this->energy_used)) * 100, 1);
-			}
-		}
-
-		$this->production_level = min(max($this->production_level, 0), 100);
-
-		foreach (Vars::getResources() as $res) {
-			$this->{$res . '_production'} = 0;
-
-			if ($this->{$res} <= $this->{$res . '_max'}) {
-				$this->{$res . '_production'} = ($productionTime * ($this->{$res . '_perhour'} / 3600)) * (0.01 * $this->production_level);
-
-				if (!$this->user->isVacation()) {
-					$this->{$res . '_base'} = ($productionTime * (config('settings.' . $res . '_basic_income', 0) / 3600)) * config('settings.resource_multiplier', 1);
-				} else {
-					$this->{$res . '_base'} = 0;
-				}
-
-				$this->{$res . '_production'} = $this->{$res . '_production'} + $this->{$res . '_base'};
-
-				if (($this->{$res} + $this->{$res . '_production'}) > $this->{$res . '_max'}) {
-					$this->{$res . '_production'} = $this->{$res . '_max'} - $this->{$res};
-				}
-			}
-
-			$this->{$res . '_perhour'} = round(floatval($this->{$res . '_perhour'}) * (0.01 * $this->production_level));
-			$this->{$res} += $this->{$res . '_production'};
-
-			if ($this->{$res} < 0) {
-				$this->{$res} = 0;
-			}
-		}
-
-		if (!$simulation) {
-			$this->update();
-		}
-
-		return true;
-	}
-
-	public function resourceProductions()
-	{
-		$this->energy_used 	= 0;
-		$this->energy_max 	= 0;
-
-		foreach (Vars::getResources() as $res) {
-			$this->{$res . '_perhour'} = 0;
-		}
-
-		if ($this->user->isVacation()) {
-			return;
-		}
-
-		if (in_array($this->planet_type, [3, 5])) {
-			foreach (Vars::getResources() as $res) {
-				config(['settings.' . $res . '_basic_income' => 0]);
-			}
-
-			return;
-		}
-
-		$itemsId = Vars::getItemsByType('prod');
-
-		foreach ($itemsId as $ProdID) {
-			$type = Vars::getItemType($ProdID);
-
-			if ($type == Vars::ITEM_TYPE_BUILING && $this->getBuildLevel($ProdID) <= 0) {
-				continue;
-			} elseif ($type == Vars::ITEM_TYPE_FLEET && $this->getUnitCount($ProdID) <= 0) {
-				continue;
-			}
-
-			if (!Vars::getBuildProduction($ProdID)) {
-				continue;
-			}
-
-			$BuildLevelFactor = $BuildLevel = 0;
-
-			if ($type == Vars::ITEM_TYPE_BUILING) {
-				$build = $this->getBuild($ProdID);
-
-				$BuildLevel = $build['level'];
-				$BuildLevelFactor = $build['power'];
-			} elseif ($type == Vars::ITEM_TYPE_FLEET) {
-				$unit = $this->getUnit($ProdID);
-
-				$BuildLevel = $unit['amount'];
-				$BuildLevelFactor = $unit['power'];
-			}
-
-			if ($ProdID == 12 && $this->deuterium < 100) {
-				$BuildLevelFactor = 0;
-			}
-
-			$result = $this->getResourceProductionLevel($ProdID, $BuildLevel, $BuildLevelFactor);
-
-			foreach (Vars::getResources() as $res) {
-				$this->{$res . '_perhour'} += $result[$res];
-			}
-
-			if ($ProdID < 4) {
-				$this->energy_used += $result['energy'];
-			} else {
-				$this->energy_max += $result['energy'];
-			}
+			$entity->amount = $amount;
 		}
 	}
 
-	/** @noinspection PhpUnusedParameterInspection */
-	public function getResourceProductionLevel($Element, $BuildLevel, $BuildLevelFactor = 10)
+	public function getProduction(): Production
 	{
-		if ($BuildLevelFactor > 10) {
-			/** @noinspection PhpUnusedLocalVariableInspection */
-			$BuildLevelFactor = 10;
+		return new Production($this);
+	}
+
+	public function afterUpdate()
+	{
+		if (!$this->entities) {
+			return;
 		}
 
-		$return = ['energy' => 0];
-
-		foreach (Vars::getResources() as $res) {
-			$return[$res] = 0;
-		}
-
-		$return['energy'] = 0;
-
-		$production = Vars::getBuildProduction($Element);
-
-		if (!$production) {
-			return $return;
-		}
-
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$energyTech = $this->user->getTechLevel('energy');
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildTemp = $this->temp_max;
-
-		foreach (Vars::getResources() as $res) {
-			if (isset($production[$res])) {
-				$return[$res] = floor(eval($production[$res]) * config('settings.resource_multiplier') * $this->user->bonusValue($res));
+		$this->entities->each(function (PlanetEntity $entity) {
+			if ($entity->isDirty()) {
+				$entity->save();
 			}
-		}
-
-		if (isset($production['energy'])) {
-			$energy = floor(eval($production['energy']));
-
-			if ($Element < 4) {
-				$return['energy'] = $energy;
-			} elseif ($Element == 4 || $Element == 12) {
-				$return['energy'] = floor($energy * $this->user->bonusValue('energy'));
-			} elseif ($Element == 212) {
-				$return['energy'] = floor($energy * $this->user->bonusValue('solar'));
-			}
-		}
-
-		return $return;
+		});
 	}
 
 	public function getNetworkLevel()
 	{
-		$list = [$this->getBuildLevel('laboratory')];
+		$list = [$this->entities->getEntityAmount('laboratory')];
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$items = DB::select(
@@ -341,15 +187,15 @@ class Planet extends Models\Planet
 
 	public function isAvailableJumpGate()
 	{
-		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->getBuildLevel('jumpgate') > 0;
+		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->entities->getEntityAmount('jumpgate') > 0;
 	}
 
 	public function getNextJumpTime()
 	{
-		$jumpGate = $this->getBuild('jumpgate');
+		$jumpGate = $this->entities->getEntity('jumpgate');
 
-		if ($jumpGate && $jumpGate['level'] > 0) {
-			$waitTime = (60 * 60) * (1 / $jumpGate['level']);
+		if ($jumpGate && $jumpGate->amount > 0) {
+			$waitTime = (60 * 60) * (1 / $jumpGate->amount);
 			$nextJumpTime = $this->last_jump_time + $waitTime;
 
 			if ($nextJumpTime >= time()) {
@@ -360,53 +206,39 @@ class Planet extends Models\Planet
 		return 0;
 	}
 
-	public function getTopPanelRosources(): array
+	public function toArray(): array
 	{
-		$user = Auth::user();
+		$user = $this->getUser();
 
-		$data = [];
+		$data = [
+			'id' => $this->id,
+			'name' => $this->name,
+			'resources' => [
+				'energy' => [
+					'current' => $this->energy_max + $this->energy_used,
+					'max' => $this->energy_max
+				],
+			],
+			'coordinates' => [
+				'galaxy' => (int) $this->galaxy,
+				'system' => (int) $this->system,
+				'position' => (int) $this->planet,
+				'type' => (int) $this->planet_type,
+			],
+		];
 
 		foreach (Vars::getResources() as $res) {
-			$data[$res] = [
+			$entity = $this->entities->getEntity($res . '_mine');
+
+			$data['resources'][$res] = [
 				'current' => floor(floatval($this->{$res})),
 				'max' => $this->{$res . '_max'},
 				'production' => 0,
-				'power' => $this->getBuild($res . '_mine')['power'] * 10
+				'factor' => $entity ? $entity->factor / 10 : 0,
 			];
 
 			if (!$user->isVacation()) {
-				$data[$res]['production'] = $this->{$res . '_perhour'} + floor(config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1));
-			}
-		}
-
-		$data['energy'] = [
-			'current' => $this->energy_max + $this->energy_used,
-			'max' => $this->energy_max
-		];
-
-		$data['battery'] = [
-			'current' => round($this->energy_ak),
-			'max' => $this->battery_max,
-			'power' => 0,
-			'tooltip' => ''
-		];
-
-		$data['credits'] = (int) $user->credits;
-
-		$data['officiers'] = [];
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
-			$data['officiers'][$officier] = (int) $user->{Vars::getName($officier)};
-		}
-
-		$data['battery']['power'] = ($this->battery_max > 0 ? round($this->energy_ak / $this->battery_max, 2) * 100 : 0);
-		$data['battery']['power'] = min(100, max(0, $data['battery']['power']));
-
-		if ($data['battery']['power'] > 0 && $data['battery']['power'] < 100) {
-			if (($this->energy_max + $this->energy_used) > 0) {
-				$data['battery']['tooltip'] .= 'Заряд: ' . Format::time(round(((round(250 * $this->getBuild('solar_plant')['level']) - $this->energy_ak) / ($this->energy_max + $this->energy_used)) * 3600));
-			} elseif (($this->energy_max + $this->energy_used) < 0) {
-				$data['battery']['tooltip'] .= 'Разряд: ' . Format::time(round(($this->energy_ak / abs($this->energy_max + $this->energy_used)) * 3600));
+				$data['resources'][$res]['production'] = $this->{$res . '_perhour'} + floor(config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1));
 			}
 		}
 

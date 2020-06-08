@@ -39,12 +39,12 @@ class Tech
 				$planet->spaceLabs = $planet->getNetworkLevel();
 			}
 
-			$entity = new Entity\Research($elementId, $user->getTechLevel($elementId), new Entity\Context($user, $planet));
+			$entity = new Entity\Research($elementId, $user->getTechLevel($elementId), new Planet\Entity\Context($user, $planet));
 			$cost = $entity->getPrice();
 
 			$price = Vars::getItemPrice($elementId);
 
-			if ($entity->isAvailable() && $entity->canBuy($cost) && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max'])) {
+			if ($entity->isAvailable() && $entity->canConstruct() && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max'])) {
 				$planet->metal 		-= $cost['metal'];
 				$planet->crystal 	-= $cost['crystal'];
 				$planet->deuterium 	-= $cost['deuterium'];
@@ -95,7 +95,7 @@ class Tech
 			$planet = Planet::query()
 				->find((int) $techHandle->planet_id);
 
-			$entity = new Entity\Research($elementId, $techHandle->level, new Entity\Context($user, $planet));
+			$entity = new Entity\Research($elementId, $techHandle->level, new Planet\Entity\Context($user, $planet));
 
 			$cost = $entity->getPrice();
 
