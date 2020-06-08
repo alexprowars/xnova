@@ -22,7 +22,7 @@ class Spy extends FleetEngine implements Mission
 	{
 		$owner = User::query()->find($this->fleet->owner);
 
-		$TargetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
+		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if ($TargetPlanet->id_owner == 0) {
 			$this->returnFleet();

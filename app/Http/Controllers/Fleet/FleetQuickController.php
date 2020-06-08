@@ -11,6 +11,7 @@ namespace Xnova\Http\Controllers\Fleet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Xnova\Controller;
+use Xnova\Entity\Coordinates;
 use Xnova\Exceptions\Exception;
 use Xnova\Exceptions\SuccessException;
 use Xnova\Models;
@@ -176,7 +177,10 @@ class FleetQuickController extends Controller
 		$FleetSpeed = $fleetCollection->getSpeed();
 
 		if ($FleetSpeed > 0 && count($FleetArray) > 0) {
-			$distance = $fleetCollection->getDistance($this->planet->galaxy, $galaxy, $this->planet->system, $system, $this->planet->planet, $planet);
+			$distance = $fleetCollection->getDistance(
+				new Coordinates($this->planet->galaxy, $this->planet->system, $this->planet->planet),
+				new Coordinates($galaxy, $system, $planet)
+			);
 			$duration = $fleetCollection->getDuration(10, $distance);
 			$consumption = $fleetCollection->getConsumption($duration, $distance);
 

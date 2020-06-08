@@ -10,6 +10,7 @@ namespace Xnova\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
+use Xnova\Entity\Coordinates;
 
 /**
  * @property $id
@@ -165,5 +166,15 @@ class Fleet extends Model
 	public function canBack()
 	{
 		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_owner != 1);
+	}
+
+	public function getOriginCoordinates(): Coordinates
+	{
+		return new Coordinates($this->start_galaxy, $this->start_system, $this->start_planet, $this->start_type);
+	}
+
+	public function getDestinationCoordinates(): Coordinates
+	{
+		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $this->end_type);
 	}
 }

@@ -5,6 +5,7 @@ namespace Xnova\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
+use Xnova\Entity\Coordinates;
 use Xnova\Galaxy;
 use Xnova\Http\Requests\Admin\PlanetRequest;
 use Xnova\Models\Planet;
@@ -129,12 +130,9 @@ class PlanetsController extends CrudController
 		$fields = $this->crud->getStrippedSaveRequest();
 
 		$planetId = (new Galaxy())->createPlanet(
-			$fields['galaxy'],
-			$fields['system'],
-			$fields['planet'],
+			new Coordinates($fields['galaxy'], $fields['system'], $fields['planet']),
 			$fields['id_owner'],
-			$fields['name'],
-			false
+			$fields['name']
 		);
 
 		if ($planetId) {

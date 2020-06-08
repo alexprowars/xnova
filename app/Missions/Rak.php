@@ -9,6 +9,7 @@ namespace Xnova\Missions;
  */
 
 use Illuminate\Support\Facades\DB;
+use Xnova\Entity\Coordinates;
 use Xnova\FleetEngine;
 use Xnova\Planet;
 use Xnova\User;
@@ -20,7 +21,7 @@ class Rak extends FleetEngine implements Mission
 	{
 		$this->killFleet();
 
-		$targetPlanet = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, 1);
+		$targetPlanet = Planet::findByCoordinates(new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, Coordinates::TYPE_PLANET));
 
 		if (!$targetPlanet) {
 			return;

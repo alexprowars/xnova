@@ -37,7 +37,7 @@ class Attack extends FleetEngine implements Mission
 
 	public function targetEvent()
 	{
-		$target = Planet::findByCoords($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type);
+		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if (!isset($target->id) || !$target->id_owner || $target->destruyed > 0) {
 			$this->returnFleet();
@@ -86,7 +86,15 @@ class Attack extends FleetEngine implements Mission
 			unset($fleets);
 		}
 
-		$def = Models\Fleet::find(['end_galaxy = :galaxy: AND end_system = :system: AND end_type = :type: AND end_planet = :planet: AND mess = 3', 'bind' => ['galaxy' => $this->fleet->end_galaxy, 'system' => $this->fleet->end_system, 'planet' => $this->fleet->end_planet, 'type' => $this->fleet->end_type]]);
+		$def = Models\Fleet::find([
+			'end_galaxy = :galaxy: AND end_system = :system: AND end_type = :type: AND end_planet = :planet: AND mess = 3',
+			'bind' => [
+				'galaxy' => $this->fleet->end_galaxy,
+				'system' => $this->fleet->end_system,
+				'planet' => $this->fleet->end_planet,
+				'type' => $this->fleet->end_type,
+			]
+		]);
 
 		foreach ($def as $fleet) {
 			$this->getGroupFleet($fleet, $defenders);
@@ -359,9 +367,13 @@ class Attack extends FleetEngine implements Mission
 		if ($target->parent_planet == 0 && $userChance && $userChance <= $moonChance) {
 			$galaxy = new Galaxy();
 
-			$TargetPlanetName = $galaxy->createMoon($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $target->id_owner, $moonChance);
+			$planetId = $galaxy->createMoon(
+				$this->fleet->getDestinationCoordinates(),
+				$target->id_owner,
+				$moonChance
+			);
 
-			if ($TargetPlanetName) {
+			if ($planetId) {
 				$GottenMoon = sprintf(__('fleet_engine.sys_moonbuilt'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
 			} else {
 				$GottenMoon = 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';

@@ -9,6 +9,7 @@
 namespace Xnova\Missions;
 
 use Illuminate\Support\Facades\Cache;
+use Xnova\Entity\Coordinates;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\Models;
@@ -35,7 +36,7 @@ class Colonisation extends FleetEngine implements Mission
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
 
-		if ($galaxy->isPositionFree($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet)) {
+		if ($galaxy->isPositionFree($this->fleet->getDestinationCoordinates())) {
 			if ($iPlanetCount >= $maxPlanets) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxPlanets . __('fleet_engine.sys_colo_planet');
 
@@ -43,7 +44,11 @@ class Colonisation extends FleetEngine implements Mission
 
 				$this->returnFleet();
 			} else {
-				$NewOwnerPlanet = $galaxy->createPlanet($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->owner, __('fleet_engine.sys_colo_defaultname'), false);
+				$NewOwnerPlanet = $galaxy->createPlanet(
+					$this->fleet->getDestinationCoordinates(),
+					$this->fleet->owner,
+					__('fleet_engine.sys_colo_defaultname')
+				);
 
 				if ($NewOwnerPlanet !== false) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_allisok');

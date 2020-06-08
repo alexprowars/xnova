@@ -4,6 +4,7 @@ namespace Xnova\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Xnova\Entity\Coordinates;
 
 /**
  * @property $id
@@ -41,11 +42,12 @@ class Planet extends Model
 	protected $hidden = ['planet_updated'];
 	protected $guarded = [];
 
-	public static function findByCoords(int $galaxy, int $system, int $planet, int $type = 1): ?self
+	public static function findByCoordinates(Coordinates $target): ?self
 	{
-		return self::query()->where('galaxy', $galaxy)
-			->where('system', $system)
-			->where('planet', $planet)
-			->where('planet_type', $type)->first();
+		return self::query()->where('galaxy', $target->getGalaxy())
+			->where('system', $target->getSystem())
+			->where('planet', $target->getPosition())
+			->where('planet_type', $target->getType() ?: Coordinates::TYPE_PLANET)
+			->first();
 	}
 }

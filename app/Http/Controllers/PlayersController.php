@@ -11,6 +11,7 @@ namespace Xnova\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Xnova\Entity\Coordinates;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Files;
@@ -51,7 +52,7 @@ class PlayersController extends Controller
 		$parse['avatar'] = URL::asset($parse['avatar']);
 		$parse['userplanet'] = '';
 
-		$planet = Planet::findByCoords($user->galaxy, $user->system, $user->planet, 1);
+		$planet = Planet::findByCoordinates(new Coordinates($user->galaxy, $user->system, $user->planet, 1));
 
 		if ($planet) {
 			$parse['userplanet'] = $planet->name;

@@ -202,7 +202,7 @@ class FleetController extends Controller
 		$YourPlanet = false;
 		$UsedPlanet = false;
 
-		$targetPlanet = Planet::findByCoords($galaxy, $system, $planet, $type);
+		$targetPlanet = Planet::findByCoordinates(new Entity\Coordinates($galaxy, $system, $planet, $type));
 
 		if ($targetPlanet) {
 			$UsedPlanet = true;

@@ -5,6 +5,7 @@ namespace Xnova\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
+use Xnova\Entity\Coordinates;
 use Xnova\Galaxy;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 use Xnova\Http\Requests\Admin\MoonRequest;
@@ -113,9 +114,7 @@ class MoonsController extends CrudController
 		$diameter = min(max($fields['diameter'], 20), 0);
 
 		$planetId = (new Galaxy())->createMoon(
-			$fields['galaxy'],
-			$fields['system'],
-			$fields['planet'],
+			new Coordinates($fields['galaxy'], $fields['system'], $fields['planet']),
 			$fields['id_owner'],
 			$diameter
 		);

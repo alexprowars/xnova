@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Xnova\Controller;
+use Xnova\Entity\Coordinates;
 use Xnova\Entity\FleetCollection;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
@@ -347,9 +348,13 @@ class FleetSendController extends Controller
 
 		$fleet = new Models\Fleet();
 
-		$distance 		= $fleetCollection->getDistance($this->planet->galaxy, $galaxy, $this->planet->system, $system, $this->planet->planet, $planet);
-		$duration 		= $fleetCollection->getDuration($fleetSpeedFactor, $distance);
-		$consumption 	= $fleetCollection->getConsumption($duration, $distance);
+		$distance = $fleetCollection->getDistance(
+			new Coordinates($this->planet->galaxy, $this->planet->system, $this->planet->planet),
+			new Coordinates($galaxy, $system, $planet)
+		);
+
+		$duration = $fleetCollection->getDuration($fleetSpeedFactor, $distance);
+		$consumption = $fleetCollection->getConsumption($duration, $distance);
 
 		$fleet_group_time = 0;
 

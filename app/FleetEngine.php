@@ -8,6 +8,7 @@
 
 namespace Xnova;
 
+use Xnova\Entity\Coordinates;
 use Xnova\Models;
 
 class FleetEngine
@@ -66,14 +67,16 @@ class FleetEngine
 			$p = 'end';
 		}
 
-		$TargetPlanet = Planet::findByCoords($this->fleet->{$p . '_galaxy'}, $this->fleet->{$p . '_system'}, $this->fleet->{$p . '_planet'}, $this->fleet->{$p . '_type'});
+		$targetPlanet = Planet::findByCoordinates(
+			new Coordinates($this->fleet->{$p . '_galaxy'}, $this->fleet->{$p . '_system'}, $this->fleet->{$p . '_planet'}, $this->fleet->{$p . '_type'})
+		);
 
-		if ($TargetPlanet && $TargetPlanet->id_owner > 0) {
-			$TargetUser = User::query()->find($TargetPlanet->id_owner);
+		if ($targetPlanet && $targetPlanet->id_owner > 0) {
+			$targetUser = User::query()->find($targetPlanet->id_owner);
 
-			if ($TargetUser) {
-				$TargetPlanet->assignUser($TargetUser);
-				$TargetPlanet->resourceUpdate(time());
+			if ($targetUser) {
+				$targetPlanet->assignUser($targetUser);
+				$targetPlanet->resourceUpdate(time());
 			}
 
 			if ($fleet) {
@@ -81,33 +84,32 @@ class FleetEngine
 
 				foreach ($fleetData as $shipId => $shipArr) {
 					if ($shipArr['count'] > 0) {
-						$TargetPlanet->setUnit($shipId, $shipArr['count'], true);
+						$targetPlanet->setUnit($shipId, $shipArr['count'], true);
 					}
 				}
 			}
 
-			$TargetPlanet->metal += $this->fleet->resource_metal;
-			$TargetPlanet->crystal += $this->fleet->resource_crystal;
-			$TargetPlanet->deuterium += $this->fleet->resource_deuterium;
+			$targetPlanet->metal += $this->fleet->resource_metal;
+			$targetPlanet->crystal += $this->fleet->resource_crystal;
+			$targetPlanet->deuterium += $this->fleet->resource_deuterium;
 
-			$TargetPlanet->update();
+			$targetPlanet->update();
 		}
 	}
 
-	public function storeGoodsToPlanet($Start = true)
+	public function storeGoodsToPlanet($isOrigin = true)
 	{
 		if (!isset($this->fleet->id)) {
 			return;
 		}
 
-		$update =
-		[
-			'+metal' 		=> $this->fleet->resource_metal,
-			'+crystal' 		=> $this->fleet->resource_crystal,
-			'+deuterium' 	=> $this->fleet->resource_deuterium
+		$update = [
+			'+metal' => $this->fleet->resource_metal,
+			'+crystal' => $this->fleet->resource_crystal,
+			'+deuterium' => $this->fleet->resource_deuterium
 		];
 
-		if ($Start) {
+		if ($isOrigin) {
 			$p = 'start';
 		} else {
 			$p = 'end';

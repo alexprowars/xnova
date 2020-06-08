@@ -10,6 +10,7 @@ namespace Xnova\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Xnova\Controller;
+use Xnova\Entity\Coordinates;
 use Xnova\Exceptions\ErrorException;
 use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\SuccessException;
@@ -40,7 +41,7 @@ class RocketController extends Controller
 		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$targetPlanet = Models\Planet::findByCoords($g, $s, $p, 1);
+		$targetPlanet = Models\Planet::findByCoordinates(new Coordinates($g, $s, $p, 1));
 
 		if ($this->planet->getBuildLevel('missile_facility') < 4) {
 			throw new ErrorException('Постройте ракетную шахту');

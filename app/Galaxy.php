@@ -10,136 +10,138 @@ namespace Xnova;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Session;
+use Xnova\Entity\Coordinates;
 use Xnova\Models\Planet;
-use Xnova\Models\User as UserModel;
 
 class Galaxy
 {
 	public function createPlanetByUserId($userId)
 	{
-		$Galaxy = Setting::get('LastSettedGalaxyPos');
-		$System = Setting::get('LastSettedSystemPos');
-		$Planet = Setting::get('LastSettedPlanetPos');
+		$galaxy = Setting::get('LastSettedGalaxyPos');
+		$system = Setting::get('LastSettedSystemPos');
+		$planet = Setting::get('LastSettedPlanetPos');
 
 		do {
-			$free = self::getFreePositions($Galaxy, $System, round(config('settings.maxPlanetInSystem') * 0.2), round(config('settings.maxPlanetInSystem') * 0.8));
+			$isFree = self::getFreePositions(
+				new Coordinates($galaxy, $system),
+				round(config('settings.maxPlanetInSystem') * 0.2),
+				round(config('settings.maxPlanetInSystem') * 0.8)
+			);
 
-			if (count($free) > 0) {
-				$position = $free[array_rand($free)];
+			if (count($isFree) > 0) {
+				$position = $isFree[array_rand($isFree)];
 			} else {
 				$position = 0;
 			}
 
-			if ($position > 0 && $Planet < config('settings.maxRegPlanetsInSystem', 3)) {
-				$Planet += 1;
+			if ($position > 0 && $planet < config('settings.maxRegPlanetsInSystem', 3)) {
+				$planet += 1;
 			} else {
-				$Planet = 1;
+				$planet = 1;
 
-				if ($System >= config('settings.maxSystemInGalaxy')) {
-					$System = 1;
+				if ($system >= config('settings.maxSystemInGalaxy')) {
+					$system = 1;
 
-					if ($Galaxy >= config('settings.maxGalaxyInWorld')) {
-						$Galaxy = 1;
+					if ($galaxy >= config('settings.maxGalaxyInWorld')) {
+						$galaxy = 1;
 					} else {
-						$Galaxy += 1;
+						$galaxy += 1;
 					}
 				} else {
-					$System += 1;
+					$system += 1;
 				}
 			}
-		} while ($this->isPositionFree($Galaxy, $System, $position) === false);
+		} while ($this->isPositionFree(new Coordinates($galaxy, $system, $position)) === false);
 
-		$PlanetID = $this->createPlanet($Galaxy, $System, $position, $userId, __('main.sys_plnt_defaultname'), true);
+		$planetId = $this->createPlanet(
+			new Coordinates($galaxy, $system, $position),
+			$userId,
+			__('main.sys_plnt_defaultname'),
+			true
+		);
 
-		if ($PlanetID !== false) {
-			Setting::set('LastSettedGalaxyPos', $Galaxy);
-			Setting::set('LastSettedSystemPos', $System);
-			Setting::set('LastSettedPlanetPos', $Planet);
+		if ($planetId !== false) {
+			Setting::set('LastSettedGalaxyPos', $galaxy);
+			Setting::set('LastSettedSystemPos', $system);
+			Setting::set('LastSettedPlanetPos', $planet);
 
-			$user = UserModel::find($userId);
-			$user->update([
-				'planet_id'		 => $PlanetID,
-				'planet_current' => $PlanetID,
-				'galaxy'		 => $Galaxy,
-				'system'		 => $System,
-				'planet'		 => $position
+			User::query()
+				->where('id', $userId)
+				->update([
+				'planet_id' => $planetId,
+				'planet_current' => $planetId,
+				'galaxy' => $galaxy,
+				'system' => $system,
+				'planet' => $position
 			]);
-
-			return $PlanetID;
-		} else {
-			return false;
 		}
+
+		return $planetId;
 	}
 
-	public function createPlanet($Galaxy, $System, $Position, $PlanetOwnerID, $PlanetName = '', $HomeWorld = false, $Base = false)
+	public function createPlanet(Coordinates $target, $userId, $title = '', $isMainPlanet = false)
 	{
-		if ($this->isPositionFree($Galaxy, $System, $Position)) {
-			$planet = $this->sizeRandomiser($Position, $HomeWorld, $Base);
+		if ($this->isPositionFree($target)) {
+			$planet = $this->sizeRandomiser($target, $isMainPlanet);
 
-			$planet->metal 		= config('settings.baseMetalProduction');
-			$planet->crystal 	= config('settings.baseCristalProduction');
-			$planet->deuterium 	= config('settings.baseDeuteriumProduction');
+			$planet->metal = config('settings.baseMetalProduction');
+			$planet->crystal = config('settings.baseCristalProduction');
+			$planet->deuterium = config('settings.baseDeuteriumProduction');
 
-			$planet->galaxy = $Galaxy;
-			$planet->system = $System;
-			$planet->planet = $Position;
+			$planet->galaxy = $target->getGalaxy();
+			$planet->system = $target->getSystem();
+			$planet->planet = $target->getPosition();
 
-			$planet->planet_type = 1;
+			$planet->planet_type = Coordinates::TYPE_PLANET;
 
-			if ($Base) {
-				$planet->planet_type = 5;
+			if ($target->getType() == Coordinates::TYPE_MILITARY_BASE) {
+				$planet->planet_type = Coordinates::TYPE_MILITARY_BASE;
 			}
 
-			$planet->id_owner = $PlanetOwnerID;
+			$planet->id_owner = $userId;
 			$planet->last_update = time();
-			$planet->name = ($PlanetName == '') ? __('main.sys_colo_defaultname') : $PlanetName;
+			$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 			if ($planet->save()) {
-				if (Session::has('fleet_shortcut')) {
-					Session::remove('fleet_shortcut');
-				}
+				Session::remove('fleet_shortcut');
 
 				return $planet->id;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
-	public function createMoon($Galaxy, $System, $Planet, $Owner, $Chance)
+	public function createMoon(Coordinates $target, $userId, $chance): ?int
 	{
-		$planet = Planet::findByCoords($Galaxy, $System, $Planet, 1);
+		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPosition(), 1));
 
 		if ($planet && $planet->parent_planet == 0) {
 			$maxtemp = $planet->temp_max - rand(10, 45);
 			$mintemp = $planet->temp_min - rand(10, 45);
 
-			if ($Chance > 20) {
-				$Chance = 20;
-			}
+			$chance = min($chance, 20);
 
-			$size = floor(pow(mt_rand(10, 20) + 3 * $Chance, 0.5) * 1000);
+			$size = floor(pow(mt_rand(10, 20) + 3 * $chance, 0.5) * 1000);
 
-			$moon = new Planet();
-			$moon->fill([
-				'name' 			=> __('main.sys_moon'),
-				'id_owner' 		=> $Owner,
-				'galaxy' 		=> $Galaxy,
-				'system' 		=> $System,
-				'planet' 		=> $Planet,
-				'planet_type' 	=> 3,
-				'last_update' 	=> time(),
-				'image' 		=> 'mond',
-				'diameter' 		=> $size,
-				'field_max' 	=> 1,
-				'temp_min' 		=> $maxtemp,
-				'temp_max' 		=> $mintemp,
-				'metal' 		=> 0,
-				'crystal' 		=> 0,
-				'deuterium' 	=> 0
-			]);
+			$moon = (new Planet([
+				'name' => __('main.sys_moon'),
+				'id_owner' => $userId,
+				'galaxy' => $target->getGalaxy(),
+				'system' => $target->getSystem(),
+				'planet' => $target->getPosition(),
+				'planet_type' => Coordinates::TYPE_MOON,
+				'last_update' => time(),
+				'image' => 'mond',
+				'diameter' => $size,
+				'field_max' => 1,
+				'temp_min' => $maxtemp,
+				'temp_max' => $mintemp,
+				'metal' => 0,
+				'crystal' => 0,
+				'deuterium' => 0
+			]));
+
 			$moon->save();
 
 			if ($moon->id > 0) {
@@ -147,26 +149,24 @@ class Galaxy
 				$planet->update();
 
 				return $moon->id;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+
+		return null;
 	}
 
-	public function isPositionFree($galaxy, $system, $planet, $type = false)
+	public function isPositionFree(Coordinates $target)
 	{
-		if (!$galaxy || !$system || !$planet) {
+		if (!$target->isEmpty()) {
 			return false;
 		}
 
-		$exist = Planet::query()->where('galaxy', $galaxy)
-			->where('system', $system)
-			->where('planet', $planet);
+		$exist = Planet::query()->where('galaxy', $target->getGalaxy())
+			->where('system', $target->getSystem())
+			->where('planet', $target->getPosition());
 
-		if ($type !== false) {
-			$exist->where('planet_type', $type);
+		if ($target->getType()) {
+			$exist->where('planet_type', $target->getType());
 		}
 
 		$exist = $exist->count();
@@ -174,23 +174,19 @@ class Galaxy
 		return (!($exist > 0));
 	}
 
-	public function getFreePositions($galaxy, $system, $start = 1, $end = 15)
+	public function getFreePositions(Coordinates $target, $startPosition = 1, $endPosition = 15)
 	{
-		$search = Planet::query()->select('id, planet')
-			->where('galaxy', $galaxy)
-			->where('system', $system)
-			->where('planet', '>=', $start)
-			->where('planet', '<=', $end);
-
-		$planets = [];
-
-		foreach ($search as $item) {
-			$planets[$item->planet] = $item;
-		}
+		$planets = Planet::query()
+			->where('galaxy', $target->getGalaxy())
+			->where('system', $target->getSystem())
+			->where('planet', '>=', $startPosition)
+			->where('planet', '<=', $endPosition)
+			->get('id, planet')
+			->keyBy('planet');
 
 		$result = [];
 
-		for ($i = $start; $i <= $end; $i++) {
+		for ($i = $startPosition; $i <= $endPosition; $i++) {
 			if (!isset($planets[$i])) {
 				$result[] = $i;
 			}
@@ -199,36 +195,38 @@ class Galaxy
 		return $result;
 	}
 
-	public function sizeRandomiser($Position, $HomeWorld = false, $Base = false)
+	public function sizeRandomiser(Coordinates $target, $isMainPlanet = false)
 	{
 		$planetData = [];
 		require(app_path('Vars/planet.php'));
 
+		$position = $target->getPosition();
+
 		$planet = new Planet();
 
-		if ($HomeWorld) {
+		if ($isMainPlanet) {
 			$planet->field_max = (int) config('settings.initial_fields', 163);
-		} elseif ($Base) {
+		} elseif ($target->getType() === Coordinates::TYPE_MILITARY_BASE) {
 			$planet->field_max = (int) config('settings.initial_base_fields', 10);
 		} else {
-			$planet->field_max = (int) floor($planetData[$Position]['fields'] * (int) config('settings.planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$position]['fields'] * (int) config('settings.planetFactor', 1));
 		}
 
 		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));
 
-		$planet->temp_max = $planetData[$Position]['temp'];
+		$planet->temp_max = $planetData[$position]['temp'];
 		$planet->temp_min = $planet->temp_max - 40;
 
-		if ($Base) {
+		if ($target->getType() === Coordinates::TYPE_MILITARY_BASE) {
 			$planet->image = 'baseplanet01';
 		} else {
-			$imageNames = array_keys($planetData[$Position]['image']);
+			$imageNames = array_keys($planetData[$position]['image']);
 			$imageNameType = $imageNames[array_rand($imageNames)];
 
 			$planet->image  = $imageNameType;
 			$planet->image .= 'planet';
-			$planet->image .= $planetData[$Position]['image'][$imageNameType] < 10 ? '0' : '';
-			$planet->image .= $planetData[$Position]['image'][$imageNameType];
+			$planet->image .= $planetData[$position]['image'][$imageNameType] < 10 ? '0' : '';
+			$planet->image .= $planetData[$position]['image'][$imageNameType];
 		}
 
 		return $planet;

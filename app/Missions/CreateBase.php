@@ -9,6 +9,7 @@ namespace Xnova\Missions;
  */
 
 use Illuminate\Support\Facades\Cache;
+use Xnova\Entity\Coordinates;
 use Xnova\FleetEngine;
 use Xnova\Galaxy;
 use Xnova\User;
@@ -32,7 +33,7 @@ class CreateBase extends FleetEngine implements Mission
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
 
 		// Если в галактике пусто (планета не заселена)
-		if ($galaxy->isPositionFree($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet)) {
+		if ($galaxy->isPositionFree($this->fleet->getDestinationCoordinates())) {
 			// Если лимит баз исчерпан
 			if ($iPlanetCount >= $maxBases) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
@@ -42,7 +43,11 @@ class CreateBase extends FleetEngine implements Mission
 				$this->returnFleet();
 			} else {
 				// Создание планеты-базы
-				$NewOwnerPlanet = $galaxy->createPlanet($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->owner, __('fleet_engine.sys_base_defaultname'), false, true);
+				$NewOwnerPlanet = $galaxy->createPlanet(
+					$this->fleet->getDestinationCoordinates(),
+					$this->fleet->owner,
+					__('fleet_engine.sys_base_defaultname'),
+				);
 
 				// Если планета-база создана
 				if ($NewOwnerPlanet !== false) {
