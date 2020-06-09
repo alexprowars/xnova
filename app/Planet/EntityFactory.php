@@ -2,9 +2,13 @@
 
 namespace Xnova\Planet;
 
+use Xnova\Entity\Research;
+use Xnova\Planet\Entity\Building;
 use Xnova\Planet\Entity\Context;
 use Xnova\Exceptions\Exception;
 use Xnova\Planet\Contracts\PlanetEntityInterface;
+use Xnova\Planet\Entity\Defence;
+use Xnova\Planet\Entity\Ship;
 use Xnova\Vars;
 
 class EntityFactory
@@ -15,23 +19,15 @@ class EntityFactory
 
 		switch ($entityType) {
 			case Vars::ITEM_TYPE_BUILING:
-				$className = 'Building';
-				break;
+				return new Building($entityId, $level, $context);
 			case Vars::ITEM_TYPE_TECH:
-				$className = 'Research';
-				break;
+				return new Research($entityId, $level, $context);
 			case Vars::ITEM_TYPE_FLEET:
-				$className = 'Fleet';
-				break;
+				return new Ship($entityId, $level, $context);
 			case Vars::ITEM_TYPE_DEFENSE:
-				$className = 'Defence';
-				break;
+				return new Defence($entityId, $level, $context);
 			default:
 				throw new Exception('unknown entity');
 		}
-
-		$className = 'Xnova\Entity\\' . $className;
-
-		return new $className($entityId, $level, $context);
 	}
 }

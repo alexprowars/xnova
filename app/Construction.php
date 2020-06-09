@@ -11,7 +11,6 @@ namespace Xnova;
 use Illuminate\Support\Facades\Request;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Models;
-use Xnova\Entity;
 use Xnova\Planet\EntityFactory;
 
 class Construction
@@ -39,10 +38,10 @@ class Construction
 
 		if (Request::instance()->isMethod('post')) {
 			$Command = Request::post('cmd', '');
-			$Element = (int) Request::post('building', 0);
+			$elementId = (int) Request::post('building', 0);
 			$ListID = (int) Request::post('listid', 0);
 
-			if (in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove'))) {
+			if (in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove'))) {
 				$queueManager = new Queue($this->user, $this->planet);
 
 				switch ($Command) {
@@ -54,13 +53,13 @@ class Construction
 						break;
 					case 'insert':
 						if ($CanBuildElement) {
-							$queueManager->add($Element);
+							$queueManager->add($elementId);
 						}
 
 						break;
 					case 'destroy':
 						if ($CanBuildElement) {
-							$queueManager->add($Element, 1, true);
+							$queueManager->add($elementId, 1, true);
 						}
 
 						break;
@@ -76,48 +75,42 @@ class Construction
 
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $Element) {
-			if (!in_array($Element, Vars::getAllowedBuilds($this->planet->planet_type))) {
+		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $elementId) {
+			if (
+				!in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type))
+				|| !Building::checkTechnologyRace($this->user, $elementId)
+			) {
 				continue;
 			}
 
-			$build = $this->planet->getEntity($Element);
+			$level = $this->planet->getLevel($elementId);
 
-			if (!$build) {
+			$entity = EntityFactory::create($elementId, $level, $context);
+
+			$isAvailable = $entity->isAvailable();
+
+			if (!$isAvailable && $viewOnlyAvailable) {
 				continue;
 			}
 
-			$entity = EntityFactory::create($Element, $build->amount, $context);
-
-			$isAccess = $entity->isAvailable();
-
-			if (!$isAccess && $viewOnlyAvailable) {
-				continue;
-			}
-
-			if (!Building::checkTechnologyRace($this->user, $Element)) {
-				continue;
-			}
-
-			$BuildingLevel = $build->amount;
-			$BuildingPrice = $entity->getPrice();
+			$price = $entity->getPrice();
 
 			$row = [];
 
-			$row['allow']	= $isAccess;
-			$row['i'] 		= $Element;
-			$row['level'] 	= $BuildingLevel;
-			$row['price'] 	= $BuildingPrice;
+			$row['allow'] = $isAvailable;
+			$row['i'] = $elementId;
+			$row['level'] = $level;
+			$row['price'] = $price;
 
-			if ($isAccess) {
-				if (in_array($Element, Vars::getItemsByType('build_exp'))) {
-					$row['exp'] = floor(($BuildingPrice['metal'] + $BuildingPrice['crystal'] + $BuildingPrice['deuterium']) / config('settings.buildings_exp_mult', 1000));
+			if ($isAvailable) {
+				if (in_array($elementId, Vars::getItemsByType('build_exp'))) {
+					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('settings.buildings_exp_mult', 1000));
 				}
 
-				$row['time'] 	= $entity->getTime();
-				$row['effects'] = Building::getNextProduction($Element, $BuildingLevel, $this->planet);
+				$row['time'] = $entity->getTime();
+				$row['effects'] = Building::getNextProduction($elementId, $level, $this->planet);
 			} else {
-				$row['need'] = Building::getTechTree($Element, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
 
 			$parse['items'][] = $row;
@@ -125,8 +118,6 @@ class Construction
 
 		$parse['queue'] 			= $Queue['buildlist'];
 		$parse['queue_max'] 		= $MaxBuidSize;
-		$parse['fields_current'] 	= (int) $this->planet->field_current;
-		$parse['fields_max'] 		= (int) $this->planet->getMaxFields();
 		$parse['planet'] 			= 'normaltemp';
 
 		preg_match('/(.*?)planet/', $this->planet->image, $match);
@@ -196,58 +187,58 @@ class Construction
 
 		$parse['items'] = [];
 
-		foreach ($res_array as $Tech) {
-			$entity = EntityFactory::create($Tech, null, $context);
+		foreach ($res_array as $elementId) {
+			$entity = EntityFactory::create($elementId, $this->user->getTechLevel($elementId), $context);
 
-			$isAccess = $entity->isAvailable();
+			$isAvailable = $entity->isAvailable();
 
-			if (!$isAccess && $viewOnlyAvailable) {
+			if (!$isAvailable && $viewOnlyAvailable) {
 				continue;
 			}
 
-			if (!Building::checkTechnologyRace($this->user, $Tech)) {
+			if (!Building::checkTechnologyRace($this->user, $elementId)) {
 				continue;
 			}
 
-			$price = Vars::getItemPrice($Tech);
+			$price = Vars::getItemPrice($elementId);
 
-			$row = [];
+			$row = [
+				'i' => $elementId,
+				'allow' => $isAvailable && $bContinue,
+				'level' => $this->user->getTechLevel($elementId),
+				'max' => $price['max'] ?? 0,
+				'price' => $entity->getPrice(),
+				'build' => false,
+				'effects' => '',
+			];
 
-			$row['allow'] 	= $isAccess && $bContinue;
-			$row['i'] 		= $Tech;
-			$row['level']	= $this->user->getTechLevel($Tech);
-			$row['max']		= isset($price['max']) ? $price['max'] : 0;
-			$row['price'] 	= $entity->getPrice();
-			$row['build']	= false;
-			$row['effects']	= '';
-
-			if ($isAccess) {
-				if ($Tech >= 120 && $Tech <= 122) {
+			if ($isAvailable) {
+				if ($elementId >= 120 && $elementId <= 122) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 115) {
+				} elseif ($elementId == 115) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 117) {
+				} elseif ($elementId == 117) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 118) {
+				} elseif ($elementId == 118) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 108) {
+				} elseif ($elementId == 108) {
 					$row['effects'] = '<div class="tech-effects-row">+' . ($row['level'] + 1) . ' слотов флота</div>';
-				} elseif ($Tech == 109) {
+				} elseif ($elementId == 109) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 110) {
+				} elseif ($elementId == 110) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 111) {
+				} elseif ($elementId == 111) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($Tech == 123) {
+				} elseif ($elementId == 123) {
 					$row['effects'] = '<div class="tech-effects-row">+' . $row['level'] . '% лабораторий</div>';
-				} elseif ($Tech == 113) {
+				} elseif ($elementId == 113) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($row['level'] * 2) . '%</span></div>';
 				}
 
 				$row['time'] = $entity->getTime();
 
 				if ($techHandle) {
-					if ($techHandle->object_id == $Tech) {
+					if ($techHandle->object_id == $elementId) {
 						$row['build'] = [
 							'id' => (int) $techHandle->planet_id,
 							'name' => '',
@@ -269,7 +260,7 @@ class Construction
 					}
 				}
 			} else {
-				$row['need'] = Building::getTechTree($Tech, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
 
 			$parse['items'][] = $row;
@@ -331,7 +322,7 @@ class Construction
 			$row['i'] 		= $element;
 			$row['count'] 	= $this->planet->getLevel($element);
 			$row['price'] 	= $entity->getPrice();
-			$row['effects']	= '';
+			$row['effects']	= null;
 
 			if ($isAccess) {
 				$row['time'] = $entity->getTime();
@@ -354,7 +345,7 @@ class Construction
 				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
 				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
 			} else {
-				$row['need'] = Building::getTechTree($element, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
 
 			$parse['items'][] = $row;

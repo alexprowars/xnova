@@ -2,14 +2,12 @@
 
 namespace Xnova;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\DB;
 use Xnova\Models\PlanetEntity;
 use Xnova\Planet\EntityCollection;
 use Xnova\Planet\Production;
-use Xnova\User as UsersModel;
 
-class Planet extends Models\Planet implements Arrayable
+class Planet extends Models\Planet
 {
 	/** @var User */
 	private $user;
@@ -38,7 +36,7 @@ class Planet extends Models\Planet implements Arrayable
 	/** @var EntityCollection */
 	public $entities;
 
-	public function assignUser(UsersModel $user)
+	public function assignUser(User $user)
 	{
 		$this->user = $user;
 	}
@@ -204,44 +202,5 @@ class Planet extends Models\Planet implements Arrayable
 		}
 
 		return 0;
-	}
-
-	public function toArray(): array
-	{
-		$user = $this->getUser();
-
-		$data = [
-			'id' => $this->id,
-			'name' => $this->name,
-			'resources' => [
-				'energy' => [
-					'current' => $this->energy_max + $this->energy_used,
-					'max' => $this->energy_max
-				],
-			],
-			'coordinates' => [
-				'galaxy' => (int) $this->galaxy,
-				'system' => (int) $this->system,
-				'position' => (int) $this->planet,
-				'type' => (int) $this->planet_type,
-			],
-		];
-
-		foreach (Vars::getResources() as $res) {
-			$entity = $this->entities->getEntity($res . '_mine');
-
-			$data['resources'][$res] = [
-				'current' => floor(floatval($this->{$res})),
-				'max' => $this->{$res . '_max'},
-				'production' => 0,
-				'factor' => $entity ? $entity->factor / 10 : 0,
-			];
-
-			if (!$user->isVacation()) {
-				$data['resources'][$res]['production'] = $this->{$res . '_perhour'} + floor(config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1));
-			}
-		}
-
-		return $data;
 	}
 }

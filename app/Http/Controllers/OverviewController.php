@@ -478,20 +478,6 @@ class OverviewController extends Controller
 			}
 		}
 
-		$parse['planet'] = [
-			'type' => __('main.type_planet.' . $this->planet->planet_type),
-			'name' => $this->planet->name,
-			'image' => $this->planet->image,
-			'diameter' => (int) $this->planet->diameter,
-			'field_used' => (int) $this->planet->field_current,
-			'field_max' => (int) $this->planet->getMaxFields(),
-			'temp_min' => (int) $this->planet->temp_min,
-			'temp_max' => (int) $this->planet->temp_max,
-			'galaxy' => (int) $this->planet->galaxy,
-			'system' => (int) $this->planet->system,
-			'planet' => (int) $this->planet->planet
-		];
-
 		$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
 			$records = Models\Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])

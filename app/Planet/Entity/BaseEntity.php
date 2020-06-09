@@ -39,7 +39,7 @@ class BaseEntity implements PlanetEntityInterface
 
 		$cost = [];
 
-		foreach (Vars::getItemsByType('res') + ['energy'] as $ResType) {
+		foreach (array_merge(Vars::getItemsByType('res'), ['energy']) as $ResType) {
 			if (!isset($price[$ResType])) {
 				continue;
 			}

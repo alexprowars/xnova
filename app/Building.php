@@ -8,9 +8,12 @@
 
 namespace Xnova;
 
+use Xnova\Models\PlanetEntity;
+use Xnova\Planet\Entity\Context;
+
 class Building
 {
-	public static function checkTechnologyRace(User $user, $element)
+	public static function checkTechnologyRace(User $user, int $element)
 	{
 		$requeriments = Vars::getItemRequirements($element);
 
@@ -44,15 +47,15 @@ class Building
 		return true;
 	}
 
-	public static function getTechTree($element, User $user, Planet $planet)
+	public static function getTechTree(int $element, User $user, Planet $planet): ?array
 	{
-		$result = '';
-
 		$requirements = Vars::getItemRequirements($element);
 
 		if (!count($requirements)) {
-			return $result;
+			return null;
 		}
+
+		$result = [];
 
 		foreach ($requirements as $reqId => $level) {
 			$minus = 0;
@@ -80,58 +83,37 @@ class Building
 				$minus = __('main.race.' . $level);
 			}
 
-			$result .= '<div><span class="negative">' . __('main.tech.' . $reqId) . ' ' . $level . ($minus != 0 ? ' (' . $minus . ')' : '') . '</span></div>';
+			$result[] = [
+				'id' => $reqId,
+				'level' => $level,
+				'diff' => $minus,
+			];
 		}
 
 		return $result;
 	}
 
-	/**
-	 * @param int $Element
-	 * @param int $Level
-	 * @param Planet $planet
-	 * @return string
-	 */
-	public static function getNextProduction($Element, $Level, Planet $planet)
+	public static function getNextProduction(int $elementId, int $level, Planet $planet): ?array
 	{
-		if (!in_array($Element, Vars::getItemsByType('prod'))) {
-			return '';
+		if (!in_array($elementId, Vars::getItemsByType('prod'))) {
+			return null;
 		}
 
-		$Res = [];
+		$context = new Context($planet->getUser(), $planet);
 
-		$resFrom = $planet->getResourceProductionLevel($Element, ($Level + 1));
+		$resFrom = PlanetEntity::createEmpty($elementId, $level + 1)
+			->getProduction($context);
 
-		$Res['m'] = $resFrom['metal'];
-		$Res['c'] = $resFrom['crystal'];
-		$Res['d'] = $resFrom['deuterium'];
-		$Res['e'] = $resFrom['energy'];
+		$resources = $resFrom->toArray();
 
-		$resTo = $planet->getResourceProductionLevel($Element, $Level);
+		$resTo = PlanetEntity::createEmpty($elementId, $level)
+			->getProduction($context);
 
-		$Res['m'] -= $resTo['metal'];
-		$Res['c'] -= $resTo['crystal'];
-		$Res['d'] -= $resTo['deuterium'];
-		$Res['e'] -= $resTo['energy'];
+		$resources['metal'] -= $resTo->get('metal');
+		$resources['crystal'] -= $resTo->get('crystal');
+		$resources['deuterium'] -= $resTo->get('deuterium');
+		$resources['energy'] -= $resTo->get('energy');
 
-		$text = '';
-
-		if ($Res['m'] != 0) {
-			$text .= '<div class="building-effects-row"><span class="sprite skin_s_metal" title="Металл"></span> <span class=' . (($Res['m'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['m']) . '</span></div>';
-		}
-
-		if ($Res['c'] != 0) {
-			$text .= '<div class="building-effects-row"><span class="sprite skin_s_crystal" title="Кристалл"></span> <span class=' . (($Res['c'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['c']) . '</span></div>';
-		}
-
-		if ($Res['d'] != 0) {
-			$text .= '<div class="building-effects-row"><span class="sprite skin_s_deuterium" title="Дейтерий"></span> <span class=' . (($Res['d'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['d']) . '</span></div>';
-		}
-
-		if ($Res['e'] != 0) {
-			$text .= '<div class="building-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span> <span class=' . (($Res['e'] > 0) ? 'positive' : 'negative') . ">" . abs($Res['e']) . '</span></div>';
-		}
-
-		return $text;
+		return $resources;
 	}
 }

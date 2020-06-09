@@ -17,11 +17,17 @@ use Xnova\Vars;
 class PlanetEntity extends Model
 {
 	public $timestamps = false;
+	protected $fillable = ['entity_id', 'amount'];
+
+	public static function createEmpty(int $entityId, int $level): self
+	{
+		return new PlanetEntity(['entity_id' => $entityId, 'amount' => $level]);
+	}
 
 	public function getProduction(Context $context, ?int $factor = null): Resources
 	{
 		if (!$factor) {
-			$factor = $this->factor;
+			$factor = $this->factor ?: 10;
 		}
 
 		$factor = min(max($factor, 0), 10);
@@ -50,7 +56,7 @@ class PlanetEntity extends Model
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$BuildLevel = $this->amount;
 		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildLevelFactor = $this->$factor;
+		$BuildLevelFactor = $factor;
 
 		foreach (Vars::getResources() as $res) {
 			if (isset($production[$res])) {
