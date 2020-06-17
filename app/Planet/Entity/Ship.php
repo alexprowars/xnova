@@ -7,18 +7,9 @@ use Xnova\Vars;
 
 class Ship extends Unit
 {
-	public function __construct($entityId, $count = 1, $context = null)
-	{
-		if (Vars::getItemType($entityId) !== Vars::ITEM_TYPE_FLEET) {
-			throw new Exception('wrong entity type');
-		}
-
-		parent::__construct($entityId, $count, $context);
-	}
-
 	public function getTime(): int
 	{
-		$user = $this->getContext()->getUser();
+		$user = $this->getPlanet()->getUser();
 
 		$time = parent::getTime();
 		$time *= $user->bonusValue('time_fleet');
@@ -28,15 +19,15 @@ class Ship extends Unit
 
 	public function getConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		$shipData = Vars::getUnitData($this->entity_id);
 
-		return (int) ceil($shipData['consumption'] * $this->getContext()->getUser()->bonusValue('fleet_fuel'));
+		return (int) ceil($shipData['consumption'] * $this->getPlanet()->getUser()->bonusValue('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
-		$user = $this->getContext()->getUser();
+		$shipData = Vars::getUnitData($this->entity_id);
+		$user = $this->getPlanet()->getUser();
 
 		switch ($shipData['type_engine']) {
 			case 1:
@@ -61,7 +52,7 @@ class Ship extends Unit
 
 	public function getStorage(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		$shipData = Vars::getUnitData($this->entity_id);
 
 		if (!$shipData) {
 			return 0;
@@ -72,13 +63,13 @@ class Ship extends Unit
 
 	public function getStayConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		$shipData = Vars::getUnitData($this->entity_id);
 
 		if (!$shipData) {
 			return 0;
 		}
 
-		if ($this->getContext()->getUser()->rpg_meta > time()) {
+		if ($this->getPlanet()->getUser()->rpg_meta > time()) {
 			return (int) ceil($shipData['stay'] * 0.9);
 		} else {
 			return (int) $shipData['stay'];
@@ -87,14 +78,14 @@ class Ship extends Unit
 
 	public function getInfo(): array
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		$shipData = Vars::getUnitData($this->entity_id);
 
 		if (!$shipData) {
 			throw new Exception('unit does not exist');
 		}
 
 		$ship = [
-			'id' => $this->entityId,
+			'id' => $this->entity_id,
 			'consumption' => $this->getConsumption(),
 			'speed' => $this->getSpeed(),
 			'stay' => $this->getStayConsumption(),

@@ -71,8 +71,6 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		$context = new Planet\Entity\Context($this->user, $this->planet);
-
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $elementId) {
@@ -83,9 +81,7 @@ class Construction
 				continue;
 			}
 
-			$level = $this->planet->getLevel($elementId);
-
-			$entity = EntityFactory::create($elementId, $level, $context);
+			$entity = $this->planet->getEntity($elementId);
 
 			$isAvailable = $entity->isAvailable();
 
@@ -99,7 +95,7 @@ class Construction
 
 			$row['allow'] = $isAvailable;
 			$row['i'] = $elementId;
-			$row['level'] = $level;
+			$row['level'] = $entity->getLevel();
 			$row['price'] = $price;
 
 			if ($isAvailable) {
@@ -108,7 +104,7 @@ class Construction
 				}
 
 				$row['time'] = $entity->getTime();
-				$row['effects'] = Building::getNextProduction($elementId, $level, $this->planet);
+				$row['effects'] = Building::getNextProduction($elementId, $entity->getLevel(), $this->planet);
 			} else {
 				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
@@ -183,12 +179,10 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getUserOption('only_available');
 
-		$context = new Planet\Entity\Context($this->user, $this->planet);
-
 		$parse['items'] = [];
 
 		foreach ($res_array as $elementId) {
-			$entity = EntityFactory::create($elementId, $this->user->getTechLevel($elementId), $context);
+			$entity = EntityFactory::create($elementId, $this->user->getTechLevel($elementId), $this->planet);
 
 			$isAvailable = $entity->isAvailable();
 
@@ -383,7 +377,11 @@ class Construction
 					$end = $item->time;
 				}
 
-				$entity = EntityFactory::create($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0), new Planet\Entity\Context($this->user, $this->planet));
+				$entity = EntityFactory::create(
+					$item->object_id,
+					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
+					$this->planet
+				);
 
 				$elementTime = $entity->getTime();
 

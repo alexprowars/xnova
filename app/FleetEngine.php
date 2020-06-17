@@ -75,7 +75,7 @@ class FleetEngine
 			$targetUser = User::query()->find($targetPlanet->id_owner);
 
 			if ($targetUser) {
-				$targetPlanet->assignUser($targetUser);
+				$targetPlanet->setUser($targetUser);
 				$targetPlanet->getProduction()->update();
 			}
 

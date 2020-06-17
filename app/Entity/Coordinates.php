@@ -2,7 +2,9 @@
 
 namespace Xnova\Entity;
 
-class Coordinates
+use Illuminate\Contracts\Support\Arrayable;
+
+class Coordinates implements Arrayable
 {
 	public const TYPE_PLANET = 1;
 	public const TYPE_DEBRIS = 2;
@@ -45,5 +47,15 @@ class Coordinates
 	public function isEmpty(): bool
 	{
 		return $this->galaxy < 0 || $this->system < 0 || $this->position < 0;
+	}
+
+	public function toArray(): array
+	{
+		return [
+			'galaxy' => $this->galaxy,
+			'system' => $this->system,
+			'position' => $this->position,
+			'type' => $this->type,
+		];
 	}
 }

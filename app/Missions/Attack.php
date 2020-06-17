@@ -63,8 +63,8 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$target->assignUser($targetUser);
-		$target->getProduction()->update($this->fleet->start_time);
+		$target->setUser($targetUser);
+		$target->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $target);
 		$queueManager->checkUnitQueue();

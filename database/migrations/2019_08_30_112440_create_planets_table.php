@@ -30,7 +30,6 @@ class CreatePlanetsTable extends Migration
 			$table->float('metal', 32, 4)->default(500.0000);
 			$table->float('crystal', 32, 4)->default(500.0000);
 			$table->float('deuterium', 32, 4)->default(0.0000);
-			$table->float('energy_ak', 11)->default(0.00);
 			$table->integer('last_jump_time')->unsigned()->default(0);
 			$table->integer('parent_planet')->default(0);
 			$table->integer('debris_metal')->default(0);

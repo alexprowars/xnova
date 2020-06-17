@@ -39,7 +39,7 @@ class Tech
 				$planet->spaceLabs = $planet->getNetworkLevel();
 			}
 
-			$entity = new Entity\Research($elementId, $user->getTechLevel($elementId), new Planet\Entity\Context($user, $planet));
+			$entity = Entity\Research::createEntity($elementId, $user->getTechLevel($elementId), $planet);
 			$cost = $entity->getPrice();
 
 			$price = Vars::getItemPrice($elementId);
@@ -95,7 +95,7 @@ class Tech
 			$planet = Planet::query()
 				->find((int) $techHandle->planet_id);
 
-			$entity = new Entity\Research($elementId, $techHandle->level, new Planet\Entity\Context($user, $planet));
+			$entity = Entity\Research::createEntity($elementId, $techHandle->level, $planet);
 
 			$cost = $entity->getPrice();
 

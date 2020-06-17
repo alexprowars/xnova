@@ -382,11 +382,9 @@ class InfoController extends Controller
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
-			$build = $this->planet->getEntity($itemId);
+			$entity = $this->planet->getEntity($itemId);
 
-			if ($build && $build->amount > 0) {
-				$entity = new \Xnova\Planet\Entity\Building($itemId, $build->amount, new \Xnova\Planet\Entity\Context($this->user, $this->planet));
-
+			if ($entity && $entity->amount > 0) {
 				$time = ceil($entity->getTime() / 2);
 
 				if ($time < 1) {
@@ -394,7 +392,7 @@ class InfoController extends Controller
 				}
 
 				$parse['destroy'] = [
-					'level' => $build->amount,
+					'level' => $entity->amount,
 					'resources' => $entity->getDestroyPrice(),
 					'time' => $time
 				];

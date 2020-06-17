@@ -8,8 +8,9 @@
 
 namespace Xnova;
 
-use Xnova\Models\PlanetEntity;
-use Xnova\Planet\Entity\Context;
+use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
+use Xnova\Planet\EntityFactory;
+use Xnova\Planet\Resources;
 
 class Building
 {
@@ -93,27 +94,22 @@ class Building
 		return $result;
 	}
 
-	public static function getNextProduction(int $elementId, int $level, Planet $planet): ?array
+	public static function getNextProduction(int $elementId, int $level, ?Planet $planet = null): ?Resources
 	{
 		if (!in_array($elementId, Vars::getItemsByType('prod'))) {
 			return null;
 		}
 
-		$context = new Context($planet->getUser(), $planet);
+		$entity = EntityFactory::create($elementId, $level + 1, $planet);
 
-		$resFrom = PlanetEntity::createEmpty($elementId, $level + 1)
-			->getProduction($context);
+		if (!($entity instanceof PlanetEntityProductionInterface)) {
+			return null;
+		}
 
-		$resources = $resFrom->toArray();
+		$resources = $entity->getProduction();
 
-		$resTo = PlanetEntity::createEmpty($elementId, $level)
-			->getProduction($context);
+		$entity->setLevel($level);
 
-		$resources['metal'] -= $resTo->get('metal');
-		$resources['crystal'] -= $resTo->get('crystal');
-		$resources['deuterium'] -= $resTo->get('deuterium');
-		$resources['energy'] -= $resTo->get('energy');
-
-		return $resources;
+		return $resources->sub($entity->getProduction());
 	}
 }

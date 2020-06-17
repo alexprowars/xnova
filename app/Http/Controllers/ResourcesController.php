@@ -15,9 +15,9 @@ use Xnova\Exceptions\PageException;
 use Xnova\Exceptions\RedirectException;
 use Xnova\Controller;
 use Xnova\Models\LogCredit;
-use Xnova\Models\PlanetBuilding;
-use Xnova\Models\PlanetUnit;
+use Xnova\Models\PlanetEntity;
 use Xnova\Planet;
+use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
 use Xnova\Vars;
 
 class ResourcesController extends Controller
@@ -62,50 +62,37 @@ class ResourcesController extends Controller
 	public function productionAction()
 	{
 		if ($this->user->vacation > 0) {
-			throw new PageException("Включен режим отпуска!");
+			throw new PageException('Включен режим отпуска!');
 		}
 
-		$production = Request::query('active', 'Y');
-		$production = $production == 'Y' ? 10 : 0;
-
-		$planetsId = [];
+		$production = request('active', 'Y') == 'Y' ? 10 : 0;
 
 		$planets = Planet::query()
 			->where('id_owner', $this->user->id)
 			->get();
 
 		foreach ($planets as $planet) {
-			$planet->assignUser($this->user);
+			$planet->setUser($this->user);
 			$planet->getProduction()->update();
-
-			$planetsId[] = $planet->id;
 		}
 
-		unset($planets, $planet);
+		$planetsId = $planets->pluck('id');
 
-		$buildsId = [4, 12, 212];
+		$entityId = [4, 12, 212];
 
 		foreach (Vars::getResources() as $res) {
-			$buildsId[] = Vars::getIdByName($res . '_mine');
+			$entityId[] = Vars::getIdByName($res . '_mine');
 		}
 
-		PlanetBuilding::query()
+		PlanetEntity::query()
 			->whereIn('planet_id', $planetsId)
-			->whereIn('build_id', $buildsId)
+			->whereIn('entity_id', $entityId)
 			->update([
-				'power' => $production,
+				'factor' => $production,
 			]);
 
-		PlanetUnit::query()
-			->whereIn('planet_id', $planetsId)
-			->whereIn('unit_id', $buildsId)
-			->update([
-				'power' => $production,
-			]);
-
-		$this->planet->clearBuildingsData();
-		$this->planet->clearUnitsData();
-		$this->planet->getProduction()->update(time(), true);
+		$this->planet->reset();
+		$this->planet->getProduction()->reset();
 	}
 
 	public function index()
@@ -132,37 +119,28 @@ class ResourcesController extends Controller
 
 				$value = max(0, min(10, (int) $value));
 
-				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING) {
-					PlanetBuilding::query()
+				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING || Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET) {
+					PlanetEntity::query()
 						->whereIn('planet_id', $this->planet->id)
-						->whereIn('build_id', Vars::getIdByName($field))
+						->whereIn('entity_id', Vars::getIdByName($field))
 						->update([
-							'power' => $value,
-						]);
-				}
-
-				if (Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET) {
-					PlanetUnit::query()
-						->whereIn('planet_id', $this->planet->id)
-						->whereIn('unit_id', Vars::getIdByName($field))
-						->update([
-							'power' => $value,
+							'factor' => $value,
 						]);
 				}
 			}
 
-			$this->planet->clearBuildingsData();
-			$this->planet->clearUnitsData();
-
-			$this->planet->update();
-			$this->planet->getProduction()->update(time(), true);
+			$this->planet->reset();
+			$this->planet->getProduction()->reset();
+			$this->planet->getProduction()->update(true);
 		}
 
 		$parse = [];
 
 		$parse['resources'] = Vars::getResources();
 
-		$production_level = $this->planet->production_level;
+		$planetProduction = $this->planet->getProduction();
+
+		$productionLevel = $planetProduction->getProductionFactor();
 
 		$parse['buy_form'] = [
 			'visible' => ($this->planet->planet_type == 1 && $this->user->vacation <= 0),
@@ -170,84 +148,57 @@ class ResourcesController extends Controller
 		];
 
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
-
 		$parse['items'] = [];
 
-		$context = new Planet\Entity\Context($this->user, $this->planet);
-
 		foreach (Vars::getItemsByType('prod') as $productionId) {
-			$build = $this->planet->getEntity($productionId);
+			$entity = $this->planet->getEntity($productionId);
 
-			if (!$build || $this->planet->getLevel($productionId) <= 0) {
+			if (!$entity || $this->planet->getLevel($productionId) <= 0 || !($entity instanceof PlanetEntityProductionInterface)) {
 				continue;
 			}
 
-			if (!Vars::getBuildProduction($productionId)) {
-				continue;
-			}
-
-			$result = $build->getProduction($context);
-
-			foreach (Vars::getResources() as $res) {
-				$$res = $result->get($res);
-				$$res = round($$res * 0.01 * $production_level);
-			}
+			$production = $entity->getProduction();
+			$production->multiply($productionLevel / 100);
 
 			$row = [];
 			$row['id'] = $productionId;
-			$row['name'] = Vars::getName($productionId);
-			$row['factor'] = $build->factor;
+			$row['factor'] = $entity->factor;
 			$row['bonus'] = 0;
 
 			if ($productionId == 4 || $productionId == 12) {
 				$row['bonus'] += $this->user->bonusValue('energy');
 				$row['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
-			}
-
-			if ($productionId == 212) {
+			} elseif ($productionId == 212) {
 				$row['bonus'] += $this->user->bonusValue('solar');
-			}
-
-			if ($productionId == 1) {
+			} elseif ($productionId == 1) {
 				$row['bonus'] += $this->user->bonusValue('metal');
-			}
-
-			if ($productionId == 2) {
+			} elseif ($productionId == 2) {
 				$row['bonus'] += $this->user->bonusValue('crystal');
-			}
-
-			if ($productionId == 3) {
+			} elseif ($productionId == 3) {
 				$row['bonus'] += $this->user->bonusValue('deuterium');
 			}
 
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
-			$row['level'] = $build->amount;
-
-			foreach (Vars::getResources() as $res) {
-				$row['resources'][$res] = $$res;
-			}
-
-			$row['resources']['energy'] = $result->get('energy');
+			$row['level'] = $entity->amount;
+			$row['resources'] = $production->toArray();
+			$row['resources']['energy'] = $production->get($production::ENERGY);
 
 			$parse['items'][] = $row;
 		}
 
 		$parse['production'] = [];
 
+		$storage = $planetProduction->getStorageCapacity();
+		$production = $planetProduction->getResourceProduction();
+
 		foreach (Vars::getResources() as $res) {
 			$row = [];
 
-			if (!$this->user->isVacation()) {
-				$row['basic'] = config('game.' . $res . '_basic_income', 0) * config('game.resource_multiplier', 1);
-			} else {
-				$row['basic'] = 0;
-			}
+			$row['capacity'] = $storage->get($res);
+			$row['production'] = $production->get($res);
+			$row['storage'] = floor($this->planet->{$res} / $storage->get($res) * 100);
 
-			$row['max'] = (int) $this->planet->{$res . '_max'};
-			$row['total'] = $this->planet->{$res . '_perhour'} + $row['basic'];
-			$row['storage'] = floor($this->planet->{$res} / $this->planet->{$res . '_max'} * 100);
-
-			$parse['buy_form'][$res] = $row['total'] * 8;
+			$parse['buy_form'][$res] = $row['production'] * 8;
 
 			if ($parse['buy_form'][$res] < 0) {
 				$parse['buy_form'][$res] = 0;
@@ -262,13 +213,11 @@ class ResourcesController extends Controller
 
 		$parse['production']['energy'] = [
 			'basic' => (int) config('game.energy_basic_income'),
-			'max' => floor($this->planet->energy_max),
-			'total' => floor(($this->planet->energy_max + config('game.energy_basic_income')) + $this->planet->energy_used)
+			'capacity' => floor($this->planet->energy_max),
+			'production' => floor(($this->planet->energy_max + config('game.energy_basic_income')) + $this->planet->energy_used)
 		];
 
-		$parse['production_level'] = $production_level;
-
-		$parse['planet_name'] = $this->planet->name;
+		$parse['production_level'] = $productionLevel;
 		$parse['energy_tech'] = $this->user->getTechLevel('energy');
 
 		$this->setTitle('Сырьё');

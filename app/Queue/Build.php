@@ -98,9 +98,11 @@ class Build
 			}
 
 			if ($buildItem->time > 0) {
-				$entity = new Entity\Building($buildItem->object_id, $buildItem->level, new Entity\Context($user, $planet));
+				$entity = Entity\Building::createEntity($buildItem->object_id, $buildItem->level, $planet);
 
-				$cost = $buildItem->operation == $buildItem::OPERATION_DESTROY ? $entity->getDestroyPrice() : $entity->getPrice();
+				$cost = $buildItem->operation == $buildItem::OPERATION_DESTROY
+					? $entity->getDestroyPrice()
+					: $entity->getPrice();
 
 				$planet->metal 		+= $cost['metal'];
 				$planet->crystal 	+= $cost['crystal'];

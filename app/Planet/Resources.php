@@ -13,7 +13,7 @@ class Resources implements Arrayable
 
 	private $resources;
 
-	public function __construct(array $resources)
+	public function __construct(array $resources = [])
 	{
 		$this->resources[self::METAL] = $resources[self::METAL] ?? 0;
 		$this->resources[self::CRYSTAL] = $resources[self::CRYSTAL] ?? 0;
@@ -34,6 +34,41 @@ class Resources implements Arrayable
 	public function get(string $type): float
 	{
 		return $this->resources[$type] ?? 0;
+	}
+
+	public function set(string $type, float $value)
+	{
+		$this->resources[$type] = $value;
+	}
+
+	public function add(Resources $resources)
+	{
+		$this->resources[self::METAL] += $resources->get(self::METAL);
+		$this->resources[self::CRYSTAL] += $resources->get(self::CRYSTAL);
+		$this->resources[self::DEUTERIUM] += $resources->get(self::DEUTERIUM);
+		$this->resources[self::ENERGY] += $resources->get(self::ENERGY);
+
+		return $this;
+	}
+
+	public function sub(Resources $resources)
+	{
+		$this->resources[self::METAL] -= $resources->get(self::METAL);
+		$this->resources[self::CRYSTAL] -= $resources->get(self::CRYSTAL);
+		$this->resources[self::DEUTERIUM] -= $resources->get(self::DEUTERIUM);
+		$this->resources[self::ENERGY] -= $resources->get(self::ENERGY);
+
+		return $this;
+	}
+
+	public function multiply(float $value)
+	{
+		$this->resources[self::METAL] *= $value;
+		$this->resources[self::CRYSTAL] *= $value;
+		$this->resources[self::DEUTERIUM] *= $value;
+		$this->resources[self::ENERGY] *= $value;
+
+		return $this;
 	}
 
 	public function toArray(): array

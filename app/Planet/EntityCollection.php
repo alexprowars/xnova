@@ -11,9 +11,14 @@ class EntityCollection extends Collection
 {
 	public static function getForPlanet(Planet $planet)
 	{
-		return new self(PlanetEntity::query()
+		$items = PlanetEntity::query()
 			->where('planet_id', $planet->id)
-			->get());
+			->get()
+			->map(function (PlanetEntity $item) use ($planet) {
+				return EntityFactory::createFromModel($item, $planet);
+			});
+
+		return new self($items);
 	}
 
 	public function getForTypes($types): Collection
@@ -22,12 +27,12 @@ class EntityCollection extends Collection
 			$types = [$types];
 		}
 
-		return $this->filter(static function ($item) use ($types) {
+		return $this->filter(function ($item) use ($types) {
 			return in_array(Vars::getItemType($item->entity_id), $types);
 		});
 	}
 
-	public function getEntity($entityId): ?PlanetEntity
+	public function getEntity($entityId): ?Planet\Entity\BaseEntity
 	{
 		if (!is_numeric($entityId)) {
 			$entityId = Vars::getIdByName($entityId);

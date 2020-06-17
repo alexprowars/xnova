@@ -47,7 +47,7 @@ class Queue extends Command
 					$planet = Planet::query()->find((int) $item->planet_id);
 
 					if ($planet) {
-						$planet->assignUser($user);
+						$planet->setUser($user);
 					}
 
 					if (!$user || !$planet) {

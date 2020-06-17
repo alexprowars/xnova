@@ -68,8 +68,8 @@ class ImperiumController extends Controller
 			->get();
 
 		foreach ($planets as $planet) {
-			$planet->assignUser($this->user);
-			$planet->getProduction()->update(time(), true);
+			$planet->setUser($this->user);
+			$planet->getProduction()->update(true);
 
 			$row = [];
 

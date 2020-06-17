@@ -101,7 +101,7 @@ class TechController extends Controller
 		$element = (int) $element;
 
 		if ($element > 0 && Vars::getName($element)) {
-			$entity = EntityFactory::create($element, 1, new \Xnova\Planet\Entity\Context($this->user, $this->planet));
+			$entity = EntityFactory::create($element, 1, $this->planet);
 
 			$page['element'] = $element;
 			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getLevel($element);

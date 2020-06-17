@@ -329,7 +329,7 @@ class User extends Models\User
 			}
 
 			if ($planet) {
-				$planet->assignUser($this);
+				$planet->setUser($this);
 				$planet->checkOwnerPlanet();
 
 				// Проверяем корректность заполненных полей
@@ -340,7 +340,7 @@ class User extends Models\User
 
 				// Обновляем ресурсы на планете когда это необходимо
 				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60))) {
-					$planet->getProduction()->update(time(), true);
+					$planet->getProduction()->update(true);
 				} else {
 					$planet->getProduction()->update();
 

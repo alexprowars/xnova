@@ -37,8 +37,8 @@ class Spy extends FleetEngine implements Mission
 			return false;
 		}
 
-		$TargetPlanet->assignUser($targetUser);
-		$TargetPlanet->getProduction()->update($this->fleet->start_time);
+		$TargetPlanet->setUser($targetUser);
+		$TargetPlanet->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();

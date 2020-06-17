@@ -3,7 +3,9 @@
 namespace Xnova;
 
 use Illuminate\Support\Facades\DB;
+use Xnova\Entity\Coordinates;
 use Xnova\Models\PlanetEntity;
+use Xnova\Planet\Entity\BaseEntity;
 use Xnova\Planet\EntityCollection;
 use Xnova\Planet\Production;
 
@@ -13,30 +15,18 @@ class Planet extends Models\Planet
 	private $user;
 	public $ally = [];
 
-	public $planet_updated;
-	public $metal_perhour = 0;
-	public $crystal_perhour = 0;
-	public $deuterium_perhour = 0;
+	public $planet_updated = false;
 	public $spaceLabs;
 	public $merchand;
-	public $metal_max;
-	public $crystal_max;
-	public $deuterium_max;
-	public $battery_max;
 	public $energy_used;
 	public $energy_max = 0;
-	public $production_level;
-	public $metal_production;
-	public $metal_base;
-	public $crystal_production;
-	public $crystal_base;
-	public $deuterium_production;
-	public $deuterium_base;
 
 	/** @var EntityCollection */
 	public $entities;
 
-	public function assignUser(User $user)
+	private $production;
+
+	public function setUser(User $user)
 	{
 		$this->user = $user;
 	}
@@ -71,9 +61,16 @@ class Planet extends Models\Planet
 		}
 	}
 
+	public function reset()
+	{
+		$this->entities = null;
+	}
+
 	public function checkUsedFields()
 	{
-		$this->collectEntities();
+		if (!$this->entities) {
+			$this->collectEntities();
+		}
 
 		$count = 0;
 
@@ -101,13 +98,26 @@ class Planet extends Models\Planet
 		return $fields;
 	}
 
+	public function getCoordinates(): Coordinates
+	{
+		return new Coordinates($this->galaxy, $this->system, $this->planet, $this->planet_type);
+	}
+
 	public function getLevel($entityId): int
 	{
+		if (!$this->entities) {
+			$this->collectEntities();
+		}
+
 		return $this->entities->getEntityAmount($entityId);
 	}
 
-	public function getEntity($entityId): ?PlanetEntity
+	public function getEntity($entityId): ?BaseEntity
 	{
+		if (!$this->entities) {
+			$this->collectEntities();
+		}
+
 		return $this->entities->getEntity($entityId);
 	}
 
@@ -136,9 +146,13 @@ class Planet extends Models\Planet
 		}
 	}
 
-	public function getProduction(): Production
+	public function getProduction(int $updateTime = 0): Production
 	{
-		return new Production($this);
+		if (!$this->production) {
+			$this->production = new Production($this, $updateTime);
+		}
+
+		return $this->production;
 	}
 
 	public function afterUpdate()
@@ -148,7 +162,7 @@ class Planet extends Models\Planet
 		}
 
 		$this->entities->each(function (PlanetEntity $entity) {
-			if ($entity->isDirty()) {
+			if ($entity->isDirty() && $entity->planet_id > 0) {
 				$entity->save();
 			}
 		});

@@ -15,11 +15,7 @@ class UserPlanets extends JsonResource
 			'id' => (int) $this->id,
 			'name' => $this->name,
 			'image' => $this->image,
-			'g' => (int) $this->galaxy,
-			's' => (int) $this->system,
-			'p' => (int) $this->planet,
-			't' => (int) $this->planet_type,
 			'destroy' => $this->destruyed > 0,
-		];
+		] + $this->getCoordinates()->toArray();
 	}
 }

@@ -3,39 +3,53 @@
 namespace Xnova\Planet\Entity;
 
 use Illuminate\Support\Facades\Auth;
+use Xnova\Models\PlanetEntity;
+use Xnova\Planet;
 use Xnova\Planet\Contracts\PlanetEntityInterface;
+use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
 use Xnova\Vars;
 
-class BaseEntity implements PlanetEntityInterface
+class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEntityProductionInterface
 {
-	protected $entityId;
-	protected $context;
-	protected $level = 0;
+	use ProductionTrait;
 
-	public function __construct(int $entityId, int $level = 1, ?Context $context = null)
+	protected $planet;
+
+	public static function createEntity(int $entityId, int $level = 1, Planet $context = null): self
 	{
-		$this->entityId = $entityId;
-		$this->level = $level;
-		$this->context = $context;
+		$object = self::createEmpty($entityId, $level);
+		$object->setPlanet($context);
+
+		return $object;
 	}
 
-	protected function getContext(): Context
+	public function getPlanet(): Planet
 	{
-		if (!$this->context) {
-			$this->context = new Context(Auth::user());
+		if (!$this->planet) {
+			$this->planet = Auth::user()->getCurrentPlanet(true);
 		}
 
-		return $this->context;
+		return $this->planet;
+	}
+
+	public function setPlanet(Planet $planet)
+	{
+		$this->planet = $planet;
 	}
 
 	public function getLevel(): int
 	{
-		return $this->level;
+		return $this->amount;
+	}
+
+	public function setLevel(int $level)
+	{
+		$this->amount = $level;
 	}
 
 	protected function getBasePrice(): array
 	{
-		$price = Vars::getItemPrice($this->entityId);
+		$price = Vars::getItemPrice($this->entity_id);
 
 		$cost = [];
 
@@ -53,9 +67,9 @@ class BaseEntity implements PlanetEntityInterface
 	public function getPrice(): array
 	{
 		$cost = $this->getBasePrice();
-		$user = $this->getContext()->getUser();
+		$user = $this->getPlanet()->getUser();
 
-		$elementType = Vars::getItemType($this->entityId);
+		$elementType = Vars::getItemType($this->entity_id);
 
 		foreach ($cost as $resType => $value) {
 			switch ($elementType) {
@@ -91,14 +105,14 @@ class BaseEntity implements PlanetEntityInterface
 
 	public function isAvailable(): bool
 	{
-		$requeriments = Vars::getItemRequirements($this->entityId);
+		$requeriments = Vars::getItemRequirements($this->entity_id);
 
 		if (!count($requeriments)) {
 			return true;
 		}
 
-		$user = $this->getContext()->getUser();
-		$planet = $this->getContext()->getPlanet();
+		$user = $this->getPlanet()->getUser();
+		$planet = $this->getPlanet();
 
 		foreach ($requeriments as $reqElement => $level) {
 			if ($reqElement == 700) {
@@ -110,7 +124,7 @@ class BaseEntity implements PlanetEntityInterface
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
-				if ($planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
+				if ($planet->planet_type == 5 && in_array($this->entity_id, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;
 					}
@@ -133,7 +147,7 @@ class BaseEntity implements PlanetEntityInterface
 			$cost = $this->getPrice();
 		}
 
-		$planet = $this->getContext()->getPlanet();
+		$planet = $this->getPlanet();
 
 		foreach ($cost as $ResType => $ResCount) {
 			if ($ResType == 'energy') {

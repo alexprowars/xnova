@@ -219,10 +219,8 @@ class Queue
 
 		$buildItem = $queueArray[0];
 
-		$build = $this->planet->getEntity($buildItem->object_id);
+		$entity = $this->planet->getEntity($buildItem->object_id);
 		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
-
-		$entity = EntityFactory::create($buildItem->object_id, $build->amount, new Planet\Entity\Context($this->user, $this->planet));
 
 		$buildTime = $entity->getTime();
 
@@ -238,7 +236,7 @@ class Queue
 
 		if ($buildItem->time + $buildTime <= time() + 5) {
 			if (!$this->planet->planet_updated) {
-				$this->planet->getProduction()->update(0, true);
+				$this->planet->getProduction()->update(true);
 			}
 
 			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
@@ -314,9 +312,9 @@ class Queue
 
 			$HaveNoMoreLevel = false;
 
-			$build = $this->planet->getEntity($buildItem->object_id);
+			$entity = $this->planet->getEntity($buildItem->object_id);
 
-			if (!$build) {
+			if (!$entity) {
 				array_shift($queueArray);
 
 				if (!$this->deleteInQueue($buildItem->id)) {
@@ -332,10 +330,11 @@ class Queue
 
 			$isDestroy = $buildItem->operation == $buildItem::OPERATION_DESTROY;
 
-			$entity = new Planet\Entity\Building($buildItem->object_id, 0, new Planet\Entity\Context($this->user, $this->planet));
-			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
+			$cost = $isDestroy
+				? $entity->getDestroyPrice()
+				: $entity->getPrice();
 
-			if ($isDestroy && $build->amount == 0) {
+			if ($isDestroy && $entity->amount == 0) {
 				$HaveRessources = false;
 				$HaveNoMoreLevel = true;
 			} else {
@@ -374,7 +373,7 @@ class Queue
 						'to_crystal' 		=> $this->planet->crystal,
 						'to_deuterium' 		=> $this->planet->deuterium,
 						'build_id' 			=> $buildItem->object_id,
-						'level' 			=> $build->amount + 1,
+						'level' 			=> $entity->amount + 1,
 					]);
 				}
 			} else {
@@ -438,7 +437,7 @@ class Queue
 				$planet = Planet::query()->find((int) $buildItem->planet_id);
 
 				if ($planet) {
-					$planet->assignUser($this->user);
+					$planet->setUser($this->user);
 				}
 			} else {
 				$planet = $this->planet;
@@ -452,7 +451,7 @@ class Queue
 				$planet->spaceLabs = $planet->getNetworkLevel();
 			}
 
-			$entity = new Entity\Research($buildItem->object_id, $buildItem->level, new Planet\Entity\Context($this->user, $planet));
+			$entity = Entity\Research::createEntity($buildItem->object_id, $buildItem->level, $planet);
 
 			$buildTime = $entity->getTime();
 
@@ -557,14 +556,12 @@ class Queue
 
 			unset($item);
 
-			$context = new Planet\Entity\Context($this->user, $this->planet);
-
 			foreach ($buildQueue as $i => $item) {
 				if (!in_array($item->object_id, $buildTypes)) {
 					continue;
 				}
 
-				$entity = EntityFactory::create($item->object_id, 1, $context);
+				$entity = EntityFactory::create($item->object_id, 1, $this->planet);
 
 				$buildTime = $entity->getTime();
 

@@ -28,9 +28,7 @@ class Unit
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
-		$context = new \Xnova\Planet\Entity\Context($user, $planet);
-
-		$entity = EntityFactory::create($elementId, 1, $context);
+		$entity = EntityFactory::create($elementId, 1, $planet);
 
 		if (!$entity->isAvailable()) {
 			return;
