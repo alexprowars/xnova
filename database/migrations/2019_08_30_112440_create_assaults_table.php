@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssaultsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('assaults', function (Blueprint $table) {
@@ -16,7 +15,7 @@ class CreateAssaultsTable extends Migration
 			$table->integer('system')->nullable();
 			$table->integer('planet')->nullable();
 			$table->boolean('planet_type')->default(1);
-			$table->integer('user_id')->nullable()->default(0);
+			$table->unsignedBigInteger('user_id');
 		});
 	}
 
@@ -24,4 +23,4 @@ class CreateAssaultsTable extends Migration
 	{
 		Schema::drop('assaults');
 	}
-}
+};

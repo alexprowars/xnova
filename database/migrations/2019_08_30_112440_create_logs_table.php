@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLogsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('logs', function (Blueprint $table) {
@@ -27,4 +26,4 @@ class CreateLogsTable extends Migration
 	{
 		Schema::drop('logs');
 	}
-}
+};

@@ -8,7 +8,7 @@
 
 use Friday\Core\Lang;
 use Friday\Core\Modules;
-use Xnova\Vars;
+use App\Vars;
 
 class BotTask extends ApplicationTask
 {
@@ -23,7 +23,7 @@ class BotTask extends ApplicationTask
 
 		while ($bot = $bots->fetch())
 		{
-			$ai = new \Xnova\Ai($bot['user_id']);
+			$ai = new \App\Ai($bot['user_id']);
 			$ai->update();
 
 			$ai->getLog();

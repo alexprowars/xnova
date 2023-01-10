@@ -6,9 +6,9 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Controller;
+use App\Controller;
 
 class NewsController extends Controller
 {

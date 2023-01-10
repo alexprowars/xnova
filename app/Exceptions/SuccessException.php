@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Exceptions;
+namespace App\Exceptions;
 
 class SuccessException extends Exception
 {

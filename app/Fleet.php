@@ -6,9 +6,9 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
-use Xnova\Models;
+use App\Models;
 
 class Fleet extends Building
 {

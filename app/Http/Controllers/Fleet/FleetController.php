@@ -6,18 +6,18 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers\Fleet;
+namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
-use Xnova\Exceptions\PageException;
-use Xnova\Entity;
-use Xnova\Fleet;
-use Xnova\Planet;
-use Xnova\Models;
-use Xnova\Vars;
+use App\Controller;
+use App\Exceptions\PageException;
+use App\Entity;
+use App\Fleet;
+use App\Planet;
+use App\Models;
+use App\Vars;
 
 class FleetController extends Controller
 {
@@ -97,7 +97,7 @@ class FleetController extends Controller
 
 		$parse['shortcuts'] = [];
 
-		$shortcuts = Models\Account::query()
+		$shortcuts = Models\UserDetail::query()
 			->find($this->user->id, ['fleet_shortcut'])
 			->value('fleet_shortcut');
 

@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
-use Xnova\FleetEngine;
-use Xnova\Format;
-use Xnova\Models\Fleet;
-use Xnova\Planet;
-use Xnova\Queue;
-use Xnova\User;
-use Xnova\Vars;
+use App\FleetEngine;
+use App\Format;
+use App\Models\Fleet;
+use App\Planet;
+use App\Queue;
+use App\User;
+use App\Vars;
 
 class Spy extends FleetEngine implements Mission
 {

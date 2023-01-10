@@ -6,22 +6,22 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Xnova\Battle\Core\Battle;
-use Xnova\Battle\LangImplementation;
-use Xnova\Battle\Models\Player;
-use Xnova\Battle\Models\PlayerGroup;
-use Xnova\Battle\Models\Fleet;
-use Xnova\Battle\Utils\LangManager;
-use Xnova\FleetEngine;
-use Xnova\Format;
-use Xnova\Models\Statistic;
-use Xnova\Models;
-use Xnova\User;
-use Xnova\Vars;
+use App\Battle\Core\Battle;
+use App\Battle\LangImplementation;
+use App\Battle\Models\Player;
+use App\Battle\Models\PlayerGroup;
+use App\Battle\Models\Fleet;
+use App\Battle\Utils\LangManager;
+use App\FleetEngine;
+use App\Format;
+use App\Models\Statistic;
+use App\Models;
+use App\User;
+use App\Vars;
 
 class Expedition extends FleetEngine implements Mission
 {
@@ -235,7 +235,7 @@ class Expedition extends FleetEngine implements Mission
 
 				LangManager::getInstance()->setImplementation(new LangImplementation());
 
-				$mission = new Attack(new \Xnova\Models\Fleet());
+				$mission = new Attack(new \App\Models\Fleet());
 
 				$attackers = new PlayerGroup();
 				$defenders = new PlayerGroup();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -9,11 +9,11 @@ namespace Xnova\Missions;
  */
 
 use Illuminate\Support\Facades\Cache;
-use Xnova\Entity\Coordinates;
-use Xnova\FleetEngine;
-use Xnova\Galaxy;
-use Xnova\User;
-use Xnova\Models;
+use App\Entity\Coordinates;
+use App\FleetEngine;
+use App\Galaxy;
+use App\User;
+use App\Models;
 
 class CreateBase extends FleetEngine implements Mission
 {

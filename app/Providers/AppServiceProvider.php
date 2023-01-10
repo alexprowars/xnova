@@ -1,11 +1,8 @@
 <?php
 
-namespace Xnova\Providers;
+namespace App\Providers;
 
-use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
-use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,17 +16,5 @@ class AppServiceProvider extends ServiceProvider
 
 	public function register()
 	{
-		if ($this->app->environment() !== 'production') {
-			//$this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
-		}
-
-		if ($this->app->environment() !== 'production') {
-			$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
-		}
-
-		if ($this->app->runningInConsole()) {
-			$this->app->register(ConsoleSupportServiceProvider::class);
-			$this->app->register(QueueServiceProvider::class);
-		}
 	}
 }

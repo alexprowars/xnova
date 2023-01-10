@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Xnova\User;
+use App\User;
 
 class SupportController extends Controller
 {

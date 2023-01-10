@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
-use Xnova\Models\Blocked;
-use Xnova\Models;
-use Xnova\Models\Account;
+use App\Models\Blocked;
+use App\Models;
+use App\Models\UserDetail;
 use Backpack\CRUD\app\Http\Controllers\Operations;
-use Xnova\User;
-use Xnova\Vars;
+use App\User;
+use App\Vars;
 
 /**
  * @property CrudPanel $crud
@@ -102,14 +102,14 @@ class UsersController extends CrudController
 					'name' => 'email',
 					'entity' => 'info',
 					'attribute' => 'email',
-					'model' => Account::class
+					'model' => UserDetail::class
 				], [
 					'label' => 'Дата регистрации',
 					'type' => 'closure',
 					'name' => 'create_time',
 					'entity' => 'info',
 					'attribute' => 'create_time',
-					'model' => Account::class,
+					'model' => UserDetail::class,
 					'function' => function ($entry) {
 						return date('d.m.Y H:i:s', $entry->info->create_time ?? 0);
 					},
@@ -130,7 +130,7 @@ class UsersController extends CrudController
 			'type'	=> 'email',
 			'entity' => 'info',
 			'attribute' => 'email',
-			'model' => Account::class
+			'model' => UserDetail::class
 		]);
 
 		$this->crud->operation('update', function () {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Xnova\Http\Resources;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \Xnova\Planet
+ * @mixin \App\Planet
  */
 class UserPlanets extends JsonResource
 {

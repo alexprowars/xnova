@@ -6,12 +6,12 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xnova\Controller;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Models\Content;
+use App\Controller;
+use App\Exceptions\ErrorException;
+use App\Models\Content;
 
 class ContentController extends Controller
 {

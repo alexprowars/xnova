@@ -6,10 +6,10 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
+use App\Controller;
 
 class ContactsController extends Controller
 {
@@ -17,7 +17,7 @@ class ContactsController extends Controller
 	{
 		$contacts = [];
 
-		$GameOps = DB::select("SELECT u.id, u.username, ui.email, u.authlevel, ui.about FROM users u, accounts ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");
+		$GameOps = DB::select("SELECT u.id, u.username, ui.email, u.authlevel, ui.about FROM users u, user_details ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");
 
 		foreach ($GameOps as $Ops) {
 			$contacts[] = [

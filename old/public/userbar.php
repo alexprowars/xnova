@@ -3,7 +3,7 @@
 use Friday\Core\Options;
 use Phalcon\Loader;
 use Phalcon\Events\Manager as EventsManager;
-use Xnova\User;
+use App\User;
 
 define('ROOT_PATH', dirname(__DIR__.'../').'/');
 
@@ -19,7 +19,7 @@ $loader = new Loader();
 
 $loader->registerNamespaces([
 	'Xnova' => ROOT_PATH.$config->application->baseDir.'modules/Xnova/Classes/',
-	'Xnova\Models' => ROOT_PATH.$config->application->baseDir.'modules/Xnova/Models/',
+	'App\Models' => ROOT_PATH.$config->application->baseDir.'modules/Xnova/Models/',
 	'Friday\Core' => ROOT_PATH.$config->application->baseDir.'modules/Core/Classes/',
 	'Friday\Core\Models' => ROOT_PATH.$config->application->baseDir.'modules/Core/Models/',
 ], true);
@@ -34,7 +34,7 @@ $application->initDatabase($di, $eventsManager);
 $application->initCache($di);
 
 /**
- * @var \Xnova\Database $db
+ * @var \App\Database $db
  */
 $db = $di->getShared('db');
 
@@ -71,15 +71,15 @@ if ($id > 0)
 		$lang[4]  = "Древние";
 
 		/**
-		 * @var $user \Xnova\Models\User
+		 * @var $user \App\Models\User
 		 */
-		$user = Xnova\Models\User::findFirst($id);
+		$user = App\Models\User::findFirst($id);
 
 		if ($user)
 		{
-			$planet = $db->query("SELECT name, galaxy, system, planet FROM game_planets WHERE id_owner = ".$user->id." AND planet_type = 1 ORDER BY id LIMIT 1")->fetch();
+			$planet = $db->query("SELECT name, galaxy, system, planet FROM planets WHERE id_owner = ".$user->id." AND planet_type = 1 ORDER BY id LIMIT 1")->fetch();
 
-			$stats = $db->query("SELECT `total_points`, `total_rank` FROM game_statpoints WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "';")->fetch();
+			$stats = $db->query("SELECT `total_points`, `total_rank` FROM statistics WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "';")->fetch();
 
 			$color = "FFFFFF";
 			$red = hexdec(substr($color,0,2));
@@ -103,8 +103,8 @@ if ($id > 0)
 			imagettftext($image, 6, 0, 13, 37, $txt_color2, ROOT_PATH."/static/images/KLMNFP2005.ttf", $planet['name']." [".$planet['galaxy'].":".$planet['system'].":".$planet['planet']."]");
 
 			// Очки
-			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Очки: ".\Xnova\Format::number(intval($stats['total_points']))."");
-			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Место: ".\Xnova\Format::number(intval($stats['total_rank']))." из ".\Xnova\Format::number(Options::get('users_total', 0))."");
+			imagettftext($image, 6, 0, 13, 55, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Очки: ".\App\Format::number(intval($stats['total_points']))."");
+			imagettftext($image, 6, 0, 13, 70, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", "Место: ".\App\Format::number(intval($stats['total_rank']))." из ".\App\Format::number(Options::get('users_total', 0))."");
 
 			// Дата генерации
 			imagettftext($image, 6, 0, 365, 13, $txt_color, ROOT_PATH."/static/images/KLMNFP2005.ttf", date("d.m.Y"));

@@ -1,10 +1,17 @@
 {
+	"name": "xnova/server",
+	"type": "project",
+	"description": "The Xnova game backend server",
     "config": {
         "platform": {
-            "php": "7.3"
-        }
-    },
+            "php": "8.1"
+        },
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
     "require": {
+		"php": "^8.1",
         "nubs/random-name-generator": "^2.1",
         "gumlet/php-image-resize": "^1.9",
 		"ext-mbstring": "*",
@@ -13,15 +20,15 @@
 		"ext-pdo": "*",
 		"ext-iconv": "*",
 		"ext-gd": "*",
-        "laravel/framework": "^7.0",
-        "spatie/laravel-permission": "^3.0",
-        "zelenin/smsru": "^4.1",
-        "laravel/socialite": "^4.3",
-        "socialiteproviders/vkontakte": "^4.0",
-        "backpack/crud": "^4.1",
-        "backpack/permissionmanager": "^5.0",
-        "backpack/settings": "^3.0",
-        "predis/predis": "^1.1"
+        "laravel/framework": "^9.0.0",
+        "spatie/laravel-permission": "^5.7.0",
+        "zelenin/smsru": "^5.0.0",
+        "laravel/socialite": "^5.5.7",
+        "socialiteproviders/vkontakte": "^5.0.0",
+        "backpack/crud": "^5.4.14",
+        "backpack/permissionmanager": "^6.0.15",
+        "backpack/settings": "^3.0.16",
+        "predis/predis": "^2.0.0"
 	},
 	"replace": {
 		"symfony/polyfill-mbstring": "*",
@@ -31,19 +38,35 @@
 		"symfony/polyfill-ctype": "*",
 		"symfony/polyfill-intl-idn": "*"
 	},
+	"require-dev": {
+		"barryvdh/laravel-debugbar": "^3.3"
+	},
 	"autoload": {
-		 "psr-4": {
-			 "Xnova\\": "app/"
-		 }
+		"psr-4": {
+			"App\\": "app/",
+			"Database\\Factories\\": "database/factories/",
+			"Database\\Seeders\\": "database/seeders/"
+		}
 	},
 	"scripts": {
      	"post-autoload-dump": [
          	"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
          	"@php artisan package:discover --ansi"
-     	]
+     	],
+		"post-update-cmd": [
+			"@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+		],
+		"post-root-package-install": [
+			"@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+		],
+		"post-create-project-cmd": [
+			"@php artisan key:generate --ansi"
+		]
  	},
-    "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.3",
-        "barryvdh/laravel-ide-helper": "^2.7"
-    }
+	"extra": {
+		"laravel": {
+			"dont-discover": []
+		}
+	},
+	"prefer-stable": true
 }

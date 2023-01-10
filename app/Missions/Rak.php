@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -9,11 +9,11 @@ namespace Xnova\Missions;
  */
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Entity\Coordinates;
-use Xnova\FleetEngine;
-use Xnova\Planet;
-use Xnova\User;
-use Xnova\Vars;
+use App\Entity\Coordinates;
+use App\FleetEngine;
+use App\Planet;
+use App\User;
+use App\Vars;
 
 class Rak extends FleetEngine implements Mission
 {

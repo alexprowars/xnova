@@ -1,13 +1,13 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Spatie\Permission\Traits\HasRoles;
-use Xnova\Mail\UserLostPassword;
+use App\Mail\UserLostPassword;
 
 /**
  * @property int $id
@@ -62,7 +62,7 @@ class User extends Authenticatable
 
 	public function info()
 	{
-		return $this->hasOne(Account::class, 'id', 'id');
+		return $this->hasOne(UserDetail::class, 'id', 'id');
 	}
 
 	public function getId(): int
@@ -96,7 +96,7 @@ class User extends Authenticatable
 
 	public function getEmailForPasswordReset()
 	{
-		$info = Account::query()->find($this->id, ['email']);
+		$info = UserDetail::query()->find($this->id, ['email']);
 
 		return $info->email ?? null;
 	}

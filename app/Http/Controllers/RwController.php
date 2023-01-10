@@ -6,13 +6,13 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\URL;
-use Xnova\CombatReport;
-use Xnova\Controller;
-use Xnova\Exceptions\PageException;
-use Xnova\Models\Report;
+use App\CombatReport;
+use App\Controller;
+use App\Exceptions\PageException;
+use App\Models\Report;
 
 class RwController extends Controller
 {

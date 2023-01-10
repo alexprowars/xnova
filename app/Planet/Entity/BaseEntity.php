@@ -1,13 +1,13 @@
 <?php
 
-namespace Xnova\Planet\Entity;
+namespace App\Planet\Entity;
 
 use Illuminate\Support\Facades\Auth;
-use Xnova\Models\PlanetEntity;
-use Xnova\Planet;
-use Xnova\Planet\Contracts\PlanetEntityInterface;
-use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
-use Xnova\Vars;
+use App\Models\PlanetEntity;
+use App\Planet;
+use App\Planet\Contracts\PlanetEntityInterface;
+use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\Vars;
 
 class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEntityProductionInterface
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
-use Xnova\Format;
-use Xnova\Helpers;
+use App\Format;
+use App\Helpers;
 
 /** @noinspection PhpUnused */
 class IndexController extends Controller

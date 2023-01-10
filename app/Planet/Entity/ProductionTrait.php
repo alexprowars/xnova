@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Planet\Entity;
+namespace App\Planet\Entity;
 
-use Xnova\Planet\Resources;
-use Xnova\Vars;
+use App\Planet\Resources;
+use App\Vars;
 
 /**
  * @mixin BaseEntity

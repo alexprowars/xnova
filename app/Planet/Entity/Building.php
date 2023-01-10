@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Planet\Entity;
+namespace App\Planet\Entity;
 
-use Xnova\Exceptions\Exception;
-use Xnova\Planet;
-use Xnova\Planet\Contracts\PlanetBuildingEntityInterface;
-use Xnova\Planet\Production;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Planet;
+use App\Planet\Contracts\PlanetBuildingEntityInterface;
+use App\Planet\Production;
+use App\Vars;
 
 class Building extends BaseEntity implements PlanetBuildingEntityInterface
 {

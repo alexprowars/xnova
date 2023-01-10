@@ -1,31 +1,21 @@
 <?php
 
-namespace Xnova\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Xnova\Exceptions\Exception;
-use Xnova\Game;
-use Xnova\Controller;
-use Xnova\Http\Resources\Responce;
-use Xnova\Models\UserQuest;
-use Xnova\Planet\ApiData;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Http\Resources\Responce;
 
 class ApiResponse
 {
 	public function handle(Request $request, Closure $next): Response
 	{
-		Auth::onceUsingId(1);
-
 		/** @var JsonResponse $response */
 		$response = $next($request);
 
@@ -57,6 +47,10 @@ class ApiResponse
 				return new JsonResponse([
 					'data' => $response->getOriginalContent(),
 				], $code);
+			} else {
+				return new JsonResponse([
+					'data' => array_merge(Responce::make(null)->toArray(request()), $response->getOriginalContent()),
+				]);
 			}
 		}
 

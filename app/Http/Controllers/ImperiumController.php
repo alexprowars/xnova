@@ -6,14 +6,14 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Models\Fleet;
-use Xnova\Planet;
-use Xnova\Queue;
-use Xnova\Controller;
-use Xnova\User;
-use Xnova\Vars;
+use App\Models\Fleet;
+use App\Planet;
+use App\Queue;
+use App\Controller;
+use App\User;
+use App\Vars;
 
 class ImperiumController extends Controller
 {
@@ -102,7 +102,7 @@ class ImperiumController extends Controller
 			}
 
 			foreach (Vars::getItemsByType('prod') as $ProdID) {
-				$row['factor'][$ProdID] = $planet->getEntity($ProdID)->factor * 10;
+				$row['factor'][$ProdID] = $planet->getEntity($ProdID)?->factor * 10;
 			}
 
 			$build_hangar = [];
@@ -156,15 +156,15 @@ class ImperiumController extends Controller
 			$row['elements'] = [];
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i) {
-				$row['elements'][$i] = $items[$i];
+				$row['elements']['e' . $i] = $items[$i];
 			}
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
-				$row['elements'][$i] = $items[$i];
+				$row['elements']['e' . $i] = $items[$i];
 			}
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i) {
-				$row['elements'][$i] = $items[$i];
+				$row['elements']['e' . $i] = $items[$i];
 			}
 
 			$parse['planets'][] = $row;

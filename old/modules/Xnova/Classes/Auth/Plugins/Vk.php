@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Auth\Plugins;
+namespace App\Auth\Plugins;
 
 /**
  * @author AlexPro

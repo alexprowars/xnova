@@ -6,18 +6,18 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
-use Xnova\Entity\Coordinates;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Files;
-use Xnova\Models\Planet;
-use Xnova\Controller;
-use Xnova\User;
+use App\Entity\Coordinates;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Files;
+use App\Models\Planet;
+use App\Controller;
+use App\User;
 
 class PlayersController extends Controller
 {
@@ -29,7 +29,7 @@ class PlayersController extends Controller
 			throw new PageException('Профиль не найден');
 		}
 
-		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN accounts ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
+		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN user_details ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
 
 		if (!$user) {
 			throw new PageException('Профиль не найден');

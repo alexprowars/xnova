@@ -6,14 +6,14 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Models;
-use Xnova\Controller;
-use Xnova\Vars;
-use Xnova\Entity;
+use App\Exceptions\ErrorException;
+use App\Models;
+use App\Controller;
+use App\Vars;
+use App\Entity;
 
 class FleetController extends Controller
 {
@@ -112,7 +112,7 @@ class FleetController extends Controller
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
 			if ($this->planet->getLevel($i) > 0) {
-				$parse['ships'][] = (new \Xnova\Planet\Entity\Ship($i, $this->planet->getLevel($i)))->getInfo();
+				$parse['ships'][] = (new \App\Planet\Entity\Ship($i, $this->planet->getLevel($i)))->getInfo();
 			}
 		}
 

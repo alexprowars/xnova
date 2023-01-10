@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
@@ -19,7 +19,7 @@ class AlliancesController extends Controller
 
 	public function index()
 	{
-		$query = $this->db->query("SELECT a.`id`, a.`name`, a.`tag`,  a.`owner`, a.`create_time`, a.`description`, a.`text`, a.`members`, u.`username` FROM alliance a, users u WHERE u.id = a.owner");
+		$query = $this->db->query("SELECT a.`id`, a.`name`, a.`tag`,  a.`owner`, a.`create_time`, a.`description`, a.`text`, a.`members`, u.`username` FROM alliances a, users u WHERE u.id = a.owner");
 
 		$parse = [];
 		$parse['alliance'] = [];
@@ -38,7 +38,7 @@ class AlliancesController extends Controller
 
 		if (isset($_GET['desc'])) {
 			$ally_id = intval($_GET['desc']);
-			$info = $this->db->query("SELECT `description` FROM alliance WHERE id='" . $ally_id . "'");
+			$info = $this->db->query("SELECT `description` FROM alliances WHERE id='" . $ally_id . "'");
 			$ally_text = $info->fetch();
 
 			$parse['desc'] = "<tr>"
@@ -50,7 +50,7 @@ class AlliancesController extends Controller
 
 		if (isset($_GET['edit'])) {
 			$ally_id = intval($_GET['edit']);
-			$info = $this->db->query("SELECT `description` FROM alliance WHERE id='" . $ally_id . "'");
+			$info = $this->db->query("SELECT `description` FROM alliances WHERE id='" . $ally_id . "'");
 			$ally_text = $info->fetch();
 
 			$parse['desc'] = "<tr>"
@@ -68,7 +68,7 @@ class AlliancesController extends Controller
 					throw new \Exception('Access denied');
 				}
 
-				$this->db->query("UPDATE alliance SET `description` = '" . addslashes($_POST['desc']) . "' WHERE `id` = '" . intval($_GET['edit']) . "'");
+				$this->db->query("UPDATE alliances SET `description` = '" . addslashes($_POST['desc']) . "' WHERE `id` = '" . intval($_GET['edit']) . "'");
 
 				$this->response->redirect('admin/alliancelist/');
 			}
@@ -78,7 +78,7 @@ class AlliancesController extends Controller
 		if (isset($_GET['allyname'])) {
 			$ally_id = intval($_GET['allyname']);
 
-			$u = $this->db->query("SELECT `image`, `web`, `name`, `tag` FROM alliance WHERE `id` = '" . $ally_id . "'")->fetch();
+			$u = $this->db->query("SELECT `image`, `web`, `name`, `tag` FROM alliances WHERE `id` = '" . $ally_id . "'")->fetch();
 
 			$parse['name'] = "<tr>"
 					. "<td colspan=9 class=c>Название / обозначение / лого / сайт</td></tr>"
@@ -104,7 +104,7 @@ class AlliancesController extends Controller
 					throw new \Exception('Access denied');
 				}
 
-				$this->db->query("UPDATE alliance SET `name` = '" . addslashes($_POST['name']) . "', `tag` = '" . addslashes($_POST['tag']) . "', `image` = '" . addslashes($_POST['image']) . "', `web` = '" . addslashes($_POST['web']) . "' WHERE `id` = '" . intval($_GET['allyname']) . "'");
+				$this->db->query("UPDATE alliances SET `name` = '" . addslashes($_POST['name']) . "', `tag` = '" . addslashes($_POST['tag']) . "', `image` = '" . addslashes($_POST['image']) . "', `web` = '" . addslashes($_POST['web']) . "' WHERE `id` = '" . intval($_GET['allyname']) . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
 		}
@@ -188,7 +188,7 @@ class AlliancesController extends Controller
 		if (isset($_GET['leader'])) {
 			$ally_id = intval($_GET['leader']);
 
-			$query = $this->db->query("SELECT `owner` FROM alliance");
+			$query = $this->db->query("SELECT `owner` FROM alliances");
 			$u = $query->fetch();
 			$users = $this->db->query("SELECT `username` FROM users WHERE id='" . $u['owner'] . "'");
 			$a = $users->fetch();
@@ -216,7 +216,7 @@ class AlliancesController extends Controller
 				$a = $sq->fetch();
 
 				if ($a['ally_id'] == $_GET['leader']) {
-					$this->db->query("UPDATE alliance SET `owner` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
+					$this->db->query("UPDATE alliances SET `owner` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
 				}
 
 				$this->response->redirect('admin/alliancelist/');

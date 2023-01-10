@@ -6,14 +6,14 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xnova\Controller;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models;
-use Xnova\Vars;
+use App\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\Models;
+use App\Vars;
 
 class MerchantController extends Controller
 {

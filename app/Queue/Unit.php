@@ -6,13 +6,13 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Queue;
+namespace App\Queue;
 
-use Xnova\Models\LogHistory;
-use Xnova\Planet\EntityFactory;
-use Xnova\Queue;
-use Xnova\Vars;
-use Xnova\Models;
+use App\Models\LogHistory;
+use App\Planet\EntityFactory;
+use App\Queue;
+use App\Vars;
+use App\Models;
 
 class Unit
 {

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFilesTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('files', function (Blueprint $table) {
@@ -21,4 +20,4 @@ class CreateFilesTable extends Migration
 	{
 		Schema::drop('files');
 	}
-}
+};

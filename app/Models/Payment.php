@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;

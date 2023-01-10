@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLogIpsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('log_ips', function (Blueprint $table) {
@@ -19,4 +18,4 @@ class CreateLogIpsTable extends Migration
 	{
 		Schema::drop('log_ips');
 	}
-}
+};

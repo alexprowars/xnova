@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use DirectoryIterator;
@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
-use Xnova\User;
-use Xnova\Vars;
+use App\User;
+use App\Vars;
 
 class AdminViewData
 {
@@ -50,7 +50,7 @@ class AdminViewData
 				continue;
 			}
 
-			$class = 'Xnova\Http\Controllers\Admin\\' . str_replace('.php', '', $file->getFilename());
+			$class = 'App\Http\Controllers\Admin\\' . str_replace('.php', '', $file->getFilename());
 
 			if (method_exists($class, 'getMenu')) {
 				$items = $class::getMenu();

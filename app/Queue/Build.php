@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Queue;
+namespace App\Queue;
 
-use Xnova\Queue;
-use Xnova\Models;
-use Xnova\Planet\Entity;
+use App\Queue;
+use App\Models;
+use App\Planet\Entity;
 
 class Build
 {

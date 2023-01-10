@@ -6,17 +6,17 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
-use Xnova\CombatReport;
-use Xnova\Controller;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models\LogBattle;
-use Xnova\Models\Report;
+use App\CombatReport;
+use App\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Exceptions\RedirectException;
+use App\Models\LogBattle;
+use App\Models\Report;
 
 class LogController extends Controller
 {

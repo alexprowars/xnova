@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\User;
-use Xnova\Controller;
-use Xnova\Models;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\User;
+use App\Controller;
+use App\Models;
 
 class BuddyController extends Controller
 {

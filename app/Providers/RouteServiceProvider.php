@@ -1,17 +1,17 @@
 <?php
 
-namespace Xnova\Providers;
+namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers;
 
 class RouteServiceProvider extends Providers\RouteServiceProvider
 {
-	protected $namespace = 'Xnova\Http\Controllers';
+	public const HOME = '/';
+	protected $namespace = 'App\Http\Controllers';
 
 	public function boot()
 	{
-		parent::boot();
 	}
 
 	public function map()

@@ -6,12 +6,12 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
 use Illuminate\Support\Facades\Request;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models;
-use Xnova\Planet\EntityFactory;
+use App\Exceptions\RedirectException;
+use App\Models;
+use App\Planet\EntityFactory;
 
 class Construction
 {

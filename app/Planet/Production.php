@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Planet;
+namespace App\Planet;
 
-use Xnova\Entity\Coordinates;
-use Xnova\Planet;
-use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
-use Xnova\User;
-use Xnova\Vars;
+use App\Entity\Coordinates;
+use App\Planet;
+use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\User;
+use App\Vars;
 
 class Production
 {

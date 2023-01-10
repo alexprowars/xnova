@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Models\Observers;
+namespace App\Models\Observers;
 
-use Xnova\Planet;
+use App\Planet;
 
 class PlanetObserver
 {

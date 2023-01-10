@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Entity;
+namespace App\Entity;
 
 use Illuminate\Support\Collection;
-use Xnova\Game;
-use Xnova\Planet\Entity\Ship;
+use App\Game;
+use App\Planet\Entity\Ship;
 
 class FleetCollection extends Collection
 {

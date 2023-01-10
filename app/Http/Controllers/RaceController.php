@@ -6,23 +6,23 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models\Account;
-use Xnova\Models\Fleet;
-use Xnova\Planet;
-use Xnova\Queue;
-use Xnova\Controller;
-use Xnova\Vars;
+use App\Exceptions\RedirectException;
+use App\Models\UserDetail;
+use App\Models\Fleet;
+use App\Planet;
+use App\Queue;
+use App\Controller;
+use App\Vars;
 
 class RaceController extends Controller
 {
 	public function change()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM accounts WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM user_details WHERE id = ' . $this->user->id)->free_race_change;
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
 
@@ -44,11 +44,11 @@ class RaceController extends Controller
 					$this->user->race = $r;
 
 					if ($numChanges > 0) {
-						Account::query()->where('id', $this->user->id)->decrement('free_race_change', 1);
+						UserDetail::query()->where('id', $this->user->id)->decrement('free_race_change', 1);
 					} else {
 						$this->user->credits -= 100;
 
-						Account::query()->insert([
+						UserDetail::query()->insert([
 							'uid' => $this->user->id,
 							'time' => time(),
 							'credits' => 100,
@@ -79,7 +79,7 @@ class RaceController extends Controller
 
 	public function index()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM accounts WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM user_details WHERE id = ' . $this->user->id)->free_race_change;
 
 		if (Request::has('sel') && $this->user->race == 0) {
 			$r = Request::input('sel', 0);

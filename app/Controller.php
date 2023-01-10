@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova;
+namespace App;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models\Account;
+use App\Exceptions\RedirectException;
+use App\Models\UserDetail;
 
 class Controller extends BaseController
 {
@@ -50,7 +50,7 @@ class Controller extends BaseController
 
 			// Кэшируем настройки профиля в сессию
 			if (!Session::has('config') || strlen(Session::get('config')) < 10) {
-				$info = Account::query()
+				$info = UserDetail::query()
 					->find(Auth::id(), ['settings']);
 
 				Session::put('config', $info->settings);

@@ -6,10 +6,10 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
-use Xnova\Entity\Coordinates;
-use Xnova\Models;
+use App\Entity\Coordinates;
+use App\Models;
 
 class FleetEngine
 {

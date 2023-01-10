@@ -6,12 +6,12 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Route;
-use Xnova\Construction;
-use Xnova\Controller;
-use Xnova\Exceptions\PageException;
+use App\Construction;
+use App\Controller;
+use App\Exceptions\PageException;
 
 class DefenseController extends Controller
 {

@@ -6,29 +6,29 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Battle\Core\Battle;
-use Xnova\Battle\Core\Round;
-use Xnova\Battle\LangImplementation;
-use Xnova\Battle\Models\Defense;
-use Xnova\Battle\Models\HomeFleet;
-use Xnova\Battle\Models\Player;
-use Xnova\Battle\Models\PlayerGroup;
-use Xnova\Battle\Models\Ship;
-use Xnova\Battle\Models\ShipType;
-use Xnova\Battle\Models\Fleet;
-use Xnova\Battle\Utils\LangManager;
-use Xnova\FleetEngine;
-use Xnova\Format;
-use Xnova\Galaxy;
-use Xnova\Planet;
-use Xnova\Models;
-use Xnova\Queue;
-use Xnova\User;
-use Xnova\Models\Fleet as FleetModel;
-use Xnova\Vars;
+use App\Battle\Core\Battle;
+use App\Battle\Core\Round;
+use App\Battle\LangImplementation;
+use App\Battle\Models\Defense;
+use App\Battle\Models\HomeFleet;
+use App\Battle\Models\Player;
+use App\Battle\Models\PlayerGroup;
+use App\Battle\Models\Ship;
+use App\Battle\Models\ShipType;
+use App\Battle\Models\Fleet;
+use App\Battle\Utils\LangManager;
+use App\FleetEngine;
+use App\Format;
+use App\Galaxy;
+use App\Planet;
+use App\Models;
+use App\Queue;
+use App\User;
+use App\Models\Fleet as FleetModel;
+use App\Vars;
 
 class Attack extends FleetEngine implements Mission
 {

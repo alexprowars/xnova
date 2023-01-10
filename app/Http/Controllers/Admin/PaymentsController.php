@@ -1,14 +1,14 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
-use Xnova\Http\Requests\Admin\PaymentRequest;
-use Xnova\Models\LogCredit;
-use Xnova\Models\Payment;
-use Xnova\User;
+use App\Http\Requests\Admin\PaymentRequest;
+use App\Models\LogCredit;
+use App\Models\Payment;
+use App\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
 /**

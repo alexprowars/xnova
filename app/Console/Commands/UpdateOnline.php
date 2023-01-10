@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Console\Commands;
+namespace App\Console\Commands;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Console\Command;
-use Xnova\Models;
+use App\Models;
 
 class UpdateOnline extends Command
 {

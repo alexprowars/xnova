@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Xnova\Controller;
-use Xnova\Game;
-use Xnova\Models\Statistic;
+use App\Controller;
+use App\Game;
+use App\Models\Statistic;
 
 class StatController extends Controller
 {
@@ -116,9 +116,9 @@ class StatController extends Controller
 		$position = ($parse['page'] - 1) * 100;
 
 		if ($type == 6 || $type == 7) {
-			$query = DB::select("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliance a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
+			$query = DB::select("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
 		} else {
-			$query = DB::select("SELECT s.*, u.username, u.race FROM statpoints s LEFT JOIN users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
+			$query = DB::select("SELECT s.*, u.username, u.race FROM statistics s LEFT JOIN users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
 		}
 
 		$position++;
@@ -179,7 +179,7 @@ class StatController extends Controller
 
 		$position = ($parse['page'] - 1) * 100;
 
-		$query = DB::select("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM statpoints s, alliance a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+		$query = DB::select("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 
@@ -219,7 +219,7 @@ class StatController extends Controller
 			'page' => 0
 		];
 
-		$query = DB::select("SELECT * FROM statpoints WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $this->field . "_rank` ASC;");
+		$query = DB::select("SELECT * FROM statistics WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $this->field . "_rank` ASC;");
 
 		foreach ($query as $item) {
 			$row = [];

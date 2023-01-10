@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -8,7 +8,7 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\FleetEngine;
+use App\FleetEngine;
 
 class Assault extends FleetEngine implements Mission
 {

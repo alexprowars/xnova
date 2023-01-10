@@ -6,10 +6,10 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Controller;
-use Xnova\Vars;
+use App\Controller;
+use App\Vars;
 
 class SimController extends Controller
 {

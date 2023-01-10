@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Battle\Core;
+namespace App\Battle\Core;
 
-use Xnova\Battle\Models\PlayerGroup;
+use App\Battle\Models\PlayerGroup;
 
 class Battle
 {

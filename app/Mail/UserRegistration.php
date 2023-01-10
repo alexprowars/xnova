@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Mail;
+namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\File;

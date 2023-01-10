@@ -6,12 +6,12 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Session;
-use Xnova\Entity\Coordinates;
-use Xnova\Models\Planet;
+use App\Entity\Coordinates;
+use App\Models\Planet;
 
 class Galaxy
 {
@@ -22,10 +22,10 @@ class Galaxy
 		$planet = Setting::get('LastSettedPlanetPos');
 
 		do {
-			$isFree = self::getFreePositions(
+			$isFree = $this->getFreePositions(
 				new Coordinates($galaxy, $system),
-				round(config('settings.maxPlanetInSystem') * 0.2),
-				round(config('settings.maxPlanetInSystem') * 0.8)
+				(int) round(config('settings.maxPlanetInSystem') * 0.2),
+				(int) round(config('settings.maxPlanetInSystem') * 0.8)
 			);
 
 			if (count($isFree) > 0) {
@@ -35,7 +35,7 @@ class Galaxy
 			}
 
 			if ($position > 0 && $planet < config('settings.maxRegPlanetsInSystem', 3)) {
-				$planet += 1;
+				$planet++;
 			} else {
 				$planet = 1;
 
@@ -45,10 +45,10 @@ class Galaxy
 					if ($galaxy >= config('settings.maxGalaxyInWorld')) {
 						$galaxy = 1;
 					} else {
-						$galaxy += 1;
+						$galaxy++;
 					}
 				} else {
-					$system += 1;
+					$system++;
 				}
 			}
 		} while ($this->isPositionFree(new Coordinates($galaxy, $system, $position)) === false);
@@ -65,15 +65,14 @@ class Galaxy
 			Setting::set('LastSettedSystemPos', $system);
 			Setting::set('LastSettedPlanetPos', $planet);
 
-			User::query()
-				->where('id', $userId)
+			User::find($userId)
 				->update([
-				'planet_id' => $planetId,
-				'planet_current' => $planetId,
-				'galaxy' => $galaxy,
-				'system' => $system,
-				'planet' => $position
-			]);
+					'planet_id' => $planetId,
+					'planet_current' => $planetId,
+					'galaxy' => $galaxy,
+					'system' => $system,
+					'planet' => $position
+				]);
 		}
 
 		return $planetId;
@@ -117,8 +116,8 @@ class Galaxy
 		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPosition(), 1));
 
 		if ($planet && $planet->parent_planet == 0) {
-			$maxtemp = $planet->temp_max - rand(10, 45);
-			$mintemp = $planet->temp_min - rand(10, 45);
+			$maxtemp = $planet->temp_max - random_int(10, 45);
+			$mintemp = $planet->temp_min - random_int(10, 45);
 
 			$chance = min($chance, 20);
 
@@ -157,7 +156,7 @@ class Galaxy
 
 	public function isPositionFree(Coordinates $target)
 	{
-		if (!$target->isEmpty()) {
+		if ($target->isEmpty()) {
 			return false;
 		}
 
@@ -169,9 +168,7 @@ class Galaxy
 			$exist->where('planet_type', $target->getType());
 		}
 
-		$exist = $exist->count();
-
-		return (!($exist > 0));
+		return !$exist->count();
 	}
 
 	public function getFreePositions(Coordinates $target, $startPosition = 1, $endPosition = 15)
@@ -181,7 +178,7 @@ class Galaxy
 			->where('system', $target->getSystem())
 			->where('planet', '>=', $startPosition)
 			->where('planet', '<=', $endPosition)
-			->get('id, planet')
+			->get()
 			->keyBy('planet');
 
 		$result = [];

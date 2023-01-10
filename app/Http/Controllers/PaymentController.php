@@ -6,12 +6,12 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use Xnova\User;
-use Xnova\Models;
-use Xnova\Controller;
+use App\User;
+use App\Models;
+use App\Controller;
 
 class PaymentController extends Controller
 {

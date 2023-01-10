@@ -6,13 +6,13 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Xnova\Models\Money;
-use Xnova\Models\User;
+use App\Models\Money;
+use App\Models\User;
 
 class Game
 {

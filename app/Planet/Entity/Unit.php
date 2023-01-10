@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Planet\Entity;
+namespace App\Planet\Entity;
 
-use Xnova\Planet\Contracts\PlanetUnitEntityInterface;
+use App\Planet\Contracts\PlanetUnitEntityInterface;
 
 class Unit extends BaseEntity implements PlanetUnitEntityInterface
 {

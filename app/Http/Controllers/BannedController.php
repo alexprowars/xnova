@@ -6,10 +6,10 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
+use App\Controller;
 
 class BannedController extends Controller
 {

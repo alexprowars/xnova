@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
-use Xnova\Planet\Contracts\PlanetEntityProductionInterface;
-use Xnova\Planet\EntityFactory;
-use Xnova\Planet\Resources;
+use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\Planet\EntityFactory;
+use App\Planet\Resources;
 
 class Building
 {

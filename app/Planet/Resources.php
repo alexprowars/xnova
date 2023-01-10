@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Planet;
+namespace App\Planet;
 
 use Illuminate\Contracts\Support\Arrayable;
 

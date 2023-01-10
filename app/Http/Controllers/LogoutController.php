@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Xnova\Controller;
-use Xnova\Exceptions\PageException;
+use App\Controller;
+use App\Exceptions\PageException;
 
 class LogoutController extends Controller
 {

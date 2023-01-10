@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova;
+namespace App;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Auth;
@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
-use Xnova\Exceptions\Exception;
-use Xnova\Mail\UserRegistration;
-use Xnova\Models\Alliance;
-use Xnova\Models\Message;
-use Xnova\Models;
-use Xnova\User\Tech;
-use Xnova\Queue as QueueManager;
+use App\Exceptions\Exception;
+use App\Mail\UserRegistration;
+use App\Models\Alliance;
+use App\Models\Message;
+use App\Models;
+use App\User\Tech;
+use App\Queue as QueueManager;
 
 class User extends Models\User
 {
@@ -555,7 +555,7 @@ class User extends Models\User
 				throw new Exception('create user error');
 			}
 
-			Models\Account::query()->create([
+			Models\UserDetail::query()->create([
 				'id' => $user->id,
 				'email' => $data['email'] ?? '',
 				'create_time' => time(),

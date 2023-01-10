@@ -4,13 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNotesTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('notes', function (Blueprint $table) {
 			$table->id();
-			$table->integer('user_id')->nullable()->index('owner');
+			$table->unsignedBigInteger('user_id')->index('owner');
 			$table->integer('time')->nullable();
 			$table->boolean('priority')->nullable();
 			$table->string('title', 60)->nullable();
@@ -22,4 +21,4 @@ class CreateNotesTable extends Migration
 	{
 		Schema::drop('notes');
 	}
-}
+};

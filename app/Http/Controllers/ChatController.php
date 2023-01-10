@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Xnova\Controller;
-use Xnova\Events\ChatMessage;
-use Xnova\Events\ChatPrivateMessage;
-use Xnova\Exceptions\Exception;
-use Xnova\Models\Chat;
+use App\Controller;
+use App\Events\ChatMessage;
+use App\Events\ChatPrivateMessage;
+use App\Exceptions\Exception;
+use App\Models\Chat;
 
 class ChatController extends Controller
 {

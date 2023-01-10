@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Xnova\Controller;
-use Xnova\Exceptions\Exception;
-use Xnova\Helpers;
-use Xnova\Models;
-use Xnova\User;
+use App\Controller;
+use App\Exceptions\Exception;
+use App\Helpers;
+use App\Models;
+use App\User;
 
 class IndexController extends Controller
 {
@@ -45,7 +45,7 @@ class IndexController extends Controller
 				$errors[] = __('reg.error_confirm');
 			}
 
-			$checkExist = Models\Account::query()->where('email', $email)->exists();
+			$checkExist = Models\UserDetail::query()->where('email', $email)->exists();
 
 			if ($checkExist) {
 				$errors[] = __('reg.error_emailexist');

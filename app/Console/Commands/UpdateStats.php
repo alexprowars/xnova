@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Xnova\UpdateStatistics;
-use Xnova\Vars;
+use App\UpdateStatistics;
+use App\Vars;
 
 class UpdateStats extends Command
 {

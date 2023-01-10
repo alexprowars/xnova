@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\User;
+namespace App\User;
 
-use Xnova\Exceptions\Exception;
-use Xnova\Models\UserTech;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Models\UserTech;
+use App\Vars;
 
 trait Tech
 {

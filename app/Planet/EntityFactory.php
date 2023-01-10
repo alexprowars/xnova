@@ -1,16 +1,16 @@
 <?php
 
-namespace Xnova\Planet;
+namespace App\Planet;
 
 use Illuminate\Support\Facades\Auth;
-use Xnova\Entity\Research;
-use Xnova\Models\PlanetEntity;
-use Xnova\Planet;
-use Xnova\Planet\Entity\Building;
-use Xnova\Exceptions\Exception;
-use Xnova\Planet\Entity\Defence;
-use Xnova\Planet\Entity\Ship;
-use Xnova\Vars;
+use App\Entity\Research;
+use App\Models\PlanetEntity;
+use App\Planet;
+use App\Planet\Entity\Building;
+use App\Exceptions\Exception;
+use App\Planet\Entity\Defence;
+use App\Planet\Entity\Ship;
+use App\Vars;
 
 class EntityFactory
 {

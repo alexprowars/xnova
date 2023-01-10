@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -9,9 +9,9 @@ namespace Xnova\Missions;
  */
 
 use Illuminate\Support\Facades\DB;
-use Xnova\FleetEngine;
-use Xnova\Format;
-use Xnova\User;
+use App\FleetEngine;
+use App\Format;
+use App\User;
 
 class Recycling extends FleetEngine implements Mission
 {

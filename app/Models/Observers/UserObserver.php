@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Models\Observers;
+namespace App\Models\Observers;
 
-use Xnova\User;
+use App\User;
 
 class UserObserver
 {

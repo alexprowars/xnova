@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Battle\Core;
+namespace App\Battle\Core;
 
-use Xnova\Battle\CombatObject\Fire;
-use Xnova\Battle\CombatObject\FireManager;
-use Xnova\Battle\Models\PlayerGroup;
+use App\Battle\CombatObject\Fire;
+use App\Battle\CombatObject\FireManager;
+use App\Battle\Models\PlayerGroup;
 
 /**
  * Round
@@ -232,7 +232,7 @@ class Round
 				foreach ($fleetPS as $idTypeD => $typeDPS) {
 					foreach ($typeDPS as $typeAPS) {
 						/**
-						 * @var \Xnova\Battle\CombatObject\PhysicShot $typeAPS
+						 * @var \App\Battle\CombatObject\PhysicShot $typeAPS
 						 */
 						$ass += $typeAPS->getAssorbedDamage();
 					}

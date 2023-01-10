@@ -6,7 +6,7 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -14,18 +14,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Fleet;
-use Xnova\Game;
-use Xnova\Helpers;
-use Xnova\Models;
-use Xnova\Planet;
-use Xnova\Queue;
-use Xnova\Models\Fleet as FleetModel;
-use Xnova\Controller;
-use Xnova\Vars;
-use Xnova\Entity;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\Fleet;
+use App\Game;
+use App\Helpers;
+use App\Models;
+use App\Planet;
+use App\Queue;
+use App\Models\Fleet as FleetModel;
+use App\Controller;
+use App\Vars;
+use App\Entity;
 
 class OverviewController extends Controller
 {

@@ -6,21 +6,21 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use Xnova\Battle\Core\Battle;
-use Xnova\Battle\Core\Round;
-use Xnova\Battle\Models\Defense;
-use Xnova\Battle\Models\Fleet;
-use Xnova\Battle\Models\Player;
-use Xnova\Battle\Models\PlayerGroup;
-use Xnova\Battle\Models\Ship;
-use Xnova\Battle\Models\ShipType;
-use Xnova\CombatReport;
-use Xnova\Controller;
-use Xnova\Vars;
+use App\Battle\Core\Battle;
+use App\Battle\Core\Round;
+use App\Battle\Models\Defense;
+use App\Battle\Models\Fleet;
+use App\Battle\Models\Player;
+use App\Battle\Models\PlayerGroup;
+use App\Battle\Models\Ship;
+use App\Battle\Models\ShipType;
+use App\CombatReport;
+use App\Controller;
+use App\Vars;
 
 class XnsimController extends Controller
 {
@@ -231,7 +231,7 @@ class XnsimController extends Controller
 	{
 		$playerGroupObj = new PlayerGroup();
 
-		$model = new \Xnova\Models\Fleet();
+		$model = new \App\Models\Fleet();
 
 		for ($i = $s; $i < MAX_SLOTS * 2; $i++) {
 			if ($i <= MAX_SLOTS && $i < (MAX_SLOTS + $s) && $r[$i] != "") {

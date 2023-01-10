@@ -83,6 +83,9 @@ return [
 		'password' => '',
 		'from' => '',
 	],
+	'recaptcha' => [
+		'public_key' => '11',
+	],
 	'robokassa' => [
 		'login' => 75835,
 		'public' => 's9veqtsa',

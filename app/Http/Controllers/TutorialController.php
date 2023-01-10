@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Format;
-use Xnova\Controller;
-use Xnova\Models;
-use Xnova\Vars;
+use App\Exceptions\PageException;
+use App\Exceptions\RedirectException;
+use App\Format;
+use App\Controller;
+use App\Models;
+use App\Vars;
 
 class TutorialController extends Controller
 {

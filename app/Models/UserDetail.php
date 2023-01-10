@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 /**
  * @author AlexPro
@@ -28,10 +28,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $birthday
  * @property int $free_race_change
  */
-class Account extends Model
+class UserDetail extends Model
 {
 	public $timestamps = false;
 	protected $guarded = [];
+	public $table = 'user_details';
 
 	public function getSettings()
 	{

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAllianceDiplomaciesTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('alliance_diplomacies', function (Blueprint $table) {
@@ -23,4 +22,4 @@ class CreateAllianceDiplomaciesTable extends Migration
 	{
 		Schema::drop('alliance_diplomacies');
 	}
-}
+};

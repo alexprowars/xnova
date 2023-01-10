@@ -6,14 +6,14 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Queue;
+namespace App\Queue;
 
-use Xnova\Models\LogHistory;
-use Xnova\Planet;
-use Xnova\Queue;
-use Xnova\Vars;
-use Xnova\Models;
-use Xnova\Entity;
+use App\Models\LogHistory;
+use App\Planet;
+use App\Queue;
+use App\Vars;
+use App\Models;
+use App\Entity;
 
 class Tech
 {

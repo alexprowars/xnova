@@ -13,8 +13,8 @@ Thumbs.db
 *.map
 *.lock
 *.json
-!package.json
-!composer.json
+!package*.json
+!composer*.json
 *.phar
 /old/public/assets/avatars/*
 /old/public/assets/build/*

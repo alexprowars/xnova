@@ -6,22 +6,22 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers\Fleet;
+namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
-use Xnova\Entity\Coordinates;
-use Xnova\Entity\FleetCollection;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Fleet;
-use Xnova\Format;
-use Xnova\Game;
-use Xnova\Models;
-use Xnova\Planet;
-use Xnova\Vars;
+use App\Controller;
+use App\Entity\Coordinates;
+use App\Entity\FleetCollection;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Fleet;
+use App\Format;
+use App\Game;
+use App\Models;
+use App\Planet;
+use App\Vars;
 
 /** @noinspection PhpUnused */
 class FleetSendController extends Controller

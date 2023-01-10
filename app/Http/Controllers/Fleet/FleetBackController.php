@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers\Fleet;
+namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Http\Request;
-use Xnova\Controller;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Models\Assault;
-use Xnova\Models\AssaultUser;
-use Xnova\Models\Fleet;
+use App\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\Models\Assault;
+use App\Models\AssaultUser;
+use App\Models\Fleet;
 
 class FleetBackController extends Controller
 {

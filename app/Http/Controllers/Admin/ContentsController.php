@@ -1,11 +1,11 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
-use Xnova\Http\Requests\Admin\ContentRequest;
-use Xnova\Models\Content;
+use App\Http\Requests\Admin\ContentRequest;
+use App\Models\Content;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
 /**

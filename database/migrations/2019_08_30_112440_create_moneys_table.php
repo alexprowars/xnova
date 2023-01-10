@@ -4,13 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMoneysTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('moneys', function (Blueprint $table) {
 			$table->id();
-			$table->integer('user_id');
+			$table->unsignedBigInteger('user_id');
 			$table->string('ip', 50)->default('')->index('ip');
 			$table->bigInteger('time')->default(0)->index('time');
 			$table->string('referer', 250)->default('');
@@ -22,4 +21,4 @@ class CreateMoneysTable extends Migration
 	{
 		Schema::drop('moneys');
 	}
-}
+};

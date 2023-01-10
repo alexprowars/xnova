@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Laravel\Socialite\AbstractUser as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;
-use Xnova\Controller;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\Exception;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Mail\UserLostPasswordSuccess;
-use Xnova\User;
-use Xnova\Models;
+use App\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
+use App\Exceptions\SuccessException;
+use App\Mail\UserLostPasswordSuccess;
+use App\User;
+use App\Models;
 
 /** @noinspection PhpUnused */
 class LoginController extends Controller
@@ -40,7 +40,7 @@ class LoginController extends Controller
 			throw new ErrorException('Введите хоть что-нибудь!');
 		}
 
-		$isExist = Models\Account::query()->where('email', $request->post('email'))->exists();
+		$isExist = Models\UserDetail::query()->where('email', $request->post('email'))->exists();
 
 		if (!$isExist) {
 			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
@@ -124,7 +124,7 @@ class LoginController extends Controller
 			$response = $broker->reset(
 				['email' => $email, 'token' => $token, 'password' => $password],
 				function (Models\User $user, $password) {
-					Models\Account::query()->where('id', $user->id)->update([
+					Models\UserDetail::query()->where('id', $user->id)->update([
 						'password' => Hash::make($password)
 					]);
 

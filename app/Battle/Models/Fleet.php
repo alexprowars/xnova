@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Battle\Models;
+namespace App\Battle\Models;
 
-use Xnova\Battle\CombatObject\FireManager;
-use Xnova\Battle\Utils\IterableIterator;
+use App\Battle\CombatObject\FireManager;
+use App\Battle\Utils\IterableIterator;
 use Exception;
 
 /**

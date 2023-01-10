@@ -6,19 +6,19 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Nutnet\LaravelSms\SmsSender;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\Exception;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Game;
-use Xnova\Helpers;
-use Xnova\Models\Support;
-use Xnova\User;
-use Xnova\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
+use App\Exceptions\RedirectException;
+use App\Exceptions\SuccessException;
+use App\Game;
+use App\Helpers;
+use App\Models\Support;
+use App\User;
+use App\Controller;
 
 class SupportController extends Controller
 {

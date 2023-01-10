@@ -4,13 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateChatsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('chats', function (Blueprint $table) {
 			$table->id();
-			$table->bigInteger('user_id')->nullable();
+			$table->unsignedBigInteger('user_id');
 			$table->text('text');
 			$table->timestamps();
 
@@ -25,4 +24,4 @@ class CreateChatsTable extends Migration
 	{
 		Schema::drop('chats');
 	}
-}
+};

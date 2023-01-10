@@ -1,15 +1,15 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
-use Xnova\Entity\Coordinates;
-use Xnova\Galaxy;
+use App\Entity\Coordinates;
+use App\Galaxy;
 use Backpack\CRUD\app\Http\Controllers\Operations;
-use Xnova\Http\Requests\Admin\MoonRequest;
-use Xnova\Models\Planet;
+use App\Http\Requests\Admin\MoonRequest;
+use App\Models\Planet;
 
 /**
  * @property CrudPanel $crud

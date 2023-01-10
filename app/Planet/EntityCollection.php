@@ -1,11 +1,11 @@
 <?php
 
-namespace Xnova\Planet;
+namespace App\Planet;
 
 use Illuminate\Support\Collection;
-use Xnova\Models\PlanetEntity;
-use Xnova\Planet;
-use Xnova\Vars;
+use App\Models\PlanetEntity;
+use App\Planet;
+use App\Vars;
 
 class EntityCollection extends Collection
 {
@@ -38,7 +38,7 @@ class EntityCollection extends Collection
 			$entityId = Vars::getIdByName($entityId);
 		}
 
-		return $this->firstWhere('entity_id', $entityId) ?? null;
+		return $this->firstWhere('entity_id', $entityId);
 	}
 
 	public function getEntityAmount($entityId): int

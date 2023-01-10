@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Battle\Utils;
+namespace App\Battle\Utils;
 
 use Exception;
 

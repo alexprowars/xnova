@@ -1,17 +1,17 @@
 <?php
 
-namespace Xnova\Listeners;
+namespace App\Listeners;
 
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use Xnova\Exceptions\PageException;
-use Xnova\Game;
-use Xnova\Helpers;
-use Xnova\Models\Blocked;
-use Xnova\User;
+use App\Exceptions\PageException;
+use App\Game;
+use App\Helpers;
+use App\Models\Blocked;
+use App\User;
 
 class UserAuthenticated
 {

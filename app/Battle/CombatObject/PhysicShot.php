@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Battle\CombatObject;
+namespace App\Battle\CombatObject;
 
-use Xnova\Battle\Models\ShipType;
+use App\Battle\Models\ShipType;
 use Exception;
 
 class PhysicShot

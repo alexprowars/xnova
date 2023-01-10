@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
-use Xnova\Exceptions\ErrorException;
-use Xnova\Models\LogHistory;
-use Xnova\Planet\EntityFactory;
-use Xnova\Queue\Build;
-use Xnova\Queue\Tech;
-use Xnova\Queue\Unit;
-use Xnova\Entity;
+use App\Exceptions\ErrorException;
+use App\Models\LogHistory;
+use App\Planet\EntityFactory;
+use App\Queue\Build;
+use App\Queue\Tech;
+use App\Queue\Unit;
+use App\Entity;
 
 class Queue
 {

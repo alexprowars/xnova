@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Planet\Contracts;
+namespace App\Planet\Contracts;
 
-use Xnova\Planet\Resources;
+use App\Planet\Resources;
 
 interface PlanetEntityProductionInterface
 {

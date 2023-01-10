@@ -6,7 +6,7 @@ Route::get('banned', 'BannedController@index')->name('banned');
 Route::get('contacts', 'ContactsController@index')->name('contacts');
 Route::get('content', 'ContentController@index')->name('content');
 Route::get('/', 'IndexController@index')->name('index');
-Route::post('registration', 'IndexController@Registration')->name('registration');
+Route::match(['get', 'post'], 'registration', 'IndexController@Registration')->name('registration');
 Route::get('log/{id}', 'LogController@info')->name('log.info');
 Route::get('news', 'NewsController@index')->name('news');
 Route::match(['get', 'post'], 'payment/robokassa', 'PaymentController@robokassa')->name('payment.robokassa');

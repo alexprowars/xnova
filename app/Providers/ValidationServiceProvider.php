@@ -2,7 +2,7 @@
 
 /** @noinspection PhpUnusedParameterInspection */
 
-namespace Xnova\Providers;
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;

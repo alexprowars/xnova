@@ -4,13 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSupportsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('supports', function (Blueprint $table) {
 			$table->id();
-			$table->integer('user_id')->default(0)->index('player_id');
+			$table->unsignedBigInteger('user_id')->index('player_id');
 			$table->integer('time')->default(0);
 			$table->string('subject')->default('');
 			$table->text('text');
@@ -22,4 +21,4 @@ class CreateSupportsTable extends Migration
 	{
 		Schema::drop('supports');
 	}
-}
+};

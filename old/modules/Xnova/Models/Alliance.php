@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Modelsss;
+namespace App\Modelsss;
 
 /**
  * @author AlexPro
@@ -26,7 +26,7 @@ class Alliance extends Model
 
 	public function onConstruct()
 	{
-		$this->hasOne('id', 'Xnova\Models\AllianceMember', 'a_id', ['alias' => 'member']);
+		$this->hasOne('id', 'App\Models\AllianceMember', 'a_id', ['alias' => 'member']);
 
 		$this->useDynamicUpdate(true);
 	}

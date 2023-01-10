@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use Xnova\User;
+use App\Models\UserDetail;
+use App\User;
 
 class UserSeed extends Seeder
 {
@@ -9,7 +12,10 @@ class UserSeed extends Seeder
 	{
 		/** @var User $user */
 		$user = User::query()->create([
-			'name'     => 'Admin',
+			'username' => 'admin',
+		]);
+
+		UserDetail::query()->create([
 			'email'    => 'admin@admin.com',
 			'password' => bcrypt('password'),
 		]);

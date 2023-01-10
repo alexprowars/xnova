@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Battle\CombatObject;
+namespace App\Battle\CombatObject;
 
-use Xnova\Battle\Utils\IterableIterator;
+use App\Battle\Utils\IterableIterator;
 
 /**
  * Class FireManager

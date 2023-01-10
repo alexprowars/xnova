@@ -6,19 +6,19 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers\Fleet;
+namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Xnova\Controller;
-use Xnova\Entity\Coordinates;
-use Xnova\Exceptions\Exception;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Models;
-use Xnova\Game;
-use Xnova\Planet;
-use Xnova\Vars;
-use Xnova\Entity;
+use App\Controller;
+use App\Entity\Coordinates;
+use App\Exceptions\Exception;
+use App\Exceptions\SuccessException;
+use App\Models;
+use App\Game;
+use App\Planet;
+use App\Vars;
+use App\Entity;
 
 class FleetQuickController extends Controller
 {

@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Xnova\Files;
-use Xnova\Fleet;
-use Xnova\Controller;
-use Xnova\Models;
+use App\Files;
+use App\Fleet;
+use App\Controller;
+use App\Models;
 
 class GalaxyController extends Controller
 {
@@ -88,7 +88,7 @@ class GalaxyController extends Controller
 				$j[] = [base64_encode($a->name), $a->galaxy, $a->system, $a->planet];
 			}
 
-			$shortcuts = Models\Account::query()
+			$shortcuts = Models\UserDetail::query()
 				->select(['fleet_shortcut'])
 				->where('id', $this->user->id)
 				->first();
@@ -199,10 +199,10 @@ class GalaxyController extends Controller
 				FROM planets p
 				LEFT JOIN planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0)
 				LEFT JOIN users u ON (u.id = p.id_owner AND p.id_owner != 0)
-				LEFT JOIN accounts ui ON (ui.id = p.id_owner AND p.id_owner != 0)
-				LEFT JOIN alliance a ON (a.id = u.ally_id AND u.ally_id != 0)
-				LEFT JOIN alliance_diplomacy ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
-				LEFT JOIN statpoints s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1')
+				LEFT JOIN user_details ui ON (ui.id = p.id_owner AND p.id_owner != 0)
+				LEFT JOIN alliances a ON (a.id = u.ally_id AND u.ally_id != 0)
+				LEFT JOIN alliance_diplomacies ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
+				LEFT JOIN statistics s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1')
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
 		foreach ($GalaxyRow as $row) {

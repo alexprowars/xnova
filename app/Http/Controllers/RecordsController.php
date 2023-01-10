@@ -6,10 +6,10 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Format;
-use Xnova\Controller;
+use App\Format;
+use App\Controller;
 
 class RecordsController extends Controller
 {

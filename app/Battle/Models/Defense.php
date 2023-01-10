@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Battle\Models;
+namespace App\Battle\Models;
 
 class Defense extends ShipType
 {

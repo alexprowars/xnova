@@ -14,7 +14,7 @@ return [
 	'providers' => [
 		'users' => [
 			'driver' => 'authuserprovider',
-			'model' => Xnova\User::class,
+			'model' => App\User::class,
 		],
 	],
 	/*

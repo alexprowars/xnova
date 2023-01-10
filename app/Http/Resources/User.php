@@ -1,14 +1,14 @@
 <?php
 
-namespace Xnova\Http\Resources;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
-use Xnova\Models\UserQuest;
-use Xnova\Vars;
+use App\Models\UserQuest;
+use App\Vars;
 
 /**
- * @mixin \Xnova\User
+ * @mixin \App\User
  */
 class User extends JsonResource
 {

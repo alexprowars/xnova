@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Models;
-use Xnova\Controller;
-use Xnova\Vars;
-use Xnova\Entity;
+use App\Exceptions\ErrorException;
+use App\Exceptions\SuccessException;
+use App\Models;
+use App\Controller;
+use App\Vars;
+use App\Entity;
 
 class InfoController extends Controller
 {
@@ -266,7 +266,7 @@ class InfoController extends Controller
 			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
 			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
 			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
-			$fleet['speed_full'] = (new \Xnova\Planet\Entity\Ship($itemId))->getSpeed();
+			$fleet['speed_full'] = (new \App\Planet\Entity\Ship($itemId))->getSpeed();
 			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
 
 			$fleet['resources'] = [];

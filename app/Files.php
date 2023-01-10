@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova;
+namespace App;
 
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use Xnova\Exceptions\Exception;
+use App\Exceptions\Exception;
 
 class Files
 {

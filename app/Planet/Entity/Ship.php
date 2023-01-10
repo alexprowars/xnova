@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Planet\Entity;
+namespace App\Planet\Entity;
 
-use Xnova\Exceptions\Exception;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Vars;
 
 class Ship extends Unit
 {

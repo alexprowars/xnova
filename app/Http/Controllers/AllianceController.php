@@ -6,26 +6,26 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Files;
-use Xnova\Format;
-use Xnova\Game;
-use Xnova\Helpers;
-use Xnova\Models\Alliance;
-use Xnova\Models\AllianceMember;
-use Xnova\Models\AllianceRequest;
-use Xnova\Models;
-use Xnova\User;
-use Xnova\Controller;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Exceptions\RedirectException;
+use App\Files;
+use App\Format;
+use App\Game;
+use App\Helpers;
+use App\Models\Alliance;
+use App\Models\AllianceMember;
+use App\Models\AllianceRequest;
+use App\Models;
+use App\User;
+use App\Controller;
 
 class AllianceController extends Controller
 {
@@ -86,7 +86,7 @@ class AllianceController extends Controller
 
 		$parse['allys'] = [];
 
-		$allys = DB::select("SELECT s.total_points, a.id, a.tag, a.name, a.members FROM statpoints s, alliance a WHERE s.stat_type = '2' AND s.stat_code = '1' AND a.id = s.id_owner ORDER BY s.total_points DESC LIMIT 0,15;");
+		$allys = DB::select("SELECT s.total_points, a.id, a.tag, a.name, a.members FROM statistics s, alliances a WHERE s.stat_type = '2' AND s.stat_code = '1' AND a.id = s.id_owner ORDER BY s.total_points DESC LIMIT 0,15;");
 
 		foreach ($allys as $ally) {
 			$ally->total_points = Format::number($ally->total_points);
@@ -621,7 +621,7 @@ class AllianceController extends Controller
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				$ad = DB::select("SELECT id FROM alliance_diplomacy WHERE a_id = " . $this->ally->id . " AND d_id = " . $al->id . "");
+				$ad = DB::select("SELECT id FROM alliance_diplomacies WHERE a_id = " . $this->ally->id . " AND d_id = " . $al->id . "");
 
 				if (count($ad)) {
 					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "/alliance/diplomacy/");
@@ -676,7 +676,7 @@ class AllianceController extends Controller
 
 		$parse['a_list'] = [];
 
-		$ally_list = DB::select("SELECT id, name, tag FROM alliance WHERE id != " . $this->user->ally_id . " AND members > 0");
+		$ally_list = DB::select("SELECT id, name, tag FROM alliances WHERE id != " . $this->user->ally_id . " AND members > 0");
 
 		foreach ($ally_list as $a_list) {
 			$parse['a_list'][] = (array) $a_list;
@@ -750,7 +750,7 @@ class AllianceController extends Controller
 				$sort .= " ASC;";
 			}
 		}
-		$listuser = DB::select("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM users u LEFT JOIN alliance_members m ON m.u_id = u.id LEFT JOIN statpoints s ON s.id_owner = u.id AND stat_type = 1 WHERE u.ally_id = '" . $this->user->ally_id . "'" . $sort . "");
+		$listuser = DB::select("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM users u LEFT JOIN alliance_members m ON m.u_id = u.id LEFT JOIN statistics s ON s.id_owner = u.id AND stat_type = 1 WHERE u.ally_id = '" . $this->user->ally_id . "'" . $sort . "");
 
 		$i = 0;
 		$parse['memberslist'] = [];

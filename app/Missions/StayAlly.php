@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -8,8 +8,8 @@ namespace Xnova\Missions;
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-use Xnova\FleetEngine;
-use Xnova\User;
+use App\FleetEngine;
+use App\User;
 
 class StayAlly extends FleetEngine implements Mission
 {

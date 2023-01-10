@@ -1,13 +1,13 @@
 <?php
 
-namespace Xnova\Battle\CombatObject;
+namespace App\Battle\CombatObject;
 
-use Xnova\Battle\Models\Fleet;
-use Xnova\Battle\Models\ShipType;
-use Xnova\Battle\Utils\Gauss;
-use Xnova\Battle\Utils\GeometricDistribution;
-use Xnova\Battle\Utils\Math;
-use Xnova\Battle\Utils\Number;
+use App\Battle\Models\Fleet;
+use App\Battle\Models\ShipType;
+use App\Battle\Utils\Gauss;
+use App\Battle\Utils\GeometricDistribution;
+use App\Battle\Utils\Math;
+use App\Battle\Utils\Number;
 
 class Fire
 {

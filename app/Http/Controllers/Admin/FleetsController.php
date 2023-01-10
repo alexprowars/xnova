@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Xnova\Fleet;
-use Xnova\Game;
-use Xnova\Models;
+use App\Fleet;
+use App\Game;
+use App\Models;
 
 /** @noinspection PhpUnused */
 class FleetsController extends Controller

@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Battle\Models;
+namespace App\Battle\Models;
 
-use Xnova\Battle\CombatObject\PhysicShot;
-use Xnova\Battle\CombatObject\ShipsCleaner;
+use App\Battle\CombatObject\PhysicShot;
+use App\Battle\CombatObject\ShipsCleaner;
 use Exception;
 
 class ShipType extends Type
@@ -129,7 +129,7 @@ class ShipType extends Type
 		if (!is_numeric($level) || $level <= 0) {
 			return;
 		}
-		
+
 		$diff = $level - $this->armour_tech;
 
 		if ($diff < 0) {

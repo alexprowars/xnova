@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use Xnova\Controller;
-use Xnova\Entity\Coordinates;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Models\Fleet;
-use Xnova\Models;
+use App\Controller;
+use App\Entity\Coordinates;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Exceptions\SuccessException;
+use App\Models\Fleet;
+use App\Models;
 
 class RocketController extends Controller
 {

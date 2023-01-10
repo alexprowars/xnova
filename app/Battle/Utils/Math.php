@@ -1,11 +1,11 @@
 <?php
 
-namespace Xnova\Battle\Utils;
+namespace App\Battle\Utils;
 
 use Exception;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
-use Xnova\Battle\Utils\Number as Number2;
+use App\Battle\Utils\Number as Number2;
 
 abstract class Math
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Entity;
+namespace App\Entity;
 
-use Xnova\Exceptions\Exception;
-use Xnova\Planet\Entity\BaseEntity;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Planet\Entity\BaseEntity;
+use App\Vars;
 
 class Research extends BaseEntity
 {

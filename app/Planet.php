@@ -1,13 +1,13 @@
 <?php
 
-namespace Xnova;
+namespace App;
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Entity\Coordinates;
-use Xnova\Models\PlanetEntity;
-use Xnova\Planet\Entity\BaseEntity;
-use Xnova\Planet\EntityCollection;
-use Xnova\Planet\Production;
+use App\Entity\Coordinates;
+use App\Models\PlanetEntity;
+use App\Planet\Entity\BaseEntity;
+use App\Planet\EntityCollection;
+use App\Planet\Production;
 
 class Planet extends Models\Planet
 {

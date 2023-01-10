@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova;
+namespace App;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Xnova\Mail\UserDelete;
-use Xnova\Models\Fleet;
-use Xnova\Models\Statistic;
-use Xnova\Models;
+use App\Mail\UserDelete;
+use App\Models\Fleet;
+use App\Models\Statistic;
+use App\Models;
 
 class UpdateStatistics
 {
@@ -240,7 +240,7 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, accounts i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, user_details i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		foreach ($list as $user) {
 			DB::statement("UPDATE users SET `deltime` = '" . (time() + config('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
@@ -293,7 +293,7 @@ class UpdateStatistics
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, accounts ui) LEFT JOIN statpoints s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
+		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, user_details ui) LEFT JOIN statistics s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
@@ -437,7 +437,7 @@ class UpdateStatistics
 
 	private function calcPositions()
 	{
-		$qryFormat = 'UPDATE statpoints SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `id_owner` ASC;';
+		$qryFormat = 'UPDATE statistics SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `id_owner` ASC;';
 
 		$rankNames = ['tech', 'fleet', 'defs', 'build', 'total'];
 
@@ -456,13 +456,13 @@ class UpdateStatistics
 		        SUM(u.`defs_count`), SUM(u.`fleet_points`), SUM(u.`fleet_count`), SUM(u.`total_points`), SUM(u.`total_count`),
 		        u.`id_ally`, 0, 2, 1,
 		        a.tech_rank, a.build_rank, a.defs_rank, a.fleet_rank, a.total_rank
-		      FROM statpoints as u
-		        LEFT JOIN statpoints as a ON a.id_owner = u.id_ally AND a.stat_code = 2 AND a.stat_type = 2
+		      FROM statistics as u
+		        LEFT JOIN statistics as a ON a.id_owner = u.id_ally AND a.stat_code = 2 AND a.stat_type = 2
 		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.id_ally<>0
 		      GROUP BY u.`id_ally`");
 
 		DB::statement("UPDATE statistics as new
-		      LEFT JOIN statpoints as old ON old.id_owner = new.id_owner AND old.stat_code = 2 AND old.stat_type = 1
+		      LEFT JOIN statistics as old ON old.id_owner = new.id_owner AND old.stat_code = 2 AND old.stat_type = 1
 		    SET
 		      new.tech_old_rank = old.tech_rank,
 		      new.build_old_rank = old.build_rank,
@@ -509,7 +509,7 @@ class UpdateStatistics
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
 		        u.`id_owner`, 1, " . $this->start . "
-		    FROM statpoints as u
+		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
 
@@ -519,7 +519,7 @@ class UpdateStatistics
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
 		        u.`id_owner`, 2, " . $this->start . "
-		    FROM statpoints as u
+		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
 	}

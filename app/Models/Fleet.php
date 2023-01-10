@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 /**
  * @author AlexPro
@@ -10,7 +10,7 @@ namespace Xnova\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
-use Xnova\Entity\Coordinates;
+use App\Entity\Coordinates;
 
 /**
  * @property $id

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Planet\Contracts;
+namespace App\Planet\Contracts;
 
 interface PlanetEntityInterface
 {

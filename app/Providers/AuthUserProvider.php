@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Providers;
+namespace App\Providers;
 
 use Illuminate\Auth\EloquentUserProvider as UserProvider;
-use Xnova\User;
+use App\User;
 
 class AuthUserProvider extends UserProvider
 {
@@ -15,7 +15,7 @@ class AuthUserProvider extends UserProvider
 
 		return $this->newModelQuery()
 			->select(['users.*', 'info.password'])
-			->join('accounts as info', 'info.id', '=', 'users.id')
+			->join('user_details as info', 'info.id', '=', 'users.id')
 			->where('info.email', $credentials['email'])
 			->get()->first();
 	}

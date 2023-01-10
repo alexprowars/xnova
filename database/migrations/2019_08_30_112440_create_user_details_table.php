@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserDetailsTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('user_details', function (Blueprint $table) {
@@ -32,4 +31,4 @@ class CreateUserDetailsTable extends Migration
 	{
 		Schema::drop('user_details');
 	}
-}
+};

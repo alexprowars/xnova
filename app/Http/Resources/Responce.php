@@ -1,10 +1,10 @@
 <?php
 
-namespace Xnova\Http\Resources;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
-use Xnova\Game;
+use App\Game;
 
 class Responce extends JsonResource
 {
@@ -50,21 +50,21 @@ class Responce extends JsonResource
 			$globalMessage = config('settings.newsMessage', '');
 
 			if (!empty($globalMessage)) {
-				$result['messages'][] = [
+				$data['messages'][] = [
 					'type' => 'warning-static',
 					'text' => $globalMessage
 				];
 			}
 
 			if ($user->deltime > 0) {
-				$result['messages'][] = [
+				$data['messages'][] = [
 					'type' => 'info-static',
 					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' . Game::datezone("d.m.Y", $user->deltime) . ' в ' . Game::datezone("H:i:s", $user->deltime) . '. Выключить режим удаления можно в настройках игры.'
 				];
 			}
 
 			if ($user->vacation > 0) {
-				$result['messages'][] = [
+				$data['messages'][] = [
 					'type' => 'warning-static',
 					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
 				];
@@ -74,7 +74,7 @@ class Responce extends JsonResource
 				$keys = session('_flash')['new'] ?? [];
 
 				foreach ($keys as $key) {
-					$result['messages'][] = [
+					$data['messages'][] = [
 						'type' => $key,
 						'text' => session($key)
 					];

@@ -6,14 +6,14 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 use Illuminate\Support\Facades\Cache;
-use Xnova\Entity\Coordinates;
-use Xnova\FleetEngine;
-use Xnova\Galaxy;
-use Xnova\Models;
-use Xnova\User;
+use App\Entity\Coordinates;
+use App\FleetEngine;
+use App\Galaxy;
+use App\Models;
+use App\User;
 
 class Colonisation extends FleetEngine implements Mission
 {

@@ -1,39 +1,11 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
-use Xnova\Entity\Coordinates;
+use App\Entity\Coordinates;
 
-/**
- * @property $id
- * @property $image
- * @property $name
- * @property $id_owner
- * @property $id_ally
- * @property $planet_type
- * @property $field_current
- * @property $field_max
- * @property $last_update
- * @property $metal
- * @property $crystal
- * @property $deuterium
- * @property $energy_ak
- * @property $temp_min
- * @property $temp_max
- * @property $queue
- * @property $last_active
- * @property $debris_metal
- * @property $debris_crystal
- * @property $galaxy
- * @property $planet
- * @property $system
- * @property $diameter
- * @property $parent_planet
- * @property $last_jump_time
- * @property $destruyed
- */
 class Planet extends Model
 {
 	use CrudTrait;

@@ -6,13 +6,13 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers\Fleet;
+namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Xnova\Controller;
-use Xnova\Models;
-use Xnova\Exceptions\RedirectException;
+use App\Controller;
+use App\Models;
+use App\Exceptions\RedirectException;
 
 /** @noinspection PhpUnused */
 class FleetShortcutController extends Controller
@@ -21,7 +21,7 @@ class FleetShortcutController extends Controller
 	{
 		$this->setTitle('Закладки');
 
-		$inf = Models\Account::query()->find($this->user->id, ['fleet_shortcut']);
+		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		$links = [];
 
@@ -63,7 +63,7 @@ class FleetShortcutController extends Controller
 	{
 		$this->setTitle('Добавление в закладки');
 
-		$inf = Models\Account::query()->find($this->user->id, ['fleet_shortcut']);
+		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		if ($request->isMethod('post')) {
 			$name = $request->post('title', '');
@@ -92,7 +92,7 @@ class FleetShortcutController extends Controller
 
 			$inf['fleet_shortcut'] .= strip_tags(str_replace(',', '', $name)) . "," . $g . "," . $s . "," . $p . "," . $t . "\r\n";
 
-			Models\Account::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
+			Models\UserDetail::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
 			if (Session::has('fleet_shortcut')) {
 				Session::remove('fleet_shortcut');
@@ -133,7 +133,7 @@ class FleetShortcutController extends Controller
 	{
 		$this->setTitle('Редактирование закладки');
 
-		$inf = Models\Account::query()->find($this->user->id, ['fleet_shortcut']);
+		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		if ($request->isMethod('post')) {
 			$scarray = explode("\r\n", $inf['fleet_shortcut']);
@@ -146,7 +146,7 @@ class FleetShortcutController extends Controller
 				unset($scarray[$id]);
 				$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
-				Models\Account::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
+				Models\UserDetail::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
 				if (Session::has('fleet_shortcut')) {
 					Session::remove('fleet_shortcut');
@@ -178,7 +178,7 @@ class FleetShortcutController extends Controller
 				$scarray[$id] = implode(",", $r);
 				$inf['fleet_shortcut'] = implode("\r\n", $scarray);
 
-				Models\Account::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
+				Models\UserDetail::query()->where('id', $this->user->getId())->update(['fleet_shortcut' => $inf['fleet_shortcut']]);
 
 				if (Session::has('fleet_shortcut')) {
 					Session::remove('fleet_shortcut');

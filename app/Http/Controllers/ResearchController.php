@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Construction;
-use Xnova\Controller;
-use Xnova\Exceptions\PageException;
+use App\Construction;
+use App\Controller;
+use App\Exceptions\PageException;
 
 class ResearchController extends Controller
 {

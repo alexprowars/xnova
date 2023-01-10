@@ -6,16 +6,16 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Xnova\Controller;
+use App\Controller;
 
 class RefersController extends Controller
 {
 	public function index()
 	{
-		$refers = DB::select("SELECT u.id, u.username, u.lvl_minier, u.lvl_raid, ui.create_time FROM refs r LEFT JOIN users u ON u.id = r.r_id LEFT JOIN accounts ui ON ui.id = r.r_id WHERE r.u_id = " . $this->user->getId() . " ORDER BY u.id DESC;");
+		$refers = DB::select("SELECT u.id, u.username, u.lvl_minier, u.lvl_raid, ui.create_time FROM refs r LEFT JOIN users u ON u.id = r.r_id LEFT JOIN user_details ui ON ui.id = r.r_id WHERE r.u_id = " . $this->user->getId() . " ORDER BY u.id DESC;");
 
 		$parse['ref'] = [];
 

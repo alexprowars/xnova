@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Entity;
+namespace App\Entity;
 
 use Illuminate\Contracts\Support\Arrayable;
 

@@ -4,14 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQueuesTable extends Migration
-{
+return new class extends Migration {
 	public function up()
 	{
 		Schema::create('queues', function (Blueprint $table) {
 			$table->id();
 			$table->enum('type', array('build','tech','unit'));
-			$table->integer('user_id');
+			$table->unsignedBigInteger('user_id');
 			$table->integer('planet_id');
 			$table->integer('object_id');
 			$table->integer('level');
@@ -25,4 +24,4 @@ class CreateQueuesTable extends Migration
 	{
 		Schema::drop('queues');
 	}
-}
+};

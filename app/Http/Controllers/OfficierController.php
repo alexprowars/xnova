@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Controller;
-use Xnova\Models\LogCredit;
-use Xnova\Vars;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Exceptions\RedirectException;
+use App\Controller;
+use App\Models\LogCredit;
+use App\Vars;
 
 class OfficierController extends Controller
 {

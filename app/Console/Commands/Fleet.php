@@ -1,12 +1,12 @@
 <?php
 
-namespace Xnova\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Xnova\Missions\Mission;
-use Xnova\Models;
-use Xnova\Vars;
+use App\Missions\Mission;
+use App\Models;
+use App\Vars;
 
 class Fleet extends Command
 {
@@ -76,7 +76,7 @@ class Fleet extends Command
 
 					$missionName = $missionObjPattern[$fleetRow->mission];
 
-					$missionName = '\Xnova\Missions\\' . $missionName;
+					$missionName = '\App\Missions\\' . $missionName;
 
 					/** @var $mission Mission */
 					$mission = new $missionName($fleetRow);

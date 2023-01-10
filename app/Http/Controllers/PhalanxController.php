@@ -6,15 +6,15 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Xnova\Exceptions\PageException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Fleet;
-use Xnova\Models;
-use Xnova\Controller;
+use App\Exceptions\PageException;
+use App\Exceptions\RedirectException;
+use App\Fleet;
+use App\Models;
+use App\Controller;
 
 class PhalanxController extends Controller
 {

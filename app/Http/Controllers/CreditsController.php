@@ -6,11 +6,11 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xnova\Controller;
-use Xnova\Models;
+use App\Controller;
+use App\Models;
 
 class CreditsController extends Controller
 {
@@ -31,7 +31,7 @@ class CreditsController extends Controller
 				$id = mt_rand(1000000000000, 9999999999999);
 			} while (Models\Payment::query()->where('transaction_id', $id)->exists());
 
-			$info = Models\Account::query()
+			$info = Models\UserDetail::query()
 				->find($this->user->getId(), ['email']);
 
 			$parse['payment'] = [

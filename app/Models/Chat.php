@@ -1,9 +1,9 @@
 <?php
 
-namespace Xnova\Models;
+namespace App\Models;
 
 use Illuminate\Support\Facades\Auth;
-use Xnova\User;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model

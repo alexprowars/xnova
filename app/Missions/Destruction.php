@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Missions;
+namespace App\Missions;
 
 /**
  * @author AlexPro
@@ -10,9 +10,9 @@ namespace Xnova\Missions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Xnova\FleetEngine;
-use Xnova\Models;
-use Xnova\User;
+use App\FleetEngine;
+use App\Models;
+use App\User;
 
 class Destruction extends FleetEngine implements Mission
 {

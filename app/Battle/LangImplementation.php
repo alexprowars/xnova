@@ -1,8 +1,8 @@
 <?php
 
-namespace Xnova\Battle;
+namespace App\Battle;
 
-use Xnova\Battle\Utils\Lang;
+use App\Battle\Utils\Lang;
 
 class LangImplementation implements Lang
 {

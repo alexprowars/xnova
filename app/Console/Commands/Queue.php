@@ -1,13 +1,13 @@
 <?php
 
-namespace Xnova\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Xnova\Exceptions\Exception;
-use Xnova\Models;
-use Xnova\Planet;
-use Xnova\User;
-use Xnova\Vars;
+use App\Exceptions\Exception;
+use App\Models;
+use App\Planet;
+use App\User;
+use App\Vars;
 
 class Queue extends Command
 {
@@ -54,7 +54,7 @@ class Queue extends Command
 						throw new Exception('Cron::update::queueAction::user or planet not found');
 					}
 
-					$queueManager = new \Xnova\Queue($user, $planet);
+					$queueManager = new \App\Queue($user, $planet);
 					$queueManager->update();
 				} catch (Exception $e) {
 					file_put_contents(ROOT_PATH . '/php_errors.log', "\n\n" . $e->getMessage() . "\n\n", FILE_APPEND);

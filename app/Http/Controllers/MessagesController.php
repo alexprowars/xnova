@@ -6,21 +6,21 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\SuccessException;
-use Xnova\Format;
-use Xnova\Game;
-use Xnova\Models\Message;
-use Xnova\User;
-use Xnova\Controller;
-use Xnova\Models;
+use App\Exceptions\ErrorException;
+use App\Exceptions\SuccessException;
+use App\Format;
+use App\Game;
+use App\Models\Message;
+use App\User;
+use App\Controller;
+use App\Models;
 
 class MessagesController extends Controller
 {
@@ -52,7 +52,7 @@ class MessagesController extends Controller
 			}
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
-				$registerTime = DB::selectOne("SELECT create_time FROM accounts WHERE id = " . $this->user->id . "")->create_time;
+				$registerTime = DB::selectOne("SELECT create_time FROM user_details WHERE id = " . $this->user->id . "")->create_time;
 
 				if ($registerTime > time() - 86400) {
 					$lastSend = Message::query()

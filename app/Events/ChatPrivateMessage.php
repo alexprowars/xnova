@@ -1,6 +1,6 @@
 <?php
 
-namespace Xnova\Events;
+namespace App\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;

@@ -6,13 +6,13 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Xnova\Building;
-use Xnova\Controller;
-use Xnova\Planet\EntityFactory;
-use Xnova\Vars;
-use Xnova\Entity;
+use App\Building;
+use App\Controller;
+use App\Planet\EntityFactory;
+use App\Vars;
+use App\Entity;
 
 class TechController extends Controller
 {

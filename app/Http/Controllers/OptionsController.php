@@ -6,7 +6,7 @@
  * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
-namespace Xnova\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Gumlet\ImageResize;
 use Illuminate\Http\Request;
@@ -17,18 +17,18 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Xnova\Exceptions\ErrorException;
-use Xnova\Exceptions\RedirectException;
-use Xnova\Files;
-use Xnova\Format;
-use Xnova\Game;
-use Xnova\Helpers;
-use Xnova\Mail\UserLostPasswordSuccess;
-use Xnova\Models;
-use Xnova\User;
-use Xnova\Queue;
-use Xnova\Controller;
-use Xnova\Vars;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\Files;
+use App\Format;
+use App\Game;
+use App\Helpers;
+use App\Mail\UserLostPasswordSuccess;
+use App\Models;
+use App\User;
+use App\Queue;
+use App\Controller;
+use App\Vars;
 
 class OptionsController extends Controller
 {
@@ -72,14 +72,14 @@ class OptionsController extends Controller
 
 	public function emailAction(Request $request)
 	{
-		$userInfo = Models\Account::query()->find($this->user->id);
+		$userInfo = Models\UserDetail::query()->find($this->user->id);
 
 		if ($request->post('password') && $request->post('email')) {
 			if (md5($request->post('password')) != $userInfo->password) {
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
-			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . addslashes(htmlspecialchars(trim($request->post('email')))) . "';");
+			$email = DB::selectOne("SELECT id FROM user_details WHERE email = '" . addslashes(htmlspecialchars(trim($request->post('email')))) . "';");
 
 			if ($email) {
 				throw new ErrorException('Данный email уже используется в игре.');
@@ -95,7 +95,7 @@ class OptionsController extends Controller
 
 	public function changeAction(Request $request)
 	{
-		$userInfo = Models\Account::query()->find($this->user->id);
+		$userInfo = Models\UserDetail::query()->find($this->user->id);
 
 		if (
 			$request->post('username')
@@ -117,7 +117,7 @@ class OptionsController extends Controller
 		if ($request->post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email($request->post('email'))) {
 			$e = addslashes(htmlspecialchars(trim($request->post('email'))));
 
-			$email = DB::selectOne("SELECT id FROM accounts WHERE email = '" . $e . "'");
+			$email = DB::selectOne("SELECT id FROM user_details WHERE email = '" . $e . "'");
 
 			if ($email) {
 				throw new ErrorException('Данный email уже используется в игре.');
@@ -125,7 +125,7 @@ class OptionsController extends Controller
 
 			$password = Str::random(10);
 
-			Models\Account::query()->where('id', $this->user->getId())
+			Models\UserDetail::query()->where('id', $this->user->getId())
 				->update([
 					'email' => $e,
 					'password' => md5($password)
@@ -324,7 +324,7 @@ class OptionsController extends Controller
 
 	public function index()
 	{
-		$userInfo = Models\Account::query()->find($this->user->id);
+		$userInfo = Models\UserDetail::query()->find($this->user->id);
 
 		$parse = [];
 		$parse['social'] = config('game.view.socialIframeView', 0) > 0;
