@@ -84,7 +84,8 @@ return [
 		'from' => '',
 	],
 	'recaptcha' => [
-		'public_key' => '11',
+		'public_key' => env('RECAPTCHA_PUBLIC_KEY'),
+		'secret_key' => env('RECAPTCHA_SECRET_KEY'),
 	],
 	'robokassa' => [
 		'login' => 75835,

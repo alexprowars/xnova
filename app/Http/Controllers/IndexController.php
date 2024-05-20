@@ -58,7 +58,7 @@ class IndexController extends Controller
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
-					'secret' => config('settings.recaptcha->secret_key'),
+					'secret' => config('settings.recaptcha.secret_key'),
 					'response' => $request->post('captcha'),
 					'remoteip' => $request->ip()
 				]));

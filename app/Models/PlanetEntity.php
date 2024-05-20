@@ -17,7 +17,7 @@ class PlanetEntity extends Model
 	protected $guarded = [];
 	public $timestamps = false;
 
-	public static function createEmpty(int $entityId, int $level): self
+	public static function createEmpty(int $entityId, int $level = 0): self
 	{
 		return new static([
 			'entity_id' => $entityId,

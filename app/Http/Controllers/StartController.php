@@ -100,7 +100,7 @@ class StartController extends Controller
 			$races[] = [
 				'i' => $i,
 				'name' => $race,
-				'description' => __('infos.info.' . (700 + $i)),
+				'description' => __('info.info.' . (700 + $i)),
 			];
 		}
 

@@ -21,13 +21,10 @@ use App\Mail\UserLostPasswordSuccess;
 use App\User;
 use App\Models;
 
-/** @noinspection PhpUnused */
 class LoginController extends Controller
 {
 	private $socialDrivers = [
-		'facebook',
 		'vkontakte',
-		'google',
 	];
 
 	public function LoginByCredentials(Request $request)

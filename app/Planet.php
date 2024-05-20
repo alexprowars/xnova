@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Planet\EntityFactory;
 use Illuminate\Support\Facades\DB;
 use App\Entity\Coordinates;
 use App\Models\PlanetEntity;
@@ -118,7 +119,8 @@ class Planet extends Models\Planet
 			$this->collectEntities();
 		}
 
-		return $this->entities->getEntity($entityId);
+		return $this->entities->getEntity($entityId)
+			?? EntityFactory::createFromModel(PlanetEntity::createEmpty($entityId), $this);
 	}
 
 	public function updateAmount($entityId, int $amount, bool $isDifferent = false)

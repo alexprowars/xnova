@@ -12,8 +12,6 @@ class AuthServiceProvider extends ServiceProvider
 
 	public function boot(GateContract $gate)
 	{
-		$this->registerPolicies();
-
 		Auth::provider('authuserprovider', function ($app, array $config) {
 			return new AuthUserProvider($app['hash'], $config['model']);
 		});

@@ -42,6 +42,8 @@ class Responce extends JsonResource
 			'planet' => $this->when($planet !== null, Planet::make($planet)),
 			'view' => $controller->getViews(),
 			'page' => $this->resource,
+			'host' => $request->getHttpHost(),
+			'version' => VERSION,
 		];
 
 		if (Auth::check()) {
