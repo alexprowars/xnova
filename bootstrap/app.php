@@ -1,5 +1,12 @@
 <?php
 
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+
 if (!defined('VERSION')) {
 	define('VERSION', '5.0');
 }
@@ -18,56 +25,63 @@ function log_comment($comment)
 	echo "[log]$comment<br>\n";
 }
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+return Application::configure(basePath: dirname(__DIR__))
+	->withRouting(
+		api: __DIR__ . '/../routes/api.php',
+		commands: __DIR__ . '/../routes/console.php',
+		channels: __DIR__ . '/../routes/channels.php',
+		health: '/up',
+	)
+	->withMiddleware(function (Middleware $middleware) {
+		$middleware->group('web', []);
 
-$app = new Illuminate\Foundation\Application(
-    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
-);
+		$middleware->appendToGroup('api', [
+			Illuminate\Cookie\Middleware\EncryptCookies::class,
+			Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+			Illuminate\Session\Middleware\StartSession::class,
+			Illuminate\View\Middleware\ShareErrorsFromSession::class,
+			//Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+			\App\Http\Middleware\ApiResponse::class,
+		]);
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+		$middleware->group('admin', [
+			Illuminate\Cookie\Middleware\EncryptCookies::class,
+			Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+			Illuminate\Session\Middleware\StartSession::class,
+			Illuminate\View\Middleware\ShareErrorsFromSession::class,
+			//Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+			\App\Http\Middleware\AdminCanAccess::class,
+			\App\Http\Middleware\AdminViewData::class,
+		]);
+	})
+	->withExceptions(function (Exceptions $exceptions) {
+		$exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
+			if ($request->is('admin/*')) {
+				return true;
+			}
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+			return $request->expectsJson();
+		});
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
+		$exceptions->render(function (\Exception $e, Request $request) {
+			$data = [
+				'message' => $e->getMessage(),
+			];
 
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
+			$debug = config('app.debug');
 
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
+			if ($debug) {
+				$data['trace'] = $e->getTraceAsString();
+			}
 
-return $app;
+			return new JsonResponse(
+				[
+					'status' => false,
+					'data' => $data
+				],
+				$e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500,
+				$e instanceof HttpExceptionInterface ? $e->getHeaders() : [],
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+			);
+		});
+	})->create();

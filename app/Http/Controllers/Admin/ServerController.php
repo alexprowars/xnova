@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 
-/** @noinspection PhpUnused */
 class ServerController extends Controller
 {
 	public static function getMenu()

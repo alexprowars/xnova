@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\View;
 use App\Format;
 use App\Helpers;
 
-/** @noinspection PhpUnused */
 class IndexController extends Controller
 {
 	public static function getMenu()

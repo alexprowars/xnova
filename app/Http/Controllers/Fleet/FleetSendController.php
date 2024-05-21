@@ -23,7 +23,6 @@ use App\Models;
 use App\Planet;
 use App\Vars;
 
-/** @noinspection PhpUnused */
 class FleetSendController extends Controller
 {
 	protected $loadPlanet = true;

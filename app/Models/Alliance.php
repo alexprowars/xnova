@@ -5,22 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @property $id
- * @property $name
- * @property $tag
- * @property $owner
- * @property $create_time
- * @property $description
- * @property $web
- * @property $text
- * @property $image
- * @property $request
- * @property $request_notallow
- * @property $owner_range
- * @property $ranks
- * @property $members
- */
 class Alliance extends Model
 {
 	public $timestamps = false;

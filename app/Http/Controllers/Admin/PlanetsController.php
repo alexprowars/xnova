@@ -14,7 +14,6 @@ use Backpack\CRUD\app\Http\Controllers\Operations;
 /**
  * @property CrudPanel $crud
  */
-/** @noinspection PhpUnused */
 class PlanetsController extends CrudController
 {
 	use Operations\ListOperation;

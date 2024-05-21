@@ -14,7 +14,6 @@ use App\Models\Planet;
 /**
  * @property CrudPanel $crud
  */
-/** @noinspection PhpUnused */
 class MoonsController extends CrudController
 {
 	use Operations\ListOperation;

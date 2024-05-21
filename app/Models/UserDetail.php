@@ -10,24 +10,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property $id
- * @property $password
- * @property $email
- * @property $name
- * @property $last_name
- * @property $second_name
- * @property $gender
- * @property $photo
- * @property $create_time
- * @property $about
- * @property $settings
- * @property $image
- * @property $username_last
- * @property $fleet_shortcut
- * @property string $birthday
- * @property int $free_race_change
- */
 class UserDetail extends Model
 {
 	public $timestamps = false;

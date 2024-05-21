@@ -2,8 +2,8 @@
 
 return [
 	'defaults' => [
-		'guard' => 'api',
-		'passwords' => 'users',
+		'guard' => env('AUTH_GUARD', 'web'),
+		'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
 	],
 	'guards' => [
 		'api' => [
@@ -37,7 +37,8 @@ return [
 			'provider' => 'users',
 			'table' => 'password_resets',
 			'expire' => 60,
+			'throttle' => 60,
 		],
 	],
-
+	'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 ];

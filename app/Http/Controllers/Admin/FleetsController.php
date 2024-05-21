@@ -8,7 +8,6 @@ use App\Fleet;
 use App\Game;
 use App\Models;
 
-/** @noinspection PhpUnused */
 class FleetsController extends Controller
 {
 	public static function getMenu()

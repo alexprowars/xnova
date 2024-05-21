@@ -14,7 +14,6 @@ use App\Controller;
 use App\Models;
 use App\Exceptions\RedirectException;
 
-/** @noinspection PhpUnused */
 class FleetShortcutController extends Controller
 {
 	public function index()

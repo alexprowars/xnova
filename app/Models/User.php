@@ -9,48 +9,6 @@ use Illuminate\Support\Facades\URL;
 use Spatie\Permission\Traits\HasRoles;
 use App\Mail\UserLostPassword;
 
-/**
- * @property int $id
- * @property $group_id
- * @property $username
- * @property $authlevel
- * @property $onlinetime
- * @property $banned
- * @property $planet_current
- * @property $planet_id
- * @property $race
- * @property $sex
- * @property $ally_id
- * @property $ally_name
- * @property $vacation
- * @property $ip
- * @property $lvl_minier
- * @property $lvl_raid
- * @property $xpminier
- * @property $xpraid
- * @property $credits
- * @property $messages
- * @property $messages_ally
- * @property $avatar
- * @property $raids_win
- * @property $raids_lose
- * @property $raids
- * @property $links
- * @property $bonus
- * @property $bonus_multi
- * @property $refers
- * @property $galaxy
- * @property $system
- * @property $planet
- * @property $rpg_geologue
- * @property $rpg_ingenieur
- * @property $rpg_admiral
- * @property $rpg_constructeur
- * @property $rpg_technocrate
- * @property $rpg_meta
- * @property $rpg_komandir
- * @property $deltime
- */
 class User extends Authenticatable
 {
 	use HasRoles;

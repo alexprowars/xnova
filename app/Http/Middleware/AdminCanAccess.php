@@ -23,7 +23,7 @@ class AdminCanAccess
 		$user = Auth::user();
 
 		if (!$user->getRoleNames()->count()) {
-			throw new UnauthorizedException('access dined');
+			throw new UnauthorizedException(403);
 		}
 
 		$route = Route::current();

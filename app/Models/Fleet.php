@@ -12,40 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use App\Entity\Coordinates;
 
-/**
- * @property $id
- * @property $owner
- * @property $owner_name
- * @property $mission
- * @property $amount
- * @property $fleet_array
-
- * @property $start_time
- * @property $start_galaxy
- * @property $start_system
- * @property $start_planet
- * @property $start_type
-
- * @property $end_time
- * @property $end_stay
- * @property $end_galaxy
- * @property $end_system
- * @property $end_planet
- * @property $end_type
-
- * @property $resource_metal
- * @property $resource_crystal
- * @property $resource_deuterium
-
- * @property $target_owner
- * @property $target_owner_name
- * @property $group_id
- * @property $mess
- * @property $create_time
- * @property $update_time
- * @property $raunds
- * @property $won
- */
 class Fleet extends Model
 {
 	public $timestamps = false;

@@ -11,7 +11,6 @@ use Backpack\CRUD\app\Http\Controllers\Operations;
 /**
  * @property CrudPanel $crud
  */
-/** @noinspection PhpUnused */
 class ContentsController extends CrudController
 {
 	use Operations\ListOperation;

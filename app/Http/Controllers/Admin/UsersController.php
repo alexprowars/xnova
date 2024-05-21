@@ -19,7 +19,6 @@ use App\Vars;
 /**
  * @property CrudPanel $crud
  */
-/** @noinspection PhpUnused */
 class UsersController extends CrudController
 {
 	use ValidatesRequests;

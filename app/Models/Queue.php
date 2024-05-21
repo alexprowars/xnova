@@ -4,17 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property $id
- * @property $user_id
- * @property $object_id
- * @property $planet_id
- * @property $level
- * @property $type
- * @property $operation
- * @property $time
- * @property $time_end
- */
 class Queue extends Model
 {
 	public $timestamps = false;

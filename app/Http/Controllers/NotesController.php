@@ -15,7 +15,6 @@ use App\Exceptions\RedirectException;
 use App\Game;
 use App\Models\Note;
 
-/** @noinspection PhpUnused */
 class NotesController extends Controller
 {
 	public function __construct()
