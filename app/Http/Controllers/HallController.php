@@ -40,7 +40,6 @@ class HallController extends Controller
 
 		$parse['time'] = $time;
 
-		$this->setTitle('Зал славы');
 		$this->showTopPanel(false);
 
 		return $parse;

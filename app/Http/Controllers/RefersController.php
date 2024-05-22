@@ -29,7 +29,6 @@ class RefersController extends Controller
 			$parse['you'] = (array) $refers;
 		}
 
-		$this->setTitle('Рефералы');
 		$this->showTopPanel(false);
 
 		return $parse;

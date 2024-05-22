@@ -50,7 +50,6 @@ class RwController extends Controller
 		$html = $combatReport->report()['html'];
 		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(config('app.key') . $report->id) . $report->id . "/\"><font color=red>" . md5('xnovasuka' . $report->id) . $report->id . "</font></a></div>";
 
-		$this->setTitle('Боевой доклад');
 		$this->showTopPanel(false);
 
 		return [

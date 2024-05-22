@@ -216,8 +216,6 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		$this->setTitle("Совместная атака");
-
 		return $parse;
 	}
 }

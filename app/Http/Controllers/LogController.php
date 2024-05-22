@@ -38,7 +38,6 @@ class LogController extends Controller
 			];
 		}
 
-		$this->setTitle('Логовница');
 		$this->showTopPanel(false);
 
 		return [
@@ -87,7 +86,6 @@ class LogController extends Controller
 			return redirect('/');
 		}
 
-		$this->setTitle('Логовница');
 		$this->showTopPanel(false);
 
 		return [];
@@ -164,7 +162,6 @@ class LogController extends Controller
 
 		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
 
-		$this->setTitle('Боевой доклад');
 		$this->showTopPanel(false);
 
 		return [

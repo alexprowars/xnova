@@ -98,7 +98,6 @@ class PlayersController extends Controller
 		$parse['m'] = User::getRankId($user->lvl_minier);
 		$parse['f'] = User::getRankId($user->lvl_raid);
 
-		$this->setTitle('Информация о игроке');
 		$this->showTopPanel(false);
 		$this->showLeftPanel(Auth::check());
 
@@ -143,7 +142,6 @@ class PlayersController extends Controller
 			];
 		}
 
-		$this->setTitle('Статистика игрока');
 		$this->showTopPanel(false);
 		$this->showLeftPanel(Auth::check());
 

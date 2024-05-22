@@ -31,8 +31,6 @@ class MerchantController extends Controller
 			$this->exchange($request);
 		}
 
-		$this->setTitle('Торговец');
-
 		return [
 			'modifiers' => $this->modifiers
 		];

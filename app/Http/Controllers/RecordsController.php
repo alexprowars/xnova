@@ -69,7 +69,6 @@ class RecordsController extends Controller
 			'update' => config('game.stat_update'),
 		];
 
-		$this->setTitle('Таблица рекордов');
 		$this->showTopPanel(false);
 
 		return $parse;

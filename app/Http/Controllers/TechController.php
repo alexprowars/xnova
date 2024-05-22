@@ -20,8 +20,6 @@ class TechController extends Controller
 
 	public function index()
 	{
-		$this->setTitle(__('tech.Tech'));
-
 		$parse = [];
 		$items = [];
 
@@ -107,8 +105,6 @@ class TechController extends Controller
 			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getLevel($element);
 			$page['access'] = $entity->isAvailable();
 			$page['req'] = Vars::getItemRequirements($element);
-
-			$this->setTitle(__('main.tech.' . $element));
 		}
 
 		$data = [];

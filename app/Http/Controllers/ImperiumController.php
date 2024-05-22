@@ -185,7 +185,6 @@ class ImperiumController extends Controller
 			];
 		}
 
-		$this->setTitle('Империя');
 		$this->showTopPanel(false);
 
 		return $parse;

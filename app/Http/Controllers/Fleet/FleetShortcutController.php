@@ -18,8 +18,6 @@ class FleetShortcutController extends Controller
 {
 	public function index()
 	{
-		$this->setTitle('Закладки');
-
 		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		$links = [];
@@ -60,8 +58,6 @@ class FleetShortcutController extends Controller
 
 	public function add(Request $request)
 	{
-		$this->setTitle('Добавление в закладки');
-
 		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		if ($request->isMethod('post')) {
@@ -130,8 +126,6 @@ class FleetShortcutController extends Controller
 
 	public function view(Request $request, int $id)
 	{
-		$this->setTitle('Редактирование закладки');
-
 		$inf = Models\UserDetail::query()->find($this->user->id, ['fleet_shortcut']);
 
 		if ($request->isMethod('post')) {

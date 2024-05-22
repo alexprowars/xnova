@@ -43,7 +43,6 @@ class CreditsController extends Controller
 			];
 		}
 
-		$this->setTitle('Покупка кредитов');
 		$this->showTopPanel(false);
 
 		return $parse;

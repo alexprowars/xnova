@@ -68,7 +68,6 @@ class BuddyController extends Controller
 			throw new ErrorException('Нельзя дружить сам с собой');
 		}
 
-		$this->setTitle('Друзья');
 		$this->showTopPanel(false);
 
 		return [
@@ -196,8 +195,6 @@ class BuddyController extends Controller
 
 			$parse['items'][] = $row;
 		}
-
-		$this->setTitle('Список друзей');
 
 		return $parse;
 	}

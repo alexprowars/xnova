@@ -250,8 +250,6 @@ class FleetController extends Controller
 
 		$parse['mission'] = $mission;
 
-		$this->setTitle(__('fleet.fl_title_1'));
-
 		return $parse;
 	}
 }

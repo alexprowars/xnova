@@ -108,8 +108,6 @@ class LoginController extends Controller
 
 	public function ResetPassword(Request $request)
 	{
-		$this->setTitle('Восстановление пароля');
-
 		if ($request->has(['email', 'token'])) {
 			$email = (int) $request->query('email');
 			$token = addslashes($request->query('token'));

@@ -100,7 +100,6 @@ class RaceController extends Controller
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
 
-		$this->setTitle('Фракции');
 		$this->showTopPanel(false);
 		$this->showLeftPanel(!($this->user->race == 0));
 

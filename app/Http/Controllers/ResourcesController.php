@@ -220,8 +220,6 @@ class ResourcesController extends Controller
 		$parse['production_level'] = $productionLevel;
 		$parse['energy_tech'] = $this->user->getTechLevel('energy');
 
-		$this->setTitle('Сырьё');
-
 		return $parse;
 	}
 }

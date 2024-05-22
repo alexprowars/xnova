@@ -43,7 +43,7 @@ class GalaxyController extends Controller
 				->where('id_owner', $this->user->getId())
 				->first();
 
-			return $records ? $records->toArray() : null;
+			return $records?->toArray();
 		});
 
 		$galaxy = $this->planet->galaxy;
@@ -166,10 +166,6 @@ class GalaxyController extends Controller
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];
 
-		for ($i = 1; $i <= 15; $i++) {
-			$parse['items'][$i - 1] = false;
-		}
-
 		if (Session::get('fleet_shortcut')) {
 			$array = json_decode(Session::get('fleet_shortcut'), true);
 
@@ -189,7 +185,7 @@ class GalaxyController extends Controller
 		}
 
 		$GalaxyRow = DB::select("SELECT
-								p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
+								p.galaxy, p.system, p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
 								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
 								u.id AS u_id, u.username as u_name, u.race as u_race, u.ally_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned as u_ban, u.sex as u_sex, u.avatar as u_avatar,
 								ui.image AS u_image,
@@ -253,20 +249,11 @@ class GalaxyController extends Controller
 				}
 			}
 
-			unset($row->p_parent, $row->l_update, $row->p_id);
+			unset($row->p_parent, $row->l_update);
 
-			foreach ($row as &$v) {
-				if (is_numeric($v)) {
-					$v = (int) $v;
-				}
-			}
-
-			unset($v);
-
-			$parse['items'][$row->planet - 1] = (array) $row;
+			$parse['items'][] = (array) $row;
 		}
 
-		$this->setTitle('Галактика');
 		$this->showTopPanel(false);
 
 		return $parse;

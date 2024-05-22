@@ -108,7 +108,6 @@ class MessagesController extends Controller
 			}
 		}
 
-		$this->setTitle('Отправка сообщения');
 		$this->showTopPanel(false);
 
 		return $page;
@@ -273,14 +272,13 @@ class MessagesController extends Controller
 		}
 
 		$parse['pagination'] = [
-			'total' => (int) $paginator->total(),
-			'limit' => (int) $limit,
-			'page' => (int) $paginator->currentPage()
+			'total' => $paginator->total(),
+			'limit' => $limit,
+			'page' => $paginator->currentPage()
 		];
 
 		$parse['parser'] = $this->user->getOption('bb_parser');
 
-		$this->setTitle('Сообщения');
 		$this->showTopPanel(false);
 
 		return $parse;

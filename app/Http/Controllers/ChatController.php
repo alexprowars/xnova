@@ -23,7 +23,6 @@ class ChatController extends Controller
 {
 	public function index()
 	{
-		$this->setTitle('Межгалактический чат');
 		$this->showTopPanel(false);
 
 		return [];

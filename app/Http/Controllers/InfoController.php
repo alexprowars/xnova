@@ -21,10 +21,9 @@ class InfoController extends Controller
 
 	public function index(int $element)
 	{
-		$this->setTitle(__('main.tech.' . $element));
 		$this->showTopPanel(false);
 
-		return $this->ShowBuildingInfoPage((int) $element);
+		return $this->ShowBuildingInfoPage($element);
 	}
 
 	private function ShowRapidFireTo($BuildID)

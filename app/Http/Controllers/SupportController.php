@@ -26,7 +26,6 @@ class SupportController extends Controller
 	{
 		parent::__construct();
 
-		$this->setTitle('Техподдержка');
 		$this->showTopPanel(false);
 	}
 

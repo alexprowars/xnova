@@ -36,7 +36,6 @@ class BannedController extends Controller
 		}
 
 		$this->showTopPanel(false);
-		$this->setTitle('Список заблокированных игроков');
 
 		return [
 			'items' => $items

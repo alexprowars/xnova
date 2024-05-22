@@ -29,7 +29,6 @@ class ContactsController extends Controller
 			];
 		}
 
-		$this->setTitle(__('contact.ctc_title'));
 		$this->showTopPanel(false);
 
 		return [

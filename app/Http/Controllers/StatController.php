@@ -62,7 +62,6 @@ class StatController extends Controller
 				$this->field = 'total';
 		}
 
-		$this->setTitle('Статистика');
 		$this->showTopPanel(false);
 	}
 

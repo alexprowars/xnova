@@ -231,8 +231,6 @@ class TutorialController extends Controller
 		$parse['stage'] = $stage;
 		$parse['errors'] = $errors;
 
-		$this->setTitle('Задание. ' . $parse['info']['TITLE']);
-
 		return $parse;
 	}
 
@@ -280,8 +278,6 @@ class TutorialController extends Controller
 
 			$parse['list'][] = $quest;
 		}
-
-		$this->setTitle('Обучение');
 
 		return $parse;
 	}

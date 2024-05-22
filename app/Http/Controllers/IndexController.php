@@ -22,8 +22,6 @@ class IndexController extends Controller
 {
 	public function index()
 	{
-		$this->setTitle('Вход в игру');
-
 		return [];
 	}
 
@@ -79,8 +77,6 @@ class IndexController extends Controller
 				return Redirect::to('overview/');
 			}
 		}
-
-		$this->setTitle('Регистрация');
 
 		return [
 			'errors' => $errors

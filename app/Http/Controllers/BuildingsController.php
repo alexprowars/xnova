@@ -22,8 +22,6 @@ class BuildingsController extends Controller
 			throw new PageException('Нет доступа!');
 		}
 
-		$this->setTitle('Постройки');
-
 		$construction = new Construction($this->user, $this->planet);
 		return $construction->pageBuilding();
 	}

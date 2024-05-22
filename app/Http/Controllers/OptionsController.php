@@ -89,8 +89,6 @@ class OptionsController extends Controller
 
 			throw new RedirectException('Заявка отправлена на рассмотрение', '/options/');
 		}
-
-		$this->setTitle('Hacтpoйки');
 	}
 
 	public function save(Request $request)
@@ -359,8 +357,6 @@ class OptionsController extends Controller
 				return (array) $value;
 			}, $authData);*/
 		}
-
-		$this->setTitle('Hacтpoйки');
 
 		return $parse;
 	}

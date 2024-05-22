@@ -98,7 +98,6 @@ class OfficierController extends Controller
 			$parse['items'][] = $row;
 		}
 
-		$this->setTitle('Офицеры');
 		$this->showTopPanel(false);
 
 		return $parse;

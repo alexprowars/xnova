@@ -29,10 +29,10 @@ class ContentController extends Controller
 			throw new ErrorException('Страница не найдена!');
 		}
 
-		$this->setTitle($content->title);
 		$this->showTopPanel(false);
 
 		return [
+			'title' => $content->title,
 			'html' => stripslashes($content->html)
 		];
 	}

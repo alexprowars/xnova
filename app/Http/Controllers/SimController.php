@@ -61,7 +61,6 @@ class SimController extends Controller
 			}
 		}
 
-		$this->setTitle('Симулятор');
 		$this->showTopPanel(false);
 
 		return $parse;

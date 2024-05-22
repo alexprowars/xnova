@@ -33,8 +33,6 @@ class DefenseController extends Controller
 		$parse['mode'] = Route::current()->getName();
 		$parse['queue'] = $construction->ElementBuildListBox();
 
-		$this->setTitle('Оборона');
-
 		return $parse;
 	}
 }

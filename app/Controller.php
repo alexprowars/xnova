@@ -41,8 +41,6 @@ class Controller extends BaseController
 
 	private function init()
 	{
-		$this->setTitle(config('settings.site_title', ''));
-
 		Vars::init();
 
 		if (Auth::check()) {
@@ -104,15 +102,5 @@ class Controller extends BaseController
 		$this->setViews('footer', $view);
 		$this->setViews('menu', $view);
 		$this->setViews('planets', $view);
-	}
-
-	public function setTitle(string $title = '')
-	{
-		$this->title = $title;
-	}
-
-	public function getTitle(): string
-	{
-		return $this->title;
 	}
 }

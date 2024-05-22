@@ -37,12 +37,10 @@ class Responce extends JsonResource
 				'online' => (int) config('settings.users_online', 0),
 				'users' => (int) config('settings.users_total', 0),
 			],
-			'title' => $controller->getTitle(),
 			'user' => $this->when(Auth::check(), User::make(Auth::user())),
 			'planet' => $this->when($planet !== null, Planet::make($planet)),
 			'view' => $controller->getViews(),
 			'page' => $this->resource,
-			'host' => $request->getHttpHost(),
 			'version' => VERSION,
 		];
 

@@ -23,7 +23,6 @@ class NewsController extends Controller
 			];
 		}
 
-		$this->setTitle('Новости');
 		$this->showTopPanel(false);
 
 		return [

@@ -137,8 +137,6 @@ class PhalanxController extends Controller
 			}
 		}
 
-		$this->setTitle('Сенсорная фаланга');
-
 		$this->showTopPanel(false);
 		$this->showLeftPanel(false);
 

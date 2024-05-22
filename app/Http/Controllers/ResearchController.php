@@ -22,8 +22,6 @@ class ResearchController extends Controller
 			throw new PageException('Нет доступа!');
 		}
 
-		$this->setTitle('Исследования');
-
 		$construction = new Construction($this->user, $this->planet);
 		return $construction->pageResearch();
 	}

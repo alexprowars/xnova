@@ -274,7 +274,6 @@ class OverviewController extends Controller
 		$parse['system'] = $this->planet->system;
 		$parse['planet'] = $this->planet->planet;
 
-		$this->setTitle('Покинуть колонию');
 		$this->showTopPanel(false);
 
 		return $parse;
@@ -355,7 +354,6 @@ class OverviewController extends Controller
 
 		$parse['planet_name'] = $this->planet->name;
 
-		$this->setTitle('Переименовать планету');
 		$this->showTopPanel(false);
 
 		return $parse;
@@ -770,8 +768,6 @@ class OverviewController extends Controller
 		if ($showMessage) {
 			$parse['error'] = '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="' . URL::route('resources', [], false) . '">Сырьё</a>" и восстановите производство.</span>';
 		}
-
-		$this->setTitle('Обзор');
 
 		return $parse;
 	}

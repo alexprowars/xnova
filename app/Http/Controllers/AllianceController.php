@@ -93,8 +93,6 @@ class AllianceController extends Controller
 			$parse['allys'][] = (array) $ally;
 		}
 
-		$this->setTitle(__('alliance.alliance'));
-
 		return $parse;
 	}
 
@@ -159,8 +157,6 @@ class AllianceController extends Controller
 			$parse['members'] = $this->ally->members;
 			$parse['name'] = $this->ally->name;
 			$parse['id'] = $this->ally->id;
-
-			$this->setTitle('Ваш альянс');
 
 			return $parse;
 		}
@@ -264,8 +260,6 @@ class AllianceController extends Controller
 			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/exit", 'Продолжить');
 		}
 
-		$this->setTitle(__('alliance.Alliance_admin'));
-
 		return $parse;
 	}
 
@@ -357,8 +351,6 @@ class AllianceController extends Controller
 			}
 		}
 
-		$this->setTitle(__('alliance.Law_settings'));
-
 		return $parse;
 	}
 
@@ -441,8 +433,6 @@ class AllianceController extends Controller
 
 		$parse['tag'] = $this->ally->tag;
 
-		$this->setTitle(__('alliance.Check_the_requests'));
-
 		return $parse;
 	}
 
@@ -473,8 +463,6 @@ class AllianceController extends Controller
 			throw new RedirectException('Название альянса изменено', '/alliance/admin/name');
 		}
 
-		$this->setTitle('Управление альянсом');
-
 		return [
 			'name' => $this->ally->name
 		];
@@ -504,8 +492,6 @@ class AllianceController extends Controller
 
 			throw new RedirectException('Абревиатура альянса изменена', '/alliance/admin/tag');
 		}
-
-		$this->setTitle('Управление альянсом');
 
 		return [
 			'tag' => $this->ally->tag
@@ -557,8 +543,6 @@ class AllianceController extends Controller
 		}
 
 		$parse['id'] = $this->user->id;
-
-		$this->setTitle('Передача альянса');
 
 		return $parse;
 	}
@@ -682,8 +666,6 @@ class AllianceController extends Controller
 			$parse['a_list'][] = (array) $a_list;
 		}
 
-		$this->setTitle('Дипломатия');
-
 		return $parse;
 	}
 
@@ -703,7 +685,7 @@ class AllianceController extends Controller
 			$html = $this->MessageForm(__('alliance.Want_go_out'), "<br>", "/alliance/exit/yes/1/", "Подтвердить");
 		}
 
-		$this->setTitle('Выход их альянса');
+		//$this->setTitle('Выход их альянса');
 	}
 
 	public function members(Request $request)
@@ -820,8 +802,6 @@ class AllianceController extends Controller
 		$parse['s'] = $s;
 		$parse['status'] = $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS);
 
-		$this->setTitle(__('alliance.Members_list'));
-
 		return $parse;
 	}
 
@@ -898,8 +878,6 @@ class AllianceController extends Controller
 		$parse['owner'] = ($this->ally->owner == $this->user->id) ? true : false;
 		$parse['parser'] = $this->user->getOption('bb_parser') ? true : false;
 
-		$this->setTitle('Альянс-чат');
-
 		return $parse;
 	}
 
@@ -942,8 +920,6 @@ class AllianceController extends Controller
 
 		$parse['web'] = $allyrow->web;
 		$parse['request'] = ($this->user && $this->user->ally_id == 0);
-
-		$this->setTitle('Альянс ' . $allyrow->name);
 
 		return $parse;
 	}
@@ -1008,11 +984,7 @@ class AllianceController extends Controller
 			$this->user->ally_name = $alliance->name;
 			$this->user->update();
 
-			$this->setTitle(__('alliance.make_alliance'));
-
 			throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');
-		} else {
-			$this->setTitle(__('alliance.make_alliance'));
 		}
 
 		return [];
@@ -1061,8 +1033,6 @@ class AllianceController extends Controller
 
 		$parse['searchtext'] = $text;
 
-		$this->setTitle(__('alliance.search_alliance'));
-
 		return $parse;
 	}
 
@@ -1110,8 +1080,6 @@ class AllianceController extends Controller
 		$parse['text_apply'] = ($allyrow->request) ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow->request)) : '';
 		$parse['tag'] = $allyrow->tag;
 
-		$this->setTitle('Запрос на вступление');
-
 		return $parse;
 	}
 
@@ -1154,8 +1122,6 @@ class AllianceController extends Controller
 				]
 			];
 		}
-
-		$this->setTitle('Статистика альянса');
 
 		return $parse;
 	}

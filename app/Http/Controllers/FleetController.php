@@ -116,8 +116,6 @@ class FleetController extends Controller
 			}
 		}
 
-		$this->setTitle(__('fleet.fl_title_0'));
-
 		return $parse;
 	}
 }

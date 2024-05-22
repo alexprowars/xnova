@@ -52,8 +52,6 @@ class NotesController extends Controller
 			throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/' . $note->id . '/');
 		}
 
-		$this->setTitle('Создание заметки');
-
 		return [];
 	}
 
@@ -97,8 +95,6 @@ class NotesController extends Controller
 			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
 
-		$this->setTitle(__('notes.Notes'));
-
 		return $parse;
 	}
 
@@ -138,8 +134,6 @@ class NotesController extends Controller
 
 			$parse['items'][] = $list;
 		}
-
-		$this->setTitle('Заметки');
 
 		return $parse;
 	}

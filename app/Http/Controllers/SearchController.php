@@ -66,8 +66,6 @@ class SearchController extends Controller
 		$parse['searchtext'] = $searchtext;
 		$parse['type'] = $type;
 
-		$this->setTitle('Поиск');
-
 		return $parse;
 	}
 }

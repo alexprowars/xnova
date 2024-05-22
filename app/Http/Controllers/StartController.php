@@ -104,8 +104,6 @@ class StartController extends Controller
 			];
 		}
 
-		$this->setTitle('Выбор персонажа');
-
 		$this->setViews('menu', false);
 		$this->setViews('header', false);
 		$this->showTopPanel(false);
