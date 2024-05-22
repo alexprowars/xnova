@@ -534,15 +534,10 @@ class OverviewController extends Controller
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
 
 		$build_list = [];
-		$planetsData = [];
 
-		$planets = Planet::query()
+		$planetsData = Planet::query()
 			->where('id_owner', $this->user->id)
-			->get();
-
-		foreach ($planets as $item) {
-			$planetsData[$item->id] = $item;
-		}
+			->get()->keyBy('id');
 
 		$queueManager = new Queue($this->user);
 
@@ -556,7 +551,14 @@ class OverviewController extends Controller
 					$end[$item->planet_id] = $item->time;
 				}
 
-				$entity = new Planet\Entity\Building($item->object_id, $item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0));
+				$planet = $planetsData[$item->planet_id];
+				$planet->setUser($this->user);
+
+				$entity = Planet\Entity\Building::createEntity(
+					$item->object_id,
+					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
+					$planet
+				);
 
 				$time = $entity->getTime();
 
@@ -569,7 +571,7 @@ class OverviewController extends Controller
 				$build_list[$end[$item->planet_id]][] = [
 					$end[$item->planet_id],
 					$item->planet_id,
-					$planetsData[$item->planet_id]->name,
+					$planet->name,
 					__('main.tech.' . $item->object_id) . ' (' . ($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1) . ' -> ' . $item->level . ')'
 				];
 			}

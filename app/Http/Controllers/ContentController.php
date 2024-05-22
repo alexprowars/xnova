@@ -15,14 +15,14 @@ use App\Models\Content;
 
 class ContentController extends Controller
 {
-	public function index(Request $request)
+	public function index(string $slug)
 	{
-		if (!$request->query('article')) {
+		if (empty($slug)) {
 			throw new ErrorException('Страница не найдена!');
 		}
 
 		$content = Content::query()
-			->where('alias', $request->query('article'))
+			->where('alias', $slug)
 			->first();
 
 		if (!$content) {

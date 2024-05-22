@@ -14,7 +14,6 @@ use App\Exceptions\SuccessException;
 use App\Models;
 use App\Controller;
 use App\Vars;
-use App\Entity;
 
 class InfoController extends Controller
 {
@@ -69,15 +68,12 @@ class InfoController extends Controller
 		$ActualNeed = $ActualProd = 0;
 
 		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-			$BuildLevelFactor = $this->planet->getEntity($buildId)->factor;
-			$BuildLevel = ($CurrentBuildtLvl > 0) ? $CurrentBuildtLvl : 1;
+			$res = $this->planet->getEntity($buildId)->getProduction();
 
-			$res = $this->planet->getResourceProductionLevel($buildId, $BuildLevel, $BuildLevelFactor);
-
-			$Prod[1] = $res['metal'];
-			$Prod[2] = $res['crystal'];
-			$Prod[3] = $res['deuterium'];
-			$Prod[4] = $res['energy'];
+			$Prod[1] = $res->get('metal');
+			$Prod[2] = $res->get('crystal');
+			$Prod[3] = $res->get('deuterium');
+			$Prod[4] = $res->get('energy');
 
 			if ($buildId != 12) {
 				$ActualNeed = floor($Prod[4]);
@@ -102,12 +98,15 @@ class InfoController extends Controller
 			$row = [];
 
 			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-				$res = $this->planet->getResourceProductionLevel($buildId, $BuildLevel);
+				$entity = clone $this->planet->getEntity($buildId);
+				$entity->setLevel($BuildLevel);
 
-				$Prod[1] = $res['metal'];
-				$Prod[2] = $res['crystal'];
-				$Prod[3] = $res['deuterium'];
-				$Prod[4] = $res['energy'];
+				$res = $entity->getProduction();
+
+				$Prod[1] = $res->get('metal');
+				$Prod[2] = $res->get('crystal');
+				$Prod[3] = $res->get('deuterium');
+				$Prod[4] = $res->get('energy');
 
 				if ($buildId != 12) {
 					$row['prod'] = floor($Prod[$buildId]);

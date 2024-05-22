@@ -111,14 +111,13 @@ class TechController extends Controller
 			$this->setTitle(__('main.tech.' . $element));
 		}
 
-		$data = [
-			0 => []
-		];
+		$data = [];
 
 		$storage = Vars::getStorage();
 
 		foreach ($storage['resource'] as $id => $code) {
-			$data[$id] = [
+			$item = [
+				'id' => $id,
 				'name' => __('main.tech.' . $id),
 				'img' => $id . '.gif',
 				'req' => [],
@@ -126,7 +125,7 @@ class TechController extends Controller
 
 			if (isset($storage['requeriments'][$id]) && count($storage['requeriments'][$id])) {
 				foreach ($storage['requeriments'][$id] as $ids => $level) {
-					$data[$id]['req'][] = [
+					$item['req'][] = [
 						$ids,
 						__('main.tech.' . $ids),
 						$level,
@@ -135,6 +134,8 @@ class TechController extends Controller
 					];
 				}
 			}
+
+			$data[] = $item;
 		}
 
 		$page['data'] = $data;

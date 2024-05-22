@@ -372,11 +372,13 @@ class OptionsController extends Controller
 			$parse['spy'] = isset($settings['spy']) ? $settings['spy'] : 1;
 			$parse['color'] = isset($settings['color']) ? $settings['color'] : 0;
 
-			$authData = DB::select("SELECT * FROM users_auth WHERE user_id = " . $this->user->getId() . "");
+			$parse['auth'] = [];
+
+			/*$authData = DB::select("SELECT * FROM users_auth WHERE user_id = " . $this->user->getId() . "");
 
 			$parse['auth'] = array_map(function ($value) {
 				return (array) $value;
-			}, $authData);
+			}, $authData);*/
 		}
 
 		$this->setTitle('Hacтpoйки');
