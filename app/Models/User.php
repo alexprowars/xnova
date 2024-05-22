@@ -14,9 +14,19 @@ class User extends Authenticatable
 	use HasRoles;
 	use CrudTrait;
 
-	public $timestamps = false;
 	protected $guarded = [];
 	protected $hidden = ['password'];
+
+	protected $attributes = [
+		'options' => [],
+	];
+
+	protected function casts(): array
+	{
+		return [
+			'options' => 'array',
+		];
+	}
 
 	public function info()
 	{
@@ -50,13 +60,6 @@ class User extends Authenticatable
 	public function isOnline()
 	{
 		return (time() - $this->onlinetime < 180);
-	}
-
-	public function getEmailForPasswordReset()
-	{
-		$info = UserDetail::query()->find($this->id, ['email']);
-
-		return $info->email ?? null;
 	}
 
 	public function sendPasswordResetNotification($token)

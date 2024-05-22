@@ -58,8 +58,8 @@ class ImperiumController extends Controller
 		$parse['planets'] = [];
 
 		$sort = User::getPlanetListSortQuery(
-			$this->user->getUserOption('planet_sort'),
-			$this->user->getUserOption('planet_sort_order')
+			$this->user->getOption('planet_sort'),
+			$this->user->getOption('planet_sort_order')
 		);
 
 		$planets = Planet::query()

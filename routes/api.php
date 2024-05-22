@@ -79,7 +79,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::match(['get', 'post'], 'notes/edit/{id}', [Controllers\NotesController::class, 'edit'])->name('notes.edit');
 	Route::match(['get', 'post'], 'notes/new', [Controllers\NotesController::class, 'new'])->name('notes.new');
 	Route::match(['get', 'post'], 'officier', [Controllers\OfficierController::class, 'index'])->name('officier');
-	Route::match(['get', 'post'], 'options', [Controllers\OptionsController::class, 'index'])->name('options');
+	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
+	Route::post('options/save', [Controllers\OptionsController::class, 'save'])->name('options.save');
 	Route::match(['get', 'post'], 'overview', [Controllers\OverviewController::class, 'index'])->name('overview');
 	Route::match(['get', 'post'], 'overview/rename', [Controllers\OverviewController::class, 'rename'])->name('overview.rename');
 	Route::match(['get', 'post'], 'overview/delete', [Controllers\OverviewController::class, 'delete'])->name('overview.delete');

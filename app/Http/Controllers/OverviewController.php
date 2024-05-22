@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use App\Exceptions\ErrorException;
@@ -205,7 +206,7 @@ class OverviewController extends Controller
 				throw new RedirectException(__('overview.deletemessage_wrong'), '/overview/rename/');
 			}
 
-			if (md5(trim($request->post('pw'))) != $request->post('password')) {
+			if (!Hash::check(trim($request->post('pw')), $request->post('password'))) {
 				throw new RedirectException(__('overview.deletemessage_fail'), '/overview/delete/');
 			}
 
@@ -675,18 +676,19 @@ class OverviewController extends Controller
 		$parse['chat'] = [];
 
 		if (Helpers::isMobile()) {
-			$chatCached = Cache::remember(config('chat.cache'), 86400, function () {
-				$messages = DB::select("SELECT c.*, u.username FROM log_chat c LEFT JOIN users u ON u.id = c.user WHERE 1 = 1 ORDER BY c.time DESC LIMIT 20");
+			$chatCached = Cache::remember('chat.cache', 86400, function () {
+				$messages = Models\Chat::orderByDesc('created_at')
+					->limit(20)->with('user')->get();
 
 				$chat = [];
 
 				foreach ($messages as $message) {
-					if (preg_match_all("/приватно [(.*?)]/u", $message->text, $private)) {
-						$message->text = preg_replace("/приватно [(.*?)]/u", '', $message->text);
+					if (preg_match_all("/приватно [(.*?)]/u", $message->message, $private)) {
+						$message->message = preg_replace("/приватно [(.*?)]/u", '', $message->message);
 					}
 
-					if (preg_match_all("/для [(.*?)]/u", $message->text, $to)) {
-						$message->text = preg_replace("/для [(.*?)]/u", '', $message->text);
+					if (preg_match_all("/для [(.*?)]/u", $message->message, $to)) {
+						$message->message = preg_replace("/для [(.*?)]/u", '', $message->message);
 
 						if (isset($private[1]) && count($private[1]) > 0) {
 							$private[1] = array_merge($private[1], $to[1]);
@@ -705,9 +707,9 @@ class OverviewController extends Controller
 						$isPrivate = true;
 					}
 
-					$message->text = trim($message->text);
+					$message->message = trim($message->message);
 
-					$chat[] = [$message->id, $message->time, $message->username, $to[1], $isPrivate, $message->text, 0];
+					$chat[] = [$message->id, $message->created_at, $message->user->username, $to[1], $isPrivate, $message->message, 0];
 				}
 
 				return json_encode(array_reverse($chat));

@@ -69,7 +69,7 @@ class Construction
 			}
 		}
 
-		$viewOnlyAvailable = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getOption('only_available');
 
 		$parse['items'] = [];
 
@@ -177,7 +177,7 @@ class Construction
 			}
 		}
 
-		$viewOnlyAvailable = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getOption('only_available');
 
 		$parse['items'] = [];
 
@@ -292,7 +292,7 @@ class Construction
 
 		$BuildArray = $this->extractHangarQueue($queueArray);
 
-		$viewOnlyAvailable = $this->user->getUserOption('only_available');
+		$viewOnlyAvailable = $this->user->getOption('only_available');
 
 		$parse = [];
 		$parse['items'] = [];

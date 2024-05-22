@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -72,16 +73,15 @@ class OptionsController extends Controller
 
 	public function emailAction(Request $request)
 	{
-		$userInfo = Models\UserDetail::query()->find($this->user->id);
-
 		if ($request->post('password') && $request->post('email')) {
-			if (md5($request->post('password')) != $userInfo->password) {
+			if (!Hash::check($request->post('password'), $this->user->password)) {
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
-			$email = DB::selectOne("SELECT id FROM user_details WHERE email = '" . addslashes(htmlspecialchars(trim($request->post('email')))) . "';");
+			$existEmail = Models\User::query()->where('email', addslashes(htmlspecialchars(trim($request->post('email')))))
+				->exists();
 
-			if ($email) {
+			if ($existEmail) {
 				throw new ErrorException('Данный email уже используется в игре.');
 			}
 
@@ -93,7 +93,7 @@ class OptionsController extends Controller
 		$this->setTitle('Hacтpoйки');
 	}
 
-	public function changeAction(Request $request)
+	public function save(Request $request)
 	{
 		$userInfo = Models\UserDetail::query()->find($this->user->id);
 
@@ -114,22 +114,21 @@ class OptionsController extends Controller
 			$username = $this->user->username;
 		}
 
-		if ($request->post('email') && !Helpers::is_email($userInfo->email) && Helpers::is_email($request->post('email'))) {
+		if ($request->post('email') && !Helpers::is_email($this->user->email) && Helpers::is_email($request->post('email'))) {
 			$e = addslashes(htmlspecialchars(trim($request->post('email'))));
 
-			$email = DB::selectOne("SELECT id FROM user_details WHERE email = '" . $e . "'");
+			$existEmail = Models\User::query()->where('email', $e)
+				->exists();
 
-			if ($email) {
+			if ($existEmail) {
 				throw new ErrorException('Данный email уже используется в игре.');
 			}
 
 			$password = Str::random(10);
 
-			Models\UserDetail::query()->where('id', $this->user->getId())
-				->update([
-					'email' => $e,
-					'password' => md5($password)
-				]);
+			$this->user->email = $e;
+			$this->user->password = Hash::make($password);
+			$this->user->save();
 
 			Mail::to($e)->send(new UserLostPasswordSuccess([
 				'#EMAIL#' => $e,
@@ -186,10 +185,6 @@ class OptionsController extends Controller
 			$color = $request->post('color', 1);
 			$color = max(1, min(13, $color));
 
-			if ($color < 1 || $color > 13) {
-				$color = 1;
-			}
-
 			$timezone = $request->post('timezone', 0);
 
 			if ($timezone < -32 || $timezone > 16) {
@@ -210,24 +205,19 @@ class OptionsController extends Controller
 			$this->user->vacation = $vacation;
 			$this->user->deltime = $Del_Time;
 
+			$this->user->setOption('records', $request->post('records'));
+			$this->user->setOption('bb_parser', $request->post('bbcode'));
+			$this->user->setOption('chatbox', $request->post('chatbox'));
+			$this->user->setOption('planetlist', $request->post('planetlist'));
+			$this->user->setOption('planetlistselect', $request->post('planetlistselect'));
+			$this->user->setOption('only_available', $request->post('available'));
+			$this->user->setOption('planet_sort', (int) $SetSort);
+			$this->user->setOption('planet_sort_order', (int) $SetOrder);
+			$this->user->setOption('color', (int) $color);
+			$this->user->setOption('timezone', (int) $timezone);
+			$this->user->setOption('spy', (int) $spy);
+
 			$this->user->update();
-
-			$settings = $userInfo->getSettings();
-
-			$settings['records'] 		= $request->post('records');
-			$settings['bb_parser'] 		= $request->post('bbcode');
-			$settings['chatbox'] 		= $request->post('chatbox');
-			$settings['planetlist']		= $request->post('planetlist');
-			$settings['planetlistselect'] = $request->post('planetlistselect');
-			$settings['only_available']	= $request->post('available');
-
-			$settings['planet_sort'] 	= (int) $SetSort;
-			$settings['planet_sort_order'] = (int) $SetOrder;
-			$settings['color'] 			= (int) $color;
-			$settings['timezone'] 		= (int) $timezone;
-			$settings['spy'] 			= (int) $spy;
-
-			$userInfo->setSettings($settings);
 
 			if ($request->hasFile('image')) {
 				$file = $request->file('image');
@@ -235,7 +225,7 @@ class OptionsController extends Controller
 				if ($file->isValid()) {
 					$fileType = $file->getMimeType();
 
-					if (strpos($fileType, 'image/') === false) {
+					if (!str_contains($fileType, 'image/')) {
 						throw new ErrorException('Разрешены к загрузке только изображения');
 					}
 
@@ -265,7 +255,6 @@ class OptionsController extends Controller
 			$userInfo->about = $about;
 			$userInfo->update();
 
-			Session::remove('config');
 			Cache::forget('app::planetlist_' . $this->user->getId());
 		} else {
 			$this->user->vacation = $vacation;
@@ -274,12 +263,8 @@ class OptionsController extends Controller
 			$this->user->update();
 		}
 
-		if (
-			$request->post('password')
-			&& $request->post('password') != ''
-			&& $request->post('new_password') != ''
-		) {
-			if (md5($request->post('password')) != $userInfo->password) {
+		if (!empty($request->post('password')) && !empty($request->post('new_password'))) {
+			if (!Hash::check($request->post('password'), $this->user->password)) {
 				throw new ErrorException('Heпpaвильный тeкyщий пapoль');
 			}
 
@@ -287,8 +272,8 @@ class OptionsController extends Controller
 				throw new ErrorException('Bвeдeнныe пapoли нe coвпaдaют');
 			}
 
-			$userInfo->password = md5($request->post('new_password'));
-			$userInfo->update();
+			$this->user->password = Hash::make($request->post('new_password'));
+			$this->user->save();
 
 			Auth::logout();
 
@@ -300,9 +285,9 @@ class OptionsController extends Controller
 				throw new ErrorException('Смена игрового имени возможна лишь раз в сутки.');
 			}
 
-			$query = DB::selectOne("SELECT id FROM users WHERE username = '" . $username . "'");
+			$existName = Models\User::query()->where('username', $username)->exists();
 
-			if ($query) {
+			if ($existName) {
 				throw new ErrorException('Дaннoe имя aккayнтa yжe иcпoльзyeтcя в игpe');
 			}
 
@@ -327,7 +312,6 @@ class OptionsController extends Controller
 		$userInfo = Models\UserDetail::query()->find($this->user->id);
 
 		$parse = [];
-		$parse['social'] = config('game.view.socialIframeView', 0) > 0;
 		$parse['vacation'] = $this->user->vacation > 0;
 
 		if ($this->user->vacation > 0) {
@@ -336,10 +320,7 @@ class OptionsController extends Controller
 			$parse['opt_modev_data'] = ($this->user->vacation > 0);
 			$parse['opt_usern_data'] = $this->user->username;
 		} else {
-			$settings = $userInfo->getSettings();
-
-			$parse['settings'] = $settings;
-
+			$parse['settings'] = $this->user->settings ?? [];
 			$parse['avatar'] = '';
 
 			if ($userInfo->image > 0) {
@@ -350,27 +331,25 @@ class OptionsController extends Controller
 				}
 			}
 
-			$this->user->setOptions($settings);
-
 			$parse['opt_usern_datatime'] = $userInfo->username_last < (time() - 86400);
 			$parse['opt_usern_data'] = $this->user->username;
-			$parse['opt_mail_data'] = $userInfo->email;
-			$parse['opt_isemail'] = Helpers::is_email($userInfo->email);
+			$parse['opt_mail_data'] = $this->user->email;
+			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
 
-			$parse['opt_record_data'] = $this->user->getUserOption('records');
-			$parse['opt_bbcode_data'] = $this->user->getUserOption('bb_parser');
-			$parse['opt_chatbox_data'] = $this->user->getUserOption('chatbox');
-			$parse['opt_planetlist_data'] = $this->user->getUserOption('planetlist');
-			$parse['opt_planetlistselect_data'] = $this->user->getUserOption('planetlistselect');
-			$parse['opt_available_data'] = $this->user->getUserOption('only_available');
+			$parse['opt_record_data'] = $this->user->getOption('records');
+			$parse['opt_bbcode_data'] = $this->user->getOption('bb_parser');
+			$parse['opt_chatbox_data'] = $this->user->getOption('chatbox');
+			$parse['opt_planetlist_data'] = $this->user->getOption('planetlist');
+			$parse['opt_planetlistselect_data'] = $this->user->getOption('planetlistselect');
+			$parse['opt_available_data'] = $this->user->getOption('only_available');
 			$parse['opt_delac_data'] = $this->user->deltime > 0;
 			$parse['opt_modev_data'] = $this->user->vacation > 0;
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $userInfo->about);
-			$parse['timezone'] = isset($settings['timezone']) ? $settings['timezone'] : 0;
-			$parse['spy'] = isset($settings['spy']) ? $settings['spy'] : 1;
-			$parse['color'] = isset($settings['color']) ? $settings['color'] : 0;
+			$parse['timezone'] = $this->user->getOption('timezone');
+			$parse['spy'] = $this->user->getOption('spy');
+			$parse['color'] = $this->user->getOption('color');
 
 			$parse['auth'] = [];
 

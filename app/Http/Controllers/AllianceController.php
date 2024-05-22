@@ -896,7 +896,7 @@ class AllianceController extends Controller
 		}
 
 		$parse['owner'] = ($this->ally->owner == $this->user->id) ? true : false;
-		$parse['parser'] = $this->user->getUserOption('bb_parser') ? true : false;
+		$parse['parser'] = $this->user->getOption('bb_parser') ? true : false;
 
 		$this->setTitle('Альянс-чат');
 

@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Statistic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -35,21 +36,20 @@ class PlayersController extends Controller
 			throw new PageException('Профиль не найден');
 		}
 
-		$parse['avatar'] = 'images/no_photo.gif';
+		$parse['avatar'] = '/images/no_photo.gif';
 
-		if ($user->image > 0) {
+		if ($user->image) {
 			$file = Files::getById($user->image);
 
 			if ($file) {
-				$parse['avatar'] = $file['src'];
+				$parse['avatar'] = URL::asset($file['src']);
 			}
-		} elseif ($user->avatar != 0) {
+		} elseif ($user->avatar) {
 			if ($user->avatar != 99) {
-				$parse['avatar'] = "images/faces/" . $user->sex . "/" . $user->avatar . ".png";
+				$parse['avatar'] = '/images/faces/' . $user->sex . '/' . $user->avatar . '.png';
 			}
 		}
 
-		$parse['avatar'] = URL::asset($parse['avatar']);
 		$parse['userplanet'] = '';
 
 		$planet = Planet::findByCoordinates(new Coordinates($user->galaxy, $user->system, $user->planet, 1));
@@ -60,7 +60,11 @@ class PlayersController extends Controller
 
 		$parse['stats'] = false;
 
-		$points = DB::selectOne("SELECT * FROM statistics WHERE `stat_type` = '1' AND `stat_code` = '1' AND `id_owner` = '" . $user->id . "'");
+		$points = Statistic::query()
+			->where('stat_type', 1)
+			->where('stat_code', 1)
+			->where('id_owner', $user->id)
+			->first();
 
 		if ($points) {
 			$parse['stats'] = [
@@ -107,7 +111,7 @@ class PlayersController extends Controller
 			throw new PageException('Доступ запрещен');
 		}
 
-		$player = DB::selectOne("SELECT id, username FROM users WHERE id = " . $userId . "");
+		$player = User::find($userId);
 
 		if (!$player) {
 			throw new ErrorException('Информация о данном игроке не найдена');

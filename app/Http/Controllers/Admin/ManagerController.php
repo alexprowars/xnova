@@ -71,7 +71,7 @@ class ManagerController extends Controller
 			$parse['answer4'] = $SelUser['email'];
 			$parse['answer6'] = Lang::getText('admin', 'adm_usr_genre', $SelUser['sex']);
 			$parse['answer7'] = date('d.m.Y H:i:s', $SelUser['vacation']);
-			$parse['answer9'] = date('d.m.Y H:i:s', $SelUser['create_time']);
+			$parse['answer9'] = date('d.m.Y H:i:s', $SelUser['created_at']);
 			$parse['answer8'] = "[" . $SelUser['galaxy'] . ":" . $SelUser['system'] . ":" . $SelUser['planet'] . "] ";
 
 			$parse['planet_list'] = [];

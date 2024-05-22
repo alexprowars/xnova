@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('chats', function (Blueprint $table) {
+		Schema::create('chat', function (Blueprint $table) {
 			$table->id();
 			$table->unsignedBigInteger('user_id');
-			$table->text('text');
+			$table->text('message');
 			$table->timestamps();
 
 			$table->foreign('user_id')
@@ -22,6 +22,6 @@ return new class extends Migration {
 
 	public function down()
 	{
-		Schema::drop('chats');
+		Schema::drop('chat');
 	}
 };

@@ -16,6 +16,8 @@ use App\Events\ChatMessage;
 use App\Events\ChatPrivateMessage;
 use App\Exceptions\Exception;
 use App\Models\Chat;
+use App\Http\Resources;
+use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
@@ -29,18 +31,18 @@ class ChatController extends Controller
 
 	public function sendMessage(Request $request)
 	{
-		$message = $request->post('message', null);
+		$message = $request->post('message');
 
-		if (!$message) {
+		if (empty($message)) {
 			throw new Exception('Введите текст сообщения');
 		}
 
-		$chatMessage = Chat::query()->create([
+		$chatMessage = Chat::create([
 			'user_id' => Auth::id(),
 			'message' => $message,
 		]);
 
-		$parsedMessage = $chatMessage->parse();
+		$parsedMessage = Resources\ChatMessage::make($chatMessage);
 
 		if ($parsedMessage['private']) {
 			foreach ($parsedMessage['toi'] as $userId) {
@@ -49,8 +51,10 @@ class ChatController extends Controller
 
 			event(new ChatPrivateMessage(Auth::id(), $parsedMessage));
 		} else {
-			event(new ChatMessage($chatMessage->parse()));
+			event(new ChatMessage($parsedMessage));
 		}
+
+		Cache::delete('chat.cache');
 
 		return [
 			'message' => $parsedMessage,
@@ -76,12 +80,6 @@ class ChatController extends Controller
 
 		$items = $items->get();
 
-		$result = [];
-
-		foreach ($items as $item) {
-			$result[] = $item->parse();
-		}
-
-		return ['messages' => array_reverse($result)];
+		return ['messages' => Resources\ChatMessage::collection($items->reverse())];
 	}
 }

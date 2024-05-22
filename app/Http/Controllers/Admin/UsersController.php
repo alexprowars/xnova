@@ -110,7 +110,7 @@ class UsersController extends CrudController
 					'attribute' => 'create_time',
 					'model' => UserDetail::class,
 					'function' => function ($entry) {
-						return date('d.m.Y H:i:s', $entry->info->create_time ?? 0);
+						return $entry->user->created_at->format('d.m.Y H:i:s');
 					},
 				], [
 					'label'     => trans('backpack::permissionmanager.roles'),

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
@@ -12,10 +11,6 @@ class AuthServiceProvider extends ServiceProvider
 
 	public function boot(GateContract $gate)
 	{
-		Auth::provider('authuserprovider', function ($app, array $config) {
-			return new AuthUserProvider($app['hash'], $config['model']);
-		});
-
 		$gate->before(function ($user) {
 			return $user->id === 1;
 		});

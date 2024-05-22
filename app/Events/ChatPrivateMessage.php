@@ -14,18 +14,13 @@ class ChatPrivateMessage implements ShouldBroadcast
 	use InteractsWithSockets;
 	use SerializesModels;
 
-	public $message;
-	public $userId;
-
-	public function __construct(int $userId, $message)
+	public function __construct(public int $userId, public $message)
 	{
-		$this->userId = $userId;
-		$this->message = $message;
 		$this->dontBroadcastToCurrentUser();
 	}
 
 	public function broadcastOn()
 	{
-		return new PrivateChannel('game.' . $this->userId);
+		return new PrivateChannel('user.' . $this->userId);
 	}
 }

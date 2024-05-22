@@ -9,7 +9,9 @@ return new class extends Migration {
 	{
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
-			$table->string('username', 30);
+			$table->string('email', 50);
+			$table->string('password', 100)->default('');
+			$table->string('username', 50);
 			$table->boolean('authlevel')->default(0);
 			$table->smallInteger('group_id')->default(0);
 			$table->integer('banned')->default(0);
@@ -50,6 +52,8 @@ return new class extends Migration {
 			$table->integer('message_block')->default(0);
 			$table->integer('links')->unsigned()->default(0);
 			$table->boolean('chat')->default(0);
+			$table->json('options')->nullable();
+			$table->timestamps();
 		});
 	}
 

@@ -22,8 +22,8 @@ class Game
 			$time = time();
 		}
 
-		if (Auth::check() && !is_null(Auth::user()->getUserOption('timezone'))) {
-			$time += Auth::user()->getUserOption('timezone') * 1800;
+		if (Auth::check() && !is_null(Auth::user()->getOption('timezone'))) {
+			$time += Auth::user()->getOption('timezone') * 1800;
 		}
 
 		return date($format, $time);

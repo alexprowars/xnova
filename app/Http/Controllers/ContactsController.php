@@ -17,7 +17,7 @@ class ContactsController extends Controller
 	{
 		$contacts = [];
 
-		$GameOps = DB::select("SELECT u.id, u.username, ui.email, u.authlevel, ui.about FROM users u, user_details ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");
+		$GameOps = DB::select("SELECT u.id, u.username, u.email, u.authlevel, ui.about FROM users u, user_details ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");
 
 		foreach ($GameOps as $Ops) {
 			$contacts[] = [

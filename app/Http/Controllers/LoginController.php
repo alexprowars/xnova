@@ -121,9 +121,8 @@ class LoginController extends Controller
 			$response = $broker->reset(
 				['email' => $email, 'token' => $token, 'password' => $password],
 				function (Models\User $user, $password) {
-					Models\UserDetail::query()->where('id', $user->id)->update([
-						'password' => Hash::make($password)
-					]);
+					$user->password = Hash::make($password);
+					$user->save();
 
 					event(new PasswordReset($user));
 
@@ -137,7 +136,7 @@ class LoginController extends Controller
 							'#NAME#' => $user->username,
 							'#PASSWORD#' => $password,
 						]));
-					} catch (\Exception $e) {
+					} catch (\Exception) {
 					}
 				}
 			);

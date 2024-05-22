@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
 use App\Controller;
 use App\Exceptions\Exception;
@@ -45,27 +46,18 @@ class IndexController extends Controller
 				$errors[] = __('reg.error_confirm');
 			}
 
-			$checkExist = Models\UserDetail::query()->where('email', $email)->exists();
+			$checkExist = Models\User::query()->where('email', $email)->exists();
 
 			if ($checkExist) {
 				$errors[] = __('reg.error_emailexist');
 			}
 
-			if (!count($errors)) {
-				$curl = curl_init();
-
-				curl_setopt($curl, CURLOPT_URL, 'https://www.google.com/recaptcha/api/siteverify');
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($curl, CURLOPT_POST, true);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
+			if (empty($errors)) {
+				$captcha = Http::post('https://www.google.com/recaptcha/api/siteverify', [
 					'secret' => config('settings.recaptcha.secret_key'),
 					'response' => $request->post('captcha'),
 					'remoteip' => $request->ip()
-				]));
-
-				$captcha = json_decode(curl_exec($curl), true);
-
-				curl_close($curl);
+				])->json();
 
 				if (!$captcha['success']) {
 					$errors[] = "Вы не прошли проверку на бота!";
@@ -91,7 +83,6 @@ class IndexController extends Controller
 		$this->setTitle('Регистрация');
 
 		return [
-			'captcha' => config('settings.recaptcha.public_key'),
 			'errors' => $errors
 		];
 	}

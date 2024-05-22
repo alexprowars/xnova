@@ -15,53 +15,51 @@ return [
 	'baseDeuteriumProduction' => 5000,
 	'onlinetime'              => 60,
 	'universe'                => 'x',
-	'forum_url'               => 'http://forum.xnova.su/',
 	// УРЛ форума
-	'noobprotection'          => 1,
+	'forum_url'               => 'http://forum.xnova.su/',
 	// Защита новичков
+	'noobprotection'          => 1,
 	'noobprotectiontime'      => 50,
 	'noobprotectionmulti'     => 5,
-	'fleetDebrisRate'         => 0.3,
 	// Флот в обломки
-	'defsDebrisRate'          => 0,
+	'fleetDebrisRate'         => 0.3,
 	// Оборона в обломки
-	'initial_fields'          => 170,
+	'defsDebrisRate'          => 0,
 	// Поля на главной планете
-	'initial_base_fields'     => 10,
+	'initial_fields'          => 170,
 	// Поля на военной базе
-	'BuildLabWhileRun'        => 0,
+	'initial_base_fields'     => 10,
 	// Разрешить апгрейд лабы при идущем исследовании
-	'vocationModeTime'        => 172800,
+	'BuildLabWhileRun'        => 0,
 	// Время ухода в отпуск
-	'metal_basic_income'      => 20,
+	'vocationModeTime'        => 172800,
 	// Базовое производство на планете
+	'metal_basic_income'      => 20,
 	'crystal_basic_income'    => 10,
 	'deuterium_basic_income'  => 0,
 	'energy_basic_income'     => 0,
-	'game_speed'              => 500000,
 	// Скорость строительства и исследований /2500
-	'fleet_speed'             => 500000,
+	'game_speed'              => 500000,
 	// Скорость полётов /2500
-	'resource_multiplier'     => 30,
+	'fleet_speed'             => 500000,
 	// Скорость добычи ресурсов
-	'planetFactor'            => 1,
+	'resource_multiplier'     => 30,
 	// Множитель размера колонизируемых планет
-	'hallPoints'              => 1000000,
+	'planetFactor'            => 1,
 	// Порог лома для попадания в зал славы
-	'maxMoonChance'           => 20,
+	'hallPoints'              => 1000000,
 	// Максимальный ШВЛ
-	'refersCreditBonus'       => 5,
+	'maxMoonChance'           => 20,
 	// Ежедневный бонус за рефералов
+	'refersCreditBonus'       => 5,
 	'maxRegPlanetsInSystem'   => 3,
 	'buildings_exp_mult'      => 1500,
 	'maxSlotsInSim'           => 10,
 	'view' => [
-		'openRaportInNewWindow' => 1,
 		// Открывать отчетыв новом окне
-		'showPlanetListSelect'  => 0,
+		'openRaportInNewWindow' => 1,
 		// Показывать селект выбора планет
-		'socialIframeView'      => 0,
-		// Вид для соц сетей
+		'showPlanetListSelect'  => 0,
 	],
 	'stat' => [
 		'deleteTime'   => 604800,

@@ -16,7 +16,6 @@ use App\Exceptions\Exception;
 use App\Mail\UserRegistration;
 use App\Models\Alliance;
 use App\Models\Message;
-use App\Models;
 use App\User\Tech;
 use App\Queue as QueueManager;
 
@@ -31,7 +30,6 @@ class User extends Models\User
 		'chatbox' 			=> true,
 		'records' 			=> true,
 		'only_available' 	=> false,
-
 		'planet_sort'		=> 0,
 		'planet_sort_order'	=> 0,
 		'color'				=> 0,
@@ -39,7 +37,6 @@ class User extends Models\User
 		'spy'				=> 1,
 	];
 
-	private $optionsData = [];
 	private $bonusData = null;
 	public $ally = [];
 	/** @var Planet */
@@ -53,33 +50,17 @@ class User extends Models\User
 		return (time() - $this->onlinetime < 180);
 	}
 
-	public function setOptions($data, $clear = true)
+	public function getOption($key)
 	{
-		if ($clear) {
-			$this->optionsData = [];
-		}
-
-		if (!is_array($data)) {
-			return;
-		}
-
-		foreach ($data as $key => $value) {
-			$this->optionsData[trim($key)] = $value;
-		}
+		return ($this->options[$key] ?? ($this->optionsDefault[$key] ?? 0));
 	}
 
-	public function getUserOption($key = false)
+	public function setOption($key, $value)
 	{
-		if ($key === false) {
-			return $this->optionsData;
-		}
+		$options = $this->options ?? [];
+		$options[$key] = $value;
 
-		return (isset($this->optionsData[$key]) ? $this->optionsData[$key] : (isset($this->optionsDefault[$key]) ? $this->optionsDefault[$key] : 0));
-	}
-
-	public function setUserOption($key, $value)
-	{
-		$this->optionsData[$key] = $value;
+		$this->options = $options;
 	}
 
 	private function fillBobusData()
@@ -294,8 +275,8 @@ class User extends Models\User
 		}
 
 		$sort = self::getPlanetListSortQuery(
-			$this->getUserOption('planet_sort'),
-			$this->getUserOption('planet_sort_order')
+			$this->getOption('planet_sort'),
+			$this->getOption('planet_sort_order')
 		);
 
 		$query->orderBy($sort['fields'], $sort['order']);
@@ -537,12 +518,14 @@ class User extends Models\User
 
 	public static function creation(array $data)
 	{
-		if (!isset($data['password']) || $data['password'] == '') {
+		if (empty($data['password'])) {
 			$data['password'] = Str::random(10);
 		}
 
 		return DB::transaction(function () use ($data) {
-			$user = Models\User::query()->create([
+			$user = Models\User::create([
+				'email' => $data['email'] ?? '',
+				'password' => Hash::make($data['password']),
 				'username' => $data['name'] ?? '',
 				'sex' => 0,
 				'planet_id' => 0,
@@ -555,18 +538,15 @@ class User extends Models\User
 				throw new Exception('create user error');
 			}
 
-			Models\UserDetail::query()->create([
+			Models\UserDetail::create([
 				'id' => $user->id,
-				'email' => $data['email'] ?? '',
-				'create_time' => time(),
-				'password' => Hash::make($data['password']),
 			]);
 
 			if (Session::has('ref')) {
 				$refer = Models\User::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
-					Models\Referal::query()->insert([
+					Models\Referal::insert([
 						'r_id' => $user->id,
 						'u_id' => $refer->getId()
 					]);

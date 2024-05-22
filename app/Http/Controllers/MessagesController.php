@@ -52,9 +52,7 @@ class MessagesController extends Controller
 			}
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
-				$registerTime = DB::selectOne("SELECT create_time FROM user_details WHERE id = " . $this->user->id . "")->create_time;
-
-				if ($registerTime > time() - 86400) {
+				if ($this->user->created_at->timestamp > time() - 86400) {
 					$lastSend = Message::query()
 						->where('user_id', $this->user->id)
 						->where('time', time() - (1 * 60))
@@ -280,7 +278,7 @@ class MessagesController extends Controller
 			'page' => (int) $paginator->currentPage()
 		];
 
-		$parse['parser'] = $this->user->getUserOption('bb_parser');
+		$parse['parser'] = $this->user->getOption('bb_parser');
 
 		$this->setTitle('Сообщения');
 		$this->showTopPanel(false);

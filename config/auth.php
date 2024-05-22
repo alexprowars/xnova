@@ -13,8 +13,8 @@ return [
 	],
 	'providers' => [
 		'users' => [
-			'driver' => 'authuserprovider',
-			'model' => App\User::class,
+			'driver' => 'eloquent',
+			'model' => env('AUTH_MODEL', App\User::class),
 		],
 	],
 	/*

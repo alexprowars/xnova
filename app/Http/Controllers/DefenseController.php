@@ -24,7 +24,7 @@ class DefenseController extends Controller
 		}
 
 		if ($this->planet->planet_type == 5) {
-			$this->user->setUserOption('only_available', true);
+			$this->user->setOption('only_available', true);
 		}
 
 		$construction = new Construction($this->user, $this->planet);

@@ -12,7 +12,6 @@
 	},
     "require": {
 		"php": "^8.2",
-		"ext-curl": "*",
 		"ext-gd": "*",
 		"ext-iconv": "*",
 		"ext-json": "*",
@@ -23,6 +22,7 @@
 		"backpack/settings": "^3.1.1",
 		"gumlet/php-image-resize": "^2.0.4",
 		"laravel/framework": "^11.0.0",
+		"laravel/reverb": "@beta",
 		"laravel/socialite": "^5.5.7",
 		"laravel/tinker": "^2.9",
 		"nubs/random-name-generator": "^2.1",

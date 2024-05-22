@@ -48,40 +48,11 @@ class Controller extends BaseController
 		if (Auth::check()) {
 			$this->user = Auth::user();
 
-			// Кэшируем настройки профиля в сессию
-			if (!Session::has('config') || strlen(Session::get('config')) < 10) {
-				$info = UserDetail::query()
-					->find(Auth::id(), ['settings']);
-
-				Session::put('config', $info->settings);
-			}
-
 			if (!(int) config('settings.view.showPlanetListSelect', 0)) {
-				config(['settings.view.showPlanetListSelect' => $this->user->getUserOption('planetlistselect')]);
+				config(['settings.view.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
 			}
 
-			if (Request::input('fullscreen') == 'Y') {
-				Cookie::queue('full', 'Y', (time() + 30 * 86400), '/', null, $_SERVER['SERVER_NAME'], 0);
-				$_COOKIE["full"] = 'Y';
-			}
-
-			if (Request::server('SERVER_NAME') == 'vk.xnova.su') {
-				config(['settings.view.socialIframeView' => 1]);
-			}
-
-			if (Cookie::has('full') && Cookie::get("full") == 'Y') {
-				config(['settings.view.socialIframeView' => 0]);
-				config(['settings.view.showPlanetListSelect' => 0]);
-			}
-
-			// Заносим настройки профиля в основной массив
-			$inf = json_decode(Session::get('config'), true);
-
-			if (is_array($inf)) {
-				$this->user->setOptions($inf);
-			}
-
-			if (!$this->user->getUserOption('chatbox')) {
+			if (!$this->user->getOption('chatbox')) {
 				$this->views['chat'] = false;
 			}
 

@@ -240,7 +240,7 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.id, u.username, i.email FROM users u, user_details i WHERE i.id = u.id AND u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$list = DB::select("SELECT u.* FROM users u WHERE u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
 
 		foreach ($list as $user) {
 			DB::statement("UPDATE users SET `deltime` = '" . (time() + config('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
@@ -293,7 +293,7 @@ class UpdateStatistics
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = DB::select("SELECT u.*, ui.settings, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM (users u, user_details ui) LEFT JOIN statistics s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
+		$list = DB::select("SELECT u.*, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM users LEFT JOIN statistics s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
