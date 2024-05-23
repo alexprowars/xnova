@@ -23,6 +23,10 @@ return new class extends Migration {
 			$table->boolean('members')->default(true);
 			$table->timestamps();
 		});
+
+		Schema::table('users', function (Blueprint $table) {
+			$table->foreign('alliance_id')->on('alliances')->references('id')->nullOnDelete();
+		});
 	}
 
 	public function down()

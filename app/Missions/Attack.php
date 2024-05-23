@@ -443,7 +443,6 @@ class Attack extends FleetEngine implements Mission
 
 		if ($this->fleet->assault) {
 			$this->fleet->assault->delete();
-			Models\AssaultUser::query()->where('assault_id', $this->fleet->assault_id)->delete();
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];

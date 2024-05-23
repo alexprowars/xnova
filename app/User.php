@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Log;
 use Backpack\Settings\app\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -405,7 +406,7 @@ class User extends Models\User
 		Models\LogHistory::query()->where('user_id', $id)->delete();
 		DB::table('log_transfers')->where('user_id', $id)->delete();
 		DB::table('log_stats')->where('user_id', $id)->where('type', 1)->delete();
-		DB::table('logs')->where('s_id', $id)->orWhere('e_id', $id)->delete();
+		Log::query()->where('s_id', $id)->orWhere('e_id', $id)->delete();
 		Models\Message::query()->where('user_id', $id)->where('from_id', $id)->delete();
 		Models\Blocked::query()->where('user_id', $id)->delete();
 		DB::table('log_ips')->where('user_id', $id)->delete();

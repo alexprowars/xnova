@@ -124,7 +124,7 @@ class Alliance extends Model
 			$this->parseRights();
 		}
 
-		return (isset($this->rights[$method]) ? $this->rights[$method] : false);
+		return $this->rights[$method] ?? false;
 	}
 
 	public function deleteMember($userId)
@@ -138,14 +138,13 @@ class Alliance extends Model
 
 	public function deleteAlly()
 	{
-		User::query()->where('alliance_id', $this->id)->update(['alliance_id' => null, 'ally_name' => null]);
+		User::where('alliance_id', $this->id)
+			->update(['alliance_id' => null, 'ally_name' => null]);
 
 		$this->delete();
 
-		AllianceChat::query()->where('alliance_id', $this->id)->delete();
-		AllianceMember::query()->where('alliance_id', $this->id)->delete();
-		AllianceRequest::query()->where('alliance_id', $this->id)->delete();
-		AllianceDiplomacy::query()->where('alliance_id', $this->id)->orWhere('d_id', $this->id)->delete();
-		Statistic::query()->where('stat_type', 1)->where('usser_id', null)->where('alliance_id', $this->id)->delete();
+		Statistic::query()->where('stat_type', 1)
+			->where('user_id', null)
+			->where('alliance_id', $this->id)->delete();
 	}
 }

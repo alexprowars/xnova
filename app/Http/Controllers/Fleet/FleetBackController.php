@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\Models\Assault;
-use App\Models\AssaultUser;
 use App\Models\Fleet;
 
 class FleetBackController extends Controller
@@ -44,7 +42,6 @@ class FleetBackController extends Controller
 
 		if ($fleet->mission == 1 && $fleet->assault) {
 			$fleet->assault->delete();
-			AssaultUser::query()->where('assault_id', $fleet->assault_id)->delete();
 		}
 
 		$fleet->update([

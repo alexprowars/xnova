@@ -367,7 +367,7 @@ class AllianceController extends Controller
 
 				if ($check) {
 					AllianceRequest::query()->where('user_id', $show)->delete();
-					AllianceMember::query()->where('u_id', $show)->delete();
+					AllianceMember::query()->where('user_id', $show)->delete();
 
 					AllianceMember::insert([
 						'alliance_id' => $this->ally->id,

@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('alliances_requests', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->string('message')->nullable();
 			$table->timestamps();
 			$table->unique(['alliance_id','user_id'], 'alliance_id');

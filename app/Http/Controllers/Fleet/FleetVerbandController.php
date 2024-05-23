@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Models\Assault;
-use App\Models\AssaultUser;
 use App\Models\Fleet;
 use App\User;
 

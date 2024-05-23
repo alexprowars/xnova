@@ -121,11 +121,10 @@ class FleetEngine
 			$fleetId = $this->fleet->id;
 		}
 
-		Models\Fleet::query()->where('id', $fleetId)->update($update);
+		Models\Fleet::find($fleetId)->update($update);
 
 		if ($this->fleet->assault) {
 			$this->fleet->assault->delete();
-			Models\AssaultUser::query()->where('assault_id', $this->fleet->assault_id)->delete();
 		}
 	}
 

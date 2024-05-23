@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('alliances_diplomacies', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
-			$table->integer('d_id')->default(0);
+			$table->foreignId('d_id')->constrained('alliances')->cascadeOnDelete();
 			$table->boolean('type')->default(0);
 			$table->boolean('status')->default(0);
 			$table->boolean('primary')->default(0);

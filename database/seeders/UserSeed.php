@@ -3,21 +3,17 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\UserDetail;
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeed extends Seeder
 {
 	public function run()
 	{
-		/** @var User $user */
-		$user = User::query()->create([
+		$user = User::create([
 			'username' => 'admin',
-		]);
-
-		UserDetail::query()->create([
 			'email'    => 'admin@admin.com',
-			'password' => bcrypt('password'),
+			'password' => Hash::make('password'),
 		]);
 
 		$user->assignRole('admin');
