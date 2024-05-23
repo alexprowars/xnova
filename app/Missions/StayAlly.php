@@ -11,9 +11,9 @@ class StayAlly extends FleetEngine implements Mission
 	{
 		$this->stayFleet();
 
-		$Message = sprintf(__('fleet_engine.sys_stay_mess_user'), $this->fleet->owner_name, $this->fleet->getStartAdressLink(), $this->fleet->target_owner_name, $this->fleet->getTargetAdressLink());
+		$Message = sprintf(__('fleet_engine.sys_stay_mess_user'), $this->fleet->user_name, $this->fleet->getStartAdressLink(), $this->fleet->target_user_name, $this->fleet->getTargetAdressLink());
 
-		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_tower'), $Message);
+		User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_tower'), $Message);
 	}
 
 	public function endStayEvent()

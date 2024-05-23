@@ -130,7 +130,7 @@ class OptionsController extends Controller
 				$queueManager = new Queue($this->user);
 				$queueCount = $queueManager->getCount();
 
-				$UserFlyingFleets = Models\Fleet::query()->where('owner', $this->user->id)->count();
+				$UserFlyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
 
 				if ($queueCount > 0) {
 					throw new ErrorException('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe. Строится: ' . $queueCount . ' объектов.');

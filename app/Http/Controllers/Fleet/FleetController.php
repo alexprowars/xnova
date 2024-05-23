@@ -167,7 +167,7 @@ class FleetController extends Controller
 
 		$assaults = Assault::query()
 			->whereRelation('users', 'user_id', $this->user->id)
-			->first();
+			->get();
 
 		foreach ($assaults as $assault) {
 			$parse['alliances'][] = [

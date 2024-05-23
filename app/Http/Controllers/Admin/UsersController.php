@@ -229,12 +229,11 @@ class UsersController extends CrudController
 			$BanTime += $mins * 60;
 			$BanTime += time();
 
-			Blocked::query()->insert([
-				'who'		=> $user->id,
-				'theme'		=> $reason,
-				'time'		=> time(),
+			Blocked::create([
+				'user_id'	=> $user->id,
+				'reason'	=> $reason,
 				'longer'	=> $BanTime,
-				'author'	=> Auth::id(),
+				'author_id'	=> Auth::id(),
 			]);
 
 			$update = ['banned' => $BanTime];
@@ -288,7 +287,8 @@ class UsersController extends CrudController
 				return redirect(backpack_url('users/unban'))->with('error', 'Игрок не найден');
 			}
 
-			Blocked::query()->where('who', $user->id)->delete();
+			Blocked::query()->where('user_id', $user->id)->delete();
+
 			$user->banned = 0;
 
 			if ($user->vacation == 1) {

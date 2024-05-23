@@ -56,7 +56,7 @@ class ChatMessage extends JsonResource
 
 		$result = [
 			'id' => $this->id,
-			'time' => $this->created_at->timestamp,
+			'time' => $this->created_at->getTimestamp(),
 			'user' => $this->user->username ?? '',
 			'tou' => $users,
 			'toi' => $receiversId,

@@ -195,8 +195,8 @@ class InfoController extends Controller
 					$this->planet->deuterium -= $cur;
 					$this->planet->update();
 
-					$fleet->end_stay += $times;
-					$fleet->end_time += $times;
+					$fleet->end_stay->addSeconds($times);
+					$fleet->end_time->addSeconds($times);
 					$fleet->update();
 
 					throw new SuccessException('Ракета с дейтерием отправлена на орбиту вашей планете');
@@ -221,7 +221,7 @@ class InfoController extends Controller
 						'start_galaxy' => $item->start_galaxy,
 						'system' => $item->start_system,
 						'planet' => $item->start_planet,
-						'name' => $item->owner_name,
+						'name' => $item->user_name,
 					];
 				}
 

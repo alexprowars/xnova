@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->string('user', 50)->default('');
-			$table->foreignId('user_id')->constrained('users')->nullOnDelete();
+			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->text('message');
 			$table->integer('timestamp')->default(0);
 		});

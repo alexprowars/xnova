@@ -25,7 +25,7 @@ class GalaxyController extends Controller
 		}
 
 		$maxfleet_count = Models\Fleet::query()
-			->where('owner', $this->user->id)
+			->where('user_id', $this->user->id)
 			->count();
 
 		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {

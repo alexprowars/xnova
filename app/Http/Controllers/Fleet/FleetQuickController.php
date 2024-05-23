@@ -22,7 +22,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Нет доступа!');
 		}
 
-		$maxfleet = Models\Fleet::query()->where('owner', $this->user->id)->count();
+		$maxfleet = Models\Fleet::query()->where('user_id', $this->user->id)->count();
 
 		$MaxFlottes = 1 + $this->user->getTechLevel('computer');
 
@@ -203,8 +203,8 @@ class FleetQuickController extends Controller
 			if (count($shipArray)) {
 				$fleet = new Models\Fleet();
 
-				$fleet->owner = $this->user->id;
-				$fleet->owner_name = $this->planet->name;
+				$fleet->user_id = $this->user->id;
+				$fleet->user_name = $this->planet->name;
 				$fleet->mission = $mission;
 				$fleet->fleet_array = $shipArray;
 				$fleet->start_time = $duration + time();
@@ -217,21 +217,18 @@ class FleetQuickController extends Controller
 				$fleet->end_system = $system;
 				$fleet->end_planet = $planet;
 				$fleet->end_type = $planetType;
-				$fleet->create_time = time();
-				$fleet->update_time = $duration + time();
+				$fleet->updated_at = now()->addSeconds($duration);
 
 				if ($mission == 6 && $HeDBRec) {
-					$fleet->target_owner = $HeDBRec['id'];
-					$fleet->target_owner_name = $target->name;
+					$fleet->target_user_id = $HeDBRec['id'];
+					$fleet->target_user_name = $target->name;
 				}
 
 				if ($fleet->save()) {
 					$this->planet->deuterium -= $consumption;
 					$this->planet->update();
 
-					$tutorial = Models\UserQuest::query()
-						->select(['id', 'quest_id'])
-						->where('user_id', $this->user->id)
+					$tutorial = $this->user->quests()
 						->where('finish', 0)
 						->where('stage', 0)
 						->first();

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Entity\Coordinates;
@@ -53,7 +55,7 @@ class FleetSendController extends Controller
 
 		$allianceId = (int) $request->post('alliance', 0);
 
-		$fleetGroupId = 0;
+		$fleetGroupId = null;
 
 		if ($allianceId > 0 && $fleetMission == 2) {
 			$assault = Models\Assault::query()
@@ -116,7 +118,7 @@ class FleetSendController extends Controller
 		} else {
 			if ($this->user->getTechLevel('expedition') >= 1) {
 				$ExpeditionEnCours = Models\Fleet::query()
-					->where('owner', $this->user->id)
+					->where('user_id', $this->user->id)
 					->where('mission', 15)
 					->count();
 
@@ -238,7 +240,7 @@ class FleetSendController extends Controller
 			throw new PageException("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", "/fleet/");
 		}
 
-		$flyingFleets = Models\Fleet::query()->where('owner', $this->user->id)->count();
+		$flyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
 
 		$maxFleets = $this->user->getTechLevel('computer') + 1;
 
@@ -350,20 +352,20 @@ class FleetSendController extends Controller
 		if ($fleetGroupId > 0) {
 			// Вычисляем время самого медленного флота в совместной атаке
 			$flet = Models\Fleet::query()
-				->where('group_id', $fleetGroupId)
+				->where('assault_id', $fleetGroupId)
 				->get(['id', 'start_time', 'end_time']);
 
 			$fleet_group_time = $duration + time();
 			$arrr = [];
 
 			foreach ($flet as $i => $flt) {
-				if ($flt->start_time > $fleet_group_time) {
-					$fleet_group_time = $flt->start_time;
+				if ($flt->start_time->getTimestamp() > $fleet_group_time) {
+					$fleet_group_time = $flt->start_time->getTimestamp();
 				}
 
 				$arrr[$i]['id'] = $flt->id;
-				$arrr[$i]['start'] = $flt->start_time;
-				$arrr[$i]['end'] = $flt->end_time;
+				$arrr[$i]['start'] = $flt->start_time->getTimestamp();
+				$arrr[$i]['end'] = $flt->end_time->getTimestamp();
 			}
 		}
 
@@ -375,7 +377,7 @@ class FleetSendController extends Controller
 
 		if ($fleetMission == 15) {
 			$StayDuration = $expTime * 3600;
-			$StayTime = $fleet->start_time + $StayDuration;
+			$StayTime = $fleet->start_time->getTimestamp() + $StayDuration;
 		} else {
 			$StayDuration = 0;
 			$StayTime = 0;
@@ -448,7 +450,7 @@ class FleetSendController extends Controller
 			$FleetStayTime = round(($TotalFleetCons / $FleetStayConsumption) * 3600);
 
 			$StayDuration = $FleetStayTime;
-			$StayTime = $fleet->start_time + $FleetStayTime;
+			$StayTime = $fleet->start_time->getTimestamp() + $FleetStayTime;
 		}
 
 		if ($fleetGroupId > 0) {
@@ -523,7 +525,7 @@ class FleetSendController extends Controller
 					->update([
 						'start_time' => $fleet_group_time,
 						'end_time' => $end,
-						'update_time' => $fleet_group_time
+						'updated_at' => $fleet_group_time
 					]);
 			}
 		}
@@ -618,7 +620,7 @@ class FleetSendController extends Controller
 			->first();
 
 		if ($tutorial) {
-			$quest = __('tutorial.tutorial', $tutorial->quest_id);
+			$quest = __('tutorial.tutorial.' . $tutorial->quest_id);
 
 			foreach ($quest['TASK'] as $taskKey => $taskVal) {
 				if ($taskKey == 'FLEET_MISSION' && $taskVal == $fleetMission) {
@@ -635,15 +637,15 @@ class FleetSendController extends Controller
 		}
 
 		$fleet->fill([
-			'owner' 				=> $this->user->id,
-			'owner_name' 			=> $this->planet->name,
+			'user_id' 				=> $this->user->id,
+			'user_name' 			=> $this->planet->name,
 			'mission' 				=> $fleetMission,
 			'fleet_array' 			=> $fleetArray,
 			'start_galaxy' 			=> $this->planet->galaxy,
 			'start_system' 			=> $this->planet->system,
 			'start_planet' 			=> $this->planet->planet,
 			'start_type' 			=> $this->planet->planet_type,
-			'end_stay' 				=> $StayTime,
+			'end_stay' 				=> $StayTime ?: null,
 			'end_galaxy' 			=> $galaxy,
 			'end_system' 			=> $system,
 			'end_planet' 			=> $planet,
@@ -651,13 +653,13 @@ class FleetSendController extends Controller
 			'resource_metal' 		=> $TransMetal,
 			'resource_crystal' 		=> $TransCrystal,
 			'resource_deuterium' 	=> $TransDeuterium,
-			'target_owner' 			=> $targetPlanet ? $targetPlanet->user_id : 0,
-			'target_owner_name' 	=> $targetPlanet ? $targetPlanet->name : '',
-			'group_id' 				=> $fleetGroupId,
+			'target_user_id' 		=> $targetPlanet?->user_id,
+			'target_user_name' 		=> $targetPlanet?->name ?? '',
+			'assault_id' 			=> $fleetGroupId,
 			'raunds' 				=> $raunds,
-			'create_time' 			=> time(),
-			'update_time' 			=> $fleet->start_time,
+			'updated_at' 			=> $fleet->start_time,
 		]);
+
 		$fleet->save();
 
 		$this->planet->metal 		-= $TransMetal;

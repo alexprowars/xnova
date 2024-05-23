@@ -50,19 +50,19 @@ class Fleet extends Command
 		while ($totalRuns < MAX_RUNS) {
 			$_fleets = Models\Fleet::query()
 				->where(function (Builder $query) {
-					$query->where('start_time', '<=', time())
+					$query->where('start_time', '<=', now())
 						->where('mess', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->where('end_stay', '<=', time())
+					$query->where('end_stay', '<=', now())
 						->where('mess', '!=', 0)
 						->where('end_stay', '!=', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->where('end_time', '<=', time())
+					$query->where('end_time', '<=', now())
 						->where('mess', '!=', 0);
 				})
-				->orderBy('update_time', 'asc')
+				->orderBy('updated_at')
 				->limit(10)
 				->get();
 
@@ -81,11 +81,11 @@ class Fleet extends Command
 					/** @var $mission Mission */
 					$mission = new $missionName($fleetRow);
 
-					if ($fleetRow->mess == 0 && $fleetRow->start_time <= time()) {
+					if ($fleetRow->mess == 0 && $fleetRow->start_time->getTimestamp() <= time()) {
 						$mission->targetEvent();
-					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay <= time()) {
+					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->getTimestamp() <= time()) {
 						$mission->endStayEvent();
-					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time <= time()) {
+					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->getTimestamp() <= time()) {
 						$mission->returnEvent();
 					}
 

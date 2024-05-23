@@ -266,16 +266,16 @@ class UpdateStatistics
 		foreach ($UsrFleets as $CurFleet) {
 			$Points = $this->getFleetPointsOnTour($CurFleet->getShips());
 
-			if (!isset($fleetPoints[$CurFleet->owner])) {
-				$fleetPoints[$CurFleet->owner] = [];
-				$fleetPoints[$CurFleet->owner]['points'] = 0;
-				$fleetPoints[$CurFleet->owner]['count'] = 0;
-				$fleetPoints[$CurFleet->owner]['array'] = [];
+			if (!isset($fleetPoints[$CurFleet->user_id])) {
+				$fleetPoints[$CurFleet->user_id] = [];
+				$fleetPoints[$CurFleet->user_id]['points'] = 0;
+				$fleetPoints[$CurFleet->user_id]['count'] = 0;
+				$fleetPoints[$CurFleet->user_id]['array'] = [];
 			}
 
-			$fleetPoints[$CurFleet->owner]['points'] += ($Points['FleetPoint'] / 1000);
-			$fleetPoints[$CurFleet->owner]['count'] += $Points['FleetCount'];
-			$fleetPoints[$CurFleet->owner]['array'][] = $Points['fleet_array'];
+			$fleetPoints[$CurFleet->user_id]['points'] += ($Points['FleetPoint'] / 1000);
+			$fleetPoints[$CurFleet->user_id]['count'] += $Points['FleetCount'];
+			$fleetPoints[$CurFleet->user_id]['array'][] = $Points['fleet_array'];
 		}
 
 		return $fleetPoints;

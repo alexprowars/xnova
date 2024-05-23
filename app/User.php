@@ -3,6 +3,7 @@
 namespace App;
 
 use Backpack\Settings\app\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -313,7 +314,11 @@ class User extends Models\User
 
 	public static function sendMessage($owner, $sender, $time, $type, $from, $message): bool
 	{
-		if (!$time) {
+		if ($time instanceof Carbon) {
+			$time = $time->getTimestamp();
+		}
+
+		if (empty($time)) {
 			$time = time();
 		}
 
@@ -345,8 +350,7 @@ class User extends Models\User
 		$obj->text = addslashes($message);
 
 		if ($obj->save()) {
-			User::query()->find($owner)
-				->increment('messages');
+			User::find($owner)->increment('messages');
 
 			return true;
 		}
@@ -393,7 +397,7 @@ class User extends Models\User
 		Models\Statistic::query()->where('stat_type', 1)->where('user_id', $id)->delete();
 		Models\Planet::query()->where('user_id', $id)->delete();
 		Models\Note::query()->where('user_id', $id)->delete();
-		Models\Fleet::query()->where('owner', $id)->delete();
+		Models\Fleet::query()->where('user_id', $id)->delete();
 		Models\Friend::query()->where('sender', $id)->orWhere('owner', $id)->delete();
 		Models\Referal::query()->where('r_id', $id)->orWhere('u_id', $id)->delete();
 		DB::table('log_attacks')->where('user_id', $id)->delete();

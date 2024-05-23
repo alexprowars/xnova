@@ -46,7 +46,7 @@ class MessagesController extends Controller
 			}
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
-				if ($this->user->created_at->timestamp > time() - 86400) {
+				if ($this->user->created_at->getTimestamp() > time() - 86400) {
 					$lastSend = Message::query()
 						->where('user_id', $this->user->id)
 						->where('time', time() - (1 * 60))

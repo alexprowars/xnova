@@ -87,7 +87,7 @@ class TutorialController extends Controller
 			if ($taskKey == 'BUDDY_COUNT') {
 				$count = Models\Friend::query()->where('sender', $this->user->id)->orWhere('owner', $this->user->id)->count();
 
-				$check = $count >= $taskVal ? true : false;
+				$check = $count >= $taskVal;
 
 				$parse['task'][] = ['Кол-во друзей в игре: ' . $taskVal, $check];
 			}
@@ -224,11 +224,7 @@ class TutorialController extends Controller
 
 		$userQuests = [];
 
-		$quests = Models\UserQuest::query()
-			->where('user_id', $this->user->id)
-			->get();
-
-		foreach ($quests as $quest) {
+		foreach ($this->user->quests as $quest) {
 			$userQuests[$quest->quest_id] = $quest->toArray();
 		}
 

@@ -14,7 +14,7 @@ class Spy extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$owner = User::query()->find($this->fleet->owner);
+		$owner = User::query()->find($this->fleet->user_id);
 
 		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
@@ -32,7 +32,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		$TargetPlanet->setRelation('user', $targetUser);
-		$TargetPlanet->getProduction($this->fleet->start_time)->update();
+		$TargetPlanet->getProduction($this->fleet->start_time->getTimestamp())->update();
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();
@@ -161,13 +161,13 @@ class Spy extends FleetEngine implements Mission
 				$MessageEnd .= "Симуляция</a></center>";
 			}
 
-			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->fleet->start_time . "')\">BB-код</a></center>";
+			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->fleet->start_time->getTimestamp() . "')\">BB-код</a></center>";
 
-			$SpyMessage = "<div id=\"sp" . $this->fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
+			$SpyMessage = "<div id=\"sp" . $this->fleet->start_time->getTimestamp() . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
 
-			User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
+			User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
 
-			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->fleet->owner_name . " ";
+			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->fleet->user_name . " ";
 			$TargetMessage .= $this->fleet->getStartAdressLink();
 			$TargetMessage .= __('fleet_engine.sys_mess_spy_seen_at') . " " . $TargetPlanet->name;
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";

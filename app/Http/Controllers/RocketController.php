@@ -74,9 +74,9 @@ class RocketController extends Controller
 
 		$time = 30 + (60 * $distance);
 
-		$fleet = Fleet::query()->create([
-			'owner' 			=> $this->user->id,
-			'owner_name' 		=> $this->planet->name,
+		$fleet = Fleet::create([
+			'user_id' 			=> $this->user->id,
+			'user_name' 		=> $this->planet->name,
 			'mission' 			=> 20,
 			'fleet_array' 		=> [['id' => 503, 'count' => $count, 'target' => $destroyType]],
 			'start_time' 		=> time() + $time,
@@ -84,15 +84,14 @@ class RocketController extends Controller
 			'start_system' 		=> $this->planet->system,
 			'start_planet' 		=> $this->planet->planet,
 			'start_type' 		=> 1,
-			'end_time' 			=> 0,
+			'end_time' 			=> null,
 			'end_galaxy' 		=> $g,
 			'end_system' 		=> $s,
 			'end_planet' 		=> $p,
 			'end_type' 			=> 1,
-			'target_owner' 		=> $targetPlanet->user_id,
-			'target_owner_name' => $targetPlanet->name,
-			'create_time' 		=> time(),
-			'update_time' 		=> time() + $time,
+			'target_user_id' 	=> $targetPlanet->user_id,
+			'target_user_name' 	=> $targetPlanet->name,
+			'updated_at' 		=> now()->addSeconds($time),
 		]);
 
 		if ($fleet->id > 0) {

@@ -111,7 +111,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$Message = __('fleet_engine.sys_expe_found_dm_1_' . random_int(1, 5));
 
-				Models\User::query()->where('id', $this->fleet->owner)
+				Models\User::query()->where('id', $this->fleet->user_id)
 					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
 				$this->returnFleet();
@@ -260,8 +260,8 @@ class Expedition extends FleetEngine implements Mission
 				$playerObj->setTech(0, 0, 0);
 
 				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
-					if (isset($mission->usersTech[$this->fleet->owner][Vars::getName($techId)]) && $mission->usersTech[$this->fleet->owner][Vars::getName($techId)] > 0) {
-						$res[$techId] = random_int(abs($mission->usersTech[$this->fleet->owner][Vars::getName($techId)] + $Def), 0);
+					if (isset($mission->usersTech[$this->fleet->user_id][Vars::getName($techId)]) && $mission->usersTech[$this->fleet->user_id][Vars::getName($techId)] > 0) {
+						$res[$techId] = random_int(abs($mission->usersTech[$this->fleet->user_id][Vars::getName($techId)] + $Def), 0);
 					}
 				}
 
@@ -336,7 +336,7 @@ class Expedition extends FleetEngine implements Mission
 						Models\Fleet::query()->where('id', $fleetID)
 							->update([
 								'fleet_array' 	=> json_encode($fleetArray),
-								'update_time' 	=> DB::raw('end_time'),
+								'updated_at' 	=> DB::raw('end_time'),
 								'mess'			=> 1,
 								'won'			=> $result['won']
 							]);
@@ -360,7 +360,7 @@ class Expedition extends FleetEngine implements Mission
 				];
 
 				$report = Models\Report::create([
-					'id_users' => $FleetsUsers,
+					'users_id' => $FleetsUsers,
 					'no_contact' => 0,
 					'data' => $raport,
 				]);
@@ -383,7 +383,7 @@ class Expedition extends FleetEngine implements Mission
 				}
 				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $report->id, md5(config('app.key') . $report->id), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
 
-				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_tower'), $MessageAtt);
+				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_tower'), $MessageAtt);
 
 				break;
 
@@ -409,11 +409,11 @@ class Expedition extends FleetEngine implements Mission
 				$Wrapper[]      = 5;
 
 				if ($MoreTime < 75) {
-					$this->fleet->end_time += ($this->fleet->end_stay - $this->fleet->start_time) * (array_rand($Wrapper) - 1);
+					$this->fleet->end_time->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_time->getTimestamp()) * (array_rand($Wrapper) - 1));
 
 					$Message = __('fleet_engine.sys_expe_time_slow_' . random_int(1, 6));
 				} else {
-					$this->fleet->end_time -= max(1, (($this->fleet->end_stay - $this->fleet->start_time) / 3 * array_rand($Wrapper)));
+					$this->fleet->end_time->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_time->getTimestamp()) / 3 * array_rand($Wrapper))));
 
 					$Message = __('fleet_engine.sys_expe_time_fast_' . random_int(1, 3));
 				}
@@ -428,14 +428,14 @@ class Expedition extends FleetEngine implements Mission
 				$Message = __('fleet_engine.sys_expe_nothing_' . random_int(1, 8));
 		}
 
-		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_stay, 15, __('fleet_engine.sys_expe_report'), $Message);
+		User::sendMessage($this->fleet->user_id, 0, $this->fleet->end_stay, 15, __('fleet_engine.sys_expe_report'), $Message);
 	}
 
 	public function returnEvent()
 	{
 		$Message = sprintf(__('fleet_engine.sys_expe_back_home'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 
-		User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 15, __('fleet_engine.sys_expe_report'), $Message);
+		User::sendMessage($this->fleet->user_id, 0, $this->fleet->end_time, 15, __('fleet_engine.sys_expe_report'), $Message);
 
 		$this->restoreFleetToPlanet();
 		$this->killFleet();

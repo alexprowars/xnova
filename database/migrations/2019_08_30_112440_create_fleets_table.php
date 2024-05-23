@@ -9,33 +9,33 @@ return new class extends Migration {
 	{
 		Schema::create('fleets', function (Blueprint $table) {
 			$table->id();
-			$table->integer('owner')->default(0)->index('fleet_owner');
-			$table->string('owner_name', 35)->default('');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+			$table->string('user_name', 50)->nullable()->default('');
 			$table->integer('mission')->default(0);
 			$table->bigInteger('amount')->default(0);
 			$table->json('fleet_array')->nullable();
-			$table->integer('start_time')->default(0)->index('fleet_start_time');
+			$table->timestamp('start_time')->nullable()->index();
 			$table->boolean('start_galaxy')->default(0);
 			$table->smallInteger('start_system')->unsigned()->default(0);
 			$table->boolean('start_planet')->default(0);
 			$table->boolean('start_type')->default(0);
-			$table->integer('end_time')->default(0)->index('fleet_end_time');
-			$table->integer('end_stay')->default(0)->index('fleet_end_stay');
+			$table->timestamp('end_time')->nullable()->index();
+			$table->timestamp('end_stay')->nullable()->index();
 			$table->boolean('end_galaxy')->default(0);
-			$table->smallInteger('end_system')->unsigned()->default(0)->index('fleet_end_system');
+			$table->smallInteger('end_system')->unsigned()->default(0)->index();
 			$table->boolean('end_planet')->default(0);
 			$table->boolean('end_type')->default(0);
 			$table->bigInteger('resource_metal')->unsigned()->default(0);
 			$table->bigInteger('resource_crystal')->unsigned()->default(0);
 			$table->bigInteger('resource_deuterium')->unsigned()->default(0);
-			$table->integer('target_owner')->default(0)->index('fleet_target_owner');
-			$table->string('target_owner_name', 35)->default('');
-			$table->integer('group_id')->default(0)->index('fleet_group');
+			$table->foreignId('target_user_id')->nullable()->constrained('users')->nullOnDelete();
+			$table->string('target_user_name', 50)->nullable()->default('');
+			$table->foreignId('assault_id')->nullable()->constrained('assaults')->nullOnDelete();
 			$table->integer('mess')->default(0);
-			$table->integer('create_time')->default(0);
-			$table->integer('update_time')->default(0)->index('fleet_time');
 			$table->boolean('raunds')->default(6);
 			$table->boolean('won')->default(0);
+			$table->timestamps();
+			$table->index('updated_at');
 		});
 	}
 

@@ -9,19 +9,31 @@ use App\Entity\Coordinates;
 
 class Fleet extends Model
 {
-	public $timestamps = false;
 	protected $guarded = [];
 
 	protected function casts(): array
 	{
 		return [
 			'fleet_array' => 'array',
+			'start_time' => 'datetime',
+			'end_time' => 'datetime',
+			'end_stay' => 'datetime',
 		];
 	}
 
 	public function user()
 	{
-		return $this->belongsTo(User::class, 'owner');
+		return $this->belongsTo(User::class, 'user_id');
+	}
+
+	public function targetUser()
+	{
+		return $this->belongsTo(User::class, 'target_user_id');
+	}
+
+	public function assault()
+	{
+		return $this->belongsTo(Assault::class, 'assault_id');
 	}
 
 	public function splitStartPosition()
@@ -109,7 +121,7 @@ class Fleet extends Model
 
 	public function canBack()
 	{
-		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_owner != 1);
+		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_user_id != 1);
 	}
 
 	public function getOriginCoordinates(): Coordinates

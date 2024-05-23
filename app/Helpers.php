@@ -164,7 +164,7 @@ class Helpers
 
 	public static function BuildHostileFleetPlayerLink($FleetRow)
 	{
-		$uri = URL::to('messages/write/' . $FleetRow->owner . '/');
+		$uri = URL::to('messages/write/' . $FleetRow->user_id . '/');
 
 		return $FleetRow->user?->username . ' <a href="' . $uri . '" title="' . __('overview.ov_message') . '"><span class=\'sprite skin_m\'></span></a>';
 	}

@@ -48,9 +48,9 @@ class OverviewController extends Controller
 		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, __('overview.ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
 		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, __('main.type_mission.' . $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
 
-		$StartPlanet 	= $FleetRow->owner_name;
+		$StartPlanet 	= $FleetRow->user_name;
 		$StartType 		= $FleetRow->start_type;
-		$TargetPlanet 	= $FleetRow->target_owner_name;
+		$TargetPlanet 	= $FleetRow->target_user_name;
 		$TargetType 	= $FleetRow->end_type;
 
 		$StartID  = '';
@@ -136,7 +136,7 @@ class OverviewController extends Controller
 			$EventString = __('overview.ov_une');
 			$EventString .= $FleetContent;
 		} else {
-			$EventString = ($FleetRow->group_id != 0) ? 'Союзный ' : __('overview.ov_une_hostile');
+			$EventString = $FleetRow->assault_id ? 'Союзный ' : __('overview.ov_une_hostile');
 			$EventString .= $FleetContent;
 			$EventString .= __('overview.ov_hostile');
 			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
@@ -177,7 +177,7 @@ class OverviewController extends Controller
 		$bloc['prefix'] = $FleetPrefix;
 		$bloc['mission'] = $FleetStyle[$MissionType];
 		$bloc['date'] = Game::datezone("H:i:s", $Time);
-		$bloc['time'] = (int) $Time;
+		$bloc['time'] = $Time->getTimestamp();
 		$bloc['text'] = $EventString;
 
 		return $bloc;
@@ -375,8 +375,8 @@ class OverviewController extends Controller
 		$XpRaidUp = pow($this->user->lvl_raid, 2);
 
 		$fleets = Models\Fleet::query()
-			->where('owner', $this->user->id)
-			->orWhere('target_owner', $this->user->id)
+			->where('user_id', $this->user->id)
+			->orWhere('target_user_id', $this->user->id)
 			->with('user')
 			->get();
 
@@ -384,40 +384,41 @@ class OverviewController extends Controller
 		$aks = [];
 
 		foreach ($fleets as $fleet) {
-			if ($fleet->owner == $this->user->id) {
-				if ($fleet->start_time > time()) {
-					$fpage[$fleet->start_time][$fleet->id] = $this->buildFleetEventTable($fleet, 0, true);
+			if ($fleet->user_id == $this->user->id) {
+				if ($fleet->start_time->isFuture()) {
+					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 0, true);
 				}
 
-				if ($fleet->end_stay > time()) {
-					$fpage[$fleet->end_stay][$fleet->id] = $this->buildFleetEventTable($fleet, 1, true);
+				if ($fleet->end_stay?->isFuture()) {
+					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 1, true);
 				}
 
 				if (!($fleet->mission == 7 && $fleet->mess == 0)) {
-					if (($fleet->end_time > time() and $fleet->mission != 4) or ($fleet->mess == 1 and $fleet->mission == 4)) {
-						$fpage[$fleet->end_time][$fleet->id] = $this->buildFleetEventTable($fleet, 2, true);
+					if (($fleet->end_time->isFuture() and $fleet->mission != 4) or ($fleet->mess == 1 and $fleet->mission == 4)) {
+						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 2, true);
 					}
 				}
 
-				if ($fleet->group_id != 0 && !in_array($fleet->group_id, $aks)) {
+				if ($fleet->assault_id && !in_array($fleet->assault_id, $aks)) {
 					$AKSFleets = Models\Fleet::query()
-						->where('group_id', $fleet->group_id)
-						->where('owner', '!=', $this->user->id)
+						->where('assault_id', $fleet->assault_id)
+						->where('user_id', '!=', $this->user->id)
 						->where('mess', 0)
 						->get();
 
 					foreach ($AKSFleets as $AKFleet) {
-						$fpage[$fleet->start_time][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
+						$fpage[$fleet->start_time->getTimestamp()][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
 					}
 
-					$aks[] = $fleet->group_id;
+					$aks[] = $fleet->assault_id;
 				}
 			} elseif ($fleet->mission != 8) {
-				if ($fleet->start_time > time()) {
-					$fpage[$fleet->start_time][$fleet->id] = $this->buildFleetEventTable($fleet, 0, false);
+				if ($fleet->start_time->isFuture()) {
+					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 0, false);
 				}
-				if ($fleet->mission == 5 && $fleet->end_stay > time()) {
-					$fpage[$fleet->end_stay][$fleet->id] = $this->buildFleetEventTable($fleet, 1, false);
+
+				if ($fleet->mission == 5 && $fleet->end_stay?->isFuture()) {
+					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 1, false);
 				}
 			}
 		}

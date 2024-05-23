@@ -19,14 +19,14 @@ class FleetController extends Controller
 			throw new ErrorException(__('fleet.fl_noplanetrow'));
 		}
 
-		$flyingFleets = Models\Fleet::query()->where('owner', $this->user->id)->count();
+		$flyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
 
 		$expeditionTech = $this->user->getTechLevel('expedition');
 		$curExpeditions = 0;
 		$maxExpeditions = 0;
 
 		if ($expeditionTech >= 1) {
-			$curExpeditions = Models\Fleet::query()->where('owner', $this->user->id)->where('mission', 15)->count();
+			$curExpeditions = Models\Fleet::query()->where('user_id', $this->user->id)->where('mission', 15)->count();
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
@@ -63,9 +63,9 @@ class FleetController extends Controller
 		$parse['maxFleets'] = $maxFleets;
 		$parse['curExpeditions'] = $curExpeditions;
 		$parse['maxExpeditions'] = $maxExpeditions;
-		$parse['mission'] = (int) $mission;
+		$parse['mission'] = $mission;
 
-		$fleets = Models\Fleet::query()->where('owner', $this->user->id)->get();
+		$fleets = Models\Fleet::query()->where('user_id', $this->user->id)->get();
 
 		$parse['fleets'] = [];
 
@@ -79,14 +79,14 @@ class FleetController extends Controller
 					'galaxy' => (int) $fleet->start_galaxy,
 					'system' => (int) $fleet->start_system,
 					'planet' => (int) $fleet->start_planet,
-					'time' => (int) $fleet->start_time
+					'time' => $fleet->start_time->getTimestamp(),
 				],
 				'target' => [
 					'galaxy' => (int) $fleet->end_galaxy,
 					'system' => (int) $fleet->end_system,
 					'planet' => (int) $fleet->end_planet,
-					'time' => (int) $fleet->end_time,
-					'id' => (int) $fleet->target_owner
+					'time' => $fleet->end_time->getTimestamp(),
+					'id' => $fleet->target_user_id,
 				],
 				'stage' => (int) $fleet->mess
 			];

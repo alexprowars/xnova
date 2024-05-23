@@ -18,7 +18,7 @@ class Stay extends FleetEngine implements Mission
 			->where('planet_type', $this->fleet->end_type)
 			->first();
 
-		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->target_owner) {
+		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->target_user_id) {
 			$this->returnFleet();
 		} else {
 			$this->restoreFleetToPlanet(false);
@@ -47,7 +47,7 @@ class Stay extends FleetEngine implements Mission
 				$TargetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
 			}
 
-			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 
@@ -65,7 +65,7 @@ class Stay extends FleetEngine implements Mission
 			->where('planet_type', $this->fleet->start_type)
 			->first();
 
-		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->owner) {
+		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->user_id) {
 			$this->killFleet();
 		} else {
 			$this->restoreFleetToPlanet();
@@ -81,7 +81,7 @@ class Stay extends FleetEngine implements Mission
 
 			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
 
-			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->user_id, 0, $this->fleet->end_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 }

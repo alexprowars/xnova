@@ -9,10 +9,10 @@ return new class extends Migration {
 	{
 		Schema::create('statistics', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users')->nullOnDelete();
+			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->string('username', 35)->default('');
 			$table->boolean('race')->default(0);
-			$table->foreignId('alliance_id')->constrained('users')->nullOnDelete();
+			$table->foreignId('alliance_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->string('alliance_name', 50)->default('');
 			$table->boolean('stat_type')->default(0)->index('stat_type');
 			$table->integer('stat_code')->default(0);

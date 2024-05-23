@@ -188,7 +188,7 @@ class AlliancesController extends Controller
 		if (isset($_GET['leader'])) {
 			$ally_id = intval($_GET['leader']);
 
-			$query = $this->db->query("SELECT `owner` FROM alliances");
+			$query = $this->db->query("SELECT `user_id` FROM alliances");
 			$u = $query->fetch();
 			$users = $this->db->query("SELECT `username` FROM users WHERE id='" . $u['owner'] . "'");
 			$a = $users->fetch();
@@ -216,7 +216,7 @@ class AlliancesController extends Controller
 				$a = $sq->fetch();
 
 				if ($a['alliance_id'] == $_GET['leader']) {
-					$this->db->query("UPDATE alliances SET `owner` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
+					$this->db->query("UPDATE alliances SET `user_id` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
 				}
 
 				$this->response->redirect('admin/alliancelist/');

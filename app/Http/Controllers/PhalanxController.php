@@ -98,15 +98,15 @@ class PhalanxController extends Controller
 				$type2 = "планет";
 			}
 
-			if ($row->start_time > time() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3))) {
+			if ($row->start_time->isFuture() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3))) {
 				$list[] = [
-					'time' => (int) $row->start_time,
+					'time' => $row->start_time->getTimestamp(),
 					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type . 'ы',
 					'type_2' => $type2 . 'у',
-					'planet_name' => $row->owner_name,
+					'planet_name' => $row->user_name,
 					'planet_position' => $row->splitStartPosition(),
-					'target_name' => $row->target_owner_name,
+					'target_name' => $row->target_user_name,
 					'target_position' => $row->splitTargetPosition(),
 					'mission' => __('main.type_mission.' . $row->mission),
 					'color' => $color,
@@ -116,13 +116,13 @@ class PhalanxController extends Controller
 
 			if ($row->mission <> 4 && !$end && $row->start_type != 3) {
 				$list[] = [
-					'time' => (int) $row->end_time,
+					'time' => $row->end_time->getTimestamp(),
 					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type2 . 'ы',
 					'type_2' => $type . 'у',
-					'planet_name' => $row->target_owner_name,
+					'planet_name' => $row->target_user_name,
 					'planet_position' => $row->splitTargetPosition(),
-					'target_name' => $row->owner_name,
+					'target_name' => $row->user_name,
 					'target_position' => $row->splitStartPosition(),
 					'mission' => __('main.type_mission.' . $row->mission),
 					'color' => $color,

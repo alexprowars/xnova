@@ -44,7 +44,7 @@ class Destruction extends FleetEngine implements Mission
 						->where('planet_type', 3)
 						->first();
 
-					$CurrentUser = DB::selectOne("SELECT rpg_admiral, rpg_ingenieur FROM users WHERE id = '" . $this->fleet->owner . "'");
+					$CurrentUser = DB::selectOne("SELECT rpg_admiral, rpg_ingenieur FROM users WHERE id = '" . $this->fleet->user_id . "'");
 
 					$moonDestroyChance = round((100 - sqrt($TargetMoon->diameter)) * (sqrt($Rips)));
 
@@ -126,15 +126,15 @@ class Destruction extends FleetEngine implements Mission
 
 					$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
 
-					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
+					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
 					User::sendMessage($TargetMoon->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
 
 					Cache::forget('app::planetlist_' . $TargetMoon->user_id);
 				} else {
-					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 				}
 			} else {
-				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 			}
 		}
 	}

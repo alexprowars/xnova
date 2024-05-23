@@ -22,7 +22,7 @@ class FleetBackController extends Controller
 
 		$fleet = Fleet::query()->find($fleetId);
 
-		if (!$fleet || $fleet->owner != $this->user->id) {
+		if (!$fleet || $fleet->user_id != $this->user->id) {
 			throw new ErrorException(__('fleet.fl_onlyyours'));
 		}
 
@@ -31,29 +31,29 @@ class FleetBackController extends Controller
 		}
 
 		if ($fleet->end_stay != 0) {
-			if ($fleet->start_time > time()) {
-				$CurrentFlyingTime = time() - $fleet->create_time;
+			if ($fleet->start_time->isFuture()) {
+				$CurrentFlyingTime = time() - $fleet->created_at->getTimestamp();
 			} else {
-				$CurrentFlyingTime = $fleet->start_time - $fleet->create_time;
+				$CurrentFlyingTime = $fleet->start_time->getTimestamp() - $fleet->created_at->getTimestamp();
 			}
 		} else {
-			$CurrentFlyingTime = time() - $fleet->create_time;
+			$CurrentFlyingTime = time() - $fleet->created_at->getTimestamp();
 		}
 
 		$ReturnFlyingTime = $CurrentFlyingTime + time();
 
-		if ($fleet->group_id != 0 && $fleet->mission == 1) {
-			Assault::query()->find($fleet->group_id)->delete();
-			AssaultUser::query()->where('assault_id', $fleet->group_id)->delete();
+		if ($fleet->mission == 1 && $fleet->assault) {
+			$fleet->assault->delete();
+			AssaultUser::query()->where('assault_id', $fleet->assault_id)->delete();
 		}
 
 		$fleet->update([
 			'start_time'	=> time() - 1,
 			'end_stay' 		=> 0,
 			'end_time' 		=> $ReturnFlyingTime + 1,
-			'target_owner' 	=> $this->user->id,
-			'group_id' 		=> 0,
-			'update_time' 	=> $ReturnFlyingTime + 1,
+			'target_user_id'=> $this->user->id,
+			'assault_id' 	=> null,
+			'updated_at' 	=> $ReturnFlyingTime + 1,
 			'mess' 			=> 1,
 		]);
 

@@ -79,8 +79,7 @@ class MerchantController extends Controller
 		$this->user->credits -= 1;
 		$this->user->update();
 
-		$tutorial = Models\UserQuest::query()
-			->where('user_id', $this->user->id)
+		$tutorial = $this->user->quests()
 			->where('quest_id', 6)
 			->where('finish', 0)
 			->where('stage', 0)

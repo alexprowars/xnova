@@ -31,7 +31,7 @@ class UserAuthenticated
 		} elseif ($user->banned > 0 && $user->banned < time()) {
 			$user->banned = 0;
 
-			Blocked::query()->where('who', $user->id)->delete();
+			Blocked::query()->where('user_id', $user->id)->delete();
 		}
 
 		if ($user->onlinetime < (time() - 30)) {

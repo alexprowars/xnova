@@ -13,4 +13,9 @@ class Assault extends Model
 	{
 		return $this->hasMany(AssaultUser::class, 'assault_id');
 	}
+
+	public function fleets()
+	{
+		return $this->hasMany(Fleet::class, 'assault_id');
+	}
 }

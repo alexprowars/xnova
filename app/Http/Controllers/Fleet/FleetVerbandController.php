@@ -24,7 +24,7 @@ class FleetVerbandController extends Controller
 
 		$fleet = Fleet::query()
 			->where('id', $fleetId)
-			->where('owner', $this->user->id)
+			->where('user_id', $this->user->id)
 			->where('mission', 1)
 			->first();
 
@@ -32,17 +32,17 @@ class FleetVerbandController extends Controller
 			throw new ErrorException('Этот флот не существует!');
 		}
 
-		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1) {
+		if ($fleet->start_time->getTimestamp() <= time() || $fleet->end_time->getTimestamp() < time() || $fleet->mess == 1) {
 			throw new ErrorException('Ваш флот возвращается на планету!');
 		}
 
-		$assault = Assault::find($fleet->group_id);
+		$assault = $fleet->assault;
 
 		if ($request->has('action')) {
 			$action = $request->post('action');
 
 			if ($action == 'add') {
-				if ($fleet->group_id) {
+				if ($fleet->assault_id) {
 					throw new ErrorException('Для этого флота уже задана ассоциация!');
 				}
 
@@ -64,7 +64,7 @@ class FleetVerbandController extends Controller
 					'user_id' => $this->user->id,
 				]);
 
-				$fleet->group_id = $assault->id;
+				$fleet->assault_id = $assault->id;
 				$fleet->update();
 			} elseif ($action == 'adduser') {
 				if ($assault->fleet_id != $fleet->id) {
@@ -139,10 +139,10 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		if ($fleet->group_id == 0) {
+		if ($fleet->assault_id == 0) {
 			$fq = Fleet::query()->where('id', $fleet->id)->get();
 		} else {
-			$fq = Fleet::query()->where('group_id', $fleet->group_id)->get();
+			$fq = Fleet::query()->where('assault_id', $fleet->assault_id)->get();
 		}
 
 		if ($assault) {
@@ -150,7 +150,7 @@ class FleetVerbandController extends Controller
 		}
 
 		$parse = [];
-		$parse['group'] = (int) $fleet->group_id;
+		$parse['group'] = (int) $fleet->assault_id;
 		$parse['fleetid'] = (int) $fleet->id;
 		$parse['aks'] = $assault->toArray();
 		$parse['list'] = [];
@@ -165,15 +165,15 @@ class FleetVerbandController extends Controller
 					'galaxy' => (int) $row->start_galaxy,
 					'system' => (int) $row->start_system,
 					'planet' => (int) $row->start_planet,
-					'time' => (int) $row->start_time,
-					'name' => $row->owner_name,
+					'time' => $row->start_time->getTimestamp(),
+					'name' => $row->user_name,
 				],
 				'target' => [
 					'galaxy' => (int) $row->end_system,
 					'system' => (int) $row->end_system,
 					'planet' => (int) $row->end_planet,
-					'time' => (int) $row->end_time,
-					'name' => $row->target_owner_name,
+					'time' => $row->end_time->getTimestamp(),
+					'name' => $row->target_user_name,
 				],
 			];
 		}

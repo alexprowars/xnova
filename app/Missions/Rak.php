@@ -23,7 +23,7 @@ class Rak extends FleetEngine implements Mission
 
 		$defTech = DB::selectOne(
 			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
-			[$this->fleet->target_owner, Vars::getIdByName('defence_tech')]
+			[$this->fleet->target_user_id, Vars::getIdByName('defence_tech')]
 		);
 
 		if (!$defTech) {
@@ -33,7 +33,7 @@ class Rak extends FleetEngine implements Mission
 
 		$attTech = DB::selectOne(
 			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
-			[$this->fleet->owner, Vars::getIdByName('military_tech')]
+			[$this->fleet->user_id, Vars::getIdByName('military_tech')]
 		);
 
 		if (!$attTech) {
@@ -70,8 +70,8 @@ class Rak extends FleetEngine implements Mission
 
 			$targetPlanet->updateAmount('interceptor_misil', -$Raks, true);
 		} else {
-			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->fleet->owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
-			$message .= ' на планету ' . $this->fleet->target_owner_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
+			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
+			$message .= ' на планету ' . $this->fleet->target_user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
 
 			if ($defenceMissiles > 0) {
 				$message .= $defenceMissiles . " ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>";
@@ -102,7 +102,7 @@ class Rak extends FleetEngine implements Mission
 			$message = "Нет обороны для разрушения!";
 		}
 
-		User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 4, 'Ракетная атака', $message);
+		User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 4, 'Ракетная атака', $message);
 	}
 
 	public function endStayEvent()

@@ -13,6 +13,7 @@ return new class extends Migration {
 			$table->integer('quest_id')->default(0);
 			$table->boolean('finish')->default(false);
 			$table->integer('stage')->default(0);
+			$table->timestamps();
 		});
 	}
 

@@ -22,7 +22,7 @@ class ImperiumController extends Controller
 		$fleet_fly = [];
 
 		$fleets = Fleet::query()
-			->where('owner', $this->user->id)
+			->where('user_id', $this->user->id)
 			->get();
 
 		foreach ($fleets as $fleet) {
@@ -39,7 +39,7 @@ class ImperiumController extends Controller
 
 				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId] += $shipArr['count'];
 
-				if ($fleet->target_owner == $this->user->id) {
+				if ($fleet->target_user_id == $this->user->id) {
 					if (!isset($build_hangar_full[$shipId])) {
 						$build_hangar_full[$shipId] = 0;
 					}

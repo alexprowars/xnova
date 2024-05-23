@@ -8,4 +8,9 @@ class UserTech extends Model
 {
 	public $table = 'users_teches';
 	public $timestamps = false;
+
+	public function user()
+	{
+		return $this->belongsTo(User::class, 'user_id');
+	}
 }

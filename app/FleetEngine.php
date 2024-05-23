@@ -115,7 +115,7 @@ class FleetEngine
 	public function returnFleet($update = [], $fleetId = false)
 	{
 		$update['mess'] = 1;
-		$update['update_time'] = $this->fleet->end_time;
+		$update['updated_at'] = $this->fleet->end_time;
 
 		if (!$fleetId) {
 			$fleetId = $this->fleet->id;
@@ -123,16 +123,16 @@ class FleetEngine
 
 		Models\Fleet::query()->where('id', $fleetId)->update($update);
 
-		if ($this->fleet->group_id > 0) {
-			Models\Assault::query()->find($this->fleet->group_id)->delete();
-			Models\AssaultUser::query()->where('assault_id', $this->fleet->group_id)->delete();
+		if ($this->fleet->assault) {
+			$this->fleet->assault->delete();
+			Models\AssaultUser::query()->where('assault_id', $this->fleet->assault_id)->delete();
 		}
 	}
 
 	public function stayFleet($update = [])
 	{
 		$update['mess'] = 3;
-		$update['update_time'] = $this->fleet->end_stay;
+		$update['updated_at'] = $this->fleet->end_stay;
 
 		$this->fleet->update($update);
 	}

@@ -36,18 +36,18 @@ class Fleet extends Building
 			$Total += $fleet['count'];
 		}
 
-		if ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 2) {
+		if ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
-		} elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 4) {
+		} elseif ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
-		} elseif ($FleetRow->owner != $user->id && $user->getTechLevel('spy') < 8) {
+		} elseif ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
 			foreach ($FleetRec as $id => $fleet) {
 				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . __('main.tech.' . $id) . "<font></td></tr>";
 			}
 
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		} else {
-			if ($FleetRow->target_owner == $user->id && $FleetRow->mission == 1) {
+			if ($FleetRow->target_user_id == $user->id && $FleetRow->mission == 1) {
 				$r = '/sim/';
 			}
 

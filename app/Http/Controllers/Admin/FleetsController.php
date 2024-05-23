@@ -24,7 +24,7 @@ class FleetsController extends Controller
 	{
 		$items = [];
 
-		$fleets = Models\Fleet::query()->orderBy('end_time', 'asc');
+		$fleets = Models\Fleet::query()->orderBy('end_time');
 
 		foreach ($fleets as $fleet) {
 			$row = [];
@@ -33,12 +33,12 @@ class FleetsController extends Controller
 			$row['Mission'] .= "<br>" . (($fleet->mess == 1) ? "R" : "A");
 
 			$row['Fleet'] = Fleet::CreateFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);
-			$row['St_Owner'] = "[" . $fleet->owner . "]<br>" . $fleet->owner_name;
+			$row['St_Owner'] = "[" . $fleet->user_id . "]<br>" . $fleet->user_name;
 			$row['St_Posit'] = "[" . $fleet->start_galaxy . ":" . $fleet->start_system . ":" . $fleet->start_planet . "]<br>" . (($fleet->start_type == 1) ? "[P]" : (($fleet->start_type == 2) ? "D" : "L")) . "";
 			$row['St_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->start_time);
 
-			if (!empty($fleet->target_owner)) {
-				$row['En_Owner'] = "[" . $fleet->target_owner . "]<br>" . $fleet->target_owner_name;
+			if (!empty($fleet->target_user_id)) {
+				$row['En_Owner'] = "[" . $fleet->target_user_id . "]<br>" . $fleet->target_user_name;
 			} else {
 				$row['En_Owner'] = "";
 			}
