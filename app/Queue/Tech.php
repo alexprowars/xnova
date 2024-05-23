@@ -57,7 +57,7 @@ class Tech
 					'level' => $user->getTechLevel($elementId) + 1
 				]);
 
-				if (config('game.log.research', false) == true) {
+				if (config('settings.log.research', false)) {
 					LogHistory::query()->insert([
 						'user_id' 			=> $user->getId(),
 						'time' 				=> time(),
@@ -101,7 +101,7 @@ class Tech
 			$techHandle->delete();
 			$this->queue->loadQueue();
 
-			if (config('game.log.research', false) == true) {
+			if (config('settings.log.research', false)) {
 				LogHistory::query()->insert([
 					'user_id' 			=> $user->getId(),
 					'time' 				=> time(),

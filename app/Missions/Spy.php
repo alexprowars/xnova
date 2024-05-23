@@ -165,7 +165,7 @@ class Spy extends FleetEngine implements Mission
 
 			$SpyMessage = "<div id=\"sp" . $this->fleet->start_time . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
 
-			User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
+			User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_report'), $SpyMessage);
 
 			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->fleet->owner_name . " ";
 			$TargetMessage .= $this->fleet->getStartAdressLink();
@@ -173,7 +173,7 @@ class Spy extends FleetEngine implements Mission
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
 			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . ".";
 
-			User::sendMessage($TargetPlanet->id_owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
+			User::sendMessage($TargetPlanet->id_owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
 
 			if ($TargetChances > $SpyerChances) {
 				$mission = new Attack($this->fleet);

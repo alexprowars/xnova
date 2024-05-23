@@ -75,7 +75,7 @@ class Recycling extends FleetEngine implements Mission
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
 
-		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_spy_control'), $Message);
+		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_spy_control'), $Message);
 	}
 
 	public function endStayEvent()

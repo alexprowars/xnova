@@ -8,4 +8,5 @@ class UserQuest extends Model
 {
 	public $timestamps = false;
 	protected $guarded = [];
+	public $table = 'users_quests';
 }

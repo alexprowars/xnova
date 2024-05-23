@@ -48,7 +48,7 @@ class MailingController extends Controller
 					$user->id,
 					false,
 					time(),
-					1,
+					2,
 					'<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
 					$fields['message']
 				);

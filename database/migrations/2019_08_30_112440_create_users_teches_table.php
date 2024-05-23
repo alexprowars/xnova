@@ -7,18 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('alliance_chats', function (Blueprint $table) {
+		Schema::create('users_teches', function (Blueprint $table) {
 			$table->id();
-			$table->integer('ally_id')->unsigned()->default(0)->index('ally_id');
-			$table->string('user', 50)->default('');
 			$table->unsignedBigInteger('user_id');
-			$table->text('message');
-			$table->integer('timestamp')->default(0);
+			$table->integer('tech_id')->nullable();
+			$table->smallInteger('level')->default(0);
+			$table->unique(['user_id','tech_id'], 'user_id');
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('alliance_chats');
+		Schema::drop('users_teches');
 	}
 };

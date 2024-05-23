@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('alliance_diplomacies', function (Blueprint $table) {
+		Schema::create('alliances_diplomacies', function (Blueprint $table) {
 			$table->id();
 			$table->integer('a_id')->default(0);
 			$table->integer('d_id')->default(0);
@@ -20,6 +20,6 @@ return new class extends Migration {
 
 	public function down()
 	{
-		Schema::drop('alliance_diplomacies');
+		Schema::drop('alliances_diplomacies');
 	}
 };

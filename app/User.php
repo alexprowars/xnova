@@ -167,7 +167,7 @@ class User extends Models\User
 
 		if ($this->ally_id > 0) {
 			$ally = Cache::remember('user::ally_' . $this->id . '_' . $this->ally_id, 300, function () {
-				return DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliance_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
+				return DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliances_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
 			});
 
 			if ($ally) {
@@ -197,21 +197,21 @@ class User extends Models\User
 
 			$this->update();
 
-			self::sendMessage($this->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
+			self::sendMessage($this->getId(), 0, 0, 2, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
 			$giveCredits += config('settings.level.credits', 10);
 		}
 
-		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('game.level.max_war', 100)) {
+		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('settings.level.max_war', 100)) {
 			$this->lvl_raid++;
-			$this->credits += config('game.level.credits', 10);
+			$this->credits += config('settings.level.credits', 10);
 			$this->xpraid -= $warNextXp;
 
 			$this->update();
 
-			User::sendMessage($this->getId(), 0, 0, 1, '', '<a href="/officier/">Получен новый военный уровень</a>');
+			User::sendMessage($this->getId(), 0, 0, 2, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
-			$giveCredits += config('game.level.credits', 10);
+			$giveCredits += config('settings.level.credits', 10);
 		}
 
 		if ($giveCredits != 0) {

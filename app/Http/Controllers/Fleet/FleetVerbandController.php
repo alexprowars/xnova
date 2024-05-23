@@ -105,7 +105,7 @@ class FleetVerbandController extends Controller
 
 				$message = "Игрок " . $this->user->username . " приглашает вас произвести совместное нападение на планету " . $planet_daten->name . " [" . $aks->galaxy . ":" . $aks->system . ":" . $aks->planet . "] игрока " . $owner->username . ". Имя ассоциации: " . $aks->name . ". Если вы отказываетесь, то просто проигнорируйте данной сообщение.";
 
-				User::sendMessage($user_data->id, false, 0, 0, 'Флот', $message);
+				User::sendMessage($user_data->id, false, 0, 1, 'Флот', $message);
 			} elseif ($action == "changename") {
 				if ($aks->fleet_id != $fleet->id) {
 					throw new ErrorException("Вы не можете менять имя ассоциации");

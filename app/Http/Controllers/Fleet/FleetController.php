@@ -10,7 +10,6 @@ use App\Exceptions\PageException;
 use App\Entity;
 use App\Fleet;
 use App\Planet;
-use App\Models;
 use App\Vars;
 
 class FleetController extends Controller
@@ -65,7 +64,7 @@ class FleetController extends Controller
 
 				$fleets[$i] = $cnt;
 
-				$ship = (new Planet\Entity\Ship($i))->getInfo();
+				$ship = Planet\Entity\Ship::createEntity($i, 1, $this->planet)->getInfo();
 				$ship['count'] = $cnt;
 
 				$parse['ships'][] = $ship;
@@ -79,10 +78,10 @@ class FleetController extends Controller
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 
 		$parse['target'] = [
-			'galaxy' => (int) $galaxy,
-			'system' => (int) $system,
-			'planet' => (int) $planet,
-			'planet_type' => (int) $type,
+			'galaxy' => $galaxy,
+			'system' => $system,
+			'planet' => $planet,
+			'planet_type' => $type,
 		];
 
 		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
@@ -91,20 +90,15 @@ class FleetController extends Controller
 
 		$parse['shortcuts'] = [];
 
-		$shortcuts = Models\UserDetail::query()
-			->find($this->user->id, ['fleet_shortcut'])
-			->value('fleet_shortcut');
-
-		if ($shortcuts) {
-			$scarray = explode("\r\n", $shortcuts);
-
-			foreach ($scarray as $a => $b) {
-				if ($b != '') {
-					$c = explode(',', $b);
-
-					$parse['shortcuts'][] = $c;
-				}
-			}
+		foreach ($this->user->shortcuts as $shortcut) {
+			$parse['shortcuts'][] = [
+				'id' => $shortcut->id,
+				'name' => $shortcut->name,
+				'galaxy' => $shortcut->galaxy,
+				'system' => $shortcut->system,
+				'planet' => $shortcut->planet,
+				'planet_type' => $shortcut->planet_type,
+			];
 		}
 
 		$parse['planets'] = [];

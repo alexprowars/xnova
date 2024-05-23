@@ -228,25 +228,18 @@ class OverviewController extends Controller
 			$this->user->update();
 
 			if ($this->planet->parent_planet != 0) {
-				Models\Planet::query()
-					->where('id', $this->planet->parent_planet)
+				Models\Planet::where('id', $this->planet->parent_planet)
 					->update([
 						'destruyed' => $destruyed,
 						'id_owner' => 0
 					]);
 
-				Models\Queue::query()
-					->where('planet_id', $this->planet->parent_planet)
+				Models\Queue::where('planet_id', $this->planet->parent_planet)
 					->delete();
 			}
 
-			Models\Queue::query()
-				->where('planet_id', $this->planet->id)
+			Models\Queue::where('planet_id', $this->planet->id)
 				->delete();
-
-			if (Session::has('fleet_shortcut')) {
-				Session::remove('fleet_shortcut');
-			}
 
 			Cache::forget('app::planetlist_' . $this->user->id);
 
@@ -312,10 +305,6 @@ class OverviewController extends Controller
 
 				$this->planet->name = $name;
 				$this->planet->update();
-
-				if (Session::has('fleet_shortcut')) {
-					Session::remove('fleet_shortcut');
-				}
 
 				throw new RedirectException('Название планеты изменено', '/overview/');
 			} elseif ($action == 'image') {
@@ -623,7 +612,7 @@ class OverviewController extends Controller
 
 		$parse['links'] = $this->user->links;
 		$parse['refers'] = $this->user->refers;
-		$parse['noob'] = config('game.noob', 0);
+		$parse['noob'] = config('settings.noobprotection', 0);
 
 		$parse['raids'] = [
 			'win' => $this->user->raids_win,

@@ -100,7 +100,7 @@ class Unit
 				'level' => $count
 			]);
 
-			if (config('game.log.units', false) == true) {
+			if (config('settings.log.units', false)) {
 				LogHistory::query()->insert([
 					'user_id' 			=> $user->id,
 					'time' 				=> time(),

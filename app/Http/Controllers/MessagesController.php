@@ -76,7 +76,7 @@ class MessagesController extends Controller
 			$Message = preg_replace('/[ ]+/', ' ', $Message);
 			$Message = strtr($Message, __('messages.stopwords'));
 
-			User::sendMessage($OwnerRecord['id'], false, 0, 1, $From, $Message);
+			User::sendMessage($OwnerRecord['id'], false, 0, 2, $From, $Message);
 
 			throw new SuccessException(__('messages.mess_sended'));
 		}
@@ -159,7 +159,7 @@ class MessagesController extends Controller
 	{
 		$parse = [];
 
-		$types = [0, 1, 2, 3, 4, 5, 15, 99, 100, 101];
+		$types = [1, 2, 3, 4, 5, 6, 15, 99, 100, 101];
 		$limits = [5, 10, 25, 50, 100, 200];
 
 		$category = 100;
@@ -239,17 +239,13 @@ class MessagesController extends Controller
 		$parse['items'] = [];
 
 		foreach ($items as $item) {
-			preg_match_all('/href=\\\"\/(.*?)\\\"/i', $item->text, $match);
-
-			if (isset($match[1])) {
+			if (preg_match_all('/href=\"\/(.*?)"/i', $item->text, $match)) {
 				foreach ($match[1] as $rep) {
 					$item->text = str_replace('/' . $rep, URL::to($rep), $item->text);
 				}
 			}
 
-			preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match);
-
-			if (isset($match[2])) {
+			if (preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match)) {
 				$item->text = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->text);
 			}
 

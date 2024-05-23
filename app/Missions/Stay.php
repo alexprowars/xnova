@@ -42,7 +42,7 @@ class Stay extends FleetEngine implements Mission
 				$TargetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
 			}
 
-			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 
@@ -71,7 +71,7 @@ class Stay extends FleetEngine implements Mission
 
 			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
 
-			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 5, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 }

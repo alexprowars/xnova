@@ -20,7 +20,7 @@ class PaymentController extends Controller
 			die('InvId nulled');
 		}
 
-		$sign_hash = strtoupper(md5(Request::input('OutSum') . ":" . Request::input('InvId') . ":" . config('game.robokassa.secret') . ":Shp_UID=" . Request::input('Shp_UID')));
+		$sign_hash = strtoupper(md5(Request::input('OutSum') . ":" . Request::input('InvId') . ":" . config('settings.robokassa.secret') . ":Shp_UID=" . Request::input('Shp_UID')));
 
 		if (strtoupper(Request::input('SignatureValue')) !== $sign_hash) {
 			die('signature verification failed');
@@ -63,7 +63,7 @@ class PaymentController extends Controller
 				'product_code' 		=> addslashes(json_encode($_REQUEST)),
 			]);
 
-			User::sendMessage($user->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $amount . ' кредитов');
+			User::sendMessage($user->id, 0, 0, 2, 'Обработка платежей', 'На ваш счет зачислено ' . $amount . ' кредитов');
 
 			Models\LogCredit::query()->insert([
 				'uid' => $user->id,

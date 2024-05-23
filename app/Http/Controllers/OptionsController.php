@@ -72,7 +72,7 @@ class OptionsController extends Controller
 				throw new ErrorException('Данный email уже используется в игре.');
 			}
 
-			User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
+			User::sendMessage(1, false, time(), 5, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
 
 			throw new RedirectException('Заявка отправлена на рассмотрение', '/options/');
 		}
@@ -140,7 +140,7 @@ class OptionsController extends Controller
 					throw new ErrorException('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
 					if ($this->user->vacation == 0) {
-						$vacation = time() + config('game.vocationModeTime', 172800);
+						$vacation = time() + config('settings.vocationModeTime', 172800);
 					} else {
 						$vacation = $this->user->vacation;
 					}

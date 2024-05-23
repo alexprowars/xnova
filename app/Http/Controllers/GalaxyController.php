@@ -74,33 +74,6 @@ class GalaxyController extends Controller
 		$galaxy = min(max($galaxy, 1), config('settings.maxGalaxyInWorld'));
 		$system = min(max($system, 1), config('settings.maxSystemInGalaxy'));
 
-		if (!Session::has('fleet_shortcut')) {
-			$array = $this->user->getPlanets(false);
-			$j = [];
-
-			foreach ($array as $a) {
-				$j[] = [base64_encode($a->name), $a->galaxy, $a->system, $a->planet];
-			}
-
-			$shortcuts = Models\UserDetail::query()
-				->select(['fleet_shortcut'])
-				->where('id', $this->user->id)
-				->first();
-
-			if ($shortcuts) {
-				$scarray = explode("\r\n", $shortcuts->fleet_shortcut);
-
-				foreach ($scarray as $b) {
-					if ($b != "") {
-						$c = explode(',', $b);
-						$j[] = [base64_encode($c[0]), intval($c[1]), intval($c[2]), intval($c[3])];
-					}
-				}
-			}
-
-			Session::put('fleet_shortcut', json_encode($j));
-		}
-
 		$Phalanx = 0;
 
 		if ($this->planet->getLevel('phalanx') > 0) {
@@ -160,22 +133,15 @@ class GalaxyController extends Controller
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];
 
-		if (Session::get('fleet_shortcut')) {
-			$array = json_decode(Session::get('fleet_shortcut'), true);
-
-			if (!is_array($array)) {
-				$array = [];
-			}
-
-			foreach ($array as $id => $a) {
-				$parse['shortcuts'][] = [
-					'n' => base64_decode($a[0]),
-					'g' => (int) $a[1],
-					's' => (int) $a[2],
-					'p' => (int) $a[3],
-					'c'	=> $a[1] == $galaxy && $a[2] == $system
-				];
-			}
+		foreach ($this->user->shortcuts as $shortcut) {
+			$parse['shortcuts'][] = [
+				'id' => $shortcut->id,
+				'name' => $shortcut->name,
+				'galaxy' => $shortcut->galaxy,
+				'system' => $shortcut->system,
+				'planet' => $shortcut->planet,
+				'planet_type' => $shortcut->planet_type,
+			];
 		}
 
 		$GalaxyRow = DB::select("SELECT
@@ -189,9 +155,9 @@ class GalaxyController extends Controller
 				FROM planets p
 				LEFT JOIN planets p2 ON (p.parent_planet = p2.id AND p.parent_planet != 0)
 				LEFT JOIN users u ON (u.id = p.id_owner AND p.id_owner != 0)
-				LEFT JOIN user_details ui ON (ui.id = p.id_owner AND p.id_owner != 0)
+				LEFT JOIN users_details ui ON (ui.id = p.id_owner AND p.id_owner != 0)
 				LEFT JOIN alliances a ON (a.id = u.ally_id AND u.ally_id != 0)
-				LEFT JOIN alliance_diplomacies ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
+				LEFT JOIN alliances_diplomacies ad ON ((ad.a_id = u.ally_id AND ad.d_id = " . $this->user->ally_id . ") AND ad.status = 1 AND u.ally_id != 0)
 				LEFT JOIN statistics s ON (s.id_owner = u.id AND s.stat_type = '1' AND s.stat_code = '1')
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 

@@ -8,9 +8,10 @@ return new class extends Migration {
 	public function up()
 	{
 		Schema::create('logs', function (Blueprint $table) {
+			$table->id();
 			$table->boolean('mission')->default(0);
-			$table->integer('time')->unsigned()->default(0)->index('time');
-			$table->boolean('kolvo')->default(1);
+			$table->timestamp('time');
+			$table->boolean('amount')->default(0);
 			$table->integer('s_id')->unsigned()->default(0)->index('s_id');
 			$table->boolean('s_galaxy')->default(0);
 			$table->smallInteger('s_system')->unsigned()->default(0);

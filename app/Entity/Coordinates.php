@@ -11,17 +11,8 @@ class Coordinates implements Arrayable
 	public const TYPE_MOON = 3;
 	public const TYPE_MILITARY_BASE = 5;
 
-	private $galaxy;
-	private $system;
-	private $position;
-	private $type;
-
-	public function __construct(int $galaxy, int $system, ?int $position = null, ?int $type = null)
+	public function __construct(private int $galaxy, private int $system, private ?int $planet = null, private ?int $type = null)
 	{
-		$this->galaxy = $galaxy;
-		$this->system = $system;
-		$this->position = $position;
-		$this->type = $type;
 	}
 
 	public function getGalaxy(): int
@@ -34,9 +25,9 @@ class Coordinates implements Arrayable
 		return $this->system;
 	}
 
-	public function getPosition(): ?int
+	public function getPlanet(): ?int
 	{
-		return $this->position;
+		return $this->planet;
 	}
 
 	public function getType(): ?int
@@ -46,7 +37,7 @@ class Coordinates implements Arrayable
 
 	public function isEmpty(): bool
 	{
-		return $this->galaxy < 0 || $this->system < 0 || $this->position < 0;
+		return $this->galaxy < 0 || $this->system < 0 || $this->planet < 0;
 	}
 
 	public function toArray(): array
@@ -54,8 +45,8 @@ class Coordinates implements Arrayable
 		return [
 			'galaxy' => $this->galaxy,
 			'system' => $this->system,
-			'position' => $this->position,
-			'type' => $this->type,
+			'planet' => $this->planet,
+			'planet_type' => $this->type,
 		];
 	}
 }

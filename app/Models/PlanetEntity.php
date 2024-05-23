@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanetEntity extends Model
 {
-	protected $table = 'planet_entities';
+	protected $table = 'planets_entities';
 	protected $guarded = [];
-	public $timestamps = false;
 
 	protected $attributes = [
 		'amount' => 0,
+		'factor' => 10,
 	];
 
 	public static function createEmpty(int $entityId, int $level = 0): self

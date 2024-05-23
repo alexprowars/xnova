@@ -166,7 +166,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$fleetCollection = Entity\FleetCollection::createFromArray($FleetArray);
+		$fleetCollection = Entity\FleetCollection::createFromArray($FleetArray, $this->planet);
 
 		$FleetSpeed = $fleetCollection->getSpeed();
 

@@ -520,9 +520,9 @@ class UpdateStatistics
 
 	public function clearGame()
 	{
-		Models\Message::query()->where('time', '<', time() - (86400 * 14))->where('type', '!=', 1)->delete();
+		Models\Message::query()->where('time', '<', time() - (86400 * 14))->where('type', '!=', 2)->delete();
 		Models\Report::query()->where('time', '<', time() - 172800)->delete();
-		//DB::statement("DELETE FROM alliance_chats WHERE `timestamp` <= '" . (time() - 1209600) . "';");
+		//DB::statement("DELETE FROM alliances_chats WHERE `timestamp` <= '" . (time() - 1209600) . "';");
 		DB::statement("DELETE FROM password_resets WHERE `created_at` <= '" . (time() - 86400) . "';");
 		DB::statement("DELETE FROM logs WHERE `time` <= '" . (time() - 259200) . "';");
 		DB::statement("DELETE FROM log_attacks WHERE `time` <= '" . (time() - 604800) . "';");

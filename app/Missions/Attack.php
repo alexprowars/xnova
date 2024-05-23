@@ -531,7 +531,7 @@ class Attack extends FleetEngine implements Mission
 		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
 
 		foreach ($UserList as $info) {
-			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $attackersReport);
+			User::sendMessage($info, 0, time(), 4, 'Боевой доклад', $attackersReport);
 		}
 
 		$UserList = [];
@@ -555,7 +555,7 @@ class Attack extends FleetEngine implements Mission
 		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
 
 		foreach ($UserList as $info) {
-			User::sendMessage($info, 0, time(), 3, 'Боевой доклад', $defendersReport);
+			User::sendMessage($info, 0, time(), 4, 'Боевой доклад', $defendersReport);
 		}
 
 		DB::table('log_attacks')->insert([

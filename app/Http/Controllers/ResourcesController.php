@@ -97,7 +97,7 @@ class ResourcesController extends Controller
 
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
 			foreach (Vars::getResources() as $res) {
-				Config::set('game.' . $res . '_basic_income', 0);
+				Config::set('settings.' . $res . '_basic_income', 0);
 			}
 		}
 
@@ -206,9 +206,9 @@ class ResourcesController extends Controller
 		}
 
 		$parse['production']['energy'] = [
-			'basic' => (int) config('game.energy_basic_income'),
+			'basic' => (int) config('settings.energy_basic_income'),
 			'capacity' => floor($this->planet->energy_max),
-			'production' => floor(($this->planet->energy_max + config('game.energy_basic_income')) + $this->planet->energy_used)
+			'production' => floor(($this->planet->energy_max + config('settings.energy_basic_income')) + $this->planet->energy_used)
 		];
 
 		$parse['production_level'] = $productionLevel;

@@ -12,10 +12,6 @@ class Fleet extends Model
 	public $timestamps = false;
 	protected $guarded = [];
 
-	protected $attributes = [
-		'fleet_array' => [],
-	];
-
 	protected function casts(): array
 	{
 		return [

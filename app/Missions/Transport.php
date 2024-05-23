@@ -23,7 +23,7 @@ class Transport extends FleetEngine implements Mission
 			__('main.Deuterium')
 		);
 
-		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
+		User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $Message);
 
 		if ($this->fleet->target_owner != $this->fleet->owner) {
 			$Message = sprintf(
@@ -40,7 +40,7 @@ class Transport extends FleetEngine implements Mission
 				__('main.Deuterium')
 			);
 
-			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_tower'), $Message);
+			User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $Message);
 		}
 
 		$this->returnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);

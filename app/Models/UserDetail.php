@@ -8,5 +8,5 @@ class UserDetail extends Model
 {
 	public $timestamps = false;
 	protected $guarded = [];
-	public $table = 'user_details';
+	public $table = 'users_details';
 }

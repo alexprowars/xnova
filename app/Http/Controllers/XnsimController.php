@@ -53,7 +53,7 @@ class XnsimController extends Controller
 				die('Нет данных для симуляции боя');
 			}
 
-			define('MAX_SLOTS', config('game.maxSlotsInSim', 5));
+			define('MAX_SLOTS', config('settings.maxSlotsInSim', 5));
 
 			include_once(ROOT_PATH . "/app/config/battle.php");
 

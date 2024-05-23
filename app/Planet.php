@@ -23,11 +23,6 @@ class Planet extends Models\Planet
 
 	private $production;
 
-	public function user()
-	{
-		return $this->belongsTo(User::class, 'id_owner');
-	}
-
 	public function checkOwnerPlanet()
 	{
 		if ($this->id_owner != $this->user->id && $this->id_ally > 0 && ($this->id_ally != $this->user->ally_id || !$this->user->ally['rights']['planet'])) {

@@ -14,11 +14,16 @@ class Planet extends Model
 	protected $hidden = ['planet_updated'];
 	protected $guarded = [];
 
+	public function user()
+	{
+		return $this->belongsTo(User::class, 'id_owner');
+	}
+
 	public static function findByCoordinates(Coordinates $target): ?static
 	{
 		return self::query()->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())
-			->where('planet', $target->getPosition())
+			->where('planet', $target->getPlanet())
 			->where('planet_type', $target->getType() ?: Coordinates::TYPE_PLANET)
 			->first();
 	}

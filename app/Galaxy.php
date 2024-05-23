@@ -83,7 +83,7 @@ class Galaxy
 
 			$planet->galaxy = $target->getGalaxy();
 			$planet->system = $target->getSystem();
-			$planet->planet = $target->getPosition();
+			$planet->planet = $target->getPlanet();
 
 			$planet->planet_type = Coordinates::TYPE_PLANET;
 
@@ -96,8 +96,6 @@ class Galaxy
 			$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 			if ($planet->save()) {
-				Session::remove('fleet_shortcut');
-
 				return $planet->id;
 			}
 		}
@@ -107,7 +105,7 @@ class Galaxy
 
 	public function createMoon(Coordinates $target, $userId, $chance): ?int
 	{
-		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPosition(), 1));
+		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), 1));
 
 		if ($planet && $planet->parent_planet == 0) {
 			$maxtemp = $planet->temp_max - random_int(10, 45);
@@ -122,7 +120,7 @@ class Galaxy
 				'id_owner' => $userId,
 				'galaxy' => $target->getGalaxy(),
 				'system' => $target->getSystem(),
-				'planet' => $target->getPosition(),
+				'planet' => $target->getPlanet(),
 				'planet_type' => Coordinates::TYPE_MOON,
 				'last_update' => time(),
 				'image' => 'mond',
@@ -156,7 +154,7 @@ class Galaxy
 
 		$exist = Planet::query()->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())
-			->where('planet', $target->getPosition());
+			->where('planet', $target->getPlanet());
 
 		if ($target->getType()) {
 			$exist->where('planet_type', $target->getType());
@@ -191,7 +189,7 @@ class Galaxy
 		$planetData = [];
 		require(app_path('Vars/planet.php'));
 
-		$position = $target->getPosition();
+		$position = $target->getPlanet();
 
 		$planet = new Planet();
 

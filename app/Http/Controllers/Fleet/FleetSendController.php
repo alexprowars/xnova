@@ -308,7 +308,7 @@ class FleetSendController extends Controller
 
 		$speedPossible = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
-		$fleetCollection = FleetCollection::createFromArray($fleetarray);
+		$fleetCollection = FleetCollection::createFromArray($fleetarray, $this->planet);
 
 		$maxFleetSpeed 		= $fleetCollection->getSpeed();
 		$fleetSpeedFactor 	= $request->post('speed', 10);
@@ -385,16 +385,16 @@ class FleetSendController extends Controller
 			$StayTime = 0;
 		}
 
-		$FleetStorage = 0;
-		$fleet_array = [];
+		$fleetStorage = 0;
+		$fleetArray = [];
 
 		foreach ($fleetarray as $Ship => $Count) {
 			$fleetData = Vars::getUnitData($Ship);
 
 			$Count = (int) $Count;
-			$FleetStorage += $fleetData['capacity'] * $Count;
+			$fleetStorage += $fleetData['capacity'] * $Count;
 
-			$fleet_array[] = [
+			$fleetArray[] = [
 				'id' => (int) $Ship,
 				'count' => $Count,
 			];
@@ -402,7 +402,7 @@ class FleetSendController extends Controller
 			$this->planet->updateAmount($Ship, -$Count, true);
 		}
 
-		$FleetStorage -= $consumption;
+		$fleetStorage -= $consumption;
 		$StorageNeeded = 0;
 
 		if ($resources['metal'] < 1) {
@@ -445,8 +445,8 @@ class FleetSendController extends Controller
 				$TotalFleetCons = $FleetStayAll;
 			}
 
-			if ($FleetStorage < $TotalFleetCons) {
-				$TotalFleetCons = $FleetStorage;
+			if ($fleetStorage < $TotalFleetCons) {
+				$TotalFleetCons = $fleetStorage;
 			}
 
 			$FleetStayTime = round(($TotalFleetCons / $FleetStayConsumption) * 3600);
@@ -471,27 +471,33 @@ class FleetSendController extends Controller
 			throw new ErrorException(__('fleet.fl_noressources') . Format::number($consumption));
 		}
 
-		if ($StorageNeeded > $FleetStorage && !$this->user->isAdmin()) {
-			throw new ErrorException(__('fleet.fl_nostoragespa') . Format::number($StorageNeeded - $FleetStorage));
+		if ($StorageNeeded > $fleetStorage && !$this->user->isAdmin()) {
+			throw new ErrorException(__('fleet.fl_nostoragespa') . Format::number($StorageNeeded - $fleetStorage));
 		}
 
 		// Баш контроль
 		if ($fleetMission == 1) {
 			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
 
-			$log = DB::selectOne("SELECT id, kolvo FROM logs WHERE s_id = '" . $this->user->id . "' AND mission = 1 AND e_galaxy = " . $targetPlanet->galaxy . " AND e_system = " . $targetPlanet->system . " AND e_planet = " . $targetPlanet->planet . " AND time > " . $night_time . "");
+			$log = Models\Log::query()->where('s_id', $this->user->id)
+				->where('mission', 1)
+				->where('e_galaxy', $targetPlanet->galaxy)
+				->where('e_system', $targetPlanet->system)
+				->where('e_planet', $targetPlanet->planet)
+				->where('time', '>', $night_time)
+				->first();
 
-			if (!$this->user->isAdmin() && $log && $log->kolvo > 2 && (($diplomacy && $diplomacy['type'] != 3) || !$diplomacy)) {
+			if (!$this->user->isAdmin() && $log && $log->amount > 2 && (($diplomacy && $diplomacy['type'] != 3) || !$diplomacy)) {
 				throw new PageException("<span class=\"error\"><b>Баш-контроль. Лимит ваших нападений на планету исчерпан.</b></span>", "/fleet/");
 			}
 
 			if ($log) {
-				DB::table('logs')->where('id', $log->id)->increment('kolvo');
+				Models\Log::find($log->id)->increment('amount');
 			} else {
-				DB::table('logs')->insert([
+				Models\Log::insert([
 					'mission' => 1,
-					'time' => time(),
-					'kolvo' => 1,
+					'time' => now(),
+					'amount' => 1,
 					's_id' => $this->user->id,
 					's_galaxy' => $this->planet->galaxy,
 					's_system' => $this->planet->system,
@@ -513,7 +519,7 @@ class FleetSendController extends Controller
 		//
 
 		if ($fleet_group_mr > 0 && $fleet_group_time > 0 && isset($arrr)) {
-			foreach ($arrr as $id => $row) {
+			foreach ($arrr as $row) {
 				$end = $fleet_group_time + $row['end'] - $row['start'];
 
 				Models\Fleet::query()
@@ -580,7 +586,7 @@ class FleetSendController extends Controller
 						'planet' => $planet,
 						'type' => $planet_type,
 					],
-					'fleet' => $fleet_array,
+					'fleet' => $fleetArray,
 					'resources' => [
 						'metal' => $TransMetal,
 						'crystal' => $TransCrystal,
@@ -611,7 +617,7 @@ class FleetSendController extends Controller
 			$consumption = 0;
 		}
 
-		$tutorial = DB::selectOne("SELECT id, quest_id FROM user_quests WHERE user_id = " . $this->user->getId() . " AND finish = '0' AND stage = 0");
+		$tutorial = DB::selectOne("SELECT id, quest_id FROM users_quests WHERE user_id = " . $this->user->getId() . " AND finish = '0' AND stage = 0");
 
 		if ($tutorial) {
 			$quest = __('tutorial.tutorial', $tutorial->quest_id);
@@ -634,7 +640,7 @@ class FleetSendController extends Controller
 			'owner' 				=> $this->user->id,
 			'owner_name' 			=> $this->planet->name,
 			'mission' 				=> $fleetMission,
-			'fleet_array' 			=> $fleet_array,
+			'fleet_array' 			=> $fleetArray,
 			'start_galaxy' 			=> $this->planet->galaxy,
 			'start_system' 			=> $this->planet->system,
 			'start_planet' 			=> $this->planet->planet,

@@ -22,7 +22,7 @@ class Rak extends FleetEngine implements Mission
 		}
 
 		$defTech = DB::selectOne(
-			'SELECT level FROM user_teches WHERE user_id = ? AND tech_id = ?',
+			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
 			[$this->fleet->target_owner, Vars::getIdByName('defence_tech')]
 		);
 
@@ -32,7 +32,7 @@ class Rak extends FleetEngine implements Mission
 		}
 
 		$attTech = DB::selectOne(
-			'SELECT level FROM user_teches WHERE user_id = ? AND tech_id = ?',
+			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
 			[$this->fleet->owner, Vars::getIdByName('military_tech')]
 		);
 
@@ -102,7 +102,7 @@ class Rak extends FleetEngine implements Mission
 			$message = "Нет обороны для разрушения!";
 		}
 
-		User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 3, 'Ракетная атака', $message);
+		User::sendMessage($this->fleet->target_owner, 0, $this->fleet->start_time, 4, 'Ракетная атака', $message);
 	}
 
 	public function endStayEvent()

@@ -7,17 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('user_teches', function (Blueprint $table) {
+		Schema::create('assaults_users', function (Blueprint $table) {
 			$table->id();
+			$table->integer('aks_id')->unsigned()->default(0)->index('aks_id');
 			$table->unsignedBigInteger('user_id');
-			$table->integer('tech_id')->nullable();
-			$table->smallInteger('level')->default(0);
-			$table->unique(['user_id','tech_id'], 'user_id');
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('user_teches');
+		Schema::drop('assaults_users');
 	}
 };

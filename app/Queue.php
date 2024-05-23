@@ -240,9 +240,9 @@ class Queue
 
 			if (in_array($buildItem->object_id, Vars::getItemsByType('build_exp'))) {
 				if (!$isDestroy) {
-					$xp += floor($units / config('game.buildings_exp_mult', 1000));
+					$xp += floor($units / config('settings.buildings_exp_mult', 1000));
 				} else {
-					$xp -= floor($units / config('game.buildings_exp_mult', 1000));
+					$xp -= floor($units / config('settings.buildings_exp_mult', 1000));
 				}
 			}
 
@@ -258,7 +258,7 @@ class Queue
 				$buildItem->delete();
 			}
 
-			if ($xp != 0 && $this->user->lvl_minier < config('game.level.max_ind', 100)) {
+			if ($xp != 0 && $this->user->lvl_minier < config('settings.level.max_ind', 100)) {
 				$this->user->xpminier += $xp;
 
 				if ($this->user->xpminier < 0) {
@@ -268,7 +268,7 @@ class Queue
 				$this->user->update();
 			}
 
-			if (config('game.log.buildings', false)) {
+			if (config('settings.log.buildings', false)) {
 				LogHistory::query()->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
@@ -354,7 +354,7 @@ class Queue
 
 				$loop = false;
 
-				if (config('game.log.buildings', false)) {
+				if (config('settings.log.buildings', false)) {
 					LogHistory::query()->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
@@ -463,7 +463,7 @@ class Queue
 					$this->loadQueue();
 				}
 
-				if (config('game.log.research', false) == true) {
+				if (config('settings.log.research', false)) {
 					LogHistory::query()->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),

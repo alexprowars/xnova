@@ -18,8 +18,8 @@ class UserLostPassword extends Mailable
 
 	public function build()
 	{
-		$this->from(config('settings.email_notify'), config('game.site_title'))
-			->subject(config('game.site_title') . ": Восстановление забытого пароля");
+		$this->from(config('settings.email_notify'), config('settings.site_title'))
+			->subject(config('settings.site_title') . ": Восстановление забытого пароля");
 
 		$template = File::get(resource_path('/views/email/remind_1.html'));
 		$template = strtr($template, $this->fields);

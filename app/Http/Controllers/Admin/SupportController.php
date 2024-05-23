@@ -129,7 +129,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "',status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
+			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Поступил ответ на тикет №' . $id);
 		}
 
 		return $this->index();
@@ -152,7 +152,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Был открыт тикет №' . $id);
+			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Был открыт тикет №' . $id);
 		}
 
 		return $this->index();
@@ -175,7 +175,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 4, $this->user->username, 'Тикет №' . $id . ' закрыт');
+			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Тикет №' . $id . ' закрыт');
 		}
 
 		return $this->index();

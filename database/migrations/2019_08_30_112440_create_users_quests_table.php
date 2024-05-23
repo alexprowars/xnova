@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('user_quests', function (Blueprint $table) {
+		Schema::create('users_quests', function (Blueprint $table) {
 			$table->id();
 			$table->unsignedBigInteger('user_id')->index('user_id');
 			$table->integer('quest_id')->default(0);
@@ -18,6 +18,6 @@ return new class extends Migration {
 
 	public function down()
 	{
-		Schema::drop('user_quests');
+		Schema::drop('users_quests');
 	}
 };

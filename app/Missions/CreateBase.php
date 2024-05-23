@@ -32,7 +32,7 @@ class CreateBase extends FleetEngine implements Mission
 			if ($iPlanetCount >= $maxBases) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
 
-				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+				User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
 				$this->returnFleet();
 			} else {
@@ -47,7 +47,7 @@ class CreateBase extends FleetEngine implements Mission
 				if ($NewOwnerPlanet !== false) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_allisok');
 
-					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
 					$newFleet = [];
 
@@ -73,7 +73,7 @@ class CreateBase extends FleetEngine implements Mission
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
-					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 0, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 				}
 			}
 		} else {
@@ -81,7 +81,7 @@ class CreateBase extends FleetEngine implements Mission
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 
-			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 0, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+			User::sendMessage($this->fleet->owner, 0, $this->fleet->end_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 		}
 	}
 

@@ -2,17 +2,16 @@
 
 namespace App\Entity;
 
+use App\Planet;
 use Illuminate\Support\Collection;
 use App\Game;
 use App\Planet\Entity\Ship;
 
 class FleetCollection extends Collection
 {
-	public static function createFromArray(array $items): self
+	public static function createFromArray(array $items, Planet $planet): static
 	{
-		return (new self($items))->map(function ($count, $item) {
-			return new Ship($item, $count);
-		});
+		return (new static($items))->map(fn($count, $item) => Ship::createEntity($item, $count, $planet));
 	}
 
 	public function getSpeed(): int
@@ -36,7 +35,7 @@ class FleetCollection extends Collection
 			return $abs * 95 + 2700;
 		}
 
-		$abs = abs($origin->getPosition() - $destination->getPosition());
+		$abs = abs($origin->getPlanet() - $destination->getPlanet());
 
 		if ($abs != 0) {
 			return $abs * 5 + 1000;

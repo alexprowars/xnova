@@ -16,7 +16,7 @@ class RaceController extends Controller
 {
 	public function change()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM user_details WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_details WHERE id = ' . $this->user->id)->free_race_change;
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
 
@@ -73,7 +73,7 @@ class RaceController extends Controller
 
 	public function index()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM user_details WHERE id = ' . $this->user->id)->free_race_change;
+		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_details WHERE id = ' . $this->user->id)->free_race_change;
 
 		if (Request::has('sel') && $this->user->race == 0) {
 			$r = Request::input('sel', 0);

@@ -7,17 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('planet_entities', function (Blueprint $table) {
+		Schema::create('planets_entities', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('planet_id')->constrained('planets')->cascadeOnUpdate()->restrictOnDelete();
 			$table->integer('entity_id');
 			$table->integer('amount')->default(0);
 			$table->tinyInteger('factor')->default(10);
+			$table->timestamps();
 		});
 	}
 
 	public function down()
 	{
-		Schema::dropIfExists('planet_entities');
+		Schema::dropIfExists('planets_entities');
 	}
 };

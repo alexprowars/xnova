@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class Alliance extends Model
 {
 	public $timestamps = false;
+	protected $table = 'alliances';
 
 	private $rights = [];
 	/** @var AllianceMember */

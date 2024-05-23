@@ -37,7 +37,7 @@ class SupportController extends Controller
 		}
 
 		app(SmsSender::class)
-			->send(config('game.sms.login'), 'Создан новый тикет №' . $ticket->id . ' (' . $this->user->username . ')');
+			->send(config('settings.sms.login'), 'Создан новый тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 
 		throw new SuccessException('Задача добавлена');
 	}
@@ -68,11 +68,11 @@ class SupportController extends Controller
 		$ticket->status = 3;
 		$ticket->update();
 
-		User::sendMessage(1, false, time(), 4, $this->user->username, 'Поступил ответ на тикет №' . $id);
+		User::sendMessage(1, false, time(), 5, $this->user->username, 'Поступил ответ на тикет №' . $id);
 
 		if ($ticket->status == 2) {
 			app(SmsSender::class)
-				->send(config('game.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' (' . $this->user->username . ')');
+				->send(config('settings.sms.login'), 'Поступил ответ на тикет №' . $ticket->id . ' (' . $this->user->username . ')');
 		}
 
 		throw new SuccessException('Задача обновлена');

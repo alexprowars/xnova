@@ -114,7 +114,7 @@ class PaymentsController extends CrudController
 				'type' => 6,
 			]);
 
-			User::sendMessage($checkUser->id, 0, 0, 1, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');
+			User::sendMessage($checkUser->id, 0, 0, 2, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');
 
 			Alert::success('Начисление ' . $fields['amount'] . ' кредитов прошло успешно');
 		}

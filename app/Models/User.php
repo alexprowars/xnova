@@ -17,10 +17,6 @@ class User extends Authenticatable
 	protected $guarded = [];
 	protected $hidden = ['password'];
 
-	protected $attributes = [
-		'options' => [],
-	];
-
 	protected function casts(): array
 	{
 		return [
@@ -31,6 +27,11 @@ class User extends Authenticatable
 	public function info()
 	{
 		return $this->hasOne(UserDetail::class, 'id', 'id');
+	}
+
+	public function shortcuts()
+	{
+		return $this->hasMany(FleetShortcut::class);
 	}
 
 	public function getId(): int

@@ -53,7 +53,7 @@ class BuddyController extends Controller
 				'text' => $text,
 			]);
 
-			User::sendMessage($user->id, 0, time(), 1, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+			User::sendMessage($user->id, 0, time(), 2, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
 			throw new RedirectException('Запрос отправлен', '/buddy/');
 		}
