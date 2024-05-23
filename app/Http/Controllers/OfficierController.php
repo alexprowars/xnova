@@ -46,7 +46,7 @@ class OfficierController extends Controller
 
 		$time = $duration * 86400;
 
-		if (!$credits || !$time || $this->user->credits < $credits) {
+		if (!$time || $this->user->credits < $credits) {
 			throw new ErrorException(__('officier.NoPoints'));
 		}
 
@@ -55,7 +55,7 @@ class OfficierController extends Controller
 		}
 
 		if ($this->user->{Vars::getName($id)} > time()) {
-			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)} + $time;
+			$this->user->{Vars::getName($id)} += $time;
 		} else {
 			$this->user->{Vars::getName($id)} = time() + $time;
 		}
@@ -63,10 +63,9 @@ class OfficierController extends Controller
 		$this->user->credits -= $credits;
 		$this->user->update();
 
-		LogCredit::query()->insert([
-			'uid' => $this->user->id,
-			'time' => time(),
-			'credits' => $credits * (-1),
+		LogCredit::create([
+			'user_id' => $this->user->id,
+			'amount' => $credits * (-1),
 			'type' => 5
 		]);
 
@@ -75,7 +74,7 @@ class OfficierController extends Controller
 
 	public function index()
 	{
-		$parse['credits'] = (int) $this->user->credits;
+		$parse['credits'] = $this->user->credits;
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {

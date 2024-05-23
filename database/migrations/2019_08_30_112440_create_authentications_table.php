@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('authentications', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->string('provider', 50);
 			$table->string('provider_id')->index('external_id');
 			$table->integer('create_time')->default(0);

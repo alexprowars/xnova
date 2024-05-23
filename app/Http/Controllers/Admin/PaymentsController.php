@@ -107,10 +107,9 @@ class PaymentsController extends CrudController
 		} else {
 			User::query()->where('id', $checkUser->id)->increment('credits', (int) $fields['amount']);
 
-			LogCredit::query()->insert([
-				'uid' => $checkUser->id,
-				'time' => time(),
-				'credits' => (int) $fields['amount'],
+			LogCredit::create([
+				'user_id' => $checkUser->id,
+				'amount' => (int) $fields['amount'],
 				'type' => 6,
 			]);
 

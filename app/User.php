@@ -4,7 +4,6 @@ namespace App;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +13,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Exceptions\Exception;
 use App\Mail\UserRegistration;
-use App\Models\Alliance;
 use App\Models\Message;
 use App\User\Tech;
 use App\Queue as QueueManager;
@@ -23,21 +21,7 @@ class User extends Models\User
 {
 	use Tech;
 
-	private $optionsDefault = [
-		'bb_parser' 		=> true,
-		'planetlist' 		=> false,
-		'planetlistselect' 	=> false,
-		'chatbox' 			=> true,
-		'records' 			=> true,
-		'only_available' 	=> false,
-		'planet_sort'		=> 0,
-		'planet_sort_order'	=> 0,
-		'color'				=> 0,
-		'timezone'			=> 0,
-		'spy'				=> 1,
-	];
-
-	private $bonusData = null;
+	private $bonusData;
 	public $ally = [];
 	/** @var Planet */
 	private $planet;
@@ -48,24 +32,6 @@ class User extends Models\User
 	public function isOnline()
 	{
 		return (time() - $this->onlinetime < 180);
-	}
-
-	public function getOptions()
-	{
-		return array_merge($this->optionsDefault, $this->options ?? []);
-	}
-
-	public function getOption($key)
-	{
-		return ($this->options[$key] ?? ($this->optionsDefault[$key] ?? 0));
-	}
-
-	public function setOption($key, $value)
-	{
-		$options = $this->options ?? [];
-		$options[$key] = $value;
-
-		$this->options = $options;
 	}
 
 	private function fillBobusData()
@@ -163,30 +129,15 @@ class User extends Models\User
 
 	public function getAllyInfo()
 	{
-		$this->ally = [];
-
-		if ($this->ally_id > 0) {
-			$ally = Cache::remember('user::ally_' . $this->id . '_' . $this->ally_id, 300, function () {
-				return DB::selectOne("SELECT a.id, a.owner, a.name, a.ranks, m.rank FROM alliances a, alliances_members m WHERE m.a_id = a.id AND m.u_id = " . $this->id . " AND a.id = " . $this->ally_id);
-			});
-
-			if ($ally) {
-				if (!$ally->ranks) {
-					$ally->ranks = 'a:0:{}';
-				}
-
-				$ranks = json_decode($ally->ranks, true);
-
-				$this->ally = (array) $ally;
-				$this->ally['rights'] = isset($ranks[$ally->rank - 1]) ? $ranks[$ally->rank - 1] : ['name' => '', 'planet' => 0];
-			}
+		if ($this->alliance) {
+			$this->ally['rights'] = $this->alliance->ranks[$ally->rank - 1] ?? ['name' => '', 'planet' => 0];
 		}
 	}
 
 	public function checkLevel()
 	{
-		$indNextXp = pow($this->lvl_minier, 3);
-		$warNextXp = pow($this->lvl_raid, 2);
+		$indNextXp = $this->lvl_minier ** 3;
+		$warNextXp = $this->lvl_raid ** 2;
 
 		$giveCredits = 0;
 
@@ -197,7 +148,7 @@ class User extends Models\User
 
 			$this->update();
 
-			self::sendMessage($this->getId(), 0, 0, 2, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
+			static::sendMessage($this->id, 0, 0, 2, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
 			$giveCredits += config('settings.level.credits', 10);
 		}
@@ -209,32 +160,30 @@ class User extends Models\User
 
 			$this->update();
 
-			User::sendMessage($this->getId(), 0, 0, 2, '', '<a href="/officier/">Получен новый военный уровень</a>');
+			static::sendMessage($this->id, 0, 0, 2, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
 			$giveCredits += config('settings.level.credits', 10);
 		}
 
 		if ($giveCredits != 0) {
-			Models\LogCredit::query()->create([
-				'uid' 		=> $this->getId(),
-				'time' 		=> time(),
-				'credits' 	=> $giveCredits,
+			Models\LogCredit::create([
+				'user_id' 	=> $this->id,
+				'amount' 	=> $giveCredits,
 				'type' 		=> 4,
 			]);
 
 			$reffer = Models\Referal::query()
-				->where('r_id', $this->getId())
+				->where('r_id', $this->id)
 				->first();
 
 			if ($reffer) {
-				User::query()->where('id', $reffer['u_id'])
+				static::query()->where('id', $reffer['u_id'])
 					->increment('credits', round($giveCredits / 2));
 
-				Models\LogCredit::query()->create([
-					'uid' => $reffer['u_id'],
-					'time' => time(),
-					'credits' => round($giveCredits / 2),
-					'type' => 3,
+				Models\LogCredit::create([
+					'user_id'	=> $reffer['u_id'],
+					'amount' 	=> round($giveCredits / 2),
+					'type' 		=> 3,
 				]);
 			}
 		}
@@ -248,7 +197,7 @@ class User extends Models\User
 
 		$isExistPlanet = Planet::query()
 			->where('id', $planetId)
-			->where('id_owner', $this->getId())
+			->where('user_id', $this->id)
 			->exists();
 
 		if (!$isExistPlanet) {
@@ -263,10 +212,10 @@ class User extends Models\User
 	{
 		$query = Planet::query()
 			->select(['id', 'name', 'image', 'galaxy', 'system', 'planet', 'planet_type', 'destruyed'])
-			->where('id_owner', $this->id);
+			->where('user_id', $this->id);
 
-		if ($this->ally_id > 0) {
-			$query->orWhere('id_ally', $this->ally_id);
+		if ($this->alliance_id > 0) {
+			$query->orWhere('alliance_id', $this->alliance_id);
 		}
 
 		if (!$moons) {
@@ -293,7 +242,7 @@ class User extends Models\User
 			if ($this->race > 0) {
 				$galaxy = new Galaxy();
 
-				$this->planet_id = $galaxy->createPlanetByUserId($this->getId());
+				$this->planet_id = $galaxy->createPlanetByUserId($this->id);
 				$this->planet_current = $this->planet_id;
 			}
 		}
@@ -382,7 +331,7 @@ class User extends Models\User
 			$sender = $user->id;
 		}
 
-		if ($user && $owner == $user->getId()) {
+		if ($user && $owner == $user->id) {
 			$user->messages++;
 		}
 
@@ -418,51 +367,46 @@ class User extends Models\User
 		}
 	}
 
-	public static function deleteById(int $userId)
+	public static function deleteById(int $id)
 	{
-		$userInfo = Models\User::query()->find((int) $userId, ['id', 'ally_id']);
+		$user = Models\User::find($id);
 
-		if (!$userInfo) {
+		if (!$user) {
 			return false;
 		}
 
-		if ($userInfo->ally_id > 0) {
-			$ally = Alliance::query()->find($userInfo->ally_id);
-
-			if ($ally) {
-				if ($ally->owner != $userId) {
-					$ally->deleteMember($userId);
-				} else {
-					$ally->deleteAlly();
-				}
+		if ($user->alliance) {
+			if ($user->alliance->user_id != $id) {
+				$user->alliance->deleteMember($id);
+			} else {
+				$user->alliance->deleteAlly();
 			}
 		}
 
-		$planets = Models\Planet::query()->where('id_owner', $userId)->get(['id'])->pluck('id');
+		$planets = Models\Planet::query()->where('user_id', $id)->get(['id'])->pluck('id');
 
 		foreach ($planets as $planet) {
-			Models\PlanetBuilding::query()->where('planet_id', $planet)->delete();
-			Models\PlanetUnit::query()->where('planet_id', $planet)->delete();
+			Models\PlanetEntity::query()->where('planet_id', $planet)->delete();
 		}
 
-		Models\AllianceRequest::query()->where('u_id', $userId)->delete();
-		Models\Statistic::query()->where('stat_type', 1)->where('id_owner', $userId)->delete();
-		Models\Planet::query()->where('id_owner', $userId)->delete();
-		Models\Note::query()->where('user_id', $userId)->delete();
-		Models\Fleet::query()->where('owner', $userId)->delete();
-		Models\Friend::query()->where('sender', $userId)->orWhere('owner', $userId)->delete();
-		Models\Referal::query()->where('r_id', $userId)->orWhere('u_id', $userId)->delete();
-		DB::table('log_attacks')->where('uid', $userId)->delete();
-		Models\LogCredit::query()->where('uid', $userId)->delete();
-		Models\LogHistory::query()->where('user_id', $userId)->delete();
-		DB::table('log_transfers')->where('user_id', $userId)->delete();
-		DB::table('log_stats')->where('id', $userId)->where('type', 1)->delete();
-		DB::table('logs')->where('s_id', $userId)->orWhere('e_id', $userId)->delete();
-		Models\Message::query()->where('user_id', $userId)->where('from_id', $userId)->delete();
-		Models\Blocked::query()->where('who', $userId)->delete();
-		DB::table('log_ips')->where('id', $userId)->delete();
-		Models\UserTech::query()->where('user_id', $userId)->delete();
-		Models\UserQuest::query()->where('user_id', $userId)->delete();
+		Models\AllianceRequest::query()->where('user_id', $id)->delete();
+		Models\Statistic::query()->where('stat_type', 1)->where('user_id', $id)->delete();
+		Models\Planet::query()->where('user_id', $id)->delete();
+		Models\Note::query()->where('user_id', $id)->delete();
+		Models\Fleet::query()->where('owner', $id)->delete();
+		Models\Friend::query()->where('sender', $id)->orWhere('owner', $id)->delete();
+		Models\Referal::query()->where('r_id', $id)->orWhere('u_id', $id)->delete();
+		DB::table('log_attacks')->where('user_id', $id)->delete();
+		Models\LogCredit::query()->where('user_id', $id)->delete();
+		Models\LogHistory::query()->where('user_id', $id)->delete();
+		DB::table('log_transfers')->where('user_id', $id)->delete();
+		DB::table('log_stats')->where('user_id', $id)->where('type', 1)->delete();
+		DB::table('logs')->where('s_id', $id)->orWhere('e_id', $id)->delete();
+		Models\Message::query()->where('user_id', $id)->where('from_id', $id)->delete();
+		Models\Blocked::query()->where('user_id', $id)->delete();
+		DB::table('log_ips')->where('user_id', $id)->delete();
+		Models\UserTech::query()->where('user_id', $id)->delete();
+		Models\UserQuest::query()->where('user_id', $id)->delete();
 
 		$update = [
 			'authlevel' => 0,
@@ -471,8 +415,8 @@ class User extends Models\User
 			'planet_id' => 0,
 			'planet_current' => 0,
 			'bonus' => 0,
-			'ally_id' => 0,
-			'ally_name' => '',
+			'alliance_id' => null,
+			'alliance_name' => null,
 			'lvl_minier' => 1,
 			'lvl_raid' => 1,
 			'xpminier' => 0,
@@ -496,23 +440,15 @@ class User extends Models\User
 			$update[Vars::getName($oId)] = 0;
 		}
 
-		Models\User::query()->where('id', $userId)->update($update);
+		$user->update($update);
 
 		return true;
 	}
 
 	public static function getPlanetsId(int $userId): array
 	{
-		$result = [];
-
-		$rows = Planet::query()->where('id_owner', $userId)
-			->get(['id']);
-
-		foreach ($rows as $row) {
-			$result[] = (int) $row->id;
-		}
-
-		return $result;
+		return Planet::query()->where('user_id', $userId)
+			->get(['id'])->pluck('id')->all();
 	}
 
 	public static function creation(array $data)
@@ -547,7 +483,7 @@ class User extends Models\User
 				if ($refer) {
 					Models\Referal::insert([
 						'r_id' => $user->id,
-						'u_id' => $refer->getId()
+						'u_id' => $refer->id
 					]);
 				}
 			}

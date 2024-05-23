@@ -33,7 +33,7 @@ class Attack extends FleetEngine implements Mission
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if (!isset($target->id) || !$target->id_owner || $target->destruyed > 0) {
+		if (empty($target->id) || !$target->user_id || $target->destruyed > 0) {
 			$this->returnFleet();
 
 			return false;
@@ -48,8 +48,7 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$targetUser = User::query()
-			->find((int) $target->id_owner);
+		$targetUser = User::find($target->user_id);
 
 		if (!$targetUser) {
 			$this->returnFleet();
@@ -432,20 +431,18 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$raport = json_encode([$result, $attackUsers, $defenseUsers, $steal, $moonChance, $GottenMoon, $repairFleets]);
 		// Уничтожен в первой волне
 		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 
-		$ids = Models\Report::query()->insertGetId([
-			'time' 			=> time(),
-			'id_users' 		=> json_encode($FleetsUsers),
+		$report = Models\Report::create([
+			'id_users' 		=> $FleetsUsers,
 			'no_contact' 	=> $no_contact,
-			'raport' 		=> $raport,
+			'raport' 		=> [$result, $attackUsers, $defenseUsers, $steal, $moonChance, $GottenMoon, $repairFleets],
 		]);
 
 		if ($this->fleet->group_id != 0) {
-			Models\Assault::query()->where('id', $this->fleet->group_id)->delete();
-			Models\AssaultUser::query()->where('aks_id', $this->fleet->group_id)->delete();
+			Models\Assault::query()->find($this->fleet->group_id)->delete();
+			Models\AssaultUser::query()->where('assault_id', $this->fleet->group_id)->delete();
 		}
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
@@ -481,13 +478,12 @@ class Attack extends FleetEngine implements Mission
 
 			$title_2 = implode(',', $UserList);
 
-			$title = '' . $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
+			$title = $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
 			$battleLog = new Models\LogBattle();
-
 			$battleLog->user_id = 0;
 			$battleLog->title = $title;
-			$battleLog->log = $raport;
+			$battleLog->data = $report->data;
 
 			if ($battleLog->save()) {
 				DB::table('halls')->insert([
@@ -501,14 +497,13 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$raport = "<center>";
-		$raport .= '<a href="/rw/' . $ids . '/' . md5(config('app.key') . $ids) . '/" target="' . (config('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
+		$reportHtml = "<center>";
+		$reportHtml .= '<a href="/rw/' . $report->id . '/' . md5(config('app.key') . $report->id) . '/" target="' . (config('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
+		$reportHtml .= "<font color=\"#COLOR#\">" . __('fleet_engine.sys_mess_attack_report') . " [" . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ":" . $this->fleet->end_planet . "]</font></a>";
 
-		$raport .= "<font color=\"#COLOR#\">" . __('fleet_engine.sys_mess_attack_report') . " [" . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ":" . $this->fleet->end_planet . "]</font></a>";
-
-		$raport2  = '<br><br><font color=\'red\'>' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
-		$raport2 .= __('fleet_engine.sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';
-		$raport2 .= __('fleet_engine.sys_debris') . ' м: <font color=\'#adaead\'>' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
+		$report2Html  = '<br><br><font color=\'red\'>' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
+		$report2Html .= __('fleet_engine.sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';
+		$report2Html .= __('fleet_engine.sys_debris') . ' м: <font color=\'#adaead\'>' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
 
 		$UserList = [];
 
@@ -518,7 +513,7 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$attackersReport = $raport . $raport2;
+		$attackersReport = $reportHtml . $report2Html;
 
 		$color = 'orange';
 
@@ -542,7 +537,7 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$defendersReport = $raport;
+		$defendersReport = $reportHtml;
 
 		$color = 'orange';
 
@@ -564,7 +559,7 @@ class Attack extends FleetEngine implements Mission
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
 			'fleet' 		=> is_array($this->fleet->fleet_array) ? json_encode($this->fleet->fleet_array) : $this->fleet->fleet_array,
-			'battle_log'	=> $ids
+			'battle_log'	=> $report->id
 		]);
 
 		return true;

@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LogCredit extends Model
 {
-	public $timestamps = false;
+	protected $table = 'log_credits';
+	protected $guarded = [];
 }

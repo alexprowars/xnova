@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('fleets_shortcuts', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->string('name', 100);
 			$table->integer('galaxy');
 			$table->integer('system');

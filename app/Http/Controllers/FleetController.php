@@ -8,7 +8,6 @@ use App\Exceptions\ErrorException;
 use App\Models;
 use App\Controller;
 use App\Vars;
-use App\Entity;
 
 class FleetController extends Controller
 {

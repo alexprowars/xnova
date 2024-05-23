@@ -107,7 +107,7 @@ class PlanetsController extends CrudController
 			]);
 
 			$this->crud->addField([
-				'name'       => 'id_owner',
+				'name'       => 'user_id',
 				'label'      => 'Пользователь',
 				'type'       => 'number',
 			]);
@@ -130,7 +130,7 @@ class PlanetsController extends CrudController
 
 		$planetId = (new Galaxy())->createPlanet(
 			new Coordinates($fields['galaxy'], $fields['system'], $fields['planet']),
-			$fields['id_owner'],
+			$fields['user_id'],
 			$fields['name']
 		);
 

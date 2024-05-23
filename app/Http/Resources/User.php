@@ -14,14 +14,11 @@ class User extends JsonResource
 {
 	public function toArray($request)
 	{
-		$quests = Cache::remember('app::quests::' . $this->getId(), 3600, function () {
-			return UserQuest::query()
-				->where('user_id', $this->getId())
-				->where('finish', 1)
-				->count();
+		$quests = Cache::remember('app::quests::' . $this->id, 3600, function () {
+			return $this->quests()->where('finish', 1)->count();
 		});
 
-		$planets = Cache::remember('app::planetlist_' . $this->getId(), 600, function () {
+		$planets = Cache::remember('app::planetlist_' . $this->id, 600, function () {
 			return $this->getPlanets();
 		});
 
@@ -30,9 +27,9 @@ class User extends JsonResource
 			'name' => trim($this->username),
 			'race' => (int) $this->race,
 			'messages' => $this->messages,
-			'alliance' => $this->ally_id > 0 ? [
-				'id' => $this->ally_id,
-				'name' => $this->ally_name,
+			'alliance' => $this->alliance_id > 0 ? [
+				'id' => $this->alliance_id,
+				'name' => $this->alliance_name,
 				'messages' => $this->messages_ally
 			] : null,
 			'planets' => UserPlanets::collection($planets),

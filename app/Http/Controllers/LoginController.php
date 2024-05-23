@@ -27,7 +27,7 @@ class LoginController extends Controller
 		'vkontakte',
 	];
 
-	public function LoginByCredentials(Request $request)
+	public function loginByCredentials(Request $request)
 	{
 		if (!$request->has('email')) {
 			throw new ErrorException(';)');
@@ -37,7 +37,7 @@ class LoginController extends Controller
 			throw new ErrorException('Введите хоть что-нибудь!');
 		}
 
-		$isExist = Models\UserDetail::query()->where('email', $request->post('email'))->exists();
+		$isExist = Models\User::query()->where('email', $request->post('email'))->exists();
 
 		if (!$isExist) {
 			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
@@ -52,7 +52,7 @@ class LoginController extends Controller
 		return Redirect::intended('overview/');
 	}
 
-	public function LoginBySocialServices($service)
+	public function loginBySocialServices($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return Redirect::to('/');
@@ -61,7 +61,7 @@ class LoginController extends Controller
 		return Socialite::driver($service)->redirect();
 	}
 
-	public function SocialServicesCallback($service)
+	public function socialServicesCallback($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return Redirect::to('/');
@@ -70,7 +70,7 @@ class LoginController extends Controller
 		try {
 			/** @var SocialiteUser $user */
 			$user = Socialite::driver($service)->user();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return Redirect::to('/');
 		}
 
@@ -106,7 +106,7 @@ class LoginController extends Controller
 		return Redirect::intended('overview/');
 	}
 
-	public function ResetPassword(Request $request)
+	public function resetPassword(Request $request)
 	{
 		if ($request->has(['email', 'token'])) {
 			$email = (int) $request->query('email');

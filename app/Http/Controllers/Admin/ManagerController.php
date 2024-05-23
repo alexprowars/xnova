@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\LogCredit;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 
@@ -77,7 +78,7 @@ class ManagerController extends Controller
 			$parse['planet_list'] = [];
 			$parse['planet_fields'] = $this->registry->resource;
 
-			$parse['planet_list'] = $this->db->fetchAll("SELECT * FROM planets WHERE id_owner = '" . $SelUser['id'] . "' ORDER BY id ASC");
+			$parse['planet_list'] = $this->db->fetchAll("SELECT * FROM planets WHERE user_id = '" . $SelUser['id'] . "' ORDER BY id ASC");
 
 			$parse['list_transfer'] = [];
 			$parse['list_transfer_income'] = [];
@@ -129,14 +130,14 @@ class ManagerController extends Controller
 				];
 			}
 
-			$logs = $this->db->query("SELECT time, credits, type FROM log_credits WHERE uid = " . $SelUser['id'] . " ORDER BY time DESC");
+			$logs = LogCredit::query()->where('user_id', $SelUser['id'])->orderByDesc('created_at');
 
 			$parse['list_credits'] = [];
 
-			while ($log = $logs->fetch()) {
+			foreach ($logs as $log)
 				$parse['list_credits'][] = [
 					'date' => $this->game->datezone("d.m.Y H:i", $log['time']),
-					'credits' => $log['credits'],
+					'credits' => $log->amount,
 					'type' => Lang::getText('admin', 'adm_credits_type', $log['type'])
 				];
 			}

@@ -13,9 +13,9 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 {
 	use ProductionTrait;
 
-	public static function createEntity(int $entityId, int $level = 1, Planet $context = null): self
+	public static function createEntity(int $entityId, int $level = 1, Planet $context = null): static
 	{
-		$object = self::createEmpty($entityId, $level);
+		$object = static::createEmpty($entityId, $level);
 		$object->setRelation('planet', $context);
 
 		return $object;

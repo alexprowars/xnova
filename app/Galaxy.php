@@ -91,7 +91,7 @@ class Galaxy
 				$planet->planet_type = Coordinates::TYPE_MILITARY_BASE;
 			}
 
-			$planet->id_owner = $userId;
+			$planet->user_id = $userId;
 			$planet->last_update = time();
 			$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
@@ -113,11 +113,11 @@ class Galaxy
 
 			$chance = min($chance, 20);
 
-			$size = floor(pow(mt_rand(10, 20) + 3 * $chance, 0.5) * 1000);
+			$size = floor(((random_int(10, 20) + 3 * $chance) ** 0.5) * 1000);
 
 			$moon = (new Planet([
 				'name' => __('main.sys_moon'),
-				'id_owner' => $userId,
+				'user_id' => $userId,
 				'galaxy' => $target->getGalaxy(),
 				'system' => $target->getSystem(),
 				'planet' => $target->getPlanet(),
@@ -128,9 +128,6 @@ class Galaxy
 				'field_max' => 1,
 				'temp_min' => $maxtemp,
 				'temp_max' => $mintemp,
-				'metal' => 0,
-				'crystal' => 0,
-				'deuterium' => 0
 			]));
 
 			$moon->save();

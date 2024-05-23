@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('supports', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('player_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->integer('time')->default(0);
 			$table->string('subject')->default('');
 			$table->text('text');

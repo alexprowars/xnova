@@ -2,7 +2,7 @@
 
 namespace App\Missions;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Planet;
 use App\FleetEngine;
 use App\Format;
 use App\User;
@@ -11,9 +11,14 @@ class Stay extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type = '" . $this->fleet->end_type . "'");
+		$TargetPlanet = Planet::query()
+			->where('galaxy', $this->fleet->end_galaxy)
+			->where('system', $this->fleet->end_system)
+			->where('planet', $this->fleet->end_planet)
+			->where('planet_type', $this->fleet->end_type)
+			->first();
 
-		if ($TargetPlanet->id_owner != $this->fleet->target_owner) {
+		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->target_owner) {
 			$this->returnFleet();
 		} else {
 			$this->restoreFleetToPlanet(false);
@@ -53,9 +58,14 @@ class Stay extends FleetEngine implements Mission
 
 	public function returnEvent()
 	{
-		$TargetPlanet = DB::selectOne("SELECT id_owner FROM planets WHERE galaxy = '" . $this->fleet->start_galaxy . "' AND system = '" . $this->fleet->start_system . "' AND planet = '" . $this->fleet->start_planet . "' AND planet_type = '" . $this->fleet->start_type . "';");
+		$TargetPlanet = Planet::query()
+			->where('galaxy', $this->fleet->start_galaxy)
+			->where('system', $this->fleet->start_system)
+			->where('planet', $this->fleet->start_planet)
+			->where('planet_type', $this->fleet->start_type)
+			->first();
 
-		if ($TargetPlanet->id_owner != $this->fleet->owner) {
+		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->owner) {
 			$this->killFleet();
 		} else {
 			$this->restoreFleetToPlanet();

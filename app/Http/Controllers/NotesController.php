@@ -28,12 +28,10 @@ class NotesController extends Controller
 			}
 
 			$note = new Note();
-
 			$note->user_id = $this->user->id;
 			$note->priority = $priority;
 			$note->title = $title;
 			$note->text = $text;
-
 			$note->save();
 
 			throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/' . $note->id . '/');
@@ -45,7 +43,7 @@ class NotesController extends Controller
 	public function edit(Request $request, int $noteId)
 	{
 		$note = Note::query()->where('user_id', $this->user->id)
-			->where('id', (int) $noteId)->first();
+			->where('id', $noteId)->first();
 
 		if (!$note) {
 			throw new ErrorException(__('notes.notpossiblethisway'));
@@ -65,12 +63,10 @@ class NotesController extends Controller
 				$text = __('notes.NoText');
 			}
 
-			$note->time = time();
 			$note->priority = $priority;
 			$note->title = $title;
 			$note->text = $text;
-
-			$note->update();
+			$note->save();
 
 			throw new RedirectException(__('notes.NoteUpdated'), '/notes/edit/' . $note->id . '/');
 		}
@@ -88,7 +84,7 @@ class NotesController extends Controller
 	public function index(Request $request)
 	{
 		if ($request->isMethod('post')) {
-			$deleteIds = array_map('int', $request->post('delete'));
+			$deleteIds = array_map('intval', $request->post('delete'));
 
 			if (is_array($deleteIds) && count($deleteIds)) {
 				Note::query()->where('user_id', $this->user->id)
@@ -99,7 +95,7 @@ class NotesController extends Controller
 		}
 
 		$notes = Note::query()->where('user_id', $this->user->id)
-			->orderByDesc('time')->get();
+			->orderByDesc('updated_at')->get();
 
 		$parse = [];
 		$parse['items'] = [];
@@ -108,15 +104,15 @@ class NotesController extends Controller
 			$list = [];
 
 			if ($note->priority == 0) {
-				$list['color'] = "lime";
+				$list['color'] = 'lime';
 			} elseif ($note->priority == 1) {
-				$list['color'] = "yellow";
+				$list['color'] = 'yellow';
 			} elseif ($note->priority == 2) {
-				$list['color'] = "red";
+				$list['color'] = 'red';
 			}
 
-			$list['id'] = (int) $note->id;
-			$list['time'] = Game::datezone("Y.m.d h:i:s", $note->time);
+			$list['id'] = $note->id;
+			$list['time'] = Game::datezone('Y.m.d h:i:s', $note->updated_at);
 			$list['title'] = $note->title;
 
 			$parse['items'][] = $list;

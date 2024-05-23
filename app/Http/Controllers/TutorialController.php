@@ -29,14 +29,12 @@ class TutorialController extends Controller
 		$parse['task'] = [];
 		$parse['rewd'] = [];
 
-		$qInfo = Models\UserQuest::query()
-			->where('user_id', $this->user->getId())
+		$qInfo = $this->user->quests()
 			->where('quest_id', $stage)
 			->first();
 
 		if (!$qInfo) {
-			$qInfo = Models\UserQuest::query()->create([
-				'user_id' 	=> $this->user->getId(),
+			$qInfo = $this->user->quests()->create([
 				'quest_id' 	=> $stage,
 				'finish' 	=> 0,
 				'stage' 	=> 0
@@ -95,7 +93,7 @@ class TutorialController extends Controller
 			}
 
 			if ($taskKey == 'ALLY') {
-				$check = $this->user->ally_id > 0 ? true : false;
+				$check = $this->user->alliance_id > 0;
 
 				$parse['task'][] = ['Вступить в альянс с кол-во игроков: ' . $taskVal, $check];
 			}
@@ -121,12 +119,11 @@ class TutorialController extends Controller
 			}
 
 			if ($taskKey == 'PLANETS') {
-				$count = Models\Planet::query()
-					->where('id_owner', $this->user->getId())
+				$count = $this->user->planets()
 					->where('planet_type', 1)
 					->count();
 
-				$check = $count >= $taskVal ? true : false;
+				$check = $count >= $taskVal;
 
 				$parse['task'][] = ['Кол-во колонизированных планет: ' . $taskVal, $check];
 			}
@@ -176,7 +173,7 @@ class TutorialController extends Controller
 			$qInfo->finish = 1;
 			$qInfo->update();
 
-			Cache::forget('app::quests::' . $this->user->getId());
+			Cache::forget('app::quests::' . $this->user->id);
 
 			$this->user->save();
 			$this->planet->save();
@@ -228,7 +225,7 @@ class TutorialController extends Controller
 		$userQuests = [];
 
 		$quests = Models\UserQuest::query()
-			->where('user_id', $this->user->getId())
+			->where('user_id', $this->user->id)
 			->get();
 
 		foreach ($quests as $quest) {

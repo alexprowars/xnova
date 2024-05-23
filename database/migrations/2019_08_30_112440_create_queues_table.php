@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('queues', function (Blueprint $table) {
 			$table->id();
 			$table->enum('type', array('build','tech','unit'));
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->integer('planet_id');
 			$table->integer('object_id');
 			$table->integer('level');

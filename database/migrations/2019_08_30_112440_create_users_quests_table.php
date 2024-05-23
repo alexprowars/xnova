@@ -9,9 +9,9 @@ return new class extends Migration {
 	{
 		Schema::create('users_quests', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->integer('quest_id')->default(0);
-			$table->enum('finish', array('0','1'))->default('0');
+			$table->boolean('finish')->default(false);
 			$table->integer('stage')->default(0);
 		});
 	}

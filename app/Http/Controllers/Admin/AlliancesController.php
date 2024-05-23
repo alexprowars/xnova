@@ -112,7 +112,7 @@ class AlliancesController extends Controller
 		if (isset($_GET['mitglieder'])) {
 			$ally_id = intval($_GET['mitglieder']);
 
-			$users = $this->db->query("SELECT `id`, `username` FROM users WHERE ally_id='" . $ally_id . "'");
+			$users = $this->db->query("SELECT `id`, `username` FROM users WHERE alliance_id='" . $ally_id . "'");
 
 			$parse['member_row'] = '';
 
@@ -145,7 +145,7 @@ class AlliancesController extends Controller
 				}
 
 				$user_id = $_GET['ent'];
-				$this->db->query("UPDATE users SET `ally_id`=0, `ally_name` = '' WHERE `id`='" . $user_id . "'");
+				$this->db->query("UPDATE users SET `alliance_id`=0, `ally_name` = '' WHERE `id`='" . $user_id . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
 		}
@@ -170,7 +170,7 @@ class AlliancesController extends Controller
 				}
 
 				$ally_id = intval($_GET['mail']);
-				$sq = $this->db->query("SELECT id FROM users WHERE ally_id='" . $ally_id . "'");
+				$sq = $this->db->query("SELECT id FROM users WHERE alliance_id='" . $ally_id . "'");
 				while ($u = $sq->fetch()) {
 					$this->db->query("INSERT INTO messages SET
 											`owner`='{$u['id']}',
@@ -212,10 +212,10 @@ class AlliancesController extends Controller
 					throw new \Exception('Access denied');
 				}
 
-				$sq = $this->db->query("SELECT ally_id FROM users WHERE id='" . intval($_POST['leader']) . "'");
+				$sq = $this->db->query("SELECT alliance_id FROM users WHERE id='" . intval($_POST['leader']) . "'");
 				$a = $sq->fetch();
 
-				if ($a['ally_id'] == $_GET['leader']) {
+				if ($a['alliance_id'] == $_GET['leader']) {
 					$this->db->query("UPDATE alliances SET `owner` = '" . intval($_POST['leader']) . "' WHERE `id` = '" . intval($_GET['leader']) . "'");
 				}
 

@@ -8,11 +8,12 @@ return new class extends Migration {
 	public function up()
 	{
 		Schema::create('alliances_requests', function (Blueprint $table) {
-			$table->integer('a_id')->default(0);
-			$table->integer('u_id')->default(0);
-			$table->integer('time')->default(0);
-			$table->string('request');
-			$table->unique(['a_id','u_id'], 'a_id');
+			$table->id();
+			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
+			$table->foreignId('user_id')->constrained('users');
+			$table->string('message')->nullable();
+			$table->timestamps();
+			$table->unique(['alliance_id','user_id'], 'alliance_id');
 		});
 	}
 

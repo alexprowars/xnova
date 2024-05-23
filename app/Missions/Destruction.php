@@ -2,6 +2,7 @@
 
 namespace App\Missions;
 
+use App\Models\Planet;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\FleetEngine;
@@ -36,7 +37,13 @@ class Destruction extends FleetEngine implements Mission
 				}
 
 				if ($Rips > 0) {
-					$TargetMoon = DB::selectOne("SELECT id, id_owner, diameter FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type = '3'");
+					$TargetMoon = Planet::query()
+						->where('galaxy', $this->fleet->end_galaxy)
+						->where('system', $this->fleet->end_system)
+						->where('planet', $this->fleet->end_planet)
+						->where('planet_type', 3)
+						->first();
+
 					$CurrentUser = DB::selectOne("SELECT rpg_admiral, rpg_ingenieur FROM users WHERE id = '" . $this->fleet->owner . "'");
 
 					$moonDestroyChance = round((100 - sqrt($TargetMoon->diameter)) * (sqrt($Rips)));
@@ -64,20 +71,20 @@ class Destruction extends FleetEngine implements Mission
 
 					$fleetDestroyChance = max(min(ceil($fleetDestroyChance), 100), 0);
 
-					$randChance = mt_rand(1, 100);
+					$randChance = random_int(1, 100);
 
 					if ($randChance <= $moonDestroyChance) {
 						$moonDestroyed = true;
 
-						DB::statement("UPDATE planets SET destruyed = " . (time() + 60 * 60 * 24) . ", id_owner = 0 WHERE id = '" . $TargetMoon->id . "'");
-						DB::statement("UPDATE users SET planet_current = planet_id WHERE id = " . $TargetMoon->id_owner . "");
+						DB::statement("UPDATE planets SET destruyed = " . (time() + 60 * 60 * 24) . ", user_id = null WHERE id = '" . $TargetMoon->id . "'");
+						DB::statement("UPDATE users SET planet_current = planet_id WHERE id = " . $TargetMoon->user_id . "");
 
 						DB::statement("UPDATE fleets SET start_type = 1 WHERE start_galaxy = " . $this->fleet->end_galaxy . " AND start_system = " . $this->fleet->end_system . " AND start_planet = " . $this->fleet->end_planet . " AND start_type = 3");
 						DB::statement("UPDATE fleets SET end_type = 1 WHERE end_galaxy = " . $this->fleet->end_galaxy . " AND end_system = " . $this->fleet->end_system . " AND end_planet = " . $this->fleet->end_planet . " AND end_type = 3");
 
 						Models\Queue::query()->where('planet_id', $TargetMoon->id)->delete();
 					} else {
-						$randChance = mt_rand(1, 100);
+						$randChance = random_int(1, 100);
 
 						if ($randChance <= $fleetDestroyChance) {
 							$ripsKilled = true;
@@ -120,9 +127,9 @@ class Destruction extends FleetEngine implements Mission
 					$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
 
 					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
-					User::sendMessage($TargetMoon->id_owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
+					User::sendMessage($TargetMoon->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
 
-					Cache::forget('app::planetlist_' . $TargetMoon->id_owner);
+					Cache::forget('app::planetlist_' . $TargetMoon->user_id);
 				} else {
 					User::sendMessage($this->fleet->owner, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 				}

@@ -13,7 +13,7 @@ class CreditsController extends Controller
 		$parse = [];
 
 		$userId = $request->post('userId') && (int) $request->post('userId') > 0 ?
-			(int) $request->post('userId') : $this->user->getId();
+			(int) $request->post('userId') : $this->user->id;
 
 		$parse['id'] = $userId;
 		$parse['payment'] = false;
@@ -22,17 +22,14 @@ class CreditsController extends Controller
 			$summ = (int) $request->post('summ', 0);
 
 			do {
-				$id = mt_rand(1000000000000, 9999999999999);
+				$id = random_int(1000000000000, 9999999999999);
 			} while (Models\Payment::query()->where('transaction_id', $id)->exists());
-
-			$info = Models\UserDetail::query()
-				->find($this->user->getId(), ['email']);
 
 			$parse['payment'] = [
 				'id' => $id,
 				'hash' => md5(config('settings.robokassa.login') . ":" . $summ . ":" . $id . ":" . config('settings.robokassa.public') . ":Shp_UID=" . $parse['id']),
 				'summ' => $summ,
-				'email' => $info->email,
+				'email' => $this->user->email,
 				'merchant' => config('settings.robokassa.login'),
 			];
 		}

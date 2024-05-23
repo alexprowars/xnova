@@ -15,10 +15,10 @@ Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index
 Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index'])->name('xnsim');
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->name('players');
 
-Route::post('login', [Controllers\LoginController::class, 'LoginByCredentials'])->name('login');
-Route::get('login/social/{service}', [Controllers\LoginController::class, 'LoginBySocialServices'])->name('login.socials');
-Route::get('login/callback/{service}', [Controllers\LoginController::class, 'SocialServicesCallback'])->name('login.callback');
-Route::match(['get', 'post'], 'login/reset', [Controllers\LoginController::class, 'ResetPassword'])->name('login.reset');
+Route::post('login', [Controllers\LoginController::class, 'loginByCredentials'])->name('login');
+Route::get('login/social/{service}', [Controllers\LoginController::class, 'loginBySocialServices'])->name('login.socials');
+Route::get('login/callback/{service}', [Controllers\LoginController::class, 'socialServicesCallback'])->name('login.callback');
+Route::match(['get', 'post'], 'login/reset', [Controllers\LoginController::class, 'resetPassword'])->name('login.reset');
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('tech', [Controllers\TechController::class, 'index'])->name('tech');
@@ -78,7 +78,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::match(['get', 'post'], 'notes', [Controllers\NotesController::class, 'index'])->name('notes');
 	Route::match(['get', 'post'], 'notes/edit/{id}', [Controllers\NotesController::class, 'edit'])->name('notes.edit');
 	Route::match(['get', 'post'], 'notes/new', [Controllers\NotesController::class, 'new'])->name('notes.new');
-	Route::match(['get', 'post'], 'officier', [Controllers\OfficierController::class, 'index'])->name('officier');
+	Route::get('officier', [Controllers\OfficierController::class, 'index'])->name('officier');
+	Route::post('officier/buy', [Controllers\OfficierController::class, 'buy'])->name('officier.buy');
 	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
 	Route::post('options/save', [Controllers\OptionsController::class, 'save'])->name('options.save');
 	Route::match(['get', 'post'], 'overview', [Controllers\OverviewController::class, 'index'])->name('overview');

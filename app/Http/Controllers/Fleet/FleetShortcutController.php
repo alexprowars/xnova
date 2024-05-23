@@ -56,16 +56,13 @@ class FleetShortcutController extends Controller
 				$t = 1;
 			}
 
-			$shortcut = new Models\FleetShortcut([
+			$this->user->shortcuts()->create([
 				'name' => $name,
 				'galaxy' => $g,
 				'system' => $s,
 				'planet' => $p,
 				'planet_type' => $t,
 			]);
-
-			$shortcut->user()->associate($this->user);
-			$shortcut->save();
 
 			throw new RedirectException("Ссылка на планету добавлена!", "/fleet/shortcut/");
 		}

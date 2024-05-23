@@ -52,11 +52,7 @@ class RaceController extends Controller
 
 					$this->user->update();
 
-					$planets = Planet::query()
-						->where('id_owner', $this->user->id)
-						->get();
-
-					foreach ($planets as $planet) {
+					foreach ($this->user->planets as $planet) {
 						$planet->updateAmount(Vars::getIdByName('corvete'), 0);
 						$planet->updateAmount(Vars::getIdByName('interceptor'), 0);
 						$planet->updateAmount(Vars::getIdByName('dreadnought'), 0);

@@ -9,10 +9,10 @@ return new class extends Migration {
 	{
 		Schema::create('reports', function (Blueprint $table) {
 			$table->id();
-			$table->string('id_users')->default('');
-			$table->text('raport');
-			$table->boolean('no_contact')->default(0);
-			$table->integer('time')->unsigned()->default(0);
+			$table->json('users_id');
+			$table->json('data');
+			$table->boolean('no_contact')->default(false);
+			$table->timestamps();
 		});
 	}
 

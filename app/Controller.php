@@ -32,6 +32,7 @@ class Controller extends BaseController
 
 		if (!Auth::check()) {
 			Game::checkReferLink();
+			return;
 		}
 
 		$this->user = Auth::user();

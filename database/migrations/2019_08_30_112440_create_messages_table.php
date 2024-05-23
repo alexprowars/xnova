@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('messages', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('message_owner');
+			$table->foreignId('user_id')->constrained('users');
 			$table->integer('from_id')->default(0)->index('message_sender');
 			$table->integer('time')->default(0)->index('message_time');
 			$table->integer('type')->default(0);

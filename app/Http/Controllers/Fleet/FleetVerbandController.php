@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Models\Planet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Controller;
@@ -31,11 +32,11 @@ class FleetVerbandController extends Controller
 			throw new ErrorException('Этот флот не существует!');
 		}
 
-		$aks = DB::selectOne("SELECT * FROM assaults WHERE id = :id", ['id' => $fleet->group_id]);
-
 		if ($fleet->start_time <= time() || $fleet->end_time < time() || $fleet->mess == 1) {
 			throw new ErrorException('Ваш флот возвращается на планету!');
 		}
+
+		$assault = Assault::find($fleet->group_id);
 
 		if ($request->has('action')) {
 			$action = $request->post('action');
@@ -45,7 +46,7 @@ class FleetVerbandController extends Controller
 					throw new ErrorException('Для этого флота уже задана ассоциация!');
 				}
 
-				$aks = Assault::query()->create([
+				$assault = Assault::create([
 					'name' 			=> $request->post('name', 'string'),
 					'fleet_id' 		=> $fleet->id,
 					'galaxy' 		=> $fleet->end_galaxy,
@@ -55,19 +56,18 @@ class FleetVerbandController extends Controller
 					'user_id' 		=> $this->user->id,
 				]);
 
-				if (!$aks) {
+				if (!$assault) {
 					throw new ErrorException('Невозможно получить идентификатор САБ атаки');
 				}
 
-				AssaultUser::query()->create([
-					'aks_id'	=> $aks->id,
-					'user_id'	=> $this->user->id
+				$assault->users()->create([
+					'user_id' => $this->user->id,
 				]);
 
-				$fleet->group_id = $aks->id;
+				$fleet->group_id = $assault->id;
 				$fleet->update();
 			} elseif ($action == 'adduser') {
-				if ($aks->fleet_id != $fleet->id) {
+				if ($assault->fleet_id != $fleet->id) {
 					throw new ErrorException("Вы не можете добавлять сюда игроков");
 				}
 
@@ -89,29 +89,32 @@ class FleetVerbandController extends Controller
 					throw new ErrorException("Игрок не найден");
 				}
 
-				$aks_user = DB::select("SELECT * FROM aks_user WHERE aks_id = " . $aks->id . " AND user_id = " . $user_data->id . "");
+				$assaultUser = $assault->users()->where('user_id', $user_data->id)->first();
 
-				if (count($aks_user)) {
+				if ($assaultUser) {
 					throw new ErrorException("Игрок уже приглашён для нападения");
 				}
 
-				AssaultUser::query()->insert([
-					'aks_id' => $aks->id,
+				$assault->users()->create([
 					'user_id' => $user_data->id,
 				]);
 
-				$planet_daten = DB::selectOne("SELECT `id_owner`, `name` FROM planets WHERE galaxy = '" . $aks->galaxy . "' AND system = '" . $aks->system . "' AND planet = '" . $aks->planet . "' AND planet_type = '" . $aks->planet_type . "'");
-				$owner = DB::selectOne("SELECT username FROM users WHERE id = '" . $planet_daten->id_owner . "'");
+				$planet = Planet::query()
+					->where('galaxy', $assault->galaxy)
+					->where('system', $assault->system)
+					->where('planet', $assault->planet)
+					->where('planet_type', $assault->planet_type)
+					->first();
 
-				$message = "Игрок " . $this->user->username . " приглашает вас произвести совместное нападение на планету " . $planet_daten->name . " [" . $aks->galaxy . ":" . $aks->system . ":" . $aks->planet . "] игрока " . $owner->username . ". Имя ассоциации: " . $aks->name . ". Если вы отказываетесь, то просто проигнорируйте данной сообщение.";
+				$message = "Игрок " . $this->user->username . " приглашает вас произвести совместное нападение на планету " . $planet->name . " [" . $assault->galaxy . ":" . $assault->system . ":" . $assault->planet . "] игрока " . $planet->user->username . ". Имя ассоциации: " . $assault->name . ". Если вы отказываетесь, то просто проигнорируйте данной сообщение.";
 
 				User::sendMessage($user_data->id, false, 0, 1, 'Флот', $message);
 			} elseif ($action == "changename") {
-				if ($aks->fleet_id != $fleet->id) {
+				if ($assault->fleet_id != $fleet->id) {
 					throw new ErrorException("Вы не можете менять имя ассоциации");
 				}
 
-				$name = $request->post('name', 'string');
+				$name = strip_tags($request->post('name', 'string'));
 
 				if (mb_strlen($name) < 5) {
 					throw new ErrorException("Слишком короткое имя ассоциации");
@@ -125,17 +128,14 @@ class FleetVerbandController extends Controller
 					throw new ErrorException("Имя ассоциации содержит запрещённые символы");
 				}
 
-				$name = strip_tags($name);
+				$x = Assault::where('name', $name)->exists();
 
-				$x = DB::select("SELECT * FROM aks WHERE name = :name", ['name' => $name]);
-
-				if (count($x)) {
+				if ($x) {
 					throw new ErrorException("Имя уже зарезервировано другим игроком");
 				}
 
-				$aks->name = $name;
-
-				Assault::query()->where('id', $aks->id)->update(['name' => $name]);
+				$assault->name = $name;
+				$assault->save();
 			}
 		}
 
@@ -145,14 +145,14 @@ class FleetVerbandController extends Controller
 			$fq = Fleet::query()->where('group_id', $fleet->group_id)->get();
 		}
 
-		if ($aks) {
-			$aks->fleet_id = (int) $aks->fleet_id;
+		if ($assault) {
+			$assault->fleet_id = (int) $assault->fleet_id;
 		}
 
 		$parse = [];
 		$parse['group'] = (int) $fleet->group_id;
 		$parse['fleetid'] = (int) $fleet->id;
-		$parse['aks'] = (array) $aks;
+		$parse['aks'] = $assault->toArray();
 		$parse['list'] = [];
 
 		foreach ($fq as $row) {
@@ -178,19 +178,19 @@ class FleetVerbandController extends Controller
 			];
 		}
 
-		if ($fleet->id == $aks->fleet_id) {
+		if ($fleet->id == $assault->fleet_id) {
+			$assault->load(['users', 'users.user']);
+
 			$parse['users'] = [];
 
-			$query = DB::select("SELECT users.username FROM users, aks_user WHERE users.id = aks_user.user_id AND aks_user.aks_id = " . $fleet->group_id . "");
-
-			foreach ($query as $us) {
-				$parse['users'][] = $us->username;
+			foreach ($assault->users as $user) {
+				$parse['users'][] = $user->user->username;
 			}
 
 			$parse['alliance'] = [];
 
-			if ($this->user->ally_id > 0) {
-				$alliances = DB::select("SELECT id, username FROM users WHERE ally_id = " . $this->user->ally_id . " AND id != " . $this->user->id . "");
+			if ($this->user->alliance_id > 0) {
+				$alliances = DB::select("SELECT id, username FROM users WHERE alliance_id = " . $this->user->alliance_id . " AND id != " . $this->user->id . "");
 
 				if (count($alliances)) {
 					foreach ($alliances as $user) {
@@ -201,7 +201,7 @@ class FleetVerbandController extends Controller
 
 			$parse['friends'] = [];
 
-			$buddies = DB::select("SELECT u.id, u.username FROM buddy b, users u WHERE u.id = b.sender AND b.owner = " . $this->user->getId() . " AND active = '1'");
+			$buddies = DB::select("SELECT u.id, u.username FROM buddy b, users u WHERE u.id = b.sender AND b.owner = " . $this->user->id . " AND active = '1'");
 
 			if (count($buddies)) {
 				foreach ($buddies as $buddy) {

@@ -87,7 +87,7 @@ class MoonsController extends CrudController
 			]);
 
 			$this->crud->addField([
-				'name'	=> 'id_owner',
+				'name'	=> 'user_id',
 				'label'	=> 'Пользователь',
 				'type'	=> 'number',
 			]);
@@ -114,7 +114,7 @@ class MoonsController extends CrudController
 
 		$planetId = (new Galaxy())->createMoon(
 			new Coordinates($fields['galaxy'], $fields['system'], $fields['planet']),
-			$fields['id_owner'],
+			$fields['user_id'],
 			$diameter
 		);
 

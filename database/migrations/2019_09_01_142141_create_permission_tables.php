@@ -33,7 +33,7 @@ return new class extends Migration {
 			$table->foreign('permission_id')
 				->references('id')
 				->on($tableNames['permissions'])
-				->onDelete('cascade');
+				->cascadeOnDelete();
 
 			$table->primary(
 				['permission_id', $columnNames['model_morph_key'], 'model_type'],
@@ -50,7 +50,7 @@ return new class extends Migration {
 			$table->foreign('role_id')
 				->references('id')
 				->on($tableNames['roles'])
-				->onDelete('cascade');
+				->cascadeOnDelete();
 
 			$table->primary(
 				['role_id', $columnNames['model_morph_key'], 'model_type'],
@@ -65,12 +65,12 @@ return new class extends Migration {
 			$table->foreign('permission_id')
 				->references('id')
 				->on($tableNames['permissions'])
-				->onDelete('cascade');
+				->cascadeOnDelete();
 
 			$table->foreign('role_id')
 				->references('id')
 				->on($tableNames['roles'])
-				->onDelete('cascade');
+				->cascadeOnDelete();
 
 			$table->primary(['permission_id', 'role_id']);
 		});

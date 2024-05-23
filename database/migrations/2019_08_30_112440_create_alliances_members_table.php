@@ -8,8 +8,9 @@ return new class extends Migration {
 	public function up()
 	{
 		Schema::create('alliances_members', function (Blueprint $table) {
-			$table->integer('a_id')->default(0)->index('a_id');
-			$table->integer('u_id')->default(0)->unique('u_id');
+			$table->id();
+			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->boolean('rank')->default(0);
 			$table->integer('time')->default(0);
 		});

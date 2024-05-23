@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -10,9 +11,13 @@ use App\Models\User;
 
 class Game
 {
-	public static function datezone($format, $time = 0)
+	public static function datezone($format, int|Carbon|null $time = 0)
 	{
-		if ($time == 0) {
+		if ($time instanceof Carbon) {
+			$time = $time->getTimestamp();
+		}
+
+		if (empty($time)) {
 			$time = time();
 		}
 

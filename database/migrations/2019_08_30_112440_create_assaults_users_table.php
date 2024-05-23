@@ -9,8 +9,8 @@ return new class extends Migration {
 	{
 		Schema::create('assaults_users', function (Blueprint $table) {
 			$table->id();
-			$table->integer('aks_id')->unsigned()->default(0)->index('aks_id');
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('assault_id')->constrained('assaults')->cascadeOnDelete();
+			$table->foreignId('user_id')->constrained('users');
 		});
 	}
 

@@ -9,13 +9,13 @@ return new class extends Migration {
 	{
 		Schema::create('assaults', function (Blueprint $table) {
 			$table->id();
-			$table->string('name', 50)->nullable();
+			$table->string('name', 100)->nullable();
 			$table->integer('fleet_id')->nullable();
 			$table->integer('galaxy')->nullable();
 			$table->integer('system')->nullable();
 			$table->integer('planet')->nullable();
 			$table->boolean('planet_type')->default(1);
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('user_id')->constrained('users');
 		});
 	}
 

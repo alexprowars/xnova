@@ -124,8 +124,8 @@ class FleetEngine
 		Models\Fleet::query()->where('id', $fleetId)->update($update);
 
 		if ($this->fleet->group_id > 0) {
-			Models\Assault::query()->where('id', $this->fleet->group_id)->delete();
-			Models\AssaultUser::query()->where('aks_id', $this->fleet->group_id)->delete();
+			Models\Assault::query()->find($this->fleet->group_id)->delete();
+			Models\AssaultUser::query()->where('assault_id', $this->fleet->group_id)->delete();
 		}
 	}
 

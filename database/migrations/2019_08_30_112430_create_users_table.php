@@ -22,7 +22,7 @@ return new class extends Migration {
 			$table->integer('planet_id')->unsigned()->default(0);
 			$table->integer('planet_current')->unsigned()->default(0);
 			$table->integer('bonus')->unsigned()->default(0);
-			$table->integer('ally_id')->unsigned()->default(0);
+			$table->foreignId('alliance_id')->constrained('alliances')->nullOnDelete();
 			$table->string('ally_name', 50)->default('');
 			$table->smallInteger('lvl_minier')->unsigned()->default(1);
 			$table->smallInteger('lvl_raid')->unsigned()->default(1);

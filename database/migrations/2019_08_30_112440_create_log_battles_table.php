@@ -9,10 +9,10 @@ return new class extends Migration {
 	{
 		Schema::create('log_battles', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user');
-			$table->integer('time');
+			$table->foreignId('user_id')->constrained('users');
 			$table->string('title')->default('');
-			$table->text('log');
+			$table->json('data');
+			$table->timestamps();
 		});
 	}
 

@@ -53,26 +53,22 @@ class FleetSendController extends Controller
 
 		$allianceId = (int) $request->post('alliance', 0);
 
-		$fleet_group_mr = 0;
+		$fleetGroupId = 0;
 
-		if ($allianceId > 0) {
-			if ($fleetMission == 2) {
-				$aks_tr = DB::table('assaults')
-					->select('assaults.*')
-					->join('assaults_users', 'assaults_users.aks_id', '=', 'assaults.id')
-					->where('assaults_users.user_id', $this->user->id)
-					->where('assaults_users.aks_id', $allianceId)
-					->first();
+		if ($allianceId > 0 && $fleetMission == 2) {
+			$assault = Models\Assault::query()
+				->whereHas('users', function (Builder $query) use ($allianceId) {
+					$query->where('user_id', $this->user->id)
+						->where('aks_id', $allianceId);
+				})
+				->first();
 
-				if ($aks_tr) {
-					if ($aks_tr->galaxy == $galaxy && $aks_tr->system == $system && $aks_tr->planet == $planet && $aks_tr->planet_type == $planet_type) {
-						$fleet_group_mr = $allianceId;
-					}
-				}
+			if ($assault && $assault->galaxy == $galaxy && $assault->system == $system && $assault->planet == $planet && $assault->planet_type == $planet_type) {
+				$fleetGroupId = $allianceId;
 			}
 		}
 
-		if (($allianceId == 0 || $fleet_group_mr == 0) && ($fleetMission == 2)) {
+		if (($allianceId == 0 || $fleetGroupId == 0) && $fleetMission == 2) {
 			$fleetMission = 1;
 		}
 
@@ -144,7 +140,7 @@ class FleetSendController extends Controller
 		if (!$targetPlanet) {
 			$YourPlanet = false;
 			$UsedPlanet = false;
-		} elseif ($targetPlanet->id_owner == $this->user->id || ($this->user->ally_id > 0 && $targetPlanet->id_ally == $this->user->ally_id)) {
+		} elseif ($targetPlanet->user_id == $this->user->id || ($this->user->alliance_id > 0 && $targetPlanet->alliance_id == $this->user->alliance_id)) {
 			$YourPlanet = true;
 			$UsedPlanet = true;
 		} else {
@@ -152,11 +148,11 @@ class FleetSendController extends Controller
 			$UsedPlanet = true;
 		}
 
-		if ($fleetMission == 4 && ($targetPlanet->id_owner == 1 || $this->user->isAdmin())) {
+		if ($fleetMission == 4 && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
 			$YourPlanet = true;
 		}
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planet_type], $YourPlanet, $UsedPlanet, ($fleet_group_mr > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planet_type], $YourPlanet, $UsedPlanet, ($fleetGroupId > 0));
 
 		if (!in_array($fleetMission, $missiontype)) {
 			throw new ErrorException('Миссия неизвестна!');
@@ -169,10 +165,10 @@ class FleetSendController extends Controller
 		}
 
 		if ($targetPlanet) {
-			$targerUser = Models\User::query()->find($targetPlanet->id_owner);
+			$targerUser = $targetPlanet->user;
 
 			if (!$targerUser) {
-				throw new PageException("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU" . $targetPlanet->id_owner . "</b></span>", "/fleet/");
+				throw new PageException("<span class=\"error\"><b>Неизвестная ошибка #FLTNFU" . $targetPlanet->user_id . "</b></span>", "/fleet/");
 			}
 		} else {
 			$targerUser = $this->user;
@@ -184,10 +180,10 @@ class FleetSendController extends Controller
 
 		$diplomacy = false;
 
-		if ($this->user->ally_id != 0 && $targerUser->ally_id != 0 && $fleetMission == 1) {
+		if ($this->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $fleetMission == 1) {
 			$diplomacy = Models\AllianceDiplomacy::query()
-				->where('a_id', $targerUser->ally_id)
-				->where('d_id', $this->user->ally_id)
+				->where('alliance_id', $targerUser->alliance_id)
+				->where('d_id', $this->user->alliance_id)
 				->where('status', 1)
 				->where('type', '<', 3)
 				->first();
@@ -209,7 +205,7 @@ class FleetSendController extends Controller
 				$protection = false;
 			}
 
-			if ($fleetMission == 5 && $targerUser->ally_id == $this->user->ally_id) {
+			if ($fleetMission == 5 && $targerUser->alliance_id == $this->user->alliance_id) {
 				$protection = false;
 			}
 
@@ -218,14 +214,14 @@ class FleetSendController extends Controller
 					->select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
-					->where('id_owner', $this->user->id)
+					->where('user_id', $this->user->id)
 					->value('total_points') ?? 0;
 
 				$HePoints = Models\Statistic::query()
 					->select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
-					->where('id_owner', $targerUser->id)
+					->where('user_id', $targerUser->id)
 					->value('total_points') ?? 0;
 
 				if ($HePoints < $protectionPoints) {
@@ -288,16 +284,16 @@ class FleetSendController extends Controller
 					})
 					->where('active', 1)->first();
 
-				if ($targerUser->ally_id != $this->user->ally_id && !$friend && (!$diplomacy || ($diplomacy && $diplomacy['type'] != 2))) {
+				if ($targerUser->alliance_id != $this->user->alliance_id && !$friend && (!$diplomacy || ($diplomacy && $diplomacy['type'] != 2))) {
 					throw new ErrorException('Нельзя охранять вражеские планеты!');
 				}
 			}
 
-			if ($targetPlanet && $targetPlanet->id_owner == $this->user->id && ($fleetMission == 1 || $fleetMission == 2)) {
+			if ($targetPlanet && $targetPlanet->user_id == $this->user->id && ($fleetMission == 1 || $fleetMission == 2)) {
 				throw new ErrorException('Невозможно атаковать самого себя!');
 			}
 
-			if ($targetPlanet && $targetPlanet->id_owner == $this->user->id && $fleetMission == 6) {
+			if ($targetPlanet && $targetPlanet->user_id == $this->user->id && $fleetMission == 6) {
 				throw new ErrorException('Невозможно шпионить самого себя!');
 			}
 
@@ -351,10 +347,10 @@ class FleetSendController extends Controller
 
 		$fleet_group_time = 0;
 
-		if ($fleet_group_mr > 0) {
+		if ($fleetGroupId > 0) {
 			// Вычисляем время самого медленного флота в совместной атаке
 			$flet = Models\Fleet::query()
-				->where('group_id', $fleet_group_mr)
+				->where('group_id', $fleetGroupId)
 				->get(['id', 'start_time', 'end_time']);
 
 			$fleet_group_time = $duration + time();
@@ -371,7 +367,7 @@ class FleetSendController extends Controller
 			}
 		}
 
-		if ($fleet_group_mr > 0) {
+		if ($fleetGroupId > 0) {
 			$fleet->start_time = $fleet_group_time;
 		} else {
 			$fleet->start_time = $duration + time();
@@ -455,7 +451,7 @@ class FleetSendController extends Controller
 			$StayTime = $fleet->start_time + $FleetStayTime;
 		}
 
-		if ($fleet_group_mr > 0) {
+		if ($fleetGroupId > 0) {
 			$fleet->end_time = $StayDuration + $duration + $fleet_group_time;
 		} else {
 			$fleet->end_time = $StayDuration + (2 * $duration) + time();
@@ -467,7 +463,7 @@ class FleetSendController extends Controller
 
 		$StockOk = ($StockMetal >= $TransMetal && $StockCrystal >= $TransCrystal && $StockDeuterium >= $TransDeuterium);
 
-		if (!$StockOk && (!$targetPlanet || $targetPlanet->id_owner != 1)) {
+		if (!$StockOk && (!$targetPlanet || $targetPlanet->user_id != 1)) {
 			throw new ErrorException(__('fleet.fl_noressources') . Format::number($consumption));
 		}
 
@@ -502,7 +498,7 @@ class FleetSendController extends Controller
 					's_galaxy' => $this->planet->galaxy,
 					's_system' => $this->planet->system,
 					's_planet' => $this->planet->planet,
-					'e_id' => $targetPlanet->id_owner,
+					'e_id' => $targetPlanet->user_id,
 					'e_galaxy' => $targetPlanet->galaxy,
 					'e_system' => $targetPlanet->system,
 					'e_planet' => $targetPlanet->planet,
@@ -518,7 +514,7 @@ class FleetSendController extends Controller
 		//		message ("<span class=\"error\"><b>Ваш флот не может взлететь из-за находящегося поблизости от орбиты планеты атакующего флота.</b></span>", 'Ошибка', "fleet." . $phpEx, 2);
 		//
 
-		if ($fleet_group_mr > 0 && $fleet_group_time > 0 && isset($arrr)) {
+		if ($fleetGroupId > 0 && $fleet_group_time > 0 && isset($arrr)) {
 			foreach ($arrr as $row) {
 				$end = $fleet_group_time + $row['end'] - $row['start'];
 
@@ -593,13 +589,13 @@ class FleetSendController extends Controller
 						'deuterium' => $TransDeuterium,
 					],
 				]),
-				'target_id' => $targetPlanet->id_owner,
+				'target_id' => $targetPlanet->user_id,
 			]);
 
 			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
 		}
 
-		if (false && $targetPlanet && $targetPlanet->id_owner == 1) {
+		if (false && $targetPlanet && $targetPlanet->user_id == 1) {
 			$fleet->start_time = time() + 30;
 			$fleet->end_time = time() + 60;
 
@@ -617,14 +613,16 @@ class FleetSendController extends Controller
 			$consumption = 0;
 		}
 
-		$tutorial = DB::selectOne("SELECT id, quest_id FROM users_quests WHERE user_id = " . $this->user->getId() . " AND finish = '0' AND stage = 0");
+		$tutorial = $this->user->quests()
+			->where('finish', 0)->where('stage', 0)
+			->first();
 
 		if ($tutorial) {
 			$quest = __('tutorial.tutorial', $tutorial->quest_id);
 
 			foreach ($quest['TASK'] as $taskKey => $taskVal) {
 				if ($taskKey == 'FLEET_MISSION' && $taskVal == $fleetMission) {
-					Models\UserQuest::query()->where('id', $tutorial->id)->update(['stage' => 1]);
+					$tutorial->update(['stage' => 1]);
 				}
 			}
 		}
@@ -653,9 +651,9 @@ class FleetSendController extends Controller
 			'resource_metal' 		=> $TransMetal,
 			'resource_crystal' 		=> $TransCrystal,
 			'resource_deuterium' 	=> $TransDeuterium,
-			'target_owner' 			=> $targetPlanet ? $targetPlanet->id_owner : 0,
+			'target_owner' 			=> $targetPlanet ? $targetPlanet->user_id : 0,
 			'target_owner_name' 	=> $targetPlanet ? $targetPlanet->name : '',
-			'group_id' 				=> $fleet_group_mr,
+			'group_id' 				=> $fleetGroupId,
 			'raunds' 				=> $raunds,
 			'create_time' 			=> time(),
 			'update_time' 			=> $fleet->start_time,

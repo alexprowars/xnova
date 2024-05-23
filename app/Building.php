@@ -27,7 +27,7 @@ class Building
 
 	public static function checkLabSettingsInQueue(Planet $planet)
 	{
-		$queueManager = new Queue($planet->id_owner, $planet);
+		$queueManager = new Queue($planet->user_id, $planet);
 
 		if ($queueManager->getCount($queueManager::TYPE_BUILDING)) {
 			$BuildQueue = $queueManager->get($queueManager::TYPE_BUILDING);

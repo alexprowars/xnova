@@ -57,21 +57,21 @@ class PlayersController extends Controller
 		$points = Statistic::query()
 			->where('stat_type', 1)
 			->where('stat_code', 1)
-			->where('id_owner', $user->id)
+			->where('user_id', $user->id)
 			->first();
 
 		if ($points) {
 			$parse['stats'] = [
-				'tech_rank' => (int) $points->tech_rank ?? 0,
-				'tech_points' => (int) $points->tech_points ?? 0,
-				'build_rank' => (int) $points->build_rank ?? 0,
-				'build_points' => (int) $points->build_points ?? 0,
-				'fleet_rank' => (int) $points->fleet_rank ?? 0,
-				'fleet_points' => (int) $points->fleet_points ?? 0,
-				'defs_rank' => (int) $points->defs_rank ?? 0,
-				'defs_points' => (int) $points->defs_points ?? 0,
-				'total_rank' => (int) $points->total_rank ?? 0,
-				'total_points' => (int) $points->total_points ?? 0,
+				'tech_rank' => (int) ($points->tech_rank ?? 0),
+				'tech_points' => (int) ($points->tech_points ?? 0),
+				'build_rank' => (int) ($points->build_rank ?? 0),
+				'build_points' => (int) ($points->build_points ?? 0),
+				'fleet_rank' => (int) ($points->fleet_rank ?? 0),
+				'fleet_points' => (int) ($points->fleet_points ?? 0),
+				'defs_rank' => (int) ($points->defs_rank ?? 0),
+				'defs_points' => (int) ($points->defs_points ?? 0),
+				'total_rank' => (int) ($points->total_rank ?? 0),
+				'total_points' => (int) ($points->total_points ?? 0),
 			];
 		}
 
@@ -82,8 +82,8 @@ class PlayersController extends Controller
 		$parse['galaxy'] = (int) $user->galaxy;
 		$parse['system'] = (int) $user->system;
 		$parse['planet'] = (int) $user->planet;
-		$parse['ally_id'] = (int) $user->ally_id;
-		$parse['ally_name'] = $user->ally_name;
+		$parse['ally_id'] = (int) $user->alliance_id;
+		$parse['ally_name'] = $user->alliance_name;
 		$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about));
 		$parse['wons'] = (int) $user->raids_win;
 		$parse['loos'] = (int) $user->raids_lose;

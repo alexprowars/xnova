@@ -10,8 +10,8 @@ return new class extends Migration {
 		Schema::create('planets', function (Blueprint $table) {
 			$table->id();
 			$table->string('name', 50)->nullable();
-			$table->integer('id_owner')->unsigned()->nullable()->index('id_owner');
-			$table->integer('id_ally')->default(0)->index('id_ally');
+			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+			$table->foreignId('alliance_id')->constrained('alliances')->nullOnDelete();
 			$table->boolean('id_level')->default(0);
 			$table->boolean('galaxy')->default(0)->index('galaxy');
 			$table->smallInteger('system')->unsigned()->default(0)->index('system');
@@ -30,7 +30,7 @@ return new class extends Migration {
 			$table->float('crystal', 32, 4)->default(500.0000);
 			$table->float('deuterium', 32, 4)->default(0.0000);
 			$table->integer('last_jump_time')->unsigned()->default(0);
-			$table->integer('parent_planet')->default(0);
+			$table->foreignId('parent_planet')->constrained('planets')->nullOnDelete();
 			$table->integer('debris_metal')->default(0);
 			$table->integer('debris_crystal')->default(0);
 			$table->integer('merchand')->default(0);

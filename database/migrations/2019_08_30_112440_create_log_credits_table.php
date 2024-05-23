@@ -8,10 +8,11 @@ return new class extends Migration {
 	public function up()
 	{
 		Schema::create('log_credits', function (Blueprint $table) {
-			$table->integer('uid')->default(0);
-			$table->integer('time')->default(0);
-			$table->smallInteger('credits')->default(0);
+			$table->id();
+			$table->foreignId('user_id')->constrained('users');
+			$table->integer('amount')->default(0);
 			$table->boolean('type')->default(0);
+			$table->timestamps();
 		});
 	}
 

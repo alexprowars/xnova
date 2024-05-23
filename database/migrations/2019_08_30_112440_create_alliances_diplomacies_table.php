@@ -9,12 +9,12 @@ return new class extends Migration {
 	{
 		Schema::create('alliances_diplomacies', function (Blueprint $table) {
 			$table->id();
-			$table->integer('a_id')->default(0);
+			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->integer('d_id')->default(0);
 			$table->boolean('type')->default(0);
 			$table->boolean('status')->default(0);
 			$table->boolean('primary')->default(0);
-			$table->index(['a_id','d_id'], 'a_id');
+			$table->index(['alliance_id','d_id'], 'alliance_id');
 		});
 	}
 

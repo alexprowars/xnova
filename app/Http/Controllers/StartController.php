@@ -25,7 +25,7 @@ class StartController extends Controller
 
 				$ExistUser = Models\User::query()
 					->where('username', $username)
-					->where('id', '!=', $this->user->getId())
+					->where('id', '!=', $this->user->id)
 					->exists();
 
 				if ($ExistUser) {

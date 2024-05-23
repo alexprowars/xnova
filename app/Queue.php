@@ -40,7 +40,7 @@ class Queue
 	{
 		$this->queue = [];
 
-		$query = Models\Queue::query()->where('user_id', $this->user->getId())
+		$query = Models\Queue::query()->where('user_id', $this->user->id)
 			->orderBy('id', 'ASC');
 
 		if ($this->planet) {
@@ -269,9 +269,8 @@ class Queue
 			}
 
 			if (config('settings.log.buildings', false)) {
-				LogHistory::query()->insert([
+				LogHistory::create([
 					'user_id' 			=> $this->user->id,
-					'time' 				=> time(),
 					'operation' 		=> 9,
 					'planet' 			=> $this->planet->id,
 					'from_metal' 		=> $this->planet->metal,
@@ -280,8 +279,8 @@ class Queue
 					'to_metal' 			=> $this->planet->metal,
 					'to_crystal' 		=> $this->planet->crystal,
 					'to_deuterium' 		=> $this->planet->deuterium,
-					'build_id' 			=> $buildItem->object_id,
-					'level' 			=> $this->planet->getLevel($buildItem->object_id)
+					'entity_id' 		=> $buildItem->object_id,
+					'amount' 			=> $this->planet->getLevel($buildItem->object_id)
 				]);
 			}
 
@@ -355,9 +354,8 @@ class Queue
 				$loop = false;
 
 				if (config('settings.log.buildings', false)) {
-					LogHistory::query()->insert([
+					LogHistory::create([
 						'user_id' 			=> $this->user->id,
-						'time' 				=> time(),
 						'operation' 		=> ($isDestroy ? 2 : 1),
 						'planet' 			=> $this->planet->id,
 						'from_metal' 		=> $this->planet->metal + $cost['metal'],
@@ -366,8 +364,8 @@ class Queue
 						'to_metal' 			=> $this->planet->metal,
 						'to_crystal' 		=> $this->planet->crystal,
 						'to_deuterium' 		=> $this->planet->deuterium,
-						'build_id' 			=> $buildItem->object_id,
-						'level' 			=> $entity->amount + 1,
+						'entity_id' 		=> $buildItem->object_id,
+						'amount' 			=> $entity->amount + 1,
 					]);
 				}
 			} else {
@@ -464,9 +462,8 @@ class Queue
 				}
 
 				if (config('settings.log.research', false)) {
-					LogHistory::query()->insert([
+					LogHistory::create([
 						'user_id' 			=> $this->user->id,
-						'time' 				=> time(),
 						'operation' 		=> 8,
 						'planet' 			=> $planet->id,
 						'from_metal' 		=> $planet->metal,
@@ -475,8 +472,8 @@ class Queue
 						'to_metal' 			=> $planet->metal,
 						'to_crystal' 		=> $planet->crystal,
 						'to_deuterium' 		=> $planet->deuterium,
-						'build_id' 			=> $buildItem->object_id,
-						'level' 			=> $buildItem->level
+						'entity_id' 		=> $buildItem->object_id,
+						'amount' 			=> $buildItem->level
 					]);
 				}
 

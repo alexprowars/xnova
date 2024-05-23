@@ -80,8 +80,7 @@ class MerchantController extends Controller
 		$this->user->update();
 
 		$tutorial = Models\UserQuest::query()
-			->select(['id'])
-			->where('user_id', $this->user->getId())
+			->where('user_id', $this->user->id)
 			->where('quest_id', 6)
 			->where('finish', 0)
 			->where('stage', 0)
@@ -89,7 +88,7 @@ class MerchantController extends Controller
 
 		if ($tutorial) {
 			$tutorial->stage = 1;
-			$tutorial->update();
+			$tutorial->save();
 		}
 
 		throw new RedirectException('Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type), '/merchant/');

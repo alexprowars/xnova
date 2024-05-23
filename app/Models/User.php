@@ -14,6 +14,20 @@ class User extends Authenticatable
 	use HasRoles;
 	use CrudTrait;
 
+	private $optionsDefault = [
+		'bb_parser' 		=> true,
+		'planetlist' 		=> false,
+		'planetlistselect' 	=> false,
+		'chatbox' 			=> true,
+		'records' 			=> true,
+		'only_available' 	=> false,
+		'planet_sort'		=> 0,
+		'planet_sort_order'	=> 0,
+		'color'				=> 0,
+		'timezone'			=> 0,
+		'spy'				=> 1,
+	];
+
 	protected $guarded = [];
 	protected $hidden = ['password'];
 
@@ -34,9 +48,24 @@ class User extends Authenticatable
 		return $this->hasMany(FleetShortcut::class);
 	}
 
-	public function getId(): int
+	public function quests()
 	{
-		return (int) $this->id;
+		return $this->hasMany(UserQuest::class);
+	}
+
+	public function statistics()
+	{
+		return $this->hasOne(Statistic::class)->where('stat_type', 1);
+	}
+
+	public function planets()
+	{
+		return $this->hasMany(Planet::class);
+	}
+
+	public function alliance()
+	{
+		return $this->hasOne(Alliance::class);
 	}
 
 	public function isAdmin()
@@ -53,14 +82,27 @@ class User extends Authenticatable
 		return $this->vacation > 0;
 	}
 
-	public function getFullName()
-	{
-		return trim($this->username);
-	}
-
 	public function isOnline()
 	{
-		return (time() - $this->onlinetime < 180);
+		return (time() - $this->onlinetime) < 180;
+	}
+
+	public function getOptions()
+	{
+		return array_merge($this->optionsDefault, $this->options ?? []);
+	}
+
+	public function getOption($key)
+	{
+		return ($this->options[$key] ?? ($this->optionsDefault[$key] ?? 0));
+	}
+
+	public function setOption($key, $value)
+	{
+		$options = $this->options ?? [];
+		$options[$key] = $value;
+
+		$this->options = $options;
 	}
 
 	public function sendPasswordResetNotification($token)
@@ -73,7 +115,7 @@ class User extends Authenticatable
 				'#NAME#' => $this->username,
 				'#URL#' => URL::route('login.reset', ['token' => $token, 'user' => $email]),
 			]));
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		}
 	}
 }

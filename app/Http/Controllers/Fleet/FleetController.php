@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Models\Assault;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -130,13 +131,12 @@ class FleetController extends Controller
 		$parse['moons'] = [];
 
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
-			$moons = Planet::query()
+			$moons = $this->user->planets()
+				->where('id', '!=', $this->planet->id)
 				->where(function (Builder $planet) {
 					$planet->where('planet_type', 3)
 						->orWhere('planet_type', 5);
 				})
-				->where('id', '!=', $this->planet->id)
-				->where('id_owner', $this->user->id)
 				->get();
 
 			if ($moons->count()) {
@@ -165,23 +165,19 @@ class FleetController extends Controller
 
 		$parse['alliances'] = [];
 
-		$alliances = DB::table('assaults')
-			->select('assaults.*')
-			->join('assaults_users', 'assaults_users.aks_id', '=', 'assaults.id')
-			->where('assaults_users.user_id', $this->user->id)
-			->get();
+		$assaults = Assault::query()
+			->whereRelation('users', 'user_id', $this->user->id)
+			->first();
 
-		if ($alliances->count()) {
-			foreach ($alliances as $row) {
-				$parse['alliances'][] = [
-					'id' => (int) $row->id,
-					'name' => $row->name,
-					'galaxy' => (int) $row->galaxy,
-					'system' => (int) $row->system,
-					'planet' => (int) $row->planet,
-					'planet_type' => (int) $row->planet_type,
-				];
-			}
+		foreach ($assaults as $assault) {
+			$parse['alliances'][] = [
+				'id' => (int) $assault->id,
+				'name' => $assault->name,
+				'galaxy' => (int) $assault->galaxy,
+				'system' => (int) $assault->system,
+				'planet' => (int) $assault->planet,
+				'planet_type' => (int) $assault->planet_type,
+			];
 		}
 
 		$acs 	= (int) $request->post('alliance', 0);
@@ -195,14 +191,14 @@ class FleetController extends Controller
 		if ($targetPlanet) {
 			$UsedPlanet = true;
 
-			if ($targetPlanet->id_owner == $this->user->id) {
+			if ($targetPlanet->user_id == $this->user->id) {
 				$YourPlanet = true;
 			}
 		}
 
 		$missions = Fleet::getFleetMissions($fleets, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
 
-		if ($targetPlanet && ($targetPlanet->id_owner == 1 || $this->user->isAdmin())) {
+		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
 			$missions[] = 4;
 		}
 

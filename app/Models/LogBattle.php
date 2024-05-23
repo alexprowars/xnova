@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class LogBattle extends Model
 {
-	public $timestamps = false;
+	protected $table = 'log_battles';
+	protected $guarded = [];
+
+	protected function casts(): array
+	{
+		return [
+			'data' => 'array',
+		];
+	}
 }

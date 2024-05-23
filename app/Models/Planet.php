@@ -14,9 +14,15 @@ class Planet extends Model
 	protected $hidden = ['planet_updated'];
 	protected $guarded = [];
 
+	protected $attributes = [
+		'metal' => 0,
+		'crystal' => 0,
+		'deuterium' => 0,
+	];
+
 	public function user()
 	{
-		return $this->belongsTo(User::class, 'id_owner');
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
 	public static function findByCoordinates(Coordinates $target): ?static

@@ -8,4 +8,9 @@ class AllianceMember extends Model
 {
 	public $timestamps = false;
 	protected $table = 'alliances_members';
+
+	public function user()
+	{
+		return $this->hasOne(User::class);
+	}
 }

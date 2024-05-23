@@ -26,13 +26,23 @@ class Alliance extends Model
 	public const PLANET_ACCESS = 'planet';
 	public const REQUEST_ACCESS = 'request';
 
+	protected function casts(): array
+	{
+		return [
+			'ranks' => 'array',
+		];
+	}
+
+	public function user()
+	{
+		return $this->hasOne(User::class);
+	}
+
 	public function getRanks()
 	{
 		if ($this->ranks == null) {
-			$this->ranks = '[]';
+			$this->ranks = [];
 		}
-
-		$this->ranks = json_decode($this->ranks, true);
 	}
 
 	public function setRanks($ranks)
@@ -52,7 +62,7 @@ class Alliance extends Model
 	public function parseRights($userId = 0)
 	{
 		if (!$userId && Auth::check()) {
-			$userId = Auth::user()->getId();
+			$userId = Auth::user()->id;
 		}
 
 		$this->rights = [
@@ -69,7 +79,7 @@ class Alliance extends Model
 			self::REQUEST_ACCESS 				=> false,
 		];
 
-		if ($this->owner == $userId) {
+		if ($this->user_id == $userId) {
 			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= true;
 			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= true;
 			$this->rights[self::CHAT_ACCESS] 					= true;
@@ -119,23 +129,23 @@ class Alliance extends Model
 
 	public function deleteMember($userId)
 	{
-		Alliance::query()->where('id', $this->id)->update(['members' => $this->members - 1]);
-		AllianceMember::query()->where('u_id', $userId)->delete();
+		$this->decrement('members');
+		AllianceMember::query()->where('user_id', $userId)->delete();
 
-		Planet::query()->where('id_owner', $userId)->update(['id_ally' => 0]);
-		User::query()->where('id', $userId)->update(['ally_id' => 0, 'ally_name' => '']);
+		Planet::query()->where('user_id', $userId)->update(['alliance_id' => null]);
+		User::query()->find($userId)->update(['alliance_id' => null, 'alliance_name' => null]);
 	}
 
 	public function deleteAlly()
 	{
-		User::query()->where('ally_id', $this->id)->update(['ally_id' => 0, 'ally_name' => '']);
+		User::query()->where('alliance_id', $this->id)->update(['alliance_id' => null, 'ally_name' => null]);
 
 		$this->delete();
 
-		AllianceChat::query()->where('ally_id', $this->id)->delete();
-		AllianceMember::query()->where('a_id', $this->id)->delete();
-		AllianceRequest::query()->where('a_id', $this->id)->delete();
-		AllianceDiplomacy::query()->where('a_id', $this->id)->orWhere('d_id', $this->id)->delete();
-		Statistic::query()->where('stat_type', 1)->where('id_owner', $this->id)->delete();
+		AllianceChat::query()->where('alliance_id', $this->id)->delete();
+		AllianceMember::query()->where('alliance_id', $this->id)->delete();
+		AllianceRequest::query()->where('alliance_id', $this->id)->delete();
+		AllianceDiplomacy::query()->where('alliance_id', $this->id)->orWhere('d_id', $this->id)->delete();
+		Statistic::query()->where('stat_type', 1)->where('usser_id', null)->where('alliance_id', $this->id)->delete();
 	}
 }

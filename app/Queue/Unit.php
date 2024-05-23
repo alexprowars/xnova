@@ -92,7 +92,7 @@ class Unit
 			Models\Queue::query()->create([
 				'type' => Models\Queue::TYPE_UNIT,
 				'operation' => Models\Queue::OPERATION_BUILD,
-				'user_id' => $user->getId(),
+				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
 				'time' => time(),
@@ -101,9 +101,8 @@ class Unit
 			]);
 
 			if (config('settings.log.units', false)) {
-				LogHistory::query()->insert([
+				LogHistory::create([
 					'user_id' 			=> $user->id,
-					'time' 				=> time(),
 					'operation' 		=> 7,
 					'planet' 			=> $planet->id,
 					'from_metal' 		=> $planet->metal + $cost['metal'],
@@ -112,8 +111,8 @@ class Unit
 					'to_metal' 			=> $planet->metal,
 					'to_crystal' 		=> $planet->crystal,
 					'to_deuterium' 		=> $planet->deuterium,
-					'build_id' 			=> $elementId,
-					'count' 			=> $count
+					'entity_id' 		=> $elementId,
+					'amount' 			=> $count
 				]);
 			}
 		}

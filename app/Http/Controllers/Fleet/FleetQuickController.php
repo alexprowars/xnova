@@ -60,7 +60,7 @@ class FleetQuickController extends Controller
 					$query->where('planet_type');
 				}
 			})
-			->get();
+			->first();
 
 		if (!$target) {
 			throw new Exception('Цели не существует!');
@@ -80,25 +80,25 @@ class FleetQuickController extends Controller
 			if ($this->planet->getLevel('spy_sonde') == 0) {
 				throw new Exception('Нет шпионских зондов ля отправки!');
 			}
-			if ($target->id_owner == $this->user->id) {
+			if ($target->user_id == $this->user->id) {
 				throw new Exception('Невозможно выполнить задание!');
 			}
 
 			$HeDBRec = Models\User::query()
-				->find($target->id_owner, ['id', 'onlinetime', 'vacation']);
+				->find($target->user_id, ['id', 'onlinetime', 'vacation']);
 
 			$MyGameLevel = Models\Statistic::query()
 				->select('total_points')
 				->where('stat_type', 1)
 				->where('stat_code', 1)
-				->where('id_owner', $this->user->id)
+				->where('user_id', $this->user->id)
 				->value('total_points') ?? 0;
 
 			$HeGameLevel = Models\Statistic::query()
 				->select('total_points')
 				->where('stat_type', 1)
 				->where('stat_code', 1)
-				->where('id_owner', $HeDBRec->id)
+				->where('user_id', $HeDBRec->id)
 				->value('total_points') ?? 0;
 
 			if (!$HeGameLevel) {
@@ -231,7 +231,7 @@ class FleetQuickController extends Controller
 
 					$tutorial = Models\UserQuest::query()
 						->select(['id', 'quest_id'])
-						->where('user_id', $this->user->getId())
+						->where('user_id', $this->user->id)
 						->where('finish', 0)
 						->where('stage', 0)
 						->first();

@@ -58,7 +58,7 @@ class Build
 			Models\Queue::query()->create([
 				'type' => Models\Queue::TYPE_BUILD,
 				'operation' => $destroy ? Models\Queue::OPERATION_DESTROY : Models\Queue::OPERATION_BUILD,
-				'user_id' => $user->getId(),
+				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
 				'time' => 0,

@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('log_transfers', function (Blueprint $table) {
 			$table->id();
 			$table->integer('time')->default(0);
-			$table->unsignedBigInteger('user_id')->index('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->text('data');
 			$table->integer('target_id')->default(0);
 		});

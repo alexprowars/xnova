@@ -6,10 +6,8 @@ use Gumlet\ImageResize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use App\Exceptions\ErrorException;
@@ -43,7 +41,7 @@ class OptionsController extends Controller
 
 				if (!$check) {
 					Models\Authentication::query()->insert([
-						'user_id' => $this->user->getId(),
+						'user_id' => $this->user->id,
 						'provider_id' => $identity,
 						'create_time' => time(),
 					]);
@@ -240,7 +238,7 @@ class OptionsController extends Controller
 			$userInfo->about = $about;
 			$userInfo->update();
 
-			Cache::forget('app::planetlist_' . $this->user->getId());
+			Cache::forget('app::planetlist_' . $this->user->id);
 		} else {
 			$this->user->vacation = $vacation;
 			$this->user->deltime = $Del_Time;

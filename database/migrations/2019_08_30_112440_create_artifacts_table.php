@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('artifacts', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->smallInteger('element_id')->default(0);
 			$table->boolean('level')->default(1);
 			$table->integer('expired')->default(0);

@@ -150,10 +150,7 @@ class BuddyController extends Controller
 		foreach ($items as $item) {
 			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
 
-			$user = Models\User::query()
-				->select(['id', 'username', 'galaxy', 'system', 'planet', 'onlinetime', 'ally_id', 'ally_name'])
-				->where('id', $userId)
-				->first();
+			$user = Models\User::find($userId);
 
 			if (!$user) {
 				$item->delete();
@@ -168,7 +165,7 @@ class BuddyController extends Controller
 					'id' => (int) $user->id,
 					'name' => $user->username,
 					'alliance' => [
-						'id' => (int) $user->ally_id,
+						'id' => (int) $user->alliance_id,
 						'name' => $user->ally_name
 					],
 					'galaxy' => (int) $user->galaxy,

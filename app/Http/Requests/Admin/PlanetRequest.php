@@ -13,7 +13,7 @@ class PlanetRequest extends FormRequest
 			'galaxy' => 'required|numeric|galaxy',
 			'system' => 'required|numeric|system',
 			'planet' => 'required|numeric|planet',
-			'id_owner' => 'required|numeric|exists:users,id',
+			'user_id' => 'required|numeric|exists:users,id',
 		];
 	}
 
@@ -31,8 +31,8 @@ class PlanetRequest extends FormRequest
 			'system.system' => 'Данного номера системы не существует',
 			'planet.required' => 'Введите номер планеты',
 			'planet.planet' => 'Данного номера планеты не существует',
-			'id_owner.required' => 'Введите id пользователя',
-			'id_owner.exists' => 'Такого пользователя не существует',
+			'user_id.required' => 'Введите id пользователя',
+			'user_id.exists' => 'Такого пользователя не существует',
 		];
 	}
 }

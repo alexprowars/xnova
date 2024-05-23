@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
@@ -187,7 +186,7 @@ class OverviewController extends Controller
 	public function delete(Request $request)
 	{
 		if ($request->isMethod('post') && $request->post('id') && $request->post('id', 0) == $this->user->planet_current) {
-			if ($this->user->id != $this->planet->id_owner) {
+			if ($this->user->id != $this->planet->user_id) {
 				throw new RedirectException("Удалить планету может только владелец", '/overview/rename/');
 			}
 
@@ -221,7 +220,7 @@ class OverviewController extends Controller
 			$destruyed = time() + 60 * 60 * 24;
 
 			$this->planet->destruyed = $destruyed;
-			$this->planet->id_owner = 0;
+			$this->planet->user_id = null;
 			$this->planet->update();
 
 			$this->user->planet_current = $this->user->planet_id;
@@ -231,7 +230,7 @@ class OverviewController extends Controller
 				Models\Planet::where('id', $this->planet->parent_planet)
 					->update([
 						'destruyed' => $destruyed,
-						'id_owner' => 0
+						'user_id' => null,
 					]);
 
 				Models\Queue::where('planet_id', $this->planet->parent_planet)
@@ -444,12 +443,12 @@ class OverviewController extends Controller
 			}
 		}
 
-		$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
+		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
 			return Models\Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
-				->where('id_owner', $this->user->getId())
+				->where('user_id', $this->user->id)
 				->first()?->toArray();
 		});
 
@@ -500,7 +499,7 @@ class OverviewController extends Controller
 		$build_list = [];
 
 		$planetsData = Planet::query()
-			->where('id_owner', $this->user->id)
+			->where('user_id', $this->user->id)
 			->get()->keyBy('id');
 
 		$queueManager = new Queue($this->user);

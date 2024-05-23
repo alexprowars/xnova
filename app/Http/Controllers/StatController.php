@@ -13,9 +13,9 @@ use App\Models\Statistic;
 
 class StatController extends Controller
 {
-	private $field = '';
-	private $page = 1;
-	private $pid = 0;
+	private $field;
+	private $page;
+	private $pid;
 
 	public function __construct()
 	{
@@ -83,15 +83,15 @@ class StatController extends Controller
 		];
 
 		if (!$this->page && Auth::check()) {
-			$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
+			$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
 				$records = Statistic::query()
 					->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 					->where('stat_type', 1)
 					->where('stat_code', 1)
-					->where('id_owner', $this->user->getId())
+					->where('user_id', $this->user->id)
 					->first();
 
-				return $records ? $records->toArray() : null;
+				return $records?->toArray();
 			});
 
 			if ($records) {
@@ -107,9 +107,9 @@ class StatController extends Controller
 		$position = ($parse['page'] - 1) * 100;
 
 		if ($type == 6 || $type == 7) {
-			$query = DB::select("SELECT u.username, u.race, u.id as id_owner, a.name as ally_name, u.ally_id as id_ally, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.ally_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
+			$query = DB::select("SELECT u.username, u.race, u.id as user_id, a.name as alliance_name, u.alliance_id as alliance_id, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.alliance_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
 		} else {
-			$query = DB::select("SELECT s.*, u.username, u.race FROM statistics s LEFT JOIN users u ON u.id = s.id_owner WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
+			$query = DB::select("SELECT s.*, u.username, u.race FROM statistics s LEFT JOIN users u ON u.id = s.user_id WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
 		}
 
 		$position++;
@@ -118,7 +118,7 @@ class StatController extends Controller
 
 		foreach ($query as $item) {
 			$row = [];
-			$row['id'] = (int) $item->id_owner;
+			$row['id'] = (int) $item->user_id;
 			$row['position'] = $position;
 
 			$oldPosition = (int) $item->{$this->field . '_old_rank'};
@@ -129,15 +129,15 @@ class StatController extends Controller
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->username;
-			$row['name_marked'] = (Auth::check() && $item->id_owner == $this->user->id) || $item->id_owner == $this->pid;
+			$row['name_marked'] = (Auth::check() && $item->user_id == $this->user->id) || $item->user_id == $this->pid;
 
 			$row['alliance'] = false;
 
-			if ($item->id_ally) {
+			if ($item->alliance_id) {
 				$row['alliance'] = [
-					'id' => (int) $item->id_ally,
-					'name' => $item->ally_name,
-					'marked' => Auth::check() && $item->ally_name == $this->user->ally_name
+					'id' => (int) $item->alliance_id,
+					'name' => $item->alliance_name,
+					'marked' => Auth::check() && $item->alliance_name == $this->user->alliance?->name
 				];
 			}
 
@@ -170,7 +170,7 @@ class StatController extends Controller
 
 		$position = ($parse['page'] - 1) * 100;
 
-		$query = DB::select("SELECT s.*, a.`id` as ally_id, a.`tag`, a.`name`, a.`members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.id_owner ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 
@@ -178,7 +178,7 @@ class StatController extends Controller
 
 		foreach ($query as $item) {
 			$row = [];
-			$row['id'] = (int) $item->ally_id;
+			$row['id'] = (int) $item->alliance_id;
 			$row['position'] = $position;
 
 			$oldPosition = (int) $item->{$this->field . '_old_rank'};
@@ -189,7 +189,7 @@ class StatController extends Controller
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->name;
-			$row['name_marked'] = Auth::check() && $item->name == $this->user->ally_name;
+			$row['name_marked'] = Auth::check() && $item->name == $this->user->alliance_name;
 			$row['members'] = (int) $item->members;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 

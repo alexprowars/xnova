@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('log_refers', function (Blueprint $table) {
 			$table->integer('time')->default(0);
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->smallInteger('refers')->default(0);
 		});
 	}

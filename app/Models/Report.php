@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-	public $timestamps = false;
+	protected function casts(): array
+	{
+		return [
+			'users_id' => 'array',
+			'data' => 'array',
+		];
+	}
 }

@@ -18,12 +18,12 @@ class Spy extends FleetEngine implements Mission
 
 		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if ($TargetPlanet->id_owner == 0) {
+		if ($TargetPlanet->user_id == 0) {
 			$this->returnFleet();
 			return false;
 		}
 
-		$targetUser = User::query()->find($TargetPlanet->id_owner);
+		$targetUser = User::find($TargetPlanet->user_id);
 
 		if (!$targetUser) {
 			$this->returnFleet();
@@ -173,7 +173,7 @@ class Spy extends FleetEngine implements Mission
 			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
 			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . ".";
 
-			User::sendMessage($TargetPlanet->id_owner, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
+			User::sendMessage($TargetPlanet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage);
 
 			if ($TargetChances > $SpyerChances) {
 				$mission = new Attack($this->fleet);

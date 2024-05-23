@@ -25,7 +25,7 @@ class Planet extends Models\Planet
 
 	public function checkOwnerPlanet()
 	{
-		if ($this->id_owner != $this->user->id && $this->id_ally > 0 && ($this->id_ally != $this->user->ally_id || !$this->user->ally['rights']['planet'])) {
+		if ($this->user_id != $this->user->id && $this->alliance_id > 0 && ($this->alliance_id != $this->user->alliance_id || !$this->user->alliance['rights']['planet'])) {
 			$this->user->planet_current = $this->user->planet_id;
 			$this->user->update();
 
@@ -157,7 +157,7 @@ class Planet extends Models\Planet
 				'SELECT b.id, b.level FROM planets_buildings b
 				LEFT JOIN planets p ON p.id = b.planet_id
 					WHERE
-				b.build_id = :build AND p.id_owner = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1
+				b.build_id = :build AND p.user_id = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1
 					ORDER BY
 				b.level DESC
 					LIMIT :level',

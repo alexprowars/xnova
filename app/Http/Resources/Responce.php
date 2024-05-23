@@ -80,7 +80,7 @@ class Responce extends JsonResource
 				}
 			}
 
-			if ($user->messages_ally > 0 && $user->ally_id == 0) {
+			if ($user->messages_ally > 0 && $user->alliance_id == 0) {
 				$user->messages_ally = 0;
 				$user->update();
 			}

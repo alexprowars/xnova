@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\UserDelete;
 use App\Models\Fleet;
 use App\Models\Statistic;
-use App\Models;
 
 class UpdateStatistics
 {
@@ -80,13 +79,14 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getBuildPoints(Models\Planet $planet, $user)
+	private function getBuildPoints(Models\Planet $planet, Models\User $user)
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
 
-		$items = Models\PlanetBuilding::query()
+		$items = Models\PlanetEntity::query()
 			->where('planet_id', $planet->id)
+			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_BUILING))
 			->get();
 
 		foreach ($items as $item) {
@@ -94,7 +94,7 @@ class UpdateStatistics
 				continue;
 			}
 
-			if ($user['records'] == 1) {
+			if ($user->getOption('records')) {
 				$this->setMaxInfo($item->build_id, $item->level, $user);
 			}
 
@@ -103,7 +103,7 @@ class UpdateStatistics
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
 			for ($Level = 1; $Level <= $item->level; $Level++) {
-				$BuildPoints += $Units * pow($price['factor'], $Level);
+				$BuildPoints += $Units * ($price['factor'] ** $Level);
 			}
 
 			$BuildCounts += $item->level;
@@ -287,15 +287,16 @@ class UpdateStatistics
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$list = DB::select("SELECT u.*, s.total_rank, s.tech_rank, s.fleet_rank, s.build_rank, s.defs_rank FROM users LEFT JOIN statistics s ON s.id_owner = u.id AND s.stat_type = 1 WHERE u.planet_id > 0 AND ui.id = u.id AND u.authlevel < 3 AND u.banned = 0");
+		$users = User::where('planet_id', '>', 0)
+			->where('authlevel', '<', 3)
+			->where('banned', 0)
+			->with(['alliance', 'statistics'])
+			->get();
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
-		foreach ($list as $user) {
-			$options = json_decode($user->settings, true);
-			$user->records = $options['records'] ?? true;
-
-			if ($user->banned != 0 || ($user->vacation != 0 && $user->vacation < (time() - 1036800))) {
+		foreach ($users as $user) {
+			if ($user->banned || ($user->vacation != 0 && $user->vacation < (time() - 1036800))) {
 				$hide = 1;
 			} else {
 				$hide = 0;
@@ -306,12 +307,12 @@ class UpdateStatistics
 			}
 
 			// Запоминаем старое место в стате
-			if ($user->total_rank != '') {
-				$OldTotalRank 	= $user->total_rank;
-				$OldTechRank 	= $user->tech_rank;
-				$OldFleetRank 	= $user->fleet_rank;
-				$OldBuildRank	= $user->build_rank;
-				$OldDefsRank 	= $user->defs_rank;
+			if ($user->statistics) {
+				$OldTotalRank 	= $user->statistics->total_rank;
+				$OldTechRank 	= $user->statistics->tech_rank;
+				$OldFleetRank 	= $user->statistics->fleet_rank;
+				$OldBuildRank	= $user->statistics->build_rank;
+				$OldDefsRank 	= $user->statistics->defs_rank;
 			} else {
 				$OldTotalRank 	= 0;
 				$OldTechRank 	= 0;
@@ -333,11 +334,9 @@ class UpdateStatistics
 			$GCount = $TTechCount;
 			$GPoints = $TTechPoints;
 
-			$planets = Models\Planet::query()->where('id_owner', $user->id)->get();
-
 			$RecordArray = [];
 
-			foreach ($planets as $planet) {
+			foreach ($user->planets as $planet) {
 				$Points = $this->getBuildPoints($planet, $user);
 				$TBuildCount += $Points['BuildCount'];
 				$GCount += $Points['BuildCount'];
@@ -360,14 +359,14 @@ class UpdateStatistics
 			}
 
 			// Складываем очки флота
-			if (isset($fleetPoints[$user['id']]['points'])) {
-				$TFleetCount += $fleetPoints[$user['id']]['count'];
-				$GCount += $fleetPoints[$user['id']]['count'];
-				$TFleetPoints += $fleetPoints[$user['id']]['points'];
-				$PlanetPoints = $fleetPoints[$user['id']]['points'];
+			if (isset($fleetPoints[$user->id]['points'])) {
+				$TFleetCount += $fleetPoints[$user->id]['count'];
+				$GCount += $fleetPoints[$user->id]['count'];
+				$TFleetPoints += $fleetPoints[$user->id]['points'];
+				$PlanetPoints = $fleetPoints[$user->id]['points'];
 				$GPoints += $PlanetPoints;
 
-				foreach ($fleetPoints[$user['id']]['array'] as $fleet) {
+				foreach ($fleetPoints[$user->id]['array'] as $fleet) {
 					foreach ($fleet as $id => $amount) {
 						if (isset($RecordArray[$id])) {
 							$RecordArray[$id] += $amount;
@@ -378,27 +377,27 @@ class UpdateStatistics
 				}
 			}
 
-			if ($user['records']) {
+			if ($user->getOption('records')) {
 				foreach ($RecordArray as $id => $amount) {
 					$this->setMaxInfo($id, $amount, $user);
 				}
 			}
 
-			if ($user['race'] != 0) {
-				$this->StatRace[$user['race']]['count'] += 1;
-				$this->StatRace[$user['race']]['total'] += $GPoints;
-				$this->StatRace[$user['race']]['fleet'] += $TFleetPoints;
-				$this->StatRace[$user['race']]['tech'] += $TTechPoints;
-				$this->StatRace[$user['race']]['build'] += $TBuildPoints;
-				$this->StatRace[$user['race']]['defs'] += $TDefsPoints;
+			if ($user->race != 0) {
+				$this->StatRace[$user->race]['count'] += 1;
+				$this->StatRace[$user->race]['total'] += $GPoints;
+				$this->StatRace[$user->race]['fleet'] += $TFleetPoints;
+				$this->StatRace[$user->race]['tech'] += $TTechPoints;
+				$this->StatRace[$user->race]['build'] += $TBuildPoints;
+				$this->StatRace[$user->race]['defs'] += $TDefsPoints;
 			}
 
-			Statistic::query()->insert([
-				'id_owner' => $user->id,
+			Statistic::insert([
+				'user_id' => $user->id,
 				'username' => addslashes($user->username),
 				'race' => $user->race,
-				'id_ally' => $user->ally_id,
-				'ally_name' => addslashes($user->ally_name),
+				'alliance_id' => $user->alliance_id,
+				'alliance_name' => $user->alliance->name,
 				'stat_type' => 1,
 				'stat_code' => 1,
 				'tech_points' => $TTechPoints,
@@ -422,7 +421,8 @@ class UpdateStatistics
 
 		$this->calcPositions();
 
-		$active_alliance = Statistic::query()->where('stat_type', 2)->where('stat_hide', 0)->count();
+		$active_alliance = Statistic::query()->where('stat_type', 2)
+			->where('stat_hide', 0)->count();
 
 		Setting::set('stat_update', time());
 		Setting::set('active_users', $active_users);
@@ -431,7 +431,7 @@ class UpdateStatistics
 
 	private function calcPositions()
 	{
-		$qryFormat = 'UPDATE statistics SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `id_owner` ASC;';
+		$qryFormat = 'UPDATE statistics SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `user_id` ASC;';
 
 		$rankNames = ['tech', 'fleet', 'defs', 'build', 'total'];
 
@@ -442,21 +442,21 @@ class UpdateStatistics
 
 		DB::statement("INSERT INTO statistics
 		      (`tech_points`, `tech_count`, `build_points`, `build_count`, `defs_points`, `defs_count`,
-		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `id_owner`, `id_ally`, `stat_type`, `stat_code`,
+		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `user_id`, `alliance_id`, `stat_type`, `stat_code`,
 		        `tech_old_rank`, `build_old_rank`, `defs_old_rank`, `fleet_old_rank`, `total_old_rank`
 		      )
 		      SELECT
 		        SUM(u.`tech_points`), SUM(u.`tech_count`), SUM(u.`build_points`), SUM(u.`build_count`), SUM(u.`defs_points`),
 		        SUM(u.`defs_count`), SUM(u.`fleet_points`), SUM(u.`fleet_count`), SUM(u.`total_points`), SUM(u.`total_count`),
-		        u.`id_ally`, 0, 2, 1,
+		        0, u.`alliance_id`, 2, 1,
 		        a.tech_rank, a.build_rank, a.defs_rank, a.fleet_rank, a.total_rank
 		      FROM statistics as u
-		        LEFT JOIN statistics as a ON a.id_owner = u.id_ally AND a.stat_code = 2 AND a.stat_type = 2
-		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.id_ally<>0
-		      GROUP BY u.`id_ally`");
+		        LEFT JOIN statistics as a ON a.alliance_id = u.alliance_id AND a.stat_code = 2 AND a.stat_type = 2
+		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.alliance_id<>0
+		      GROUP BY u.`alliance_id`");
 
 		DB::statement("UPDATE statistics as new
-		      LEFT JOIN statistics as old ON old.id_owner = new.id_owner AND old.stat_code = 2 AND old.stat_type = 1
+		      LEFT JOIN statistics as old ON old.alliance_id = new.alliance_id AND old.stat_code = 2 AND old.stat_type = 1
 		    SET
 		      new.tech_old_rank = old.tech_rank,
 		      new.build_old_rank = old.build_rank,
@@ -474,7 +474,7 @@ class UpdateStatistics
 		}
 
 		foreach ($this->StatRace as $race => $arr) {
-			Statistic::query()->insert([
+			Statistic::insert([
 				'race' => $race,
 				'stat_type' => 3,
 				'stat_code' => 1,
@@ -502,7 +502,7 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`id_owner`, 1, " . $this->start . "
+		        u.`user_id`, 1, " . $this->start . "
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
@@ -512,7 +512,7 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`id_owner`, 2, " . $this->start . "
+		        u.`alliance_id`, 2, " . $this->start . "
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
@@ -527,8 +527,8 @@ class UpdateStatistics
 		DB::statement("DELETE FROM logs WHERE `time` <= '" . (time() - 259200) . "';");
 		DB::statement("DELETE FROM log_attacks WHERE `time` <= '" . (time() - 604800) . "';");
 		DB::statement("DELETE FROM log_ips WHERE `time` <= '" . (time() - 604800) . "';");
-		Models\LogCredit::query()->where('time', '<', time() - 604800)->delete();
-		Models\LogHistory::query()->where('time', '<', time() - 604800)->delete();
+		Models\LogCredit::query()->where('created_at', '<', time() - 604800)->delete();
+		Models\LogHistory::query()->where('created_at', '<', time() - 604800)->delete();
 		DB::statement("DELETE FROM log_stats WHERE `time` <= '" . (time() - (86400 * 30)) . "';");
 		DB::statement("DELETE FROM log_simulations WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
 	}

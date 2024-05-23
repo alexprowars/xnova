@@ -65,10 +65,9 @@ class PaymentController extends Controller
 
 			User::sendMessage($user->id, 0, 0, 2, 'Обработка платежей', 'На ваш счет зачислено ' . $amount . ' кредитов');
 
-			Models\LogCredit::query()->insert([
-				'uid' => $user->id,
-				'time' => time(),
-				'credits' => $amount,
+			Models\LogCredit::create([
+				'user_id' => $user->id,
+				'amount' => $amount,
 				'type' => 1,
 			]);
 

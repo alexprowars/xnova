@@ -49,7 +49,7 @@ class Tech
 				Models\Queue::query()->create([
 					'type' => Models\Queue::TYPE_TECH,
 					'operation' => Models\Queue::OPERATION_BUILD,
-					'user_id' => $user->getId(),
+					'user_id' => $user->id,
 					'planet_id' => $planet->id,
 					'object_id' => $elementId,
 					'time' => time(),
@@ -58,9 +58,8 @@ class Tech
 				]);
 
 				if (config('settings.log.research', false)) {
-					LogHistory::query()->insert([
-						'user_id' 			=> $user->getId(),
-						'time' 				=> time(),
+					LogHistory::create([
+						'user_id' 			=> $user->id,
 						'operation' 		=> 5,
 						'planet' 			=> $planet->id,
 						'from_metal' 		=> $planet->metal + $cost['metal'],
@@ -69,8 +68,8 @@ class Tech
 						'to_metal' 			=> $planet->metal,
 						'to_crystal' 		=> $planet->crystal,
 						'to_deuterium' 		=> $planet->deuterium,
-						'build_id' 			=> $elementId,
-						'level' 			=> $user->getTechLevel($elementId) + 1
+						'entity_id' 		=> $elementId,
+						'amount' 			=> $user->getTechLevel($elementId) + 1
 					]);
 				}
 			}
@@ -102,9 +101,8 @@ class Tech
 			$this->queue->loadQueue();
 
 			if (config('settings.log.research', false)) {
-				LogHistory::query()->insert([
-					'user_id' 			=> $user->getId(),
-					'time' 				=> time(),
+				LogHistory::create([
+					'user_id' 			=> $user->id,
 					'operation' 		=> 6,
 					'planet' 			=> $planet->id,
 					'from_metal' 		=> $planet->metal - $cost['metal'],
@@ -113,8 +111,8 @@ class Tech
 					'to_metal' 			=> $planet->metal,
 					'to_crystal' 		=> $planet->crystal,
 					'to_deuterium' 		=> $planet->deuterium,
-					'build_id' 			=> $elementId,
-					'level' 			=> $user->getTechLevel($elementId) + 1
+					'entity_id' 		=> $elementId,
+					'amount' 			=> $user->getTechLevel($elementId) + 1
 				]);
 			}
 		}

@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('moneys', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('user_id')->constrained('users');
 			$table->string('ip', 50)->default('')->index('ip');
 			$table->bigInteger('time')->default(0)->index('time');
 			$table->string('referer', 250)->default('');

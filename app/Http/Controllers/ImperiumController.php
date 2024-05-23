@@ -22,7 +22,7 @@ class ImperiumController extends Controller
 		$fleet_fly = [];
 
 		$fleets = Fleet::query()
-			->where('owner', $this->user->getId())
+			->where('owner', $this->user->id)
 			->get();
 
 		foreach ($fleets as $fleet) {
@@ -57,7 +57,7 @@ class ImperiumController extends Controller
 		);
 
 		$planets = Planet::query()
-			->where('id_owner', $this->user->getId())
+			->where('user_id', $this->user->id)
 			->orderBy($sort['fields'], $sort['order'])
 			->get();
 

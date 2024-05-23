@@ -43,8 +43,8 @@ class FleetBackController extends Controller
 		$ReturnFlyingTime = $CurrentFlyingTime + time();
 
 		if ($fleet->group_id != 0 && $fleet->mission == 1) {
-			Assault::query()->delete($fleet->group_id);
-			AssaultUser::query()->where('aks_id', $fleet->group_id)->delete();
+			Assault::query()->find($fleet->group_id)->delete();
+			AssaultUser::query()->where('assault_id', $fleet->group_id)->delete();
 		}
 
 		$fleet->update([

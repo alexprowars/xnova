@@ -11,8 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->string('name', 32);
 			$table->string('tag', 8);
-			$table->integer('owner')->default(0);
-			$table->integer('create_time')->default(0);
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->text('description')->nullable();
 			$table->string('web')->nullable();
 			$table->text('text')->nullable();
@@ -20,8 +19,9 @@ return new class extends Migration {
 			$table->text('request')->nullable();
 			$table->boolean('request_notallow')->default(0);
 			$table->string('owner_range', 32)->nullable();
-			$table->text('ranks')->nullable();
-			$table->boolean('members')->default(1);
+			$table->json('ranks');
+			$table->boolean('members')->default(true);
+			$table->timestamps();
 		});
 	}
 

@@ -43,10 +43,9 @@ class ResourcesController extends Controller
 		$this->user->credits -= 10;
 		$this->user->update();
 
-		LogCredit::query()->insert([
-			'uid' => $this->user->id,
-			'time' => time(),
-			'credits' => 10 * (-1),
+		LogCredit::create([
+			'user_id' => $this->user->id,
+			'amount' => 10 * (-1),
 			'type' => 2
 		]);
 
@@ -61,16 +60,12 @@ class ResourcesController extends Controller
 
 		$production = request('active', 'Y') == 'Y' ? 10 : 0;
 
-		$planets = Planet::query()
-			->where('id_owner', $this->user->id)
-			->get();
-
-		foreach ($planets as $planet) {
+		foreach ($this->user->planets as $planet) {
 			$planet->setRelation('user', $this->user);
 			$planet->getProduction()->update();
 		}
 
-		$planetsId = $planets->pluck('id');
+		$planetsId = $this->user->planets->pluck('id');
 
 		$entityId = [4, 12, 212];
 

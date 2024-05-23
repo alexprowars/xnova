@@ -8,4 +8,9 @@ class Assault extends Model
 {
 	public $timestamps = false;
 	protected $table = 'assaults';
+
+	public function users()
+	{
+		return $this->hasMany(AssaultUser::class, 'assault_id');
+	}
 }

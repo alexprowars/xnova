@@ -56,10 +56,9 @@ class LogController extends Controller
 			throw new RedirectException('Ошибка удаления.', '/log/');
 		}
 
-		$log = LogBattle::findFirst([
-			'conditions' => 'id = ?0 AND user_id = ?1',
-			'bind' => [$id, $this->user->id],
-		]);
+		$log = LogBattle::where('id', $id)
+			->where('user_id', $this->user->id)
+			->first();
 
 		if (!$log) {
 			throw new RedirectException('Ошибка удаления.', '/log/');
@@ -100,32 +99,26 @@ class LogController extends Controller
 			throw new RedirectException('Неправильный ключ', '/log/');
 		}
 
-		$log = Report::query()->find($id);
+		$log = Report::find($id);
 
 		if (!$log) {
 			throw new RedirectException('Боевой отчёт не найден в базе', '/log/');
 		}
 
-		$user_list = json_decode($log->id_users);
-
-		if ($user_list[0] == $this->user->id && $log->no_contact == 1) {
-			$SaveLog = "Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)";
+		if ($log->users_id[0] == $this->user->id && $log->no_contact == 1) {
+			$SaveLog = [null];
 		} else {
-			$SaveLog = json_decode($log->raport, true);
+			$SaveLog = $log->data;
 
 			foreach ($SaveLog[0]['rw'] as $round => $data1) {
-				unset($SaveLog[0]['rw'][$round]['logA']);
-				unset($SaveLog[0]['rw'][$round]['logD']);
+				unset($SaveLog[0]['rw'][$round]['logA'], $SaveLog[0]['rw'][$round]['logD']);
 			}
-
-			$SaveLog = json_encode($SaveLog);
 		}
 
 		$new = new LogBattle();
-
 		$new->user_id = $this->user->id;
 		$new->title = addslashes(htmlspecialchars($title));
-		$new->log = $SaveLog;
+		$new->data = $SaveLog;
 
 		if (!$new->save()) {
 			throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
@@ -134,23 +127,23 @@ class LogController extends Controller
 		throw new RedirectException('Боевой отчёт успешно сохранён.', '/log/');
 	}
 
-	public function info($id)
+	public function info(int $id)
 	{
-		$id = (int) $id;
+		$raport = LogBattle::find($id);
 
-		$raportrow = LogBattle::query()->find($id);
-
-		if (!$raportrow) {
+		if (!$raport) {
 			throw new PageException('Запрашиваемого лога не существует в базе данных');
 		}
 
-		$result = json_decode($raportrow->log, true);
+		if ($raport->data[0] === null) {
+			throw new PageException('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
+		}
 
-		if (!is_array($result) || ($raportrow->user_id == 0 && $result[0]['time'] > (time() - 7200) && !$this->user->isAdmin())) {
+		if (($raport->user_id == 0 && $raport->data[0]['time'] > (time() - 7200) && !$this->user->isAdmin())) {
 			throw new PageException('Данный лог боя пока недоступен для просмотра!');
 		}
 
-		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
+		$report = new CombatReport($raport->data[0], $raport->data[1], $raport->data[2], $raport->data[3], $raport->data[4], $raport->data[5], $raport->data[6]);
 
 		return [
 			'raport' => $report->report()['html']

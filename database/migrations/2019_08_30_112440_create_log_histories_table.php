@@ -9,8 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('log_histories', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id')->index('user_id');
-			$table->integer('time');
+			$table->foreignId('user_id')->constrained('users');
 			$table->integer('planet');
 			$table->integer('operation');
 			$table->integer('from_metal');
@@ -19,10 +18,9 @@ return new class extends Migration {
 			$table->integer('to_metal');
 			$table->integer('to_crystal');
 			$table->integer('to_deuterium');
-			$table->integer('build_id');
-			$table->integer('tech_id');
-			$table->integer('level');
-			$table->integer('count');
+			$table->integer('entity_id');
+			$table->integer('amount');
+			$table->timestamps();
 		});
 	}
 

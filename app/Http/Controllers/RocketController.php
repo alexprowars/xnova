@@ -58,7 +58,7 @@ class RocketController extends Controller
 		}
 
 		$targetUser = Models\User::query()
-			->find($targetPlanet->id_owner, ['id', 'vacation']);
+			->find($targetPlanet->user_id, ['id', 'vacation']);
 
 		if (!$targetUser) {
 			throw new ErrorException('Игрока не существует');
@@ -89,7 +89,7 @@ class RocketController extends Controller
 			'end_system' 		=> $s,
 			'end_planet' 		=> $p,
 			'end_type' 			=> 1,
-			'target_owner' 		=> $targetPlanet->id_owner,
+			'target_owner' 		=> $targetPlanet->user_id,
 			'target_owner_name' => $targetPlanet->name,
 			'create_time' 		=> time(),
 			'update_time' 		=> time() + $time,

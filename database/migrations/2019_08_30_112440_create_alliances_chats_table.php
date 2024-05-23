@@ -9,9 +9,9 @@ return new class extends Migration {
 	{
 		Schema::create('alliances_chats', function (Blueprint $table) {
 			$table->id();
-			$table->integer('ally_id')->unsigned()->default(0)->index('ally_id');
+			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->string('user', 50)->default('');
-			$table->unsignedBigInteger('user_id');
+			$table->foreignId('user_id')->constrained('users')->nullOnDelete();
 			$table->text('message');
 			$table->integer('timestamp')->default(0);
 		});
