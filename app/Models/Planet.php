@@ -14,7 +14,7 @@ class Planet extends Model
 	protected $hidden = ['planet_updated'];
 	protected $guarded = [];
 
-	public static function findByCoordinates(Coordinates $target): ?self
+	public static function findByCoordinates(Coordinates $target): ?static
 	{
 		return self::query()->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())

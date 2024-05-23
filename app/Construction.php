@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App;
 
 use Illuminate\Support\Facades\Request;
 use App\Exceptions\RedirectException;
-use App\Models;
 use App\Planet\EntityFactory;
 
 class Construction
@@ -28,37 +21,37 @@ class Construction
 
 	public function pageBuilding()
 	{
-		$parse = [];
+		$request = Request::instance();
 
-		$Queue = $this->ShowBuildingQueue();
+		$queue = $this->ShowBuildingQueue();
 
-		$MaxBuidSize = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
+		$maxBuidSize = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
 
-		$CanBuildElement = ($Queue['lenght'] < $MaxBuidSize);
+		if ($request->isMethod('post')) {
+			$action = $request->post('cmd', '');
+			$elementId = (int) $request->post('building', 0);
+			$listID = (int) $request->post('listid', 0);
 
-		if (Request::instance()->isMethod('post')) {
-			$Command = Request::post('cmd', '');
-			$elementId = (int) Request::post('building', 0);
-			$ListID = (int) Request::post('listid', 0);
-
-			if (in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type)) || ($ListID != 0 && ($Command == 'cancel' || $Command == 'remove'))) {
+			if (in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type)) || ($listID != 0 && ($action == 'cancel' || $action == 'remove'))) {
 				$queueManager = new Queue($this->user, $this->planet);
 
-				switch ($Command) {
+				$canBuildElement = ($queue['lenght'] < $maxBuidSize);
+
+				switch ($action) {
 					case 'cancel':
 						$queueManager->delete(1, 0);
 						break;
 					case 'remove':
-						$queueManager->delete(1, $ListID);
+						$queueManager->delete(1, $listID);
 						break;
 					case 'insert':
-						if ($CanBuildElement) {
+						if ($canBuildElement) {
 							$queueManager->add($elementId);
 						}
 
 						break;
 					case 'destroy':
-						if ($CanBuildElement) {
+						if ($canBuildElement) {
 							$queueManager->add($elementId, 1, true);
 						}
 
@@ -71,6 +64,7 @@ class Construction
 
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
+		$parse = [];
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $elementId) {
@@ -104,7 +98,7 @@ class Construction
 				}
 
 				$row['time'] = $entity->getTime();
-				$row['effects'] = Building::getNextProduction($elementId, $entity->getLevel(), $this->planet);
+				$row['effects'] = Building::getNextProduction($elementId, $entity->getLevel(), $this->planet)?->toArray() ?? null;
 			} else {
 				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
@@ -112,9 +106,9 @@ class Construction
 			$parse['items'][] = $row;
 		}
 
-		$parse['queue'] 			= $Queue['buildlist'];
-		$parse['queue_max'] 		= $MaxBuidSize;
-		$parse['planet'] 			= 'normaltemp';
+		$parse['queue'] 	= $queue['buildlist'];
+		$parse['queue_max'] = $maxBuidSize;
+		$parse['planet'] 	= 'normaltemp';
 
 		preg_match('/(.*?)planet/', $this->planet->image, $match);
 

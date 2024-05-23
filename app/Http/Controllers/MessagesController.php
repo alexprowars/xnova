@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -107,8 +101,6 @@ class MessagesController extends Controller
 				$page['text'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->text) . '[/quote]';
 			}
 		}
-
-		$this->showTopPanel(false);
 
 		return $page;
 	}
@@ -225,7 +217,7 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
+			->select(['id', 'type', 'time', 'text', 'from_id'])
 			->orderBy('time', 'DESC');
 
 		if ($category == 101) {
@@ -278,8 +270,6 @@ class MessagesController extends Controller
 		];
 
 		$parse['parser'] = $this->user->getOption('bb_parser');
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

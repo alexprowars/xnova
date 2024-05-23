@@ -33,28 +33,25 @@ class Queue extends Command
 
 		while ($totalRuns < MAX_RUNS) {
 			$items = Models\Queue::query()
+				->select(['user_id', 'planet_id'])
 				->where('time', '>', 0)
 				->where('time_end', '<=', time() + 10)
-				->where('type', '!=', 'unit')
-				->orderBy('id', 'asc')
+				->whereNot('type', 'unit')
+				//->orderBy('id')
 				->groupBy('user_id', 'planet_id')
+				->with(['user', 'planet'])
 				->get();
 
 			foreach ($items as $item) {
 				try {
-					$user = User::query()->find((int) $item->user_id);
+					$planet = $item->planet;
+					$planet?->setRelation('user', $item->user);
 
-					$planet = Planet::query()->find((int) $item->planet_id);
-
-					if ($planet) {
-						$planet->setUser($user);
-					}
-
-					if (!$user || !$planet) {
+					if (!$item->user || !$planet) {
 						throw new Exception('Cron::update::queueAction::user or planet not found');
 					}
 
-					$queueManager = new \App\Queue($user, $planet);
+					$queueManager = new \App\Queue($item->user, $planet);
 					$queueManager->update();
 				} catch (Exception $e) {
 					file_put_contents(ROOT_PATH . '/php_errors.log', "\n\n" . $e->getMessage() . "\n\n", FILE_APPEND);

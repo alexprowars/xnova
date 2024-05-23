@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -67,8 +61,6 @@ class BuddyController extends Controller
 		if ($user->id == $this->user->id) {
 			throw new ErrorException('Нельзя дружить сам с собой');
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'id' => $user->id,

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
@@ -20,13 +14,6 @@ use App\Vars;
 class TutorialController extends Controller
 {
 	protected $loadPlanet = true;
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->showTopPanel(false);
-	}
 
 	public function info(int $stage)
 	{

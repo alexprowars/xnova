@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -97,8 +91,6 @@ class OfficierController extends Controller
 
 			$parse['items'][] = $row;
 		}
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

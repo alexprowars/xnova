@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -31,13 +25,6 @@ class AllianceController extends Controller
 {
 	/** @var Alliance $ally */
 	private $ally;
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->showTopPanel(false);
-	}
 
 	private function parseInfo($allyId)
 	{

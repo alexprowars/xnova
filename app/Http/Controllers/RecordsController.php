@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Format;
@@ -68,8 +62,6 @@ class RecordsController extends Controller
 			'items' => $Records,
 			'update' => config('game.stat_update'),
 		];
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

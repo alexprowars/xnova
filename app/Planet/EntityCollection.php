@@ -18,18 +18,16 @@ class EntityCollection extends Collection
 				return EntityFactory::createFromModel($item, $planet);
 			});
 
-		return new self($items);
+		return new static($items);
 	}
 
-	public function getForTypes($types): Collection
+	public function getForTypes($types): static
 	{
 		if (!is_array($types)) {
 			$types = [$types];
 		}
 
-		return $this->filter(function ($item) use ($types) {
-			return in_array(Vars::getItemType($item->entity_id), $types);
-		});
+		return $this->filter(fn($item) => in_array(Vars::getItemType($item->entity_id), $types));
 	}
 
 	public function getEntity($entityId): ?Planet\Entity\BaseEntity
@@ -49,6 +47,6 @@ class EntityCollection extends Collection
 			return 0;
 		}
 
-		return (int) $entity->amount;
+		return $entity->amount;
 	}
 }

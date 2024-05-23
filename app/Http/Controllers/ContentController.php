@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -28,8 +22,6 @@ class ContentController extends Controller
 		if (!$content) {
 			throw new ErrorException('Страница не найдена!');
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'title' => $content->title,

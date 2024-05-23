@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Models\Statistic;
@@ -98,9 +92,6 @@ class PlayersController extends Controller
 		$parse['m'] = User::getRankId($user->lvl_minier);
 		$parse['f'] = User::getRankId($user->lvl_raid);
 
-		$this->showTopPanel(false);
-		$this->showLeftPanel(Auth::check());
-
 		return $parse;
 	}
 
@@ -141,9 +132,6 @@ class PlayersController extends Controller
 				]
 			];
 		}
-
-		$this->showTopPanel(false);
-		$this->showLeftPanel(Auth::check());
 
 		return $parse;
 	}

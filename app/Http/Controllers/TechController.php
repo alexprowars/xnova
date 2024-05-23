@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Building;
@@ -87,8 +81,6 @@ class TechController extends Controller
 			unset($parse[count($parse) - 1]);
 		}
 
-		$this->showTopPanel(false);
-
 		return $parse;
 	}
 
@@ -135,8 +127,6 @@ class TechController extends Controller
 		}
 
 		$page['data'] = $data;
-
-		$this->showTopPanel(false);
 
 		return $page;
 	}

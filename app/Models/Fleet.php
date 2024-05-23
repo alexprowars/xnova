@@ -2,12 +2,7 @@
 
 namespace App\Models;
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use App\Entity\Coordinates;
@@ -17,26 +12,20 @@ class Fleet extends Model
 	public $timestamps = false;
 	protected $guarded = [];
 
-	public $username = '';
+	protected $attributes = [
+		'fleet_array' => [],
+	];
 
-	public static function boot()
+	protected function casts(): array
 	{
-		parent::boot();
-
-		self::creating(function (self $model) {
-			$model->_beforeSave($model);
-		});
-
-		self::updating(function (self $model) {
-			$model->_beforeSave($model);
-		});
+		return [
+			'fleet_array' => 'array',
+		];
 	}
 
-	private function _beforeSave($model)
+	public function user()
 	{
-		if (is_array($model->fleet_array)) {
-			$model->fleet_array = json_encode($model->fleet_array);
-		}
+		return $this->belongsTo(User::class, 'owner');
 	}
 
 	public function splitStartPosition()
@@ -120,13 +109,6 @@ class Fleet extends Model
 		}
 
 		return $result;
-	}
-
-	public function beforeSave()
-	{
-		if (is_array($this->fleet_array)) {
-			$this->fleet_array = json_encode(array_values($this->fleet_array));
-		}
 	}
 
 	public function canBack()

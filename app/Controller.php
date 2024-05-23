@@ -4,29 +4,14 @@ namespace App;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use App\Exceptions\RedirectException;
-use App\Models\UserDetail;
 
 class Controller extends BaseController
 {
-	private $views = [
-		'header' => true,
-		'footer' => true,
-		'planets' => true,
-		'menu' => true,
-		'resources' => true,
-		'chat' => true
-	];
-
-	private $title = '';
-	/** @var User */
-	protected $user = null;
-	/** @var Planet */
-	protected $planet = null;
+	protected ?User $user = null;
+	protected ?Planet $planet = null;
 
 	protected $loadPlanet = false;
 
@@ -41,66 +26,37 @@ class Controller extends BaseController
 
 	private function init()
 	{
+		$request = Request::instance();
+
 		Vars::init();
 
-		if (Auth::check()) {
-			$this->user = Auth::user();
-
-			if (!(int) config('settings.view.showPlanetListSelect', 0)) {
-				config(['settings.view.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
-			}
-
-			if (!$this->user->getOption('chatbox')) {
-				$this->views['chat'] = false;
-			}
-
-			$this->user->getAllyInfo();
-			$this->user->checkLevel();
-
-			// Выставляем планету выбранную игроком из списка планет
-			$this->user->setSelectedPlanet();
-
-			$controller = Route::current()->getName();
-
-			if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout'])) {
-				throw new RedirectException('', '/start/');
-			}
-
-			if (Request::has('initial') || $this->loadPlanet) {
-				$this->planet = $this->user->getCurrentPlanet(true);
-			}
-
-			Fleet::SetShipsEngine($this->user);
-		} else {
-			$this->showTopPanel(false);
-			$this->showLeftPanel(false);
-
+		if (!Auth::check()) {
 			Game::checkReferLink();
 		}
-	}
 
-	public function setViews($view, $mode)
-	{
-		if (isset($this->views[$view])) {
-			$this->views[$view] = (bool) $mode;
+		$this->user = Auth::user();
+
+		if (!(int) config('settings.view.showPlanetListSelect', 0)) {
+			config(['settings.view.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
 		}
-	}
 
-	public function getViews(): array
-	{
-		return $this->views;
-	}
+		$this->user->getAllyInfo();
+		$this->user->checkLevel();
 
-	public function showTopPanel($view = true)
-	{
-		$this->setViews('resources', $view);
-	}
+		if ($request->has('chpl') && is_numeric($request->input('chpl'))) {
+			$this->user->setSelectedPlanet($request->input('chpl'));
+		}
 
-	public function showLeftPanel($view = true)
-	{
-		$this->setViews('header', $view);
-		$this->setViews('footer', $view);
-		$this->setViews('menu', $view);
-		$this->setViews('planets', $view);
+		$controller = Route::current()->getName();
+
+		if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout'])) {
+			throw new RedirectException('', '/start/');
+		}
+
+		if ($request->has('initial') || $this->loadPlanet) {
+			$this->planet = $this->user->getCurrentPlanet(true);
+		}
+
+		Fleet::SetShipsEngine($this->user);
 	}
 }

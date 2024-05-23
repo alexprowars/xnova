@@ -36,11 +36,10 @@ class User extends JsonResource
 				'messages' => $this->messages_ally
 			] : null,
 			'planets' => UserPlanets::collection($planets),
-			'timezone' => (int) $this->getOption('timezone'),
-			'color' => (int) $this->getOption('color'),
 			'vacation' => $this->vacation > 0,
 			'quests' => (int) $quests,
 			'credits' => $this->credits,
+			'options' => $this->getOptions(),
 			'officiers' => [],
 		];
 

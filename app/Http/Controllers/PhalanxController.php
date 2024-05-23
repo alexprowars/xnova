@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -136,9 +130,6 @@ class PhalanxController extends Controller
 				];
 			}
 		}
-
-		$this->showTopPanel(false);
-		$this->showLeftPanel(false);
 
 		return [
 			'items' => $list

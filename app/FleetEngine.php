@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App;
 
 use App\Entity\Coordinates;
@@ -71,13 +65,8 @@ class FleetEngine
 			new Coordinates($this->fleet->{$p . '_galaxy'}, $this->fleet->{$p . '_system'}, $this->fleet->{$p . '_planet'}, $this->fleet->{$p . '_type'})
 		);
 
-		if ($targetPlanet && $targetPlanet->id_owner > 0) {
-			$targetUser = User::query()->find($targetPlanet->id_owner);
-
-			if ($targetUser) {
-				$targetPlanet->setUser($targetUser);
-				$targetPlanet->getProduction()->update();
-			}
+		if ($targetPlanet && $targetPlanet->user) {
+			$targetPlanet->getProduction()->update();
 
 			if ($fleet) {
 				$fleetData = $this->fleet->getShips();

@@ -39,7 +39,6 @@ class Responce extends JsonResource
 			],
 			'user' => $this->when(Auth::check(), User::make(Auth::user())),
 			'planet' => $this->when($planet !== null, Planet::make($planet)),
-			'view' => $controller->getViews(),
 			'page' => $this->resource,
 			'version' => VERSION,
 		];

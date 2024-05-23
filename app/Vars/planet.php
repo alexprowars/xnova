@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 $planetData = [
 	1	=> ['temp' => mt_rand(220, 260),	'fields' => mt_rand(95, 128),	'image' => ['trocken' => mt_rand(1, 20), 'wuesten' => mt_rand(1, 4)]],
 	2	=> ['temp' => mt_rand(170, 210),	'fields' => mt_rand(97, 130),	'image' => ['trocken' => mt_rand(1, 20), 'wuesten' => mt_rand(1, 4)]],

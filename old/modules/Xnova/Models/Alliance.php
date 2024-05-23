@@ -2,12 +2,6 @@
 
 namespace App\Modelsss;
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2018 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 use Phalcon\Mvc\Model;
 
 /** @noinspection PhpHierarchyChecksInspection */

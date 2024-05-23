@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Controller;
@@ -60,8 +54,6 @@ class SimController extends Controller
 				$parse['slots']['attackers'][0][$id] = ['c' => $this->user->getTechLevel($id)];
 			}
 		}
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -17,13 +11,6 @@ use App\Models\Note;
 
 class NotesController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->showTopPanel(false);
-	}
-
 	public function new(Request $request)
 	{
 		if ($request->isMethod('post')) {

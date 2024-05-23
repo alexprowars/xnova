@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Gumlet\ImageResize;
@@ -33,13 +27,6 @@ use App\Vars;
 
 class OptionsController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->showTopPanel(false);
-	}
-
 	public function externalAction()
 	{
 		$token = request()->input('token', '');
@@ -203,12 +190,12 @@ class OptionsController extends Controller
 			$this->user->vacation = $vacation;
 			$this->user->deltime = $Del_Time;
 
-			$this->user->setOption('records', $request->post('records'));
-			$this->user->setOption('bb_parser', $request->post('bbcode'));
-			$this->user->setOption('chatbox', $request->post('chatbox'));
+			$this->user->setOption('records', !empty($request->post('records')));
+			$this->user->setOption('bb_parser', !empty($request->post('bbcode')));
+			$this->user->setOption('chatbox', !empty($request->post('chatbox')));
+			$this->user->setOption('only_available', !empty($request->post('available')));
 			$this->user->setOption('planetlist', $request->post('planetlist'));
 			$this->user->setOption('planetlistselect', $request->post('planetlistselect'));
-			$this->user->setOption('only_available', $request->post('available'));
 			$this->user->setOption('planet_sort', (int) $SetSort);
 			$this->user->setOption('planet_sort_order', (int) $SetOrder);
 			$this->user->setOption('color', (int) $color);
@@ -318,7 +305,7 @@ class OptionsController extends Controller
 			$parse['opt_modev_data'] = ($this->user->vacation > 0);
 			$parse['opt_usern_data'] = $this->user->username;
 		} else {
-			$parse['settings'] = $this->user->settings ?? [];
+			$parse['options'] = $this->user->getOptions();
 			$parse['avatar'] = '';
 
 			if ($userInfo->image > 0) {
@@ -334,20 +321,11 @@ class OptionsController extends Controller
 			$parse['opt_mail_data'] = $this->user->email;
 			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
 
-			$parse['opt_record_data'] = $this->user->getOption('records');
-			$parse['opt_bbcode_data'] = $this->user->getOption('bb_parser');
-			$parse['opt_chatbox_data'] = $this->user->getOption('chatbox');
-			$parse['opt_planetlist_data'] = $this->user->getOption('planetlist');
-			$parse['opt_planetlistselect_data'] = $this->user->getOption('planetlistselect');
-			$parse['opt_available_data'] = $this->user->getOption('only_available');
 			$parse['opt_delac_data'] = $this->user->deltime > 0;
 			$parse['opt_modev_data'] = $this->user->vacation > 0;
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $userInfo->about);
-			$parse['timezone'] = $this->user->getOption('timezone');
-			$parse['spy'] = $this->user->getOption('spy');
-			$parse['color'] = $this->user->getOption('color');
 
 			$parse['auth'] = [];
 

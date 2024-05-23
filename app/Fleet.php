@@ -1,14 +1,6 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App;
-
-use App\Models;
 
 class Fleet extends Building
 {
@@ -17,7 +9,7 @@ class Fleet extends Building
 		$storage = Vars::getStorage();
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship) {
-			if (isset($storage->CombatCaps[$Ship]) && isset($storage->CombatCaps[$Ship]['engine_up'])) {
+			if (isset($storage->CombatCaps[$Ship]['engine_up'])) {
 				if ($user->getTechLevel($storage['CombatCaps'][$Ship]['engine_up']['tech']) >= $storage['CombatCaps'][$Ship]['engine_up']['lvl']) {
 					$tmp = $storage['CombatCaps'];
 

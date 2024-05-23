@@ -1,13 +1,8 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
+use App\Planet\Entity\Ship;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorException;
 use App\Models;
@@ -112,7 +107,7 @@ class FleetController extends Controller
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
 			if ($this->planet->getLevel($i) > 0) {
-				$parse['ships'][] = (new \App\Planet\Entity\Ship($i, $this->planet->getLevel($i)))->getInfo();
+				$parse['ships'][] = Ship::createEntity($i, $this->planet->getLevel($i), $this->planet)->getInfo();
 			}
 		}
 

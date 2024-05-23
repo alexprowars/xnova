@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
@@ -28,8 +22,6 @@ class RefersController extends Controller
 		if ($refers) {
 			$parse['you'] = (array) $refers;
 		}
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

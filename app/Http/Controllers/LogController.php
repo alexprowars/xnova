@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
@@ -37,8 +31,6 @@ class LogController extends Controller
 				'title' => $log->title
 			];
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'items' => $list
@@ -85,8 +77,6 @@ class LogController extends Controller
 		if (!Auth::check()) {
 			return redirect('/');
 		}
-
-		$this->showTopPanel(false);
 
 		return [];
 	}
@@ -161,8 +151,6 @@ class LogController extends Controller
 		}
 
 		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
-
-		$this->showTopPanel(false);
 
 		return [
 			'raport' => $report->report()['html']

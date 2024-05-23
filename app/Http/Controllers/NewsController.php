@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Controller;
@@ -22,8 +16,6 @@ class NewsController extends Controller
 				'text' => nl2br($b)
 			];
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'items' => $news

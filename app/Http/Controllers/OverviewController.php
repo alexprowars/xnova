@@ -1,17 +1,10 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -26,7 +19,6 @@ use App\Queue;
 use App\Models\Fleet as FleetModel;
 use App\Controller;
 use App\Vars;
-use App\Entity;
 
 class OverviewController extends Controller
 {
@@ -50,7 +42,7 @@ class OverviewController extends Controller
 		];
 
 		$FleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
-		$FleetPrefix = $Owner == true ? 'own' : '';
+		$FleetPrefix = $Owner ? 'own' : '';
 
 		$MissionType 	= $FleetRow->mission;
 
@@ -141,16 +133,13 @@ class OverviewController extends Controller
 			$TargetID .= $FleetRow->getTargetAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
 		}
 
-		if ($Owner == true) {
+		if ($Owner) {
 			$EventString = __('overview.ov_une');
 			$EventString .= $FleetContent;
 		} else {
 			$EventString = ($FleetRow->group_id != 0) ? 'Союзный ' : __('overview.ov_une_hostile');
 			$EventString .= $FleetContent;
 			$EventString .= __('overview.ov_hostile');
-
-			$FleetRow->username = DB::selectOne("SELECT `username` FROM users WHERE `id` = '" . $FleetRow->owner . "'")->username;
-
 			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
 		}
 
@@ -274,8 +263,6 @@ class OverviewController extends Controller
 		$parse['system'] = $this->planet->system;
 		$parse['planet'] = $this->planet->planet;
 
-		$this->showTopPanel(false);
-
 		return $parse;
 	}
 
@@ -354,8 +341,6 @@ class OverviewController extends Controller
 
 		$parse['planet_name'] = $this->planet->name;
 
-		$this->showTopPanel(false);
-
 		return $parse;
 	}
 
@@ -404,67 +389,60 @@ class OverviewController extends Controller
 		$fleets = Models\Fleet::query()
 			->where('owner', $this->user->id)
 			->orWhere('target_owner', $this->user->id)
+			->with('user')
 			->get();
 
-		$Record = 0;
 		$fpage = [];
 		$aks = [];
 
-		foreach ($fleets as $FleetRow) {
-			$Record++;
-
-			if ($FleetRow->owner == $this->user->id) {
-				if ($FleetRow->start_time > time()) {
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 0, true);
+		foreach ($fleets as $fleet) {
+			if ($fleet->owner == $this->user->id) {
+				if ($fleet->start_time > time()) {
+					$fpage[$fleet->start_time][$fleet->id] = $this->buildFleetEventTable($fleet, 0, true);
 				}
 
-				if ($FleetRow->end_stay > time()) {
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 1, true);
+				if ($fleet->end_stay > time()) {
+					$fpage[$fleet->end_stay][$fleet->id] = $this->buildFleetEventTable($fleet, 1, true);
 				}
 
-				if (!($FleetRow->mission == 7 && $FleetRow->mess == 0)) {
-					if (($FleetRow->end_time > time() and $FleetRow->mission != 4) or ($FleetRow->mess == 1 and $FleetRow->mission == 4)) {
-						$fpage[$FleetRow->end_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 2, true);
+				if (!($fleet->mission == 7 && $fleet->mess == 0)) {
+					if (($fleet->end_time > time() and $fleet->mission != 4) or ($fleet->mess == 1 and $fleet->mission == 4)) {
+						$fpage[$fleet->end_time][$fleet->id] = $this->buildFleetEventTable($fleet, 2, true);
 					}
 				}
 
-				if ($FleetRow->group_id != 0 && !in_array($FleetRow->group_id, $aks)) {
+				if ($fleet->group_id != 0 && !in_array($fleet->group_id, $aks)) {
 					$AKSFleets = Models\Fleet::query()
-						->where('group_id', $FleetRow->group_id)
+						->where('group_id', $fleet->group_id)
 						->where('owner', '!=', $this->user->id)
 						->where('mess', 0)
 						->get();
 
 					foreach ($AKSFleets as $AKFleet) {
-						$Record++;
-						$fpage[$FleetRow->start_time][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
+						$fpage[$fleet->start_time][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
 					}
 
-					$aks[] = $FleetRow->group_id;
+					$aks[] = $fleet->group_id;
 				}
-			} elseif ($FleetRow->mission != 8) {
-				$Record++;
-
-				if ($FleetRow->start_time > time()) {
-					$fpage[$FleetRow->start_time][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 0, false);
+			} elseif ($fleet->mission != 8) {
+				if ($fleet->start_time > time()) {
+					$fpage[$fleet->start_time][$fleet->id] = $this->buildFleetEventTable($fleet, 0, false);
 				}
-				if ($FleetRow->mission == 5 && $FleetRow->end_stay > time()) {
-					$fpage[$FleetRow->end_stay][$FleetRow->id] = $this->buildFleetEventTable($FleetRow, 1, false);
+				if ($fleet->mission == 5 && $fleet->end_stay > time()) {
+					$fpage[$fleet->end_stay][$fleet->id] = $this->buildFleetEventTable($fleet, 1, false);
 				}
 			}
 		}
 
-		$parse['moon'] 	= false;
+		$parse['moon'] = false;
 
 		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id) {
 			$lune = Cache::remember('app::lune_' . $this->planet->parent_planet, 300, function () {
-				$lune = Models\Planet::query()
+				return Models\Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
 					->where('id', $this->planet->parent_planet)
 					->where('planet_type', 3)
-					->first();
-
-				return $lune ? $lune->toArray() : null;
+					->first()?->toArray();
 			});
 
 			if (isset($lune['id']) && !$lune['destruyed']) {
@@ -478,14 +456,12 @@ class OverviewController extends Controller
 		}
 
 		$records = Cache::remember('app::records_' . $this->user->getId(), 1800, function () {
-			$records = Models\Statistic::query()
+			return Models\Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
 				->where('id_owner', $this->user->getId())
-				->first();
-
-			return $records ? $records->toArray() : null;
+				->first()?->toArray();
 		});
 
 		$parse['points'] = [
@@ -526,8 +502,8 @@ class OverviewController extends Controller
 		$parse['fleets'] = $flotten;
 
 		$parse['debris'] = [
-			'metal' => (int) $this->planet->debris_metal,
-			'crystal' => (int) $this->planet->debris_crystal,
+			'metal' => $this->planet->debris_metal,
+			'crystal' => $this->planet->debris_crystal,
 		];
 
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
@@ -551,7 +527,7 @@ class OverviewController extends Controller
 				}
 
 				$planet = $planetsData[$item->planet_id];
-				$planet->setUser($this->user);
+				$planet->setRelation('user', $this->user);
 
 				$entity = Planet\Entity\Building::createEntity(
 					$item->object_id,
@@ -634,25 +610,25 @@ class OverviewController extends Controller
 
 		$parse['lvl'] = [
 			'mine' => [
-				'p' => (int) $this->user->xpminier,
-				'l' => (int) $this->user->lvl_minier,
+				'p' => $this->user->xpminier,
+				'l' => $this->user->lvl_minier,
 				'u' => (int) $XpMinierUp,
 			],
 			'raid' => [
-				'p' => (int) $this->user->xpraid,
-				'l' => (int) $this->user->lvl_raid,
+				'p' => $this->user->xpraid,
+				'l' => $this->user->lvl_raid,
 				'u' => (int) $XpRaidUp
 			]
 		];
 
-		$parse['links'] = (int) $this->user->links;
-		$parse['refers'] = (int) $this->user->refers;
+		$parse['links'] = $this->user->links;
+		$parse['refers'] = $this->user->refers;
 		$parse['noob'] = config('game.noob', 0);
 
 		$parse['raids'] = [
-			'win' => (int) $this->user->raids_win,
-			'lost' => (int) $this->user->raids_lose,
-			'total' => (int) $this->user->raids
+			'win' => $this->user->raids_win,
+			'lost' => $this->user->raids_lose,
+			'total' => $this->user->raids
 		];
 
 		$parse['bonus'] = $this->user->bonus < time();

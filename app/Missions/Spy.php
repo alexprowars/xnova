@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Missions;
 
 use App\FleetEngine;
@@ -37,7 +31,7 @@ class Spy extends FleetEngine implements Mission
 			return false;
 		}
 
-		$TargetPlanet->setUser($targetUser);
+		$TargetPlanet->setRelation('user', $targetUser);
 		$TargetPlanet->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
@@ -225,10 +219,8 @@ class Spy extends FleetEngine implements Mission
 			$String .= " <a href=\"/galaxy/?galaxy=" . $TargetPlanet->galaxy . "&system=" . $TargetPlanet->system . "\">";
 			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a> ";
 
-			$targetUser = $TargetPlanet->getUser();
-
-			if ($targetUser) {
-				$String .= ' <a href="/players/' . $TargetPlanet->getUser()->getId() . '/">' . $TargetPlanet->getUser()->username . '</a>';
+			if ($targetUser = $TargetPlanet->user) {
+				$String .= ' <a href="/players/' . $targetUser->id . '/">' . $targetUser->username . '</a>';
 			}
 
 			$String .= "<br>на #DATE|H:i:s|" . time() . "#</td>";

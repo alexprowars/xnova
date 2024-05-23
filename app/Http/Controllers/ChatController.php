@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
@@ -23,8 +17,6 @@ class ChatController extends Controller
 {
 	public function index()
 	{
-		$this->showTopPanel(false);
-
 		return [];
 	}
 

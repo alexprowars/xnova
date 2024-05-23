@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
@@ -34,8 +28,6 @@ class BannedController extends Controller
 				'reason' => $u['theme'],
 			];
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'items' => $items

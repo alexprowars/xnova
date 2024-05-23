@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
@@ -99,9 +93,6 @@ class RaceController extends Controller
 		}
 
 		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
-
-		$this->showTopPanel(false);
-		$this->showLeftPanel(!($this->user->race == 0));
 
 		return [
 			'change' => (int) $numChanges,

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use App\Models\Fleet;
@@ -68,7 +62,7 @@ class ImperiumController extends Controller
 			->get();
 
 		foreach ($planets as $planet) {
-			$planet->setUser($this->user);
+			$planet->setRelation('user', $this->user);
 			$planet->getProduction()->update(true);
 
 			$row = [];
@@ -184,8 +178,6 @@ class ImperiumController extends Controller
 				'build' => $build_hangar_full[$i] ?? 0,
 			];
 		}
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

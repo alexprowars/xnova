@@ -10,10 +10,8 @@ class Defence extends Unit
 {
 	public function getTime(): int
 	{
-		$user = $this->getPlanet()->getUser();
-
 		$time = parent::getTime();
-		$time *= $user->bonusValue('time_defence');
+		$time *= $this->planet->user->bonusValue('time_defence');
 
 		return max(1, floor($time));
 	}

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -253,8 +247,6 @@ class GalaxyController extends Controller
 
 			$parse['items'][] = (array) $row;
 		}
-
-		$this->showTopPanel(false);
 
 		return $parse;
 	}

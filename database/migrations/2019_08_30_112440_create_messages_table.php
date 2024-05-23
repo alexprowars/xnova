@@ -13,7 +13,7 @@ return new class extends Migration {
 			$table->integer('from_id')->default(0)->index('message_sender');
 			$table->integer('time')->default(0)->index('message_time');
 			$table->integer('type')->default(0);
-			$table->enum('deleted', array('0','1'))->default('0');
+			$table->boolean('deleted')->default(false);
 			$table->string('theme', 100)->nullable();
 			$table->text('text')->nullable();
 			$table->index(['user_id','deleted'], 'message_owner_2');

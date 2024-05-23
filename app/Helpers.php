@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App;
 
 use Illuminate\Support\Facades\URL;
@@ -172,7 +166,7 @@ class Helpers
 	{
 		$uri = URL::to('messages/write/' . $FleetRow->owner . '/');
 
-		return $FleetRow->username . ' <a href="' . $uri . '" title="' . __('overview.ov_message') . '"><span class=\'sprite skin_m\'></span></a>';
+		return $FleetRow->user?->username . ' <a href="' . $uri . '" title="' . __('overview.ov_message') . '"><span class=\'sprite skin_m\'></span></a>';
 	}
 
 	public static function phoneFormat($phone)

@@ -24,8 +24,8 @@ trait ProductionTrait
 			return new Resources();
 		}
 
-		$planet = $this->getPlanet();
-		$user = $planet->getUser();
+		$planet = $this->planet;
+		$user = $planet->user;
 
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$energyTech = $user->getTechLevel('energy');

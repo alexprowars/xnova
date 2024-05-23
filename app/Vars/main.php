@@ -1,15 +1,6 @@
 <?php
 
 /**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
-/**
- * Игровые массивы
- * @author AlexPro
- * @copyright 2008 - 2013 XNova Game Group
  * @global $reslist array Массив типов построек
  * @global $resource array Массив символьных обозначений построек
  * @global $requeriments array Массив необходимых для построек требований
@@ -17,7 +8,6 @@
  * @global $gun_armour array Массив типов брони
  * @global $CombatCaps array Массив боевых параметров кораблей
  * @global $ProdGrid array Массив производства ресурсов постройками
- * ICQ: 8696096, Skype: alexprowars, Email: alexprowars@gmail.com
  */
 
 $resource = array

@@ -37,7 +37,7 @@ class EntityFactory
 		/** @var Planet\Entity\BaseEntity $object */
 		$object = new $className($entity->getAttributes());
 		$object->exists = $entity->exists;
-		$object->setPlanet($planet);
+		$object->planet()->associate($planet);
 		$object->syncOriginal();
 
 		return $object;

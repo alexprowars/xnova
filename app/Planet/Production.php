@@ -31,9 +31,7 @@ class Production
 
 	private function calculate()
 	{
-		$user = $this->planet->getUser();
-
-		if (!$user instanceof User) {
+		if (!$this->planet->user instanceof User) {
 			return;
 		}
 
@@ -88,12 +86,10 @@ class Production
 			return $this->storage;
 		}
 
-		$user = $this->planet->getUser();
-
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->planet->getLevel($res . '_store'))))) * $user->bonusValue('storage'));
+			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->planet->getLevel($res . '_store'))))) * $this->planet->user->bonusValue('storage'));
 		}
 
 		$this->storage = new Resources($resources);
@@ -107,12 +103,10 @@ class Production
 			return $this->basic;
 		}
 
-		$user = $this->planet->getUser();
-
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			if (!$user->isVacation() && !in_array($this->planet->planet_type, [Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
+			if (!$this->planet->user->isVacation() && !in_array($this->planet->planet_type, [Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
 				$resources[$res] = config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1);
 			} else {
 				$resources[$res] = 0;
@@ -135,9 +129,7 @@ class Production
 
 		$resources = new Resources();
 
-		$user = $this->planet->getUser();
-
-		if ($user->isVacation()) {
+		if ($this->planet->user->isVacation()) {
 			return $resources;
 		}
 

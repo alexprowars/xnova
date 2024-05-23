@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -103,10 +97,6 @@ class StartController extends Controller
 				'description' => __('info.info.' . (700 + $i)),
 			];
 		}
-
-		$this->setViews('menu', false);
-		$this->setViews('header', false);
-		$this->showTopPanel(false);
 
 		return [
 			'sex' => (int) $this->user->sex,

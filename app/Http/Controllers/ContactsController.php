@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
@@ -28,8 +22,6 @@ class ContactsController extends Controller
 				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($Ops->about)),
 			];
 		}
-
-		$this->showTopPanel(false);
 
 		return [
 			'items' => $contacts

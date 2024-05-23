@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Missions;
 
 use Illuminate\Support\Facades\DB;
@@ -63,7 +57,7 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$target->setUser($targetUser);
+		$target->setRelation('user', $targetUser);
 		$target->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $target);

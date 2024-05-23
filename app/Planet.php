@@ -12,10 +12,6 @@ use App\Planet\Production;
 
 class Planet extends Models\Planet
 {
-	/** @var User */
-	private $user;
-	public $ally = [];
-
 	public $planet_updated = false;
 	public $spaceLabs;
 	public $merchand;
@@ -27,14 +23,9 @@ class Planet extends Models\Planet
 
 	private $production;
 
-	public function setUser(User $user)
+	public function user()
 	{
-		$this->user = $user;
-	}
-
-	public function getUser()
-	{
-		return $this->user;
+		return $this->belongsTo(User::class, 'id_owner');
 	}
 
 	public function checkOwnerPlanet()
@@ -78,9 +69,7 @@ class Planet extends Models\Planet
 		$buildings = $this->entities->getForTypes(Vars::ITEM_TYPE_BUILING);
 
 		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
-			if (isset($buildings[$type])) {
-				$count += $buildings[$type]->amount;
-			}
+			$count += $buildings->getEntityAmount($type);
 		}
 
 		if ($this->field_current != $count) {
@@ -91,7 +80,7 @@ class Planet extends Models\Planet
 
 	public function getMaxFields()
 	{
-		$fields = (int) $this->field_max;
+		$fields = $this->field_max;
 
 		$fields += $this->entities->getEntityAmount('terraformer') * 5;
 		$fields += config('settings.fieldsByMoonBase', 0) * $this->entities->getEntityAmount('moonbase');
@@ -131,13 +120,7 @@ class Planet extends Models\Planet
 
 		$entity = $this->getEntity($entityId);
 
-		if (!$entity) {
-			$entity = new PlanetEntity([
-				'planet_id' => $this->id,
-				'entity_id' => $entityId,
-				'amount' => 0,
-			]);
-
+		if (!$entity->id) {
 			$this->entities->add($entity);
 		}
 

@@ -50,6 +50,11 @@ class User extends Models\User
 		return (time() - $this->onlinetime < 180);
 	}
 
+	public function getOptions()
+	{
+		return array_merge($this->optionsDefault, $this->options ?? []);
+	}
+
 	public function getOption($key)
 	{
 		return ($this->options[$key] ?? ($this->optionsDefault[$key] ?? 0));
@@ -235,29 +240,23 @@ class User extends Models\User
 		}
 	}
 
-	public function setSelectedPlanet()
+	public function setSelectedPlanet(int $planetId)
 	{
-		if (Request::has('chpl') && is_numeric(Request::input('chpl'))) {
-			$selectPlanet = (int) Request::input('chpl');
-
-			if ($this->planet_current == $selectPlanet || $selectPlanet <= 0) {
-				return true;
-			}
-
-			$isExistPlanet = Planet::query()
-				->where('id', $selectPlanet)
-				->where('id_owner', $this->getId())
-				->exists();
-
-			if (!$isExistPlanet) {
-				return false;
-			}
-
-			$this->planet_current = $selectPlanet;
-			$this->update();
+		if ($this->planet_current == $planetId || $planetId <= 0) {
+			return true;
 		}
 
-		return true;
+		$isExistPlanet = Planet::query()
+			->where('id', $planetId)
+			->where('id_owner', $this->getId())
+			->exists();
+
+		if (!$isExistPlanet) {
+			return false;
+		}
+
+		$this->planet_current = $planetId;
+		$this->update();
 	}
 
 	public function getPlanets(bool $moons = true): array
@@ -310,7 +309,7 @@ class User extends Models\User
 			}
 
 			if ($planet) {
-				$planet->setUser($this);
+				$planet->setRelation('user', $this);
 				$planet->checkOwnerPlanet();
 
 				// Проверяем корректность заполненных полей

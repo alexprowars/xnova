@@ -13,28 +13,12 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 {
 	use ProductionTrait;
 
-	protected $planet;
-
 	public static function createEntity(int $entityId, int $level = 1, Planet $context = null): self
 	{
 		$object = self::createEmpty($entityId, $level);
-		$object->setPlanet($context);
+		$object->setRelation('planet', $context);
 
 		return $object;
-	}
-
-	public function getPlanet(): Planet
-	{
-		if (!$this->planet) {
-			$this->planet = Auth::user()->getCurrentPlanet(true);
-		}
-
-		return $this->planet;
-	}
-
-	public function setPlanet(Planet $planet)
-	{
-		$this->planet = $planet;
 	}
 
 	public function getLevel(): int
@@ -67,7 +51,7 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 	public function getPrice(): array
 	{
 		$cost = $this->getBasePrice();
-		$user = $this->getPlanet()->getUser();
+		$user = $this->planet->user;
 
 		$elementType = Vars::getItemType($this->entity_id);
 
@@ -111,16 +95,15 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 			return true;
 		}
 
-		$user = $this->getPlanet()->getUser();
-		$planet = $this->getPlanet();
+		$planet = $this->planet;
 
 		foreach ($requeriments as $reqElement => $level) {
 			if ($reqElement == 700) {
-				if ($user->race != $level) {
+				if ($planet->user->race != $level) {
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH) {
-				if ($user->getTechLevel($reqElement) < $level) {
+				if ($planet->user->getTechLevel($reqElement) < $level) {
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
@@ -147,7 +130,7 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 			$cost = $this->getPrice();
 		}
 
-		$planet = $this->getPlanet();
+		$planet = $this->planet;
 
 		foreach ($cost as $ResType => $ResCount) {
 			if ($ResType == 'energy') {

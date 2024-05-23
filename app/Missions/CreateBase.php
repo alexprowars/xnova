@@ -2,12 +2,6 @@
 
 namespace App\Missions;
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 use Illuminate\Support\Facades\Cache;
 use App\Entity\Coordinates;
 use App\FleetEngine;

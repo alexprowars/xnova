@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App;
 
 use App\Exceptions\ErrorException;
@@ -194,7 +188,7 @@ class Queue
 			for ($i = 0; $i < $buildingsCount; $i++) {
 				if ($this->checkBuildQueue()) {
 					$this->planet->update();
-					$this->planet->resourceProductions();
+					$this->planet->getProduction()->update();
 
 					$this->nextBuildingQueue();
 				} else {
@@ -274,7 +268,7 @@ class Queue
 				$this->user->update();
 			}
 
-			if (config('game.log.buildings', false) == true) {
+			if (config('game.log.buildings', false)) {
 				LogHistory::query()->insert([
 					'user_id' 			=> $this->user->id,
 					'time' 				=> time(),
@@ -310,7 +304,7 @@ class Queue
 		while ($loop) {
 			$buildItem = $queueArray[0];
 
-			$HaveNoMoreLevel = false;
+			$haveNoMoreLevel = false;
 
 			$entity = $this->planet->getEntity($buildItem->object_id);
 
@@ -335,13 +329,13 @@ class Queue
 				: $entity->getPrice();
 
 			if ($isDestroy && $entity->amount == 0) {
-				$HaveRessources = false;
-				$HaveNoMoreLevel = true;
+				$haveRessources = false;
+				$haveNoMoreLevel = true;
 			} else {
-				$HaveRessources = $entity->canConstruct($isDestroy ? $entity->getDestroyPrice() : null);
+				$haveRessources = $entity->canConstruct($isDestroy ? $entity->getDestroyPrice() : null);
 			}
 
-			if ($HaveRessources && ($entity->isAvailable() || $isDestroy)) {
+			if ($haveRessources && ($entity->isAvailable() || $isDestroy)) {
 				$this->planet->metal 		-= $cost['metal'];
 				$this->planet->crystal 		-= $cost['crystal'];
 				$this->planet->deuterium 	-= $cost['deuterium'];
@@ -360,7 +354,7 @@ class Queue
 
 				$loop = false;
 
-				if (config('game.log.buildings', false) == true) {
+				if (config('game.log.buildings', false)) {
 					LogHistory::query()->insert([
 						'user_id' 			=> $this->user->id,
 						'time' 				=> time(),
@@ -377,9 +371,9 @@ class Queue
 					]);
 				}
 			} else {
-				if ($HaveNoMoreLevel) {
+				if ($haveNoMoreLevel) {
 					$message = sprintf(__('main.sys_nomore_level'), __('main.tech.' . $buildItem->object_id));
-				} elseif (!$HaveRessources) {
+				} elseif (!$haveRessources) {
 					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.' . $buildItem->object_id) . '" на планете ' . $this->planet->name . ' ' . Helpers::BuildPlanetAdressLink($this->planet->toArray()) . '.<br>Вам необходимо ещё: <br>';
 
 					if ($cost['metal'] > $this->planet->metal) {
@@ -435,10 +429,7 @@ class Queue
 		if ($buildItem) {
 			if ($buildItem->planet_id != $this->planet->id) {
 				$planet = Planet::query()->find((int) $buildItem->planet_id);
-
-				if ($planet) {
-					$planet->setUser($this->user);
-				}
+				$planet?->setRelation('user', $this->user);
 			} else {
 				$planet = $this->planet;
 			}

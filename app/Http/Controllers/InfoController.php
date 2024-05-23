@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author AlexPro
- * @copyright 2008 - 2019 XNova Game Group
- * Telegram: @alexprowars, Skype: alexprowars, Email: alexprowars@gmail.com
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
@@ -21,8 +15,6 @@ class InfoController extends Controller
 
 	public function index(int $element)
 	{
-		$this->showTopPanel(false);
-
 		return $this->ShowBuildingInfoPage($element);
 	}
 
