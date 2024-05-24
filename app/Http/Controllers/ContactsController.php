@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Controller;
 
@@ -9,17 +10,20 @@ class ContactsController extends Controller
 {
 	public function index()
 	{
+		$users = User::query()
+			->where('authlevel', '>', 0)
+			->orderByDesc('authlevel')
+			->get();
+
 		$contacts = [];
 
-		$GameOps = DB::select("SELECT u.id, u.username, u.email, u.authlevel, ui.about FROM users u, users_details ui WHERE ui.id = u.id AND u.authlevel != '0' ORDER BY u.authlevel DESC");
-
-		foreach ($GameOps as $Ops) {
+		foreach ($users as $user) {
 			$contacts[] = [
-				'id' 	=> (int) $Ops->id,
-				'name' 	=> $Ops->username,
-				'auth' 	=> __('main.user_level', $Ops->authlevel),
-				'mail' 	=> $Ops->email,
-				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($Ops->about)),
+				'id' 	=> (int) $user->id,
+				'name' 	=> $user->username,
+				'auth' 	=> __('main.user_level', $user->authlevel),
+				'mail' 	=> $user->email,
+				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about)),
 			];
 		}
 

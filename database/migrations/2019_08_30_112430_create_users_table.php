@@ -13,6 +13,7 @@ return new class extends Migration {
 			$table->string('password', 100)->nullable();
 			$table->rememberToken();
 			$table->string('username', 50)->nullable();
+			$table->timestamp('username_change')->nullable();
 			$table->boolean('authlevel')->default(0);
 			$table->smallInteger('group_id')->nullable();
 			$table->integer('banned')->default(0);
@@ -20,6 +21,7 @@ return new class extends Migration {
 			$table->bigInteger('ip')->nullable();
 			$table->boolean('sex')->default(0);
 			$table->boolean('race')->default(0);
+			$table->tinyInteger('race_change_count')->default(1);
 			$table->unsignedBigInteger('planet_id')->nullable();
 			$table->unsignedBigInteger('planet_current')->nullable();
 			$table->integer('bonus')->unsigned()->default(0);
@@ -29,13 +31,13 @@ return new class extends Migration {
 			$table->smallInteger('lvl_raid')->unsigned()->default(1);
 			$table->integer('xpminier')->unsigned()->default(0);
 			$table->integer('xpraid')->unsigned()->default(0);
-			$table->smallInteger('credits')->unsigned()->default(0);
+			$table->integer('credits')->unsigned()->default(0);
 			$table->smallInteger('messages')->unsigned()->default(0);
 			$table->smallInteger('messages_ally')->unsigned()->default(0);
 			$table->smallInteger('avatar')->unsigned()->default(0);
 			$table->integer('galaxy')->unsigned()->default(0);
 			$table->integer('system')->unsigned()->default(0);
-			$table->boolean('planet')->default(0);
+			$table->tinyInteger('planet')->default(0);
 			$table->integer('vacation')->unsigned()->default(0);
 			$table->integer('deltime')->default(0);
 			$table->integer('rpg_geologue')->unsigned()->default(0);
@@ -53,7 +55,8 @@ return new class extends Migration {
 			$table->integer('message_block')->default(0);
 			$table->integer('links')->unsigned()->default(0);
 			$table->boolean('chat')->default(0);
-			$table->string('photo')->nullable();
+			$table->string('image')->nullable();
+			$table->text('about')->nullable();
 			$table->json('options')->nullable();
 			$table->timestamps();
 		});

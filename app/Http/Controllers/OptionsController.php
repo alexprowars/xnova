@@ -77,8 +77,6 @@ class OptionsController extends Controller
 
 	public function save(Request $request)
 	{
-		$userInfo = Models\UserDetail::query()->find($this->user->id);
-
 		if (
 			$request->post('username')
 			&& trim($request->post('username')) != ''
@@ -148,12 +146,8 @@ class OptionsController extends Controller
 						$buildsId[] = Vars::getIdByName($res . '_mine');
 					}
 
-					Models\PlanetBuilding::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
+					Models\PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
 						->whereIn('build_id', $buildsId)
-						->update(['power' => 0]);
-
-					Models\PlanetUnit::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
-						->whereIn('unit_id', $buildsId)
 						->update(['power' => 0]);
 				}
 			}
@@ -199,8 +193,6 @@ class OptionsController extends Controller
 			$this->user->setOption('timezone', (int) $timezone);
 			$this->user->setOption('spy', (int) $spy);
 
-			$this->user->update();
-
 			if ($request->hasFile('image')) {
 				$file = $request->file('image');
 
@@ -211,13 +203,13 @@ class OptionsController extends Controller
 						throw new ErrorException('Разрешены к загрузке только изображения');
 					}
 
-					if ($userInfo->image > 0) {
-						Files::delete($userInfo->image);
+					if ($this->user->image > 0) {
+						Files::delete($this->user->image);
 					}
 
-					$userInfo->image = Files::save($file);
+					$this->user->image = Files::save($file);
 
-					$f = Files::getById($userInfo->image);
+					$f = Files::getById($this->user->image);
 
 					if ($f) {
 						$image = new ImageResize($f['path']);
@@ -229,13 +221,13 @@ class OptionsController extends Controller
 			}
 
 			if ($request->post('image_delete')) {
-				if (Files::delete($userInfo->image)) {
-					$userInfo->image = 0;
+				if (Files::delete($this->user->image)) {
+					$this->user->image = null;
 				}
 			}
 
-			$userInfo->about = $about;
-			$userInfo->update();
+			$this->user->about = $about;
+			$this->user->update();
 
 			Cache::forget('app::planetlist_' . $this->user->id);
 		} else {
@@ -263,7 +255,7 @@ class OptionsController extends Controller
 		}
 
 		if ($this->user->username != $username) {
-			if ($userInfo->username_last > (time() - 86400)) {
+			if ($this->user->username_change?->getTimestamp() > time() - 86400) {
 				throw new ErrorException('Смена игрового имени возможна лишь раз в сутки.');
 			}
 
@@ -278,10 +270,8 @@ class OptionsController extends Controller
 			}
 
 			$this->user->username = $username;
+			$this->user->username_change = now();
 			$this->user->update();
-
-			$userInfo->username_last = time();
-			$userInfo->update();
 
 			throw new RedirectException('Имя пользователя изменено', '/options/');
 		}
@@ -291,8 +281,6 @@ class OptionsController extends Controller
 
 	public function index()
 	{
-		$userInfo = Models\UserDetail::query()->find($this->user->id);
-
 		$parse = [];
 		$parse['vacation'] = $this->user->vacation > 0;
 
@@ -305,15 +293,15 @@ class OptionsController extends Controller
 			$parse['options'] = $this->user->getOptions();
 			$parse['avatar'] = '';
 
-			if ($userInfo->image > 0) {
-				$file = Files::getById($userInfo->image);
+			if ($this->user->image > 0) {
+				$file = Files::getById($this->user->image);
 
 				if ($file) {
 					$parse['avatar'] = $file['src'];
 				}
 			}
 
-			$parse['opt_usern_datatime'] = $userInfo->username_last < (time() - 86400);
+			$parse['opt_usern_datatime'] = $this->user->username_change?->getTimestamp() < time() - 86400;
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $this->user->email;
 			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
@@ -322,7 +310,7 @@ class OptionsController extends Controller
 			$parse['opt_modev_data'] = $this->user->vacation > 0;
 
 			$parse['sex'] = $this->user->sex;
-			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $userInfo->about);
+			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
 
 			$parse['auth'] = [];
 

@@ -15,9 +15,9 @@ Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index
 Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index'])->name('xnsim');
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->name('players');
 
-Route::post('login', [Controllers\LoginController::class, 'loginByCredentials'])->name('login');
-Route::get('login/social/{service}', [Controllers\LoginController::class, 'loginBySocialServices'])->name('login.socials');
-Route::get('login/callback/{service}', [Controllers\LoginController::class, 'socialServicesCallback'])->name('login.callback');
+Route::post('login', [Controllers\LoginController::class, 'byCredentials'])->name('login');
+Route::get('login/social/{service}', [Controllers\LoginController::class, 'byServices'])->name('login.socials');
+Route::get('login/callback/{service}', [Controllers\LoginController::class, 'servicesCallback'])->name('login.callback');
 Route::match(['get', 'post'], 'login/reset', [Controllers\LoginController::class, 'resetPassword'])->name('login.reset');
 
 Route::middleware(['auth'])->group(function () {

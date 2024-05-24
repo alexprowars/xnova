@@ -57,7 +57,7 @@ class ManagerController extends Controller
 		if ($this->request->has('send')) {
 			$username = $this->request->get('username');
 
-			$SelUser = $this->db->query("SELECT u.*, ui.* FROM users u, users_details ui WHERE ui.id = u.id AND " . (is_numeric($username) ? "u.id = '" . $username . "'" : "u.username = '" . $username . "'") . " LIMIT 1;")->fetch();
+			$SelUser = $this->db->query("SELECT u.* FROM users u WHERE " . (is_numeric($username) ? "u.id = '" . $username . "'" : "u.username = '" . $username . "'") . " LIMIT 1;")->fetch();
 
 			if (!isset($SelUser['id'])) {
 				$this->message('Такого игрока не существует', 'Ошибка', '/admin/manager/', 2);

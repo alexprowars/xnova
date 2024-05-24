@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
-use Laravel\Socialite\AbstractUser as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;
 use App\Controller;
 use App\Exceptions\ErrorException;
@@ -26,10 +25,10 @@ class LoginController extends Controller
 		'vkontakte',
 	];
 
-	public function loginByCredentials(Request $request)
+	public function byCredentials(Request $request)
 	{
 		if (empty($request->post('email'))) {
-			throw new ErrorException('Введите хоть что-нибудь!');
+			throw new ErrorException('Введите Email');
 		}
 
 		$existUser = Models\User::query()->where('email', $request->post('email'))->exists();
@@ -47,7 +46,7 @@ class LoginController extends Controller
 		return Redirect::intended('overview/');
 	}
 
-	public function loginBySocialServices($service)
+	public function byServices($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return Redirect::to('/');
@@ -56,7 +55,7 @@ class LoginController extends Controller
 		return Socialite::driver($service)->redirect();
 	}
 
-	public function socialServicesCallback($service)
+	public function servicesCallback($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return Redirect::to('/');

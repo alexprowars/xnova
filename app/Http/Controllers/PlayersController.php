@@ -16,20 +16,19 @@ use App\Models\User;
 
 class PlayersController extends Controller
 {
-	public function index($userId)
+	public function index(int $userId)
 	{
-		$parse = [];
-
 		if (!$userId) {
 			throw new PageException('Профиль не найден');
 		}
 
-		$user = DB::selectOne("SELECT u.*, ui.about, ui.image FROM users u LEFT JOIN users_details ui ON ui.id = u.id WHERE u.id = '" . $userId . "'");
+		$user = User::find($userId);
 
 		if (!$user) {
 			throw new PageException('Профиль не найден');
 		}
 
+		$parse = [];
 		$parse['avatar'] = '/images/no_photo.gif';
 
 		if ($user->image) {

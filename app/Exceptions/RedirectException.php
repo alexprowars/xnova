@@ -30,6 +30,12 @@ class RedirectException extends Exception
 
 	public function render()
 	{
+		if (empty($this->getMessage())) {
+			return new JsonResponse([
+				'redirect' => $this->url,
+			]);
+		}
+
 		return new JsonResponse([
 			'messages' => [[
 				'type' => 'notice',

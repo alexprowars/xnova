@@ -27,22 +27,12 @@ class OfficierController extends Controller
 			throw new ErrorException('Ошибка входных параметров');
 		}
 
-		switch ($duration) {
-			case 7:
-				$credits = 20;
-				break;
-
-			case 14:
-				$credits = 40;
-				break;
-
-			case 30:
-				$credits = 80;
-				break;
-
-			default:
-				throw new ErrorException('Ошибка входных параметров');
-		}
+		$credits = match ($duration) {
+			7 => 20,
+			14 => 40,
+			30 => 80,
+			default => throw new ErrorException('Ошибка входных параметров'),
+		};
 
 		$time = $duration * 86400;
 

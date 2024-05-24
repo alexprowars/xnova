@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\LogCredit;
 use Illuminate\Support\Facades\Request;
 use App\Exceptions\RedirectException;
-use App\Models\UserDetail;
 use App\Models\Fleet;
 use App\Queue;
 use App\Controller;
@@ -15,13 +14,11 @@ class RaceController extends Controller
 {
 	public function change()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_details WHERE id = ' . $this->user->id)->free_race_change;
-
-		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
+		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 
 		if ($this->user->race != 0 && $isChangeAvailable) {
 			$r = Request::post('race', 0);
-			$r = max(min($r, 4), 1);
+			$r = max(min($r, 4), 0);
 
 			if ($r > 0) {
 				$queueManager = new Queue($this->user);
@@ -36,15 +33,14 @@ class RaceController extends Controller
 				} else {
 					$this->user->race = $r;
 
-					if ($numChanges > 0) {
-						UserDetail::query()->where('id', $this->user->id)->decrement('free_race_change', 1);
+					if ($this->user->race_change_count > 0) {
+						$this->user->race_change_count--;
 					} else {
 						$this->user->credits -= 100;
 
-						UserDetail::query()->insert([
-							'uid' => $this->user->id,
-							'time' => time(),
-							'credits' => 100,
+						LogCredit::create([
+							'user_id' => $this->user->id,
+							'amount' => 100,
 							'type' => 7,
 						]);
 					}
@@ -68,11 +64,9 @@ class RaceController extends Controller
 
 	public function index()
 	{
-		$numChanges = (int) DB::selectOne('SELECT free_race_change FROM users_details WHERE id = ' . $this->user->id)->free_race_change;
-
 		if (Request::has('sel') && $this->user->race == 0) {
 			$r = Request::input('sel', 0);
-			$r = max(min($r, 4), 1);
+			$r = max(min($r, 4), 0);
 
 			if ($r > 0) {
 				$update = ['race' => intval($r), 'bonus' => time() + 86400];
@@ -87,10 +81,10 @@ class RaceController extends Controller
 			}
 		}
 
-		$isChangeAvailable = ($numChanges > 0) || ($this->user->credits >= 100);
+		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 
 		return [
-			'change' => (int) $numChanges,
+			'change' => $this->user->race_change_count,
 			'change_available' => $isChangeAvailable,
 		];
 	}

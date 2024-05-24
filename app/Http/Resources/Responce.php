@@ -11,7 +11,6 @@ class Responce extends JsonResource
 	public function toArray($request)
 	{
 		$route = $request->route();
-		$controller = $route->getController();
 
 		$planet = null;
 

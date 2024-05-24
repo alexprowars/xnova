@@ -6,7 +6,6 @@ use App\Models\Fleet;
 use App\Models\Planet;
 use App\Queue;
 use App\Controller;
-use App\Models\User;
 use App\Vars;
 
 class ImperiumController extends Controller
@@ -51,15 +50,12 @@ class ImperiumController extends Controller
 
 		$parse['planets'] = [];
 
-		$sort = User::getPlanetListSortQuery(
-			$this->user->getOption('planet_sort'),
-			$this->user->getOption('planet_sort_order')
-		);
-
 		$planets = Planet::query()
-			->where('user_id', $this->user->id)
-			->orderBy($sort['fields'], $sort['order'])
-			->get();
+			->where('user_id', $this->user->id);
+
+		$this->user->getPlanetListSortQuery($planets);
+
+		$planets = $planets->get();
 
 		foreach ($planets as $planet) {
 			$planet->setRelation('user', $this->user);

@@ -14,6 +14,7 @@ use App\Game;
 use App\Helpers;
 use App\Models;
 use App\Models\Planet;
+use App\Planet\Entity as PlanetEntity;
 use App\Queue;
 use App\Models\Fleet as FleetModel;
 use App\Controller;
@@ -279,7 +280,7 @@ class OverviewController extends Controller
 		$parse['type'] = '';
 
 		foreach ($parse['images'] as $type => $max) {
-			if (strpos($this->planet->image, $type) !== false) {
+			if (str_contains($this->planet->image, $type)) {
 				$parse['type'] = $type;
 			}
 		}
@@ -518,7 +519,7 @@ class OverviewController extends Controller
 				$planet = $planetsData[$item->planet_id];
 				$planet->setRelation('user', $this->user);
 
-				$entity = Planet\Entity\Building::createEntity(
+				$entity = PlanetEntity\Building::createEntity(
 					$item->object_id,
 					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
 					$planet

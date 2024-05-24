@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
 use App\Models\Blocked;
 use App\Models;
-use App\Models\UserDetail;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 use App\Models\User;
 use App\Vars;
@@ -99,16 +98,10 @@ class UsersController extends CrudController
 					'label' => 'Email',
 					'type' => 'select',
 					'name' => 'email',
-					'entity' => 'info',
-					'attribute' => 'email',
-					'model' => UserDetail::class
 				], [
 					'label' => 'Дата регистрации',
 					'type' => 'closure',
 					'name' => 'create_time',
-					'entity' => 'info',
-					'attribute' => 'create_time',
-					'model' => UserDetail::class,
 					'function' => function ($entry) {
 						return $entry->user->created_at->format('d.m.Y H:i:s');
 					},
@@ -127,9 +120,6 @@ class UsersController extends CrudController
 			'name'	=> 'email',
 			'label'	=> 'Email',
 			'type'	=> 'email',
-			'entity' => 'info',
-			'attribute' => 'email',
-			'model' => UserDetail::class
 		]);
 
 		$this->crud->operation('update', function () {

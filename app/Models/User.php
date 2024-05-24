@@ -11,6 +11,7 @@ use App\User\Tech;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Backpack\Settings\app\Models\Setting;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
@@ -66,11 +67,6 @@ class User extends Authenticatable
 		return [
 			'options' => 'array',
 		];
-	}
-
-	public function info()
-	{
-		return $this->hasOne(UserDetail::class, 'id', 'id');
 	}
 
 	public function shortcuts()
@@ -141,7 +137,7 @@ class User extends Authenticatable
 			'storage', 'metal', 'crystal', 'deuterium', 'energy', 'solar',
 			'res_fleet', 'res_defence', 'res_research', 'res_building', 'res_levelup',
 			'time_fleet', 'time_defence', 'time_research', 'time_building',
-			'fleet_fuel', 'fleet_speed', 'queue'
+			'fleet_fuel', 'fleet_speed', 'queue',
 		];
 
 		$this->bonusData = [];
@@ -339,12 +335,7 @@ class User extends Authenticatable
 			$query->where('planet_type', '!=', 3);
 		}
 
-		$sort = self::getPlanetListSortQuery(
-			$this->getOption('planet_sort'),
-			$this->getOption('planet_sort_order')
-		);
-
-		$query->orderBy($sort['fields'], $sort['order']);
+		$this->getPlanetListSortQuery($query);
 
 		return $query->get()->all();
 	}
@@ -404,28 +395,16 @@ class User extends Authenticatable
 		return $this->planet;
 	}
 
-	public static function getPlanetListSortQuery($sort = '', $order = 0)
+	public function getPlanetListSortQuery(Builder $query)
 	{
-		$qryPlanets = '';
+		$qryPlanets = match ($this->getOption('planet_sort')) {
+			1 => 'galaxy, system, planet, planet_type',
+			2 => 'name',
+			3 => 'planet_type',
+			default => 'id',
+		};
 
-		switch ($sort) {
-			case 1:
-				$qryPlanets .= "galaxy, system, planet, planet_type";
-				break;
-			case 2:
-				$qryPlanets .= "name";
-				break;
-			case 3:
-				$qryPlanets .= "planet_type";
-				break;
-			default:
-				$qryPlanets .= "id";
-		}
-
-		return [
-			'fields' => $qryPlanets,
-			'order' => ($order == 1) ? "DESC" : "ASC",
-		];
+		$query->orderBy($qryPlanets, $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc');
 	}
 
 	public static function sendMessage($owner, $sender, $time, $type, $from, $message): bool
@@ -459,7 +438,7 @@ class User extends Authenticatable
 		$obj = new Message();
 
 		$obj->user_id = $owner;
-		$obj->from_id = $sender;
+		$obj->from_id = $sender ?: null;
 		$obj->time = $time;
 		$obj->type = $type;
 		$obj->theme = $from;
@@ -513,17 +492,13 @@ class User extends Authenticatable
 				throw new Exception('create user error');
 			}
 
-			UserDetail::create([
-				'id' => $user->id,
-			]);
-
 			if (Session::has('ref')) {
 				$refer = User::find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
 					Referal::insert([
 						'r_id' => $user->id,
-						'u_id' => $refer->id
+						'u_id' => $refer->id,
 					]);
 				}
 			}
