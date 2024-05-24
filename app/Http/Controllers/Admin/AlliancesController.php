@@ -145,7 +145,7 @@ class AlliancesController extends Controller
 				}
 
 				$user_id = $_GET['ent'];
-				$this->db->query("UPDATE users SET `alliance_id`=0, `ally_name` = '' WHERE `id`='" . $user_id . "'");
+				$this->db->query("UPDATE users SET `alliance_id`=0, `alliance_name` = '' WHERE `id`='" . $user_id . "'");
 				$this->response->redirect('admin/alliancelist/');
 			}
 		}

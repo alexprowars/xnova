@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -44,7 +45,7 @@ class IndexController extends Controller
 		$PrevIP = '';
 
 		if (Auth::user()->can('list index:online')) {
-			$Last15Mins = DB::select("SELECT `id`, `username`, `ip`, `ally_name`, `onlinetime` FROM users WHERE `onlinetime` >= '" . (time() - 15 * 60) . "' ORDER BY `" . $TypeSort . "` ASC;");
+			$Last15Mins = DB::select("SELECT `id`, `username`, `ip`, `alliance_name`, `onlinetime` FROM users WHERE `onlinetime` >= '" . (time() - 15 * 60) . "' ORDER BY `" . $TypeSort . "` ASC;");
 
 			foreach ($Last15Mins as $TheUser) {
 				if ($PrevIP != "") {
@@ -63,7 +64,7 @@ class IndexController extends Controller
 				$Bloc['adm_ov_data_name'] = $TheUser->username;
 				$Bloc['adm_ov_data_clip'] = $Color;
 				$Bloc['adm_ov_data_adip'] = Helpers::convertIp($TheUser->ip);
-				$Bloc['adm_ov_data_ally'] = $TheUser->ally_name;
+				$Bloc['adm_ov_data_ally'] = $TheUser->alliance_name;
 				$Bloc['adm_ov_data_activ'] = Format::time(time() - $TheUser->onlinetime);
 
 				$parse['adm_ov_data_table'][] = $Bloc;

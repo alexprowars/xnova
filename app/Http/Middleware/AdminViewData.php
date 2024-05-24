@@ -45,7 +45,7 @@ class AdminViewData
 		$files = new DirectoryIterator(app_path('Http/Controllers/Admin'));
 
 		foreach ($files as $file) {
-			if (!$file->isFile() || strpos($file->getFilename(), 'Controller.php') === false) {
+			if (!$file->isFile() || !str_contains($file->getFilename(), 'Controller.php')) {
 				continue;
 			}
 
@@ -59,7 +59,7 @@ class AdminViewData
 				}
 
 				foreach ($items as $item) {
-					if (!isset($item['title']) || empty($item['title'])) {
+					if (empty($item['title'])) {
 						continue;
 					}
 

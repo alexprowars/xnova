@@ -156,8 +156,8 @@ class GalaxyController extends Controller
 				LEFT JOIN users u ON (u.id = p.user_id AND p.user_id != 0)
 				LEFT JOIN users_details ui ON (ui.id = p.user_id AND p.user_id != 0)
 				LEFT JOIN alliances a ON (a.id = u.alliance_id AND u.alliance_id != 0)
-				LEFT JOIN alliances_diplomacies ad ON ((ad.a_id = u.alliance_id AND ad.d_id = " . $this->user->alliance_id . ") AND ad.status = 1 AND u.alliance_id != 0)
-				LEFT JOIN statistics s ON (s.user_id = u.id AND s.stat_type = '1' AND s.stat_code = '1')
+				LEFT JOIN alliances_diplomacies ad ON ((ad.alliance_id = u.alliance_id AND ad.diplomacy_id = " . ($this->user->alliance_id ?? 0) . ") AND ad.status = 1 AND u.alliance_id != 0)
+				LEFT JOIN statistics s ON (s.user_id = u.id AND s.stat_type = 1 AND s.stat_code = 1)
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
 		foreach ($GalaxyRow as $row) {

@@ -30,7 +30,7 @@ class EntityCollection extends Collection
 		return $this->filter(fn($item) => in_array(Vars::getItemType($item->entity_id), $types));
 	}
 
-	public function getEntity($entityId): ?Planet\Entity\BaseEntity
+	public function getEntity($entityId): ?Entity\BaseEntity
 	{
 		if (!is_numeric($entityId)) {
 			$entityId = Vars::getIdByName($entityId);

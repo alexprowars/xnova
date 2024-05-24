@@ -109,7 +109,7 @@ class AllianceController extends Controller
 			$parse['diplomacy'] = false;
 
 			if ($this->ally->canAccess(Alliance::DIPLOMACY_ACCESS)) {
-				$parse['diplomacy'] = Models\AllianceDiplomacy::query()->where('d_id', $this->ally->id)->where('status', 0)->count();
+				$parse['diplomacy'] = Models\AllianceDiplomacy::query()->where('diplomacy_id', $this->ally->id)->where('status', 0)->count();
 			}
 
 			$parse['requests'] = 0;
@@ -594,7 +594,7 @@ class AllianceController extends Controller
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				$ad = DB::select("SELECT id FROM alliances_diplomacies WHERE alliance_id = " . $this->ally->id . " AND d_id = " . $al->id . "");
+				$ad = DB::select("SELECT id FROM alliances_diplomacies WHERE alliance_id = " . $this->ally->id . " AND diplomacy_id = " . $al->id . "");
 
 				if (count($ad)) {
 					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "/alliance/diplomacy/");
@@ -609,31 +609,31 @@ class AllianceController extends Controller
 
 				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy/");
 			} elseif ($request->query('edit', '') == "del") {
-				$al = DB::selectOne("SELECT alliance_id, d_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
+				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->alliance_id . " AND d_id = " . $al->d_id . ";");
-				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->d_id . " AND d_id = " . $al->alliance_id . ";");
+				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
+				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
 				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy/");
 			} elseif ($request->query('edit', '') == "suc") {
-				$al = DB::selectOne("SELECT alliance_id, d_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
+				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
 					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
 				}
 
-				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->alliance_id . " AND d_id = " . $al->d_id . ";");
-				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->d_id . " AND d_id = " . $al->alliance_id . ";");
+				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
+				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
 				throw new RedirectException("Отношение между вашими альянсами подтверждено", "/alliance/diplomacy/");
 			}
 		}
 
-		$dp = DB::select("SELECT ad.*, a.name FROM alliances_diplomacies ad, alliances a WHERE a.id = ad.d_id AND ad.alliance_id = '" . $this->ally->id . "'");
+		$dp = DB::select("SELECT ad.*, a.name FROM alliances_diplomacies ad, alliances a WHERE a.id = ad.diplomacy_id AND ad.alliance_id = '" . $this->ally->id . "'");
 
 		foreach ($dp as $diplo) {
 			if ($diplo->status == 0) {

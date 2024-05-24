@@ -184,7 +184,7 @@ class FleetSendController extends Controller
 		if ($this->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $fleetMission == 1) {
 			$diplomacy = Models\AllianceDiplomacy::query()
 				->where('alliance_id', $targerUser->alliance_id)
-				->where('d_id', $this->user->alliance_id)
+				->where('diplomacy_id', $this->user->alliance_id)
 				->where('status', 1)
 				->where('type', '<', 3)
 				->first();

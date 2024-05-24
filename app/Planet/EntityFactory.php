@@ -14,7 +14,7 @@ use App\Vars;
 
 class EntityFactory
 {
-	public static function create(int $entityId, int $level = 1, ?Planet $planet = null): Planet\Entity\BaseEntity
+	public static function create(int $entityId, int $level = 1, ?Planet $planet = null): Entity\BaseEntity
 	{
 		$className = self::getEntityClassName($entityId);
 
@@ -22,7 +22,7 @@ class EntityFactory
 			$planet = Auth::user()->getCurrentPlanet(true);
 		}
 
-		/** @var Planet\Entity\BaseEntity $className */
+		/** @var Entity\BaseEntity $className */
 		return $className::createEntity($entityId, $level, $planet);
 	}
 
@@ -34,7 +34,7 @@ class EntityFactory
 			$planet = Auth::user()->getCurrentPlanet(true);
 		}
 
-		/** @var Planet\Entity\BaseEntity $object */
+		/** @var Entity\BaseEntity $object */
 		$object = new $className($entity->getAttributes());
 		$object->exists = $entity->exists;
 		$object->planet()->associate($planet);

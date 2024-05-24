@@ -134,7 +134,7 @@ class ManagerController extends Controller
 
 			$parse['list_credits'] = [];
 
-			foreach ($logs as $log)
+			foreach ($logs as $log) {
 				$parse['list_credits'][] = [
 					'date' => $this->game->datezone("d.m.Y H:i", $log['time']),
 					'credits' => $log->amount,

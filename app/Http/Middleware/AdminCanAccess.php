@@ -13,8 +13,6 @@ class AdminCanAccess
 {
 	public function handle(Request $request, Closure $next): Response
 	{
-		Auth::onceUsingId(1);
-
 		if (Auth::guest()) {
 			throw UnauthorizedException::notLoggedIn();
 		}
