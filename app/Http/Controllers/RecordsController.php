@@ -60,7 +60,7 @@ class RecordsController extends Controller
 
 		$parse = [
 			'items' => $Records,
-			'update' => config('settings.stat_update'),
+			'update' => config('settings.statUpdate'),
 		];
 
 		return $parse;

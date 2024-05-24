@@ -14,7 +14,7 @@ use App\FleetEngine;
 use App\Format;
 use App\Models\Statistic;
 use App\Models;
-use App\User;
+use App\Models\User;
 use App\Vars;
 
 class Expedition extends FleetEngine implements Mission

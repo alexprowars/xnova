@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\User;
+
 class Fleet extends Building
 {
 	static function SetShipsEngine(User $user)

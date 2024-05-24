@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Planet;
 use Illuminate\Database\Eloquent\Model;
 
 class PlanetEntity extends Model

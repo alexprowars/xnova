@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->boolean('free_race_change')->default(1);
 			$table->integer('image')->default(0);
-			$table->text('about');
+			$table->text('about')->nullable();
 			$table->string('username_last', 150)->default('');
 		});
 	}

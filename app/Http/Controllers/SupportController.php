@@ -11,7 +11,7 @@ use App\Exceptions\SuccessException;
 use App\Game;
 use App\Helpers;
 use App\Models\Support;
-use App\User;
+use App\Models\User;
 use App\Controller;
 
 class SupportController extends Controller

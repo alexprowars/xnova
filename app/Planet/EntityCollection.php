@@ -4,7 +4,7 @@ namespace App\Planet;
 
 use Illuminate\Support\Collection;
 use App\Models\PlanetEntity;
-use App\Planet;
+use App\Models\Planet;
 use App\Vars;
 
 class EntityCollection extends Collection

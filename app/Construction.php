@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Support\Facades\Request;
 use App\Exceptions\RedirectException;
 use App\Planet\EntityFactory;
+use App\Models\User;
+use App\Models\Planet;
 
 class Construction
 {

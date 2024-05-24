@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('users_teches', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->integer('tech_id')->nullable();
 			$table->smallInteger('level')->default(0);
 			$table->timestamps();

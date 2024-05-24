@@ -3,10 +3,9 @@
 namespace App\Missions;
 
 use Illuminate\Support\Facades\Cache;
-use App\Entity\Coordinates;
 use App\FleetEngine;
 use App\Galaxy;
-use App\User;
+use App\Models\User;
 use App\Models;
 
 class CreateBase extends FleetEngine implements Mission

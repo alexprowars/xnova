@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Planet
+ * @mixin \App\Models\Planet
  */
 class UserPlanets extends JsonResource
 {

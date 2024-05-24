@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('planets_entities', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('planet_id')->constrained('planets')->cascadeOnUpdate()->restrictOnDelete();
+			$table->foreignId('planet_id')->constrained('planets')->cascadeOnUpdate()->cascadeOnDelete();
 			$table->integer('entity_id');
 			$table->integer('amount')->default(0);
 			$table->tinyInteger('factor')->default(10);

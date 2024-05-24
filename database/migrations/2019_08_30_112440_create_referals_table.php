@@ -8,8 +8,9 @@ return new class extends Migration {
 	public function up()
 	{
 		Schema::create('referals', function (Blueprint $table) {
-			$table->integer('r_id')->unsigned()->default(0)->primary();
-			$table->integer('u_id')->unsigned()->default(0);
+			$table->id();
+			$table->foreignId('r_id')->constrained('users')->cascadeOnDelete();
+			$table->foreignId('u_id')->constrained('users')->cascadeOnDelete();
 		});
 	}
 

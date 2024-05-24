@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\User;
+use App\Models\User;
 use App\Controller;
 use App\Models;
 
 class BuddyController extends Controller
 {
-	public function newAction(Request $request, $userId)
+	public function new(Request $request, $userId)
 	{
 		$user = Models\User::query()
 			->select(['id', 'username'])
@@ -25,16 +25,13 @@ class BuddyController extends Controller
 
 		if ($request->isMethod('post')) {
 			$buddy = Models\Friend::query()
-				->select(['id'])
 				->where(function (Builder $query) use ($userId) {
-					$query->where('sender', $userId)
-						->where('owner', $this->user->id);
+					$query->where('user_id', $userId)->where('friend_id', $this->user->id);
 				})
 				->orWhere(function (Builder $query) use ($userId) {
-					$query->where('owner', $userId)
-						->where('sender', $this->user->id);
+					$query->where('user_id', $userId)->where('friend_id', $this->user->id);
 				})
-				->first();
+				->exists();
 
 			if ($buddy) {
 				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
@@ -46,11 +43,11 @@ class BuddyController extends Controller
 				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
 			}
 
-			Models\Friend::query()->insert([
-				'sender' => $this->user->id,
-				'owner' => $user->id,
-				'active' => 0,
-				'text' => $text,
+			Models\Friend::create([
+				'user_id' => $this->user->id,
+				'friend_id' => $user->id,
+				'active' => false,
+				'message' => $text,
 			]);
 
 			User::sendMessage($user->id, 0, time(), 2, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
@@ -68,7 +65,7 @@ class BuddyController extends Controller
 		];
 	}
 
-	public function requestsAction($isMy = false)
+	public function requests($isMy = false)
 	{
 		if ($isMy !== false) {
 			$isMy = true;
@@ -77,19 +74,19 @@ class BuddyController extends Controller
 		$this->index(true, $isMy);
 	}
 
-	public function deleteAction(int $id)
+	public function delete(int $id)
 	{
-		$friend = Models\Friend::query()->find($id);
+		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
-		if ($friend->owner == $this->user->id) {
+		if ($friend->friend_id == $this->user->id) {
 			$friend->delete();
 
 			throw new RedirectException('Заявка отклонена', '/buddy/requests/');
-		} elseif ($friend->sender == $this->user->id) {
+		} elseif ($friend->user_id == $this->user->id) {
 			$friend->delete();
 
 			throw new RedirectException('Заявка удалена', '/buddy/requests/my/');
@@ -98,15 +95,15 @@ class BuddyController extends Controller
 		}
 	}
 
-	public function approveAction(int $id)
+	public function approve(int $id)
 	{
-		$friend = Models\Friend::query()->find($id);
+		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
-		if (!($friend->owner == $this->user->id && $friend->active == 0)) {
+		if (!($friend->friend_id == $this->user->id && !$friend->active)) {
 			throw new ErrorException('Заявка не найдена');
 		}
 
@@ -126,29 +123,29 @@ class BuddyController extends Controller
 		$parse['isMy'] = $isMy;
 
 		$items = Models\Friend::query()
-			->orderBy('id', 'DESC')
-			->where('ignor', 0);
+			->orderByDesc('id')
+			->where('ignore', 0);
 
 		if ($isRequests) {
 			$items->where('active', 0);
 
 			if ($isMy) {
-				$items->where('sender', $this->user->id);
+				$items->where('user_id', $this->user->id);
 			} else {
-				$items->where('owner', $this->user->id);
+				$items->where('friend_id', $this->user->id);
 			}
 		} else {
-			$items->where('active', 0)
-			->where(function (Builder $query) {
-				$query->where('sender', $this->user->id)
-					->where('owner', $this->user->id);
-			});
+			$items
+				->where('active', 0)
+				->where(function (Builder $query) {
+					$query->where('user_id', $this->user->id)->where('friend_id', $this->user->id);
+				});
 		}
 
 		$items = $items->get();
 
 		foreach ($items as $item) {
-			$userId = ($item->owner == $this->user->id) ? $item->sender : $item->owner;
+			$userId = ($item->friend_id == $this->user->id) ? $item->user_id : $item->friend_id;
 
 			$user = Models\User::find($userId);
 
@@ -166,7 +163,7 @@ class BuddyController extends Controller
 					'name' => $user->username,
 					'alliance' => [
 						'id' => (int) $user->alliance_id,
-						'name' => $user->ally_name
+						'name' => $user->alliance_name
 					],
 					'galaxy' => (int) $user->galaxy,
 					'system' => (int) $user->system,

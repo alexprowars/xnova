@@ -3,11 +3,10 @@
 namespace App\Missions;
 
 use Illuminate\Support\Facades\Cache;
-use App\Entity\Coordinates;
 use App\FleetEngine;
 use App\Galaxy;
 use App\Models;
-use App\User;
+use App\Models\User;
 
 class Colonisation extends FleetEngine implements Mission
 {

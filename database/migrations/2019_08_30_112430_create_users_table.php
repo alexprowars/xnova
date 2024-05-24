@@ -9,18 +9,19 @@ return new class extends Migration {
 	{
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
-			$table->string('email', 50);
-			$table->string('password', 100)->default('');
-			$table->string('username', 50);
+			$table->string('email', 50)->unique();
+			$table->string('password', 100)->nullable();
+			$table->rememberToken();
+			$table->string('username', 50)->nullable();
 			$table->boolean('authlevel')->default(0);
-			$table->smallInteger('group_id')->default(0);
+			$table->smallInteger('group_id')->nullable();
 			$table->integer('banned')->default(0);
 			$table->integer('onlinetime')->unsigned()->default(0);
-			$table->bigInteger('ip')->default(0);
+			$table->bigInteger('ip')->nullable();
 			$table->boolean('sex')->default(0);
 			$table->boolean('race')->default(0);
-			$table->integer('planet_id')->unsigned()->default(0);
-			$table->integer('planet_current')->unsigned()->default(0);
+			$table->unsignedBigInteger('planet_id')->nullable();
+			$table->unsignedBigInteger('planet_current')->nullable();
 			$table->integer('bonus')->unsigned()->default(0);
 			$table->unsignedBigInteger('alliance_id')->nullable();
 			$table->string('alliance_name', 50)->nullable();
@@ -52,6 +53,7 @@ return new class extends Migration {
 			$table->integer('message_block')->default(0);
 			$table->integer('links')->unsigned()->default(0);
 			$table->boolean('chat')->default(0);
+			$table->string('photo')->nullable();
 			$table->json('options')->nullable();
 			$table->timestamps();
 		});

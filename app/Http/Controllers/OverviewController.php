@@ -13,7 +13,7 @@ use App\Fleet;
 use App\Game;
 use App\Helpers;
 use App\Models;
-use App\Planet;
+use App\Models\Planet;
 use App\Queue;
 use App\Models\Fleet as FleetModel;
 use App\Controller;

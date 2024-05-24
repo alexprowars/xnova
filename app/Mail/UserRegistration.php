@@ -18,8 +18,7 @@ class UserRegistration extends Mailable
 
 	public function build()
 	{
-		$this->from(config('settings.email_notify'), config('settings.site_title'))
-			->subject(config('settings.site_title') . ": Регистрация");
+		$this->subject(config('app.name') . ": Регистрация");
 
 		$template = File::get(resource_path('/views/email/registration.html'));
 		$template = strtr($template, $this->fields);

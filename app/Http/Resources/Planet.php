@@ -6,7 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Vars;
 
 /**
- * @mixin \App\Planet
+ * @mixin \App\Models\Planet
  */
 class Planet extends JsonResource
 {

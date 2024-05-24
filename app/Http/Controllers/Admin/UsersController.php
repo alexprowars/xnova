@@ -13,7 +13,7 @@ use App\Models\Blocked;
 use App\Models;
 use App\Models\UserDetail;
 use Backpack\CRUD\app\Http\Controllers\Operations;
-use App\User;
+use App\Models\User;
 use App\Vars;
 
 /**
@@ -196,7 +196,7 @@ class UsersController extends CrudController
 
 		$fields = $this->crud->getStrippedSaveRequest();
 
-		$userId = User::creation([
+		$user = User::creation([
 			'email' => $fields['email'],
 			'password' => $fields['password'],
 		]);
@@ -205,7 +205,7 @@ class UsersController extends CrudController
 
 		$this->crud->setSaveAction();
 
-		return $this->crud->performSaveAction($userId);
+		return $this->crud->performSaveAction($user->id);
 	}
 
 	public function ban(Request $request)

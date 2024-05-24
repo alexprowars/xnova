@@ -2,7 +2,8 @@
 
 namespace App\Models\Observers;
 
-use App\User;
+use App\Models\LogStat;
+use App\Models\User;
 
 class UserObserver
 {
@@ -11,8 +12,16 @@ class UserObserver
 		$model->_afterUpdateTechs();
 	}
 
-	public function deleted(User $model)
+	public function deleting(User $model)
 	{
-		User::deleteById($model->id);
+		if ($model->alliance) {
+			if ($model->alliance->user_id != $model->id) {
+				$model->alliance->deleteMember($model->id);
+			} else {
+				$model->alliance->deleteAlly();
+			}
+		}
+
+		LogStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
 	}
 }

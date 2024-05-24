@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Request;
 use App\Exceptions\RedirectException;
 use App\Models\UserDetail;
 use App\Models\Fleet;
-use App\Planet;
 use App\Queue;
 use App\Controller;
 use App\Vars;

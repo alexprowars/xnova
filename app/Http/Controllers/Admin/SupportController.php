@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use App\User;
+use App\Models\User;
 
 class SupportController extends Controller
 {

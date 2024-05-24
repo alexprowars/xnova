@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Log extends Model
+class LogAttack extends Model
 {
-	public $timestamps = false;
 	protected $guarded = [];
 }

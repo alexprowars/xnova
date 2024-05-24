@@ -2,9 +2,8 @@
 
 namespace App\Planet\Entity;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\PlanetEntity;
-use App\Planet;
+use App\Models\Planet;
 use App\Planet\Contracts\PlanetEntityInterface;
 use App\Planet\Contracts\PlanetEntityProductionInterface;
 use App\Vars;

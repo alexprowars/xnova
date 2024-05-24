@@ -12,7 +12,7 @@ use App\Exceptions\SuccessException;
 use App\Format;
 use App\Game;
 use App\Models\Message;
-use App\User;
+use App\Models\User;
 use App\Controller;
 use App\Models;
 

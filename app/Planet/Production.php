@@ -3,9 +3,9 @@
 namespace App\Planet;
 
 use App\Entity\Coordinates;
-use App\Planet;
+use App\Models\Planet;
 use App\Planet\Contracts\PlanetEntityProductionInterface;
-use App\User;
+use App\Models\User;
 use App\Vars;
 
 class Production

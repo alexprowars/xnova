@@ -3,7 +3,7 @@
 namespace App\Queue;
 
 use App\Models\LogHistory;
-use App\Planet;
+use App\Models\Planet;
 use App\Queue;
 use App\Vars;
 use App\Models;

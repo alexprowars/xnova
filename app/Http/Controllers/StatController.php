@@ -76,7 +76,7 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
 			'list' => 'players',
 			'type' => $type,
 			'page' => 1
@@ -99,7 +99,7 @@ class StatController extends Controller
 			}
 		}
 
-		$users = (int) config('settings.active_users', 0);
+		$users = (int) config('settings.activeUsers', 0);
 
 		$parse['elements'] = $users;
 		$parse['page'] = $this->page;
@@ -157,13 +157,13 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
 			'list' => Route::current()->getActionMethod(),
 			'type' => $type,
 			'page' => 1
 		];
 
-		$alliances = (int) config('settings.active_alliance', 0);
+		$alliances = (int) config('settings.activeAlliance', 0);
 
 		$parse['elements'] = $alliances;
 		$parse['page'] = $this->page;
@@ -204,7 +204,7 @@ class StatController extends Controller
 	private function races()
 	{
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.stat_update', 0)),
+			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
 			'list' => Route::current()->getActionMethod(),
 			'type' => 0,
 			'page' => 0

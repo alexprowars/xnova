@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\User;
-use App\Planet;
 use Illuminate\Database\Eloquent\Model;
 
 class Queue extends Model

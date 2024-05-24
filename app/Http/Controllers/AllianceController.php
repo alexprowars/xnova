@@ -18,7 +18,7 @@ use App\Models\Alliance;
 use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use App\Models;
-use App\User;
+use App\Models\User;
 use App\Controller;
 
 class AllianceController extends Controller
@@ -970,7 +970,7 @@ class AllianceController extends Controller
 			}
 
 			$this->user->alliance_id = $alliance->id;
-			$this->user->ally_name = $alliance->name;
+			$this->user->alliance_name = $alliance->name;
 			$this->user->update();
 
 			throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');

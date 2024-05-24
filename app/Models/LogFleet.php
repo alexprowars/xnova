@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Authentication extends Model
+class LogFleet extends Model
 {
-	public $timestamps = false;
 	protected $guarded = [];
 }

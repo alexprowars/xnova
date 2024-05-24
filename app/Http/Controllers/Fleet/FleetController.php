@@ -10,7 +10,7 @@ use App\Controller;
 use App\Exceptions\PageException;
 use App\Entity;
 use App\Fleet;
-use App\Planet;
+use App\Models\Planet;
 use App\Vars;
 
 class FleetController extends Controller

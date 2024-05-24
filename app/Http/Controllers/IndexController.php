@@ -10,7 +10,7 @@ use App\Controller;
 use App\Exceptions\Exception;
 use App\Helpers;
 use App\Models;
-use App\User;
+use App\Models\User;
 
 class IndexController extends Controller
 {
@@ -19,7 +19,7 @@ class IndexController extends Controller
 		return [];
 	}
 
-	public function Registration(Request $request)
+	public function registration(Request $request)
 	{
 		$errors = [];
 
@@ -44,29 +44,29 @@ class IndexController extends Controller
 				$errors[] = __('reg.error_emailexist');
 			}
 
-			if (empty($errors)) {
-				$captcha = Http::post('https://www.google.com/recaptcha/api/siteverify', [
+			if (empty($errors) && !empty(config('settings.recaptcha.secret_key'))) {
+				$captcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
 					'secret' => config('settings.recaptcha.secret_key'),
 					'response' => $request->post('captcha'),
 					'remoteip' => $request->ip()
 				])->json();
 
 				if (!$captcha['success']) {
-					$errors[] = "Вы не прошли проверку на бота!";
+					$errors[] = 'Вы не прошли проверку на бота!';
 				}
 			}
 
 			if (!count($errors)) {
-				$userId = User::creation([
+				$user = User::creation([
 					'email' => $email,
 					'password' => trim($request->post('password')),
 				]);
 
-				if (!$userId) {
+				if (!$user) {
 					throw new Exception('create user error');
 				}
 
-				Auth::loginUsingId($userId, true);
+				Auth::login($user, true);
 
 				return Redirect::to('overview/');
 			}

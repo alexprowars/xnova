@@ -17,7 +17,7 @@ class UpdateOnline extends Command
 			->where('onlinetime', '>', time() - config('settings.onlinetime') * 60)
 			->count();
 
-		Setting::set('users_online', $online);
+		Setting::set('usersOnline', $online);
 
 		echo $online . " users online\n";
 	}

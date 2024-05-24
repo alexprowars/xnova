@@ -17,10 +17,10 @@ use App\Battle\Utils\LangManager;
 use App\FleetEngine;
 use App\Format;
 use App\Galaxy;
-use App\Planet;
+use App\Models\Planet;
 use App\Models;
 use App\Queue;
-use App\User;
+use App\Models\User;
 use App\Models\Fleet as FleetModel;
 use App\Vars;
 
@@ -553,12 +553,11 @@ class Attack extends FleetEngine implements Mission
 			User::sendMessage($info, 0, time(), 4, 'Боевой доклад', $defendersReport);
 		}
 
-		DB::table('log_attacks')->insert([
-			'uid' 			=> $this->fleet->user_id,
-			'time'			=> time(),
+		Models\LogAttack::create([
+			'user_id' 		=> $this->fleet->user_id,
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
-			'fleet' 		=> is_array($this->fleet->fleet_array) ? json_encode($this->fleet->fleet_array) : $this->fleet->fleet_array,
+			'fleet' 		=> $this->fleet->fleet_array,
 			'battle_log'	=> $report->id
 		]);
 

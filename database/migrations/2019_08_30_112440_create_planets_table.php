@@ -13,8 +13,8 @@ return new class extends Migration {
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('alliance_id')->nullable()->constrained('alliances')->nullOnDelete();
 			$table->boolean('id_level')->default(0);
-			$table->boolean('galaxy')->default(0)->index('galaxy');
-			$table->smallInteger('system')->unsigned()->default(0)->index('system');
+			$table->boolean('galaxy')->default(0)->index();
+			$table->smallInteger('system')->unsigned()->default(0)->index();
 			$table->boolean('planet')->default(0);
 			$table->integer('last_update')->nullable();
 			$table->integer('last_active')->default(0);
@@ -35,10 +35,20 @@ return new class extends Migration {
 			$table->integer('debris_crystal')->default(0);
 			$table->integer('merchand')->default(0);
 		});
+
+		Schema::table('users', function (Blueprint $table) {
+			$table->foreign('planet_id')->on('planets')->references('id')->nullOnDelete();
+			$table->foreign('planet_current')->on('planets')->references('id')->nullOnDelete();
+		});
 	}
 
 	public function down()
 	{
+		Schema::table('users', function (Blueprint $table) {
+			$table->dropForeign('planet_id');
+			$table->dropForeign('planet_current');
+		});
+
 		Schema::drop('planets');
 	}
 };

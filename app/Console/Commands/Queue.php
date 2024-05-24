@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Exceptions\Exception;
 use App\Models;
-use App\Planet;
-use App\User;
 use App\Vars;
 
 class Queue extends Command

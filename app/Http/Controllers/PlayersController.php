@@ -12,7 +12,7 @@ use App\Exceptions\PageException;
 use App\Files;
 use App\Models\Planet;
 use App\Controller;
-use App\User;
+use App\Models\User;
 
 class PlayersController extends Controller
 {

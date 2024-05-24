@@ -5,7 +5,7 @@ namespace App\Planet;
 use Illuminate\Support\Facades\Auth;
 use App\Entity\Research;
 use App\Models\PlanetEntity;
-use App\Planet;
+use App\Models\Planet;
 use App\Planet\Entity\Building;
 use App\Exceptions\Exception;
 use App\Planet\Entity\Defence;

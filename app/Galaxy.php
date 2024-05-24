@@ -3,17 +3,17 @@
 namespace App;
 
 use Backpack\Settings\app\Models\Setting;
-use Illuminate\Support\Facades\Session;
 use App\Entity\Coordinates;
 use App\Models\Planet;
+use App\Models\User;
 
 class Galaxy
 {
 	public function createPlanetByUserId($userId)
 	{
-		$galaxy = Setting::get('LastSettedGalaxyPos');
-		$system = Setting::get('LastSettedSystemPos');
-		$planet = Setting::get('LastSettedPlanetPos');
+		$galaxy = Setting::get('lastSettedGalaxyPos') ?? 1;
+		$system = Setting::get('lastSettedSystemPos') ?? 1;
+		$planet = Setting::get('lastSettedPlanetPos') ?? 1;
 
 		do {
 			$isFree = $this->getFreePositions(
@@ -22,7 +22,7 @@ class Galaxy
 				(int) round(config('settings.maxPlanetInSystem') * 0.8)
 			);
 
-			if (count($isFree) > 0) {
+			if (!empty($isFree)) {
 				$position = $isFree[array_rand($isFree)];
 			} else {
 				$position = 0;
@@ -55,9 +55,9 @@ class Galaxy
 		);
 
 		if ($planetId !== false) {
-			Setting::set('LastSettedGalaxyPos', $galaxy);
-			Setting::set('LastSettedSystemPos', $system);
-			Setting::set('LastSettedPlanetPos', $planet);
+			Setting::set('lastSettedGalaxyPos', $galaxy);
+			Setting::set('lastSettedSystemPos', $system);
+			Setting::set('lastSettedPlanetPos', $planet);
 
 			User::find($userId)
 				->update([
@@ -160,7 +160,7 @@ class Galaxy
 		return !$exist->count();
 	}
 
-	public function getFreePositions(Coordinates $target, $startPosition = 1, $endPosition = 15)
+	public function getFreePositions(Coordinates $target, $startPosition, $endPosition)
 	{
 		$planets = Planet::query()
 			->where('galaxy', $target->getGalaxy())

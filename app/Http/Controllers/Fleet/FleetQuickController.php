@@ -10,7 +10,7 @@ use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
 use App\Models;
 use App\Game;
-use App\Planet;
+use App\Models\Planet;
 use App\Vars;
 use App\Entity;
 

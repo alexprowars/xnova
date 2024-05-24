@@ -18,8 +18,7 @@ class UserDelete extends Mailable
 
 	public function build()
 	{
-		$this->from(config('settings.email_notify'), config('settings.site_title'))
-			->subject(config('settings.site_title') . ': Уведомление об удалении аккаунта: ' . config('settings.universe') . ' вселенная');
+		$this->subject(config('app.name') . ': Уведомление об удалении аккаунта: ' . config('settings.universe') . ' вселенная');
 
 		$template = File::get(resource_path('/views/email/delete.html'));
 		$template = strtr($template, $this->fields);

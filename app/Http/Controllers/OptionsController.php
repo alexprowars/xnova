@@ -18,7 +18,7 @@ use App\Game;
 use App\Helpers;
 use App\Mail\UserLostPasswordSuccess;
 use App\Models;
-use App\User;
+use App\Models\User;
 use App\Queue;
 use App\Controller;
 use App\Vars;
@@ -36,14 +36,13 @@ class OptionsController extends Controller
 			if (isset($data['identity'])) {
 				$identity = isset($data['profile']) && $data['profile'] != '' ? $data['profile'] : $data['identity'];
 
-				$check = Models\Authentication::query()
+				$check = Models\UserAuthentication::query()
 					->where('provider_id', $identity)->exists();
 
 				if (!$check) {
-					Models\Authentication::query()->insert([
+					Models\UserAuthentication::create([
 						'user_id' => $this->user->id,
 						'provider_id' => $identity,
-						'create_time' => time(),
 					]);
 				} else {
 					throw new RedirectException('Данная точка входа уже используется', '/options/');

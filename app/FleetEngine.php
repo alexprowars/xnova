@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Entity\Coordinates;
-use App\Models;
+use App\Models\Planet;
 
 class FleetEngine
 {

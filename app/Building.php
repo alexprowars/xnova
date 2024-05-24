@@ -5,6 +5,8 @@ namespace App;
 use App\Planet\Contracts\PlanetEntityProductionInterface;
 use App\Planet\EntityFactory;
 use App\Planet\Resources;
+use App\Models\User;
+use App\Models\Planet;
 
 class Building
 {

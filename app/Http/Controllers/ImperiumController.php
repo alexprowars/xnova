@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fleet;
-use App\Planet;
+use App\Models\Planet;
 use App\Queue;
 use App\Controller;
-use App\User;
+use App\Models\User;
 use App\Vars;
 
 class ImperiumController extends Controller

@@ -31,6 +31,10 @@ return new class extends Migration {
 
 	public function down()
 	{
+		Schema::table('users', function (Blueprint $table) {
+			$table->dropForeign('alliance_id');
+		});
+
 		Schema::drop('alliances');
 	}
 };

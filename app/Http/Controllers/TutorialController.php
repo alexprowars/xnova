@@ -85,7 +85,7 @@ class TutorialController extends Controller
 			}
 
 			if ($taskKey == 'BUDDY_COUNT') {
-				$count = Models\Friend::query()->where('sender', $this->user->id)->orWhere('owner', $this->user->id)->count();
+				$count = Models\Friend::query()->where('user_id', $this->user->id)->orWhere('friend_id', $this->user->id)->count();
 
 				$check = $count >= $taskVal;
 

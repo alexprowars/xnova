@@ -5,9 +5,9 @@ namespace App\Missions;
 use App\FleetEngine;
 use App\Format;
 use App\Models\Fleet;
-use App\Planet;
+use App\Models\Planet;
 use App\Queue;
-use App\User;
+use App\Models\User;
 use App\Vars;
 
 class Spy extends FleetEngine implements Mission

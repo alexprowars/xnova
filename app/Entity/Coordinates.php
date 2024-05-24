@@ -37,7 +37,7 @@ class Coordinates implements Arrayable
 
 	public function isEmpty(): bool
 	{
-		return $this->galaxy < 0 || $this->system < 0 || $this->planet < 0;
+		return $this->galaxy <= 0 || $this->system <= 0 || $this->planet <= 0;
 	}
 
 	public function toArray(): array

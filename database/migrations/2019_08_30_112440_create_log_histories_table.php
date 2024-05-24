@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('log_histories', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->integer('planet');
 			$table->integer('operation');
 			$table->integer('from_metal');

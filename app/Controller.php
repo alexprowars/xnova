@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use App\Exceptions\RedirectException;
+use App\Models\User;
+use App\Models\Planet;
 
 class Controller extends BaseController
 {

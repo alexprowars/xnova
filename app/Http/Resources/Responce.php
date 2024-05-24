@@ -34,8 +34,8 @@ class Responce extends JsonResource
 			'stats' => [
 				'time' => time(),
 				'timezone' => (int) date('Z'),
-				'online' => (int) config('settings.users_online', 0),
-				'users' => (int) config('settings.users_total', 0),
+				'online' => (int) config('settings.usersOnline', 0),
+				'users' => (int) config('settings.usersTotal', 0),
 			],
 			'user' => $this->when(Auth::check(), User::make(Auth::user())),
 			'planet' => $this->when($planet !== null, Planet::make($planet)),

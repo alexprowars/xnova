@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Chat;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 

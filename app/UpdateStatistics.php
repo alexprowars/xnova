@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\Models\LogStat;
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserDelete;
 use App\Models\Fleet;
 use App\Models\Statistic;
+use App\Models\User;
 
 class UpdateStatistics
 {
@@ -222,7 +224,7 @@ class UpdateStatistics
 			->get(['id', 'username']);
 
 		foreach ($list as $user) {
-			if (User::deleteById($user->id)) {
+			if ($user->delete()) {
 				$result[] = $user->username;
 			}
 		}
@@ -424,14 +426,14 @@ class UpdateStatistics
 		$active_alliance = Statistic::query()->where('stat_type', 2)
 			->where('stat_hide', 0)->count();
 
-		Setting::set('stat_update', time());
-		Setting::set('active_users', $active_users);
-		Setting::set('active_alliance', $active_alliance);
+		Setting::set('statUpdate', time());
+		Setting::set('activeUsers', $active_users);
+		Setting::set('activeAlliance', $active_alliance);
 	}
 
 	private function calcPositions()
 	{
-		$qryFormat = 'UPDATE statistics SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `user_id` ASC;';
+		$qryFormat = 'UPDATE ' . app(Statistic::class)->getTable() . ' SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `user_id` ASC;';
 
 		$rankNames = ['tech', 'fleet', 'defs', 'build', 'total'];
 
@@ -440,7 +442,7 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 1));
 		}
 
-		DB::statement("INSERT INTO statistics
+		DB::statement("INSERT INTO " . app(Statistic::class)->getTable() . "
 		      (`tech_points`, `tech_count`, `build_points`, `build_count`, `defs_points`, `defs_count`,
 		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `user_id`, `alliance_id`, `stat_type`, `stat_code`,
 		        `tech_old_rank`, `build_old_rank`, `defs_old_rank`, `fleet_old_rank`, `total_old_rank`
@@ -450,13 +452,13 @@ class UpdateStatistics
 		        SUM(u.`defs_count`), SUM(u.`fleet_points`), SUM(u.`fleet_count`), SUM(u.`total_points`), SUM(u.`total_count`),
 		        0, u.`alliance_id`, 2, 1,
 		        a.tech_rank, a.build_rank, a.defs_rank, a.fleet_rank, a.total_rank
-		      FROM statistics as u
-		        LEFT JOIN statistics as a ON a.alliance_id = u.alliance_id AND a.stat_code = 2 AND a.stat_type = 2
+		      FROM " . app(Statistic::class)->getTable() . " as u
+		        LEFT JOIN " . app(Statistic::class)->getTable() . " as a ON a.alliance_id = u.alliance_id AND a.stat_code = 2 AND a.stat_type = 2
 		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.alliance_id<>0
 		      GROUP BY u.`alliance_id`");
 
-		DB::statement("UPDATE statistics as new
-		      LEFT JOIN statistics as old ON old.alliance_id = new.alliance_id AND old.stat_code = 2 AND old.stat_type = 1
+		DB::statement("UPDATE " . app(Statistic::class)->getTable() . " as new
+		      LEFT JOIN " . app(Statistic::class)->getTable() . " as old ON old.alliance_id = new.alliance_id AND old.stat_code = 2 AND old.stat_type = 1
 		    SET
 		      new.tech_old_rank = old.tech_rank,
 		      new.build_old_rank = old.build_rank,
@@ -466,7 +468,7 @@ class UpdateStatistics
 		    WHERE
 		      new.stat_type = 2 AND new.stat_code = 2;");
 
-		DB::statement("DELETE FROM statistics WHERE `stat_code` >= 2");
+		Statistic::where('stat_code', '>=', 2)->delete();
 
 		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
@@ -492,12 +494,12 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 3));
 		}
 
-		DB::statement("OPTIMIZE TABLE statistics");
+		DB::statement("OPTIMIZE TABLE " . app(Statistic::class)->getTable());
 	}
 
 	public function addToLog()
 	{
-		DB::statement("INSERT INTO log_stats
+		DB::statement("INSERT INTO " . app(LogStat::class)->getTable() . "
 			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
@@ -507,7 +509,7 @@ class UpdateStatistics
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
 
-		DB::statement("INSERT INTO log_stats
+		DB::statement("INSERT INTO " . app(LogStat::class)->getTable() . "
 			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
@@ -522,15 +524,12 @@ class UpdateStatistics
 	{
 		Models\Message::query()->where('time', '<', time() - (86400 * 14))->where('type', '!=', 2)->delete();
 		Models\Report::query()->where('time', '<', time() - 172800)->delete();
-		//DB::statement("DELETE FROM alliances_chats WHERE `timestamp` <= '" . (time() - 1209600) . "';");
-		DB::statement("DELETE FROM password_resets WHERE `created_at` <= '" . (time() - 86400) . "';");
-		DB::statement("DELETE FROM logs WHERE `time` <= '" . (time() - 259200) . "';");
-		DB::statement("DELETE FROM log_attacks WHERE `time` <= '" . (time() - 604800) . "';");
-		DB::statement("DELETE FROM log_ips WHERE `time` <= '" . (time() - 604800) . "';");
+		Models\LogFleet::query()->where('created_at', '<', time() - 259200)->delete();
+		Models\LogAttack::query()->where('created_at', '<', time() - 604800)->delete();
+		Models\LogIp::query()->where('created_at', '<', time() - 604800)->delete();
 		Models\LogCredit::query()->where('created_at', '<', time() - 604800)->delete();
 		Models\LogHistory::query()->where('created_at', '<', time() - 604800)->delete();
-		DB::statement("DELETE FROM log_stats WHERE `time` <= '" . (time() - (86400 * 30)) . "';");
-		DB::statement("DELETE FROM log_simulations WHERE `time` <= '" . (time() - (86400 * 7)) . "';");
+		Models\LogStat::query()->where('time', '<', (time() - (86400 * 30)))->delete();
 	}
 
 	public function buildRecordsCache()

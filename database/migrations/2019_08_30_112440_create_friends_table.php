@@ -9,11 +9,12 @@ return new class extends Migration {
 	{
 		Schema::create('friends', function (Blueprint $table) {
 			$table->id();
-			$table->integer('sender')->default(0)->index('sender');
-			$table->integer('owner')->default(0)->index('owner');
-			$table->boolean('ignor')->default(0);
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+			$table->foreignId('friend_id')->constrained('users')->cascadeOnDelete();
+			$table->boolean('ignore')->default(0);
 			$table->boolean('active')->default(0);
-			$table->string('text', 250);
+			$table->string('message', 250);
+			$table->timestamps();
 		});
 	}
 

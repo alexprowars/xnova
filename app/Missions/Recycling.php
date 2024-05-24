@@ -5,7 +5,7 @@ namespace App\Missions;
 use Illuminate\Support\Facades\DB;
 use App\FleetEngine;
 use App\Format;
-use App\User;
+use App\Models\User;
 
 class Recycling extends FleetEngine implements Mission
 {

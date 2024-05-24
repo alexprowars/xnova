@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('users_quests', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->integer('quest_id')->default(0);
 			$table->boolean('finish')->default(false);
 			$table->integer('stage')->default(0);

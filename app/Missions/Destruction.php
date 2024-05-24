@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\FleetEngine;
 use App\Models;
-use App\User;
+use App\Models\User;
 
 class Destruction extends FleetEngine implements Mission
 {

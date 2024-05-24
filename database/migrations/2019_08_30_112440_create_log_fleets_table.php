@@ -7,24 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('logs', function (Blueprint $table) {
+		Schema::create('log_fleets', function (Blueprint $table) {
 			$table->id();
 			$table->boolean('mission')->default(0);
-			$table->timestamp('time');
 			$table->boolean('amount')->default(0);
-			$table->integer('s_id')->unsigned()->default(0)->index('s_id');
+			$table->foreignId('s_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->boolean('s_galaxy')->default(0);
 			$table->smallInteger('s_system')->unsigned()->default(0);
 			$table->boolean('s_planet')->default(0);
-			$table->integer('e_id')->unsigned()->default(0);
+			$table->foreignId('e_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->boolean('e_galaxy')->default(0);
 			$table->smallInteger('e_system')->unsigned()->default(0);
 			$table->boolean('e_planet')->default(0);
+			$table->timestamps();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('logs');
+		Schema::drop('log_fleets');
 	}
 };

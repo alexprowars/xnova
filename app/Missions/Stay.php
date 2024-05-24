@@ -5,7 +5,7 @@ namespace App\Missions;
 use App\Models\Planet;
 use App\FleetEngine;
 use App\Format;
-use App\User;
+use App\Models\User;
 
 class Stay extends FleetEngine implements Mission
 {

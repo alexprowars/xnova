@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\PasswordResetNotification;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
@@ -17,9 +16,9 @@ use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
-use App\Mail\UserLostPasswordSuccess;
-use App\User;
+use App\Models\User;
 use App\Models;
+use Throwable;
 
 class LoginController extends Controller
 {
@@ -29,17 +28,13 @@ class LoginController extends Controller
 
 	public function loginByCredentials(Request $request)
 	{
-		if (!$request->has('email')) {
-			throw new ErrorException(';)');
-		}
-
-		if ($request->post('email') == '') {
+		if (empty($request->post('email'))) {
 			throw new ErrorException('Введите хоть что-нибудь!');
 		}
 
-		$isExist = Models\User::query()->where('email', $request->post('email'))->exists();
+		$existUser = Models\User::query()->where('email', $request->post('email'))->exists();
 
-		if (!$isExist) {
+		if (!$existUser) {
 			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
 		}
 
@@ -68,39 +63,37 @@ class LoginController extends Controller
 		}
 
 		try {
-			/** @var SocialiteUser $user */
 			$user = Socialite::driver($service)->user();
 		} catch (\Exception) {
 			return Redirect::to('/');
 		}
 
-		$authData = Models\Authentication::query()->where('provider', $service)
+		$authData = Models\UserAuthentication::query()->where('provider', $service)
 			->where('provider_id', $user->id)->first();
 
 		if ($authData) {
 			$authData->enter_time = time();
-			$authData->update();
+			$authData->save();
 
 			Auth::loginUsingId($authData->user_id, true);
 		} else {
-			$userId = User::creation([
-				'name' => $user->getNickname() != '' ? $user->getNickname() : $user->getName(),
+			$user = User::creation([
+				'name' => $user->getNickname() ?: $user->getName(),
 				'email' => $user->email,
 			]);
 
-			if (!$userId) {
+			if (!$user) {
 				throw new Exception('create user error');
 			}
 
-			Models\Authentication::query()->insert([
-				'user_id' 		=> $userId,
+			Models\UserAuthentication::create([
+				'user_id' 		=> $user->id,
 				'provider'		=> $service,
 				'provider_id' 	=> $user->id,
-				'create_time' 	=> time(),
-				'enter_time' 	=> time()
+				'enter_time' 	=> now(),
 			]);
 
-			Auth::loginUsingId($userId, true);
+			Auth::login($user, true);
 		}
 
 		return Redirect::intended('overview/');
@@ -109,17 +102,21 @@ class LoginController extends Controller
 	public function resetPassword(Request $request)
 	{
 		if ($request->has(['email', 'token'])) {
-			$email = (int) $request->query('email');
-			$token = addslashes($request->query('token'));
+			$request->validate([
+				'token' => ['required'],
+				'email' => ['required', 'email'],
+			]);
 
-			$broker = Password::broker();
+			$email = $request->query('email');
+			$token = addslashes($request->query('token'));
 
 			$password = Str::random(10);
 
-			$response = $broker->reset(
+			$status = Password::reset(
 				['email' => $email, 'token' => $token, 'password' => $password],
 				function (Models\User $user, $password) {
 					$user->password = Hash::make($password);
+					$user->setRememberToken(Str::random(60));
 					$user->save();
 
 					event(new PasswordReset($user));
@@ -127,39 +124,33 @@ class LoginController extends Controller
 					Auth::login($user);
 
 					try {
-						$email = $user->getEmailForPasswordReset();
-
-						Mail::to($email)->send(new UserLostPasswordSuccess([
-							'#EMAIL#' => $email,
-							'#NAME#' => $user->username,
-							'#PASSWORD#' => $password,
-						]));
-					} catch (\Exception) {
+						$user->notify(new PasswordResetNotification($password));
+					} catch (Throwable) {
 					}
 				}
 			);
 
-			if ($response == PasswordBroker::INVALID_TOKEN) {
-				throw new ErrorException('Действие данной ссылки истекло, попробуйте пройти процедуру заново!');
-			}
-
-			if ($response == PasswordBroker::INVALID_USER) {
-				throw new ErrorException('Аккаунт не найден');
+			if ($status != Password::PASSWORD_RESET) {
+				throw new ErrorException(__($status));
 			}
 
 			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
 		}
 
 		if ($request->post('email')) {
-			$broker = Password::broker();
+			$request->validate([
+				'email' => ['required', 'email'],
+			]);
 
-			$response = $broker->sendResetLink(['email' => $request->post('email')]);
+			$status = Password::sendResetLink(
+				$request->only('email')
+			);
 
-			if ($response == PasswordBroker::INVALID_USER) {
-				throw new ErrorException('Аккаунт не найден');
+			if ($status != Password::RESET_LINK_SENT) {
+				throw new ErrorException(__($status));
 			}
 
-			throw new SuccessException('Ссылка на восстановления пароля отправлена на ваш E-mail');
+			throw new SuccessException(__($status));
 		}
 
 		return [];

@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -41,16 +40,15 @@ class Files
 		$fileName = $fileInfo['filename'] . '.' . $fileInfo['extension'];
 
 		$storage = Storage::disk('public');
-
+		dd($storage->path('files/'));
 		$dir = $storage->getDriver()->getAdapter()->getPathPrefix() . 'files';
-		$subdir = '';
 
 		$i = 0;
 
 		while (true) {
-			$subdir = substr(md5(uniqid("", true)), 0, 3);
+			$subdir = substr(md5(uniqid('', true)), 0, 3);
 
-			if (!file_exists($dir . "/" . $subdir . "/" . $fileName)) {
+			if (!file_exists($dir . '/' . $subdir . '/' . $fileName)) {
 				break;
 			}
 
@@ -58,14 +56,14 @@ class Files
 				$j = 0;
 
 				while (true) {
-					$subdir = substr(md5(mt_rand()), 0, 3) . "/" . substr(md5(mt_rand()), 0, 3);
+					$subdir = substr(md5(mt_rand()), 0, 3) . '/' . substr(md5(mt_rand()), 0, 3);
 
-					if (!file_exists($dir . "/" . $subdir . "/" . $fileName)) {
+					if (!file_exists($dir . '/' . $subdir . '/' . $fileName)) {
 						break;
 					}
 
 					if ($j >= 25) {
-						$subdir = substr(md5(mt_rand()), 0, 3) . "/" . md5(mt_rand());
+						$subdir = substr(md5(mt_rand()), 0, 3) . '/' . md5(mt_rand());
 
 						break;
 					}
@@ -82,7 +80,7 @@ class Files
 		$fileModel->mime = $file->getMimeType();
 		$fileModel->size = $file->getSize();
 
-		if ($storage->putFileAs('files/' . $subdir, $file, $fileName)) {
+		if ($file->storeAs('files/' . $subdir, $fileName, $storage)) {
 			throw new Exception('Не удалось записать файл');
 		}
 
@@ -100,8 +98,6 @@ class Files
 	public static function getById(int $fileId)
 	{
 		static $_staticCache = [];
-
-		$fileId = (int) $fileId;
 
 		if (!$fileId) {
 			return false;
@@ -144,8 +140,7 @@ class Files
 
 	public static function delete(int $fileId)
 	{
-		$file = Models\File::query()
-			->find((int) $fileId);
+		$file = Models\File::find($fileId);
 
 		if (!$file) {
 			return true;

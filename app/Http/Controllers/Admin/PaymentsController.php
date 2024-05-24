@@ -8,7 +8,7 @@ use Prologue\Alerts\Facades\Alert;
 use App\Http\Requests\Admin\PaymentRequest;
 use App\Models\LogCredit;
 use App\Models\Payment;
-use App\User;
+use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
 /**

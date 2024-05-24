@@ -5,8 +5,8 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Models\Observers\PlanetObserver;
 use App\Models\Observers\UserObserver;
-use App\Planet;
-use App\User;
+use App\Models\Planet;
+use App\Models\User;
 
 class EventServiceProvider extends ServiceProvider
 {

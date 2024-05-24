@@ -5,8 +5,8 @@ namespace App\Missions;
 use Illuminate\Support\Facades\DB;
 use App\Entity\Coordinates;
 use App\FleetEngine;
-use App\Planet;
-use App\User;
+use App\Models\Planet;
+use App\Models\User;
 use App\Vars;
 
 class Rak extends FleetEngine implements Mission

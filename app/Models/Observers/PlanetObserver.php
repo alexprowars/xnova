@@ -2,7 +2,7 @@
 
 namespace App\Models\Observers;
 
-use App\Planet;
+use App\Models\Planet;
 
 class PlanetObserver
 {

@@ -3,7 +3,7 @@
 namespace App\Missions;
 
 use App\FleetEngine;
-use App\User;
+use App\Models\User;
 
 class StayAlly extends FleetEngine implements Mission
 {

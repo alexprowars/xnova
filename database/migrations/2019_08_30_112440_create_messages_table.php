@@ -9,14 +9,14 @@ return new class extends Migration {
 	{
 		Schema::create('messages', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
-			$table->integer('from_id')->default(0)->index('message_sender');
-			$table->integer('time')->default(0)->index('message_time');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+			$table->foreignId('from_id')->nullable()->constrained('users')->cascadeOnDelete();
+			$table->integer('time')->default(0)->index();
 			$table->integer('type')->default(0);
 			$table->boolean('deleted')->default(false);
 			$table->string('theme', 100)->nullable();
 			$table->text('text')->nullable();
-			$table->index(['user_id','deleted'], 'message_owner_2');
+			$table->index(['user_id','deleted']);
 		});
 	}
 

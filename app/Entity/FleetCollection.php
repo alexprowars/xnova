@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Planet;
+use App\Models\Planet;
 use Illuminate\Support\Collection;
 use App\Game;
 use App\Planet\Entity\Ship;

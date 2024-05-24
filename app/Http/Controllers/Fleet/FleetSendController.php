@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Entity\Coordinates;
@@ -14,7 +15,7 @@ use App\Fleet;
 use App\Format;
 use App\Game;
 use App\Models;
-use App\Planet;
+use App\Models\Planet;
 use App\Vars;
 
 class FleetSendController extends Controller
@@ -274,15 +275,14 @@ class FleetSendController extends Controller
 				$friend = Models\Friend::query()
 					->where(function (Builder $query) use ($targerUser) {
 						$query->where(function (Builder $query) use ($targerUser) {
-							$query->where('sender', $this->user->id)
-								->where('owner', $targerUser->id);
+							$query->where('user_id', $this->user->id)->where('friend_id', $targerUser->id);
 						})
 						->orWhere(function (Builder $query) use ($targerUser) {
-							$query->where('owner', $this->user->id)
-								->where('sender', $targerUser->id);
+							$query->where('user_id', $this->user->id)->where('friend_id', $targerUser->id);
 						});
 					})
-					->where('active', 1)->first();
+					->where('active', 1)
+					->exists();
 
 				if ($targerUser->alliance_id != $this->user->alliance_id && !$friend && (!$diplomacy || ($diplomacy && $diplomacy['type'] != 2))) {
 					throw new ErrorException('Нельзя охранять вражеские планеты!');
@@ -475,12 +475,12 @@ class FleetSendController extends Controller
 		if ($fleetMission == 1) {
 			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
 
-			$log = Models\Log::query()->where('s_id', $this->user->id)
+			$log = Models\LogFleet::query()->where('s_id', $this->user->id)
 				->where('mission', 1)
 				->where('e_galaxy', $targetPlanet->galaxy)
 				->where('e_system', $targetPlanet->system)
 				->where('e_planet', $targetPlanet->planet)
-				->where('time', '>', $night_time)
+				->where('created_at', '>', $night_time)
 				->first();
 
 			if (!$this->user->isAdmin() && $log && $log->amount > 2 && (($diplomacy && $diplomacy['type'] != 3) || !$diplomacy)) {
@@ -488,11 +488,10 @@ class FleetSendController extends Controller
 			}
 
 			if ($log) {
-				Models\Log::find($log->id)->increment('amount');
+				$log->increment('amount');
 			} else {
-				Models\Log::insert([
+				Models\LogFleet::create([
 					'mission' => 1,
-					'time' => now(),
 					'amount' => 1,
 					's_id' => $this->user->id,
 					's_galaxy' => $this->planet->galaxy,
@@ -541,35 +540,29 @@ class FleetSendController extends Controller
 				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
 			}
 
-			$cnt = DB::table('log_transfers')
+			$cnt = Models\LogTransfer::query()
 				->where('user_id', $this->user->id)
 				->where('target_id', $targerUser->id)
-				->where('time', '>', time() - 86400 * 7)
+				->where('created_at', '>', Date::createFromTimestamp(time() - 86400 * 7))
 				->count();
 
 			if ($cnt >= 3) {
 				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще 3х раз в неделю.');
 			}
 
-			$cnt = DB::table('log_transfers')
+			$cnt = Models\LogTransfer::query()
 				->where('user_id', $this->user->id)
 				->where('target_id', $targerUser->id)
-				->where('time', '>', time() - 86400 * 1)
+				->where('created_at', '>', Date::createFromTimestamp(time() - 86400))
 				->count();
 
 			if ($cnt > 0) {
 				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще одного раза в день.');
 			}
 
-			//$equiv = $TransMetal + $TransCrystal * 2 + $TransDeuterium * 4;
-
-			//if ($equiv > 15000000)
-			//	throw new RedirectException("<span class=\"error\"><b>Вы не можете посылать флот с миссией \"Транспорт\" другому игроку с количеством ресурсов большим чем 15кк в эквиваленте металла.</b></span>", 'Ошибка', "/fleet/", 5);
-
-			DB::table('log_transfers')->insert([
-				'time' => time(),
+			Models\LogTransfer::create([
 				'user_id' => $this->user->id,
-				'data' => json_encode([
+				'data' => [
 					'planet' => [
 						'galaxy' => $this->planet->galaxy,
 						'system' => $this->planet->system,
@@ -588,7 +581,7 @@ class FleetSendController extends Controller
 						'crystal' => $TransCrystal,
 						'deuterium' => $TransDeuterium,
 					],
-				]),
+				],
 				'target_id' => $targetPlanet->user_id,
 			]);
 

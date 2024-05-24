@@ -3,7 +3,7 @@
 use Friday\Core\Options;
 use Phalcon\Loader;
 use Phalcon\Events\Manager as EventsManager;
-use App\User;
+use App\Models\User;
 
 define('ROOT_PATH', dirname(__DIR__.'../').'/');
 

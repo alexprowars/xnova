@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\LogIp;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -11,7 +12,7 @@ use App\Exceptions\PageException;
 use App\Game;
 use App\Helpers;
 use App\Models\Blocked;
-use App\User;
+use App\Models\User;
 
 class UserAuthenticated
 {
@@ -43,10 +44,9 @@ class UserAuthenticated
 		if ($user->ip != $ip) {
 			$user->ip = $ip;
 
-			DB::table('log_ips')->insert([
-				'id'	=> $user->id,
-				'time'	=> time(),
-				'ip'	=> $ip
+			LogIp::create([
+				'user_id' => $user->id,
+				'ip' => $ip,
 			]);
 		}
 

@@ -9,7 +9,7 @@ use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Models\Assault;
 use App\Models\Fleet;
-use App\User;
+use App\Models\User;
 
 class FleetVerbandController extends Controller
 {

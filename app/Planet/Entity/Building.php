@@ -2,10 +2,7 @@
 
 namespace App\Planet\Entity;
 
-use App\Exceptions\Exception;
-use App\Planet;
 use App\Planet\Contracts\PlanetBuildingEntityInterface;
-use App\Planet\Production;
 use App\Vars;
 
 class Building extends BaseEntity implements PlanetBuildingEntityInterface

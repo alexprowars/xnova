@@ -22,7 +22,7 @@ return new class extends Migration {
 			$table->integer('fleet_points')->default(0);
 			$table->integer('total_rank')->default(0);
 			$table->integer('total_points')->default(0);
-			$table->index(['object_id','type'], 'id');
+			$table->index(['object_id','type']);
 		});
 	}
 
