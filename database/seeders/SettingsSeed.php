@@ -9,7 +9,7 @@ class SettingsSeed extends Seeder
 {
 	public function run()
 	{
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'lastSettedGalaxyPos'], [
 			'key' => 'lastSettedGalaxyPos',
 			'name' => 'lastSettedGalaxyPos',
 			'value' => 1,
@@ -17,7 +17,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'lastSettedSystemPos'], [
 			'key' => 'lastSettedSystemPos',
 			'name' => 'lastSettedSystemPos',
 			'value' => 1,
@@ -25,7 +25,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'lastSettedPlanetPos'], [
 			'key' => 'lastSettedPlanetPos',
 			'name' => 'lastSettedPlanetPos',
 			'value' => 1,
@@ -33,7 +33,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'usersTotal'], [
 			'key' => 'usersTotal',
 			'name' => 'usersTotal',
 			'value' => 0,
@@ -41,7 +41,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'usersOnline'], [
 			'key' => 'usersOnline',
 			'name' => 'usersOnline',
 			'value' => 0,
@@ -49,7 +49,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'statUpdate'], [
 			'key' => 'statUpdate',
 			'name' => 'statUpdate',
 			'value' => 0,
@@ -57,7 +57,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'activeUsers'], [
 			'key' => 'activeUsers',
 			'name' => 'activeUsers',
 			'value' => 0,
@@ -65,7 +65,7 @@ class SettingsSeed extends Seeder
 			'active' => 1,
 		]);
 
-		Setting::create([
+		Setting::firstOrCreate(['key' => 'activeAlliance'], [
 			'key' => 'activeAlliance',
 			'name' => 'activeAlliance',
 			'value' => 0,

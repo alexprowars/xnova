@@ -24,3 +24,4 @@ Thumbs.db
 /.phpstorm.meta.php
 /public/assets/build/
 /public/packages/
+/database/database.sqlite

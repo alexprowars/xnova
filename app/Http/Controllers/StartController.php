@@ -15,7 +15,7 @@ class StartController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->sex == 0 || $this->user->avatar == 0) {
+		if (!$this->user->sex || !$this->user->avatar) {
 			if ($request->post('save')) {
 				$username = strip_tags(trim($request->post('character')));
 
@@ -34,9 +34,8 @@ class StartController extends Controller
 
 				$face = Helpers::checkString($request->post('face', ''));
 
-				if ($face != '') {
+				if (!empty($face)) {
 					$face = explode('_', $face);
-
 					$face[0] = (int) $face[0];
 
 					if ($face[0] != 1 && $face[0] != 2) {
@@ -49,8 +48,8 @@ class StartController extends Controller
 							$face[1] = 1;
 						}
 
-						$this->user->sex = (int) $face[0];
-						$this->user->avatar = (int) $face[1];
+						$this->user->sex = $face[0];
+						$this->user->avatar = $face[1];
 					}
 				}
 
@@ -58,11 +57,10 @@ class StartController extends Controller
 				$this->user->update();
 			}
 
-			if ($this->user->username == '') {
-				$generator = RandomNameGenerator\All::create();
-				$this->user->username = $generator->getName();
+			if (empty($this->user->username)) {
+				$this->user->username = RandomNameGenerator\All::create()->getName();
 			}
-		} elseif ($this->user->race == 0) {
+		} elseif (!$this->user->race) {
 			if ($request->post('save')) {
 				$r = (int) $request->post('race', 0);
 				$r = ($r < 1 || $r > 4) ? 0 : $r;

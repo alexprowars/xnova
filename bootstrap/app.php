@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -63,20 +64,14 @@ return Application::configure(basePath: dirname(__DIR__))
 				'message' => $e->getMessage(),
 			];
 
-			$debug = config('app.debug');
-
-			if ($debug) {
-				$data['trace'] = $e->getTraceAsString();
+			if ($e instanceof AuthenticationException) {
+				$data['redirect'] = $e->redirectTo($request);
+			} else {
+				if (config('app.debug')) {
+					$data['trace'] = $e->getTraceAsString();
+				}
 			}
 
-			return new JsonResponse(
-				[
-					'status' => false,
-					'data' => $data
-				],
-				$e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500,
-				$e instanceof HttpExceptionInterface ? $e->getHeaders() : [],
-				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-			);
+			return new JsonResponse(['data' => $data], options: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 		});
 	})->create();
