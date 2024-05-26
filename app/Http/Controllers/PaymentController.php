@@ -9,11 +9,6 @@ use App\Controller;
 
 class PaymentController extends Controller
 {
-	public function index()
-	{
-		return [];
-	}
-
 	public function robokassa()
 	{
 		if (!Request::has('InvId') || Request::input("InvId") == '' || !is_numeric(Request::input("InvId"))) {

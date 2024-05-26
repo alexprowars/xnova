@@ -151,7 +151,5 @@ class LoginController extends Controller
 
 			throw new SuccessException(__($status));
 		}
-
-		return [];
 	}
 }

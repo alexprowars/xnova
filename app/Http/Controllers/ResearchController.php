@@ -8,8 +8,6 @@ use App\Exceptions\PageException;
 
 class ResearchController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		if ($this->user->vacation > 0) {

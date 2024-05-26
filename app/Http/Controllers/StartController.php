@@ -2,37 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RedirectException;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorException;
-use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Controller;
 use App\Models;
 use App\Vars;
-use Nubs\RandomNameGenerator;
 
 class StartController extends Controller
 {
-	public function index(Request $request)
+	public function save(Request $request)
 	{
 		if (!$this->user->sex || !$this->user->avatar) {
-			if ($request->post('save')) {
-				$username = strip_tags(trim($request->post('character')));
+			if ($request->has('username')) {
+				$username = strip_tags(trim($request->post('username')));
 
 				if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $username)) {
 					throw new ErrorException(__('start.error_charalpha'));
 				}
 
-				$ExistUser = Models\User::query()
+				$existUser = Models\User::query()
 					->where('username', $username)
 					->where('id', '!=', $this->user->id)
 					->exists();
 
-				if ($ExistUser) {
+				if ($existUser) {
 					throw new ErrorException(__('reg.error_userexist'));
 				}
 
-				$face = Helpers::checkString($request->post('face', ''));
+				$this->user->username = $username;
+			}
+
+			if ($request->has('avatar')) {
+				$face = Helpers::checkString($request->post('avatar'));
 
 				if (!empty($face)) {
 					$face = explode('_', $face);
@@ -52,56 +55,29 @@ class StartController extends Controller
 						$this->user->avatar = $face[1];
 					}
 				}
-
-				$this->user->username = $username;
-				$this->user->update();
 			}
 
-			if (empty($this->user->username)) {
-				$this->user->username = RandomNameGenerator\All::create()->getName();
-			}
-		} elseif (!$this->user->race) {
-			if ($request->post('save')) {
-				$r = (int) $request->post('race', 0);
-				$r = ($r < 1 || $r > 4) ? 0 : $r;
-
-				if ($r <= 0) {
-					throw new ErrorException('Выберите фракцию');
-				}
-
-				$this->user->race = $r;
-				$this->user->bonus = time() + 86400;
-
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
-					$this->user->{Vars::getName($oId)} = time() + 86400;
-				}
-
-				$this->user->update();
-
-				throw new RedirectException('', '/tutorial/');
-			}
+			$this->user->update();
 		}
 
-		$races = [];
+		if (!$this->user->race && $request->has('race')) {
+			$r = (int) $request->post('race', 0);
+			$r = ($r < 1 || $r > 4) ? 0 : $r;
 
-		foreach (__('main.race') as $i => $race) {
-			if ($i === 0) {
-				continue;
+			if ($r <= 0) {
+				throw new ErrorException('Выберите фракцию');
 			}
 
-			$races[] = [
-				'i' => $i,
-				'name' => $race,
-				'description' => __('info.info.' . (700 + $i)),
-			];
-		}
+			$this->user->race = $r;
+			$this->user->bonus = time() + 86400;
 
-		return [
-			'sex' => (int) $this->user->sex,
-			'avatar' => (int) $this->user->avatar,
-			'race' => (int) $this->user->race,
-			'races' => $races,
-			'name' => $this->user->username
-		];
+			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
+				$this->user->{Vars::getName($oId)} = time() + 86400;
+			}
+
+			$this->user->update();
+
+			throw new RedirectException('', '/tutorial');
+		}
 	}
 }

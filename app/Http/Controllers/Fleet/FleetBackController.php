@@ -54,6 +54,6 @@ class FleetBackController extends Controller
 			'mess' 			=> 1,
 		]);
 
-		throw new RedirectException(__('fleet.fl_isback'), '/xnova/');
+		throw new RedirectException(__('fleet.fl_isback'), '/');
 	}
 }

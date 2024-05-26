@@ -11,8 +11,6 @@ use App\Vars;
 
 class InfoController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index(int $element)
 	{
 		return $this->ShowBuildingInfoPage($element);
@@ -137,14 +135,13 @@ class InfoController extends Controller
 	{
 		$parse = [];
 
-		if (!__('info.info.' . $itemId)) {
+		if (!__('main.tech.' . $itemId)) {
 			throw new ErrorException('Мы не сможем дать вам эту информацию');
 		}
 
 		$price = Vars::getItemPrice($itemId);
 
 		$parse['i'] = (int) $itemId;
-		$parse['description'] = __('info.info.' . $itemId);
 
 		$parse['production'] = false;
 		$parse['destroy'] = false;

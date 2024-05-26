@@ -8,7 +8,7 @@ use App\Models\UserQuest;
 use App\Vars;
 
 /**
- * @mixin \App\User
+ * @mixin \App\Models\User
  */
 class User extends JsonResource
 {
@@ -26,6 +26,8 @@ class User extends JsonResource
 			'id' => $this->id,
 			'name' => trim($this->username),
 			'race' => (int) $this->race,
+			'sex' => (int) $this->sex,
+			'avatar' => $this->avatar,
 			'messages' => $this->messages,
 			'alliance' => $this->alliance_id > 0 ? [
 				'id' => $this->alliance_id,

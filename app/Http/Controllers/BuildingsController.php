@@ -8,8 +8,6 @@ use App\Exceptions\PageException;
 
 class BuildingsController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		if ($this->user->isVacation() > 0) {

@@ -9,8 +9,6 @@ use App\Controller;
 
 class SearchController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index(Request $request)
 	{
 		$parse = [

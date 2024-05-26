@@ -11,8 +11,6 @@ use App\Vars;
 
 class MerchantController extends Controller
 {
-	protected $loadPlanet = true;
-
 	private $modifiers = [
 		'metal' => 1,
 		'crystal' => 2,
@@ -90,6 +88,6 @@ class MerchantController extends Controller
 			$tutorial->save();
 		}
 
-		throw new RedirectException('Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type), '/merchant/');
+		throw new RedirectException('Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type), '/merchant');
 	}
 }

@@ -7,12 +7,6 @@ use App\Vars;
 
 class SimController extends Controller
 {
-	protected $loadPlanet = true;
-
-	/**
-	 * @Route("/{data:[0-9!;,]+}{params:(/.*)*}")
-	 * @param string $data
-	 */
 	public function index($data = '')
 	{
 		$data = explode(";", $data);

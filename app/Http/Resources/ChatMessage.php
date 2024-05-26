@@ -40,7 +40,7 @@ class ChatMessage extends JsonResource
 		$message = nl2br(str_replace(["\n", "\r"], '', $message));
 
 		if ($color = $this->user->getOption('color')) {
-			$message = '<span style="color: ' . (__('main.colors')[$color][0] ?? 'white') . '">' . $message . '</span>';
+			$message = '<span style="color: ' . (__('main.colors.' . $color) ?? 'white') . '">' . $message . '</span>';
 		}
 
 		$users = count($privateUsers) ? $privateUsers : $publicUsers;

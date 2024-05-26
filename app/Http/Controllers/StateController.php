@@ -1,19 +1,40 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Controllers;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
+use App\Controller;
 use App\Game;
+use App\Http\Resources\Planet;
+use App\Http\Resources\User;
+use Illuminate\Support\Facades\Auth;
 
-class Responce extends JsonResource
+class StateController extends Controller
 {
-	public function toArray($request)
+	public function index()
 	{
+		$planet = null;
+
+		if (Auth::check()) {
+			$planet = Auth::user()->getCurrentPlanet();
+		}
+
 		$data = [
-			'data' => $this->resource,
 			'error' => null,
 			'messages' => [],
+			'speed' => [
+				'game' => Game::getSpeed('build'),
+				'fleet' => Game::getSpeed('fleet'),
+				'resources' => Game::getSpeed('mine'),
+			],
+			'stats' => [
+				'time' => time(),
+				'timezone' => (int) date('Z'),
+				'online' => (int) config('settings.usersOnline', 0),
+				'users' => (int) config('settings.usersTotal', 0),
+			],
+			'user' => Auth::check() ? User::make(Auth::user()) : null,
+			'planet' => $planet ? Planet::make($planet) : null,
+			'version' => VERSION,
 		];
 
 		if (Auth::check()) {

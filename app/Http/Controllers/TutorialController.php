@@ -13,8 +13,6 @@ use App\Vars;
 
 class TutorialController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function info(int $stage)
 	{
 		if ($stage <= 0) {
@@ -178,7 +176,7 @@ class TutorialController extends Controller
 			$this->user->save();
 			$this->planet->save();
 
-			throw new RedirectException('Квест завершен', '/tutorial/');
+			throw new RedirectException('Квест завершен', '/tutorial');
 		}
 
 		foreach ($parse['info']['REWARD'] as $rewardKey => $rewardVal) {

@@ -10,8 +10,6 @@ use App\Vars;
 
 class ImperiumController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		$parse = [];
@@ -122,39 +120,26 @@ class ImperiumController extends Controller
 				}
 			}
 
-			$resources = Vars::getStorage()['resource'] ?? [];
-
-			$items = [];
-
-			foreach ($resources as $i => $res) {
-				if (!isset($items[$i])) {
-					$items[$i] = [
-						'current' => 0,
-						'build' => 0,
-						'fly' => 0
-					];
-				}
-
-				$items[$i]['current'] = $planet->getLevel($i);
-				$items[$i]['build'] = $build_hangar[$i] ?? 0;
-
-				if (Vars::getItemType($i) == Vars::ITEM_TYPE_FLEET) {
-					$items[$i]['fly'] = $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$i] ?? 0;
-				}
-			}
-
 			$row['elements'] = [];
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $i) {
-				$row['elements']['e' . $i] = $items[$i];
-			}
+			foreach (Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]) as $id) {
+				if (!$planet->getLevel($id)) {
+					continue;
+				}
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
-				$row['elements']['e' . $i] = $items[$i];
-			}
+				$item = [
+					'id' => $id,
+					'fly' => 0
+				];
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $i) {
-				$row['elements']['e' . $i] = $items[$i];
+				$item['current'] = $planet->getLevel($id);
+				$item['build'] = $build_hangar[$id] ?? 0;
+
+				if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET) {
+					$item['fly'] = $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$id] ?? 0;
+				}
+
+				$row['elements'][$id] = $item;
 			}
 
 			$parse['planets'][] = $row;

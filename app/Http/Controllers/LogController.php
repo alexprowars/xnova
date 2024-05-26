@@ -47,13 +47,13 @@ class LogController extends Controller
 		}
 
 		if (!Request::has('id')) {
-			throw new RedirectException('Ошибка удаления.', '/log/');
+			throw new RedirectException('Ошибка удаления.', '/log');
 		}
 
 		$id = (int) Request::query('id', 0);
 
 		if (!$id) {
-			throw new RedirectException('Ошибка удаления.', '/log/');
+			throw new RedirectException('Ошибка удаления.', '/log');
 		}
 
 		$log = LogBattle::where('id', $id)
@@ -61,33 +61,24 @@ class LogController extends Controller
 			->first();
 
 		if (!$log) {
-			throw new RedirectException('Ошибка удаления.', '/log/');
+			throw new RedirectException('Ошибка удаления.', '/log');
 		}
 
 		if (!$log->delete()) {
-			throw new RedirectException('Ошибка удаления.', '/log/');
+			throw new RedirectException('Ошибка удаления.', '/log');
 		}
 
-		throw new RedirectException('Отчет удалён', '/log/');
+		throw new RedirectException('Отчет удалён', '/log');
 	}
 
 	public function new()
 	{
-		if (!Auth::check()) {
-			return redirect('/');
-		}
-
-		return [];
-	}
-
-	public function newSave()
-	{
 		$title = Request::post('title', '');
 
 		if ($title == '') {
-			throw new RedirectException('<h1><font color=red>Введите название для боевого отчёта.</h1>', '/log/');
+			throw new RedirectException('<h1><font color=red>Введите название для боевого отчёта.</h1>', '/log');
 		} elseif (Request::post('code', '') == '') {
-			throw new RedirectException('<h1><font color=red>Введите ID боевого отчёта.</h1>', '/log/');
+			throw new RedirectException('<h1><font color=red>Введите ID боевого отчёта.</h1>', '/log');
 		}
 
 		$code = Request::post('code', '');
@@ -96,13 +87,13 @@ class LogController extends Controller
 		$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 		if (md5(config('app.key') . $id) != $key) {
-			throw new RedirectException('Неправильный ключ', '/log/');
+			throw new RedirectException('Неправильный ключ', '/log');
 		}
 
 		$log = Report::find($id);
 
 		if (!$log) {
-			throw new RedirectException('Боевой отчёт не найден в базе', '/log/');
+			throw new RedirectException('Боевой отчёт не найден в базе', '/log');
 		}
 
 		if ($log->users_id[0] == $this->user->id && $log->no_contact == 1) {
@@ -124,7 +115,7 @@ class LogController extends Controller
 			throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
 		}
 
-		throw new RedirectException('Боевой отчёт успешно сохранён.', '/log/');
+		throw new RedirectException('Боевой отчёт успешно сохранён.', '/log');
 	}
 
 	public function info(int $id)

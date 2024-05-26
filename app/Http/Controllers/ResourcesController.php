@@ -15,8 +15,6 @@ use App\Vars;
 
 class ResourcesController extends Controller
 {
-	protected $loadPlanet = true;
-
 	private function buy($parse)
 	{
 		if ($this->user->vacation > 0) {
@@ -48,7 +46,7 @@ class ResourcesController extends Controller
 			'type' => 2
 		]);
 
-		throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', '/resources/');
+		throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', '/resources');
 	}
 
 	public function productionAction()

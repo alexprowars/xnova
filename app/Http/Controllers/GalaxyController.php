@@ -12,12 +12,8 @@ use App\Models;
 
 class GalaxyController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index(Request $request)
 	{
-		$parse = [];
-
 		$fleetmax = $this->user->getTechLevel('computer') + 1;
 
 		if ($this->user->rpg_admiral > time()) {
@@ -126,6 +122,7 @@ class GalaxyController extends Controller
 			'max_fleets' => $fleetmax
 		];
 
+		$parse = [];
 		$parse['galaxy'] = (int) $galaxy;
 		$parse['system'] = (int) $system;
 		$parse['user'] = $jsUser;

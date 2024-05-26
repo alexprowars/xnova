@@ -25,3 +25,4 @@ Thumbs.db
 /public/assets/build/
 /public/packages/
 /database/database.sqlite
+/public/storage

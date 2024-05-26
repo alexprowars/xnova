@@ -12,8 +12,6 @@ use App\Vars;
 
 class OfficierController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function buy(Request $request)
 	{
 		if ($this->user->vacation > 0) {
@@ -59,7 +57,7 @@ class OfficierController extends Controller
 			'type' => 5
 		]);
 
-		throw new RedirectException(__('officier.OffiRecrute'), '/officier/');
+		throw new RedirectException(__('officier.OffiRecrute'), '/officier');
 	}
 
 	public function index()

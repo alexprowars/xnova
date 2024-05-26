@@ -20,20 +20,13 @@ class ApiResponse
 		$response = $next($request);
 
 		if ($response instanceof RedirectResponse) {
-			$route = Route::current();
-
-			$uri = rtrim(str_replace($request->root(), '', $response->getTargetUrl()), '/') . '/';
-			$uri = str_replace('/' . $route->getPrefix(), '', $uri);
-
 			return new JsonResponse([
-				'data' => [
-					'redirect' => $uri
-				],
+				'redirect' => $response->getTargetUrl(),
 			]);
 		}
 
-		if (!($response instanceof JsonResponse)) {
-			return $response;
+		if (!$response instanceof JsonResponse) {
+			return new JsonResponse(null, $response->status());
 		}
 
 		if ($response->exception) {
@@ -44,14 +37,14 @@ class ApiResponse
 					$code = $response->exception->getStatusCode();
 				}
 
-				return new JsonResponse([
-					'data' => $response->getOriginalContent(),
-				], $code);
+				return new JsonResponse($response->getOriginalContent(), $code);
 			} else {
-				return new JsonResponse([
-					'data' => array_merge(Responce::make(null)->toArray(request()), $response->getOriginalContent()),
-				]);
+				return new JsonResponse(array_merge(Responce::make(null)->toArray(request()), $response->getOriginalContent()));
 			}
+		}
+
+		if (Route::current()->getName() == 'state')  {
+			return $response;
 		}
 
 		return (new Responce($response->getOriginalContent()))->response();

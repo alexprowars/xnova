@@ -14,11 +14,6 @@ use App\Models\User;
 
 class IndexController extends Controller
 {
-	public function index()
-	{
-		return [];
-	}
-
 	public function registration(Request $request)
 	{
 		$errors = [];

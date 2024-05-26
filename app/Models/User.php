@@ -362,7 +362,7 @@ class User extends Authenticatable
 				$this->planet_current = $this->planet_id;
 				$this->update();
 
-				$planet = Planet::query()->find($this->planet_current);
+				$planet = Planet::find($this->planet_current);
 			}
 
 			if ($planet) {

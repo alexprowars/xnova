@@ -10,15 +10,8 @@ use App\Models\Planet;
 
 class Construction
 {
-	/** @var User */
-	private $user;
-	/** @var Planet */
-	private $planet;
-
-	public function __construct(User $user, Planet $planet)
+	public function __construct(protected User $user, protected Planet $planet)
 	{
-		$this->user = $user;
-		$this->planet = $planet;
 	}
 
 	public function pageBuilding()
@@ -60,7 +53,7 @@ class Construction
 						break;
 				}
 
-				throw new RedirectException('', 'buildings/');
+				throw new RedirectException('', '/buildings');
 			}
 		}
 
@@ -169,7 +162,7 @@ class Construction
 						break;
 				}
 
-				throw new RedirectException('', '/research/');
+				throw new RedirectException('', '/research');
 			}
 		}
 

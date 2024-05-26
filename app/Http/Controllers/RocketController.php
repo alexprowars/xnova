@@ -13,8 +13,6 @@ use App\Models;
 
 class RocketController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		if (!Request::instance()->isMethod('post')) {

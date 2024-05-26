@@ -15,8 +15,6 @@ use App\Vars;
 
 class FleetController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index(Request $request)
 	{
 		if ($this->user->vacation > 0) {

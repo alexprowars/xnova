@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\Route;
 use App\Exceptions\RedirectException;
 use App\Models\User;
 use App\Models\Planet;
+use Nubs\RandomNameGenerator;
 
 class Controller extends BaseController
 {
 	protected ?User $user = null;
 	protected ?Planet $planet = null;
-
-	protected $loadPlanet = false;
 
 	public function __construct()
 	{
@@ -39,6 +38,10 @@ class Controller extends BaseController
 
 		$this->user = Auth::user();
 
+		if (empty($this->user->username)) {
+			$this->user->username = RandomNameGenerator\All::create()->getName();
+		}
+
 		if (!(int) config('settings.view.showPlanetListSelect', 0)) {
 			config(['settings.view.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
 		}
@@ -52,13 +55,11 @@ class Controller extends BaseController
 
 		$controller = Route::current()->getName();
 
-		if (($this->user->race == 0 || $this->user->avatar == 0) && !in_array($controller, ['infos', 'content', 'start', 'error', 'logout'])) {
-			throw new RedirectException('', '/start/');
+		if ((!$this->user->race || !$this->user->avatar) && !in_array($controller, ['state', 'infos', 'content', 'start', 'error', 'logout'])) {
+			throw new RedirectException('', '/start');
 		}
 
-		if ($request->has('initial') || $this->loadPlanet) {
-			$this->planet = $this->user->getCurrentPlanet(true);
-		}
+		$this->planet = $this->user->getCurrentPlanet(true);
 
 		Fleet::SetShipsEngine($this->user);
 	}

@@ -8,8 +8,6 @@ use App\Vars;
 
 class TechController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		$parse = [];

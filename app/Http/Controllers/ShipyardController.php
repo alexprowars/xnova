@@ -9,8 +9,6 @@ use App\Exceptions\PageException;
 
 class ShipyardController extends Controller
 {
-	protected $loadPlanet = true;
-
 	public function index()
 	{
 		if ($this->user->vacation > 0) {

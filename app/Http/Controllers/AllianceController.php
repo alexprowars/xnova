@@ -34,7 +34,7 @@ class AllianceController extends Controller
 			Models\User::query()->where('id', $this->user->id)->update(['alliance_id' => null]);
 			Models\AllianceMember::query()->where('u_id', $this->user->id)->delete();
 
-			throw new RedirectException(__('alliance.ally_notexist'), '/alliance/');
+			throw new RedirectException(__('alliance.ally_notexist'), '/alliance');
 		}
 
 		$this->ally = $alliance;
@@ -60,7 +60,7 @@ class AllianceController extends Controller
 				->where('u_id', $this->user->id)
 				->delete();
 
-			throw new RedirectException("Вы отозвали свою заявку на вступление в альянс", "/alliance/");
+			throw new RedirectException("Вы отозвали свою заявку на вступление в альянс", "/alliance");
 		}
 
 		$parse = [];
@@ -383,7 +383,7 @@ class AllianceController extends Controller
 
 					User::sendMessage($show, $this->user->id, 0, 3, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
-					throw new RedirectException('Игрок принят в альянс', '/alliance/members/');
+					throw new RedirectException('Игрок принят в альянс', '/alliance/members');
 				}
 			} elseif ($request->post('action') == "Отклонить") {
 				if ($request->post('text') != '') {
@@ -497,7 +497,7 @@ class AllianceController extends Controller
 
 		$this->ally->deleteAlly();
 
-		throw new RedirectException('Альянс удалён', '/alliance/');
+		throw new RedirectException('Альянс удалён', '/alliance');
 	}
 
 	public function adminGive(Request $request)
@@ -505,20 +505,20 @@ class AllianceController extends Controller
 		$this->parseInfo($this->user->alliance_id);
 
 		if ($this->ally->user_id != $this->user->id) {
-			throw new RedirectException("Доступ запрещён.", "/alliance/");
+			throw new RedirectException("Доступ запрещён.", "/alliance");
 		}
 
 		if ($request->post('newleader') && $this->ally->user_id == $this->user->id) {
 			$info = DB::selectOne("SELECT id, alliance_id FROM users WHERE id = '" . $request->post('newleader', 'int') . "'");
 
 			if (!$info || $info->alliance_id != $this->user->alliance_id) {
-				throw new RedirectException("Операция невозможна.", "/alliance/");
+				throw new RedirectException("Операция невозможна.", "/alliance");
 			}
 
 			DB::statement("UPDATE alliances SET user_id = '" . $info->id . "' WHERE id = " . $this->user->alliance_id . " ");
 			DB::statement("UPDATE alliances_members SET rank = '0' WHERE u_id = '" . $info->id . "';");
 
-			throw new RedirectException('Правление передано', '/alliance/');
+			throw new RedirectException('Правление передано', '/alliance');
 		}
 
 		$listuser = DB::select("SELECT u.username, u.id, m.rank FROM users u LEFT JOIN alliances_members m ON m.u_id = u.id WHERE u.alliance_id = '" . $this->user->alliance_id . "' AND u.id != " . $this->ally->user_id . " AND m.rank != 0;");
@@ -591,13 +591,13 @@ class AllianceController extends Controller
 				$al = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . intval($request->post('ally')) . "'");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
+					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
 				}
 
 				$ad = DB::select("SELECT id FROM alliances_diplomacies WHERE alliance_id = " . $this->ally->id . " AND diplomacy_id = " . $al->id . "");
 
 				if (count($ad)) {
-					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "/alliance/diplomacy/");
+					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "/alliance/diplomacy");
 				}
 
 				if ($st < 0 || $st > 3) {
@@ -607,29 +607,29 @@ class AllianceController extends Controller
 				DB::statement("INSERT INTO alliances_diplomacies VALUES (NULL, " . $this->ally->id . ", " . $al->id . ", " . $st . ", 0, 1)");
 				DB::statement("INSERT INTO alliances_diplomacies VALUES (NULL, " . $al->id . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
-				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy/");
+				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy");
 			} elseif ($request->query('edit', '') == "del") {
 				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
+					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
 				}
 
 				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
 				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
-				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy/");
+				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy");
 			} elseif ($request->query('edit', '') == "suc") {
 				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy/");
+					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
 				}
 
 				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
 				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
-				throw new RedirectException("Отношение между вашими альянсами подтверждено", "/alliance/diplomacy/");
+				throw new RedirectException("Отношение между вашими альянсами подтверждено", "/alliance/diplomacy");
 			}
 		}
 
@@ -836,7 +836,7 @@ class AllianceController extends Controller
 
 			DB::statement("UPDATE users SET messages_ally = messages_ally + '1' WHERE alliance_id = '" . $this->user->alliance_id . "' AND id != " . $this->user->id . "");
 
-			throw new RedirectException('Сообщение отправлено', '/alliance/chat/');
+			throw new RedirectException('Сообщение отправлено', '/alliance/chat');
 		}
 
 		$parse = [];
@@ -925,58 +925,54 @@ class AllianceController extends Controller
 			throw new ErrorException(__('alliance.Denied_access'));
 		}
 
-		if ($request->isMethod('post')) {
-			$tag = $request->post('tag', '');
-			$name = $request->post('name', '');
+		$tag = $request->post('tag', '');
+		$name = $request->post('name', '');
 
-			if ($tag == '') {
-				throw new ErrorException(__('alliance.have_not_tag'));
-			}
-			if ($name == '') {
-				throw new ErrorException(__('alliance.have_not_name'));
-			}
-			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
-				throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
-			}
-			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $name)) {
-				throw new ErrorException("Название альянса содержит запрещённые символы");
-			}
-
-			$find = Alliance::query()->where('tag', addslashes($tag))->exists();
-
-			if ($find) {
-				throw new ErrorException(str_replace('%s', $tag, __('alliance.always_exist')));
-			}
-
-			$alliance = new Alliance();
-
-			$alliance->name = addslashes($name);
-			$alliance->tag = addslashes($tag);
-			$alliance->user_id = $this->user->id;
-			$alliance->created_at = time();
-
-			if (!$alliance->save()) {
-				throw new ErrorException('Произошла ошибка при создании альянса');
-			}
-
-			$member = new AllianceMember();
-
-			$member->alliance_id = $alliance->id;
-			$member->user_id = $this->user->id;
-			$member->time = time();
-
-			if (!$member->save()) {
-				throw new ErrorException('Произошла ошибка при создании альянса');
-			}
-
-			$this->user->alliance_id = $alliance->id;
-			$this->user->alliance_name = $alliance->name;
-			$this->user->update();
-
-			throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');
+		if ($tag == '') {
+			throw new ErrorException(__('alliance.have_not_tag'));
+		}
+		if ($name == '') {
+			throw new ErrorException(__('alliance.have_not_name'));
+		}
+		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
+			throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
+		}
+		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $name)) {
+			throw new ErrorException("Название альянса содержит запрещённые символы");
 		}
 
-		return [];
+		$find = Alliance::query()->where('tag', addslashes($tag))->exists();
+
+		if ($find) {
+			throw new ErrorException(str_replace('%s', $tag, __('alliance.always_exist')));
+		}
+
+		$alliance = new Alliance();
+
+		$alliance->name = addslashes($name);
+		$alliance->tag = addslashes($tag);
+		$alliance->user_id = $this->user->id;
+		$alliance->created_at = time();
+
+		if (!$alliance->save()) {
+			throw new ErrorException('Произошла ошибка при создании альянса');
+		}
+
+		$member = new AllianceMember();
+
+		$member->alliance_id = $alliance->id;
+		$member->user_id = $this->user->id;
+		$member->time = time();
+
+		if (!$member->save()) {
+			throw new ErrorException('Произошла ошибка при создании альянса');
+		}
+
+		$this->user->alliance_id = $alliance->id;
+		$this->user->alliance_name = $alliance->name;
+		$this->user->update();
+
+		throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');
 	}
 
 	public function search(Request $request)
@@ -1000,7 +996,7 @@ class AllianceController extends Controller
 			$text = $request->post('searchtext');
 
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $text)) {
-				throw new RedirectException("Строка поиска содержит запрещённые символы", '/alliance/search/');
+				throw new RedirectException("Строка поиска содержит запрещённые символы", '/alliance/search');
 			}
 
 			$search = Alliance::query()->where('name', 'LIKE', '%' . $text . '%')
@@ -1056,7 +1052,7 @@ class AllianceController extends Controller
 				->exists();
 
 			if ($existRequest) {
-				throw new RedirectException('Вы уже отсылали заявку на вступление в этот альянс!', '/alliance/');
+				throw new RedirectException('Вы уже отсылали заявку на вступление в этот альянс!', '/alliance');
 			}
 
 			AllianceRequest::create([
@@ -1065,7 +1061,7 @@ class AllianceController extends Controller
 				'message' => strip_tags($request->post('text')),
 			]);
 
-			throw new RedirectException(__('alliance.apply_registered'), '/alliance/');
+			throw new RedirectException(__('alliance.apply_registered'), '/alliance');
 		}
 
 		$parse = [];

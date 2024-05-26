@@ -47,7 +47,7 @@ class SupportController extends Controller
 		$id = (int) $id;
 
 		if (!$id) {
-			throw new RedirectException('Не задан ID тикета', '/support/');
+			throw new RedirectException('Не задан ID тикета', '/support');
 		}
 
 		$text = Request::post('text', '');
@@ -59,7 +59,7 @@ class SupportController extends Controller
 		$ticket = Support::query()->find($id);
 
 		if (!$ticket) {
-			throw new RedirectException('Тикет не найден', '/support/');
+			throw new RedirectException('Тикет не найден', '/support');
 		}
 
 		$text = $ticket->text . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($text) . '';

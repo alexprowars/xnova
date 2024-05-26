@@ -13,31 +13,27 @@ class NotesController extends Controller
 {
 	public function new(Request $request)
 	{
-		if ($request->isMethod('post')) {
-			$priority = (int) $request->post('u', 0);
+		$priority = (int) $request->post('u', 0);
 
-			$title = $request->post('title', '');
-			$text = $request->post('text', '');
+		$title = $request->post('title', '');
+		$text = $request->post('text', '');
 
-			if ($title == '') {
-				$title = __('notes.NoTitle');
-			}
-
-			if ($text == '') {
-				$text = __('notes.NoText');
-			}
-
-			$note = new Note();
-			$note->user_id = $this->user->id;
-			$note->priority = $priority;
-			$note->title = $title;
-			$note->text = $text;
-			$note->save();
-
-			throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/' . $note->id . '/');
+		if ($title == '') {
+			$title = __('notes.NoTitle');
 		}
 
-		return [];
+		if ($text == '') {
+			$text = __('notes.NoText');
+		}
+
+		$note = new Note();
+		$note->user_id = $this->user->id;
+		$note->priority = $priority;
+		$note->title = $title;
+		$note->text = $text;
+		$note->save();
+
+		throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/' . $note->id);
 	}
 
 	public function edit(Request $request, int $noteId)
@@ -68,7 +64,7 @@ class NotesController extends Controller
 			$note->text = $text;
 			$note->save();
 
-			throw new RedirectException(__('notes.NoteUpdated'), '/notes/edit/' . $note->id . '/');
+			throw new RedirectException(__('notes.NoteUpdated'), '/notes/edit/' . $note->id);
 		}
 
 		$parse = [
@@ -91,7 +87,7 @@ class NotesController extends Controller
 					->whereIn('id', $deleteIds)->delete();
 			}
 
-			throw new RedirectException(__('notes.NoteDeleteds'), '/notes/');
+			throw new RedirectException(__('notes.NoteDeleteds'), '/notes');
 		}
 
 		$notes = Note::query()->where('user_id', $this->user->id)

@@ -47,17 +47,12 @@ class EntityFactory
 	{
 		$entityType = Vars::getItemType($entityId);
 
-		switch ($entityType) {
-			case Vars::ITEM_TYPE_BUILING:
-				return Building::class;
-			case Vars::ITEM_TYPE_TECH:
-				return Research::class;
-			case Vars::ITEM_TYPE_FLEET:
-				return Ship::class;
-			case Vars::ITEM_TYPE_DEFENSE:
-				return Defence::class;
-			default:
-				throw new Exception('unknown entity');
-		}
+		return match ($entityType) {
+			Vars::ITEM_TYPE_BUILING => Building::class,
+			Vars::ITEM_TYPE_TECH => Research::class,
+			Vars::ITEM_TYPE_FLEET => Ship::class,
+			Vars::ITEM_TYPE_DEFENSE => Defence::class,
+			default => throw new Exception('unknown entity'),
+		};
 	}
 }

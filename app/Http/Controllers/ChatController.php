@@ -15,11 +15,6 @@ use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
-	public function index()
-	{
-		return [];
-	}
-
 	public function sendMessage(Request $request)
 	{
 		$message = $request->post('message');

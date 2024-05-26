@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection PhpUnusedParameterInspection */
-
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;

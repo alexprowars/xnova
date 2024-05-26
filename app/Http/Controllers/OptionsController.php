@@ -45,14 +45,14 @@ class OptionsController extends Controller
 						'provider_id' => $identity,
 					]);
 				} else {
-					throw new RedirectException('Данная точка входа уже используется', '/options/');
+					throw new RedirectException('Данная точка входа уже используется', '/options');
 				}
 			} else {
-				throw new RedirectException('Ошибка получения данных', '/options/');
+				throw new RedirectException('Ошибка получения данных', '/options');
 			}
 		}
 
-		throw new RedirectException('', '/options/');
+		throw new RedirectException('', '/options');
 	}
 
 	public function emailAction(Request $request)
@@ -71,7 +71,7 @@ class OptionsController extends Controller
 
 			User::sendMessage(1, false, time(), 5, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
 
-			throw new RedirectException('Заявка отправлена на рассмотрение', '/options/');
+			throw new RedirectException('Заявка отправлена на рассмотрение', '/options');
 		}
 	}
 
@@ -273,10 +273,10 @@ class OptionsController extends Controller
 			$this->user->username_change = now();
 			$this->user->update();
 
-			throw new RedirectException('Имя пользователя изменено', '/options/');
+			throw new RedirectException('Имя пользователя изменено', '/options');
 		}
 
-		throw new RedirectException(__('options.succeful_save'), '/options/');
+		throw new RedirectException(__('options.succeful_save'), '/options');
 	}
 
 	public function index()

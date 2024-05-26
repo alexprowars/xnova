@@ -52,7 +52,7 @@ class BuddyController extends Controller
 
 			User::sendMessage($user->id, 0, time(), 2, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
-			throw new RedirectException('Запрос отправлен', '/buddy/');
+			throw new RedirectException('Запрос отправлен', '/buddy');
 		}
 
 		if ($user->id == $this->user->id) {
@@ -89,7 +89,7 @@ class BuddyController extends Controller
 		} elseif ($friend->user_id == $this->user->id) {
 			$friend->delete();
 
-			throw new RedirectException('Заявка удалена', '/buddy/requests/my/');
+			throw new RedirectException('Заявка удалена', '/buddy/requests/my');
 		} else {
 			throw new ErrorException('Заявка не найдена');
 		}
@@ -110,7 +110,7 @@ class BuddyController extends Controller
 		$friend->active = 1;
 		$friend->update();
 
-		throw new RedirectException('', '/buddy/');
+		throw new RedirectException('', '/buddy');
 	}
 
 	public function index($isRequests = false, $isMy = false)
