@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Events\PlanetEntityUpdated;
 use App\Exceptions\ErrorException;
 use App\Models\LogHistory;
 use App\Models\User;
 use App\Models\Planet;
+use App\Planet\Contracts\PlanetBuildingEntityInterface;
 use App\Planet\EntityFactory;
 use App\Queue\Build;
 use App\Queue\Tech;
@@ -19,20 +21,16 @@ class Queue
 	public const TYPE_BUILDING = Models\Queue::TYPE_BUILD;
 	public const TYPE_RESEARCH = Models\Queue::TYPE_TECH;
 	public const TYPE_SHIPYARD = Models\Queue::TYPE_UNIT;
-	/** @var User user */
-	private $user;
-	/** @var Planet planet */
-	private $planet;
 
-	public function __construct($user, ?Planet $planet = null)
+	protected User $user;
+
+	public function __construct($user, protected ?Planet $planet = null)
 	{
 		if ($user instanceof Models\User) {
 			$this->user = $user;
 		} else {
 			$this->user = Models\User::find((int) $user);
 		}
-
-		$this->planet = $planet;
 
 		$this->loadQueue();
 	}
@@ -177,10 +175,6 @@ class Queue
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
 		}
 
-		if (!($this->user instanceof User)) {
-			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::User');
-		}
-
 		$buildingsCount = $this->getCount(self::TYPE_BUILDING);
 
 		if ($buildingsCount) {
@@ -215,6 +209,15 @@ class Queue
 		$buildItem = $queueArray[0];
 
 		$entity = $this->planet->getEntity($buildItem->object_id);
+
+		if (!($entity instanceof PlanetBuildingEntityInterface)) {
+			if (!$this->deleteInQueue($buildItem->id)) {
+				$buildItem->delete();
+			}
+
+			return true;
+		}
+
 		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
 
 		$buildTime = $entity->getTime();
@@ -254,6 +257,8 @@ class Queue
 				$this->planet->field_current--;
 				$this->planet->updateAmount($buildItem->object_id, -1, true);
 			}
+
+			event(new PlanetEntityUpdated($this->user->id));
 
 			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
@@ -308,7 +313,7 @@ class Queue
 
 			$entity = $this->planet->getEntity($buildItem->object_id);
 
-			if (!$entity) {
+			if (!($entity instanceof PlanetBuildingEntityInterface)) {
 				array_shift($queueArray);
 
 				if (!$this->deleteInQueue($buildItem->id)) {
@@ -414,10 +419,6 @@ class Queue
 	{
 		if (!($this->planet instanceof Planet)) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
-		}
-
-		if (!($this->user instanceof User)) {
-			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::User');
 		}
 
 		$result	= false;

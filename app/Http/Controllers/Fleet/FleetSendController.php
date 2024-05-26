@@ -151,7 +151,7 @@ class FleetSendController extends Controller
 			$YourPlanet = true;
 		}
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, [$galaxy, $system, $planet, $planet_type], $YourPlanet, $UsedPlanet, ($fleetGroupId > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, new Coordinates($galaxy, $system, $planet, $planet_type), $YourPlanet, $UsedPlanet, ($fleetGroupId > 0));
 
 		if (!in_array($fleetMission, $missiontype)) {
 			throw new ErrorException('Миссия неизвестна!');

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Exceptions\Exception;
 use App\Models;
 use App\Vars;
+use Illuminate\Support\Facades\DB;
 
 class Queue extends Command
 {
@@ -33,7 +34,7 @@ class Queue extends Command
 			$items = Models\Queue::query()
 				->select(['user_id', 'planet_id'])
 				->where('time', '>', 0)
-				->where('time_end', '<=', time() + 10)
+				->where('time_end', '<=', time() + 5)
 				->whereNot('type', 'unit')
 				//->orderBy('id')
 				->groupBy('user_id', 'planet_id')
@@ -49,8 +50,7 @@ class Queue extends Command
 						throw new Exception('Cron::update::queueAction::user or planet not found');
 					}
 
-					$queueManager = new \App\Queue($item->user, $planet);
-					$queueManager->update();
+					DB::transaction(fn() => (new \App\Queue($item->user, $planet))->update());
 				} catch (Exception $e) {
 					file_put_contents(ROOT_PATH . '/php_errors.log', "\n\n" . $e->getMessage() . "\n\n", FILE_APPEND);
 

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\URL;
 use App\Entity\Coordinates;
 
 class Fleet extends Model
@@ -47,7 +46,7 @@ class Fleet extends Model
 
 	public function getStartAdressLink($FleetType = '')
 	{
-		$uri = URL::route('galaxy', [
+		$uri = route('galaxy', [
 			'galaxy' => $this->start_galaxy,
 			'system' => $this->start_system,
 		], false);
@@ -59,7 +58,7 @@ class Fleet extends Model
 
 	public function getTargetAdressLink($FleetType = '')
 	{
-		$uri = URL::route('galaxy', [
+		$uri = route('galaxy', [
 			'galaxy' => $this->end_galaxy,
 			'system' => $this->end_system,
 		], false);

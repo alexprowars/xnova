@@ -19,7 +19,6 @@ class StateController extends Controller
 		}
 
 		$data = [
-			'error' => null,
 			'messages' => [],
 			'speed' => [
 				'game' => Game::getSpeed('build'),

@@ -42,8 +42,11 @@ class ApiResponse
 				return new JsonResponse(array_merge(Responce::make(null)->toArray(request()), $response->getOriginalContent()));
 			}
 		}
+		if ($request->routeIs('state'))  {
+			return $response;
+		}
 
-		if (Route::current()->getName() == 'state')  {
+		if ($request->is('broadcasting/*')) {
 			return $response;
 		}
 

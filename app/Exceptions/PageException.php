@@ -9,15 +9,8 @@ use Illuminate\Support\Facades\URL;
 
 class PageException extends Exception
 {
-	protected $url = false;
-
-	public function __construct($message = '', $url = false)
+	public function __construct($message = '', protected $url = null)
 	{
-		if ($url) {
-			$this->url = str_replace(Request::root(), '', rtrim(URL::to($url), '/')) . '/';
-			$this->url = str_replace('/' . Route::current()->getPrefix(), '', $this->url);
-		}
-
 		parent::__construct($message);
 	}
 

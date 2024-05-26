@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FleetRow;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -9,179 +10,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\Fleet;
 use App\Game;
 use App\Helpers;
 use App\Models;
 use App\Models\Planet;
 use App\Planet\Entity as PlanetEntity;
 use App\Queue;
-use App\Models\Fleet as FleetModel;
 use App\Controller;
 use App\Vars;
 
 class OverviewController extends Controller
 {
-	private function buildFleetEventTable(FleetModel $FleetRow, $Status, $Owner)
-	{
-		$FleetStyle = [
-			1 => 'attack',
-			2 => 'federation',
-			3 => 'transport',
-			4 => 'deploy',
-			5 => 'transport',
-			6 => 'espionage',
-			7 => 'colony',
-			8 => 'harvest',
-			9 => 'destroy',
-			10 => 'missile',
-			15 => 'transport',
-			20 => 'attack'
-		];
-
-		$FleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
-		$FleetPrefix = $Owner ? 'own' : '';
-
-		$MissionType 	= $FleetRow->mission;
-
-		$FleetContent 	= Fleet::CreateFleetPopupedFleetLink($FleetRow, __('overview.ov_fleet'), $FleetPrefix . $FleetStyle[$MissionType], $this->user);
-		$FleetCapacity 	= Fleet::CreateFleetPopupedMissionLink($FleetRow, __('main.type_mission.' . $MissionType), $FleetPrefix . $FleetStyle[$MissionType]);
-
-		$StartPlanet 	= $FleetRow->user_name;
-		$StartType 		= $FleetRow->start_type;
-		$TargetPlanet 	= $FleetRow->target_user_name;
-		$TargetType 	= $FleetRow->end_type;
-
-		$StartID  = '';
-		$TargetID = '';
-
-		if ($Status != 2) {
-			if ($StartPlanet == '') {
-				$StartID = ' с координат ';
-			} else {
-				if ($StartType == 1) {
-					$StartID = __('overview.ov_planet_to');
-				} elseif ($StartType == 3) {
-					$StartID = __('overview.ov_moon_to');
-				} elseif ($StartType == 5) {
-					$StartID = ' с военной базы ';
-				}
-
-				$StartID .= $StartPlanet . " ";
-			}
-
-			$StartID .= $FleetRow->getStartAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
-
-			if ($TargetPlanet == '') {
-				$TargetID = ' координаты ';
-			} else {
-				if ($MissionType != 15 && $MissionType != 5) {
-					if ($TargetType == 1) {
-						$TargetID = __('overview.ov_planet_to_target');
-					} elseif ($TargetType == 2) {
-						$TargetID = __('overview.ov_debris_to_target');
-					} elseif ($TargetType == 3) {
-						$TargetID = __('overview.ov_moon_to_target');
-					} elseif ($TargetType == 5) {
-						$TargetID = ' военной базе ';
-					}
-				} else {
-					$TargetID = __('overview.ov_explo_to_target');
-				}
-
-				$TargetID .= $TargetPlanet . " ";
-			}
-
-			$TargetID .= $FleetRow->getTargetAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
-		} else {
-			if ($StartPlanet == '') {
-				$StartID = ' на координаты ';
-			} else {
-				if ($StartType == 1) {
-					$StartID = __('overview.ov_back_planet');
-				} elseif ($StartType == 3) {
-					$StartID = __('overview.ov_back_moon');
-				}
-
-				$StartID .= $StartPlanet . " ";
-			}
-
-			$StartID .= $FleetRow->getStartAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
-
-			if ($TargetPlanet == '') {
-				$TargetID = ' с координат ';
-			} else {
-				if ($MissionType != 15) {
-					if ($TargetType == 1) {
-						$TargetID = __('overview.ov_planet_from');
-					} elseif ($TargetType == 2) {
-						$TargetID = __('overview.ov_debris_from');
-					} elseif ($TargetType == 3) {
-						$TargetID = __('overview.ov_moon_from');
-					} elseif ($TargetType == 5) {
-						$TargetID = ' с военной базы ';
-					}
-				} else {
-					$TargetID = __('overview.ov_explo_from');
-				}
-
-				$TargetID .= $TargetPlanet . " ";
-			}
-
-			$TargetID .= $FleetRow->getTargetAdressLink($FleetPrefix . $FleetStyle[$MissionType]);
-		}
-
-		if ($Owner) {
-			$EventString = __('overview.ov_une');
-			$EventString .= $FleetContent;
-		} else {
-			$EventString = $FleetRow->assault_id ? 'Союзный ' : __('overview.ov_une_hostile');
-			$EventString .= $FleetContent;
-			$EventString .= __('overview.ov_hostile');
-			$EventString .= Helpers::BuildHostileFleetPlayerLink($FleetRow);
-		}
-
-		if ($Status == 0) {
-			$Time = $FleetRow->start_time;
-			$EventString .= __('overview.ov_vennant');
-			$EventString .= $StartID;
-			$EventString .= __('overview.ov_atteint');
-			$EventString .= $TargetID;
-			$EventString .= __('overview.ov_mission');
-		} elseif ($Status == 1) {
-			$Time = $FleetRow->end_stay;
-			$EventString .= __('overview.ov_vennant');
-			$EventString .= $StartID;
-
-			if ($MissionType == 5) {
-				$EventString .= ' защищает ';
-			} else {
-				$EventString .= __('overview.ov_explo_stay');
-			}
-
-			$EventString .= $TargetID;
-			$EventString .= __('overview.ov_explo_mission');
-		} else {
-			$Time = $FleetRow->end_time;
-			$EventString .= __('overview.ov_rentrant');
-			$EventString .= $TargetID;
-			$EventString .= $StartID;
-			$EventString .= __('overview.ov_mission');
-		}
-
-		$EventString .= $FleetCapacity;
-
-		$bloc['id'] = (int) $FleetRow->id;
-		$bloc['status'] = $FleetStatus[$Status];
-		$bloc['prefix'] = $FleetPrefix;
-		$bloc['mission'] = $FleetStyle[$MissionType];
-		$bloc['date'] = Game::datezone("H:i:s", $Time);
-		$bloc['time'] = $Time->getTimestamp();
-		$bloc['text'] = $EventString;
-
-		return $bloc;
-	}
-
 	public function delete(Request $request)
 	{
 		if ($request->isMethod('post') && $request->post('id') && $request->post('id', 0) == $this->user->planet_current) {
@@ -331,7 +170,7 @@ class OverviewController extends Controller
 		return $parse;
 	}
 
-	public function bonus()
+	public function daily()
 	{
 		if ($this->user->bonus > time()) {
 			throw new ErrorException('Вы не можете получить ежедневный бонус в данное время');
@@ -362,14 +201,8 @@ class OverviewController extends Controller
 		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : ''), '/overview');
 	}
 
-	public function index(Request $request)
+	public function index()
 	{
-		if ($request->has('bonus')) {
-			$this->bonus();
-		}
-
-		$parse = [];
-
 		$XpMinierUp = pow($this->user->lvl_minier, 3);
 		$XpRaidUp = pow($this->user->lvl_raid, 2);
 
@@ -385,16 +218,16 @@ class OverviewController extends Controller
 		foreach ($fleets as $fleet) {
 			if ($fleet->user_id == $this->user->id) {
 				if ($fleet->start_time->isFuture()) {
-					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 0, true);
+					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 0, true);
 				}
 
 				if ($fleet->end_stay?->isFuture()) {
-					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 1, true);
+					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, true);
 				}
 
 				if (!($fleet->mission == 7 && $fleet->mess == 0)) {
 					if (($fleet->end_time->isFuture() and $fleet->mission != 4) or ($fleet->mess == 1 and $fleet->mission == 4)) {
-						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 2, true);
+						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 2, true);
 					}
 				}
 
@@ -406,22 +239,23 @@ class OverviewController extends Controller
 						->get();
 
 					foreach ($AKSFleets as $AKFleet) {
-						$fpage[$fleet->start_time->getTimestamp()][$AKFleet->id] = $this->buildFleetEventTable($AKFleet, 0, false);
+						$fpage[$fleet->start_time->getTimestamp()][$AKFleet->id] = FleetRow::make($AKFleet, 0, false);
 					}
 
 					$aks[] = $fleet->assault_id;
 				}
 			} elseif ($fleet->mission != 8) {
 				if ($fleet->start_time->isFuture()) {
-					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 0, false);
+					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 0, false);
 				}
 
 				if ($fleet->mission == 5 && $fleet->end_stay?->isFuture()) {
-					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = $this->buildFleetEventTable($fleet, 1, false);
+					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, false);
 				}
 			}
 		}
 
+		$parse = [];
 		$parse['moon'] = false;
 
 		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id) {
@@ -496,7 +330,7 @@ class OverviewController extends Controller
 
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
 
-		$build_list = [];
+		$queueList = [];
 
 		$planetsData = Planet::query()
 			->where('user_id', $this->user->id)
@@ -510,10 +344,9 @@ class OverviewController extends Controller
 			$end = [];
 
 			foreach ($queueArray as $item) {
-				if (!isset($end[$item->planet_id])) {
-					$end[$item->planet_id] = $item->time;
-				}
+				$end[$item->planet_id] ??= $item->time;
 
+				/** @var Planet $planet */
 				$planet = $planetsData[$item->planet_id];
 				$planet->setRelation('user', $this->user);
 
@@ -531,11 +364,13 @@ class OverviewController extends Controller
 
 				$end[$item->planet_id] += $time;
 
-				$build_list[$end[$item->planet_id]][] = [
-					$end[$item->planet_id],
-					$item->planet_id,
-					$planet->name,
-					__('main.tech.' . $item->object_id) . ' (' . ($item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1) . ' -> ' . $item->level . ')'
+				$queueList[] = [
+					'time' => $end[$item->planet_id],
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planet->name,
+					'object_id' => $item->object_id,
+					'level' => $item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1,
+					'level_to' => $item->level,
 				];
 			}
 		}
@@ -544,11 +379,13 @@ class OverviewController extends Controller
 			$queueArray = $queueManager->get($queueManager::TYPE_RESEARCH);
 
 			foreach ($queueArray as $item) {
-				$build_list[$item->time_end][] = [
-					(int) $item->time_end,
-					$item->planet_id,
-					$planetsData[$item->planet_id]->name,
-					__('main.tech.' . $item->object_id) . ' (' . $this->user->getTechLevel($item->object_id) . ' -> ' . ($this->user->getTechLevel($item->object_id) + 1) . ')'
+				$queueList[] = [
+					'time' => (int) $item->time_end,
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planetsData[$item->planet_id]->name,
+					'object_id' => $item->object_id,
+					'level' => $this->user->getTechLevel($item->object_id),
+					'level_to' => $this->user->getTechLevel($item->object_id) + 1,
 				];
 			}
 		}
@@ -559,39 +396,26 @@ class OverviewController extends Controller
 			$end = [];
 
 			foreach ($queueArray as $item) {
-				if (!isset($end[$item->planet_id])) {
-					$end[$item->planet_id] = $item->time;
-				}
-
-				$time = $item->time_end - $item->time;
-
-				$end[$item->planet_id] += $time * $item->level;
+				$end[$item->planet_id] ??= $item->time;
+				$end[$item->planet_id] += ($item->time_end - $item->time) * $item->level;
 
 				if ($end[$item->planet_id] < time()) {
 					continue;
 				}
 
-				$build_list[$end[$item->planet_id]][] = [
-					$end[$item->planet_id],
-					$item->planet_id,
-					$planetsData[$item->planet_id]->name,
-					__('main.tech.' . $item->object_id) . ' (' . $item->level . ')'
+				$queueList[] = [
+					'time' => $end[$item->planet_id],
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planetsData[$item->planet_id]->name,
+					'object_id' => $item->object_id,
+					'level' => $item->level,
 				];
 			}
 		}
 
-		$parse['build_list'] = [];
+		usort($queueList, fn($a, $b) => $a['time'] > $b['time'] ? 1 : -1);
 
-		if (count($build_list) > 0) {
-			$parse['build_list'] = [];
-			ksort($build_list);
-
-			foreach ($build_list as $planet) {
-				foreach ($planet as $text) {
-					$parse['build_list'][] = $text;
-				}
-			}
-		}
+		$parse['build_list'] = $queueList;
 
 		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->planet->getMaxFields() * 100);
 		$parse['case_pourcentage'] = min($parse['case_pourcentage'], 100);

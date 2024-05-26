@@ -61,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::match(['get', 'post'], 'defense', [Controllers\DefenseController::class, 'index'])->name('defense');
 	Route::get('fleet', [Controllers\FleetController::class, 'index'])->name('fleet');
 	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', [Controllers\FleetController::class, 'index'])->name('fleet.galaxy');
-	Route::match(['get', 'post'], 'fleet/checkout', [Controllers\Fleet\FleetController::class, 'index'])->name('fleet.checkout');
+	Route::match(['get', 'post'], 'fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index'])->name('fleet.checkout');
 	Route::match(['get', 'post'], 'fleet/send', [Controllers\Fleet\FleetSendController::class, 'index'])->name('fleet.send');
 	Route::match(['get', 'post'], 'fleet/back', [Controllers\Fleet\FleetBackController::class, 'index'])->name('fleet.back');
 	Route::match(['get', 'post'], 'fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'index'])->name('fleet.shortcut');
@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
 	Route::post('options/save', [Controllers\OptionsController::class, 'save'])->name('options.save');
 	Route::match(['get', 'post'], 'overview', [Controllers\OverviewController::class, 'index'])->name('overview');
+	Route::get('overview/daily', [Controllers\OverviewController::class, 'daily'])->name('overview.daily');
 	Route::match(['get', 'post'], 'overview/rename', [Controllers\OverviewController::class, 'rename'])->name('overview.rename');
 	Route::match(['get', 'post'], 'overview/delete', [Controllers\OverviewController::class, 'delete'])->name('overview.delete');
 	Route::get('phalanx', [Controllers\PhalanxController::class, 'index'])->name('phalanx');

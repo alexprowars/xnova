@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Entity\Coordinates;
 use App\Models\User;
 
 class Fleet extends Building
@@ -65,9 +66,7 @@ class Fleet extends Building
 		$FleetPopup .= "</table>";
 		$FleetPopup .= "'>" . $Texte . "</a>";
 
-		$FleetPopup = "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
-
-		return $FleetPopup;
+		return "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 	}
 
 	static function CreateFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
@@ -93,19 +92,23 @@ class Fleet extends Building
 		return $MissionPopup;
 	}
 
-	static function getFleetMissions($fleetArray, $target = [1, 1, 1, 1], $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
+	static function getFleetMissions($fleetArray, Coordinates $target = null, $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
 	{
+		if (empty($target)) {
+			$target = new Coordinates(1, 1, 1, 1);
+		}
+
 		$result = [];
 
-		if ($target[2] == 16) {
+		if ($target->getPlanet() == 16) {
 			if (!(count($fleetArray) == 1 && isset($fleetArray[210]))) {
 				$result[] = 15;
 			}
 		} else {
-			if ($target[3] == 2 && isset($fleetArray[209])) {
+			if ($target->getType() == 2 && isset($fleetArray[209])) {
 				$result[] = 8; // Переработка
-			} elseif ($target[3] == 1 || $target[3] == 3 || $target[3] == 5) {
-				if (isset($fleetArray[216]) && !$isActivePlanet && $target[3] == 1) {
+			} elseif ($target->getType() == 1 || $target->getType() == 3 || $target->getType() == 5) {
+				if (isset($fleetArray[216]) && !$isActivePlanet && $target->getType() == 1) {
 					$result[] = 10; // Создать базу
 				}
 
@@ -137,7 +140,7 @@ class Fleet extends Building
 					$result[] = 2; // Объединить
 				}
 
-				if ($target[3] == 3 && isset($fleetArray[214]) && !$isYouPlanet && $isActivePlanet) {
+				if ($target->getType() == 3 && isset($fleetArray[214]) && !$isYouPlanet && $isActivePlanet) {
 					$result[] = 9;
 				}
 			}

@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Exceptions\RedirectException;
 use App\Models\Assault;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Exceptions\PageException;
 use App\Entity;
 use App\Fleet;
 use App\Models\Planet;
+use App\Planet\Entity as PlanetEntity;
 use App\Vars;
 
-class FleetController extends Controller
+class FleetCheckoutController extends Controller
 {
 	public function index(Request $request)
 	{
@@ -63,7 +64,7 @@ class FleetController extends Controller
 
 				$fleets[$i] = $cnt;
 
-				$ship = Planet\Entity\Ship::createEntity($i, 1, $this->planet)->getInfo();
+				$ship = PlanetEntity\Ship::createEntity($i, 1, $this->planet)->getInfo();
 				$ship['count'] = $cnt;
 
 				$parse['ships'][] = $ship;
@@ -71,7 +72,7 @@ class FleetController extends Controller
 		}
 
 		if (!count($fleets)) {
-			return redirect('/fleet/');
+			throw new RedirectException('', '/fleet');
 		}
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
@@ -102,16 +103,16 @@ class FleetController extends Controller
 
 		$parse['planets'] = [];
 
-		$kolonien = $this->user->getPlanets();
+		$planets = $this->user->getPlanets();
 
-		if (count($kolonien) > 1) {
-			foreach ($kolonien as $row) {
+		if (count($planets) > 1) {
+			foreach ($planets as $row) {
 				if ($row->id == $this->planet->id) {
 					continue;
 				}
 
 				if ($row->planet_type == 3) {
-					$row->name .= " " . __('fleet.fl_shrtcup3');
+					$row->name .= ' ' . __('fleet.fl_shrtcup3');
 				}
 
 				$parse['planets'][] =  [
@@ -132,8 +133,7 @@ class FleetController extends Controller
 			$moons = $this->user->planets()
 				->where('id', '!=', $this->planet->id)
 				->where(function (Builder $planet) {
-					$planet->where('planet_type', 3)
-						->orWhere('planet_type', 5);
+					$planet->where('planet_type', 3)->orWhere('planet_type', 5);
 				})
 				->get();
 
@@ -194,7 +194,7 @@ class FleetController extends Controller
 			}
 		}
 
-		$missions = Fleet::getFleetMissions($fleets, [$galaxy, $system, $planet, $type], $YourPlanet, $UsedPlanet, ($acs > 0));
+		$missions = Fleet::getFleetMissions($fleets, new Entity\Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
 
 		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
 			$missions[] = 4;
@@ -219,7 +219,7 @@ class FleetController extends Controller
 		if (count($missions) > 0) {
 			foreach ($missions as $i => $id) {
 				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1) {
-					$parse['mission'] = $id;
+					$mission = $id;
 				}
 
 				$parse['missions'][] = $id;
