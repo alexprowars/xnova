@@ -14,7 +14,7 @@ class OfficierController extends Controller
 {
 	public function buy(Request $request)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException('В режиме отпуска данный раздел недоступен!');
 		}
 
@@ -69,8 +69,8 @@ class OfficierController extends Controller
 			$row['id'] = $officier;
 			$row['time'] = 0;
 
-			if ($this->user->{Vars::getName($officier)} > time()) {
-				$row['time'] = $this->user->{Vars::getName($officier)};
+			if ($this->user->{Vars::getName($officier)}?->isFuture()) {
+				$row['time'] = $this->user->{Vars::getName($officier)}->timestamp;
 			}
 
 			$row['description'] = __('officier.Desc.' . $officier);

@@ -65,7 +65,7 @@ class IndexController extends Controller
 				$Bloc['adm_ov_data_clip'] = $Color;
 				$Bloc['adm_ov_data_adip'] = Helpers::convertIp($TheUser->ip);
 				$Bloc['adm_ov_data_ally'] = $TheUser->alliance_name;
-				$Bloc['adm_ov_data_activ'] = Format::time(time() - $TheUser->onlinetime);
+				$Bloc['adm_ov_data_activ'] = Format::time(time() - $TheUser->onlinetime->timestamp);
 
 				$parse['adm_ov_data_table'][] = $Bloc;
 				$Count++;

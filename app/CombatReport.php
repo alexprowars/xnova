@@ -6,23 +6,8 @@ use Illuminate\Support\Facades\URL;
 
 class CombatReport
 {
-	private $attackUsers = [];
-	private $defenseUsers = [];
-	private $result_array = [];
-	private $steal_array = [];
-	private $moon_int = 0;
-	private $moon_string = '';
-	private $repair = [];
-
-	public function __construct($result_array, $attackUsers, $defenseUsers, $steal_array, $moon_int = 0, $moon_string = '', $repair = [])
+	public function __construct(protected $result_array, protected $attackUsers, protected $defenseUsers, protected $steal_array, protected $moon_int = 0, protected $moon_string = '', protected $repair = [])
 	{
-		$this->attackUsers = $attackUsers;
-		$this->defenseUsers = $defenseUsers;
-		$this->result_array = $result_array;
-		$this->steal_array = $steal_array;
-		$this->moon_int = $moon_int;
-		$this->moon_string = $moon_string;
-		$this->repair = $repair;
 	}
 
 	public function report()
@@ -294,14 +279,14 @@ class CombatReport
 		}
 
 		$html .= '<br><br>';
-		$html .= '<a href="' . $this->convertReportToSimLink(array($this->result_array, $this->attackUsers, $this->defenseUsers)) . '" target="_blank">Симуляция</a>';
+		$html .= '<a href="' . $this->convertToSimLink(array($this->result_array, $this->attackUsers, $this->defenseUsers)) . '" target="_blank">Симуляция</a>';
 
 		$html .= "</div>";
 
 		return array('html' => $html, 'bbc' => $bbc);
 	}
 
-	public function convertReportToSimLink($result)
+	public function convertToSimLink($result)
 	{
 		$usersInfo = [];
 

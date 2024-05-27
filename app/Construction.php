@@ -363,7 +363,7 @@ class Construction
 
 			foreach ($queueItems as $item) {
 				if (!$end) {
-					$end = $item->time;
+					$end = $item->time->timestamp;
 				}
 
 				$entity = EntityFactory::create(
@@ -378,9 +378,9 @@ class Construction
 					$elementTime = ceil($elementTime / 2);
 				}
 
-				if ($item->time > 0 && $item->time_end - $item->time != $elementTime) {
+				if ($item->time && $item->time_end->timestamp - $item->time->timestamp != $elementTime) {
 					$item->update([
-						'time_end' => $item->time + $elementTime
+						'time_end' => $item->time->addSeconds($elementTime),
 					]);
 				}
 
@@ -402,38 +402,38 @@ class Construction
 		return $RetValue;
 	}
 
-	public function ElementBuildListBox()
+	public function queueList()
 	{
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueItems = (new Queue($this->user, $this->planet))
+			->get(Queue::TYPE_SHIPYARD);
 
-		$queueItems = $queueManager->get($queueManager::TYPE_SHIPYARD);
+		if (empty($queueItems)) {
+			return [];
+		}
 
 		$data = [];
 
-		if (count($queueItems)) {
-			$end = 0;
+		$end = 0;
 
-			foreach ($queueItems as $item) {
-				if (!$end) {
-					$end = $item->time;
-				}
-
-				$entity = EntityFactory::create($item->object_id);
-
-				$time = $entity->getTime();
-
-				$end += $time * $item->level;
-
-				$row = [
-					'i'		=> (int) $item->object_id,
-					'name'	=> __('main.tech.' . $item->object_id),
-					'count'	=> (int) $item->level,
-					'time'	=> $time,
-					'end'	=> $end
-				];
-
-				$data[] = $row;
+		foreach ($queueItems as $item) {
+			if (!$end) {
+				$end = $item->time;
 			}
+
+			$entity = EntityFactory::create($item->object_id);
+
+			$time = $entity->getTime();
+
+			$end += $time * $item->level;
+
+			$row = [
+				'i'		=> (int) $item->object_id,
+				'count'	=> (int) $item->level,
+				'time'	=> $time,
+				'end'	=> $end
+			];
+
+			$data[] = $row;
 		}
 
 		return $data;

@@ -18,7 +18,7 @@ class FleetQuickController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new Exception('Нет доступа!');
 		}
 
@@ -26,7 +26,7 @@ class FleetQuickController extends Controller
 
 		$MaxFlottes = 1 + $this->user->getTechLevel('computer');
 
-		if ($this->user->rpg_admiral > time()) {
+		if ($this->user->rpg_admiral?->isFuture()) {
 			$MaxFlottes += 2;
 		}
 
@@ -105,7 +105,7 @@ class FleetQuickController extends Controller
 				$HeGameLevel = 0;
 			}
 
-			if ($HeDBRec->onlinetime < (time() - 60 * 60 * 24 * 7)) {
+			if ($HeDBRec->onlinetime->lessThan(now()->subDays(7))) {
 				$NoobNoActive = 1;
 			} else {
 				$NoobNoActive = 0;
@@ -126,7 +126,7 @@ class FleetQuickController extends Controller
 				}
 			}
 
-			if ($HeDBRec->vacation > 0) {
+			if ($HeDBRec->vacation) {
 				throw new Exception('Игрок в режиме отпуска!');
 			}
 

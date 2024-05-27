@@ -10,6 +10,7 @@ use App\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Entity\Coordinates;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
@@ -35,6 +36,17 @@ class Planet extends Model
 	public $entities;
 
 	private $production;
+
+	protected function casts(): array
+	{
+		return [
+			'last_update' => 'datetime',
+			'last_active' => 'datetime',
+			'last_jump_time' => 'datetime',
+			'merchand' => 'datetime',
+			'destruyed' => 'datetime',
+		];
+	}
 
 	public function user()
 	{
@@ -144,7 +156,7 @@ class Planet extends Model
 		}
 	}
 
-	public function getProduction(int $updateTime = 0): Production
+	public function getProduction(Carbon $updateTime = null): Production
 	{
 		if (!$this->production) {
 			$this->production = new Production($this, $updateTime);
@@ -171,21 +183,17 @@ class Planet extends Model
 		$list = [$this->entities->getEntityAmount('laboratory')];
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
-			$items = DB::select(
-				'SELECT b.id, b.level FROM planets_buildings b
-				LEFT JOIN planets p ON p.id = b.planet_id
-					WHERE
-				b.build_id = :build AND p.user_id = :user AND b.planet_id != :planet AND b.level > 0 AND p.destruyed = 0 AND p.planet_type = 1
-					ORDER BY
-				b.level DESC
-					LIMIT :level',
-				[
-					'build' => 31,
-					'user' => $this->user->id,
-					'planet' => $this->id,
-					'level' => $this->user->getTechLevel('intergalactic')
-				]
-			);
+			$items = DB::table('planets_entities', 'pe')
+				->leftJoin('planets p', 'p.id', '=', 'pe.planet_id')
+				->where('pe.entity_id', 31)
+				->where('pe.planet_id', '!=', $this->id)
+				->where('pe.amount', '>', 0)
+				->where('p.user_id', $this->user->id)
+				->where('p.planet_type', 1)
+				->whereNull('pe.destruyed')
+				->orderByDesc('level')
+				->limit($this->user->getTechLevel('intergalactic'))
+				->get();
 
 			foreach ($items as $item) {
 				$list[] = (int) $item->level;
@@ -206,7 +214,7 @@ class Planet extends Model
 
 		if ($jumpGate && $jumpGate->amount > 0) {
 			$waitTime = (60 * 60) * (1 / $jumpGate->amount);
-			$nextJumpTime = $this->last_jump_time + $waitTime;
+			$nextJumpTime = $this->last_jump_time->timestamp + $waitTime;
 
 			if ($nextJumpTime >= time()) {
 				return $nextJumpTime - time();

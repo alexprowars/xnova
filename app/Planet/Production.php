@@ -7,6 +7,7 @@ use App\Models\Planet;
 use App\Planet\Contracts\PlanetEntityProductionInterface;
 use App\Models\User;
 use App\Vars;
+use Illuminate\Support\Carbon;
 
 class Production
 {
@@ -17,12 +18,12 @@ class Production
 	private $storage;
 	private $production;
 
-	public function __construct(Planet $planet, int $updateTime = 0)
+	public function __construct(Planet $planet, Carbon $updateTime = null)
 	{
 		$this->planet = $planet;
 
 		if (!$updateTime) {
-			$updateTime = time();
+			$updateTime = now();
 		}
 
 		$this->updateTime = $updateTime;
@@ -35,7 +36,7 @@ class Production
 			return;
 		}
 
-		if ($this->updateTime < $this->planet->last_update) {
+		if ($this->updateTime->lessThan($this->planet->last_update)) {
 			return;
 		}
 
@@ -50,7 +51,7 @@ class Production
 
 	public function reset()
 	{
-		$this->updateTime = time();
+		$this->updateTime = now();
 		$this->basic = null;
 		$this->storage = null;
 		$this->production = null;
@@ -142,7 +143,7 @@ class Production
 		foreach ($itemsId as $productionId) {
 			$entity = $this->planet->getEntity($productionId);
 
-			if (!$entity || $entity->getLevel() <= 0 || !($entity instanceof PlanetEntityProductionInterface)) {
+			if (!($entity instanceof PlanetEntityProductionInterface) || $entity->getLevel() <= 0) {
 				continue;
 			}
 
@@ -173,7 +174,7 @@ class Production
 
 	private function updatePlanetResources()
 	{
-		$time = $this->updateTime - $this->planet->last_update;
+		$time = $this->updateTime->timestamp - $this->planet->last_update?->timestamp;
 
 		$resourceProduction = $this->getResourceProduction();
 		$storageCapacity = $this->getStorageCapacity();

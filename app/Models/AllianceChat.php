@@ -8,4 +8,11 @@ class AllianceChat extends Model
 {
 	public $timestamps = false;
 	protected $table = 'alliances_chats';
+
+	protected function casts(): array
+	{
+		return [
+			'timestamp' => 'datetime',
+		];
+	}
 }

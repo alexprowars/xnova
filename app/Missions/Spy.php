@@ -32,7 +32,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		$TargetPlanet->setRelation('user', $targetUser);
-		$TargetPlanet->getProduction($this->fleet->start_time->getTimestamp())->update();
+		$TargetPlanet->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();

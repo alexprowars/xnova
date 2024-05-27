@@ -33,7 +33,7 @@ class Attack extends FleetEngine implements Mission
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if (empty($target->id) || !$target->user_id || $target->destruyed > 0) {
+		if (empty($target->id) || !$target->user_id || $target->destruyed) {
 			$this->returnFleet();
 
 			return false;
@@ -56,7 +56,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$target->setRelation('user', $targetUser);
-		$target->getProduction($this->fleet->start_time->getTimestamp())->update();
+		$target->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new Queue($targetUser, $target);
 		$queueManager->checkUnitQueue();
@@ -623,7 +623,7 @@ class Attack extends FleetEngine implements Mission
 				'buster_tech' 	=> $user->getTechLevel('buster'),
 			];
 
-			if ($user->rpg_komandir > time()) {
+			if ($user->rpg_komandir?->isFuture()) {
 				$info['military_tech'] 	+= 2;
 				$info['defence_tech'] 	+= 2;
 				$info['shield_tech'] 	+= 2;

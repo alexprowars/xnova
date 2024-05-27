@@ -48,14 +48,14 @@ class StateController extends Controller
 				];
 			}
 
-			if ($user->deltime > 0) {
+			if ($user->delete_time) {
 				$data['messages'][] = [
 					'type' => 'info-static',
-					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' . Game::datezone("d.m.Y", $user->deltime) . ' в ' . Game::datezone("H:i:s", $user->deltime) . '. Выключить режим удаления можно в настройках игры.'
+					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' . Game::datezone("d.m.Y", $user->delete_time) . ' в ' . Game::datezone("H:i:s", $user->delete_time) . '. Выключить режим удаления можно в настройках игры.'
 				];
 			}
 
-			if ($user->vacation > 0) {
+			if ($user->vacation) {
 				$data['messages'][] = [
 					'type' => 'warning-static',
 					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'

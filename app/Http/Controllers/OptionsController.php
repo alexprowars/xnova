@@ -118,10 +118,10 @@ class OptionsController extends Controller
 			throw new ErrorException('Ваш пароль от аккаунта: ' . $password . '. Обязательно смените его на другой в настройках игры. Копия пароля отправлена на указанный вами электронный почтовый ящик.');
 		}
 
-		if ($this->user->vacation > time()) {
+		if ($this->user->vacation?->isFuture()) {
 			$vacation = $this->user->vacation;
 		} else {
-			$vacation = 0;
+			$vacation = null;
 
 			if ($request->post('vacation')) {
 				$queueManager = new Queue($this->user);
@@ -134,8 +134,8 @@ class OptionsController extends Controller
 				} elseif ($UserFlyingFleets > 0) {
 					throw new ErrorException('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
-					if ($this->user->vacation == 0) {
-						$vacation = time() + config('settings.vocationModeTime', 172800);
+					if (!$this->user->vacation) {
+						$vacation = now()->addDays(config('settings.vacationModeTime', 2));
 					} else {
 						$vacation = $this->user->vacation;
 					}
@@ -153,7 +153,7 @@ class OptionsController extends Controller
 			}
 		}
 
-		$Del_Time = $request->post('delete') ? (time() + 604800) : 0;
+		$Del_Time = $request->post('delete') ? (now()->addDays(7)) : null;
 
 		if (!$this->user->isVacation()) {
 			$sex = ($request->post('sex', 'M') == 'F') ? 2 : 1;
@@ -179,7 +179,7 @@ class OptionsController extends Controller
 
 			$this->user->sex = $sex;
 			$this->user->vacation = $vacation;
-			$this->user->deltime = $Del_Time;
+			$this->user->delete_time = $Del_Time;
 
 			$this->user->setOption('records', !empty($request->post('records')));
 			$this->user->setOption('bb_parser', !empty($request->post('bbcode')));
@@ -232,7 +232,7 @@ class OptionsController extends Controller
 			Cache::forget('app::planetlist_' . $this->user->id);
 		} else {
 			$this->user->vacation = $vacation;
-			$this->user->deltime = $Del_Time;
+			$this->user->delete_time = $Del_Time;
 
 			$this->user->update();
 		}
@@ -255,7 +255,7 @@ class OptionsController extends Controller
 		}
 
 		if ($this->user->username != $username) {
-			if ($this->user->username_change?->getTimestamp() > time() - 86400) {
+			if ($this->user->username_change?->greaterThan(now()->subDay())) {
 				throw new ErrorException('Смена игрового имени возможна лишь раз в сутки.');
 			}
 
@@ -282,12 +282,12 @@ class OptionsController extends Controller
 	public function index()
 	{
 		$parse = [];
-		$parse['vacation'] = $this->user->vacation > 0;
+		$parse['vacation'] = !empty($this->user->vacation);
 
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			$parse['um_end_date'] = Game::datezone("d.m.Y H:i:s", $this->user->vacation);
-			$parse['opt_delac_data'] = ($this->user->deltime > 0);
-			$parse['opt_modev_data'] = ($this->user->vacation > 0);
+			$parse['opt_delac_data'] = !empty($this->user->delete_time);
+			$parse['opt_modev_data'] = !empty($this->user->vacation);
 			$parse['opt_usern_data'] = $this->user->username;
 		} else {
 			$parse['options'] = $this->user->getOptions();
@@ -301,13 +301,13 @@ class OptionsController extends Controller
 				}
 			}
 
-			$parse['opt_usern_datatime'] = $this->user->username_change?->getTimestamp() < time() - 86400;
+			$parse['opt_usern_datatime'] = $this->user->username_change?->lessThan(now()->subDay());
 			$parse['opt_usern_data'] = $this->user->username;
 			$parse['opt_mail_data'] = $this->user->email;
 			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
 
-			$parse['opt_delac_data'] = $this->user->deltime > 0;
-			$parse['opt_modev_data'] = $this->user->vacation > 0;
+			$parse['opt_delac_data'] = !empty($this->user->delete_time);
+			$parse['opt_modev_data'] = !empty($this->user->vacation);
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);

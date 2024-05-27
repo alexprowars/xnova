@@ -55,7 +55,7 @@ class OverviewController extends Controller
 				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', '/overview/rename');
 			}
 
-			$destruyed = time() + 60 * 60 * 24;
+			$destruyed = now()->addDay();
 
 			$this->planet->destruyed = $destruyed;
 			$this->planet->user_id = null;
@@ -64,7 +64,7 @@ class OverviewController extends Controller
 			$this->user->planet_current = $this->user->planet_id;
 			$this->user->update();
 
-			if ($this->planet->parent_planet != 0) {
+			if ($this->planet->parent_planet) {
 				Models\Planet::where('id', $this->planet->parent_planet)
 					->update([
 						'destruyed' => $destruyed,
@@ -172,33 +172,34 @@ class OverviewController extends Controller
 
 	public function daily()
 	{
-		if ($this->user->bonus > time()) {
+		if ($this->user->daily_bonus?->isFuture()) {
 			throw new ErrorException('Вы не можете получить ежедневный бонус в данное время');
 		}
 
-		$multi = ($this->user->bonus_multi < 50) ? ($this->user->bonus_multi + 1) : 50;
+		$factor = $this->user->daily_bonus_factor < 50
+			? $this->user->daily_bonus_factor + 1 : 50;
 
-		if ($this->user->bonus < (time() - 86400)) {
-			$multi = 1;
+		if (!$this->user->daily_bonus || $this->user->daily_bonus->subDay()->isPast()) {
+			$factor = 1;
 		}
 
-		$add = $multi * 500 * Game::getSpeed('mine');
+		$add = $factor * 500 * Game::getSpeed('mine');
 
 		$this->planet->metal += $add;
 		$this->planet->crystal += $add;
 		$this->planet->deuterium += $add;
 		$this->planet->update();
 
-		$this->user->bonus = time() + 86400;
-		$this->user->bonus_multi = $multi;
+		$this->user->daily_bonus = now()->addSeconds(86400);
+		$this->user->daily_bonus_factor = $factor;
 
-		if ($this->user->bonus_multi > 1) {
+		if ($this->user->daily_bonus_factor > 1) {
 			$this->user->credits++;
 		}
 
 		$this->user->update();
 
-		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->bonus_multi > 1 ? ', а также 1 кредит.' : ''), '/overview');
+		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->daily_bonus_factor > 1 ? ', а также 1 кредит.' : ''), '/overview');
 	}
 
 	public function index()
@@ -267,7 +268,7 @@ class OverviewController extends Controller
 					->first()?->toArray();
 			});
 
-			if (isset($lune['id']) && !$lune['destruyed']) {
+			if (isset($lune['id']) && empty($lune['destruyed'])) {
 				$parse['moon'] = [
 					'id' => $lune['id'],
 					'name' => $lune['name'],
@@ -380,7 +381,7 @@ class OverviewController extends Controller
 
 			foreach ($queueArray as $item) {
 				$queueList[] = [
-					'time' => (int) $item->time_end,
+					'time' => (int) $item->time_end->timestamp,
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planetsData[$item->planet_id]->name,
 					'object_id' => $item->object_id,
@@ -397,7 +398,7 @@ class OverviewController extends Controller
 
 			foreach ($queueArray as $item) {
 				$end[$item->planet_id] ??= $item->time;
-				$end[$item->planet_id] += ($item->time_end - $item->time) * $item->level;
+				$end[$item->planet_id] += ($item->time_end->timestamp - $item->time->timestamp) * $item->level;
 
 				if ($end[$item->planet_id] < time()) {
 					continue;
@@ -443,16 +444,16 @@ class OverviewController extends Controller
 			'total' => $this->user->raids
 		];
 
-		$parse['bonus'] = $this->user->bonus < time();
+		$parse['bonus'] = $this->user->daily_bonus->isPast();
 
 		if ($parse['bonus']) {
-			$bonus = $this->user->bonus_multi + 1;
+			$bonus = $this->user->daily_bonus_factor + 1;
 
 			if ($bonus > 50) {
 				$bonus = 50;
 			}
 
-			if ($this->user->bonus < (time() - 86400)) {
+			if ($this->user->daily_bonus->subDay()->isPast()) {
 				$bonus = 1;
 			}
 

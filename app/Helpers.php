@@ -16,7 +16,7 @@ class Helpers
 			$data = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 		}
 
-		return (isset($data[$value]) ? $data[$value] : '');
+		return $data[$value] ?? '';
 	}
 
 	public static function getTimeFromString($str, $is_sec = false)
@@ -30,9 +30,7 @@ class Helpers
 			$str[1] = 59;
 		}
 
-		$str = $str[0] * ($is_sec ? 3600 : 60) + $str[1];
-
-		return $str;
+		return $str[0] * ($is_sec ? 3600 : 60) + $str[1];
 	}
 
 	public static function translite($st)
@@ -169,57 +167,9 @@ class Helpers
 		return $FleetRow->user?->username . ' <a href="' . $uri . '" title="' . __('overview.ov_message') . '"><span class=\'sprite skin_m\'></span></a>';
 	}
 
-	public static function phoneFormat($phone)
-	{
-		if ($phone == '') {
-			return '';
-		}
-
-		$phone = str_replace(['+', '-', '(', ')', ' '], '', $phone);
-
-		if ($phone[0] == '8') {
-			$phone[0] = '7';
-		}
-
-		if ($phone[0] != '7') {
-			$phone = '7' . $phone;
-		}
-
-		if (mb_strlen($phone, 'UTF-8') == 11) {
-			return $phone;
-		} else {
-			return '';
-		}
-	}
-
-	public static function allowMobileVersion()
-	{
-		if (!isset($_SERVER['HTTP_USER_AGENT'])) {
-			return false;
-		}
-
-		$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
-
-		$result = true;
-
-		if (!self::isMobile()) {
-			$result = false;
-		}
-
-		if (strpos($ua, 'webkit/5') === false && strpos($ua, 'webkit/6') === false) {
-			$result = false;
-		}
-
-		if (strpos($ua, 'android 2') !== false || strpos($ua, 'android 3') !== false) {
-			$result = false;
-		}
-
-		return $result;
-	}
-
 	public static function isMobile(): bool
 	{
-		if (!isset($_SERVER['HTTP_USER_AGENT']) || empty($_SERVER['HTTP_USER_AGENT'])) {
+		if (empty($_SERVER['HTTP_USER_AGENT'])) {
 			return false;
 		}
 

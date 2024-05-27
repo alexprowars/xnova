@@ -46,15 +46,15 @@ class Tech
 
 				$buildTime = $entity->getTime();
 
-				Models\Queue::query()->create([
+				Models\Queue::create([
 					'type' => Models\Queue::TYPE_TECH,
 					'operation' => Models\Queue::OPERATION_BUILD,
 					'user_id' => $user->id,
 					'planet_id' => $planet->id,
 					'object_id' => $elementId,
-					'time' => time(),
-					'time_end' => time() + $buildTime,
-					'level' => $user->getTechLevel($elementId) + 1
+					'time' => now(),
+					'time_end' => now()->addSeconds($buildTime),
+					'level' => $user->getTechLevel($elementId) + 1,
 				]);
 
 				if (config('settings.log.research', false)) {

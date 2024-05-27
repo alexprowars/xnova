@@ -2,30 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Blocked;
 use App\Controller;
 
 class BannedController extends Controller
 {
 	public function index()
 	{
-		$query = DB::select('SELECT u.username AS user_1, u2.username AS user_2, b.* FROM banned b LEFT JOIN users u ON u.id = b.who LEFT JOIN users u2 ON u2.id = b.author ORDER BY b.id DESC');
+		$rows = Blocked::orderByDesc('id')
+			->with(['user', 'author'])
+			->get();
 
 		$items = [];
 
-		foreach ($query as $u) {
+		foreach ($rows as $u) {
 			$items[] = [
 				'user' => [
-					'id' => (int) $u['who'],
-					'name' => $u['user_1']
+					'id' => $u->user?->id,
+					'name' => $u->user?->username,
 				],
 				'moderator' => [
-					'id' => (int) $u['author'],
-					'name' => $u['user_2']
+					'id' => $u->author?->id,
+					'name' => $u->author?->username,
 				],
-				'time' => (int) $u['time'],
-				'time_end' => (int) $u['longer'],
-				'reason' => $u['theme'],
+				'time' => $u->created_at?->format('c'),
+				'time_end' => $u->longer?->format('c'),
+				'reason' => $u->reason,
 			];
 		}
 

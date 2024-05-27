@@ -10,18 +10,14 @@ class Unit extends BaseEntity implements PlanetUnitEntityInterface
 	{
 		$time = parent::getTime();
 
-		$planet = $this->planet;
-
-		$time *= (1 / ($planet->getLevel('hangar') + 1));
-		$time *= pow(1 / 2, $planet->getLevel('nano_factory'));
+		$time *= (1 / ($this->planet->getLevel('hangar') + 1));
+		$time *= pow(1 / 2, $this->planet->getLevel('nano_factory'));
 
 		return max(1, $time);
 	}
 
 	public function getMaxConstructible(): int
 	{
-		$planet = $this->planet;
-
 		$max = 0;
 
 		$price = parent::getPrice();
@@ -31,7 +27,7 @@ class Unit extends BaseEntity implements PlanetUnitEntityInterface
 				continue;
 			}
 
-			$count = floor($planet->{$type} / $count);
+			$count = floor($this->planet->{$type} / $count);
 
 			$max = max($max, $count);
 		}

@@ -29,13 +29,11 @@ class Building extends BaseEntity implements PlanetBuildingEntityInterface
 
 	public function getTime(): int
 	{
-		$planet = $this->planet;
-
 		$time = parent::getTime();
 
-		$time *= (1 / ($planet->getLevel('robot_factory') + 1));
-		$time *= pow(0.5, $planet->getLevel('nano_factory'));
-		$time *= $planet->user->bonusValue('time_building');
+		$time *= (1 / ($this->planet->getLevel('robot_factory') + 1));
+		$time *= pow(0.5, $this->planet->getLevel('nano_factory'));
+		$time *= $this->planet->user->bonusValue('time_building');
 
 		return max(1, $time);
 	}

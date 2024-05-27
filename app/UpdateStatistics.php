@@ -4,6 +4,8 @@ namespace App;
 
 use App\Models\LogStat;
 use Backpack\Settings\app\Models\Setting;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserDelete;
@@ -33,7 +35,7 @@ class UpdateStatistics
 
 	private function setMaxInfo($ID, $Count, Models\User $Data)
 	{
-		if ($Data->isAdmin() || $Data->banned != 0) {
+		if ($Data->isAdmin() || $Data->banned_time) {
 			return;
 		}
 
@@ -219,8 +221,8 @@ class UpdateStatistics
 		$result = [];
 
 		$list = Models\User::query()
-			->where('deltime', '<', time())
-			->where('deltime', '>', 0)
+			->whereNotNull('delete_time')
+			->where('delete_time', '<', now())
 			->get(['id', 'username']);
 
 		foreach ($list as $user) {
@@ -236,10 +238,27 @@ class UpdateStatistics
 	{
 		$result = [];
 
-		$list = DB::select("SELECT u.* FROM users u WHERE u.`onlinetime` < " . (time() - config('settings.stat.inactiveTime', (21 * 86400))) . " AND u.`onlinetime` > '0' AND planet_id > 0 AND (u.`vacation` = '0' OR (u.vacation < " . time() . " - 15184000 AND u.vacation > 1)) AND u.`banned` = '0' AND u.`deltime` = '0' ORDER BY u.onlinetime LIMIT 250");
+		$users = User::query()
+			->where('onlinetime', '<', now()->addDays(config('settings.inactiveTime', 21)))
+			->whereNotNull('onlinetime')
+			->whereNotNull('planet_id')
+			->where(function (Builder $query) {
+				$query->whereNull('vacation')
+					->orWhere(function (Builder $query) {
+						$query->where('vacation', '<', now()->subSeconds(15184000))
+							->where('vacation', '>', Date::createFromTimestamp(0));
+					});
+			})
+			->whereNull('banned_time')
+			->whereNull('delete_time')
+			->orderBy('onlinetime')
+			->limit(250)
+			->get();
 
-		foreach ($list as $user) {
-			DB::statement("UPDATE users SET `deltime` = '" . (time() + config('settings.stat.deleteTime', (7 * 86400))) . "' WHERE `id` = '" . $user->id . "'");
+		foreach ($users as $user) {
+			$user->update([
+				'delete_time' => now()->addDays(config('settings.deleteTime', 7)),
+			]);
 
 			if (Helpers::is_email($user->email)) {
 				Mail::to($user->email)->send(new UserDelete([
@@ -289,16 +308,16 @@ class UpdateStatistics
 
 		$fleetPoints = $this->getTotalFleetPoints();
 
-		$users = User::where('planet_id', '>', 0)
+		$users = User::whereNotNull('planet_id')
 			->where('authlevel', '<', 3)
-			->where('banned', 0)
+			->whereNull('banned_time')
 			->with(['alliance', 'statistics'])
 			->get();
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
 		foreach ($users as $user) {
-			if ($user->banned || ($user->vacation != 0 && $user->vacation < (time() - 1036800))) {
+			if ($user->banned_time || ($user->vacation && $user->vacation->lessThan(now()->subSeconds(1036800)))) {
 				$hide = 1;
 			} else {
 				$hide = 0;

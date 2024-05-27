@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->integer('object_id')->default(0);
 			$table->boolean('type')->default(0);
-			$table->integer('time')->default(0);
+			$table->timestamp('time')->nullable();
 			$table->integer('tech_rank')->default(0);
 			$table->integer('tech_points')->default(0);
 			$table->integer('build_rank')->default(0);

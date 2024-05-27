@@ -30,7 +30,7 @@ class FleetController extends Controller
 
 		$maxFleets = 1 + $this->user->getTechLevel('computer');
 
-		if ($this->user->rpg_admiral > time()) {
+		if ($this->user->rpg_admiral?->isFuture()) {
 			$maxFleets += 2;
 		}
 

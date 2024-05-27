@@ -66,6 +66,19 @@ class User extends Authenticatable
 	{
 		return [
 			'options' => 'array',
+			'username_change' => 'datetime',
+			'banned_time' => 'datetime',
+			'onlinetime' => 'datetime',
+			'vacation' => 'datetime',
+			'delete_time' => 'datetime',
+			'rpg_geologue' => 'datetime',
+			'rpg_admiral' => 'datetime',
+			'rpg_ingenieur' => 'datetime',
+			'rpg_technocrate' => 'datetime',
+			'rpg_constructeur' => 'datetime',
+			'rpg_meta' => 'datetime',
+			'rpg_komandir' => 'datetime',
+			'daily_bonus' => 'datetime',
 		];
 	}
 
@@ -105,12 +118,12 @@ class User extends Authenticatable
 
 	public function isVacation()
 	{
-		return $this->vacation > 0;
+		return !empty($this->vacation);
 	}
 
 	public function isOnline()
 	{
-		return (time() - $this->onlinetime) < 180;
+		return $this->onlinetime->diffInSeconds() < 180;
 	}
 
 	public function getOptions()
@@ -150,31 +163,31 @@ class User extends Authenticatable
 		$this->bonusData['queue'] = 0;
 
 		// Расчет бонусов от офицеров
-		if ($this->rpg_geologue > time()) {
+		if ($this->rpg_geologue?->isFuture()) {
 			$this->bonusData['metal'] 			+= 0.25;
 			$this->bonusData['crystal'] 		+= 0.25;
 			$this->bonusData['deuterium'] 		+= 0.25;
 			$this->bonusData['storage'] 		+= 0.25;
 		}
-		if ($this->rpg_ingenieur > time()) {
+		if ($this->rpg_ingenieur?->isFuture()) {
 			$this->bonusData['energy'] 			+= 0.15;
 			$this->bonusData['solar'] 			+= 0.15;
 			$this->bonusData['res_defence'] 	-= 0.1;
 		}
-		if ($this->rpg_admiral > time()) {
+		if ($this->rpg_admiral?->isFuture()) {
 			$this->bonusData['res_fleet'] 		-= 0.1;
 			$this->bonusData['fleet_speed'] 	+= 0.25;
 		}
-		if ($this->rpg_constructeur > time()) {
+		if ($this->rpg_constructeur?->isFuture()) {
 			$this->bonusData['time_fleet'] 		-= 0.25;
 			$this->bonusData['time_defence'] 	-= 0.25;
 			$this->bonusData['time_building'] 	-= 0.25;
 			$this->bonusData['queue'] 			+= 2;
 		}
-		if ($this->rpg_technocrate > time()) {
+		if ($this->rpg_technocrate?->isFuture()) {
 			$this->bonusData['time_research'] 	-= 0.25;
 		}
-		if ($this->rpg_meta > time()) {
+		if ($this->rpg_meta?->isFuture()) {
 			$this->bonusData['fleet_fuel'] 		-= 0.2;
 		}
 
@@ -321,7 +334,7 @@ class User extends Authenticatable
 		return true;
 	}
 
-	public function getPlanets(bool $moons = true): array
+	public function getPlanets(bool $moons = true)
 	{
 		$query = Planet::query()
 			->select(['id', 'name', 'image', 'galaxy', 'system', 'planet', 'planet_type', 'destruyed'])
@@ -372,11 +385,8 @@ class User extends Authenticatable
 				// Проверяем корректность заполненных полей
 				$planet->checkUsedFields();
 
-				$controller = Route::current()->getName();
-				$action = Route::current()->getActionName();
-
 				// Обновляем ресурсы на планете когда это необходимо
-				if (((($controller == "fleet" && $action != 'fleet_3') || in_array($controller, ['overview', 'galaxy', 'resources', 'imperium', 'credits', 'tutorial', 'tech', 'search', 'support', 'sim', 'tutorial'])) && $planet->last_update > (time() - 60))) {
+				if ($planet->last_update?->diffInSeconds() > 60) {
 					$planet->getProduction()->update(true);
 				} else {
 					$planet->getProduction()->update();
@@ -388,9 +398,6 @@ class User extends Authenticatable
 				$this->planet = $planet;
 			}
 		}
-
-		//if (!$this->_planet)
-		//	throw new Exception('planet not found');
 
 		return $this->planet;
 	}
@@ -484,8 +491,8 @@ class User extends Authenticatable
 				'password' => Hash::make($data['password']),
 				'username' => $data['name'] ?? '',
 				'ip' => Helpers::convertIp(Request::ip()),
-				'bonus' => time(),
-				'onlinetime' => time(),
+				'daily_bonus' => now(),
+				'onlinetime' => now(),
 			]);
 
 			if (!$user->id) {

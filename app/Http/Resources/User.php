@@ -35,7 +35,7 @@ class User extends JsonResource
 				'messages' => $this->messages_ally
 			] : null,
 			'planets' => UserPlanets::collection($planets),
-			'vacation' => $this->vacation > 0,
+			'vacation' => $this->vacation?->format('c'),
 			'quests' => (int) $quests,
 			'credits' => $this->credits,
 			'options' => $this->getOptions(),
@@ -45,7 +45,7 @@ class User extends JsonResource
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
 			$data['officiers'][] = [
 				'id' => $officier,
-				'time' => (int) $this->{Vars::getName($officier)}
+				'time' => (int) $this->{Vars::getName($officier)}?->timestamp,
 			];
 		}
 

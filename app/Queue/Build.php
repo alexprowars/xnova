@@ -8,11 +8,8 @@ use App\Planet\Entity;
 
 class Build
 {
-	private $queue;
-
-	public function __construct(Queue $queue)
+	public function __construct(protected Queue $queue)
 	{
-		$this->queue = $queue;
 	}
 
 	public function add($elementId, $destroy = false)
@@ -22,7 +19,7 @@ class Build
 
 		$maxBuidSize = config('settings.maxBuildingQueue', 1);
 
-		if ($user->rpg_constructeur > time()) {
+		if ($user->rpg_constructeur?->isFuture()) {
 			$maxBuidSize += 2;
 		}
 
@@ -55,14 +52,14 @@ class Build
 				return false;
 			}
 
-			Models\Queue::query()->create([
+			Models\Queue::create([
 				'type' => Models\Queue::TYPE_BUILD,
 				'operation' => $destroy ? Models\Queue::OPERATION_DESTROY : Models\Queue::OPERATION_BUILD,
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
-				'time' => 0,
-				'time_end' => 0,
+				'time' => null,
+				'time_end' => null,
 				'level' => $build->amount + (!$destroy ? 1 : 0) + $inArray
 			]);
 

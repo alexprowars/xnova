@@ -21,6 +21,14 @@ class Queue extends Model
 	public const OPERATION_BUILD = 'build';
 	public const OPERATION_DESTROY = 'destroy';
 
+	protected function casts(): array
+	{
+		return [
+			'time' => 'datetime',
+			'time_end' => 'datetime',
+		];
+	}
+
 	public function user()
 	{
 		return $this->belongsTo(User::class, 'user_id');

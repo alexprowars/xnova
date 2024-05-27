@@ -15,8 +15,8 @@ return new class extends Migration {
 			$table->integer('object_id');
 			$table->integer('level');
 			$table->enum('operation', array('build','destroy'));
-			$table->integer('time');
-			$table->integer('time_end');
+			$table->timestamp('time')->nullable();
+			$table->timestamp('time_end')->nullable();
 		});
 	}
 

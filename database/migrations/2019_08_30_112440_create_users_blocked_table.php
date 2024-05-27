@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->string('reason');
-			$table->integer('longer')->default(0);
+			$table->timestamp('longer')->nullable();
 			$table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->timestamps();
 		});

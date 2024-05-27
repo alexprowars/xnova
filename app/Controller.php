@@ -61,6 +61,6 @@ class Controller extends BaseController
 
 		$this->planet = $this->user->getCurrentPlanet(true);
 
-		Fleet::SetShipsEngine($this->user);
+		Fleet::setShipsEngine($this->user);
 	}
 }

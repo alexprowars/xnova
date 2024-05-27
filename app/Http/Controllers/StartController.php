@@ -69,10 +69,10 @@ class StartController extends Controller
 			}
 
 			$this->user->race = $r;
-			$this->user->bonus = time() + 86400;
+			$this->user->daily_bonus = now()->addDay();
 
 			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
-				$this->user->{Vars::getName($oId)} = time() + 86400;
+				$this->user->{Vars::getName($oId)} = now()->addDay();
 			}
 
 			$this->user->update();

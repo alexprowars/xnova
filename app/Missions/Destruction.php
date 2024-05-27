@@ -76,11 +76,26 @@ class Destruction extends FleetEngine implements Mission
 					if ($randChance <= $moonDestroyChance) {
 						$moonDestroyed = true;
 
-						DB::statement("UPDATE planets SET destruyed = " . (time() + 60 * 60 * 24) . ", user_id = null WHERE id = '" . $TargetMoon->id . "'");
-						DB::statement("UPDATE users SET planet_current = planet_id WHERE id = " . $TargetMoon->user_id . "");
+						$TargetMoon->destruyed = now()->addDay();
+						$TargetMoon->save();
 
-						DB::statement("UPDATE fleets SET start_type = 1 WHERE start_galaxy = " . $this->fleet->end_galaxy . " AND start_system = " . $this->fleet->end_system . " AND start_planet = " . $this->fleet->end_planet . " AND start_type = 3");
-						DB::statement("UPDATE fleets SET end_type = 1 WHERE end_galaxy = " . $this->fleet->end_galaxy . " AND end_system = " . $this->fleet->end_system . " AND end_planet = " . $this->fleet->end_planet . " AND end_type = 3");
+						$TargetMoon->user->update([
+							'planet_current' => DB::raw('planet_id')
+						]);
+
+						Models\Fleet::query()
+							->where('start_galaxy', $this->fleet->end_galaxy)
+							->where('start_system', $this->fleet->end_system)
+							->where('start_planet', $this->fleet->end_planet)
+							->where('start_type', 3)
+							->update(['start_type' => 1]);
+
+						Models\Fleet::query()
+							->where('end_galaxy', $this->fleet->end_galaxy)
+							->where('end_system', $this->fleet->end_system)
+							->where('end_planet', $this->fleet->end_planet)
+							->where('start_type', 3)
+							->update(['end_type' => 1]);
 
 						Models\Queue::query()->where('planet_id', $TargetMoon->id)->delete();
 					} else {

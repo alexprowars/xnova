@@ -14,7 +14,7 @@ class PhalanxController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException('Нет доступа!');
 		}
 
@@ -99,7 +99,7 @@ class PhalanxController extends Controller
 			if ($row->start_time->isFuture() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3))) {
 				$list[] = [
 					'time' => $row->start_time->getTimestamp(),
-					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type . 'ы',
 					'type_2' => $type2 . 'у',
 					'planet_name' => $row->user_name,
@@ -115,7 +115,7 @@ class PhalanxController extends Controller
 			if ($row->mission <> 4 && !$end && $row->start_type != 3) {
 				$list[] = [
 					'time' => $row->end_time->getTimestamp(),
-					'fleet' => Fleet::CreateFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type2 . 'ы',
 					'type_2' => $type . 'у',
 					'planet_name' => $row->target_user_name,

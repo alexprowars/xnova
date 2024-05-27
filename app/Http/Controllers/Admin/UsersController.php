@@ -7,6 +7,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
 use App\Models\Blocked;
@@ -214,10 +215,7 @@ class UsersController extends CrudController
 				return redirect(backpack_url('users/ban'))->with('error', 'Игрок не найден');
 			}
 
-			$BanTime = $days * 86400;
-			$BanTime += $hour * 3600;
-			$BanTime += $mins * 60;
-			$BanTime += time();
+			$BanTime = now()->addDays($days)->addHours($hour)->addMinutes($mins);
 
 			Blocked::create([
 				'user_id'	=> $user->id,
@@ -226,10 +224,10 @@ class UsersController extends CrudController
 				'author_id'	=> Auth::id(),
 			]);
 
-			$update = ['banned' => $BanTime];
+			$update = ['banned_time' => $BanTime];
 
 			if ($request->post('ro', 0) == 1) {
-				$update['vacation'] = 1;
+				$update['vacation'] = Date::createFromTimestamp(0);
 			}
 
 			$user->update($update);
@@ -264,14 +262,14 @@ class UsersController extends CrudController
 
 	public function unban(Request $request)
 	{
-		if ($request->isMethod('POST') != '') {
+		if ($request->isMethod('POST')) {
 			$fields = $this->validate($request, [
 				'username' => 'required',
 			], [
 				'required' => 'Поле ":attribute" обязательно для заполнения',
 			]);
 
-			$user = User::query()->where('username', $fields['username'])->get(['id', 'username', 'banned', 'vacation'])->first();
+			$user = User::query()->where('username', $fields['username'])->get(['id', 'username', 'banned_time', 'vacation'])->first();
 
 			if (!$user) {
 				return redirect(backpack_url('users/unban'))->with('error', 'Игрок не найден');
@@ -279,10 +277,10 @@ class UsersController extends CrudController
 
 			Blocked::query()->where('user_id', $user->id)->delete();
 
-			$user->banned = 0;
+			$user->banned_time = null;
 
-			if ($user->vacation == 1) {
-				$user->vacation = 0;
+			if ($user->vacation->timestamp == 0) {
+				$user->vacation = null;
 			}
 
 			$user->save();

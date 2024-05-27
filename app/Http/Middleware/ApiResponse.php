@@ -25,10 +25,6 @@ class ApiResponse
 			]);
 		}
 
-		if (!$response instanceof JsonResponse) {
-			return new JsonResponse(null, $response->status());
-		}
-
 		if ($response->exception) {
 			if (!($response->exception instanceof Exception)) {
 				$code = 500;
@@ -42,6 +38,11 @@ class ApiResponse
 				return new JsonResponse(array_merge(Responce::make(null)->toArray(request()), $response->getOriginalContent()));
 			}
 		}
+
+		if (!$response instanceof JsonResponse) {
+			return new JsonResponse(null, $response->status());
+		}
+
 		if ($request->routeIs('state'))  {
 			return $response;
 		}

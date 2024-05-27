@@ -8,4 +8,11 @@ class UserAuthentication extends Model
 {
 	protected $guarded = [];
 	protected $table = 'users_authentications';
+
+	protected function casts(): array
+	{
+		return [
+			'enter_time' => 'datetime',
+		];
+	}
 }

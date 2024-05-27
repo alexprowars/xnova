@@ -9,8 +9,8 @@ return new class extends Migration {
 	{
 		Schema::create('supports', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
-			$table->integer('time')->default(0);
+			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+			$table->timestamp('time')->nullable();
 			$table->string('subject')->default('');
 			$table->text('text');
 			$table->integer('status')->default(1);

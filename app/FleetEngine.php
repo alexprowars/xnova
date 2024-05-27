@@ -38,7 +38,7 @@ class FleetEngine
 					->where('planet_type', $this->fleet->start_type)
 					->first(['destruyed']);
 
-				if ($CheckFleet && $CheckFleet->destruyed != 0) {
+				if ($CheckFleet && $CheckFleet->destruyed) {
 					$this->fleet->start_type = 1;
 				}
 			} elseif ($this->fleet->end_type == 3) {
@@ -49,7 +49,7 @@ class FleetEngine
 					->where('planet_type', $this->fleet->end_type)
 					->first(['destruyed']);
 
-				if ($CheckFleet && $CheckFleet->destruyed != 0) {
+				if ($CheckFleet && $CheckFleet->destruyed) {
 					$this->fleet->end_type = 1;
 				}
 			}

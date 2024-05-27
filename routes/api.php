@@ -10,7 +10,6 @@ Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->n
 Route::match(['get', 'post'], 'registration', [Controllers\IndexController::class, 'registration'])->name('registration');
 Route::get('log/{id}', [Controllers\LogController::class, 'info'])->name('log.info');
 Route::get('news', [Controllers\NewsController::class, 'index'])->name('news');
-Route::match(['get', 'post'], 'payment/robokassa', [Controllers\PaymentController::class, 'robokassa'])->name('payment.robokassa');
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index'])->name('stat');
 Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index'])->name('xnsim');
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->name('players');

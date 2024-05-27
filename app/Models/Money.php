@@ -8,4 +8,11 @@ class Money extends Model
 {
 	public $timestamps = false;
 	protected $table = 'moneys';
+
+	protected function casts(): array
+	{
+		return [
+			'time' => 'datetime',
+		];
+	}
 }

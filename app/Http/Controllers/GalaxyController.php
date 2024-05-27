@@ -16,7 +16,7 @@ class GalaxyController extends Controller
 	{
 		$fleetmax = $this->user->getTechLevel('computer') + 1;
 
-		if ($this->user->rpg_admiral > time()) {
+		if ($this->user->rpg_admiral?->isFuture()) {
 			$fleetmax += 2;
 		}
 
@@ -72,7 +72,7 @@ class GalaxyController extends Controller
 		$Phalanx = 0;
 
 		if ($this->planet->getLevel('phalanx') > 0) {
-			$Range = Fleet::GetPhalanxRange($this->planet->getLevel('phalanx'));
+			$Range = Fleet::getPhalanxRange($this->planet->getLevel('phalanx'));
 
 			$SystemLimitMin = max(1, $this->planet->system - $Range);
 			$SystemLimitMax = $this->planet->system + $Range;
@@ -84,7 +84,7 @@ class GalaxyController extends Controller
 
 		if ($this->planet->getLevel('interplanetary_misil') > 0) {
 			if ($galaxy == $this->planet->galaxy) {
-				$Range = Fleet::GetMissileRange($this->user);
+				$Range = Fleet::getMissileRange($this->user);
 
 				$SystemLimitMin = max(1, $this->planet->system - $Range);
 				$SystemLimitMax = $this->planet->system + $Range;
@@ -129,9 +129,20 @@ class GalaxyController extends Controller
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];
 
+		$planets = $this->user->getPlanets(false);
+
+		foreach ($planets as $planet) {
+			$parse['shortcuts'][] = [
+				'name' => $planet->name,
+				'galaxy' => $planet->galaxy,
+				'system' => $planet->system,
+				'planet' => $planet->planet,
+				'planet_type' => $planet->planet_type,
+			];
+		}
+
 		foreach ($this->user->shortcuts as $shortcut) {
 			$parse['shortcuts'][] = [
-				'id' => $shortcut->id,
 				'name' => $shortcut->name,
 				'galaxy' => $shortcut->galaxy,
 				'system' => $shortcut->system,
@@ -143,7 +154,7 @@ class GalaxyController extends Controller
 		$GalaxyRow = DB::select("SELECT
 								p.galaxy, p.system, p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
 								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
-								u.id AS u_id, u.username as u_name, u.race as u_race, u.alliance_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned as u_ban, u.sex as u_sex, u.avatar as u_avatar, u.image AS u_image,
+								u.id AS u_id, u.username as u_name, u.race as u_race, u.alliance_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned_time as u_ban, u.sex as u_sex, u.avatar as u_avatar, u.image AS u_image,
 								a.name AS a_name, a.members AS a_members, a.web AS a_web, a.tag AS a_tag,
 								ad.type as d_type,
 								s.total_rank as s_rank, s.total_points as s_points
@@ -156,39 +167,39 @@ class GalaxyController extends Controller
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
 		foreach ($GalaxyRow as $row) {
-			if (!empty($row->l_update) && $row->l_update > $row->p_active) {
+			if (!empty($row->l_update) && strtotime($row->l_update) > strtotime($row->p_active)) {
 				$row->p_active = $row->l_update;
 			}
 
-			if ($row->p_delete > 0 && $row->p_delete <= time()) {
-				Models\Planet::query()->where('id', $row->p_id)->delete();
+			if (!empty($row->p_delete) && strtotime($row->p_delete) <= time()) {
+				Models\Planet::find($row->p_id)->delete();
 
-				if ($row->p_parent != 0) {
-					Models\Planet::query()->where('id', $row->p_parent)->delete();
+				if ($row->p_parent) {
+					Models\Planet::find($row->p_parent)->delete();
 				}
 			}
 
-			if (!empty($row->l_id) && $row->l_delete != 0 && $row->l_delete <= time()) {
-				Models\Planet::query()->where('id', $row->l_id)->delete();
-				Models\Planet::query()->where('parent_planet', $row->l_id)->update(['parent_planet' => 0]);
+			if (!empty($row->l_id) && $row->l_delete && strtotime($row->l_delete) <= time()) {
+				Models\Planet::find($row->l_id)->delete();
+				Models\Planet::query()->where('parent_planet', $row->l_id)->update(['parent_planet' => null]);
 
-				$row->l_id = 0;
+				$row->l_id = null;
 			}
 
-			if ($row->u_online < (time() - 60 * 60 * 24 * 7) && $row->u_online > (time() - 60 * 60 * 24 * 28)) {
+			if (strtotime($row->u_online) < time() - 60 * 60 * 24 * 7 && strtotime($row->u_online) > time() - 60 * 60 * 24 * 28) {
 				$row->u_online = 1;
-			} elseif ($row->u_online < (time() - 60 * 60 * 24 * 28)) {
+			} elseif (strtotime($row->u_online) < time() - 60 * 60 * 24 * 28) {
 				$row->u_online = 2;
 			} else {
 				$row->u_online = 0;
 			}
 
-			if ($row->u_vacation > 0) {
+			if ($row->u_vacation) {
 				$row->u_vacation = 1;
 			}
 
-			if ($row->p_active > (time() - 59 * 60)) {
-				$row->p_active = floor((time() - $row->p_active) / 60);
+			if (strtotime($row->p_active) > time() - 59 * 60) {
+				$row->p_active = floor((time() - strtotime($row->p_active)) / 60);
 			} else {
 				$row->p_active = 60;
 			}

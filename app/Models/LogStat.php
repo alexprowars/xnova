@@ -8,4 +8,11 @@ class LogStat extends Model
 {
 	protected $guarded = [];
 	public $timestamps = false;
+
+	protected function casts(): array
+	{
+		return [
+			'time' => 'datetime',
+		];
+	}
 }

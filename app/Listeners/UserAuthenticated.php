@@ -27,16 +27,16 @@ class UserAuthenticated
 		/** @var User $user */
 		$user = $event->user;
 
-		if ($user->banned > time()) {
-			throw new PageException('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->banned) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('banned/') . '">сюда</a>');
-		} elseif ($user->banned > 0 && $user->banned < time()) {
-			$user->banned = 0;
+		if ($user->banned_time?->isFuture()) {
+			throw new PageException('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->banned_time) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('/banned') . '">сюда</a>');
+		} elseif ($user->banned_time?->isPast()) {
+			$user->banned_time = null;
 
 			Blocked::query()->where('user_id', $user->id)->delete();
 		}
 
-		if ($user->onlinetime < (time() - 30)) {
-			$user->onlinetime = time();
+		if ($user->onlinetime->diffInSeconds() > 30) {
+			$user->onlinetime = now();
 		}
 
 		$ip = Helpers::convertIp(Request::ip());
@@ -50,8 +50,6 @@ class UserAuthenticated
 			]);
 		}
 
-		if ($user->isDirty()) {
-			$user->update();
-		}
+		$user->update();
 	}
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->foreignId('from_id')->nullable()->constrained('users')->cascadeOnDelete();
-			$table->integer('time')->default(0)->index();
+			$table->timestamp('time')->nullable()->index();
 			$table->integer('type')->default(0);
 			$table->boolean('deleted')->default(false);
 			$table->string('theme', 100)->nullable();

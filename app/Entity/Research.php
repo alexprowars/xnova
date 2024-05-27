@@ -2,12 +2,23 @@
 
 namespace App\Entity;
 
-use App\Exceptions\Exception;
 use App\Planet\Entity\BaseEntity;
 use App\Vars;
 
 class Research extends BaseEntity
 {
+	protected function getBasePrice(): array
+	{
+		$cost = parent::getBasePrice();
+
+		$price = Vars::getItemPrice($this->entity_id);
+
+		return array_map(
+			fn ($value) => floor($value * pow($price['factor'] ?? 1, $this->amount)),
+			$cost
+		);
+	}
+
 	public function getTime(): int
 	{
 		$time = parent::getTime();

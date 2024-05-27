@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users');
 			$table->string('ip', 50)->default('')->index();
-			$table->bigInteger('time')->default(0)->index();
+			$table->timestamp('time')->nullable()->index();
 			$table->string('referer', 250)->default('');
 			$table->string('user_agent', 250)->default('');
 		});

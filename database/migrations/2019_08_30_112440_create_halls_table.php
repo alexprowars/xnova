@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->string('title', 150);
 			$table->integer('debris');
-			$table->integer('time')->index();
+			$table->timestamp('time')->index();
 			$table->boolean('won');
 			$table->boolean('sab')->default(0)->index();
 			$table->integer('log');

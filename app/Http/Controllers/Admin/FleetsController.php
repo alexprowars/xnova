@@ -29,10 +29,10 @@ class FleetsController extends Controller
 		foreach ($fleets as $fleet) {
 			$row = [];
 			$row['Id'] = $fleet->id;
-			$row['Mission'] = Fleet::CreateFleetPopupedMissionLink($fleet, __('main.type_mission.' . $fleet->mission), '');
+			$row['Mission'] = Fleet::createFleetPopupedMissionLink($fleet, __('main.type_mission.' . $fleet->mission), '');
 			$row['Mission'] .= "<br>" . (($fleet->mess == 1) ? "R" : "A");
 
-			$row['Fleet'] = Fleet::CreateFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);
+			$row['Fleet'] = Fleet::createFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);
 			$row['St_Owner'] = "[" . $fleet->user_id . "]<br>" . $fleet->user_name;
 			$row['St_Posit'] = "[" . $fleet->start_galaxy . ":" . $fleet->start_system . ":" . $fleet->start_planet . "]<br>" . (($fleet->start_type == 1) ? "[P]" : (($fleet->start_type == 2) ? "D" : "L")) . "";
 			$row['St_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->start_time);

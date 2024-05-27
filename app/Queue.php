@@ -37,8 +37,6 @@ class Queue
 
 	public function loadQueue()
 	{
-		$this->queue = [];
-
 		$query = Models\Queue::query()->where('user_id', $this->user->id)
 			->orderBy('id', 'ASC');
 
@@ -46,11 +44,7 @@ class Queue
 			$query->where('planet_id', $this->planet->id);
 		}
 
-		$items = $query->get();
-
-		foreach ($items as $item) {
-			$this->queue[] = $item;
-		}
+		$this->queue = $query->get()->all();
 	}
 
 	public function setPlanet(Planet $planet)
@@ -226,13 +220,10 @@ class Queue
 			$buildTime = ceil($buildTime / 2);
 		}
 
-		if ($buildItem->time + $buildTime != $buildItem->time_end) {
-			$buildItem->update([
-				'time_end' => $buildItem->time + $buildTime
-			]);
-		}
+		$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
+		$buildItem->save();
 
-		if ($buildItem->time + $buildTime <= time() + 5) {
+		if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
 			if (!$this->planet->planet_updated) {
 				$this->planet->getProduction()->update(true);
 			}
@@ -300,7 +291,7 @@ class Queue
 	{
 		$queueArray = $this->get(self::TYPE_BUILDING);
 
-		if (!count($queueArray) || $queueArray[0]->time > 0) {
+		if (!count($queueArray) || $queueArray[0]->time) {
 			return false;
 		}
 
@@ -353,8 +344,8 @@ class Queue
 				}
 
 				$buildItem->update([
-					'time' => time(),
-					'time_end' => time() + $buildTime
+					'time' => now(),
+					'time_end' => now()->addSeconds($buildTime),
 				]);
 
 				$loop = false;
@@ -446,13 +437,10 @@ class Queue
 
 			$buildTime = $entity->getTime();
 
-			if ($buildItem->time + $buildTime != $buildItem->time_end) {
-				$buildItem->update([
-					'time_end' => $buildItem->time + $buildTime
-				]);
-			}
+			$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
+			$buildItem->save();
 
-			if ($buildItem->time + $buildTime <= time() + 5) {
+			if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
 				$this->user->setTech($buildItem->object_id, $buildItem->level);
 
 				if (!$this->deleteInQueue($buildItem->id)) {
@@ -578,7 +566,7 @@ class Queue
 				$this->planet->update();
 
 				if ($item->level > 0) {
-					$item->time_end = $item->time + $buildTime;
+					$item->time_end = $item->time->addSeconds($buildTime);
 					$item->update();
 
 					break;

@@ -45,17 +45,6 @@ class Format
 		return number_format($n, 0, ",", ".");
 	}
 
-	public static function phone($phone)
-	{
-		$phone = Helpers::phoneFormat($phone);
-
-		if ($phone != '') {
-			$phone = preg_replace("/([0-9a-zA-Z])([0-9a-zA-Z]{3})([0-9a-zA-Z]{3})([0-9a-zA-Z]{2})([0-9a-zA-Z]{2})/", "8 ($2) $3-$4-$5", $phone);
-		}
-
-		return $phone;
-	}
-
 	public static function text($text)
 	{
 		$text = htmlspecialchars(str_replace("'", '&#39;', $text));

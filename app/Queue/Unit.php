@@ -89,14 +89,14 @@ class Unit
 
 			$buildTime = $entity->getTime();
 
-			Models\Queue::query()->create([
+			Models\Queue::create([
 				'type' => Models\Queue::TYPE_UNIT,
 				'operation' => Models\Queue::OPERATION_BUILD,
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
-				'time' => time(),
-				'time_end' => $buildTime + time(),
+				'time' => now(),
+				'time_end' => now()->addSeconds($buildTime),
 				'level' => $count
 			]);
 

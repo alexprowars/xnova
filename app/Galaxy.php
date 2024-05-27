@@ -78,7 +78,7 @@ class Galaxy
 			$planet = $this->sizeRandomiser($target, $isMainPlanet);
 
 			$planet->metal = config('settings.baseMetalProduction');
-			$planet->crystal = config('settings.baseCristalProduction');
+			$planet->crystal = config('settings.baseCrystalProduction');
 			$planet->deuterium = config('settings.baseDeuteriumProduction');
 
 			$planet->galaxy = $target->getGalaxy();
@@ -92,7 +92,7 @@ class Galaxy
 			}
 
 			$planet->user_id = $userId;
-			$planet->last_update = time();
+			$planet->last_update = now();
 			$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 			if ($planet->save()) {

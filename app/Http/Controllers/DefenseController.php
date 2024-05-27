@@ -11,7 +11,7 @@ class DefenseController extends Controller
 {
 	public function index()
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException('Нет доступа!');
 		}
 
@@ -23,7 +23,7 @@ class DefenseController extends Controller
 		$parse = $construction->pageShipyard('defense');
 
 		$parse['mode'] = Route::current()->getName();
-		$parse['queue'] = $construction->ElementBuildListBox();
+		$parse['queue'] = $construction->queueList();
 
 		return $parse;
 	}

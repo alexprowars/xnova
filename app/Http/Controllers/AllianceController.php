@@ -721,6 +721,7 @@ class AllianceController extends Controller
 				$sort .= " ASC;";
 			}
 		}
+
 		$listuser = DB::select("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM users u LEFT JOIN alliances_members m ON m.u_id = u.id LEFT JOIN statistics s ON s.user_id = u.id AND stat_type = 1 WHERE u.alliance_id = '" . $this->user->alliance_id . "'" . $sort . "");
 
 		$i = 0;
@@ -730,12 +731,12 @@ class AllianceController extends Controller
 			$i++;
 			$u->i = $i;
 
-			if ($u->onlinetime + 60 * 10 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			if (strtotime($u->onlinetime) + 60 * 10 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$u->onlinetime = "<span class='positive'>" . __('alliance.On') . "</span>";
-			} elseif ($u->onlinetime + 60 * 20 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			} elseif (strtotime($u->onlinetime) + 60 * 20 >= time() && $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$u->onlinetime = "<span class='neutral'>" . __('alliance.15_min') . "</span>";
 			} elseif ($this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$hours = floor((time() - $u->onlinetime) / 3600);
+				$hours = floor((time() - strtotime($u->onlinetime)) / 3600);
 
 				$u->onlinetime = "<span class='negative'>" . __('alliance.Off') . " " . Format::time($hours * 3600) . "</span>";
 			}

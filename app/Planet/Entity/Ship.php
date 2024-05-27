@@ -27,19 +27,12 @@ class Ship extends Unit
 		$shipData = Vars::getUnitData($this->entity_id);
 		$user = $this->planet->user;
 
-		switch ($shipData['type_engine']) {
-			case 1:
-				$speed = $shipData['speed'] * (1 + ($user->getTechLevel('combustion') * 0.1));
-				break;
-			case 2:
-				$speed = $shipData['speed'] * (1 + ($user->getTechLevel('impulse_motor') * 0.2));
-				break;
-			case 3:
-				$speed = $shipData['speed'] * (1 + ($user->getTechLevel('hyperspace_motor') * 0.3));
-				break;
-			default:
-				$speed = $shipData['speed'];
-		}
+		$speed = $shipData['speed'] * match ($shipData['type_engine']) {
+			1 => 1 + ($user->getTechLevel('combustion') * 0.1),
+			2 => 1 + ($user->getTechLevel('impulse_motor') * 0.2),
+			3 => 1 + ($user->getTechLevel('hyperspace_motor') * 0.3),
+			default => 1,
+		};
 
 		if ($user->bonusValue('fleet_speed') != 1) {
 			$speed = $speed * $user->bonusValue('fleet_speed');
@@ -67,7 +60,7 @@ class Ship extends Unit
 			return 0;
 		}
 
-		if ($this->planet->user->rpg_meta > time()) {
+		if ($this->planet->user->rpg_meta?->isFuture()) {
 			return (int) ceil($shipData['stay'] * 0.9);
 		} else {
 			return (int) $shipData['stay'];
@@ -82,7 +75,7 @@ class Ship extends Unit
 			throw new Exception('unit does not exist');
 		}
 
-		$ship = [
+		return [
 			'id' => $this->entity_id,
 			'consumption' => $this->getConsumption(),
 			'speed' => $this->getSpeed(),
@@ -90,7 +83,5 @@ class Ship extends Unit
 			'count' => $this->getLevel(),
 			'capacity' => $shipData['capacity'] ?? 0,
 		];
-
-		return $ship;
 	}
 }

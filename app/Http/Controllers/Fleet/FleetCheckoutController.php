@@ -18,7 +18,7 @@ class FleetCheckoutController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException('Нет доступа!');
 		}
 

@@ -7,7 +7,7 @@ use App\Models\User;
 
 class Fleet extends Building
 {
-	static function SetShipsEngine(User $user)
+	static function setShipsEngine(User $user)
 	{
 		$storage = Vars::getStorage();
 
@@ -26,7 +26,7 @@ class Fleet extends Building
 		}
 	}
 
-	static function CreateFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
+	static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
 	{
 		$FleetRec = $FleetRow->getShips();
 
@@ -69,7 +69,7 @@ class Fleet extends Building
 		return "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 	}
 
-	static function CreateFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
+	static function createFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
 	{
 		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
 
@@ -149,7 +149,7 @@ class Fleet extends Building
 		return $result;
 	}
 
-	static function GetMissileRange(User $user)
+	static function getMissileRange(User $user)
 	{
 		if ($user->getTechLevel('impulse_motor') > 0) {
 			return ($user->getTechLevel('impulse_motor') * 5) - 1;
@@ -158,12 +158,12 @@ class Fleet extends Building
 		return 0;
 	}
 
-	static function GetPhalanxRange($PhalanxLevel)
+	static function getPhalanxRange($level)
 	{
 		$PhalanxRange = 0;
 
-		if ($PhalanxLevel > 1) {
-			for ($Level = 2; $Level < $PhalanxLevel + 1; $Level++) {
+		if ($level > 1) {
+			for ($Level = 2; $Level < $level + 1; $Level++) {
 				$lvl = ($Level * 2) - 1;
 				$PhalanxRange += $lvl;
 			}

@@ -17,7 +17,7 @@ class ResourcesController extends Controller
 {
 	private function buy($parse)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new ErrorException("Включен режим отпуска!");
 		}
 
@@ -25,11 +25,11 @@ class ResourcesController extends Controller
 			throw new ErrorException('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
 		}
 
-		if ($this->planet->merchand > time()) {
+		if ($this->planet->merchand?->isFuture()) {
 			throw new ErrorException('Покупать ресурсы можно только раз в 48 часов');
 		}
 
-		$this->planet->merchand = time() + 172800;
+		$this->planet->merchand = now()->addDays(2);
 
 		foreach (Vars::getResources() as $res) {
 			$this->planet->{$res} += $parse['buy_form'][$res];
@@ -51,7 +51,7 @@ class ResourcesController extends Controller
 
 	public function productionAction()
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException('Включен режим отпуска!');
 		}
 
@@ -94,7 +94,7 @@ class ResourcesController extends Controller
 		}
 
 		if (Request::instance()->isMethod('post')) {
-			if ($this->user->vacation > 0) {
+			if ($this->user->vacation) {
 				throw new ErrorException("Включен режим отпуска!");
 			}
 
@@ -129,8 +129,8 @@ class ResourcesController extends Controller
 		$productionLevel = $planetProduction->getProductionFactor();
 
 		$parse['buy_form'] = [
-			'visible' => ($this->planet->planet_type == 1 && $this->user->vacation <= 0),
-			'time' => max(0, $this->planet->merchand - time())
+			'visible' => ($this->planet->planet_type == 1 && !$this->user->vacation),
+			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand))
 		];
 
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;

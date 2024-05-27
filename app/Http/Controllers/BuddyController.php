@@ -172,8 +172,8 @@ class BuddyController extends Controller
 			];
 
 			if (!$isRequests) {
-				if ($user->onlinetime > (time() - 59 * 60)) {
-					$row['online'] = floor((time() - $user->onlinetime) / 60);
+				if ($user->onlinetime?->timestamp > time() - 59 * 60) {
+					$row['online'] = floor((time() - $user->onlinetime->timestamp) / 60);
 				} else {
 					$row['online'] = 60;
 				}

@@ -13,7 +13,7 @@ return new class extends Migration {
 			$table->string('user', 50)->default('');
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->text('message');
-			$table->integer('timestamp')->default(0);
+			$table->timestamp('timestamp');
 		});
 	}
 

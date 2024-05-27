@@ -2,57 +2,55 @@
 
 return [
 	'spyReportRow'            => 2,
-	'fieldsByMoonBase'        => 4,
-	'maxPlanets'              => 9,
-	'maxBuildingQueue'        => 1,
+	'fieldsByMoonBase'        => env('GAME_MOONBASE_FIELDS', 4),
+	'maxPlanets'              => env('GAME_MAX_PLANETS', 9),
+	'maxBuildingQueue'        => env('GAME_MAX_QUEUE', 1),
 	'maxBuildingFleets'       => 99999,
-	'maxGalaxyInWorld'        => 4,
-	'maxSystemInGalaxy'       => 499,
-	'maxPlanetInSystem'       => 15,
-	'baseStorageSize'         => 50000,
-	'baseMetalProduction'     => 5000,
-	'baseCristalProduction'   => 5000,
-	'baseDeuteriumProduction' => 5000,
+	'maxGalaxyInWorld'        => env('GAME_MAX_GALAXY_IN_WORLD', 4),
+	'maxSystemInGalaxy'       => env('GAME_MAX_SYSTEM_IN_WORLD', 499),
+	'maxPlanetInSystem'       => env('GAME_MAX_PLANET_IN_WORLD', 15),
+	'baseStorageSize'         => env('GAME_BASE_STORAGE_SIZE', 50000),
+	'baseMetalProduction'     => env('GAME_PLANET_METAL', 5000),
+	'baseCrystalProduction'   => env('GAME_PLANET_CRYSTAL', 5000),
+	'baseDeuteriumProduction' => env('GAME_PLANET_DEUTERIUM', 5000),
 	'onlinetime'              => 60,
-	'universe'                => 'x',
-	// УРЛ форума
-	'forum_url'               => 'http://forum.xnova.su/',
+	'universe'                => env('GAME_UNIVERSE', 'x'),
 	// Защита новичков
-	'noobprotection'          => 1,
-	'noobprotectiontime'      => 50,
-	'noobprotectionmulti'     => 5,
+	'noobprotection'          => env('GAME_NOOB_PROTECTION', 1),
+	'noobprotectiontime'      => env('GAME_NOOB_PROTECTION_TIME', 50),
+	'noobprotectionmulti'     => env('GAME_NOOB_PROTECTION_MULTI', 5),
 	// Флот в обломки
-	'fleetDebrisRate'         => 0.3,
+	'fleetDebrisRate'         => env('GAME_FLEET_DEBRIS_RATE', 0.3),
 	// Оборона в обломки
-	'defsDebrisRate'          => 0,
+	'defsDebrisRate'          => env('GAME_DEFENSE_DEBRIS_RATE', 0),
 	// Поля на главной планете
-	'initial_fields'          => 170,
+	'initial_fields'          => env('GAME_PLANET_FILEDS', 170),
 	// Поля на военной базе
-	'initial_base_fields'     => 10,
+	'initial_base_fields'     => env('GAME_PLANET_BASE_FILEDS', 10),
 	// Разрешить апгрейд лабы при идущем исследовании
 	'BuildLabWhileRun'        => 0,
-	// Время ухода в отпуск
-	'vocationModeTime'        => 172800,
+	// Время ухода в отпуск в днях
+	'vacationModeTime'        => env('GAME_VACATION_MODE_DAYS', 2),
 	// Базовое производство на планете
-	'metal_basic_income'      => 20,
-	'crystal_basic_income'    => 10,
-	'deuterium_basic_income'  => 0,
-	'energy_basic_income'     => 0,
+	'metal_basic_income'      => env('GAME_PLANET_METAL_PRODUCTION', 20),
+	'crystal_basic_income'    => env('GAME_PLANET_CRYSTAL_PRODUCTION', 10),
+	'deuterium_basic_income'  => env('GAME_PLANET_DEUTERIUM_PRODUCTION', 0),
+	'energy_basic_income'     => env('GAME_PLANET_ENERGY_PRODUCTION', 0),
 	// Скорость строительства и исследований /2500
-	'game_speed'              => 500000,
+	'game_speed'              => 2500 * env('GAME_BASE_SPEED', 1),
 	// Скорость полётов /2500
-	'fleet_speed'             => 500000,
+	'fleet_speed'             => 2500 * env('GAME_FLEET_SPEED', 1),
 	// Скорость добычи ресурсов
-	'resource_multiplier'     => 30,
+	'resource_multiplier'     => env('GAME_RESOURCE_SPEED', 1),
 	// Множитель размера колонизируемых планет
-	'planetFactor'            => 1,
+	'planetFactor'            => env('GAME_PLANET_SIZE_FACTOR', 1),
 	// Порог лома для попадания в зал славы
 	'hallPoints'              => 1000000,
 	// Максимальный ШВЛ
-	'maxMoonChance'           => 20,
+	'maxMoonChance'           => env('GAME_MAX_MOON_CHANCE', 20),
 	// Ежедневный бонус за рефералов
 	'refersCreditBonus'       => 5,
-	'maxRegPlanetsInSystem'   => 3,
+	'maxRegPlanetsInSystem'   => env('GAME_MAX_PLANET_IN_SYSTEM', 3),
 	'buildings_exp_mult'      => 1500,
 	'maxSlotsInSim'           => 10,
 	'view' => [
@@ -61,19 +59,17 @@ return [
 		// Показывать селект выбора планет
 		'showPlanetListSelect'  => 0,
 	],
-	'stat' => [
-		'deleteTime'   => 604800,
-		'inactiveTime' => 1814400,
-	],
+	'deleteTime'   => env('GAME_USER_DELETE_TIME', 7),
+	'inactiveTime' => env('GAME_USER_INACTIVE_TIME', 21),
 	'level' => [
 		'max_ind' => 100,
 		'max_war' => 100,
 		'credits' => 10,
 	],
 	'log'   => [
-		'research'  => 1,
-		'buildings' => 1,
-		'factory'   => 1,
+		'research'  => env('GAME_LOG_RESEARCH', 1),
+		'buildings' => env('GAME_LOG_BUILDINGS', 1),
+		'factory'   => env('GAME_LOG_FACTORY', 1),
 	],
 	'sms' => [
 		'id' => '',
@@ -84,10 +80,5 @@ return [
 	'recaptcha' => [
 		'public_key' => env('RECAPTCHA_PUBLIC_KEY', ''),
 		'secret_key' => env('RECAPTCHA_SECRET_KEY', ''),
-	],
-	'robokassa' => [
-		'login' => 75835,
-		'public' => 's9veqtsa',
-		'secret' => 'ZYDX6A4ap9jfHdCqvTk9Pf7Wd6Z9jVF3',
 	],
 ];

@@ -22,7 +22,7 @@ class FleetSendController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation > 0) {
+		if ($this->user->vacation) {
 			throw new PageException("Нет доступа!");
 		}
 
@@ -200,7 +200,7 @@ class FleetSendController extends Controller
 				$protection = false;
 			}
 
-			if ($targerUser->onlinetime < (time() - 86400 * 7) || $targerUser->banned > 0) {
+			if ($targerUser->onlinetime->diffInDays() > 7 || $targerUser->banned_time) {
 				$protection = false;
 			}
 
@@ -233,7 +233,7 @@ class FleetSendController extends Controller
 			}
 		}
 
-		if ($targerUser->vacation > 0 && $fleetMission != 8 && !$this->user->isAdmin()) {
+		if ($targerUser->vacation && $fleetMission != 8 && !$this->user->isAdmin()) {
 			throw new PageException("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", "/fleet/");
 		}
 
@@ -241,7 +241,7 @@ class FleetSendController extends Controller
 
 		$maxFleets = $this->user->getTechLevel('computer') + 1;
 
-		if ($this->user->rpg_admiral > time()) {
+		if ($this->user->rpg_admiral?->isFuture()) {
 			$maxFleets += 2;
 		}
 
@@ -534,7 +534,7 @@ class FleetSendController extends Controller
 		}*/
 
 		if ($fleetMission == 3 && $targerUser->id != $this->user->id && !$this->user->isAdmin()) {
-			if ($targerUser->onlinetime < (time() - 86400 * 7)) {
+			if ($targerUser->onlinetime->lessThan(now()->subDays(7))) {
 				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
 			}
 
@@ -751,10 +751,10 @@ class FleetSendController extends Controller
 			throw new PageException(__('fleet.gate_wait_data'), '/fleet/');
 		}
 
-		$this->planet->last_jump_time = time();
+		$this->planet->last_jump_time = now();
 		$this->planet->update();
 
-		$targetPlanet->last_jump_time = time();
+		$targetPlanet->last_jump_time = now();
 		$targetPlanet->update();
 
 		$this->user->update(['planet_current' => $targetPlanet->id]);

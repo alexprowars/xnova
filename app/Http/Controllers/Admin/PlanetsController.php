@@ -70,7 +70,7 @@ class PlanetsController extends CrudController
 					'label' => 'Время обновления',
 					'type'	=> 'closure',
 					'function' => function ($entry) {
-						return date('d.m.Y H:i:s', $entry->last_update);
+						return $entry->last_update?->format('d.m.Y H:i:s');
 					},
 				],
 			]);

@@ -16,10 +16,10 @@ return new class extends Migration {
 			$table->boolean('galaxy')->default(0)->index();
 			$table->smallInteger('system')->unsigned()->default(0)->index();
 			$table->boolean('planet')->default(0);
-			$table->integer('last_update')->nullable();
-			$table->integer('last_active')->default(0);
+			$table->timestamp('last_update')->nullable();
+			$table->timestamp('last_active')->nullable();
 			$table->boolean('planet_type')->default(1);
-			$table->integer('destruyed')->unsigned()->default(0);
+			$table->timestamp('destruyed')->nullable();
 			$table->string('image', 32)->default('normaltempplanet01');
 			$table->smallInteger('diameter')->unsigned()->default(12800);
 			$table->smallInteger('field_current')->unsigned()->default(0);
@@ -29,11 +29,11 @@ return new class extends Migration {
 			$table->float('metal', 32, 4)->default(500.0000);
 			$table->float('crystal', 32, 4)->default(500.0000);
 			$table->float('deuterium', 32, 4)->default(0.0000);
-			$table->integer('last_jump_time')->unsigned()->default(0);
+			$table->timestamp('last_jump_time')->nullable();
 			$table->foreignId('parent_planet')->nullable()->constrained('planets')->nullOnDelete();
 			$table->integer('debris_metal')->default(0);
 			$table->integer('debris_crystal')->default(0);
-			$table->integer('merchand')->default(0);
+			$table->timestamp('merchand')->nullable();
 		});
 
 		Schema::table('users', function (Blueprint $table) {
