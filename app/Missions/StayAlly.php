@@ -18,7 +18,7 @@ class StayAlly extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		$this->returnFleet();
+		$this->fleet->return();
 	}
 
 	public function returnEvent()

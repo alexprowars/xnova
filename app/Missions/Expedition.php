@@ -85,17 +85,17 @@ class Expedition extends FleetEngine implements Mission
 
 				switch ($WitchFound) {
 					case 1:
-						$update['+resource_metal'] = $Size;
+						$update['resource_metal'] = DB::raw('resource_metal + ' . $Size);
 						break;
 					case 2:
-						$update['+resource_crystal'] = $Size;
+						$update['resource_crystal'] = DB::raw('resource_crystal + ' . $Size);
 						break;
 					case 3:
-						$update['+resource_deuterium'] = $Size;
+						$update['resource_deuterium'] = DB::raw('resource_deuterium + ' . $Size);
 						break;
 				}
 
-				$this->returnFleet($update);
+				$this->fleet->return($update);
 
 				break;
 
@@ -114,7 +114,7 @@ class Expedition extends FleetEngine implements Mission
 				Models\User::query()->where('id', $this->fleet->user_id)
 					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
-				$this->returnFleet();
+				$this->fleet->return();
 
 				break;
 
@@ -174,7 +174,8 @@ class Expedition extends FleetEngine implements Mission
 
 				$Message .= $FoundShipMess;
 
-				$this->returnFleet(['fleet_array' => json_encode($NewFleetArray)]);
+				$this->fleet->fleet_array = $NewFleetArray;
+				$this->fleet->return();
 
 				break;
 
@@ -229,14 +230,14 @@ class Expedition extends FleetEngine implements Mission
 
 				LangManager::getInstance()->setImplementation(new LangImplementation());
 
-				$mission = new Attack(new \App\Models\Fleet());
+				$mission = new Attack(new Models\Fleet());
 
 				$attackers = new PlayerGroup();
 				$defenders = new PlayerGroup();
 
 				$mission->getGroupFleet($this->fleet, $attackers);
 
-				$fleetData = $this->fleet->getShips($defenderFleetArray);
+				$fleetData = $defenderFleetArray;
 
 				$mission->usersInfo[0] = [];
 				$mission->usersInfo[0][0] = [
@@ -335,7 +336,7 @@ class Expedition extends FleetEngine implements Mission
 					} else {
 						Models\Fleet::query()->where('id', $fleetID)
 							->update([
-								'fleet_array' 	=> json_encode($fleetArray),
+								'fleet_array' 	=> $fleetArray,
 								'updated_at' 	=> DB::raw('end_time'),
 								'mess'			=> 1,
 								'won'			=> $result['won']
@@ -418,12 +419,12 @@ class Expedition extends FleetEngine implements Mission
 					$Message = __('fleet_engine.sys_expe_time_fast_' . random_int(1, 3));
 				}
 
-				$this->returnFleet();
+				$this->fleet->return();
 
 				break;
 
 			default:
-				$this->returnFleet();
+				$this->fleet->return();
 
 				$Message = __('fleet_engine.sys_expe_nothing_' . random_int(1, 8));
 		}

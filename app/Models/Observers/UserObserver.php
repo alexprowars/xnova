@@ -18,7 +18,7 @@ class UserObserver
 			if ($model->alliance->user_id != $model->id) {
 				$model->alliance->deleteMember($model->id);
 			} else {
-				$model->alliance->deleteAlly();
+				$model->alliance->delete();
 			}
 		}
 

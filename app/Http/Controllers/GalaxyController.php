@@ -155,7 +155,7 @@ class GalaxyController extends Controller
 								p.galaxy, p.system, p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
 								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
 								u.id AS u_id, u.username as u_name, u.race as u_race, u.alliance_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned_time as u_ban, u.sex as u_sex, u.avatar as u_avatar, u.image AS u_image,
-								a.name AS a_name, a.members AS a_members, a.web AS a_web, a.tag AS a_tag,
+								a.name AS a_name, a.members_count AS a_members, a.web AS a_web, a.tag AS a_tag,
 								ad.type as d_type,
 								s.total_rank as s_rank, s.total_points as s_points
 				FROM planets p

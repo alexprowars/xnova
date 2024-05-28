@@ -24,7 +24,7 @@ class Fleet extends Model
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
-	public function targetUser()
+	public function target()
 	{
 		return $this->belongsTo(User::class, 'target_user_id');
 	}
@@ -81,24 +81,16 @@ class Fleet extends Model
 		return $result;
 	}
 
-	public function getShips($fleets = false)
+	public function getShips()
 	{
-		if (!$fleets) {
-			$fleets = $this->fleet_array;
+		if (empty($this->fleet_array)) {
+			return [];
 		}
 
 		$result = [];
 
-		if (!is_array($fleets)) {
-			$fleets = json_decode($fleets, true);
-		}
-
-		if (!is_array($fleets)) {
-			return [];
-		}
-
-		foreach ($fleets as $fleet) {
-			if (!isset($fleet['id'])) {
+		foreach ($this->fleet_array as $fleet) {
+			if (empty($fleet['id'])) {
 				continue;
 			}
 
@@ -106,7 +98,7 @@ class Fleet extends Model
 
 			$result[$fleetId] = [
 				'id' => $fleetId,
-				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0
+				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0,
 			];
 
 			if (isset($fleet['target'])) {
@@ -130,5 +122,14 @@ class Fleet extends Model
 	public function getDestinationCoordinates(): Coordinates
 	{
 		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $this->end_type);
+	}
+
+	public function return(array $attributes = [])
+	{
+		$this->mess = 1;
+		$this->updated_at = $this->end_time;
+
+		$this->update($attributes);
+		$this->assault?->delete();
 	}
 }

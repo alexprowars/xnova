@@ -26,7 +26,7 @@ class MessagesController extends Controller
 
 		$userId = (int) $userId;
 
-		$OwnerRecord = DB::selectOne("SELECT `id`, `username`, `galaxy`, `system`, `planet` FROM users WHERE `id` = '" . $userId . "'");
+		$OwnerRecord = User::find($userId);
 
 		if (!$OwnerRecord) {
 			throw new ErrorException(__('messages.mess_no_owner'));
@@ -58,15 +58,16 @@ class MessagesController extends Controller
 				}
 			}
 
-			$similar = DB::selectOne("SELECT text FROM messages WHERE user_id = " . $this->user->id . " AND time > " . (time() - (5 * 60)) . " ORDER BY time DESC");
+			$similar = Message::query()->where('user_id', $this->user->id)
+				->where('time', now()->subMinutes(5))
+				->orderByDesc('time')
+				->first();
 
-			if ($similar) {
-				if (mb_strlen($similar->text) < 1000) {
-					similar_text($text, $similar->text, $sim);
+			if ($similar && mb_strlen($similar->text) < 1000) {
+				similar_text($text, $similar->text, $sim);
 
-					if ($sim > 80) {
-						throw new ErrorException(__('messages.mess_similar'));
-					}
+				if ($sim > 80) {
+					throw new ErrorException(__('messages.mess_similar'));
 				}
 			}
 

@@ -34,7 +34,7 @@ class Attack extends FleetEngine implements Mission
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if (empty($target->id) || !$target->user_id || $target->destruyed) {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			return false;
 		}
@@ -42,7 +42,7 @@ class Attack extends FleetEngine implements Mission
 		$owner = User::find($this->fleet->user_id);
 
 		if (!$owner) {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			return false;
 		}
@@ -50,7 +50,7 @@ class Attack extends FleetEngine implements Mission
 		$targetUser = User::find($target->user_id);
 
 		if (!$targetUser) {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			return false;
 		}
@@ -293,12 +293,10 @@ class Attack extends FleetEngine implements Mission
 					'won'			=> $result['won']
 				];
 
-				if ($result['won'] == 1 && ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)) {
-					if (isset($res_procent[$fleetID])) {
-						$update['resource_metal'] 		= DB::raw('resource_metal + ' . (int) round($res_procent[$fleetID] * $steal['metal']));
-						$update['resource_crystal'] 	= DB::raw('resource_crystal + ' . (int) round($res_procent[$fleetID] * $steal['crystal']));
-						$update['resource_deuterium'] 	= DB::raw('resource_deuterium + ' . (int) round($res_procent[$fleetID] * $steal['deuterium']));
-					}
+				if ($result['won'] == 1 && isset($res_procent[$fleetID]) && ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)) {
+					$update['resource_metal'] 		= DB::raw('resource_metal + ' . (int) round($res_procent[$fleetID] * $steal['metal']));
+					$update['resource_crystal'] 	= DB::raw('resource_crystal + ' . (int) round($res_procent[$fleetID] * $steal['crystal']));
+					$update['resource_deuterium'] 	= DB::raw('resource_deuterium + ' . (int) round($res_procent[$fleetID] * $steal['deuterium']));
 				}
 
 				Models\Fleet::query()->where('id', $fleetID)->update($update);
@@ -325,7 +323,7 @@ class Attack extends FleetEngine implements Mission
 				} else {
 					Planet::query()->where('id', $fleetID)
 						->update([
-							'fleet_array' => json_encode($fleetArray),
+							'fleet_array' => $fleetArray,
 							'updated_at' => DB::raw('end_time')
 						]);
 				}
@@ -352,7 +350,7 @@ class Attack extends FleetEngine implements Mission
 			$moonChance = 0;
 		}
 
-		$userChance = mt_rand(1, 100);
+		$userChance = random_int(1, 100);
 
 		if ($this->fleet->end_type == 5) {
 			$userChance = 0;
@@ -410,7 +408,7 @@ class Attack extends FleetEngine implements Mission
 						$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
 					}
 
-					Models\User::query()->where('id', $info['tech']['id'])->update($update);
+					Models\User::find($info['tech']['id'])->update($update);
 				}
 			}
 		}
@@ -486,10 +484,10 @@ class Attack extends FleetEngine implements Mission
 			$battleLog->data = $report->data;
 
 			if ($battleLog->save()) {
-				DB::table('halls')->insert([
+				Models\Hall::create([
 					'title' 	=> $title,
 					'debris' 	=> floor($lost / 1000),
-					'time' 		=> time(),
+					'time' 		=> now(),
 					'won' 		=> $result['won'],
 					'sab' 		=> $sab,
 					'log' 		=> $battleLog->id
@@ -581,7 +579,7 @@ class Attack extends FleetEngine implements Mission
 
 		if (!count($fleetData)) {
 			if ($fleet->mission == 1 || ($fleet->mission == 2 && count($fleetData) == 1 && isset($fleetData[210]))) {
-				$this->returnFleet([], $fleet->id);
+				$fleet->return();
 			}
 
 			return;
@@ -640,7 +638,7 @@ class Attack extends FleetEngine implements Mission
 			$playerObj = $playerGroup->getPlayer($fleet->user_id);
 
 			if ($playerObj === false) {
-				$info = DB::selectOne('SELECT id, username FROM users WHERE id = ' . $fleet->user_id);
+				$info = User::find($fleet->user_id);
 
 				$playerObj = new Player($fleet->user_id);
 				$playerObj->setName($info->username);
@@ -710,12 +708,12 @@ class Attack extends FleetEngine implements Mission
 				'fleet' 	=> $this->usersInfo[$_player->getId()],
 				'tech' 		=> [
 					'id' 			=> $_player->getId(),
-					'military_tech' => isset($this->usersTech[$_player->getId()][109]) ? $this->usersTech[$_player->getId()][109] : 0,
-					'shield_tech' 	=> isset($this->usersTech[$_player->getId()][110]) ? $this->usersTech[$_player->getId()][110] : 0,
-					'defence_tech' 	=> isset($this->usersTech[$_player->getId()][111]) ? $this->usersTech[$_player->getId()][111] : 0,
-					'laser_tech'	=> isset($this->usersTech[$_player->getId()][120]) ? $this->usersTech[$_player->getId()][120] : 0,
-					'ionic_tech'	=> isset($this->usersTech[$_player->getId()][121]) ? $this->usersTech[$_player->getId()][121] : 0,
-					'buster_tech'	=> isset($this->usersTech[$_player->getId()][122]) ? $this->usersTech[$_player->getId()][122] : 0
+					'military_tech' => $this->usersTech[$_player->getId()][109] ?? 0,
+					'shield_tech' 	=> $this->usersTech[$_player->getId()][110] ?? 0,
+					'defence_tech' 	=> $this->usersTech[$_player->getId()][111] ?? 0,
+					'laser_tech'	=> $this->usersTech[$_player->getId()][120] ?? 0,
+					'ionic_tech'	=> $this->usersTech[$_player->getId()][121] ?? 0,
+					'buster_tech'	=> $this->usersTech[$_player->getId()][122] ?? 0
 				],
 				'flvl' => $this->usersTech[$_player->getId()],
 			];

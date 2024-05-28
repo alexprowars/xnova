@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class Alliance extends Model
 {
-	public $timestamps = false;
 	protected $table = 'alliances';
+	protected $guarded = [];
 
-	private $rights = [];
-	/** @var AllianceMember */
-	public $member;
+	public $rights = [];
+	public ?AllianceMember $member;
 
 	public const CAN_WATCH_MEMBERLIST_STATUS = 'onlinestatus';
 	public const CAN_WATCH_MEMBERLIST = 'memberlist';
@@ -38,25 +37,23 @@ class Alliance extends Model
 		return $this->hasOne(User::class);
 	}
 
-	public function getRanks()
+	public function members()
 	{
-		if ($this->ranks == null) {
-			$this->ranks = [];
-		}
+		return $this->hasMany(AllianceMember::class);
 	}
 
-	public function setRanks($ranks)
+	public function getRanks()
 	{
-		if (is_array($ranks)) {
-			$this->ranks = json_encode($ranks);
-		} else {
-			$this->ranks = $ranks;
+		if (empty($this->ranks)) {
+			$this->ranks = [];
 		}
 	}
 
 	public function getMember($userId)
 	{
-		$this->member = AllianceMember::query()->where('u_id', $userId)->get();
+		$this->member ??= $this->members()->where('user_id', $userId)->first();
+
+		return $this->member;
 	}
 
 	public function parseRights($userId = 0)
@@ -136,12 +133,12 @@ class Alliance extends Model
 		User::query()->find($userId)->update(['alliance_id' => null, 'alliance_name' => null]);
 	}
 
-	public function deleteAlly()
+	public function delete()
 	{
 		User::where('alliance_id', $this->id)
 			->update(['alliance_id' => null, 'ally_name' => null]);
 
-		$this->delete();
+		parent::delete();
 
 		Statistic::query()->where('stat_type', 1)
 			->where('user_id', null)

@@ -2,6 +2,8 @@
 
 namespace App\Missions;
 
+use App\Models\Planet;
+use App\Vars;
 use Illuminate\Support\Facades\DB;
 use App\FleetEngine;
 use App\Format;
@@ -11,66 +13,81 @@ class Recycling extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$TargetGalaxy = $this->db->query("SELECT id, debris_metal, debris_crystal FROM planets WHERE galaxy = '" . $this->fleet->end_galaxy . "' AND system = '" . $this->fleet->end_system . "' AND planet = '" . $this->fleet->end_planet . "' AND planet_type != 3 LIMIT 1;")->fetch();
+		$targetPlanet = Planet::query()->where('galaxy', $this->fleet->end_galaxy)
+			->where('system', $this->fleet->end_system)
+			->where('planet', $this->fleet->end_planet)
+			->whereNot('planet_type', 3)
+			->first();
 
-		if (isset($TargetGalaxy['id'])) {
-			$RecyclerCapacity = 0;
-			$OtherFleetCapacity = 0;
+		if ($targetPlanet) {
+			$recyclerCapacity = 0;
+			$otherFleetCapacity = 0;
+
+			$storage = Vars::getStorage();
 
 			$fleetData = $this->fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr) {
-				$capacity = $this->registry->CombatCaps[$shipId]["capacity"] * $shipArr['count'];
+				$capacity = $storage['CombatCaps'][$shipId]['capacity'] * $shipArr['count'];
 
 				if ($shipId == 209) {
-					$RecyclerCapacity += $capacity;
+					$recyclerCapacity += $capacity;
 				} else {
-					$OtherFleetCapacity += $capacity;
+					$otherFleetCapacity += $capacity;
 				}
 			}
 
-			$IncomingFleetGoods = $this->fleet->resource_metal + $this->fleet->resource_crystal + $this->fleet->resource_deuterium;
+			$incomingFleetGoods = $this->fleet->resource_metal + $this->fleet->resource_crystal + $this->fleet->resource_deuterium;
 
 			// Если часть ресурсов хранится в переработчиках
-			if ($IncomingFleetGoods > $OtherFleetCapacity) {
-				$RecyclerCapacity -= ($IncomingFleetGoods - $OtherFleetCapacity);
+			if ($incomingFleetGoods > $otherFleetCapacity) {
+				$recyclerCapacity -= ($incomingFleetGoods - $otherFleetCapacity);
 			}
 
-			if (($TargetGalaxy["debris_metal"] + $TargetGalaxy["debris_crystal"]) <= $RecyclerCapacity) {
-				$RecycledGoods["metal"] = $TargetGalaxy["debris_metal"];
-				$RecycledGoods["crystal"] = $TargetGalaxy["debris_crystal"];
-			} else {
-				if (($TargetGalaxy["debris_metal"] > $RecyclerCapacity / 2) and ($TargetGalaxy["debris_crystal"] > $RecyclerCapacity / 2)) {
-					$RecycledGoods["metal"] = $RecyclerCapacity / 2;
-					$RecycledGoods["crystal"] = $RecyclerCapacity / 2;
+			$recycledGoods = [];
+
+			if (($targetPlanet->debris_metal + $targetPlanet->debris_crystal) <= $recyclerCapacity) {
+				$recycledGoods['metal'] = $targetPlanet->debris_metal;
+				$recycledGoods['crystal'] = $targetPlanet->debris_crystal;
+			} elseif (($targetPlanet->debris_metal > $recyclerCapacity / 2) and ($targetPlanet->debris_crystal > $recyclerCapacity / 2)) {
+				$recycledGoods['metal'] = $recyclerCapacity / 2;
+				$recycledGoods['crystal'] = $recyclerCapacity / 2;
+			} elseif ($targetPlanet->debris_metal > $targetPlanet->debris_crystal) {
+				$recycledGoods['crystal'] = $targetPlanet->debris_crystal;
+
+				if ($targetPlanet->debris_metal > ($recyclerCapacity - $recycledGoods['crystal'])) {
+					$recycledGoods['metal'] = $recyclerCapacity - $recycledGoods['crystal'];
 				} else {
-					if ($TargetGalaxy["debris_metal"] > $TargetGalaxy["debris_crystal"]) {
-						$RecycledGoods["crystal"] = $TargetGalaxy["debris_crystal"];
+					$recycledGoods['metal'] = $targetPlanet->debris_metal;
+				}
+			} else {
+				$recycledGoods['metal'] = $targetPlanet->debris_metal;
 
-						if ($TargetGalaxy["debris_metal"] > ($RecyclerCapacity - $RecycledGoods["crystal"])) {
-							$RecycledGoods["metal"] = $RecyclerCapacity - $RecycledGoods["crystal"];
-						} else {
-							$RecycledGoods["metal"] = $TargetGalaxy["debris_metal"];
-						}
-					} else {
-						$RecycledGoods["metal"] = $TargetGalaxy["debris_metal"];
-
-						if ($TargetGalaxy["debris_crystal"] > ($RecyclerCapacity - $RecycledGoods["metal"])) {
-							$RecycledGoods["crystal"] = $RecyclerCapacity - $RecycledGoods["metal"];
-						} else {
-							$RecycledGoods["crystal"] = $TargetGalaxy["debris_crystal"];
-						}
-					}
+				if ($targetPlanet->debris_crystal > ($recyclerCapacity - $recycledGoods['metal'])) {
+					$recycledGoods['crystal'] = $recyclerCapacity - $recycledGoods['metal'];
+				} else {
+					$recycledGoods['crystal'] = $targetPlanet->debris_crystal;
 				}
 			}
 
-			DB::statement("UPDATE planets SET debris_metal = debris_metal - '" . $RecycledGoods["metal"] . "', debris_crystal = debris_crystal - '" . $RecycledGoods["crystal"] . "' WHERE id = '" . $TargetGalaxy['id'] . "' LIMIT 1;");
+			if (!empty($recycledGoods['metal'])) {
+				$targetPlanet->debris_metal = DB::raw('debris_metal - ' . $recycledGoods['metal']);
+			}
 
-			$this->returnFleet(['+resource_metal' => $RecycledGoods["metal"], '+resource_crystal' => $RecycledGoods["crystal"]]);
+			if (!empty($recycledGoods['metal'])) {
+				$targetPlanet->debris_crystal = DB::raw('debris_crystal - ' . $recycledGoods['metal']);
+			}
 
-			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), Format::number($RecycledGoods["metal"]), __('main.Metal'), Format::number($RecycledGoods["crystal"]), __('main.Crystal'), $this->fleet->getTargetAdressLink());
+			$targetPlanet->save();
+
+			$this->fleet->return([
+				'resource_metal' => DB::raw('resource_metal + ' . $recycledGoods['metal']),
+				'resource_crystal' => DB::raw('resource_crystal + ' . $recycledGoods['crystal'])
+			]);
+
+			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), Format::number($recycledGoods['metal']), __('main.Metal'), Format::number($recycledGoods['crystal']), __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		} else {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
@@ -80,7 +97,6 @@ class Recycling extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()

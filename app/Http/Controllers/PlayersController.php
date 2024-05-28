@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogStat;
 use App\Models\Statistic;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Entity\Coordinates;
 use App\Exceptions\ErrorException;
@@ -110,7 +110,11 @@ class PlayersController extends Controller
 		$parse['name'] = $player->username;
 		$parse['points'] = [];
 
-		$items = DB::select("SELECT * FROM log_stats WHERE object_id = " . $userId . " AND type = 1 AND time > " . (time() - 14 * 86400) . " ORDER BY time ASC");
+		$items = LogStat::query()->where('object_id', $userId)
+			->where('type', 1)
+			->where('time', now()->addDays(14))
+			->orderBy('time')
+			->get();
 
 		foreach ($items as $item) {
 			$parse['points'][] = [

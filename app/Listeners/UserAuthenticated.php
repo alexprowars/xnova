@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Models\LogIp;
 use Illuminate\Auth\Events\Authenticated;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;

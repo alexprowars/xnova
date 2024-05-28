@@ -7,26 +7,24 @@ use App\Models\User;
 
 class Fleet extends Building
 {
-	static function setShipsEngine(User $user)
+	public static function setShipsEngine(User $user)
 	{
 		$storage = Vars::getStorage();
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship) {
-			if (isset($storage->CombatCaps[$Ship]['engine_up'])) {
-				if ($user->getTechLevel($storage['CombatCaps'][$Ship]['engine_up']['tech']) >= $storage['CombatCaps'][$Ship]['engine_up']['lvl']) {
-					$tmp = $storage['CombatCaps'];
+			if (isset($storage->CombatCaps[$Ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$Ship]['engine_up']['tech']) >= $storage['CombatCaps'][$Ship]['engine_up']['lvl']) {
+				$tmp = $storage['CombatCaps'];
 
-					$tmp[$Ship]['type_engine']++;
-					$tmp[$Ship]['speed'] = $tmp[$Ship]['engine_up']['speed'];
+				$tmp[$Ship]['type_engine']++;
+				$tmp[$Ship]['speed'] = $tmp[$Ship]['engine_up']['speed'];
 
-					unset($tmp[$Ship]['engine_up']);
-					$storage['CombatCaps'] = $tmp;
-				}
+				unset($tmp[$Ship]['engine_up']);
+				$storage['CombatCaps'] = $tmp;
 			}
 		}
 	}
 
-	static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
+	public static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
 	{
 		$FleetRec = $FleetRow->getShips();
 
@@ -69,7 +67,7 @@ class Fleet extends Building
 		return "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
 	}
 
-	static function createFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
+	public static function createFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
 	{
 		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
 
@@ -92,9 +90,9 @@ class Fleet extends Building
 		return $MissionPopup;
 	}
 
-	static function getFleetMissions($fleetArray, Coordinates $target = null, $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
+	public static function getFleetMissions($fleetArray, Coordinates $target = null, $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
 	{
-		if (empty($target)) {
+		if ($target === null) {
 			$target = new Coordinates(1, 1, 1, 1);
 		}
 
@@ -149,7 +147,7 @@ class Fleet extends Building
 		return $result;
 	}
 
-	static function getMissileRange(User $user)
+	public static function getMissileRange(User $user)
 	{
 		if ($user->getTechLevel('impulse_motor') > 0) {
 			return ($user->getTechLevel('impulse_motor') * 5) - 1;
@@ -158,7 +156,7 @@ class Fleet extends Building
 		return 0;
 	}
 
-	static function getPhalanxRange($level)
+	public static function getPhalanxRange($level)
 	{
 		$PhalanxRange = 0;
 

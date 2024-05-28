@@ -12,7 +12,7 @@ return new class extends Migration {
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->boolean('rank')->default(0);
-			$table->integer('time')->default(0);
+			$table->timestamps();
 		});
 	}
 

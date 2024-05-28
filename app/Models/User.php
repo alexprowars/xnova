@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -34,7 +33,7 @@ class User extends Authenticatable
 	use Notifiable;
 	use Tech;
 
-	private $optionsDefault = [
+	protected $optionsDefault = [
 		'bb_parser' 		=> true,
 		'planetlist' 		=> false,
 		'planetlistselect' 	=> false,
@@ -48,11 +47,8 @@ class User extends Authenticatable
 		'spy'				=> 1,
 	];
 
-	private $bonusData;
-	public $ally = [];
-
-	/** @var Planet */
-	private $planet;
+	protected $bonusData;
+	protected ?Planet $planet = null;
 
 	protected $guarded = [];
 	protected $hidden = ['password'];
@@ -254,7 +250,10 @@ class User extends Authenticatable
 	public function getAllyInfo()
 	{
 		if ($this->alliance) {
-			$this->ally['rights'] = $this->alliance->ranks[$ally->rank - 1] ?? ['name' => '', 'planet' => 0];
+			$member = $this->alliance->members()->where('user_id', $this->id)
+				->first();
+
+			$this->alliance->rights = $this->alliance->ranks[($member?->rank ?? 0) - 1] ?? ['name' => '', 'planet' => 0];
 		}
 	}
 

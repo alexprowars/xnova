@@ -43,7 +43,8 @@ class Transport extends FleetEngine implements Mission
 			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $Message);
 		}
 
-		$this->returnFleet(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
+		$this->fleet->fill(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
+		$this->fleet->return();
 	}
 
 	public function endStayEvent()

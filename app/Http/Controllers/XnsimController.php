@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use App\Battle\Core\Battle;
 use App\Battle\Core\Round;

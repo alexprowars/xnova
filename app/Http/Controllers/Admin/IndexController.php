@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use App\Format;
 use App\Helpers;
@@ -45,14 +44,16 @@ class IndexController extends Controller
 		$PrevIP = '';
 
 		if (Auth::user()->can('list index:online')) {
-			$Last15Mins = DB::select("SELECT `id`, `username`, `ip`, `alliance_name`, `onlinetime` FROM users WHERE `onlinetime` >= '" . (time() - 15 * 60) . "' ORDER BY `" . $TypeSort . "` ASC;");
+			$Last15Mins = User::query()->where('onlinetime', '>', now()->addMinutes(15))
+				->orderBy($TypeSort)
+				->get();
 
 			foreach ($Last15Mins as $TheUser) {
-				if ($PrevIP != "") {
+				if (!empty($PrevIP)) {
 					if ($PrevIP == $TheUser->ip) {
-						$Color = "red";
+						$Color = 'red';
 					} else {
-						$Color = "inherit";
+						$Color = 'inherit';
 					}
 				}
 

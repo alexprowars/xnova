@@ -418,9 +418,6 @@ class OverviewController extends Controller
 
 		$parse['build_list'] = $queueList;
 
-		$parse['case_pourcentage'] = floor($this->planet->field_current / $this->planet->getMaxFields() * 100);
-		$parse['case_pourcentage'] = min($parse['case_pourcentage'], 100);
-
 		$parse['lvl'] = [
 			'mine' => [
 				'p' => $this->user->xpminier,

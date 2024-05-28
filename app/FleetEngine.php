@@ -7,55 +7,52 @@ use App\Models\Planet;
 
 class FleetEngine
 {
-	public $fleet;
-
-	public function __construct(Models\Fleet $Fleet)
+	public function __construct(public Models\Fleet $fleet)
 	{
-		$this->fleet = $Fleet;
 	}
 
-	public function killFleet($fleetId = false)
+	public function killFleet($fleetId = null)
 	{
 		if (!$fleetId) {
 			$fleetId = $this->fleet->id;
 		}
 
-		Models\Fleet::query()->where('id', $fleetId)->delete();
+		Models\Fleet::find($fleetId)->delete();
 	}
 
-	public function restoreFleetToPlanet($Start = true, $fleet = true)
+	public function restoreFleetToPlanet($start = true, $fleet = true)
 	{
 		if (!isset($this->fleet->id)) {
 			return;
 		}
 
 		if ($fleet) {
-			if ($Start && $this->fleet->start_type == 3) {
-				$CheckFleet = Models\Planet::query()
+			if ($start && $this->fleet->start_type == 3) {
+				$checkFleet = Models\Planet::query()
 					->where('galaxy', $this->fleet->start_galaxy)
 					->where('system', $this->fleet->start_system)
 					->where('planet', $this->fleet->start_planet)
 					->where('planet_type', $this->fleet->start_type)
 					->first(['destruyed']);
 
-				if ($CheckFleet && $CheckFleet->destruyed) {
+				if ($checkFleet && $checkFleet->destruyed) {
 					$this->fleet->start_type = 1;
 				}
 			} elseif ($this->fleet->end_type == 3) {
-				$CheckFleet = Models\Planet::query()
+				$checkFleet = Models\Planet::query()
 					->where('galaxy', $this->fleet->end_galaxy)
 					->where('system', $this->fleet->end_system)
 					->where('planet', $this->fleet->end_planet)
 					->where('planet_type', $this->fleet->end_type)
 					->first(['destruyed']);
 
-				if ($CheckFleet && $CheckFleet->destruyed) {
+				if ($checkFleet && $checkFleet->destruyed) {
 					$this->fleet->end_type = 1;
 				}
 			}
 		}
 
-		if ($Start) {
+		if ($start) {
 			$p = 'start';
 		} else {
 			$p = 'end';
@@ -83,48 +80,6 @@ class FleetEngine
 			$targetPlanet->deuterium += $this->fleet->resource_deuterium;
 
 			$targetPlanet->update();
-		}
-	}
-
-	public function storeGoodsToPlanet($isOrigin = true)
-	{
-		if (!isset($this->fleet->id)) {
-			return;
-		}
-
-		$update = [
-			'+metal' => $this->fleet->resource_metal,
-			'+crystal' => $this->fleet->resource_crystal,
-			'+deuterium' => $this->fleet->resource_deuterium
-		];
-
-		if ($isOrigin) {
-			$p = 'start';
-		} else {
-			$p = 'end';
-		}
-
-		Models\Planet::query()
-			->where('galaxy', $this->fleet->{$p . '_galaxy'})
-			->where('system', $this->fleet->{$p . '_system'})
-			->where('planet', $this->fleet->{$p . '_planet'})
-			->where('planet_type', $this->fleet->{$p . '_type'})
-			->update($update);
-	}
-
-	public function returnFleet($update = [], $fleetId = false)
-	{
-		$update['mess'] = 1;
-		$update['updated_at'] = $this->fleet->end_time;
-
-		if (!$fleetId) {
-			$fleetId = $this->fleet->id;
-		}
-
-		Models\Fleet::find($fleetId)->update($update);
-
-		if ($this->fleet->assault) {
-			$this->fleet->assault->delete();
 		}
 	}
 

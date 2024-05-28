@@ -19,7 +19,7 @@ class Stay extends FleetEngine implements Mission
 			->first();
 
 		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->target_user_id) {
-			$this->returnFleet();
+			$this->fleet->return();
 		} else {
 			$this->restoreFleetToPlanet(false);
 			$this->killFleet();

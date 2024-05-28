@@ -19,8 +19,8 @@ return new class extends Migration {
 			$table->text('request')->nullable();
 			$table->boolean('request_notallow')->default(0);
 			$table->string('owner_range', 32)->nullable();
-			$table->json('ranks');
-			$table->boolean('members')->default(true);
+			$table->json('ranks')->nullable();
+			$table->integer('members_count')->default(0);
 			$table->timestamps();
 		});
 

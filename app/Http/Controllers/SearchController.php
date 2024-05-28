@@ -29,10 +29,10 @@ class SearchController extends Controller
 					$search = DB::select("SELECT u.id, u.username, u.race, p.name AS planet_name, u.ally_name, p.galaxy AS g, p.system AS s, p.planet AS p, s.total_rank FROM planets p LEFT JOIN users u ON u.id = p.user_id LEFT JOIN statistics s ON s.user_id = u.id AND s.stat_type = 1 WHERE p.name LIKE '%" . $searchtext . "%' LIMIT 30");
 					break;
 				case "allytag":
-					$search = DB::select("SELECT a.id, a.name, a.tag, a.members, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.tag LIKE '%" . $searchtext . "%' LIMIT 30");
+					$search = DB::select("SELECT a.id, a.name, a.tag, a.members_count, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.tag LIKE '%" . $searchtext . "%' LIMIT 30");
 					break;
 				case "allyname":
-					$search = DB::select("SELECT a.id, a.name, a.tag, a.members, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.name LIKE '%" . $searchtext . "%' LIMIT 30");
+					$search = DB::select("SELECT a.id, a.name, a.tag, a.members_count, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.name LIKE '%" . $searchtext . "%' LIMIT 30");
 			}
 
 			if (count($search)) {

@@ -19,14 +19,14 @@ class Spy extends FleetEngine implements Mission
 		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if ($TargetPlanet->user_id == 0) {
-			$this->returnFleet();
+			$this->fleet->return();
 			return false;
 		}
 
 		$targetUser = User::find($TargetPlanet->user_id);
 
 		if (!$targetUser) {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			return false;
 		}
@@ -81,42 +81,42 @@ class Spy extends FleetEngine implements Mission
 			$techDifference = abs($CurrentSpyLvl - $TargetSpyLvl);
 
 			if ($TargetSpyLvl > $CurrentSpyLvl) {
-				$ST = ($LS - pow($techDifference, 2));
+				$ST = ($LS - ($techDifference ** 2));
 			}
 			if ($CurrentSpyLvl >= $TargetSpyLvl) {
-				$ST = ($LS + pow($techDifference, 2));
+				$ST = ($LS + ($techDifference ** 2));
 			}
 
-			$MaterialsInfo = $this->SpyTarget($TargetPlanet, 0, __('fleet_engine.sys_spy_maretials'));
+			$MaterialsInfo = $this->spyTarget($TargetPlanet, 0, __('fleet_engine.sys_spy_maretials'));
 			$SpyMessage = $MaterialsInfo['String'];
 
-			$PlanetFleetInfo = $this->SpyTarget($TargetPlanet, 1, __('fleet_engine.sys_spy_fleet'));
+			$PlanetFleetInfo = $this->spyTarget($TargetPlanet, 1, __('fleet_engine.sys_spy_fleet'));
 
 			if ($ST >= 2) {
 				$SpyMessage .= $PlanetFleetInfo['String'];
 			}
 			if ($ST >= 3) {
-				$PlanetDefenInfo = $this->SpyTarget($TargetPlanet, 2, __('fleet_engine.sys_spy_defenses'));
+				$PlanetDefenInfo = $this->spyTarget($TargetPlanet, 2, __('fleet_engine.sys_spy_defenses'));
 				$SpyMessage .= $PlanetDefenInfo['String'];
 			}
 			if ($ST >= 5) {
-				$PlanetBuildInfo = $this->SpyTarget($TargetPlanet, 3, __('main.tech.0'));
+				$PlanetBuildInfo = $this->spyTarget($TargetPlanet, 3, __('main.tech.0'));
 				$SpyMessage .= $PlanetBuildInfo['String'];
 			}
 			if ($ST >= 7) {
-				$TargetTechnInfo = $this->SpyTarget($targetUser, 4, __('main.tech.100'));
+				$TargetTechnInfo = $this->spyTarget($targetUser, 4, __('main.tech.100'));
 				$SpyMessage .= $TargetTechnInfo['String'];
 			}
 			if ($ST >= 9) {
-				$TargetOfficierLvlInfo = $this->SpyTarget($targetUser, 6, __('main.tech.600'));
+				$TargetOfficierLvlInfo = $this->spyTarget($targetUser, 6, __('main.tech.600'));
 				$SpyMessage .= $TargetOfficierLvlInfo['String'];
 			}
 
 			$TargetForce = ($PlanetFleetInfo['Count'] * $LS) / 4;
 			$TargetForce = min(100, max(0, $TargetForce));
 
-			$TargetChances = rand(0, $TargetForce);
-			$SpyerChances = rand(0, 100);
+			$TargetChances = random_int(0, $TargetForce);
+			$SpyerChances = random_int(0, 100);
 
 			if ($TargetChances <= $SpyerChances) {
 				$DestProba = sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances);
@@ -179,10 +179,10 @@ class Spy extends FleetEngine implements Mission
 				$mission = new Attack($this->fleet);
 				$mission->targetEvent();
 			} else {
-				$this->returnFleet();
+				$this->fleet->return();
 			}
 		} else {
-			$this->returnFleet();
+			$this->fleet->return();
 		}
 
 		return true;
@@ -190,7 +190,6 @@ class Spy extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()
@@ -199,13 +198,7 @@ class Spy extends FleetEngine implements Mission
 		$this->killFleet();
 	}
 
-	/**
-	 * @param $TargetPlanet Planet|User
-	 * @param $Mode
-	 * @param $TitleString
-	 * @return mixed
-	 */
-	private function SpyTarget($TargetPlanet, $Mode, $TitleString)
+	private function spyTarget(User|Planet $TargetPlanet, $Mode, $TitleString)
 	{
 		$LookAtLoop = true;
 		$String = '';
@@ -256,7 +249,7 @@ class Spy extends FleetEngine implements Mission
 			$Loops = 1;
 		}
 
-		if ($LookAtLoop == true) {
+		if ($LookAtLoop) {
 			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * config('settings.spyReportRow', 1)) + (config('settings.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
 			$Count = 0;
 			$CurrentLook = 0;

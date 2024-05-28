@@ -33,7 +33,7 @@ class CreateBase extends FleetEngine implements Mission
 
 				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
-				$this->returnFleet();
+				$this->fleet->return();
 			} else {
 				// Создание планеты-базы
 				$NewOwnerPlanet = $galaxy->createPlanet(
@@ -68,7 +68,7 @@ class CreateBase extends FleetEngine implements Mission
 
 					Cache::forget('app::planetlist_' . $this->fleet->user_id);
 				} else {
-					$this->returnFleet();
+					$this->fleet->return();
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
@@ -76,7 +76,7 @@ class CreateBase extends FleetEngine implements Mission
 				}
 			}
 		} else {
-			$this->returnFleet();
+			$this->fleet->return();
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 

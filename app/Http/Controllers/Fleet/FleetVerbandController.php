@@ -75,13 +75,13 @@ class FleetVerbandController extends Controller
 				$byId = (int) $request->post('user_id', 'int');
 
 				if ($byId > 0) {
-					$user_data = DB::selectOne("SELECT * FROM users WHERE id = '" . $request->post('user_id', 'int') . "'");
+					$user_data = User::find($request->post('user_id'));
 				}
 
 				$byName = trim($request->post('user_name', 'string'));
 
 				if ($byName != '') {
-					$user_data = DB::selectOne("SELECT * FROM users WHERE username = :name", ['name' => $byName]);
+					$user_data = User::whereUsername($byName)->first();
 				}
 
 				if (!$user_data) {
@@ -188,13 +188,16 @@ class FleetVerbandController extends Controller
 
 			$parse['alliance'] = [];
 
-			if ($this->user->alliance_id > 0) {
-				$alliances = DB::select("SELECT id, username FROM users WHERE alliance_id = " . $this->user->alliance_id . " AND id != " . $this->user->id . "");
+			if ($this->user->alliance_id) {
+				$allianceUsers = User::query()->where('alliance_id', $this->user->alliance_id)
+					->whereNot('id', $this->user->id)
+					->get();
 
-				if (count($alliances)) {
-					foreach ($alliances as $user) {
-						$parse['alliance'][] = (array) $user;
-					}
+				foreach ($allianceUsers as $user) {
+					$parse['alliance'][] = [
+						'id' => $user->id,
+						'username' => $user->username,
+					];
 				}
 			}
 

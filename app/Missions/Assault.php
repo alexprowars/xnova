@@ -8,12 +8,11 @@ class Assault extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$this->returnFleet();
+		$this->fleet->return();
 	}
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()

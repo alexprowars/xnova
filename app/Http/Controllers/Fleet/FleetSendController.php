@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Fleet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Entity\Coordinates;
 use App\Entity\FleetCollection;

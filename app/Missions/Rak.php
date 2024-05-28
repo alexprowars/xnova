@@ -2,7 +2,7 @@
 
 namespace App\Missions;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\UserTech;
 use App\Entity\Coordinates;
 use App\FleetEngine;
 use App\Models\Planet;
@@ -21,25 +21,13 @@ class Rak extends FleetEngine implements Mission
 			return;
 		}
 
-		$defTech = DB::selectOne(
-			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
-			[$this->fleet->target_user_id, Vars::getIdByName('defence_tech')]
-		);
+		$defTech = UserTech::query()->where('user_id', $this->fleet->target_user_id)
+			->where('tech_id', Vars::getIdByName('defence_tech'))
+			->firstOrNew();
 
-		if (!$defTech) {
-			$defTech = new \stdClass();
-			$defTech->level = 0;
-		}
-
-		$attTech = DB::selectOne(
-			'SELECT level FROM users_teches WHERE user_id = ? AND tech_id = ?',
-			[$this->fleet->user_id, Vars::getIdByName('military_tech')]
-		);
-
-		if (!$attTech) {
-			$attTech = new \stdClass();
-			$attTech->level = 0;
-		}
+		$attTech = UserTech::query()->where('user_id', $this->fleet->user_id)
+			->where('tech_id', Vars::getIdByName('military_tech'))
+			->firstOrNew();
 
 		$message = '';
 
@@ -107,12 +95,10 @@ class Rak extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()
 	{
-		return;
 	}
 
 	private function raketenangriff($targetDefTech, $ownerAttTech, $missiles, $targetDefensive, $firstTarget = 0)
