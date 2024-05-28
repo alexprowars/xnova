@@ -33,7 +33,7 @@ class NotesController extends Controller
 		$note->text = $text;
 		$note->save();
 
-		throw new RedirectException(__('notes.NoteAdded'), '/notes/edit/' . $note->id);
+		throw new RedirectException('/notes/edit/' . $note->id, __('notes.NoteAdded'));
 	}
 
 	public function edit(Request $request, int $noteId)
@@ -64,7 +64,7 @@ class NotesController extends Controller
 			$note->text = $text;
 			$note->save();
 
-			throw new RedirectException(__('notes.NoteUpdated'), '/notes/edit/' . $note->id);
+			throw new RedirectException('/notes/edit/' . $note->id, __('notes.NoteUpdated'));
 		}
 
 		$parse = [
@@ -74,7 +74,7 @@ class NotesController extends Controller
 			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function index(Request $request)
@@ -87,7 +87,7 @@ class NotesController extends Controller
 					->whereIn('id', $deleteIds)->delete();
 			}
 
-			throw new RedirectException(__('notes.NoteDeleteds'), '/notes');
+			throw new RedirectException('/notes', __('notes.NoteDeleteds'));
 		}
 
 		$notes = Note::query()->where('user_id', $this->user->id)
@@ -114,6 +114,6 @@ class NotesController extends Controller
 			$parse['items'][] = $list;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

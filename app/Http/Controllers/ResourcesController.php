@@ -46,7 +46,7 @@ class ResourcesController extends Controller
 			'type' => 2
 		]);
 
-		throw new RedirectException('Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия', '/resources');
+		throw new RedirectException('/resources', 'Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия');
 	}
 
 	public function productionAction()
@@ -206,6 +206,6 @@ class ResourcesController extends Controller
 		$parse['production_level'] = $productionLevel;
 		$parse['energy_tech'] = $this->user->getTechLevel('energy');
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

@@ -24,9 +24,9 @@ class FleetShortcutController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $items
-		];
+		]);
 	}
 
 	public function add(Request $request)
@@ -64,7 +64,7 @@ class FleetShortcutController extends Controller
 				'planet_type' => $t,
 			]);
 
-			throw new RedirectException("Ссылка на планету добавлена!", "/fleet/shortcut");
+			throw new RedirectException("/fleet/shortcut", "Ссылка на планету добавлена!");
 		}
 
 		$g = (int) $request->input('g', 0);
@@ -85,12 +85,12 @@ class FleetShortcutController extends Controller
 			$t = 1;
 		}
 
-		return [
+		return response()->state([
 			'galaxy' => $g,
 			'system' => $s,
 			'planet' => $p,
 			'planet_type' => $t,
-		];
+		]);
 	}
 
 	public function view(Request $request, int $id)
@@ -100,14 +100,14 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new RedirectException("Данной ссылки не существует!", "/fleet/shortcut");
+			throw new RedirectException("/fleet/shortcut", "Данной ссылки не существует!");
 		}
 
 		if ($request->isMethod('post')) {
 			if ($request->has('delete')) {
 				$shortcut->delete();
 
-				throw new RedirectException("Ссылка была успешно удалена!", "/fleet/shortcut");
+				throw new RedirectException("/fleet/shortcut", "Ссылка была успешно удалена!");
 			} else {
 				$shortcut->name = strip_tags(str_replace(',', '', $request->post('title', '')));
 
@@ -138,17 +138,17 @@ class FleetShortcutController extends Controller
 				$shortcut->planet_type = $t;
 				$shortcut->save();
 
-				throw new RedirectException("Ссылка была обновлена!", "/fleet/shortcut");
+				throw new RedirectException("/fleet/shortcut", "Ссылка была обновлена!");
 			}
 		}
 
-		return [
+		return response()->state([
 			'id' => $shortcut->id,
 			'name' => $shortcut->name,
 			'galaxy' => $shortcut->galaxy,
 			'system' => $shortcut->system,
 			'planet' => $shortcut->planet,
 			'planet_type' => $shortcut->planet_type,
-		];
+		]);
 	}
 }

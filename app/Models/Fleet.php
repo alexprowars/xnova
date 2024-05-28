@@ -119,7 +119,7 @@ class Fleet extends Model
 
 	public function canBack()
 	{
-		return ($this->mess == 0 || ($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_user_id != 1);
+		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_user_id != 1));
 	}
 
 	public function getOriginCoordinates(): Coordinates

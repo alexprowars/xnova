@@ -23,9 +23,9 @@ class MerchantController extends Controller
 			$this->exchange($request);
 		}
 
-		return [
+		return response()->state([
 			'modifiers' => $this->modifiers
-		];
+		]);
 	}
 
 	private function exchange(Request $request)
@@ -88,6 +88,6 @@ class MerchantController extends Controller
 			$tutorial->save();
 		}
 
-		throw new RedirectException('Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type), '/merchant');
+		throw new RedirectException('/merchant', 'Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type));
 	}
 }

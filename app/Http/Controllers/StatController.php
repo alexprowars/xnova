@@ -149,7 +149,7 @@ class StatController extends Controller
 			$position++;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	private function alliances()
@@ -198,7 +198,7 @@ class StatController extends Controller
 			$position++;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	private function races()
@@ -222,6 +222,6 @@ class StatController extends Controller
 			$parse['items'][] = $row;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

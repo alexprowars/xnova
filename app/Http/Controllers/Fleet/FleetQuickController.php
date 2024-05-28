@@ -70,7 +70,7 @@ class FleetQuickController extends Controller
 			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>");
 		}
 
-		$FleetArray = [];
+		$fleetArray = [];
 		$HeDBRec = false;
 
 		if ($mission == 6 && ($planetType == 1 || $planetType == 3 || $planetType == 5)) {
@@ -106,23 +106,21 @@ class FleetQuickController extends Controller
 			}
 
 			if ($HeDBRec->onlinetime->lessThan(now()->subDays(7))) {
-				$NoobNoActive = 1;
+				$noobNoActive = 1;
 			} else {
-				$NoobNoActive = 0;
+				$noobNoActive = 0;
 			}
 
-			if ($this->user->authlevel != 3) {
-				if ($NoobNoActive == 0) {
-					$protectionPoints = (int) config('settings.noobprotectionPoints');
-					$protectionFactor = (int) config('settings.noobprotectionFactor');
+			if ($noobNoActive == 0 && $this->user->authlevel != 3) {
+				$protectionPoints = (int) config('settings.noobprotectionPoints');
+				$protectionFactor = (int) config('settings.noobprotectionFactor');
 
-					if ($HeGameLevel < $protectionPoints) {
-						throw new Exception('Игрок находится под защитой новичков!');
-					}
+				if ($HeGameLevel < $protectionPoints) {
+					throw new Exception('Игрок находится под защитой новичков!');
+				}
 
-					if ($protectionFactor && $MyGameLevel > $HeGameLevel * $protectionFactor) {
-						throw new Exception('Этот игрок слишком слабый для вас!');
-					}
+				if ($protectionFactor && $MyGameLevel > $HeGameLevel * $protectionFactor) {
+					throw new Exception('Этот игрок слишком слабый для вас!');
 				}
 			}
 
@@ -134,31 +132,31 @@ class FleetQuickController extends Controller
 				$num = $this->planet->getLevel('spy_sonde');
 			}
 
-			$FleetArray[210] = $num;
+			$fleetArray[210] = $num;
 		} elseif ($mission == 8 && $planetType == 2) {
-			$DebrisSize = $target->debris_metal + $target->debris_crystal;
+			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
-			if ($DebrisSize == 0) {
+			if ($debrisSize == 0) {
 				throw new Exception('Нет обломков для сбора!');
 			}
 			if ($this->planet->getLevel('recycler') == 0) {
 				throw new Exception('Нет переработчиков для сбора обломков!');
 			}
 
-			$RecyclerNeeded = 0;
+			$recyclerNeeded = 0;
 
-			if ($this->planet->getLevel('recycler') > 0 && $DebrisSize > 0) {
+			if ($this->planet->getLevel('recycler') > 0 && $debrisSize > 0) {
 				$fleetData = Vars::getUnitData(Vars::getIdByName('recycler'));
 
-				$RecyclerNeeded = floor($DebrisSize / ($fleetData['capacity'])) + 1;
+				$recyclerNeeded = floor($debrisSize / ($fleetData['capacity'])) + 1;
 
-				if ($RecyclerNeeded > $this->planet->getLevel('recycler')) {
-					$RecyclerNeeded = $this->planet->getLevel('recycler');
+				if ($recyclerNeeded > $this->planet->getLevel('recycler')) {
+					$recyclerNeeded = $this->planet->getLevel('recycler');
 				}
 			}
 
-			if ($RecyclerNeeded > 0) {
-				$FleetArray[209] = $RecyclerNeeded;
+			if ($recyclerNeeded > 0) {
+				$fleetArray[209] = $recyclerNeeded;
 			} else {
 				throw new Exception('Произошла какая-то непонятная ситуация');
 			}
@@ -166,11 +164,11 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$fleetCollection = Entity\FleetCollection::createFromArray($FleetArray, $this->planet);
+		$fleetCollection = Entity\FleetCollection::createFromArray($fleetArray, $this->planet);
 
-		$FleetSpeed = $fleetCollection->getSpeed();
+		$fleetSpeed = $fleetCollection->getSpeed();
 
-		if ($FleetSpeed > 0 && count($FleetArray) > 0) {
+		if ($fleetSpeed > 0 && count($fleetArray) > 0) {
 			$distance = $fleetCollection->getDistance(
 				new Coordinates($this->planet->galaxy, $this->planet->system, $this->planet->planet),
 				new Coordinates($galaxy, $system, $planet)
@@ -180,7 +178,7 @@ class FleetQuickController extends Controller
 
 			$shipArray = [];
 
-			foreach ($FleetArray as $shipId => $count) {
+			foreach ($fleetArray as $shipId => $count) {
 				$count = (int) $count;
 
 				$this->planet->updateAmount($shipId, -$count, true);
@@ -191,10 +189,10 @@ class FleetQuickController extends Controller
 				];
 			}
 
-			$FleetStorage = $fleetCollection->getStorage();
+			$fleetStorage = $fleetCollection->getStorage();
 
-			if ($FleetStorage < $consumption) {
-				throw new Exception('Не хватает места в трюме для топлива! (необходимо еще ' . ($consumption - $FleetStorage) . ')');
+			if ($fleetStorage < $consumption) {
+				throw new Exception('Не хватает места в трюме для топлива! (необходимо еще ' . ($consumption - $fleetStorage) . ')');
 			}
 			if ($this->planet->deuterium < $consumption) {
 				throw new Exception('Не хватает топлива на полёт! (необходимо еще ' . ($consumption - $this->planet->deuterium) . ')');
@@ -207,12 +205,12 @@ class FleetQuickController extends Controller
 				$fleet->user_name = $this->planet->name;
 				$fleet->mission = $mission;
 				$fleet->fleet_array = $shipArray;
-				$fleet->start_time = $duration + time();
+				$fleet->start_time = now()->addSeconds($duration);
 				$fleet->start_galaxy = $this->planet->galaxy;
 				$fleet->start_system = $this->planet->system;
 				$fleet->start_planet = $this->planet->planet;
 				$fleet->start_type = $this->planet->planet_type;
-				$fleet->end_time = ($duration * 2) + time();
+				$fleet->end_time = now()->addSeconds($duration * 2);
 				$fleet->end_galaxy = $galaxy;
 				$fleet->end_system = $system;
 				$fleet->end_planet = $planet;
@@ -229,8 +227,7 @@ class FleetQuickController extends Controller
 					$this->planet->update();
 
 					$tutorial = $this->user->quests()
-						->where('finish', 0)
-						->where('stage', 0)
+						->where('finish', 0)->where('stage', 0)
 						->first();
 
 					if ($tutorial) {
@@ -243,7 +240,7 @@ class FleetQuickController extends Controller
 						}
 					}
 
-					throw new SuccessException("Флот отправлен на координаты [" . $galaxy . ":" . $system . ":" . $planet . "] с миссией " . __('main.type_mission.' . $mission) . " и прибудет к цели в " . Game::datezone("H:i:s", $duration + time()));
+					throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . __('main.type_mission.' . $mission) . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
 				}
 			}
 		}

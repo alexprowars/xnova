@@ -209,6 +209,6 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

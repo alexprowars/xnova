@@ -63,6 +63,6 @@ class RecordsController extends Controller
 			'update' => config('settings.statUpdate'),
 		];
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

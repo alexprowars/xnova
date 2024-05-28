@@ -7,7 +7,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Resources\Responce;
 
 class ApiResponse
 {
@@ -26,18 +25,6 @@ class ApiResponse
 			return new JsonResponse(null, $response->status());
 		}
 
-		if ($request->routeIs('state')) {
-			return $response;
-		}
-
-		if ($request->is('broadcasting/*')) {
-			return $response;
-		}
-
-		if ($response->exception) {
-			return $response;
-		}
-
-		return (new Responce($response->getOriginalContent()))->response();
+		return $response;
 	}
 }

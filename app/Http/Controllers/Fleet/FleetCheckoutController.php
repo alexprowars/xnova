@@ -72,7 +72,7 @@ class FleetCheckoutController extends Controller
 		}
 
 		if (!count($fleets)) {
-			throw new RedirectException('', '/fleet');
+			throw new RedirectException('/fleet');
 		}
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
@@ -232,6 +232,6 @@ class FleetCheckoutController extends Controller
 
 		$parse['mission'] = $mission;
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

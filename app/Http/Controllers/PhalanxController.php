@@ -59,7 +59,7 @@ class PhalanxController extends Controller
 			->count();
 
 		if (!$planet) {
-			throw new RedirectException('Чит детектед! Режим бога активирован! Приятной игры!', '');
+			throw new RedirectException('', 'Чит детектед! Режим бога активирован! Приятной игры!');
 		}
 
 		$fleets = Models\Fleet::query()
@@ -129,8 +129,8 @@ class PhalanxController extends Controller
 			}
 		}
 
-		return [
+		return response()->state([
 			'items' => $list
-		];
+		]);
 	}
 }

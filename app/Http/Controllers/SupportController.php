@@ -47,7 +47,7 @@ class SupportController extends Controller
 		$id = (int) $id;
 
 		if (!$id) {
-			throw new RedirectException('Не задан ID тикета', '/support');
+			throw new RedirectException('/support', 'Не задан ID тикета');
 		}
 
 		$text = Request::post('text', '');
@@ -59,7 +59,7 @@ class SupportController extends Controller
 		$ticket = Support::query()->find($id);
 
 		if (!$ticket) {
-			throw new RedirectException('Тикет не найден', '/support');
+			throw new RedirectException('/support', 'Тикет не найден');
 		}
 
 		$text = $ticket->text . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s", time()) . ':<br>' . Helpers::checkString($text) . '';
@@ -96,9 +96,9 @@ class SupportController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $list
-		];
+		]);
 	}
 
 	public function info($id)
@@ -111,12 +111,12 @@ class SupportController extends Controller
 			throw new \Exception('Тикет не найден');
 		}
 
-		return [
+		return response()->state([
 			'id' => (int) $ticket->id,
 			'status' => (int) $ticket->status,
 			'subject' => $ticket->subject,
 			'date' => Game::datezone("d.m.Y H:i:s", $ticket->time),
 			'text' => html_entity_decode($ticket->text, ENT_NOQUOTES, "CP1251"),
-		];
+		]);
 	}
 }

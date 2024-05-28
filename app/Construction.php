@@ -53,7 +53,7 @@ class Construction
 						break;
 				}
 
-				throw new RedirectException('', '/buildings');
+				throw new RedirectException('/buildings');
 			}
 		}
 
@@ -162,7 +162,7 @@ class Construction
 						break;
 				}
 
-				throw new RedirectException('', '/research');
+				throw new RedirectException('/research');
 			}
 		}
 

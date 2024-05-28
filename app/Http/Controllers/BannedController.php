@@ -31,8 +31,8 @@ class BannedController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $items
-		];
+		]);
 	}
 }

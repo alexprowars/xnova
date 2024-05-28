@@ -58,6 +58,6 @@ class SearchController extends Controller
 		$parse['searchtext'] = $searchtext;
 		$parse['type'] = $type;
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

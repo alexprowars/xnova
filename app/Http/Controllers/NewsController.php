@@ -17,8 +17,8 @@ class NewsController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $news
-		];
+		]);
 	}
 }

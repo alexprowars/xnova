@@ -21,6 +21,6 @@ class ShipyardController extends Controller
 		$parse['mode'] = Route::current()->getName();
 		$parse['queue'] = $construction->queueList();
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

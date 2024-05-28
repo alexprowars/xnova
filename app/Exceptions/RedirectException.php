@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 class RedirectException extends Exception
 {
-	public function __construct($message = '', protected $url = '')
+	public function __construct(protected $url = '', $message = '')
 	{
 		if (empty($this->url)) {
 			$this->url = Route::current()->uri();

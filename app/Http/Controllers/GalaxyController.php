@@ -219,6 +219,6 @@ class GalaxyController extends Controller
 			$parse['items'][] = (array) $row;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

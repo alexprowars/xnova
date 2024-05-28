@@ -27,9 +27,9 @@ class RaceController extends Controller
 				$UserFlyingFleets = Fleet::query()->where('user_id', $this->user->id)->count();
 
 				if ($queueCount > 0) {
-					throw new RedirectException('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.', "/race");
+					throw new RedirectException("/race", 'Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe.');
 				} elseif ($UserFlyingFleets > 0) {
-					throw new RedirectException('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.', "/race");
+					throw new RedirectException("/race", 'Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
 					$this->user->race = $r;
 
@@ -56,7 +56,7 @@ class RaceController extends Controller
 						$planet->update();
 					}
 
-					throw new RedirectException('Фракция изменена', '/overview');
+					throw new RedirectException('/overview', 'Фракция изменена');
 				}
 			}
 		}
@@ -77,15 +77,15 @@ class RaceController extends Controller
 
 				$this->user->update($update);
 
-				throw new RedirectException('', '/tutorial');
+				throw new RedirectException('/tutorial');
 			}
 		}
 
 		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 
-		return [
+		return response()->state([
 			'change' => $this->user->race_change_count,
 			'change_available' => $isChangeAvailable,
-		];
+		]);
 	}
 }

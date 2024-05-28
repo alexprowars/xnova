@@ -25,15 +25,15 @@ class OverviewController extends Controller
 	{
 		if ($request->isMethod('post') && $request->post('id') && $request->post('id', 0) == $this->user->planet_current) {
 			if ($this->user->id != $this->planet->user_id) {
-				throw new RedirectException("Удалить планету может только владелец", '/overview/rename');
+				throw new RedirectException('/overview/rename', "Удалить планету может только владелец");
 			}
 
 			if ($this->user->planet_id == $this->user->planet_current) {
-				throw new RedirectException(__('overview.deletemessage_wrong'), '/overview/rename');
+				throw new RedirectException('/overview/rename', __('overview.deletemessage_wrong'));
 			}
 
 			if (!Hash::check(trim($request->post('pw')), $request->post('password'))) {
-				throw new RedirectException(__('overview.deletemessage_fail'), '/overview/delete');
+				throw new RedirectException('/overview/delete', __('overview.deletemessage_fail'));
 			}
 
 			$checkFleets = Models\Fleet::query()
@@ -52,7 +52,7 @@ class OverviewController extends Controller
 				->exists();
 
 			if ($checkFleets) {
-				throw new RedirectException('Нельзя удалять планету если с/на неё летит флот', '/overview/rename');
+				throw new RedirectException('/overview/rename', 'Нельзя удалять планету если с/на неё летит флот');
 			}
 
 			$destruyed = now()->addDay();
@@ -80,7 +80,7 @@ class OverviewController extends Controller
 
 			Cache::forget('app::planetlist_' . $this->user->id);
 
-			throw new RedirectException(__('overview.deletemessage_ok'), '/overview');
+			throw new RedirectException('/overview', __('overview.deletemessage_ok'));
 		}
 
 		$parse['number_1'] 		= mt_rand(1, 100);
@@ -93,7 +93,7 @@ class OverviewController extends Controller
 		$parse['system'] = $this->planet->system;
 		$parse['planet'] = $this->planet->planet;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function rename(Request $request)
@@ -143,7 +143,7 @@ class OverviewController extends Controller
 				$this->planet->name = $name;
 				$this->planet->update();
 
-				throw new RedirectException('Название планеты изменено', '/overview');
+				throw new RedirectException('/overview', 'Название планеты изменено');
 			} elseif ($action == 'image') {
 				if ($this->user->credits < 1) {
 					throw new ErrorException('Недостаточно кредитов');
@@ -161,7 +161,7 @@ class OverviewController extends Controller
 				$this->user->credits--;
 				$this->user->update();
 
-				throw new RedirectException('Картинка планеты изменена', '/overview');
+				throw new RedirectException('/overview', 'Картинка планеты изменена');
 			}
 		}
 
@@ -199,13 +199,13 @@ class OverviewController extends Controller
 
 		$this->user->update();
 
-		throw new RedirectException('Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->daily_bonus_factor > 1 ? ', а также 1 кредит.' : ''), '/overview');
+		throw new RedirectException('/overview', 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->daily_bonus_factor > 1 ? ', а также 1 кредит.' : ''));
 	}
 
 	public function index()
 	{
-		$XpMinierUp = pow($this->user->lvl_minier, 3);
-		$XpRaidUp = pow($this->user->lvl_raid, 2);
+		$XpMinierUp = $this->user->lvl_minier ** 3;
+		$XpRaidUp = $this->user->lvl_raid ** 2;
 
 		$fleets = Models\Fleet::query()
 			->where('user_id', $this->user->id)
@@ -558,6 +558,6 @@ class OverviewController extends Controller
 			$parse['error'] = '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="' . URL::route('resources', [], false) . '">Сырьё</a>" и восстановите производство.</span>';
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

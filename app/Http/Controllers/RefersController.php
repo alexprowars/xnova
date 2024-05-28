@@ -23,6 +23,6 @@ class RefersController extends Controller
 			$parse['you'] = (array) $refers;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

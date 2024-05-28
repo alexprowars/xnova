@@ -27,8 +27,8 @@ class ContactsController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $contacts
-		];
+		]);
 	}
 }

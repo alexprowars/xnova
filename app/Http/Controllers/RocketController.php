@@ -77,7 +77,7 @@ class RocketController extends Controller
 			'user_name' 		=> $this->planet->name,
 			'mission' 			=> 20,
 			'fleet_array' 		=> [['id' => 503, 'count' => $count, 'target' => $destroyType]],
-			'start_time' 		=> time() + $time,
+			'start_time' 		=> now()->addSeconds($time),
 			'start_galaxy' 		=> $this->planet->galaxy,
 			'start_system' 		=> $this->planet->system,
 			'start_planet' 		=> $this->planet->planet,

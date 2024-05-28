@@ -57,7 +57,7 @@ class OfficierController extends Controller
 			'type' => 5
 		]);
 
-		throw new RedirectException(__('officier.OffiRecrute'), '/officier');
+		throw new RedirectException('/officier', __('officier.OffiRecrute'));
 	}
 
 	public function index()
@@ -79,6 +79,6 @@ class OfficierController extends Controller
 			$parse['items'][] = $row;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

@@ -34,7 +34,7 @@ class AllianceController extends Controller
 			Models\User::query()->where('id', $this->user->id)->update(['alliance_id' => null]);
 			Models\AllianceMember::query()->where('u_id', $this->user->id)->delete();
 
-			throw new RedirectException(__('alliance.ally_notexist'), '/alliance');
+			throw new RedirectException('/alliance', __('alliance.ally_notexist'));
 		}
 
 		$this->ally = $alliance;
@@ -60,7 +60,7 @@ class AllianceController extends Controller
 				->where('u_id', $this->user->id)
 				->delete();
 
-			throw new RedirectException("Вы отозвали свою заявку на вступление в альянс", "/alliance");
+			throw new RedirectException("/alliance", "Вы отозвали свою заявку на вступление в альянс");
 		}
 
 		$parse = [];
@@ -82,7 +82,7 @@ class AllianceController extends Controller
 			$parse['allys'][] = (array) $ally;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function index(Request $request)
@@ -147,7 +147,7 @@ class AllianceController extends Controller
 			$parse['name'] = $this->ally->name;
 			$parse['id'] = $this->ally->id;
 
-			return $parse;
+			return response()->state($parse);
 		}
 	}
 
@@ -249,7 +249,7 @@ class AllianceController extends Controller
 			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/exit", 'Продолжить');
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function adminRights(Request $request)
@@ -340,7 +340,7 @@ class AllianceController extends Controller
 			}
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function adminRequests(Request $request)
@@ -383,7 +383,7 @@ class AllianceController extends Controller
 
 					User::sendMessage($show, $this->user->id, 0, 3, $this->ally->tag, "Привет!<br>Альянс <b>" . $this->ally->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
-					throw new RedirectException('Игрок принят в альянс', '/alliance/members');
+					throw new RedirectException('/alliance/members', 'Игрок принят в альянс');
 				}
 			} elseif ($request->post('action') == "Отклонить") {
 				if ($request->post('text') != '') {
@@ -422,7 +422,7 @@ class AllianceController extends Controller
 
 		$parse['tag'] = $this->ally->tag;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function adminName(Request $request)
@@ -449,12 +449,12 @@ class AllianceController extends Controller
 
 			DB::statement("UPDATE users SET alliance_name = '" . $this->ally->name . "' WHERE alliance_id = '" . $this->ally->id . "';");
 
-			throw new RedirectException('Название альянса изменено', '/alliance/admin/name');
+			throw new RedirectException('/alliance/admin/name', 'Название альянса изменено');
 		}
 
-		return [
+		return response()->state([
 			'name' => $this->ally->name
-		];
+		]);
 	}
 
 	public function adminTag(Request $request)
@@ -469,7 +469,7 @@ class AllianceController extends Controller
 			$tag = trim($request->post('tag', ''));
 
 			if ($tag == '') {
-				throw new RedirectException("Введите новую абревиатуру альянса", __('alliance.make_alliance'));
+				throw new RedirectException('/alliance/admin/tag', "Введите новую абревиатуру альянса");
 			}
 
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
@@ -479,12 +479,12 @@ class AllianceController extends Controller
 			$this->ally->tag = addslashes(htmlspecialchars($tag));
 			$this->ally->update();
 
-			throw new RedirectException('Абревиатура альянса изменена', '/alliance/admin/tag');
+			throw new RedirectException('/alliance/admin/tag', 'Абревиатура альянса изменена');
 		}
 
-		return [
+		return response()->state([
 			'tag' => $this->ally->tag
-		];
+		]);
 	}
 
 	public function adminExit()
@@ -497,7 +497,7 @@ class AllianceController extends Controller
 
 		$this->ally->deleteAlly();
 
-		throw new RedirectException('Альянс удалён', '/alliance');
+		throw new RedirectException('/alliance', 'Альянс удалён');
 	}
 
 	public function adminGive(Request $request)
@@ -505,20 +505,20 @@ class AllianceController extends Controller
 		$this->parseInfo($this->user->alliance_id);
 
 		if ($this->ally->user_id != $this->user->id) {
-			throw new RedirectException("Доступ запрещён.", "/alliance");
+			throw new RedirectException('/alliance', "Доступ запрещён.");
 		}
 
 		if ($request->post('newleader') && $this->ally->user_id == $this->user->id) {
 			$info = DB::selectOne("SELECT id, alliance_id FROM users WHERE id = '" . $request->post('newleader', 'int') . "'");
 
 			if (!$info || $info->alliance_id != $this->user->alliance_id) {
-				throw new RedirectException("Операция невозможна.", "/alliance");
+				throw new RedirectException('/alliance', "Операция невозможна.");
 			}
 
 			DB::statement("UPDATE alliances SET user_id = '" . $info->id . "' WHERE id = " . $this->user->alliance_id . " ");
 			DB::statement("UPDATE alliances_members SET rank = '0' WHERE u_id = '" . $info->id . "';");
 
-			throw new RedirectException('Правление передано', '/alliance');
+			throw new RedirectException('/alliance', 'Правление передано');
 		}
 
 		$listuser = DB::select("SELECT u.username, u.id, m.rank FROM users u LEFT JOIN alliances_members m ON m.u_id = u.id WHERE u.alliance_id = '" . $this->user->alliance_id . "' AND u.id != " . $this->ally->user_id . " AND m.rank != 0;");
@@ -533,7 +533,7 @@ class AllianceController extends Controller
 
 		$parse['id'] = $this->user->id;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function adminMembers(Request $request)
@@ -591,13 +591,13 @@ class AllianceController extends Controller
 				$al = DB::selectOne("SELECT id, name FROM alliances WHERE id = '" . intval($request->post('ally')) . "'");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
+					throw new RedirectException("/alliance/diplomacy", "Ошибка ввода параметров");
 				}
 
 				$ad = DB::select("SELECT id FROM alliances_diplomacies WHERE alliance_id = " . $this->ally->id . " AND diplomacy_id = " . $al->id . "");
 
 				if (count($ad)) {
-					throw new RedirectException("У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.", "/alliance/diplomacy");
+					throw new RedirectException("/alliance/diplomacy", "У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.");
 				}
 
 				if ($st < 0 || $st > 3) {
@@ -607,29 +607,29 @@ class AllianceController extends Controller
 				DB::statement("INSERT INTO alliances_diplomacies VALUES (NULL, " . $this->ally->id . ", " . $al->id . ", " . $st . ", 0, 1)");
 				DB::statement("INSERT INTO alliances_diplomacies VALUES (NULL, " . $al->id . ", " . $this->ally->id . ", " . $st . ", 0, 0)");
 
-				throw new RedirectException("Отношение между вашими альянсами успешно добавлено", "/alliance/diplomacy");
+				throw new RedirectException("/alliance/diplomacy", "Отношение между вашими альянсами успешно добавлено");
 			} elseif ($request->query('edit', '') == "del") {
 				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
+					throw new RedirectException("/alliance/diplomacy", "Ошибка ввода параметров");
 				}
 
 				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
 				DB::statement("DELETE FROM alliances_diplomacies WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
-				throw new RedirectException("Отношение между вашими альянсами расторжено", "/alliance/diplomacy");
+				throw new RedirectException("/alliance/diplomacy", "Отношение между вашими альянсами расторжено");
 			} elseif ($request->query('edit', '') == "suc") {
 				$al = DB::selectOne("SELECT alliance_id, diplomacy_id FROM alliances_diplomacies WHERE id = '" . (int) $request->query('id') . "' AND alliance_id = " . $this->ally->id . "");
 
 				if (!$al) {
-					throw new RedirectException("Ошибка ввода параметров", "/alliance/diplomacy");
+					throw new RedirectException("/alliance/diplomacy", "Ошибка ввода параметров");
 				}
 
 				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->alliance_id . " AND diplomacy_id = " . $al->diplomacy_id . ";");
 				DB::statement("UPDATE alliances_diplomacies SET status = 1 WHERE alliance_id = " . $al->diplomacy_id . " AND diplomacy_id = " . $al->alliance_id . ";");
 
-				throw new RedirectException("Отношение между вашими альянсами подтверждено", "/alliance/diplomacy");
+				throw new RedirectException("/alliance/diplomacy", "Отношение между вашими альянсами подтверждено");
 			}
 		}
 
@@ -655,7 +655,7 @@ class AllianceController extends Controller
 			$parse['a_list'][] = (array) $a_list;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function exit(Request $request)
@@ -792,7 +792,7 @@ class AllianceController extends Controller
 		$parse['s'] = $s;
 		$parse['status'] = $this->ally->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS);
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function chat(Request $request)
@@ -837,7 +837,7 @@ class AllianceController extends Controller
 
 			DB::statement("UPDATE users SET messages_ally = messages_ally + '1' WHERE alliance_id = '" . $this->user->alliance_id . "' AND id != " . $this->user->id . "");
 
-			throw new RedirectException('Сообщение отправлено', '/alliance/chat');
+			throw new RedirectException('/alliance/chat', 'Сообщение отправлено');
 		}
 
 		$parse = [];
@@ -868,7 +868,7 @@ class AllianceController extends Controller
 		$parse['owner'] = $this->ally->user_id == $this->user->id;
 		$parse['parser'] = (bool) $this->user->getOption('bb_parser');
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function info($id)
@@ -911,7 +911,7 @@ class AllianceController extends Controller
 		$parse['web'] = $allyrow->web;
 		$parse['request'] = ($this->user && $this->user->alliance_id == 0);
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function make(Request $request)
@@ -997,7 +997,7 @@ class AllianceController extends Controller
 			$text = $request->post('searchtext');
 
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $text)) {
-				throw new RedirectException("Строка поиска содержит запрещённые символы", '/alliance/search');
+				throw new RedirectException('/alliance/search', "Строка поиска содержит запрещённые символы");
 			}
 
 			$search = Alliance::query()->where('name', 'LIKE', '%' . $text . '%')
@@ -1019,7 +1019,7 @@ class AllianceController extends Controller
 
 		$parse['searchtext'] = $text;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function apply(Request $request)
@@ -1053,7 +1053,7 @@ class AllianceController extends Controller
 				->exists();
 
 			if ($existRequest) {
-				throw new RedirectException('Вы уже отсылали заявку на вступление в этот альянс!', '/alliance');
+				throw new RedirectException('/alliance', 'Вы уже отсылали заявку на вступление в этот альянс!');
 			}
 
 			AllianceRequest::create([
@@ -1062,7 +1062,7 @@ class AllianceController extends Controller
 				'message' => strip_tags($request->post('text')),
 			]);
 
-			throw new RedirectException(__('alliance.apply_registered'), '/alliance');
+			throw new RedirectException('/alliance', __('alliance.apply_registered'));
 		}
 
 		$parse = [];
@@ -1071,7 +1071,7 @@ class AllianceController extends Controller
 		$parse['text_apply'] = ($allyrow->request) ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow->request)) : '';
 		$parse['tag'] = $allyrow->tag;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function stat($id)
@@ -1114,7 +1114,7 @@ class AllianceController extends Controller
 			];
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	private function MessageForm($Title, $Message, $Goto = '', $Button = ' ok ', $TwoLines = false)

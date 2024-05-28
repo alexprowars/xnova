@@ -176,7 +176,7 @@ class TutorialController extends Controller
 			$this->user->save();
 			$this->planet->save();
 
-			throw new RedirectException('Квест завершен', '/tutorial');
+			throw new RedirectException('/tutorial', 'Квест завершен');
 		}
 
 		foreach ($parse['info']['REWARD'] as $rewardKey => $rewardVal) {
@@ -213,7 +213,7 @@ class TutorialController extends Controller
 		$parse['stage'] = $stage;
 		$parse['errors'] = $errors;
 
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function index()
@@ -257,6 +257,6 @@ class TutorialController extends Controller
 			$parse['list'][] = $quest;
 		}
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

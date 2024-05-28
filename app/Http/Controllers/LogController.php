@@ -32,14 +32,11 @@ class LogController extends Controller
 			];
 		}
 
-		return [
+		return response()->state([
 			'items' => $list
-		];
+		]);
 	}
 
-	/**
-	 * @Route("/delete{params:(/.*)*}")
-	 */
 	public function deleteAction()
 	{
 		if (!Auth::check()) {
@@ -47,13 +44,13 @@ class LogController extends Controller
 		}
 
 		if (!Request::has('id')) {
-			throw new RedirectException('Ошибка удаления.', '/log');
+			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
 		$id = (int) Request::query('id', 0);
 
 		if (!$id) {
-			throw new RedirectException('Ошибка удаления.', '/log');
+			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
 		$log = LogBattle::where('id', $id)
@@ -61,14 +58,14 @@ class LogController extends Controller
 			->first();
 
 		if (!$log) {
-			throw new RedirectException('Ошибка удаления.', '/log');
+			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
 		if (!$log->delete()) {
-			throw new RedirectException('Ошибка удаления.', '/log');
+			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
-		throw new RedirectException('Отчет удалён', '/log');
+		throw new RedirectException('/log', 'Отчет удалён');
 	}
 
 	public function new()
@@ -76,9 +73,9 @@ class LogController extends Controller
 		$title = Request::post('title', '');
 
 		if ($title == '') {
-			throw new RedirectException('<h1><font color=red>Введите название для боевого отчёта.</h1>', '/log');
+			throw new RedirectException('/log', '<h1><font color=red>Введите название для боевого отчёта.</h1>');
 		} elseif (Request::post('code', '') == '') {
-			throw new RedirectException('<h1><font color=red>Введите ID боевого отчёта.</h1>', '/log');
+			throw new RedirectException('/log', '<h1><font color=red>Введите ID боевого отчёта.</h1>');
 		}
 
 		$code = Request::post('code', '');
@@ -87,13 +84,13 @@ class LogController extends Controller
 		$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 		if (md5(config('app.key') . $id) != $key) {
-			throw new RedirectException('Неправильный ключ', '/log');
+			throw new RedirectException('/log', 'Неправильный ключ');
 		}
 
 		$log = Report::find($id);
 
 		if (!$log) {
-			throw new RedirectException('Боевой отчёт не найден в базе', '/log');
+			throw new RedirectException('/log', 'Боевой отчёт не найден в базе');
 		}
 
 		if ($log->users_id[0] == $this->user->id && $log->no_contact == 1) {
@@ -115,7 +112,7 @@ class LogController extends Controller
 			throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
 		}
 
-		throw new RedirectException('Боевой отчёт успешно сохранён.', '/log');
+		throw new RedirectException('/log', 'Боевой отчёт успешно сохранён.');
 	}
 
 	public function info(int $id)
@@ -136,8 +133,8 @@ class LogController extends Controller
 
 		$report = new CombatReport($raport->data[0], $raport->data[1], $raport->data[2], $raport->data[3], $raport->data[4], $raport->data[5], $raport->data[6]);
 
-		return [
+		return response()->state([
 			'raport' => $report->report()['html']
-		];
+		]);
 	}
 }

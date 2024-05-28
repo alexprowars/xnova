@@ -18,7 +18,7 @@ class FleetBackController extends Controller
 			throw new ErrorException('Не выбран флот');
 		}
 
-		$fleet = Fleet::query()->find($fleetId);
+		$fleet = Fleet::find($fleetId);
 
 		if (!$fleet || $fleet->user_id != $this->user->id) {
 			throw new ErrorException(__('fleet.fl_onlyyours'));
@@ -28,32 +28,32 @@ class FleetBackController extends Controller
 			throw new ErrorException(__('fleet.fl_notback'));
 		}
 
-		if ($fleet->end_stay != 0) {
+		if ($fleet->end_stay) {
 			if ($fleet->start_time->isFuture()) {
-				$CurrentFlyingTime = time() - $fleet->created_at->getTimestamp();
+				$currentFlyingTime = now()->sub($fleet->created_at);
 			} else {
-				$CurrentFlyingTime = $fleet->start_time->getTimestamp() - $fleet->created_at->getTimestamp();
+				$currentFlyingTime = $fleet->start_time->sub($fleet->created_at);
 			}
 		} else {
-			$CurrentFlyingTime = time() - $fleet->created_at->getTimestamp();
+			$currentFlyingTime = now()->sub($fleet->created_at);
 		}
 
-		$ReturnFlyingTime = $CurrentFlyingTime + time();
+		$returnFlyingTime = $currentFlyingTime->add(now());
 
 		if ($fleet->mission == 1 && $fleet->assault) {
 			$fleet->assault->delete();
 		}
 
 		$fleet->update([
-			'start_time'	=> time() - 1,
-			'end_stay' 		=> 0,
-			'end_time' 		=> $ReturnFlyingTime + 1,
-			'target_user_id'=> $this->user->id,
-			'assault_id' 	=> null,
-			'updated_at' 	=> $ReturnFlyingTime + 1,
-			'mess' 			=> 1,
+			'start_time'		=> now()->subSecond(),
+			'end_stay' 			=> 0,
+			'end_time' 			=> $returnFlyingTime + 1,
+			'target_user_id'	=> $this->user->id,
+			'assault_id' 		=> null,
+			'updated_at' 		=> $returnFlyingTime + 1,
+			'mess' 				=> 1,
 		]);
 
-		throw new RedirectException(__('fleet.fl_isback'), '/');
+		throw new RedirectException('/', __('fleet.fl_isback'));
 	}
 }

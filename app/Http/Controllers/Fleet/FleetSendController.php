@@ -759,6 +759,6 @@ class FleetSendController extends Controller
 
 		$this->user->update(['planet_current' => $targetPlanet->id]);
 
-		throw new PageException(__('fleet.gate_jump_done') . " " . Format::time($this->planet->getNextJumpTime()), '/fleet/');
+		throw new PageException(__('fleet.gate_jump_done') . ' ' . Format::time($this->planet->getNextJumpTime()), '/fleet/');
 	}
 }

@@ -56,7 +56,7 @@ class Controller extends BaseController
 		$controller = explode('.', Route::current()->getName());
 
 		if ((!$this->user->race || !$this->user->avatar) && !in_array($controller[0], ['state', 'infos', 'content', 'start', 'logout'])) {
-			throw new RedirectException('', '/start');
+			throw new RedirectException('/start');
 		}
 
 		$this->planet = $this->user->getCurrentPlanet(true);

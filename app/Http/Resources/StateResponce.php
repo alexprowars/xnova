@@ -6,7 +6,7 @@ use App\Game;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
-class Responce extends JsonResource
+class StateResponce extends JsonResource
 {
 	public function toArray($request)
 	{

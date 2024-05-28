@@ -14,6 +14,6 @@ class BuildingsController extends Controller
 			throw new PageException('Нет доступа!');
 		}
 
-		return (new Construction($this->user, $this->planet))->pageBuilding();
+		return response()->state((new Construction($this->user, $this->planet))->pageBuilding());
 	}
 }

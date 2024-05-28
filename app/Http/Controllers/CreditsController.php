@@ -17,6 +17,6 @@ class CreditsController extends Controller
 
 		$parse['id'] = $userId;
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

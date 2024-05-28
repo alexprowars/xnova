@@ -15,7 +15,7 @@ class StartController extends Controller
 	public function save(Request $request)
 	{
 		if ($this->user->sex && $this->user->avatar) {
-			throw new RedirectException('', '/');
+			throw new RedirectException('/');
 		}
 
 		$data = $request->validate([
@@ -67,7 +67,7 @@ class StartController extends Controller
 	public function race(Request $request)
 	{
 		if ($this->user->race) {
-			throw new RedirectException('', '/');
+			throw new RedirectException('/');
 		}
 
 		$request->validate([

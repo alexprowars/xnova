@@ -34,6 +34,6 @@ class HallController extends Controller
 
 		$parse['time'] = $time;
 
-		return $parse;
+		return response()->state($parse);
 	}
 }

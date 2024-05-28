@@ -102,7 +102,7 @@ class MessagesController extends Controller
 			}
 		}
 
-		return $page;
+		return response()->state($page);
 	}
 
 	public function delete(Request $request)
@@ -267,6 +267,6 @@ class MessagesController extends Controller
 
 		$parse['parser'] = $this->user->getOption('bb_parser');
 
-		return $parse;
+		return response()->state($parse);
 	}
 }
