@@ -317,7 +317,7 @@ class UpdateStatistics
 		Statistic::query()->where('stat_code', 1)->delete();
 
 		foreach ($users as $user) {
-			if ($user->banned_time || ($user->vacation && $user->vacation->lessThan(now()->subSeconds(1036800)))) {
+			if ($user->banned_time || $user->vacation?->lessThan(now()->subSeconds(1036800))) {
 				$hide = 1;
 			} else {
 				$hide = 0;

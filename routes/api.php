@@ -7,7 +7,7 @@ Route::get('state', [Controllers\StateController::class, 'index'])->name('state'
 Route::get('banned', [Controllers\BannedController::class, 'index'])->name('banned');
 Route::get('contacts', [Controllers\ContactsController::class, 'index'])->name('contacts');
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->name('content');
-Route::match(['get', 'post'], 'registration', [Controllers\IndexController::class, 'registration'])->name('registration');
+Route::post('registration', [Controllers\RegistrationController::class, 'index'])->name('registration');
 Route::get('log/{id}', [Controllers\LogController::class, 'info'])->name('log.info');
 Route::get('news', [Controllers\NewsController::class, 'index'])->name('news');
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index'])->name('stat');
@@ -23,10 +23,11 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('tech', [Controllers\TechController::class, 'index'])->name('tech');
 	Route::get('tech/{id}', [Controllers\TechController::class, 'info'])->name('tech.detail');
 	Route::post('start', [Controllers\StartController::class, 'save'])->name('start');
+	Route::post('start/race', [Controllers\StartController::class, 'race'])->name('start.race');
 	Route::match(['get', 'post'], 'sim', [Controllers\SimController::class, 'index'])->name('sim');
 	Route::get('records', [Controllers\RecordsController::class, 'index'])->name('records');
 	Route::get('players/stat/{id}', [Controllers\PlayersController::class, 'stat'])->name('players.stat');
-	Route::get('logout', [Controllers\LogoutController::class, 'index'])->name('logout');
+	Route::post('logout', [Controllers\LogoutController::class, 'index'])->name('logout');
 	Route::get('info/{id}', [Controllers\InfoController::class, 'index'])->name('info');
 	Route::get('hall', [Controllers\HallController::class, 'index'])->name('hall');
 	Route::post('chat/send', [Controllers\ChatController::class, 'sendMessage'])->name('chat.send');

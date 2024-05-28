@@ -55,7 +55,7 @@ class StateController extends Controller
 				];
 			}
 
-			if ($user->vacation) {
+			if ($user->isVacation()) {
 				$data['messages'][] = [
 					'type' => 'warning-static',
 					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'

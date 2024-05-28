@@ -14,7 +14,7 @@ class PhalanxController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new PageException('Нет доступа!');
 		}
 

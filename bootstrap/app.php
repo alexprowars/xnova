@@ -6,7 +6,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 if (!defined('VERSION')) {
 	define('VERSION', '5.0');
@@ -55,15 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
 		]);
 	})
 	->withExceptions(function (Exceptions $exceptions) {
-		$exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
-			if ($request->is('admin/*')) {
-				return true;
-			}
-
-			return $request->expectsJson();
-		});
-
-		$exceptions->render(function (\Exception $e, Request $request) {
+		/*$exceptions->render(function (Exception $e, Request $request) {
 			$data = [
 				'message' => $e->getMessage(),
 			];
@@ -77,5 +68,5 @@ return Application::configure(basePath: dirname(__DIR__))
 			}
 
 			return new JsonResponse($data, options: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-		});
+		});*/
 	})->create();

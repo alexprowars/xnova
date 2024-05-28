@@ -14,7 +14,7 @@ class OfficierController extends Controller
 {
 	public function buy(Request $request)
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new PageException('В режиме отпуска данный раздел недоступен!');
 		}
 

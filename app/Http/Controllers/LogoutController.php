@@ -12,6 +12,6 @@ class LogoutController extends Controller
 	{
 		Auth::logout();
 
-		throw new PageException('Вы вышли из игры', "/");
+		throw new PageException('Вы вышли из игры', '/');
 	}
 }

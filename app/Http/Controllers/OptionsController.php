@@ -282,12 +282,12 @@ class OptionsController extends Controller
 	public function index()
 	{
 		$parse = [];
-		$parse['vacation'] = !empty($this->user->vacation);
+		$parse['vacation'] = !$this->user->isVacation();
 
 		if ($this->user->vacation) {
 			$parse['um_end_date'] = Game::datezone("d.m.Y H:i:s", $this->user->vacation);
 			$parse['opt_delac_data'] = !empty($this->user->delete_time);
-			$parse['opt_modev_data'] = !empty($this->user->vacation);
+			$parse['opt_modev_data'] = $this->user->isVacation();
 			$parse['opt_usern_data'] = $this->user->username;
 		} else {
 			$parse['options'] = $this->user->getOptions();
@@ -307,7 +307,7 @@ class OptionsController extends Controller
 			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
 
 			$parse['opt_delac_data'] = !empty($this->user->delete_time);
-			$parse['opt_modev_data'] = !empty($this->user->vacation);
+			$parse['opt_modev_data'] = $this->user->isVacation();
 
 			$parse['sex'] = $this->user->sex;
 			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);

@@ -22,7 +22,7 @@ class FleetSendController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new PageException("Нет доступа!");
 		}
 
@@ -233,7 +233,7 @@ class FleetSendController extends Controller
 			}
 		}
 
-		if ($targerUser->vacation && $fleetMission != 8 && !$this->user->isAdmin()) {
+		if ($targerUser->isVacation() && $fleetMission != 8 && !$this->user->isAdmin()) {
 			throw new PageException("<span class=\"success\"><b>Игрок в режиме отпуска!</b></span>", "/fleet/");
 		}
 

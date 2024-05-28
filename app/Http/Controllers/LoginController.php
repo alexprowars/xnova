@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use App\Controller;
@@ -42,14 +41,12 @@ class LoginController extends Controller
 		if (!Auth::attempt($credentials, $request->has('rememberme'))) {
 			throw new ErrorException('Неверный E-mail и/или пароль');
 		}
-
-		return Redirect::intended('overview/');
 	}
 
 	public function byServices($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
-			return Redirect::to('/');
+			return redirect()->away('/');
 		}
 
 		return Socialite::driver($service)->redirect();
@@ -58,13 +55,13 @@ class LoginController extends Controller
 	public function servicesCallback($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
-			return Redirect::to('/');
+			return redirect()->away('/');
 		}
 
 		try {
 			$user = Socialite::driver($service)->user();
 		} catch (\Exception) {
-			return Redirect::to('/');
+			return redirect()->away('/');
 		}
 
 		$authData = Models\UserAuthentication::query()->where('provider', $service)
@@ -95,7 +92,7 @@ class LoginController extends Controller
 			Auth::login($user, true);
 		}
 
-		return Redirect::intended('overview/');
+		return redirect()->away('/overview');
 	}
 
 	public function resetPassword(Request $request)

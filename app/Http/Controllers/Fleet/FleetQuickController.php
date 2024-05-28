@@ -18,7 +18,7 @@ class FleetQuickController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new Exception('Нет доступа!');
 		}
 
@@ -126,7 +126,7 @@ class FleetQuickController extends Controller
 				}
 			}
 
-			if ($HeDBRec->vacation) {
+			if ($HeDBRec->isVacation()) {
 				throw new Exception('Игрок в режиме отпуска!');
 			}
 

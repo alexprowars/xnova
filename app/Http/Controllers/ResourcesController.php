@@ -17,7 +17,7 @@ class ResourcesController extends Controller
 {
 	private function buy($parse)
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new ErrorException("Включен режим отпуска!");
 		}
 
@@ -51,7 +51,7 @@ class ResourcesController extends Controller
 
 	public function productionAction()
 	{
-		if ($this->user->vacation) {
+		if ($this->user->isVacation()) {
 			throw new PageException('Включен режим отпуска!');
 		}
 
@@ -94,7 +94,7 @@ class ResourcesController extends Controller
 		}
 
 		if (Request::instance()->isMethod('post')) {
-			if ($this->user->vacation) {
+			if ($this->user->isVacation()) {
 				throw new ErrorException("Включен режим отпуска!");
 			}
 
@@ -129,7 +129,7 @@ class ResourcesController extends Controller
 		$productionLevel = $planetProduction->getProductionFactor();
 
 		$parse['buy_form'] = [
-			'visible' => ($this->planet->planet_type == 1 && !$this->user->vacation),
+			'visible' => ($this->planet->planet_type == 1 && !$this->user->isVacation()),
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand))
 		];
 
