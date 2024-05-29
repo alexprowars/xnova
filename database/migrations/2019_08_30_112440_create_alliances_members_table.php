@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-			$table->boolean('rank')->default(0);
+			$table->tinyInteger('rank')->nullable();
 			$table->timestamps();
 		});
 	}

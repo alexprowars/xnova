@@ -11,10 +11,14 @@ use App\Models\User;
 
 class Game
 {
-	public static function datezone($format, int|Carbon|null $time = 0)
+	public static function datezone($format, int|string|Carbon|null $time = null)
 	{
 		if ($time instanceof Carbon) {
 			$time = $time->getTimestamp();
+		}
+
+		if (is_string($time)) {
+			$time = strtotime($time);
 		}
 
 		if (empty($time)) {

@@ -72,46 +72,24 @@ class Alliance extends Model
 			self::CAN_ACCEPT 					=> false,
 			self::ADMIN_ACCESS 					=> false,
 			self::DIPLOMACY_ACCESS 				=> false,
-			self::PLANET_ACCESS 				=> false,
 			self::REQUEST_ACCESS 				=> false,
 		];
 
 		if ($this->user_id == $userId) {
-			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= true;
-			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= true;
-			$this->rights[self::CHAT_ACCESS] 					= true;
-			$this->rights[self::CAN_KICK] 						= true;
-			$this->rights[self::CAN_EDIT_RIGHTS] 				= true;
-			$this->rights[self::CAN_DELETE_ALLIANCE] 			= true;
-			$this->rights[self::CAN_ACCEPT] 					= true;
-			$this->rights[self::ADMIN_ACCESS] 					= true;
-			$this->rights[self::DIPLOMACY_ACCESS] 				= true;
-			$this->rights[self::PLANET_ACCESS] 					= true;
-			$this->rights[self::REQUEST_ACCESS] 				= true;
-		} elseif ($this->member && $this->member->rank == 0) {
-			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= false;
-			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= false;
-			$this->rights[self::CHAT_ACCESS] 					= false;
-			$this->rights[self::CAN_KICK] 						= false;
-			$this->rights[self::CAN_EDIT_RIGHTS] 				= false;
-			$this->rights[self::CAN_DELETE_ALLIANCE] 			= false;
-			$this->rights[self::CAN_ACCEPT] 					= false;
-			$this->rights[self::ADMIN_ACCESS] 					= false;
-			$this->rights[self::DIPLOMACY_ACCESS] 				= false;
-			$this->rights[self::PLANET_ACCESS] 					= false;
-			$this->rights[self::REQUEST_ACCESS] 				= false;
-		} elseif (isset($this->ranks[$this->member->rank - 1])) {
-			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST_STATUS] == 1);
-			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= ($this->ranks[$this->member->rank - 1][self::CAN_WATCH_MEMBERLIST] == 1);
-			$this->rights[self::CHAT_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::CHAT_ACCESS] == 1);
-			$this->rights[self::CAN_KICK] 						= ($this->ranks[$this->member->rank - 1][self::CAN_KICK] == 1);
-			$this->rights[self::CAN_EDIT_RIGHTS] 				= ($this->ranks[$this->member->rank - 1][self::CAN_EDIT_RIGHTS] == 1);
-			$this->rights[self::CAN_DELETE_ALLIANCE] 			= ($this->ranks[$this->member->rank - 1][self::CAN_DELETE_ALLIANCE] == 1);
-			$this->rights[self::CAN_ACCEPT] 					= ($this->ranks[$this->member->rank - 1][self::CAN_ACCEPT] == 1);
-			$this->rights[self::ADMIN_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::ADMIN_ACCESS] == 1);
-			$this->rights[self::DIPLOMACY_ACCESS] 				= ($this->ranks[$this->member->rank - 1][self::DIPLOMACY_ACCESS] == 1);
-			$this->rights[self::PLANET_ACCESS] 					= ($this->ranks[$this->member->rank - 1][self::PLANET_ACCESS] == 1);
-			$this->rights[self::REQUEST_ACCESS] 				= ($this->ranks[$this->member->rank - 1][self::REQUEST_ACCESS] == 1);
+			foreach ($this->rights as $key => $value) {
+				$this->rights[$key] = true;
+			}
+		} elseif (isset($this->ranks[$this->member->rank])) {
+			$this->rights[self::CAN_WATCH_MEMBERLIST_STATUS] 	= $this->ranks[$this->member->rank][self::CAN_WATCH_MEMBERLIST_STATUS] == 1;
+			$this->rights[self::CAN_WATCH_MEMBERLIST] 			= $this->ranks[$this->member->rank][self::CAN_WATCH_MEMBERLIST] == 1;
+			$this->rights[self::CHAT_ACCESS] 					= $this->ranks[$this->member->rank][self::CHAT_ACCESS] == 1;
+			$this->rights[self::CAN_KICK] 						= $this->ranks[$this->member->rank][self::CAN_KICK] == 1;
+			$this->rights[self::CAN_EDIT_RIGHTS] 				= $this->ranks[$this->member->rank][self::CAN_EDIT_RIGHTS] == 1;
+			$this->rights[self::CAN_DELETE_ALLIANCE] 			= $this->ranks[$this->member->rank][self::CAN_DELETE_ALLIANCE] == 1;
+			$this->rights[self::CAN_ACCEPT] 					= $this->ranks[$this->member->rank][self::CAN_ACCEPT] == 1;
+			$this->rights[self::ADMIN_ACCESS] 					= $this->ranks[$this->member->rank][self::ADMIN_ACCESS] == 1;
+			$this->rights[self::DIPLOMACY_ACCESS] 				= $this->ranks[$this->member->rank][self::DIPLOMACY_ACCESS] == 1;
+			$this->rights[self::REQUEST_ACCESS] 				= $this->ranks[$this->member->rank][self::REQUEST_ACCESS] == 1;
 		}
 	}
 

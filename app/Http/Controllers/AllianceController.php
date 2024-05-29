@@ -93,8 +93,8 @@ class AllianceController extends Controller
 
 		if ($alliance->user_id == $this->user->id) {
 			$range = ($alliance->owner_range == '') ? 'Основатель' : $alliance->owner_range;
-		} elseif ($alliance->member->rank != 0 && isset($alliance->ranks[$alliance->member->rank - 1]['name'])) {
-			$range = $alliance->ranks[$alliance->member->rank - 1]['name'];
+		} elseif ($alliance->member->rank != null && isset($alliance->ranks[$alliance->member->rank]['name'])) {
+			$range = $alliance->ranks[$alliance->member->rank]['name'];
 		} else {
 			$range = __('alliance.member');
 		}
@@ -264,69 +264,57 @@ class AllianceController extends Controller
 				Alliance::CHAT_ACCESS => 0,
 				Alliance::CAN_EDIT_RIGHTS => 0,
 				Alliance::DIPLOMACY_ACCESS => 0,
-				Alliance::PLANET_ACCESS => 0
 			];
 
 			$alliance->ranks = $ranks;
 			$alliance->save();
-		} elseif ($request->post('id') && is_array($request->post('id'))) {
-			$ally_ranks_new = [];
+		} elseif ($request->has('rigths') && is_array($request->post('rigths'))) {
+			$rights = $request->post('rigths');
 
-			foreach ($request->post('id') as $id) {
-				$ally_ranks_new[$id]['name'] = $alliance->ranks[$id]['name'];
-				$ally_ranks_new[$id][Alliance::CAN_DELETE_ALLIANCE] = ($alliance->user_id == $this->user->id ? ($request->post('u' . $id . 'r0') ? 1 : 0) : $alliance->ranks[$id][Alliance::CAN_DELETE_ALLIANCE]);
-				$ally_ranks_new[$id][Alliance::CAN_KICK] = ($alliance->user_id == $this->user->id ? ($request->post('u' . $id . 'r1') ? 1 : 0) : $alliance->ranks[$id][Alliance::CAN_KICK]);
-				$ally_ranks_new[$id][Alliance::REQUEST_ACCESS] = $request->post('u' . $id . 'r2') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST] = $request->post('u' . $id . 'r3') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_ACCEPT] = $request->post('u' . $id . 'r4') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::ADMIN_ACCESS] = $request->post('u' . $id . 'r5') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS] = $request->post('u' . $id . 'r6') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CHAT_ACCESS] = $request->post('u' . $id . 'r7') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::CAN_EDIT_RIGHTS] = $request->post('u' . $id . 'r8') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::DIPLOMACY_ACCESS] = $request->post('u' . $id . 'r9') ? 1 : 0;
-				$ally_ranks_new[$id][Alliance::PLANET_ACCESS] = $request->post('u' . $id . 'r10') ? 1 : 0;
+			$newRanks = $alliance->ranks;
+
+			foreach ($alliance->ranks as $id => $rank) {
+				$newRanks[$id] = array_merge($rank, [
+					Alliance::CAN_DELETE_ALLIANCE => $alliance->user_id == $this->user->id ? (isset($rights[$id][Alliance::CAN_DELETE_ALLIANCE]) ? 1 : 0) : $rank[Alliance::CAN_DELETE_ALLIANCE],
+					Alliance::CAN_KICK => $alliance->user_id == $this->user->id ? (isset($rights[$id][Alliance::CAN_KICK]) ? 1 : 0) : $rank[Alliance::CAN_KICK],
+					Alliance::REQUEST_ACCESS => isset($rights[$id][Alliance::REQUEST_ACCESS]) ? 1 : 0,
+					Alliance::CAN_WATCH_MEMBERLIST => isset($rights[$id][Alliance::CAN_WATCH_MEMBERLIST]) ? 1 : 0,
+					Alliance::CAN_ACCEPT => isset($rights[$id][Alliance::CAN_ACCEPT]) ? 1 : 0,
+					Alliance::ADMIN_ACCESS => isset($rights[$id][Alliance::ADMIN_ACCESS]) ? 1 : 0,
+					Alliance::CAN_WATCH_MEMBERLIST_STATUS => isset($rights[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS]) ? 1 : 0,
+					Alliance::CHAT_ACCESS => isset($rights[$id][Alliance::CHAT_ACCESS]) ? 1 : 0,
+					Alliance::CAN_EDIT_RIGHTS => isset($rights[$id][Alliance::CAN_EDIT_RIGHTS]) ? 1 : 0,
+					Alliance::DIPLOMACY_ACCESS => isset($rights[$id][Alliance::DIPLOMACY_ACCESS]) ? 1 : 0,
+				]);
 			}
 
-			$alliance->ranks = $ally_ranks_new;
+			$alliance->ranks = $newRanks;
 			$alliance->save();
 		} elseif ($request->query('d') && isset($alliance->ranks[$request->query('d', 'int')])) {
 			unset($alliance->ranks[$request->query('d', 'int')]);
 			$alliance->save();
 		}
 
+		$parse['alliance'] = $alliance->only(['id', 'user_id']);
 		$parse['list'] = [];
 
-		if (!empty($alliance->ranks)) {
-			foreach ($alliance->ranks as $a => $b) {
-				$list['id'] = $a;
-				$list['delete'] = '<a href="' . url('alliance/admin/rights?d=' . $a) . '"><img src="/images/abort.gif" alt="Удалить ранг"></a>';
-				$list['r0'] = $b['name'];
-				$list['a'] = $a;
-
-				if ($alliance->user_id == $this->user->id) {
-					$list['r1'] = "<input type=checkbox name=\"u" . $a . "r0\"" . (($b[Alliance::CAN_DELETE_ALLIANCE] == 1) ? ' checked' : '') . ">";
-				} else {
-					$list['r1'] = "<b>" . (($b['delete'] == 1) ? '+' : '-') . "</b>";
-				}
-
-				if ($alliance->user_id == $this->user->id) {
-					$list['r2'] = "<input type=checkbox name=\"u" . $a . "r1\"" . (($b[Alliance::CAN_KICK] == 1) ? ' checked' : '') . ">";
-				} else {
-					$list['r2'] = "<b>" . (($b['kick'] == 1) ? '+' : '-') . "</b>";
-				}
-
-				$list['r3']  = "<input type=checkbox name=\"u" . $a . "r2\"" .  ($b[Alliance::REQUEST_ACCESS] ? ' checked' : '') . ">";
-				$list['r4']  = "<input type=checkbox name=\"u" . $a . "r3\"" .  ($b[Alliance::CAN_WATCH_MEMBERLIST] ? ' checked' : '') . ">";
-				$list['r5']  = "<input type=checkbox name=\"u" . $a . "r4\"" .  ($b[Alliance::CAN_ACCEPT] ? ' checked' : '') . ">";
-				$list['r6']  = "<input type=checkbox name=\"u" . $a . "r5\"" .  ($b[Alliance::ADMIN_ACCESS] ? ' checked' : '') . ">";
-				$list['r7']  = "<input type=checkbox name=\"u" . $a . "r6\"" .  ($b[Alliance::CAN_WATCH_MEMBERLIST_STATUS] ? ' checked' : '') . ">";
-				$list['r8']  = "<input type=checkbox name=\"u" . $a . "r7\"" .  ($b[Alliance::CHAT_ACCESS] ? ' checked' : '') . ">";
-				$list['r9']  = "<input type=checkbox name=\"u" . $a . "r8\"" .  ($b[Alliance::CAN_EDIT_RIGHTS] ? ' checked' : '') . ">";
-				$list['r10'] = "<input type=checkbox name=\"u" . $a . "r9\"" .  ($b[Alliance::DIPLOMACY_ACCESS] ? ' checked' : '') . ">";
-				$list['r11'] = "<input type=checkbox name=\"u" . $a . "r10\"" . ($b[Alliance::PLANET_ACCESS] ? ' checked' : '') . ">";
-
-				$parse['list'][] = $list;
-			}
+		foreach ($alliance->ranks as $a => $b) {
+			$parse['list'][] = [
+				'id' => $a,
+				'name' => $b['name'],
+				'rights' => [
+					Alliance::CAN_DELETE_ALLIANCE => (bool) ($b[Alliance::CAN_DELETE_ALLIANCE] ?: false),
+					Alliance::CAN_KICK => (bool) ($b[Alliance::CAN_KICK] ?: false),
+					Alliance::REQUEST_ACCESS => (bool) ($b[Alliance::REQUEST_ACCESS] ?: false),
+					Alliance::CAN_WATCH_MEMBERLIST => (bool) ($b[Alliance::CAN_WATCH_MEMBERLIST] ?: false),
+					Alliance::CAN_ACCEPT => (bool) ($b[Alliance::CAN_ACCEPT] ?: false),
+					Alliance::ADMIN_ACCESS => (bool) ($b[Alliance::ADMIN_ACCESS] ?: false),
+					Alliance::CAN_WATCH_MEMBERLIST_STATUS => (bool) ($b[Alliance::CAN_WATCH_MEMBERLIST_STATUS] ?: false),
+					Alliance::CHAT_ACCESS => (bool) ($b[Alliance::CHAT_ACCESS] ?: false),
+					Alliance::CAN_EDIT_RIGHTS => (bool) ($b[Alliance::CAN_EDIT_RIGHTS] ?: false),
+					Alliance::DIPLOMACY_ACCESS => (bool) ($b[Alliance::DIPLOMACY_ACCESS] ?: false),
+				]
+			];
 		}
 
 		return response()->state($parse);
@@ -530,8 +518,8 @@ class AllianceController extends Controller
 		$parse['righthand'] = '';
 
 		foreach ($listuser as $u) {
-			if ($alliance->ranks[$u->rank - 1][Alliance::CAN_EDIT_RIGHTS] == 1) {
-				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->user?->username . "&nbsp;[" . $alliance->ranks[$u->rank - 1]['name'] . "]&nbsp;&nbsp;</option>";
+			if ($alliance->ranks[$u->rank][Alliance::CAN_EDIT_RIGHTS] == 1) {
+				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->user?->username . "&nbsp;[" . $alliance->ranks[$u->rank]['name'] . "]&nbsp;&nbsp;</option>";
 			}
 		}
 
@@ -572,11 +560,11 @@ class AllianceController extends Controller
 			}
 		} elseif ($request->post('newrang', '') != '' && $request->input('id', 0) != 0) {
 			$id = $request->input('id', 0);
-			$rank = $request->post('newrang', 0);
+			$rank = $request->post('newrang');
 
 			$q = User::find($id);
 
-			if ((isset($alliance->ranks[$rank - 1]) || $rank == 0) && $q->id != $alliance->user_id && $q->alliance_id == $alliance->id) {
+			if ((isset($alliance->ranks[$rank]) || $rank == null) && $q->id != $alliance->user_id && $q->alliance_id == $alliance->id) {
 				$alliance->members()->where('user_id', $q->id)
 					->update(['rank' => $rank]);
 			}
@@ -737,71 +725,73 @@ class AllianceController extends Controller
 
 		$rank = $request->query('rank', 0);
 
-		$sort = "";
-
-		if ($sort2) {
-			if ($sort1 == 1) {
-				$sort = ' ORDER BY u.username';
-			} elseif ($sort1 == 2) {
-				$sort = ' ORDER BY m.rank';
-			} elseif ($sort1 == 3) {
-				$sort = ' ORDER BY s.total_points';
-			} elseif ($sort1 == 4) {
-				$sort = ' ORDER BY m.time';
-			} elseif ($sort1 == 5 && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$sort = ' ORDER BY u.onlinetime';
-			} else {
-				$sort = ' ORDER BY u.id';
-			}
-
-			if ($sort2 == 1) {
-				$sort .= ' DESC;';
-			} elseif ($sort2 == 2) {
-				$sort .= ' ASC;';
-			}
+		if ($sort1 == 1) {
+			$sort = 'u.username';
+		} elseif ($sort1 == 2) {
+			$sort = 'm.rank';
+		} elseif ($sort1 == 3) {
+			$sort = 's.total_points';
+		} elseif ($sort1 == 4) {
+			$sort = 'm.created_at';
+		} elseif ($sort1 == 5 && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			$sort = 'u.onlinetime';
+		} else {
+			$sort = 'u.id';
 		}
 
-		$listuser = DB::select("SELECT u.id, u.username, u.race, u.galaxy, u.system, u.planet, u.onlinetime, m.rank, m.time, s.total_points FROM users u LEFT JOIN alliances_members m ON m.user_id = u.id LEFT JOIN statistics s ON s.user_id = u.id AND stat_type = 1 WHERE u.alliance_id = '" . $this->user->alliance_id . "'" . $sort . "");
+		$members = DB::table('alliances_members', 'm')
+			->select(['m.id', 'u.username', 'u.race', 'u.galaxy', 'u.system', 'u.planet', 'u.onlinetime', 'm.user_id', 'm.rank', 'm.created_at', 's.total_points'])
+			->leftJoin('users as u', 'u.id', '=', 'm.user_id')
+			->leftJoin('statistics as s', 's.user_id', '=', 'm.user_id')
+			->where('s.stat_type', 1)
+			->where('m.alliance_id', $alliance->id)
+			->orderBy($sort, $sort2 == 1 ? 'desc' : 'asc')
+			->get();
 
-		$i = 0;
-		$parse['memberslist'] = [];
+		$parse['members'] = [];
 
-		foreach ($listuser as $u) {
-			$i++;
-			$u->i = $i;
+		foreach ($members as $member) {
+			$item = [
+				'id' => $member->user_id,
+				'username' => $member->username,
+				'race' => $member->race,
+				'galaxy' => $member->galaxy,
+				'system' => $member->system,
+				'planet' => $member->planet,
+				'points' => Format::number($member->total_points),
+				'date' => $member->created_at ? Game::datezone("d.m.Y H:i", $member->created_at) : '-',
+			];
 
-			if (strtotime($u->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$u->onlinetime = "<span class='positive'>" . __('alliance.On') . "</span>";
-			} elseif (strtotime($u->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$u->onlinetime = "<span class='neutral'>" . __('alliance.15_min') . "</span>";
+			if (strtotime($member->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+				$item['onlinetime'] = "<span class='positive'>" . __('alliance.On') . "</span>";
+			} elseif (strtotime($member->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+				$item['onlinetime'] = "<span class='neutral'>" . __('alliance.15_min') . "</span>";
 			} elseif ($alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$hours = floor((time() - strtotime($u->onlinetime)) / 3600);
+				$hours = floor((time() - strtotime($member->onlinetime)) / 3600);
 
-				$u->onlinetime = "<span class='negative'>" . __('alliance.Off') . " " . Format::time($hours * 3600) . "</span>";
+				$item['onlinetime'] = "<span class='negative'>" . __('alliance.Off') . " " . Format::time($hours * 3600) . "</span>";
 			}
 
-			if ($alliance->user_id == $u->id) {
-				$u->range = ($alliance->owner_range == '') ? "Основатель" : $alliance->owner_range;
-			} elseif (isset($alliance->ranks[$u->rank - 1]['name'])) {
-				$u->range = $alliance->ranks[$u->rank - 1]['name'];
+			if ($alliance->user_id == $member->user_id) {
+				$item['range'] = ($alliance->owner_range == '') ? "Основатель" : $alliance->owner_range;
+			} elseif ($member->rank && isset($alliance->ranks[$member->rank]['name'])) {
+				$item['range'] = $alliance->ranks[$member->rank]['name'];
 			} else {
-				$u->range = __('alliance.Novate');
+				$item['range'] = __('alliance.Novate');
 			}
 
-			$u->points = Format::number($u->total_points);
-			$u->time = ($u->time > 0) ? Game::datezone("d.m.Y H:i", $u->time) : '-';
+			$parse['members'][] = $item;
 
-			$parse['memberslist'][] = (array) $u;
-
-			if ($rank == $u->id && $parse['admin']) {
-				$r['Rank_for'] = 'Установить ранг для ' . $u->username;
+			if ($rank == $member->user_id && $parse['admin']) {
+				$r = [];
+				$r['Rank_for'] = 'Установить ранг для ' . $member->username;
 				$r['options'] = "<option value=\"0\">Новичок</option>";
 
-				if (is_array($alliance->ranks) && count($alliance->ranks)) {
+				if (is_array($alliance->ranks) && !empty($alliance->ranks)) {
 					foreach ($alliance->ranks as $a => $b) {
 						$r['options'] .= "<option value=\"" . ($a + 1) . "\"";
 
-						if ($u->rank - 1 == $a) {
+						if ($member->rank == $a) {
 							$r['options'] .= ' selected=selected';
 						}
 
@@ -809,9 +799,9 @@ class AllianceController extends Controller
 					}
 				}
 
-				$r['id'] = $u->id;
+				$r['id'] = $member->user_id;
 
-				$parse['memberslist'][] = $r;
+				$parse['members'][] = $r;
 			}
 		}
 
@@ -823,12 +813,11 @@ class AllianceController extends Controller
 			$s = 1;
 		}
 
-		if ($i != $alliance->members_count) {
-			$alliance->members_count = $i;
+		if (count($parse['members']) != $alliance->members_count) {
+			$alliance->members_count = count($parse['memberslist']);
 			$alliance->save();
 		}
 
-		$parse['i'] = $i;
 		$parse['s'] = $s;
 		$parse['status'] = $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS);
 

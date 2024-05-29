@@ -248,10 +248,8 @@ class User extends Authenticatable
 	public function getAllyInfo()
 	{
 		if ($this->alliance) {
-			$member = $this->alliance->members()->where('user_id', $this->id)
+			$this->alliance->member = $this->alliance->members()->where('user_id', $this->id)
 				->first();
-
-			$this->alliance->rights = $this->alliance->ranks[($member?->rank ?? 0) - 1] ?? ['name' => '', 'planet' => 0];
 		}
 	}
 

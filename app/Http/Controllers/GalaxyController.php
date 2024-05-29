@@ -38,93 +38,70 @@ class GalaxyController extends Controller
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
 
-		if ($request->post('direction')) {
-			$direction = trim($request->post('direction', ''));
+		if ($request->input('galaxy')) {
+			$galaxy = (int) $request->input('galaxy', 1);
+		}
 
-			if ($direction == 'galaxyLeft') {
-				$galaxy = (int) $request->post('galaxy') - 1;
-			} elseif ($direction == 'galaxyRight') {
-				$galaxy = (int) $request->post('galaxy') + 1;
-			} elseif ($request->post('galaxy')) {
-				$galaxy = (int) $request->post('galaxy');
-			}
-
-			if ($direction == 'systemLeft') {
-				$system = (int) $request->post('system') - 1;
-			} elseif ($direction == 'systemRight') {
-				$system = (int) $request->post('system') + 1;
-			} elseif ($request->post('system')) {
-				$system = (int) $request->post('system');
-			}
-		} else {
-			if ($request->post('galaxy')) {
-				$galaxy = (int) $request->query('galaxy', 1);
-			}
-
-			if ($request->post('system')) {
-				$system = (int) $request->query('system', 1);
-			}
+		if ($request->input('system')) {
+			$system = (int) $request->input('system', 1);
 		}
 
 		$galaxy = min(max($galaxy, 1), config('settings.maxGalaxyInWorld'));
 		$system = min(max($system, 1), config('settings.maxSystemInGalaxy'));
 
-		$Phalanx = 0;
+		$phalanx = false;
 
 		if ($this->planet->getLevel('phalanx') > 0) {
 			$Range = Fleet::getPhalanxRange($this->planet->getLevel('phalanx'));
 
-			$SystemLimitMin = max(1, $this->planet->system - $Range);
-			$SystemLimitMax = $this->planet->system + $Range;
+			$systemLimitMin = max(1, $this->planet->system - $Range);
+			$systemLimitMax = $this->planet->system + $Range;
 
-			if ($system <= $SystemLimitMax && $system >= $SystemLimitMin) {
-				$Phalanx = 1;
+			if ($system <= $systemLimitMax && $system >= $systemLimitMin) {
+				$phalanx = true;
 			}
 		}
 
-		if ($this->planet->getLevel('interplanetary_misil') > 0) {
-			if ($galaxy == $this->planet->galaxy) {
-				$Range = Fleet::getMissileRange($this->user);
+		if ($this->planet->getLevel('interplanetary_misil') > 0 && $galaxy == $this->planet->galaxy) {
+			$Range = Fleet::getMissileRange($this->user);
 
-				$SystemLimitMin = max(1, $this->planet->system - $Range);
-				$SystemLimitMax = $this->planet->system + $Range;
+			$systemLimitMin = max(1, $this->planet->system - $Range);
+			$systemLimitMax = $this->planet->system + $Range;
 
-				if ($system <= $SystemLimitMax) {
-					$MissileBtn = ($system >= $SystemLimitMin) ? 1 : 0;
-				} else {
-					$MissileBtn = 0;
-				}
+			if ($system <= $systemLimitMax) {
+				$missileBtn = $system >= $systemLimitMin;
 			} else {
-				$MissileBtn = 0;
+				$missileBtn = false;
 			}
 		} else {
-			$MissileBtn = 0;
+			$missileBtn = false;
 		}
 
-		$Destroy = 0;
+		$destroy = false;
 
 		if ($this->planet->getLevel('dearth_star') > 0) {
-			$Destroy = 1;
+			$destroy = true;
 		}
 
 		$jsUser = [
-			'phalanx' => $Phalanx,
-			'destroy' => $Destroy,
-			'missile' => $MissileBtn,
+			'phalanx' => $phalanx,
+			'destroy' => $destroy,
+			'missile' => $missileBtn,
 			'stat_points' => $records ? $records['total_points'] : 0,
 			'colonizer' => $this->planet->getLevel('colonizer'),
 			'spy_sonde' => $this->planet->getLevel('spy_sonde'),
-			'spy' => (int) $this->user->getOption('spy'),
 			'recycler' => $this->planet->getLevel('recycler'),
 			'interplanetary_misil' => $this->planet->getLevel('interplanetary_misil'),
-			'allowExpedition' => $this->user->getTechLevel('expedition') > 0,
+			'expedition' => $this->user->getTechLevel('expedition') > 0,
 			'fleets' => $maxfleet_count,
 			'max_fleets' => $fleetmax
 		];
 
 		$parse = [];
 		$parse['galaxy'] = (int) $galaxy;
+		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
 		$parse['system'] = (int) $system;
+		$parse['system_max'] = (int) config('settings.maxSystemInGalaxy');
 		$parse['user'] = $jsUser;
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];
@@ -132,26 +109,14 @@ class GalaxyController extends Controller
 		$planets = $this->user->getPlanets(false);
 
 		foreach ($planets as $planet) {
-			$parse['shortcuts'][] = [
-				'name' => $planet->name,
-				'galaxy' => $planet->galaxy,
-				'system' => $planet->system,
-				'planet' => $planet->planet,
-				'planet_type' => $planet->planet_type,
-			];
+			$parse['shortcuts'][] = $planet->only(['name', 'galaxy', 'system', 'planet']);
 		}
 
 		foreach ($this->user->shortcuts as $shortcut) {
-			$parse['shortcuts'][] = [
-				'name' => $shortcut->name,
-				'galaxy' => $shortcut->galaxy,
-				'system' => $shortcut->system,
-				'planet' => $shortcut->planet,
-				'planet_type' => $shortcut->planet_type,
-			];
+			$parse['shortcuts'][] = $shortcut->only(['name', 'galaxy', 'system', 'planet']);
 		}
 
-		$GalaxyRow = DB::select("SELECT
+		$rows = DB::select("SELECT
 								p.galaxy, p.system, p.planet, p.id AS p_id, p.debris_metal AS p_metal, p.debris_crystal AS p_crystal, p.name as p_name, p.planet_type as p_type, p.destruyed as p_delete, p.image as p_image, p.last_active as p_active, p.parent_planet as p_parent,
 								p2.id AS l_id, p2.name AS l_name, p2.destruyed AS l_delete, p2.last_active AS l_update, p2.diameter AS l_diameter, p2.temp_min AS l_temp,
 								u.id AS u_id, u.username as u_name, u.race as u_race, u.alliance_id as a_id, u.authlevel as u_admin, u.onlinetime as u_online, u.vacation as u_vacation, u.banned_time as u_ban, u.sex as u_sex, u.avatar as u_avatar, u.image AS u_image,
@@ -166,7 +131,7 @@ class GalaxyController extends Controller
 				LEFT JOIN statistics s ON (s.user_id = u.id AND s.stat_type = 1 AND s.stat_code = 1)
 				WHERE p.planet_type <> 3 AND p.`galaxy` = '" . $galaxy . "' AND p.`system` = '" . $system . "'");
 
-		foreach ($GalaxyRow as $row) {
+		foreach ($rows as $row) {
 			if (!empty($row->l_update) && strtotime($row->l_update) > strtotime($row->p_active)) {
 				$row->p_active = $row->l_update;
 			}
