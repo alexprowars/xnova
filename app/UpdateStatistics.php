@@ -18,8 +18,6 @@ class UpdateStatistics
 	private $maxinfos = [];
 	public $start = 0;
 
-	private $user;
-
 	private $StatRace = [
 		1 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
 		2 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
@@ -30,7 +28,6 @@ class UpdateStatistics
 	public function __construct()
 	{
 		$this->start = time();
-		$this->user = new Models\User();
 	}
 
 	private function setMaxInfo($ID, $Count, Models\User $Data)
@@ -62,7 +59,7 @@ class UpdateStatistics
 				continue;
 			}
 
-			if ($user->records == 1 && $item->tech_id < 300) {
+			if ($user->getOption('records') && $item->tech_id < 300) {
 				$this->setMaxInfo($item->tech_id, $item->level, $user);
 			}
 
@@ -71,7 +68,7 @@ class UpdateStatistics
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
 			for ($Level = 1; $Level <= $item->level; $Level++) {
-				$TechPoints += $Units * pow($price['factor'], $Level);
+				$TechPoints += $Units * ($price['factor'] ** $Level);
 			}
 
 			$TechCounts += $item->level;
@@ -88,29 +85,28 @@ class UpdateStatistics
 		$BuildCounts = 0;
 		$BuildPoints = 0;
 
-		$items = Models\PlanetEntity::query()
-			->where('planet_id', $planet->id)
+		$items = $planet->entities()
 			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_BUILING))
 			->get();
 
 		foreach ($items as $item) {
-			if ($item->level <= 0) {
+			if ($item->amount <= 0) {
 				continue;
 			}
 
 			if ($user->getOption('records')) {
-				$this->setMaxInfo($item->build_id, $item->level, $user);
+				$this->setMaxInfo($item->entity_id, $item->amount, $user);
 			}
 
-			$price = Vars::getItemPrice($item->build_id);
+			$price = Vars::getItemPrice($item->entity_id);
 
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
-			for ($Level = 1; $Level <= $item->level; $Level++) {
+			for ($Level = 1; $Level <= $item->amount; $Level++) {
 				$BuildPoints += $Units * ($price['factor'] ** $Level);
 			}
 
-			$BuildCounts += $item->level;
+			$BuildCounts += $item->amount;
 		}
 
 		$RetValue['BuildCount'] = $BuildCounts;
@@ -124,9 +120,8 @@ class UpdateStatistics
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = Models\PlanetUnit::query()
-			->where('planet_id', $planet->id)
-			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE))
+		$items = $planet->entities()
+			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE))
 			->get();
 
 		foreach ($items as $item) {
@@ -134,13 +129,13 @@ class UpdateStatistics
 				continue;
 			}
 
-			if (!isset($RecordArray[$item->unit_id])) {
-				$RecordArray[$item->unit_id] = 0;
+			if (!isset($RecordArray[$item->entity_id])) {
+				$RecordArray[$item->entity_id] = 0;
 			}
 
-			$RecordArray[$item->unit_id] += $item->amount;
+			$RecordArray[$item->entity_id] += $item->amount;
 
-			$Units = Vars::getItemTotalPrice($item->unit_id, true);
+			$Units = Vars::getItemTotalPrice($item->entity_id, true);
 
 			$UnitsPoints += ($Units * $item->amount);
 			$UnitsCounts += $item->amount;
@@ -157,9 +152,8 @@ class UpdateStatistics
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = Models\PlanetUnit::query()
-			->where('planet_id', $planet->id)
-			->whereIn('unit_id', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET))
+		$items = $planet->entities()
+			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET))
 			->get();
 
 		foreach ($items as $item) {
@@ -167,13 +161,13 @@ class UpdateStatistics
 				continue;
 			}
 
-			if (!isset($RecordArray[$item->unit_id])) {
-				$RecordArray[$item->unit_id] = 0;
+			if (!isset($RecordArray[$item->entity_id])) {
+				$RecordArray[$item->entity_id] = 0;
 			}
 
-			$RecordArray[$item->unit_id] += $item->amount;
+			$RecordArray[$item->entity_id] += $item->amount;
 
-			$Units = Vars::getItemTotalPrice($item->unit_id, true);
+			$Units = Vars::getItemTotalPrice($item->entity_id, true);
 
 			$UnitsPoints += ($Units * $item->amount);
 
@@ -418,7 +412,7 @@ class UpdateStatistics
 				'username' => addslashes($user->username),
 				'race' => $user->race,
 				'alliance_id' => $user->alliance_id,
-				'alliance_name' => $user->alliance->name,
+				'alliance_name' => $user->alliance?->name,
 				'stat_type' => 1,
 				'stat_code' => 1,
 				'tech_points' => $TTechPoints,
@@ -469,11 +463,11 @@ class UpdateStatistics
 		      SELECT
 		        SUM(u.`tech_points`), SUM(u.`tech_count`), SUM(u.`build_points`), SUM(u.`build_count`), SUM(u.`defs_points`),
 		        SUM(u.`defs_count`), SUM(u.`fleet_points`), SUM(u.`fleet_count`), SUM(u.`total_points`), SUM(u.`total_count`),
-		        0, u.`alliance_id`, 2, 1,
-		        a.tech_rank, a.build_rank, a.defs_rank, a.fleet_rank, a.total_rank
+		        NULL, u.`alliance_id`, 2, 1,
+		        COALESCE(MIN(a.tech_rank), 0), COALESCE(MIN(a.build_rank), 0), COALESCE(MIN(a.defs_rank), 0), COALESCE(MIN(a.fleet_rank), 0), COALESCE(MIN(a.total_rank), 0)
 		      FROM " . app(Statistic::class)->getTable() . " as u
 		        LEFT JOIN " . app(Statistic::class)->getTable() . " as a ON a.alliance_id = u.alliance_id AND a.stat_code = 2 AND a.stat_type = 2
-		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.alliance_id<>0
+		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.alliance_id IS NOT NULL
 		      GROUP BY u.`alliance_id`");
 
 		DB::statement("UPDATE " . app(Statistic::class)->getTable() . " as new
@@ -523,7 +517,7 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`user_id`, 1, " . $this->start . "
+		        u.`user_id`, 1, '" . Date::createFromTimestamp($this->start) . "'
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
@@ -533,7 +527,7 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`alliance_id`, 2, " . $this->start . "
+		        u.`alliance_id`, 2, '" . Date::createFromTimestamp($this->start) . "'
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
@@ -541,14 +535,14 @@ class UpdateStatistics
 
 	public function clearGame()
 	{
-		Models\Message::query()->where('time', '<', time() - (86400 * 14))->where('type', '!=', 2)->delete();
-		Models\Report::query()->where('time', '<', time() - 172800)->delete();
-		Models\LogFleet::query()->where('created_at', '<', time() - 259200)->delete();
-		Models\LogAttack::query()->where('created_at', '<', time() - 604800)->delete();
-		Models\LogIp::query()->where('created_at', '<', time() - 604800)->delete();
-		Models\LogCredit::query()->where('created_at', '<', time() - 604800)->delete();
-		Models\LogHistory::query()->where('created_at', '<', time() - 604800)->delete();
-		Models\LogStat::query()->where('time', '<', (time() - (86400 * 30)))->delete();
+		Models\Message::query()->where('time', '<', now()->subDays(14))->whereNot('type', 2)->delete();
+		Models\Report::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogFleet::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogAttack::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogIp::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogCredit::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogHistory::query()->where('created_at', '<', now()->subDays(7))->delete();
+		Models\LogStat::query()->where('time', '<', now()->subDays(30))->delete();
 	}
 
 	public function buildRecordsCache()

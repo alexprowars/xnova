@@ -56,11 +56,6 @@ class User extends Authenticatable
 	protected $guarded = [];
 	protected $hidden = ['password'];
 
-	protected $attributes = [
-		'sex' => 0,
-		'planet_id' => null,
-	];
-
 	protected function casts(): array
 	{
 		return [

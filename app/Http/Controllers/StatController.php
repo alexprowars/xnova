@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Route;
 use App\Controller;
 use App\Game;
 use App\Models\Statistic;
@@ -15,16 +14,13 @@ class StatController extends Controller
 {
 	private $field;
 	private $page;
-	private $pid;
 
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->page = (int) Request::input('range', 0);
+		$this->page = (int) Request::input('page', 0);
 		$this->page = max($this->page, 1);
-
-		$this->pid = (int) Request::query('pid', 0);
 
 		$type = (int) Request::input('type', 1);
 		$view = Request::input('view', 'players');
@@ -33,45 +29,18 @@ class StatController extends Controller
 			$type = 1;
 		}
 
-		switch ($type) {
-			case 2:
-				$this->field = 'fleet';
-				break;
-			case 3:
-				$this->field = 'tech';
-				break;
-			case 4:
-				$this->field = 'defs';
-				break;
-			case 5:
-				$this->field = 'build';
-				break;
-			case 6:
-				$this->field = 'minier';
-				break;
-			case 7:
-				$this->field = 'raid';
-				break;
-			default:
-				$this->field = 'total';
-		}
+		$this->field = match ($type) {
+			2 => 'fleet',
+			3 => 'tech',
+			4 => 'defs',
+			5 => 'build',
+			6 => 'minier',
+			7 => 'raid',
+			default => 'total',
+		};
 	}
 
 	public function index()
-	{
-		$view = Request::input('view', 'players');
-
-		switch ($view) {
-			case 'alliances':
-				return $this->alliances();
-			case 'races':
-				return $this->races();
-			default:
-				return $this->players();
-		}
-	}
-
-	private function players()
 	{
 		$type = (int) Request::input('type', 1);
 
@@ -119,7 +88,7 @@ class StatController extends Controller
 		foreach ($query as $item) {
 			$row = [];
 			$row['id'] = (int) $item->user_id;
-			$row['position'] = $position;
+			$row['place'] = $position;
 
 			$oldPosition = (int) $item->{$this->field . '_old_rank'};
 
@@ -129,7 +98,6 @@ class StatController extends Controller
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->username;
-			$row['name_marked'] = (Auth::check() && $item->user_id == $this->user->id) || $item->user_id == $this->pid;
 
 			$row['alliance'] = false;
 
@@ -152,13 +120,13 @@ class StatController extends Controller
 		return response()->state($parse);
 	}
 
-	private function alliances()
+	public function alliances()
 	{
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
 			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
-			'list' => Route::current()->getActionMethod(),
+			'list' => 'alliances',
 			'type' => $type,
 			'page' => 1
 		];
@@ -170,7 +138,7 @@ class StatController extends Controller
 
 		$position = ($parse['page'] - 1) * 100;
 
-		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`members_count` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 
@@ -190,7 +158,7 @@ class StatController extends Controller
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->name;
 			$row['name_marked'] = Auth::check() && $item->name == $this->user->alliance_name;
-			$row['members'] = (int) $item->members;
+			$row['members'] = (int) $item->members_count;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 
 			$parse['items'][] = $row;
@@ -201,18 +169,23 @@ class StatController extends Controller
 		return response()->state($parse);
 	}
 
-	private function races()
+	public function races()
 	{
 		$parse = [
 			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
-			'list' => Route::current()->getActionMethod(),
+			'list' => 'races',
+			'items' => [],
 			'type' => 0,
 			'page' => 0
 		];
 
-		$query = DB::select("SELECT * FROM statistics WHERE `stat_type` = 3 AND `stat_code` = 1 ORDER BY `" . $this->field . "_rank` ASC;");
+		$items = Statistic::query()
+			->where('stat_type', 3)
+			->where('stat_code', 1)
+			->orderBy($this->field . '_rank')
+			->get();
 
-		foreach ($query as $item) {
+		foreach ($items as $item) {
 			$row = [];
 			$row['position'] = (int) $item->{$this->field . '_rank'};
 			$row['race'] = (int) $item->race;

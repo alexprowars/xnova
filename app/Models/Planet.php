@@ -56,6 +56,11 @@ class Planet extends Model
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
+	public function entities()
+	{
+		return $this->hasMany(PlanetEntity::class, 'planet_id');
+	}
+
 	public function checkOwnerPlanet()
 	{
 		if ($this->user_id != $this->user->id && $this->alliance_id > 0 && ($this->alliance_id != $this->user->alliance_id || !$this->user->alliance['rights']['planet'])) {

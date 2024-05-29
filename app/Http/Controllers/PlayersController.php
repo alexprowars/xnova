@@ -112,13 +112,13 @@ class PlayersController extends Controller
 
 		$items = LogStat::query()->where('object_id', $userId)
 			->where('type', 1)
-			->where('time', now()->addDays(14))
+			->where('time', '>', now()->subDays(14))
 			->orderBy('time')
 			->get();
 
 		foreach ($items as $item) {
 			$parse['points'][] = [
-				'date' => (int) $item->time,
+				'date' => (int) $item->time->timestamp,
 				'rank' => [
 					'tech' => (int) $item->tech_rank,
 					'build' => (int) $item->build_rank,

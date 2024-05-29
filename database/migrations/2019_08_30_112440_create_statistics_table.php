@@ -13,7 +13,7 @@ return new class extends Migration {
 			$table->string('username', 35)->default('');
 			$table->boolean('race')->default(0);
 			$table->foreignId('alliance_id')->nullable()->constrained('users')->nullOnDelete();
-			$table->string('alliance_name', 50)->default('');
+			$table->string('alliance_name', 50)->nullable();
 			$table->boolean('stat_type')->default(0)->index();
 			$table->integer('stat_code')->default(0);
 			$table->smallInteger('tech_rank')->unsigned()->default(0)->index();

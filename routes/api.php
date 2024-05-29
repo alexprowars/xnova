@@ -11,6 +11,8 @@ Route::post('registration', [Controllers\RegistrationController::class, 'index']
 Route::get('log/{id}', [Controllers\LogController::class, 'info'])->name('log.info');
 Route::get('news', [Controllers\NewsController::class, 'index'])->name('news');
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index'])->name('stat');
+Route::match(['get', 'post'], 'stat/alliances', [Controllers\StatController::class, 'alliances']);
+Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 'races']);
 Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index'])->name('xnsim');
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->name('players');
 
