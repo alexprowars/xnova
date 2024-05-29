@@ -88,7 +88,7 @@ class Build
 				$buildItem->delete();
 			}
 
-			if ($buildItem->time > 0) {
+			if ($buildItem->time) {
 				$entity = Entity\Building::createEntity($buildItem->object_id, $buildItem->level, $planet);
 
 				$cost = $buildItem->operation == $buildItem::OPERATION_DESTROY

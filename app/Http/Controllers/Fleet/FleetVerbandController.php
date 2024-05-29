@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Models\Friend;
 use App\Models\Planet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Models\Assault;
@@ -203,12 +203,13 @@ class FleetVerbandController extends Controller
 
 			$parse['friends'] = [];
 
-			$buddies = DB::select("SELECT u.id, u.username FROM buddy b, users u WHERE u.id = b.sender AND b.owner = " . $this->user->id . " AND active = '1'");
+			$friends = Friend::query()->where('user_id', $this->user->id)
+				->where('active', true)
+				->with('friend')
+				->get();
 
-			if (count($buddies)) {
-				foreach ($buddies as $buddy) {
-					$parse['friends'][] = (array) $buddy;
-				}
+			foreach ($friends as $friend) {
+				$parse['friends'][] = $friend->only(['friend.id', 'friend.username']);
 			}
 		}
 

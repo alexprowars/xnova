@@ -2,361 +2,19 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Request;
-use App\Exceptions\RedirectException;
 use App\Planet\EntityFactory;
 use App\Models\User;
 use App\Models\Planet;
 
 class Construction
 {
-	public function __construct(protected User $user, protected Planet $planet)
+	public static function showBuildingQueue(User $user, Planet $planet)
 	{
-	}
-
-	public function pageBuilding()
-	{
-		$request = Request::instance();
-
-		$queue = $this->ShowBuildingQueue();
-
-		$maxBuidSize = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
-
-		if ($request->isMethod('post')) {
-			$action = $request->post('cmd', '');
-			$elementId = (int) $request->post('building', 0);
-			$listID = (int) $request->post('listid', 0);
-
-			if (in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type)) || ($listID != 0 && ($action == 'cancel' || $action == 'remove'))) {
-				$queueManager = new Queue($this->user, $this->planet);
-
-				$canBuildElement = ($queue['lenght'] < $maxBuidSize);
-
-				switch ($action) {
-					case 'cancel':
-						$queueManager->delete(1, 0);
-						break;
-					case 'remove':
-						$queueManager->delete(1, $listID);
-						break;
-					case 'insert':
-						if ($canBuildElement) {
-							$queueManager->add($elementId);
-						}
-
-						break;
-					case 'destroy':
-						if ($canBuildElement) {
-							$queueManager->add($elementId, 1, true);
-						}
-
-						break;
-				}
-
-				throw new RedirectException('/buildings');
-			}
-		}
-
-		$viewOnlyAvailable = $this->user->getOption('only_available');
-
-		$parse = [];
-		$parse['items'] = [];
-
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $elementId) {
-			if (
-				!in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type))
-				|| !Building::checkTechnologyRace($this->user, $elementId)
-			) {
-				continue;
-			}
-
-			$entity = $this->planet->getEntity($elementId);
-
-			$isAvailable = $entity->isAvailable();
-
-			if (!$isAvailable && $viewOnlyAvailable) {
-				continue;
-			}
-
-			$price = $entity->getPrice();
-
-			$row = [];
-
-			$row['allow'] = $isAvailable;
-			$row['i'] = $elementId;
-			$row['level'] = $entity->getLevel();
-			$row['price'] = $price;
-
-			if ($isAvailable) {
-				if (in_array($elementId, Vars::getItemsByType('build_exp'))) {
-					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('settings.buildings_exp_mult', 1000));
-				}
-
-				$row['time'] = $entity->getTime();
-				$row['effects'] = Building::getNextProduction($elementId, $entity->getLevel(), $this->planet)?->toArray() ?? null;
-			} else {
-				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
-			}
-
-			$parse['items'][] = $row;
-		}
-
-		$parse['queue'] 	= $queue['buildlist'];
-		$parse['queue_max'] = $maxBuidSize;
-		$parse['planet'] 	= 'normaltemp';
-
-		preg_match('/(.*?)planet/', $this->planet->image, $match);
-
-		if (isset($match[1])) {
-			$parse['planet'] = trim($match[1]);
-		}
-
-		return $parse;
-	}
-
-	public function pageResearch()
-	{
-		$bContinue = true;
-
-		if (!Building::checkLabSettingsInQueue($this->planet)) {
-			session()->flash('error-static', __('buildings.labo_on_update'));
-
-			$bContinue = false;
-		}
-
-		$spaceLabs = [];
-
-		if ($this->user->getTechLevel('intergalactic') > 0) {
-			$spaceLabs = $this->planet->getNetworkLevel();
-		}
-
-		$this->planet->spaceLabs = $spaceLabs;
-
-		$res_array = Vars::getItemsByType(Vars::ITEM_TYPE_TECH);
-
-		$techHandle = Models\Queue::query()
-			->where('user_id', $this->user->id)
-			->where('type', Models\Queue::TYPE_TECH)
-			->first();
-
-		if (Request::post('cmd') && $bContinue != false) {
-			$queueManager = new Queue($this->user, $this->planet);
-
-			$command = Request::post('cmd', '');
-			$techId = (int) Request::post('tech', 0);
-
-			if ($techId > 0 && in_array($techId, $res_array)) {
-				switch ($command) {
-					case 'cancel':
-						if ($queueManager->getCount(Queue::TYPE_RESEARCH)) {
-							$queueManager->delete($techId);
-						}
-
-						break;
-
-					case 'search':
-						if (!$queueManager->getCount(Queue::TYPE_RESEARCH)) {
-							$queueManager->add($techId);
-						}
-
-						break;
-				}
-
-				throw new RedirectException('/research');
-			}
-		}
-
-		$viewOnlyAvailable = $this->user->getOption('only_available');
-
-		$parse['items'] = [];
-
-		foreach ($res_array as $elementId) {
-			$entity = EntityFactory::create($elementId, $this->user->getTechLevel($elementId), $this->planet);
-
-			$isAvailable = $entity->isAvailable();
-
-			if (!$isAvailable && $viewOnlyAvailable) {
-				continue;
-			}
-
-			if (!Building::checkTechnologyRace($this->user, $elementId)) {
-				continue;
-			}
-
-			$price = Vars::getItemPrice($elementId);
-
-			$row = [
-				'i' => $elementId,
-				'allow' => $isAvailable && $bContinue,
-				'level' => $this->user->getTechLevel($elementId),
-				'max' => $price['max'] ?? 0,
-				'price' => $entity->getPrice(),
-				'build' => false,
-				'effects' => '',
-			];
-
-			if ($isAvailable) {
-				if ($elementId >= 120 && $elementId <= 122) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 115) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 117) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 118) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 108) {
-					$row['effects'] = '<div class="tech-effects-row">+' . ($row['level'] + 1) . ' слотов флота</div>';
-				} elseif ($elementId == 109) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 110) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 111) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $row['level']) . '%</span></div>';
-				} elseif ($elementId == 123) {
-					$row['effects'] = '<div class="tech-effects-row">+' . $row['level'] . '% лабораторий</div>';
-				} elseif ($elementId == 113) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($row['level'] * 2) . '%</span></div>';
-				}
-
-				$row['time'] = $entity->getTime();
-
-				if ($techHandle) {
-					if ($techHandle->object_id == $elementId) {
-						$row['build'] = [
-							'id' => (int) $techHandle->planet_id,
-							'name' => '',
-							'time' => $techHandle->time + $row['time']
-						];
-
-						if ($techHandle->planet_id != $this->planet->id) {
-							$planet = Models\Planet::query()
-								->select(['id', 'name'])
-								->where('id', $techHandle->planet_id)
-								->first();
-
-							if ($planet) {
-								$row['build']['planet'] = $planet->name;
-							}
-						}
-					} else {
-						$row['build'] = true;
-					}
-				}
-			} else {
-				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
-			}
-
-			$parse['items'][] = $row;
-		}
-
-		return $parse;
-	}
-
-	public function pageShipyard($mode = 'fleet')
-	{
-		$queueManager = new Queue($this->user, $this->planet);
-
-		if ($mode == 'defense') {
-			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
-		} else {
-			$elementIDs = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
-		}
-
-		if (Request::post('fmenge')) {
-			foreach (Request::post('fmenge', []) as $element => $count) {
-				$element 	= (int) $element;
-				$count 		= abs((int) $count);
-
-				if (!in_array($element, $elementIDs)) {
-					continue;
-				}
-
-				$queueManager->add($element, $count);
-			}
-
-			$this->planet->queue = $queueManager->get();
-		}
-
-		$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
-
-		$BuildArray = $this->extractHangarQueue($queueArray);
-
-		$viewOnlyAvailable = $this->user->getOption('only_available');
-
-		$parse = [];
-		$parse['items'] = [];
-
-		foreach ($elementIDs as $element) {
-			$entity = EntityFactory::create($element);
-
-			$isAccess = $entity->isAvailable();
-
-			if (!$isAccess && $viewOnlyAvailable) {
-				continue;
-			}
-
-			if (!Building::checkTechnologyRace($this->user, $element)) {
-				continue;
-			}
-
-			$row = [];
-
-			$row['allow']	= $isAccess;
-			$row['i'] 		= $element;
-			$row['count'] 	= $this->planet->getLevel($element);
-			$row['price'] 	= $entity->getPrice();
-			$row['effects']	= null;
-
-			if ($isAccess) {
-				$row['time'] = $entity->getTime();
-				$row['is_max'] = false;
-
-				$price = Vars::getItemPrice($element);
-
-				if (isset($price['max'])) {
-					$total = $this->planet->getLevel($element);
-
-					if (isset($BuildArray[$element])) {
-						$total += $BuildArray[$element];
-					}
-
-					if ($total >= $price['max']) {
-						$row['is_max'] = true;
-					}
-				}
-
-				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
-				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
-			} else {
-				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
-			}
-
-			$parse['items'][] = $row;
-		}
-
-		return $parse;
-	}
-
-	private function extractHangarQueue($queue = '')
-	{
-		$result = [];
-
-		if (is_array($queue) && count($queue)) {
-			foreach ($queue as $element) {
-				$result[$element->object_id] = $element->level;
-			}
-		}
-
-		return $result;
-	}
-
-	private function ShowBuildingQueue()
-	{
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new Queue($user, $planet);
 
 		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
-		$listRow = [];
+		$items = [];
 
 		if (count($queueItems)) {
 			$end = 0;
@@ -369,7 +27,7 @@ class Construction
 				$entity = EntityFactory::create(
 					$item->object_id,
 					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
-					$this->planet
+					$planet
 				);
 
 				$elementTime = $entity->getTime();
@@ -386,8 +44,8 @@ class Construction
 
 				$end += $elementTime;
 
-				$listRow[] = [
-					'name' 	=> __('main.tech.' . $item->object_id),
+				$items[] = [
+					'item' 	=> $item->object_id,
 					'level' => $item->level,
 					'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
 					'time' 	=> $end - time(),
@@ -396,15 +54,12 @@ class Construction
 			}
 		}
 
-		$RetValue['lenght'] 	= count($listRow);
-		$RetValue['buildlist'] 	= $listRow;
-
-		return $RetValue;
+		return $items;
 	}
 
-	public function queueList()
+	public static function queueList(User $user, Planet $planet)
 	{
-		$queueItems = (new Queue($this->user, $this->planet))
+		$queueItems = (new Queue($user, $planet))
 			->get(Queue::TYPE_SHIPYARD);
 
 		if (empty($queueItems)) {
@@ -417,7 +72,7 @@ class Construction
 
 		foreach ($queueItems as $item) {
 			if (!$end) {
-				$end = $item->time;
+				$end = $item->time->timestamp;
 			}
 
 			$entity = EntityFactory::create($item->object_id);
@@ -427,7 +82,7 @@ class Construction
 			$end += $time * $item->level;
 
 			$row = [
-				'i'		=> (int) $item->object_id,
+				'id'	=> (int) $item->object_id,
 				'count'	=> (int) $item->level,
 				'time'	=> $time,
 				'end'	=> $end

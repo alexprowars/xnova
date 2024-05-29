@@ -22,8 +22,6 @@ use App\Controller;
 
 class AllianceController extends Controller
 {
-	protected Alliance $alliance;
-
 	protected function getAlliance()
 	{
 		$alliance = $this->user->alliance;
@@ -58,19 +56,28 @@ class AllianceController extends Controller
 
 		$parse['list'] = [];
 
-		$requests = DB::select("SELECT r.*, a.name, a.tag FROM alliances_requests r LEFT JOIN alliances a ON a.id = r.alliance_id WHERE r.user_id = " . $this->user->id . ";");
+		$requests = AllianceRequest::query()
+			->where('user_id', $this->user->id)
+			->with('alliance')
+			->get();
 
 		foreach ($requests as $item) {
-			$parse['list'][] = [$item->alliance_id, $item->tag, $item->name, $item->time];
+			$parse['list'][] = [$item->alliance_id, $item->alliance?->tag, $item->alliance?->name, $item->created_at->format('c')];
 		}
 
 		$parse['allys'] = [];
 
-		$allys = DB::select("SELECT s.total_points, a.id, a.tag, a.name, a.members_count FROM statistics s, alliances a WHERE s.stat_type = '2' AND s.stat_code = '1' AND a.id = s.alliance_id ORDER BY s.total_points DESC LIMIT 0,15;");
+		$alliances = DB::table('alliances', 'a')
+			->select('a.id, a.tag, a.name, a.members_count as members, s.total_points')
+			->from('statistics', 's')
+			->where('s.stat_type', 2)
+			->where('s.stat_code', 1)
+			->where('s.alliance_id', 'a.id')
+			->orderByDesc('s.total_points')
+			->limit(15);
 
-		foreach ($allys as $ally) {
-			$ally->total_points = Format::number($ally->total_points);
-			$parse['allys'][] = (array) $ally;
+		foreach ($alliances as $item) {
+			$parse['allys'][] = (array) $item;
 		}
 
 		return response()->state($parse);
@@ -384,22 +391,25 @@ class AllianceController extends Controller
 		$parse = [];
 		$parse['list'] = [];
 
-		$query = DB::select("SELECT u.id, u.username, r.* FROM alliances_requests r LEFT JOIN users u ON u.id = r.user_id WHERE alliance_id = '" . $alliance->id . "'");
+		$requests = AllianceRequest::query()
+			->where('alliance_id', $alliance->id)
+			->with('user')
+			->get();
 
-		foreach ($query as $r) {
-			if (isset($show) && $r->id == $show) {
+		foreach ($requests as $item) {
+			if ($item->id == $show) {
 				$s = [];
-				$s['username'] = $r->username;
-				$s['request_text'] = nl2br($r->request);
-				$s['id'] = $r->id;
+				$s['username'] = $item->user?->username;
+				$s['request_text'] = nl2br($item->message);
+				$s['id'] = $item->id;
 			}
 
-			$r->time = Game::datezone("Y-m-d H:i:s", $r->time);
+			$item->created_at = Game::datezone('Y-m-d H:i:s', $request->created_at);
 
-			$parse['list'][] = $r;
+			$parse['list'][] = $item;
 		}
 
-		if (isset($show) && $show != 0 && count($parse['list']) > 0 && isset($s)) {
+		if ($show != 0 && count($parse['list']) > 0 && isset($s)) {
 			$parse['request'] = $s;
 		} else {
 			$parse['request'] = null;
@@ -510,13 +520,18 @@ class AllianceController extends Controller
 			throw new RedirectException('/alliance', 'Правление передано');
 		}
 
-		$listuser = DB::select("SELECT u.username, u.id, m.rank FROM users u LEFT JOIN alliances_members m ON m.user_id = u.id WHERE u.alliance_id = '" . $this->user->alliance_id . "' AND u.id != " . $alliance->user_id . " AND m.rank != 0;");
+		$listuser = AllianceMember::query()
+			->where('alliance_id', $alliance->id)
+			->where('user_id', $alliance->user_id)
+			->where('rank', '>', 0)
+			->with('user')
+			->get();
 
 		$parse['righthand'] = '';
 
 		foreach ($listuser as $u) {
 			if ($alliance->ranks[$u->rank - 1][Alliance::CAN_EDIT_RIGHTS] == 1) {
-				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->username . "&nbsp;[" . $alliance->ranks[$u->rank - 1]['name'] . "]&nbsp;&nbsp;</option>";
+				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->user?->username . "&nbsp;[" . $alliance->ranks[$u->rank - 1]['name'] . "]&nbsp;&nbsp;</option>";
 			}
 		}
 

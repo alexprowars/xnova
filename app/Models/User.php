@@ -26,6 +26,9 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Mail\UserLostPassword;
 use Throwable;
 
+/**
+ * @mixin User
+ */
 class User extends Authenticatable
 {
 	use HasRoles;
@@ -48,7 +51,7 @@ class User extends Authenticatable
 	];
 
 	protected $bonusData;
-	protected ?Planet $planet = null;
+	protected ?Planet $currentPlanet = null;
 
 	protected $guarded = [];
 	protected $hidden = ['password'];
@@ -354,23 +357,19 @@ class User extends Authenticatable
 
 	public function getCurrentPlanet(bool $loading = false): ?Planet
 	{
-		if ($this->planet || !$loading) {
-			return $this->planet;
+		if ($this->currentPlanet || !$loading) {
+			return $this->currentPlanet;
 		}
 
-		if (!$this->planet_current && !$this->planet_id) {
-			if ($this->race > 0) {
-				$galaxy = new Galaxy();
-
-				$this->planet_id = $galaxy->createPlanetByUserId($this->id);
-				$this->planet_current = $this->planet_id;
-			}
+		if (!$this->planet_current && !$this->planet_id && $this->race) {
+			$this->planet_id = (new Galaxy())->createPlanetByUserId($this->id);
+			$this->planet_current = $this->planet_id;
 		}
 
 		if ($this->planet_current && $this->planet_id) {
-			$planet = Planet::query()->find($this->planet_current);
+			$planet = Planet::find($this->planet_current);
 
-			if (!$planet && $this->planet_id > 0) {
+			if (!$planet && $this->planet_id) {
 				$this->planet_current = $this->planet_id;
 				$this->update();
 
@@ -394,11 +393,11 @@ class User extends Authenticatable
 					$queueManager->checkUnitQueue();
 				}
 
-				$this->planet = $planet;
+				$this->currentPlanet = $planet;
 			}
 		}
 
-		return $this->planet;
+		return $this->currentPlanet;
 	}
 
 	public function getPlanetListSortQuery(Builder $query)
@@ -509,7 +508,7 @@ class User extends Authenticatable
 				}
 			}
 
-			Setting::set('usersTotal', (Setting::get('usersTotal') ?? 0) + 1);
+			Setting::set('usersTotal', (int) (Setting::get('usersTotal') ?? 0) + 1);
 
 			if (!empty($user->email)) {
 				try {

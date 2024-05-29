@@ -13,6 +13,9 @@ use App\Entity\Coordinates;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @mixin Planet
+ */
 class Planet extends Model
 {
 	use CrudTrait;

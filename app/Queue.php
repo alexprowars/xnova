@@ -543,8 +543,8 @@ class Queue
 
 				$buildTime = $entity->getTime();
 
-				while ($item->time + $buildTime < time()) {
-					$item->time += $buildTime;
+				while ($item->time->timestamp + $buildTime < time()) {
+					$item->time->addSeconds($buildTime);
 
 					$builded++;
 					$this->planet->updateAmount($item->object_id, 1, true);
