@@ -12,7 +12,7 @@ class AllianceChat extends Model
 	protected function casts(): array
 	{
 		return [
-			'timestamp' => 'datetime',
+			'timestamp' => 'immutable_datetime',
 		];
 	}
 }

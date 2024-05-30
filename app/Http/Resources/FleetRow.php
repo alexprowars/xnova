@@ -165,8 +165,7 @@ class FleetRow extends JsonResource
 		$bloc['status'] = $fleetStatus[$this->status];
 		$bloc['prefix'] = $fleetPrefix;
 		$bloc['mission'] = $fleetStyle[$this->resource->mission];
-		$bloc['date'] = Game::datezone('H:i:s', $time);
-		$bloc['time'] = $time->getTimestamp();
+		$bloc['time'] = $time->utc()->toAtomString();
 		$bloc['text'] = $rowString;
 
 		return $bloc;

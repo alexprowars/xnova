@@ -13,9 +13,9 @@ class Fleet extends Model
 	{
 		return [
 			'fleet_array' => 'array',
-			'start_time' => 'datetime',
-			'end_time' => 'datetime',
-			'end_stay' => 'datetime',
+			'start_time' => 'immutable_datetime',
+			'end_time' => 'immutable_datetime',
+			'end_stay' => 'immutable_datetime',
 		];
 	}
 

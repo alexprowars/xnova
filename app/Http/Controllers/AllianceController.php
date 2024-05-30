@@ -62,7 +62,7 @@ class AllianceController extends Controller
 			->get();
 
 		foreach ($requests as $item) {
-			$parse['list'][] = [$item->alliance_id, $item->alliance?->tag, $item->alliance?->name, $item->created_at->format('c')];
+			$parse['list'][] = [$item->alliance_id, $item->alliance?->tag, $item->alliance?->name, $item->created_at?->utc()->toAtomString()];
 		}
 
 		$parse['allys'] = [];
@@ -906,7 +906,7 @@ class AllianceController extends Controller
 					'id' => (int) $message->id,
 					'user' => $message->user,
 					'user_id' => (int) $message->user_id,
-					'time' => $message->timestamp->format('c'),
+					'time' => $message->timestamp?->utc()->toAtomString(),
 					'text' => str_replace(["\r\n", "\n", "\r"], '', stripslashes($message->message)),
 				];
 			}

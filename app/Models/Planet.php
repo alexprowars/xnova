@@ -43,11 +43,11 @@ class Planet extends Model
 	protected function casts(): array
 	{
 		return [
-			'last_update' => 'datetime',
-			'last_active' => 'datetime',
-			'last_jump_time' => 'datetime',
-			'merchand' => 'datetime',
-			'destruyed' => 'datetime',
+			'last_update' => 'immutable_datetime',
+			'last_active' => 'immutable_datetime',
+			'last_jump_time' => 'immutable_datetime',
+			'merchand' => 'immutable_datetime',
+			'destruyed' => 'immutable_datetime',
 		];
 	}
 

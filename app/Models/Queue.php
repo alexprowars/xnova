@@ -24,8 +24,8 @@ class Queue extends Model
 	protected function casts(): array
 	{
 		return [
-			'time' => 'datetime',
-			'time_end' => 'datetime',
+			'time' => 'immutable_datetime',
+			'time_end' => 'immutable_datetime',
 		];
 	}
 

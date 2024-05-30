@@ -36,8 +36,8 @@ class PhalanxController extends Controller
 
 		$phalanx = $this->planet->getLevel('phalanx');
 
-		$systemdol 	= $this->planet->system - pow($phalanx, 2);
-		$systemgora = $this->planet->system + pow($phalanx, 2);
+		$systemdol 	= $this->planet->system - ($phalanx ** 2);
+		$systemgora = $this->planet->system + ($phalanx ** 2);
 
 		if ($this->planet->planet_type != 3) {
 			throw new PageException('Вы можете использовать фалангу только на луне!');
@@ -74,31 +74,29 @@ class PhalanxController extends Controller
 					->where('end_system', $s)
 					->where('end_planet', $i);
 			})
-			->orderBy('start_time', 'asc')
+			->orderBy('start_time')
 			->get();
 
 		$list = [];
 
-		foreach ($fleets as $ii => $row) {
+		foreach ($fleets as $row) {
 			$end = !($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i);
 
-			$color = ($row->mission != 6) ? 'lime' : 'orange';
-
 			if ($row->start_type == 3) {
-				$type = "лун";
+				$type = 'лун';
 			} else {
-				$type = "планет";
+				$type = 'планет';
 			}
 
 			if ($row->end_type == 3) {
-				$type2 = "лун";
+				$type2 = 'лун';
 			} else {
-				$type2 = "планет";
+				$type2 = 'планет';
 			}
 
 			if ($row->start_time->isFuture() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3))) {
 				$list[] = [
-					'time' => $row->start_time->getTimestamp(),
+					'time' => $row->start_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type . 'ы',
 					'type_2' => $type2 . 'у',
@@ -106,15 +104,14 @@ class PhalanxController extends Controller
 					'planet_position' => $row->splitStartPosition(),
 					'target_name' => $row->target_user_name,
 					'target_position' => $row->splitTargetPosition(),
-					'mission' => __('main.type_mission.' . $row->mission),
-					'color' => $color,
+					'mission' => $row->mission,
 					'direction' => 1
 				];
 			}
 
 			if ($row->mission <> 4 && !$end && $row->start_type != 3) {
 				$list[] = [
-					'time' => $row->end_time->getTimestamp(),
+					'time' => $row->end_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type2 . 'ы',
 					'type_2' => $type . 'у',
@@ -122,15 +119,14 @@ class PhalanxController extends Controller
 					'planet_position' => $row->splitTargetPosition(),
 					'target_name' => $row->user_name,
 					'target_position' => $row->splitStartPosition(),
-					'mission' => __('main.type_mission.' . $row->mission),
-					'color' => $color,
+					'mission' => $row->mission,
 					'direction' => 2
 				];
 			}
 		}
 
 		return response()->state([
-			'items' => $list
+			'items' => $list,
 		]);
 	}
 }

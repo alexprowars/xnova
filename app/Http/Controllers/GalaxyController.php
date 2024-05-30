@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use App\Files;
 use App\Fleet;
@@ -177,6 +178,10 @@ class GalaxyController extends Controller
 				} else {
 					$row->u_image = '';
 				}
+			}
+
+			if ($row->u_ban) {
+				$row->u_ban = Date::make($row->u_ban)->utc()->toAtomString();
 			}
 
 			unset($row->p_parent, $row->l_update);

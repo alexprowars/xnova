@@ -679,10 +679,10 @@ class FleetSendController extends Controller
 		$html .= '<div class="th col-6">' . $galaxy . ":" . $system . ":" . $planet . '</div>';
 		$html .= '</div><div class="row">';
 		$html .= '<div class="th col-6">' . __('fleet.fl_time_go') . '</div>';
-		$html .= '<div class="th col-6">' . Game::datezone("d H:i:s", $fleet->start_time) . '</div>';
+		$html .= '<div class="th col-6">' . Game::datezone("d.m H:i:s", $fleet->start_time) . '</div>';
 		$html .= '</div><div class="row">';
 		$html .= '<div class="th col-6">' . __('fleet.fl_time_back') . '</div>';
-		$html .= '<div class="th col-6">' . Game::datezone("d H:i:s", $fleet->end_time) . '</div>';
+		$html .= '<div class="th col-6">' . Game::datezone("d.m H:i:s", $fleet->end_time) . '</div>';
 		$html .= '</div><div class="row">';
 		$html .= '<div class="c col-12">Корабли</div>';
 

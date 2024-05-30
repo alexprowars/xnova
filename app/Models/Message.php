@@ -11,7 +11,7 @@ class Message extends Model
 	protected function casts(): array
 	{
 		return [
-			'time' => 'datetime',
+			'time' => 'immutable_datetime',
 		];
 	}
 }

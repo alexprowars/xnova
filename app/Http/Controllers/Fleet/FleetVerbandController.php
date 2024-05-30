@@ -164,14 +164,14 @@ class FleetVerbandController extends Controller
 					'galaxy' => (int) $row->start_galaxy,
 					'system' => (int) $row->start_system,
 					'planet' => (int) $row->start_planet,
-					'time' => $row->start_time->getTimestamp(),
+					'time' => $row->start_time?->utc()->toAtomString(),
 					'name' => $row->user_name,
 				],
 				'target' => [
 					'galaxy' => (int) $row->end_system,
 					'system' => (int) $row->end_system,
 					'planet' => (int) $row->end_planet,
-					'time' => $row->end_time->getTimestamp(),
+					'time' => $row->end_time?->utc()->toAtomString(),
 					'name' => $row->target_user_name,
 				],
 			];

@@ -42,10 +42,10 @@ class OfficierController extends Controller
 			throw new ErrorException('Выбран неверный элемент');
 		}
 
-		if ($this->user->{Vars::getName($id)} > time()) {
-			$this->user->{Vars::getName($id)} += $time;
+		if ($this->user->{Vars::getName($id)}?->isFuture()) {
+			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)}->addSeconds($time);
 		} else {
-			$this->user->{Vars::getName($id)} = time() + $time;
+			$this->user->{Vars::getName($id)} = now()->addSeconds($time);
 		}
 
 		$this->user->credits -= $credits;
@@ -66,14 +66,14 @@ class OfficierController extends Controller
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
+			$row = [];
 			$row['id'] = $officier;
-			$row['time'] = 0;
+			$row['time'] = null;
 
 			if ($this->user->{Vars::getName($officier)}?->isFuture()) {
-				$row['time'] = $this->user->{Vars::getName($officier)}->timestamp;
+				$row['time'] = $this->user->{Vars::getName($officier)}->utc()->toAtomString();
 			}
 
-			$row['description'] = __('officier.Desc.' . $officier);
 			$row['power'] = __('officier.power.' . $officier);
 
 			$parse['items'][] = $row;

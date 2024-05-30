@@ -118,7 +118,7 @@ class PlayersController extends Controller
 
 		foreach ($items as $item) {
 			$parse['points'][] = [
-				'date' => (int) $item->time->timestamp,
+				'date' => $item->time?->utc()->toAtomString(),
 				'rank' => [
 					'tech' => (int) $item->tech_rank,
 					'build' => (int) $item->build_rank,

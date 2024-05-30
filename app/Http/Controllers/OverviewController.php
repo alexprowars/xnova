@@ -363,10 +363,10 @@ class OverviewController extends Controller
 					$time = ceil($time / 2);
 				}
 
-				$end[$item->planet_id] += $time;
+				$end[$item->planet_id] = $end[$item->planet_id]->addSeconds($time);
 
 				$queueList[] = [
-					'time' => $end[$item->planet_id],
+					'time' => $end[$item->planet_id]->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planet->name,
 					'object_id' => $item->object_id,
@@ -381,7 +381,7 @@ class OverviewController extends Controller
 
 			foreach ($queueArray as $item) {
 				$queueList[] = [
-					'time' => (int) $item->time_end->timestamp,
+					'time' => $item->time_end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planetsData[$item->planet_id]->name,
 					'object_id' => $item->object_id,
@@ -398,14 +398,14 @@ class OverviewController extends Controller
 
 			foreach ($queueArray as $item) {
 				$end[$item->planet_id] ??= $item->time;
-				$end[$item->planet_id] += ($item->time_end->timestamp - $item->time->timestamp) * $item->level;
+				$end[$item->planet_id]->addSeconds(((int) $item->time->diffInSeconds($item->time_end)) * $item->level);
 
-				if ($end[$item->planet_id] < time()) {
+				if ($end[$item->planet_id]->isPast()) {
 					continue;
 				}
 
 				$queueList[] = [
-					'time' => $end[$item->planet_id],
+					'time' => $end[$item->planet_id]->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planetsData[$item->planet_id]->name,
 					'object_id' => $item->object_id,
@@ -422,12 +422,12 @@ class OverviewController extends Controller
 			'mine' => [
 				'p' => $this->user->xpminier,
 				'l' => $this->user->lvl_minier,
-				'u' => (int) $XpMinierUp,
+				'u' => $XpMinierUp,
 			],
 			'raid' => [
 				'p' => $this->user->xpraid,
 				'l' => $this->user->lvl_raid,
-				'u' => (int) $XpRaidUp
+				'u' => $XpRaidUp
 			]
 		];
 
@@ -493,7 +493,7 @@ class OverviewController extends Controller
 
 					$message->message = trim($message->message);
 
-					$chat[] = [$message->id, $message->created_at, $message->user->username, $to[1], $isPrivate, $message->message, 0];
+					$chat[] = [$message->id, $message->created_at->utc()->toAtomString(), $message->user->username, $to[1], $isPrivate, $message->message, 0];
 				}
 
 				return json_encode(array_reverse($chat));

@@ -126,7 +126,7 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$parse['gate_time'] = 0;
+		$parse['gate_time'] = null;
 		$parse['moons'] = [];
 
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
@@ -140,8 +140,8 @@ class FleetCheckoutController extends Controller
 			if ($moons->count()) {
 				$timer = $this->planet->getNextJumpTime();
 
-				if ($timer != 0) {
-					$parse['gate_time'] = $timer;
+				if ($timer) {
+					$parse['gate_time'] = now()->addSeconds($timer)->utc()->toAtomString();
 				}
 
 				foreach ($moons as $moon) {
@@ -149,13 +149,15 @@ class FleetCheckoutController extends Controller
 						continue;
 					}
 
+					$gateTime = $moon->getNextJumpTime();
+
 					$parse['moons'][] = [
 						'id' => $moon->id,
 						'name' => $moon->name,
 						'galaxy' => $moon->galaxy,
 						'system' => $moon->system,
 						'planet' => $moon->planet,
-						'timer' => $moon->getNextJumpTime()
+						'jumpgate' => $gateTime > 0 ? now()->addSeconds($gateTime)->utc()->toAtomString() : null,
 					];
 				}
 			}

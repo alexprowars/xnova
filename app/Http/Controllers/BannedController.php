@@ -25,8 +25,8 @@ class BannedController extends Controller
 					'id' => $u->author?->id,
 					'name' => $u->author?->username,
 				],
-				'time' => $u->created_at?->format('c'),
-				'time_end' => $u->longer?->format('c'),
+				'time' => $u->created_at?->utc()->toAtomString(),
+				'time_end' => $u->longer?->utc()->toAtomString(),
 				'reason' => $u->reason,
 			];
 		}

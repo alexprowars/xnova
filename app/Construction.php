@@ -15,43 +15,37 @@ class Construction
 		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
 		$items = [];
+		$end   = null;
 
-		if (count($queueItems)) {
-			$end = 0;
+		foreach ($queueItems as $item) {
+			$end ??= $item->time;
 
-			foreach ($queueItems as $item) {
-				if (!$end) {
-					$end = $item->time->timestamp;
-				}
+			$entity = EntityFactory::create(
+				$item->object_id,
+				$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
+				$planet
+			);
 
-				$entity = EntityFactory::create(
-					$item->object_id,
-					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
-					$planet
-				);
+			$elementTime = $entity->getTime();
 
-				$elementTime = $entity->getTime();
-
-				if ($item->operation == $item::OPERATION_DESTROY) {
-					$elementTime = ceil($elementTime / 2);
-				}
-
-				if ($item->time && $item->time_end->timestamp - $item->time->timestamp != $elementTime) {
-					$item->update([
-						'time_end' => $item->time->addSeconds($elementTime),
-					]);
-				}
-
-				$end += $elementTime;
-
-				$items[] = [
-					'item' 	=> $item->object_id,
-					'level' => $item->level,
-					'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
-					'time' 	=> $end - time(),
-					'end' 	=> $end
-				];
+			if ($item->operation == $item::OPERATION_DESTROY) {
+				$elementTime = ceil($elementTime / 2);
 			}
+
+			if ($item->time && (int) $item->time->diffInSeconds($item->time_end) != $elementTime) {
+				$item->update([
+					'time_end' => $item->time->addSeconds($elementTime),
+				]);
+			}
+
+			$end = $end->addSeconds($elementTime);
+
+			$items[] = [
+				'item' 	=> $item->object_id,
+				'level' => $item->level,
+				'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
+				'time' 	=> $end->utc()->toAtomString(),
+			];
 		}
 
 		return $items;
@@ -67,25 +61,22 @@ class Construction
 		}
 
 		$data = [];
-
-		$end = 0;
+		$end  = null;
 
 		foreach ($queueItems as $item) {
-			if (!$end) {
-				$end = $item->time->timestamp;
-			}
+			$end ??= $item->time;
 
 			$entity = EntityFactory::create($item->object_id);
 
 			$time = $entity->getTime();
 
-			$end += $time * $item->level;
+			$end = $end->addSeconds($time * $item->level);
 
 			$row = [
-				'id'	=> (int) $item->object_id,
-				'count'	=> (int) $item->level,
-				'time'	=> $time,
-				'end'	=> $end
+				'id'		=> (int) $item->object_id,
+				'count'		=> (int) $item->level,
+				'time_one'	=> $time,
+				'time'		=> $end->utc()->toAtomString(),
 			];
 
 			$data[] = $row;

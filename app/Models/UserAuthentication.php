@@ -12,7 +12,7 @@ class UserAuthentication extends Model
 	protected function casts(): array
 	{
 		return [
-			'enter_time' => 'datetime',
+			'enter_time' => 'immutable_datetime',
 		];
 	}
 }

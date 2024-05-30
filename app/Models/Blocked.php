@@ -12,7 +12,7 @@ class Blocked extends Model
 	protected function casts(): array
 	{
 		return [
-			'longer' => 'datetime',
+			'longer' => 'immutable_datetime',
 		];
 	}
 

@@ -94,14 +94,13 @@ class ResearchController extends Controller
 				if ($techHandle) {
 					if ($techHandle->object_id == $elementId) {
 						$row['build'] = [
-							'id' => (int) $techHandle->planet_id,
-							'name' => '',
-							'time' => $techHandle->time->timestamp + $row['time']
+							'id' => $techHandle->planet_id,
+							'name' => null,
+							'time' => $techHandle->time->addSeconds($row['time'])->utc()->toAtomString(),
 						];
 
 						if ($techHandle->planet_id != $this->planet->id) {
-							$planet = Planet::query()
-								->select(['id', 'name'])
+							$planet = Planet::select(['name'])
 								->where('id', $techHandle->planet_id)
 								->first();
 

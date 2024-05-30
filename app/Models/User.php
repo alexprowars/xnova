@@ -60,19 +60,19 @@ class User extends Authenticatable
 	{
 		return [
 			'options' => 'array',
-			'username_change' => 'datetime',
-			'banned_time' => 'datetime',
-			'onlinetime' => 'datetime',
-			'vacation' => 'datetime',
-			'delete_time' => 'datetime',
-			'rpg_geologue' => 'datetime',
-			'rpg_admiral' => 'datetime',
-			'rpg_ingenieur' => 'datetime',
-			'rpg_technocrate' => 'datetime',
-			'rpg_constructeur' => 'datetime',
-			'rpg_meta' => 'datetime',
-			'rpg_komandir' => 'datetime',
-			'daily_bonus' => 'datetime',
+			'username_change' => 'immutable_datetime',
+			'banned_time' => 'immutable_datetime',
+			'onlinetime' => 'immutable_datetime',
+			'vacation' => 'immutable_datetime',
+			'delete_time' => 'immutable_datetime',
+			'rpg_geologue' => 'immutable_datetime',
+			'rpg_admiral' => 'immutable_datetime',
+			'rpg_ingenieur' => 'immutable_datetime',
+			'rpg_technocrate' => 'immutable_datetime',
+			'rpg_constructeur' => 'immutable_datetime',
+			'rpg_meta' => 'immutable_datetime',
+			'rpg_komandir' => 'immutable_datetime',
+			'daily_bonus' => 'immutable_datetime',
 		];
 	}
 
