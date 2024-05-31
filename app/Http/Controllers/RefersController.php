@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Referal;
 use Illuminate\Support\Facades\DB;
 use App\Controller;
 
@@ -9,12 +10,22 @@ class RefersController extends Controller
 {
 	public function index()
 	{
-		$refers = DB::select("SELECT u.id, u.username, u.lvl_minier, u.lvl_raid FROM refs r LEFT JOIN users u ON u.id = r.r_id WHERE r.u_id = " . $this->user->id . " ORDER BY u.id DESC;");
+		$referals = Referal::query()
+			->where('u_id', $this->user->id)
+			->orderByDesc('r_id')
+			->with('referal')
+			->get();
 
-		$parse['ref'] = [];
+		$parse['items'] = [];
 
-		foreach ($refers as $refer) {
-			$parse['ref'][] = (array) $refer;
+		foreach ($referals as $referal) {
+			$parse['items'][] = [
+				'id' => $referal->referal->id,
+				'username' => $referal->referal->username,
+				'lvl_minier' => $referal->referal->lvl_minier,
+				'lvl_raid' => $referal->referal->lvl_raid,
+				'created_at' => $referal->referal->created_at->utc()->toAtomString(),
+			];
 		}
 
 		$refers = DB::selectOne("SELECT u.id, u.username FROM referals r LEFT JOIN users u ON u.id = r.u_id WHERE r.r_id = " . $this->user->id . "");

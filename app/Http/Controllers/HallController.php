@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hall;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Request;
 use App\Controller;
 
@@ -25,14 +26,14 @@ class HallController extends Controller
 		$time = 0;
 
 		foreach ($halls as $hall) {
-			$parse['hall'][] = (array) $hall;
+			$parse['hall'][] = $hall->only(['log', 'title', 'won', 'time']);
 
 			if ($time < $hall->time->timestamp) {
 				$time = $hall->time->timestamp;
 			}
 		}
 
-		$parse['time'] = $time;
+		$parse['time'] = Date::createFromTimestamp($time)->utc()->toAtomString();
 
 		return response()->state($parse);
 	}

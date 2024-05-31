@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('players/stat/{id}', [Controllers\PlayersController::class, 'stat'])->name('players.stat');
 	Route::post('logout', [Controllers\LogoutController::class, 'index'])->name('logout');
 	Route::get('info/{id}', [Controllers\InfoController::class, 'index'])->name('info');
-	Route::get('hall', [Controllers\HallController::class, 'index'])->name('hall');
+	Route::match(['get', 'post'], 'hall', [Controllers\HallController::class, 'index'])->name('hall');
 	Route::post('chat/send', [Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
 	Route::get('chat/last', [Controllers\ChatController::class, 'last'])->name('chat.last');
 

@@ -14,7 +14,6 @@ use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
 use App\Files;
 use App\Format;
-use App\Game;
 use App\Helpers;
 use App\Mail\UserLostPasswordSuccess;
 use App\Models;
@@ -161,10 +160,14 @@ class OptionsController extends Controller
 			$color = $request->post('color', 1);
 			$color = max(1, min(13, $color));
 
-			$timezone = $request->post('timezone', 0);
+			$timezone = $request->post('timezone');
 
-			if ($timezone < -32 || $timezone > 16) {
-				$timezone = 0;
+			if ($timezone < -12 || $timezone > 12) {
+				$timezone = null;
+			}
+
+			if ($timezone !== null) {
+				$timezone = (int) $timezone;
 			}
 
 			$SetSort = $request->post('settings_sort', 0);
@@ -190,7 +193,7 @@ class OptionsController extends Controller
 			$this->user->setOption('planet_sort', (int) $SetSort);
 			$this->user->setOption('planet_sort_order', (int) $SetOrder);
 			$this->user->setOption('color', (int) $color);
-			$this->user->setOption('timezone', (int) $timezone);
+			$this->user->setOption('timezone', $timezone);
 			$this->user->setOption('spy', (int) $spy);
 
 			if ($request->hasFile('image')) {
@@ -282,10 +285,10 @@ class OptionsController extends Controller
 	public function index()
 	{
 		$parse = [];
-		$parse['vacation'] = !$this->user->isVacation();
+		$parse['vacation'] = $this->user->isVacation();
 
 		if ($this->user->vacation) {
-			$parse['um_end_date'] = Game::datezone("d.m.Y H:i:s", $this->user->vacation);
+			$parse['um_end_date'] = $this->user->vacation->utc()->toAtomString();
 			$parse['opt_delac_data'] = !empty($this->user->delete_time);
 			$parse['opt_modev_data'] = $this->user->isVacation();
 			$parse['opt_usern_data'] = $this->user->username;

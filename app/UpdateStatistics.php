@@ -553,11 +553,11 @@ class UpdateStatistics
 
 		foreach ($Elements as $ElementID) {
 			if ($ElementID != 407 && $ElementID != 408) {
-				$array .= $ElementID . " => array('username' => '" . (isset($this->maxinfos[$ElementID]['username']) ? $this->maxinfos[$ElementID]['username'] : '-') . "', 'maxlvl' => '" . (isset($this->maxinfos[$ElementID]['maxlvl']) ? $this->maxinfos[$ElementID]['maxlvl'] : '-') . "'),\n";
+				$array .= $ElementID . " => array('username' => '" . ($this->maxinfos[$ElementID]['username'] ?? '') . "', 'maxlvl' => " . ($this->maxinfos[$ElementID]['maxlvl'] ?? 0) . "),\n";
 			}
 		}
 
-		$file = "<?php \n//The File is created on " . date("d. M y H:i:s", time()) . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";
+		$file = "<?php \n//The File is created on " . date("d. M y H:i:s") . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";
 
 		file_put_contents(base_path('bootstrap/cache/CacheRecords.php'), $file);
 	}

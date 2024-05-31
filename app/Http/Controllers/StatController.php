@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use App\Controller;
-use App\Game;
 use App\Models\Statistic;
 
 class StatController extends Controller
@@ -45,7 +45,7 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
+			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
 			'page' => 1
@@ -125,7 +125,7 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
+			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'alliances',
 			'type' => $type,
 			'page' => 1
@@ -172,7 +172,7 @@ class StatController extends Controller
 	public function races()
 	{
 		$parse = [
-			'update' => Game::datezone("d.m.Y - H:i:s", config('settings.statUpdate', 0)),
+			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'races',
 			'items' => [],
 			'type' => 0,

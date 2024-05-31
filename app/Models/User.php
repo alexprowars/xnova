@@ -46,7 +46,7 @@ class User extends Authenticatable
 		'planet_sort'		=> 0,
 		'planet_sort_order'	=> 0,
 		'color'				=> 0,
-		'timezone'			=> 0,
+		'timezone'			=> null,
 		'spy'				=> 1,
 	];
 

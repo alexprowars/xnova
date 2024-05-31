@@ -26,8 +26,6 @@ class StateController extends Controller
 				'resources' => Game::getSpeed('mine'),
 			],
 			'stats' => [
-				'time' => time(),
-				'timezone' => (int) date('Z'),
 				'online' => (int) config('settings.usersOnline', 0),
 				'users' => (int) config('settings.usersTotal', 0),
 			],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Format;
 use App\Controller;
+use Illuminate\Support\Facades\Date;
 
 class RecordsController extends Controller
 {
@@ -22,7 +23,7 @@ class RecordsController extends Controller
 		$Defense = [];
 
 		foreach ($RecordsArray as $ElementID => $ElementIDArray) {
-			if ($ElementID >= 1 && $ElementID <= 39 || $ElementID == 44) {
+			if (($ElementID >= 1 && $ElementID <= 39) || $ElementID == 44) {
 				$Builds[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
@@ -43,7 +44,7 @@ class RecordsController extends Controller
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
 			} elseif ($ElementID >= 401 && $ElementID <= 599) {
-				$Defense[__('main.tech' . $ElementID)] = [
+				$Defense[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
 					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
 				];
@@ -60,7 +61,7 @@ class RecordsController extends Controller
 
 		$parse = [
 			'items' => $Records,
-			'update' => config('settings.statUpdate'),
+			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 		];
 
 		return response()->state($parse);

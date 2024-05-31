@@ -8,7 +8,6 @@ use App\Exceptions\ErrorException;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Exceptions\SuccessException;
-use App\Game;
 use App\Helpers;
 use App\Models\Support;
 use App\Models\User;
@@ -92,7 +91,7 @@ class SupportController extends Controller
 				'id' => (int) $ticket->id,
 				'status' => (int) $ticket->status,
 				'subject' => $ticket->subject,
-				'date' => Game::datezone("d.m.Y H:i:s", $ticket->time)
+				'date' => $ticket->time?->utc()->toAtomString(),
 			];
 		}
 
@@ -115,8 +114,8 @@ class SupportController extends Controller
 			'id' => (int) $ticket->id,
 			'status' => (int) $ticket->status,
 			'subject' => $ticket->subject,
-			'date' => Game::datezone("d.m.Y H:i:s", $ticket->time),
-			'text' => html_entity_decode($ticket->text, ENT_NOQUOTES, "CP1251"),
+			'date' => $ticket->time?->utc()->toAtomString(),
+			'text' => $ticket->text,
 		]);
 	}
 }

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\Game;
 use App\Models\Note;
 
 class NotesController extends Controller
@@ -108,7 +107,7 @@ class NotesController extends Controller
 			}
 
 			$list['id'] = $note->id;
-			$list['time'] = Game::datezone('Y.m.d h:i:s', $note->updated_at);
+			$list['time'] = $note->updated_at?->utc()->toAtomString();
 			$list['title'] = $note->title;
 
 			$parse['items'][] = $list;
