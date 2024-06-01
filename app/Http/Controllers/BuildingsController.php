@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\Building;
 use App\Engine\Construction;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use Illuminate\Http\Request;
@@ -61,7 +61,7 @@ class BuildingsController extends Controller
 		}
 
 		$parse['queue'] 	= Construction::showBuildingQueue($this->user, $this->planet);
-		$parse['queue_max'] = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
+		$parse['queue_max'] = config('settings.maxBuildingQueue') + $this->user->bonus('queue', 0);
 		$parse['planet'] 	= 'normaltemp';
 
 		preg_match('/(.*?)planet/', $this->planet->image, $match);
@@ -81,9 +81,9 @@ class BuildingsController extends Controller
 			return;
 		}
 
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new QueueManager($this->user, $this->planet);
 
-		$maxQueueSize = config('settings.maxBuildingQueue') + $this->user->bonusValue('queue', 0);
+		$maxQueueSize = config('settings.maxBuildingQueue') + $this->user->bonus('queue', 0);
 
 		if ($queueManager->getCount($queueManager::TYPE_BUILDING) >= $maxQueueSize) {
 			return;
@@ -107,7 +107,7 @@ class BuildingsController extends Controller
 			return;
 		}
 
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new QueueManager($this->user, $this->planet);
 
 		switch ($action) {
 			case 'cancel':

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
+use App\Engine\Fleet\Mission;
 use App\Engine\Game;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
@@ -65,26 +66,27 @@ class FleetQuickController extends Controller
 			throw new Exception('Цели не существует!');
 		}
 
-		if (in_array($mission, [1, 2, 6, 9]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
+		if (in_array($mission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
 			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>");
 		}
 
 		$fleetArray = [];
 		$HeDBRec = false;
 
-		if ($mission == 6 && ($planetType == 1 || $planetType == 3 || $planetType == 5)) {
+		if ($mission == Mission::Spy && ($planetType == 1 || $planetType == 3 || $planetType == 5)) {
 			if ($num <= 0) {
 				throw new Exception('Вы были забанены за читерство!');
 			}
+
 			if ($this->planet->getLevel('spy_sonde') == 0) {
 				throw new Exception('Нет шпионских зондов ля отправки!');
 			}
+
 			if ($target->user_id == $this->user->id) {
 				throw new Exception('Невозможно выполнить задание!');
 			}
 
-			$HeDBRec = Models\User::query()
-				->find($target->user_id, ['id', 'onlinetime', 'vacation']);
+			$HeDBRec = Models\User::find($target->user_id, ['id', 'onlinetime', 'vacation']);
 
 			$MyGameLevel = Models\Statistic::query()
 				->select('total_points')
@@ -132,7 +134,7 @@ class FleetQuickController extends Controller
 			}
 
 			$fleetArray[210] = $num;
-		} elseif ($mission == 8 && $planetType == 2) {
+		} elseif ($mission == Mission::Recycling && $planetType == 2) {
 			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
 			if ($debrisSize == 0) {
@@ -216,7 +218,7 @@ class FleetQuickController extends Controller
 				$fleet->end_type = $planetType;
 				$fleet->updated_at = now()->addSeconds($duration);
 
-				if ($mission == 6 && $HeDBRec) {
+				if ($mission == Mission::Spy && $HeDBRec) {
 					$fleet->target_user_id = $HeDBRec['id'];
 					$fleet->target_user_name = $target->name;
 				}

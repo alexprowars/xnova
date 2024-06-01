@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
@@ -122,7 +122,7 @@ class OptionsController extends Controller
 			$vacation = null;
 
 			if ($request->post('vacation')) {
-				$queueManager = new Queue($this->user);
+				$queueManager = new QueueManager($this->user);
 				$queueCount = $queueManager->getCount();
 
 				$UserFlyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();

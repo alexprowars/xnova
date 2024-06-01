@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Engine\Fleet;
+use App\Engine\Fleet\Mission;
 use App\Helpers;
 use App\Models\Fleet as FleetModel;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -64,7 +65,7 @@ class FleetRow extends JsonResource
 			if (empty($this->resource->target_user_name)) {
 				$targetId = ' координаты ';
 			} else {
-				if ($this->resource->mission != 15 && $this->resource->mission != 5) {
+				if ($this->resource->mission != Mission::Expedition && $this->resource->mission != 5) {
 					if ($this->resource->end_type == 1) {
 						$targetId = __('overview.ov_planet_to_target');
 					} elseif ($this->resource->end_type == 2) {
@@ -100,7 +101,7 @@ class FleetRow extends JsonResource
 			if (empty($this->resource->target_user_name)) {
 				$targetId = ' с координат ';
 			} else {
-				if ($this->resource->mission != 15) {
+				if ($this->resource->mission != Mission::Expedition) {
 					if ($this->resource->end_type == 1) {
 						$targetId = __('overview.ov_planet_from');
 					} elseif ($this->resource->end_type == 2) {
@@ -142,7 +143,7 @@ class FleetRow extends JsonResource
 			$rowString .= __('overview.ov_vennant');
 			$rowString .= $startId;
 
-			if ($this->resource->mission == 5) {
+			if ($this->resource->mission == Mission::StayAlly) {
 				$rowString .= ' защищает ';
 			} else {
 				$rowString .= __('overview.ov_explo_stay');

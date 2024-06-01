@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Engine\Fleet\Missions\Mission;
+use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\Vars;
 use App\Models;
 use Illuminate\Console\Command;
@@ -30,21 +31,6 @@ class Fleet extends Command
 		define('MAX_RUNS', 12);
 		define('TIME_LIMIT', 60);
 
-		$missionObjPattern = [
-			1	=> 'Attack',
-			2   => 'Assault',
-			3   => 'Transport',
-			4   => 'Stay',
-			5   => 'StayAlly',
-			6   => 'Spy',
-			7   => 'Colonisation',
-			8   => 'Recycling',
-			9   => 'Destruction',
-			10  => 'CreateBase',
-			15  => 'Expedition',
-			20  => 'Rak',
-		];
-
 		$totalRuns = 1;
 
 		while ($totalRuns < MAX_RUNS) {
@@ -68,24 +54,23 @@ class Fleet extends Command
 
 			if ($_fleets->count()) {
 				foreach ($_fleets as $fleetRow) {
-					if (!isset($missionObjPattern[$fleetRow->mission])) {
+					if (!MissionEnum::tryFrom($fleetRow->mission)) {
 						$fleetRow->delete();
 
 						continue;
 					}
 
-					$missionName = $missionObjPattern[$fleetRow->mission];
-
-					$missionName = '\App\Missions\\' . $missionName;
+					$missionName = MissionEnum::tryFrom($fleetRow->mission)->name;
+					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
 
 					/** @var $mission Mission */
 					$mission = new $missionName($fleetRow);
 
-					if ($fleetRow->mess == 0 && $fleetRow->start_time->getTimestamp() <= time()) {
+					if ($fleetRow->mess == 0 && $fleetRow->start_time->timestamp <= time()) {
 						$mission->targetEvent();
-					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->getTimestamp() <= time()) {
+					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->timestamp <= time()) {
 						$mission->endStayEvent();
-					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->getTimestamp() <= time()) {
+					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->timestamp <= time()) {
 						$mission->returnEvent();
 					}
 

@@ -5,7 +5,8 @@ namespace App\Engine;
 use App\Engine\Contracts\EntityProductionInterface;
 use App\Models\Planet;
 use App\Models\User;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 
 class Production
 {
@@ -13,7 +14,7 @@ class Production
 	protected $storage;
 	protected $production;
 
-	public function __construct(protected Planet $planet, protected ?Carbon $updateTime = null)
+	public function __construct(protected Planet $planet, protected null|Carbon|CarbonImmutable $updateTime = null)
 	{
 		if (!$this->updateTime) {
 			$this->updateTime = now();
@@ -82,7 +83,7 @@ class Production
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->planet->getLevel($res . '_store'))))) * $this->planet->user->bonusValue('storage'));
+			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->planet->getLevel($res . '_store'))))) * $this->planet->user->bonus('storage'));
 		}
 
 		$this->storage = new Resources($resources);

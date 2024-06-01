@@ -45,7 +45,7 @@ trait ProductionTrait
 			$return[$res] = 0;
 
 			if (isset($production[$res])) {
-				$return[$res] = floor(eval($production[$res]) * config('settings.resource_multiplier') * $user->bonusValue($res));
+				$return[$res] = floor(eval($production[$res]) * config('settings.resource_multiplier') * $user->bonus($res));
 			}
 		}
 
@@ -55,9 +55,9 @@ trait ProductionTrait
 			if ($this->entityId < 4) {
 				$return[Resources::ENERGY] = $energy;
 			} elseif ($this->entityId == 4 || $this->entityId == 12) {
-				$return[Resources::ENERGY] = floor($energy * $user->bonusValue('energy'));
+				$return[Resources::ENERGY] = floor($energy * $user->bonus('energy'));
 			} elseif ($this->entityId == 212) {
-				$return[Resources::ENERGY] = floor($energy * $user->bonusValue('solar'));
+				$return[Resources::ENERGY] = floor($energy * $user->bonus('solar'));
 			}
 		}
 

@@ -11,7 +11,7 @@ class Coordinates implements Arrayable
 	public const TYPE_MOON = 3;
 	public const TYPE_MILITARY_BASE = 5;
 
-	public function __construct(private int $galaxy, private int $system, private ?int $planet = null, private ?int $type = null)
+	public function __construct(protected int $galaxy, protected int $system, protected ?int $planet = null, protected ?int $type = null)
 	{
 	}
 
@@ -37,7 +37,7 @@ class Coordinates implements Arrayable
 
 	public function isEmpty(): bool
 	{
-		return $this->galaxy <= 0 || $this->system <= 0 || $this->planet <= 0;
+		return $this->galaxy <= 0 || $this->system <= 0 || empty($this->planet) || $this->planet <= 0;
 	}
 
 	public function toArray(): array

@@ -14,151 +14,145 @@ class Destruction extends FleetEngine implements Mission
 	public function targetEvent()
 	{
 		$mission = new Attack($this->fleet);
-		$result = $mission->targetEvent();
 
-		if ($result == true) {
-			$checkFleet = Models\Fleet::query()->find($this->fleet->id, ['fleet_array', 'won']);
+		if (!$mission->targetEvent()) {
+			return;
+		}
 
-			if ($checkFleet && $checkFleet->won == 1) {
-				$this->fleet->fleet_array = $checkFleet->fleet_array;
-				$this->fleet->won = $checkFleet->won;
+		$checkFleet = Models\Fleet::find($this->fleet->id, ['fleet_array', 'won']);
 
-				unset($checkFleet);
+		if ($checkFleet && $checkFleet->won == 1) {
+			$this->fleet->fleet_array = $checkFleet->fleet_array;
+			$this->fleet->won = $checkFleet->won;
 
-				$ripsKilled = false;
-				$moonDestroyed = false;
+			unset($checkFleet);
 
-				$Rips = 0;
+			$ripsKilled = false;
+			$moonDestroyed = false;
 
-				$fleetData = $this->fleet->getShips();
+			$rips = 0;
 
-				if (isset($fleetData[214])) {
-					$Rips = $fleetData[214]['count'];
+			$fleetData = $this->fleet->getShips();
+
+			if (isset($fleetData[214])) {
+				$rips = $fleetData[214]['count'];
+			}
+
+			if ($rips > 0) {
+				$targetMoon = Planet::query()
+					->where('galaxy', $this->fleet->end_galaxy)
+					->where('system', $this->fleet->end_system)
+					->where('planet', $this->fleet->end_planet)
+					->where('planet_type', 3)
+					->first();
+
+				$CurrentUser = User::find($this->fleet->user_id);
+
+				$moonDestroyChance = round((100 - sqrt($targetMoon->diameter)) * sqrt($rips));
+
+				if ($CurrentUser->rpg_admiral?->isFuture()) {
+					$moonDestroyChance *= 1.1;
 				}
 
-				if ($Rips > 0) {
-					$targetMoon = Planet::query()
-						->where('galaxy', $this->fleet->end_galaxy)
-						->where('system', $this->fleet->end_system)
-						->where('planet', $this->fleet->end_planet)
-						->where('planet_type', 3)
-						->first();
+				$moonDestroyChance 	= max(min(floor($moonDestroyChance), 100), 0);
+				$fleetDestroyChance = sqrt($targetMoon->diameter) / 4;
 
-					$CurrentUser = User::find($this->fleet->user_id);
+				if ($rips > 150) {
+					$fleetDestroyChance *= 0.1;
+				} elseif ($rips > 100) {
+					$fleetDestroyChance *= 0.25;
+				} elseif ($rips > 50) {
+					$fleetDestroyChance *= 0.5;
+				} elseif ($rips > 25) {
+					$fleetDestroyChance *= 0.75;
+				}
 
-					$moonDestroyChance = round((100 - sqrt($targetMoon->diameter)) * sqrt($Rips));
+				if ($CurrentUser->rpg_ingenieur?->isFuture()) {
+					$fleetDestroyChance *= 0.5;
+				}
 
-					if ($CurrentUser->rpg_admiral?->isFuture()) {
-						$moonDestroyChance *= 1.1;
+				$fleetDestroyChance = max(min(ceil($fleetDestroyChance), 100), 0);
+
+				if (random_int(1, 100) <= $moonDestroyChance) {
+					$moonDestroyed = true;
+
+					$targetMoon->destruyed = now()->addDay();
+					$targetMoon->save();
+
+					if ($targetMoon->user->planet_current == $targetMoon->id) {
+						$targetMoon->user->update([
+							'planet_current' => DB::raw('planet_id')
+						]);
 					}
 
-					$moonDestroyChance 	= max(min(floor($moonDestroyChance), 100), 0);
-					$fleetDestroyChance = sqrt($targetMoon->diameter) / 4;
+					Models\Fleet::query()
+						->where('start_galaxy', $this->fleet->end_galaxy)
+						->where('start_system', $this->fleet->end_system)
+						->where('start_planet', $this->fleet->end_planet)
+						->where('start_type', 3)
+						->update(['start_type' => 1]);
 
-					if ($Rips > 150) {
-						$fleetDestroyChance *= 0.1;
-					} elseif ($Rips > 100) {
-						$fleetDestroyChance *= 0.25;
-					} elseif ($Rips > 50) {
-						$fleetDestroyChance *= 0.5;
-					} elseif ($Rips > 25) {
-						$fleetDestroyChance *= 0.75;
-					}
+					Models\Fleet::query()
+						->where('end_galaxy', $this->fleet->end_galaxy)
+						->where('end_system', $this->fleet->end_system)
+						->where('end_planet', $this->fleet->end_planet)
+						->where('start_type', 3)
+						->update(['end_type' => 1]);
 
-					if ($CurrentUser->rpg_ingenieur?->isFuture()) {
-						$fleetDestroyChance *= 0.5;
-					}
+					Models\Queue::query()->where('planet_id', $targetMoon->id)->delete();
+				} elseif (random_int(1, 100) <= $fleetDestroyChance) {
+					$ripsKilled = true;
 
-					$fleetDestroyChance = max(min(ceil($fleetDestroyChance), 100), 0);
+					$this->killFleet();
 
-					$randChance = random_int(1, 100);
+					$debree = $this->convertFleetToDebris($fleetData);
 
-					if ($randChance <= $moonDestroyChance) {
-						$moonDestroyed = true;
-
-						$targetMoon->destruyed = now()->addDay();
-						$targetMoon->save();
-
-						if ($targetMoon->user->planet_current == $targetMoon->id) {
-							$targetMoon->user->update([
-								'planet_current' => DB::raw('planet_id')
+					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
+						Models\Planet::query()->where('galaxy', $this->fleet->end_galaxy)
+							->where('system', $this->fleet->end_system)
+							->where('planet', $this->fleet->end_planet)
+							->where('planet_type', '!=', 3)
+							->update([
+								'debris_metal' => DB::raw('debris_metal + ' . $debree['metal']),
+								'debris_crystal' => DB::raw('debris_metal + ' . $debree['crystal']),
 							]);
-						}
-
-						Models\Fleet::query()
-							->where('start_galaxy', $this->fleet->end_galaxy)
-							->where('start_system', $this->fleet->end_system)
-							->where('start_planet', $this->fleet->end_planet)
-							->where('start_type', 3)
-							->update(['start_type' => 1]);
-
-						Models\Fleet::query()
-							->where('end_galaxy', $this->fleet->end_galaxy)
-							->where('end_system', $this->fleet->end_system)
-							->where('end_planet', $this->fleet->end_planet)
-							->where('start_type', 3)
-							->update(['end_type' => 1]);
-
-						Models\Queue::query()->where('planet_id', $targetMoon->id)->delete();
-					} else {
-						$randChance = random_int(1, 100);
-
-						if ($randChance <= $fleetDestroyChance) {
-							$ripsKilled = true;
-
-							$this->killFleet();
-
-							$debree = $this->convertFleetToDebris($fleetData);
-
-							if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
-								Models\Planet::query()->where('galaxy', $this->fleet->end_galaxy)
-									->where('system', $this->fleet->end_system)
-									->where('planet', $this->fleet->end_planet)
-									->where('planet_type', '!=', 3)
-									->update([
-										'debris_metal' => DB::raw('debris_metal + ' . $debree['metal']),
-										'debris_crystal' => DB::raw('debris_metal + ' . $debree['crystal']),
-									]);
-							}
-						}
 					}
-
-					$message = __('fleet_engine.sys_destruc_mess1');
-
-					if ($moonDestroyed && !$ripsKilled) {
-						$message .= __('fleet_engine.sys_destruc_reussi');
-					}
-
-					if ($moonDestroyed && $ripsKilled) {
-						$message .= __('fleet_engine.sys_destruc_all');
-					}
-
-					if (!$moonDestroyed && $ripsKilled) {
-						$message .= __('fleet_engine.sys_destruc_echec');
-					}
-
-					if (!$moonDestroyed && !$ripsKilled) {
-						$message .= __('fleet_engine.sys_destruc_null');
-					}
-
-					$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
-
-					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
-					User::sendMessage($targetMoon->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
-
-					Cache::forget('app::planetlist_' . $targetMoon->user_id);
-				} else {
-					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 				}
+
+				$message = __('fleet_engine.sys_destruc_mess1');
+
+				if ($moonDestroyed && !$ripsKilled) {
+					$message .= __('fleet_engine.sys_destruc_reussi');
+				}
+
+				if ($moonDestroyed && $ripsKilled) {
+					$message .= __('fleet_engine.sys_destruc_all');
+				}
+
+				if (!$moonDestroyed && $ripsKilled) {
+					$message .= __('fleet_engine.sys_destruc_echec');
+				}
+
+				if (!$moonDestroyed && !$ripsKilled) {
+					$message .= __('fleet_engine.sys_destruc_null');
+				}
+
+				$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
+
+				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
+				User::sendMessage($targetMoon->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
+
+				Cache::forget('app::planetlist_' . $targetMoon->user_id);
 			} else {
 				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 			}
+		} else {
+			User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 		}
 	}
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()

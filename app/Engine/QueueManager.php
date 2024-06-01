@@ -12,7 +12,7 @@ use App\Models\LogHistory;
 use App\Models\Planet;
 use App\Models\User;
 
-class Queue
+class QueueManager
 {
 	/** @var Models\Queue[]|bool */
 	private $queue = false;
@@ -403,10 +403,6 @@ class Queue
 
 		if (!$planet) {
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
-		}
-
-		if ($this->user->getTechLevel('intergalactic') > 0) {
-			$planet->spaceLabs = $planet->getNetworkLevel();
 		}
 
 		$entity = \App\Engine\Entity\Research::createEntity($buildItem->object_id, $buildItem->level, $planet);

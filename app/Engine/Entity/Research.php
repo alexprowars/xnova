@@ -8,8 +8,7 @@ class Research extends Entity
 {
 	protected function getBasePrice(): array
 	{
-		$cost = parent::getBasePrice();
-
+		$cost  = parent::getBasePrice();
 		$price = Vars::getItemPrice($this->entityId);
 
 		return array_map(
@@ -20,27 +19,26 @@ class Research extends Entity
 
 	public function getTime(): int
 	{
-		$time = parent::getTime();
+		$networkLevel = $this->planet->getNetworkLevel();
 
-		$planet = $this->planet;
-
-		if (isset($planet->spaceLabs) && is_array($planet->spaceLabs) && count($planet->spaceLabs)) {
+		if (!empty($networkLevel)) {
 			$lablevel = 0;
 
-			foreach ($planet->spaceLabs as $Levels) {
+			foreach ($networkLevel as $level) {
 				$req = Vars::getItemRequirements($this->entityId);
 
-				if (!isset($req[31]) || $Levels >= $req[31]) {
-					$lablevel += $Levels;
+				if (!isset($req[31]) || $level >= $req[31]) {
+					$lablevel += $level;
 				}
 			}
 		} else {
-			$lablevel = $planet->getLevel('laboratory');
+			$lablevel = $this->planet->getLevel('laboratory');
 		}
 
+		$time  = parent::getTime();
 		$time /= ($lablevel + 1) * 2;
-		$time *= $planet->user->bonusValue('time_research');
+		$time *= $this->planet->user->bonus('time_research');
 
-		return max(1, $time);
+		return (int) max(1, $time);
 	}
 }

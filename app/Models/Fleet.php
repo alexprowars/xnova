@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Engine\Coordinates;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin Fleet
+ */
 class Fleet extends Model
 {
 	protected $guarded = [];

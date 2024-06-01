@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
+use App\Engine\Fleet\Mission;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Exceptions\SuccessException;
@@ -74,7 +75,7 @@ class RocketController extends Controller
 		$fleet = Fleet::create([
 			'user_id' 			=> $this->user->id,
 			'user_name' 		=> $this->planet->name,
-			'mission' 			=> 20,
+			'mission' 			=> Mission::Rak,
 			'fleet_array' 		=> [['id' => 503, 'count' => $count, 'target' => $destroyType]],
 			'start_time' 		=> now()->addSeconds($time),
 			'start_galaxy' 		=> $this->planet->galaxy,

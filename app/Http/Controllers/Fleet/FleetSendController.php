@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
 use App\Engine\Fleet;
+use App\Engine\Fleet\Mission;
 use App\Engine\FleetCollection;
 use App\Engine\Game;
 use App\Engine\Vars;
@@ -115,7 +116,7 @@ class FleetSendController extends Controller
 			if ($this->user->getTechLevel('expedition') >= 1) {
 				$ExpeditionEnCours = Models\Fleet::query()
 					->where('user_id', $this->user->id)
-					->where('mission', 15)
+					->where('mission', Mission::Expedition)
 					->count();
 
 				$MaxExpedition = 1 + floor($this->user->getTechLevel('expedition') / 3);
@@ -469,11 +470,11 @@ class FleetSendController extends Controller
 		}
 
 		// Баш контроль
-		if ($fleetMission == 1) {
-			$night_time = mktime(0, 0, 0, date('m', time()), date('d', time()), date('Y', time()));
+		if ($fleetMission == Mission::Attack) {
+			$night_time = now()->startOfDay();
 
 			$log = Models\LogFleet::query()->where('s_id', $this->user->id)
-				->where('mission', 1)
+				->where('mission', Mission::Attack)
 				->where('e_galaxy', $targetPlanet->galaxy)
 				->where('e_system', $targetPlanet->system)
 				->where('e_planet', $targetPlanet->planet)
@@ -488,7 +489,7 @@ class FleetSendController extends Controller
 				$log->increment('amount');
 			} else {
 				Models\LogFleet::create([
-					'mission' => 1,
+					'mission' => Mission::Attack,
 					'amount' => 1,
 					's_id' => $this->user->id,
 					's_galaxy' => $this->planet->galaxy,

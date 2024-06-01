@@ -112,7 +112,7 @@ class ResourcesController extends Controller
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
 		] + $this->getBuyResourcesAmount();
 
-		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
+		$parse['bonus_h'] = ($this->user->bonus('storage') - 1) * 100;
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType('prod') as $productionId) {
@@ -133,16 +133,16 @@ class ResourcesController extends Controller
 			$row['bonus'] = 0;
 
 			if ($productionId == 4 || $productionId == 12) {
-				$row['bonus'] += $this->user->bonusValue('energy');
+				$row['bonus'] += $this->user->bonus('energy');
 				$row['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
 			} elseif ($productionId == 212) {
-				$row['bonus'] += $this->user->bonusValue('solar');
+				$row['bonus'] += $this->user->bonus('solar');
 			} elseif ($productionId == 1) {
-				$row['bonus'] += $this->user->bonusValue('metal');
+				$row['bonus'] += $this->user->bonus('metal');
 			} elseif ($productionId == 2) {
-				$row['bonus'] += $this->user->bonusValue('crystal');
+				$row['bonus'] += $this->user->bonus('crystal');
 			} elseif ($productionId == 3) {
-				$row['bonus'] += $this->user->bonusValue('deuterium');
+				$row['bonus'] += $this->user->bonus('deuterium');
 			}
 
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);

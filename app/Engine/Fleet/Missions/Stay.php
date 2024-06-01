@@ -11,14 +11,9 @@ class Stay extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$TargetPlanet = Planet::query()
-			->where('galaxy', $this->fleet->end_galaxy)
-			->where('system', $this->fleet->end_system)
-			->where('planet', $this->fleet->end_planet)
-			->where('planet_type', $this->fleet->end_type)
-			->first();
+		$targetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->target_user_id) {
+		if (!$targetPlanet || $targetPlanet->user_id != $this->fleet->target_user_id) {
 			$this->fleet->return();
 		} else {
 			$this->restoreFleetToPlanet(false);
@@ -53,19 +48,13 @@ class Stay extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()
 	{
-		$TargetPlanet = Planet::query()
-			->where('galaxy', $this->fleet->start_galaxy)
-			->where('system', $this->fleet->start_system)
-			->where('planet', $this->fleet->start_planet)
-			->where('planet_type', $this->fleet->start_type)
-			->first();
+		$targetPlanet = Planet::findByCoordinates($this->fleet->getOriginCoordinates());
 
-		if (!$TargetPlanet || $TargetPlanet->user_id != $this->fleet->user_id) {
+		if (!$targetPlanet || $targetPlanet->user_id != $this->fleet->user_id) {
 			$this->killFleet();
 		} else {
 			$this->restoreFleetToPlanet();

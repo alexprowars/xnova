@@ -17,7 +17,7 @@ class FleetEngine
 			$fleetId = $this->fleet->id;
 		}
 
-		Models\Fleet::find($fleetId)->delete();
+		Models\Fleet::find($fleetId)?->delete();
 	}
 
 	public function restoreFleetToPlanet($start = true, $fleet = true)
@@ -28,23 +28,13 @@ class FleetEngine
 
 		if ($fleet) {
 			if ($start && $this->fleet->start_type == 3) {
-				$checkFleet = Models\Planet::query()
-					->where('galaxy', $this->fleet->start_galaxy)
-					->where('system', $this->fleet->start_system)
-					->where('planet', $this->fleet->start_planet)
-					->where('planet_type', $this->fleet->start_type)
-					->first(['destruyed']);
+				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getOriginCoordinates());
 
 				if ($checkFleet && $checkFleet->destruyed) {
 					$this->fleet->start_type = 1;
 				}
 			} elseif ($this->fleet->end_type == 3) {
-				$checkFleet = Models\Planet::query()
-					->where('galaxy', $this->fleet->end_galaxy)
-					->where('system', $this->fleet->end_system)
-					->where('planet', $this->fleet->end_planet)
-					->where('planet_type', $this->fleet->end_type)
-					->first(['destruyed']);
+				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 				if ($checkFleet && $checkFleet->destruyed) {
 					$this->fleet->end_type = 1;

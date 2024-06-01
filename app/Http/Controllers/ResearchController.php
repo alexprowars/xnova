@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\Building;
 use App\Engine\EntityFactory;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Models\Planet;
@@ -25,10 +25,6 @@ class ResearchController extends Controller
 			session()->flash('error-static', __('buildings.labo_on_update'));
 
 			$labInQueue = false;
-		}
-
-		if ($this->user->getTechLevel('intergalactic') > 0) {
-			$this->planet->spaceLabs = $this->planet->getNetworkLevel();
 		}
 
 		$techHandle = QueueModel::query()
@@ -133,16 +129,16 @@ class ResearchController extends Controller
 			return;
 		}
 
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new QueueManager($this->user, $this->planet);
 
 		switch ($action) {
 			case 'cancel':
-				if ($queueManager->getCount(Queue::TYPE_RESEARCH)) {
+				if ($queueManager->getCount(QueueManager::TYPE_RESEARCH)) {
 					$queueManager->delete($elementId);
 				}
 				break;
 			case 'search':
-				if (!$queueManager->getCount(Queue::TYPE_RESEARCH)) {
+				if (!$queueManager->getCount(QueueManager::TYPE_RESEARCH)) {
 					$queueManager->add($elementId);
 				}
 				break;

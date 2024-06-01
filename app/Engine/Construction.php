@@ -9,7 +9,7 @@ class Construction
 {
 	public static function showBuildingQueue(User $user, Planet $planet)
 	{
-		$queueManager = new Queue($user, $planet);
+		$queueManager = new QueueManager($user, $planet);
 
 		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
 
@@ -52,8 +52,8 @@ class Construction
 
 	public static function queueList(User $user, Planet $planet)
 	{
-		$queueItems = (new Queue($user, $planet))
-			->get(Queue::TYPE_SHIPYARD);
+		$queueItems = (new QueueManager($user, $planet))
+			->get(QueueManager::TYPE_SHIPYARD);
 
 		if (empty($queueItems)) {
 			return [];

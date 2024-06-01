@@ -3,7 +3,7 @@
 namespace App\Engine\Queue;
 
 use App\Engine\EntityFactory;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Models;
 use App\Models\LogHistory;
@@ -12,7 +12,7 @@ class Unit
 {
 	private $queue;
 
-	public function __construct(Queue $queue)
+	public function __construct(QueueManager $queue)
 	{
 		$this->queue = $queue;
 	}
@@ -28,7 +28,7 @@ class Unit
 			return;
 		}
 
-		$buildItems = $this->queue->get(Queue::TYPE_SHIPYARD);
+		$buildItems = $this->queue->get(QueueManager::TYPE_SHIPYARD);
 
 		if ($elementId == 502 || $elementId == 503) {
 			$Missiles = [];

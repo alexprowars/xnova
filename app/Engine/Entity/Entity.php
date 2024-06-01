@@ -11,7 +11,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 {
 	use ProductionTrait;
 
-	protected $planet;
+	protected ?Planet $planet;
 
 	protected function __construct(public int $entityId, public int $level = 0)
 	{
@@ -46,12 +46,12 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 		$cost = [];
 
-		foreach (array_merge(Vars::getItemsByType('res'), ['energy']) as $ResType) {
-			if (!isset($price[$ResType])) {
+		foreach (array_merge(Vars::getItemsByType('res'), ['energy']) as $resource) {
+			if (!isset($price[$resource])) {
 				continue;
 			}
 
-			$cost[$ResType] = floor($price[$ResType]);
+			$cost[$resource] = floor($price[$resource]);
 		}
 
 		return $cost;
@@ -67,16 +67,16 @@ class Entity implements EntityInterface, EntityProductionInterface
 		foreach ($cost as $resType => $value) {
 			switch ($elementType) {
 				case Vars::ITEM_TYPE_BUILING:
-					$cost[$resType] *= $user->bonusValue('res_building');
+					$cost[$resType] *= $user->bonus('res_building');
 					break;
 				case Vars::ITEM_TYPE_TECH:
-					$cost[$resType] *= $user->bonusValue('res_research');
+					$cost[$resType] *= $user->bonus('res_research');
 					break;
 				case Vars::ITEM_TYPE_FLEET:
-					$cost[$resType] *= $user->bonusValue('res_fleet');
+					$cost[$resType] *= $user->bonus('res_fleet');
 					break;
 				case Vars::ITEM_TYPE_DEFENSE:
-					$cost[$resType] *= $user->bonusValue('res_defence');
+					$cost[$resType] *= $user->bonus('res_defence');
 					break;
 			}
 
@@ -93,7 +93,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 		$time = ($cost / config('settings.game_speed')) * 3600;
 
-		return max(1, $time);
+		return (int) max(1, $time);
 	}
 
 	public function isAvailable(): bool
@@ -104,25 +104,23 @@ class Entity implements EntityInterface, EntityProductionInterface
 			return true;
 		}
 
-		$planet = $this->planet;
-
 		foreach ($requeriments as $reqElement => $level) {
 			if ($reqElement == 700) {
-				if ($planet->user->race != $level) {
+				if ($this->planet->user->race != $level) {
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH) {
-				if ($planet->user->getTechLevel($reqElement) < $level) {
+				if ($this->planet->user->getTechLevel($reqElement) < $level) {
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
-				if ($planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
+				if ($this->planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;
 					}
 				}
 
-				if ($planet->getLevel($reqElement) < $level) {
+				if ($this->planet->getLevel($reqElement) < $level) {
 					return false;
 				}
 			} else {

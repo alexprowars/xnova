@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Fleet\Mission;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
@@ -40,7 +41,7 @@ class FleetBackController extends Controller
 
 		$returnFlyingTime = $currentFlyingTime->add(now());
 
-		if ($fleet->mission == 1 && $fleet->assault) {
+		if ($fleet->mission == Mission::Attack && $fleet->assault) {
 			$fleet->assault->delete();
 		}
 

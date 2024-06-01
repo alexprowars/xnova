@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Fleet\Mission;
 use App\Format;
 use App\Models;
 use App\Models\User;
@@ -49,7 +50,7 @@ class Fleet extends Building
 
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		} else {
-			if ($FleetRow->target_user_id == $user->id && $FleetRow->mission == 1) {
+			if ($FleetRow->target_user_id == $user->id && $FleetRow->mission == Mission::Attack) {
 				$r = '/sim/';
 			}
 
@@ -91,7 +92,7 @@ class Fleet extends Building
 		return $MissionPopup;
 	}
 
-	public static function getFleetMissions($fleetArray, Coordinates $target = null, $isYouPlanet = false, $isActivePlanet = false, $isAcs = false)
+	public static function getFleetMissions($fleets, Coordinates $target = null, $youPlanet = false, $activePlanet = false, $assault = false)
 	{
 		if ($target === null) {
 			$target = new Coordinates(1, 1, 1, 1);
@@ -100,48 +101,46 @@ class Fleet extends Building
 		$result = [];
 
 		if ($target->getPlanet() == 16) {
-			if (!(count($fleetArray) == 1 && isset($fleetArray[210]))) {
-				$result[] = 15;
+			if (!(count($fleets) == 1 && isset($fleets[210]))) {
+				$result[] = Mission::Expedition;
 			}
-		} else {
-			if ($target->getType() == 2 && isset($fleetArray[209])) {
-				$result[] = 8; // Переработка
-			} elseif ($target->getType() == 1 || $target->getType() == 3 || $target->getType() == 5) {
-				if (isset($fleetArray[216]) && !$isActivePlanet && $target->getType() == 1) {
-					$result[] = 10; // Создать базу
-				}
+		} elseif ($target->getType() == Coordinates::TYPE_DEBRIS && isset($fleets[209])) {
+			$result[] = Mission::Recycling;
+		} elseif (in_array($target->getType(), [Coordinates::TYPE_PLANET, Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
+			if (isset($fleets[216]) && !$activePlanet && $target->getType() == Coordinates::TYPE_PLANET) {
+				$result[] = Mission::CreateBase;
+			}
 
-				if (isset($fleetArray[210]) && !$isYouPlanet) {
-					$result[] = 6; // Шпионаж
-				}
+			if (isset($fleets[210]) && !$youPlanet) {
+				$result[] = Mission::Spy;
+			}
 
-				if (isset($fleetArray[208]) && !$isActivePlanet) {
-					$result[] = 7; // Колонизировать
-				}
+			if (isset($fleets[208]) && !$activePlanet) {
+				$result[] = Mission::Colonization;
+			}
 
-				if (!$isYouPlanet && $isActivePlanet && !isset($fleetArray[208]) && !isset($fleetArray[209]) && !isset($fleetArray[216])) {
-					$result[] = 1; // Атаковать
-				}
+			if (!$youPlanet && $activePlanet && !isset($fleets[208]) && !isset($fleets[209]) && !isset($fleets[216])) {
+				$result[] = Mission::Attack;
+			}
 
-				if ($isActivePlanet && !$isYouPlanet && !(count($fleetArray) == 1 && isset($fleetArray[210]))) {
-					$result[] = 5; // Удерживать
-				}
+			if ($activePlanet && !$youPlanet && !(count($fleets) == 1 && isset($fleets[210]))) {
+				$result[] = Mission::StayAlly;
+			}
 
-				if ($isActivePlanet && (isset($fleetArray[202]) || isset($fleetArray[203]))) {
-					$result[] = 3; // Транспорт
-				}
+			if ($activePlanet && (isset($fleets[202]) || isset($fleets[203]))) {
+				$result[] = Mission::Transport;
+			}
 
-				if ($isYouPlanet) {
-					$result[] = 4; // Оставить
-				}
+			if ($youPlanet) {
+				$result[] = Mission::Stay;
+			}
 
-				if ($isAcs > 0 && $isActivePlanet) {
-					$result[] = 2; // Объединить
-				}
+			if ($assault && $activePlanet) {
+				$result[] = Mission::Assault;
+			}
 
-				if ($target->getType() == 3 && isset($fleetArray[214]) && !$isYouPlanet && $isActivePlanet) {
-					$result[] = 9;
-				}
+			if ($target->getType() == Coordinates::TYPE_MOON && isset($fleets[214]) && !$youPlanet && $activePlanet) {
+				$result[] = Mission::Destruction;
 			}
 		}
 

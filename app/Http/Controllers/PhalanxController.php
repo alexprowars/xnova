@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Fleet;
+use App\Engine\Fleet\Mission;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models;
@@ -108,7 +109,7 @@ class PhalanxController extends Controller
 				];
 			}
 
-			if ($row->mission <> 4 && !$end && $row->start_type != 3) {
+			if ($row->mission != Mission::Stay && !$end && $row->start_type != 3) {
 				$list[] = [
 					'time' => $row->end_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),

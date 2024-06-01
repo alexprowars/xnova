@@ -11,7 +11,7 @@ class Transport extends FleetEngine implements Mission
 	{
 		$this->restoreFleetToPlanet(false, false);
 
-		$Message = sprintf(
+		$message = sprintf(
 			__('fleet_engine.sys_tran_mess_owner'),
 			$this->fleet->target_user_name,
 			$this->fleet->getTargetAdressLink(),
@@ -23,10 +23,10 @@ class Transport extends FleetEngine implements Mission
 			__('main.Deuterium')
 		);
 
-		User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $Message);
+		User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $message);
 
 		if ($this->fleet->target_user_id != $this->fleet->user_id) {
-			$Message = sprintf(
+			$message = sprintf(
 				__('fleet_engine.sys_tran_mess_user'),
 				$this->fleet->user_name,
 				$this->fleet->getStartAdressLink(),
@@ -40,7 +40,7 @@ class Transport extends FleetEngine implements Mission
 				__('main.Deuterium')
 			);
 
-			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $Message);
+			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $message);
 		}
 
 		$this->fleet->fill(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
@@ -49,7 +49,6 @@ class Transport extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()

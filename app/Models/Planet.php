@@ -9,8 +9,9 @@ use App\Engine\EntityFactory;
 use App\Engine\Production;
 use App\Engine\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -31,7 +32,7 @@ class Planet extends Model
 	];
 
 	public $planet_updated = false;
-	public $spaceLabs;
+	protected $spaceLabs;
 	public $energy_used;
 	public $energy_max = 0;
 
@@ -159,7 +160,7 @@ class Planet extends Model
 		}
 	}
 
-	public function getProduction(Carbon $updateTime = null): Production
+	public function getProduction(Carbon|CarbonImmutable $updateTime = null): Production
 	{
 		if (!$this->production) {
 			$this->production = new Production($this, $updateTime);
@@ -181,6 +182,10 @@ class Planet extends Model
 
 	public function getNetworkLevel()
 	{
+		if ($this->spaceLabs !== null) {
+			return $this->spaceLabs;
+		}
+
 		$list = [$this->entityCollection->getEntityAmount('laboratory')];
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
@@ -200,6 +205,8 @@ class Planet extends Model
 				$list[] = (int) $item->level;
 			}
 		}
+
+		$this->spaceLabs = $list;
 
 		return $list;
 	}

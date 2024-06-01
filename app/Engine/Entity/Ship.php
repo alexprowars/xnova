@@ -10,7 +10,7 @@ class Ship extends Unit
 	public function getTime(): int
 	{
 		$time = parent::getTime();
-		$time *= $this->planet->user->bonusValue('time_fleet');
+		$time *= $this->planet->user->bonus('time_fleet');
 
 		return max(1, floor($time));
 	}
@@ -19,7 +19,7 @@ class Ship extends Unit
 	{
 		$shipData = Vars::getUnitData($this->entityId);
 
-		return (int) ceil($shipData['consumption'] * $this->planet->user->bonusValue('fleet_fuel'));
+		return (int) ceil($shipData['consumption'] * $this->planet->user->bonus('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
@@ -34,8 +34,8 @@ class Ship extends Unit
 			default => 1,
 		};
 
-		if ($user->bonusValue('fleet_speed') != 1) {
-			$speed *= $user->bonusValue('fleet_speed');
+		if ($user->bonus('fleet_speed') != 1) {
+			$speed *= $user->bonus('fleet_speed');
 		}
 
 		return (int) floor($speed);

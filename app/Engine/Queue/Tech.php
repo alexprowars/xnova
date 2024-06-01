@@ -2,9 +2,9 @@
 
 namespace App\Engine\Queue;
 
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
-use App\Entity;
+use App\Engine\Entity;
 use App\Models;
 use App\Models\LogHistory;
 use App\Models\Planet;
@@ -13,7 +13,7 @@ class Tech
 {
 	private $queue;
 
-	public function __construct(Queue $queue)
+	public function __construct(QueueManager $queue)
 	{
 		$this->queue = $queue;
 	}
@@ -29,10 +29,6 @@ class Tech
 			->exists();
 
 		if (!$techHandle) {
-			if ($user->getTechLevel('intergalactic') > 0) {
-				$planet->spaceLabs = $planet->getNetworkLevel();
-			}
-
 			$entity = Entity\Research::createEntity($elementId, $user->getTechLevel($elementId), $planet);
 			$cost = $entity->getPrice();
 

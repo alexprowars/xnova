@@ -53,7 +53,7 @@ class Galaxy
 			true
 		);
 
-		if ($planetId !== false) {
+		if ($planetId) {
 			Setting::set('lastSettedGalaxyPos', $galaxy);
 			Setting::set('lastSettedSystemPos', $system);
 			Setting::set('lastSettedPlanetPos', $planet);
@@ -71,35 +71,37 @@ class Galaxy
 		return $planetId;
 	}
 
-	public function createPlanet(Coordinates $target, $userId, $title = '', $isMainPlanet = false)
+	public function createPlanet(Coordinates $target, $userId, $title = '', $mainPlanet = false): ?int
 	{
-		if ($this->isPositionFree($target)) {
-			$planet = $this->sizeRandomiser($target, $isMainPlanet);
-
-			$planet->metal = config('settings.baseMetalProduction');
-			$planet->crystal = config('settings.baseCrystalProduction');
-			$planet->deuterium = config('settings.baseDeuteriumProduction');
-
-			$planet->galaxy = $target->getGalaxy();
-			$planet->system = $target->getSystem();
-			$planet->planet = $target->getPlanet();
-
-			$planet->planet_type = Coordinates::TYPE_PLANET;
-
-			if ($target->getType() == Coordinates::TYPE_MILITARY_BASE) {
-				$planet->planet_type = Coordinates::TYPE_MILITARY_BASE;
-			}
-
-			$planet->user_id = $userId;
-			$planet->last_update = now();
-			$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
-
-			if ($planet->save()) {
-				return $planet->id;
-			}
+		if (!$this->isPositionFree($target)) {
+			return null;
 		}
 
-		return false;
+		$planet = $this->sizeRandomiser($target, $mainPlanet);
+
+		$planet->metal = config('settings.baseMetalProduction');
+		$planet->crystal = config('settings.baseCrystalProduction');
+		$planet->deuterium = config('settings.baseDeuteriumProduction');
+
+		$planet->galaxy = $target->getGalaxy();
+		$planet->system = $target->getSystem();
+		$planet->planet = $target->getPlanet();
+
+		$planet->planet_type = Coordinates::TYPE_PLANET;
+
+		if ($target->getType() == Coordinates::TYPE_MILITARY_BASE) {
+			$planet->planet_type = Coordinates::TYPE_MILITARY_BASE;
+		}
+
+		$planet->user_id = $userId;
+		$planet->last_update = now();
+		$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
+
+		if ($planet->save()) {
+			return $planet->id;
+		}
+
+		return null;
 	}
 
 	public function createMoon(Coordinates $target, $userId, $chance): ?int
@@ -142,7 +144,7 @@ class Galaxy
 		return null;
 	}
 
-	public function isPositionFree(Coordinates $target)
+	public function isPositionFree(Coordinates $target): bool
 	{
 		if ($target->isEmpty()) {
 			return false;
@@ -159,7 +161,7 @@ class Galaxy
 		return !$exist->count();
 	}
 
-	public function getFreePositions(Coordinates $target, $startPosition, $endPosition)
+	public function getFreePositions(Coordinates $target, $startPosition, $endPosition): array
 	{
 		$planets = Planet::query()
 			->where('galaxy', $target->getGalaxy())
@@ -180,7 +182,7 @@ class Galaxy
 		return $result;
 	}
 
-	public function sizeRandomiser(Coordinates $target, $isMainPlanet = false)
+	public function sizeRandomiser(Coordinates $target, $mainPlanet = false): Planet
 	{
 		$planetData = [];
 		require(resource_path('engine/planet.php'));
@@ -189,7 +191,7 @@ class Galaxy
 
 		$planet = new Planet();
 
-		if ($isMainPlanet) {
+		if ($mainPlanet) {
 			$planet->field_max = (int) config('settings.initial_fields', 163);
 		} elseif ($target->getType() === Coordinates::TYPE_MILITARY_BASE) {
 			$planet->field_max = (int) config('settings.initial_base_fields', 10);

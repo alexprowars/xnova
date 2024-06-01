@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Coordinates;
 use App\Engine\Entity as PlanetEntity;
 use App\Engine\Fleet;
+use App\Engine\Fleet\Mission;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
@@ -185,7 +187,7 @@ class FleetCheckoutController extends Controller
 		$YourPlanet = false;
 		$UsedPlanet = false;
 
-		$targetPlanet = Planet::findByCoordinates(new \App\Engine\Coordinates($galaxy, $system, $planet, $type));
+		$targetPlanet = Planet::findByCoordinates(new Coordinates($galaxy, $system, $planet, $type));
 
 		if ($targetPlanet) {
 			$UsedPlanet = true;
@@ -195,24 +197,24 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$missions = Fleet::getFleetMissions($fleets, new \App\Engine\Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
+		$missions = Fleet::getFleetMissions($fleets, new Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
 
 		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
-			$missions[] = 4;
+			$missions[] = Mission::Stay;
 		}
 
 		$missions = array_values(array_unique($missions));
 
-		if (in_array(15, $missions)) {
+		if (in_array(Mission::Expedition, $missions)) {
 			if ($this->user->getTechLevel('expedition') <= 0) {
-				unset($missions[array_search(15, $missions)]);
+				unset($missions[array_search(Mission::Expedition, $missions)]);
 			} else {
 				$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
 			}
 		}
 
-		if (!$mission && $acs && in_array(2, $missions)) {
-			$mission = 2;
+		if (!$mission && $acs && in_array(Mission::Assault, $missions)) {
+			$mission = Mission::Assault;
 		}
 
 		$parse['missions'] = [];

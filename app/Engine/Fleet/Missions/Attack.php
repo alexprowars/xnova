@@ -13,9 +13,10 @@ use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\CombatEngine\Utils\LangManager;
+use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\FleetEngine;
 use App\Engine\Galaxy;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Format;
 use App\Models;
@@ -58,7 +59,7 @@ class Attack extends FleetEngine implements Mission
 		$target->setRelation('user', $targetUser);
 		$target->getProduction($this->fleet->start_time)->update();
 
-		$queueManager = new Queue($targetUser, $target);
+		$queueManager = new QueueManager($targetUser, $target);
 		$queueManager->checkUnitQueue();
 
 		LangManager::getInstance()->setImplementation(new LangImplementation());
@@ -115,7 +116,7 @@ class Attack extends FleetEngine implements Mission
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
 			$level = $targetUser->getTechLevel($techId);
 
-			if ($targetUser->rpg_komandir > time() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
+			if ($targetUser->rpg_komandir?->isFuture() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
 				$level += 2;
 			}
 
@@ -395,7 +396,7 @@ class Attack extends FleetEngine implements Mission
 			if (!in_array($info['tech']['id'], $FleetsUsers)) {
 				$FleetsUsers[] = (int) $info['tech']['id'];
 
-				if ($this->fleet->mission != 6) {
+				if ($this->fleet->mission != MissionEnum::Spy) {
 					$update = ['raids' => DB::raw('raids + 1')];
 
 					if ($result['won'] == 1) {
@@ -416,7 +417,7 @@ class Attack extends FleetEngine implements Mission
 			if (!in_array($info['tech']['id'], $FleetsUsers)) {
 				$FleetsUsers[] = (int) $info['tech']['id'];
 
-				if ($this->fleet->mission != 6) {
+				if ($this->fleet->mission != MissionEnum::Spy) {
 					$update = ['raids' => DB::raw('raids + 1')];
 
 					if ($result['won'] == 2) {
@@ -578,7 +579,7 @@ class Attack extends FleetEngine implements Mission
 		$fleetData = $fleet->getShips();
 
 		if (!count($fleetData)) {
-			if ($fleet->mission == 1 || ($fleet->mission == 2 && count($fleetData) == 1 && isset($fleetData[210]))) {
+			if ($fleet->mission == MissionEnum::Attack || ($fleet->mission == MissionEnum::Assault && count($fleetData) == 1 && isset($fleetData[210]))) {
 				$fleet->return();
 			}
 

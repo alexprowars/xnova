@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Building;
 use App\Engine\Construction;
 use App\Engine\EntityFactory;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class ShipyardController extends Controller
 			throw new PageException('Нет доступа!');
 		}
 
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new QueueManager($this->user, $this->planet);
 
 		if ($this->mode == 'defense') {
 			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
@@ -104,7 +104,7 @@ class ShipyardController extends Controller
 			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
 		}
 
-		$queueManager = new Queue($this->user, $this->planet);
+		$queueManager = new QueueManager($this->user, $this->planet);
 
 		foreach ($request->post('element', []) as $element => $count) {
 			$element 	= (int) $element;

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity as PlanetEntity;
+use App\Engine\Fleet\Mission;
 use App\Engine\Game;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
@@ -225,8 +226,8 @@ class OverviewController extends Controller
 					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, true);
 				}
 
-				if (!($fleet->mission == 7 && $fleet->mess == 0)) {
-					if (($fleet->end_time->isFuture() and $fleet->mission != 4) or ($fleet->mess == 1 and $fleet->mission == 4)) {
+				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
+					if (($fleet->end_time->isFuture() and $fleet->mission != Mission::Stay) or ($fleet->mess == 1 and $fleet->mission == Mission::Stay)) {
 						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 2, true);
 					}
 				}
@@ -244,12 +245,12 @@ class OverviewController extends Controller
 
 					$aks[] = $fleet->assault_id;
 				}
-			} elseif ($fleet->mission != 8) {
+			} elseif ($fleet->mission != Mission::Recycling) {
 				if ($fleet->start_time->isFuture()) {
 					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 0, false);
 				}
 
-				if ($fleet->mission == 5 && $fleet->end_stay?->isFuture()) {
+				if ($fleet->mission == Mission::StayAlly && $fleet->end_stay?->isFuture()) {
 					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, false);
 				}
 			}
@@ -336,7 +337,7 @@ class OverviewController extends Controller
 			->where('user_id', $this->user->id)
 			->get()->keyBy('id');
 
-		$queueManager = new Queue($this->user);
+		$queueManager = new QueueManager($this->user);
 
 		if ($queueManager->getCount($queueManager::TYPE_BUILDING)) {
 			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Galaxy;
-use App\Engine\Queue as QueueManager;
+use App\Engine\QueueManager;
 use App\Engine\User\Tech;
 use App\Exceptions\Exception;
 use App\Helpers;
@@ -218,7 +218,7 @@ class User extends Authenticatable
 		return true;
 	}
 
-	public function bonusValue($key, $default = false)
+	public function bonus($key, $default = false)
 	{
 		if (!$this->bonusData) {
 			$this->fillBobusData();
@@ -227,7 +227,7 @@ class User extends Authenticatable
 		return $this->bonusData[$key] ?? ($default !== false ? $default : 1);
 	}
 
-	public function setBonusValue($key, $value)
+	public function setBonus($key, $value)
 	{
 		if (!$this->bonusData) {
 			$this->fillBobusData();

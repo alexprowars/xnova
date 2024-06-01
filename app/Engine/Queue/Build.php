@@ -3,12 +3,12 @@
 namespace App\Engine\Queue;
 
 use App\Engine\Entity;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Models;
 
 class Build
 {
-	public function __construct(protected Queue $queue)
+	public function __construct(protected QueueManager $queue)
 	{
 	}
 
@@ -23,7 +23,7 @@ class Build
 			$maxBuidSize += 2;
 		}
 
-		$actualCount = $this->queue->getCount(Queue::TYPE_BUILDING);
+		$actualCount = $this->queue->getCount(QueueManager::TYPE_BUILDING);
 
 		if ($actualCount < $maxBuidSize) {
 			$queueID = $actualCount + 1;
@@ -37,7 +37,7 @@ class Build
 			if ($queueID > 1) {
 				$inArray = 0;
 
-				foreach ($this->queue->get(Queue::TYPE_BUILDING) as $item) {
+				foreach ($this->queue->get(QueueManager::TYPE_BUILDING) as $item) {
 					if ($item->object_id == $elementId) {
 						$inArray++;
 					}
@@ -72,52 +72,48 @@ class Build
 
 	public function delete($indexId)
 	{
-		$planet = $this->queue->getPlanet();
-		$user = $this->queue->getUser();
+		$queueArray = $this->queue->get(QueueManager::TYPE_BUILDING);
 
-		if ($this->queue->getCount(Queue::TYPE_BUILDING)) {
-			$queueArray = $this->queue->get(Queue::TYPE_BUILDING);
+		if (empty($queueArray) || empty($queueArray[$indexId])) {
+			return;
+		}
 
-			if (!isset($queueArray[$indexId])) {
-				return;
-			}
+		$queueItem = $queueArray[$indexId];
 
-			$buildItem = $queueArray[$indexId];
+		if (!$this->queue->deleteInQueue($queueItem->id)) {
+			$queueItem->delete();
+		}
 
-			if (!$this->queue->deleteInQueue($buildItem->id)) {
-				$buildItem->delete();
-			}
+		if ($queueItem->time) {
+			$planet = $this->queue->getPlanet();
 
-			if ($buildItem->time) {
-				$entity = Entity\Building::createEntity($buildItem->object_id, $buildItem->level, $planet);
+			$entity = Entity\Building::createEntity($queueItem->object_id, $queueItem->level, $planet);
 
-				$cost = $buildItem->operation == $buildItem::OPERATION_DESTROY
-					? $entity->getDestroyPrice()
-					: $entity->getPrice();
+			$cost = $queueItem->operation == $queueItem::OPERATION_DESTROY
+				? $entity->getDestroyPrice() : $entity->getPrice();
 
-				$planet->metal 		+= $cost['metal'];
-				$planet->crystal 	+= $cost['crystal'];
-				$planet->deuterium 	+= $cost['deuterium'];
+			$planet->metal 		+= $cost['metal'];
+			$planet->crystal 	+= $cost['crystal'];
+			$planet->deuterium 	+= $cost['deuterium'];
 
-				$planet->update();
-			}
+			$planet->update();
+		}
 
-			if (count($queueArray) > 1) {
-				unset($queueArray[$indexId]);
+		if (count($queueArray) > 1) {
+			unset($queueArray[$indexId]);
 
-				/** @var Models\Queue[] $queueArray */
-				$queueArray = array_values($queueArray);
+			/** @var Models\Queue[] $queueArray */
+			$queueArray = array_values($queueArray);
 
-				foreach ($queueArray as $i => $item) {
-					if ($buildItem->object_id == $item->object_id && $indexId <= $i) {
-						$item->level--;
-						$item->update();
-					}
+			foreach ($queueArray as $i => $item) {
+				if ($queueItem->object_id == $item->object_id && $indexId <= $i) {
+					$item->level--;
+					$item->update();
 				}
 			}
-
-			$this->queue->loadQueue();
-			$this->queue->nextBuildingQueue();
 		}
+
+		$this->queue->loadQueue();
+		$this->queue->nextBuildingQueue();
 	}
 }

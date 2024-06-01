@@ -116,7 +116,7 @@ class InfoController extends Controller
 					}
 				}
 			} elseif ($buildId >= 22 && $buildId <= 24) {
-				$row['range'] = floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonusValue('storage')) / 1000;
+				$row['range'] = floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonus('storage')) / 1000;
 			} else {
 				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
 			}
@@ -260,7 +260,7 @@ class InfoController extends Controller
 			foreach ($price as $res => $value) {
 				$fleet['resources'][$res] = [
 					'base' => $value,
-					'full' => $value * $this->user->bonusValue('res_fleet')
+					'full' => $value * $this->user->bonus('res_fleet')
 				];
 			}
 

@@ -3,7 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\FleetEngine;
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Format;
 use App\Models\Fleet;
@@ -34,7 +34,7 @@ class Spy extends FleetEngine implements Mission
 		$TargetPlanet->setRelation('user', $targetUser);
 		$TargetPlanet->getProduction($this->fleet->start_time)->update();
 
-		$queueManager = new Queue($targetUser, $TargetPlanet);
+		$queueManager = new QueueManager($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');

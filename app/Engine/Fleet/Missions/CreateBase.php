@@ -43,7 +43,7 @@ class CreateBase extends FleetEngine implements Mission
 				);
 
 				// Если планета-база создана
-				if ($NewOwnerPlanet !== false) {
+				if ($NewOwnerPlanet) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_allisok');
 
 					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
@@ -86,7 +86,6 @@ class CreateBase extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()

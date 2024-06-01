@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\RedirectException;
 use App\Models\Fleet;
@@ -20,7 +20,7 @@ class RaceController extends Controller
 			$r = max(min($r, 4), 0);
 
 			if ($r > 0) {
-				$queueManager = new Queue($this->user);
+				$queueManager = new QueueManager($this->user);
 				$queueCount = $queueManager->getCount();
 
 				$UserFlyingFleets = Fleet::query()->where('user_id', $this->user->id)->count();

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Queue;
+use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Models\Fleet;
 use App\Models\Planet;
@@ -84,7 +84,7 @@ class ImperiumController extends Controller
 				$row['resources'][$res] = [
 					'current' => $planet->{$res},
 					'production' => $planet->{$res . '_perhour'},
-					'storage' => floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonusValue('storage'))
+					'storage' => floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonus('storage'))
 				];
 			}
 
@@ -94,7 +94,7 @@ class ImperiumController extends Controller
 
 			$build_hangar = [];
 
-			$queueManager = new Queue($this->user, $planet);
+			$queueManager = new QueueManager($this->user, $planet);
 			$queueManager->checkUnitQueue();
 
 			foreach ($queueManager->getTypes() as $type) {

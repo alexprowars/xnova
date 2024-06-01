@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Fleet\Mission;
 use App\Exceptions\ErrorException;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
@@ -24,14 +25,14 @@ class FleetVerbandController extends Controller
 		$fleet = Fleet::query()
 			->where('id', $fleetId)
 			->where('user_id', $this->user->id)
-			->where('mission', 1)
+			->where('mission', Mission::Attack)
 			->first();
 
 		if (!$fleet) {
 			throw new ErrorException('Этот флот не существует!');
 		}
 
-		if ($fleet->start_time->getTimestamp() <= time() || $fleet->end_time->getTimestamp() < time() || $fleet->mess == 1) {
+		if ($fleet->start_time->getTimestamp() <= time() || $fleet->end_time->timestamp < time() || $fleet->mess == 1) {
 			throw new ErrorException('Ваш флот возвращается на планету!');
 		}
 
