@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Planet\EntityFactory;
+use App\Engine\EntityFactory;
 use App\Models\User;
 use App\Models\Planet;
 
@@ -20,7 +20,7 @@ class Construction
 		foreach ($queueItems as $item) {
 			$end ??= $item->time;
 
-			$entity = EntityFactory::create(
+			$entity = EntityFactory::get(
 				$item->object_id,
 				$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
 				$planet
@@ -66,7 +66,7 @@ class Construction
 		foreach ($queueItems as $item) {
 			$end ??= $item->time;
 
-			$entity = EntityFactory::create($item->object_id);
+			$entity = EntityFactory::get($item->object_id);
 
 			$time = $entity->getTime();
 

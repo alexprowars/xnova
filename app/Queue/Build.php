@@ -4,7 +4,7 @@ namespace App\Queue;
 
 use App\Queue;
 use App\Models;
-use App\Planet\Entity;
+use App\Engine\Entity;
 
 class Build
 {

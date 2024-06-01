@@ -1,38 +1,48 @@
 <?php
 
-namespace App\Planet\Entity;
+namespace App\Engine\Entity;
 
-use App\Models\PlanetEntity;
 use App\Models\Planet;
-use App\Planet\Contracts\PlanetEntityInterface;
-use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\Engine\Contracts\EntityInterface;
+use App\Engine\Contracts\EntityProductionInterface;
 use App\Vars;
 
-class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEntityProductionInterface
+class Entity implements EntityInterface, EntityProductionInterface
 {
 	use ProductionTrait;
 
-	public static function createEntity(int $entityId, int $level = 1, Planet $context = null): static
+	protected $planet;
+
+	protected function __construct(public int $entityId, public int $level = 0)
 	{
-		$object = static::createEmpty($entityId, $level);
-		$object->setRelation('planet', $context);
+	}
+
+	public static function createEntity(int $entityId, int $level = 1, Planet $planet = null): static
+	{
+		$object = new static($entityId, $level);
+		$object->planet = $planet;
 
 		return $object;
 	}
 
+	public function getEntityId(): int
+	{
+		return $this->entityId;
+	}
+
 	public function getLevel(): int
 	{
-		return $this->amount;
+		return $this->level;
 	}
 
 	public function setLevel(int $level)
 	{
-		$this->amount = $level;
+		$this->level = $level;
 	}
 
 	protected function getBasePrice(): array
 	{
-		$price = Vars::getItemPrice($this->entity_id);
+		$price = Vars::getItemPrice($this->entityId);
 
 		$cost = [];
 
@@ -52,7 +62,7 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 		$cost = $this->getBasePrice();
 		$user = $this->planet->user;
 
-		$elementType = Vars::getItemType($this->entity_id);
+		$elementType = Vars::getItemType($this->entityId);
 
 		foreach ($cost as $resType => $value) {
 			switch ($elementType) {
@@ -88,7 +98,7 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 
 	public function isAvailable(): bool
 	{
-		$requeriments = Vars::getItemRequirements($this->entity_id);
+		$requeriments = Vars::getItemRequirements($this->entityId);
 
 		if (!count($requeriments)) {
 			return true;
@@ -106,7 +116,7 @@ class BaseEntity extends PlanetEntity implements PlanetEntityInterface, PlanetEn
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
-				if ($planet->planet_type == 5 && in_array($this->entity_id, [43, 502, 503])) {
+				if ($planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;
 					}

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Planet\Entity\Ship;
+use App\Engine\Entity\Ship;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorException;
 use App\Models;

@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Models\Planet;
 use Illuminate\Support\Collection;
 use App\Game;
-use App\Planet\Entity\Ship;
+use App\Engine\Entity\Ship;
 
 class FleetCollection extends Collection
 {

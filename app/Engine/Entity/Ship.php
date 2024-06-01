@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Planet\Entity;
+namespace App\Engine\Entity;
 
 use App\Exceptions\Exception;
 use App\Vars;
@@ -17,14 +17,14 @@ class Ship extends Unit
 
 	public function getConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entity_id);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		return (int) ceil($shipData['consumption'] * $this->planet->user->bonusValue('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
 	{
-		$shipData = Vars::getUnitData($this->entity_id);
+		$shipData = Vars::getUnitData($this->entityId);
 		$user = $this->planet->user;
 
 		$speed = $shipData['speed'] * match ($shipData['type_engine']) {
@@ -35,7 +35,7 @@ class Ship extends Unit
 		};
 
 		if ($user->bonusValue('fleet_speed') != 1) {
-			$speed = $speed * $user->bonusValue('fleet_speed');
+			$speed *= $user->bonusValue('fleet_speed');
 		}
 
 		return (int) floor($speed);
@@ -43,7 +43,7 @@ class Ship extends Unit
 
 	public function getStorage(): int
 	{
-		$shipData = Vars::getUnitData($this->entity_id);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			return 0;
@@ -54,7 +54,7 @@ class Ship extends Unit
 
 	public function getStayConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entity_id);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			return 0;
@@ -69,14 +69,14 @@ class Ship extends Unit
 
 	public function getInfo(): array
 	{
-		$shipData = Vars::getUnitData($this->entity_id);
+		$shipData = Vars::getUnitData($this->entityId);
 
 		if (!$shipData) {
 			throw new Exception('unit does not exist');
 		}
 
 		return [
-			'id' => $this->entity_id,
+			'id' => $this->entityId,
 			'consumption' => $this->getConsumption(),
 			'speed' => $this->getSpeed(),
 			'stay' => $this->getStayConsumption(),

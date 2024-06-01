@@ -13,12 +13,12 @@ class InfoController extends Controller
 {
 	public function index(int $element)
 	{
-		return $this->ShowBuildingInfoPage($element);
+		return $this->showBuildingInfoPage($element);
 	}
 
-	private function ShowRapidFireTo($BuildID)
+	private function showRapidFireTo($BuildID)
 	{
-		$ResultString = "";
+		$ResultString = '';
 
 		$storage = Vars::getStorage();
 
@@ -33,9 +33,9 @@ class InfoController extends Controller
 		return $ResultString;
 	}
 
-	private function ShowRapidFireFrom($BuildID)
+	private function showRapidFireFrom($BuildID)
 	{
-		$ResultString = "";
+		$ResultString = '';
 
 		$storage = Vars::getStorage();
 
@@ -50,7 +50,7 @@ class InfoController extends Controller
 		return $ResultString;
 	}
 
-	private function ShowProductionTable($buildId)
+	private function showProductionTable($buildId)
 	{
 		$CurrentBuildtLvl = $this->planet->getLevel($buildId);
 
@@ -87,7 +87,7 @@ class InfoController extends Controller
 			$row = [];
 
 			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-				$entity = clone $this->planet->getEntity($buildId);
+				$entity = $this->planet->getEntity($buildId);
 				$entity->setLevel($BuildLevel);
 
 				$res = $entity->getProduction();
@@ -131,7 +131,7 @@ class InfoController extends Controller
 		return $items;
 	}
 
-	private function ShowBuildingInfoPage($itemId)
+	private function showBuildingInfoPage($itemId)
 	{
 		$parse = [];
 
@@ -152,7 +152,7 @@ class InfoController extends Controller
 		$storage = Vars::getStorage();
 
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24)) {
-			$parse['production'] = $this->ShowProductionTable($itemId);
+			$parse['production'] = $this->showProductionTable($itemId);
 		} elseif ($itemId == 34) {
 			$parse['msg'] = '';
 
@@ -244,8 +244,8 @@ class InfoController extends Controller
 			}
 
 			$fleet['rapidfire'] = [
-				'to' => $this->ShowRapidFireTo($itemId),
-				'from' => $this->ShowRapidFireFrom($itemId)
+				'to' => $this->showRapidFireTo($itemId),
+				'from' => $this->showRapidFireFrom($itemId)
 			];
 
 			$fleet['attack'] = $storage['CombatCaps'][$itemId]['attack'];
@@ -253,7 +253,7 @@ class InfoController extends Controller
 			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
 			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
 			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
-			$fleet['speed_full'] = (new \App\Planet\Entity\Ship($itemId))->getSpeed();
+			$fleet['speed_full'] = \App\Engine\Entity\Ship::createEntity($itemId)->getSpeed();
 			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
 
 			$fleet['resources'] = [];

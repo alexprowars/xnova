@@ -78,16 +78,16 @@ trait Tech
 			return false;
 		}
 
+		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH) {
+			return false;
+		}
+
 		if ($this->technology === false) {
 			$this->getTechnologyData();
 		}
 
 		if (isset($this->technology[$techId])) {
 			return $this->technology[$techId];
-		}
-
-		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH) {
-			return false;
 		}
 
 		$this->technology[$techId] = [

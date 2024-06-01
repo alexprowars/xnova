@@ -96,6 +96,11 @@ class User extends Authenticatable
 		return $this->hasMany(Planet::class);
 	}
 
+	public function queue()
+	{
+		return $this->hasMany(Queue::class);
+	}
+
 	public function alliance()
 	{
 		return $this->hasOne(Alliance::class);

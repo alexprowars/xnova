@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Controller;
-use App\Planet\EntityFactory;
+use App\Engine\EntityFactory;
 use App\Vars;
 
 class TechController extends Controller
@@ -87,10 +87,10 @@ class TechController extends Controller
 		$element = (int) $element;
 
 		if ($element > 0 && Vars::getName($element)) {
-			$entity = EntityFactory::create($element, 1, $this->planet);
+			$entity = EntityFactory::get($element, 1, $this->planet);
 
 			$page['element'] = $element;
-			$page['level'] = $this->user->getTechLevel($element) ? $this->user->getTechLevel($element) : $this->planet->getLevel($element);
+			$page['level'] = $this->user->getTechLevel($element) ?: $this->planet->getLevel($element);
 			$page['access'] = $entity->isAvailable();
 			$page['req'] = Vars::getItemRequirements($element);
 		}

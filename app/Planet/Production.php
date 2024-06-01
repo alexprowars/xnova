@@ -4,33 +4,27 @@ namespace App\Planet;
 
 use App\Entity\Coordinates;
 use App\Models\Planet;
-use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\Engine\Contracts\EntityProductionInterface;
 use App\Models\User;
 use App\Vars;
 use Illuminate\Support\Carbon;
 
 class Production
 {
-	private $planet;
-	private $updateTime;
+	protected $basic;
+	protected $storage;
+	protected $production;
 
-	private $basic;
-	private $storage;
-	private $production;
-
-	public function __construct(Planet $planet, Carbon $updateTime = null)
+	public function __construct(protected Planet $planet, protected ?Carbon $updateTime = null)
 	{
-		$this->planet = $planet;
-
-		if (!$updateTime) {
-			$updateTime = now();
+		if (!$this->updateTime) {
+			$this->updateTime = now();
 		}
 
-		$this->updateTime = $updateTime;
 		$this->calculate();
 	}
 
-	private function calculate()
+	protected function calculate()
 	{
 		if (!$this->planet->user instanceof User) {
 			return;
@@ -40,8 +34,8 @@ class Production
 			return;
 		}
 
+		$this->planet->last_update ??= now();
 		$this->updatePlanetResources();
-
 		$this->planet->last_update = $this->updateTime;
 
 		if (!defined('CRON')) {
@@ -143,11 +137,11 @@ class Production
 		foreach ($itemsId as $productionId) {
 			$entity = $this->planet->getEntity($productionId);
 
-			if (!($entity instanceof PlanetEntityProductionInterface) || $entity->getLevel() <= 0) {
+			if (!($entity instanceof EntityProductionInterface) || $entity->getLevel() <= 0) {
 				continue;
 			}
 
-			$factor = $entity->factor;
+			$factor = null;
 
 			if ($productionId == 12 && $this->planet->deuterium < 100) {
 				$factor = 0;
@@ -172,9 +166,13 @@ class Production
 		return $this->production;
 	}
 
-	private function updatePlanetResources()
+	protected function updatePlanetResources()
 	{
-		$time = $this->updateTime->timestamp - $this->planet->last_update?->timestamp;
+		$time = $this->planet->last_update->diffInSeconds($this->updateTime);
+
+		if ($time < 0) {
+			return;
+		}
 
 		$resourceProduction = $this->getResourceProduction();
 		$storageCapacity = $this->getStorageCapacity();

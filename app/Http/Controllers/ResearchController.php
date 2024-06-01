@@ -7,7 +7,7 @@ use App\Controller;
 use App\Exceptions\PageException;
 use App\Models\Planet;
 use App\Models\Queue as QueueModel;
-use App\Planet\EntityFactory;
+use App\Engine\EntityFactory;
 use App\Queue;
 use App\Vars;
 use Illuminate\Http\Request;
@@ -42,7 +42,7 @@ class ResearchController extends Controller
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $elementId) {
-			$entity = EntityFactory::create($elementId, $this->user->getTechLevel($elementId), $this->planet);
+			$entity = EntityFactory::get($elementId, $this->user->getTechLevel($elementId), $this->planet);
 
 			$available = $entity->isAvailable();
 

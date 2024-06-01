@@ -20,6 +20,6 @@ class PageException extends Exception
 			'message' => $this->getMessage(),
 			'redirect' => $this->url,
 			'timeout' => 5,
-		]]);
+		]], 403);
 	}
 }

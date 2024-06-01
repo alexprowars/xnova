@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Planet\Entity;
+namespace App\Engine\Entity;
 
-use App\Planet\Contracts\PlanetBuildingEntityInterface;
+use App\Engine\Contracts\EntityBuildingInterface;
 use App\Vars;
 
-class Building extends BaseEntity implements PlanetBuildingEntityInterface
+class Building extends Entity implements EntityBuildingInterface
 {
 	protected function getBasePrice(): array
 	{
 		$cost = parent::getBasePrice();
 
-		$price = Vars::getItemPrice($this->entity_id);
+		$price = Vars::getItemPrice($this->entityId);
 
 		return array_map(function ($value) use ($price) {
-			return floor($value * pow($price['factor'] ?? 1, $this->amount));
+			return floor($value * (($price['factor'] ?? 1) ** $this->level));
 		}, $cost);
 	}
 
@@ -32,7 +32,7 @@ class Building extends BaseEntity implements PlanetBuildingEntityInterface
 		$time = parent::getTime();
 
 		$time *= (1 / ($this->planet->getLevel('robot_factory') + 1));
-		$time *= pow(0.5, $this->planet->getLevel('nano_factory'));
+		$time *= 0.5 ** $this->planet->getLevel('nano_factory');
 		$time *= $this->planet->user->bonusValue('time_building');
 
 		return max(1, $time);

@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Entity;
+namespace App\Engine\Entity;
 
-use App\Planet\Entity\BaseEntity;
 use App\Vars;
 
-class Research extends BaseEntity
+class Research extends Entity
 {
 	protected function getBasePrice(): array
 	{
 		$cost = parent::getBasePrice();
 
-		$price = Vars::getItemPrice($this->entity_id);
+		$price = Vars::getItemPrice($this->entityId);
 
 		return array_map(
-			fn ($value) => floor($value * pow($price['factor'] ?? 1, $this->amount)),
+			fn ($value) => floor($value * (($price['factor'] ?? 1) ** $this->level)),
 			$cost
 		);
 	}
@@ -29,7 +28,7 @@ class Research extends BaseEntity
 			$lablevel = 0;
 
 			foreach ($planet->spaceLabs as $Levels) {
-				$req = Vars::getItemRequirements($this->entity_id);
+				$req = Vars::getItemRequirements($this->entityId);
 
 				if (!isset($req[31]) || $Levels >= $req[31]) {
 					$lablevel += $Levels;

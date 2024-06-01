@@ -1,10 +1,6 @@
 <?php
 
-namespace App\Planet\Entity;
-
-use App\Exceptions\Exception;
-use App\Planet\Entity\Unit;
-use App\Vars;
+namespace App\Engine\Entity;
 
 class Defence extends Unit
 {

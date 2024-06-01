@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Building;
-use App\Planet\EntityFactory;
+use App\Engine\EntityFactory;
 use App\Queue;
 use App\Vars;
 use App\Construction;
@@ -45,7 +45,7 @@ class ShipyardController extends Controller
 		$parse['items'] = [];
 
 		foreach ($elementIds as $element) {
-			$entity = EntityFactory::create($element);
+			$entity = EntityFactory::get($element);
 
 			$available = $entity->isAvailable();
 

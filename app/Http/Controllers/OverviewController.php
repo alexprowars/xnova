@@ -14,7 +14,7 @@ use App\Game;
 use App\Helpers;
 use App\Models;
 use App\Models\Planet;
-use App\Planet\Entity as PlanetEntity;
+use App\Engine\Entity as PlanetEntity;
 use App\Queue;
 use App\Controller;
 use App\Vars;
@@ -544,7 +544,9 @@ class OverviewController extends Controller
 		$showMessage = false;
 
 		foreach (Vars::getResources() as $res) {
-			if ($this->planet->getLevel($res . '_mine') && !$this->planet->getEntity($res . '_mine')->factor) {
+			$entity = $this->planet->entities->where('entity_id', Vars::getIdByName($res . '_mine'))->first();
+
+			if ($this->planet->getLevel($res . '_mine') && !$entity?->factor) {
 				$showMessage = true;
 			}
 		}

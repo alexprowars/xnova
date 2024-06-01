@@ -2,23 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Controller;
 use App\Models\LogCredit;
 use App\Models\PlanetEntity;
-use App\Planet\Contracts\PlanetEntityProductionInterface;
+use App\Engine\Contracts\EntityProductionInterface;
 use App\Vars;
 
 class ResourcesController extends Controller
 {
-	private function buy($parse)
+	public function buy()
 	{
 		if ($this->user->isVacation()) {
-			throw new ErrorException("Включен режим отпуска!");
+			throw new ErrorException('Включен режим отпуска!');
+		}
+
+		if (!$this->planet->id || $this->planet->planet_type != 1) {
+			throw new ErrorException('На этой планете нельзя купить ресурсы');
 		}
 
 		if ($this->user->credits < 10) {
@@ -31,8 +35,10 @@ class ResourcesController extends Controller
 
 		$this->planet->merchand = now()->addDays(2);
 
+		$resources = $this->getBuyResourcesAmount();
+
 		foreach (Vars::getResources() as $res) {
-			$this->planet->{$res} += $parse['buy_form'][$res];
+			$this->planet->{$res} += $resources[$res];
 		}
 
 		$this->planet->update();
@@ -43,85 +49,59 @@ class ResourcesController extends Controller
 		LogCredit::create([
 			'user_id' => $this->user->id,
 			'amount' => 10 * (-1),
-			'type' => 2
+			'type' => 2,
 		]);
 
-		throw new RedirectException('/resources', 'Вы успешно купили ' . $parse['buy_form']['metal'] . ' металла, ' . $parse['buy_form']['crystal'] . ' кристалла, ' . $parse['buy_form']['deuterium'] . ' дейтерия');
+		throw new RedirectException('/resources', 'Вы успешно купили ' . $resources['metal'] . ' металла, ' . $resources['crystal'] . ' кристалла, ' . $resources['deuterium'] . ' дейтерия');
 	}
 
-	public function productionAction()
+	public function shutdown(Request $request)
 	{
 		if ($this->user->isVacation()) {
 			throw new PageException('Включен режим отпуска!');
 		}
 
-		$production = request('active', 'Y') == 'Y' ? 10 : 0;
+		$production = $request->post('active', 'Y') == 'Y' ? 10 : 0;
 
 		foreach ($this->user->planets as $planet) {
 			$planet->setRelation('user', $this->user);
 			$planet->getProduction()->update();
 		}
 
-		$planetsId = $this->user->planets->pluck('id');
+		PlanetEntity::query()
+			->whereIn('planet_id', $this->user->planets->pluck('id'))
+			->whereIn('entity_id', Vars::getItemsByType('prod'))
+			->update(['factor' => $production]);
+	}
 
-		$entityId = [4, 12, 212];
-
-		foreach (Vars::getResources() as $res) {
-			$entityId[] = Vars::getIdByName($res . '_mine');
+	public function state(Request $request)
+	{
+		if ($this->user->isVacation()) {
+			throw new ErrorException('Включен режим отпуска!');
 		}
 
-		PlanetEntity::query()
-			->whereIn('planet_id', $planetsId)
-			->whereIn('entity_id', $entityId)
-			->update([
-				'factor' => $production,
-			]);
+		foreach ($request->post('state') as $entityId => $value) {
+			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType('prod'))) {
+				continue;
+			}
 
-		$this->planet->reset();
-		$this->planet->getProduction()->reset();
+			$value = max(0, min(10, (int) $value));
+
+			$this->planet->entities()
+				->where('entity_id', $entityId)
+				->update(['factor' => $value]);
+		}
 	}
 
 	public function index()
 	{
-		if (Request::has('production')) {
-			$this->productionAction();
-		}
-
 		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
 			foreach (Vars::getResources() as $res) {
 				Config::set('settings.' . $res . '_basic_income', 0);
 			}
 		}
 
-		if (Request::instance()->isMethod('post')) {
-			if ($this->user->isVacation()) {
-				throw new ErrorException("Включен режим отпуска!");
-			}
-
-			foreach (Request::post() as $field => $value) {
-				if (!Vars::getIdByName($field)) {
-					continue;
-				}
-
-				$value = max(0, min(10, (int) $value));
-
-				if (Vars::getItemType($field) == Vars::ITEM_TYPE_BUILING || Vars::getItemType($field) == Vars::ITEM_TYPE_FLEET) {
-					PlanetEntity::query()
-						->whereIn('planet_id', $this->planet->id)
-						->whereIn('entity_id', Vars::getIdByName($field))
-						->update([
-							'factor' => $value,
-						]);
-				}
-			}
-
-			$this->planet->reset();
-			$this->planet->getProduction()->reset();
-			$this->planet->getProduction()->update(true);
-		}
-
 		$parse = [];
-
 		$parse['resources'] = Vars::getResources();
 
 		$planetProduction = $this->planet->getProduction();
@@ -130,8 +110,8 @@ class ResourcesController extends Controller
 
 		$parse['buy_form'] = [
 			'visible' => ($this->planet->planet_type == 1 && !$this->user->isVacation()),
-			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand))
-		];
+			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
+		] + $this->getBuyResourcesAmount();
 
 		$parse['bonus_h'] = ($this->user->bonusValue('storage') - 1) * 100;
 		$parse['items'] = [];
@@ -139,16 +119,18 @@ class ResourcesController extends Controller
 		foreach (Vars::getItemsByType('prod') as $productionId) {
 			$entity = $this->planet->getEntity($productionId);
 
-			if (!$entity || $this->planet->getLevel($productionId) <= 0 || !($entity instanceof PlanetEntityProductionInterface)) {
+			if (!$entity || $this->planet->getLevel($productionId) <= 0 || !($entity instanceof EntityProductionInterface)) {
 				continue;
 			}
+
+			$planetEntity = $this->planet->entities->where('entity_id', $productionId)->first();
 
 			$production = $entity->getProduction();
 			$production->multiply($productionLevel / 100);
 
 			$row = [];
 			$row['id'] = $productionId;
-			$row['factor'] = $entity->factor;
+			$row['factor'] = $planetEntity?->factor ?? 10;
 			$row['bonus'] = 0;
 
 			if ($productionId == 4 || $productionId == 12) {
@@ -165,7 +147,7 @@ class ResourcesController extends Controller
 			}
 
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
-			$row['level'] = $entity->amount;
+			$row['level'] = $entity->level;
 			$row['resources'] = $production->toArray();
 			$row['resources']['energy'] = $production->get($production::ENERGY);
 
@@ -179,33 +161,36 @@ class ResourcesController extends Controller
 
 		foreach (Vars::getResources() as $res) {
 			$row = [];
-
 			$row['capacity'] = $storage->get($res);
 			$row['production'] = $production->get($res);
 			$row['storage'] = floor($this->planet->{$res} / $storage->get($res) * 100);
 
-			$parse['buy_form'][$res] = $row['production'] * 8;
-
-			if ($parse['buy_form'][$res] < 0) {
-				$parse['buy_form'][$res] = 0;
-			}
-
 			$parse['production'][$res] = $row;
-		}
-
-		if (Request::query('buy') && $this->planet->id > 0 && $this->planet->planet_type == 1) {
-			$this->buy($parse);
 		}
 
 		$parse['production']['energy'] = [
 			'basic' => (int) config('settings.energy_basic_income'),
 			'capacity' => floor($this->planet->energy_max),
-			'production' => floor(($this->planet->energy_max + config('settings.energy_basic_income')) + $this->planet->energy_used)
+			'production' => floor(($this->planet->energy_max + config('settings.energy_basic_income')) + $this->planet->energy_used),
 		];
 
 		$parse['production_level'] = $productionLevel;
 		$parse['energy_tech'] = $this->user->getTechLevel('energy');
 
 		return response()->state($parse);
+	}
+
+	protected function getBuyResourcesAmount()
+	{
+		$production = $this->planet->getProduction()
+			->getResourceProduction();
+
+		$resources = [];
+
+		foreach (Vars::getResources() as $res) {
+			$resources[$res] = max(0, $production->get($res) * 8);
+		}
+
+		return $resources;
 	}
 }

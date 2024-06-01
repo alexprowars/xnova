@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\Planet\Contracts\PlanetEntityProductionInterface;
-use App\Planet\EntityFactory;
+use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\EntityFactory;
 use App\Planet\Resources;
 use App\Models\User;
 use App\Models\Planet;
@@ -96,9 +96,9 @@ class Building
 			return null;
 		}
 
-		$entity = EntityFactory::create($elementId, $level + 1, $planet);
+		$entity = EntityFactory::get($elementId, $level + 1, $planet);
 
-		if (!($entity instanceof PlanetEntityProductionInterface)) {
+		if (!($entity instanceof EntityProductionInterface)) {
 			return null;
 		}
 

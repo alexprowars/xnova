@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Planet\Contracts;
+namespace App\Engine\Contracts;
 
-interface PlanetEntityInterface
+interface EntityInterface
 {
 	public function getLevel(): int;
 	public function getPrice(): array;

@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Planet\Entity;
+namespace App\Engine\Entity;
 
 use App\Planet\Resources;
 use App\Vars;
 
 /**
- * @mixin BaseEntity
+ * @mixin Entity
  */
 trait ProductionTrait
 {
 	public function getProduction(?int $factor = null): Resources
 	{
 		if ($factor === null) {
-			$factor = $this->factor ?: 10;
+			$factor = $this->planet?->entities->where('entity_id', $this->entityId)
+				->first()?->factor ?? 10;
 		}
 
 		$factor = min(max($factor, 0), 10);
 
-		$production = Vars::getBuildProduction($this->entity_id);
+		$production = Vars::getBuildProduction($this->entityId);
 
 		if (!$production) {
 			return new Resources();
@@ -32,7 +33,7 @@ trait ProductionTrait
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$BuildTemp = $planet->temp_max;
 		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildLevel = $this->amount;
+		$BuildLevel = $this->level;
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$BuildLevelFactor = $factor;
 
@@ -51,11 +52,11 @@ trait ProductionTrait
 		if (isset($production[Resources::ENERGY])) {
 			$energy = floor(eval($production[Resources::ENERGY]));
 
-			if ($this->entity_id < 4) {
+			if ($this->entityId < 4) {
 				$return[Resources::ENERGY] = $energy;
-			} elseif ($this->entity_id == 4 || $this->entity_id == 12) {
+			} elseif ($this->entityId == 4 || $this->entityId == 12) {
 				$return[Resources::ENERGY] = floor($energy * $user->bonusValue('energy'));
-			} elseif ($this->entity_id == 212) {
+			} elseif ($this->entityId == 212) {
 				$return[Resources::ENERGY] = floor($energy * $user->bonusValue('solar'));
 			}
 		}

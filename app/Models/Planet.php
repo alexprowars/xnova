@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Planet\Entity\BaseEntity;
-use App\Planet\EntityCollection;
-use App\Planet\EntityFactory;
+use App\Engine\Entity\Entity as BaseEntity;
+use App\Engine\EntityCollection;
+use App\Engine\EntityFactory;
 use App\Planet\Production;
 use App\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
@@ -36,7 +36,7 @@ class Planet extends Model
 	public $energy_max = 0;
 
 	/** @var EntityCollection */
-	public $entities;
+	public $entityCollection;
 
 	private $production;
 
@@ -81,25 +81,20 @@ class Planet extends Model
 
 	private function collectEntities()
 	{
-		if (!($this->entities instanceof EntityCollection)) {
-			$this->entities = EntityCollection::getForPlanet($this);
+		if (!($this->entityCollection instanceof EntityCollection)) {
+			$this->entityCollection = EntityCollection::getForPlanet($this);
 		}
-	}
-
-	public function reset()
-	{
-		$this->entities = null;
 	}
 
 	public function checkUsedFields()
 	{
-		if (!$this->entities) {
+		if (!$this->entityCollection) {
 			$this->collectEntities();
 		}
 
 		$count = 0;
 
-		$buildings = $this->entities->getForTypes(Vars::ITEM_TYPE_BUILING);
+		$buildings = $this->entityCollection->getForTypes(Vars::ITEM_TYPE_BUILING);
 
 		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
 			$count += $buildings->getEntityAmount($type);
@@ -115,8 +110,8 @@ class Planet extends Model
 	{
 		$fields = $this->field_max;
 
-		$fields += $this->entities->getEntityAmount('terraformer') * 5;
-		$fields += config('settings.fieldsByMoonBase', 0) * $this->entities->getEntityAmount('moonbase');
+		$fields += $this->entityCollection->getEntityAmount('terraformer') * 5;
+		$fields += config('settings.fieldsByMoonBase', 0) * $this->entityCollection->getEntityAmount('moonbase');
 
 		return $fields;
 	}
@@ -128,21 +123,21 @@ class Planet extends Model
 
 	public function getLevel($entityId): int
 	{
-		if (!$this->entities) {
+		if (!$this->entityCollection) {
 			$this->collectEntities();
 		}
 
-		return $this->entities->getEntityAmount($entityId);
+		return $this->entityCollection->getEntityAmount($entityId);
 	}
 
 	public function getEntity($entityId): ?BaseEntity
 	{
-		if (!$this->entities) {
+		if (!$this->entityCollection) {
 			$this->collectEntities();
 		}
 
-		return $this->entities->getEntity($entityId)
-			?? EntityFactory::createFromModel(PlanetEntity::createEmpty($entityId), $this);
+		return $this->entityCollection->getEntity($entityId)
+			?? EntityFactory::get($entityId, 1, $this);
 	}
 
 	public function updateAmount($entityId, int $amount, bool $isDifferent = false)
@@ -154,7 +149,7 @@ class Planet extends Model
 		$entity = $this->getEntity($entityId);
 
 		if (!$entity->id) {
-			$this->entities->add($entity);
+			$this->entityCollection->add($entity);
 		}
 
 		if ($isDifferent) {
@@ -175,20 +170,18 @@ class Planet extends Model
 
 	public function afterUpdate()
 	{
-		if (!$this->entities) {
+		if (!$this->relationLoaded('entities')) {
 			return;
 		}
 
 		$this->entities->each(function (PlanetEntity $entity) {
-			if ($entity->isDirty() && $entity->planet_id > 0) {
-				$entity->save();
-			}
+			$entity->save();
 		});
 	}
 
 	public function getNetworkLevel()
 	{
-		$list = [$this->entities->getEntityAmount('laboratory')];
+		$list = [$this->entityCollection->getEntityAmount('laboratory')];
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$items = DB::table('planets_entities', 'pe')
@@ -213,12 +206,12 @@ class Planet extends Model
 
 	public function isAvailableJumpGate()
 	{
-		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->entities->getEntityAmount('jumpgate') > 0;
+		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->entityCollection->getEntityAmount('jumpgate') > 0;
 	}
 
 	public function getNextJumpTime()
 	{
-		$jumpGate = $this->entities->getEntity('jumpgate');
+		$jumpGate = $this->entityCollection->getEntity('jumpgate');
 
 		if ($jumpGate && $jumpGate->amount > 0) {
 			$waitTime = (60 * 60) * (1 / $jumpGate->amount);

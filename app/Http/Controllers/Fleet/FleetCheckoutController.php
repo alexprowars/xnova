@@ -11,7 +11,7 @@ use App\Exceptions\PageException;
 use App\Entity;
 use App\Fleet;
 use App\Models\Planet;
-use App\Planet\Entity as PlanetEntity;
+use App\Engine\Entity as PlanetEntity;
 use App\Vars;
 
 class FleetCheckoutController extends Controller

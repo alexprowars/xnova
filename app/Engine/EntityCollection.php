@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Planet;
+namespace App\Engine;
 
+use App\Engine\Entity\Entity;
 use Illuminate\Support\Collection;
 use App\Models\PlanetEntity;
 use App\Models\Planet;
@@ -11,12 +12,8 @@ class EntityCollection extends Collection
 {
 	public static function getForPlanet(Planet $planet)
 	{
-		$items = PlanetEntity::query()
-			->where('planet_id', $planet->id)
-			->get()
-			->map(function (PlanetEntity $item) use ($planet) {
-				return EntityFactory::createFromModel($item, $planet);
-			});
+		$items = $planet->entities
+			->map(fn(PlanetEntity $item) => EntityFactory::fromModel($item, $planet));
 
 		return new static($items);
 	}
@@ -27,26 +24,22 @@ class EntityCollection extends Collection
 			$types = [$types];
 		}
 
-		return $this->filter(fn($item) => in_array(Vars::getItemType($item->entity_id), $types));
+		return $this->filter(fn(Entity $item) => in_array(Vars::getItemType($item->entityId), $types));
 	}
 
-	public function getEntity($entityId): ?Entity\BaseEntity
+	public function getEntity($entityId): ?Entity
 	{
 		if (!is_numeric($entityId)) {
 			$entityId = Vars::getIdByName($entityId);
 		}
 
-		return $this->firstWhere('entity_id', $entityId);
+		return $this->firstWhere('entityId', $entityId);
 	}
 
 	public function getEntityAmount($entityId): int
 	{
 		$entity = $this->getEntity($entityId);
 
-		if (!$entity) {
-			return 0;
-		}
-
-		return $entity->amount;
+		return $entity->level ?? 0;
 	}
 }

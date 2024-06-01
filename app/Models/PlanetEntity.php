@@ -14,14 +14,6 @@ class PlanetEntity extends Model
 		'factor' => 10,
 	];
 
-	public static function createEmpty(int $entityId, int $level = 0): static
-	{
-		return new static([
-			'entity_id' => $entityId,
-			'amount' => $level,
-		]);
-	}
-
 	public function planet()
 	{
 		return $this->belongsTo(Planet::class, 'planet_id');

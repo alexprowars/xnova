@@ -90,7 +90,7 @@ class ImperiumController extends Controller
 			}
 
 			foreach (Vars::getItemsByType('prod') as $ProdID) {
-				$row['factor'][$ProdID] = $planet->getEntity($ProdID)?->factor * 10;
+				$row['factor'][$ProdID] = $planet->entities->where('entity_id', $ProdID)->first()?->factor * 10;
 			}
 
 			$build_hangar = [];

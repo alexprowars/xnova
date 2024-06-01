@@ -3,7 +3,7 @@
 namespace App\Queue;
 
 use App\Models\LogHistory;
-use App\Planet\EntityFactory;
+use App\Engine\EntityFactory;
 use App\Queue;
 use App\Vars;
 use App\Models;
@@ -22,7 +22,7 @@ class Unit
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
-		$entity = EntityFactory::create($elementId, 1, $planet);
+		$entity = EntityFactory::get($elementId, 1, $planet);
 
 		if (!$entity->isAvailable()) {
 			return;

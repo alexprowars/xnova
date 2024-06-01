@@ -7,8 +7,8 @@ use App\Exceptions\ErrorException;
 use App\Models\LogHistory;
 use App\Models\User;
 use App\Models\Planet;
-use App\Planet\Contracts\PlanetBuildingEntityInterface;
-use App\Planet\EntityFactory;
+use App\Engine\Contracts\EntityBuildingInterface;
+use App\Engine\Entity;
 use App\Queue\Build;
 use App\Queue\Tech;
 use App\Queue\Unit;
@@ -37,7 +37,7 @@ class Queue
 
 	public function loadQueue()
 	{
-		$query = Models\Queue::query()->where('user_id', $this->user->id)
+		$query = $this->user->queue()
 			->orderBy('id', 'ASC');
 
 		if ($this->planet) {
@@ -196,7 +196,7 @@ class Queue
 	{
 		$queueArray = $this->get(self::TYPE_BUILDING);
 
-		if (!count($queueArray)) {
+		if (empty($queueArray)) {
 			return false;
 		}
 
@@ -204,7 +204,7 @@ class Queue
 
 		$entity = $this->planet->getEntity($buildItem->object_id);
 
-		if (!($entity instanceof PlanetBuildingEntityInterface)) {
+		if (!($entity instanceof EntityBuildingInterface)) {
 			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
 			}
@@ -213,7 +213,6 @@ class Queue
 		}
 
 		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
-
 		$buildTime = $entity->getTime();
 
 		if ($isDestroy) {
@@ -228,41 +227,18 @@ class Queue
 				$this->planet->getProduction()->update(true);
 			}
 
-			$cost = $isDestroy ? $entity->getDestroyPrice() : $entity->getPrice();
-			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
-
-			$xp = 0;
-
-			if (in_array($buildItem->object_id, Vars::getItemsByType('build_exp'))) {
-				if (!$isDestroy) {
-					$xp += floor($units / config('settings.buildings_exp_mult', 1000));
-				} else {
-					$xp -= floor($units / config('settings.buildings_exp_mult', 1000));
-				}
-			}
+			$this->addExp($entity, $isDestroy);
 
 			if (!$isDestroy) {
-				$this->planet->field_current++;
-				$this->planet->updateAmount($buildItem->object_id, 1, true);
+				$entity->amount++;
 			} else {
-				$this->planet->field_current--;
-				$this->planet->updateAmount($buildItem->object_id, -1, true);
+				$entity->amount--;
 			}
 
 			event(new PlanetEntityUpdated($this->user->id));
 
 			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
-			}
-
-			if ($xp != 0 && $this->user->lvl_minier < config('settings.level.max_ind', 100)) {
-				$this->user->xpminier += $xp;
-
-				if ($this->user->xpminier < 0) {
-					$this->user->xpminier = 0;
-				}
-
-				$this->user->update();
 			}
 
 			if (config('settings.log.buildings', false)) {
@@ -276,8 +252,8 @@ class Queue
 					'to_metal' 			=> $this->planet->metal,
 					'to_crystal' 		=> $this->planet->crystal,
 					'to_deuterium' 		=> $this->planet->deuterium,
-					'entity_id' 		=> $buildItem->object_id,
-					'amount' 			=> $this->planet->getLevel($buildItem->object_id)
+					'entity_id' 		=> $entity->entity_id,
+					'amount' 			=> $entity->amount,
 				]);
 			}
 
@@ -304,7 +280,7 @@ class Queue
 
 			$entity = $this->planet->getEntity($buildItem->object_id);
 
-			if (!($entity instanceof PlanetBuildingEntityInterface)) {
+			if (!($entity instanceof EntityBuildingInterface)) {
 				array_shift($queueArray);
 
 				if (!$this->deleteInQueue($buildItem->id)) {
@@ -380,7 +356,7 @@ class Queue
 					if ($cost['deuterium'] > $this->planet->deuterium) {
 						$message .= Format::number($cost['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
 					}
-					if (isset($cost['energy']) && isset($this->planet->energy_max) && $cost['energy'] > $this->planet->energy_max) {
+					if (isset($cost['energy'], $this->planet->energy_max) && $cost['energy'] > $this->planet->energy_max) {
 						$message .= Format::number($cost['energy'] - $this->planet->energy_max) . ' энергии<br>';
 					}
 				}
@@ -412,170 +388,190 @@ class Queue
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
 		}
 
-		$result	= false;
-
-		$buildItem = Models\Queue::query()->where('user_id', $this->user->id)
+		$buildItem = $this->user->queue()
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
-		if ($buildItem) {
-			if ($buildItem->planet_id != $this->planet->id) {
-				$planet = Planet::query()->find((int) $buildItem->planet_id);
-				$planet?->setRelation('user', $this->user);
-			} else {
-				$planet = $this->planet;
+		if (!$buildItem) {
+			return;
+		}
+
+		if ($buildItem->planet_id != $this->planet->id) {
+			$planet = Planet::find((int) $buildItem->planet_id);
+			$planet?->setRelation('user', $this->user);
+		} else {
+			$planet = $this->planet;
+		}
+
+		if (!$planet) {
+			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+		}
+
+		if ($this->user->getTechLevel('intergalactic') > 0) {
+			$planet->spaceLabs = $planet->getNetworkLevel();
+		}
+
+		$entity = \App\Engine\Entity\Research::createEntity($buildItem->object_id, $buildItem->level, $planet);
+
+		$buildTime = $entity->getTime();
+
+		$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
+		$buildItem->save();
+
+		if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
+			$this->user->setTech($buildItem->object_id, $buildItem->level);
+
+			if (!$this->deleteInQueue($buildItem->id)) {
+				$buildItem->delete();
 			}
 
-			if (!$planet) {
-				throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+			if ($planet->id == $this->planet->id) {
+				$this->loadQueue();
 			}
 
-			if ($this->user->getTechLevel('intergalactic') > 0) {
-				$planet->spaceLabs = $planet->getNetworkLevel();
-			}
-
-			$entity = Entity\Research::createEntity($buildItem->object_id, $buildItem->level, $planet);
-
-			$buildTime = $entity->getTime();
-
-			$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
-			$buildItem->save();
-
-			if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
-				$this->user->setTech($buildItem->object_id, $buildItem->level);
-
-				if (!$this->deleteInQueue($buildItem->id)) {
-					$buildItem->delete();
-				}
-
-				if ($planet->id == $this->planet->id) {
-					$this->loadQueue();
-				}
-
-				if (config('settings.log.research', false)) {
-					LogHistory::create([
-						'user_id' 			=> $this->user->id,
-						'operation' 		=> 8,
-						'planet' 			=> $planet->id,
-						'from_metal' 		=> $planet->metal,
-						'from_crystal' 		=> $planet->crystal,
-						'from_deuterium' 	=> $planet->deuterium,
-						'to_metal' 			=> $planet->metal,
-						'to_crystal' 		=> $planet->crystal,
-						'to_deuterium' 		=> $planet->deuterium,
-						'entity_id' 		=> $buildItem->object_id,
-						'amount' 			=> $buildItem->level
-					]);
-				}
-
-				$result	= true;
+			if (config('settings.log.research', false)) {
+				LogHistory::create([
+					'user_id' 			=> $this->user->id,
+					'operation' 		=> 8,
+					'planet' 			=> $planet->id,
+					'from_metal' 		=> $planet->metal,
+					'from_crystal' 		=> $planet->crystal,
+					'from_deuterium' 	=> $planet->deuterium,
+					'to_metal' 			=> $planet->metal,
+					'to_crystal' 		=> $planet->crystal,
+					'to_deuterium' 		=> $planet->deuterium,
+					'entity_id' 		=> $buildItem->object_id,
+					'amount' 			=> $buildItem->level,
+				]);
 			}
 
 			$this->user->update();
 		}
-
-		return $result;
 	}
 
 	public function checkUnitQueue()
 	{
-		if ($this->getCount(self::TYPE_SHIPYARD)) {
-			$buildQueue = $this->get(self::TYPE_SHIPYARD);
+		$queue = $this->get(self::TYPE_SHIPYARD);
 
-			$MissilesSpace = ($this->planet->getLevel('missile_facility') * 10) - ($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
+		if (empty($queue)) {
+			return false;
+		}
 
-			$max = [];
-			$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$missilesSpace = ($this->planet->getLevel('missile_facility') * 10) - ($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
 
-			foreach ($buildTypes as $id) {
-				$price = Vars::getItemPrice($id);
+		$max = [];
+		$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
 
-				if (isset($price['max'])) {
-					$max[$id] = $this->planet->getLevel($id);
-				}
+		foreach ($buildTypes as $id) {
+			$price = Vars::getItemPrice($id);
+
+			if (isset($price['max'])) {
+				$max[$id] = $this->planet->getLevel($id);
 			}
+		}
 
-			$builded = 0;
+		$builded = 0;
 
-			foreach ($buildQueue as &$item) {
-				if ($item->object_id == 502 || $item->object_id == 503) {
-					if ($item->object_id == 502) {
-						if ($item->level > $MissilesSpace) {
-							$item->level = $MissilesSpace;
-						} else {
-							$MissilesSpace -= $item->level;
-						}
+		foreach ($queue as $item) {
+			if ($item->object_id == 502 || $item->object_id == 503) {
+				if ($item->object_id == 502) {
+					if ($item->level > $missilesSpace) {
+						$item->level = $missilesSpace;
 					} else {
-						if ($item->level > floor($MissilesSpace / 2)) {
-							$item->level = floor($MissilesSpace / 2);
-						} else {
-							$MissilesSpace -= $item->level;
-						}
+						$missilesSpace -= $item->level;
 					}
-				}
-
-				$price = Vars::getItemPrice($item->object_id);
-
-				if (isset($price['max'])) {
-					if ($item->level > $price['max']) {
-						$item->level = $price['max'];
-					}
-
-					if ($max[$item->object_id] + $item->level > $price['max']) {
-						$item->level = $price['max'] - $max[$item->object_id];
-					}
-
-					if ($item->level > 0) {
-						$max[$item->object_id] += $item->level;
+				} else {
+					if ($item->level > floor($missilesSpace / 2)) {
+						$item->level = floor($missilesSpace / 2);
 					} else {
-						$item->level = 0;
+						$missilesSpace -= $item->level;
 					}
 				}
 			}
 
-			unset($item);
+			$price = Vars::getItemPrice($item->object_id);
 
-			foreach ($buildQueue as $i => $item) {
-				if (!in_array($item->object_id, $buildTypes)) {
-					continue;
+			if (isset($price['max'])) {
+				if ($item->level > $price['max']) {
+					$item->level = $price['max'];
 				}
 
-				$entity = EntityFactory::create($item->object_id, 1, $this->planet);
-
-				$buildTime = $entity->getTime();
-
-				while ($item->time->timestamp + $buildTime < time()) {
-					$item->time->addSeconds($buildTime);
-
-					$builded++;
-					$this->planet->updateAmount($item->object_id, 1, true);
-					$item->level--;
-
-					if ($item->level <= 0) {
-						if (!$this->deleteInQueue($item->id)) {
-							$item->delete();
-						}
-
-						if (isset($buildQueue[$i + 1])) {
-							$buildQueue[$i + 1]->time = $item->time;
-						}
-
-						break;
-					}
+				if ($max[$item->object_id] + $item->level > $price['max']) {
+					$item->level = $price['max'] - $max[$item->object_id];
 				}
-
-				$this->planet->update();
 
 				if ($item->level > 0) {
-					$item->time_end = $item->time->addSeconds($buildTime);
-					$item->update();
+					$max[$item->object_id] += $item->level;
+				} else {
+					$item->level = 0;
+				}
+			}
+		}
+
+		foreach ($queue as $i => $item) {
+			if (!in_array($item->object_id, $buildTypes)) {
+				continue;
+			}
+
+			$entity = $this->planet->getEntity($item->object_id);
+
+			$buildTime = $entity->getTime();
+
+			while ($item->time->addSeconds($buildTime)->isPast()) {
+				$item->time = $item->time->addSeconds($buildTime);
+
+				$builded++;
+				$entity->amount--;
+				$item->level--;
+
+				if ($item->level <= 0) {
+					if (!$this->deleteInQueue($item->id)) {
+						$item->delete();
+					}
+
+					if (isset($queue[$i + 1])) {
+						$queue[$i + 1]->time = $item->time;
+					}
 
 					break;
 				}
 			}
 
-			return $builded > 0;
+			$this->planet->update();
+
+			if ($item->level > 0) {
+				$item->time_end = $item->time->addSeconds($buildTime);
+				$item->update();
+
+				break;
+			}
 		}
 
-		return false;
+		return $builded > 0;
+	}
+
+	public function addExp(Entity\Building $entity, $destroy = false)
+	{
+		$xp = 0;
+
+		if (in_array($entity->entity_id, Vars::getItemsByType('build_exp'))) {
+			$cost = $destroy ? $entity->getDestroyPrice() : $entity->getPrice();
+			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
+
+			if (!$destroy) {
+				$xp += floor($units / config('settings.buildings_exp_mult', 1000));
+			} else {
+				$xp -= floor($units / config('settings.buildings_exp_mult', 1000));
+			}
+		}
+
+		if ($xp != 0 && $this->user->lvl_minier < config('settings.level.max_ind', 100)) {
+			$this->user->xpminier += $xp;
+
+			if ($this->user->xpminier < 0) {
+				$this->user->xpminier = 0;
+			}
+
+			$this->user->update();
+		}
 	}
 }

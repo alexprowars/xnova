@@ -39,7 +39,6 @@
 		"symfony/polyfill-intl-idn": "*"
 	},
 	"require-dev": {
-		"barryvdh/laravel-debugbar": "^3.3"
 	},
 	"autoload": {
 		"psr-4": {

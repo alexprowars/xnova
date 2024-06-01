@@ -97,7 +97,10 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('refers', [Controllers\RefersController::class, 'index'])->name('refers');
 	Route::get('research', [Controllers\ResearchController::class, 'index'])->name('research');
 	Route::post('research/{action}', [Controllers\ResearchController::class, 'action'])->whereIn('action', ['cancel', 'search']);
-	Route::match(['get', 'post'], 'resources', [Controllers\ResourcesController::class, 'index'])->name('resources');
+	Route::get('resources', [Controllers\ResourcesController::class, 'index'])->name('resources');
+	Route::post('resources/buy', [Controllers\ResourcesController::class, 'buy']);
+	Route::post('resources/shutdown', [Controllers\ResourcesController::class, 'shutdown']);
+	Route::post('resources/state', [Controllers\ResourcesController::class, 'state']);
 	Route::get('rocket', [Controllers\RocketController::class, 'index'])->name('rocket');
 	Route::get('rw/{id}/{key}', [Controllers\RwController::class, 'index'])->name('rw');
 	Route::match(['get', 'post'], 'search', [Controllers\SearchController::class, 'index'])->name('search');

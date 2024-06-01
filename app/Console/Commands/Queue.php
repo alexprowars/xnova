@@ -7,6 +7,7 @@ use App\Exceptions\Exception;
 use App\Models;
 use App\Vars;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Queue extends Command
 {
@@ -52,8 +53,7 @@ class Queue extends Command
 
 					DB::transaction(fn() => (new \App\Queue($item->user, $planet))->update());
 				} catch (Exception $e) {
-					file_put_contents(ROOT_PATH . '/php_errors.log', "\n\n" . $e->getMessage() . "\n\n", FILE_APPEND);
-
+					Log::error("\n\n" . $e->getMessage() . "\n\n");
 					echo $e->getMessage();
 				}
 			}
