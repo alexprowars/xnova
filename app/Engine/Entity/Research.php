@@ -19,7 +19,7 @@ class Research extends Entity
 
 	public function getTime(): int
 	{
-		$networkLevel = $this->planet->getNetworkLevel();
+		$networkLevel = $this->planet->network_level;
 
 		if (!empty($networkLevel)) {
 			$lablevel = 0;

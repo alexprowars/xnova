@@ -54,14 +54,13 @@ class Fleet extends Command
 
 			if ($_fleets->count()) {
 				foreach ($_fleets as $fleetRow) {
-					if (!MissionEnum::tryFrom($fleetRow->mission)) {
+					if (!$missionName = $fleetRow->mission?->name) {
 						$fleetRow->delete();
 
 						continue;
 					}
 
-					$missionName = MissionEnum::tryFrom($fleetRow->mission)->name;
-					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
+					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName->name;
 
 					/** @var $mission Mission */
 					$mission = new $missionName($fleetRow);

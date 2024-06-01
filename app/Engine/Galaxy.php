@@ -44,7 +44,7 @@ class Galaxy
 					$system++;
 				}
 			}
-		} while ($this->isPositionFree(new Coordinates($galaxy, $system, $position)) === false);
+		} while (!$this->isPositionFree(new Coordinates($galaxy, $system, $position)));
 
 		$planetId = $this->createPlanet(
 			new Coordinates($galaxy, $system, $position),

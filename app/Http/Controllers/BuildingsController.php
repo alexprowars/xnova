@@ -30,7 +30,7 @@ class BuildingsController extends Controller
 				continue;
 			}
 
-			$entity = $this->planet->getEntity($elementId);
+			$entity = $this->planet->getEntity($elementId)->unit();
 
 			$available = $entity->isAvailable();
 

@@ -3,6 +3,7 @@
 namespace App\Engine;
 
 use App\Engine\Contracts\EntityBuildingInterface;
+use App\Engine\Entity\Research;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\ErrorException;
 use App\Format;
@@ -201,7 +202,7 @@ class QueueManager
 
 		$buildItem = $queueArray[0];
 
-		$entity = $this->planet->getEntity($buildItem->object_id);
+		$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
 		if (!($entity instanceof EntityBuildingInterface)) {
 			if (!$this->deleteInQueue($buildItem->id)) {
@@ -229,9 +230,9 @@ class QueueManager
 			$this->addExp($entity, $isDestroy);
 
 			if (!$isDestroy) {
-				$entity->amount++;
+				$this->planet->updateAmount($buildItem->object_id, 1, true);
 			} else {
-				$entity->amount--;
+				$this->planet->updateAmount($buildItem->object_id, -1, true);
 			}
 
 			event(new PlanetEntityUpdated($this->user->id));
@@ -251,8 +252,8 @@ class QueueManager
 					'to_metal' 			=> $this->planet->metal,
 					'to_crystal' 		=> $this->planet->crystal,
 					'to_deuterium' 		=> $this->planet->deuterium,
-					'entity_id' 		=> $entity->entity_id,
-					'amount' 			=> $entity->amount,
+					'entity_id' 		=> $entity->entityId,
+					'amount' 			=> $entity->getLevel(),
 				]);
 			}
 
@@ -277,7 +278,7 @@ class QueueManager
 
 			$haveNoMoreLevel = false;
 
-			$entity = $this->planet->getEntity($buildItem->object_id);
+			$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
 			if (!($entity instanceof EntityBuildingInterface)) {
 				array_shift($queueArray);
@@ -296,10 +297,9 @@ class QueueManager
 			$isDestroy = $buildItem->operation == $buildItem::OPERATION_DESTROY;
 
 			$cost = $isDestroy
-				? $entity->getDestroyPrice()
-				: $entity->getPrice();
+				? $entity->getDestroyPrice() : $entity->getPrice();
 
-			if ($isDestroy && $entity->amount == 0) {
+			if ($isDestroy && $entity->getLevel() == 0) {
 				$haveRessources = false;
 				$haveNoMoreLevel = true;
 			} else {
@@ -337,7 +337,7 @@ class QueueManager
 						'to_crystal' 		=> $this->planet->crystal,
 						'to_deuterium' 		=> $this->planet->deuterium,
 						'entity_id' 		=> $buildItem->object_id,
-						'amount' 			=> $entity->amount + 1,
+						'amount' 			=> $entity->getLevel() + 1,
 					]);
 				}
 			} else {
@@ -387,15 +387,15 @@ class QueueManager
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
 		}
 
-		$buildItem = $this->user->queue()
+		$queueItem = $this->user->queue()
 			->where('type', Models\Queue::TYPE_TECH)->first();
 
-		if (!$buildItem) {
+		if (!$queueItem) {
 			return;
 		}
 
-		if ($buildItem->planet_id != $this->planet->id) {
-			$planet = Planet::find((int) $buildItem->planet_id);
+		if ($queueItem->planet_id != $this->planet->id) {
+			$planet = Planet::find((int) $queueItem->planet_id);
 			$planet?->setRelation('user', $this->user);
 		} else {
 			$planet = $this->planet;
@@ -405,18 +405,18 @@ class QueueManager
 			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
 		}
 
-		$entity = \App\Engine\Entity\Research::createEntity($buildItem->object_id, $buildItem->level, $planet);
+		$entity = Research::createEntity($queueItem->object_id, $queueItem->level, $planet);
 
 		$buildTime = $entity->getTime();
 
-		$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
-		$buildItem->save();
+		$queueItem->time_end = $queueItem->time->addSeconds($buildTime);
+		$queueItem->save();
 
-		if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
-			$this->user->setTech($buildItem->object_id, $buildItem->level);
+		if ($queueItem->time->timestamp + $buildTime <= time() + 5) {
+			$this->user->setTech($queueItem->object_id, $queueItem->level);
 
-			if (!$this->deleteInQueue($buildItem->id)) {
-				$buildItem->delete();
+			if (!$this->deleteInQueue($queueItem->id)) {
+				$queueItem->delete();
 			}
 
 			if ($planet->id == $this->planet->id) {
@@ -434,8 +434,8 @@ class QueueManager
 					'to_metal' 			=> $planet->metal,
 					'to_crystal' 		=> $planet->crystal,
 					'to_deuterium' 		=> $planet->deuterium,
-					'entity_id' 		=> $buildItem->object_id,
-					'amount' 			=> $buildItem->level,
+					'entity_id' 		=> $queueItem->object_id,
+					'amount' 			=> $queueItem->level,
 				]);
 			}
 
@@ -507,7 +507,7 @@ class QueueManager
 				continue;
 			}
 
-			$entity = $this->planet->getEntity($item->object_id);
+			$entity = $this->planet->getEntity($item->object_id)->unit();
 
 			$buildTime = $entity->getTime();
 
@@ -515,7 +515,7 @@ class QueueManager
 				$item->time = $item->time->addSeconds($buildTime);
 
 				$builded++;
-				$entity->amount--;
+				$this->planet->updateAmount($item->object_id, 1, true);
 				$item->level--;
 
 				if ($item->level <= 0) {
@@ -548,7 +548,7 @@ class QueueManager
 	{
 		$xp = 0;
 
-		if (in_array($entity->entity_id, Vars::getItemsByType('build_exp'))) {
+		if (in_array($entity->entityId, Vars::getItemsByType('build_exp'))) {
 			$cost = $destroy ? $entity->getDestroyPrice() : $entity->getPrice();
 			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 

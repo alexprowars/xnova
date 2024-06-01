@@ -139,7 +139,7 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		if ($fleet->assault_id == 0) {
+		if (!$fleet->assault_id) {
 			$fq = Fleet::query()->where('id', $fleet->id)->get();
 		} else {
 			$fq = Fleet::query()->where('assault_id', $fleet->assault_id)->get();
@@ -151,27 +151,27 @@ class FleetVerbandController extends Controller
 
 		$parse = [];
 		$parse['group'] = (int) $fleet->assault_id;
-		$parse['fleetid'] = (int) $fleet->id;
+		$parse['fleetid'] = $fleet->id;
 		$parse['aks'] = $assault->toArray();
 		$parse['list'] = [];
 
 		foreach ($fq as $row) {
 			$parse['list'][] = [
-				'id' => (int) $row->id,
+				'id' => $row->id,
 				'ships' => $row->getShips(),
 				'ships_total' => $row->getTotalShips(),
-				'mission' => (int) $row->mission,
+				'mission' => $row->mission,
 				'start' => [
-					'galaxy' => (int) $row->start_galaxy,
-					'system' => (int) $row->start_system,
-					'planet' => (int) $row->start_planet,
+					'galaxy' => $row->start_galaxy,
+					'system' => $row->start_system,
+					'planet' => $row->start_planet,
 					'time' => $row->start_time?->utc()->toAtomString(),
 					'name' => $row->user_name,
 				],
 				'target' => [
-					'galaxy' => (int) $row->end_system,
-					'system' => (int) $row->end_system,
-					'planet' => (int) $row->end_planet,
+					'galaxy' => $row->end_system,
+					'system' => $row->end_system,
+					'planet' => $row->end_planet,
 					'time' => $row->end_time?->utc()->toAtomString(),
 					'name' => $row->target_user_name,
 				],

@@ -83,7 +83,7 @@ class Production
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(pow(1.6, $this->planet->getLevel($res . '_store'))))) * $this->planet->user->bonus('storage'));
+			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(1.6 ** $this->planet->getLevel($res . '_store')))) * $this->planet->user->bonus('storage'));
 		}
 
 		$this->storage = new Resources($resources);
@@ -134,7 +134,7 @@ class Production
 		$itemsId = Vars::getItemsByType('prod');
 
 		foreach ($itemsId as $productionId) {
-			$entity = $this->planet->getEntity($productionId);
+			$entity = $this->planet->getEntity($productionId)->unit();
 
 			if (!($entity instanceof EntityProductionInterface) || $entity->getLevel() <= 0) {
 				continue;

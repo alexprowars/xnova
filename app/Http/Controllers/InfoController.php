@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Entity\Ship;
 use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\SuccessException;
@@ -56,7 +57,7 @@ class InfoController extends Controller
 		$ActualNeed = $ActualProd = 0;
 
 		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-			$res = $this->planet->getEntity($buildId)->getProduction();
+			$res = $this->planet->getEntity($buildId)->unit()->getProduction();
 
 			$Prod[1] = $res->get('metal');
 			$Prod[2] = $res->get('crystal');
@@ -86,7 +87,7 @@ class InfoController extends Controller
 			$row = [];
 
 			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-				$entity = $this->planet->getEntity($buildId);
+				$entity = $this->planet->getEntity($buildId)->unit();
 				$entity->setLevel($BuildLevel);
 
 				$res = $entity->getProduction();
@@ -116,7 +117,7 @@ class InfoController extends Controller
 					}
 				}
 			} elseif ($buildId >= 22 && $buildId <= 24) {
-				$row['range'] = floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $BuildLevel)))) * $this->user->bonus('storage')) / 1000;
+				$row['range'] = floor((config('settings.baseStorageSize') + floor(50000 * round(1.6 ** $BuildLevel))) * $this->user->bonus('storage')) / 1000;
 			} else {
 				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
 			}
@@ -252,7 +253,7 @@ class InfoController extends Controller
 			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
 			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
 			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
-			$fleet['speed_full'] = \App\Engine\Entity\Ship::createEntity($itemId)->getSpeed();
+			$fleet['speed_full'] = Ship::createEntity($itemId, 1, $this->planet)->getSpeed();
 			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
 
 			$fleet['resources'] = [];
@@ -368,9 +369,9 @@ class InfoController extends Controller
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
-			$entity = $this->planet->getEntity($itemId);
+			$entity = $this->planet->getEntity($itemId)->unit();
 
-			if ($entity && $entity->amount > 0) {
+			if ($entity?->getLevel() > 0) {
 				$time = ceil($entity->getTime() / 2);
 
 				if ($time < 1) {
@@ -378,7 +379,7 @@ class InfoController extends Controller
 				}
 
 				$parse['destroy'] = [
-					'level' => $entity->amount,
+					'level' => $entity->getLevel(),
 					'resources' => $entity->getDestroyPrice(),
 					'time' => $time
 				];

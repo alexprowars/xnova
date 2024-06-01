@@ -116,7 +116,7 @@ class ResourcesController extends Controller
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType('prod') as $productionId) {
-			$entity = $this->planet->getEntity($productionId);
+			$entity = $this->planet->getEntity($productionId)->unit();
 
 			if (!$entity || $this->planet->getLevel($productionId) <= 0 || !($entity instanceof EntityProductionInterface)) {
 				continue;

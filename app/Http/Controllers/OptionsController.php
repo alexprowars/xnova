@@ -146,7 +146,7 @@ class OptionsController extends Controller
 
 					Models\PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
 						->whereIn('build_id', $buildsId)
-						->update(['power' => 0]);
+						->update(['factor' => 0]);
 				}
 			}
 		}

@@ -199,11 +199,9 @@ class FleetCheckoutController extends Controller
 
 		$missions = Fleet::getFleetMissions($fleets, new Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
 
-		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
+		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin()) && !in_array(Mission::Stay, $missions)) {
 			$missions[] = Mission::Stay;
 		}
-
-		$missions = array_values(array_unique($missions));
 
 		if (in_array(Mission::Expedition, $missions)) {
 			if ($this->user->getTechLevel('expedition') <= 0) {

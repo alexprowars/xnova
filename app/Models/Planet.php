@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
-use App\Engine\Entity\Entity as BaseEntity;
-use App\Engine\EntityCollection;
-use App\Engine\EntityFactory;
 use App\Engine\Production;
 use App\Engine\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -32,12 +30,8 @@ class Planet extends Model
 	];
 
 	public $planet_updated = false;
-	protected $spaceLabs;
 	public $energy_used;
 	public $energy_max = 0;
-
-	/** @var EntityCollection */
-	public $entityCollection;
 
 	private $production;
 
@@ -80,22 +74,11 @@ class Planet extends Model
 		return true;
 	}
 
-	private function collectEntities()
-	{
-		if (!($this->entityCollection instanceof EntityCollection)) {
-			$this->entityCollection = EntityCollection::getForPlanet($this);
-		}
-	}
-
 	public function checkUsedFields()
 	{
-		if (!$this->entityCollection) {
-			$this->collectEntities();
-		}
-
 		$count = 0;
 
-		$buildings = $this->entityCollection->getForTypes(Vars::ITEM_TYPE_BUILING);
+		$buildings = $this->entities->getForTypes(Vars::ITEM_TYPE_BUILING);
 
 		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
 			$count += $buildings->getEntityAmount($type);
@@ -111,8 +94,8 @@ class Planet extends Model
 	{
 		$fields = $this->field_max;
 
-		$fields += $this->entityCollection->getEntityAmount('terraformer') * 5;
-		$fields += config('settings.fieldsByMoonBase', 0) * $this->entityCollection->getEntityAmount('moonbase');
+		$fields += $this->getLevel('terraformer') * 5;
+		$fields += config('settings.fieldsByMoonBase', 0) * $this->getLevel('moonbase');
 
 		return $fields;
 	}
@@ -124,21 +107,35 @@ class Planet extends Model
 
 	public function getLevel($entityId): int
 	{
-		if (!$this->entityCollection) {
-			$this->collectEntities();
-		}
-
-		return $this->entityCollection->getEntityAmount($entityId);
+		return $this->entities->getEntityAmount($entityId);
 	}
 
-	public function getEntity($entityId): ?BaseEntity
+	public function getEntity($entityId): ?PlanetEntity
 	{
-		if (!$this->entityCollection) {
-			$this->collectEntities();
+		if (!is_numeric($entityId)) {
+			$entityId = Vars::getIdByName($entityId);
 		}
 
-		return $this->entityCollection->getEntity($entityId)
-			?? EntityFactory::get($entityId, 1, $this);
+		if (!$entityId) {
+			return null;
+		}
+
+		$entity = $this->entities->getEntity($entityId);
+
+		if (!$entity) {
+			if (!Vars::getName($entityId)) {
+				return null;
+			}
+
+			$entity = new PlanetEntity([
+				'entity_id' => $entityId,
+				'amount' => 1,
+			]);
+		}
+
+		$entity->planet()->associate($this);
+
+		return $entity;
 	}
 
 	public function updateAmount($entityId, int $amount, bool $isDifferent = false)
@@ -150,7 +147,7 @@ class Planet extends Model
 		$entity = $this->getEntity($entityId);
 
 		if (!$entity->id) {
-			$this->entityCollection->add($entity);
+			$this->entities->add($entity);
 		}
 
 		if ($isDifferent) {
@@ -158,6 +155,8 @@ class Planet extends Model
 		} else {
 			$entity->amount = $amount;
 		}
+
+		$entity->save();
 	}
 
 	public function getProduction(Carbon|CarbonImmutable $updateTime = null): Production
@@ -169,24 +168,16 @@ class Planet extends Model
 		return $this->production;
 	}
 
-	public function afterUpdate()
+	public function networkLevel(): Attribute
 	{
-		if (!$this->relationLoaded('entities')) {
-			return;
-		}
-
-		$this->entities->each(function (PlanetEntity $entity) {
-			$entity->save();
-		});
+		return Attribute::make(
+			get: fn () => $this->getNetworkLevel()
+		)->shouldCache();
 	}
 
-	public function getNetworkLevel()
+	protected function getNetworkLevel()
 	{
-		if ($this->spaceLabs !== null) {
-			return $this->spaceLabs;
-		}
-
-		$list = [$this->entityCollection->getEntityAmount('laboratory')];
+		$list = [$this->getLevel('laboratory')];
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$items = DB::table('planets_entities', 'pe')
@@ -206,19 +197,17 @@ class Planet extends Model
 			}
 		}
 
-		$this->spaceLabs = $list;
-
 		return $list;
 	}
 
 	public function isAvailableJumpGate()
 	{
-		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->entityCollection->getEntityAmount('jumpgate') > 0;
+		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->getLevel('jumpgate') > 0;
 	}
 
 	public function getNextJumpTime()
 	{
-		$jumpGate = $this->entityCollection->getEntity('jumpgate');
+		$jumpGate = $this->getEntity('jumpgate');
 
 		if ($jumpGate && $jumpGate->amount > 0) {
 			$waitTime = (60 * 60) * (1 / $jumpGate->amount);

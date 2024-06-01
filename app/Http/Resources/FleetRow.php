@@ -37,10 +37,10 @@ class FleetRow extends JsonResource
 
 		$fleetStatus = [0 => 'flight', 1 => 'holding', 2 => 'return'];
 		$fleetPrefix = $this->owner ? 'own' : '';
-		$fleetClass = $fleetPrefix . $fleetStyle[$this->resource->mission];
+		$fleetClass = $fleetPrefix . $fleetStyle[$this->resource->mission->value];
 
 		$fleetContent 	= Fleet::createFleetPopupedFleetLink($this->resource, __('overview.ov_fleet'), $fleetClass, auth()->user());
-		$fleetCapacity 	= Fleet::createFleetPopupedMissionLink($this->resource, __('main.type_mission.' . $this->resource->mission), $fleetClass);
+		$fleetCapacity 	= Fleet::createFleetPopupedMissionLink($this->resource, __('main.type_mission.' . $this->resource->mission->value), $fleetClass);
 
 		$startId  = '';
 		$targetId = '';
@@ -164,7 +164,7 @@ class FleetRow extends JsonResource
 		$bloc['id'] = $this->resource->id;
 		$bloc['status'] = $fleetStatus[$this->status];
 		$bloc['prefix'] = $fleetPrefix;
-		$bloc['mission'] = $fleetStyle[$this->resource->mission];
+		$bloc['mission'] = $fleetStyle[$this->resource->mission->value];
 		$bloc['time'] = $time->utc()->toAtomString();
 		$bloc['text'] = $rowString;
 

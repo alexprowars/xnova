@@ -227,7 +227,7 @@ class OverviewController extends Controller
 				}
 
 				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
-					if (($fleet->end_time->isFuture() and $fleet->mission != Mission::Stay) or ($fleet->mess == 1 and $fleet->mission == Mission::Stay)) {
+					if (($fleet->end_time->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
 						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 2, true);
 					}
 				}

@@ -381,8 +381,10 @@ class User extends Authenticatable
 				// Проверяем корректность заполненных полей
 				$planet->checkUsedFields();
 
+				$this->currentPlanet = $planet;
+
 				// Обновляем ресурсы на планете когда это необходимо
-				if ($planet->last_update?->diffInSeconds() > 60) {
+				if ($planet->last_update?->diffInSeconds() < 60) {
 					$planet->getProduction()->update(true);
 				} else {
 					$planet->getProduction()->update();
@@ -390,8 +392,6 @@ class User extends Authenticatable
 					$queueManager = new QueueManager($this, $planet);
 					$queueManager->checkUnitQueue();
 				}
-
-				$this->currentPlanet = $planet;
 			}
 		}
 

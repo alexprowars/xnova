@@ -638,7 +638,7 @@ class Attack extends FleetEngine implements Mission
 		} else {
 			$playerObj = $playerGroup->getPlayer($fleet->user_id);
 
-			if ($playerObj === false) {
+			if (!$playerObj) {
 				$info = User::find($fleet->user_id);
 
 				$playerObj = new Player($fleet->user_id);

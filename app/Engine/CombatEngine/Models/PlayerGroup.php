@@ -43,7 +43,7 @@ class PlayerGroup extends IterableIterator
 
 	public function getPlayer($id)
 	{
-		return isset($this->array[$id]) ? $this->array[$id] : false;
+		return $this->array[$id] ?? null;
 	}
 
 	public function existPlayer($id)

@@ -258,7 +258,7 @@ class Spy extends FleetEngine implements Mission
 				$row = 0;
 
 				for ($Item = $ResFrom[$CurrentLook]; $Item <= $ResTo[$CurrentLook]; $Item++) {
-					if (Vars::getName($Item) === false) {
+					if (!Vars::getName($Item)) {
 						continue;
 					}
 

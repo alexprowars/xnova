@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Fleet\Mission;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -19,6 +20,7 @@ class Fleet extends Model
 			'start_time' => 'immutable_datetime',
 			'end_time' => 'immutable_datetime',
 			'end_stay' => 'immutable_datetime',
+			'mission' => Mission::class,
 		];
 	}
 
@@ -114,7 +116,7 @@ class Fleet extends Model
 
 	public function canBack()
 	{
-		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != 15) && $this->mission != 20 && $this->target_user_id != 1));
+		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != 15) && $this->mission != Mission::Rak && $this->target_user_id != 1));
 	}
 
 	public function getOriginCoordinates(): Coordinates

@@ -20,7 +20,7 @@ class TechController extends Controller
 			$pars = [];
 			$pars['name'] = $name;
 
-			if (Vars::getName($element) === false) {
+			if (!Vars::getName($element)) {
 				if (count($items) > 0) {
 					$parse[count($parse) - 1]['items'] = $items;
 					$items = [];

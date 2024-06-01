@@ -68,24 +68,24 @@ class FleetController extends Controller
 
 		foreach ($fleets as $fleet) {
 			$parse['fleets'][] = [
-				'id' => (int) $fleet->id,
-				'mission' => (int) $fleet->mission,
+				'id' => $fleet->id,
+				'mission' => $fleet->mission,
 				'amount' => $fleet->getTotalShips(),
 				'units' => $fleet->getShips(),
 				'start' => [
-					'galaxy' => (int) $fleet->start_galaxy,
-					'system' => (int) $fleet->start_system,
-					'planet' => (int) $fleet->start_planet,
+					'galaxy' => $fleet->start_galaxy,
+					'system' => $fleet->start_system,
+					'planet' => $fleet->start_planet,
 					'time' => $fleet->start_time?->utc()->toAtomString(),
 				],
 				'target' => [
-					'galaxy' => (int) $fleet->end_galaxy,
-					'system' => (int) $fleet->end_system,
-					'planet' => (int) $fleet->end_planet,
+					'galaxy' => $fleet->end_galaxy,
+					'system' => $fleet->end_system,
+					'planet' => $fleet->end_planet,
 					'time' => $fleet->end_time?->utc()->toAtomString(),
 					'id' => $fleet->target_user_id,
 				],
-				'stage' => (int) $fleet->mess
+				'stage' => $fleet->mess,
 			];
 		}
 

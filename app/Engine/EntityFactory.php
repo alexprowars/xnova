@@ -21,18 +21,6 @@ class EntityFactory
 		return $className::createEntity($entityId, $level, $planet);
 	}
 
-	public static function fromModel(PlanetEntity $entity, ?Planet $planet = null)
-	{
-		$className = self::getEntityClassName($entity->entity_id);
-
-		if (!$planet) {
-			$planet = Auth::user()->getCurrentPlanet(true);
-		}
-
-		/** @var Entity\Entity $className */
-		return $className::createEntity($entity->entity_id, $entity->amount, $planet);
-	}
-
 	public static function getEntityClassName(int $entityId): string
 	{
 		return match (Vars::getItemType($entityId)) {
