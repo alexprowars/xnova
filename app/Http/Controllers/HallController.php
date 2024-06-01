@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Hall;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Request;
-use App\Controller;
 
 class HallController extends Controller
 {

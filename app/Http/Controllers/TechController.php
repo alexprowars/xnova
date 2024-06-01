@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Controller;
 use App\Engine\EntityFactory;
-use App\Vars;
+use App\Engine\Vars;
 
 class TechController extends Controller
 {

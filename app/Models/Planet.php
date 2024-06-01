@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Engine\Coordinates;
 use App\Engine\Entity\Entity as BaseEntity;
 use App\Engine\EntityCollection;
 use App\Engine\EntityFactory;
-use App\Planet\Production;
-use App\Vars;
+use App\Engine\Production;
+use App\Engine\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
-use App\Entity\Coordinates;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 

@@ -2,8 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Fleet;
-use App\Game;
+use App\Engine\Fleet;
 use App\Helpers;
 use App\Models\Fleet as FleetModel;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -128,7 +127,7 @@ class FleetRow extends JsonResource
 			$rowString = $this->resource->assault_id ? 'Союзный ' : __('overview.ov_une_hostile');
 			$rowString .= $fleetContent;
 			$rowString .= __('overview.ov_hostile');
-			$rowString .= Helpers::BuildHostileFleetPlayerLink($this->resource);
+			$rowString .= Helpers::buildHostileFleetPlayerLink($this->resource);
 		}
 
 		if ($this->status == 0) {

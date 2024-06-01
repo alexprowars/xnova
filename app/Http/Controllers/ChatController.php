@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Controller;
 use App\Events\ChatMessage;
 use App\Events\ChatPrivateMessage;
 use App\Exceptions\Exception;
-use App\Models\Chat;
 use App\Http\Resources;
+use App\Models\Chat;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller

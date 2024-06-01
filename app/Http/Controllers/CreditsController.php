@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Controller;
-use App\Models;
 
 class CreditsController extends Controller
 {

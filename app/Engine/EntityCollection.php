@@ -3,10 +3,9 @@
 namespace App\Engine;
 
 use App\Engine\Entity\Entity;
-use Illuminate\Support\Collection;
-use App\Models\PlanetEntity;
 use App\Models\Planet;
-use App\Vars;
+use App\Models\PlanetEntity;
+use Illuminate\Support\Collection;
 
 class EntityCollection extends Collection
 {

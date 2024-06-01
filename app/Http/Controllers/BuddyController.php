@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\Models\User;
-use App\Controller;
 use App\Models;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class BuddyController extends Controller
 {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use Illuminate\Http\Request;
-use App\Controller;
-use App\Models;
 use App\Exceptions\RedirectException;
+use App\Http\Controllers\Controller;
+use App\Models;
+use Illuminate\Http\Request;
 
 class FleetShortcutController extends Controller
 {

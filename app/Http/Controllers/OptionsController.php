@@ -2,14 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Gumlet\ImageResize;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use App\Engine\Queue;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
 use App\Files;
@@ -18,9 +12,14 @@ use App\Helpers;
 use App\Mail\UserLostPasswordSuccess;
 use App\Models;
 use App\Models\User;
-use App\Queue;
-use App\Controller;
-use App\Vars;
+use Gumlet\ImageResize;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class OptionsController extends Controller
 {

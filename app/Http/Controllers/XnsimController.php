@@ -3,18 +3,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\BattleReport;
+use App\Engine\CombatEngine\Core\Battle;
+use App\Engine\CombatEngine\Core\Round;
+use App\Engine\CombatEngine\Models\Defense;
+use App\Engine\CombatEngine\Models\Fleet;
+use App\Engine\CombatEngine\Models\Player;
+use App\Engine\CombatEngine\Models\PlayerGroup;
+use App\Engine\CombatEngine\Models\Ship;
+use App\Engine\CombatEngine\Models\ShipType;
+use App\Engine\Vars;
 use Illuminate\Support\Facades\Request;
-use App\Battle\Core\Battle;
-use App\Battle\Core\Round;
-use App\Battle\Models\Defense;
-use App\Battle\Models\Fleet;
-use App\Battle\Models\Player;
-use App\Battle\Models\PlayerGroup;
-use App\Battle\Models\Ship;
-use App\Battle\Models\ShipType;
-use App\CombatReport;
-use App\Controller;
-use App\Vars;
 
 class XnsimController extends Controller
 {
@@ -125,7 +124,7 @@ class XnsimController extends Controller
 			$this->view->setVar('statistics', $statistics);
 		}
 
-		$report = new CombatReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
+		$report = new BattleReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
 		$report = $report->report();
 
 		$this->view->setVar('report', $report);

@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Controller;
-use App\Game;
+use App\Engine\Game;
 use App\Http\Resources\Planet;
 use App\Http\Resources\User;
 use Illuminate\Support\Facades\Auth;

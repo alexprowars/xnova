@@ -2,8 +2,8 @@
 
 namespace App\Engine\Entity;
 
+use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Vars;
 
 class Ship extends Unit
 {

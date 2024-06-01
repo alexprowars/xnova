@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Building;
+use App\Engine\Building;
+use App\Engine\Construction;
 use App\Engine\EntityFactory;
-use App\Queue;
-use App\Vars;
-use App\Construction;
-use App\Controller;
+use App\Engine\Queue;
+use App\Engine\Vars;
 use App\Exceptions\PageException;
 use Illuminate\Http\Request;
 

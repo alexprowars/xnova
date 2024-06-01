@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LogStat;
-use App\Models\Statistic;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
-use App\Entity\Coordinates;
+use App\Engine\Coordinates;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Files;
+use App\Models\LogStat;
 use App\Models\Planet;
-use App\Controller;
+use App\Models\Statistic;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
 class PlayersController extends Controller
 {

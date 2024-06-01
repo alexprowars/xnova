@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Engine\Coordinates;
 use Illuminate\Database\Eloquent\Model;
-use App\Entity\Coordinates;
 
 class Fleet extends Model
 {

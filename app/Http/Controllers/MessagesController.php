@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Game;
+use App\Exceptions\ErrorException;
+use App\Exceptions\SuccessException;
+use App\Format;
+use App\Models;
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
-use App\Exceptions\ErrorException;
-use App\Exceptions\SuccessException;
-use App\Format;
-use App\Game;
-use App\Models\Message;
-use App\Models\User;
-use App\Controller;
-use App\Models;
 
 class MessagesController extends Controller
 {

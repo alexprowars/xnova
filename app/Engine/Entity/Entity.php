@@ -2,10 +2,10 @@
 
 namespace App\Engine\Entity;
 
-use App\Models\Planet;
 use App\Engine\Contracts\EntityInterface;
 use App\Engine\Contracts\EntityProductionInterface;
-use App\Vars;
+use App\Engine\Vars;
+use App\Models\Planet;
 
 class Entity implements EntityInterface, EntityProductionInterface
 {

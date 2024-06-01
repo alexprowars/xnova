@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Models;
-use App\Vars;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -51,7 +51,7 @@ class Queue extends Command
 						throw new Exception('Cron::update::queueAction::user or planet not found');
 					}
 
-					DB::transaction(fn() => (new \App\Queue($item->user, $planet))->update());
+					DB::transaction(fn() => (new \App\Engine\Queue($item->user, $planet))->update());
 				} catch (Exception $e) {
 					Log::error("\n\n" . $e->getMessage() . "\n\n");
 					echo $e->getMessage();

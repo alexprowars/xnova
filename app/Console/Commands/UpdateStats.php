@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Engine\UpdateStatistics;
+use App\Engine\Vars;
 use Illuminate\Console\Command;
-use App\UpdateStatistics;
-use App\Vars;
 
 class UpdateStats extends Command
 {

@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Engine\Vars;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
-use App\Models\UserQuest;
-use App\Vars;
 
 /**
  * @mixin \App\Models\User

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Statistic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use App\Controller;
-use App\Models\Statistic;
 
 class StatController extends Controller
 {

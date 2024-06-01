@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Entity as PlanetEntity;
+use App\Engine\Fleet;
+use App\Engine\Vars;
+use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
+use App\Http\Controllers\Controller;
 use App\Models\Assault;
+use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Controller;
-use App\Exceptions\PageException;
-use App\Entity;
-use App\Fleet;
-use App\Models\Planet;
-use App\Engine\Entity as PlanetEntity;
-use App\Vars;
 
 class FleetCheckoutController extends Controller
 {
@@ -186,7 +185,7 @@ class FleetCheckoutController extends Controller
 		$YourPlanet = false;
 		$UsedPlanet = false;
 
-		$targetPlanet = Planet::findByCoordinates(new Entity\Coordinates($galaxy, $system, $planet, $type));
+		$targetPlanet = Planet::findByCoordinates(new \App\Engine\Coordinates($galaxy, $system, $planet, $type));
 
 		if ($targetPlanet) {
 			$UsedPlanet = true;
@@ -196,7 +195,7 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$missions = Fleet::getFleetMissions($fleets, new Entity\Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
+		$missions = Fleet::getFleetMissions($fleets, new \App\Engine\Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
 
 		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin())) {
 			$missions[] = 4;

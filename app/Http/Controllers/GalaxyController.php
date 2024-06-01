@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Fleet;
+use App\Files;
+use App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use App\Files;
-use App\Fleet;
-use App\Controller;
-use App\Models;
 
 class GalaxyController extends Controller
 {

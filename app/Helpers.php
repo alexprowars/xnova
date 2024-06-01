@@ -6,47 +6,11 @@ use Illuminate\Support\Facades\URL;
 
 class Helpers
 {
-	public static function getDateString($type, $value)
-	{
-		$data = [];
-
-		if ($type == 'month') {
-			$data = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-		} elseif ($type == 'week') {
-			$data = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-		}
-
-		return $data[$value] ?? '';
-	}
-
-	public static function getTimeFromString($str, $is_sec = false)
-	{
-		$str = explode(":", $str);
-
-		if ($str[0] > 23) {
-			$str[0] = 23;
-		}
-		if ($str[1] > 59) {
-			$str[1] = 59;
-		}
-
-		return $str[0] * ($is_sec ? 3600 : 60) + $str[1];
-	}
-
 	public static function translite($st)
 	{
 		$st = strtr($st, 'абвгдезийклмнопрстуфх', 'abvgdezijklmnoprstufx');
 		$st = strtr($st, 'АБВГДЕЗИЙКЛМНОПРСТУФХ', 'ABVGDEZIJKLMNOPRSTUFX');
 		$st = strtr($st, ['ё' => 'yo', 'ж' => 'zh', 'ц' => 'cz', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shh', 'ъ' => '``', 'ы' => 'y`', 'ь' => '`', 'э' => 'e`', 'ю' => 'yu', 'я' => 'ya', 'Ё' => 'YO', 'Ж' => 'ZH', 'Ц' => 'CZ', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SHH', 'Ъ' => '``', 'Ы' => 'Y`', 'Ь' => '`', 'Э' => 'E`', 'Ю' => 'YU', 'Я' => 'YA']);
-
-		return $st;
-	}
-
-	public static function untranslite($st)
-	{
-		$st = strtr($st, ['yo' => 'ё', 'zh' => 'ж', 'cz' => 'ц', 'ch' => 'ч', 'sh' => 'ш', 'shh' => 'щ', '``' => 'ъ', 'y`' => 'ы', '`' => 'ь', 'e`' => 'э', 'yu' => 'ю', 'ya' => 'я', 'YO' => 'Ё', 'ZH' => 'Ж', 'CZ' => 'Ц', 'CH' => 'Ч', 'SH' => 'Ш', 'SHH' => 'Щ', 'Y`' => 'Ы', 'E`' => 'Э', 'YU' => 'Ю', 'YA' => 'Я']);
-		$st = strtr($st, 'abvgdezijklmnoprstufx', 'абвгдезийклмнопрстуфх');
-		$st = strtr($st, 'ABVGDEZIJKLMNOPRSTUFX', 'АБВГДЕЗИЙКЛМНОПРСТУФХ');
 
 		return $st;
 	}
@@ -60,55 +24,9 @@ class Helpers
 		return htmlspecialchars($str);
 	}
 
-	public static function morph($value, $gender = '', $declension = '')
-	{
-		if (preg_match('/1\d$/', $value)) {
-			$n = 2;
-		} elseif (preg_match('/1$/', $value)) {
-			$n = 0;
-		} elseif (preg_match('/([234])$/', $value)) {
-			$n = 1;
-		} else {
-			$n = 2;
-		}
-
-		if ($gender == 'masculine') {
-			$ends = array(1 => array('', 'а', 'ов'), 2 => array('ь', 'я', 'ей'), 3 => array('', 'а', ''), 4 => array('ся', 'ось', 'ось'));
-			return $ends[$declension][$n];
-		} elseif ($gender == 'feminine') {
-			$ends = array(1 => array('а', 'и', ''), 2 => array('я', 'и', 'й'), 3 => array('ья', 'ьи', 'ей'), 4 => array('ь', 'и', 'ей'), 5 => array('а', 'ы', ''));
-			return $ends[$declension][$n];
-		} elseif ($gender == 'neuter') {
-			$ends = array(1 => array('е', 'я', 'ей'), 2 => array('ое', 'ых', 'ых'));
-			return $ends[$declension][$n];
-		} else {
-			return $n;
-		}
-	}
-
-	public static function colorNumber($n)
-	{
-		if ($n > 0) {
-			return '<span class="positive">' . $n . '</span>';
-		} elseif ($n < 0) {
-			return '<span class="negative">' . $n . '</span>';
-		} else {
-			return $n;
-		}
-	}
-
 	public static function is_email($email)
 	{
-		return !!filter_var($email, FILTER_VALIDATE_EMAIL);
-	}
-
-	public static function cutString($string, $maxlen)
-	{
-		$len = (mb_strlen($string) > $maxlen) ? mb_strripos(mb_substr($string, 0, $maxlen), ' ') : $maxlen;
-
-		$cutStr = mb_substr($string, 0, $len);
-
-		return (mb_strlen($string) > $maxlen) ? '' . $cutStr . '...' : '' . $cutStr . '';
+		return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
 	public static function pagination($count, $per_page, $link, $page = 0)
@@ -153,16 +71,16 @@ class Helpers
 		return $pages;
 	}
 
-	public static function BuildPlanetAdressLink($CurrentPlanet)
+	public static function buildPlanetAdressLink($CurrentPlanet)
 	{
-		$uri = URL::to('galaxy/' . $CurrentPlanet['galaxy'] . '/' . $CurrentPlanet['system'] . '/');
+		$uri = URL::to('galaxy/' . $CurrentPlanet['galaxy'] . '/' . $CurrentPlanet['system']);
 
 		return '<a href="' . $uri . '">[' . $CurrentPlanet['galaxy'] . ':' . $CurrentPlanet['system'] . ':' . $CurrentPlanet['planet'] . ']</a>';
 	}
 
-	public static function BuildHostileFleetPlayerLink($FleetRow)
+	public static function buildHostileFleetPlayerLink($FleetRow)
 	{
-		$uri = URL::to('messages/write/' . $FleetRow->user_id . '/');
+		$uri = URL::to('messages/write/' . $FleetRow->user_id);
 
 		return $FleetRow->user?->username . ' <a href="' . $uri . '" title="' . __('overview.ov_message') . '"><span class=\'sprite skin_m\'></span></a>';
 	}

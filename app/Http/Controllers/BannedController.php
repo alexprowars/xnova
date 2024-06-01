@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blocked;
-use App\Controller;
 
 class BannedController extends Controller
 {

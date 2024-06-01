@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
+use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Format;
-use App\Controller;
 use App\Models;
-use App\Vars;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Request;
 
 class TutorialController extends Controller
 {

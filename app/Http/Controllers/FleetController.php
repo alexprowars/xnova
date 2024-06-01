@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
-use Illuminate\Http\Request;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Models;
-use App\Controller;
-use App\Vars;
+use Illuminate\Http\Request;
 
 class FleetController extends Controller
 {

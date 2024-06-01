@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\SuccessException;
 use App\Models;
-use App\Controller;
-use App\Vars;
+use Illuminate\Support\Facades\Request;
 
 class InfoController extends Controller
 {

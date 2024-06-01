@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
+use App\Engine\Fleet;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
-use App\Fleet;
 use App\Models;
-use App\Controller;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class PhalanxController extends Controller
 {

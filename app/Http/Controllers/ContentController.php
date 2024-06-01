@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Controller;
 use App\Exceptions\ErrorException;
 use App\Models\Content;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Game;
+use App\Engine\Game;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 

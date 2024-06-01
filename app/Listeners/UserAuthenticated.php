@@ -2,16 +2,16 @@
 
 namespace App\Listeners;
 
+use App\Engine\Game;
+use App\Exceptions\PageException;
+use App\Helpers;
+use App\Models\Blocked;
 use App\Models\LogIp;
+use App\Models\User;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use App\Exceptions\PageException;
-use App\Game;
-use App\Helpers;
-use App\Models\Blocked;
-use App\Models\User;
 
 class UserAuthenticated
 {

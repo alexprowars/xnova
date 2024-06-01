@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Engine\Vars;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Vars;
 
 /**
  * @mixin \App\Models\Planet

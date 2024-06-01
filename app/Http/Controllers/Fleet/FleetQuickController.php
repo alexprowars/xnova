@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use App\Controller;
-use App\Entity\Coordinates;
+use App\Engine\Coordinates;
+use App\Engine\Game;
+use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
+use App\Http\Controllers\Controller;
 use App\Models;
-use App\Game;
 use App\Models\Planet;
-use App\Vars;
-use App\Entity;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class FleetQuickController extends Controller
 {
@@ -164,7 +163,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$fleetCollection = Entity\FleetCollection::createFromArray($fleetArray, $this->planet);
+		$fleetCollection = \App\Engine\FleetCollection::createFromArray($fleetArray, $this->planet);
 
 		$fleetSpeed = $fleetCollection->getSpeed();
 

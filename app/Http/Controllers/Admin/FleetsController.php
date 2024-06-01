@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Engine\Fleet;
+use App\Engine\Game;
+use App\Models;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use App\Fleet;
-use App\Game;
-use App\Models;
 
 class FleetsController extends Controller
 {

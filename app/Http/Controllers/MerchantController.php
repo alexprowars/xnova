@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Controller;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\RedirectException;
-use App\Models;
-use App\Vars;
+use Illuminate\Http\Request;
 
 class MerchantController extends Controller
 {

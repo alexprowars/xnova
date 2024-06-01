@@ -2,7 +2,7 @@
 
 namespace App\Engine\Entity;
 
-use App\Vars;
+use App\Engine\Vars;
 
 class Research extends Entity
 {

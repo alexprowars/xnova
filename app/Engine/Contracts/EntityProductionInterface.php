@@ -2,7 +2,7 @@
 
 namespace App\Engine\Contracts;
 
-use App\Planet\Resources;
+use App\Engine\Resources;
 
 interface EntityProductionInterface
 {

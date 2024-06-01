@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Engine\Fleet\Missions\Mission;
+use App\Engine\Vars;
+use App\Models;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use App\Missions\Mission;
-use App\Models;
-use App\Vars;
 
 class Fleet extends Command
 {

@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
+use App\Engine\Game;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Files;
 use App\Format;
-use App\Game;
 use App\Helpers;
+use App\Models;
 use App\Models\Alliance;
 use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
-use App\Models;
 use App\Models\User;
-use App\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 class AllianceController extends Controller
 {

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Engine\Galaxy;
+use App\Engine\Queue as QueueManager;
+use App\Engine\User\Tech;
 use App\Exceptions\Exception;
-use App\Galaxy;
 use App\Helpers;
+use App\Mail\UserLostPassword;
 use App\Notifications\UserRegistrationNotification;
-use App\Queue as QueueManager;
-use App\User\Tech;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Backpack\Settings\app\Models\Setting;
 use Carbon\Carbon;
@@ -23,7 +24,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
-use App\Mail\UserLostPassword;
 use Throwable;
 
 /**

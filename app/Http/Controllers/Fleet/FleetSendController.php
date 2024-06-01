@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Coordinates;
+use App\Engine\Fleet;
+use App\Engine\FleetCollection;
+use App\Engine\Game;
+use App\Engine\Vars;
+use App\Exceptions\ErrorException;
+use App\Exceptions\PageException;
+use App\Format;
+use App\Http\Controllers\Controller;
+use App\Models;
+use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
-use App\Controller;
-use App\Entity\Coordinates;
-use App\Entity\FleetCollection;
-use App\Exceptions\ErrorException;
-use App\Exceptions\PageException;
-use App\Fleet;
-use App\Format;
-use App\Game;
-use App\Models;
-use App\Models\Planet;
-use App\Vars;
 
 class FleetSendController extends Controller
 {

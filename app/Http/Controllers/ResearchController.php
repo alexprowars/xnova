@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Building;
-use App\Controller;
+use App\Engine\Building;
+use App\Engine\EntityFactory;
+use App\Engine\Queue;
+use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Models\Planet;
 use App\Models\Queue as QueueModel;
-use App\Engine\EntityFactory;
-use App\Queue;
-use App\Vars;
 use Illuminate\Http\Request;
 
 class ResearchController extends Controller

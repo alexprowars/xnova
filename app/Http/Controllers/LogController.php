@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
-use App\CombatReport;
-use App\Controller;
+use App\Engine\BattleReport;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models\LogBattle;
 use App\Models\Report;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class LogController extends Controller
 {
@@ -131,7 +130,7 @@ class LogController extends Controller
 			throw new PageException('Данный лог боя пока недоступен для просмотра!');
 		}
 
-		$report = new CombatReport($raport->data[0], $raport->data[1], $raport->data[2], $raport->data[3], $raport->data[4], $raport->data[5], $raport->data[6]);
+		$report = new BattleReport($raport->data[0], $raport->data[1], $raport->data[2], $raport->data[3], $raport->data[4], $raport->data[5], $raport->data[6]);
 
 		return response()->state([
 			'raport' => $report->report()['html']

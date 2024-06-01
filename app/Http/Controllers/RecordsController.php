@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Format;
-use App\Controller;
 use Illuminate\Support\Facades\Date;
 
 class RecordsController extends Controller

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
+use App\Exceptions\SuccessException;
+use App\Models;
+use App\Models\User;
 use App\Notifications\PasswordResetNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
@@ -10,12 +15,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use App\Controller;
-use App\Exceptions\ErrorException;
-use App\Exceptions\Exception;
-use App\Exceptions\SuccessException;
-use App\Models\User;
-use App\Models;
 use Throwable;
 
 class LoginController extends Controller

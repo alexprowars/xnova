@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\URL;
-use App\CombatReport;
-use App\Controller;
+use App\Engine\BattleReport;
 use App\Exceptions\PageException;
 use App\Models\Report;
+use Illuminate\Support\Facades\URL;
 
 class RwController extends Controller
 {
@@ -36,7 +35,7 @@ class RwController extends Controller
 			}
 		}
 
-		$combatReport = new CombatReport($report->data[0], $report->data[1], $report->data[2], $report->data[3], $report->data[4], $report->data[5]);
+		$combatReport = new BattleReport($report->data[0], $report->data[1], $report->data[2], $report->data[3], $report->data[4], $report->data[5]);
 
 		$html = $combatReport->report()['html'];
 		$html .= "<div class='separator'></div><div class='text-center'>ID боевого доклада: <a href=\"" . URL::to('log/new/') . "?code=" . md5(config('app.key') . $report->id) . $report->id . "/\"><font color=red>" . md5('xnovasuka' . $report->id) . $report->id . "</font></a></div>";

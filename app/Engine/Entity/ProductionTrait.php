@@ -2,8 +2,8 @@
 
 namespace App\Engine\Entity;
 
-use App\Planet\Resources;
-use App\Vars;
+use App\Engine\Resources;
+use App\Engine\Vars;
 
 /**
  * @mixin Entity

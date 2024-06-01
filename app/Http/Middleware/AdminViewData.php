@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Engine\Vars;
 use Closure;
 use DirectoryIterator;
 use Illuminate\Http\Request;
@@ -11,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
-use App\Vars;
 
 class AdminViewData
 {

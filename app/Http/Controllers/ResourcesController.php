@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
+use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
-use App\Controller;
 use App\Models\LogCredit;
 use App\Models\PlanetEntity;
-use App\Engine\Contracts\EntityProductionInterface;
-use App\Vars;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class ResourcesController extends Controller
 {

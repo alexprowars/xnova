@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Controller;
-
 class NewsController extends Controller
 {
 	public function index()

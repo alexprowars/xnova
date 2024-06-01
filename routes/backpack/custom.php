@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix(config('backpack.base.route_prefix', 'admin'))
 	->middleware(array_merge(
-      (array) config('backpack.base.web_middleware', 'web'),
-      (array) config('backpack.base.middleware_key', 'admin'),
+		(array) config('backpack.base.web_middleware', 'web'),
+		(array) config('backpack.base.middleware_key', 'admin'),
 	))
 	->name('admin.')
-		->group(function () {
+	->group(function () {
 		Route::get('/', [Admin\IndexController::class, 'index'])->name('index');
 		Route::get('alliances', [Admin\AlliancesController::class, 'index'])->name('alliances');
 		Route::get('fleets', [Admin\FleetsController::class, 'index'])->name('fleets');

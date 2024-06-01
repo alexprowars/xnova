@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\RedirectException;
-use Illuminate\Http\Request;
+use App\Engine\Vars;
 use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
 use App\Helpers;
-use App\Controller;
 use App\Models;
-use App\Vars;
+use Illuminate\Http\Request;
 
 class StartController extends Controller
 {

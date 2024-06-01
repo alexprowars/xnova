@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Controller;
-use App\Vars;
+use App\Engine\Vars;
 
 class SimController extends Controller
 {

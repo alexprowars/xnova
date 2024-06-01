@@ -2,11 +2,10 @@
 
 namespace App\Engine;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\PlanetEntity;
-use App\Models\Planet;
 use App\Exceptions\Exception;
-use App\Vars;
+use App\Models\Planet;
+use App\Models\PlanetEntity;
+use Illuminate\Support\Facades\Auth;
 
 class EntityFactory
 {

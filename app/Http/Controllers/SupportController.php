@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
-use Nutnet\LaravelSms\SmsSender;
 use App\Exceptions\ErrorException;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
@@ -11,7 +9,8 @@ use App\Exceptions\SuccessException;
 use App\Helpers;
 use App\Models\Support;
 use App\Models\User;
-use App\Controller;
+use Illuminate\Support\Facades\Request;
+use Nutnet\LaravelSms\SmsSender;
 
 class SupportController extends Controller
 {

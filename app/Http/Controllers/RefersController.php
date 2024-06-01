@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Referal;
 use Illuminate\Support\Facades\DB;
-use App\Controller;
 
 class RefersController extends Controller
 {

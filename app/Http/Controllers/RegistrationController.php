@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Http\Requests\RegistrationRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use App\Controller;
-use App\Exceptions\Exception;
-use App\Models\User;
 
 class RegistrationController extends Controller
 {

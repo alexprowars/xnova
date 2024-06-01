@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Building;
-use App\Construction;
-use App\Controller;
+use App\Engine\Building;
+use App\Engine\Construction;
+use App\Engine\Queue;
+use App\Engine\Vars;
 use App\Exceptions\PageException;
-use App\Queue;
-use App\Vars;
 use Illuminate\Http\Request;
 
 class BuildingsController extends Controller

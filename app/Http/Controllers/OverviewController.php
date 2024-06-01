@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Entity as PlanetEntity;
+use App\Engine\Game;
+use App\Engine\Queue;
+use App\Engine\Vars;
+use App\Exceptions\ErrorException;
+use App\Exceptions\RedirectException;
+use App\Helpers;
 use App\Http\Resources\FleetRow;
+use App\Models;
+use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
-use App\Exceptions\ErrorException;
-use App\Exceptions\RedirectException;
-use App\Game;
-use App\Helpers;
-use App\Models;
-use App\Models\Planet;
-use App\Engine\Entity as PlanetEntity;
-use App\Queue;
-use App\Controller;
-use App\Vars;
 
 class OverviewController extends Controller
 {

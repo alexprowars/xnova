@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use App\Models\Friend;
-use App\Models\Planet;
-use Illuminate\Http\Request;
-use App\Controller;
 use App\Exceptions\ErrorException;
+use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Fleet;
+use App\Models\Friend;
+use App\Models\Planet;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class FleetVerbandController extends Controller
 {
