@@ -4,6 +4,7 @@ namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityInterface;
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Vars;
 use App\Models\Planet;
 
@@ -114,7 +115,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
-				if ($this->planet->planet_type == 5 && in_array($this->entityId, [43, 502, 503])) {
+				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;
 					}

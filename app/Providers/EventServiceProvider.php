@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use App\Models\Observers\UserObserver;
-use App\Models\User;
 use App\Listeners\UserAuthenticated;
 
 class EventServiceProvider extends ServiceProvider
@@ -17,11 +15,4 @@ class EventServiceProvider extends ServiceProvider
 			'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
 		],
 	];
-
-	public function boot()
-	{
-		parent::boot();
-
-		User::observe(UserObserver::class);
-	}
 }

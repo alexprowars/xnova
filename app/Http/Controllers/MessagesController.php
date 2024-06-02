@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Game;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
 use App\Format;
 use App\Models;
@@ -20,7 +20,7 @@ class MessagesController extends Controller
 	public function write(Request $request, $userId)
 	{
 		if (!$userId) {
-			throw new ErrorException(__('messages.mess_no_ownerid'));
+			throw new Exception(__('messages.mess_no_ownerid'));
 		}
 
 		$userId = (int) $userId;
@@ -28,7 +28,7 @@ class MessagesController extends Controller
 		$OwnerRecord = User::find($userId);
 
 		if (!$OwnerRecord) {
-			throw new ErrorException(__('messages.mess_no_owner'));
+			throw new Exception(__('messages.mess_no_owner'));
 		}
 
 		if ($request->post('text')) {
@@ -37,11 +37,11 @@ class MessagesController extends Controller
 			$error = 0;
 
 			if ($text == '') {
-				throw new ErrorException(__('messages.mess_no_text'));
+				throw new Exception(__('messages.mess_no_text'));
 			}
 
 			if (!$error && $this->user->message_block > time()) {
-				throw new ErrorException(__('messages.mess_similar'));
+				throw new Exception(__('messages.mess_similar'));
 			}
 
 			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
@@ -52,7 +52,7 @@ class MessagesController extends Controller
 						->count();
 
 					if ($lastSend > 0) {
-						throw new ErrorException(__('messages.mess_limit'));
+						throw new Exception(__('messages.mess_limit'));
 					}
 				}
 			}
@@ -66,7 +66,7 @@ class MessagesController extends Controller
 				similar_text($text, $similar->text, $sim);
 
 				if ($sim > 80) {
-					throw new ErrorException(__('messages.mess_similar'));
+					throw new Exception(__('messages.mess_similar'));
 				}
 			}
 
@@ -133,7 +133,7 @@ class MessagesController extends Controller
 			->first();
 
 		if (!$mes) {
-			throw new ErrorException('Сообщение не найдено');
+			throw new Exception('Сообщение не найдено');
 		}
 
 		$users = Models\User::query()

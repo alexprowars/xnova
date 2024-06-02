@@ -15,9 +15,7 @@ class FleetCollection extends Collection
 
 	public function getSpeed(): int
 	{
-		return $this->map(function ($item) {
-			return $item->getSpeed();
-		})->min();
+		return $this->map(fn(Ship $item) => $item->getSpeed())->min();
 	}
 
 	public function getDistance(Coordinates $origin, Coordinates $destination): int
@@ -52,29 +50,24 @@ class FleetCollection extends Collection
 	{
 		$duration = max($duration, 2);
 
-		$consumption = $this->filter(function ($item) {
-			return $item->getLevel() > 0;
-		})
-		->reduce(function ($total, $item) use ($duration, $distance) {
-			$speed = 35000 / ($duration * Game::getSpeed('fleet') - 10) * sqrt($distance * 10 / $item->getSpeed());
+		$consumption = $this
+			->filter(fn(Ship $item) => $item->getLevel() > 0)
+			->reduce(function ($total, Ship $item) use ($duration, $distance) {
+				$speed = 35000 / ($duration * Game::getSpeed('fleet') - 10) * sqrt($distance * 10 / $item->getSpeed());
 
-			return $total + (($item->getConsumption() * $item->getLevel()) * $distance / 35000 * pow(($speed / 10) + 1, 2));
-		});
+				return $total + (($item->getConsumption() * $item->getLevel()) * $distance / 35000 * ((($speed / 10) + 1) ** 2));
+			}, 0);
 
-		return (int) round($consumption) + 1;
+		return ((int) round($consumption)) + 1;
 	}
 
 	public function getStorage(): int
 	{
-		return $this->reduce(function ($total, $item) {
-			return $total + ($item->getStorage() * $item->getLevel());
-		});
+		return $this->reduce(fn($total, $item) => $total + ($item->getStorage() * $item->getLevel()), 0);
 	}
 
 	public function getStayConsumption(): int
 	{
-		return $this->reduce(function ($total, $item) {
-			return $total + ($item->getStayConsumption() * $item->getLevel());
-		});
+		return $this->reduce(fn($total, $item) => $total + ($item->getStayConsumption() * $item->getLevel()), 0);
 	}
 }

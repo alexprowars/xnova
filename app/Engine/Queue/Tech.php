@@ -76,9 +76,7 @@ class Tech
 	{
 		$user = $this->queue->getUser();
 
-		$techHandle = Models\Queue::query()
-			->where('user_id', $user->id)
-			->where('type', Models\Queue::TYPE_TECH)->first();
+		$techHandle = $user->queue->firstWhere('type', Models\Queue::TYPE_TECH);
 
 		if ($techHandle && $techHandle->object_id == $elementId) {
 			$planet = Planet::query()

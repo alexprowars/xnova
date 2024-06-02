@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity as PlanetEntity;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use App\Engine\Game;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Http\Resources\FleetRow;
@@ -83,9 +84,9 @@ class OverviewController extends Controller
 			throw new RedirectException('/overview', __('overview.deletemessage_ok'));
 		}
 
-		$parse['number_1'] 		= mt_rand(1, 100);
-		$parse['number_2'] 		= mt_rand(1, 100);
-		$parse['number_3'] 		= mt_rand(1, 100);
+		$parse['number_1'] 		= random_int(1, 100);
+		$parse['number_2'] 		= random_int(1, 100);
+		$parse['number_3'] 		= random_int(1, 100);
 		$parse['number_check'] 	= md5($parse['number_1'] + $parse['number_2'] * $parse['number_3']);
 
 		$parse['id'] = $this->planet->id;
@@ -99,10 +100,6 @@ class OverviewController extends Controller
 	public function rename(Request $request)
 	{
 		$parse = [];
-		$parse['planet_id'] = $this->planet->id;
-		$parse['galaxy_galaxy'] = $this->planet->galaxy;
-		$parse['galaxy_system'] = $this->planet->system;
-		$parse['galaxy_planet'] = $this->planet->planet;
 
 		$parse['images'] = [
 			'trocken' => 20,
@@ -129,15 +126,15 @@ class OverviewController extends Controller
 				$name = strip_tags(trim($request->post('name', '')));
 
 				if ($name == '') {
-					throw new ErrorException('Ввведите новое название планеты');
+					throw new Exception('Ввведите новое название планеты');
 				}
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-					throw new ErrorException('Введённое название содержит недопустимые символы');
+					throw new Exception('Введённое название содержит недопустимые символы');
 				}
 
 				if (mb_strlen($name) <= 1 || mb_strlen($name) >= 20) {
-					throw new ErrorException('Введённо слишком длинное или короткое название планеты');
+					throw new Exception('Введённо слишком длинное или короткое название планеты');
 				}
 
 				$this->planet->name = $name;
@@ -146,13 +143,13 @@ class OverviewController extends Controller
 				throw new RedirectException('/overview', 'Название планеты изменено');
 			} elseif ($action == 'image') {
 				if ($this->user->credits < 1) {
-					throw new ErrorException('Недостаточно кредитов');
+					throw new Exception('Недостаточно кредитов');
 				}
 
 				$image = (int) $request->post('image', 0);
 
 				if ($image <= 0 || $image > $parse['images'][$parse['type']]) {
-					throw new ErrorException('Недостаточно читерских навыков');
+					throw new Exception('Недостаточно читерских навыков');
 				}
 
 				$this->planet->image = $parse['type'] . 'planet' . ($image < 10 ? '0' : '') . $image;
@@ -165,15 +162,13 @@ class OverviewController extends Controller
 			}
 		}
 
-		$parse['planet_name'] = $this->planet->name;
-
-		return $parse;
+		return response()->state($parse);
 	}
 
 	public function daily()
 	{
 		if ($this->user->daily_bonus?->isFuture()) {
-			throw new ErrorException('Вы не можете получить ежедневный бонус в данное время');
+			throw new Exception('Вы не можете получить ежедневный бонус в данное время');
 		}
 
 		$factor = $this->user->daily_bonus_factor < 50
@@ -259,7 +254,7 @@ class OverviewController extends Controller
 		$parse = [];
 		$parse['moon'] = false;
 
-		if ($this->planet->parent_planet != 0 && $this->planet->planet_type != 3 && $this->planet->id) {
+		if ($this->planet->parent_planet && $this->planet->planet_type != PlanetType::MOON && $this->planet->id) {
 			$lune = Cache::remember('app::lune_' . $this->planet->parent_planet, 300, function () {
 				return Models\Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Fleet\Mission;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
 use App\Models\Fleet;
@@ -16,17 +16,17 @@ class FleetBackController extends Controller
 		$fleetId = (int) $request->post('id', 0);
 
 		if ($fleetId <= 0) {
-			throw new ErrorException('Не выбран флот');
+			throw new Exception('Не выбран флот');
 		}
 
 		$fleet = Fleet::find($fleetId);
 
 		if (!$fleet || $fleet->user_id != $this->user->id) {
-			throw new ErrorException(__('fleet.fl_onlyyours'));
+			throw new Exception(__('fleet.fl_onlyyours'));
 		}
 
 		if (!$fleet->canBack()) {
-			throw new ErrorException(__('fleet.fl_notback'));
+			throw new Exception(__('fleet.fl_notback'));
 		}
 
 		if ($fleet->end_stay) {

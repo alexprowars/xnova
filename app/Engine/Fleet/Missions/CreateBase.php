@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
@@ -61,7 +62,7 @@ class CreateBase extends FleetEngine implements Mission
 					}
 
 					$this->fleet->fleet_array = $newFleet;
-					$this->fleet->end_type = 5;
+					$this->fleet->end_type = PlanetType::MILITARY_BASE;
 
 					$this->restoreFleetToPlanet(false);
 					$this->killFleet();

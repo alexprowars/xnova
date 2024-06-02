@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Game;
 use App\Models;
@@ -34,7 +35,7 @@ class FleetsController extends Controller
 
 			$row['Fleet'] = Fleet::createFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);
 			$row['St_Owner'] = "[" . $fleet->user_id . "]<br>" . $fleet->user_name;
-			$row['St_Posit'] = "[" . $fleet->start_galaxy . ":" . $fleet->start_system . ":" . $fleet->start_planet . "]<br>" . (($fleet->start_type == 1) ? "[P]" : (($fleet->start_type == 2) ? "D" : "L")) . "";
+			$row['St_Posit'] = "[" . $fleet->start_galaxy . ":" . $fleet->start_system . ":" . $fleet->start_planet . "]<br>" . (($fleet->start_type == PlanetType::PLANET) ? "[P]" : (($fleet->start_type == PlanetType::DEBRIS) ? "D" : "L")) . "";
 			$row['St_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->start_time);
 
 			if (!empty($fleet->target_user_id)) {
@@ -43,7 +44,7 @@ class FleetsController extends Controller
 				$row['En_Owner'] = "";
 			}
 
-			$row['En_Posit'] = "[" . $fleet->end_galaxy . ":" . $fleet->end_system . ":" . $fleet->end_planet . "]<br>" . (($fleet->end_type == 1) ? "[P]" : (($fleet->end_type == 2) ? "D" : "L")) . "";
+			$row['En_Posit'] = "[" . $fleet->end_galaxy . ":" . $fleet->end_system . ":" . $fleet->end_planet . "]<br>" . (($fleet->end_type == PlanetType::PLANET) ? "[P]" : (($fleet->end_type == PlanetType::DEBRIS) ? "D" : "L")) . "";
 
 			$row['En_Time'] = Game::datezone('H:i:s d/n/Y', $fleet->end_time);
 

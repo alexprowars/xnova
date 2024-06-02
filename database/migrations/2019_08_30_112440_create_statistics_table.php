@@ -11,10 +11,10 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->string('username', 35)->default('');
-			$table->boolean('race')->default(0);
+			$table->tinyInteger('race')->default(0);
 			$table->foreignId('alliance_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->string('alliance_name', 50)->nullable();
-			$table->boolean('stat_type')->default(0)->index();
+			$table->tinyInteger('stat_type')->default(0)->index();
 			$table->integer('stat_code')->default(0);
 			$table->smallInteger('tech_rank')->unsigned()->default(0)->index();
 			$table->smallInteger('tech_old_rank')->unsigned()->default(0);
@@ -36,7 +36,7 @@ return new class extends Migration {
 			$table->smallInteger('total_old_rank')->unsigned()->default(0);
 			$table->bigInteger('total_points')->default(0);
 			$table->integer('total_count')->default(0);
-			$table->boolean('stat_hide')->default(0);
+			$table->tinyInteger('stat_hide')->default(0);
 			$table->index(['stat_type','stat_code','stat_hide'], 'stat_type_2');
 		});
 	}

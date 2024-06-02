@@ -2,16 +2,12 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\PlanetType;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Coordinates implements Arrayable
 {
-	public const TYPE_PLANET = 1;
-	public const TYPE_DEBRIS = 2;
-	public const TYPE_MOON = 3;
-	public const TYPE_MILITARY_BASE = 5;
-
-	public function __construct(protected int $galaxy, protected int $system, protected ?int $planet = null, protected ?int $type = null)
+	public function __construct(protected int $galaxy, protected int $system, protected ?int $planet = null, protected ?PlanetType $type = null)
 	{
 	}
 
@@ -30,7 +26,7 @@ class Coordinates implements Arrayable
 		return $this->planet;
 	}
 
-	public function getType(): ?int
+	public function getType(): ?PlanetType
 	{
 		return $this->type;
 	}
@@ -46,7 +42,7 @@ class Coordinates implements Arrayable
 			'galaxy' => $this->galaxy,
 			'system' => $this->system,
 			'planet' => $this->planet,
-			'planet_type' => $this->type,
+			'planet_type' => $this->type?->value,
 		];
 	}
 }

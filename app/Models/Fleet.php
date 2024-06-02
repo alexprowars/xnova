@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,8 @@ class Fleet extends Model
 			'end_time' => 'immutable_datetime',
 			'end_stay' => 'immutable_datetime',
 			'mission' => Mission::class,
+			'start_type' => PlanetType::class,
+			'end_type' => PlanetType::class,
 		];
 	}
 

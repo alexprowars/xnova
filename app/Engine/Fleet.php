@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use App\Format;
 use App\Models;
@@ -95,7 +96,7 @@ class Fleet extends Building
 	public static function getFleetMissions($fleets, Coordinates $target = null, $youPlanet = false, $activePlanet = false, $assault = false)
 	{
 		if ($target === null) {
-			$target = new Coordinates(1, 1, 1, 1);
+			$target = new Coordinates(1, 1, 1, PlanetType::PLANET);
 		}
 
 		$result = [];
@@ -104,10 +105,10 @@ class Fleet extends Building
 			if (!(count($fleets) == 1 && isset($fleets[210]))) {
 				$result[] = Mission::Expedition;
 			}
-		} elseif ($target->getType() == Coordinates::TYPE_DEBRIS && isset($fleets[209])) {
+		} elseif ($target->getType() == PlanetType::DEBRIS && isset($fleets[209])) {
 			$result[] = Mission::Recycling;
-		} elseif (in_array($target->getType(), [Coordinates::TYPE_PLANET, Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
-			if (isset($fleets[216]) && !$activePlanet && $target->getType() == Coordinates::TYPE_PLANET) {
+		} elseif (in_array($target->getType(), [PlanetType::PLANET, PlanetType::MOON, PlanetType::MILITARY_BASE])) {
+			if (isset($fleets[216]) && !$activePlanet && $target->getType() == PlanetType::PLANET) {
 				$result[] = Mission::CreateBase;
 			}
 
@@ -139,7 +140,7 @@ class Fleet extends Building
 				$result[] = Mission::Assault;
 			}
 
-			if ($target->getType() == Coordinates::TYPE_MOON && isset($fleets[214]) && !$youPlanet && $activePlanet) {
+			if ($target->getType() == PlanetType::MOON && isset($fleets[214]) && !$youPlanet && $activePlanet) {
 				$result[] = Mission::Destruction;
 			}
 		}

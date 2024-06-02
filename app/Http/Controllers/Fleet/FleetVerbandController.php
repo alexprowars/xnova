@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Fleet\Mission;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Fleet;
@@ -19,7 +19,7 @@ class FleetVerbandController extends Controller
 		$fleetId = (int) $fleetId;
 
 		if ($fleetId <= 0) {
-			throw new ErrorException('Флот не выбран');
+			throw new Exception('Флот не выбран');
 		}
 
 		$fleet = Fleet::query()
@@ -29,11 +29,11 @@ class FleetVerbandController extends Controller
 			->first();
 
 		if (!$fleet) {
-			throw new ErrorException('Этот флот не существует!');
+			throw new Exception('Этот флот не существует!');
 		}
 
 		if ($fleet->start_time->getTimestamp() <= time() || $fleet->end_time->timestamp < time() || $fleet->mess == 1) {
-			throw new ErrorException('Ваш флот возвращается на планету!');
+			throw new Exception('Ваш флот возвращается на планету!');
 		}
 
 		$assault = $fleet->assault;
@@ -43,7 +43,7 @@ class FleetVerbandController extends Controller
 
 			if ($action == 'add') {
 				if ($fleet->assault_id) {
-					throw new ErrorException('Для этого флота уже задана ассоциация!');
+					throw new Exception('Для этого флота уже задана ассоциация!');
 				}
 
 				$assault = Assault::create([
@@ -57,7 +57,7 @@ class FleetVerbandController extends Controller
 				]);
 
 				if (!$assault) {
-					throw new ErrorException('Невозможно получить идентификатор САБ атаки');
+					throw new Exception('Невозможно получить идентификатор САБ атаки');
 				}
 
 				$assault->users()->create([
@@ -68,7 +68,7 @@ class FleetVerbandController extends Controller
 				$fleet->update();
 			} elseif ($action == 'adduser') {
 				if ($assault->fleet_id != $fleet->id) {
-					throw new ErrorException("Вы не можете добавлять сюда игроков");
+					throw new Exception("Вы не можете добавлять сюда игроков");
 				}
 
 				$user_data = false;
@@ -86,13 +86,13 @@ class FleetVerbandController extends Controller
 				}
 
 				if (!$user_data) {
-					throw new ErrorException("Игрок не найден");
+					throw new Exception("Игрок не найден");
 				}
 
 				$assaultUser = $assault->users()->where('user_id', $user_data->id)->first();
 
 				if ($assaultUser) {
-					throw new ErrorException("Игрок уже приглашён для нападения");
+					throw new Exception("Игрок уже приглашён для нападения");
 				}
 
 				$assault->users()->create([
@@ -111,27 +111,27 @@ class FleetVerbandController extends Controller
 				User::sendMessage($user_data->id, false, 0, 1, 'Флот', $message);
 			} elseif ($action == "changename") {
 				if ($assault->fleet_id != $fleet->id) {
-					throw new ErrorException("Вы не можете менять имя ассоциации");
+					throw new Exception("Вы не можете менять имя ассоциации");
 				}
 
 				$name = strip_tags($request->post('name', 'string'));
 
 				if (mb_strlen($name) < 5) {
-					throw new ErrorException("Слишком короткое имя ассоциации");
+					throw new Exception("Слишком короткое имя ассоциации");
 				}
 
 				if (mb_strlen($name) > 20) {
-					throw new ErrorException("Слишком длинное имя ассоциации");
+					throw new Exception("Слишком длинное имя ассоциации");
 				}
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-					throw new ErrorException("Имя ассоциации содержит запрещённые символы");
+					throw new Exception("Имя ассоциации содержит запрещённые символы");
 				}
 
 				$x = Assault::where('name', $name)->exists();
 
 				if ($x) {
-					throw new ErrorException("Имя уже зарезервировано другим игроком");
+					throw new Exception("Имя уже зарезервировано другим игроком");
 				}
 
 				$assault->name = $name;

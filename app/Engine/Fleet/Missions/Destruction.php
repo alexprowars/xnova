@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Models;
 use App\Models\Planet;
@@ -89,15 +90,15 @@ class Destruction extends FleetEngine implements Mission
 						->where('start_galaxy', $this->fleet->end_galaxy)
 						->where('start_system', $this->fleet->end_system)
 						->where('start_planet', $this->fleet->end_planet)
-						->where('start_type', 3)
-						->update(['start_type' => 1]);
+						->where('start_type', PlanetType::MOON)
+						->update(['start_type' => PlanetType::PLANET]);
 
 					Models\Fleet::query()
 						->where('end_galaxy', $this->fleet->end_galaxy)
 						->where('end_system', $this->fleet->end_system)
 						->where('end_planet', $this->fleet->end_planet)
-						->where('start_type', 3)
-						->update(['end_type' => 1]);
+						->where('start_type', PlanetType::MOON)
+						->update(['end_type' => PlanetType::PLANET]);
 
 					Models\Queue::query()->where('planet_id', $targetMoon->id)->delete();
 				} elseif (random_int(1, 100) <= $fleetDestroyChance) {
@@ -111,7 +112,7 @@ class Destruction extends FleetEngine implements Mission
 						Models\Planet::query()->where('galaxy', $this->fleet->end_galaxy)
 							->where('system', $this->fleet->end_system)
 							->where('planet', $this->fleet->end_planet)
-							->where('planet_type', '!=', 3)
+							->where('planet_type', '!=', PlanetType::MOON)
 							->update([
 								'debris_metal' => DB::raw('debris_metal + ' . $debree['metal']),
 								'debris_crystal' => DB::raw('debris_metal + ' . $debree['crystal']),

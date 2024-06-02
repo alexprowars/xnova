@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-class ErrorException extends Exception
+class NoticeException extends Exception
 {
 	public function __construct($message = '')
 	{

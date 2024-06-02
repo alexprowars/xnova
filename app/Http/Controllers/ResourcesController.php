@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\PlanetType;
+use App\Engine\Enums\Resources;
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models\LogCredit;
@@ -17,19 +19,19 @@ class ResourcesController extends Controller
 	public function buy()
 	{
 		if ($this->user->isVacation()) {
-			throw new ErrorException('Включен режим отпуска!');
+			throw new Exception('Включен режим отпуска!');
 		}
 
-		if (!$this->planet->id || $this->planet->planet_type != 1) {
-			throw new ErrorException('На этой планете нельзя купить ресурсы');
+		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
+			throw new Exception('На этой планете нельзя купить ресурсы');
 		}
 
 		if ($this->user->credits < 10) {
-			throw new ErrorException('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
+			throw new Exception('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
 		}
 
 		if ($this->planet->merchand?->isFuture()) {
-			throw new ErrorException('Покупать ресурсы можно только раз в 48 часов');
+			throw new Exception('Покупать ресурсы можно только раз в 48 часов');
 		}
 
 		$this->planet->merchand = now()->addDays(2);
@@ -76,7 +78,7 @@ class ResourcesController extends Controller
 	public function state(Request $request)
 	{
 		if ($this->user->isVacation()) {
-			throw new ErrorException('Включен режим отпуска!');
+			throw new Exception('Включен режим отпуска!');
 		}
 
 		foreach ($request->post('state') as $entityId => $value) {
@@ -94,7 +96,7 @@ class ResourcesController extends Controller
 
 	public function index()
 	{
-		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
+		if ($this->planet->planet_type == PlanetType::MOON || $this->planet->planet_type == PlanetType::MILITARY_BASE) {
 			foreach (Vars::getResources() as $res) {
 				Config::set('settings.' . $res . '_basic_income', 0);
 			}
@@ -108,7 +110,7 @@ class ResourcesController extends Controller
 		$productionLevel = $planetProduction->getProductionFactor();
 
 		$parse['buy_form'] = [
-			'visible' => ($this->planet->planet_type == 1 && !$this->user->isVacation()),
+			'visible' => ($this->planet->planet_type == PlanetType::PLANET && !$this->user->isVacation()),
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
 		] + $this->getBuyResourcesAmount();
 
@@ -148,7 +150,7 @@ class ResourcesController extends Controller
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
 			$row['level'] = $entity->level;
 			$row['resources'] = $production->toArray();
-			$row['resources']['energy'] = $production->get($production::ENERGY);
+			$row['resources']['energy'] = $production->get(Resources::ENERGY);
 
 			$parse['items'][] = $row;
 		}

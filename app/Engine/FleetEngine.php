@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\PlanetType;
 use App\Models;
 use App\Models\Planet;
 
@@ -27,17 +28,17 @@ class FleetEngine
 		}
 
 		if ($fleet) {
-			if ($start && $this->fleet->start_type == 3) {
+			if ($start && $this->fleet->start_type == PlanetType::MOON) {
 				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getOriginCoordinates());
 
 				if ($checkFleet && $checkFleet->destruyed) {
-					$this->fleet->start_type = 1;
+					$this->fleet->start_type = PlanetType::PLANET;
 				}
-			} elseif ($this->fleet->end_type == 3) {
+			} elseif ($this->fleet->end_type == PlanetType::MOON) {
 				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 				if ($checkFleet && $checkFleet->destruyed) {
-					$this->fleet->end_type = 1;
+					$this->fleet->end_type = PlanetType::PLANET;
 				}
 			}
 		}

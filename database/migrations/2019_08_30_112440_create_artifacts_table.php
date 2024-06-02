@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users');
 			$table->smallInteger('element_id')->default(0);
-			$table->boolean('level')->default(1);
+			$table->tinyInteger('level')->default(1);
 			$table->integer('expired')->default(0);
 		});
 	}

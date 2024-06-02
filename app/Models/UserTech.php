@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserTech extends Model
 {
-	public $table = 'users_teches';
-	public $timestamps = false;
+	protected $table = 'users_teches';
+	protected $guarded = [];
 
 	protected $attributes = [
 		'level' => 0,

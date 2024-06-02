@@ -13,6 +13,7 @@ use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\CombatEngine\Utils\LangManager;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\FleetEngine;
 use App\Engine\Galaxy;
@@ -81,15 +82,13 @@ class Attack extends FleetEngine implements Mission
 			unset($fleets);
 		}
 
-		$def = Models\Fleet::find([
-			'end_galaxy = :galaxy: AND end_system = :system: AND end_type = :type: AND end_planet = :planet: AND mess = 3',
-			'bind' => [
-				'galaxy' => $this->fleet->end_galaxy,
-				'system' => $this->fleet->end_system,
-				'planet' => $this->fleet->end_planet,
-				'type' => $this->fleet->end_type,
-			]
-		]);
+		$def = Models\Fleet::query()
+			->where('end_galaxy', $this->fleet->end_galaxy)
+			->where('end_system', $this->fleet->end_system)
+			->where('end_planet', $this->fleet->end_planet)
+			->where('end_type', $this->fleet->end_type)
+			->where('mess', 3)
+			->get();
 
 		foreach ($def as $fleet) {
 			$this->getGroupFleet($fleet, $defenders);
@@ -249,7 +248,7 @@ class Attack extends FleetEngine implements Mission
 
 			if ($max_resources > 0) {
 				foreach ($max_fleet_res as $id => $res) {
-					$res_procent[$id] = $max_fleet_res[$id] / $res_correction;
+					$res_procent[$id] = $res / $res_correction;
 				}
 			}
 
@@ -290,7 +289,7 @@ class Attack extends FleetEngine implements Mission
 					'fleet_array' 	=> $fleetArray,
 					'updated_at' 	=> DB::raw('end_time'),
 					'mess'			=> 1,
-					'assault_id'	=> 0,
+					'assault_id'	=> null,
 					'won'			=> $result['won']
 				];
 
@@ -325,7 +324,7 @@ class Attack extends FleetEngine implements Mission
 					Planet::query()->where('id', $fleetID)
 						->update([
 							'fleet_array' => $fleetArray,
-							'updated_at' => DB::raw('end_time')
+							'updated_at' => DB::raw('end_time'),
 						]);
 				}
 			} else {
@@ -345,15 +344,15 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$moonChance = $report->getMoonProb(($targetUser->rpg_admiral > time() ? 10 : 0));
+		$moonChance = $report->getMoonProb(($targetUser->rpg_admiral?->isFuture() ? 10 : 0));
 
-		if ($target->planet_type != 1) {
+		if ($target->planet_type != PlanetType::PLANET) {
 			$moonChance = 0;
 		}
 
 		$userChance = random_int(1, 100);
 
-		if ($this->fleet->end_type == 5) {
+		if ($this->fleet->end_type == PlanetType::MILITARY_BASE) {
 			$userChance = 0;
 		}
 

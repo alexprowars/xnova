@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Helpers;
@@ -49,11 +50,11 @@ class FleetRow extends JsonResource
 			if (empty($this->resource->user_name)) {
 				$startId = ' с координат ';
 			} else {
-				if ($this->resource->start_type == 1) {
+				if ($this->resource->start_type == PlanetType::PLANET) {
 					$startId = __('overview.ov_planet_to');
-				} elseif ($this->resource->start_type == 3) {
+				} elseif ($this->resource->start_type == PlanetType::MOON) {
 					$startId = __('overview.ov_moon_to');
-				} elseif ($this->resource->start_type == 5) {
+				} elseif ($this->resource->start_type == PlanetType::MILITARY_BASE) {
 					$startId = ' с военной базы ';
 				}
 
@@ -66,13 +67,13 @@ class FleetRow extends JsonResource
 				$targetId = ' координаты ';
 			} else {
 				if ($this->resource->mission != Mission::Expedition && $this->resource->mission != 5) {
-					if ($this->resource->end_type == 1) {
+					if ($this->resource->end_type == PlanetType::PLANET) {
 						$targetId = __('overview.ov_planet_to_target');
-					} elseif ($this->resource->end_type == 2) {
+					} elseif ($this->resource->end_type == PlanetType::DEBRIS) {
 						$targetId = __('overview.ov_debris_to_target');
-					} elseif ($this->resource->end_type == 3) {
+					} elseif ($this->resource->end_type == PlanetType::MOON) {
 						$targetId = __('overview.ov_moon_to_target');
-					} elseif ($this->resource->end_type == 5) {
+					} elseif ($this->resource->end_type == PlanetType::MILITARY_BASE) {
 						$targetId = ' военной базе ';
 					}
 				} else {
@@ -87,9 +88,9 @@ class FleetRow extends JsonResource
 			if (empty($this->resource->user_name)) {
 				$startId = ' на координаты ';
 			} else {
-				if ($this->resource->start_type == 1) {
+				if ($this->resource->start_type == PlanetType::PLANET) {
 					$startId = __('overview.ov_back_planet');
-				} elseif ($this->resource->start_type == 3) {
+				} elseif ($this->resource->start_type == PlanetType::MOON) {
 					$startId = __('overview.ov_back_moon');
 				}
 
@@ -102,13 +103,13 @@ class FleetRow extends JsonResource
 				$targetId = ' с координат ';
 			} else {
 				if ($this->resource->mission != Mission::Expedition) {
-					if ($this->resource->end_type == 1) {
+					if ($this->resource->end_type == PlanetType::PLANET) {
 						$targetId = __('overview.ov_planet_from');
-					} elseif ($this->resource->end_type == 2) {
+					} elseif ($this->resource->end_type == PlanetType::DEBRIS) {
 						$targetId = __('overview.ov_debris_from');
-					} elseif ($this->resource->end_type == 3) {
+					} elseif ($this->resource->end_type == PlanetType::MOON) {
 						$targetId = __('overview.ov_moon_from');
-					} elseif ($this->resource->end_type == 5) {
+					} elseif ($this->resource->end_type == PlanetType::MILITARY_BASE) {
 						$targetId = ' с военной базы ';
 					}
 				} else {

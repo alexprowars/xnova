@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
-use App\Exceptions\ErrorException;
+use App\Engine\Enums\PlanetType;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Files;
 use App\Models\LogStat;
@@ -44,7 +45,7 @@ class PlayersController extends Controller
 
 		$parse['userplanet'] = '';
 
-		$planet = Planet::findByCoordinates(new Coordinates($user->galaxy, $user->system, $user->planet, 1));
+		$planet = Planet::findByCoordinates(new Coordinates($user->galaxy, $user->system, $user->planet, PlanetType::PLANET));
 
 		if ($planet) {
 			$parse['userplanet'] = $planet->name;
@@ -102,7 +103,7 @@ class PlayersController extends Controller
 		$player = User::find($userId);
 
 		if (!$player) {
-			throw new ErrorException('Информация о данном игроке не найдена');
+			throw new Exception('Информация о данном игроке не найдена');
 		}
 
 		$parse = [];

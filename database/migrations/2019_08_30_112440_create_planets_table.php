@@ -12,13 +12,13 @@ return new class extends Migration {
 			$table->string('name', 50)->nullable();
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('alliance_id')->nullable()->constrained('alliances')->nullOnDelete();
-			$table->boolean('id_level')->default(0);
-			$table->boolean('galaxy')->default(0)->index();
-			$table->smallInteger('system')->unsigned()->default(0)->index();
-			$table->boolean('planet')->default(0);
+			$table->tinyInteger('id_level')->default(0);
+			$table->tinyInteger('galaxy')->nullable()->index();
+			$table->smallInteger('system')->unsigned()->nullable()->index();
+			$table->tinyInteger('planet')->nullable();
 			$table->timestamp('last_update')->nullable();
 			$table->timestamp('last_active')->nullable();
-			$table->boolean('planet_type')->default(1);
+			$table->tinyInteger('planet_type')->default(1);
 			$table->timestamp('destruyed')->nullable();
 			$table->string('image', 32)->default('normaltempplanet01');
 			$table->smallInteger('diameter')->unsigned()->default(12800);

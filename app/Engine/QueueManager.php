@@ -5,7 +5,7 @@ namespace App\Engine;
 use App\Engine\Contracts\EntityBuildingInterface;
 use App\Engine\Entity\Research;
 use App\Events\PlanetEntityUpdated;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Format;
 use App\Helpers;
 use App\Models;
@@ -166,7 +166,7 @@ class QueueManager
 	public function update()
 	{
 		if (!($this->planet instanceof Planet)) {
-			throw new ErrorException('Произошла внутренняя ошибка: Queue::update::check::Planet');
+			throw new Exception('Произошла внутренняя ошибка: Queue::update::check::Planet');
 		}
 
 		$buildingsCount = $this->getCount(self::TYPE_BUILDING);
@@ -384,7 +384,7 @@ class QueueManager
 	public function checkTechQueue()
 	{
 		if (!($this->planet instanceof Planet)) {
-			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
+			throw new Exception('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
 		}
 
 		$queueItem = $this->user->queue()
@@ -402,7 +402,7 @@ class QueueManager
 		}
 
 		if (!$planet) {
-			throw new ErrorException('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+			throw new Exception('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
 		}
 
 		$entity = Research::createEntity($queueItem->object_id, $queueItem->level, $planet);

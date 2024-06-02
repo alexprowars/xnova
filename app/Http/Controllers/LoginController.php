@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ErrorException;
 use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
 use App\Models;
@@ -26,19 +25,19 @@ class LoginController extends Controller
 	public function byCredentials(Request $request)
 	{
 		if (empty($request->post('email'))) {
-			throw new ErrorException('Введите Email');
+			throw new Exception('Введите Email');
 		}
 
 		$existUser = Models\User::query()->where('email', $request->post('email'))->exists();
 
 		if (!$existUser) {
-			throw new ErrorException('Игрока с таким E-mail адресом не найдено');
+			throw new Exception('Игрока с таким E-mail адресом не найдено');
 		}
 
 		$credentials = $request->only(['email', 'password']);
 
 		if (!Auth::attempt($credentials, $request->has('rememberme'))) {
-			throw new ErrorException('Неверный E-mail и/или пароль');
+			throw new Exception('Неверный E-mail и/или пароль');
 		}
 	}
 
@@ -126,7 +125,7 @@ class LoginController extends Controller
 			);
 
 			if ($status != Password::PASSWORD_RESET) {
-				throw new ErrorException(__($status));
+				throw new Exception(__($status));
 			}
 
 			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
@@ -142,7 +141,7 @@ class LoginController extends Controller
 			);
 
 			if ($status != Password::RESET_LINK_SENT) {
-				throw new ErrorException(__($status));
+				throw new Exception(__($status));
 			}
 
 			throw new SuccessException(__($status));

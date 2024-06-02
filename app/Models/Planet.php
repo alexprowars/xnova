@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
 use App\Engine\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
@@ -43,6 +44,7 @@ class Planet extends Model
 			'last_jump_time' => 'immutable_datetime',
 			'merchand' => 'immutable_datetime',
 			'destruyed' => 'immutable_datetime',
+			'planet_type' => PlanetType::class,
 		];
 	}
 
@@ -78,10 +80,8 @@ class Planet extends Model
 	{
 		$count = 0;
 
-		$buildings = $this->entities->getForTypes(Vars::ITEM_TYPE_BUILING);
-
 		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
-			$count += $buildings->getEntityAmount($type);
+			$count += $this->getLevel($type);
 		}
 
 		if ($this->field_current != $count) {
@@ -107,7 +107,7 @@ class Planet extends Model
 
 	public function getLevel($entityId): int
 	{
-		return $this->entities->getEntityAmount($entityId);
+		return $this->getEntity($entityId)?->amount ?? 0;
 	}
 
 	public function getEntity($entityId): ?PlanetEntity
@@ -120,17 +120,16 @@ class Planet extends Model
 			return null;
 		}
 
-		$entity = $this->entities->getEntity($entityId);
+		$entity = $this->entities->firstWhere('entity_id', $entityId);
 
 		if (!$entity) {
 			if (!Vars::getName($entityId)) {
 				return null;
 			}
 
-			$entity = new PlanetEntity([
-				'entity_id' => $entityId,
-				'amount' => 1,
-			]);
+			$entity = new PlanetEntity(['entity_id' => $entityId]);
+
+			$this->entities->add($entity);
 		}
 
 		$entity->planet()->associate($this);
@@ -202,7 +201,7 @@ class Planet extends Model
 
 	public function isAvailableJumpGate()
 	{
-		return ($this->planet_type == 3 || $this->planet_type == 5) && $this->getLevel('jumpgate') > 0;
+		return ($this->planet_type == PlanetType::MOON || $this->planet_type == PlanetType::MILITARY_BASE) && $this->getLevel('jumpgate') > 0;
 	}
 
 	public function getNextJumpTime()
@@ -226,7 +225,7 @@ class Planet extends Model
 		return self::query()->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())
 			->where('planet', $target->getPlanet())
-			->where('planet_type', $target->getType() ?: Coordinates::TYPE_PLANET)
+			->where('planet_type', $target->getType() ?: PlanetType::PLANET)
 			->first();
 	}
 }

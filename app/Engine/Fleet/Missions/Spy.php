@@ -58,11 +58,13 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		if ($LS > 0) {
-			$defenders = Fleet::find([
-				'colums' => 'fleet_array',
-				'conditions' => 'end_galaxy = ?0 AND end_system = ?1 AND end_planet = ?2 AND end_type = ?3 AND mess = 3',
-				'bind' => [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, $this->fleet->end_type]
-			]);
+			$defenders = Fleet::query()
+				->where('end_galaxy', $this->fleet->end_galaxy)
+				->where('end_system', $this->fleet->end_system)
+				->where('end_planet', $this->fleet->end_planet)
+				->where('end_type', $this->fleet->end_type)
+				->where('mess', 3)
+				->get();
 
 			foreach ($defenders as $row) {
 				$fleetData = $row->getShips();

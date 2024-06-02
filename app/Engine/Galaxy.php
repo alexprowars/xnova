@@ -2,13 +2,14 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\PlanetType;
 use App\Models\Planet;
 use App\Models\User;
 use Backpack\Settings\app\Models\Setting;
 
 class Galaxy
 {
-	public function createPlanetByUserId($userId)
+	public function createPlanetByUser(User $user)
 	{
 		$galaxy = (int) (Setting::get('lastSettedGalaxyPos') ?? 1);
 		$system = (int) (Setting::get('lastSettedSystemPos') ?? 1);
@@ -48,7 +49,7 @@ class Galaxy
 
 		$planetId = $this->createPlanet(
 			new Coordinates($galaxy, $system, $position),
-			$userId,
+			$user->id,
 			__('main.sys_plnt_defaultname'),
 			true
 		);
@@ -58,14 +59,13 @@ class Galaxy
 			Setting::set('lastSettedSystemPos', $system);
 			Setting::set('lastSettedPlanetPos', $planet);
 
-			User::find($userId)
-				->update([
-					'planet_id' => $planetId,
-					'planet_current' => $planetId,
-					'galaxy' => $galaxy,
-					'system' => $system,
-					'planet' => $position
-				]);
+			$user->update([
+				'planet_id' => $planetId,
+				'planet_current' => $planetId,
+				'galaxy' => $galaxy,
+				'system' => $system,
+				'planet' => $position
+			]);
 		}
 
 		return $planetId;
@@ -87,10 +87,10 @@ class Galaxy
 		$planet->system = $target->getSystem();
 		$planet->planet = $target->getPlanet();
 
-		$planet->planet_type = Coordinates::TYPE_PLANET;
+		$planet->planet_type = PlanetType::PLANET;
 
-		if ($target->getType() == Coordinates::TYPE_MILITARY_BASE) {
-			$planet->planet_type = Coordinates::TYPE_MILITARY_BASE;
+		if ($target->getType() == PlanetType::MILITARY_BASE) {
+			$planet->planet_type = PlanetType::MILITARY_BASE;
 		}
 
 		$planet->user_id = $userId;
@@ -106,7 +106,7 @@ class Galaxy
 
 	public function createMoon(Coordinates $target, $userId, $chance): ?int
 	{
-		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), 1));
+		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), PlanetType::PLANET));
 
 		if ($planet && $planet->parent_planet == 0) {
 			$maxtemp = $planet->temp_max - random_int(10, 45);
@@ -122,7 +122,7 @@ class Galaxy
 				'galaxy' => $target->getGalaxy(),
 				'system' => $target->getSystem(),
 				'planet' => $target->getPlanet(),
-				'planet_type' => Coordinates::TYPE_MOON,
+				'planet_type' => PlanetType::MOON,
 				'last_update' => time(),
 				'image' => 'mond',
 				'diameter' => $size,
@@ -193,7 +193,7 @@ class Galaxy
 
 		if ($mainPlanet) {
 			$planet->field_max = (int) config('settings.initial_fields', 163);
-		} elseif ($target->getType() === Coordinates::TYPE_MILITARY_BASE) {
+		} elseif ($target->getType() === PlanetType::MILITARY_BASE) {
 			$planet->field_max = (int) config('settings.initial_base_fields', 10);
 		} else {
 			$planet->field_max = (int) floor($planetData[$position]['fields'] * (int) config('settings.planetFactor', 1));
@@ -204,7 +204,7 @@ class Galaxy
 		$planet->temp_max = $planetData[$position]['temp'];
 		$planet->temp_min = $planet->temp_max - 40;
 
-		if ($target->getType() === Coordinates::TYPE_MILITARY_BASE) {
+		if ($target->getType() === PlanetType::MILITARY_BASE) {
 			$planet->image = 'baseplanet01';
 		} else {
 			$imageNames = array_keys($planetData[$position]['image']);

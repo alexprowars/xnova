@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Engine\FleetCollection;
 use App\Engine\Game;
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Format;
 use App\Http\Controllers\Controller;
@@ -35,7 +36,9 @@ class FleetSendController extends Controller
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
 		$planet = (int) $request->post('planet', 0);
-		$planet_type = (int) $request->post('planet_type', 0);
+
+		$planetType = (int) $request->post('planet_type', 0);
+		$planetType = PlanetType::tryFrom($planetType);
 
 		$fleetMission = (int) $request->post('mission', 0);
 		$fleetMission = Mission::tryFrom($fleetMission);
@@ -45,10 +48,14 @@ class FleetSendController extends Controller
 		$fleetarray = json_decode(base64_decode(str_rot13($request->post('fleet', ''))), true);
 
 		if (!$fleetMission) {
-			throw new ErrorException("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
+			throw new Exception("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
 		}
 
-		if (($fleetMission == Mission::Attack || $fleetMission == Mission::Spy || $fleetMission == Mission::Destruction || $fleetMission == Mission::Assault) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
+		if (!$planetType) {
+			throw new Exception('Неизвестный тип планеты!');
+		}
+
+		if (in_array($fleetMission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
 			throw new PageException("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>", '/fleet/');
 		}
 
@@ -64,7 +71,7 @@ class FleetSendController extends Controller
 				})
 				->first();
 
-			if ($assault && $assault->galaxy == $galaxy && $assault->system == $system && $assault->planet == $planet && $assault->planet_type == $planet_type) {
+			if ($assault && $assault->galaxy == $galaxy && $assault->system == $system && $assault->planet == $planet && $assault->planet_type == $planetType) {
 				$fleetGroupId = $allianceId;
 			}
 		}
@@ -85,33 +92,23 @@ class FleetSendController extends Controller
 			}
 		}
 
-		if ($planet_type != 1 && $planet_type != 2 && $planet_type != 3 && $planet_type != 5) {
-			throw new ErrorException('Неизвестный тип планеты!');
-		}
-
-		if ($this->planet->galaxy == $galaxy && $this->planet->system == $system && $this->planet->planet == $planet && $this->planet->planet_type == $planet_type) {
-			throw new ErrorException('Невозможно отправить флот на эту же планету!');
+		if ($this->planet->galaxy == $galaxy && $this->planet->system == $system && $this->planet->planet == $planet && $this->planet->planet_type == $planetType) {
+			throw new Exception('Невозможно отправить флот на эту же планету!');
 		}
 
 		$targetPlanet = Planet::query()
 			->where('galaxy', $galaxy)
 			->where('system', $system)
 			->where('planet', $planet)
-			->where(function (Builder $query) use ($fleetMission, $planet_type) {
-				if ($fleetMission == Mission::Recycling) {
-					$query->where('planet_type', 1)
-						->orWhere('planet_type', 5);
-				} else {
-					$query->where('planet_type', $planet_type);
-				}
-			})->first();
+			->whereIn('planet_type', $fleetMission == Mission::Recycling ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$planetType])
+			->first();
 
 		if ($fleetMission != Mission::Expedition) {
 			if (!$targetPlanet && $fleetMission != Mission::Colonization && $fleetMission != Mission::CreateBase) {
-				throw new ErrorException("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
+				throw new Exception("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
 			} elseif ($fleetMission == Mission::Destruction && !$targetPlanet) {
-				throw new ErrorException("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
-			} elseif (!$targetPlanet && $fleetMission == Mission::Colonization && $planet_type != 1) {
+				throw new Exception("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
+			} elseif (!$targetPlanet && $fleetMission == Mission::Colonization && $planetType != PlanetType::PLANET) {
 				throw new PageException("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", "/fleet/");
 			}
 		} else {
@@ -134,7 +131,7 @@ class FleetSendController extends Controller
 			}
 
 			if ($expTime <= 0 || $expTime > (round($this->user->getTechLevel('expedition') / 2) + 1)) {
-				throw new ErrorException('Вы не можете столько времени летать в экспедиции!');
+				throw new Exception('Вы не можете столько времени летать в экспедиции!');
 			}
 		}
 
@@ -153,10 +150,10 @@ class FleetSendController extends Controller
 			$YourPlanet = true;
 		}
 
-		$missiontype = Fleet::getFleetMissions($fleetarray, new Coordinates($galaxy, $system, $planet, $planet_type), $YourPlanet, $UsedPlanet, ($fleetGroupId > 0));
+		$missiontype = Fleet::getFleetMissions($fleetarray, new Coordinates($galaxy, $system, $planet, $planetType), $YourPlanet, $UsedPlanet, ($fleetGroupId > 0));
 
 		if (!in_array($fleetMission, $missiontype)) {
-			throw new ErrorException('Миссия неизвестна!');
+			throw new Exception('Миссия неизвестна!');
 		}
 
 		if ($fleetMission == Mission::Recycling && $targetPlanet->debris_metal == 0 && $targetPlanet->debris_crystal == 0) {
@@ -253,20 +250,20 @@ class FleetSendController extends Controller
 		$resources = array_map('intval', $resources);
 
 		if (array_sum($resources) < 1 && $fleetMission == Mission::Transport) {
-			throw new ErrorException('Нет сырья для транспорта!');
+			throw new Exception('Нет сырья для транспорта!');
 		}
 
 		if ($fleetMission != Mission::Expedition) {
 			if (!$targetPlanet && $fleetMission->value < 7) {
-				throw new ErrorException('Планеты не существует!');
+				throw new Exception('Планеты не существует!');
 			}
 
 			if ($targetPlanet && ($fleetMission == Mission::Colonization || $fleetMission == Mission::CreateBase)) {
-				throw new ErrorException('Место занято');
+				throw new Exception('Место занято');
 			}
 
 			if ($targetPlanet && $targetPlanet->getLevel('ally_deposit') == 0 && $targerUser->id != $this->user->id && $fleetMission == Mission::StayAlly) {
-				throw new ErrorException('На планете нет склада альянса!');
+				throw new Exception('На планете нет склада альянса!');
 			}
 
 			if ($fleetMission == Mission::StayAlly) {
@@ -283,20 +280,20 @@ class FleetSendController extends Controller
 					->exists();
 
 				if ($targerUser->alliance_id != $this->user->alliance_id && !$friend && (!$diplomacy || ($diplomacy && $diplomacy['type'] != 2))) {
-					throw new ErrorException('Нельзя охранять вражеские планеты!');
+					throw new Exception('Нельзя охранять вражеские планеты!');
 				}
 			}
 
 			if ($targetPlanet && $targetPlanet->user_id == $this->user->id && ($fleetMission == Mission::Attack || $fleetMission == Mission::Assault)) {
-				throw new ErrorException('Невозможно атаковать самого себя!');
+				throw new Exception('Невозможно атаковать самого себя!');
 			}
 
 			if ($targetPlanet && $targetPlanet->user_id == $this->user->id && $fleetMission == Mission::Spy) {
-				throw new ErrorException('Невозможно шпионить самого себя!');
+				throw new Exception('Невозможно шпионить самого себя!');
 			}
 
 			if (!$YourPlanet && $fleetMission == Mission::Stay) {
-				throw new ErrorException('Выполнение данной миссии невозможно!');
+				throw new Exception('Выполнение данной миссии невозможно!');
 			}
 		}
 
@@ -308,11 +305,11 @@ class FleetSendController extends Controller
 		$fleetSpeedFactor 	= $request->post('speed', 10);
 
 		if (!in_array($fleetSpeedFactor, $speedPossible)) {
-			throw new ErrorException('Читеришь со скоростью?');
+			throw new Exception('Читеришь со скоростью?');
 		}
 
-		if (!$planet_type) {
-			throw new ErrorException('Ошибочный тип планеты!');
+		if (!$planetType) {
+			throw new Exception('Ошибочный тип планеты!');
 		}
 
 		$errorlist = "";
@@ -462,11 +459,11 @@ class FleetSendController extends Controller
 		$StockOk = ($StockMetal >= $TransMetal && $StockCrystal >= $TransCrystal && $StockDeuterium >= $TransDeuterium);
 
 		if (!$StockOk && (!$targetPlanet || $targetPlanet->user_id != 1)) {
-			throw new ErrorException(__('fleet.fl_noressources') . Format::number($consumption));
+			throw new Exception(__('fleet.fl_noressources') . Format::number($consumption));
 		}
 
 		if ($StorageNeeded > $fleetStorage && !$this->user->isAdmin()) {
-			throw new ErrorException(__('fleet.fl_nostoragespa') . Format::number($StorageNeeded - $fleetStorage));
+			throw new Exception(__('fleet.fl_nostoragespa') . Format::number($StorageNeeded - $fleetStorage));
 		}
 
 		// Баш контроль
@@ -535,7 +532,7 @@ class FleetSendController extends Controller
 
 		if ($fleetMission == Mission::Transport && $targerUser->id != $this->user->id && !$this->user->isAdmin()) {
 			if ($targerUser->onlinetime->lessThan(now()->subDays(7))) {
-				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
+				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
 			}
 
 			$cnt = Models\LogTransfer::query()
@@ -545,7 +542,7 @@ class FleetSendController extends Controller
 				->count();
 
 			if ($cnt >= 3) {
-				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще 3х раз в неделю.');
+				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще 3х раз в неделю.');
 			}
 
 			$cnt = Models\LogTransfer::query()
@@ -555,7 +552,7 @@ class FleetSendController extends Controller
 				->count();
 
 			if ($cnt > 0) {
-				throw new ErrorException('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще одного раза в день.');
+				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще одного раза в день.');
 			}
 
 			Models\LogTransfer::create([
@@ -571,7 +568,7 @@ class FleetSendController extends Controller
 						'galaxy' => $galaxy,
 						'system' => $system,
 						'planet' => $planet,
-						'type' => $planet_type,
+						'type' => $planetType,
 					],
 					'fleet' => $fleetArray,
 					'resources' => [
@@ -583,10 +580,10 @@ class FleetSendController extends Controller
 				'target_id' => $targetPlanet->user_id,
 			]);
 
-			$str_error = "Информация о передаче ресурсов добавлена в журнал оператора.<br>";
+			$str_error = 'Информация о передаче ресурсов добавлена в журнал оператора.<br>';
 		}
 
-		if (false && $targetPlanet && $targetPlanet->user_id == 1) {
+		/*if (false && $targetPlanet && $targetPlanet->user_id == 1) {
 			$fleet->start_time = time() + 30;
 			$fleet->end_time = time() + 60;
 
@@ -602,7 +599,7 @@ class FleetSendController extends Controller
 			}
 
 			$consumption = 0;
-		}
+		}*/
 
 		$tutorial = $this->user->quests()
 			->where('finish', 0)->where('stage', 0)
@@ -638,7 +635,7 @@ class FleetSendController extends Controller
 			'end_galaxy' 			=> $galaxy,
 			'end_system' 			=> $system,
 			'end_planet' 			=> $planet,
-			'end_type' 				=> $planet_type,
+			'end_type' 				=> $planetType,
 			'resource_metal' 		=> $TransMetal,
 			'resource_crystal' 		=> $TransCrystal,
 			'resource_deuterium' 	=> $TransDeuterium,

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Http\Request;
 
@@ -13,7 +13,7 @@ class FleetController extends Controller
 	public function index(Request $request)
 	{
 		if (!$this->planet) {
-			throw new ErrorException(__('fleet.fl_noplanetrow'));
+			throw new Exception(__('fleet.fl_noplanetrow'));
 		}
 
 		$flyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();

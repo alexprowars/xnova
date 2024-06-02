@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ErrorException;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Exceptions\SuccessException;
@@ -20,7 +19,7 @@ class SupportController extends Controller
 		$subject = Request::post('subject', '');
 
 		if (empty($text) || empty($subject)) {
-			throw new ErrorException('Не заполнены все поля');
+			throw new Exception('Не заполнены все поля');
 		}
 
 		$ticket = new Support();
@@ -51,7 +50,7 @@ class SupportController extends Controller
 		$text = Request::post('text', '');
 
 		if (empty($text)) {
-			throw new ErrorException('Не заполнены все поля');
+			throw new Exception('Не заполнены все поля');
 		}
 
 		$ticket = Support::query()->find($id);

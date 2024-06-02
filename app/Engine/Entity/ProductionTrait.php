@@ -3,6 +3,7 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Resources;
+use App\Engine\Enums\Resources as ResourcesEnum;
 use App\Engine\Vars;
 
 /**
@@ -38,7 +39,7 @@ trait ProductionTrait
 		$BuildLevelFactor = $factor;
 
 		$return = [
-			Resources::ENERGY => 0,
+			ResourcesEnum::ENERGY->value => 0,
 		];
 
 		foreach (Vars::getResources() as $res) {
@@ -49,15 +50,15 @@ trait ProductionTrait
 			}
 		}
 
-		if (isset($production[Resources::ENERGY])) {
-			$energy = floor(eval($production[Resources::ENERGY]));
+		if (isset($production[ResourcesEnum::ENERGY->value])) {
+			$energy = floor(eval($production[ResourcesEnum::ENERGY->value]));
 
 			if ($this->entityId < 4) {
-				$return[Resources::ENERGY] = $energy;
+				$return[ResourcesEnum::ENERGY->value] = $energy;
 			} elseif ($this->entityId == 4 || $this->entityId == 12) {
-				$return[Resources::ENERGY] = floor($energy * $user->bonus('energy'));
+				$return[ResourcesEnum::ENERGY->value] = floor($energy * $user->bonus('energy'));
 			} elseif ($this->entityId == 212) {
-				$return[Resources::ENERGY] = floor($energy * $user->bonus('solar'));
+				$return[ResourcesEnum::ENERGY->value] = floor($energy * $user->bonus('solar'));
 			}
 		}
 

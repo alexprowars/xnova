@@ -8,10 +8,10 @@ class Exception extends \Exception
 {
 	public function render()
 	{
-		$type = 'notice';
+		$type = 'error';
 
-		if ($this instanceof ErrorException) {
-			$type = 'error';
+		if ($this instanceof NoticeException) {
+			$type = 'notice';
 		} elseif ($this instanceof SuccessException) {
 			$type = 'success';
 		}

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\BattleReport;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models\LogBattle;
@@ -108,7 +108,7 @@ class LogController extends Controller
 		$new->data = $SaveLog;
 
 		if (!$new->save()) {
-			throw new ErrorException('Произошла ошибка при сохранении боевого отчета');
+			throw new Exception('Произошла ошибка при сохранении боевого отчета');
 		}
 
 		throw new RedirectException('/log', 'Боевой отчёт успешно сохранён.');

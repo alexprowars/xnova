@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Models;
@@ -25,7 +25,7 @@ class StartController extends Controller
 		$data['name'] = strip_tags(trim($data['name']));
 
 		if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $data['name'])) {
-			throw new ErrorException(__('start.error_charalpha'));
+			throw new Exception(__('start.error_charalpha'));
 		}
 
 		$existUser = Models\User::query()
@@ -34,7 +34,7 @@ class StartController extends Controller
 			->exists();
 
 		if ($existUser) {
-			throw new ErrorException(__('reg.error_userexist'));
+			throw new Exception(__('reg.error_userexist'));
 		}
 
 		$this->user->username = $data['name'];
@@ -77,7 +77,7 @@ class StartController extends Controller
 		$r = ($r < 1 || $r > 4) ? 0 : $r;
 
 		if ($r <= 0) {
-			throw new ErrorException('Выберите фракцию');
+			throw new Exception('Выберите фракцию');
 		}
 
 		$this->user->race = $r;

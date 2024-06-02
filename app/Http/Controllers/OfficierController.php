@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models\LogCredit;
@@ -21,24 +21,24 @@ class OfficierController extends Controller
 		$duration = (int) $request->post('duration');
 
 		if (!$id || !$duration) {
-			throw new ErrorException('Ошибка входных параметров');
+			throw new Exception('Ошибка входных параметров');
 		}
 
 		$credits = match ($duration) {
 			7 => 20,
 			14 => 40,
 			30 => 80,
-			default => throw new ErrorException('Ошибка входных параметров'),
+			default => throw new Exception('Ошибка входных параметров'),
 		};
 
 		$time = $duration * 86400;
 
 		if (!$time || $this->user->credits < $credits) {
-			throw new ErrorException(__('officier.NoPoints'));
+			throw new Exception(__('officier.NoPoints'));
 		}
 
 		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER) {
-			throw new ErrorException('Выбран неверный элемент');
+			throw new Exception('Выбран неверный элемент');
 		}
 
 		if ($this->user->{Vars::getName($id)}?->isFuture()) {

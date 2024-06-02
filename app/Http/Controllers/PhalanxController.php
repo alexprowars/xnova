@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Exceptions\PageException;
@@ -39,7 +40,7 @@ class PhalanxController extends Controller
 		$systemdol 	= $this->planet->system - ($phalanx ** 2);
 		$systemgora = $this->planet->system + ($phalanx ** 2);
 
-		if ($this->planet->planet_type != 3) {
+		if ($this->planet->planet_type != PlanetType::MOON) {
 			throw new PageException('Вы можете использовать фалангу только на луне!');
 		} elseif ($phalanx == 0) {
 			throw new PageException('Постройте сначало сенсорную фалангу');
@@ -67,7 +68,7 @@ class PhalanxController extends Controller
 				$query->where('start_galaxy', $g)
 					->where('start_system', $s)
 					->where('start_planet', $i)
-					->where('start_type', '!=', 3);
+					->where('start_type', '!=', PlanetType::MOON);
 			})
 			->orWhere(function (Builder $query) use ($g, $s, $i) {
 				$query->where('end_galaxy', $g)
@@ -82,19 +83,19 @@ class PhalanxController extends Controller
 		foreach ($fleets as $row) {
 			$end = !($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i);
 
-			if ($row->start_type == 3) {
+			if ($row->start_type == PlanetType::MOON) {
 				$type = 'лун';
 			} else {
 				$type = 'планет';
 			}
 
-			if ($row->end_type == 3) {
+			if ($row->end_type == PlanetType::MOON) {
 				$type2 = 'лун';
 			} else {
 				$type2 = 'планет';
 			}
 
-			if ($row->start_time->isFuture() && $end && !($row->start_type == 3 && ($row->end_type == 2 || $row->end_type == 3))) {
+			if ($row->start_time->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
 				$list[] = [
 					'time' => $row->start_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
@@ -109,7 +110,7 @@ class PhalanxController extends Controller
 				];
 			}
 
-			if ($row->mission != Mission::Stay && !$end && $row->start_type != 3) {
+			if ($row->mission != Mission::Stay && !$end && $row->start_type != PlanetType::MOON) {
 				$list[] = [
 					'time' => $row->end_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),

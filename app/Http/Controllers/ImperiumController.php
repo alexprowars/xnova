@@ -15,25 +15,22 @@ class ImperiumController extends Controller
 
 		$build_hangar_full = [];
 
-		$fleet_fly = [];
+		$fleetsFly = [];
 
 		$fleets = Fleet::query()
 			->where('user_id', $this->user->id)
 			->get();
 
 		foreach ($fleets as $fleet) {
-			if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type])) {
-				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type] = [];
-			}
+			$key = $fleet->splitStartPosition() . ':' . $fleet->start_type->value;
+
+			$fleetsFly[$key] ??= [];
 
 			$fleetData = $fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr) {
-				if (!isset($fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId])) {
-					$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId] = 0;
-				}
-
-				$fleet_fly[$fleet->splitStartPosition() . ':' . $fleet->start_type][$shipId] += $shipArr['count'];
+				$fleetsFly[$key][$shipId] ??= 0;
+				$fleetsFly[$key][$shipId] += $shipArr['count'];
 
 				if ($fleet->target_user_id == $this->user->id) {
 					if (!isset($build_hangar_full[$shipId])) {
@@ -135,7 +132,7 @@ class ImperiumController extends Controller
 				$item['build'] = $build_hangar[$id] ?? 0;
 
 				if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET) {
-					$item['fly'] = $fleet_fly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type][$id] ?? 0;
+					$item['fly'] = $fleetsFly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type->value][$id] ?? 0;
 				}
 
 				$row['elements'][$id] = $item;
@@ -144,7 +141,7 @@ class ImperiumController extends Controller
 			$parse['planets'][] = $row;
 		}
 
-		$parse['credits'] = (int) $this->user->credits;
+		$parse['credits'] = $this->user->credits;
 
 		$parse['tech'] = [];
 

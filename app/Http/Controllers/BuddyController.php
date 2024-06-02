@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Models;
 use App\Models\User;
@@ -19,7 +19,7 @@ class BuddyController extends Controller
 			->first();
 
 		if (!$user) {
-			throw new ErrorException('Друг не найден');
+			throw new Exception('Друг не найден');
 		}
 
 		if ($request->isMethod('post')) {
@@ -33,13 +33,13 @@ class BuddyController extends Controller
 				->exists();
 
 			if ($buddy) {
-				throw new ErrorException('Запрос дружбы был уже отправлен ранее');
+				throw new Exception('Запрос дружбы был уже отправлен ранее');
 			}
 
 			$text = strip_tags($request->post('text', ''));
 
 			if (mb_strlen($text) > 5000) {
-				throw new ErrorException('Максимальная длинна сообщения 5000 символов!');
+				throw new Exception('Максимальная длинна сообщения 5000 символов!');
 			}
 
 			Models\Friend::create([
@@ -55,7 +55,7 @@ class BuddyController extends Controller
 		}
 
 		if ($user->id == $this->user->id) {
-			throw new ErrorException('Нельзя дружить сам с собой');
+			throw new Exception('Нельзя дружить сам с собой');
 		}
 
 		return response()->state([
@@ -78,7 +78,7 @@ class BuddyController extends Controller
 		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
-			throw new ErrorException('Заявка не найдена');
+			throw new Exception('Заявка не найдена');
 		}
 
 		if ($friend->friend_id == $this->user->id) {
@@ -90,7 +90,7 @@ class BuddyController extends Controller
 
 			throw new RedirectException('/buddy/requests/my', 'Заявка удалена');
 		} else {
-			throw new ErrorException('Заявка не найдена');
+			throw new Exception('Заявка не найдена');
 		}
 	}
 
@@ -99,11 +99,11 @@ class BuddyController extends Controller
 		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
-			throw new ErrorException('Заявка не найдена');
+			throw new Exception('Заявка не найдена');
 		}
 
 		if (!($friend->friend_id == $this->user->id && !$friend->active)) {
-			throw new ErrorException('Заявка не найдена');
+			throw new Exception('Заявка не найдена');
 		}
 
 		$friend->active = 1;

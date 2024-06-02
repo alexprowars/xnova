@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Models\Note;
 use Illuminate\Http\Request;
@@ -40,7 +40,7 @@ class NotesController extends Controller
 			->where('id', $noteId)->first();
 
 		if (!$note) {
-			throw new ErrorException(__('notes.notpossiblethisway'));
+			throw new Exception(__('notes.notpossiblethisway'));
 		}
 
 		if ($request->isMethod('post')) {

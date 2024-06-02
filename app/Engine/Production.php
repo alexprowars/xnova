@@ -3,6 +3,8 @@
 namespace App\Engine;
 
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\PlanetType;
+use App\Engine\Enums\Resources as ResourcesEnum;
 use App\Models\Planet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -100,7 +102,7 @@ class Production
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			if (!$this->planet->user->isVacation() && !in_array($this->planet->planet_type, [Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
+			if (!$this->planet->user->isVacation() && !in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
 				$resources[$res] = config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1);
 			} else {
 				$resources[$res] = 0;
@@ -127,7 +129,7 @@ class Production
 			return $resources;
 		}
 
-		if (in_array($this->planet->planet_type, [Coordinates::TYPE_MOON, Coordinates::TYPE_MILITARY_BASE])) {
+		if (in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
 			return $resources;
 		}
 
@@ -151,9 +153,9 @@ class Production
 			$resources->add($production);
 
 			if ($productionId < 4) {
-				$this->planet->energy_used += abs($production->get(Resources::ENERGY));
+				$this->planet->energy_used += abs($production->get(ResourcesEnum::ENERGY));
 			} else {
-				$this->planet->energy_max += $production->get(Resources::ENERGY);
+				$this->planet->energy_max += $production->get(ResourcesEnum::ENERGY);
 			}
 		}
 
@@ -175,7 +177,7 @@ class Production
 
 		$resourceProduction = $this->getResourceProduction();
 		$storageCapacity = $this->getStorageCapacity();
-		$storageCapacity->set($storageCapacity::ENERGY, $this->planet->energy_max);
+		$storageCapacity->set(ResourcesEnum::ENERGY, $this->planet->energy_max);
 
 		foreach (Vars::getResources() as $res) {
 			if ($this->planet->{$res} <= $storageCapacity->get($res)) {

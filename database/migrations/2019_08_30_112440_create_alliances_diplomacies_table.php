@@ -11,9 +11,9 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('alliance_id')->constrained('alliances')->cascadeOnDelete();
 			$table->foreignId('diplomacy_id')->constrained('alliances')->cascadeOnDelete();
-			$table->boolean('type')->default(0);
-			$table->boolean('status')->default(0);
-			$table->boolean('primary')->default(0);
+			$table->tinyInteger('type')->default(0);
+			$table->tinyInteger('status')->default(0);
+			$table->tinyInteger('primary')->default(0);
 			$table->index(['alliance_id','diplomacy_id']);
 		});
 	}

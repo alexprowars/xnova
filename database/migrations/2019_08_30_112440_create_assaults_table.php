@@ -14,7 +14,7 @@ return new class extends Migration {
 			$table->integer('galaxy')->nullable();
 			$table->integer('system')->nullable();
 			$table->integer('planet')->nullable();
-			$table->boolean('planet_type')->default(1);
+			$table->tinyInteger('planet_type')->default(1);
 			$table->foreignId('user_id')->constrained('users');
 		});
 	}

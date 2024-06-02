@@ -60,7 +60,7 @@ class Fleet extends Command
 						continue;
 					}
 
-					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName->name;
+					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
 
 					/** @var $mission Mission */
 					$mission = new $missionName($fleetRow);

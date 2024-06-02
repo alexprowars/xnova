@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Game;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Files;
@@ -149,7 +149,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$t = (int) $request->query('t', 1);
@@ -169,7 +169,7 @@ class AllianceController extends Controller
 					$fileType = $file->getMimeType();
 
 					if (!str_contains($fileType, 'image/')) {
-						throw new ErrorException('Разрешены к загрузке только изображения');
+						throw new Exception('Разрешены к загрузке только изображения');
 					}
 
 					if ($alliance->image > 0) {
@@ -187,7 +187,7 @@ class AllianceController extends Controller
 			$alliance->request_notallow = (int) $request->post('request_notallow', 0);
 
 			if ($alliance->request_notallow != 0 && $alliance->request_notallow != 1) {
-				throw new ErrorException("Недопустимое значение атрибута!");
+				throw new Exception("Недопустимое значение атрибута!");
 			}
 
 			$alliance->update();
@@ -248,7 +248,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		} elseif (!empty($request->post('newrangname'))) {
 			$ranks = $alliance->ranks;
 			$ranks[] = [
@@ -324,7 +324,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_ACCEPT) && !$alliance->canAccess(Alliance::REQUEST_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$show = (int) $request->query('show', 0);
@@ -332,7 +332,7 @@ class AllianceController extends Controller
 		if (($alliance->user_id == $this->user->id || $alliance->canAccess(Alliance::CAN_ACCEPT)) && $request->post('action')) {
 			if ($request->post('action') == "Принять") {
 				if ($alliance->members_count >= 150) {
-					throw new ErrorException('Альянс не может иметь больше 150 участников');
+					throw new Exception('Альянс не может иметь больше 150 участников');
 				}
 
 				if ($request->post('text') != '') {
@@ -412,18 +412,18 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		if ($request->post('name')) {
 			$name = trim($request->post('name', ''));
 
 			if (empty($name)) {
-				throw new ErrorException("Введите новое название альянса");
+				throw new Exception("Введите новое название альянса");
 			}
 
 			if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-				throw new ErrorException("Название альянса содержит запрещённые символы");
+				throw new Exception("Название альянса содержит запрещённые символы");
 			}
 
 			$alliance->name = addslashes(htmlspecialchars($name));
@@ -445,7 +445,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		if ($request->post('tag')) {
@@ -456,7 +456,7 @@ class AllianceController extends Controller
 			}
 
 			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
-				throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
+				throw new Exception("Абревиатура альянса содержит запрещённые символы");
 			}
 
 			$alliance->tag = addslashes(htmlspecialchars($tag));
@@ -475,7 +475,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_DELETE_ALLIANCE)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$alliance->delete();
@@ -532,14 +532,14 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_KICK)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		if ($request->query('kick')) {
 			$kick = $request->query('kick', 0);
 
 			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_KICK) && $kick > 0) {
-				throw new ErrorException(__('alliance.Denied_access'));
+				throw new Exception(__('alliance.Denied_access'));
 			}
 
 			$u = User::find($kick);
@@ -555,7 +555,7 @@ class AllianceController extends Controller
 
 				AllianceMember::query()->where('user_id', $u->id)->delete();
 			} else {
-				throw new ErrorException(__('alliance.Denied_access'));
+				throw new Exception(__('alliance.Denied_access'));
 			}
 		} elseif ($request->post('newrang', '') != '' && $request->input('id', 0) != 0) {
 			$id = $request->input('id', 0);
@@ -577,7 +577,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::DIPLOMACY_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
@@ -691,7 +691,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id == $this->user->id) {
-			throw new ErrorException(__('alliance.Owner_cant_go_out'));
+			throw new Exception(__('alliance.Owner_cant_go_out'));
 		}
 
 		if ($request->query('yes')) {
@@ -713,7 +713,7 @@ class AllianceController extends Controller
 			$parse['admin'] = true;
 		} else {
 			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST)) {
-				throw new ErrorException(__('alliance.Denied_access'));
+				throw new Exception(__('alliance.Denied_access'));
 			}
 
 			$parse['admin'] = false;
@@ -833,7 +833,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CHAT_ACCESS)) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		if ($request->post('delete_type') && $alliance->user_id == $this->user->id) {
@@ -924,11 +924,11 @@ class AllianceController extends Controller
 		} elseif ($id > 0 && is_numeric($id)) {
 			$allyrow = Alliance::find((int) $id);
 		} else {
-			throw new ErrorException('Указанного альянса не существует в игре!');
+			throw new Exception('Указанного альянса не существует в игре!');
 		}
 
 		if (!$allyrow) {
-			throw new ErrorException('Указанного альянса не существует в игре!');
+			throw new Exception('Указанного альянса не существует в игре!');
 		}
 
 		if (empty($allyrow->description)) {
@@ -965,29 +965,29 @@ class AllianceController extends Controller
 		$ally_request = AllianceRequest::query()->where('user_id', $this->user->id)->count();
 
 		if ($this->user->alliance_id > 0 || $ally_request) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$tag = $request->post('tag', '');
 		$name = $request->post('name', '');
 
 		if ($tag == '') {
-			throw new ErrorException(__('alliance.have_not_tag'));
+			throw new Exception(__('alliance.have_not_tag'));
 		}
 		if ($name == '') {
-			throw new ErrorException(__('alliance.have_not_name'));
+			throw new Exception(__('alliance.have_not_name'));
 		}
 		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
-			throw new ErrorException("Абревиатура альянса содержит запрещённые символы");
+			throw new Exception("Абревиатура альянса содержит запрещённые символы");
 		}
 		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $name)) {
-			throw new ErrorException("Название альянса содержит запрещённые символы");
+			throw new Exception("Название альянса содержит запрещённые символы");
 		}
 
 		$find = Alliance::query()->where('tag', addslashes($tag))->exists();
 
 		if ($find) {
-			throw new ErrorException(str_replace('%s', $tag, __('alliance.always_exist')));
+			throw new Exception(str_replace('%s', $tag, __('alliance.always_exist')));
 		}
 
 		$alliance = new Alliance();
@@ -997,7 +997,7 @@ class AllianceController extends Controller
 		$alliance->ranks = [];
 
 		if (!$alliance->save()) {
-			throw new ErrorException('Произошла ошибка при создании альянса');
+			throw new Exception('Произошла ошибка при создании альянса');
 		}
 
 		$member = new AllianceMember();
@@ -1005,7 +1005,7 @@ class AllianceController extends Controller
 		$member->user_id = $this->user->id;
 
 		if (!$member->save()) {
-			throw new ErrorException('Произошла ошибка при создании альянса');
+			throw new Exception('Произошла ошибка при создании альянса');
 		}
 
 		$this->user->alliance_id = $alliance->id;
@@ -1020,7 +1020,7 @@ class AllianceController extends Controller
 		$ally_request = AllianceRequest::query()->where('user_id', $this->user->id)->count();
 
 		if ($this->user->alliance_id > 0 || $ally_request) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$parse = [];
@@ -1060,23 +1060,23 @@ class AllianceController extends Controller
 	public function apply(Request $request)
 	{
 		if ($this->user->alliance_id > 0) {
-			throw new ErrorException(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$allyid = $request->query('allyid', 0);
 
 		if ($allyid <= 0) {
-			throw new ErrorException(__('alliance.it_is_not_posible_to_apply'));
+			throw new Exception(__('alliance.it_is_not_posible_to_apply'));
 		}
 
 		$allyrow = Alliance::find($allyid);
 
 		if (!$allyrow) {
-			throw new ErrorException("Альянса не существует!");
+			throw new Exception("Альянса не существует!");
 		}
 
 		if ($allyrow->request_notallow != 0) {
-			throw new ErrorException("Данный альянс является закрытым для вступлений новых членов");
+			throw new Exception("Данный альянс является закрытым для вступлений новых членов");
 		}
 
 		if ($request->post('further')) {

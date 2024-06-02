@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\Exception;
 use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
@@ -21,7 +21,7 @@ class RegistrationController extends Controller
 			])->json();
 
 			if (!$captcha['success']) {
-				throw new ErrorException('Вы не прошли проверку на бота!');
+				throw new Exception('Вы не прошли проверку на бота!');
 			}
 		}
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
 use App\Engine\Entity as PlanetEntity;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Engine\Vars;
@@ -43,8 +44,10 @@ class FleetCheckoutController extends Controller
 		}
 
 		if (!$type) {
-			$type = 1;
+			$type = PlanetType::PLANET;
 		}
+
+		$type = PlanetType::tryFrom($type);
 
 		$parse['ships'] = [];
 		$fleets = [];
@@ -112,7 +115,7 @@ class FleetCheckoutController extends Controller
 					continue;
 				}
 
-				if ($row->planet_type == 3) {
+				if ($row->planet_type == PlanetType::MOON) {
 					$row->name .= ' ' . __('fleet.fl_shrtcup3');
 				}
 
@@ -130,7 +133,7 @@ class FleetCheckoutController extends Controller
 		$parse['gate_time'] = null;
 		$parse['moons'] = [];
 
-		if ($this->planet->planet_type == 3 || $this->planet->planet_type == 5) {
+		if ($this->planet->planet_type == PlanetType::MOON || $this->planet->planet_type == PlanetType::MILITARY_BASE) {
 			$moons = $this->user->planets()
 				->where('id', '!=', $this->planet->id)
 				->where(function (Builder $planet) {

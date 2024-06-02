@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\SuccessException;
 use App\Models;
@@ -24,7 +25,7 @@ class RocketController extends Controller
 		$p = (int) Request::post('planet', 0);
 
 		if ($g <= 0 || $s <= 0 || $p <= 0) {
-			throw new ErrorException('Координаты не определены');
+			throw new Exception('Координаты не определены');
 		}
 
 		$count = (int) Request::post('count', 1);
@@ -33,20 +34,20 @@ class RocketController extends Controller
 		$distance = abs($s - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$targetPlanet = Models\Planet::findByCoordinates(new Coordinates($g, $s, $p, 1));
+		$targetPlanet = Models\Planet::findByCoordinates(new Coordinates($g, $s, $p, PlanetType::PLANET));
 
 		if ($this->planet->getLevel('missile_facility') < 4) {
-			throw new ErrorException('Постройте ракетную шахту');
+			throw new Exception('Постройте ракетную шахту');
 		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
-			throw new ErrorException('Необходима технология "Импульсный двигатель"');
+			throw new Exception('Необходима технология "Импульсный двигатель"');
 		} elseif ($distance >= $maxDistance || $g != $this->planet->galaxy) {
-			throw new ErrorException('Превышена дистанция ракетной атаки');
+			throw new Exception('Превышена дистанция ракетной атаки');
 		} elseif (!$targetPlanet) {
-			throw new ErrorException('Планета не найдена');
+			throw new Exception('Планета не найдена');
 		} elseif ($count > $this->planet->getLevel('interplanetary_misil')) {
-			throw new ErrorException('У вас нет такого кол-ва ракет');
+			throw new Exception('У вас нет такого кол-ва ракет');
 		} elseif ((!is_numeric($destroyType) && $destroyType != "all") or ($destroyType < 0 && $destroyType > 7 && $destroyType != "all")) {
-			throw new ErrorException('Не найдена цель');
+			throw new Exception('Не найдена цель');
 		}
 
 		if ($destroyType == 'all') {
@@ -59,15 +60,15 @@ class RocketController extends Controller
 			->find($targetPlanet->user_id, ['id', 'vacation']);
 
 		if (!$targetUser) {
-			throw new ErrorException('Игрока не существует');
+			throw new Exception('Игрока не существует');
 		}
 
 		if ($targetUser->isVacation()) {
-			throw new ErrorException('Игрок в режиме отпуска');
+			throw new Exception('Игрок в режиме отпуска');
 		}
 
 		if ($this->user->isVacation()) {
-			throw new ErrorException('Вы в режиме отпуска');
+			throw new Exception('Вы в режиме отпуска');
 		}
 
 		$time = 30 + (60 * $distance);
@@ -81,12 +82,12 @@ class RocketController extends Controller
 			'start_galaxy' 		=> $this->planet->galaxy,
 			'start_system' 		=> $this->planet->system,
 			'start_planet' 		=> $this->planet->planet,
-			'start_type' 		=> 1,
+			'start_type' 		=> PlanetType::PLANET,
 			'end_time' 			=> null,
 			'end_galaxy' 		=> $g,
 			'end_system' 		=> $s,
 			'end_planet' 		=> $p,
-			'end_type' 			=> 1,
+			'end_type' 			=> PlanetType::PLANET,
 			'target_user_id' 	=> $targetPlanet->user_id,
 			'target_user_name' 	=> $targetPlanet->name,
 			'updated_at' 		=> now()->addSeconds($time),

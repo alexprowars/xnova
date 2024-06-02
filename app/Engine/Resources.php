@@ -2,71 +2,71 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\Resources as ResourcesEnum;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Resources implements Arrayable
 {
-	public const METAL = 'metal';
-	public const CRYSTAL = 'crystal';
-	public const DEUTERIUM = 'deuterium';
-	public const ENERGY = 'energy';
-
-	private $resources;
+	protected array $resources;
 
 	public function __construct(array $resources = [])
 	{
-		$this->resources[self::METAL] = $resources[self::METAL] ?? 0;
-		$this->resources[self::CRYSTAL] = $resources[self::CRYSTAL] ?? 0;
-		$this->resources[self::DEUTERIUM] = $resources[self::DEUTERIUM] ?? 0;
-		$this->resources[self::ENERGY] = $resources[self::ENERGY] ?? 0;
+		foreach (ResourcesEnum::cases() as $res) {
+			$this->resources[$res->value] = $resources[$res->value] ?? 0;
+		}
 	}
 
 	public static function create(float $metal = 0, float $crystal = 0, float $deuterium = 0, float $energy = 0): self
 	{
 		return new self([
-			self::METAL => $metal,
-			self::CRYSTAL => $crystal,
-			self::DEUTERIUM => $deuterium,
-			self::ENERGY => $energy,
+			ResourcesEnum::METAL->value => $metal,
+			ResourcesEnum::CRYSTAL->value => $crystal,
+			ResourcesEnum::DEUTERIUM->value => $deuterium,
+			ResourcesEnum::ENERGY->value => $energy,
 		]);
 	}
 
-	public function get(string $type): float
+	public function get(string|ResourcesEnum $type): float
 	{
+		if ($type instanceof ResourcesEnum) {
+			$type = $type->value;
+		}
+
 		return $this->resources[$type] ?? 0;
 	}
 
-	public function set(string $type, float $value)
+	public function set(string|ResourcesEnum $type, float $value)
 	{
+		if ($type instanceof ResourcesEnum) {
+			$type = $type->value;
+		}
+
 		$this->resources[$type] = $value;
 	}
 
 	public function add(Resources $resources)
 	{
-		$this->resources[self::METAL] += $resources->get(self::METAL);
-		$this->resources[self::CRYSTAL] += $resources->get(self::CRYSTAL);
-		$this->resources[self::DEUTERIUM] += $resources->get(self::DEUTERIUM);
-		$this->resources[self::ENERGY] += $resources->get(self::ENERGY);
+		foreach (ResourcesEnum::cases() as $res) {
+			$this->resources[$res->value] += $resources->get($res);
+		}
 
 		return $this;
 	}
 
 	public function sub(Resources $resources)
 	{
-		$this->resources[self::METAL] -= $resources->get(self::METAL);
-		$this->resources[self::CRYSTAL] -= $resources->get(self::CRYSTAL);
-		$this->resources[self::DEUTERIUM] -= $resources->get(self::DEUTERIUM);
-		$this->resources[self::ENERGY] -= $resources->get(self::ENERGY);
+		foreach (ResourcesEnum::cases() as $res) {
+			$this->resources[$res->value] -= $resources->get($res);
+		}
 
 		return $this;
 	}
 
 	public function multiply(float $value)
 	{
-		$this->resources[self::METAL] *= $value;
-		$this->resources[self::CRYSTAL] *= $value;
-		$this->resources[self::DEUTERIUM] *= $value;
-		$this->resources[self::ENERGY] *= $value;
+		foreach (ResourcesEnum::cases() as $res) {
+			$this->resources[$res->value] *= $value;
+		}
 
 		return $this;
 	}

@@ -4,7 +4,6 @@ namespace App\Engine;
 
 use App\Exceptions\Exception;
 use App\Models\Planet;
-use App\Models\PlanetEntity;
 use Illuminate\Support\Facades\Auth;
 
 class EntityFactory
@@ -14,7 +13,7 @@ class EntityFactory
 		$className = self::getEntityClassName($entityId);
 
 		if (!$planet) {
-			$planet = Auth::user()->getCurrentPlanet(true);
+			$planet = Auth::user()->getCurrentPlanet();
 		}
 
 		/** @var Entity\Entity $className */

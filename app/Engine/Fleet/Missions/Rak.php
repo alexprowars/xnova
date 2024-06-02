@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Engine\Vars;
 use App\Models\Planet;
@@ -15,7 +16,7 @@ class Rak extends FleetEngine implements Mission
 	{
 		$this->killFleet();
 
-		$targetPlanet = Planet::findByCoordinates(new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, Coordinates::TYPE_PLANET));
+		$targetPlanet = Planet::findByCoordinates(new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::PLANET));
 
 		if (!$targetPlanet) {
 			return;

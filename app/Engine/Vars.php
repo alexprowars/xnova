@@ -2,6 +2,8 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\PlanetType;
+
 class Vars
 {
 	private static $registry;
@@ -151,8 +153,8 @@ class Vars
 		return self::$registry['ProdGrid'][$buildId] ?? null;
 	}
 
-	public static function getAllowedBuilds($planetType): array
+	public static function getAllowedBuilds(PlanetType $planetType): array
 	{
-		return self::$registry['reslist']['allowed'][(int)$planetType] ?? [];
+		return self::$registry['reslist']['allowed'][$planetType->value] ?? [];
 	}
 }

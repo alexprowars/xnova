@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
+use App\Engine\Enums\Resources;
 use App\Engine\Vars;
-use App\Exceptions\ErrorException;
+use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
 use App\Models;
 use Illuminate\Support\Facades\Request;
@@ -59,10 +60,10 @@ class InfoController extends Controller
 		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
 			$res = $this->planet->getEntity($buildId)->unit()->getProduction();
 
-			$Prod[1] = $res->get('metal');
-			$Prod[2] = $res->get('crystal');
-			$Prod[3] = $res->get('deuterium');
-			$Prod[4] = $res->get('energy');
+			$Prod[1] = $res->get(Resources::METAL);
+			$Prod[2] = $res->get(Resources::CRYSTAL);
+			$Prod[3] = $res->get(Resources::DEUTERIUM);
+			$Prod[4] = $res->get(Resources::ENERGY);
 
 			if ($buildId != 12) {
 				$ActualNeed = floor($Prod[4]);
@@ -92,10 +93,10 @@ class InfoController extends Controller
 
 				$res = $entity->getProduction();
 
-				$Prod[1] = $res->get('metal');
-				$Prod[2] = $res->get('crystal');
-				$Prod[3] = $res->get('deuterium');
-				$Prod[4] = $res->get('energy');
+				$Prod[1] = $res->get(Resources::METAL);
+				$Prod[2] = $res->get(Resources::CRYSTAL);
+				$Prod[3] = $res->get(Resources::DEUTERIUM);
+				$Prod[4] = $res->get(Resources::ENERGY);
 
 				if ($buildId != 12) {
 					$row['prod'] = floor($Prod[$buildId]);
@@ -136,7 +137,7 @@ class InfoController extends Controller
 		$parse = [];
 
 		if (!__('main.tech.' . $itemId)) {
-			throw new ErrorException('Мы не сможем дать вам эту информацию');
+			throw new Exception('Мы не сможем дать вам эту информацию');
 		}
 
 		$price = Vars::getItemPrice($itemId);
@@ -169,7 +170,7 @@ class InfoController extends Controller
 					->first();
 
 				if (!$fleet) {
-					throw new ErrorException('Флот отсутствует у планеты');
+					throw new Exception('Флот отсутствует у планеты');
 				} else {
 					$tt = 0;
 
