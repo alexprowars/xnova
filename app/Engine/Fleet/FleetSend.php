@@ -291,7 +291,6 @@ class FleetSend
 
 	public function send()
 	{
-		throw new Exception('Нет сырья для транспорта!');
 		$this->verify();
 
 		$fleet = new Fleet();
