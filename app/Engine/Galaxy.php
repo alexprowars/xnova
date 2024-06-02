@@ -150,15 +150,7 @@ class Galaxy
 			return false;
 		}
 
-		$exist = Planet::query()->where('galaxy', $target->getGalaxy())
-			->where('system', $target->getSystem())
-			->where('planet', $target->getPlanet());
-
-		if ($target->getType()) {
-			$exist->where('planet_type', $target->getType());
-		}
-
-		return !$exist->count();
+		return !Planet::coordinates($target)->exists();
 	}
 
 	public function getFreePositions(Coordinates $target, $startPosition, $endPosition): array

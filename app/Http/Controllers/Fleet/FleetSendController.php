@@ -96,23 +96,20 @@ class FleetSendController extends Controller
 			throw new Exception('Невозможно отправить флот на эту же планету!');
 		}
 
-		$targetPlanet = Planet::query()
-			->where('galaxy', $galaxy)
-			->where('system', $system)
-			->where('planet', $planet)
+		$targetPlanet = Planet::coordinates(new Coordinates($galaxy, $system, $planet))
 			->whereIn('planet_type', $fleetMission == Mission::Recycling ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$planetType])
 			->first();
 
 		if ($fleetMission != Mission::Expedition) {
 			if (!$targetPlanet && $fleetMission != Mission::Colonization && $fleetMission != Mission::CreateBase) {
-				throw new Exception("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
+				throw new Exception('Данной планеты не существует! - [' . $galaxy . ':' . $system . ':' . $planet . ']');
 			} elseif ($fleetMission == Mission::Destruction && !$targetPlanet) {
-				throw new Exception("Данной планеты не существует! - [" . $galaxy . ":" . $system . ":" . $planet . "]");
+				throw new Exception('Данной планеты не существует! - [' . $galaxy . ':' . $system . ':' . $planet . ']');
 			} elseif (!$targetPlanet && $fleetMission == Mission::Colonization && $planetType != PlanetType::PLANET) {
-				throw new PageException("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", "/fleet/");
+				throw new PageException("<span class=\"error\"><b>Колонизировать можно только планету!</b></span>", '/fleet/');
 			}
 		} else {
-			if ($this->user->getTechLevel('expedition') >= 1) {
+			if ($this->user->getTechLevel('expedition') > 0) {
 				$ExpeditionEnCours = Models\Fleet::query()
 					->where('user_id', $this->user->id)
 					->where('mission', Mission::Expedition)
@@ -124,10 +121,10 @@ class FleetSendController extends Controller
 				$ExpeditionEnCours = 0;
 			}
 
-			if ($this->user->getTechLevel('expedition') == 0) {
-				throw new PageException("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", "/fleet/");
+			if (!$this->user->getTechLevel('expedition')) {
+				throw new PageException("<span class=\"error\"><b>Вами не изучена \"Экспедиционная технология\"!</b></span>", '/fleet/');
 			} elseif ($ExpeditionEnCours >= $MaxExpedition) {
-				throw new PageException("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", "/fleet/");
+				throw new PageException("<span class=\"error\"><b>Вы уже отправили максимальное количество экспедиций!</b></span>", '/fleet/');
 			}
 
 			if ($expTime <= 0 || $expTime > (round($this->user->getTechLevel('expedition') / 2) + 1)) {
@@ -659,7 +656,7 @@ class FleetSendController extends Controller
 		$html .= '<div class="c col-12"><span class="success">' . ($str_error ?? __('fleet.fl_fleet_send')) . '</span></div>';
 		$html .= '</div><div class="row">';
 		$html .= '<div class="th col-6">' . __('fleet.fl_mission') . '</div>';
-		$html .= '<div class="th col-6">' . __('main.type_mission.' . $fleetMission->value) . '</div>';
+		$html .= '<div class="th col-6">' . $fleetMission->title() . '</div>';
 		$html .= '</div><div class="row">';
 		$html .= '<div class="th col-6">' . __('fleet.fl_dist') . '</div>';
 		$html .= '<div class="th col-6">' . Format::number($distance) . '</div>';
@@ -707,7 +704,7 @@ class FleetSendController extends Controller
 			throw new PageException(__('fleet.gate_wait_star') . " - " . Format::time($nextJumpTime), '/fleet/');
 		}
 
-		$targetPlanet = Planet::query()->find($planetId);
+		$targetPlanet = Planet::find($planetId);
 
 		if (!$targetPlanet->isAvailableJumpGate()) {
 			throw new PageException(__('fleet.gate_no_dest_g'), '/fleet/');

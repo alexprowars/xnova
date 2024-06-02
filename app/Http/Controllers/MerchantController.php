@@ -15,18 +15,14 @@ class MerchantController extends Controller
 		'deuterium' => 4,
 	];
 
-	public function index(Request $request)
+	public function index()
 	{
-		if ($request->has('exchange')) {
-			$this->exchange($request);
-		}
-
 		return response()->state([
-			'modifiers' => $this->modifiers
+			'modifiers' => $this->modifiers,
 		]);
 	}
 
-	private function exchange(Request $request)
+	public function exchange(Request $request)
 	{
 		if ($this->user->credits <= 0) {
 			throw new Exception('Недостаточно кредитов для проведения обменной операции');

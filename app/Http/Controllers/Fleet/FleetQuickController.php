@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
+use App\Engine\FleetCollection;
 use App\Engine\Game;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
@@ -11,7 +13,6 @@ use App\Exceptions\SuccessException;
 use App\Http\Controllers\Controller;
 use App\Models;
 use App\Models\Planet;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class FleetQuickController extends Controller
@@ -30,12 +31,20 @@ class FleetQuickController extends Controller
 			$MaxFlottes += 2;
 		}
 
-		$mission 	= (int) $request->query('mission', 0);
+		$mission = (int) $request->query('mission', 0);
+		$mission = Mission::tryFrom($mission);
+
+		if (!$mission) {
+			throw new Exception("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
+		}
+
 		$galaxy 	= (int) $request->query('galaxy', 0);
 		$system 	= (int) $request->query('system', 0);
 		$planet 	= (int) $request->query('planet', 0);
 		$planetType = (int) $request->query('type', 0);
-		$num 		= (int) $request->query('count', 0);
+		$planetType = PlanetType::tryFrom($planetType);
+
+		$num = (int) $request->query('count', 0);
 
 		if ($MaxFlottes <= $maxfleet) {
 			throw new Exception('Все слоты флота заняты');
@@ -45,21 +54,12 @@ class FleetQuickController extends Controller
 			throw new Exception('Ошибочная система!');
 		} elseif ($planet > config('settings.maxPlanetInSystem') || $planet < 1) {
 			throw new Exception('Ошибочная планета!');
-		} elseif ($planetType != 1 && $planetType != 2 && $planetType != 3 && $planetType != 5) {
+		} elseif (!in_array($planetType, PlanetType::cases())) {
 			throw new Exception('Ошибочный тип планеты!');
 		}
 
-		$target = Planet::query()
-			->where('galaxy', $galaxy)
-			->where('system', $system)
-			->where('planet', $planet)
-			->where(function (Builder $query) use ($planetType) {
-				if ($planetType == 2) {
-					$query->where('planet_type', 1)->where('planet_type', 5);
-				} else {
-					$query->where('planet_type');
-				}
-			})
+		$target = Planet::coordinates(new Coordinates($galaxy, $system, $planet))
+			->whereIn('planet_type', $planetType == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$planetType])
 			->first();
 
 		if (!$target) {
@@ -73,7 +73,7 @@ class FleetQuickController extends Controller
 		$fleetArray = [];
 		$HeDBRec = false;
 
-		if ($mission == Mission::Spy && ($planetType == 1 || $planetType == 3 || $planetType == 5)) {
+		if ($mission == Mission::Spy && ($planetType == PlanetType::PLANET || $planetType == PlanetType::MOON || $planetType == PlanetType::MILITARY_BASE)) {
 			if ($num <= 0) {
 				throw new Exception('Вы были забанены за читерство!');
 			}
@@ -134,7 +134,7 @@ class FleetQuickController extends Controller
 			}
 
 			$fleetArray[210] = $num;
-		} elseif ($mission == Mission::Recycling && $planetType == 2) {
+		} elseif ($mission == Mission::Recycling && $planetType == PlanetType::DEBRIS) {
 			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
 			if ($debrisSize == 0) {
@@ -165,7 +165,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$fleetCollection = \App\Engine\FleetCollection::createFromArray($fleetArray, $this->planet);
+		$fleetCollection = FleetCollection::createFromArray($fleetArray, $this->planet);
 
 		$fleetSpeed = $fleetCollection->getSpeed();
 
@@ -185,7 +185,7 @@ class FleetQuickController extends Controller
 				$this->planet->updateAmount($shipId, -$count, true);
 
 				$shipArray[] = [
-					'id' => (int) $shipId,
+					'id' => $shipId,
 					'count' => $count
 				];
 			}
@@ -241,7 +241,7 @@ class FleetQuickController extends Controller
 						}
 					}
 
-					throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . __('main.type_mission.' . $mission) . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
+					throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . $mission->title() . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
 				}
 			}
 		}

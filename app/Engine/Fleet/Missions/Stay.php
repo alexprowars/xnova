@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\FleetEngine;
 use App\Format;
 use App\Models\Planet;
@@ -42,7 +43,7 @@ class Stay extends FleetEngine implements Mission
 				$TargetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
 			}
 
-			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->target_user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 
@@ -70,7 +71,7 @@ class Stay extends FleetEngine implements Mission
 
 			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
 
-			User::sendMessage($this->fleet->user_id, 0, $this->fleet->end_time, 6, __('fleet_engine.sys_mess_qg'), $TargetMessage);
+			User::sendMessage($this->fleet->user_id, null, $this->fleet->end_time, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage);
 		}
 	}
 }

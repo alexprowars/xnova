@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Engine\Galaxy;
@@ -32,7 +33,7 @@ class CreateBase extends FleetEngine implements Mission
 			if ($iPlanetCount >= $maxBases) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
 
-				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
 				$this->fleet->return();
 			} else {
@@ -47,7 +48,7 @@ class CreateBase extends FleetEngine implements Mission
 				if ($NewOwnerPlanet) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_allisok');
 
-					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 
 					$newFleet = [];
 
@@ -73,7 +74,7 @@ class CreateBase extends FleetEngine implements Mission
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
-					User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 				}
 			}
 		} else {
@@ -81,7 +82,7 @@ class CreateBase extends FleetEngine implements Mission
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 
-			User::sendMessage($this->fleet->user_id, 0, $this->fleet->end_time, 1, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+			User::sendMessage($this->fleet->user_id, null, $this->fleet->end_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
 		}
 	}
 

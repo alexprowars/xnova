@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Coordinates;
+use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\Mission;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
@@ -99,39 +101,36 @@ class FleetVerbandController extends Controller
 					'user_id' => $user_data->id,
 				]);
 
-				$planet = Planet::query()
-					->where('galaxy', $assault->galaxy)
-					->where('system', $assault->system)
-					->where('planet', $assault->planet)
-					->where('planet_type', $assault->planet_type)
-					->first();
+				$planet = Planet::findByCoordinates(
+					new Coordinates($assault->galaxy, $assault->system, $assault->planet, $assault->planet_type)
+				);
 
-				$message = "Игрок " . $this->user->username . " приглашает вас произвести совместное нападение на планету " . $planet->name . " [" . $assault->galaxy . ":" . $assault->system . ":" . $assault->planet . "] игрока " . $planet->user->username . ". Имя ассоциации: " . $assault->name . ". Если вы отказываетесь, то просто проигнорируйте данной сообщение.";
+				$message = 'Игрок ' . $this->user->username . ' приглашает вас произвести совместное нападение на планету ' . $planet->name . ' [' . $assault->galaxy . ':' . $assault->system . ':' . $assault->planet . '] игрока ' . $planet->user->username . '. Имя ассоциации: ' . $assault->name . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
 
-				User::sendMessage($user_data->id, false, 0, 1, 'Флот', $message);
+				User::sendMessage($user_data->id, null, now(), MessageType::User, 'Флот', $message);
 			} elseif ($action == "changename") {
 				if ($assault->fleet_id != $fleet->id) {
-					throw new Exception("Вы не можете менять имя ассоциации");
+					throw new Exception('Вы не можете менять имя ассоциации');
 				}
 
-				$name = strip_tags($request->post('name', 'string'));
+				$name = strip_tags($request->post('name'));
 
 				if (mb_strlen($name) < 5) {
-					throw new Exception("Слишком короткое имя ассоциации");
+					throw new Exception('Слишком короткое имя ассоциации');
 				}
 
 				if (mb_strlen($name) > 20) {
-					throw new Exception("Слишком длинное имя ассоциации");
+					throw new Exception('Слишком длинное имя ассоциации');
 				}
 
 				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-					throw new Exception("Имя ассоциации содержит запрещённые символы");
+					throw new Exception('Имя ассоциации содержит запрещённые символы');
 				}
 
 				$x = Assault::where('name', $name)->exists();
 
 				if ($x) {
-					throw new Exception("Имя уже зарезервировано другим игроком");
+					throw new Exception('Имя уже зарезервировано другим игроком');
 				}
 
 				$assault->name = $name;

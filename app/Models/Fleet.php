@@ -122,14 +122,14 @@ class Fleet extends Model
 		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != 15) && $this->mission != Mission::Rak && $this->target_user_id != 1));
 	}
 
-	public function getOriginCoordinates(): Coordinates
+	public function getOriginCoordinates($withType = true): Coordinates
 	{
-		return new Coordinates($this->start_galaxy, $this->start_system, $this->start_planet, $this->start_type);
+		return new Coordinates($this->start_galaxy, $this->start_system, $this->start_planet, $withType ? $this->start_type : null);
 	}
 
-	public function getDestinationCoordinates(): Coordinates
+	public function getDestinationCoordinates($withType = true): Coordinates
 	{
-		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $this->end_type);
+		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $withType ? $this->end_type : null);
 	}
 
 	public function return(array $attributes = [])

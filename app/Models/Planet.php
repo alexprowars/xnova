@@ -9,6 +9,7 @@ use App\Engine\Vars;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -227,5 +228,16 @@ class Planet extends Model
 			->where('planet', $target->getPlanet())
 			->where('planet_type', $target->getType() ?: PlanetType::PLANET)
 			->first();
+	}
+
+	public function scopeCoordinates(Builder $query, Coordinates $target): void
+	{
+		$query->where('galaxy', $target->getGalaxy())
+			->where('system', $target->getSystem())
+			->where('planet', $target->getPlanet());
+
+		if ($target->getType()) {
+			$query->where('planet_type', $target->getType());
+		}
 	}
 }

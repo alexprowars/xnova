@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\Game;
 use App\Exceptions\Exception;
 use App\Exceptions\SuccessException;
@@ -76,7 +77,7 @@ class MessagesController extends Controller
 			$Message = preg_replace('/[ ]+/', ' ', $Message);
 			$Message = strtr($Message, __('messages.stopwords'));
 
-			User::sendMessage($OwnerRecord['id'], false, 0, 2, $From, $Message);
+			User::sendMessage($OwnerRecord['id'], null, now(), MessageType::User, $From, $Message);
 
 			throw new SuccessException(__('messages.mess_sended'));
 		}
@@ -146,7 +147,7 @@ class MessagesController extends Controller
 				$user->id,
 				$this->user->id,
 				0,
-				1,
+				MessageType::User,
 				'<font color=red>' . $this->user->username . '</font>',
 				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text
 			);

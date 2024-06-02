@@ -12,7 +12,7 @@ class ServerController extends Controller
 		return [[
 			'code'	=> 'server',
 			'title' => 'Информация',
-			'icon'	=> 'server',
+			'icon'	=> 'la la-server',
 			'sort'	=> 30
 		]];
 	}

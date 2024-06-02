@@ -119,14 +119,7 @@ class FleetCheckoutController extends Controller
 					$row->name .= ' ' . __('fleet.fl_shrtcup3');
 				}
 
-				$parse['planets'][] =  [
-					'id' => $row->id,
-					'name' => $row->name,
-					'galaxy' => $row->galaxy,
-					'system' => $row->system,
-					'planet' => $row->planet,
-					'planet_type' => $row->planet_type,
-				];
+				$parse['planets'][] = $row->only(['id', 'name', 'galaxy', 'system', 'planet', 'planet_type']);
 			}
 		}
 

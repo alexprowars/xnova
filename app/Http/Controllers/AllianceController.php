@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\Game;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
@@ -360,7 +361,7 @@ class AllianceController extends Controller
 						'alliance_id' => $alliance->id,
 					]);
 
-					User::sendMessage($show, $this->user->id, 0, 3, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
+					User::sendMessage($show, $this->user->id, now(), MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
 
 					throw new RedirectException('/alliance/members', 'Игрок принят в альянс');
 				}
@@ -371,7 +372,7 @@ class AllianceController extends Controller
 
 				AllianceRequest::query()->where('user_id', $show)->where('alliance_id', $alliance->id)->delete();
 
-				User::sendMessage($show, $this->user->id, 0, 3, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
+				User::sendMessage($show, $this->user->id, now(), MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
 			}
 		}
 

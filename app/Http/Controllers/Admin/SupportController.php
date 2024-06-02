@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Engine\Enums\MessageType;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
@@ -13,7 +14,7 @@ class SupportController extends Controller
 		return [[
 			'code'	=> 'support',
 			'title' => 'Техподдержка',
-			'icon'	=> 'support',
+			'icon'	=> 'la la-headset',
 			'sort'	=> 20
 		]];
 	}
@@ -129,7 +130,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "',status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Поступил ответ на тикет №' . $id);
+			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Поступил ответ на тикет №' . $id);
 		}
 
 		return $this->index();
@@ -152,7 +153,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Был открыт тикет №' . $id);
+			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Был открыт тикет №' . $id);
 		}
 
 		return $this->index();
@@ -175,7 +176,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], false, time(), 5, $this->user->username, 'Тикет №' . $id . ' закрыт');
+			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Тикет №' . $id . ' закрыт');
 		}
 
 		return $this->index();

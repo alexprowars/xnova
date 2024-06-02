@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Engine\Enums\MessageType;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -18,7 +19,7 @@ class MailingController extends Controller
 		return [[
 			'code'	=> 'mailing',
 			'title' => 'Рассылка',
-			'icon'	=> 'edit',
+			'icon'	=> 'la la-mail-bulk',
 			'sort'	=> 180
 		]];
 	}
@@ -46,9 +47,9 @@ class MailingController extends Controller
 			foreach ($users as $user) {
 				User::sendMessage(
 					$user->id,
-					false,
-					time(),
-					2,
+					null,
+					now(),
+					MessageType::System,
 					'<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
 					$fields['message']
 				);

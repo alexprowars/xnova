@@ -13,6 +13,8 @@ use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\CombatEngine\Utils\LangManager;
+use App\Engine\Coordinates;
+use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\FleetEngine;
@@ -258,9 +260,7 @@ class Attack extends FleetEngine implements Mission
 		$totalDebree = $result['debree']['def'][0] + $result['debree']['def'][1] + $result['debree']['att'][0] + $result['debree']['att'][1];
 
 		if ($totalDebree > 0) {
-			Planet::query()->where('galaxy', $target->galaxy)
-				->where('system', $target->system)
-				->where('planet', $target->planet)
+			Planet::coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
 				->where('planet_type', '!=', 3)
 				->update([
 					'debris_metal' => DB::raw('debris_metal + ' . ($result['debree']['att'][0] + $result['debree']['def'][0])),
@@ -321,7 +321,7 @@ class Attack extends FleetEngine implements Mission
 				if (!count($fleetArray)) {
 					$this->killFleet($fleetID);
 				} else {
-					Planet::query()->where('id', $fleetID)
+					Planet::find($fleetID)
 						->update([
 							'fleet_array' => $fleetArray,
 							'updated_at' => DB::raw('end_time'),
@@ -524,7 +524,7 @@ class Attack extends FleetEngine implements Mission
 		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
 
 		foreach ($UserList as $info) {
-			User::sendMessage($info, 0, time(), 4, 'Боевой доклад', $attackersReport);
+			User::sendMessage($info, null, now(), MessageType::Battle, 'Боевой доклад', $attackersReport);
 		}
 
 		$UserList = [];
@@ -548,7 +548,7 @@ class Attack extends FleetEngine implements Mission
 		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
 
 		foreach ($UserList as $info) {
-			User::sendMessage($info, 0, time(), 4, 'Боевой доклад', $defendersReport);
+			User::sendMessage($info, null, now(), MessageType::Battle, 'Боевой доклад', $defendersReport);
 		}
 
 		Models\LogAttack::create([

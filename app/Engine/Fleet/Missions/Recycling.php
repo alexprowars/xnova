@@ -2,6 +2,9 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
+use App\Engine\Enums\MessageType;
+use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Engine\Vars;
 use App\Format;
@@ -13,11 +16,9 @@ class Recycling extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$targetPlanet = Planet::query()->where('galaxy', $this->fleet->end_galaxy)
-			->where('system', $this->fleet->end_system)
-			->where('planet', $this->fleet->end_planet)
-			->whereNot('planet_type', 3)
-			->first();
+		$targetPlanet = Planet::findByCoordinates(
+			new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::MOON)
+		);
 
 		if ($targetPlanet) {
 			$recyclerCapacity = 0;
@@ -92,7 +93,7 @@ class Recycling extends FleetEngine implements Mission
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
 
-		User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 5, __('fleet_engine.sys_mess_spy_control'), $Message);
+		User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $Message);
 	}
 
 	public function endStayEvent()

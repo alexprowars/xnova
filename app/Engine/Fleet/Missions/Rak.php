@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Engine\Vars;
@@ -91,7 +92,7 @@ class Rak extends FleetEngine implements Mission
 			$message = "Нет обороны для разрушения!";
 		}
 
-		User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 4, 'Ракетная атака', $message);
+		User::sendMessage($this->fleet->target_user_id, null, $this->fleet->start_time, MessageType::Battle, 'Ракетная атака', $message);
 	}
 
 	public function endStayEvent()

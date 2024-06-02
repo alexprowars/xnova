@@ -16,4 +16,9 @@ enum Mission: int
 	case CreateBase = 10;
 	case Expedition = 15;
 	case Rak = 20;
+
+	public function title(): string
+	{
+		return __('main.type_mission.' . $this->value);
+	}
 }

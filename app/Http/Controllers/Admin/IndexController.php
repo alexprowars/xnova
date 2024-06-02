@@ -17,7 +17,7 @@ class IndexController extends Controller
 		return [[
 			'code'	=> 'index',
 			'title' => 'Панель управления',
-			'icon'	=> 'dashboard',
+			'icon'	=> 'la la-campground',
 			'sort'	=> 10
 		], [
 			'code'	=> null,
@@ -44,7 +44,7 @@ class IndexController extends Controller
 		$PrevIP = '';
 
 		if (Auth::user()->can('list index:online')) {
-			$Last15Mins = User::query()->where('onlinetime', '>', now()->addMinutes(15))
+			$Last15Mins = User::query()->where('onlinetime', '>', now()->subMinutes(15))
 				->orderBy($TypeSort)
 				->get();
 

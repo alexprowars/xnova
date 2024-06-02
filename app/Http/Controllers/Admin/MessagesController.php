@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Message;
+use App\Models\Report;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use App\Helpers;
 
@@ -13,22 +18,23 @@ class MessagesController extends Controller
 		return [[
 			'code'	=> 'messages',
 			'title' => 'Сообщения',
-			'icon'	=> 'comments-o',
+			'icon'	=> 'la la-sms',
 			'sort'	=> 170
 		]];
 	}
 
-	public function index()
+	public function index(Request $request)
 	{
 		$parse = [];
 
-		$Prev = !empty($_POST['prev']);
-		$Next = !empty($_POST['next']);
-		$DelSel = !empty($_POST['delsel']);
-		$DelDat = !empty($_POST['deldat']);
-		$CurrPage = (!empty($_POST['curr'])) ? intval($_POST['curr']) : 1;
-		$Selected = isset($_POST['type']) ? intval($_POST['type']) : 1;
-		$SelPage = (int) $this->request->get('p', 'int', 1);
+		$Prev = $request->has('prev');
+		$Next = $request->has('next');
+		$DelSel = $request->has('delsel');
+		$DelDat = $request->has('deldat');
+
+		$CurrPage = (int) $request->post('curr', 1);
+		$Selected = (int) $request->post('type', 1);
+		$SelPage = (int) $request->input('p', 1);
 
 		if ($Selected == 6) {
 			$Selected = 0;
@@ -36,7 +42,9 @@ class MessagesController extends Controller
 
 		$parse['types'] = [1, 2, 3, 4, 5, 0];
 
-		if ($this->user->authlevel == 1) {
+		$user = auth()->user();
+
+		if ($user->authlevel == 1) {
 			$parse['types'] = [3, 4, 5];
 		}
 
@@ -50,76 +58,78 @@ class MessagesController extends Controller
 
 		$ViewPage = (!empty($SelPage)) ? $SelPage : 1;
 
-		if ($Prev == true) {
-			$CurrPage -= 1;
+		if ($Prev) {
+			--$CurrPage;
 
 			if ($CurrPage >= 1) {
 				$ViewPage = $CurrPage;
 			} else {
 				$ViewPage = 1;
 			}
-		} elseif ($Next == true) {
-			$CurrPage += 1;
+		} elseif ($Next) {
+			++$CurrPage;
 
 			$ViewPage = $CurrPage;
-		} elseif ($DelSel == true && $this->user->authlevel > 1) {
-			foreach ($_POST['sele_mes'] as $MessId => $Value) {
+		} elseif ($DelSel && $user->authlevel > 1) {
+			foreach ($request->post('sele_mes') as $MessId => $Value) {
 				if ($Value = "on") {
-					$this->db->query("DELETE FROM messages WHERE id = '" . $MessId . "';");
+					Message::query()->where('id', $MessId)->delete();
 				}
 			}
-		} elseif ($DelDat == true && $this->user->authlevel > 1) {
-			$SelDay 	= intval($_POST['selday']);
-			$SelMonth 	= intval($_POST['selmonth']);
-			$SelYear 	= intval($_POST['selyear']);
+		} elseif ($DelDat && $user->authlevel > 1) {
+			$SelDay 	= (int) $request->post('selday');
+			$SelMonth 	= (int) $request->post('selmonth');
+			$SelYear 	= (int) $request->post('selyear');
 
-			$LimitDate = mktime(0, 0, 0, $SelMonth, $SelDay, $SelYear);
+			$LimitDate = Carbon::createFromDate($SelYear, $SelMonth, $SelDay);
 
-			if ($LimitDate != false) {
-				$this->db->query("DELETE FROM messages WHERE time <= '" . $LimitDate . "';");
-				$this->db->query("DELETE FROM rw WHERE time <= '" . $LimitDate . "';");
-			}
+			Message::query()->where('time', '<=', $LimitDate)->delete();
+			Report::query()->where('created_at', '<=', $LimitDate)->delete();
 		}
 
-		$Mess = $this->db->query("SELECT COUNT(*) AS max FROM messages WHERE type = '" . $Selected . "';")->fetch();
-		$MaxPage = ceil(($Mess['max'] / 25));
+		$Mess = Message::query()->where('type', $Selected)->count();
+
+		$MaxPage = ceil(($Mess / 25));
 
 		$parse['mlst_data_page'] = $ViewPage;
 		$parse['mlst_data_pagemax'] = $MaxPage;
 		$parse['mlst_data_sele'] = $Selected;
 
+		$messages = Message::query()
+			->where('type', $Selected)
+			->orderByDesc('time')
+			->limit(25)
+			->offset((($ViewPage - 1) * 25))
+			->with('user');
+
 		if (isset($_POST['userid']) && $_POST['userid'] != "") {
-			$userid = " AND user_id = " . intval($_POST['userid']) . "";
+			$messages->where('user_id', (int) $_POST['userid']);
 			$parse['userid'] = intval($_POST['userid']);
 		} elseif (isset($_POST['userid_s']) && $_POST['userid_s'] != "") {
-			$userid = " AND from_id = " . intval($_POST['userid_s']) . "";
+			$messages->where('from_id', (int) $_POST['userid_s']);
 			$parse['userid_s'] = intval($_POST['userid_s']);
-		} else {
-			$userid = "";
 		}
 
-		$Messages = $this->db->query("SELECT m.*, u.username FROM messages m LEFT JOIN users u ON u.id = m.user_id WHERE m.type = '" . $Selected . "' " . $userid . " ORDER BY m.time DESC LIMIT " . (($ViewPage - 1) * 25) . ",25;");
+		$messages = $messages->get();
 
-		$parse['mlst_data_rows'] = [];
+		$parse['items'] = [];
 
-		while ($row = $Messages->fetch()) {
-			$row['text'] = str_replace('/admin', '', str_replace('#BASEPATH#', $this->url->getBaseUri(), $row['text']));
+		foreach ($messages as $row) {
+			$bloc['id'] = $row->id;
+			$bloc['from'] = $row->from_id;
+			$bloc['to'] = $row->user ? $row->user->username . ' ID:' . $row->user_id : '-';
+			$bloc['text'] = stripslashes(nl2br($row->text));
+			$bloc['time'] = $row->time?->format('d.m.Y H:i:s');
 
-			$bloc['mlst_id'] = $row['id'];
-			$bloc['mlst_from'] = $row['from_id'];
-			$bloc['mlst_to'] = $row['username'] . " ID:" . $row['user_id'];
-			$bloc['mlst_text'] = stripslashes(nl2br($row['text']));
-			$bloc['mlst_time'] = date("d.m.Y H:i:s", $row['time']);
-
-			$parse['mlst_data_rows'][] = $bloc;
+			$parse['items'][] = $bloc;
 		}
 
-		if (isset($_POST['delit']) && $this->user->authlevel > 1) {
-			$this->db->query("DELETE FROM messages WHERE id = '" . $_POST['delit'] . "';");
+		if (isset($_POST['delit']) && $user->authlevel > 1) {
+			Message::query()->where('id', $_POST['delit'])->delete();
 			$this->message(_getText('mlst_mess_del') . " ( " . $_POST['delit'] . " )", _getText('mlst_title'), "/messages/", 3);
 		}
 
-		$pagination = Helpers::pagination($Mess['max'], 25, '/admin/messages/', $ViewPage);
+		$pagination = Helpers::pagination($Mess, 25, '/admin/messages/', $ViewPage);
 
 		View::share('title', __('admin.mlst_title'));
 

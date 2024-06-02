@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use App\Engine\Enums\PlanetType;
 use Illuminate\Database\Eloquent\Model;
 
 class Assault extends Model
 {
 	public $timestamps = false;
 	protected $table = 'assaults';
+
+	protected function casts(): array
+	{
+		return [
+			'planet_type' => PlanetType::class,
+		];
+	}
 
 	public function users()
 	{

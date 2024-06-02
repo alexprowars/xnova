@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Engine\Enums\MessageType;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
 use App\Http\Requests\Admin\PaymentRequest;
 use App\Models\LogCredit;
@@ -11,9 +11,6 @@ use App\Models\Payment;
 use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
-/**
- * @property CrudPanel $crud
- */
 class PaymentsController extends CrudController
 {
 	use Operations\ListOperation;
@@ -26,7 +23,7 @@ class PaymentsController extends CrudController
 			'code'	=> 'payments',
 			'title' => 'Финансы',
 			'url'	=> backpack_url('payments'),
-			'icon'	=> 'money',
+			'icon'	=> 'la la-money-bill',
 			'sort'	=> 40,
 		]];
 	}
@@ -40,7 +37,6 @@ class PaymentsController extends CrudController
 
 		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
-			$this->crud->enableExportButtons();
 
 			$this->crud->setColumns([[
 					'name'  => 'transaction_id',
@@ -113,7 +109,7 @@ class PaymentsController extends CrudController
 				'type' => 6,
 			]);
 
-			User::sendMessage($checkUser->id, 0, 0, 2, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');
+			User::sendMessage($checkUser->id, null, now(), MessageType::System, 'Обработка платежей', 'На ваш счет зачислено ' . $fields['amount'] . ' кредитов');
 
 			Alert::success('Начисление ' . $fields['amount'] . ' кредитов прошло успешно');
 		}

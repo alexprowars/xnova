@@ -2,6 +2,8 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
+use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\FleetEngine;
 use App\Models;
@@ -40,12 +42,9 @@ class Destruction extends FleetEngine implements Mission
 			}
 
 			if ($rips > 0) {
-				$targetMoon = Planet::query()
-					->where('galaxy', $this->fleet->end_galaxy)
-					->where('system', $this->fleet->end_system)
-					->where('planet', $this->fleet->end_planet)
-					->where('planet_type', 3)
-					->first();
+				$targetMoon = Planet::findByCoordinates(
+					new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::MOON)
+				);
 
 				$CurrentUser = User::find($this->fleet->user_id);
 
@@ -109,9 +108,7 @@ class Destruction extends FleetEngine implements Mission
 					$debree = $this->convertFleetToDebris($fleetData);
 
 					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
-						Models\Planet::query()->where('galaxy', $this->fleet->end_galaxy)
-							->where('system', $this->fleet->end_system)
-							->where('planet', $this->fleet->end_planet)
+						Models\Planet::coordinates($this->fleet->getDestinationCoordinates(false))
 							->where('planet_type', '!=', PlanetType::MOON)
 							->update([
 								'debris_metal' => DB::raw('debris_metal + ' . $debree['metal']),
@@ -140,15 +137,15 @@ class Destruction extends FleetEngine implements Mission
 
 				$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
 
-				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
-				User::sendMessage($targetMoon->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), $message);
+				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message);
+				User::sendMessage($targetMoon->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message);
 
 				Cache::forget('app::planetlist_' . $targetMoon->user_id);
 			} else {
-				User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 			}
 		} else {
-			User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 4, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+			User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
 		}
 	}
 

@@ -78,7 +78,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('imperium', [Controllers\ImperiumController::class, 'index'])->name('imperium');
 	Route::match(['get', 'post'], 'log', [Controllers\LogController::class, 'index'])->name('log');
 	Route::post('log/new', [Controllers\LogController::class, 'new'])->name('log.new');
-	Route::match(['get', 'post'], 'merchant', [Controllers\MerchantController::class, 'index'])->name('merchant');
+	Route::get('merchant', [Controllers\MerchantController::class, 'index'])->name('merchant');
+	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange']);
 	Route::match(['get', 'post'], 'messages', [Controllers\MessagesController::class, 'index'])->name('messages');
 	Route::match(['get', 'post'], 'messages/write/{id}', [Controllers\MessagesController::class, 'write'])->name('messages.send');
 	Route::match(['get', 'post'], 'notes', [Controllers\NotesController::class, 'index'])->name('notes');

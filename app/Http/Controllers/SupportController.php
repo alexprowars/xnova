@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Exceptions\SuccessException;
@@ -65,7 +66,7 @@ class SupportController extends Controller
 		$ticket->status = 3;
 		$ticket->update();
 
-		User::sendMessage(1, false, time(), 5, $this->user->username, 'Поступил ответ на тикет №' . $id);
+		User::sendMessage(1, null, now(), MessageType::System, $this->user->username, 'Поступил ответ на тикет №' . $id);
 
 		if ($ticket->status == 2) {
 			app(SmsSender::class)

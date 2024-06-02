@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Models;
@@ -49,7 +50,7 @@ class BuddyController extends Controller
 				'message' => $text,
 			]);
 
-			User::sendMessage($user->id, 0, time(), 2, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+			User::sendMessage($user->id, null, now(), MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
 
 			throw new RedirectException('/buddy', 'Запрос отправлен');
 		}

@@ -1,4 +1,9 @@
 @extends(backpack_view('blank'))
+@section('header')
+	<section class="header-operation container-fluid animated fadeIn d-flex mb-2 align-items-baseline d-print-none">
+		<h1 class="text-capitalize mb-0">Флоты в полёте</h1>
+	</section>
+@endsection
 @section('content')
 	<div class="row">
 		<div class="col-12">

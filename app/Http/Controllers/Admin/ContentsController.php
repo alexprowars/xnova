@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use App\Http\Requests\Admin\ContentRequest;
 use App\Models\Content;
 use Backpack\CRUD\app\Http\Controllers\Operations;
 
-/**
- * @property CrudPanel $crud
- */
 class ContentsController extends CrudController
 {
 	use Operations\ListOperation;
@@ -25,7 +21,7 @@ class ContentsController extends CrudController
 			'code'	=> 'contents',
 			'title' => 'Контент',
 			'url'	=> backpack_url('contents'),
-			'icon'	=> 'pencil',
+			'icon'	=> 'la la-pencil-alt',
 			'sort'	=> 190
 		], [
 			'code'	=> null,
@@ -43,7 +39,6 @@ class ContentsController extends CrudController
 
 		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
-			$this->crud->enableExportButtons();
 
 			$this->crud->setColumns([
 				[

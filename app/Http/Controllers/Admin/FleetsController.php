@@ -16,7 +16,7 @@ class FleetsController extends Controller
 		return [[
 			'code'	=> 'fleets',
 			'title' => 'Флоты в полёте',
-			'icon'	=> 'plane',
+			'icon'	=> 'la la-fighter-jet',
 			'sort'	=> 110
 		]];
 	}
@@ -25,12 +25,12 @@ class FleetsController extends Controller
 	{
 		$items = [];
 
-		$fleets = Models\Fleet::query()->orderBy('end_time');
+		$fleets = Models\Fleet::query()->orderBy('end_time')->get();
 
 		foreach ($fleets as $fleet) {
 			$row = [];
 			$row['Id'] = $fleet->id;
-			$row['Mission'] = Fleet::createFleetPopupedMissionLink($fleet, __('main.type_mission.' . $fleet->mission), '');
+			$row['Mission'] = Fleet::createFleetPopupedMissionLink($fleet, $fleet->mission->title(), '');
 			$row['Mission'] .= "<br>" . (($fleet->mess == 1) ? "R" : "A");
 
 			$row['Fleet'] = Fleet::createFleetPopupedFleetLink($fleet, __('main.tech.200'), '', $this->user);

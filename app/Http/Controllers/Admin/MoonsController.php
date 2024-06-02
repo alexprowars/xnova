@@ -8,12 +8,8 @@ use App\Http\Requests\Admin\MoonRequest;
 use App\Models\Planet;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Http\Controllers\Operations;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Prologue\Alerts\Facades\Alert;
 
-/**
- * @property CrudPanel $crud
- */
 class MoonsController extends CrudController
 {
 	use Operations\ListOperation;
@@ -27,7 +23,7 @@ class MoonsController extends CrudController
 			'code'	=> 'moons',
 			'title' => 'Список лун',
 			'url'	=> backpack_url('moons'),
-			'icon'	=> 'moon-o',
+			'icon'	=> 'la la-moon',
 			'sort'	=> 100
 		]];
 	}
@@ -41,7 +37,6 @@ class MoonsController extends CrudController
 		$this->crud->operation('list', function () {
 			$this->crud->orderBy('id', 'desc');
 			$this->crud->addClause('where', 'planet_type', '=', 3);
-			$this->crud->enableExportButtons();
 
 			$this->crud->setColumns([
 				[

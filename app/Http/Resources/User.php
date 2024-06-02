@@ -24,8 +24,8 @@ class User extends JsonResource
 		$data = [
 			'id' => $this->id,
 			'name' => trim($this->username),
-			'race' => (int) $this->race,
-			'sex' => (int) $this->sex,
+			'race' => $this->race,
+			'sex' => $this->sex,
 			'avatar' => $this->avatar,
 			'messages' => $this->messages,
 			'alliance' => $this->alliance_id > 0 ? [

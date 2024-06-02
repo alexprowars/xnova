@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
@@ -67,7 +68,7 @@ class OptionsController extends Controller
 				throw new Exception('Данный email уже используется в игре.');
 			}
 
-			User::sendMessage(1, false, time(), 5, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
+			User::sendMessage(1, null, now(), MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
 
 			throw new RedirectException('/options', 'Заявка отправлена на рассмотрение');
 		}

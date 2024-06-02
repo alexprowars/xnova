@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\Galaxy;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
@@ -165,7 +166,7 @@ class User extends Authenticatable
 
 			$this->update();
 
-			static::sendMessage($this->id, 0, 0, 2, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
+			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
 			$giveCredits += config('settings.level.credits', 10);
 		}
@@ -177,7 +178,7 @@ class User extends Authenticatable
 
 			$this->update();
 
-			static::sendMessage($this->id, 0, 0, 2, '', '<a href="/officier/">Получен новый военный уровень</a>');
+			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
 			$giveCredits += config('settings.level.credits', 10);
 		}
@@ -227,17 +228,19 @@ class User extends Authenticatable
 		return true;
 	}
 
-	public function getPlanets(bool $moons = true)
+	public function getPlanets(bool $withMoons = true)
 	{
-		$query = Planet::query()
-			->select(['id', 'name', 'image', 'galaxy', 'system', 'planet', 'planet_type', 'destruyed'])
-			->where('user_id', $this->id);
+		$query = Planet::query();
 
-		if ($this->alliance_id > 0) {
-			$query->orWhere('alliance_id', $this->alliance_id);
+		if ($this->alliance_id) {
+			$query->where(function (Builder $query) {
+				$query->where('user_id', $this->id)->orWhere('alliance_id', $this->alliance_id);
+			});
+		} else {
+			$query->where('user_id', $this->id);
 		}
 
-		if (!$moons) {
+		if (!$withMoons) {
 			$query->where('planet_type', '!=', 3);
 		}
 
@@ -288,45 +291,44 @@ class User extends Authenticatable
 		$query->orderBy($qryPlanets, $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc');
 	}
 
-	public static function sendMessage($owner, $sender, $time, $type, $from, $message): bool
+	public static function sendMessage($userId, $sender, $time, MessageType $type, $from, $message): bool
 	{
-		if ($time instanceof Carbon) {
-			$time = $time->getTimestamp();
+		if (is_numeric($time)) {
+			$time = Carbon::createFromTimestamp($time);
 		}
 
 		if (empty($time)) {
-			$time = time();
+			$time = now();
 		}
 
-		$user = Auth::check() ? Auth::user() : false;
+		$authUser = Auth::user();
 
-		if (!$owner && $user) {
-			$owner = $user->id;
+		if (!$userId && $authUser) {
+			$userId = $authUser->id;
 		}
 
-		if (!$owner) {
+		if (!$userId) {
 			return false;
 		}
 
-		if ($sender === false && $user) {
-			$sender = $user->id;
-		}
-
-		if ($user && $owner == $user->id) {
-			$user->messages++;
+		if (!$sender && $authUser) {
+			$sender = $authUser->id;
 		}
 
 		$obj = new Message();
-
-		$obj->user_id = $owner;
+		$obj->user_id = $userId;
 		$obj->from_id = $sender ?: null;
 		$obj->time = $time;
 		$obj->type = $type;
 		$obj->theme = $from;
-		$obj->text = addslashes($message);
+		$obj->text = $message;
 
 		if ($obj->save()) {
-			User::find($owner)->increment('messages');
+			if ($authUser && $userId == $authUser->id) {
+				$authUser->increment('messages');
+			} else {
+				User::find($userId)->increment('messages');
+			}
 
 			return true;
 		}
@@ -349,8 +351,8 @@ class User extends Authenticatable
 
 	public static function getPlanetsId(int $userId): array
 	{
-		return Planet::query()->where('user_id', $userId)
-			->get(['id'])->pluck('id')->all();
+		return Planet::query()->select(['id'])->where('user_id', $userId)
+			->get()->pluck('id')->all();
 	}
 
 	public static function creation(array $data)

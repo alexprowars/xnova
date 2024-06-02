@@ -4,6 +4,7 @@ namespace App\Engine;
 
 use App\Engine\Contracts\EntityBuildingInterface;
 use App\Engine\Entity\Research;
+use App\Engine\Enums\MessageType;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
 use App\Format;
@@ -361,7 +362,7 @@ class QueueManager
 				}
 
 				if (isset($message)) {
-					User::sendMessage($this->user->id, 0, 0, 99, __('main.sys_buildlist'), $message);
+					User::sendMessage($this->user->id, null, now(), MessageType::Queue, __('main.sys_buildlist'), $message);
 				}
 
 				array_shift($queueArray);

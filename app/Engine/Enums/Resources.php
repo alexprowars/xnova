@@ -8,4 +8,9 @@ enum Resources: string
 	case CRYSTAL = 'crystal';
 	case DEUTERIUM = 'deuterium';
 	case ENERGY = 'energy';
+
+	public function title(): string
+	{
+		return __('main.res.' . $this->value);
+	}
 }

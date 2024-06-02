@@ -13,7 +13,7 @@ class ManagerController extends Controller
 		return [[
 			'code'	=> 'manager',
 			'title' => 'Редактор',
-			'icon'	=> 'edit',
+			'icon'	=> 'la la-edit',
 			'sort'	=> 70,
 			'childrens' => [[
 				'code'	=> 'ip',

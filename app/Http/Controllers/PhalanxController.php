@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
@@ -53,13 +54,10 @@ class PhalanxController extends Controller
 		$this->planet->deuterium -= $consomation;
 		$this->planet->update();
 
-		$planet = Models\Planet::query()
-			->where('galaxy', $g)
-			->where('system', $s)
-			->where('planet', $i)
-			->count();
+		$planetExist = Models\Planet::coordinates(new Coordinates($g, $s, $i))
+			->exists();
 
-		if (!$planet) {
+		if (!$planetExist) {
 			throw new RedirectException('', 'Чит детектед! Режим бога активирован! Приятной игры!');
 		}
 

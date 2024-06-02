@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Engine\Vars;
+use App\Helpers;
 use App\Models;
 use App\Models\Blocked;
 use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Http\Controllers\Operations;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +16,6 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\View;
 use Prologue\Alerts\Facades\Alert;
 
-/**
- * @property CrudPanel $crud
- */
 class UsersController extends CrudController
 {
 	use ValidatesRequests;
@@ -34,7 +31,7 @@ class UsersController extends CrudController
 			'code'	=> 'users',
 			'title' => 'Пользователи',
 			'url'	=> backpack_url('users'),
-			'icon'	=> 'user',
+			'icon'	=> 'la la-users',
 			'sort'	=> 1000,
 			'childrens' => [[
 				'code'	=> 'index',
@@ -52,19 +49,19 @@ class UsersController extends CrudController
 			'code' => 'role',
 			'url' => backpack_url('role'),
 			'title' => 'Роли',
-			'icon' => 'group',
+			'icon' => 'la la-user-tag',
 			'sort'	=> 1001,
 		], [
 			'code' => 'permission',
 			'url' => backpack_url('permission'),
 			'title' => 'Права',
-			'icon' => 'key',
+			'icon' => 'la la-key',
 			'sort'	=> 1002,
 		], [
 			'code' => 'setting',
 			'url' => backpack_url('setting'),
 			'title' => 'Настройки',
-			'icon' => 'cog',
+			'icon' => 'la la-cog',
 			'sort'	=> 1003,
 		]];
 	}
@@ -75,119 +72,302 @@ class UsersController extends CrudController
 		$this->crud->setEntityNameStrings('пользователь', 'пользователи');
 		$this->crud->setRoute(backpack_url('users'));
 
-		$this->crud->operation('list', function () {
-			$this->crud->orderBy('id', 'desc');
-			$this->crud->enableExportButtons();
-
-			$this->crud->setColumns([
-				[
-					'name'  => 'id',
-					'label' => 'ID',
-				], [
-					'name'  => 'username',
-					'label' => 'Никнейм',
-				], [
-					'name'  => 'galaxy',
-					'label' => 'Галактика',
-				], [
-					'name'  => 'system',
-					'label' => 'Система',
-				], [
-					'name'  => 'planet',
-					'label' => 'Планета',
-				],  [
-					'label' => 'Email',
-					'type' => 'select',
-					'name' => 'email',
-				], [
-					'label' => 'Дата регистрации',
-					'type' => 'closure',
-					'name' => 'create_time',
-					'function' => function ($entry) {
-						return $entry->user->created_at->format('d.m.Y H:i:s');
-					},
-				], [
-					'label'     => trans('backpack::permissionmanager.roles'),
-					'type'      => 'select_multiple',
-					'name'      => 'roles',
-					'entity'    => 'roles',
-					'attribute' => 'name',
-					'model'     => config('permission.models.role'),
-				],
-			]);
-		});
-
 		$this->crud->addField([
 			'name'	=> 'email',
 			'label'	=> 'Email',
 			'type'	=> 'email',
 		]);
 
-		$this->crud->operation('update', function () {
-			$this->crud->addField([
-				'name'	=> 'username',
-				'label'	=> 'Никнейм',
-				'type'	=> 'text',
-			]);
+		$this->crud->addField([
+			'name'	=> 'username',
+			'label'	=> 'Никнейм',
+			'type'	=> 'text',
+		]);
 
-			$this->crud->addField([
-				'label'             => trans('backpack::permissionmanager.user_role_permission'),
-				'field_unique_name' => 'user_role_permission',
-				'type'              => 'checklist_dependency',
-				'name'              => [
-					'roles',
-					'permissions',
-				],
-				'subfields' => [
-					'primary' => [
-						'label'            => trans('backpack::permissionmanager.roles'),
-						'name'             => 'roles',
-						'entity'           => 'roles',
-						'entity_secondary' => 'permissions',
-						'attribute'        => 'name',
-						'model'            => config('permission.models.role'),
-						'pivot'            => true,
-						'number_columns'   => 3,
-					],
-					'secondary' => [
-						'label'          => ucfirst(trans('backpack::permissionmanager.permission_singular')),
-						'name'           => 'permissions',
-						'entity'         => 'permissions',
-						'entity_primary' => 'roles',
-						'attribute'      => 'name',
-						'model'          => config('permission.models.permission'),
-						'pivot'          => true,
-						'number_columns' => 3,
-					],
-				],
-			]);
-		});
-
-		$this->crud->operation('create', function () {
-			$this->crud->addField([
-				'name'  => 'password',
-				'label' => trans('backpack::permissionmanager.password'),
-				'type'  => 'password',
-			]);
-
-			$this->crud->addField([
-				'name'  => 'password_confirmation',
-				'label' => trans('backpack::permissionmanager.password_confirmation'),
-				'type'  => 'password',
-			]);
-		});
+		$this->crud->addField([
+			'name'  => 'password',
+			'label' => trans('backpack::permissionmanager.password'),
+			'type'  => 'password',
+		]);
 	}
 
-	public function store()
+	public function setupListOperation()
+	{
+		$this->crud->orderBy('id', 'desc');
+		$this->crud->addColumns([[
+			'name'  => 'id',
+			'label' => 'ID',
+		], [
+			'label' => 'Email',
+			'name' => 'email',
+		], [
+			'name'  => 'username',
+			'label' => 'Никнейм',
+		], [
+			'name'  => 'galaxy',
+			'label' => 'Галактика',
+		], [
+			'name'  => 'system',
+			'label' => 'Система',
+		], [
+			'name'  => 'planet',
+			'label' => 'Планета',
+		],  [
+			'label' => 'Дата регистрации',
+			'name' => 'created_at',
+			'type'  => 'datetime',
+		], [
+			'label'     => trans('backpack::permissionmanager.roles'),
+			'type'      => 'select_multiple',
+			'name'      => 'roles',
+			'entity'    => 'roles',
+			'attribute' => 'name',
+			'model'     => config('permission.models.role'),
+		]]);
+	}
+
+	public function setupShowOperation()
+	{
+		$this->crud->addColumns([[
+			'name'  => 'id',
+			'label' => 'ID',
+		], [
+			'label' => 'Email',
+			'name' => 'email',
+		], [
+			'name'  => 'username',
+			'label' => 'Никнейм',
+		], [
+			'name'  => 'galaxy',
+			'label' => 'Галактика',
+		], [
+			'name'  => 'system',
+			'label' => 'Система',
+		], [
+			'name'  => 'planet',
+			'label' => 'Планета',
+		],  [
+			'label' => 'Дата регистрации',
+			'name' => 'created_at',
+			'type'  => 'datetime',
+		], [
+			'label' => 'Онлайн',
+			'name' => 'onlinetime',
+			'type'  => 'datetime',
+		], [
+			'label' => 'Дата блокировки',
+			'name' => 'banned_time',
+			'type'  => 'datetime',
+		], [
+			'label' => 'Режим отпуска',
+			'name' => 'vacation',
+			'type'  => 'datetime',
+		], [
+			'label' => 'Дата удаления',
+			'name' => 'delete_time',
+			'type'  => 'datetime',
+		], [
+			'label' => 'IP',
+			'name' => 'ip',
+			'type' => 'closure',
+			'function' => function (User $entry) {
+				return $entry->ip ? Helpers::convertIp($entry->ip) : '-';
+			},
+		], [
+			'name'  => 'sex',
+			'label' => 'Пол',
+			'type' => 'number',
+		], [
+			'name'  => 'race',
+			'label' => 'Раса',
+			'type' => 'closure',
+			'function' => function (User $entry) {
+				return $entry->race ? __('main.race.' . $entry->race) : '-';
+			},
+		], [
+			'name'  => 'alliance_id',
+			'label' => 'Альянс',
+			'type' => 'closure',
+			'function' => function (User $entry) {
+				return $entry->alliance ? '[' . $entry->alliance->id . '] ' . $entry->alliance->name : '-';
+			},
+		], [
+			'name'  => 'lvl_minier',
+			'label' => 'Промышленный уровень',
+			'type' => 'number',
+		], [
+			'name'  => 'lvl_raid',
+			'label' => 'Военный уровень',
+			'type' => 'number',
+		], [
+			'name'  => 'credits',
+			'label' => 'Кредиты',
+			'type' => 'number',
+		], [
+			'name'  => 'about',
+			'label' => 'О себе',
+		], [
+			'name'  => 'rpg_geologue',
+			'label' => __('main.tech.601'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_admiral',
+			'label' => __('main.tech.602'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_ingenieur',
+			'label' => __('main.tech.603'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_technocrate',
+			'label' => __('main.tech.604'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_constructeur',
+			'label' => __('main.tech.605'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_meta',
+			'label' => __('main.tech.606'),
+			'type'  => 'datetime',
+		], [
+			'name'  => 'rpg_komandir',
+			'label' => __('main.tech.607'),
+			'type'  => 'datetime',
+		], [
+			'label'     => trans('backpack::permissionmanager.roles'),
+			'type'      => 'select_multiple',
+			'name'      => 'roles',
+			'entity'    => 'roles',
+			'attribute' => 'name',
+			'model'     => config('permission.models.role'),
+		]]);
+	}
+
+	public function setupCreateOperation()
+	{
+		$this->crud->addField([
+			'name'  => 'password',
+			'label' => trans('backpack::permissionmanager.password'),
+			'type'  => 'password',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'password_confirmation',
+			'label' => trans('backpack::permissionmanager.password_confirmation'),
+			'type'  => 'password',
+		]);
+	}
+
+	public function setupUpdateOperation()
+	{
+		$this->crud->addField([
+			'name'  => 'sex',
+			'label' => 'Пол',
+			'type' => 'number',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'race',
+			'label' => 'Раса',
+			'type' => 'select_from_array',
+			'options' => __('main.race'),
+		]);
+
+		$this->crud->addField([
+			'name'  => 'credits',
+			'label' => 'Кредиты',
+			'type' => 'number',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'about',
+			'label' => 'О себе',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_geologue',
+			'label' => __('main.tech.601'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_admiral',
+			'label' => __('main.tech.602'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_ingenieur',
+			'label' => __('main.tech.603'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_technocrate',
+			'label' => __('main.tech.604'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_constructeur',
+			'label' => __('main.tech.605'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_meta',
+			'label' => __('main.tech.606'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'name'  => 'rpg_komandir',
+			'label' => __('main.tech.607'),
+			'type'  => 'datetime',
+		]);
+
+		$this->crud->addField([
+			'label'             => trans('backpack::permissionmanager.user_role_permission'),
+			'field_unique_name' => 'user_role_permission',
+			'type'              => 'checklist_dependency',
+			'name'              => 'roles,permissions',
+			'subfields' => [
+				'primary' => [
+					'label'            => trans('backpack::permissionmanager.roles'),
+					'name'             => 'roles',
+					'entity'           => 'roles',
+					'entity_secondary' => 'permissions',
+					'attribute'        => 'name',
+					'model'            => config('permission.models.role'),
+					'pivot'            => true,
+					'number_columns'   => 3,
+				],
+				'secondary' => [
+					'label'          => ucfirst(trans('backpack::permissionmanager.permission_singular')),
+					'name'           => 'permissions',
+					'entity'         => 'permissions',
+					'entity_primary' => 'roles',
+					'attribute'      => 'name',
+					'model'          => config('permission.models.permission'),
+					'pivot'          => true,
+					'number_columns' => 3,
+				],
+			],
+		]);
+	}
+
+	public function store(Request $request)
 	{
 		$this->crud->applyConfigurationFromSettings('create');
 		$this->crud->hasAccessOrFail('create');
 
 		$this->crud->validateRequest();
 
-		$fields = $this->crud->getStrippedSaveRequest();
+		$fields = $this->crud->getStrippedSaveRequest($request);
 
 		$user = User::creation([
+			'name' => $fields['username'],
 			'email' => $fields['email'],
 			'password' => $fields['password'],
 		]);

@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\MessageType;
 use App\Engine\FleetEngine;
 use App\Models\User;
 
@@ -23,7 +24,7 @@ class Transport extends FleetEngine implements Mission
 			__('main.Deuterium')
 		);
 
-		User::sendMessage($this->fleet->user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $message);
+		User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_mess_tower'), $message);
 
 		if ($this->fleet->target_user_id != $this->fleet->user_id) {
 			$message = sprintf(
@@ -40,7 +41,7 @@ class Transport extends FleetEngine implements Mission
 				__('main.Deuterium')
 			);
 
-			User::sendMessage($this->fleet->target_user_id, 0, $this->fleet->start_time, 6, __('fleet_engine.sys_mess_tower'), $message);
+			User::sendMessage($this->fleet->target_user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_mess_tower'), $message);
 		}
 
 		$this->fleet->fill(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);

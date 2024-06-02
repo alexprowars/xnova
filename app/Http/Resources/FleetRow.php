@@ -41,7 +41,7 @@ class FleetRow extends JsonResource
 		$fleetClass = $fleetPrefix . $fleetStyle[$this->resource->mission->value];
 
 		$fleetContent 	= Fleet::createFleetPopupedFleetLink($this->resource, __('overview.ov_fleet'), $fleetClass, auth()->user());
-		$fleetCapacity 	= Fleet::createFleetPopupedMissionLink($this->resource, __('main.type_mission.' . $this->resource->mission->value), $fleetClass);
+		$fleetCapacity 	= Fleet::createFleetPopupedMissionLink($this->resource, $this->resource->mission->title(), $fleetClass);
 
 		$startId  = '';
 		$targetId = '';
