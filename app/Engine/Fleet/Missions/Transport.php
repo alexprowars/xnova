@@ -3,7 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 use App\Models\User;
 
 class Transport extends FleetEngine implements Mission

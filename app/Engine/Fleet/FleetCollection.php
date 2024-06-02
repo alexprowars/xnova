@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Engine;
+namespace App\Engine\Fleet;
 
+use App\Engine\Coordinates;
 use App\Engine\Entity\Ship;
+use App\Engine\Game;
 use App\Models\Planet;
 use Illuminate\Support\Collection;
 

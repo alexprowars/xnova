@@ -4,59 +4,42 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\Mission;
-use App\Engine\FleetCollection;
 use App\Engine\Game;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Exceptions\SuccessException;
 use App\Http\Controllers\Controller;
-use App\Models;
 use App\Models\Planet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FleetQuickController extends Controller
 {
+	/** @noinspection PhpRedundantCatchClauseInspection */
 	public function index(Request $request)
 	{
 		if ($this->user->isVacation()) {
 			throw new Exception('Нет доступа!');
 		}
 
-		$maxfleet = Models\Fleet::query()->where('user_id', $this->user->id)->count();
-
-		$MaxFlottes = 1 + $this->user->getTechLevel('computer');
-
-		if ($this->user->rpg_admiral?->isFuture()) {
-			$MaxFlottes += 2;
-		}
-
 		$mission = (int) $request->query('mission', 0);
 		$mission = Mission::tryFrom($mission);
 
 		if (!$mission) {
-			throw new Exception("<span class=\"error\"><b>Не выбрана миссия!</b></span>");
+			throw new Exception('<span class="error"><b>Не выбрана миссия!</b></span>');
 		}
+
+		$num = (int) $request->query('count', 0);
 
 		$galaxy 	= (int) $request->query('galaxy', 0);
 		$system 	= (int) $request->query('system', 0);
 		$planet 	= (int) $request->query('planet', 0);
+
 		$planetType = (int) $request->query('type', 0);
 		$planetType = PlanetType::tryFrom($planetType);
-
-		$num = (int) $request->query('count', 0);
-
-		if ($MaxFlottes <= $maxfleet) {
-			throw new Exception('Все слоты флота заняты');
-		} elseif ($galaxy > config('settings.maxGalaxyInWorld') || $galaxy < 1) {
-			throw new Exception('Ошибочная галактика!');
-		} elseif ($system > config('settings.maxSystemInGalaxy') || $system < 1) {
-			throw new Exception('Ошибочная система!');
-		} elseif ($planet > config('settings.maxPlanetInSystem') || $planet < 1) {
-			throw new Exception('Ошибочная планета!');
-		} elseif (!in_array($planetType, PlanetType::cases())) {
-			throw new Exception('Ошибочный тип планеты!');
-		}
 
 		$target = Planet::coordinates(new Coordinates($galaxy, $system, $planet))
 			->whereIn('planet_type', $planetType == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$planetType])
@@ -66,94 +49,24 @@ class FleetQuickController extends Controller
 			throw new Exception('Цели не существует!');
 		}
 
-		if (in_array($mission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
-			throw new Exception("<span class=\"error\"><b>Посылать флот в атаку временно запрещено.<br>Дата включения атак " . Game::datezone("d.m.Y H ч. i мин.", config('settings.disableAttacks', 0)) . "</b></span>");
-		}
-
 		$fleetArray = [];
-		$HeDBRec = false;
 
 		if ($mission == Mission::Spy && ($planetType == PlanetType::PLANET || $planetType == PlanetType::MOON || $planetType == PlanetType::MILITARY_BASE)) {
-			if ($num <= 0) {
-				throw new Exception('Вы были забанены за читерство!');
-			}
-
-			if ($this->planet->getLevel('spy_sonde') == 0) {
-				throw new Exception('Нет шпионских зондов ля отправки!');
-			}
-
-			if ($target->user_id == $this->user->id) {
-				throw new Exception('Невозможно выполнить задание!');
-			}
-
-			$HeDBRec = Models\User::find($target->user_id, ['id', 'onlinetime', 'vacation']);
-
-			$MyGameLevel = Models\Statistic::query()
-				->select('total_points')
-				->where('stat_type', 1)
-				->where('stat_code', 1)
-				->where('user_id', $this->user->id)
-				->value('total_points') ?? 0;
-
-			$HeGameLevel = Models\Statistic::query()
-				->select('total_points')
-				->where('stat_type', 1)
-				->where('stat_code', 1)
-				->where('user_id', $HeDBRec->id)
-				->value('total_points') ?? 0;
-
-			if (!$HeGameLevel) {
-				$HeGameLevel = 0;
-			}
-
-			if ($HeDBRec->onlinetime->lessThan(now()->subDays(7))) {
-				$noobNoActive = 1;
-			} else {
-				$noobNoActive = 0;
-			}
-
-			if ($noobNoActive == 0 && $this->user->authlevel != 3) {
-				$protectionPoints = (int) config('settings.noobprotectionPoints');
-				$protectionFactor = (int) config('settings.noobprotectionFactor');
-
-				if ($HeGameLevel < $protectionPoints) {
-					throw new Exception('Игрок находится под защитой новичков!');
-				}
-
-				if ($protectionFactor && $MyGameLevel > $HeGameLevel * $protectionFactor) {
-					throw new Exception('Этот игрок слишком слабый для вас!');
-				}
-			}
-
-			if ($HeDBRec->isVacation()) {
-				throw new Exception('Игрок в режиме отпуска!');
-			}
-
-			if ($this->planet->getLevel('spy_sonde') < $num) {
-				$num = $this->planet->getLevel('spy_sonde');
-			}
-
 			$fleetArray[210] = $num;
 		} elseif ($mission == Mission::Recycling && $planetType == PlanetType::DEBRIS) {
 			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
-			if ($debrisSize == 0) {
+			if ($debrisSize <= 0) {
 				throw new Exception('Нет обломков для сбора!');
-			}
-			if ($this->planet->getLevel('recycler') == 0) {
-				throw new Exception('Нет переработчиков для сбора обломков!');
 			}
 
 			$recyclerNeeded = 0;
 
-			if ($this->planet->getLevel('recycler') > 0 && $debrisSize > 0) {
+			if ($this->planet->getLevel('recycler')) {
 				$fleetData = Vars::getUnitData(Vars::getIdByName('recycler'));
 
 				$recyclerNeeded = floor($debrisSize / ($fleetData['capacity'])) + 1;
-
-				if ($recyclerNeeded > $this->planet->getLevel('recycler')) {
-					$recyclerNeeded = $this->planet->getLevel('recycler');
-				}
+				$recyclerNeeded = min($recyclerNeeded, $this->planet->getLevel('recycler'));
 			}
 
 			if ($recyclerNeeded > 0) {
@@ -165,87 +78,30 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$fleetCollection = FleetCollection::createFromArray($fleetArray, $this->planet);
+		$sender = new FleetSend(new Coordinates($galaxy, $system, $planet, $planetType), $this->planet);
+		$sender->setMission($mission);
+		$sender->setFleets($fleetArray);
 
-		$fleetSpeed = $fleetCollection->getSpeed();
+		try {
+			$fleet = DB::transaction(fn() => $sender->send());
+		} catch (PageException $e) {
+			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>', '/fleet');
+		}
 
-		if ($fleetSpeed > 0 && count($fleetArray) > 0) {
-			$distance = $fleetCollection->getDistance(
-				new Coordinates($this->planet->galaxy, $this->planet->system, $this->planet->planet),
-				new Coordinates($galaxy, $system, $planet)
-			);
-			$duration = $fleetCollection->getDuration(10, $distance);
-			$consumption = $fleetCollection->getConsumption($duration, $distance);
+		$tutorial = $this->user->quests()
+			->where('finish', 0)->where('stage', 0)
+			->first();
 
-			$shipArray = [];
+		if ($tutorial) {
+			$quest = __('tutorial.tutorial', $tutorial->quest_id);
 
-			foreach ($fleetArray as $shipId => $count) {
-				$count = (int) $count;
-
-				$this->planet->updateAmount($shipId, -$count, true);
-
-				$shipArray[] = [
-					'id' => $shipId,
-					'count' => $count
-				];
-			}
-
-			$fleetStorage = $fleetCollection->getStorage();
-
-			if ($fleetStorage < $consumption) {
-				throw new Exception('Не хватает места в трюме для топлива! (необходимо еще ' . ($consumption - $fleetStorage) . ')');
-			}
-			if ($this->planet->deuterium < $consumption) {
-				throw new Exception('Не хватает топлива на полёт! (необходимо еще ' . ($consumption - $this->planet->deuterium) . ')');
-			}
-
-			if (count($shipArray)) {
-				$fleet = new Models\Fleet();
-
-				$fleet->user_id = $this->user->id;
-				$fleet->user_name = $this->planet->name;
-				$fleet->mission = $mission;
-				$fleet->fleet_array = $shipArray;
-				$fleet->start_time = now()->addSeconds($duration);
-				$fleet->start_galaxy = $this->planet->galaxy;
-				$fleet->start_system = $this->planet->system;
-				$fleet->start_planet = $this->planet->planet;
-				$fleet->start_type = $this->planet->planet_type;
-				$fleet->end_time = now()->addSeconds($duration * 2);
-				$fleet->end_galaxy = $galaxy;
-				$fleet->end_system = $system;
-				$fleet->end_planet = $planet;
-				$fleet->end_type = $planetType;
-				$fleet->updated_at = now()->addSeconds($duration);
-
-				if ($mission == Mission::Spy && $HeDBRec) {
-					$fleet->target_user_id = $HeDBRec['id'];
-					$fleet->target_user_name = $target->name;
-				}
-
-				if ($fleet->save()) {
-					$this->planet->deuterium -= $consumption;
-					$this->planet->update();
-
-					$tutorial = $this->user->quests()
-						->where('finish', 0)->where('stage', 0)
-						->first();
-
-					if ($tutorial) {
-						$quest = __('tutorial.tutorial', $tutorial->quest_id);
-
-						foreach ($quest['TASK'] as $taskKey => $taskVal) {
-							if ($taskKey == 'FLEET_MISSION' && $taskVal == $mission) {
-								$tutorial->update(['stage' => 1]);
-							}
-						}
-					}
-
-					throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . $mission->title() . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
+			foreach ($quest['TASK'] as $taskKey => $taskVal) {
+				if ($taskKey == 'FLEET_MISSION' && $taskVal == $mission) {
+					$tutorial->update(['stage' => 1]);
 				}
 			}
 		}
 
-		throw new Exception('Произошла ошибка');
+		throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . $mission->title() . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
 	}
 }

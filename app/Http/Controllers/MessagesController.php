@@ -251,10 +251,10 @@ class MessagesController extends Controller
 			}
 
 			$parse['items'][] = [
-				'id' => (int) $item->id,
-				'type' => (int) $item->type,
+				'id' => $item->id,
+				'type' => $item->type,
 				'time' => $item->time?->utc()->toAtomString(),
-				'from' => (int) $item->from_id,
+				'from' => $item->from_id,
 				'theme' => $item->theme ?? '',
 				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->text)),
 			];

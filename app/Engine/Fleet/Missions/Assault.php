@@ -2,7 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 
 class Assault extends FleetEngine implements Mission
 {

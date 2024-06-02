@@ -31,12 +31,12 @@ class FleetBackController extends Controller
 
 		if ($fleet->end_stay) {
 			if ($fleet->start_time->isFuture()) {
-				$currentFlyingTime = now()->sub($fleet->created_at);
+				$currentFlyingTime = now()->toImmutable()->sub($fleet->created_at);
 			} else {
 				$currentFlyingTime = $fleet->start_time->sub($fleet->created_at);
 			}
 		} else {
-			$currentFlyingTime = now()->sub($fleet->created_at);
+			$currentFlyingTime = now()->toImmutable()->sub($fleet->created_at);
 		}
 
 		$returnFlyingTime = $currentFlyingTime->add(now());
@@ -47,11 +47,11 @@ class FleetBackController extends Controller
 
 		$fleet->update([
 			'start_time'		=> now()->subSecond(),
-			'end_stay' 			=> 0,
-			'end_time' 			=> $returnFlyingTime + 1,
+			'end_stay' 			=> null,
+			'end_time' 			=> $returnFlyingTime->addSecond(),
 			'target_user_id'	=> $this->user->id,
 			'assault_id' 		=> null,
-			'updated_at' 		=> $returnFlyingTime + 1,
+			'updated_at' 		=> $returnFlyingTime->addSecond(),
 			'mess' 				=> 1,
 		]);
 

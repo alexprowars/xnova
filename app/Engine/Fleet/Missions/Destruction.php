@@ -5,7 +5,7 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 use App\Models;
 use App\Models\Planet;
 use App\Models\User;

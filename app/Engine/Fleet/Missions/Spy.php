@@ -3,7 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Format;

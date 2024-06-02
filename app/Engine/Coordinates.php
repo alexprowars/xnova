@@ -36,6 +36,11 @@ class Coordinates implements Arrayable
 		return $this->galaxy <= 0 || $this->system <= 0 || empty($this->planet) || $this->planet <= 0;
 	}
 
+	public function isSame(Coordinates $coordinates): bool
+	{
+		return $this->galaxy == $coordinates->getGalaxy() && $this->system == $coordinates->getSystem() && $this->planet == $coordinates->getPlanet() && $this->type == $coordinates->getType();
+	}
+
 	public function toArray(): array
 	{
 		return [

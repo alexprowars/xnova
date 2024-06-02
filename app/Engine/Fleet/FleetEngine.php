@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Engine;
+namespace App\Engine\Fleet;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Vars;
 use App\Models;
 use App\Models\Planet;
 

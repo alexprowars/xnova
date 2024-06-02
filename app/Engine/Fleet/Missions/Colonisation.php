@@ -3,7 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
 use App\Models\User;

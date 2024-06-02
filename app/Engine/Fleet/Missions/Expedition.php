@@ -9,7 +9,7 @@ use App\Engine\CombatEngine\Models\Player;
 use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Enums\MessageType;
-use App\Engine\FleetEngine;
+use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Format;
 use App\Models;

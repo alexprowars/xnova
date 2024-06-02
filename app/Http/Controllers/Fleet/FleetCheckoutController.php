@@ -29,7 +29,9 @@ class FleetCheckoutController extends Controller
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
 		$planet = (int) $request->post('planet', 0);
+
 		$type = (int) $request->post('planet_type', 0);
+		$type = PlanetType::tryFrom($type);
 
 		if (!$galaxy) {
 			$galaxy = (int) $this->planet->galaxy;
@@ -46,8 +48,6 @@ class FleetCheckoutController extends Controller
 		if (!$type) {
 			$type = PlanetType::PLANET;
 		}
-
-		$type = PlanetType::tryFrom($type);
 
 		$parse['ships'] = [];
 		$fleets = [];
