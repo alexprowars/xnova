@@ -11,9 +11,11 @@ use App\Exceptions\Exception;
 use App\Helpers;
 use App\Mail\UserLostPassword;
 use App\Notifications\UserRegistrationNotification;
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Backpack\Settings\app\Models\Setting;
 use Carbon\Carbon;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,10 +33,9 @@ use Throwable;
 /**
  * @mixin User
  */
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, HasName
 {
 	use HasRoles;
-	use CrudTrait;
 	use Notifiable;
 
 	use HasBonuses;
@@ -397,5 +398,15 @@ class User extends Authenticatable
 
 			return $user;
 		});
+	}
+
+	public function canAccessPanel(Panel $panel): bool
+	{
+		return $this->id === 1;
+	}
+
+	public function getFilamentName(): string
+	{
+		return $this->username;
 	}
 }

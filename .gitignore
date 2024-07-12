@@ -26,3 +26,5 @@ Thumbs.db
 /public/packages/
 /database/database.sqlite
 /public/storage
+/public/css/filament
+/public/js/filament

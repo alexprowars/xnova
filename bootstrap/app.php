@@ -37,8 +37,6 @@ return Application::configure(basePath: dirname(__DIR__))
 		health: '/up',
 	)
 	->withMiddleware(function (Middleware $middleware) {
-		$middleware->group('web', []);
-
 		$middleware->appendToGroup('api', [
 			Illuminate\Cookie\Middleware\EncryptCookies::class,
 			Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -55,7 +53,6 @@ return Application::configure(basePath: dirname(__DIR__))
 			Illuminate\View\Middleware\ShareErrorsFromSession::class,
 			//Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
 			\App\Http\Middleware\AdminCanAccess::class,
-			\App\Http\Middleware\AdminViewData::class,
 		]);
 	})
 	->withExceptions(function (Exceptions $exceptions) {

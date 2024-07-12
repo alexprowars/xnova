@@ -2,7 +2,9 @@
 
 namespace App\Engine\Enums;
 
-enum PlanetType: int
+use Filament\Support\Contracts\HasLabel;
+
+enum PlanetType: int implements HasLabel
 {
 	case PLANET = 1;
 	case DEBRIS = 2;
@@ -12,5 +14,10 @@ enum PlanetType: int
 	public function title(): string
 	{
 		return __('main.type_planet.' . $this->value);
+	}
+
+	public function getLabel(): ?string
+	{
+		return $this->title();
 	}
 }

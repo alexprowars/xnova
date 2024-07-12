@@ -1,73 +1,72 @@
 {
-	"name": "xnova/server",
-	"type": "project",
-	"description": "The Xnova game backend server",
+    "name": "xnova/server",
+    "type": "project",
+    "description": "The Xnova game backend server",
     "config": {
         "platform": {
             "php": "8.2"
         },
-		"optimize-autoloader": true,
-		"preferred-install": "dist",
-		"sort-packages": true
-	},
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
     "require": {
-		"php": "^8.2",
-		"ext-gd": "*",
-		"ext-iconv": "*",
-		"ext-json": "*",
-		"ext-mbstring": "*",
-		"ext-pdo": "*",
-		"backpack/crud": "^6.7.14",
-		"backpack/permissionmanager": "^7.2.1",
-		"backpack/settings": "^3.1.1",
-		"backpack/theme-tabler": "^1.2",
-		"gumlet/php-image-resize": "^2.0.4",
-		"laravel/framework": "^11.0.0",
-		"laravel/reverb": "@beta",
-		"laravel/socialite": "^5.5.7",
-		"laravel/tinker": "^2.9",
-		"nubs/random-name-generator": "^2.1",
-		"predis/predis": "^2.0.0",
-		"socialiteproviders/vkontakte": "^5.0.0",
-		"spatie/laravel-permission": "^6.7.0",
-		"zelenin/smsru": "^5.0.0"
-	},
-	"replace": {
-		"symfony/polyfill-mbstring": "*",
-		"symfony/polyfill-php80": "*",
-		"symfony/polyfill-ctype": "*",
-		"symfony/polyfill-intl-idn": "*"
-	},
-	"require-dev": {
-	},
-	"autoload": {
-		"psr-4": {
-			"App\\": "app/",
-			"Database\\Factories\\": "database/factories/",
-			"Database\\Seeders\\": "database/seeders/"
-		}
-	},
-	"scripts": {
-     	"post-autoload-dump": [
-         	"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-         	"@php artisan package:discover --ansi"
-     	],
-		"post-update-cmd": [
-			"@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-		],
-		"post-root-package-install": [
-			"@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-		],
-		"post-create-project-cmd": [
-			"@php artisan key:generate --ansi",
-			"@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-			"@php artisan migrate --graceful --ansi"
-		]
- 	},
-	"extra": {
-		"laravel": {
-			"dont-discover": []
-		}
-	},
-	"prefer-stable": true
+        "php": "^8.2",
+        "ext-gd": "*",
+        "ext-iconv": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "althinect/filament-spatie-roles-permissions": "^2.2",
+        "filament/filament": "^3.2",
+        "gumlet/php-image-resize": "^2.0.4",
+        "laravel/framework": "^11.0.0",
+        "laravel/reverb": "@beta",
+        "laravel/socialite": "^5.5.7",
+        "laravel/tinker": "^2.9",
+        "malzariey/filament-daterangepicker-filter": "^2.8",
+        "nubs/random-name-generator": "^2.1",
+        "predis/predis": "^2.0.0",
+        "shuvroroy/filament-spatie-laravel-backup": "^2.2",
+        "socialiteproviders/vkontakte": "^5.0.0",
+        "spatie/laravel-permission": "^6.7.0",
+        "zelenin/smsru": "^5.0.0"
+    },
+    "replace": {
+        "symfony/polyfill-mbstring": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-intl-idn": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "prefer-stable": true
 }

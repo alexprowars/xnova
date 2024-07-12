@@ -6,7 +6,6 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
 use App\Engine\Vars;
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,8 +18,6 @@ use Illuminate\Support\Facades\DB;
  */
 class Planet extends Model
 {
-	use CrudTrait;
-
 	public $timestamps = false;
 	protected $hidden = ['planet_updated'];
 	protected $guarded = [];

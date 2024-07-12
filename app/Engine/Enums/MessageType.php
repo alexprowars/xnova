@@ -2,7 +2,9 @@
 
 namespace App\Engine\Enums;
 
-enum MessageType: int
+use Filament\Support\Contracts\HasLabel;
+
+enum MessageType: int implements HasLabel
 {
 	case Spy = 1;
 	case User = 2;
@@ -16,5 +18,10 @@ enum MessageType: int
 	public function title(): string
 	{
 		return __('messages.type.' . $this->value);
+	}
+
+	public function getLabel(): ?string
+	{
+		return $this->title();
 	}
 }

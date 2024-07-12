@@ -27,7 +27,7 @@ class Fleet extends Building
 		}
 	}
 
-	public static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, User $user)
+	public static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, ?User $user)
 	{
 		$FleetRec = $FleetRow->getShips();
 
@@ -40,18 +40,18 @@ class Fleet extends Building
 			$Total += $fleet['count'];
 		}
 
-		if ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
+		if ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
 			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
-		} elseif ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
+		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
-		} elseif ($FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
+		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
 			foreach ($FleetRec as $id => $fleet) {
 				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . __('main.tech.' . $id) . "<font></td></tr>";
 			}
 
 			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
 		} else {
-			if ($FleetRow->target_user_id == $user->id && $FleetRow->mission == Mission::Attack) {
+			if ($FleetRow->target_user_id == $user?->id && $FleetRow->mission == Mission::Attack) {
 				$r = '/sim/';
 			}
 
