@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\QueueManager;
@@ -139,11 +140,11 @@ class Spy extends FleetEngine implements Mission
 			$fleet_link = '';
 
 			if ($ST == 2) {
-				$res = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
+				$res = Vars::getItemsByType(ItemType::FLEET);
 			} elseif ($ST >= 3 && $ST <= 6) {
-				$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+				$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 			} elseif ($ST >= 7) {
-				$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
+				$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE, ItemType::TECH]);
 			} else {
 				$res = [];
 			}
@@ -268,13 +269,13 @@ class Spy extends FleetEngine implements Mission
 					$level = 0;
 					$type = Vars::getItemType($Item);
 
-					if ($type == Vars::ITEM_TYPE_BUILING) {
+					if ($type == ItemType::BUILDING) {
 						$level = $TargetPlanet->getLevel($Item);
-					} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
+					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 						$level = $TargetPlanet->getLevel($Item);
-					} elseif ($type == Vars::ITEM_TYPE_OFFICIER) {
+					} elseif ($type == ItemType::OFFICIER) {
 						$level = $TargetPlanet->{Vars::getName($Item)};
-					} elseif ($type == Vars::ITEM_TYPE_TECH) {
+					} elseif ($type == ItemType::TECH) {
 						$level = $TargetPlanet->getTechLevel($Item);
 					}
 

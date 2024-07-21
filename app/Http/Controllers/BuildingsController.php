@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Engine\Building;
 use App\Engine\Construction;
+use App\Engine\Enums\ItemType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
@@ -19,10 +21,9 @@ class BuildingsController extends Controller
 
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
-		$parse = [];
-		$parse['items'] = [];
+		$items = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_BUILING) as $elementId) {
+		foreach (Vars::getItemsByType(ItemType::BUILDING) as $elementId) {
 			if (
 				!in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type))
 				|| !Building::checkTechnologyRace($this->user, $elementId)
@@ -47,7 +48,7 @@ class BuildingsController extends Controller
 			$row['price'] = $price;
 
 			if ($available) {
-				if (in_array($elementId, Vars::getItemsByType('build_exp'))) {
+				if (in_array($elementId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
 					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('settings.buildings_exp_mult', 1000));
 				}
 
@@ -57,20 +58,10 @@ class BuildingsController extends Controller
 				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
 
-			$parse['items'][] = $row;
+			$items[] = $row;
 		}
 
-		$parse['queue'] 	= Construction::showBuildingQueue($this->user, $this->planet);
-		$parse['queue_max'] = config('settings.maxBuildingQueue') + $this->user->bonus('queue', 0);
-		$parse['planet'] 	= 'normaltemp';
-
-		preg_match('/(.*?)planet/', $this->planet->image, $match);
-
-		if (isset($match[1])) {
-			$parse['planet'] = trim($match[1]);
-		}
-
-		return response()->state($parse);
+		return response()->state($items);
 	}
 
 	public function build(Request $request, string $action)
@@ -85,7 +76,7 @@ class BuildingsController extends Controller
 
 		$maxQueueSize = config('settings.maxBuildingQueue') + $this->user->bonus('queue', 0);
 
-		if ($queueManager->getCount($queueManager::TYPE_BUILDING) >= $maxQueueSize) {
+		if ($queueManager->getCount(QueueType::BUILDING) >= $maxQueueSize) {
 			return;
 		}
 

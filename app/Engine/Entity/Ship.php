@@ -3,7 +3,6 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Vars;
-use App\Exceptions\Exception;
 
 class Ship extends Unit
 {
@@ -69,19 +68,13 @@ class Ship extends Unit
 
 	public function getInfo(): array
 	{
-		$shipData = Vars::getUnitData($this->entityId);
-
-		if (!$shipData) {
-			throw new Exception('unit does not exist');
-		}
-
 		return [
 			'id' => $this->entityId,
 			'consumption' => $this->getConsumption(),
 			'speed' => $this->getSpeed(),
 			'stay' => $this->getStayConsumption(),
 			'count' => $this->getLevel(),
-			'capacity' => $shipData['capacity'] ?? 0,
+			'capacity' => $this->getStorage(),
 		];
 	}
 }

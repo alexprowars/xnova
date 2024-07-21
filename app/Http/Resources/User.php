@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
@@ -34,18 +35,29 @@ class User extends JsonResource
 				'messages' => $this->messages_ally
 			] : null,
 			'planets' => UserPlanets::collection($planets),
+			'queue_max' => config('settings.maxBuildingQueue') + $this->bonus('queue', 0),
 			'vacation' => $this->vacation?->utc()->toAtomString(),
 			'quests' => (int) $quests,
 			'credits' => $this->credits,
 			'options' => $this->getOptions(),
 			'officiers' => [],
+			'technology' => [],
+			'fleets_max' => $this->getTechLevel('computer') + 1,
 		];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
+		if ($this->rpg_admiral?->isFuture()) {
+			$data['fleets_max'] += 2;
+		}
+
+		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
 			$data['officiers'][] = [
 				'id' => $officier,
 				'time' => $this->{Vars::getName($officier)}->isFuture() ? $this->{Vars::getName($officier)}?->utc()->toAtomString() : null,
 			];
+		}
+
+		foreach (Vars::getItemsByType(ItemType::TECH) as $elementId) {
+			$data['technology'][Vars::getName($elementId)] = $this->getTechLevel($elementId);
 		}
 
 		return $data;

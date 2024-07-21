@@ -4,14 +4,14 @@
     "description": "The Xnova game backend server",
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-gd": "*",
         "ext-iconv": "*",
         "ext-json": "*",

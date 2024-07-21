@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
@@ -37,7 +38,7 @@ class OfficierController extends Controller
 			throw new Exception(__('officier.NoPoints'));
 		}
 
-		if (Vars::getItemType($id) != Vars::ITEM_TYPE_OFFICIER) {
+		if (Vars::getItemType($id) != ItemType::OFFICIER) {
 			throw new Exception('Выбран неверный элемент');
 		}
 
@@ -64,7 +65,7 @@ class OfficierController extends Controller
 		$parse['credits'] = $this->user->credits;
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $officier) {
+		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
 			$row = [];
 			$row['id'] = $officier;
 			$row['time'] = null;

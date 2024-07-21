@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Models;
@@ -25,12 +26,6 @@ class FleetController extends Controller
 		if ($expeditionTech >= 1) {
 			$curExpeditions = Models\Fleet::query()->where('user_id', $this->user->id)->where('mission', 15)->count();
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
-		}
-
-		$maxFleets = 1 + $this->user->getTechLevel('computer');
-
-		if ($this->user->rpg_admiral?->isFuture()) {
-			$maxFleets += 2;
 		}
 
 		$galaxy = (int) $request->query('galaxy', 0);
@@ -57,7 +52,6 @@ class FleetController extends Controller
 
 		$parse = [];
 		$parse['curFleets'] = $flyingFleets;
-		$parse['maxFleets'] = $maxFleets;
 		$parse['curExpeditions'] = $curExpeditions;
 		$parse['maxExpeditions'] = $maxExpeditions;
 		$parse['mission'] = $mission;
@@ -101,7 +95,7 @@ class FleetController extends Controller
 
 		$parse['ships'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $i) {
 			if ($this->planet->getLevel($i) > 0) {
 				$parse['ships'][] = Ship::createEntity($i, $this->planet->getLevel($i), $this->planet)->getInfo();
 			}

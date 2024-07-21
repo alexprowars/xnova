@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\ItemType;
 use App\Exceptions\Exception;
 use App\Models\Planet;
 use Illuminate\Support\Facades\Auth;
@@ -23,10 +24,10 @@ class EntityFactory
 	public static function getEntityClassName(int $entityId): string
 	{
 		return match (Vars::getItemType($entityId)) {
-			Vars::ITEM_TYPE_BUILING => Entity\Building::class,
-			Vars::ITEM_TYPE_TECH => Entity\Research::class,
-			Vars::ITEM_TYPE_FLEET => Entity\Ship::class,
-			Vars::ITEM_TYPE_DEFENSE => Entity\Defence::class,
+			ItemType::BUILDING => Entity\Building::class,
+			ItemType::TECH => Entity\Research::class,
+			ItemType::FLEET => Entity\Ship::class,
+			ItemType::DEFENSE => Entity\Defence::class,
 			default => throw new Exception('unknown entity'),
 		};
 	}

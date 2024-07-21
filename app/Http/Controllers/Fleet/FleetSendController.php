@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\Mission;
-use App\Engine\Game;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Format;
@@ -115,45 +115,23 @@ class FleetSendController extends Controller
 			}
 		}
 
-		$html  = '<div class="block-table">';
-		$html .= '<div class="row">';
-		$html .= '<div class="c col-12"><span class="success">' . __('fleet.fl_fleet_send') . '</span></div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_mission') . '</div>';
-		$html .= '<div class="th col-6">' . $fleetMission->title() . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_dist') . '</div>';
-		$html .= '<div class="th col-6">' . Format::number($distance) . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_speed') . '</div>';
-		$html .= '<div class="th col-6">' . Format::number($maxFleetSpeed) . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_deute_need') . '</div>';
-		$html .= '<div class="th col-6">' . Format::number($consumption) . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_from') . '</div>';
-		$html .= '<div class="th col-6">' . $this->planet->galaxy . ":" . $this->planet->system . ":" . $this->planet->planet . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_dest') . '</div>';
-		$html .= '<div class="th col-6">' . $galaxy . ":" . $system . ":" . $planet . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_time_go') . '</div>';
-		$html .= '<div class="th col-6">' . Game::datezone("d.m H:i:s", $fleet->start_time) . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="th col-6">' . __('fleet.fl_time_back') . '</div>';
-		$html .= '<div class="th col-6">' . Game::datezone("d.m H:i:s", $fleet->end_time) . '</div>';
-		$html .= '</div><div class="row">';
-		$html .= '<div class="c col-12">Корабли</div>';
+		$result = [
+			'mission' => $fleetMission->value,
+			'distance' => $distance,
+			'speed' => $maxFleetSpeed,
+			'consumption' => $consumption,
+			'from' => $this->planet->getCoordinates()->toArray(),
+			'target' => $target->toArray(),
+			'start_time' => $fleet->start_time,
+			'end_time' => $fleet->end_time,
+			'units' => [],
+		];
 
-		foreach ($fleetArray as $Ship => $Count) {
-			$html .= '</div><div class="row">';
-			$html .= '<div class="th col-6">' . __('main.tech.' . $Ship) . '</div>';
-			$html .= '<div class="th col-6">' . Format::number($Count) . '</div>';
+		foreach ($fleetArray as $unitId => $count) {
+			$result['units'][Vars::getName($unitId)] = $count;
 		}
 
-		$html .= '</div></div>';
-
-		throw new PageException($html);
+		return response()->state($result);
 	}
 
 	private function checkJumpGate($planetId)
@@ -186,7 +164,7 @@ class FleetSendController extends Controller
 		$ships = array_map('intval', $ships);
 		$ships = array_map('abs', $ships);
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ship) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $ship) {
 			if (!isset($ships[$ship]) || !$ships[$ship]) {
 				continue;
 			}

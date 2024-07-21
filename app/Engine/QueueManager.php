@@ -4,7 +4,10 @@ namespace App\Engine;
 
 use App\Engine\Contracts\EntityBuildingInterface;
 use App\Engine\Entity\Research;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
 use App\Format;
@@ -18,10 +21,6 @@ class QueueManager
 {
 	/** @var Models\Queue[]|bool */
 	private $queue = false;
-
-	public const TYPE_BUILDING = Models\Queue::TYPE_BUILD;
-	public const TYPE_RESEARCH = Models\Queue::TYPE_TECH;
-	public const TYPE_SHIPYARD = Models\Queue::TYPE_UNIT;
 
 	protected User $user;
 
@@ -69,15 +68,12 @@ class QueueManager
 
 		$type = Vars::getItemType($elementId);
 
-		if ($type == Vars::ITEM_TYPE_BUILING) {
-			(new Queue\Build($this)
-			)->add($elementId, $destroy);
-		} elseif ($type == Vars::ITEM_TYPE_TECH) {
-			(new Queue\Tech($this)
-			)->add($elementId);
-		} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
-			(new Queue\Unit($this)
-			)->add($elementId, $count);
+		if ($type == ItemType::BUILDING) {
+			(new Queue\Build($this))->add($elementId, $destroy);
+		} elseif ($type == ItemType::TECH) {
+			(new Queue\Tech($this))->add($elementId);
+		} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
+			(new Queue\Unit($this))->add($elementId, $count);
 		}
 	}
 
@@ -87,16 +83,14 @@ class QueueManager
 
 		$type = Vars::getItemType($elementId);
 
-		if ($type == Vars::ITEM_TYPE_BUILING) {
-			(new Queue\Build($this)
-			)->delete($listId);
-		} elseif ($type == Vars::ITEM_TYPE_TECH) {
-			(new Queue\Tech($this)
-			)->delete($elementId);
+		if ($type == ItemType::BUILDING) {
+			(new Queue\Build($this))->delete($listId);
+		} elseif ($type == ItemType::TECH) {
+			(new Queue\Tech($this))->delete($elementId);
 		}
 	}
 
-	public function get($type = '')
+	public function get(?QueueType $type = null)
 	{
 		if (!is_array($this->queue)) {
 			$this->loadQueue();
@@ -104,7 +98,7 @@ class QueueManager
 
 		if (!$type) {
 			return $this->queue;
-		} elseif (in_array($type, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD])) {
+		} elseif (in_array($type, QueueType::cases())) {
 			$r = [];
 
 			foreach ($this->queue as $item) {
@@ -119,7 +113,7 @@ class QueueManager
 		}
 	}
 
-	public function getCount($queueType = '')
+	public function getCount(?QueueType $queueType = null)
 	{
 		if (!is_array($this->queue)) {
 			$this->loadQueue();
@@ -127,7 +121,7 @@ class QueueManager
 
 		if (!$queueType) {
 			return count($this->queue);
-		} elseif (in_array($queueType, [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD])) {
+		} elseif (in_array($queueType, QueueType::cases())) {
 			$cnt = 0;
 
 			foreach ($this->queue as $item) {
@@ -140,11 +134,6 @@ class QueueManager
 		} else {
 			return 0;
 		}
-	}
-
-	public function getTypes()
-	{
-		return [self::TYPE_BUILDING, self::TYPE_RESEARCH, self::TYPE_SHIPYARD];
 	}
 
 	public function deleteInQueue($id)
@@ -170,7 +159,7 @@ class QueueManager
 			throw new Exception('Произошла внутренняя ошибка: Queue::update::check::Planet');
 		}
 
-		$buildingsCount = $this->getCount(self::TYPE_BUILDING);
+		$buildingsCount = $this->getCount(QueueType::BUILDING);
 
 		if ($buildingsCount) {
 			$this->nextBuildingQueue();
@@ -195,7 +184,7 @@ class QueueManager
 
 	private function checkBuildQueue()
 	{
-		$queueArray = $this->get(self::TYPE_BUILDING);
+		$queueArray = $this->get(QueueType::BUILDING);
 
 		if (empty($queueArray)) {
 			return false;
@@ -213,7 +202,7 @@ class QueueManager
 			return true;
 		}
 
-		$isDestroy = $buildItem->operation == Models\Queue::OPERATION_DESTROY;
+		$isDestroy = $buildItem->operation == QueueConstructionType::DESTROY;
 		$buildTime = $entity->getTime();
 
 		if ($isDestroy) {
@@ -266,7 +255,7 @@ class QueueManager
 
 	public function nextBuildingQueue()
 	{
-		$queueArray = $this->get(self::TYPE_BUILDING);
+		$queueArray = $this->get(QueueType::BUILDING);
 
 		if (!count($queueArray) || $queueArray[0]->time) {
 			return false;
@@ -295,7 +284,7 @@ class QueueManager
 				continue;
 			}
 
-			$isDestroy = $buildItem->operation == $buildItem::OPERATION_DESTROY;
+			$isDestroy = $buildItem->operation == QueueConstructionType::DESTROY;
 
 			$cost = $isDestroy
 				? $entity->getDestroyPrice() : $entity->getPrice();
@@ -389,7 +378,7 @@ class QueueManager
 		}
 
 		$queueItem = $this->user->queue()
-			->where('type', Models\Queue::TYPE_TECH)->first();
+			->where('type', QueueType::RESEARCH)->first();
 
 		if (!$queueItem) {
 			return;
@@ -446,7 +435,7 @@ class QueueManager
 
 	public function checkUnitQueue()
 	{
-		$queue = $this->get(self::TYPE_SHIPYARD);
+		$queue = $this->get(QueueType::SHIPYARD);
 
 		if (empty($queue)) {
 			return false;
@@ -455,7 +444,7 @@ class QueueManager
 		$missilesSpace = ($this->planet->getLevel('missile_facility') * 10) - ($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
 
 		$max = [];
-		$buildTypes = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$buildTypes = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($buildTypes as $id) {
 			$price = Vars::getItemPrice($id);
@@ -549,7 +538,7 @@ class QueueManager
 	{
 		$xp = 0;
 
-		if (in_array($entity->entityId, Vars::getItemsByType('build_exp'))) {
+		if (in_array($entity->entityId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
 			$cost = $destroy ? $entity->getDestroyPrice() : $entity->getPrice();
 			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 

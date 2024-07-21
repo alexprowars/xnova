@@ -3,6 +3,8 @@
 namespace App\Engine\Queue;
 
 use App\Engine\Entity;
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Models;
 
@@ -23,7 +25,7 @@ class Build
 			$maxBuidSize += 2;
 		}
 
-		$actualCount = $this->queue->getCount(QueueManager::TYPE_BUILDING);
+		$actualCount = $this->queue->getCount(QueueType::BUILDING);
 
 		if ($actualCount < $maxBuidSize) {
 			$queueID = $actualCount + 1;
@@ -37,7 +39,7 @@ class Build
 			if ($queueID > 1) {
 				$inArray = 0;
 
-				foreach ($this->queue->get(QueueManager::TYPE_BUILDING) as $item) {
+				foreach ($this->queue->get(QueueType::BUILDING) as $item) {
 					if ($item->object_id == $elementId) {
 						$inArray++;
 					}
@@ -53,8 +55,8 @@ class Build
 			}
 
 			Models\Queue::create([
-				'type' => Models\Queue::TYPE_BUILD,
-				'operation' => $destroy ? Models\Queue::OPERATION_DESTROY : Models\Queue::OPERATION_BUILD,
+				'type' => QueueType::BUILDING,
+				'operation' => $destroy ? QueueConstructionType::DESTROY : QueueConstructionType::BUILDING,
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
@@ -72,7 +74,7 @@ class Build
 
 	public function delete($indexId)
 	{
-		$queueArray = $this->queue->get(QueueManager::TYPE_BUILDING);
+		$queueArray = $this->queue->get(QueueType::BUILDING);
 
 		if (empty($queueArray) || empty($queueArray[$indexId])) {
 			return;
@@ -89,7 +91,7 @@ class Build
 
 			$entity = Entity\Building::createEntity($queueItem->object_id, $queueItem->level, $planet);
 
-			$cost = $queueItem->operation == $queueItem::OPERATION_DESTROY
+			$cost = $queueItem->operation == QueueConstructionType::DESTROY
 				? $entity->getDestroyPrice() : $entity->getPrice();
 
 			$planet->metal 		+= $cost['metal'];

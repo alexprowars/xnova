@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\MessageType;
 use App\Engine\Game;
 use App\Exceptions\Exception;
@@ -103,19 +104,19 @@ class AllianceController extends Controller
 
 		$parse['diplomacy'] = false;
 
-		if ($alliance->canAccess(Alliance::DIPLOMACY_ACCESS)) {
+		if ($alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
 			$parse['diplomacy'] = Models\AllianceDiplomacy::query()->where('diplomacy_id', $alliance->id)->where('status', 0)->count();
 		}
 
 		$parse['requests'] = 0;
 
-		if ($alliance->user_id == $this->user->id || $alliance->canAccess(Alliance::REQUEST_ACCESS)) {
+		if ($alliance->user_id == $this->user->id || $alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
 			$parse['requests'] = Models\AllianceDiplomacy::query()->where('alliance_id', $alliance->id)->count();
 		}
 
-		$parse['alliance_admin'] = $alliance->canAccess(Alliance::ADMIN_ACCESS);
-		$parse['chat_access'] = $alliance->canAccess(Alliance::CHAT_ACCESS);
-		$parse['members_list'] = $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST);
+		$parse['alliance_admin'] = $alliance->canAccess(AllianceAccess::ADMIN_ACCESS);
+		$parse['chat_access'] = $alliance->canAccess(AllianceAccess::CHAT_ACCESS);
+		$parse['members_list'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST);
 		$parse['owner'] = ($alliance->user_id != $this->user->id) ? $this->MessageForm(__('alliance.Exit_of_this_alliance'), "", "/alliance/exit/", __('alliance.Continue')) : '';
 
 		$parse['image'] = '';
@@ -149,7 +150,7 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
+		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -231,13 +232,13 @@ class AllianceController extends Controller
 		$parse['request_allow'] = $alliance->request_notallow;
 		$parse['owner_range'] = $alliance->owner_range;
 
-		$parse['can_view_members'] = $alliance->canAccess(Alliance::CAN_KICK);
+		$parse['can_view_members'] = $alliance->canAccess(AllianceAccess::CAN_KICK);
 
 		if ($alliance->user_id == $this->user->id) {
 			$parse['Transfer_alliance'] = $this->MessageForm("Покинуть / Передать альянс", "", "/alliance/admin/give", 'Продолжить');
 		}
 
-		if ($alliance->canAccess(Alliance::CAN_DELETE_ALLIANCE)) {
+		if ($alliance->canAccess(AllianceAccess::CAN_DELETE_ALLIANCE)) {
 			$parse['Disolve_alliance'] = $this->MessageForm("Расформировать альянс", "", "/alliance/admin/exit", 'Продолжить');
 		}
 
@@ -248,23 +249,20 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if (!$alliance->canAccess(Alliance::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
+		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
 			throw new Exception(__('alliance.Denied_access'));
 		} elseif (!empty($request->post('newrangname'))) {
 			$ranks = $alliance->ranks;
-			$ranks[] = [
+
+			$rank = [
 				'name' => strip_tags($request->post('newrangname')),
-				Alliance::CAN_DELETE_ALLIANCE => 0,
-				Alliance::CAN_KICK => 0,
-				Alliance::REQUEST_ACCESS => 0,
-				Alliance::CAN_WATCH_MEMBERLIST => 0,
-				Alliance::CAN_ACCEPT => 0,
-				Alliance::ADMIN_ACCESS => 0,
-				Alliance::CAN_WATCH_MEMBERLIST_STATUS => 0,
-				Alliance::CHAT_ACCESS => 0,
-				Alliance::CAN_EDIT_RIGHTS => 0,
-				Alliance::DIPLOMACY_ACCESS => 0,
 			];
+
+			foreach (AllianceAccess::cases() as $case) {
+				$rank[$case->value] = 0;
+			}
+
+			$ranks[] = $rank;
 
 			$alliance->ranks = $ranks;
 			$alliance->save();
@@ -275,16 +273,16 @@ class AllianceController extends Controller
 
 			foreach ($alliance->ranks as $id => $rank) {
 				$newRanks[$id] = array_merge($rank, [
-					Alliance::CAN_DELETE_ALLIANCE => $alliance->user_id == $this->user->id ? (isset($rights[$id][Alliance::CAN_DELETE_ALLIANCE]) ? 1 : 0) : $rank[Alliance::CAN_DELETE_ALLIANCE],
-					Alliance::CAN_KICK => $alliance->user_id == $this->user->id ? (isset($rights[$id][Alliance::CAN_KICK]) ? 1 : 0) : $rank[Alliance::CAN_KICK],
-					Alliance::REQUEST_ACCESS => isset($rights[$id][Alliance::REQUEST_ACCESS]) ? 1 : 0,
-					Alliance::CAN_WATCH_MEMBERLIST => isset($rights[$id][Alliance::CAN_WATCH_MEMBERLIST]) ? 1 : 0,
-					Alliance::CAN_ACCEPT => isset($rights[$id][Alliance::CAN_ACCEPT]) ? 1 : 0,
-					Alliance::ADMIN_ACCESS => isset($rights[$id][Alliance::ADMIN_ACCESS]) ? 1 : 0,
-					Alliance::CAN_WATCH_MEMBERLIST_STATUS => isset($rights[$id][Alliance::CAN_WATCH_MEMBERLIST_STATUS]) ? 1 : 0,
-					Alliance::CHAT_ACCESS => isset($rights[$id][Alliance::CHAT_ACCESS]) ? 1 : 0,
-					Alliance::CAN_EDIT_RIGHTS => isset($rights[$id][Alliance::CAN_EDIT_RIGHTS]) ? 1 : 0,
-					Alliance::DIPLOMACY_ACCESS => isset($rights[$id][Alliance::DIPLOMACY_ACCESS]) ? 1 : 0,
+					AllianceAccess::CAN_DELETE_ALLIANCE->value => $alliance->user_id == $this->user->id ? (isset($rights[$id][AllianceAccess::CAN_DELETE_ALLIANCE->value]) ? 1 : 0) : $rank[AllianceAccess::CAN_DELETE_ALLIANCE->value],
+					AllianceAccess::CAN_KICK->value => $alliance->user_id == $this->user->id ? (isset($rights[$id][AllianceAccess::CAN_KICK->value]) ? 1 : 0) : $rank[AllianceAccess::CAN_KICK->value],
+					AllianceAccess::REQUEST_ACCESS->value => isset($rights[$id][AllianceAccess::REQUEST_ACCESS->value]) ? 1 : 0,
+					AllianceAccess::CAN_WATCH_MEMBERLIST->value => isset($rights[$id][AllianceAccess::CAN_WATCH_MEMBERLIST->value]) ? 1 : 0,
+					AllianceAccess::CAN_ACCEPT->value => isset($rights[$id][AllianceAccess::CAN_ACCEPT->value]) ? 1 : 0,
+					AllianceAccess::ADMIN_ACCESS->value => isset($rights[$id][AllianceAccess::ADMIN_ACCESS->value]) ? 1 : 0,
+					AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS->value => isset($rights[$id][AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS->value]) ? 1 : 0,
+					AllianceAccess::CHAT_ACCESS->value => isset($rights[$id][AllianceAccess::CHAT_ACCESS->value]) ? 1 : 0,
+					AllianceAccess::CAN_EDIT_RIGHTS->value => isset($rights[$id][AllianceAccess::CAN_EDIT_RIGHTS->value]) ? 1 : 0,
+					AllianceAccess::DIPLOMACY_ACCESS->value => isset($rights[$id][AllianceAccess::DIPLOMACY_ACCESS->value]) ? 1 : 0,
 				]);
 			}
 
@@ -299,21 +297,16 @@ class AllianceController extends Controller
 		$parse['list'] = [];
 
 		foreach ($alliance->ranks as $a => $b) {
+			$rights = [];
+
+			foreach (AllianceAccess::cases() as $case) {
+				$rights[$case->value] = (bool) ($b[$case->value] ?: false);
+			}
+
 			$parse['list'][] = [
 				'id' => $a,
 				'name' => $b['name'],
-				'rights' => [
-					Alliance::CAN_DELETE_ALLIANCE => (bool) ($b[Alliance::CAN_DELETE_ALLIANCE] ?: false),
-					Alliance::CAN_KICK => (bool) ($b[Alliance::CAN_KICK] ?: false),
-					Alliance::REQUEST_ACCESS => (bool) ($b[Alliance::REQUEST_ACCESS] ?: false),
-					Alliance::CAN_WATCH_MEMBERLIST => (bool) ($b[Alliance::CAN_WATCH_MEMBERLIST] ?: false),
-					Alliance::CAN_ACCEPT => (bool) ($b[Alliance::CAN_ACCEPT] ?: false),
-					Alliance::ADMIN_ACCESS => (bool) ($b[Alliance::ADMIN_ACCESS] ?: false),
-					Alliance::CAN_WATCH_MEMBERLIST_STATUS => (bool) ($b[Alliance::CAN_WATCH_MEMBERLIST_STATUS] ?: false),
-					Alliance::CHAT_ACCESS => (bool) ($b[Alliance::CHAT_ACCESS] ?: false),
-					Alliance::CAN_EDIT_RIGHTS => (bool) ($b[Alliance::CAN_EDIT_RIGHTS] ?: false),
-					Alliance::DIPLOMACY_ACCESS => (bool) ($b[Alliance::DIPLOMACY_ACCESS] ?: false),
-				]
+				'rights' => $rights
 			];
 		}
 
@@ -324,13 +317,13 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_ACCEPT) && !$alliance->canAccess(Alliance::REQUEST_ACCESS)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT) && !$alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$show = (int) $request->query('show', 0);
 
-		if (($alliance->user_id == $this->user->id || $alliance->canAccess(Alliance::CAN_ACCEPT)) && $request->post('action')) {
+		if (($alliance->user_id == $this->user->id || $alliance->canAccess(AllianceAccess::CAN_ACCEPT)) && $request->post('action')) {
 			if ($request->post('action') == "Принять") {
 				if ($alliance->members_count >= 150) {
 					throw new Exception('Альянс не может иметь больше 150 участников');
@@ -412,7 +405,7 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
+		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -445,7 +438,7 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if (!$alliance->canAccess(Alliance::ADMIN_ACCESS)) {
+		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -475,7 +468,7 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_DELETE_ALLIANCE)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_DELETE_ALLIANCE)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -518,7 +511,7 @@ class AllianceController extends Controller
 		$parse['righthand'] = '';
 
 		foreach ($listuser as $u) {
-			if ($alliance->ranks[$u->rank][Alliance::CAN_EDIT_RIGHTS] == 1) {
+			if ($alliance->ranks[$u->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
 				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->user?->username . "&nbsp;[" . $alliance->ranks[$u->rank]['name'] . "]&nbsp;&nbsp;</option>";
 			}
 		}
@@ -532,14 +525,14 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_KICK)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_KICK)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		if ($request->query('kick')) {
 			$kick = $request->query('kick', 0);
 
-			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_KICK) && $kick > 0) {
+			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_KICK) && $kick > 0) {
 				throw new Exception(__('alliance.Denied_access'));
 			}
 
@@ -577,7 +570,7 @@ class AllianceController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::DIPLOMACY_ACCESS)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -713,7 +706,7 @@ class AllianceController extends Controller
 		if (Route::currentRouteAction() == 'admin') {
 			$parse['admin'] = true;
 		} else {
-			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST)) {
+			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST)) {
 				throw new Exception(__('alliance.Denied_access'));
 			}
 
@@ -733,7 +726,7 @@ class AllianceController extends Controller
 			$sort = 's.total_points';
 		} elseif ($sort1 == 4) {
 			$sort = 'm.created_at';
-		} elseif ($sort1 == 5 && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+		} elseif ($sort1 == 5 && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
 			$sort = 'u.onlinetime';
 		} else {
 			$sort = 'u.id';
@@ -762,11 +755,11 @@ class AllianceController extends Controller
 				'date' => $member->created_at ? Game::datezone("d.m.Y H:i", $member->created_at) : '-',
 			];
 
-			if (strtotime($member->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			if (strtotime($member->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$item['onlinetime'] = "<span class='positive'>" . __('alliance.On') . "</span>";
-			} elseif (strtotime($member->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			} elseif (strtotime($member->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$item['onlinetime'] = "<span class='neutral'>" . __('alliance.15_min') . "</span>";
-			} elseif ($alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS)) {
+			} elseif ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$hours = floor((time() - strtotime($member->onlinetime)) / 3600);
 
 				$item['onlinetime'] = "<span class='negative'>" . __('alliance.Off') . " " . Format::time($hours * 3600) . "</span>";
@@ -819,7 +812,7 @@ class AllianceController extends Controller
 		}
 
 		$parse['s'] = $s;
-		$parse['status'] = $alliance->canAccess(Alliance::CAN_WATCH_MEMBERLIST_STATUS);
+		$parse['status'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS);
 
 		return response()->state($parse);
 	}
@@ -833,7 +826,7 @@ class AllianceController extends Controller
 
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(Alliance::CHAT_ACCESS)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CHAT_ACCESS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 

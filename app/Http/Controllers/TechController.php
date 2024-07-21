@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\EntityFactory;
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 
 class TechController extends Controller
@@ -37,9 +38,9 @@ class TechController extends Controller
 					if ($ResClass != 700) {
 						$type = Vars::getItemType($ResClass);
 
-						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) >= $Level) {
+						if ($type == ItemType::TECH && $this->user->getTechLevel($ResClass) >= $Level) {
 							$pars['required'] .= "<span class=\"positive\">";
-						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getLevel($ResClass) >= $Level) {
+						} elseif ($type == ItemType::BUILDING && $this->planet->getLevel($ResClass) >= $Level) {
 							$pars['required'] .= "<span class=\"positive\">";
 						} else {
 							$pars['required'] .= "<span class=\"negative\">";
@@ -47,10 +48,10 @@ class TechController extends Controller
 
 						$pars['required'] .= __('main.tech.' . $ResClass) . " (" . __('main.level') . " " . $Level . "";
 
-						if ($type == Vars::ITEM_TYPE_TECH && $this->user->getTechLevel($ResClass) < $Level) {
+						if ($type == ItemType::TECH && $this->user->getTechLevel($ResClass) < $Level) {
 							$minus = $Level - $this->user->getTechLevel($ResClass);
 							$pars['required'] .= " + <b>" . $minus . "</b>";
-						} elseif ($type == Vars::ITEM_TYPE_BUILING && $this->planet->getLevel($ResClass) < $Level) {
+						} elseif ($type == ItemType::BUILDING && $this->planet->getLevel($ResClass) < $Level) {
 							$minus = $Level - $this->planet->getLevel($ResClass);
 							$pars['required'] .= " + <b>" . $minus . "</b>";
 						}

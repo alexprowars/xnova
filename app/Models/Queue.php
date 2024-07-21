@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use Illuminate\Database\Eloquent\Model;
 
 class Queue extends Model
@@ -9,23 +11,18 @@ class Queue extends Model
 	public $timestamps = false;
 
 	protected $attributes = [
-		'operation' => self::OPERATION_BUILD,
+		'operation' => QueueConstructionType::BUILDING,
 	];
 
 	protected $guarded = [];
-
-	public const TYPE_BUILD = 'build';
-	public const TYPE_TECH = 'tech';
-	public const TYPE_UNIT = 'unit';
-
-	public const OPERATION_BUILD = 'build';
-	public const OPERATION_DESTROY = 'destroy';
 
 	protected function casts(): array
 	{
 		return [
 			'time' => 'immutable_datetime',
 			'time_end' => 'immutable_datetime',
+			'type' => QueueType::class,
+			'operation' => QueueConstructionType::class,
 		];
 	}
 

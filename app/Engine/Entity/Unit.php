@@ -3,6 +3,7 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityUnitInterface;
+use App\Engine\Enums\Resources;
 
 class Unit extends Entity implements EntityUnitInterface
 {
@@ -23,7 +24,7 @@ class Unit extends Entity implements EntityUnitInterface
 		$price = $this->getPrice();
 
 		foreach ($price as $type => $count) {
-			if (!in_array($type, ['metal', 'crystal', 'deuterium', 'energy']) || $count <= 0) {
+			if (!in_array($type, array_column(Resources::cases(), 'value')) || $count <= 0) {
 				continue;
 			}
 

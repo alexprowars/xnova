@@ -2,16 +2,17 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Models\Planet;
 use App\Models\User;
 
 class Construction
 {
-	public static function showBuildingQueue(User $user, Planet $planet)
+	public static function showBuildingQueue(User $user, Planet $planet, QueueType $type = null)
 	{
-		$queueManager = new QueueManager($user, $planet);
-
-		$queueItems = $queueManager->get($queueManager::TYPE_BUILDING);
+		$queueItems = (new QueueManager($user, $planet))
+			->get($type);
 
 		$items = [];
 		$end   = null;
@@ -19,68 +20,56 @@ class Construction
 		foreach ($queueItems as $item) {
 			$end ??= $item->time;
 
-			$entity = EntityFactory::get(
-				$item->object_id,
-				$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
-				$planet
-			);
+			$entity = null;
 
-			$elementTime = $entity->getTime();
+			if ($item->type == QueueType::BUILDING) {
+				$entity = EntityFactory::get(
+					$item->object_id,
+					$item->level - ($item->operation == QueueConstructionType::BUILDING ? 1 : 0),
+					$planet
+				);
 
-			if ($item->operation == $item::OPERATION_DESTROY) {
-				$elementTime = ceil($elementTime / 2);
+				$elementTime = $entity->getTime();
+
+				if ($item->operation == QueueConstructionType::DESTROY) {
+					$elementTime = ceil($elementTime / 2);
+				}
+
+				if ($item->time && (int) $item->time->diffInSeconds($item->time_end) != $elementTime) {
+					$item->update([
+						'time_end' => $item->time->addSeconds($elementTime),
+					]);
+				}
+
+				$end = $end->addSeconds($elementTime);
+
+				$items[] = [
+					'item' 	=> $item->object_id,
+					'type'	=> $item->type,
+					'level' => $item->level,
+					'mode' 	=> $item->operation,
+					'time' 	=> $end->utc()->toAtomString(),
+				];
 			}
 
-			if ($item->time && (int) $item->time->diffInSeconds($item->time_end) != $elementTime) {
-				$item->update([
-					'time_end' => $item->time->addSeconds($elementTime),
-				]);
+			if ($item->type == QueueType::SHIPYARD) {
+				$entity = EntityFactory::get($item->object_id);
+
+				$time = $entity->getTime();
+
+				$end = $end->addSeconds($time * $item->level);
+
+				$items[] = [
+					'item'		=> (int) $item->object_id,
+					'type'		=> $item->type,
+					'count'		=> (int) $item->level,
+					'mode' 		=> $item->operation,
+					'time_one'	=> $time,
+					'time'		=> $end->utc()->toAtomString(),
+				];
 			}
-
-			$end = $end->addSeconds($elementTime);
-
-			$items[] = [
-				'item' 	=> $item->object_id,
-				'level' => $item->level,
-				'mode' 	=> $item->operation == $item::OPERATION_DESTROY,
-				'time' 	=> $end->utc()->toAtomString(),
-			];
 		}
 
 		return $items;
-	}
-
-	public static function queueList(User $user, Planet $planet)
-	{
-		$queueItems = (new QueueManager($user, $planet))
-			->get(QueueManager::TYPE_SHIPYARD);
-
-		if (empty($queueItems)) {
-			return [];
-		}
-
-		$data = [];
-		$end  = null;
-
-		foreach ($queueItems as $item) {
-			$end ??= $item->time;
-
-			$entity = EntityFactory::get($item->object_id);
-
-			$time = $entity->getTime();
-
-			$end = $end->addSeconds($time * $item->level);
-
-			$row = [
-				'id'		=> (int) $item->object_id,
-				'count'		=> (int) $item->level,
-				'time_one'	=> $time,
-				'time'		=> $end->utc()->toAtomString(),
-			];
-
-			$data[] = $row;
-		}
-
-		return $data;
 	}
 }

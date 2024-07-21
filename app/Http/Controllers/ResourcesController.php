@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
 use App\Engine\Vars;
@@ -71,7 +72,7 @@ class ResourcesController extends Controller
 
 		PlanetEntity::query()
 			->whereIn('planet_id', $this->user->planets->pluck('id'))
-			->whereIn('entity_id', Vars::getItemsByType('prod'))
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::PRODUCTION))
 			->update(['factor' => $production]);
 	}
 
@@ -82,7 +83,7 @@ class ResourcesController extends Controller
 		}
 
 		foreach ($request->post('state') as $entityId => $value) {
-			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType('prod'))) {
+			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {
 				continue;
 			}
 
@@ -117,7 +118,7 @@ class ResourcesController extends Controller
 		$parse['bonus_h'] = ($this->user->bonus('storage') - 1) * 100;
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType('prod') as $productionId) {
+		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $productionId) {
 			$entity = $this->planet->getEntity($productionId)->unit();
 
 			if (!$entity || $this->planet->getLevel($productionId) <= 0 || !($entity instanceof EntityProductionInterface)) {

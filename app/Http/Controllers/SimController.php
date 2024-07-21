@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 
 class SimController extends Controller
@@ -36,7 +37,7 @@ class SimController extends Controller
 			}
 		}
 
-		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE, Vars::ITEM_TYPE_TECH]);
+		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE, ItemType::TECH]);
 
 		foreach ($res as $id) {
 			if ($this->planet->getLevel($id) > 0) {

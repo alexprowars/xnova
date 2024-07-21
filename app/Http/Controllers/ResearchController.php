@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Engine\Building;
 use App\Engine\EntityFactory;
+use App\Engine\Enums\ItemType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
@@ -29,14 +31,14 @@ class ResearchController extends Controller
 
 		$techHandle = QueueModel::query()
 			->where('user_id', $this->user->id)
-			->where('type', QueueModel::TYPE_TECH)
+			->where('type', QueueType::RESEARCH)
 			->first();
 
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $elementId) {
+		foreach (Vars::getItemsByType(ItemType::TECH) as $elementId) {
 			$entity = EntityFactory::get($elementId, $this->user->getTechLevel($elementId), $this->planet);
 
 			$available = $entity->isAvailable();
@@ -89,8 +91,10 @@ class ResearchController extends Controller
 				if ($techHandle) {
 					if ($techHandle->object_id == $elementId) {
 						$row['build'] = [
-							'id' => $techHandle->planet_id,
+							'planet_id' => $techHandle->planet_id,
+							'item' => $techHandle->object_id,
 							'name' => null,
+							'level' => $techHandle->level,
 							'time' => $techHandle->time->addSeconds($row['time'])->utc()->toAtomString(),
 						];
 
@@ -125,7 +129,7 @@ class ResearchController extends Controller
 
 		$elementId = (int) $request->post('element', 0);
 
-		if (!$elementId || !in_array($elementId, Vars::getItemsByType(Vars::ITEM_TYPE_TECH))) {
+		if (!$elementId || !in_array($elementId, Vars::getItemsByType(ItemType::TECH))) {
 			return;
 		}
 
@@ -133,12 +137,12 @@ class ResearchController extends Controller
 
 		switch ($action) {
 			case 'cancel':
-				if ($queueManager->getCount(QueueManager::TYPE_RESEARCH)) {
+				if ($queueManager->getCount(QueueType::RESEARCH)) {
 					$queueManager->delete($elementId);
 				}
 				break;
 			case 'search':
-				if (!$queueManager->getCount(QueueManager::TYPE_RESEARCH)) {
+				if (!$queueManager->getCount(QueueType::RESEARCH)) {
 					$queueManager->add($elementId);
 				}
 				break;

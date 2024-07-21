@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Construction;
 use App\Engine\Game;
 use App\Http\Resources\Planet;
 use App\Http\Resources\User;
@@ -11,11 +12,8 @@ class StateController extends Controller
 {
 	public function index()
 	{
-		$planet = null;
-
-		if (Auth::check()) {
-			$planet = Auth::user()->getCurrentPlanet();
-		}
+		$user = Auth::user();
+		$planet = $user?->getCurrentPlanet();
 
 		$data = [
 			'messages' => [],
@@ -28,14 +26,13 @@ class StateController extends Controller
 				'online' => (int) config('settings.usersOnline', 0),
 				'users' => (int) config('settings.usersTotal', 0),
 			],
-			'user' => Auth::check() ? User::make(Auth::user()) : null,
+			'user' => $user ? User::make($user) : null,
 			'planet' => $planet ? Planet::make($planet) : null,
+			'queue' => Construction::showBuildingQueue($user, $planet),
 			'version' => VERSION,
 		];
 
-		if (Auth::check()) {
-			$user = Auth::user();
-
+		if ($user) {
 			$globalMessage = config('settings.newsMessage', '');
 
 			if (!empty($globalMessage)) {

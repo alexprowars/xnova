@@ -12,6 +12,7 @@ use App\Engine\CombatEngine\Models\Player;
 use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use Illuminate\Support\Facades\Request;
 
@@ -295,7 +296,7 @@ class XnsimController extends Controller
 
 		$cost = [$price['metal'], $price['crystal']];
 
-		if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET) {
+		if (Vars::getItemType($id) == ItemType::FLEET) {
 			return new Ship($id, $count[0], $unitData['sd'], $unitData['shield'], $cost, $unitData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
 		}
 

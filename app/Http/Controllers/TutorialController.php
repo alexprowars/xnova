@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
@@ -49,9 +50,9 @@ class TutorialController extends Controller
 				foreach ($taskVal as $element => $level) {
 					$type = Vars::getItemType($element);
 
-					if ($type == Vars::ITEM_TYPE_TECH) {
+					if ($type == ItemType::TECH) {
 						$check = $this->user->getTechLevel($element) >= $level;
-					} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
+					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 						$check = $this->planet->getLevel($element) >= $level;
 					} else {
 						$check = $this->planet->getLevel($element) >= $level;
@@ -61,11 +62,11 @@ class TutorialController extends Controller
 						$chk = $check;
 					}
 
-					if ($type == Vars::ITEM_TYPE_TECH) {
+					if ($type == ItemType::TECH) {
 						$parse['task'][] = ['Исследовать <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $check];
-					} elseif ($type == Vars::ITEM_TYPE_FLEET) {
+					} elseif ($type == ItemType::FLEET) {
 						$parse['task'][] = ['Построить ' . $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>', $check];
-					} elseif ($type == Vars::ITEM_TYPE_DEFENSE) {
+					} elseif ($type == ItemType::DEFENSE) {
 						$parse['task'][] = ['Построить ' . $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>', $check];
 					} else {
 						$parse['task'][] = ['Построить <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $check];
@@ -146,22 +147,22 @@ class TutorialController extends Controller
 					foreach ($rewardVal as $element => $level) {
 						$type = Vars::getItemType($element);
 
-						if ($type == Vars::ITEM_TYPE_TECH) {
+						if ($type == ItemType::TECH) {
 							$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
-						} elseif ($type == Vars::ITEM_TYPE_FLEET || $type == Vars::ITEM_TYPE_DEFENSE) {
+						} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 							$this->planet->updateAmount($element, $level, true);
-						} elseif ($type == Vars::ITEM_TYPE_OFFICIER) {
+						} elseif ($type == ItemType::OFFICIER) {
 							if ($this->user->{Vars::getName($element)} > time()) {
 								$this->user->{Vars::getName($element)} += $level;
 							} else {
 								$this->user->{Vars::getName($element)} = time() + $level;
 							}
-						} elseif ($type == Vars::ITEM_TYPE_BUILING) {
+						} elseif ($type == ItemType::BUILDING) {
 							$this->planet->updateAmount($element, (int) $level, true);
 						}
 					}
 				} elseif ($rewardKey == 'STORAGE_RAND') {
-					$r = mt_rand(22, 24);
+					$r = random_int(22, 24);
 
 					$this->planet->updateAmount($r, 1, true);
 				}
@@ -191,13 +192,13 @@ class TutorialController extends Controller
 				foreach ($rewardVal as $element => $level) {
 					$type = Vars::getItemType($element);
 
-					if ($type == Vars::ITEM_TYPE_TECH) {
+					if ($type == ItemType::TECH) {
 						$parse['rewd'][] = 'Исследование <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
-					} elseif ($type == Vars::ITEM_TYPE_FLEET) {
+					} elseif ($type == ItemType::FLEET) {
 						$parse['rewd'][] = $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>';
-					} elseif ($type == Vars::ITEM_TYPE_DEFENSE) {
+					} elseif ($type == ItemType::DEFENSE) {
 						$parse['rewd'][] = $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>';
-					} elseif ($type == Vars::ITEM_TYPE_OFFICIER) {
+					} elseif ($type == ItemType::OFFICIER) {
 						$parse['rewd'][] = 'Офицер <b>' . __('main.tech.' . $element) . '</b> на ' . round($level / 3600 / 24, 1) . ' суток';
 					} else {
 						$parse['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';

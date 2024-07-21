@@ -3,6 +3,8 @@
 namespace App\Engine;
 
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\ItemType;
+use App\Engine\Enums\QueueType;
 use App\Models\Planet;
 use App\Models\User;
 
@@ -29,8 +31,8 @@ class Building
 	{
 		$queueManager = new QueueManager($planet->user_id, $planet);
 
-		if ($queueManager->getCount($queueManager::TYPE_BUILDING)) {
-			$BuildQueue = $queueManager->get($queueManager::TYPE_BUILDING);
+		if ($queueManager->getCount(QueueType::BUILDING)) {
+			$BuildQueue = $queueManager->get(QueueType::BUILDING);
 
 			if ($BuildQueue[0]->object_id == 31 && config('settings.BuildLabWhileRun', 0) != 1) {
 				return false;
@@ -58,15 +60,15 @@ class Building
 			if ($reqId != 700) {
 				$elementType = Vars::getItemType($reqId);
 
-				if ($elementType === Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) >= $level) {
+				if ($elementType === ItemType::TECH && $user->getTechLevel($reqId) >= $level) {
 					continue;
-				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getLevel($reqId) >= $level) {
+				} elseif ($elementType == ItemType::BUILDING && $planet->getLevel($reqId) >= $level) {
 					continue;
 				}
 
-				if ($elementType == Vars::ITEM_TYPE_TECH && $user->getTechLevel($reqId) < $level) {
+				if ($elementType == ItemType::TECH && $user->getTechLevel($reqId) < $level) {
 					$minus = $level - $user->getTechLevel($reqId);
-				} elseif ($elementType == Vars::ITEM_TYPE_BUILING && $planet->getLevel($reqId) < $level) {
+				} elseif ($elementType == ItemType::BUILDING && $planet->getLevel($reqId) < $level) {
 					$minus = $level - $planet->getLevel($reqId);
 				}
 			} else {
@@ -90,7 +92,7 @@ class Building
 
 	public static function getNextProduction(int $elementId, int $level, ?Planet $planet = null): ?Resources
 	{
-		if (!in_array($elementId, Vars::getItemsByType('prod'))) {
+		if (!in_array($elementId, Vars::getItemsByType(ItemType::PRODUCTION))) {
 			return null;
 		}
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\RedirectException;
@@ -68,9 +69,9 @@ class RaceController extends Controller
 			$r = max(min($r, 4), 0);
 
 			if ($r > 0) {
-				$update = ['race' => intval($r), 'bonus' => time() + 86400];
+				$update = ['race' => (int) $r, 'bonus' => time() + 86400];
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
+				foreach (Vars::getItemsByType(ItemType::OFFICIER) as $oId) {
 					$update[Vars::getName($oId)] = time() + 86400;
 				}
 

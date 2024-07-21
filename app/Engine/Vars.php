@@ -2,17 +2,12 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 
 class Vars
 {
 	private static $registry;
-
-	public const ITEM_TYPE_BUILING = 'build';
-	public const ITEM_TYPE_TECH = 'tech';
-	public const ITEM_TYPE_FLEET = 'fleet';
-	public const ITEM_TYPE_DEFENSE = 'defense';
-	public const ITEM_TYPE_OFFICIER = 'officier';
 
 	public static function init()
 	{
@@ -64,7 +59,7 @@ class Vars
 		return self::$registry['pricelist'][$itemId] ?? [];
 	}
 
-	public static function getItemTotalPrice($itemId, $allResources = false): int
+	public static function getItemTotalPrice($itemId, $all = false): int
 	{
 		$price = self::getItemPrice($itemId);
 
@@ -72,14 +67,14 @@ class Vars
 			return 0;
 		}
 
-		if (!$allResources) {
+		if (!$all) {
 			return $price['metal'] + $price['crystal'];
 		} else {
 			return $price['metal'] + $price['crystal'] + $price['deuterium'];
 		}
 	}
 
-	public static function getItemType($itemId): ?string
+	public static function getItemType($itemId): ?ItemType
 	{
 		if (empty(self::$registry)) {
 			self::init();
@@ -90,19 +85,19 @@ class Vars
 		}
 
 		if (in_array($itemId, self::$registry['reslist']['build'])) {
-			return self::ITEM_TYPE_BUILING;
+			return ItemType::BUILDING;
 		}
 		if (in_array($itemId, self::$registry['reslist']['tech'])) {
-			return self::ITEM_TYPE_TECH;
+			return ItemType::TECH;
 		}
 		if (in_array($itemId, self::$registry['reslist']['fleet'])) {
-			return self::ITEM_TYPE_FLEET;
+			return ItemType::FLEET;
 		}
 		if (in_array($itemId, self::$registry['reslist']['defense'])) {
-			return self::ITEM_TYPE_DEFENSE;
+			return ItemType::DEFENSE;
 		}
 		if (in_array($itemId, self::$registry['reslist']['officier'])) {
-			return self::ITEM_TYPE_OFFICIER;
+			return ItemType::OFFICIER;
 		}
 
 		return null;
@@ -121,7 +116,7 @@ class Vars
 		return self::$registry['requeriments'][$itemId] ?? [];
 	}
 
-	public static function getItemsByType($types): array
+	public static function getItemsByType(array | ItemType $types): array
 	{
 		if (!is_array($types)) {
 			$types = [$types];
@@ -130,8 +125,8 @@ class Vars
 		$result = [];
 
 		foreach ($types as $type) {
-			if (isset(self::$registry['reslist'][$type])) {
-				$result = array_merge($result, self::$registry['reslist'][$type]);
+			if (isset(self::$registry['reslist'][$type->value])) {
+				$result = array_merge($result, self::$registry['reslist'][$type->value]);
 			}
 		}
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Coordinates;
 use App\Engine\Entity as PlanetEntity;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
@@ -23,8 +24,6 @@ class FleetCheckoutController extends Controller
 		if ($this->user->isVacation()) {
 			throw new PageException('Нет доступа!');
 		}
-
-		$parse = [];
 
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
@@ -49,6 +48,7 @@ class FleetCheckoutController extends Controller
 			$type = PlanetType::PLANET;
 		}
 
+		$parse = [];
 		$parse['ships'] = [];
 		$fleets = [];
 
@@ -58,7 +58,7 @@ class FleetCheckoutController extends Controller
 			$ships = [];
 		}
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $i) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $i) {
 			if (isset($ships[$i]) && (int) $ships[$i] > 0) {
 				$cnt = (int) $ships[$i];
 
@@ -75,19 +75,14 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		if (!count($fleets)) {
+		if (empty($fleets)) {
 			throw new RedirectException('/fleet');
 		}
 
+		$target = new Coordinates($galaxy, $system, $planet, $type);
+
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
-
-		$parse['target'] = [
-			'galaxy' => $galaxy,
-			'system' => $system,
-			'planet' => $planet,
-			'planet_type' => $type,
-		];
-
+		$parse['target'] = $target->toArray();
 		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
 		$parse['system_max'] = (int) config('settings.maxSystemInGalaxy');
 		$parse['planet_max'] = (int) config('settings.maxPlanetInSystem') + 1;
@@ -183,7 +178,7 @@ class FleetCheckoutController extends Controller
 		$YourPlanet = false;
 		$UsedPlanet = false;
 
-		$targetPlanet = Planet::findByCoordinates(new Coordinates($galaxy, $system, $planet, $type));
+		$targetPlanet = Planet::findByCoordinates($target);
 
 		if ($targetPlanet) {
 			$UsedPlanet = true;
@@ -193,7 +188,7 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$missions = Fleet::getFleetMissions($fleets, new Coordinates($galaxy, $system, $planet, $type), $YourPlanet, $UsedPlanet, ($acs > 0));
+		$missions = Fleet::getFleetMissions($fleets, $target, $YourPlanet, $UsedPlanet, ($acs > 0));
 
 		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin()) && !in_array(Mission::Stay, $missions)) {
 			$missions[] = Mission::Stay;

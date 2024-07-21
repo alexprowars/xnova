@@ -8,6 +8,7 @@ use App\Engine\CombatEngine\Models\Fleet;
 use App\Engine\CombatEngine\Models\Player;
 use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Utils\LangManager;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
@@ -29,7 +30,7 @@ class Expedition extends FleetEngine implements Mission
 	{
 		$Expowert = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $ID) {
 			$Expowert[$ID] = Vars::getItemTotalPrice($ID) / 200;
 		}
 
@@ -139,7 +140,7 @@ class Expedition extends FleetEngine implements Mission
 
 				$Found = [];
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $ID) {
+				foreach (Vars::getItemsByType(ItemType::FLEET) as $ID) {
 					if (!isset($FleetCount[$ID]) || $ID == 208 || $ID == 209 || $ID == 214) {
 						continue;
 					}
@@ -250,7 +251,7 @@ class Expedition extends FleetEngine implements Mission
 				$res = [];
 
 				foreach ($fleetData as $shipId => $shipArr) {
-					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET) {
+					if (Vars::getItemType($shipId) != ItemType::FLEET) {
 						continue;
 					}
 
@@ -261,7 +262,7 @@ class Expedition extends FleetEngine implements Mission
 				$playerObj->setName($Name);
 				$playerObj->setTech(0, 0, 0);
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
+				foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
 					if (isset($mission->usersTech[$this->fleet->user_id][Vars::getName($techId)]) && $mission->usersTech[$this->fleet->user_id][Vars::getName($techId)] > 0) {
 						$res[$techId] = random_int(abs($mission->usersTech[$this->fleet->user_id][Vars::getName($techId)] + $Def), 0);
 					}
@@ -272,7 +273,7 @@ class Expedition extends FleetEngine implements Mission
 				$fleetObj = new Fleet(0);
 
 				foreach ($fleetData as $shipId => $shipArr) {
-					if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count']) {
+					if (Vars::getItemType($shipId) != ItemType::FLEET || !$shipArr['count']) {
 						continue;
 					}
 

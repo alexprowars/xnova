@@ -14,6 +14,7 @@ use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Coordinates;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
@@ -100,7 +101,7 @@ class Attack extends FleetEngine implements Mission
 
 		$res = [];
 
-		$units = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$units = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($units as $i) {
 			if ($target->getLevel($i) > 0) {
@@ -114,7 +115,7 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
+		foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
 			$level = $targetUser->getTechLevel($techId);
 
 			if ($targetUser->rpg_komandir?->isFuture() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
@@ -598,7 +599,7 @@ class Attack extends FleetEngine implements Mission
 		$res = [];
 
 		foreach ($fleetData as $shipId => $shipArr) {
-			if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET) {
+			if (Vars::getItemType($shipId) != ItemType::FLEET) {
 				continue;
 			}
 
@@ -627,7 +628,7 @@ class Attack extends FleetEngine implements Mission
 				$info['shield_tech'] 	+= 2;
 			}
 
-			foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $techId) {
+			foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
 				if (isset($info[Vars::getName($techId)]) && $info[Vars::getName($techId)] > 0) {
 					$res[$techId] = $info[Vars::getName($techId)];
 				}
@@ -655,7 +656,7 @@ class Attack extends FleetEngine implements Mission
 		$fleetObj = new Fleet($fleet->id);
 
 		foreach ($fleetData as $shipId => $shipArr) {
-			if (Vars::getItemType($shipId) != Vars::ITEM_TYPE_FLEET || !$shipArr['count']) {
+			if (Vars::getItemType($shipId) != ItemType::FLEET || !$shipArr['count']) {
 				continue;
 			}
 
@@ -690,7 +691,7 @@ class Attack extends FleetEngine implements Mission
 
 		$cost = [$price['metal'], $price['crystal']];
 
-		if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET) {
+		if (Vars::getItemType($id) == ItemType::FLEET) {
 			return new Ship($id, $count, $shipData['sd'], $shipData['shield'], $cost, $shipData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
 		}
 

@@ -479,6 +479,15 @@ class FleetSend
 			}
 		}
 
+		$fleetArray = [];
+
+		foreach ($this->fleetArray as $unitId => $count) {
+			$fleetArray[] = [
+				'id' => (int) $unitId,
+				'count' => $count,
+			];
+		}
+
 		if ($this->mission == Mission::Attack) {
 			$raunds = max(min(10, 6), 6);
 		} else {
@@ -489,7 +498,7 @@ class FleetSend
 			'user_id' 				=> $this->planet->user->id,
 			'user_name' 			=> $this->planet->name,
 			'mission' 				=> $this->mission,
-			'fleet_array' 			=> $this->fleetArray,
+			'fleet_array' 			=> $fleetArray,
 			'start_galaxy' 			=> $this->planet->galaxy,
 			'start_system' 			=> $this->planet->system,
 			'start_planet' 			=> $this->planet->planet,

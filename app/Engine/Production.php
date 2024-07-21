@@ -3,6 +3,7 @@
 namespace App\Engine;
 
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources as ResourcesEnum;
 use App\Models\Planet;
@@ -133,7 +134,7 @@ class Production
 			return $resources;
 		}
 
-		$itemsId = Vars::getItemsByType('prod');
+		$itemsId = Vars::getItemsByType(ItemType::PRODUCTION);
 
 		foreach ($itemsId as $productionId) {
 			$entity = $this->planet->getEntity($productionId)->unit();

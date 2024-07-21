@@ -31,15 +31,15 @@ class FleetBackController extends Controller
 
 		if ($fleet->end_stay) {
 			if ($fleet->start_time->isFuture()) {
-				$currentFlyingTime = now()->toImmutable()->sub($fleet->created_at);
+				$flyingTime = $fleet->created_at->diffInSeconds(now());
 			} else {
-				$currentFlyingTime = $fleet->start_time->sub($fleet->created_at);
+				$flyingTime = $fleet->created_at->diffInSeconds($fleet->created_at);
 			}
 		} else {
-			$currentFlyingTime = now()->toImmutable()->sub($fleet->created_at);
+			$flyingTime = $fleet->created_at->diffInSeconds(now());
 		}
 
-		$returnFlyingTime = $currentFlyingTime->add(now());
+		$returnTime = now()->toImmutable()->addSeconds($flyingTime);
 
 		if ($fleet->mission == Mission::Attack && $fleet->assault) {
 			$fleet->assault->delete();
@@ -48,10 +48,10 @@ class FleetBackController extends Controller
 		$fleet->update([
 			'start_time'		=> now()->subSecond(),
 			'end_stay' 			=> null,
-			'end_time' 			=> $returnFlyingTime->addSecond(),
+			'end_time' 			=> $returnTime->addSecond(),
 			'target_user_id'	=> $this->user->id,
 			'assault_id' 		=> null,
-			'updated_at' 		=> $returnFlyingTime->addSecond(),
+			'updated_at' 		=> $returnTime->addSecond(),
 			'mess' 				=> 1,
 		]);
 

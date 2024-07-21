@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Engine\Entity as PlanetEntity;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Engine\Fleet\Mission;
 use App\Engine\Game;
 use App\Engine\QueueManager;
@@ -208,22 +210,22 @@ class OverviewController extends Controller
 			->with('user')
 			->get();
 
-		$fpage = [];
+		$flotten = [];
 		$aks = [];
 
 		foreach ($fleets as $fleet) {
 			if ($fleet->user_id == $this->user->id) {
 				if ($fleet->start_time->isFuture()) {
-					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 0, true);
+					$flotten[] = FleetRow::make($fleet, 0, true);
 				}
 
 				if ($fleet->end_stay?->isFuture()) {
-					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, true);
+					$flotten[] = FleetRow::make($fleet, 1, true);
 				}
 
 				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
 					if (($fleet->end_time->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
-						$fpage[$fleet->end_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 2, true);
+						$flotten[] = FleetRow::make($fleet, 2, true);
 					}
 				}
 
@@ -235,21 +237,23 @@ class OverviewController extends Controller
 						->get();
 
 					foreach ($AKSFleets as $AKFleet) {
-						$fpage[$fleet->start_time->getTimestamp()][$AKFleet->id] = FleetRow::make($AKFleet, 0, false);
+						$flotten[] = FleetRow::make($AKFleet, 0, false);
 					}
 
 					$aks[] = $fleet->assault_id;
 				}
 			} elseif ($fleet->mission != Mission::Recycling) {
 				if ($fleet->start_time->isFuture()) {
-					$fpage[$fleet->start_time->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 0, false);
+					$flotten[] = FleetRow::make($fleet, 0, false);
 				}
 
 				if ($fleet->mission == Mission::StayAlly && $fleet->end_stay?->isFuture()) {
-					$fpage[$fleet->end_stay->getTimestamp()][$fleet->id] = FleetRow::make($fleet, 1, false);
+					$flotten[] = FleetRow::make($fleet, 1, false);
 				}
 			}
 		}
+
+		usort($flotten, fn ($a, $b) => $a['time'] <=> $b['time']);
 
 		$parse = [];
 		$parse['moon'] = false;
@@ -306,23 +310,7 @@ class OverviewController extends Controller
 			$parse['points']['diff'] = (int) $records['total_old_rank'] - (int) $records['total_rank'];
 		}
 
-		$flotten = [];
-
-		if (count($fpage) > 0) {
-			ksort($fpage);
-			foreach ($fpage as $content) {
-				foreach ($content as $text) {
-					$flotten[] = $text;
-				}
-			}
-		}
-
 		$parse['fleets'] = $flotten;
-
-		$parse['debris'] = [
-			'metal' => $this->planet->debris_metal,
-			'crystal' => $this->planet->debris_crystal,
-		];
 
 		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
 
@@ -334,8 +322,8 @@ class OverviewController extends Controller
 
 		$queueManager = new QueueManager($this->user);
 
-		if ($queueManager->getCount($queueManager::TYPE_BUILDING)) {
-			$queueArray = $queueManager->get($queueManager::TYPE_BUILDING);
+		if ($queueManager->getCount(QueueType::BUILDING)) {
+			$queueArray = $queueManager->get(QueueType::BUILDING);
 
 			$end = [];
 
@@ -348,13 +336,13 @@ class OverviewController extends Controller
 
 				$entity = PlanetEntity\Building::createEntity(
 					$item->object_id,
-					$item->level - ($item->operation == $item::OPERATION_BUILD ? 1 : 0),
+					$item->level - ($item->operation == QueueConstructionType::BUILDING ? 1 : 0),
 					$planet
 				);
 
 				$time = $entity->getTime();
 
-				if ($item->operation == $item::OPERATION_DESTROY) {
+				if ($item->operation == QueueConstructionType::DESTROY) {
 					$time = ceil($time / 2);
 				}
 
@@ -365,14 +353,14 @@ class OverviewController extends Controller
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planet->name,
 					'object_id' => $item->object_id,
-					'level' => $item->operation == $item::OPERATION_BUILD ? $item->level - 1 : $item->level + 1,
+					'level' => $item->operation == QueueConstructionType::BUILDING ? $item->level - 1 : $item->level + 1,
 					'level_to' => $item->level,
 				];
 			}
 		}
 
-		if ($queueManager->getCount($queueManager::TYPE_RESEARCH)) {
-			$queueArray = $queueManager->get($queueManager::TYPE_RESEARCH);
+		if ($queueManager->getCount(QueueType::RESEARCH)) {
+			$queueArray = $queueManager->get(QueueType::RESEARCH);
 
 			foreach ($queueArray as $item) {
 				$queueList[] = [
@@ -386,8 +374,8 @@ class OverviewController extends Controller
 			}
 		}
 
-		if ($queueManager->getCount($queueManager::TYPE_SHIPYARD)) {
-			$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
+		if ($queueManager->getCount(QueueType::SHIPYARD)) {
+			$queueArray = $queueManager->get(QueueType::SHIPYARD);
 
 			$end = [];
 

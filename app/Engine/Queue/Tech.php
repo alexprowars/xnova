@@ -2,6 +2,8 @@
 
 namespace App\Engine\Queue;
 
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Engine\Entity;
@@ -25,7 +27,7 @@ class Tech
 
 		$techHandle = Models\Queue::query()
 			->where('user_id', $user->id)
-			->where('type', Models\Queue::TYPE_TECH)
+			->where('type', QueueType::RESEARCH)
 			->exists();
 
 		if (!$techHandle) {
@@ -43,8 +45,8 @@ class Tech
 				$buildTime = $entity->getTime();
 
 				Models\Queue::create([
-					'type' => Models\Queue::TYPE_TECH,
-					'operation' => Models\Queue::OPERATION_BUILD,
+					'type' => QueueType::RESEARCH,
+					'operation' => QueueConstructionType::BUILDING,
 					'user_id' => $user->id,
 					'planet_id' => $planet->id,
 					'object_id' => $elementId,
@@ -76,7 +78,7 @@ class Tech
 	{
 		$user = $this->queue->getUser();
 
-		$techHandle = $user->queue->firstWhere('type', Models\Queue::TYPE_TECH);
+		$techHandle = $user->queue->firstWhere('type', QueueType::RESEARCH);
 
 		if ($techHandle && $techHandle->object_id == $elementId) {
 			$planet = Planet::query()

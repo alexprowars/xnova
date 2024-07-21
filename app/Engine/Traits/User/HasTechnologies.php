@@ -2,6 +2,7 @@
 
 namespace App\Engine\Traits\User;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Models\UserTech;
 
@@ -22,7 +23,7 @@ trait HasTechnologies
 			return null;
 		}
 
-		if (Vars::getItemType($techId) != Vars::ITEM_TYPE_TECH) {
+		if (Vars::getItemType($techId) != ItemType::TECH) {
 			return null;
 		}
 

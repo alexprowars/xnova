@@ -14,12 +14,6 @@ class GalaxyController extends Controller
 {
 	public function index(Request $request)
 	{
-		$fleetmax = $this->user->getTechLevel('computer') + 1;
-
-		if ($this->user->rpg_admiral?->isFuture()) {
-			$fleetmax += 2;
-		}
-
 		$maxfleet_count = Models\Fleet::query()
 			->where('user_id', $this->user->id)
 			->count();
@@ -52,10 +46,10 @@ class GalaxyController extends Controller
 		$phalanx = false;
 
 		if ($this->planet->getLevel('phalanx') > 0) {
-			$Range = Fleet::getPhalanxRange($this->planet->getLevel('phalanx'));
+			$range = Fleet::getPhalanxRange($this->planet->getLevel('phalanx'));
 
-			$systemLimitMin = max(1, $this->planet->system - $Range);
-			$systemLimitMax = $this->planet->system + $Range;
+			$systemLimitMin = max(1, $this->planet->system - $range);
+			$systemLimitMax = $this->planet->system + $range;
 
 			if ($system <= $systemLimitMax && $system >= $systemLimitMin) {
 				$phalanx = true;
@@ -63,10 +57,10 @@ class GalaxyController extends Controller
 		}
 
 		if ($this->planet->getLevel('interplanetary_misil') > 0 && $galaxy == $this->planet->galaxy) {
-			$Range = Fleet::getMissileRange($this->user);
+			$range = Fleet::getMissileRange($this->user);
 
-			$systemLimitMin = max(1, $this->planet->system - $Range);
-			$systemLimitMax = $this->planet->system + $Range;
+			$systemLimitMin = max(1, $this->planet->system - $range);
+			$systemLimitMax = $this->planet->system + $range;
 
 			if ($system <= $systemLimitMax) {
 				$missileBtn = $system >= $systemLimitMin;
@@ -77,24 +71,11 @@ class GalaxyController extends Controller
 			$missileBtn = false;
 		}
 
-		$destroy = false;
-
-		if ($this->planet->getLevel('dearth_star') > 0) {
-			$destroy = true;
-		}
-
 		$jsUser = [
 			'phalanx' => $phalanx,
-			'destroy' => $destroy,
 			'missile' => $missileBtn,
 			'stat_points' => $records ? $records['total_points'] : 0,
-			'colonizer' => $this->planet->getLevel('colonizer'),
-			'spy_sonde' => $this->planet->getLevel('spy_sonde'),
-			'recycler' => $this->planet->getLevel('recycler'),
-			'interplanetary_misil' => $this->planet->getLevel('interplanetary_misil'),
-			'expedition' => $this->user->getTechLevel('expedition') > 0,
 			'fleets' => $maxfleet_count,
-			'max_fleets' => $fleetmax
 		];
 
 		$parse = [];

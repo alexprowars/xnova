@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\Resources;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
@@ -23,7 +24,7 @@ class InfoController extends Controller
 
 		$storage = Vars::getStorage();
 
-		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($res as $Type) {
 			if (isset($storage['CombatCaps'][$BuildID]['sd'][$Type]) && $storage['CombatCaps'][$BuildID]['sd'][$Type] > 1) {
@@ -40,7 +41,7 @@ class InfoController extends Controller
 
 		$storage = Vars::getStorage();
 
-		$res = Vars::getItemsByType([Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($res as $Type) {
 			if (isset($storage['CombatCaps'][$Type]['sd'][$BuildID]) && $storage['CombatCaps'][$Type]['sd'][$BuildID] > 1) {
@@ -228,7 +229,7 @@ class InfoController extends Controller
 					'cost' => $this->planet->getLevel($itemId) * 10000,
 				];
 			}
-		} elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_FLEET) {
+		} elseif (Vars::getItemType($itemId) == ItemType::FLEET) {
 			$fleet = [];
 
 			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
@@ -275,7 +276,7 @@ class InfoController extends Controller
 			$fleet['type_armour'] = $armour[$storage['CombatCaps'][$itemId]['type_armour']];
 
 			$parse['fleet'] = $fleet;
-		} elseif (Vars::getItemType($itemId) == Vars::ITEM_TYPE_DEFENSE) {
+		} elseif (Vars::getItemType($itemId) == ItemType::DEFENSE) {
 			$fleet = [];
 
 			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
@@ -318,7 +319,7 @@ class InfoController extends Controller
 				$fleet['type_armour'] = $armour[$storage['CombatCaps'][$itemId]['type_armour']];
 				$fleet['rapidfire'] = [];
 
-				foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Type) {
+				foreach (Vars::getItemsByType(ItemType::FLEET) as $Type) {
 					if (!isset($storage['CombatCaps'][$Type])) {
 						continue;
 					}

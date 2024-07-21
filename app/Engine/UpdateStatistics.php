@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\ItemType;
 use App\Helpers;
 use App\Mail\UserDelete;
 use App\Models;
@@ -88,7 +89,7 @@ class UpdateStatistics
 		$BuildPoints = 0;
 
 		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_BUILING))
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::BUILDING))
 			->get();
 
 		foreach ($items as $item) {
@@ -123,7 +124,7 @@ class UpdateStatistics
 		$UnitsPoints = 0;
 
 		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE))
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::DEFENSE))
 			->get();
 
 		foreach ($items as $item) {
@@ -155,7 +156,7 @@ class UpdateStatistics
 		$UnitsPoints = 0;
 
 		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(Vars::ITEM_TYPE_FLEET))
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::FLEET))
 			->get();
 
 		foreach ($items as $item) {
@@ -549,7 +550,7 @@ class UpdateStatistics
 
 	public function buildRecordsCache()
 	{
-		$Elements = Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_TECH, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]);
+		$Elements = Vars::getItemsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
 
 		$array = "";
 

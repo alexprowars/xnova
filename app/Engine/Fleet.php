@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use App\Format;
@@ -14,7 +15,7 @@ class Fleet extends Building
 	{
 		$storage = Vars::getStorage();
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_FLEET) as $Ship) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $Ship) {
 			if (isset($storage->CombatCaps[$Ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$Ship]['engine_up']['tech']) >= $storage['CombatCaps'][$Ship]['engine_up']['lvl']) {
 				$tmp = $storage['CombatCaps'];
 

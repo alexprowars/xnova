@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
@@ -49,7 +50,7 @@ class Rak extends FleetEngine implements Mission
 
 		$TargetDefensive = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE) as $Element) {
+		foreach (Vars::getItemsByType(ItemType::DEFENSE) as $Element) {
 			$TargetDefensive[$Element] = $targetPlanet->getLevel($Element);
 		}
 

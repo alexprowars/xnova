@@ -3,6 +3,9 @@
 namespace App\Engine\Queue;
 
 use App\Engine\EntityFactory;
+use App\Engine\Entity;
+use App\Engine\Enums\QueueConstructionType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Models;
@@ -10,11 +13,8 @@ use App\Models\LogHistory;
 
 class Unit
 {
-	private $queue;
-
-	public function __construct(QueueManager $queue)
+	public function __construct(protected QueueManager $queue)
 	{
-		$this->queue = $queue;
 	}
 
 	public function add($elementId, $count)
@@ -24,11 +24,11 @@ class Unit
 
 		$entity = EntityFactory::get($elementId, 1, $planet);
 
-		if (!$entity->isAvailable()) {
+		if (!$entity->isAvailable() || !($entity instanceof Entity\Unit)) {
 			return;
 		}
 
-		$buildItems = $this->queue->get(QueueManager::TYPE_SHIPYARD);
+		$buildItems = $this->queue->get(QueueType::SHIPYARD);
 
 		if ($elementId == 502 || $elementId == 503) {
 			$Missiles = [];
@@ -90,8 +90,8 @@ class Unit
 			$buildTime = $entity->getTime();
 
 			Models\Queue::create([
-				'type' => Models\Queue::TYPE_UNIT,
-				'operation' => Models\Queue::OPERATION_BUILD,
+				'type' => QueueType::SHIPYARD,
+				'operation' => QueueConstructionType::BUILDING,
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,

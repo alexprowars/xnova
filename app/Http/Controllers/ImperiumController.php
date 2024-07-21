@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Models\Fleet;
@@ -85,7 +87,7 @@ class ImperiumController extends Controller
 				];
 			}
 
-			foreach (Vars::getItemsByType('prod') as $ProdID) {
+			foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $ProdID) {
 				$row['factor'][$ProdID] = $planet->entities->where('entity_id', $ProdID)->first()?->factor * 10;
 			}
 
@@ -94,7 +96,7 @@ class ImperiumController extends Controller
 			$queueManager = new QueueManager($this->user, $planet);
 			$queueManager->checkUnitQueue();
 
-			foreach ($queueManager->getTypes() as $type) {
+			foreach (QueueType::cases() as $type) {
 				$queue = $queueManager->get($type);
 
 				if (!count($queue)) {
@@ -102,13 +104,13 @@ class ImperiumController extends Controller
 				}
 
 				foreach ($queue as $q) {
-					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING) {
+					if (!isset($build_hangar[$q->object_id]) || Vars::getItemType($q->object_id) == ItemType::BUILDING) {
 						$build_hangar[$q->object_id] = (int) $q->level;
 					} else {
 						$build_hangar[$q->object_id] += (int) $q->level;
 					}
 
-					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == Vars::ITEM_TYPE_BUILING) {
+					if (!isset($build_hangar_full[$q->object_id]) || Vars::getItemType($q->object_id) == ItemType::BUILDING) {
 						$build_hangar_full[$q->object_id] = (int) $q->level;
 					} else {
 						$build_hangar_full[$q->object_id] += (int) $q->level;
@@ -118,7 +120,7 @@ class ImperiumController extends Controller
 
 			$row['elements'] = [];
 
-			foreach (Vars::getItemsByType([Vars::ITEM_TYPE_BUILING, Vars::ITEM_TYPE_FLEET, Vars::ITEM_TYPE_DEFENSE]) as $id) {
+			foreach (Vars::getItemsByType([ItemType::BUILDING, ItemType::FLEET, ItemType::DEFENSE]) as $id) {
 				if (!$planet->getLevel($id)) {
 					continue;
 				}
@@ -131,7 +133,7 @@ class ImperiumController extends Controller
 				$item['current'] = $planet->getLevel($id);
 				$item['build'] = $build_hangar[$id] ?? 0;
 
-				if (Vars::getItemType($id) == Vars::ITEM_TYPE_FLEET) {
+				if (Vars::getItemType($id) == ItemType::FLEET) {
 					$item['fly'] = $fleetsFly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type->value][$id] ?? 0;
 				}
 
@@ -145,7 +147,7 @@ class ImperiumController extends Controller
 
 		$parse['tech'] = [];
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_TECH) as $i) {
+		foreach (Vars::getItemsByType(ItemType::TECH) as $i) {
 			if ($this->user->getTechLevel($i) <= 0) {
 				continue;
 			}

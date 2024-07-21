@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Engine\Building;
 use App\Engine\Construction;
 use App\Engine\EntityFactory;
+use App\Engine\Enums\ItemType;
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\PageException;
@@ -23,12 +25,12 @@ class ShipyardController extends Controller
 		$queueManager = new QueueManager($this->user, $this->planet);
 
 		if ($this->mode == 'defense') {
-			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
+			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
 		} else {
-			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
+			$elementIds = Vars::getItemsByType(ItemType::FLEET);
 		}
 
-		$queueArray = $queueManager->get($queueManager::TYPE_SHIPYARD);
+		$queueArray = $queueManager->get(QueueType::SHIPYARD);
 
 		$buildArray = [];
 
@@ -40,8 +42,7 @@ class ShipyardController extends Controller
 
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
-		$parse = [];
-		$parse['items'] = [];
+		$items = [];
 
 		foreach ($elementIds as $element) {
 			$entity = EntityFactory::get($element);
@@ -88,20 +89,18 @@ class ShipyardController extends Controller
 				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
 
-			$parse['items'][] = $row;
+			$items[] = $row;
 		}
 
-		$parse['queue'] = Construction::queueList($this->user, $this->planet);
-
-		return response()->state($parse);
+		return response()->state($items);
 	}
 
 	public function queue(Request $request)
 	{
 		if ($this->mode == 'defense') {
-			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_DEFENSE);
+			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
 		} else {
-			$elementIds = Vars::getItemsByType(Vars::ITEM_TYPE_FLEET);
+			$elementIds = Vars::getItemsByType(ItemType::FLEET);
 		}
 
 		$queueManager = new QueueManager($this->user, $this->planet);

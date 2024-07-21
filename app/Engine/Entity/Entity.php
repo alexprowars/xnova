@@ -4,7 +4,9 @@ namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityInterface;
 use App\Engine\Contracts\EntityProductionInterface;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Enums\Resources;
 use App\Engine\Vars;
 use App\Models\Planet;
 
@@ -47,12 +49,12 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 		$cost = [];
 
-		foreach (array_merge(Vars::getItemsByType('res'), ['energy']) as $resource) {
-			if (!isset($price[$resource])) {
+		foreach (Resources::cases() as $resource) {
+			if (!isset($price[$resource->value])) {
 				continue;
 			}
 
-			$cost[$resource] = floor($price[$resource]);
+			$cost[$resource->value] = floor($price[$resource->value]);
 		}
 
 		return $cost;
@@ -67,16 +69,16 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 		foreach ($cost as $resType => $value) {
 			switch ($elementType) {
-				case Vars::ITEM_TYPE_BUILING:
+				case ItemType::BUILDING:
 					$cost[$resType] *= $user->bonus('res_building');
 					break;
-				case Vars::ITEM_TYPE_TECH:
+				case ItemType::TECH:
 					$cost[$resType] *= $user->bonus('res_research');
 					break;
-				case Vars::ITEM_TYPE_FLEET:
+				case ItemType::FLEET:
 					$cost[$resType] *= $user->bonus('res_fleet');
 					break;
-				case Vars::ITEM_TYPE_DEFENSE:
+				case ItemType::DEFENSE:
 					$cost[$resType] *= $user->bonus('res_defence');
 					break;
 			}
@@ -110,11 +112,11 @@ class Entity implements EntityInterface, EntityProductionInterface
 				if ($this->planet->user->race != $level) {
 					return false;
 				}
-			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_TECH) {
+			} elseif (Vars::getItemType($reqElement) == ItemType::TECH) {
 				if ($this->planet->user->getTechLevel($reqElement) < $level) {
 					return false;
 				}
-			} elseif (Vars::getItemType($reqElement) == Vars::ITEM_TYPE_BUILING) {
+			} elseif (Vars::getItemType($reqElement) == ItemType::BUILDING) {
 				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503])) {
 					if (in_array($reqElement, [21, 41])) {
 						continue;

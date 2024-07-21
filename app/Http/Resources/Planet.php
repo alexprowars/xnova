@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,6 +30,12 @@ class Planet extends JsonResource
 				],
 			],
 			'coordinates' => $this->getCoordinates()->toArray(),
+			'debris' => [
+				'metal' => $this->debris_metal,
+				'crystal' => $this->debris_crystal,
+			],
+			'buildings' => [],
+			'units' => [],
 		];
 
 		$planetProduction = $this->getProduction();
@@ -46,6 +53,14 @@ class Planet extends JsonResource
 				'production' => $production->get($res),
 				'factor' => $entity ? $entity->factor / 10 : 0,
 			];
+		}
+
+		foreach (Vars::getItemsByType(ItemType::BUILDING) as $elementId) {
+			$data['buildings'][Vars::getName($elementId)] = $this->getLevel($elementId);
+		}
+
+		foreach (Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]) as $elementId) {
+			$data['units'][Vars::getName($elementId)] = $this->getLevel($elementId);
 		}
 
 		return $data;

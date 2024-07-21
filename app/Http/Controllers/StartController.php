@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
@@ -83,7 +84,7 @@ class StartController extends Controller
 		$this->user->race = $r;
 		$this->user->daily_bonus = now()->addDay();
 
-		foreach (Vars::getItemsByType(Vars::ITEM_TYPE_OFFICIER) as $oId) {
+		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $oId) {
 			$this->user->{Vars::getName($oId)} = now()->addDay();
 		}
 
