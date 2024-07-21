@@ -36,13 +36,13 @@ class Game
 	public static function getSpeed($type = '')
 	{
 		if ($type == 'fleet') {
-			return (int) config('settings.fleet_speed', 2500) / 2500;
+			return (int) config('game.fleet_speed', 2500) / 2500;
 		}
 		if ($type == 'mine') {
-			return (int) config('settings.resource_multiplier', 1);
+			return (int) config('game.resource_multiplier', 1);
 		}
 		if ($type == 'build') {
-			return round((int) config('settings.game_speed', 2500) / 2500, 1);
+			return round((int) config('game.game_speed', 2500) / 2500, 1);
 		}
 
 		return 1;

@@ -40,8 +40,8 @@ class GalaxyController extends Controller
 			$system = (int) $request->input('system', 1);
 		}
 
-		$galaxy = min(max($galaxy, 1), config('settings.maxGalaxyInWorld'));
-		$system = min(max($system, 1), config('settings.maxSystemInGalaxy'));
+		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
+		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));
 
 		$phalanx = false;
 
@@ -80,9 +80,9 @@ class GalaxyController extends Controller
 
 		$parse = [];
 		$parse['galaxy'] = (int) $galaxy;
-		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
+		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
 		$parse['system'] = (int) $system;
-		$parse['system_max'] = (int) config('settings.maxSystemInGalaxy');
+		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');
 		$parse['user'] = $jsUser;
 		$parse['items'] = [];
 		$parse['shortcuts'] = [];

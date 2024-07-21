@@ -11,7 +11,7 @@ use App\Exceptions\Exception;
 use App\Helpers;
 use App\Mail\UserLostPassword;
 use App\Notifications\UserRegistrationNotification;
-use Backpack\Settings\app\Models\Setting;
+use App\Settings;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
@@ -160,28 +160,28 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 		$giveCredits = 0;
 
-		if ($this->xpminier >= $indNextXp && $this->lvl_minier < config('settings.level.max_ind', 100)) {
+		if ($this->xpminier >= $indNextXp && $this->lvl_minier < config('game.level.max_ind', 100)) {
 			$this->lvl_minier++;
-			$this->credits += config('settings.level.credits', 10);
+			$this->credits += config('game.level.credits', 10);
 			$this->xpminier -= $indNextXp;
 
 			$this->update();
 
 			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
 
-			$giveCredits += config('settings.level.credits', 10);
+			$giveCredits += config('game.level.credits', 10);
 		}
 
-		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('settings.level.max_war', 100)) {
+		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('game.level.max_war', 100)) {
 			$this->lvl_raid++;
-			$this->credits += config('settings.level.credits', 10);
+			$this->credits += config('game.level.credits', 10);
 			$this->xpraid -= $warNextXp;
 
 			$this->update();
 
 			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый военный уровень</a>');
 
-			$giveCredits += config('settings.level.credits', 10);
+			$giveCredits += config('game.level.credits', 10);
 		}
 
 		if ($giveCredits != 0) {
@@ -387,7 +387,9 @@ class User extends Authenticatable implements FilamentUser, HasName
 				}
 			}
 
-			Setting::set('usersTotal', (int) (Setting::get('usersTotal') ?? 0) + 1);
+			$settings = app(Settings::class);
+			$settings->usersTotal++;
+			$settings->save();
 
 			if (!empty($user->email)) {
 				try {

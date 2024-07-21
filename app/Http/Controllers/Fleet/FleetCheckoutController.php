@@ -83,9 +83,9 @@ class FleetCheckoutController extends Controller
 
 		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
 		$parse['target'] = $target->toArray();
-		$parse['galaxy_max'] = (int) config('settings.maxGalaxyInWorld');
-		$parse['system_max'] = (int) config('settings.maxSystemInGalaxy');
-		$parse['planet_max'] = (int) config('settings.maxPlanetInSystem') + 1;
+		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
+		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');
+		$parse['planet_max'] = (int) config('game.maxPlanetInSystem') + 1;
 
 		$parse['shortcuts'] = [];
 

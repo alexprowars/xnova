@@ -100,7 +100,7 @@ class Unit
 				'level' => $count
 			]);
 
-			if (config('settings.log.units', false)) {
+			if (config('game.log.units', false)) {
 				LogHistory::create([
 					'user_id' 			=> $user->id,
 					'operation' 		=> 7,

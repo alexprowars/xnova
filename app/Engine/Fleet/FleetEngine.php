@@ -92,11 +92,11 @@ class FleetEngine
 			$res = Vars::getItemPrice($fleetId);
 
 			if (isset($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * config('settings.fleetDebrisRate', 0));
+				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * config('game.fleetDebrisRate', 0));
 			}
 
 			if (isset($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * config('settings.fleetDebrisRate', 0));
+				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * config('game.fleetDebrisRate', 0));
 			}
 		}
 

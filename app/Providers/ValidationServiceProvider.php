@@ -12,19 +12,19 @@ class ValidationServiceProvider extends ServiceProvider
 		Validator::extend('galaxy', function ($attribute, $value) {
 			$value = (int) $value;
 
-			return !($value > config('settings.maxGalaxyInWorld') || $value < 1);
+			return !($value > config('game.maxGalaxyInWorld') || $value < 1);
 		});
 
 		Validator::extend('system', function ($attribute, $value) {
 			$value = (int) $value;
 
-			return !($value > config('settings.maxSystemInGalaxy') || $value < 1);
+			return !($value > config('game.maxSystemInGalaxy') || $value < 1);
 		});
 
 		Validator::extend('planet', function ($attribute, $value) {
 			$value = (int) $value;
 
-			return !($value > config('settings.maxPlanetInSystem') || $value < 1);
+			return !($value > config('game.maxPlanetInSystem') || $value < 1);
 		});
 	}
 }

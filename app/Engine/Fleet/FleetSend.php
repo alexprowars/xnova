@@ -77,18 +77,18 @@ class FleetSend
 			throw new Exception('Не выбрана миссия!');
 		}
 
-		if ($this->target->getGalaxy() > (int) config('settings.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
+		if ($this->target->getGalaxy() > (int) config('game.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
 			throw new Exception('Ошибочная галактика!');
-		} elseif ($this->target->getSystem() > (int) config('settings.maxSystemInGalaxy') || $this->target->getSystem() < 1) {
+		} elseif ($this->target->getSystem() > (int) config('game.maxSystemInGalaxy') || $this->target->getSystem() < 1) {
 			throw new Exception('Ошибочная система!');
-		} elseif ($this->target->getPlanet() > (int) config('settings.maxPlanetInSystem') || $this->target->getPlanet() < 1) {
+		} elseif ($this->target->getPlanet() > (int) config('game.maxPlanetInSystem') || $this->target->getPlanet() < 1) {
 			throw new Exception('Ошибочная планета!');
 		} elseif (!in_array($this->target->getType(), PlanetType::cases())) {
 			throw new Exception('Неизвестный тип планеты!');
 		}
 
-		if (in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('settings.disableAttacks', 0) > 0 && time() < config('settings.disableAttacks', 0)) {
-			throw new PageException('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('settings.disableAttacks', 0)), '/fleet');
+		if (in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('game.disableAttacks', 0) > 0 && time() < config('game.disableAttacks', 0)) {
+			throw new PageException('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)), '/fleet');
 		}
 
 		if (!in_array($this->fleetSpeed, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1])) {
@@ -209,11 +209,11 @@ class FleetSend
 			}
 		}
 
-		$protection = (int) config('settings.noobprotection') > 0;
+		$protection = (int) config('game.noobprotection') > 0;
 
 		if ($protection && $this->targetPlanet && in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::StayAlly, Mission::Spy, Mission::Destruction]) && $this->planet->user->authlevel < 2) {
-			$protectionPoints = (int) config('settings.noobprotectionPoints');
-			$protectionFactor = (int) config('settings.noobprotectionFactor');
+			$protectionPoints = (int) config('game.noobprotectionPoints');
+			$protectionFactor = (int) config('game.noobprotectionFactor');
 
 			if ($protectionPoints <= 0) {
 				$protection = false;

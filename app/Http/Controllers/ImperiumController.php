@@ -83,7 +83,7 @@ class ImperiumController extends Controller
 				$row['resources'][$res] = [
 					'current' => $planet->{$res},
 					'production' => $planet->{$res . '_perhour'},
-					'storage' => floor((config('settings.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonus('storage'))
+					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonus('storage'))
 				];
 			}
 

@@ -231,7 +231,7 @@ class QueueManager
 				$buildItem->delete();
 			}
 
-			if (config('settings.log.buildings', false)) {
+			if (config('game.log.buildings', false)) {
 				LogHistory::create([
 					'user_id' 			=> $this->user->id,
 					'operation' 		=> 9,
@@ -315,7 +315,7 @@ class QueueManager
 
 				$loop = false;
 
-				if (config('settings.log.buildings', false)) {
+				if (config('game.log.buildings', false)) {
 					LogHistory::create([
 						'user_id' 			=> $this->user->id,
 						'operation' 		=> ($isDestroy ? 2 : 1),
@@ -413,7 +413,7 @@ class QueueManager
 				$this->loadQueue();
 			}
 
-			if (config('settings.log.research', false)) {
+			if (config('game.log.research', false)) {
 				LogHistory::create([
 					'user_id' 			=> $this->user->id,
 					'operation' 		=> 8,
@@ -543,13 +543,13 @@ class QueueManager
 			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 
 			if (!$destroy) {
-				$xp += floor($units / config('settings.buildings_exp_mult', 1000));
+				$xp += floor($units / config('game.buildings_exp_mult', 1000));
 			} else {
-				$xp -= floor($units / config('settings.buildings_exp_mult', 1000));
+				$xp -= floor($units / config('game.buildings_exp_mult', 1000));
 			}
 		}
 
-		if ($xp != 0 && $this->user->lvl_minier < config('settings.level.max_ind', 100)) {
+		if ($xp != 0 && $this->user->lvl_minier < config('game.level.max_ind', 100)) {
 			$this->user->xpminier += $xp;
 
 			if ($this->user->xpminier < 0) {

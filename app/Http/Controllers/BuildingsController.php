@@ -49,7 +49,7 @@ class BuildingsController extends Controller
 
 			if ($available) {
 				if (in_array($elementId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
-					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('settings.buildings_exp_mult', 1000));
+					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('game.buildings_exp_mult', 1000));
 				}
 
 				$row['time'] = $entity->getTime();
@@ -74,7 +74,7 @@ class BuildingsController extends Controller
 
 		$queueManager = new QueueManager($this->user, $this->planet);
 
-		$maxQueueSize = config('settings.maxBuildingQueue') + $this->user->bonus('queue', 0);
+		$maxQueueSize = config('game.maxBuildingQueue') + $this->user->bonus('queue', 0);
 
 		if ($queueManager->getCount(QueueType::BUILDING) >= $maxQueueSize) {
 			return;

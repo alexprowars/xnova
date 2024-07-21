@@ -26,13 +26,13 @@ class PhalanxController extends Controller
 
 		$consomation = 5000;
 
-		if ($g < 1 || $g > config('settings.maxGalaxyInWorld')) {
+		if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 			$g = $this->planet->galaxy;
 		}
-		if ($s < 1 || $s > config('settings.maxSystemInGalaxy')) {
+		if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 			$s = $this->planet->system;
 		}
-		if ($i < 1 || $i > config('settings.maxPlanetInSystem')) {
+		if ($i < 1 || $i > config('game.maxPlanetInSystem')) {
 			$i = $this->planet->planet;
 		}
 

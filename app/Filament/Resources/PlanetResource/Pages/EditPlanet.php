@@ -53,17 +53,17 @@ class EditPlanet extends EditRecord
 					->label('Металл')
 					->required()
 					->integer()
-					->default(config('settings.baseMetalProduction')),
+					->default(config('game.baseMetalProduction')),
 				TextInput::make('crystal')
 					->label('Кристалл')
 					->required()
 					->integer()
-					->default(config('settings.baseCrystalProduction')),
+					->default(config('game.baseCrystalProduction')),
 				TextInput::make('deuterium')
 					->label('Дейтерий')
 					->required()
 					->integer()
-					->default(config('settings.baseDeuteriumProduction')),
+					->default(config('game.baseDeuteriumProduction')),
 				TextInput::make('debris_metal')
 					->label('Поле обломков: Металл')
 					->required()

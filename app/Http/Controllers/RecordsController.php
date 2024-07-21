@@ -60,7 +60,7 @@ class RecordsController extends Controller
 
 		$parse = [
 			'items' => $Records,
-			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 		];
 
 		return response()->state($parse);

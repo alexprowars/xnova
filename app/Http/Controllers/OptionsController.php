@@ -134,7 +134,7 @@ class OptionsController extends Controller
 					throw new Exception('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
 					if (!$this->user->vacation) {
-						$vacation = now()->addDays(config('settings.vacationModeTime', 2));
+						$vacation = now()->addDays(config('game.vacationModeTime', 2));
 					} else {
 						$vacation = $this->user->vacation;
 					}

@@ -94,7 +94,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 		$cost = $this->getBasePrice();
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		$time = ($cost / config('settings.game_speed')) * 3600;
+		$time = ($cost / config('game.game_speed')) * 3600;
 
 		return (int) max(1, $time);
 	}

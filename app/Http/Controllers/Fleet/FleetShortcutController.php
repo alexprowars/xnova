@@ -43,13 +43,13 @@ class FleetShortcutController extends Controller
 			$p = (int) $request->post('planet', 0);
 			$t = (int) $request->post('planet_type', 0);
 
-			if ($g < 1 || $g > config('settings.maxGalaxyInWorld')) {
+			if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 				$g = 1;
 			}
-			if ($s < 1 || $s > config('settings.maxSystemInGalaxy')) {
+			if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 				$s = 1;
 			}
-			if ($p < 1 || $p > config('settings.maxPlanetInSystem')) {
+			if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
 				$p = 1;
 			}
 			if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
@@ -72,13 +72,13 @@ class FleetShortcutController extends Controller
 		$p = (int) $request->input('p', 0);
 		$t = (int) $request->input('t', 0);
 
-		if ($g < 1 || $g > config('settings.maxGalaxyInWorld')) {
+		if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 			$g = 1;
 		}
-		if ($s < 1 || $s > config('settings.maxSystemInGalaxy')) {
+		if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 			$s = 1;
 		}
-		if ($p < 1 || $p > config('settings.maxPlanetInSystem')) {
+		if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
 			$p = 1;
 		}
 		if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
@@ -116,15 +116,15 @@ class FleetShortcutController extends Controller
 				$p = (int) $request->post('planet', 0);
 				$t = (int) $request->post('planet_type', 0);
 
-				if ($g < 1 || $g > config('settings.maxGalaxyInWorld')) {
+				if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
 					$g = 1;
 				}
 
-				if ($s < 1 || $s > config('settings.maxSystemInGalaxy')) {
+				if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
 					$s = 1;
 				}
 
-				if ($p < 1 || $p > config('settings.maxPlanetInSystem')) {
+				if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
 					$p = 1;
 				}
 

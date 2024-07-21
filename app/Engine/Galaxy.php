@@ -5,21 +5,23 @@ namespace App\Engine;
 use App\Engine\Enums\PlanetType;
 use App\Models\Planet;
 use App\Models\User;
-use Backpack\Settings\app\Models\Setting;
+use App\Settings;
 
 class Galaxy
 {
 	public function createPlanetByUser(User $user)
 	{
-		$galaxy = (int) (Setting::get('lastSettedGalaxyPos') ?? 1);
-		$system = (int) (Setting::get('lastSettedSystemPos') ?? 1);
-		$planet = (int) (Setting::get('lastSettedPlanetPos') ?? 1);
+		$settings = app(Settings::class);
+
+		$galaxy = (int) ($settings->lastSettedGalaxyPos ?? 1);
+		$system = (int) ($settings->lastSettedSystemPos ?? 1);
+		$planet = (int) ($settings->lastSettedPlanetPos ?? 1);
 
 		do {
 			$isFree = $this->getFreePositions(
 				new Coordinates($galaxy, $system),
-				(int) round(config('settings.maxPlanetInSystem') * 0.2),
-				(int) round(config('settings.maxPlanetInSystem') * 0.8)
+				(int) round(config('game.maxPlanetInSystem') * 0.2),
+				(int) round(config('game.maxPlanetInSystem') * 0.8)
 			);
 
 			if (!empty($isFree)) {
@@ -28,15 +30,15 @@ class Galaxy
 				$position = 0;
 			}
 
-			if ($position > 0 && $planet < config('settings.maxRegPlanetsInSystem', 3)) {
+			if ($position > 0 && $planet < config('game.maxRegPlanetsInSystem', 3)) {
 				$planet++;
 			} else {
 				$planet = 1;
 
-				if ($system >= config('settings.maxSystemInGalaxy')) {
+				if ($system >= config('game.maxSystemInGalaxy')) {
 					$system = 1;
 
-					if ($galaxy >= config('settings.maxGalaxyInWorld')) {
+					if ($galaxy >= config('game.maxGalaxyInWorld')) {
 						$galaxy = 1;
 					} else {
 						$galaxy++;
@@ -55,9 +57,10 @@ class Galaxy
 		);
 
 		if ($planetId) {
-			Setting::set('lastSettedGalaxyPos', $galaxy);
-			Setting::set('lastSettedSystemPos', $system);
-			Setting::set('lastSettedPlanetPos', $planet);
+			$settings->lastSettedGalaxyPos = $galaxy;
+			$settings->lastSettedSystemPos = $system;
+			$settings->lastSettedPlanetPos = $planet;
+			$settings->save();
 
 			$user->update([
 				'planet_id' => $planetId,
@@ -79,9 +82,9 @@ class Galaxy
 
 		$planet = $this->sizeRandomiser($target, $mainPlanet);
 
-		$planet->metal = config('settings.baseMetalProduction');
-		$planet->crystal = config('settings.baseCrystalProduction');
-		$planet->deuterium = config('settings.baseDeuteriumProduction');
+		$planet->metal = config('game.baseMetalProduction');
+		$planet->crystal = config('game.baseCrystalProduction');
+		$planet->deuterium = config('game.baseDeuteriumProduction');
 
 		$planet->galaxy = $target->getGalaxy();
 		$planet->system = $target->getSystem();
@@ -184,11 +187,11 @@ class Galaxy
 		$planet = new Planet();
 
 		if ($mainPlanet) {
-			$planet->field_max = (int) config('settings.initial_fields', 163);
+			$planet->field_max = (int) config('game.initial_fields', 163);
 		} elseif ($target->getType() === PlanetType::MILITARY_BASE) {
-			$planet->field_max = (int) config('settings.initial_base_fields', 10);
+			$planet->field_max = (int) config('game.initial_base_fields', 10);
 		} else {
-			$planet->field_max = (int) floor($planetData[$position]['fields'] * (int) config('settings.planetFactor', 1));
+			$planet->field_max = (int) floor($planetData[$position]['fields'] * (int) config('game.planetFactor', 1));
 		}
 
 		$planet->diameter = (int) floor(1000 * sqrt($planet->field_max));

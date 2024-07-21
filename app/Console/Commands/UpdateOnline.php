@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Backpack\Settings\app\Models\Setting;
+use App\Settings;
 use Illuminate\Console\Command;
 use App\Models;
 
@@ -14,10 +14,12 @@ class UpdateOnline extends Command
 	public function handle()
 	{
 		$online = Models\User::query()
-			->where('onlinetime', '>', now()->subSeconds(config('settings.onlinetime') * 60))
+			->where('onlinetime', '>', now()->subSeconds(config('game.onlinetime') * 60))
 			->count();
 
-		Setting::set('usersOnline', $online);
+		$settings = app(Settings::class);
+		$settings->usersOnline = $online;
+		$settings->save();
 
 		echo $online . " users online\n";
 	}

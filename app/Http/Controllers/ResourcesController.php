@@ -171,9 +171,9 @@ class ResourcesController extends Controller
 		}
 
 		$parse['production']['energy'] = [
-			'basic' => (int) config('settings.energy_basic_income'),
+			'basic' => (int) config('game.energy_basic_income'),
 			'capacity' => floor($this->planet->energy_max),
-			'production' => floor(($this->planet->energy_max + config('settings.energy_basic_income')) + $this->planet->energy_used),
+			'production' => floor(($this->planet->energy_max + config('game.energy_basic_income')) + $this->planet->energy_used),
 		];
 
 		$parse['production_level'] = $productionLevel;

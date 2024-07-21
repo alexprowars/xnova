@@ -446,7 +446,7 @@ class Attack extends FleetEngine implements Mission
 
 		$lost = $result['lost']['att'] + $result['lost']['def'];
 
-		if ($lost >= config('settings.hallPoints', 1000000)) {
+		if ($lost >= config('game.hallPoints', 1000000)) {
 			$sab = 0;
 
 			$UserList = [];
@@ -497,7 +497,7 @@ class Attack extends FleetEngine implements Mission
 		}
 
 		$reportHtml = "<center>";
-		$reportHtml .= '<a href="/rw/' . $report->id . '/' . md5(config('app.key') . $report->id) . '/" target="' . (config('settings.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
+		$reportHtml .= '<a href="/rw/' . $report->id . '/' . md5(config('app.key') . $report->id) . '/" target="' . (config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
 		$reportHtml .= "<font color=\"#COLOR#\">" . __('fleet_engine.sys_mess_attack_report') . " [" . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ":" . $this->fleet->end_planet . "]</font></a>";
 
 		$report2Html  = '<br><br><font color=\'red\'>' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';

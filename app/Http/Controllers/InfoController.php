@@ -119,7 +119,7 @@ class InfoController extends Controller
 					}
 				}
 			} elseif ($buildId >= 22 && $buildId <= 24) {
-				$row['range'] = floor((config('settings.baseStorageSize') + floor(50000 * round(1.6 ** $BuildLevel))) * $this->user->bonus('storage')) / 1000;
+				$row['range'] = floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $BuildLevel))) * $this->user->bonus('storage')) / 1000;
 			} else {
 				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
 			}

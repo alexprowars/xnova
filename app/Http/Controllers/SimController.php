@@ -11,7 +11,7 @@ class SimController extends Controller
 	{
 		$data = explode(";", $data);
 
-		$maxSlots = config('settings.maxSlotsInSim', 5);
+		$maxSlots = config('game.maxSlotsInSim', 5);
 
 		$parse = [];
 		$parse['slots'] = [

@@ -19,6 +19,7 @@
         "ext-pdo": "*",
         "althinect/filament-spatie-roles-permissions": "^2.2",
         "filament/filament": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "gumlet/php-image-resize": "^2.0.4",
         "laravel/framework": "^11.0.0",
         "laravel/reverb": "@beta",

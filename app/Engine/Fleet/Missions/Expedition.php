@@ -71,13 +71,13 @@ class Expedition extends FleetEngine implements Mission
 				$FindSize = random_int(0, 100);
 
 				if (10 < $FindSize) {
-					$Factor = (random_int(10, 50) / $WitchFound) *  (1 + (config('settings.resource_multiplier') - 1) / 10);
+					$Factor = (random_int(10, 50) / $WitchFound) *  (1 + (config('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_1_' . random_int(1, 4));
 				} elseif (0 < $FindSize && 10 >= $FindSize) {
-					$Factor = (random_int(50, 100) / $WitchFound) * (1 + (config('settings.resource_multiplier') - 1) / 10);
+					$Factor = (random_int(50, 100) / $WitchFound) * (1 + (config('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_2_' . random_int(1, 3));
 				} else {
-					$Factor = (random_int(100, 200) / $WitchFound) * (1 + (config('settings.resource_multiplier') - 1) / 10);
+					$Factor = (random_int(100, 200) / $WitchFound) * (1 + (config('game.resource_multiplier') - 1) / 10);
 					$Message = __('fleet_engine.sys_expe_found_ress_3_' . random_int(1, 2));
 				}
 

@@ -22,8 +22,8 @@ class StateResponce extends JsonResource
 				'resources' => Game::getSpeed('mine'),
 			],
 			'stats' => [
-				'online' => (int) config('settings.usersOnline', 0),
-				'users' => (int) config('settings.usersTotal', 0),
+				'online' => (int) config('game.usersOnline', 0),
+				'users' => (int) config('game.usersTotal', 0),
 			],
 			'user' => $user ? User::make($user) : null,
 			'planet' => $planet ? Planet::make($planet) : null,
@@ -33,7 +33,7 @@ class StateResponce extends JsonResource
 		];
 
 		if ($user) {
-			$globalMessage = config('settings.newsMessage', '');
+			$globalMessage = config('game.newsMessage', '');
 
 			if (!empty($globalMessage)) {
 				$data['messages'][] = [

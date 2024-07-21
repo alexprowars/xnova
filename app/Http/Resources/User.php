@@ -35,7 +35,7 @@ class User extends JsonResource
 				'messages' => $this->messages_ally
 			] : null,
 			'planets' => UserPlanets::collection($planets),
-			'queue_max' => config('settings.maxBuildingQueue') + $this->bonus('queue', 0),
+			'queue_max' => config('game.maxBuildingQueue') + $this->bonus('queue', 0),
 			'vacation' => $this->vacation?->utc()->toAtomString(),
 			'quests' => (int) $quests,
 			'credits' => $this->credits,

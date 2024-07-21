@@ -416,7 +416,7 @@ class OverviewController extends Controller
 
 		$parse['links'] = $this->user->links;
 		$parse['refers'] = $this->user->refers;
-		$parse['noob'] = config('settings.noobprotection', 0);
+		$parse['noob'] = config('game.noobprotection', 0);
 
 		$parse['raids'] = [
 			'win' => $this->user->raids_win,

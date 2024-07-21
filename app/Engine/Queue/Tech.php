@@ -55,7 +55,7 @@ class Tech
 					'level' => $user->getTechLevel($elementId) + 1,
 				]);
 
-				if (config('settings.log.research', false)) {
+				if (config('game.log.research', false)) {
 					LogHistory::create([
 						'user_id' 			=> $user->id,
 						'operation' 		=> 5,
@@ -96,7 +96,7 @@ class Tech
 			$techHandle->delete();
 			$this->queue->loadQueue();
 
-			if (config('settings.log.research', false)) {
+			if (config('game.log.research', false)) {
 				LogHistory::create([
 					'user_id' 			=> $user->id,
 					'operation' 		=> 6,

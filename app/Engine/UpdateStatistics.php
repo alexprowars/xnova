@@ -10,7 +10,7 @@ use App\Models\Fleet;
 use App\Models\LogStat;
 use App\Models\Statistic;
 use App\Models\User;
-use Backpack\Settings\app\Models\Setting;
+use App\Settings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -236,7 +236,7 @@ class UpdateStatistics
 		$result = [];
 
 		$users = User::query()
-			->where('onlinetime', '<', now()->addDays(config('settings.inactiveTime', 21)))
+			->where('onlinetime', '<', now()->addDays(config('game.inactiveTime', 21)))
 			->whereNotNull('onlinetime')
 			->whereNotNull('planet_id')
 			->where(function (Builder $query) {
@@ -254,7 +254,7 @@ class UpdateStatistics
 
 		foreach ($users as $user) {
 			$user->update([
-				'delete_time' => now()->addDays(config('settings.deleteTime', 7)),
+				'delete_time' => now()->addDays(config('game.deleteTime', 7)),
 			]);
 
 			if (Helpers::is_email($user->email)) {
@@ -442,9 +442,12 @@ class UpdateStatistics
 		$active_alliance = Statistic::query()->where('stat_type', 2)
 			->where('stat_hide', 0)->count();
 
-		Setting::set('statUpdate', time());
-		Setting::set('activeUsers', $active_users);
-		Setting::set('activeAlliance', $active_alliance);
+		$settings = app(Settings::class);
+
+		$settings->statUpdate = time();
+		$settings->activeUsers = $active_users;
+		$settings->activeAlliance = $active_alliance;
+		$settings->save();
 	}
 
 	private function calcPositions()

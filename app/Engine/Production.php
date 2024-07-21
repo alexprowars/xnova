@@ -86,7 +86,7 @@ class Production
 		$resources = [];
 
 		foreach (Vars::getResources() as $res) {
-			$resources[$res] = floor((config('settings.baseStorageSize', 0) + floor(50000 * round(1.6 ** $this->planet->getLevel($res . '_store')))) * $this->planet->user->bonus('storage'));
+			$resources[$res] = floor((config('game.baseStorageSize', 0) + floor(50000 * round(1.6 ** $this->planet->getLevel($res . '_store')))) * $this->planet->user->bonus('storage'));
 		}
 
 		$this->storage = new Resources($resources);
@@ -104,7 +104,7 @@ class Production
 
 		foreach (Vars::getResources() as $res) {
 			if (!$this->planet->user->isVacation() && !in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
-				$resources[$res] = config('settings.' . $res . '_basic_income', 0) * config('settings.resource_multiplier', 1);
+				$resources[$res] = config('game.' . $res . '_basic_income', 0) * config('game.resource_multiplier', 1);
 			} else {
 				$resources[$res] = 0;
 			}

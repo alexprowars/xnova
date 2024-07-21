@@ -93,7 +93,7 @@ class Planet extends Model
 		$fields = $this->field_max;
 
 		$fields += $this->getLevel('terraformer') * 5;
-		$fields += config('settings.fieldsByMoonBase', 0) * $this->getLevel('moonbase');
+		$fields += config('game.fieldsByMoonBase', 0) * $this->getLevel('moonbase');
 
 		return $fields;
 	}

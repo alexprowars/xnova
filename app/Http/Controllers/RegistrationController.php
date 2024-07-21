@@ -13,9 +13,9 @@ class RegistrationController extends Controller
 {
 	public function index(RegistrationRequest $request)
 	{
-		if (!empty(config('settings.recaptcha.secret_key'))) {
+		if (!empty(config('game.recaptcha.secret_key'))) {
 			$captcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-				'secret' => config('settings.recaptcha.secret_key'),
+				'secret' => config('game.recaptcha.secret_key'),
 				'response' => $request->post('captcha'),
 				'remoteip' => $request->ip(),
 			])->json();

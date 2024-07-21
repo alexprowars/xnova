@@ -46,7 +46,7 @@ trait ProductionTrait
 			$return[$res] = 0;
 
 			if (isset($production[$res])) {
-				$return[$res] = floor(eval($production[$res]) * config('settings.resource_multiplier') * $user->bonus($res));
+				$return[$res] = floor(eval($production[$res]) * config('game.resource_multiplier') * $user->bonus($res));
 			}
 		}
 

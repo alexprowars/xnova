@@ -44,7 +44,7 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
 			'page' => 1
@@ -67,7 +67,7 @@ class StatController extends Controller
 			}
 		}
 
-		$users = (int) config('settings.activeUsers', 0);
+		$users = (int) config('game.activeUsers', 0);
 
 		$parse['elements'] = $users;
 		$parse['page'] = $this->page;
@@ -124,13 +124,13 @@ class StatController extends Controller
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'alliances',
 			'type' => $type,
 			'page' => 1
 		];
 
-		$alliances = (int) config('settings.activeAlliance', 0);
+		$alliances = (int) config('game.activeAlliance', 0);
 
 		$parse['elements'] = $alliances;
 		$parse['page'] = $this->page;
@@ -171,7 +171,7 @@ class StatController extends Controller
 	public function races()
 	{
 		$parse = [
-			'update' => Date::createFromTimestamp(config('settings.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'races',
 			'items' => [],
 			'type' => 0,
