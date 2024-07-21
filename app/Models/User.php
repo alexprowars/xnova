@@ -64,6 +64,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 			'rpg_meta' => 'immutable_datetime',
 			'rpg_komandir' => 'immutable_datetime',
 			'daily_bonus' => 'immutable_datetime',
+			'message_block' => 'immutable_datetime',
 		];
 	}
 

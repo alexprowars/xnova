@@ -344,9 +344,9 @@ class FleetSend
 			$this->planet->updateAmount($shipId, -((int) $count), true);
 		}
 
-		$TransMetal = max(0, (int) $this->resources['metal']);
-		$TransCrystal = max(0, (int) $this->resources['crystal']);
-		$TransDeuterium = max(0, (int) $this->resources['deuterium']);
+		$TransMetal = max(0, (int) ($this->resources['metal'] ?? 0));
+		$TransCrystal = max(0, (int) ($this->resources['crystal'] ?? 0));
+		$TransDeuterium = max(0, (int) ($this->resources['deuterium'] ?? 0));
 
 		$storageNeeded = array_sum($this->resources);
 

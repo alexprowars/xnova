@@ -56,4 +56,8 @@ $lang['mess_background'] = array
 	100 => '#999999'
 );
 
+$lang['stopwords'] = [
+	'сука'
+];
+
 return $lang;

@@ -106,11 +106,14 @@ class FleetSendController extends Controller
 			->first();
 
 		if ($tutorial) {
-			$quest = __('tutorial.tutorial.' . $tutorial->quest_id);
+			$quest = require resource_path('engine/tutorial.php');
+			$quest = $quest[$tutorial->quest_id] ?? null;
 
-			foreach ($quest['TASK'] as $taskKey => $taskVal) {
-				if ($taskKey == 'FLEET_MISSION' && $taskVal == $fleetMission) {
-					$tutorial->update(['stage' => 1]);
+			if ($quest) {
+				foreach ($quest['task'] as $taskKey => $taskVal) {
+					if ($taskKey == 'fleet_mission' && $taskVal == $fleetMission) {
+						$tutorial->update(['stage' => 1]);
+					}
 				}
 			}
 		}

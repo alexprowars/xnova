@@ -6,11 +6,9 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\Mission;
-use App\Engine\Game;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Exceptions\SuccessException;
 use App\Http\Controllers\Controller;
 use App\Models\Planet;
 use Illuminate\Http\Request;
@@ -25,20 +23,20 @@ class FleetQuickController extends Controller
 			throw new Exception('Нет доступа!');
 		}
 
-		$mission = (int) $request->query('mission', 0);
+		$mission = (int) $request->post('mission', 0);
 		$mission = Mission::tryFrom($mission);
 
 		if (!$mission) {
 			throw new Exception('<span class="error"><b>Не выбрана миссия!</b></span>');
 		}
 
-		$num = (int) $request->query('count', 0);
+		$num = (int) $request->post('count', 0);
 
-		$galaxy 	= (int) $request->query('galaxy', 0);
-		$system 	= (int) $request->query('system', 0);
-		$planet 	= (int) $request->query('planet', 0);
+		$galaxy 	= (int) $request->post('galaxy', 0);
+		$system 	= (int) $request->post('system', 0);
+		$planet 	= (int) $request->post('planet', 0);
 
-		$planetType = (int) $request->query('type', 0);
+		$planetType = (int) $request->post('type', 0);
 		$planetType = PlanetType::tryFrom($planetType);
 
 		$target = Planet::coordinates(new Coordinates($galaxy, $system, $planet))
@@ -93,15 +91,22 @@ class FleetQuickController extends Controller
 			->first();
 
 		if ($tutorial) {
-			$quest = __('tutorial.tutorial', $tutorial->quest_id);
+			$quest = require resource_path('engine/tutorial.php');
+			$quest = $quest[$tutorial->quest_id] ?? null;
 
-			foreach ($quest['TASK'] as $taskKey => $taskVal) {
-				if ($taskKey == 'FLEET_MISSION' && $taskVal == $mission) {
-					$tutorial->update(['stage' => 1]);
+			if ($quest) {
+				foreach ($quest['task'] as $taskKey => $taskVal) {
+					if ($taskKey == 'fleet_mission' && $taskVal == $mission) {
+						$tutorial->update(['stage' => 1]);
+					}
 				}
 			}
 		}
 
-		throw new SuccessException('Флот отправлен на координаты [' . $galaxy . ':' . $system . ':' . $planet . '] с миссией ' . $mission->title() . ' и прибудет к цели в ' . Game::datezone('H:i:s', $fleet->start_time));
+		return [
+			'target' => $target->getCoordinates()->toArray(),
+			'mission' => $mission->value,
+			'time' => $fleet->start_time->utc()->toAtomString(),
+		];
 	}
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Building;
-use App\Engine\Construction;
+use App\Engine\Entity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
@@ -33,6 +33,10 @@ class BuildingsController extends Controller
 
 			$entity = $this->planet->getEntity($elementId)->unit();
 
+			if (!($entity instanceof Entity\Building)) {
+				continue;
+			}
+
 			$available = $entity->isAvailable();
 
 			if (!$available && $viewOnlyAvailable) {
@@ -41,15 +45,16 @@ class BuildingsController extends Controller
 
 			$price = $entity->getPrice();
 
-			$row = [];
-			$row['id'] = $elementId;
-			$row['available'] = $available;
-			$row['level'] = $entity->getLevel();
-			$row['price'] = $price;
+			$row = [
+				'id' => $elementId,
+				'code' => Vars::getName($elementId),
+				'available' => $available,
+				'price' => $price,
+			];
 
 			if ($available) {
 				if (in_array($elementId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
-					$row['exp'] = floor(($price['metal'] + $price['crystal'] + $price['deuterium']) / config('game.buildings_exp_mult', 1000));
+					$row['exp'] = $entity->getExp();
 				}
 
 				$row['time'] = $entity->getTime();

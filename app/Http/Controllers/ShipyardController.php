@@ -44,8 +44,8 @@ class ShipyardController extends Controller
 
 		$items = [];
 
-		foreach ($elementIds as $element) {
-			$entity = EntityFactory::get($element);
+		foreach ($elementIds as $elementId) {
+			$entity = EntityFactory::get($elementId);
 
 			$available = $entity->isAvailable();
 
@@ -53,29 +53,29 @@ class ShipyardController extends Controller
 				continue;
 			}
 
-			if (!Building::checkTechnologyRace($this->user, $element)) {
+			if (!Building::checkTechnologyRace($this->user, $elementId)) {
 				continue;
 			}
 
-			$row = [];
-
-			$row['available']	= $available;
-			$row['id'] 		= $element;
-			$row['count'] 	= $this->planet->getLevel($element);
-			$row['price'] 	= $entity->getPrice();
-			$row['effects']	= null;
+			$row = [
+				'id' => $elementId,
+				'code' => Vars::getName($elementId),
+				'available' => $available,
+				'price' => $entity->getPrice(),
+				'effects' => null,
+			];
 
 			if ($available) {
 				$row['time'] = $entity->getTime();
 				$row['is_max'] = false;
 
-				$price = Vars::getItemPrice($element);
+				$price = Vars::getItemPrice($elementId);
 
 				if (isset($price['max'])) {
-					$total = $this->planet->getLevel($element);
+					$total = $this->planet->getLevel($elementId);
 
-					if (isset($buildArray[$element])) {
-						$total += $buildArray[$element];
+					if (isset($buildArray[$elementId])) {
+						$total += $buildArray[$elementId];
 					}
 
 					if ($total >= $price['max']) {
@@ -84,9 +84,9 @@ class ShipyardController extends Controller
 				}
 
 				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
-				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
+				$row['effects'] = Building::getNextProduction($elementId, 0, $this->planet);
 			} else {
-				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
 			}
 
 			$items[] = $row;

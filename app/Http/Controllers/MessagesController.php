@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\MessageType;
 use App\Engine\Game;
 use App\Exceptions\Exception;
-use App\Exceptions\SuccessException;
 use App\Format;
-use App\Models;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,144 +16,6 @@ use Illuminate\Support\Facades\URL;
 
 class MessagesController extends Controller
 {
-	public function write(Request $request, $userId)
-	{
-		if (!$userId) {
-			throw new Exception(__('messages.mess_no_ownerid'));
-		}
-
-		$userId = (int) $userId;
-
-		$OwnerRecord = User::find($userId);
-
-		if (!$OwnerRecord) {
-			throw new Exception(__('messages.mess_no_owner'));
-		}
-
-		if ($request->post('text')) {
-			$text = $request->post('text', '');
-
-			$error = 0;
-
-			if ($text == '') {
-				throw new Exception(__('messages.mess_no_text'));
-			}
-
-			if (!$error && $this->user->message_block > time()) {
-				throw new Exception(__('messages.mess_similar'));
-			}
-
-			if ($this->user->lvl_minier == 1 && $this->user->lvl_raid) {
-				if ($this->user->created_at->getTimestamp() > time() - 86400) {
-					$lastSend = Message::query()
-						->where('user_id', $this->user->id)
-						->where('time', time() - (1 * 60))
-						->count();
-
-					if ($lastSend > 0) {
-						throw new Exception(__('messages.mess_limit'));
-					}
-				}
-			}
-
-			$similar = Message::query()->where('user_id', $this->user->id)
-				->where('time', now()->subMinutes(5))
-				->orderByDesc('time')
-				->first();
-
-			if ($similar && mb_strlen($similar->text) < 1000) {
-				similar_text($text, $similar->text, $sim);
-
-				if ($sim > 80) {
-					throw new Exception(__('messages.mess_similar'));
-				}
-			}
-
-			$From = $this->user->username . " [" . $this->user->galaxy . ":" . $this->user->system . ":" . $this->user->planet . "]";
-
-			$Message = Format::text($text);
-			$Message = preg_replace('/[ ]+/', ' ', $Message);
-			$Message = strtr($Message, __('messages.stopwords'));
-
-			User::sendMessage($OwnerRecord['id'], null, now(), MessageType::User, $From, $Message);
-
-			throw new SuccessException(__('messages.mess_sended'));
-		}
-
-		$page = [
-			'text' => '',
-			'id' => $OwnerRecord['id'],
-			'to' => $OwnerRecord['username'] . " [" . $OwnerRecord['galaxy'] . ":" . $OwnerRecord['system'] . ":" . $OwnerRecord['planet'] . "]"
-		];
-
-		if ($request->query('quote')) {
-			$mes = Message::query()
-				->select(['id', 'text'])
-				->where('id', $request->query('quote'))
-				->where(function (Builder $query) {
-					$query->where('user_id', $this->user->id)
-						->orWhere('from_id', $this->user->id);
-				})
-				->first();
-
-			if ($mes) {
-				$page['text'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->text) . '[/quote]';
-			}
-		}
-
-		return response()->state($page);
-	}
-
-	public function delete(Request $request)
-	{
-		$items = $request->post('delete');
-
-		if (!is_array($items) || !count($items)) {
-			return false;
-		}
-
-		$items = array_map('intval', $items);
-
-		if (count($items)) {
-			Message::query()
-				->whereIn('id', $items)
-				->where('user_id', $this->user->id)
-				->update(['deleted' => 1]);
-		}
-
-		return true;
-	}
-
-	public function abuse($messageId)
-	{
-		$mes = Message::query()
-			->where('id', (int) $messageId)
-			->where('user_id', $this->user->id)
-			->first();
-
-		if (!$mes) {
-			throw new Exception('Сообщение не найдено');
-		}
-
-		$users = Models\User::query()
-			->select(['id'])
-			->where('authlevel', '!=', 0)
-			->get();
-
-		foreach ($users as $user) {
-			User::sendMessage(
-				$user->id,
-				$this->user->id,
-				0,
-				MessageType::User,
-				'<font color=red>' . $this->user->username . '</font>',
-				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date("d-m-Y H:i:s", $mes->time) . '<br>Текст сообщения: ' . $mes->text
-			);
-		}
-
-		throw new SuccessException('Жалоба отправлена администрации игры');
-	}
-
 	public function index(Request $request)
 	{
 		$parse = [];
@@ -269,5 +129,141 @@ class MessagesController extends Controller
 		$parse['parser'] = $this->user->getOption('bb_parser');
 
 		return response()->state($parse);
+	}
+
+	public function write(int $userId, Request $request)
+	{
+		if (!$userId) {
+			throw new Exception(__('messages.mess_no_ownerid'));
+		}
+
+		$user = User::find($userId);
+
+		if (!$user) {
+			throw new Exception(__('messages.mess_no_owner'));
+		}
+
+		$page = [
+			'id' => $user->id,
+			'to' => $user->username . ' [' . $user->galaxy . ':' . $user->system . ':' . $user->planet . ']',
+			'message' => '',
+		];
+
+		if ($request->query('quote')) {
+			$mes = Message::query()
+				->select(['id', 'text'])
+				->where('id', $request->query('quote'))
+				->where(function (Builder $query) {
+					$query->where('user_id', $this->user->id)
+						->orWhere('from_id', $this->user->id);
+				})
+				->first();
+
+			if ($mes) {
+				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->text) . '[/quote]';
+			}
+		}
+
+		return response()->state($page);
+	}
+
+	public function send(int $userId, Request $request)
+	{
+		$user = User::find($userId);
+
+		if (!$user) {
+			throw new Exception(__('messages.mess_no_owner'));
+		}
+
+		$message = $request->post('message', '');
+
+		if (empty($message)) {
+			throw new Exception(__('messages.mess_no_text'));
+		}
+
+		if ($this->user->message_block?->isFuture()) {
+			throw new Exception(__('messages.mess_similar'));
+		}
+
+		if ($this->user->lvl_minier == 1 && $this->user->lvl_raid == 1 && $this->user->created_at?->addDay()->isFuture()) {
+			$lastSend = Message::query()
+				->where('user_id', $this->user->id)
+				->where('time', '>', now()->subMinute())
+				->count();
+
+			if ($lastSend > 0) {
+				throw new Exception(__('messages.mess_limit'));
+			}
+		}
+
+		$similar = Message::query()
+			->where('user_id', $this->user->id)
+			->where('time', '>', now()->subMinutes(5))
+			->orderByDesc('time')
+			->first();
+
+		if ($similar && mb_strlen($similar->text) < 1000) {
+			similar_text($message, $similar->text, $sim);
+
+			if ($sim > 80) {
+				throw new Exception(__('messages.mess_similar'));
+			}
+		}
+
+		$from = $this->user->username . ' [' . $this->user->galaxy . ':' . $this->user->system . ':' . $this->user->planet . ']';
+
+		$message = Format::text($message);
+		$message = preg_replace('/ +/', ' ', $message);
+		$message = strtr($message, __('messages.stopwords'));
+
+		User::sendMessage($user->id, null, now(), MessageType::User, $from, $message);
+	}
+
+	public function delete(Request $request)
+	{
+		$items = $request->post('delete');
+
+		if (!is_array($items) || !count($items)) {
+			return false;
+		}
+
+		$items = array_map('intval', $items);
+
+		if (count($items)) {
+			Message::query()
+				->whereIn('id', $items)
+				->where('user_id', $this->user->id)
+				->update(['deleted' => 1]);
+		}
+
+		return true;
+	}
+
+	public function abuse(int $messageId)
+	{
+		$mes = Message::query()
+			->where('id', $messageId)
+			->where('user_id', $this->user->id)
+			->first();
+
+		if (!$mes) {
+			throw new Exception('Сообщение не найдено');
+		}
+
+		$users = User::query()
+			->select(['id'])
+			->where('authlevel', '!=', 0)
+			->get();
+
+		foreach ($users as $user) {
+			User::sendMessage(
+				$user->id,
+				$this->user->id,
+				now(),
+				MessageType::User,
+				'<font color=red>' . $this->user->username . '</font>',
+				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date('d-m-Y H:i:s', $mes->time) . '<br>Текст сообщения: ' . $mes->text
+			);
+		}
 	}
 }

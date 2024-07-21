@@ -52,7 +52,7 @@ return new class extends Migration {
 			$table->timestamp('daily_bonus')->nullable();
 			$table->tinyInteger('daily_bonus_factor')->default(0);
 			$table->integer('refers')->default(0);
-			$table->integer('message_block')->default(0);
+			$table->timestamp('message_block')->nullable();
 			$table->integer('links')->unsigned()->default(0);
 			$table->tinyInteger('chat')->default(0);
 			$table->string('image')->nullable();

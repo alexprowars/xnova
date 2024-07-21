@@ -19,7 +19,6 @@ class TechController extends Controller
 			}
 
 			$pars = [];
-			$pars['name'] = $name;
 
 			if (!Vars::getName($element)) {
 				if (count($items) > 0) {
@@ -27,6 +26,7 @@ class TechController extends Controller
 					$items = [];
 				}
 
+				$pars['name'] = $name;
 				$pars['items'] = [];
 				$parse[] = $pars;
 			} else {
@@ -68,7 +68,7 @@ class TechController extends Controller
 					$pars['required'] .= ")</span><br>";
 				}
 
-				$pars['info'] = $element;
+				$pars['id'] = $element;
 				$items[] = $pars;
 			}
 		}
@@ -102,8 +102,6 @@ class TechController extends Controller
 		foreach ($storage['resource'] as $id => $code) {
 			$item = [
 				'id' => $id,
-				'name' => __('main.tech.' . $id),
-				'img' => $id . '.gif',
 				'req' => [],
 			];
 
@@ -111,7 +109,6 @@ class TechController extends Controller
 				foreach ($storage['requeriments'][$id] as $ids => $level) {
 					$item['req'][] = [
 						$ids,
-						__('main.tech.' . $ids),
 						$level,
 						-1,
 						$level

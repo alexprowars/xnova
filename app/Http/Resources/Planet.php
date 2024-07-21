@@ -27,6 +27,7 @@ class Planet extends JsonResource
 				'energy' => [
 					'value' => $this->energy_max - $this->energy_used,
 					'capacity' => $this->energy_max,
+					'basic' => (int) config('game.energy_basic_income', 0),
 				],
 			],
 			'coordinates' => $this->getCoordinates()->toArray(),
@@ -42,6 +43,7 @@ class Planet extends JsonResource
 
 		$storage = $planetProduction->getStorageCapacity();
 		$production = $planetProduction->getResourceProduction();
+		$basicProduction = $planetProduction->getBasicProduction();
 
 		foreach (Vars::getResources() as $res) {
 			$entity = $this->entities->where('entity_id', Vars::getIdByName($res . '_mine'))
@@ -50,6 +52,7 @@ class Planet extends JsonResource
 			$data['resources'][$res] = [
 				'value' => floor((float) $this->{$res}),
 				'capacity' => $storage->get($res),
+				'basic' => $basicProduction->get($res),
 				'production' => $production->get($res),
 				'factor' => $entity ? $entity->factor / 10 : 0,
 			];

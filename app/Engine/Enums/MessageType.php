@@ -6,8 +6,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum MessageType: int implements HasLabel
 {
-	case Spy = 1;
-	case User = 2;
+	case User = 1;
+	case Spy = 2;
 	case Alliance = 3;
 	case Battle = 4;
 	case System = 5;

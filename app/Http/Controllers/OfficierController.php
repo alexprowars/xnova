@@ -62,21 +62,13 @@ class OfficierController extends Controller
 
 	public function index()
 	{
-		$parse['credits'] = $this->user->credits;
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
-			$row = [];
-			$row['id'] = $officier;
-			$row['time'] = null;
-
-			if ($this->user->{Vars::getName($officier)}?->isFuture()) {
-				$row['time'] = $this->user->{Vars::getName($officier)}->utc()->toAtomString();
-			}
-
-			$row['power'] = __('officier.power.' . $officier);
-
-			$parse['items'][] = $row;
+			$parse['items'][] = [
+				'id' => $officier,
+				'power' => __('officier.power.' . $officier),
+			];
 		}
 
 		return response()->state($parse);

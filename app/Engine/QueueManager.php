@@ -539,13 +539,10 @@ class QueueManager
 		$xp = 0;
 
 		if (in_array($entity->entityId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
-			$cost = $destroy ? $entity->getDestroyPrice() : $entity->getPrice();
-			$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
-
 			if (!$destroy) {
-				$xp += floor($units / config('game.buildings_exp_mult', 1000));
+				$xp += $entity->getExp();
 			} else {
-				$xp -= floor($units / config('game.buildings_exp_mult', 1000));
+				$xp -= $entity->getExp($destroy);
 			}
 		}
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Statistic;
+use App\Settings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -39,12 +40,12 @@ class StatController extends Controller
 		};
 	}
 
-	public function index()
+	public function index(Settings $settings)
 	{
 		$type = (int) Request::input('type', 1);
 
 		$parse = [
-			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
 			'page' => 1

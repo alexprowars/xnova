@@ -59,7 +59,7 @@ class ImperiumController extends Controller
 
 			$row = [];
 
-			$row['id'] = (int) $planet->id;
+			$row['id'] = $planet->id;
 			$row['image'] = $planet->image;
 			$row['name'] = $planet->name;
 			$row['position'] = [
@@ -67,23 +67,23 @@ class ImperiumController extends Controller
 				'system' => (int) $planet->system,
 				'planet' => (int) $planet->planet,
 			];
-			$row['fields'] = (int) $planet->field_current;
+			$row['fields'] = $planet->field_current;
 			$row['fields_max'] = $planet->getMaxFields();
 
 			$row['resources'] = [];
 			$row['factor'] = [];
 
 			$row['resources']['energy'] = [
-				'current' => $planet->energy_max - abs($planet->energy_used),
+				'value' => $planet->energy_max - abs($planet->energy_used),
 				'production' => $planet->energy_max,
 				'storage' => $planet->getLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getLevel('solar_plant')) * 100) : 0
 			];
 
 			foreach (Vars::getResources() as $res) {
 				$row['resources'][$res] = [
-					'current' => $planet->{$res},
+					'value' => $planet->{$res},
 					'production' => $planet->{$res . '_perhour'},
-					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(pow(1.6, $planet->getLevel($res . '_store'))))) * $this->user->bonus('storage'))
+					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $planet->getLevel($res . '_store')))) * $this->user->bonus('storage'))
 				];
 			}
 
@@ -130,7 +130,7 @@ class ImperiumController extends Controller
 					'fly' => 0
 				];
 
-				$item['current'] = $planet->getLevel($id);
+				$item['value'] = $planet->getLevel($id);
 				$item['build'] = $build_hangar[$id] ?? 0;
 
 				if (Vars::getItemType($id) == ItemType::FLEET) {
@@ -143,8 +143,6 @@ class ImperiumController extends Controller
 			$parse['planets'][] = $row;
 		}
 
-		$parse['credits'] = $this->user->credits;
-
 		$parse['tech'] = [];
 
 		foreach (Vars::getItemsByType(ItemType::TECH) as $i) {
@@ -152,8 +150,9 @@ class ImperiumController extends Controller
 				continue;
 			}
 
-			$parse['tech'][$i] = [
-				'current' => $this->user->getTechLevel($i),
+			$parse['tech'][] = [
+				'id' => $i,
+				'value' => $this->user->getTechLevel($i),
 				'build' => $build_hangar_full[$i] ?? 0,
 			];
 		}

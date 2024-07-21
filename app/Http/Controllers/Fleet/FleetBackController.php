@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Fleet\Mission;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
 use App\Models\Fleet;
 use Illuminate\Http\Request;
@@ -54,7 +53,5 @@ class FleetBackController extends Controller
 			'updated_at' 		=> $returnTime->addSecond(),
 			'mess' 				=> 1,
 		]);
-
-		throw new RedirectException('/', __('fleet.fl_isback'));
 	}
 }

@@ -160,7 +160,7 @@ class Production
 			}
 		}
 
-		$resources->multiply($this->getProductionFactor() / 100);
+		$resources->multiply($this->getProductionFactor() / 100, [ResourcesEnum::ENERGY]);
 		$resources->add($this->getBasicProduction());
 
 		$this->production = $resources;

@@ -62,9 +62,13 @@ class Resources implements Arrayable
 		return $this;
 	}
 
-	public function multiply(float $value)
+	public function multiply(float $value, array $except = [])
 	{
 		foreach (ResourcesEnum::cases() as $res) {
+			if (!empty($except) && in_array($res, $except)) {
+				continue;
+			}
+
 			$this->resources[$res->value] *= $value;
 		}
 
