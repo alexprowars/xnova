@@ -15,7 +15,7 @@ use App\Engine\Vars;
 use App\Format;
 use App\Models;
 use App\Models\Statistic;
-use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -386,7 +386,7 @@ class Expedition extends FleetEngine implements Mission
 				}
 				$MessageAtt = sprintf('<a href="/rw/%s/%s/" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>', $report->id, md5(config('app.key') . $report->id), $ColorAtt, 'Боевой доклад', sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet), $ColorAtt, __('fleet_engine.sys_perte_attaquant'), Format::number($result['lost']['att']), $ColorDef, __('fleet_engine.sys_perte_defenseur'), Format::number($result['lost']['def']), __('fleet_engine.sys_gain'), __('main.Metal'), 0, __('main.Crystal'), 0, __('main.Deuterium'), 0, __('fleet_engine.sys_debris'), __('main.Metal'), 0, __('main.Crystal'), 0);
 
-				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_tower'), $MessageAtt);
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_tower'), $MessageAtt));
 
 				break;
 
@@ -431,14 +431,14 @@ class Expedition extends FleetEngine implements Mission
 				$Message = __('fleet_engine.sys_expe_nothing_' . random_int(1, 8));
 		}
 
-		User::sendMessage($this->fleet->user_id, null, $this->fleet->end_stay, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $Message);
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $Message));
 	}
 
 	public function returnEvent()
 	{
 		$Message = sprintf(__('fleet_engine.sys_expe_back_home'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
 
-		User::sendMessage($this->fleet->user_id, null, $this->fleet->end_time, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $Message);
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $Message));
 
 		$this->restoreFleetToPlanet();
 		$this->killFleet();

@@ -10,19 +10,12 @@ class Exception extends \Exception
 	{
 		$type = 'error';
 
-		if ($this instanceof NoticeException) {
-			$type = 'notice';
-		} elseif ($this instanceof SuccessException) {
-			$type = 'success';
-		}
-
-		$message = [
-			'type' => $type,
-			'text' => $this->getMessage(),
-		];
-
 		return new JsonResponse([
-			'messages' => [$message],
+			'error' => [
+				'type' => $type,
+				'code' => $this->getCode(),
+				'message' => $this->getMessage(),
+			],
 		], 403);
 	}
 }

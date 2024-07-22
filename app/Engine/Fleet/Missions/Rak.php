@@ -9,8 +9,8 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Models\Planet;
-use App\Models\User;
 use App\Models\UserTech;
+use App\Notifications\MessageNotification;
 
 class Rak extends FleetEngine implements Mission
 {
@@ -32,68 +32,59 @@ class Rak extends FleetEngine implements Mission
 			->where('tech_id', Vars::getIdByName('military_tech'))
 			->firstOrNew();
 
-		$message = '';
-
-		$Raks = 0;
-		$Primary = 401;
-
 		$fleetData = $this->fleet->getShips();
 
-		foreach ($fleetData as $shipId => $shipArr) {
-			if ($shipId != 503) {
-				continue;
-			}
+		$rockets = $fleetData[503]['count'] ?? 0;
+		$targetType = $fleetData[503]['target'] ?? 0;
 
-			$Raks = $shipArr['count'];
-			$Primary = $shipArr['target'];
-		}
+		$targetDefensive = [];
 
-		$TargetDefensive = [];
-
-		foreach (Vars::getItemsByType(ItemType::DEFENSE) as $Element) {
-			$TargetDefensive[$Element] = $targetPlanet->getLevel($Element);
+		foreach (Vars::getItemsByType(ItemType::DEFENSE) as $elementId) {
+			$targetDefensive[$elementId] = $targetPlanet->getLevel($elementId);
 		}
 
 		$defenceMissiles = $targetPlanet->getLevel('interceptor_misil');
 
-		if ($defenceMissiles >= $Raks) {
+		$message = '';
+
+		if ($defenceMissiles >= $rockets) {
 			$message .= 'Вражеская ракетная атака была отбита ракетами-перехватчиками<br>';
 
-			$targetPlanet->updateAmount('interceptor_misil', -$Raks, true);
+			$targetPlanet->updateAmount('interceptor_misil', -$rockets, true);
 		} else {
-			$message .= 'Произведена межпланетная атака (' . $Raks . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
+			$message .= 'Произведена межпланетная атака (' . $rockets . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
 			$message .= ' на планету ' . $this->fleet->target_user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
 
 			if ($defenceMissiles > 0) {
-				$message .= $defenceMissiles . " ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>";
+				$message .= $defenceMissiles . ' ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>';
 
 				$targetPlanet->updateAmount('interceptor_misil', 0);
 			}
 
-			$Raks -= $defenceMissiles;
+			$rockets -= $defenceMissiles;
 
-			$irak = $this->raketenangriff($defTech->level, $attTech->level, $Raks, $TargetDefensive, $Primary);
+			$irak = $this->raketenangriff($defTech->level, $attTech->level, $rockets, $targetDefensive, $targetType);
 
 			ksort($irak, SORT_NUMERIC);
 
-			foreach ($irak as $Element => $destroy) {
-				if (empty($Element) || $destroy == 0) {
+			foreach ($irak as $elementId => $destroy) {
+				if (empty($elementId) || $destroy == 0) {
 					continue;
 				}
 
-				$message .= __('main.tech.' . $Element) . " (" . $destroy . " уничтожено)<br>";
+				$message .= __('main.tech.' . $elementId) . ' (' . $destroy . ' уничтожено)<br>';
 
-				$targetPlanet->updateAmount($Element, -$destroy, true);
+				$targetPlanet->updateAmount($elementId, -$destroy, true);
 			}
 		}
 
 		$targetPlanet->update();
 
 		if (empty($message)) {
-			$message = "Нет обороны для разрушения!";
+			$message = 'Нет обороны для разрушения!';
 		}
 
-		User::sendMessage($this->fleet->target_user_id, null, $this->fleet->start_time, MessageType::Battle, 'Ракетная атака', $message);
+		$this->fleet->target->notify(new MessageNotification(null, MessageType::Battle, 'Ракетная атака', $message));
 	}
 
 	public function endStayEvent()

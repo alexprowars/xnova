@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Engine\Fleet\Missions\Mission;
-use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\Vars;
 use App\Models;
 use Illuminate\Console\Command;

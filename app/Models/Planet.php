@@ -178,14 +178,14 @@ class Planet extends Model
 
 		if ($this->user->getTechLevel('intergalactic') > 0) {
 			$items = DB::table('planets_entities', 'pe')
-				->leftJoin('planets p', 'p.id', '=', 'pe.planet_id')
+				->leftJoin('planets as p', 'p.id', '=', 'pe.planet_id')
 				->where('pe.entity_id', 31)
 				->where('pe.planet_id', '!=', $this->id)
 				->where('pe.amount', '>', 0)
 				->where('p.user_id', $this->user->id)
-				->where('p.planet_type', 1)
-				->whereNull('pe.destruyed')
-				->orderByDesc('level')
+				->where('p.planet_type', PlanetType::PLANET)
+				->whereNull('p.destruyed')
+				->orderByDesc('pe.amount')
 				->limit($this->user->getTechLevel('intergalactic'))
 				->get();
 

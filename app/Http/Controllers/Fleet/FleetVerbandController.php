@@ -12,6 +12,7 @@ use App\Models\Fleet;
 use App\Models\Friend;
 use App\Models\Planet;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Http\Request;
 
 class FleetVerbandController extends Controller
@@ -107,7 +108,7 @@ class FleetVerbandController extends Controller
 
 				$message = 'Игрок ' . $this->user->username . ' приглашает вас произвести совместное нападение на планету ' . $planet->name . ' [' . $assault->galaxy . ':' . $assault->system . ':' . $assault->planet . '] игрока ' . $planet->user->username . '. Имя ассоциации: ' . $assault->name . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
 
-				User::sendMessage($user_data->id, null, now(), MessageType::User, 'Флот', $message);
+				$user_data->notify(new MessageNotification(null, MessageType::User, 'Флот', $message));
 			} elseif ($action == "changename") {
 				if ($assault->fleet_id != $fleet->id) {
 					throw new Exception('Вы не можете менять имя ассоциации');

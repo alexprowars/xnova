@@ -3,19 +3,18 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
-use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 
 class Colonisation extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$owner = User::query()->find($this->fleet->user_id);
-
-		$maxPlanets = $owner->getTechLevel('colonisation') + 1;
+		$maxPlanets = $this->fleet->user->getTechLevel('colonisation') + 1;
 
 		if ($maxPlanets > config('game.maxPlanets', 9)) {
 			$maxPlanets = config('game.maxPlanets', 9);
@@ -25,7 +24,7 @@ class Colonisation extends FleetEngine implements Mission
 
 		$iPlanetCount = Models\Planet::query()
 			->where('user_id', $this->fleet->user_id)
-			->where('planet_type', 1)
+			->where('planet_type', PlanetType::PLANET)
 			->count();
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
@@ -34,8 +33,7 @@ class Colonisation extends FleetEngine implements Mission
 			if ($iPlanetCount >= $maxPlanets) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxPlanets . __('fleet_engine.sys_colo_planet');
 
-				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage);
-
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
 				$this->fleet->return();
 			} else {
 				$NewOwnerPlanet = $galaxy->createPlanet(
@@ -47,7 +45,7 @@ class Colonisation extends FleetEngine implements Mission
 				if ($NewOwnerPlanet) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_allisok');
 
-					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage);
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
 
 					$newFleet = [];
 
@@ -72,7 +70,7 @@ class Colonisation extends FleetEngine implements Mission
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_badpos');
 
-					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage);
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
 				}
 			}
 		} else {
@@ -80,7 +78,7 @@ class Colonisation extends FleetEngine implements Mission
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_notfree');
 
-			User::sendMessage($this->fleet->user_id, null, $this->fleet->end_time, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage);
+			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
 		}
 	}
 

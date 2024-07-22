@@ -337,7 +337,7 @@
 										<table width="100%" cellpadding="0" cellspacing="0" border="0">
 											<tr style="line-height:0px;line-height:0px;">
 												<td style="padding-right: 0px; padding-left: 0px;" align="center"><![endif]-->
-										<img class="center  autowidth  fullwidth" align="center" border="0" src="#SERVER#/images/email/header.jpg" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: 0;height: auto;float: none;width: 100%;max-width: 500px" width="500">
+										<img class="center  autowidth  fullwidth" align="center" border="0" src="{{ asset('images/email/header.jpg') }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: 0;height: auto;float: none;width: 100%;max-width: 500px" width="500">
 										<!--[if mso]></td></tr></table><![endif]-->
 									</div>
 
@@ -402,12 +402,12 @@
 										<div style="color:#555555;line-height:120%;font-family:Tahoma, Verdana, Segoe, sans-serif; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
 											<div style="font-size:12px;line-height:14px;font-family:Tahoma, Verdana, Segoe, sans-serif;color:#555555;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px">
 												Доброго времени суток!<br>
-												Кто-то запросил восстановление пароля к аккаунту <b>#EMAIL#</b>.
+												Кто-то запросил восстановление пароля к аккаунту <b>{{ $user->username }}</b>.
 												Так как в анкете у персонажа указан данный e-mail, то именно Вы получили это письмо.
 												</p>
 												<p style="margin: 0;font-size: 14px;line-height: 17px">&#160;<br></p>
 												<p style="margin: 0;font-size: 14px;line-height: 17px">
-												Для восстановления пароля перейдите <a href="#SERVER##URL#">по ссылке</a>.
+												Для восстановления пароля перейдите <a href="{{ $link }}">по ссылке</a>.
 												</p>
 											</div>
 										</div>
@@ -447,7 +447,7 @@
 												<tr style="vertical-align: top">
 													<td align="left" valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
 														<a href="https://vk.com/xnova_game" title="Vkontakte" target="_blank">
-															<img src="#SERVER#/images/email/vkontakte@2x.png" alt="Vkontakte" title="Vkontakte" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+															<img src="{{ asset('assets/images/email/vkontakte@2x.png') }}" alt="Vkontakte" title="Vkontakte" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
 														</a>
 														<div style="line-height:5px;font-size:1px">&#160;</div>
 													</td>
@@ -461,7 +461,7 @@
 												<tr style="vertical-align: top">
 													<td align="left" valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
 														<a href="https://t.me/xnovasu" title="Telegram" target="_blank">
-															<img src="#SERVER#/images/email/telegram@2x.png" alt="Telegram" title="Telegram" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+															<img src="{{ asset('images/email/telegram@2x.png') }}" alt="Telegram" title="Telegram" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
 														</a>
 														<div style="line-height:5px;font-size:1px">&#160;</div>
 													</td>
@@ -478,7 +478,7 @@
 											<tr>
 												<td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;"><![endif]-->
 										<div style="color:#555555;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
-											<div style="font-size:12px;line-height:14px;color:#555555;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center"><a style="color:#0068a5;text-decoration: underline;" href="https://xnova.su" target="_blank" rel="noopener">xnova.su</a> ♥ 2018</p></div>
+											<div style="font-size:12px;line-height:14px;color:#555555;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center"><a style="color:#0068a5;text-decoration: underline;" href="https://xnova.su" target="_blank" rel="noopener">xnova.su</a> ♥ {{ date('Y') }}</p></div>
 										</div>
 										<!--[if mso]></td></tr></table><![endif]-->
 									</div>

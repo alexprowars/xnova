@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Engine\Enums\MessageType;
+use App\Notifications\MessageNotification;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use App\Models\User;
@@ -26,22 +27,13 @@ class SupportController extends Controller
 		$query = $this->db->query("SELECT s.*, u.username FROM support s, users u WHERE u.id = s.user_id AND status != 0 ORDER BY s.time LIMIT 100;");
 
 		while ($ticket = $query->fetch()) {
-			switch ($ticket['status']) {
-				case 0:
-					$status = '<font color="red">закрыто</font>';
-					break;
-				case 1:
-					$status = '<font color="green">открыто</font>';
-					break;
-				case 2:
-					$status = '<font color="orange">ответ админа</font>';
-					break;
-				case 3:
-					$status = '<font color="green">ответ игрока</font>';
-					break;
-				default:
-					$status = '';
-			}
+			$status = match ($ticket['status']) {
+				0 => '<font color="red">закрыто</font>',
+				1 => '<font color="green">открыто</font>',
+				2 => '<font color="orange">ответ админа</font>',
+				3 => '<font color="green">ответ игрока</font>',
+				default => '',
+			};
 
 			if ($id > 0 && $id == $ticket['id']) {
 				$TINFO = $ticket;
@@ -71,22 +63,13 @@ class SupportController extends Controller
 		}
 
 		if (isset($TINFO)) {
-			switch ($TINFO['status']) {
-				case 0:
-					$status = '<font color="red">закрыто</font>';
-					break;
-				case 1:
-					$status = '<font color="green">открыто</font>';
-					break;
-				case 2:
-					$status = '<font color="orange">ответ админа</font>';
-					break;
-				case 3:
-					$status = '<font color="green">ответ игрока</font>';
-					break;
-				default:
-					$status = '';
-			}
+			$status = match ($TINFO['status']) {
+				0 => '<font color="red">закрыто</font>',
+				1 => '<font color="green">открыто</font>',
+				2 => '<font color="orange">ответ админа</font>',
+				3 => '<font color="green">ответ игрока</font>',
+				default => '',
+			};
 
 			$parse = [
 				't_id' => $TINFO['id'],
@@ -130,7 +113,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "',status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Поступил ответ на тикет №' . $id);
+			User::find($ticket['user_id'])?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Поступил ответ на тикет №' . $id));
 		}
 
 		return $this->index();
@@ -153,7 +136,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '2' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Был открыт тикет №' . $id);
+			User::find($ticket['user_id'])?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Был открыт тикет №' . $id));
 		}
 
 		return $this->index();
@@ -176,7 +159,7 @@ class SupportController extends Controller
 
 			$this->db->query("UPDATE support SET text = '" . addslashes($newtext) . "', status = '0' WHERE id = '" . $id . "'");
 
-			User::sendMessage($ticket['user_id'], null, now(), MessageType::System, $this->user->username, 'Тикет №' . $id . ' закрыт');
+			User::find($ticket['user_id'])?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Тикет №' . $id . ' закрыт'));
 		}
 
 		return $this->index();

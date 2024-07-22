@@ -10,7 +10,7 @@ class Battle
 	private $defenders;
 	private $report;
 	private $battleStarted;
-	private $rounds = 6;
+	private $rounds;
 
 	public function __construct(PlayerGroup $attackers, PlayerGroup $defenders, $rounds = 6)
 	{

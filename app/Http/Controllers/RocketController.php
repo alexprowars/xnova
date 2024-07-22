@@ -3,61 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
+use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
-use App\Exceptions\SuccessException;
-use App\Models;
 use App\Models\Fleet;
-use Illuminate\Support\Facades\Request;
+use App\Models\Planet;
+use Illuminate\Http\Request;
 
 class RocketController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		if (!Request::instance()->isMethod('post')) {
-			throw new PageException('Ошибка', '/galaxy/');
-		}
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
 
-		$g = (int) Request::post('galaxy', 0);
-		$s = (int) Request::post('system', 0);
-		$p = (int) Request::post('planet', 0);
-
-		if ($g <= 0 || $s <= 0 || $p <= 0) {
+		if ($galaxy <= 0 || $system <= 0 || $planet <= 0) {
 			throw new Exception('Координаты не определены');
 		}
 
-		$count = (int) Request::post('count', 1);
-		$destroyType = Request::post('target', 'all');
+		$count = (int) $request->post('count', 1);
+		$destroyType = $request->post('target', 'all');
 
-		$distance = abs($s - $this->planet->system);
+		$distance = abs($system - $this->planet->system);
 		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
 
-		$targetPlanet = Models\Planet::findByCoordinates(new Coordinates($g, $s, $p, PlanetType::PLANET));
-
-		if ($this->planet->getLevel('missile_facility') < 4) {
-			throw new Exception('Постройте ракетную шахту');
-		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
-			throw new Exception('Необходима технология "Импульсный двигатель"');
-		} elseif ($distance >= $maxDistance || $g != $this->planet->galaxy) {
-			throw new Exception('Превышена дистанция ракетной атаки');
-		} elseif (!$targetPlanet) {
-			throw new Exception('Планета не найдена');
-		} elseif ($count > $this->planet->getLevel('interplanetary_misil')) {
-			throw new Exception('У вас нет такого кол-ва ракет');
-		} elseif ((!is_numeric($destroyType) && $destroyType != "all") or ($destroyType < 0 && $destroyType > 7 && $destroyType != "all")) {
-			throw new Exception('Не найдена цель');
-		}
-
-		if ($destroyType == 'all') {
-			$destroyType = 0;
-		} else {
-			$destroyType = (int) $destroyType;
-		}
-
-		$targetUser = Models\User::query()
-			->find($targetPlanet->user_id, ['id', 'vacation']);
+		$targetPlanet = Planet::findByCoordinates(new Coordinates($galaxy, $system, $planet, PlanetType::PLANET));
+		$targetUser = $targetPlanet->user;
 
 		if (!$targetUser) {
 			throw new Exception('Игрока не существует');
@@ -69,6 +43,26 @@ class RocketController extends Controller
 
 		if ($this->user->isVacation()) {
 			throw new Exception('Вы в режиме отпуска');
+		}
+
+		if (!$targetPlanet) {
+			throw new Exception('Планета не найдена');
+		} elseif ($this->planet->getLevel('missile_facility') < 4) {
+			throw new Exception('Постройте ракетную шахту');
+		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
+			throw new Exception('Необходима технология "Импульсный двигатель"');
+		} elseif ($distance >= $maxDistance || $galaxy != $this->planet->galaxy) {
+			throw new Exception('Превышена дистанция ракетной атаки');
+		} elseif ($count > $this->planet->getLevel('interplanetary_misil')) {
+			throw new Exception('У вас нет такого кол-ва ракет');
+		} elseif ((!is_numeric($destroyType) && $destroyType != 'all') || (!in_array($destroyType, Vars::getItemsByType(ItemType::DEFENSE)) && $destroyType != 'all')) {
+			throw new Exception('Не найдена цель');
+		}
+
+		if ($destroyType == 'all') {
+			$destroyType = 0;
+		} else {
+			$destroyType = (int) $destroyType;
 		}
 
 		$time = 30 + (60 * $distance);
@@ -84,9 +78,9 @@ class RocketController extends Controller
 			'start_planet' 		=> $this->planet->planet,
 			'start_type' 		=> PlanetType::PLANET,
 			'end_time' 			=> null,
-			'end_galaxy' 		=> $g,
-			'end_system' 		=> $s,
-			'end_planet' 		=> $p,
+			'end_galaxy' 		=> $galaxy,
+			'end_system' 		=> $system,
+			'end_planet' 		=> $planet,
 			'end_type' 			=> PlanetType::PLANET,
 			'target_user_id' 	=> $targetPlanet->user_id,
 			'target_user_name' 	=> $targetPlanet->name,
@@ -97,7 +91,5 @@ class RocketController extends Controller
 			$this->planet->updateAmount('interplanetary_misil', -$count, true);
 			$this->planet->update();
 		}
-
-		throw new SuccessException('<b>' . $count . '</b> межпланетные ракеты запущены для атаки удалённой планеты!');
 	}
 }

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Ship;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\Resources;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\SuccessException;
 use App\Models;
-use Illuminate\Support\Facades\Request;
+use App\Models\Fleet;
+use Illuminate\Http\Request;
 
 class InfoController extends Controller
 {
@@ -156,52 +157,6 @@ class InfoController extends Controller
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24)) {
 			$parse['production'] = $this->showProductionTable($itemId);
 		} elseif ($itemId == 34) {
-			$parse['msg'] = '';
-
-			if (Request::post('send') && Request::post('fleet')) {
-				$fleetId = (int) Request::post('fleet', 0);
-
-				$fleet = Models\Fleet::query()
-					->where('id', $fleetId)
-					->where('end_galaxy', $this->planet->galaxy)
-					->where('end_system', $this->planet->system)
-					->where('end_planet', $this->planet->planet)
-					->where('end_type', $this->planet->planet_type)
-					->where('mess', 3)
-					->first();
-
-				if (!$fleet) {
-					throw new Exception('Флот отсутствует у планеты');
-				} else {
-					$tt = 0;
-
-					foreach ($fleet->getShips() as $type => $ship) {
-						if ($type > 100) {
-							$tt += $storage['CombatCaps'][$type]['stay'] * $ship['count'];
-						}
-					}
-
-					$max = $this->planet->getLevel($itemId) * 10000;
-
-					if ($max > $this->planet->deuterium) {
-						$cur = $this->planet->deuterium;
-					} else {
-						$cur = $max;
-					}
-
-					$times = round(($cur / $tt) * 3600);
-
-					$this->planet->deuterium -= $cur;
-					$this->planet->update();
-
-					$fleet->end_stay->addSeconds($times);
-					$fleet->end_time->addSeconds($times);
-					$fleet->update();
-
-					throw new SuccessException('Ракета с дейтерием отправлена на орбиту вашей планете');
-				}
-			}
-
 			if ($this->planet->getLevel($itemId) > 0) {
 				$list = [];
 
@@ -247,7 +202,7 @@ class InfoController extends Controller
 
 			$fleet['rapidfire'] = [
 				'to' => $this->showRapidFireTo($itemId),
-				'from' => $this->showRapidFireFrom($itemId)
+				'from' => $this->showRapidFireFrom($itemId),
 			];
 
 			$fleet['attack'] = $storage['CombatCaps'][$itemId]['attack'];
@@ -263,7 +218,7 @@ class InfoController extends Controller
 			foreach ($price as $res => $value) {
 				$fleet['resources'][$res] = [
 					'base' => $value,
-					'full' => $value * $this->user->bonus('res_fleet')
+					'full' => $value * $this->user->bonus('res_fleet'),
 				];
 			}
 
@@ -343,31 +298,6 @@ class InfoController extends Controller
 			}
 
 			$parse['defence'] = $fleet;
-
-			if ($itemId >= 500 && $itemId < 600) {
-				if (Request::post('missiles')) {
-					$icm = abs((int) Request::post('interceptor', 0));
-					$ipm = abs((int) Request::post('interplanetary', 0));
-
-					if ($icm > $this->planet->getLevel('interceptor_misil')) {
-						$icm = $this->planet->getLevel('interceptor_misil');
-					}
-					if ($ipm > $this->planet->getLevel('interplanetary_misil')) {
-						$ipm = $this->planet->getLevel('interplanetary_misil');
-					}
-
-					$this->planet->updateAmount('interceptor_misil', -$icm, true);
-					$this->planet->updateAmount('interplanetary_misil', -$ipm, true);
-					$this->planet->update();
-
-					throw new SuccessException('Ракеты уничтожены');
-				}
-
-				$parse['missile'] = [
-					'interceptor' => $this->planet->getLevel('interceptor_misil'),
-					'interplanetary' => $this->planet->getLevel('interplanetary_misil')
-				];
-			}
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
@@ -383,11 +313,74 @@ class InfoController extends Controller
 				$parse['destroy'] = [
 					'level' => $entity->getLevel(),
 					'resources' => $entity->getDestroyPrice(),
-					'time' => $time
+					'time' => $time,
 				];
 			}
 		}
 
 		return response()->state($parse);
+	}
+
+	public function missiles(Request $request)
+	{
+		$icm = abs((int) $request->post('interceptor', 0));
+		$ipm = abs((int) $request->post('interplanetary', 0));
+
+		if ($icm > $this->planet->getLevel('interceptor_misil')) {
+			$icm = $this->planet->getLevel('interceptor_misil');
+		}
+		if ($ipm > $this->planet->getLevel('interplanetary_misil')) {
+			$ipm = $this->planet->getLevel('interplanetary_misil');
+		}
+
+		$this->planet->updateAmount('interceptor_misil', -$icm, true);
+		$this->planet->updateAmount('interplanetary_misil', -$ipm, true);
+		$this->planet->update();
+	}
+
+	public function alliance($itemId, Request $request)
+	{
+		$fleetId = (int) $request->post('fleet', 0);
+
+		if ($fleetId <= 0) {
+			throw new Exception('Флот отсутствует у планеты');
+		}
+
+		$fleet = Fleet::query()
+			->where('id', $fleetId)
+			->coordinates(FleetDirection::END, $this->planet->getCoordinates())
+			->where('mess', 3)
+			->first();
+
+		if (!$fleet) {
+			throw new Exception('Флот отсутствует у планеты');
+		}
+
+		$storage = Vars::getStorage();
+
+		$tt = 0;
+
+		foreach ($fleet->getShips() as $type => $ship) {
+			if ($type > 100) {
+				$tt += $storage['CombatCaps'][$type]['stay'] * $ship['count'];
+			}
+		}
+
+		$max = $this->planet->getLevel($itemId) * 10000;
+
+		if ($max > $this->planet->deuterium) {
+			$cur = $this->planet->deuterium;
+		} else {
+			$cur = $max;
+		}
+
+		$times = round(($cur / $tt) * 3600);
+
+		$this->planet->deuterium -= $cur;
+		$this->planet->update();
+
+		$fleet->end_stay->addSeconds($times);
+		$fleet->end_time->addSeconds($times);
+		$fleet->update();
 	}
 }

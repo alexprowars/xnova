@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Enums\ItemType;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Vars;
 use Illuminate\Database\Eloquent\Model;
 
@@ -72,7 +73,7 @@ class UserQuest extends Model
 
 			if ($taskKey == 'planets') {
 				$count = $user->planets()
-					->where('planet_type', 1)
+					->where('planet_type', PlanetType::PLANET)
 					->count();
 
 				$result[$taskKey] = $count >= $taskVal;

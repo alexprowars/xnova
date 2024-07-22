@@ -9,12 +9,10 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Engine\Vars;
-use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
+use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Planet;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class FleetCheckoutController extends Controller
@@ -22,7 +20,7 @@ class FleetCheckoutController extends Controller
 	public function index(Request $request)
 	{
 		if ($this->user->isVacation()) {
-			throw new PageException('Нет доступа!');
+			throw new Exception('Нет доступа!');
 		}
 
 		$galaxy = (int) $request->post('galaxy', 0);
@@ -52,7 +50,7 @@ class FleetCheckoutController extends Controller
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = $request->post('ship');
+		$ships = $request->post('ships');
 
 		if (!is_array($ships)) {
 			$ships = [];
@@ -76,7 +74,7 @@ class FleetCheckoutController extends Controller
 		}
 
 		if (empty($fleets)) {
-			throw new RedirectException('/fleet');
+			throw new Exception('Не выбран флот');
 		}
 
 		$target = new Coordinates($galaxy, $system, $planet, $type);
@@ -124,9 +122,7 @@ class FleetCheckoutController extends Controller
 		if ($this->planet->planet_type == PlanetType::MOON || $this->planet->planet_type == PlanetType::MILITARY_BASE) {
 			$moons = $this->user->planets()
 				->where('id', '!=', $this->planet->id)
-				->where(function (Builder $planet) {
-					$planet->where('planet_type', 3)->orWhere('planet_type', 5);
-				})
+				->whereIn('planet_type', [PlanetType::MOON, PlanetType::MILITARY_BASE])
 				->get();
 
 			if ($moons->count()) {
@@ -172,8 +168,8 @@ class FleetCheckoutController extends Controller
 			];
 		}
 
-		$acs 	= (int) $request->post('alliance', 0);
-		$mission 	= (int) $request->post('mission', 0);
+		$acs = (int) $request->post('alliance', 0);
+		$mission = (int) $request->post('mission', 0);
 
 		$YourPlanet = false;
 		$UsedPlanet = false;

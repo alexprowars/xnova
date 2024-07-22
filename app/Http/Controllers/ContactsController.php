@@ -17,7 +17,7 @@ class ContactsController extends Controller
 
 		foreach ($users as $user) {
 			$contacts[] = [
-				'id' 	=> (int) $user->id,
+				'id' 	=> $user->id,
 				'name' 	=> $user->username,
 				'auth' 	=> __('main.user_level', $user->authlevel),
 				'mail' 	=> $user->email,

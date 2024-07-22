@@ -8,8 +8,6 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
 use App\Models\LogCredit;
 use App\Models\PlanetEntity;
 use Illuminate\Http\Request;
@@ -113,13 +111,13 @@ class ResourcesController extends Controller
 			'type' => 2,
 		]);
 
-		throw new RedirectException('/resources', 'Вы успешно купили ' . $resources['metal'] . ' металла, ' . $resources['crystal'] . ' кристалла, ' . $resources['deuterium'] . ' дейтерия');
+		return $resources;
 	}
 
 	public function shutdown(Request $request)
 	{
 		if ($this->user->isVacation()) {
-			throw new PageException('Включен режим отпуска!');
+			throw new Exception('Включен режим отпуска!');
 		}
 
 		$production = $request->post('active', 'Y') == 'Y' ? 10 : 0;

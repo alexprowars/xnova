@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Engine\Enums\MessageType;
+use App\Notifications\MessageNotification;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -45,14 +46,12 @@ class MailingController extends Controller
 			$users = User::query()->get(['id']);
 
 			foreach ($users as $user) {
-				User::sendMessage(
-					$user->id,
+				$user->notify(new MessageNotification(
 					null,
-					now(),
 					MessageType::System,
 					'<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
 					$fields['message']
-				);
+				));
 			}
 
 			return redirect(backpack_url('mailing'))->with('success', 'Сообщение успешно отправлено всем игрокам!');

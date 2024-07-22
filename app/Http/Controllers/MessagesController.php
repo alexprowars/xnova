@@ -8,6 +8,7 @@ use App\Exceptions\Exception;
 use App\Format;
 use App\Models\Message;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -78,12 +79,12 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['id', 'type', 'time', 'text', 'from_id'])
+			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
 			->orderBy('time', 'DESC');
 
 		if ($category == 101) {
-			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\',users.planet, \']\') as theme'))
-				->join('users', 'users.id', '=', 'user_id')
+			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\', users.planet, \']\') as theme'))
+				->leftJoin('users', 'users.id', '=', 'user_id')
 				->where('from_id', $this->user->id);
 		} else {
 			$messages->addSelect('theme')->where('user_id', $this->user->id)
@@ -216,7 +217,7 @@ class MessagesController extends Controller
 		$message = preg_replace('/ +/', ' ', $message);
 		$message = strtr($message, __('messages.stopwords'));
 
-		User::sendMessage($user->id, null, now(), MessageType::User, $from, $message);
+		$user->notify(new MessageNotification(null, MessageType::User, $from, $message));
 	}
 
 	public function delete(Request $request)
@@ -256,14 +257,12 @@ class MessagesController extends Controller
 			->get();
 
 		foreach ($users as $user) {
-			User::sendMessage(
-				$user->id,
-				$this->user->id,
-				now(),
+			$user->notify(new MessageNotification(
+				$this->user,
 				MessageType::User,
 				'<font color=red>' . $this->user->username . '</font>',
 				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date('d-m-Y H:i:s', $mes->time) . '<br>Текст сообщения: ' . $mes->text
-			);
+			));
 		}
 	}
 }

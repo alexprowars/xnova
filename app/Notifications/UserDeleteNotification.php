@@ -2,19 +2,15 @@
 
 namespace App\Notifications;
 
-use App\Mail\UserRegistration;
+use App\Mail\UserDelete;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 
-class UserRegistrationNotification extends Notification
+class UserDeleteNotification extends Notification
 {
 	use Queueable;
-
-	public function __construct(protected string $password)
-	{
-	}
 
 	public function via(): array
 	{
@@ -23,7 +19,7 @@ class UserRegistrationNotification extends Notification
 
 	public function toMail(User $notifiable): Mailable
 	{
-		return (new UserRegistration($notifiable, $this->password))
+		return (new UserDelete($notifiable))
 			->to($notifiable->email);
 	}
 }

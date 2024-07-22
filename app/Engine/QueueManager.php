@@ -16,6 +16,7 @@ use App\Models;
 use App\Models\LogHistory;
 use App\Models\Planet;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 
 class QueueManager
 {
@@ -351,7 +352,7 @@ class QueueManager
 				}
 
 				if (isset($message)) {
-					User::sendMessage($this->user->id, null, now(), MessageType::Queue, __('main.sys_buildlist'), $message);
+					$this->user->notify(new MessageNotification(null, MessageType::Queue, __('main.sys_buildlist'), $message));
 				}
 
 				array_shift($queueArray);
@@ -441,7 +442,8 @@ class QueueManager
 			return false;
 		}
 
-		$missilesSpace = ($this->planet->getLevel('missile_facility') * 10) - ($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
+		$missilesSpace = ($this->planet->getLevel('missile_facility') * 10) -
+			($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
 
 		$max = [];
 		$buildTypes = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);

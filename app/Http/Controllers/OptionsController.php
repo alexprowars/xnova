@@ -10,20 +10,65 @@ use App\Exceptions\RedirectException;
 use App\Files;
 use App\Format;
 use App\Helpers;
-use App\Mail\UserLostPasswordSuccess;
 use App\Models;
 use App\Models\User;
+use App\Notifications\MessageNotification;
+use App\Notifications\PasswordResetSuccessNotification;
 use Gumlet\ImageResize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class OptionsController extends Controller
 {
+	public function index()
+	{
+		$parse = [];
+		$parse['vacation'] = $this->user->isVacation();
+
+		if ($this->user->vacation) {
+			$parse['um_end_date'] = $this->user->vacation->utc()->toAtomString();
+			$parse['opt_delac_data'] = !empty($this->user->delete_time);
+			$parse['opt_modev_data'] = $this->user->isVacation();
+			$parse['opt_usern_data'] = $this->user->username;
+		} else {
+			$parse['options'] = $this->user->getOptions();
+			$parse['avatar'] = '';
+
+			if ($this->user->image > 0) {
+				$file = Files::getById($this->user->image);
+
+				if ($file) {
+					$parse['avatar'] = $file['src'];
+				}
+			}
+
+			$parse['opt_usern_datatime'] = $this->user->username_change?->lessThan(now()->subDay());
+			$parse['opt_usern_data'] = $this->user->username;
+			$parse['opt_mail_data'] = $this->user->email;
+			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
+
+			$parse['opt_delac_data'] = !empty($this->user->delete_time);
+			$parse['opt_modev_data'] = $this->user->isVacation();
+
+			$parse['sex'] = $this->user->sex;
+			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
+
+			$parse['auth'] = [];
+
+			/*$authData = DB::select("SELECT * FROM users_auth WHERE user_id = " . $this->user->getId() . "");
+
+			$parse['auth'] = array_map(function ($value) {
+				return (array) $value;
+			}, $authData);*/
+		}
+
+		return response()->state($parse);
+	}
+
 	public function externalAction()
 	{
 		$token = request()->input('token', '');
@@ -68,7 +113,7 @@ class OptionsController extends Controller
 				throw new Exception('Данный email уже используется в игре.');
 			}
 
-			User::sendMessage(1, null, now(), MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>');
+			User::find(1)?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>'));
 
 			throw new RedirectException('/options', 'Заявка отправлена на рассмотрение');
 		}
@@ -109,10 +154,7 @@ class OptionsController extends Controller
 			$this->user->password = Hash::make($password);
 			$this->user->save();
 
-			Mail::to($e)->send(new UserLostPasswordSuccess([
-				'#EMAIL#' => $e,
-				'#PASSWORD#' => $password,
-			]));
+			$this->user->notify(new PasswordResetSuccessNotification($password));
 
 			throw new Exception('Ваш пароль от аккаунта: ' . $password . '. Обязательно смените его на другой в настройках игры. Копия пароля отправлена на указанный вами электронный почтовый ящик.');
 		}
@@ -123,8 +165,7 @@ class OptionsController extends Controller
 			$vacation = null;
 
 			if ($request->post('vacation')) {
-				$queueManager = new QueueManager($this->user);
-				$queueCount = $queueManager->getCount();
+				$queueCount = (new QueueManager($this->user))->getCount();
 
 				$UserFlyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
 
@@ -276,54 +317,7 @@ class OptionsController extends Controller
 			$this->user->username_change = now();
 			$this->user->update();
 
-			throw new RedirectException('/options', 'Имя пользователя изменено');
+			throw new RedirectException('Имя пользователя изменено');
 		}
-
-		throw new RedirectException('/options', __('options.succeful_save'));
-	}
-
-	public function index()
-	{
-		$parse = [];
-		$parse['vacation'] = $this->user->isVacation();
-
-		if ($this->user->vacation) {
-			$parse['um_end_date'] = $this->user->vacation->utc()->toAtomString();
-			$parse['opt_delac_data'] = !empty($this->user->delete_time);
-			$parse['opt_modev_data'] = $this->user->isVacation();
-			$parse['opt_usern_data'] = $this->user->username;
-		} else {
-			$parse['options'] = $this->user->getOptions();
-			$parse['avatar'] = '';
-
-			if ($this->user->image > 0) {
-				$file = Files::getById($this->user->image);
-
-				if ($file) {
-					$parse['avatar'] = $file['src'];
-				}
-			}
-
-			$parse['opt_usern_datatime'] = $this->user->username_change?->lessThan(now()->subDay());
-			$parse['opt_usern_data'] = $this->user->username;
-			$parse['opt_mail_data'] = $this->user->email;
-			$parse['opt_isemail'] = Helpers::is_email($this->user->email);
-
-			$parse['opt_delac_data'] = !empty($this->user->delete_time);
-			$parse['opt_modev_data'] = $this->user->isVacation();
-
-			$parse['sex'] = $this->user->sex;
-			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
-
-			$parse['auth'] = [];
-
-			/*$authData = DB::select("SELECT * FROM users_auth WHERE user_id = " . $this->user->getId() . "");
-
-			$parse['auth'] = array_map(function ($value) {
-				return (array) $value;
-			}, $authData);*/
-		}
-
-		return response()->state($parse);
 	}
 }

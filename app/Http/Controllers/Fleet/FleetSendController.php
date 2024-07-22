@@ -45,12 +45,12 @@ class FleetSendController extends Controller
 
 		$assaultId = (int) $request->post('alliance', 0);
 
-		$resources = $request->post('resource');
+		$resources = $request->post('resource', []);
 		$resources = array_map('intval', $resources);
 
 		$fleetSpeedFactor = $request->post('speed', 10);
 
-		$fleetArray = json_decode(base64_decode(str_rot13($request->post('fleet', ''))), true);
+		$fleetArray = json_decode(base64_decode(str_rot13($request->post('fleet', ''))), true) ?? [];
 
 		$target = new Coordinates($galaxy, $system, $planet, $planetType);
 

@@ -16,10 +16,11 @@ Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 
 Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index']);
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index']);
 
-Route::post('login', [Controllers\LoginController::class, 'byCredentials']);
-Route::get('login/social/{service}', [Controllers\LoginController::class, 'byServices']);
-Route::get('login/callback/{service}', [Controllers\LoginController::class, 'servicesCallback']);
-Route::post('login/reset', [Controllers\LoginController::class, 'resetPassword']);
+Route::post('login', [Controllers\LoginController::class, 'credentials']);
+Route::get('login/social/{service}', [Controllers\LoginController::class, 'services']);
+Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback']);
+Route::get('login/reset', [Controllers\ResetPasswordController::class, 'reset']);
+Route::post('login/reset', [Controllers\ResetPasswordController::class, 'send']);
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('tech', [Controllers\TechController::class, 'index']);
@@ -31,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('players/stat/{id}', [Controllers\PlayersController::class, 'stat']);
 	Route::post('logout', [Controllers\LogoutController::class, 'index']);
 	Route::get('info/{id}', [Controllers\InfoController::class, 'index']);
+	Route::post('info/{id}/missiles', [Controllers\InfoController::class, 'missiles']);
+	Route::post('info/{id}/alliance', [Controllers\InfoController::class, 'alliance']);
 	Route::match(['get', 'post'], 'hall', [Controllers\HallController::class, 'index']);
 	Route::post('chat/send', [Controllers\ChatController::class, 'sendMessage']);
 	Route::get('chat/last', [Controllers\ChatController::class, 'last']);
@@ -90,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('officier', [Controllers\OfficierController::class, 'index']);
 	Route::post('officier/buy', [Controllers\OfficierController::class, 'buy']);
 	Route::get('options', [Controllers\OptionsController::class, 'index']);
-	Route::post('options/save', [Controllers\OptionsController::class, 'save']);
+	Route::post('options', [Controllers\OptionsController::class, 'save']);
 	Route::match(['get', 'post'], 'overview', [Controllers\OverviewController::class, 'index']);
 	Route::post('overview/daily', [Controllers\OverviewController::class, 'daily']);
 	Route::match(['get', 'post'], 'overview/rename', [Controllers\OverviewController::class, 'rename']);
@@ -104,14 +107,14 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('resources/buy', [Controllers\ResourcesController::class, 'buy']);
 	Route::post('resources/shutdown', [Controllers\ResourcesController::class, 'shutdown']);
 	Route::post('resources/state', [Controllers\ResourcesController::class, 'state']);
-	Route::get('rocket', [Controllers\RocketController::class, 'index']);
+	Route::post('rocket', [Controllers\RocketController::class, 'index']);
 	Route::get('rw/{id}/{key}', [Controllers\RwController::class, 'index']);
 	Route::match(['get', 'post'], 'search', [Controllers\SearchController::class, 'index']);
 	Route::get('shipyard', [Controllers\ShipyardController::class, 'index']);
 	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue']);
 	Route::get('support', [Controllers\SupportController::class, 'index']);
-	Route::get('support/info/{id}', [Controllers\SupportController::class, 'info']);
-	Route::post('support/answer/{id}', [Controllers\SupportController::class, 'answer']);
+	Route::get('support/info/{id}', [Controllers\SupportController::class, 'info'])->whereNumber('id');
+	Route::post('support/answer/{id}', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
 	Route::post('support/add', [Controllers\SupportController::class, 'add']);
 	Route::get('tutorial', [Controllers\TutorialController::class, 'index']);
 	Route::get('tutorial/{id}', [Controllers\TutorialController::class, 'info']);

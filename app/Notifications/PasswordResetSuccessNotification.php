@@ -8,7 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 
-class PasswordResetNotification extends Notification
+class PasswordResetSuccessNotification extends Notification
 {
 	use Queueable;
 
@@ -23,11 +23,7 @@ class PasswordResetNotification extends Notification
 
 	public function toMail(User $notifiable): Mailable
 	{
-		return (new UserLostPasswordSuccess([
-			'#EMAIL#' => $notifiable->getEmailForPasswordReset(),
-			'#NAME#' => $notifiable->username,
-			'#PASSWORD#' => $this->password,
-		]))
-		->to($notifiable->getEmailForPasswordReset());
+		return (new UserLostPasswordSuccess($notifiable, $this->password))
+			->to($notifiable->getEmailForPasswordReset());
 	}
 }

@@ -2,27 +2,29 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Mail\Mailable;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 
 class UserLostPasswordSuccess extends Mailable
 {
-	protected $fields = [];
-
-	public function __construct(array $fields)
+	public function __construct(protected User $user, protected string $password)
 	{
-		$this->fields = $fields;
-		$this->fields['#SERVER#'] = Request::instance()->getHttpHost();
 	}
 
-	public function build()
+	public function envelope(): Envelope
 	{
-		$this->subject(config('app.name') . ": Новый пароль");
+		return new Envelope(
+			subject: config('app.name') . ': Новый пароль',
+		);
+	}
 
-		$template = File::get(resource_path('/views/email/remind_2.html'));
-		$template = strtr($template, $this->fields);
-
-		return $this->html($template);
+	public function content(): Content
+	{
+		return new Content('email.remind_2', with: [
+			'user' => $this->user,
+			'password' => $this->password,
+		]);
 	}
 }

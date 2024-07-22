@@ -3,29 +3,26 @@
 namespace App\Models;
 
 use App\Engine\Enums\MessageType;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Galaxy;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
 use App\Exceptions\Exception;
 use App\Helpers;
-use App\Mail\UserLostPassword;
+use App\Notifications\MessageNotification;
 use App\Notifications\UserRegistrationNotification;
 use App\Settings;
-use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 use Throwable;
@@ -132,20 +129,6 @@ class User extends Authenticatable implements FilamentUser, HasName
 		return $this->onlinetime->diffInSeconds() < 180;
 	}
 
-	public function sendPasswordResetNotification($token)
-	{
-		$email = $this->getEmailForPasswordReset();
-
-		try {
-			Mail::to($email)->send(new UserLostPassword([
-				'#EMAIL#' => $email,
-				'#NAME#' => $this->username,
-				'#URL#' => URL::route('login.reset', ['token' => $token, 'user' => $email]),
-			]));
-		} catch (\Exception) {
-		}
-	}
-
 	public function getAllyInfo()
 	{
 		if ($this->alliance) {
@@ -168,7 +151,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 			$this->update();
 
-			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый промышленный уровень</a>');
+			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier/">Получен новый промышленный уровень</a>'));
 
 			$giveCredits += config('game.level.credits', 10);
 		}
@@ -180,7 +163,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 			$this->update();
 
-			static::sendMessage($this->id, null, now(), MessageType::System, '', '<a href="/officier/">Получен новый военный уровень</a>');
+			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier/">Получен новый военный уровень</a>'));
 
 			$giveCredits += config('game.level.credits', 10);
 		}
@@ -243,7 +226,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 
 		if (!$withMoons) {
-			$query->where('planet_type', '!=', 3);
+			$query->where('planet_type', '!=', PlanetType::MOON);
 		}
 
 		$this->getPlanetListSortQuery($query);
@@ -291,51 +274,6 @@ class User extends Authenticatable implements FilamentUser, HasName
 		};
 
 		$query->orderBy($qryPlanets, $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc');
-	}
-
-	public static function sendMessage($userId, $sender, $time, MessageType $type, $from, $message): bool
-	{
-		if (is_numeric($time)) {
-			$time = Carbon::createFromTimestamp($time);
-		}
-
-		if (empty($time)) {
-			$time = now();
-		}
-
-		$authUser = Auth::user();
-
-		if (!$userId && $authUser) {
-			$userId = $authUser->id;
-		}
-
-		if (!$userId) {
-			return false;
-		}
-
-		if (!$sender && $authUser) {
-			$sender = $authUser->id;
-		}
-
-		$obj = new Message();
-		$obj->user_id = $userId;
-		$obj->from_id = $sender ?: null;
-		$obj->time = $time;
-		$obj->type = $type;
-		$obj->theme = $from;
-		$obj->text = $message;
-
-		if ($obj->save()) {
-			if ($authUser && $userId == $authUser->id) {
-				$authUser->increment('messages');
-			} else {
-				User::find($userId)->increment('messages');
-			}
-
-			return true;
-		}
-
-		return false;
 	}
 
 	public static function getRankId($lvl)

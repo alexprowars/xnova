@@ -9,6 +9,7 @@ use App\Engine\Fleet\FleetEngine;
 use App\Models;
 use App\Models\Planet;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -137,15 +138,15 @@ class Destruction extends FleetEngine implements Mission
 
 				$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
 
-				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message);
-				User::sendMessage($targetMoon->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message);
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));
+				$targetMoon->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));
 
 				Cache::forget('app::planetlist_' . $targetMoon->user_id);
 			} else {
-				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop')));
 			}
 		} else {
-			User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop'));
+			$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop')));
 		}
 	}
 

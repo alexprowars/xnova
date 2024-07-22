@@ -7,23 +7,23 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
-use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 
 class CreateBase extends FleetEngine implements Mission
 {
 	public function targetEvent()
 	{
-		$owner = User::query()->find($this->fleet->user_id);
-
 		// Определяем максимальное количество баз
-		$maxBases = $owner->getTechLevel('fleet_base');
+		$maxBases = $this->fleet->user->getTechLevel('fleet_base');
 
 		$galaxy = new Galaxy();
 
 		// Получение общего количества построенных баз
-		$iPlanetCount = Models\Planet::query()->where('user_id', $this->fleet->user_id)
-			->where('planet_type', 5)->count();
+		$iPlanetCount = Models\Planet::query()
+			->where('user_id', $this->fleet->user_id)
+			->where('planet_type', PlanetType::MILITARY_BASE)
+			->count();
 
 		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
 
@@ -33,8 +33,7 @@ class CreateBase extends FleetEngine implements Mission
 			if ($iPlanetCount >= $maxBases) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
 
-				User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
-
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 				$this->fleet->return();
 			} else {
 				// Создание планеты-базы
@@ -48,7 +47,7 @@ class CreateBase extends FleetEngine implements Mission
 				if ($NewOwnerPlanet) {
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_allisok');
 
-					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 
 					$newFleet = [];
 
@@ -74,7 +73,7 @@ class CreateBase extends FleetEngine implements Mission
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
-					User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 				}
 			}
 		} else {
@@ -82,7 +81,7 @@ class CreateBase extends FleetEngine implements Mission
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 
-			User::sendMessage($this->fleet->user_id, null, $this->fleet->end_time, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage);
+			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 		}
 	}
 

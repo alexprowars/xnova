@@ -36,7 +36,7 @@ class FleetSend
 			->first();
 	}
 
-	public function setMission(Mission $mission)
+	public function setMission(?Mission $mission)
 	{
 		$this->mission = $mission;
 	}

@@ -8,6 +8,7 @@ use App\Filament\Resources\PaymentResource;
 use App\Models\LogCredit;
 use App\Models\Payment;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -53,7 +54,7 @@ class CreatePayment extends CreateRecord
 			'type' => 6,
 		]);
 
-		User::sendMessage($user->id, null, now(), MessageType::System, 'Обработка платежей', 'На ваш счет зачислено ' . $data['amount'] . ' кредитов');
+		$user->notify(new MessageNotification(null, MessageType::System, 'Обработка платежей', 'На ваш счет зачислено ' . $data['amount'] . ' кредитов'));
 
 		return $record;
 	}

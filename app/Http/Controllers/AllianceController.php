@@ -16,6 +16,7 @@ use App\Models\Alliance;
 use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -354,7 +355,7 @@ class AllianceController extends Controller
 						'alliance_id' => $alliance->id,
 					]);
 
-					User::sendMessage($show, $this->user->id, now(), MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot . "" : ""));
+					User::find($show)?->notify(new MessageNotification($this->user->id, MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> принял вас в свои ряды!" . ((isset($text_ot)) ? "<br>Приветствие:<br>" . $text_ot : "")));
 
 					throw new RedirectException('/alliance/members', 'Игрок принят в альянс');
 				}
@@ -365,7 +366,7 @@ class AllianceController extends Controller
 
 				AllianceRequest::query()->where('user_id', $show)->where('alliance_id', $alliance->id)->delete();
 
-				User::sendMessage($show, $this->user->id, now(), MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot . "" : ""));
+				User::find($show)?->notify(new MessageNotification($this->user->id, MessageType::Alliance, $alliance->tag, "Привет!<br>Альянс <b>" . $alliance->name . "</b> отклонил вашу кандидатуру!" . ((isset($text_ot)) ? "<br>Причина:<br>" . $text_ot : "")));
 			}
 		}
 
@@ -582,7 +583,7 @@ class AllianceController extends Controller
 				$al = Alliance::find((int) $request->post('ally'));
 
 				if (!$al) {
-					throw new RedirectException("/alliance/diplomacy", "Ошибка ввода параметров");
+					throw new RedirectException('/alliance/diplomacy', 'Ошибка ввода параметров');
 				}
 
 				$ad = Models\AllianceDiplomacy::query()->where('alliance_id', $alliance->id)

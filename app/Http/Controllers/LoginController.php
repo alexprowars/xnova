@@ -3,18 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Exception;
-use App\Exceptions\SuccessException;
 use App\Models;
 use App\Models\User;
-use App\Notifications\PasswordResetNotification;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Throwable;
 
 class LoginController extends Controller
 {
@@ -22,7 +15,7 @@ class LoginController extends Controller
 		'vkontakte',
 	];
 
-	public function byCredentials(Request $request)
+	public function credentials(Request $request)
 	{
 		if (empty($request->post('email'))) {
 			throw new Exception('Введите Email');
@@ -41,7 +34,7 @@ class LoginController extends Controller
 		}
 	}
 
-	public function byServices($service)
+	public function services($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return redirect()->away('/');
@@ -50,7 +43,7 @@ class LoginController extends Controller
 		return Socialite::driver($service)->redirect();
 	}
 
-	public function servicesCallback($service)
+	public function callback($service)
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return redirect()->away('/');
@@ -91,60 +84,5 @@ class LoginController extends Controller
 		}
 
 		return redirect()->away('/overview');
-	}
-
-	public function resetPassword(Request $request)
-	{
-		if ($request->has(['email', 'token'])) {
-			$request->validate([
-				'token' => ['required'],
-				'email' => ['required', 'email'],
-			]);
-
-			$email = $request->query('email');
-			$token = addslashes($request->query('token'));
-
-			$password = Str::random(10);
-
-			$status = Password::reset(
-				['email' => $email, 'token' => $token, 'password' => $password],
-				function (Models\User $user, $password) {
-					$user->password = Hash::make($password);
-					$user->setRememberToken(Str::random(60));
-					$user->save();
-
-					event(new PasswordReset($user));
-
-					Auth::login($user);
-
-					try {
-						$user->notify(new PasswordResetNotification($password));
-					} catch (Throwable) {
-					}
-				}
-			);
-
-			if ($status != Password::PASSWORD_RESET) {
-				throw new Exception(__($status));
-			}
-
-			throw new SuccessException('Ваш новый пароль: ' . $password . '. Копия пароля отправлена на почтовый ящик!');
-		}
-
-		if ($request->post('email')) {
-			$request->validate([
-				'email' => ['required', 'email'],
-			]);
-
-			$status = Password::sendResetLink(
-				$request->only('email')
-			);
-
-			if ($status != Password::RESET_LINK_SENT) {
-				throw new Exception(__($status));
-			}
-
-			throw new SuccessException(__($status));
-		}
 	}
 }

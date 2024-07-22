@@ -6,7 +6,7 @@ use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Models;
-use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -122,7 +122,7 @@ class BuddyController extends Controller
 				'message' => $text,
 			]);
 
-			User::sendMessage($user->id, null, now(), MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>');
+			$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>'));
 
 			throw new RedirectException('/buddy', 'Запрос отправлен');
 		}

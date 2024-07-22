@@ -17,8 +17,6 @@ class FleetController extends Controller
 			throw new Exception(__('fleet.fl_noplanetrow'));
 		}
 
-		$flyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
-
 		$expeditionTech = $this->user->getTechLevel('expedition');
 		$curExpeditions = 0;
 		$maxExpeditions = 0;
@@ -51,7 +49,6 @@ class FleetController extends Controller
 		}
 
 		$parse = [];
-		$parse['curFleets'] = $flyingFleets;
 		$parse['curExpeditions'] = $curExpeditions;
 		$parse['maxExpeditions'] = $maxExpeditions;
 		$parse['mission'] = $mission;

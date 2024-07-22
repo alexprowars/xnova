@@ -6,12 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Support extends Model
 {
-	public $timestamps = false;
-
-	protected function casts(): array
+	public function user()
 	{
-		return [
-			'time' => 'immutable_datetime',
-		];
+		return $this->belongsTo(User::class, 'user_id');
 	}
 }

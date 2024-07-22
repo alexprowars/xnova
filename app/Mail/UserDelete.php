@@ -2,27 +2,29 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Mail\Mailable;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 
 class UserDelete extends Mailable
 {
-	protected $fields = [];
-
-	public function __construct(array $fields)
+	public function __construct(protected User $user)
 	{
-		$this->fields = $fields;
-		$this->fields['#SERVER#'] = Request::instance()->getHttpHost();
 	}
 
-	public function build()
+	public function envelope(): Envelope
 	{
-		$this->subject(config('app.name') . ': Уведомление об удалении аккаунта: ' . config('game.universe') . ' вселенная');
+		return new Envelope(
+			subject: config('app.name') . ': Уведомление об удалении аккаунта: ' . config('game.universe') . ' вселенная',
+		);
+	}
 
-		$template = File::get(resource_path('/views/email/delete.html'));
-		$template = strtr($template, $this->fields);
-
-		return $this->html($template);
+	public function content(): Content
+	{
+		return new Content('email.delete', with: [
+			'user' => $this->user,
+			'time' => config('game.deleteTime', 7),
+		]);
 	}
 }

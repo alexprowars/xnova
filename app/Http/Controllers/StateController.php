@@ -26,13 +26,18 @@ class StateController extends Controller
 				'online' => (int) config('game.usersOnline', 0),
 				'users' => (int) config('game.usersTotal', 0),
 			],
-			'user' => $user ? User::make($user) : null,
-			'planet' => $planet ? Planet::make($planet) : null,
-			'queue' => Construction::showBuildingQueue($user, $planet),
+			'user' => null,
 			'version' => VERSION,
 		];
 
 		if ($user) {
+			$data['user'] = User::make($user);
+
+			if ($planet) {
+				$data['planet'] = Planet::make($planet);
+				$data['queue'] = Construction::showBuildingQueue($user, $planet);
+			}
+
 			$globalMessage = config('game.newsMessage', '');
 
 			if (!empty($globalMessage)) {

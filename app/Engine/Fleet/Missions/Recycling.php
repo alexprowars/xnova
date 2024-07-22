@@ -9,7 +9,7 @@ use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Format;
 use App\Models\Planet;
-use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\DB;
 
 class Recycling extends FleetEngine implements Mission
@@ -93,7 +93,7 @@ class Recycling extends FleetEngine implements Mission
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
 
-		User::sendMessage($this->fleet->user_id, null, $this->fleet->start_time, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $Message);
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $Message));
 	}
 
 	public function endStayEvent()

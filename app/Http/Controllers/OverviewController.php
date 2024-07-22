@@ -196,7 +196,10 @@ class OverviewController extends Controller
 
 		$this->user->update();
 
-		throw new RedirectException('/overview', 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . $add . '</b> Металла, Кристаллов и Дейтерия' . ($this->user->daily_bonus_factor > 1 ? ', а также 1 кредит.' : ''));
+		return [
+			'resources' => $add,
+			'credits' => $this->user->daily_bonus_factor > 1,
+		];
 	}
 
 	public function index()
@@ -263,7 +266,7 @@ class OverviewController extends Controller
 				return Models\Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
 					->where('id', $this->planet->parent_planet)
-					->where('planet_type', 3)
+					->where('planet_type', PlanetType::MOON)
 					->first()?->toArray();
 			});
 

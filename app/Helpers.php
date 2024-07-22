@@ -50,9 +50,9 @@ class Helpers
 					$end = 0;
 
 					if ($i == $page) {
-						$pages .= '<div class="page-item active"><a href="' . $link . (strpos($link, '?') === false ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
+						$pages .= '<div class="page-item active"><a href="' . $link . (!str_contains($link, '?') ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
 					} else {
-						$pages .= '<div class="page-item"><a href="' . $link . (strpos($link, '?') === false ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
+						$pages .= '<div class="page-item"><a href="' . $link . (!str_contains($link, '?') ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
 					}
 				} else {
 					if ($end == 0) {

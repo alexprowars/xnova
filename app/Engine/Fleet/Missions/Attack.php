@@ -14,6 +14,7 @@ use App\Engine\CombatEngine\Models\Ship;
 use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Coordinates;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
@@ -25,8 +26,10 @@ use App\Engine\Vars;
 use App\Format;
 use App\Models;
 use App\Models\Fleet as FleetModel;
+use App\Models\LogAttack;
 use App\Models\Planet;
 use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\DB;
 
 class Attack extends FleetEngine implements Mission
@@ -81,23 +84,16 @@ class Attack extends FleetEngine implements Mission
 			foreach ($fleets as $fleet) {
 				$this->getGroupFleet($fleet, $attackers);
 			}
-
-			unset($fleets);
 		}
 
-		$def = Models\Fleet::query()
-			->where('end_galaxy', $this->fleet->end_galaxy)
-			->where('end_system', $this->fleet->end_system)
-			->where('end_planet', $this->fleet->end_planet)
-			->where('end_type', $this->fleet->end_type)
+		$fleets = Models\Fleet::query()
+			->coordinates(FleetDirection::END, $this->fleet->getDestinationCoordinates())
 			->where('mess', 3)
 			->get();
 
-		foreach ($def as $fleet) {
+		foreach ($fleets as $fleet) {
 			$this->getGroupFleet($fleet, $defenders);
 		}
-
-		unset($def);
 
 		$res = [];
 
@@ -262,7 +258,7 @@ class Attack extends FleetEngine implements Mission
 
 		if ($totalDebree > 0) {
 			Planet::coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
-				->where('planet_type', '!=', 3)
+				->where('planet_type', '!=', PlanetType::MOON)
 				->update([
 					'debris_metal' => DB::raw('debris_metal + ' . ($result['debree']['att'][0] + $result['debree']['def'][0])),
 					'debris_crystal' => DB::raw('debris_metal + ' . ($result['debree']['att'][1] + $result['debree']['def'][1])),
@@ -449,33 +445,33 @@ class Attack extends FleetEngine implements Mission
 		if ($lost >= config('game.hallPoints', 1000000)) {
 			$sab = 0;
 
-			$UserList = [];
+			$userList = [];
 
 			foreach ($attackUsers as $info) {
-				if (!in_array($info['username'], $UserList)) {
-					$UserList[] = $info['username'];
+				if (!in_array($info['username'], $userList)) {
+					$userList[] = $info['username'];
 				}
 			}
 
-			if (count($UserList) > 1) {
+			if (count($userList) > 1) {
 				$sab = 1;
 			}
 
-			$title_1 = implode(',', $UserList);
+			$title_1 = implode(',', $userList);
 
-			$UserList = [];
+			$userList = [];
 
 			foreach ($defenseUsers as $info) {
-				if (!in_array($info['username'], $UserList)) {
-					$UserList[] = $info['username'];
+				if (!in_array($info['username'], $userList)) {
+					$userList[] = $info['username'];
 				}
 			}
 
-			if (count($UserList) > 1) {
+			if (count($userList) > 1) {
 				$sab = 1;
 			}
 
-			$title_2 = implode(',', $UserList);
+			$title_2 = implode(',', $userList);
 
 			$title = $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
@@ -504,11 +500,11 @@ class Attack extends FleetEngine implements Mission
 		$report2Html .= __('fleet_engine.sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';
 		$report2Html .= __('fleet_engine.sys_debris') . ' м: <font color=\'#adaead\'>' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
 
-		$UserList = [];
+		$userList = [];
 
 		foreach ($attackUsers as $info) {
-			if (!in_array($info['tech']['id'], $UserList)) {
-				$UserList[] = $info['tech']['id'];
+			if (!in_array($info['tech']['id'], $userList)) {
+				$userList[] = $info['tech']['id'];
 			}
 		}
 
@@ -524,15 +520,15 @@ class Attack extends FleetEngine implements Mission
 
 		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
 
-		foreach ($UserList as $info) {
-			User::sendMessage($info, null, now(), MessageType::Battle, 'Боевой доклад', $attackersReport);
+		foreach ($userList as $userId) {
+			User::find($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $attackersReport));
 		}
 
-		$UserList = [];
+		$userList = [];
 
 		foreach ($defenseUsers as $info) {
-			if (!in_array($info['tech']['id'], $UserList)) {
-				$UserList[] = $info['tech']['id'];
+			if (!in_array($info['tech']['id'], $userList)) {
+				$userList[] = $info['tech']['id'];
 			}
 		}
 
@@ -548,11 +544,11 @@ class Attack extends FleetEngine implements Mission
 
 		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
 
-		foreach ($UserList as $info) {
-			User::sendMessage($info, null, now(), MessageType::Battle, 'Боевой доклад', $defendersReport);
+		foreach ($userList as $userId) {
+			User::find($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $defendersReport));
 		}
 
-		Models\LogAttack::create([
+		LogAttack::create([
 			'user_id' 		=> $this->fleet->user_id,
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
@@ -565,7 +561,6 @@ class Attack extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		return;
 	}
 
 	public function returnEvent()
@@ -813,9 +808,6 @@ class Attack extends FleetEngine implements Mission
 
 					if ($existShipType) {
 						$XshipType = $Xfleet->getShipType($idShipType);
-						/**
-						 * @var $XshipType ShipType
-						 */
 						$result[$idFleet][$idShipType] = $XshipType->getCount();
 					} else {
 						$result[$idFleet][$idShipType] = 0;

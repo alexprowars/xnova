@@ -64,7 +64,7 @@ class FleetShortcutController extends Controller
 				'planet_type' => $t,
 			]);
 
-			throw new RedirectException("/fleet/shortcut", "Ссылка на планету добавлена!");
+			throw new RedirectException('/fleet/shortcut', 'Ссылка на планету добавлена!');
 		}
 
 		$g = (int) $request->input('g', 0);
@@ -100,14 +100,14 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new RedirectException("/fleet/shortcut", "Данной ссылки не существует!");
+			throw new RedirectException('/fleet/shortcut', 'Данной ссылки не существует!');
 		}
 
 		if ($request->isMethod('post')) {
 			if ($request->has('delete')) {
 				$shortcut->delete();
 
-				throw new RedirectException("/fleet/shortcut", "Ссылка была успешно удалена!");
+				throw new RedirectException('/fleet/shortcut', 'Ссылка была успешно удалена!');
 			} else {
 				$shortcut->name = strip_tags(str_replace(',', '', $request->post('title', '')));
 
@@ -138,7 +138,7 @@ class FleetShortcutController extends Controller
 				$shortcut->planet_type = $t;
 				$shortcut->save();
 
-				throw new RedirectException("/fleet/shortcut", "Ссылка была обновлена!");
+				throw new RedirectException('/fleet/shortcut', 'Ссылка была обновлена!');
 			}
 		}
 

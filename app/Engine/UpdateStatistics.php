@@ -4,17 +4,16 @@ namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
 use App\Helpers;
-use App\Mail\UserDelete;
 use App\Models;
 use App\Models\Fleet;
 use App\Models\LogStat;
 use App\Models\Statistic;
 use App\Models\User;
+use App\Notifications\UserDeleteNotification;
 use App\Settings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class UpdateStatistics
 {
@@ -258,9 +257,7 @@ class UpdateStatistics
 			]);
 
 			if (Helpers::is_email($user->email)) {
-				Mail::to($user->email)->send(new UserDelete([
-					'#NAME#' => $user->username,
-				]));
+				$user->notify(new UserDeleteNotification());
 			}
 
 			$result[] = $user->username;

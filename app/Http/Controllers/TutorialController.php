@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Format;
-use App\Models;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 
 class TutorialController extends Controller
 {
@@ -195,13 +193,13 @@ class TutorialController extends Controller
 	public function finish(int $id)
 	{
 		if ($id <= 0) {
-			throw new PageException('Не выбрано задание', '/tutorial');
+			throw new Exception('Не выбрано задание');
 		}
 
 		$tutorial = require resource_path('engine/tutorial.php');
 
 		if (!isset($tutorial[$id])) {
-			throw new PageException('Задание не существует', '/tutorial');
+			throw new Exception('Задание не существует');
 		}
 
 		$qInfo = $this->user->quests()
@@ -209,7 +207,7 @@ class TutorialController extends Controller
 			->first();
 
 		if (!$qInfo) {
-			throw new PageException('Задание не существует', '/tutorial');
+			throw new Exception('Задание не существует');
 		}
 
 		$errors = 0;
@@ -220,7 +218,7 @@ class TutorialController extends Controller
 		}
 
 		if ($errors || $qInfo->finish) {
-			throw new PageException('Задание не выполнено', '/tutorial');
+			throw new Exception('Задание не выполнено');
 		}
 
 		foreach ($tutorial[$id]['reward'] as $rewardKey => $rewardVal) {
@@ -258,11 +256,9 @@ class TutorialController extends Controller
 		$qInfo->finish = 1;
 		$qInfo->update();
 
-		Cache::forget('app::quests::' . $this->user->id);
+		cache()->forget('app::quests::' . $this->user->id);
 
 		$this->user->save();
 		$this->planet->save();
-
-		throw new RedirectException('/tutorial', 'Квест завершен');
 	}
 }

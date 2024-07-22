@@ -10,10 +10,10 @@ return new class extends Migration {
 		Schema::create('supports', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-			$table->timestamp('time')->nullable();
 			$table->string('subject')->default('');
-			$table->text('text');
+			$table->text('message');
 			$table->integer('status')->default(1);
+			$table->timestamps();
 		});
 	}
 

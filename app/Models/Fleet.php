@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -139,5 +141,16 @@ class Fleet extends Model
 
 		$this->update($attributes);
 		$this->assault?->delete();
+	}
+
+	public function scopeCoordinates(Builder $query, FleetDirection $position, Coordinates $target)
+	{
+		$query->where($position->value . '_galaxy', $target->getGalaxy())
+			->where($position->value . '_system', $target->getSystem())
+			->where($position->value . '_planet', $target->getPlanet());
+
+		if ($target->getType()) {
+			$query->where($position->value . '_type', $target->getType());
+		}
 	}
 }
