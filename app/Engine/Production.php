@@ -181,10 +181,11 @@ class Production
 		$storageCapacity->set(ResourcesEnum::ENERGY, $this->planet->energy_max);
 
 		foreach (Vars::getResources() as $res) {
-			if ($this->planet->{$res} <= $storageCapacity->get($res)) {
-				$this->planet->{$res} += $time * (($resourceProduction->get($res) / 3600));
+			if ($this->planet->{$res} >= $storageCapacity->get($res)) {
+				continue;
 			}
 
+			$this->planet->{$res} += $time * (($resourceProduction->get($res) / 3600));
 			$this->planet->{$res} = max(0, min($this->planet->{$res}, $storageCapacity->get($res)));
 		}
 	}

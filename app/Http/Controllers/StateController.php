@@ -6,11 +6,12 @@ use App\Engine\Construction;
 use App\Engine\Game;
 use App\Http\Resources\Planet;
 use App\Http\Resources\User;
+use App\Settings;
 use Illuminate\Support\Facades\Auth;
 
 class StateController extends Controller
 {
-	public function index()
+	public function index(Settings $settings)
 	{
 		$user = Auth::user();
 		$planet = $user?->getCurrentPlanet();
@@ -23,8 +24,8 @@ class StateController extends Controller
 				'resources' => Game::getSpeed('mine'),
 			],
 			'stats' => [
-				'online' => (int) config('game.usersOnline', 0),
-				'users' => (int) config('game.usersTotal', 0),
+				'online' => $settings->usersOnline ?: 0,
+				'users' => $settings->usersTotal ?: 0,
 			],
 			'user' => null,
 			'version' => VERSION,

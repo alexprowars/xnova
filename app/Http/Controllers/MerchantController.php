@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class MerchantController extends Controller
 {
-	private $modifiers = [
+	protected $modifiers = [
 		'metal' => 1,
 		'crystal' => 2,
 		'deuterium' => 4,
@@ -82,6 +82,9 @@ class MerchantController extends Controller
 			$tutorial->save();
 		}
 
-		throw new RedirectException('/merchant', 'Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type));
+		return [
+			'type' => $type,
+			'exchange' => $exchange,
+		];
 	}
 }

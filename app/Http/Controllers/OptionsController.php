@@ -99,24 +99,28 @@ class OptionsController extends Controller
 		throw new RedirectException('/options');
 	}
 
-	public function emailAction(Request $request)
+	public function email(Request $request)
 	{
-		if ($request->post('password') && $request->post('email')) {
-			if (!Hash::check($request->post('password'), $this->user->password)) {
-				throw new Exception('Heпpaвильный тeкyщий пapoль');
-			}
+		$email = addslashes(htmlspecialchars(trim($request->post('email'))));
 
-			$existEmail = Models\User::query()->where('email', addslashes(htmlspecialchars(trim($request->post('email')))))
-				->exists();
-
-			if ($existEmail) {
-				throw new Exception('Данный email уже используется в игре.');
-			}
-
-			User::find(1)?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email/') . '">Сменить</a>'));
-
-			throw new RedirectException('/options', 'Заявка отправлена на рассмотрение');
+		if (empty($email)) {
+			throw new Exception('Введите Email адрес');
 		}
+
+		if (!Hash::check($request->post('password'), $this->user->password)) {
+			throw new Exception('Heпpaвильный тeкyщий пapoль');
+		}
+
+		$existEmail = User::query()->where('email', $email)
+			->exists();
+
+		if ($existEmail) {
+			throw new Exception('Данный email уже используется в игре.');
+		}
+
+		User::find(1)?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email') . '">Сменить</a>'));
+
+		throw new RedirectException('/options', 'Заявка отправлена на рассмотрение');
 	}
 
 	public function save(Request $request)

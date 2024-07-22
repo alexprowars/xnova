@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Fleet;
 
+use App\Engine\Enums\PlanetType;
+use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
-use App\Models;
+use App\Models\FleetShortcut;
 use Illuminate\Http\Request;
 
 class FleetShortcutController extends Controller
@@ -25,121 +27,71 @@ class FleetShortcutController extends Controller
 		}
 
 		return response()->state([
-			'items' => $items
+			'items' => $items,
 		]);
 	}
 
-	public function add(Request $request)
+	public function create(Request $request)
 	{
-		if ($request->isMethod('post')) {
-			$name = $request->post('title', '');
+		$galaxy = (int) $request->query('g', 0);
+		$system = (int) $request->query('s', 0);
+		$planet = (int) $request->query('p', 0);
+		$planetType = (int) $request->query('t', 0);
 
-			if ($name == '' || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-				$name = 'Планета';
-			}
+		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
+		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));
+		$planet = min(max($planet, 1), config('game.maxPlanetInSystem'));
 
-			$g = (int) $request->post('galaxy', 0);
-			$s = (int) $request->post('system', 0);
-			$p = (int) $request->post('planet', 0);
-			$t = (int) $request->post('planet_type', 0);
-
-			if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
-				$g = 1;
-			}
-			if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
-				$s = 1;
-			}
-			if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
-				$p = 1;
-			}
-			if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
-				$t = 1;
-			}
-
-			$this->user->shortcuts()->create([
-				'name' => $name,
-				'galaxy' => $g,
-				'system' => $s,
-				'planet' => $p,
-				'planet_type' => $t,
-			]);
-
-			throw new RedirectException('/fleet/shortcut', 'Ссылка на планету добавлена!');
-		}
-
-		$g = (int) $request->input('g', 0);
-		$s = (int) $request->input('s', 0);
-		$p = (int) $request->input('p', 0);
-		$t = (int) $request->input('t', 0);
-
-		if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
-			$g = 1;
-		}
-		if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
-			$s = 1;
-		}
-		if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
-			$p = 1;
-		}
-		if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
-			$t = 1;
+		if (!in_array($planetType, array_column(PlanetType::cases(), 'value'))) {
+			$planetType = 1;
 		}
 
 		return response()->state([
-			'galaxy' => $g,
-			'system' => $s,
-			'planet' => $p,
-			'planet_type' => $t,
+			'galaxy' => $galaxy,
+			'system' => $system,
+			'planet' => $planet,
+			'planet_type' => $planetType,
 		]);
 	}
 
-	public function view(Request $request, int $id)
+	public function store(Request $request)
 	{
-		$shortcut = Models\FleetShortcut::where('user_id', $this->user->id)
+		$name = $request->post('name');
+
+		if (empty($name) || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
+			$name = 'Планета';
+		}
+
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
+		$planetType = (int) $request->post('planet_type', 0);
+
+		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
+		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));
+		$planet = min(max($planet, 1), config('game.maxPlanetInSystem'));
+
+		if (!in_array($planetType, array_column(PlanetType::cases(), 'value'))) {
+			$planetType = 1;
+		}
+
+		$this->user->shortcuts()->create([
+			'name' => $name,
+			'galaxy' => $galaxy,
+			'system' => $system,
+			'planet' => $planet,
+			'planet_type' => $planetType,
+		]);
+	}
+
+	public function view(int $id)
+	{
+		$shortcut = FleetShortcut::where('user_id', $this->user->id)
 			->where('id', $id)
 			->first();
 
 		if (!$shortcut) {
 			throw new RedirectException('/fleet/shortcut', 'Данной ссылки не существует!');
-		}
-
-		if ($request->isMethod('post')) {
-			if ($request->has('delete')) {
-				$shortcut->delete();
-
-				throw new RedirectException('/fleet/shortcut', 'Ссылка была успешно удалена!');
-			} else {
-				$shortcut->name = strip_tags(str_replace(',', '', $request->post('title', '')));
-
-				$g = (int) $request->post('galaxy', 0);
-				$s = (int) $request->post('system', 0);
-				$p = (int) $request->post('planet', 0);
-				$t = (int) $request->post('planet_type', 0);
-
-				if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
-					$g = 1;
-				}
-
-				if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
-					$s = 1;
-				}
-
-				if ($p < 1 || $p > config('game.maxPlanetInSystem')) {
-					$p = 1;
-				}
-
-				if ($t != 1 && $t != 2 && $t != 3 && $t != 5) {
-					$t = 1;
-				}
-
-				$shortcut->galaxy = $g;
-				$shortcut->system = $s;
-				$shortcut->planet = $p;
-				$shortcut->planet_type = $t;
-				$shortcut->save();
-
-				throw new RedirectException('/fleet/shortcut', 'Ссылка была обновлена!');
-			}
 		}
 
 		return response()->state([
@@ -150,5 +102,50 @@ class FleetShortcutController extends Controller
 			'planet' => $shortcut->planet,
 			'planet_type' => $shortcut->planet_type,
 		]);
+	}
+
+	public function update(int $id, Request $request)
+	{
+		$shortcut = FleetShortcut::where('user_id', $this->user->id)
+			->where('id', $id)
+			->first();
+
+		if (!$shortcut) {
+			throw new Exception('Данной ссылки не существует!');
+		}
+
+		$shortcut->name = strip_tags(str_replace(',', '', $request->post('name', '')));
+
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
+		$planetType = (int) $request->post('planet_type', 0);
+
+		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
+		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));
+		$planet = min(max($planet, 1), config('game.maxPlanetInSystem'));
+
+		if (!in_array($planetType, array_column(PlanetType::cases(), 'value'))) {
+			$planetType = 1;
+		}
+
+		$shortcut->galaxy = $galaxy;
+		$shortcut->system = $system;
+		$shortcut->planet = $planet;
+		$shortcut->planet_type = $planetType;
+		$shortcut->save();
+	}
+
+	public function delete(int $id)
+	{
+		$shortcut = FleetShortcut::where('user_id', $this->user->id)
+			->where('id', $id)
+			->first();
+
+		if (!$shortcut) {
+			throw new Exception('Данной ссылки не существует!');
+		}
+
+		$shortcut->delete();
 	}
 }

@@ -9,60 +9,79 @@ use Illuminate\Http\Request;
 
 class NotesController extends Controller
 {
-	public function new(Request $request)
+	public function index()
 	{
-		$priority = (int) $request->post('u', 0);
+		$notes = Note::query()->where('user_id', $this->user->id)
+			->orderByDesc('updated_at')->get();
 
-		$title = $request->post('title', '');
-		$text = $request->post('text', '');
+		$items = [];
 
-		if ($title == '') {
+		foreach ($notes as $note) {
+			$item = [
+				'id' => $note->id,
+				'time' => $note->updated_at?->utc()->toAtomString(),
+				'title' => $note->title,
+				'color' => '',
+			];
+
+			if ($note->priority == 0) {
+				$item['color'] = 'lime';
+			} elseif ($note->priority == 1) {
+				$item['color'] = 'yellow';
+			} elseif ($note->priority == 2) {
+				$item['color'] = 'red';
+			}
+
+			$items[] = $item;
+		}
+
+		return response()->state($items);
+	}
+
+	public function delete(Request $request)
+	{
+		$deleteIds = $request->post('id', []);
+
+		if (!empty($deleteIds) && is_array($deleteIds)) {
+			Note::query()->where('user_id', $this->user->id)
+				->whereIn('id', array_map('intval', $deleteIds))->delete();
+		}
+	}
+
+	public function create(Request $request)
+	{
+		$priority = (int) $request->post('priority', 0);
+
+		$title = $request->post('title');
+		$message = $request->post('message');
+
+		if (empty($title)) {
 			$title = __('notes.NoTitle');
 		}
 
-		if ($text == '') {
-			$text = __('notes.NoText');
+		if (empty($message)) {
+			$message = __('notes.NoText');
 		}
 
 		$note = new Note();
 		$note->user_id = $this->user->id;
 		$note->priority = $priority;
 		$note->title = $title;
-		$note->text = $text;
+		$note->text = $message;
 		$note->save();
 
-		throw new RedirectException('/notes/edit/' . $note->id, __('notes.NoteAdded'));
+		return [
+			'id' => $note->id,
+		];
 	}
 
-	public function edit(Request $request, int $noteId)
+	public function edit(int $id)
 	{
 		$note = Note::query()->where('user_id', $this->user->id)
-			->where('id', $noteId)->first();
+			->where('id', $id)->first();
 
 		if (!$note) {
-			throw new Exception(__('notes.notpossiblethisway'));
-		}
-
-		if ($request->isMethod('post')) {
-			$priority = (int) $request->post('u', 0);
-
-			$title = $request->post('title', '');
-			$text = $request->post('text', '');
-
-			if ($title == '') {
-				$title = __('notes.NoTitle');
-			}
-
-			if ($text == '') {
-				$text = __('notes.NoText');
-			}
-
-			$note->priority = $priority;
-			$note->title = $title;
-			$note->text = $text;
-			$note->save();
-
-			throw new RedirectException('/notes/edit/' . $note->id, __('notes.NoteUpdated'));
+			throw new Exception('Заметка не найдена');
 		}
 
 		$parse = [
@@ -75,43 +94,31 @@ class NotesController extends Controller
 		return response()->state($parse);
 	}
 
-	public function index(Request $request)
+	public function update(int $id, Request $request)
 	{
-		if ($request->isMethod('post')) {
-			$deleteIds = array_map('intval', $request->post('delete'));
+		$note = Note::query()->where('user_id', $this->user->id)
+			->where('id', $id)->first();
 
-			if (is_array($deleteIds) && count($deleteIds)) {
-				Note::query()->where('user_id', $this->user->id)
-					->whereIn('id', $deleteIds)->delete();
-			}
-
-			throw new RedirectException('/notes', __('notes.NoteDeleteds'));
+		if (!$note) {
+			throw new Exception('Заметка не найдена');
 		}
 
-		$notes = Note::query()->where('user_id', $this->user->id)
-			->orderByDesc('updated_at')->get();
+		$priority = (int) $request->post('priority', 0);
 
-		$parse = [];
-		$parse['items'] = [];
+		$title = $request->post('title');
+		$message = $request->post('message');
 
-		foreach ($notes as $note) {
-			$list = [];
-
-			if ($note->priority == 0) {
-				$list['color'] = 'lime';
-			} elseif ($note->priority == 1) {
-				$list['color'] = 'yellow';
-			} elseif ($note->priority == 2) {
-				$list['color'] = 'red';
-			}
-
-			$list['id'] = $note->id;
-			$list['time'] = $note->updated_at?->utc()->toAtomString();
-			$list['title'] = $note->title;
-
-			$parse['items'][] = $list;
+		if (empty($title)) {
+			$title = __('notes.NoTitle');
 		}
 
-		return response()->state($parse);
+		if (empty($message)) {
+			$message = __('notes.NoText');
+		}
+
+		$note->priority = $priority;
+		$note->title = $title;
+		$note->text = $message;
+		$note->save();
 	}
 }

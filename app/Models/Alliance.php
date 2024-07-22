@@ -89,7 +89,7 @@ class Alliance extends Model
 	public function delete()
 	{
 		User::where('alliance_id', $this->id)
-			->update(['alliance_id' => null, 'ally_name' => null]);
+			->update(['alliance_id' => null, 'alliance_name' => null]);
 
 		parent::delete();
 

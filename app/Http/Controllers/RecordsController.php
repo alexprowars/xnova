@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Format;
+use App\Settings;
 use Illuminate\Support\Facades\Date;
 
 class RecordsController extends Controller
 {
-	public function index()
+	public function index(Settings $settings)
 	{
 		$RecordsArray = [];
 
@@ -60,7 +61,7 @@ class RecordsController extends Controller
 
 		$parse = [
 			'items' => $Records,
-			'update' => Date::createFromTimestamp(config('game.statUpdate'), config('app.timezone'))->utc()->toAtomString(),
+			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 		];
 
 		return response()->state($parse);

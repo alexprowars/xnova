@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity as PlanetEntity;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
@@ -14,200 +15,34 @@ use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Http\Resources\FleetRow;
-use App\Models;
+use App\Models\Chat;
+use App\Models\Fleet;
 use App\Models\Planet;
+use App\Models\Queue;
+use App\Models\Statistic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 
 class OverviewController extends Controller
 {
-	public function delete(Request $request)
-	{
-		if ($request->isMethod('post') && $request->post('id') && $request->post('id', 0) == $this->user->planet_current) {
-			if ($this->user->id != $this->planet->user_id) {
-				throw new RedirectException('/overview/rename', "Удалить планету может только владелец");
-			}
-
-			if ($this->user->planet_id == $this->user->planet_current) {
-				throw new RedirectException('/overview/rename', __('overview.deletemessage_wrong'));
-			}
-
-			if (!Hash::check(trim($request->post('pw')), $request->post('password'))) {
-				throw new RedirectException('/overview/delete', __('overview.deletemessage_fail'));
-			}
-
-			$checkFleets = Models\Fleet::query()
-				->where(function (Builder $query) {
-					$query->where('start_galaxy', $this->planet->galaxy)
-						->where('start_system', $this->planet->system)
-						->where('start_planet', $this->planet->planet)
-						->where('start_type', $this->planet->planet_type);
-				})
-				->orWhere(function (Builder $query) {
-					$query->where('end_galaxy', $this->planet->galaxy)
-						->where('end_system', $this->planet->system)
-						->where('end_planet', $this->planet->planet)
-						->where('end_type', $this->planet->planet_type);
-				})
-				->exists();
-
-			if ($checkFleets) {
-				throw new RedirectException('/overview/rename', 'Нельзя удалять планету если с/на неё летит флот');
-			}
-
-			$destruyed = now()->addDay();
-
-			$this->planet->destruyed = $destruyed;
-			$this->planet->user_id = null;
-			$this->planet->update();
-
-			$this->user->planet_current = $this->user->planet_id;
-			$this->user->update();
-
-			if ($this->planet->parent_planet) {
-				Models\Planet::where('id', $this->planet->parent_planet)
-					->update([
-						'destruyed' => $destruyed,
-						'user_id' => null,
-					]);
-
-				Models\Queue::where('planet_id', $this->planet->parent_planet)
-					->delete();
-			}
-
-			Models\Queue::where('planet_id', $this->planet->id)
-				->delete();
-
-			Cache::forget('app::planetlist_' . $this->user->id);
-
-			throw new RedirectException('/overview', __('overview.deletemessage_ok'));
-		}
-
-		$parse['number_1'] 		= random_int(1, 100);
-		$parse['number_2'] 		= random_int(1, 100);
-		$parse['number_3'] 		= random_int(1, 100);
-		$parse['number_check'] 	= md5($parse['number_1'] + $parse['number_2'] * $parse['number_3']);
-
-		$parse['id'] = $this->planet->id;
-		$parse['galaxy'] = $this->planet->galaxy;
-		$parse['system'] = $this->planet->system;
-		$parse['planet'] = $this->planet->planet;
-
-		return response()->state($parse);
-	}
-
-	public function rename(Request $request)
-	{
-		$parse = [];
-
-		$parse['images'] = [
-			'trocken' => 20,
-			'wuesten' => 4,
-			'dschjungel' => 19,
-			'normaltemp' => 15,
-			'gas' => 16,
-			'wasser' => 18,
-			'eis' => 20
-		];
-
-		$parse['type'] = '';
-
-		foreach ($parse['images'] as $type => $max) {
-			if (str_contains($this->planet->image, $type)) {
-				$parse['type'] = $type;
-			}
-		}
-
-		if ($request->post('action')) {
-			$action = $request->post('action');
-
-			if ($action == 'name') {
-				$name = strip_tags(trim($request->post('name', '')));
-
-				if ($name == '') {
-					throw new Exception('Ввведите новое название планеты');
-				}
-
-				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-					throw new Exception('Введённое название содержит недопустимые символы');
-				}
-
-				if (mb_strlen($name) <= 1 || mb_strlen($name) >= 20) {
-					throw new Exception('Введённо слишком длинное или короткое название планеты');
-				}
-
-				$this->planet->name = $name;
-				$this->planet->update();
-
-				throw new RedirectException('/overview', 'Название планеты изменено');
-			} elseif ($action == 'image') {
-				if ($this->user->credits < 1) {
-					throw new Exception('Недостаточно кредитов');
-				}
-
-				$image = (int) $request->post('image', 0);
-
-				if ($image <= 0 || $image > $parse['images'][$parse['type']]) {
-					throw new Exception('Недостаточно читерских навыков');
-				}
-
-				$this->planet->image = $parse['type'] . 'planet' . ($image < 10 ? '0' : '') . $image;
-				$this->planet->update();
-
-				$this->user->credits--;
-				$this->user->update();
-
-				throw new RedirectException('/overview', 'Картинка планеты изменена');
-			}
-		}
-
-		return response()->state($parse);
-	}
-
-	public function daily()
-	{
-		if ($this->user->daily_bonus?->isFuture()) {
-			throw new Exception('Вы не можете получить ежедневный бонус в данное время');
-		}
-
-		$factor = $this->user->daily_bonus_factor < 50
-			? $this->user->daily_bonus_factor + 1 : 50;
-
-		if (!$this->user->daily_bonus || $this->user->daily_bonus->subDay()->isPast()) {
-			$factor = 1;
-		}
-
-		$add = $factor * 500 * Game::getSpeed('mine');
-
-		$this->planet->metal += $add;
-		$this->planet->crystal += $add;
-		$this->planet->deuterium += $add;
-		$this->planet->update();
-
-		$this->user->daily_bonus = now()->addSeconds(86400);
-		$this->user->daily_bonus_factor = $factor;
-
-		if ($this->user->daily_bonus_factor > 1) {
-			$this->user->credits++;
-		}
-
-		$this->user->update();
-
-		return [
-			'resources' => $add,
-			'credits' => $this->user->daily_bonus_factor > 1,
-		];
-	}
+	protected array $planetImages = [
+		'trocken' => 20,
+		'wuesten' => 4,
+		'dschjungel' => 19,
+		'normaltemp' => 15,
+		'gas' => 16,
+		'wasser' => 18,
+		'eis' => 20,
+	];
 
 	public function index()
 	{
 		$XpMinierUp = $this->user->lvl_minier ** 3;
 		$XpRaidUp = $this->user->lvl_raid ** 2;
 
-		$fleets = Models\Fleet::query()
+		$fleets = Fleet::query()
 			->where('user_id', $this->user->id)
 			->orWhere('target_user_id', $this->user->id)
 			->with('user')
@@ -233,7 +68,7 @@ class OverviewController extends Controller
 				}
 
 				if ($fleet->assault_id && !in_array($fleet->assault_id, $aks)) {
-					$AKSFleets = Models\Fleet::query()
+					$AKSFleets = Fleet::query()
 						->where('assault_id', $fleet->assault_id)
 						->where('user_id', '!=', $this->user->id)
 						->where('mess', 0)
@@ -263,7 +98,7 @@ class OverviewController extends Controller
 
 		if ($this->planet->parent_planet && $this->planet->planet_type != PlanetType::MOON && $this->planet->id) {
 			$lune = Cache::remember('app::lune_' . $this->planet->parent_planet, 300, function () {
-				return Models\Planet::query()
+				return Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
 					->where('id', $this->planet->parent_planet)
 					->where('planet_type', PlanetType::MOON)
@@ -274,14 +109,14 @@ class OverviewController extends Controller
 				$parse['moon'] = [
 					'id' => $lune['id'],
 					'name' => $lune['name'],
-					'image' => $lune['image']
+					'image' => $lune['image'],
 
 				];
 			}
 		}
 
 		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
-			return Models\Statistic::query()
+			return Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)
@@ -296,7 +131,7 @@ class OverviewController extends Controller
 			'defs' => 0,
 			'total' => 0,
 			'place' => 0,
-			'diff' => 0
+			'diff' => 0,
 		];
 
 		if ($records) {
@@ -413,8 +248,8 @@ class OverviewController extends Controller
 			'raid' => [
 				'p' => $this->user->xpraid,
 				'l' => $this->user->lvl_raid,
-				'u' => $XpRaidUp
-			]
+				'u' => $XpRaidUp,
+			],
 		];
 
 		$parse['links'] = $this->user->links;
@@ -424,7 +259,7 @@ class OverviewController extends Controller
 		$parse['raids'] = [
 			'win' => $this->user->raids_win,
 			'lost' => $this->user->raids_lose,
-			'total' => $this->user->raids
+			'total' => $this->user->raids,
 		];
 
 		$parse['bonus'] = $this->user->daily_bonus->isPast();
@@ -447,7 +282,7 @@ class OverviewController extends Controller
 
 		if (Helpers::isMobile()) {
 			$chatCached = Cache::remember('chat.cache', 86400, function () {
-				$messages = Models\Chat::orderByDesc('created_at')
+				$messages = Chat::orderByDesc('created_at')
 					->limit(20)->with('user')->get();
 
 				$chat = [];
@@ -519,7 +354,7 @@ class OverviewController extends Controller
 
 					$parse['chat'][] = [
 						'time' => $message[1],
-						'message' => '<span class="title"><span class="to">' . $message[2] . '</span> написал' . (count($message[3]) ? ' <span class="to">' . implode(', ', $message[3]) . '</span>' : '') . '</span>: ' . $message[5] . ''
+						'message' => '<span class="title"><span class="to">' . $message[2] . '</span> написал' . (count($message[3]) ? ' <span class="to">' . implode(', ', $message[3]) . '</span>' : '') . '</span>: ' . $message[5] . '',
 					];
 
 					$i++;
@@ -544,5 +379,154 @@ class OverviewController extends Controller
 		}
 
 		return response()->state($parse);
+	}
+
+	public function delete($planetId)
+	{
+		$planet = Planet::find($planetId);
+
+		if (!$planet) {
+			throw new Exception('Планета не найдена');
+		}
+
+		if ($this->user->id != $planet->user_id) {
+			throw new Exception('Удалить планету может только владелец');
+		}
+
+		if ($this->user->planet_id == $planet->id) {
+			throw new Exception(__('overview.deletemessage_wrong'));
+		}
+
+		$checkFleets = Fleet::query()
+			->where(fn (Builder $query) => $query->coordinates(FleetDirection::START, $planet->getCoordinates()))
+			->orWhere(fn (Builder $query) => $query->coordinates(FleetDirection::END, $planet->getCoordinates()))
+			->exists();
+
+		if ($checkFleets) {
+			throw new Exception('Нельзя удалять планету если с/на неё летит флот');
+		}
+
+		$destruyed = now()->addDay();
+
+		$planet->destruyed = $destruyed;
+		$planet->user_id = null;
+		$planet->update();
+
+		$this->user->planet_current = $this->user->planet_id;
+		$this->user->update();
+
+		if ($planet->parent_planet) {
+			Planet::where('id', $planet->parent_planet)
+				->update([
+					'destruyed' => $destruyed,
+					'user_id' => null,
+				]);
+
+			Queue::where('planet_id', $planet->parent_planet)
+				->delete();
+		}
+
+		Queue::where('planet_id', $planet->id)
+			->delete();
+
+		Cache::forget('app::planetlist_' . $this->user->id);
+	}
+
+	public function rename()
+	{
+		$parse = [];
+		$parse['images'] = $this->planetImages;
+		$parse['type'] = '';
+
+		foreach ($parse['images'] as $type => $max) {
+			if (str_contains($this->planet->image, $type)) {
+				$parse['type'] = $type;
+			}
+		}
+
+		return response()->state($parse);
+	}
+
+	public function renameAction(Request $request)
+	{
+		$name = strip_tags(trim($request->post('name', '')));
+
+		if ($name == '') {
+			throw new Exception('Ввведите новое название планеты');
+		}
+
+		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
+			throw new Exception('Введённое название содержит недопустимые символы');
+		}
+
+		if (mb_strlen($name) <= 1 || mb_strlen($name) >= 20) {
+			throw new Exception('Введённо слишком длинное или короткое название планеты');
+		}
+
+		$this->planet->name = $name;
+		$this->planet->update();
+
+		throw new RedirectException('/overview', 'Название планеты изменено');
+	}
+
+	public function image(Request $request)
+	{
+		if ($this->user->credits < 1) {
+			throw new Exception('Недостаточно кредитов');
+		}
+
+		$image = (int) $request->post('image', 0);
+		$type  = '';
+
+		foreach ($this->planetImages as $t => $max) {
+			if (str_contains($this->planet->image, $t)) {
+				$type = $t;
+			}
+		}
+
+		if ($image <= 0 || $image > $this->planetImages[$type]) {
+			throw new Exception('Недостаточно читерских навыков');
+		}
+
+		$this->planet->image = $type . 'planet' . ($image < 10 ? '0' : '') . $image;
+		$this->planet->update();
+
+		$this->user->credits--;
+		$this->user->update();
+	}
+
+	public function daily()
+	{
+		if ($this->user->daily_bonus?->isFuture()) {
+			throw new Exception('Вы не можете получить ежедневный бонус в данное время');
+		}
+
+		$factor = $this->user->daily_bonus_factor < 50
+			? $this->user->daily_bonus_factor + 1 : 50;
+
+		if (!$this->user->daily_bonus || $this->user->daily_bonus->subDay()->isPast()) {
+			$factor = 1;
+		}
+
+		$add = $factor * 500 * Game::getSpeed('mine');
+
+		$this->planet->metal += $add;
+		$this->planet->crystal += $add;
+		$this->planet->deuterium += $add;
+		$this->planet->update();
+
+		$this->user->daily_bonus = now()->addSeconds(86400);
+		$this->user->daily_bonus_factor = $factor;
+
+		if ($this->user->daily_bonus_factor > 1) {
+			$this->user->credits++;
+		}
+
+		$this->user->update();
+
+		return [
+			'resources' => $add,
+			'credits' => $this->user->daily_bonus_factor > 1,
+		];
 	}
 }

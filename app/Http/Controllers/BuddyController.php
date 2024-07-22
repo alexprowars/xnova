@@ -162,9 +162,9 @@ class BuddyController extends Controller
 			$friend->delete();
 
 			throw new RedirectException('/buddy/requests/my', 'Заявка удалена');
-		} else {
-			throw new Exception('Заявка не найдена');
 		}
+
+		throw new Exception('Заявка не найдена');
 	}
 
 	public function approve(int $id)
@@ -181,7 +181,5 @@ class BuddyController extends Controller
 
 		$friend->active = 1;
 		$friend->update();
-
-		throw new RedirectException('/buddy');
 	}
 }

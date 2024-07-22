@@ -19,8 +19,6 @@ class MessagesController extends Controller
 {
 	public function index(Request $request)
 	{
-		$parse = [];
-
 		$types = [1, 2, 3, 4, 5, 6, 15, 99, 100, 101];
 		$limits = [5, 10, 25, 50, 100, 200];
 
@@ -30,8 +28,8 @@ class MessagesController extends Controller
 			$category = (int) Session::get('m_cat');
 		}
 
-		if ($request->post('category')) {
-			$category = (int) $request->post('category', 100);
+		if ($request->query('category')) {
+			$category = (int) $request->query('category', 100);
 		}
 
 		if (!in_array($category, $types)) {
@@ -44,8 +42,8 @@ class MessagesController extends Controller
 			$limit = (int) Session::get('m_limit');
 		}
 
-		if ($request->post('limit')) {
-			$limit = (int) $request->post('limit', 10);
+		if ($request->query('limit')) {
+			$limit = (int) $request->query('limit', 10);
 		}
 
 		if (!in_array($limit, $limits)) {
@@ -66,10 +64,7 @@ class MessagesController extends Controller
 			Session::put('m_cat', $category);
 		}
 
-		if ($request->post('delete')) {
-			$this->delete($request);
-		}
-
+		$parse = [];
 		$parse['limit'] = $limit;
 		$parse['category'] = $category;
 
@@ -222,10 +217,10 @@ class MessagesController extends Controller
 
 	public function delete(Request $request)
 	{
-		$items = $request->post('delete');
+		$items = $request->post('id');
 
 		if (!is_array($items) || !count($items)) {
-			return false;
+			throw new Exception('Не выбраны сообщения');
 		}
 
 		$items = array_map('intval', $items);
@@ -236,8 +231,6 @@ class MessagesController extends Controller
 				->where('user_id', $this->user->id)
 				->update(['deleted' => 1]);
 		}
-
-		return true;
 	}
 
 	public function abuse(int $messageId)

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Engine\Construction;
 use App\Engine\Game;
+use App\Settings;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,8 @@ class StateResponce extends JsonResource
 		$user = Auth::user();
 		$planet = $user?->getCurrentPlanet();
 
+		$settings = app(Settings::class);
+
 		$data = [
 			'messages' => [],
 			'speed' => [
@@ -22,8 +25,8 @@ class StateResponce extends JsonResource
 				'resources' => Game::getSpeed('mine'),
 			],
 			'stats' => [
-				'online' => (int) config('game.usersOnline', 0),
-				'users' => (int) config('game.usersTotal', 0),
+				'online' => $settings->usersOnline ?: 0,
+				'users' => $settings->usersTotal ?: 0,
 			],
 			'user' => $user ? User::make($user) : null,
 			'planet' => $planet ? Planet::make($planet) : null,
