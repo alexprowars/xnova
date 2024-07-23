@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserAuthentication extends Model
 {
-	protected $guarded = [];
+	protected $guarded = false;
 	protected $table = 'users_authentications';
 
 	protected function casts(): array

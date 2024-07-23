@@ -41,21 +41,19 @@ class Attack extends FleetEngine implements Mission
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if (empty($target->id) || !$target->user_id || $target->destruyed) {
+		if (!$target || !$target->user_id || $target->destruyed) {
 			$this->fleet->return();
 
 			return false;
 		}
 
-		$owner = User::find($this->fleet->user_id);
-
-		if (!$owner) {
+		if (!$this->fleet->user) {
 			$this->fleet->return();
 
 			return false;
 		}
 
-		$targetUser = User::find($target->user_id);
+		$targetUser = $target->user;
 
 		if (!$targetUser) {
 			$this->fleet->return();
@@ -63,7 +61,6 @@ class Attack extends FleetEngine implements Mission
 			return false;
 		}
 
-		$target->setRelation('user', $targetUser);
 		$target->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new QueueManager($targetUser, $target);
@@ -279,7 +276,7 @@ class Attack extends FleetEngine implements Mission
 				];
 			}
 
-			if (!count($fleetArray)) {
+			if (empty($fleetArray)) {
 				$this->killFleet($fleetID);
 			} else {
 				$update = [
@@ -318,7 +315,7 @@ class Attack extends FleetEngine implements Mission
 				if (!count($fleetArray)) {
 					$this->killFleet($fleetID);
 				} else {
-					Planet::find($fleetID)
+					Planet::query()->where('id', $fleetID)
 						->update([
 							'fleet_array' => $fleetArray,
 							'updated_at' => DB::raw('end_time'),
@@ -353,7 +350,7 @@ class Attack extends FleetEngine implements Mission
 			$userChance = 0;
 		}
 
-		if ($target->parent_planet == 0 && $userChance && $userChance <= $moonChance) {
+		if (!$target->parent_planet && $userChance && $userChance <= $moonChance) {
 			$galaxy = new Galaxy();
 
 			$planetId = $galaxy->createMoon(
@@ -389,42 +386,51 @@ class Attack extends FleetEngine implements Mission
 		unset($tmp);
 
 		foreach ($attackUsers as $info) {
-			if (!in_array($info['tech']['id'], $FleetsUsers)) {
-				$FleetsUsers[] = (int) $info['tech']['id'];
-
-				if ($this->fleet->mission != MissionEnum::Spy) {
-					$update = ['raids' => DB::raw('raids + 1')];
-
-					if ($result['won'] == 1) {
-						$update['raids_win'] = DB::raw('raids_win + 1');
-					} elseif ($result['won'] == 2) {
-						$update['raids_lose'] =  DB::raw('raids_lose + 1');
-					}
-
-					if ($AddWarPoints > 0) {
-						$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
-					}
-
-					Models\User::find($info['tech']['id'])->update($update);
-				}
+			if (in_array($info['tech']['id'], $FleetsUsers)) {
+				continue;
 			}
+
+			$FleetsUsers[] = (int) $info['tech']['id'];
+
+			if ($this->fleet->mission == MissionEnum::Spy) {
+				continue;
+			}
+
+			$update = ['raids' => DB::raw('raids + 1')];
+
+			if ($result['won'] == 1) {
+				$update['raids_win'] = DB::raw('raids_win + 1');
+			} elseif ($result['won'] == 2) {
+				$update['raids_lose'] = DB::raw('raids_lose + 1');
+			}
+
+			if ($AddWarPoints > 0) {
+				$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
+			}
+
+			Models\User::query()->where('id', $info['tech']['id'])->update($update);
 		}
+
 		foreach ($defenseUsers as $info) {
-			if (!in_array($info['tech']['id'], $FleetsUsers)) {
-				$FleetsUsers[] = (int) $info['tech']['id'];
-
-				if ($this->fleet->mission != MissionEnum::Spy) {
-					$update = ['raids' => DB::raw('raids + 1')];
-
-					if ($result['won'] == 2) {
-						$update['raids_win'] = DB::raw('raids_win + 1');
-					} elseif ($result['won'] == 1) {
-						$update['raids_lose'] = DB::raw('raids_lose + 1');
-					}
-
-					Models\User::query()->where('id', $info['tech']['id'])->update($update);
-				}
+			if (in_array($info['tech']['id'], $FleetsUsers)) {
+				continue;
 			}
+
+			$FleetsUsers[] = (int) $info['tech']['id'];
+
+			if ($this->fleet->mission == MissionEnum::Spy) {
+				continue;
+			}
+
+			$update = ['raids' => DB::raw('raids + 1')];
+
+			if ($result['won'] == 2) {
+				$update['raids_win'] = DB::raw('raids_win + 1');
+			} elseif ($result['won'] == 1) {
+				$update['raids_lose'] = DB::raw('raids_lose + 1');
+			}
+
+			Models\User::query()->where('id', $info['tech']['id'])->update($update);
 		}
 
 		// Уничтожен в первой волне
@@ -492,13 +498,10 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$reportHtml = "<center>";
-		$reportHtml .= '<a href="/rw/' . $report->id . '/' . md5(config('app.key') . $report->id) . '/" target="' . (config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
-		$reportHtml .= "<font color=\"#COLOR#\">" . __('fleet_engine.sys_mess_attack_report') . " [" . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ":" . $this->fleet->end_planet . "]</font></a>";
-
-		$report2Html  = '<br><br><font color=\'red\'>' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</font><font color=\'green\'>   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</font><br>';
-		$report2Html .= __('fleet_engine.sys_gain') . ' м: <font color=\'#adaead\'>' . Format::number($steal['metal']) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($steal['crystal']) . '</font>, д: <font color=\'#f77542\'>' . Format::number($steal['deuterium']) . '</font><br>';
-		$report2Html .= __('fleet_engine.sys_debris') . ' м: <font color=\'#adaead\'>' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</font>, к: <font color=\'#ef51ef\'>' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</font></center>';
+		$reportHtml  = '<div class="text-center">';
+		$reportHtml .= '<a href="' . str_replace('/api', '', url()->signedRoute('log.view', ['id' => $report->id], absolute: false)) . '" target="' . (config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
+		$reportHtml .= '<span style="color:##COLOR#">' . __('fleet_engine.sys_mess_attack_report') . ' [' . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</span></a>';
+		$reportHtml .= '</div>';
 
 		$userList = [];
 
@@ -508,15 +511,18 @@ class Attack extends FleetEngine implements Mission
 			}
 		}
 
-		$attackersReport = $reportHtml . $report2Html;
+		$attackersReport = $reportHtml;
 
-		$color = 'orange';
+		$attackersReport .= '<br><br><div class="text-center">';
+		$attackersReport .= '<span style="color:red">' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</span><span style="color:green">   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</span><br>';
+		$attackersReport .= __('fleet_engine.sys_gain') . ' м: <span style="color:#adaead">' . Format::number($steal['metal']) . '</span>, к: <span style="color:#ef51ef">' . Format::number($steal['crystal']) . '</span>, д: <span style="color:#f77542">' . Format::number($steal['deuterium']) . '</span><br>';
+		$attackersReport .= __('fleet_engine.sys_debris') . ' м: <span style="color:#adaead">' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</span>, к: <span style="color:#ef51ef">' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</span></div>';
 
-		if ($result['won'] == 1) {
-			$color = 'green';
-		} elseif ($result['won'] == 2) {
-			$color = 'red';
-		}
+		$color = match ($result['won']) {
+			1 => 'green',
+			2 => 'red',
+			default => 'orange'
+		};
 
 		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
 
@@ -534,13 +540,11 @@ class Attack extends FleetEngine implements Mission
 
 		$defendersReport = $reportHtml;
 
-		$color = 'orange';
-
-		if ($result['won'] == 1) {
-			$color = 'red';
-		} elseif ($result['won'] == 2) {
-			$color = 'green';
-		}
+		$color = match ($result['won']) {
+			1 => 'red',
+			2 => 'green',
+			default => 'orange'
+		};
 
 		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
 

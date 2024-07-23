@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 class Queue extends Model
 {
 	public $timestamps = false;
+	protected $guarded = false;
 
 	protected $attributes = [
 		'operation' => QueueConstructionType::BUILDING,
 	];
-
-	protected $guarded = [];
 
 	protected function casts(): array
 	{

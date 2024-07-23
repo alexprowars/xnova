@@ -9,6 +9,7 @@ class Assault extends Model
 {
 	public $timestamps = false;
 	protected $table = 'assaults';
+	protected $guarded = false;
 
 	protected function casts(): array
 	{

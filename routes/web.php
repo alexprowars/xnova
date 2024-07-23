@@ -1,6 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers;
 
-Route::get('login/reset', [Controllers\ResetPasswordController::class, 'reset'])->name('password.reset');
+Route::get('login/reset')->name('password.reset');
+Route::get('galaxy')->name('galaxy');

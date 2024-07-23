@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\URL;
 
 class MessagesController extends Controller
 {
@@ -96,12 +95,6 @@ class MessagesController extends Controller
 		$parse['items'] = [];
 
 		foreach ($items as $item) {
-			if (preg_match_all('/href=\"\/(.*?)"/i', $item->text, $match)) {
-				foreach ($match[1] as $rep) {
-					$item->text = str_replace('/' . $rep, URL::to($rep), $item->text);
-				}
-			}
-
 			if (preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match)) {
 				$item->text = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->text);
 			}
@@ -121,8 +114,6 @@ class MessagesController extends Controller
 			'limit' => $limit,
 			'page' => $paginator->currentPage()
 		];
-
-		$parse['parser'] = $this->user->getOption('bb_parser');
 
 		return response()->state($parse);
 	}

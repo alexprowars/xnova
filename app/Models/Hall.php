@@ -8,6 +8,7 @@ class Hall extends Model
 {
 	public $timestamps = false;
 	protected $table = 'halls';
+	protected $guarded = false;
 
 	protected function casts(): array
 	{

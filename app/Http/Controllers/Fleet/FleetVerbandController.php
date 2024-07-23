@@ -17,169 +17,49 @@ use Illuminate\Http\Request;
 
 class FleetVerbandController extends Controller
 {
-	public function index(Request $request, $fleetId)
+	public function index(int $fleetId)
 	{
-		$fleetId = (int) $fleetId;
-
-		if ($fleetId <= 0) {
-			throw new Exception('Флот не выбран');
-		}
-
-		$fleet = Fleet::query()
-			->where('id', $fleetId)
-			->where('user_id', $this->user->id)
-			->where('mission', Mission::Attack)
-			->first();
-
-		if (!$fleet) {
-			throw new Exception('Этот флот не существует!');
-		}
-
-		if ($fleet->start_time->getTimestamp() <= time() || $fleet->end_time->timestamp < time() || $fleet->mess == 1) {
-			throw new Exception('Ваш флот возвращается на планету!');
-		}
+		$fleet = $this->getFleet($fleetId);
 
 		$assault = $fleet->assault;
 
-		if ($request->has('action')) {
-			$action = $request->post('action');
-
-			if ($action == 'add') {
-				if ($fleet->assault_id) {
-					throw new Exception('Для этого флота уже задана ассоциация!');
-				}
-
-				$assault = Assault::create([
-					'name' 			=> $request->post('name', 'string'),
-					'fleet_id' 		=> $fleet->id,
-					'galaxy' 		=> $fleet->end_galaxy,
-					'system' 		=> $fleet->end_system,
-					'planet' 		=> $fleet->end_planet,
-					'planet_type' 	=> $fleet->end_type,
-					'user_id' 		=> $this->user->id,
-				]);
-
-				if (!$assault) {
-					throw new Exception('Невозможно получить идентификатор САБ атаки');
-				}
-
-				$assault->users()->create([
-					'user_id' => $this->user->id,
-				]);
-
-				$fleet->assault_id = $assault->id;
-				$fleet->update();
-			} elseif ($action == 'adduser') {
-				if ($assault->fleet_id != $fleet->id) {
-					throw new Exception("Вы не можете добавлять сюда игроков");
-				}
-
-				$user_data = false;
-
-				$byId = (int) $request->post('user_id', 'int');
-
-				if ($byId > 0) {
-					$user_data = User::find($request->post('user_id'));
-				}
-
-				$byName = trim($request->post('user_name', 'string'));
-
-				if ($byName != '') {
-					$user_data = User::whereUsername($byName)->first();
-				}
-
-				if (!$user_data) {
-					throw new Exception("Игрок не найден");
-				}
-
-				$assaultUser = $assault->users()->where('user_id', $user_data->id)->first();
-
-				if ($assaultUser) {
-					throw new Exception("Игрок уже приглашён для нападения");
-				}
-
-				$assault->users()->create([
-					'user_id' => $user_data->id,
-				]);
-
-				$planet = Planet::findByCoordinates(
-					new Coordinates($assault->galaxy, $assault->system, $assault->planet, $assault->planet_type)
-				);
-
-				$message = 'Игрок ' . $this->user->username . ' приглашает вас произвести совместное нападение на планету ' . $planet->name . ' [' . $assault->galaxy . ':' . $assault->system . ':' . $assault->planet . '] игрока ' . $planet->user->username . '. Имя ассоциации: ' . $assault->name . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
-
-				$user_data->notify(new MessageNotification(null, MessageType::User, 'Флот', $message));
-			} elseif ($action == "changename") {
-				if ($assault->fleet_id != $fleet->id) {
-					throw new Exception('Вы не можете менять имя ассоциации');
-				}
-
-				$name = strip_tags($request->post('name'));
-
-				if (mb_strlen($name) < 5) {
-					throw new Exception('Слишком короткое имя ассоциации');
-				}
-
-				if (mb_strlen($name) > 20) {
-					throw new Exception('Слишком длинное имя ассоциации');
-				}
-
-				if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-					throw new Exception('Имя ассоциации содержит запрещённые символы');
-				}
-
-				$x = Assault::where('name', $name)->exists();
-
-				if ($x) {
-					throw new Exception('Имя уже зарезервировано другим игроком');
-				}
-
-				$assault->name = $name;
-				$assault->save();
-			}
-		}
-
-		if (!$fleet->assault_id) {
-			$fq = Fleet::query()->where('id', $fleet->id)->get();
-		} else {
-			$fq = Fleet::query()->where('assault_id', $fleet->assault_id)->get();
-		}
+		$parse = [
+			'fleetid' => $fleet->id,
+			'assault' => null,
+			'items' => [],
+		];
 
 		if ($assault) {
-			$assault->fleet_id = (int) $assault->fleet_id;
+			$parse['assault'] = $assault->only(['id', 'name', 'fleet_id']);
 		}
 
-		$parse = [];
-		$parse['group'] = (int) $fleet->assault_id;
-		$parse['fleetid'] = $fleet->id;
-		$parse['aks'] = $assault->toArray();
-		$parse['list'] = [];
+		if (!$assault) {
+			$fleets = Fleet::query()->where('id', $fleet->id)->get();
+		} else {
+			$fleets = Fleet::query()->whereBelongsTo($assault)->get();
+		}
 
-		foreach ($fq as $row) {
-			$parse['list'][] = [
-				'id' => $row->id,
-				'ships' => $row->getShips(),
-				'ships_total' => $row->getTotalShips(),
-				'mission' => $row->mission,
+		foreach ($fleets as $item) {
+			$parse['items'][] = [
+				'id' => $item->id,
+				'ships' => $item->getShips(),
+				'ships_total' => $item->getTotalShips(),
+				'mission' => $item->mission,
 				'start' => [
-					'galaxy' => $row->start_galaxy,
-					'system' => $row->start_system,
-					'planet' => $row->start_planet,
-					'time' => $row->start_time?->utc()->toAtomString(),
-					'name' => $row->user_name,
+					...$item->getOriginCoordinates()->toArray(),
+					'time' => $item->start_time?->utc()->toAtomString(),
+					'name' => $item->user_name,
 				],
 				'target' => [
-					'galaxy' => $row->end_system,
-					'system' => $row->end_system,
-					'planet' => $row->end_planet,
-					'time' => $row->end_time?->utc()->toAtomString(),
-					'name' => $row->target_user_name,
+					...$item->getDestinationCoordinates()->toArray(),
+					'time' => $item->end_time?->utc()->toAtomString(),
+					'name' => $item->target_user_name,
 				],
 			];
 		}
 
-		if ($fleet->id == $assault->fleet_id) {
-			$assault->load(['users', 'users.user']);
+		if ($fleet->id == $assault?->fleet_id) {
+			$assault->loadMissing(['users', 'users.user']);
 
 			$parse['users'] = [];
 
@@ -215,5 +95,147 @@ class FleetVerbandController extends Controller
 		}
 
 		return response()->state($parse);
+	}
+
+	public function create(int $fleetId, Request $request)
+	{
+		$fleet = $this->getFleet($fleetId);
+
+		if ($fleet->assault_id) {
+			throw new Exception('Для этого флота уже задана ассоциация!');
+		}
+
+		$assault = Assault::create([
+			'name' 			=> $request->post('name', 'ACS'),
+			'fleet_id' 		=> $fleet->id,
+			'galaxy' 		=> $fleet->end_galaxy,
+			'system' 		=> $fleet->end_system,
+			'planet' 		=> $fleet->end_planet,
+			'planet_type' 	=> $fleet->end_type,
+			'user_id' 		=> $this->user->id,
+		]);
+
+		if (!$assault) {
+			throw new Exception('Невозможно получить идентификатор САБ атаки');
+		}
+
+		$assault->users()->create([
+			'user_id' => $this->user->id,
+		]);
+
+		$fleet->assault_id = $assault->id;
+		$fleet->update();
+	}
+
+	public function user(int $fleetId, Request $request)
+	{
+		$fleet = $this->getFleet($fleetId);
+
+		if (!$fleet->assault_id) {
+			throw new Exception('Для этого флота не задана ассоциация!');
+		}
+
+		$assault = $fleet->assault;
+
+		if ($assault->fleet_id != $fleet->id) {
+			throw new Exception("Вы не можете добавлять сюда игроков");
+		}
+
+		$user = null;
+
+		$byUserId = (int) $request->post('user_id', 0);
+
+		if ($byUserId > 0) {
+			$user = User::find($request->post('user_id'));
+		}
+
+		$byName = trim($request->post('user_name', ''));
+
+		if (!empty($byName)) {
+			$user = User::whereUsername($byName)->first();
+		}
+
+		if (!$user) {
+			throw new Exception('Игрок не найден');
+		}
+
+		$assaultUser = $assault->users()->whereBelongsTo($user)->first();
+
+		if ($assaultUser) {
+			throw new Exception('Игрок уже приглашён для нападения');
+		}
+
+		$assault->users()->create([
+			'user_id' => $user->id,
+		]);
+
+		$planet = Planet::findByCoordinates(
+			new Coordinates($assault->galaxy, $assault->system, $assault->planet, $assault->planet_type)
+		);
+
+		$message = 'Игрок ' . $this->user->username . ' приглашает вас произвести совместное нападение на планету ' . $planet->name . ' [' . $assault->galaxy . ':' . $assault->system . ':' . $assault->planet . '] игрока ' . $planet->user->username . '. Имя ассоциации: ' . $assault->name . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
+
+		$user->notify(new MessageNotification(null, MessageType::User, 'Флот', $message));
+	}
+
+	public function name(int $fleetId, Request $request)
+	{
+		$fleet = $this->getFleet($fleetId);
+
+		if (!$fleet->assault_id) {
+			throw new Exception('Для этого флота не задана ассоциация!');
+		}
+
+		$assault = $fleet->assault;
+
+		if ($assault->fleet_id != $fleet->id) {
+			throw new Exception('Вы не можете менять имя ассоциации');
+		}
+
+		$name = strip_tags($request->post('name'));
+
+		if (mb_strlen($name) < 5) {
+			throw new Exception('Слишком короткое имя ассоциации');
+		}
+
+		if (mb_strlen($name) > 20) {
+			throw new Exception('Слишком длинное имя ассоциации');
+		}
+
+		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
+			throw new Exception('Имя ассоциации содержит запрещённые символы');
+		}
+
+		$exist = Assault::where('name', $name)->exists();
+
+		if ($exist) {
+			throw new Exception('Имя уже зарезервировано другим игроком');
+		}
+
+		$assault->name = $name;
+		$assault->save();
+	}
+
+	protected function getFleet(int $id)
+	{
+		if ($id <= 0) {
+			throw new Exception('Флот не выбран');
+		}
+
+		$fleet = Fleet::query()
+			->where('id', $id)
+			->where('user_id', $this->user->id)
+			->where('mission', Mission::Attack)
+			->first();
+
+		if (!$fleet) {
+			throw new Exception('Этот флот не существует!');
+		}
+
+		if ($fleet->start_time->isPast() || $fleet->end_time->isPast() || $fleet->mess == 1) {
+			throw new Exception('Ваш флот возвращается на планету!');
+		}
+
+		return $fleet;
 	}
 }

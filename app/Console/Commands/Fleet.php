@@ -51,29 +51,27 @@ class Fleet extends Command
 				->limit(10)
 				->get();
 
-			if ($_fleets->count()) {
-				foreach ($_fleets as $fleetRow) {
-					if (!$missionName = $fleetRow->mission?->name) {
-						$fleetRow->delete();
+			foreach ($_fleets as $fleetRow) {
+				if (!$missionName = $fleetRow->mission?->name) {
+					$fleetRow->delete();
 
-						continue;
-					}
-
-					$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
-
-					/** @var $mission Mission */
-					$mission = new $missionName($fleetRow);
-
-					if ($fleetRow->mess == 0 && $fleetRow->start_time->timestamp <= time()) {
-						$mission->targetEvent();
-					} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->timestamp <= time()) {
-						$mission->endStayEvent();
-					} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->timestamp <= time()) {
-						$mission->returnEvent();
-					}
-
-					unset($mission);
+					continue;
 				}
+
+				$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
+
+				/** @var $mission Mission */
+				$mission = new $missionName($fleetRow);
+
+				if ($fleetRow->mess == 0 && $fleetRow->start_time->lessThanOrEqualTo(now())) {
+					$mission->targetEvent();
+				} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->lessThanOrEqualTo(now())) {
+					$mission->endStayEvent();
+				} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->lessThanOrEqualTo(now())) {
+					$mission->returnEvent();
+				}
+
+				unset($mission);
 			}
 
 			$totalRuns++;

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class Alliance extends Model
 {
 	protected $table = 'alliances';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public $rights = [];
 	public ?AllianceMember $member;
@@ -23,7 +23,7 @@ class Alliance extends Model
 
 	public function user()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class);
 	}
 
 	public function members()

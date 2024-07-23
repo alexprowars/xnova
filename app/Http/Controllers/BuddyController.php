@@ -14,6 +14,8 @@ class BuddyController extends Controller
 {
 	public function index($isRequests = false, $isMy = false)
 	{
+		$parse = [];
+
 		if ($isRequests) {
 			$parse['title'] = $isMy ? 'Мои запросы' : 'Другие запросы';
 		}
@@ -143,7 +145,7 @@ class BuddyController extends Controller
 			$isMy = true;
 		}
 
-		$this->index(true, $isMy);
+		return $this->index(true, $isMy);
 	}
 
 	public function delete(int $id)

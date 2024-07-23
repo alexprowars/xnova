@@ -8,6 +8,7 @@ class Money extends Model
 {
 	public $timestamps = false;
 	protected $table = 'moneys';
+	protected $guarded = false;
 
 	protected function casts(): array
 	{

@@ -41,7 +41,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 	protected ?Planet $currentPlanet = null;
 
-	protected $guarded = [];
+	protected $guarded = false;
 	protected $hidden = ['password'];
 
 	protected function casts(): array
@@ -107,7 +107,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 	public function alliance()
 	{
-		return $this->hasOne(Alliance::class);
+		return $this->belongsTo(Alliance::class);
 	}
 
 	public function isAdmin()

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Referal extends Model
 {
 	public $timestamps = false;
+	protected $guarded = false;
 
 	public function user()
 	{

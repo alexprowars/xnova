@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Friend extends Model
 {
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public function user()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class);
 	}
 
 	public function friend()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class, 'friend_id');
 	}
 
 	public static function hasFriends(int $userId, int $friendId): bool

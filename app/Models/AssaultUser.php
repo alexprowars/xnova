@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class AssaultUser extends Model
 {
 	public $timestamps = false;
-		protected $table = 'assaults_users';
+	protected $table = 'assaults_users';
+	protected $guarded = false;
 
 	public function assault()
 	{
-		return $this->hasOne(Assault::class);
+		return $this->belongsTo(Assault::class);
 	}
 
 	public function user()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class);
 	}
 }

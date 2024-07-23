@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PlanetEntity extends Model
 {
 	protected $table = 'planets_entities';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	protected $attributes = [
 		'amount' => 0,

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Chat extends Model
 {
 	protected $table = 'chat';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public function user()
 	{

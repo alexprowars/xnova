@@ -20,7 +20,7 @@ class Planet extends Model
 {
 	public $timestamps = false;
 	protected $hidden = ['planet_updated'];
-	protected $guarded = [];
+	protected $guarded = false;
 
 	protected $attributes = [
 		'metal' => 0,

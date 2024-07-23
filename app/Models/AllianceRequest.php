@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class AllianceRequest extends Model
 {
 	protected $table = 'alliances_requests';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public function alliance()
 	{
-		return $this->hasOne(Alliance::class);
+		return $this->belongsTo(Alliance::class);
 	}
 
 	public function user()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class);
 	}
 }

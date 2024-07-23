@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
 	public $timestamps = false;
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public function user()
 	{
-		return $this->hasOne(User::class, 'id', 'user_id');
+		return $this->belongsTo(User::class, 'id', 'user_id');
 	}
 }

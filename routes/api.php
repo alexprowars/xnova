@@ -44,8 +44,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('chat/last', [Controllers\ChatController::class, 'last']);
 
 	Route::match(['get', 'post'], 'alliance', [Controllers\AllianceController::class, 'index']);
-	Route::match(['get', 'post'], 'alliance/search', [Controllers\AllianceController::class, 'search']);
-	Route::post('alliance/make', [Controllers\AllianceController::class, 'make']);
+	Route::post('alliance/search', [Controllers\AllianceController::class, 'search']);
+	Route::post('alliance/create', [Controllers\AllianceController::class, 'create']);
 	Route::match(['get', 'post'], 'alliance/apply', [Controllers\AllianceController::class, 'apply']);
 	Route::get('alliance/chat', [Controllers\AllianceChatController::class, 'index']);
 	Route::post('alliance/chat', [Controllers\AllianceChatController::class, 'send']);
@@ -68,8 +68,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::match(['get', 'post'], 'buddy/requests', [Controllers\BuddyController::class, 'requests']);
 	Route::match(['get', 'post'], 'buddy/new/{id}', [Controllers\BuddyController::class, 'new']);
 
-	Route::post('buddy/delete/{id}', [Controllers\BuddyController::class, 'delete'])->whereNumber('id');
-	Route::post('buddy/approve/{id}', [Controllers\BuddyController::class, 'approve'])->whereNumber('id');
+	Route::delete('buddy/{id}', [Controllers\BuddyController::class, 'delete'])->whereNumber('id');
+	Route::post('buddy/{id}/approve', [Controllers\BuddyController::class, 'approve'])->whereNumber('id');
 
 	Route::get('buildings', [Controllers\BuildingsController::class, 'index']);
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->whereIn('action', ['insert', 'destroy']);
@@ -82,8 +82,8 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('fleet', [Controllers\FleetController::class, 'index']);
 	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', [Controllers\FleetController::class, 'index']);
-	Route::match(['get', 'post'], 'fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index']);
-	Route::match(['get', 'post'], 'fleet/send', [Controllers\Fleet\FleetSendController::class, 'index']);
+	Route::post('fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index']);
+	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index']);
 	Route::post('fleet/back', [Controllers\Fleet\FleetBackController::class, 'index']);
 	Route::get('fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'index']);
 	Route::get('fleet/shortcut/create', [Controllers\Fleet\FleetShortcutController::class, 'create']);
@@ -91,14 +91,17 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('fleet/shortcut/{id}', [Controllers\Fleet\FleetShortcutController::class, 'view'])->whereNumber('id');
 	Route::post('fleet/shortcut/{id}', [Controllers\Fleet\FleetShortcutController::class, 'update'])->whereNumber('id');
 	Route::delete('fleet/shortcut/{id}', [Controllers\Fleet\FleetShortcutController::class, 'delete'])->whereNumber('id');
-	Route::match(['get', 'post'], 'fleet/verband/{id}', [Controllers\Fleet\FleetVerbandController::class, 'index'])->whereNumber('id');
+	Route::get('fleet/verband/{id}', [Controllers\Fleet\FleetVerbandController::class, 'index'])->whereNumber('id');
+	Route::post('fleet/verband/{id}', [Controllers\Fleet\FleetVerbandController::class, 'create'])->whereNumber('id');
+	Route::post('fleet/verband/{id}/name', [Controllers\Fleet\FleetVerbandController::class, 'name'])->whereNumber('id');
+	Route::post('fleet/verband/{id}/user', [Controllers\Fleet\FleetVerbandController::class, 'user'])->whereNumber('id');
 	Route::post('fleet/quick', [Controllers\Fleet\FleetQuickController::class, 'index']);
 
 	Route::match(['get', 'post'], 'galaxy', [Controllers\GalaxyController::class, 'index']);
 	Route::get('imperium', [Controllers\ImperiumController::class, 'index']);
 
 	Route::match(['get', 'post'], 'log', [Controllers\LogController::class, 'index']);
-	Route::post('log/new', [Controllers\LogController::class, 'new']);
+	Route::post('log', [Controllers\LogController::class, 'create']);
 
 	Route::get('merchant', [Controllers\MerchantController::class, 'index']);
 	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange']);
@@ -130,7 +133,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::delete('overview/delete/{id}', [Controllers\OverviewController::class, 'delete'])->whereNumber('id');
 
 	Route::get('phalanx', [Controllers\PhalanxController::class, 'index']);
-	Route::match(['get', 'post'], 'race', [Controllers\RaceController::class, 'index']);
+	Route::get('race', [Controllers\RaceController::class, 'index']);
+	Route::post('race/change', [Controllers\RaceController::class, 'change']);
 	Route::get('refers', [Controllers\RefersController::class, 'index']);
 
 	Route::get('research', [Controllers\ResearchController::class, 'index']);
@@ -142,7 +146,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('resources/state', [Controllers\ResourcesController::class, 'state']);
 
 	Route::post('rocket', [Controllers\RocketController::class, 'index']);
-	Route::get('rw/{id}/{key}', [Controllers\RwController::class, 'index'])->whereNumber('id');
+	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->name('log.view')->whereNumber('id')->middleware('signed:relative');
 	Route::post('search', [Controllers\SearchController::class, 'index']);
 
 	Route::get('shipyard', [Controllers\ShipyardController::class, 'index']);

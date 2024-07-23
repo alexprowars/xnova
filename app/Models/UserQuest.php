@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserQuest extends Model
 {
-	protected $guarded = [];
+	protected $guarded = false;
 	public $table = 'users_quests';
 
 	public function checkFinished(User $user, Planet $planet)

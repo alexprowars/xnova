@@ -57,6 +57,19 @@ return Application::configure(basePath: dirname(__DIR__))
 		]);
 	})
 	->withExceptions(function (Exceptions $exceptions) {
+		$exceptions->render(function (Exception $e, Request $request) {
+			$data = [
+				'error' => [
+					'message' => $e->getMessage(),
+				]
+			];
+
+			if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+				return new JsonResponse($data, $e->getStatusCode(), options: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+			}
+
+			return new JsonResponse($data, 500, options: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+		});
 		/*$exceptions->render(function (Exception $e, Request $request) {
 			$data = [
 				'message' => $e->getMessage(),

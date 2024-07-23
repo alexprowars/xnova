@@ -34,7 +34,7 @@ class AllianceController extends Controller
 
 		$parse = [];
 
-		$parse['list'] = [];
+		$parse['requests'] = [];
 
 		$requests = AllianceRequest::query()
 			->where('user_id', $this->user->id)
@@ -42,22 +42,22 @@ class AllianceController extends Controller
 			->get();
 
 		foreach ($requests as $item) {
-			$parse['list'][] = [$item->alliance_id, $item->alliance?->tag, $item->alliance?->name, $item->created_at?->utc()->toAtomString()];
+			$parse['requests'][] = [$item->alliance_id, $item->alliance?->tag, $item->alliance?->name, $item->created_at?->utc()->toAtomString()];
 		}
 
-		$parse['allys'] = [];
+		$parse['alliances'] = [];
 
 		$alliances = DB::table('alliances', 'a')
-			->select('a.id, a.tag, a.name, a.members_count as members, s.total_points')
-			->from('statistics', 's')
+			->select(['a.id', 'a.tag', 'a.name', 'a.members_count as members', 's.total_points'])
+			->leftJoin('statistics as s', 's.alliance_id', '=', 'a.id')
 			->where('s.stat_type', 2)
 			->where('s.stat_code', 1)
-			->where('s.alliance_id', 'a.id')
 			->orderByDesc('s.total_points')
-			->limit(15);
+			->limit(15)
+			->get();
 
 		foreach ($alliances as $item) {
-			$parse['allys'][] = (array) $item;
+			$parse['alliances'][] = (array) $item;
 		}
 
 		return response()->state($parse);
@@ -419,21 +419,21 @@ class AllianceController extends Controller
 		return response()->state($parse);
 	}
 
-	public function make(Request $request)
+	public function create(Request $request)
 	{
-		$ally_request = AllianceRequest::query()->where('user_id', $this->user->id)->count();
+		$ally_request = AllianceRequest::query()->whereBelongsTo($this->user)->count();
 
 		if ($this->user->alliance_id > 0 || $ally_request) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$tag = $request->post('tag', '');
-		$name = $request->post('name', '');
+		$tag = $request->post('tag');
+		$name = $request->post('name');
 
-		if ($tag == '') {
+		if (empty($tag)) {
 			throw new Exception(__('alliance.have_not_tag'));
 		}
-		if ($name == '') {
+		if (empty($name)) {
 			throw new Exception(__('alliance.have_not_name'));
 		}
 		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
@@ -470,50 +470,34 @@ class AllianceController extends Controller
 		$this->user->alliance_id = $alliance->id;
 		$this->user->alliance_name = $alliance->name;
 		$this->user->update();
-
-		throw new PageException(str_replace('%s', $alliance->tag, __('alliance.alliance_has_been_maked')), '/alliance/');
 	}
 
 	public function search(Request $request)
 	{
-		$ally_request = AllianceRequest::query()->where('user_id', $this->user->id)->count();
+		$query = $request->post('query', '');
 
-		if ($this->user->alliance_id > 0 || $ally_request) {
-			throw new Exception(__('alliance.Denied_access'));
+		if (!empty($query)) {
+			return [];
 		}
 
-		$parse = [];
-		$parse['result'] = [];
-
-		$text = '';
-
-		if ($request->post('searchtext') && $request->post('searchtext') != '') {
-			$text = $request->post('searchtext');
-
-			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $text)) {
-				throw new RedirectException('/alliance/search', "Строка поиска содержит запрещённые символы");
-			}
-
-			$search = Alliance::query()->where('name', 'LIKE', '%' . $text . '%')
-				->orWhere('tag', 'LIKE', '%' . $text . '%')
-				->limit(30)->get();
-
-			if ($search->count()) {
-				foreach ($search as $s) {
-					$entry = [];
-
-					$entry['tag'] = "[<a href=\"" . URL::to('alliance/apply/allyid/' . $s->id . '/') . "\">" . $s->tag . "</a>]";
-					$entry['name'] = $s->name;
-					$entry['members'] = $s->members;
-
-					$parse['result'][] = $entry;
-				}
-			}
+		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $query)) {
+			throw new RedirectException('/alliance/search', "Строка поиска содержит запрещённые символы");
 		}
 
-		$parse['searchtext'] = $text;
+		$items = [];
 
-		return response()->state($parse);
+		$search = Alliance::query()->where('name', 'LIKE', '%' . $query . '%')
+			->orWhere('tag', 'LIKE', '%' . $query . '%')
+			->limit(30)->get();
+
+		foreach ($search as $item) {
+			$entry = $item->only(['name', 'members']);
+			$entry['tag'] = "[<a href=\"" . URL::to('alliance/apply/' . $item->id) . "\">" . $item->tag . "</a>]";
+
+			$items[] = $entry;
+		}
+
+		return $items;
 	}
 
 	public function apply(Request $request)

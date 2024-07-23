@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Fleet extends Model
 {
-	protected $guarded = [];
+	protected $guarded = false;
 
 	protected function casts(): array
 	{
@@ -61,8 +61,6 @@ class Fleet extends Model
 			'system' => $this->start_system,
 		], false);
 
-		$uri = str_replace('/api', '', $uri);
-
 		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitStartPosition() . ']</a>';
 	}
 
@@ -72,8 +70,6 @@ class Fleet extends Model
 			'galaxy' => $this->end_galaxy,
 			'system' => $this->end_system,
 		], false);
-
-		$uri = str_replace('/api', '', $uri);
 
 		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitTargetPosition() . ']</a>';
 	}

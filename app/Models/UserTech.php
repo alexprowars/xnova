@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserTech extends Model
 {
 	protected $table = 'users_teches';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	protected $attributes = [
 		'level' => 0,

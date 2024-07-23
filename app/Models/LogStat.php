@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LogStat extends Model
 {
-	protected $guarded = [];
+	protected $guarded = false;
 	public $timestamps = false;
 
 	protected function casts(): array

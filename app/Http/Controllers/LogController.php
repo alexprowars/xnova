@@ -8,8 +8,8 @@ use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
 use App\Models\LogBattle;
 use App\Models\Report;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class LogController extends Controller
 {
@@ -67,51 +67,48 @@ class LogController extends Controller
 		throw new RedirectException('/log', 'Отчет удалён');
 	}
 
-	public function new()
+	public function create(Request $request)
 	{
-		$title = Request::post('title', '');
+		$title = $request->post('title');
+		$code = $request->post('code');
 
-		if ($title == '') {
-			throw new RedirectException('/log', '<h1><font color=red>Введите название для боевого отчёта.</h1>');
-		} elseif (Request::post('code', '') == '') {
-			throw new RedirectException('/log', '<h1><font color=red>Введите ID боевого отчёта.</h1>');
+		if (empty($title)) {
+			throw new Exception('Введите название для боевого отчёта');
+		} elseif (empty($code)) {
+			throw new Exception('Введите ID боевого отчёта');
 		}
-
-		$code = Request::post('code', '');
 
 		$key = substr($code, 0, 32);
 		$id = (int) substr($code, 32, (mb_strlen($code, 'UTF-8') - 32));
 
 		if (md5(config('app.key') . $id) != $key) {
-			throw new RedirectException('/log', 'Неправильный ключ');
+			throw new Exception('Неправильный ключ');
 		}
 
 		$log = Report::find($id);
 
 		if (!$log) {
-			throw new RedirectException('/log', 'Боевой отчёт не найден в базе');
+			throw new Exception('Боевой отчёт не найден в базе');
 		}
 
 		if ($log->users_id[0] == $this->user->id && $log->no_contact == 1) {
-			$SaveLog = [null];
+			$dataLog = [null];
 		} else {
-			$SaveLog = $log->data;
+			$dataLog = $log->data;
 
-			foreach ($SaveLog[0]['rw'] as $round => $data1) {
-				unset($SaveLog[0]['rw'][$round]['logA'], $SaveLog[0]['rw'][$round]['logD']);
+			foreach ($dataLog[0]['rw'] as $round => $data1) {
+				unset($dataLog[0]['rw'][$round]['logA'], $dataLog[0]['rw'][$round]['logD']);
 			}
 		}
 
 		$new = new LogBattle();
 		$new->user_id = $this->user->id;
 		$new->title = addslashes(htmlspecialchars($title));
-		$new->data = $SaveLog;
+		$new->data = $dataLog;
 
 		if (!$new->save()) {
 			throw new Exception('Произошла ошибка при сохранении боевого отчета');
 		}
-
-		throw new RedirectException('/log', 'Боевой отчёт успешно сохранён.');
 	}
 
 	public function info(int $id)

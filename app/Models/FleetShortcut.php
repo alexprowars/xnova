@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class FleetShortcut extends Model
 {
 	protected $table = 'fleets_shortcuts';
-	protected $guarded = [];
+	protected $guarded = false;
 
 	public function user()
 	{
