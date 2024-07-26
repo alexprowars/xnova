@@ -22,7 +22,7 @@ class AllianceAdminController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new RedirectException('/alliance', __('alliance.Denied_access'));
 		}
 
 		$type = (int) $request->get('type', 1);
@@ -119,48 +119,56 @@ class AllianceAdminController extends Controller
 		$alliance->delete();
 	}
 
-	public function give(Request $request)
+	public function give()
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id) {
-			throw new RedirectException('/alliance', 'Доступ запрещён.');
+			throw new RedirectException('/alliance', 'Доступ запрещён');
 		}
 
-		if ($request->post('newleader') && $alliance->user_id == $this->user->id) {
-			$info = User::find($request->post('newleader'));
-
-			if (!$info || $info->alliance_id != $this->user->alliance_id) {
-				throw new RedirectException('/alliance', 'Операция невозможна.');
-			}
-
-			$alliance->user_id = $info->id;
-			$alliance->save();
-
-			AllianceMember::query()->where('user_id', $info->id)
-				->update(['rank' => 0]);
-
-			throw new RedirectException('/alliance', 'Правление передано');
-		}
-
-		$listuser = AllianceMember::query()
-			->where('alliance_id', $alliance->id)
-			->where('user_id', $alliance->user_id)
+		$listuser = $alliance->members()
+			->whereNot('user_id', $alliance->user_id)
 			->where('rank', '>', 0)
 			->with('user')
 			->get();
 
-		$parse['righthand'] = '';
+		$parse['users'] = [];
 
 		foreach ($listuser as $u) {
 			if ($alliance->ranks[$u->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
-				$parse['righthand'] .= "<option value=\"" . $u->id . "\">" . $u->user?->username . "&nbsp;[" . $alliance->ranks[$u->rank]['name'] . "]&nbsp;&nbsp;</option>";
+				$parse['users'][] = [
+					'id' => $u->id,
+					'name' => $u->user?->username,
+					'rank' => $alliance->ranks[$u->rank]['name'],
+				];
 			}
 		}
 
 		$parse['id'] = $this->user->id;
 
 		return response()->state($parse);
+	}
+
+	public function giveSend(Request $request)
+	{
+		$alliance = $this->getAlliance();
+
+		if ($alliance->user_id != $this->user->id) {
+			throw new Exception('Доступ запрещён');
+		}
+
+		$user = User::find((int) $request->post('user', 0));
+
+		if (!$user || $user->alliance_id != $this->user->alliance_id) {
+			throw new Exception('Операция невозможна.');
+		}
+
+		$alliance->user_id = $user->id;
+		$alliance->save();
+
+		AllianceMember::query()->where('user_id', $user->id)
+			->update(['rank' => 0]);
 	}
 
 	public function update(Request $request)

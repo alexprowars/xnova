@@ -15,7 +15,7 @@ return new class extends Migration {
 			$table->integer('type')->default(0);
 			$table->boolean('deleted')->default(false);
 			$table->string('theme', 100)->nullable();
-			$table->text('text')->nullable();
+			$table->text('message')->nullable();
 			$table->index(['user_id','deleted']);
 		});
 	}

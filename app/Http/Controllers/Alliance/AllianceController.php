@@ -253,52 +253,56 @@ class AllianceController extends Controller
 		return $items;
 	}
 
-	public function apply(Request $request)
+	public function join(int $id)
 	{
-		if ($this->user->alliance_id > 0) {
-			throw new Exception(__('alliance.Denied_access'));
+		if ($this->user->alliance_id) {
+			throw new RedirectException('/alliance', __('alliance.Denied_access'));
 		}
 
-		$allyid = $request->query('allyid', 0);
+		$alliance = Alliance::find($id);
 
-		if ($allyid <= 0) {
-			throw new Exception(__('alliance.it_is_not_posible_to_apply'));
+		if (!$alliance) {
+			throw new Exception('Альянса не существует!');
 		}
 
-		$allyrow = Alliance::find($allyid);
-
-		if (!$allyrow) {
-			throw new Exception("Альянса не существует!");
-		}
-
-		if ($allyrow->request_notallow != 0) {
-			throw new Exception("Данный альянс является закрытым для вступлений новых членов");
-		}
-
-		if ($request->post('further')) {
-			$existRequest = AllianceRequest::where('alliance_id', $allyrow->id)->where('user_id', $this->user->id)
-				->exists();
-
-			if ($existRequest) {
-				throw new RedirectException('/alliance', 'Вы уже отсылали заявку на вступление в этот альянс!');
-			}
-
-			AllianceRequest::create([
-				'alliance_id' => $allyrow->id,
-				'user_id' => $this->user->id,
-				'message' => strip_tags($request->post('text')),
-			]);
-
-			throw new RedirectException('/alliance', __('alliance.apply_registered'));
+		if ($alliance->request_notallow != 0) {
+			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
 		}
 
 		$parse = [];
-
-		$parse['allyid'] = $allyrow->id;
-		$parse['text_apply'] = ($allyrow->request) ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow->request)) : '';
-		$parse['tag'] = $allyrow->tag;
+		$parse['text'] = $alliance->request ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request)) : '';
+		$parse['tag'] = $alliance->tag;
 
 		return response()->state($parse);
+	}
+
+	public function joinSend(int $id, Request $request)
+	{
+		if ($this->user->alliance_id) {
+			throw new Exception(__('alliance.Denied_access'));
+		}
+
+		$alliance = Alliance::find($id);
+
+		if (!$alliance) {
+			throw new Exception('Альянса не существует!');
+		}
+
+		if ($alliance->request_notallow != 0) {
+			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
+		}
+
+		$exist = $alliance->requests()->where('user_id', $this->user->id)
+			->exists();
+
+		if ($exist) {
+			throw new Exception('Вы уже отсылали заявку на вступление в этот альянс!');
+		}
+
+		$alliance->requests()->create([
+			'user_id' => $this->user->id,
+			'message' => strip_tags($request->post('message')),
+		]);
 	}
 
 	public function stat(int $id)

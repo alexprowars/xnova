@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class CreditsController extends Controller
 {
-	public function index(Request $request)
+	public function pay(Request $request)
 	{
 		$parse = [];
 
@@ -15,6 +15,6 @@ class CreditsController extends Controller
 
 		$parse['id'] = $userId;
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

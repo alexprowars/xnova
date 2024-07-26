@@ -46,7 +46,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('alliance', [Controllers\Alliance\AllianceController::class, 'index']);
 	Route::post('alliance/search', [Controllers\Alliance\AllianceController::class, 'search']);
 	Route::post('alliance/create', [Controllers\Alliance\AllianceController::class, 'create']);
-	Route::match(['get', 'post'], 'alliance/apply', [Controllers\Alliance\AllianceController::class, 'apply']);
+	Route::get('alliance/join/{id}', [Controllers\Alliance\AllianceController::class, 'join']);
+	Route::post('alliance/join/{id}', [Controllers\Alliance\AllianceController::class, 'joinSend']);
 	Route::get('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'index']);
 	Route::post('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'send']);
 	Route::delete('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'delete']);
@@ -56,7 +57,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('alliance/admin/name', [Controllers\Alliance\AllianceAdminController::class, 'name']);
 	Route::post('alliance/admin/tag', [Controllers\Alliance\AllianceAdminController::class, 'tag']);
 	Route::post('alliance/admin/remove', [Controllers\Alliance\AllianceAdminController::class, 'remove']);
-	Route::match(['get', 'post'], 'alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'give']);
+	Route::get('alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'give']);
+	Route::post('alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'giveSend']);
 	Route::get('alliance/diplomacy', [Controllers\Alliance\AllianceDiplomacyController::class, 'index']);
 	Route::post('alliance/diplomacy/create', [Controllers\Alliance\AllianceDiplomacyController::class, 'create']);
 	Route::post('alliance/diplomacy/accept', [Controllers\Alliance\AllianceDiplomacyController::class, 'accept']);
@@ -77,10 +79,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('alliance/admin/rights/create', [Controllers\Alliance\AllianceRanksController::class, 'create']);
 	Route::delete('alliance/admin/rights/{id}', [Controllers\Alliance\AllianceRanksController::class, 'remove']);
 
-	Route::match(['get', 'post'], 'buddy', [Controllers\BuddyController::class, 'index']);
-	Route::match(['get', 'post'], 'buddy/requests', [Controllers\BuddyController::class, 'requests']);
-	Route::match(['get', 'post'], 'buddy/new/{id}', [Controllers\BuddyController::class, 'new']);
-
+	Route::get('buddy', [Controllers\BuddyController::class, 'index']);
+	Route::get('buddy/new/{id}', [Controllers\BuddyController::class, 'new']);
+	Route::post('buddy/new/{id}', [Controllers\BuddyController::class, 'create']);
 	Route::delete('buddy/{id}', [Controllers\BuddyController::class, 'delete'])->whereNumber('id');
 	Route::post('buddy/{id}/approve', [Controllers\BuddyController::class, 'approve'])->whereNumber('id');
 
@@ -88,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->whereIn('action', ['insert', 'destroy']);
 	Route::post('buildings/queue/{action}', [Controllers\BuildingsController::class, 'queue'])->whereIn('action', ['cancel', 'remove']);
 
-	Route::match(['get', 'post'], 'credits', [Controllers\CreditsController::class, 'index']);
+	Route::post('credits/pay', [Controllers\CreditsController::class, 'pay']);
 
 	Route::get('defense', [Controllers\DefenseController::class, 'index']);
 	Route::post('defense/queue', [Controllers\DefenseController::class, 'queue']);

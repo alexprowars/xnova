@@ -6,31 +6,33 @@ use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Models;
+use App\Models\Friend;
+use App\Models\User;
 use App\Notifications\MessageNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class BuddyController extends Controller
 {
-	public function index($isRequests = false, $isMy = false)
+	public function index(Request $request)
 	{
 		$parse = [];
 
-		if ($isRequests) {
-			$parse['title'] = $isMy ? 'Мои запросы' : 'Другие запросы';
+		if ($request->has('requests')) {
+			$parse['title'] = $request->has('my') ? 'Мои запросы' : 'Другие запросы';
 		}
 
 		$parse['items'] = [];
-		$parse['isMy'] = $isMy;
+		$parse['isMy'] = $request->has('my');
 
 		$items = Models\Friend::query()
 			->orderByDesc('id')
 			->where('ignore', 0);
 
-		if ($isRequests) {
+		if ($request->has('requests')) {
 			$items->where('active', 0);
 
-			if ($isMy) {
+			if ($request->has('my')) {
 				$items->where('user_id', $this->user->id);
 			} else {
 				$items->where('friend_id', $this->user->id);
@@ -46,7 +48,7 @@ class BuddyController extends Controller
 		$items = $items->get();
 
 		foreach ($items as $item) {
-			$userId = ($item->friend_id == $this->user->id) ? $item->user_id : $item->friend_id;
+			$userId = $item->friend_id == $this->user->id ? $item->user_id : $item->friend_id;
 
 			$user = Models\User::find($userId);
 
@@ -56,23 +58,23 @@ class BuddyController extends Controller
 			}
 
 			$row = [
-				'id' => (int) $item->id,
+				'id' => $item->id,
 				'online' => 0,
-				'text' => $item->text,
+				'message' => $item->message,
 				'user' => [
 					'id' => (int) $user->id,
 					'name' => $user->username,
 					'alliance' => [
 						'id' => (int) $user->alliance_id,
-						'name' => $user->alliance_name
+						'name' => $user->alliance_name,
 					],
 					'galaxy' => (int) $user->galaxy,
 					'system' => (int) $user->system,
 					'planet' => (int) $user->planet,
-				]
+				],
 			];
 
-			if (!$isRequests) {
+			if (!$request->has('requests')) {
 				if ($user->onlinetime?->timestamp > time() - 59 * 60) {
 					$row['online'] = floor((time() - $user->onlinetime->timestamp) / 60);
 				} else {
@@ -86,47 +88,12 @@ class BuddyController extends Controller
 		return response()->state($parse);
 	}
 
-	public function new(Request $request, $userId)
+	public function new(int $userId)
 	{
-		$user = Models\User::query()
-			->select(['id', 'username'])
-			->where('id', $userId)
-			->first();
+		$user = User::find($userId);
 
 		if (!$user) {
 			throw new Exception('Друг не найден');
-		}
-
-		if ($request->isMethod('post')) {
-			$buddy = Models\Friend::query()
-				->where(function (Builder $query) use ($userId) {
-					$query->where('user_id', $userId)->where('friend_id', $this->user->id);
-				})
-				->orWhere(function (Builder $query) use ($userId) {
-					$query->where('user_id', $userId)->where('friend_id', $this->user->id);
-				})
-				->exists();
-
-			if ($buddy) {
-				throw new Exception('Запрос дружбы был уже отправлен ранее');
-			}
-
-			$text = strip_tags($request->post('text', ''));
-
-			if (mb_strlen($text) > 5000) {
-				throw new Exception('Максимальная длинна сообщения 5000 символов!');
-			}
-
-			Models\Friend::create([
-				'user_id' => $this->user->id,
-				'friend_id' => $user->id,
-				'active' => false,
-				'message' => $text,
-			]);
-
-			$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests/"><< просмотреть >></a>'));
-
-			throw new RedirectException('/buddy', 'Запрос отправлен');
 		}
 
 		if ($user->id == $this->user->id) {
@@ -139,13 +106,45 @@ class BuddyController extends Controller
 		]);
 	}
 
-	public function requests($isMy = false)
+	public function create(int $userId, Request $request)
 	{
-		if ($isMy !== false) {
-			$isMy = true;
+		$user = User::find($userId);
+
+		if (!$user) {
+			throw new Exception('Друг не найден');
 		}
 
-		return $this->index(true, $isMy);
+		if ($user->id == $this->user->id) {
+			throw new Exception('Нельзя дружить сам с собой');
+		}
+
+		$buddy = Friend::query()
+			->where(function (Builder $query) use ($userId) {
+				$query->where('user_id', $userId)->where('friend_id', $this->user->id);
+			})
+			->orWhere(function (Builder $query) use ($userId) {
+				$query->where('user_id', $this->user->id)->where('friend_id', $userId);
+			})
+			->exists();
+
+		if ($buddy) {
+			throw new Exception('Запрос дружбы был уже отправлен ранее');
+		}
+
+		$message = strip_tags($request->post('message', ''));
+
+		if (mb_strlen($message) > 5000) {
+			throw new Exception('Максимальная длинна сообщения 5000 символов!');
+		}
+
+		Friend::create([
+			'user_id' => $this->user->id,
+			'friend_id' => $user->id,
+			'active' => false,
+			'message' => $message,
+		]);
+
+		$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests"><< просмотреть >></a>'));
 	}
 
 	public function delete(int $id)
