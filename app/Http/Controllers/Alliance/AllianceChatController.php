@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Format;
+use App\Http\Controllers\Controller;
 use App\Models\AllianceChat;
 use App\Models\User;
 use Illuminate\Http\Request;

@@ -31,6 +31,16 @@ class Alliance extends Model
 		return $this->hasMany(AllianceMember::class);
 	}
 
+	public function requests()
+	{
+		return $this->hasMany(AllianceRequest::class);
+	}
+
+	public function diplomacy()
+	{
+		return $this->hasMany(AllianceDiplomacy::class);
+	}
+
 	public function getRanks()
 	{
 		if (empty($this->ranks)) {

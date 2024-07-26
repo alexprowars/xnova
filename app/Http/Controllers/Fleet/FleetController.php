@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Entity\Ship;
 use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
+use App\Http\Controllers\Controller;
 use App\Models;
 use Illuminate\Http\Request;
 
