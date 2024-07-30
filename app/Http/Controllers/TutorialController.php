@@ -6,7 +6,6 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
 use App\Format;
 
 class TutorialController extends Controller
@@ -239,10 +238,10 @@ class TutorialController extends Controller
 					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 						$this->planet->updateAmount($element, $level, true);
 					} elseif ($type == ItemType::OFFICIER) {
-						if ($this->user->{Vars::getName($element)} > time()) {
-							$this->user->{Vars::getName($element)} += $level;
+						if ($this->user->{Vars::getName($element)}?->isFuture()) {
+							$this->user->{Vars::getName($element)} = $this->user->{Vars::getName($element)}->addSeconds($level);
 						} else {
-							$this->user->{Vars::getName($element)} = time() + $level;
+							$this->user->{Vars::getName($element)} = now()->addSeconds($level);
 						}
 					} elseif ($type == ItemType::BUILDING) {
 						$this->planet->updateAmount($element, (int) $level, true);

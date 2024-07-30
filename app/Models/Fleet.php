@@ -130,15 +130,6 @@ class Fleet extends Model
 		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $withType ? $this->end_type : null);
 	}
 
-	public function return(array $attributes = [])
-	{
-		$this->mess = 1;
-		$this->updated_at = $this->end_time;
-
-		$this->update($attributes);
-		$this->assault?->delete();
-	}
-
 	public function scopeCoordinates(Builder $query, FleetDirection $position, Coordinates $target)
 	{
 		$query->where($position->value . '_galaxy', $target->getGalaxy())

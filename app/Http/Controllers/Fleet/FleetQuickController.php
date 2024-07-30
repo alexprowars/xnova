@@ -19,10 +19,6 @@ class FleetQuickController extends Controller
 	/** @noinspection PhpRedundantCatchClauseInspection */
 	public function index(Request $request)
 	{
-		if ($this->user->isVacation()) {
-			throw new Exception('Нет доступа!');
-		}
-
 		$mission = (int) $request->post('mission', 0);
 		$mission = Mission::tryFrom($mission);
 

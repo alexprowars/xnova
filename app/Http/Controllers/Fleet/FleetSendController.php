@@ -23,10 +23,6 @@ class FleetSendController extends Controller
 	/** @noinspection PhpRedundantCatchClauseInspection */
 	public function index(Request $request)
 	{
-		if ($this->user->isVacation()) {
-			throw new PageException('Нет доступа!');
-		}
-
 		$moon = (int) $request->post('moon', 0);
 
 		if ($moon && $moon != $this->planet->id) {

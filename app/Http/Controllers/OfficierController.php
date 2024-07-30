@@ -5,19 +5,27 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
 use App\Models\LogCredit;
 use Illuminate\Http\Request;
 
 class OfficierController extends Controller
 {
-	public function buy(Request $request)
+	public function index()
 	{
-		if ($this->user->isVacation()) {
-			throw new PageException('В режиме отпуска данный раздел недоступен!');
+		$parse['items'] = [];
+
+		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
+			$parse['items'][] = [
+				'id' => $officier,
+				'power' => __('officier.power.' . $officier),
+			];
 		}
 
+		return response()->state($parse);
+	}
+
+	public function buy(Request $request)
+	{
 		$id = (int) $request->post('id');
 		$duration = (int) $request->post('duration');
 
@@ -56,21 +64,5 @@ class OfficierController extends Controller
 			'amount' => $credits * (-1),
 			'type' => 5
 		]);
-
-		throw new RedirectException('/officier', __('officier.OffiRecrute'));
-	}
-
-	public function index()
-	{
-		$parse['items'] = [];
-
-		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
-			$parse['items'][] = [
-				'id' => $officier,
-				'power' => __('officier.power.' . $officier),
-			];
-		}
-
-		return response()->state($parse);
 	}
 }

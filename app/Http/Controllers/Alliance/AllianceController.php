@@ -15,7 +15,6 @@ use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 
 class AllianceController extends Controller
 {
@@ -234,7 +233,7 @@ class AllianceController extends Controller
 		}
 
 		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $query)) {
-			throw new RedirectException('/alliance/search', "Строка поиска содержит запрещённые символы");
+			throw new Exception('Строка поиска содержит запрещённые символы');
 		}
 
 		$items = [];
@@ -244,10 +243,7 @@ class AllianceController extends Controller
 			->limit(30)->get();
 
 		foreach ($search as $item) {
-			$entry = $item->only(['name', 'members']);
-			$entry['tag'] = "[<a href=\"" . URL::to('alliance/apply/' . $item->id) . "\">" . $item->tag . "</a>]";
-
-			$items[] = $entry;
+			$items[] = $item->only(['id', 'name', 'tag', 'members']);
 		}
 
 		return $items;

@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Enums\ItemType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Models\Fleet;
 use App\Models\LogCredit;
 use Illuminate\Http\Request;
 
 class RaceController extends Controller
 {
-	public function index(Request $request)
+	public function index()
 	{
 		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 

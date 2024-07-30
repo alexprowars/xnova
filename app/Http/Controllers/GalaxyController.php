@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Fleet;
 use App\Files;
 use App\Models;
+use App\Models\Statistic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -19,7 +20,7 @@ class GalaxyController extends Controller
 			->count();
 
 		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
-			$records = Models\Statistic::query()
+			$records = Statistic::query()
 				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
 				->where('stat_type', 1)
 				->where('stat_code', 1)

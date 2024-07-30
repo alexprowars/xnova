@@ -3,10 +3,9 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\FleetEngine;
 use App\Notifications\MessageNotification;
 
-class Transport extends FleetEngine implements Mission
+class Transport extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -44,17 +43,6 @@ class Transport extends FleetEngine implements Mission
 			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower'), $message));
 		}
 
-		$this->fleet->fill(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
-		$this->fleet->return();
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
+		$this->return(['resource_metal' => 0, 'resource_crystal' => 0, 'resource_deuterium' => 0]);
 	}
 }

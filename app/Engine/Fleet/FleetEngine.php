@@ -2,15 +2,15 @@
 
 namespace App\Engine\Fleet;
 
-use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Vars;
 use App\Models;
+use App\Models\Fleet;
 use App\Models\Planet;
 
 class FleetEngine
 {
-	public function __construct(public Models\Fleet $fleet)
+	public function __construct(public Fleet $fleet)
 	{
 	}
 
@@ -20,7 +20,7 @@ class FleetEngine
 			$fleetId = $this->fleet->id;
 		}
 
-		Models\Fleet::find($fleetId)?->delete();
+		Fleet::find($fleetId)?->delete();
 	}
 
 	public function restoreFleetToPlanet($start = true, $fleet = true)
@@ -46,14 +46,12 @@ class FleetEngine
 		}
 
 		if ($start) {
-			$p = 'start';
+			$target = $this->fleet->getOriginCoordinates();
 		} else {
-			$p = 'end';
+			$target = $this->fleet->getDestinationCoordinates();
 		}
 
-		$targetPlanet = Planet::findByCoordinates(
-			new Coordinates($this->fleet->{$p . '_galaxy'}, $this->fleet->{$p . '_system'}, $this->fleet->{$p . '_planet'}, $this->fleet->{$p . '_type'})
-		);
+		$targetPlanet = Planet::findByCoordinates($target);
 
 		if ($targetPlanet && $targetPlanet->user) {
 			$targetPlanet->getProduction()->update();
@@ -76,12 +74,21 @@ class FleetEngine
 		}
 	}
 
-	public function stayFleet($update = [])
+	public function stayFleet(array $attributes = [])
 	{
-		$update['mess'] = 3;
-		$update['updated_at'] = $this->fleet->end_stay;
+		$this->fleet->mess = 3;
+		$this->fleet->updated_at = $this->fleet->end_stay;
 
-		$this->fleet->update($update);
+		$this->fleet->update($attributes);
+	}
+
+	public function return(array $attributes = [])
+	{
+		$this->fleet->mess = 1;
+		$this->fleet->updated_at = $this->fleet->end_time;
+
+		$this->fleet->update($attributes);
+		$this->fleet->assault?->delete();
 	}
 
 	public function convertFleetToDebris($fleet)
@@ -91,11 +98,11 @@ class FleetEngine
 		foreach ($fleet as $fleetId => $fleetData) {
 			$res = Vars::getItemPrice($fleetId);
 
-			if (isset($res['metal']) && $res['metal'] > 0) {
+			if (!empty($res['metal']) && $res['metal'] > 0) {
 				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * config('game.fleetDebrisRate', 0));
 			}
 
-			if (isset($res['crystal']) && $res['crystal'] > 0) {
+			if (!empty($res['crystal']) && $res['crystal'] > 0) {
 				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * config('game.fleetDebrisRate', 0));
 			}
 		}

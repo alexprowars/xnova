@@ -5,7 +5,6 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\FleetEngine;
 use App\Models;
 use App\Models\Planet;
 use App\Models\User;
@@ -13,7 +12,7 @@ use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class Destruction extends FleetEngine implements Mission
+class Destruction extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -148,15 +147,5 @@ class Destruction extends FleetEngine implements Mission
 		} else {
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop')));
 		}
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
 	}
 }

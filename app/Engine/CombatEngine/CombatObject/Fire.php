@@ -73,7 +73,6 @@ class Fire
 	/**
 	 * Fire::calculateTotal()
 	 * Calculate the total power and shots amount of attacker, including RF and standart fire
-	 * @return void
 	 */
 	private function calculateTotal()
 	{

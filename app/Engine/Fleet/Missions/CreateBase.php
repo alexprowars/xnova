@@ -4,13 +4,12 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 
-class CreateBase extends FleetEngine implements Mission
+class CreateBase extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -34,7 +33,7 @@ class CreateBase extends FleetEngine implements Mission
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
 
 				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
-				$this->fleet->return();
+				$this->return();
 			} else {
 				// Создание планеты-базы
 				$NewOwnerPlanet = $galaxy->createPlanet(
@@ -69,7 +68,7 @@ class CreateBase extends FleetEngine implements Mission
 
 					Cache::forget('app::planetlist_' . $this->fleet->user_id);
 				} else {
-					$this->fleet->return();
+					$this->return();
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
 
@@ -77,21 +76,11 @@ class CreateBase extends FleetEngine implements Mission
 				}
 			}
 		} else {
-			$this->fleet->return();
+			$this->return();
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 		}
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
 	}
 }

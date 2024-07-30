@@ -8,7 +8,6 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
-use App\Exceptions\PageException;
 use App\Models\Planet;
 use App\Models\Queue as QueueModel;
 use Illuminate\Http\Request;
@@ -17,10 +16,6 @@ class ResearchController extends Controller
 {
 	public function index()
 	{
-		if ($this->user->isVacation()) {
-			throw new PageException('Нет доступа!');
-		}
-
 		$labInQueue = true;
 
 		if (!Building::checkLabSettingsInQueue($this->planet)) {

@@ -6,13 +6,12 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Models\Planet;
 use App\Models\UserTech;
 use App\Notifications\MessageNotification;
 
-class Rak extends FleetEngine implements Mission
+class Rak extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -85,10 +84,6 @@ class Rak extends FleetEngine implements Mission
 		}
 
 		$this->fleet->target->notify(new MessageNotification(null, MessageType::Battle, 'Ракетная атака', $message));
-	}
-
-	public function endStayEvent()
-	{
 	}
 
 	public function returnEvent()

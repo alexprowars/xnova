@@ -27,7 +27,7 @@ class ResourcesController extends Controller
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
 		] + $this->getBuyResourcesAmount();
 
-		$parse['bonus_h'] = ($this->user->bonus('storage') - 1) * 100;
+		$parse['bonus_h'] = (int) round(($this->user->bonus('storage') - 1) * 100);
 		$parse['items'] = [];
 
 		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $entityId) {
@@ -76,10 +76,6 @@ class ResourcesController extends Controller
 
 	public function buy()
 	{
-		if ($this->user->isVacation()) {
-			throw new Exception('Включен режим отпуска!');
-		}
-
 		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
 			throw new Exception('На этой планете нельзя купить ресурсы');
 		}
@@ -116,10 +112,6 @@ class ResourcesController extends Controller
 
 	public function shutdown(Request $request)
 	{
-		if ($this->user->isVacation()) {
-			throw new Exception('Включен режим отпуска!');
-		}
-
 		$production = $request->post('active', 'Y') == 'Y' ? 10 : 0;
 
 		foreach ($this->user->planets as $planet) {
@@ -135,10 +127,6 @@ class ResourcesController extends Controller
 
 	public function state(Request $request)
 	{
-		if ($this->user->isVacation()) {
-			throw new Exception('Включен режим отпуска!');
-		}
-
 		foreach ($request->post('state') as $entityId => $value) {
 			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {
 				continue;

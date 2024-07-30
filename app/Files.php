@@ -115,7 +115,7 @@ class Files
 			return $result;
 		}
 
-		$file = Models\File::query()->find((int) $fileId);
+		$file = Models\File::query()->find($fileId);
 
 		if (!$file) {
 			return false;

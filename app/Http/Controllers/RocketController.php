@@ -41,10 +41,6 @@ class RocketController extends Controller
 			throw new Exception('Игрок в режиме отпуска');
 		}
 
-		if ($this->user->isVacation()) {
-			throw new Exception('Вы в режиме отпуска');
-		}
-
 		if (!$targetPlanet) {
 			throw new Exception('Планета не найдена');
 		} elseif ($this->planet->getLevel('missile_facility') < 4) {

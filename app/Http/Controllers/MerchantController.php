@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use Illuminate\Http\Request;
 
 class MerchantController extends Controller

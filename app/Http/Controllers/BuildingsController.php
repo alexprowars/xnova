@@ -8,17 +8,12 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
-use App\Exceptions\PageException;
 use Illuminate\Http\Request;
 
 class BuildingsController extends Controller
 {
 	public function index()
 	{
-		if ($this->user->isVacation()) {
-			throw new PageException('Нет доступа!');
-		}
-
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
 		$items = [];

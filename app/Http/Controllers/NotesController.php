@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Models\Note;
 use Illuminate\Http\Request;
 

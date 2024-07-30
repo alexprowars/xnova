@@ -5,14 +5,13 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Format;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\DB;
 
-class Recycling extends FleetEngine implements Mission
+class Recycling extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -81,28 +80,18 @@ class Recycling extends FleetEngine implements Mission
 
 			$targetPlanet->save();
 
-			$this->fleet->return([
+			$this->return([
 				'resource_metal' => DB::raw('resource_metal + ' . $recycledGoods['metal']),
 				'resource_crystal' => DB::raw('resource_crystal + ' . $recycledGoods['crystal'])
 			]);
 
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), Format::number($recycledGoods['metal']), __('main.Metal'), Format::number($recycledGoods['crystal']), __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		} else {
-			$this->fleet->return();
+			$this->return();
 
 			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		}
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $Message));
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
 	}
 }

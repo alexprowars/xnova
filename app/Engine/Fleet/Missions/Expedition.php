@@ -10,7 +10,6 @@ use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\Vars;
 use App\Format;
 use App\Models;
@@ -19,7 +18,7 @@ use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class Expedition extends FleetEngine implements Mission
+class Expedition extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -97,7 +96,7 @@ class Expedition extends FleetEngine implements Mission
 						break;
 				}
 
-				$this->fleet->return($update);
+				$this->return($update);
 
 				break;
 
@@ -116,7 +115,7 @@ class Expedition extends FleetEngine implements Mission
 				Models\User::query()->where('id', $this->fleet->user_id)
 					->update(['credits' => DB::raw('credits + ' . $Size)]);
 
-				$this->fleet->return();
+				$this->return();
 
 				break;
 
@@ -177,7 +176,7 @@ class Expedition extends FleetEngine implements Mission
 				$Message .= $FoundShipMess;
 
 				$this->fleet->fleet_array = $NewFleetArray;
-				$this->fleet->return();
+				$this->return();
 
 				break;
 
@@ -445,12 +444,12 @@ class Expedition extends FleetEngine implements Mission
 					$Message = __('fleet_engine.sys_expe_time_fast_' . random_int(1, 3));
 				}
 
-				$this->fleet->return();
+				$this->return();
 
 				break;
 
 			default:
-				$this->fleet->return();
+				$this->return();
 
 				$Message = __('fleet_engine.sys_expe_nothing_' . random_int(1, 8));
 		}
@@ -464,7 +463,6 @@ class Expedition extends FleetEngine implements Mission
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $Message));
 
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
+		parent::returnEvent();
 	}
 }

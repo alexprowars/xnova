@@ -8,25 +8,21 @@ class IterableIterator implements Iterator
 {
 	public function rewind()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
 		reset($this->array);
 	}
 
 	public function current()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
 		return current($this->array);
 	}
 
 	public function key()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
 		return key($this->array);
 	}
 
 	public function next()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
 		return next($this->array);
 	}
 
@@ -37,7 +33,6 @@ class IterableIterator implements Iterator
 
 	public function getIterator()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
 		return $this->array;
 	}
 }

@@ -12,7 +12,6 @@ use App\Engine\Game;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Http\Resources\FleetRow;
 use App\Models\Chat;
@@ -23,7 +22,6 @@ use App\Models\Statistic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\URL;
 
 class OverviewController extends Controller
 {
@@ -362,20 +360,14 @@ class OverviewController extends Controller
 			}
 		}
 
-		$showMessage = false;
+		$parse['resource_notify'] = false;
 
 		foreach (Vars::getResources() as $res) {
 			$entity = $this->planet->entities->where('entity_id', Vars::getIdByName($res . '_mine'))->first();
 
 			if ($this->planet->getLevel($res . '_mine') && !$entity?->factor) {
-				$showMessage = true;
+				$parse['resource_notify'] = true;
 			}
-		}
-
-		$parse['error'] = false;
-
-		if ($showMessage) {
-			$parse['error'] = '<span class="negative">Одна из шахт находится в выключенном состоянии. Зайдите в меню "<a href="' . URL::route('resources', [], false) . '">Сырьё</a>" и восстановите производство.</span>';
 		}
 
 		return response()->state($parse);
@@ -465,8 +457,6 @@ class OverviewController extends Controller
 
 		$this->planet->name = $name;
 		$this->planet->update();
-
-		throw new RedirectException('/overview', 'Название планеты изменено');
 	}
 
 	public function image(Request $request)

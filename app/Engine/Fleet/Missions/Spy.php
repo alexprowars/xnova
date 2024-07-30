@@ -2,9 +2,9 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Format;
@@ -13,7 +13,7 @@ use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 
-class Spy extends FleetEngine implements Mission
+class Spy extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -22,19 +22,18 @@ class Spy extends FleetEngine implements Mission
 		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if ($TargetPlanet->user_id == 0) {
-			$this->fleet->return();
+			$this->return();
 			return false;
 		}
 
-		$targetUser = User::find($TargetPlanet->user_id);
+		$targetUser = $TargetPlanet->user;
 
-		if (!$targetUser) {
-			$this->fleet->return();
+		if (!$TargetPlanet) {
+			$this->return();
 
 			return false;
 		}
 
-		$TargetPlanet->setRelation('user', $targetUser);
 		$TargetPlanet->getProduction($this->fleet->start_time)->update();
 
 		$queueManager = new QueueManager($targetUser, $TargetPlanet);
@@ -42,13 +41,13 @@ class Spy extends FleetEngine implements Mission
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');
 
-		if ($owner->rpg_technocrate > time()) {
+		if ($owner->rpg_technocrate->isFuture()) {
 			$CurrentSpyLvl += 2;
 		}
 
 		$TargetSpyLvl = $targetUser->getTechLevel('spy');
 
-		if ($targetUser->rpg_technocrate > time()) {
+		if ($targetUser->rpg_technocrate->isFuture()) {
 			$TargetSpyLvl += 2;
 		}
 
@@ -62,10 +61,7 @@ class Spy extends FleetEngine implements Mission
 
 		if ($LS > 0) {
 			$defenders = Fleet::query()
-				->where('end_galaxy', $this->fleet->end_galaxy)
-				->where('end_system', $this->fleet->end_system)
-				->where('end_planet', $this->fleet->end_planet)
-				->where('end_type', $this->fleet->end_type)
+				->coordinates(FleetDirection::END, $this->fleet->getDestinationCoordinates())
 				->where('mess', 3)
 				->get();
 
@@ -126,17 +122,17 @@ class Spy extends FleetEngine implements Mission
 			if ($TargetChances <= $SpyerChances) {
 				$DestProba = sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances);
 			} else {
-				$DestProba = "<font color=\"red\">" . __('fleet_engine.sys_mess_spy_destroyed') . "</font>";
+				$DestProba = '<font color="red">' . __('fleet_engine.sys_mess_spy_destroyed') . '</font>';
 			}
 
-			$AttackLink = "<center>";
-			$AttackLink .= "<a href=\"/fleet/g" . $this->fleet->end_galaxy . "/s" . $this->fleet->end_system . "/";
-			$AttackLink .= "p" . $this->fleet->end_planet . "/t" . $this->fleet->end_type . "/";
-			$AttackLink .= "m" . $this->fleet->end_type . "/";
-			$AttackLink .= " \">" . __('main.type_mission.1') . "";
-			$AttackLink .= "</a></center>";
+			$AttackLink = '<div class="text-center">';
+			$AttackLink .= '<a href="/fleet?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system;
+			$AttackLink .= '&planet=' . $this->fleet->end_planet . '&type=' . $this->fleet->end_type->value;
+			$AttackLink .= '&mission=' . \App\Engine\Fleet\Mission::Attack->value . '">' . __('main.type_mission.1');
+			$AttackLink .= '</a>';
+			$AttackLink .= '</div>';
 
-			$MessageEnd = "<center>" . $DestProba . "</center>";
+			$MessageEnd = '<div class="text-center">' . $DestProba . '</div>';
 
 			$fleet_link = '';
 
@@ -161,22 +157,22 @@ class Spy extends FleetEngine implements Mission
 			}
 
 			if ($fleet_link != '') {
-				$MessageEnd .= "<center>";
-				$MessageEnd .= '<a href="/sim/' . $fleet_link . '/" target="' . config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '' . '">';
-				$MessageEnd .= "Симуляция</a></center>";
+				$MessageEnd .= '<div class="text-center">';
+				$MessageEnd .= '<a href="/sim' . $fleet_link . '" target="' . config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '">';
+				$MessageEnd .= 'Симуляция</a></div>';
 			}
 
-			$MessageEnd .= "<center><a href=\"#\" onclick=\"raport_to_bb('sp" . $this->fleet->start_time->getTimestamp() . "')\">BB-код</a></center>";
+			$MessageEnd .= '<div class="text-center"><a href="#" onclick="raport_to_bb(\'sp' . $this->fleet->start_time->getTimestamp() . '\')">BB-код</a></div>';
 
-			$SpyMessage = "<div id=\"sp" . $this->fleet->start_time->getTimestamp() . "\">" . $SpyMessage . "</div><br />" . $MessageEnd . $AttackLink;
+			$SpyMessage = '<div id="sp' . $this->fleet->start_time->getTimestamp() . '">' . $SpyMessage . '</div><br>' . $MessageEnd . $AttackLink;
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Spy, __('fleet_engine.sys_mess_spy_report'), $SpyMessage));
 
-			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . " " . $this->fleet->user_name . " ";
+			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . ' ' . $this->fleet->user_name . ' ';
 			$TargetMessage .= $this->fleet->getStartAdressLink();
-			$TargetMessage .= __('fleet_engine.sys_mess_spy_seen_at') . " " . $TargetPlanet->name;
-			$TargetMessage .= " [" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]. ";
-			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . ".";
+			$TargetMessage .= __('fleet_engine.sys_mess_spy_seen_at') . ' ' . $TargetPlanet->name;
+			$TargetMessage .= ' [' . $TargetPlanet->galaxy . ':' . $TargetPlanet->system . ':' . $TargetPlanet->planet . ']. ';
+			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . '.';
 
 			$TargetPlanet->user->notify(new MessageNotification(null, MessageType::Spy, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage));
 
@@ -184,23 +180,13 @@ class Spy extends FleetEngine implements Mission
 				$mission = new Attack($this->fleet);
 				$mission->targetEvent();
 			} else {
-				$this->fleet->return();
+				$this->return();
 			}
 		} else {
-			$this->fleet->return();
+			$this->return();
 		}
 
 		return true;
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
 	}
 
 	private function spyTarget(User|Planet $TargetPlanet, $Mode, $TitleString)
@@ -212,23 +198,23 @@ class Spy extends FleetEngine implements Mission
 		$ResTo = [];
 
 		if ($Mode == 0) {
-			$String .= "<table width=\"100%\"><tr><td class=\"c\" colspan=\"4\">";
+			$String .= '<table width="100%"><tr><td class="c" colspan="4">';
 			$String .= $TitleString . " " . $TargetPlanet->name;
-			$String .= " <a href=\"/galaxy/?galaxy=" . $TargetPlanet->galaxy . "&system=" . $TargetPlanet->system . "\">";
-			$String .= "[" . $TargetPlanet->galaxy . ":" . $TargetPlanet->system . ":" . $TargetPlanet->planet . "]</a> ";
+			$String .= ' <a href="/galaxy?galaxy=' . $TargetPlanet->galaxy . '&system=' . $TargetPlanet->system . '">';
+			$String .= '[' . $TargetPlanet->galaxy . ':' . $TargetPlanet->system . ':' . $TargetPlanet->planet . ']</a> ';
 
 			if ($targetUser = $TargetPlanet->user) {
-				$String .= ' <a href="/players/' . $targetUser->id . '/">' . $targetUser->username . '</a>';
+				$String .= ' <a href="/players/' . $targetUser->id . '">' . $targetUser->username . '</a>';
 			}
 
-			$String .= "<br>на #DATE|H:i:s|" . time() . "#</td>";
-			$String .= "</tr><tr>";
-			$String .= "<th width=25%>Металл:</th><th width=25%>" . Format::number($TargetPlanet->metal) . "</th>";
-			$String .= "<th width=25%>Кристалл:</th><th width=25%>" . Format::number($TargetPlanet->crystal) . "</th>";
-			$String .= "</tr><tr>";
-			$String .= "<th width=25%>Дейтерий:</th><th width=25%>" . Format::number($TargetPlanet->deuterium) . "</th>";
-			$String .= "<th width=25%>Энергия:</th><th width=25%>" . Format::number($TargetPlanet->energy_max) . "</th>";
-			$String .= "</tr>";
+			$String .= '<br>на #DATE|H:i:s|' . time() . "#</td>";
+			$String .= '</tr><tr>';
+			$String .= '<th width="25%">Металл:</th><th width="25%">' . Format::number($TargetPlanet->metal) . '</th>';
+			$String .= '<th width="25%">Кристалл:</th><th width="25%">' . Format::number($TargetPlanet->crystal) . '</th>';
+			$String .= '</tr><tr>';
+			$String .= '<th width="25%">Дейтерий:</th><th width="25%">' . Format::number($TargetPlanet->deuterium) . '</th>';
+			$String .= '<th width="25%">Энергия:</th><th width="25%">' . Format::number($TargetPlanet->energy_max) . '</th>';
+			$String .= '</tr>';
 			$LookAtLoop = false;
 		} elseif ($Mode == 1) {
 			$ResFrom[0] = 200;
@@ -255,7 +241,7 @@ class Spy extends FleetEngine implements Mission
 		}
 
 		if ($LookAtLoop) {
-			$String = "<table width=\"100%\" cellspacing=\"1\"><tr><td class=\"c\" colspan=\"" . ((2 * config('game.spyReportRow', 1)) + (config('game.spyReportRow', 1) - 2)) . "\">" . $TitleString . "</td></tr>";
+			$String = '<table width="100%" cellspacing="1"><tr><td class="c" colspan="' . ((2 * config('game.spyReportRow', 1)) + (config('game.spyReportRow', 1) - 2)) . '">' . $TitleString . '</td></tr>';
 			$Count = 0;
 			$CurrentLook = 0;
 
@@ -275,34 +261,34 @@ class Spy extends FleetEngine implements Mission
 					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 						$level = $TargetPlanet->getLevel($Item);
 					} elseif ($type == ItemType::OFFICIER) {
-						$level = $TargetPlanet->{Vars::getName($Item)};
+						$level = $TargetPlanet->{Vars::getName($Item)}?->timestamp ?? 0;
 					} elseif ($type == ItemType::TECH) {
 						$level = $TargetPlanet->getTechLevel($Item);
 					}
 
 					if (($level && $Item < 600) || ($level > time() && $Item > 600)) {
 						if ($row == 0) {
-							$String .= "<tr>";
+							$String .= '<tr>';
 						}
 
-						$String .= "<th width=40%>" . __('main.tech.' . $Item) . "</th><th width=10%>" . (($Item < 600) ? $level : '+') . "</th>";
+						$String .= '<th width="40%">' . __('main.tech.' . $Item) . '</th><th width="10%">' . (($Item < 600) ? $level : '+') . '</th>';
 
 						$Count += $Item < 600 ? $level : 1;
 						$row++;
 
 						if ($row == config('game.spyReportRow', 1)) {
-							$String .= "</tr>";
+							$String .= '</tr>';
 							$row = 0;
 						}
 					}
 				}
 
 				while ($row != 0) {
-					$String .= "<th width=40%>&nbsp;</th><th width=10%>&nbsp;</th>";
+					$String .= '<th width="40%">&nbsp;</th><th width="10%">&nbsp;</th>';
 					$row++;
 
 					if ($row == config('game.spyReportRow', 1)) {
-						$String .= "</tr>";
+						$String .= '</tr>';
 						$row = 0;
 					}
 				}
@@ -311,13 +297,13 @@ class Spy extends FleetEngine implements Mission
 			}
 
 			if ($Count == 0) {
-				$String .= "<tr><th>нет данных</th></tr>";
+				$String .= '<tr><th>нет данных</th></tr>';
 			}
 		} else {
 			$Count = 0;
 		}
 
-		$String .= "</table>";
+		$String .= '</table>';
 
 		$return['String'] = $String;
 		$return['Count'] = $Count;

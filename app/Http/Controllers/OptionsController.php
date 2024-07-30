@@ -11,6 +11,7 @@ use App\Files;
 use App\Format;
 use App\Helpers;
 use App\Models;
+use App\Models\PlanetEntity;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use App\Notifications\PasswordResetSuccessNotification;
@@ -190,8 +191,8 @@ class OptionsController extends Controller
 						$buildsId[] = Vars::getIdByName($res . '_mine');
 					}
 
-					Models\PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
-						->whereIn('build_id', $buildsId)
+					PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
+						->whereIn('entity_id', $buildsId)
 						->update(['factor' => 0]);
 				}
 			}

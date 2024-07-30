@@ -2,22 +2,10 @@
 
 namespace App\Engine\Fleet\Missions;
 
-use App\Engine\Fleet\FleetEngine;
-
-class Assault extends FleetEngine implements Mission
+class Assault extends BaseMission
 {
 	public function targetEvent()
 	{
-		$this->fleet->return();
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
+		$this->return();
 	}
 }

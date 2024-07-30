@@ -3,19 +3,18 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\FleetEngine;
 use App\Format;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
 
-class Stay extends FleetEngine implements Mission
+class Stay extends BaseMission
 {
 	public function targetEvent()
 	{
 		$targetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if (!$targetPlanet || $targetPlanet->user_id != $this->fleet->target_user_id) {
-			$this->fleet->return();
+			$this->return();
 		} else {
 			$this->restoreFleetToPlanet(false);
 			$this->killFleet();
@@ -45,10 +44,6 @@ class Stay extends FleetEngine implements Mission
 
 			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
 		}
-	}
-
-	public function endStayEvent()
-	{
 	}
 
 	public function returnEvent()

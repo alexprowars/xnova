@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
 use App\Models\Alliance;
 use App\Models\AllianceDiplomacy;

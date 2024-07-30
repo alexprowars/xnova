@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Middleware\IsVacationMode;
 use Illuminate\Support\Facades\Route;
 
 Route::get('state', [Controllers\StateController::class, 'index']);
@@ -85,19 +86,19 @@ Route::middleware(['auth'])->group(function () {
 	Route::delete('buddy/{id}', [Controllers\BuddyController::class, 'delete'])->whereNumber('id');
 	Route::post('buddy/{id}/approve', [Controllers\BuddyController::class, 'approve'])->whereNumber('id');
 
-	Route::get('buildings', [Controllers\BuildingsController::class, 'index']);
-	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->whereIn('action', ['insert', 'destroy']);
-	Route::post('buildings/queue/{action}', [Controllers\BuildingsController::class, 'queue'])->whereIn('action', ['cancel', 'remove']);
+	Route::get('buildings', [Controllers\BuildingsController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->middleware(IsVacationMode::class)->whereIn('action', ['insert', 'destroy']);
+	Route::post('buildings/queue/{action}', [Controllers\BuildingsController::class, 'queue'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'remove']);
 
 	Route::post('credits/pay', [Controllers\CreditsController::class, 'pay']);
 
-	Route::get('defense', [Controllers\DefenseController::class, 'index']);
-	Route::post('defense/queue', [Controllers\DefenseController::class, 'queue']);
+	Route::get('defense', [Controllers\DefenseController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::post('defense/queue', [Controllers\DefenseController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('fleet', [Controllers\Fleet\FleetController::class, 'index']);
 	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', [Controllers\Fleet\FleetController::class, 'index']);
-	Route::post('fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index']);
-	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index']);
+	Route::post('fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('fleet/back', [Controllers\Fleet\FleetBackController::class, 'index']);
 	Route::get('fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'index']);
 	Route::get('fleet/shortcut/create', [Controllers\Fleet\FleetShortcutController::class, 'create']);
@@ -109,9 +110,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('fleet/verband/{id}', [Controllers\Fleet\FleetVerbandController::class, 'create'])->whereNumber('id');
 	Route::post('fleet/verband/{id}/name', [Controllers\Fleet\FleetVerbandController::class, 'name'])->whereNumber('id');
 	Route::post('fleet/verband/{id}/user', [Controllers\Fleet\FleetVerbandController::class, 'user'])->whereNumber('id');
-	Route::post('fleet/quick', [Controllers\Fleet\FleetQuickController::class, 'index']);
+	Route::post('fleet/quick', [Controllers\Fleet\FleetQuickController::class, 'index'])->middleware(IsVacationMode::class);
 
-	Route::match(['get', 'post'], 'galaxy', [Controllers\GalaxyController::class, 'index']);
+	Route::get('galaxy', [Controllers\GalaxyController::class, 'index']);
 	Route::get('imperium', [Controllers\ImperiumController::class, 'index']);
 
 	Route::match(['get', 'post'], 'log', [Controllers\LogController::class, 'index']);
@@ -133,7 +134,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('notes/create', [Controllers\NotesController::class, 'create']);
 
 	Route::get('officier', [Controllers\OfficierController::class, 'index']);
-	Route::post('officier/buy', [Controllers\OfficierController::class, 'buy']);
+	Route::post('officier/buy', [Controllers\OfficierController::class, 'buy'])->middleware(IsVacationMode::class);
 
 	Route::get('options', [Controllers\OptionsController::class, 'index']);
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
@@ -146,25 +147,25 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('overview/image', [Controllers\OverviewController::class, 'image']);
 	Route::delete('overview/delete/{id}', [Controllers\OverviewController::class, 'delete'])->whereNumber('id');
 
-	Route::get('phalanx', [Controllers\PhalanxController::class, 'index']);
+	Route::get('phalanx', [Controllers\PhalanxController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('race', [Controllers\RaceController::class, 'index']);
 	Route::post('race/change', [Controllers\RaceController::class, 'change']);
 	Route::get('refers', [Controllers\RefersController::class, 'index']);
 
-	Route::get('research', [Controllers\ResearchController::class, 'index']);
-	Route::post('research/{action}', [Controllers\ResearchController::class, 'action'])->whereIn('action', ['cancel', 'search']);
+	Route::get('research', [Controllers\ResearchController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::post('research/{action}', [Controllers\ResearchController::class, 'action'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'search']);
 
 	Route::get('resources', [Controllers\ResourcesController::class, 'index']);
-	Route::post('resources/buy', [Controllers\ResourcesController::class, 'buy']);
-	Route::post('resources/shutdown', [Controllers\ResourcesController::class, 'shutdown']);
-	Route::post('resources/state', [Controllers\ResourcesController::class, 'state']);
+	Route::post('resources/buy', [Controllers\ResourcesController::class, 'buy'])->middleware(IsVacationMode::class);
+	Route::post('resources/shutdown', [Controllers\ResourcesController::class, 'shutdown'])->middleware(IsVacationMode::class);
+	Route::post('resources/state', [Controllers\ResourcesController::class, 'state'])->middleware(IsVacationMode::class);
 
-	Route::post('rocket', [Controllers\RocketController::class, 'index']);
+	Route::post('rocket', [Controllers\RocketController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->name('log.view')->whereNumber('id')->middleware('signed:relative');
 	Route::post('search', [Controllers\SearchController::class, 'index']);
 
-	Route::get('shipyard', [Controllers\ShipyardController::class, 'index']);
-	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue']);
+	Route::get('shipyard', [Controllers\ShipyardController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('support', [Controllers\SupportController::class, 'index']);
 	Route::get('support/info/{id}', [Controllers\SupportController::class, 'info'])->whereNumber('id');

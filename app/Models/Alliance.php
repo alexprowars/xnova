@@ -93,7 +93,7 @@ class Alliance extends Model
 		AllianceMember::query()->where('user_id', $userId)->delete();
 
 		Planet::query()->where('user_id', $userId)->update(['alliance_id' => null]);
-		User::query()->find($userId)->update(['alliance_id' => null, 'alliance_name' => null]);
+		User::query()->where('id', $userId)->update(['alliance_id' => null, 'alliance_name' => null]);
 	}
 
 	public function delete()

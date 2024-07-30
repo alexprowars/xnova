@@ -3,10 +3,9 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\FleetEngine;
 use App\Notifications\MessageNotification;
 
-class StayAlly extends FleetEngine implements Mission
+class StayAlly extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -19,12 +18,6 @@ class StayAlly extends FleetEngine implements Mission
 
 	public function endStayEvent()
 	{
-		$this->fleet->return();
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
+		$this->return();
 	}
 }

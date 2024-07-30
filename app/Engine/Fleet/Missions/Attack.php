@@ -32,7 +32,7 @@ use App\Models\User;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\DB;
 
-class Attack extends FleetEngine implements Mission
+class Attack extends BaseMission
 {
 	public $usersTech = [];
 	public $usersInfo = [];
@@ -42,13 +42,13 @@ class Attack extends FleetEngine implements Mission
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if (!$target || !$target->user_id || $target->destruyed) {
-			$this->fleet->return();
+			$this->return();
 
 			return false;
 		}
 
 		if (!$this->fleet->user) {
-			$this->fleet->return();
+			$this->return();
 
 			return false;
 		}
@@ -56,7 +56,7 @@ class Attack extends FleetEngine implements Mission
 		$targetUser = $target->user;
 
 		if (!$targetUser) {
-			$this->fleet->return();
+			$this->return();
 
 			return false;
 		}
@@ -563,23 +563,13 @@ class Attack extends FleetEngine implements Mission
 		return true;
 	}
 
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
-	}
-
 	public function getGroupFleet(FleetModel $fleet, PlayerGroup $playerGroup)
 	{
 		$fleetData = $fleet->getShips();
 
 		if (!count($fleetData)) {
 			if ($fleet->mission == MissionEnum::Attack || ($fleet->mission == MissionEnum::Assault && count($fleetData) == 1 && isset($fleetData[210]))) {
-				$fleet->return();
+				(new FleetEngine($fleet))->return();
 			}
 
 			return;

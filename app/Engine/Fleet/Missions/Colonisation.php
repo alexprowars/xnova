@@ -4,13 +4,12 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\FleetEngine;
 use App\Engine\Galaxy;
 use App\Models;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 
-class Colonisation extends FleetEngine implements Mission
+class Colonisation extends BaseMission
 {
 	public function targetEvent()
 	{
@@ -34,7 +33,7 @@ class Colonisation extends FleetEngine implements Mission
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxPlanets . __('fleet_engine.sys_colo_planet');
 
 				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
-				$this->fleet->return();
+				$this->return();
 			} else {
 				$NewOwnerPlanet = $galaxy->createPlanet(
 					$this->fleet->getDestinationCoordinates(),
@@ -66,7 +65,7 @@ class Colonisation extends FleetEngine implements Mission
 
 					Cache::forget('app::planetlist_' . $this->fleet->user_id);
 				} else {
-					$this->fleet->return();
+					$this->return();
 
 					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_badpos');
 
@@ -74,21 +73,11 @@ class Colonisation extends FleetEngine implements Mission
 				}
 			}
 		} else {
-			$this->fleet->return();
+			$this->return();
 
 			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_notfree');
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
 		}
-	}
-
-	public function endStayEvent()
-	{
-	}
-
-	public function returnEvent()
-	{
-		$this->restoreFleetToPlanet();
-		$this->killFleet();
 	}
 }

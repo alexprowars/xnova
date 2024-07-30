@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
-use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
+use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -16,24 +16,22 @@ class PhalanxController extends Controller
 {
 	public function index(Request $request)
 	{
-		if ($this->user->isVacation()) {
-			throw new PageException('Нет доступа!');
+		$galaxy = (int) $request->post('galaxy');
+		$system = (int) $request->post('system');
+		$planet = (int) $request->post('planet');
+
+		$consumption = 5000;
+
+		if ($galaxy < 1 || $galaxy > config('game.maxGalaxyInWorld')) {
+			$galaxy = $this->planet->galaxy;
 		}
 
-		$g = (int) $request->post('galaxy');
-		$s = (int) $request->post('system');
-		$i = (int) $request->post('planet');
-
-		$consomation = 5000;
-
-		if ($g < 1 || $g > config('game.maxGalaxyInWorld')) {
-			$g = $this->planet->galaxy;
+		if ($system < 1 || $system > config('game.maxSystemInGalaxy')) {
+			$system = $this->planet->system;
 		}
-		if ($s < 1 || $s > config('game.maxSystemInGalaxy')) {
-			$s = $this->planet->system;
-		}
-		if ($i < 1 || $i > config('game.maxPlanetInSystem')) {
-			$i = $this->planet->planet;
+
+		if ($planet < 1 || $planet > config('game.maxPlanetInSystem')) {
+			$planet = $this->planet->planet;
 		}
 
 		$phalanx = $this->planet->getLevel('phalanx');
@@ -41,45 +39,43 @@ class PhalanxController extends Controller
 		$systemdol 	= $this->planet->system - ($phalanx ** 2);
 		$systemgora = $this->planet->system + ($phalanx ** 2);
 
+		$target = new Coordinates($galaxy, $system, $planet);
+
 		if ($this->planet->planet_type != PlanetType::MOON) {
-			throw new PageException('Вы можете использовать фалангу только на луне!');
+			throw new Exception('Вы можете использовать фалангу только на луне!');
 		} elseif ($phalanx == 0) {
-			throw new PageException('Постройте сначало сенсорную фалангу');
-		} elseif ($this->planet->deuterium < $consomation) {
-			throw new PageException('Недостаточно дейтерия для использования. Необходимо: ' . $consomation . '.');
-		} elseif (($s <= $systemdol or $s >= $systemgora) or $g != $this->planet->galaxy) {
-			throw new PageException('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
+			throw new Exception('Постройте сначало сенсорную фалангу');
+		} elseif ($this->planet->deuterium < $consumption) {
+			throw new Exception('Недостаточно дейтерия для использования. Необходимо: ' . $consumption . '.');
+		} elseif (($target->getSystem() <= $systemdol or $target->getSystem() >= $systemgora) || $target->getGalaxy() != $this->planet->galaxy) {
+			throw new Exception('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
 		}
 
-		$this->planet->deuterium -= $consomation;
+		$this->planet->deuterium -= $consumption;
 		$this->planet->update();
 
-		$planetExist = Models\Planet::coordinates(new Coordinates($g, $s, $i))
+		$planetExist = Models\Planet::coordinates($target)
 			->exists();
 
 		if (!$planetExist) {
-			throw new RedirectException('', 'Чит детектед! Режим бога активирован! Приятной игры!');
+			throw new Exception('Чит детектед! Режим бога активирован! Приятной игры!');
 		}
 
 		$fleets = Models\Fleet::query()
-			->where(function (Builder $query) use ($g, $s, $i) {
-				$query->where('start_galaxy', $g)
-					->where('start_system', $s)
-					->where('start_planet', $i)
-					->where('start_type', '!=', PlanetType::MOON);
-			})
-			->orWhere(function (Builder $query) use ($g, $s, $i) {
-				$query->where('end_galaxy', $g)
-					->where('end_system', $s)
-					->where('end_planet', $i);
-			})
+			->where(
+				fn (Builder $query) => $query->coordinates(FleetDirection::START, $target)
+					->where('start_type', '!=', PlanetType::MOON)
+			)
+			->orWhere(
+				fn (Builder $query) => $query->coordinates(FleetDirection::END, $target)
+			)
 			->orderBy('start_time')
 			->get();
 
 		$list = [];
 
 		foreach ($fleets as $row) {
-			$end = !($row->start_galaxy == $g && $row->start_system == $s && $row->start_planet == $i);
+			$end = !($row->start_galaxy == $galaxy && $row->start_system == $system && $row->start_planet == $planet);
 
 			if ($row->start_type == PlanetType::MOON) {
 				$type = 'лун';
