@@ -355,7 +355,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 	public function getPoints(): ?Statistic
 	{
 		return Cache::remember('app::statistics_' . $this->id, 1800, function () {
-			return $this->statistics
+			return $this->statistics()
 				->where('stat_code', 1)
 				->first();
 		});

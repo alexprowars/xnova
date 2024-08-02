@@ -63,19 +63,21 @@ class Controller extends BaseController
 
 		$this->planet = $this->user->getCurrentPlanet();
 
-		$this->planet->checkOwnerPlanet();
-		$this->planet->checkUsedFields();
+		if ($this->planet) {
+			$this->planet->checkOwnerPlanet();
+			$this->planet->checkUsedFields();
 
-		// Обновляем ресурсы на планете когда это необходимо
-		if ($this->planet->last_update?->diffInSeconds() < 60) {
-			$this->planet->getProduction()->update(true);
-		} else {
-			$this->planet->getProduction()->update();
+			// Обновляем ресурсы на планете когда это необходимо
+			if ($this->planet->last_update?->diffInSeconds() < 60) {
+				$this->planet->getProduction()->update(true);
+			} else {
+				$this->planet->getProduction()->update();
 
-			$queueManager = new QueueManager($this->user, $this->planet);
-			$queueManager->checkUnitQueue();
+				$queueManager = new QueueManager($this->user, $this->planet);
+				$queueManager->checkUnitQueue();
+			}
+
+			Fleet::setShipsEngine($this->user);
 		}
-
-		Fleet::setShipsEngine($this->user);
 	}
 }
