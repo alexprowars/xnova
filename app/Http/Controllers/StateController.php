@@ -73,7 +73,7 @@ class StateController extends Controller
 				}
 			}
 
-			if ($user->messages_ally > 0 && $user->alliance_id == 0) {
+			if ($user->messages_ally > 0 && !$user->alliance_id) {
 				$user->messages_ally = 0;
 				$user->update();
 			}

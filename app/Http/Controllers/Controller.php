@@ -57,9 +57,7 @@ class Controller extends BaseController
 			$this->user->setSelectedPlanet($request->input('chpl'));
 		}
 
-		$controller = explode('.', Route::current()->getName());
-
-		if ((!$this->user->race || !$this->user->avatar) && !in_array($controller[0], ['state', 'infos', 'content', 'start', 'logout'])) {
+		if ((!$this->user->race || !$this->user->avatar) && !in_array(Route::current()->controller::class, [StateController::class, InfoController::class, ContentController::class, StartController::class, LogoutController::class])) {
 			throw new RedirectException('/start');
 		}
 

@@ -28,14 +28,19 @@ class StateResponce extends JsonResource
 				'online' => $settings->usersOnline ?: 0,
 				'users' => $settings->usersTotal ?: 0,
 			],
-			'user' => $user ? User::make($user) : null,
-			'planet' => $planet ? Planet::make($planet) : null,
-			'queue' => Construction::showBuildingQueue($user, $planet),
+			'user' => null,
 			'data' => $this->resource,
 			'version' => VERSION,
 		];
 
 		if ($user) {
+			$data['user'] = User::make($user);
+
+			if ($planet) {
+				$data['planet'] = Planet::make($planet);
+				$data['queue'] = Construction::showBuildingQueue($user, $planet);
+			}
+
 			$globalMessage = config('game.newsMessage', '');
 
 			if (!empty($globalMessage)) {
@@ -70,7 +75,7 @@ class StateResponce extends JsonResource
 				}
 			}
 
-			if ($user->messages_ally > 0 && $user->alliance_id == 0) {
+			if ($user->messages_ally > 0 && !$user->alliance_id) {
 				$user->messages_ally = 0;
 				$user->update();
 			}

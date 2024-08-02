@@ -39,33 +39,33 @@ class TechController extends Controller
 						$type = Vars::getItemType($ResClass);
 
 						if ($type == ItemType::TECH && $this->user->getTechLevel($ResClass) >= $Level) {
-							$pars['required'] .= "<span class=\"positive\">";
+							$pars['required'] .= '<span class="positive">';
 						} elseif ($type == ItemType::BUILDING && $this->planet->getLevel($ResClass) >= $Level) {
-							$pars['required'] .= "<span class=\"positive\">";
+							$pars['required'] .= '<span class="positive">';
 						} else {
-							$pars['required'] .= "<span class=\"negative\">";
+							$pars['required'] .= '<span class="negative">';
 						}
 
 						$pars['required'] .= __('main.tech.' . $ResClass) . " (" . __('main.level') . " " . $Level . "";
 
 						if ($type == ItemType::TECH && $this->user->getTechLevel($ResClass) < $Level) {
 							$minus = $Level - $this->user->getTechLevel($ResClass);
-							$pars['required'] .= " + <b>" . $minus . "</b>";
+							$pars['required'] .= ' + <b>' . $minus . '</b>';
 						} elseif ($type == ItemType::BUILDING && $this->planet->getLevel($ResClass) < $Level) {
 							$minus = $Level - $this->planet->getLevel($ResClass);
-							$pars['required'] .= " + <b>" . $minus . "</b>";
+							$pars['required'] .= ' + <b>' . $minus . '</b>';
 						}
 					} else {
-						$pars['required'] .= __('main.tech.' . $ResClass) . " (";
+						$pars['required'] .= __('main.tech.' . $ResClass) . ' (';
 
 						if ($this->user->race != $Level) {
-							$pars['required'] .= "<span class=\"negative\">" . __('main.race.' . $Level);
+							$pars['required'] .= '<span class="negative">' . __('main.race.' . $Level);
 						} else {
-							$pars['required'] .= "<span class=\"positive\">" . __('main.race.' . $Level);
+							$pars['required'] .= '<span class="positive">' . __('main.race.' . $Level);
 						}
 					}
 
-					$pars['required'] .= ")</span><br>";
+					$pars['required'] .= ')</span><br>';
 				}
 
 				$pars['id'] = $element;
@@ -109,7 +109,7 @@ class TechController extends Controller
 				foreach ($storage['requeriments'][$id] as $ids => $level) {
 					$item['req'][] = [
 						$ids,
-						$level,
+						$this->user->getTechLevel($ids) ?: $this->planet->getLevel($ids),
 						-1,
 						$level
 					];

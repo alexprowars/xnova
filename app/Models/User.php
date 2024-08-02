@@ -19,6 +19,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
@@ -349,5 +350,33 @@ class User extends Authenticatable implements FilamentUser, HasName
 	public function getFilamentName(): string
 	{
 		return $this->username;
+	}
+
+	public function getPoints(): ?Statistic
+	{
+		return Cache::remember('app::statistics_' . $this->id, 1800, function () {
+			return $this->statistics
+				->where('stat_code', 1)
+				->first();
+		});
+	}
+
+	public function isNoobProtection(): bool
+	{
+		$protection = (int) config('game.noobprotection') > 0;
+
+		if (!$protection) {
+			return false;
+		}
+
+		$protectionPoints = (int) config('game.noobprotectionPoints');
+
+		if ($protectionPoints <= 0 || $this->onlinetime->diffInDays() > 7 || $this->banned_time) {
+			return false;
+		}
+
+		$points = $this->getPoints();
+
+		return ($points?->total_points ?? 0) < $protectionPoints;
 	}
 }

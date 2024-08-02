@@ -18,7 +18,6 @@ use App\Models\Chat;
 use App\Models\Fleet;
 use App\Models\Planet;
 use App\Models\Queue;
-use App\Models\Statistic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -37,9 +36,6 @@ class OverviewController extends Controller
 
 	public function index()
 	{
-		$XpMinierUp = $this->user->lvl_minier ** 3;
-		$XpRaidUp = $this->user->lvl_raid ** 2;
-
 		$fleets = Fleet::query()
 			->where('user_id', $this->user->id)
 			->orWhere('target_user_id', $this->user->id)
@@ -113,15 +109,6 @@ class OverviewController extends Controller
 			}
 		}
 
-		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
-			return Statistic::query()
-				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
-				->where('stat_type', 1)
-				->where('stat_code', 1)
-				->where('user_id', $this->user->id)
-				->first()?->toArray();
-		});
-
 		$parse['points'] = [
 			'build' => 0,
 			'tech' => 0,
@@ -132,23 +119,17 @@ class OverviewController extends Controller
 			'diff' => 0,
 		];
 
-		if ($records) {
-			if (!$records['total_old_rank']) {
-				$records['total_old_rank'] = $records['total_rank'];
-			}
-
-			$parse['points']['build'] = (int) $records['build_points'];
-			$parse['points']['tech'] = (int) $records['tech_points'];
-			$parse['points']['fleet'] = (int) $records['fleet_points'];
-			$parse['points']['defs'] = (int) $records['defs_points'];
-			$parse['points']['total'] = (int) $records['total_points'];
-			$parse['points']['place'] = (int) $records['total_rank'];
-			$parse['points']['diff'] = (int) $records['total_old_rank'] - (int) $records['total_rank'];
+		if ($points = $this->user->getPoints()) {
+			$parse['points']['build'] = (int) $points->build_points;
+			$parse['points']['tech'] = (int) $points->tech_points;
+			$parse['points']['fleet'] = (int) $points->fleet_points;
+			$parse['points']['defs'] = (int) $points->defs_points;
+			$parse['points']['total'] = (int) $points->total_points;
+			$parse['points']['place'] = (int) $points->total_rank;
+			$parse['points']['diff'] = (int) ($points->total_old_rank ?: $points->total_rank) - (int) $points->total_rank;
 		}
 
 		$parse['fleets'] = $flotten;
-
-		$parse['debris_mission'] = (($this->planet->debris_metal != 0 || $this->planet->debris_crystal != 0) && $this->planet->getLevel('recycler') > 0);
 
 		$queueList = [];
 
@@ -161,31 +142,12 @@ class OverviewController extends Controller
 		if ($queueManager->getCount(QueueType::BUILDING)) {
 			$queueArray = $queueManager->get(QueueType::BUILDING);
 
-			$end = [];
-
 			foreach ($queueArray as $item) {
-				$end[$item->planet_id] ??= $item->time;
-
 				/** @var Planet $planet */
 				$planet = $planetsData[$item->planet_id];
-				$planet->setRelation('user', $this->user);
-
-				$entity = PlanetEntity\Building::createEntity(
-					$item->object_id,
-					$item->level - ($item->operation == QueueConstructionType::BUILDING ? 1 : 0),
-					$planet
-				);
-
-				$time = $entity->getTime();
-
-				if ($item->operation == QueueConstructionType::DESTROY) {
-					$time = ceil($time / 2);
-				}
-
-				$end[$item->planet_id] = $end[$item->planet_id]->addSeconds($time);
 
 				$queueList[] = [
-					'time' => $end[$item->planet_id]->utc()->toAtomString(),
+					'time' => $item->time_end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planet->name,
 					'object_id' => $item->object_id,
@@ -235,24 +197,24 @@ class OverviewController extends Controller
 
 		usort($queueList, fn($a, $b) => $a['time'] > $b['time'] ? 1 : -1);
 
-		$parse['build_list'] = $queueList;
+		$parse['queue'] = $queueList;
 
 		$parse['lvl'] = [
 			'mine' => [
 				'p' => $this->user->xpminier,
 				'l' => $this->user->lvl_minier,
-				'u' => $XpMinierUp,
+				'u' => $this->user->lvl_minier ** 3,
 			],
 			'raid' => [
 				'p' => $this->user->xpraid,
 				'l' => $this->user->lvl_raid,
-				'u' => $XpRaidUp,
+				'u' => $this->user->lvl_raid ** 2,
 			],
 		];
 
 		$parse['links'] = $this->user->links;
 		$parse['refers'] = $this->user->refers;
-		$parse['noob'] = config('game.noobprotection', 0);
+		$parse['noob'] = $this->user->isNoobProtection();
 
 		$parse['raids'] = [
 			'win' => $this->user->raids_win,

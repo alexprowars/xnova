@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Models\Content;
 
 class ContentController extends Controller
@@ -10,7 +10,7 @@ class ContentController extends Controller
 	public function index(string $slug)
 	{
 		if (empty($slug)) {
-			throw new Exception('Страница не найдена!');
+			throw new PageException('Страница не найдена!');
 		}
 
 		$content = Content::query()
@@ -18,7 +18,7 @@ class ContentController extends Controller
 			->first();
 
 		if (!$content) {
-			throw new Exception('Страница не найдена!');
+			throw new PageException('Страница не найдена!');
 		}
 
 		return [

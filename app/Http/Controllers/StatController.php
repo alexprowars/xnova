@@ -4,26 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Statistic;
 use App\Settings;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 class StatController extends Controller
 {
 	private $field;
 	private $page;
 
-	public function __construct()
+	public function __construct(Request $request)
 	{
 		parent::__construct();
 
-		$this->page = (int) Request::input('page', 0);
+		$this->page = (int) $request->input('page', 0);
 		$this->page = max($this->page, 1);
 
-		$type = (int) Request::input('type', 1);
-		$view = Request::input('view', 'players');
+		$type = (int) $request->input('type', 1);
+		$view = $request->input('view', 'players');
 
 		if ($view != 'players' && $type > 5) {
 			$type = 1;
@@ -40,36 +38,22 @@ class StatController extends Controller
 		};
 	}
 
-	public function index(Settings $settings)
+	public function index(Settings $settings, Request $request)
 	{
-		$type = (int) Request::input('type', 1);
+		$type = (int) $request->input('type', 1);
 
 		$parse = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
-			'page' => 1
+			'page' => $this->page,
 		];
 
-		if (!$this->page && Auth::check()) {
-			$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
-				$records = Statistic::query()
-					->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
-					->where('stat_type', 1)
-					->where('stat_code', 1)
-					->where('user_id', $this->user->id)
-					->first();
-
-				return $records?->toArray();
-			});
-
-			if ($records) {
-				$this->page = $records[$this->field . '_rank'];
-			}
+		if (!$this->page && $points = $this->user?->getPoints()) {
+			$this->page = $points->{$this->field . '_rank'};
 		}
 
 		$parse['elements'] = $settings->activeUsers;
-		$parse['page'] = $this->page;
 
 		$position = ($parse['page'] - 1) * 100;
 
@@ -103,7 +87,7 @@ class StatController extends Controller
 				$row['alliance'] = [
 					'id' => (int) $item->alliance_id,
 					'name' => $item->alliance_name,
-					'marked' => Auth::check() && $item->alliance_name == $this->user->alliance?->name
+					'marked' => $item->alliance_name == $this->user?->alliance_name,
 				];
 			}
 
@@ -118,19 +102,18 @@ class StatController extends Controller
 		return response()->state($parse);
 	}
 
-	public function alliances(Settings $settings)
+	public function alliances(Settings $settings, Request $request)
 	{
-		$type = (int) Request::input('type', 1);
+		$type = (int) $request->input('type', 1);
 
 		$parse = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'alliances',
 			'type' => $type,
-			'page' => 1
+			'page' => $this->page,
 		];
 
 		$parse['elements'] = $settings->activeAlliance;
-		$parse['page'] = $this->page;
 
 		$position = ($parse['page'] - 1) * 100;
 
@@ -153,7 +136,7 @@ class StatController extends Controller
 
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->name;
-			$row['name_marked'] = Auth::check() && $item->name == $this->user->alliance_name;
+			$row['name_marked'] = $item->name == $this->user?->alliance_name;
 			$row['members'] = (int) $item->members_count;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 

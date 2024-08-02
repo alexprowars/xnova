@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Fleet;
 use App\Files;
 use App\Models;
-use App\Models\Statistic;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -18,17 +16,6 @@ class GalaxyController extends Controller
 		$maxfleet_count = Models\Fleet::query()
 			->where('user_id', $this->user->id)
 			->count();
-
-		$records = Cache::remember('app::records_' . $this->user->id, 1800, function () {
-			$records = Statistic::query()
-				->select(['build_points', 'tech_points', 'fleet_points', 'defs_points', 'total_points', 'total_old_rank', 'total_rank'])
-				->where('stat_type', 1)
-				->where('stat_code', 1)
-				->where('user_id', $this->user->id)
-				->first();
-
-			return $records?->toArray();
-		});
 
 		$galaxy = $this->planet->galaxy;
 		$system = $this->planet->system;
@@ -72,10 +59,12 @@ class GalaxyController extends Controller
 			$missileBtn = false;
 		}
 
+		$points = $this->user->getPoints();
+
 		$jsUser = [
 			'phalanx' => $phalanx,
 			'missile' => $missileBtn,
-			'stat_points' => $records ? $records['total_points'] : 0,
+			'stat_points' => $points?->total_points ?? 0,
 			'fleets' => $maxfleet_count,
 		];
 

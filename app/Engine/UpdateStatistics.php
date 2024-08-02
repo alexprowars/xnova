@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\UserDeleteNotification;
 use App\Settings;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -399,7 +400,7 @@ class UpdateStatistics
 			}
 
 			if ($user->race != 0) {
-				$this->StatRace[$user->race]['count'] += 1;
+				$this->StatRace[$user->race]['count']++;
 				$this->StatRace[$user->race]['total'] += $GPoints;
 				$this->StatRace[$user->race]['fleet'] += $TFleetPoints;
 				$this->StatRace[$user->race]['tech'] += $TTechPoints;
@@ -432,6 +433,8 @@ class UpdateStatistics
 				'total_old_rank' => $OldTotalRank,
 				'stat_hide' => $hide,
 			]);
+
+			Cache::delete('app::statistics_' . $user->id);
 		}
 
 		$this->calcPositions();
