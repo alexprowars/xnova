@@ -30,7 +30,8 @@
         "predis/predis": "^2.0.0",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "socialiteproviders/vkontakte": "^5.0.0",
-        "spatie/laravel-permission": "^6.7.0"
+        "spatie/laravel-permission": "^6.7.0",
+        "webbingbrasil/filament-advancedfilter": "^3.0"
     },
     "replace": {
         "symfony/polyfill-mbstring": "*",

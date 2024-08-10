@@ -14,12 +14,17 @@ class UserResource extends Resource
 	protected static ?string $navigationGroup = 'Администрирование';
 	protected static ?string $navigationLabel = 'Пользователи';
 	protected static ?int $navigationSort = 10;
+	protected static ?string $modelLabel = 'Пользователь';
+	protected static ?string $pluralModelLabel = 'Пользователи';
+	protected static ?string $recordTitleAttribute = 'username';
 
 	public static function getPages(): array
 	{
 		return [
 			'index' => Pages\ListUsers::route('/'),
 			'edit' => Pages\EditUser::route('/{record}/edit'),
+			'create' => Pages\CreateUser::route('/create'),
+			'view' => Pages\ViewUsers::route('/{record}'),
 		];
 	}
 }
