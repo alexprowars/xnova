@@ -36,7 +36,7 @@ class AllianceRanksController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function create(Request $request)

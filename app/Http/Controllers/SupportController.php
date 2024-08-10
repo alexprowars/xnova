@@ -31,7 +31,7 @@ class SupportController extends Controller
 			];
 		}
 
-		return response()->state($items);
+		return $items;
 	}
 
 	public function add(Request $request)
@@ -92,12 +92,12 @@ class SupportController extends Controller
 			throw new Exception('Тикет не найден');
 		}
 
-		return response()->state([
+		return [
 			'id' => $ticket->id,
 			'status' => $ticket->status,
 			'subject' => $ticket->subject,
 			'date' => $ticket->created_at?->utc()->toAtomString(),
 			'message' => $ticket->message,
-		]);
+		];
 	}
 }

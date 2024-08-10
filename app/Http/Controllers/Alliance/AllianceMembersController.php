@@ -114,7 +114,7 @@ class AllianceMembersController extends Controller
 		$parse['order'] = $order == 'desc' ? 'asc' : 'desc';
 		$parse['status'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS);
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function kick(Request $request)

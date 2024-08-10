@@ -62,7 +62,7 @@ class AllianceChatController extends Controller
 
 		$parse['owner'] = $alliance->user_id == $this->user->id;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function send(Request $request)

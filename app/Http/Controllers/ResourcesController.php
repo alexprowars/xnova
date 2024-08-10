@@ -71,7 +71,7 @@ class ResourcesController extends Controller
 
 		$parse['production_level'] = $productionLevel;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function buy()

@@ -130,7 +130,7 @@ class FleetSendController extends Controller
 			$result['units'][Vars::getName($unitId)] = $count;
 		}
 
-		return response()->state($result);
+		return $result;
 	}
 
 	private function checkJumpGate($planetId)

@@ -55,7 +55,7 @@ class AllianceController extends Controller
 			$parse['alliances'][] = (array) $item;
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function index()
@@ -114,7 +114,7 @@ class AllianceController extends Controller
 		$parse['name'] = $alliance->name;
 		$parse['id'] = $alliance->id;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function exit()
@@ -168,7 +168,7 @@ class AllianceController extends Controller
 		$parse['web'] = $allyrow->web;
 		$parse['request'] = ($this->user && $this->user->alliance_id == 0);
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function create(Request $request)
@@ -269,7 +269,7 @@ class AllianceController extends Controller
 		$parse['text'] = $alliance->request ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request)) : '';
 		$parse['tag'] = $alliance->tag;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function joinSend(int $id, Request $request)
@@ -339,6 +339,6 @@ class AllianceController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

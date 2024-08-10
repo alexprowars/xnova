@@ -13,10 +13,10 @@ class ContactsController extends Controller
 			->orderByDesc('authlevel')
 			->get();
 
-		$contacts = [];
+		$items = [];
 
 		foreach ($users as $user) {
-			$contacts[] = [
+			$items[] = [
 				'id' 	=> $user->id,
 				'name' 	=> $user->username,
 				'auth' 	=> __('main.user_level', $user->authlevel),
@@ -25,8 +25,6 @@ class ContactsController extends Controller
 			];
 		}
 
-		return response()->state([
-			'items' => $contacts
-		]);
+		return $items;
 	}
 }

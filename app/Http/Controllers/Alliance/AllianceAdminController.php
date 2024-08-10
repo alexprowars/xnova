@@ -58,7 +58,7 @@ class AllianceAdminController extends Controller
 		$parse['request_allow'] = $alliance->request_notallow;
 		$parse['owner_range'] = $alliance->owner_range;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function name(Request $request)
@@ -147,7 +147,7 @@ class AllianceAdminController extends Controller
 
 		$parse['id'] = $this->user->id;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function giveSend(Request $request)

@@ -6,17 +6,15 @@ class NewsController extends Controller
 {
 	public function index()
 	{
-		$news = [];
+		$items = [];
 
 		foreach (__('news.news') as $a => $b) {
-			$news[] = [
+			$items[] = [
 				'title' => $a,
 				'text' => nl2br($b)
 			];
 		}
 
-		return response()->state([
-			'items' => $news
-		]);
+		return $items;
 	}
 }

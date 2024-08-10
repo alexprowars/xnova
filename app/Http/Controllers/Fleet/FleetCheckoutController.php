@@ -216,6 +216,6 @@ class FleetCheckoutController extends Controller
 
 		$parse['mission'] = $mission;
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

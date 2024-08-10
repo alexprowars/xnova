@@ -77,7 +77,7 @@ class TechController extends Controller
 			unset($parse[count($parse) - 1]);
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function info($element)
@@ -121,6 +121,6 @@ class TechController extends Controller
 
 		$page['data'] = $data;
 
-		return response()->state($page);
+		return $page;
 	}
 }

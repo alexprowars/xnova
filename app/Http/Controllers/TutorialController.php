@@ -53,7 +53,7 @@ class TutorialController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function info(int $id)
@@ -186,7 +186,7 @@ class TutorialController extends Controller
 		$parse['rewd'] = implode(', ', $parse['rewd']);
 		$parse['errors'] = $errors > 0;
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function finish(int $id)

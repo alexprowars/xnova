@@ -318,7 +318,7 @@ class InfoController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function missiles(Request $request)

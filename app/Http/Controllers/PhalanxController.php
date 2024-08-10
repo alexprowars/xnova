@@ -72,7 +72,7 @@ class PhalanxController extends Controller
 			->orderBy('start_time')
 			->get();
 
-		$list = [];
+		$items = [];
 
 		foreach ($fleets as $row) {
 			$end = !($row->start_galaxy == $galaxy && $row->start_system == $system && $row->start_planet == $planet);
@@ -90,7 +90,7 @@ class PhalanxController extends Controller
 			}
 
 			if ($row->start_time->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
-				$list[] = [
+				$items[] = [
 					'time' => $row->start_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type . 'ы',
@@ -105,7 +105,7 @@ class PhalanxController extends Controller
 			}
 
 			if ($row->mission != Mission::Stay && !$end && $row->start_type != PlanetType::MOON) {
-				$list[] = [
+				$items[] = [
 					'time' => $row->end_time->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type2 . 'ы',
@@ -120,8 +120,6 @@ class PhalanxController extends Controller
 			}
 		}
 
-		return response()->state([
-			'items' => $list,
-		]);
+		return $items;
 	}
 }

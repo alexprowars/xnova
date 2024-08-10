@@ -64,6 +64,6 @@ class RecordsController extends Controller
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 		];
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

@@ -94,7 +94,7 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function create(int $fleetId, Request $request)

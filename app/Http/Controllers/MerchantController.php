@@ -16,9 +16,9 @@ class MerchantController extends Controller
 
 	public function index()
 	{
-		return response()->state([
+		return [
 			'modifiers' => $this->modifiers,
-		]);
+		];
 	}
 
 	public function exchange(Request $request)

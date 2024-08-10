@@ -86,7 +86,7 @@ class ShipyardController extends Controller
 			$items[] = $row;
 		}
 
-		return response()->state($items);
+		return $items;
 	}
 
 	public function queue(Request $request)

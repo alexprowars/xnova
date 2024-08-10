@@ -26,9 +26,7 @@ class FleetShortcutController extends Controller
 			];
 		}
 
-		return response()->state([
-			'items' => $items,
-		]);
+		return $items;
 	}
 
 	public function create(Request $request)
@@ -46,12 +44,12 @@ class FleetShortcutController extends Controller
 			$planetType = 1;
 		}
 
-		return response()->state([
+		return [
 			'galaxy' => $galaxy,
 			'system' => $system,
 			'planet' => $planet,
 			'planet_type' => $planetType,
-		]);
+		];
 	}
 
 	public function store(Request $request)
@@ -94,14 +92,14 @@ class FleetShortcutController extends Controller
 			throw new RedirectException('/fleet/shortcut', 'Данной ссылки не существует!');
 		}
 
-		return response()->state([
+		return [
 			'id' => $shortcut->id,
 			'name' => $shortcut->name,
 			'galaxy' => $shortcut->galaxy,
 			'system' => $shortcut->system,
 			'planet' => $shortcut->planet,
 			'planet_type' => $shortcut->planet_type,
-		]);
+		];
 	}
 
 	public function update(int $id, Request $request)

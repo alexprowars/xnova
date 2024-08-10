@@ -85,7 +85,7 @@ class BuddyController extends Controller
 			$parse['items'][] = $row;
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function new(int $userId)
@@ -100,10 +100,10 @@ class BuddyController extends Controller
 			throw new Exception('Нельзя дружить сам с собой');
 		}
 
-		return response()->state([
+		return [
 			'id' => $user->id,
 			'username' => $user->username,
-		]);
+		];
 	}
 
 	public function create(int $userId, Request $request)
@@ -158,7 +158,7 @@ class BuddyController extends Controller
 		if ($friend->friend_id == $this->user->id) {
 			$friend->delete();
 
-			throw new RedirectException('/buddy/requests/', 'Заявка отклонена');
+			throw new RedirectException('/buddy/requests', 'Заявка отклонена');
 		} elseif ($friend->user_id == $this->user->id) {
 			$friend->delete();
 

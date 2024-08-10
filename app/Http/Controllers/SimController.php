@@ -49,6 +49,6 @@ class SimController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

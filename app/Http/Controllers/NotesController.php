@@ -34,7 +34,7 @@ class NotesController extends Controller
 			$items[] = $item;
 		}
 
-		return response()->state($items);
+		return $items;
 	}
 
 	public function delete(Request $request)
@@ -90,7 +90,7 @@ class NotesController extends Controller
 			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function update(int $id, Request $request)

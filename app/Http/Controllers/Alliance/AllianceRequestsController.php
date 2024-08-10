@@ -41,7 +41,7 @@ class AllianceRequestsController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function accept(Request $request)

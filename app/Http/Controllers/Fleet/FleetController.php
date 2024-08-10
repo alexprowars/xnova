@@ -99,6 +99,6 @@ class FleetController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

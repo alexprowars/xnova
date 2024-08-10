@@ -34,6 +34,6 @@ class HallController extends Controller
 
 		$parse['time'] = Date::createFromTimestamp($time)->utc()->toAtomString();
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

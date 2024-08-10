@@ -152,7 +152,7 @@ class OverviewController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function delete($planetId)
@@ -218,7 +218,7 @@ class OverviewController extends Controller
 			}
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function renameAction(Request $request)

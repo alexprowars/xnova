@@ -61,7 +61,7 @@ class BuildingsController extends Controller
 			$items[] = $row;
 		}
 
-		return response()->state($items);
+		return $items;
 	}
 
 	public function build(Request $request, string $action)

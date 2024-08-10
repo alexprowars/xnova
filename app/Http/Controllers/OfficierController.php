@@ -21,7 +21,7 @@ class OfficierController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function buy(Request $request)

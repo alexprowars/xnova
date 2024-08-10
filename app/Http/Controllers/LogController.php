@@ -22,18 +22,16 @@ class LogController extends Controller
 		$logs = LogBattle::query()->where('user_id', $this->user->id)
 			->orderByDesc('id')->get();
 
-		$list = [];
+		$items = [];
 
 		foreach ($logs as $log) {
-			$list[] = [
+			$items[] = [
 				'id' => (int) $log->id,
 				'title' => $log->title
 			];
 		}
 
-		return response()->state([
-			'items' => $list
-		]);
+		return $items;
 	}
 
 	public function deleteAction()
@@ -129,8 +127,8 @@ class LogController extends Controller
 
 		$report = new BattleReport($raport->data[0], $raport->data[1], $raport->data[2], $raport->data[3], $raport->data[4], $raport->data[5], $raport->data[6]);
 
-		return response()->state([
+		return [
 			'raport' => $report->report()['html']
-		]);
+		];
 	}
 }

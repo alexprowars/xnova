@@ -15,10 +15,10 @@ class RaceController extends Controller
 	{
 		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 
-		return response()->state([
+		return [
 			'change' => $this->user->race_change_count,
 			'change_available' => $isChangeAvailable,
-		]);
+		];
 	}
 
 	public function change(Request $request)

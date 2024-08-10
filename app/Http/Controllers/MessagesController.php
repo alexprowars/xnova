@@ -115,7 +115,7 @@ class MessagesController extends Controller
 			'page' => $paginator->currentPage()
 		];
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function write(int $userId, Request $request)
@@ -151,7 +151,7 @@ class MessagesController extends Controller
 			}
 		}
 
-		return response()->state($page);
+		return $page;
 	}
 
 	public function send(int $userId, Request $request)

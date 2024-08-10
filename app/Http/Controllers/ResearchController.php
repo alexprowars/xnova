@@ -113,7 +113,7 @@ class ResearchController extends Controller
 			$items[] = $row;
 		}
 
-		return response()->state($items);
+		return $items;
 	}
 
 	public function action(Request $request, string $action)

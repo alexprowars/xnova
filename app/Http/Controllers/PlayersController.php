@@ -91,7 +91,7 @@ class PlayersController extends Controller
 		$parse['m'] = User::getRankId($user->lvl_minier);
 		$parse['f'] = User::getRankId($user->lvl_raid);
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function stat($userId)
@@ -136,6 +136,6 @@ class PlayersController extends Controller
 			];
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 }

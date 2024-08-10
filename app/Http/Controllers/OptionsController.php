@@ -67,7 +67,7 @@ class OptionsController extends Controller
 			}, $authData);*/
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function externalAction()

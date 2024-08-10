@@ -48,7 +48,7 @@ class AllianceDiplomacyController extends Controller
 			$parse['items'][] = $ally->only(['id', 'name', 'tag']);
 		}
 
-		return response()->state($parse);
+		return $parse;
 	}
 
 	public function accept(Request $request)
