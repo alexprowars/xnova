@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
-	public function sendMessage(Request $request)
+	public function send(Request $request)
 	{
 		$message = $request->post('message');
 
@@ -65,6 +65,6 @@ class ChatController extends Controller
 
 		$items = $items->get();
 
-		return ['messages' => Resources\ChatMessage::collection($items->reverse())];
+		return Resources\ChatMessage::collection($items->reverse());
 	}
 }

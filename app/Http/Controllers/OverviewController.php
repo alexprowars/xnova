@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Entity as PlanetEntity;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\QueueConstructionType;
@@ -12,9 +11,7 @@ use App\Engine\Game;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
-use App\Helpers;
 use App\Http\Resources\FleetRow;
-use App\Models\Chat;
 use App\Models\Fleet;
 use App\Models\Planet;
 use App\Models\Queue;
@@ -109,95 +106,8 @@ class OverviewController extends Controller
 			}
 		}
 
-		$parse['points'] = [
-			'build' => 0,
-			'tech' => 0,
-			'fleet' => 0,
-			'defs' => 0,
-			'total' => 0,
-			'place' => 0,
-			'diff' => 0,
-		];
-
-		if ($points = $this->user->getPoints()) {
-			$parse['points']['build'] = (int) $points->build_points;
-			$parse['points']['tech'] = (int) $points->tech_points;
-			$parse['points']['fleet'] = (int) $points->fleet_points;
-			$parse['points']['defs'] = (int) $points->defs_points;
-			$parse['points']['total'] = (int) $points->total_points;
-			$parse['points']['place'] = (int) $points->total_rank;
-			$parse['points']['diff'] = (int) ($points->total_old_rank ?: $points->total_rank) - (int) $points->total_rank;
-		}
-
 		$parse['fleets'] = $flotten;
-
-		$queueList = [];
-
-		$planetsData = Planet::query()
-			->where('user_id', $this->user->id)
-			->get()->keyBy('id');
-
-		$queueManager = new QueueManager($this->user);
-
-		if ($queueManager->getCount(QueueType::BUILDING)) {
-			$queueArray = $queueManager->get(QueueType::BUILDING);
-
-			foreach ($queueArray as $item) {
-				/** @var Planet $planet */
-				$planet = $planetsData[$item->planet_id];
-
-				$queueList[] = [
-					'time' => $item->time_end->utc()->toAtomString(),
-					'planet_id' => $item->planet_id,
-					'planet_name' => $planet->name,
-					'object_id' => $item->object_id,
-					'level' => $item->operation == QueueConstructionType::BUILDING ? $item->level - 1 : $item->level + 1,
-					'level_to' => $item->level,
-				];
-			}
-		}
-
-		if ($queueManager->getCount(QueueType::RESEARCH)) {
-			$queueArray = $queueManager->get(QueueType::RESEARCH);
-
-			foreach ($queueArray as $item) {
-				$queueList[] = [
-					'time' => $item->time_end->utc()->toAtomString(),
-					'planet_id' => $item->planet_id,
-					'planet_name' => $planetsData[$item->planet_id]->name,
-					'object_id' => $item->object_id,
-					'level' => $this->user->getTechLevel($item->object_id),
-					'level_to' => $this->user->getTechLevel($item->object_id) + 1,
-				];
-			}
-		}
-
-		if ($queueManager->getCount(QueueType::SHIPYARD)) {
-			$queueArray = $queueManager->get(QueueType::SHIPYARD);
-
-			$end = [];
-
-			foreach ($queueArray as $item) {
-				$end[$item->planet_id] ??= $item->time;
-				$end[$item->planet_id]->addSeconds(((int) $item->time->diffInSeconds($item->time_end)) * $item->level);
-
-				if ($end[$item->planet_id]->isPast()) {
-					continue;
-				}
-
-				$queueList[] = [
-					'time' => $end[$item->planet_id]->utc()->toAtomString(),
-					'planet_id' => $item->planet_id,
-					'planet_name' => $planetsData[$item->planet_id]->name,
-					'object_id' => $item->object_id,
-					'level' => $item->level,
-				];
-			}
-		}
-
-		usort($queueList, fn($a, $b) => $a['time'] > $b['time'] ? 1 : -1);
-
-		$parse['queue'] = $queueList;
+		$parse['queue'] = $this->getQueue();
 
 		$parse['lvl'] = [
 			'mine' => [
@@ -216,12 +126,6 @@ class OverviewController extends Controller
 		$parse['refers'] = $this->user->refers;
 		$parse['noob'] = $this->user->isNoobProtection();
 
-		$parse['raids'] = [
-			'win' => $this->user->raids_win,
-			'lost' => $this->user->raids_lose,
-			'total' => $this->user->raids,
-		];
-
 		$parse['bonus'] = $this->user->daily_bonus->isPast();
 
 		if ($parse['bonus']) {
@@ -236,90 +140,6 @@ class OverviewController extends Controller
 			}
 
 			$parse['bonus_count'] = $bonus * 500 * Game::getSpeed('mine');
-		}
-
-		$parse['chat'] = [];
-
-		if (Helpers::isMobile()) {
-			$chatCached = Cache::remember('chat.cache', 86400, function () {
-				$messages = Chat::orderByDesc('created_at')
-					->limit(20)->with('user')->get();
-
-				$chat = [];
-
-				foreach ($messages as $message) {
-					if (preg_match_all("/приватно [(.*?)]/u", $message->message, $private)) {
-						$message->message = preg_replace("/приватно [(.*?)]/u", '', $message->message);
-					}
-
-					if (preg_match_all("/для [(.*?)]/u", $message->message, $to)) {
-						$message->message = preg_replace("/для [(.*?)]/u", '', $message->message);
-
-						if (isset($private[1]) && count($private[1]) > 0) {
-							$private[1] = array_merge($private[1], $to[1]);
-							unset($to[1]);
-						}
-					}
-
-					if (!isset($to[1])) {
-						$to[1] = [];
-					}
-
-					$isPrivate = false;
-
-					if (isset($private['1']) && count($private[1]) > 0) {
-						$to[1] = $private[1];
-						$isPrivate = true;
-					}
-
-					$message->message = trim($message->message);
-
-					$chat[] = [$message->id, $message->created_at->utc()->toAtomString(), $message->user->username, $to[1], $isPrivate, $message->message, 0];
-				}
-
-				return json_encode(array_reverse($chat));
-			});
-
-			if (is_string($chatCached)) {
-				$chat = json_decode($chatCached, true);
-			} else {
-				$chat = null;
-			}
-
-			if ($chat && count($chat)) {
-				$chat = array_reverse($chat);
-
-				$i = 0;
-
-				foreach ($chat as $message) {
-					if ($message[4] != false) {
-						continue;
-					}
-
-					if ($i >= 5) {
-						break;
-					}
-
-					$t = explode(' ', $message[5]);
-
-					foreach ($t as $j => $w) {
-						if (mb_strlen($w, 'UTF-8') > 30) {
-							$w = str_split(iconv('utf-8', 'windows-1251', $w), 30);
-
-							$t[$j] = iconv('windows-1251', 'utf-8', implode(' ', $w));
-						}
-					}
-
-					$message[5] = implode(' ', $t);
-
-					$parse['chat'][] = [
-						'time' => $message[1],
-						'message' => '<span class="title"><span class="to">' . $message[2] . '</span> написал' . (count($message[3]) ? ' <span class="to">' . implode(', ', $message[3]) . '</span>' : '') . '</span>: ' . $message[5] . '',
-					];
-
-					$i++;
-				}
-			}
 		}
 
 		$parse['resource_notify'] = false;
@@ -480,5 +300,76 @@ class OverviewController extends Controller
 			'resources' => $add,
 			'credits' => $this->user->daily_bonus_factor > 1,
 		];
+	}
+
+	protected function getQueue()
+	{
+		$queueList = [];
+
+		$planetsData = Planet::query()
+			->where('user_id', $this->user->id)
+			->get()->keyBy('id');
+
+		$queueManager = new QueueManager($this->user);
+
+		if ($queueManager->getCount(QueueType::BUILDING)) {
+			$queueArray = $queueManager->get(QueueType::BUILDING);
+
+			foreach ($queueArray as $item) {
+				/** @var Planet $planet */
+				$planet = $planetsData[$item->planet_id];
+
+				$queueList[] = [
+					'time' => $item->time_end->utc()->toAtomString(),
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planet->name,
+					'object_id' => $item->object_id,
+					'level' => $item->operation == QueueConstructionType::BUILDING ? $item->level - 1 : $item->level + 1,
+					'level_to' => $item->level,
+				];
+			}
+		}
+
+		if ($queueManager->getCount(QueueType::RESEARCH)) {
+			$queueArray = $queueManager->get(QueueType::RESEARCH);
+
+			foreach ($queueArray as $item) {
+				$queueList[] = [
+					'time' => $item->time_end->utc()->toAtomString(),
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planetsData[$item->planet_id]->name,
+					'object_id' => $item->object_id,
+					'level' => $this->user->getTechLevel($item->object_id),
+					'level_to' => $this->user->getTechLevel($item->object_id) + 1,
+				];
+			}
+		}
+
+		if ($queueManager->getCount(QueueType::SHIPYARD)) {
+			$queueArray = $queueManager->get(QueueType::SHIPYARD);
+
+			$end = [];
+
+			foreach ($queueArray as $item) {
+				$end[$item->planet_id] ??= $item->time;
+				$end[$item->planet_id]->addSeconds(((int) $item->time->diffInSeconds($item->time_end)) * $item->level);
+
+				if ($end[$item->planet_id]->isPast()) {
+					continue;
+				}
+
+				$queueList[] = [
+					'time' => $end[$item->planet_id]->utc()->toAtomString(),
+					'planet_id' => $item->planet_id,
+					'planet_name' => $planetsData[$item->planet_id]->name,
+					'object_id' => $item->object_id,
+					'level' => $item->level,
+				];
+			}
+		}
+
+		usort($queueList, fn($a, $b) => $a['time'] > $b['time'] ? 1 : -1);
+
+		return $queueList;
 	}
 }

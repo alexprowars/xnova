@@ -49,6 +49,7 @@ class Construction
 					'level' => $item->level,
 					'mode' 	=> $item->operation,
 					'time' 	=> $end->utc()->toAtomString(),
+					'planet_id' => $item->planet_id,
 				];
 			}
 
@@ -66,6 +67,7 @@ class Construction
 					'mode' 		=> $item->operation,
 					'time_one'	=> $time,
 					'time'		=> $end->utc()->toAtomString(),
+					'planet_id' => $item->planet_id,
 				];
 			}
 		}

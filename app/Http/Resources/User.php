@@ -60,6 +60,32 @@ class User extends JsonResource
 			$data['technology'][Vars::getName($elementId)] = $this->getTechLevel($elementId);
 		}
 
+		$data['points'] = [
+			'build' => 0,
+			'tech' => 0,
+			'fleet' => 0,
+			'defs' => 0,
+			'total' => 0,
+			'place' => 0,
+			'diff' => 0,
+		];
+
+		if ($points = $this->getPoints()) {
+			$data['points']['build'] = (int) $points->build_points;
+			$data['points']['tech'] = (int) $points->tech_points;
+			$data['points']['fleet'] = (int) $points->fleet_points;
+			$data['points']['defs'] = (int) $points->defs_points;
+			$data['points']['total'] = (int) $points->total_points;
+			$data['points']['place'] = (int) $points->total_rank;
+			$data['points']['diff'] = (int) ($points->total_old_rank ?: $points->total_rank) - (int) $points->total_rank;
+		}
+
+		$data['raids'] = [
+			'win' => $this->raids_win,
+			'lost' => $this->raids_lose,
+			'total' => $this->raids,
+		];
+
 		return $data;
 	}
 }

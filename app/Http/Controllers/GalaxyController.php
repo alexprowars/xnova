@@ -59,12 +59,9 @@ class GalaxyController extends Controller
 			$missileBtn = false;
 		}
 
-		$points = $this->user->getPoints();
-
 		$jsUser = [
 			'phalanx' => $phalanx,
 			'missile' => $missileBtn,
-			'stat_points' => $points?->total_points ?? 0,
 			'fleets' => $maxfleet_count,
 		];
 
