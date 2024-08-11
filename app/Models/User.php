@@ -133,8 +133,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 	public function getAllyInfo()
 	{
 		if ($this->alliance) {
-			$this->alliance->member = $this->alliance->members()->where('user_id', $this->id)
-				->first();
+			$this->alliance->member = $this->alliance->getMember($this->id);
 		}
 	}
 

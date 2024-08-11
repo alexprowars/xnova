@@ -133,8 +133,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('notes/{id}', [Controllers\NotesController::class, 'update'])->whereNumber('id');
 	Route::post('notes/create', [Controllers\NotesController::class, 'create']);
 
-	Route::get('officier', [Controllers\OfficierController::class, 'index']);
-	Route::post('officier/buy', [Controllers\OfficierController::class, 'buy'])->middleware(IsVacationMode::class);
+	Route::get('officiers', [Controllers\OfficiersController::class, 'index']);
+	Route::post('officiers/buy', [Controllers\OfficiersController::class, 'buy'])->middleware(IsVacationMode::class);
 
 	Route::get('options', [Controllers\OptionsController::class, 'index']);
 	Route::post('options', [Controllers\OptionsController::class, 'save']);

@@ -14,11 +14,8 @@ class ChatMessage implements ShouldBroadcast
 	use InteractsWithSockets;
 	use SerializesModels;
 
-	public $message;
-
-	public function __construct($message)
+	public function __construct(public string $message)
 	{
-		$this->message = $message;
 		$this->dontBroadcastToCurrentUser();
 	}
 

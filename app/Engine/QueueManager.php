@@ -178,7 +178,7 @@ class QueueManager
 		}
 
 		$this->checkTechQueue();
-		//$this->checkUnitQueue();
+		$this->checkUnitQueue();
 
 		return true;
 	}
@@ -226,7 +226,7 @@ class QueueManager
 				$this->planet->updateAmount($buildItem->object_id, -1, true);
 			}
 
-			event(new PlanetEntityUpdated($this->user->id));
+			event(new PlanetEntityUpdated($this->planet));
 
 			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
@@ -410,6 +410,8 @@ class QueueManager
 				$queueItem->delete();
 			}
 
+			event(new PlanetEntityUpdated($this->planet));
+
 			if ($planet->id == $this->planet->id) {
 				$this->loadQueue();
 			}
@@ -494,6 +496,8 @@ class QueueManager
 			}
 		}
 
+		$isUpdated = false;
+
 		foreach ($queue as $i => $item) {
 			if (!in_array($item->object_id, $buildTypes)) {
 				continue;
@@ -509,6 +513,8 @@ class QueueManager
 				$builded++;
 				$this->planet->updateAmount($item->object_id, 1, true);
 				$item->level--;
+
+				$isUpdated = true;
 
 				if ($item->level <= 0) {
 					if (!$this->deleteInQueue($item->id)) {
@@ -531,6 +537,10 @@ class QueueManager
 
 				break;
 			}
+		}
+
+		if ($isUpdated) {
+			event(new PlanetEntityUpdated($this->planet));
 		}
 
 		return $builded > 0;

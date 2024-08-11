@@ -36,6 +36,7 @@
     "replace": {
         "symfony/polyfill-mbstring": "*",
         "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php83": "*",
         "symfony/polyfill-ctype": "*",
         "symfony/polyfill-intl-idn": "*"
     },

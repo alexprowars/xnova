@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Fleet;
 use App\Engine\Game;
-use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\RedirectException;
 use App\Models\Planet;
@@ -64,7 +63,13 @@ class Controller extends BaseController
 		$this->planet = $this->user->getCurrentPlanet();
 
 		if ($this->planet) {
-			$this->planet->checkOwnerPlanet();
+			if (!$this->planet->checkOwnerPlanet()) {
+				$this->user->planet_current = $this->user->planet_id;
+				$this->user->update();
+
+				$this->planet = Planet::find($this->user->planet_id);
+			}
+
 			$this->planet->checkUsedFields();
 
 			// Обновляем ресурсы на планете когда это необходимо
@@ -72,9 +77,6 @@ class Controller extends BaseController
 				$this->planet->getProduction()->update(true);
 			} else {
 				$this->planet->getProduction()->update();
-
-				$queueManager = new QueueManager($this->user, $this->planet);
-				$queueManager->checkUnitQueue();
 			}
 
 			Fleet::setShipsEngine($this->user);

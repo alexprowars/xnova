@@ -8,20 +8,20 @@ use App\Exceptions\Exception;
 use App\Models\LogCredit;
 use Illuminate\Http\Request;
 
-class OfficierController extends Controller
+class OfficiersController extends Controller
 {
 	public function index()
 	{
-		$parse['items'] = [];
+		$items = [];
 
 		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
-			$parse['items'][] = [
+			$items[] = [
 				'id' => $officier,
 				'power' => __('officier.power.' . $officier),
 			];
 		}
 
-		return $parse;
+		return $items;
 	}
 
 	public function buy(Request $request)

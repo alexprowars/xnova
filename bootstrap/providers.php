@@ -8,5 +8,4 @@ return [
 	App\Providers\EventServiceProvider::class,
 	App\Providers\ValidationServiceProvider::class,
 	Spatie\Permission\PermissionServiceProvider::class,
-	App\Providers\AdminPanelProvider::class,
 ];

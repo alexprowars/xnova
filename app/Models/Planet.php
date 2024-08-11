@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
 use App\Engine\Vars;
@@ -58,16 +59,11 @@ class Planet extends Model
 
 	public function checkOwnerPlanet()
 	{
-		if ($this->user_id != $this->user->id && $this->alliance_id > 0 && ($this->alliance_id != $this->user->alliance_id || !$this->user->alliance['rights']['planet'])) {
-			$this->user->planet_current = $this->user->planet_id;
-			$this->user->update();
+		if ($this->user_id != $this->user->id) {
+			return false;
+		}
 
-			$data = $this->find($this->user->planet->id);
-
-			if ($data) {
-				$this->fill($data->toArray());
-			}
-
+		if ($this->alliance_id && ($this->alliance_id != $this->user->alliance_id || !$this->user->alliance?->canAccess(AllianceAccess::PLANET_ACCESS))) {
 			return false;
 		}
 

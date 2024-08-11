@@ -37,7 +37,6 @@ class Queue extends Command
 				->select(['user_id', 'planet_id'])
 				->where('time', '>', 0)
 				->where('time_end', '<=', now()->addSeconds(5))
-				->whereNot('type', 'unit')
 				//->orderBy('id')
 				->groupBy('user_id', 'planet_id')
 				->with(['user', 'planet'])
