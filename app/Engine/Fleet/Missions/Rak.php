@@ -75,13 +75,13 @@ class Rak extends BaseMission
 
 				$targetPlanet->updateAmount($elementId, -$destroy, true);
 			}
+
+			if (empty($irak)) {
+				$message .= 'Нет обороны для разрушения!';
+			}
 		}
 
 		$targetPlanet->update();
-
-		if (empty($message)) {
-			$message = 'Нет обороны для разрушения!';
-		}
 
 		$this->fleet->target->notify(new MessageNotification(null, MessageType::Battle, 'Ракетная атака', $message));
 	}
@@ -122,6 +122,10 @@ class Rak extends BaseMission
 
 			$destroyCount = floor($totalDamage / $structure);
 			$destroyCount = min($destroyCount, $count);
+
+			if ($destroyCount <= 0) {
+				continue;
+			}
 
 			$result[$target] = $destroyCount;
 

@@ -84,7 +84,7 @@ class FleetVerbandController extends Controller
 
 			$parse['friends'] = [];
 
-			$friends = Friend::query()->where('user_id', $this->user->id)
+			$friends = Friend::query()->whereBelongsTo($this->user)
 				->where('active', true)
 				->with('friend')
 				->get();
@@ -223,10 +223,9 @@ class FleetVerbandController extends Controller
 		}
 
 		$fleet = Fleet::query()
-			->where('id', $id)
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->where('mission', Mission::Attack)
-			->first();
+			->findOne($id);
 
 		if (!$fleet) {
 			throw new Exception('Этот флот не существует!');

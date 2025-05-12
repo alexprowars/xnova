@@ -34,7 +34,7 @@ class ChatController extends Controller
 				event(new ChatPrivateMessage($userId, $parsedMessage));
 			}
 
-			event(new ChatPrivateMessage(Auth::id(), $parsedMessage));
+			event(new ChatPrivateMessage(auth()->id(), $parsedMessage));
 		} else {
 			event(new ChatMessage($parsedMessage));
 		}

@@ -34,9 +34,9 @@ class OverviewController extends Controller
 	public function index()
 	{
 		$fleets = Fleet::query()
-			->where('user_id', $this->user->id)
-			->orWhere('target_user_id', $this->user->id)
 			->with('user')
+			->whereBelongsTo($this->user)
+			->orWhereBelongsTo($this->user, 'target')
 			->get();
 
 		$flotten = [];
@@ -307,7 +307,7 @@ class OverviewController extends Controller
 		$queueList = [];
 
 		$planetsData = Planet::query()
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->get()->keyBy('id');
 
 		$queueManager = new QueueManager($this->user);

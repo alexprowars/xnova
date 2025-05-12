@@ -261,7 +261,7 @@ class Spy extends BaseMission
 					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 						$level = $TargetPlanet->getLevel($Item);
 					} elseif ($type == ItemType::OFFICIER) {
-						$level = $TargetPlanet->{Vars::getName($Item)}?->timestamp ?? 0;
+						$level = $TargetPlanet->{Vars::getName($Item)}->timestamp ?? 0;
 					} elseif ($type == ItemType::TECH) {
 						$level = $TargetPlanet->getTechLevel($Item);
 					}

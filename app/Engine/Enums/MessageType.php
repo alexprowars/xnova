@@ -20,7 +20,7 @@ enum MessageType: int implements HasLabel
 		return __('messages.type.' . $this->value);
 	}
 
-	public function getLabel(): ?string
+	public function getLabel(): string
 	{
 		return $this->title();
 	}

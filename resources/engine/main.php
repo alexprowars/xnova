@@ -45,7 +45,7 @@ $resource = [
 	122 => 'buster_tech',
 	123 => 'intergalactic_tech',
 	124 => 'expedition_tech',
-	150 => 'colonisation_tech',
+	150 => 'colonization_tech',
 	161 => 'fleet_base_tech',
 	199 => 'graviton_tech',
 

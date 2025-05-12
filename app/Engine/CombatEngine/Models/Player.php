@@ -7,16 +7,12 @@ use App\Engine\CombatEngine\Utils\IterableIterator;
 use Exception;
 
 /**
- * @method Fleet[] getIterator
+ * @method Fleet[] getIterator()
+ * @property Fleet[] $array
  */
 class Player extends IterableIterator
 {
 	private $id;
-	/**
-	 * @var Fleet[] $array
-	 */
-	protected $array = [];
-
 	private $weapons_tech = 0;
 	private $shields_tech = 0;
 	private $armour_tech = 0;

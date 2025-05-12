@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Engine\Enums\MessageType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
@@ -14,23 +15,23 @@ class Message extends Model
 		'from_id',
 		'theme',
 		'time',
-		'text',
+		'message',
 	];
 
-	protected function casts(): array
-	{
-		return [
-			'time' => 'immutable_datetime',
-			'type' => MessageType::class,
-		];
-	}
+	protected $casts = [
+		'deleted' => 'boolean',
+		'time' => 'immutable_datetime',
+		'type' => MessageType::class,
+	];
 
-	public function from()
+	/** @return BelongsTo<User, $this> */
+	public function from(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'from_id');
 	}
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}

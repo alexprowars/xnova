@@ -2,8 +2,6 @@
 
 namespace App\Engine;
 
-use App\Engine\Contracts\EntityBuildingInterface;
-use App\Engine\Entity\Research;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\QueueConstructionType;
@@ -195,7 +193,7 @@ class QueueManager
 
 		$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
-		if (!($entity instanceof EntityBuildingInterface)) {
+		if (!($entity instanceof Entity\Building)) {
 			if (!$this->deleteInQueue($buildItem->id)) {
 				$buildItem->delete();
 			}
@@ -271,7 +269,7 @@ class QueueManager
 
 			$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
-			if (!($entity instanceof EntityBuildingInterface)) {
+			if (!($entity instanceof Entity\Building)) {
 				array_shift($queueArray);
 
 				if (!$this->deleteInQueue($buildItem->id)) {
@@ -396,7 +394,7 @@ class QueueManager
 			throw new Exception('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
 		}
 
-		$entity = Research::createEntity($queueItem->object_id, $queueItem->level, $planet);
+		$entity = Entity\Research::createEntity($queueItem->object_id, $queueItem->level, $planet);
 
 		$buildTime = $entity->getTime();
 

@@ -9,11 +9,11 @@ use App\Models;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
 
-class Colonisation extends BaseMission
+class Colonization extends BaseMission
 {
 	public function targetEvent()
 	{
-		$maxPlanets = $this->fleet->user->getTechLevel('colonisation') + 1;
+		$maxPlanets = $this->fleet->user->getTechLevel('colonization') + 1;
 
 		if ($maxPlanets > config('game.maxPlanets', 9)) {
 			$maxPlanets = config('game.maxPlanets', 9);
@@ -22,7 +22,7 @@ class Colonisation extends BaseMission
 		$galaxy = new Galaxy();
 
 		$iPlanetCount = Models\Planet::query()
-			->where('user_id', $this->fleet->user_id)
+			->whereBelongsTo($this->fleet->user)
 			->where('planet_type', PlanetType::PLANET)
 			->count();
 

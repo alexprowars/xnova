@@ -45,7 +45,7 @@ class ResourcesController extends Controller
 			$row = [];
 			$row['id'] = $entityId;
 			$row['code'] = Vars::getName($entityId);
-			$row['factor'] = $planetEntity?->factor ?? 10;
+			$row['factor'] = $planetEntity->factor ?? 10;
 			$row['bonus'] = 0;
 
 			if ($entityId == 4 || $entityId == 12) {
@@ -62,7 +62,7 @@ class ResourcesController extends Controller
 			}
 
 			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
-			$row['level'] = $entity->level;
+			$row['level'] = $entity->getLevel();
 			$row['resources'] = $production->toArray();
 			$row['resources']['energy'] = $production->get(Resources::ENERGY);
 
@@ -127,7 +127,7 @@ class ResourcesController extends Controller
 
 	public function state(Request $request)
 	{
-		foreach ($request->post('state') as $entityId => $value) {
+		foreach ($request->post('state', []) as $entityId => $value) {
 			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {
 				continue;
 			}

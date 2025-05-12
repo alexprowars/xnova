@@ -19,7 +19,7 @@ class LogController extends Controller
 			return redirect('/');
 		}
 
-		$logs = LogBattle::query()->where('user_id', $this->user->id)
+		$logs = LogBattle::query()->whereBelongsTo($this->user)
 			->orderByDesc('id')->get();
 
 		$items = [];
@@ -34,24 +34,24 @@ class LogController extends Controller
 		return $items;
 	}
 
-	public function deleteAction()
+	public function delete(Request $request)
 	{
 		if (!Auth::check()) {
 			throw new PageException('Доступ запрещен');
 		}
 
-		if (!Request::has('id')) {
+		if (!$request->has('id')) {
 			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
-		$id = (int) Request::query('id', 0);
+		$id = (int) $request->query('id', 0);
 
 		if (!$id) {
 			throw new RedirectException('/log', 'Ошибка удаления.');
 		}
 
-		$log = LogBattle::where('id', $id)
-			->where('user_id', $this->user->id)
+		$log = LogBattle::query()->whereKey($id)
+			->whereBelongsTo($this->user)
 			->first();
 
 		if (!$log) {

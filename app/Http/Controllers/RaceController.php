@@ -42,7 +42,7 @@ class RaceController extends Controller
 
 		$queueCount = (new QueueManager($this->user))->getCount();
 
-		$flyingFleets = Fleet::query()->where('user_id', $this->user->id)->count();
+		$flyingFleets = Fleet::query()->whereBelongsTo($this->user)->count();
 
 		if ($queueCount > 0) {
 			throw new Exception('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe');

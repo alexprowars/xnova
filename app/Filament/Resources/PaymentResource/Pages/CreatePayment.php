@@ -14,6 +14,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
+/**
+ * @property Payment $record
+ */
 class CreatePayment extends CreateRecord
 {
 	protected static string $resource = PaymentResource::class;

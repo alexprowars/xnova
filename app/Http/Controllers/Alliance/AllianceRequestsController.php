@@ -117,7 +117,7 @@ class AllianceRequestsController extends Controller
 		}
 
 		AllianceRequest::query()->where('id', $id)
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->delete();
 	}
 }

@@ -17,7 +17,7 @@ class EntityFactory
 			$planet = Auth::user()->getCurrentPlanet();
 		}
 
-		/** @var Entity\Entity $className */
+		/** @var class-string<Entity\Entity> $className */
 		return $className::createEntity($entityId, $level, $planet);
 	}
 

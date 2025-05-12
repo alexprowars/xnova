@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssaultUser extends Model
 {
@@ -10,12 +11,14 @@ class AssaultUser extends Model
 	protected $table = 'assaults_users';
 	protected $guarded = false;
 
-	public function assault()
+	/** @return BelongsTo<Assault, $this> */
+	public function assault(): BelongsTo
 	{
 		return $this->belongsTo(Assault::class);
 	}
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class);
 	}

@@ -60,7 +60,7 @@ class Fleet extends Command
 
 				$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
 
-				/** @var $mission Mission */
+				/** @var Mission $mission */
 				$mission = new $missionName($fleetRow);
 
 				if ($fleetRow->mess == 0 && $fleetRow->start_time->lessThanOrEqualTo(now())) {

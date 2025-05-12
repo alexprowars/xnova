@@ -15,14 +15,14 @@ class Fleet extends Building
 	{
 		$storage = Vars::getStorage();
 
-		foreach (Vars::getItemsByType(ItemType::FLEET) as $Ship) {
-			if (isset($storage->CombatCaps[$Ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$Ship]['engine_up']['tech']) >= $storage['CombatCaps'][$Ship]['engine_up']['lvl']) {
+		foreach (Vars::getItemsByType(ItemType::FLEET) as $ship) {
+			if (isset($storage->CombatCaps[$ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$ship]['engine_up']['tech']) >= $storage['CombatCaps'][$ship]['engine_up']['lvl']) {
 				$tmp = $storage['CombatCaps'];
 
-				$tmp[$Ship]['type_engine']++;
-				$tmp[$Ship]['speed'] = $tmp[$Ship]['engine_up']['speed'];
+				$tmp[$ship]['type_engine']++;
+				$tmp[$ship]['speed'] = $tmp[$ship]['engine_up']['speed'];
 
-				unset($tmp[$Ship]['engine_up']);
+				unset($tmp[$ship]['engine_up']);
 				$storage['CombatCaps'] = $tmp;
 			}
 		}

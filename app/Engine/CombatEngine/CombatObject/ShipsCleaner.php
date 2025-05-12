@@ -7,21 +7,14 @@ use Exception;
 
 class ShipsCleaner
 {
+	private $shipType;
 	private $lastShipHit;
 	private $lastShots;
 
 	private $exploded;
 	private $remainLife;
 
-	/**
-	 * ShipsCleaner::__construct()
-	 *
-	 * @param mixed $shipType
-	 * @param int $lastShipHit
-	 * @param int $lastShots
-	 * @throws Exception
-	 */
-	public function __construct(ShipType $shipType, $lastShipHit, $lastShots)
+	public function __construct(ShipType $shipType, int $lastShipHit, int $lastShots)
 	{
 		if ($lastShipHit < 0) {
 			throw new Exception('Negative $lastShipHit');
@@ -30,7 +23,7 @@ class ShipsCleaner
 			throw new Exception('Negative $lastShots');
 		}
 
-		$this->fighters = $shipType->cloneMe();
+		$this->shipType = $shipType->cloneMe();
 		$this->lastShipHit = $lastShipHit;
 		$this->lastShots = $lastShots;
 	}
@@ -42,7 +35,7 @@ class ShipsCleaner
 	 */
 	public function start()
 	{
-		$prob = 1 - $this->fighters->getCurrentLife() / ($this->fighters->getHull() * $this->fighters->getCount());
+		$prob = 1 - $this->shipType->getCurrentLife() / ($this->shipType->getHull() * $this->shipType->getCount());
 
 		if ($prob < 0 && $prob > -EPSILON) {
 			$prob = 0;
@@ -52,7 +45,7 @@ class ShipsCleaner
 			throw new Exception("Negative prob");
 		}
 
-		if (USE_BIEXPLOSION_SYSTEM && $this->lastShipHit >= $this->fighters->getCount() / PROB_TO_REAL_MAGIC) {
+		if (USE_BIEXPLOSION_SYSTEM && $this->lastShipHit >= $this->shipType->getCount() / PROB_TO_REAL_MAGIC) {
 			\log_comment('lastShipHit bigger than getCount()/magic');
 			if ($prob < MIN_PROB_TO_EXPLODE) {
 				$probToExplode = 0;
@@ -65,7 +58,7 @@ class ShipsCleaner
 		}
 
 		/*** calculating the amount of exploded ships ***/
-		$teoricExploded = round($this->fighters->getCount() * $probToExplode);
+		$teoricExploded = round($this->shipType->getCount() * $probToExplode);
 
 		if (USE_EXPLODED_LIMITATION) {
 			$teoricExploded = min($teoricExploded, $this->lastShots);
@@ -76,7 +69,7 @@ class ShipsCleaner
 		/*** calculating the life of destroyed ships ***/
 
 		//$this->remainLife = $this->exploded * (1 - $prob) * ($this->fighters->getCurrentLife() / $this->fighters->getCount());
-		$this->remainLife = $this->fighters->getCurrentLife() / $this->fighters->getCount();
+		$this->remainLife = $this->shipType->getCurrentLife() / $this->shipType->getCount();
 		\log_var('prob', $prob);
 		\log_var('probToExplode', $probToExplode);
 		\log_var('teoricExploded', $teoricExploded);

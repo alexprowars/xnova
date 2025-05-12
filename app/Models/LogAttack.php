@@ -8,10 +8,7 @@ class LogAttack extends Model
 {
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'fleet' => 'array',
-		];
-	}
+	protected $casts = [
+		'fleet' => 'json:unicode',
+	];
 }

@@ -17,6 +17,9 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -28,9 +31,6 @@ use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 use Throwable;
 
-/**
- * @mixin User
- */
 class User extends Authenticatable implements FilamentUser, HasName
 {
 	use HasRoles;
@@ -45,26 +45,23 @@ class User extends Authenticatable implements FilamentUser, HasName
 	protected $guarded = false;
 	protected $hidden = ['password'];
 
-	protected function casts(): array
-	{
-		return [
-			'options' => 'array',
-			'username_change' => 'immutable_datetime',
-			'banned_time' => 'immutable_datetime',
-			'onlinetime' => 'immutable_datetime',
-			'vacation' => 'immutable_datetime',
-			'delete_time' => 'immutable_datetime',
-			'rpg_geologue' => 'immutable_datetime',
-			'rpg_admiral' => 'immutable_datetime',
-			'rpg_ingenieur' => 'immutable_datetime',
-			'rpg_technocrate' => 'immutable_datetime',
-			'rpg_constructeur' => 'immutable_datetime',
-			'rpg_meta' => 'immutable_datetime',
-			'rpg_komandir' => 'immutable_datetime',
-			'daily_bonus' => 'immutable_datetime',
-			'message_block' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'options' => 'json:unicode',
+		'username_change' => 'immutable_datetime',
+		'banned_time' => 'immutable_datetime',
+		'onlinetime' => 'immutable_datetime',
+		'vacation' => 'immutable_datetime',
+		'delete_time' => 'immutable_datetime',
+		'rpg_geologue' => 'immutable_datetime',
+		'rpg_admiral' => 'immutable_datetime',
+		'rpg_ingenieur' => 'immutable_datetime',
+		'rpg_technocrate' => 'immutable_datetime',
+		'rpg_constructeur' => 'immutable_datetime',
+		'rpg_meta' => 'immutable_datetime',
+		'rpg_komandir' => 'immutable_datetime',
+		'daily_bonus' => 'immutable_datetime',
+		'message_block' => 'immutable_datetime',
+	];
 
 	protected static function booted(): void
 	{
@@ -81,32 +78,38 @@ class User extends Authenticatable implements FilamentUser, HasName
 		});
 	}
 
-	public function shortcuts()
+	/** @return HasMany<FleetShortcut, $this> */
+	public function shortcuts(): HasMany
 	{
 		return $this->hasMany(FleetShortcut::class);
 	}
 
-	public function quests()
+	/** @return HasMany<UserQuest, $this> */
+	public function quests(): HasMany
 	{
 		return $this->hasMany(UserQuest::class);
 	}
 
-	public function statistics()
+	/** @return HasOne<Statistic, $this> */
+	public function statistics(): HasOne
 	{
 		return $this->hasOne(Statistic::class)->where('stat_type', 1);
 	}
 
-	public function planets()
+	/** @return HasMany<Planet, $this> */
+	public function planets(): HasMany
 	{
 		return $this->hasMany(Planet::class);
 	}
 
-	public function queue()
+	/** @return HasMany<Queue, $this> */
+	public function queue(): HasMany
 	{
 		return $this->hasMany(Queue::class);
 	}
 
-	public function alliance()
+	/** @return BelongsTo<Alliance, $this> */
+	public function alliance(): BelongsTo
 	{
 		return $this->belongsTo(Alliance::class);
 	}
@@ -133,7 +136,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 	public function getAllyInfo()
 	{
 		if ($this->alliance) {
-			$this->alliance->member = $this->alliance->getMember($this->id);
+			$this->alliance->member = $this->alliance->getMember($this);
 		}
 	}
 
@@ -145,9 +148,9 @@ class User extends Authenticatable implements FilamentUser, HasName
 		$giveCredits = 0;
 
 		if ($this->xpminier >= $indNextXp && $this->lvl_minier < config('game.level.max_ind', 100)) {
-			$this->lvl_minier++;
-			$this->credits += config('game.level.credits', 10);
-			$this->xpminier -= $indNextXp;
+			$this->setAttribute('lvl_minier', $this->lvl_minier + 1);
+			$this->setAttribute('credits', $this->credits + config('game.level.credits', 10));
+			$this->setAttribute('xpminier', $this->xpminier - $indNextXp);
 
 			$this->update();
 
@@ -157,9 +160,9 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 
 		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('game.level.max_war', 100)) {
-			$this->lvl_raid++;
-			$this->credits += config('game.level.credits', 10);
-			$this->xpraid -= $warNextXp;
+			$this->setAttribute('lvl_raid', $this->lvl_raid + 1);
+			$this->setAttribute('credits', $this->credits + config('game.level.credits', 10));
+			$this->setAttribute('xpraid', $this->xpraid - $warNextXp);
 
 			$this->update();
 
@@ -180,7 +183,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 				->first();
 
 			if ($reffer) {
-				static::query()->where('id', $reffer['u_id'])
+				static::query()->whereKey($reffer['u_id'])
 					->increment('credits', round($giveCredits / 2));
 
 				LogCredit::create([
@@ -199,15 +202,15 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 
 		$isExistPlanet = Planet::query()
-			->where('id', $planetId)
-			->where('user_id', $this->id)
+			->whereKey($planetId)
+			->whereBelongsTo($this)
 			->exists();
 
 		if (!$isExistPlanet) {
 			return false;
 		}
 
-		$this->planet_current = $planetId;
+		$this->setAttribute('planet_current', $planetId);
 		$this->update();
 
 		return true;
@@ -219,14 +222,14 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 		if ($this->alliance_id) {
 			$query->where(function (Builder $query) {
-				$query->where('user_id', $this->id)->orWhere('alliance_id', $this->alliance_id);
+				$query->whereBelongsTo($this)->orWhere('alliance_id', $this->alliance_id);
 			});
 		} else {
-			$query->where('user_id', $this->id);
+			$query->whereBelongsTo($this);
 		}
 
 		if (!$withMoons) {
-			$query->where('planet_type', '!=', PlanetType::MOON);
+			$query->whereNot('planet_type', PlanetType::MOON);
 		}
 
 		$this->getPlanetListSortQuery($query);
@@ -245,13 +248,13 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 
 		if ($this->planet_current && $this->planet_id) {
-			$planet = Planet::find($this->planet_current);
+			$planet = Planet::findOne($this->planet_current);
 
 			if (!$planet && $this->planet_id) {
-				$this->planet_current = $this->planet_id;
+				$this->setAttribute('planet_current', $this->planet_id);
 				$this->update();
 
-				$planet = Planet::find($this->planet_current);
+				$planet = Planet::findOne($this->planet_current);
 			}
 
 			if ($planet) {
@@ -289,10 +292,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 	}
 
-	public static function getPlanetsId(int $userId): array
+	public static function getPlanetsId(User $user): array
 	{
-		return Planet::query()->select(['id'])->where('user_id', $userId)
-			->get()->pluck('id')->all();
+		return Planet::query()->whereBelongsTo($user)
+			->pluck('id')->all();
 	}
 
 	public static function creation(array $data)
@@ -376,6 +379,6 @@ class User extends Authenticatable implements FilamentUser, HasName
 
 		$points = $this->getPoints();
 
-		return ($points?->total_points ?? 0) < $protectionPoints;
+		return ($points->total_points ?? 0) < $protectionPoints;
 	}
 }

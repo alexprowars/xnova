@@ -3,29 +3,37 @@
 namespace App\Engine\CombatEngine\Utils;
 
 use Iterator;
+use ReturnTypeWillChange;
 
 class IterableIterator implements Iterator
 {
+	protected array $array = [];
+
+	#[ReturnTypeWillChange]
 	public function rewind()
 	{
 		reset($this->array);
 	}
 
+	#[ReturnTypeWillChange]
 	public function current()
 	{
 		return current($this->array);
 	}
 
+	#[ReturnTypeWillChange]
 	public function key()
 	{
 		return key($this->array);
 	}
 
+	#[ReturnTypeWillChange]
 	public function next()
 	{
 		return next($this->array);
 	}
 
+	#[ReturnTypeWillChange]
 	public function valid()
 	{
 		return $this->current() !== false;

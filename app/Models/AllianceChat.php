@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AllianceChat extends Model
 {
@@ -10,19 +11,18 @@ class AllianceChat extends Model
 	protected $table = 'alliances_chats';
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'timestamp' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'timestamp' => 'immutable_datetime',
+	];
 
-	public function alliance()
+	/** @return BelongsTo<Alliance, $this> */
+	public function alliance(): BelongsTo
 	{
 		return $this->belongsTo(Alliance::class);
 	}
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class);
 	}

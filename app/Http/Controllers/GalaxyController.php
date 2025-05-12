@@ -14,7 +14,7 @@ class GalaxyController extends Controller
 	public function index(Request $request)
 	{
 		$maxfleet_count = Models\Fleet::query()
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->count();
 
 		$galaxy = $this->planet->galaxy;

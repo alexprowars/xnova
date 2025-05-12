@@ -5,12 +5,10 @@ namespace App\Notifications;
 use App\Engine\Enums\MessageType;
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Auth;
 
 class MessagesChannel
 {
-	public function send(object $notifiable, Notification $notification): void
+	public function send(User $notifiable, MessageNotification $notification): void
 	{
 		/**
 		 * @var User $user
@@ -21,7 +19,7 @@ class MessagesChannel
 		 */
 		[$user, $sender, $type, $subject, $message] = $notification->toMessages($notifiable);
 
-		$authUser = Auth::user();
+		$authUser = auth()->user();
 
 		if (!$sender && $authUser) {
 			$sender = $authUser->id;
@@ -32,12 +30,12 @@ class MessagesChannel
 		}
 
 		$obj = new Message();
-		$obj->user_id = $user->id;
+		$obj->user()->associate($user);
 		$obj->from_id = $sender ?: null;
 		$obj->time = now();
 		$obj->type = $type;
 		$obj->theme = $subject;
-		$obj->text = $message;
+		$obj->message = $message;
 
 		if ($obj->save()) {
 			if ($authUser && $user->id == $authUser->id) {

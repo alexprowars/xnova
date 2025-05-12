@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Engine\EntityFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanetEntity extends Model
 {
@@ -15,7 +16,8 @@ class PlanetEntity extends Model
 		'factor' => 10,
 	];
 
-	public function planet()
+	/** @return BelongsTo<Planet, $this> */
+	public function planet(): BelongsTo
 	{
 		return $this->belongsTo(Planet::class, 'planet_id');
 	}

@@ -70,15 +70,18 @@ class Recycling extends BaseMission
 				}
 			}
 
+			$update = [];
+
 			if (!empty($recycledGoods['metal'])) {
-				$targetPlanet->debris_metal = DB::raw('debris_metal - ' . $recycledGoods['metal']);
+				$update['debris_metal'] = DB::raw('debris_metal - ' . $recycledGoods['metal']);
 			}
 
 			if (!empty($recycledGoods['metal'])) {
-				$targetPlanet->debris_crystal = DB::raw('debris_crystal - ' . $recycledGoods['metal']);
+				$update['debris_crystal'] = DB::raw('debris_crystal - ' . $recycledGoods['metal']);
 			}
 
-			$targetPlanet->save();
+			Planet::query()->whereKey($targetPlanet)
+				->update($update);
 
 			$this->return([
 				'resource_metal' => DB::raw('resource_metal + ' . $recycledGoods['metal']),

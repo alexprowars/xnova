@@ -16,15 +16,7 @@ class PhysicShot
 	private $hullDamage = 0;
 	private $cellDestroyed = 0;
 
-	/**
-	 * PhysicShot::__construct()
-	 *
-	 * @param ShipType $shipType
-	 * @param int $damage
-	 * @param int $count
-	 * @throws Exception
-	 */
-	public function __construct(ShipType $shipType, $damage, $count)
+	public function __construct(ShipType $shipType, int $damage, int $count)
 	{
 		\log_var('damage', $damage);
 		\log_var('count', $count);
@@ -36,7 +28,7 @@ class PhysicShot
 			throw new Exception('Negative amount of shots');
 		}
 
-		$this->fighters = $shipType->cloneMe();
+		$this->shipType = $shipType->cloneMe();
 		$this->damage = $damage;
 		$this->count = $count;
 	}
@@ -88,7 +80,7 @@ class PhysicShot
 	 */
 	public function getHitShips()
 	{
-		return min($this->count, $this->fighters->getCount());
+		return min($this->count, $this->shipType->getCount());
 	}
 
 	/**
@@ -112,7 +104,7 @@ class PhysicShot
 	{
 		$count = $this->count;
 		$damage = $this->damage;
-		$shieldCellValue = $this->fighters->getShieldCellValue();
+		$shieldCellValue = $this->shipType->getShieldCellValue();
 		$unbauncedDamage = $this->clamp($damage, $shieldCellValue);
 		$this->bouncedDamage = ($damage - $unbauncedDamage) * $count;
 	}
@@ -126,12 +118,12 @@ class PhysicShot
 	{
 		$count = $this->count;
 		$damage = $this->damage;
-		$shieldCellValue = $this->fighters->getShieldCellValue();
+		$shieldCellValue = $this->shipType->getShieldCellValue();
 		$unbauncedDamage = $this->clamp($damage, $shieldCellValue);
-		$currentShield = $this->fighters->getCurrentShield();
+		$currentShield = $this->shipType->getCurrentShield();
 
 		if (USE_HITSHIP_LIMITATION) {
-			$currentShield = $currentShield * $this->getHitShips() / $this->fighters->getCount();
+			$currentShield = $currentShield * $this->getHitShips() / $this->shipType->getCount();
 		}
 
 		$this->assorbedDamage = min($unbauncedDamage * $count, $currentShield);
@@ -141,12 +133,11 @@ class PhysicShot
 	 * PhysicShot::inflict()
 	 * HullDamage should be more than zero and less than shiplife.
 	 * Expecially, it should be less than the life of hitten ships.
-	 * @return null
 	 */
 	private function inflict()
 	{
 		$hullDamage = $this->getPureDamage() - $this->assorbedDamage - $this->bouncedDamage;
-		$hullDamage = min($hullDamage, $this->fighters->getCurrentLife() * $this->getHitShips() / $this->fighters->getCount());
+		$hullDamage = min($hullDamage, $this->shipType->getCurrentLife() * $this->getHitShips() / $this->shipType->getCount());
 		$this->hullDamage = max(0, $hullDamage);
 	}
 

@@ -56,7 +56,7 @@ class PlayersController extends Controller
 		$points = Statistic::query()
 			->where('stat_type', 1)
 			->where('stat_code', 1)
-			->where('user_id', $user->id)
+			->whereBelongsTo($user)
 			->first();
 
 		if ($points) {

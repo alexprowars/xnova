@@ -26,7 +26,7 @@ class Tech
 		$user = $this->queue->getUser();
 
 		$techHandle = Models\Queue::query()
-			->where('user_id', $user->id)
+			->whereBelongsTo($user)
 			->where('type', QueueType::RESEARCH)
 			->exists();
 

@@ -9,10 +9,7 @@ class UserAuthentication extends Model
 	protected $guarded = false;
 	protected $table = 'users_authentications';
 
-	protected function casts(): array
-	{
-		return [
-			'enter_time' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'enter_time' => 'immutable_datetime',
+	];
 }

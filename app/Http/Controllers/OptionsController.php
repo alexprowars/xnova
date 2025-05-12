@@ -172,11 +172,11 @@ class OptionsController extends Controller
 			if ($request->post('vacation')) {
 				$queueCount = (new QueueManager($this->user))->getCount();
 
-				$UserFlyingFleets = Models\Fleet::query()->where('user_id', $this->user->id)->count();
+				$userFlyingFleets = Models\Fleet::query()->whereBelongsTo($this->user)->count();
 
 				if ($queueCount > 0) {
 					throw new Exception('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe. Строится: ' . $queueCount . ' объектов.');
-				} elseif ($UserFlyingFleets > 0) {
+				} elseif ($userFlyingFleets > 0) {
 					throw new Exception('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
 				} else {
 					if (!$this->user->vacation) {
@@ -191,7 +191,7 @@ class OptionsController extends Controller
 						$buildsId[] = Vars::getIdByName($res . '_mine');
 					}
 
-					PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user->id))
+					PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user))
 						->whereIn('entity_id', $buildsId)
 						->update(['factor' => 0]);
 				}

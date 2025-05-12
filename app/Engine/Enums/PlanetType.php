@@ -16,7 +16,7 @@ enum PlanetType: int implements HasLabel
 		return __('main.type_planet.' . $this->value);
 	}
 
-	public function getLabel(): ?string
+	public function getLabel(): string
 	{
 		return $this->title();
 	}

@@ -66,7 +66,7 @@ class FleetRow extends JsonResource
 			if (empty($this->resource->target_user_name)) {
 				$targetId = ' координаты ';
 			} else {
-				if ($this->resource->mission != Mission::Expedition && $this->resource->mission != 5) {
+				if ($this->resource->mission != Mission::Expedition && $this->resource->mission != Mission::StayAlly) {
 					if ($this->resource->end_type == PlanetType::PLANET) {
 						$targetId = __('overview.ov_planet_to_target');
 					} elseif ($this->resource->end_type == PlanetType::DEBRIS) {

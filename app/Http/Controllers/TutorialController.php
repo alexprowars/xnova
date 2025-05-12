@@ -252,7 +252,7 @@ class TutorialController extends Controller
 			}
 		}
 
-		$qInfo->finish = 1;
+		$qInfo->finish = true;
 		$qInfo->update();
 
 		cache()->forget('app::quests::' . $this->user->id);

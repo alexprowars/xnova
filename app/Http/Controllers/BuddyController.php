@@ -27,21 +27,21 @@ class BuddyController extends Controller
 
 		$items = Models\Friend::query()
 			->orderByDesc('id')
-			->where('ignore', 0);
+			->where('ignore', false);
 
 		if ($request->has('requests')) {
-			$items->where('active', 0);
+			$items->where('active', false);
 
 			if ($request->has('my')) {
-				$items->where('user_id', $this->user->id);
+				$items->whereBelongsTo($this->user);
 			} else {
-				$items->where('friend_id', $this->user->id);
+				$items->whereBelongsTo($this->user, 'friend');
 			}
 		} else {
 			$items
-				->where('active', 0)
+				->where('active', false)
 				->where(function (Builder $query) {
-					$query->where('user_id', $this->user->id)->where('friend_id', $this->user->id);
+					$query->whereBelongsTo($this->user)->whereBelongsTo($this->user, 'friend');
 				});
 		}
 
@@ -62,15 +62,15 @@ class BuddyController extends Controller
 				'online' => 0,
 				'message' => $item->message,
 				'user' => [
-					'id' => (int) $user->id,
+					'id' => $user->id,
 					'name' => $user->username,
 					'alliance' => [
-						'id' => (int) $user->alliance_id,
+						'id' => $user->alliance_id,
 						'name' => $user->alliance_name,
 					],
-					'galaxy' => (int) $user->galaxy,
-					'system' => (int) $user->system,
-					'planet' => (int) $user->planet,
+					'galaxy' => $user->galaxy,
+					'system' => $user->system,
+					'planet' => $user->planet,
 				],
 			];
 
@@ -120,10 +120,10 @@ class BuddyController extends Controller
 
 		$buddy = Friend::query()
 			->where(function (Builder $query) use ($userId) {
-				$query->where('user_id', $userId)->where('friend_id', $this->user->id);
+				$query->where('user_id', $userId)->whereBelongsTo($this->user, 'friend');
 			})
 			->orWhere(function (Builder $query) use ($userId) {
-				$query->where('user_id', $this->user->id)->where('friend_id', $userId);
+				$query->whereBelongsTo($this->user)->where('friend_id', $userId);
 			})
 			->exists();
 

@@ -87,7 +87,11 @@ class FleetEngine
 		$this->fleet->mess = 1;
 		$this->fleet->updated_at = $this->fleet->end_time;
 
-		$this->fleet->update($attributes);
+		if (!empty($attributes)) {
+			Fleet::query()->whereKey($this->fleet)
+				->update($attributes);
+		}
+
 		$this->fleet->assault?->delete();
 	}
 

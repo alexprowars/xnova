@@ -54,7 +54,7 @@ class UpdateStatistics
 		$TechPoints = 0;
 
 		$items = Models\UserTech::query()
-			->where('user_id', $user->id)
+			->whereBelongsTo($user)
 			->get();
 
 		foreach ($items as $item) {
@@ -174,7 +174,7 @@ class UpdateStatistics
 
 			$UnitsPoints += ($Units * $item->amount);
 
-			if ($item->unit_id != 212) {
+			if ($item->entity_id != 212) {
 				$UnitsCounts += $item->amount;
 			}
 		}

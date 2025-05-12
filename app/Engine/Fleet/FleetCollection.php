@@ -10,9 +10,9 @@ use Illuminate\Support\Collection;
 
 class FleetCollection extends Collection
 {
-	public static function createFromArray(array $items, Planet $planet): static
+	public static function createFromArray(array $items, Planet $planet): self
 	{
-		return (new static($items))->map(fn($count, $item) => Ship::createEntity($item, $count, $planet));
+		return (new self($items))->map(fn($count, $item) => Ship::createEntity($item, $count, $planet));
 	}
 
 	public function getSpeed(): int

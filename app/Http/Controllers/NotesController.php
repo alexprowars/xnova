@@ -10,7 +10,7 @@ class NotesController extends Controller
 {
 	public function index()
 	{
-		$notes = Note::query()->where('user_id', $this->user->id)
+		$notes = Note::query()->whereBelongsTo($this->user)
 			->orderByDesc('updated_at')->get();
 
 		$items = [];
@@ -39,11 +39,12 @@ class NotesController extends Controller
 
 	public function delete(Request $request)
 	{
+		/** @var array $deleteIds */
 		$deleteIds = $request->post('id', []);
 
 		if (!empty($deleteIds) && is_array($deleteIds)) {
-			Note::query()->where('user_id', $this->user->id)
-				->whereIn('id', array_map('intval', $deleteIds))->delete();
+			Note::query()->whereBelongsTo($this->user)
+				->whereKey(array_map('intval', $deleteIds))->delete();
 		}
 	}
 
@@ -76,27 +77,25 @@ class NotesController extends Controller
 
 	public function edit(int $id)
 	{
-		$note = Note::query()->where('user_id', $this->user->id)
-			->where('id', $id)->first();
+		$note = Note::query()->whereBelongsTo($this->user)
+			->findOne($id);
 
 		if (!$note) {
 			throw new Exception('Заметка не найдена');
 		}
 
-		$parse = [
-			'id' => (int) $note->id,
+		return [
+			'id' => $note->id,
 			'priority' => (int) $note->priority,
 			'title' => $note->title,
 			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
-
-		return $parse;
 	}
 
 	public function update(int $id, Request $request)
 	{
-		$note = Note::query()->where('user_id', $this->user->id)
-			->where('id', $id)->first();
+		$note = Note::query()->whereBelongsTo($this->user)
+			->findOne($id);
 
 		if (!$note) {
 			throw new Exception('Заметка не найдена');

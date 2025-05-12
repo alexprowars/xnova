@@ -105,7 +105,7 @@ class FleetSend
 			}
 		}
 
-		$flyingFleets = Fleet::query()->where('user_id', $this->planet->user->id)->count();
+		$flyingFleets = Fleet::query()->whereBelongsTo($this->planet->user)->count();
 
 		$maxFleets = 1 + $this->planet->user->getTechLevel('computer');
 
@@ -132,7 +132,7 @@ class FleetSend
 		} else {
 			if ($this->planet->user->getTechLevel('expedition') > 0) {
 				$ExpeditionEnCours = Fleet::query()
-					->where('user_id', $this->planet->user->id)
+					->whereBelongsTo($this->planet->user)
 					->where('mission', Mission::Expedition)
 					->count();
 
@@ -231,13 +231,13 @@ class FleetSend
 				$MyPoints = Statistic::select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
-					->where('user_id', $this->planet->user->id)
+					->whereBelongsTo($this->planet->user)
 					->value('total_points') ?? 0;
 
 				$HePoints = Statistic::select('total_points')
 					->where('stat_type', 1)
 					->where('stat_code', 1)
-					->where('user_id', $targerUser->id)
+					->whereBelongsTo($targerUser)
 					->value('total_points') ?? 0;
 
 				if ($HePoints < $protectionPoints) {
@@ -268,7 +268,7 @@ class FleetSend
 			}
 
 			if ($this->mission == Mission::StayAlly) {
-				$isFriends = Friend::hasFriends($this->planet->user->id, $targerUser->id);
+				$isFriends = Friend::hasFriends($this->planet->user, $targerUser);
 
 				if ($targerUser->alliance_id != $this->planet->user->alliance_id && !$isFriends && (!$this->diplomacy || $this->diplomacy->type != 2)) {
 					throw new Exception('Нельзя охранять вражеские планеты!');
@@ -399,7 +399,7 @@ class FleetSend
 			throw new Exception(__('fleet.fl_nostoragespa') . Format::number($storageNeeded - $fleetStorage));
 		}
 
-		if ($this->assault && $fleetGroupTime > 0 && isset($arrr)) {
+		if ($this->assault && $fleetGroupTime && !empty($arrr)) {
 			foreach ($arrr as $row) {
 				Fleet::find($row['id'])
 					->update([
@@ -416,8 +416,8 @@ class FleetSend
 			}
 
 			$cnt = LogTransfer::query()
-				->where('user_id', $this->planet->user->id)
-				->where('target_id', $this->targetPlanet->user->id)
+				->whereBelongsTo($this->planet->user)
+				->whereBelongsTo($this->targetPlanet->user, 'target')
 				->where('created_at', '>', now()->subDays(7))
 				->count();
 
@@ -426,8 +426,8 @@ class FleetSend
 			}
 
 			$cnt = LogTransfer::query()
-				->where('user_id', $this->planet->user->id)
-				->where('target_id', $this->targetPlanet->user->id)
+				->whereBelongsTo($this->planet->user)
+				->whereBelongsTo($this->targetPlanet->user, 'target')
 				->where('created_at', '>', now()->subDay())
 				->count();
 
@@ -512,8 +512,8 @@ class FleetSend
 			'resource_crystal' 		=> $TransCrystal,
 			'resource_deuterium' 	=> $TransDeuterium,
 			'target_user_id' 		=> $this->targetPlanet?->user_id,
-			'target_user_name' 		=> $this->targetPlanet?->name ?? '',
-			'assault_id' 			=> $this->assault?->id ?? null,
+			'target_user_name' 		=> $this->targetPlanet->name ?? '',
+			'assault_id' 			=> $this->assault->id ?? null,
 			'raunds' 				=> $raunds,
 			'updated_at' 			=> $fleet->start_time,
 		]);

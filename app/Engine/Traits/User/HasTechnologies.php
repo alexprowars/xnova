@@ -5,10 +5,12 @@ namespace App\Engine\Traits\User;
 use App\Engine\Enums\ItemType;
 use App\Engine\Vars;
 use App\Models\UserTech;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasTechnologies
 {
-	public function techs()
+	/** @return HasMany<UserTech, $this> */
+	public function techs(): HasMany
 	{
 		return $this->hasMany(UserTech::class);
 	}
@@ -50,6 +52,6 @@ trait HasTechnologies
 
 	public function getTechLevel($techId)
 	{
-		return $this->getTech($techId)?->level ?? 0;
+		return $this->getTech($techId)->level ?? 0;
 	}
 }

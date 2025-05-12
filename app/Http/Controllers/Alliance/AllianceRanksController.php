@@ -71,7 +71,8 @@ class AllianceRanksController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$rights = $request->post('rigths');
+		/** @var array $rights */
+		$rights = $request->post('rigths', []);
 
 		if (empty($rights) || !is_array($rights)) {
 			throw new Exception('Ошибка в передаче параметров');

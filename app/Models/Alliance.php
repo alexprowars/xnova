@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Engine\Enums\AllianceAccess;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 class Alliance extends Model
@@ -14,29 +16,43 @@ class Alliance extends Model
 	public $rights = [];
 	public ?AllianceMember $member;
 
-	protected function casts(): array
+	protected $casts = [
+		'ranks' => 'json:unicode',
+	];
+
+	protected static function booted()
 	{
-		return [
-			'ranks' => 'array',
-		];
+		static::deleted(function (Alliance $model) {
+			User::query()->where('alliance_id', $model->id)
+				->update(['alliance_id' => null, 'alliance_name' => null]);
+
+			Statistic::query()->where('stat_type', 1)
+				->where('user_id', null)
+				->where('alliance_id', $model->id)
+				->delete();
+		});
 	}
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class);
 	}
 
-	public function members()
+	/** @return HasMany<AllianceMember, $this> */
+	public function members(): HasMany
 	{
 		return $this->hasMany(AllianceMember::class);
 	}
 
-	public function requests()
+	/** @return HasMany<AllianceRequest, $this> */
+	public function requests(): HasMany
 	{
 		return $this->hasMany(AllianceRequest::class);
 	}
 
-	public function diplomacy()
+	/** @return HasMany<AllianceDiplomacy, $this> */
+	public function diplomacy(): HasMany
 	{
 		return $this->hasMany(AllianceDiplomacy::class);
 	}
@@ -44,13 +60,13 @@ class Alliance extends Model
 	public function getRanks()
 	{
 		if (empty($this->ranks)) {
-			$this->ranks = [];
+			$this->setAttribute('ranks', []);
 		}
 	}
 
-	public function getMember($userId)
+	public function getMember(User $user)
 	{
-		$this->member ??= $this->members()->where('user_id', $userId)->first();
+		$this->member ??= $this->members()->whereBelongsTo($user)->first();
 
 		return $this->member;
 	}
@@ -94,17 +110,5 @@ class Alliance extends Model
 
 		Planet::query()->where('user_id', $userId)->update(['alliance_id' => null]);
 		User::query()->where('id', $userId)->update(['alliance_id' => null, 'alliance_name' => null]);
-	}
-
-	public function delete()
-	{
-		User::where('alliance_id', $this->id)
-			->update(['alliance_id' => null, 'alliance_name' => null]);
-
-		parent::delete();
-
-		Statistic::query()->where('stat_type', 1)
-			->where('user_id', null)
-			->where('alliance_id', $this->id)->delete();
 	}
 }

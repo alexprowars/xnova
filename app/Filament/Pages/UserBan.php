@@ -114,7 +114,7 @@ class UserBan extends Page
 				$buildsId[] = Vars::getIdByName($res . '_mine');
 			}
 
-			PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($user->id))
+			PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($user))
 				->whereIn('entity_id', $buildsId)
 				->update(['factor' => 0]);
 		}

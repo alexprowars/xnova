@@ -42,7 +42,7 @@ class OfficiersController extends Controller
 
 		$time = $duration * 86400;
 
-		if (!$time || $this->user->credits < $credits) {
+		if ($this->user->credits < $credits) {
 			throw new Exception(__('officier.NoPoints'));
 		}
 

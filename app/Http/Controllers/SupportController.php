@@ -84,9 +84,8 @@ class SupportController extends Controller
 	public function info($id)
 	{
 		$ticket = Support::query()
-			->where('user_id', $this->user->id)
-			->where('id', $id)
-			->first();
+			->whereBelongsTo($this->user)
+			->findOne($id);
 
 		if (!$ticket) {
 			throw new Exception('Тикет не найден');

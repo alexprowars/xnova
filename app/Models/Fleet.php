@@ -8,38 +8,36 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @mixin Fleet
- */
 class Fleet extends Model
 {
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'fleet_array' => 'array',
-			'start_time' => 'immutable_datetime',
-			'end_time' => 'immutable_datetime',
-			'end_stay' => 'immutable_datetime',
-			'mission' => Mission::class,
-			'start_type' => PlanetType::class,
-			'end_type' => PlanetType::class,
-		];
-	}
+	protected $casts = [
+		'fleet_array' => 'json:unicode',
+		'start_time' => 'immutable_datetime',
+		'end_time' => 'immutable_datetime',
+		'end_stay' => 'immutable_datetime',
+		'mission' => Mission::class,
+		'start_type' => PlanetType::class,
+		'end_type' => PlanetType::class,
+	];
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
-	public function target()
+	/** @return BelongsTo<User, $this> */
+	public function target(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'target_user_id');
 	}
 
-	public function assault()
+	/** @return BelongsTo<Assault, $this> */
+	public function assault(): BelongsTo
 	{
 		return $this->belongsTo(Assault::class, 'assault_id');
 	}
@@ -117,7 +115,7 @@ class Fleet extends Model
 
 	public function canBack()
 	{
-		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != 15) && $this->mission != Mission::Rak && $this->target_user_id != 1));
+		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != Mission::Expedition) && $this->mission != Mission::Rak && $this->target_user_id != 1));
 	}
 
 	public function getOriginCoordinates($withType = true): Coordinates

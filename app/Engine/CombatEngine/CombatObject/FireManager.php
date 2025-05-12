@@ -5,14 +5,11 @@ namespace App\Engine\CombatEngine\CombatObject;
 use App\Engine\CombatEngine\Utils\IterableIterator;
 
 /**
- * @method Fire[] getIterator
+ * @method Fire[] getIterator()
+ * @property Fire[] $array
  */
 class FireManager extends IterableIterator
 {
-	/**
-	 * @var Fire[] $array
-	 */
-	protected $array = [];
 
 	public function add(Fire $fire)
 	{

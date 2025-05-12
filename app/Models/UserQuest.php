@@ -50,7 +50,7 @@ class UserQuest extends Model
 			}
 
 			if ($taskKey == 'buddy_count') {
-				$count = Friend::query()->where('user_id', $user->id)->orWhere('friend_id', $user->id)->count();
+				$count = Friend::query()->whereBelongsTo($user)->orWhereBelongsTo($user, 'friend')->count();
 
 				$result[$taskKey] = $count >= $taskVal;
 			}

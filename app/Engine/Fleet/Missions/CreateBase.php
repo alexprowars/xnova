@@ -20,7 +20,7 @@ class CreateBase extends BaseMission
 
 		// Получение общего количества построенных баз
 		$iPlanetCount = Models\Planet::query()
-			->where('user_id', $this->fleet->user_id)
+			->whereBelongsTo($this->fleet->user)
 			->where('planet_type', PlanetType::MILITARY_BASE)
 			->count();
 

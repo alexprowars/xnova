@@ -9,10 +9,7 @@ class LogStat extends Model
 	protected $guarded = false;
 	public $timestamps = false;
 
-	protected function casts(): array
-	{
-		return [
-			'time' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'time' => 'immutable_datetime',
+	];
 }

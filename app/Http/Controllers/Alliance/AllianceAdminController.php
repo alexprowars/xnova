@@ -167,7 +167,7 @@ class AllianceAdminController extends Controller
 		$alliance->user_id = $user->id;
 		$alliance->save();
 
-		AllianceMember::query()->where('user_id', $user->id)
+		AllianceMember::query()->whereBelongsTo($user)
 			->update(['rank' => 0]);
 	}
 

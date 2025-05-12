@@ -7,14 +7,11 @@ use App\Engine\CombatEngine\Utils\IterableIterator;
 use Exception;
 
 /**
- * @method Ship[] getIterator
+ * @method Ship[] getIterator()
+ * @property ShipType[] $array
  */
 class Fleet extends IterableIterator
 {
-	/**
-	 * @var ShipType[] $array
-	 */
-	protected $array = [];
 	private $count;
 	private $id;
 	// added but only used in report templates

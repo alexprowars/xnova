@@ -12,7 +12,7 @@ class ApiResponse
 {
 	public function handle(Request $request, Closure $next): Response
 	{
-		/** @var JsonResponse $response */
+		/** @var JsonResponse|RedirectResponse $response */
 		$response = $next($request);
 
 		if (!$request->expectsJson()) {

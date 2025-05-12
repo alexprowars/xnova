@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Entity\Ship;
 use App\Engine\Enums\ItemType;
+use App\Engine\Fleet\Mission;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
@@ -23,7 +24,7 @@ class FleetController extends Controller
 		$maxExpeditions = 0;
 
 		if ($expeditionTech >= 1) {
-			$curExpeditions = Models\Fleet::query()->where('user_id', $this->user->id)->where('mission', 15)->count();
+			$curExpeditions = Models\Fleet::query()->whereBelongsTo($this->user)->where('mission', Mission::Expedition)->count();
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
@@ -54,7 +55,7 @@ class FleetController extends Controller
 		$parse['maxExpeditions'] = $maxExpeditions;
 		$parse['mission'] = $mission;
 
-		$fleets = Models\Fleet::query()->where('user_id', $this->user->id)->get();
+		$fleets = Models\Fleet::query()->whereBelongsTo($this->user)->get();
 
 		$parse['fleets'] = [];
 

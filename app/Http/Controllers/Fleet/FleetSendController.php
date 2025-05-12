@@ -69,7 +69,7 @@ class FleetSendController extends Controller
 		if ($assaultId > 0 && $fleetMission == Mission::Assault) {
 			$assault = Models\Assault::query()
 				->whereHas('users', function (Builder $query) use ($assaultId) {
-					$query->where('user_id', $this->user->id)->where('aks_id', $assaultId);
+					$query->whereBelongsTo($this->user)->where('aks_id', $assaultId);
 				})
 				->first();
 

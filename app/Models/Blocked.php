@@ -3,26 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Blocked extends Model
 {
-	public $timestamps = false;
 	public $table = 'users_blocked';
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'longer' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'longer' => 'immutable_datetime',
+	];
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
-	public function author()
+	/** @return BelongsTo<User, $this> */
+	public function author(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'author_id');
 	}

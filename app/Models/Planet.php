@@ -12,11 +12,10 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
-/**
- * @mixin Planet
- */
 class Planet extends Model
 {
 	public $timestamps = false;
@@ -35,24 +34,23 @@ class Planet extends Model
 
 	private $production;
 
-	protected function casts(): array
-	{
-		return [
-			'last_update' => 'immutable_datetime',
-			'last_active' => 'immutable_datetime',
-			'last_jump_time' => 'immutable_datetime',
-			'merchand' => 'immutable_datetime',
-			'destruyed' => 'immutable_datetime',
-			'planet_type' => PlanetType::class,
-		];
-	}
+	protected $casts = [
+		'last_update' => 'immutable_datetime',
+		'last_active' => 'immutable_datetime',
+		'last_jump_time' => 'immutable_datetime',
+		'merchand' => 'immutable_datetime',
+		'destruyed' => 'immutable_datetime',
+		'planet_type' => PlanetType::class,
+	];
 
-	public function user()
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
-	public function entities()
+	/** @return HasMany<PlanetEntity, $this> */
+	public function entities(): HasMany
 	{
 		return $this->hasMany(PlanetEntity::class, 'planet_id');
 	}
@@ -101,7 +99,7 @@ class Planet extends Model
 
 	public function getLevel($entityId): int
 	{
-		return $this->getEntity($entityId)?->amount ?? 0;
+		return $this->getEntity($entityId)->amount ?? 0;
 	}
 
 	public function getEntity($entityId): ?PlanetEntity

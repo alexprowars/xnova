@@ -7,14 +7,11 @@ use App\Engine\CombatEngine\Utils\IterableIterator;
 use Exception;
 
 /**
- * @method Player[] getIterator
+ * @method Player[] getIterator()
+ * @property Player[] $array
  */
 class PlayerGroup extends IterableIterator
 {
-	/**
-	 * @var Player[] $array
-	 */
-	protected $array = [];
 	public $battleResult;
 	private static $id_count = 0;
 	private $id;

@@ -25,7 +25,7 @@ class ResearchController extends Controller
 		}
 
 		$techHandle = QueueModel::query()
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->where('type', QueueType::RESEARCH)
 			->first();
 

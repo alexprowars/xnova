@@ -52,7 +52,7 @@ class User extends JsonResource
 		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
 			$data['officiers'][] = [
 				'id' => $officier,
-				'time' => $this->{Vars::getName($officier)}?->isFuture() ? $this->{Vars::getName($officier)}?->utc()->toAtomString() : null,
+				'time' => $this->{Vars::getName($officier)}?->isFuture() ? $this->{Vars::getName($officier)}->utc()->toAtomString() : null,
 			];
 		}
 

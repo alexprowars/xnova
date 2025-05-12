@@ -46,7 +46,7 @@ class FleetCheckoutController extends Controller
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = $request->post('ships');
+		$ships = $request->post('ships', []);
 
 		if (!is_array($ships)) {
 			$ships = [];

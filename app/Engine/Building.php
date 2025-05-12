@@ -98,10 +98,6 @@ class Building
 
 		$entity = EntityFactory::get($elementId, $level + 1, $planet);
 
-		if (!($entity instanceof EntityProductionInterface)) {
-			return null;
-		}
-
 		$resources = $entity->getProduction();
 
 		$entity->setLevel($level);

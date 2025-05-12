@@ -73,30 +73,31 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['messages.id', 'type', 'time', 'text', 'from_id'])
-			->orderBy('time', 'DESC');
+			->select(['messages.id', 'type', 'time', 'messages', 'from_id'])
+			->orderByDesc('time');
 
 		if ($category == 101) {
 			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\', users.planet, \']\') as theme'))
 				->leftJoin('users', 'users.id', '=', 'user_id')
-				->where('from_id', $this->user->id);
+				->whereBelongsTo($this->user, 'from');
 		} else {
-			$messages->addSelect('theme')->where('user_id', $this->user->id)
-				->where('deleted', 0);
+			$messages->addSelect('theme')->whereBelongsTo($this->user)
+				->where('deleted', false);
 
 			if ($category < 100) {
 				$messages->where('type', $category);
 			}
 		}
 
-		$paginator = $messages->paginate($limit, null, null, $page);
+		$paginator = $messages->paginate($limit, page: $page);
 
 		$items = $paginator->items();
 		$parse['items'] = [];
 
+		/** @var Message $item */
 		foreach ($items as $item) {
-			if (preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->text, $match)) {
-				$item->text = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->text);
+			if (preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->message, $match)) {
+				$item->message = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->message);
 			}
 
 			$parse['items'][] = [
@@ -105,14 +106,14 @@ class MessagesController extends Controller
 				'time' => $item->time?->utc()->toAtomString(),
 				'from' => $item->from_id,
 				'theme' => $item->theme ?? '',
-				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->text)),
+				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->message)),
 			];
 		}
 
 		$parse['pagination'] = [
 			'total' => $paginator->total(),
 			'limit' => $limit,
-			'page' => $paginator->currentPage()
+			'page' => $paginator->currentPage(),
 		];
 
 		return $parse;
@@ -139,15 +140,15 @@ class MessagesController extends Controller
 		if ($request->query('quote')) {
 			$mes = Message::query()
 				->select(['id', 'text'])
-				->where('id', $request->query('quote'))
+				->whereKey($request->query('quote'))
 				->where(function (Builder $query) {
-					$query->where('user_id', $this->user->id)
-						->orWhere('from_id', $this->user->id);
+					$query->whereBelongsTo($this->user)
+						->orWhereBelongsTo($this->user, 'from');
 				})
 				->first();
 
 			if ($mes) {
-				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->text) . '[/quote]';
+				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->message) . '[/quote]';
 			}
 		}
 
@@ -174,7 +175,7 @@ class MessagesController extends Controller
 
 		if ($this->user->lvl_minier == 1 && $this->user->lvl_raid == 1 && $this->user->created_at?->addDay()->isFuture()) {
 			$lastSend = Message::query()
-				->where('user_id', $this->user->id)
+				->whereBelongsTo($this->user)
 				->where('time', '>', now()->subMinute())
 				->count();
 
@@ -184,13 +185,13 @@ class MessagesController extends Controller
 		}
 
 		$similar = Message::query()
-			->where('user_id', $this->user->id)
+			->whereBelongsTo($this->user)
 			->where('time', '>', now()->subMinutes(5))
 			->orderByDesc('time')
 			->first();
 
-		if ($similar && mb_strlen($similar->text) < 1000) {
-			similar_text($message, $similar->text, $sim);
+		if ($similar && mb_strlen($similar->message) < 1000) {
+			similar_text($message, $similar->message, $sim);
 
 			if ($sim > 80) {
 				throw new Exception(__('messages.mess_similar'));
@@ -218,17 +219,17 @@ class MessagesController extends Controller
 
 		if (count($items)) {
 			Message::query()
-				->whereIn('id', $items)
-				->where('user_id', $this->user->id)
-				->update(['deleted' => 1]);
+				->whereKey($items)
+				->whereBelongsTo($this->user)
+				->update(['deleted' => true]);
 		}
 	}
 
 	public function abuse(int $messageId)
 	{
 		$mes = Message::query()
-			->where('id', $messageId)
-			->where('user_id', $this->user->id)
+			->whereKey($messageId)
+			->whereBelongsTo($this->user)
 			->first();
 
 		if (!$mes) {
@@ -245,7 +246,7 @@ class MessagesController extends Controller
 				$this->user,
 				MessageType::User,
 				'<font color=red>' . $this->user->username . '</font>',
-				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date('d-m-Y H:i:s', $mes->time) . '<br>Текст сообщения: ' . $mes->text
+				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date('d-m-Y H:i:s', $mes->time) . '<br>Текст сообщения: ' . $mes->message
 			));
 		}
 	}

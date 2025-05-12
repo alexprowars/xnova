@@ -10,10 +10,7 @@ class Money extends Model
 	protected $table = 'moneys';
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'time' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'time' => 'immutable_datetime',
+	];
 }

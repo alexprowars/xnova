@@ -56,24 +56,26 @@ class LoginController extends Controller
 		}
 
 		$authData = UserAuthentication::query()->where('provider', $service)
-			->where('provider_id', $profile->id)->first();
+			->where('provider_id', $profile->getId())->first();
 
 		if ($authData) {
-			$authData->enter_time = time();
+			$authData->enter_time = now();
 			$authData->save();
 
 			Auth::loginUsingId($authData->user_id, true);
 		} else {
-			if (empty($profile->email)) {
-				$profile->email = 'social@' . $profile->id;
+			$email = $profile->getEmail();
+
+			if (empty($email)) {
+				$email = 'social@' . $profile->getId();
 			}
 
-			$user = User::query()->where('email', $profile->email)->first();
+			$user = User::query()->where('email', $email)->first();
 
 			if (!$user) {
 				$user = User::creation([
 					'name' => $profile->getNickname() ?: $profile->getName(),
-					'email' => $profile->email,
+					'email' => $email,
 				]);
 
 				if (!$user) {
@@ -84,7 +86,7 @@ class LoginController extends Controller
 			UserAuthentication::create([
 				'user_id' 		=> $user->id,
 				'provider'		=> $service,
-				'provider_id' 	=> $profile->id,
+				'provider_id' 	=> $profile->getId(),
 				'enter_time' 	=> now(),
 			]);
 

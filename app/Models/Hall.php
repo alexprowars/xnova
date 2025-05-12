@@ -10,10 +10,7 @@ class Hall extends Model
 	protected $table = 'halls';
 	protected $guarded = false;
 
-	protected function casts(): array
-	{
-		return [
-			'time' => 'immutable_datetime',
-		];
-	}
+	protected $casts = [
+		'time' => 'immutable_datetime',
+	];
 }

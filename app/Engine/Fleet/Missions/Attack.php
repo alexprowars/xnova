@@ -207,10 +207,8 @@ class Attack extends BaseMission
 
 		$fleetToUser = [];
 
+		/** @var Player $player */
 		foreach ($report->getPresentationAttackersFleetOnRound('START') as $idPlayer => $player) {
-			/**
-			 * @var $player Player
-			 */
 			foreach ($player->getIterator() as $idFleet => $fleet) {
 				$fleetToUser[$idFleet] = $idPlayer;
 			}
@@ -772,8 +770,8 @@ class Attack extends BaseMission
 
 		foreach ($playerGroupBeforeBattle->getIterator() as $idPlayer => $player) {
 			/**
-			 * @var $player Player
-			 * @var $Xplayer Player
+			 * @var Player $player
+			 * @var Player $Xplayer
 			 */
 			$existPlayer = $playerGroupAfterBattle->existPlayer($idPlayer);
 
@@ -785,8 +783,8 @@ class Attack extends BaseMission
 
 			foreach ($player->getIterator() as $idFleet => $fleet) {
 				/**
-				 * @var $fleet Fleet
-				 * @var $Xfleet Fleet
+				 * @var Fleet $fleet
+				 * @var Fleet $Xfleet
 				 */
 				$existFleet = $existPlayer && $Xplayer->existFleet($idFleet);
 				$Xfleet = null;

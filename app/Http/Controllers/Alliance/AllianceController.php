@@ -28,8 +28,8 @@ class AllianceController extends Controller
 		];
 
 		$requests = AllianceRequest::query()
-			->where('user_id', $this->user->id)
 			->with('alliance')
+			->whereBelongsTo($this->user)
 			->get();
 
 		foreach ($requests as $item) {
@@ -288,7 +288,7 @@ class AllianceController extends Controller
 			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
 		}
 
-		$exist = $alliance->requests()->where('user_id', $this->user->id)
+		$exist = $alliance->requests()->whereBelongsTo($this->user)
 			->exists();
 
 		if ($exist) {
@@ -321,20 +321,20 @@ class AllianceController extends Controller
 
 		foreach ($items as $item) {
 			$parse['points'][] = [
-				'date' => (int) $item->time,
+				'date' => $item->time->utc()->toAtomString(),
 				'rank' => [
-					'tech' => (int) $item->tech_rank,
-					'build' => (int) $item->build_rank,
-					'defs' => (int) $item->defs_rank,
-					'fleet' => (int) $item->fleet_rank,
-					'total' => (int) $item->total_rank,
+					'tech' => $item->tech_rank,
+					'build' => $item->build_rank,
+					'defs' => $item->defs_rank,
+					'fleet' => $item->fleet_rank,
+					'total' => $item->total_rank,
 				],
 				'point' => [
-					'tech' => (int) $item->tech_points,
-					'build' => (int) $item->build_points,
-					'defs' => (int) $item->defs_points,
-					'fleet' => (int) $item->fleet_points,
-					'total' => (int) $item->total_points,
+					'tech' => $item->tech_points,
+					'build' => $item->build_points,
+					'defs' => $item->defs_points,
+					'fleet' => $item->fleet_points,
+					'total' => $item->total_points,
 				],
 			];
 		}

@@ -131,9 +131,9 @@ class AllianceMembersController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$user = User::find($kick);
+		$user = User::findOne($kick);
 
-		if ($user || $user->alliance_id != $alliance->id || $user->id == $alliance->user_id) {
+		if (!$user || $user->alliance_id != $alliance->id || $user->id == $alliance->user_id) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
@@ -170,7 +170,7 @@ class AllianceMembersController extends Controller
 		}
 
 		if ((isset($alliance->ranks[$rank - 1]) || $rank == 0) && $user->alliance_id == $alliance->id) {
-			$alliance->members()->where('user_id', $user->id)
+			$alliance->members()->whereBelongsTo($user)
 				->update(['rank' => $rank]);
 		}
 	}
