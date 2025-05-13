@@ -96,7 +96,7 @@ class AllianceMembersController extends Controller
 		}
 
 		if (count($parse['members']) != $alliance->members_count) {
-			$alliance->members_count = count($parse['memberslist']);
+			$alliance->members_count = count($parse['members']);
 			$alliance->save();
 		}
 

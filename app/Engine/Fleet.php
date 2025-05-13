@@ -69,7 +69,7 @@ class Fleet extends Building
 		return '<a href="' . $r . '" class="tooltip ' . $FleetType . '" data-content="' . $FleetPopup . '">' . $Texte . '</a>';
 	}
 
-	public static function createFleetPopupedMissionLink($FleetRow, string $Texte, $FleetType)
+	public static function createFleetPopupedMissionLink(Models\Fleet $FleetRow, string $Texte, $FleetType)
 	{
 		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
 

@@ -4,55 +4,34 @@ namespace App\Engine\CombatEngine\Utils;
 
 abstract class GeometricDistribution
 {
-	/**
-	 * GeometricDistribution::getProbabilityFromMean()
-	 *
-	 * @param int $m: the mean
-	 * @return int
-	 */
-	public static function getProbabilityFromMean($m)
+	public static function getProbabilityFromMean(float | int $m): float
 	{
 		if ($m <= 1) {
 			return 1;
 		}
+
 		return 1 / $m;
 	}
 
-	/**
-	 * GeometricDistribution::getMeanFromProbability()
-	 *
-	 * @param int $p: the probability
-	 * @return int
-	 */
-	public static function getMeanFromProbability($p)
+	public static function getMeanFromProbability(float | int $p): float
 	{
 		if ($p == 0) {
 			return INF;
 		}
+
 		return 1 / $p;
 	}
 
-	/**
-	 * GeometricDistribution::getVarianceFromProbability()
-	 *
-	 * @param int $p: the probability
-	 * @return int
-	 */
-	public static function getVarianceFromProbability($p)
+	public static function getVarianceFromProbability(float | int $p): float
 	{
 		if ($p == 0) {
 			return INF;
 		}
+
 		return (1 - $p) / ($p * $p);
 	}
 
-	/**
-	 * GeometricDistribution::getStandardDeviationFromProbability()
-	 *
-	 * @param int $p: the probability
-	 * @return int
-	 */
-	public static function getStandardDeviationFromProbability($p)
+	public static function getStandardDeviationFromProbability(float | int $p): float
 	{
 		return sqrt(self::getVarianceFromProbability($p));
 	}

@@ -16,6 +16,7 @@ use App\Models;
 use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class FleetSendController extends Controller
@@ -159,7 +160,7 @@ class FleetSendController extends Controller
 
 		$success = false;
 
-		$ships = request()->post('ship');
+		$ships = Arr::wrap(request()->post('ship', []));
 		$ships = array_map('intval', $ships);
 		$ships = array_map('abs', $ships);
 

@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Planet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class FleetCheckoutController extends Controller
 {
@@ -46,7 +47,7 @@ class FleetCheckoutController extends Controller
 		$parse['ships'] = [];
 		$fleets = [];
 
-		$ships = $request->post('ships', []);
+		$ships = Arr::wrap($request->post('ships', []));
 
 		if (!is_array($ships)) {
 			$ships = [];

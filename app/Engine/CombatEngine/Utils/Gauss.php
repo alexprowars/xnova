@@ -6,7 +6,7 @@ use App\Engine\CombatEngine\Exception;
 
 class Gauss
 {
-	public static function getNext(): int
+	public static function getNext(): float
 	{
 		$x = (float) mt_rand() / (float) mt_getrandmax();
 		$y = (float) mt_rand() / (float) mt_getrandmax();
@@ -14,12 +14,12 @@ class Gauss
 		return (int) sqrt(-2 * log($x)) * cos(2 * M_PI * $y);
 	}
 
-	public static function getNextMs(int $m, int $s): int
+	public static function getNextMs(int $m, int $s): float
 	{
 		return self::getNext() * $s + $m;
 	}
 
-	public static function getNextMsBetween(int $m, int $s, int $min, int $max): int
+	public static function getNextMsBetween(int | float $m, int | float $s, int | float $min, int | float $max): float
 	{
 		$i = 0;
 

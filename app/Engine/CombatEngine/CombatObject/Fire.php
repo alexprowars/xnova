@@ -104,13 +104,9 @@ class Fire
 	}
 
 	/**
-	 * Fire::getShotsFromOneAttackerShipOfType()
 	 * This function return the number of shots caused by RF from one ShipType to all defenders
-	 * @param ShipType $shipType_A
-	 * @return int
-	 * @throws \Exception
 	 */
-	private function getShotsFromOneAttackerShipOfType(ShipType $shipType_A)
+	private function getShotsFromOneAttackerShipOfType(ShipType $shipType_A): float
 	{
 		$p = $this->getProbabilityToShotAgainForAttackerShipOfType($shipType_A);
 		$meanShots = GeometricDistribution::getMeanFromProbability(1 - $p) - 1;
@@ -130,7 +126,6 @@ class Fire
 	}
 
 	/**
-	 * Fire::getProbabilityToShotAgainForAttackerShipOfType()
 	 * This function return the probability of a ShipType to shot thanks RF
 	 * @param ShipType $shipType_A
 	 * @return int
@@ -139,7 +134,7 @@ class Fire
 	{
 		$p = 0;
 
-		foreach ($this->defenderFleet->getIterator() as $idFleet => $shipType_D) {
+		foreach ($this->defenderFleet->getIterator() as $shipType_D) {
 			$RF = $shipType_A->getRfTo($shipType_D);
 			$probabilityToShotAgain = 1 - GeometricDistribution::getProbabilityFromMean($RF);
 			$probabilityToHitThisType = $shipType_D->getCount() / $this->defenderFleet->getTotalCount();

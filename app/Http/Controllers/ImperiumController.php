@@ -76,7 +76,6 @@ class ImperiumController extends Controller
 			$row['resources']['energy'] = [
 				'value' => $planet->energy_max - abs($planet->energy_used),
 				'production' => $planet->energy_max,
-				'storage' => $planet->getLevel('solar_plant') ? round($planet->energy_ak / (250 * $planet->getLevel('solar_plant')) * 100) : 0
 			];
 
 			foreach (Vars::getResources() as $res) {

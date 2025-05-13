@@ -204,12 +204,7 @@ class AllianceAdminController extends Controller
 			$alliance->image = 0;
 		}
 
-		$alliance->request_notallow = (int) $request->post('request_notallow', 0);
-
-		if ($alliance->request_notallow != 0 && $alliance->request_notallow != 1) {
-			throw new Exception('Недопустимое значение атрибута!');
-		}
-
+		$alliance->request_notallow = (int) $request->post('request_notallow', 0) > 0;
 		$alliance->update();
 	}
 

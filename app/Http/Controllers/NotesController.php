@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\Exception;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class NotesController extends Controller
 {
@@ -39,12 +40,11 @@ class NotesController extends Controller
 
 	public function delete(Request $request)
 	{
-		/** @var array $deleteIds */
-		$deleteIds = $request->post('id', []);
+		$deleteIds = array_map('intval', Arr::wrap($request->post('id', [])));
 
-		if (!empty($deleteIds) && is_array($deleteIds)) {
+		if (!empty($deleteIds)) {
 			Note::query()->whereBelongsTo($this->user)
-				->whereKey(array_map('intval', $deleteIds))->delete();
+				->whereKey($deleteIds)->delete();
 		}
 	}
 

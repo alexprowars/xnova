@@ -357,9 +357,9 @@ class Attack extends BaseMission
 
 			if ($planetId) {
 				$GottenMoon = __('fleet_engine.sys_moonbuilt', [
-					$this->fleet->end_galaxy,
-					$this->fleet->end_system,
-					$this->fleet->end_planet,
+					'galaxy' => $this->fleet->end_galaxy,
+					'system' => $this->fleet->end_system,
+					'planet' => $this->fleet->end_planet,
 				]);
 			} else {
 				$GottenMoon = 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';

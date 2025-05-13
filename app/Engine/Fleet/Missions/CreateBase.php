@@ -22,7 +22,11 @@ class CreateBase extends BaseMission
 			->where('planet_type', PlanetType::MILITARY_BASE)
 			->count();
 
-		$TargetAdress = __('main.sys_adress_planet', [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet]);
+		$TargetAdress = __('main.sys_adress_planet', [
+			'galaxy' => $this->fleet->end_galaxy,
+			'system' => $this->fleet->end_system,
+			'planet' => $this->fleet->end_planet,
+		]);
 
 		// Если в галактике пусто (планета не заселена)
 		if (Galaxy::isPositionFree($this->fleet->getDestinationCoordinates())) {

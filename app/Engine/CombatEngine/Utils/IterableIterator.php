@@ -27,10 +27,9 @@ class IterableIterator implements Iterator
 		return key($this->array);
 	}
 
-	#[ReturnTypeWillChange]
-	public function next()
+	public function next(): void
 	{
-		return next($this->array);
+		next($this->array);
 	}
 
 	#[ReturnTypeWillChange]

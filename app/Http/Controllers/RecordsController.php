@@ -10,7 +10,7 @@ class RecordsController extends Controller
 {
 	public function index(Settings $settings)
 	{
-		$RecordsArray = [];
+		$recordsArray = [];
 
 		if (file_exists(base_path('bootstrap/cache/CacheRecords.php'))) {
 			require_once(base_path('bootstrap/cache/CacheRecords.php'));
@@ -22,7 +22,7 @@ class RecordsController extends Controller
 		$Fleet = [];
 		$Defense = [];
 
-		foreach ($RecordsArray as $ElementID => $ElementIDArray) {
+		foreach ($recordsArray as $ElementID => $ElementIDArray) {
 			if (($ElementID >= 1 && $ElementID <= 39) || $ElementID == 44) {
 				$Builds[__('main.tech.' . $ElementID)] = [
 					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',

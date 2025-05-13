@@ -139,7 +139,7 @@ class Production
 		foreach ($itemsId as $productionId) {
 			$entity = $this->planet->getEntity($productionId)->unit();
 
-			if (!($entity instanceof EntityProductionInterface) || $entity->getLevel() <= 0) {
+			if (!$entity || $entity->getLevel() <= 0) {
 				continue;
 			}
 

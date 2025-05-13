@@ -18,7 +18,11 @@ class Colonization extends BaseMission
 			$maxPlanets = config('game.maxPlanets', 9);
 		}
 
-		$targetAdress = __('main.sys_adress_planet', [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet]);
+		$targetAdress = __('main.sys_adress_planet', [
+			'galaxy' => $this->fleet->end_galaxy,
+			'system' => $this->fleet->end_system,
+			'planet' => $this->fleet->end_planet,
+		]);
 
 		if (Galaxy::isPositionFree($this->fleet->getDestinationCoordinates())) {
 			$iPlanetCount = Models\Planet::query()

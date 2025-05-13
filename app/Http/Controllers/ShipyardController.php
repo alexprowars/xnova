@@ -9,6 +9,7 @@ use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ShipyardController extends Controller
 {
@@ -99,7 +100,9 @@ class ShipyardController extends Controller
 
 		$queueManager = new QueueManager($this->user, $this->planet);
 
-		foreach ($request->post('element', []) as $element => $count) {
+		$elements = Arr::wrap($request->post('element', []));
+
+		foreach ($elements as $element => $count) {
 			$element 	= (int) $element;
 			$count 		= abs((int) $count);
 

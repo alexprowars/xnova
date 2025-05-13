@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\MessageNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -209,20 +210,17 @@ class MessagesController extends Controller
 
 	public function delete(Request $request)
 	{
-		$items = $request->post('id');
+		$items = Arr::wrap($request->post('id', []));
+		$items = array_map('intval', $items);
 
-		if (!is_array($items) || !count($items)) {
+		if (empty($items)) {
 			throw new Exception('Не выбраны сообщения');
 		}
 
-		$items = array_map('intval', $items);
-
-		if (count($items)) {
-			Message::query()
-				->whereKey($items)
-				->whereBelongsTo($this->user)
-				->update(['deleted' => true]);
-		}
+		Message::query()
+			->whereKey($items)
+			->whereBelongsTo($this->user)
+			->update(['deleted' => true]);
 	}
 
 	public function abuse(int $messageId)
@@ -246,7 +244,7 @@ class MessagesController extends Controller
 				$this->user,
 				MessageType::User,
 				'<font color=red>' . $this->user->username . '</font>',
-				'От кого: ' . $mes->from . '<br>Дата отправления: ' . date('d-m-Y H:i:s', $mes->time) . '<br>Текст сообщения: ' . $mes->message
+				'От кого: ' . $mes->from . '<br>Дата отправления: ' . $mes->time->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $mes->message
 			));
 		}
 	}

@@ -145,7 +145,7 @@ class Expedition extends BaseMission
 						continue;
 					}
 
-					$maxFound = floor($foundShips / Vars::getItemTotalPrice($id));
+					$maxFound = (int) floor($foundShips / Vars::getItemTotalPrice($id));
 
 					if ($maxFound <= 0) {
 						continue;
@@ -391,7 +391,11 @@ class Expedition extends BaseMission
 					str_replace('/api', '', url()->signedRoute('log.view', ['id' => $report->id], absolute: false)),
 					$colorAtt,
 					'Боевой доклад',
-					__('main.sys_adress_planet', [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet]),
+					__('main.sys_adress_planet', [
+						'galaxy' => $this->fleet->end_galaxy,
+						'system' => $this->fleet->end_system,
+						'planet' => $this->fleet->end_planet,
+					]),
 					$colorAtt,
 					__('fleet_engine.sys_perte_attaquant'),
 					Format::number($result['lost']['att']),
@@ -463,12 +467,12 @@ class Expedition extends BaseMission
 	public function returnEvent()
 	{
 		$message = __('fleet_engine.sys_expe_back_home', [
-			__('main.metal'),
-			Format::number($this->fleet->resource_metal),
-			__('main.crystal'),
-			Format::number($this->fleet->resource_crystal),
-			__('main.deuterium'),
-			Format::number($this->fleet->resource_deuterium),
+			'mt' => __('main.metal'),
+			'm' => Format::number($this->fleet->resource_metal),
+			'ct' => __('main.crystal'),
+			'c' => Format::number($this->fleet->resource_crystal),
+			'dt' => __('main.deuterium'),
+			'd' => Format::number($this->fleet->resource_deuterium),
 		]);
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, __('fleet_engine.sys_expe_report'), $message));

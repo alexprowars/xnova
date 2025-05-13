@@ -20,6 +20,11 @@ class Recycling extends BaseMission
 			new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::MOON)
 		);
 
+		$recycledGoods = [
+			'metal' => 0,
+			'crystal' => 0,
+		];
+
 		if ($targetPlanet) {
 			$recyclerCapacity = 0;
 			$otherFleetCapacity = 0;
@@ -89,27 +94,17 @@ class Recycling extends BaseMission
 					'resource_metal' => $recycledGoods['metal'],
 					'resource_crystal' => $recycledGoods['crystal'],
 				]);
-
-			$this->return();
-
-			$message = __('fleet_engine.sys_recy_gotten', [
-				Format::number($recycledGoods['metal']),
-				__('main.metal'),
-				Format::number($recycledGoods['crystal']),
-				__('main.crystal'),
-				$this->fleet->getTargetAdressLink(),
-			]);
-		} else {
-			$this->return();
-
-			$message = __('fleet_engine.sys_recy_gotten', [
-				0,
-				__('main.metal'),
-				0,
-				__('main.crystal'),
-				$this->fleet->getTargetAdressLink(),
-			]);
 		}
+
+		$this->return();
+
+		$message = __('fleet_engine.sys_recy_gotten', [
+			'm' => Format::number($recycledGoods['metal']),
+			'mt' => __('main.metal'),
+			'c' => Format::number($recycledGoods['crystal']),
+			'ct' => __('main.crystal'),
+			'target' => $this->fleet->getTargetAdressLink(),
+		]);
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $message));
 	}
