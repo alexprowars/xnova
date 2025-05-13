@@ -2,7 +2,7 @@
 
 namespace App\Engine\CombatEngine\Utils;
 
-use Exception;
+use App\Engine\CombatEngine\Exception;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -16,7 +16,7 @@ abstract class Math
 			}
 
 			$shots = floor($num->result / $denum->result);
-			$rest = Math::rest($num->result, $denum->result);
+			$rest = self::rest($num->result, $denum->result);
 
 			return new Number($shots, $rest);
 		} else {
@@ -61,8 +61,8 @@ abstract class Math
 			throw new Exception();
 		}
 
-		if (mt_rand(0, 99) < $probability) {
-			return call_user_func($callback, $callbackParam);
+		if (random_int(0, 99) < $probability) {
+			return $callback($callbackParam);
 		}
 
 		return false;
@@ -73,7 +73,7 @@ abstract class Math
 		$sum = 0;
 		$array_obj = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));
 
-		foreach ($array_obj as $key => $value) {
+		foreach ($array_obj as $value) {
 			$sum += $value;
 		}
 

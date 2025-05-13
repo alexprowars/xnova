@@ -3,8 +3,9 @@
 namespace App\Engine\CombatEngine\Models;
 
 use App\Engine\CombatEngine\CombatObject\FireManager;
+use App\Engine\CombatEngine\Core\BattleResult;
 use App\Engine\CombatEngine\Utils\IterableIterator;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 /**
  * @method Player[] getIterator()
@@ -12,7 +13,7 @@ use Exception;
  */
 class PlayerGroup extends IterableIterator
 {
-	public $battleResult;
+	public BattleResult $battleResult;
 	private static $id_count = 0;
 	private $id;
 
@@ -76,7 +77,6 @@ class PlayerGroup extends IterableIterator
 		ob_start();
 
 		$_st = '';
-		/** @noinspection PhpUnusedLocalVariableInspection */
 		$_playerGroup = $this;
 
 		require(dirname(__DIR__) . "/Views/playerGroup.html");

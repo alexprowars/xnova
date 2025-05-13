@@ -3,7 +3,7 @@
 namespace App\Engine\CombatEngine\CombatObject;
 
 use App\Engine\CombatEngine\Models\ShipType;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 class ShipsCleaner
 {
@@ -37,7 +37,7 @@ class ShipsCleaner
 	{
 		$prob = 1 - $this->shipType->getCurrentLife() / ($this->shipType->getHull() * $this->shipType->getCount());
 
-		if ($prob < 0 && $prob > -EPSILON) {
+		if ($prob < 0 && $prob > -config('battle.EPSILON')) {
 			$prob = 0;
 		}
 
@@ -45,22 +45,22 @@ class ShipsCleaner
 			throw new Exception("Negative prob");
 		}
 
-		if (USE_BIEXPLOSION_SYSTEM && $this->lastShipHit >= $this->shipType->getCount() / PROB_TO_REAL_MAGIC) {
+		if (config('battle.USE_BIEXPLOSION_SYSTEM') && $this->lastShipHit >= $this->shipType->getCount() / config('battle.PROB_TO_REAL_MAGIC')) {
 			\log_comment('lastShipHit bigger than getCount()/magic');
-			if ($prob < MIN_PROB_TO_EXPLODE) {
+			if ($prob < config('battle.MIN_PROB_TO_EXPLODE')) {
 				$probToExplode = 0;
 			} else {
 				$probToExplode = $prob;
 			}
 		} else {
 			\log_comment('lastShipHit smaller than getCount()/magic');
-			$probToExplode = $prob * (1 - MIN_PROB_TO_EXPLODE);
+			$probToExplode = $prob * (1 - config('battle.MIN_PROB_TO_EXPLODE'));
 		}
 
 		/*** calculating the amount of exploded ships ***/
 		$teoricExploded = round($this->shipType->getCount() * $probToExplode);
 
-		if (USE_EXPLODED_LIMITATION) {
+		if (config('battle.USE_EXPLODED_LIMITATION')) {
 			$teoricExploded = min($teoricExploded, $this->lastShots);
 		}
 

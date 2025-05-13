@@ -200,8 +200,7 @@ class OverviewController extends Controller
 				->delete();
 		}
 
-		Queue::where('planet_id', $planet->id)
-			->delete();
+		$planet->queue()->delete();
 
 		Cache::forget('app::planetlist_' . $this->user->id);
 	}

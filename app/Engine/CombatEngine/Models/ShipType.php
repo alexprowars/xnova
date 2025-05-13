@@ -4,7 +4,7 @@ namespace App\Engine\CombatEngine\Models;
 
 use App\Engine\CombatEngine\CombatObject\PhysicShot;
 use App\Engine\CombatEngine\CombatObject\ShipsCleaner;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 class ShipType extends Type
 {
@@ -60,7 +60,7 @@ class ShipType extends Type
 		$this->originalPower = $power;
 
 		$this->singleShield = $shield;
-		$this->singleLife = COST_TO_ARMOUR * array_sum($cost);
+		$this->singleLife = config('battle.COST_TO_ARMOUR') * array_sum($cost);
 		$this->singlePower = $power;
 
 		$this->increment($count);
@@ -69,15 +69,9 @@ class ShipType extends Type
 		$this->setShieldsTech($shields_tech);
 	}
 
-	/**
-	 * ShipType::setWeaponsTech()
-	 * Set new weapon techs level.
-	 * @param int $level
-	 * @throws Exception
-	 */
-	public function setWeaponsTech($level)
+	public function setWeaponsTech(int $level)
 	{
-		if (!is_numeric($level) || $level <= 0) {
+		if ($level <= 0) {
 			return;
 		}
 
@@ -88,20 +82,14 @@ class ShipType extends Type
 		}
 
 		$this->weapons_tech = $level;
-		$incr = 1 + WEAPONS_TECH_INCREMENT_FACTOR * $diff;
+		$incr = 1 + config('battle.WEAPONS_TECH_INCREMENT_FACTOR') * $diff;
 		$this->singlePower *= $incr;
 		$this->fullPower *= $incr;
 	}
 
-	/**
-	 * ShipType::setShieldsTech()
-	 * Set new shield techs level.
-	 * @param int $level
-	 * @throws Exception
-	 */
-	public function setShieldsTech($level)
+	public function setShieldsTech(int $level)
 	{
-		if (!is_numeric($level) || $level <= 0) {
+		if ($level <= 0) {
 			return;
 		}
 
@@ -112,21 +100,15 @@ class ShipType extends Type
 		}
 
 		$this->shields_tech = $level;
-		$incr = 1 + SHIELDS_TECH_INCREMENT_FACTOR * $diff;
+		$incr = 1 + config('battle.SHIELDS_TECH_INCREMENT_FACTOR') * $diff;
 		$this->singleShield *= $incr;
 		$this->fullShield *= $incr;
 		$this->currentShield *= $incr;
 	}
 
-	/**
-	 * ShipType::setArmourTech()
-	 * Set new armour techs level
-	 * @param int $level
-	 * @throws Exception
-	 */
-	public function setArmourTech($level)
+	public function setArmourTech(int $level)
 	{
-		if (!is_numeric($level) || $level <= 0) {
+		if ($level <= 0) {
 			return;
 		}
 
@@ -137,7 +119,7 @@ class ShipType extends Type
 		}
 
 		$this->armour_tech = $level;
-		$incr = 1 + ARMOUR_TECH_INCREMENT_FACTOR * $diff;
+		$incr = 1 + config('battle.ARMOUR_TECH_INCREMENT_FACTOR') * $diff;
 		$this->singleLife *= $incr;
 		$this->fullLife *= $incr;
 		$this->currentLife *= $incr;
@@ -294,7 +276,7 @@ class ShipType extends Type
 		if ($this->isShieldDisabled()) {
 			return 0;
 		}
-		return $this->singleShield / SHIELD_CELLS;
+		return $this->singleShield / config('battle.SHIELD_CELLS');
 	}
 
 	/**
@@ -375,14 +357,14 @@ class ShipType extends Type
 		\log_var('$ps->getAssorbedDamage()', $ps->getAssorbedDamage());
 		$this->currentShield -= $ps->getAssorbedDamage();
 
-		if ($this->currentShield < 0 && $this->currentShield > -EPSILON) {
+		if ($this->currentShield < 0 && $this->currentShield > -config('battle.EPSILON')) {
 			\log_comment('fixing double number currentshield');
 			$this->currentShield = 0;
 		}
 
 		$this->currentLife -= $ps->getHullDamage();
 
-		if ($this->currentLife < 0 && $this->currentLife > -EPSILON) {
+		if ($this->currentLife < 0 && $this->currentLife > -config('battle.EPSILON')) {
 			\log_comment('fixing double number currentlife');
 			$this->currentLife = 0;
 		}

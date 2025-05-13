@@ -10,6 +10,8 @@
  * @global $ProdGrid array Массив производства ресурсов постройками
  */
 
+use App\Models\Planet;
+
 $resource = [
 	1 => 'metal_mine',
 	2 => 'crystal_mine',
@@ -570,26 +572,26 @@ $CombatCaps = [
 
 $ProdGrid = [
 	1 => [
-		'metal' => 'return (30 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
+		'metal' => fn($BuildLevel, $BuildLevelFactor) => (30 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
 	],
 	2 => [
-		'crystal' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
+		'crystal' => fn($BuildLevel, $BuildLevelFactor) => (20 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
 	],
 	3 => [
-		'deuterium' => 'return ((10 * $BuildLevel * pow((1.1), $BuildLevel)) * (-0.002 * $BuildTemp + 1.28)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return -(30 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);'
+		'deuterium' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => ((10 * $BuildLevel * (1.1 ** $BuildLevel)) * (-0.002 * $planet->temp_max + 1.28)) * (0.1 * $BuildLevelFactor),
+		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(30 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
 	],
 	4 => [
-		'energy' => 'return (20 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $energyTech * 0.02);'
+		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => (20 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $planet->user->getTechLevel('energy') * 0.02),
 	],
 	12 => [
-		'deuterium' => 'return -(10 * $BuildLevel * pow((1.1), $BuildLevel)) * (0.1 * $BuildLevelFactor);',
-		'energy' => 'return (40 * $BuildLevel * pow(1.05, $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $energyTech * 0.02);'
+		'deuterium' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => (40 * $BuildLevel * (1.05 ** $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $planet->user->getTechLevel('energy') * 0.02),
 	],
 	212 => [
-		'energy' => 'return floor(($BuildTemp + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor);'
+		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => floor(($planet->temp_max + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor),
 	]
 ];
 

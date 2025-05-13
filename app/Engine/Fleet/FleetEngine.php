@@ -25,7 +25,7 @@ class FleetEngine
 
 	public function restoreFleetToPlanet($start = true, $fleet = true)
 	{
-		if (!isset($this->fleet->id)) {
+		if (empty($this->fleet->id)) {
 			return;
 		}
 
@@ -86,11 +86,7 @@ class FleetEngine
 	{
 		$this->fleet->mess = 1;
 		$this->fleet->updated_at = $this->fleet->end_time;
-
-		if (!empty($attributes)) {
-			Fleet::query()->whereKey($this->fleet)
-				->update($attributes);
-		}
+		$this->fleet->update($attributes);
 
 		$this->fleet->assault?->delete();
 	}

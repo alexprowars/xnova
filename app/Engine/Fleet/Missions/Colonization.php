@@ -4,10 +4,9 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Galaxy;
+use App\Facades\Galaxy;
 use App\Models;
 use App\Notifications\MessageNotification;
-use Illuminate\Support\Facades\Cache;
 
 class Colonization extends BaseMission
 {
@@ -19,32 +18,30 @@ class Colonization extends BaseMission
 			$maxPlanets = config('game.maxPlanets', 9);
 		}
 
-		$galaxy = new Galaxy();
+		$targetAdress = __('main.sys_adress_planet', [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet]);
 
-		$iPlanetCount = Models\Planet::query()
-			->whereBelongsTo($this->fleet->user)
-			->where('planet_type', PlanetType::PLANET)
-			->count();
+		if (Galaxy::isPositionFree($this->fleet->getDestinationCoordinates())) {
+			$iPlanetCount = Models\Planet::query()
+				->whereBelongsTo($this->fleet->user)
+				->where('planet_type', PlanetType::PLANET)
+				->count();
 
-		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
-
-		if ($galaxy->isPositionFree($this->fleet->getDestinationCoordinates())) {
 			if ($iPlanetCount >= $maxPlanets) {
-				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxPlanets . __('fleet_engine.sys_colo_planet');
+				$message = __('fleet_engine.sys_colo_arrival') . $targetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxPlanets . __('fleet_engine.sys_colo_planet');
 
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
+				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $message));
 				$this->return();
 			} else {
-				$NewOwnerPlanet = $galaxy->createPlanet(
+				$newOwnerPlanet = Galaxy::createPlanet(
 					$this->fleet->getDestinationCoordinates(),
 					$this->fleet->user_id,
 					__('fleet_engine.sys_colo_defaultname')
 				);
 
-				if ($NewOwnerPlanet) {
-					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_allisok');
+				if ($newOwnerPlanet) {
+					$message = __('fleet_engine.sys_colo_arrival') . $targetAdress . __('fleet_engine.sys_colo_allisok');
 
-					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $message));
 
 					$newFleet = [];
 
@@ -63,21 +60,21 @@ class Colonization extends BaseMission
 					$this->restoreFleetToPlanet(false);
 					$this->killFleet();
 
-					Cache::forget('app::planetlist_' . $this->fleet->user_id);
+					cache()->forget('app::planetlist_' . $this->fleet->user_id);
 				} else {
 					$this->return();
 
-					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_badpos');
+					$message = __('fleet_engine.sys_colo_arrival') . $targetAdress . __('fleet_engine.sys_colo_badpos');
 
-					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
+					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $message));
 				}
 			}
 		} else {
 			$this->return();
 
-			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_notfree');
+			$message = __('fleet_engine.sys_colo_arrival') . $targetAdress . __('fleet_engine.sys_colo_notfree');
 
-			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $TheMessage));
+			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $message));
 		}
 	}
 }

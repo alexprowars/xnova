@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\PlanetResource\Pages;
 
 use App\Engine\Coordinates;
-use App\Engine\Galaxy;
 use App\Exceptions\Exception;
+use App\Facades\Galaxy;
 use App\Filament\Resources\PlanetResource;
 use App\Models\Planet;
 use Filament\Forms\Components\Select;
@@ -46,7 +46,7 @@ class CreatePlanet extends CreateRecord
 
 	protected function handleRecordCreation(array $data): Planet
 	{
-		$planetId = (new Galaxy())->createPlanet(
+		$planetId = Galaxy::createPlanet(
 			new Coordinates($data['galaxy'], $data['system'], $data['planet']),
 			$data['user_id'],
 			$data['name']

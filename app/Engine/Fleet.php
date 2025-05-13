@@ -16,14 +16,13 @@ class Fleet extends Building
 		$storage = Vars::getStorage();
 
 		foreach (Vars::getItemsByType(ItemType::FLEET) as $ship) {
-			if (isset($storage->CombatCaps[$ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$ship]['engine_up']['tech']) >= $storage['CombatCaps'][$ship]['engine_up']['lvl']) {
-				$tmp = $storage['CombatCaps'];
+			if (isset($storage['CombatCaps'][$ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$ship]['engine_up']['tech']) >= $storage['CombatCaps'][$ship]['engine_up']['lvl']) {
+				$tmp = $storage['CombatCaps'][$ship];
+				$tmp['type_engine']++;
+				$tmp['speed'] = $tmp['engine_up']['speed'];
+				unset($tmp['engine_up']);
 
-				$tmp[$ship]['type_engine']++;
-				$tmp[$ship]['speed'] = $tmp[$ship]['engine_up']['speed'];
-
-				unset($tmp[$ship]['engine_up']);
-				$storage['CombatCaps'] = $tmp;
+				Vars::updateStorage('CombatCaps.' . $ship, $tmp);
 			}
 		}
 	}
@@ -32,7 +31,7 @@ class Fleet extends Building
 	{
 		$FleetRec = $FleetRow->getShips();
 
-		$FleetPopup = "<table width=200>";
+		$FleetPopup = '<table width="200">';
 		$r = 'javascript:;';
 
 		$Total = 0;
@@ -42,22 +41,22 @@ class Fleet extends Building
 		}
 
 		if ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
-			$FleetPopup .= "<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>";
+			$FleetPopup .= '<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>';
 		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
+			$FleetPopup .= '<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>' . Format::number($Total) . "<font></td></tr>";
 		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
 			foreach ($FleetRec as $id => $fleet) {
-				$FleetPopup .= "<tr><td width=100% align=center colspan=2><font color=white>" . __('main.tech.' . $id) . "<font></td></tr>";
+				$FleetPopup .= '<tr><td width=100% align=center colspan=2><font color=white>' . __('main.tech.' . $id) . "<font></td></tr>";
 			}
 
-			$FleetPopup .= "<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>" . Format::number($Total) . "<font></td></tr>";
+			$FleetPopup .= '<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>' . Format::number($Total) . "<font></td></tr>";
 		} else {
 			if ($FleetRow->target_user_id == $user?->id && $FleetRow->mission == Mission::Attack) {
 				$r = '/sim/';
 			}
 
 			foreach ($FleetRec as $id => $fleet) {
-				$FleetPopup .= "<tr><td width=75% align=left><font color=white>" . __('main.tech.' . $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['count']) . "<font></td></tr>";
+				$FleetPopup .= '<tr><td width=75% align=left><font color=white>' . __('main.tech.' . $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['count']) . "<font></td></tr>";
 
 				if ($r != 'javascript:;') {
 					$r .= $id . ',' . $fleet['count'] . ';';
@@ -65,30 +64,29 @@ class Fleet extends Building
 			}
 		}
 
-		$FleetPopup .= "</table>";
-		$FleetPopup .= "'>" . $Texte . "</a>";
+		$FleetPopup .= '</table>';
 
-		return "<a href='" . $r . "' class=\"tooltip " . $FleetType . "\" data-content='" . $FleetPopup;
+		return '<a href="' . $r . '" class="tooltip ' . $FleetType . '" data-content="' . $FleetPopup . '">' . $Texte . '</a>';
 	}
 
-	public static function createFleetPopupedMissionLink($FleetRow, $Texte, $FleetType)
+	public static function createFleetPopupedMissionLink($FleetRow, string $Texte, $FleetType)
 	{
 		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
 
 		if ($FleetTotalC != 0) {
-			$FRessource = "<table width=200>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . __('main.Metal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_metal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . __('main.Crystal') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_crystal) . "<font></td></tr>";
-			$FRessource .= "<tr><td width=50% align=left><font color=white>" . __('main.Deuterium') . "<font></td><td width=50% align=right><font color=white>" . Format::number($FleetRow->resource_deuterium) . "<font></td></tr>";
-			$FRessource .= "</table>";
+			$FRessource = '<table width=200>';
+			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.metal') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_metal) . '<font></td></tr>';
+			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.crystal') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_crystal) . '<font></td></tr>';
+			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.deuterium') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_deuterium) . '<font></td></tr>';
+			$FRessource .= '</table>';
 		} else {
-			$FRessource = "";
+			$FRessource = '';
 		}
 
-		if ($FRessource <> "") {
-			$MissionPopup = "<a href='javascript:;' data-content='" . $FRessource . "' class=\"tooltip " . $FleetType . "\">" . $Texte . "</a>";
+		if ($FRessource <> '') {
+			$MissionPopup = '<a href="javascript:;" data-content="' . $FRessource . '" class="tooltip ' . $FleetType . '">' . $Texte . '</a>';
 		} else {
-			$MissionPopup = $Texte . "";
+			$MissionPopup = $Texte;
 		}
 
 		return $MissionPopup;

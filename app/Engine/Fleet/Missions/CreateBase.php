@@ -4,7 +4,7 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Galaxy;
+use App\Facades\Galaxy;
 use App\Models;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
@@ -16,18 +16,16 @@ class CreateBase extends BaseMission
 		// Определяем максимальное количество баз
 		$maxBases = $this->fleet->user->getTechLevel('fleet_base');
 
-		$galaxy = new Galaxy();
-
 		// Получение общего количества построенных баз
 		$iPlanetCount = Models\Planet::query()
 			->whereBelongsTo($this->fleet->user)
 			->where('planet_type', PlanetType::MILITARY_BASE)
 			->count();
 
-		$TargetAdress = sprintf(__('fleet_engine.sys_adress_planet'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
+		$TargetAdress = __('main.sys_adress_planet', [$this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet]);
 
 		// Если в галактике пусто (планета не заселена)
-		if ($galaxy->isPositionFree($this->fleet->getDestinationCoordinates())) {
+		if (Galaxy::isPositionFree($this->fleet->getDestinationCoordinates())) {
 			// Если лимит баз исчерпан
 			if ($iPlanetCount >= $maxBases) {
 				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
@@ -36,7 +34,7 @@ class CreateBase extends BaseMission
 				$this->return();
 			} else {
 				// Создание планеты-базы
-				$NewOwnerPlanet = $galaxy->createPlanet(
+				$NewOwnerPlanet = Galaxy::createPlanet(
 					$this->fleet->getDestinationCoordinates(),
 					$this->fleet->user_id,
 					__('fleet_engine.sys_base_defaultname'),

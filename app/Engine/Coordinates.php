@@ -16,9 +16,23 @@ class Coordinates implements Arrayable
 		return $this->galaxy;
 	}
 
+	public function setGalaxy(int $value): self
+	{
+		$this->galaxy = $value;
+
+		return $this;
+	}
+
 	public function getSystem(): int
 	{
 		return $this->system;
+	}
+
+	public function setSystem(int $value): self
+	{
+		$this->system = $value;
+
+		return $this;
 	}
 
 	public function getPlanet(): ?int
@@ -26,9 +40,23 @@ class Coordinates implements Arrayable
 		return $this->planet;
 	}
 
+	public function setPlanet(int $value): self
+	{
+		$this->planet = $value;
+
+		return $this;
+	}
+
 	public function getType(): ?PlanetType
 	{
 		return $this->type;
+	}
+
+	public function setType(?PlanetType $value): self
+	{
+		$this->type = $value;
+
+		return $this;
 	}
 
 	public function isEmpty(): bool

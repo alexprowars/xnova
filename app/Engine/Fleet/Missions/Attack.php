@@ -20,9 +20,9 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Fleet\Mission as MissionEnum;
-use App\Engine\Galaxy;
 use App\Engine\QueueManager;
 use App\Engine\Vars;
+use App\Facades\Galaxy;
 use App\Format;
 use App\Models;
 use App\Models\Fleet as FleetModel;
@@ -253,10 +253,10 @@ class Attack extends BaseMission
 
 		if ($totalDebree > 0) {
 			Planet::coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
-				->where('planet_type', '!=', PlanetType::MOON)
-				->update([
-					'debris_metal' => DB::raw('debris_metal + ' . ($result['debree']['att'][0] + $result['debree']['def'][0])),
-					'debris_crystal' => DB::raw('debris_metal + ' . ($result['debree']['att'][1] + $result['debree']['def'][1])),
+				->whereNot('planet_type', PlanetType::MOON)
+				->incrementEach([
+					'debris_metal' => $result['debree']['att'][0] + $result['debree']['def'][0],
+					'debris_crystal' => $result['debree']['att'][1] + $result['debree']['def'][1],
 				]);
 		}
 
@@ -291,7 +291,7 @@ class Attack extends BaseMission
 					$update['resource_deuterium'] 	= DB::raw('resource_deuterium + ' . (int) round($res_procent[$fleetID] * $steal['deuterium']));
 				}
 
-				Models\Fleet::query()->where('id', $fleetID)->update($update);
+				Models\Fleet::query()->whereKey($fleetID)->update($update);
 			}
 		}
 
@@ -349,16 +349,18 @@ class Attack extends BaseMission
 		}
 
 		if (!$target->parent_planet && $userChance && $userChance <= $moonChance) {
-			$galaxy = new Galaxy();
-
-			$planetId = $galaxy->createMoon(
+			$planetId = Galaxy::createMoon(
 				$this->fleet->getDestinationCoordinates(),
 				$target->user_id,
 				$moonChance
 			);
 
 			if ($planetId) {
-				$GottenMoon = sprintf(__('fleet_engine.sys_moonbuilt'), $this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet);
+				$GottenMoon = __('fleet_engine.sys_moonbuilt', [
+					$this->fleet->end_galaxy,
+					$this->fleet->end_system,
+					$this->fleet->end_planet,
+				]);
 			} else {
 				$GottenMoon = 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';
 			}

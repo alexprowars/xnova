@@ -4,7 +4,7 @@ namespace App\Engine\CombatEngine\Core;
 
 use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Utils\Math;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 class BattleReport
 {
@@ -23,23 +23,23 @@ class BattleReport
 
 	public function addRound(Round $round)
 	{
-		if (ONLY_FIRST_AND_LAST_ROUND && $this->roundsCount == 2) {
+		if (config('battle.ONLY_FIRST_AND_LAST_ROUND') && $this->roundsCount == 2) {
 			$this->rounds[1] = $round;
 			return;
 		}
 		$this->rounds[$this->roundsCount++] = $round;
 	}
 
-	public function getRound($number)
+	public function getRound($number): Round
 	{
 		if ($number === 'END') {
 			return $this->rounds[$this->roundsCount - 1];
 		} elseif ($number === 'START') {
 			return $this->rounds[0];
-		} elseif (intval($number) < 0 || intval($number) > $this->getLastRoundNumber()) {
+		} elseif ((int) $number < 0 || (int) $number > $this->getLastRoundNumber()) {
 			throw new Exception('Invalid round number');
 		} else {
-			return $this->rounds[intval($number)];
+			return $this->rounds[(int) $number];
 		}
 	}
 
@@ -64,17 +64,17 @@ class BattleReport
 
 	public function attackerHasWin()
 	{
-		return $this->getRound('END')->getAfterBattleAttackers()->battleResult === BATTLE_WIN;
+		return $this->getRound('END')->getAfterBattleAttackers()->battleResult === BattleResult::WIN;
 	}
 
 	public function defenderHasWin()
 	{
-		return $this->getRound('END')->getAfterBattleDefenders()->battleResult === BATTLE_WIN;
+		return $this->getRound('END')->getAfterBattleDefenders()->battleResult === BattleResult::WIN;
 	}
 
 	public function isAdraw()
 	{
-		return $this->getRound('END')->getAfterBattleAttackers()->battleResult === BATTLE_DRAW;
+		return $this->getRound('END')->getAfterBattleAttackers()->battleResult === BattleResult::DRAW;
 	}
 
 	public function getPresentationAttackersFleetOnRound($number)
@@ -161,20 +161,20 @@ class BattleReport
 
 	public function getMoonProb($add = 0)
 	{
-		return min(floor(array_sum($this->getDebris()) / MOON_UNIT_PROB), (MAX_MOON_PROB + $add));
+		return min(floor(array_sum($this->getDebris()) / config('battle.MOON_UNIT_PROB')), (config('battle.MAX_MOON_PROB') + $add));
 	}
 
 	public function getAttackerDebris()
 	{
 		$result = [0, 0];
 
-		foreach ($this->getAttackersLostUnits(!REPAIRED_DO_DEBRIS) as $idPlayer => $player) {
-			foreach ($player as $idFleet => $fleet) {
+		foreach ($this->getAttackersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $idPlayer => $player) {
+			foreach ($player as $fleet) {
 				foreach ($fleet as $role => $values) {
 					$metal = 0;
 					$crystal = 0;
 
-					foreach ($values as $idShipType => $lost) {
+					foreach ($values as $lost) {
 						$metal += $lost[0];
 						$crystal += $lost[1];
 					}
@@ -194,13 +194,13 @@ class BattleReport
 	{
 		$result = [0, 0];
 
-		foreach ($this->getDefendersLostUnits(!REPAIRED_DO_DEBRIS) as $idPlayer => $player) {
-			foreach ($player as $idFleet => $fleet) {
+		foreach ($this->getDefendersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $idPlayer => $player) {
+			foreach ($player as $fleet) {
 				foreach ($fleet as $role => $values) {
 					$metal = 0;
 					$crystal = 0;
 
-					foreach ($values as $idShipType => $lost) {
+					foreach ($values as $lost) {
 						$metal += $lost[0];
 						$crystal += $lost[1];
 					}

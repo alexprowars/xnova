@@ -3,7 +3,7 @@
 namespace App\Engine\CombatEngine\CombatObject;
 
 use App\Engine\CombatEngine\Models\ShipType;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 class PhysicShot
 {
@@ -14,7 +14,6 @@ class PhysicShot
 	private $assorbedDamage = 0;
 	private $bouncedDamage = 0;
 	private $hullDamage = 0;
-	private $cellDestroyed = 0;
 
 	public function __construct(ShipType $shipType, int $damage, int $count)
 	{
@@ -122,7 +121,7 @@ class PhysicShot
 		$unbauncedDamage = $this->clamp($damage, $shieldCellValue);
 		$currentShield = $this->shipType->getCurrentShield();
 
-		if (USE_HITSHIP_LIMITATION) {
+		if (config('battle.USE_HITSHIP_LIMITATION')) {
 			$currentShield = $currentShield * $this->getHitShips() / $this->shipType->getCount();
 		}
 

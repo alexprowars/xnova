@@ -4,10 +4,11 @@ namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
+use Illuminate\Support\Arr;
 
 class Vars
 {
-	private static $registry;
+	private static array $registry;
 
 	public static function init()
 	{
@@ -34,6 +35,11 @@ class Vars
 	public static function getStorage(): array
 	{
 		return self::$registry;
+	}
+
+	public static function updateStorage(string $key, mixed $value)
+	{
+		Arr::set(self::$registry, $key, $value);
 	}
 
 	public static function getName($id): ?string

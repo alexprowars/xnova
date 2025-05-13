@@ -55,6 +55,12 @@ class Planet extends Model
 		return $this->hasMany(PlanetEntity::class, 'planet_id');
 	}
 
+	/** @return HasMany<Queue, $this> */
+	public function queue(): HasMany
+	{
+		return $this->hasMany(Queue::class, 'planet_id');
+	}
+
 	public function checkOwnerPlanet()
 	{
 		if ($this->user_id != $this->user->id) {

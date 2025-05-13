@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Models;
@@ -10,7 +11,6 @@ use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class Destruction extends BaseMission
 {
@@ -81,25 +81,22 @@ class Destruction extends BaseMission
 
 					if ($targetMoon->user->planet_current == $targetMoon->id) {
 						$targetMoon->user->update([
-							'planet_current' => DB::raw('planet_id')
+							'planet_current' => $targetMoon->user->planet_id,
 						]);
 					}
 
+					$coordinates = $this->fleet->getDestinationCoordinates();
+					$coordinates->setType(PlanetType::MOON);
+
 					Models\Fleet::query()
-						->where('start_galaxy', $this->fleet->end_galaxy)
-						->where('start_system', $this->fleet->end_system)
-						->where('start_planet', $this->fleet->end_planet)
-						->where('start_type', PlanetType::MOON)
+						->coordinates(FleetDirection::START, $coordinates)
 						->update(['start_type' => PlanetType::PLANET]);
 
 					Models\Fleet::query()
-						->where('end_galaxy', $this->fleet->end_galaxy)
-						->where('end_system', $this->fleet->end_system)
-						->where('end_planet', $this->fleet->end_planet)
-						->where('start_type', PlanetType::MOON)
+						->coordinates(FleetDirection::END, $coordinates)
 						->update(['end_type' => PlanetType::PLANET]);
 
-					Models\Queue::query()->where('planet_id', $targetMoon->id)->delete();
+					$targetMoon->queue()->delete();
 				} elseif (random_int(1, 100) <= $fleetDestroyChance) {
 					$ripsKilled = true;
 
@@ -109,10 +106,10 @@ class Destruction extends BaseMission
 
 					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
 						Models\Planet::coordinates($this->fleet->getDestinationCoordinates(false))
-							->where('planet_type', '!=', PlanetType::MOON)
-							->update([
-								'debris_metal' => DB::raw('debris_metal + ' . $debree['metal']),
-								'debris_crystal' => DB::raw('debris_metal + ' . $debree['crystal']),
+							->whereNot('planet_type', PlanetType::MOON)
+							->incrementEach([
+								'debris_metal' => $debree['metal'],
+								'debris_crystal' => $debree['crystal'],
 							]);
 					}
 				}

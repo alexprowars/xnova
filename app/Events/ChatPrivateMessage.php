@@ -14,7 +14,7 @@ class ChatPrivateMessage implements ShouldBroadcast
 	use InteractsWithSockets;
 	use SerializesModels;
 
-	public function __construct(public int $userId, public string $message)
+	public function __construct(public int $userId, public array $message)
 	{
 		$this->dontBroadcastToCurrentUser();
 	}

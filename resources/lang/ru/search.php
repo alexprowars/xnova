@@ -1,25 +1,23 @@
 <?php
 
-$lang['Position'] 			= 'Позиция';
-$lang['Player'] 			= 'Игрок';
-$lang['Name'] 			= 'Имя';
-$lang['Player_name'] 		= 'Имя игрока';
-$lang['Planet'] 			= 'Планета';
-$lang['Planet_name'] 		= 'Название планеты';
-$lang['Alliance'] 			= 'Альянс';
-$lang['Alliance_name'] 		= 'Название альянса';
-$lang['Tag'] 			= 'Аббревиатура';
-$lang['Alliance_tag'] 		= 'Аббревиатура альянса';
-$lang['Members'] 			= 'Члены';
-$lang['Points'] 			= 'Очки';
-$lang['PerMember'] 		= 'на игрока';
-$lang['Coordinated'] 		= 'Координаты';
-$lang['Position'] 			= 'Место';
-$lang['Search'] 			= 'Найти';
-$lang['Search_in_all_game']   	= "Поиск по галактике";
-$lang['Back'] 			= 'Назад';
-$lang['Search'] 			= 'Поиск';
-$lang['write_a_messege'] 		= 'Написать сообщение';
-$lang['buddy_request'] 		= 'Предложение подружиться';
-
-return $lang;
+return [
+	'Player' => 'Игрок',
+	'Name' => 'Имя',
+	'Player_name' => 'Имя игрока',
+	'Planet' => 'Планета',
+	'Planet_name' => 'Название планеты',
+	'Alliance' => 'Альянс',
+	'Alliance_name' => 'Название альянса',
+	'Tag' => 'Аббревиатура',
+	'Alliance_tag' => 'Аббревиатура альянса',
+	'Members' => 'Члены',
+	'Points' => 'Очки',
+	'PerMember' => 'на игрока',
+	'Coordinated' => 'Координаты',
+	'Position' => 'Место',
+	'Search' => 'Найти',
+	'Search_in_all_game' => 'Поиск по галактике',
+	'Back' => 'Назад',
+	'write_a_messege' => 'Написать сообщение',
+	'buddy_request' => 'Предложение подружиться',
+];

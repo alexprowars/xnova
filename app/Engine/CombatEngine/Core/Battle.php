@@ -71,14 +71,14 @@ class Battle
 	private function checkWhoWon($att_lose, $deff_lose)
 	{
 		if ($att_lose && !$deff_lose) {
-			$this->attackers->battleResult = BATTLE_LOSE;
-			$this->defenders->battleResult = BATTLE_WIN;
+			$this->attackers->battleResult = BattleResult::LOSE;
+			$this->defenders->battleResult = BattleResult::WIN;
 		} elseif (!$att_lose && $deff_lose) {
-			$this->attackers->battleResult = BATTLE_WIN;
-			$this->defenders->battleResult = BATTLE_LOSE;
+			$this->attackers->battleResult = BattleResult::WIN;
+			$this->defenders->battleResult = BattleResult::LOSE;
 		} else {
-			$this->attackers->battleResult = BATTLE_DRAW;
-			$this->defenders->battleResult = BATTLE_DRAW;
+			$this->attackers->battleResult = BattleResult::DRAW;
+			$this->defenders->battleResult = BattleResult::DRAW;
 		}
 	}
 

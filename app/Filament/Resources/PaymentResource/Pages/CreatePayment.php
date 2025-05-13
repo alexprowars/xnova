@@ -48,8 +48,7 @@ class CreatePayment extends CreateRecord
 		/** @var Payment $record */
 		$record = parent::handleRecordCreation($data);
 
-		User::query()->whereBelongsTo($user)
-			->increment('credits', (int) $data['amount']);
+		$user->increment('credits', (int) $data['amount']);
 
 		LogCredit::create([
 			'user_id' => $user->id,

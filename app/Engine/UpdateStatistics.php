@@ -270,7 +270,7 @@ class UpdateStatistics
 	public function clearOldStats()
 	{
 		Statistic::query()->where('stat_code', '>=', 2)->delete();
-		Statistic::query()->increment('stat_code', 1);
+		Statistic::query()->increment('stat_code');
 	}
 
 	public function getTotalFleetPoints()

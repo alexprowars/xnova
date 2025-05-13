@@ -27,22 +27,21 @@ class Stay extends BaseMission
 				$TargetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
 			}
 
-			$TargetMessage = sprintf(
-				__('fleet_engine.sys_stat_mess'),
-				$this->fleet->getTargetAdressLink(),
-				Format::number($this->fleet->resource_metal),
-				__('main.Metal'),
-				Format::number($this->fleet->resource_crystal),
-				__('main.Crystal'),
-				Format::number($this->fleet->resource_deuterium),
-				__('main.Deuterium')
-			);
+			$targetMessage = __('fleet_engine.sys_stat_mess', [
+				'target' => $this->fleet->getTargetAdressLink(),
+				'm' => Format::number($this->fleet->resource_metal),
+				'mt' => __('main.metal'),
+				'c' => Format::number($this->fleet->resource_crystal),
+				'ct' => __('main.crystal'),
+				'd' => Format::number($this->fleet->resource_deuterium),
+				'dt' => __('main.deuterium')
+			]);
 
 			if ($TargetAddedGoods != '') {
-				$TargetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
+				$targetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
 			}
 
-			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
+			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $targetMessage));
 		}
 	}
 
@@ -56,15 +55,22 @@ class Stay extends BaseMission
 			$this->restoreFleetToPlanet();
 			$this->killFleet();
 
-			$TargetAddedGoods = sprintf(__('fleet_engine.sys_stay_mess_goods'), __('main.Metal'), Format::number($this->fleet->resource_metal), __('main.Crystal'), Format::number($this->fleet->resource_crystal), __('main.Deuterium'), Format::number($this->fleet->resource_deuterium));
+			$targetAddedGoods = __('fleet_engine.sys_stay_mess_goods', [
+				'mt' => __('main.metal'),
+				'm' => Format::number($this->fleet->resource_metal),
+				'ct' => __('main.crystal'),
+				'c' => Format::number($this->fleet->resource_crystal),
+				'dt' => __('main.deuterium'),
+				'd' => Format::number($this->fleet->resource_deuterium),
+			]);
 
 			$fleetData = $this->fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr) {
-				$TargetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
+				$targetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
 			}
 
-			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $TargetAddedGoods;
+			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $targetAddedGoods;
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
 		}

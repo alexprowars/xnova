@@ -1,42 +1,41 @@
 <?php
 
-$lang['Notes'] 			= 'Заметки';
+return [
+	'Notes' => 'Заметки',
 
-$lang['Please_Wait'] = "Подождите...";
+	'Please_Wait' => 'Подождите...',
 
-$lang['Createnote'] = 'Создание заметки';
-$lang['MakeNewNote'] = 'Создать новую заметку';
-$lang['Editnote'] = 'Редактирование заметки';
+	'Createnote' => 'Создание заметки',
+	'MakeNewNote' => 'Создать новую заметку',
+	'Editnote' => 'Редактирование заметки',
 
-$lang['Priority'] = 'Приоритет';
+	'Priority' => 'Приоритет',
 
-$lang['Important'] = 'Важно';
-$lang['Normal'] = 'Обычно';
-$lang['Unimportant'] = 'Неважно';
+	'Important' => 'Важно',
+	'Normal' => 'Обычно',
+	'Unimportant' => 'Неважно',
 
-$lang['Subject'] = 'Тема';
-$lang['NoTitle'] = 'Без заголовка';
-$lang['NoText'] = 'Без содеражния';
+	'Subject' => 'Тема',
+	'NoTitle' => 'Без заголовка',
+	'NoText' => 'Без содеражния',
 
-$lang['Date'] = 'Дата';
-$lang['Size'] = 'Размер';
+	'Date' => 'Дата',
+	'Size' => 'Размер',
 
-$lang['Note'] = 'Заметка';
+	'Note' => 'Заметка',
 
-$lang['characters'] = 'знаков';
+	'characters' => 'знаков',
 
-$lang['Apply'] = 'Применить';
-$lang['Back'] = 'Назад';
-$lang['Save'] = 'Сохранить';
-$lang['Delete'] = 'Удалить';
-$lang['Reset'] = 'Сброс';
+	'Apply' => 'Применить',
+	'Back' => 'Назад',
+	'Save' => 'Сохранить',
+	'Delete' => 'Удалить',
+	'Reset' => 'Сброс',
 
+	'ThereIsNoNote' => 'Нет заметок',
 
-$lang['ThereIsNoNote'] = 'Нет заметок';
-
-$lang['NoteUpdated'] = 'Заметка обновлена.';
-$lang['NoteAdded'] = 'Заметка добавлена.';
-$lang['NoteDeleted'] = 'Заметка удалена';
-$lang['NoteDeleteds'] = 'Заметки удалены';
-
-return $lang;
+	'NoteUpdated' => 'Заметка обновлена.',
+	'NoteAdded' => 'Заметка добавлена.',
+	'NoteDeleted' => 'Заметка удалена',
+	'NoteDeleteds' => 'Заметки удалены',
+];

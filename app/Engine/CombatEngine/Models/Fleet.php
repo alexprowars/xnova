@@ -4,7 +4,7 @@ namespace App\Engine\CombatEngine\Models;
 
 use App\Engine\CombatEngine\CombatObject\FireManager;
 use App\Engine\CombatEngine\Utils\IterableIterator;
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 /**
  * @method Ship[] getIterator()
@@ -52,7 +52,7 @@ class Fleet extends IterableIterator
 
 	public function setTech($weapons = null, $shields = null, $armour = null)
 	{
-		foreach ($this->array as $id => $shipType) {
+		foreach ($this->array as $shipType) {
 			$shipType->setWeaponsTech($weapons);
 			$shipType->setShieldsTech($shields);
 			$shipType->setArmourTech($armour);
@@ -174,9 +174,7 @@ class Fleet extends IterableIterator
 
 	public function getOrderedIterator()
 	{
-		if (!ksort($this->array)) {
-			throw new Exception('Unable to order types');
-		}
+		ksort($this->array);
 
 		return $this->array;
 	}
@@ -201,14 +199,14 @@ class Fleet extends IterableIterator
 
 	public function repairShields($round = 0)
 	{
-		foreach ($this->array as $id => $shipTypeDefender) {
+		foreach ($this->array as $shipTypeDefender) {
 			$shipTypeDefender->repairShields($round);
 		}
 	}
 
 	public function isEmpty()
 	{
-		foreach ($this->array as $id => $shipType) {
+		foreach ($this->array as $shipType) {
 			if (!$shipType->isEmpty()) {
 				return false;
 			}
@@ -232,10 +230,7 @@ class Fleet extends IterableIterator
 		return $this->armour_tech;
 	}
 
-	/**
-	 * @return $this
-	 */
-	public function cloneMe()
+	public function cloneMe(): self
 	{
 		$types = array_values($this->array);
 		$class = get_class($this);

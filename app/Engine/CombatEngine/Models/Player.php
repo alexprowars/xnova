@@ -4,7 +4,6 @@ namespace App\Engine\CombatEngine\Models;
 
 use App\Engine\CombatEngine\CombatObject\FireManager;
 use App\Engine\CombatEngine\Utils\IterableIterator;
-use Exception;
 
 /**
  * @method Fleet[] getIterator()
@@ -34,7 +33,7 @@ class Player extends IterableIterator
 	public function setName($name)
 	{
 		$this->name = $name;
-		foreach ($this->array as $id => $fleet) {
+		foreach ($this->array as $fleet) {
 			$fleet->setName($name);
 		}
 	}
@@ -49,18 +48,18 @@ class Player extends IterableIterator
 
 	public function setTech($weapons = null, $shields = null, $armour = null)
 	{
-		foreach ($this->array as $id => $fleet) {
+		foreach ($this->array as $fleet) {
 			$fleet->setTech($weapons, $shields, $armour);
 		}
 
 		if (is_numeric($weapons)) {
-			$this->weapons_tech = intval($weapons);
+			$this->weapons_tech = (int) $weapons;
 		}
 		if (is_numeric($shields)) {
-			$this->shields_tech = intval($shields);
+			$this->shields_tech = (int) $shields;
 		}
 		if (is_numeric($armour)) {
-			$this->armour_tech = intval($armour);
+			$this->armour_tech = (int) $armour;
 		}
 	}
 
@@ -101,9 +100,7 @@ class Player extends IterableIterator
 
 	private function order()
 	{
-		if (!ksort($this->array)) {
-			throw new Exception('Unable to order fleets');
-		}
+		ksort($this->array);
 	}
 
 	public function getFleet($id)
@@ -118,7 +115,7 @@ class Player extends IterableIterator
 
 	public function isEmpty()
 	{
-		foreach ($this->array as $id => $fleet) {
+		foreach ($this->array as $fleet) {
 			if (!$fleet->isEmpty()) {
 				return false;
 			}
@@ -153,7 +150,7 @@ class Player extends IterableIterator
 
 	public function repairShields($round = 0)
 	{
-		foreach ($this->array as $idFleet => $fleet) {
+		foreach ($this->array as $fleet) {
 			$fleet->repairShields($round);
 		}
 	}
@@ -162,7 +159,7 @@ class Player extends IterableIterator
 	{
 		$merged = new Fleet(-1);
 
-		foreach ($this->array as $idFleet => $fleet) {
+		foreach ($this->array as $fleet) {
 			$merged->mergeFleet($fleet);
 		}
 
@@ -194,7 +191,7 @@ class Player extends IterableIterator
 	{
 		$amount = 0;
 
-		foreach ($this->array as $idFleet => $fleet) {
+		foreach ($this->array as $fleet) {
 			$amount += $fleet->getTotalCount();
 		}
 

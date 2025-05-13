@@ -79,7 +79,7 @@ class Fire
 		$this->shots += $this->attackerShipType->getCount();
 		$this->power += $this->getNormalPower();
 
-		if (USE_RF) {
+		if (config('battle.USE_RF')) {
 			$this->calculateRf();
 		}
 
@@ -115,9 +115,9 @@ class Fire
 		$p = $this->getProbabilityToShotAgainForAttackerShipOfType($shipType_A);
 		$meanShots = GeometricDistribution::getMeanFromProbability(1 - $p) - 1;
 
-		if (USE_RANDOMIC_RF) {
-			$max = $meanShots * (1 + MAX_RF_BUFF);
-			$min = $meanShots * (1 - MAX_RF_NERF);
+		if (config('battle.USE_RANDOMIC_RF')) {
+			$max = $meanShots * (1 + config('battle.MAX_RF_BUFF'));
+			$min = $meanShots * (1 - config('battle.MAX_RF_NERF'));
 
 			\log_var('$max', $max);
 			\log_var('$min', $min);

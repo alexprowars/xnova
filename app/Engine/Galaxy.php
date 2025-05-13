@@ -179,6 +179,7 @@ class Galaxy
 
 	public function sizeRandomiser(Coordinates $target, $mainPlanet = false): Planet
 	{
+		/** @var array{int, array} $planetData */
 		$planetData = [];
 		require(resource_path('engine/planet.php'));
 

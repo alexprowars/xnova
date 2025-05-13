@@ -88,8 +88,8 @@ class AllianceChatController extends Controller
 		]);
 
 		User::query()->where('alliance_id', $this->user->alliance_id)
-			->where('id', '!=', $this->user->id)
-			->update(['messages_ally' => DB::raw('messages_ally + 1')]);
+			->whereKeyNot($this->user->id)
+			->increment('messages_ally');
 	}
 
 	public function delete(Request $request)

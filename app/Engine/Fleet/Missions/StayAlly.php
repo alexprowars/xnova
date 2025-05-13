@@ -11,9 +11,14 @@ class StayAlly extends BaseMission
 	{
 		$this->stayFleet();
 
-		$Message = sprintf(__('fleet_engine.sys_stay_mess_user'), $this->fleet->user_name, $this->fleet->getStartAdressLink(), $this->fleet->target_user_name, $this->fleet->getTargetAdressLink());
+		$message = __('fleet_engine.sys_stay_mess_user', [
+			'user' => $this->fleet->user_name,
+			'start' => $this->fleet->getStartAdressLink(),
+			'target_user' => $this->fleet->target_user_name,
+			'target' => $this->fleet->getTargetAdressLink(),
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Alliance, __('fleet_engine.sys_mess_tower'), $Message));
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Alliance, __('fleet_engine.sys_mess_tower'), $message));
 	}
 
 	public function endStayEvent()

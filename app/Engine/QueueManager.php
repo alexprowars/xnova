@@ -331,7 +331,7 @@ class QueueManager
 				}
 			} else {
 				if ($haveNoMoreLevel) {
-					$message = sprintf(__('main.sys_nomore_level'), __('main.tech.' . $buildItem->object_id));
+					$message = __('main.sys_nomore_level', [__('main.tech.' . $buildItem->object_id)]);
 				} elseif (!$haveRessources) {
 					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.' . $buildItem->object_id) . '" на планете ' . $this->planet->name . ' ' . Helpers::buildPlanetAdressLink($this->planet->toArray()) . '.<br>Вам необходимо ещё: <br>';
 

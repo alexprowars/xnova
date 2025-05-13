@@ -21,36 +21,36 @@ class InfoController extends Controller
 
 	private function showRapidFireTo($BuildID)
 	{
-		$ResultString = '';
-
-		$storage = Vars::getStorage();
+		$result = '';
 
 		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($res as $Type) {
-			if (isset($storage['CombatCaps'][$BuildID]['sd'][$Type]) && $storage['CombatCaps'][$BuildID]['sd'][$Type] > 1) {
-				$ResultString .= __('info.nfo_rf_again') . " <font color=\"#00ff00\">" . $storage['CombatCaps'][$BuildID]['sd'][$Type] . "</font> единиц " . __('main.tech.' . $Type) . "<br>";
+			$unitData = Vars::getUnitData($BuildID);
+
+			if (isset($unitData['sd'][$Type]) && $unitData['sd'][$Type] > 1) {
+				$result .= __('info.nfo_rf_again') . ' <font color="#00ff00">' . $unitData['sd'][$Type] . '</font> единиц ' . __('main.tech.' . $Type) . '<br>';
 			}
 		}
 
-		return $ResultString;
+		return $result;
 	}
 
 	private function showRapidFireFrom($BuildID)
 	{
-		$ResultString = '';
-
-		$storage = Vars::getStorage();
+		$result = '';
 
 		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($res as $Type) {
-			if (isset($storage['CombatCaps'][$Type]['sd'][$BuildID]) && $storage['CombatCaps'][$Type]['sd'][$BuildID] > 1) {
-				$ResultString .= __('main.tech.' . $Type) . " " . __('info.nfo_rf_from') . " <font color=\"#ff0000\">" . $storage['CombatCaps'][$Type]['sd'][$BuildID] . "</font> единиц<br>";
+			$unitData = Vars::getUnitData($Type);
+
+			if (isset($unitData['sd'][$BuildID]) && $unitData['sd'][$BuildID] > 1) {
+				$result .= __('main.tech.' . $Type) . ' ' . __('info.nfo_rf_from') . ' <font color="#ff0000">' . $unitData['sd'][$BuildID] . '</font> единиц<br>';
 			}
 		}
 
-		return $ResultString;
+		return $result;
 	}
 
 	private function showProductionTable($buildId)
@@ -152,8 +152,6 @@ class InfoController extends Controller
 		$parse['defence'] = false;
 		$parse['missile'] = false;
 
-		$storage = Vars::getStorage();
-
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24)) {
 			$parse['production'] = $this->showProductionTable($itemId);
 		} elseif ($itemId == 34) {
@@ -192,11 +190,13 @@ class InfoController extends Controller
 
 			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
-			if ($storage['CombatCaps'][$itemId]['type_gun'] == 1) {
+			$unitData = Vars::getUnitData($itemId);
+
+			if ($unitData['type_gun'] == 1) {
 				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($storage['CombatCaps'][$itemId]['type_gun'] == 2) {
+			} elseif ($unitData['type_gun'] == 2) {
 				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($storage['CombatCaps'][$itemId]['type_gun'] == 3) {
+			} elseif ($unitData['type_gun'] == 3) {
 				$attTech += $this->user->getTechLevel('buster') * 0.05;
 			}
 
@@ -205,13 +205,13 @@ class InfoController extends Controller
 				'from' => $this->showRapidFireFrom($itemId),
 			];
 
-			$fleet['attack'] = $storage['CombatCaps'][$itemId]['attack'];
-			$fleet['attack_full'] = round($storage['CombatCaps'][$itemId]['attack'] * $attTech);
-			$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
-			$fleet['capacity'] = $storage['CombatCaps'][$itemId]['capacity'];
-			$fleet['speed'] = $storage['CombatCaps'][$itemId]['speed'];
+			$fleet['attack'] = $unitData['attack'];
+			$fleet['attack_full'] = round($unitData['attack'] * $attTech);
+			$fleet['shield'] = $unitData['shield'];
+			$fleet['capacity'] = $unitData['capacity'];
+			$fleet['speed'] = $unitData['speed'];
 			$fleet['speed_full'] = Ship::createEntity($itemId, 1, $this->planet)->getSpeed();
-			$fleet['consumption'] = $storage['CombatCaps'][$itemId]['consumption'];
+			$fleet['consumption'] = $unitData['consumption'];
 
 			$fleet['resources'] = [];
 
@@ -226,9 +226,9 @@ class InfoController extends Controller
 			$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
 			$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
-			$fleet['type_engine'] = $engine[$storage['CombatCaps'][$itemId]['type_engine']];
-			$fleet['type_gun'] = $gun[$storage['CombatCaps'][$itemId]['type_gun']];
-			$fleet['type_armour'] = $armour[$storage['CombatCaps'][$itemId]['type_armour']];
+			$fleet['type_engine'] = $engine[$unitData['type_engine']];
+			$fleet['type_gun'] = $gun[$unitData['type_gun']];
+			$fleet['type_armour'] = $armour[$unitData['type_armour']];
 
 			$parse['fleet'] = $fleet;
 		} elseif (Vars::getItemType($itemId) == ItemType::DEFENSE) {
@@ -237,24 +237,26 @@ class InfoController extends Controller
 			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
 			$fleet['armor_full'] = round($fleet['armor'] * (1 + $this->user->getTechLevel('defence') * 0.05));
 
-			if (isset($storage['CombatCaps'][$itemId]['shield'])) {
-				$fleet['shield'] = $storage['CombatCaps'][$itemId]['shield'];
+			$unitData = Vars::getUnitData($itemId);
+
+			if (isset($unitData['shield'])) {
+				$fleet['shield'] = $unitData['shield'];
 			} else {
 				$fleet['shield'] = 0;
 			}
 
 			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
-			if ($storage['CombatCaps'][$itemId]['type_gun'] == 1) {
+			if ($unitData['type_gun'] == 1) {
 				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($storage['CombatCaps'][$itemId]['type_gun'] == 2) {
+			} elseif ($unitData['type_gun'] == 2) {
 				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($storage['CombatCaps'][$itemId]['type_gun'] == 3) {
+			} elseif ($unitData['type_gun'] == 3) {
 				$attTech += $this->user->getTechLevel('buster') * 0.05;
 			}
 
-			$fleet['attack'] = $storage['CombatCaps'][$itemId]['attack'];
-			$fleet['attack_full'] = round($storage['CombatCaps'][$itemId]['attack'] * $attTech);
+			$fleet['attack'] = $unitData['attack'];
+			$fleet['attack_full'] = round($unitData['attack'] * $attTech);
 
 			$fleet['resources'] = [];
 
@@ -270,12 +272,14 @@ class InfoController extends Controller
 				$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
 				$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
 
-				$fleet['type_gun'] = $gun[$storage['CombatCaps'][$itemId]['type_gun']];
-				$fleet['type_armour'] = $armour[$storage['CombatCaps'][$itemId]['type_armour']];
+				$fleet['type_gun'] = $gun[$unitData['type_gun']];
+				$fleet['type_armour'] = $armour[$unitData['type_armour']];
 				$fleet['rapidfire'] = [];
 
 				foreach (Vars::getItemsByType(ItemType::FLEET) as $Type) {
-					if (!isset($storage['CombatCaps'][$Type])) {
+					$rfUnitData = Vars::getUnitData($Type);
+
+					if (!$rfUnitData) {
 						continue;
 					}
 
@@ -283,13 +287,13 @@ class InfoController extends Controller
 
 					$enemy_durability = ($enemyPrice['metal'] + $enemyPrice['crystal']) / 10;
 
-					$rapid = $storage['CombatCaps'][$itemId]['attack'] * ($storage['CombatCaps'][$itemId]['amplify'][$Type] ?? 1) / $enemy_durability;
+					$rapid = $unitData['attack'] * ($unitData['amplify'][$Type] ?? 1) / $enemy_durability;
 
 					if ($rapid >= 1) {
 						$fleet['rapidfire'][$Type]['TO'] = floor($rapid);
 					}
 
-					$rapid = $storage['CombatCaps'][$Type]['attack'] * ($storage['CombatCaps'][$Type]['amplify'][$itemId] ?? 1) / $fleet['armor'];
+					$rapid = $rfUnitData['attack'] * ($rfUnitData['amplify'][$itemId] ?? 1) / $fleet['armor'];
 
 					if ($rapid >= 1) {
 						$fleet['rapidfire'][$Type]['FROM'] = floor($rapid);
@@ -356,13 +360,13 @@ class InfoController extends Controller
 			throw new Exception('Флот отсутствует у планеты');
 		}
 
-		$storage = Vars::getStorage();
-
 		$tt = 0;
 
 		foreach ($fleet->getShips() as $type => $ship) {
 			if ($type > 100) {
-				$tt += $storage['CombatCaps'][$type]['stay'] * $ship['count'];
+				$unitData = Vars::getUnitData($type);
+
+				$tt += $unitData['stay'] * $ship['count'];
 			}
 		}
 

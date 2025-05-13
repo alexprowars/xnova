@@ -7,6 +7,7 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Vars;
 use App\Format;
+use App\Models\Fleet;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\DB;
@@ -23,12 +24,12 @@ class Recycling extends BaseMission
 			$recyclerCapacity = 0;
 			$otherFleetCapacity = 0;
 
-			$storage = Vars::getStorage();
-
 			$fleetData = $this->fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr) {
-				$capacity = $storage['CombatCaps'][$shipId]['capacity'] * $shipArr['count'];
+				$unitData = Vars::getUnitData($shipId);
+
+				$capacity = $unitData['capacity'] * $shipArr['count'];
 
 				if ($shipId == 209) {
 					$recyclerCapacity += $capacity;
@@ -73,28 +74,43 @@ class Recycling extends BaseMission
 			$update = [];
 
 			if (!empty($recycledGoods['metal'])) {
-				$update['debris_metal'] = DB::raw('debris_metal - ' . $recycledGoods['metal']);
+				$update['debris_metal'] = $recycledGoods['metal'];
 			}
 
-			if (!empty($recycledGoods['metal'])) {
-				$update['debris_crystal'] = DB::raw('debris_crystal - ' . $recycledGoods['metal']);
+			if (!empty($recycledGoods['crystal'])) {
+				$update['debris_crystal'] = $recycledGoods['crystal'];
 			}
 
 			Planet::query()->whereKey($targetPlanet)
-				->update($update);
+				->decrementEach($update);
 
-			$this->return([
-				'resource_metal' => DB::raw('resource_metal + ' . $recycledGoods['metal']),
-				'resource_crystal' => DB::raw('resource_crystal + ' . $recycledGoods['crystal'])
+			Fleet::query()->whereKey($this->fleet)
+				->incrementEach([
+					'resource_metal' => $recycledGoods['metal'],
+					'resource_crystal' => $recycledGoods['crystal'],
+				]);
+
+			$this->return();
+
+			$message = __('fleet_engine.sys_recy_gotten', [
+				Format::number($recycledGoods['metal']),
+				__('main.metal'),
+				Format::number($recycledGoods['crystal']),
+				__('main.crystal'),
+				$this->fleet->getTargetAdressLink(),
 			]);
-
-			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), Format::number($recycledGoods['metal']), __('main.Metal'), Format::number($recycledGoods['crystal']), __('main.Crystal'), $this->fleet->getTargetAdressLink());
 		} else {
 			$this->return();
 
-			$Message = sprintf(__('fleet_engine.sys_recy_gotten'), 0, __('main.Metal'), 0, __('main.Crystal'), $this->fleet->getTargetAdressLink());
+			$message = __('fleet_engine.sys_recy_gotten', [
+				0,
+				__('main.metal'),
+				0,
+				__('main.crystal'),
+				$this->fleet->getTargetAdressLink(),
+			]);
 		}
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $Message));
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $message));
 	}
 }

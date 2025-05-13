@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\MoonResource\Pages;
 
 use App\Engine\Coordinates;
-use App\Engine\Galaxy;
 use App\Exceptions\Exception;
+use App\Facades\Galaxy;
 use App\Filament\Resources\MoonResource;
 use App\Models\Planet;
 use Filament\Forms\Components\Select;
@@ -51,7 +51,7 @@ class CreateMoon extends CreateRecord
 	{
 		$diameter = min(max($data['diameter'], 20), 0);
 
-		$planetId = (new Galaxy())->createMoon(
+		$planetId = Galaxy::createMoon(
 			new Coordinates($data['galaxy'], $data['system'], $data['planet']),
 			$data['user_id'],
 			$diameter

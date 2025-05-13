@@ -29,15 +29,6 @@ trait ProductionTrait
 		$planet = $this->planet;
 		$user = $planet->user;
 
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$energyTech = $user->getTechLevel('energy');
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildTemp = $planet->temp_max;
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildLevel = $this->level;
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$BuildLevelFactor = $factor;
-
 		$return = [
 			ResourcesEnum::ENERGY->value => 0,
 		];
@@ -46,12 +37,12 @@ trait ProductionTrait
 			$return[$res] = 0;
 
 			if (isset($production[$res])) {
-				$return[$res] = floor(eval($production[$res]) * config('game.resource_multiplier') * $user->bonus($res));
+				$return[$res] = floor(call_user_func($production[$res], $this->level, $factor, $planet) * config('game.resource_multiplier') * $user->bonus($res));
 			}
 		}
 
 		if (isset($production[ResourcesEnum::ENERGY->value])) {
-			$energy = floor(eval($production[ResourcesEnum::ENERGY->value]));
+			$energy = floor(call_user_func($production[ResourcesEnum::ENERGY->value], $this->level, $factor, $planet));
 
 			if ($this->entityId < 4) {
 				$return[ResourcesEnum::ENERGY->value] = $energy;

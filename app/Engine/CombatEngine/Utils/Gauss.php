@@ -2,48 +2,24 @@
 
 namespace App\Engine\CombatEngine\Utils;
 
-use Exception;
+use App\Engine\CombatEngine\Exception;
 
 class Gauss
 {
-	/**
-	 * Random::getNext()
-	 * Return an random normal number
-	 * @return int
-	 */
-	public static function getNext()
+	public static function getNext(): int
 	{
-		$x = (float)mt_rand() / (float)mt_getrandmax();
-		$y = (float)mt_rand() / (float)mt_getrandmax();
-		$u = sqrt(-2 * log($x)) * cos(2 * pi() * $y);
+		$x = (float) mt_rand() / (float) mt_getrandmax();
+		$y = (float) mt_rand() / (float) mt_getrandmax();
 
-		return $u;
+		return (int) sqrt(-2 * log($x)) * cos(2 * M_PI * $y);
 	}
 
-	/**
-	 * Random::getNextMs()
-	 * Generates a random number from the normal distribution with specific mean and standard deviation
-	 * @param int $m: mean
-	 * @param int $s: standard deviation
-	 * @return int
-	 */
-	public static function getNextMs($m, $s)
+	public static function getNextMs(int $m, int $s): int
 	{
 		return self::getNext() * $s + $m;
 	}
 
-	/**
-	 * Random::getNextMsBetween()
-	 * Generates a random number from the normal distribution with specific mean and standard deviation.
-	 * The number must be between min and max.
-	 * @param int $m : mean
-	 * @param int $s : standard deviation
-	 * @param int $min : the minimum
-	 * @param int $max : the maximum
-	 * @return int
-	 * @throws Exception
-	 */
-	public static function getNextMsBetween($m, $s, $min, $max)
+	public static function getNextMsBetween(int $m, int $s, int $min, int $max): int
 	{
 		$i = 0;
 
@@ -61,47 +37,10 @@ class Gauss
 			$i++;
 
 			if ($i > 10) {
-				return mt_rand($min, $max);
+				return random_int($min, $max);
 			}
 		}
 
 		return 0;
 	}
 }
-
-/**
-
- * //--------------------------- testing -----------------------
-
- * //--------edit only these!----------
- * define('MEAN', 55);
- * define('DEV', sqrt(7));
- * define('SIMULATIONS', 1000);
- * //----------------------------------
-
-
- * $a = [];
- * for ($i = 0; $i < SIMULATIONS; $i++)
- * {
- *	 $a[] = Gauss::getNextMs(MEAN, DEV);
- * }
-
- * $l = [];
- * foreach ($a as $v)
- * {
- *	 if (isset($l[$v]))
- *		 $l[$v]++;
- *	 else
- *		 $l[$v] = 1;
- * }
- * ksort($l);
- * foreach ($l as $id => $v)
- * {
- *	 $s = '';
- *	 for ($i = 0; $i < $v; $i++)
- *	 {
- *		 $s .= '-';
- *	 }
- *	 echo $s . $id . '(' . $v . ')' . '<br>';
- * }
- */

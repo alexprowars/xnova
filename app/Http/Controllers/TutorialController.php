@@ -155,13 +155,13 @@ class TutorialController extends Controller
 
 		foreach ($tutorial[$id]['reward'] as $rewardKey => $rewardVal) {
 			if ($rewardKey == 'metal') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.Metal') . 'а';
+				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.metal') . 'а';
 			} elseif ($rewardKey == 'crystal') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.Crystal') . 'а';
+				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.crystal') . 'а';
 			} elseif ($rewardKey == 'deuterium') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.Deuterium');
+				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.deuterium');
 			} elseif ($rewardKey == 'credits') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.Credits');
+				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.credits');
 			} elseif ($rewardKey == 'build') {
 				foreach ($rewardVal as $element => $level) {
 					$type = Vars::getItemType($element);

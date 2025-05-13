@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Engine\Galaxy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -45,5 +46,7 @@ class AppServiceProvider extends ServiceProvider
 		if (str_starts_with(request()->path(), 'admin') || str_starts_with(request()->path(), 'livewire') || isset($_SERVER['LARAVEL_OCTANE'])) {
 			$this->app->register(AdminPanelProvider::class);
 		}
+
+		$this->app->singleton(Galaxy::class);
 	}
 }

@@ -27,7 +27,7 @@ class ChatController extends Controller
 			'message' => $message,
 		]);
 
-		$parsedMessage = Resources\ChatMessage::make($chatMessage);
+		$parsedMessage = Resources\ChatMessage::make($chatMessage)->resolve();
 
 		if ($parsedMessage['private']) {
 			foreach ($parsedMessage['toi'] as $userId) {

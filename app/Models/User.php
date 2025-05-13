@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Galaxy;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
 use App\Exceptions\Exception;
+use App\Facades\Galaxy;
 use App\Helpers;
 use App\Notifications\MessageNotification;
 use App\Notifications\UserRegistrationNotification;
@@ -105,7 +105,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 	/** @return HasMany<Queue, $this> */
 	public function queue(): HasMany
 	{
-		return $this->hasMany(Queue::class);
+		return $this->hasMany(Queue::class, 'user_id');
 	}
 
 	/** @return BelongsTo<Alliance, $this> */
@@ -123,12 +123,12 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 	}
 
-	public function isVacation()
+	public function isVacation(): bool
 	{
 		return !empty($this->vacation);
 	}
 
-	public function isOnline()
+	public function isOnline(): bool
 	{
 		return $this->onlinetime->diffInSeconds() < 180;
 	}
@@ -195,7 +195,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 	}
 
-	public function setSelectedPlanet(int $planetId)
+	public function setSelectedPlanet(int $planetId): bool
 	{
 		if ($this->planet_current == $planetId || $planetId <= 0) {
 			return true;
@@ -244,7 +244,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 		}
 
 		if (!$this->planet_current && !$this->planet_id && $this->race) {
-			(new Galaxy())->createPlanetByUser($this);
+			Galaxy::createPlanetByUser($this);
 		}
 
 		if ($this->planet_current && $this->planet_id) {
@@ -319,7 +319,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 			}
 
 			if (Session::has('ref')) {
-				$refer = User::find((int) Session::get('ref'), ['id']);
+				$refer = self::query()->find((int) Session::get('ref'), ['id']);
 
 				if ($refer) {
 					Referal::insert([

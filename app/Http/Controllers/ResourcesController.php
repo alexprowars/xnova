@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Contracts\EntityProductionInterface;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
@@ -33,7 +32,7 @@ class ResourcesController extends Controller
 		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $entityId) {
 			$entity = $this->planet->getEntity($entityId)->unit();
 
-			if (!($entity instanceof EntityProductionInterface)) {
+			if (!$entity) {
 				continue;
 			}
 
@@ -127,7 +126,9 @@ class ResourcesController extends Controller
 
 	public function state(Request $request)
 	{
-		foreach ($request->post('state', []) as $entityId => $value) {
+		$state = $request->post('state', []);
+
+		foreach ($state as $entityId => $value) {
 			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {
 				continue;
 			}

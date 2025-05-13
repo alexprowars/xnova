@@ -4,6 +4,7 @@ namespace App\Engine\CombatEngine\Core;
 
 use App\Engine\CombatEngine\CombatObject\Fire;
 use App\Engine\CombatEngine\CombatObject\FireManager;
+use App\Engine\CombatEngine\CombatObject\PhysicShot;
 use App\Engine\CombatEngine\Models\PlayerGroup;
 
 class Round
@@ -168,9 +169,7 @@ class Round
 			foreach ($playerPs as $fleetPS) {
 				foreach ($fleetPS as $typeDPS) {
 					foreach ($typeDPS as $typeAPS) {
-						/**
-						 * @var \App\Engine\CombatEngine\CombatObject\PhysicShot $typeAPS
-						 */
+						/** @var PhysicShot $typeAPS */
 						$ass += $typeAPS->getAssorbedDamage();
 					}
 				}

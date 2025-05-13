@@ -1,221 +1,217 @@
 <?php
 
-$lang['page_title'] = [
-	'users_index'			=> 'Пользователи',
-	'users_edit'			=> 'Редактирование пользователя',
-	'users_add'				=> 'Добавление нового пользователя',
-	'dashboard_index'		=> 'Стартовый экран',
+return [
+	'page_title' => [
+		'users_index' => 'Пользователи',
+		'users_edit' => 'Редактирование пользователя',
+		'users_add' => 'Добавление нового пользователя',
+		'dashboard_index' => 'Стартовый экран',
 
-	'index_index'			=>  'Dashboard',
-	'support_index'			=>  'Техподдержка',
-	'support_detail'		=>  'Просмотр тикета',
-	'server_index'			=>  'Переменные сервера',
-	'money_index'			=>  'Денежные транзакции',
-	'money_add'				=>  'Начислить кредиты',
-	'planets_index'			=>  'Список планет',
-	'moons_index'			=>  'Список лун',
-	'fleets_index'			=>  'Флоты в полёте',
-	'alliances_index'		=>  'Список альянсов',
-	'messages_index'		=>  'Список сообщений',
-	'messageall_index'		=>  'Рассылка сообщений',
-	'content_index'			=>  'Список контента',
+		'index_index' => 'Dashboard',
+		'support_index' => 'Техподдержка',
+		'support_detail' => 'Просмотр тикета',
+		'server_index' => 'Переменные сервера',
+		'money_index' => 'Денежные транзакции',
+		'money_add' => 'Начислить кредиты',
+		'planets_index' => 'Список планет',
+		'moons_index' => 'Список лун',
+		'fleets_index' => 'Флоты в полёте',
+		'alliances_index' => 'Список альянсов',
+		'messages_index' => 'Список сообщений',
+		'messageall_index' => 'Рассылка сообщений',
+		'content_index' => 'Список контента',
 
-	'manager_data' 			=> 'Просмотр игрового профиля',
-	'manager_ip' 			=> 'Поиск по IP',
+		'manager_data' => 'Просмотр игрового профиля',
+		'manager_ip' => 'Поиск по IP',
+	],
+
+	'category' => [
+		'overview' => ['Обзор', 'home', 1],
+		'support' => ['Техподдержка', 'bolt', 1],
+		'server' => ['Информация', 'dashboard', 3],
+		'load' => ['Загрузка', 'signal', 3],
+		'money' => ['Финансы', 'rub', 3, [
+			'add' => ['Начислить кредиты'],
+			'transactions' => ['Транзакции'],
+		]],
+		'settings' => ['Настройки', 'cogs', 3],
+		'userlist' => ['Список игроков', 'user', 3],
+		'manager' => ['Редактор', 'edit', 1, [
+			'ip_search' => ['Поиск по IP'],
+			'usr_data' => ['Статистика'],
+			'usr_level' => ['Смена прав'],
+		]],
+		'planetlist' => ['Список планет', 'globe', 3],
+		'activeplanet' => ['Активные планеты', 'clock-o', 2],
+		'moonlist' => ['Список лун', 'star', 2],
+		'flyfleettable' => ['Флоты в полёте', 'plane', 3],
+		'alliancelist' => ['Список альянсов', 'group', 2],
+		'banned' => ['Заблокировать', 'ban', 1],
+		'unbanned' => ['Разблокировать', 'legal', 2],
+		'md5changepass' => ['Сменить пароль', 'key', 3],
+		'email' => ['Сменить Email', 'envelope', 3],
+		'messagelist' => ['Сообщения', 'inbox', 3],
+		'messall' => ['Рассылка', 'bullhorn', 1],
+		'errors' => ['Список ошибок', 'bug', 2],
+	],
+
+	'adm_done' => 'Обновлено',
+	'adm_stat_title' => 'Статистика',
+	'adm_cleaner_title' => 'Обновление очереди построек',
+	'adm_cleaned' => 'Anzahl der der gestrichenen: ',
+	'Fix' => 'Aktualisieren',
+	'Welcome_to_Fix_section' => 'Willkommen bei der Abteilung Update',
+	'There_is_not_need_fix' => 'Das Update wurde durchgef&uuml;rt!',
+	'Fix_welldone' => 'Die Aktualisierung konte nicht durchgef&uuml;rt werden.',
+
+	'adm_ov_title' => 'Обоз игроков',
+	'adm_ov_infos' => 'Информация',
+	'adm_ov_yourv' => 'Версия игры',
+	'adm_ov_lastv' => 'Последняя версия',
+	'adm_ov_here' => 'здесь',
+	'adm_ov_onlin' => 'Online',
+	'adm_ov_ally' => 'Альянс',
+	'adm_ov_point' => 'Очки',
+	'adm_ov_activ' => 'В сети',
+	'adm_ov_count' => 'Игроков в сети',
+	'adm_ov_wrtpm' => 'Nachricht senden',
+	'adm_ov_altpm' => 'PN',
+
+	'adm_ul_title' => 'Список игроков',
+	'adm_ul_ttle2' => 'Зарегистрированные игроки',
+	'adm_ul_id' => 'ID',
+	'adm_ul_name' => 'Логин игрока',
+	'adm_ul_mail' => 'E-Mail',
+	'adm_ul_adip' => 'IP',
+	'adm_ul_regd' => 'Регистрация',
+	'adm_ul_lconn' => 'Последний вход',
+	'adm_ul_bana' => 'Блок',
+	'adm_ul_detai' => 'Инфо',
+	'adm_ul_actio' => 'Действия',
+	'adm_ul_playe' => ' игрока',
+	'adm_ul_yes' => 'Да',
+	'adm_ul_no' => 'Нет',
+
+	'adm_pl_title' => 'Активные планеты',
+	'adm_pl_activ' => 'Активные планеты',
+	'adm_pl_name' => 'Название планеты',
+	'adm_pl_posit' => 'Координаты',
+	'adm_pl_point' => 'Очки',
+	'adm_pl_since' => 'В сети',
+	'adm_pl_they' => 'В игре',
+	'adm_pl_apla' => 'активные планеты',
+
+	'adm_am_plid' => 'ID планеты',
+	'adm_am_done' => 'Hinzuf&uuml;gen OK',
+	'adm_am_ttle' => 'Добавить ресурсов',
+	'adm_am_add' => 'Добавить',
+	'adm_am_form' => 'Форма ввода данных',
+
+	'adm_bn_ttle' => 'Банилка',
+	'adm_bn_plto' => 'Игрок',
+	'adm_bn_name' => 'Имя',
+	'adm_bn_reas' => 'Причина',
+	'adm_bn_time' => 'Время бана',
+	'adm_bn_days' => 'Дни',
+	'adm_bn_hour' => 'Часы',
+	'adm_bn_mins' => 'Минуты',
+	'adm_bn_secs' => 'Секунды',
+	'adm_bn_bnbt' => 'Забанить',
+	'adm_bn_thpl' => 'Игрок',
+	'adm_bn_isbn' => 'был заблокирован!',
+
+	'adm_rz_ttle' => 'Обнуление Вселенной',
+	'adm_rz_done' => 'User &uuml;bertragen',
+	'adm_rz_conf' => 'Подтверждение',
+	'adm_rz_text' => 'Обнуление обнуляет всё нах!!!!!!!!!!!!!!!!',
+	'adm_rz_doit' => 'Обнулить',
+
+	'adm_ch_ttle' => 'Администрирование чата',
+	'adm_ch_list' => 'Список сообщений',
+	'adm_ch_clear' => 'Alles L&uuml;schen',
+	'adm_ch_idmsg' => 'ID',
+	'adm_ch_delet' => 'Сообщение',
+	'adm_ch_play' => 'Игрок',
+	'adm_ch_time' => 'Дата',
+	'adm_ch_nbs' => 'сообщений.',
+
+	'adm_er_ttle' => 'Ошибки игры',
+	'adm_er_list' => 'Список ошибок скрипта',
+	'adm_er_clear' => 'Очистить списк',
+	'adm_er_idmsg' => 'ID',
+	'adm_er_type' => 'Тип',
+	'adm_er_play' => 'ID игрока',
+	'adm_er_time' => 'Дата',
+	'adm_er_nbs' => 'ошибок...',
+
+	'Id' => 'ID планеты',
+	'cle' => 'Легкий истребитель',
+	'clourd' => 'Тяжелый истребитель',
+	'pt' => 'Малый транспорт',
+	'gt' => 'Большой транспорт',
+	'cruise' => 'Крейсер',
+	'vb' => 'Линкор',
+	'colo' => 'Колонизатор',
+	'rc' => 'Переработчик',
+	'spy' => 'Шпионский зонд',
+	'bomb' => 'Бомбардировщик',
+	'solar' => 'Солнечный спутник',
+	'des' => 'Уничтожитель',
+	'rip' => 'Звезда смерти',
+	'traq' => 'Линейный крейсер',
+
+	'add_ship_form' => 'Форма ввода данных',
+	'add_ship_ttle' => 'Добавление флота',
+	'ship_typ' => 'Тип корабля',
+	'hinz' => 'Количество',
+	'del' => 'L&ouml;schen',
+	'nr' => '№',
+	'kt' => 'Малый транспорт',
+	'lj' => 'Лёгкий истребитель',
+	'sj' => 'Тяжёлый истребитель',
+	'kz' => 'Крейсер',
+	'ss' => 'Линкор',
+	'ks' => 'Колонизатор',
+	'tf' => 'Переработчик',
+	'sp' => 'Шпионский зонд',
+	'bo' => 'Бомбардировщик',
+	'so' => 'Солнечный спутник',
+	'zt' => 'Уничтожитель',
+	'rp' => 'Звезда смерти',
+	'sk' => 'Линейный крейсер',
+
+	'adm_delship1' => 'Schiffe L&ouml;schen',
+	'adm_delship2' => 'Schiffe wurden erfolgreich gel&ouml;scht',
+	'adm_addship1' => 'Schiffe hinzuf&uuml;gen',
+	'adm_addship2' => 'Schiffe wurden erfolgreich hinzugef&uuml;gt',
+	'adm_delbuilding1' => 'Geb&auml;ude verringern',
+	'adm_delbuilding2' => 'Geb&auml;ude wurden erfolgreich verringert',
+	'adm_addbuilding1' => 'Geb&auml;ude erweitern',
+	'adm_addbuilding2' => 'Geb&auml;ude wurden erfolgreich erweitert',
+	'adm_delresearch1' => 'Forschungen verringern',
+	'adm_delresearch2' => 'Forschungen wurden erfolgreich verringert',
+	'adm_addresearch1' => 'Forschungen erweitern',
+	'adm_addresearch2' => 'Forschungen wurden erfolgreich erweitert',
+	'adm_delmoney1' => 'Удаление ресурсов',
+	'adm_delmoney2' => 'Rohstoffe erfolgreich abgezogen',
+	'adm_deldef1' => 'Verteidigungen L&ouml;schen',
+	'adm_deldef2' => 'Verteidigungen wurden erfolgreich gel&ouml;scht',
+	'adm_adddef1' => 'Verteidigungen hinzuf&uuml;gen',
+	'adm_adddef2' => 'Verteidigungen wurden erfolgreich hinzugef&uuml;gt',
+	'adm_shipdel1' => 'Schiffe L&ouml;schen',
+	'adm_shipdel2' => 'Formular f&uuml;r Schiffe L&ouml;schen',
+	'adm_buildingadd1' => 'Geb&auml;ude hinzuf&uuml;gen',
+	'adm_buildingadd2' => 'Форма ввода данных',
+	'adm_moneydel1' => 'Удаление ресурсов',
+	'adm_moneydel2' => 'Форма ввода данных',
+	'adm_buildingdel1' => 'Удаление построек',
+	'adm_buildingdel2' => 'Форма ввода данных',
+	'adm_researchadd1' => 'Добавление исследований',
+	'adm_researchadd2' => 'Форма ввода данных',
+	'adm_researchdel1' => 'Удаление исследований',
+	'adm_researchdel2' => 'Форма ввода данных',
+	'adm_defadd1' => 'Добавление обороны',
+	'adm_defadd2' => 'Форма добавления обороны',
+	'adm_defdel1' => 'Удаление обороны',
+	'adm_defdel2' => 'Форма для удаления обороны',
 ];
-
-$lang['category'] = array
-(
-	'overview' 		=> Array('Обзор', 'home', 1),
-	'support' 		=> Array('Техподдержка', 'bolt', 1),
-	'server' 		=> Array('Информация', 'dashboard', 3),
-	'load' 			=> Array('Загрузка', 'signal', 3),
-	'money' 		=> Array('Финансы', 'rub', 3, Array
-	(
-			'add' => Array('Начислить кредиты'),
-			'transactions' => Array('Транзакции')
-	)),
-	'settings' 		=> Array('Настройки', 'cogs', 3),
-	'userlist' 		=> Array('Список игроков', 'user', 3),
-	'manager' 		=> Array('Редактор', 'edit', 1, Array
-	(
-			'ip_search' => Array('Поиск по IP'),
-			'usr_data' => Array('Статистика'),
-			'usr_level' => Array('Смена прав')
-	)),
-	'planetlist' 	=> Array('Список планет', 'globe', 3),
-	'activeplanet' 	=> Array('Активные планеты', 'clock-o', 2),
-	'moonlist' 		=> Array('Список лун', 'star', 2),
-	'flyfleettable' => Array('Флоты в полёте', 'plane', 3),
-	'alliancelist' 	=> Array('Список альянсов', 'group', 2),
-	'banned' 		=> Array('Заблокировать', 'ban', 1),
-	'unbanned' 		=> Array('Разблокировать', 'legal', 2),
-	'md5changepass' => Array('Сменить пароль', 'key', 3),
-	'email' 		=> Array('Сменить Email', 'envelope', 3),
-	'messagelist' 	=> Array('Сообщения', 'inbox', 3),
-	'messall' 		=> Array('Рассылка', 'bullhorn', 1),
-	'errors' 		=> Array('Список ошибок', 'bug', 2)
-);
-
-$lang['adm_done']               = "Обновлено";
-$lang['adm_stat_title']         = "Статистика";
-$lang['adm_cleaner_title']      = "Обновление очереди построек";
-$lang['adm_cleaned']            = "Anzahl der der gestrichenen: ";
-$lang['Fix']                    = "Aktualisieren";
-$lang['Welcome_to_Fix_section'] = "Willkommen bei der Abteilung Update";
-$lang['There_is_not_need_fix']  = "Das Update wurde durchgef&uuml;rt!";
-$lang['Fix_welldone']           = "Die Aktualisierung konte nicht durchgef&uuml;rt werden.";
-
-$lang['adm_ov_title'] = "Обоз игроков";
-$lang['adm_ov_infos'] = "Информация";
-$lang['adm_ov_yourv'] = "Версия игры";
-$lang['adm_ov_lastv'] = "Последняя версия";
-$lang['adm_ov_here']  = "здесь";
-$lang['adm_ov_onlin'] = "Online";
-$lang['adm_ov_ally']  = "Альянс";
-$lang['adm_ov_point'] = "Очки";
-$lang['adm_ov_activ'] = "В сети";
-$lang['adm_ov_count'] = "Игроков в сети";
-$lang['adm_ov_wrtpm'] = "Nachricht senden";
-$lang['adm_ov_altpm'] = "PN";
-
-$lang['adm_ul_title'] = "Список игроков";
-$lang['adm_ul_ttle2'] = "Зарегистрированные игроки";
-$lang['adm_ul_id']    = "ID";
-$lang['adm_ul_name']  = "Логин игрока";
-$lang['adm_ul_mail']  = "E-Mail";
-$lang['adm_ul_adip']  = "IP";
-$lang['adm_ul_regd']  = "Регистрация";
-$lang['adm_ul_lconn'] = "Последний вход";
-$lang['adm_ul_bana']  = "Блок";
-$lang['adm_ul_detai'] = "Инфо";
-$lang['adm_ul_actio'] = "Действия";
-$lang['adm_ul_playe'] = " игрока";
-$lang['adm_ul_yes']   = "Да";
-$lang['adm_ul_no']    = "Нет";
-
-$lang['adm_pl_title'] = "Активные планеты";
-$lang['adm_pl_activ'] = "Активные планеты";
-$lang['adm_pl_name']  = "Название планеты";
-$lang['adm_pl_posit'] = "Координаты";
-$lang['adm_pl_point'] = "Очки";
-$lang['adm_pl_since'] = "В сети";
-$lang['adm_pl_they']  = "В игре";
-$lang['adm_pl_apla']  = "активные планеты";
-
-$lang['adm_am_plid']  = "ID планеты";
-$lang['adm_am_done']  = "Hinzuf&uuml;gen OK";
-$lang['adm_am_ttle']  = "Добавить ресурсов";
-$lang['adm_am_add']   = "Добавить";
-$lang['adm_am_form']  = "Форма ввода данных";
-
-$lang['adm_bn_ttle']  = "Банилка";
-$lang['adm_bn_plto']  = "Игрок";
-$lang['adm_bn_name']  = "Имя";
-$lang['adm_bn_reas']  = "Причина";
-$lang['adm_bn_time']  = "Время бана";
-$lang['adm_bn_days']  = "Дни";
-$lang['adm_bn_hour']  = "Часы";
-$lang['adm_bn_mins']  = "Минуты";
-$lang['adm_bn_secs']  = "Секунды";
-$lang['adm_bn_bnbt']  = "Забанить";
-$lang['adm_bn_thpl']  = "Игрок";
-$lang['adm_bn_isbn']  = "был заблокирован!";
-
-$lang['adm_rz_ttle']  = "Обнуление Вселенной";
-$lang['adm_rz_done']  = "User &uuml;bertragen";
-$lang['adm_rz_conf']  = "Подтверждение";
-$lang['adm_rz_text']  = "Обнуление обнуляет всё нах!!!!!!!!!!!!!!!!";
-$lang['adm_rz_doit']  = "Обнулить";
-
-$lang['adm_ch_ttle']  = "Администрирование чата";
-$lang['adm_ch_list']  = "Список сообщений";
-$lang['adm_ch_clear'] = "Alles L&uuml;schen";
-$lang['adm_ch_idmsg'] = "ID";
-$lang['adm_ch_delet'] = "Сообщение";
-$lang['adm_ch_play']  = "Игрок";
-$lang['adm_ch_time']  = "Дата";
-$lang['adm_ch_nbs']   = "сообщений.";
-
-$lang['adm_er_ttle']  = "Ошибки игры";
-$lang['adm_er_list']  = "Список ошибок скрипта";
-$lang['adm_er_clear'] = "Очистить списк";
-$lang['adm_er_idmsg'] = "ID";
-$lang['adm_er_type']  = "Тип";
-$lang['adm_er_play']  = "ID игрока";
-$lang['adm_er_time']  = "Дата";
-$lang['adm_er_nbs']   = "ошибок...";
-
-$lang['Id'] = "ID планеты";
-$lang['cle'] = "Легкий истребитель";
-$lang['clourd'] = "Тяжелый истребитель";
-$lang['pt'] = "Малый транспорт";
-$lang['gt'] = "Большой транспорт";
-$lang['cruise'] = "Крейсер";
-$lang['vb'] = "Линкор";
-$lang['colo'] = "Колонизатор";
-$lang['rc'] = "Переработчик";
-$lang['spy'] = "Шпионский зонд";
-$lang['bomb'] = "Бомбардировщик";
-$lang['solar'] = "Солнечный спутник";
-$lang['des'] = "Уничтожитель";
-$lang['rip'] = "Звезда смерти";
-$lang['traq'] = "Линейный крейсер";
-
-$lang['add_ship_form']    = "Форма ввода данных";
-$lang['add_ship_ttle']    = "Добавление флота";
-$lang['ship_typ']         = "Тип корабля";
-$lang['hinz']             = "Количество";
-$lang['del']              = "L&ouml;schen";
-$lang['nr']               = "№";
-$lang['kt']               = "Малый транспорт";
-$lang['gt']               = "Большой транспорт";
-$lang['lj']               = "Лёгкий истребитель";
-$lang['sj']               = "Тяжёлый истребитель";
-$lang['kz']               = "Крейсер";
-$lang['ss']               = "Линкор";
-$lang['ks']               = "Колонизатор";
-$lang['tf']               = "Переработчик";
-$lang['sp']               = "Шпионский зонд";
-$lang['bo']               = "Бомбардировщик";
-$lang['so']               = "Солнечный спутник";
-$lang['zt']               = "Уничтожитель";
-$lang['rp']               = "Звезда смерти";
-$lang['sk']               = "Линейный крейсер";
-
-$lang['adm_delship1'] = "Schiffe L&ouml;schen";
-$lang['adm_delship2'] = "Schiffe wurden erfolgreich gel&ouml;scht";
-$lang['adm_addship1'] = "Schiffe hinzuf&uuml;gen";
-$lang['adm_addship2'] = "Schiffe wurden erfolgreich hinzugef&uuml;gt";
-$lang['adm_delbuilding1'] = "Geb&auml;ude verringern";
-$lang['adm_delbuilding2'] = "Geb&auml;ude wurden erfolgreich verringert";
-$lang['adm_addbuilding1'] = "Geb&auml;ude erweitern";
-$lang['adm_addbuilding2'] = "Geb&auml;ude wurden erfolgreich erweitert";
-$lang['adm_delresearch1'] = "Forschungen verringern";
-$lang['adm_delresearch2'] = "Forschungen wurden erfolgreich verringert";
-$lang['adm_addresearch1'] = "Forschungen erweitern";
-$lang['adm_addresearch2'] = "Forschungen wurden erfolgreich erweitert";
-$lang['adm_delmoney1'] = "Удаление ресурсов";
-$lang['adm_delmoney2'] = "Rohstoffe erfolgreich abgezogen";
-$lang['adm_deldef1'] = "Verteidigungen L&ouml;schen";
-$lang['adm_deldef2'] = "Verteidigungen wurden erfolgreich gel&ouml;scht";
-$lang['adm_adddef1'] = "Verteidigungen hinzuf&uuml;gen";
-$lang['adm_adddef2'] = "Verteidigungen wurden erfolgreich hinzugef&uuml;gt";
-$lang['adm_shipdel1'] = "Schiffe L&ouml;schen";
-$lang['adm_shipdel2'] = "Formular f&uuml;r Schiffe L&ouml;schen";
-$lang['adm_buildingadd1'] = "Geb&auml;ude hinzuf&uuml;gen";
-$lang['adm_buildingadd2'] = "Форма ввода данных";
-$lang['adm_moneydel1'] = "Удаление ресурсов";
-$lang['adm_moneydel2'] = "Форма ввода данных";
-$lang['adm_buildingdel1'] = "Удаление построек";
-$lang['adm_buildingdel2'] = "Форма ввода данных";
-$lang['adm_researchadd1'] = "Добавление исследований";
-$lang['adm_researchadd2'] = "Форма ввода данных";
-$lang['adm_researchdel1'] = "Удаление исследований";
-$lang['adm_researchdel2'] = "Форма ввода данных";
-$lang['adm_defadd1'] = "Добавление обороны";
-$lang['adm_defadd2'] = "Форма добавления обороны";
-$lang['adm_defdel1'] = "Удаление обороны";
-$lang['adm_defdel2'] = "Форма для удаления обороны";
-
-return $lang;
