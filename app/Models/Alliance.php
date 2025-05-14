@@ -7,9 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Alliance extends Model
+class Alliance extends Model implements HasMedia
 {
+	use InteractsWithMedia;
+
 	protected $table = 'alliances';
 	protected $guarded = false;
 
@@ -55,6 +60,19 @@ class Alliance extends Model
 	public function diplomacy(): HasMany
 	{
 		return $this->hasMany(AllianceDiplomacy::class);
+	}
+
+	public function registerMediaCollections(): void
+	{
+		$this->addMediaCollection('default')
+			->storeConversionsOnDisk('resize')
+			->singleFile()
+			->useDisk('upload');
+	}
+
+	public function registerMediaConversions(?Media $media = null): void
+	{
+		$this->addMediaConversion('thumb')->width(500)->height(500);
 	}
 
 	public function getRanks()

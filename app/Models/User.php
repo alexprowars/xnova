@@ -28,13 +28,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use Throwable;
 
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 {
 	use HasRoles;
 	use Notifiable;
+	use InteractsWithMedia;
 
 	use HasBonuses;
 	use HasTechnologies;
@@ -112,6 +116,19 @@ class User extends Authenticatable implements FilamentUser, HasName
 	public function alliance(): BelongsTo
 	{
 		return $this->belongsTo(Alliance::class);
+	}
+
+	public function registerMediaCollections(): void
+	{
+		$this->addMediaCollection('default')
+			->storeConversionsOnDisk('resize')
+			->singleFile()
+			->useDisk('upload');
+	}
+
+	public function registerMediaConversions(?Media $media = null): void
+	{
+		$this->addMediaConversion('thumb')->width(300)->height(300);
 	}
 
 	public function isAdmin()
@@ -250,7 +267,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 		if ($this->planet_current && $this->planet_id) {
 			$planet = Planet::findOne($this->planet_current);
 
-			if (!$planet && $this->planet_id) {
+			if (!$planet) {
 				$this->setAttribute('planet_current', $this->planet_id);
 				$this->update();
 

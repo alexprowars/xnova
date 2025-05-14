@@ -12,7 +12,7 @@ class ApiResponse
 {
 	public function handle(Request $request, Closure $next): Response
 	{
-		/** @var JsonResponse|RedirectResponse $response */
+		/** @var JsonResponse|RedirectResponse|mixed $response */
 		$response = $next($request);
 
 		if (!$request->expectsJson()) {
@@ -28,6 +28,8 @@ class ApiResponse
 		if (!$response instanceof JsonResponse) {
 			return new JsonResponse(null, $response->status());
 		}
+
+		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
 
 		return $response;
 	}

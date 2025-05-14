@@ -10,6 +10,7 @@ class RecordsController extends Controller
 {
 	public function index(Settings $settings)
 	{
+		/** @var array<int, array> $recordsArray */
 		$recordsArray = [];
 
 		if (file_exists(base_path('bootstrap/cache/CacheRecords.php'))) {
@@ -22,36 +23,36 @@ class RecordsController extends Controller
 		$Fleet = [];
 		$Defense = [];
 
-		foreach ($recordsArray as $ElementID => $ElementIDArray) {
-			if (($ElementID >= 1 && $ElementID <= 39) || $ElementID == 44) {
-				$Builds[__('main.tech.' . $ElementID)] = [
-					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
+		foreach ($recordsArray as $entitytId => $entityData) {
+			if (($entitytId >= 1 && $entitytId <= 39) || $entitytId == 44) {
+				$Builds[__('main.tech.' . $entitytId)] = [
+					'winner' => ($entityData['maxlvl'] != 0) ? $entityData['username'] : '-',
+					'count' => ($entityData['maxlvl'] != 0) ? Format::number($entityData['maxlvl']) : '-',
 				];
-			} elseif ($ElementID >= 41 && $ElementID <= 99 && $ElementID != 44) {
-				$MoonsBuilds[__('main.tech.' . $ElementID)] = [
-					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
+			} elseif ($entitytId >= 41 && $entitytId <= 99) {
+				$MoonsBuilds[__('main.tech.' . $entitytId)] = [
+					'winner' => ($entityData['maxlvl'] != 0) ? $entityData['username'] : '-',
+					'count' => ($entityData['maxlvl'] != 0) ? Format::number($entityData['maxlvl']) : '-',
 				];
-			} elseif ($ElementID >= 101 && $ElementID <= 199) {
-				$Techno[__('main.tech.' . $ElementID)] = [
-					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
+			} elseif ($entitytId >= 101 && $entitytId <= 199) {
+				$Techno[__('main.tech.' . $entitytId)] = [
+					'winner' => ($entityData['maxlvl'] != 0) ? $entityData['username'] : '-',
+					'count' => ($entityData['maxlvl'] != 0) ? Format::number($entityData['maxlvl']) : '-',
 				];
-			} elseif ($ElementID >= 201 && $ElementID <= 399) {
-				$Fleet[__('main.tech.' . $ElementID)] = [
-					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
+			} elseif ($entitytId >= 201 && $entitytId <= 399) {
+				$Fleet[__('main.tech.' . $entitytId)] = [
+					'winner' => ($entityData['maxlvl'] != 0) ? $entityData['username'] : '-',
+					'count' => ($entityData['maxlvl'] != 0) ? Format::number($entityData['maxlvl']) : '-',
 				];
-			} elseif ($ElementID >= 401 && $ElementID <= 599) {
-				$Defense[__('main.tech.' . $ElementID)] = [
-					'winner' => ($ElementIDArray['maxlvl'] != 0) ? $ElementIDArray['username'] : '-',
-					'count' => ($ElementIDArray['maxlvl'] != 0) ? Format::number($ElementIDArray['maxlvl']) : '-',
+			} elseif ($entitytId >= 401 && $entitytId <= 599) {
+				$Defense[__('main.tech.' . $entitytId)] = [
+					'winner' => ($entityData['maxlvl'] != 0) ? $entityData['username'] : '-',
+					'count' => ($entityData['maxlvl'] != 0) ? Format::number($entityData['maxlvl']) : '-',
 				];
 			}
 		}
 
-		$Records = [
+		$records = [
 			'Постройки' => $Builds,
 			'Лунные постройки' => $MoonsBuilds,
 			'Исследования' => $Techno,
@@ -59,11 +60,9 @@ class RecordsController extends Controller
 			'Оборона' => $Defense,
 		];
 
-		$parse = [
-			'items' => $Records,
+		return [
+			'items' => $records,
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 		];
-
-		return $parse;
 	}
 }

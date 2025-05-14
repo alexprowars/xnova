@@ -6,13 +6,11 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Files;
 use App\Models\LogStat;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 
 class PlayersController extends Controller
 {
@@ -31,12 +29,8 @@ class PlayersController extends Controller
 		$parse = [];
 		$parse['avatar'] = '/images/no_photo.gif';
 
-		if ($user->image) {
-			$file = Files::getById($user->image);
-
-			if ($file) {
-				$parse['avatar'] = URL::asset($file['src']);
-			}
+		if ($file = $user->getFirstMediaUrl(conversionName: 'thumb')) {
+			$parse['avatar'] = $file;
 		} elseif ($user->avatar) {
 			if ($user->avatar != 99) {
 				$parse['avatar'] = '/images/faces/' . $user->sex . '/' . $user->avatar . '.png';

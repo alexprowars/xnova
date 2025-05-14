@@ -563,7 +563,7 @@ class UpdateStatistics
 			}
 		}
 
-		$file = "<?php \n//The File is created on " . date("d. M y H:i:s") . "\n$" . "RecordsArray = [\n" . $array . "\n];\n?>";
+		$file = "<?php \n//The File is created on " . date("d. M y H:i:s") . "\n$" . "recordsArray = [\n" . $array . "\n];\n?>";
 
 		file_put_contents(base_path('bootstrap/cache/CacheRecords.php'), $file);
 	}

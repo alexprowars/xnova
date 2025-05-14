@@ -6,6 +6,7 @@ use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class AllianceRanksController extends Controller
 {
@@ -71,10 +72,9 @@ class AllianceRanksController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		/** @var array $rights */
-		$rights = $request->post('rigths', []);
+		$rights = Arr::wrap($request->post('rigths', []));
 
-		if (empty($rights) || !is_array($rights)) {
+		if (empty($rights)) {
 			throw new Exception('Ошибка в передаче параметров');
 		}
 

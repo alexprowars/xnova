@@ -49,10 +49,6 @@ class FleetCheckoutController extends Controller
 
 		$ships = Arr::wrap($request->post('ships', []));
 
-		if (!is_array($ships)) {
-			$ships = [];
-		}
-
 		foreach (Vars::getItemsByType(ItemType::FLEET) as $i) {
 			if (isset($ships[$i]) && (int) $ships[$i] > 0) {
 				$cnt = (int) $ships[$i];
@@ -161,7 +157,7 @@ class FleetCheckoutController extends Controller
 				'galaxy' => (int) $assault->galaxy,
 				'system' => (int) $assault->system,
 				'planet' => (int) $assault->planet,
-				'planet_type' => (int) $assault->planet_type,
+				'planet_type' => $assault->planet_type->value,
 			];
 		}
 

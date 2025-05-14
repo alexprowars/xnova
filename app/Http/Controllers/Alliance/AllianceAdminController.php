@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Alliance;
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
-use App\Files;
 use App\Format;
 use App\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class AllianceAdminController extends Controller
 {
@@ -45,15 +47,7 @@ class AllianceAdminController extends Controller
 		$parse['owner'] = $alliance->user_id;
 		$parse['web'] = $alliance->web;
 		$parse['access'] = $alliance->rights;
-		$parse['image'] = null;
-
-		if ($alliance->image) {
-			$image = Files::getById($alliance->image);
-
-			if ($image) {
-				$parse['image'] = $image['src'];
-			}
-		}
+		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
 
 		$parse['request_allow'] = $alliance->request_notallow;
 		$parse['owner_range'] = $alliance->owner_range;
@@ -186,22 +180,25 @@ class AllianceAdminController extends Controller
 			$file = $request->file('image');
 
 			if ($file->isValid()) {
-				$fileType = $file->getMimeType();
+				$validator = Validator::make(
+					['file' => $file],
+					['image' => 'image,mimetypes:image/jpg,image/webp,image/png']
+				);
 
-				if (!str_contains($fileType, 'image/')) {
-					throw new Exception('Разрешены к загрузке только изображения');
+				if ($validator->passes()) {
+					$alliance->clearMediaCollection();
+
+					try {
+						$alliance->addMedia($file)->toMediaCollection();
+					} catch (Throwable $e) {
+						Log::error($e);
+					}
 				}
-
-				if ($alliance->image > 0) {
-					Files::delete($alliance->image);
-				}
-
-				$alliance->image = Files::save($file);
 			}
 		}
 
-		if ($request->post('delete_image') && Files::delete($alliance->image)) {
-			$alliance->image = 0;
+		if ($request->post('delete_image')) {
+			$alliance->clearMediaCollection();
 		}
 
 		$alliance->request_notallow = (int) $request->post('request_notallow', 0) > 0;

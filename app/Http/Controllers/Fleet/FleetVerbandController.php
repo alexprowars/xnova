@@ -14,6 +14,7 @@ use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use Illuminate\Http\Request;
+use Throwable;
 
 class FleetVerbandController extends Controller
 {
@@ -105,17 +106,17 @@ class FleetVerbandController extends Controller
 			throw new Exception('Для этого флота уже задана ассоциация!');
 		}
 
-		$assault = Assault::create([
-			'name' 			=> $request->post('name', 'ACS'),
-			'fleet_id' 		=> $fleet->id,
-			'galaxy' 		=> $fleet->end_galaxy,
-			'system' 		=> $fleet->end_system,
-			'planet' 		=> $fleet->end_planet,
-			'planet_type' 	=> $fleet->end_type,
-			'user_id' 		=> $this->user->id,
-		]);
-
-		if (!$assault) {
+		try {
+			$assault = Assault::create([
+				'name' 			=> $request->post('name', 'ACS'),
+				'fleet_id' 		=> $fleet->id,
+				'galaxy' 		=> $fleet->end_galaxy,
+				'system' 		=> $fleet->end_system,
+				'planet' 		=> $fleet->end_planet,
+				'planet_type' 	=> $fleet->end_type,
+				'user_id' 		=> $this->user->id,
+			]);
+		} catch (Throwable) {
 			throw new Exception('Невозможно получить идентификатор САБ атаки');
 		}
 

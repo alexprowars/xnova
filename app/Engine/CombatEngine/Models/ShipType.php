@@ -33,21 +33,7 @@ class ShipType extends Type
 
 	public $repairProb = 0;
 
-	/**
-	 * ShipType::__construct()
-	 *
-	 * @param int $id
-	 * @param int $count
-	 * @param array $rf
-	 * @param int $shield
-	 * @param array $cost
-	 * @param int $power
-	 * @param int $weapons_tech
-	 * @param int $shields_tech
-	 * @param int $armour_tech
-	 * @throws Exception
-	 */
-	public function __construct($id, $count, $rf, $shield, array $cost, $power, $weapons_tech = null, $shields_tech = null, $armour_tech = null)
+	public function __construct(int $id, int $count, array $rf, $shield, array $cost, int $power, ?float $weapons_tech = null, ?float $shields_tech = null, ?float $armour_tech = null)
 	{
 		parent::__construct($id, 0);
 
@@ -69,7 +55,7 @@ class ShipType extends Type
 		$this->setShieldsTech($shields_tech);
 	}
 
-	public function setWeaponsTech(int $level)
+	public function setWeaponsTech(float $level)
 	{
 		if ($level <= 0) {
 			return;
@@ -87,7 +73,7 @@ class ShipType extends Type
 		$this->fullPower *= $incr;
 	}
 
-	public function setShieldsTech(int $level)
+	public function setShieldsTech(float $level)
 	{
 		if ($level <= 0) {
 			return;
@@ -106,7 +92,7 @@ class ShipType extends Type
 		$this->currentShield *= $incr;
 	}
 
-	public function setArmourTech(int $level)
+	public function setArmourTech(float $level)
 	{
 		if ($level <= 0) {
 			return;

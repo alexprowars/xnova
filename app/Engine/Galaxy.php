@@ -111,7 +111,7 @@ class Galaxy
 	{
 		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), PlanetType::PLANET));
 
-		if ($planet && $planet->parent_planet == 0) {
+		if ($planet && !$planet->moon_id) {
 			$maxtemp = $planet->temp_max - random_int(10, 45);
 			$mintemp = $planet->temp_min - random_int(10, 45);
 
@@ -137,7 +137,7 @@ class Galaxy
 			$moon->save();
 
 			if ($moon->id > 0) {
-				$planet->parent_planet = $moon->id;
+				$planet->moon_id = $moon->id;
 				$planet->update();
 
 				return $moon->id;

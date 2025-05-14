@@ -30,7 +30,7 @@ return new class extends Migration {
 			$table->float('crystal', 32, 4)->default(500.0000);
 			$table->float('deuterium', 32, 4)->default(0.0000);
 			$table->timestamp('last_jump_time')->nullable();
-			$table->foreignId('parent_planet')->nullable()->constrained('planets')->nullOnDelete();
+			$table->foreignId('moon_id')->nullable()->constrained('planets')->nullOnDelete();
 			$table->integer('debris_metal')->default(0);
 			$table->integer('debris_crystal')->default(0);
 			$table->timestamp('merchand')->nullable();

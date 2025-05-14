@@ -348,7 +348,7 @@ class Attack extends BaseMission
 			$userChance = 0;
 		}
 
-		if (!$target->parent_planet && $userChance && $userChance <= $moonChance) {
+		if (!$target->moon_id && $userChance && $userChance <= $moonChance) {
 			$planetId = Galaxy::createMoon(
 				$this->fleet->getDestinationCoordinates(),
 				$target->user_id,

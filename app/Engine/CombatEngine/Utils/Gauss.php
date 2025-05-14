@@ -40,7 +40,5 @@ class Gauss
 				return random_int($min, $max);
 			}
 		}
-
-		return 0;
 	}
 }

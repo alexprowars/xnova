@@ -20,7 +20,6 @@
         "althinect/filament-spatie-roles-permissions": "^2.3.1",
         "filament/filament": "^3.3",
         "filament/spatie-laravel-settings-plugin": "^3.2",
-        "gumlet/php-image-resize": "^2.0.4",
         "laravel/framework": "^12.0.0",
         "laravel/reverb": "^1.4",
         "laravel/socialite": "^5.5.7",
@@ -30,6 +29,7 @@
         "predis/predis": "^2.0.0",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "socialiteproviders/vkontakte": "^5.0.0",
+        "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.7.0",
         "webbingbrasil/filament-advancedfilter": "^3.0"
     },

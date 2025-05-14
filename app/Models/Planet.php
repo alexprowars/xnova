@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
@@ -47,6 +48,12 @@ class Planet extends Model
 	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_id');
+	}
+
+	/** @return BelongsTo<Planet, $this> */
+	public function moon(): BelongsTo
+	{
+		return $this->belongsTo(Planet::class, 'moon_id');
 	}
 
 	/** @return HasMany<PlanetEntity, $this> */

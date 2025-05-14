@@ -7,7 +7,6 @@ use App\Engine\QueueManager;
 use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
-use App\Files;
 use App\Format;
 use App\Helpers;
 use App\Models;
@@ -15,13 +14,15 @@ use App\Models\PlanetEntity;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use App\Notifications\PasswordResetSuccessNotification;
-use Gumlet\ImageResize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Throwable;
 
 class OptionsController extends Controller
 {
@@ -37,15 +38,7 @@ class OptionsController extends Controller
 			$parse['opt_usern_data'] = $this->user->username;
 		} else {
 			$parse['options'] = $this->user->getOptions();
-			$parse['avatar'] = '';
-
-			if ($this->user->image > 0) {
-				$file = Files::getById($this->user->image);
-
-				if ($file) {
-					$parse['avatar'] = $file['src'];
-				}
-			}
+			$parse['avatar'] = $this->user->getFirstMediaUrl(conversionName: 'thumb');
 
 			$parse['opt_usern_datatime'] = $this->user->username_change?->lessThan(now()->subDay());
 			$parse['opt_usern_data'] = $this->user->username;
@@ -246,33 +239,25 @@ class OptionsController extends Controller
 				$file = $request->file('image');
 
 				if ($file->isValid()) {
-					$fileType = $file->getMimeType();
+					$validator = Validator::make(
+						['file' => $file],
+						['image' => 'image,mimetypes:image/jpg,image/webp,image/png']
+					);
 
-					if (!str_contains($fileType, 'image/')) {
-						throw new Exception('Разрешены к загрузке только изображения');
-					}
+					if ($validator->passes()) {
+						$this->user->clearMediaCollection();
 
-					if ($this->user->image > 0) {
-						Files::delete($this->user->image);
-					}
-
-					$this->user->image = Files::save($file);
-
-					$f = Files::getById($this->user->image);
-
-					if ($f) {
-						$image = new ImageResize($f['path']);
-						$image->quality_jpg = 90;
-						$image->crop(300, 300, ImageResize::CROPCENTER);
-						$image->save($f['path']);
+						try {
+							$this->user->addMedia($file)->toMediaCollection();
+						} catch (Throwable $e) {
+							Log::error($e);
+						}
 					}
 				}
 			}
 
 			if ($request->post('image_delete')) {
-				if (Files::delete($this->user->image)) {
-					$this->user->image = null;
-				}
+				$this->user->clearMediaCollection();
 			}
 
 			$this->user->about = $about;

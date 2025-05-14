@@ -87,11 +87,11 @@ class OverviewController extends Controller
 		$parse = [];
 		$parse['moon'] = false;
 
-		if ($this->planet->parent_planet && $this->planet->planet_type != PlanetType::MOON && $this->planet->id) {
-			$lune = Cache::remember('app::lune_' . $this->planet->parent_planet, 300, function () {
+		if ($this->planet->moon_id && $this->planet->planet_type != PlanetType::MOON && $this->planet->id) {
+			$lune = Cache::remember('app::lune_' . $this->planet->moon_id, 300, function () {
 				return Planet::query()
 					->select(['id', 'name', 'image', 'destruyed'])
-					->where('id', $this->planet->parent_planet)
+					->where('id', $this->planet->moon_id)
 					->where('planet_type', PlanetType::MOON)
 					->first()?->toArray();
 			});
@@ -189,14 +189,14 @@ class OverviewController extends Controller
 		$this->user->planet_current = $this->user->planet_id;
 		$this->user->update();
 
-		if ($planet->parent_planet) {
-			Planet::where('id', $planet->parent_planet)
+		if ($planet->moon_id) {
+			Planet::where('id', $planet->moon_id)
 				->update([
 					'destruyed' => $destruyed,
 					'user_id' => null,
 				]);
 
-			Queue::where('planet_id', $planet->parent_planet)
+			Queue::where('planet_id', $planet->moon_id)
 				->delete();
 		}
 

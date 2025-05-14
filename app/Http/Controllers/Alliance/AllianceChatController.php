@@ -8,7 +8,9 @@ use App\Format;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceChat;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class AllianceChatController extends Controller
@@ -51,10 +53,10 @@ class AllianceChatController extends Controller
 
 			foreach ($messages as $message) {
 				$parse['items'][] = [
-					'id' => (int) $message->id,
+					'id' => (int)$message->id,
 					'user' => $message->user,
-					'user_id' => (int) $message->user_id,
-					'time' => $message->timestamp?->utc()->toAtomString(),
+					'user_id' => (int)$message->user_id,
+					'time' => $message->date->utc()->toAtomString(),
 					'message' => str_replace(["\r\n", "\n", "\r"], '', stripslashes($message->message)),
 				];
 			}
@@ -80,11 +82,10 @@ class AllianceChatController extends Controller
 		}
 
 		AllianceChat::create([
-			'alliance_id' 	=> $this->user->alliance_id,
-			'user' 			=> $this->user->username,
-			'user_id' 		=> $this->user->id,
-			'message' 		=> Format::text($message),
-			'timestamp'		=> now(),
+			'alliance_id' => $this->user->alliance_id,
+			'user' => $this->user->username,
+			'user_id' => $this->user->id,
+			'message' => Format::text($message),
 		]);
 
 		User::query()->where('alliance_id', $this->user->alliance_id)
@@ -107,22 +108,18 @@ class AllianceChatController extends Controller
 		}
 
 		if ($type == 'marked' || $type == 'unmarked') {
-			$messages = $request->post('id');
+			$messages = Arr::wrap($request->post('id', []));
+			$messages = array_map('intval', $messages);
 
-			if (is_array($messages)) {
-				$messages = array_map('intval', $messages);
-
-				if (count($messages)) {
-					$query = AllianceChat::query()->whereBelongsTo($alliance);
-
-					if ($type == 'unmarked') {
-						$query->whereNotIn('id', $messages);
-					} else {
-						$query->whereIn('id', $messages);
-					}
-
-					$query->delete();
-				}
+			if (count($messages)) {
+				AllianceChat::query()
+					->whereBelongsTo($alliance)
+					->when(
+						$type == 'unmarked',
+						fn(Builder $query) => $query->whereNotIn('id', $messages),
+						fn(Builder $query) => $query->whereIn('id', $messages),
+					)
+					->delete();
 			}
 		}
 	}

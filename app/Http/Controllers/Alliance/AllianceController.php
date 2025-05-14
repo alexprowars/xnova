@@ -6,7 +6,6 @@ use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Exceptions\RedirectException;
-use App\Files;
 use App\Http\Controllers\Controller;
 use App\Models;
 use App\Models\Alliance;
@@ -89,16 +88,7 @@ class AllianceController extends Controller
 
 		$parse['access'] = $alliance->rights;
 		$parse['owner'] = $alliance->user_id == $this->user->id;
-
-		$parse['image'] = null;
-
-		if ($alliance->image) {
-			$image = Files::getById($alliance->image);
-
-			if ($image) {
-				$parse['image'] = $image['src'];
-			}
-		}
+		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
 
 		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->description));
 		$parse['text'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->text));
@@ -151,15 +141,7 @@ class AllianceController extends Controller
 		$parse['name'] = $allyrow->name;
 		$parse['tag'] = $allyrow->tag;
 		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow->description));
-		$parse['image'] = '';
-
-		if ($allyrow->image > 0) {
-			$file = Files::getById($allyrow->image);
-
-			if ($file) {
-				$parse['image'] = $file['src'];
-			}
-		}
+		$parse['image'] = $allyrow->getFirstMediaUrl(conversionName: 'thumb') ?: null;
 
 		if ($allyrow->web != '' && !str_contains($allyrow->web, 'http')) {
 			$allyrow->web = 'https://' . $allyrow->web;

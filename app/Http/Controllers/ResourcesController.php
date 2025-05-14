@@ -10,6 +10,7 @@ use App\Exceptions\Exception;
 use App\Models\LogCredit;
 use App\Models\PlanetEntity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ResourcesController extends Controller
 {
@@ -126,7 +127,7 @@ class ResourcesController extends Controller
 
 	public function state(Request $request)
 	{
-		$state = $request->post('state', []);
+		$state = Arr::wrap($request->post('state', []));
 
 		foreach ($state as $entityId => $value) {
 			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {

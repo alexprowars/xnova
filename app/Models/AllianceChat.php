@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AllianceChat extends Model
 {
-	public $timestamps = false;
 	protected $table = 'alliances_chats';
+	public $timestamps = false;
 	protected $guarded = false;
 
 	protected $casts = [
-		'timestamp' => 'immutable_datetime',
+		'date' => 'immutable_datetime',
 	];
 
 	/** @return BelongsTo<Alliance, $this> */

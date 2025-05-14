@@ -74,7 +74,7 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['messages.id', 'type', 'time', 'messages', 'from_id'])
+			->select(['messages.id', 'type', 'time', 'message', 'from_id'])
 			->orderByDesc('time');
 
 		if ($category == 101) {
