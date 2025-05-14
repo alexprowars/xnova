@@ -11,8 +11,8 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->foreignId('friend_id')->constrained('users')->cascadeOnDelete();
-			$table->boolean('ignore')->default(0);
-			$table->boolean('active')->default(0);
+			$table->boolean('ignore')->default(false);
+			$table->boolean('active')->default(false);
 			$table->string('message', 250);
 			$table->timestamps();
 		});

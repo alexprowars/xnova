@@ -33,13 +33,13 @@ class FleetEngine
 			if ($start && $this->fleet->start_type == PlanetType::MOON) {
 				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getOriginCoordinates());
 
-				if ($checkFleet && $checkFleet->destruyed) {
+				if ($checkFleet && $checkFleet->destruyed_at) {
 					$this->fleet->start_type = PlanetType::PLANET;
 				}
 			} elseif ($this->fleet->end_type == PlanetType::MOON) {
 				$checkFleet = Models\Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-				if ($checkFleet && $checkFleet->destruyed) {
+				if ($checkFleet && $checkFleet->destruyed_at) {
 					$this->fleet->end_type = PlanetType::PLANET;
 				}
 			}

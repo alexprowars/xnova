@@ -14,23 +14,31 @@ class Game
 {
 	public static function datezone($format, int|string|Carbon|null $time = null)
 	{
+		$date = null;
+
 		if ($time instanceof Carbon) {
-			$time = $time->getTimestamp();
+			$date = $time;
+		}
+
+		if (is_numeric($time)) {
+			$date = Carbon::createFromTimestamp($time);
 		}
 
 		if (is_string($time)) {
-			$time = strtotime($time);
+			$date = Carbon::parse($time);
 		}
 
 		if (empty($time)) {
-			$time = time();
+			$date = now();
 		}
 
-		if (!empty(Auth::user()?->getOption('timezone'))) {
-			$time += Auth::user()->getOption('timezone') * 3600;
+		$timezone = auth()->user()?->getOption('timezone');
+
+		if (!empty($timezone)) {
+			$date = $date->setTimezone($timezone);
 		}
 
-		return date($format, $time);
+		return $date->format($format);
 	}
 
 	public static function getSpeed($type = '')

@@ -15,7 +15,6 @@ return new class extends Migration {
 			$table->text('description')->nullable();
 			$table->string('web')->nullable();
 			$table->text('text')->nullable();
-			$table->integer('image')->default(0);
 			$table->text('request')->nullable();
 			$table->boolean('request_notallow')->default(0);
 			$table->string('owner_range', 32)->nullable();

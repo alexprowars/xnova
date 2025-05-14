@@ -76,7 +76,7 @@ class Destruction extends BaseMission
 				if (random_int(1, 100) <= $moonDestroyChance) {
 					$moonDestroyed = true;
 
-					$targetMoon->destruyed = now()->addDay();
+					$targetMoon->destruyed_at = now()->addDay();
 					$targetMoon->save();
 
 					if ($targetMoon->user->planet_current == $targetMoon->id) {

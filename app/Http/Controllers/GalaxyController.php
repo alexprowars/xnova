@@ -111,7 +111,7 @@ class GalaxyController extends Controller
 				$activeTime = $item->moon->last_active;
 			}
 
-			if ($item->destruyed && $item->destruyed->isPast()) {
+			if ($item->destruyed_at && $item->destruyed_at->isPast()) {
 				$item->delete();
 
 				if ($item->moon) {
@@ -119,7 +119,7 @@ class GalaxyController extends Controller
 				}
 			}
 
-			if ($item->moon && $item->moon->destruyed && $item->moon->destruyed->isPast()) {
+			if ($item->moon && $item->moon->destruyed_at && $item->moon->destruyed_at->isPast()) {
 				$item->moon->delete();
 				$item->update(['moon_id' => null]);
 				$item->unsetRelation('moon');
@@ -144,7 +144,7 @@ class GalaxyController extends Controller
 					'type' => $item->planet_type->value,
 					'image' => $item->image,
 					'active' => $planetActive,
-					'destruyed' => $item->destruyed?->utc()->toAtomString(),
+					'destruyed' => $item->destruyed_at?->utc()->toAtomString(),
 				],
 				'debris' => [
 					'metal' => $item->debris_metal,
@@ -159,7 +159,7 @@ class GalaxyController extends Controller
 				$row['moon'] = [
 					'id' => $moon->id,
 					'name' => $moon->name,
-					'destruyed' => $moon->destruyed?->utc()->toAtomString(),
+					'destruyed' => $moon->destruyed_at?->utc()->toAtomString(),
 					'diameter' => $moon->diameter,
 					'temp' => $moon->temp_min,
 				];
@@ -185,7 +185,7 @@ class GalaxyController extends Controller
 					'admin' => $user->authlevel,
 					'online' => $userOnline,
 					'vacation' => $user->isVacation(),
-					'blocked' => $user->banned_time?->utc()->toAtomString(),
+					'blocked' => $user->blocked_at?->utc()->toAtomString(),
 					'sex' => $user->sex,
 					'avatar' => $user->avatar,
 					'image' => $image,

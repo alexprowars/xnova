@@ -219,7 +219,7 @@ class FleetSend
 				$protection = false;
 			}
 
-			if ($targerUser->onlinetime->diffInDays() > 7 || $targerUser->banned_time) {
+			if ($targerUser->onlinetime->diffInDays() > 7 || $targerUser->blocked_at) {
 				$protection = false;
 			}
 

@@ -99,7 +99,7 @@ class UserBan extends Page
 			'author_id'	=> auth()->id(),
 		]);
 
-		$update = ['banned_time' => $BanTime];
+		$update = ['blocked_at' => $BanTime];
 
 		if ($this->vacation) {
 			$update['vacation'] = Date::createFromTimestamp(0);

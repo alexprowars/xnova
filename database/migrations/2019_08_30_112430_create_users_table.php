@@ -16,7 +16,7 @@ return new class extends Migration {
 			$table->timestamp('username_change')->nullable();
 			$table->tinyInteger('authlevel')->default(0);
 			$table->smallInteger('group_id')->nullable();
-			$table->timestamp('banned_time')->nullable();
+			$table->timestamp('blocked_at')->nullable();
 			$table->timestamp('onlinetime')->nullable();
 			$table->bigInteger('ip')->nullable();
 			$table->tinyInteger('sex')->default(0);
@@ -55,7 +55,6 @@ return new class extends Migration {
 			$table->timestamp('message_block')->nullable();
 			$table->integer('links')->unsigned()->default(0);
 			$table->tinyInteger('chat')->default(0);
-			$table->string('image')->nullable();
 			$table->text('about')->nullable();
 			$table->json('options')->nullable();
 			$table->timestamps();

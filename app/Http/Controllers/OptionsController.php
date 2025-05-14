@@ -199,7 +199,7 @@ class OptionsController extends Controller
 			$color = $request->post('color', 1);
 			$color = max(1, min(13, $color));
 
-			$timezone = $request->post('timezone');
+			$timezone = $request->post('timezone', 0);
 
 			if ($timezone < -12 || $timezone > 12) {
 				$timezone = null;
@@ -217,7 +217,6 @@ class OptionsController extends Controller
 			if ($spy < 1 || $spy > 1000) {
 				$spy = 1;
 			}
-
 
 			$this->user->sex = $sex;
 			$this->user->vacation = $vacation;

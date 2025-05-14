@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
 {
-	public $timestamps = false;
 	protected $hidden = ['planet_updated'];
 	protected $guarded = false;
 
@@ -40,7 +39,7 @@ class Planet extends Model
 		'last_active' => 'immutable_datetime',
 		'last_jump_time' => 'immutable_datetime',
 		'merchand' => 'immutable_datetime',
-		'destruyed' => 'immutable_datetime',
+		'destruyed_at' => 'immutable_datetime',
 		'planet_type' => PlanetType::class,
 	];
 
@@ -191,7 +190,7 @@ class Planet extends Model
 				->where('pe.amount', '>', 0)
 				->where('p.user_id', $this->user->id)
 				->where('p.planet_type', PlanetType::PLANET)
-				->whereNull('p.destruyed')
+				->whereNull('p.destruyed_at')
 				->orderByDesc('pe.amount')
 				->limit($this->user->getTechLevel('intergalactic'))
 				->get();

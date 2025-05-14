@@ -41,7 +41,7 @@ class Attack extends BaseMission
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if (!$target || !$target->user_id || $target->destruyed) {
+		if (!$target || !$target->user_id || $target->destruyed_at) {
 			$this->return();
 
 			return false;

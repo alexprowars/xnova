@@ -28,3 +28,7 @@ Thumbs.db
 /public/storage
 /public/css/filament
 /public/js/filament
+/public/css/filament-daterangepicker-filter
+/public/js/filament-daterangepicker-filter
+/public/css/malzariey/filament-daterangepicker-filter
+/public/js/malzariey/filament-daterangepicker-filter

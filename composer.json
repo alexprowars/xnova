@@ -8,7 +8,10 @@
         },
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "require": {
         "php": "^8.3",
@@ -34,7 +37,12 @@
         "webbingbrasil/filament-advancedfilter": "^3.0"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.24",
         "larastan/larastan": "^3.0",
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^3.7",
+        "pestphp/pest-plugin-faker": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.1",
         "phpstan/phpstan": "^2.1"
     },
     "replace": {
@@ -53,6 +61,11 @@
         "files": [
             "app/functions.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
         "post-autoload-dump": [
@@ -75,6 +88,7 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ],
+        "test": "vendor/bin/pest",
         "analyse": "vendor/bin/phpstan analyse"
     },
     "extra": {

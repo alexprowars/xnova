@@ -88,20 +88,21 @@ class OverviewController extends Controller
 		$parse['moon'] = false;
 
 		if ($this->planet->moon_id && $this->planet->planet_type != PlanetType::MOON && $this->planet->id) {
+			/** @var ?Planet $lune */
 			$lune = Cache::remember('app::lune_' . $this->planet->moon_id, 300, function () {
 				return Planet::query()
-					->select(['id', 'name', 'image', 'destruyed'])
+					->select(['id', 'name', 'image'])
 					->where('id', $this->planet->moon_id)
 					->where('planet_type', PlanetType::MOON)
-					->first()?->toArray();
+					->whereNull('destruyed_at')
+					->first();
 			});
 
-			if (isset($lune['id']) && empty($lune['destruyed'])) {
+			if ($lune) {
 				$parse['moon'] = [
-					'id' => $lune['id'],
-					'name' => $lune['name'],
-					'image' => $lune['image'],
-
+					'id' => $lune->id,
+					'name' => $lune->name,
+					'image' => $lune->image,
 				];
 			}
 		}
@@ -182,7 +183,7 @@ class OverviewController extends Controller
 
 		$destruyed = now()->addDay();
 
-		$planet->destruyed = $destruyed;
+		$planet->destruyed_at = $destruyed;
 		$planet->user_id = null;
 		$planet->update();
 
@@ -192,7 +193,7 @@ class OverviewController extends Controller
 		if ($planet->moon_id) {
 			Planet::where('id', $planet->moon_id)
 				->update([
-					'destruyed' => $destruyed,
+					'destruyed_at' => $destruyed,
 					'user_id' => null,
 				]);
 

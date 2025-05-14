@@ -24,7 +24,6 @@ class UpdateStats extends Command
 		$statUpdate->clearOldStats();
 		$statUpdate->update();
 		$statUpdate->addToLog();
-		$statUpdate->clearGame();
 		$statUpdate->buildRecordsCache();
 
 		$end = microtime(true);

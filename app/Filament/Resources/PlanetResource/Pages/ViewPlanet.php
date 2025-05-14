@@ -41,7 +41,7 @@ class ViewPlanet extends ViewRecord
 				Infolists\Components\TextEntry::make('last_active')
 					->dateTime('d.m.Y H:i:s')
 					->label('Время активности'),
-				Infolists\Components\TextEntry::make('destruyed')
+				Infolists\Components\TextEntry::make('destruyed_at')
 					->dateTime('d.m.Y H:i:s')
 					->label('Время уничтожения'),
 				Infolists\Components\TextEntry::make('merchand')

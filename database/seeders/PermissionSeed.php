@@ -11,7 +11,6 @@ class PermissionSeed extends Seeder
 	public function run()
 	{
 		//Artisan::call('cache:clear');
-		/** @noinspection PhpUndefinedMethodInspection */
 		app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
 		//Permission::create(['name' => 'users_manage']);

@@ -35,7 +35,7 @@ class UpdateStatistics
 
 	private function setMaxInfo($ID, $Count, Models\User $Data)
 	{
-		if ($Data->isAdmin() || $Data->banned_time) {
+		if ($Data->isAdmin() || $Data->blocked_at) {
 			return;
 		}
 
@@ -246,7 +246,7 @@ class UpdateStatistics
 							->where('vacation', '>', Date::createFromTimestamp(0));
 					});
 			})
-			->whereNull('banned_time')
+			->whereNull('blocked_at')
 			->whereNull('delete_time')
 			->orderBy('onlinetime')
 			->limit(250)
@@ -305,14 +305,14 @@ class UpdateStatistics
 
 		$users = User::whereNotNull('planet_id')
 			->where('authlevel', '<', 3)
-			->whereNull('banned_time')
+			->whereNull('blocked_at')
 			->with(['alliance', 'statistics'])
 			->get();
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
 		foreach ($users as $user) {
-			if ($user->banned_time || $user->vacation?->lessThan(now()->subSeconds(1036800))) {
+			if ($user->blocked_at || $user->vacation?->lessThan(now()->subSeconds(1036800))) {
 				$hide = 1;
 			} else {
 				$hide = 0;
@@ -537,18 +537,6 @@ class UpdateStatistics
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
-	}
-
-	public function clearGame()
-	{
-		Models\Message::query()->where('time', '<', now()->subDays(14))->whereNot('type', 2)->delete();
-		Models\Report::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogFleet::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogAttack::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogIp::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogCredit::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogHistory::query()->where('created_at', '<', now()->subDays(7))->delete();
-		Models\LogStat::query()->where('time', '<', now()->subDays(30))->delete();
 	}
 
 	public function buildRecordsCache()

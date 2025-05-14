@@ -67,7 +67,7 @@ class UserUnBan extends Page
 
 		Blocked::query()->whereBelongsTo($user)->delete();
 
-		$user->banned_time = null;
+		$user->blocked_at = null;
 
 		if ($user->vacation?->timestamp == 0) {
 			$user->vacation = null;

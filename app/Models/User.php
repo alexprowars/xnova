@@ -13,10 +13,12 @@ use App\Helpers;
 use App\Notifications\MessageNotification;
 use App\Notifications\UserRegistrationNotification;
 use App\Settings;
+use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -39,6 +41,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	use HasRoles;
 	use Notifiable;
 	use InteractsWithMedia;
+	use HasFactory;
 
 	use HasBonuses;
 	use HasTechnologies;
@@ -47,12 +50,16 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	protected ?Planet $currentPlanet = null;
 
 	protected $guarded = false;
-	protected $hidden = ['password'];
+
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
 
 	protected $casts = [
 		'options' => 'json:unicode',
 		'username_change' => 'immutable_datetime',
-		'banned_time' => 'immutable_datetime',
+		'blocked_at' => 'immutable_datetime',
 		'onlinetime' => 'immutable_datetime',
 		'vacation' => 'immutable_datetime',
 		'delete_time' => 'immutable_datetime',
@@ -80,6 +87,11 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 			LogStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
 		});
+	}
+
+	protected static function newFactory()
+	{
+		return UserFactory::new();
 	}
 
 	/** @return HasMany<FleetShortcut, $this> */
@@ -390,7 +402,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 		$protectionPoints = (int) config('game.noobprotectionPoints');
 
-		if ($protectionPoints <= 0 || $this->onlinetime->diffInDays() > 7 || $this->banned_time) {
+		if ($protectionPoints <= 0 || $this->onlinetime->diffInDays() > 7 || $this->blocked_at) {
 			return false;
 		}
 
