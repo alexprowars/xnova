@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Format;
 use App\Models\Planet;
@@ -9,6 +10,11 @@ use App\Notifications\MessageNotification;
 
 class Stay extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return $targetPlanet && ($targetPlanet->user_id == $planet->user_id || $targetPlanet->user->isAdmin());
+	}
+
 	public function targetEvent()
 	{
 		$targetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());

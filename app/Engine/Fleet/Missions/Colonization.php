@@ -2,14 +2,21 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Facades\Galaxy;
 use App\Models;
+use App\Models\Planet;
 use App\Notifications\MessageNotification;
 
 class Colonization extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return !empty($units[208]) && $targetPlanet;
+	}
+
 	public function targetEvent()
 	{
 		$maxPlanets = $this->fleet->user->getTechLevel('colonization') + 1;

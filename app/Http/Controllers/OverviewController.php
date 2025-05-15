@@ -173,8 +173,8 @@ class OverviewController extends Controller
 		}
 
 		$checkFleets = Fleet::query()
-			->where(fn (Builder $query) => $query->coordinates(FleetDirection::START, $planet->getCoordinates()))
-			->orWhere(fn (Builder $query) => $query->coordinates(FleetDirection::END, $planet->getCoordinates()))
+			->where(fn(Builder $query) => $query->coordinates(FleetDirection::START, $planet->coordinates))
+			->orWhere(fn(Builder $query) => $query->coordinates(FleetDirection::END, $planet->coordinates))
 			->exists();
 
 		if ($checkFleets) {

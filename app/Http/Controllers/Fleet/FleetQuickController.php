@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class FleetQuickController extends Controller
 {
-	/** @noinspection PhpRedundantCatchClauseInspection */
 	public function index(Request $request)
 	{
 		$mission = (int) $request->post('mission', 0);
@@ -72,8 +71,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$sender = new FleetSend(new Coordinates($galaxy, $system, $planet, $planetType), $this->planet);
-		$sender->setMission($mission);
+		$sender = new FleetSend(new Coordinates($galaxy, $system, $planet, $planetType), $this->planet, $mission);
 		$sender->setFleets($fleetArray);
 
 		try {
@@ -100,7 +98,7 @@ class FleetQuickController extends Controller
 		}
 
 		return [
-			'target' => $target->getCoordinates()->toArray(),
+			'target' => $target->coordinates->toArray(),
 			'mission' => $mission->value,
 			'time' => $fleet->start_time->utc()->toAtomString(),
 		];

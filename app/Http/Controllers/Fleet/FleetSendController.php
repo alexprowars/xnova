@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\DB;
 
 class FleetSendController extends Controller
 {
-	/** @noinspection PhpRedundantCatchClauseInspection */
 	public function index(Request $request)
 	{
 		$moon = (int) $request->post('moon', 0);
@@ -51,8 +50,7 @@ class FleetSendController extends Controller
 
 		$target = new Coordinates($galaxy, $system, $planet, $planetType);
 
-		$sender = new Fleet\FleetSend($target, $this->planet);
-		$sender->setMission($fleetMission);
+		$sender = new Fleet\FleetSend($target, $this->planet, $fleetMission);
 		$sender->setFleets($fleetArray);
 		$sender->setResources($resources);
 		$sender->setFleetSpeed($fleetSpeedFactor);
@@ -67,14 +65,15 @@ class FleetSendController extends Controller
 			$sender->setStayTime($holdTime);
 		}
 
-		if ($assaultId > 0 && $fleetMission == Mission::Assault) {
+		if ($assaultId && $fleetMission == Mission::Assault) {
 			$assault = Models\Assault::query()
-				->whereHas('users', function (Builder $query) use ($assaultId) {
-					$query->whereBelongsTo($this->user)->where('aks_id', $assaultId);
+				->whereKey($assaultId)
+				->whereHas('users', function (Builder $query) {
+					$query->whereBelongsTo($this->user);
 				})
 				->first();
 
-			if ($assault && $assault->galaxy == $galaxy && $assault->system == $system && $assault->planet == $planet && $assault->planet_type == $planetType) {
+			if ($assault && $assault->coordinates->isSame($target)) {
 				$sender->setAssault($assault);
 			}
 
@@ -93,13 +92,13 @@ class FleetSendController extends Controller
 
 		$maxFleetSpeed = $fleetCollection->getSpeed();
 
-		$distance = $fleetCollection->getDistance($this->planet->getCoordinates(), $target);
+		$distance = $fleetCollection->getDistance($this->planet->coordinates, $target);
 		$duration = $fleetCollection->getDuration($fleetSpeedFactor, $distance);
 
 		$consumption = $fleetCollection->getConsumption($duration, $distance);
 
 		$tutorial = $this->user->quests()
-			->where('finish', 0)->where('stage', 0)
+			->where('finish', false)->where('stage', 0)
 			->first();
 
 		if ($tutorial) {
@@ -120,10 +119,10 @@ class FleetSendController extends Controller
 			'distance' => $distance,
 			'speed' => $maxFleetSpeed,
 			'consumption' => $consumption,
-			'from' => $this->planet->getCoordinates()->toArray(),
+			'from' => $this->planet->coordinates->toArray(),
 			'target' => $target->toArray(),
-			'start_time' => $fleet->start_time,
-			'end_time' => $fleet->end_time,
+			'start_time' => $fleet->start_time?->utc()->toAtomString(),
+			'end_time' => $fleet->end_time?->utc()->toAtomString(),
 			'units' => [],
 		];
 
@@ -143,7 +142,7 @@ class FleetSendController extends Controller
 		$nextJumpTime = $this->planet->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
-			throw new PageException(__('fleet.gate_wait_star') . " - " . Format::time($nextJumpTime), '/fleet/');
+			throw new PageException(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime), '/fleet/');
 		}
 
 		$targetPlanet = Planet::find($planetId);
@@ -155,7 +154,7 @@ class FleetSendController extends Controller
 		$nextJumpTime = $targetPlanet->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
-			throw new PageException(__('fleet.gate_wait_dest') . " - " . Format::time($nextJumpTime), '/fleet/');
+			throw new PageException(__('fleet.gate_wait_dest') . ' - ' . Format::time($nextJumpTime), '/fleet/');
 		}
 
 		$success = false;

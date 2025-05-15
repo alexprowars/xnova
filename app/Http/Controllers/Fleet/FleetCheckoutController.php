@@ -77,6 +77,7 @@ class FleetCheckoutController extends Controller
 		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
 		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');
 		$parse['planet_max'] = (int) config('game.maxPlanetInSystem') + 1;
+		$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
 
 		$parse['shortcuts'] = [];
 
@@ -162,32 +163,17 @@ class FleetCheckoutController extends Controller
 		}
 
 		$acs = (int) $request->post('alliance', 0);
-		$mission = (int) $request->post('mission', 0);
 
-		$YourPlanet = false;
-		$UsedPlanet = false;
+		$mission = (int) $request->post('mission');
+		$mission = Mission::tryFrom($mission);
 
 		$targetPlanet = Planet::findByCoordinates($target);
 
-		if ($targetPlanet) {
-			$UsedPlanet = true;
+		$missions = [];
 
-			if ($targetPlanet->user_id == $this->user->id) {
-				$YourPlanet = true;
-			}
-		}
-
-		$missions = Fleet::getFleetMissions($fleets, $target, $YourPlanet, $UsedPlanet, ($acs > 0));
-
-		if ($targetPlanet && ($targetPlanet->user_id == 1 || $this->user->isAdmin()) && !in_array(Mission::Stay, $missions)) {
-			$missions[] = Mission::Stay;
-		}
-
-		if (in_array(Mission::Expedition, $missions)) {
-			if ($this->user->getTechLevel('expedition') <= 0) {
-				unset($missions[array_search(Mission::Expedition, $missions)]);
-			} else {
-				$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
+		foreach (Mission::cases() as $m) {
+			if (Fleet\MissionFactory::getMission($m)->isMissionPossible($this->planet, $target, $targetPlanet, $fleets, $acs > 0)) {
+				$missions[] = $m;
 			}
 		}
 
@@ -197,9 +183,9 @@ class FleetCheckoutController extends Controller
 
 		$parse['missions'] = [];
 
-		if (count($missions) > 0) {
+		if (!empty($missions)) {
 			foreach ($missions as $i => $id) {
-				if (($mission > 0 && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1) {
+				if (($mission && $mission == $id) || ($i == 0 && !in_array($mission, $missions)) || count($missions) == 1) {
 					$mission = $id;
 				}
 

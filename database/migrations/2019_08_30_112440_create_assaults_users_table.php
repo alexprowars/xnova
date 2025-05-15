@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('assaults_users', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('assault_id')->constrained('assaults')->cascadeOnDelete();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 		});
 	}
 

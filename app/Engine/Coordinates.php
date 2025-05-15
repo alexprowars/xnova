@@ -69,6 +69,11 @@ class Coordinates implements Arrayable
 		return $this->galaxy == $coordinates->getGalaxy() && $this->system == $coordinates->getSystem() && $this->planet == $coordinates->getPlanet() && $this->type == $coordinates->getType();
 	}
 
+	public function isPlanet(): bool
+	{
+		return $this->planet <= 15;
+	}
+
 	public function toArray(): array
 	{
 		return [

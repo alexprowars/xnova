@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class Recycling extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return $target->getType() == PlanetType::DEBRIS && !empty($units[209]);
+	}
+
 	public function targetEvent()
 	{
 		$targetPlanet = Planet::findByCoordinates(

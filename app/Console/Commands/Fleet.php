@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Engine\Fleet\Missions\Mission;
+use App\Engine\Fleet\MissionFactory;
 use App\Engine\Vars;
 use App\Models;
 use Illuminate\Console\Command;
@@ -25,49 +25,44 @@ class Fleet extends Command
 
 		Vars::init();
 
-		include_once(config_path('battle.php'));
-
 		define('MAX_RUNS', 12);
 		define('TIME_LIMIT', 60);
 
 		$totalRuns = 1;
 
 		while ($totalRuns < MAX_RUNS) {
-			$_fleets = Models\Fleet::query()
+			$fleets = Models\Fleet::query()
 				->where(function (Builder $query) {
-					$query->where('start_time', '<=', now())
+					$query->whereNowOrPast('start_time')
 						->where('mess', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->where('end_stay', '<=', now())
+					$query->whereNowOrPast('end_stay')
 						->where('mess', '!=', 0)
 						->where('end_stay', '!=', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->where('end_time', '<=', now())
+					$query->whereNowOrPast('end_time')
 						->where('mess', '!=', 0);
 				})
 				->orderBy('updated_at')
 				->limit(10)
 				->get();
 
-			foreach ($_fleets as $fleetRow) {
-				if (!$missionName = $fleetRow->mission?->name) {
-					$fleetRow->delete();
+			foreach ($fleets as $fleet) {
+				if (!$fleet->mission?->name) {
+					$fleet->delete();
 
 					continue;
 				}
 
-				$missionName = '\App\Engine\Fleet\Missions\\' . $missionName;
+				$mission = MissionFactory::getMission($fleet->mission);
 
-				/** @var Mission $mission */
-				$mission = new $missionName($fleetRow);
-
-				if ($fleetRow->mess == 0 && $fleetRow->start_time->lessThanOrEqualTo(now())) {
+				if ($fleet->mess == 0 && $fleet->start_time->lessThanOrEqualTo(now())) {
 					$mission->targetEvent();
-				} elseif ($fleetRow->mess == 3 && $fleetRow->end_stay->lessThanOrEqualTo(now())) {
+				} elseif ($fleet->mess == 3 && $fleet->end_stay->lessThanOrEqualTo(now())) {
 					$mission->endStayEvent();
-				} elseif ($fleetRow->mess == 1 && $fleetRow->end_time->lessThanOrEqualTo(now())) {
+				} elseif ($fleet->mess == 1 && $fleet->end_time->lessThanOrEqualTo(now())) {
 					$mission->returnEvent();
 				}
 

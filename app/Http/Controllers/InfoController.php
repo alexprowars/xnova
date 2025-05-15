@@ -352,7 +352,7 @@ class InfoController extends Controller
 
 		$fleet = Fleet::query()
 			->where('id', $fleetId)
-			->coordinates(FleetDirection::END, $this->planet->getCoordinates())
+			->coordinates(FleetDirection::END, $this->planet->coordinates)
 			->where('mess', 3)
 			->first();
 

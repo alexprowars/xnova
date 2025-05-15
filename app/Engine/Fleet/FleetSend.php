@@ -19,7 +19,6 @@ use App\Models\Statistic;
 
 class FleetSend
 {
-	protected ?Mission $mission = null;
 	protected ?Planet $targetPlanet = null;
 	protected ?Assault $assault = null;
 	protected array $fleetArray = [];
@@ -29,14 +28,14 @@ class FleetSend
 	protected int $fleetSpeed = 10;
 	protected ?AllianceDiplomacy $diplomacy = null;
 
-	public function __construct(protected Coordinates $target, protected Planet $planet)
+	public function __construct(protected Coordinates $target, protected Planet $planet, protected Mission $mission)
 	{
 		$this->targetPlanet = Planet::coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
 			->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])
 			->first();
 	}
 
-	public function setMission(?Mission $mission)
+	public function setMission(Mission $mission)
 	{
 		$this->mission = $mission;
 	}
@@ -73,10 +72,6 @@ class FleetSend
 
 	protected function verify()
 	{
-		if (!$this->mission) {
-			throw new Exception('Не выбрана миссия!');
-		}
-
 		if ($this->target->getGalaxy() > (int) config('game.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
 			throw new Exception('Ошибочная галактика!');
 		} elseif ($this->target->getSystem() > (int) config('game.maxSystemInGalaxy') || $this->target->getSystem() < 1) {
@@ -117,7 +112,7 @@ class FleetSend
 			throw new PageException('Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.');
 		}
 
-		if ($this->planet->getCoordinates()->isSame($this->target)) {
+		if ($this->planet->coordinates->isSame($this->target)) {
 			throw new Exception('Невозможно отправить флот на эту же планету!');
 		}
 
@@ -153,25 +148,16 @@ class FleetSend
 			}
 		}
 
-		if (!$this->targetPlanet) {
-			$YourPlanet = false;
-			$UsedPlanet = false;
-		} elseif ($this->targetPlanet->user_id == $this->planet->user->id || ($this->planet->user->alliance_id > 0 && $this->targetPlanet->alliance_id == $this->planet->user->alliance_id)) {
-			$YourPlanet = true;
-			$UsedPlanet = true;
-		} else {
-			$YourPlanet = false;
-			$UsedPlanet = true;
+		$missions = [];
+
+		foreach (Mission::cases() as $m) {
+			if (MissionFactory::getMission($m)->isMissionPossible($this->planet, $this->target, $this->targetPlanet, $this->fleetArray, !empty($this->assault))) {
+				$missions[] = $m;
+			}
 		}
 
-		if ($this->mission == Mission::Stay && ($this->targetPlanet->user_id == 1 || $this->planet->user->isAdmin())) {
-			$YourPlanet = true;
-		}
-
-		$missiontype = \App\Engine\Fleet::getFleetMissions($this->fleetArray, $this->target, $YourPlanet, $UsedPlanet, !empty($this->assault));
-
-		if (!in_array($this->mission, $missiontype)) {
-			throw new Exception('Миссия неизвестна!');
+		if (!in_array($this->mission, $missions)) {
+			throw new Exception('Выполнение данной миссии невозможно!');
 		}
 
 		if ($this->mission == Mission::Recycling && $this->targetPlanet->debris_metal <= 0 && $this->targetPlanet->debris_crystal <= 0) {
@@ -282,10 +268,6 @@ class FleetSend
 			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && $this->mission == Mission::Spy) {
 				throw new Exception('Невозможно шпионить самого себя!');
 			}
-
-			if (!$YourPlanet && $this->mission == Mission::Stay) {
-				throw new Exception('Выполнение данной миссии невозможно!');
-			}
 		}
 	}
 
@@ -297,7 +279,7 @@ class FleetSend
 
 		$fleetCollection = FleetCollection::createFromArray($this->fleetArray, $this->planet);
 
-		$distance = $fleetCollection->getDistance($this->planet->getCoordinates(), $this->target);
+		$distance = $fleetCollection->getDistance($this->planet->coordinates, $this->target);
 		$duration = $fleetCollection->getDuration($this->fleetSpeed, $distance);
 		$consumption = $fleetCollection->getConsumption($duration, $distance);
 
@@ -438,7 +420,7 @@ class FleetSend
 			LogTransfer::create([
 				'user_id' => $this->planet->user->id,
 				'data' => [
-					'planet' => $this->planet->getCoordinates()->toArray(),
+					'planet' => $this->planet->coordinates->toArray(),
 					'target' => $this->target->toArray(),
 					'fleet' => $this->fleetArray,
 					'resources' => ['metal' => $TransMetal, 'crystal' => $TransCrystal, 'deuterium' => $TransDeuterium],

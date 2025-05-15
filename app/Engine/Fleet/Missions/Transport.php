@@ -2,11 +2,18 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
+use App\Models\Planet;
 use App\Notifications\MessageNotification;
 
 class Transport extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return $targetPlanet && (!empty($units[202]) || !empty($units[203]));
+	}
+
 	public function targetEvent()
 	{
 		$this->restoreFleetToPlanet(false, false);

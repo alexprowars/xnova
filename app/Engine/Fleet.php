@@ -3,7 +3,6 @@
 namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use App\Format;
 use App\Models;
@@ -90,61 +89,6 @@ class Fleet extends Building
 		}
 
 		return $MissionPopup;
-	}
-
-	public static function getFleetMissions($fleets, Coordinates $target = null, $youPlanet = false, $activePlanet = false, $assault = false)
-	{
-		if ($target === null) {
-			$target = new Coordinates(1, 1, 1, PlanetType::PLANET);
-		}
-
-		$result = [];
-
-		if ($target->getPlanet() == 16) {
-			if (!(count($fleets) == 1 && isset($fleets[210]))) {
-				$result[] = Mission::Expedition;
-			}
-		} elseif ($target->getType() == PlanetType::DEBRIS && isset($fleets[209])) {
-			$result[] = Mission::Recycling;
-		} elseif (in_array($target->getType(), [PlanetType::PLANET, PlanetType::MOON, PlanetType::MILITARY_BASE])) {
-			if (isset($fleets[216]) && !$activePlanet && $target->getType() == PlanetType::PLANET) {
-				$result[] = Mission::CreateBase;
-			}
-
-			if (isset($fleets[210]) && !$youPlanet) {
-				$result[] = Mission::Spy;
-			}
-
-			if (isset($fleets[208]) && !$activePlanet) {
-				$result[] = Mission::Colonization;
-			}
-
-			if (!$youPlanet && $activePlanet && !isset($fleets[208]) && !isset($fleets[209]) && !isset($fleets[216])) {
-				$result[] = Mission::Attack;
-			}
-
-			if ($activePlanet && !$youPlanet && !(count($fleets) == 1 && isset($fleets[210]))) {
-				$result[] = Mission::StayAlly;
-			}
-
-			if ($activePlanet && (isset($fleets[202]) || isset($fleets[203]))) {
-				$result[] = Mission::Transport;
-			}
-
-			if ($youPlanet) {
-				$result[] = Mission::Stay;
-			}
-
-			if ($assault && $activePlanet) {
-				$result[] = Mission::Assault;
-			}
-
-			if ($target->getType() == PlanetType::MOON && isset($fleets[214]) && !$youPlanet && $activePlanet) {
-				$result[] = Mission::Destruction;
-			}
-		}
-
-		return $result;
 	}
 
 	public static function getMissileRange(User $user)

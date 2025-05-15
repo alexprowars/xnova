@@ -16,6 +16,6 @@ class UserPlanets extends JsonResource
 			'name' => $this->name,
 			'image' => $this->image,
 			'destroy' => !empty($this->destruyed_at),
-		] + $this->getCoordinates()->toArray();
+		] + $this->coordinates->toArray();
 	}
 }

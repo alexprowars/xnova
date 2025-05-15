@@ -37,6 +37,27 @@ class Attack extends BaseMission
 	public $usersTech = [];
 	public $usersInfo = [];
 
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		if (!in_array($target->getType(), [PlanetType::PLANET, PlanetType::MOON, PlanetType::MILITARY_BASE])) {
+			return false;
+		}
+
+		if (!$targetPlanet) {
+			return false;
+		}
+
+		if ($planet->user_id == $targetPlanet->user_id) {
+			return false;
+		}
+
+		if (!empty($units[208]) || !empty($units[209]) || !empty($units[216])) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public function targetEvent()
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());

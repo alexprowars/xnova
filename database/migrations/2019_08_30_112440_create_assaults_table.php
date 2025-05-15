@@ -15,7 +15,7 @@ return new class extends Migration {
 			$table->integer('system')->nullable();
 			$table->integer('planet')->nullable();
 			$table->tinyInteger('planet_type')->default(1);
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 		});
 	}
 

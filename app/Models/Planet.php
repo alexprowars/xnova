@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
@@ -104,9 +103,10 @@ class Planet extends Model
 		return $fields;
 	}
 
-	public function getCoordinates(): Coordinates
+	/** @return Attribute<Coordinates, never> */
+	protected function coordinates(): Attribute
 	{
-		return new Coordinates($this->galaxy, $this->system, $this->planet, $this->planet_type);
+		return Attribute::get(fn() => new Coordinates($this->galaxy, $this->system, $this->planet, $this->planet_type));
 	}
 
 	public function getLevel($entityId): int
@@ -171,14 +171,16 @@ class Planet extends Model
 		return $this->production;
 	}
 
+	/** @return Attribute<array<int>, never> */
 	public function networkLevel(): Attribute
 	{
-		return Attribute::make(
-			get: fn () => $this->getNetworkLevel()
-		)->shouldCache();
+		return Attribute::get(fn() => $this->getNetworkLevel())->shouldCache();
 	}
 
-	protected function getNetworkLevel()
+	/**
+	 * @return array<int>
+	 */
+	protected function getNetworkLevel(): array
 	{
 		$list = [$this->getLevel('laboratory')];
 
@@ -193,10 +195,10 @@ class Planet extends Model
 				->whereNull('p.destruyed_at')
 				->orderByDesc('pe.amount')
 				->limit($this->user->getTechLevel('intergalactic'))
-				->get();
+				->pluck('level');
 
 			foreach ($items as $item) {
-				$list[] = (int) $item->level;
+				$list[] = (int) $item;
 			}
 		}
 

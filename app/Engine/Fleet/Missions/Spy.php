@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
@@ -15,6 +16,11 @@ use App\Notifications\MessageNotification;
 
 class Spy extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return !empty($units[210]) && $targetPlanet && $planet->user_id != $targetPlanet->user_id;
+	}
+
 	public function targetEvent()
 	{
 		$owner = User::query()->find($this->fleet->user_id);

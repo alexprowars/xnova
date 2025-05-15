@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Cache;
 
 class Destruction extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return $target->getType() == PlanetType::MOON && !empty($units[214]) && $targetPlanet && $planet->user_id == $targetPlanet->user_id;
+	}
+
 	public function targetEvent()
 	{
 		$mission = new Attack($this->fleet);

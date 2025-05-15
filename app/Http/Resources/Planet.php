@@ -30,7 +30,7 @@ class Planet extends JsonResource
 					'basic' => (int) config('game.energy_basic_income', 0),
 				],
 			],
-			'coordinates' => $this->getCoordinates()->toArray(),
+			'coordinates' => $this->coordinates->toArray(),
 			'debris' => [
 				'metal' => $this->debris_metal,
 				'crystal' => $this->debris_crystal,

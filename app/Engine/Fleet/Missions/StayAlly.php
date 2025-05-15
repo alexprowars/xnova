@@ -2,11 +2,18 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
+use App\Models\Planet;
 use App\Notifications\MessageNotification;
 
 class StayAlly extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return $targetPlanet && $targetPlanet->user_id != $planet->user_id && !(count($units) == 1 && !empty($units[210]));
+	}
+
 	public function targetEvent()
 	{
 		$this->stayFleet();

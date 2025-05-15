@@ -8,11 +8,13 @@ use App\Engine\CombatEngine\Models\Fleet;
 use App\Engine\CombatEngine\Models\Player;
 use App\Engine\CombatEngine\Models\PlayerGroup;
 use App\Engine\CombatEngine\Utils\LangManager;
+use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Vars;
 use App\Format;
 use App\Models;
+use App\Models\Planet;
 use App\Models\Statistic;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Facades\Config;
@@ -20,6 +22,19 @@ use Illuminate\Support\Facades\DB;
 
 class Expedition extends BaseMission
 {
+	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		if ($target->getPlanet() != 16) {
+			return false;
+		}
+
+		if ($planet->user->getTechLevel('expedition') <= 0) {
+			return false;
+		}
+
+		return !(count($units) == 1 && !empty($units[210]));
+	}
+
 	public function targetEvent()
 	{
 		$this->stayFleet();
