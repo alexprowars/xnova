@@ -7,6 +7,7 @@ use App\Engine\Contracts\EntityProductionInterface;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
+use App\Engine\Game;
 use App\Engine\Vars;
 use App\Models\Planet;
 
@@ -61,6 +62,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 		return $cost;
 	}
 
+	/** @return array<string, int> */
 	public function getPrice(): array
 	{
 		$cost = $this->getBasePrice();
@@ -82,9 +84,10 @@ class Entity implements EntityInterface, EntityProductionInterface
 				case ItemType::DEFENSE:
 					$cost[$resType] *= $user->bonus('res_defence');
 					break;
+				default:
 			}
 
-			$cost[$resType] = round($cost[$resType]);
+			$cost[$resType] = (int) floor($cost[$resType]);
 		}
 
 		return $cost;
@@ -95,7 +98,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 		$cost = $this->getBasePrice();
 		$cost = $cost['metal'] + $cost['crystal'];
 
-		$time = ($cost / config('game.game_speed')) * 3600;
+		$time = ($cost / (2500 * Game::getSpeed('build'))) * 3600;
 
 		return (int) max(1, $time);
 	}
@@ -145,7 +148,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 		foreach ($cost as $ResType => $ResCount) {
 			if ($ResType == 'energy') {
-				if ($planet->energy_max < $ResCount) {
+				if ($planet->energy < $ResCount) {
 					return false;
 				}
 			} elseif (!isset($planet->{$ResType}) || $ResCount > $planet->{$ResType}) {

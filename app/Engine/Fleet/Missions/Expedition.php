@@ -11,6 +11,7 @@ use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
+use App\Engine\Game;
 use App\Engine\Vars;
 use App\Format;
 use App\Models;
@@ -84,15 +85,15 @@ class Expedition extends BaseMission
 
 				switch ($this->determineEventSize()) {
 					case 2:
-						$factor = (random_int(100, 200) / $witchFound) * (1 + (config('game.resource_multiplier') - 1) / 10);
+						$factor = (random_int(100, 200) / $witchFound) * (1 + (Game::getSpeed('mine') - 1) / 10);
 						$message = __('fleet_engine.sys_expe_found_ress_3_' . random_int(1, 2));
 						break;
 					case 1:
-						$factor = (random_int(50, 100) / $witchFound) * (1 + (config('game.resource_multiplier') - 1) / 10);
+						$factor = (random_int(50, 100) / $witchFound) * (1 + (Game::getSpeed('mine') - 1) / 10);
 						$message = __('fleet_engine.sys_expe_found_ress_2_' . random_int(1, 3));
 						break;
 					default:
-						$factor = (random_int(10, 50) / $witchFound) *  (1 + (config('game.resource_multiplier') - 1) / 10);
+						$factor = (random_int(10, 50) / $witchFound) *  (1 + (Game::getSpeed('mine') - 1) / 10);
 						$message = __('fleet_engine.sys_expe_found_ress_1_' . random_int(1, 4));
 				}
 

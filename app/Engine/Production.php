@@ -66,12 +66,12 @@ class Production
 
 	public function getProductionFactor(): int
 	{
-		if ($this->planet->energy_max == 0) {
+		if ($this->planet->energy == 0) {
 			$factor = 0;
-		} elseif ($this->planet->energy_max >= $this->planet->energy_used) {
+		} elseif ($this->planet->energy >= $this->planet->energy_used) {
 			$factor = 100;
 		} else {
-			$factor = round(($this->planet->energy_max / $this->planet->energy_used) * 100, 1);
+			$factor = round(($this->planet->energy / $this->planet->energy_used) * 100, 1);
 		}
 
 		return min(max($factor, 0), 100);
@@ -104,7 +104,7 @@ class Production
 
 		foreach (Vars::getResources() as $res) {
 			if (!$this->planet->user->isVacation() && !in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
-				$resources[$res] = config('game.' . $res . '_basic_income', 0) * config('game.resource_multiplier', 1);
+				$resources[$res] = config('game.' . $res . '_basic_income', 0) * Game::getSpeed('mine');
 			} else {
 				$resources[$res] = 0;
 			}
@@ -122,7 +122,7 @@ class Production
 		}
 
 		$this->planet->energy_used = 0;
-		$this->planet->energy_max = 0;
+		$this->planet->energy = 0;
 
 		$resources = new Resources();
 
@@ -156,7 +156,7 @@ class Production
 			if ($productionId < 4) {
 				$this->planet->energy_used += abs($production->get(ResourcesEnum::ENERGY));
 			} else {
-				$this->planet->energy_max += $production->get(ResourcesEnum::ENERGY);
+				$this->planet->energy += $production->get(ResourcesEnum::ENERGY);
 			}
 		}
 
@@ -178,7 +178,7 @@ class Production
 
 		$resourceProduction = $this->getResourceProduction();
 		$storageCapacity = $this->getStorageCapacity();
-		$storageCapacity->set(ResourcesEnum::ENERGY, $this->planet->energy_max);
+		$storageCapacity->set(ResourcesEnum::ENERGY, $this->planet->energy);
 
 		foreach (Vars::getResources() as $res) {
 			if ($this->planet->{$res} >= $storageCapacity->get($res)) {

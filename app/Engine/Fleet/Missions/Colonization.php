@@ -45,7 +45,7 @@ class Colonization extends BaseMission
 			} else {
 				$newOwnerPlanet = Galaxy::createPlanet(
 					$this->fleet->getDestinationCoordinates(),
-					$this->fleet->user_id,
+					$this->fleet->user,
 					__('fleet_engine.sys_colo_defaultname')
 				);
 

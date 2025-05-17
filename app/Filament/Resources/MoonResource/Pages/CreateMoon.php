@@ -7,6 +7,7 @@ use App\Exceptions\Exception;
 use App\Facades\Galaxy;
 use App\Filament\Resources\MoonResource;
 use App\Models\Planet;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -51,17 +52,17 @@ class CreateMoon extends CreateRecord
 	{
 		$diameter = min(max($data['diameter'], 20), 0);
 
-		$planetId = Galaxy::createMoon(
+		$moon = Galaxy::createMoon(
 			new Coordinates($data['galaxy'], $data['system'], $data['planet']),
-			$data['user_id'],
+			User::findOne($data['user_id']),
 			$diameter
 		);
 
-		if (!$planetId) {
+		if (!$moon) {
 			throw new Exception('Не удалось создать луну');
 		}
 
-		return Planet::find($planetId);
+		return $moon;
 	}
 
 	protected function getCreatedNotificationTitle(): ?string

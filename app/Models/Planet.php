@@ -29,7 +29,7 @@ class Planet extends Model
 
 	public $planet_updated = false;
 	public $energy_used;
-	public $energy_max = 0;
+	public $energy = 0;
 
 	private $production;
 
@@ -195,7 +195,7 @@ class Planet extends Model
 				->whereNull('p.destruyed_at')
 				->orderByDesc('pe.amount')
 				->limit($this->user->getTechLevel('intergalactic'))
-				->pluck('level');
+				->pluck('pe.amount');
 
 			foreach ($items as $item) {
 				$list[] = (int) $item;

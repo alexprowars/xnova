@@ -2,6 +2,7 @@
 
 namespace App\Engine\Entity;
 
+use App\Engine\Game;
 use App\Engine\Vars;
 
 class Research extends Entity
@@ -35,8 +36,11 @@ class Research extends Entity
 			$lablevel = $this->planet->getLevel('laboratory');
 		}
 
-		$time  = parent::getTime();
-		$time /= ($lablevel + 1) * 2;
+		$cost = $this->getBasePrice();
+		$cost = $cost['metal'] + $cost['crystal'];
+
+		$time = 3600 * ($cost) / (1000 * (1.0 + $lablevel));
+		$time /= Game::getSpeed('build');
 		$time *= $this->planet->user->bonus('time_research');
 
 		return (int) max(1, $time);

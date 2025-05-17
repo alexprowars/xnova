@@ -7,6 +7,7 @@ use App\Exceptions\Exception;
 use App\Facades\Galaxy;
 use App\Filament\Resources\PlanetResource;
 use App\Models\Planet;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -46,17 +47,17 @@ class CreatePlanet extends CreateRecord
 
 	protected function handleRecordCreation(array $data): Planet
 	{
-		$planetId = Galaxy::createPlanet(
+		$planet = Galaxy::createPlanet(
 			new Coordinates($data['galaxy'], $data['system'], $data['planet']),
-			$data['user_id'],
+			User::findOne($data['user_id']),
 			$data['name']
 		);
 
-		if (!$planetId) {
+		if (!$planet) {
 			throw new Exception('Не удалось создать планету');
 		}
 
-		return Planet::find($planetId);
+		return $planet;
 	}
 
 	protected function getCreatedNotificationTitle(): ?string

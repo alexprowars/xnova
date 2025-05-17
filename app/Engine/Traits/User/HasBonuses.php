@@ -81,13 +81,13 @@ trait HasBonuses
 		return true;
 	}
 
-	public function bonus($key, $default = false)
+	public function bonus($key, $default = null): float
 	{
 		if (!$this->bonusData) {
 			$this->fillBobusData();
 		}
 
-		return $this->bonusData[$key] ?? ($default !== false ? $default : 1);
+		return $this->bonusData[$key] ?? ($default ?? 1.0);
 	}
 
 	public function setBonus($key, $value)

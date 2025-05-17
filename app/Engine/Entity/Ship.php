@@ -18,7 +18,7 @@ class Ship extends Unit
 	{
 		$shipData = Vars::getUnitData($this->entityId);
 
-		return (int) ceil($shipData['consumption'] * $this->planet->user->bonus('fleet_fuel'));
+		return (int) floor($shipData['consumption'] * $this->planet->user->bonus('fleet_fuel'));
 	}
 
 	public function getSpeed(): int

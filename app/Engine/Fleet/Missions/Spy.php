@@ -219,7 +219,7 @@ class Spy extends BaseMission
 			$String .= '<th width="25%">Кристалл:</th><th width="25%">' . Format::number($TargetPlanet->crystal) . '</th>';
 			$String .= '</tr><tr>';
 			$String .= '<th width="25%">Дейтерий:</th><th width="25%">' . Format::number($TargetPlanet->deuterium) . '</th>';
-			$String .= '<th width="25%">Энергия:</th><th width="25%">' . Format::number($TargetPlanet->energy_max) . '</th>';
+			$String .= '<th width="25%">Энергия:</th><th width="25%">' . Format::number($TargetPlanet->energy) . '</th>';
 			$String .= '</tr>';
 			$LookAtLoop = false;
 		} elseif ($Mode == 1) {

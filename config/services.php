@@ -16,4 +16,8 @@ return [
 		'client_secret' => env('GG_CLIENT_SECRET'),
 		'redirect' => env('GG_REDIRECT')
 	],
+	'recaptcha' => [
+		'public_key' => env('RECAPTCHA_PUBLIC_KEY'),
+		'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+	],
 ];

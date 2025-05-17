@@ -109,19 +109,19 @@ $requeriments = [
 	106 => [31 => 3],
 	108 => [31 => 1],
 	109 => [31 => 4],
-	110 => [113 => 3, 31 => 6],
+	110 => [31 => 6, 113 => 3],
 	111 => [31 => 2],
 	113 => [31 => 1],
-	114 => [113 => 5, 110 => 5, 31 => 7],
-	115 => [113 => 1, 31 => 1],
+	114 => [31 => 7, 110 => 5, 113 => 5],
+	115 => [31 => 1, 113 => 1],
 	117 => [113 => 1, 31 => 2],
 	118 => [114 => 3, 31 => 7],
 	120 => [31 => 1, 113 => 2],
-	121 => [31 => 4, 120 => 5, 113 => 4],
+	121 => [31 => 4, 113 => 4, 120 => 5],
 	122 => [31 => 5, 113 => 8, 120 => 10, 121 => 5],
 	123 => [31 => 10, 108 => 8, 114 => 8],
 	124 => [31 => 3, 108 => 4, 117 => 3],
-	150 => [31 => 3, 113 => 5, 111 => 2],
+	150 => [31 => 3, 111 => 2, 113 => 5],
 	161 => [31 => 11],
 	199 => [31 => 12],
 
@@ -132,30 +132,30 @@ $requeriments = [
 	206 => [21 => 5, 117 => 4, 121 => 2],
 	207 => [21 => 7, 118 => 4],
 	208 => [21 => 4, 117 => 3, 150 => 1],
-	209 => [21 => 4, 115 => 6, 110 => 2],
-	210 => [21 => 3, 115 => 3, 106 => 2],
-	211 => [117 => 6, 21 => 8, 122 => 5],
+	209 => [21 => 4, 110 => 2, 115 => 6],
+	210 => [21 => 3, 106 => 2, 115 => 3],
+	211 => [21 => 8, 117 => 6, 122 => 5],
 	212 => [21 => 1],
-	213 => [21 => 9, 118 => 6, 114 => 5],
-	214 => [21 => 12, 199 => 1, 118 => 7, 114 => 6],
-	215 => [21 => 8, 114 => 5, 120 => 12, 118 => 5],
-	216 => [21 => 8, 161 => 1, 118 => 6],
+	213 => [21 => 9, 114 => 5, 118 => 6],
+	214 => [21 => 12, 114 => 6, 118 => 7, 199 => 1],
+	215 => [21 => 8, 114 => 5, 118 => 5, 120 => 12],
+	216 => [21 => 8, 118 => 6, 161 => 1],
 
-	220 => [21 => 5, 117 => 4, 109 => 4, 113 => 4, 700 => 1],
-	221 => [21 => 4, 117 => 3, 111 => 5, 700 => 2],
+	220 => [21 => 5, 109 => 4, 113 => 4, 117 => 4, 700 => 1],
+	221 => [21 => 4, 111 => 5, 117 => 3, 700 => 2],
 	222 => [21 => 8, 114 => 4, 118 => 5, 700 => 3],
 	223 => [21 => 5, 111 => 5, 117 => 3, 700 => 4],
 
 	401 => [21 => 1],
-	402 => [113 => 1, 21 => 2, 120 => 3],
-	403 => [113 => 3, 21 => 4, 120 => 6],
-	404 => [21 => 6, 113 => 6, 109 => 3, 110 => 1],
+	402 => [21 => 2, 113 => 1, 120 => 3],
+	403 => [21 => 4, 113 => 3, 120 => 6],
+	404 => [21 => 6, 109 => 3, 110 => 1, 113 => 6],
 	405 => [21 => 4, 121 => 4],
 	406 => [21 => 8, 122 => 7],
 	407 => [110 => 2, 21 => 1],
 	408 => [110 => 6, 21 => 6],
-	502 => [44 => 2, 21 => 1],
-	503 => [44 => 4, 21 => 1, 117 => 1],
+	502 => [21 => 1, 44 => 2],
+	503 => [21 => 1, 44 => 4, 117 => 1],
 ];
 
 $pricelist = [
@@ -313,7 +313,7 @@ $CombatCaps = [
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 1,
-		'sd' => [204 => 6, 401 => 10, 210 => 5, 212 => 5]
+		'sd' => [204 => 6, 210 => 5, 212 => 5, 401 => 10]
 	],
 	// Линкор
 	207 => [
@@ -418,7 +418,7 @@ $CombatCaps = [
 		'stay' => 0.1,
 		'type_gun' => 2,
 		'type_armour' => 4,
-		'sd' => [210 => 1250, 212 => 1250, 202 => 250, 203 => 250, 208 => 250, 209 => 250, 204 => 200, 205 => 100, 206 => 33, 207 => 30, 211 => 25, 215 => 15, 213 => 5, 220 => 10, 221 => 10, 222 => 10, 223 => 10, 401 => 200, 402 => 200, 403 => 100, 404 =>  50, 405 => 100]
+		'sd' => [202 => 250, 203 => 250, 204 => 200, 205 => 100, 206 => 33, 207 => 30, 208 => 250, 209 => 250, 210 => 1250, 211 => 25, 212 => 1250, 213 => 5, 215 => 15, 220 => 10, 221 => 10, 222 => 10, 223 => 10, 401 => 200, 402 => 200, 403 => 100, 404 =>  50, 405 => 100]
 	],
 	// Линейный крейсер
 	215 => [
@@ -457,7 +457,7 @@ $CombatCaps = [
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 2,
-		'sd' => [210 => 5, 212 => 5, 2104 => 5, 205 => 4, 206 => 2]
+		'sd' => [204 => 5, 205 => 4, 206 => 2, 210 => 5, 212 => 5]
 	],
 	// Перехватчик
 	221 => [
@@ -483,7 +483,7 @@ $CombatCaps = [
 		'stay' => 30,
 		'type_gun' => 2,
 		'type_armour' => 2,
-		'sd' => [210 => 5, 212 => 5, 206 => 2, 207 => 5, 401 => 2, 402 => 2]
+		'sd' => [206 => 2, 207 => 5, 210 => 5, 212 => 5, 401 => 2, 402 => 2]
 	],
 	// Корсар
 	223 => [
@@ -572,26 +572,26 @@ $CombatCaps = [
 
 $ProdGrid = [
 	1 => [
-		'metal' => fn($BuildLevel, $BuildLevelFactor) => (30 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
-		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'metal' => fn($level, $factor) => 30 * $level * (1.1 ** $level) * (0.1 * $factor),
+		'energy' => fn($level, $factor) => -floor(10 * $level * (1.1 ** $level) * (0.1 * $factor)),
 	],
 	2 => [
-		'crystal' => fn($BuildLevel, $BuildLevelFactor) => (20 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
-		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'crystal' => fn($level, $factor) => 20 * $level * (1.1 ** $level) * (0.1 * $factor),
+		'energy' => fn($level, $factor) => -floor(10 * $level * (1.1 ** $level) * (0.1 * $factor)),
 	],
 	3 => [
-		'deuterium' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => ((10 * $BuildLevel * (1.1 ** $BuildLevel)) * (-0.002 * $planet->temp_max + 1.28)) * (0.1 * $BuildLevelFactor),
-		'energy' => fn($BuildLevel, $BuildLevelFactor) => -(30 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
+		'deuterium' => fn($level, $factor, Planet $planet) => (10 * $level * (1.1 ** $level) * (-0.004 * $planet->temp_max + 1.44)) * (0.1 * $factor),
+		'energy' => fn($level, $factor) => -floor(20 * $level * (1.1 ** $level) * (0.1 * $factor)),
 	],
 	4 => [
-		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => (20 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor) * (1 + $planet->user->getTechLevel('energy') * 0.02),
+		'energy' => fn($level, $factor, Planet $planet) => 20 * $level * (1.1 ** $level) * (0.1 * $factor),
 	],
 	12 => [
-		'deuterium' => fn($BuildLevel, $BuildLevelFactor) => -(10 * $BuildLevel * (1.1 ** $BuildLevel)) * (0.1 * $BuildLevelFactor),
-		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => (40 * $BuildLevel * (1.05 ** $BuildLevel)) * (0.1 * $BuildLevelFactor)  * (1 + $planet->user->getTechLevel('energy') * 0.02),
+		'deuterium' => fn($level, $factor) => -floor(10 * $level * (1.1 ** $level) * (0.1 * $factor)),
+		'energy' => fn($level, $factor, Planet $planet) => 30 * $level * ((1.05 + $planet->user->getTechLevel('energy') * 0.01) ** $level) * (0.1 * $factor),
 	],
 	212 => [
-		'energy' => fn($BuildLevel, $BuildLevelFactor, Planet $planet) => floor(($planet->temp_max + 160) / 6) * $BuildLevel * (0.1 * $BuildLevelFactor),
+		'energy' => fn($level, $factor, Planet $planet) => floor(($planet->temp_max + 140) / 6) * $level * (0.1 * $factor),
 	]
 ];
 

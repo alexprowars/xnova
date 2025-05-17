@@ -10,8 +10,8 @@ return new class extends Migration {
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
 			$table->string('email', 50)->unique();
+			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password', 100)->nullable();
-			$table->rememberToken();
 			$table->string('username', 50)->nullable();
 			$table->timestamp('username_change')->nullable();
 			$table->tinyInteger('authlevel')->default(0);
@@ -57,7 +57,9 @@ return new class extends Migration {
 			$table->tinyInteger('chat')->default(0);
 			$table->text('about')->nullable();
 			$table->json('options')->nullable();
+			$table->rememberToken();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

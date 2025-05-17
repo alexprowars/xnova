@@ -6,7 +6,7 @@ use App\Events\FleetSended;
 
 class QuestsListeners
 {
-	public function handle(FleetSended $event): void
+	public function handleFleets(FleetSended $event): void
 	{
 		$quest = $event->fleet->user->quests()
 			->where('finish', false)

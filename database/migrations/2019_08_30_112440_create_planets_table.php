@@ -26,9 +26,9 @@ return new class extends Migration {
 			$table->smallInteger('field_max')->unsigned()->default(163);
 			$table->smallInteger('temp_min')->default(-17);
 			$table->smallInteger('temp_max')->default(23);
-			$table->bigInteger('metal')->default(500);
-			$table->bigInteger('crystal')->default(500);
-			$table->bigInteger('deuterium')->default(0);
+			$table->decimal('metal', 32, 4)->default(500);
+			$table->decimal('crystal', 32, 4)->default(500);
+			$table->decimal('deuterium', 32, 4)->default(0);
 			$table->timestamp('last_jump_time')->nullable();
 			$table->foreignId('moon_id')->nullable()->constrained('planets')->nullOnDelete();
 			$table->integer('debris_metal')->default(0);

@@ -2,6 +2,7 @@
 
 namespace App\Engine\Entity;
 
+use App\Engine\Game;
 use App\Engine\Resources;
 use App\Engine\Enums\Resources as ResourcesEnum;
 use App\Engine\Vars;
@@ -37,7 +38,7 @@ trait ProductionTrait
 			$return[$res] = 0;
 
 			if (isset($production[$res])) {
-				$return[$res] = floor(call_user_func($production[$res], $this->level, $factor, $planet) * config('game.resource_multiplier') * $user->bonus($res));
+				$return[$res] = floor(call_user_func($production[$res], $this->level, $factor, $planet) * Game::getSpeed('mine') * $user->bonus($res));
 			}
 		}
 

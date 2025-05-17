@@ -25,8 +25,8 @@ class Planet extends JsonResource
 			'temp_max' => $this->temp_max,
 			'resources' => [
 				'energy' => [
-					'value' => $this->energy_max - $this->energy_used,
-					'capacity' => $this->energy_max,
+					'value' => $this->energy - $this->energy_used,
+					'capacity' => $this->energy,
 					'basic' => (int) config('game.energy_basic_income', 0),
 				],
 			],

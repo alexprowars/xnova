@@ -49,65 +49,65 @@ class Galaxy
 			}
 		} while (!$this->isPositionFree(new Coordinates($galaxy, $system, $position)));
 
-		$planetId = $this->createPlanet(
+		$planetObj = $this->createPlanet(
 			new Coordinates($galaxy, $system, $position),
-			$user->id,
+			$user,
 			__('main.sys_plnt_defaultname'),
 			true
 		);
 
-		if ($planetId) {
+		if ($planetObj) {
 			$settings->lastSettedGalaxyPos = $galaxy;
 			$settings->lastSettedSystemPos = $system;
 			$settings->lastSettedPlanetPos = $planet;
 			$settings->save();
 
 			$user->update([
-				'planet_id' => $planetId,
-				'planet_current' => $planetId,
+				'planet_id' => $planetObj->id,
+				'planet_current' => $planetObj->id,
 				'galaxy' => $galaxy,
 				'system' => $system,
 				'planet' => $position
 			]);
 		}
 
-		return $planetId;
+		return $planetObj->id;
 	}
 
-	public function createPlanet(Coordinates $target, $userId, $title = '', $mainPlanet = false): ?int
+	public function createPlanet(Coordinates $target, User $user, ?string $title = null, bool $mainPlanet = false): ?Planet
 	{
 		if (!$this->isPositionFree($target)) {
 			return null;
 		}
 
-		$planet = $this->sizeRandomiser($target, $mainPlanet);
-
-		$planet->metal = config('game.baseMetalProduction');
-		$planet->crystal = config('game.baseCrystalProduction');
-		$planet->deuterium = config('game.baseDeuteriumProduction');
-
+		$planet = new Planet();
 		$planet->galaxy = $target->getGalaxy();
 		$planet->system = $target->getSystem();
 		$planet->planet = $target->getPlanet();
-
 		$planet->planet_type = PlanetType::PLANET;
 
 		if ($target->getType() == PlanetType::MILITARY_BASE) {
 			$planet->planet_type = PlanetType::MILITARY_BASE;
 		}
 
-		$planet->user_id = $userId;
+		$this->sizeRandomiser($planet, $mainPlanet);
+
+		$planet->metal = (int) config('game.baseMetalProduction');
+		$planet->crystal = (int) config('game.baseCrystalProduction');
+		$planet->deuterium = (int) config('game.baseDeuteriumProduction');
+
+		$planet->user()->associate($user);
 		$planet->last_update = now();
 		$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 		if ($planet->save()) {
-			return $planet->id;
+			return $planet;
 		}
 
 		return null;
 	}
 
-	public function createMoon(Coordinates $target, $userId, $chance): ?int
+	public function createMoon(Coordinates $target, User $user, $chance): ?Planet
 	{
 		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), PlanetType::PLANET));
 
@@ -121,12 +121,11 @@ class Galaxy
 
 			$moon = (new Planet([
 				'name' => __('main.sys_moon'),
-				'user_id' => $userId,
 				'galaxy' => $target->getGalaxy(),
 				'system' => $target->getSystem(),
 				'planet' => $target->getPlanet(),
 				'planet_type' => PlanetType::MOON,
-				'last_update' => time(),
+				'last_update' => now(),
 				'image' => 'mond',
 				'diameter' => $size,
 				'field_max' => 1,
@@ -134,13 +133,13 @@ class Galaxy
 				'temp_max' => $mintemp,
 			]));
 
-			$moon->save();
+			$moon->user()->associate($user);
 
-			if ($moon->id > 0) {
-				$planet->moon_id = $moon->id;
-				$planet->update();
+			if ($moon->save()) {
+				$planet->moon()->associate($moon);
+				$planet->save();
 
-				return $moon->id;
+				return $moon;
 			}
 		}
 
@@ -177,19 +176,17 @@ class Galaxy
 		return $result;
 	}
 
-	public function sizeRandomiser(Coordinates $target, $mainPlanet = false): Planet
+	public function sizeRandomiser(Planet $planet, $mainPlanet = false): Planet
 	{
-		/** @var array{int, array} $planetData */
+		/** @var array<int, array> $planetData */
 		$planetData = [];
 		require(resource_path('engine/planet.php'));
 
-		$position = $target->getPlanet();
-
-		$planet = new Planet();
+		$position = $planet->planet;
 
 		if ($mainPlanet) {
 			$planet->field_max = (int) config('game.initial_fields', 163);
-		} elseif ($target->getType() === PlanetType::MILITARY_BASE) {
+		} elseif ($planet->planet_type === PlanetType::MILITARY_BASE) {
 			$planet->field_max = (int) config('game.initial_base_fields', 10);
 		} else {
 			$planet->field_max = (int) floor($planetData[$position]['fields'] * (int) config('game.planetFactor', 1));
@@ -200,7 +197,7 @@ class Galaxy
 		$planet->temp_max = $planetData[$position]['temp'];
 		$planet->temp_min = $planet->temp_max - 40;
 
-		if ($target->getType() === PlanetType::MILITARY_BASE) {
+		if ($planet->planet_type === PlanetType::MILITARY_BASE) {
 			$planet->image = 'baseplanet01';
 		} else {
 			$imageNames = array_keys($planetData[$position]['image']);

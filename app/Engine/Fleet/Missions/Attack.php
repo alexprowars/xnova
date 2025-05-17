@@ -370,13 +370,13 @@ class Attack extends BaseMission
 		}
 
 		if (!$target->moon_id && $userChance && $userChance <= $moonChance) {
-			$planetId = Galaxy::createMoon(
+			$moon = Galaxy::createMoon(
 				$this->fleet->getDestinationCoordinates(),
-				$target->user_id,
+				$target->user,
 				$moonChance
 			);
 
-			if ($planetId) {
+			if ($moon) {
 				$GottenMoon = __('fleet_engine.sys_moonbuilt', [
 					'galaxy' => $this->fleet->end_galaxy,
 					'system' => $this->fleet->end_system,

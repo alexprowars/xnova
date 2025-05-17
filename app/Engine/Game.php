@@ -41,19 +41,19 @@ class Game
 		return $date->format($format);
 	}
 
-	public static function getSpeed($type = '')
+	public static function getSpeed(?string $type = null): float
 	{
 		if ($type == 'fleet') {
-			return (int) config('game.fleet_speed', 2500) / 2500;
+			return (float) config('game.fleet_speed', 1);
 		}
 		if ($type == 'mine') {
-			return (int) config('game.resource_multiplier', 1);
+			return (float) config('game.resource_multiplier', 1);
 		}
 		if ($type == 'build') {
-			return round((int) config('game.game_speed', 2500) / 2500, 1);
+			return (float) config('game.game_speed', 1);
 		}
 
-		return 1;
+		return 1.0;
 	}
 
 	public static function checkReferLink()

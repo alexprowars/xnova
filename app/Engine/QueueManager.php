@@ -344,8 +344,8 @@ class QueueManager
 					if ($cost['deuterium'] > $this->planet->deuterium) {
 						$message .= Format::number($cost['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
 					}
-					if (isset($cost['energy'], $this->planet->energy_max) && $cost['energy'] > $this->planet->energy_max) {
-						$message .= Format::number($cost['energy'] - $this->planet->energy_max) . ' энергии<br>';
+					if (isset($cost['energy'], $this->planet->energy) && $cost['energy'] > $this->planet->energy) {
+						$message .= Format::number($cost['energy'] - $this->planet->energy) . ' энергии<br>';
 					}
 				}
 

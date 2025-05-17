@@ -6,7 +6,7 @@ return [
 	'maxPlanets'              => env('GAME_MAX_PLANETS', 9),
 	'maxBuildingQueue'        => env('GAME_MAX_QUEUE', 1),
 	'maxBuildingFleets'       => 99999,
-	'maxGalaxyInWorld'        => env('GAME_MAX_GALAXY_IN_WORLD', 4),
+	'maxGalaxyInWorld'        => env('GAME_MAX_GALAXY_IN_WORLD', 9),
 	'maxSystemInGalaxy'       => env('GAME_MAX_SYSTEM_IN_WORLD', 499),
 	'maxPlanetInSystem'       => env('GAME_MAX_PLANET_IN_WORLD', 15),
 	'baseStorageSize'         => env('GAME_BASE_STORAGE_SIZE', 50000),
@@ -32,14 +32,14 @@ return [
 	// Время ухода в отпуск в днях
 	'vacationModeTime'        => env('GAME_VACATION_MODE_DAYS', 2),
 	// Базовое производство на планете
-	'metal_basic_income'      => env('GAME_PLANET_METAL_PRODUCTION', 20),
-	'crystal_basic_income'    => env('GAME_PLANET_CRYSTAL_PRODUCTION', 10),
+	'metal_basic_income'      => env('GAME_PLANET_METAL_PRODUCTION', 30),
+	'crystal_basic_income'    => env('GAME_PLANET_CRYSTAL_PRODUCTION', 15),
 	'deuterium_basic_income'  => env('GAME_PLANET_DEUTERIUM_PRODUCTION', 0),
 	'energy_basic_income'     => env('GAME_PLANET_ENERGY_PRODUCTION', 0),
-	// Скорость строительства и исследований /2500
-	'game_speed'              => 2500 * env('GAME_BASE_SPEED', 1),
-	// Скорость полётов /2500
-	'fleet_speed'             => 2500 * env('GAME_FLEET_SPEED', 1),
+	// Скорость строительства и исследований
+	'game_speed'              => env('GAME_BASE_SPEED', 1),
+	// Скорость полётов
+	'fleet_speed'             => env('GAME_FLEET_SPEED', 1),
 	// Скорость добычи ресурсов
 	'resource_multiplier'     => env('GAME_RESOURCE_SPEED', 1),
 	// Множитель размера колонизируемых планет
@@ -70,15 +70,5 @@ return [
 		'research'  => env('GAME_LOG_RESEARCH', 1),
 		'buildings' => env('GAME_LOG_BUILDINGS', 1),
 		'factory'   => env('GAME_LOG_FACTORY', 1),
-	],
-	'sms' => [
-		'id' => '',
-		'login' => '',
-		'password' => '',
-		'from' => '',
-	],
-	'recaptcha' => [
-		'public_key' => env('RECAPTCHA_PUBLIC_KEY', ''),
-		'secret_key' => env('RECAPTCHA_SECRET_KEY', ''),
 	],
 ];

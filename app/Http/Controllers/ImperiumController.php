@@ -74,8 +74,8 @@ class ImperiumController extends Controller
 			$row['factor'] = [];
 
 			$row['resources']['energy'] = [
-				'value' => $planet->energy_max - abs($planet->energy_used),
-				'production' => $planet->energy_max,
+				'value' => $planet->energy - abs($planet->energy_used),
+				'production' => $planet->energy,
 			];
 
 			foreach (Vars::getResources() as $res) {

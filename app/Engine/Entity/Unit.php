@@ -19,7 +19,7 @@ class Unit extends Entity implements EntityUnitInterface
 
 	public function getMaxConstructible(): int
 	{
-		$max = 0;
+		$max = null;
 
 		$price = $this->getPrice();
 
@@ -30,13 +30,13 @@ class Unit extends Entity implements EntityUnitInterface
 
 			$count = (int) floor($this->planet->{$type} / $count);
 
-			$max = max($max, $count);
+			$max = min($max ?? $count, $count);
 		}
 
-		if (isset($price['max']) && $max > $price['max']) {
-			$max = (int) $price['max'];
+		if (isset($price['max'])) {
+			$max = min($max, $price['max']);
 		}
 
-		return $max;
+		return $max ?? 0;
 	}
 }

@@ -60,7 +60,7 @@ class FleetCollection extends Collection
 				return $total + (($item->getConsumption() * $item->getLevel()) * $distance / 35000 * ((($speed / 10) + 1) ** 2));
 			}, 0);
 
-		return ((int) round($consumption)) + 1;
+		return max((int) round($consumption), 1);
 	}
 
 	public function getStorage(): int

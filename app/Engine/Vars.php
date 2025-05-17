@@ -12,7 +12,7 @@ class Vars
 
 	public static function init()
 	{
-		require_once(resource_path('engine/main.php'));
+		require(resource_path('engine/main.php'));
 
 		/** @var array $resource */
 		/** @var array $requeriments */
