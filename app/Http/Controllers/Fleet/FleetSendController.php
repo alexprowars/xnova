@@ -17,6 +17,7 @@ use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class FleetSendController extends Controller
@@ -46,7 +47,7 @@ class FleetSendController extends Controller
 
 		$fleetSpeedFactor = $request->post('speed', 10);
 
-		$fleetArray = json_decode(base64_decode(str_rot13($request->post('fleet', ''))), true) ?? [];
+		$fleetArray = Crypt::decrypt($request->post('fleet', '')) ?: [];
 
 		$target = new Coordinates($galaxy, $system, $planet, $planetType);
 
@@ -75,9 +76,7 @@ class FleetSendController extends Controller
 
 			if ($assault && $assault->coordinates->isSame($target)) {
 				$sender->setAssault($assault);
-			}
-
-			if (!$assault) {
+			} else {
 				$sender->setMission(Mission::Attack);
 			}
 		}
@@ -96,23 +95,6 @@ class FleetSendController extends Controller
 		$duration = $fleetCollection->getDuration($fleetSpeedFactor, $distance);
 
 		$consumption = $fleetCollection->getConsumption($duration, $distance);
-
-		$tutorial = $this->user->quests()
-			->where('finish', false)->where('stage', 0)
-			->first();
-
-		if ($tutorial) {
-			$quest = require resource_path('engine/tutorial.php');
-			$quest = $quest[$tutorial->quest_id] ?? null;
-
-			if ($quest) {
-				foreach ($quest['task'] as $taskKey => $taskVal) {
-					if ($taskKey == 'fleet_mission' && $taskVal == $fleetMission) {
-						$tutorial->update(['stage' => 1]);
-					}
-				}
-			}
-		}
 
 		$result = [
 			'mission' => $fleetMission->value,

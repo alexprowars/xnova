@@ -54,7 +54,7 @@ class PhalanxController extends Controller
 		$this->planet->deuterium -= $consumption;
 		$this->planet->update();
 
-		$planetExist = Models\Planet::coordinates($target)
+		$planetExist = Models\Planet::query()->coordinates($target)
 			->exists();
 
 		if (!$planetExist) {

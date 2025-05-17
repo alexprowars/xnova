@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Exceptions\Exception;
 use App\Models\Alliance;
-use App\Models\AllianceMember;
 
 trait AllianceControllerTrait
 {
@@ -21,11 +20,10 @@ trait AllianceControllerTrait
 		$member = $alliance->getMember($this->user);
 
 		if (!$member) {
-			$member = new AllianceMember();
+			$member = $alliance->members()->make();
 			$member->user()->associate($this->user);
-			$member->save();
 
-			if ($member = $alliance->members()->save($member)) {
+			if ($member->save()) {
 				$alliance->member = $member;
 			}
 		}

@@ -34,7 +34,7 @@ class FleetQuickController extends Controller
 		$planetType = (int) $request->post('type', 0);
 		$planetType = PlanetType::tryFrom($planetType);
 
-		$target = Planet::coordinates(new Coordinates($galaxy, $system, $planet))
+		$target = Planet::query()->coordinates(new Coordinates($galaxy, $system, $planet))
 			->whereIn('planet_type', $planetType == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$planetType])
 			->first();
 
@@ -78,23 +78,6 @@ class FleetQuickController extends Controller
 			$fleet = DB::transaction(fn() => $sender->send());
 		} catch (PageException $e) {
 			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>', '/fleet');
-		}
-
-		$tutorial = $this->user->quests()
-			->where('finish', 0)->where('stage', 0)
-			->first();
-
-		if ($tutorial) {
-			$quest = require resource_path('engine/tutorial.php');
-			$quest = $quest[$tutorial->quest_id] ?? null;
-
-			if ($quest) {
-				foreach ($quest['task'] as $taskKey => $taskVal) {
-					if ($taskKey == 'fleet_mission' && $taskVal == $mission) {
-						$tutorial->update(['stage' => 1]);
-					}
-				}
-			}
 		}
 
 		return [

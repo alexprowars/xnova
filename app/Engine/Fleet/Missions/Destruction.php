@@ -110,7 +110,7 @@ class Destruction extends BaseMission
 					$debree = $this->convertFleetToDebris($fleetData);
 
 					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
-						Models\Planet::coordinates($this->fleet->getDestinationCoordinates(false))
+						Models\Planet::query()->coordinates($this->fleet->getDestinationCoordinates(false))
 							->whereNot('planet_type', PlanetType::MOON)
 							->incrementEach([
 								'debris_metal' => $debree['metal'],

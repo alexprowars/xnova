@@ -273,7 +273,7 @@ class Attack extends BaseMission
 		$totalDebree = $result['debree']['def'][0] + $result['debree']['def'][1] + $result['debree']['att'][0] + $result['debree']['att'][1];
 
 		if ($totalDebree > 0) {
-			Planet::coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
+			Planet::query()->coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
 				->whereNot('planet_type', PlanetType::MOON)
 				->incrementEach([
 					'debris_metal' => $result['debree']['att'][0] + $result['debree']['def'][0],

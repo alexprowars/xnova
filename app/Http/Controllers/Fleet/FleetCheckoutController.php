@@ -15,6 +15,7 @@ use App\Models\Assault;
 use App\Models\Planet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
 
 class FleetCheckoutController extends Controller
 {
@@ -72,7 +73,7 @@ class FleetCheckoutController extends Controller
 
 		$target = new Coordinates($galaxy, $system, $planet, $type);
 
-		$parse['fleet'] = str_rot13(base64_encode(json_encode($fleets)));
+		$parse['fleet'] = Crypt::encrypt($fleets);
 		$parse['target'] = $target->toArray();
 		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
 		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');

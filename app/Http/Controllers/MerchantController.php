@@ -72,7 +72,7 @@ class MerchantController extends Controller
 
 		$tutorial = $this->user->quests()
 			->where('quest_id', 6)
-			->where('finish', 0)
+			->where('finish', false)
 			->where('stage', 0)
 			->first();
 

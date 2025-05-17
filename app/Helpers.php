@@ -6,15 +6,6 @@ use Illuminate\Support\Facades\URL;
 
 class Helpers
 {
-	public static function translite($st)
-	{
-		$st = strtr($st, 'абвгдезийклмнопрстуфх', 'abvgdezijklmnoprstufx');
-		$st = strtr($st, 'АБВГДЕЗИЙКЛМНОПРСТУФХ', 'ABVGDEZIJKLMNOPRSTUFX');
-		$st = strtr($st, ['ё' => 'yo', 'ж' => 'zh', 'ц' => 'cz', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shh', 'ъ' => '``', 'ы' => 'y`', 'ь' => '`', 'э' => 'e`', 'ю' => 'yu', 'я' => 'ya', 'Ё' => 'YO', 'Ж' => 'ZH', 'Ц' => 'CZ', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SHH', 'Ъ' => '``', 'Ы' => 'Y`', 'Ь' => '`', 'Э' => 'E`', 'Ю' => 'YU', 'Я' => 'YA']);
-
-		return $st;
-	}
-
 	public static function checkString($str, $cut = false)
 	{
 		if ($cut) {
@@ -27,48 +18,6 @@ class Helpers
 	public static function is_email($email)
 	{
 		return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
-	}
-
-	public static function pagination($count, $per_page, $link, $page = 0)
-	{
-		if (!is_numeric($page)) {
-			return '';
-		}
-
-		$pages_count = @ceil($count / $per_page);
-
-		if ($page == 0 || $page > $pages_count) {
-			$page = 1;
-		}
-
-		$pages = '<div class="pagination pagination-sm">';
-		$end = 0;
-
-		if ($pages_count > 1) {
-			for ($i = 1; $i <= $pages_count; $i++) {
-				if (($page <= $i + 3 && $page >= $i - 3) || $i == 1 || $i == $pages_count || $pages_count <= 6) {
-					$end = 0;
-
-					if ($i == $page) {
-						$pages .= '<div class="page-item active"><a href="' . $link . (!str_contains($link, '?') ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
-					} else {
-						$pages .= '<div class="page-item"><a href="' . $link . (!str_contains($link, '?') ? '?' : '&') . 'p=' . $i . '" class="page-link">' . $i . '</a></div>';
-					}
-				} else {
-					if ($end == 0) {
-						$pages .= '<div class="page-item"><a href="javascript:;" class="page-link">... | </a></div>';
-					}
-
-					$end = 1;
-				}
-			}
-		} else {
-			$pages .= '<div class="page-item"><a href="javascript:;" class="page-link">1</a></div>';
-		}
-
-		$pages .= '</div>';
-
-		return $pages;
 	}
 
 	public static function buildPlanetAdressLink($CurrentPlanet)

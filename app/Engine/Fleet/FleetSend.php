@@ -5,6 +5,7 @@ namespace App\Engine\Fleet;
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Game;
+use App\Events\FleetSended;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Format;
@@ -30,7 +31,7 @@ class FleetSend
 
 	public function __construct(protected Coordinates $target, protected Planet $planet, protected Mission $mission)
 	{
-		$this->targetPlanet = Planet::coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
+		$this->targetPlanet = Planet::query()->coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
 			->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])
 			->first();
 	}
@@ -505,8 +506,9 @@ class FleetSend
 		$this->planet->metal 		-= $TransMetal;
 		$this->planet->crystal 		-= $TransCrystal;
 		$this->planet->deuterium 	-= $TransDeuterium + $consumption + $totalFleetCons;
-
 		$this->planet->update();
+
+		event(new FleetSended($fleet));
 
 		return $fleet;
 	}

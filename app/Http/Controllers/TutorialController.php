@@ -83,7 +83,7 @@ class TutorialController extends Controller
 		if (!$qInfo) {
 			$qInfo = $this->user->quests()->create([
 				'quest_id' 	=> $id,
-				'finish' 	=> 0,
+				'finish' 	=> false,
 				'stage' 	=> 0,
 			]);
 		}

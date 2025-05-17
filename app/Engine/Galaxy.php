@@ -153,7 +153,7 @@ class Galaxy
 			return false;
 		}
 
-		return !Planet::coordinates($target)->exists();
+		return !Planet::query()->coordinates($target)->exists();
 	}
 
 	public function getFreePositions(Coordinates $target, $startPosition, $endPosition): array
