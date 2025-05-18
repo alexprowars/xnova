@@ -10,8 +10,8 @@ return new class extends Migration {
 		Schema::create('chat', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+			$table->timestamp('date')->useCurrent();
 			$table->text('message');
-			$table->timestamps();
 		});
 	}
 

@@ -49,17 +49,18 @@ class ChatController extends Controller
 	public function last()
 	{
 		$items = Chat::query()
+			->with(['user'])
 			->orderByDesc('id')
 			->limit(30);
 
 		$lastMessage = Chat::query()
 			->orderByDesc('id')
-			->first(['id'])->id ?? 0;
+			->value('id') ?? 0;
 
 		if ($lastMessage) {
 			$items->where(function ($query) use ($lastMessage) {
 				$query->where('id', '>=', $lastMessage - 30)
-					->orWhere('created_at', '>', Carbon::now()->subMinutes(30));
+					->orWhere('date', '>', Carbon::now()->subMinutes(30));
 			});
 		}
 

@@ -56,28 +56,28 @@ class ChatMessage extends JsonResource
 
 		$result = [
 			'id' => $this->id,
-			'time' => $this->created_at?->utc()->toAtomString(),
+			'date' => $this->date->utc()->toAtomString(),
 			'user' => $this->user->username ?? '',
 			'tou' => $users,
 			'toi' => $receiversId,
 			'text' => $message,
-			'private' => $isPrivate > 0 ? 1 : 0,
-			'me' => -1,
-			'my' => -1,
+			'private' => $isPrivate > 0,
+			'me' => null,
+			'my' => null,
 		];
 
 		$user = Auth::user();
 
 		if ($user) {
 			if (!$isPrivate && count($receiversId)) {
-				$result['me'] = in_array($user->id, $receiversId) ? 1 : 0;
-				$result['my'] = $this->user_id === $user->id ? 1 : 0;
+				$result['me'] = in_array($user->id, $receiversId);
+				$result['my'] = $this->user_id === $user->id;
 			} elseif ($isPrivate && count($receiversId) && ($this->user_id === $user->id || in_array($user->id, $receiversId))) {
-				$result['me'] = $this->user_id === $user->id ? 0 : 1;
-				$result['my'] = $result['me'] ? 0 : 1;
+				$result['me'] = $this->user_id !== $user->id;
+				$result['my'] = !$result['me'];
 			} elseif (!count($receiversId)) {
 				$result['me'] = 0;
-				$result['my'] = $this->user_id === $user->id ? 1 : 0;
+				$result['my'] = $this->user_id === $user->id;
 			}
 		}
 
