@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Referal;
-use Illuminate\Support\Facades\DB;
 
 class RefersController extends Controller
 {
 	public function index()
 	{
 		$referals = Referal::query()
-			->where('u_id', $this->user->id)
-			->orderByDesc('r_id')
+			->whereBelongsTo($this->user, 'user')
+			->orderByDesc('referal_id')
 			->with('referal')
 			->get();
 
@@ -27,10 +26,16 @@ class RefersController extends Controller
 			];
 		}
 
-		$refers = DB::selectOne("SELECT u.id, u.username FROM referals r LEFT JOIN users u ON u.id = r.u_id WHERE r.r_id = " . $this->user->id . "");
+		$refers = Referal::query()
+			->whereBelongsTo($this->user, 'referal')
+			->with('user')
+			->first();
 
 		if ($refers) {
-			$parse['you'] = (array) $refers;
+			$parse['you'] = [
+				'id' => $refers->user->id,
+				'username' => $refers->user->username,
+			];
 		}
 
 		return $parse;

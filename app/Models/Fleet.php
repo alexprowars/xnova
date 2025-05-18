@@ -128,14 +128,20 @@ class Fleet extends Model
 		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $withType ? $this->end_type : null);
 	}
 
-	public function scopeCoordinates(Builder $query, FleetDirection $position, Coordinates $target)
+	/**
+	 * @param Builder<$this> $query
+	 * @param FleetDirection $position
+	 * @param Coordinates $target
+	 * @return Builder<$this>
+	 */
+	public function scopeCoordinates(Builder $query, FleetDirection $position, Coordinates $target): Builder
 	{
-		$query->where($position->value . '_galaxy', $target->getGalaxy())
+		return $query->where($position->value . '_galaxy', $target->getGalaxy())
 			->where($position->value . '_system', $target->getSystem())
-			->where($position->value . '_planet', $target->getPlanet());
-
-		if ($target->getType()) {
-			$query->where($position->value . '_type', $target->getType());
-		}
+			->where($position->value . '_planet', $target->getPlanet())
+			->when(
+				$target->getType(),
+				fn(Builder $query) => $query->where($position->value . '_type', $target->getType())
+			);
 	}
 }

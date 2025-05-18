@@ -210,16 +210,16 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 			]);
 
 			$reffer = Referal::query()
-				->where('r_id', $this->id)
+				->whereBelongsTo($this, 'referal')
 				->first();
 
 			if ($reffer) {
-				static::query()->whereKey($reffer['u_id'])
-					->increment('credits', round($giveCredits / 2));
+				$credits = round($giveCredits / 2);
+				$reffer->user()->increment('credits', $credits);
 
 				LogCredit::create([
-					'user_id'	=> $reffer['u_id'],
-					'amount' 	=> round($giveCredits / 2),
+					'user_id'	=> $reffer->user_id,
+					'amount' 	=> $credits,
 					'type' 		=> 3,
 				]);
 			}
@@ -350,12 +350,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 			}
 
 			if (Session::has('ref')) {
-				$refer = self::query()->find((int) Session::get('ref'), ['id']);
+				$refer = User::query()->findOne((int) Session::get('ref'));
 
 				if ($refer) {
 					Referal::insert([
-						'r_id' => $user->id,
-						'u_id' => $refer->id,
+						'referal_id' => $user->id,
+						'user_id' => $refer->id,
 					]);
 				}
 			}

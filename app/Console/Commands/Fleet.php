@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Engine\Fleet\MissionFactory;
-use App\Engine\Vars;
 use App\Models;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,8 +21,6 @@ class Fleet extends Command
 				die('Server too busy. Please try again later.');
 			}
 		}
-
-		Vars::init();
 
 		define('MAX_RUNS', 12);
 		define('TIME_LIMIT', 60);

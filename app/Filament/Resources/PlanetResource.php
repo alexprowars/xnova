@@ -11,12 +11,20 @@ class PlanetResource extends Resource
 	protected static ?string $model = Planet::class;
 
 	protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
-	protected static ?string $navigationGroup = 'Игра';
-	protected static ?string $navigationLabel = 'Список планет';
 	protected static ?int $navigationSort = 60;
 	protected static ?string $modelLabel = 'Планета';
 	protected static ?string $pluralModelLabel = 'Планеты';
 	protected static ?string $recordTitleAttribute = 'name';
+
+	public static function getNavigationGroup(): string
+	{
+		return __('admin.navigation.groups.game');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.planets');
+	}
 
 	public static function getPages(): array
 	{

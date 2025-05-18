@@ -30,7 +30,8 @@ class CreatePayment extends CreateRecord
 				Select::make('user_id')
 					->label('Игрок')
 					->relationship('user', 'username')
-					->searchable(),
+					->native(false)
+					->searchable(['id', 'username', 'email']),
 				TextInput::make('amount')
 					->label('Сумма')
 					->integer(),

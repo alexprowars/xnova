@@ -8,6 +8,7 @@ use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
+use App\Facades\Vars;
 use App\Format;
 use App\Helpers;
 use App\Models;
@@ -466,12 +467,10 @@ class QueueManager
 					} else {
 						$missilesSpace -= $item->level;
 					}
+				} elseif ($item->level > floor($missilesSpace / 2)) {
+					$item->level = floor($missilesSpace / 2);
 				} else {
-					if ($item->level > floor($missilesSpace / 2)) {
-						$item->level = floor($missilesSpace / 2);
-					} else {
-						$missilesSpace -= $item->level;
-					}
+					$missilesSpace -= $item->level;
 				}
 			}
 

@@ -7,7 +7,7 @@ use App\Engine\Entity;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models;
 use App\Models\LogHistory;
 

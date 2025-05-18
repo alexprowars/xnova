@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models\Fleet;
 use App\Models\Planet;
 

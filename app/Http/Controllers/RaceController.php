@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\LogCredit;

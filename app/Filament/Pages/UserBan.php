@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models\Blocked;
 use App\Models\PlanetEntity;
 use App\Models\User;
@@ -26,8 +26,6 @@ class UserBan extends Page
 	use InteractsWithFormActions;
 
 	protected static ?string $navigationIcon = 'heroicon-o-user-minus';
-	protected static ?string $navigationLabel = 'Заблокировать';
-	protected static ?string $navigationGroup = 'Администрирование';
 	protected static ?int $navigationSort = 20;
 	protected static ?string $slug = 'ban';
 	protected static ?string $title = 'Заблокировать пользователя';
@@ -41,27 +39,38 @@ class UserBan extends Page
 	public ?string $mins = '';
 	public bool $vacation = false;
 
-	protected function getFormSchema(): array
+	public static function getNavigationGroup(): string
 	{
-		return [
-			TextInput::make('username')
-				->label('Логин/email игрока')
-				->required()
-				->maxLength(50),
-			TextInput::make('reason')
-				->label('Причина')
-				->maxLength(50),
-			Fieldset::make('Время бана')
-				->schema([
-					TextInput::make('days')->integer()->label('дней'),
-					TextInput::make('hour')->integer()->label('часов'),
-					TextInput::make('mins')->integer()->label('минут'),
-				])
-				->columns(3),
-			Checkbox::make('vacation')
-				->label('Режим отпуска')
-				->default(false),
-		];
+		return __('admin.navigation.groups.management');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.user_ban');
+	}
+
+	public function form(Form $form): Form
+	{
+		return $form
+			->schema([
+				TextInput::make('username')
+					->label('Логин/email игрока')
+					->required()
+					->maxLength(50),
+				TextInput::make('reason')
+					->label('Причина')
+					->maxLength(50),
+				Fieldset::make('Время бана')
+					->schema([
+						TextInput::make('days')->integer()->label('дней'),
+						TextInput::make('hour')->integer()->label('часов'),
+						TextInput::make('mins')->integer()->label('минут'),
+					])
+					->columns(3),
+				Checkbox::make('vacation')
+					->label('Режим отпуска')
+					->default(false),
+			]);
 	}
 
 	public function getFormActions(): array

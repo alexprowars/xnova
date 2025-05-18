@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Fleet;
 use App\Engine\Game;
-use App\Engine\Vars;
 use App\Exceptions\RedirectException;
 use App\Models\Planet;
 use App\Models\User;
@@ -31,8 +30,6 @@ class Controller extends BaseController
 	private function init()
 	{
 		$request = Request::instance();
-
-		Vars::init();
 
 		if (!Auth::check()) {
 			Game::checkReferLink();

@@ -7,7 +7,7 @@ use App\Engine\Entity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use Illuminate\Http\Request;
 
 class BuildingsController extends Controller

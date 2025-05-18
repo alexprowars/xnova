@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\PlanetResource\Pages;
 
 use App\Filament\Resources\PlanetResource;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
@@ -56,11 +55,11 @@ class ListPlanets extends ListRecords
 					->sortable(),
 				TextColumn::make('last_update')
 					->label('Время обновления')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->sortable(),
 				TextColumn::make('last_active')
 					->label('Активность')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->sortable(),
 				TextColumn::make('metal')
 					->label('Металл')
@@ -87,12 +86,14 @@ class ListPlanets extends ListRecords
 				SelectFilter::make('user_id')
 					->label('Игрок')
 					->relationship('user', 'username')
-					->getSearchResultsUsing(fn (string $search) => User::query()->where('username', 'like', "%{$search}%")->orWhere('id', (int) $search)->limit(50)->pluck('username', 'id')->toArray())
-					->searchable()
+					->native(false)
+					->searchable(['id', 'username', 'email']),
 			])
 			->actions([
-				Tables\Actions\ViewAction::make(),
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\ViewAction::make()
+					->iconButton(),
+				Tables\Actions\EditAction::make()
+					->iconButton(),
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([

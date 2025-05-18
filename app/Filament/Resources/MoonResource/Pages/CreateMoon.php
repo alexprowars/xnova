@@ -8,6 +8,7 @@ use App\Facades\Galaxy;
 use App\Filament\Resources\MoonResource;
 use App\Models\Planet;
 use App\Models\User;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -23,28 +24,33 @@ class CreateMoon extends CreateRecord
 		return $form
 			->columns(1)
 			->schema([
-				Select::make('user_id')
-					->label('Игрок')
-					->relationship('user', 'username'),
-				TextInput::make('galaxy')
-					->label('Галактика')
-					->integer()
-					->required(),
-				TextInput::make('system')
-					->label('Система')
-					->required()
-					->integer(),
-				TextInput::make('planet')
-					->label('Планета')
-					->integer()
-					->required(),
-				TextInput::make('diameter')
-					->label('Диаметр')
-					->integer()
-					->required()
-					->default(1)
-					->minValue(1)
-					->maxValue(20),
+				Section::make()
+					->schema([
+						Select::make('user_id')
+							->label('Игрок')
+							->relationship('user', 'username')
+							->native(false)
+							->searchable(['id', 'username', 'email']),
+						TextInput::make('galaxy')
+							->label('Галактика')
+							->integer()
+							->required(),
+						TextInput::make('system')
+							->label('Система')
+							->required()
+							->integer(),
+						TextInput::make('planet')
+							->label('Планета')
+							->integer()
+							->required(),
+						TextInput::make('diameter')
+							->label('Диаметр')
+							->integer()
+							->required()
+							->default(1)
+							->minValue(1)
+							->maxValue(20),
+					]),
 			]);
 	}
 

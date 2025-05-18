@@ -8,7 +8,7 @@ use Filament\Pages\Page;
 
 class Dashboard extends Page
 {
-	protected static ?string $navigationIcon = 'heroicon-o-home';
+	protected static ?string $navigationIcon = 'lucide-house';
 	protected static ?int $navigationSort = 10;
 	protected static ?string $slug = 'dashboard';
 
@@ -16,12 +16,12 @@ class Dashboard extends Page
 
 	public static function getNavigationLabel(): string
 	{
-		return 'Панель управления';
+		return __('admin.navigation.pages.dashboard');
 	}
 
 	public function getTitle(): string
 	{
-		return 'Панель управления';
+		return __('admin.navigation.pages.dashboard');
 	}
 
 	public function getWidgets(): array

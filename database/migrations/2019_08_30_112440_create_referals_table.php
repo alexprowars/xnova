@@ -9,8 +9,9 @@ return new class extends Migration {
 	{
 		Schema::create('referals', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('r_id')->constrained('users')->cascadeOnDelete();
-			$table->foreignId('u_id')->constrained('users')->cascadeOnDelete();
+			$table->timestamp('date')->useCurrent();
+			$table->foreignId('referal_id')->constrained('users')->cascadeOnDelete();
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 		});
 	}
 

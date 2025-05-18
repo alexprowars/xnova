@@ -4,16 +4,16 @@
 namespace App\Http\Controllers;
 
 use App\Engine\BattleReport;
-use App\Engine\CombatEngine\Core\Battle;
-use App\Engine\CombatEngine\Core\Round;
-use App\Engine\CombatEngine\Models\Defense;
-use App\Engine\CombatEngine\Models\Fleet;
-use App\Engine\CombatEngine\Models\Player;
-use App\Engine\CombatEngine\Models\PlayerGroup;
-use App\Engine\CombatEngine\Models\Ship;
-use App\Engine\CombatEngine\Models\ShipType;
 use App\Engine\Enums\ItemType;
-use App\Engine\Vars;
+use App\Engine\Fleet\CombatEngine\Core\Battle;
+use App\Engine\Fleet\CombatEngine\Core\Round;
+use App\Engine\Fleet\CombatEngine\Models\Defense;
+use App\Engine\Fleet\CombatEngine\Models\Fleet;
+use App\Engine\Fleet\CombatEngine\Models\Player;
+use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
+use App\Engine\Fleet\CombatEngine\Models\Ship;
+use App\Engine\Fleet\CombatEngine\Models\ShipType;
+use App\Facades\Vars;
 use Illuminate\Support\Facades\Request;
 
 class XnsimController extends Controller
@@ -141,12 +141,12 @@ class XnsimController extends Controller
 				'username' => $_player->getName(),
 				'fleet' => [$_player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
 				'tech' => [
-					'military_tech' => isset($this->usersInfo[$_player->getId()][109]) ? $this->usersInfo[$_player->getId()][109] : 0,
-					'shield_tech' 	=> isset($this->usersInfo[$_player->getId()][110]) ? $this->usersInfo[$_player->getId()][110] : 0,
-					'defence_tech' 	=> isset($this->usersInfo[$_player->getId()][111]) ? $this->usersInfo[$_player->getId()][111] : 0,
-					'laser_tech'	=> isset($this->usersInfo[$_player->getId()][120]) ? $this->usersInfo[$_player->getId()][120] : 0,
-					'ionic_tech'	=> isset($this->usersInfo[$_player->getId()][121]) ? $this->usersInfo[$_player->getId()][121] : 0,
-					'buster_tech'	=> isset($this->usersInfo[$_player->getId()][122]) ? $this->usersInfo[$_player->getId()][122] : 0
+					'military_tech' => $this->usersInfo[$_player->getId()][109] ?? 0,
+					'shield_tech' 	=> $this->usersInfo[$_player->getId()][110] ?? 0,
+					'defence_tech' 	=> $this->usersInfo[$_player->getId()][111] ?? 0,
+					'laser_tech'	=> $this->usersInfo[$_player->getId()][120] ?? 0,
+					'ionic_tech'	=> $this->usersInfo[$_player->getId()][121] ?? 0,
+					'buster_tech'	=> $this->usersInfo[$_player->getId()][122] ?? 0
 				],
 				'flvl' => $this->usersInfo[$_player->getId()],
 			];

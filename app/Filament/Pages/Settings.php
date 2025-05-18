@@ -10,11 +10,22 @@ use Filament\Pages\SettingsPage;
 class Settings extends SettingsPage
 {
 	protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-	protected static ?string $navigationGroup = 'Настройки';
-	protected static ?string $navigationLabel = 'Настройки';
-	protected static ?string $title = 'Настройки';
-
 	protected static string $settings = \App\Settings::class;
+
+	public static function getNavigationGroup(): string
+	{
+		return __('admin.navigation.groups.settings');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.settings');
+	}
+
+	public function getTitle(): string
+	{
+		return __('admin.navigation.pages.settings');
+	}
 
 	public function form(Form $form): Form
 	{

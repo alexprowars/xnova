@@ -3,6 +3,7 @@
 namespace App\Engine;
 
 use App\Format;
+use App\Facades\Vars;
 use Illuminate\Support\Facades\URL;
 
 class BattleReport
@@ -123,7 +124,7 @@ class BattleReport
 							if ($round == 0) {
 								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "</th>";
 							} else {
-								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count));
 
 								if (ceil($this->result_array['rw'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
 									$raport2 .= " <small><font color='red'>-" . (ceil($this->result_array['rw'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count)) . "</font></small>";
@@ -190,7 +191,7 @@ class BattleReport
 							if ($round == 0) {
 								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "</th>";
 							} else {
-								$raport2 .= "<th>" . Format::number(ceil($ship_count)) . "";
+								$raport2 .= "<th>" . Format::number(ceil($ship_count));
 
 								if (ceil($this->result_array['rw'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
 									$raport2 .= " <small><font color='red'>-" . (ceil($this->result_array['rw'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count)) . "</font></small>";

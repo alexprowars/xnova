@@ -5,12 +5,11 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Format;
 use App\Models\Fleet;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
-use Illuminate\Support\Facades\DB;
 
 class Recycling extends BaseMission
 {

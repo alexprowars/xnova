@@ -3,7 +3,6 @@
 use App\Engine\Coordinates;
 use App\Engine\Enums\Resources;
 use App\Engine\Fleet\FleetCollection;
-use App\Engine\Vars;
 use App\Facades\Galaxy;
 use App\Models\User;
 use Tests\TestCase;
@@ -11,8 +10,6 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-	Vars::init();
-
 	$this->user = User::factory()->createOne();
 	$this->planet = Galaxy::createPlanet(new Coordinates(1, 1, 1), $this->user, null, true);
 });

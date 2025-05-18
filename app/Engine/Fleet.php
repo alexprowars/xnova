@@ -4,6 +4,7 @@ namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
 use App\Engine\Fleet\Mission;
+use App\Facades\Vars;
 use App\Format;
 use App\Models;
 use App\Models\User;

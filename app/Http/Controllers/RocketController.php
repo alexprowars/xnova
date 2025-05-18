@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\Planet;

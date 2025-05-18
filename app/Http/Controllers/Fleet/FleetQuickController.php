@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\Mission;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
@@ -71,7 +71,7 @@ class FleetQuickController extends Controller
 			throw new Exception('Такой миссии не существует!');
 		}
 
-		$sender = new FleetSend(new Coordinates($galaxy, $system, $planet, $planetType), $this->planet, $mission);
+		$sender = new FleetSend($this->planet, new Coordinates($galaxy, $system, $planet, $planetType), $mission);
 		$sender->setFleets($fleetArray);
 
 		try {

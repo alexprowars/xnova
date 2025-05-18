@@ -37,7 +37,8 @@ class ListContents extends ListRecords
 					->sortable(),
 			])
 			->actions([
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\EditAction::make()
+					->iconButton(),
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([

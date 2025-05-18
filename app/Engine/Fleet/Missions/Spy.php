@@ -7,7 +7,7 @@ use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Format;
 use App\Models\Fleet;
 use App\Models\Planet;

@@ -3,7 +3,7 @@
 namespace App\Engine\Fleet;
 
 use App\Engine\Enums\PlanetType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
 use App\Models\Planet;

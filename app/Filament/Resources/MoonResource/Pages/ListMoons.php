@@ -4,7 +4,6 @@ namespace App\Filament\Resources\MoonResource\Pages;
 
 use App\Engine\Enums\PlanetType;
 use App\Filament\Resources\MoonResource;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
@@ -57,18 +56,19 @@ class ListMoons extends ListRecords
 					->sortable(),
 				TextColumn::make('last_active')
 					->label('Активность')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->sortable(),
 			])
 			->filters([
 				SelectFilter::make('user_id')
 					->label('Игрок')
 					->relationship('user', 'username')
-					->getSearchResultsUsing(fn (string $search) => User::query()->where('username', 'like', "%{$search}%")->orWhere('id', (int) $search)->limit(50)->pluck('username', 'id')->toArray())
-					->searchable()
+					->native(false)
+					->searchable(['id', 'username', 'email'])
 			])
 			->actions([
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\EditAction::make()
+					->iconButton()
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([

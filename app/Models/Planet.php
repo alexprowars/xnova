@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -235,14 +235,19 @@ class Planet extends Model
 			->first();
 	}
 
-	public function scopeCoordinates(Builder $query, Coordinates $target): void
+	/**
+	 * @param Builder<$this> $query
+	 * @param Coordinates $target
+	 * @return Builder<$this>
+	 */
+	public function scopeCoordinates(Builder $query, Coordinates $target): Builder
 	{
-		$query->where('galaxy', $target->getGalaxy())
+		return $query->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())
-			->where('planet', $target->getPlanet());
-
-		if ($target->getType()) {
-			$query->where('planet_type', $target->getType());
-		}
+			->where('planet', $target->getPlanet())
+			->when(
+				$target->getType(),
+				fn(Builder $query) => $query->where('planet_type', $target->getType())
+			);
 	}
 }

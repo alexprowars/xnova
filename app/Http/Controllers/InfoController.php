@@ -6,7 +6,7 @@ use App\Engine\Entity\Ship;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\Resources;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models;
 use App\Models\Fleet;

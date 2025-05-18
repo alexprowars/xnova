@@ -23,28 +23,41 @@ class Mailing extends Page
 	use InteractsWithFormActions;
 
 	protected static ?string $navigationIcon = 'heroicon-o-envelope-open';
-	protected static ?string $navigationGroup = 'Игра';
-	protected static ?string $navigationLabel = 'Рассылка';
 	protected static ?int $navigationSort = 120;
 	protected static ?string $slug = 'mailing';
-	protected static ?string $title = 'Отправить сообщение всем игрокам';
 
 	protected static string $view = 'filament.pages.mailing';
 
 	public ?string $theme = '';
 	public ?string $message = '';
 
-	protected function getFormSchema(): array
+	public static function getNavigationGroup(): string
 	{
-		return [
-			TextInput::make('theme')
-				->label('Тема сообщения')
-				->maxLength(50),
-			Textarea::make('message')
-				->label('Сообщение')
-				->required()
-				->rows(10),
-		];
+		return __('admin.navigation.groups.game');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.mailing');
+	}
+
+	public function getTitle(): string
+	{
+		return 'Отправить сообщение всем игрокам';
+	}
+
+	public function form(Form $form): Form
+	{
+		return $form
+			->schema([
+				TextInput::make('theme')
+					->label('Тема сообщения')
+					->maxLength(50),
+				Textarea::make('message')
+					->label('Сообщение')
+					->required()
+					->rows(10),
+			]);
 	}
 
 	public function getFormActions(): array
@@ -67,7 +80,7 @@ class Mailing extends Page
 			$color = 'skyblue';
 		}
 
-		$users = User::query()->get(['id']);
+		$users = User::query()->pluck('id');
 
 		foreach ($users as $user) {
 			$user->notify(new MessageNotification(

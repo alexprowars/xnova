@@ -44,12 +44,14 @@ class ListUsers extends ListRecords
 					->formatStateUsing(fn ($state) => long2ip($state)),
 				TextColumn::make('created_at')
 					->label('Дата регистрации')
-					->dateTime('d.m.Y H:i:s'),
+					->dateTime(),
 			])
 			->filters([])
 			->actions([
-				Tables\Actions\ViewAction::make(),
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\ViewAction::make()
+					->iconButton(),
+				Tables\Actions\EditAction::make()
+					->iconButton(),
 			]);
 	}
 }

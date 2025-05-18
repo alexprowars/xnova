@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

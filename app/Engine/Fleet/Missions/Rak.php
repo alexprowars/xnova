@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\UserTech;
 use App\Notifications\MessageNotification;

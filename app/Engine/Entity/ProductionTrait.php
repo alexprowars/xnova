@@ -5,11 +5,8 @@ namespace App\Engine\Entity;
 use App\Engine\Game;
 use App\Engine\Resources;
 use App\Engine\Enums\Resources as ResourcesEnum;
-use App\Engine\Vars;
+use App\Facades\Vars;
 
-/**
- * @mixin Entity
- */
 trait ProductionTrait
 {
 	public function getProduction(?int $factor = null): Resources

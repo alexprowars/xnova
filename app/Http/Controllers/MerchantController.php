@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use Illuminate\Http\Request;
 

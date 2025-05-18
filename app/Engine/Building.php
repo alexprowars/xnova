@@ -2,9 +2,9 @@
 
 namespace App\Engine;
 
-use App\Engine\Contracts\EntityProductionInterface;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
+use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\User;
 

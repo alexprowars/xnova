@@ -1,6 +1,49 @@
 <?php
 
 return [
+	'navigation' => [
+		'groups' => [
+			'game' => 'Игра',
+			'management' => 'Администрирование',
+			'settings' => 'Настройки',
+		],
+		'pages' => [
+			'users' => 'Пользователи',
+			'roles' => 'Роли',
+			'planets' => 'Список планет',
+			'payments' => 'Финансы',
+			'moons' => 'Список лун',
+			'messages' => 'Сообщения',
+			'fleets' => 'Флоты в полёте',
+			'content' => 'Контент',
+			'alliances' => 'Список альянсов',
+			'user_ban' => 'Заблокировать',
+			'user_unban' => 'Разблокировать',
+			'support' => 'Техподдержка',
+			'settings' => 'Настройки',
+			'server' => 'Сервер',
+			'mailing' => 'Рассылка',
+			'dashboard' => 'Панель управления',
+		],
+	],
+	'roles' => [
+		'model' => 'Роль',
+		'model_plural' => 'Роли',
+		'create_title' => 'Создать роль',
+		'edit_title' => 'Редактировать роль',
+		'table' => [
+			'code' => 'Код',
+			'count' => 'Кол-во разрешений',
+			'guard' => 'Guard',
+		],
+		'form' => [
+			'code' => 'Код',
+			'guard' => 'Аутентификация (guard)',
+			'permissions' => 'Разрешения',
+		],
+		'list' => [],
+	],
+	'edit_profile' => 'Редактировать профиль',
 	'page_title' => [
 		'users_index' => 'Пользователи',
 		'users_edit' => 'Редактирование пользователя',

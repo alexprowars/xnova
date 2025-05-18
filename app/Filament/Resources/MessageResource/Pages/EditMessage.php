@@ -7,6 +7,7 @@ use App\Filament\Resources\MessageResource;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -27,31 +28,35 @@ class EditMessage extends EditRecord
 	public function form(Form $form): Form
 	{
 		return $form
-			->columns(1)
 			->schema([
-				Select::make('from_id')
-					->label('От кого')
-					->relationship('from', 'username')
-					->searchable()
-					->nullable()
-					->default(null),
-				Select::make('user_id')
-					->label('Кому')
-					->relationship('user', 'username')
-					->searchable()
-					->required(),
-				DateTimePicker::make('time')
-					->label('Дата')
-					->required(),
-				Select::make('type')
-					->label('Тип')
-					->options(MessageType::class)
-					->required(),
-				TextInput::make('theme')
-					->label('Тема'),
-				RichEditor::make('text')
-					->label('Текст')
-					->required(),
+				Section::make()
+					->schema([
+						Select::make('from_id')
+							->label('От кого')
+							->relationship('from', 'username')
+							->native(false)
+							->searchable(['id', 'username', 'email'])
+							->nullable()
+							->default(null),
+						Select::make('user_id')
+							->label('Кому')
+							->relationship('user', 'username')
+							->native(false)
+							->searchable(['id', 'username', 'email'])
+							->required(),
+						DateTimePicker::make('time')
+							->label('Дата')
+							->required(),
+						Select::make('type')
+							->label('Тип')
+							->options(MessageType::class)
+							->required(),
+						TextInput::make('theme')
+							->label('Тема'),
+						RichEditor::make('text')
+							->label('Текст')
+							->required(),
+					]),
 			]);
 	}
 }

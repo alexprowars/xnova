@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Engine\UpdateStatistics;
-use App\Engine\Vars;
 use Illuminate\Console\Command;
 
 class UpdateStats extends Command
@@ -13,8 +12,6 @@ class UpdateStats extends Command
 
 	public function handle()
 	{
-		Vars::init();
-
 		$start = microtime(true);
 
 		$statUpdate = new UpdateStatistics();

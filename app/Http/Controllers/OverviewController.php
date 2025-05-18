@@ -9,7 +9,7 @@ use App\Engine\Enums\QueueType;
 use App\Engine\Fleet\Mission;
 use App\Engine\Game;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Http\Resources\FleetRow;
 use App\Models\Fleet;

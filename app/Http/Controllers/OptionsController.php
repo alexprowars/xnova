@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\QueueManager;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Format;

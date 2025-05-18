@@ -36,16 +36,16 @@ class ViewPlanet extends ViewRecord
 					]),
 
 				Infolists\Components\TextEntry::make('last_update')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->label('Время обновления'),
 				Infolists\Components\TextEntry::make('last_active')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->label('Время активности'),
 				Infolists\Components\TextEntry::make('destruyed_at')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->label('Время уничтожения'),
 				Infolists\Components\TextEntry::make('merchand')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->label('Время покупки ресурсов'),
 				Infolists\Components\TextEntry::make('image')
 					->label('Картинка'),

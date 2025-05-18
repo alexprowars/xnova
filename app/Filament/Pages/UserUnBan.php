@@ -21,8 +21,6 @@ class UserUnBan extends Page
 	use InteractsWithFormActions;
 
 	protected static ?string $navigationIcon = 'heroicon-o-user-plus';
-	protected static ?string $navigationLabel = 'Разблокировать';
-	protected static ?string $navigationGroup = 'Администрирование';
 	protected static ?int $navigationSort = 30;
 	protected static ?string $slug = 'unban';
 	protected static ?string $title = 'Разблокировать пользователя';
@@ -31,14 +29,25 @@ class UserUnBan extends Page
 
 	public ?string $username = '';
 
-	protected function getFormSchema(): array
+	public static function getNavigationGroup(): string
 	{
-		return [
-			TextInput::make('username')
-				->label('Логин/email игрока')
-				->required()
-				->maxLength(50),
-		];
+		return __('admin.navigation.groups.management');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.user_unban');
+	}
+
+	public function form(Form $form): Form
+	{
+		return $form
+			->schema([
+				TextInput::make('username')
+					->label('Логин/email игрока')
+					->required()
+					->maxLength(50),
+			]);
 	}
 
 	public function getFormActions(): array

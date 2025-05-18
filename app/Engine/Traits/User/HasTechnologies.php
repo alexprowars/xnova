@@ -3,7 +3,7 @@
 namespace App\Engine\Traits\User;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models\UserTech;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

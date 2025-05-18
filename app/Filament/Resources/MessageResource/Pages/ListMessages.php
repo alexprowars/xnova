@@ -4,7 +4,6 @@ namespace App\Filament\Resources\MessageResource\Pages;
 
 use App\Filament\Resources\MessageResource;
 use App\Models\Message;
-use App\Models\User;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables;
@@ -28,7 +27,7 @@ class ListMessages extends ListRecords
 					->sortable(),
 				TextColumn::make('time')
 					->label('Время')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->sortable(),
 				TextColumn::make('type')
 					->label('Тип')
@@ -52,18 +51,19 @@ class ListMessages extends ListRecords
 				SelectFilter::make('from_id')
 					->label('От кого')
 					->relationship('user', 'username')
-					->getSearchResultsUsing(fn (string $search) => User::query()->where('username', 'like', "%{$search}%")->orWhere('id', (int) $search)->limit(50)->pluck('username', 'id')->toArray())
-					->searchable(),
+					->native(false)
+					->searchable(['id', 'username', 'email']),
 				SelectFilter::make('user_id')
 					->label('Кому')
 					->relationship('user', 'username')
-					->getSearchResultsUsing(fn (string $search) => User::query()->where('username', 'like', "%{$search}%")->orWhere('id', (int) $search)->limit(50)->pluck('username', 'id')->toArray())
-					->searchable(),
+					->native(false)
+					->searchable(['id', 'username', 'email']),
 				DateRangeFilter::make('time')
 					->label('Дата'),
 			])
 			->actions([
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\EditAction::make()
+					->iconButton(),
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([

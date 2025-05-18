@@ -8,7 +8,7 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\Mission;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\PageException;
 use App\Format;
 use App\Http\Controllers\Controller;
@@ -51,7 +51,7 @@ class FleetSendController extends Controller
 
 		$target = new Coordinates($galaxy, $system, $planet, $planetType);
 
-		$sender = new Fleet\FleetSend($target, $this->planet, $fleetMission);
+		$sender = new Fleet\FleetSend($this->planet, $target, $fleetMission);
 		$sender->setFleets($fleetArray);
 		$sender->setResources($resources);
 		$sender->setFleetSpeed($fleetSpeedFactor);

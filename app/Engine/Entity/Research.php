@@ -3,7 +3,7 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Game;
-use App\Engine\Vars;
+use App\Facades\Vars;
 
 class Research extends Entity
 {
@@ -13,7 +13,7 @@ class Research extends Entity
 		$price = Vars::getItemPrice($this->entityId);
 
 		return array_map(
-			fn ($value) => floor($value * (($price['factor'] ?? 1) ** $this->level)),
+			fn (int $value) => (int) floor($value * (($price['factor'] ?? 1) ** $this->level)),
 			$cost
 		);
 	}

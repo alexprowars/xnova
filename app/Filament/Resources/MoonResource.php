@@ -11,12 +11,20 @@ class MoonResource extends Resource
 	protected static ?string $model = Planet::class;
 
 	protected static ?string $navigationIcon = 'heroicon-o-moon';
-	protected static ?string $navigationGroup = 'Игра';
-	protected static ?string $navigationLabel = 'Список лун';
 	protected static ?int $navigationSort = 70;
 	protected static ?string $modelLabel = 'Луна';
 	protected static ?string $pluralModelLabel = 'Луны';
 	protected static ?string $recordTitleAttribute = 'name';
+
+	public static function getNavigationGroup(): string
+	{
+		return __('admin.navigation.groups.game');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.moons');
+	}
 
 	public static function getPages(): array
 	{

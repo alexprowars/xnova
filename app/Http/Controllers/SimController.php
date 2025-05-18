@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 
 class SimController extends Controller
 {

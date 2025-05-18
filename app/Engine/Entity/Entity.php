@@ -8,7 +8,7 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
 use App\Engine\Game;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Models\Planet;
 
 class Entity implements EntityInterface, EntityProductionInterface
@@ -45,6 +45,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 		$this->level = $level;
 	}
 
+	/** @return array<value-of<Resources>, int> */
 	protected function getBasePrice(): array
 	{
 		$price = Vars::getItemPrice($this->entityId);
@@ -56,13 +57,12 @@ class Entity implements EntityInterface, EntityProductionInterface
 				continue;
 			}
 
-			$cost[$resource->value] = floor($price[$resource->value]);
+			$cost[$resource->value] = (int) floor($price[$resource->value]);
 		}
 
 		return $cost;
 	}
 
-	/** @return array<string, int> */
 	public function getPrice(): array
 	{
 		$cost = $this->getBasePrice();

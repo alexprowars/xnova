@@ -4,6 +4,7 @@ namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityUnitInterface;
 use App\Engine\Enums\Resources;
+use App\Facades\Vars;
 
 class Unit extends Entity implements EntityUnitInterface
 {
@@ -14,7 +15,7 @@ class Unit extends Entity implements EntityUnitInterface
 		$time *= (1 / ($this->planet->getLevel('hangar') + 1));
 		$time *= (1 / 2) ** $this->planet->getLevel('nano_factory');
 
-		return max(1, $time);
+		return max(1, (int) $time);
 	}
 
 	public function getMaxConstructible(): int
@@ -32,6 +33,8 @@ class Unit extends Entity implements EntityUnitInterface
 
 			$max = min($max ?? $count, $count);
 		}
+
+		$price = Vars::getItemPrice($this->entityId);
 
 		if (isset($price['max'])) {
 			$max = min($max, $price['max']);

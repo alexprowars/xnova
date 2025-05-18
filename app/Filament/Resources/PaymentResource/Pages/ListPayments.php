@@ -30,7 +30,7 @@ class ListPayments extends ListRecords
 					->sortable(),
 				TextColumn::make('transaction_time')
 					->label('Дата')
-					->dateTime('d.m.Y H:i:s')
+					->dateTime()
 					->sortable(),
 				TextColumn::make('method')
 					->label('Метод')

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use Illuminate\Database\Eloquent\Model;
 
 class UserQuest extends Model

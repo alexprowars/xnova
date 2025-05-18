@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogCredit;
 use App\Models\PlanetEntity;

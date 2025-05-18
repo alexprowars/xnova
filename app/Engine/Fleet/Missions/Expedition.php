@@ -2,17 +2,17 @@
 
 namespace App\Engine\Fleet\Missions;
 
-use App\Engine\CombatEngine\Core\Battle;
-use App\Engine\CombatEngine\LangImplementation;
-use App\Engine\CombatEngine\Models\Fleet;
-use App\Engine\CombatEngine\Models\Player;
-use App\Engine\CombatEngine\Models\PlayerGroup;
-use App\Engine\CombatEngine\Utils\LangManager;
 use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
+use App\Engine\Fleet\CombatEngine\Core\Battle;
+use App\Engine\Fleet\CombatEngine\LangImplementation;
+use App\Engine\Fleet\CombatEngine\Models\Fleet;
+use App\Engine\Fleet\CombatEngine\Models\Player;
+use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
+use App\Engine\Fleet\CombatEngine\Utils\LangManager;
 use App\Engine\Game;
-use App\Engine\Vars;
+use App\Facades\Vars;
 use App\Format;
 use App\Models;
 use App\Models\Planet;

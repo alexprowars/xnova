@@ -9,6 +9,6 @@ class Defence extends Unit
 		$time = parent::getTime();
 		$time *= $this->planet->user->bonus('time_defence');
 
-		return (int) max(1, floor($time));
+		return max(1, (int) floor($time));
 	}
 }

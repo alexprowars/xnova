@@ -29,7 +29,7 @@ class FleetSend
 	protected int $fleetSpeed = 10;
 	protected ?AllianceDiplomacy $diplomacy = null;
 
-	public function __construct(protected Coordinates $target, protected Planet $planet, protected Mission $mission)
+	public function __construct(protected Planet $planet, protected Coordinates $target, protected Mission $mission)
 	{
 		$this->targetPlanet = Planet::query()->coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
 			->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])

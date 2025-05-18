@@ -8,66 +8,68 @@ use Illuminate\Support\Arr;
 
 class Vars
 {
-	private static array $registry;
+	/** @var array<string, array> */
+	protected array $registry;
 
-	public static function init()
+	public function __construct()
+	{
+		$this->init();
+	}
+
+	protected function init()
 	{
 		require(resource_path('engine/main.php'));
 
-		/** @var array $resource */
-		/** @var array $requeriments */
-		/** @var array $pricelist */
-		/** @var array $gun_armour */
-		/** @var array $CombatCaps */
-		/** @var array $ProdGrid */
-		/** @var array $reslist */
+		/** @var array<int, string> $resource */
+		/** @var array<int, array> $requeriments */
+		/** @var array<int, array> $pricelist */
+		/** @var array<int, array> $gun_armour */
+		/** @var array<int, array> $CombatCaps */
+		/** @var array<int, array> $ProdGrid */
+		/** @var array<string, array> $reslist */
 
-		self::$registry['resource'] = $resource;
-		self::$registry['resource_flip'] = array_flip($resource);
-		self::$registry['requeriments'] = $requeriments;
-		self::$registry['pricelist'] = $pricelist;
-		self::$registry['gun_armour'] = $gun_armour;
-		self::$registry['CombatCaps'] = $CombatCaps;
-		self::$registry['ProdGrid'] = $ProdGrid;
-		self::$registry['reslist'] = $reslist;
+		$this->registry['resource'] = $resource;
+		$this->registry['resource_flip'] = array_flip($resource);
+		$this->registry['requeriments'] = $requeriments;
+		$this->registry['pricelist'] = $pricelist;
+		$this->registry['gun_armour'] = $gun_armour;
+		$this->registry['CombatCaps'] = $CombatCaps;
+		$this->registry['ProdGrid'] = $ProdGrid;
+		$this->registry['reslist'] = $reslist;
 	}
 
-	public static function getStorage(): array
+	public function getStorage(): array
 	{
-		return self::$registry;
+		return $this->registry;
 	}
 
-	public static function updateStorage(string $key, mixed $value)
+	public function updateStorage(string $key, mixed $value)
 	{
-		Arr::set(self::$registry, $key, $value);
+		Arr::set($this->registry, $key, $value);
 	}
 
-	public static function getName($id): ?string
+	public function getName($id): ?string
 	{
-		return self::$registry['resource'][$id] ?? null;
+		return $this->registry['resource'][$id] ?? null;
 	}
 
-	public static function getIdByName($name): ?int
+	public function getIdByName($name): ?int
 	{
-		return self::$registry['resource_flip'][$name] ?? null;
+		return $this->registry['resource_flip'][$name] ?? null;
 	}
 
-	public static function getItemPrice($itemId): array
+	public function getItemPrice($itemId): array
 	{
-		if (empty(self::$registry)) {
-			self::init();
-		}
-
 		if (!is_numeric($itemId)) {
-			$itemId = self::$registry['resource_flip'][$itemId];
+			$itemId = $this->registry['resource_flip'][$itemId];
 		}
 
-		return self::$registry['pricelist'][$itemId] ?? [];
+		return $this->registry['pricelist'][$itemId] ?? [];
 	}
 
-	public static function getItemTotalPrice($itemId, $all = false): int
+	public function getItemTotalPrice($itemId, $all = false): int
 	{
-		$price = self::getItemPrice($itemId);
+		$price = $this->getItemPrice($itemId);
 
 		if (!count($price)) {
 			return 0;
@@ -80,49 +82,41 @@ class Vars
 		}
 	}
 
-	public static function getItemType($itemId): ?ItemType
+	public function getItemType($itemId): ?ItemType
 	{
-		if (empty(self::$registry)) {
-			self::init();
-		}
-
 		if (!is_numeric($itemId)) {
-			$itemId = self::$registry['resource_flip'][$itemId];
+			$itemId = $this->registry['resource_flip'][$itemId];
 		}
 
-		if (in_array($itemId, self::$registry['reslist']['build'])) {
+		if (in_array($itemId, $this->registry['reslist']['build'])) {
 			return ItemType::BUILDING;
 		}
-		if (in_array($itemId, self::$registry['reslist']['tech'])) {
+		if (in_array($itemId, $this->registry['reslist']['tech'])) {
 			return ItemType::TECH;
 		}
-		if (in_array($itemId, self::$registry['reslist']['fleet'])) {
+		if (in_array($itemId, $this->registry['reslist']['fleet'])) {
 			return ItemType::FLEET;
 		}
-		if (in_array($itemId, self::$registry['reslist']['defense'])) {
+		if (in_array($itemId, $this->registry['reslist']['defense'])) {
 			return ItemType::DEFENSE;
 		}
-		if (in_array($itemId, self::$registry['reslist']['officier'])) {
+		if (in_array($itemId, $this->registry['reslist']['officier'])) {
 			return ItemType::OFFICIER;
 		}
 
 		return null;
 	}
 
-	public static function getItemRequirements($itemId): array
+	public function getItemRequirements($itemId): array
 	{
-		if (empty(self::$registry)) {
-			self::init();
-		}
-
 		if (!is_numeric($itemId)) {
-			$itemId = self::$registry['resource_flip'][$itemId];
+			$itemId = $this->registry['resource_flip'][$itemId];
 		}
 
-		return self::$registry['requeriments'][$itemId] ?? [];
+		return $this->registry['requeriments'][$itemId] ?? [];
 	}
 
-	public static function getItemsByType(array | ItemType $types): array
+	public function getItemsByType(array | ItemType $types): array
 	{
 		if (!is_array($types)) {
 			$types = [$types];
@@ -131,31 +125,31 @@ class Vars
 		$result = [];
 
 		foreach ($types as $type) {
-			if (isset(self::$registry['reslist'][$type->value])) {
-				$result = array_merge($result, self::$registry['reslist'][$type->value]);
+			if (isset($this->registry['reslist'][$type->value])) {
+				$result = array_merge($result, $this->registry['reslist'][$type->value]);
 			}
 		}
 
 		return $result;
 	}
 
-	public static function getResources(): array
+	public function getResources(): array
 	{
-		return self::$registry['reslist']['res'];
+		return $this->registry['reslist']['res'];
 	}
 
-	public static function getUnitData(int $unitId): ?array
+	public function getUnitData(int $unitId): ?array
 	{
-		return self::$registry['CombatCaps'][$unitId] ?? null;
+		return $this->registry['CombatCaps'][$unitId] ?? null;
 	}
 
-	public static function getBuildProduction($buildId): ?array
+	public function getBuildProduction($buildId): ?array
 	{
-		return self::$registry['ProdGrid'][$buildId] ?? null;
+		return $this->registry['ProdGrid'][$buildId] ?? null;
 	}
 
-	public static function getAllowedBuilds(PlanetType $planetType): array
+	public function getAllowedBuilds(PlanetType $planetType): array
 	{
-		return self::$registry['reslist']['allowed'][$planetType->value] ?? [];
+		return $this->registry['reslist']['allowed'][$planetType->value] ?? [];
 	}
 }

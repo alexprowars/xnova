@@ -2,10 +2,10 @@
 
 namespace App\Engine;
 
-use App\Engine\Contracts\EntityProductionInterface;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources as ResourcesEnum;
+use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\User;
 use Carbon\Carbon;

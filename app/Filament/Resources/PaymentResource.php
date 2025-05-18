@@ -11,11 +11,19 @@ class PaymentResource extends Resource
 	protected static ?string $model = Payment::class;
 
 	protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-	protected static ?string $navigationGroup = 'Игра';
-	protected static ?string $navigationLabel = 'Финансы';
 	protected static ?int $navigationSort = 40;
 	protected static ?string $modelLabel = 'Транзакции';
 	protected static ?string $pluralModelLabel = 'Транзакции';
+
+	public static function getNavigationGroup(): string
+	{
+		return __('admin.navigation.groups.game');
+	}
+
+	public static function getNavigationLabel(): string
+	{
+		return __('admin.navigation.pages.payments');
+	}
 
 	public static function getPages(): array
 	{

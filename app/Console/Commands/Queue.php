@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Engine\QueueManager;
-use App\Engine\Vars;
 use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Console\Command;
@@ -17,8 +16,6 @@ class Queue extends Command
 
 	public function handle()
 	{
-		Vars::init();
-
 		define('MAX_RUNS', 15);
 		define('TIME_LIMIT', 60);
 
