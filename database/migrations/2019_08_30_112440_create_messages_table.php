@@ -11,12 +11,12 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->foreignId('from_id')->nullable()->constrained('users')->cascadeOnDelete();
-			$table->timestamp('time')->nullable()->index();
+			$table->timestamp('date')->useCurrent()->index();
 			$table->integer('type')->default(0);
-			$table->boolean('deleted')->default(false);
-			$table->string('theme', 100)->nullable();
+			$table->string('subject', 100)->nullable();
 			$table->text('message')->nullable();
-			$table->index(['user_id','deleted']);
+			$table->index(['user_id']);
+			$table->softDeletes();
 		});
 	}
 

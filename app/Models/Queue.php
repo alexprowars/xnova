@@ -17,8 +17,8 @@ class Queue extends Model
 	];
 
 	protected $casts = [
-		'time' => 'immutable_datetime',
-		'time_end' => 'immutable_datetime',
+		'date' => 'immutable_datetime',
+		'date_end' => 'immutable_datetime',
 		'type' => QueueType::class,
 		'operation' => QueueConstructionType::class,
 	];

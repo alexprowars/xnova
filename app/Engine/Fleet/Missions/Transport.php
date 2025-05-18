@@ -9,7 +9,7 @@ use App\Notifications\MessageNotification;
 
 class Transport extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return $targetPlanet && (!empty($units[202]) || !empty($units[203]));
 	}

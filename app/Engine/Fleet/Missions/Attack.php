@@ -37,7 +37,7 @@ class Attack extends BaseMission
 	public $usersTech = [];
 	public $usersInfo = [];
 
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		if (!in_array($target->getType(), [PlanetType::PLANET, PlanetType::MOON, PlanetType::MILITARY_BASE])) {
 			return false;
@@ -82,7 +82,7 @@ class Attack extends BaseMission
 			return false;
 		}
 
-		$target->getProduction($this->fleet->start_time)->update();
+		$target->getProduction($this->fleet->start_date)->update();
 
 		$queueManager = new QueueManager($targetUser, $target);
 		$queueManager->checkUnitQueue();
@@ -300,7 +300,7 @@ class Attack extends BaseMission
 			} else {
 				$update = [
 					'fleet_array' 	=> $fleetArray,
-					'updated_at' 	=> DB::raw('end_time'),
+					'updated_at' 	=> DB::raw('end_date'),
 					'mess'			=> 1,
 					'assault_id'	=> null,
 					'won'			=> $result['won']
@@ -337,7 +337,7 @@ class Attack extends BaseMission
 					Planet::query()->where('id', $fleetID)
 						->update([
 							'fleet_array' => $fleetArray,
-							'updated_at' => DB::raw('end_time'),
+							'updated_at' => DB::raw('end_date'),
 						]);
 				}
 			} else {
@@ -429,7 +429,7 @@ class Attack extends BaseMission
 				$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
 			}
 
-			Models\User::query()->where('id', $info['tech']['id'])->update($update);
+			Models\User::query()->whereKey($info['tech']['id'])->update($update);
 		}
 
 		foreach ($defenseUsers as $info) {
@@ -451,7 +451,7 @@ class Attack extends BaseMission
 				$update['raids_lose'] = DB::raw('raids_lose + 1');
 			}
 
-			Models\User::query()->where('id', $info['tech']['id'])->update($update);
+			Models\User::query()->whereKey($info['tech']['id'])->update($update);
 		}
 
 		// Уничтожен в первой волне

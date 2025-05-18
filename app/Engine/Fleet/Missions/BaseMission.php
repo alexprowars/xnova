@@ -8,7 +8,7 @@ use App\Models\Planet;
 
 class BaseMission extends FleetEngine implements Mission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return true;
 	}

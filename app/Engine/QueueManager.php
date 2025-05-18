@@ -209,10 +209,10 @@ class QueueManager
 			$buildTime = ceil($buildTime / 2);
 		}
 
-		$buildItem->time_end = $buildItem->time->addSeconds($buildTime);
+		$buildItem->date_end = $buildItem->date->addSeconds($buildTime);
 		$buildItem->save();
 
-		if ($buildItem->time->timestamp + $buildTime <= time() + 5) {
+		if ($buildItem->date->timestamp + $buildTime <= time() + 5) {
 			if (!$this->planet->planet_updated) {
 				$this->planet->getProduction()->update(true);
 			}
@@ -257,7 +257,7 @@ class QueueManager
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
-		if (!count($queueArray) || $queueArray[0]->time) {
+		if (!count($queueArray) || $queueArray[0]->date) {
 			return false;
 		}
 
@@ -309,8 +309,8 @@ class QueueManager
 				}
 
 				$buildItem->update([
-					'time' => now(),
-					'time_end' => now()->addSeconds($buildTime),
+					'date' => now(),
+					'date_end' => now()->addSeconds($buildTime),
 				]);
 
 				$loop = false;
@@ -399,10 +399,10 @@ class QueueManager
 
 		$buildTime = $entity->getTime();
 
-		$queueItem->time_end = $queueItem->time->addSeconds($buildTime);
+		$queueItem->date_end = $queueItem->date->addSeconds($buildTime);
 		$queueItem->save();
 
-		if ($queueItem->time->timestamp + $buildTime <= time() + 5) {
+		if ($queueItem->date->timestamp + $buildTime <= time() + 5) {
 			$this->user->setTech($queueItem->object_id, $queueItem->level);
 
 			if (!$this->deleteInQueue($queueItem->id)) {
@@ -504,8 +504,8 @@ class QueueManager
 
 			$buildTime = $entity->getTime();
 
-			while ($item->time->addSeconds($buildTime)->isPast()) {
-				$item->time = $item->time->addSeconds($buildTime);
+			while ($item->date->addSeconds($buildTime)->isPast()) {
+				$item->date = $item->date->addSeconds($buildTime);
 
 				$builded++;
 				$this->planet->updateAmount($item->object_id, 1, true);
@@ -519,7 +519,7 @@ class QueueManager
 					}
 
 					if (isset($queue[$i + 1])) {
-						$queue[$i + 1]->time = $item->time;
+						$queue[$i + 1]->date = $item->date;
 					}
 
 					break;
@@ -529,7 +529,7 @@ class QueueManager
 			$this->planet->update();
 
 			if ($item->level > 0) {
-				$item->time_end = $item->time->addSeconds($buildTime);
+				$item->date_end = $item->date->addSeconds($buildTime);
 				$item->update();
 
 				break;

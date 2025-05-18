@@ -133,7 +133,7 @@ class FleetRow extends JsonResource
 		}
 
 		if ($this->status == 0) {
-			$time = $this->resource->start_time;
+			$time = $this->resource->start_date;
 			$rowString .= __('overview.ov_vennant');
 			$rowString .= $startId;
 			$rowString .= __('overview.ov_atteint');
@@ -153,7 +153,7 @@ class FleetRow extends JsonResource
 			$rowString .= $targetId;
 			$rowString .= __('overview.ov_explo_mission');
 		} else {
-			$time = $this->resource->end_time;
+			$time = $this->resource->end_date;
 			$rowString .= __('overview.ov_rentrant');
 			$rowString .= $targetId;
 			$rowString .= $startId;
@@ -166,7 +166,7 @@ class FleetRow extends JsonResource
 		$bloc['status'] = $fleetStatus[$this->status];
 		$bloc['prefix'] = $fleetPrefix;
 		$bloc['mission'] = $fleetStyle[$this->resource->mission->value];
-		$bloc['time'] = $time->utc()->toAtomString();
+		$bloc['date'] = $time->utc()->toAtomString();
 		$bloc['text'] = $rowString;
 
 		return $bloc;

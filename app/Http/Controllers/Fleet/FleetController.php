@@ -69,14 +69,14 @@ class FleetController extends Controller
 					'galaxy' => $fleet->start_galaxy,
 					'system' => $fleet->start_system,
 					'planet' => $fleet->start_planet,
-					'time' => $fleet->start_time?->utc()->toAtomString(),
+					'date' => $fleet->start_date?->utc()->toAtomString(),
 				],
 				'target' => [
+					'id' => $fleet->target_user_id,
 					'galaxy' => $fleet->end_galaxy,
 					'system' => $fleet->end_system,
 					'planet' => $fleet->end_planet,
-					'time' => $fleet->end_time?->utc()->toAtomString(),
-					'id' => $fleet->target_user_id,
+					'date' => $fleet->end_date?->utc()->toAtomString(),
 				],
 				'stage' => $fleet->mess,
 			];

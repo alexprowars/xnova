@@ -44,7 +44,7 @@ class OverviewController extends Controller
 
 		foreach ($fleets as $fleet) {
 			if ($fleet->user_id == $this->user->id) {
-				if ($fleet->start_time->isFuture()) {
+				if ($fleet->start_date->isFuture()) {
 					$flotten[] = FleetRow::make($fleet, 0, true);
 				}
 
@@ -53,7 +53,7 @@ class OverviewController extends Controller
 				}
 
 				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
-					if (($fleet->end_time->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
+					if (($fleet->end_date->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
 						$flotten[] = FleetRow::make($fleet, 2, true);
 					}
 				}
@@ -72,7 +72,7 @@ class OverviewController extends Controller
 					$aks[] = $fleet->assault_id;
 				}
 			} elseif ($fleet->mission != Mission::Recycling) {
-				if ($fleet->start_time->isFuture()) {
+				if ($fleet->start_date->isFuture()) {
 					$flotten[] = FleetRow::make($fleet, 0, false);
 				}
 
@@ -320,10 +320,10 @@ class OverviewController extends Controller
 				$planet = $planetsData[$item->planet_id];
 
 				$queueList[] = [
-					'time' => $item->time_end->utc()->toAtomString(),
+					'date' => $item->date_end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planet->name,
-					'object_id' => $item->object_id,
+					'item' => $item->object_id,
 					'level' => $item->operation == QueueConstructionType::BUILDING ? $item->level - 1 : $item->level + 1,
 					'level_to' => $item->level,
 				];
@@ -335,10 +335,10 @@ class OverviewController extends Controller
 
 			foreach ($queueArray as $item) {
 				$queueList[] = [
-					'time' => $item->time_end->utc()->toAtomString(),
+					'date' => $item->date_end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planetsData[$item->planet_id]->name,
-					'object_id' => $item->object_id,
+					'item' => $item->object_id,
 					'level' => $this->user->getTechLevel($item->object_id),
 					'level_to' => $this->user->getTechLevel($item->object_id) + 1,
 				];
@@ -351,18 +351,18 @@ class OverviewController extends Controller
 			$end = [];
 
 			foreach ($queueArray as $item) {
-				$end[$item->planet_id] ??= $item->time;
-				$end[$item->planet_id]->addSeconds(((int) $item->time->diffInSeconds($item->time_end)) * $item->level);
+				$end[$item->planet_id] ??= $item->date;
+				$end[$item->planet_id]->addSeconds(((int) $item->date->diffInSeconds($item->date_end)) * $item->level);
 
 				if ($end[$item->planet_id]->isPast()) {
 					continue;
 				}
 
 				$queueList[] = [
-					'time' => $end[$item->planet_id]->utc()->toAtomString(),
+					'date' => $end[$item->planet_id]->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 					'planet_name' => $planetsData[$item->planet_id]->name,
-					'object_id' => $item->object_id,
+					'item' => $item->object_id,
 					'level' => $item->level,
 				];
 			}

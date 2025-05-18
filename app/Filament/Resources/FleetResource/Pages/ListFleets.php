@@ -17,7 +17,7 @@ class ListFleets extends ListRecords
 	public function table(Table $table): Table
 	{
 		return $table
-			->defaultSort('end_time')
+			->defaultSort('end_date')
 			->paginated(false)
 			->emptyStateHeading('Флоты не найдены')
 			->columns([
@@ -43,7 +43,7 @@ class ListFleets extends ListRecords
 					->label('Старт')
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->start_galaxy . ':' . $record->start_system . ':' . $record->start_planet . '] ' . (($record->start_type == PlanetType::PLANET) ? '[P]' : (($record->start_type == PlanetType::DEBRIS) ? 'D' : 'L'))),
-				TextColumn::make('start_time')
+				TextColumn::make('start_date')
 					->label('Отправление')
 					->dateTime('H:i:s d.m')
 					->sortable(),
@@ -56,7 +56,7 @@ class ListFleets extends ListRecords
 					->label('Цель')
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->end_galaxy . ':' . $record->end_system . ':' . $record->end_planet . '] ' . (($record->end_type == PlanetType::PLANET) ? '[P]' : (($record->end_type == PlanetType::DEBRIS) ? 'D' : 'L'))),
-				TextColumn::make('end_time')
+				TextColumn::make('end_date')
 					->label('Прибытие')
 					->dateTime('H:i:s d.m')
 					->sortable(),

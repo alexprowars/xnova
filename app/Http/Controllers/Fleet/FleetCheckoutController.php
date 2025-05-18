@@ -173,7 +173,7 @@ class FleetCheckoutController extends Controller
 		$missions = [];
 
 		foreach (Mission::cases() as $m) {
-			if (Fleet\MissionFactory::getMission($m)->isMissionPossible($this->planet, $target, $targetPlanet, $fleets, $acs > 0)) {
+			if (Fleet\MissionFactory::getMission($m)::isMissionPossible($this->planet, $target, $targetPlanet, $fleets, $acs > 0)) {
 				$missions[] = $m;
 			}
 		}

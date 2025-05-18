@@ -28,7 +28,7 @@ class Mailing extends Page
 
 	protected static string $view = 'filament.pages.mailing';
 
-	public ?string $theme = '';
+	public ?string $subject = '';
 	public ?string $message = '';
 
 	public static function getNavigationGroup(): string
@@ -50,7 +50,7 @@ class Mailing extends Page
 	{
 		return $form
 			->schema([
-				TextInput::make('theme')
+				TextInput::make('subject')
 					->label('Тема сообщения')
 					->maxLength(50),
 				Textarea::make('message')
@@ -86,7 +86,7 @@ class Mailing extends Page
 			$user->notify(new MessageNotification(
 				null,
 				MessageType::System,
-				$this->theme ?: '<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
+				$this->subject ?: '<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
 				$this->message
 			));
 		}

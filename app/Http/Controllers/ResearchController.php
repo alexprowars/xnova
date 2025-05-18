@@ -90,7 +90,7 @@ class ResearchController extends Controller
 							'item' => $techHandle->object_id,
 							'name' => null,
 							'level' => $techHandle->level,
-							'time' => $techHandle->time->addSeconds($row['time'])->utc()->toAtomString(),
+							'date' => $techHandle->date->addSeconds($row['time'])->utc()->toAtomString(),
 						];
 
 						if ($techHandle->planet_id != $this->planet->id) {

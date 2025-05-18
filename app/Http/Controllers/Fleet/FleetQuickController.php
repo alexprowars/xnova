@@ -83,7 +83,7 @@ class FleetQuickController extends Controller
 		return [
 			'target' => $target->coordinates->toArray(),
 			'mission' => $mission->value,
-			'time' => $fleet->start_time->utc()->toAtomString(),
+			'time' => $fleet->start_date->utc()->toAtomString(),
 		];
 	}
 }

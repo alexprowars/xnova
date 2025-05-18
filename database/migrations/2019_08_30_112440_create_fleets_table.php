@@ -14,12 +14,12 @@ return new class extends Migration {
 			$table->integer('mission')->nullable();
 			$table->bigInteger('amount')->default(0);
 			$table->json('fleet_array')->nullable();
-			$table->timestamp('start_time')->nullable()->index();
+			$table->timestamp('start_date')->nullable()->index();
 			$table->tinyInteger('start_galaxy')->nullable();
 			$table->smallInteger('start_system')->nullable();
 			$table->tinyInteger('start_planet')->nullable();
 			$table->tinyInteger('start_type')->nullable();
-			$table->timestamp('end_time')->nullable()->index();
+			$table->timestamp('end_date')->nullable()->index();
 			$table->timestamp('end_stay')->nullable()->index();
 			$table->tinyInteger('end_galaxy')->nullable();
 			$table->smallInteger('end_system')->nullable()->index();

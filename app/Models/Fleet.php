@@ -12,12 +12,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fleet extends Model
 {
+	protected $table = 'fleets';
 	protected $guarded = false;
 
 	protected $casts = [
 		'fleet_array' => 'json:unicode',
-		'start_time' => 'immutable_datetime',
-		'end_time' => 'immutable_datetime',
+		'start_date' => 'immutable_datetime',
+		'end_date' => 'immutable_datetime',
 		'end_stay' => 'immutable_datetime',
 		'mission' => Mission::class,
 		'start_type' => PlanetType::class,

@@ -48,12 +48,12 @@ class FleetVerbandController extends Controller
 				'mission' => $item->mission,
 				'start' => [
 					...$item->getOriginCoordinates()->toArray(),
-					'time' => $item->start_time?->utc()->toAtomString(),
+					'time' => $item->start_date?->utc()->toAtomString(),
 					'name' => $item->user_name,
 				],
 				'target' => [
 					...$item->getDestinationCoordinates()->toArray(),
-					'time' => $item->end_time?->utc()->toAtomString(),
+					'time' => $item->end_date?->utc()->toAtomString(),
 					'name' => $item->target_user_name,
 				],
 			];
@@ -232,7 +232,7 @@ class FleetVerbandController extends Controller
 			throw new Exception('Этот флот не существует!');
 		}
 
-		if ($fleet->start_time->isPast() || $fleet->end_time->isPast() || $fleet->mess == 1) {
+		if ($fleet->start_date->isPast() || $fleet->end_date->isPast() || $fleet->mess == 1) {
 			throw new Exception('Ваш флот возвращается на планету!');
 		}
 

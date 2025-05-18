@@ -384,7 +384,7 @@ class InfoController extends Controller
 		$this->planet->update();
 
 		$fleet->end_stay->addSeconds($times);
-		$fleet->end_time->addSeconds($times);
+		$fleet->end_date->addSeconds($times);
 		$fleet->update();
 	}
 }

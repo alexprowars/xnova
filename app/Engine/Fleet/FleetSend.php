@@ -152,7 +152,7 @@ class FleetSend
 		$missions = [];
 
 		foreach (Mission::cases() as $m) {
-			if (MissionFactory::getMission($m)->isMissionPossible($this->planet, $this->target, $this->targetPlanet, $this->fleetArray, !empty($this->assault))) {
+			if (MissionFactory::getMission($m)::isMissionPossible($this->planet, $this->target, $this->targetPlanet, $this->fleetArray, !empty($this->assault))) {
 				$missions[] = $m;
 			}
 		}
@@ -290,31 +290,31 @@ class FleetSend
 			// Вычисляем время самого медленного флота в совместной атаке
 			$assaultFleets = Fleet::query()
 				->where('assault_id', $this->assault->id)
-				->get(['id', 'start_time', 'end_time']);
+				->get(['id', 'start_date', 'end_date']);
 
 			$fleetGroupTime = now()->toImmutable()->addSeconds($duration);
 			$arrr = [];
 
 			foreach ($assaultFleets as $i => $flt) {
-				if ($flt->start_time->greaterThan($fleetGroupTime)) {
-					$fleetGroupTime = $flt->start_time;
+				if ($flt->start_date->greaterThan($fleetGroupTime)) {
+					$fleetGroupTime = $flt->start_date;
 				}
 
 				$arrr[$i]['id'] = $flt->id;
-				$arrr[$i]['start'] = $flt->start_time;
-				$arrr[$i]['end'] = $flt->end_time;
+				$arrr[$i]['start'] = $flt->start_date;
+				$arrr[$i]['end'] = $flt->end_date;
 			}
 		}
 
 		if ($fleetGroupTime) {
-			$fleet->start_time = $fleetGroupTime;
+			$fleet->start_date = $fleetGroupTime;
 		} else {
-			$fleet->start_time = now()->toImmutable()->addSeconds($duration);
+			$fleet->start_date = now()->toImmutable()->addSeconds($duration);
 		}
 
 		if ($this->mission == Mission::Expedition) {
 			$StayDuration = $this->expeditionTime * 3600;
-			$StayTime = $fleet->start_time->addSeconds($StayDuration);
+			$StayTime = $fleet->start_date->addSeconds($StayDuration);
 		} else {
 			$StayDuration = 0;
 			$StayTime = null;
@@ -357,13 +357,13 @@ class FleetSend
 			$FleetStayTime = round(($totalFleetCons / $fleetStayConsumption) * 3600);
 
 			$StayDuration = $FleetStayTime;
-			$StayTime = $fleet->start_time->getTimestamp() + $FleetStayTime;
+			$StayTime = $fleet->start_date->getTimestamp() + $FleetStayTime;
 		}
 
 		if ($fleetGroupTime) {
-			$fleet->end_time = $fleetGroupTime->addSeconds($StayDuration + $duration);
+			$fleet->end_date = $fleetGroupTime->addSeconds($StayDuration + $duration);
 		} else {
-			$fleet->end_time = now()->toImmutable()->addSeconds($StayDuration + (2 * $duration));
+			$fleet->end_date = now()->toImmutable()->addSeconds($StayDuration + (2 * $duration));
 		}
 
 		$hasResources = $this->planet->metal >= $TransMetal &&
@@ -384,10 +384,10 @@ class FleetSend
 
 		if ($this->assault && $fleetGroupTime && !empty($arrr)) {
 			foreach ($arrr as $row) {
-				Fleet::find($row['id'])
+				Fleet::findOne($row['id'])
 					->update([
-						'start_time' => $fleetGroupTime,
-						'end_time' => $fleetGroupTime->addSeconds($row['end']->timestamp - $row['start']->timestamp),
+						'start_date' => $fleetGroupTime,
+						'end_date' => $fleetGroupTime->addSeconds($row['end']->timestamp - $row['start']->timestamp),
 						'updated_at' => $fleetGroupTime,
 					]);
 			}
@@ -498,7 +498,7 @@ class FleetSend
 			'target_user_name' 		=> $this->targetPlanet->name ?? '',
 			'assault_id' 			=> $this->assault->id ?? null,
 			'raunds' 				=> $raunds,
-			'updated_at' 			=> $fleet->start_time,
+			'updated_at' 			=> $fleet->start_date,
 		]);
 
 		$fleet->save();

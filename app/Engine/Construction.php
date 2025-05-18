@@ -18,7 +18,7 @@ class Construction
 		$end   = null;
 
 		foreach ($queueItems as $item) {
-			$end ??= $item->time;
+			$end ??= $item->date;
 
 			$entity = null;
 
@@ -35,9 +35,9 @@ class Construction
 					$elementTime = ceil($elementTime / 2);
 				}
 
-				if ($item->time && (int) $item->time->diffInSeconds($item->time_end) != $elementTime) {
+				if ($item->date && (int) $item->date->diffInSeconds($item->date_end) != $elementTime) {
 					$item->update([
-						'time_end' => $item->time->addSeconds($elementTime),
+						'date_end' => $item->date->addSeconds($elementTime),
 					]);
 				}
 
@@ -48,7 +48,7 @@ class Construction
 					'type'	=> $item->type,
 					'level' => $item->level,
 					'mode' 	=> $item->operation,
-					'time' 	=> $end->utc()->toAtomString(),
+					'date' 	=> $end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 				];
 			}
@@ -65,8 +65,8 @@ class Construction
 					'type'		=> $item->type,
 					'count'		=> (int) $item->level,
 					'mode' 		=> $item->operation,
-					'time_one'	=> $time,
-					'time'		=> $end->utc()->toAtomString(),
+					'date_one'	=> $time,
+					'date'		=> $end->utc()->toAtomString(),
 					'planet_id' => $item->planet_id,
 				];
 			}

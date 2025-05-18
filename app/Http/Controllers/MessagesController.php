@@ -74,20 +74,20 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['messages.id', 'type', 'time', 'message', 'from_id'])
-			->orderByDesc('time');
+			->select(['messages.id', 'type', 'date', 'message', 'from_id'])
+			->orderByDesc('date');
 
 		if ($category == 101) {
-			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\', users.planet, \']\') as theme'))
+			$messages->addSelect(DB::raw('CONCAT(users.username, \' [\', users.galaxy,\':\', users.system,\':\', users.planet, \']\') as subject'))
 				->leftJoin('users', 'users.id', '=', 'user_id')
 				->whereBelongsTo($this->user, 'from');
 		} else {
-			$messages->addSelect('theme')->whereBelongsTo($this->user)
-				->where('deleted', false);
-
-			if ($category < 100) {
-				$messages->where('type', $category);
-			}
+			$messages->addSelect('subject')
+				->whereBelongsTo($this->user)
+				->when(
+					$category < 100,
+					fn(Builder $query) => $query->where('type', $category),
+				);
 		}
 
 		$paginator = $messages->paginate($limit, page: $page);
@@ -104,10 +104,10 @@ class MessagesController extends Controller
 			$parse['items'][] = [
 				'id' => $item->id,
 				'type' => $item->type,
-				'time' => $item->time?->utc()->toAtomString(),
+				'date' => $item->date->utc()->toAtomString(),
 				'from' => $item->from_id,
-				'theme' => $item->theme ?? '',
-				'text' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->message)),
+				'subject' => $item->subject ?? '',
+				'message' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->message)),
 			];
 		}
 
@@ -139,17 +139,16 @@ class MessagesController extends Controller
 		];
 
 		if ($request->query('quote')) {
-			$mes = Message::query()
-				->select(['id', 'text'])
+			$message = Message::query()
 				->whereKey($request->query('quote'))
 				->where(function (Builder $query) {
 					$query->whereBelongsTo($this->user)
 						->orWhereBelongsTo($this->user, 'from');
 				})
-				->first();
+				->value('message');
 
-			if ($mes) {
-				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "", $mes->message) . '[/quote]';
+			if ($message) {
+				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', '', $message) . '[/quote]';
 			}
 		}
 
@@ -177,7 +176,7 @@ class MessagesController extends Controller
 		if ($this->user->lvl_minier == 1 && $this->user->lvl_raid == 1 && $this->user->created_at?->addDay()->isFuture()) {
 			$lastSend = Message::query()
 				->whereBelongsTo($this->user)
-				->where('time', '>', now()->subMinute())
+				->where('date', '>', now()->subMinute())
 				->count();
 
 			if ($lastSend > 0) {
@@ -187,8 +186,8 @@ class MessagesController extends Controller
 
 		$similar = Message::query()
 			->whereBelongsTo($this->user)
-			->where('time', '>', now()->subMinutes(5))
-			->orderByDesc('time')
+			->where('date', '>', now()->subMinutes(5))
+			->orderByDesc('date')
 			->first();
 
 		if ($similar && mb_strlen($similar->message) < 1000) {
@@ -199,13 +198,11 @@ class MessagesController extends Controller
 			}
 		}
 
-		$from = $this->user->username . ' [' . $this->user->galaxy . ':' . $this->user->system . ':' . $this->user->planet . ']';
-
 		$message = Format::text($message);
 		$message = preg_replace('/ +/', ' ', $message);
 		$message = strtr($message, __('messages.stopwords'));
 
-		$user->notify(new MessageNotification(null, MessageType::User, $from, $message));
+		$user->notify(new MessageNotification(null, MessageType::User, $this->user->username_formatted, $message));
 	}
 
 	public function delete(Request $request)
@@ -220,17 +217,17 @@ class MessagesController extends Controller
 		Message::query()
 			->whereKey($items)
 			->whereBelongsTo($this->user)
-			->update(['deleted' => true]);
+			->delete();
 	}
 
 	public function abuse(int $messageId)
 	{
-		$mes = Message::query()
+		$message = Message::query()
 			->whereKey($messageId)
 			->whereBelongsTo($this->user)
 			->first();
 
-		if (!$mes) {
+		if (!$message) {
 			throw new Exception('Сообщение не найдено');
 		}
 
@@ -244,7 +241,7 @@ class MessagesController extends Controller
 				$this->user,
 				MessageType::User,
 				'<font color=red>' . $this->user->username . '</font>',
-				'От кого: ' . $mes->from . '<br>Дата отправления: ' . $mes->time->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $mes->message
+				'От кого: ' . $message->from . '<br>Дата отправления: ' . $message->date->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $message->message
 			));
 		}
 	}

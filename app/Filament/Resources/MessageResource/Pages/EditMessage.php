@@ -51,9 +51,9 @@ class EditMessage extends EditRecord
 							->label('Тип')
 							->options(MessageType::class)
 							->required(),
-						TextInput::make('theme')
+						TextInput::make('subject')
 							->label('Тема'),
-						RichEditor::make('text')
+						RichEditor::make('message')
 							->label('Текст')
 							->required(),
 					]),

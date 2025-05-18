@@ -34,18 +34,17 @@ class ListMessages extends ListRecords
 					->sortable(),
 				TextColumn::make('from_id')
 					->label('От')
-					->formatStateUsing(fn(Message $record) => $record->from ? $record->from->username . ' ID:' . $record->from_id : '-')
+					->formatStateUsing(fn(Message $record) => $record->from ? $record->from->username_formatted . ' ID:' . $record->from_id : '-')
 					->sortable(),
 				TextColumn::make('user_id')
 					->label('Кому')
-					->formatStateUsing(fn(Message $record) => $record->user ? $record->user->username . ' ID:' . $record->user_id : '-')
+					->formatStateUsing(fn(Message $record) => $record->user ? $record->user->username_formatted . ' ID:' . $record->user_id : '-')
 					->sortable(),
 				TextColumn::make('text')
 					->label('Текст')
 					->html()
 					->sortable()
 					->searchable(),
-
 			])
 			->filters([
 				SelectFilter::make('from_id')

@@ -7,7 +7,7 @@ use App\Models\Planet;
 
 class Assault extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return $isAssault && $targetPlanet;
 	}

@@ -32,8 +32,8 @@ class Queue extends Command
 		while ($totalRuns < MAX_RUNS) {
 			$items = Models\Queue::query()
 				->select(['user_id', 'planet_id'])
-				->where('time', '>', 0)
-				->where('time_end', '<=', now()->addSeconds(5))
+				->where('date', '>', 0)
+				->where('date_end', '<=', now()->addSeconds(5))
 				//->orderBy('id')
 				->groupBy('user_id', 'planet_id')
 				->with(['user', 'planet'])

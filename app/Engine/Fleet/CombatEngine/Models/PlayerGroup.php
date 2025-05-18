@@ -13,7 +13,7 @@ use App\Engine\Fleet\CombatEngine\Utils\IterableIterator;
  */
 class PlayerGroup extends IterableIterator
 {
-	public BattleResult $battleResult;
+	public ?BattleResult $battleResult = null;
 	private static $id_count = 0;
 	private $id;
 

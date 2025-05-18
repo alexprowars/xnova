@@ -34,6 +34,7 @@ return new class extends Migration {
 			$table->integer('debris_metal')->default(0);
 			$table->integer('debris_crystal')->default(0);
 			$table->timestamp('merchand')->nullable();
+			$table->softDeletes();
 			$table->timestamps();
 		});
 

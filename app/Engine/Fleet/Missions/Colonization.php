@@ -12,7 +12,7 @@ use App\Notifications\MessageNotification;
 
 class Colonization extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return !empty($units[208]) && $targetPlanet;
 	}

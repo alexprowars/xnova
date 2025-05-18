@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 
 class Expedition extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		if ($target->getPlanet() != 16) {
 			return false;
@@ -356,7 +356,7 @@ class Expedition extends BaseMission
 						Models\Fleet::query()->whereKey($fleetID)
 							->update([
 								'fleet_array' 	=> $fleetArray,
-								'updated_at' 	=> DB::raw('end_time'),
+								'updated_at' 	=> DB::raw('end_date'),
 								'mess'			=> 1,
 								'won'			=> $result['won']
 							]);
@@ -458,11 +458,11 @@ class Expedition extends BaseMission
 				$Wrapper[] = 5;
 
 				if ($MoreTime < 75) {
-					$this->fleet->end_time->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_time->getTimestamp()) * (array_rand($Wrapper) - 1));
+					$this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * (array_rand($Wrapper) - 1));
 
 					$message = __('fleet_engine.sys_expe_time_slow_' . random_int(1, 6));
 				} else {
-					$this->fleet->end_time->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_time->getTimestamp()) / 3 * array_rand($Wrapper))));
+					$this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * array_rand($Wrapper))));
 
 					$message = __('fleet_engine.sys_expe_time_fast_' . random_int(1, 3));
 				}

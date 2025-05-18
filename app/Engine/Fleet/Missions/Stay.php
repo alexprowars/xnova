@@ -10,7 +10,7 @@ use App\Notifications\MessageNotification;
 
 class Stay extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return $targetPlanet && ($targetPlanet->user_id == $planet->user_id || $targetPlanet->user->isAdmin());
 	}

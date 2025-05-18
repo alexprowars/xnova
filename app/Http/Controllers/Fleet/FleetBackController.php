@@ -29,7 +29,7 @@ class FleetBackController extends Controller
 		}
 
 		if ($fleet->end_stay) {
-			if ($fleet->start_time->isFuture()) {
+			if ($fleet->start_date->isFuture()) {
 				$flyingTime = $fleet->created_at->diffInSeconds(now());
 			} else {
 				$flyingTime = $fleet->created_at->diffInSeconds($fleet->created_at);
@@ -45,9 +45,9 @@ class FleetBackController extends Controller
 		}
 
 		$fleet->update([
-			'start_time'		=> now()->subSecond(),
+			'start_date'		=> now()->subSecond(),
 			'end_stay' 			=> null,
-			'end_time' 			=> $returnTime->addSecond(),
+			'end_date' 			=> $returnTime->addSecond(),
 			'target_user_id'	=> $this->user->id,
 			'assault_id' 		=> null,
 			'updated_at' 		=> $returnTime->addSecond(),

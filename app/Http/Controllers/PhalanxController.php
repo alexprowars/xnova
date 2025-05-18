@@ -69,7 +69,7 @@ class PhalanxController extends Controller
 			->orWhere(
 				fn (Builder $query) => $query->coordinates(FleetDirection::END, $target)
 			)
-			->orderBy('start_time')
+			->orderBy('start_date')
 			->get();
 
 		$items = [];
@@ -89,9 +89,9 @@ class PhalanxController extends Controller
 				$type2 = 'планет';
 			}
 
-			if ($row->start_time->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
+			if ($row->start_date->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
 				$items[] = [
-					'time' => $row->start_time->utc()->toAtomString(),
+					'time' => $row->start_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type . 'ы',
 					'type_2' => $type2 . 'у',
@@ -106,7 +106,7 @@ class PhalanxController extends Controller
 
 			if ($row->mission != Mission::Stay && !$end && $row->start_type != PlanetType::MOON) {
 				$items[] = [
-					'time' => $row->end_time->utc()->toAtomString(),
+					'time' => $row->end_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
 					'type_1' => $type2 . 'ы',
 					'type_2' => $type . 'у',

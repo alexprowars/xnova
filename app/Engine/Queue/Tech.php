@@ -50,8 +50,8 @@ class Tech
 					'user_id' => $user->id,
 					'planet_id' => $planet->id,
 					'object_id' => $elementId,
-					'time' => now(),
-					'time_end' => now()->addSeconds($buildTime),
+					'date' => now(),
+					'date_end' => now()->addSeconds($buildTime),
 					'level' => $user->getTechLevel($elementId) + 1,
 				]);
 

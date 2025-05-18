@@ -6,24 +6,26 @@ use App\Engine\Enums\MessageType;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Message extends Model
 {
 	use MassPrunable;
+	use SoftDeletes;
 
+	protected $table = 'messages';
 	public $timestamps = false;
 
 	protected $fillable = [
 		'user_id',
 		'from_id',
-		'theme',
-		'time',
+		'subject',
+		'date',
 		'message',
 	];
 
 	protected $casts = [
-		'deleted' => 'boolean',
-		'time' => 'immutable_datetime',
+		'date' => 'immutable_datetime',
 		'type' => MessageType::class,
 	];
 
@@ -41,6 +43,6 @@ class Message extends Model
 
 	public function prunable()
 	{
-		return static::query()->where('time', '<', now()->subDays(14))->whereNot('type', 2);
+		return static::query()->where('date', '<', now()->subDays(14))->whereNot('type', 2);
 	}
 }

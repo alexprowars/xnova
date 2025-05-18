@@ -60,8 +60,8 @@ class Build
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
 				'object_id' => $elementId,
-				'time' => null,
-				'time_end' => null,
+				'date' => null,
+				'date_end' => null,
 				'level' => $build->amount + (!$destroy ? 1 : 0) + $inArray
 			]);
 

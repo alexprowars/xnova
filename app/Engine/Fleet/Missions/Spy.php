@@ -16,7 +16,7 @@ use App\Notifications\MessageNotification;
 
 class Spy extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return !empty($units[210]) && $targetPlanet && $planet->user_id != $targetPlanet->user_id;
 	}
@@ -40,7 +40,7 @@ class Spy extends BaseMission
 			return false;
 		}
 
-		$TargetPlanet->getProduction($this->fleet->start_time)->update();
+		$TargetPlanet->getProduction($this->fleet->start_date)->update();
 
 		$queueManager = new QueueManager($targetUser, $TargetPlanet);
 		$queueManager->checkUnitQueue();
@@ -168,9 +168,9 @@ class Spy extends BaseMission
 				$MessageEnd .= 'Симуляция</a></div>';
 			}
 
-			$MessageEnd .= '<div class="text-center"><a href="#" onclick="raport_to_bb(\'sp' . $this->fleet->start_time->getTimestamp() . '\')">BB-код</a></div>';
+			$MessageEnd .= '<div class="text-center"><a href="#" onclick="raport_to_bb(\'sp' . $this->fleet->start_date->getTimestamp() . '\')">BB-код</a></div>';
 
-			$SpyMessage = '<div id="sp' . $this->fleet->start_time->getTimestamp() . '">' . $SpyMessage . '</div><br>' . $MessageEnd . $AttackLink;
+			$SpyMessage = '<div id="sp' . $this->fleet->start_date->getTimestamp() . '">' . $SpyMessage . '</div><br>' . $MessageEnd . $AttackLink;
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Spy, __('fleet_engine.sys_mess_spy_report'), $SpyMessage));
 

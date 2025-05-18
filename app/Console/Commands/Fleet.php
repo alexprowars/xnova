@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Engine\Fleet\MissionFactory;
+use App\Engine\Fleet\Missions\Mission;
 use App\Models;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,7 +31,7 @@ class Fleet extends Command
 		while ($totalRuns < MAX_RUNS) {
 			$fleets = Models\Fleet::query()
 				->where(function (Builder $query) {
-					$query->whereNowOrPast('start_time')
+					$query->whereNowOrPast('start_date')
 						->where('mess', 0);
 				})
 				->orWhere(function (Builder $query) {
@@ -39,7 +40,7 @@ class Fleet extends Command
 						->where('end_stay', '!=', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->whereNowOrPast('end_time')
+					$query->whereNowOrPast('end_date')
 						->where('mess', '!=', 0);
 				})
 				->orderBy('updated_at')
@@ -53,13 +54,15 @@ class Fleet extends Command
 					continue;
 				}
 
+				/** @var class-string<Mission> $mission */
 				$mission = MissionFactory::getMission($fleet->mission);
+				$mission = new $mission($fleet);
 
-				if ($fleet->mess == 0 && $fleet->start_time->lessThanOrEqualTo(now())) {
+				if ($fleet->mess == 0 && $fleet->start_date->lessThanOrEqualTo(now())) {
 					$mission->targetEvent();
 				} elseif ($fleet->mess == 3 && $fleet->end_stay->lessThanOrEqualTo(now())) {
 					$mission->endStayEvent();
-				} elseif ($fleet->mess == 1 && $fleet->end_time->lessThanOrEqualTo(now())) {
+				} elseif ($fleet->mess == 1 && $fleet->end_date->lessThanOrEqualTo(now())) {
 					$mission->returnEvent();
 				}
 

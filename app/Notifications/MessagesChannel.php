@@ -32,9 +32,8 @@ class MessagesChannel
 		$obj = new Message();
 		$obj->user()->associate($user);
 		$obj->from_id = $sender ?: null;
-		$obj->time = now();
 		$obj->type = $type;
-		$obj->theme = $subject;
+		$obj->subject = $subject;
 		$obj->message = $message;
 
 		if ($obj->save()) {

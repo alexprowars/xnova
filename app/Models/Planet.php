@@ -11,13 +11,18 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
 {
+	use MassPrunable;
+	use SoftDeletes;
+
 	protected $hidden = ['planet_updated'];
 	protected $guarded = false;
 
@@ -64,6 +69,11 @@ class Planet extends Model
 	public function queue(): HasMany
 	{
 		return $this->hasMany(Queue::class, 'planet_id');
+	}
+
+	public function prunable()
+	{
+		return static::query()->withTrashed()->where('deleted_at', '<', now()->subWeek());
 	}
 
 	public function checkOwnerPlanet()

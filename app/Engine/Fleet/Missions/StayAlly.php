@@ -9,7 +9,7 @@ use App\Notifications\MessageNotification;
 
 class StayAlly extends BaseMission
 {
-	public function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		return $targetPlanet && $targetPlanet->user_id != $planet->user_id && !(count($units) == 1 && !empty($units[210]));
 	}

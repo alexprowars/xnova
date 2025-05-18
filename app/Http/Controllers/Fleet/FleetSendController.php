@@ -103,8 +103,8 @@ class FleetSendController extends Controller
 			'consumption' => $consumption,
 			'from' => $this->planet->coordinates->toArray(),
 			'target' => $target->toArray(),
-			'start_time' => $fleet->start_time?->utc()->toAtomString(),
-			'end_time' => $fleet->end_time?->utc()->toAtomString(),
+			'start_date' => $fleet->start_date?->utc()->toAtomString(),
+			'end_date' => $fleet->end_date?->utc()->toAtomString(),
 			'units' => [],
 		];
 

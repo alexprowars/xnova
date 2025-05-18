@@ -85,7 +85,7 @@ class FleetEngine
 	public function return(array $attributes = [])
 	{
 		$this->fleet->mess = 1;
-		$this->fleet->updated_at = $this->fleet->end_time;
+		$this->fleet->updated_at = $this->fleet->end_date;
 		$this->fleet->update($attributes);
 
 		$this->fleet->assault?->delete();
