@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +39,16 @@ class AppServiceProvider extends ServiceProvider
 
 			return $this->whereKey($key)->firstOrFail();
 		});
+
+		Gate::before(function ($user) {
+			return $user->hasRole('admin') ? true : null;
+		});
+
+		if (app()->isProduction()) {
+			url()->forceHttps();
+
+			DB::prohibitDestructiveCommands();
+		}
 
 		/*\DB::listen(function ($query) {
 			dump($query);

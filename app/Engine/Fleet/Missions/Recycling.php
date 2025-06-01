@@ -20,9 +20,10 @@ class Recycling extends BaseMission
 
 	public function targetEvent()
 	{
-		$targetPlanet = Planet::findByCoordinates(
-			new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::MOON)
-		);
+		$targetPlanet = Planet::query()
+			->coordinates(new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet))
+			->whereNot('planet_type', PlanetType::MOON)
+			->first();
 
 		$recycledGoods = [
 			'metal' => 0,
@@ -108,7 +109,7 @@ class Recycling extends BaseMission
 			'c' => Format::number($recycledGoods['crystal']),
 			'ct' => __('main.crystal'),
 			'target' => $this->fleet->getTargetAdressLink(),
-		]);
+		], $this->fleet->user->locale);
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $message));
 	}

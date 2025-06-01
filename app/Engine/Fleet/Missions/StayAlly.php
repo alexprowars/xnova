@@ -23,7 +23,7 @@ class StayAlly extends BaseMission
 			'start' => $this->fleet->getStartAdressLink(),
 			'target_user' => $this->fleet->target_user_name,
 			'target' => $this->fleet->getTargetAdressLink(),
-		]);
+		], $this->fleet->user->locale);
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Alliance, __('fleet_engine.sys_mess_tower'), $message));
 	}

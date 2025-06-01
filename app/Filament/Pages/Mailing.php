@@ -91,7 +91,7 @@ class Mailing extends Page
 			$user->notify(new MessageNotification(
 				null,
 				MessageType::System,
-				$this->subject ?: '<font color="' . $color . '">Информационное сообщение (' . $currentUser->username . ')</font>',
+				$this->subject ?: '<span style="color: ' . $color . '">Информационное сообщение (' . $currentUser->username . ')</span>',
 				$this->message
 			));
 		}

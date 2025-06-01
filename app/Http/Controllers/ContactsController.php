@@ -9,8 +9,9 @@ class ContactsController extends Controller
 	public function index()
 	{
 		$users = User::query()
-			->where('authlevel', '>', 0)
-			->orderByDesc('authlevel')
+			->with(['roles'])
+			->whereHas('roles')
+			->orderByDesc('id')
 			->get();
 
 		$items = [];
@@ -19,9 +20,9 @@ class ContactsController extends Controller
 			$items[] = [
 				'id' 	=> $user->id,
 				'name' 	=> $user->username,
-				'auth' 	=> __('main.user_level.' . $user->authlevel),
-				'mail' 	=> $user->email,
-				'info' 	=> preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about)),
+				'role' 	=> $user->roles->first()->name,
+				'email' => $user->email,
+				'about' => preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about)),
 			];
 		}
 

@@ -128,7 +128,7 @@ class Spy extends BaseMission
 			if ($TargetChances <= $SpyerChances) {
 				$DestProba = sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances);
 			} else {
-				$DestProba = '<font color="red">' . __('fleet_engine.sys_mess_spy_destroyed') . '</font>';
+				$DestProba = '<span style="color: red">' . __('fleet_engine.sys_mess_spy_destroyed') . '</span>';
 			}
 
 			$AttackLink = '<div class="text-center">';

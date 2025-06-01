@@ -63,9 +63,9 @@ class Fleet extends Building
 
 		if ($FleetTotalC != 0) {
 			$FRessource = '<table width=200>';
-			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.metal') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_metal) . '<font></td></tr>';
-			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.crystal') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_crystal) . '<font></td></tr>';
-			$FRessource .= '<tr><td width=50% align=left><font color=white>' . __('main.deuterium') . '<font></td><td width=50% align=right><font color=white>' . Format::number($FleetRow->resource_deuterium) . '<font></td></tr>';
+			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.metal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_metal) . '<span></td></tr>';
+			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.crystal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_crystal) . '<span></td></tr>';
+			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.deuterium') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_deuterium) . '<span></td></tr>';
 			$FRessource .= '</table>';
 		} else {
 			$FRessource = '';

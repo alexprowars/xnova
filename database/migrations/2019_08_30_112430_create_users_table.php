@@ -14,8 +14,6 @@ return new class extends Migration {
 			$table->string('password', 100)->nullable();
 			$table->string('username', 50)->nullable();
 			$table->timestamp('username_change')->nullable();
-			$table->tinyInteger('authlevel')->default(0);
-			$table->smallInteger('group_id')->nullable();
 			$table->timestamp('blocked_at')->nullable();
 			$table->timestamp('onlinetime')->nullable();
 			$table->bigInteger('ip')->nullable();

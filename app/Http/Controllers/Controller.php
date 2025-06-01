@@ -9,7 +9,6 @@ use App\Models\Planet;
 use App\Models\User;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Nubs\RandomNameGenerator;
 
@@ -29,8 +28,6 @@ class Controller extends BaseController
 
 	private function init()
 	{
-		$request = Request::instance();
-
 		if (!Auth::check()) {
 			Game::checkReferLink();
 			return;

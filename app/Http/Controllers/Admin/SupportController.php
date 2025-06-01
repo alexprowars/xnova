@@ -28,10 +28,10 @@ class SupportController extends Controller
 
 		while ($ticket = $query->fetch()) {
 			$status = match ($ticket['status']) {
-				0 => '<font color="red">закрыто</font>',
-				1 => '<font color="green">открыто</font>',
-				2 => '<font color="orange">ответ админа</font>',
-				3 => '<font color="green">ответ игрока</font>',
+				0 => '<span style="color: red">закрыто</span>',
+				1 => '<span style="color: green">открыто</span>',
+				2 => '<span style="color: orange">ответ админа</span>',
+				3 => '<span style="color: green">ответ игрока</span>',
 				default => '',
 			};
 
@@ -64,10 +64,10 @@ class SupportController extends Controller
 
 		if (isset($TINFO)) {
 			$status = match ($TINFO['status']) {
-				0 => '<font color="red">закрыто</font>',
-				1 => '<font color="green">открыто</font>',
-				2 => '<font color="orange">ответ админа</font>',
-				3 => '<font color="green">ответ игрока</font>',
+				0 => '<span style="color: red">закрыто</span>',
+				1 => '<span style="color: green">открыто</span>',
+				2 => '<span style="color: orange">ответ админа</span>',
+				3 => '<span style="color: green">ответ игрока</span>',
 				default => '',
 			};
 

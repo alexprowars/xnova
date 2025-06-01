@@ -403,7 +403,7 @@ class Expedition extends BaseMission
 				}
 
 				$messageAtt = sprintf(
-					'<a href="/rw/%s" target="_blank"><center><font color="%s">%s %s</font></a><br><br><font color="%s">%s: %s</font> <font color="%s">%s: %s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font> %s:<font color="#f77542">%s</font><br>%s %s:<font color="#adaead">%s</font> %s:<font color="#ef51ef">%s</font><br></center>',
+					'<a href="/rw/%s" target="_blank"><center><span style="color: %s">%s %s</span></a><br><br><span style="color: %s">%s: %s</span> <span style="color: %s">%s: %s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span> %s:<span style="color: #f77542">%s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span><br></center>',
 					str_replace('/api', '', url()->signedRoute('log.view', ['id' => $report->id], absolute: false)),
 					$colorAtt,
 					'Боевой доклад',

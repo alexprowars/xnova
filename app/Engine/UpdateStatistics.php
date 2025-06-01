@@ -305,7 +305,10 @@ class UpdateStatistics
 		$fleetPoints = $this->getTotalFleetPoints();
 
 		$users = User::whereNotNull('planet_id')
-			->where('authlevel', '<', 3)
+			->where(function (Builder $query) {
+				return $query->orWhereHas('roles', fn(Builder $query) => $query->whereNot('name', 'admin'))
+					->whereDoesntHave('roles');
+			})
 			->whereNull('blocked_at')
 			->with(['alliance', 'statistics'])
 			->get();

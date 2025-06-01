@@ -22,14 +22,14 @@ class Transport extends BaseMission
 			'user' => $this->fleet->target_user_name,
 			'target' => $this->fleet->getTargetAdressLink(),
 			'm' => $this->fleet->resource_metal,
-			'mt' => __('main.metal'),
+			'mt' => __('main.metal', locale: $this->fleet->user->locale),
 			'c' => $this->fleet->resource_crystal,
-			'ct' => __('main.crystal'),
+			'ct' => __('main.crystal', locale: $this->fleet->user->locale),
 			'd' => $this->fleet->resource_deuterium,
-			'dt' => __('main.deuterium')
-		]);
+			'dt' => __('main.deuterium', locale: $this->fleet->user->locale)
+		], $this->fleet->user->locale);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower'), $message));
+		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower', locale: $this->fleet->user->locale), $message));
 
 		if ($this->fleet->target_user_id != $this->fleet->user_id) {
 			$message = __('fleet_engine.sys_tran_mess_user', [
@@ -38,14 +38,14 @@ class Transport extends BaseMission
 				'target_user' => $this->fleet->target_user_name,
 				'target' => $this->fleet->getTargetAdressLink(),
 				'm' => $this->fleet->resource_metal,
-				'mt' => __('main.metal'),
+				'mt' => __('main.metal', locale: $this->fleet->target->locale),
 				'c' => $this->fleet->resource_crystal,
-				'ct' => __('main.crystal'),
+				'ct' => __('main.crystal', locale: $this->fleet->target->locale),
 				'd' => $this->fleet->resource_deuterium,
-				'dt' => __('main.deuterium')
-			]);
+				'dt' => __('main.deuterium', locale: $this->fleet->target->locale)
+			], $this->fleet->target->locale);
 
-			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower'), $message));
+			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower', locale: $this->fleet->target->locale), $message));
 		}
 
 		$this->fleet->resource_metal = 0;

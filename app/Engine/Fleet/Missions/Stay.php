@@ -62,21 +62,21 @@ class Stay extends BaseMission
 			$this->killFleet();
 
 			$targetAddedGoods = __('fleet_engine.sys_stay_mess_goods', [
-				'mt' => __('main.metal'),
+				'mt' => __('main.metal', locale: $this->fleet->user->locale),
 				'm' => Format::number($this->fleet->resource_metal),
-				'ct' => __('main.crystal'),
+				'ct' => __('main.crystal', locale: $this->fleet->user->locale),
 				'c' => Format::number($this->fleet->resource_crystal),
-				'dt' => __('main.deuterium'),
+				'dt' => __('main.deuterium', locale: $this->fleet->user->locale),
 				'd' => Format::number($this->fleet->resource_deuterium),
-			]);
+			], $this->fleet->user->locale);
 
 			$fleetData = $this->fleet->getShips();
 
 			foreach ($fleetData as $shipId => $shipArr) {
-				$targetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
+				$targetAddedGoods .= ', ' . __('main.tech.' . $shipId, locale: $this->fleet->user->locale) . ': ' . $shipArr['count'];
 			}
 
-			$TargetMessage = __('fleet_engine.sys_stay_mess_back') . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend') . "<br />" . $targetAddedGoods;
+			$TargetMessage = __('fleet_engine.sys_stay_mess_back', locale: $this->fleet->user->locale) . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend', locale: $this->fleet->user->locale) . '<br>' . $targetAddedGoods;
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
 		}

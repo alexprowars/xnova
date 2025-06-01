@@ -27,7 +27,7 @@ class PaymentResource extends Resource
 
 	public static function canAccess(): bool
 	{
-		return auth()->user()->can('planets');
+		return auth()->user()->can('payments');
 	}
 
 	public static function getPages(): array

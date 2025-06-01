@@ -232,15 +232,14 @@ class MessagesController extends Controller
 		}
 
 		$users = User::query()
-			->select(['id'])
-			->where('authlevel', '!=', 0)
+			->whereHas('roles')
 			->get();
 
 		foreach ($users as $user) {
 			$user->notify(new MessageNotification(
 				$this->user,
 				MessageType::User,
-				'<font color=red>' . $this->user->username . '</font>',
+				'<span style="color: red">' . $this->user->username . '</span>',
 				'От кого: ' . $message->from . '<br>Дата отправления: ' . $message->date->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $message->message
 			));
 		}

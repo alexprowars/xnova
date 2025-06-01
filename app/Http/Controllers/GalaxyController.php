@@ -85,7 +85,7 @@ class GalaxyController extends Controller
 		}
 
 		$items = Models\Planet::query()
-			->with(['moon', 'user', 'user.alliance', 'user.statistics'])
+			->with(['moon', 'user', 'user.alliance', 'user.statistics', 'user.roles'])
 			->where('galaxy', $galaxy)
 			->where('system', $system)
 			->whereNot('planet_type', PlanetType::MOON)
@@ -183,7 +183,7 @@ class GalaxyController extends Controller
 					'id' => $user->id,
 					'name' => $user->username,
 					'race' => $user->race,
-					'admin' => $user->authlevel,
+					'role' => $user->roles->first()->name ?? null,
 					'online' => $userOnline,
 					'vacation' => $user->isVacation(),
 					'blocked' => $user->blocked_at?->utc()->toAtomString(),

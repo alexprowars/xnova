@@ -175,7 +175,7 @@ class FleetSend
 			$targerUser = $this->planet->user;
 		}
 
-		if (($targerUser->authlevel > 0 && $this->planet->user->authlevel == 0) && ($this->mission != Mission::Stay && $this->mission != Mission::Transport)) {
+		if (($targerUser->roles->isNotEmpty() && $this->planet->user->roles->isEmpty()) && ($this->mission != Mission::Stay && $this->mission != Mission::Transport)) {
 			throw new PageException('На этого игрока запрещено нападать');
 		}
 
@@ -198,7 +198,7 @@ class FleetSend
 
 		$protection = (int) config('game.noobprotection') > 0;
 
-		if ($protection && $this->targetPlanet && in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::StayAlly, Mission::Spy, Mission::Destruction]) && $this->planet->user->authlevel < 2) {
+		if ($protection && $this->targetPlanet && in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::StayAlly, Mission::Spy, Mission::Destruction]) && ($this->planet->user->roles->isEmpty() || $this->planet->user->hasExactRoles('operator'))) {
 			$protectionPoints = (int) config('game.noobprotectionPoints');
 			$protectionFactor = (int) config('game.noobprotectionFactor');
 

@@ -29,7 +29,7 @@ class InfoController extends Controller
 			$unitData = Vars::getUnitData($BuildID);
 
 			if (isset($unitData['sd'][$Type]) && $unitData['sd'][$Type] > 1) {
-				$result .= __('info.nfo_rf_again') . ' <font color="#00ff00">' . $unitData['sd'][$Type] . '</font> единиц ' . __('main.tech.' . $Type) . '<br>';
+				$result .= __('info.nfo_rf_again') . ' <span style="color: #00ff00">' . $unitData['sd'][$Type] . '</span> единиц ' . __('main.tech.' . $Type) . '<br>';
 			}
 		}
 
@@ -46,7 +46,7 @@ class InfoController extends Controller
 			$unitData = Vars::getUnitData($Type);
 
 			if (isset($unitData['sd'][$BuildID]) && $unitData['sd'][$BuildID] > 1) {
-				$result .= __('main.tech.' . $Type) . ' ' . __('info.nfo_rf_from') . ' <font color="#ff0000">' . $unitData['sd'][$BuildID] . '</font> единиц<br>';
+				$result .= __('main.tech.' . $Type) . ' ' . __('info.nfo_rf_from') . ' <span style="color: #ff0000">' . $unitData['sd'][$BuildID] . '</span> единиц<br>';
 			}
 		}
 
