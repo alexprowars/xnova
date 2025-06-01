@@ -26,6 +26,11 @@ class UserResource extends Resource
 		return __('admin.navigation.pages.users');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('users');
+	}
+
 	public static function getPages(): array
 	{
 		return [

@@ -26,6 +26,11 @@ class MessageResource extends Resource
 		return __('admin.navigation.pages.messages');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('messages');
+	}
+
 	public static function getPages(): array
 	{
 		return [

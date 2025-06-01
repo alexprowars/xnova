@@ -30,6 +30,11 @@ class ContentResource extends Resource
 		return __('admin.navigation.pages.content');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('content');
+	}
+
 	public static function form(Form $form): Form
 	{
 		return $form

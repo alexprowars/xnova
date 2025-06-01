@@ -10,6 +10,7 @@ use App\Engine\Fleet;
 use App\Engine\Fleet\Mission;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
+use App\Factories\PlanetServiceFactory;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Planet;
@@ -121,7 +122,8 @@ class FleetCheckoutController extends Controller
 				->get();
 
 			if ($moons->count()) {
-				$timer = $this->planet->getNextJumpTime();
+				$timer = resolve(PlanetServiceFactory::class)->make($this->planet)
+					->getNextJumpTime();
 
 				if ($timer) {
 					$parse['gate_time'] = now()->addSeconds($timer)->utc()->toAtomString();
@@ -132,7 +134,8 @@ class FleetCheckoutController extends Controller
 						continue;
 					}
 
-					$gateTime = $moon->getNextJumpTime();
+					$gateTime = resolve(PlanetServiceFactory::class)->make($moon)
+						->getNextJumpTime();
 
 					$parse['moons'][] = [
 						'id' => $moon->id,

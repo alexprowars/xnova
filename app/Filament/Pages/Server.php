@@ -26,4 +26,9 @@ class Server extends Page
 	{
 		return __('admin.navigation.pages.server');
 	}
+
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('server');
+	}
 }

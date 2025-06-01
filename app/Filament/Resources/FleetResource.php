@@ -26,6 +26,11 @@ class FleetResource extends Resource
 		return __('admin.navigation.pages.fleets');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('fleets');
+	}
+
 	public static function getPages(): array
 	{
 		return [

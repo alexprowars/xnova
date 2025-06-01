@@ -8,7 +8,9 @@ use App\Engine\Fleet\Mission;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FleetRow;
 use App\Models;
+use App\Models\Fleet;
 use Illuminate\Http\Request;
 
 class FleetController extends Controller
@@ -55,7 +57,9 @@ class FleetController extends Controller
 		$parse['maxExpeditions'] = $maxExpeditions;
 		$parse['mission'] = $mission;
 
-		$fleets = Models\Fleet::query()->whereBelongsTo($this->user)->get();
+		$fleets = Models\Fleet::query()
+			->whereBelongsTo($this->user)
+			->get();
 
 		$parse['fleets'] = [];
 
@@ -101,5 +105,61 @@ class FleetController extends Controller
 		}
 
 		return $parse;
+	}
+
+	public function list()
+	{
+		$fleets = Fleet::query()
+			->with(['user'])
+			->whereBelongsTo($this->user)
+			->orWhereBelongsTo($this->user, 'target')
+			->get();
+
+		$result = [];
+		$aks = [];
+
+		foreach ($fleets as $fleet) {
+			if ($fleet->user_id == $this->user->id) {
+				if ($fleet->start_date->isFuture()) {
+					$result[] = FleetRow::make($fleet, 0, true);
+				}
+
+				if ($fleet->end_stay?->isFuture()) {
+					$result[] = FleetRow::make($fleet, 1, true);
+				}
+
+				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
+					if (($fleet->end_date->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
+						$result[] = FleetRow::make($fleet, 2, true);
+					}
+				}
+
+				if ($fleet->assault_id && !in_array($fleet->assault_id, $aks)) {
+					$assaultFleets = Fleet::query()
+						->where('assault_id', $fleet->assault_id)
+						->whereNot('user_id', $this->user->id)
+						->where('mess', 0)
+						->get();
+
+					foreach ($assaultFleets as $AKFleet) {
+						$result[] = FleetRow::make($AKFleet, 0, false);
+					}
+
+					$aks[] = $fleet->assault_id;
+				}
+			} elseif ($fleet->mission != Mission::Recycling) {
+				if ($fleet->start_date->isFuture()) {
+					$result[] = FleetRow::make($fleet, 0, false);
+				}
+
+				if ($fleet->mission == Mission::StayAlly && $fleet->end_stay?->isFuture()) {
+					$result[] = FleetRow::make($fleet, 1, false);
+				}
+			}
+		}
+
+		usort($result, fn ($a, $b) => $a['time'] <=> $b['time']);
+
+		return $result;
 	}
 }

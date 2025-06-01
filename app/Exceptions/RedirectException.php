@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 class RedirectException extends Exception
 {
-	public function __construct(protected $url = '', $message = '')
+	public function __construct(protected $url = '', $message = '', protected $code = 301)
 	{
 		if (empty($this->url)) {
 			$this->url = Route::current()->uri();
@@ -27,11 +27,9 @@ class RedirectException extends Exception
 		}
 
 		return new JsonResponse([
-			'messages' => [[
-				'type' => 'notice',
-				'text' => $this->getMessage(),
-			]],
+			'code' => $this->getCode(),
+			'messages' => $this->getMessage(),
 			'redirect' => $this->url,
-		]);
+		], $this->getCode());
 	}
 }

@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use App\Engine\Galaxy;
 use App\Facades\Vars;
+use App\Factories\PlanetServiceFactory;
+use App\Services\GalaxyService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -48,7 +49,8 @@ class AppServiceProvider extends ServiceProvider
 			$this->app->register(AdminPanelProvider::class);
 		}
 
-		$this->app->singleton(Galaxy::class);
+		$this->app->singleton(GalaxyService::class);
 		$this->app->singleton(Vars::class);
+		$this->app->singleton(PlanetServiceFactory::class);
 	}
 }

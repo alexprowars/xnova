@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Filament\AvatarProviders\GravatarProvider;
 use App\Filament\Resources\UserResource;
-use App\Http\Middleware\AdminCanAccess;
 use Filament\Actions\CreateAction;
 use Filament\Events\ServingFilament;
 use Filament\FontProviders\LocalFontProvider;
@@ -78,7 +77,6 @@ class AdminPanelProvider extends PanelProvider
 			])
 			->authMiddleware([
 				Authenticate::class,
-				AdminCanAccess::class,
 			])
 			->plugin(FilamentSpatieLaravelBackupPlugin::make())
 			->bootUsing(function (Panel $panel) {

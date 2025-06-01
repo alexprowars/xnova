@@ -26,6 +26,11 @@ class AlliancesResource extends Resource
 		return __('admin.navigation.pages.alliances');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('alliances');
+	}
+
 	public static function getRelations(): array
 	{
 		return [

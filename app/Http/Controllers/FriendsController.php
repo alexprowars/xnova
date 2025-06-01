@@ -12,13 +12,13 @@ use App\Notifications\MessageNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class BuddyController extends Controller
+class FriendsController extends Controller
 {
 	public function index(Request $request)
 	{
 		$parse = [];
 
-		if ($request->has('requests')) {
+		if ($request->get('requests')) {
 			$parse['title'] = $request->has('my') ? 'Мои запросы' : 'Другие запросы';
 		}
 
@@ -29,10 +29,10 @@ class BuddyController extends Controller
 			->orderByDesc('id')
 			->where('ignore', false);
 
-		if ($request->has('requests')) {
+		if ($request->get('requests')) {
 			$items->where('active', false);
 
-			if ($request->has('my')) {
+			if ($request->get('my')) {
 				$items->whereBelongsTo($this->user);
 			} else {
 				$items->whereBelongsTo($this->user, 'friend');
@@ -74,7 +74,7 @@ class BuddyController extends Controller
 				],
 			];
 
-			if (!$request->has('requests')) {
+			if (!$request->get('requests')) {
 				if ($user->onlinetime?->timestamp > time() - 59 * 60) {
 					$row['online'] = floor((time() - $user->onlinetime->timestamp) / 60);
 				} else {
@@ -118,7 +118,7 @@ class BuddyController extends Controller
 			throw new Exception('Нельзя дружить сам с собой');
 		}
 
-		$buddy = Friend::query()
+		$friend = Friend::query()
 			->where(function (Builder $query) use ($userId) {
 				$query->where('user_id', $userId)->whereBelongsTo($this->user, 'friend');
 			})
@@ -127,7 +127,7 @@ class BuddyController extends Controller
 			})
 			->exists();
 
-		if ($buddy) {
+		if ($friend) {
 			throw new Exception('Запрос дружбы был уже отправлен ранее');
 		}
 
@@ -144,7 +144,7 @@ class BuddyController extends Controller
 			'message' => $message,
 		]);
 
-		$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/buddy/requests"><< просмотреть >></a>'));
+		$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/friends/requests"><< просмотреть >></a>'));
 	}
 
 	public function delete(int $id)
@@ -158,11 +158,11 @@ class BuddyController extends Controller
 		if ($friend->friend_id == $this->user->id) {
 			$friend->delete();
 
-			throw new RedirectException('/buddy/requests', 'Заявка отклонена');
+			throw new RedirectException('/friends/requests', 'Заявка отклонена');
 		} elseif ($friend->user_id == $this->user->id) {
 			$friend->delete();
 
-			throw new RedirectException('/buddy/requests/my', 'Заявка удалена');
+			throw new RedirectException('/friends/requests/my', 'Заявка удалена');
 		}
 
 		throw new Exception('Заявка не найдена');

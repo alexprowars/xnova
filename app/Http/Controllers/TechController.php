@@ -89,7 +89,8 @@ class TechController extends Controller
 		if ($element > 0 && Vars::getName($element)) {
 			$entity = EntityFactory::get($element, 1, $this->planet);
 
-			$page['element'] = $element;
+			$page['id'] = $element;
+			$page['code'] = Vars::getName($element);
 			$page['level'] = $this->user->getTechLevel($element) ?: $this->planet->getLevel($element);
 			$page['access'] = $entity->isAvailable();
 			$page['req'] = Vars::getItemRequirements($element);

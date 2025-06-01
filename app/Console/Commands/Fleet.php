@@ -35,13 +35,13 @@ class Fleet extends Command
 						->where('mess', 0);
 				})
 				->orWhere(function (Builder $query) {
-					$query->whereNowOrPast('end_stay')
-						->where('mess', '!=', 0)
-						->where('end_stay', '!=', 0);
+					$query->whereNotNull('end_stay')
+						->whereNowOrPast('end_stay')
+						->whereNot('mess', 0);
 				})
 				->orWhere(function (Builder $query) {
 					$query->whereNowOrPast('end_date')
-						->where('mess', '!=', 0);
+						->whereNot('mess', 0);
 				})
 				->orderBy('updated_at')
 				->limit(10)
@@ -58,11 +58,11 @@ class Fleet extends Command
 				$mission = MissionFactory::getMission($fleet->mission);
 				$mission = new $mission($fleet);
 
-				if ($fleet->mess == 0 && $fleet->start_date->lessThanOrEqualTo(now())) {
+				if ($fleet->mess == 0 && $fleet->start_date->isNowOrPast()) {
 					$mission->targetEvent();
-				} elseif ($fleet->mess == 3 && $fleet->end_stay->lessThanOrEqualTo(now())) {
+				} elseif ($fleet->mess == 3 && $fleet->end_stay->isNowOrPast()) {
 					$mission->endStayEvent();
-				} elseif ($fleet->mess == 1 && $fleet->end_date->lessThanOrEqualTo(now())) {
+				} elseif ($fleet->mess == 1 && $fleet->end_date->isNowOrPast()) {
 					$mission->returnEvent();
 				}
 

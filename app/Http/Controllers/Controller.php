@@ -49,10 +49,6 @@ class Controller extends BaseController
 		$this->user->getAllyInfo();
 		$this->user->checkLevel();
 
-		if ($request->has('chpl') && is_numeric($request->input('chpl'))) {
-			$this->user->setSelectedPlanet($request->input('chpl'));
-		}
-
 		if ((!$this->user->race || !$this->user->avatar) && !in_array(Route::current()->controller::class, [StateController::class, InfoController::class, ContentController::class, StartController::class, LogoutController::class])) {
 			throw new RedirectException('/start');
 		}
@@ -70,7 +66,7 @@ class Controller extends BaseController
 			$this->planet->checkUsedFields();
 
 			// Обновляем ресурсы на планете когда это необходимо
-			if ($this->planet->last_update?->diffInSeconds() < 60) {
+			if ($this->planet->last_update->diffInSeconds() < 60) {
 				$this->planet->getProduction()->update(true);
 			} else {
 				$this->planet->getProduction()->update();

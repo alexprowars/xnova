@@ -9,7 +9,7 @@ use App\Facades\Vars;
 use App\Models\Fleet;
 use App\Models\Planet;
 
-class ImperiumController extends Controller
+class EmpireController extends Controller
 {
 	public function index()
 	{

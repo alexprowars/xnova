@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Blocked;
 
-class BannedController extends Controller
+class BlockedController extends Controller
 {
 	public function index()
 	{

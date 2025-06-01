@@ -122,7 +122,7 @@ class TutorialController extends Controller
 				$parse['task'][] = ['Переименовать планету', $check];
 			}
 
-			if ($taskKey == 'buddy_count') {
+			if ($taskKey == 'friends_count') {
 				$parse['task'][] = ['Кол-во друзей в игре: ' . $taskVal, $check];
 			}
 

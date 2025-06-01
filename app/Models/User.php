@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Locale;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
@@ -204,12 +205,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 			$this->update();
 
-			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier/">Получен новый военный уровень</a>'));
+			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier">Получен новый военный уровень</a>'));
 
 			$giveCredits += config('game.level.credits', 10);
 		}
 
-		if ($giveCredits != 0) {
+		if ($giveCredits > 0) {
 			LogCredit::create([
 				'user_id' 	=> $this->id,
 				'amount' 	=> $giveCredits,
@@ -231,6 +232,17 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 				]);
 			}
 		}
+	}
+
+	public function setMainPlanet(Planet $planet)
+	{
+		$this->update([
+			'planet_id' => $planet->id,
+			'planet_current' => $planet->id,
+			'galaxy' => $planet->galaxy,
+			'system' => $planet->system,
+			'planet' => $planet->planet,
+		]);
 	}
 
 	public function setSelectedPlanet(int $planetId): bool
@@ -350,6 +362,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 				'ip' => Helpers::convertIp(Request::ip()),
 				'daily_bonus' => now(),
 				'onlinetime' => now(),
+				'locale' => Locale::getPreferredLocale(),
 			]);
 
 			if (!$user->id) {
@@ -384,7 +397,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 	public function canAccessPanel(Panel $panel): bool
 	{
-		return $this->id === 1;
+		return $this->id === 1 || $this->can('panel');
 	}
 
 	public function getFilamentName(): string

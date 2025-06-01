@@ -92,7 +92,7 @@ class PhalanxController extends Controller
 			if ($row->start_date->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
 				$items[] = [
 					'time' => $row->start_date->utc()->toAtomString(),
-					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),
 					'type_1' => $type . 'ы',
 					'type_2' => $type2 . 'у',
 					'planet_name' => $row->user_name,
@@ -107,7 +107,7 @@ class PhalanxController extends Controller
 			if ($row->mission != Mission::Stay && !$end && $row->start_type != PlanetType::MOON) {
 				$items[] = [
 					'time' => $row->end_date->utc()->toAtomString(),
-					'fleet' => Fleet::createFleetPopupedFleetLink($row, 'флот', '', $this->user),
+					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),
 					'type_1' => $type2 . 'ы',
 					'type_2' => $type . 'у',
 					'planet_name' => $row->target_user_name,

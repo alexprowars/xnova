@@ -2,25 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Game;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use Illuminate\Http\Request;
 
 class MerchantController extends Controller
 {
-	protected $modifiers = [
-		'metal' => 1,
-		'crystal' => 2,
-		'deuterium' => 4,
-	];
-
-	public function index()
-	{
-		return [
-			'modifiers' => $this->modifiers,
-		];
-	}
-
 	public function exchange(Request $request)
 	{
 		if ($this->user->credits <= 0) {
@@ -41,11 +29,13 @@ class MerchantController extends Controller
 			throw new Exception('Ресурс не существует');
 		}
 
+		$exchangeRate = Game::getMerchantExchangeRate();
+
 		$exchange = 0;
 
 		foreach (Vars::getResources() as $res) {
 			if ($res != $type) {
-				$exchange += $$res * ($this->modifiers[$res] / $this->modifiers[$type]);
+				$exchange += $$res * ($exchangeRate[$res] / $exchangeRate[$type]);
 			}
 		}
 

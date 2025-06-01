@@ -25,6 +25,11 @@ class PaymentResource extends Resource
 		return __('admin.navigation.pages.payments');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('planets');
+	}
+
 	public static function getPages(): array
 	{
 		return [

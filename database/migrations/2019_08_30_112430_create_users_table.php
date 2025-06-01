@@ -57,6 +57,7 @@ return new class extends Migration {
 			$table->tinyInteger('chat')->default(0);
 			$table->text('about')->nullable();
 			$table->json('options')->nullable();
+			$table->char('locale', 2)->default('en');
 			$table->rememberToken();
 			$table->timestamps();
 			$table->softDeletes();

@@ -49,7 +49,7 @@ class UserQuest extends Model
 				$result[$taskKey] = $planet->name != $taskVal;
 			}
 
-			if ($taskKey == 'buddy_count') {
+			if ($taskKey == 'friends_count') {
 				$count = Friend::query()->whereBelongsTo($user)->orWhereBelongsTo($user, 'friend')->count();
 
 				$result[$taskKey] = $count >= $taskVal;

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Construction;
 use App\Engine\Game;
-use App\Http\Resources\Planet;
-use App\Http\Resources\User;
+use App\Engine\Locale;
+use App\Http\Resources\PlanetResource;
+use App\Http\Resources\QueueResource;
+use App\Http\Resources\UserResource;
 use App\Settings;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,10 @@ class StateController extends Controller
 				'fleet' => Game::getSpeed('fleet'),
 				'resources' => Game::getSpeed('mine'),
 			],
+			'settings' => [
+				'language' => Locale::getPreferredLocale(),
+				'merchant' => Game::getMerchantExchangeRate(),
+			],
 			'stats' => [
 				'online' => $settings->usersOnline ?: 0,
 				'users' => $settings->usersTotal ?: 0,
@@ -32,11 +37,11 @@ class StateController extends Controller
 		];
 
 		if ($user) {
-			$data['user'] = User::make($user);
+			$data['user'] = UserResource::make($user);
 
 			if ($planet) {
-				$data['planet'] = Planet::make($planet);
-				$data['queue'] = Construction::showBuildingQueue($user, $planet);
+				$data['planet'] = PlanetResource::make($planet);
+				$data['queue'] = QueueResource::make($user);
 			}
 
 			$globalMessage = config('game.newsMessage', '');

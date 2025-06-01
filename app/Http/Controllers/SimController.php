@@ -9,7 +9,15 @@ class SimController extends Controller
 {
 	public function index($data = '')
 	{
-		$data = explode(";", $data);
+		if (!empty($data)) {
+			$units = explode(';', $data);
+		} elseif (request()->has('units')) {
+			$units = explode(';', request()->get('units'));
+		} else {
+			$units = [];
+		}
+
+		$units = array_filter($units);
 
 		$maxSlots = config('game.maxSlotsInSim', 5);
 
@@ -26,14 +34,15 @@ class SimController extends Controller
 
 		$parse['tech'] = [109, 110, 111, 120, 121, 122];
 
-		foreach ($data as $row) {
-			if ($row != '') {
-				$Element = explode(",", $row);
-				$Count = explode("!", $Element[1]);
+		foreach ($units as $row) {
+			$element = explode(',', $row);
 
-				if (isset($Count[1])) {
-					$parse['slots']['defenders'][0][$Element[0]] = ['c' => $Count[0], 'l' => $Count[1]];
-				}
+			if (!is_numeric($element[0])) {
+				$element[0] = Vars::getIdByName($element[0]);
+			}
+
+			if (isset($element[1])) {
+				$parse['slots']['defenders'][0][$element[0]] = ['c' => $element[1]];
 			}
 		}
 

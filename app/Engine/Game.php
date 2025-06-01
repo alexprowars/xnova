@@ -98,4 +98,13 @@ class Game
 
 		Session::put('ref', $user->id);
 	}
+
+	public static function getMerchantExchangeRate(): array
+	{
+		return [
+			'metal' => 1,
+			'crystal' => 2,
+			'deuterium' => 4,
+		];
+	}
 }

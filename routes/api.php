@@ -5,12 +5,11 @@ use App\Http\Middleware\IsVacationMode;
 use Illuminate\Support\Facades\Route;
 
 Route::get('state', [Controllers\StateController::class, 'index']);
-Route::get('banned', [Controllers\BannedController::class, 'index']);
+Route::get('blocked', [Controllers\BlockedController::class, 'index']);
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);
 Route::post('registration', [Controllers\RegistrationController::class, 'index']);
 Route::get('log/{id}', [Controllers\LogController::class, 'info'])->whereNumber('id');
-Route::get('news', [Controllers\NewsController::class, 'index']);
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index']);
 Route::match(['get', 'post'], 'stat/alliances', [Controllers\StatController::class, 'alliances']);
 Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 'races']);
@@ -42,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::match(['get', 'post'], 'hall', [Controllers\HallController::class, 'index']);
 
 	Route::post('chat', [Controllers\ChatController::class, 'send']);
-	Route::get('chat', [Controllers\ChatController::class, 'last']);
+	Route::get('chat/last', [Controllers\ChatController::class, 'last']);
 
 	Route::get('alliance', [Controllers\Alliance\AllianceController::class, 'index']);
 	Route::post('alliance/search', [Controllers\Alliance\AllianceController::class, 'search']);
@@ -75,16 +74,16 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('alliance/admin/requests', [Controllers\Alliance\AllianceRequestsController::class, 'index']);
 	Route::post('alliance/admin/requests/accept', [Controllers\Alliance\AllianceRequestsController::class, 'accept']);
 	Route::post('alliance/admin/requests/reject', [Controllers\Alliance\AllianceRequestsController::class, 'reject']);
-	Route::get('alliance/admin/rights', [Controllers\Alliance\AllianceRanksController::class, 'index']);
-	Route::post('alliance/admin/rights', [Controllers\Alliance\AllianceRanksController::class, 'update']);
-	Route::post('alliance/admin/rights/create', [Controllers\Alliance\AllianceRanksController::class, 'create']);
-	Route::delete('alliance/admin/rights/{id}', [Controllers\Alliance\AllianceRanksController::class, 'remove']);
+	Route::get('alliance/admin/ranks', [Controllers\Alliance\AllianceRanksController::class, 'index']);
+	Route::post('alliance/admin/ranks', [Controllers\Alliance\AllianceRanksController::class, 'update']);
+	Route::post('alliance/admin/ranks/create', [Controllers\Alliance\AllianceRanksController::class, 'create']);
+	Route::delete('alliance/admin/ranks/{id}', [Controllers\Alliance\AllianceRanksController::class, 'remove']);
 
-	Route::get('buddy', [Controllers\BuddyController::class, 'index']);
-	Route::get('buddy/new/{id}', [Controllers\BuddyController::class, 'new']);
-	Route::post('buddy/new/{id}', [Controllers\BuddyController::class, 'create']);
-	Route::delete('buddy/{id}', [Controllers\BuddyController::class, 'delete'])->whereNumber('id');
-	Route::post('buddy/{id}/approve', [Controllers\BuddyController::class, 'approve'])->whereNumber('id');
+	Route::get('friends', [Controllers\FriendsController::class, 'index']);
+	Route::get('friends/new/{id}', [Controllers\FriendsController::class, 'new']);
+	Route::post('friends/new/{id}', [Controllers\FriendsController::class, 'create']);
+	Route::delete('friends/{id}', [Controllers\FriendsController::class, 'delete'])->whereNumber('id');
+	Route::post('friends/{id}/approve', [Controllers\FriendsController::class, 'approve'])->whereNumber('id');
 
 	Route::get('buildings', [Controllers\BuildingsController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->middleware(IsVacationMode::class)->whereIn('action', ['insert', 'destroy']);
@@ -96,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('defense/queue', [Controllers\DefenseController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('fleet', [Controllers\Fleet\FleetController::class, 'index']);
+	Route::get('fleet/list', [Controllers\Fleet\FleetController::class, 'list']);
 	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', [Controllers\Fleet\FleetController::class, 'index']);
 	Route::post('fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index'])->middleware(IsVacationMode::class);
@@ -113,12 +113,11 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('fleet/quick', [Controllers\Fleet\FleetQuickController::class, 'index'])->middleware(IsVacationMode::class);
 
 	Route::get('galaxy', [Controllers\GalaxyController::class, 'index']);
-	Route::get('imperium', [Controllers\ImperiumController::class, 'index']);
+	Route::get('empire', [Controllers\EmpireController::class, 'index']);
 
-	Route::match(['get', 'post'], 'log', [Controllers\LogController::class, 'index']);
+	Route::get('log', [Controllers\LogController::class, 'index']);
 	Route::post('log', [Controllers\LogController::class, 'create']);
 
-	Route::get('merchant', [Controllers\MerchantController::class, 'index']);
 	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange']);
 
 	Route::get('messages', [Controllers\MessagesController::class, 'index']);
@@ -139,18 +138,12 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('options', [Controllers\OptionsController::class, 'index']);
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'email']);
-
-	Route::get('overview', [Controllers\OverviewController::class, 'index']);
-	Route::post('overview/daily', [Controllers\OverviewController::class, 'daily']);
-	Route::get('overview/rename', [Controllers\OverviewController::class, 'rename']);
-	Route::post('overview/rename', [Controllers\OverviewController::class, 'renameAction']);
-	Route::post('overview/image', [Controllers\OverviewController::class, 'image']);
-	Route::delete('overview/delete/{id}', [Controllers\OverviewController::class, 'delete'])->whereNumber('id');
+	Route::post('options/password', [Controllers\OptionsController::class, 'password']);
 
 	Route::get('phalanx', [Controllers\PhalanxController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('race', [Controllers\RaceController::class, 'index']);
 	Route::post('race/change', [Controllers\RaceController::class, 'change']);
-	Route::get('refers', [Controllers\RefersController::class, 'index']);
+	Route::get('referrals', [Controllers\ReferralsController::class, 'index']);
 
 	Route::get('research', [Controllers\ResearchController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('research/{action}', [Controllers\ResearchController::class, 'action'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'search']);
@@ -175,4 +168,11 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('tutorial', [Controllers\TutorialController::class, 'index']);
 	Route::get('tutorial/{id}', [Controllers\TutorialController::class, 'info'])->whereNumber('id');
 	Route::post('tutorial/{id}', [Controllers\TutorialController::class, 'finish'])->whereNumber('id');
+
+	Route::post('user/planet/{id}', [Controllers\UserController::class, 'setPlanet']);
+	Route::post('user/daily', [Controllers\UserController::class, 'dailyBonus']);
+
+	Route::delete('planet/delete', [Controllers\PlanetController::class, 'delete']);
+	Route::post('planet/rename', [Controllers\PlanetController::class, 'rename']);
+	Route::post('planet/image', [Controllers\PlanetController::class, 'image']);
 });

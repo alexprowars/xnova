@@ -49,6 +49,11 @@ class UserBan extends Page
 		return __('admin.navigation.pages.user_ban');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('users-block');
+	}
+
 	public function form(Form $form): Form
 	{
 		return $form

@@ -25,7 +25,7 @@ return [
 	],
 	5 => [
 		'required' => ['quest' => 4],
-		'task' => ['!planet_name' => 'главная планета', 'buddy_count' => 1, 'ally' => 1],
+		'task' => ['!planet_name' => 'главная планета', 'friends_count' => 1, 'ally' => 1],
 		'reward' => ['credits' => 10],
 	],
 	6 => [

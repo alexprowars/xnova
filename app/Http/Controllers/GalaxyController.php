@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
+use App\Engine\Formulas;
 use App\Models;
 use App\Models\AllianceDiplomacy;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class GalaxyController extends Controller
 		$phalanx = false;
 
 		if ($this->planet->getLevel('phalanx') > 0) {
-			$range = Fleet::getPhalanxRange($this->planet->getLevel('phalanx'));
+			$range = Formulas::getPhalanxRange($this->planet->getLevel('phalanx'));
 
 			$systemLimitMin = max(1, $this->planet->system - $range);
 			$systemLimitMax = $this->planet->system + $range;
@@ -44,7 +45,7 @@ class GalaxyController extends Controller
 		}
 
 		if ($this->planet->getLevel('interplanetary_misil') > 0 && $galaxy == $this->planet->galaxy) {
-			$range = Fleet::getMissileRange($this->user);
+			$range = Formulas::getMissileRange($this->user->getTechLevel('impulse_motor'));
 
 			$systemLimitMin = max(1, $this->planet->system - $range);
 			$systemLimitMax = $this->planet->system + $range;
@@ -98,8 +99,8 @@ class GalaxyController extends Controller
 			if ($allyIds->isNotEmpty()) {
 				$diplomacyItems = Models\AllianceDiplomacy::query()
 					->where('status', 1)
-					->where('alliance_id', $allyIds)
-					->where('diplomacy_id', $this->user->alliance->id)
+					->whereIn('alliance_id', $allyIds)
+					->whereBelongsTo($this->user->alliance, 'diplomacy')
 					->get()->keyBy('alliance_id');
 			}
 		}
@@ -111,7 +112,7 @@ class GalaxyController extends Controller
 				$activeTime = $item->moon->last_active;
 			}
 
-			if ($item->destruyed_at && $item->destruyed_at->isPast()) {
+			if ($item->destroyed_at && $item->destroyed_at->isPast()) {
 				$item->delete();
 
 				if ($item->moon) {
@@ -119,13 +120,13 @@ class GalaxyController extends Controller
 				}
 			}
 
-			if ($item->moon && $item->moon->destruyed_at && $item->moon->destruyed_at->isPast()) {
+			if ($item->moon && $item->moon->destroyed_at && $item->moon->destroyed_at->isPast()) {
 				$item->moon->delete();
 				$item->update(['moon_id' => null]);
 				$item->unsetRelation('moon');
 			}
 
-			if ($activeTime->timestamp > time() - 59 * 60) {
+			if ($activeTime?->timestamp > time() - 59 * 60) {
 				$planetActive = floor((time() - $activeTime->timestamp) / 60);
 			} else {
 				$planetActive = 60;
@@ -144,7 +145,7 @@ class GalaxyController extends Controller
 					'type' => $item->planet_type->value,
 					'image' => $item->image,
 					'active' => $planetActive,
-					'destruyed' => $item->destruyed_at?->utc()->toAtomString(),
+					'destruyed' => $item->destroyed_at?->utc()->toAtomString(),
 				],
 				'debris' => [
 					'metal' => $item->debris_metal,
@@ -159,7 +160,7 @@ class GalaxyController extends Controller
 				$row['moon'] = [
 					'id' => $moon->id,
 					'name' => $moon->name,
-					'destruyed' => $moon->destruyed_at?->utc()->toAtomString(),
+					'destruyed' => $moon->destroyed_at?->utc()->toAtomString(),
 					'diameter' => $moon->diameter,
 					'temp' => $moon->temp_min,
 				];

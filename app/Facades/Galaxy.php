@@ -2,15 +2,16 @@
 
 namespace App\Facades;
 
+use App\Services\GalaxyService;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \App\Engine\Galaxy
+ * @see GalaxyService
  */
 class Galaxy extends Facade
 {
 	protected static function getFacadeAccessor(): string
 	{
-		return \App\Engine\Galaxy::class;
+		return GalaxyService::class;
 	}
 }

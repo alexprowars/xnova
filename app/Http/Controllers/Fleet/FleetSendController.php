@@ -10,6 +10,7 @@ use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\Mission;
 use App\Facades\Vars;
 use App\Exceptions\PageException;
+use App\Factories\PlanetServiceFactory;
 use App\Format;
 use App\Http\Controllers\Controller;
 use App\Models;
@@ -27,7 +28,7 @@ class FleetSendController extends Controller
 		$moon = (int) $request->post('moon', 0);
 
 		if ($moon && $moon != $this->planet->id) {
-			$this->checkJumpGate($moon);
+			$this->checkJumpGate(Planet::findOne($moon));
 		}
 
 		$galaxy = (int) $request->post('galaxy', 0);
@@ -115,25 +116,31 @@ class FleetSendController extends Controller
 		return $result;
 	}
 
-	private function checkJumpGate($planetId)
+	private function checkJumpGate(Planet $planet)
 	{
-		if (!$this->planet->isAvailableJumpGate()) {
+		$planetService = resolve(PlanetServiceFactory::class)
+			->make($planet);
+
+		if (!$planetService->isAvailableJumpGate()) {
 			throw new PageException(__('fleet.gate_no_dest_g'), '/fleet/');
 		}
 
-		$nextJumpTime = $this->planet->getNextJumpTime();
+		$nextJumpTime = $planetService->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
 			throw new PageException(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime), '/fleet/');
 		}
 
-		$targetPlanet = Planet::find($planetId);
+		$targetPlanet = Planet::find($planet);
 
-		if (!$targetPlanet->isAvailableJumpGate()) {
+		$targetPlanetService = resolve(PlanetServiceFactory::class)
+			->make($targetPlanet);
+
+		if (!$targetPlanetService->isAvailableJumpGate()) {
 			throw new PageException(__('fleet.gate_no_dest_g'), '/fleet/');
 		}
 
-		$nextJumpTime = $targetPlanet->getNextJumpTime();
+		$nextJumpTime = $targetPlanetService->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
 			throw new PageException(__('fleet.gate_wait_dest') . ' - ' . Format::time($nextJumpTime), '/fleet/');
@@ -176,6 +183,6 @@ class FleetSendController extends Controller
 
 		$this->user->update(['planet_current' => $targetPlanet->id]);
 
-		throw new PageException(__('fleet.gate_jump_done') . ' ' . Format::time($this->planet->getNextJumpTime()), '/fleet/');
+		throw new PageException(__('fleet.gate_jump_done') . ' ' . Format::time($planetService->getNextJumpTime()), '/fleet/');
 	}
 }

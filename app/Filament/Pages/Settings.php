@@ -27,6 +27,11 @@ class Settings extends SettingsPage
 		return __('admin.navigation.pages.settings');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('settings');
+	}
+
 	public function form(Form $form): Form
 	{
 		return $form

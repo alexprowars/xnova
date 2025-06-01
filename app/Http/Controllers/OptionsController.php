@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Enums\MessageType;
 use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
 use App\Format;
 use App\Helpers;
+use App\Http\Requests\ChangeEmailRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models;
 use App\Models\PlanetEntity;
 use App\Models\User;
-use App\Notifications\MessageNotification;
 use App\Notifications\PasswordResetSuccessNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Throwable;
@@ -49,6 +48,7 @@ class OptionsController extends Controller
 			$parse['opt_modev_data'] = $this->user->isVacation();
 
 			$parse['sex'] = $this->user->sex;
+			$parse['locale'] = $this->user->locale;
 			$parse['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
 
 			$parse['auth'] = [];
@@ -93,28 +93,11 @@ class OptionsController extends Controller
 		throw new RedirectException('/options');
 	}
 
-	public function email(Request $request)
+	public function email(ChangeEmailRequest $request)
 	{
-		$email = addslashes(htmlspecialchars(trim($request->post('email'))));
-
-		if (empty($email)) {
-			throw new Exception('Введите Email адрес');
-		}
-
-		if (!Hash::check($request->post('password'), $this->user->password)) {
-			throw new Exception('Heпpaвильный тeкyщий пapoль');
-		}
-
-		$existEmail = User::query()->where('email', $email)
-			->exists();
-
-		if ($existEmail) {
-			throw new Exception('Данный email уже используется в игре.');
-		}
-
-		User::find(1)?->notify(new MessageNotification(null, MessageType::System, $this->user->username, 'Поступила заявка на смену Email от ' . $this->user->username . ' на ' . addslashes(htmlspecialchars($request->post('email'))) . '. <a href="' . URL::to('admin/email') . '">Сменить</a>'));
-
-		throw new RedirectException('/options', 'Заявка отправлена на рассмотрение');
+		$this->user->email = $request->get('email');
+		$this->user->email_verified_at = null;
+		$this->user->save();
 	}
 
 	public function save(Request $request)
@@ -260,6 +243,7 @@ class OptionsController extends Controller
 			}
 
 			$this->user->about = $about;
+			$this->user->locale = $request->post('locale');
 			$this->user->update();
 
 			Cache::forget('app::planetlist_' . $this->user->id);
@@ -308,5 +292,15 @@ class OptionsController extends Controller
 
 			throw new RedirectException('Имя пользователя изменено');
 		}
+	}
+
+	public function password(ChangePasswordRequest $request)
+	{
+		$this->user->password = Hash::make($request->get('new_password'));
+		$this->user->save();
+
+		Auth::logout();
+
+		throw new RedirectException('/', 'Пароль успешно изменён');
 	}
 }

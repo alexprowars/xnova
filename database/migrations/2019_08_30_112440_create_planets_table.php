@@ -17,9 +17,9 @@ return new class extends Migration {
 			$table->smallInteger('system')->nullable()->index();
 			$table->smallInteger('planet')->nullable();
 			$table->tinyInteger('planet_type')->default(1);
-			$table->timestamp('last_update')->nullable();
+			$table->timestamp('last_update')->useCurrent();
 			$table->timestamp('last_active')->nullable();
-			$table->timestamp('destruyed_at')->nullable();
+			$table->timestamp('destroyed_at')->nullable();
 			$table->string('image', 32)->default('normaltempplanet01');
 			$table->smallInteger('diameter')->unsigned()->default(12800);
 			$table->smallInteger('field_current')->unsigned()->default(0);

@@ -46,6 +46,11 @@ class Mailing extends Page
 		return 'Отправить сообщение всем игрокам';
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('mailing');
+	}
+
 	public function form(Form $form): Form
 	{
 		return $form

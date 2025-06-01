@@ -15,6 +15,7 @@ class PlanetResource extends Resource
 	protected static ?string $modelLabel = 'Планета';
 	protected static ?string $pluralModelLabel = 'Планеты';
 	protected static ?string $recordTitleAttribute = 'name';
+	protected static ?string $slug = 'planets';
 
 	public static function getNavigationGroup(): string
 	{
@@ -26,12 +27,17 @@ class PlanetResource extends Resource
 		return __('admin.navigation.pages.planets');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('planets');
+	}
+
 	public static function getPages(): array
 	{
 		return [
 			'index' => Pages\ListPlanets::route('/'),
-			'view' => Pages\ViewPlanet::route('/{record}'),
 			'create' => Pages\CreatePlanet::route('/create'),
+			'view' => Pages\ViewPlanet::route('/{record}'),
 			'edit' => Pages\EditPlanet::route('/{record}/edit'),
 		];
 	}

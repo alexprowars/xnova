@@ -6,6 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Formulas;
 use App\Models;
 use App\Models\Planet;
 use App\Models\User;
@@ -51,37 +52,25 @@ class Destruction extends BaseMission
 					new Coordinates($this->fleet->end_galaxy, $this->fleet->end_system, $this->fleet->end_planet, PlanetType::MOON)
 				);
 
-				$CurrentUser = User::find($this->fleet->user_id);
+				$moonDestroyChance = Formulas::getMoonDestructionChance($targetMoon->diameter, $rips);
 
-				$moonDestroyChance = round((100 - sqrt($targetMoon->diameter)) * sqrt($rips));
-
-				if ($CurrentUser->rpg_admiral?->isFuture()) {
+				if ($this->fleet->user->rpg_admiral?->isFuture()) {
 					$moonDestroyChance *= 1.1;
 				}
 
-				$moonDestroyChance 	= max(min(floor($moonDestroyChance), 100), 0);
-				$fleetDestroyChance = sqrt($targetMoon->diameter) / 4;
+				$fleetDestroyChance = Formulas::getDeathStarsDestructionChance($targetMoon->diameter, $rips);
 
-				if ($rips > 150) {
-					$fleetDestroyChance *= 0.1;
-				} elseif ($rips > 100) {
-					$fleetDestroyChance *= 0.25;
-				} elseif ($rips > 50) {
-					$fleetDestroyChance *= 0.5;
-				} elseif ($rips > 25) {
-					$fleetDestroyChance *= 0.75;
-				}
-
-				if ($CurrentUser->rpg_ingenieur?->isFuture()) {
+				if ($this->fleet->user->rpg_ingenieur?->isFuture()) {
 					$fleetDestroyChance *= 0.5;
 				}
 
-				$fleetDestroyChance = max(min(ceil($fleetDestroyChance), 100), 0);
+				$moonDestroyChance 	= max(min((int) floor($moonDestroyChance), 100), 0);
+				$fleetDestroyChance = max(min((int) ceil($fleetDestroyChance), 100), 0);
 
 				if (random_int(1, 100) <= $moonDestroyChance) {
 					$moonDestroyed = true;
 
-					$targetMoon->destruyed_at = now()->addDay();
+					$targetMoon->destroyed_at = now()->addDay();
 					$targetMoon->save();
 
 					if ($targetMoon->user->planet_current == $targetMoon->id) {
@@ -102,7 +91,9 @@ class Destruction extends BaseMission
 						->update(['end_type' => PlanetType::PLANET]);
 
 					$targetMoon->queue()->delete();
-				} elseif (random_int(1, 100) <= $fleetDestroyChance) {
+				}
+
+				if (random_int(1, 100) <= $fleetDestroyChance) {
 					$ripsKilled = true;
 
 					$this->killFleet();
@@ -137,7 +128,7 @@ class Destruction extends BaseMission
 					$message .= __('fleet_engine.sys_destruc_null');
 				}
 
-				$message .= "<br><br>" . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . "%. <br>" . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . "%";
+				$message .= '<br><br>' . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . '%. <br>' . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . '%';
 
 				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));
 				$targetMoon->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));

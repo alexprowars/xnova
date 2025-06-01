@@ -7,6 +7,7 @@ use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
 use App\Facades\Vars;
+use App\Factories\PlanetServiceFactory;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class Planet extends Model
 {
@@ -43,7 +43,7 @@ class Planet extends Model
 		'last_active' => 'immutable_datetime',
 		'last_jump_time' => 'immutable_datetime',
 		'merchand' => 'immutable_datetime',
-		'destruyed_at' => 'immutable_datetime',
+		'destroyed_at' => 'immutable_datetime',
 		'planet_type' => PlanetType::class,
 	];
 
@@ -98,8 +98,7 @@ class Planet extends Model
 		}
 
 		if ($this->field_current != $count) {
-			$this->field_current = $count;
-			$this->update();
+			$this->update(['field_current' => $count]);
 		}
 	}
 
@@ -184,56 +183,7 @@ class Planet extends Model
 	/** @return Attribute<array<int>, never> */
 	public function networkLevel(): Attribute
 	{
-		return Attribute::get(fn() => $this->getNetworkLevel())->shouldCache();
-	}
-
-	/**
-	 * @return array<int>
-	 */
-	protected function getNetworkLevel(): array
-	{
-		$list = [$this->getLevel('laboratory')];
-
-		if ($this->user->getTechLevel('intergalactic') > 0) {
-			$items = DB::table('planets_entities', 'pe')
-				->leftJoin('planets as p', 'p.id', '=', 'pe.planet_id')
-				->where('pe.entity_id', 31)
-				->where('pe.planet_id', '!=', $this->id)
-				->where('pe.amount', '>', 0)
-				->where('p.user_id', $this->user->id)
-				->where('p.planet_type', PlanetType::PLANET)
-				->whereNull('p.destruyed_at')
-				->orderByDesc('pe.amount')
-				->limit($this->user->getTechLevel('intergalactic'))
-				->pluck('pe.amount');
-
-			foreach ($items as $item) {
-				$list[] = (int) $item;
-			}
-		}
-
-		return $list;
-	}
-
-	public function isAvailableJumpGate()
-	{
-		return ($this->planet_type == PlanetType::MOON || $this->planet_type == PlanetType::MILITARY_BASE) && $this->getLevel('jumpgate') > 0;
-	}
-
-	public function getNextJumpTime()
-	{
-		$jumpGate = $this->getEntity('jumpgate');
-
-		if ($jumpGate && $jumpGate->amount > 0) {
-			$waitTime = (60 * 60) * (1 / $jumpGate->amount);
-			$nextJumpTime = $this->last_jump_time->timestamp + $waitTime;
-
-			if ($nextJumpTime >= time()) {
-				return $nextJumpTime - time();
-			}
-		}
-
-		return 0;
+		return Attribute::get(fn() => resolve(PlanetServiceFactory::class)->make($this)->getResearchNetworkLabLevel())->shouldCache();
 	}
 
 	public static function findByCoordinates(Coordinates $target): ?static

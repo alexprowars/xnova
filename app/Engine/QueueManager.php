@@ -19,17 +19,16 @@ use App\Notifications\MessageNotification;
 
 class QueueManager
 {
-	/** @var Models\Queue[]|bool */
-	private $queue = false;
-
+	/** @var Models\Queue[]|null */
+	protected $queue;
 	protected User $user;
 
-	public function __construct($user, protected ?Planet $planet = null)
+	public function __construct(Models\User|int $user, protected ?Planet $planet = null)
 	{
 		if ($user instanceof Models\User) {
 			$this->user = $user;
 		} else {
-			$this->user = Models\User::find((int) $user);
+			$this->user = Models\User::find($user);
 		}
 
 		$this->loadQueue();
@@ -38,10 +37,11 @@ class QueueManager
 	public function loadQueue()
 	{
 		$query = $this->user->queue()
-			->orderBy('id', 'ASC');
+			->with('planet')
+			->orderBy('id');
 
 		if ($this->planet) {
-			$query->where('planet_id', $this->planet->id);
+			$query->whereBelongsTo($this->planet);
 		}
 
 		$this->queue = $query->get()->all();
@@ -62,10 +62,8 @@ class QueueManager
 		return $this->user;
 	}
 
-	public function add($elementId, $count = 1, $destroy = false)
+	public function add(int|string $elementId, int $count = 1, bool $destroy = false): void
 	{
-		$elementId = (int) $elementId;
-
 		$type = Vars::getItemType($elementId);
 
 		if ($type == ItemType::BUILDING) {
@@ -77,10 +75,8 @@ class QueueManager
 		}
 	}
 
-	public function delete($elementId, $listId = 0)
+	public function delete(int|string $elementId, $listId = 0)
 	{
-		$elementId = (int) $elementId;
-
 		$type = Vars::getItemType($elementId);
 
 		if ($type == ItemType::BUILDING) {
@@ -92,10 +88,6 @@ class QueueManager
 
 	public function get(?QueueType $type = null)
 	{
-		if (!is_array($this->queue)) {
-			$this->loadQueue();
-		}
-
 		if (!$type) {
 			return $this->queue;
 		} elseif (in_array($type, QueueType::cases())) {
@@ -115,10 +107,6 @@ class QueueManager
 
 	public function getCount(?QueueType $queueType = null)
 	{
-		if (!is_array($this->queue)) {
-			$this->loadQueue();
-		}
-
 		if (!$queueType) {
 			return count($this->queue);
 		} elseif (in_array($queueType, QueueType::cases())) {
@@ -182,7 +170,7 @@ class QueueManager
 		return true;
 	}
 
-	private function checkBuildQueue()
+	protected function checkBuildQueue()
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
@@ -374,7 +362,7 @@ class QueueManager
 	public function checkTechQueue()
 	{
 		if (!($this->planet instanceof Planet)) {
-			throw new Exception('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet');
+			throw new Exception('Queue::checkTechQueue::check::Planet');
 		}
 
 		$queueItem = $this->user->queue()
@@ -385,14 +373,14 @@ class QueueManager
 		}
 
 		if ($queueItem->planet_id != $this->planet->id) {
-			$planet = Planet::find((int) $queueItem->planet_id);
+			$planet = $queueItem->planet;
 			$planet?->setRelation('user', $this->user);
 		} else {
 			$planet = $this->planet;
 		}
 
 		if (!$planet) {
-			throw new Exception('Произошла внутренняя ошибка: Queue::checkTechQueue::check::Planet object not found');
+			throw new Exception('Queue::checkTechQueue::check::Planet object not found');
 		}
 
 		$entity = Entity\Research::createEntity($queueItem->object_id, $queueItem->level, $planet);

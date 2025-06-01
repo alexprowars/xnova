@@ -1,25 +1,26 @@
 <?php
 
-namespace App\Engine;
+namespace App\Services;
 
+use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Models\Planet;
 use App\Models\User;
 use App\Settings;
 
-class Galaxy
+class GalaxyService
 {
-	public function createPlanetByUser(User $user)
+	public function createPlanetByUser(User $user): ?Planet
 	{
 		$settings = app(Settings::class);
 
-		$galaxy = (int) ($settings->lastSettedGalaxyPos ?? 1);
-		$system = (int) ($settings->lastSettedSystemPos ?? 1);
-		$planet = (int) ($settings->lastSettedPlanetPos ?? 1);
+		$galaxyPos = (int) ($settings->lastSettedGalaxyPos ?? 1);
+		$systemPos = (int) ($settings->lastSettedSystemPos ?? 1);
+		$planetPos = (int) ($settings->lastSettedPlanetPos ?? 1);
 
 		do {
 			$isFree = $this->getFreePositions(
-				new Coordinates($galaxy, $system),
+				new Coordinates($galaxyPos, $systemPos),
 				(int) round(config('game.maxPlanetInSystem') * 0.2),
 				(int) round(config('game.maxPlanetInSystem') * 0.8)
 			);
@@ -30,48 +31,42 @@ class Galaxy
 				$position = 0;
 			}
 
-			if ($position > 0 && $planet < config('game.maxRegPlanetsInSystem', 3)) {
-				$planet++;
+			if ($position > 0 && $planetPos < config('game.maxRegPlanetsInSystem', 3)) {
+				$planetPos++;
 			} else {
-				$planet = 1;
+				$planetPos = 1;
 
-				if ($system >= config('game.maxSystemInGalaxy')) {
-					$system = 1;
+				if ($systemPos >= config('game.maxSystemInGalaxy')) {
+					$systemPos = 1;
 
-					if ($galaxy >= config('game.maxGalaxyInWorld')) {
-						$galaxy = 1;
+					if ($galaxyPos >= config('game.maxGalaxyInWorld')) {
+						$galaxyPos = 1;
 					} else {
-						$galaxy++;
+						$galaxyPos++;
 					}
 				} else {
-					$system++;
+					$systemPos++;
 				}
 			}
-		} while (!$this->isPositionFree(new Coordinates($galaxy, $system, $position)));
+		} while (!$this->isPositionFree(new Coordinates($galaxyPos, $systemPos, $position)));
 
-		$planetObj = $this->createPlanet(
-			new Coordinates($galaxy, $system, $position),
+		$planet = $this->createPlanet(
+			new Coordinates($galaxyPos, $systemPos, $position),
 			$user,
 			__('main.sys_plnt_defaultname'),
 			true
 		);
 
-		if ($planetObj) {
-			$settings->lastSettedGalaxyPos = $galaxy;
-			$settings->lastSettedSystemPos = $system;
-			$settings->lastSettedPlanetPos = $planet;
+		if ($planet) {
+			$settings->lastSettedGalaxyPos = $galaxyPos;
+			$settings->lastSettedSystemPos = $systemPos;
+			$settings->lastSettedPlanetPos = $planetPos;
 			$settings->save();
 
-			$user->update([
-				'planet_id' => $planetObj->id,
-				'planet_current' => $planetObj->id,
-				'galaxy' => $galaxy,
-				'system' => $system,
-				'planet' => $position
-			]);
+			$user->setMainPlanet($planet);
 		}
 
-		return $planetObj->id;
+		return $planet;
 	}
 
 	public function createPlanet(Coordinates $target, User $user, ?string $title = null, bool $mainPlanet = false): ?Planet
@@ -97,11 +92,10 @@ class Galaxy
 		$planet->deuterium = (int) config('game.baseDeuteriumProduction');
 
 		$planet->user()->associate($user);
-		$planet->last_update = now();
 		$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 		if ($planet->save()) {
-			return $planet;
+			return $planet->refresh();
 		}
 
 		return null;
@@ -119,19 +113,18 @@ class Galaxy
 
 			$size = floor(((random_int(10, 20) + 3 * $chance) ** 0.5) * 1000);
 
-			$moon = (new Planet([
+			$moon = new Planet([
 				'name' => __('main.sys_moon'),
 				'galaxy' => $target->getGalaxy(),
 				'system' => $target->getSystem(),
 				'planet' => $target->getPlanet(),
 				'planet_type' => PlanetType::MOON,
-				'last_update' => now(),
 				'image' => 'mond',
 				'diameter' => $size,
 				'field_max' => 1,
 				'temp_min' => $maxtemp,
 				'temp_max' => $mintemp,
-			]));
+			]);
 
 			$moon->user()->associate($user);
 

@@ -431,7 +431,7 @@ class FleetSend
 		}
 
 		// Баш контроль
-		if ($this->mission == Mission::Attack) {
+		if ($this->mission == Mission::Attack && !$this->planet->user->isAdmin()) {
 			$log = LogFleet::query()->where('s_id', $this->planet->user->id)
 				->where('mission', Mission::Attack)
 				->where('e_galaxy', $this->targetPlanet->galaxy)

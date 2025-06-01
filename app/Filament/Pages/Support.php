@@ -21,4 +21,9 @@ class Support extends Page
 	{
 		return __('admin.navigation.pages.support');
 	}
+
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('support');
+	}
 }

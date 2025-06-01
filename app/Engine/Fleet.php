@@ -3,7 +3,6 @@
 namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Fleet\Mission;
 use App\Facades\Vars;
 use App\Format;
 use App\Models;
@@ -27,46 +26,35 @@ class Fleet extends Building
 		}
 	}
 
-	public static function createFleetPopupedFleetLink(Models\Fleet $FleetRow, $Texte, $FleetType, ?User $user)
+	public static function createFleetPopupedFleetLink(Models\Fleet $fleetRow, ?User $user = null): array
 	{
-		$FleetRec = $FleetRow->getShips();
+		$fleets = $fleetRow->getShips();
 
-		$FleetPopup = '<table width="200">';
-		$r = 'javascript:;';
+		$total = 0;
 
-		$Total = 0;
-
-		foreach ($FleetRec as $fleet) {
-			$Total += $fleet['count'];
+		foreach ($fleets as $fleet) {
+			$total += $fleet['count'];
 		}
 
-		if ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
-			$FleetPopup .= '<tr><td width=100% align=center><font color=white>Нет информации<font></td></tr>';
-		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
-			$FleetPopup .= '<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>' . Format::number($Total) . "<font></td></tr>";
-		} elseif ($user && $FleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
-			foreach ($FleetRec as $id => $fleet) {
-				$FleetPopup .= '<tr><td width=100% align=center colspan=2><font color=white>' . __('main.tech.' . $id) . "<font></td></tr>";
-			}
+		$result = [];
 
-			$FleetPopup .= '<tr><td width=50% align=left><font color=white>Численность:<font></td><td width=50% align=right><font color=white>' . Format::number($Total) . "<font></td></tr>";
+		if ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
+			return [];
+		} elseif ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
+			$result['total'] = $total;
+		} elseif ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
+			$result['total'] = $total;
+
+			foreach ($fleets as $id => $fleet) {
+				$result[Vars::getName($id)] = null;
+			}
 		} else {
-			if ($FleetRow->target_user_id == $user?->id && $FleetRow->mission == Mission::Attack) {
-				$r = '/sim/';
-			}
-
-			foreach ($FleetRec as $id => $fleet) {
-				$FleetPopup .= '<tr><td width=75% align=left><font color=white>' . __('main.tech.' . $id) . ":<font></td><td width=25% align=right><font color=white>" . Format::number($fleet['count']) . "<font></td></tr>";
-
-				if ($r != 'javascript:;') {
-					$r .= $id . ',' . $fleet['count'] . ';';
-				}
+			foreach ($fleets as $id => $fleet) {
+				$result[Vars::getName($id)] = $fleet['count'];
 			}
 		}
 
-		$FleetPopup .= '</table>';
-
-		return '<a href="' . $r . '" class="tooltip ' . $FleetType . '" data-content="' . $FleetPopup . '">' . $Texte . '</a>';
+		return $result;
 	}
 
 	public static function createFleetPopupedMissionLink(Models\Fleet $FleetRow, string $Texte, $FleetType)
@@ -90,28 +78,5 @@ class Fleet extends Building
 		}
 
 		return $MissionPopup;
-	}
-
-	public static function getMissileRange(User $user)
-	{
-		if ($user->getTechLevel('impulse_motor') > 0) {
-			return ($user->getTechLevel('impulse_motor') * 5) - 1;
-		}
-
-		return 0;
-	}
-
-	public static function getPhalanxRange($level)
-	{
-		$PhalanxRange = 0;
-
-		if ($level > 1) {
-			for ($Level = 2; $Level < $level + 1; $Level++) {
-				$lvl = ($Level * 2) - 1;
-				$PhalanxRange += $lvl;
-			}
-		}
-
-		return $PhalanxRange;
 	}
 }

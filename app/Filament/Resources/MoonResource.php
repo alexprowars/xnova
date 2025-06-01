@@ -26,6 +26,11 @@ class MoonResource extends Resource
 		return __('admin.navigation.pages.moons');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('moons');
+	}
+
 	public static function getPages(): array
 	{
 		return [

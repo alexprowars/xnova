@@ -39,6 +39,11 @@ class UserUnBan extends Page
 		return __('admin.navigation.pages.user_unban');
 	}
 
+	public static function canAccess(): bool
+	{
+		return auth()->user()->can('users-unblock');
+	}
+
 	public function form(Form $form): Form
 	{
 		return $form

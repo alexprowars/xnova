@@ -34,7 +34,7 @@ class ListFleets extends ListRecords
 				TextColumn::make('fleet_array')
 					->label('Состав')
 					->html()
-					->formatStateUsing(fn(FleetModel $record) => Fleet::createFleetPopupedFleetLink($record, __('main.tech.200'), '', null)),
+					->formatStateUsing(fn(FleetModel $record) => Fleet::createFleetPopupedFleetLink($record)),
 				TextColumn::make('user_name')
 					->label('Владелец')
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->user_id . '] ' . $record->user_name)
