@@ -5,20 +5,14 @@ namespace App\Http\Controllers;
 use App\Engine\BattleReport;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
 use App\Models\LogBattle;
 use App\Models\Report;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class LogController extends Controller
+class LogsController extends Controller
 {
 	public function index()
 	{
-		if (!Auth::check()) {
-			return redirect('/');
-		}
-
 		$logs = LogBattle::query()->whereBelongsTo($this->user)
 			->orderByDesc('id')->get();
 
@@ -26,7 +20,7 @@ class LogController extends Controller
 
 		foreach ($logs as $log) {
 			$items[] = [
-				'id' => (int) $log->id,
+				'id' => $log->id,
 				'title' => $log->title
 			];
 		}
@@ -34,35 +28,19 @@ class LogController extends Controller
 		return $items;
 	}
 
-	public function delete(Request $request)
+	public function delete(int $id)
 	{
-		if (!Auth::check()) {
-			throw new PageException('Доступ запрещен');
-		}
-
-		if (!$request->has('id')) {
-			throw new RedirectException('/log', 'Ошибка удаления.');
-		}
-
-		$id = (int) $request->query('id', 0);
-
-		if (!$id) {
-			throw new RedirectException('/log', 'Ошибка удаления.');
-		}
-
 		$log = LogBattle::query()->whereKey($id)
 			->whereBelongsTo($this->user)
 			->first();
 
 		if (!$log) {
-			throw new RedirectException('/log', 'Ошибка удаления.');
+			throw new Exception('Боевой доклад не найден');
 		}
 
 		if (!$log->delete()) {
-			throw new RedirectException('/log', 'Ошибка удаления.');
+			throw new Exception('Ошибка удаления.');
 		}
-
-		throw new RedirectException('/log', 'Отчет удалён');
 	}
 
 	public function create(Request $request)

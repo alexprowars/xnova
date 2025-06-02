@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Alliance;
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
 use App\Models;
 use App\Models\Alliance;
@@ -234,7 +233,7 @@ class AllianceController extends Controller
 	public function join(int $id)
 	{
 		if ($this->user->alliance_id) {
-			throw new RedirectException('/alliance', __('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$alliance = Alliance::find($id);

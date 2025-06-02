@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Helpers;
 use App\Models\Support;
 use App\Models\User;
@@ -57,7 +56,7 @@ class SupportController extends Controller
 	public function answer(int $id, Request $request)
 	{
 		if (!$id) {
-			throw new RedirectException('/support', 'Не задан ID тикета');
+			throw new Exception('Не задан ID тикета');
 		}
 
 		$message = $request->post('message', '');
@@ -69,7 +68,7 @@ class SupportController extends Controller
 		$ticket = Support::find($id);
 
 		if (!$ticket) {
-			throw new RedirectException('/support', 'Тикет не найден');
+			throw new Exception('Тикет не найден');
 		}
 
 		$message = $ticket->message . '<hr>' . $this->user->username . ' ответил в ' . date("d.m.Y H:i:s") . ':<br>' . Helpers::checkString($message);

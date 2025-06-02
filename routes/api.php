@@ -9,7 +9,7 @@ Route::get('blocked', [Controllers\BlockedController::class, 'index']);
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);
 Route::post('registration', [Controllers\RegistrationController::class, 'index']);
-Route::get('log/{id}', [Controllers\LogController::class, 'info'])->whereNumber('id');
+Route::get('logs/{id}', [Controllers\LogsController::class, 'info'])->whereNumber('id');
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index']);
 Route::match(['get', 'post'], 'stat/alliances', [Controllers\StatController::class, 'alliances']);
 Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 'races']);
@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::delete('alliance/admin/ranks/{id}', [Controllers\Alliance\AllianceRanksController::class, 'remove']);
 
 	Route::get('friends', [Controllers\FriendsController::class, 'index']);
+	Route::get('friends/requests', [Controllers\FriendsController::class, 'requests']);
 	Route::get('friends/new/{id}', [Controllers\FriendsController::class, 'new']);
 	Route::post('friends/new/{id}', [Controllers\FriendsController::class, 'create']);
 	Route::delete('friends/{id}', [Controllers\FriendsController::class, 'delete'])->whereNumber('id');
@@ -115,8 +116,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('galaxy', [Controllers\GalaxyController::class, 'index']);
 	Route::get('empire', [Controllers\EmpireController::class, 'index']);
 
-	Route::get('log', [Controllers\LogController::class, 'index']);
-	Route::post('log', [Controllers\LogController::class, 'create']);
+	Route::get('logs', [Controllers\LogsController::class, 'index']);
+	Route::delete('logs/{id}', [Controllers\LogsController::class, 'delete']);
+	Route::post('logs', [Controllers\LogsController::class, 'create']);
 
 	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange']);
 

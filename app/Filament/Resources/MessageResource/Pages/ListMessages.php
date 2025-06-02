@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MessageResource\Pages;
 
+use App\Filament\Components\Table\Filters\DateFilter;
 use App\Filament\Resources\MessageResource;
 use App\Models\Message;
 use Filament\Resources\Pages\ListRecords;
@@ -9,7 +10,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class ListMessages extends ListRecords
 {
@@ -57,7 +57,7 @@ class ListMessages extends ListRecords
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email']),
-				DateRangeFilter::make('time')
+				DateFilter::make('time')
 					->label('Дата'),
 			])
 			->actions([

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Models;
 use App\Models\Friend;
 use App\Models\User;
@@ -14,38 +13,18 @@ use Illuminate\Http\Request;
 
 class FriendsController extends Controller
 {
-	public function index(Request $request)
+	public function index()
 	{
-		$parse = [];
-
-		if ($request->get('requests')) {
-			$parse['title'] = $request->has('my') ? 'Мои запросы' : 'Другие запросы';
-		}
-
-		$parse['items'] = [];
-		$parse['isMy'] = $request->has('my');
+		$result = [];
 
 		$items = Models\Friend::query()
 			->orderByDesc('id')
-			->where('ignore', false);
-
-		if ($request->get('requests')) {
-			$items->where('active', false);
-
-			if ($request->get('my')) {
-				$items->whereBelongsTo($this->user);
-			} else {
-				$items->whereBelongsTo($this->user, 'friend');
-			}
-		} else {
-			$items
-				->where('active', false)
-				->where(function (Builder $query) {
-					$query->whereBelongsTo($this->user)->whereBelongsTo($this->user, 'friend');
-				});
-		}
-
-		$items = $items->get();
+			->where('ignore', false)
+			->where('active', true)
+			->where(function (Builder $query) {
+				$query->whereBelongsTo($this->user)->orWhereBelongsTo($this->user, 'friend');
+			})
+			->get();
 
 		foreach ($items as $item) {
 			$userId = $item->friend_id == $this->user->id ? $item->user_id : $item->friend_id;
@@ -57,7 +36,61 @@ class FriendsController extends Controller
 				continue;
 			}
 
-			$row = [
+			$onlineDiff = (int) $user->onlinetime->diffInMinutes();
+
+			$result[] = [
+				'id' => $item->id,
+				'message' => $item->message,
+				'user' => [
+					'id' => $user->id,
+					'name' => $user->username,
+					'alliance' => [
+						'id' => $user->alliance_id,
+						'name' => $user->alliance_name,
+					],
+					'galaxy' => $user->galaxy,
+					'system' => $user->system,
+					'planet' => $user->planet,
+				],
+				'online' => match (true) {
+					$onlineDiff < 10 => 1,
+					$onlineDiff < 20 => 2,
+					default => 0,
+				},
+			];
+		}
+
+		return $result;
+	}
+
+	public function requests(Request $request)
+	{
+		$isMyRequests = $request->get('my', 'N') == 'Y';
+
+		$result = [];
+
+		$items = Models\Friend::query()
+			->orderByDesc('id')
+			->where('ignore', false)
+			->where('active', false)
+			->when(
+				$isMyRequests,
+				fn(Builder $query) => $query->whereBelongsTo($this->user),
+				fn(Builder $query) => $query->whereBelongsTo($this->user, 'friend')
+			)
+			->get();
+
+		foreach ($items as $item) {
+			$userId = $item->friend_id == $this->user->id ? $item->user_id : $item->friend_id;
+
+			$user = Models\User::find($userId);
+
+			if (!$user) {
+				$item->delete();
+				continue;
+			}
+
+			$result[] = [
 				'id' => $item->id,
 				'online' => 0,
 				'message' => $item->message,
@@ -73,19 +106,9 @@ class FriendsController extends Controller
 					'planet' => $user->planet,
 				],
 			];
-
-			if (!$request->get('requests')) {
-				if ($user->onlinetime?->timestamp > time() - 59 * 60) {
-					$row['online'] = floor((time() - $user->onlinetime->timestamp) / 60);
-				} else {
-					$row['online'] = 60;
-				}
-			}
-
-			$parse['items'][] = $row;
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function new(int $userId)
@@ -96,7 +119,7 @@ class FriendsController extends Controller
 			throw new Exception('Друг не найден');
 		}
 
-		if ($user->id == $this->user->id) {
+		if ($user->is($this->user)) {
 			throw new Exception('Нельзя дружить сам с собой');
 		}
 
@@ -155,17 +178,11 @@ class FriendsController extends Controller
 			throw new Exception('Заявка не найдена');
 		}
 
-		if ($friend->friend_id == $this->user->id) {
+		if ($friend->friend_id == $this->user->id || $friend->user_id == $this->user->id) {
 			$friend->delete();
-
-			throw new RedirectException('/friends/requests', 'Заявка отклонена');
-		} elseif ($friend->user_id == $this->user->id) {
-			$friend->delete();
-
-			throw new RedirectException('/friends/requests/my', 'Заявка удалена');
+		} else {
+			throw new Exception('Заявка не найдена');
 		}
-
-		throw new Exception('Заявка не найдена');
 	}
 
 	public function approve(int $id)
@@ -176,11 +193,11 @@ class FriendsController extends Controller
 			throw new Exception('Заявка не найдена');
 		}
 
-		if (!($friend->friend_id == $this->user->id && !$friend->active)) {
+		if ($friend->friend_id != $this->user->id || $friend->active) {
 			throw new Exception('Заявка не найдена');
 		}
 
-		$friend->active = 1;
+		$friend->active = true;
 		$friend->update();
 	}
 }

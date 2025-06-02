@@ -27,14 +27,12 @@
         "laravel/reverb": "^1.4",
         "laravel/socialite": "^5.5.7",
         "laravel/tinker": "^2.9",
-        "malzariey/filament-daterangepicker-filter": "^3.2",
         "nubs/random-name-generator": "^2.1",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "socialiteproviders/vkontakte": "^5.0.0",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.18",
-        "technikermathe/blade-lucide-icons": "^3.102",
-        "webbingbrasil/filament-advancedfilter": "^3.0"
+        "technikermathe/blade-lucide-icons": "^3.102"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

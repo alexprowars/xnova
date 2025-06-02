@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Format;
 use App\Helpers;
 use App\Http\Controllers\Controller;
@@ -24,7 +23,7 @@ class AllianceAdminController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
-			throw new RedirectException('/alliance', __('alliance.Denied_access'));
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$type = (int) $request->get('type', 1);
@@ -118,7 +117,7 @@ class AllianceAdminController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id) {
-			throw new RedirectException('/alliance', 'Доступ запрещён');
+			throw new Exception('Доступ запрещён');
 		}
 
 		$listuser = $alliance->members()

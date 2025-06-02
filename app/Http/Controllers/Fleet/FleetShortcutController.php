@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Enums\PlanetType;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Http\Controllers\Controller;
 use App\Models\FleetShortcut;
 use Illuminate\Http\Request;
@@ -89,7 +88,7 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new RedirectException('/fleet/shortcut', 'Данной ссылки не существует!');
+			throw new Exception('Данной ссылки не существует!');
 		}
 
 		return [

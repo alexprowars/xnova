@@ -254,23 +254,6 @@ class OptionsController extends Controller
 			$this->user->update();
 		}
 
-		if (!empty($request->post('password')) && !empty($request->post('new_password'))) {
-			if (!Hash::check($request->post('password'), $this->user->password)) {
-				throw new Exception('Heпpaвильный тeкyщий пapoль');
-			}
-
-			if ($request->post('new_password') != $request->post('new_password_confirm')) {
-				throw new Exception('Bвeдeнныe пapoли нe coвпaдaют');
-			}
-
-			$this->user->password = Hash::make($request->post('new_password'));
-			$this->user->save();
-
-			Auth::logout();
-
-			throw new RedirectException('/', 'Пароль успешно изменён');
-		}
-
 		if ($this->user->username != $username) {
 			if ($this->user->username_change?->greaterThan(now()->subDay())) {
 				throw new Exception('Смена игрового имени возможна лишь раз в сутки.');
@@ -300,7 +283,5 @@ class OptionsController extends Controller
 		$this->user->save();
 
 		Auth::logout();
-
-		throw new RedirectException('/', 'Пароль успешно изменён');
 	}
 }

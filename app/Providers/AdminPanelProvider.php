@@ -51,11 +51,9 @@ class AdminPanelProvider extends PanelProvider
 					->label(fn() => __('admin.edit_profile'))
 					->url(fn() => UserResource::getUrl('edit', ['record' => auth()->user()], false)),
 			])
-			->topNavigation()
 			->databaseTransactions()
 			->globalSearch(false)
 			->sidebarCollapsibleOnDesktop()
-			->sidebarWidth('17rem')
 			->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
 			->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
 			->defaultAvatarProvider(GravatarProvider::class)

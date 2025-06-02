@@ -29,7 +29,7 @@ class RwController extends Controller
 		$combatReport = new BattleReport($report->data[0], $report->data[1], $report->data[2], $report->data[3], $report->data[4], $report->data[5]);
 
 		$html = $combatReport->report()['html'];
-		$html .= '<div class="separator"></div><div class="text-center">ID боевого доклада: <a href="/log/create/?code=' . md5(config('app.key') . $report->id) . $report->id . '"><span style="color: red">' . md5(config('app.key') . $report->id) . $report->id . '</span></a></div>';
+		$html .= '<div class="separator"></div><div class="text-center">ID боевого доклада: <a href="/log/create?code=' . md5(config('app.key') . $report->id) . $report->id . '"><span style="color: red">' . md5(config('app.key') . $report->id) . $report->id . '</span></a></div>';
 
 		return [
 			'raport' => $html
