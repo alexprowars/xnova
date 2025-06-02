@@ -44,26 +44,12 @@ class StateController extends Controller
 				$data['queue'] = QueueResource::make($user);
 			}
 
-			$globalMessage = config('game.newsMessage', '');
+			$globalMessage = $settings->globalMessage ?: '';
 
 			if (!empty($globalMessage)) {
 				$data['messages'][] = [
 					'type' => 'warning-static',
 					'text' => $globalMessage
-				];
-			}
-
-			if ($user->delete_time) {
-				$data['messages'][] = [
-					'type' => 'info-static',
-					'text' => 'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' . Game::datezone("d.m.Y", $user->delete_time) . ' в ' . Game::datezone("H:i:s", $user->delete_time) . '. Выключить режим удаления можно в настройках игры.'
-				];
-			}
-
-			if ($user->isVacation()) {
-				$data['messages'][] = [
-					'type' => 'warning-static',
-					'text' => 'Включен режим отпуска! Функциональность игры ограничена.'
 				];
 			}
 

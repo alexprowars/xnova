@@ -14,6 +14,7 @@ class Settings extends LaravelSettings\Settings
 	public int $statUpdate;
 	public int $activeUsers;
 	public int $activeAlliance;
+	public ?string $globalMessage;
 
 	public static function group(): string
 	{

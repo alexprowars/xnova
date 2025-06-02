@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Forms;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -37,6 +38,8 @@ class Settings extends SettingsPage
 		return $form
 			->schema([
 				Forms\Components\Section::make([
+					Textarea::make('globalMessage')
+						->label('Глобальное сообщение'),
 					TextInput::make('lastSettedGalaxyPos')
 						->label('Галактика')
 						->integer()

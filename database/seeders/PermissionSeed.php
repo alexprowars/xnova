@@ -29,11 +29,5 @@ class PermissionSeed extends Seeder
 		Permission::create(['name' => 'payments']);
 		Permission::create(['name' => 'planets']);
 		Permission::create(['name' => 'roles']);
-
-		app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
-		Role::create(['name' => 'admin']);
-		Role::create(['name' => 'operator']);
-		Role::create(['name' => 'super-operator']);
 	}
 }

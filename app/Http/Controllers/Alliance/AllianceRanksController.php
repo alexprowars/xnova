@@ -107,8 +107,12 @@ class AllianceRanksController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		if (isset($alliance->ranks[$id])) {
-			unset($alliance->ranks[$id]);
+		$ranks = $alliance->ranks;
+
+		if (isset($ranks[$id])) {
+			unset($ranks[$id]);
+
+			$alliance->ranks = $ranks;
 			$alliance->save();
 		}
 	}

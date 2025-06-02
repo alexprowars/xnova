@@ -14,5 +14,6 @@ return new class extends SettingsMigration
 		$this->migrator->add('general.statUpdate', 0);
 		$this->migrator->add('general.activeUsers', 0);
 		$this->migrator->add('general.activeAlliance', 0);
+		$this->migrator->add('general.globalMessage', '');
 	}
 };

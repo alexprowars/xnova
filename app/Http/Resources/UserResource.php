@@ -49,6 +49,7 @@ class UserResource extends JsonResource
 			'fleets_max' => $this->resource->getTechLevel('computer') + 1,
 			'protection' => $this->resource->isNoobProtection(),
 			'daily_bonus' => null,
+			'deleted_at' => $this->resource->delete_time?->utc()->toAtomString(),
 		];
 
 		if ($this->resource->rpg_admiral?->isFuture()) {
