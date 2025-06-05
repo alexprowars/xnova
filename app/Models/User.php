@@ -119,13 +119,13 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	/** @return HasMany<Planet, $this> */
 	public function planets(): HasMany
 	{
-		return $this->hasMany(Planet::class);
+		return $this->hasMany(Planet::class)->chaperone();
 	}
 
 	/** @return HasMany<Queue, $this> */
 	public function queue(): HasMany
 	{
-		return $this->hasMany(Queue::class, 'user_id');
+		return $this->hasMany(Queue::class, 'user_id')->chaperone();
 	}
 
 	/** @return BelongsTo<Alliance, $this> */

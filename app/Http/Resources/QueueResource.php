@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Engine\EntityFactory;
 use App\Engine\Enums\QueueType;
-use App\Engine\QueueManager;
 use App\Models\Planet;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,23 +19,10 @@ class QueueResource extends JsonResource
 	{
 		$items = [];
 
-		$queueManager = new QueueManager($this->user);
+		$queue = $this->user->queue;
+		$queue->loadMissing('planet');
 
-		$queueItems = $queueManager->get(QueueType::BUILDING);
-
-		foreach ($queueItems as $item) {
-			$items[] = [
-				'item' 	=> $item->object_id,
-				'type'	=> $item->type,
-				'level' => $item->level,
-				'mode' 	=> $item->operation,
-				'date' 	=> $item->date_end->utc()->toAtomString(),
-				'planet_id' => $item->planet_id,
-				'planet_name' => $item->planet->name ?? '',
-			];
-		}
-
-		$queueItems = $queueManager->get(QueueType::RESEARCH);
+		$queueItems = $queue->where('type', QueueType::BUILDING);
 
 		foreach ($queueItems as $item) {
 			$items[] = [
@@ -50,7 +36,21 @@ class QueueResource extends JsonResource
 			];
 		}
 
-		$queueItems = $queueManager->get(QueueType::SHIPYARD);
+		$queueItems = $queue->where('type', QueueType::RESEARCH);
+
+		foreach ($queueItems as $item) {
+			$items[] = [
+				'item' 	=> $item->object_id,
+				'type'	=> $item->type,
+				'level' => $item->level,
+				'mode' 	=> $item->operation,
+				'date' 	=> $item->date_end->utc()->toAtomString(),
+				'planet_id' => $item->planet_id,
+				'planet_name' => $item->planet->name ?? '',
+			];
+		}
+
+		$queueItems = $queue->where('type', QueueType::SHIPYARD);
 		$endDate = [];
 
 		foreach ($queueItems as $item) {

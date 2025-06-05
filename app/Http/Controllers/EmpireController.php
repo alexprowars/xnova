@@ -92,13 +92,13 @@ class EmpireController extends Controller
 
 			$build_hangar = [];
 
-			$queueManager = new QueueManager($this->user, $planet);
+			$queueManager = new QueueManager($planet);
 			$queueManager->checkUnitQueue();
 
 			foreach (QueueType::cases() as $type) {
 				$queue = $queueManager->get($type);
 
-				if (!count($queue)) {
+				if ($queue->isEmpty()) {
 					continue;
 				}
 

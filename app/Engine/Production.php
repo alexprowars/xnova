@@ -115,6 +115,41 @@ class Production
 		return $this->basic;
 	}
 
+	public function getEnitityProductions(): array
+	{
+		if ($this->planet->user->isVacation()) {
+			return [];
+		}
+
+		if (in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
+			return [];
+		}
+
+		$result = [];
+
+		$itemsId = Vars::getItemsByType(ItemType::PRODUCTION);
+
+		foreach ($itemsId as $itemId) {
+			$entity = $this->planet->getEntity($itemId)->unit();
+
+			if (!$entity || $entity->getLevel() <= 0) {
+				continue;
+			}
+
+			$factor = null;
+
+			if ($itemId == 12 && $this->planet->deuterium < 100) {
+				$factor = 0;
+			}
+
+			$production = $entity->getProduction($factor);
+
+			$result[$itemId] = $production;
+		}
+
+		return $result;
+	}
+
 	public function getResourceProduction(): Resources
 	{
 		if ($this->production) {
@@ -126,34 +161,12 @@ class Production
 
 		$resources = new Resources();
 
-		if ($this->planet->user->isVacation()) {
-			return $resources;
-		}
+		$productions = $this->getEnitityProductions();
 
-		if (in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
-			return $resources;
-		}
-
-		$itemsId = Vars::getItemsByType(ItemType::PRODUCTION);
-
-		foreach ($itemsId as $productionId) {
-			$entity = $this->planet->getEntity($productionId)->unit();
-
-			if (!$entity || $entity->getLevel() <= 0) {
-				continue;
-			}
-
-			$factor = null;
-
-			if ($productionId == 12 && $this->planet->deuterium < 100) {
-				$factor = 0;
-			}
-
-			$production = $entity->getProduction($factor);
-
+		foreach ($productions as $entityId => $production) {
 			$resources->add($production);
 
-			if ($productionId < 4) {
+			if ($entityId < 4) {
 				$this->planet->energy_used += abs($production->get(ResourcesEnum::ENERGY));
 			} else {
 				$this->planet->energy += $production->get(ResourcesEnum::ENERGY);

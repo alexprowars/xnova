@@ -60,15 +60,15 @@ class MerchantController extends Controller
 		$this->user->credits -= 1;
 		$this->user->update();
 
-		$tutorial = $this->user->quests()
+		$quest = $this->user->quests()
 			->where('quest_id', 6)
 			->where('finish', false)
 			->where('stage', 0)
 			->first();
 
-		if ($tutorial) {
-			$tutorial->stage = 1;
-			$tutorial->save();
+		if ($quest) {
+			$quest->stage = 1;
+			$quest->save();
 		}
 
 		return [

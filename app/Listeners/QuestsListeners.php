@@ -14,7 +14,7 @@ class QuestsListeners
 			->first();
 
 		if ($quest) {
-			$quest = require resource_path('engine/tutorial.php');
+			$quest = require resource_path('engine/quests.php');
 			$quest = $quest[$quest->quest_id] ?? null;
 
 			if ($quest) {

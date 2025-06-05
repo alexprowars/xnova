@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
@@ -146,7 +145,7 @@ class OptionsController extends Controller
 			$vacation = null;
 
 			if ($request->post('vacation')) {
-				$queueCount = (new QueueManager($this->user))->getCount();
+				$queueCount = $this->user->queue_count;
 
 				$userFlyingFleets = Models\Fleet::query()->whereBelongsTo($this->user)->count();
 

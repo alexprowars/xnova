@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
@@ -40,7 +39,7 @@ class RaceController extends Controller
 			throw new Exception('Выберите фракцию');
 		}
 
-		$queueCount = (new QueueManager($this->user))->getCount();
+		$queueCount = $this->user->queue_count;
 
 		$flyingFleets = Fleet::query()->whereBelongsTo($this->user)->count();
 

@@ -14,15 +14,15 @@ class UserQuest extends Model
 
 	public function checkFinished(User $user, Planet $planet)
 	{
-		$tutorial = require resource_path('engine/tutorial.php');
+		$quest = require resource_path('engine/quests.php');
 
-		if (!isset($tutorial[$this->quest_id])) {
+		if (!isset($quest[$this->quest_id])) {
 			return [];
 		}
 
 		$result = [];
 
-		foreach ($tutorial[$this->quest_id]['task'] as $taskKey => $taskVal) {
+		foreach ($quest[$this->quest_id]['task'] as $taskKey => $taskVal) {
 			if ($taskKey == 'build') {
 				$chk = true;
 

@@ -20,7 +20,7 @@ class ContactsController extends Controller
 			$items[] = [
 				'id' 	=> $user->id,
 				'name' 	=> $user->username,
-				'role' 	=> $user->roles->first()->name,
+				'role' 	=> $user->roles->first()->name ?? '',
 				'email' => $user->email,
 				'about' => preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about)),
 			];

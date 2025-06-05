@@ -17,7 +17,7 @@ class ShipyardController extends Controller
 
 	public function index()
 	{
-		$queueManager = new QueueManager($this->user, $this->planet);
+		$queueManager = new QueueManager($this->planet);
 
 		if ($this->mode == 'defense') {
 			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
@@ -26,14 +26,7 @@ class ShipyardController extends Controller
 		}
 
 		$queueArray = $queueManager->get(QueueType::SHIPYARD);
-
-		$buildArray = [];
-
-		if (is_array($queueArray) && count($queueArray)) {
-			foreach ($queueArray as $element) {
-				$buildArray[$element->object_id] = $element->level;
-			}
-		}
+		$buildArray = $queueArray->pluck('level', 'object_id')->all();
 
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
@@ -98,7 +91,7 @@ class ShipyardController extends Controller
 			$elementIds = Vars::getItemsByType(ItemType::FLEET);
 		}
 
-		$queueManager = new QueueManager($this->user, $this->planet);
+		$queueManager = new QueueManager($this->planet);
 
 		$elements = Arr::wrap($request->post('element', []));
 

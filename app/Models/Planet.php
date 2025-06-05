@@ -68,7 +68,7 @@ class Planet extends Model
 	/** @return HasMany<Queue, $this> */
 	public function queue(): HasMany
 	{
-		return $this->hasMany(Queue::class, 'planet_id');
+		return $this->hasMany(Queue::class, 'planet_id')->chaperone();
 	}
 
 	public function prunable()

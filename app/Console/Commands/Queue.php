@@ -48,7 +48,7 @@ class Queue extends Command
 						throw new Exception('Cron::update::queueAction::user or planet not found');
 					}
 
-					DB::transaction(fn() => (new QueueManager($item->user, $planet))->update());
+					DB::transaction(fn() => (new QueueManager($planet))->update());
 				} catch (Exception $e) {
 					Log::error("\n\n" . $e->getMessage() . "\n\n");
 					echo $e->getMessage();

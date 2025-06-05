@@ -167,9 +167,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('support/answer/{id}', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
 	Route::post('support/add', [Controllers\SupportController::class, 'add']);
 
-	Route::get('tutorial', [Controllers\TutorialController::class, 'index']);
-	Route::get('tutorial/{id}', [Controllers\TutorialController::class, 'info'])->whereNumber('id');
-	Route::post('tutorial/{id}', [Controllers\TutorialController::class, 'finish'])->whereNumber('id');
+	Route::get('quests', [Controllers\QuestController::class, 'index']);
+	Route::get('quests/{id}', [Controllers\QuestController::class, 'info'])->whereNumber('id');
+	Route::post('quests/{id}', [Controllers\QuestController::class, 'finish'])->whereNumber('id');
 
 	Route::post('user/planet/{id}', [Controllers\UserController::class, 'setPlanet']);
 	Route::post('user/daily', [Controllers\UserController::class, 'dailyBonus']);

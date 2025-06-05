@@ -84,7 +84,7 @@ class Attack extends BaseMission
 
 		$target->getProduction($this->fleet->start_date)->update();
 
-		$queueManager = new QueueManager($targetUser, $target);
+		$queueManager = new QueueManager($target);
 		$queueManager->checkUnitQueue();
 
 		LangManager::getInstance()->setImplementation(new LangImplementation());

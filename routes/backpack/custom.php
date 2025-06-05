@@ -7,7 +7,6 @@ Route::prefix(config('backpack.base.route_prefix', 'admin'))
 	->middleware((array) config('backpack.base.middleware_key', 'admin'))
 	->name('admin.')
 	->group(function () {
-		Route::get('alliances', [Admin\AlliancesController::class, 'index'])->name('alliances');
 		Route::get('manager', [Admin\ManagerController::class, 'index'])->name('manager');
 		Route::get('manager/ip', [Admin\ManagerController::class, 'ip'])->name('manager.ip');
 		Route::get('manager/data', [Admin\ManagerController::class, 'data'])->name('manager.data');

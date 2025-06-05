@@ -42,7 +42,7 @@ class Spy extends BaseMission
 
 		$TargetPlanet->getProduction($this->fleet->start_date)->update();
 
-		$queueManager = new QueueManager($targetUser, $TargetPlanet);
+		$queueManager = new QueueManager($TargetPlanet);
 		$queueManager->checkUnitQueue();
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');

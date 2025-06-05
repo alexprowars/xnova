@@ -72,7 +72,7 @@ class BuildingsController extends Controller
 			return;
 		}
 
-		$queueManager = new QueueManager($this->user, $this->planet);
+		$queueManager = new QueueManager($this->planet);
 
 		$maxQueueSize = config('game.maxBuildingQueue') + $this->user->bonus('queue', 0);
 
@@ -98,7 +98,7 @@ class BuildingsController extends Controller
 			return;
 		}
 
-		$queueManager = new QueueManager($this->user, $this->planet);
+		$queueManager = new QueueManager($this->planet);
 
 		switch ($action) {
 			case 'cancel':

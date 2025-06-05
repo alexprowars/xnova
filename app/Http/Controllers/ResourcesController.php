@@ -23,50 +23,45 @@ class ResourcesController extends Controller
 			->getProductionFactor();
 
 		$parse['buy_form'] = [
-			'visible' => ($this->planet->planet_type == PlanetType::PLANET && !$this->user->isVacation()),
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
 		] + $this->getBuyResourcesAmount();
 
 		$parse['bonus_h'] = (int) round(($this->user->bonus('storage') - 1) * 100);
 		$parse['items'] = [];
 
-		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $entityId) {
-			$entity = $this->planet->getEntity($entityId)->unit();
+		$productions = $this->planet->getProduction()->getEnitityProductions();
 
-			if (!$entity) {
-				continue;
-			}
+		foreach ($productions as $entityId => $production) {
+			$entity = $this->planet->getEntity($entityId);
 
-			$planetEntity = $this->planet->entities->where('entity_id', $entityId)->first();
-
-			$production = $entity->getProduction();
 			$production->multiply($productionLevel / 100, [Resources::ENERGY]);
 
-			$row = [];
-			$row['id'] = $entityId;
-			$row['code'] = Vars::getName($entityId);
-			$row['factor'] = $planetEntity->factor ?? 10;
-			$row['bonus'] = 0;
+			$item = [
+				'id' => $entityId,
+				'code' => Vars::getName($entityId),
+				'factor' => $entity->factor ?? 10,
+				'level' => $entity->amount,
+				'bonus' => 0,
+			];
 
 			if ($entityId == 4 || $entityId == 12) {
-				$row['bonus'] += $this->user->bonus('energy');
-				$row['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
+				$item['bonus'] += $this->user->bonus('energy');
+				$item['bonus'] += ($this->user->getTechLevel('energy') * 2) / 100;
 			} elseif ($entityId == 212) {
-				$row['bonus'] += $this->user->bonus('solar');
+				$item['bonus'] += $this->user->bonus('solar');
 			} elseif ($entityId == 1) {
-				$row['bonus'] += $this->user->bonus('metal');
+				$item['bonus'] += $this->user->bonus('metal');
 			} elseif ($entityId == 2) {
-				$row['bonus'] += $this->user->bonus('crystal');
+				$item['bonus'] += $this->user->bonus('crystal');
 			} elseif ($entityId == 3) {
-				$row['bonus'] += $this->user->bonus('deuterium');
+				$item['bonus'] += $this->user->bonus('deuterium');
 			}
 
-			$row['bonus'] = (int) (($row['bonus'] - 1) * 100);
-			$row['level'] = $entity->getLevel();
-			$row['resources'] = $production->toArray();
-			$row['resources']['energy'] = $production->get(Resources::ENERGY);
+			$item['bonus'] = (int) (($item['bonus'] - 1) * 100);
+			$item['resources'] = $production->toArray();
+			$item['resources']['energy'] = $production->get(Resources::ENERGY);
 
-			$parse['items'][] = $row;
+			$parse['items'][] = $item;
 		}
 
 		$parse['production_level'] = $productionLevel;
@@ -144,15 +139,33 @@ class ResourcesController extends Controller
 
 	protected function getBuyResourcesAmount()
 	{
-		$production = $this->planet->getProduction()
-			->getResourceProduction();
-
-		$resources = [];
-
-		foreach (Vars::getResources() as $res) {
-			$resources[$res] = max(0, $production->get($res) * 8);
+		if ($this->planet->user->isVacation()) {
+			return [];
 		}
 
-		return $resources;
+		if ($this->planet->planet_type != PlanetType::PLANET) {
+			return [];
+		}
+
+		$resources = new \App\Engine\Resources();
+		$resources->add($this->planet->getProduction()->getBasicProduction());
+
+		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $itemId) {
+			$entity = $this->planet->getEntity($itemId)->unit();
+
+			if (!$entity || $entity->getLevel() <= 0) {
+				continue;
+			}
+
+			$resources->add($entity->getProduction(10));
+		}
+
+		$result = [];
+
+		foreach (Vars::getResources() as $res) {
+			$result[$res] = max(0, $resources->get($res) * 8);
+		}
+
+		return $result;
 	}
 }

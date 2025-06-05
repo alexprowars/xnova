@@ -29,12 +29,11 @@ class Building
 
 	public static function checkLabSettingsInQueue(Planet $planet)
 	{
-		$queueManager = new QueueManager($planet->user_id, $planet);
+		$BuildQueue = (new QueueManager($planet))
+			->get(QueueType::BUILDING);
 
-		if ($queueManager->getCount(QueueType::BUILDING)) {
-			$BuildQueue = $queueManager->get(QueueType::BUILDING);
-
-			if ($BuildQueue[0]->object_id == 31 && config('game.BuildLabWhileRun', 0) != 1) {
+		if ($BuildQueue->isNotEmpty()) {
+			if ($BuildQueue->first()->object_id == 31 && config('game.BuildLabWhileRun', 0) != 1) {
 				return false;
 			} else {
 				return true;

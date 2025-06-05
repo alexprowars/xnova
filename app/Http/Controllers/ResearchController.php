@@ -128,7 +128,7 @@ class ResearchController extends Controller
 			return;
 		}
 
-		$queueManager = new QueueManager($this->user, $this->planet);
+		$queueManager = new QueueManager($this->planet);
 
 		switch ($action) {
 			case 'cancel':

@@ -8,11 +8,11 @@ use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Format;
 
-class TutorialController extends Controller
+class QuestController extends Controller
 {
 	public function index()
 	{
-		$quests = require resource_path('engine/tutorial.php');
+		$quests = require resource_path('engine/quests.php');
 
 		$parse = [];
 
@@ -46,7 +46,7 @@ class TutorialController extends Controller
 
 			$parse['items'][] = [
 				'id' => $questId,
-				'title' => __('tutorial.' . $questId . '.title'),
+				'title' => __('quests.' . $questId . '.title'),
 				'finish' => isset($userQuests[$questId]) && $userQuests[$questId]['finish'] == 1,
 				'required' => $quest['required'],
 				'available' => $available,
@@ -59,20 +59,20 @@ class TutorialController extends Controller
 	public function info(int $id)
 	{
 		if ($id <= 0) {
-			throw new PageException('Не выбрано задание', '/tutorial');
+			throw new PageException('Не выбрано задание', '/quests');
 		}
 
-		$tutorial = require resource_path('engine/tutorial.php');
+		$quest = require resource_path('engine/quests.php');
 
-		if (!isset($tutorial[$id])) {
-			throw new PageException('Задание не существует', '/tutorial');
+		if (!isset($quest[$id])) {
+			throw new PageException('Задание не существует', '/quests');
 		}
 
 		$parse = [];
 		$parse['id'] = $id;
-		$parse['title'] = __('tutorial.' . $id . '.title');
-		$parse['description'] = __('tutorial.' . $id . '.description');
-		$parse['solution'] = __('tutorial.' . $id . '.solution');
+		$parse['title'] = __('quests.' . $id . '.title');
+		$parse['description'] = __('quests.' . $id . '.description');
+		$parse['solution'] = __('quests.' . $id . '.solution');
 		$parse['task'] = [];
 		$parse['rewd'] = [];
 
@@ -91,7 +91,7 @@ class TutorialController extends Controller
 		$errors = 0;
 		$checks = $qInfo->checkFinished($this->user, $this->planet);
 
-		foreach ($tutorial[$id]['task'] as $taskKey => $taskVal) {
+		foreach ($quest[$id]['task'] as $taskKey => $taskVal) {
 			$check = $checks[$taskKey] ?? false;
 
 			if ($taskKey == 'build') {
@@ -153,7 +153,7 @@ class TutorialController extends Controller
 			$errors++;
 		}
 
-		foreach ($tutorial[$id]['reward'] as $rewardKey => $rewardVal) {
+		foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
 			if ($rewardKey == 'metal') {
 				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.metal') . 'а';
 			} elseif ($rewardKey == 'crystal') {
@@ -195,9 +195,9 @@ class TutorialController extends Controller
 			throw new Exception('Не выбрано задание');
 		}
 
-		$tutorial = require resource_path('engine/tutorial.php');
+		$quest = require resource_path('engine/quests.php');
 
-		if (!isset($tutorial[$id])) {
+		if (!isset($quest[$id])) {
 			throw new Exception('Задание не существует');
 		}
 
@@ -212,7 +212,7 @@ class TutorialController extends Controller
 		$errors = 0;
 		$checks = $qInfo->checkFinished($this->user, $this->planet);
 
-		foreach ($tutorial[$id]['task'] as $taskKey => $taskVal) {
+		foreach ($quest[$id]['task'] as $taskKey => $taskVal) {
 			$errors += !($checks[$taskKey] ?? false) ? 1 : 0;
 		}
 
@@ -220,7 +220,7 @@ class TutorialController extends Controller
 			throw new Exception('Задание не выполнено');
 		}
 
-		foreach ($tutorial[$id]['reward'] as $rewardKey => $rewardVal) {
+		foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
 			if ($rewardKey == 'metal') {
 				$this->planet->metal += $rewardVal;
 			} elseif ($rewardKey == 'crystal') {

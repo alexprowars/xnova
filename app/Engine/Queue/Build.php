@@ -76,17 +76,17 @@ class Build
 	{
 		$queueArray = $this->queue->get(QueueType::BUILDING);
 
-		if (empty($queueArray) || empty($queueArray[$indexId])) {
+		$queueItem = $queueArray->get($indexId);
+
+		if (!$queueItem) {
 			return;
 		}
 
-		$queueItem = $queueArray[$indexId];
-
-		if (!$this->queue->deleteInQueue($queueItem->id)) {
+		if (!$this->queue->deleteInQueue($queueItem)) {
 			$queueItem->delete();
 		}
 
-		if ($queueItem->time) {
+		if ($queueItem->date) {
 			$planet = $this->queue->getPlanet();
 
 			$entity = Entity\Building::createEntity($queueItem->object_id, $queueItem->level, $planet);
@@ -101,11 +101,9 @@ class Build
 			$planet->update();
 		}
 
-		if (count($queueArray) > 1) {
-			unset($queueArray[$indexId]);
-
-			/** @var Models\Queue[] $queueArray */
-			$queueArray = array_values($queueArray);
+		if ($queueArray->count() > 1) {
+			$queueArray->forget($indexId);
+			$queueArray = $queueArray->values();
 
 			foreach ($queueArray as $i => $item) {
 				if ($queueItem->object_id == $item->object_id && $indexId <= $i) {

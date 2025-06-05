@@ -14,42 +14,27 @@ use App\Helpers;
 use App\Models;
 use App\Models\LogHistory;
 use App\Models\Planet;
-use App\Models\User;
 use App\Notifications\MessageNotification;
+use Illuminate\Support\Collection;
 
 class QueueManager
 {
-	/** @var Models\Queue[]|null */
+	/** @var Models\Queue[]|null|Collection<array-key, Models\Queue> */
 	protected $queue;
-	protected User $user;
 
-	public function __construct(Models\User|int $user, protected ?Planet $planet = null)
+	public function __construct(protected Planet $planet)
 	{
-		if ($user instanceof Models\User) {
-			$this->user = $user;
-		} else {
-			$this->user = Models\User::find($user);
-		}
-
 		$this->loadQueue();
 	}
 
 	public function loadQueue()
 	{
-		$query = $this->user->queue()
-			->with('planet')
-			->orderBy('id');
-
-		if ($this->planet) {
-			$query->whereBelongsTo($this->planet);
-		}
-
-		$this->queue = $query->get()->all();
-	}
-
-	public function setPlanet(Planet $planet)
-	{
-		$this->planet = $planet;
+		$this->queue = $this->planet->user->queue()
+			->orderBy('id')
+			->whereBelongsTo($this->planet)
+			->get()
+			->map(fn(Models\Queue $item) => $item->setRelation('planet', $item->planet))
+			->collect();
 	}
 
 	public function getPlanet()
@@ -59,7 +44,7 @@ class QueueManager
 
 	public function getUser()
 	{
-		return $this->user;
+		return $this->planet->user;
 	}
 
 	public function add(int|string $elementId, int $count = 1, bool $destroy = false): void
@@ -86,56 +71,39 @@ class QueueManager
 		}
 	}
 
-	public function get(?QueueType $type = null)
+	/** @return Collection<array-key, Models\Queue> */
+	public function get(?QueueType $type = null): Collection
 	{
 		if (!$type) {
 			return $this->queue;
 		} elseif (in_array($type, QueueType::cases())) {
-			$r = [];
-
-			foreach ($this->queue as $item) {
-				if ($item->type == $type) {
-					$r[] = $item;
-				}
-			}
-
-			return $r;
+			return $this->queue->where('type', $type);
 		} else {
-			return [];
+			return new Collection();
 		}
 	}
 
-	public function getCount(?QueueType $queueType = null)
+	public function getCount(?QueueType $type = null)
 	{
-		if (!$queueType) {
-			return count($this->queue);
-		} elseif (in_array($queueType, QueueType::cases())) {
-			$cnt = 0;
-
-			foreach ($this->queue as $item) {
-				if ($item->type == $queueType) {
-					$cnt++;
-				}
-			}
-
-			return $cnt;
+		if (!$type) {
+			return $this->queue->count();
+		} elseif (in_array($type, QueueType::cases())) {
+			return $this->queue->where('type', $type)->count();
 		} else {
 			return 0;
 		}
 	}
 
-	public function deleteInQueue($id)
+	public function deleteInQueue(Models\Queue $queueItem)
 	{
-		foreach ($this->queue as $i => $item) {
-			if ($item->id == $id) {
-				if ($item->delete()) {
-					unset($this->queue[$i]);
+		if (!$this->queue->firstWhere('id', $queueItem->id)) {
+			return false;
+		}
 
-					return true;
-				}
+		if ($queueItem->delete()) {
+			$this->queue->reject(fn(Models\Queue $item) => $item->is($queueItem));
 
-				break;
-			}
+			return true;
 		}
 
 		return false;
@@ -143,10 +111,6 @@ class QueueManager
 
 	public function update()
 	{
-		if (!($this->planet instanceof Planet)) {
-			throw new Exception('Произошла внутренняя ошибка: Queue::update::check::Planet');
-		}
-
 		$buildingsCount = $this->getCount(QueueType::BUILDING);
 
 		if ($buildingsCount) {
@@ -174,16 +138,16 @@ class QueueManager
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
-		if (empty($queueArray)) {
+		if ($queueArray->isEmpty()) {
 			return false;
 		}
 
-		$buildItem = $queueArray[0];
+		$buildItem = $queueArray->first();
 
 		$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
 		if (!($entity instanceof Entity\Building)) {
-			if (!$this->deleteInQueue($buildItem->id)) {
+			if (!$this->deleteInQueue($buildItem)) {
 				$buildItem->delete();
 			}
 
@@ -215,13 +179,13 @@ class QueueManager
 
 			event(new PlanetEntityUpdated($this->planet));
 
-			if (!$this->deleteInQueue($buildItem->id)) {
+			if (!$this->deleteInQueue($buildItem)) {
 				$buildItem->delete();
 			}
 
 			if (config('game.log.buildings', false)) {
 				LogHistory::create([
-					'user_id' 			=> $this->user->id,
+					'user_id' 			=> $this->planet->user->id,
 					'operation' 		=> 9,
 					'planet' 			=> $this->planet->id,
 					'from_metal' 		=> $this->planet->metal,
@@ -245,27 +209,27 @@ class QueueManager
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
-		if (!count($queueArray) || $queueArray[0]->date) {
+		if ($queueArray->isEmpty() || $queueArray->first()->date) {
 			return false;
 		}
 
 		$loop = true;
 
 		while ($loop) {
-			$buildItem = $queueArray[0];
+			$buildItem = $queueArray->first();
 
 			$haveNoMoreLevel = false;
 
 			$entity = $this->planet->getEntity($buildItem->object_id)->unit();
 
 			if (!($entity instanceof Entity\Building)) {
-				array_shift($queueArray);
+				$queueArray->shift();
 
-				if (!$this->deleteInQueue($buildItem->id)) {
+				if (!$this->deleteInQueue($buildItem)) {
 					$buildItem->delete();
 				}
 
-				if (!count($queueArray)) {
+				if ($queueArray->isEmpty()) {
 					$loop = false;
 				}
 
@@ -305,7 +269,7 @@ class QueueManager
 
 				if (config('game.log.buildings', false)) {
 					LogHistory::create([
-						'user_id' 			=> $this->user->id,
+						'user_id' 			=> $this->planet->user->id,
 						'operation' 		=> ($isDestroy ? 2 : 1),
 						'planet' 			=> $this->planet->id,
 						'from_metal' 		=> $this->planet->metal + $cost['metal'],
@@ -339,16 +303,16 @@ class QueueManager
 				}
 
 				if (isset($message)) {
-					$this->user->notify(new MessageNotification(null, MessageType::Queue, __('main.sys_buildlist'), $message));
+					$this->planet->user->notify(new MessageNotification(null, MessageType::Queue, __('main.sys_buildlist'), $message));
 				}
 
-				array_shift($queueArray);
+				$queueArray->shift();
 
-				if (!$this->deleteInQueue($buildItem->id)) {
+				if (!$this->deleteInQueue($buildItem)) {
 					$buildItem->delete();
 				}
 
-				if (!count($queueArray)) {
+				if ($queueArray->isEmpty()) {
 					$loop = false;
 				}
 			}
@@ -361,11 +325,7 @@ class QueueManager
 
 	public function checkTechQueue()
 	{
-		if (!($this->planet instanceof Planet)) {
-			throw new Exception('Queue::checkTechQueue::check::Planet');
-		}
-
-		$queueItem = $this->user->queue()
+		$queueItem = $this->planet->user->queue()
 			->where('type', QueueType::RESEARCH)->first();
 
 		if (!$queueItem) {
@@ -374,7 +334,7 @@ class QueueManager
 
 		if ($queueItem->planet_id != $this->planet->id) {
 			$planet = $queueItem->planet;
-			$planet?->setRelation('user', $this->user);
+			$planet?->setRelation('user', $this->planet->user);
 		} else {
 			$planet = $this->planet;
 		}
@@ -391,9 +351,9 @@ class QueueManager
 		$queueItem->save();
 
 		if ($queueItem->date->timestamp + $buildTime <= time() + 5) {
-			$this->user->setTech($queueItem->object_id, $queueItem->level);
+			$this->planet->user->setTech($queueItem->object_id, $queueItem->level);
 
-			if (!$this->deleteInQueue($queueItem->id)) {
+			if (!$this->deleteInQueue($queueItem)) {
 				$queueItem->delete();
 			}
 
@@ -405,7 +365,7 @@ class QueueManager
 
 			if (config('game.log.research', false)) {
 				LogHistory::create([
-					'user_id' 			=> $this->user->id,
+					'user_id' 			=> $this->planet->user->id,
 					'operation' 		=> 8,
 					'planet' 			=> $planet->id,
 					'from_metal' 		=> $planet->metal,
@@ -419,7 +379,7 @@ class QueueManager
 				]);
 			}
 
-			$this->user->update();
+			$this->planet->user->update();
 		}
 	}
 
@@ -427,7 +387,7 @@ class QueueManager
 	{
 		$queue = $this->get(QueueType::SHIPYARD);
 
-		if (empty($queue)) {
+		if ($queue->isEmpty()) {
 			return false;
 		}
 
@@ -456,7 +416,7 @@ class QueueManager
 						$missilesSpace -= $item->level;
 					}
 				} elseif ($item->level > floor($missilesSpace / 2)) {
-					$item->level = floor($missilesSpace / 2);
+					$item->level = (int) floor($missilesSpace / 2);
 				} else {
 					$missilesSpace -= $item->level;
 				}
@@ -502,12 +462,12 @@ class QueueManager
 				$isUpdated = true;
 
 				if ($item->level <= 0) {
-					if (!$this->deleteInQueue($item->id)) {
+					if (!$this->deleteInQueue($item)) {
 						$item->delete();
 					}
 
-					if (isset($queue[$i + 1])) {
-						$queue[$i + 1]->date = $item->date;
+					if ($queue->get($i + 1)) {
+						$queue->get($i + 1)->date = $item->date;
 					}
 
 					break;
@@ -543,14 +503,14 @@ class QueueManager
 			}
 		}
 
-		if ($xp != 0 && $this->user->lvl_minier < config('game.level.max_ind', 100)) {
-			$this->user->xpminier += $xp;
+		if ($xp != 0 && $this->planet->user->lvl_minier < config('game.level.max_ind', 100)) {
+			$this->planet->user->xpminier += $xp;
 
-			if ($this->user->xpminier < 0) {
-				$this->user->xpminier = 0;
+			if ($this->planet->user->xpminier < 0) {
+				$this->planet->user->xpminier = 0;
 			}
 
-			$this->user->update();
+			$this->planet->user->update();
 		}
 	}
 }
