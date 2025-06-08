@@ -307,16 +307,16 @@ class UpdateStatistics
 		$users = User::whereNotNull('planet_id')
 			->where(function (Builder $query) {
 				return $query->orWhereHas('roles', fn(Builder $query) => $query->whereNot('name', 'admin'))
-					->whereDoesntHave('roles');
+					->orWhereDoesntHave('roles');
 			})
 			->whereNull('blocked_at')
 			->with(['alliance', 'statistics'])
-			->get();
+			->lazyById();
 
 		Statistic::query()->where('stat_code', 1)->delete();
 
 		foreach ($users as $user) {
-			if ($user->blocked_at || $user->vacation?->lessThan(now()->subSeconds(1036800))) {
+			if ($user->blocked_at || $user->vacation?->lessThan(now()->subWeeks(2))) {
 				$hide = 1;
 			} else {
 				$hide = 0;

@@ -165,13 +165,12 @@ class StatController extends Controller
 			->get();
 
 		foreach ($items as $item) {
-			$row = [];
-			$row['position'] = (int) $item->{$this->field . '_rank'};
-			$row['race'] = (int) $item->race;
-			$row['count'] = (int) $item->total_count;
-			$row['points'] = (int) $item->{$this->field . '_points'};
-
-			$parse['items'][] = $row;
+			$parse['items'][] = [
+				'place' => (int) $item->{$this->field . '_rank'},
+				'race' => (int) $item->race,
+				'count' => (int) $item->total_count,
+				'points' => (int) $item->{$this->field . '_points'},
+			];
 		}
 
 		return $parse;

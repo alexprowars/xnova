@@ -8,14 +8,14 @@ class QuestsListeners
 {
 	public function handleFleets(FleetSended $event): void
 	{
-		$quest = $event->fleet->user->quests()
+		$questItem = $event->fleet->user->quests()
 			->where('finish', false)
 			->where('stage', 0)
 			->first();
 
-		if ($quest) {
+		if ($questItem) {
 			$quest = require resource_path('engine/quests.php');
-			$quest = $quest[$quest->quest_id] ?? null;
+			$quest = $quest[$questItem->quest_id] ?? null;
 
 			if ($quest) {
 				foreach ($quest['task'] as $key => $value) {
