@@ -25,6 +25,7 @@ class ChatController extends Controller
 		$chatMessage = Chat::create([
 			'user_id' => Auth::id(),
 			'message' => $message,
+			'date' => now(),
 		]);
 
 		$parsedMessage = Resources\ChatMessage::make($chatMessage)->resolve();
@@ -40,10 +41,6 @@ class ChatController extends Controller
 		}
 
 		Cache::delete('chat.cache');
-
-		return [
-			'message' => $parsedMessage,
-		];
 	}
 
 	public function last()
