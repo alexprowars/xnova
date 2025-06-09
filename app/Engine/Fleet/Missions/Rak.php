@@ -13,6 +13,11 @@ use App\Notifications\MessageNotification;
 
 class Rak extends BaseMission
 {
+	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
+	{
+		return false;
+	}
+
 	public function targetEvent()
 	{
 		$this->killFleet();

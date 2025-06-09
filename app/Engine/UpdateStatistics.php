@@ -465,6 +465,8 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 1));
 		}
 
+		Statistic::where('stat_code', '>=', 2)->delete();
+
 		DB::statement("INSERT INTO " . app(Statistic::class)->getTable() . "
 		      (`tech_points`, `tech_count`, `build_points`, `build_count`, `defs_points`, `defs_count`,
 		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `user_id`, `alliance_id`, `stat_type`, `stat_code`,
@@ -490,8 +492,6 @@ class UpdateStatistics
 		      new.total_old_rank = old.total_rank
 		    WHERE
 		      new.stat_type = 2 AND new.stat_code = 2;");
-
-		Statistic::where('stat_code', '>=', 2)->delete();
 
 		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');

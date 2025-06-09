@@ -52,11 +52,19 @@ class OptionsController extends Controller
 
 			$parse['auth'] = [];
 
-			/*$authData = DB::select("SELECT * FROM users_auth WHERE user_id = " . $this->user->getId() . "");
+			$authItems = Models\UserAuthentication::query()
+				->whereBelongsTo($this->user)
+				->get();
 
-			$parse['auth'] = array_map(function ($value) {
-				return (array) $value;
-			}, $authData);*/
+			foreach ($authItems as $authItem) {
+				$parse['auth'][] = [
+					'id' =>  $authItem->id,
+					'provider' =>  $authItem->provider,
+					'provider_id' =>  $authItem->provider_id,
+					'created_at' =>  $authItem->created_at->utc()->toAtomString(),
+					'login_date' => $authItem->login_date?->utc()->toAtomString(),
+				];
+			}
 		}
 
 		return $parse;

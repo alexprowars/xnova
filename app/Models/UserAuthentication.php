@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserAuthentication extends Model
 {
@@ -10,6 +11,12 @@ class UserAuthentication extends Model
 	protected $table = 'users_authentications';
 
 	protected $casts = [
-		'enter_time' => 'immutable_datetime',
+		'login_date' => 'immutable_datetime',
 	];
+
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
+	{
+		return $this->belongsTo(User::class);
+	}
 }

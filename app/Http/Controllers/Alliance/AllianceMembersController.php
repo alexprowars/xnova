@@ -42,46 +42,41 @@ class AllianceMembersController extends Controller
 		}
 
 		$sortSql = match ($sort) {
-			'name' => 'u.username',
-			'rank' => 'm.rank',
-			'points' => 's.total_points',
-			'date' => 'm.created_at',
-			'active' => 'u.onlinetime',
-			default => 'u.id'
+			'name' => 'user.username',
+			'rank' => 'rank',
+			'points' => 'user.statistics.total_points',
+			'date' => 'created_at',
+			'active' => 'user.onlinetime',
+			default => 'id'
 		};
 
-		$members = DB::table('alliances_members', 'm')
-			->select(['m.id', 'u.username', 'u.race', 'u.galaxy', 'u.system', 'u.planet', 'u.onlinetime', 'm.user_id', 'm.rank', 'm.created_at', 's.total_points'])
-			->leftJoin('users as u', 'u.id', '=', 'm.user_id')
-			->leftJoin('statistics as s', 's.user_id', '=', 'm.user_id')
-			->where('s.stat_type', 1)
-			->where('m.alliance_id', $alliance->id)
-			->orderBy($sortSql, $order == 'desc' ? 'desc' : 'asc')
-			->get();
+		$members = $this->getAlliance()->members;
+		$members->loadMissing(['user', 'user.statistics']);
+		$members = $members->sortBy($sortSql, descending: $order == 'desc');
 
 		$parse['members'] = [];
 
 		foreach ($members as $member) {
 			$item = [
 				'id' => $member->user_id,
-				'username' => $member->username,
-				'race' => $member->race,
+				'username' => $member->user->username,
+				'race' => $member->user->race,
 				'rank' => (int) $member->rank,
-				'galaxy' => $member->galaxy,
-				'system' => $member->system,
-				'planet' => $member->planet,
-				'points' => Format::number($member->total_points),
-				'date' => $member->created_at ? Game::datezone("d.m.Y H:i", $member->created_at) : '-',
+				'galaxy' => $member->user->galaxy,
+				'system' => $member->user->system,
+				'planet' => $member->user->planet,
+				'points' => Format::number($member->user->statistics->total_points ?? 0),
+				'date' => $member->created_at->utc()->toAtomString(),
 			];
 
-			if (strtotime($member->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$item['onlinetime'] = '<span class="positive">' . __('alliance.On') . '</span>';
-			} elseif (strtotime($member->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$item['onlinetime'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
+			if (strtotime($member->user->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
+				$item['online'] = '<span class="positive">' . __('alliance.On') . '</span>';
+			} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
+				$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
 			} elseif ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$hours = floor((time() - strtotime($member->onlinetime)) / 3600);
+				$hours = floor((time() - strtotime($member->user->onlinetime)) / 3600);
 
-				$item['onlinetime'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
+				$item['online'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
 			}
 
 			if ($alliance->user_id == $member->user_id) {

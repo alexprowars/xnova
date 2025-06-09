@@ -12,7 +12,7 @@ return new class extends Migration {
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->string('provider', 50);
 			$table->string('provider_id')->index();
-			$table->timestamp('enter_time')->nullable();
+			$table->timestamp('login_date')->nullable();
 			$table->timestamps();
 		});
 	}
