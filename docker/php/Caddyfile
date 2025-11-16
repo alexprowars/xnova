@@ -1,0 +1,62 @@
+{
+	auto_https off
+	admin off
+	skip_install_trust
+
+	servers {
+		protocols h1
+	}
+
+	frankenphp
+}
+
+:8000 {
+	root * /app/public
+
+	file_server {
+		hide *.php .git
+	}
+
+	header {
+		Strict-Transport-Security max-age=31536000
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		X-XSS-Protection "1; mode=block"
+		-X-Powered-By
+	}
+
+	@assets {
+		path /storage/* /assets/* /js/* /css/* /fonts/*
+	}
+
+	handle @assets {
+		file_server
+	}
+
+	@api {
+		path /api* /broadcasting* /admin* /livewire* /_debugbar*
+	}
+
+	handle @api {
+		php_server {
+			try_files {path} index.php
+			resolve_root_symlink
+		}
+	}
+
+	@reverb {
+		path /app/* /apps/*
+	}
+
+	handle @reverb {
+		reverse_proxy reverb:8080
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	request_body {
+		max_size 100MB
+	}
+}

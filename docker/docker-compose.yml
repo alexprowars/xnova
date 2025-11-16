@@ -1,0 +1,87 @@
+x-base-image: &base-image
+  build:
+    context: .
+    dockerfile: php/Dockerfile
+    args:
+      - UID=${UID:-1000}
+      - GID=${GID:-1000}
+    platforms:
+      - "linux/amd64"
+  restart: unless-stopped
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  environment: &api-env
+    TZ: '${APP_TIMEZONE:-UTC}'
+    APP_ENV: '${APP_ENV:-local}'
+  networks:
+    - xnova
+  volumes:
+    - "../:/app"
+
+services:
+  frontend:
+    build: frontend
+    environment:
+      NUXT_PUBLIC_I18N_BASE_URL: '${BASE_URL:-}'
+      NUXT_PUBLIC_GTM_ID: '${GTM_ID:-}'
+      NUXT_PUBLIC_RECAPTCHA_KEY: '${RECAPTCHA_KEY:-}'
+      NUXT_PUBLIC_REVERB_APP_KEY: '${REVERB_APP_KEY:-}'
+      NUXT_PUBLIC_REVERB_HOST: '${REVERB_HOST:-localhost}'
+      NUXT_PUBLIC_REVERB_PORT: '${REVERB_PORT:-80}'
+      NUXT_PUBLIC_REVERB_SCHEME: '${REVERB_SCHEME:-http}'
+    restart: unless-stopped
+    networks:
+      - xnova
+
+  backend:
+    <<: *base-image
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    container_name: xnova
+    environment:
+      <<: *api-env
+    depends_on:
+      - reverb
+      - queue
+      - schedule
+
+  reverb:
+    <<: *base-image
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    user: "web"
+
+  queue:
+    <<: *base-image
+    command: [ "php", "artisan", "queue:work" ]
+    user: "web"
+
+  schedule:
+    <<: *base-image
+    command: [ "php", "artisan", "schedule:work" ]
+    user: "web"
+
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    networks:
+      - xnova
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      retries: 3
+      timeout: 5s
+
+networks:
+  xnova:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
