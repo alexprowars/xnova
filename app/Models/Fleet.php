@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Fleet extends Model
 {
 	protected $table = 'fleets';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'fleet_array' => 'json:unicode',

@@ -31,7 +31,7 @@ class Fire
 	 */
 	public function __construct(ShipType $attackerShipType, Fleet $defenderFleet)
 	{
-		\log_comment('calculating fire from attacker ' . $attackerShipType->getId());
+		log_comment('calculating fire from attacker ' . $attackerShipType->getId());
 
 		$this->attackerShipType = $attackerShipType;
 		$this->defenderFleet = $defenderFleet;
@@ -83,7 +83,7 @@ class Fire
 			$this->calculateRf();
 		}
 
-		\log_var('$this->shots', $this->shots);
+		log_var('$this->shots', $this->shots);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Fire
 		//rapid fire
 		$tmpshots = round($this->getShotsFromOneAttackerShipOfType($this->attackerShipType) * $this->attackerShipType->getCount());
 
-		\log_var('$tmpshots', $tmpshots);
+		log_var('$tmpshots', $tmpshots);
 
 		$this->power += $tmpshots * $this->attackerShipType->getPower();
 		$this->shots += $tmpshots;
@@ -115,9 +115,9 @@ class Fire
 			$max = $meanShots * (1 + config('battle.MAX_RF_BUFF'));
 			$min = $meanShots * (1 - config('battle.MAX_RF_NERF'));
 
-			\log_var('$max', $max);
-			\log_var('$min', $min);
-			\log_var('$mean', $meanShots);
+			log_var('$max', $max);
+			log_var('$min', $min);
+			log_var('$mean', $meanShots);
 
 			return Gauss::getNextMsBetween($meanShots, GeometricDistribution::getStandardDeviationFromProbability(1 - $p), $min, $max);
 		}

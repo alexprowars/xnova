@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\ContentResource\Pages;
 
 use App\Filament\Resources\ContentResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Actions;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class ListContents extends ListRecords
@@ -16,7 +18,7 @@ class ListContents extends ListRecords
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\CreateAction::make(),
+			CreateAction::make(),
 		];
 	}
 
@@ -36,13 +38,13 @@ class ListContents extends ListRecords
 					->label('Символьный код')
 					->sortable(),
 			])
-			->actions([
-				Tables\Actions\EditAction::make()
+			->recordActions([
+				EditAction::make()
 					->iconButton(),
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			]);
 	}

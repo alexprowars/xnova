@@ -18,7 +18,7 @@ class GravatarProvider implements AvatarProvider
 	{
 		$hash = md5(strtolower(trim($email)));
 
-		return "https://www.gravatar.com/avatar/{$hash}?" . http_build_query(array_filter([
+		return 'https://www.gravatar.com/avatar/' . $hash . '?' . http_build_query(array_filter([
 			'd' => 'mp',
 			's' => $size,
 		]));

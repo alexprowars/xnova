@@ -9,7 +9,7 @@ class AssaultUser extends Model
 {
 	public $timestamps = false;
 	protected $table = 'assaults_users';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	/** @return BelongsTo<Assault, $this> */
 	public function assault(): BelongsTo

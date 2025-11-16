@@ -10,11 +10,15 @@ class FleetResource extends Resource
 {
 	protected static ?string $model = Fleet::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
 	protected static ?int $navigationSort = 80;
 	protected static ?string $modelLabel = 'Флот';
 	protected static ?string $pluralModelLabel = 'Флот';
 	protected static ?string $recordTitleAttribute = 'name';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-rocket-launch';
+	}
 
 	public static function getNavigationGroup(): string
 	{

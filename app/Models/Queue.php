@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Queue extends Model
 {
 	public $timestamps = false;
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $attributes = [
 		'operation' => QueueConstructionType::BUILDING,

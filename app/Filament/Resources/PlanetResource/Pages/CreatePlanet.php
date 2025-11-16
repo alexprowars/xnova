@@ -8,20 +8,20 @@ use App\Facades\Galaxy;
 use App\Filament\Resources\PlanetResource;
 use App\Models\Planet;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreatePlanet extends CreateRecord
 {
 	protected static string $resource = PlanetResource::class;
 	protected static ?string $title = 'Создать планету';
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Section::make()

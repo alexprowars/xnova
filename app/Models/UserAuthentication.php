@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserAuthentication extends Model
 {
-	protected $guarded = false;
+	protected $guarded = [];
 	protected $table = 'users_authentications';
 
 	protected $casts = [

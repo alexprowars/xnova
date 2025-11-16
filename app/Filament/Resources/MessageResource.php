@@ -10,11 +10,15 @@ class MessageResource extends Resource
 {
 	protected static ?string $model = Message::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-envelope';
 	protected static ?int $navigationSort = 90;
 	protected static ?string $modelLabel = 'Сообщение';
 	protected static ?string $pluralModelLabel = 'Сообщения';
 	protected static ?string $recordTitleAttribute = 'id';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-envelope';
+	}
 
 	public static function getNavigationGroup(): string
 	{

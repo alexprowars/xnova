@@ -9,7 +9,7 @@ class Referal extends Model
 {
 	protected $table = 'referals';
 	public $timestamps = false;
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'date' => 'immutable_datetime',

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Statistic extends Model
 {
 	public $timestamps = false;
-	protected $guarded = false;
+	protected $guarded = [];
 
 	/** @return BelongsTo<User, $this> */
 	public function user(): BelongsTo

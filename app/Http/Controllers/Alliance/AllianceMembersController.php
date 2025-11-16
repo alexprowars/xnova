@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
-use App\Engine\Game;
 use App\Exceptions\Exception;
 use App\Format;
 use App\Http\Controllers\Controller;
@@ -11,7 +10,6 @@ use App\Models\AllianceMember;
 use App\Models\Planet;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 class AllianceMembersController extends Controller

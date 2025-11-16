@@ -4,15 +4,14 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\OnlineList;
 use App\Filament\Widgets\VersionWidget;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
-	protected static ?string $navigationIcon = 'lucide-house';
-	protected static ?int $navigationSort = 10;
-	protected static ?string $slug = 'dashboard';
-
-	protected static string $view = 'filament.pages.dashboard';
+	public static function getNavigationIcon(): string
+	{
+		return 'lucide-house';
+	}
 
 	public static function getNavigationLabel(): string
 	{
@@ -30,15 +29,5 @@ class Dashboard extends Page
 			VersionWidget::class,
 			OnlineList::class,
 		];
-	}
-
-	public function getColumns(): int|string|array
-	{
-		return 2;
-	}
-
-	public function getVisibleWidgets(): array
-	{
-		return $this->filterVisibleWidgets($this->getWidgets());
 	}
 }

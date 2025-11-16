@@ -8,9 +8,9 @@ Laravel (**https://laravel.com**)\
 Nuxt.js (**https://nuxt.com**)
 
 ## System requirements:
-- PHP 8.2 and higher
+- PHP 8.4 and higher
 - MySQL 8.0 and higher
-- NodeJs 20 and higher
+- NodeJS 24 and higher
 - Composer
 
 ## Run in docker

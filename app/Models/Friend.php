@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Friend extends Model
 {
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'active' => 'boolean',

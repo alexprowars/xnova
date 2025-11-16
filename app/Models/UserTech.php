@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserTech extends Model
 {
 	protected $table = 'users_teches';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $attributes = [
 		'level' => 0,

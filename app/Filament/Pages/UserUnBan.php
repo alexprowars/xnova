@@ -2,32 +2,37 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\HasPageForm;
 use App\Models\Blocked;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class UserUnBan extends Page
 {
 	use InteractsWithForms;
 	use InteractsWithFormActions;
+	use HasPageForm;
 
-	protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 	protected static ?int $navigationSort = 30;
 	protected static ?string $slug = 'unban';
 	protected static ?string $title = 'Разблокировать пользователя';
 
-	protected static string $view = 'filament.pages.user-unban';
+	public ?array $data = [];
 
-	public ?string $username = '';
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-user-plus';
+	}
 
 	public static function getNavigationGroup(): string
 	{
@@ -44,15 +49,25 @@ class UserUnBan extends Page
 		return auth()->user()->can('users-unblock');
 	}
 
-	public function form(Form $form): Form
+	public function mount(): void
 	{
-		return $form
-			->schema([
-				TextInput::make('username')
-					->label('Логин/email игрока')
-					->required()
-					->maxLength(50),
-			]);
+		$this->form->fill();
+	}
+
+	public function form(Schema $schema): Schema
+	{
+		return $schema
+			->components([
+				Section::make()
+					->compact()
+					->schema([
+						TextInput::make('username')
+							->label('Логин/email игрока')
+							->required()
+							->maxLength(50),
+				]),
+			])
+			->statePath('data');
 	}
 
 	public function getFormActions(): array
@@ -60,15 +75,15 @@ class UserUnBan extends Page
 		return [
 			Action::make('Разблокировать')
 				->action(function () {
-					$this->submit();
+					$this->submit($this->form->getState());
 				})
 		];
 	}
 
-	public function submit()
+	protected function submit(array $data)
 	{
-		$user = User::query()->where('username', $this->username)
-			->orWhere('email', $this->username)
+		$user = User::query()->where('username', $data['username'])
+			->orWhere('email', $data['username'])
 			->first();
 
 		if (!$user) {

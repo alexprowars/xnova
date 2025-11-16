@@ -3,14 +3,14 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class EditUser extends EditRecord
 {
@@ -19,13 +19,13 @@ class EditUser extends EditRecord
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\DeleteAction::make(),
+			DeleteAction::make(),
 		];
 	}
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Section::make()

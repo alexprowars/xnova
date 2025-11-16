@@ -2,16 +2,20 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Forms;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class Settings extends SettingsPage
 {
-	protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 	protected static string $settings = \App\Settings::class;
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-cog-6-tooth';
+	}
 
 	public static function getNavigationGroup(): string
 	{
@@ -33,11 +37,11 @@ class Settings extends SettingsPage
 		return auth()->user()->can('settings');
 	}
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
-			->schema([
-				Forms\Components\Section::make([
+		return $schema
+			->components([
+				Section::make([
 					Textarea::make('globalMessage')
 						->label('Глобальное сообщение'),
 					TextInput::make('lastSettedGalaxyPos')

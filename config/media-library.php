@@ -71,12 +71,12 @@ return [
 	/*
 	 * This is the class that is responsible for naming generated files.
 	 */
-	'file_namer' => Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer::class,
+	'file_namer' => \App\Support\MediaLibrary\FileNamer::class,
 
 	/*
 	 * The class that contains the strategy for determining a media file's path.
 	 */
-	'path_generator' => \App\Support\MediaLibraryPathGenerator::class,
+	'path_generator' => \App\Support\MediaLibrary\PathGenerator::class,
 
 	/*
 	 * The class that contains the strategy for determining how to remove files.

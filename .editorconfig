@@ -1,17 +1,9 @@
 root = true
 
-[**.{php, js, css}]
+[**.{php,js,css}]
 end_of_line = lf
 insert_final_newline = false
 charset = utf-8
 indent_style = tab
 tab_width = 4
 trim_trailing_whitespace = true
-
-[public/assets/build/*.{js, css}]
-end_of_line = ignore
-insert_final_newline = ignore
-charset = ignore
-indent_style = ignore
-tab_width = ignore
-trim_trailing_whitespace = false

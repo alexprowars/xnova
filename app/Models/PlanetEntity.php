@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PlanetEntity extends Model
 {
 	protected $table = 'planets_entities';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $attributes = [
 		'amount' => 0,

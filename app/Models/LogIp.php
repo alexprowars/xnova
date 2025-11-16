@@ -10,7 +10,7 @@ class LogIp extends Model
 	use MassPrunable;
 
 	protected $table = 'log_ips';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	public function prunable()
 	{

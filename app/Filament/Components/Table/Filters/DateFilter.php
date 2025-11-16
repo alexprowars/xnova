@@ -2,12 +2,12 @@
 
 namespace App\Filament\Components\Table\Filters;
 
-use App\Filament\Components\Form\Fields\Group;
 use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -25,6 +25,32 @@ class DateFilter extends BaseFilter
 		parent::setUp();
 
 		$this
+			->schema(fn() => [
+				FusedGroup::make([
+					DatePicker::make('from')
+						->hiddenLabel()
+						->native(false)
+						->closeOnDateSelection()
+						->weekStartsOnMonday()
+						->placeholder(__('admin/panel.from'))
+						->displayFormat($this->displayFormat)
+						->format($this->displayFormat)
+						->default($this->startDate)
+						->afterStateHydrated(fn(DateTimePicker $component, $state) => $this->afterStateHydrated($component, $state)),
+					DatePicker::make('until')
+						->hiddenLabel()
+						->native(false)
+						->closeOnDateSelection()
+						->weekStartsOnMonday()
+						->placeholder(__('admin/panel.until'))
+						->displayFormat($this->displayFormat)
+						->format($this->displayFormat)
+						->default($this->endDate)
+						->afterStateHydrated(fn(DateTimePicker $component, $state) => $this->afterStateHydrated($component, $state)),
+				])
+				->label($this->getLabel())
+				->columns(),
+			])
 			->useColumn($this->getName())
 			->indicateUsing(function (array $state): array {
 				$state = Arr::only($state, ['from', 'until']);
@@ -37,8 +63,8 @@ class DateFilter extends BaseFilter
 				$displayFormat = $this->evaluate($this->displayFormat);
 
 				$labels = [
-					'from' => __('From'),
-					'until' => __('Until'),
+					'from' => __('admin/panel.from'),
+					'until' => __('admin/panel.until'),
 				];
 
 				$format = fn(string $field) => $state[$field] ?? null
@@ -103,36 +129,6 @@ class DateFilter extends BaseFilter
 		$this->endDate = $date;
 
 		return $this;
-	}
-
-	public function getFormSchema(): array
-	{
-		return [
-			Group::make($this->getLabel())
-				->columns()
-				->schema([
-					DatePicker::make('from')
-						->hiddenLabel()
-						->native(false)
-						->closeOnDateSelection()
-						->weekStartsOnMonday()
-						->placeholder(__('From'))
-						->displayFormat($this->displayFormat)
-						->format($this->displayFormat)
-						->default($this->startDate)
-						->afterStateHydrated(fn(DateTimePicker $component, $state) => $this->afterStateHydrated($component, $state)),
-					DatePicker::make('until')
-						->hiddenLabel()
-						->native(false)
-						->closeOnDateSelection()
-						->weekStartsOnMonday()
-						->placeholder(__('Until'))
-						->displayFormat($this->displayFormat)
-						->format($this->displayFormat)
-						->default($this->endDate)
-						->afterStateHydrated(fn(DateTimePicker $component, $state) => $this->afterStateHydrated($component, $state)),
-				]),
-		];
 	}
 
 	protected function afterStateHydrated(DateTimePicker $component, $state): void

@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\AlliancesResource\RelationManagers;
 
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class MembersRelation extends RelationManager
 {
@@ -24,9 +24,9 @@ class MembersRelation extends RelationManager
 		return 'участник';
 	}
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Select::make('user_id')
@@ -46,8 +46,8 @@ class MembersRelation extends RelationManager
 					->icon('lucide-circle-plus')
 					->label('Добавить'),
 			])
-			->actions([
-				Tables\Actions\DeleteAction::make()
+			->recordActions([
+				DeleteAction::make()
 					->iconButton()
 					->modalHeading('Удалить участника из альянса?')
 					->modalDescription('После нажатия кнопки "подтвердить", выбранный вами участник выйдет из альянса'),

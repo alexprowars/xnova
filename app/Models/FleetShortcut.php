@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FleetShortcut extends Model
 {
 	protected $table = 'fleets_shortcuts';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	/** @return BelongsTo<User, $this> */
 	public function user(): BelongsTo

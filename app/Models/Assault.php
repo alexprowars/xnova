@@ -12,7 +12,7 @@ class Assault extends Model
 {
 	public $timestamps = false;
 	protected $table = 'assaults';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'planet_type' => PlanetType::class,

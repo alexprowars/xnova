@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Chat extends Model
 {
 	protected $table = 'chat';
-	protected $guarded = false;
+	protected $guarded = [];
 	public $timestamps = false;
 
 	protected $casts = [

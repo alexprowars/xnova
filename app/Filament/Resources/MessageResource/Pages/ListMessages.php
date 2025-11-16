@@ -5,9 +5,11 @@ namespace App\Filament\Resources\MessageResource\Pages;
 use App\Filament\Components\Table\Filters\DateFilter;
 use App\Filament\Resources\MessageResource;
 use App\Models\Message;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -60,13 +62,13 @@ class ListMessages extends ListRecords
 				DateFilter::make('time')
 					->label('Дата'),
 			])
-			->actions([
-				Tables\Actions\EditAction::make()
+			->recordActions([
+				EditAction::make()
 					->iconButton(),
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			]);
 	}

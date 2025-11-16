@@ -4,7 +4,7 @@
     "description": "The Xnova game backend server",
     "config": {
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         },
         "optimize-autoloader": true,
         "preferred-install": "dist",
@@ -14,21 +14,22 @@
         }
     },
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-gd": "*",
         "ext-iconv": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "filament/filament": "^3.3",
-        "filament/spatie-laravel-media-library-plugin": "^3.3",
-        "filament/spatie-laravel-settings-plugin": "^3.2",
+        "filament/filament": "^v4.2",
+        "filament/spatie-laravel-media-library-plugin": "^v4.2",
+        "filament/spatie-laravel-settings-plugin": "^v4.2",
         "laravel/framework": "^12.0.0",
         "laravel/reverb": "^1.4",
         "laravel/socialite": "^5.5.7",
         "laravel/tinker": "^2.9",
+        "league/flysystem-path-prefixing": "^3.28",
         "nubs/random-name-generator": "^2.1",
-        "shuvroroy/filament-spatie-laravel-backup": "^2.2",
+        "shuvroroy/filament-spatie-laravel-backup": "^v3.1.0",
         "socialiteproviders/vkontakte": "^5.0.0",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^6.18",
@@ -48,6 +49,7 @@
         "symfony/polyfill-mbstring": "*",
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php83": "*",
+        "symfony/polyfill-php84": "*",
         "symfony/polyfill-ctype": "*",
         "symfony/polyfill-intl-idn": "*"
     },

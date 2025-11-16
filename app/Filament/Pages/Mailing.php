@@ -3,33 +3,37 @@
 namespace App\Filament\Pages;
 
 use App\Engine\Enums\MessageType;
+use App\Filament\HasPageForm;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class Mailing extends Page
 {
 	use InteractsWithForms;
 	use InteractsWithFormActions;
+	use HasPageForm;
 
-	protected static ?string $navigationIcon = 'heroicon-o-envelope-open';
 	protected static ?int $navigationSort = 120;
 	protected static ?string $slug = 'mailing';
 
-	protected static string $view = 'filament.pages.mailing';
+	public ?array $data = [];
 
-	public ?string $subject = '';
-	public ?string $message = '';
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-envelope-open';
+	}
 
 	public static function getNavigationGroup(): string
 	{
@@ -51,31 +55,41 @@ class Mailing extends Page
 		return auth()->user()->can('mailing');
 	}
 
-	public function form(Form $form): Form
+	public function mount(): void
 	{
-		return $form
-			->schema([
-				TextInput::make('subject')
-					->label('Тема сообщения')
-					->maxLength(50),
-				Textarea::make('message')
-					->label('Сообщение')
-					->required()
-					->rows(10),
-			]);
+		$this->form->fill();
 	}
 
-	public function getFormActions(): array
+	public function form(Schema $schema): Schema
+	{
+		return $schema
+			->components([
+				Section::make()
+					->compact()
+					->schema([
+						TextInput::make('subject')
+							->label('Тема сообщения')
+							->maxLength(50),
+						Textarea::make('message')
+							->label('Сообщение')
+							->required()
+							->rows(10),
+				]),
+			])
+			->statePath('data');
+	}
+
+	protected function getFormActions(): array
 	{
 		return [
 			Action::make('Отправить')
 				->action(function () {
-					$this->submit();
+					$this->submit($this->form->getState());
 				})
 		];
 	}
 
-	public function submit()
+	protected function submit(array $data)
 	{
 		$currentUser = auth()->user();
 
@@ -85,20 +99,21 @@ class Mailing extends Page
 			$color = 'skyblue';
 		}
 
-		$users = User::query()->pluck('id');
+		$users = User::query()->get();
 
 		foreach ($users as $user) {
 			$user->notify(new MessageNotification(
 				null,
 				MessageType::System,
-				$this->subject ?: '<span style="color: ' . $color . '">Информационное сообщение (' . $currentUser->username . ')</span>',
-				$this->message
+				$data['subject'] ?: '<span style="color: ' . $color . '">Информационное сообщение (' . $currentUser->username . ')</span>',
+				$data['message']
 			));
 		}
 
 		Notification::make()
+			->success()
 			->title('Сообщение успешно отправлено всем игрокам!')
-			->success()->send();
+			->send();
 
 		$this->form->fill();
 	}

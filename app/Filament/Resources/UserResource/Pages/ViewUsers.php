@@ -4,16 +4,16 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Schema;
 
 class ViewUsers extends ViewRecord
 {
 	protected static string $resource = UserResource::class;
 
-	public function infolist(Infolist $infolist): Infolist
+	public function infolist(Schema $schema): Schema
 	{
-		return $infolist
+		return $schema
 			->schema([
 				TextEntry::make('id')
 					->label('ID'),

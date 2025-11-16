@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LogBattle extends Model
 {
 	protected $table = 'log_battles';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'data' => 'json:unicode',

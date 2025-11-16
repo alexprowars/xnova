@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\PlanetResource\Pages;
 
 use App\Filament\Resources\PlanetResource;
-use Filament\Actions;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class ListPlanets extends ListRecords
 {
@@ -17,7 +20,7 @@ class ListPlanets extends ListRecords
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\CreateAction::make(),
+			CreateAction::make(),
 		];
 	}
 
@@ -89,15 +92,15 @@ class ListPlanets extends ListRecords
 					->native(false)
 					->searchable(['id', 'username', 'email']),
 			])
-			->actions([
-				Tables\Actions\ViewAction::make()
+			->recordActions([
+				ViewAction::make()
 					->iconButton(),
-				Tables\Actions\EditAction::make()
+				EditAction::make()
 					->iconButton(),
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			]);
 	}

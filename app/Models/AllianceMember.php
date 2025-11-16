@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AllianceMember extends Model
 {
 	protected $table = 'alliances_members';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	/** @return BelongsTo<Alliance, $this> */
 	public function alliance(): BelongsTo

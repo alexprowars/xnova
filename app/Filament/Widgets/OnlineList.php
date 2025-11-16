@@ -5,14 +5,16 @@ namespace App\Filament\Widgets;
 use App\Format;
 use App\Helpers;
 use App\Models\User;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 
-class OnlineList extends BaseWidget
+class OnlineList extends TableWidget
 {
 	protected int | string | array $columnSpan = 'full';
 	protected static bool $isLazy = false;
@@ -30,21 +32,21 @@ class OnlineList extends BaseWidget
 			->searchable()
 			->striped()
 			->columns([
-				Tables\Columns\IconColumn::make('id')
-					->label('')
+				IconColumn::make('id')
+					->label(new HtmlString('&nbsp;'))
 					->icon('heroicon-o-envelope')
 					->url(fn(User $record) => url('messages/write/' . $record->id . '/')),
-				Tables\Columns\TextColumn::make('username')
+				TextColumn::make('username')
 					->label('Логин игрока')
 					->sortable(),
-				Tables\Columns\TextColumn::make('ip')
+				TextColumn::make('ip')
 					->label('Ip')
 					->formatStateUsing(fn($state) => Helpers::convertIp($state))
 					->sortable(),
-				Tables\Columns\TextColumn::make('alliance_name')
+				TextColumn::make('alliance_name')
 					->label('Альянс')
 					->sortable(),
-				Tables\Columns\TextColumn::make('onlinetime')
+				TextColumn::make('onlinetime')
 					->label('Активность')
 					->formatStateUsing(fn (User $record) => Format::time($record->onlinetime->diffInSeconds(now())))
 					->sortable(),

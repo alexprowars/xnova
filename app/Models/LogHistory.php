@@ -10,7 +10,7 @@ class LogHistory extends Model
 	use MassPrunable;
 
 	protected $table = 'log_histories';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	public function prunable()
 	{

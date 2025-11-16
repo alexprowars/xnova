@@ -2,29 +2,29 @@
 
 namespace App\Providers;
 
+use Filament\Tables\Table;
 use App\Filament\AvatarProviders\GravatarProvider;
 use App\Filament\Resources\UserResource;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Events\ServingFilament;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -47,14 +47,15 @@ class AdminPanelProvider extends PanelProvider
 				'primary' => Color::Amber,
 			])
 			->userMenuItems([
-				'profile' => MenuItem::make()
-					->label(fn() => __('admin.edit_profile'))
-					->url(fn() => UserResource::getUrl('edit', ['record' => auth()->user()], false)),
+				'profile' => fn (Action $action) => $action
+					->label(__('admin.edit_profile'))
+					->url(UserResource::getUrl('edit', ['record' => auth()->user()], false)),
 			])
 			->databaseTransactions()
+			->errorNotifications(false)
 			->globalSearch(false)
 			->sidebarCollapsibleOnDesktop()
-			->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
+			->maxContentWidth(Width::ScreenTwoExtraLarge)
 			->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
 			->defaultAvatarProvider(GravatarProvider::class)
 			->font('Helvetica Neue', provider: LocalFontProvider::class)
@@ -101,7 +102,7 @@ class AdminPanelProvider extends PanelProvider
 
 	protected function afterBoot(): void
 	{
-		Tables\Table::configureUsing(function (Tables\Table $table): void {
+		Table::configureUsing(function (Table $table): void {
 			$table
 				->persistFiltersInSession()
 				->persistSortInSession()
@@ -109,32 +110,27 @@ class AdminPanelProvider extends PanelProvider
 				->defaultPaginationPageOption(20)
 				->extremePaginationLinks()
 				->selectCurrentPageOnly()
-				->columnToggleFormMaxHeight('500px')
+				->columnManagerMaxHeight('500px')
 				->striped()
-				->deferFilters();
+				->deferFilters()
+				->reorderableColumns()
+				->deferColumnManager(false)
+				->defaultDateDisplayFormat('d.m.Y')
+				->defaultDateTimeDisplayFormat('d.m.Y H:i:s');
 		});
-
-		Tables\Table::$defaultDateDisplayFormat = 'd.m.Y';
-		Tables\Table::$defaultDateTimeDisplayFormat = 'd.m.Y H:i:s';
-		Infolist::$defaultDateTimeDisplayFormat = 'd.m.Y H:i:s';
-		Infolist::$defaultDateDisplayFormat = 'd.m.Y';
 
 		CreateAction::configureUsing(function (CreateAction $action): void {
-			$action->createAnother(false);
-		});
-
-		Tables\Actions\CreateAction::configureUsing(function (Tables\Actions\CreateAction $action): void {
 			$action->createAnother(false)
 				->icon('lucide-circle-plus')
-				->modalWidth(MaxWidth::ExtraLarge);
+				->modalWidth(Width::ExtraLarge);
 		});
 
-		Tables\Actions\EditAction::configureUsing(function (Tables\Actions\EditAction $action): void {
-			$action->modalWidth(MaxWidth::ExtraLarge);
+		EditAction::configureUsing(function (EditAction $action): void {
+			$action->modalWidth(Width::ExtraLarge);
 		});
 
-		Infolists\Components\Actions\Action::configureUsing(function (Infolists\Components\Actions\Action $action): void {
-			$action->modalWidth(MaxWidth::ExtraLarge);
+		Action::configureUsing(function (Action $action): void {
+			$action->modalWidth(Width::ExtraLarge);
 		});
 
 		TextArea::configureUsing(function (TextArea $textarea): void {
@@ -153,6 +149,12 @@ class AdminPanelProvider extends PanelProvider
 				->displayFormat('d.m.Y')
 				->weekStartsOnMonday()
 				->closeOnDateSelection();
+		});
+
+		RichEditor::configureUsing(function (RichEditor $component): void {
+			$component->fileAttachmentsDisk('public')
+				->fileAttachmentsDirectory('medialibrary')
+				->fileAttachmentsVisibility('public');
 		});
 
 		CreateRecord::disableCreateAnother();

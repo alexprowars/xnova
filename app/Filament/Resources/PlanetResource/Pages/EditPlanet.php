@@ -4,12 +4,12 @@ namespace App\Filament\Resources\PlanetResource\Pages;
 
 use App\Engine\Enums\PlanetType;
 use App\Filament\Resources\PlanetResource;
-use Filament\Actions;
-use Filament\Forms\Components\Section;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class EditPlanet extends EditRecord
 {
@@ -18,13 +18,13 @@ class EditPlanet extends EditRecord
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\DeleteAction::make(),
+			DeleteAction::make(),
 		];
 	}
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Section::make()

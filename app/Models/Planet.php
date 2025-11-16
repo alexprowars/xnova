@@ -24,7 +24,7 @@ class Planet extends Model
 	use SoftDeletes;
 
 	protected $hidden = ['planet_updated'];
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $attributes = [
 		'metal' => 0,
@@ -171,7 +171,7 @@ class Planet extends Model
 		$entity->save();
 	}
 
-	public function getProduction(Carbon|CarbonImmutable $updateTime = null): Production
+	public function getProduction(Carbon|CarbonImmutable|null $updateTime = null): Production
 	{
 		if (!$this->production) {
 			$this->production = new Production($this, $updateTime);
@@ -186,7 +186,7 @@ class Planet extends Model
 		return Attribute::get(fn() => resolve(PlanetServiceFactory::class)->make($this)->getResearchNetworkLabLevel())->shouldCache();
 	}
 
-	public static function findByCoordinates(Coordinates $target): ?static
+	public static function findByCoordinates(Coordinates $target): ?self
 	{
 		return self::query()->where('galaxy', $target->getGalaxy())
 			->where('system', $target->getSystem())

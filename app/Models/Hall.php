@@ -8,7 +8,7 @@ class Hall extends Model
 {
 	public $timestamps = false;
 	protected $table = 'halls';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'time' => 'immutable_datetime',

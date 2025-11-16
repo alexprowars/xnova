@@ -16,7 +16,7 @@ class Alliance extends Model implements HasMedia
 	use InteractsWithMedia;
 
 	protected $table = 'alliances';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	public $rights = [];
 	public ?AllianceMember $member;
@@ -67,7 +67,7 @@ class Alliance extends Model implements HasMedia
 		$this->addMediaCollection('default')
 			->storeConversionsOnDisk('resize')
 			->singleFile()
-			->useDisk('upload');
+			->useDisk('media');
 	}
 
 	public function registerMediaConversions(?Media $media = null): void

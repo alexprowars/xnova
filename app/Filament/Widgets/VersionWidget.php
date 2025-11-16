@@ -2,10 +2,15 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\Widget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class VersionWidget extends BaseWidget
 {
-	protected static string $view = 'filament.widgets.version';
-	protected static bool $isLazy = false;
+	protected function getStats(): array
+	{
+		return [
+			Stat::make('Версия сервера', VERSION),
+		];
+	}
 }

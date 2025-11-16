@@ -9,7 +9,7 @@ class Report extends Model
 {
 	use MassPrunable;
 
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'users_id' => 'json:unicode',

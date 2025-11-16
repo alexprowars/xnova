@@ -3,41 +3,41 @@
 namespace App\Filament\Pages;
 
 use App\Facades\Vars;
+use App\Filament\HasPageForm;
 use App\Models\Blocked;
 use App\Models\PlanetEntity;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Date;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class UserBan extends Page
 {
 	use InteractsWithForms;
 	use InteractsWithFormActions;
+	use HasPageForm;
 
-	protected static ?string $navigationIcon = 'heroicon-o-user-minus';
 	protected static ?int $navigationSort = 20;
 	protected static ?string $slug = 'ban';
 	protected static ?string $title = 'Заблокировать пользователя';
 
-	protected static string $view = 'filament.pages.user-ban';
+	public ?array $data = [];
 
-	public ?string $username = '';
-	public ?string $reason = '';
-	public ?string $days = '';
-	public ?string $hour = '';
-	public ?string $mins = '';
-	public bool $vacation = false;
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-user-minus';
+	}
 
 	public static function getNavigationGroup(): string
 	{
@@ -54,28 +54,38 @@ class UserBan extends Page
 		return auth()->user()->can('users-block');
 	}
 
-	public function form(Form $form): Form
+	public function mount(): void
 	{
-		return $form
-			->schema([
-				TextInput::make('username')
-					->label('Логин/email игрока')
-					->required()
-					->maxLength(50),
-				TextInput::make('reason')
-					->label('Причина')
-					->maxLength(50),
-				Fieldset::make('Время бана')
+		$this->form->fill();
+	}
+
+	public function form(Schema $schema): Schema
+	{
+		return $schema
+			->components([
+				Section::make()
+					->compact()
 					->schema([
-						TextInput::make('days')->integer()->label('дней'),
-						TextInput::make('hour')->integer()->label('часов'),
-						TextInput::make('mins')->integer()->label('минут'),
-					])
-					->columns(3),
-				Checkbox::make('vacation')
-					->label('Режим отпуска')
-					->default(false),
-			]);
+						TextInput::make('username')
+							->label('Логин/email игрока')
+							->required()
+							->maxLength(50),
+						TextInput::make('reason')
+							->label('Причина')
+							->maxLength(50),
+						Fieldset::make('Время бана')
+							->schema([
+								TextInput::make('days')->integer()->label('дней'),
+								TextInput::make('hour')->integer()->label('часов'),
+								TextInput::make('mins')->integer()->label('минут'),
+							])
+							->columns(3),
+						Checkbox::make('vacation')
+							->label('Режим отпуска')
+							->default(false),
+					]),
+			])
+			->statePath('data');
 	}
 
 	public function getFormActions(): array
@@ -83,15 +93,15 @@ class UserBan extends Page
 		return [
 			Action::make('Заблокировать')
 				->action(function () {
-					$this->submit();
+					$this->submit($this->form->getState());
 				})
 		];
 	}
 
-	public function submit()
+	protected function submit(array $data)
 	{
-		$user = User::query()->where('username', $this->username)
-			->orWhere('email', $this->username)
+		$user = User::query()->where('username', $data['username'])
+			->orWhere('email', $data['username'])
 			->first();
 
 		if (!$user) {
@@ -102,26 +112,26 @@ class UserBan extends Page
 			return;
 		}
 
-		$BanTime = now()->addDays((int) $this->days)
-			->addHours((int) $this->hour)
-			->addMinutes((int) $this->mins);
+		$BanTime = now()->addDays((int) $data['days'])
+			->addHours((int) $data['hour'])
+			->addMinutes((int) $data['mins']);
 
 		Blocked::create([
 			'user_id'	=> $user->id,
-			'reason'	=> $this->reason,
+			'reason'	=> $data['reason'],
 			'longer'	=> $BanTime,
 			'author_id'	=> auth()->id(),
 		]);
 
 		$update = ['blocked_at' => $BanTime];
 
-		if ($this->vacation) {
+		if ($data['vacation']) {
 			$update['vacation'] = Date::createFromTimestamp(0);
 		}
 
 		$user->update($update);
 
-		if ($this->vacation) {
+		if ($data['vacation']) {
 			$buildsId = [4, 12, 212];
 
 			foreach (Vars::getResources() as $res) {

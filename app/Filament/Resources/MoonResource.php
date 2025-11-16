@@ -10,11 +10,15 @@ class MoonResource extends Resource
 {
 	protected static ?string $model = Planet::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-moon';
 	protected static ?int $navigationSort = 70;
 	protected static ?string $modelLabel = 'Луна';
 	protected static ?string $pluralModelLabel = 'Луны';
 	protected static ?string $recordTitleAttribute = 'name';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-moon';
+	}
 
 	public static function getNavigationGroup(): string
 	{

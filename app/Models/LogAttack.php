@@ -10,7 +10,7 @@ class LogAttack extends Model
 	use MassPrunable;
 
 	protected $table = 'log_attacks';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'fleet' => 'json:unicode',

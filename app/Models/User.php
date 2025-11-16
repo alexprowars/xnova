@@ -53,7 +53,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 	protected ?Planet $currentPlanet = null;
 
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $hidden = [
 		'password',
@@ -139,7 +139,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		$this->addMediaCollection('default')
 			->storeConversionsOnDisk('resize')
 			->singleFile()
-			->useDisk('upload');
+			->useDisk('media');
 	}
 
 	public function registerMediaConversions(?Media $media = null): void

@@ -8,7 +8,7 @@ class Money extends Model
 {
 	public $timestamps = false;
 	protected $table = 'moneys';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'time' => 'immutable_datetime',

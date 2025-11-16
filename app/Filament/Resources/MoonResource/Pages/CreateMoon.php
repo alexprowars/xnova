@@ -8,20 +8,20 @@ use App\Facades\Galaxy;
 use App\Filament\Resources\MoonResource;
 use App\Models\Planet;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreateMoon extends CreateRecord
 {
 	protected static string $resource = MoonResource::class;
 	protected static ?string $title = 'Создать луну';
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Section::make()

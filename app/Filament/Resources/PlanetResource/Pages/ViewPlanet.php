@@ -3,81 +3,79 @@
 namespace App\Filament\Resources\PlanetResource\Pages;
 
 use App\Filament\Resources\PlanetResource;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Infolist;
-use Filament\Infolists;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 
 class ViewPlanet extends ViewRecord
 {
 	protected static string $resource = PlanetResource::class;
 
-	public function infolist(Infolist $infolist): Infolist
+	public function infolist(Schema $schema): Schema
 	{
-		return $infolist
+		return $schema
 			->schema([
-				Infolists\Components\TextEntry::make('id')
+				TextEntry::make('id')
 					->label('ID'),
-				Infolists\Components\TextEntry::make('name')
+				TextEntry::make('name')
 					->label('Название'),
-				Infolists\Components\TextEntry::make('user_id')
+				TextEntry::make('user_id')
 					->label('Игрок'),
-
-				Infolists\Components\Fieldset::make('Координаты')
+				Fieldset::make('Координаты')
 					->columns(4)
 					->schema([
-						Infolists\Components\TextEntry::make('galaxy')
+						TextEntry::make('galaxy')
 							->label('Галактика'),
-						Infolists\Components\TextEntry::make('system')
+						TextEntry::make('system')
 							->label('Система'),
-						Infolists\Components\TextEntry::make('planet')
+						TextEntry::make('planet')
 							->label('Планета'),
-						Infolists\Components\TextEntry::make('planet_type')
+						TextEntry::make('planet_type')
 							->label('Тип'),
 					]),
-
-				Infolists\Components\TextEntry::make('last_update')
+				TextEntry::make('last_update')
 					->dateTime()
 					->label('Время обновления'),
-				Infolists\Components\TextEntry::make('last_active')
+				TextEntry::make('last_active')
 					->dateTime()
 					->label('Время активности'),
-				Infolists\Components\TextEntry::make('destroyed_at')
+				TextEntry::make('destroyed_at')
 					->dateTime()
 					->label('Время уничтожения'),
-				Infolists\Components\TextEntry::make('merchand')
+				TextEntry::make('merchand')
 					->dateTime()
 					->label('Время покупки ресурсов'),
-				Infolists\Components\TextEntry::make('image')
+				TextEntry::make('image')
 					->label('Картинка'),
-				Infolists\Components\TextEntry::make('diameter')
+				TextEntry::make('diameter')
 					->label('Диаметр'),
-				Infolists\Components\TextEntry::make('field_current')
+				TextEntry::make('field_current')
 					->label('Кол-во полей'),
-				Infolists\Components\TextEntry::make('field_max')
+				TextEntry::make('field_max')
 					->label('Макс кол-во полей'),
-				Infolists\Components\TextEntry::make('temp_min')
+				TextEntry::make('temp_min')
 					->label('Темп. мин.'),
-				Infolists\Components\TextEntry::make('temp_max')
+				TextEntry::make('temp_max')
 					->label('Темп. макс.'),
-
-				Infolists\Components\Fieldset::make('Ресурсы')
+				Fieldset::make('Ресурсы')
 					->columns(3)
 					->schema([
-						Infolists\Components\TextEntry::make('metal')
+						TextEntry::make('metal')
 							->label('Металл')
 							->numeric(4, ',', ' '),
-						Infolists\Components\TextEntry::make('crystal')
+						TextEntry::make('crystal')
 							->label('Кристалл')
 							->numeric(4, ',', ' '),
-						Infolists\Components\TextEntry::make('deuterium')
+						TextEntry::make('deuterium')
 							->label('Дейтерий')
 							->numeric(4, ',', ' '),
 					]),
-				Infolists\Components\Fieldset::make('Поле обломков')
+				Fieldset::make('Поле обломков')
 					->schema([
-						Infolists\Components\TextEntry::make('debris_metal')
+						TextEntry::make('debris_metal')
 							->label('Металл'),
-						Infolists\Components\TextEntry::make('debris_crystal')
+						TextEntry::make('debris_crystal')
 							->label('Кристалл'),
 					]),
 			])

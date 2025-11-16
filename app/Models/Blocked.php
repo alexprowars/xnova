@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Blocked extends Model
 {
 	public $table = 'users_blocked';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'longer' => 'immutable_datetime',

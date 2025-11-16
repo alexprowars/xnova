@@ -5,12 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\RoleResource\Pages\CreateRole;
 use App\Filament\Resources\RoleResource\Pages\EditRole;
 use App\Filament\Resources\RoleResource\Pages\ListRoles;
-use Filament\Forms\Components\Section;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,10 +21,14 @@ class RoleResource extends Resource
 {
 	protected static ?string $model = Role::class;
 
-	protected static ?string $navigationIcon = 'lucide-shield';
 	protected static ?int $navigationSort = 20;
 	protected static ?string $recordTitleAttribute = 'name';
 	protected static ?string $slug = 'roles';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'lucide-shield';
+	}
 
 	public static function getNavigationGroup(): string
 	{
@@ -56,10 +60,10 @@ class RoleResource extends Resource
 		return false;
 	}
 
-	public static function form(Form $form): Form
+	public static function form(Schema $schema): Schema
 	{
-		return $form
-			->schema([
+		return $schema
+			->components([
 				Section::make()
 					->schema([
 						TextInput::make('name')
@@ -105,8 +109,8 @@ class RoleResource extends Resource
 					->label(__('admin.roles.table.guard'))
 					->searchable(),
 			])
-			->actions([
-				Tables\Actions\EditAction::make()
+			->recordActions([
+				EditAction::make()
 					->iconButton(),
 			]);
 	}

@@ -10,11 +10,15 @@ class AlliancesResource extends Resource
 {
 	protected static ?string $model = Alliance::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-user-group';
 	protected static ?int $navigationSort = 100;
 	protected static ?string $modelLabel = 'Альянс';
 	protected static ?string $pluralModelLabel = 'Альянсы';
 	protected static ?string $recordTitleAttribute = 'name';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-user-group';
+	}
 
 	public static function getNavigationGroup(): string
 	{

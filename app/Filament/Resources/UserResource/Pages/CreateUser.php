@@ -6,17 +6,17 @@ use App\Exceptions\Exception;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateUser extends CreateRecord
 {
 	protected static string $resource = UserResource::class;
 	protected static ?string $title = 'Создать пользователя';
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				TextInput::make('username')

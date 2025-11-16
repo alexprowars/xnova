@@ -332,34 +332,34 @@ class ShipType extends Type
 			throw new Exception("Negative amount of shotsToThisShipType!");
 		}
 
-		\log_var('Defender single hull', $this->singleLife);
-		\log_var('Defender count', $this->getCount());
-		\log_var('currentShield before', $this->currentShield);
-		\log_var('currentLife before', $this->currentLife);
+		log_var('Defender single hull', $this->singleLife);
+		log_var('Defender count', $this->getCount());
+		log_var('currentShield before', $this->currentShield);
+		log_var('currentLife before', $this->currentLife);
 
 		$this->lastShots += $shotsToThisShipType;
 		$ps = new PhysicShot($this, $damage, $shotsToThisShipType);
 		$ps->start();
-		\log_var('$ps->getAssorbedDamage()', $ps->getAssorbedDamage());
+		log_var('$ps->getAssorbedDamage()', $ps->getAssorbedDamage());
 		$this->currentShield -= $ps->getAssorbedDamage();
 
 		if ($this->currentShield < 0 && $this->currentShield > -config('battle.EPSILON')) {
-			\log_comment('fixing double number currentshield');
+			log_comment('fixing double number currentshield');
 			$this->currentShield = 0;
 		}
 
 		$this->currentLife -= $ps->getHullDamage();
 
 		if ($this->currentLife < 0 && $this->currentLife > -config('battle.EPSILON')) {
-			\log_comment('fixing double number currentlife');
+			log_comment('fixing double number currentlife');
 			$this->currentLife = 0;
 		}
 
-		\log_var('currentShield after', $this->currentShield);
-		\log_var('currentLife after', $this->currentLife);
+		log_var('currentShield after', $this->currentShield);
+		log_var('currentLife after', $this->currentLife);
 		$this->lastShipHit += $ps->getHitShips();
-		\log_var('lastShipHit after', $this->lastShipHit);
-		\log_var('lastShots after', $this->lastShots);
+		log_var('lastShipHit after', $this->lastShipHit);
+		log_var('lastShots after', $this->lastShots);
 
 		if ($this->currentLife < 0) {
 			throw new Exception('Negative currentLife!');
@@ -382,16 +382,16 @@ class ShipType extends Type
 	 */
 	public function cleanShips()
 	{
-		\log_var('lastShipHit after', $this->lastShipHit);
-		\log_var('lastShots after', $this->lastShots);
-		\log_var('currentLife before', $this->currentLife);
+		log_var('lastShipHit after', $this->lastShipHit);
+		log_var('lastShots after', $this->lastShots);
+		log_var('currentLife before', $this->currentLife);
 
 		$sc = new ShipsCleaner($this, $this->lastShipHit, $this->lastShots);
 		$sc->start();
 		$this->decrement($sc->getExplodedShips(), $sc->getRemainLife(), 0);
 		$this->lastShipHit = 0;
 		$this->lastShots = 0;
-		\log_var('currentLife after', $this->currentLife);
+		log_var('currentLife after', $this->currentLife);
 		return $sc;
 	}
 

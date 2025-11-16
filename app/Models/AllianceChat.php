@@ -9,7 +9,7 @@ class AllianceChat extends Model
 {
 	protected $table = 'alliances_chats';
 	public $timestamps = false;
-	protected $guarded = false;
+	protected $guarded = [];
 
 	protected $casts = [
 		'date' => 'immutable_datetime',

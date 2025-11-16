@@ -131,7 +131,7 @@ class FleetSendController extends Controller
 			throw new PageException(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime), '/fleet/');
 		}
 
-		$targetPlanet = Planet::find($planet);
+		$targetPlanet = Planet::findOne($planet);
 
 		$targetPlanetService = resolve(PlanetServiceFactory::class)
 			->make($targetPlanet);

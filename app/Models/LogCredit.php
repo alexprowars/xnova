@@ -10,7 +10,7 @@ class LogCredit extends Model
 	use MassPrunable;
 
 	protected $table = 'log_credits';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	public function prunable()
 	{

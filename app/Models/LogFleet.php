@@ -10,7 +10,7 @@ class LogFleet extends Model
 	use MassPrunable;
 
 	protected $table = 'log_fleets';
-	protected $guarded = false;
+	protected $guarded = [];
 
 	public function prunable()
 	{

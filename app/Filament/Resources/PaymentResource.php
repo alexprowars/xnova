@@ -10,10 +10,14 @@ class PaymentResource extends Resource
 {
 	protected static ?string $model = Payment::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 	protected static ?int $navigationSort = 40;
 	protected static ?string $modelLabel = 'Транзакции';
 	protected static ?string $pluralModelLabel = 'Транзакции';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-banknotes';
+	}
 
 	public static function getNavigationGroup(): string
 	{

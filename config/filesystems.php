@@ -41,26 +41,22 @@ return [
 		'public' => [
 			'driver' => 'local',
 			'root' => storage_path('app/public'),
-			'url' => env('APP_URL').'/storage',
+			'url' => env('APP_URL') . '/storage',
 			'visibility' => 'public',
 			'throw' => false,
 			'report' => false,
 		],
 
-		'upload' => [
-			'driver' => 'local',
-			'root' => storage_path('app/public/upload'),
-			'url' => '/storage/upload',
-			'visibility' => 'public',
-			'throw' => false,
+		'media' => [
+			'driver' => 'scoped',
+			'disk' => 'public',
+			'prefix' => 'media',
 		],
 
 		'resize' => [
-			'driver' => 'local',
-			'root' => storage_path('app/public/resize'),
-			'url' => '/storage/resize',
-			'visibility' => 'public',
-			'throw' => false,
+			'driver' => 'scoped',
+			'disk' => 'public',
+			'prefix' => 'resize',
 		],
 
 		's3' => [

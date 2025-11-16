@@ -21,7 +21,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 	{
 	}
 
-	public static function createEntity(int $entityId, int $level = 1, Planet $planet = null): static
+	public static function createEntity(int $entityId, int $level = 1, ?Planet $planet = null): static
 	{
 		/** @phpstan-ignore new.static */
 		$object = new static($entityId, $level);

@@ -4,11 +4,11 @@ namespace App\Filament\Resources\AlliancesResource\Pages;
 
 use App\Filament\Resources\AlliancesResource;
 use App\Models\User;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListAlliance extends ListRecords
@@ -18,7 +18,7 @@ class ListAlliance extends ListRecords
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\CreateAction::make(),
+			CreateAction::make(),
 		];
 	}
 
@@ -51,8 +51,8 @@ class ListAlliance extends ListRecords
 					->label('Дата создания')
 					->dateTime(),
 			])
-			->actions([
-				Tables\Actions\EditAction::make()
+			->recordActions([
+				EditAction::make()
 					->iconButton(),
 			]);
 	}

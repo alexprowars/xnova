@@ -11,8 +11,8 @@ use App\Models\User;
 use App\Notifications\MessageNotification;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 /**
  * @property Payment $record
@@ -22,9 +22,9 @@ class CreatePayment extends CreateRecord
 	protected static string $resource = PaymentResource::class;
 	protected static ?string $title = 'Создать транзакцию';
 
-	public function form(Form $form): Form
+	public function form(Schema $schema): Schema
 	{
-		return $form
+		return $schema
 			->columns(1)
 			->schema([
 				Select::make('user_id')

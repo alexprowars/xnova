@@ -10,12 +10,16 @@ class PlanetResource extends Resource
 {
 	protected static ?string $model = Planet::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 	protected static ?int $navigationSort = 60;
 	protected static ?string $modelLabel = 'Планета';
 	protected static ?string $pluralModelLabel = 'Планеты';
 	protected static ?string $recordTitleAttribute = 'name';
 	protected static ?string $slug = 'planets';
+
+	public static function getNavigationIcon(): string
+	{
+		return 'heroicon-o-globe-alt';
+	}
 
 	public static function getNavigationGroup(): string
 	{

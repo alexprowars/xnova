@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Actions;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class ListUsers extends ListRecords
 {
@@ -16,7 +17,7 @@ class ListUsers extends ListRecords
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\CreateAction::make(),
+			CreateAction::make(),
 		];
 	}
 
@@ -47,10 +48,10 @@ class ListUsers extends ListRecords
 					->dateTime(),
 			])
 			->filters([])
-			->actions([
-				Tables\Actions\ViewAction::make()
+			->recordActions([
+				ViewAction::make()
 					->iconButton(),
-				Tables\Actions\EditAction::make()
+				EditAction::make()
 					->iconButton(),
 			]);
 	}

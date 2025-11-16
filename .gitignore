@@ -1,11 +1,7 @@
 .idea/*
 .nuxt
-/old/app/cache/*
-/old/app/config/*.ini
-/old/config/*.ini
 vendor
 node_modules/*
-chat/node_modules/*
 Thumbs.db
 .DS_Store
 *.log
@@ -16,8 +12,6 @@ Thumbs.db
 !package*.json
 !composer*.json
 *.phar
-/old/public/assets/avatars/*
-/old/public/assets/build/*
 /data/
 /.env
 /_ide_helper*.php
@@ -26,9 +20,8 @@ Thumbs.db
 /public/packages/
 /database/database.sqlite
 /public/storage
-/public/css/filament
-/public/js/filament
-/public/css/filament-daterangepicker-filter
-/public/js/filament-daterangepicker-filter
-/public/css/malzariey/filament-daterangepicker-filter
-/public/js/malzariey/filament-daterangepicker-filter
+/public/css/filament*
+/public/js/filament*
+/public/css/malzariey
+/public/js/malzariey
+/public/fonts/filament

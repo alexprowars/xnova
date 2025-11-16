@@ -10,7 +10,7 @@ class LogStat extends Model
 	use MassPrunable;
 
 	protected $table = 'log_stats';
-	protected $guarded = false;
+	protected $guarded = [];
 	public $timestamps = false;
 
 	protected $casts = [

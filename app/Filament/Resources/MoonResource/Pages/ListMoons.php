@@ -4,12 +4,14 @@ namespace App\Filament\Resources\MoonResource\Pages;
 
 use App\Engine\Enums\PlanetType;
 use App\Filament\Resources\MoonResource;
-use Filament\Actions;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListMoons extends ListRecords
@@ -19,7 +21,7 @@ class ListMoons extends ListRecords
 	protected function getHeaderActions(): array
 	{
 		return [
-			Actions\CreateAction::make(),
+			CreateAction::make(),
 		];
 	}
 
@@ -66,13 +68,13 @@ class ListMoons extends ListRecords
 					->native(false)
 					->searchable(['id', 'username', 'email'])
 			])
-			->actions([
-				Tables\Actions\EditAction::make()
+			->recordActions([
+				EditAction::make()
 					->iconButton()
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			]);
 	}

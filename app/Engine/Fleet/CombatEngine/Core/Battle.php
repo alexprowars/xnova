@@ -29,8 +29,8 @@ class Battle
 
 		$this->battleStarted = true;
 
-		\log_var('attackers', $this->attackers);
-		\log_var('defenders', $this->defenders);
+		log_var('attackers', $this->attackers);
+		log_var('defenders', $this->defenders);
 
 		$round = new Round($this->attackers, $this->defenders, 0);
 		$this->report->addRound($round);
