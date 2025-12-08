@@ -41,7 +41,8 @@ class BattleReport
 		$html = '<div class="report">';
 		$bbc = '';
 
-		$html .= 'В ' . Game::datezone('d-m-Y H:i:s', $this->result_array['time']) . ' произошёл бой между следующими флотами:<div class="separator"></div><table align="center"><tr>';
+		$html .= sprintf('В %s произошёл бой между следующими флотами:', Game::datezone('d-m-Y H:i:s', $this->result_array['time']));
+		$html .= '<div class="flex row gap-2 justify-center">';
 
 		if (is_array($this->attackUsers)) {
 			$checkName = [];
@@ -51,7 +52,7 @@ class BattleReport
 					continue;
 				}
 
-				$html .= '<td><table class="report_user" align="center">
+				$html .= '<div><table class="table report_user">
 							<tr><td class="c" colspan="3"><span class="negative">' . $info['username'] . '</span></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
@@ -59,7 +60,7 @@ class BattleReport
 							<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
 							<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
 							<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></td>';
+							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
 
 				$checkName[] = $info['username'];
 			}
@@ -73,7 +74,7 @@ class BattleReport
 					continue;
 				}
 
-				$html .= '<td><table class="report_user" align="center">
+				$html .= '<div><table class="table report_user">
 							<tr><td class="c" colspan="3"><span class="positive">' . $info['username'] . '</span></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
@@ -81,35 +82,35 @@ class BattleReport
 							<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
 							<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
 							<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></td>';
+							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
 
 				$checkName[] = $info['username'];
 			}
 		}
 
-		$html .= '</tr></table><br>';
-
-		$round_no = 1;
+		$html .= '</div>';
 
 		foreach ($this->result_array['rw'] as $round => $data) {
 			if ($data['attackA']['total'] > 0 && $data['defenseA']['total'] > 0) {
-				$html .= '<div class="separator"></div><center>Атакующий флот делает ' . Format::number($data['attackA']['total']) . ' выстрела(ов) с общей мощностью ' . Format::number($data['attack']['total']) . ' по защитнику. Щиты защитника поглощают ' . Format::number($data['defShield']) . ' мощности.<br />';
-				$html .= 'Защитный флот делает ' . Format::number($data['defenseA']['total']) . ' выстрела(ов) с общей мощностью ' . Format::number($data['defense']['total']) . ' по атакующему. Щиты атакующего поглащают ' . Format::number($data['attackShield']) . ' мощности.</center><div class="separator"></div>';
+				$html .= '<div class="text-center">';
+				$html .= sprintf('Атакующий флот делает %s выстрела(ов) с общей мощностью %s по защитнику. Щиты защитника поглощают %s мощности.<br>', Format::number($data['attackA']['total']), Format::number($data['attack']['total']), Format::number($data['defShield']));
+				$html .= sprintf('Защитный флот делает %s выстрела(ов) с общей мощностью %s по атакующему. Щиты атакующего поглащают %s мощности.', Format::number($data['defenseA']['total']), Format::number($data['defense']['total']), Format::number($data['attackShield']));
+				$html .= '</div>';
 			}
 
 			$attackers = $data['attackers'];
 			$defenders = $data['defenders'];
 
 			if (!count($attackers)) {
-				$html .= '<div class="report_fleet"><div class="separator"></div><center>Атакующий флот уничтожен</center><div class="separator"></div></div>';
+				$html .= '<div class="report_fleet">Атакующий флот уничтожен</div>';
 			}
 
 			foreach ($attackers as $fleet_id => $data2) {
 				$user = $usersInfo[$fleet_id]['user_id'];
 
 				$html .= '<div class="report_fleet">';
-				$html .= '<span class="negative">Атакующий ' . $this->attackUsers[$user]['username'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</span><div class="separator"></div>';
-				$html .= '<table border="1">';
+				$html .= '<div class="mb-2 negative">Атакующий ' . $this->attackUsers[$user]['username'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
+				$html .= '<table class="table">';
 
 				if ($data['attackA'][$fleet_id] > 0) {
 					$raport1 = '<tr><th>Тип</th>';
@@ -164,19 +165,17 @@ class BattleReport
 				$html .= '</div>';
 			}
 
-			$html .= '<div class="separator"></div>';
-
 			if (!count($defenders)) {
-				$html .= '<div class="report_fleet"><div class="separator"></div><center>Защитный флот уничтожен</center><div class="separator"></div></div>';
+				$html .= '<div class="report_fleet">Защитный флот уничтожен</div>';
 			}
 
 			foreach ($defenders as $fleet_id => $data2) {
 				$user = $usersInfo[$fleet_id]['user_id'];
 
 				$html .= '<div class="report_fleet">';
-				$html .= '<span class="positive">Защитник ' . $this->defenseUsers[$user]['username'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</span><div class="separator"></div>';
+				$html .= '<div class="mb-2 positive">Защитник ' . $this->defenseUsers[$user]['username'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
 
-				$html .= '<table border="1" align="center">';
+				$html .= '<table class="table">';
 
 				if ($data['defenseA'][$fleet_id] > 0) {
 					$raport1 = '<tr><th>Тип</th>';
@@ -230,37 +229,34 @@ class BattleReport
 				$html .= '</table>';
 				$html .= '</div>';
 			}
-
-			$round_no++;
 		}
 
 		if ($this->result_array['won'] == 2) {
-			$result1 = 'Обороняющийся выиграл битву!<br />';
+			$result1 = 'Обороняющийся выиграл битву!';
 		} elseif ($this->result_array['won'] == 1) {
-			$result1 = 'Атакующий выиграл битву!<br />';
-			$result1 .= 'Он получает ' . Format::number($this->steal_array['metal']) . ' металла, ' . Format::number($this->steal_array['crystal']) . ' кристалла и ' . Format::number($this->steal_array['deuterium']) . ' дейтерия<br />';
+			$result1 = sprintf('Атакующий выиграл битву!<br>Он получает %s металла, %s кристалла и %s дейтерия', Format::number($this->steal_array['metal']), Format::number($this->steal_array['crystal']), Format::number($this->steal_array['deuterium']));
 		} else {
-			$result1 = 'Бой закончился ничьёй!<br />';
+			$result1 = 'Бой закончился ничьёй!';
 		}
 
-		$html .= '<br><br><table class="report_result"><tr><td class="c">' . $result1 . '</td></tr>';
+		$html .= '<div><table class="table report_result"><tr><td class="c">' . $result1 . '</td></tr>';
 
 		$debirs_meta = ($this->result_array['debree']['att'][0] + $this->result_array['debree']['def'][0]);
 		$debirs_crys = ($this->result_array['debree']['att'][1] + $this->result_array['debree']['def'][1]);
 
-		$html .= '<tr><th>Атакующий потерял ' . Format::number($this->result_array['lost']['att']) . ' единиц.</th></tr>';
-		$html .= '<tr><th>Обороняющийся потерял ' . Format::number($this->result_array['lost']['def']) . ' единиц.</th></tr>';
-		$html .= '<tr><td class="c">Поле обломков: ' . Format::number($debirs_meta) . ' металла и ' . Format::number($debirs_crys) . " кристалла.</td></tr>";
+		$html .= '<tr><th>' . sprintf('Атакующий потерял %s единиц', Format::number($this->result_array['lost']['att'])) . '.</th></tr>';
+		$html .= '<tr><th>' . sprintf('Обороняющийся потерял %s единиц', Format::number($this->result_array['lost']['def'])) . '</th></tr>';
+		$html .= '<tr><td class="c">' . sprintf('Поле обломков: %s металла и %s кристалла.', Format::number($debirs_meta), Format::number($debirs_crys)) . '</td></tr>';
 
-		$html .= '<tr><th>Шанс появления луны составляет ' . $this->moon_int . '%<br>';
+		$html .= '<tr><th>' . sprintf('Шанс появления луны составляет %s %%', $this->moon_int) . '<br>';
 		$html .= $this->moon_string . '</th></tr>';
 
-		$html .= '</table><br><br>';
+		$html .= '</table></div>';
 
 		if (count($this->repair)) {
 			foreach ($this->repair as $data2) {
-				$html .= '<div class="report_fleet"><span class="neutral">Восстановленная оборона:</span><div class="separator"></div>';
-				$html .= '<table border="1" align="center">';
+				$html .= '<div class="report_fleet mb-2"><span class="neutral">Восстановленная оборона:</div>';
+				$html .= '<table class="table">';
 
 				$raport1 = '';
 				$raport2 = '';
@@ -280,9 +276,7 @@ class BattleReport
 			}
 		}
 
-		$html .= '<br><br>';
 		$html .= '<a href="' . $this->convertToSimLink([$this->result_array, $this->attackUsers, $this->defenseUsers]) . '" target="_blank">Симуляция</a>';
-
 		$html .= '</div>';
 
 		return ['html' => $html, 'bbc' => $bbc];
@@ -372,6 +366,6 @@ class BattleReport
 			$def[] = '';
 		}
 
-		return URL::to('/xnsim/report/?r=' . implode('|', $att) . '|' . implode('|', $def));
+		return URL::to('/sim/report?r=' . implode('|', $att) . '|' . implode('|', $def));
 	}
 }

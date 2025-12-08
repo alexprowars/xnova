@@ -8,7 +8,7 @@ use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Engine\Entity;
 use App\Models;
-use App\Models\LogHistory;
+use App\Models\LogsHistory;
 use App\Models\Planet;
 
 class Tech
@@ -56,7 +56,7 @@ class Tech
 				]);
 
 				if (config('game.log.research', false)) {
-					LogHistory::create([
+					LogsHistory::create([
 						'user_id' 			=> $user->id,
 						'operation' 		=> 5,
 						'planet' 			=> $planet->id,
@@ -97,7 +97,7 @@ class Tech
 			$this->queue->loadQueue();
 
 			if (config('game.log.research', false)) {
-				LogHistory::create([
+				LogsHistory::create([
 					'user_id' 			=> $user->id,
 					'operation' 		=> 6,
 					'planet' 			=> $planet->id,

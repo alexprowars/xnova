@@ -6,7 +6,7 @@ use App\Engine\Game;
 use App\Exceptions\PageException;
 use App\Helpers;
 use App\Models\Blocked;
-use App\Models\LogIp;
+use App\Models\LogsIp;
 use App\Models\User;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Support\Facades\Request;
@@ -45,7 +45,7 @@ class UserAuthenticated
 		if ($user->ip != $ip) {
 			$user->ip = $ip;
 
-			LogIp::create([
+			LogsIp::create([
 				'user_id' => $user->id,
 				'ip' => $ip,
 			]);

@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_credits', function (Blueprint $table) {
+		Schema::create('logs_credits', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->integer('amount')->default(0);
 			$table->tinyInteger('type')->default(0);
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('log_credits');
+		Schema::drop('logs_credits');
 	}
 };

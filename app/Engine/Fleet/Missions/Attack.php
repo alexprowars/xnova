@@ -26,7 +26,7 @@ use App\Facades\Vars;
 use App\Format;
 use App\Models;
 use App\Models\Fleet as FleetModel;
-use App\Models\LogAttack;
+use App\Models\LogsAttack;
 use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\MessageNotification;
@@ -502,7 +502,7 @@ class Attack extends BaseMission
 
 			$title = $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
 
-			$battleLog = new Models\LogBattle();
+			$battleLog = new Models\LogsBattle();
 			$battleLog->user_id = 0;
 			$battleLog->title = $title;
 			$battleLog->data = $report->data;
@@ -573,7 +573,7 @@ class Attack extends BaseMission
 			User::find($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $defendersReport));
 		}
 
-		LogAttack::create([
+		LogsAttack::create([
 			'user_id' 		=> $this->fleet->user_id,
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,

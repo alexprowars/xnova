@@ -5,19 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
-class LogAttack extends Model
+class LogsStat extends Model
 {
 	use MassPrunable;
 
-	protected $table = 'log_attacks';
+	protected $table = 'logs_stats';
 	protected $guarded = [];
+	public $timestamps = false;
 
 	protected $casts = [
-		'fleet' => 'json:unicode',
+		'date' => 'immutable_datetime',
 	];
 
 	public function prunable()
 	{
-		return static::query()->where('created_at', '<', now()->subDays(7));
+		return static::query()->where('date', '<', now()->subDays(30));
 	}
 }

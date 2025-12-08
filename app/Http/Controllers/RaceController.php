@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
-use App\Models\LogCredit;
+use App\Models\LogsCredit;
 use Illuminate\Http\Request;
 
 class RaceController extends Controller
@@ -56,7 +56,7 @@ class RaceController extends Controller
 		} else {
 			$this->user->credits -= 100;
 
-			LogCredit::create([
+			LogsCredit::create([
 				'user_id' => $this->user->id,
 				'amount' => 100,
 				'type' => 7,

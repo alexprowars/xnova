@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
-use App\Models\LogCredit;
+use App\Models\LogsCredit;
 use Illuminate\Http\Request;
 
 class OfficiersController extends Controller
@@ -59,7 +59,7 @@ class OfficiersController extends Controller
 		$this->user->credits -= $credits;
 		$this->user->update();
 
-		LogCredit::create([
+		LogsCredit::create([
 			'user_id' => $this->user->id,
 			'amount' => $credits * (-1),
 			'type' => 5

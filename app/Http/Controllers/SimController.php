@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\BattleReport;
 use App\Engine\Enums\ItemType;
+use App\Engine\Fleet\CombatEngine\Simulation;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
+use App\Models\LogsSimulation;
+use Illuminate\Http\Request;
 
 class SimController extends Controller
 {
@@ -25,10 +30,10 @@ class SimController extends Controller
 		$parse['slots'] = [
 			'max' => $maxSlots,
 			'attackers' => [
-				0 => []
+				0 => [],
 			],
 			'defenders' => [
-				0 => []
+				0 => [],
 			],
 		];
 
@@ -59,5 +64,67 @@ class SimController extends Controller
 		}
 
 		return $parse;
+	}
+
+	public function reportById(string $id)
+	{
+		$log = LogsSimulation::findOne($id);
+
+		if (!$log) {
+			throw new Exception('Лога не существует');
+		}
+
+		$result = $log->data;
+
+		$report = new BattleReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
+		$report = $report->report();
+
+		return [
+			'report' => $report,
+			'uuid' => $log->id,
+		];
+	}
+
+	public function report(Request $request)
+	{
+		$r = explode('|', $request->input('r', ''));
+
+		if (empty($r[0]) || empty($r[10])) {
+			throw new Exception('Нет данных для симуляции боя');
+		}
+
+		$sim = new Simulation();
+
+		foreach ($r as $slot) {
+			$items = [];
+
+			foreach (explode(';', $slot) as $row) {
+				$f = explode(',', $row);
+
+				if (isset($f[1]) && $f[1] > 0) {
+					$items[] = [
+						'id' => (int) $f[0],
+						'count' => (int) $f[1],
+					];
+				}
+			}
+
+			$sim->addSlot($items);
+		}
+
+		$result = $sim->getResult();
+
+		$report = new BattleReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
+		$report = $report->report();
+
+		$log = LogsSimulation::create([
+			'data' => $result,
+		]);
+
+		return [
+			'report' => $report,
+			'statistics' => $sim->getStatistics(),
+			'uuid' => $log->id,
+		];
 	}
 }

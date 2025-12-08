@@ -294,7 +294,7 @@ class AllianceController extends Controller
 		$parse['name'] = $alliance->name;
 		$parse['points'] = [];
 
-		$items = Models\LogStat::query()->where('object_id', $alliance->id)
+		$items = Models\LogsStat::query()->where('object_id', $alliance->id)
 			->where('type', 2)
 			->where('time', '>', now()->subDays(14))
 			->orderBy('time')
@@ -302,7 +302,7 @@ class AllianceController extends Controller
 
 		foreach ($items as $item) {
 			$parse['points'][] = [
-				'date' => $item->time->utc()->toAtomString(),
+				'date' => $item->date->utc()->toAtomString(),
 				'rank' => [
 					'tech' => $item->tech_rank,
 					'build' => $item->build_rank,

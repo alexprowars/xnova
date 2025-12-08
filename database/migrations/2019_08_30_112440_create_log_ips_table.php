@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_ips', function (Blueprint $table) {
+		Schema::create('logs_ips', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->noActionOnDelete();
 			$table->integer('ip')->unsigned()->default(0);
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('log_ips');
+		Schema::drop('logs_ips');
 	}
 };

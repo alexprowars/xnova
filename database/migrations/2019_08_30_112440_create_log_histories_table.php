@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_histories', function (Blueprint $table) {
+		Schema::create('logs_histories', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->integer('planet');
@@ -20,12 +20,12 @@ return new class extends Migration {
 			$table->integer('to_deuterium');
 			$table->integer('entity_id');
 			$table->integer('amount');
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('log_histories');
+		Schema::drop('logs_histories');
 	}
 };

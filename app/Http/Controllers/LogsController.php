@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\BattleReport;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Models\LogBattle;
+use App\Models\LogsBattle;
 use App\Models\Report;
 use Illuminate\Http\Request;
 
@@ -13,7 +13,7 @@ class LogsController extends Controller
 {
 	public function index()
 	{
-		$logs = LogBattle::query()->whereBelongsTo($this->user)
+		$logs = LogsBattle::query()->whereBelongsTo($this->user)
 			->orderByDesc('id')->get();
 
 		$items = [];
@@ -30,7 +30,7 @@ class LogsController extends Controller
 
 	public function delete(int $id)
 	{
-		$log = LogBattle::query()->whereKey($id)
+		$log = LogsBattle::query()->whereKey($id)
 			->whereBelongsTo($this->user)
 			->first();
 
@@ -77,7 +77,7 @@ class LogsController extends Controller
 			}
 		}
 
-		$new = new LogBattle();
+		$new = new LogsBattle();
 		$new->user_id = $this->user->id;
 		$new->title = addslashes(htmlspecialchars($title));
 		$new->data = $dataLog;
@@ -89,7 +89,7 @@ class LogsController extends Controller
 
 	public function info(int $id)
 	{
-		$raport = LogBattle::find($id);
+		$raport = LogsBattle::find($id);
 
 		if (!$raport) {
 			throw new PageException('Запрашиваемого лога не существует в базе данных');

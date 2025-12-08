@@ -9,7 +9,7 @@ use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Models;
-use App\Models\LogHistory;
+use App\Models\LogsHistory;
 
 class Unit
 {
@@ -101,7 +101,7 @@ class Unit
 			]);
 
 			if (config('game.log.units', false)) {
-				LogHistory::create([
+				LogsHistory::create([
 					'user_id' 			=> $user->id,
 					'operation' 		=> 7,
 					'planet' 			=> $planet->id,

@@ -179,7 +179,7 @@ class BattleReport
 						$crystal += $lost[1];
 					}
 
-					$factor = constant(strtoupper($role) . '_DEBRIS_FACTOR');
+					$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
 
 					$result[0] += $metal * $factor;
 					$result[1] += $crystal * $factor;
@@ -205,7 +205,7 @@ class BattleReport
 						$crystal += $lost[1];
 					}
 
-					$factor = constant(strtoupper($role) . '_DEBRIS_FACTOR');
+					$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
 
 					$result[0] += $metal * $factor;
 					$result[1] += $crystal * $factor;

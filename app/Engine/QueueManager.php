@@ -12,7 +12,7 @@ use App\Facades\Vars;
 use App\Format;
 use App\Helpers;
 use App\Models;
-use App\Models\LogHistory;
+use App\Models\LogsHistory;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
 use Illuminate\Support\Collection;
@@ -184,7 +184,7 @@ class QueueManager
 			}
 
 			if (config('game.log.buildings', false)) {
-				LogHistory::create([
+				LogsHistory::create([
 					'user_id' 			=> $this->planet->user->id,
 					'operation' 		=> 9,
 					'planet' 			=> $this->planet->id,
@@ -268,7 +268,7 @@ class QueueManager
 				$loop = false;
 
 				if (config('game.log.buildings', false)) {
-					LogHistory::create([
+					LogsHistory::create([
 						'user_id' 			=> $this->planet->user->id,
 						'operation' 		=> ($isDestroy ? 2 : 1),
 						'planet' 			=> $this->planet->id,
@@ -364,7 +364,7 @@ class QueueManager
 			}
 
 			if (config('game.log.research', false)) {
-				LogHistory::create([
+				LogsHistory::create([
 					'user_id' 			=> $this->planet->user->id,
 					'operation' 		=> 8,
 					'planet' 			=> $planet->id,

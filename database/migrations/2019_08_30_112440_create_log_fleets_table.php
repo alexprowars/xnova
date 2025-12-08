@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_fleets', function (Blueprint $table) {
+		Schema::create('logs_fleets', function (Blueprint $table) {
 			$table->id();
 			$table->tinyInteger('mission')->default(0);
 			$table->tinyInteger('amount')->default(0);
@@ -19,12 +19,12 @@ return new class extends Migration {
 			$table->tinyInteger('e_galaxy')->default(0);
 			$table->smallInteger('e_system')->unsigned()->default(0);
 			$table->tinyInteger('e_planet')->default(0);
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('log_fleets');
+		Schema::drop('logs_fleets');
 	}
 };

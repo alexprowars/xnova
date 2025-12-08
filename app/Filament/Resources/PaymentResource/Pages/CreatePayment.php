@@ -5,7 +5,7 @@ namespace App\Filament\Resources\PaymentResource\Pages;
 use App\Engine\Enums\MessageType;
 use App\Exceptions\Exception;
 use App\Filament\Resources\PaymentResource;
-use App\Models\LogCredit;
+use App\Models\LogsCredit;
 use App\Models\Payment;
 use App\Models\User;
 use App\Notifications\MessageNotification;
@@ -51,7 +51,7 @@ class CreatePayment extends CreateRecord
 
 		$user->increment('credits', (int) $data['amount']);
 
-		LogCredit::create([
+		LogsCredit::create([
 			'user_id' => $user->id,
 			'amount' => (int) $data['amount'],
 			'type' => 6,

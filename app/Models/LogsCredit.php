@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
-class LogStat extends Model
+class LogsCredit extends Model
 {
 	use MassPrunable;
 
-	protected $table = 'log_stats';
+	protected $table = 'logs_credits';
 	protected $guarded = [];
 	public $timestamps = false;
 
 	protected $casts = [
-		'time' => 'immutable_datetime',
+		'created_at' => 'immutable_datetime',
 	];
 
 	public function prunable()
 	{
-		return static::query()->where('time', '<', now()->subDays(30));
+		return static::query()->where('created_at', '<', now()->subDays(365));
 	}
 }

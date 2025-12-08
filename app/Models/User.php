@@ -89,7 +89,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 				}
 			}
 
-			LogStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
+			LogsStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
 		});
 	}
 
@@ -211,7 +211,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		}
 
 		if ($giveCredits > 0) {
-			LogCredit::create([
+			LogsCredit::create([
 				'user_id' 	=> $this->id,
 				'amount' 	=> $giveCredits,
 				'type' 		=> 4,
@@ -225,7 +225,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 				$credits = round($giveCredits / 2);
 				$reffer->user()->increment('credits', $credits);
 
-				LogCredit::create([
+				LogsCredit::create([
 					'user_id'	=> $reffer->user_id,
 					'amount' 	=> $credits,
 					'type' 		=> 3,

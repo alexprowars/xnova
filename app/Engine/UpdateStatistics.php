@@ -7,7 +7,7 @@ use App\Helpers;
 use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
-use App\Models\LogStat;
+use App\Models\LogsStat;
 use App\Models\Statistic;
 use App\Models\User;
 use App\Notifications\UserDeleteNotification;
@@ -522,8 +522,8 @@ class UpdateStatistics
 
 	public function addToLog()
 	{
-		DB::statement("INSERT INTO " . app(LogStat::class)->getTable() . "
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
+		DB::statement("INSERT INTO " . app(LogsStat::class)->getTable() . "
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `date`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
@@ -532,8 +532,8 @@ class UpdateStatistics
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
 
-		DB::statement("INSERT INTO " . app(LogStat::class)->getTable() . "
-			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `time`)
+		DB::statement("INSERT INTO " . app(LogsStat::class)->getTable() . "
+			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `date`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,

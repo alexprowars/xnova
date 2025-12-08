@@ -13,8 +13,8 @@ use App\Models\AllianceDiplomacy;
 use App\Models\Assault;
 use App\Models\Fleet;
 use App\Models\Friend;
-use App\Models\LogFleet;
-use App\Models\LogTransfer;
+use App\Models\LogsFleet;
+use App\Models\LogsTransfer;
 use App\Models\Planet;
 use App\Models\Statistic;
 
@@ -398,7 +398,7 @@ class FleetSend
 				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
 			}
 
-			$cnt = LogTransfer::query()
+			$cnt = LogsTransfer::query()
 				->whereBelongsTo($this->planet->user)
 				->whereBelongsTo($this->targetPlanet->user, 'target')
 				->where('created_at', '>', now()->subDays(7))
@@ -408,7 +408,7 @@ class FleetSend
 				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще 3х раз в неделю.');
 			}
 
-			$cnt = LogTransfer::query()
+			$cnt = LogsTransfer::query()
 				->whereBelongsTo($this->planet->user)
 				->whereBelongsTo($this->targetPlanet->user, 'target')
 				->where('created_at', '>', now()->subDay())
@@ -418,7 +418,7 @@ class FleetSend
 				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще одного раза в день.');
 			}
 
-			LogTransfer::create([
+			LogsTransfer::create([
 				'user_id' => $this->planet->user->id,
 				'data' => [
 					'planet' => $this->planet->coordinates->toArray(),
@@ -432,7 +432,7 @@ class FleetSend
 
 		// Баш контроль
 		if ($this->mission == Mission::Attack && !$this->planet->user->isAdmin()) {
-			$log = LogFleet::query()->where('s_id', $this->planet->user->id)
+			$log = LogsFleet::query()->where('s_id', $this->planet->user->id)
 				->where('mission', Mission::Attack)
 				->where('e_galaxy', $this->targetPlanet->galaxy)
 				->where('e_system', $this->targetPlanet->system)
@@ -447,7 +447,7 @@ class FleetSend
 			if ($log) {
 				$log->increment('amount');
 			} else {
-				LogFleet::create([
+				LogsFleet::create([
 					'mission' => Mission::Attack,
 					'amount' => 1,
 					's_id' => $this->planet->user->id,

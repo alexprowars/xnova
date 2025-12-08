@@ -4,9 +4,6 @@ includes:
 parameters:
     paths:
         - app/
-    excludePaths:
-    	- app/Http/Controllers/Admin/*
-    	- app/Http/Controllers/XnsimController.php
     level: 5
     checkOctaneCompatibility: true
     checkModelProperties: true

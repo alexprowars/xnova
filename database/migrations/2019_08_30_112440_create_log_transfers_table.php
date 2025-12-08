@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_transfers', function (Blueprint $table) {
+		Schema::create('logs_transfers', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id')->constrained('users')->noActionOnDelete();
 			$table->json('data')->nullable();
 			$table->foreignId('target_id')->constrained('users')->noActionOnDelete();
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('log_transfers');
+		Schema::drop('logs_transfers');
 	}
 };

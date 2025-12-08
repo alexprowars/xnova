@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('log_stats', function (Blueprint $table) {
+		Schema::create('logs_stats', function (Blueprint $table) {
 			$table->id();
 			$table->integer('object_id')->default(0);
 			$table->boolean('type')->default(0);
-			$table->timestamp('time')->nullable();
+			$table->timestamp('date')->useCurrent();
 			$table->integer('tech_rank')->default(0);
 			$table->integer('tech_points')->default(0);
 			$table->integer('build_rank')->default(0);
@@ -28,6 +28,6 @@ return new class extends Migration {
 
 	public function down()
 	{
-		Schema::drop('log_stats');
+		Schema::drop('logs_stats');
 	}
 };

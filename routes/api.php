@@ -13,7 +13,6 @@ Route::get('logs/{id}', [Controllers\LogsController::class, 'info'])->whereNumbe
 Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index']);
 Route::match(['get', 'post'], 'stat/alliances', [Controllers\StatController::class, 'alliances']);
 Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 'races']);
-Route::match(['get', 'post'], 'xnsim', [Controllers\XnsimController::class, 'index']);
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id');
 
 Route::post('login', [Controllers\LoginController::class, 'credentials']);
@@ -30,6 +29,8 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('start/race', [Controllers\StartController::class, 'race']);
 
 	Route::match(['get', 'post'], 'sim', [Controllers\SimController::class, 'index']);
+	Route::post('sim/report', [Controllers\SimController::class, 'report']);
+	Route::post('sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/stat/{id}', [Controllers\PlayersController::class, 'stat']);
 	Route::post('logout', [Controllers\LogoutController::class, 'index']);

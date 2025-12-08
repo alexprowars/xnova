@@ -5,12 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
-class LogFleet extends Model
+class LogsFleet extends Model
 {
 	use MassPrunable;
 
-	protected $table = 'log_fleets';
+	protected $table = 'logs_fleets';
 	protected $guarded = [];
+	public $timestamps = false;
+
+	protected $casts = [
+		'created_at' => 'immutable_datetime',
+	];
 
 	public function prunable()
 	{

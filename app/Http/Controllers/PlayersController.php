@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
-use App\Models\LogStat;
+use App\Models\LogsStat;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
@@ -104,15 +104,15 @@ class PlayersController extends Controller
 		$parse['name'] = $player->username;
 		$parse['points'] = [];
 
-		$items = LogStat::query()->where('object_id', $userId)
+		$items = LogsStat::query()->where('object_id', $userId)
 			->where('type', 1)
-			->where('time', '>', now()->subDays(14))
-			->orderBy('time')
+			->where('date', '>', now()->subDays(14))
+			->orderBy('date')
 			->get();
 
 		foreach ($items as $item) {
 			$parse['points'][] = [
-				'date' => $item->time?->utc()->toAtomString(),
+				'date' => $item->date->utc()->toAtomString(),
 				'rank' => [
 					'tech' => (int) $item->tech_rank,
 					'build' => (int) $item->build_rank,

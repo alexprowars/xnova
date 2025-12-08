@@ -7,7 +7,7 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
-use App\Models\LogCredit;
+use App\Models\LogsCredit;
 use App\Models\PlanetEntity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -96,7 +96,7 @@ class ResourcesController extends Controller
 		$this->user->credits -= 10;
 		$this->user->update();
 
-		LogCredit::create([
+		LogsCredit::create([
 			'user_id' => $this->user->id,
 			'amount' => 10 * (-1),
 			'type' => 2,
