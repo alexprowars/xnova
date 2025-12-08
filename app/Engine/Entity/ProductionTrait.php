@@ -12,8 +12,7 @@ trait ProductionTrait
 	public function getProduction(?int $factor = null): Resources
 	{
 		if ($factor === null) {
-			$factor = $this->planet?->entities->where('entity_id', $this->entityId)
-				->first()->factor ?? 10;
+			$factor = $this->planet?->entities->getByEntityId($this->entityId)->factor ?? 10;
 		}
 
 		$factor = min(max($factor, 0), 10);

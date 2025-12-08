@@ -95,7 +95,10 @@ class GalaxyService
 		$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 		if ($planet->save()) {
-			return $planet->refresh();
+			$planet->refresh();
+			$planet->setRelation('user', $user);
+
+			return $planet;
 		}
 
 		return null;

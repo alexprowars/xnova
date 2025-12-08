@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Entity\Model\PlanetEntity;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
@@ -10,8 +11,7 @@ use App\Helpers;
 use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Models;
-use App\Models\PlanetEntity;
-use App\Models\User;
+use App\Models\Planet;
 use App\Notifications\PasswordResetSuccessNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -174,9 +174,10 @@ class OptionsController extends Controller
 						$buildsId[] = Vars::getIdByName($res . '_mine');
 					}
 
-					PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($this->user))
-						->whereIn('entity_id', $buildsId)
-						->update(['factor' => 0]);
+					$this->user->planets->each(function (Planet $planet) use ($buildsId) {
+						$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
+						$planet->save();
+					});
 				}
 			}
 		}

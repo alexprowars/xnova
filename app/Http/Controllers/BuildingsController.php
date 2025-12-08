@@ -26,7 +26,7 @@ class BuildingsController extends Controller
 				continue;
 			}
 
-			$entity = $this->planet->getEntity($elementId)->unit();
+			$entity = $this->planet->getEntityUnit($elementId);
 
 			if (!($entity instanceof Entity\Building)) {
 				continue;

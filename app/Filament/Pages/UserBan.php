@@ -2,10 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Engine\Entity\Model\PlanetEntity;
 use App\Facades\Vars;
 use App\Filament\HasPageForm;
 use App\Models\Blocked;
-use App\Models\PlanetEntity;
+use App\Models\Planet;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -138,9 +139,10 @@ class UserBan extends Page
 				$buildsId[] = Vars::getIdByName($res . '_mine');
 			}
 
-			PlanetEntity::query()->whereIn('planet_id', User::getPlanetsId($user))
-				->whereIn('entity_id', $buildsId)
-				->update(['factor' => 0]);
+			$user->planets->each(function (Planet $planet) use ($buildsId) {
+				$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
+				$planet->save();
+			});
 		}
 
 		Notification::make()

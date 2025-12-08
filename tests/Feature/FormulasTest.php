@@ -10,36 +10,36 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-	$this->user = User::factory()->createOne();
-	$this->planet = Galaxy::createPlanet(new Coordinates(1, 1, 1), $this->user, null, true);
+	$this->planet = Galaxy::createPlanet(new Coordinates(1, 1, 1), User::factory()->createOne(), null, true);
+	$this->user = $this->planet->user;
 });
 
 test('construction cost', function () {
-	$entity = $this->planet->getEntity('metal_mine')->unit();
+	$entity = $this->planet->getEntityUnit('metal_mine');
 	$entity->setLevel(9);
 
 	expect($entity->getPrice())
 		->toMatchArray(['metal' => 2306, 'crystal' => 576, 'deuterium' => 0]);
 
-	$entity = $this->planet->getEntity('spy_tech')->unit();
+	$entity = $this->planet->getEntityUnit('spy_tech');
 	$entity->setLevel(9);
 
 	expect($entity->getPrice())
 		->toMatchArray(['metal' => 102400, 'crystal' => 512000, 'deuterium' => 102400]);
 
-	$entity = $this->planet->getEntity('small_ship_cargo')->unit();
+	$entity = $this->planet->getEntityUnit('small_ship_cargo');
 
 	expect($entity->getPrice())
 		->toMatchArray(['metal' => 2000, 'crystal' => 2000, 'deuterium' => 0]);
 
-	$entity = $this->planet->getEntity('gauss_canyon')->unit();
+	$entity = $this->planet->getEntityUnit('gauss_canyon');
 
 	expect($entity->getPrice())
 		->toMatchArray(['metal' => 20000, 'crystal' => 15000, 'deuterium' => 2000]);
 });
 
 test('building time', function () {
-	$entity = $this->planet->getEntity('metal_mine')->unit();
+	$entity = $this->planet->getEntityUnit('metal_mine');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -49,7 +49,7 @@ test('building time', function () {
 test('building time with robot factory', function () {
 	$this->planet->updateAmount('robot_factory', 5);
 
-	$entity = $this->planet->getEntity('metal_mine')->unit();
+	$entity = $this->planet->getEntityUnit('metal_mine');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -59,7 +59,7 @@ test('building time with robot factory', function () {
 test('building time with nano factory', function () {
 	$this->planet->updateAmount('nano_factory', 5);
 
-	$entity = $this->planet->getEntity('metal_mine')->unit();
+	$entity = $this->planet->getEntityUnit('metal_mine');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -67,7 +67,7 @@ test('building time with nano factory', function () {
 });
 
 test('research time', function () {
-	$entity = $this->planet->getEntity('spy_tech')->unit();
+	$entity = $this->planet->getEntityUnit('spy_tech');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -77,7 +77,7 @@ test('research time', function () {
 test('research time with research lab', function () {
 	$this->planet->updateAmount('laboratory', 5);
 
-	$entity = $this->planet->getEntity('spy_tech')->unit();
+	$entity = $this->planet->getEntityUnit('spy_tech');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -95,7 +95,7 @@ test('research time with intergalactic network', function () {
 
 	$this->user->setTech('intergalactic', 3);
 
-	$entity = $this->planet->getEntity('spy_tech')->unit();
+	$entity = $this->planet->getEntityUnit('spy_tech');
 	$entity->setLevel(9);
 
 	expect($entity->getTime())
@@ -103,12 +103,12 @@ test('research time with intergalactic network', function () {
 });
 
 test('construction time', function () {
-	$entity = $this->planet->getEntity('small_ship_cargo')->unit();
+	$entity = $this->planet->getEntityUnit('small_ship_cargo');
 
 	expect($entity->getTime())
 		->toBeInt()->toEqual(5760);
 
-	$entity = $this->planet->getEntity('gauss_canyon')->unit();
+	$entity = $this->planet->getEntityUnit('gauss_canyon');
 
 	expect($entity->getTime())
 		->toBeInt()->toEqual(50400);
@@ -117,12 +117,12 @@ test('construction time', function () {
 test('construction time with shipyard', function () {
 	$this->planet->updateAmount('hangar', 5);
 
-	$entity = $this->planet->getEntity('small_ship_cargo')->unit();
+	$entity = $this->planet->getEntityUnit('small_ship_cargo');
 
 	expect($entity->getTime())
 		->toBeInt()->toEqual(960);
 
-	$entity = $this->planet->getEntity('gauss_canyon')->unit();
+	$entity = $this->planet->getEntityUnit('gauss_canyon');
 
 	expect($entity->getTime())
 		->toBeInt()->toEqual(8400);

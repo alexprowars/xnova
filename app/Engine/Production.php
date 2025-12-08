@@ -130,7 +130,7 @@ class Production
 		$itemsId = Vars::getItemsByType(ItemType::PRODUCTION);
 
 		foreach ($itemsId as $itemId) {
-			$entity = $this->planet->getEntity($itemId)->unit();
+			$entity = $this->planet->getEntityUnit($itemId);
 
 			if (!$entity || $entity->getLevel() <= 0) {
 				continue;

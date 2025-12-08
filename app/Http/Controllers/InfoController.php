@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Entity\Building;
 use App\Engine\Entity\Ship;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
@@ -60,7 +61,7 @@ class InfoController extends Controller
 		$ActualNeed = $ActualProd = 0;
 
 		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-			$res = $this->planet->getEntity($buildId)->unit()->getProduction();
+			$res = $this->planet->getEntityUnit($buildId)->getProduction();
 
 			$Prod[1] = $res->get(Resources::METAL);
 			$Prod[2] = $res->get(Resources::CRYSTAL);
@@ -90,7 +91,7 @@ class InfoController extends Controller
 			$row = [];
 
 			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-				$entity = $this->planet->getEntity($buildId)->unit();
+				$entity = $this->planet->getEntityUnit($buildId);
 				$entity->setLevel($BuildLevel);
 
 				$res = $entity->getProduction();
@@ -305,9 +306,9 @@ class InfoController extends Controller
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
-			$entity = $this->planet->getEntity($itemId)->unit();
+			$entity = $this->planet->getEntityUnit($itemId);
 
-			if ($entity?->getLevel() > 0) {
+			if ($entity instanceof Building && $entity->getLevel() > 0) {
 				$time = ceil($entity->getTime() / 2);
 
 				if ($time < 1) {

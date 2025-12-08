@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Engine\Enums\PlanetType;
 use App\Facades\Vars;
 use App\Models\Planet;
-use App\Models\PlanetEntity;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 
 class PlanetService
 {
@@ -30,26 +28,26 @@ class PlanetService
 		 */
 	public function getResearchNetworkLabLevel(): array
 	{
-		$list = [$this->planet->getLevel('laboratory')];
+		$list = [
+			$this->planet->getLevel('laboratory'),
+		];
 
 		$irnLevel = $this->planet->user->getTechLevel('intergalactic');
 
 		if ($irnLevel > 0) {
-			$items = PlanetEntity::query()
-				->where('entity_id', Vars::getIdByName('laboratory'))
-				->where('amount', '>', 0)
-				->whereNot('planet_id', $this->planet->id)
-				->whereHas('planet', function (Builder $query) {
-					return $query->whereBelongsTo($this->planet->user)
-						->where('planet_type', PlanetType::PLANET)
-						->whereNull('destroyed_at');
-				})
-				->orderByDesc('amount')
-				->limit($irnLevel)
-				->pluck('amount');
+			$items = $this->planet->user->planets()
+				->select(['entities'])
+				->where('planet_type', PlanetType::PLANET)
+				->whereKeyNot($this->planet)
+				->whereNull('destroyed_at')
+				->get()
+				->map(fn(Planet $planet) => $planet->entities->getByEntityId(Vars::getIdByName('laboratory'))->level)
+				->filter(fn(int $level) => $level > 0)
+				->sortDesc()
+				->take($irnLevel);
 
 			foreach ($items as $lvl) {
-				$list[] = (int) $lvl;
+				$list[] = $lvl;
 			}
 		}
 

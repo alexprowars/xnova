@@ -8,7 +8,6 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Facades\Vars;
 use App\Models\Planet;
-use App\Models\UserTech;
 use App\Notifications\MessageNotification;
 
 class Rak extends BaseMission
@@ -28,13 +27,8 @@ class Rak extends BaseMission
 			return;
 		}
 
-		$defTech = UserTech::query()->where('user_id', $this->fleet->target_user_id)
-			->where('tech_id', Vars::getIdByName('defence_tech'))
-			->firstOrNew();
-
-		$attTech = UserTech::query()->where('user_id', $this->fleet->user_id)
-			->where('tech_id', Vars::getIdByName('military_tech'))
-			->firstOrNew();
+		$attTech = $this->fleet->user->getTech('defence');
+		$defTech = $this->fleet->target->getTech('military');
 
 		$fleetData = $this->fleet->getShips();
 

@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Helpers;
 use App\Facades\Vars;
@@ -54,20 +55,18 @@ class UpdateStatistics
 		$TechCounts = 0;
 		$TechPoints = 0;
 
-		$items = Models\UserTech::query()
-			->whereBelongsTo($user)
-			->get();
+		$items = $user->technologies;
 
 		foreach ($items as $item) {
 			if ($item->level <= 0) {
 				continue;
 			}
 
-			if ($user->getOption('records') && $item->tech_id < 300) {
-				$this->setMaxInfo($item->tech_id, $item->level, $user);
+			if ($user->getOption('records') && $item->id < 300) {
+				$this->setMaxInfo($item->id, $item->level, $user);
 			}
 
-			$price = Vars::getItemPrice($item->tech_id);
+			$price = Vars::getItemPrice($item->id);
 
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
@@ -89,28 +88,28 @@ class UpdateStatistics
 		$BuildCounts = 0;
 		$BuildPoints = 0;
 
-		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(ItemType::BUILDING))
-			->get();
+		$items = $planet->entities
+			->whereIn('id', Vars::getItemsByType(ItemType::BUILDING));
 
+		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->amount <= 0) {
+			if ($item->level <= 0) {
 				continue;
 			}
 
 			if ($user->getOption('records')) {
-				$this->setMaxInfo($item->entity_id, $item->amount, $user);
+				$this->setMaxInfo($item->id, $item->level, $user);
 			}
 
-			$price = Vars::getItemPrice($item->entity_id);
+			$price = Vars::getItemPrice($item->id);
 
 			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
 
-			for ($Level = 1; $Level <= $item->amount; $Level++) {
+			for ($Level = 1; $Level <= $item->level; $Level++) {
 				$BuildPoints += $Units * ($price['factor'] ** $Level);
 			}
 
-			$BuildCounts += $item->amount;
+			$BuildCounts += $item->level;
 		}
 
 		$RetValue['BuildCount'] = $BuildCounts;
@@ -124,25 +123,22 @@ class UpdateStatistics
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(ItemType::DEFENSE))
-			->get();
+		$items = $planet->entities
+			->whereIn('id', Vars::getItemsByType(ItemType::DEFENSE));
 
+		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->amount <= 0) {
+			if ($item->level <= 0) {
 				continue;
 			}
 
-			if (!isset($RecordArray[$item->entity_id])) {
-				$RecordArray[$item->entity_id] = 0;
-			}
+			$RecordArray[$item->id] ??= 0;
+			$RecordArray[$item->id] += $item->level;
 
-			$RecordArray[$item->entity_id] += $item->amount;
+			$Units = Vars::getItemTotalPrice($item->id, true);
 
-			$Units = Vars::getItemTotalPrice($item->entity_id, true);
-
-			$UnitsPoints += ($Units * $item->amount);
-			$UnitsCounts += $item->amount;
+			$UnitsPoints += ($Units * $item->level);
+			$UnitsCounts += $item->level;
 		}
 
 		$RetValue['DefenseCount'] = $UnitsCounts;
@@ -156,27 +152,24 @@ class UpdateStatistics
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
 
-		$items = $planet->entities()
-			->whereIn('entity_id', Vars::getItemsByType(ItemType::FLEET))
-			->get();
+		$items = $planet->entities
+			->whereIn('id', Vars::getItemsByType(ItemType::FLEET));
 
+		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->amount <= 0) {
+			if ($item->level <= 0) {
 				continue;
 			}
 
-			if (!isset($RecordArray[$item->entity_id])) {
-				$RecordArray[$item->entity_id] = 0;
-			}
+			$RecordArray[$item->id] ??= 0;
+			$RecordArray[$item->id] += $item->level;
 
-			$RecordArray[$item->entity_id] += $item->amount;
+			$Units = Vars::getItemTotalPrice($item->id, true);
 
-			$Units = Vars::getItemTotalPrice($item->entity_id, true);
+			$UnitsPoints += ($Units * $item->level);
 
-			$UnitsPoints += ($Units * $item->amount);
-
-			if ($item->entity_id != 212) {
-				$UnitsCounts += $item->amount;
+			if ($item->id != 212) {
+				$UnitsCounts += $item->level;
 			}
 		}
 

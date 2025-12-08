@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -47,6 +48,7 @@ return new class extends Migration {
 			$table->smallInteger('raids_win')->unsigned()->default(0);
 			$table->smallInteger('raids_lose')->unsigned()->default(0);
 			$table->integer('raids')->default(0);
+			$table->json('technologies')->default(new Expression('(JSON_ARRAY())'));
 			$table->timestamp('daily_bonus')->nullable();
 			$table->tinyInteger('daily_bonus_factor')->default(0);
 			$table->integer('refers')->default(0);

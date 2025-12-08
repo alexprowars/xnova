@@ -144,7 +144,7 @@ class QueueManager
 
 		$buildItem = $queueArray->first();
 
-		$entity = $this->planet->getEntity($buildItem->object_id)->unit();
+		$entity = $this->planet->getEntityUnit($buildItem->object_id);
 
 		if (!($entity instanceof Entity\Building)) {
 			if (!$this->deleteInQueue($buildItem)) {
@@ -220,7 +220,7 @@ class QueueManager
 
 			$haveNoMoreLevel = false;
 
-			$entity = $this->planet->getEntity($buildItem->object_id)->unit();
+			$entity = $this->planet->getEntityUnit($buildItem->object_id);
 
 			if (!($entity instanceof Entity\Building)) {
 				$queueArray->shift();
@@ -448,7 +448,7 @@ class QueueManager
 				continue;
 			}
 
-			$entity = $this->planet->getEntity($item->object_id)->unit();
+			$entity = $this->planet->getEntityUnit($item->object_id);
 
 			$buildTime = $entity->getTime();
 

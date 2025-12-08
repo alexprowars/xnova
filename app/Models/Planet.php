@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Entity;
+use App\Engine\Entity\Model\PlanetEntity;
+use App\Engine\Entity\Model\PlanetEntityCollection;
+use App\Engine\EntityFactory;
 use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
@@ -11,6 +15,7 @@ use App\Factories\PlanetServiceFactory;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +23,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property PlanetEntityCollection $entities
+ */
 class Planet extends Model
 {
 	use MassPrunable;
@@ -30,6 +38,7 @@ class Planet extends Model
 		'metal' => 0,
 		'crystal' => 0,
 		'deuterium' => 0,
+		'entities' => '[]',
 	];
 
 	public $planet_updated = false;
@@ -47,6 +56,18 @@ class Planet extends Model
 		'planet_type' => PlanetType::class,
 	];
 
+	/**
+	 * @return array{
+	 *     entities: 'Illuminate\Database\Eloquent\Casts\AsCollection',
+	 * }
+	 */
+	protected function casts(): array
+	{
+	    return [
+	        'entities' => AsCollection::using(PlanetEntityCollection::class, PlanetEntity::class),
+	    ];
+	}
+
 	/** @return BelongsTo<User, $this> */
 	public function user(): BelongsTo
 	{
@@ -57,12 +78,6 @@ class Planet extends Model
 	public function moon(): BelongsTo
 	{
 		return $this->belongsTo(Planet::class, 'moon_id');
-	}
-
-	/** @return HasMany<PlanetEntity, $this> */
-	public function entities(): HasMany
-	{
-		return $this->hasMany(PlanetEntity::class, 'planet_id');
 	}
 
 	/** @return HasMany<Queue, $this> */
@@ -120,7 +135,7 @@ class Planet extends Model
 
 	public function getLevel($entityId): int
 	{
-		return $this->getEntity($entityId)->amount ?? 0;
+		return $this->getEntity($entityId)->level ?? 0;
 	}
 
 	public function getEntity($entityId): ?PlanetEntity
@@ -129,46 +144,35 @@ class Planet extends Model
 			$entityId = Vars::getIdByName($entityId);
 		}
 
-		if (!$entityId) {
+		if (!$entityId || !Vars::getName($entityId)) {
 			return null;
 		}
 
-		$entity = $this->entities->firstWhere('entity_id', $entityId);
+		return $this->entities->getByEntityId($entityId);
+	}
+
+	public function getEntityUnit($entityId): ?Entity
+	{
+		$entity = $this->getEntity($entityId);
 
 		if (!$entity) {
-			if (!Vars::getName($entityId)) {
-				return null;
-			}
-
-			$entity = new PlanetEntity(['entity_id' => $entityId]);
-
-			$this->entities->add($entity);
+			return null;
 		}
 
-		$entity->planet()->associate($this);
-
-		return $entity;
+		return EntityFactory::get($entity->id, $entity->level, $this);
 	}
 
 	public function updateAmount($entityId, int $amount, bool $isDifferent = false)
 	{
-		if (!is_numeric($entityId)) {
-			$entityId = Vars::getIdByName($entityId);
-		}
-
 		$entity = $this->getEntity($entityId);
 
-		if (!$entity->id) {
-			$this->entities->add($entity);
-		}
-
 		if ($isDifferent) {
-			$entity->amount += $amount;
+			$entity->level += $amount;
 		} else {
-			$entity->amount = $amount;
+			$entity->level = $amount;
 		}
 
-		$entity->save();
+		$this->save();
 	}
 
 	public function getProduction(Carbon|CarbonImmutable|null $updateTime = null): Production

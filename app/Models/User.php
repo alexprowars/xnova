@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Engine\Entity\Model\TechnologiesCollection;
+use App\Engine\Entity\Model\TechnologiesEntity;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Locale;
@@ -19,6 +21,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,6 +42,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use Throwable;
 
+/**
+ * @property TechnologiesCollection $technologies
+ */
 class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 {
 	use HasRoles;
@@ -60,6 +66,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		'remember_token',
 	];
 
+	protected $attributes = [
+		'technologies' => '[]',
+	];
+
 	protected $casts = [
 		'options' => 'json:unicode',
 		'username_change' => 'immutable_datetime',
@@ -77,6 +87,18 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		'daily_bonus' => 'immutable_datetime',
 		'message_block' => 'immutable_datetime',
 	];
+
+	/**
+	 * @return array{
+	 *     technologies: 'Illuminate\Database\Eloquent\Casts\AsCollection',
+	 * }
+	 */
+	protected function casts(): array
+	{
+	    return [
+	        'technologies' => AsCollection::using(TechnologiesCollection::class, TechnologiesEntity::class),
+	    ];
+	}
 
 	protected static function booted(): void
 	{
