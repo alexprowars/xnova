@@ -30,10 +30,10 @@ class Rak extends BaseMission
 		$attTech = $this->fleet->user->getTech('defence');
 		$defTech = $this->fleet->target->getTech('military');
 
-		$fleetData = $this->fleet->getShips();
+		$fleetEntity = $this->fleet->entities->getByEntityId(503);
 
-		$rockets = $fleetData[503]['count'] ?? 0;
-		$targetType = $fleetData[503]['target'] ?? 0;
+		$rockets = $fleetEntity->count ?? 0;
+		$targetType = $fleetEntity->getParam('target') ?? 0;
 
 		$targetDefensive = [];
 

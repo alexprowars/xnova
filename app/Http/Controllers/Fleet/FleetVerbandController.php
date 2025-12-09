@@ -43,9 +43,9 @@ class FleetVerbandController extends Controller
 		foreach ($fleets as $item) {
 			$parse['items'][] = [
 				'id' => $item->id,
-				'ships' => $item->getShips(),
-				'ships_total' => $item->getTotalShips(),
 				'mission' => $item->mission,
+				'amount' => $item->entities->getTotal(),
+				'units' => $fleet->entities,
 				'start' => [
 					...$item->getOriginCoordinates()->toArray(),
 					'time' => $item->start_date?->utc()->toAtomString(),

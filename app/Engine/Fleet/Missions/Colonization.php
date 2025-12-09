@@ -54,19 +54,11 @@ class Colonization extends BaseMission
 
 					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_colo_mess_from'), $message));
 
-					$newFleet = [];
-
-					$fleetData = $this->fleet->getShips();
-
-					foreach ($fleetData as $shipId => $shipArr) {
-						if ($shipId == 208 && $shipArr['count'] > 0) {
-							$shipArr['count']--;
+					foreach ($this->fleet->entities as $entity) {
+						if ($entity->id == 208 && $entity->count > 0) {
+							$entity->count--;
 						}
-
-						$newFleet[] = $shipArr;
 					}
-
-					$this->fleet->fleet_array = $newFleet;
 
 					$this->restoreFleetToPlanet(false);
 					$this->killFleet();

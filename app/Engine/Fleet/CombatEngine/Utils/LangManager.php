@@ -15,7 +15,7 @@ class LangManager
 	public static function getInstance()
 	{
 		if (empty(self::$instance)) {
-			self::$instance = new LangManager();
+			self::$instance = new self();
 		}
 		return self::$instance;
 	}

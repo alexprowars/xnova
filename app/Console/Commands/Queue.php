@@ -17,7 +17,7 @@ class Queue extends Command
 	{
 		$items = Models\Queue::query()
 			->select(['user_id', 'planet_id'])
-			->where('date', '>', 0)
+			->whereNotNull('date')
 			->where('date_end', '<=', now()->addSeconds(5))
 			//->orderBy('id')
 			->groupBy('user_id', 'planet_id')

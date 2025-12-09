@@ -295,12 +295,7 @@ class BattleReport
 		return $this->getAfterBattlePlayerGroup($players, $playersRepaired);
 	}
 
-	/**
-	 * @param PlayerGroup $players
-	 * @param PlayerGroup $playersRepaired
-	 * @return PlayerGroup
-	 */
-	private function getAfterBattlePlayerGroup($players, $playersRepaired)
+	private function getAfterBattlePlayerGroup(PlayerGroup $players, PlayerGroup $playersRepaired): PlayerGroup
 	{
 		foreach ($playersRepaired->getIterator() as $idPlayer => $playerRepaired) {
 			if (!$players->existPlayer($idPlayer)) { // player is completely destroyed

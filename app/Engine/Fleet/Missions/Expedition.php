@@ -3,6 +3,8 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntity;
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\CombatEngine\Core\Battle;
@@ -54,13 +56,13 @@ class Expedition extends BaseMission
 		$fleetCapacity = 0;
 		$fleetCount = [];
 
-		foreach ($this->fleet->getShips() as $type => $ship) {
-			$fleetCount[$type] = $ship['count'];
+		foreach ($this->fleet->entities as $entity) {
+			$fleetCount[$entity->id] = $entity->count;
 
-			$fleetData = Vars::getUnitData($type);
+			$fleetData = Vars::getUnitData($entity->id);
 
-			$fleetCapacity += $ship['count'] * $fleetData['capacity'];
-			$fleetPoints += $ship['count'] * $expowert[$type];
+			$fleetCapacity += $entity->count * $fleetData['capacity'];
+			$fleetPoints += $entity->count * $expowert[$entity->id];
 		}
 
 		$statFactor = Statistic::query()->where('stat_type', 1)->max('total_points');
@@ -152,7 +154,7 @@ class Expedition extends BaseMission
 				$foundShips = max(round($size * min($fleetPoints, ($upperLimit / 2))), 10000);
 
 				$foundShipMess = '';
-				$newFleetArray = [];
+				$newFleetArray = new FleetEntityCollection();
 
 				$found = [];
 
@@ -184,15 +186,12 @@ class Expedition extends BaseMission
 				}
 
 				foreach ($fleetCount as $id => $count) {
-					$newFleetArray[] = [
-						'id' => (int) $id,
-						'count' => (int) ($count + floor($found[$id] ?? 0)),
-					];
+					$newFleetArray->add(FleetEntity::create($id, (int) ($count + floor($found[$id] ?? 0))));
 				}
 
 				$message .= $foundShipMess;
 
-				$this->fleet->fleet_array = $newFleetArray;
+				$this->fleet->entities = $newFleetArray;
 				$this->return();
 
 				break;
@@ -337,25 +336,14 @@ class Expedition extends BaseMission
 				$attackFleets = $mission->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 
 				foreach ($attackFleets as $fleetID => $attacker) {
-					$fleetArray = [];
+					$fleetArray = FleetEntityCollection::createFromArray($attacker);
 
-					foreach ($attacker as $element => $amount) {
-						if (!is_numeric($element) || !$amount) {
-							continue;
-						}
-
-						$fleetArray[] = [
-							'id' => (int) $element,
-							'count' => (int) $amount
-						];
-					}
-
-					if (count($fleetArray)) {
+					if ($fleetArray->isEmpty()) {
 						$this->killFleet($fleetID);
 					} else {
 						Models\Fleet::query()->whereKey($fleetID)
 							->update([
-								'fleet_array' 	=> $fleetArray,
+								'entities'		=> $fleetArray,
 								'updated_at' 	=> DB::raw('end_date'),
 								'mess'			=> 1,
 								'won'			=> $result['won']

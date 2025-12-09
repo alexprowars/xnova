@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Attributes\WithoutRelations;
+use Illuminate\Support\Facades\DB;
 
 class FleetMissionJob implements ShouldQueue, ShouldBeUnique
 {
@@ -20,21 +21,23 @@ class FleetMissionJob implements ShouldQueue, ShouldBeUnique
 
 	public function handle(): void
 	{
-		/** @var class-string<Mission> $mission */
-		$mission = MissionFactory::getMission($this->fleet->mission);
-		$mission = new $mission($this->fleet);
+		DB::transaction(function () {
+			/** @var class-string<Mission> $mission */
+			$mission = MissionFactory::getMission($this->fleet->mission);
+			$mission = new $mission($this->fleet);
 
-		if ($this->fleet->mess == 0 && $this->fleet->start_date->isNowOrPast()) {
-			$mission->targetEvent();
-		}
+			if ($this->fleet->mess == 0 && $this->fleet->start_date->isNowOrPast()) {
+				$mission->targetEvent();
+			}
 
-		if ($this->fleet->mess == 3 && $this->fleet->end_stay->isNowOrPast()) {
-			$mission->endStayEvent();
-		}
+			if ($this->fleet->mess == 3 && $this->fleet->end_stay->isNowOrPast()) {
+				$mission->endStayEvent();
+			}
 
-		if ($this->fleet->mess == 1 && $this->fleet->end_date->isNowOrPast()) {
-			$mission->returnEvent();
-		}
+			if ($this->fleet->mess == 1 && $this->fleet->end_date->isNowOrPast()) {
+				$mission->returnEvent();
+			}
+		});
 	}
 
 	public function uniqueId(): string

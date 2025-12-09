@@ -363,11 +363,11 @@ class InfoController extends Controller
 
 		$tt = 0;
 
-		foreach ($fleet->getShips() as $type => $ship) {
-			if ($type > 100) {
-				$unitData = Vars::getUnitData($type);
+		foreach ($fleet->entities as $entity) {
+			if ($entity->id > 100) {
+				$unitData = Vars::getUnitData($entity->id);
 
-				$tt += $unitData['stay'] * $ship['count'];
+				$tt += $unitData['stay'] * $entity->count;
 			}
 		}
 

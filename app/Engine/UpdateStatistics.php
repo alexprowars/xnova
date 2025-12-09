@@ -2,6 +2,7 @@
 
 namespace App\Engine;
 
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Helpers;
@@ -179,30 +180,30 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getFleetPointsOnTour($CurrentFleet)
+	private function getFleetPointsOnTour(FleetEntityCollection $entities)
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
 		$FleetArray = [];
 
-		foreach ($CurrentFleet as $type => $ship) {
-			$Units = Vars::getItemTotalPrice($type, true);
-			$FleetPoints += ($Units * $ship['count']);
+		foreach ($entities as $entity) {
+			$Units = Vars::getItemTotalPrice($entity->id, true);
+			$FleetPoints += ($Units * $entity->count);
 
-			if ($type != 212) {
-				$FleetCounts += $ship['count'];
+			if ($entity->id != 212) {
+				$FleetCounts += $entity->count;
 			}
 
-			if (isset($FleetArray[$type])) {
-				$FleetArray[$type] += $ship['count'];
+			if (isset($FleetArray[$entity->id])) {
+				$FleetArray[$entity->id] += $entity->count;
 			} else {
-				$FleetArray[$type] = $ship['count'];
+				$FleetArray[$entity->id] = $entity->count;
 			}
 		}
 
 		$RetValue['FleetCount'] = $FleetCounts;
 		$RetValue['FleetPoint'] = $FleetPoints;
-		$RetValue['fleet_array'] = $FleetArray;
+		$RetValue['FleetArray'] = $FleetArray;
 
 		return $RetValue;
 	}
@@ -274,7 +275,7 @@ class UpdateStatistics
 		$UsrFleets = Fleet::query()->get();
 
 		foreach ($UsrFleets as $CurFleet) {
-			$Points = $this->getFleetPointsOnTour($CurFleet->getShips());
+			$Points = $this->getFleetPointsOnTour($CurFleet->entities);
 
 			if (!isset($fleetPoints[$CurFleet->user_id])) {
 				$fleetPoints[$CurFleet->user_id] = [];
@@ -285,7 +286,7 @@ class UpdateStatistics
 
 			$fleetPoints[$CurFleet->user_id]['points'] += ($Points['FleetPoint'] / 1000);
 			$fleetPoints[$CurFleet->user_id]['count'] += $Points['FleetCount'];
-			$fleetPoints[$CurFleet->user_id]['array'][] = $Points['fleet_array'];
+			$fleetPoints[$CurFleet->user_id]['array'][] = $Points['FleetArray'];
 		}
 
 		return $fleetPoints;

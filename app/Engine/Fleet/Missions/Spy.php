@@ -57,29 +57,21 @@ class Spy extends BaseMission
 			$TargetSpyLvl += 2;
 		}
 
-		$LS = 0;
+		$spySondeEntity = $this->fleet->entities->getByEntityId(210);
 
-		$fleetData = $this->fleet->getShips();
-
-		if (isset($fleetData[210])) {
-			$LS = $fleetData[210]['count'];
-		}
-
-		if ($LS > 0) {
+		if ($spySondeEntity && $spySondeEntity->count) {
 			$defenders = Fleet::query()
 				->coordinates(FleetDirection::END, $this->fleet->getDestinationCoordinates())
 				->where('mess', 3)
 				->get();
 
 			foreach ($defenders as $row) {
-				$fleetData = $row->getShips();
-
-				foreach ($fleetData as $shipId => $shipData) {
-					if ($shipId < 100) {
+				foreach ($row->entities as $entity) {
+					if ($entity->id < 100) {
 						continue;
 					}
 
-					$TargetPlanet->updateAmount($shipId, $shipData['count'], true);
+					$TargetPlanet->updateAmount($entity->id, $entity->count, true);
 				}
 			}
 
@@ -88,10 +80,10 @@ class Spy extends BaseMission
 			$techDifference = abs($CurrentSpyLvl - $TargetSpyLvl);
 
 			if ($TargetSpyLvl > $CurrentSpyLvl) {
-				$ST = ($LS - ($techDifference ** 2));
+				$ST = ($spySondeEntity->count - ($techDifference ** 2));
 			}
 			if ($CurrentSpyLvl >= $TargetSpyLvl) {
-				$ST = ($LS + ($techDifference ** 2));
+				$ST = ($spySondeEntity->count + ($techDifference ** 2));
 			}
 
 			$MaterialsInfo = $this->spyTarget($TargetPlanet, 0, __('fleet_engine.sys_spy_maretials'));
@@ -119,7 +111,7 @@ class Spy extends BaseMission
 				$SpyMessage .= $TargetOfficierLvlInfo['String'];
 			}
 
-			$TargetForce = ($PlanetFleetInfo['Count'] * $LS) / 4;
+			$TargetForce = ($PlanetFleetInfo['Count'] * $spySondeEntity->count) / 4;
 			$TargetForce = min(100, max(0, $TargetForce));
 
 			$TargetChances = random_int(0, $TargetForce);

@@ -16,7 +16,7 @@ class TechnologiesEntity implements Arrayable, JsonSerializable
 		$this->level = $data['l'];
 	}
 
-	public static function create(int $id, int $level = 0): TechnologiesEntity
+	public static function create(int $id, int $level = 0): self
 	{
 		return new self(['i' => $id, 'l' => $level]);
 	}

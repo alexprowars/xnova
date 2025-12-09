@@ -28,18 +28,16 @@ class EmpireController extends Controller
 
 			$fleetsFly[$key] ??= [];
 
-			$fleetData = $fleet->getShips();
-
-			foreach ($fleetData as $shipId => $shipArr) {
-				$fleetsFly[$key][$shipId] ??= 0;
-				$fleetsFly[$key][$shipId] += $shipArr['count'];
+			foreach ($fleet->entities as $entity) {
+				$fleetsFly[$key][$entity->id] ??= 0;
+				$fleetsFly[$key][$entity->id] += $entity->count;
 
 				if ($fleet->target_user_id == $this->user->id) {
-					if (!isset($build_hangar_full[$shipId])) {
-						$build_hangar_full[$shipId] = 0;
+					if (!isset($build_hangar_full[$entity->id])) {
+						$build_hangar_full[$entity->id] = 0;
 					}
 
-					$build_hangar_full[$shipId] += $shipArr['count'];
+					$build_hangar_full[$entity->id] += $entity->count;
 				}
 			}
 		}

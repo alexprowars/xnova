@@ -2,6 +2,7 @@
 
 namespace App\Engine\Fleet;
 
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\PlanetType;
 use App\Facades\Vars;
 use App\Models;
@@ -57,11 +58,9 @@ class FleetEngine
 			$targetPlanet->getProduction()->update();
 
 			if ($fleet) {
-				$fleetData = $this->fleet->getShips();
-
-				foreach ($fleetData as $shipId => $shipArr) {
-					if ($shipArr['count'] > 0) {
-						$targetPlanet->updateAmount($shipId, $shipArr['count'], true);
+				foreach ($this->fleet->entities as $entity) {
+					if ($entity->count > 0) {
+						$targetPlanet->updateAmount($entity->id, $entity->count, true);
 					}
 				}
 			}
@@ -91,19 +90,19 @@ class FleetEngine
 		$this->fleet->assault?->delete();
 	}
 
-	public function convertFleetToDebris($fleet)
+	public function convertFleetToDebris(FleetEntityCollection $fleets)
 	{
 		$debris = ['metal' => 0, 'crystal' => 0];
 
-		foreach ($fleet as $fleetId => $fleetData) {
-			$res = Vars::getItemPrice($fleetId);
+		foreach ($fleets as $entity) {
+			$res = Vars::getItemPrice($entity->id);
 
 			if (!empty($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += floor($fleetData['count'] * $res['metal'] * config('game.fleetDebrisRate', 0));
+				$debris['metal'] += floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));
 			}
 
 			if (!empty($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += floor($fleetData['count'] * $res['crystal'] * config('game.fleetDebrisRate', 0));
+				$debris['crystal'] += floor($entity->count * $res['crystal'] * config('game.fleetDebrisRate', 0));
 			}
 		}
 

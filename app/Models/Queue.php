@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Engine\EntityFactory;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use Illuminate\Database\Eloquent\Model;
@@ -33,5 +34,30 @@ class Queue extends Model
 	public function planet(): BelongsTo
 	{
 		return $this->belongsTo(Planet::class, 'planet_id');
+	}
+
+	public function getTime(): int
+	{
+		if ($this->type === QueueType::BUILDING || $this->type === QueueType::RESEARCH) {
+			$entity = EntityFactory::get(
+				$this->object_id,
+				$this->level - ($this->operation == QueueConstructionType::BUILDING ? 1 : 0),
+				$this->planet
+			);
+		} else {
+			$entity = EntityFactory::get(
+				$this->object_id,
+				1,
+				$this->planet
+			);
+		}
+
+		$result = $entity->getTime();
+
+		if ($this->operation == QueueConstructionType::DESTROY) {
+			$result = (int) ceil($result / 2);
+		}
+
+		return $result;
 	}
 }

@@ -296,8 +296,8 @@ class AllianceController extends Controller
 
 		$items = Models\LogsStat::query()->where('object_id', $alliance->id)
 			->where('type', 2)
-			->where('time', '>', now()->subDays(14))
-			->orderBy('time')
+			->where('date', '>', now()->subDays(14))
+			->orderBy('date')
 			->get();
 
 		foreach ($items as $item) {

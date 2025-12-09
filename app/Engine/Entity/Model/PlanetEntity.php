@@ -2,7 +2,6 @@
 
 namespace App\Engine\Entity\Model;
 
-use App\Engine\EntityFactory;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
@@ -19,7 +18,7 @@ class PlanetEntity implements Arrayable, JsonSerializable
 		$this->factor = $data['f'];
 	}
 
-	public static function create(int $id, int $level = 0, int $factor = 10): PlanetEntity
+	public static function create(int $id, int $level = 0, int $factor = 10): self
 	{
 		return new self(['i' => $id, 'l' => $level, 'f' => $factor]);
 	}

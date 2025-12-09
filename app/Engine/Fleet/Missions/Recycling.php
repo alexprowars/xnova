@@ -34,14 +34,12 @@ class Recycling extends BaseMission
 			$recyclerCapacity = 0;
 			$otherFleetCapacity = 0;
 
-			$fleetData = $this->fleet->getShips();
+			foreach ($this->fleet->entities as $entity) {
+				$unitData = Vars::getUnitData($entity->id);
 
-			foreach ($fleetData as $shipId => $shipArr) {
-				$unitData = Vars::getUnitData($shipId);
+				$capacity = $unitData['capacity'] * $entity->count;
 
-				$capacity = $unitData['capacity'] * $shipArr['count'];
-
-				if ($shipId == 209) {
+				if ($entity->id == 209) {
 					$recyclerCapacity += $capacity;
 				} else {
 					$otherFleetCapacity += $capacity;

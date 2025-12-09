@@ -53,7 +53,7 @@ class BattleReport
 				}
 
 				$html .= '<div><table class="table report_user">
-							<tr><td class="c" colspan="3"><span class="negative">' . $info['username'] . '</span></td></tr>
+							<tr><td class="c" colspan="3"><div class="text-center negative">' . $info['username'] . '</div></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
 							<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
@@ -75,7 +75,7 @@ class BattleReport
 				}
 
 				$html .= '<div><table class="table report_user">
-							<tr><td class="c" colspan="3"><span class="positive">' . $info['username'] . '</span></td></tr>
+							<tr><td class="c" colspan="3"><div class="text-center positive">' . $info['username'] . '</div></td></tr>
 							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
 							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
 							<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>

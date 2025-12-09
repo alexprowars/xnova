@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,7 +14,7 @@ return new class extends Migration {
 			$table->string('user_name', 50)->nullable()->default('');
 			$table->integer('mission')->nullable();
 			$table->bigInteger('amount')->default(0);
-			$table->json('fleet_array')->nullable();
+			$table->json('entities')->default(new Expression('(JSON_ARRAY())'));
 			$table->timestamp('start_date')->nullable()->index();
 			$table->tinyInteger('start_galaxy')->nullable();
 			$table->smallInteger('start_system')->nullable();
@@ -32,7 +33,7 @@ return new class extends Migration {
 			$table->string('target_user_name', 50)->nullable()->default('');
 			$table->foreignId('assault_id')->nullable()->constrained('assaults')->nullOnDelete();
 			$table->integer('mess')->default(0);
-			$table->tinyInteger('raunds')->default(6);
+			$table->tinyInteger('rounds')->default(6);
 			$table->tinyInteger('won')->default(0);
 			$table->timestamps();
 			$table->index('updated_at');

@@ -101,7 +101,7 @@ class QueueManager
 		}
 
 		if ($queueItem->delete()) {
-			$this->queue->reject(fn(Models\Queue $item) => $item->is($queueItem));
+			$this->queue = $this->queue->reject(fn(Models\Queue $item) => $item->is($queueItem));
 
 			return true;
 		}

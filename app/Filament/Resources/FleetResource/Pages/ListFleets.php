@@ -31,7 +31,7 @@ class ListFleets extends ListRecords
 						Fleet::createFleetPopupedMissionLink($record, $record->mission->title(), '')
 						. ' ' . ($record->mess == 1 ? 'R' : 'A'))
 					->sortable(),
-				TextColumn::make('fleet_array')
+				TextColumn::make('entities')
 					->label('Состав')
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => Fleet::createFleetPopupedFleetLink($record)),

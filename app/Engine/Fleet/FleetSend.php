@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Game;
 use App\Events\FleetSended;
@@ -462,26 +463,17 @@ class FleetSend
 			}
 		}
 
-		$fleetArray = [];
-
-		foreach ($this->fleetArray as $unitId => $count) {
-			$fleetArray[] = [
-				'id' => (int) $unitId,
-				'count' => $count,
-			];
-		}
-
 		if ($this->mission == Mission::Attack) {
-			$raunds = max(min(10, 6), 6);
+			$rounds = max(min(10, 6), 6);
 		} else {
-			$raunds = 0;
+			$rounds = 0;
 		}
 
 		$fleet->fill([
 			'user_id' 				=> $this->planet->user->id,
 			'user_name' 			=> $this->planet->name,
 			'mission' 				=> $this->mission,
-			'fleet_array' 			=> $fleetArray,
+			'entities' 				=> FleetEntityCollection::createFromArray($this->fleetArray),
 			'start_galaxy' 			=> $this->planet->galaxy,
 			'start_system' 			=> $this->planet->system,
 			'start_planet' 			=> $this->planet->planet,
@@ -497,7 +489,7 @@ class FleetSend
 			'target_user_id' 		=> $this->targetPlanet?->user_id,
 			'target_user_name' 		=> $this->targetPlanet->name ?? '',
 			'assault_id' 			=> $this->assault->id ?? null,
-			'raunds' 				=> $raunds,
+			'rounds' 				=> $rounds,
 			'updated_at' 			=> $fleet->start_date,
 		]);
 

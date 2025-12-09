@@ -143,9 +143,6 @@ class PhysicShot
 	/**
 	 * PhysicShot2::clamp()
 	 * Return $a if greater than $b, zero otherwise
-	 * @param mixed $a
-	 * @param mixed $b
-	 * @return mixed
 	 */
 	private function clamp($a, $b)
 	{

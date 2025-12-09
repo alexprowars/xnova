@@ -27,10 +27,10 @@ class Destruction extends BaseMission
 			return;
 		}
 
-		$checkFleet = Models\Fleet::find($this->fleet->id, ['fleet_array', 'won']);
+		$checkFleet = Models\Fleet::find($this->fleet->id, ['entities', 'won']);
 
 		if ($checkFleet && $checkFleet->won == 1) {
-			$this->fleet->fleet_array = $checkFleet->fleet_array;
+			$this->fleet->entities = $checkFleet->entities;
 			$this->fleet->won = $checkFleet->won;
 
 			unset($checkFleet);
@@ -40,10 +40,8 @@ class Destruction extends BaseMission
 
 			$rips = 0;
 
-			$fleetData = $this->fleet->getShips();
-
-			if (isset($fleetData[214])) {
-				$rips = $fleetData[214]['count'];
+			if ($ships = $this->fleet->entities->getByEntityId(214)) {
+				$rips = $ships->count;
 			}
 
 			if ($rips > 0) {
@@ -97,7 +95,7 @@ class Destruction extends BaseMission
 
 					$this->killFleet();
 
-					$debree = $this->convertFleetToDebris($fleetData);
+					$debree = $this->convertFleetToDebris($this->fleet->entities);
 
 					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
 						Models\Planet::query()->coordinates($this->fleet->getDestinationCoordinates(false))

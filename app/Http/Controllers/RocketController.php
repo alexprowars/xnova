@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntity;
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
@@ -67,7 +69,7 @@ class RocketController extends Controller
 			'user_id' 			=> $this->user->id,
 			'user_name' 		=> $this->planet->name,
 			'mission' 			=> Mission::Rak,
-			'fleet_array' 		=> [['id' => 503, 'count' => $count, 'target' => $destroyType]],
+			'entities' 			=> new FleetEntityCollection([FleetEntity::create(503, $count, ['target' => $destroyType])]),
 			'start_date' 		=> now()->addSeconds($time),
 			'start_galaxy' 		=> $this->planet->galaxy,
 			'start_system' 		=> $this->planet->system,

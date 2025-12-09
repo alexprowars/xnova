@@ -3,20 +3,24 @@
 namespace App\Models;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntity;
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\Mission;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property FleetEntityCollection $entities
+ */
 class Fleet extends Model
 {
 	protected $table = 'fleets';
 	protected $guarded = [];
-
 	protected $casts = [
-		'fleet_array' => 'json:unicode',
 		'start_date' => 'immutable_datetime',
 		'end_date' => 'immutable_datetime',
 		'end_stay' => 'immutable_datetime',
@@ -24,6 +28,18 @@ class Fleet extends Model
 		'start_type' => PlanetType::class,
 		'end_type' => PlanetType::class,
 	];
+
+	/**
+	 * @return array{
+	 *     entities: 'Illuminate\Database\Eloquent\Casts\AsCollection',
+	 * }
+	 */
+	protected function casts(): array
+	{
+		return [
+			'entities' => AsCollection::using(FleetEntityCollection::class, FleetEntity::class),
+		];
+	}
 
 	/** @return BelongsTo<User, $this> */
 	public function user(): BelongsTo
@@ -53,65 +69,24 @@ class Fleet extends Model
 		return $this->end_galaxy . ':' . $this->end_system . ':' . $this->end_planet;
 	}
 
-	public function getStartAdressLink($FleetType = '')
+	public function getStartAdressLink($type = '')
 	{
 		$uri = route('galaxy', [
 			'galaxy' => $this->start_galaxy,
 			'system' => $this->start_system,
 		], false);
 
-		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitStartPosition() . ']</a>';
+		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitStartPosition() . ']</a>';
 	}
 
-	public function getTargetAdressLink($FleetType = '')
+	public function getTargetAdressLink($type = '')
 	{
 		$uri = route('galaxy', [
 			'galaxy' => $this->end_galaxy,
 			'system' => $this->end_system,
 		], false);
 
-		return '<a href="' . $uri . '" ' . $FleetType . '>[' . $this->splitTargetPosition() . ']</a>';
-	}
-
-	public function getTotalShips()
-	{
-		$result = 0;
-
-		$data = $this->getShips();
-
-		foreach ($data as $type) {
-			$result += $type['count'];
-		}
-
-		return $result;
-	}
-
-	public function getShips()
-	{
-		if (empty($this->fleet_array)) {
-			return [];
-		}
-
-		$result = [];
-
-		foreach ($this->fleet_array as $fleet) {
-			if (empty($fleet['id'])) {
-				continue;
-			}
-
-			$fleetId = (int) $fleet['id'];
-
-			$result[$fleetId] = [
-				'id' => $fleetId,
-				'count' => isset($fleet['count']) ? (int) $fleet['count'] : 0,
-			];
-
-			if (isset($fleet['target'])) {
-				$result[$fleetId]['target'] = (int) $fleet['target'];
-			}
-		}
-
-		return $result;
+		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitTargetPosition() . ']</a>';
 	}
 
 	public function canBack()

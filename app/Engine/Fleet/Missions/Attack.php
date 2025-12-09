@@ -3,6 +3,7 @@
 namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
@@ -176,11 +177,11 @@ class Attack extends BaseMission
 			$defenders->getPlayer($targetUser->id)->addDefense($homeFleet);
 		}
 
-		if (!$this->fleet->raunds) {
-			$this->fleet->raunds = 6;
+		if (!$this->fleet->rounds) {
+			$this->fleet->rounds = 6;
 		}
 
-		$engine = new Battle($attackers, $defenders, $this->fleet->raunds);
+		$engine = new Battle($attackers, $defenders, $this->fleet->rounds);
 		$report = $engine->getReport();
 		$result = ['version' => 2, 'time' => time(), 'rw' => []];
 
@@ -282,24 +283,13 @@ class Attack extends BaseMission
 		}
 
 		foreach ($attackFleets as $fleetID => $attacker) {
-			$fleetArray = [];
+			$fleetArray = FleetEntityCollection::createFromArray($attacker);
 
-			foreach ($attacker as $element => $amount) {
-				if (!is_numeric($element) || !$amount) {
-					continue;
-				}
-
-				$fleetArray[] = [
-					'id' => (int) $element,
-					'count' => (int) $amount
-				];
-			}
-
-			if (empty($fleetArray)) {
+			if ($fleetArray->isEmpty()) {
 				$this->killFleet($fleetID);
 			} else {
 				$update = [
-					'fleet_array' 	=> $fleetArray,
+					'entities' 		=> $fleetArray,
 					'updated_at' 	=> DB::raw('end_date'),
 					'mess'			=> 1,
 					'assault_id'	=> null,
@@ -318,25 +308,14 @@ class Attack extends BaseMission
 
 		foreach ($defenseFleets as $fleetID => $defender) {
 			if ($fleetID != 0) {
-				$fleetArray = [];
+				$fleetArray = FleetEntityCollection::createFromArray($defender);
 
-				foreach ($defender as $element => $amount) {
-					if (!is_numeric($element) || !$amount) {
-						continue;
-					}
-
-					$fleetArray[] = [
-						'id' => (int) $element,
-						'count' => (int) $amount
-					];
-				}
-
-				if (!count($fleetArray)) {
+				if ($fleetArray->isEmpty()) {
 					$this->killFleet($fleetID);
 				} else {
-					Planet::query()->where('id', $fleetID)
+					Planet::query()->whereKey($fleetID)
 						->update([
-							'fleet_array' => $fleetArray,
+							'entities' => $fleetArray,
 							'updated_at' => DB::raw('end_date'),
 						]);
 				}
@@ -577,7 +556,7 @@ class Attack extends BaseMission
 			'user_id' 		=> $this->fleet->user_id,
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
-			'fleet' 		=> $this->fleet->fleet_array,
+			'fleet' 		=> $this->fleet->entities,
 			'battle_log'	=> $report->id
 		]);
 
@@ -586,12 +565,8 @@ class Attack extends BaseMission
 
 	public function getGroupFleet(FleetModel $fleet, PlayerGroup $playerGroup)
 	{
-		$fleetData = $fleet->getShips();
-
-		if (!count($fleetData)) {
-			if ($fleet->mission == MissionEnum::Attack || ($fleet->mission == MissionEnum::Assault && count($fleetData) == 1 && isset($fleetData[210]))) {
-				(new FleetEngine($fleet))->return();
-			}
+		if (($fleet->entities->isEmpty() && $fleet->mission == MissionEnum::Attack) || ($fleet->mission == MissionEnum::Assault && $fleet->entities->count() == 1 && $fleet->entities->getByEntityId(210))) {
+			(new FleetEngine($fleet))->return();
 
 			return;
 		}
@@ -608,12 +583,12 @@ class Attack extends BaseMission
 
 		$res = [];
 
-		foreach ($fleetData as $shipId => $shipArr) {
-			if (Vars::getItemType($shipId) != ItemType::FLEET) {
+		foreach ($fleet->entities as $entity) {
+			if (Vars::getItemType($entity->id) != ItemType::FLEET) {
 				continue;
 			}
 
-			$res[$shipId] = $shipArr['count'];
+			$res[$entity->id] = $entity->count;
 		}
 
 		if (!isset($this->usersTech[$fleet->user_id])) {
@@ -665,12 +640,12 @@ class Attack extends BaseMission
 
 		$fleetObj = new Fleet($fleet->id);
 
-		foreach ($fleetData as $shipId => $shipArr) {
-			if (Vars::getItemType($shipId) != ItemType::FLEET || !$shipArr['count']) {
+		foreach ($fleet->entities as $entity) {
+			if (Vars::getItemType($entity->id) != ItemType::FLEET || empty($entity->count)) {
 				continue;
 			}
 
-			$fleetObj->addShipType($this->getShipType($shipId, $shipArr['count'], $res));
+			$fleetObj->addShipType($this->getShipType($entity->id, $entity->count, $res));
 		}
 
 		if (!$fleetObj->isEmpty()) {

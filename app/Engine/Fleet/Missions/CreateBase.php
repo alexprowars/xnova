@@ -57,19 +57,12 @@ class CreateBase extends BaseMission
 
 					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 
-					$newFleet = [];
-
-					$fleetData = $this->fleet->getShips();
-
-					foreach ($fleetData as $shipId => $shipArr) {
-						if ($shipId == 216 && $shipArr['count'] > 0) {
-							$shipArr['count']--;
+					foreach ($this->fleet->entities as $entity) {
+						if ($entity->id == 216 && $entity->count > 0) {
+							$entity->count--;
 						}
-
-						$newFleet[] = $shipArr;
 					}
 
-					$this->fleet->fleet_array = $newFleet;
 					$this->fleet->end_type = PlanetType::MILITARY_BASE;
 
 					$this->restoreFleetToPlanet(false);

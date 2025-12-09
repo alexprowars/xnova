@@ -27,10 +27,8 @@ class Stay extends BaseMission
 
 			$TargetAddedGoods = '';
 
-			$fleetData = $this->fleet->getShips();
-
-			foreach ($fleetData as $shipId => $shipArr) {
-				$TargetAddedGoods .= ', ' . __('main.tech.' . $shipId) . ': ' . $shipArr['count'];
+			foreach ($this->fleet->entities as $entity) {
+				$TargetAddedGoods .= ', ' . __('main.tech.' . $entity->id) . ': ' . $entity->count;
 			}
 
 			$targetMessage = __('fleet_engine.sys_stat_mess', [
@@ -70,10 +68,8 @@ class Stay extends BaseMission
 				'd' => Format::number($this->fleet->resource_deuterium),
 			], $this->fleet->user->locale);
 
-			$fleetData = $this->fleet->getShips();
-
-			foreach ($fleetData as $shipId => $shipArr) {
-				$targetAddedGoods .= ', ' . __('main.tech.' . $shipId, locale: $this->fleet->user->locale) . ': ' . $shipArr['count'];
+			foreach ($this->fleet->entities as $entity) {
+				$targetAddedGoods .= ', ' . __('main.tech.' . $entity->id, locale: $this->fleet->user->locale) . ': ' . $entity->count;
 			}
 
 			$TargetMessage = __('fleet_engine.sys_stay_mess_back', locale: $this->fleet->user->locale) . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend', locale: $this->fleet->user->locale) . '<br>' . $targetAddedGoods;

@@ -67,8 +67,8 @@ class FleetController extends Controller
 			$parse['fleets'][] = [
 				'id' => $fleet->id,
 				'mission' => $fleet->mission,
-				'amount' => $fleet->getTotalShips(),
-				'units' => $fleet->getShips(),
+				'amount' => $fleet->entities->getTotal(),
+				'units' => $fleet->entities,
 				'start' => [
 					'galaxy' => $fleet->start_galaxy,
 					'system' => $fleet->start_system,

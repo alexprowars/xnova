@@ -28,29 +28,21 @@ class Fleet extends Building
 
 	public static function createFleetPopupedFleetLink(Models\Fleet $fleetRow, ?User $user = null): array
 	{
-		$fleets = $fleetRow->getShips();
-
-		$total = 0;
-
-		foreach ($fleets as $fleet) {
-			$total += $fleet['count'];
-		}
-
 		$result = [];
 
 		if ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 2) {
 			return [];
 		} elseif ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 4) {
-			$result['total'] = $total;
+			$result['total'] = $fleetRow->entities->getTotal();
 		} elseif ($user && $fleetRow->user_id != $user->id && $user->getTechLevel('spy') < 8) {
-			$result['total'] = $total;
+			$result['total'] = $fleetRow->entities->getTotal();
 
-			foreach ($fleets as $id => $fleet) {
-				$result[Vars::getName($id)] = null;
+			foreach ($fleetRow->entities as $entity) {
+				$result[Vars::getName($entity->id)] = null;
 			}
 		} else {
-			foreach ($fleets as $id => $fleet) {
-				$result[Vars::getName($id)] = $fleet['count'];
+			foreach ($fleetRow->entities as $entity) {
+				$result[Vars::getName($entity->id)] = $entity->count;
 			}
 		}
 
