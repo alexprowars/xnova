@@ -18,8 +18,8 @@ Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whe
 Route::post('login', [Controllers\LoginController::class, 'credentials']);
 Route::get('login/social/{service}', [Controllers\LoginController::class, 'services']);
 Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback']);
-Route::get('login/reset', [Controllers\ResetPasswordController::class, 'reset']);
-Route::post('login/reset', [Controllers\ResetPasswordController::class, 'send']);
+Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset']);
+Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot']);
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('tech', [Controllers\TechController::class, 'index']);

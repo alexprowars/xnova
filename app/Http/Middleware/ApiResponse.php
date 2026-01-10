@@ -30,6 +30,9 @@ class ApiResponse
 		}
 
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+		$response->setData([
+			'data' => $response->getOriginalContent()
+		]);
 
 		return $response;
 	}

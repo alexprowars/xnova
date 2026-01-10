@@ -8,7 +8,6 @@ use App\Services\GalaxyService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +17,6 @@ class AppServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
-		JsonResource::withoutWrapping();
-
 		Model::unguard();
 
 		Date::use(CarbonImmutable::class);
