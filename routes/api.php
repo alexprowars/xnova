@@ -138,7 +138,6 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('officiers', [Controllers\OfficiersController::class, 'index']);
 	Route::post('officiers/buy', [Controllers\OfficiersController::class, 'buy'])->middleware(IsVacationMode::class);
 
-	Route::get('options', [Controllers\OptionsController::class, 'index']);
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'email']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);
@@ -172,6 +171,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('quests/{id}', [Controllers\QuestController::class, 'info'])->whereNumber('id');
 	Route::post('quests/{id}', [Controllers\QuestController::class, 'finish'])->whereNumber('id');
 
+	Route::get('user/info', [Controllers\UserController::class, 'info']);
 	Route::post('user/planet/{id}', [Controllers\UserController::class, 'setPlanet']);
 	Route::post('user/daily', [Controllers\UserController::class, 'dailyBonus']);
 

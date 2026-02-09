@@ -46,7 +46,6 @@ class ResetPasswordController extends Controller
 				$user->forceFill([
 					'password' => Hash::make($password),
 				]);
-				$user->setRememberToken(null);
 				$user->save();
 
 				event(new PasswordReset($user));

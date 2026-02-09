@@ -28,9 +28,12 @@ class UserResource extends JsonResource
 		$data = [
 			'id' => $this->resource->id,
 			'name' => trim($this->resource->username),
+			'email' => $this->resource->email,
 			'race' => $this->resource->race,
 			'sex' => $this->resource->sex,
 			'avatar' => $this->resource->avatar,
+			'photo' => $this->resource->getFirstMediaUrl(conversionName: 'thumb'),
+			'locale' => $this->resource->locale,
 			'messages' => $this->resource->messages,
 			'alliance' => $this->resource->alliance_id > 0 ? [
 				'id' => $this->resource->alliance_id,

@@ -4,9 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Engine\Game;
 use App\Exceptions\Exception;
+use App\Models\UserAuthentication;
 
 class UserController extends Controller
 {
+	public function info()
+	{
+		$result = [];
+		$result['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
+		$result['allow_name_change'] = $this->user->username_change?->lessThan(now()->subDay()) ?? true;
+		$result['auth'] = [];
+
+		$authItems = UserAuthentication::query()
+			->whereBelongsTo($this->user)
+			->get();
+
+		foreach ($authItems as $authItem) {
+			$result['auth'][] = [
+				'id' => $authItem->id,
+				'provider' => $authItem->provider,
+				'provider_id' => $authItem->provider_id,
+				'created_at' => $authItem->created_at->utc()->toAtomString(),
+				'login_date' => $authItem->login_date?->utc()->toAtomString(),
+			];
+		}
+
+		return $result;
+	}
+
 	public function setPlanet(int $planetId)
 	{
 		$this->user->setSelectedPlanet($planetId);

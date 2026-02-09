@@ -29,9 +29,13 @@ class ApiResponse
 			return new JsonResponse(null, $response->status());
 		}
 
+		if ($response->exception) {
+			return $response;
+		}
+
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
 		$response->setData([
-			'data' => $response->getOriginalContent()
+			'data' => $response->getOriginalContent(),
 		]);
 
 		return $response;
