@@ -57,10 +57,6 @@ class AppServiceProvider extends ServiceProvider
 
 	public function register()
 	{
-		if (str_starts_with(request()->path(), 'admin') || str_starts_with(request()->path(), 'livewire') || isset($_SERVER['LARAVEL_OCTANE'])) {
-			$this->app->register(AdminPanelProvider::class);
-		}
-
 		$this->app->singleton(GalaxyService::class);
 		$this->app->singleton(Vars::class);
 		$this->app->singleton(PlanetServiceFactory::class);

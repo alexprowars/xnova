@@ -133,7 +133,7 @@ class AdminPanelProvider extends PanelProvider
 			$action->modalWidth(Width::ExtraLarge);
 		});
 
-		TextArea::configureUsing(function (TextArea $textarea): void {
+		Textarea::configureUsing(function (Textarea $textarea): void {
 			$textarea->rows(5);
 		});
 

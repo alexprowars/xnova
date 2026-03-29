@@ -3,9 +3,6 @@
     "type": "project",
     "description": "The Xnova game backend server",
     "config": {
-        "platform": {
-            "php": "8.4"
-        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
@@ -24,19 +21,19 @@
         "ext-intl": "*",
         "ext-redis": "*",
 		"ext-zend-opcache": "*",
-        "filament/filament": "^v4.2",
-        "filament/spatie-laravel-media-library-plugin": "^v4.2",
-        "filament/spatie-laravel-settings-plugin": "^v4.2",
-        "laravel/framework": "^12.0.0",
+        "filament/filament": "^v5.0",
+        "filament/spatie-laravel-media-library-plugin": "^v5.0",
+        "filament/spatie-laravel-settings-plugin": "^v5.0",
+        "laravel/framework": "^13.0.0",
         "laravel/reverb": "^1.4",
         "laravel/socialite": "^5.5.7",
-        "laravel/tinker": "^2.9",
+        "laravel/tinker": "^3.0",
         "league/flysystem-path-prefixing": "^3.28",
         "nubs/random-name-generator": "^2.1",
         "shuvroroy/filament-spatie-laravel-backup": "^v3.1.0",
         "socialiteproviders/vkontakte": "^5.0.0",
         "spatie/laravel-medialibrary": "^11.12",
-        "spatie/laravel-permission": "^6.18",
+        "spatie/laravel-permission": "^7.2",
         "technikermathe/blade-lucide-icons": "^3.102"
     },
     "require-dev": {
@@ -44,9 +41,9 @@
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2",
         "mockery/mockery": "^1.6",
-        "pestphp/pest": "^3.7",
-        "pestphp/pest-plugin-faker": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.1",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-faker": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.1",
         "phpstan/phpstan": "^2.1"
     },
     "replace": {
