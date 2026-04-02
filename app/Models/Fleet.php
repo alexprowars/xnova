@@ -59,17 +59,17 @@ class Fleet extends Model
 		return $this->belongsTo(Assault::class, 'assault_id');
 	}
 
-	public function splitStartPosition()
+	public function splitStartPosition(): string
 	{
 		return $this->start_galaxy . ':' . $this->start_system . ':' . $this->start_planet;
 	}
 
-	public function splitTargetPosition()
+	public function splitTargetPosition(): string
 	{
 		return $this->end_galaxy . ':' . $this->end_system . ':' . $this->end_planet;
 	}
 
-	public function getStartAdressLink($type = '')
+	public function getStartAdressLink($type = ''): string
 	{
 		$uri = route('galaxy', [
 			'galaxy' => $this->start_galaxy,
@@ -79,7 +79,7 @@ class Fleet extends Model
 		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitStartPosition() . ']</a>';
 	}
 
-	public function getTargetAdressLink($type = '')
+	public function getTargetAdressLink($type = ''): string
 	{
 		$uri = route('galaxy', [
 			'galaxy' => $this->end_galaxy,
@@ -89,7 +89,7 @@ class Fleet extends Model
 		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitTargetPosition() . ']</a>';
 	}
 
-	public function canBack()
+	public function canBack(): bool
 	{
 		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != Mission::Expedition) && $this->mission != Mission::Rak && $this->target_user_id != 1));
 	}

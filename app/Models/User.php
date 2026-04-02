@@ -95,9 +95,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	 */
 	protected function casts(): array
 	{
-	    return [
-	        'technologies' => AsCollection::using(TechnologiesCollection::class, TechnologiesEntity::class),
-	    ];
+		return [
+			'technologies' => AsCollection::using(TechnologiesCollection::class, TechnologiesEntity::class),
+		];
 	}
 
 	protected static function booted(): void
@@ -124,6 +124,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	public function shortcuts(): HasMany
 	{
 		return $this->hasMany(FleetShortcut::class);
+	}
+
+	/** @return HasMany<Note, $this> */
+	public function notes(): HasMany
+	{
+		return $this->hasMany(Note::class);
 	}
 
 	/** @return HasMany<UserQuest, $this> */

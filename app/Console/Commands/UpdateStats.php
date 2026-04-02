@@ -10,7 +10,7 @@ class UpdateStats extends Command
 	protected $signature = 'game:update.stats';
 	protected $description = '';
 
-	public function handle()
+	public function handle(): void
 	{
 		$start = microtime(true);
 

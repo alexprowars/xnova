@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ChangeEmailRequest extends FormRequest
 {
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			'password' => ['required', new CurrentPasswordRule()],

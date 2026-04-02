@@ -8,11 +8,9 @@ use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\CombatEngine\Core\Battle;
-use App\Engine\Fleet\CombatEngine\LangImplementation;
 use App\Engine\Fleet\CombatEngine\Models\Fleet;
 use App\Engine\Fleet\CombatEngine\Models\Player;
 use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
-use App\Engine\Fleet\CombatEngine\Utils\LangManager;
 use App\Engine\Game;
 use App\Facades\Vars;
 use App\Format;
@@ -246,8 +244,6 @@ class Expedition extends BaseMission
 					];
 				}
 
-				LangManager::getInstance()->setImplementation(new LangImplementation());
-
 				$mission = new Attack(new Models\Fleet());
 
 				$attackers = new PlayerGroup();
@@ -274,9 +270,8 @@ class Expedition extends BaseMission
 					$res[$shipId] = $shipArr['count'];
 				}
 
-				$playerObj = new Player(0);
-				$playerObj->setName($mame);
-				$playerObj->setTech(0, 0, 0);
+				$playerObj = new Player(0)
+					->setName($mame);
 
 				foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
 					if (isset($mission->usersTech[$this->fleet->user_id][Vars::getName($techId)]) && $mission->usersTech[$this->fleet->user_id][Vars::getName($techId)] > 0) {

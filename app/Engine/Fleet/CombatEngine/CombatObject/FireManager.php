@@ -10,27 +10,26 @@ use App\Engine\Fleet\CombatEngine\Utils\IterableIterator;
  */
 class FireManager extends IterableIterator
 {
-
-	public function add(Fire $fire)
+	public function add(Fire $fire): void
 	{
 		$this->array[] = $fire;
 	}
 
-	public function getAttackerTotalShots()
+	public function getAttackerTotalShots(): int
 	{
 		$tmp = 0;
 
-		foreach ($this->array as $id => $fire) {
+		foreach ($this->array as $fire) {
 			$tmp += $fire->getAttackerTotalShots();
 		}
 
 		return $tmp;
 	}
-	public function getAttackerTotalFire()
+	public function getAttackerTotalFire(): int
 	{
 		$tmp = 0;
 
-		foreach ($this->array as $id => $fire) {
+		foreach ($this->array as $fire) {
 			$tmp += $fire->getAttackerTotalFire();
 		}
 

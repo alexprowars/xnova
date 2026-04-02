@@ -11,7 +11,7 @@ class UpdateOnline extends Command
 	protected $signature = 'game:update.online';
 	protected $description = '';
 
-	public function handle()
+	public function handle(): void
 	{
 		$online = Models\User::query()
 			->where('onlinetime', '>', now()->subSeconds(config('game.onlinetime') * 60))

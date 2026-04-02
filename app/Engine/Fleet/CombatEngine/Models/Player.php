@@ -11,85 +11,54 @@ use App\Engine\Fleet\CombatEngine\Utils\IterableIterator;
  */
 class Player extends IterableIterator
 {
-	private $id;
-	private $weapons_tech = 0;
-	private $shields_tech = 0;
-	private $armour_tech = 0;
-	private $name;
+	private int $id;
+	private string $name;
 
-	public function __construct($id, $fleets = [], $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
+	public function __construct(int $id, array $fleets = [], string $name = '')
 	{
 		$this->id = $id;
 		$this->name = $name;
-		$this->setTech($weapons_tech, $shields_tech, $armour_tech);
+
 		foreach ($fleets as $fleet) {
 			$this->addFleet($fleet);
 		}
 	}
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}
-	public function setName($name)
+	public function setName($name): self
 	{
 		$this->name = $name;
+
 		foreach ($this->array as $fleet) {
 			$fleet->setName($name);
 		}
+
+		return $this;
 	}
 
 	public function addFleet(Fleet $fleet)
 	{
 		$fleet = $fleet->cloneMe();
-		$fleet->setTech($this->weapons_tech, $this->shields_tech, $this->armour_tech);
 		$fleet->setName($this->name);
 		$this->array[$fleet->getId()] = $fleet; //avoid collateral effects: when the object or array is an argument && it's saved in a structure
 	}
 
-	public function setTech($weapons = null, $shields = null, $armour = null)
-	{
-		foreach ($this->array as $fleet) {
-			$fleet->setTech($weapons, $shields, $armour);
-		}
-
-		if (is_numeric($weapons)) {
-			$this->weapons_tech = (int) $weapons;
-		}
-		if (is_numeric($shields)) {
-			$this->shields_tech = (int) $shields;
-		}
-		if (is_numeric($armour)) {
-			$this->armour_tech = (int) $armour;
-		}
-	}
-
-	public function getId()
+	public function getId(): int
 	{
 		return $this->id;
 	}
 
-	public function decrement($idFleet, $idShipType, $count)
+	public function decrement($idFleet, $idShipType, $count): self
 	{
 		$this->array[$idFleet]->decrement($idShipType, $count);
 
 		if ($this->array[$idFleet]->isEmpty()) {
 			unset($this->array[$idFleet]);
 		}
-	}
 
-	public function getWeaponsTech()
-	{
-		return $this->weapons_tech;
-	}
-
-	public function getShieldsTech()
-	{
-		return $this->shields_tech;
-	}
-
-	public function getArmourTech()
-	{
-		return $this->armour_tech;
+		return $this;
 	}
 
 	public function getOrderedItereator()
@@ -98,64 +67,70 @@ class Player extends IterableIterator
 		return $this->array;
 	}
 
-	private function order()
+	private function order(): void
 	{
 		ksort($this->array);
 	}
 
-	public function getFleet($id)
+	public function getFleet($id): ?Fleet
 	{
-		return $this->array[$id];
+		return $this->array[$id] ?? null;
 	}
 
-	public function existFleet($idFleet)
+	public function existFleet($idFleet): bool
 	{
 		return isset($this->array[$idFleet]);
 	}
 
-	public function isEmpty()
+	public function isEmpty(): bool
 	{
 		foreach ($this->array as $fleet) {
 			if (!$fleet->isEmpty()) {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
-	public function inflictDamage(FireManager $fire)
+	public function inflictDamage(FireManager $fire): array
 	{
 		$physicShots = [];
+
 		foreach ($this->array as $idFleet => $fleet) {
 			echo "------- firing to fleet with ID = $idFleet -------- <br>";
 			$ps = $fleet->inflictDamage($fire);
 			$physicShots[$idFleet] = $ps;
 		}
+
 		return $physicShots;
 	}
 
-	public function cleanShips()
+	public function cleanShips(): array
 	{
 		$shipsCleaners = [];
+
 		foreach ($this->array as $idFleet => $fleet) {
 			echo "------- cleanShips to fleet with ID = $idFleet -------- <br>";
 			$sc = $fleet->cleanShips();
 			$shipsCleaners[$this->getId()] = $sc;
+
 			if ($fleet->isEmpty()) {
 				unset($this->array[$idFleet]);
 			}
 		}
+
 		return $shipsCleaners;
 	}
 
-	public function repairShields($round = 0)
+	public function repairShields($round = 0): void
 	{
 		foreach ($this->array as $fleet) {
 			$fleet->repairShields($round);
 		}
 	}
 
-	public function getEquivalentFleetContent()
+	public function getEquivalentFleetContent(): Fleet
 	{
 		$merged = new Fleet(-1);
 
@@ -166,10 +141,9 @@ class Player extends IterableIterator
 		return $merged;
 	}
 
-	public function addDefense(Fleet $fleetDefender) // da fare: controllare ordine
+	public function addDefense(Fleet $fleetDefender): void
 	{
 		$fleetDefender = $fleetDefender->cloneMe();
-		$fleetDefender->setTech($this->weapons_tech, $this->shields_tech, $this->armour_tech);
 		$this->order();
 		$fl = current($this->array);
 
@@ -180,14 +154,14 @@ class Player extends IterableIterator
 		}
 	}
 
-	public function mergePlayerFleets(Player $player)
+	public function mergePlayerFleets(Player $player): void
 	{
 		foreach ($player->getIterator() as $idFleet => $fleet) {
 			$this->array[$idFleet] = $fleet->cloneMe();
 		}
 	}
 
-	public function getTotalCount()
+	public function getTotalCount(): int
 	{
 		$amount = 0;
 
@@ -198,10 +172,8 @@ class Player extends IterableIterator
 		return $amount;
 	}
 
-	public function cloneMe()
+	public function cloneMe(): self
 	{
-		$fleets = array_values($this->array);
-
-		return new Player($this->id, $fleets, $this->weapons_tech, $this->shields_tech, $this->armour_tech, $this->name);
+		return new Player($this->id, array_values($this->array), $this->name);
 	}
 }

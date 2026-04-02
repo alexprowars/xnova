@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\URL;
 
 class UserAuthenticated
 {
-	public function handle(Authenticated $event)
+	public function handle(Authenticated $event): void
 	{
 		$route = Route::current()->getName();
 

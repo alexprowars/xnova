@@ -20,6 +20,7 @@ class PlayerGroup extends IterableIterator
 	public function __construct($players = [])
 	{
 		$this->id = ++self::$id_count;
+
 		foreach ($players as $player) {
 			$this->addPlayer($player);
 		}
@@ -33,7 +34,9 @@ class PlayerGroup extends IterableIterator
 		if (!$this->existPlayer($idPlayer)) {
 			throw new Exception('Player with id : ' . $idPlayer . ' not exist');
 		}
+
 		$this->array[$idPlayer]->decrement($idFleet, $idShipType, $count);
+
 		if ($this->array[$idPlayer]->isEmpty()) {
 			unset($this->array[$idPlayer]);
 		}
@@ -54,34 +57,23 @@ class PlayerGroup extends IterableIterator
 		$this->array[$player->getId()] = $player->cloneMe();
 	}
 
-	public function createPlayerIfNotExist($id, $fleets, $militaryTech, $shieldTech, $defenceTech)
+	public function createPlayerIfNotExist($id, $fleets)
 	{
 		if (!$this->existPlayer($id)) {
-			$this->addPlayer(new Player($id, $fleets, $militaryTech, $shieldTech, $defenceTech));
+			$this->addPlayer(new Player($id, $fleets));
 		}
+
 		return $this->getPlayer($id);
 	}
 
 	public function isEmpty()
 	{
-		foreach ($this->array as $id => $player) {
+		foreach ($this->array as $player) {
 			if (!$player->isEmpty()) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	public function __toString()
-	{
-		ob_start();
-
-		$_st = '';
-		$_playerGroup = $this;
-
-		require(dirname(__DIR__) . "/Views/playerGroup.html");
-
-		return ob_get_clean();
 	}
 
 	public function inflictDamage(FireManager $fire)

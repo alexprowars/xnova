@@ -11,24 +11,12 @@ use App\Engine\Fleet\CombatEngine\Utils\Number;
 
 class Fire
 {
-	/**
-	 * @var ShipType $attackerShipType
-	 */
-	private $attackerShipType;
-	/**
-	 * @var Fleet $defenderFleet
-	 */
-	private $defenderFleet;
+	private ShipType $attackerShipType;
+	private Fleet $defenderFleet;
 
-	private $shots = 0;
-	private $power = 0;
+	private int $shots = 0;
+	private int $power = 0;
 
-	/**
-	 * Fire::__construct()
-	 *
-	 * @param ShipType $attackerShipType
-	 * @param Fleet $defenderFleet
-	 */
 	public function __construct(ShipType $attackerShipType, Fleet $defenderFleet)
 	{
 		log_comment('calculating fire from attacker ' . $attackerShipType->getId());
@@ -38,7 +26,7 @@ class Fire
 		$this->calculateTotal();
 	}
 
-	public function getPower()
+	public function getPower(): int
 	{
 		return $this->attackerShipType->getPower();
 	}
@@ -48,33 +36,17 @@ class Fire
 		return $this->attackerShipType->getId();
 	}
 
-	//----------- SENDED FIRE -------------
-
-	/**
-	 * Fire::getAttackerTotalFire()
-	 * Return the total fire
-	 * @return int
-	 */
-	public function getAttackerTotalFire()
+	public function getAttackerTotalFire(): int
 	{
 		return $this->power;
 	}
 
-	/**
-	 * Fire::getAttackerTotalShots()
-	 * Return the total shots
-	 * @return int
-	 */
-	public function getAttackerTotalShots()
+	public function getAttackerTotalShots(): int
 	{
 		return $this->shots;
 	}
 
-	/**
-	 * Fire::calculateTotal()
-	 * Calculate the total power and shots amount of attacker, including RF and standart fire
-	 */
-	private function calculateTotal()
+	private function calculateTotal(): void
 	{
 		$this->shots += $this->attackerShipType->getCount();
 		$this->power += $this->getNormalPower();
@@ -86,16 +58,9 @@ class Fire
 		log_var('$this->shots', $this->shots);
 	}
 
-	/**
-	 * Fire::calculateRf()
-	 * This function implement the RF component of above function
-	 * @return void
-	 * @throws \Exception
-	 */
-	private function calculateRf()
+	private function calculateRf(): void
 	{
-		//rapid fire
-		$tmpshots = round($this->getShotsFromOneAttackerShipOfType($this->attackerShipType) * $this->attackerShipType->getCount());
+		$tmpshots = (int) round($this->getShotsFromOneAttackerShipOfType($this->attackerShipType) * $this->attackerShipType->getCount());
 
 		log_var('$tmpshots', $tmpshots);
 
@@ -127,10 +92,8 @@ class Fire
 
 	/**
 	 * This function return the probability of a ShipType to shot thanks RF
-	 * @param ShipType $shipType_A
-	 * @return int
 	 */
-	private function getProbabilityToShotAgainForAttackerShipOfType(ShipType $shipType_A)
+	private function getProbabilityToShotAgainForAttackerShipOfType(ShipType $shipType_A): int
 	{
 		$p = 0;
 
@@ -145,18 +108,16 @@ class Fire
 	}
 
 	/**
-	 * Fire::getNormalPower()
 	 * Return the total fire shotted from attacker ShipType to all defenders without RF
-	 * @return int
 	 */
-	private function getNormalPower()
+	private function getNormalPower(): int
 	{
 		return $this->attackerShipType->getCount() * $this->attackerShipType->getPower();
 	}
 
 	//------- INCOMING FIRE------------
 
-	public function getShotsFiredByAttackerTypeToDefenderType(ShipType $shipType_A, ShipType $shipType_D, $real = false)
+	public function getShotsFiredByAttackerTypeToDefenderType(ShipType $shipType_A, ShipType $shipType_D, $real = false): Number
 	{
 		$first = $this->getShotsFiredByAttackerToOne($shipType_A);
 		$second = new Number($shipType_D->getCount());
@@ -164,7 +125,7 @@ class Fire
 		return Math::multiple($first, $second, $real);
 	}
 
-	public function getShotsFiredByAttackerToOne(ShipType $shipType_A, $real = false)
+	public function getShotsFiredByAttackerToOne(ShipType $shipType_A, $real = false): Number
 	{
 		$num = $this->getShotsFiredByAttackerToAll($shipType_A);
 		$denum = new Number($this->defenderFleet->getTotalCount());
@@ -172,7 +133,7 @@ class Fire
 		return Math::divide($num, $denum, $real);
 	}
 
-	public function getShotsFiredByAllToDefenderType(ShipType $shipType_D, $real = false)
+	public function getShotsFiredByAllToDefenderType(ShipType $shipType_D, $real = false): Number
 	{
 		$first = $this->getShotsFiredByAllToOne();
 		$second = new Number($shipType_D->getCount());
@@ -180,7 +141,7 @@ class Fire
 		return Math::multiple($first, $second, $real);
 	}
 
-	public function getShotsFiredByAttackerToAll(ShipType $shipType_A, $real = false)
+	public function getShotsFiredByAttackerToAll(ShipType $shipType_A, $real = false): Number
 	{
 		$num = new Number($this->getAttackerTotalShots() * $shipType_A->getCount());
 
@@ -189,7 +150,7 @@ class Fire
 		return Math::divide($num, $denum, $real);
 	}
 
-	public function getShotsFiredByAllToOne($real = false)
+	public function getShotsFiredByAllToOne($real = false): Number
 	{
 		$num = new Number($this->getAttackerTotalShots());
 		$denum = new Number($this->defenderFleet->getTotalCount());
@@ -197,7 +158,7 @@ class Fire
 		return Math::divide($num, $denum, $real);
 	}
 
-	public function cloneMe()
+	public function cloneMe(): Fire
 	{
 		return new Fire($this->attackerShipType, $this->defenderFleet);
 	}

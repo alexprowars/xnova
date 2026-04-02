@@ -4,13 +4,13 @@ namespace App\Engine\Fleet\CombatEngine\Models;
 
 class Defense extends ShipType
 {
-	public function getType()
+	public function getType(): string
 	{
 		return 'Defense';
 	}
 
-	public function getRepairProb()
+	public function getRepairProb(): int
 	{
-		return ($this->repairProb > 0 ? $this->repairProb : config('battle.DEFENSE_REPAIR_PROB'));
+		return ($this->repairProb > 0 ? $this->repairProb : config('battle.DEFENSE_REPAIR_PROB', 0));
 	}
 }

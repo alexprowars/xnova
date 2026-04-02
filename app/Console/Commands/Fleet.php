@@ -11,7 +11,7 @@ class Fleet extends Command
 {
 	protected $signature = 'game:fleet';
 
-	public function handle()
+	public function handle(): void
 	{
 		$fleets = Models\Fleet::query()
 			->where(function (Builder $query) {

@@ -67,7 +67,7 @@ class QueueResource extends JsonResource
 		return $items;
 	}
 
-	protected function getBuildingQueue()
+	protected function getBuildingQueue(): array
 	{
 		$result = [];
 		$endTime = [];
@@ -93,7 +93,7 @@ class QueueResource extends JsonResource
 		return $result;
 	}
 
-	private function sortQueue($a, $b)
+	private function sortQueue(array $a, array $b): int
 	{
 		if ($a['date'] == $b['date']) {
 			return 0;

@@ -55,19 +55,6 @@ abstract class Math
 		return $dividendo % $divisore;
 	}
 
-	public static function tryEvent($probability, $callback, $callbackParam)
-	{
-		if (!is_callable($callback)) {
-			throw new Exception();
-		}
-
-		if (random_int(0, 99) < $probability) {
-			return $callback($callbackParam);
-		}
-
-		return false;
-	}
-
 	public static function recursive_sum($array)
 	{
 		$sum = 0;

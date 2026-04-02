@@ -11,61 +11,35 @@ use App\Engine\Fleet\CombatEngine\Utils\IterableIterator;
  */
 class Fleet extends IterableIterator
 {
-	private $count;
-	private $id;
-	// added but only used in report templates
-	private $weapons_tech = 0;
-	private $shields_tech = 0;
-	private $armour_tech = 0;
-	private $name;
+	private int $id;
+	private int $count = 0;
+	private string $name;
 
-	public function __construct($id, $shipTypes = [], $weapons_tech = null, $shields_tech = null, $armour_tech = null, $name = "")
+	public function __construct(int $id, array $shipTypes = [], string $name = '')
 	{
 		$this->id = $id;
-		$this->count = 0;
 		$this->name = $name;
-
-		if ($this->id != -1) {
-			$this->setTech($weapons_tech, $shields_tech, $armour_tech);
-		}
 
 		foreach ($shipTypes as $shipType) {
 			$this->addShipType($shipType);
 		}
 	}
 
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}
 
-	public function setName($name)
+	public function setName($name): self
 	{
 		$this->name = $name;
+
+		return $this;
 	}
 
-	public function getId()
+	public function getId(): int
 	{
 		return $this->id;
-	}
-
-	public function setTech($weapons = null, $shields = null, $armour = null)
-	{
-		foreach ($this->array as $shipType) {
-			$shipType->setWeaponsTech($weapons);
-			$shipType->setShieldsTech($shields);
-			$shipType->setArmourTech($armour);
-		}
-
-		if (is_numeric($weapons)) {
-			$this->weapons_tech = (int) $weapons;
-		}
-		if (is_numeric($shields)) {
-			$this->shields_tech = (int) $shields;
-		}
-		if (is_numeric($armour)) {
-			$this->armour_tech = (int) $armour;
-		}
 	}
 
 	public function addShipType(ShipType $shipType)
@@ -73,63 +47,54 @@ class Fleet extends IterableIterator
 		if (isset($this->array[$shipType->getId()])) {
 			$this->array[$shipType->getId()]->increment($shipType->getCount());
 		} else {
-			$shipType = $shipType->cloneMe();//avoid collateral effects
-
-			if ($this->id != -1) {
-				if ($this->weapons_tech > 0) {
-					$shipType->setWeaponsTech($this->weapons_tech);
-				}
-				if ($this->shields_tech > 0) {
-					$shipType->setShieldsTech($this->shields_tech);
-				}
-				if ($this->armour_tech > 0) {
-					$shipType->setArmourTech($this->armour_tech);
-				}
-			}
-
-			$this->array[$shipType->getId()] = $shipType;
+			$this->array[$shipType->getId()] = $shipType->cloneMe();
 		}
 
 		$this->count += $shipType->getCount();
 	}
 
-	public function decrement($id, $count)
+	public function decrement(int $id, int $count): self
 	{
 		$this->array[$id]->decrement($count);
 		$this->count -= $count;
+
 		if ($this->array[$id]->getCount() <= 0) {
 			unset($this->array[$id]);
 		}
+
+		return $this;
 	}
 
-	public function mergeFleet(Fleet $other)
+	public function mergeFleet(Fleet $other): self
 	{
-		foreach ($other->getIterator() as $idShipType => $shipType) {
+		foreach ($other->getIterator() as $shipType) {
 			$this->addShipType($shipType);
 		}
+
+		return $this;
 	}
 
-	public function getShipType($id)
+	public function getShipType($id): ShipType
 	{
 		return $this->array[$id];
 	}
 
-	public function existShipType($id)
+	public function existShipType($id): bool
 	{
 		return isset($this->array[$id]);
 	}
 
-	public function getTypeCount($type)
+	public function getTypeCount($type): int
 	{
 		return $this->array[$type]->getCount();
 	}
 
-	public function getTotalCount()
+	public function getTotalCount(): int
 	{
 		return $this->count;
 	}
 
-	public function inflictDamage(FireManager $fires)
+	public function inflictDamage(FireManager $fires): array
 	{
 		$physicShots = [];
 		//doesn't matter who shot first, but who receive first the damage
@@ -178,7 +143,7 @@ class Fleet extends IterableIterator
 		return $this->array;
 	}
 
-	public function cleanShips()
+	public function cleanShips(): array
 	{
 		$shipsCleaners = [];
 
@@ -196,14 +161,16 @@ class Fleet extends IterableIterator
 		return $shipsCleaners;
 	}
 
-	public function repairShields($round = 0)
+	public function repairShields($round = 0): self
 	{
 		foreach ($this->array as $shipTypeDefender) {
 			$shipTypeDefender->repairShields($round);
 		}
+
+		return $this;
 	}
 
-	public function isEmpty()
+	public function isEmpty(): bool
 	{
 		foreach ($this->array as $shipType) {
 			if (!$shipType->isEmpty()) {
@@ -214,26 +181,10 @@ class Fleet extends IterableIterator
 		return true;
 	}
 
-	public function getWeaponsTech()
-	{
-		return $this->weapons_tech;
-	}
-
-	public function getShieldsTech()
-	{
-		return $this->shields_tech;
-	}
-
-	public function getArmourTech()
-	{
-		return $this->armour_tech;
-	}
-
 	public function cloneMe(): self
 	{
-		$types = array_values($this->array);
 		$class = get_class($this);
 
-		return new $class($this->id, $types, $this->weapons_tech, $this->shields_tech, $this->armour_tech);
+		return new $class($this->id, array_values($this->array));
 	}
 }

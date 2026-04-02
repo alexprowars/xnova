@@ -6,22 +6,16 @@ use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
 
 class Battle
 {
-	private $attackers;
-	private $defenders;
-	private $report;
-	private $battleStarted;
-	private $rounds;
+	private BattleReport $report;
+	private bool $battleStarted;
 
-	public function __construct(PlayerGroup $attackers, PlayerGroup $defenders, $rounds = 6)
+	public function __construct(private PlayerGroup $attackers, private PlayerGroup $defenders, private int $rounds = 6)
 	{
-		$this->attackers = $attackers;
-		$this->defenders = $defenders;
 		$this->battleStarted = false;
 		$this->report = new BattleReport();
-		$this->rounds = $rounds;
 	}
 
-	public function startBattle($debug = false)
+	public function startBattle(bool $debug = false)
 	{
 		if (!$debug) {
 			ob_start();
@@ -29,8 +23,8 @@ class Battle
 
 		$this->battleStarted = true;
 
-		log_var('attackers', $this->attackers);
-		log_var('defenders', $this->defenders);
+		log_var('attackers', print_r($this->attackers, true));
+		log_var('defenders', print_r($this->defenders, true));
 
 		$round = new Round($this->attackers, $this->defenders, 0);
 		$this->report->addRound($round);
@@ -47,7 +41,7 @@ class Battle
 					ob_get_clean();
 				}
 
-				return false;
+				return;
 			}
 
 			$round = new Round($this->attackers, $this->defenders, $i);
@@ -64,11 +58,9 @@ class Battle
 		if (!$debug) {
 			ob_get_clean();
 		}
-
-		return true;
 	}
 
-	private function checkWhoWon($att_lose, $deff_lose)
+	private function checkWhoWon(bool $att_lose, bool $deff_lose): void
 	{
 		if ($att_lose && !$deff_lose) {
 			$this->attackers->battleResult = BattleResult::LOSE;
@@ -82,7 +74,7 @@ class Battle
 		}
 	}
 
-	public function getReport($debug = false)
+	public function getReport(bool $debug = false): BattleReport
 	{
 		if (!$this->battleStarted) {
 			$this->startBattle($debug);

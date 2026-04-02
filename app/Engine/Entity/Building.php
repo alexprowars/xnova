@@ -34,11 +34,11 @@ class Building extends Entity implements EntityBuildingInterface
 		return (int) max(1, $time);
 	}
 
-	public function getExp($isDestroy = false)
+	public function getExp(bool $isDestroy = false): int
 	{
 		$cost = $isDestroy ? $this->getDestroyPrice() : $this->getPrice();
 		$units = $cost['metal'] + $cost['crystal'] + $cost['deuterium'];
 
-		return floor($units / config('game.buildings_exp_mult', 1000));
+		return (int) floor($units / config('game.buildings_exp_mult', 1000));
 	}
 }

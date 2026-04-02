@@ -11,8 +11,8 @@ class NotesController extends Controller
 {
 	public function index()
 	{
-		$notes = Note::query()->whereBelongsTo($this->user)
-			->orderByDesc('updated_at')->get();
+		$notes = $this->user->notes()
+			->latest('updated_at')->get();
 
 		$items = [];
 
@@ -43,8 +43,7 @@ class NotesController extends Controller
 		$deleteIds = array_map('intval', Arr::wrap($request->post('id', [])));
 
 		if (!empty($deleteIds)) {
-			Note::query()->whereBelongsTo($this->user)
-				->whereKey($deleteIds)->delete();
+			$this->user->notes()->whereKey($deleteIds)->delete();
 		}
 	}
 
@@ -64,7 +63,7 @@ class NotesController extends Controller
 		}
 
 		$note = new Note();
-		$note->user_id = $this->user->id;
+		$note->user()->associate($this->user);
 		$note->priority = $priority;
 		$note->title = $title;
 		$note->text = $message;
@@ -77,8 +76,7 @@ class NotesController extends Controller
 
 	public function edit(int $id)
 	{
-		$note = Note::query()->whereBelongsTo($this->user)
-			->findOne($id);
+		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
 			throw new Exception('Заметка не найдена');
@@ -94,8 +92,7 @@ class NotesController extends Controller
 
 	public function update(int $id, Request $request)
 	{
-		$note = Note::query()->whereBelongsTo($this->user)
-			->findOne($id);
+		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
 			throw new Exception('Заметка не найдена');

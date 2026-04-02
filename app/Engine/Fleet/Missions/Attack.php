@@ -10,7 +10,6 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\CombatEngine\Core\Battle;
 use App\Engine\Fleet\CombatEngine\Core\Round;
-use App\Engine\Fleet\CombatEngine\LangImplementation;
 use App\Engine\Fleet\CombatEngine\Models\Defense;
 use App\Engine\Fleet\CombatEngine\Models\Fleet;
 use App\Engine\Fleet\CombatEngine\Models\HomeFleet;
@@ -18,7 +17,6 @@ use App\Engine\Fleet\CombatEngine\Models\Player;
 use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
 use App\Engine\Fleet\CombatEngine\Models\Ship;
 use App\Engine\Fleet\CombatEngine\Models\ShipType;
-use App\Engine\Fleet\CombatEngine\Utils\LangManager;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\QueueManager;
@@ -87,8 +85,6 @@ class Attack extends BaseMission
 
 		$queueManager = new QueueManager($target);
 		$queueManager->checkUnitQueue();
-
-		LangManager::getInstance()->setImplementation(new LangImplementation());
 
 		$attackers = new PlayerGroup();
 		$defenders = new PlayerGroup();
@@ -159,9 +155,9 @@ class Attack extends BaseMission
 		}
 
 		if (!$defenders->existPlayer($targetUser->id)) {
-			$player = new Player($targetUser->id, [$homeFleet]);
-			$player->setTech(0, 0, 0);
-			$player->setName($targetUser->username);
+			$player = new Player($targetUser->id, [$homeFleet])
+				->setName($targetUser->username);
+
 			$defenders->addPlayer($player);
 
 			if (!isset($this->usersInfo[$targetUser->id])) {
@@ -594,9 +590,8 @@ class Attack extends BaseMission
 		if (!isset($this->usersTech[$fleet->user_id])) {
 			$user = User::query()->find($fleet->user_id);
 
-			$playerObj = new Player($fleet->user_id);
-			$playerObj->setName($user->username);
-			$playerObj->setTech(0, 0, 0);
+			$playerObj = new Player($fleet->user_id)
+				->setName($user->username);
 
 			$info = [
 				'military_tech' => $user->getTechLevel('military'),
@@ -624,11 +619,10 @@ class Attack extends BaseMission
 			$playerObj = $playerGroup->getPlayer($fleet->user_id);
 
 			if (!$playerObj) {
-				$info = User::find($fleet->user_id);
+				$info = User::findOne($fleet->user_id);
 
-				$playerObj = new Player($fleet->user_id);
-				$playerObj->setName($info->username);
-				$playerObj->setTech(0, 0, 0);
+				$playerObj = new Player($fleet->user_id)
+					->setName($info->username);
 			}
 
 			foreach ($this->usersTech[$fleet->user_id] as $rId => $rVal) {

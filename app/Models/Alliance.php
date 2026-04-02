@@ -18,7 +18,7 @@ class Alliance extends Model implements HasMedia
 	protected $table = 'alliances';
 	protected $guarded = [];
 
-	public $rights = [];
+	public array $rights = [];
 	public ?AllianceMember $member;
 
 	protected $casts = [
@@ -82,14 +82,14 @@ class Alliance extends Model implements HasMedia
 		}
 	}
 
-	public function getMember(User $user)
+	public function getMember(User $user): ?AllianceMember
 	{
 		$this->member ??= $this->members()->whereBelongsTo($user)->first();
 
 		return $this->member;
 	}
 
-	public function parseRights($userId = 0)
+	public function parseRights(?int $userId = null): void
 	{
 		if (!$userId && Auth::check()) {
 			$userId = Auth::user()->id;
@@ -112,7 +112,7 @@ class Alliance extends Model implements HasMedia
 		}
 	}
 
-	public function canAccess(AllianceAccess $method)
+	public function canAccess(AllianceAccess $method): bool
 	{
 		if (!count($this->rights)) {
 			$this->parseRights();
@@ -121,7 +121,7 @@ class Alliance extends Model implements HasMedia
 		return $this->rights[$method->value] ?? false;
 	}
 
-	public function deleteMember($userId)
+	public function deleteMember(int $userId)
 	{
 		$this->decrement('members');
 		AllianceMember::query()->where('user_id', $userId)->delete();

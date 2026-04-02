@@ -13,7 +13,7 @@ class Queue extends Command
 {
 	protected $signature = 'game:queue';
 
-	public function handle()
+	public function handle(): void
 	{
 		$items = Models\Queue::query()
 			->select(['user_id', 'planet_id'])

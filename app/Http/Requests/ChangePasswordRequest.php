@@ -8,7 +8,7 @@ use Illuminate\Validation\Rules\Password;
 
 class ChangePasswordRequest extends FormRequest
 {
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			'current_password' => ['required', new CurrentPasswordRule()],

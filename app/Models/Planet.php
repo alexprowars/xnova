@@ -41,11 +41,11 @@ class Planet extends Model
 		'entities' => '[]',
 	];
 
-	public $planet_updated = false;
-	public $energy_used;
-	public $energy = 0;
+	public bool $planet_updated = false;
+	public int $energy_used;
+	public int $energy = 0;
 
-	private $production;
+	private Production $production;
 
 	protected $casts = [
 		'last_update' => 'immutable_datetime',
@@ -63,9 +63,9 @@ class Planet extends Model
 	 */
 	protected function casts(): array
 	{
-	    return [
-	        'entities' => AsCollection::using(PlanetEntityCollection::class, PlanetEntity::class),
-	    ];
+		return [
+			'entities' => AsCollection::using(PlanetEntityCollection::class, PlanetEntity::class),
+		];
 	}
 
 	/** @return BelongsTo<User, $this> */
@@ -133,12 +133,12 @@ class Planet extends Model
 		return Attribute::get(fn() => new Coordinates($this->galaxy, $this->system, $this->planet, $this->planet_type));
 	}
 
-	public function getLevel($entityId): int
+	public function getLevel(int|string|null $entityId): int
 	{
 		return $this->getEntity($entityId)->level ?? 0;
 	}
 
-	public function getEntity($entityId): ?PlanetEntity
+	public function getEntity(int|string|null $entityId): ?PlanetEntity
 	{
 		if (!is_numeric($entityId)) {
 			$entityId = Vars::getIdByName($entityId);
@@ -151,7 +151,7 @@ class Planet extends Model
 		return $this->entities->getByEntityId($entityId);
 	}
 
-	public function getEntityUnit($entityId): ?Entity
+	public function getEntityUnit(int|string|null $entityId): ?Entity
 	{
 		$entity = $this->getEntity($entityId);
 
@@ -162,7 +162,7 @@ class Planet extends Model
 		return EntityFactory::get($entity->id, $entity->level, $this);
 	}
 
-	public function updateAmount($entityId, int $amount, bool $isDifferent = false)
+	public function updateAmount(int|string|null $entityId, int $amount, bool $isDifferent = false)
 	{
 		$entity = $this->getEntity($entityId);
 
@@ -177,7 +177,7 @@ class Planet extends Model
 
 	public function getProduction(Carbon|CarbonImmutable|null $updateTime = null): Production
 	{
-		if (!$this->production) {
+		if (!isset($this->production)) {
 			$this->production = new Production($this, $updateTime);
 		}
 

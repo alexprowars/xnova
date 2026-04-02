@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\URL;
 
 class BattleReport
 {
-	public function __construct(protected $result_array, protected $attackUsers, protected $defenseUsers, protected $steal_array, protected $moon_int = 0, protected $moon_string = '', protected $repair = [])
+	public function __construct(protected array $result_array, protected array $attackUsers, protected array $defenseUsers, protected array $steal_array, protected int $moon_int = 0, protected string $moon_string = '', protected array $repair = [])
 	{
 	}
 
-	public function report()
+	public function report(): array
 	{
 		$usersInfo = [];
 
@@ -44,48 +44,44 @@ class BattleReport
 		$html .= sprintf('В %s произошёл бой между следующими флотами:', Game::datezone('d-m-Y H:i:s', $this->result_array['time']));
 		$html .= '<div class="flex row gap-2 justify-center">';
 
-		if (is_array($this->attackUsers)) {
-			$checkName = [];
+		$checkName = [];
 
-			foreach ($this->attackUsers as $info) {
-				if (in_array($info['username'], $checkName)) {
-					continue;
-				}
-
-				$html .= '<div><table class="table report_user">
-							<tr><td class="c" colspan="3"><div class="text-center negative">' . $info['username'] . '</div></td></tr>
-							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
-							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
-							<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
-							<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
-							<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
-							<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
-
-				$checkName[] = $info['username'];
+		foreach ($this->attackUsers as $info) {
+			if (in_array($info['username'], $checkName)) {
+				continue;
 			}
+
+			$html .= '<div><table class="table report_user">
+						<tr><td class="c" colspan="3"><div class="text-center negative">' . $info['username'] . '</div></td></tr>
+						<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
+						<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
+						<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
+						<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
+						<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
+						<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
+						<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
+
+			$checkName[] = $info['username'];
 		}
 
-		if (is_array($this->defenseUsers)) {
-			$checkName = [];
+		$checkName = [];
 
-			foreach ($this->defenseUsers as $info) {
-				if (in_array($info['username'], $checkName)) {
-					continue;
-				}
-
-				$html .= '<div><table class="table report_user">
-							<tr><td class="c" colspan="3"><div class="text-center positive">' . $info['username'] . '</div></td></tr>
-							<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
-							<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
-							<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
-							<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
-							<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
-							<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-							<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
-
-				$checkName[] = $info['username'];
+		foreach ($this->defenseUsers as $info) {
+			if (in_array($info['username'], $checkName)) {
+				continue;
 			}
+
+			$html .= '<div><table class="table report_user">
+						<tr><td class="c" colspan="3"><div class="text-center positive">' . $info['username'] . '</div></td></tr>
+						<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
+						<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
+						<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
+						<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
+						<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
+						<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
+						<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
+
+			$checkName[] = $info['username'];
 		}
 
 		$html .= '</div>';
@@ -282,7 +278,7 @@ class BattleReport
 		return ['html' => $html, 'bbc' => $bbc];
 	}
 
-	public function convertToSimLink($result)
+	public function convertToSimLink($result): string
 	{
 		$usersInfo = [];
 

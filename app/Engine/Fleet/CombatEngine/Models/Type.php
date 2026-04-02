@@ -4,46 +4,41 @@ namespace App\Engine\Fleet\CombatEngine\Models;
 
 class Type
 {
-	private $id;
-	private $count;
-
-	public function __construct($id, $count)
+	public function __construct(protected int $id, protected int $count)
 	{
-		$this->id = $id;
-		$this->count = $count;
 	}
 
-	public function getId()
+	public function getId(): int
 	{
 		return $this->id;
 	}
 
-	public function getCount()
+	public function getCount(): int
 	{
 		return $this->count;
 	}
 
-	public function increment($number)
+	public function increment(int $number)
 	{
 		$this->count += $number;
 	}
 
-	public function decrement($number)
+	public function decrement(int $number)
 	{
 		$this->count -= $number;
 	}
 
-	public function setCount($number)
+	public function setCount(int $number)
 	{
 		$this->count = $number;
 	}
 
-	public function isEmpty()
+	public function isEmpty(): bool
 	{
 		return $this->count == 0;
 	}
 
-	public function cloneMe()
+	public function cloneMe(): Type
 	{
 		return new Type($this->id, $this->count);
 	}

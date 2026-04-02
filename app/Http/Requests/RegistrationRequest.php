@@ -8,7 +8,7 @@ use Illuminate\Validation\Rules\Password;
 
 class RegistrationRequest extends FormRequest
 {
-	public function rules()
+	public function rules(): array
 	{
 		return [
 			'email' => 'required|email|unique:users,email',

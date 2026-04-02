@@ -10,7 +10,7 @@ use App\Models\User;
 
 class Building
 {
-	public static function checkTechnologyRace(User $user, int $element)
+	public static function checkTechnologyRace(User $user, int $element): bool
 	{
 		$requeriments = Vars::getItemRequirements($element);
 
@@ -27,7 +27,7 @@ class Building
 		return true;
 	}
 
-	public static function checkLabSettingsInQueue(Planet $planet)
+	public static function checkLabSettingsInQueue(Planet $planet): bool
 	{
 		$BuildQueue = (new QueueManager($planet))
 			->get(QueueType::BUILDING);

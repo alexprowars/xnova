@@ -40,9 +40,11 @@ class Entity implements EntityInterface, EntityProductionInterface
 		return $this->level;
 	}
 
-	public function setLevel(int $level)
+	public function setLevel(int $level): self
 	{
 		$this->level = $level;
+
+		return $this;
 	}
 
 	/** @return array<value-of<Resources>, int> */

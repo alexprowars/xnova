@@ -7,12 +7,12 @@ use App\Engine\Fleet\CombatEngine\Models\ShipType;
 
 class ShipsCleaner
 {
-	private $shipType;
-	private $lastShipHit;
-	private $lastShots;
+	private ShipType $shipType;
+	private int $lastShipHit;
+	private int $lastShots;
 
-	private $exploded;
-	private $remainLife;
+	private int $exploded;
+	private float $remainLife;
 
 	public function __construct(ShipType $shipType, int $lastShipHit, int $lastShots)
 	{
@@ -29,11 +29,9 @@ class ShipsCleaner
 	}
 
 	/**
-	 * ShipsCleaner::start()
 	 * Start the system
-	 * @throws Exception
 	 */
-	public function start()
+	public function start(): void
 	{
 		$prob = 1 - $this->shipType->getCurrentLife() / ($this->shipType->getHull() * $this->shipType->getCount());
 
@@ -45,8 +43,9 @@ class ShipsCleaner
 			throw new Exception("Negative prob");
 		}
 
-		if (config('battle.USE_BIEXPLOSION_SYSTEM') && $this->lastShipHit >= $this->shipType->getCount() / config('battle.PROB_TO_REAL_MAGIC')) {
+		if (config('battle.USE_BIEXPLOSION_SYSTEM') && $this->lastShipHit >= ($this->shipType->getCount() / config('battle.PROB_TO_REAL_MAGIC'))) {
 			log_comment('lastShipHit bigger than getCount()/magic');
+
 			if ($prob < config('battle.MIN_PROB_TO_EXPLODE')) {
 				$probToExplode = 0;
 			} else {
@@ -78,21 +77,17 @@ class ShipsCleaner
 	}
 
 	/**
-	 * ShipsCleaner::getExplodeShips()
 	 * Return the number of exploded ships
-	 * @return int
 	 */
-	public function getExplodedShips()
+	public function getExplodedShips(): int
 	{
 		return $this->exploded;
 	}
 
 	/**
-	 * ShipsCleaner::getRemainLife()
 	 * Return the life of exploded ships
-	 * @return float
 	 */
-	public function getRemainLife()
+	public function getRemainLife(): float
 	{
 		return $this->remainLife;
 	}

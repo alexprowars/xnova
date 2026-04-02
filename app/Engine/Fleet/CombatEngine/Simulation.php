@@ -33,16 +33,15 @@ class Simulation
 		return $this->result;
 	}
 
-	public function handle()
+	public function handle(): void
 	{
 		$maxSlots = config('game.maxSlotsInSim', 5);
 
 		$attackers = $this->getAttackers(0);
 		$defenders = $this->getAttackers($maxSlots);
 
-		$engine = new Battle($attackers, $defenders);
-
-		$report = $engine->getReport();
+		$report = new Battle($attackers, $defenders)
+			->getReport();
 
 		$result = [];
 		$result[0] = ['time' => time(), 'rw' => []];
@@ -112,30 +111,31 @@ class Simulation
 		return array_values($statistics);
 	}
 
-	private function convertPlayerGroupToArray(PlayerGroup $_playerGroup)
+	private function convertPlayerGroupToArray(PlayerGroup $playerGroup): array
 	{
 		$result = [];
 
-		foreach ($_playerGroup as $_player) {
-			$result[$_player->getId()] = [
-				'username' => $_player->getName(),
-				'fleet' => [$_player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
+		/** @var Player $player */
+		foreach ($playerGroup as $player) {
+			$result[$player->getId()] = [
+				'username' => $player->getName(),
+				'fleet' => [$player->getId() => ['galaxy' => 1, 'system' => 1, 'planet' => 1]],
 				'tech' => [
-					'military_tech' => $this->usersInfo[$_player->getId()][109] ?? 0,
-					'shield_tech' 	=> $this->usersInfo[$_player->getId()][110] ?? 0,
-					'defence_tech' 	=> $this->usersInfo[$_player->getId()][111] ?? 0,
-					'laser_tech'	=> $this->usersInfo[$_player->getId()][120] ?? 0,
-					'ionic_tech'	=> $this->usersInfo[$_player->getId()][121] ?? 0,
-					'buster_tech'	=> $this->usersInfo[$_player->getId()][122] ?? 0,
+					'military_tech' => $this->usersInfo[$player->getId()][109] ?? 0,
+					'shield_tech' 	=> $this->usersInfo[$player->getId()][110] ?? 0,
+					'defence_tech' 	=> $this->usersInfo[$player->getId()][111] ?? 0,
+					'laser_tech'	=> $this->usersInfo[$player->getId()][120] ?? 0,
+					'ionic_tech'	=> $this->usersInfo[$player->getId()][121] ?? 0,
+					'buster_tech'	=> $this->usersInfo[$player->getId()][122] ?? 0,
 				],
-				'flvl' => $this->usersInfo[$_player->getId()],
+				'flvl' => $this->usersInfo[$player->getId()],
 			];
 		}
 
 		return $result;
 	}
 
-	private function convertRoundToArray(Round $round)
+	private function convertRoundToArray(Round $round): array
 	{
 		$result = [
 			'attackers' 	=> [],
@@ -189,7 +189,7 @@ class Simulation
 		return $result;
 	}
 
-	private function getAttackers($s)
+	private function getAttackers(int $s): PlayerGroup
 	{
 		$maxSlots = config('game.maxSlotsInSim', 5);
 
@@ -204,7 +204,7 @@ class Simulation
 
 				foreach ($rFleet as $shipArr) {
 					if ($shipArr['id'] > 200) {
-						$fleets[$shipArr['id']] = [$shipArr['count'], 0];
+						$fleets[$shipArr['id']] = $shipArr['count'];
 					}
 
 					$res[$shipArr['id']] = $shipArr['count'];
@@ -213,9 +213,8 @@ class Simulation
 				$fleetId = $i;
 				$playerId = $i;
 
-				$playerObj = new Player($playerId);
-				$playerObj->setName('Игрок ' . ($playerId + 1));
-				$playerObj->setTech(0, 0, 0);
+				$playerObj = new Player($playerId)
+					->setName('Игрок ' . ($playerId + 1));
 
 				$this->usersInfo[$playerId] = $res;
 
@@ -224,7 +223,7 @@ class Simulation
 				foreach ($fleets as $id => $count) {
 					$id = floor($id);
 
-					if ($count[0] > 0 && $id > 0) {
+					if ($count > 0 && $id > 0) {
 						$fleetObj->addShipType($this->getShipType($id, $count, $res));
 					}
 				}
@@ -242,10 +241,10 @@ class Simulation
 		return $playerGroupObj;
 	}
 
-	private function getShipType($id, $count, $res)
+	private function getShipType($id, int $count, array $res): ShipType
 	{
-		$attDef 	= $count[1] + ($res[111] ?? 0) * 0.05;
-		$attTech 	= ($res[109] ?? 0) * 0.05 + $count[1];
+		$attDef 	= ($res[111] ?? 0) * 0.05;
+		$attTech 	= ($res[109] ?? 0) * 0.05;
 
 		$unitData = Vars::getUnitData($id);
 
@@ -262,9 +261,15 @@ class Simulation
 		$cost = [$price['metal'], $price['crystal']];
 
 		if (Vars::getItemType($id) == ItemType::FLEET) {
-			return new Ship($id, $count[0], $unitData['sd'], $unitData['shield'], $cost, $unitData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
+			$shipType = new Ship($id, $count, $unitData['sd'], $unitData['shield'], $cost, $unitData['attack']);
+		} else {
+			$shipType = new Defense($id, $count, $unitData['sd'], $unitData['shield'], $cost, $unitData['attack']);
 		}
 
-		return new Defense($id, $count[0], $unitData['sd'], $unitData['shield'], $cost, $unitData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
+		$shipType->setWeaponsFactor($attTech);
+		$shipType->setArmourFactor($attDef);
+		$shipType->setShieldsFactor(($res[110] ?? 0) * 0.05);
+
+		return $shipType;
 	}
 }
