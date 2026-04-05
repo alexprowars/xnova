@@ -87,13 +87,13 @@ Route::middleware(['auth'])->group(function () {
 	Route::delete('friends/{id}', [Controllers\FriendsController::class, 'delete'])->whereNumber('id');
 	Route::post('friends/{id}/approve', [Controllers\FriendsController::class, 'approve'])->whereNumber('id');
 
-	Route::get('buildings', [Controllers\BuildingsController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::get('buildings', [Controllers\BuildingsController::class, 'index']);
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->middleware(IsVacationMode::class)->whereIn('action', ['insert', 'destroy']);
 	Route::post('buildings/queue/{action}', [Controllers\BuildingsController::class, 'queue'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'remove']);
 
 	Route::post('credits/pay', [Controllers\CreditsController::class, 'pay']);
 
-	Route::get('defense', [Controllers\DefenseController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::get('defense', [Controllers\DefenseController::class, 'index']);
 	Route::post('defense/queue', [Controllers\DefenseController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('fleet', [Controllers\Fleet\FleetController::class, 'index']);
@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::delete('logs/{id}', [Controllers\LogsController::class, 'delete']);
 	Route::post('logs', [Controllers\LogsController::class, 'create']);
 
-	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange']);
+	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange'])->middleware(IsVacationMode::class);
 
 	Route::get('messages', [Controllers\MessagesController::class, 'index']);
 	Route::get('messages/write/{id}', [Controllers\MessagesController::class, 'write']);
@@ -143,10 +143,10 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('phalanx', [Controllers\PhalanxController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('race', [Controllers\RaceController::class, 'index']);
-	Route::post('race/change', [Controllers\RaceController::class, 'change']);
+	Route::post('race/change', [Controllers\RaceController::class, 'change'])->middleware(IsVacationMode::class);
 	Route::get('referrals', [Controllers\ReferralsController::class, 'index']);
 
-	Route::get('research', [Controllers\ResearchController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::get('research', [Controllers\ResearchController::class, 'index']);
 	Route::post('research/{action}', [Controllers\ResearchController::class, 'action'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'search']);
 
 	Route::get('resources', [Controllers\ResourcesController::class, 'index']);
@@ -158,7 +158,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->whereNumber('id');
 	Route::post('search', [Controllers\SearchController::class, 'index']);
 
-	Route::get('shipyard', [Controllers\ShipyardController::class, 'index'])->middleware(IsVacationMode::class);
+	Route::get('shipyard', [Controllers\ShipyardController::class, 'index']);
 	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('support', [Controllers\SupportController::class, 'index']);
@@ -174,7 +174,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('user/planet/{id}', [Controllers\UserController::class, 'setPlanet']);
 	Route::post('user/daily', [Controllers\UserController::class, 'dailyBonus']);
 
-	Route::delete('planet/delete', [Controllers\PlanetController::class, 'delete']);
-	Route::post('planet/rename', [Controllers\PlanetController::class, 'rename']);
-	Route::post('planet/image', [Controllers\PlanetController::class, 'image']);
+	Route::delete('planet/delete', [Controllers\PlanetController::class, 'delete'])->middleware(IsVacationMode::class);
+	Route::post('planet/rename', [Controllers\PlanetController::class, 'rename'])->middleware(IsVacationMode::class);
+	Route::post('planet/image', [Controllers\PlanetController::class, 'image'])->middleware(IsVacationMode::class);
 });

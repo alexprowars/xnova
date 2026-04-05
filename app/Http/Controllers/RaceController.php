@@ -12,7 +12,8 @@ class RaceController extends Controller
 {
 	public function index()
 	{
-		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
+		$isChangeAvailable = ($this->user->race_change_count > 0 || $this->user->credits >= 100)
+			&& !$this->user->isVacation();
 
 		return [
 			'change' => $this->user->race_change_count,

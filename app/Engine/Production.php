@@ -116,10 +116,6 @@ class Production
 
 	public function getEnitityProductions(): array
 	{
-		if ($this->planet->user->isVacation()) {
-			return [];
-		}
-
 		if (in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
 			return [];
 		}
@@ -159,6 +155,10 @@ class Production
 		$this->planet->energy = 0;
 
 		$resources = new Resources();
+
+		if ($this->planet->user->isVacation()) {
+			return $resources;
+		}
 
 		$productions = $this->getEnitityProductions();
 

@@ -17,6 +17,6 @@ class PageException extends Exception
 			'message' => $this->getMessage(),
 			'redirect' => $this->url,
 			'timeout' => 5,
-		]], 403);
+		]], 403, options: JSON_UNESCAPED_UNICODE);
 	}
 }
