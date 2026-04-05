@@ -2,6 +2,9 @@
 
 namespace App\Engine\Traits\User;
 
+/**
+ * @property array $options
+ */
 trait HasOptions
 {
 	protected array $optionsDefault = [

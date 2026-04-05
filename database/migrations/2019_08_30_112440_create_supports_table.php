@@ -7,18 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('supports', function (Blueprint $table) {
+		Schema::create('support_tickets', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-			$table->string('subject')->default('');
+			$table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+			$table->string('subject')->nullable();
 			$table->text('message');
-			$table->integer('status')->default(1);
+			$table->smallInteger('status')->default(1);
 			$table->timestamps();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('supports');
+		Schema::drop('support_tickets');
 	}
 };

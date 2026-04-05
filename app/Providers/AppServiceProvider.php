@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
 		Date::use(CarbonImmutable::class);
 
 		JsonResource::withoutWrapping();
+
+		Str::macro('sanitize', function (string $string): string {
+			return htmlspecialchars($string);
+		});
 
 		Builder::macro('findOne', /** @return Model|null */ function ($key) {
 			if (empty($key)) {

@@ -140,6 +140,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'email']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);
+	Route::post('options/vacation', [Controllers\OptionsController::class, 'vacation']);
 
 	Route::get('phalanx', [Controllers\PhalanxController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('race', [Controllers\RaceController::class, 'index']);
@@ -162,9 +163,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue'])->middleware(IsVacationMode::class);
 
 	Route::get('support', [Controllers\SupportController::class, 'index']);
-	Route::get('support/info/{id}', [Controllers\SupportController::class, 'info'])->whereNumber('id');
-	Route::post('support/answer/{id}', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
-	Route::post('support/add', [Controllers\SupportController::class, 'add']);
+	Route::get('support/{id}', [Controllers\SupportController::class, 'info'])->whereNumber('id');
+	Route::post('support/{id}/answer', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
+	Route::post('support', [Controllers\SupportController::class, 'create']);
 
 	Route::get('quests', [Controllers\QuestController::class, 'index']);
 	Route::get('quests/{id}', [Controllers\QuestController::class, 'info'])->whereNumber('id');
