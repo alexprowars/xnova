@@ -27,8 +27,7 @@ class ChatMessage extends JsonResource
 			$publicUsers = array_map('trim', $match[1]);
 
 			if (!empty($privateUsers)) {
-				$privateUsers = array_merge($privateUsers, $publicUsers);
-				$privateUsers = array_unique($privateUsers);
+				$privateUsers = array_unique(array_merge($privateUsers, $publicUsers));
 
 				$publicUsers = [];
 			}

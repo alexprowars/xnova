@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\Game;
+use App\Engine\Messages\MessageFormatter;
 use App\Exceptions\Exception;
 use App\Format;
 use App\Models\Message;
@@ -64,9 +64,9 @@ class MessagesController extends Controller
 			Session::put('m_cat', $category);
 		}
 
-		$parse = [];
-		$parse['limit'] = $limit;
-		$parse['category'] = $category;
+		$result = [];
+		$result['limit'] = $limit;
+		$result['category'] = $category;
 
 		if ($this->user->messages > 0) {
 			$this->user->messages = 0;
@@ -93,31 +93,27 @@ class MessagesController extends Controller
 		$paginator = $messages->paginate($limit, page: $page);
 
 		$items = $paginator->items();
-		$parse['items'] = [];
+		$result['items'] = [];
 
 		/** @var Message $item */
 		foreach ($items as $item) {
-			if (preg_match('/#DATE\|(.*?)\|(.*?)#/i', $item->message, $match)) {
-				$item->message = str_replace($match[0], Game::datezone(trim($match[1]), (int) $match[2]), $item->message);
-			}
-
-			$parse['items'][] = [
+			$result['items'][] = [
 				'id' => $item->id,
 				'type' => $item->type,
 				'date' => $item->date->utc()->toAtomString(),
 				'from' => $item->from_id,
-				'subject' => $item->subject ?? '',
-				'message' => str_replace(["\r\n", "\n", "\r"], '<br>', stripslashes($item->message)),
+				'subject' => $item->subject ? __($item->subject) : null,
+				'message' => MessageFormatter::format($item->message),
 			];
 		}
 
-		$parse['pagination'] = [
+		$result['pagination'] = [
 			'total' => $paginator->total(),
 			'limit' => $limit,
 			'page' => $paginator->currentPage(),
 		];
 
-		return $parse;
+		return $result;
 	}
 
 	public function write(int $userId, Request $request)
@@ -186,12 +182,13 @@ class MessagesController extends Controller
 
 		$similar = Message::query()
 			->whereBelongsTo($this->user)
+			->where('type', MessageType::User)
 			->where('date', '>', now()->subMinutes(5))
 			->orderByDesc('date')
 			->first();
 
-		if ($similar && mb_strlen($similar->message) < 1000) {
-			similar_text($message, $similar->message, $sim);
+		if ($similar && mb_strlen($similar->message['text']) < 1000) {
+			similar_text($message, $similar->message['text'], $sim);
 
 			if ($sim > 80) {
 				throw new Exception(__('messages.mess_similar'));

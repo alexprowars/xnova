@@ -13,7 +13,7 @@ use Illuminate\Support\Arr;
 
 class ShipyardController extends Controller
 {
-	protected $mode = 'fleet';
+	protected string $mode = 'fleet';
 
 	public function index()
 	{
@@ -47,6 +47,7 @@ class ShipyardController extends Controller
 
 			$row = [
 				'id' => $elementId,
+				'name' => __('main.tech.' . $elementId),
 				'code' => Vars::getName($elementId),
 				'available' => $available,
 				'price' => $entity->getPrice(),

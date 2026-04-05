@@ -10,6 +10,7 @@ use App\Engine\Formulas;
 use App\Models;
 use App\Models\Planet;
 use App\Notifications\MessageNotification;
+use App\Services\FleetService;
 use Illuminate\Support\Facades\Cache;
 
 class Destruction extends BaseMission
@@ -19,15 +20,16 @@ class Destruction extends BaseMission
 		return $target->getType() == PlanetType::MOON && !empty($units[214]) && $targetPlanet && $planet->user_id == $targetPlanet->user_id;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$mission = new Attack($this->fleet);
+		$mission->targetEvent();
 
-		if (!$mission->targetEvent()) {
+		$checkFleet = Models\Fleet::findOne($this->fleet);
+
+		if ($checkFleet && $checkFleet->mess == 1) {
 			return;
 		}
-
-		$checkFleet = Models\Fleet::find($this->fleet->id, ['entities', 'won']);
 
 		if ($checkFleet && $checkFleet->won == 1) {
 			$this->fleet->entities = $checkFleet->entities;
@@ -95,14 +97,14 @@ class Destruction extends BaseMission
 
 					$this->killFleet();
 
-					$debree = $this->convertFleetToDebris($this->fleet->entities);
+					$debris = FleetService::convertFleetToDebris($this->fleet->entities);
 
-					if ($debree['metal'] > 0 && $debree['crystal'] > 0) {
+					if ($debris['metal'] > 0 && $debris['crystal'] > 0) {
 						Models\Planet::query()->coordinates($this->fleet->getDestinationCoordinates(false))
 							->whereNot('planet_type', PlanetType::MOON)
 							->incrementEach([
-								'debris_metal' => $debree['metal'],
-								'debris_crystal' => $debree['crystal'],
+								'debris_metal' => $debris['metal'],
+								'debris_crystal' => $debris['crystal'],
 							]);
 					}
 				}

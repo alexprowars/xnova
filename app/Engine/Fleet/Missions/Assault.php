@@ -12,7 +12,7 @@ class Assault extends BaseMission
 		return $isAssault && $targetPlanet;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$this->return();
 	}

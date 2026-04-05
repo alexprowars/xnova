@@ -2,40 +2,31 @@
 
 namespace App\Engine\Fleet\Missions;
 
+use App\Engine\Battle\Battle;
+use App\Engine\Battle\Engine\Models\PlayerGroup;
 use App\Engine\Coordinates;
+use App\Engine\Entity\Model\FleetEntity;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\CombatEngine\Core\Battle;
-use App\Engine\Fleet\CombatEngine\Core\Round;
-use App\Engine\Fleet\CombatEngine\Models\Defense;
-use App\Engine\Fleet\CombatEngine\Models\Fleet;
-use App\Engine\Fleet\CombatEngine\Models\HomeFleet;
-use App\Engine\Fleet\CombatEngine\Models\Player;
-use App\Engine\Fleet\CombatEngine\Models\PlayerGroup;
-use App\Engine\Fleet\CombatEngine\Models\Ship;
-use App\Engine\Fleet\CombatEngine\Models\ShipType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Fleet\Mission as MissionEnum;
 use App\Engine\QueueManager;
 use App\Facades\Galaxy;
 use App\Facades\Vars;
-use App\Format;
 use App\Models;
 use App\Models\Fleet as FleetModel;
 use App\Models\LogsAttack;
 use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\MessageNotification;
+use App\Services\FleetService;
 use Illuminate\Support\Facades\DB;
 
 class Attack extends BaseMission
 {
-	public $usersTech = [];
-	public $usersInfo = [];
-
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
 		if (!in_array($target->getType(), [PlanetType::PLANET, PlanetType::MOON, PlanetType::MILITARY_BASE])) {
@@ -57,20 +48,20 @@ class Attack extends BaseMission
 		return true;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$target = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
 		if (!$target || !$target->user_id || $target->destroyed_at) {
 			$this->return();
 
-			return false;
+			return;
 		}
 
 		if (!$this->fleet->user) {
 			$this->return();
 
-			return false;
+			return;
 		}
 
 		$targetUser = $target->user;
@@ -78,7 +69,7 @@ class Attack extends BaseMission
 		if (!$targetUser) {
 			$this->return();
 
-			return false;
+			return;
 		}
 
 		$target->getProduction($this->fleet->start_date)->update();
@@ -86,195 +77,102 @@ class Attack extends BaseMission
 		$queueManager = new QueueManager($target);
 		$queueManager->checkUnitQueue();
 
-		$attackers = new PlayerGroup();
-		$defenders = new PlayerGroup();
+		$units = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
-		$this->getGroupFleet($this->fleet, $attackers);
+		$battle = new Battle();
+
+		if ($this->checkFleet($this->fleet)) {
+			$battle->addAttackerFleet($this->fleet);
+		} else {
+			return;
+		}
 
 		if ($this->fleet->assault_id) {
 			$fleets = Models\Fleet::where('id', $this->fleet->id)
 				->where('assault_id', $this->fleet->assault_id)
-				->get();
+				->get()
+				->filter(fn(Models\Fleet $fleet) => $this->checkFleet($fleet));
 
 			foreach ($fleets as $fleet) {
-				$this->getGroupFleet($fleet, $attackers);
+				$battle->addAttackerFleet($fleet);
 			}
 		}
 
 		$fleets = Models\Fleet::query()
 			->coordinates(FleetDirection::END, $this->fleet->getDestinationCoordinates())
 			->where('mess', 3)
-			->get();
+			->get()
+			->filter(fn(Models\Fleet $fleet) => $this->checkFleet($fleet));
 
 		foreach ($fleets as $fleet) {
-			$this->getGroupFleet($fleet, $defenders);
-		}
-
-		$res = [];
-
-		$units = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
-
-		foreach ($units as $i) {
-			if ($target->getLevel($i) > 0) {
-				$res[$i] = $target->getLevel($i);
-
-				$l = $i > 400 ? ($i - 50) : ($i + 100);
-
-				if ($targetUser->getTechLevel($l) > 0) {
-					$res[$l] = $targetUser->getTechLevel($l);
-				}
-			}
-		}
-
-		foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
-			$level = $targetUser->getTechLevel($techId);
-
-			if ($targetUser->rpg_komandir?->isFuture() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
-				$level += 2;
-			}
-
-			if ($level > 0) {
-				$res[$techId] = $level;
-			}
-		}
-
-		$this->usersTech[$targetUser->id] = $res;
-
-		$homeFleet = new HomeFleet(0);
-
-		foreach ($units as $i) {
-			if ($target->getLevel($i) > 0) {
-				$shipType = $this->getShipType($i, $target->getLevel($i), $res);
-
-				if ($targetUser->rpg_ingenieur && $shipType->getType() == 'Ship') {
-					$shipType->setRepairProb(0.8);
-				}
-
-				$homeFleet->addShipType($shipType);
-			}
-		}
-
-		if (!$defenders->existPlayer($targetUser->id)) {
-			$player = new Player($targetUser->id, [$homeFleet])
-				->setName($targetUser->username);
-
-			$defenders->addPlayer($player);
-
-			if (!isset($this->usersInfo[$targetUser->id])) {
-				$this->usersInfo[$targetUser->id] = [];
-			}
-
-			$this->usersInfo[$targetUser->id][0] = [
-				'galaxy' => $target->galaxy,
-				'system' => $target->system,
-				'planet' => $target->planet
-			];
-		} else {
-			$defenders->getPlayer($targetUser->id)->addDefense($homeFleet);
+			$battle->addDefenderFleet($fleet);
 		}
 
 		if (!$this->fleet->rounds) {
 			$this->fleet->rounds = 6;
 		}
 
-		$engine = new Battle($attackers, $defenders, $this->fleet->rounds);
-		$report = $engine->getReport();
-		$result = ['version' => 2, 'time' => time(), 'rw' => []];
+		$battle->addPlanet($target);
+		$battle->setRounds($this->fleet->rounds);
 
-		$attackUsers 	= $this->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
-		$defenseUsers 	= $this->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
+		$report = $battle->run();
+		$result = $report->convertToArray();
 
-		for ($_i = 0; $_i <= $report->getLastRoundNumber(); $_i++) {
-			$result['rw'][] = $this->convertRoundToArray($report->getRound($_i));
-		}
-
-		$result['won'] = 0;
-
-		if ($report->attackerHasWin()) {
-			$result['won'] = 1;
-		}
-		if ($report->defenderHasWin()) {
-			$result['won'] = 2;
-		}
-		if ($report->isAdraw()) {
-			$result['won'] = 0;
-		}
-
-		$result['lost'] = ['att' => $report->getTotalAttackersLostUnits(), 'def' => $report->getTotalDefendersLostUnits()];
-
-		$debris = $report->getDebris();
-
-		$result['debree']['att'] = $debris;
-		$result['debree']['def'] = [0, 0];
+		$attackUsers 	= $report->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
+		$defenseUsers 	= $report->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
 
 		$attackFleets 	= $this->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
 		$defenseFleets 	= $this->getResultFleetArray($report->getPresentationDefendersFleetOnRound('START'), $report->getAfterBattleDefenders());
 
 		$repairFleets = [];
 
-		foreach ($report->getDefendersRepaired() as $_player) {
-			foreach ($_player as $_idFleet => $_fleet) {
-				/**
-				 * @var ShipType $_ship
-				 */
-				foreach ($_fleet as $_shipID => $_ship) {
-					$repairFleets[$_idFleet][$_shipID] = $_ship->getCount();
+		foreach ($report->getDefendersRepaired()->getPlayers() as $player) {
+			foreach ($player->getFleets() as $fleet) {
+				foreach ($fleet->getShips() as $ship) {
+					$repairFleets[$fleet->getId()][$ship->getId()] = $ship->getCount();
 				}
 			}
 		}
 
-		$fleetToUser = [];
-
-		/** @var Player $player */
-		foreach ($report->getPresentationAttackersFleetOnRound('START') as $idPlayer => $player) {
-			foreach ($player->getIterator() as $idFleet => $fleet) {
-				$fleetToUser[$idFleet] = $idPlayer;
-			}
-		}
-
-		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
+		$steal = [
+			'metal' => 0,
+			'crystal' => 0,
+			'deuterium' => 0,
+		];
 
 		if ($result['won'] == 1) {
-			$max_resources = 0;
-			$max_fleet_res = [];
+			$maxStorage = 0;
+			$maxFleetStorage = [];
 
 			foreach ($attackFleets as $fleet => $arr) {
-				$max_fleet_res[$fleet] = 0;
+				$fleets = FleetEntityCollection::createFromArray($arr)
+					->filter(fn(FleetEntity $entity) => $entity->id !== 210);
 
-				foreach ($arr as $Element => $amount) {
-					if ($Element == 210) {
-						continue;
-					}
+				$maxFleetStorage[$fleet] = $fleets->getCapacity();
 
-					$fleetData = Vars::getUnitData($Element);
-
-					$capacity = $fleetData['capacity'] * $amount;
-
-					$max_resources += $capacity;
-					$max_fleet_res[$fleet] += $capacity;
-				}
+				$maxStorage += $maxFleetStorage[$fleet];
 			}
 
-			$res_correction = $max_resources;
+			$res_correction = $maxStorage;
 			$res_procent = [];
 
-			if ($max_resources > 0) {
-				foreach ($max_fleet_res as $id => $res) {
+			if ($maxStorage > 0) {
+				foreach ($maxFleetStorage as $id => $res) {
 					$res_procent[$id] = $res / $res_correction;
 				}
 			}
 
-			$steal = $this->getSteal($target, $max_resources);
+			$steal = FleetService::getSteal($target, $maxStorage);
 		}
 
-		$totalDebree = $result['debree']['def'][0] + $result['debree']['def'][1] + $result['debree']['att'][0] + $result['debree']['att'][1];
+		$totalDebris = array_sum($result['debris']['def']) + array_sum($result['debris']['att']);
 
-		if ($totalDebree > 0) {
+		if ($totalDebris > 0) {
 			Planet::query()->coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
 				->whereNot('planet_type', PlanetType::MOON)
 				->incrementEach([
-					'debris_metal' => $result['debree']['att'][0] + $result['debree']['def'][0],
-					'debris_crystal' => $result['debree']['att'][1] + $result['debree']['def'][1],
+					'debris_metal' => $result['debris']['att'][0] + $result['debris']['def'][0],
+					'debris_crystal' => $result['debris']['att'][1] + $result['debris']['def'][1],
 				]);
 		}
 
@@ -289,7 +187,7 @@ class Attack extends BaseMission
 					'updated_at' 	=> DB::raw('end_date'),
 					'mess'			=> 1,
 					'assault_id'	=> null,
-					'won'			=> $result['won']
+					'won'			=> $result['won'],
 				];
 
 				if ($result['won'] == 1 && isset($res_procent[$fleetID]) && ($steal['metal'] > 0 || $steal['crystal'] > 0 || $steal['deuterium'] > 0)) {
@@ -332,7 +230,7 @@ class Attack extends BaseMission
 			}
 		}
 
-		$moonChance = $report->getMoonProb(($targetUser->rpg_admiral?->isFuture() ? 10 : 0));
+		$moonChance = $report->getMoonProb($targetUser->rpg_admiral?->isFuture() ? 10 : 0);
 
 		if ($target->planet_type != PlanetType::PLANET) {
 			$moonChance = 0;
@@ -352,41 +250,33 @@ class Attack extends BaseMission
 			);
 
 			if ($moon) {
-				$GottenMoon = __('fleet_engine.sys_moonbuilt', [
-					'galaxy' => $this->fleet->end_galaxy,
-					'system' => $this->fleet->end_system,
-					'planet' => $this->fleet->end_planet,
-				]);
+				$GottenMoon = 1;
 			} else {
-				$GottenMoon = 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';
+				$GottenMoon = 2;
 			}
 		} else {
-			$GottenMoon = '';
+			$GottenMoon = 0;
 		}
 
 		// Очки военного опыта
-		$warPoints 		= round($totalDebree / 25000);
+		$warPoints 		= round($totalDebris / 25000);
 		$AddWarPoints 	= ($result['won'] != 2) ? $warPoints : 0;
 		// Сборка массива ID участников боя
 		$FleetsUsers = [];
 
 		$tmp = [];
 
-		foreach ($attackUsers as $info) {
-			if (!in_array($info['tech']['id'], $tmp)) {
-				$tmp[] = $info['tech']['id'];
+		foreach ($report->getAttackersId() as $userId) {
+			if (!in_array($userId, $tmp)) {
+				$tmp[] = $userId;
 			}
 		}
 
 		$realAttackersUsers = count($tmp);
 		unset($tmp);
 
-		foreach ($attackUsers as $info) {
-			if (in_array($info['tech']['id'], $FleetsUsers)) {
-				continue;
-			}
-
-			$FleetsUsers[] = (int) $info['tech']['id'];
+		foreach ($report->getAttackersId() as $userId) {
+			$FleetsUsers[] = $userId;
 
 			if ($this->fleet->mission == MissionEnum::Spy) {
 				continue;
@@ -404,15 +294,11 @@ class Attack extends BaseMission
 				$update['xpraid'] = DB::raw('xpraid + ' . ceil($AddWarPoints / $realAttackersUsers));
 			}
 
-			Models\User::query()->whereKey($info['tech']['id'])->update($update);
+			Models\User::query()->whereKey($userId)->update($update);
 		}
 
-		foreach ($defenseUsers as $info) {
-			if (in_array($info['tech']['id'], $FleetsUsers)) {
-				continue;
-			}
-
-			$FleetsUsers[] = (int) $info['tech']['id'];
+		foreach ($report->getDefendersId() as $userId) {
+			$FleetsUsers[] = $userId;
 
 			if ($this->fleet->mission == MissionEnum::Spy) {
 				continue;
@@ -426,126 +312,70 @@ class Attack extends BaseMission
 				$update['raids_lose'] = DB::raw('raids_lose + 1');
 			}
 
-			Models\User::query()->whereKey($info['tech']['id'])->update($update);
+			Models\User::query()->whereKey($userId)->update($update);
 		}
 
 		// Уничтожен в первой волне
-		$no_contact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
+		$noContact = (count($result['rw']) <= 2 && $result['won'] == 2) ? 1 : 0;
 
-		$report = Models\Report::create([
-			'users_id' 		=> $FleetsUsers,
-			'no_contact' 	=> $no_contact,
-			'data' 			=> [$result, $attackUsers, $defenseUsers, $steal, $moonChance, $GottenMoon, $repairFleets],
+		$combatReport = Models\Report::create([
+			'users_id' 		=> array_unique($FleetsUsers),
+			'no_contact' 	=> $noContact,
+			'data' 			=> [
+				'result' => $result,
+				'attackers' => $attackUsers,
+				'defenders' => $defenseUsers,
+				'steal' => $steal,
+				'moon_chance' => $moonChance,
+				'moon' => $GottenMoon,
+				'repair' => $repairFleets,
+			],
 		]);
 
 		if ($this->fleet->assault) {
 			$this->fleet->assault->delete();
 		}
 
-		$lost = $result['lost']['att'] + $result['lost']['def'];
+		FleetService::checkHallBattle($combatReport);
 
-		if ($lost >= config('game.hallPoints', 1000000)) {
-			$sab = 0;
+		$reportData = [
+			'type' => 'AttackMessage',
+			'report_id' => $combatReport->id,
+			'galaxy' => $this->fleet->end_galaxy,
+			'system' => $this->fleet->end_system,
+			'planet' => $this->fleet->end_planet,
+			'lost' => $result['lost'],
+			'steal' => $steal,
+			'debris' => [
+				'metal' => $result['debris']['att'][0] + $result['debris']['def'][0],
+				'crystal' => $result['debris']['att'][1] + $result['debris']['def'][1],
+			],
+		];
 
-			$userList = [];
-
-			foreach ($attackUsers as $info) {
-				if (!in_array($info['username'], $userList)) {
-					$userList[] = $info['username'];
-				}
-			}
-
-			if (count($userList) > 1) {
-				$sab = 1;
-			}
-
-			$title_1 = implode(',', $userList);
-
-			$userList = [];
-
-			foreach ($defenseUsers as $info) {
-				if (!in_array($info['username'], $userList)) {
-					$userList[] = $info['username'];
-				}
-			}
-
-			if (count($userList) > 1) {
-				$sab = 1;
-			}
-
-			$title_2 = implode(',', $userList);
-
-			$title = $title_1 . ' vs ' . $title_2 . ' (П: ' . Format::number($lost) . ')';
-
-			$battleLog = new Models\LogsBattle();
-			$battleLog->user_id = 0;
-			$battleLog->title = $title;
-			$battleLog->data = $report->data;
-
-			if ($battleLog->save()) {
-				Models\Hall::create([
-					'title' 	=> $title,
-					'debris' 	=> floor($lost / 1000),
-					'time' 		=> now(),
-					'won' 		=> $result['won'],
-					'sab' 		=> $sab,
-					'log' 		=> $battleLog->id
-				]);
-			}
-		}
-
-		$reportHtml  = '<div class="text-center">';
-		$reportHtml .= '<a href="' . str_replace('/api', '', url()->signedRoute('log.view', ['id' => $report->id], absolute: false)) . '" target="' . (config('game.view.openRaportInNewWindow', 0) == 1 ? '_blank' : '') . '">';
-		$reportHtml .= '<span style="color:##COLOR#">' . __('fleet_engine.sys_mess_attack_report') . ' [' . $this->fleet->end_galaxy . ":" . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</span></a>';
-		$reportHtml .= '</div>';
-
-		$userList = [];
-
-		foreach ($attackUsers as $info) {
-			if (!in_array($info['tech']['id'], $userList)) {
-				$userList[] = $info['tech']['id'];
-			}
-		}
-
-		$attackersReport = $reportHtml;
-
-		$attackersReport .= '<br><br><div class="text-center">';
-		$attackersReport .= '<span style="color:red">' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($result['lost']['att']) . '</span><span style="color:green">   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($result['lost']['def']) . '</span><br>';
-		$attackersReport .= __('fleet_engine.sys_gain') . ' м: <span style="color:#adaead">' . Format::number($steal['metal']) . '</span>, к: <span style="color:#ef51ef">' . Format::number($steal['crystal']) . '</span>, д: <span style="color:#f77542">' . Format::number($steal['deuterium']) . '</span><br>';
-		$attackersReport .= __('fleet_engine.sys_debris') . ' м: <span style="color:#adaead">' . Format::number($result['debree']['att'][0] + $result['debree']['def'][0]) . '</span>, к: <span style="color:#ef51ef">' . Format::number($result['debree']['att'][1] + $result['debree']['def'][1]) . '</span></div>';
-
-		$color = match ($result['won']) {
+		$reportData['color'] = match ($result['won']) {
 			1 => 'green',
 			2 => 'red',
 			default => 'orange'
 		};
 
-		$attackersReport = str_replace('#COLOR#', $color, $attackersReport);
-
-		foreach ($userList as $userId) {
-			User::find($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $attackersReport));
+		foreach ($report->getAttackersId() as $userId) {
+			User::findOne($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $reportData));
 		}
 
-		$userList = [];
+		unset(
+			$reportData['steal'],
+			$reportData['debris'],
+			$reportData['lost']
+		);
 
-		foreach ($defenseUsers as $info) {
-			if (!in_array($info['tech']['id'], $userList)) {
-				$userList[] = $info['tech']['id'];
-			}
-		}
-
-		$defendersReport = $reportHtml;
-
-		$color = match ($result['won']) {
+		$reportData['color'] = match ($result['won']) {
 			1 => 'red',
 			2 => 'green',
 			default => 'orange'
 		};
 
-		$defendersReport = str_replace('#COLOR#', $color, $defendersReport);
-
-		foreach ($userList as $userId) {
-			User::find($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $defendersReport));
+		foreach ($report->getDefendersId() as $userId) {
+			User::findOne($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $reportData));
 		}
 
 		LogsAttack::create([
@@ -553,288 +383,43 @@ class Attack extends BaseMission
 			'planet_start' 	=> 0,
 			'planet_end'	=> $target->id,
 			'fleet' 		=> $this->fleet->entities,
-			'battle_log'	=> $report->id
+			'battle_log'	=> $combatReport->id,
 		]);
-
-		return true;
 	}
 
-	public function getGroupFleet(FleetModel $fleet, PlayerGroup $playerGroup)
+	public function checkFleet(FleetModel $fleet): bool
 	{
 		if (($fleet->entities->isEmpty() && $fleet->mission == MissionEnum::Attack) || ($fleet->mission == MissionEnum::Assault && $fleet->entities->count() == 1 && $fleet->entities->getByEntityId(210))) {
 			(new FleetEngine($fleet))->return();
 
-			return;
+			return false;
 		}
 
-		if (!isset($this->usersInfo[$fleet->user_id])) {
-			$this->usersInfo[$fleet->user_id] = [];
-		}
-
-		$this->usersInfo[$fleet->user_id][$fleet->id] = [
-			'galaxy' => $fleet->start_galaxy,
-			'system' => $fleet->start_system,
-			'planet' => $fleet->start_planet
-		];
-
-		$res = [];
-
-		foreach ($fleet->entities as $entity) {
-			if (Vars::getItemType($entity->id) != ItemType::FLEET) {
-				continue;
-			}
-
-			$res[$entity->id] = $entity->count;
-		}
-
-		if (!isset($this->usersTech[$fleet->user_id])) {
-			$user = User::query()->find($fleet->user_id);
-
-			$playerObj = new Player($fleet->user_id)
-				->setName($user->username);
-
-			$info = [
-				'military_tech' => $user->getTechLevel('military'),
-				'defence_tech' 	=> $user->getTechLevel('defence'),
-				'shield_tech' 	=> $user->getTechLevel('shield'),
-				'laser_tech' 	=> $user->getTechLevel('laser'),
-				'ionic_tech' 	=> $user->getTechLevel('ionic'),
-				'buster_tech' 	=> $user->getTechLevel('buster'),
-			];
-
-			if ($user->rpg_komandir?->isFuture()) {
-				$info['military_tech'] 	+= 2;
-				$info['defence_tech'] 	+= 2;
-				$info['shield_tech'] 	+= 2;
-			}
-
-			foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
-				if (isset($info[Vars::getName($techId)]) && $info[Vars::getName($techId)] > 0) {
-					$res[$techId] = $info[Vars::getName($techId)];
-				}
-			}
-
-			$this->usersTech[$fleet->user_id] = $res;
-		} else {
-			$playerObj = $playerGroup->getPlayer($fleet->user_id);
-
-			if (!$playerObj) {
-				$info = User::findOne($fleet->user_id);
-
-				$playerObj = new Player($fleet->user_id)
-					->setName($info->username);
-			}
-
-			foreach ($this->usersTech[$fleet->user_id] as $rId => $rVal) {
-				if (!isset($res[$rId])) {
-					$res[$rId] = $rVal;
-				}
-			}
-		}
-
-		$fleetObj = new Fleet($fleet->id);
-
-		foreach ($fleet->entities as $entity) {
-			if (Vars::getItemType($entity->id) != ItemType::FLEET || empty($entity->count)) {
-				continue;
-			}
-
-			$fleetObj->addShipType($this->getShipType($entity->id, $entity->count, $res));
-		}
-
-		if (!$fleetObj->isEmpty()) {
-			$playerObj->addFleet($fleetObj);
-		}
-
-		if (!$playerGroup->existPlayer($fleet->user_id)) {
-			$playerGroup->addPlayer($playerObj);
-		}
-	}
-
-	public function getShipType($id, $count, $res)
-	{
-		$shipData = Vars::getUnitData($id);
-
-		$attDef 	= ($res[111] ?? 0) * 0.05;
-		$attTech 	= ($res[109] ?? 0) * 0.05;
-
-		if ($shipData['type_gun'] == 1) {
-			$attTech += ($res[120] ?? 0) * 0.05;
-		} elseif ($shipData['type_gun'] == 2) {
-			$attTech += ($res[121] ?? 0) * 0.05;
-		} elseif ($shipData['type_gun'] == 3) {
-			$attTech += ($res[122] ?? 0) * 0.05;
-		}
-
-		$price = Vars::getItemPrice($id);
-
-		$cost = [$price['metal'], $price['crystal']];
-
-		if (Vars::getItemType($id) == ItemType::FLEET) {
-			return new Ship($id, $count, $shipData['sd'], $shipData['shield'], $cost, $shipData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
-		}
-
-		return new Defense($id, $count, $shipData['sd'], $shipData['shield'], $cost, $shipData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
-	}
-
-	public function convertPlayerGroupToArray(PlayerGroup $_playerGroup)
-	{
-		$result = [];
-
-		foreach ($_playerGroup as $_player) {
-			/** @var Player $_player */
-			$result[$_player->getId()] = [
-				'username' 	=> $_player->getName(),
-				'fleet' 	=> $this->usersInfo[$_player->getId()],
-				'tech' 		=> [
-					'id' 			=> $_player->getId(),
-					'military_tech' => $this->usersTech[$_player->getId()][109] ?? 0,
-					'shield_tech' 	=> $this->usersTech[$_player->getId()][110] ?? 0,
-					'defence_tech' 	=> $this->usersTech[$_player->getId()][111] ?? 0,
-					'laser_tech'	=> $this->usersTech[$_player->getId()][120] ?? 0,
-					'ionic_tech'	=> $this->usersTech[$_player->getId()][121] ?? 0,
-					'buster_tech'	=> $this->usersTech[$_player->getId()][122] ?? 0
-				],
-				'flvl' => $this->usersTech[$_player->getId()],
-			];
-		}
-
-		return $result;
-	}
-
-	public function convertRoundToArray(Round $round)
-	{
-		$result = [
-			'attackers' 	=> [],
-			'defenders' 	=> [],
-			'attack'		=> ['total' => $round->getAttackersFirePower()],
-			'defense' 		=> ['total' => $round->getDefendersFirePower()],
-			'attackA' 		=> ['total' => $round->getAttackersFireCount()],
-			'defenseA' 		=> ['total' => $round->getDefendersFireCount()]
-		];
-
-		$attackers = $round->getAfterBattleAttackers();
-		$defenders = $round->getAfterBattleDefenders();
-
-		foreach ($attackers as $_player) {
-			foreach ($_player as $_idFleet => $_fleet) {
-				/**
-				 * @var ShipType $_ship
-				 */
-				foreach ($_fleet as $_shipID => $_ship) {
-					$result['attackers'][$_idFleet][$_shipID] = $_ship->getCount();
-
-					if (!isset($result['attackA'][$_idFleet]['total'])) {
-						$result['attackA'][$_idFleet]['total'] = 0;
-					}
-
-					$result['attackA'][$_idFleet]['total'] += $_ship->getCount();
-				}
-			}
-		}
-
-		foreach ($defenders as $_player) {
-			foreach ($_player as $_idFleet => $_fleet) {
-				/**
-				 * @var ShipType $_ship
-				 */
-				foreach ($_fleet as $_shipID => $_ship) {
-					$result['defenders'][$_idFleet][$_shipID] = $_ship->getCount();
-
-					if (!isset($result['defenseA'][$_idFleet]['total'])) {
-						$result['defenseA'][$_idFleet]['total'] = 0;
-					}
-
-					$result['defenseA'][$_idFleet]['total'] += $_ship->getCount();
-				}
-			}
-		}
-
-		$result['attackShield'] = $round->getAttachersAssorbedDamage();
-		$result['defShield'] 	= $round->getDefendersAssorbedDamage();
-
-		return $result;
+		return true;
 	}
 
 	public function getResultFleetArray(PlayerGroup $playerGroupBeforeBattle, PlayerGroup $playerGroupAfterBattle)
 	{
 		$result = [];
 
-		foreach ($playerGroupBeforeBattle->getIterator() as $idPlayer => $player) {
-			/**
-			 * @var Player $player
-			 * @var Player $Xplayer
-			 */
-			$existPlayer = $playerGroupAfterBattle->existPlayer($idPlayer);
+		foreach ($playerGroupBeforeBattle->getPlayers() as $player) {
+			$playerAfterBattle = $playerGroupAfterBattle->getPlayer($player->getId());
 
-			$Xplayer = null;
+			foreach ($player->getFleets() as $fleet) {
+				$fleetAfterBattle = $playerAfterBattle?->getFleet($fleet->getId());
 
-			if ($existPlayer) {
-				$Xplayer = $playerGroupAfterBattle->getPlayer($idPlayer);
-			}
+				$result[$fleet->getId()] = [];
 
-			foreach ($player->getIterator() as $idFleet => $fleet) {
-				/**
-				 * @var Fleet $fleet
-				 * @var Fleet $Xfleet
-				 */
-				$existFleet = $existPlayer && $Xplayer->existFleet($idFleet);
-				$Xfleet = null;
-
-				$result[$idFleet] = [];
-
-				if ($existFleet) {
-					$Xfleet = $Xplayer->getFleet($idFleet);
-				}
-
-				foreach ($fleet as $idShipType => $fighters) {
-					$existShipType 	= $existFleet && $Xfleet->existShipType($idShipType);
-
-					if ($existShipType) {
-						$XshipType = $Xfleet->getShipType($idShipType);
-						$result[$idFleet][$idShipType] = $XshipType->getCount();
+				foreach ($fleet->getShips() as $ship) {
+					if ($shipAfterBattle = $fleetAfterBattle?->getShip($ship->getId())) {
+						$result[$fleet->getId()][$ship->getId()] = $shipAfterBattle->getCount();
 					} else {
-						$result[$idFleet][$idShipType] = 0;
+						$result[$fleet->getId()][$ship->getId()] = 0;
 					}
 				}
 			}
 		}
 
 		return $result;
-	}
-
-	private function getSteal(Planet $planet, $capacity = 0)
-	{
-		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
-
-		if ($capacity > 0) {
-			$metal 		= $planet->metal / 2;
-			$crystal 	= $planet->crystal / 2;
-			$deuter 	= $planet->deuterium / 2;
-
-			$steal['metal'] 	= min($capacity / 3, $metal);
-			$capacity -= $steal['metal'];
-
-			$steal['crystal'] 	= min($capacity / 2, $crystal);
-			$capacity -= $steal['crystal'];
-
-			$steal['deuterium'] = min($capacity, $deuter);
-			$capacity -= $steal['deuterium'];
-
-			if ($capacity > 0) {
-				$oldStealMetal = $steal['metal'];
-
-				$steal['metal'] += min(($capacity / 2), ($metal - $steal['metal']));
-				$capacity -= $steal['metal'] - $oldStealMetal;
-
-				$steal['crystal'] += min($capacity, ($crystal - $steal['crystal']));
-			}
-		}
-
-		$steal['metal'] 	= max($steal['metal'], 0);
-		$steal['crystal'] 	= max($steal['crystal'], 0);
-		$steal['deuterium'] = max($steal['deuterium'], 0);
-
-		return array_map('round', $steal);
 	}
 }

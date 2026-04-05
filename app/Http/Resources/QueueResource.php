@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Engine\EntityFactory;
-use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Models\Planet;
 use App\Models\User;

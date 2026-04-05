@@ -38,6 +38,7 @@ return [
 		'metal' => 'Metal',
 		'crystal' => 'Crystal',
 		'deuterium' => 'Deuterium',
+		'energy' => 'Energy',
 	],
 	'res_builds' => [
 		'metal' => 1,
@@ -99,8 +100,6 @@ return [
 		122 => 'Plasma technology',
 		123 => 'Intergalactic research network',
 		124 => 'Expedition technology',
-		125 => 'Anti-matter technology',
-		126 => 'Disintegration stream technology',
 		150 => 'Colonization technology',
 		161 => 'Military base',
 		199 => 'Graviton technology',

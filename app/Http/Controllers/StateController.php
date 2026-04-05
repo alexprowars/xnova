@@ -33,7 +33,7 @@ class StateController extends Controller
 				'users' => $settings->usersTotal ?: 0,
 			],
 			'user' => null,
-			'version' => VERSION,
+			'version' => config('game.version'),
 		];
 
 		if ($user) {

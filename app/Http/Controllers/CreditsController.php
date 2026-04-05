@@ -8,13 +8,13 @@ class CreditsController extends Controller
 {
 	public function pay(Request $request)
 	{
-		$parse = [];
+		$result = [];
 
 		$userId = $request->post('userId') && (int) $request->post('userId') > 0 ?
 			(int) $request->post('userId') : $this->user->id;
 
-		$parse['id'] = $userId;
+		$result['id'] = $userId;
 
-		return $parse;
+		return $result;
 	}
 }

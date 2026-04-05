@@ -40,8 +40,8 @@ class Helpers
 	{
 		if (!is_numeric($ip)) {
 			return sprintf("%u", ip2long($ip));
-		} else {
-			return long2ip($ip);
 		}
+
+		return long2ip($ip);
 	}
 }

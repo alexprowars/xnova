@@ -185,9 +185,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 	{
 		if ($this->id > 0) {
 			return $this->hasRole('admin');
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	public function isVacation(): bool
@@ -365,12 +365,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 		if ($lvl <= 80) {
 			return (ceil($lvl / 4) + 1);
-		} else {
-			return 22;
 		}
+
+		return 22;
 	}
 
-	public static function getPlanetsId(User $user): array
+	public static function getPlanetsId(self $user): array
 	{
 		return Planet::query()->whereBelongsTo($user)
 			->pluck('id')->all();

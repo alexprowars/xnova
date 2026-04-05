@@ -50,8 +50,7 @@ class Format
 		$text = htmlspecialchars(str_replace("'", '&#39;', $text));
 		$text = addslashes($text);
 		$text = trim(nl2br(strip_tags($text, '<br>')));
-		$text = str_replace(["\r\n", "\n", "\r"], '', $text);
 
-		return $text;
+		return str_replace(["\r\n", "\n", "\r"], '', $text);
 	}
 }

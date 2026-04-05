@@ -45,8 +45,8 @@ class FleetCheckoutController extends Controller
 			$type = PlanetType::PLANET;
 		}
 
-		$parse = [];
-		$parse['ships'] = [];
+		$result = [];
+		$result['ships'] = [];
 		$fleets = [];
 
 		$ships = Arr::wrap($request->post('ships', []));
@@ -64,7 +64,7 @@ class FleetCheckoutController extends Controller
 				$ship = PlanetEntity\Ship::createEntity($i, 1, $this->planet)->getInfo();
 				$ship['count'] = $cnt;
 
-				$parse['ships'][] = $ship;
+				$result['ships'][] = $ship;
 			}
 		}
 
@@ -74,17 +74,17 @@ class FleetCheckoutController extends Controller
 
 		$target = new Coordinates($galaxy, $system, $planet, $type);
 
-		$parse['fleet'] = Crypt::encrypt($fleets);
-		$parse['target'] = $target->toArray();
-		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
-		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');
-		$parse['planet_max'] = (int) config('game.maxPlanetInSystem') + 1;
-		$parse['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
+		$result['fleet'] = Crypt::encrypt($fleets);
+		$result['target'] = $target->toArray();
+		$result['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
+		$result['system_max'] = (int) config('game.maxSystemInGalaxy');
+		$result['planet_max'] = (int) config('game.maxPlanetInSystem') + 1;
+		$result['expedition_hours'] = round($this->user->getTechLevel('expedition') / 2) + 1;
 
-		$parse['shortcuts'] = [];
+		$result['shortcuts'] = [];
 
 		foreach ($this->user->shortcuts as $shortcut) {
-			$parse['shortcuts'][] = [
+			$result['shortcuts'][] = [
 				'id' => $shortcut->id,
 				'name' => $shortcut->name,
 				'galaxy' => $shortcut->galaxy,
@@ -94,7 +94,7 @@ class FleetCheckoutController extends Controller
 			];
 		}
 
-		$parse['planets'] = [];
+		$result['planets'] = [];
 
 		$planets = $this->user->getPlanets();
 
@@ -108,12 +108,12 @@ class FleetCheckoutController extends Controller
 					$row->name .= ' ' . __('fleet.fl_shrtcup3');
 				}
 
-				$parse['planets'][] = $row->only(['id', 'name', 'galaxy', 'system', 'planet', 'planet_type']);
+				$result['planets'][] = $row->only(['id', 'name', 'galaxy', 'system', 'planet', 'planet_type']);
 			}
 		}
 
-		$parse['gate_time'] = null;
-		$parse['moons'] = [];
+		$result['gate_time'] = null;
+		$result['moons'] = [];
 
 		if ($this->planet->planet_type == PlanetType::MOON || $this->planet->planet_type == PlanetType::MILITARY_BASE) {
 			$moons = $this->user->planets()
@@ -126,7 +126,7 @@ class FleetCheckoutController extends Controller
 					->getNextJumpTime();
 
 				if ($timer) {
-					$parse['gate_time'] = now()->addSeconds($timer)->utc()->toAtomString();
+					$result['gate_time'] = now()->addSeconds($timer)->utc()->toAtomString();
 				}
 
 				foreach ($moons as $moon) {
@@ -137,7 +137,7 @@ class FleetCheckoutController extends Controller
 					$gateTime = resolve(PlanetServiceFactory::class)->make($moon)
 						->getNextJumpTime();
 
-					$parse['moons'][] = [
+					$result['moons'][] = [
 						'id' => $moon->id,
 						'name' => $moon->name,
 						'galaxy' => $moon->galaxy,
@@ -149,14 +149,14 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$parse['alliances'] = [];
+		$result['alliances'] = [];
 
 		$assaults = Assault::query()
 			->whereRelation('users', 'user_id', $this->user->id)
 			->get();
 
 		foreach ($assaults as $assault) {
-			$parse['alliances'][] = [
+			$result['alliances'][] = [
 				'id' => (int) $assault->id,
 				'name' => $assault->name,
 				'galaxy' => (int) $assault->galaxy,
@@ -185,7 +185,7 @@ class FleetCheckoutController extends Controller
 			$mission = Mission::Assault;
 		}
 
-		$parse['missions'] = [];
+		$result['missions'] = [];
 
 		if (!empty($missions)) {
 			foreach ($missions as $i => $id) {
@@ -193,7 +193,7 @@ class FleetCheckoutController extends Controller
 					$mission = $id;
 				}
 
-				$parse['missions'][] = $id;
+				$result['missions'][] = $id;
 			}
 
 			if (!$mission) {
@@ -201,8 +201,8 @@ class FleetCheckoutController extends Controller
 			}
 		}
 
-		$parse['mission'] = $mission;
+		$result['mission'] = $mission;
 
-		return $parse;
+		return $result;
 	}
 }

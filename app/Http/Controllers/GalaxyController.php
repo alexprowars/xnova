@@ -27,8 +27,8 @@ class GalaxyController extends Controller
 			$system = (int) $request->input('system', 1);
 		}
 
-		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
-		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));
+		$galaxy = (int) min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
+		$system = (int) min(max($system, 1), config('game.maxSystemInGalaxy'));
 
 		$phalanx = false;
 
@@ -64,23 +64,23 @@ class GalaxyController extends Controller
 			'fleets' => $maxfleet_count,
 		];
 
-		$parse = [];
-		$parse['galaxy'] = (int) $galaxy;
-		$parse['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
-		$parse['system'] = (int) $system;
-		$parse['system_max'] = (int) config('game.maxSystemInGalaxy');
-		$parse['user'] = $jsUser;
-		$parse['items'] = [];
-		$parse['shortcuts'] = [];
+		$result = [];
+		$result['galaxy'] = $galaxy;
+		$result['galaxy_max'] = (int) config('game.maxGalaxyInWorld');
+		$result['system'] = $system;
+		$result['system_max'] = (int) config('game.maxSystemInGalaxy');
+		$result['user'] = $jsUser;
+		$result['items'] = [];
+		$result['shortcuts'] = [];
 
 		$planets = $this->user->getPlanets(false);
 
 		foreach ($planets as $planet) {
-			$parse['shortcuts'][] = $planet->only(['name', 'galaxy', 'system', 'planet']);
+			$result['shortcuts'][] = $planet->only(['name', 'galaxy', 'system', 'planet']);
 		}
 
 		foreach ($this->user->shortcuts as $shortcut) {
-			$parse['shortcuts'][] = $shortcut->only(['name', 'galaxy', 'system', 'planet']);
+			$result['shortcuts'][] = $shortcut->only(['name', 'galaxy', 'system', 'planet']);
 		}
 
 		$items = Models\Planet::query()
@@ -214,9 +214,9 @@ class GalaxyController extends Controller
 				}
 			}
 
-			$parse['items'][] = $row;
+			$result['items'][] = $row;
 		}
 
-		return $parse;
+		return $result;
 	}
 }

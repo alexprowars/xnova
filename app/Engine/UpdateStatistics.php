@@ -21,10 +21,10 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateStatistics
 {
-	private $maxinfos = [];
-	public $start = 0;
+	private array $maxinfos = [];
+	public int $start = 0;
 
-	private $StatRace = [
+	private array $StatRace = [
 		1 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
 		2 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
 		3 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],

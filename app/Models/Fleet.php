@@ -69,26 +69,6 @@ class Fleet extends Model
 		return $this->end_galaxy . ':' . $this->end_system . ':' . $this->end_planet;
 	}
 
-	public function getStartAdressLink($type = ''): string
-	{
-		$uri = route('galaxy', [
-			'galaxy' => $this->start_galaxy,
-			'system' => $this->start_system,
-		], false);
-
-		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitStartPosition() . ']</a>';
-	}
-
-	public function getTargetAdressLink($type = ''): string
-	{
-		$uri = route('galaxy', [
-			'galaxy' => $this->end_galaxy,
-			'system' => $this->end_system,
-		], false);
-
-		return '<a href="' . $uri . '" ' . $type . '>[' . $this->splitTargetPosition() . ']</a>';
-	}
-
 	public function canBack(): bool
 	{
 		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != Mission::Expedition) && $this->mission != Mission::Rak && $this->target_user_id != 1));

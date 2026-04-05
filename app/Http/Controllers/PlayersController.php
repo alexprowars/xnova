@@ -10,42 +10,64 @@ use App\Models\LogsStat;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class PlayersController extends Controller
 {
 	public function index(int $userId)
 	{
-		if (!$userId) {
-			throw new PageException('Профиль не найден');
-		}
-
 		$user = User::find($userId);
 
 		if (!$user) {
 			throw new PageException('Профиль не найден');
 		}
 
-		$parse = [];
-		$parse['avatar'] = '/images/no_photo.gif';
+		$result = [
+			'id' => $user->id,
+			'avatar' => '/images/no_photo.gif',
+			'sex' => $user->sex,
+			'name' => $user->username,
+			'race' => $user->race,
+			'alliance' => null,
+			'planet' => null,
+			'fights' => [
+				'wons' => $user->raids_win,
+				'loos' => $user->raids_lose,
+				'total' => $user->raids,
+			],
+			'about' => preg_replace('/(\r\n)/u', '<br>', stripslashes($user->about)),
+			'level' => [
+				'mine' => User::getRankId($user->lvl_minier),
+				'raid' => User::getRankId($user->lvl_raid),
+			],
+		];
 
 		if ($file = $user->getFirstMediaUrl(conversionName: 'thumb')) {
-			$parse['avatar'] = $file;
+			$result['avatar'] = $file;
 		} elseif ($user->avatar) {
 			if ($user->avatar != 99) {
-				$parse['avatar'] = '/images/faces/' . $user->sex . '/' . $user->avatar . '.png';
+				$result['avatar'] = '/images/faces/' . $user->sex . '/' . $user->avatar . '.png';
 			}
 		}
-
-		$parse['userplanet'] = '';
 
 		$planet = Planet::findByCoordinates(new Coordinates($user->galaxy, $user->system, $user->planet, PlanetType::PLANET));
 
 		if ($planet) {
-			$parse['userplanet'] = $planet->name;
+			$result['planet'] = [
+				'name' => $planet->name,
+				'galaxy' => $planet->galaxy,
+				'system' => $planet->system,
+				'planet' => $planet->planet,
+			];
 		}
 
-		$parse['stats'] = false;
+		if ($user->alliance) {
+			$result['alliance'] = [
+				'id' => $user->alliance->id,
+				'name' => $user->alliance->name,
+			];
+		}
+
+		$result['stats'] = null;
 
 		$points = Statistic::query()
 			->where('stat_type', 1)
@@ -54,82 +76,62 @@ class PlayersController extends Controller
 			->first();
 
 		if ($points) {
-			$parse['stats'] = [
-				'tech_rank' => (int) ($points->tech_rank ?? 0),
-				'tech_points' => (int) ($points->tech_points ?? 0),
-				'build_rank' => (int) ($points->build_rank ?? 0),
-				'build_points' => (int) ($points->build_points ?? 0),
-				'fleet_rank' => (int) ($points->fleet_rank ?? 0),
-				'fleet_points' => (int) ($points->fleet_points ?? 0),
-				'defs_rank' => (int) ($points->defs_rank ?? 0),
-				'defs_points' => (int) ($points->defs_points ?? 0),
-				'total_rank' => (int) ($points->total_rank ?? 0),
-				'total_points' => (int) ($points->total_points ?? 0),
+			$result['stats'] = [
+				'tech_rank' => $points->tech_rank,
+				'tech_points' => $points->tech_points,
+				'build_rank' => $points->build_rank,
+				'build_points' => $points->build_points,
+				'fleet_rank' => $points->fleet_rank,
+				'fleet_points' => $points->fleet_points,
+				'defs_rank' => $points->defs_rank,
+				'defs_points' => $points->defs_points,
+				'total_rank' => $points->total_rank,
+				'total_points' => $points->total_points,
 			];
 		}
 
-		$parse['sex'] = (int) $user->sex;
-		$parse['id'] = (int) $user->id;
-		$parse['username'] = $user->username;
-		$parse['race'] = (int) $user->race;
-		$parse['galaxy'] = (int) $user->galaxy;
-		$parse['system'] = (int) $user->system;
-		$parse['planet'] = (int) $user->planet;
-		$parse['ally_id'] = (int) $user->alliance_id;
-		$parse['ally_name'] = $user->alliance_name;
-		$parse['about'] = preg_replace("/(\r\n)/u", "<br>", stripslashes($user->about));
-		$parse['wons'] = (int) $user->raids_win;
-		$parse['loos'] = (int) $user->raids_lose;
-		$parse['total'] = (int) $user->raids;
-
-		$parse['m'] = User::getRankId($user->lvl_minier);
-		$parse['f'] = User::getRankId($user->lvl_raid);
-
-		return $parse;
+		return $result;
 	}
 
-	public function stat($userId)
+	public function stats(int $id)
 	{
-		if (!Auth::check()) {
-			throw new PageException('Доступ запрещен');
-		}
-
-		$player = User::find($userId);
+		$player = User::find($id);
 
 		if (!$player) {
 			throw new Exception('Информация о данном игроке не найдена');
 		}
 
-		$parse = [];
-		$parse['name'] = $player->username;
-		$parse['points'] = [];
+		$result = [
+			'name' => $player->username,
+			'points' => [],
+		];
 
-		$items = LogsStat::query()->where('object_id', $userId)
+		$items = LogsStat::query()->where('object_id', $id)
 			->where('type', 1)
 			->where('date', '>', now()->subDays(14))
 			->orderBy('date')
 			->get();
 
 		foreach ($items as $item) {
-			$parse['points'][] = [
+			$result['points'][] = [
 				'date' => $item->date->utc()->toAtomString(),
 				'rank' => [
-					'tech' => (int) $item->tech_rank,
-					'build' => (int) $item->build_rank,
-					'defs' => (int) $item->defs_rank,
-					'fleet' => (int) $item->fleet_rank,
-					'total' => (int) $item->total_rank,
+					'tech' => $item->tech_rank,
+					'build' => $item->build_rank,
+					'defs' => $item->defs_rank,
+					'fleet' => $item->fleet_rank,
+					'total' => $item->total_rank,
 				],
 				'point' => [
-					'tech' => (int) $item->tech_points,
-					'build' => (int) $item->build_points,
-					'defs' => (int) $item->defs_points,
-					'fleet' => (int) $item->fleet_points,
-					'total' => (int) $item->total_points,
+					'tech' => $item->tech_points,
+					'build' => $item->build_points,
+					'defs' => $item->defs_points,
+					'fleet' => $item->fleet_points,
+					'total' => $item->total_points,
 				]
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 }

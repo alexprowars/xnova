@@ -2,14 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\BattleReport;
+use App\Engine\Battle\BattleReport;
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Models\Report;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Throwable;
 
 class RwController extends Controller
 {
-	public function index(int $id)
+	public function index(int $id, Request $request)
 	{
+		try {
+			$signature = Crypt::decrypt($request->input('signature'));
+
+			if ($signature != $id) {
+				throw new Exception();
+			}
+		} catch (Throwable) {
+			throw new PageException('Недействительная подпись');
+		}
+
 		$report = Report::find($id);
 
 		if (!$report) {
@@ -26,13 +40,18 @@ class RwController extends Controller
 			}
 		}
 
-		$combatReport = new BattleReport($report->data[0], $report->data[1], $report->data[2], $report->data[3], $report->data[4], $report->data[5]);
+		try {
+			$html = BattleReport::fromArray($report->data)->report();
+		} catch (Throwable) {
+			throw new PageException('Ошибка обработки боевого отчета');
+		}
 
-		$html = $combatReport->report()['html'];
-		$html .= '<div class="separator"></div><div class="text-center">ID боевого доклада: <a href="/log/create?code=' . md5(config('app.key') . $report->id) . $report->id . '"><span style="color: red">' . md5(config('app.key') . $report->id) . $report->id . '</span></a></div>';
+		$logCode = md5(config('app.key') . $report->id) . $report->id;
+
+		$html .= '<div class="text-center mt-2">ID боевого доклада: <a href="/logs/create?code=' . $logCode . '"><span style="color: red">' . $logCode . '</span></a></div>';
 
 		return [
-			'raport' => $html
+			'raport' => $html,
 		];
 	}
 }

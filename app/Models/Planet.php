@@ -12,7 +12,6 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Production;
 use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
@@ -54,6 +53,9 @@ class Planet extends Model
 		'merchand' => 'immutable_datetime',
 		'destroyed_at' => 'immutable_datetime',
 		'planet_type' => PlanetType::class,
+		'metal' => 'float',
+		'crystal' => 'float',
+		'deuterium' => 'float',
 	];
 
 	/**
@@ -175,7 +177,7 @@ class Planet extends Model
 		$this->save();
 	}
 
-	public function getProduction(Carbon|CarbonImmutable|null $updateTime = null): Production
+	public function getProduction(?CarbonImmutable $updateTime = null): Production
 	{
 		if (!isset($this->production)) {
 			$this->production = new Production($this, $updateTime);

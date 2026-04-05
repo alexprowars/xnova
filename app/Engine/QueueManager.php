@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
 class QueueManager
 {
 	/** @var Models\Queue[]|null|Collection<array-key, Models\Queue> */
-	protected $queue;
+	protected mixed $queue;
 
 	public function __construct(protected Planet $planet)
 	{
@@ -78,9 +78,9 @@ class QueueManager
 			return $this->queue;
 		} elseif (in_array($type, QueueType::cases())) {
 			return $this->queue->where('type', $type);
-		} else {
-			return new Collection();
 		}
+
+		return new Collection();
 	}
 
 	public function getCount(?QueueType $type = null)
@@ -89,9 +89,9 @@ class QueueManager
 			return $this->queue->count();
 		} elseif (in_array($type, QueueType::cases())) {
 			return $this->queue->where('type', $type)->count();
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
 
 	public function deleteInQueue(Models\Queue $queueItem)

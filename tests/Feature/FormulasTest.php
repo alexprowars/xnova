@@ -138,7 +138,7 @@ test('resource production', function () {
 	$planet->updateAmount('deuterium_mine', 10);
 	$planet->updateAmount('solar_plant', 20);
 
-	$production = $planet->getProduction(now()->addSecond());
+	$production = $planet->getProduction(now()->toImmutable()->addSecond());
 
 	$rp = $production->getResourceProduction();
 	$bp = $production->getBasicProduction();
@@ -165,7 +165,7 @@ test('resource production without enough energy', function () {
 	$planet->updateAmount('deuterium_mine', 10);
 	$planet->updateAmount('solar_plant', 10);
 
-	$production = $planet->getProduction(now()->addSecond());
+	$production = $planet->getProduction(now()->toImmutable()->addSecond());
 
 	$rp = $production->getResourceProduction();
 	$bp = $production->getBasicProduction();
@@ -185,7 +185,7 @@ test('resource production without enough energy', function () {
 test('fusion plant production', function () {
 	$this->planet->updateAmount('fusion_plant', 10);
 
-	$production = $this->planet->getProduction(now()->addSecond());
+	$production = $this->planet->getProduction(now()->toImmutable()->addSecond());
 
 	$rp = $production->getResourceProduction();
 	$bp = $production->getBasicProduction();
@@ -200,7 +200,7 @@ test('fusion plant production with energy level', function () {
 	$this->planet->updateAmount('fusion_plant', 10);
 	$this->user->setTech('energy', 10);
 
-	$production = $this->planet->getProduction(now()->addSecond());
+	$production = $this->planet->getProduction(now()->toImmutable()->addSecond());
 
 	$rp = $production->getResourceProduction();
 	$bp = $production->getBasicProduction();
@@ -215,7 +215,7 @@ test('solar satelite production', function () {
 	$this->planet->updateAmount('solar_satelit', 10);
 	$this->planet->temp_max = 20;
 
-	$production = $this->planet->getProduction(now()->addSecond());
+	$production = $this->planet->getProduction(now()->toImmutable()->addSecond());
 
 	$rp = $production->getResourceProduction();
 

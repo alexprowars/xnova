@@ -135,26 +135,27 @@ class InfoController extends Controller
 		return $items;
 	}
 
-	private function showBuildingInfoPage($itemId)
+	private function showBuildingInfoPage(int $itemId)
 	{
-		$parse = [];
-
-		if (!__('main.tech.' . $itemId)) {
+		if (!Vars::getName($itemId)) {
 			throw new Exception('Мы не сможем дать вам эту информацию');
 		}
 
 		$price = Vars::getItemPrice($itemId);
 
-		$parse['i'] = (int) $itemId;
-
-		$parse['production'] = false;
-		$parse['destroy'] = false;
-		$parse['fleet'] = false;
-		$parse['defence'] = false;
-		$parse['missile'] = false;
+		$result = [
+			'id' => $itemId,
+			'name' => __('main.tech.' . $itemId),
+			'description' => __('info.description.' . $itemId),
+			'production' => null,
+			'destroy' => null,
+			'fleet' => null,
+			'defence' => null,
+			'missile' => null,
+		];
 
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24)) {
-			$parse['production'] = $this->showProductionTable($itemId);
+			$result['production'] = $this->showProductionTable($itemId);
 		} elseif ($itemId == 34) {
 			if ($this->planet->getLevel($itemId) > 0) {
 				$list = [];
@@ -178,7 +179,7 @@ class InfoController extends Controller
 					];
 				}
 
-				$parse['alliance'] = [
+				$result['alliance'] = [
 					'fleets' => $list,
 					'cost' => $this->planet->getLevel($itemId) * 10000,
 				];
@@ -231,7 +232,7 @@ class InfoController extends Controller
 			$fleet['type_gun'] = $gun[$unitData['type_gun']];
 			$fleet['type_armour'] = $armour[$unitData['type_armour']];
 
-			$parse['fleet'] = $fleet;
+			$result['fleet'] = $fleet;
 		} elseif (Vars::getItemType($itemId) == ItemType::DEFENSE) {
 			$fleet = [];
 
@@ -302,10 +303,10 @@ class InfoController extends Controller
 				}
 			}
 
-			$parse['defence'] = $fleet;
+			$result['defence'] = $fleet;
 		}
 
-		if ($itemId <= 44 && $itemId != 33 && $itemId != 41 && !($itemId >= 601 && $itemId <= 615) && !($itemId >= 502 && $itemId <= 503)) {
+		if ($itemId <= 44 && $itemId != 33 && $itemId != 41) {
 			$entity = $this->planet->getEntityUnit($itemId);
 
 			if ($entity instanceof Building && $entity->getLevel() > 0) {
@@ -315,7 +316,7 @@ class InfoController extends Controller
 					$time = 1;
 				}
 
-				$parse['destroy'] = [
+				$result['destroy'] = [
 					'level' => $entity->getLevel(),
 					'resources' => $entity->getDestroyPrice(),
 					'time' => $time,
@@ -323,7 +324,7 @@ class InfoController extends Controller
 			}
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function missiles(Request $request)

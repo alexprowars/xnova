@@ -20,7 +20,7 @@ class AllianceController extends Controller
 
 	protected function noAlly()
 	{
-		$parse = [
+		$result = [
 			'requests' => [],
 			'alliances' => [],
 		];
@@ -31,7 +31,7 @@ class AllianceController extends Controller
 			->get();
 
 		foreach ($requests as $item) {
-			$parse['requests'][] = [
+			$result['requests'][] = [
 				'id' => $item->id,
 				'alliance_id' => $item->alliance_id,
 				'tag' => $item->alliance?->tag,
@@ -50,10 +50,10 @@ class AllianceController extends Controller
 			->get();
 
 		foreach ($alliances as $item) {
-			$parse['alliances'][] = (array) $item;
+			$result['alliances'][] = (array) $item;
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function index()
@@ -72,38 +72,38 @@ class AllianceController extends Controller
 			$range = __('alliance.member');
 		}
 
-		$parse = [];
-		$parse['range'] = $range;
-		$parse['diplomacy'] = 0;
-		$parse['requests'] = 0;
+		$result = [];
+		$result['range'] = $range;
+		$result['diplomacy'] = 0;
+		$result['requests'] = 0;
 
 		if ($alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			$parse['diplomacy'] = AllianceDiplomacy::query()->where('diplomacy_id', $alliance->id)->where('status', 0)->count();
+			$result['diplomacy'] = AllianceDiplomacy::query()->where('diplomacy_id', $alliance->id)->where('status', 0)->count();
 		}
 
 		if ($alliance->user_id == $this->user->id || $alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
-			$parse['requests'] = AllianceDiplomacy::query()->where('alliance_id', $alliance->id)->count();
+			$result['requests'] = AllianceDiplomacy::query()->where('alliance_id', $alliance->id)->count();
 		}
 
-		$parse['access'] = $alliance->rights;
-		$parse['owner'] = $alliance->user_id == $this->user->id;
-		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
+		$result['access'] = $alliance->rights;
+		$result['owner'] = $alliance->user_id == $this->user->id;
+		$result['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
 
-		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->description));
-		$parse['text'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->text));
+		$result['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->description));
+		$result['text'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->text));
 
-		$parse['web'] = $alliance->web;
+		$result['web'] = $alliance->web;
 
-		if (!empty($parse['web']) && !str_contains($parse['web'], 'http')) {
-			$parse['web'] = 'https://' . $parse['web'];
+		if (!empty($result['web']) && !str_contains($result['web'], 'http')) {
+			$result['web'] = 'https://' . $result['web'];
 		}
 
-		$parse['tag'] = $alliance->tag;
-		$parse['members'] = $alliance->members_count;
-		$parse['name'] = $alliance->name;
-		$parse['id'] = $alliance->id;
+		$result['tag'] = $alliance->tag;
+		$result['members'] = $alliance->members_count;
+		$result['name'] = $alliance->name;
+		$result['id'] = $alliance->id;
 
-		return $parse;
+		return $result;
 	}
 
 	public function exit()
@@ -246,11 +246,12 @@ class AllianceController extends Controller
 			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
 		}
 
-		$parse = [];
-		$parse['text'] = $alliance->request ? str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request)) : '';
-		$parse['tag'] = $alliance->tag;
+		$requestText = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request ?? ''));
 
-		return $parse;
+		return [
+			'tag' => $alliance->tag,
+			'text' => $requestText,
+		];
 	}
 
 	public function joinSend(int $id, Request $request)
@@ -290,9 +291,10 @@ class AllianceController extends Controller
 			throw new PageException('Информация о данном альянсе не найдена');
 		}
 
-		$parse = [];
-		$parse['name'] = $alliance->name;
-		$parse['points'] = [];
+		$result = [
+			'name' => $alliance->name,
+			'points' => [],
+		];
 
 		$items = Models\LogsStat::query()->where('object_id', $alliance->id)
 			->where('type', 2)
@@ -301,7 +303,7 @@ class AllianceController extends Controller
 			->get();
 
 		foreach ($items as $item) {
-			$parse['points'][] = [
+			$result['points'][] = [
 				'date' => $item->date->utc()->toAtomString(),
 				'rank' => [
 					'tech' => $item->tech_rank,
@@ -320,6 +322,6 @@ class AllianceController extends Controller
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 }

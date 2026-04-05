@@ -17,18 +17,18 @@ class ResourcesController extends Controller
 {
 	public function index()
 	{
-		$parse = [];
-		$parse['resources'] = Vars::getResources();
+		$result = [];
+		$result['resources'] = Vars::getResources();
 
 		$productionLevel = $this->planet->getProduction()
 			->getProductionFactor();
 
-		$parse['buy_form'] = [
+		$result['buy_form'] = [
 			'time' => max(0, (int) now()->diffInSeconds($this->planet->merchand)),
 		] + $this->getBuyResourcesAmount();
 
-		$parse['bonus_h'] = (int) round(($this->user->bonus('storage') - 1) * 100);
-		$parse['items'] = [];
+		$result['bonus_h'] = (int) round(($this->user->bonus('storage') - 1) * 100);
+		$result['items'] = [];
 
 		$productions = $this->planet->getProduction()->getEnitityProductions();
 
@@ -62,12 +62,12 @@ class ResourcesController extends Controller
 			$item['resources'] = $production->toArray();
 			$item['resources']['energy'] = $production->get(Resources::ENERGY);
 
-			$parse['items'][] = $item;
+			$result['items'][] = $item;
 		}
 
-		$parse['production_level'] = $productionLevel;
+		$result['production_level'] = $productionLevel;
 
-		return $parse;
+		return $result;
 	}
 
 	public function buy()

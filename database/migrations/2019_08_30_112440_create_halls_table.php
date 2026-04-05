@@ -7,19 +7,19 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('halls', function (Blueprint $table) {
+		Schema::create('halls_of_fame', function (Blueprint $table) {
 			$table->id();
 			$table->string('title', 150);
 			$table->integer('debris');
-			$table->timestamp('time')->index();
+			$table->timestamp('date')->index();
 			$table->boolean('won');
-			$table->boolean('sab')->default(0)->index();
-			$table->integer('log');
+			$table->enum('type', ['single', 'team'])->default('single')->index();
+			$table->foreignId('report_id')->nullable()->constrained('reports')->nullOnDelete();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('halls');
+		Schema::drop('halls_of_fame');
 	}
 };

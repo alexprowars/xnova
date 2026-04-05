@@ -26,7 +26,7 @@ class AllianceAdminController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$type = (int) $request->get('type', 1);
+		$type = (int) $request->input('type', 1);
 
 		if ($type != 1 && $type != 2 && $type != 3) {
 			$type = 1;

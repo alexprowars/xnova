@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notification;
 
 class MessageNotification extends Notification
 {
-	public function __construct(protected $sender, protected MessageType $type, protected $subject, protected $message)
+	public function __construct(protected User|int|null $sender, protected MessageType $type, protected ?string $subject, protected array|string $message)
 	{
 	}
 

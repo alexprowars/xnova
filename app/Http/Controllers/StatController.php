@@ -42,7 +42,7 @@ class StatController extends Controller
 	{
 		$type = (int) $request->input('type', 1);
 
-		$parse = [
+		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
@@ -53,9 +53,9 @@ class StatController extends Controller
 			$this->page = $points->{$this->field . '_rank'};
 		}
 
-		$parse['elements'] = $settings->activeUsers;
+		$result['elements'] = $settings->activeUsers;
 
-		$position = ($parse['page'] - 1) * 100;
+		$position = ($result['page'] - 1) * 100;
 
 		if ($type == 6 || $type == 7) {
 			$query = DB::select("SELECT u.username, u.race, u.id as user_id, a.name as alliance_name, u.alliance_id as alliance_id, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.alliance_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
@@ -65,7 +65,7 @@ class StatController extends Controller
 
 		$position++;
 
-		$parse['items'] = [];
+		$result['items'] = [];
 
 		foreach ($query as $item) {
 			$row = [];
@@ -94,34 +94,34 @@ class StatController extends Controller
 			$row['race'] = (int) $item->race;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 
-			$parse['items'][] = $row;
+			$result['items'][] = $row;
 
 			$position++;
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function alliances(Settings $settings, Request $request)
 	{
 		$type = (int) $request->input('type', 1);
 
-		$parse = [
+		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'alliances',
 			'type' => $type,
 			'page' => $this->page,
 		];
 
-		$parse['elements'] = $settings->activeAlliance;
+		$result['elements'] = $settings->activeAlliance;
 
-		$position = ($parse['page'] - 1) * 100;
+		$position = ($result['page'] - 1) * 100;
 
 		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`members_count` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 
-		$parse['items'] = [];
+		$result['items'] = [];
 
 		foreach ($query as $item) {
 			$row = [];
@@ -140,17 +140,17 @@ class StatController extends Controller
 			$row['members'] = (int) $item->members_count;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 
-			$parse['items'][] = $row;
+			$result['items'][] = $row;
 
 			$position++;
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function races(Settings $settings)
 	{
-		$parse = [
+		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'races',
 			'items' => [],
@@ -165,7 +165,7 @@ class StatController extends Controller
 			->get();
 
 		foreach ($items as $item) {
-			$parse['items'][] = [
+			$result['items'][] = [
 				'place' => (int) $item->{$this->field . '_rank'},
 				'race' => (int) $item->race,
 				'count' => (int) $item->total_count,
@@ -173,6 +173,6 @@ class StatController extends Controller
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 }

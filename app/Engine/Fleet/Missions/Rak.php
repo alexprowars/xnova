@@ -17,7 +17,7 @@ class Rak extends BaseMission
 		return false;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$this->killFleet();
 
@@ -50,8 +50,8 @@ class Rak extends BaseMission
 
 			$targetPlanet->updateAmount('interceptor_misil', -$rockets, true);
 		} else {
-			$message .= 'Произведена межпланетная атака (' . $rockets . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
-			$message .= ' на планету ' . $this->fleet->target_user_name . ' <a href="/galaxy/?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
+			$message .= 'Произведена межпланетная атака (' . $rockets . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
+			$message .= ' на планету ' . $this->fleet->target_user_name . ' <a href="/galaxy?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
 
 			if ($defenceMissiles > 0) {
 				$message .= $defenceMissiles . ' ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>';
@@ -85,7 +85,7 @@ class Rak extends BaseMission
 		$this->fleet->target->notify(new MessageNotification(null, MessageType::Battle, 'Ракетная атака', $message));
 	}
 
-	public function returnEvent()
+	public function returnEvent(): void
 	{
 	}
 

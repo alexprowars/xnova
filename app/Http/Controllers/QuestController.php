@@ -14,7 +14,7 @@ class QuestController extends Controller
 	{
 		$quests = require resource_path('engine/quests.php');
 
-		$parse = [];
+		$result = [];
 
 		$userQuests = [];
 
@@ -22,8 +22,8 @@ class QuestController extends Controller
 			$userQuests[$quest->quest_id] = $quest->toArray();
 		}
 
-		$parse['items'] = [];
-		$parse['quests'] = $userQuests;
+		$result['items'] = [];
+		$result['quests'] = $userQuests;
 
 		foreach ($quests as $questId => $quest) {
 			$available = true;
@@ -44,7 +44,7 @@ class QuestController extends Controller
 				}
 			}
 
-			$parse['items'][] = [
+			$result['items'][] = [
 				'id' => $questId,
 				'title' => __('quests.' . $questId . '.title'),
 				'finish' => isset($userQuests[$questId]) && $userQuests[$questId]['finish'] == 1,
@@ -53,7 +53,7 @@ class QuestController extends Controller
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function info(int $id)
@@ -68,13 +68,14 @@ class QuestController extends Controller
 			throw new PageException('Задание не существует', '/quests');
 		}
 
-		$parse = [];
-		$parse['id'] = $id;
-		$parse['title'] = __('quests.' . $id . '.title');
-		$parse['description'] = __('quests.' . $id . '.description');
-		$parse['solution'] = __('quests.' . $id . '.solution');
-		$parse['task'] = [];
-		$parse['rewd'] = [];
+		$result = [
+			'id' => $id,
+			'title' => __('quests.' . $id . '.title'),
+			'description' => __('quests.' . $id . '.description'),
+			'solution' => __('quests.' . $id . '.solution'),
+			'task' => [],
+			'rewd' => [],
+		];
 
 		$qInfo = $this->user->quests()
 			->where('quest_id', $id)
@@ -107,43 +108,43 @@ class QuestController extends Controller
 					}
 
 					if ($type == ItemType::TECH) {
-						$parse['task'][] = ['Исследовать <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
+						$result['task'][] = ['Исследовать <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
 					} elseif ($type == ItemType::FLEET) {
-						$parse['task'][] = ['Построить ' . $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
+						$result['task'][] = ['Построить ' . $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
 					} elseif ($type == ItemType::DEFENSE) {
-						$parse['task'][] = ['Построить ' . $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
+						$result['task'][] = ['Построить ' . $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
 					} else {
-						$parse['task'][] = ['Построить <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
+						$result['task'][] = ['Построить <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
 					}
 				}
 			}
 
 			if ($taskKey == '!planet_name') {
-				$parse['task'][] = ['Переименовать планету', $check];
+				$result['task'][] = ['Переименовать планету', $check];
 			}
 
 			if ($taskKey == 'friends_count') {
-				$parse['task'][] = ['Кол-во друзей в игре: ' . $taskVal, $check];
+				$result['task'][] = ['Кол-во друзей в игре: ' . $taskVal, $check];
 			}
 
 			if ($taskKey == 'ally') {
-				$parse['task'][] = ['Вступить в альянс с кол-во игроков: ' . $taskVal, $check];
+				$result['task'][] = ['Вступить в альянс с кол-во игроков: ' . $taskVal, $check];
 			}
 
 			if ($taskKey == 'storage' && $taskVal === true) {
-				$parse['task'][] = ['Построить любое хранилище ресурсов', $check];
+				$result['task'][] = ['Построить любое хранилище ресурсов', $check];
 			}
 
 			if ($taskKey == 'trade') {
-				$parse['task'][] = ['Обменять ресурсы у торговца', $check];
+				$result['task'][] = ['Обменять ресурсы у торговца', $check];
 			}
 
 			if ($taskKey == 'fleet_mission') {
-				$parse['task'][] = ['Отправить флот в миссию: ' . __('main.type_mission.' . $taskVal), $check];
+				$result['task'][] = ['Отправить флот в миссию: ' . __('main.type_mission.' . $taskVal), $check];
 			}
 
 			if ($taskKey == 'planets') {
-				$parse['task'][] = ['Кол-во колонизированных планет: ' . $taskVal, $check];
+				$result['task'][] = ['Кол-во колонизированных планет: ' . $taskVal, $check];
 			}
 
 			$errors += !$check ? 1 : 0;
@@ -155,38 +156,38 @@ class QuestController extends Controller
 
 		foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
 			if ($rewardKey == 'metal') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.metal') . 'а';
+				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.metal') . 'а';
 			} elseif ($rewardKey == 'crystal') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.crystal') . 'а';
+				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.crystal') . 'а';
 			} elseif ($rewardKey == 'deuterium') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.deuterium');
+				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.deuterium');
 			} elseif ($rewardKey == 'credits') {
-				$parse['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.credits');
+				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.credits');
 			} elseif ($rewardKey == 'build') {
 				foreach ($rewardVal as $element => $level) {
 					$type = Vars::getItemType($element);
 
 					if ($type == ItemType::TECH) {
-						$parse['rewd'][] = 'Исследование <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
+						$result['rewd'][] = 'Исследование <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
 					} elseif ($type == ItemType::FLEET) {
-						$parse['rewd'][] = $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>';
+						$result['rewd'][] = $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>';
 					} elseif ($type == ItemType::DEFENSE) {
-						$parse['rewd'][] = $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>';
+						$result['rewd'][] = $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>';
 					} elseif ($type == ItemType::OFFICIER) {
-						$parse['rewd'][] = 'Офицер <b>' . __('main.tech.' . $element) . '</b> на ' . round($level / 3600 / 24, 1) . ' суток';
+						$result['rewd'][] = 'Офицер <b>' . __('main.tech.' . $element) . '</b> на ' . round($level / 3600 / 24, 1) . ' суток';
 					} else {
-						$parse['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
+						$result['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
 					}
 				}
 			} elseif ($rewardKey == 'STORAGE_RAND') {
-				$parse['rewd'][] = '+1 уровень одного из хранилищ ресурсов';
+				$result['rewd'][] = '+1 уровень одного из хранилищ ресурсов';
 			}
 		}
 
-		$parse['rewd'] = implode(', ', $parse['rewd']);
-		$parse['errors'] = $errors > 0;
+		$result['rewd'] = implode(', ', $result['rewd']);
+		$result['errors'] = $errors > 0;
 
-		return $parse;
+		return $result;
 	}
 
 	public function finish(int $id)

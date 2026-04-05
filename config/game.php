@@ -1,6 +1,7 @@
 <?php
 
 return [
+	'version' => '5.0',
 	'spyReportRow'            => 2,
 	'fieldsByMoonBase'        => env('GAME_MOONBASE_FIELDS', 4),
 	'maxPlanets'              => env('GAME_MAX_PLANETS', 9),
@@ -53,12 +54,8 @@ return [
 	'maxRegPlanetsInSystem'   => env('GAME_MAX_PLANET_IN_SYSTEM', 3),
 	'buildings_exp_mult'      => 1500,
 	'maxSlotsInSim'           => 10,
-	'view' => [
-		// Открывать отчетыв новом окне
-		'openRaportInNewWindow' => 1,
-		// Показывать селект выбора планет
-		'showPlanetListSelect'  => 0,
-	],
+	// Показывать селект выбора планет
+	'showPlanetListSelect'  => 0,
 	'deleteTime'   => env('GAME_USER_DELETE_TIME', 7),
 	'inactiveTime' => env('GAME_USER_INACTIVE_TIME', 21),
 	'level' => [

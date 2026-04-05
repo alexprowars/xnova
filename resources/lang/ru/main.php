@@ -72,6 +72,7 @@ return [
 		'metal' => 'Металл',
 		'crystal' => 'Кристалл',
 		'deuterium' => 'Дейтерий',
+		'energy' => 'Энергия',
 	],
 	'res_builds' => [
 		'metal' => 1,

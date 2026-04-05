@@ -123,10 +123,8 @@ class Entity implements EntityInterface, EntityProductionInterface
 					return false;
 				}
 			} elseif (Vars::getItemType($reqElement) == ItemType::BUILDING) {
-				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503])) {
-					if (in_array($reqElement, [21, 41])) {
-						continue;
-					}
+				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503]) && in_array($reqElement, [21, 41])) {
+					continue;
 				}
 
 				if ($this->planet->getLevel($reqElement) < $level) {

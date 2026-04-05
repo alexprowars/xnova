@@ -28,18 +28,18 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('start', [Controllers\StartController::class, 'save']);
 	Route::post('start/race', [Controllers\StartController::class, 'race']);
 
-	Route::match(['get', 'post'], 'sim', [Controllers\SimController::class, 'index']);
+	Route::get('sim', [Controllers\SimController::class, 'index']);
 	Route::post('sim/report', [Controllers\SimController::class, 'report']);
 	Route::post('sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
-	Route::get('players/stat/{id}', [Controllers\PlayersController::class, 'stat']);
+	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 	Route::post('logout', [Controllers\LogoutController::class, 'index']);
 
 	Route::get('info/{id}', [Controllers\InfoController::class, 'index'])->whereNumber('id');
 	Route::post('info/{id}/missiles', [Controllers\InfoController::class, 'missiles'])->whereNumber('id');
 	Route::post('info/{id}/alliance', [Controllers\InfoController::class, 'alliance'])->whereNumber('id');
 
-	Route::match(['get', 'post'], 'hall', [Controllers\HallController::class, 'index']);
+	Route::get('hall', [Controllers\HallController::class, 'index']);
 
 	Route::post('chat', [Controllers\ChatController::class, 'send']);
 	Route::get('chat/last', [Controllers\ChatController::class, 'last']);
@@ -98,7 +98,6 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('fleet', [Controllers\Fleet\FleetController::class, 'index']);
 	Route::get('fleet/list', [Controllers\Fleet\FleetController::class, 'list']);
-	Route::get('fleet/g{galaxy}/s{system}/p{planet}/t{type}/m{mission}', [Controllers\Fleet\FleetController::class, 'index']);
 	Route::post('fleet/checkout', [Controllers\Fleet\FleetCheckoutController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('fleet/back', [Controllers\Fleet\FleetBackController::class, 'index']);
@@ -156,7 +155,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('resources/state', [Controllers\ResourcesController::class, 'state'])->middleware(IsVacationMode::class);
 
 	Route::post('rocket', [Controllers\RocketController::class, 'index'])->middleware(IsVacationMode::class);
-	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->name('log.view')->whereNumber('id')->middleware('signed:relative');
+	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->whereNumber('id');
 	Route::post('search', [Controllers\SearchController::class, 'index']);
 
 	Route::get('shipyard', [Controllers\ShipyardController::class, 'index'])->middleware(IsVacationMode::class);

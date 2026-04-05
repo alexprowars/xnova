@@ -14,8 +14,8 @@ class MessagesChannel
 		 * @var User $user
 		 * @var User|int|null $sender
 		 * @var MessageType $type
-		 * @var string $subject
-		 * @var string $message
+		 * @var ?string $subject
+		 * @var string|array $message
 		 */
 		[$user, $sender, $type, $subject, $message] = $notification->toMessages($notifiable);
 
@@ -34,6 +34,14 @@ class MessagesChannel
 		$obj->from_id = $sender ?: null;
 		$obj->type = $type;
 		$obj->subject = $subject;
+
+		if (!is_array($message)) {
+			$message = [
+				'type' => 'TextMessage',
+				'text' => $message,
+			];
+		}
+
 		$obj->message = $message;
 
 		if ($obj->save()) {

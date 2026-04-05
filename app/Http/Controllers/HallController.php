@@ -2,38 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hall;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Request;
+use App\Models\HallOfFame;
+use Illuminate\Http\Request;
 
 class HallController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		$type = (int) Request::input('type', 0);
+		$type = $request->input('type', 'single');
 
-		$parse = [];
-		$parse['type'] = $type;
-		$parse['hall'] = [];
+		$result = [];
+		$result['type'] = $type;
+		$result['items'] = [];
 
-		$halls = Hall::query()
-			->where('time', '<', now()->subHour())
-			->where('sab', $type)
-			->orderBy('debris', 'DESC')
-			->limit(50)->get();
+		$items = HallOfFame::query()
+			->where('date', '<', now()->subHour())
+			->where('type', $type)
+			->orderByDesc('debris')
+			->limit(50)
+			->get();
 
-		$time = 0;
-
-		foreach ($halls as $hall) {
-			$parse['hall'][] = $hall->only(['log', 'title', 'won', 'time']);
-
-			if ($time < $hall->time->timestamp) {
-				$time = $hall->time->timestamp;
-			}
+		foreach ($items as $item) {
+			$result['items'][] = $item
+				->only(['id', 'report_id', 'title', 'won', 'date']);
 		}
 
-		$parse['time'] = Date::createFromTimestamp($time)->utc()->toAtomString();
+		$result['last'] = $items->sortByDesc('date')->first()->id ?? null;
 
-		return $parse;
+		return $result;
 	}
 }

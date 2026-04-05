@@ -33,4 +33,9 @@ class FleetEntityCollection extends Collection
 	{
 		return $this->sum('count');
 	}
+
+	public function getCapacity(): int
+	{
+		return $this->sum(fn(FleetEntity $item) => $item->getCapacity());
+	}
 }

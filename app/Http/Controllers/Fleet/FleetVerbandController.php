@@ -24,14 +24,14 @@ class FleetVerbandController extends Controller
 
 		$assault = $fleet->assault;
 
-		$parse = [
+		$result = [
 			'fleetid' => $fleet->id,
 			'assault' => null,
 			'items' => [],
 		];
 
 		if ($assault) {
-			$parse['assault'] = $assault->only(['id', 'name', 'fleet_id']);
+			$result['assault'] = $assault->only(['id', 'name', 'fleet_id']);
 		}
 
 		if (!$assault) {
@@ -41,7 +41,7 @@ class FleetVerbandController extends Controller
 		}
 
 		foreach ($fleets as $item) {
-			$parse['items'][] = [
+			$result['items'][] = [
 				'id' => $item->id,
 				'mission' => $item->mission,
 				'amount' => $item->entities->getTotal(),
@@ -62,13 +62,13 @@ class FleetVerbandController extends Controller
 		if ($fleet->id == $assault?->fleet_id) {
 			$assault->loadMissing(['users', 'users.user']);
 
-			$parse['users'] = [];
+			$result['users'] = [];
 
 			foreach ($assault->users as $user) {
-				$parse['users'][] = $user->user->username;
+				$result['users'][] = $user->user->username;
 			}
 
-			$parse['alliance'] = [];
+			$result['alliance'] = [];
 
 			if ($this->user->alliance_id) {
 				$allianceUsers = User::query()->where('alliance_id', $this->user->alliance_id)
@@ -76,14 +76,14 @@ class FleetVerbandController extends Controller
 					->get();
 
 				foreach ($allianceUsers as $user) {
-					$parse['alliance'][] = [
+					$result['alliance'][] = [
 						'id' => $user->id,
 						'username' => $user->username,
 					];
 				}
 			}
 
-			$parse['friends'] = [];
+			$result['friends'] = [];
 
 			$friends = Friend::query()->whereBelongsTo($this->user)
 				->where('active', true)
@@ -91,11 +91,11 @@ class FleetVerbandController extends Controller
 				->get();
 
 			foreach ($friends as $friend) {
-				$parse['friends'][] = $friend->only(['friend.id', 'friend.username']);
+				$result['friends'][] = $friend->only(['friend.id', 'friend.username']);
 			}
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function create(int $fleetId, Request $request)

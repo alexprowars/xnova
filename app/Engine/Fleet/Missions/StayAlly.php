@@ -14,21 +14,21 @@ class StayAlly extends BaseMission
 		return $targetPlanet && $targetPlanet->user_id != $planet->user_id && !(count($units) == 1 && !empty($units[210]));
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$this->stayFleet();
 
 		$message = __('fleet_engine.sys_stay_mess_user', [
 			'user' => $this->fleet->user_name,
-			'start' => $this->fleet->getStartAdressLink(),
+			'start' => $this->fleet->getOriginCoordinates()->getLink(),
 			'target_user' => $this->fleet->target_user_name,
-			'target' => $this->fleet->getTargetAdressLink(),
+			'target' => $this->fleet->getDestinationCoordinates()->getLink(),
 		], $this->fleet->user->locale);
 
 		$this->fleet->user->notify(new MessageNotification(null, MessageType::Alliance, __('fleet_engine.sys_mess_tower'), $message));
 	}
 
-	public function endStayEvent()
+	public function endStayEvent(): void
 	{
 		$this->return();
 	}

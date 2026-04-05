@@ -39,8 +39,8 @@ class Controller extends BaseController
 			$this->user->username = RandomNameGenerator\All::create()->getName();
 		}
 
-		if (!(int) config('game.view.showPlanetListSelect', 0)) {
-			config(['settings.view.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
+		if (!(int) config('game.showPlanetListSelect', 0)) {
+			config(['settings.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
 		}
 
 		$this->user->getAllyInfo();

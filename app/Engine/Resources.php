@@ -44,7 +44,7 @@ class Resources implements Arrayable
 		$this->resources[$type] = $value;
 	}
 
-	public function add(Resources $resources)
+	public function add(self $resources)
 	{
 		foreach (ResourcesEnum::cases() as $res) {
 			$this->resources[$res->value] += $resources->get($res);
@@ -53,7 +53,7 @@ class Resources implements Arrayable
 		return $this;
 	}
 
-	public function sub(Resources $resources)
+	public function sub(self $resources)
 	{
 		foreach (ResourcesEnum::cases() as $res) {
 			$this->resources[$res->value] -= $resources->get($res);

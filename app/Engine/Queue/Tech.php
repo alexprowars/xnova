@@ -13,11 +13,8 @@ use App\Models\Planet;
 
 class Tech
 {
-	private $queue;
-
-	public function __construct(QueueManager $queue)
+	public function __construct(private QueueManager $queue)
 	{
-		$this->queue = $queue;
 	}
 
 	public function add($elementId)

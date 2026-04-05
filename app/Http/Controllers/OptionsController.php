@@ -22,7 +22,7 @@ class OptionsController extends Controller
 {
 	public function email(ChangeEmailRequest $request)
 	{
-		$this->user->email = $request->get('email');
+		$this->user->email = $request->input('email');
 		$this->user->email_verified_at = null;
 		$this->user->save();
 	}
@@ -69,24 +69,24 @@ class OptionsController extends Controller
 					throw new Exception('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe. Строится: ' . $queueCount . ' объектов.');
 				} elseif ($userFlyingFleets > 0) {
 					throw new Exception('Heвoзмoжнo включить peжим oтпycкa. Для включeния y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe.');
-				} else {
-					if (!$this->user->vacation) {
-						$vacation = now()->addDays(config('game.vacationModeTime', 2));
-					} else {
-						$vacation = $this->user->vacation;
-					}
-
-					$buildsId = [4, 12, 212];
-
-					foreach (Vars::getResources() as $res) {
-						$buildsId[] = Vars::getIdByName($res . '_mine');
-					}
-
-					$this->user->planets->each(function (Planet $planet) use ($buildsId) {
-						$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
-						$planet->save();
-					});
 				}
+
+				if (!$this->user->vacation) {
+					$vacation = now()->addDays(config('game.vacationModeTime', 2));
+				} else {
+					$vacation = $this->user->vacation;
+				}
+
+				$buildsId = [4, 12, 212];
+
+				foreach (Vars::getResources() as $res) {
+					$buildsId[] = Vars::getIdByName($res . '_mine');
+				}
+
+				$this->user->planets->each(function (Planet $planet) use ($buildsId) {
+					$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
+					$planet->save();
+				});
 			}
 		}
 
@@ -174,7 +174,7 @@ class OptionsController extends Controller
 
 	public function password(ChangePasswordRequest $request)
 	{
-		$this->user->password = Hash::make($request->get('password'));
+		$this->user->password = Hash::make($request->input('password'));
 		$this->user->save();
 
 		Auth::logout();

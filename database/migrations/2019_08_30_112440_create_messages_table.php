@@ -14,7 +14,7 @@ return new class extends Migration {
 			$table->timestamp('date')->useCurrent()->index();
 			$table->integer('type')->default(0);
 			$table->string('subject', 100)->nullable();
-			$table->text('message')->nullable();
+			$table->json('message')->nullable();
 			$table->index(['user_id']);
 			$table->softDeletes();
 		});

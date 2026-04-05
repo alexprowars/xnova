@@ -6,7 +6,7 @@ use App\Engine\Enums\PlanetType;
 
 class DefenseController extends ShipyardController
 {
-	protected $mode = 'defense';
+	protected string $mode = 'defense';
 
 	public function index()
 	{

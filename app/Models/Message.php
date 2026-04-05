@@ -27,6 +27,7 @@ class Message extends Model
 	protected $casts = [
 		'date' => 'immutable_datetime',
 		'type' => MessageType::class,
+		'message' => 'json:unicode',
 	];
 
 	/** @return BelongsTo<User, $this> */

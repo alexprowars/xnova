@@ -13,7 +13,7 @@ class EmpireController extends Controller
 {
 	public function index()
 	{
-		$parse = [];
+		$result = [];
 
 		$build_hangar_full = [];
 
@@ -42,7 +42,7 @@ class EmpireController extends Controller
 			}
 		}
 
-		$parse['planets'] = [];
+		$result['planets'] = [];
 
 		$planets = Planet::query()
 			->whereBelongsTo($this->user);
@@ -53,7 +53,9 @@ class EmpireController extends Controller
 
 		foreach ($planets as $planet) {
 			$planet->setRelation('user', $this->user);
-			$planet->getProduction()->update(true);
+
+			$production = $planet->getProduction();
+			$production->update(true);
 
 			$row = [];
 
@@ -61,9 +63,9 @@ class EmpireController extends Controller
 			$row['image'] = $planet->image;
 			$row['name'] = $planet->name;
 			$row['position'] = [
-				'galaxy' => (int) $planet->galaxy,
-				'system' => (int) $planet->system,
-				'planet' => (int) $planet->planet,
+				'galaxy' => $planet->galaxy,
+				'system' => $planet->system,
+				'planet' => $planet->planet,
 			];
 			$row['fields'] = $planet->field_current;
 			$row['fields_max'] = $planet->getMaxFields();
@@ -76,10 +78,12 @@ class EmpireController extends Controller
 				'production' => $planet->energy,
 			];
 
+			$resourceProduction = $planet->getProduction()->getResourceProduction();
+
 			foreach (Vars::getResources() as $res) {
 				$row['resources'][$res] = [
 					'value' => $planet->{$res},
-					'production' => $planet->{$res . '_perhour'},
+					'production' => $resourceProduction->get($res),
 					'storage' => floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $planet->getLevel($res . '_store')))) * $this->user->bonus('storage'))
 				];
 			}
@@ -137,23 +141,23 @@ class EmpireController extends Controller
 				$row['elements'][$id] = $item;
 			}
 
-			$parse['planets'][] = $row;
+			$result['planets'][] = $row;
 		}
 
-		$parse['tech'] = [];
+		$result['tech'] = [];
 
 		foreach (Vars::getItemsByType(ItemType::TECH) as $i) {
 			if ($this->user->getTechLevel($i) <= 0) {
 				continue;
 			}
 
-			$parse['tech'][] = [
+			$result['tech'][] = [
 				'id' => $i,
 				'value' => $this->user->getTechLevel($i),
 				'build' => $build_hangar_full[$i] ?? 0,
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 }

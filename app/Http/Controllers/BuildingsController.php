@@ -42,6 +42,7 @@ class BuildingsController extends Controller
 
 			$row = [
 				'id' => $elementId,
+				'name' => __('main.tech.' . $elementId),
 				'code' => Vars::getName($elementId),
 				'available' => $available,
 				'price' => $price,

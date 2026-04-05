@@ -29,6 +29,13 @@ class TechnologiesEntity implements Arrayable, JsonSerializable
 		];
 	}
 
+	public function setLevel(int $level): self
+	{
+		$this->level = $level;
+
+		return $this;
+	}
+
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();

@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\BattleReport;
+use App\Engine\Battle\BattleReport;
+use App\Engine\Battle\Simulation;
 use App\Engine\Enums\ItemType;
-use App\Engine\Fleet\CombatEngine\Simulation;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Models\LogsSimulation;
 use Illuminate\Http\Request;
+use Throwable;
 
 class SimController extends Controller
 {
-	public function index($data = '')
+	public function index(Request $request)
 	{
-		if (!empty($data)) {
-			$units = explode(';', $data);
-		} elseif (request()->has('units')) {
-			$units = explode(';', request()->get('units'));
+		if ($request->has('units')) {
+			$units = explode(';', $request->input('units'));
 		} else {
 			$units = [];
 		}
@@ -26,18 +26,18 @@ class SimController extends Controller
 
 		$maxSlots = config('game.maxSlotsInSim', 5);
 
-		$parse = [];
-		$parse['slots'] = [
-			'max' => $maxSlots,
-			'attackers' => [
-				0 => [],
-			],
-			'defenders' => [
-				0 => [],
-			],
+		$result = [
+			'tech' => [109, 110, 111, 120, 121, 122],
+			'slots' => [
+				'max' => $maxSlots,
+				'attackers' => [
+					0 => [],
+				],
+				'defenders' => [
+					0 => [],
+				],
+			]
 		];
-
-		$parse['tech'] = [109, 110, 111, 120, 121, 122];
 
 		foreach ($units as $row) {
 			$element = explode(',', $row);
@@ -47,7 +47,7 @@ class SimController extends Controller
 			}
 
 			if (isset($element[1])) {
-				$parse['slots']['defenders'][0][$element[0]] = ['c' => $element[1]];
+				$result['slots']['defenders'][0][$element[0]] = ['c' => $element[1]];
 			}
 		}
 
@@ -55,15 +55,15 @@ class SimController extends Controller
 
 		foreach ($res as $id) {
 			if ($this->planet->getLevel($id) > 0) {
-				$parse['slots']['attackers'][0][$id] = ['c' => $this->planet->getLevel($id)];
+				$result['slots']['attackers'][0][$id] = ['c' => $this->planet->getLevel($id)];
 			}
 
 			if ($this->user->getTechLevel($id) > 0) {
-				$parse['slots']['attackers'][0][$id] = ['c' => $this->user->getTechLevel($id)];
+				$result['slots']['attackers'][0][$id] = ['c' => $this->user->getTechLevel($id)];
 			}
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function reportById(string $id)
@@ -76,8 +76,11 @@ class SimController extends Controller
 
 		$result = $log->data;
 
-		$report = new BattleReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
-		$report = $report->report();
+		try {
+			$report = BattleReport::fromArray($result)->report();
+		} catch (Throwable) {
+			throw new PageException('Ошибка обработки боевого отчета');
+		}
 
 		return [
 			'report' => $report,
@@ -114,8 +117,11 @@ class SimController extends Controller
 
 		$result = $sim->getResult();
 
-		$report = new BattleReport($result[0], $result[1], $result[2], $result[3], $result[4], $result[5], $result[6]);
-		$report = $report->report();
+		try {
+			$report = BattleReport::fromArray($result)->report();
+		} catch (Throwable) {
+			throw new PageException('Ошибка обработки боевого отчета');
+		}
 
 		$log = LogsSimulation::create([
 			'data' => $result,

@@ -50,6 +50,7 @@ class ResearchController extends Controller
 
 			$row = [
 				'id' => $elementId,
+				'name' => __('main.tech.' . $elementId),
 				'code' => Vars::getName($elementId),
 				'available' => $available && $labInQueue,
 				'max' => $price['max'] ?? 0,

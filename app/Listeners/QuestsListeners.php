@@ -20,7 +20,7 @@ class QuestsListeners
 			if ($quest) {
 				foreach ($quest['task'] as $key => $value) {
 					if ($key == 'fleet_mission' && $value == $event->fleet->mission) {
-						$quest->update(['stage' => 1]);
+						$questItem->update(['stage' => 1]);
 					}
 				}
 			}

@@ -15,7 +15,7 @@ class Stay extends BaseMission
 		return $targetPlanet && ($targetPlanet->user_id == $planet->user_id || $targetPlanet->user->isAdmin());
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$targetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
@@ -32,7 +32,7 @@ class Stay extends BaseMission
 			}
 
 			$targetMessage = __('fleet_engine.sys_stat_mess', [
-				'target' => $this->fleet->getTargetAdressLink(),
+				'target' => $this->fleet->getDestinationCoordinates()->getLink(),
 				'm' => Format::number($this->fleet->resource_metal),
 				'mt' => __('main.metal'),
 				'c' => Format::number($this->fleet->resource_crystal),
@@ -49,7 +49,7 @@ class Stay extends BaseMission
 		}
 	}
 
-	public function returnEvent()
+	public function returnEvent(): void
 	{
 		$targetPlanet = Planet::findByCoordinates($this->fleet->getOriginCoordinates());
 
@@ -72,7 +72,7 @@ class Stay extends BaseMission
 				$targetAddedGoods .= ', ' . __('main.tech.' . $entity->id, locale: $this->fleet->user->locale) . ': ' . $entity->count;
 			}
 
-			$TargetMessage = __('fleet_engine.sys_stay_mess_back', locale: $this->fleet->user->locale) . $this->fleet->getTargetAdressLink() . __('fleet_engine.sys_stay_mess_bend', locale: $this->fleet->user->locale) . '<br>' . $targetAddedGoods;
+			$TargetMessage = __('fleet_engine.sys_stay_mess_back', locale: $this->fleet->user->locale) . $this->fleet->getDestinationCoordinates()->getLink() . __('fleet_engine.sys_stay_mess_bend', locale: $this->fleet->user->locale) . '<br>' . $targetAddedGoods;
 
 			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
 		}

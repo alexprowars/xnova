@@ -77,9 +77,9 @@ class Vars
 
 		if (!$all) {
 			return $price['metal'] + $price['crystal'];
-		} else {
-			return $price['metal'] + $price['crystal'] + $price['deuterium'];
 		}
+
+		return $price['metal'] + $price['crystal'] + $price['deuterium'];
 	}
 
 	public function getItemType($itemId): ?ItemType

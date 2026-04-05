@@ -14,10 +14,12 @@ class OfficiersController extends Controller
 	{
 		$items = [];
 
-		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
+		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $id) {
 			$items[] = [
-				'id' => $officier,
-				'power' => __('officier.power.' . $officier),
+				'id' => $id,
+				'name' => __('main.tech.' . $id),
+				'description' => __('info.description.' . $id),
+				'power' => __('officier.power.' . $id),
 			];
 		}
 

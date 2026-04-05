@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Uri;
 
 class UserLostPassword extends Mailable
 {
@@ -24,7 +25,7 @@ class UserLostPassword extends Mailable
 	{
 		return new Content('email.remind_1', with: [
 			'user' => $this->user,
-			'link' => route('password.reset', ['token' => $this->token, 'email' => $this->user->getEmailForPasswordReset()]),
+			'link' => new Uri('login/reset')->withQuery(['token' => $this->token, 'email' => $this->user->getEmailForPasswordReset()])->toString(),
 		]);
 	}
 }

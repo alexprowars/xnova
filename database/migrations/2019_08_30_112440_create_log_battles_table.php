@@ -9,7 +9,7 @@ return new class extends Migration {
 	{
 		Schema::create('logs_battles', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
+			$table->foreignId('user_id')->nullable()->constrained('users');
 			$table->string('title')->default('');
 			$table->json('data');
 			$table->timestamp('created_at')->useCurrent();

@@ -17,7 +17,7 @@ class Colonization extends BaseMission
 		return !empty($units[208]) && $targetPlanet;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$maxPlanets = $this->fleet->user->getTechLevel('colonization') + 1;
 

@@ -23,8 +23,7 @@ class AllianceRequestsController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$parse = [];
-		$parse['items'] = [];
+		$result = [];
 
 		$requests = AllianceRequest::query()
 			->where('alliance_id', $alliance->id)
@@ -33,7 +32,7 @@ class AllianceRequestsController extends Controller
 			->get();
 
 		foreach ($requests as $item) {
-			$parse['items'][] = [
+			$result[] = [
 				'id' => $item->id,
 				'name' => $item->user?->username,
 				'message' => nl2br($item->message),
@@ -41,7 +40,7 @@ class AllianceRequestsController extends Controller
 			];
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function accept(Request $request)

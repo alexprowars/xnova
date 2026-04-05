@@ -2,9 +2,7 @@
 
 namespace App\Engine\Fleet;
 
-use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\PlanetType;
-use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
 use App\Models\Planet;
@@ -15,7 +13,7 @@ class FleetEngine
 	{
 	}
 
-	public function killFleet($fleetId = null)
+	public function killFleet($fleetId = null): void
 	{
 		if (!$fleetId) {
 			$fleetId = $this->fleet->id;
@@ -24,7 +22,7 @@ class FleetEngine
 		Fleet::find($fleetId)?->delete();
 	}
 
-	public function restoreFleetToPlanet($start = true, $fleet = true)
+	public function restoreFleetToPlanet($start = true, $fleet = true): void
 	{
 		if (empty($this->fleet->id)) {
 			return;
@@ -73,7 +71,7 @@ class FleetEngine
 		}
 	}
 
-	public function stayFleet(array $attributes = [])
+	public function stayFleet(array $attributes = []): void
 	{
 		$this->fleet->mess = 3;
 		$this->fleet->updated_at = $this->fleet->end_stay;
@@ -81,31 +79,12 @@ class FleetEngine
 		$this->fleet->update($attributes);
 	}
 
-	public function return(array $attributes = [])
+	public function return(array $attributes = []): void
 	{
 		$this->fleet->mess = 1;
 		$this->fleet->updated_at = $this->fleet->end_date;
 		$this->fleet->update($attributes);
 
 		$this->fleet->assault?->delete();
-	}
-
-	public function convertFleetToDebris(FleetEntityCollection $fleets)
-	{
-		$debris = ['metal' => 0, 'crystal' => 0];
-
-		foreach ($fleets as $entity) {
-			$res = Vars::getItemPrice($entity->id);
-
-			if (!empty($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));
-			}
-
-			if (!empty($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += floor($entity->count * $res['crystal'] * config('game.fleetDebrisRate', 0));
-			}
-		}
-
-		return $debris;
 	}
 }

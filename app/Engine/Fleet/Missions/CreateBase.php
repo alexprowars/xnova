@@ -18,7 +18,7 @@ class CreateBase extends BaseMission
 		return !empty($units[216]) && !$targetPlanet && $target->getType() == PlanetType::PLANET;
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		// Определяем максимальное количество баз
 		$maxBases = $this->fleet->user->getTechLevel('fleet_base');

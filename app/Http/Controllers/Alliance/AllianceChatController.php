@@ -29,14 +29,15 @@ class AllianceChatController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$parse = [];
-		$parse['items'] = [];
+		$result = [
+			'items' => [],
+		];
 
 		$messagesCount = AllianceChat::query()
 			->whereBelongsTo($alliance)
 			->count();
 
-		$parse['pagination'] = [
+		$result['pagination'] = [
 			'total' => $messagesCount,
 			'limit' => 10,
 			'page' => (int) $request->query('p', 1),
@@ -46,24 +47,24 @@ class AllianceChatController extends Controller
 			$messages = AllianceChat::query()
 				->whereBelongsTo($alliance)
 				->orderByDesc('id')
-				->limit($parse['pagination']['limit'])
-				->offset(($parse['pagination']['page'] - 1) * $parse['pagination']['limit'])
+				->limit($result['pagination']['limit'])
+				->offset(($result['pagination']['page'] - 1) * $result['pagination']['limit'])
 				->get();
 
 			foreach ($messages as $message) {
-				$parse['items'][] = [
-					'id' => (int)$message->id,
+				$result['items'][] = [
+					'id' => $message->id,
 					'user' => $message->user,
-					'user_id' => (int)$message->user_id,
+					'user_id' => $message->user_id,
 					'time' => $message->date->utc()->toAtomString(),
 					'message' => str_replace(["\r\n", "\n", "\r"], '', stripslashes($message->message)),
 				];
 			}
 		}
 
-		$parse['owner'] = $alliance->user_id == $this->user->id;
+		$result['owner'] = $alliance->user_id == $this->user->id;
 
-		return $parse;
+		return $result;
 	}
 
 	public function send(Request $request)

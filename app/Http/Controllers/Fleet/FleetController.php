@@ -37,34 +37,46 @@ class FleetController extends Controller
 		$mission = (int) $request->query('mission', 0);
 
 		if (!$galaxy) {
-			$galaxy = (int) $this->planet->galaxy;
+			$galaxy = $this->planet->galaxy;
 		}
 
 		if (!$system) {
-			$system = (int) $this->planet->system;
+			$system = $this->planet->system;
 		}
 
 		if (!$planet) {
-			$planet = (int) $this->planet->planet;
+			$planet = $this->planet->planet;
 		}
 
 		if (!$planet_type) {
 			$planet_type = 1;
 		}
 
-		$parse = [];
-		$parse['curExpeditions'] = $curExpeditions;
-		$parse['maxExpeditions'] = $maxExpeditions;
-		$parse['mission'] = $mission;
+		$isCurrentPlanet = $galaxy == $this->planet->galaxy
+			&& $system == $this->planet->system
+			&& $planet == $this->planet->planet;
+
+		$result = [
+			'curExpeditions' => $curExpeditions,
+			'maxExpeditions' => $maxExpeditions,
+			'selected' => [
+				'mission' => $mission,
+				'galaxy' => !$isCurrentPlanet ? $galaxy : 0,
+				'system' => !$isCurrentPlanet ? $system : 0,
+				'planet' => !$isCurrentPlanet ? $planet : 0,
+				'planet_type' => $planet_type,
+			],
+			'mission' => $mission,
+			'fleets' => [],
+			'ships' => [],
+		];
 
 		$fleets = Models\Fleet::query()
 			->whereBelongsTo($this->user)
 			->get();
 
-		$parse['fleets'] = [];
-
 		foreach ($fleets as $fleet) {
-			$parse['fleets'][] = [
+			$result['fleets'][] = [
 				'id' => $fleet->id,
 				'mission' => $fleet->mission,
 				'amount' => $fleet->entities->getTotal(),
@@ -86,25 +98,13 @@ class FleetController extends Controller
 			];
 		}
 
-		$isCurrent = $galaxy == $this->planet->galaxy && $system == $this->planet->system && $planet == $this->planet->planet;
-
-		$parse['selected'] = [
-			'mission' => $mission,
-			'galaxy' => !$isCurrent ? $galaxy : 0,
-			'system' => !$isCurrent ? $system : 0,
-			'planet' => !$isCurrent ? $planet : 0,
-			'planet_type' => $planet_type,
-		];
-
-		$parse['ships'] = [];
-
 		foreach (Vars::getItemsByType(ItemType::FLEET) as $i) {
 			if ($this->planet->getLevel($i) > 0) {
-				$parse['ships'][] = Ship::createEntity($i, $this->planet->getLevel($i), $this->planet)->getInfo();
+				$result['ships'][] = Ship::createEntity($i, $this->planet->getLevel($i), $this->planet)->getInfo();
 			}
 		}
 
-		return $parse;
+		return $result;
 	}
 
 	public function list()

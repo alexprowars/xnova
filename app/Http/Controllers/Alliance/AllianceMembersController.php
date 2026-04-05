@@ -20,16 +20,16 @@ class AllianceMembersController extends Controller
 	{
 		$alliance = $this->getAlliance();
 
-		$parse = [];
+		$result = [];
 
 		if (str_contains(Route::current()->uri(), '/admin')) {
-			$parse['admin'] = true;
+			$result['admin'] = true;
 		} else {
 			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST)) {
 				throw new Exception(__('alliance.Denied_access'));
 			}
 
-			$parse['admin'] = false;
+			$result['admin'] = false;
 		}
 
 		$sort  = $request->query('sort');
@@ -52,7 +52,7 @@ class AllianceMembersController extends Controller
 		$members->loadMissing(['user', 'user.statistics']);
 		$members = $members->sortBy($sortSql, descending: $order == 'desc');
 
-		$parse['members'] = [];
+		$result['members'] = [];
 
 		foreach ($members as $member) {
 			$item = [
@@ -85,29 +85,29 @@ class AllianceMembersController extends Controller
 				$item['range'] = __('alliance.Novate');
 			}
 
-			$parse['members'][] = $item;
+			$result['members'][] = $item;
 		}
 
-		if (count($parse['members']) != $alliance->members_count) {
-			$alliance->members_count = count($parse['members']);
+		if (count($result['members']) != $alliance->members_count) {
+			$alliance->members_count = count($result['members']);
 			$alliance->save();
 		}
 
-		$parse['ranks'] = [];
+		$result['ranks'] = [];
 
 		if (is_array($alliance->ranks) && !empty($alliance->ranks)) {
 			foreach ($alliance->ranks as $a => $b) {
-				$parse['ranks'][] = [
+				$result['ranks'][] = [
 					'id' => $a + 1,
 					'name' => $b['name'],
 				];
 			}
 		}
 
-		$parse['order'] = $order == 'desc' ? 'asc' : 'desc';
-		$parse['status'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS);
+		$result['order'] = $order == 'desc' ? 'asc' : 'desc';
+		$result['status'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS);
 
-		return $parse;
+		return $result;
 	}
 
 	public function kick(Request $request)

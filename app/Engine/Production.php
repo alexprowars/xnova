@@ -8,7 +8,6 @@ use App\Engine\Enums\Resources as ResourcesEnum;
 use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\User;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 
 class Production
@@ -17,10 +16,10 @@ class Production
 	protected $storage;
 	protected $production;
 
-	public function __construct(protected Planet $planet, protected null|Carbon|CarbonImmutable $updateTime = null)
+	public function __construct(protected Planet $planet, protected ?CarbonImmutable $updateTime = null)
 	{
 		if (!$this->updateTime) {
-			$this->updateTime = now();
+			$this->updateTime = now()->toImmutable();
 		}
 
 		$this->calculate();
@@ -40,14 +39,14 @@ class Production
 		$this->updatePlanetResources();
 		$this->planet->last_update = $this->updateTime;
 
-		if (!defined('CRON')) {
+		if (!app()->runningInConsole()) {
 			$this->planet->last_active = $this->planet->last_update;
 		}
 	}
 
 	public function reset()
 	{
-		$this->updateTime = now();
+		$this->updateTime = now()->toImmutable();
 		$this->basic = null;
 		$this->storage = null;
 		$this->production = null;

@@ -2,6 +2,7 @@
 
 namespace App\Engine\Entity\Model;
 
+use App\Facades\Vars;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
@@ -45,5 +46,12 @@ class FleetEntity implements Arrayable, JsonSerializable
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();
+	}
+
+	public function getCapacity(): int
+	{
+		$unitData = Vars::getUnitData($this->id);
+
+		return $this->count * $unitData['capacity'];
 	}
 }

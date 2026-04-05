@@ -4,6 +4,7 @@ namespace App\Engine;
 
 use App\Engine\Enums\PlanetType;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Uri;
 
 class Coordinates implements Arrayable
 {
@@ -64,7 +65,7 @@ class Coordinates implements Arrayable
 		return $this->galaxy <= 0 || $this->system <= 0 || empty($this->planet) || $this->planet <= 0;
 	}
 
-	public function isSame(Coordinates $coordinates): bool
+	public function isSame(self $coordinates): bool
 	{
 		return $this->galaxy == $coordinates->getGalaxy() && $this->system == $coordinates->getSystem() && $this->planet == $coordinates->getPlanet() && $this->type == $coordinates->getType();
 	}
@@ -82,5 +83,16 @@ class Coordinates implements Arrayable
 			'planet' => $this->planet,
 			'planet_type' => $this->type?->value,
 		];
+	}
+
+	public function getLink(): string
+	{
+		$uri = new Uri('/galaxy')
+			->withQuery([
+				'galaxy' => $this->galaxy,
+				'system' => $this->system,
+			]);
+
+		return '<a href="' . $uri . '">[' . $this->galaxy . ':' . $this->system . ':' . $this->planet . ']</a>';
 	}
 }

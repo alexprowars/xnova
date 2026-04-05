@@ -14,13 +14,13 @@ class Transport extends BaseMission
 		return $targetPlanet && (!empty($units[202]) || !empty($units[203]));
 	}
 
-	public function targetEvent()
+	public function targetEvent(): void
 	{
 		$this->restoreFleetToPlanet(false, false);
 
 		$message = __('fleet_engine.sys_tran_mess_owner', [
 			'user' => $this->fleet->target_user_name,
-			'target' => $this->fleet->getTargetAdressLink(),
+			'target' => $this->fleet->getDestinationCoordinates()->getLink(),
 			'm' => $this->fleet->resource_metal,
 			'mt' => __('main.metal', locale: $this->fleet->user->locale),
 			'c' => $this->fleet->resource_crystal,
@@ -34,9 +34,9 @@ class Transport extends BaseMission
 		if ($this->fleet->target_user_id != $this->fleet->user_id) {
 			$message = __('fleet_engine.sys_tran_mess_user', [
 				'user' => $this->fleet->user_name,
-				'start' => $this->fleet->getStartAdressLink(),
+				'start' => $this->fleet->getOriginCoordinates()->getLink(),
 				'target_user' => $this->fleet->target_user_name,
-				'target' => $this->fleet->getTargetAdressLink(),
+				'target' => $this->fleet->getDestinationCoordinates()->getLink(),
 				'm' => $this->fleet->resource_metal,
 				'mt' => __('main.metal', locale: $this->fleet->target->locale),
 				'c' => $this->fleet->resource_crystal,

@@ -11,7 +11,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
-	private $socialDrivers = [
+	private array $socialDrivers = [
 		'vkontakte',
 	];
 

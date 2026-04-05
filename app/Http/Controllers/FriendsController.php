@@ -65,7 +65,7 @@ class FriendsController extends Controller
 
 	public function requests(Request $request)
 	{
-		$isMyRequests = $request->get('my', 'N') == 'Y';
+		$isMyRequests = $request->input('my', 'N') == 'Y';
 
 		$result = [];
 

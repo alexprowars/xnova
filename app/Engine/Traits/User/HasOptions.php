@@ -4,7 +4,7 @@ namespace App\Engine\Traits\User;
 
 trait HasOptions
 {
-	protected $optionsDefault = [
+	protected array $optionsDefault = [
 		'bb_parser' 		=> true,
 		'planetlist' 		=> false,
 		'planetlistselect' 	=> false,
