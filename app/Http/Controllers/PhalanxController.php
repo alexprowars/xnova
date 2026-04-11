@@ -16,9 +16,9 @@ class PhalanxController extends Controller
 {
 	public function index(Request $request)
 	{
-		$galaxy = (int) $request->post('galaxy');
-		$system = (int) $request->post('system');
-		$planet = (int) $request->post('planet');
+		$galaxy = (int) $request->post('galaxy', 0);
+		$system = (int) $request->post('system', 0);
+		$planet = (int) $request->post('planet', 0);
 
 		$consumption = 5000;
 

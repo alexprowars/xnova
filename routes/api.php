@@ -10,9 +10,9 @@ Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);
 Route::post('registration', [Controllers\RegistrationController::class, 'index']);
 Route::get('logs/{id}', [Controllers\LogsController::class, 'info'])->whereNumber('id');
-Route::match(['get', 'post'], 'stat', [Controllers\StatController::class, 'index']);
-Route::match(['get', 'post'], 'stat/alliances', [Controllers\StatController::class, 'alliances']);
-Route::match(['get', 'post'], 'stat/races', [Controllers\StatController::class, 'races']);
+Route::match(['get', 'post'], 'stats/players', [Controllers\StatsController::class, 'index']);
+Route::match(['get', 'post'], 'stats/alliances', [Controllers\StatsController::class, 'alliances']);
+Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class, 'races']);
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id');
 
 Route::post('login', [Controllers\LoginController::class, 'credentials']);

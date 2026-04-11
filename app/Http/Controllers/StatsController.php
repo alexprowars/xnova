@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-class StatController extends Controller
+class StatsController extends Controller
 {
 	private $field;
 	private $page;
